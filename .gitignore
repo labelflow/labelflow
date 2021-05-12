@@ -75,9 +75,6 @@ typings/
 # parcel-bundler cache (https://parceljs.org/)
 .cache
 
-# Next.js build output
-.next
-
 # Nuxt.js build / generate output
 .nuxt
 dist
@@ -102,3 +99,13 @@ dist
 
 # TernJS port file
 .tern-port
+
+# MacOS
+.DS_Store
+
+# vercel
+.vercel
+
+# next.js
+.next
+out
