@@ -1,0 +1,9 @@
+{
+  "name": "labelflow",
+  "version": "0.0.1",
+  "repository": "git@github.com:Labelflow/labelflow.git",
+  "workspaces": [
+    "packages/*"
+  ],
+  "private": true
+}
