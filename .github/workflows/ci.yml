@@ -19,4 +19,4 @@ jobs:
       - name: lint project
         run: yarn lint
       - name: run every workspaces tests
-        run: yarn tests
+        run: yarn test

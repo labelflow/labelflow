@@ -5,7 +5,7 @@
   "repository": "git@github.com:Labelflow/labelflow.git",
   "scripts": {
     "lint": "eslint packages/**/*.{ts,tsx}",
-    "tests": "jest",
+    "test": "jest",
     "cypress:open": "yarn run cypress open"
   },
   "workspaces": [
