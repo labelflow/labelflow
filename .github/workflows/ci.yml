@@ -1,22 +1,60 @@
-name: ci-github-actions
+name: ci
 on:
   pull_request:
     branches:
       - main
-      - staging
-      - develop
 jobs:
-  run-tests:
-    runs-on: ubuntu-latest
+  install:
+    runs-on: ubuntu-20.04
     steps:
-      - run: echo "This job is now running on a ${{ runner.os }}"
-      - run: echo "Repository = ${{ github.repository }}."
-      - run: echo "Current Branch = ${{ github.ref }}" 
       - name: Check out repository code
         uses: actions/checkout@v2
-      - name: build project 
-        run: yarn install
-      - name: lint project
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+      - name: Fetch/Save yarn cache
+        uses: actions/cache@v2
+        id: yarn-cache
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+      - name: install dependencies
+        run: yarn install --frozen-lockfile
+      - name: Ensure node_modules are up to date in the cache
+        uses: actions/cache@v2
+        id: node-modules-cache
+        with:
+          path: '**/node_modules'
+          key: ${{ runner.os }}-modules-${{ hashFiles('/yarn.lock') }}
+
+  lint:
+    runs-on: ubuntu-20.04
+    needs: install
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
+      - name: Fetch node_modules from cache
+        uses: actions/cache@v2
+        id: node-modules-cache
+        with:
+          path: '**/node_modules'
+          key: ${{ runner.os }}-modules-${{ hashFiles('/yarn.lock') }}
+      - name: lint project code
         run: yarn lint
-      - name: run every workspaces tests
+
+  test:
+    runs-on: ubuntu-20.04
+    needs: install
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
+      - name: Fetch node_modules from cache
+        uses: actions/cache@v2
+        id: node-modules-cache
+        with:
+          path: '**/node_modules'
+          key: ${{ runner.os }}-modules-${{ hashFiles('/yarn.lock') }}
+      - name: run tests
         run: yarn test
