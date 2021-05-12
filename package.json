@@ -4,7 +4,8 @@
   "version": "0.0.1",
   "repository": "git@github.com:Labelflow/labelflow.git",
   "scripts": {
-    "lint": "eslint packages/**/*.{ts,tsx}"
+    "lint": "eslint packages/**/*.{ts,tsx}",
+    "tests": "yarn workspaces run test"
   },
   "workspaces": [
     "packages/*"

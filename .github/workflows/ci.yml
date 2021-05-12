@@ -1,0 +1,22 @@
+name: ci-github-actions
+on:
+  pull_request:
+    branches:
+      - main
+      - staging
+      - develop
+jobs:
+  run-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "This job is now running on a ${{ runner.os }}"
+      - run: echo "Repository = ${{ github.repository }}."
+      - run: echo "Current Branch = ${{ github.ref }}" 
+      - name: Check out repository code
+        uses: actions/checkout@v2
+      - name: build project 
+        run: yarn install
+      - name: lint project
+        run: yarn lint
+      - name: run every workspaces tests
+        run: yarn tests
