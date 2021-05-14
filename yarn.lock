@@ -768,9 +768,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@labelflow/web-app@workspace:packages/web-app":
+"@labelflow/db@workspace:typescript/db":
   version: 0.0.0-use.local
-  resolution: "@labelflow/web-app@workspace:packages/web-app"
+  resolution: "@labelflow/db@workspace:typescript/db"
+  dependencies:
+    "@prisma/client": 2.22.1
+    prisma: 2.22.1
+  languageName: unknown
+  linkType: soft
+
+"@labelflow/web-app@workspace:typescript/web-app":
+  version: 0.0.0-use.local
+  resolution: "@labelflow/web-app@workspace:typescript/web-app"
   dependencies:
     "@types/node": ^12.12.21
     "@types/react": ^17.0.2
@@ -881,6 +890,34 @@ __metadata:
   version: 0.14.0
   resolution: "@opentelemetry/context-base@npm:0.14.0"
   checksum: f1e637a1912e5876a49fcdfefd76c5e37fd94852a444ad6a3e42fab2d136f0794d5f6455b01866c4342cec624541cb83cfadcc86f83ba2ececf9dc83117a982d
+  languageName: node
+  linkType: hard
+
+"@prisma/client@npm:2.22.1":
+  version: 2.22.1
+  resolution: "@prisma/client@npm:2.22.1"
+  dependencies:
+    "@prisma/engines-version": 2.22.0-21.60cc71d884972ab4e897f0277c4b84383dddaf6c
+  peerDependencies:
+    prisma: "*"
+  peerDependenciesMeta:
+    prisma:
+      optional: true
+  checksum: 0ea7bd3c5f9d6fbb939ccf1b9ef1a8e15f7d98b47557851bdc1a448484281c61cc573cccfeb8219d2d1f52b0011e0efb2cda3391c3d5ffb7b4e13761fbd6dd1e
+  languageName: node
+  linkType: hard
+
+"@prisma/engines-version@npm:2.22.0-21.60cc71d884972ab4e897f0277c4b84383dddaf6c":
+  version: 2.22.0-21.60cc71d884972ab4e897f0277c4b84383dddaf6c
+  resolution: "@prisma/engines-version@npm:2.22.0-21.60cc71d884972ab4e897f0277c4b84383dddaf6c"
+  checksum: 0329e50c7e2a1dc2d78d7cc90c7c41bcfaa377977a0d458c5c240c06a5c243bdc8ebd133ff06ebd286969205304998fb58e785dc708ad5885e36c944372883b4
+  languageName: node
+  linkType: hard
+
+"@prisma/engines@npm:2.22.0-21.60cc71d884972ab4e897f0277c4b84383dddaf6c":
+  version: 2.22.0-21.60cc71d884972ab4e897f0277c4b84383dddaf6c
+  resolution: "@prisma/engines@npm:2.22.0-21.60cc71d884972ab4e897f0277c4b84383dddaf6c"
+  checksum: 9903d376ca9c6ae0a9990ba8a02d93b4a71b0bcce821f9ce8024ac6b2521d2df5e487ebb531162ad550e6727513ea3699f1ec74bb1403821fc0a5c3d29ff2b48
   languageName: node
   linkType: hard
 
@@ -7353,6 +7390,18 @@ next@latest:
     ansi-styles: ^4.0.0
     react-is: ^17.0.1
   checksum: 5ad34fc128218485732cf0271d396158a00584708fc97bf063c1c3c000fe14da572e9a1d3d7b92d95c5e24965434656c56ed0e45804dea2435ca59a1f86f1b07
+  languageName: node
+  linkType: hard
+
+"prisma@npm:2.22.1":
+  version: 2.22.1
+  resolution: "prisma@npm:2.22.1"
+  dependencies:
+    "@prisma/engines": 2.22.0-21.60cc71d884972ab4e897f0277c4b84383dddaf6c
+  bin:
+    prisma: build/index.js
+    prisma2: build/index.js
+  checksum: 2128d459112aece0f1ce6be9ac1dfb1f00002757c1d85f22b4ab55246b859c441d62f907231f2df70475cf8c8951eba5f638e449089dd9150703fc7860168ff5
   languageName: node
   linkType: hard
 

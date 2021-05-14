@@ -119,3 +119,9 @@ cypress/videos
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
+
+!.env
+
+# Python
+.venv
+__pycache__

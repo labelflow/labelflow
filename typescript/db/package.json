@@ -1,0 +1,14 @@
+{
+  "name": "@labelflow/db",
+  "version": "0.0.1",
+  "scripts": {
+    "push": "prisma db push --skip-generate",
+    "migrate": "prisma migrate dev --name init"
+  },
+  "devDependencies": {
+    "prisma": "2.22.1"
+  },
+  "dependencies": {
+    "@prisma/client": "2.22.1"
+  }
+}
