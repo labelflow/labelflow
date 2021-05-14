@@ -1,4 +1,4 @@
 {
   "python.formatting.provider": "black",
-  "python.pythonPath": "api/.venv/bin/python3"
+  "python.pythonPath": ".venv/bin/python3"
 }
