@@ -8,13 +8,14 @@ import NextLink from "next/link";
 
 interface NavLinkProps extends HTMLChakraProps<"a"> {
   active?: boolean;
+  href?: string;
 }
 
 const DesktopNavLink = React.forwardRef<HTMLAnchorElement, NavLinkProps>(
   (props, ref) => {
     const { active, href, ...rest } = props;
     return (
-      <NextLink href={href}>
+      <NextLink href={href ?? "#"}>
         <chakra.a
           ref={ref}
           display="inline-block"
@@ -42,7 +43,7 @@ DesktopNavLink.displayName = "DesktopNavLink";
 export const MobileNavLink = (props: NavLinkProps) => {
   const { active, href, ...rest } = props;
   return (
-    <NextLink href={href}>
+    <NextLink href={href ?? "#"}>
       <chakra.a
         cursor="pointer"
         aria-current={active ? "page" : undefined}

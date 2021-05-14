@@ -48,7 +48,7 @@ const MobileNavContext = (props: FlexProps) => {
           link.children ? (
             <Submenu.Mobile key={idx} link={link} />
           ) : (
-            <NavLink.Mobile key={idx} href={link.href}>
+            <NavLink.Mobile key={idx} active={false} href={link.href as string}>
               {link.label}
             </NavLink.Mobile>
           )
@@ -88,7 +88,9 @@ const DesktopNavContent = (props: FlexProps) => {
             {link.children ? (
               <Submenu.Desktop link={link} />
             ) : (
-              <NavLink.Desktop href={link.href}>{link.label}</NavLink.Desktop>
+              <NavLink.Desktop active={false} href={link.href as string}>
+                {link.label}
+              </NavLink.Desktop>
             )}
           </Box>
         ))}

@@ -3,9 +3,9 @@ import { NextSeo } from "next-seo";
 import Head from "next/head";
 
 type Props = {
-  title: string;
-  desc: string;
-  canonical: string;
+  title?: string;
+  desc?: string;
+  canonical?: string;
 };
 
 export const Meta = ({
@@ -86,6 +86,7 @@ export const Meta = ({
         src="https://www.googletagmanager.com/gtag/js?id=G-CD75B1LER1"
       />
       <script
+        // eslint-disable-next-line react/no-danger
         dangerouslySetInnerHTML={{
           __html: `
             window.dataLayer = window.dataLayer || [];
