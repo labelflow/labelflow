@@ -3,9 +3,9 @@ import { NextSeo } from "next-seo";
 import Head from "next/head";
 
 type Props = {
-  title?: string;
-  desc?: string;
-  canonical?: string;
+  title: string;
+  desc: string;
+  canonical: string;
 };
 
 export const Meta = ({

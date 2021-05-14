@@ -1,12 +1,12 @@
 import {
-  Badge,
+  // Badge,
   Heading,
   Text,
   Stack,
   Button,
   Stat,
   StatHelpText,
-  StatLabel,
+  // StatLabel,
   StatNumber,
   Box,
 } from "@chakra-ui/react";

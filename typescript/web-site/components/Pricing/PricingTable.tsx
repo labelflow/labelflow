@@ -1,29 +1,19 @@
 import {
   Box,
-  SimpleGrid,
   useColorModeValue,
   Heading,
-  Button,
   Table,
   Tbody,
   Td,
-  Text,
   Th,
   Thead,
   useToken,
-  Tfoot,
   Tr,
-  Center,
-  Flex,
 } from "@chakra-ui/react";
 import * as React from "react";
 
-import { GiBarefoot, GiRunningShoe, GiConverseShoe } from "react-icons/gi";
-import { BiSupport, BiCheckCircle } from "react-icons/bi";
+import { BiCheckCircle } from "react-icons/bi";
 import { columns, data } from "./_data";
-
-import { ActionButton } from "./ActionButton";
-import { PricingCard } from "./PricingCard";
 
 export const PricingTable = () => {
   const colorToken = useColorModeValue("brand.600", "brand.400");

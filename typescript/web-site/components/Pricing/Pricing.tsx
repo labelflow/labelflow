@@ -6,13 +6,8 @@ import {
   Text,
 } from "@chakra-ui/react";
 import * as React from "react";
-import {
-  GiCommercialAirplane,
-  GiRunningShoe,
-  GiConverseShoe,
-  GiCityCar,
-} from "react-icons/gi";
-import { BiSupport } from "react-icons/bi";
+import { GiCommercialAirplane, GiCityCar } from "react-icons/gi";
+
 import { IoRocketSharp } from "react-icons/io5";
 import NextLink from "next/link";
 import { ActionButton } from "./ActionButton";

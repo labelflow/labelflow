@@ -7,6 +7,5 @@
   },
   "devDependencies": {
     "prisma": "2.22.1"
-  },
-  "dependencies": {}
+  }
 }

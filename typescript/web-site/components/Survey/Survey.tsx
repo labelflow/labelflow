@@ -1,10 +1,8 @@
 import {
   Box,
-  SimpleGrid,
   Center,
   useColorModeValue as mode,
   Text,
-  Image,
   Heading,
 } from "@chakra-ui/react";
 import * as React from "react";

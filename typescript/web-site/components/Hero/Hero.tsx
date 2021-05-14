@@ -3,14 +3,14 @@ import {
   Button,
   Heading,
   Img,
-  Link,
+  // Link,
   Stack,
   Text,
   useColorModeValue as mode,
 } from "@chakra-ui/react";
 import NextLink from "next/link";
 import * as React from "react";
-import { HiPlay } from "react-icons/hi";
+// import { HiPlay } from "react-icons/hi";
 
 export function Hero() {
   return (

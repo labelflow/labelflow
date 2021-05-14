@@ -1,7 +1,6 @@
 import {
   Flex,
   Heading,
-  Link,
   Icon,
   List,
   ListIcon,

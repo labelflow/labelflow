@@ -1,11 +1,4 @@
-import {
-  Box,
-  SimpleGrid,
-  useColorModeValue as mode,
-  Text,
-  Image,
-  Heading,
-} from "@chakra-ui/react";
+import { Box, Text, Image, Heading } from "@chakra-ui/react";
 import * as React from "react";
 
 // import { Image } from "../Image";

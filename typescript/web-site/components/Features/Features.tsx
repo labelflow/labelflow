@@ -8,12 +8,9 @@ import {
 import * as React from "react";
 import {
   FcFlashOn,
-  FcMultipleDevices,
   FcKey,
   FcPositiveDynamic,
-  FcFolder,
   FcGraduationCap,
-  FcGlobe,
   FcLike,
   FcFlowChart,
 } from "react-icons/fc";

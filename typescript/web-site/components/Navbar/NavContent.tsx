@@ -6,7 +6,7 @@ import {
   HStack,
   useDisclosure,
   VisuallyHidden,
-  useColorModeValue as mode,
+  // useColorModeValue as mode,
 } from "@chakra-ui/react";
 import * as React from "react";
 import NextLink from "next/link";
