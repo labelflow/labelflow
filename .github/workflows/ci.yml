@@ -21,7 +21,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-yarn-
       - name: install dependencies
-        run: yarn install --frozen-lockfile
+        run: yarn install --immutable
       - name: Ensure node_modules are up to date in the cache
         uses: actions/cache@v2
         id: node-modules-cache
