@@ -81,20 +81,23 @@ export function useNavMenu() {
       switch (event.key) {
         case "Escape": {
           onClose();
-          return triggerRef.current?.focus();
+          triggerRef.current?.focus();
+          break;
         }
         case "ArrowDown": {
           const doc = getOwnerDocument(menuRef.current);
           const next = doc?.activeElement
             ?.nextElementSibling as HTMLAnchorElement | null;
-          return next?.focus();
+          next?.focus();
+          break;
         }
         case "ArrowUp": {
           const doc = getOwnerDocument(menuRef.current);
           const prev = doc?.activeElement
             ?.previousElementSibling as HTMLAnchorElement | null;
           const el = (prev ?? triggerRef.current) as HTMLElement;
-          return el.focus();
+          el.focus();
+          break;
         }
         default:
           break;

@@ -13,12 +13,12 @@ import { ImQuotesLeft } from "react-icons/im";
 interface TestimonialProps {
   image: string;
   name: string;
-  role: string;
+  job: string;
   children: React.ReactNode;
 }
 
 export const Testimonial = (props: TestimonialProps) => {
-  const { image, name, role, children } = props;
+  const { image, name, job, children } = props;
   return (
     <Stack
       as="blockquote"
@@ -70,7 +70,7 @@ export const Testimonial = (props: TestimonialProps) => {
               {name}
             </Text>
             <Text fontSize="sm" color={mode("gray.600", "gray.400")}>
-              {role}
+              {job}
             </Text>
           </Box>
         </HStack>

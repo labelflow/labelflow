@@ -53,9 +53,9 @@ export const Features = () => (
           users, for users.
         </Feature>
         <Feature title="Blazing fast" icon={<FcFlashOn />}>
-          You can't be productive with a slow tool. This is why Labelflow has
-          been built with performance in mind from the beginning. The interface
-          is fast and you can see it.
+          You can&apos;t be productive with a slow tool. This is why Labelflow
+          has been built with performance in mind from the beginning. The
+          interface is fast and you can see it.
         </Feature>
         <Feature title="Collaborative precision" icon={<FcGraduationCap />}>
           Labelflow brings your dataset quality to new levels, thanks to
@@ -84,8 +84,8 @@ export const Features = () => (
         </Feature>
         <Feature title="Open community and standard" icon={<FcLike />}>
           Our mission is to generalize standard good practices around visual
-          data management. Dataset curation should not require any "secret
-          sauce". Labelflow is building a community around an open source
+          data management. Dataset curation should not require any &quot;secret
+          sauce&quot;. Labelflow is building a community around an open source
           labeling tool to set the standard.
         </Feature>
         <Feature title="Own your data and algorithms" icon={<FcKey />}>

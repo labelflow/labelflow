@@ -25,7 +25,7 @@ export const Testimonials = () => {
         >
           <Testimonial
             name="Mark Zoidberg"
-            role="Founder @ Fakebooth"
+            job="Founder @ Fakebooth"
             image="https://images.unsplash.com/photo-1571175351749-e8d06f275d85?ixid=MXwxMjA3fDB8MHxzZWFyY2h8MTk0fHxsYWR5JTIwc21pbGluZ3xlbnwwfHwwfA%3D%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=60"
           >
             I was able to validate my SaaS idea in a couple hours of
@@ -33,15 +33,15 @@ export const Testimonials = () => {
           </Testimonial>
           <Testimonial
             name="Jeff Bozo"
-            role="Engineering Manager @ Armazone"
+            job="Engineering Manager @ Armazone"
             image="https://images.unsplash.com/photo-1603987248955-9c142c5ae89b?ixid=MXwxMjA3fDB8MHxzZWFyY2h8MjJ8fGhhbmRzb21lJTIwbWFuJTIwc21pbGluZ3xlbnwwfHwwfA%3D%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=60"
           >
-            With no experience in Software development, I didn't think I could
-            start a SaaS business. But I did!
+            With no experience in Software development, I didn&apos;t think I
+            could start a SaaS business. But I did!
           </Testimonial>
           <Testimonial
             name="Etron Must"
-            role="Lead Engineer @ Pesta motors"
+            job="Lead Engineer @ Pesta motors"
             image="https://images.unsplash.com/photo-1618085220188-b4f210d22703?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=934&q=80"
           >
             I was able to monetize my domain knowledge by creating a SaaS which
@@ -49,10 +49,10 @@ export const Testimonials = () => {
           </Testimonial>
           <Testimonial
             name="Bill Kates"
-            role="CEO @ Necrosoft"
+            job="CEO @ Necrosoft"
             image="https://images.unsplash.com/photo-1616497925804-78987151de78?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=934&q=80"
           >
-            It's like Visual Basic and Excel, but 30 years later and
+            It&apos;s like Visual Basic and Excel, but 30 years later and
             cloud-native!
           </Testimonial>
         </SimpleGrid>

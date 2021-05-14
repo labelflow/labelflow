@@ -1,4 +1,4 @@
-import { Text, TextProps } from "@chakra-ui/layout";
+import { Text, TextProps } from "@chakra-ui/react";
 import * as React from "react";
 
 export const Copyright = (props: TextProps) => (

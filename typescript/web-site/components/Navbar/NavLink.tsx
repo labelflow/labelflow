@@ -12,7 +12,7 @@ interface NavLinkProps extends HTMLChakraProps<"a"> {
 }
 
 const DesktopNavLink = React.forwardRef<HTMLAnchorElement, NavLinkProps>(
-  (props, ref) => {
+  (props: NavLinkProps, ref) => {
     const { active, href, ...rest } = props;
     return (
       <NextLink href={href ?? "#"}>

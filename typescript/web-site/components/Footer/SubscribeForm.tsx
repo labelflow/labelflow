@@ -26,7 +26,7 @@ export const SubscribeForm = (props: HTMLChakraProps<"form">) => {
         const xhr = new XMLHttpRequest();
         xhr.onreadystatechange = function () {
           // listen for state changes
-          if (xhr.readyState == 4 && xhr.status == 200) {
+          if (xhr.readyState === 4 && xhr.status === 200) {
             router.push(`/thank-you?email=${formData.get("email")}`);
           }
         };

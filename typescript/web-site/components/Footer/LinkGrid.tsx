@@ -15,10 +15,10 @@ export const LinkGrid = (props: SimpleGridProps) => (
       <FooterHeading mb="4">Product</FooterHeading>
       <Stack>
         <NextLink href="/">
-          <Link>Product</Link>
+          <Link href="/">Product</Link>
         </NextLink>
         <NextLink href="/pricing">
-          <Link>Pricing</Link>
+          <Link href="/pricing">Pricing</Link>
         </NextLink>
       </Stack>
     </Box>

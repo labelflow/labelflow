@@ -50,7 +50,7 @@ export const PricingTable = () => {
                   key={index}
                   // position="sticky" top="0" // if only....
                 >
-                  {columns.map((column, index) => {
+                  {columns.map((column, colIndex) => {
                     const cell = row[column.accessor as keyof typeof row];
 
                     return (
@@ -58,7 +58,7 @@ export const PricingTable = () => {
                         scope="col"
                         textTransform="initial"
                         letterSpacing="initial"
-                        key={index}
+                        key={colIndex}
                         fontWeight="bold"
                         // textAlign={index === 0 ? "start" : "center"}
                       >
@@ -95,13 +95,13 @@ export const PricingTable = () => {
           return (
             <Tbody key={index}>
               <Tr key={index}>
-                {columns.map((column, index) => {
+                {columns.map((column, colIndex) => {
                   const cell = row[column.accessor as keyof typeof row];
 
                   return (
                     <Td
                       // whiteSpace="nowrap"
-                      key={index}
+                      key={colIndex}
                       // textAlign={index === 0 ? "start" : "center"}
                     >
                       {cell === true ? (
