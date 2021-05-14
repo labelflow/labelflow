@@ -74,6 +74,7 @@ jobs:
       - name: Cypress run
         uses: cypress-io/github-action@v2
         with:
+          install-command: yarn --immutable
           # install: false
           build: yarn build:web-app
           start: yarn start:web-app
