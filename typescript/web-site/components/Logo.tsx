@@ -1,12 +1,19 @@
-import { chakra, HTMLChakraProps, useToken } from "@chakra-ui/react";
+import {
+  chakra,
+  HTMLChakraProps,
+  // useToken
+} from "@chakra-ui/react";
 import * as React from "react";
 
 export const Logo = React.forwardRef<
   SVGSVGElement,
   HTMLChakraProps<"svg"> & { iconColor?: string }
 >((props, ref) => {
-  const { iconColor = "brand", ...rest } = props;
-  const color = useToken("colors", iconColor);
+  const {
+    //  iconColor = "brand",
+    ...rest
+  } = props;
+  // const color = useToken("colors", iconColor);
   return (
     <chakra.svg
       aria-hidden
