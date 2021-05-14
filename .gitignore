@@ -109,3 +109,6 @@ dist
 # next.js
 .next
 out
+
+# cypress
+cypress/videos

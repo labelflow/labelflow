@@ -6,7 +6,11 @@
   "scripts": {
     "lint": "eslint packages/**/*.{ts,tsx}",
     "test": "jest",
-    "cypress:open": "yarn run cypress open"
+    "cypress:open": "cypress open",
+    "cypress:run": "cypress run",
+    "dev:web-app": "cd ./packages/web-app && yarn dev",
+    "build:web-app": "cd ./packages/web-app && yarn build",
+    "start:web-app": "cd ./packages/web-app && yarn start"
   },
   "workspaces": [
     "packages/*"

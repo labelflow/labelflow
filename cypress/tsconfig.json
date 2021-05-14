@@ -1,0 +1,14 @@
+{
+  // needed to avoid clash with jest types
+  // see https://github.com/cypress-io/cypress-and-jest-typescript-example
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "isolatedModules": false,
+    // be explicit about types included
+    // to avoid clashing with Jest types
+    "types": ["cypress"]
+  },
+  "include": ["../node_modules/cypress", "./**/*.ts"],
+  "exclude": ["node_modules"]
+}
