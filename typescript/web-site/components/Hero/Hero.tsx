@@ -126,9 +126,7 @@ export function Hero() {
               // }}
               //
               src="/img/home-screenshot2.jpg"
-              srcSet={
-                "/img/home-screenshot1.jpg 424w, /img/home-screenshot2.jpg 847w, /img/home-screenshot3.jpg 1270w, /img/home-screenshot3.jpg 1693w"
-              }
+              srcSet="/img/home-screenshot1.jpg 424w, /img/home-screenshot2.jpg 847w, /img/home-screenshot3.jpg 1270w, /img/home-screenshot3.jpg 1693w"
               sizes="(max-width: 600px) 424px, (max-width: 900px) 847px, (max-width: 1200px) 1270px, 1693px"
               alt="Screening talent"
             />

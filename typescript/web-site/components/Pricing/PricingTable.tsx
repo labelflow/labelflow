@@ -18,9 +18,9 @@ import {
 } from "@chakra-ui/react";
 import * as React from "react";
 
-import { columns, data } from "./_data";
 import { GiBarefoot, GiRunningShoe, GiConverseShoe } from "react-icons/gi";
 import { BiSupport, BiCheckCircle } from "react-icons/bi";
+import { columns, data } from "./_data";
 
 import { ActionButton } from "./ActionButton";
 import { PricingCard } from "./PricingCard";

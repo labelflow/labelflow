@@ -1,16 +1,16 @@
-import { Box, BoxProps, useColorModeValue } from '@chakra-ui/react'
-import * as React from 'react'
-import { CardBadge } from './CardBadge'
+import { Box, BoxProps, useColorModeValue } from "@chakra-ui/react";
+import * as React from "react";
+import { CardBadge } from "./CardBadge";
 
 export interface CardProps extends BoxProps {
-  isPopular?: boolean
+  isPopular?: boolean;
 }
 
 export const Card = (props: CardProps) => {
-  const { children, isPopular, ...rest } = props
+  const { children, isPopular, ...rest } = props;
   return (
     <Box
-      bg={useColorModeValue('white', 'gray.700')}
+      bg={useColorModeValue("white", "gray.700")}
       position="relative"
       px="6"
       pb="6"
@@ -24,5 +24,5 @@ export const Card = (props: CardProps) => {
       {isPopular && <CardBadge>Popular</CardBadge>}
       {children}
     </Box>
-  )
-}
+  );
+};

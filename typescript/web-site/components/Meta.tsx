@@ -1,6 +1,7 @@
 import * as React from "react";
 import { NextSeo } from "next-seo";
 import Head from "next/head";
+
 type Props = {
   title?: string;
   desc?: string;
@@ -20,7 +21,7 @@ export const Meta = ({
       openGraph={{
         type: "website",
         url: canonical,
-        title: title,
+        title,
         description: desc,
         locale: "en_US",
         images: [

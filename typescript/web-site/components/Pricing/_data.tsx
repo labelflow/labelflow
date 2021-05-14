@@ -16,7 +16,7 @@ import * as React from "react";
 export const data = [
   {
     type: "header",
-    description: <Box minW="12em"></Box>,
+    description: <Box minW="12em" />,
     free: (
       <Stack>
         <Heading>Free</Heading>
@@ -696,7 +696,7 @@ export const data = [
   },
   {
     type: "header",
-    description: <Box minW="12em"></Box>,
+    description: <Box minW="12em" />,
     free: (
       <Stack>
         <Heading>Free</Heading>
@@ -735,7 +735,7 @@ export const data = [
   },
   {
     type: "header",
-    description: <Box minW="12em"></Box>,
+    description: <Box minW="12em" />,
     free: (
       <NextLink href="/request-access">
         <Button colorScheme="brand">Request Access</Button>

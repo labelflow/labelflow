@@ -1,7 +1,7 @@
-import { useNavMenu } from "./useNavMenu";
 import { Box, Collapse, SimpleGrid, useDisclosure } from "@chakra-ui/react";
 import * as React from "react";
 import { FaChevronDown } from "react-icons/fa";
+import { useNavMenu } from "./useNavMenu";
 import { Link } from "./_data";
 import { NavLink } from "./NavLink";
 import { NavMenu } from "./NavMenu";

@@ -1,11 +1,11 @@
 import { Box, Stack, StackDivider } from "@chakra-ui/react";
 import * as React from "react";
+import NextLink from "next/link";
 import { Copyright } from "./Copyright";
 import { LinkGrid } from "./LinkGrid";
 import { Logo } from "../Logo";
 import { SocialMediaLinks } from "./SocialMediaLinks";
 import { SubscribeForm } from "./SubscribeForm";
-import NextLink from "next/link";
 
 export const Footer = () => (
   <Box
