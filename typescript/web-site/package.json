@@ -1,5 +1,5 @@
 {
-  "name": "@labelflow/web-app",
+  "name": "@labelflow/web-site",
   "version": "0.0.1",
   "scripts": {
     "dev": "next",
