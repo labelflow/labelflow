@@ -20,10 +20,10 @@
  *
  * This file is a way to generate the strings to pass to Image's `size` property and put the results in an Enum for easier consumption
  */
-const deviceSizes = [
-  320, 480, 640, 750, 828, 960, 1080, 1200, 1440, 1920, 2048, 2560, 3840,
-];
-const deviceSizesMax = Math.max(...deviceSizes);
+// const deviceSizes = [
+//   320, 480, 640, 750, 828, 960, 1080, 1200, 1440, 1920, 2048, 2560, 3840,
+// ];
+// const deviceSizesMax = Math.max(...deviceSizes);
 
 /**
  * ? `generateSizes` will create the strings necessary for `Sizes` enum
@@ -31,16 +31,16 @@ const deviceSizesMax = Math.max(...deviceSizes);
  * ? Simply uncomment the `console.log` and adjust values
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const generateSizes = (upperLimit: number = deviceSizesMax): string => {
-  const sizes = [...deviceSizes.filter((v) => v < upperLimit), upperLimit];
-  return sizes
-    .map((v, i) => {
-      return i < sizes.length - 1 ? ` (max-width: ${v}px) ${v}px` : ` ${v}px`;
-    })
-    .join();
-};
+// const generateSizes = (upperLimit: number = deviceSizesMax): string => {
+//   const sizes = [...deviceSizes.filter((v) => v < upperLimit), upperLimit];
+//   return sizes
+//     .map((v, i) => {
+//       return i < sizes.length - 1 ? ` (max-width: ${v}px) ${v}px` : ` ${v}px`;
+//     })
+//     .join();
+// };
 // console.log(generateSizes(960)) // I use a variable, but since it's easier to understand with a real number...
-console.log(generateSizes());
+// console.log(generateSizes());
 
 export enum Sizes {
   main = "(max-width: 320px) 320px, (max-width: 480px) 480px, (max-width: 640px) 640px, (max-width: 750px) 750px, (max-width: 828px) 828px, 960px",

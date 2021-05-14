@@ -51,7 +51,7 @@ export const RequestAccess = () => {
 
                 formData.append("date", new Date().toISOString());
                 const xhr = new XMLHttpRequest();
-                xhr.onreadystatechange = function () {
+                xhr.onreadystatechange = () => {
                   // listen for state changes
                   if (xhr.readyState === 4 && xhr.status === 200) {
                     router.push(`/thank-you?email=${formData.get("email")}`);
