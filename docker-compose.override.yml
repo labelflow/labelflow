@@ -1,12 +1,16 @@
 version: "3.5"
 services:
   pgadmin:
-    image: dpage/pgadmin4:4.30
+    image: dpage/pgadmin4:5.2
     restart: always
     ports:
-      - "8080:80"
+      - "8081:80"
     environment:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
     volumes:
-      - ./volumes/pgadmin:/var/lib/pgadmin
+      - pgadmin:/var/lib/pgadmin
+
+volumes:
+  pgadmin:
+    external: false

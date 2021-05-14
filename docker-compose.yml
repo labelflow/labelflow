@@ -15,7 +15,7 @@ services:
       POSTGRES_USER: ${POSTGRES_ADMIN_USER}
       POSTGRES_PASSWORD: ${POSTGRES_ADMIN_PASSWORD}
     volumes:
-      - ./volumes/postgres:/var/lib/postgresql/data
+      - db_home:/var/lib/postgresql/data
   #   wait:
   #     image: dokku/wait
   api:
@@ -26,8 +26,12 @@ services:
     #     USER_UID: $UID
     #     SETUP_MODE: normal
     ports:
-      - "3001:3001"
+      - "5001:5000"
     depends_on:
       - db
     #* Overrides default command so things don't shut down after the process ends.
     # command: python xx
+
+volumes:
+  db_home:
+    external: false
