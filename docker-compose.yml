@@ -1,0 +1,33 @@
+version: "3.5"
+services:
+  db:
+    image: postgres:12.6
+    restart: always
+    # command: ["postgres", "-c", "log_statement=all", "-c", "log_destination=stderr"]
+    healthcheck:
+      test: /usr/bin/pg_isready -U ${POSTGRES_ADMIN_USER}
+      interval: 5s
+      timeout: 10s
+      retries: 3
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: ${POSTGRES_ADMIN_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_ADMIN_PASSWORD}
+    volumes:
+      - ./volumes/postgres:/var/lib/postgresql/data
+  #   wait:
+  #     image: dokku/wait
+  api:
+    build:
+      context: api
+      dockerfile: dockerfile
+    #   args:
+    #     USER_UID: $UID
+    #     SETUP_MODE: normal
+    ports:
+      - "3001:3001"
+    depends_on:
+      - db
+    #* Overrides default command so things don't shut down after the process ends.
+    # command: python xx
