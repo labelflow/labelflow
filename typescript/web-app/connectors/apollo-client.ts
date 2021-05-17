@@ -31,8 +31,15 @@ const resolvers = {
     hello: () => {
       return "Hello world!";
     },
-    projects: () => {
-      return localforage.getItem("projectList");
+    projects: async () => {
+      const projectKeysList = await localforage.getItem("projectList");
+      if (((projectKeysList as [])?.length ?? 0) === 0) {
+        return [];
+      }
+      const projects = await Promise.all(
+        (projectKeysList as []).map((key: string) => localforage.getItem(key))
+      );
+      return projects;
     },
   },
   Mutation: {
@@ -40,14 +47,18 @@ const resolvers = {
       const newProject = {
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
-        id: Math.floor(Math.random() * 1000000),
+        id: Math.floor(Math.random() * 1000000).toString(),
         name: args?.name,
       };
-      const oldProjectList = await localforage.getItem("projectList");
+      // Set project in db
+      const newProjectKey = `Project:${newProject.id}`;
+      await localforage.setItem(newProjectKey, newProject);
+      // Add project to project list
+      const oldProjectKeysList = await localforage.getItem("projectList");
       const newProjectList =
-        oldProjectList === undefined || oldProjectList === null
-          ? [newProject]
-          : [...(oldProjectList as []), newProject];
+        oldProjectKeysList === undefined || oldProjectKeysList === null
+          ? [newProjectKey]
+          : [...(oldProjectKeysList as []), newProjectKey];
       await localforage.setItem("projectList", newProjectList);
     },
   },
