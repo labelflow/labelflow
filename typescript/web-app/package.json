@@ -9,10 +9,15 @@
     "test": "jest"
   },
   "dependencies": {
+    "@apollo-model/graphql-tools": "^4.0.7",
+    "@apollo/client": "^3.3.18",
     "@chakra-ui/react": "1.6.1",
     "@emotion/react": "^11",
     "@emotion/styled": "^11",
     "framer-motion": "^4",
+    "graphql": "^15.5.0",
+    "graphql-tag": "^2.12.4",
+    "localforage": "^1.9.0",
     "next": "10.x",
     "next-seo": "4.24.0",
     "react": "17.x",
@@ -20,6 +25,7 @@
     "react-icons": "4.2.0"
   },
   "devDependencies": {
+    "@types/localforage": "^0.0.34",
     "@types/node": "12.12.21",
     "@types/react": "17.0.3",
     "@types/react-dom": "17.0.1",
