@@ -26,6 +26,8 @@ const addProjectsMutation = gql`
   }
 `;
 
+type Project = { id: string; name: string };
+
 const IndexPage = () => {
   const { data: title } = useQuery(testQuery);
   const { data: projectsResult } = useQuery(projectsQuery);
@@ -43,9 +45,9 @@ const IndexPage = () => {
       </button>
       <div>
         {projectsResult?.projects
-          ? projectsResult.projects.map((p) => (
-              <p key={p.id}>
-                {p.id} - {p.name}
+          ? projectsResult.projects.map((project: Project) => (
+              <p key={project.id}>
+                {project.id} - {project.name}
               </p>
             ))
           : null}
