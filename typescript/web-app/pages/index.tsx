@@ -1,4 +1,4 @@
-import { useQuery, ApolloProvider } from "@apollo/client";
+import { useQuery, ApolloProvider, useMutation } from "@apollo/client";
 import gql from "graphql-tag";
 import { client } from "../connectors/apollo-client";
 
@@ -17,12 +17,30 @@ const projectsQuery = gql`
   }
 `;
 
+const addProjectsMutation = gql`
+  mutation ($name: String) {
+    addProject(name: $name) {
+      id
+      name
+    }
+  }
+`;
+
 const IndexPage = () => {
   const { data: title } = useQuery(testQuery);
   const { data: projectsResult } = useQuery(projectsQuery);
+  const [addProject] = useMutation(addProjectsMutation, {
+    refetchQueries: [{ query: projectsQuery }],
+  });
   return (
     <div>
       <h1>{title?.hello}</h1>
+      <button
+        type="button"
+        onClick={() => addProject({ variables: { name: "Test" } })}
+      >
+        Add project
+      </button>
       <div>
         {projectsResult?.projects
           ? projectsResult.projects.map((p) => (

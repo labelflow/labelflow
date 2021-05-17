@@ -1,6 +1,7 @@
 import { makeExecutableSchema } from "@apollo-model/graphql-tools";
 import { SchemaLink } from "@apollo/client/link/schema";
 import { ApolloClient, InMemoryCache } from "@apollo/client";
+import localforage from "localforage";
 
 const typeDefs = `
   scalar DateTime
@@ -18,25 +19,36 @@ const typeDefs = `
       name:      String
   }
 
-  schema {
-    query: Query
+  type Mutation {
+    addProject(name:String!):Project
   }
+
+  
 `;
 
 const resolvers = {
   Query: {
-    hello: (root, args, context, info) => {
+    hello: () => {
       return "Hello world!";
     },
-    projects: (root, args, context, info) => {
-      return [
-        {
-          id: 123,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-          name: "test",
-        },
-      ];
+    projects: () => {
+      return localforage.getItem("projectList");
+    },
+  },
+  Mutation: {
+    addProject: async (_: any, args: { name: string }) => {
+      const newProject = {
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        id: Math.floor(Math.random() * 1000000),
+        name: args?.name,
+      };
+      const oldProjectList = await localforage.getItem("projectList");
+      const newProjectList =
+        oldProjectList === undefined || oldProjectList === null
+          ? [newProject]
+          : [...(oldProjectList as []), newProject];
+      await localforage.setItem("projectList", newProjectList);
     },
   },
 };

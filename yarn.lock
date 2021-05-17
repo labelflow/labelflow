@@ -2185,6 +2185,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/localforage@npm:^0.0.34":
+  version: 0.0.34
+  resolution: "@types/localforage@npm:0.0.34"
+  dependencies:
+    localforage: "*"
+  checksum: ab11d232639161871799b38c6a5f2e131e2ef58d0662aa11bff08bcfd849b59ab2868aad2ec5d9c34d73aff46c7f07c5c33da17e32e8f5321e0ac42c98a1c3f6
+  languageName: node
+  linkType: hard
+
 "@types/lodash.mergewith@npm:4.6.6":
   version: 4.6.6
   resolution: "@types/lodash.mergewith@npm:4.6.6"
@@ -6007,6 +6016,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"immediate@npm:~3.0.5":
+  version: 3.0.6
+  resolution: "immediate@npm:3.0.6"
+  checksum: e86d4d20e2da86f9a4629d9aee9d56dfae7d3a7ace7f569b0538f2ec2570d86b3cbdc52c546d23be2cfd28306670f44676fc833cd96d9506659b8c5ab8202ca4
+  languageName: node
+  linkType: hard
+
 "import-fresh@npm:^3.0.0, import-fresh@npm:^3.1.0, import-fresh@npm:^3.2.1":
   version: 3.3.0
   resolution: "import-fresh@npm:3.3.0"
@@ -7301,6 +7317,7 @@ __metadata:
   dependencies:
     "@testing-library/jest-dom": 5.12.0
     "@testing-library/react": 11.2.6
+    "@types/localforage": ^0.0.34
     "@typescript-eslint/eslint-plugin": 4.23.0
     "@typescript-eslint/parser": 4.23.0
     cypress: 7.3.0
@@ -7313,6 +7330,7 @@ __metadata:
     eslint-plugin-react: 7.23.2
     eslint-plugin-react-hooks: 4.2.0
     jest: 26.6.3
+    localforage: ^1.9.0
     prettier: 2.3.0
     react: 17.0.2
     react-dom: 17.0.2
@@ -7369,6 +7387,15 @@ __metadata:
     prelude-ls: ~1.1.2
     type-check: ~0.3.2
   checksum: 775861da38dcb7e5f1de5bea2a1c7ffaede6e9e8632cfbac76be145ecb295370f46bb41307613c283d66f1fee5d8cc448ca3323c4a02d0fb1e913b2f78de2abb
+  languageName: node
+  linkType: hard
+
+"lie@npm:3.1.1":
+  version: 3.1.1
+  resolution: "lie@npm:3.1.1"
+  dependencies:
+    immediate: ~3.0.5
+  checksum: 33a07ffeb7eb5aaec59a5f7a72ba7e6a2ce9d011bd7894f36ed11e2da43f076467019e5f9826c5864500c6a792450aa54b263f31cef0a1774553851dce8a501c
   languageName: node
   linkType: hard
 
@@ -7453,6 +7480,15 @@ __metadata:
     emojis-list: ^2.0.0
     json5: ^1.0.1
   checksum: 61b44f2d301c063f4937de087bffa1289ec65a88d7bccb1527baf1f63f1278761e18eb230b86f40fbea20776ed5aadcbb1ab468088ccde86858d2a4f77db1467
+  languageName: node
+  linkType: hard
+
+"localforage@npm:*, localforage@npm:^1.9.0":
+  version: 1.9.0
+  resolution: "localforage@npm:1.9.0"
+  dependencies:
+    lie: 3.1.1
+  checksum: 0645f5ec6fe28799081a9a21dc23796fbb665dcc20e09061228302750a05671bd13a42688e41b523f1598fff5d8e219f468d826595b75db07b555d4ff223943e
   languageName: node
   linkType: hard
 
