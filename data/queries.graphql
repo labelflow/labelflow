@@ -1,4 +1,5 @@
 type Query {
   hello: String
   examples(first: Int): [Example!]!
+  example(id: String!): Example!
 }

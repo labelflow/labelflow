@@ -1,14 +1,17 @@
 import localforage from "localforage";
 import { v4 as uuidv4 } from "uuid";
 import { isEmpty } from "lodash/fp";
-import { MutationCreateExampleArgs } from "../../../types";
+import { MutationCreateExampleArgs, QueryExampleArgs } from "../../../types";
 
 const typeName = "Example";
 const typeNamePlural = "Examples";
 
 // Queries
-const example = () => {};
-const examples = async () => {
+export const example = async (_: any, args: QueryExampleArgs) => {
+  const entity = await localforage.getItem(`${typeName}:${args?.id}`);
+  return entity;
+};
+export const examples = async () => {
   const entityKeysList = await localforage.getItem(typeNamePlural);
   if (isEmpty(entityKeysList)) {
     return [];
@@ -20,7 +23,10 @@ const examples = async () => {
 };
 
 // Mutations
-const createExample = async (_: any, args: MutationCreateExampleArgs) => {
+export const createExample = async (
+  _: any,
+  args: MutationCreateExampleArgs
+) => {
   const newEntity = {
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
@@ -48,12 +54,12 @@ const createExample = async (_: any, args: MutationCreateExampleArgs) => {
   return newEntity;
 };
 
-const updateExample = () => {};
-const deleteExample = () => {};
+// const updateExample = () => { };
+// const deleteExample = () => { };
 
 export default {
   Query: {
-    // example,
+    example,
     examples,
   },
 

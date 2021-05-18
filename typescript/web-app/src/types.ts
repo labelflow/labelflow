@@ -37,11 +37,17 @@ export type Query = {
   __typename?: 'Query';
   hello?: Maybe<Scalars['String']>;
   examples: Array<Example>;
+  example: Example;
 };
 
 
 export type QueryExamplesArgs = {
   first?: Maybe<Scalars['Int']>;
+};
+
+
+export type QueryExampleArgs = {
+  id: Scalars['String'];
 };
 
 
@@ -161,6 +167,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   hello?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   examples?: Resolver<Array<ResolversTypes['Example']>, ParentType, ContextType, RequireFields<QueryExamplesArgs, never>>;
+  example?: Resolver<ResolversTypes['Example'], ParentType, ContextType, RequireFields<QueryExampleArgs, 'id'>>;
 };
 
 export type Resolvers<ContextType = any> = {
