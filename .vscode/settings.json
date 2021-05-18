@@ -1,4 +1,15 @@
 {
   "python.formatting.provider": "black",
-  "python.pythonPath": ".venv/bin/python3"
+  "python.pythonPath": ".venv/bin/python3",
+  "[python]": {
+    "editor.formatOnSave": true,
+    "gitlens.codeLens.symbolScopes": ["!Module"],
+    "editor.wordBasedSuggestions": false
+  },
+  "[typescript]": {
+    "editor.formatOnSave": false,
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": true
+    }
+  }
 }
