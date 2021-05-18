@@ -1,0 +1,18 @@
+scalar DateTime
+scalar Json
+
+type Query {
+  hello: String
+  projects(first: Int): [Project!]!
+}
+
+type Project {
+  id: Int
+  createdAt: DateTime
+  updatedAt: DateTime
+  name: String
+}
+
+type Mutation {
+  addProject(name: String!): Project
+}

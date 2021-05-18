@@ -2,29 +2,7 @@ import { makeExecutableSchema } from "@apollo-model/graphql-tools";
 import { SchemaLink } from "@apollo/client/link/schema";
 import { ApolloClient, InMemoryCache } from "@apollo/client";
 import localforage from "localforage";
-
-const typeDefs = `
-  scalar DateTime
-  scalar Json
-
-  type Query {
-    hello: String
-    projects(first: Int): [Project!]!
-  }
-
-  type Project {
-      id:        Int
-      createdAt: DateTime
-      updatedAt: DateTime
-      name:      String
-  }
-
-  type Mutation {
-    addProject(name:String!):Project
-  }
-
-  
-`;
+import typeDefs from "../../../data/type-defs.graphql";
 
 const resolvers = {
   Query: {
