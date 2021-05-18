@@ -1,4 +1,4 @@
-schema: "../../data/type-defs.graphql"
+schema: "../../data/*.graphql"
 # documents: ./src/**/*.graphql
 generates:
   ./src/types.ts:

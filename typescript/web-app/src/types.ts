@@ -12,7 +12,6 @@ export type Scalars = {
   Int: number;
   Float: number;
   DateTime: any;
-  Json: any;
 };
 
 
@@ -23,7 +22,6 @@ export type Example = {
   updatedAt?: Maybe<Scalars['DateTime']>;
   name?: Maybe<Scalars['String']>;
 };
-
 
 export type Mutation = {
   __typename?: 'Mutation';
@@ -127,7 +125,6 @@ export type ResolversTypes = {
   DateTime: ResolverTypeWrapper<Scalars['DateTime']>;
   Example: ResolverTypeWrapper<Example>;
   String: ResolverTypeWrapper<Scalars['String']>;
-  Json: ResolverTypeWrapper<Scalars['Json']>;
   Mutation: ResolverTypeWrapper<{}>;
   Query: ResolverTypeWrapper<{}>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
@@ -139,7 +136,6 @@ export type ResolversParentTypes = {
   DateTime: Scalars['DateTime'];
   Example: Example;
   String: Scalars['String'];
-  Json: Scalars['Json'];
   Mutation: {};
   Query: {};
   Int: Scalars['Int'];
@@ -158,10 +154,6 @@ export type ExampleResolvers<ContextType = any, ParentType extends ResolversPare
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export interface JsonScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Json'], any> {
-  name: 'Json';
-}
-
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   createExample?: Resolver<Maybe<ResolversTypes['Example']>, ParentType, ContextType, RequireFields<MutationCreateExampleArgs, 'name'>>;
 };
@@ -174,7 +166,6 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
 export type Resolvers<ContextType = any> = {
   DateTime?: GraphQLScalarType;
   Example?: ExampleResolvers<ContextType>;
-  Json?: GraphQLScalarType;
   Mutation?: MutationResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
 };

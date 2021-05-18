@@ -1,0 +1,8 @@
+scalar DateTime
+
+type Example {
+  id: String
+  createdAt: DateTime
+  updatedAt: DateTime
+  name: String
+}
