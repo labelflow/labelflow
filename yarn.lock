@@ -6,9 +6,9 @@ __metadata:
   cacheKey: 7
 
 "@actions/core@npm:^1.2.4":
-  version: 1.2.7
-  resolution: "@actions/core@npm:1.2.7"
-  checksum: ea8aa7e54523f26e51b056e2b5b830d24a26a972e5aa80cf4c9ea2ad8785e4f67cf316a0514cec0a71bd6d1267c415b85143774a13690988532071b395bcb4a3
+  version: 1.3.0
+  resolution: "@actions/core@npm:1.3.0"
+  checksum: 8829af9595388018bb4eff5ebf74f868738f36a549305a7702bf0d872df0778a0bceae3b51e4a159dd698a775a5dd7efc676e811c28ce44602358c65750f150e
   languageName: node
   linkType: hard
 
@@ -30,21 +30,6 @@ __metadata:
   dependencies:
     tunnel: 0.0.6
   checksum: ccd0ae6ce99662e31daf1f5cb6b5130cc10ac9a3d4f2de74c54031cf13cd191dbbf0719e60e74f724f073f27af4cb9f393218d92f7f70c0b6e23bb1962c386e3
-  languageName: node
-  linkType: hard
-
-"@apollo-model/graphql-tools@npm:^4.0.7":
-  version: 4.0.7
-  resolution: "@apollo-model/graphql-tools@npm:4.0.7"
-  dependencies:
-    apollo-link: ^1.2.3
-    apollo-utilities: ^1.0.1
-    deprecated-decorator: ^0.1.6
-    iterall: ^1.1.3
-    uuid: ^3.1.0
-  peerDependencies:
-    graphql: ^0.13.0 || ^14.0.0
-  checksum: 478223f7d32986eb3eaf4c1c6533d216cf676295942a54f1259cc6b116c732632ab7ad19400cd9e9f1a4a24bc716050dec5f7bc37453adf03057d0953b50407f
   languageName: node
   linkType: hard
 
@@ -3266,7 +3251,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-tools/schema@npm:^7.0.0, @graphql-tools/schema@npm:^7.1.5":
+"@graphql-tools/schema@npm:7.1.5, @graphql-tools/schema@npm:^7.0.0, @graphql-tools/schema@npm:^7.1.5":
   version: 7.1.5
   resolution: "@graphql-tools/schema@npm:7.1.5"
   dependencies:
@@ -3618,12 +3603,12 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@labelflow/web-app@workspace:typescript/web-app"
   dependencies:
-    "@apollo-model/graphql-tools": ^4.0.7
     "@apollo/client": ^3.3.18
     "@chakra-ui/react": 1.6.1
     "@emotion/react": ^11
     "@emotion/styled": ^11
     "@graphql-tools/merge": ^6.2.14
+    "@graphql-tools/schema": 7.1.5
     "@types/localforage": ^0.0.34
     "@types/node": 12.12.21
     "@types/react": 17.0.3
@@ -5572,15 +5557,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wry/equality@npm:^0.1.2":
-  version: 0.1.11
-  resolution: "@wry/equality@npm:0.1.11"
-  dependencies:
-    tslib: ^1.9.3
-  checksum: 3d1da5799967fc272ae53f698514c169c85a04c11c1db3e4641a21edc82af75bfb4db9221c4f87aa333f14c7b43b72311fa66dae1ae981fa6f24c2bc5863d92b
-  languageName: node
-  linkType: hard
-
 "@wry/equality@npm:^0.4.0":
   version: 0.4.0
   resolution: "@wry/equality@npm:0.4.0"
@@ -5946,34 +5922,6 @@ __metadata:
     normalize-path: ^3.0.0
     picomatch: ^2.0.4
   checksum: cd6c08eb8d435741a9de6f5695c75cfba747a50772929ca588235535c6a57d37f2c2b34057768f015fd92abb88108b122ed2e399faac6ae30363a8ca0b6107d0
-  languageName: node
-  linkType: hard
-
-"apollo-link@npm:^1.2.3":
-  version: 1.2.14
-  resolution: "apollo-link@npm:1.2.14"
-  dependencies:
-    apollo-utilities: ^1.3.0
-    ts-invariant: ^0.4.0
-    tslib: ^1.9.3
-    zen-observable-ts: ^0.8.21
-  peerDependencies:
-    graphql: ^0.11.3 || ^0.12.3 || ^0.13.0 || ^14.0.0 || ^15.0.0
-  checksum: 5cc96cd6df7280ad88f41532c32340972ca755b69f6a2f26f8faf04682c387a13d49dc31663674cac14e01f08828333d5deeefe54e667d1ad9ddc8375a216964
-  languageName: node
-  linkType: hard
-
-"apollo-utilities@npm:^1.0.1, apollo-utilities@npm:^1.3.0":
-  version: 1.3.4
-  resolution: "apollo-utilities@npm:1.3.4"
-  dependencies:
-    "@wry/equality": ^0.1.2
-    fast-json-stable-stringify: ^2.0.0
-    ts-invariant: ^0.4.0
-    tslib: ^1.10.0
-  peerDependencies:
-    graphql: ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0
-  checksum: 5a046f8792b124a0fdc8ac37f4c50ba57cd4914dabcd652baaee08de541707c82bf2fb4d814e7d6d35b0b916f1582e5492c16809b43f0a2ce1584d9f89d4cd70
   languageName: node
   linkType: hard
 
@@ -8701,13 +8649,6 @@ __metadata:
   version: 0.11.0
   resolution: "dependency-graph@npm:0.11.0"
   checksum: d623df2551af339fc42a90192c0305b94239c26eef62063c4921fedb23f4d829cd5ba47190ff1abd7080ea97644b404ded3cef51488f8aa80070296ca026a02b
-  languageName: node
-  linkType: hard
-
-"deprecated-decorator@npm:^0.1.6":
-  version: 0.1.6
-  resolution: "deprecated-decorator@npm:0.1.6"
-  checksum: 35a358b89b0ca582266b5a2ce73e088658af576508463f1f608f0e7e08bf2fe3395651209a2d431d2c6901ebfafc483bc7318b8bb82d3b3585fcbd6e6c3d65de
   languageName: node
   linkType: hard
 
@@ -12462,7 +12403,7 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"iterall@npm:^1.1.3, iterall@npm:^1.2.1":
+"iterall@npm:^1.2.1":
   version: 1.3.0
   resolution: "iterall@npm:1.3.0"
   checksum: 25ae2d07cf97fc35d43fa7af814839689416b83d3ade0fec97a62c58b7b9fad5ff89dd0ede99f2d67cae2697ffa6987f0ab10876f40ae6466e802609a05b1006
@@ -18854,15 +18795,6 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
-"ts-invariant@npm:^0.4.0":
-  version: 0.4.4
-  resolution: "ts-invariant@npm:0.4.4"
-  dependencies:
-    tslib: ^1.9.3
-  checksum: 0280fb0e853db923605d84d83a7587342b2fcf718af5eac858cc461fcaa95837543de5f6d0a9afd8caf84faa01ffcc2a21cf71f5f51894d3e854b8a9504786bc
-  languageName: node
-  linkType: hard
-
 "ts-invariant@npm:^0.7.0":
   version: 0.7.3
   resolution: "ts-invariant@npm:0.7.3"
@@ -19509,7 +19441,7 @@ typescript@4.2.4:
   languageName: node
   linkType: hard
 
-"uuid@npm:^3.1.0, uuid@npm:^3.3.2":
+"uuid@npm:^3.3.2":
   version: 3.4.0
   resolution: "uuid@npm:3.4.0"
   bin:
@@ -20168,17 +20100,7 @@ typescript@4.2.4:
   languageName: node
   linkType: hard
 
-"zen-observable-ts@npm:^0.8.21":
-  version: 0.8.21
-  resolution: "zen-observable-ts@npm:0.8.21"
-  dependencies:
-    tslib: ^1.9.3
-    zen-observable: ^0.8.0
-  checksum: 031ac9c2441a9b2d388417ab402e759fcb72e74c926ecd2500708da309c54e4ecad2c3d1ce85f039d30f670fca092facd21f3e25d6dba5c055504eb08012acb0
-  languageName: node
-  linkType: hard
-
-"zen-observable@npm:^0.8.0, zen-observable@npm:^0.8.14":
+"zen-observable@npm:^0.8.14":
   version: 0.8.15
   resolution: "zen-observable@npm:0.8.15"
   checksum: 7d155f8a75b9314f9f31e70a31edcd897b0e8a1313737502ab84a573e49d2c333b738e415c156334a6e910c363ce546b59fa7921eff61440285caa99c843df74
