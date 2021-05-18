@@ -3,12 +3,6 @@ import gql from "graphql-tag";
 import { client } from "../connectors/apollo-client";
 import { Example } from "../types";
 
-const testQuery = gql`
-  query {
-    hello
-  }
-`;
-
 const examplesQuery = gql`
   query {
     examples {
@@ -28,14 +22,13 @@ const createExamplesMutation = gql`
 `;
 
 const IndexPage = () => {
-  const { data: title } = useQuery(testQuery);
   const { data: examplesResult } = useQuery(examplesQuery);
   const [createExample] = useMutation(createExamplesMutation, {
     refetchQueries: [{ query: examplesQuery }],
   });
   return (
     <div>
-      <h1>{title?.hello}</h1>
+      <h1>Hello world</h1>
       <button
         type="button"
         onClick={() => createExample({ variables: { name: "Test" } })}
