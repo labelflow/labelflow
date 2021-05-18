@@ -2,7 +2,7 @@ import {
   Catalogue as CatalogueBase,
   CatalogueItem as CatalogueItemBase,
   CatalogueKey as CatalogueKeyBase,
-  Kind as KindBase
+  Kind as KindBase,
 } from "./catalogue";
 
 export { catalogue, extend } from "./catalogue";

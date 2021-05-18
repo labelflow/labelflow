@@ -11,7 +11,7 @@ import "ol/ol.css";
 
 export default {
   title: "Examples/4-Performances",
-  component: Map
+  component: Map,
 };
 
 const stroke = new Stroke({ color: "black", width: 2 });
@@ -22,12 +22,12 @@ const styles = {};
 export const Performance = () => {
   const mapRef = useRef<olMap>();
 
-  const onPostrender = event => {
+  const onPostrender = (event) => {
     const vectorContext = getVectorContext(event);
     range(0, 1000).forEach((v, i) => {
       const coordinates = [
-        100000 * Math.random() + i * 10000,
-        6000000 + 100000 * Math.random() + i * 10000
+        1000000 * Math.random(), // + i * 10000,
+        6000000 + 1000000 * Math.random(), // + i * 10000
       ];
 
       const radius = Math.floor(Math.random() * 20);
@@ -38,8 +38,8 @@ export const Performance = () => {
             stroke,
             radius,
             points: 4,
-            angle: Math.PI / 4
-          })
+            angle: Math.PI / 4,
+          }),
         });
       }
       const style = styles[radius];

@@ -10,18 +10,18 @@ import "ol/ol.css";
 
 export default {
   title: "OL Examples/Draw and modify features",
-  component: Map
+  component: Map,
 };
 
 const fill = new Fill({
-  color: "rgba(255, 255, 255, 0.2)"
+  color: "rgba(255, 255, 255, 0.2)",
 });
 const stroke = new Stroke({
   color: "#ffcc33",
-  width: 2
+  width: 2,
 });
 const circleFill = new Fill({
-  color: "#ffcc33"
+  color: "#ffcc33",
 });
 
 export const DrawAndModifyFeatures = () => {
@@ -68,9 +68,16 @@ export const DrawAndModifyFeatures = () => {
           <>
             <olInteractionModify source={vectorSourceRef.current} />
             <olInteractionDraw
-              args={{ type: geometryType, source: vectorSourceRef.current }}
+              args={{
+                type: geometryType,
+                source: vectorSourceRef.current,
+                snapTolerance: 30,
+              }}
             />
-            <olInteractionSnap source={vectorSourceRef.current} />
+            <olInteractionSnap
+              source={vectorSourceRef.current}
+              args={{ pixelTolerance: 30 }}
+            />
           </>
         ) : null}
       </Map>

@@ -59,8 +59,6 @@ export declare namespace ReactOlFiber {
   type PickOlObjectCatalogElements<T> = Pick<T, OlObjectCatalogElementKeys<T>>;
   type OmitOlObjectCatalogElements<T> = Omit<T, OlObjectCatalogElementKeys<T>>;
 
-  type ObjectProps<T> = {};
-
   /**
    * Generic elements based on simple ol objects (most usual case)
    */

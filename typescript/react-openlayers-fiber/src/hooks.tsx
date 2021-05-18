@@ -3,7 +3,7 @@ import {
   useState,
   useRef,
   useLayoutEffect,
-  MutableRefObject
+  MutableRefObject,
 } from "react";
 
 export { useMap } from "./context";
@@ -12,9 +12,9 @@ export function useResource<T>(
   optionalRef?: MutableRefObject<T>
 ): MutableRefObject<T> {
   const [, forceUpdate] = useState(false);
-  const localRef = useRef<T>((undefined as unknown) as T);
-  const ref = optionalRef ? optionalRef : localRef;
-  useLayoutEffect(() => void forceUpdate(i => !i), []);
+  const localRef = useRef<T>(undefined as unknown as T);
+  const ref = optionalRef ?? localRef;
+  useLayoutEffect((): void => forceUpdate((i) => !i), []);
   return ref;
 }
 
@@ -24,7 +24,7 @@ export function useUpdate<T>(
   optionalRef?: MutableRefObject<T>
 ): MutableRefObject<T> | MutableRefObject<undefined> {
   const localRef = useRef();
-  const ref = optionalRef ? optionalRef : localRef;
+  const ref = optionalRef ?? localRef;
   const prevDependentsRef = useRef(dependents);
 
   useEffect(() => {

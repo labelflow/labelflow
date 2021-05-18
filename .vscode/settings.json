@@ -11,5 +11,12 @@
     "editor.codeActionsOnSave": {
       "source.fixAll.eslint": true
     }
-  }
+  },
+  "cSpell.words": [
+    "Heatmap",
+    "Mapbox",
+    "WMTS",
+    "Zoomify",
+    "openlayers"
+  ]
 }

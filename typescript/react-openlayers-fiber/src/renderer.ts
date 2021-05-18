@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React from "react";
 import ReactReconciler from "react-reconciler";
 import { unstable_now as now } from "scheduler";
@@ -16,7 +17,7 @@ import {
   has,
   lowerFirst,
   pickBy,
-  flow
+  flow,
 } from "lodash/fp";
 
 // Imports from the imperative lib
@@ -24,7 +25,7 @@ import {
   Map as OlMap,
   Object as OlObject,
   View as OlView,
-  Feature as OlFeature
+  Feature as OlFeature,
 } from "ol";
 import Layer from "ol/layer/Layer";
 import Control from "ol/control/Control";
@@ -104,16 +105,16 @@ const noOp = () => {};
 
 const error002 = (containerType = "", childType = "") =>
   new Error(
-    `React-Openlayers-Fiber Error: Couldn't add this child to this container. You can specify how to attach this type of child ("${childType}") to this type of container ("${containerType}") using the "attach" props. If you think this should be done automatically, open an issue here https://github.com/crubier/react-openlayers-fiber/issues/new?title=Support+${childType}+in+${containerType}&body=Support+${childType}+in+${containerType}`
+    `React-Openlayers-Fiber Error: Couldn't add this child to this container. You can specify how to attach this type of child ("${childType}") to this type of container ("${containerType}") using the "attach" props. If you think this should be done automatically, open an issue here https://github.com/labelflow/react-openlayers-fiber/issues/new?title=Support+${childType}+in+${containerType}&body=Support+${childType}+in+${containerType}`
   );
 
-///////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////
+/// ////////////////////////////////////////////////////////////////////////////
+/// ////////////////////////////////////////////////////////////////////////////
+/// ////////////////////////////////////////////////////////////////////////////
 // Util functions
-///////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////
+/// ////////////////////////////////////////////////////////////////////////////
+/// ////////////////////////////////////////////////////////////////////////////
+/// ////////////////////////////////////////////////////////////////////////////
 
 const applyProp = (
   olObject: OlObject,
@@ -129,15 +130,17 @@ const applyProp = (
     setterGeneric.bind(olObject)(olKey, propValue);
   } else if (has(olKey, olObject)) {
     console.warn(
-      `React-Openlayers-Fiber Warning: Setting the property ${olKey} brutally because there is no setter on the object`
+      `React-Openlayers-Fiber Warning: Setting the property "${olKey}" brutally because there is no setter on the object`
     );
     console.warn(olObject);
+    // eslint-disable-next-line no-param-reassign
     olObject[olKey] = propValue;
   } else {
     console.error(
-      `React-Openlayers-Fiber Error: Setting the property ${olKey} very brutally because there is no setter on the object nor the object has this key... This is probably an error`
+      `React-Openlayers-Fiber Error: Setting the property "${olKey}" very brutally because there is no setter on the object nor the object has this key... This is probably an error`
     );
     console.error(olObject);
+    // eslint-disable-next-line no-param-reassign
     olObject[olKey] = propValue;
   }
 };
@@ -158,7 +161,7 @@ const applyProps = (
   newProps: object,
   isNewInstance = false
 ): void => {
-  forEach(key => {
+  forEach((key) => {
     if (isNewInstance && key.substr(0, 7) === "initial") {
       const realKey = lowerFirst(key.substr(7));
       const olKey = startsWith("_", realKey) ? realKey.substring(1) : realKey;
@@ -200,7 +203,7 @@ const defaultAttach = (
       switch (childKind) {
         case "View":
           (containerOlObject as OlMap).setView(childOlObject as OlView);
-          return containerOlObject =>
+          return (containerOlObject) =>
             (containerOlObject as OlMap).unset("view"); // Dubious at best
         case "Layer":
           (containerOlObject as OlMap).addLayer(childOlObject as Layer);
@@ -277,13 +280,13 @@ const defaultAttach = (
   }
 };
 
-///////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////
+/// ////////////////////////////////////////////////////////////////////////////
+/// ////////////////////////////////////////////////////////////////////////////
+/// ////////////////////////////////////////////////////////////////////////////
 // Hot Config functions
-///////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////
+/// ////////////////////////////////////////////////////////////////////////////
+/// ////////////////////////////////////////////////////////////////////////////
+/// ////////////////////////////////////////////////////////////////////////////
 
 const getPublicInstance = (
   instance: Instance | TextInstance
@@ -302,7 +305,7 @@ const getChildHostContext = (
   rootContainerInstance: Container
 ): HostContext => {
   return typeof parentHostContext === "string"
-    ? parentHostContext + "." + type
+    ? `${parentHostContext}.${type}`
     : type;
 };
 
@@ -357,15 +360,15 @@ const createInstance = (
       // No constructFrom prop (most common)
       const initialProps = flow(
         pickBy((value, key) => key.substr(0, 7) === "initial"),
-        mapKeys(key => lowerFirst(key.substr(7)))
+        mapKeys((key) => lowerFirst(key.substr(7)))
       )(otherProps);
 
       const props = {
         ...initialProps,
         ...mapKeys(
-          key => (startsWith("_", key) ? key.substring(1) : key),
+          (key) => (startsWith("_", key) ? key.substring(1) : key),
           pickBy((value, key) => key.substr(0, 7) !== "initial", otherProps)
-        )
+        ),
       };
 
       if (isNil(args)) {
@@ -380,7 +383,7 @@ const createInstance = (
         // Single argument
         olObject = new (target.object as new (arg: any) => any)({
           ...props,
-          ...args
+          ...args,
         });
         kind = target.kind;
       }
@@ -401,7 +404,7 @@ const createInstance = (
     olObject[MetaOlFiber] = {
       kind,
       type,
-      attach: attach
+      attach,
     };
 
     applyProps(olObject, {}, otherProps, true);
@@ -435,13 +438,12 @@ const prepareUpdate = (
   if (size(oldKeys) !== size(newKeys)) {
     return true;
   } // keys are the same
-  else if (oldKeys.some((value, index) => newKeys[index] !== value)) {
+  if (oldKeys.some((value, index) => newKeys[index] !== value)) {
     return true;
-  } else {
-    return oldKeys
-      .filter(key => key !== "children")
-      .some(key => oldProps[key] !== newProps[key]);
   }
+  return oldKeys
+    .filter((key) => key !== "children")
+    .some((key) => oldProps[key] !== newProps[key]);
 };
 
 const shouldSetTextContent = (type: Type, props: Props): boolean => {
@@ -468,9 +470,8 @@ const scheduleTimeout:
     ) => TimeoutHandle | NoTimeout)
   | null = isFunction(setTimeout) ? setTimeout : null;
 
-const cancelTimeout:
-  | ((handle: TimeoutHandle | NoTimeout) => void)
-  | null = isFunction(clearTimeout) ? clearTimeout : null;
+const cancelTimeout: ((handle: TimeoutHandle | NoTimeout) => void) | null =
+  isFunction(clearTimeout) ? clearTimeout : null;
 const noTimeout: NoTimeout = -1;
 
 const commitTextUpdate = (
@@ -685,6 +686,12 @@ const hideInstance = (instance: Instance) => {
   switch (kind) {
     case "Layer": {
       (instance as Layer).setVisible(false);
+      break;
+    }
+    default: {
+      throw new Error(
+        "React-Openlayers-Fiber Error: Can't hide things that are not layers"
+      );
     }
   }
 };
@@ -694,6 +701,12 @@ const unhideInstance = (instance: Instance, props: Props) => {
   switch (kind) {
     case "Layer": {
       (instance as Layer).setVisible(true);
+      break;
+    }
+    default: {
+      throw new Error(
+        "React-Openlayers-Fiber Error: Can't unhide things that are not layers"
+      );
     }
   }
 };
@@ -737,9 +750,7 @@ const reconciler = ReactReconciler({
   supportsPersistence: false,
   supportsHydration: false,
   // -------------------
-  // eslint-disable-next-line @typescript-eslint/camelcase
   DEPRECATED_mountResponderInstance: noOp,
-  // eslint-disable-next-line @typescript-eslint/camelcase
   DEPRECATED_unmountResponderInstance: noOp,
   getFundamentalComponentInstance: noOp,
   mountFundamentalComponent: noOp,
@@ -766,7 +777,7 @@ const reconciler = ReactReconciler({
   unhideInstance,
   unhideTextInstance,
   updateFundamentalComponent: noOp,
-  unmountFundamentalComponent: noOp
+  unmountFundamentalComponent: noOp,
   // // -------------------
   // //     Persistence
   // //     (optional)

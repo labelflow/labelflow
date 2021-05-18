@@ -45,7 +45,7 @@ export const MapComponent = (
     }
   }, [children, containerRef.current, map]);
 
-  return <div style={style} ref={containerRef}></div>;
+  return <div style={style} ref={containerRef} />;
 };
 
 export const Map = forwardRef(MapComponent);

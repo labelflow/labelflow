@@ -9,12 +9,25 @@ import {
   map,
   lowerFirst,
   isObject,
-  omit
+  omit,
 } from "lodash/fp";
 // /////////////////////////////////////////////////////////////////////////////
 // Import stuff we want to use from Openlayers
-// Here we omit abtsract base classes, utility classes and other weird stuff
+// Here we omit abstract base classes, utility classes and other weird stuff
 import * as olTemp from "ol";
+//
+import * as olLayerTemp from "ol/layer";
+//
+import * as olControlTemp from "ol/control";
+//
+import * as olInteractionTemp from "ol/interaction";
+//
+import * as olSourceTemp from "ol/source";
+//
+import * as olGeomTemp from "ol/geom";
+//
+import * as olStyleTemp from "ol/style";
+
 const ol = omit(
   [
     "AssertionError",
@@ -34,27 +47,16 @@ const ol = omit(
     "VectorRenderTile",
     "VectorTile",
     "getUid",
-    "VERSION"
+    "VERSION",
   ],
   olTemp
 );
-//
-import * as olLayerTemp from "ol/layer";
 const olLayer = olLayerTemp;
-//
-import * as olControlTemp from "ol/control";
 const olControl = omit(["defaults"], olControlTemp);
-//
-import * as olInteractionTemp from "ol/interaction";
 const olInteraction = omit(["defaults"], olInteractionTemp);
-//
-import * as olSourceTemp from "ol/source";
 const olSource = omit(["Image", "Source", "Tile"], olSourceTemp);
-//
-import * as olGeomTemp from "ol/geom";
 const olGeom = omit(["Geometry", "SimpleGeometry"], olGeomTemp);
-//
-import * as olStyleTemp from "ol/style";
+
 const olStyle = omit(["Image", "IconImage"], olStyleTemp);
 
 // /////////////////////////////////////////////////////////////////////////////
@@ -238,7 +240,7 @@ const catalogueOl = fromPairs(
   map(
     <T>([key, value]: [string, T]): [string, CatalogueItem<T>] => [
       `ol${upperFirst(key)}`,
-      { kind: key as Kind, type: `ol${upperFirst(key)}`, object: value }
+      { kind: key as Kind, type: `ol${upperFirst(key)}`, object: value },
     ],
     toPairs(ol)
   )
@@ -251,8 +253,8 @@ const catalogueOlLayer = fromPairs(
       {
         kind: "Layer" as Kind,
         type: `olLayer${upperFirst(key)}`,
-        object: value
-      }
+        object: value,
+      },
     ],
     toPairs(olLayer)
   )
@@ -265,8 +267,8 @@ const catalogueOlControl = fromPairs(
       {
         kind: "Control" as Kind,
         type: `olControl${upperFirst(key)}`,
-        object: value
-      }
+        object: value,
+      },
     ],
     toPairs(olControl)
   )
@@ -279,51 +281,52 @@ const catalogueOlInteraction = fromPairs(
       {
         kind: "Interaction" as Kind,
         type: `olInteraction${upperFirst(key)}`,
-        object: value
-      }
+        object: value,
+      },
     ],
     toPairs(olInteraction)
   )
 ) as CatalogueOlInteraction;
 
-const catalogueOlSource = (fromPairs(
+const catalogueOlSource = fromPairs(
   map(
     <T>([key, value]: [string, T]): [string, CatalogueItem<T>] => [
       `olSource${upperFirst(key)}`,
       {
         kind: "Source" as Kind,
         type: `olSource${upperFirst(key)}`,
-        object: value
-      }
+        object: value,
+      },
     ],
     toPairs(olSource)
   )
-) as unknown) as CatalogueOlSource;
+) as unknown as CatalogueOlSource;
 
-const catalogueOlGeom = (fromPairs(
+const catalogueOlGeom = fromPairs(
   map(
     <T>([key, value]: [string, T]): [string, CatalogueItem<T>] => [
       `olGeom${upperFirst(key)}`,
-      { kind: "Geom" as Kind, type: `olGeom${upperFirst(key)}`, object: value }
+      { kind: "Geom" as Kind, type: `olGeom${upperFirst(key)}`, object: value },
     ],
     toPairs(olGeom)
   )
-) as unknown) as CatalogueOlGeom;
+) as unknown as CatalogueOlGeom;
 
-const catalogueOlStyle = (fromPairs(
+const catalogueOlStyle = fromPairs(
   map(
     <T>([key, value]: [string, T]): [string, CatalogueItem<T>] => [
       `olStyle${upperFirst(key)}`,
       {
         kind: "Style" as Kind,
         type: `olStyle${upperFirst(key)}`,
-        object: value
-      }
+        object: value,
+      },
     ],
     toPairs(olStyle)
   )
-) as unknown) as CatalogueOlStyle;
+) as unknown as CatalogueOlStyle;
 
+// eslint-disable-next-line import/no-mutable-exports
 export let catalogue: Catalogue = {
   ...catalogueOl,
   ...catalogueOlLayer,
@@ -331,40 +334,38 @@ export let catalogue: Catalogue = {
   ...catalogueOlInteraction,
   ...catalogueOlSource,
   ...catalogueOlGeom,
-  ...catalogueOlStyle
+  ...catalogueOlStyle,
 };
 
-///////////////////////////////////////////////////////////////////////////////
+/// ////////////////////////////////////////////////////////////////////////////
 
-///////////////////////////////////////////////////////////////////////////////
+/// ////////////////////////////////////////////////////////////////////////////
 // A way to extend the catalogue
 export const extend = <T>(objects: { [key: string]: T }): void => {
   // Cleanup the input
   const cleanedUpObjects = fromPairs(
-    map(<T>([key, value]: [string, T | CatalogueItem<T>]): [
+    map(<U>([key, value]: [string, U | CatalogueItem<U>]): [
       string,
-      CatalogueItem<T>
+      CatalogueItem<U>
     ] => {
-      if (!isObject((value as CatalogueItem<T>).object)) {
+      if (!isObject((value as CatalogueItem<U>).object)) {
         // If it's directly an object we put it nicely in a catalogue item
         return [
           lowerFirst(key),
           {
             type: lowerFirst(key),
             kind: null,
-            object: value as T
-          }
-        ];
-      } else {
-        // If it's already a catalogue item it's good
-        return [
-          lowerFirst(key),
-          { type: lowerFirst(key), kind: null, ...(value as CatalogueItem<T>) }
+            object: value as U,
+          },
         ];
       }
+      // If it's already a catalogue item it's good
+      return [
+        lowerFirst(key),
+        { type: lowerFirst(key), kind: null, ...(value as CatalogueItem<U>) },
+      ];
     }, toPairs(objects))
   );
   // Update the catalogue
   catalogue = { ...catalogue, ...cleanedUpObjects };
-  return;
 };

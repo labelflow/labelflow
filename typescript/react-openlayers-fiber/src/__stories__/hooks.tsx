@@ -14,10 +14,11 @@ export function useInterval(callback: () => void, delay: number | null): void {
         savedCallback?.current();
       }
     }
-    if (isNumber(delay)) {
-      const id = setInterval(tick, delay);
-      return (): void => clearInterval(id);
+    if (!isNumber(delay)) {
+      return null;
     }
+    const id = setInterval(tick, delay);
+    return (): void => clearInterval(id);
   }, [delay]);
 }
 
