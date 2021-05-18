@@ -80,7 +80,7 @@ jobs:
           start: yarn start:web-app
           wait-on: "http://localhost:3000"
 
-  deploy:
+  deploy-webapp:
     runs-on: ubuntu-20.04
     needs: install
     steps:
@@ -94,4 +94,4 @@ jobs:
           vercel-args: '--prod' #Optional
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID}}  #Required
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID_WEBAPP}} #Required 
-          working-directory: typescript/web-app
+          working-directory: ./typescript/web-app
