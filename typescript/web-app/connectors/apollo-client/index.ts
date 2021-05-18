@@ -9,6 +9,10 @@ const resolvers = {
     hello: () => {
       return "Hello world!";
     },
+
+    project: async (id: string) => {
+      return localforage.getItem(`project:${id}`);
+    },
     projects: async () => {
       const projectKeysList = await localforage.getItem("projectList");
       if (((projectKeysList as [])?.length ?? 0) === 0) {
