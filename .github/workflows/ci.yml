@@ -82,6 +82,7 @@ jobs:
 
   deploy:
     runs-on: ubuntu-20.04
+    needs: e2e
     steps:
       - name: Check out repository code
         uses: actions/checkout@v2
