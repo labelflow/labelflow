@@ -8,11 +8,9 @@ import * as React from "react";
 export const Logo = React.forwardRef<
   SVGSVGElement,
   HTMLChakraProps<"svg"> & { iconColor?: string }
->((props, ref) => {
-  const {
-    //  iconColor = "brand",
-    ...rest
-  } = props;
+>((props: { iconColor?: string }, ref) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { iconColor = "brand", ...rest } = props;
   // const color = useToken("colors", iconColor);
   return (
     <chakra.svg
