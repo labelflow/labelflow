@@ -1,0 +1,7 @@
+schema: "../../data/type-defs.graphql"
+# documents: ./src/**/*.graphql
+generates:
+  ./types.ts:
+    plugins:
+      - typescript
+      - typescript-resolvers

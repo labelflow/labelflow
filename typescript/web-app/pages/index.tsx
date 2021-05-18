@@ -1,6 +1,7 @@
 import { useQuery, ApolloProvider, useMutation } from "@apollo/client";
 import gql from "graphql-tag";
 import { client } from "../connectors/apollo-client";
+import { Project } from "../types";
 
 const testQuery = gql`
   query {
@@ -25,8 +26,6 @@ const addProjectsMutation = gql`
     }
   }
 `;
-
-type Project = { id: string; name: string };
 
 const IndexPage = () => {
   const { data: title } = useQuery(testQuery);

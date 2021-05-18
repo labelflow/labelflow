@@ -6,7 +6,8 @@
     "build": "next build",
     "start": "next start",
     "type-check": "tsc",
-    "test": "jest"
+    "test": "jest",
+    "generate-types": "graphql-codegen --config ./codegen.yml"
   },
   "dependencies": {
     "@apollo-model/graphql-tools": "^4.0.7",
@@ -25,6 +26,9 @@
     "react-icons": "4.2.0"
   },
   "devDependencies": {
+    "@graphql-codegen/cli": "^1.21.4",
+    "@graphql-codegen/typescript": "^1.22.0",
+    "@graphql-codegen/typescript-resolvers": "^1.19.1",
     "@types/localforage": "^0.0.34",
     "@types/node": "12.12.21",
     "@types/react": "17.0.3",
