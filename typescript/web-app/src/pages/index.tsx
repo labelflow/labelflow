@@ -1,7 +1,7 @@
 import { useQuery, ApolloProvider, useMutation } from "@apollo/client";
 import gql from "graphql-tag";
 import { client } from "../connectors/apollo-client";
-import { Project } from "../types";
+import { Example } from "../types";
 
 const testQuery = gql`
   query {
@@ -9,18 +9,18 @@ const testQuery = gql`
   }
 `;
 
-const projectsQuery = gql`
+const examplesQuery = gql`
   query {
-    projects {
+    examples {
       id
       name
     }
   }
 `;
 
-const addProjectsMutation = gql`
+const createExamplesMutation = gql`
   mutation ($name: String) {
-    addProject(name: $name) {
+    createExample(name: $name) {
       id
       name
     }
@@ -29,24 +29,24 @@ const addProjectsMutation = gql`
 
 const IndexPage = () => {
   const { data: title } = useQuery(testQuery);
-  const { data: projectsResult } = useQuery(projectsQuery);
-  const [addProject] = useMutation(addProjectsMutation, {
-    refetchQueries: [{ query: projectsQuery }],
+  const { data: examplesResult } = useQuery(examplesQuery);
+  const [createExample] = useMutation(createExamplesMutation, {
+    refetchQueries: [{ query: examplesQuery }],
   });
   return (
     <div>
       <h1>{title?.hello}</h1>
       <button
         type="button"
-        onClick={() => addProject({ variables: { name: "Test" } })}
+        onClick={() => createExample({ variables: { name: "Test" } })}
       >
-        Add project
+        Add example
       </button>
       <div>
-        {projectsResult?.projects
-          ? projectsResult.projects.map((project: Project) => (
-              <p key={project.id}>
-                {project.id} - {project.name}
+        {examplesResult?.examples
+          ? examplesResult.examples.map((example: Example) => (
+              <p key={example.id}>
+                {example.id} - {example.name}
               </p>
             ))
           : null}

@@ -3,16 +3,16 @@ scalar Json
 
 type Query {
   hello: String
-  projects(first: Int): [Project!]!
+  examples(first: Int): [Example!]!
 }
 
-type Project {
-  id: Int
+type Example {
+  id: String
   createdAt: DateTime
   updatedAt: DateTime
   name: String
 }
 
 type Mutation {
-  addProject(name: String!): Project
+  createExample(name: String!): Example
 }

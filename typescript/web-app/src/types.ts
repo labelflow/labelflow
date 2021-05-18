@@ -16,33 +16,33 @@ export type Scalars = {
 };
 
 
-
-export type Mutation = {
-  __typename?: 'Mutation';
-  addProject?: Maybe<Project>;
-};
-
-
-export type MutationAddProjectArgs = {
-  name: Scalars['String'];
-};
-
-export type Project = {
-  __typename?: 'Project';
-  id?: Maybe<Scalars['Int']>;
+export type Example = {
+  __typename?: 'Example';
+  id?: Maybe<Scalars['String']>;
   createdAt?: Maybe<Scalars['DateTime']>;
   updatedAt?: Maybe<Scalars['DateTime']>;
   name?: Maybe<Scalars['String']>;
 };
 
-export type Query = {
-  __typename?: 'Query';
-  hello?: Maybe<Scalars['String']>;
-  projects: Array<Project>;
+
+export type Mutation = {
+  __typename?: 'Mutation';
+  createExample?: Maybe<Example>;
 };
 
 
-export type QueryProjectsArgs = {
+export type MutationCreateExampleArgs = {
+  name: Scalars['String'];
+};
+
+export type Query = {
+  __typename?: 'Query';
+  hello?: Maybe<Scalars['String']>;
+  examples: Array<Example>;
+};
+
+
+export type QueryExamplesArgs = {
   first?: Maybe<Scalars['Int']>;
 };
 
@@ -125,24 +125,24 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
   DateTime: ResolverTypeWrapper<Scalars['DateTime']>;
+  Example: ResolverTypeWrapper<Example>;
+  String: ResolverTypeWrapper<Scalars['String']>;
   Json: ResolverTypeWrapper<Scalars['Json']>;
   Mutation: ResolverTypeWrapper<{}>;
-  String: ResolverTypeWrapper<Scalars['String']>;
-  Project: ResolverTypeWrapper<Project>;
-  Int: ResolverTypeWrapper<Scalars['Int']>;
   Query: ResolverTypeWrapper<{}>;
+  Int: ResolverTypeWrapper<Scalars['Int']>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
 };
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
   DateTime: Scalars['DateTime'];
+  Example: Example;
+  String: Scalars['String'];
   Json: Scalars['Json'];
   Mutation: {};
-  String: Scalars['String'];
-  Project: Project;
-  Int: Scalars['Int'];
   Query: {};
+  Int: Scalars['Int'];
   Boolean: Scalars['Boolean'];
 };
 
@@ -150,32 +150,32 @@ export interface DateTimeScalarConfig extends GraphQLScalarTypeConfig<ResolversT
   name: 'DateTime';
 }
 
-export interface JsonScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Json'], any> {
-  name: 'Json';
-}
-
-export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
-  addProject?: Resolver<Maybe<ResolversTypes['Project']>, ParentType, ContextType, RequireFields<MutationAddProjectArgs, 'name'>>;
-};
-
-export type ProjectResolvers<ContextType = any, ParentType extends ResolversParentTypes['Project'] = ResolversParentTypes['Project']> = {
-  id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+export type ExampleResolvers<ContextType = any, ParentType extends ResolversParentTypes['Example'] = ResolversParentTypes['Example']> = {
+  id?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   createdAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
   updatedAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
   name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export interface JsonScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Json'], any> {
+  name: 'Json';
+}
+
+export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
+  createExample?: Resolver<Maybe<ResolversTypes['Example']>, ParentType, ContextType, RequireFields<MutationCreateExampleArgs, 'name'>>;
+};
+
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   hello?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  projects?: Resolver<Array<ResolversTypes['Project']>, ParentType, ContextType, RequireFields<QueryProjectsArgs, never>>;
+  examples?: Resolver<Array<ResolversTypes['Example']>, ParentType, ContextType, RequireFields<QueryExamplesArgs, never>>;
 };
 
 export type Resolvers<ContextType = any> = {
   DateTime?: GraphQLScalarType;
+  Example?: ExampleResolvers<ContextType>;
   Json?: GraphQLScalarType;
   Mutation?: MutationResolvers<ContextType>;
-  Project?: ProjectResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
 };
 

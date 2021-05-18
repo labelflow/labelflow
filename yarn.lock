@@ -3577,11 +3577,13 @@ __metadata:
     "@types/node": 12.12.21
     "@types/react": 17.0.3
     "@types/react-dom": 17.0.1
+    "@types/uuid": ^8.3.0
     babel-loader: ^8.2.2
     framer-motion: ^4
     graphql: ^15.5.0
     graphql-tag: ^2.12.4
     localforage: ^1.9.0
+    lodash: ^4.17.21
     next: 10.x
     next-seo: 4.24.0
     react: 17.x
@@ -5031,6 +5033,13 @@ __metadata:
   version: 2.0.3
   resolution: "@types/unist@npm:2.0.3"
   checksum: 42e0dc4ac75a27c4bb91a3f8e82edfd8819cacb6edda08bdfb436700ea01a587faa30017fde744b0a0b33825f5e37686398c1eb5b664cabc3a72a6b3757f85a5
+  languageName: node
+  linkType: hard
+
+"@types/uuid@npm:^8.3.0":
+  version: 8.3.0
+  resolution: "@types/uuid@npm:8.3.0"
+  checksum: 620985aed8fdb4aed153daca5235f4303457a67a4d181efac0021712eabd9edd7e88895f79730c0e651effde7633b1b61e49a81519ac8d4e75019d2ac9b6412f
   languageName: node
   linkType: hard
 
