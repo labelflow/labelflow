@@ -11,7 +11,7 @@ on:
 jobs:
   verify_linked_issue:
     runs-on: ubuntu-20.04
-    name: Ensure Pull Request has a linked issue
+    name: Ensure PR has a linked issue
     steps:
       - name: Verify Linked Issue
         uses: hattan/verify-linked-issue-action@v1.1.0
