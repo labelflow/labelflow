@@ -1,7 +1,7 @@
 # This workflow will inspect a pull request to ensure there is a linked issue or a
 # valid issue is mentioned in the body. If neither is present it fails the check and adds
 # a comment alerting users of this missing requirement.
-name: Verify Issue
+name: Verify PR Linked Issue
 
 on:
   pull_request:
