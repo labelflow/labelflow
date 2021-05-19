@@ -9,7 +9,7 @@ type Query {
   images(
     where: ImageWhereInput
     first: Int
-    orderBy: ImageOrderByInput
+    skip: Int # orderBy: ImageOrderByInput
   ): [Image!]!
   image(where: ImageWhereUniqueInput!): Image!
 }

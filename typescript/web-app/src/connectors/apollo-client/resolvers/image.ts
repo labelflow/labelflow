@@ -1,7 +1,11 @@
 import localforage from "localforage";
 import { v4 as uuidv4 } from "uuid";
 import { isEmpty } from "lodash/fp";
-import { MutationCreateImageArgs, QueryImageArgs } from "../../../types";
+import {
+  MutationCreateImageArgs,
+  QueryImageArgs,
+  QueryImagesArgs,
+} from "../../../types";
 
 const typeName = "Image";
 const typeNamePlural = "Image:list";
@@ -11,7 +15,7 @@ export const image = async (_: any, args: QueryImageArgs) => {
   const entity = await localforage.getItem(`${typeName}:${args?.where?.id}`);
   return entity;
 };
-export const images = async () => {
+export const images = async (_: any, args: QueryImagesArgs) => {
   const entityKeysList = await localforage.getItem(typeNamePlural);
   if (isEmpty(entityKeysList)) {
     return [];
@@ -19,7 +23,9 @@ export const images = async () => {
   const entities = await Promise.all(
     (entityKeysList as []).map((key: string) => localforage.getItem(key))
   );
-  return entities;
+  const first = args?.first ?? entities.length;
+  const skip = args?.skip ?? 0;
+  return entities.slice(skip, first + skip);
 };
 
 // Mutations

@@ -14,7 +14,7 @@ input ImageWhereUniqueInput {
   id: ID!
 }
 
-enum ImageOrderByInput {
-  id_ASC
-  id_DESC
-}
+# enum ImageOrderByInput {
+#   id_ASC
+#   id_DESC
+# }

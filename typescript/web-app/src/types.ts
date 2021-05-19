@@ -14,6 +14,7 @@ export type Scalars = {
   DateTime: any;
 };
 
+
 export type Example = {
   __typename?: 'Example';
   id?: Maybe<Scalars['ID']>;
@@ -27,25 +28,17 @@ export type ExampleCreateInput = {
   id?: Maybe<Scalars['ID']>;
 };
 
+export enum ExampleOrderByInput {
+  IdAsc = 'id_ASC',
+  IdDesc = 'id_DESC'
+}
+
 export type ExampleWhereInput = {
   id?: Maybe<Scalars['ID']>;
 };
 
 export type ExampleWhereUniqueInput = {
   id: Scalars['ID'];
-};
-
-export enum ExampleOrderByInput {
-  IdAsc = 'id_ASC',
-  IdDesc = 'id_DESC'
-}
-
-export type ImageCreateInput = {
-  id?: Maybe<Scalars['ID']>;
-  name: Scalars['String'];
-  width: Scalars['Int'];
-  height: Scalars['Int'];
-  url: Scalars['String'];
 };
 
 export type Image = {
@@ -59,14 +52,21 @@ export type Image = {
   width?: Maybe<Scalars['Int']>;
 };
 
+export type ImageCreateInput = {
+  id?: Maybe<Scalars['ID']>;
+  name: Scalars['String'];
+  width: Scalars['Int'];
+  height: Scalars['Int'];
+  url: Scalars['String'];
+};
+
+export type ImageWhereInput = {
+  id?: Maybe<Scalars['ID']>;
+};
+
 export type ImageWhereUniqueInput = {
   id: Scalars['ID'];
 };
-
-export enum ImageOrderByInput {
-  IdAsc = 'id_ASC',
-  IdDesc = 'id_DESC'
-}
 
 export type Mutation = {
   __typename?: 'Mutation';
@@ -109,17 +109,12 @@ export type QueryExampleArgs = {
 export type QueryImagesArgs = {
   where?: Maybe<ImageWhereInput>;
   first?: Maybe<Scalars['Int']>;
-  orderBy?: Maybe<ImageOrderByInput>;
+  skip?: Maybe<Scalars['Int']>;
 };
 
 
 export type QueryImageArgs = {
   where: ImageWhereUniqueInput;
-};
-
-
-export type ImageWhereInput = {
-  id?: Maybe<Scalars['ID']>;
 };
 
 
@@ -200,43 +195,46 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
+  DateTime: ResolverTypeWrapper<Scalars['DateTime']>;
   Example: ResolverTypeWrapper<Example>;
   String: ResolverTypeWrapper<Scalars['String']>;
   ExampleCreateInput: ExampleCreateInput;
+  ExampleOrderByInput: ExampleOrderByInput;
   ExampleWhereInput: ExampleWhereInput;
   ExampleWhereUniqueInput: ExampleWhereUniqueInput;
-  ExampleOrderByInput: ExampleOrderByInput;
-  ImageCreateInput: ImageCreateInput;
-  Int: ResolverTypeWrapper<Scalars['Int']>;
+  ID: ResolverTypeWrapper<Scalars['ID']>;
   Image: ResolverTypeWrapper<Image>;
+  Int: ResolverTypeWrapper<Scalars['Int']>;
+  ImageCreateInput: ImageCreateInput;
+  ImageWhereInput: ImageWhereInput;
   ImageWhereUniqueInput: ImageWhereUniqueInput;
-  ImageOrderByInput: ImageOrderByInput;
   Mutation: ResolverTypeWrapper<{}>;
   Query: ResolverTypeWrapper<{}>;
-  DateTime: ResolverTypeWrapper<Scalars['DateTime']>;
-  ID: ResolverTypeWrapper<Scalars['ID']>;
-  ImageWhereInput: ImageWhereInput;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
 };
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
+  DateTime: Scalars['DateTime'];
   Example: Example;
   String: Scalars['String'];
   ExampleCreateInput: ExampleCreateInput;
   ExampleWhereInput: ExampleWhereInput;
   ExampleWhereUniqueInput: ExampleWhereUniqueInput;
-  ImageCreateInput: ImageCreateInput;
-  Int: Scalars['Int'];
+  ID: Scalars['ID'];
   Image: Image;
+  Int: Scalars['Int'];
+  ImageCreateInput: ImageCreateInput;
+  ImageWhereInput: ImageWhereInput;
   ImageWhereUniqueInput: ImageWhereUniqueInput;
   Mutation: {};
   Query: {};
-  DateTime: Scalars['DateTime'];
-  ID: Scalars['ID'];
-  ImageWhereInput: ImageWhereInput;
   Boolean: Scalars['Boolean'];
 };
+
+export interface DateTimeScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['DateTime'], any> {
+  name: 'DateTime';
+}
 
 export type ExampleResolvers<ContextType = any, ParentType extends ResolversParentTypes['Example'] = ResolversParentTypes['Example']> = {
   id?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
@@ -270,16 +268,12 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   image?: Resolver<ResolversTypes['Image'], ParentType, ContextType, RequireFields<QueryImageArgs, 'where'>>;
 };
 
-export interface DateTimeScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['DateTime'], any> {
-  name: 'DateTime';
-}
-
 export type Resolvers<ContextType = any> = {
+  DateTime?: GraphQLScalarType;
   Example?: ExampleResolvers<ContextType>;
   Image?: ImageResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
-  DateTime?: GraphQLScalarType;
 };
 
 
