@@ -36,7 +36,7 @@ const IndexPage = () => {
   });
   return (
     <div>
-      <h1>{title?.hello}</h1>
+      <h1>{title?.hello} THIS IS A TEST 3</h1>
       <button
         type="button"
         onClick={() => addProject({ variables: { name: "Test" } })}
