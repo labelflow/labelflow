@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { useDropzone } from "react-dropzone";
 
-export const ImportModal = () => {
+export const ImportImagesModal = () => {
   const onDrop = useCallback(() => {
     // Do something with the files
   }, []);
