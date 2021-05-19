@@ -26,7 +26,7 @@ export const ImportImagesModal = ({
         </p>
       </header>
 
-      {isEmpty(acceptedFiles) ? (
+      {isEmpty(acceptedFiles) && isEmpty(fileRejections) ? (
         <form {...getRootProps()}>
           <label htmlFor="file-uploader">
             Drop folders or images
@@ -35,21 +35,23 @@ export const ImportImagesModal = ({
         </form>
       ) : (
         <>
-          <section>
-            <h3>Uploading {acceptedFiles.length} items</h3>
-            <ul>
-              {acceptedFiles.map((f) => (
-                <li key={f.name}>{f.name}</li>
-              ))}
-            </ul>
-          </section>
-
           {!isEmpty(fileRejections) && (
             <section>
               <h3>{fileRejections.length} items rejected</h3>
               <ul>
                 {fileRejections.map((rejection) => (
                   <li key={rejection.file.name}>{rejection.file.name}</li>
+                ))}
+              </ul>
+            </section>
+          )}
+
+          {!isEmpty(acceptedFiles) && (
+            <section>
+              <h3>Uploading {acceptedFiles.length} items</h3>
+              <ul>
+                {acceptedFiles.map((f) => (
+                  <li key={f.name}>{f.name}</li>
                 ))}
               </ul>
             </section>

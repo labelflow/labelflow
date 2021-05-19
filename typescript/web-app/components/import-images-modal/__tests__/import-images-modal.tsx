@@ -56,3 +56,10 @@ test("should not display the rejected images name if everything is fine", async 
 
   expect(screen.queryByText(/items rejected/i)).not.toBeInTheDocument();
 });
+
+test("should display only rejected images name when all files are not valid", async () => {
+  await renderModalAndImport(files.slice(2, 3));
+
+  expect(screen.queryByText(/1 items rejected/i)).toBeInTheDocument();
+  expect(screen.queryByText(/uploading/i)).not.toBeInTheDocument();
+});
