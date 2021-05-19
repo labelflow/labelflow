@@ -97,3 +97,10 @@ jobs:
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID_WEBAPP}} #Required 
           vercel-project-name: 'labelflow-app'
           working-directory: ./typescript/web-app
+          # alias-domains: | #Optional
+          #   app.labelflow.ai
+          #   pr-{{PR_NUMBER}}.app.labelflow.ai
+          alias-domains: | #Optional
+            app.labelflow.ai
+            
+            
