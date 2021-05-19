@@ -16,8 +16,15 @@ beforeEach(() => {
   onImportSucceed.mockClear();
 });
 
-function renderModalAndImport(filesToImport = files) {
-  render(<ImportImagesModal onImportSucceed={onImportSucceed} />);
+function renderModalAndImport(filesToImport = files, props = {}) {
+  render(
+    <ImportImagesModal
+      isOpen
+      onClose={() => {}}
+      onImportSucceed={onImportSucceed}
+      {...props}
+    />
+  );
   const input = screen.getByLabelText(/drop folders or images/i);
   return waitFor(() => userEvent.upload(input, filesToImport));
 }
@@ -69,4 +76,19 @@ test("should display the amount of error when a file could not be imported", asy
 
   expect(screen.getByText(/1 errors/i)).toBeDefined();
   expect(screen.getByTitle(/File type must be/i)).toBeDefined();
+});
+
+test("should not display the modal by default", async () => {
+  render(<ImportImagesModal onImportSucceed={onImportSucceed} />);
+
+  expect(screen.queryByText(/Import/i)).not.toBeInTheDocument();
+});
+
+test("should call the onClose handler", async () => {
+  const onClose = jest.fn();
+  await renderModalAndImport([], { onClose });
+
+  userEvent.click(screen.getByLabelText("Close"));
+
+  expect(onClose).toHaveBeenCalled();
 });
