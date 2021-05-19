@@ -1,15 +1,15 @@
 scalar DateTime
 
 type Example {
-  createdAt: DateTime
   id: ID
-  name: String
+  createdAt: DateTime
   updatedAt: DateTime
+  name: String
 }
 
 input ExampleCreateInput {
-  id: ID
   name: String!
+  id: ID
 }
 
 enum ExampleOrderByInput {
@@ -30,7 +30,7 @@ type Mutation {
 }
 
 type Query {
-  example(where: ExampleWhereUniqueInput!): Example!
-  examples(first: Int, orderBy: ExampleOrderByInput, where: ExampleWhereInput): [Example!]!
   hello: String
+  examples(where: ExampleWhereInput, first: Int, orderBy: ExampleOrderByInput): [Example!]!
+  example(where: ExampleWhereUniqueInput!): Example!
 }

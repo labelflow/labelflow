@@ -17,15 +17,15 @@ export type Scalars = {
 
 export type Example = {
   __typename?: 'Example';
-  createdAt?: Maybe<Scalars['DateTime']>;
   id?: Maybe<Scalars['ID']>;
-  name?: Maybe<Scalars['String']>;
+  createdAt?: Maybe<Scalars['DateTime']>;
   updatedAt?: Maybe<Scalars['DateTime']>;
+  name?: Maybe<Scalars['String']>;
 };
 
 export type ExampleCreateInput = {
-  id?: Maybe<Scalars['ID']>;
   name: Scalars['String'];
+  id?: Maybe<Scalars['ID']>;
 };
 
 export enum ExampleOrderByInput {
@@ -53,21 +53,21 @@ export type MutationCreateExampleArgs = {
 
 export type Query = {
   __typename?: 'Query';
-  example: Example;
-  examples: Array<Example>;
   hello?: Maybe<Scalars['String']>;
+  examples: Array<Example>;
+  example: Example;
+};
+
+
+export type QueryExamplesArgs = {
+  where?: Maybe<ExampleWhereInput>;
+  first?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<ExampleOrderByInput>;
 };
 
 
 export type QueryExampleArgs = {
   where: ExampleWhereUniqueInput;
-};
-
-
-export type QueryExamplesArgs = {
-  first?: Maybe<Scalars['Int']>;
-  orderBy?: Maybe<ExampleOrderByInput>;
-  where?: Maybe<ExampleWhereInput>;
 };
 
 
@@ -182,10 +182,10 @@ export interface DateTimeScalarConfig extends GraphQLScalarTypeConfig<ResolversT
 }
 
 export type ExampleResolvers<ContextType = any, ParentType extends ResolversParentTypes['Example'] = ResolversParentTypes['Example']> = {
-  createdAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
-  name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  createdAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
   updatedAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
+  name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -194,9 +194,9 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
-  example?: Resolver<ResolversTypes['Example'], ParentType, ContextType, RequireFields<QueryExampleArgs, 'where'>>;
-  examples?: Resolver<Array<ResolversTypes['Example']>, ParentType, ContextType, RequireFields<QueryExamplesArgs, never>>;
   hello?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  examples?: Resolver<Array<ResolversTypes['Example']>, ParentType, ContextType, RequireFields<QueryExamplesArgs, never>>;
+  example?: Resolver<ResolversTypes['Example'], ParentType, ContextType, RequireFields<QueryExampleArgs, 'where'>>;
 };
 
 export type Resolvers<ContextType = any> = {

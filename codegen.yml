@@ -4,6 +4,6 @@ generates:
     plugins:
       - typescript
       - typescript-resolvers
-  ./data/generated-schema.graphql:
+  ./data/__generated__/generated-schema.graphql:
     plugins:
       - schema-ast
