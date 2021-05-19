@@ -10,12 +10,16 @@
     "cypress:run": "cypress run",
     "dev:web-app": "cd ./typescript/web-app && yarn dev",
     "build:web-app": "cd ./typescript/web-app && yarn build",
-    "start:web-app": "cd ./typescript/web-app && yarn start"
+    "start:web-app": "cd ./typescript/web-app && yarn start",
+    "generate-types": "graphql-codegen --config ./codegen.yml"
   },
   "workspaces": [
     "typescript/*"
   ],
   "devDependencies": {
+    "@graphql-codegen/cli": "^1.21.4",
+    "@graphql-codegen/typescript": "^1.22.0",
+    "@graphql-codegen/typescript-resolvers": "^1.19.1",
     "@testing-library/jest-dom": "5.12.0",
     "@testing-library/react": "11.2.6",
     "@typescript-eslint/eslint-plugin": "4.23.0",

@@ -7,7 +7,6 @@
     "start": "next start",
     "type-check": "tsc",
     "test": "jest",
-    "generate-types": "graphql-codegen --config ./codegen.yml",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook"
   },
@@ -31,9 +30,6 @@
   },
   "devDependencies": {
     "@babel/core": "^7.14.3",
-    "@graphql-codegen/cli": "^1.21.4",
-    "@graphql-codegen/typescript": "^1.22.0",
-    "@graphql-codegen/typescript-resolvers": "^1.19.1",
     "@storybook/react": "^6.2.9",
     "@types/localforage": "^0.0.34",
     "@types/node": "12.12.21",
