@@ -5,7 +5,7 @@ import {
   MutationCreateImageArgs,
   QueryImageArgs,
   QueryImagesArgs,
-} from "../../../types";
+} from "../../../types.generated";
 
 const typeName = "Image";
 const typeNamePlural = "Image:list";
