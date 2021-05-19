@@ -21,11 +21,28 @@ const createExamplesMutation = gql`
   }
 `;
 
+const createImageMutation = gql`
+  mutation ($input: ImageCreateInput) {
+    createImage(data: $input) {
+      id
+      name
+    }
+  }
+`;
+
+const importImage = (file, createImage) => {
+  const url = window.URL.createObjectURL(file);
+  createImage({
+    variables: { input: { url, name: "test image", width: 100, height: 100 } },
+  });
+};
+
 const IndexPage = () => {
   const { data: examplesResult } = useQuery(examplesQuery);
   const [createExample] = useMutation(createExamplesMutation, {
     refetchQueries: [{ query: examplesQuery }],
   });
+  const [createImage] = useMutation(createImageMutation);
   return (
     <div>
       <h1>Hello world</h1>
@@ -35,6 +52,11 @@ const IndexPage = () => {
       >
         Add example
       </button>
+      <input
+        name="upload"
+        type="file"
+        onChange={(e) => importImage(e.target.files[0], createImage)}
+      />
       <div>
         {examplesResult?.examples
           ? examplesResult.examples.map((example: Example) => (
