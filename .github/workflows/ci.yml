@@ -1,5 +1,8 @@
 name: ci
 on:
+  push:
+    branches:
+      - main
   pull_request:
     branches:
       - main
@@ -80,7 +83,58 @@ jobs:
           start: yarn start:web-app
           wait-on: "http://localhost:3000"
 
-  deploy-webapp:
+  deploy-webapp-pr:
+    if: "! contains( github.ref, 'main')"
+    runs-on: ubuntu-20.04
+    needs: install
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
+      - name: Deploy webapp on Vercel
+        uses: amondnet/vercel-action@v20
+        with:
+          scope: ${{ secrets.VERCEL_ORG_ID}}
+          vercel-token: ${{ secrets.VERCEL_TOKEN }} # Required
+          github-token: ${{ secrets.GITHUB_TOKEN }} #Optional 
+          vercel-args: '' #Optional
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID}}  #Required
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID_WEBAPP}} #Required 
+          vercel-project-name: 'labelflow-app'
+          # working-directory: ./typescript/web-app
+          working-directory: .
+          # alias-domains: | #Optional
+          #   app.labelflow.ai
+          #   pr-{{PR_NUMBER}}.app.labelflow.ai
+          alias-domains: | #Optional
+            pr-{{PR_NUMBER}}.app.labelflow.ai
+
+  deploy-website-pr:
+    if: "! contains( github.ref, 'main')"
+    runs-on: ubuntu-20.04
+    needs: install
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
+      - name: Deploy website on Vercel
+        uses: amondnet/vercel-action@v20
+        with:
+          scope: ${{ secrets.VERCEL_ORG_ID}}
+          vercel-token: ${{ secrets.VERCEL_TOKEN }} # Required
+          github-token: ${{ secrets.GITHUB_TOKEN }} #Optional 
+          vercel-args: '' #Optional
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID}}  #Required
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID_WEBSITE}} #Required 
+          vercel-project-name: 'labelflow-site'
+          # working-directory: ./typescript/web-site
+          working-directory: .
+          # alias-domains: | #Optional
+          #   www.labelflow.ai
+          #   pr-{{PR_NUMBER}}.www.labelflow.ai
+          alias-domains: | #Optional
+            pr-{{PR_NUMBER}}.www.labelflow.ai
+
+  deploy-webapp-main:
+    if: contains( github.ref, 'main')
     runs-on: ubuntu-20.04
     needs: install
     steps:
@@ -102,9 +156,10 @@ jobs:
           #   app.labelflow.ai
           #   pr-{{PR_NUMBER}}.app.labelflow.ai
           alias-domains: | #Optional
-            pr-{{PR_NUMBER}}.app.labelflow.ai
+            app.labelflow.ai
 
-  deploy-website:
+  deploy-website-main:
+    if: contains( github.ref, 'main')
     runs-on: ubuntu-20.04
     needs: install
     steps:
@@ -126,6 +181,5 @@ jobs:
           #   www.labelflow.ai
           #   pr-{{PR_NUMBER}}.www.labelflow.ai
           alias-domains: | #Optional
-            pr-{{PR_NUMBER}}.www.labelflow.ai
-            
+            www.labelflow.ai
             
