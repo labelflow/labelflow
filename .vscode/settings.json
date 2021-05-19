@@ -1,4 +1,5 @@
 {
   "python.formatting.provider": "black",
-  "python.pythonPath": ".venv/bin/python3"
+  "python.pythonPath": ".venv/bin/python3",
+  "editor.formatOnSave": true
 }

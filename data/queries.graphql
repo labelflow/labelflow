@@ -1,0 +1,9 @@
+type Query {
+  hello: String
+  examples(
+    where: ExampleWhereInput
+    first: Int
+    orderBy: ExampleOrderByInput
+  ): [Example!]!
+  example(where: ExampleWhereUniqueInput!): Example!
+}
