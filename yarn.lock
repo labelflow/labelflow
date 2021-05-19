@@ -3156,7 +3156,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-tools/merge@npm:^6, @graphql-tools/merge@npm:^6.0.0, @graphql-tools/merge@npm:^6.2.12":
+"@graphql-tools/merge@npm:^6, @graphql-tools/merge@npm:^6.0.0, @graphql-tools/merge@npm:^6.2.12, @graphql-tools/merge@npm:^6.2.14":
   version: 6.2.14
   resolution: "@graphql-tools/merge@npm:6.2.14"
   dependencies:
@@ -3582,6 +3582,7 @@ __metadata:
     "@chakra-ui/react": 1.6.1
     "@emotion/react": ^11
     "@emotion/styled": ^11
+    "@graphql-tools/merge": ^6.2.14
     "@storybook/react": ^6.2.9
     "@types/localforage": ^0.0.34
     "@types/node": 12.12.21

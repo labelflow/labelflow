@@ -16,6 +16,7 @@
     "@chakra-ui/react": "1.6.1",
     "@emotion/react": "^11",
     "@emotion/styled": "^11",
+    "@graphql-tools/merge": "^6.2.14",
     "framer-motion": "^4",
     "graphql": "^15.5.0",
     "graphql-tag": "^2.12.4",
