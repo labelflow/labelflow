@@ -7,23 +7,30 @@ import { ImportImagesModal } from "../import-images-modal";
 const files = [
   new File(["Hello"], "hello.png", { type: "image/png" }),
   new File(["World"], "world.png", { type: "image/png" }),
+  new File(["Error"], "error.pdf", { type: "application/pdf" }),
 ];
 
 const onImportSucceed = jest.fn();
 
 beforeEach(() => {
   onImportSucceed.mockClear();
-
-  render(<ImportImagesModal onImportSucceed={onImportSucceed} />);
-  const input = screen.getByLabelText(/drop folders or images/i);
-  return waitFor(() => userEvent.upload(input, files));
 });
 
+function renderModalAndImport(filesToImport = files) {
+  render(<ImportImagesModal onImportSucceed={onImportSucceed} />);
+  const input = screen.getByLabelText(/drop folders or images/i);
+  return waitFor(() => userEvent.upload(input, filesToImport));
+}
+
 test("should return the list of images the user picked", async () => {
-  expect(onImportSucceed).toHaveBeenCalledWith(files);
+  await renderModalAndImport();
+
+  expect(onImportSucceed).toHaveBeenCalledWith(files.slice(0, 2));
 });
 
 test("should display the number of images", async () => {
+  await renderModalAndImport();
+
   expect(screen.getByText(/uploading 2 items/i)).toBeDefined();
   expect(
     screen.queryByLabelText(/drop folders or images/i)
@@ -31,6 +38,21 @@ test("should display the number of images", async () => {
 });
 
 test("should display the images name", async () => {
+  await renderModalAndImport();
+
   expect(screen.getByText(/hello.png/i)).toBeDefined();
   expect(screen.getByText(/world.png/i)).toBeDefined();
+});
+
+test("should display the rejected images name", async () => {
+  await renderModalAndImport();
+
+  expect(screen.getByText(/1 items rejected/i)).toBeDefined();
+  expect(screen.getByText(/error.pdf/i)).toBeDefined();
+});
+
+test("should not display the rejected images name if everything is fine", async () => {
+  await renderModalAndImport(files.slice(0, 2));
+
+  expect(screen.queryByText(/items rejected/i)).not.toBeInTheDocument();
 });
