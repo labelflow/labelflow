@@ -124,6 +124,8 @@ jobs:
           step: start
           token: ${{ secrets.GITHUB_TOKEN }}
           env: "Preview – labelflow-app"
+          ref: ${{ github.head_ref }}
+          no_override: false
       - name: Check out repository code
         uses: actions/checkout@v2
       - name: Deploy webapp on Vercel
@@ -167,6 +169,8 @@ jobs:
           step: start
           token: ${{ secrets.GITHUB_TOKEN }}
           env: "Preview – labelflow-site"
+          ref: ${{ github.head_ref }}
+          no_override: false
       - name: Check out repository code
         uses: actions/checkout@v2
       - name: Deploy website on Vercel
@@ -210,6 +214,8 @@ jobs:
           step: start
           token: ${{ secrets.GITHUB_TOKEN }}
           env: "Production – labelflow-app"
+          ref: ${{ github.head_ref }}
+          no_override: true
       - name: Check out repository code
         uses: actions/checkout@v2
       - name: Deploy webapp on Vercel
@@ -253,6 +259,8 @@ jobs:
           step: start
           token: ${{ secrets.GITHUB_TOKEN }}
           env: "Production – labelflow-site"
+          ref: ${{ github.head_ref }}
+          no_override: true
       - name: Check out repository code
         uses: actions/checkout@v2
       - name: Deploy website on Vercel
