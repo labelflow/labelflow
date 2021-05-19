@@ -24,7 +24,12 @@ export const ImportImagesModal = ({
           </label>
         </div>
       ) : (
-        <aside>Uploading {acceptedFiles.length} items</aside>
+        <aside>
+          Uploading {acceptedFiles.length} items
+          {acceptedFiles.map((f) => (
+            <div key={f.name}>{f.name}</div>
+          ))}
+        </aside>
       )}
     </section>
   );

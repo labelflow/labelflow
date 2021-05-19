@@ -4,27 +4,33 @@ import "@testing-library/jest-dom/extend-expect";
 
 import { ImportImagesModal } from "../import-images-modal";
 
-test("should return the list of images the user picked", async () => {
-  const file = new File(["Hello"], "hello.png", { type: "image/png" });
-  const onImportSucceed = jest.fn();
+const files = [
+  new File(["Hello"], "hello.png", { type: "image/png" }),
+  new File(["World"], "world.png", { type: "image/png" }),
+];
+
+const onImportSucceed = jest.fn();
+
+beforeEach(() => {
+  onImportSucceed.mockClear();
 
   render(<ImportImagesModal onImportSucceed={onImportSucceed} />);
   const input = screen.getByLabelText(/drop folders or images/i);
-  await waitFor(() => userEvent.upload(input, file));
+  return waitFor(() => userEvent.upload(input, files));
+});
 
-  expect(onImportSucceed).toHaveBeenCalledWith([file]);
+test("should return the list of images the user picked", async () => {
+  expect(onImportSucceed).toHaveBeenCalledWith(files);
 });
 
 test("should display the number of images", async () => {
-  const file = new File(["Hello"], "hello.png", { type: "image/png" });
-  const onImportSucceed = jest.fn();
-
-  render(<ImportImagesModal onImportSucceed={onImportSucceed} />);
-  const input = screen.getByLabelText(/drop folders or images/i);
-  await waitFor(() => userEvent.upload(input, file));
-
-  expect(screen.getByText(/uploading 1 items/i)).toBeDefined();
+  expect(screen.getByText(/uploading 2 items/i)).toBeDefined();
   expect(
     screen.queryByLabelText(/drop folders or images/i)
   ).not.toBeInTheDocument();
+});
+
+test("should display the images name", async () => {
+  expect(screen.getByText(/hello.png/i)).toBeDefined();
+  expect(screen.getByText(/world.png/i)).toBeDefined();
 });
