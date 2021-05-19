@@ -26,21 +26,21 @@ jobs:
     #   with:
     #     project: 'https://github.com/srggrs/assign-one-project-github-action/projects/3'
     #     column_name: 'Labeled'
-    - name: Assign issues and pull requests with `experiment` label to project 3
+    - name: Assign issues and pull requests with `experiment` label to project `experiments`
       uses: srggrs/assign-one-project-github-action@1.2.1
       if: |
         contains(github.event.issue.labels.*.name, 'experiment') 
       with:
         project: 'https://github.com/Labelflow/labelflow/projects/2'
         column_name: 'To do'
-    - name: Assign issues and pull requests with `enhancement` label to project 3
+    - name: Assign issues and pull requests with `enhancement` label to project `labelflow`
       uses: srggrs/assign-one-project-github-action@1.2.1
       if: |
         contains(github.event.issue.labels.*.name, 'enhancement') 
       with:
         project: 'https://github.com/Labelflow/labelflow/projects/1'
         column_name: 'To do'
-    - name: Assign issues and pull requests with `bug` label to project 3
+    - name: Assign issues and pull requests with `bug` label to project `bugs`
       uses: srggrs/assign-one-project-github-action@1.2.1
       if: |
         contains(github.event.issue.labels.*.name, 'bug') 
