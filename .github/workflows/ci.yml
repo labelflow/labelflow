@@ -102,5 +102,28 @@ jobs:
           #   pr-{{PR_NUMBER}}.app.labelflow.ai
           alias-domains: | #Optional
             app.labelflow.ai
+
+  deploy-website:
+    runs-on: ubuntu-20.04
+    needs: install
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
+      - name: Deploy website on Vercel
+        uses: amondnet/vercel-action@v20
+        with:
+          scope: ${{ secrets.VERCEL_ORG_ID}}
+          vercel-token: ${{ secrets.VERCEL_TOKEN }} # Required
+          github-token: ${{ secrets.GITHUB_TOKEN }} #Optional 
+          vercel-args: '--prod' #Optional
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID}}  #Required
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID_WEBSITE}} #Required 
+          vercel-project-name: 'labelflow-site'
+          working-directory: ./typescript/web-site
+          # alias-domains: | #Optional
+          #   www.labelflow.ai
+          #   pr-{{PR_NUMBER}}.www.labelflow.ai
+          alias-domains: | #Optional
+            www.labelflow.ai
             
             
