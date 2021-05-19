@@ -96,12 +96,13 @@ jobs:
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID}}  #Required
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID_WEBAPP}} #Required 
           vercel-project-name: 'labelflow-app'
-          working-directory: ./typescript/web-app
+          # working-directory: ./typescript/web-app
+          working-directory: .
           # alias-domains: | #Optional
           #   app.labelflow.ai
           #   pr-{{PR_NUMBER}}.app.labelflow.ai
           alias-domains: | #Optional
-            app.labelflow.ai
+            pr-{{PR_NUMBER}}.app.labelflow.ai
 
   deploy-website:
     runs-on: ubuntu-20.04
@@ -119,11 +120,12 @@ jobs:
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID}}  #Required
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID_WEBSITE}} #Required 
           vercel-project-name: 'labelflow-site'
-          working-directory: ./typescript/web-site
+          # working-directory: ./typescript/web-site
+          working-directory: .
           # alias-domains: | #Optional
           #   www.labelflow.ai
           #   pr-{{PR_NUMBER}}.www.labelflow.ai
           alias-domains: | #Optional
-            www.labelflow.ai
+            pr-{{PR_NUMBER}}.www.labelflow.ai
             
             
