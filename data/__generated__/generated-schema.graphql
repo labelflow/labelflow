@@ -1,5 +1,3 @@
-scalar DateTime
-
 type Example {
   id: ID
   createdAt: DateTime
@@ -12,11 +10,6 @@ input ExampleCreateInput {
   id: ID
 }
 
-enum ExampleOrderByInput {
-  id_ASC
-  id_DESC
-}
-
 input ExampleWhereInput {
   id: ID
 }
@@ -25,12 +18,53 @@ input ExampleWhereUniqueInput {
   id: ID!
 }
 
+enum ExampleOrderByInput {
+  id_ASC
+  id_DESC
+}
+
+input ImageCreateInput {
+  id: ID
+  name: String!
+  width: Int!
+  height: Int!
+  url: String!
+}
+
+type Image {
+  id: ID
+  createdAt: DateTime
+  updatedAt: DateTime
+  url: String
+  name: String
+  height: Int
+  width: Int
+}
+
+input ImageWhereUniqueInput {
+  id: ID!
+}
+
+enum ImageOrderByInput {
+  id_ASC
+  id_DESC
+}
+
 type Mutation {
   createExample(data: ExampleCreateInput!): Example
+  createImage(data: ImageCreateInput!): Image
 }
 
 type Query {
   hello: String
   examples(where: ExampleWhereInput, first: Int, orderBy: ExampleOrderByInput): [Example!]!
   example(where: ExampleWhereUniqueInput!): Example!
+  images(where: ImageWhereInput, first: Int, orderBy: ImageOrderByInput): [Image!]!
+  image(where: ImageWhereUniqueInput!): Image!
+}
+
+scalar DateTime
+
+input ImageWhereInput {
+  id: ID
 }
