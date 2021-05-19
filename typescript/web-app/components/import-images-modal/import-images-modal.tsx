@@ -17,32 +17,45 @@ export const ImportImagesModal = ({
     });
 
   return (
-    <section>
+    <article>
+      <header>
+        <h2>Import</h2>
+        <p>
+          Start working with your images. Stay in control of your data. Images
+          are not uploaded on LabelFlow servers.
+        </p>
+      </header>
+
       {isEmpty(acceptedFiles) ? (
-        <div {...getRootProps()}>
+        <form {...getRootProps()}>
           <label htmlFor="file-uploader">
             Drop folders or images
             <input {...getInputProps()} id="file-uploader" />
           </label>
-        </div>
+        </form>
       ) : (
         <>
-          <aside>
-            Uploading {acceptedFiles.length} items
-            {acceptedFiles.map((f) => (
-              <div key={f.name}>{f.name}</div>
-            ))}
-          </aside>
-          {!isEmpty(fileRejections) && (
-            <aside>
-              {fileRejections.length} items rejected
-              {fileRejections.map((rejection) => (
-                <div key={rejection.file.name}>{rejection.file.name}</div>
+          <section>
+            <h3>Uploading {acceptedFiles.length} items</h3>
+            <ul>
+              {acceptedFiles.map((f) => (
+                <li key={f.name}>{f.name}</li>
               ))}
-            </aside>
+            </ul>
+          </section>
+
+          {!isEmpty(fileRejections) && (
+            <section>
+              <h3>{fileRejections.length} items rejected</h3>
+              <ul>
+                {fileRejections.map((rejection) => (
+                  <li key={rejection.file.name}>{rejection.file.name}</li>
+                ))}
+              </ul>
+            </section>
           )}
         </>
       )}
-    </section>
+    </article>
   );
 };
