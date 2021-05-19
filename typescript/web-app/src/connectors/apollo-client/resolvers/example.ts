@@ -4,11 +4,11 @@ import { isEmpty } from "lodash/fp";
 import { MutationCreateExampleArgs, QueryExampleArgs } from "../../../types";
 
 const typeName = "Example";
-const typeNamePlural = "Examples";
+const typeNamePlural = "Example:list";
 
 // Queries
 export const example = async (_: any, args: QueryExampleArgs) => {
-  const entity = await localforage.getItem(`${typeName}:${args?.id}`);
+  const entity = await localforage.getItem(`${typeName}:${args?.where?.id}`);
   return entity;
 };
 export const examples = async () => {
@@ -33,7 +33,7 @@ export const createExample = async (
     id: uuidv4(),
 
     // Add your specific fields here
-    name: args?.name,
+    name: args?.data?.name,
   };
 
   // Set entity in db

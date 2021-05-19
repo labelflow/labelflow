@@ -14,7 +14,7 @@ const examplesQuery = gql`
 
 const createExamplesMutation = gql`
   mutation ($name: String) {
-    createExample(name: $name) {
+    createExample(data: { name: $name }) {
       id
       name
     }
