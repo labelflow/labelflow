@@ -1,8 +1,17 @@
-scalar DateTime
+input ExampleCreateInput {
+  name: String!
+  id: ID
+}
 
-type Example {
-  id: String
-  createdAt: DateTime
-  updatedAt: DateTime
-  name: String
+input ExampleWhereInput {
+  id: ID
+}
+
+input ExampleWhereUniqueInput {
+  id: ID!
+}
+
+enum ExampleOrderByInput {
+  id_ASC
+  id_DESC
 }

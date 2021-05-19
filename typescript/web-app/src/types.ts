@@ -17,10 +17,28 @@ export type Scalars = {
 
 export type Example = {
   __typename?: 'Example';
-  id?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['ID']>;
   createdAt?: Maybe<Scalars['DateTime']>;
   updatedAt?: Maybe<Scalars['DateTime']>;
   name?: Maybe<Scalars['String']>;
+};
+
+export type ExampleCreateInput = {
+  name: Scalars['String'];
+  id?: Maybe<Scalars['ID']>;
+};
+
+export enum ExampleOrderByInput {
+  IdAsc = 'id_ASC',
+  IdDesc = 'id_DESC'
+}
+
+export type ExampleWhereInput = {
+  id?: Maybe<Scalars['ID']>;
+};
+
+export type ExampleWhereUniqueInput = {
+  id: Scalars['ID'];
 };
 
 export type Mutation = {
@@ -30,7 +48,7 @@ export type Mutation = {
 
 
 export type MutationCreateExampleArgs = {
-  name: Scalars['String'];
+  data: ExampleCreateInput;
 };
 
 export type Query = {
@@ -42,12 +60,14 @@ export type Query = {
 
 
 export type QueryExamplesArgs = {
+  where?: Maybe<ExampleWhereInput>;
   first?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<ExampleOrderByInput>;
 };
 
 
 export type QueryExampleArgs = {
-  id: Scalars['String'];
+  where: ExampleWhereUniqueInput;
 };
 
 
@@ -131,6 +151,11 @@ export type ResolversTypes = {
   DateTime: ResolverTypeWrapper<Scalars['DateTime']>;
   Example: ResolverTypeWrapper<Example>;
   String: ResolverTypeWrapper<Scalars['String']>;
+  ExampleCreateInput: ExampleCreateInput;
+  ExampleOrderByInput: ExampleOrderByInput;
+  ExampleWhereInput: ExampleWhereInput;
+  ExampleWhereUniqueInput: ExampleWhereUniqueInput;
+  ID: ResolverTypeWrapper<Scalars['ID']>;
   Mutation: ResolverTypeWrapper<{}>;
   Query: ResolverTypeWrapper<{}>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
@@ -142,6 +167,10 @@ export type ResolversParentTypes = {
   DateTime: Scalars['DateTime'];
   Example: Example;
   String: Scalars['String'];
+  ExampleCreateInput: ExampleCreateInput;
+  ExampleWhereInput: ExampleWhereInput;
+  ExampleWhereUniqueInput: ExampleWhereUniqueInput;
+  ID: Scalars['ID'];
   Mutation: {};
   Query: {};
   Int: Scalars['Int'];
@@ -153,7 +182,7 @@ export interface DateTimeScalarConfig extends GraphQLScalarTypeConfig<ResolversT
 }
 
 export type ExampleResolvers<ContextType = any, ParentType extends ResolversParentTypes['Example'] = ResolversParentTypes['Example']> = {
-  id?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  id?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
   createdAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
   updatedAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
   name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -161,13 +190,13 @@ export type ExampleResolvers<ContextType = any, ParentType extends ResolversPare
 };
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
-  createExample?: Resolver<Maybe<ResolversTypes['Example']>, ParentType, ContextType, RequireFields<MutationCreateExampleArgs, 'name'>>;
+  createExample?: Resolver<Maybe<ResolversTypes['Example']>, ParentType, ContextType, RequireFields<MutationCreateExampleArgs, 'data'>>;
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   hello?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   examples?: Resolver<Array<ResolversTypes['Example']>, ParentType, ContextType, RequireFields<QueryExamplesArgs, never>>;
-  example?: Resolver<ResolversTypes['Example'], ParentType, ContextType, RequireFields<QueryExampleArgs, 'id'>>;
+  example?: Resolver<ResolversTypes['Example'], ParentType, ContextType, RequireFields<QueryExampleArgs, 'where'>>;
 };
 
 export type Resolvers<ContextType = any> = {
