@@ -1,7 +1,7 @@
 import { makeExecutableSchema } from "@apollo-model/graphql-tools";
 import { SchemaLink } from "@apollo/client/link/schema";
 import { ApolloClient, InMemoryCache } from "@apollo/client";
-import typeDefs from "../../../../../data/__generated.graphql";
+import typeDefs from "../../../../../data/generated-schema.graphql";
 import { resolvers } from "./resolvers";
 
 const schema = makeExecutableSchema({
