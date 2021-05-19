@@ -1,6 +1,6 @@
-import example from "./example";
+import exampleGraphQL from "./example";
 
-const entities = [example];
+const entities = [exampleGraphQL];
 
 export const resolvers = entities.reduce(
   (accumulator, { Query, Mutation }) => ({
