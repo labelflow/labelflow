@@ -40,7 +40,14 @@ export const ImportImagesModal = ({
               <h3>{fileRejections.length} items rejected</h3>
               <ul>
                 {fileRejections.map((rejection) => (
-                  <li key={rejection.file.name}>{rejection.file.name}</li>
+                  <li key={rejection.file.name}>
+                    <span>{rejection.file.name}</span>
+                    <span
+                      title={rejection.errors.map((e) => e.message).join(". ")}
+                    >
+                      {rejection.errors.length} errors
+                    </span>
+                  </li>
                 ))}
               </ul>
             </section>

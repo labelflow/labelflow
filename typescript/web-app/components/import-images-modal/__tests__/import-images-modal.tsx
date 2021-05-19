@@ -60,6 +60,13 @@ test("should not display the rejected images name if everything is fine", async 
 test("should display only rejected images name when all files are not valid", async () => {
   await renderModalAndImport(files.slice(2, 3));
 
-  expect(screen.queryByText(/1 items rejected/i)).toBeInTheDocument();
+  expect(screen.getByText(/1 items rejected/i)).toBeDefined();
   expect(screen.queryByText(/uploading/i)).not.toBeInTheDocument();
+});
+
+test("should display the amount of error when a file could not be imported", async () => {
+  await renderModalAndImport(files.slice(2, 3));
+
+  expect(screen.getByText(/1 errors/i)).toBeDefined();
+  expect(screen.getByTitle(/File type must be/i)).toBeDefined();
 });
