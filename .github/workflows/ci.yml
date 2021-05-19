@@ -7,8 +7,8 @@ on:
     branches:
       - main
 jobs:
-  install:
-    name: Install
+  install-typescript:
+    name: Install Typescript packages
     runs-on: ubuntu-20.04
     steps:
       - name: Check out repository code
@@ -33,10 +33,10 @@ jobs:
           path: "**/node_modules"
           key: ${{ runner.os }}-modules-${{ hashFiles('/yarn.lock') }}
 
-  lint:
-    name: Lint
+  lint-typescript:
+    name: Lint Typescript code
     runs-on: ubuntu-20.04
-    needs: install
+    needs: install-typescript
     steps:
       - name: Check out repository code
         uses: actions/checkout@v2
@@ -49,10 +49,34 @@ jobs:
       - name: lint project code
         run: yarn lint
 
-  test:
-    name: Unit Tests
+  lint-python:
+    name: Lint Python code
     runs-on: ubuntu-20.04
-    needs: install
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v2.2.2
+        with:
+          python-version: 3.8
+      - name: Install Black
+        run: pip install black
+      - name: Run black --check .
+        run: black --check .
+      # - name: If needed, commit black changes to the pull request
+      #   if: failure()
+      #   run: |
+      #     black .
+      #     git config --global user.name 'autoblack'
+      #     git config --global user.email 'cclauss@users.noreply.github.com'
+      #     git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/$GITHUB_REPOSITORY
+      #     git checkout $GITHUB_HEAD_REF
+      #     git commit -am "fixup: Format Python code with Black"
+      #     git push
+
+  test-typescript:
+    name: Unit Tests Typescript code
+    runs-on: ubuntu-20.04
+    needs: install-typescript
     steps:
       - name: Check out repository code
         uses: actions/checkout@v2
@@ -68,7 +92,7 @@ jobs:
   e2e:
     name: End-to-end Tests
     runs-on: ubuntu-20.04
-    needs: install
+    needs: install-typescript
     steps:
       - name: Check out repository code
         uses: actions/checkout@v2
@@ -91,12 +115,22 @@ jobs:
     name: Deploy webapp PR branch
     if: "! contains( github.ref, 'main')"
     runs-on: ubuntu-20.04
-    needs: install
+    needs: install-typescript
     steps:
+      - name: start deployment
+        uses: bobheadxi/deployments@v0.4.3
+        id: deployment
+        with:
+          step: start
+          token: ${{ secrets.GITHUB_TOKEN }}
+          env: "Preview – labelflow-app"
+          ref: ${{ github.head_ref }}
+          no_override: false
       - name: Check out repository code
         uses: actions/checkout@v2
       - name: Deploy webapp on Vercel
         uses: amondnet/vercel-action@v20
+        id: vercel
         with:
           scope: ${{ secrets.VERCEL_ORG_ID}}
           vercel-token: ${{ secrets.VERCEL_TOKEN }} # Required
@@ -112,17 +146,36 @@ jobs:
           #   pr-{{PR_NUMBER}}.app.labelflow.ai
           alias-domains: | #Optional
             pr-{{PR_NUMBER}}.app.labelflow.ai
+      - name: update deployment status
+        uses: bobheadxi/deployments@v0.4.3
+        if: always()
+        with:
+          step: finish
+          token: ${{ secrets.GITHUB_TOKEN }}
+          status: ${{ job.status }}
+          deployment_id: ${{ steps.deployment.outputs.deployment_id }}
+          env_url: ${{steps.vercel.outputs.preview-url}}
 
   deploy-website-pr:
     name: Deploy website PR branch
     if: "! contains( github.ref, 'main')"
     runs-on: ubuntu-20.04
-    needs: install
+    needs: install-typescript
     steps:
+      - name: start deployment
+        uses: bobheadxi/deployments@v0.4.3
+        id: deployment
+        with:
+          step: start
+          token: ${{ secrets.GITHUB_TOKEN }}
+          env: "Preview – labelflow-site"
+          ref: ${{ github.head_ref }}
+          no_override: false
       - name: Check out repository code
         uses: actions/checkout@v2
       - name: Deploy website on Vercel
         uses: amondnet/vercel-action@v20
+        id: vercel
         with:
           scope: ${{ secrets.VERCEL_ORG_ID}}
           vercel-token: ${{ secrets.VERCEL_TOKEN }} # Required
@@ -138,17 +191,36 @@ jobs:
           #   pr-{{PR_NUMBER}}.www.labelflow.ai
           alias-domains: | #Optional
             pr-{{PR_NUMBER}}.www.labelflow.ai
+      - name: update deployment status
+        uses: bobheadxi/deployments@v0.4.3
+        if: always()
+        with:
+          step: finish
+          token: ${{ secrets.GITHUB_TOKEN }}
+          status: ${{ job.status }}
+          deployment_id: ${{ steps.deployment.outputs.deployment_id }}
+          env_url: ${{steps.vercel.outputs.preview-url}}
 
   deploy-webapp-main:
     name: Deploy webapp to production
     if: contains( github.ref, 'main')
     runs-on: ubuntu-20.04
-    needs: install
+    needs: install-typescript
     steps:
+      - name: start deployment
+        uses: bobheadxi/deployments@v0.4.3
+        id: deployment
+        with:
+          step: start
+          token: ${{ secrets.GITHUB_TOKEN }}
+          env: "Production – labelflow-app"
+          ref: ${{ github.head_ref }}
+          no_override: true
       - name: Check out repository code
         uses: actions/checkout@v2
       - name: Deploy webapp on Vercel
         uses: amondnet/vercel-action@v20
+        id: vercel
         with:
           scope: ${{ secrets.VERCEL_ORG_ID}}
           vercel-token: ${{ secrets.VERCEL_TOKEN }} # Required
@@ -164,17 +236,36 @@ jobs:
           #   pr-{{PR_NUMBER}}.app.labelflow.ai
           alias-domains: | #Optional
             app.labelflow.ai
-
+      - name: update deployment status
+        uses: bobheadxi/deployments@v0.4.3
+        if: always()
+        with:
+          step: finish
+          token: ${{ secrets.GITHUB_TOKEN }}
+          status: ${{ job.status }}
+          deployment_id: ${{ steps.deployment.outputs.deployment_id }}
+          env_url: ${{steps.vercel.outputs.preview-url}}
+          
   deploy-website-main:
     name: Deploy website to production
     if: contains( github.ref, 'main')
     runs-on: ubuntu-20.04
-    needs: install
+    needs: install-typescript
     steps:
+      - name: start deployment
+        uses: bobheadxi/deployments@v0.4.3
+        id: deployment
+        with:
+          step: start
+          token: ${{ secrets.GITHUB_TOKEN }}
+          env: "Production – labelflow-site"
+          ref: ${{ github.head_ref }}
+          no_override: true
       - name: Check out repository code
         uses: actions/checkout@v2
       - name: Deploy website on Vercel
         uses: amondnet/vercel-action@v20
+        id: vercel
         with:
           scope: ${{ secrets.VERCEL_ORG_ID}}
           vercel-token: ${{ secrets.VERCEL_TOKEN }} # Required
@@ -190,4 +281,13 @@ jobs:
           #   pr-{{PR_NUMBER}}.www.labelflow.ai
           alias-domains: | #Optional
             www.labelflow.ai
-            
+      - name: update deployment status
+        uses: bobheadxi/deployments@v0.4.3
+        if: always()
+        with:
+          step: finish
+          token: ${{ secrets.GITHUB_TOKEN }}
+          status: ${{ job.status }}
+          deployment_id: ${{ steps.deployment.outputs.deployment_id }}   
+          env_url: ${{steps.vercel.outputs.preview-url}}
+
