@@ -16,7 +16,7 @@
     "typescript/*"
   ],
   "devDependencies": {
-    "@testing-library/jest-dom": "5.12.0",
+    "@testing-library/jest-dom": "^5.12.0",
     "@testing-library/react": "11.2.6",
     "@typescript-eslint/eslint-plugin": "4.23.0",
     "@typescript-eslint/parser": "4.23.0",

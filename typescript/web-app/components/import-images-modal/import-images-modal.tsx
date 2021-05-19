@@ -1,5 +1,6 @@
 import { useCallback } from "react";
 import { useDropzone } from "react-dropzone";
+import { isEmpty } from "lodash";
 
 export const ImportImagesModal = ({
   onImportSucceed,
@@ -9,14 +10,22 @@ export const ImportImagesModal = ({
   const onDrop = useCallback((acceptedFiles) => {
     onImportSucceed(acceptedFiles);
   }, []);
-  const { getRootProps, getInputProps } = useDropzone({ onDrop });
+  const { getRootProps, getInputProps, acceptedFiles } = useDropzone({
+    onDrop,
+  });
 
   return (
-    <div {...getRootProps()}>
-      <label htmlFor="file-uploader">
-        Drop folders or images
-        <input {...getInputProps()} id="file-uploader" />
-      </label>
-    </div>
+    <section>
+      {isEmpty(acceptedFiles) ? (
+        <div {...getRootProps()}>
+          <label htmlFor="file-uploader">
+            Drop folders or images
+            <input {...getInputProps()} id="file-uploader" />
+          </label>
+        </div>
+      ) : (
+        <aside>Uploading {acceptedFiles.length} items</aside>
+      )}
+    </section>
   );
 };
