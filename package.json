@@ -11,7 +11,7 @@
     "dev:web-app": "cd ./typescript/web-app && yarn dev",
     "build:web-app": "cd ./typescript/web-app && yarn build",
     "start:web-app": "cd ./typescript/web-app && yarn start",
-    "generate-types": "graphql-codegen --config ./codegen.yml"
+    "codegen": "graphql-codegen --config ./codegen.yml"
   },
   "workspaces": [
     "typescript/*"

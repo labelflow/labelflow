@@ -5,7 +5,7 @@ module.exports = {
     ],
   },
   future: {
-    //     webpack5: true,
+    webpack5: false,
   },
   webpack: (config) => {
     // Note: we provide webpack above so you should not `require` it
