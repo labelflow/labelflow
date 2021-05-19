@@ -1,0 +1,50 @@
+name: Auto Assign Issues to Projects
+
+on:
+  issues:
+    types: [opened, labeled]
+  # pull_request:
+  #   types: [opened, labeled]
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+jobs:
+  assign_one_project:
+    runs-on: ubuntu-20.04
+    name: Assign to One Project
+    steps:
+    # - name: Assign NEW issues and NEW pull requests to project 2
+    #   uses: srggrs/assign-one-project-github-action@1.2.1
+    #   if: github.event.action == 'opened'
+    #   with:
+    #     project: 'https://github.com/srggrs/assign-one-project-github-action/projects/2'
+    # - name: Assign issues and pull requests with `bug` label to project 3
+    #   uses: srggrs/assign-one-project-github-action@1.2.1
+    #   if: |
+    #     contains(github.event.issue.labels.*.name, 'bug') ||
+    #     contains(github.event.pull_request.labels.*.name, 'bug')
+    #   with:
+    #     project: 'https://github.com/srggrs/assign-one-project-github-action/projects/3'
+    #     column_name: 'Labeled'
+    - name: Assign issues and pull requests with `experiment` label to project `experiments`
+      uses: srggrs/assign-one-project-github-action@1.2.1
+      if: |
+        contains(github.event.issue.labels.*.name, 'experiment') 
+      with:
+        project: 'https://github.com/Labelflow/labelflow/projects/2'
+        column_name: 'To do'
+    - name: Assign issues and pull requests with `enhancement` label to project `labelflow`
+      uses: srggrs/assign-one-project-github-action@1.2.1
+      if: |
+        contains(github.event.issue.labels.*.name, 'enhancement') 
+      with:
+        project: 'https://github.com/Labelflow/labelflow/projects/1'
+        column_name: 'To do'
+    - name: Assign issues and pull requests with `bug` label to project `bugs`
+      uses: srggrs/assign-one-project-github-action@1.2.1
+      if: |
+        contains(github.event.issue.labels.*.name, 'bug') 
+      with:
+        project: 'https://github.com/Labelflow/labelflow/projects/3'
+        column_name: 'To do'
+    
