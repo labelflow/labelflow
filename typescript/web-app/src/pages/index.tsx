@@ -1,7 +1,13 @@
-import { useQuery, ApolloProvider, useMutation } from "@apollo/client";
+import {
+  useQuery,
+  ApolloProvider,
+  useMutation,
+  MutationFunctionOptions,
+  FetchResult,
+} from "@apollo/client";
 import gql from "graphql-tag";
 import { client } from "../connectors/apollo-client";
-import { Example } from "../types";
+import { Example } from "../types.generated";
 
 const examplesQuery = gql`
   query {
@@ -30,11 +36,28 @@ const createImageMutation = gql`
   }
 `;
 
-const importImage = (file, createImage) => {
+const importImage = (
+  file: File,
+  createImage: (
+    options?: MutationFunctionOptions<any, Record<string, any>> | undefined
+  ) => Promise<FetchResult<any, Record<string, any>, Record<string, any>>>
+) => {
   const url = window.URL.createObjectURL(file);
-  createImage({
-    variables: { input: { url, name: "test image", width: 100, height: 100 } },
-  });
+  const image = new Image();
+  image.onload = () => {
+    console.log(image.width, image.height, image.src);
+    createImage({
+      variables: {
+        input: {
+          url,
+          name: file.name,
+          width: image.width,
+          height: image.height,
+        },
+      },
+    });
+  };
+  image.src = url;
 };
 
 const IndexPage = () => {
