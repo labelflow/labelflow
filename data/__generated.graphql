@@ -1,0 +1,36 @@
+scalar DateTime
+
+type Example {
+  createdAt: DateTime
+  id: ID
+  name: String
+  updatedAt: DateTime
+}
+
+input ExampleCreateInput {
+  id: ID
+  name: String!
+}
+
+enum ExampleOrderByInput {
+  id_ASC
+  id_DESC
+}
+
+input ExampleWhereInput {
+  id: ID
+}
+
+input ExampleWhereUniqueInput {
+  id: ID!
+}
+
+type Mutation {
+  createExample(data: ExampleCreateInput!): Example
+}
+
+type Query {
+  example(where: ExampleWhereUniqueInput!): Example!
+  examples(first: Int, orderBy: ExampleOrderByInput, where: ExampleWhereInput): [Example!]!
+  hello: String
+}

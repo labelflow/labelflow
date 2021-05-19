@@ -2938,6 +2938,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@graphql-codegen/schema-ast@npm:^1.18.2":
+  version: 1.18.2
+  resolution: "@graphql-codegen/schema-ast@npm:1.18.2"
+  dependencies:
+    "@graphql-codegen/plugin-helpers": ^1.18.5
+    "@graphql-tools/utils": ^7.0.0
+    tslib: ~2.2.0
+  peerDependencies:
+    graphql: ^0.8.0 || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0
+  checksum: 9cceec7775f8c3d498a835668b083112bd6a16fc6abc942d54c4515518974d78ca7b513711280e0330ca367cce8985ff46aca3ebf7523d645bc6a36630fe0c56
+  languageName: node
+  linkType: hard
+
 "@graphql-codegen/typescript-resolvers@npm:^1.19.1":
   version: 1.19.1
   resolution: "@graphql-codegen/typescript-resolvers@npm:1.19.1"
@@ -12926,6 +12939,7 @@ fsevents@^1.2.7:
   resolution: "labelflow@workspace:."
   dependencies:
     "@graphql-codegen/cli": ^1.21.4
+    "@graphql-codegen/schema-ast": ^1.18.2
     "@graphql-codegen/typescript": ^1.22.0
     "@graphql-codegen/typescript-resolvers": ^1.19.1
     "@testing-library/jest-dom": 5.12.0
