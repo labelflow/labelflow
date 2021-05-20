@@ -57,7 +57,7 @@ export type ImageCreateInput = {
   name: Scalars['String'];
   width: Scalars['Int'];
   height: Scalars['Int'];
-  url: Scalars['String'];
+  url?: Maybe<Scalars['String']>;
 };
 
 export type ImageWhereInput = {
