@@ -146,6 +146,7 @@ jobs:
           #   pr-{{PR_NUMBER}}.app.labelflow.ai
           alias-domains: | #Optional
             pr-{{PR_NUMBER}}.app.labelflow.ai
+      - run: npx vercel logs ${{steps.vercel.outputs.preview-url}} --token ${{ secrets.VERCEL_TOKEN }}
       - name: update deployment status
         uses: bobheadxi/deployments@v0.4.3
         if: always()
@@ -191,6 +192,7 @@ jobs:
           #   pr-{{PR_NUMBER}}.www.labelflow.ai
           alias-domains: | #Optional
             pr-{{PR_NUMBER}}.www.labelflow.ai
+      - run: npx vercel logs ${{steps.vercel.outputs.preview-url}} --token ${{ secrets.VERCEL_TOKEN }}
       - name: update deployment status
         uses: bobheadxi/deployments@v0.4.3
         if: always()
@@ -236,6 +238,7 @@ jobs:
           #   pr-{{PR_NUMBER}}.app.labelflow.ai
           alias-domains: | #Optional
             app.labelflow.ai
+      - run: npx vercel logs ${{steps.vercel.outputs.preview-url}} --token ${{ secrets.VERCEL_TOKEN }}
       - name: update deployment status
         uses: bobheadxi/deployments@v0.4.3
         if: always()
@@ -281,6 +284,7 @@ jobs:
           #   pr-{{PR_NUMBER}}.www.labelflow.ai
           alias-domains: | #Optional
             www.labelflow.ai
+      - run: npx vercel logs ${{steps.vercel.outputs.preview-url}} --token ${{ secrets.VERCEL_TOKEN }}
       - name: update deployment status
         uses: bobheadxi/deployments@v0.4.3
         if: always()
