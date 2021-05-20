@@ -24,9 +24,9 @@ export const ImportImagesModal = ({
     onImportSucceed(acceptedFiles);
   }, []);
   const [{ acceptedFiles, fileRejections }, setDropzoneResult] = useState<{
-    acceptedFiles?: Array<File>;
-    fileRejections?: Array<FileRejection>;
-  }>({});
+    acceptedFiles: Array<File>;
+    fileRejections: Array<FileRejection>;
+  }>({ acceptedFiles: [], fileRejections: [] });
 
   const dropzoneResult = useDropzone({
     onDrop,
@@ -84,9 +84,9 @@ export const ImportImagesModal = ({
             <>
               {!isEmpty(fileRejections) && (
                 <section>
-                  <h3>{fileRejections?.length} items rejected</h3>
+                  <h3>{fileRejections.length} items rejected</h3>
                   <ul>
-                    {fileRejections?.map((rejection) => (
+                    {fileRejections.map((rejection) => (
                       <li key={rejection.file.name}>
                         <span>{rejection.file.name}</span>
                         <span
@@ -104,9 +104,9 @@ export const ImportImagesModal = ({
 
               {!isEmpty(acceptedFiles) && (
                 <section>
-                  <h3>Uploading {acceptedFiles?.length} items</h3>
+                  <h3>Uploading {acceptedFiles.length} items</h3>
                   <ul>
-                    {acceptedFiles?.map((f) => (
+                    {acceptedFiles.map((f) => (
                       <li key={f.name}>{f.name}</li>
                     ))}
                   </ul>
