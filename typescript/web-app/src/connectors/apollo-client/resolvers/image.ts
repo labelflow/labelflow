@@ -11,26 +11,31 @@ import {
 const typeName = "Image";
 const typeNamePlural = "Image:list";
 
-// Queries
-export const image = async (_: any, args: QueryImageArgs) => {
-  const entity = await localforage.getItem<Image>(
-    `${typeName}:${args?.where?.id}`
-  );
-  const file = await localforage.getItem(`${typeName}:${args?.where?.id}:blob`);
+const getImageByKey = async (key: string) => {
+  const entity = await localforage.getItem<Image>(key);
+  const file = await localforage.getItem(`${key}:blob`);
   const url = window.URL.createObjectURL(file);
   return { ...entity, url };
 };
+
+// Queries
+export const image = async (_: any, args: QueryImageArgs) => {
+  const imageEntity = await getImageByKey(`${typeName}:${args?.where?.id}`);
+  return imageEntity;
+};
 export const images = async (_: any, args: QueryImagesArgs) => {
-  const entityKeysList = await localforage.getItem(typeNamePlural);
-  if (isEmpty(entityKeysList)) {
+  const entityKeysList = await localforage.getItem<string[]>(typeNamePlural);
+  if (entityKeysList == null) {
     return [];
   }
-  const entities = await Promise.all(
-    (entityKeysList as []).map((key: string) => localforage.getItem(key))
-  );
-  const first = args?.first ?? entities.length;
+
+  const first = args?.first ?? entityKeysList.length;
   const skip = args?.skip ?? 0;
-  return entities.slice(skip, first + skip);
+
+  const filteredKeys = entityKeysList.slice(skip, first + skip);
+
+  const entities = await Promise.all(filteredKeys.map(getImageByKey));
+  return entities;
 };
 
 // Mutations
