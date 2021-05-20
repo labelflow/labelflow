@@ -44,6 +44,16 @@ export interface ObjectHash {
 }
 
 export type Detach = (container: OlObject, child: OlObject) => void;
+
+// export type Attach<Parent extends OlObject, Child extends OlObject> =
+//   | string
+//   | ((
+//       container: OlObject,
+//       child: OlObject,
+//       parentInstance: Instance<Parent>,
+//       childInstance: Instance<Child, Parent>
+//     ) => Detach);
+
 export type Attach =
   | string
   | ((
@@ -71,10 +81,31 @@ export type Instance = OlObject & {
   };
 };
 
+// export type Instance<Self extends OlObject, Parent extends OlObject = any> =
+//   Self & {
+//     [MetaOlFiber]: {
+//       kind: string;
+//       type: string;
+//       parent?: Instance<Parent>;
+//       attach?: Attach<Parent, Self>;
+//       detach?: (container: Container, child: Container) => void;
+//     };
+//   };
+
+// export interface Instance<Parent extends Instance<any> = any> extends OlObject {
+//   [MetaOlFiber]: {
+//     kind: string;
+//     type: string;
+//     parent?: Instance<Parent>;
+//     attach?: Attach<Parent, Instance>;
+//     detach?: (container: Container, child: Container) => void;
+//   };
+// }
+
 // export type OpaqueHandle = Fiber;
 export type OpaqueHandle = any;
 export type TextInstance = null;
-export type HydratableInstance = Instance;
+export type HydratableInstance = Instance<OlObject>;
 export type PublicInstance = OlObject;
 export type HostContext = {};
 export type UpdatePayload = boolean;
@@ -108,6 +139,11 @@ const error002 = (containerType = "", childType = "") =>
     `React-Openlayers-Fiber Error: Couldn't add this child to this container. You can specify how to attach this type of child ("${childType}") to this type of container ("${containerType}") using the "attach" props. If you think this should be done automatically, open an issue here https://github.com/labelflow/react-openlayers-fiber/issues/new?title=Support+${childType}+in+${containerType}&body=Support+${childType}+in+${containerType}`
   );
 
+const error001 = () =>
+  new Error(
+    `React-Openlayers-Fiber Error: Instance is null, is it a TextInstance ?`
+  );
+
 /// ////////////////////////////////////////////////////////////////////////////
 /// ////////////////////////////////////////////////////////////////////////////
 /// ////////////////////////////////////////////////////////////////////////////
@@ -123,7 +159,7 @@ const applyProp = (
 ): void => {
   const setterGeneric = olObject.set;
   const keySetter = `set${upperFirst(olKey)}`;
-  const setterSpecificKey = olObject[keySetter];
+  const setterSpecificKey = (olObject as any)[keySetter];
   if (isFunction(setterSpecificKey)) {
     setterSpecificKey.bind(olObject)(propValue);
   } else if (isFunction(setterGeneric)) {
@@ -134,14 +170,14 @@ const applyProp = (
     );
     console.warn(olObject);
     // eslint-disable-next-line no-param-reassign
-    olObject[olKey] = propValue;
+    (olObject as any)[olKey] = propValue;
   } else {
     console.error(
       `React-Openlayers-Fiber Error: Setting the property "${olKey}" very brutally because there is no setter on the object nor the object has this key... This is probably an error`
     );
     console.error(olObject);
     // eslint-disable-next-line no-param-reassign
-    olObject[olKey] = propValue;
+    (olObject as any)[olKey] = propValue;
   }
 };
 
@@ -157,8 +193,8 @@ const applyProp = (
  */
 const applyProps = (
   olObject: OlObject,
-  oldProps: object = {},
-  newProps: object,
+  oldProps: Props = {},
+  newProps: Props,
   isNewInstance = false
 ): void => {
   forEach((key) => {
@@ -187,12 +223,17 @@ const applyProps = (
   }, keys(newProps));
 };
 
-const defaultAttach = (
-  parent: PublicInstance,
-  child: PublicInstance,
-  parentInstance: Instance,
-  childInstance: Instance | TextInstance
+const defaultAttach = <
+  Parent extends PublicInstance,
+  Child extends PublicInstance
+>(
+  parent: Parent,
+  child: Child,
+  parentInstance: Instance<Parent>,
+  childInstance: Instance<Child, Parent> | TextInstance
 ): Detach => {
+  if (!childInstance) throw error001();
+
   const containerOlObject = parentInstance;
   const { kind: containerKind } = parentInstance[MetaOlFiber];
   const childOlObject = childInstance;
@@ -291,6 +332,7 @@ const defaultAttach = (
 const getPublicInstance = (
   instance: Instance | TextInstance
 ): PublicInstance => {
+  if (!instance) throw error001();
   return instance;
 };
 
@@ -309,13 +351,9 @@ const getChildHostContext = (
     : type;
 };
 
-const prepareForCommit = (containerInfo: Container): void => {
-  return null;
-};
+const prepareForCommit = (containerInfo: Container): void => {};
 
-const resetAfterCommit = (containerInfo: Container): void => {
-  return null;
-};
+const resetAfterCommit = (containerInfo: Container): void => {};
 
 const createInstance = (
   type: Type,
@@ -334,8 +372,9 @@ const createInstance = (
     kind = null;
   } else if (type === "new") {
     // <new/> Elements like in react three fiber
-    const { object, args } = props as ReactOlFiber.IntrinsicElements["new"];
-    olObject = new object(...args);
+    const { object: TheObjectClass, args } =
+      props as ReactOlFiber.IntrinsicElements["new"];
+    olObject = new TheObjectClass(...args);
     kind = null;
   } else {
     // <olMap/> and all other similar elements from ol
@@ -353,7 +392,7 @@ const createInstance = (
     const target = catalogue[type as CatalogueKey];
     if (isNil(target)) {
       // Not found
-      new Error(
+      throw new Error(
         `React-Openlayers-Fiber Error: ${type} is not exported by ol. Use extend to add it if needed.`
       );
     } else if (isNil(constructFrom)) {
@@ -478,18 +517,14 @@ const commitTextUpdate = (
   textInstance: TextInstance,
   oldText: string,
   newText: string
-): void => {
-  return null;
-};
+): void => {};
 
 const commitMount = (
   instance: Instance,
   type: Type,
   newProps: Props,
   internalInstanceHandle: OpaqueHandle
-): void => {
-  return null;
-};
+): void => {};
 
 const removeChild = (
   parentInstance: Instance,
@@ -682,7 +717,7 @@ function switchInstance(
 }
 
 const hideInstance = (instance: Instance) => {
-  const kind = instance[MetaOlFiber];
+  const { kind } = instance[MetaOlFiber];
   switch (kind) {
     case "Layer": {
       (instance as Layer).setVisible(false);
@@ -697,7 +732,7 @@ const hideInstance = (instance: Instance) => {
 };
 
 const unhideInstance = (instance: Instance, props: Props) => {
-  const kind = instance[MetaOlFiber];
+  const { kind } = instance[MetaOlFiber];
   switch (kind) {
     case "Layer": {
       (instance as Layer).setVisible(true);
