@@ -6,6 +6,8 @@ import {
   FetchResult,
 } from "@apollo/client";
 import gql from "graphql-tag";
+import localforage from "localforage";
+import { v4 as uuidv4 } from "uuid";
 import { client } from "../connectors/apollo-client";
 import { Example } from "../types.generated";
 
@@ -47,11 +49,14 @@ const importImage = (
   }
   const url = window.URL.createObjectURL(file);
   const image = new Image();
-  image.onload = () => {
+  image.onload = async () => {
+    const imageId = uuidv4();
+    const fileStorageKey = `Image:${imageId}:blob`;
+    await localforage.setItem(fileStorageKey, file);
     createImage({
       variables: {
         input: {
-          url,
+          id: imageId,
           name: file.name,
           width: image.width,
           height: image.height,

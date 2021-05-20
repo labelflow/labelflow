@@ -3,7 +3,7 @@ input ImageCreateInput {
   name: String!
   width: Int!
   height: Int!
-  url: String!
+  url: String # not used for now
 }
 
 input ImageWhereInput {
