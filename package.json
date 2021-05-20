@@ -11,20 +11,27 @@
     "dev:web-app": "cd ./typescript/web-app && yarn dev",
     "build:web-app": "cd ./typescript/web-app && yarn build",
     "start:web-app": "cd ./typescript/web-app && yarn start",
-    "codegen": "graphql-codegen --config ./codegen.yml"
+    "codegen": "graphql-codegen --config ./codegen.yml",
+    "storybook": "start-storybook -p 6006",
+    "build-storybook": "build-storybook",
+    "chromatic": "npx chromatic --project-token=a1c99399b03e"
   },
   "workspaces": [
     "typescript/*"
   ],
   "devDependencies": {
+    "@babel/core": "^7.14.3",
     "@graphql-codegen/cli": "^1.21.4",
     "@graphql-codegen/schema-ast": "^1.18.2",
     "@graphql-codegen/typescript": "^1.22.0",
     "@graphql-codegen/typescript-resolvers": "^1.19.1",
+    "@storybook/react": "^6.2.9",
     "@testing-library/jest-dom": "5.12.0",
     "@testing-library/react": "11.2.6",
     "@typescript-eslint/eslint-plugin": "4.23.0",
     "@typescript-eslint/parser": "4.23.0",
+    "babel-loader": "^8.2.2",
+    "chromatic": "^5.8.2",
     "cypress": "7.3.0",
     "eslint": "7.26.0",
     "eslint-config-airbnb-typescript": "12.3.1",
