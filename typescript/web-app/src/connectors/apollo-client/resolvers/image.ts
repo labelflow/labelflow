@@ -8,13 +8,18 @@ import {
   QueryImagesArgs,
 } from "../../../types.generated";
 
+const mapKeyToUrl = new Map<string, string>();
 const typeName = "Image";
 const typeNamePlural = "Image:list";
 
 const getImageByKey = async (key: string) => {
   const entity = await localforage.getItem<Image>(key);
+  if (mapKeyToUrl.has(key)) {
+    return { ...entity, url: mapKeyToUrl.get(key) };
+  }
   const file = await localforage.getItem(`${key}:blob`);
   const url = window.URL.createObjectURL(file);
+  mapKeyToUrl.set(key, url);
   return { ...entity, url };
 };
 
