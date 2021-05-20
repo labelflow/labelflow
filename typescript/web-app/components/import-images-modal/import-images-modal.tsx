@@ -8,6 +8,7 @@ import {
   ModalHeader,
   ModalBody,
   ModalCloseButton,
+  Text,
 } from "@chakra-ui/react";
 
 export const ImportImagesModal = ({
@@ -59,12 +60,16 @@ export const ImportImagesModal = ({
     >
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>
-          <h2>Import</h2>
-          <p>
+        <ModalHeader textAlign="center">
+          <h2>
+            <Text textStyle="h2" textAlign="center">
+              Import
+            </Text>
+          </h2>
+          <Text fontSize="lg" fontWeight="medium">
             Start working with your images. Stay in control of your data. Images
             are not uploaded on LabelFlow servers.
-          </p>
+          </Text>
         </ModalHeader>
         <ModalCloseButton />
         <ModalBody>
