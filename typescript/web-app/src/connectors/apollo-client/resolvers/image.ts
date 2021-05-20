@@ -2,6 +2,7 @@ import localforage from "localforage";
 import { v4 as uuidv4 } from "uuid";
 import { isEmpty } from "lodash/fp";
 import {
+  Image,
   MutationCreateImageArgs,
   QueryImageArgs,
   QueryImagesArgs,
@@ -12,8 +13,12 @@ const typeNamePlural = "Image:list";
 
 // Queries
 export const image = async (_: any, args: QueryImageArgs) => {
-  const entity = await localforage.getItem(`${typeName}:${args?.where?.id}`);
-  return entity;
+  const entity = await localforage.getItem<Image>(
+    `${typeName}:${args?.where?.id}`
+  );
+  const file = await localforage.getItem(`${typeName}:${args?.where?.id}:blob`);
+  const url = window.URL.createObjectURL(file);
+  return { ...entity, url };
 };
 export const images = async (_: any, args: QueryImagesArgs) => {
   const entityKeysList = await localforage.getItem(typeNamePlural);
