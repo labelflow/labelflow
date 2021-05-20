@@ -112,8 +112,8 @@ jobs:
           # 👇 Chromatic projectToken, refer to the manage page to obtain it.
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
 
-  e2e:
-    name: End-to-end Tests
+  cypress-e2e:
+    name: Cypress e2e Tests
     runs-on: ubuntu-20.04
     needs: install-typescript
     steps:
