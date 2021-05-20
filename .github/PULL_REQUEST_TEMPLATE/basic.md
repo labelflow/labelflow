@@ -18,14 +18,8 @@
 
 ## Resolved issues
 
-<!---
-- #1
-- #2
--->
+<!--- List references to issues that this PR resolves -->
 
 ## Newly raised issues
 
-<!---
-- #1
-- #2
--->
+<!--- List references to issues that where opened when creating this PR -->

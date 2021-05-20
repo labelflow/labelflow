@@ -1,0 +1,7 @@
+# This file contains the type definitions of each main entity
+type Example {
+  id: ID
+  createdAt: DateTime
+  updatedAt: DateTime
+  name: String
+}

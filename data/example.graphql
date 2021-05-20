@@ -1,0 +1,17 @@
+input ExampleCreateInput {
+  name: String!
+  id: ID
+}
+
+input ExampleWhereInput {
+  id: ID
+}
+
+input ExampleWhereUniqueInput {
+  id: ID!
+}
+
+enum ExampleOrderByInput {
+  id_ASC
+  id_DESC
+}
