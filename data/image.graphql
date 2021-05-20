@@ -13,8 +13,3 @@ input ImageWhereInput {
 input ImageWhereUniqueInput {
   id: ID!
 }
-
-# enum ImageOrderByInput {
-#   id_ASC
-#   id_DESC
-# }
