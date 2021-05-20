@@ -11,7 +11,7 @@ describe("Example resolver test suite", () => {
       data: { name: "test" },
     });
     expect(createResult?.name).toBe("test");
-    expect(await localforage.getItem(`Example:${createResult.id}`)).toBe(
+    expect(await localforage.getItem(`Example:${createResult.id}`)).toEqual(
       createResult
     );
   });
@@ -22,7 +22,7 @@ describe("Example resolver test suite", () => {
     const queryResult = await example(undefined, {
       where: { id: createResult.id },
     });
-    expect(queryResult).toBe(createResult);
+    expect(queryResult).toEqual(createResult);
   });
   test("Query examples", async () => {
     const createResult = await createExample(undefined, {
@@ -30,6 +30,6 @@ describe("Example resolver test suite", () => {
     });
     const queryResult = await examples();
     expect(queryResult.length).toBe(3);
-    expect(queryResult[queryResult.length - 1]).toBe(createResult);
+    expect(queryResult[queryResult.length - 1]).toEqual(createResult);
   });
 });
