@@ -45,23 +45,23 @@ export interface ObjectHash {
 
 export type Detach = (container: OlObject, child: OlObject) => void;
 
-// export type Attach<Parent extends OlObject, Child extends OlObject> =
-//   | string
-//   | ((
-//       container: OlObject,
-//       child: OlObject,
-//       parentInstance: Instance<Parent>,
-//       childInstance: Instance<Child, Parent>
-//     ) => Detach);
-
-export type Attach =
+export type Attach<Parent extends Instance, Child extends Instance<Parent>> =
   | string
   | ((
       container: OlObject,
       child: OlObject,
-      parentInstance: Instance,
-      childInstance: Instance
+      parentInstance: Parent,
+      childInstance: Child
     ) => Detach);
+
+// export type Attach =
+//   | string
+//   | ((
+//       container: OlObject,
+//       child: OlObject,
+//       parentInstance: Instance,
+//       childInstance: Instance
+//     ) => Detach);
 
 export type Type = keyof ReactOlFiber.IntrinsicElements;
 
@@ -71,15 +71,15 @@ export type Container = OlObject;
 
 const MetaOlFiber = Symbol("MetaOlFiber");
 
-export type Instance = OlObject & {
-  [MetaOlFiber]: {
-    kind: string;
-    type: string;
-    parent?: Instance;
-    attach?: Attach;
-    detach?: (container: Container, child: Container) => void;
-  };
-};
+// export type Instance = OlObject & {
+//   [MetaOlFiber]: {
+//     kind: string;
+//     type: string;
+//     parent?: Instance;
+//     attach?: Attach;
+//     detach?: (container: Container, child: Container) => void;
+//   };
+// };
 
 // export type Instance<Self extends OlObject, Parent extends OlObject = any> =
 //   Self & {
@@ -92,21 +92,23 @@ export type Instance = OlObject & {
 //     };
 //   };
 
-// export interface Instance<Parent extends Instance<any> = any> extends OlObject {
-//   [MetaOlFiber]: {
-//     kind: string;
-//     type: string;
-//     parent?: Instance<Parent>;
-//     attach?: Attach<Parent, Instance>;
-//     detach?: (container: Container, child: Container) => void;
-//   };
-// }
+export interface Instance<Parent extends Instance<any> = any> extends OlObject {
+  [MetaOlFiber]: {
+    kind: string;
+    type: string;
+    parent?: Parent;
+    attach?: Attach<Parent, Instance>;
+    detach?: (container: Container, child: Container) => void;
+  };
+}
 
 // export type OpaqueHandle = Fiber;
 export type OpaqueHandle = any;
 export type TextInstance = null;
-export type HydratableInstance = Instance<OlObject>;
-export type PublicInstance = OlObject;
+export type HydratableInstance<Parent extends Instance<any> = any> =
+  Instance<Parent>;
+export type PublicInstance<Parent extends Instance<any> = any> =
+  Instance<Parent>;
 export type HostContext = {};
 export type UpdatePayload = boolean;
 export type ChildSet = void;
@@ -225,12 +227,12 @@ const applyProps = (
 
 const defaultAttach = <
   Parent extends PublicInstance,
-  Child extends PublicInstance
+  Child extends PublicInstance<Parent>
 >(
   parent: Parent,
   child: Child,
-  parentInstance: Instance<Parent>,
-  childInstance: Instance<Child, Parent> | TextInstance
+  parentInstance: Parent,
+  childInstance: Child
 ): Detach => {
   if (!childInstance) throw error001();
 
