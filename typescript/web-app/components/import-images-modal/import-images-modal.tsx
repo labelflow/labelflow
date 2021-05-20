@@ -40,6 +40,15 @@ export const ImportImagesModal = ({
     });
   }, [dropzoneResult.acceptedFiles, dropzoneResult.fileRejections]);
 
+  const rootProps = {
+    ...dropzoneResult.getRootProps(),
+    /* There is a problem of event propagation causing the file explorer to open twice when you use click rather than drag and drop.
+     * We applied the following workaround: https://github.com/react-dropzone/react-dropzone/issues/541#issuecomment-473106192 */
+    onClick: (e: any) => {
+      e.stopPropagation();
+    },
+  };
+
   return (
     <Modal
       isOpen={isOpen}
@@ -60,7 +69,7 @@ export const ImportImagesModal = ({
         <ModalCloseButton />
         <ModalBody>
           {isEmpty(acceptedFiles) && isEmpty(fileRejections) ? (
-            <form {...dropzoneResult.getRootProps()}>
+            <form {...rootProps}>
               <label htmlFor="file-uploader">
                 Drop folders or images
                 <input {...dropzoneResult.getInputProps()} id="file-uploader" />
