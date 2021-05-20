@@ -11,9 +11,8 @@ const typeName = "Image";
 const typeNamePlural = "Image:list";
 
 // Queries
-export const image = async (_: any, args: QueryImageArgs) => {
-  const entity = await localforage.getItem(`${typeName}:${args?.where?.id}`);
-  return entity;
+export const image = (_: any, args: QueryImageArgs) => {
+  return localforage.getItem(`${typeName}:${args?.where?.id}`);
 };
 export const images = async (_: any, args: QueryImagesArgs) => {
   const entityKeysList = await localforage.getItem(typeNamePlural);
