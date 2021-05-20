@@ -57,9 +57,6 @@ export const createImage = async (_: any, args: MutationCreateImageArgs) => {
   return newEntity;
 };
 
-// const updateImage = () => { };
-// const deleteImage = () => { };
-
 export default {
   Query: {
     image,
@@ -68,6 +65,5 @@ export default {
 
   Mutation: {
     createImage,
-    // updateImage, deleteImage
   },
 };
