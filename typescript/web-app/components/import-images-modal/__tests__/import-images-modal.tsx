@@ -92,3 +92,12 @@ test("should call the onClose handler", async () => {
 
   expect(onClose).toHaveBeenCalled();
 });
+
+test("should display the amount of error when a file could not be imported", async () => {
+  await renderModalAndImport();
+
+  userEvent.click(screen.getByLabelText("Close"));
+
+  expect(screen.queryByText(/uploading 2 items/i)).not.toBeInTheDocument();
+  expect(screen.queryByText(/items rejected/i)).not.toBeInTheDocument();
+});

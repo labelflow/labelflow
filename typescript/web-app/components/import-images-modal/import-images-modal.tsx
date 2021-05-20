@@ -1,5 +1,5 @@
-import { useCallback } from "react";
-import { useDropzone } from "react-dropzone";
+import { useCallback, useState, useEffect } from "react";
+import { useDropzone, FileRejection } from "react-dropzone";
 import { isEmpty } from "lodash";
 import {
   Modal,
@@ -22,14 +22,32 @@ export const ImportImagesModal = ({
   const onDrop = useCallback((acceptedFiles) => {
     onImportSucceed(acceptedFiles);
   }, []);
-  const { getRootProps, getInputProps, acceptedFiles, fileRejections } =
-    useDropzone({
-      onDrop,
-      accept: "image/jpeg, image/png, image/bmp",
+  const [{ acceptedFiles, fileRejections }, setDropzoneResult] = useState<{
+    acceptedFiles?: Array<File>;
+    fileRejections?: Array<FileRejection>;
+  }>({});
+
+  const dropzoneResult = useDropzone({
+    onDrop,
+    accept: "image/jpeg, image/png, image/bmp",
+  });
+
+  useEffect(() => {
+    if (!dropzoneResult.acceptedFiles && !dropzoneResult.fileRejections) return;
+    setDropzoneResult({
+      acceptedFiles: dropzoneResult.acceptedFiles,
+      fileRejections: dropzoneResult.fileRejections,
     });
+  }, [dropzoneResult.acceptedFiles, dropzoneResult.fileRejections]);
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
+    <Modal
+      isOpen={isOpen}
+      onClose={() => {
+        setDropzoneResult({ acceptedFiles: [], fileRejections: [] });
+        onClose();
+      }}
+    >
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>
@@ -42,19 +60,19 @@ export const ImportImagesModal = ({
         <ModalCloseButton />
         <ModalBody>
           {isEmpty(acceptedFiles) && isEmpty(fileRejections) ? (
-            <form {...getRootProps()}>
+            <form {...dropzoneResult.getRootProps()}>
               <label htmlFor="file-uploader">
                 Drop folders or images
-                <input {...getInputProps()} id="file-uploader" />
+                <input {...dropzoneResult.getInputProps()} id="file-uploader" />
               </label>
             </form>
           ) : (
             <>
               {!isEmpty(fileRejections) && (
                 <section>
-                  <h3>{fileRejections.length} items rejected</h3>
+                  <h3>{fileRejections?.length} items rejected</h3>
                   <ul>
-                    {fileRejections.map((rejection) => (
+                    {fileRejections?.map((rejection) => (
                       <li key={rejection.file.name}>
                         <span>{rejection.file.name}</span>
                         <span
@@ -72,9 +90,9 @@ export const ImportImagesModal = ({
 
               {!isEmpty(acceptedFiles) && (
                 <section>
-                  <h3>Uploading {acceptedFiles.length} items</h3>
+                  <h3>Uploading {acceptedFiles?.length} items</h3>
                   <ul>
-                    {acceptedFiles.map((f) => (
+                    {acceptedFiles?.map((f) => (
                       <li key={f.name}>{f.name}</li>
                     ))}
                   </ul>
