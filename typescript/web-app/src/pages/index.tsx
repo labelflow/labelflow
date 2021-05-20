@@ -1,6 +1,5 @@
 import {
   useQuery,
-  ApolloProvider,
   useMutation,
   MutationFunctionOptions,
   FetchResult,
@@ -8,7 +7,7 @@ import {
 import gql from "graphql-tag";
 import localforage from "localforage";
 import { v4 as uuidv4 } from "uuid";
-import { client } from "../connectors/apollo-client";
+
 import { Example } from "../types.generated";
 
 const examplesQuery = gql`
@@ -100,10 +99,4 @@ const IndexPage = () => {
   );
 };
 
-const App = () => (
-  <ApolloProvider client={client}>
-    <IndexPage />
-  </ApolloProvider>
-);
-
-export default App;
+export default IndexPage;
