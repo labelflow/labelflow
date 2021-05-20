@@ -1,9 +1,11 @@
-import { useCallback, useState, useEffect } from "react";
+import React, { useCallback, useState, useEffect } from "react";
 import { useDropzone, FileRejection, FileWithPath } from "react-dropzone";
-import { RiUploadCloud2Line } from "react-icons/ri";
-import { isEmpty } from "lodash";
+import { RiUploadCloud2Line, RiImageLine, RiFile3Line } from "react-icons/ri";
+import { isEmpty } from "lodash/fp";
 import {
   chakra,
+  Box,
+  Button,
   Stack,
   Heading,
   Modal,
@@ -12,7 +14,13 @@ import {
   ModalHeader,
   ModalBody,
   ModalCloseButton,
+  Table,
+  Tbody,
+  Tr,
+  Td,
   Text,
+  Flex,
+  Spacer,
 } from "@chakra-ui/react";
 
 const UploadIcon = chakra(RiUploadCloud2Line);
@@ -21,10 +29,12 @@ export const ImportImagesModal = ({
   onImportSucceed,
   isOpen = false,
   onClose = () => {},
+  initialAcceptedFiles = [],
 }: {
   onImportSucceed: (images: Array<File>) => void;
   isOpen?: boolean;
   onClose?: () => void;
+  initialAcceptedFiles?: Array<FileWithPath>;
 }) => {
   const onDrop = useCallback((acceptedFiles) => {
     onImportSucceed(acceptedFiles);
@@ -32,7 +42,7 @@ export const ImportImagesModal = ({
   const [{ acceptedFiles, fileRejections }, setDropzoneResult] = useState<{
     acceptedFiles: Array<FileWithPath>;
     fileRejections: Array<FileRejection>;
-  }>({ acceptedFiles: [], fileRejections: [] });
+  }>({ acceptedFiles: initialAcceptedFiles, fileRejections: [] });
 
   const dropzoneResult = useDropzone({
     onDrop,
@@ -41,6 +51,13 @@ export const ImportImagesModal = ({
 
   useEffect(() => {
     if (!dropzoneResult.acceptedFiles && !dropzoneResult.fileRejections) return;
+
+    if (
+      isEmpty(dropzoneResult.acceptedFiles) &&
+      isEmpty(dropzoneResult.fileRejections)
+    )
+      return;
+
     setDropzoneResult({
       acceptedFiles: dropzoneResult.acceptedFiles,
       fileRejections: dropzoneResult.fileRejections,
@@ -77,7 +94,15 @@ export const ImportImagesModal = ({
           </Text>
         </ModalHeader>
         <ModalCloseButton />
-        <ModalBody display="flex" pt="0" pb="6" pr="6" pl="6">
+        <ModalBody
+          display="flex"
+          pt="0"
+          pb="6"
+          pr="6"
+          pl="6"
+          overflowY="hidden"
+          flexDirection="column"
+        >
           {isEmpty(acceptedFiles) && isEmpty(fileRejections) ? (
             <Stack
               as="form"
@@ -107,43 +132,50 @@ export const ImportImagesModal = ({
               </chakra.label>
             </Stack>
           ) : (
-            <>
-              {!isEmpty(fileRejections) && (
-                <section>
-                  <h3>{fileRejections.length} items rejected</h3>
-                  <ul>
-                    {fileRejections.map((rejection) => {
-                      // Type fix until the following issue is fixed: [insert link here]
-                      // @ts-ignore
-                      const { path } = rejection.file;
-                      return (
-                        <li key={path}>
-                          <span>{path}</span>
-                          <span
-                            title={rejection.errors
-                              .map((e) => e.message)
-                              .join(". ")}
-                          >
-                            {rejection.errors.length} errors
-                          </span>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                </section>
-              )}
-
-              {!isEmpty(acceptedFiles) && (
-                <section>
-                  <h3>Uploading {acceptedFiles.length} items</h3>
-                  <ul>
-                    {acceptedFiles.map((f) => (
-                      <li key={f.path}>{f.path}</li>
-                    ))}
-                  </ul>
-                </section>
-              )}
-            </>
+            (!isEmpty(acceptedFiles) || !isEmpty(fileRejections)) && (
+              <>
+                <Flex>
+                  <Box p="2">
+                    <Text>Uploading {acceptedFiles.length} items</Text>
+                  </Box>
+                  <Spacer />
+                  <Box>
+                    {!isEmpty(fileRejections) && (
+                      <Button colorScheme="gray" size="sm">
+                        Retry {fileRejections.length} items rejected
+                      </Button>
+                    )}
+                  </Box>
+                </Flex>
+                <Box as="section" overflowY="auto">
+                  <Table variant="striped" colorScheme="gray" size="sm">
+                    <Tbody>
+                      {fileRejections.map((rejection) => {
+                        // Type fix until the following issue is fixed: [insert link here]
+                        // @ts-ignore
+                        const { path } = rejection.file;
+                        return (
+                          <Tr key={path}>
+                            <Td w="2">
+                              <RiFile3Line />
+                            </Td>
+                            <Td pl="0">{path}</Td>
+                          </Tr>
+                        );
+                      })}
+                      {acceptedFiles.map(({ path }) => (
+                        <Tr key={path}>
+                          <Td w="2">
+                            <RiImageLine />
+                          </Td>
+                          <Td pl="0">{path}</Td>
+                        </Tr>
+                      ))}
+                    </Tbody>
+                  </Table>
+                </Box>
+              </>
+            )
           )}
         </ModalBody>
       </ModalContent>
