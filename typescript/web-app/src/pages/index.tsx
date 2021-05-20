@@ -37,15 +37,17 @@ const createImageMutation = gql`
 `;
 
 const importImage = (
-  file: File,
+  file: File | undefined,
   createImage: (
     options?: MutationFunctionOptions<any, Record<string, any>> | undefined
   ) => Promise<FetchResult<any, Record<string, any>, Record<string, any>>>
 ) => {
+  if (file == null) {
+    return;
+  }
   const url = window.URL.createObjectURL(file);
   const image = new Image();
   image.onload = () => {
-    console.log(image.width, image.height, image.src);
     createImage({
       variables: {
         input: {
@@ -78,7 +80,7 @@ const IndexPage = () => {
       <input
         name="upload"
         type="file"
-        onChange={(e) => importImage(e.target.files[0], createImage)}
+        onChange={(e) => importImage(e?.target?.files?.[0], createImage)}
       />
       <div>
         {examplesResult?.examples
