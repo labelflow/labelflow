@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect } from "react";
+import { useCallback, useState, useEffect } from "react";
 import { useDropzone, FileRejection, FileWithPath } from "react-dropzone";
 import { RiUploadCloud2Line, RiImageLine, RiFile3Line } from "react-icons/ri";
 import { isEmpty } from "lodash/fp";
@@ -160,6 +160,14 @@ export const ImportImagesModal = ({
                               <RiFile3Line />
                             </Td>
                             <Td pl="0">{path}</Td>
+                            <Td
+                              title={rejection.errors
+                                .map((e) => e.message)
+                                .join(". ")}
+                              color="gray.400"
+                            >
+                              {rejection.errors.length} errors
+                            </Td>
                           </Tr>
                         );
                       })}
@@ -169,6 +177,7 @@ export const ImportImagesModal = ({
                             <RiImageLine />
                           </Td>
                           <Td pl="0">{path}</Td>
+                          <Td />
                         </Tr>
                       ))}
                     </Tbody>
