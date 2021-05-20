@@ -89,6 +89,29 @@ jobs:
       - name: run tests
         run: yarn test
 
+  chromatic-deployment:
+    name: Storybook deployment
+    runs-on: ubuntu-20.04
+    needs: install-typescript
+    # Job steps
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0 # 👈 Required to retrieve git history
+      - name: Fetch node_modules from cache
+        uses: actions/cache@v2
+        id: node-modules-cache
+        with:
+          path: "**/node_modules"
+          key: ${{ runner.os }}-modules-${{ hashFiles('/yarn.lock') }}
+      - name: Publish to Chromatic
+        uses: chromaui/action@v1
+        # Chromatic GitHub Action options
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          # 👇 Chromatic projectToken, refer to the manage page to obtain it.
+          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+
   e2e:
     name: End-to-end Tests
     runs-on: ubuntu-20.04

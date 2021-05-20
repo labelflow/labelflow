@@ -14,7 +14,7 @@
     "codegen": "graphql-codegen --config ./codegen.yml",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
-    "chromatic": "npx chromatic --project-token=a1c99399b03e"
+    "chromatic": "npx chromatic"
   },
   "workspaces": [
     "typescript/*"
