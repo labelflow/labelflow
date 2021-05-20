@@ -1,4 +1,4 @@
 module.exports = {
-  stories: ["../**/__stories__/*.tsx"],
+  stories: ["../typescript/**/__stories__/*.tsx"],
 };
 
