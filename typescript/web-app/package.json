@@ -25,7 +25,7 @@
     "react": "17.x",
     "react-dom": "17.x",
     "react-dropzone": "^11.3.2",
-    "react-icons": "4.2.0"
+    "react-icons": "^4.2.0"
   },
   "devDependencies": {
     "@babel/core": "^7.14.3",

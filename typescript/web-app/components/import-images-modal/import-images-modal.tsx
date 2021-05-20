@@ -1,7 +1,11 @@
 import { useCallback, useState, useEffect } from "react";
-import { useDropzone, FileRejection } from "react-dropzone";
+import { useDropzone, FileRejection, FileWithPath } from "react-dropzone";
+import { RiUploadCloud2Line } from "react-icons/ri";
 import { isEmpty } from "lodash";
 import {
+  chakra,
+  Stack,
+  Heading,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -10,6 +14,8 @@ import {
   ModalCloseButton,
   Text,
 } from "@chakra-ui/react";
+
+const UploadIcon = chakra(RiUploadCloud2Line);
 
 export const ImportImagesModal = ({
   onImportSucceed,
@@ -24,7 +30,7 @@ export const ImportImagesModal = ({
     onImportSucceed(acceptedFiles);
   }, []);
   const [{ acceptedFiles, fileRejections }, setDropzoneResult] = useState<{
-    acceptedFiles: Array<File>;
+    acceptedFiles: Array<FileWithPath>;
     fileRejections: Array<FileRejection>;
   }>({ acceptedFiles: [], fileRejections: [] });
 
@@ -53,51 +59,76 @@ export const ImportImagesModal = ({
   return (
     <Modal
       isOpen={isOpen}
+      size="xl"
       onClose={() => {
         setDropzoneResult({ acceptedFiles: [], fileRejections: [] });
         onClose();
       }}
     >
       <ModalOverlay />
-      <ModalContent>
-        <ModalHeader textAlign="center">
-          <h2>
-            <Text textStyle="h2" textAlign="center">
-              Import
-            </Text>
-          </h2>
+      <ModalContent height="80vh">
+        <ModalHeader textAlign="center" padding="6">
+          <Heading as="h2" size="lg" pb="2">
+            Import
+          </Heading>
           <Text fontSize="lg" fontWeight="medium">
             Start working with your images. Stay in control of your data. Images
             are not uploaded on LabelFlow servers.
           </Text>
         </ModalHeader>
         <ModalCloseButton />
-        <ModalBody>
+        <ModalBody display="flex" pt="0" pb="6" pr="6" pl="6">
           {isEmpty(acceptedFiles) && isEmpty(fileRejections) ? (
-            <form {...rootProps}>
-              <label htmlFor="file-uploader">
+            <Stack
+              as="form"
+              {...rootProps}
+              border="1px dashed"
+              borderColor="gray.700"
+              borderRadius="md"
+              bg="gray.50"
+              flex="1"
+            >
+              {/* We make the label taking all the available place in the Stack in order to make
+              the all surface clickable since we prevent the onClick on the dropzone parent (see the comment above) */}
+              <chakra.label
+                htmlFor="file-uploader"
+                color="gray.700"
+                fontWeight="700"
+                fontSize="lg"
+                display="flex"
+                flexDirection="column"
+                alignItems="center"
+                justifyContent="Center"
+                flex="1"
+              >
+                <UploadIcon fontSize="9xl" color="gray.700" />
                 Drop folders or images
                 <input {...dropzoneResult.getInputProps()} id="file-uploader" />
-              </label>
-            </form>
+              </chakra.label>
+            </Stack>
           ) : (
             <>
               {!isEmpty(fileRejections) && (
                 <section>
                   <h3>{fileRejections.length} items rejected</h3>
                   <ul>
-                    {fileRejections.map((rejection) => (
-                      <li key={rejection.file.name}>
-                        <span>{rejection.file.name}</span>
-                        <span
-                          title={rejection.errors
-                            .map((e) => e.message)
-                            .join(". ")}
-                        >
-                          {rejection.errors.length} errors
-                        </span>
-                      </li>
-                    ))}
+                    {fileRejections.map((rejection) => {
+                      // Type fix until the following issue is fixed: [insert link here]
+                      // @ts-ignore
+                      const { path } = rejection.file;
+                      return (
+                        <li key={path}>
+                          <span>{path}</span>
+                          <span
+                            title={rejection.errors
+                              .map((e) => e.message)
+                              .join(". ")}
+                          >
+                            {rejection.errors.length} errors
+                          </span>
+                        </li>
+                      );
+                    })}
                   </ul>
                 </section>
               )}
@@ -107,7 +138,7 @@ export const ImportImagesModal = ({
                   <h3>Uploading {acceptedFiles.length} items</h3>
                   <ul>
                     {acceptedFiles.map((f) => (
-                      <li key={f.name}>{f.name}</li>
+                      <li key={f.path}>{f.path}</li>
                     ))}
                   </ul>
                 </section>

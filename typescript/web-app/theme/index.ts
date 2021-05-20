@@ -8,10 +8,5 @@ export const theme = extendTheme({
       },
     },
   },
-  textStyles: {
-    h2: {
-      fontSize: ["3xl"],
-      fontWeight: "800",
-    },
-  },
+  textStyles: {},
 });
