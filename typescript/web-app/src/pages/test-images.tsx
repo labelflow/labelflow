@@ -38,7 +38,6 @@ const importImage = (
   if (file == null) {
     return;
   }
-  console.log("importImage", file);
   createImage({
     variables: {
       data: { file },

@@ -53,7 +53,6 @@ export const images = async (_: any, args: QueryImagesArgs) => {
 // Mutations
 export const createImage = async (_: any, args: MutationCreateImageArgs) => {
   const { file, id } = args.data;
-  console.log("log createImage", file);
   const url = window.URL.createObjectURL(file);
   const imageId = id ?? uuidv4();
   const fileStorageKey = `Image:${imageId}:blob`;
