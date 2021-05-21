@@ -4,21 +4,41 @@ import { createImage, image, images } from "../image";
 beforeAll(() => {
   global.URL.createObjectURL = jest.fn(() => "mockedUrl");
 });
+jest.mock("localforage", () => ({
+  setItem: jest.fn(async () => {}),
+  getItem: jest.fn(async () => {}),
+}));
+
+const mockedLocalForage = <
+  {
+    getItem: jest.Mock<Promise<any>>;
+    setItem: jest.Mock<Promise<any>>;
+  }
+>(localforage as unknown);
 
 describe("Image resolver test suite", () => {
+  beforeEach(() => {
+    jest.resetAllMocks();
+  });
   test("Query image when db is empty", async () => {
+    mockedLocalForage.getItem.mockReturnValue(Promise.resolve(null));
+
     const queryResult = await images(undefined, {});
+
     expect(queryResult.length).toEqual(0);
   });
+
   test("Create image", async () => {
     const createResult = await createImage(undefined, {
       data: { name: "test image", width: 1000, height: 600, url: "myUrl" },
     });
+
     expect(createResult?.name).toEqual("test image");
-    expect(await localforage.getItem(`Image:${createResult.id}`)).toEqual(
-      createResult
+    expect(mockedLocalForage.setItem.mock.calls[0][0]).toEqual(
+      `Image:${createResult.id}`
     );
   });
+
   test("Create image with specified ID", async () => {
     const createResult = await createImage(undefined, {
       data: {
@@ -29,52 +49,68 @@ describe("Image resolver test suite", () => {
         id: "myID",
       },
     });
+
     expect(createResult.id).toEqual("myID");
-    expect(await localforage.getItem(`Image:${createResult.id}`)).toEqual(
-      createResult
+    expect(mockedLocalForage.setItem.mock.calls[0][0]).toEqual(
+      `Image:${createResult.id}`
     );
   });
+
   test("Query image", async () => {
-    const createResult = await createImage(undefined, {
-      data: { name: "test image 2", width: 1000, height: 600, url: "myUrl" },
+    mockedLocalForage.getItem.mockResolvedValueOnce({
+      id: "1",
+      name: "Test",
     });
+
     const queryResult = await image(undefined, {
-      where: { id: createResult.id },
+      where: { id: "1" },
     });
-    expect(queryResult).toEqual({ ...createResult, url: "mockedUrl" });
+
+    expect(queryResult).toEqual({ id: "1", name: "Test" });
+    expect(mockedLocalForage.getItem.mock.calls[0][0]).toEqual(`Image:1`);
   });
-  test("Query images", async () => {
-    const createResult = await createImage(undefined, {
-      data: { name: "test image 3", width: 1000, height: 600, url: "myUrl" },
+  describe("Test list queries", () => {
+    beforeEach(() => {
+      mockedLocalForage.getItem.mockReturnValue(
+        Promise.resolve(["Image:1", "Image:2", "Image:3", "Image:4", "Image:5"])
+      );
     });
-    const queryResult = await images(undefined, {});
-    expect(queryResult.length).toEqual(4);
-    expect(queryResult[queryResult.length - 1]).toEqual({
-      ...createResult,
-      url: "mockedUrl",
+    test("Query images", async () => {
+      const queryResult = await images(undefined, {});
+
+      expect(queryResult.length).toEqual(5);
+      expect(mockedLocalForage.getItem.mock.calls[0][0]).toEqual(`Image:list`);
+      expect(mockedLocalForage.getItem.mock.calls[1][0]).toEqual(`Image:1`);
+      expect(mockedLocalForage.getItem.mock.calls[2][0]).toEqual(`Image:2`);
+      expect(mockedLocalForage.getItem.mock.calls[3][0]).toEqual(`Image:3`);
+      expect(mockedLocalForage.getItem.mock.calls[4][0]).toEqual(`Image:4`);
+      expect(mockedLocalForage.getItem.mock.calls[5][0]).toEqual(`Image:5`);
+      expect(mockedLocalForage.getItem.mock.calls[6]).toBeUndefined();
     });
-  });
-  test("Query images with skip and first", async () => {
-    const createResult = await createImage(undefined, {
-      data: { name: "test image 4", width: 1000, height: 600, url: "myUrl" },
+
+    test("Query images with skip ", async () => {
+      const queryResultSkippingOne = await images(undefined, { skip: 1 });
+
+      expect(queryResultSkippingOne.length).toEqual(4);
     });
-    const queryResultSkippingOne = await images(undefined, { skip: 1 });
-    expect(queryResultSkippingOne.length).toEqual(4);
-    const queryResultFirstTwo = await images(undefined, { first: 2 });
-    expect(queryResultFirstTwo.length).toEqual(2);
-    const queryResultFirstTwoSkipOne = await images(undefined, {
-      first: 2,
-      skip: 1,
+
+    test("Query images with first ", async () => {
+      const queryResultFirstTwo = await images(undefined, { first: 2 });
+
+      expect(queryResultFirstTwo.length).toEqual(2);
     });
-    expect(queryResultFirstTwoSkipOne.length).toEqual(2);
-    const queryResultFirstTwoSkipFour = await images(undefined, {
-      first: 2,
-      skip: 4,
-    });
-    expect(queryResultFirstTwoSkipFour.length).toEqual(1);
-    expect(queryResultFirstTwoSkipFour[0]).toEqual({
-      ...createResult,
-      url: "mockedUrl",
+    test("Query images with skip and first ", async () => {
+      const queryResultFirstTwoSkipOne = await images(undefined, {
+        first: 2,
+        skip: 1,
+      });
+      const queryResultFirstTwoSkipFour = await images(undefined, {
+        first: 2,
+        skip: 4,
+      });
+
+      expect(queryResultFirstTwoSkipOne.length).toEqual(2);
+      expect(queryResultFirstTwoSkipFour.length).toEqual(1);
     });
   });
 });

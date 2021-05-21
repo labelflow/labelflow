@@ -8,7 +8,11 @@ import {
   QueryImagesArgs,
 } from "../../../types.generated";
 
+import { appendToListInStorage, getListFromStorage } from "./utils";
+
+// TODO: Remove
 const mapKeyToUrl = new Map<string, string>();
+
 const typeName = "Image";
 const typeNamePlural = "Image:list";
 
@@ -21,6 +25,8 @@ const getUrlFromKey = memoize(async (key: string) => {
 const getImageByKey = async (key: string) => {
   const entity = await localforage.getItem<Image>(key);
   const url = await getUrlFromKey(key);
+
+  // TODO: Remove
   mapKeyToUrl.set(key, url);
   return { ...entity, url };
 };
@@ -30,19 +36,26 @@ export const image = async (_: any, args: QueryImageArgs) => {
   const imageEntity = await getImageByKey(`${typeName}:${args?.where?.id}`);
   return imageEntity;
 };
+
 export const images = async (_: any, args: QueryImagesArgs) => {
-  const entityKeysList = await localforage.getItem<string[]>(typeNamePlural);
-  if (entityKeysList == null) {
-    return [];
-  }
+  const imagesList = await getListFromStorage<Image>(typeNamePlural);
 
-  const first = args?.first ?? entityKeysList.length;
-  const skip = args?.skip ?? 0;
+  // TODO: Implement this part of the logic in `getListFromStorage`
+  // const first = args?.first ?? entities.length;
+  // const skip = args?.skip ?? 0;
 
-  const filteredKeys = entityKeysList.slice(skip, first + skip);
+  // const filteredKeys = entityKeysList.slice(skip, first + skip);
 
-  const entities = await Promise.all(filteredKeys.map(getImageByKey));
-  return entities;
+  const entitiesWithUrls = await Promise.all(
+    imagesList.map(async (imageEntity) => {
+      return {
+        ...imageEntity,
+        url: await getUrlFromKey(`${typeName}:${imageEntity.id}`),
+      };
+    })
+  );
+
+  return entitiesWithUrls;
 };
 
 // Mutations
@@ -59,24 +72,13 @@ export const createImage = async (_: any, args: MutationCreateImageArgs) => {
 
   // Set entity in db
   const newEntityKey = `${typeName}:${newEntity.id}`;
-
   await localforage.setItem(newEntityKey, newEntity);
 
   // Add entity to entity list
-  const oldEntityKeysList = await localforage.getItem(typeNamePlural);
-
-  const newEntitiesList =
-    oldEntityKeysList == null
-      ? [newEntityKey]
-      : [...(oldEntityKeysList as []), newEntityKey];
-
-  await localforage.setItem(typeNamePlural, newEntitiesList);
+  await appendToListInStorage(typeNamePlural, newEntityKey);
 
   return newEntity;
 };
-
-// const updateImage = () => { };
-// const deleteImage = () => { };
 
 export default {
   Query: {
@@ -86,6 +88,5 @@ export default {
 
   Mutation: {
     createImage,
-    // updateImage, deleteImage
   },
 };

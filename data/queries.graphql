@@ -6,10 +6,6 @@ type Query {
     orderBy: ExampleOrderByInput
   ): [Example!]!
   example(where: ExampleWhereUniqueInput!): Example!
-  images(
-    where: ImageWhereInput
-    first: Int
-    skip: Int # orderBy: ImageOrderByInput
-  ): [Image!]!
+  images(where: ImageWhereInput, first: Int, skip: Int): [Image!]!
   image(where: ImageWhereUniqueInput!): Image!
 }

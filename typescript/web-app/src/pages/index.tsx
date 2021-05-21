@@ -77,8 +77,7 @@ const IndexPage = () => {
       <h1>Hello world</h1>
       <button
         type="button"
-        onClick={() => createExample({ variables: { name: "Test" } })}
-      >
+        onClick={() => createExample({ variables: { name: "Test" } })}>
         Add example
       </button>
       <input
