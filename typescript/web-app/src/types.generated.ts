@@ -97,6 +97,7 @@ export type Query = {
 export type QueryExamplesArgs = {
   where?: Maybe<ExampleWhereInput>;
   first?: Maybe<Scalars['Int']>;
+  skip?: Maybe<Scalars['Int']>;
   orderBy?: Maybe<ExampleOrderByInput>;
 };
 
