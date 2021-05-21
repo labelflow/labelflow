@@ -21,7 +21,7 @@ jobs:
         id: yarn-cache
         with:
           path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-yarn-${{ hashFiles('/yarn.lock') }}
+          key: ${{ runner.os }}-yarn-${{secrets.ACTIONS_CACHE_VERSION}}-${{ hashFiles('/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
       - name: install dependencies
@@ -31,7 +31,7 @@ jobs:
         id: node-modules-cache
         with:
           path: "**/node_modules"
-          key: ${{ runner.os }}-modules-${{ hashFiles('/yarn.lock') }}
+          key: ${{ runner.os }}-modules-${{secrets.ACTIONS_CACHE_VERSION}}-${{ hashFiles('/yarn.lock') }}
 
   lint-typescript:
     name: Lint Typescript code
@@ -45,7 +45,7 @@ jobs:
         id: node-modules-cache
         with:
           path: "**/node_modules"
-          key: ${{ runner.os }}-modules-${{ hashFiles('/yarn.lock') }}
+          key: ${{ runner.os }}-modules-${{secrets.ACTIONS_CACHE_VERSION}}-${{ hashFiles('/yarn.lock') }}
       - name: lint project code
         run: yarn lint
 
@@ -85,7 +85,9 @@ jobs:
         id: node-modules-cache
         with:
           path: "**/node_modules"
-          key: ${{ runner.os }}-modules-${{ hashFiles('/yarn.lock') }}
+          key: ${{ runner.os }}-modules-${{secrets.ACTIONS_CACHE_VERSION}}-${{ hashFiles('/yarn.lock') }}
+      - name: check node_modules
+        run: ls typescript/web-app/node_modules
       - name: run tests
         run: yarn test
 
@@ -103,7 +105,7 @@ jobs:
         id: node-modules-cache
         with:
           path: "**/node_modules"
-          key: ${{ runner.os }}-modules-${{ hashFiles('/yarn.lock') }}
+          key: ${{ runner.os }}-modules-${{secrets.ACTIONS_CACHE_VERSION}}-${{ hashFiles('/yarn.lock') }}
       - name: Publish to Chromatic
         uses: chromaui/action@v1
         # Chromatic GitHub Action options
@@ -124,7 +126,7 @@ jobs:
         id: node-modules-cache
         with:
           path: "**/node_modules"
-          key: ${{ runner.os }}-modules-${{ hashFiles('/yarn.lock') }}
+          key: ${{ runner.os }}-modules-${{secrets.ACTIONS_CACHE_VERSION}}-${{ hashFiles('/yarn.lock') }}
       - name: Cypress run
         uses: cypress-io/github-action@v2
         with:
