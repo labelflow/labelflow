@@ -28,17 +28,14 @@ import {
 
 const UploadIcon = chakra(RiUploadCloud2Line);
 
-// TODO: Remove initialAcceptedFiles once the component is finished
 export const ImportImagesModal = ({
   onImportSucceed,
   isOpen = false,
   onClose = () => {},
-  initialAcceptedFiles = [],
 }: {
   onImportSucceed: (images: Array<File>) => void;
   isOpen?: boolean;
   onClose?: () => void;
-  initialAcceptedFiles?: Array<FileWithPath>;
 }) => {
   const onDrop = useCallback((acceptedFiles) => {
     onImportSucceed(acceptedFiles);
@@ -46,7 +43,7 @@ export const ImportImagesModal = ({
   const [{ acceptedFiles, fileRejections }, setDropzoneResult] = useState<{
     acceptedFiles: Array<FileWithPath>;
     fileRejections: Array<FileRejection>;
-  }>({ acceptedFiles: initialAcceptedFiles, fileRejections: [] });
+  }>({ acceptedFiles: [], fileRejections: [] });
 
   const dropzoneResult = useDropzone({
     onDrop,
@@ -84,7 +81,10 @@ export const ImportImagesModal = ({
         errors: r.errors,
       })
     ),
-    ...acceptedFiles.map((f) => ({ path: f.path, errors: [] })),
+    ...acceptedFiles.map((f) => ({
+      path: f.path,
+      errors: [],
+    })),
   ];
 
   return (
@@ -148,14 +148,7 @@ export const ImportImagesModal = ({
           ) : (
             !isEmpty(files) && (
               <>
-                <Box
-                  pl="2"
-                  pr="2"
-                  pt="1"
-                  pb="1"
-                  bg="gray.200"
-                  borderTopRadius="md"
-                >
+                <Box p="2" bg="gray.200" borderTopRadius="md">
                   <Text>Uploading {files.length} items</Text>
                 </Box>
                 <Box as="section" overflowY="auto">
@@ -163,24 +156,35 @@ export const ImportImagesModal = ({
                     <Tbody>
                       {files.map(({ path, errors }, i) => (
                         <Tr key={path} bg={i % 2 === 0 ? "gray.50" : "inherit"}>
-                          <Td w="1" pl="2" pr="2" fontSize="md">
+                          <Td pl="2" pr="2" fontSize="md">
                             {isEmpty(errors) ? (
                               <RiImageLine />
                             ) : (
                               <RiFile3Line />
                             )}
                           </Td>
-                          <Td pl="0" fontSize="md">
-                            {path}
+                          <Td pl="0" fontSize="md" lineHeight="md">
+                            <Tooltip label={path}>
+                              <Text isTruncated maxWidth="sm" textAlign="left">
+                                {path}
+                              </Text>
+                            </Tooltip>
                           </Td>
                           {isEmpty(errors) ? (
                             <Td />
                           ) : (
-                            <Td color="gray.400" fontSize="md">
+                            <Td
+                              color="gray.400"
+                              fontSize="md"
+                              textAlign="right"
+                            >
                               <Tooltip
                                 label={errors.map((e) => e.message).join(". ")}
+                                placement="left"
                               >
-                                <Text>{errors.length} errors</Text>
+                                <Text as="span" color="red.600">
+                                  {errors.length} errors
+                                </Text>
                               </Tooltip>
                             </Td>
                           )}

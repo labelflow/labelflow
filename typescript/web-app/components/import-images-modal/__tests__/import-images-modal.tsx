@@ -38,7 +38,7 @@ test("should return the list of images the user picked", async () => {
 test("should display the number of images", async () => {
   await renderModalAndImport();
 
-  expect(screen.getByText(/uploading 2 items/i)).toBeDefined();
+  expect(screen.getByText(/uploading 3 items/i)).toBeDefined();
   expect(
     screen.queryByLabelText(/drop folders or images/i)
   ).not.toBeInTheDocument();
@@ -67,8 +67,13 @@ test("should not display the rejected images name if everything is fine", async 
 test("should display the amount of error when a file could not be imported", async () => {
   await renderModalAndImport(files.slice(2, 3));
 
+  userEvent.hover(screen.getByText(/1 errors/i));
+
   expect(screen.getByText(/1 errors/i)).toBeDefined();
-  expect(screen.getByTitle(/File type must be/i)).toBeDefined();
+  // We need to wait for the tooltip to be rendered before checking its content.
+  await waitFor(() =>
+    expect(screen.getByText(/File type must be/i)).toBeDefined()
+  );
 });
 
 test("should not display the modal by default", async () => {
@@ -86,11 +91,11 @@ test("should call the onClose handler", async () => {
   expect(onClose).toHaveBeenCalled();
 });
 
-test("should display the amount of error when a file could not be imported", async () => {
+test("should clear the modal content when closed", async () => {
   await renderModalAndImport();
 
   userEvent.click(screen.getByLabelText("Close"));
 
   expect(screen.queryByText(/uploading 2 items/i)).not.toBeInTheDocument();
-  expect(screen.queryByText(/items rejected/i)).not.toBeInTheDocument();
+  expect(screen.queryByText(/errors/i)).not.toBeInTheDocument();
 });
