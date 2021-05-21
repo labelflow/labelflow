@@ -14,7 +14,7 @@ export const Default = () => {
       <ImportImagesModal
         isOpen={isOpen}
         onClose={onClose}
-        onImportSucceed={(acceptedFiles) => console.log(acceptedFiles)}
+        onImportSucceed={() => {}}
       />
     </div>
   );
