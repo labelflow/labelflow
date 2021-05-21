@@ -1,5 +1,5 @@
 import { Button, useDisclosure } from "@chakra-ui/react";
-import { ImportImagesModal } from "./import-images-modal";
+import { ImportImagesModal } from "../import-images-modal";
 
 export default {
   title: "Import images modal",
