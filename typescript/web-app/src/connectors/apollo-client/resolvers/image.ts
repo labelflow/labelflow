@@ -1,5 +1,6 @@
 import localforage from "localforage";
 import { v4 as uuidv4 } from "uuid";
+import memoize from "mem";
 import {
   Image,
   MutationCreateImageArgs,
@@ -11,13 +12,15 @@ const mapKeyToUrl = new Map<string, string>();
 const typeName = "Image";
 const typeNamePlural = "Image:list";
 
-const getImageByKey = async (key: string) => {
-  const entity = await localforage.getItem<Image>(key);
-  if (mapKeyToUrl.has(key)) {
-    return { ...entity, url: mapKeyToUrl.get(key) };
-  }
+const getUrlFromKey = memoize(async (key: string) => {
   const file = await localforage.getItem(`${key}:blob`);
   const url = window.URL.createObjectURL(file);
+  return url;
+});
+
+const getImageByKey = async (key: string) => {
+  const entity = await localforage.getItem<Image>(key);
+  const url = await getUrlFromKey(key);
   mapKeyToUrl.set(key, url);
   return { ...entity, url };
 };
