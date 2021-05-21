@@ -145,30 +145,40 @@ export const ImportImagesModal = ({
               </chakra.label>
             </Stack>
           ) : (
-            (!isEmpty(acceptedFiles) || !isEmpty(fileRejections)) && (
+            !isEmpty(files) && (
               <>
-                <Box p="2" bg="gray.200" borderTopRadius="md">
-                  <Text>Uploading {acceptedFiles.length} items</Text>
+                <Box
+                  pl="2"
+                  pr="2"
+                  pt="1"
+                  pb="1"
+                  bg="gray.200"
+                  borderTopRadius="md"
+                >
+                  <Text>Uploading {files.length} items</Text>
                 </Box>
                 <Box as="section" overflowY="auto">
-                  <Table size="sm">
+                  <Table size="sm" variant="stripped">
                     <Tbody>
-                      {files.map(({ path, errors }) => (
-                        <Tr key={path}>
-                          <Td w="2">
+                      {files.map(({ path, errors }, i) => (
+                        <Tr key={path} bg={i % 2 === 0 ? "gray.50" : "inherit"}>
+                          <Td w="1" pl="2" pr="2" fontSize="md">
                             {isEmpty(errors) ? (
                               <RiImageLine />
                             ) : (
                               <RiFile3Line />
                             )}
                           </Td>
-                          <Td pl="0">{path}</Td>
+                          <Td pl="0" fontSize="md">
+                            {path}
+                          </Td>
                           {isEmpty(errors) ? (
                             <Td />
                           ) : (
                             <Td
                               title={errors.map((e) => e.message).join(". ")}
                               color="gray.400"
+                              fontSize="md"
                             >
                               {errors.length} errors
                             </Td>
