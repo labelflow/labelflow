@@ -10,7 +10,6 @@ import { isEmpty } from "lodash/fp";
 import {
   chakra,
   Box,
-  Button,
   Stack,
   Heading,
   Modal,
@@ -24,8 +23,6 @@ import {
   Tr,
   Td,
   Text,
-  Flex,
-  Spacer,
 } from "@chakra-ui/react";
 
 const UploadIcon = chakra(RiUploadCloud2Line);
