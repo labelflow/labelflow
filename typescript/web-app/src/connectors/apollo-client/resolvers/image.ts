@@ -10,9 +10,6 @@ import {
 
 import { appendToListInStorage, getListFromStorage } from "./utils";
 
-// TODO: Remove
-const mapKeyToUrl = new Map<string, string>();
-
 const typeName = "Image";
 const typeNamePlural = "Image:list";
 
@@ -26,8 +23,6 @@ const getImageByKey = async (key: string) => {
   const entity = await localforage.getItem<Image>(key);
   const url = await getUrlFromKey(key);
 
-  // TODO: Remove
-  mapKeyToUrl.set(key, url);
   return { ...entity, url };
 };
 
