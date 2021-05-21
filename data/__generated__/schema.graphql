@@ -25,12 +25,41 @@ input ExampleWhereUniqueInput {
   id: ID!
 }
 
+type Image {
+  id: ID
+  createdAt: DateTime
+  updatedAt: DateTime
+  url: String
+  name: String
+  height: Int
+  width: Int
+}
+
+input ImageCreateInput {
+  id: ID
+  name: String!
+  width: Int!
+  height: Int!
+  url: String!
+}
+
+input ImageWhereInput {
+  id: ID
+}
+
+input ImageWhereUniqueInput {
+  id: ID!
+}
+
 type Mutation {
   createExample(data: ExampleCreateInput!): Example
+  createImage(data: ImageCreateInput!): Image
 }
 
 type Query {
   hello: String
   examples(where: ExampleWhereInput, first: Int, orderBy: ExampleOrderByInput): [Example!]!
   example(where: ExampleWhereUniqueInput!): Example!
+  images(where: ImageWhereInput, first: Int, skip: Int): [Image!]!
+  image(where: ImageWhereUniqueInput!): Image!
 }

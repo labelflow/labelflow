@@ -1,0 +1,15 @@
+input ImageCreateInput {
+  id: ID
+  name: String!
+  width: Int!
+  height: Int!
+  url: String!
+}
+
+input ImageWhereInput {
+  id: ID
+}
+
+input ImageWhereUniqueInput {
+  id: ID!
+}
