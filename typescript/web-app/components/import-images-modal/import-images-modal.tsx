@@ -25,6 +25,7 @@ import {
 
 const UploadIcon = chakra(RiUploadCloud2Line);
 
+// TODO: Remove initialAcceptedFiles once the component is finished
 export const ImportImagesModal = ({
   onImportSucceed,
   isOpen = false,
@@ -139,13 +140,6 @@ export const ImportImagesModal = ({
                     <Text>Uploading {acceptedFiles.length} items</Text>
                   </Box>
                   <Spacer />
-                  <Box>
-                    {!isEmpty(fileRejections) && (
-                      <Button colorScheme="gray" size="sm">
-                        Retry {fileRejections.length} items rejected
-                      </Button>
-                    )}
-                  </Box>
                 </Flex>
                 <Box as="section" overflowY="auto">
                   <Table variant="striped" colorScheme="gray" size="sm">
