@@ -54,21 +54,14 @@ test("should display the images name", async () => {
 test("should display the rejected images name", async () => {
   await renderModalAndImport();
 
-  expect(screen.getByText(/1 items rejected/i)).toBeDefined();
   expect(screen.getByText(/error.pdf/i)).toBeDefined();
+  expect(screen.getByText(/errors/i)).toBeDefined();
 });
 
 test("should not display the rejected images name if everything is fine", async () => {
   await renderModalAndImport(files.slice(0, 2));
 
   expect(screen.queryByText(/items rejected/i)).not.toBeInTheDocument();
-});
-
-test("should display only rejected images name when all files are not valid", async () => {
-  await renderModalAndImport(files.slice(2, 3));
-
-  expect(screen.getByText(/1 items rejected/i)).toBeDefined();
-  expect(screen.queryByText(/uploading/i)).not.toBeInTheDocument();
 });
 
 test("should display the amount of error when a file could not be imported", async () => {
