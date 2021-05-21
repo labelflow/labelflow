@@ -1,10 +1,10 @@
 import localforage from "localforage";
 import { v4 as uuidv4 } from "uuid";
-import { isEmpty } from "lodash/fp";
 import {
   MutationCreateExampleArgs,
   QueryExampleArgs,
 } from "../../../types.generated";
+import { appendToListInStorage, getListFromStorage } from "./utils";
 
 const typeName = "Example";
 const typeNamePlural = "Example:list";
@@ -15,14 +15,7 @@ export const example = async (_: any, args: QueryExampleArgs) => {
   return entity;
 };
 export const examples = async () => {
-  const entityKeysList = await localforage.getItem(typeNamePlural);
-  if (isEmpty(entityKeysList)) {
-    return [];
-  }
-  const entities = await Promise.all(
-    (entityKeysList as []).map((key: string) => localforage.getItem(key))
-  );
-  return entities;
+  return getListFromStorage(typeNamePlural);
 };
 
 // Mutations
@@ -45,14 +38,7 @@ export const createExample = async (
   await localforage.setItem(newEntityKey, newEntity);
 
   // Add entity to entity list
-  const oldEntityKeysList = await localforage.getItem(typeNamePlural);
-
-  const newEntitiesList =
-    oldEntityKeysList == null
-      ? [newEntityKey]
-      : [...(oldEntityKeysList as []), newEntityKey];
-
-  await localforage.setItem(typeNamePlural, newEntitiesList);
+  await appendToListInStorage(typeNamePlural, newEntityKey);
 
   return newEntity;
 };

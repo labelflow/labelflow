@@ -1,3 +1,4 @@
 type Mutation {
   createExample(data: ExampleCreateInput!): Example
+  createImage(data: ImageCreateInput!): Image
 }
