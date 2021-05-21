@@ -1,5 +1,10 @@
 import { useCallback, useState, useEffect } from "react";
-import { useDropzone, FileRejection, FileWithPath } from "react-dropzone";
+import {
+  useDropzone,
+  FileRejection,
+  FileWithPath,
+  FileError,
+} from "react-dropzone";
 import { RiUploadCloud2Line, RiImageLine, RiFile3Line } from "react-icons/ri";
 import { isEmpty } from "lodash/fp";
 import {
@@ -74,6 +79,16 @@ export const ImportImagesModal = ({
     },
   };
 
+  const files = [
+    ...fileRejections.map(
+      (r: { file: FileWithPath; errors: Array<FileError> }) => ({
+        path: r.file.path,
+        errors: r.errors,
+      })
+    ),
+    ...acceptedFiles.map((f) => ({ path: f.path, errors: [] })),
+  ];
+
   return (
     <Modal
       isOpen={isOpen}
@@ -135,43 +150,32 @@ export const ImportImagesModal = ({
           ) : (
             (!isEmpty(acceptedFiles) || !isEmpty(fileRejections)) && (
               <>
-                <Flex>
-                  <Box p="2">
-                    <Text>Uploading {acceptedFiles.length} items</Text>
-                  </Box>
-                  <Spacer />
-                </Flex>
+                <Box p="2" bg="gray.200" borderTopRadius="md">
+                  <Text>Uploading {acceptedFiles.length} items</Text>
+                </Box>
                 <Box as="section" overflowY="auto">
-                  <Table variant="striped" colorScheme="gray" size="sm">
+                  <Table size="sm">
                     <Tbody>
-                      {fileRejections.map((rejection) => {
-                        // Type fix until the following issue is fixed: [insert link here]
-                        // @ts-ignore
-                        const { path } = rejection.file;
-                        return (
-                          <Tr key={path}>
-                            <Td w="2">
-                              <RiFile3Line />
-                            </Td>
-                            <Td pl="0">{path}</Td>
-                            <Td
-                              title={rejection.errors
-                                .map((e) => e.message)
-                                .join(". ")}
-                              color="gray.400"
-                            >
-                              {rejection.errors.length} errors
-                            </Td>
-                          </Tr>
-                        );
-                      })}
-                      {acceptedFiles.map(({ path }) => (
+                      {files.map(({ path, errors }) => (
                         <Tr key={path}>
                           <Td w="2">
-                            <RiImageLine />
+                            {isEmpty(errors) ? (
+                              <RiImageLine />
+                            ) : (
+                              <RiFile3Line />
+                            )}
                           </Td>
                           <Td pl="0">{path}</Td>
-                          <Td />
+                          {isEmpty(errors) ? (
+                            <Td />
+                          ) : (
+                            <Td
+                              title={errors.map((e) => e.message).join(". ")}
+                              color="gray.400"
+                            >
+                              {errors.length} errors
+                            </Td>
+                          )}
                         </Tr>
                       ))}
                     </Tbody>
