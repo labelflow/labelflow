@@ -67,9 +67,7 @@ describe("Image resolver test suite", () => {
   describe("Test list queries", () => {
     beforeEach(() => {
       mockedLocalForage.getItem.mockReturnValue(
-        new Promise((resolve) => {
-          resolve(["Image:1", "Image:2", "Image:3", "Image:4", "Image:5"]);
-        })
+        Promise.resolve(["Image:1", "Image:2", "Image:3", "Image:4", "Image:5"])
       );
     });
     test("Query images", async () => {
