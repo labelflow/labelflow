@@ -1,35 +1,31 @@
 // /////////////////////////////////////////////////////////////////////////////
 // The catalogue is the list of object from openlayers that are supported
 // it is generated automatically, and is strongly typed
-//
+// /////////////////////////////////////////////////////////////////////////////
 import {
   upperFirst,
-  toPairs,
-  fromPairs,
-  map,
-  lowerFirst,
-  isObject,
+
+  // lowerFirst,
+  // isObject,
   omit,
 } from "lodash/fp";
+
 // /////////////////////////////////////////////////////////////////////////////
 // Import stuff we want to use from Openlayers
-// Here we omit abstract base classes, utility classes and other weird stuff
-import * as olTemp from "ol";
-//
-import * as olLayerTemp from "ol/layer";
-//
-import * as olControlTemp from "ol/control";
-//
-import * as olInteractionTemp from "ol/interaction";
-//
-import * as olSourceTemp from "ol/source";
-//
-import * as olGeomTemp from "ol/geom";
-//
-import * as olStyleTemp from "ol/style";
 
+import * as olRaw from "ol";
+import * as olLayerRaw from "ol/layer";
+import * as olControlRaw from "ol/control";
+import * as olInteractionRaw from "ol/interaction";
+import * as olSourceRaw from "ol/source";
+import * as olGeomRaw from "ol/geom";
+import * as olStyleRaw from "ol/style";
+
+// /////////////////////////////////////////////////////////////////////////////
+// Here we omit abstract base classes, utility classes and other weird stuff
 const ol = omit(
   [
+    "defaults",
     "AssertionError",
     "Disposable",
     "Graticule",
@@ -49,15 +45,14 @@ const ol = omit(
     "getUid",
     "VERSION",
   ],
-  olTemp
+  olRaw
 );
-const olLayer = olLayerTemp;
-const olControl = omit(["defaults"], olControlTemp);
-const olInteraction = omit(["defaults"], olInteractionTemp);
-const olSource = omit(["Image", "Source", "Tile"], olSourceTemp);
-const olGeom = omit(["Geometry", "SimpleGeometry"], olGeomTemp);
-
-const olStyle = omit(["Image", "IconImage"], olStyleTemp);
+const olLayer = omit(["defaults"], olLayerRaw);
+const olControl = omit(["defaults"], olControlRaw);
+const olInteraction = omit(["defaults"], olInteractionRaw);
+const olSource = omit(["defaults", "Image", "Source", "Tile"], olSourceRaw);
+const olGeom = omit(["defaults", "Geometry", "SimpleGeometry"], olGeomRaw);
+const olStyle = omit(["defaults", "Image", "IconImage"], olStyleRaw);
 
 // /////////////////////////////////////////////////////////////////////////////
 // Catalogue Type
@@ -70,8 +65,8 @@ export type Kind =
   | "Interaction"
   | "Source"
   | "Geom"
-  | "Style"
-  | null;
+  | "Style";
+// | null;
 
 export type CatalogueItem<T> = {
   kind: Kind;
@@ -80,149 +75,161 @@ export type CatalogueItem<T> = {
 };
 
 // Now we generate the types automatically (This parts needs typescript >=4.1)
-// type CatalogueOl = {
-//   [K in keyof typeof ol as `ol${Capitalize<K>}`]: CatalogueItem<typeof ol[K]>
-// }
-// type CatalogueOlLayer = {
-//   [K in keyof typeof olLayer as `olLayer${Capitalize<K>}`]: CatalogueItem<typeof olLayer[K]>
-// }
-// type CatalogueOlControl = {
-//   [K in keyof typeof olControl as `olControl${Capitalize<K>}`]: CatalogueItem<typeof olControl[K]>
-// }
-// type CatalogueOlInteraction = {
-//   [K in keyof typeof olInteraction as `olInteraction${Capitalize<K>}`]: CatalogueItem<typeof olInteraction[K]>
-// }
-// type CatalogueOlSource = {
-//   [K in keyof typeof olSource as `olSource${Capitalize<K>}`]: CatalogueItem<typeof olSource[K]>
-// }
-// type CatalogueOlGeom = {
-//   [K in keyof typeof olGeom as `olGeom${Capitalize<K>}`]: CatalogueItem<typeof olGeom[K]>
-// }
-// type CatalogueOlStyle = {
-//   [K in keyof typeof olStyle as `olStyle${Capitalize<K>}`]: CatalogueItem<typeof olStyle[K]>
-// }
-
-// With typescript <4.1 we have to do this:
 type CatalogueOl = {
-  olCollection: CatalogueItem<typeof olTemp.Collection>;
-  olFeature: CatalogueItem<typeof olTemp.Feature>;
-  olGeolocation: CatalogueItem<typeof olTemp.Geolocation>;
-  olMap: CatalogueItem<typeof olTemp.Map>;
-  olObject: CatalogueItem<typeof olTemp.Object>;
-  olObservable: CatalogueItem<typeof olTemp.Observable>;
-  olOverlay: CatalogueItem<typeof olTemp.Overlay>;
-  olPluggableMap: CatalogueItem<typeof olTemp.PluggableMap>;
-  olTileCache: CatalogueItem<typeof olTemp.TileCache>;
-  olView: CatalogueItem<typeof olTemp.View>;
+  [K in keyof typeof ol as `ol${Capitalize<K>}`]: CatalogueItem<typeof ol[K]>;
 };
 type CatalogueOlLayer = {
-  olLayerGraticule: CatalogueItem<typeof olLayerTemp.Graticule>;
-  olLayerGroup: CatalogueItem<typeof olLayerTemp.Group>;
-  olLayerHeatmap: CatalogueItem<typeof olLayerTemp.Heatmap>;
-  olLayerImage: CatalogueItem<typeof olLayerTemp.Image>;
-  olLayerLayer: CatalogueItem<typeof olLayerTemp.Layer>;
-  olLayerMapboxVector: CatalogueItem<typeof olLayerTemp.MapboxVector>;
-  olLayerTile: CatalogueItem<typeof olLayerTemp.Tile>;
-  olLayerVector: CatalogueItem<typeof olLayerTemp.Vector>;
-  olLayerVectorImage: CatalogueItem<typeof olLayerTemp.VectorImage>;
-  olLayerVectorTile: CatalogueItem<typeof olLayerTemp.VectorTile>;
-  olLayerWebGLPoints: CatalogueItem<typeof olLayerTemp.WebGLPoints>;
+  [K in keyof typeof olLayer as `olLayer${Capitalize<K>}`]: CatalogueItem<
+    typeof olLayer[K]
+  >;
 };
 type CatalogueOlControl = {
-  olControlAttribution: CatalogueItem<typeof olControlTemp.Attribution>;
-  olControlControl: CatalogueItem<typeof olControlTemp.Control>;
-  olControlFullScreen: CatalogueItem<typeof olControlTemp.FullScreen>;
-  olControlMousePosition: CatalogueItem<typeof olControlTemp.MousePosition>;
-  olControlOverviewMap: CatalogueItem<typeof olControlTemp.OverviewMap>;
-  olControlRotate: CatalogueItem<typeof olControlTemp.Rotate>;
-  olControlScaleLine: CatalogueItem<typeof olControlTemp.ScaleLine>;
-  olControlZoom: CatalogueItem<typeof olControlTemp.Zoom>;
-  olControlZoomSlider: CatalogueItem<typeof olControlTemp.ZoomSlider>;
-  olControlZoomToExtent: CatalogueItem<typeof olControlTemp.ZoomToExtent>;
+  [K in keyof typeof olControl as `olControl${Capitalize<K>}`]: CatalogueItem<
+    typeof olControl[K]
+  >;
 };
 type CatalogueOlInteraction = {
-  olInteractionDoubleClickZoom: CatalogueItem<
-    typeof olInteractionTemp.DoubleClickZoom
+  [K in keyof typeof olInteraction as `olInteraction${Capitalize<K>}`]: CatalogueItem<
+    typeof olInteraction[K]
   >;
-  olInteractionDragAndDrop: CatalogueItem<typeof olInteractionTemp.DragAndDrop>;
-  olInteractionDragBox: CatalogueItem<typeof olInteractionTemp.DragBox>;
-  olInteractionDragPan: CatalogueItem<typeof olInteractionTemp.DragPan>;
-  olInteractionDragRotate: CatalogueItem<typeof olInteractionTemp.DragRotate>;
-  olInteractionDragRotateAndZoom: CatalogueItem<
-    typeof olInteractionTemp.DragRotateAndZoom
-  >;
-  olInteractionDragZoom: CatalogueItem<typeof olInteractionTemp.DragZoom>;
-  olInteractionDraw: CatalogueItem<typeof olInteractionTemp.Draw>;
-  olInteractionExtent: CatalogueItem<typeof olInteractionTemp.Extent>;
-  olInteractionInteraction: CatalogueItem<typeof olInteractionTemp.Interaction>;
-  olInteractionKeyboardPan: CatalogueItem<typeof olInteractionTemp.KeyboardPan>;
-  olInteractionKeyboardZoom: CatalogueItem<
-    typeof olInteractionTemp.KeyboardZoom
-  >;
-  olInteractionModify: CatalogueItem<typeof olInteractionTemp.Modify>;
-  olInteractionMouseWheelZoom: CatalogueItem<
-    typeof olInteractionTemp.MouseWheelZoom
-  >;
-  olInteractionPinchRotate: CatalogueItem<typeof olInteractionTemp.PinchRotate>;
-  olInteractionPinchZoom: CatalogueItem<typeof olInteractionTemp.PinchZoom>;
-  olInteractionPointer: CatalogueItem<typeof olInteractionTemp.Pointer>;
-  olInteractionSelect: CatalogueItem<typeof olInteractionTemp.Select>;
-  olInteractionSnap: CatalogueItem<typeof olInteractionTemp.Snap>;
-  olInteractionTranslate: CatalogueItem<typeof olInteractionTemp.Translate>;
 };
 type CatalogueOlSource = {
-  olSourceBingMaps: CatalogueItem<typeof olSourceTemp.BingMaps>;
-  olSourceCartoDB: CatalogueItem<typeof olSourceTemp.CartoDB>;
-  olSourceCluster: CatalogueItem<typeof olSourceTemp.Cluster>;
-  olSourceIIIF: CatalogueItem<typeof olSourceTemp.IIIF>;
-  // olSourceImage: CatalogueItem<typeof olSourceTemp.Image>;
-  olSourceImageArcGISRest: CatalogueItem<typeof olSourceTemp.ImageArcGISRest>;
-  olSourceImageCanvas: CatalogueItem<typeof olSourceTemp.ImageCanvas>;
-  olSourceImageMapGuide: CatalogueItem<typeof olSourceTemp.ImageMapGuide>;
-  olSourceImageStatic: CatalogueItem<typeof olSourceTemp.ImageStatic>;
-  olSourceImageWMS: CatalogueItem<typeof olSourceTemp.ImageWMS>;
-  olSourceOSM: CatalogueItem<typeof olSourceTemp.OSM>;
-  olSourceRaster: CatalogueItem<typeof olSourceTemp.Raster>;
-  // olSourceSource: CatalogueItem<typeof olSourceTemp.Source>;
-  olSourceStamen: CatalogueItem<typeof olSourceTemp.Stamen>;
-  // olSourceTile: CatalogueItem<typeof olSourceTemp.Tile>;
-  olSourceTileArcGISRest: CatalogueItem<typeof olSourceTemp.TileArcGISRest>;
-  olSourceTileDebug: CatalogueItem<typeof olSourceTemp.TileDebug>;
-  olSourceTileImage: CatalogueItem<typeof olSourceTemp.TileImage>;
-  olSourceTileJSON: CatalogueItem<typeof olSourceTemp.TileJSON>;
-  olSourceTileWMS: CatalogueItem<typeof olSourceTemp.TileWMS>;
-  olSourceUrlTile: CatalogueItem<typeof olSourceTemp.UrlTile>;
-  olSourceUTFGrid: CatalogueItem<typeof olSourceTemp.UTFGrid>;
-  olSourceVector: CatalogueItem<typeof olSourceTemp.Vector>;
-  olSourceVectorTile: CatalogueItem<typeof olSourceTemp.VectorTile>;
-  olSourceWMTS: CatalogueItem<typeof olSourceTemp.WMTS>;
-  olSourceXYZ: CatalogueItem<typeof olSourceTemp.XYZ>;
-  olSourceZoomify: CatalogueItem<typeof olSourceTemp.Zoomify>;
+  [K in keyof typeof olSource as `olSource${Capitalize<K>}`]: CatalogueItem<
+    typeof olSource[K]
+  >;
 };
 type CatalogueOlGeom = {
-  olGeomCircle: CatalogueItem<typeof olGeomTemp.Circle>;
-  // olGeomGeometry: CatalogueItem<typeof olGeomTemp.Geometry>;
-  olGeomGeometryCollection: CatalogueItem<typeof olGeomTemp.GeometryCollection>;
-  olGeomLinearRing: CatalogueItem<typeof olGeomTemp.LinearRing>;
-  olGeomLineString: CatalogueItem<typeof olGeomTemp.LineString>;
-  olGeomMultiLineString: CatalogueItem<typeof olGeomTemp.MultiLineString>;
-  olGeomMultiPoint: CatalogueItem<typeof olGeomTemp.MultiPoint>;
-  olGeomMultiPolygon: CatalogueItem<typeof olGeomTemp.MultiPolygon>;
-  olGeomPoint: CatalogueItem<typeof olGeomTemp.Point>;
-  olGeomPolygon: CatalogueItem<typeof olGeomTemp.Polygon>;
-  // olGeomSimpleGeometry: CatalogueItem<typeof olGeomTemp.SimpleGeometry>;
+  [K in keyof typeof olGeom as `olGeom${Capitalize<K>}`]: CatalogueItem<
+    typeof olGeom[K]
+  >;
 };
 type CatalogueOlStyle = {
-  olStyleCircle: CatalogueItem<typeof olStyleTemp.Circle>;
-  olStyleFill: CatalogueItem<typeof olStyleTemp.Fill>;
-  olStyleIcon: CatalogueItem<typeof olStyleTemp.Icon>;
-  // olStyleIconImage: CatalogueItem<typeof olStyleTemp.IconImage>;
-  // olStyleImage: CatalogueItem<typeof olStyleTemp.Image>;
-  olStyleRegularShape: CatalogueItem<typeof olStyleTemp.RegularShape>;
-  olStyleStroke: CatalogueItem<typeof olStyleTemp.Stroke>;
-  olStyleStyle: CatalogueItem<typeof olStyleTemp.Style>;
-  olStyleText: CatalogueItem<typeof olStyleTemp.Text>;
+  [K in keyof typeof olStyle as `olStyle${Capitalize<K>}`]: CatalogueItem<
+    typeof olStyle[K]
+  >;
 };
+
+// With typescript <4.1 we have to do this:
+// type CatalogueOl = {
+//   olCollection: CatalogueItem<typeof olRaw.Collection>;
+//   olFeature: CatalogueItem<typeof olRaw.Feature>;
+//   olGeolocation: CatalogueItem<typeof olRaw.Geolocation>;
+//   olMap: CatalogueItem<typeof olRaw.Map>;
+//   olObject: CatalogueItem<typeof olRaw.Object>;
+//   olObservable: CatalogueItem<typeof olRaw.Observable>;
+//   olOverlay: CatalogueItem<typeof olRaw.Overlay>;
+//   olPluggableMap: CatalogueItem<typeof olRaw.PluggableMap>;
+//   olTileCache: CatalogueItem<typeof olRaw.TileCache>;
+//   olView: CatalogueItem<typeof olRaw.View>;
+// };
+// type CatalogueOlLayer = {
+//   olLayerGraticule: CatalogueItem<typeof olLayerRaw.Graticule>;
+//   olLayerGroup: CatalogueItem<typeof olLayerRaw.Group>;
+//   olLayerHeatmap: CatalogueItem<typeof olLayerRaw.Heatmap>;
+//   olLayerImage: CatalogueItem<typeof olLayerRaw.Image>;
+//   olLayerLayer: CatalogueItem<typeof olLayerRaw.Layer>;
+//   olLayerMapboxVector: CatalogueItem<typeof olLayerRaw.MapboxVector>;
+//   olLayerTile: CatalogueItem<typeof olLayerRaw.Tile>;
+//   olLayerVector: CatalogueItem<typeof olLayerRaw.Vector>;
+//   olLayerVectorImage: CatalogueItem<typeof olLayerRaw.VectorImage>;
+//   olLayerVectorTile: CatalogueItem<typeof olLayerRaw.VectorTile>;
+//   olLayerWebGLPoints: CatalogueItem<typeof olLayerRaw.WebGLPoints>;
+// };
+// type CatalogueOlControl = {
+//   olControlAttribution: CatalogueItem<typeof olControlRaw.Attribution>;
+//   olControlControl: CatalogueItem<typeof olControlRaw.Control>;
+//   olControlFullScreen: CatalogueItem<typeof olControlRaw.FullScreen>;
+//   olControlMousePosition: CatalogueItem<typeof olControlRaw.MousePosition>;
+//   olControlOverviewMap: CatalogueItem<typeof olControlRaw.OverviewMap>;
+//   olControlRotate: CatalogueItem<typeof olControlRaw.Rotate>;
+//   olControlScaleLine: CatalogueItem<typeof olControlRaw.ScaleLine>;
+//   olControlZoom: CatalogueItem<typeof olControlRaw.Zoom>;
+//   olControlZoomSlider: CatalogueItem<typeof olControlRaw.ZoomSlider>;
+//   olControlZoomToExtent: CatalogueItem<typeof olControlRaw.ZoomToExtent>;
+// };
+// type CatalogueOlInteraction = {
+//   olInteractionDoubleClickZoom: CatalogueItem<
+//     typeof olInteractionRaw.DoubleClickZoom
+//   >;
+//   olInteractionDragAndDrop: CatalogueItem<typeof olInteractionRaw.DragAndDrop>;
+//   olInteractionDragBox: CatalogueItem<typeof olInteractionRaw.DragBox>;
+//   olInteractionDragPan: CatalogueItem<typeof olInteractionRaw.DragPan>;
+//   olInteractionDragRotate: CatalogueItem<typeof olInteractionRaw.DragRotate>;
+//   olInteractionDragRotateAndZoom: CatalogueItem<
+//     typeof olInteractionRaw.DragRotateAndZoom
+//   >;
+//   olInteractionDragZoom: CatalogueItem<typeof olInteractionRaw.DragZoom>;
+//   olInteractionDraw: CatalogueItem<typeof olInteractionRaw.Draw>;
+//   olInteractionExtent: CatalogueItem<typeof olInteractionRaw.Extent>;
+//   olInteractionInteraction: CatalogueItem<typeof olInteractionRaw.Interaction>;
+//   olInteractionKeyboardPan: CatalogueItem<typeof olInteractionRaw.KeyboardPan>;
+//   olInteractionKeyboardZoom: CatalogueItem<
+//     typeof olInteractionRaw.KeyboardZoom
+//   >;
+//   olInteractionModify: CatalogueItem<typeof olInteractionRaw.Modify>;
+//   olInteractionMouseWheelZoom: CatalogueItem<
+//     typeof olInteractionRaw.MouseWheelZoom
+//   >;
+//   olInteractionPinchRotate: CatalogueItem<typeof olInteractionRaw.PinchRotate>;
+//   olInteractionPinchZoom: CatalogueItem<typeof olInteractionRaw.PinchZoom>;
+//   olInteractionPointer: CatalogueItem<typeof olInteractionRaw.Pointer>;
+//   olInteractionSelect: CatalogueItem<typeof olInteractionRaw.Select>;
+//   olInteractionSnap: CatalogueItem<typeof olInteractionRaw.Snap>;
+//   olInteractionTranslate: CatalogueItem<typeof olInteractionRaw.Translate>;
+// };
+// type CatalogueOlSource = {
+//   olSourceBingMaps: CatalogueItem<typeof olSourceRaw.BingMaps>;
+//   olSourceCartoDB: CatalogueItem<typeof olSourceRaw.CartoDB>;
+//   olSourceCluster: CatalogueItem<typeof olSourceRaw.Cluster>;
+//   olSourceIIIF: CatalogueItem<typeof olSourceRaw.IIIF>;
+//   // olSourceImage: CatalogueItem<typeof olSourceRaw.Image>;
+//   olSourceImageArcGISRest: CatalogueItem<typeof olSourceRaw.ImageArcGISRest>;
+//   olSourceImageCanvas: CatalogueItem<typeof olSourceRaw.ImageCanvas>;
+//   olSourceImageMapGuide: CatalogueItem<typeof olSourceRaw.ImageMapGuide>;
+//   olSourceImageStatic: CatalogueItem<typeof olSourceRaw.ImageStatic>;
+//   olSourceImageWMS: CatalogueItem<typeof olSourceRaw.ImageWMS>;
+//   olSourceOSM: CatalogueItem<typeof olSourceRaw.OSM>;
+//   olSourceRaster: CatalogueItem<typeof olSourceRaw.Raster>;
+//   // olSourceSource: CatalogueItem<typeof olSourceRaw.Source>;
+//   olSourceStamen: CatalogueItem<typeof olSourceRaw.Stamen>;
+//   // olSourceTile: CatalogueItem<typeof olSourceRaw.Tile>;
+//   olSourceTileArcGISRest: CatalogueItem<typeof olSourceRaw.TileArcGISRest>;
+//   olSourceTileDebug: CatalogueItem<typeof olSourceRaw.TileDebug>;
+//   olSourceTileImage: CatalogueItem<typeof olSourceRaw.TileImage>;
+//   olSourceTileJSON: CatalogueItem<typeof olSourceRaw.TileJSON>;
+//   olSourceTileWMS: CatalogueItem<typeof olSourceRaw.TileWMS>;
+//   olSourceUrlTile: CatalogueItem<typeof olSourceRaw.UrlTile>;
+//   olSourceUTFGrid: CatalogueItem<typeof olSourceRaw.UTFGrid>;
+//   olSourceVector: CatalogueItem<typeof olSourceRaw.Vector>;
+//   olSourceVectorTile: CatalogueItem<typeof olSourceRaw.VectorTile>;
+//   olSourceWMTS: CatalogueItem<typeof olSourceRaw.WMTS>;
+//   olSourceXYZ: CatalogueItem<typeof olSourceRaw.XYZ>;
+//   olSourceZoomify: CatalogueItem<typeof olSourceRaw.Zoomify>;
+// };
+// type CatalogueOlGeom = {
+//   olGeomCircle: CatalogueItem<typeof olGeomRaw.Circle>;
+//   // olGeomGeometry: CatalogueItem<typeof olGeomRaw.Geometry>;
+//   olGeomGeometryCollection: CatalogueItem<typeof olGeomRaw.GeometryCollection>;
+//   olGeomLinearRing: CatalogueItem<typeof olGeomRaw.LinearRing>;
+//   olGeomLineString: CatalogueItem<typeof olGeomRaw.LineString>;
+//   olGeomMultiLineString: CatalogueItem<typeof olGeomRaw.MultiLineString>;
+//   olGeomMultiPoint: CatalogueItem<typeof olGeomRaw.MultiPoint>;
+//   olGeomMultiPolygon: CatalogueItem<typeof olGeomRaw.MultiPolygon>;
+//   olGeomPoint: CatalogueItem<typeof olGeomRaw.Point>;
+//   olGeomPolygon: CatalogueItem<typeof olGeomRaw.Polygon>;
+//   // olGeomSimpleGeometry: CatalogueItem<typeof olGeomRaw.SimpleGeometry>;
+// };
+// type CatalogueOlStyle = {
+//   olStyleCircle: CatalogueItem<typeof olStyleRaw.Circle>;
+//   olStyleFill: CatalogueItem<typeof olStyleRaw.Fill>;
+//   olStyleIcon: CatalogueItem<typeof olStyleRaw.Icon>;
+//   // olStyleIconImage: CatalogueItem<typeof olStyleRaw.IconImage>;
+//   // olStyleImage: CatalogueItem<typeof olStyleRaw.Image>;
+//   olStyleRegularShape: CatalogueItem<typeof olStyleRaw.RegularShape>;
+//   olStyleStroke: CatalogueItem<typeof olStyleRaw.Stroke>;
+//   olStyleStyle: CatalogueItem<typeof olStyleRaw.Style>;
+//   olStyleText: CatalogueItem<typeof olStyleRaw.Text>;
+// };
 
 // Finished, now some additional stuff
 export type Catalogue = CatalogueOl &
@@ -236,98 +243,85 @@ export type CatalogueKey = keyof Catalogue;
 
 // /////////////////////////////////////////////////////////////////////////////
 // Catalogue Value
-const catalogueOl = fromPairs(
-  map(
-    <T>([key, value]: [string, T]): [string, CatalogueItem<T>] => [
-      `ol${upperFirst(key)}`,
-      { kind: key as Kind, type: `ol${upperFirst(key)}`, object: value },
-    ],
-    toPairs(ol)
-  )
-) as CatalogueOl;
+const catalogueOl: CatalogueOl = Object.fromEntries(
+  Object.entries(ol).map(([key, value]) => [
+    `ol${upperFirst(key)}`,
+    {
+      kind: key,
+      type: `ol${upperFirst(key)}`,
+      object: value,
+    },
+  ])
+);
 
-const catalogueOlLayer = fromPairs(
-  map(
-    <T>([key, value]: [string, T]): [string, CatalogueItem<T>] => [
-      `olLayer${upperFirst(key)}`,
-      {
-        kind: "Layer" as Kind,
-        type: `olLayer${upperFirst(key)}`,
-        object: value,
-      },
-    ],
-    toPairs(olLayer)
-  )
-) as CatalogueOlLayer;
+const catalogueOlLayer: CatalogueOlLayer = Object.fromEntries(
+  Object.entries(olLayer).map(([key, value]) => [
+    `olLayer${upperFirst(key)}`,
+    {
+      kind: "Layer",
+      type: `olLayer${upperFirst(key)}`,
+      object: value,
+    },
+  ])
+);
 
-const catalogueOlControl = fromPairs(
-  map(
-    <T>([key, value]: [string, T]): [string, CatalogueItem<T>] => [
-      `olControl${upperFirst(key)}`,
-      {
-        kind: "Control" as Kind,
-        type: `olControl${upperFirst(key)}`,
-        object: value,
-      },
-    ],
-    toPairs(olControl)
-  )
-) as CatalogueOlControl;
+const catalogueOlControl: CatalogueOlControl = Object.fromEntries(
+  Object.entries(olControl).map(([key, value]) => [
+    `olControl${upperFirst(key)}`,
+    {
+      kind: "Control",
+      type: `olControl${upperFirst(key)}`,
+      object: value,
+    },
+  ])
+) as CatalogueOlControl; // FIXME: Not sure why it is needed here
 
-const catalogueOlInteraction = fromPairs(
-  map(
-    <T>([key, value]: [string, T]): [string, CatalogueItem<T>] => [
-      `olInteraction${upperFirst(key)}`,
-      {
-        kind: "Interaction" as Kind,
-        type: `olInteraction${upperFirst(key)}`,
-        object: value,
-      },
-    ],
-    toPairs(olInteraction)
-  )
-) as CatalogueOlInteraction;
+const catalogueOlInteraction: CatalogueOlInteraction = Object.fromEntries(
+  Object.entries(olInteraction).map(([key, value]) => [
+    `olInteraction${upperFirst(key)}`,
+    {
+      kind: "Interaction",
+      type: `olInteraction${upperFirst(key)}`,
+      object: value,
+    },
+  ])
+) as CatalogueOlInteraction; // FIXME: Not sure why it is needed here
 
-const catalogueOlSource = fromPairs(
-  map(
-    <T>([key, value]: [string, T]): [string, CatalogueItem<T>] => [
-      `olSource${upperFirst(key)}`,
-      {
-        kind: "Source" as Kind,
-        type: `olSource${upperFirst(key)}`,
-        object: value,
-      },
-    ],
-    toPairs(olSource)
-  )
-) as unknown as CatalogueOlSource;
+const catalogueOlSource: CatalogueOlSource = Object.fromEntries(
+  Object.entries(olSource).map(([key, value]) => [
+    `olSource${upperFirst(key)}`,
+    {
+      kind: "Source",
+      type: `olSource${upperFirst(key)}`,
+      object: value,
+    },
+  ])
+);
 
-const catalogueOlGeom = fromPairs(
-  map(
-    <T>([key, value]: [string, T]): [string, CatalogueItem<T>] => [
-      `olGeom${upperFirst(key)}`,
-      { kind: "Geom" as Kind, type: `olGeom${upperFirst(key)}`, object: value },
-    ],
-    toPairs(olGeom)
-  )
-) as unknown as CatalogueOlGeom;
+const catalogueOlGeom: CatalogueOlGeom = Object.fromEntries(
+  Object.entries(olGeom).map(([key, value]) => [
+    `olGeom${upperFirst(key)}`,
+    {
+      kind: "Geom",
+      type: `olGeom${upperFirst(key)}`,
+      object: value,
+    },
+  ])
+);
 
-const catalogueOlStyle = fromPairs(
-  map(
-    <T>([key, value]: [string, T]): [string, CatalogueItem<T>] => [
-      `olStyle${upperFirst(key)}`,
-      {
-        kind: "Style" as Kind,
-        type: `olStyle${upperFirst(key)}`,
-        object: value,
-      },
-    ],
-    toPairs(olStyle)
-  )
-) as unknown as CatalogueOlStyle;
+const catalogueOlStyle: CatalogueOlStyle = Object.fromEntries(
+  Object.entries(olStyle).map(([key, value]) => [
+    `olStyle${upperFirst(key)}`,
+    {
+      kind: "Style",
+      type: `olStyle${upperFirst(key)}`,
+      object: value,
+    },
+  ])
+);
 
 // eslint-disable-next-line import/no-mutable-exports
-export let catalogue: Catalogue = {
+export const catalogue: Catalogue = {
   ...catalogueOl,
   ...catalogueOlLayer,
   ...catalogueOlControl,
@@ -339,33 +333,33 @@ export let catalogue: Catalogue = {
 
 /// ////////////////////////////////////////////////////////////////////////////
 
-/// ////////////////////////////////////////////////////////////////////////////
-// A way to extend the catalogue
-export const extend = <T>(objects: { [key: string]: T }): void => {
-  // Cleanup the input
-  const cleanedUpObjects = fromPairs(
-    map(<U>([key, value]: [string, U | CatalogueItem<U>]): [
-      string,
-      CatalogueItem<U>
-    ] => {
-      if (!isObject((value as CatalogueItem<U>).object)) {
-        // If it's directly an object we put it nicely in a catalogue item
-        return [
-          lowerFirst(key),
-          {
-            type: lowerFirst(key),
-            kind: null,
-            object: value as U,
-          },
-        ];
-      }
-      // If it's already a catalogue item it's good
-      return [
-        lowerFirst(key),
-        { type: lowerFirst(key), kind: null, ...(value as CatalogueItem<U>) },
-      ];
-    }, toPairs(objects))
-  );
-  // Update the catalogue
-  catalogue = { ...catalogue, ...cleanedUpObjects };
-};
+// /// ////////////////////////////////////////////////////////////////////////////
+// // A way to extend the catalogue
+// export const extend = <T>(objects: { [key: string]: T }): void => {
+//   // Cleanup the input
+//   const cleanedUpObjects = fromPairs(
+//     map(<U>([key, value]: [string, U | CatalogueItem<U>]): [
+//       string,
+//       CatalogueItem<U>
+//     ] => {
+//       if (!isObject((value as CatalogueItem<U>).object)) {
+//         // If it's directly an object we put it nicely in a catalogue item
+//         return [
+//           lowerFirst(key),
+//           {
+//             type: lowerFirst(key),
+//             kind: null,
+//             object: value as U,
+//           },
+//         ];
+//       }
+//       // If it's already a catalogue item it's good
+//       return [
+//         lowerFirst(key),
+//         { kind: null, ...(value as CatalogueItem<U>), type: lowerFirst(key) },
+//       ];
+//     }, toPairs(objects))
+//   );
+//   // Update the catalogue
+//   catalogue = { ...catalogue, ...cleanedUpObjects };
+// };
