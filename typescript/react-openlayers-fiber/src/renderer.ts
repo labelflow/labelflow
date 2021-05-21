@@ -27,32 +27,33 @@ import {
   View as OlView,
   Feature as OlFeature,
 } from "ol";
-import Layer from "ol/layer/Layer";
-import Control from "ol/control/Control";
-import Interaction from "ol/interaction/Interaction";
-import Overlay from "ol/Overlay";
-import Source from "ol/source/Source";
-import SourceVector from "ol/source/Vector";
-import SourceCluster from "ol/source/Cluster";
-import Geometry from "ol/geom/Geometry";
 
 import { ReactOlFiber } from "./types";
-import { catalogue, CatalogueKey } from "./catalogue";
+import { catalogue, CatalogueKey, CatalogueItem, Catalogue } from "./catalogue";
 
 export interface ObjectHash {
   [name: string]: OlObject;
 }
 
-export type Detach = (container: OlObject, child: OlObject) => void;
+export type Detach<
+  ParentItem extends CatalogueItem,
+  ChildItem extends CatalogueItem
+> = (
+  parent: Instance<ParentItem>,
+  child: Instance<ChildItem, ParentItem> //  | TextInstance // But not used
+) => void;
 
-export type Attach<Parent extends Instance, Child extends Instance<Parent>> =
+export type Attach<
+  ParentItem extends CatalogueItem,
+  ChildItem extends CatalogueItem
+> =
   | string
   | ((
-      container: OlObject,
-      child: OlObject,
-      parentInstance: Parent,
-      childInstance: Child
-    ) => Detach);
+      container: ParentItem["object"],
+      child: ChildItem["object"],
+      parentInstance: Instance<ParentItem>,
+      childInstance: Instance<ChildItem, ParentItem>
+    ) => Detach<ParentItem, ChildItem>);
 
 // export type Attach =
 //   | string
@@ -71,48 +72,34 @@ export type Container = OlObject;
 
 const MetaOlFiber = Symbol("MetaOlFiber");
 
-// export type Instance = OlObject & {
-//   [MetaOlFiber]: {
-//     kind: string;
-//     type: string;
-//     parent?: Instance;
-//     attach?: Attach;
-//     detach?: (container: Container, child: Container) => void;
-//   };
-// };
-
-// export type Instance<Self extends OlObject, Parent extends OlObject = any> =
-//   Self & {
-//     [MetaOlFiber]: {
-//       kind: string;
-//       type: string;
-//       parent?: Instance<Parent>;
-//       attach?: Attach<Parent, Self>;
-//       detach?: (container: Container, child: Container) => void;
-//     };
-//   };
-
-export interface Instance<Parent extends Instance<any> = any> extends OlObject {
+export type Instance<
+  SelfItem extends CatalogueItem = CatalogueItem,
+  ParentItem extends CatalogueItem = CatalogueItem
+> = InstanceType<SelfItem["object"]> & {
   [MetaOlFiber]: {
-    kind: string;
-    type: string;
-    parent?: Parent;
-    attach?: Attach<Parent, Instance>;
-    detach?: (container: Container, child: Container) => void;
+    kind: SelfItem["kind"];
+    type: SelfItem["type"];
+    parent?: Instance<ParentItem>;
+    attach?: Attach<ParentItem, SelfItem>;
+    detach?: Detach<ParentItem, SelfItem>;
   };
-}
+};
 
 // export type OpaqueHandle = Fiber;
 export type OpaqueHandle = any;
 export type TextInstance = null;
-export type HydratableInstance<Parent extends Instance<any> = any> =
-  Instance<Parent>;
-export type PublicInstance<Parent extends Instance<any> = any> =
-  Instance<Parent>;
+export type HydratableInstance<
+  Item extends CatalogueItem = CatalogueItem,
+  ParentItem extends CatalogueItem = CatalogueItem
+> = Instance<Item, ParentItem>;
+export type PublicInstance<
+  Item extends CatalogueItem = CatalogueItem,
+  ParentItem extends CatalogueItem = CatalogueItem
+> = Instance<Item, ParentItem>;
 export type HostContext = {};
 export type UpdatePayload = boolean;
 export type ChildSet = void;
-export type TimeoutHandle = TimerHandler;
+export type TimeoutHandle = number;
 export type NoTimeout = number;
 
 // export type Reconciler = HostConfig<
@@ -225,52 +212,68 @@ const applyProps = (
   }, keys(newProps));
 };
 
-const defaultAttach = <
-  Parent extends PublicInstance,
-  Child extends PublicInstance<Parent>
+/**
+ * This function is a no-op, it's just a type guard
+ * It allows to force an instance to be considered by typescript
+ * as being of a type from the catalogue
+ * @param type
+ * @param instance
+ * @returns
+ */
+const getAs = <
+  A extends CatalogueItem,
+  B extends CatalogueItem,
+  K extends CatalogueKey
 >(
-  parent: Parent,
-  child: Child,
-  parentInstance: Parent,
-  childInstance: Child
-): Detach => {
-  if (!childInstance) throw error001();
+  _type: K,
+  instance: Instance<A, B>
+): Instance<Catalogue[K], B> => {
+  return instance as unknown as Instance<Catalogue[K], B>;
+};
 
-  const containerOlObject = parentInstance;
-  const { kind: containerKind } = parentInstance[MetaOlFiber];
-  const childOlObject = childInstance;
-  const { kind: childKind } = childInstance[MetaOlFiber];
+const defaultAttach = <
+  ParentItem extends CatalogueItem,
+  ChildItem extends CatalogueItem
+>(
+  parent: Instance<ParentItem>,
+  child: Instance<ChildItem, ParentItem>
+): Detach<ParentItem, ChildItem> => {
+  if (!child) throw error001();
+
+  const { kind: containerKind } = parent[MetaOlFiber];
+  const { kind: childKind } = child[MetaOlFiber];
 
   switch (containerKind) {
     case "Map": {
       switch (childKind) {
         case "View":
-          (containerOlObject as OlMap).setView(childOlObject as OlView);
-          return (containerOlObject) =>
-            (containerOlObject as OlMap).unset("view"); // Dubious at best
+          getAs("olMap", parent).setView(getAs("olView", child));
+          return (newParent) => getAs("olMap", newParent).unset("view"); // Dubious at best
         case "Layer":
-          (containerOlObject as OlMap).addLayer(childOlObject as Layer);
-          return (containerOlObject, childOlObject) =>
-            (containerOlObject as OlMap).removeLayer(childOlObject as Layer);
+          getAs("olMap", parent).addLayer(getAs("olLayerLayer", child));
+          return (newParent, newChild) =>
+            getAs("olMap", newParent).removeLayer(
+              getAs("olLayerLayer", newChild)
+            );
         case "Control":
-          (containerOlObject as OlMap).addControl(childOlObject as Control);
-          return (containerOlObject, childOlObject) =>
-            (containerOlObject as OlMap).removeControl(
-              childOlObject as Control
+          getAs("olMap", parent).addControl(getAs("olControlControl", child));
+          return (newParent, newChild) =>
+            getAs("olMap", newParent).removeControl(
+              getAs("olControlControl", newChild)
             );
         case "Interaction":
-          (containerOlObject as OlMap).addInteraction(
-            childOlObject as Interaction
+          getAs("olMap", parent).addInteraction(
+            getAs("olInteractionInteraction", child)
           );
-          return (containerOlObject, childOlObject) =>
-            (containerOlObject as OlMap).removeInteraction(
-              childOlObject as Interaction
+          return (newParent, newChild) =>
+            getAs("olMap", newParent).removeInteraction(
+              getAs("olInteractionInteraction", newChild)
             );
         case "Overlay":
-          (containerOlObject as OlMap).addOverlay(childOlObject as Overlay);
-          return (containerOlObject, childOlObject) =>
-            (containerOlObject as OlMap).removeOverlay(
-              childOlObject as Overlay
+          getAs("olMap", parent).addOverlay(getAs("olOverlay", child));
+          return (newParent, newChild) =>
+            getAs("olMap", newParent).removeOverlay(
+              getAs("olOverlay", newChild)
             );
         default:
           throw error002(containerKind, childKind);
@@ -279,9 +282,12 @@ const defaultAttach = <
     case "Layer": {
       switch (childKind) {
         case "Source":
-          (containerOlObject as Layer).setSource(childOlObject as Source);
-          return (containerOlObject, childOlObject) =>
-            (containerOlObject as Layer).unset("source"); // Dubious at best
+          getAs("olLayerLayer", parent).setSource(
+            // getAs("olSourceSource", child)
+            getAs("olSourceVector", child)
+          );
+          return (newParent, _newChild) =>
+            getAs("olLayerLayer", newParent).unset("source"); // Dubious at best
         default:
           throw error002(containerKind, childKind);
       }
@@ -289,19 +295,17 @@ const defaultAttach = <
     case "Source": {
       switch (childKind) {
         case "Feature":
-          (containerOlObject as SourceVector).addFeature(
-            childOlObject as OlFeature
-          );
-          return (containerOlObject, childOlObject) =>
-            (containerOlObject as SourceVector).removeFeature(
-              childOlObject as OlFeature
+          getAs("olSourceVector", parent).addFeature(getAs("olFeature", child));
+          return (newParent, newChild) =>
+            getAs("olSourceVector", newParent).removeFeature(
+              getAs("olFeature", newChild)
             ); // Dubious at best
         case "Source":
-          (containerOlObject as SourceCluster).setSource(
-            childOlObject as SourceVector
+          getAs("olSourceCluster", parent).setSource(
+            getAs("olSourceVector", child)
           );
-          return (containerOlObject, childOlObject) =>
-            (containerOlObject as SourceCluster).unset("source"); // Dubious at best
+          return (newParent, _newChild) =>
+            getAs("olSourceCluster", newParent).unset("source"); // Dubious at best
         default:
           throw error002(containerKind, childKind);
       }
@@ -309,11 +313,12 @@ const defaultAttach = <
     case "Feature": {
       switch (childKind) {
         case "Geom":
-          (containerOlObject as OlFeature).setGeometry(
-            childOlObject as Geometry
+          getAs("olFeature", parent).setGeometry(
+            // getAs("olGeomGeometry", child)
+            getAs("olGeomGeometryCollection", child)
           );
-          return (containerOlObject, childOlObject) =>
-            (containerOlObject as OlFeature).unset("geometry"); // Dubious at best
+          return (newParent, _newChild) =>
+            getAs("olFeature", newParent).unset("geometry"); // Dubious at best
         default:
           throw error002(containerKind, childKind);
       }
@@ -339,30 +344,30 @@ const getPublicInstance = (
 };
 
 // Not used as of today, feel free to implement something cool instead of this
-const getRootHostContext = (rootContainerInstance: Container): HostContext =>
+const getRootHostContext = (_rootContainerInstance: Container): HostContext =>
   emptyObject;
 
 // Not used as of today, feel free to implement something cool instead of this
 const getChildHostContext = (
   parentHostContext: HostContext,
   type: Type,
-  rootContainerInstance: Container
+  _rootContainerInstance: Container
 ): HostContext => {
   return typeof parentHostContext === "string"
     ? `${parentHostContext}.${type}`
     : type;
 };
 
-const prepareForCommit = (containerInfo: Container): void => {};
+const prepareForCommit = (_containerInfo: Container): void => {};
 
-const resetAfterCommit = (containerInfo: Container): void => {};
+const resetAfterCommit = (_containerInfo: Container): void => {};
 
 const createInstance = (
   type: Type,
   props: Props,
-  rootContainerInstance: Container,
-  hostContext: HostContext,
-  internalInstanceHandle: OpaqueHandle
+  _rootContainerInstance: Container,
+  _hostContext: HostContext,
+  _internalInstanceHandle: OpaqueHandle
 ): Instance => {
   let olObject;
   let kind;
@@ -400,46 +405,52 @@ const createInstance = (
     } else if (isNil(constructFrom)) {
       // No constructFrom prop (most common)
       const initialProps = flow(
-        pickBy((value, key) => key.substr(0, 7) === "initial"),
-        mapKeys((key) => lowerFirst(key.substr(7)))
+        pickBy((_value, propKey) => propKey.substr(0, 7) === "initial"),
+        mapKeys((propKey: string) => lowerFirst(propKey.substr(7)))
       )(otherProps);
 
-      const props = {
+      const objectProps = {
         ...initialProps,
         ...mapKeys(
-          (key) => (startsWith("_", key) ? key.substring(1) : key),
-          pickBy((value, key) => key.substr(0, 7) !== "initial", otherProps)
+          (propKey: string) =>
+            startsWith("_", propKey) ? propKey.substring(1) : propKey,
+          pickBy(
+            (_value, propKey) => propKey.substr(0, 7) !== "initial",
+            otherProps
+          )
         ),
       };
 
       if (isNil(args)) {
         // No args, simple ol object with a single options object arg
-        olObject = new (target.object as new (arg: any) => any)(props);
+        olObject = new (target.object as new (arg: any) => any)(objectProps);
         kind = target.kind;
       } else if (isArray(args)) {
         // Args array
-        olObject = new (target.object as new (...args: any[]) => any)(...args);
+        olObject = new (target.object as new (...args2: any[]) => any)(...args);
         kind = target.kind;
       } else {
         // Single argument
         olObject = new (target.object as new (arg: any) => any)({
-          ...props,
+          ...objectProps,
           ...args,
         });
         kind = target.kind;
       }
-    } else {
+    } else if (isFunction(target.object[constructFrom])) {
       // constructFrom prop is present
-      if (isFunction(target[constructFrom])) {
-        // The static field exists on the class
-        olObject = target[constructFrom](...args);
-        kind = target.kind;
-      } else {
-        // Static constructForm does not exist
-        throw new Error(
-          `React-Openlayers-Fiber Error: ${constructFrom} is not a constructor for ${target}`
-        );
-      }
+      // The static field exists on the class
+      olObject = (
+        target.object[constructFrom] as unknown as (
+          ...t: typeof args
+        ) => Instance
+      )(...args);
+      kind = target.kind;
+    } else {
+      // Static constructForm does not exist
+      throw new Error(
+        `React-Openlayers-Fiber Error: ${constructFrom} is not a constructor for ${target}`
+      );
     }
 
     olObject[MetaOlFiber] = {
@@ -449,28 +460,27 @@ const createInstance = (
     };
 
     applyProps(olObject, {}, otherProps, true);
-
-    return olObject;
   }
+  return olObject;
 };
 
 const finalizeInitialChildren = (
-  parentInstance: Instance,
-  type: Type,
-  props: Props,
-  rootContainerInstance: Container,
-  hostContext: HostContext
+  _parentInstance: Instance,
+  _type: Type,
+  _props: Props,
+  _rootContainerInstance: Container,
+  _hostContext: HostContext
 ): boolean => {
   return false;
 };
 
 const prepareUpdate = (
-  instance: Instance,
-  type: Type,
+  _instance: Instance,
+  _type: Type,
   oldProps: Props,
   newProps: Props,
-  rootContainerInstance: Container,
-  hostContext: HostContext
+  _rootContainerInstance: Container,
+  _hostContext: HostContext
 ): null | UpdatePayload => {
   const oldKeys = keys(oldProps);
   const newKeys = keys(newProps);
@@ -487,77 +497,173 @@ const prepareUpdate = (
     .some((key) => oldProps[key] !== newProps[key]);
 };
 
-const shouldSetTextContent = (type: Type, props: Props): boolean => {
+const shouldSetTextContent = (_type: Type, _props: Props): boolean => {
   return false;
 };
 
-const shouldDeprioritizeSubtree = (type: Type, props: Props): boolean => {
+const shouldDeprioritizeSubtree = (_type: Type, _props: Props): boolean => {
   return false;
 };
 
 const createTextInstance = (
-  text: string,
-  rootContainerInstance: Container,
-  hostContext: HostContext,
-  internalInstanceHandle: OpaqueHandle
+  _text: string,
+  _rootContainerInstance: Container,
+  _hostContext: HostContext,
+  _internalInstanceHandle: OpaqueHandle
 ): TextInstance => {
   return null;
 };
 
 const scheduleTimeout:
-  | ((
-      handler: (...args: any[]) => void,
-      timeout: number
-    ) => TimeoutHandle | NoTimeout)
+  | ((handler: TimerHandler, timeout: number) => TimeoutHandle | NoTimeout)
   | null = isFunction(setTimeout) ? setTimeout : null;
 
 const cancelTimeout: ((handle: TimeoutHandle | NoTimeout) => void) | null =
   isFunction(clearTimeout) ? clearTimeout : null;
+
 const noTimeout: NoTimeout = -1;
 
 const commitTextUpdate = (
-  textInstance: TextInstance,
-  oldText: string,
-  newText: string
+  _textInstance: TextInstance,
+  _oldText: string,
+  _newText: string
 ): void => {};
 
 const commitMount = (
-  instance: Instance,
-  type: Type,
-  newProps: Props,
-  internalInstanceHandle: OpaqueHandle
+  _instance: Instance,
+  _type: Type,
+  _newProps: Props,
+  _internalInstanceHandle: OpaqueHandle
 ): void => {};
 
-const removeChild = (
-  parentInstance: Instance,
-  childInstance: Instance | TextInstance
+const removeChild = <
+  ParentItem extends CatalogueItem,
+  ChildItem extends CatalogueItem
+>(
+  parent: Instance<ParentItem>,
+  child: Instance<ChildItem, ParentItem> | TextInstance
 ): void => {
-  const container = parentInstance;
-  const child = childInstance;
+  if (!child) throw error001();
   const { attach, detach } = child[MetaOlFiber];
   if (isFunction(detach)) {
-    detach(container, child);
+    detach(parent, child);
   } else if (isString(attach)) {
-    container[attach] = null;
+    // eslint-disable-next-line no-param-reassign
+    (parent as Record<string, any>)[attach] = undefined;
+    // eslint-disable-next-line no-param-reassign
+    delete (parent as Record<string, any>)[attach];
   } else {
-    new Error(
-      `React-Openlayers-Fiber Error: Couldn't remove this child from this container. You can specify how to detach this type of child ("${child.constructor.name}") from this type of container ("${container.constructor.name}") using the "attach" props.`
+    throw new Error(
+      `React-Openlayers-Fiber Error: Couldn't remove this child from this container. You can specify how to detach this type of child ("${child.constructor.name}") from this type of container ("${parent.constructor.name}") using the "attach" props.`
     );
   }
 };
 
 const removeChildFromContainer = (
-  container: Container,
+  _container: Container,
   child: Instance | TextInstance
 ): void => {
   // Probably not neded
   // There can only be one map in its parent div
-  (child as OlMap).setTarget(null);
+  (child as OlMap).setTarget(undefined);
+  (child as OlMap).unset("target");
 };
+
+const appendChild = <
+  ParentItem extends CatalogueItem,
+  ChildItem extends CatalogueItem
+>(
+  parent: Instance<ParentItem>,
+  child: Instance<ChildItem, ParentItem> | TextInstance
+): void => {
+  if (!child) throw error001();
+
+  const { attach } = child[MetaOlFiber];
+
+  // eslint-disable-next-line no-param-reassign
+  child[MetaOlFiber].parent = parent;
+  if (isNil(attach)) {
+    // eslint-disable-next-line no-param-reassign
+    child[MetaOlFiber].detach = defaultAttach(parent, child);
+  } else if (isString(attach)) {
+    const setterGeneric = (parent as any)?.set;
+    const setterSpecific = (parent as any)?.[`set${upperFirst(attach)}`];
+    if (isFunction(setterSpecific)) {
+      // Example:   source.setLayer(x)
+      setterSpecific.bind(parent)(child);
+      // eslint-disable-next-line no-param-reassign
+      child[MetaOlFiber].detach = (newParent, newChild) => {
+        const unsetterSpecific = (newParent as any)?.[
+          `unset${upperFirst(attach)}`
+        ];
+        if (isFunction(unsetterSpecific)) {
+          unsetterSpecific.bind(newParent)(newChild);
+        } else {
+          setterSpecific.bind(newParent)(undefined);
+        }
+      };
+    } else if (isFunction(setterGeneric)) {
+      // Example:   source.set("layer",x)
+      setterGeneric.bind(parent)(attach, child);
+      // eslint-disable-next-line no-param-reassign
+      child[MetaOlFiber].detach = (newParent, newChild) => {
+        const unsetterGeneric = (newParent as any)?.unset;
+        if (isFunction(unsetterGeneric)) {
+          unsetterGeneric.bind(newParent)(attach, newChild);
+        } else {
+          setterGeneric.bind(newParent)(attach, undefined);
+        }
+      };
+    } else {
+      // Example:   source["layer"] = x
+      console.warn(
+        `React-Openlayers-Fiber Warning: Attaching the child ${attach} brutally because there is no setter on the object`
+      );
+      // eslint-disable-next-line no-param-reassign
+      (parent as Record<string, any>)[attach] = child;
+      // eslint-disable-next-line no-param-reassign
+      child[MetaOlFiber].detach = (newParent, _newChild) => {
+        // eslint-disable-next-line no-param-reassign
+        (newParent as Record<string, any>)[attach] = undefined;
+        // eslint-disable-next-line no-param-reassign
+        delete (newParent as Record<string, any>)[attach];
+      };
+    }
+  } else if (isFunction(attach)) {
+    child[MetaOlFiber].detach = attach(parent, child, parent, child);
+  } else {
+    throw new Error(`React-Openlayers-Fiber Error: Unsupported "attach" type.`);
+  }
+};
+
+// Code from react-three-fiber : https://github.com/pmndrs/react-three-fiber/blob/master/src/renderer.tsx#L450
+function switchInstance(
+  instance: Instance,
+  type: Type,
+  newProps: any,
+  fiber: ReactReconciler.Fiber
+) {
+  const { parent } = instance[MetaOlFiber];
+  const newInstance = createInstance(type, newProps, null, null, fiber);
+  removeChild(parent, instance);
+  appendChild(parent, newInstance);
+  // This evil hack switches the react-internal fiber node
+  // https://github.com/facebook/react/issues/14983
+  // https://github.com/facebook/react/pull/15021
+  [fiber, fiber.alternate].forEach((fiber: any) => {
+    if (fiber !== null) {
+      fiber.stateNode = newInstance;
+      if (fiber.ref) {
+        if (typeof fiber.ref === "function") fiber.ref(newInstance);
+        else (fiber.ref as ReactReconciler.RefObject).current = newInstance;
+      }
+    }
+  });
+}
 
 const commitUpdate = (
   instance: Instance,
-  updatePayload: UpdatePayload,
+  _updatePayload: UpdatePayload,
   type: Type,
   oldProps: Props,
   newProps: Props,
@@ -611,69 +717,20 @@ const commitUpdate = (
 const insertInContainerBefore = (
   container: Container,
   child: Instance | TextInstance,
-  beforeChild: Instance | TextInstance
+  _beforeChild: Instance | TextInstance
 ): void => {
   child[MetaOlFiber].parent = container;
   // There can only be one map in its parent div
 };
 
-const resetTextContent = (instance: Instance): void => {
+const resetTextContent = (_instance: Instance): void => {
   return null;
-};
-
-const appendChild = (
-  parentInstance: Instance,
-  childInstance: Instance | TextInstance
-): void => {
-  const containerOlObject = parentInstance;
-  const childOlObject = childInstance;
-  const { attach } = childInstance[MetaOlFiber];
-
-  childInstance[MetaOlFiber].parent = parentInstance;
-  if (isNil(attach)) {
-    childInstance[MetaOlFiber].detach = defaultAttach(
-      containerOlObject,
-      childOlObject,
-      parentInstance,
-      childInstance
-    );
-  } else if (isString(attach)) {
-    containerOlObject[attach] = childOlObject;
-    childInstance[MetaOlFiber].detach = (containerOlObject, childOlObject) => {
-      delete containerOlObject[attach];
-    };
-    const setterGeneric = containerOlObject.set;
-    // From there, the code is very similar to the function applyProps
-    const keySetter = `set${upperFirst(attach)}`;
-    const setterSpecificKey = containerOlObject[keySetter];
-    if (isFunction(setterSpecificKey)) {
-      setterSpecificKey.bind(containerOlObject)(childOlObject);
-    } else if (isFunction(setterGeneric)) {
-      setterGeneric.bind(containerOlObject)(attach, childOlObject);
-    } else {
-      console.warn(
-        `React-Openlayers-Fiber Warning: Attaching the child ${attach} brutally because there is no setter on the object`
-      );
-      console.warn(containerOlObject);
-      console.warn(childOlObject);
-      containerOlObject[attach] = childOlObject;
-    }
-  } else if (isFunction(attach)) {
-    childInstance[MetaOlFiber].detach = attach(
-      containerOlObject,
-      childOlObject,
-      parentInstance,
-      childInstance
-    );
-  } else {
-    throw new Error(`React-Openlayers-Fiber Error: Unsupported "attach" type.`);
-  }
 };
 
 const insertBefore = (
   parentInstance: Instance,
   childInstance: Instance | TextInstance,
-  beforeChild: Instance | TextInstance
+  _beforeChild: Instance | TextInstance
 ): void => {
   appendChild(parentInstance, childInstance);
 };
@@ -686,43 +743,18 @@ const appendInitialChild = (
 };
 
 const appendChildToContainer = (
-  container: Container,
-  child: Instance | TextInstance
+  _container: Container,
+  _child: Instance | TextInstance
 ): void => {
   // This would link the map to it's parent div container.
   // But this is already done in the Map component anyway so not needed here
 };
 
-// Code from react-three-fiber : https://github.com/pmndrs/react-three-fiber/blob/master/src/renderer.tsx#L450
-function switchInstance(
-  instance: Instance,
-  type: Type,
-  newProps: any,
-  fiber: ReactReconciler.Fiber
-) {
-  const { parent } = instance[MetaOlFiber];
-  const newInstance = createInstance(type, newProps, null, null, fiber);
-  removeChild(parent, instance);
-  appendChild(parent, newInstance);
-  // This evil hack switches the react-internal fiber node
-  // https://github.com/facebook/react/issues/14983
-  // https://github.com/facebook/react/pull/15021
-  [fiber, fiber.alternate].forEach((fiber: any) => {
-    if (fiber !== null) {
-      fiber.stateNode = newInstance;
-      if (fiber.ref) {
-        if (typeof fiber.ref === "function") fiber.ref(newInstance);
-        else (fiber.ref as ReactReconciler.RefObject).current = newInstance;
-      }
-    }
-  });
-}
-
 const hideInstance = (instance: Instance) => {
   const { kind } = instance[MetaOlFiber];
   switch (kind) {
     case "Layer": {
-      (instance as Layer).setVisible(false);
+      getAs("olLayerLayer", instance).setVisible(false);
       break;
     }
     default: {
@@ -733,11 +765,11 @@ const hideInstance = (instance: Instance) => {
   }
 };
 
-const unhideInstance = (instance: Instance, props: Props) => {
+const unhideInstance = (instance: Instance, _props: Props) => {
   const { kind } = instance[MetaOlFiber];
   switch (kind) {
     case "Layer": {
-      (instance as Layer).setVisible(true);
+      getAs("olLayerLayer", instance).setVisible(true);
       break;
     }
     default: {

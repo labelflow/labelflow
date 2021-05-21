@@ -56,14 +56,30 @@ export declare namespace ReactOlFiber {
   type PickClasses<T> = Pick<T, ClassKeys<T>>;
   type OmitClasses<T> = Omit<T, ClassKeys<T>>;
 
-  type PickOlObjectCatalogElements<T> = Pick<T, OlObjectCatalogElementKeys<T>>;
-  type OmitOlObjectCatalogElements<T> = Omit<T, OlObjectCatalogElementKeys<T>>;
+  type SimpleObjectKeys<T> = Pick<T, OlObjectCatalogElementKeys<T>>;
+  type ComplexObjectKeys<T> = Omit<T, OlObjectCatalogElementKeys<T>>;
+  // type WeirdObjectKeys<T> = Pick<
+  //   ComplexObjectKeys<T>,
+  //   | "olSourceImage"
+  //   | "olSourceSource"
+  //   | "olSourceTile"
+  //   | "olGeomGeometry"
+  //   | "olGeomSimpleGeometry"
+  // >;
+  // type MultipleObjectKeys<T> = Omit<
+  //   ComplexObjectKeys<T>,
+  //   | "olSourceImage"
+  //   | "olSourceSource"
+  //   | "olSourceTile"
+  //   | "olGeomGeometry"
+  //   | "olGeomSimpleGeometry"
+  // >;
 
   /**
    * Generic elements based on simple ol objects (most usual case)
    */
   type IntrinsicElementsSimpleObject = {
-    [T in keyof PickOlObjectCatalogElements<Catalogue>]: Partial<
+    [T in keyof SimpleObjectKeys<Catalogue>]: Partial<
       // Fields of the class that are not functions (Most of the time there isn't any)
       OmitFunctions<PickWritables<Catalogue[T]["object"]>>
     > &
@@ -90,7 +106,7 @@ export declare namespace ReactOlFiber {
    * Generic elements based on more complex constructors
    */
   type IntrinsicElementsArgsObject = {
-    [T in keyof OmitOlObjectCatalogElements<Catalogue>]: Partial<
+    [T in keyof ComplexObjectKeys<Catalogue>]: Partial<
       // Fields of the class that are not functions (Most of the time there isn't any)
       OmitFunctions<PickWritables<Catalogue[T]["object"]>>
     > & {
@@ -108,9 +124,11 @@ export declare namespace ReactOlFiber {
       // This should be the keys of static methods of Catalogue[T]["object"]
       constructFrom?: keyof Catalogue[T]["object"];
       // Fields of the options argument of the constructor (First argument)
-      args?:
-        | ConstructorParameters<Catalogue[T]["object"]>
-        | ConstructorParameters<Catalogue[T]["object"]>[0];
+      // // FIXME disable for now
+      // args?:
+      //   | ConstructorParameters<Catalogue[T]["object"]>
+      //   | ConstructorParameters<Catalogue[T]["object"]>[0];
+      args?: any;
     } & Events & { [key: string]: any }; // Events listener (generated manually dirtily for now) // Other props that can be set using a specific setter but that dont exist in the object (see geom.point.coordinates for example)
   };
 

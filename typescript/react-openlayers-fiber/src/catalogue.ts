@@ -2,6 +2,7 @@
 // The catalogue is the list of object from openlayers that are supported
 // it is generated automatically, and is strongly typed
 // /////////////////////////////////////////////////////////////////////////////
+
 import {
   upperFirst,
 
@@ -84,6 +85,8 @@ const olStyle = omit(olStyleOmitKeys, olStyleRaw) as Omit<
   typeof olStyleOmitKeys[number]
 >;
 
+// /////////////////////////////////////////////////////////////////////////////
+
 // type OlSourceRaw = typeof olSourceRaw;
 // // type OlSourceRawKey = keyof OlSourceRaw;
 // type OlSourceOmitKey = typeof olSourceOmitKeys[number];
@@ -98,182 +101,520 @@ const olStyle = omit(olStyleOmitKeys, olStyleRaw) as Omit<
 // ) as OlSource;
 
 // /////////////////////////////////////////////////////////////////////////////
-// Catalogue Type
-export type Kind =
-  // Elements of Ol that we picked manually
-  | keyof typeof ol
-  // Or the categories of Ol items explained in https://openlayers.org/en/latest/apidoc/
-  | "Layer"
-  | "Control"
-  | "Interaction"
-  | "Source"
-  | "Geom"
-  | "Style";
-
-export type CatalogueItem<T> = {
-  kind: Kind;
-  type: string;
-  object: T;
-};
-
 // Now we generate the types automatically (This parts needs typescript >=4.1)
+
 type CatalogueOl = {
-  [K in keyof typeof ol as `ol${Capitalize<K>}`]: CatalogueItem<typeof ol[K]>;
+  [K in keyof typeof ol as `ol${Capitalize<K>}`]: {
+    kind: K;
+    type: `ol${Capitalize<K>}`;
+    object: typeof ol[K];
+  };
 };
 type CatalogueOlLayer = {
-  [K in keyof typeof olLayer as `olLayer${Capitalize<K>}`]: CatalogueItem<
-    typeof olLayer[K]
-  >;
+  [K in keyof typeof olLayer as `olLayer${Capitalize<K>}`]: {
+    kind: "Layer";
+    type: `olLayer${Capitalize<K>}`;
+    object: typeof olLayer[K];
+  };
 };
 type CatalogueOlControl = {
-  [K in keyof typeof olControl as `olControl${Capitalize<K>}`]: CatalogueItem<
-    typeof olControl[K]
-  >;
+  [K in keyof typeof olControl as `olControl${Capitalize<K>}`]: {
+    kind: "Control";
+    type: `olControl${Capitalize<K>}`;
+    object: typeof olControl[K];
+  };
 };
 type CatalogueOlInteraction = {
-  [K in keyof typeof olInteraction as `olInteraction${Capitalize<K>}`]: CatalogueItem<
-    typeof olInteraction[K]
-  >;
+  [K in keyof typeof olInteraction as `olInteraction${Capitalize<K>}`]: {
+    kind: "Interaction";
+    type: `olInteraction${Capitalize<K>}`;
+    object: typeof olInteraction[K];
+  };
 };
 type CatalogueOlSource = {
-  [K in keyof typeof olSource as `olSource${Capitalize<K>}`]: CatalogueItem<
-    typeof olSource[K]
-  >;
+  [K in keyof typeof olSource as `olSource${Capitalize<K>}`]: {
+    kind: "Source";
+    type: `olSource${Capitalize<K>}`;
+    object: typeof olSource[K];
+  };
 };
 type CatalogueOlGeom = {
-  [K in keyof typeof olGeom as `olGeom${Capitalize<K>}`]: CatalogueItem<
-    typeof olGeom[K]
-  >;
+  [K in keyof typeof olGeom as `olGeom${Capitalize<K>}`]: {
+    kind: "Geom";
+    type: `olGeom${Capitalize<K>}`;
+    object: typeof olGeom[K];
+  };
 };
 type CatalogueOlStyle = {
-  [K in keyof typeof olStyle as `olStyle${Capitalize<K>}`]: CatalogueItem<
-    typeof olStyle[K]
-  >;
+  [K in keyof typeof olStyle as `olStyle${Capitalize<K>}`]: {
+    kind: "Style";
+    type: `olStyle${Capitalize<K>}`;
+    object: typeof olStyle[K];
+  };
 };
 
+// /////////////////////////////////////////////////////////////////////////////
 // With typescript <4.1 we have to do this:
-// type CatalogueOl = {
-//   olCollection: CatalogueItem<typeof olRaw.Collection>;
-//   olFeature: CatalogueItem<typeof olRaw.Feature>;
-//   olGeolocation: CatalogueItem<typeof olRaw.Geolocation>;
-//   olMap: CatalogueItem<typeof olRaw.Map>;
-//   olObject: CatalogueItem<typeof olRaw.Object>;
-//   olObservable: CatalogueItem<typeof olRaw.Observable>;
-//   olOverlay: CatalogueItem<typeof olRaw.Overlay>;
-//   olPluggableMap: CatalogueItem<typeof olRaw.PluggableMap>;
-//   olTileCache: CatalogueItem<typeof olRaw.TileCache>;
-//   olView: CatalogueItem<typeof olRaw.View>;
-// };
-// type CatalogueOlLayer = {
-//   olLayerGraticule: CatalogueItem<typeof olLayerRaw.Graticule>;
-//   olLayerGroup: CatalogueItem<typeof olLayerRaw.Group>;
-//   olLayerHeatmap: CatalogueItem<typeof olLayerRaw.Heatmap>;
-//   olLayerImage: CatalogueItem<typeof olLayerRaw.Image>;
-//   olLayerLayer: CatalogueItem<typeof olLayerRaw.Layer>;
-//   olLayerMapboxVector: CatalogueItem<typeof olLayerRaw.MapboxVector>;
-//   olLayerTile: CatalogueItem<typeof olLayerRaw.Tile>;
-//   olLayerVector: CatalogueItem<typeof olLayerRaw.Vector>;
-//   olLayerVectorImage: CatalogueItem<typeof olLayerRaw.VectorImage>;
-//   olLayerVectorTile: CatalogueItem<typeof olLayerRaw.VectorTile>;
-//   olLayerWebGLPoints: CatalogueItem<typeof olLayerRaw.WebGLPoints>;
-// };
-// type CatalogueOlControl = {
-//   olControlAttribution: CatalogueItem<typeof olControlRaw.Attribution>;
-//   olControlControl: CatalogueItem<typeof olControlRaw.Control>;
-//   olControlFullScreen: CatalogueItem<typeof olControlRaw.FullScreen>;
-//   olControlMousePosition: CatalogueItem<typeof olControlRaw.MousePosition>;
-//   olControlOverviewMap: CatalogueItem<typeof olControlRaw.OverviewMap>;
-//   olControlRotate: CatalogueItem<typeof olControlRaw.Rotate>;
-//   olControlScaleLine: CatalogueItem<typeof olControlRaw.ScaleLine>;
-//   olControlZoom: CatalogueItem<typeof olControlRaw.Zoom>;
-//   olControlZoomSlider: CatalogueItem<typeof olControlRaw.ZoomSlider>;
-//   olControlZoomToExtent: CatalogueItem<typeof olControlRaw.ZoomToExtent>;
-// };
-// type CatalogueOlInteraction = {
-//   olInteractionDoubleClickZoom: CatalogueItem<
-//     typeof olInteractionRaw.DoubleClickZoom
-//   >;
-//   olInteractionDragAndDrop: CatalogueItem<typeof olInteractionRaw.DragAndDrop>;
-//   olInteractionDragBox: CatalogueItem<typeof olInteractionRaw.DragBox>;
-//   olInteractionDragPan: CatalogueItem<typeof olInteractionRaw.DragPan>;
-//   olInteractionDragRotate: CatalogueItem<typeof olInteractionRaw.DragRotate>;
-//   olInteractionDragRotateAndZoom: CatalogueItem<
-//     typeof olInteractionRaw.DragRotateAndZoom
-//   >;
-//   olInteractionDragZoom: CatalogueItem<typeof olInteractionRaw.DragZoom>;
-//   olInteractionDraw: CatalogueItem<typeof olInteractionRaw.Draw>;
-//   olInteractionExtent: CatalogueItem<typeof olInteractionRaw.Extent>;
-//   olInteractionInteraction: CatalogueItem<typeof olInteractionRaw.Interaction>;
-//   olInteractionKeyboardPan: CatalogueItem<typeof olInteractionRaw.KeyboardPan>;
-//   olInteractionKeyboardZoom: CatalogueItem<
-//     typeof olInteractionRaw.KeyboardZoom
-//   >;
-//   olInteractionModify: CatalogueItem<typeof olInteractionRaw.Modify>;
-//   olInteractionMouseWheelZoom: CatalogueItem<
-//     typeof olInteractionRaw.MouseWheelZoom
-//   >;
-//   olInteractionPinchRotate: CatalogueItem<typeof olInteractionRaw.PinchRotate>;
-//   olInteractionPinchZoom: CatalogueItem<typeof olInteractionRaw.PinchZoom>;
-//   olInteractionPointer: CatalogueItem<typeof olInteractionRaw.Pointer>;
-//   olInteractionSelect: CatalogueItem<typeof olInteractionRaw.Select>;
-//   olInteractionSnap: CatalogueItem<typeof olInteractionRaw.Snap>;
-//   olInteractionTranslate: CatalogueItem<typeof olInteractionRaw.Translate>;
-// };
-// type CatalogueOlSource = {
-//   olSourceBingMaps: CatalogueItem<typeof olSourceRaw.BingMaps>;
-//   olSourceCartoDB: CatalogueItem<typeof olSourceRaw.CartoDB>;
-//   olSourceCluster: CatalogueItem<typeof olSourceRaw.Cluster>;
-//   olSourceIIIF: CatalogueItem<typeof olSourceRaw.IIIF>;
-//   // olSourceImage: CatalogueItem<typeof olSourceRaw.Image>;
-//   olSourceImageArcGISRest: CatalogueItem<typeof olSourceRaw.ImageArcGISRest>;
-//   olSourceImageCanvas: CatalogueItem<typeof olSourceRaw.ImageCanvas>;
-//   olSourceImageMapGuide: CatalogueItem<typeof olSourceRaw.ImageMapGuide>;
-//   olSourceImageStatic: CatalogueItem<typeof olSourceRaw.ImageStatic>;
-//   olSourceImageWMS: CatalogueItem<typeof olSourceRaw.ImageWMS>;
-//   olSourceOSM: CatalogueItem<typeof olSourceRaw.OSM>;
-//   olSourceRaster: CatalogueItem<typeof olSourceRaw.Raster>;
-//   // olSourceSource: CatalogueItem<typeof olSourceRaw.Source>;
-//   olSourceStamen: CatalogueItem<typeof olSourceRaw.Stamen>;
-//   // olSourceTile: CatalogueItem<typeof olSourceRaw.Tile>;
-//   olSourceTileArcGISRest: CatalogueItem<typeof olSourceRaw.TileArcGISRest>;
-//   olSourceTileDebug: CatalogueItem<typeof olSourceRaw.TileDebug>;
-//   olSourceTileImage: CatalogueItem<typeof olSourceRaw.TileImage>;
-//   olSourceTileJSON: CatalogueItem<typeof olSourceRaw.TileJSON>;
-//   olSourceTileWMS: CatalogueItem<typeof olSourceRaw.TileWMS>;
-//   olSourceUrlTile: CatalogueItem<typeof olSourceRaw.UrlTile>;
-//   olSourceUTFGrid: CatalogueItem<typeof olSourceRaw.UTFGrid>;
-//   olSourceVector: CatalogueItem<typeof olSourceRaw.Vector>;
-//   olSourceVectorTile: CatalogueItem<typeof olSourceRaw.VectorTile>;
-//   olSourceWMTS: CatalogueItem<typeof olSourceRaw.WMTS>;
-//   olSourceXYZ: CatalogueItem<typeof olSourceRaw.XYZ>;
-//   olSourceZoomify: CatalogueItem<typeof olSourceRaw.Zoomify>;
-// };
-// type CatalogueOlGeom = {
-//   olGeomCircle: CatalogueItem<typeof olGeomRaw.Circle>;
-//   // olGeomGeometry: CatalogueItem<typeof olGeomRaw.Geometry>;
-//   olGeomGeometryCollection: CatalogueItem<typeof olGeomRaw.GeometryCollection>;
-//   olGeomLinearRing: CatalogueItem<typeof olGeomRaw.LinearRing>;
-//   olGeomLineString: CatalogueItem<typeof olGeomRaw.LineString>;
-//   olGeomMultiLineString: CatalogueItem<typeof olGeomRaw.MultiLineString>;
-//   olGeomMultiPoint: CatalogueItem<typeof olGeomRaw.MultiPoint>;
-//   olGeomMultiPolygon: CatalogueItem<typeof olGeomRaw.MultiPolygon>;
-//   olGeomPoint: CatalogueItem<typeof olGeomRaw.Point>;
-//   olGeomPolygon: CatalogueItem<typeof olGeomRaw.Polygon>;
-//   // olGeomSimpleGeometry: CatalogueItem<typeof olGeomRaw.SimpleGeometry>;
-// };
-// type CatalogueOlStyle = {
-//   olStyleCircle: CatalogueItem<typeof olStyleRaw.Circle>;
-//   olStyleFill: CatalogueItem<typeof olStyleRaw.Fill>;
-//   olStyleIcon: CatalogueItem<typeof olStyleRaw.Icon>;
-//   // olStyleIconImage: CatalogueItem<typeof olStyleRaw.IconImage>;
-//   // olStyleImage: CatalogueItem<typeof olStyleRaw.Image>;
-//   olStyleRegularShape: CatalogueItem<typeof olStyleRaw.RegularShape>;
-//   olStyleStroke: CatalogueItem<typeof olStyleRaw.Stroke>;
-//   olStyleStyle: CatalogueItem<typeof olStyleRaw.Style>;
-//   olStyleText: CatalogueItem<typeof olStyleRaw.Text>;
+
+// // /////////////////////////////////////////////////////////////////////////////
+// // Catalogue Type
+// export type Kind =
+//   // Elements of Ol that we picked manually
+//   | keyof typeof ol
+//   // Or the categories of Ol items explained in https://openlayers.org/en/latest/apidoc/
+//   | "Layer"
+//   | "Control"
+//   | "Interaction"
+//   | "Source"
+//   | "Geom"
+//   | "Style";
+
+// export type NewCatalogueItem<K extends Kind, T extends string, O> = {
+//   kind: K;
+//   type: T;
+//   object: O;
 // };
 
+// type CatalogueOl = {
+//   olCollection: NewCatalogueItem<
+//     "Collection",
+//     "olCollection",
+//     typeof olRaw.Collection
+//   >;
+//   olFeature: NewCatalogueItem<"Feature", "olFeature", typeof olRaw.Feature>;
+//   olGeolocation: NewCatalogueItem<
+//     "Geolocation",
+//     "olGeolocation",
+//     typeof olRaw.Geolocation
+//   >;
+//   olMap: NewCatalogueItem<"Map", "olMap", typeof olRaw.Map>;
+//   olObject: NewCatalogueItem<"Object", "olObject", typeof olRaw.Object>;
+//   olObservable: NewCatalogueItem<
+//     "Observable",
+//     "olObservable",
+//     typeof olRaw.Observable
+//   >;
+//   olOverlay: NewCatalogueItem<"Overlay", "olOverlay", typeof olRaw.Overlay>;
+//   olPluggableMap: NewCatalogueItem<
+//     "PluggableMap",
+//     "olPluggableMap",
+//     typeof olRaw.PluggableMap
+//   >;
+//   olTileCache: NewCatalogueItem<
+//     "TileCache",
+//     "olTileCache",
+//     typeof olRaw.TileCache
+//   >;
+//   olView: NewCatalogueItem<"View", "olView", typeof olRaw.View>;
+// };
+// type CatalogueOlLayer = {
+//   olLayerGraticule: NewCatalogueItem<
+//     "Layer",
+//     "olLayerGraticule",
+//     typeof olLayerRaw.Graticule
+//   >;
+//   olLayerGroup: NewCatalogueItem<
+//     "Layer",
+//     "olLayerGroup",
+//     typeof olLayerRaw.Group
+//   >;
+//   olLayerHeatmap: NewCatalogueItem<
+//     "Layer",
+//     "olLayerHeatmap",
+//     typeof olLayerRaw.Heatmap
+//   >;
+//   olLayerImage: NewCatalogueItem<
+//     "Layer",
+//     "olLayerImage",
+//     typeof olLayerRaw.Image
+//   >;
+//   olLayerLayer: NewCatalogueItem<
+//     "Layer",
+//     "olLayerLayer",
+//     typeof olLayerRaw.Layer
+//   >;
+//   olLayerMapboxVector: NewCatalogueItem<
+//     "Layer",
+//     "olLayerMapboxVector",
+//     typeof olLayerRaw.MapboxVector
+//   >;
+//   olLayerTile: NewCatalogueItem<"Layer", "olLayerTile", typeof olLayerRaw.Tile>;
+//   olLayerVector: NewCatalogueItem<
+//     "Layer",
+//     "olLayerVector",
+//     typeof olLayerRaw.Vector
+//   >;
+//   olLayerVectorImage: NewCatalogueItem<
+//     "Layer",
+//     "olLayerVectorImage",
+//     typeof olLayerRaw.VectorImage
+//   >;
+//   olLayerVectorTile: NewCatalogueItem<
+//     "Layer",
+//     "olLayerVectorTile",
+//     typeof olLayerRaw.VectorTile
+//   >;
+//   olLayerWebGLPoints: NewCatalogueItem<
+//     "Layer",
+//     "olLayerWebGLPoints",
+//     typeof olLayerRaw.WebGLPoints
+//   >;
+// };
+// type CatalogueOlControl = {
+//   olControlAttribution: NewCatalogueItem<
+//     "Control",
+//     "olControlAttribution",
+//     typeof olControlRaw.Attribution
+//   >;
+//   olControlControl: NewCatalogueItem<
+//     "Control",
+//     "olControlControl",
+//     typeof olControlRaw.Control
+//   >;
+//   olControlFullScreen: NewCatalogueItem<
+//     "Control",
+//     "olControlFullScreen",
+//     typeof olControlRaw.FullScreen
+//   >;
+//   olControlMousePosition: NewCatalogueItem<
+//     "Control",
+//     "olControlMousePosition",
+//     typeof olControlRaw.MousePosition
+//   >;
+//   olControlOverviewMap: NewCatalogueItem<
+//     "Control",
+//     "olControlOverviewMap",
+//     typeof olControlRaw.OverviewMap
+//   >;
+//   olControlRotate: NewCatalogueItem<
+//     "Control",
+//     "olControlRotate",
+//     typeof olControlRaw.Rotate
+//   >;
+//   olControlScaleLine: NewCatalogueItem<
+//     "Control",
+//     "olControlScaleLine",
+//     typeof olControlRaw.ScaleLine
+//   >;
+//   olControlZoom: NewCatalogueItem<
+//     "Control",
+//     "olControlZoom",
+//     typeof olControlRaw.Zoom
+//   >;
+//   olControlZoomSlider: NewCatalogueItem<
+//     "Control",
+//     "olControlZoomSlider",
+//     typeof olControlRaw.ZoomSlider
+//   >;
+//   olControlZoomToExtent: NewCatalogueItem<
+//     "Control",
+//     "olControlZoomToExtent",
+//     typeof olControlRaw.ZoomToExtent
+//   >;
+// };
+// type CatalogueOlInteraction = {
+//   olInteractionDoubleClickZoom: NewCatalogueItem<
+//     "Interaction",
+//     "olInteractionDoubleClickZoom",
+//     typeof olInteractionRaw.DoubleClickZoom
+//   >;
+//   olInteractionDragAndDrop: NewCatalogueItem<
+//     "Interaction",
+//     "olInteractionDragAndDrop",
+//     typeof olInteractionRaw.DragAndDrop
+//   >;
+//   olInteractionDragBox: NewCatalogueItem<
+//     "Interaction",
+//     "olInteractionDragBox",
+//     typeof olInteractionRaw.DragBox
+//   >;
+//   olInteractionDragPan: NewCatalogueItem<
+//     "Interaction",
+//     "olInteractionDragPan",
+//     typeof olInteractionRaw.DragPan
+//   >;
+//   olInteractionDragRotate: NewCatalogueItem<
+//     "Interaction",
+//     "olInteractionDragRotate",
+//     typeof olInteractionRaw.DragRotate
+//   >;
+//   olInteractionDragRotateAndZoom: NewCatalogueItem<
+//     "Interaction",
+//     "olInteractionDragRotateAndZoom",
+//     typeof olInteractionRaw.DragRotateAndZoom
+//   >;
+//   olInteractionDragZoom: NewCatalogueItem<
+//     "Interaction",
+//     "olInteractionDragZoom",
+//     typeof olInteractionRaw.DragZoom
+//   >;
+//   olInteractionDraw: NewCatalogueItem<
+//     "Interaction",
+//     "olInteractionDraw",
+//     typeof olInteractionRaw.Draw
+//   >;
+//   olInteractionExtent: NewCatalogueItem<
+//     "Interaction",
+//     "olInteractionExtent",
+//     typeof olInteractionRaw.Extent
+//   >;
+//   olInteractionInteraction: NewCatalogueItem<
+//     "Interaction",
+//     "olInteractionInteraction",
+//     typeof olInteractionRaw.Interaction
+//   >;
+//   olInteractionKeyboardPan: NewCatalogueItem<
+//     "Interaction",
+//     "olInteractionKeyboardPan",
+//     typeof olInteractionRaw.KeyboardPan
+//   >;
+//   olInteractionKeyboardZoom: NewCatalogueItem<
+//     "Interaction",
+//     "olInteractionKeyboardZoom",
+//     typeof olInteractionRaw.KeyboardZoom
+//   >;
+//   olInteractionModify: NewCatalogueItem<
+//     "Interaction",
+//     "olInteractionModify",
+//     typeof olInteractionRaw.Modify
+//   >;
+//   olInteractionMouseWheelZoom: NewCatalogueItem<
+//     "Interaction",
+//     "olInteractionMouseWheelZoom",
+//     typeof olInteractionRaw.MouseWheelZoom
+//   >;
+//   olInteractionPinchRotate: NewCatalogueItem<
+//     "Interaction",
+//     "olInteractionPinchRotate",
+//     typeof olInteractionRaw.PinchRotate
+//   >;
+//   olInteractionPinchZoom: NewCatalogueItem<
+//     "Interaction",
+//     "olInteractionPinchZoom",
+//     typeof olInteractionRaw.PinchZoom
+//   >;
+//   olInteractionPointer: NewCatalogueItem<
+//     "Interaction",
+//     "olInteractionPointer",
+//     typeof olInteractionRaw.Pointer
+//   >;
+//   olInteractionSelect: NewCatalogueItem<
+//     "Interaction",
+//     "olInteractionSelect",
+//     typeof olInteractionRaw.Select
+//   >;
+//   olInteractionSnap: NewCatalogueItem<
+//     "Interaction",
+//     "olInteractionSnap",
+//     typeof olInteractionRaw.Snap
+//   >;
+//   olInteractionTranslate: NewCatalogueItem<
+//     "Interaction",
+//     "olInteractionTranslate",
+//     typeof olInteractionRaw.Translate
+//   >;
+// };
+// type CatalogueOlSource = {
+//   olSourceBingMaps: NewCatalogueItem<
+//     "Source",
+//     "olSourceBingMaps",
+//     typeof olSourceRaw.BingMaps
+//   >;
+//   olSourceCartoDB: NewCatalogueItem<
+//     "Source",
+//     "olSourceCartoDB",
+//     typeof olSourceRaw.CartoDB
+//   >;
+//   olSourceCluster: NewCatalogueItem<
+//     "Source",
+//     "olSourceCluster",
+//     typeof olSourceRaw.Cluster
+//   >;
+//   olSourceIIIF: NewCatalogueItem<
+//     "Source",
+//     "olSourceIIIF",
+//     typeof olSourceRaw.IIIF
+//   >;
+//   // olSourceImage: NewCatalogueItem<"Source","olSourceImage",typeof olSourceRaw.Image>;
+//   olSourceImageArcGISRest: NewCatalogueItem<
+//     "Source",
+//     "olSourceImageArcGISRest",
+//     typeof olSourceRaw.ImageArcGISRest
+//   >;
+//   olSourceImageCanvas: NewCatalogueItem<
+//     "Source",
+//     "olSourceImageCanvas",
+//     typeof olSourceRaw.ImageCanvas
+//   >;
+//   olSourceImageMapGuide: NewCatalogueItem<
+//     "Source",
+//     "olSourceImageMapGuide",
+//     typeof olSourceRaw.ImageMapGuide
+//   >;
+//   olSourceImageStatic: NewCatalogueItem<
+//     "Source",
+//     "olSourceImageStatic",
+//     typeof olSourceRaw.ImageStatic
+//   >;
+//   olSourceImageWMS: NewCatalogueItem<
+//     "Source",
+//     "olSourceImageWMS",
+//     typeof olSourceRaw.ImageWMS
+//   >;
+//   olSourceOSM: NewCatalogueItem<
+//     "Source",
+//     "olSourceOSM",
+//     typeof olSourceRaw.OSM
+//   >;
+//   olSourceRaster: NewCatalogueItem<
+//     "Source",
+//     "olSourceRaster",
+//     typeof olSourceRaw.Raster
+//   >;
+//   // olSourceSource: NewCatalogueItem<"Source","olSourceSource",typeof olSourceRaw.Source>;
+//   olSourceStamen: NewCatalogueItem<
+//     "Source",
+//     "olSourceStamen",
+//     typeof olSourceRaw.Stamen
+//   >;
+//   // olSourceTile: NewCatalogueItem<"Source","olSourceTile",typeof olSourceRaw.Tile>;
+//   olSourceTileArcGISRest: NewCatalogueItem<
+//     "Source",
+//     "olSourceTileArcGISRest",
+//     typeof olSourceRaw.TileArcGISRest
+//   >;
+//   olSourceTileDebug: NewCatalogueItem<
+//     "Source",
+//     "olSourceTileDebug",
+//     typeof olSourceRaw.TileDebug
+//   >;
+//   olSourceTileImage: NewCatalogueItem<
+//     "Source",
+//     "olSourceTileImage",
+//     typeof olSourceRaw.TileImage
+//   >;
+//   olSourceTileJSON: NewCatalogueItem<
+//     "Source",
+//     "olSourceTileJSON",
+//     typeof olSourceRaw.TileJSON
+//   >;
+//   olSourceTileWMS: NewCatalogueItem<
+//     "Source",
+//     "olSourceTileWMS",
+//     typeof olSourceRaw.TileWMS
+//   >;
+//   olSourceUrlTile: NewCatalogueItem<
+//     "Source",
+//     "olSourceUrlTile",
+//     typeof olSourceRaw.UrlTile
+//   >;
+//   olSourceUTFGrid: NewCatalogueItem<
+//     "Source",
+//     "olSourceUTFGrid",
+//     typeof olSourceRaw.UTFGrid
+//   >;
+//   olSourceVector: NewCatalogueItem<
+//     "Source",
+//     "olSourceVector",
+//     typeof olSourceRaw.Vector
+//   >;
+//   olSourceVectorTile: NewCatalogueItem<
+//     "Source",
+//     "olSourceVectorTile",
+//     typeof olSourceRaw.VectorTile
+//   >;
+//   olSourceWMTS: NewCatalogueItem<
+//     "Source",
+//     "olSourceWMTS",
+//     typeof olSourceRaw.WMTS
+//   >;
+//   olSourceXYZ: NewCatalogueItem<
+//     "Source",
+//     "olSourceXYZ",
+//     typeof olSourceRaw.XYZ
+//   >;
+//   olSourceZoomify: NewCatalogueItem<
+//     "Source",
+//     "olSourceZoomify",
+//     typeof olSourceRaw.Zoomify
+//   >;
+// };
+// type CatalogueOlGeom = {
+//   olGeomCircle: NewCatalogueItem<
+//     "Geom",
+//     "olGeomCircle",
+//     typeof olGeomRaw.Circle
+//   >;
+//   // olGeomGeometry: NewCatalogueItem<"Geom","olGeomGeometry",typeof olGeomRaw.Geometry>;
+//   olGeomGeometryCollection: NewCatalogueItem<
+//     "Geom",
+//     "olGeomGeometryCollection",
+//     typeof olGeomRaw.GeometryCollection
+//   >;
+//   olGeomLinearRing: NewCatalogueItem<
+//     "Geom",
+//     "olGeomLinearRing",
+//     typeof olGeomRaw.LinearRing
+//   >;
+//   olGeomLineString: NewCatalogueItem<
+//     "Geom",
+//     "olGeomLineString",
+//     typeof olGeomRaw.LineString
+//   >;
+//   olGeomMultiLineString: NewCatalogueItem<
+//     "Geom",
+//     "olGeomMultiLineString",
+//     typeof olGeomRaw.MultiLineString
+//   >;
+//   olGeomMultiPoint: NewCatalogueItem<
+//     "Geom",
+//     "olGeomMultiPoint",
+//     typeof olGeomRaw.MultiPoint
+//   >;
+//   olGeomMultiPolygon: NewCatalogueItem<
+//     "Geom",
+//     "olGeomMultiPolygon",
+//     typeof olGeomRaw.MultiPolygon
+//   >;
+//   olGeomPoint: NewCatalogueItem<"Geom", "olGeomPoint", typeof olGeomRaw.Point>;
+//   olGeomPolygon: NewCatalogueItem<
+//     "Geom",
+//     "olGeomPolygon",
+//     typeof olGeomRaw.Polygon
+//   >;
+//   // olGeomSimpleGeometry: NewCatalogueItem<"Geom","olGeomSimpleGeometry",typeof olGeomRaw.SimpleGeometry>;
+// };
+// type CatalogueOlStyle = {
+//   olStyleCircle: NewCatalogueItem<
+//     "Style",
+//     "olStyleCircle",
+//     typeof olStyleRaw.Circle
+//   >;
+//   olStyleFill: NewCatalogueItem<"Style", "olStyleFill", typeof olStyleRaw.Fill>;
+//   olStyleIcon: NewCatalogueItem<"Style", "olStyleIcon", typeof olStyleRaw.Icon>;
+//   // olStyleIconImage: NewCatalogueItem<"Style","olStyleIconImage",typeof olStyleRaw.IconImage>;
+//   // olStyleImage: NewCatalogueItem<"Style","olStyleImage",typeof olStyleRaw.Image>;
+//   olStyleRegularShape: NewCatalogueItem<
+//     "Style",
+//     "olStyleRegularShape",
+//     typeof olStyleRaw.RegularShape
+//   >;
+//   olStyleStroke: NewCatalogueItem<
+//     "Style",
+//     "olStyleStroke",
+//     typeof olStyleRaw.Stroke
+//   >;
+//   olStyleStyle: NewCatalogueItem<
+//     "Style",
+//     "olStyleStyle",
+//     typeof olStyleRaw.Style
+//   >;
+//   olStyleText: NewCatalogueItem<"Style", "olStyleText", typeof olStyleRaw.Text>;
+// };
+
+// /////////////////////////////////////////////////////////////////////////////
 // Finished, now some additional stuff
+
 export type Catalogue = CatalogueOl &
   CatalogueOlLayer &
   CatalogueOlControl &
@@ -281,11 +622,14 @@ export type Catalogue = CatalogueOl &
   CatalogueOlSource &
   CatalogueOlGeom &
   CatalogueOlStyle;
+
 export type CatalogueKey = keyof Catalogue;
+export type CatalogueItem = Catalogue[CatalogueKey];
 
 // /////////////////////////////////////////////////////////////////////////////
 // Catalogue Value
-const catalogueOl: CatalogueOl = Object.fromEntries(
+
+const catalogueOl = Object.fromEntries(
   Object.entries(ol).map(([key, value]) => [
     `ol${upperFirst(key)}`,
     {
@@ -294,9 +638,9 @@ const catalogueOl: CatalogueOl = Object.fromEntries(
       object: value,
     },
   ])
-) as CatalogueOl; // FIXME: Not sure why it is needed here
+) as CatalogueOl;
 
-const catalogueOlLayer: CatalogueOlLayer = Object.fromEntries(
+const catalogueOlLayer = Object.fromEntries(
   Object.entries(olLayer).map(([key, value]) => [
     `olLayer${upperFirst(key)}`,
     {
@@ -305,9 +649,9 @@ const catalogueOlLayer: CatalogueOlLayer = Object.fromEntries(
       object: value,
     },
   ])
-) as CatalogueOlLayer; // FIXME: Not sure why it is needed here
+) as CatalogueOlLayer;
 
-const catalogueOlControl: CatalogueOlControl = Object.fromEntries(
+const catalogueOlControl = Object.fromEntries(
   Object.entries(olControl).map(([key, value]) => [
     `olControl${upperFirst(key)}`,
     {
@@ -316,9 +660,9 @@ const catalogueOlControl: CatalogueOlControl = Object.fromEntries(
       object: value,
     },
   ])
-) as CatalogueOlControl; // FIXME: Not sure why it is needed here
+) as CatalogueOlControl;
 
-const catalogueOlInteraction: CatalogueOlInteraction = Object.fromEntries(
+const catalogueOlInteraction = Object.fromEntries(
   Object.entries(olInteraction).map(([key, value]) => [
     `olInteraction${upperFirst(key)}`,
     {
@@ -327,9 +671,9 @@ const catalogueOlInteraction: CatalogueOlInteraction = Object.fromEntries(
       object: value,
     },
   ])
-) as CatalogueOlInteraction; // FIXME: Not sure why it is needed here
+) as CatalogueOlInteraction;
 
-const catalogueOlSource: CatalogueOlSource = Object.fromEntries(
+const catalogueOlSource = Object.fromEntries(
   Object.entries(olSource).map(([key, value]) => [
     `olSource${upperFirst(key)}`,
     {
@@ -338,9 +682,9 @@ const catalogueOlSource: CatalogueOlSource = Object.fromEntries(
       object: value,
     },
   ])
-) as CatalogueOlSource; // FIXME: Not sure why it is needed here
+) as CatalogueOlSource;
 
-const catalogueOlGeom: CatalogueOlGeom = Object.fromEntries(
+const catalogueOlGeom = Object.fromEntries(
   Object.entries(olGeom).map(([key, value]) => [
     `olGeom${upperFirst(key)}`,
     {
@@ -349,9 +693,9 @@ const catalogueOlGeom: CatalogueOlGeom = Object.fromEntries(
       object: value,
     },
   ])
-) as CatalogueOlGeom; // FIXME: Not sure why it is needed here
+) as CatalogueOlGeom;
 
-const catalogueOlStyle: CatalogueOlStyle = Object.fromEntries(
+const catalogueOlStyle = Object.fromEntries(
   Object.entries(olStyle).map(([key, value]) => [
     `olStyle${upperFirst(key)}`,
     {
@@ -360,7 +704,7 @@ const catalogueOlStyle: CatalogueOlStyle = Object.fromEntries(
       object: value,
     },
   ])
-) as CatalogueOlStyle; // FIXME: Not sure why it is needed here
+) as CatalogueOlStyle;
 
 // eslint-disable-next-line import/no-mutable-exports
 export const catalogue: Catalogue = {

@@ -29,7 +29,7 @@ export const Map = forwardRef<ReactNode>(
     ref
   ): React.ReactElement => {
     const containerRef = useRef<HTMLDivElement>(null);
-    const [map, setMap] = useState(null);
+    const [map, setMap] = useState<OlMap | null>(null);
 
     useLayoutEffect(() => {
       if (containerRef.current) {
@@ -40,13 +40,15 @@ export const Map = forwardRef<ReactNode>(
             target={containerRef.current}
             ref={ref}
           >
-            <MapProvider value={map}>{children}</MapProvider>
+            {isNull(map) ? null : (
+              <MapProvider value={map as OlMap}>{children}</MapProvider>
+            )}
           </olMap>
         );
-        const returned = render(wrapped, containerRef.current);
+        const returnedMap = render(wrapped, containerRef.current) as OlMap;
 
-        if (isNull(map) && !isNull(returned)) {
-          setMap(returned);
+        if (isNull(map) && !isNull(returnedMap)) {
+          setMap((oldMap) => (isNull(oldMap) ? returnedMap : oldMap));
         }
       }
     }, [children, containerRef.current, map]);
