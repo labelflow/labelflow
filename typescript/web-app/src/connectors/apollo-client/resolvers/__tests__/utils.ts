@@ -1,7 +1,10 @@
 import localforage from "localforage";
 import { getListFromStorage, appendToListInStorage } from "../utils";
 
-jest.mock("localforage");
+jest.mock("localforage", () => ({
+  setItem: jest.fn(async () => {}),
+  getItem: jest.fn(async () => {}),
+}));
 
 const mockedLocalForage = <
   {
@@ -11,9 +14,10 @@ const mockedLocalForage = <
 >(localforage as unknown);
 
 describe("Resolver utils tests", () => {
+  beforeEach(() => {
+    jest.resetAllMocks();
+  });
   test("Get list from storage when list is empty", async () => {
-    mockedLocalForage.getItem = jest.fn(async () => null);
-
     const listOfEntities = await getListFromStorage("Entity:list");
 
     expect(listOfEntities).toEqual([]);
@@ -21,12 +25,9 @@ describe("Resolver utils tests", () => {
   });
 
   test("Get list from storage", async () => {
-    mockedLocalForage.getItem = jest.fn(async () => [
-      "Entity:1",
-      "Entity:2",
-      "Entity:3",
-    ]);
-
+    mockedLocalForage.getItem.mockReturnValue(
+      Promise.resolve(["Entity:1", "Entity:2", "Entity:3"])
+    );
     const listOfEntities = await getListFromStorage("Entity:list");
 
     expect(listOfEntities.length).toEqual(3);
@@ -38,11 +39,6 @@ describe("Resolver utils tests", () => {
   });
 
   test("Get list from storage when list is empty", async () => {
-    mockedLocalForage.setItem = jest.fn(
-      async (_: string, elements: any) => elements
-    );
-    mockedLocalForage.getItem = jest.fn(async () => null);
-
     await appendToListInStorage("Entity:list", "Entity:1");
 
     expect(mockedLocalForage.getItem.mock.calls[0][0]).toEqual("Entity:list");
@@ -51,10 +47,7 @@ describe("Resolver utils tests", () => {
   });
 
   test("Get list from storage", async () => {
-    mockedLocalForage.setItem = jest.fn(
-      async (_: string, elements: any) => elements
-    );
-    mockedLocalForage.getItem = jest.fn(async () => ["Entity:1"]);
+    mockedLocalForage.getItem.mockReturnValue(Promise.resolve(["Entity:1"]));
 
     await appendToListInStorage("Entity:list", "Entity:2");
 
