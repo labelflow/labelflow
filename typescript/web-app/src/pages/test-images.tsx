@@ -5,8 +5,6 @@ import {
   FetchResult,
 } from "@apollo/client";
 import gql from "graphql-tag";
-import localforage from "localforage";
-import { v4 as uuidv4 } from "uuid";
 
 import type { Image } from "../types.generated";
 

@@ -1,12 +1,5 @@
-import {
-  useQuery,
-  useMutation,
-  MutationFunctionOptions,
-  FetchResult,
-} from "@apollo/client";
+import { useQuery, useMutation } from "@apollo/client";
 import gql from "graphql-tag";
-import localforage from "localforage";
-import { v4 as uuidv4 } from "uuid";
 
 import { Example } from "../types.generated";
 
