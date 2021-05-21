@@ -22,37 +22,80 @@ import * as olGeomRaw from "ol/geom";
 import * as olStyleRaw from "ol/style";
 
 // /////////////////////////////////////////////////////////////////////////////
-// Here we omit abstract base classes, utility classes and other weird stuff
-const ol = omit(
-  [
-    "defaults",
-    "AssertionError",
-    "Disposable",
-    "Graticule",
-    "Image",
-    "ImageBase",
-    "ImageCanvas",
-    "ImageTile",
-    "Kinetic",
-    "MapBrowserEvent",
-    "MapBrowserEventHandler",
-    "MapEvent",
-    "Tile",
-    "TileQueue",
-    "TileRange",
-    "VectorRenderTile",
-    "VectorTile",
-    "getUid",
-    "VERSION",
-  ],
-  olRaw
-);
-const olLayer = omit(["defaults"], olLayerRaw);
-const olControl = omit(["defaults"], olControlRaw);
-const olInteraction = omit(["defaults"], olInteractionRaw);
-const olSource = omit(["defaults", "Image", "Source", "Tile"], olSourceRaw);
-const olGeom = omit(["defaults", "Geometry", "SimpleGeometry"], olGeomRaw);
-const olStyle = omit(["defaults", "Image", "IconImage"], olStyleRaw);
+// Here we define what we omit: abstract base classes, utility classes and other weird stuff
+
+const olOmitKeys = [
+  "defaults",
+  "AssertionError",
+  "Disposable",
+  "Graticule",
+  "Image",
+  "ImageBase",
+  "ImageCanvas",
+  "ImageTile",
+  "Kinetic",
+  "MapBrowserEvent",
+  "MapBrowserEventHandler",
+  "MapEvent",
+  "Tile",
+  "TileQueue",
+  "TileRange",
+  "VectorRenderTile",
+  "VectorTile",
+  "getUid",
+  "VERSION",
+] as const;
+const olLayerOmitKeys = [] as const;
+const olControlOmitKeys = ["defaults"] as const;
+const olInteractionOmitKeys = ["defaults"] as const;
+const olSourceOmitKeys = ["Image", "Source", "Tile"] as const;
+const olGeomOmitKeys = ["Geometry", "SimpleGeometry"] as const;
+const olStyleOmitKeys = ["Image", "IconImage"] as const;
+
+// /////////////////////////////////////////////////////////////////////////////
+// Here we do omit things listed above
+
+const ol = omit(olOmitKeys, olRaw) as Omit<
+  typeof olRaw,
+  typeof olOmitKeys[number]
+>;
+const olLayer = omit(olLayerOmitKeys, olLayerRaw) as Omit<
+  typeof olLayerRaw,
+  typeof olLayerOmitKeys[number]
+>;
+const olControl = omit(olControlOmitKeys, olControlRaw) as Omit<
+  typeof olControlRaw,
+  typeof olControlOmitKeys[number]
+>;
+const olInteraction = omit(olInteractionOmitKeys, olInteractionRaw) as Omit<
+  typeof olInteractionRaw,
+  typeof olInteractionOmitKeys[number]
+>;
+const olSource = omit(olSourceOmitKeys, olSourceRaw) as Omit<
+  typeof olSourceRaw,
+  typeof olSourceOmitKeys[number]
+>;
+const olGeom = omit(olGeomOmitKeys, olGeomRaw) as Omit<
+  typeof olGeomRaw,
+  typeof olGeomOmitKeys[number]
+>;
+const olStyle = omit(olStyleOmitKeys, olStyleRaw) as Omit<
+  typeof olStyleRaw,
+  typeof olStyleOmitKeys[number]
+>;
+
+// type OlSourceRaw = typeof olSourceRaw;
+// // type OlSourceRawKey = keyof OlSourceRaw;
+// type OlSourceOmitKey = typeof olSourceOmitKeys[number];
+// // type OlSourceKey = Exclude<OlSourceRawKey, OlSourceOmitKey>;
+// // type OlSourceElement = OlSourceRaw[OlSourceKey];
+// type OlSource = Omit<OlSourceRaw, OlSourceOmitKey>;
+
+// const olSource = Object.fromEntries(
+//   Object.entries(olSourceRaw).filter(
+//     ([key]) => !olSourceOmitKeys.includes(key as OlSourceOmitKey)
+//   ) // as [OlSourceKey, OlSourceElement]
+// ) as OlSource;
 
 // /////////////////////////////////////////////////////////////////////////////
 // Catalogue Type
@@ -66,7 +109,6 @@ export type Kind =
   | "Source"
   | "Geom"
   | "Style";
-// | null;
 
 export type CatalogueItem<T> = {
   kind: Kind;
@@ -252,7 +294,7 @@ const catalogueOl: CatalogueOl = Object.fromEntries(
       object: value,
     },
   ])
-);
+) as CatalogueOl; // FIXME: Not sure why it is needed here
 
 const catalogueOlLayer: CatalogueOlLayer = Object.fromEntries(
   Object.entries(olLayer).map(([key, value]) => [
@@ -263,7 +305,7 @@ const catalogueOlLayer: CatalogueOlLayer = Object.fromEntries(
       object: value,
     },
   ])
-);
+) as CatalogueOlLayer; // FIXME: Not sure why it is needed here
 
 const catalogueOlControl: CatalogueOlControl = Object.fromEntries(
   Object.entries(olControl).map(([key, value]) => [
@@ -296,7 +338,7 @@ const catalogueOlSource: CatalogueOlSource = Object.fromEntries(
       object: value,
     },
   ])
-);
+) as CatalogueOlSource; // FIXME: Not sure why it is needed here
 
 const catalogueOlGeom: CatalogueOlGeom = Object.fromEntries(
   Object.entries(olGeom).map(([key, value]) => [
@@ -307,7 +349,7 @@ const catalogueOlGeom: CatalogueOlGeom = Object.fromEntries(
       object: value,
     },
   ])
-);
+) as CatalogueOlGeom; // FIXME: Not sure why it is needed here
 
 const catalogueOlStyle: CatalogueOlStyle = Object.fromEntries(
   Object.entries(olStyle).map(([key, value]) => [
@@ -318,7 +360,7 @@ const catalogueOlStyle: CatalogueOlStyle = Object.fromEntries(
       object: value,
     },
   ])
-);
+) as CatalogueOlStyle; // FIXME: Not sure why it is needed here
 
 // eslint-disable-next-line import/no-mutable-exports
 export const catalogue: Catalogue = {
