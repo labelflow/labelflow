@@ -21,8 +21,8 @@ const imagesQuery = gql`
 `;
 
 const createImageMutation = gql`
-  mutation ($input: ImageCreateInput) {
-    createImage(data: $input) {
+  mutation ($data: ImageCreateInputWithFile) {
+    createImage(data: $data) {
       id
       name
     }
@@ -38,24 +38,12 @@ const importImage = (
   if (file == null) {
     return;
   }
-  const url = window.URL.createObjectURL(file);
-  const image = new Image();
-  image.onload = async () => {
-    const imageId = uuidv4();
-    const fileStorageKey = `Image:${imageId}:blob`;
-    await localforage.setItem(fileStorageKey, file);
-    createImage({
-      variables: {
-        input: {
-          id: imageId,
-          name: file.name,
-          width: image.width,
-          height: image.height,
-        },
-      },
-    });
-  };
-  image.src = url;
+  console.log("importImage", file);
+  createImage({
+    variables: {
+      data: { file },
+    },
+  });
 };
 
 const TestImages = () => {
