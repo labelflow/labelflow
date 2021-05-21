@@ -35,12 +35,18 @@ type Image {
   width: Int!
 }
 
-input ImageCreateInput {
+input ImageCreateInputWithFile {
+  id: ID
+  name: String
+  file: Upload!
+}
+
+input ImageCreateInputWithUrl {
   id: ID
   name: String!
   width: Int!
   height: Int!
-  url: String
+  url: String!
 }
 
 input ImageWhereInput {
@@ -53,7 +59,7 @@ input ImageWhereUniqueInput {
 
 type Mutation {
   createExample(data: ExampleCreateInput!): Example
-  createImage(data: ImageCreateInput!): Image
+  createImage(data: ImageCreateInputWithFile!): Image
 }
 
 type Query {
@@ -63,3 +69,5 @@ type Query {
   images(where: ImageWhereInput, first: Int, skip: Int): [Image!]!
   image(where: ImageWhereUniqueInput!): Image!
 }
+
+scalar Upload

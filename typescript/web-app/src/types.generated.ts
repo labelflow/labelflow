@@ -12,6 +12,7 @@ export type Scalars = {
   Int: number;
   Float: number;
   DateTime: any;
+  Upload: any;
 };
 
 
@@ -52,12 +53,18 @@ export type Image = {
   width: Scalars['Int'];
 };
 
-export type ImageCreateInput = {
+export type ImageCreateInputWithFile = {
+  id?: Maybe<Scalars['ID']>;
+  name?: Maybe<Scalars['String']>;
+  file: Scalars['Upload'];
+};
+
+export type ImageCreateInputWithUrl = {
   id?: Maybe<Scalars['ID']>;
   name: Scalars['String'];
   width: Scalars['Int'];
   height: Scalars['Int'];
-  url?: Maybe<Scalars['String']>;
+  url: Scalars['String'];
 };
 
 export type ImageWhereInput = {
@@ -81,7 +88,7 @@ export type MutationCreateExampleArgs = {
 
 
 export type MutationCreateImageArgs = {
-  data: ImageCreateInput;
+  data: ImageCreateInputWithFile;
 };
 
 export type Query = {
@@ -117,6 +124,7 @@ export type QueryImagesArgs = {
 export type QueryImageArgs = {
   where: ImageWhereUniqueInput;
 };
+
 
 
 
@@ -206,11 +214,13 @@ export type ResolversTypes = {
   ID: ResolverTypeWrapper<Scalars['ID']>;
   Image: ResolverTypeWrapper<Image>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
-  ImageCreateInput: ImageCreateInput;
+  ImageCreateInputWithFile: ImageCreateInputWithFile;
+  ImageCreateInputWithUrl: ImageCreateInputWithUrl;
   ImageWhereInput: ImageWhereInput;
   ImageWhereUniqueInput: ImageWhereUniqueInput;
   Mutation: ResolverTypeWrapper<{}>;
   Query: ResolverTypeWrapper<{}>;
+  Upload: ResolverTypeWrapper<Scalars['Upload']>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
 };
 
@@ -225,11 +235,13 @@ export type ResolversParentTypes = {
   ID: Scalars['ID'];
   Image: Image;
   Int: Scalars['Int'];
-  ImageCreateInput: ImageCreateInput;
+  ImageCreateInputWithFile: ImageCreateInputWithFile;
+  ImageCreateInputWithUrl: ImageCreateInputWithUrl;
   ImageWhereInput: ImageWhereInput;
   ImageWhereUniqueInput: ImageWhereUniqueInput;
   Mutation: {};
   Query: {};
+  Upload: Scalars['Upload'];
   Boolean: Scalars['Boolean'];
 };
 
@@ -269,12 +281,17 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   image?: Resolver<ResolversTypes['Image'], ParentType, ContextType, RequireFields<QueryImageArgs, 'where'>>;
 };
 
+export interface UploadScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Upload'], any> {
+  name: 'Upload';
+}
+
 export type Resolvers<ContextType = any> = {
   DateTime?: GraphQLScalarType;
   Example?: ExampleResolvers<ContextType>;
   Image?: ImageResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
+  Upload?: GraphQLScalarType;
 };
 
 
