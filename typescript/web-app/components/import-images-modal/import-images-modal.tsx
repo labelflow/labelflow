@@ -20,6 +20,7 @@ import {
   ModalCloseButton,
   Table,
   Tbody,
+  Tooltip,
   Tr,
   Td,
   Text,
@@ -175,12 +176,12 @@ export const ImportImagesModal = ({
                           {isEmpty(errors) ? (
                             <Td />
                           ) : (
-                            <Td
-                              title={errors.map((e) => e.message).join(". ")}
-                              color="gray.400"
-                              fontSize="md"
-                            >
-                              {errors.length} errors
+                            <Td color="gray.400" fontSize="md">
+                              <Tooltip
+                                label={errors.map((e) => e.message).join(". ")}
+                              >
+                                <Text>{errors.length} errors</Text>
+                              </Tooltip>
                             </Td>
                           )}
                         </Tr>
