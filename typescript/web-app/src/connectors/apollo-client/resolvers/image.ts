@@ -33,13 +33,10 @@ export const image = async (_: any, args: QueryImageArgs) => {
 };
 
 export const images = async (_: any, args: QueryImagesArgs) => {
-  const imagesList = await getListFromStorage<Image>(typeNamePlural);
-
-  // TODO: Implement this part of the logic in `getListFromStorage`
-  // const first = args?.first ?? entities.length;
-  // const skip = args?.skip ?? 0;
-
-  // const filteredKeys = entityKeysList.slice(skip, first + skip);
+  const imagesList = await getListFromStorage<Image>(typeNamePlural, {
+    first: args.first,
+    skip: args.skip,
+  });
 
   const entitiesWithUrls = await Promise.all(
     imagesList.map(async (imageEntity) => {

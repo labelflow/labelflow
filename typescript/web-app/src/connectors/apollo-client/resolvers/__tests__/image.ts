@@ -69,48 +69,21 @@ describe("Image resolver test suite", () => {
     expect(queryResult).toEqual({ id: "1", name: "Test" });
     expect(mockedLocalForage.getItem.mock.calls[0][0]).toEqual(`Image:1`);
   });
-  describe("Test list queries", () => {
-    beforeEach(() => {
-      mockedLocalForage.getItem.mockReturnValue(
-        Promise.resolve(["Image:1", "Image:2", "Image:3", "Image:4", "Image:5"])
-      );
-    });
-    test("Query images", async () => {
-      const queryResult = await images(undefined, {});
 
-      expect(queryResult.length).toEqual(5);
-      expect(mockedLocalForage.getItem.mock.calls[0][0]).toEqual(`Image:list`);
-      expect(mockedLocalForage.getItem.mock.calls[1][0]).toEqual(`Image:1`);
-      expect(mockedLocalForage.getItem.mock.calls[2][0]).toEqual(`Image:2`);
-      expect(mockedLocalForage.getItem.mock.calls[3][0]).toEqual(`Image:3`);
-      expect(mockedLocalForage.getItem.mock.calls[4][0]).toEqual(`Image:4`);
-      expect(mockedLocalForage.getItem.mock.calls[5][0]).toEqual(`Image:5`);
-      expect(mockedLocalForage.getItem.mock.calls[6]).toBeUndefined();
-    });
+  test("Query images", async () => {
+    mockedLocalForage.getItem.mockReturnValue(
+      Promise.resolve(["Image:1", "Image:2", "Image:3", "Image:4", "Image:5"])
+    );
 
-    test("Query images with skip ", async () => {
-      const queryResultSkippingOne = await images(undefined, { skip: 1 });
+    const queryResult = await images(undefined, {});
 
-      expect(queryResultSkippingOne.length).toEqual(4);
-    });
-
-    test("Query images with first ", async () => {
-      const queryResultFirstTwo = await images(undefined, { first: 2 });
-
-      expect(queryResultFirstTwo.length).toEqual(2);
-    });
-    test("Query images with skip and first ", async () => {
-      const queryResultFirstTwoSkipOne = await images(undefined, {
-        first: 2,
-        skip: 1,
-      });
-      const queryResultFirstTwoSkipFour = await images(undefined, {
-        first: 2,
-        skip: 4,
-      });
-
-      expect(queryResultFirstTwoSkipOne.length).toEqual(2);
-      expect(queryResultFirstTwoSkipFour.length).toEqual(1);
-    });
+    expect(queryResult.length).toEqual(5);
+    expect(mockedLocalForage.getItem.mock.calls[0][0]).toEqual(`Image:list`);
+    expect(mockedLocalForage.getItem.mock.calls[1][0]).toEqual(`Image:1`);
+    expect(mockedLocalForage.getItem.mock.calls[2][0]).toEqual(`Image:2`);
+    expect(mockedLocalForage.getItem.mock.calls[3][0]).toEqual(`Image:3`);
+    expect(mockedLocalForage.getItem.mock.calls[4][0]).toEqual(`Image:4`);
+    expect(mockedLocalForage.getItem.mock.calls[5][0]).toEqual(`Image:5`);
+    expect(mockedLocalForage.getItem.mock.calls[6]).toBeUndefined();
   });
 });
