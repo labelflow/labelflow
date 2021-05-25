@@ -1,22 +1,32 @@
 import localforage from "localforage";
-import { isEmpty } from "lodash/fp";
 
-export const getListFromStorage = async (listKey: string) => {
-  const entityKeysList = await localforage.getItem(listKey);
-  if (isEmpty(entityKeysList)) {
+export const getListFromStorage = async <EntityType = unknown>(
+  listKey: string,
+  pagination: { first?: number | null; skip?: number | null } = {}
+): Promise<EntityType[]> => {
+  const entityKeysList = await localforage.getItem<string[]>(listKey);
+
+  if (entityKeysList === null) {
     return [];
   }
+
+  const first = pagination.first ?? entityKeysList.length;
+  const skip = pagination.skip ?? 0;
+
+  const filteredKeys = entityKeysList.slice(skip, first + skip);
+
   return Promise.all(
-    (entityKeysList as []).map((entityKey: string) =>
-      localforage.getItem(entityKey)
+    filteredKeys.map(
+      (entityKey: string) =>
+        localforage.getItem<EntityType>(entityKey) as Promise<EntityType>
     )
   );
 };
 
-export const appendToListInStorage = async (
+export const appendToListInStorage = async <EntityType = string>(
   listKey: string,
   element: string
-): Promise<any[]> => {
+): Promise<EntityType[]> => {
   const oldEntityKeysList = await (<Promise<any[] | null>>(
     localforage.getItem(listKey)
   ));
@@ -24,5 +34,5 @@ export const appendToListInStorage = async (
   const newEntitiesList =
     oldEntityKeysList == null ? [element] : [...oldEntityKeysList, element];
 
-  return localforage.setItem(listKey, newEntitiesList);
+  return localforage.setItem<EntityType[]>(listKey, newEntitiesList);
 };

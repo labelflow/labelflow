@@ -12,6 +12,7 @@ export type Scalars = {
   Int: number;
   Float: number;
   DateTime: any;
+  Upload: any;
 };
 
 
@@ -43,16 +44,22 @@ export type ExampleWhereUniqueInput = {
 
 export type Image = {
   __typename?: 'Image';
-  id?: Maybe<Scalars['ID']>;
-  createdAt?: Maybe<Scalars['DateTime']>;
-  updatedAt?: Maybe<Scalars['DateTime']>;
-  url?: Maybe<Scalars['String']>;
-  name?: Maybe<Scalars['String']>;
-  height?: Maybe<Scalars['Int']>;
-  width?: Maybe<Scalars['Int']>;
+  id: Scalars['ID'];
+  createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
+  url: Scalars['String'];
+  name: Scalars['String'];
+  height: Scalars['Int'];
+  width: Scalars['Int'];
 };
 
-export type ImageCreateInput = {
+export type ImageCreateInputWithFile = {
+  id?: Maybe<Scalars['ID']>;
+  name?: Maybe<Scalars['String']>;
+  file: Scalars['Upload'];
+};
+
+export type ImageCreateInputWithUrl = {
   id?: Maybe<Scalars['ID']>;
   name: Scalars['String'];
   width: Scalars['Int'];
@@ -81,7 +88,7 @@ export type MutationCreateExampleArgs = {
 
 
 export type MutationCreateImageArgs = {
-  data: ImageCreateInput;
+  data: ImageCreateInputWithFile;
 };
 
 export type Query = {
@@ -97,6 +104,7 @@ export type Query = {
 export type QueryExamplesArgs = {
   where?: Maybe<ExampleWhereInput>;
   first?: Maybe<Scalars['Int']>;
+  skip?: Maybe<Scalars['Int']>;
   orderBy?: Maybe<ExampleOrderByInput>;
 };
 
@@ -116,6 +124,7 @@ export type QueryImagesArgs = {
 export type QueryImageArgs = {
   where: ImageWhereUniqueInput;
 };
+
 
 
 
@@ -205,11 +214,13 @@ export type ResolversTypes = {
   ID: ResolverTypeWrapper<Scalars['ID']>;
   Image: ResolverTypeWrapper<Image>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
-  ImageCreateInput: ImageCreateInput;
+  ImageCreateInputWithFile: ImageCreateInputWithFile;
+  ImageCreateInputWithUrl: ImageCreateInputWithUrl;
   ImageWhereInput: ImageWhereInput;
   ImageWhereUniqueInput: ImageWhereUniqueInput;
   Mutation: ResolverTypeWrapper<{}>;
   Query: ResolverTypeWrapper<{}>;
+  Upload: ResolverTypeWrapper<Scalars['Upload']>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
 };
 
@@ -224,11 +235,13 @@ export type ResolversParentTypes = {
   ID: Scalars['ID'];
   Image: Image;
   Int: Scalars['Int'];
-  ImageCreateInput: ImageCreateInput;
+  ImageCreateInputWithFile: ImageCreateInputWithFile;
+  ImageCreateInputWithUrl: ImageCreateInputWithUrl;
   ImageWhereInput: ImageWhereInput;
   ImageWhereUniqueInput: ImageWhereUniqueInput;
   Mutation: {};
   Query: {};
+  Upload: Scalars['Upload'];
   Boolean: Scalars['Boolean'];
 };
 
@@ -245,13 +258,13 @@ export type ExampleResolvers<ContextType = any, ParentType extends ResolversPare
 };
 
 export type ImageResolvers<ContextType = any, ParentType extends ResolversParentTypes['Image'] = ResolversParentTypes['Image']> = {
-  id?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
-  createdAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
-  updatedAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
-  url?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  height?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  width?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  url?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  height?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  width?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -268,12 +281,17 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   image?: Resolver<ResolversTypes['Image'], ParentType, ContextType, RequireFields<QueryImageArgs, 'where'>>;
 };
 
+export interface UploadScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Upload'], any> {
+  name: 'Upload';
+}
+
 export type Resolvers<ContextType = any> = {
   DateTime?: GraphQLScalarType;
   Example?: ExampleResolvers<ContextType>;
   Image?: ImageResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
+  Upload?: GraphQLScalarType;
 };
 
 

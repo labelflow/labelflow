@@ -18,6 +18,8 @@ describe("Resolver utils tests", () => {
     jest.resetAllMocks();
   });
   test("Get list from storage when list is empty", async () => {
+    mockedLocalForage.getItem.mockReturnValue(Promise.resolve(null));
+
     const listOfEntities = await getListFromStorage("Entity:list");
 
     expect(listOfEntities).toEqual([]);
@@ -57,5 +59,98 @@ describe("Resolver utils tests", () => {
       "Entity:1",
       "Entity:2",
     ]);
+  });
+
+  describe("With pagination", () => {
+    beforeEach(() => {
+      mockedLocalForage.getItem.mockResolvedValue([
+        "Entity:1",
+        "Entity:2",
+        "Entity:3",
+        "Entity:4",
+        "Entity:5",
+      ]);
+    });
+
+    test("Query list with skip ", async () => {
+      const queryResultSkippingOne = await getListFromStorage("Entity:list", {
+        skip: 1,
+      });
+
+      expect(queryResultSkippingOne.length).toEqual(4);
+
+      expect(mockedLocalForage.getItem).toHaveBeenNthCalledWith(
+        1,
+        "Entity:list"
+      );
+      expect(mockedLocalForage.getItem).toHaveBeenNthCalledWith(2, "Entity:2");
+      expect(mockedLocalForage.getItem).toHaveBeenNthCalledWith(3, "Entity:3");
+      expect(mockedLocalForage.getItem).toHaveBeenNthCalledWith(4, "Entity:4");
+      expect(mockedLocalForage.getItem).toHaveBeenNthCalledWith(5, "Entity:5");
+
+      // the 4 items on the skipped list + one call to get the list itself
+      expect(mockedLocalForage.getItem).toBeCalledTimes(5);
+    });
+
+    test("Query list with first ", async () => {
+      const queryResultFirstTwo = await getListFromStorage("Entity:list", {
+        first: 2,
+      });
+
+      expect(queryResultFirstTwo.length).toEqual(2);
+
+      expect(mockedLocalForage.getItem).toHaveBeenNthCalledWith(
+        1,
+        "Entity:list"
+      );
+      expect(mockedLocalForage.getItem).toHaveBeenNthCalledWith(2, "Entity:1");
+      expect(mockedLocalForage.getItem).toHaveBeenNthCalledWith(3, "Entity:2");
+
+      // the 2 first items of list + one call to get the list itself
+      expect(mockedLocalForage.getItem).toBeCalledTimes(3);
+    });
+
+    test("Query list with skip and first ", async () => {
+      const queryResultFirstTwoSkipOne = await getListFromStorage(
+        "Entity:list",
+        {
+          first: 2,
+          skip: 1,
+        }
+      );
+
+      expect(queryResultFirstTwoSkipOne.length).toEqual(2);
+
+      expect(mockedLocalForage.getItem).toHaveBeenNthCalledWith(
+        1,
+        "Entity:list"
+      );
+      expect(mockedLocalForage.getItem).toHaveBeenNthCalledWith(2, "Entity:2");
+      expect(mockedLocalForage.getItem).toHaveBeenNthCalledWith(3, "Entity:3");
+
+      // the 2 first items of skipped list + one call to get the list itself
+      expect(mockedLocalForage.getItem).toBeCalledTimes(3);
+    });
+
+    test("Query more items than available", async () => {
+      const queryResultFirstTwoSkipFour = await getListFromStorage(
+        "Entity:list",
+        {
+          first: 2,
+          skip: 4,
+        }
+      );
+
+      expect(queryResultFirstTwoSkipFour.length).toEqual(1);
+
+      expect(mockedLocalForage.getItem).toHaveBeenNthCalledWith(
+        1,
+        "Entity:list"
+      );
+      expect(mockedLocalForage.getItem).toHaveBeenNthCalledWith(2, "Entity:5");
+
+      // the last items of list + one call to get the list itself
+      expect(mockedLocalForage.getItem).toBeCalledTimes(2);
+    });
   });
 });

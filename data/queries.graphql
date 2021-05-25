@@ -3,6 +3,7 @@ type Query {
   examples(
     where: ExampleWhereInput
     first: Int
+    skip: Int
     orderBy: ExampleOrderByInput
   ): [Example!]!
   example(where: ExampleWhereUniqueInput!): Example!
