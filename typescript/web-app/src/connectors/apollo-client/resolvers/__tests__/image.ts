@@ -32,9 +32,9 @@ describe("Image resolver test suite", () => {
     expect(queryResult.length).toEqual(0);
   });
 
-  test("Create image", async () => {
+  test("Create image with URL", async () => {
     const createResult = await createImage(undefined, {
-      data: { name: "test image", width: 1000, height: 600, url: "myUrl" },
+      data: { name: "test image", file: new Blob() },
     });
 
     expect(createResult?.name).toEqual("test image");
@@ -43,13 +43,11 @@ describe("Image resolver test suite", () => {
     );
   });
 
-  test("Create image with specified ID", async () => {
+  test("Create image with URL and specified ID", async () => {
     const createResult = await createImage(undefined, {
       data: {
         name: "test image",
-        width: 1000,
-        height: 600,
-        url: "myUrl",
+        file: new Blob(),
         id: "myID",
       },
     });

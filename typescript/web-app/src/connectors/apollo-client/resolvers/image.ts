@@ -19,11 +19,11 @@ const getUrlFromKey = memoize(async (key: string) => {
   return url;
 });
 
-const getImageByKey = async (key: string) => {
+const getImageByKey = async (key: string): Promise<Image> => {
   const entity = await localforage.getItem<Image>(key);
   const url = await getUrlFromKey(key);
 
-  return { ...entity, url };
+  return { ...entity, url } as Image;
 };
 
 // Queries
@@ -51,17 +51,20 @@ export const images = async (_: any, args: QueryImagesArgs) => {
 };
 
 // Mutations
-export const createImage = async (_: any, args: MutationCreateImageArgs) => {
+export const createImage = async (
+  _: any,
+  args: MutationCreateImageArgs
+): Promise<Image> => {
   const { file, id, name } = args.data;
   const imageId = id ?? uuidv4();
   const fileStorageKey = `Image:${imageId}:blob`;
   await localforage.setItem(fileStorageKey, file);
   const url = await getUrlFromKey(fileStorageKey);
 
-  const newEntityPromise = new Promise((resolve, reject) => {
+  const newEntity = await new Promise<Image>((resolve, reject) => {
     const imageObject = new Image();
     imageObject.onload = async () => {
-      const newEntity = {
+      const newImageEntity = {
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
         id: imageId,
@@ -71,8 +74,8 @@ export const createImage = async (_: any, args: MutationCreateImageArgs) => {
       };
 
       // Set entity in db
-      const newEntityKey = `${typeName}:${newEntity.id}`;
-      await localforage.setItem(newEntityKey, newEntity);
+      const newEntityKey = `${typeName}:${newImageEntity.id}`;
+      await localforage.setItem(newEntityKey, newImageEntity);
 
       // Add entity to entity list
       await appendToListInStorage(typeNamePlural, newEntityKey);
@@ -83,7 +86,7 @@ export const createImage = async (_: any, args: MutationCreateImageArgs) => {
     imageObject.src = url;
   });
 
-  return newEntityPromise;
+  return newEntity;
 };
 
 export default {
