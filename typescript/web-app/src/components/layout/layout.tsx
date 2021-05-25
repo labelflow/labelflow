@@ -8,11 +8,13 @@ export const Layout = ({ children }: PropsWithChildren<{}>) => {
   return (
     <ChakraProvider theme={theme} resetCSS>
       <Grid h="100vh" templateColumns="1fr" templateRows="64px 1fr">
-        <GridItem bg="white">
+        <GridItem>
           <TopBar />
         </GridItem>
-        <GridItem bg="gray.100">
-          <Box as="main">{children}</Box>
+        <GridItem>
+          <Box as="main" bg="gray.100">
+            {children}
+          </Box>
         </GridItem>
       </Grid>
     </ChakraProvider>
