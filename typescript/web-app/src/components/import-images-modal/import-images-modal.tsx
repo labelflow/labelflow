@@ -154,8 +154,10 @@ export const ImportImagesModal = ({
                 <Box as="section" overflowY="auto">
                   <Table size="sm" variant="stripped">
                     <Tbody>
-                      {files.map(({ path, errors }, i) => (
-                        <Tr key={path} bg={i % 2 === 0 ? "gray.50" : "inherit"}>
+                      {files.map(({ path, errors }, index) => (
+                        <Tr
+                          key={path}
+                          bg={index % 2 === 0 ? "gray.50" : "inherit"}>
                           <Td pl="2" pr="2" fontSize="md">
                             {isEmpty(errors) ? (
                               <RiImageLine />
