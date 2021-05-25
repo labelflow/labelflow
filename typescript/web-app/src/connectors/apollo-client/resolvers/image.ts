@@ -19,6 +19,10 @@ const getUrlFromKey = memoize(async (key: string) => {
   return url;
 });
 
+export const clearGetUrlFromKeyMem = () => {
+  memoize.clear(getUrlFromKey);
+};
+
 const getImageByKey = async (key: string): Promise<Image> => {
   const entity = await localforage.getItem<Image>(key);
   const url = await getUrlFromKey(key);
@@ -57,7 +61,7 @@ export const createImage = async (
 ): Promise<Image> => {
   const { file, id, name } = args.data;
   const imageId = id ?? uuidv4();
-  const fileStorageKey = `Image:${imageId}:blob`;
+  const fileStorageKey = `${typeName}:${imageId}:blob`;
   await localforage.setItem(fileStorageKey, file);
   const url = await getUrlFromKey(fileStorageKey);
 
@@ -74,13 +78,12 @@ export const createImage = async (
       };
 
       // Set entity in db
-      const newEntityKey = `${typeName}:${newImageEntity.id}`;
+      const newEntityKey = `${typeName}:${imageId}`;
       await localforage.setItem(newEntityKey, newImageEntity);
-
       // Add entity to entity list
       await appendToListInStorage(typeNamePlural, newEntityKey);
 
-      resolve(getImageByKey(fileStorageKey));
+      resolve(await getImageByKey(newEntityKey));
     };
     imageObject.onerror = reject;
     imageObject.src = url;
