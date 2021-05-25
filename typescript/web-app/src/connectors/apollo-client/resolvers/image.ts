@@ -52,11 +52,11 @@ export const images = async (_: any, args: QueryImagesArgs) => {
 
 // Mutations
 export const createImage = async (_: any, args: MutationCreateImageArgs) => {
-  const { file, id } = args.data;
-  const url = window.URL.createObjectURL(file);
+  const { file, id, name } = args.data;
   const imageId = id ?? uuidv4();
   const fileStorageKey = `Image:${imageId}:blob`;
   await localforage.setItem(fileStorageKey, file);
+  const url = await getUrlFromKey(fileStorageKey);
 
   const newEntityPromise = new Promise((resolve, reject) => {
     const imageObject = new Image();
@@ -65,10 +65,9 @@ export const createImage = async (_: any, args: MutationCreateImageArgs) => {
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
         id: imageId,
-        name: args?.data?.name ?? file.name,
+        name: name ?? file.name,
         width: imageObject.width,
         height: imageObject.height,
-        url,
       };
 
       // Set entity in db
@@ -78,7 +77,7 @@ export const createImage = async (_: any, args: MutationCreateImageArgs) => {
       // Add entity to entity list
       await appendToListInStorage(typeNamePlural, newEntityKey);
 
-      resolve(newEntity);
+      resolve(getImageByKey(fileStorageKey));
     };
     imageObject.onerror = reject;
     imageObject.src = url;
