@@ -6,7 +6,7 @@ import "ol/ol.css";
 
 export default {
   title: "OL Examples/Reprojection WGS84",
-  component: Map
+  component: Map,
 };
 
 export const ReprojectionWGS84 = () => {

@@ -7,7 +7,7 @@ import icon from "./icon.png";
 
 export default {
   title: "OL Examples/Icon",
-  component: Map
+  component: Map,
 };
 
 export const Icon = () => {
@@ -17,7 +17,7 @@ export const Icon = () => {
   const overlayRef = useResource<Overlay>();
 
   const onClick = (evt): void => {
-    const feature = mapRef.current.forEachFeatureAtPixel(evt.pixel, f => f);
+    const feature = mapRef.current.forEachFeatureAtPixel(evt.pixel, (f) => f);
     if (feature) {
       const coordinates = feature.getGeometry().getCoordinates();
       overlayRef.current.setPosition(coordinates);
@@ -27,7 +27,7 @@ export const Icon = () => {
     }
   };
 
-  const onPointermove = e => {
+  const onPointermove = (e) => {
     if (e.dragging) {
       setDisplayPopup(false);
       return;
@@ -52,7 +52,7 @@ export const Icon = () => {
             positioning="bottom-center"
             element={popupRef.current}
             args={{
-              stopEvent: false
+              stopEvent: false,
             }}
           />
         ) : null}
@@ -61,7 +61,7 @@ export const Icon = () => {
           <olSourceTileJSON
             args={{
               url: "https://a.tiles.mapbox.com/v3/aj.1x1-degrees.json?secure=1",
-              crossOrigin: ""
+              crossOrigin: "",
             }}
           />
         </olLayerTile>
@@ -75,7 +75,7 @@ export const Icon = () => {
                     anchor: [0.5, 46],
                     anchorXUnits: "fraction",
                     anchorYUnits: "pixels",
-                    src: icon
+                    src: icon,
                   }}
                 />
               </olStyleStyle>

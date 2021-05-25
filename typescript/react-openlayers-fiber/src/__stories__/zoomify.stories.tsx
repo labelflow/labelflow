@@ -6,7 +6,7 @@ import "ol/ol.css";
 
 export default {
   title: "Ol Examples/Zoomify",
-  component: Map
+  component: Map,
 };
 
 export const Zoomify = () => {
@@ -22,7 +22,7 @@ export const Zoomify = () => {
           extent: [0, -imgHeight, imgWidth, 0],
           constrainOnlyCenter: true,
           maxResolution: 80,
-          minResolution: 0.05
+          minResolution: 0.05,
         }}
       />
       <olLayerTile>
@@ -32,7 +32,7 @@ export const Zoomify = () => {
           crossOrigin="anonymous"
           zDirection={-1}
           args={{
-            url: "https://ol-zoomify.surge.sh/zoomify/"
+            url: "https://ol-zoomify.surge.sh/zoomify/",
           }}
         />
       </olLayerTile>

@@ -8,7 +8,7 @@ import "ol/ol.css";
 
 export default {
   title: "Examples/2-Dynamic",
-  component: Map
+  component: Map,
 };
 
 const stroke = new Stroke({ color: "black", width: 2 });
@@ -16,12 +16,12 @@ const fill = new Fill({ color: "red" });
 
 const pointStyle = new Style({
   image: new RegularShape({
-    fill: fill,
-    stroke: stroke,
+    fill,
+    stroke,
     points: 4,
     radius: 10,
-    angle: Math.PI / 4
-  })
+    angle: Math.PI / 4,
+  }),
 });
 
 export const Dynamic = () => {

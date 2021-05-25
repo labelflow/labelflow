@@ -7,7 +7,7 @@ import "ol/ol.css";
 
 export default {
   title: "OL Examples/XYZ Retina",
-  component: Map
+  component: Map,
 };
 
 const attributions = `<a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>`;

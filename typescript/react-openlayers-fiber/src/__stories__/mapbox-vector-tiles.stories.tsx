@@ -14,7 +14,7 @@ declare global {
 
 export default {
   title: "OL Examples/Mapbox Vector Tiles",
-  component: Map
+  component: Map,
 };
 
 const key =

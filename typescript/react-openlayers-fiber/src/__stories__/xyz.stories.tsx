@@ -6,7 +6,7 @@ import "ol/ol.css";
 
 export default {
   title: "OL Examples/XYZ",
-  component: Map
+  component: Map,
 };
 
 export const XYZ = () => {

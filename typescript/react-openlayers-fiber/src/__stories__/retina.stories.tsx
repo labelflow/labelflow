@@ -6,7 +6,7 @@ import "ol/ol.css";
 
 export default {
   title: "Components/Retina",
-  component: Map
+  component: Map,
 };
 
 export const Retina = () => (

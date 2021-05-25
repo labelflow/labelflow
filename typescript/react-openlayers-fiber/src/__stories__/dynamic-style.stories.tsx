@@ -8,7 +8,7 @@ import "ol/ol.css";
 
 export default {
   title: "Examples/3-Dynamic style",
-  component: Map
+  component: Map,
 };
 
 const stroke = new Stroke({ color: "black", width: 2 });
@@ -38,7 +38,7 @@ export const DynamicStyle = () => {
                   stroke,
                   radius: Math.random() * 20,
                   points: 4,
-                  angle: Math.PI / 4
+                  angle: Math.PI / 4,
                 }}
               />
             </olStyleStyle>

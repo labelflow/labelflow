@@ -3,6 +3,7 @@ import { Map as olMap } from "ol";
 import { Style, Fill, Stroke, Circle as CircleStyle } from "ol/style";
 import { Point, MultiPoint } from "ol/geom";
 import { getVectorContext } from "ol/render";
+import RenderEvent from "ol/render/Event";
 
 import { Map } from "../map";
 
@@ -43,13 +44,13 @@ const p = 2e6;
 
 export const DynamicData = () => {
   const mapRef = useRef<olMap>();
-  const onPostrender = (event) => {
-    const vectorContext = getVectorContext(event);
-    const frameState = event.frameState;
+  const onPostrender = (event: RenderEvent) => {
+    const vectorContext = getVectorContext(event as RenderEvent);
+    const { frameState } = event;
     const theta = (2 * Math.PI * frameState.time) / omegaTheta;
     const coordinates = [];
     let i;
-    for (i = 0; i < n; ++i) {
+    for (i = 0; i < n; i += 1) {
       const t = theta + (2 * Math.PI * i) / n;
       const x = (R + r) * Math.cos(t) + p * Math.cos(((R + r) * t) / r);
       const y = (R + r) * Math.sin(t) + p * Math.sin(((R + r) * t) / r);
@@ -66,7 +67,8 @@ export const DynamicData = () => {
     vectorContext.setStyle(headInnerImageStyle);
     vectorContext.drawGeometry(headPoint);
 
-    mapRef.current.render();
+    mapRef.current?.render();
+    return true;
   };
 
   return (

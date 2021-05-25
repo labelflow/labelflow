@@ -10,7 +10,7 @@ import "ol/ol.css";
 
 export default {
   title: "OL Examples/Popup",
-  component: Map
+  component: Map,
 };
 
 export const Popup = () => {
@@ -19,7 +19,7 @@ export const Popup = () => {
   const popupRef = useResource<HTMLElement>();
   const overlayRef = useResource<Overlay>();
 
-  const onSingleclick = evt => {
+  const onSingleclick = (evt) => {
     const coordinate = evt.coordinate;
     setCoordinates(coordinate);
     overlayRef.current.setPosition(coordinate);
@@ -36,7 +36,7 @@ export const Popup = () => {
           padding: "15px",
           borderRadius: "10px",
           border: "1px solid #cccccc",
-          minWidth: "280px"
+          minWidth: "280px",
         }}
       >
         {displayPopup ? (
@@ -50,7 +50,7 @@ export const Popup = () => {
                 textDecoration: "none",
                 position: "absolute",
                 top: "2px",
-                right: "8px"
+                right: "8px",
               }}
             >
               X
@@ -69,7 +69,7 @@ export const Popup = () => {
             element={popupRef.current}
             autoPan
             autoPanAnimation={{
-              duration: 250
+              duration: 250,
             }}
           />
         ) : null}

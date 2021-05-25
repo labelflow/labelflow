@@ -10,7 +10,7 @@ import "ol/ol.css";
 
 export default {
   title: "OL Examples/Reprojection image",
-  component: Map
+  component: Map,
 };
 
 proj4.defs(
@@ -33,7 +33,7 @@ export const ReprojectionImage = () => {
           type="checkbox"
           id="imageSmoothing"
           checked={isImageSmooth}
-          onChange={e => setImageSmoothing(e.target.checked)}
+          onChange={(e) => setImageSmoothing(e.target.checked)}
         />
         Image smoothing
       </div>
@@ -56,7 +56,7 @@ export const ReprojectionImage = () => {
             projection="EPSG:27700"
             imageExtent={imageExtent}
             args={{
-              imageSmoothing: isImageSmooth
+              imageSmoothing: isImageSmooth,
             }}
           />
         </olLayerImage>

@@ -9,7 +9,7 @@ import "ol/ol.css";
 
 export default {
   title: "OL Examples/Image filter",
-  component: Map
+  component: Map,
 };
 
 const kernels = {
@@ -19,7 +19,7 @@ const kernels = {
   blur: [1, 1, 1, 1, 1, 1, 1, 1, 1],
   shadow: [1, 2, 1, 0, 1, 0, -1, -2, -1],
   emboss: [-2, 1, 0, -1, 1, 1, 0, 1, 2],
-  edge: [0, 1, 0, 1, -4, 1, 0, 1, 0]
+  edge: [0, 1, 0, 1, -4, 1, 0, 1, 0],
 };
 
 function normalize(kernel) {
@@ -27,7 +27,7 @@ function normalize(kernel) {
   const normal = new Array(len);
   let i,
     sum = 0;
-  for (i = 0; i < len; ++i) {
+  for (i = 0; i < len; i += 1) {
     sum += kernel[i];
   }
   if (sum <= 0) {
@@ -116,7 +116,7 @@ export const ImageFilter = () => {
       {/* eslint-disable-next-line jsx-a11y/no-onchange */}
       <select
         value={selectedKernel}
-        onChange={e => setSelectedKernel(e.target.value)}
+        onChange={(e) => setSelectedKernel(e.target.value)}
       >
         <option>none</option>
         <option>sharpen</option>

@@ -12,14 +12,14 @@ import "ol/ol.css";
 
 export default {
   title: "OL Examples/Vector Tiles",
-  component: Map
+  component: Map,
 };
 
 // Match the server resolutions
 const maxResolution = 360 / 512;
 defaultResolutions.length = 14;
-for (let i = 0; i < 14; ++i) {
-  defaultResolutions[i] = maxResolution / Math.pow(2, i + 1);
+for (let i = 0; i < 14; i += 1) {
+  defaultResolutions[i] = maxResolution / 2 ** (i + 1);
 }
 
 export const VectorTiles = () => {
@@ -46,14 +46,14 @@ export const VectorTiles = () => {
             layer.setSource(
               new VectorTileSource({
                 format: new MVT(),
-                urls: source.getUrls()
+                urls: source.getUrls(),
               })
             );
           }
         });
         return;
       })
-      .catch(e => {
+      .catch((e) => {
         console.error(e.message);
       });
   }, [mapRef.current]);

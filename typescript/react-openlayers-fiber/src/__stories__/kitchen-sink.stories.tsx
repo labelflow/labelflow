@@ -10,7 +10,7 @@ import "ol/ol.css";
 
 export default {
   title: "Components/KitchenSink",
-  component: Map
+  component: Map,
 };
 
 const bingstyles = [
@@ -19,7 +19,7 @@ const bingstyles = [
   "Aerial",
   "AerialWithLabelsOnDemand",
   "CanvasDark",
-  "OrdnanceSurvey"
+  "OrdnanceSurvey",
 ];
 
 const stroke = new Stroke({ color: "black", width: 2 });
@@ -31,18 +31,18 @@ const pointStyle = new Style({
     stroke: stroke,
     points: 4,
     radius: 10,
-    angle: Math.PI / 4
-  })
+    angle: Math.PI / 4,
+  }),
 });
 
 const polygonStyle = new Style({
   stroke: new Stroke({
     color: "red",
-    width: 3
+    width: 3,
   }),
   fill: new Fill({
-    color: "rgba(0, 0, 255, 0.1)"
-  })
+    color: "rgba(0, 0, 255, 0.1)",
+  }),
 });
 
 export const KitchenSink = () => {
@@ -68,7 +68,7 @@ export const KitchenSink = () => {
       {/* eslint-disable-next-line jsx-a11y/no-onchange */}
       <select
         value={currentStyle}
-        onChange={e => setCurrentStyle(e.target.value)}
+        onChange={(e) => setCurrentStyle(e.target.value)}
       >
         {bingstyles.map((style, index) => (
           <option key={index} value={style}>
@@ -79,7 +79,7 @@ export const KitchenSink = () => {
       <span>Center: {center.join(", ")}</span>
       <Map>
         <olView
-          onChange_center={debounce(100, e => {
+          onChange_center={debounce(100, (e) => {
             setCenter(e.target.getCenter());
           })}
           initialCenter={[-6655.5402445057125, 6709968.258934638]}
@@ -116,9 +116,9 @@ export const KitchenSink = () => {
                       [0, 0],
                       [1000000, 0],
                       [0, 1000000],
-                      [0, 0]
-                    ]
-                  ]
+                      [0, 0],
+                    ],
+                  ],
                 ]}
               />
             </olFeature>

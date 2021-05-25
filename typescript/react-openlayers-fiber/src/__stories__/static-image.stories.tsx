@@ -8,7 +8,7 @@ import "ol/ol.css";
 
 export default {
   title: "OL Examples/Static image",
-  component: Map
+  component: Map,
 };
 
 const extent = [0, 0, 1024, 968];
@@ -18,7 +18,7 @@ export const StaticImage = () => {
   const projection = new Projection({
     code: "xkcd-image",
     units: "pixels",
-    extent: extent
+    extent: extent,
   });
 
   return (
