@@ -7,23 +7,25 @@ import "ol/ol.css";
 
 export default {
   title: "OL Examples/AccessibleMap",
-  component: Map
+  component: Map,
 };
 
 export const AccessibleMap = () => {
   const viewRef = useRef<View>();
   return (
-    <>
+    <div>
       <button
+        type="button"
         onClick={() => {
-          viewRef.current.setZoom(viewRef.current.getZoom() - 1);
+          viewRef.current?.setZoom(viewRef.current.getZoom() - 1);
         }}
       >
         Zoom out
       </button>
       <button
+        type="button"
         onClick={() => {
-          viewRef.current.setZoom(viewRef.current.getZoom() + 1);
+          viewRef.current?.setZoom(viewRef.current.getZoom() + 1);
         }}
       >
         Zoom in
@@ -34,6 +36,6 @@ export const AccessibleMap = () => {
           <olSourceOSM />
         </olLayerTile>
       </Map>
-    </>
+    </div>
   );
 };

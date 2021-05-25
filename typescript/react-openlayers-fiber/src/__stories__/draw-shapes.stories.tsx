@@ -9,7 +9,7 @@ import "ol/ol.css";
 
 export default {
   title: "OL Examples/Draw shapes",
-  component: Map
+  component: Map,
 };
 
 function useGeometryFunction(shapeType) {
@@ -54,6 +54,7 @@ export const DrawShapes = () => {
   return (
     <>
       <form>
+        {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
         <label htmlFor="type">Geometry type &nbsp;</label>
         {/* This example does not work with onBlur */}
         {/* eslint-disable-next-line jsx-a11y/no-onchange */}
@@ -82,7 +83,7 @@ export const DrawShapes = () => {
             args={{
               source: vectorSourceRef.current,
               type: "Circle",
-              geometryFunction: geometryFunction
+              geometryFunction: geometryFunction,
             }}
           />
         ) : null}

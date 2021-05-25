@@ -6,7 +6,7 @@ import "ol/ol.css";
 
 export default {
   title: "OL Examples/Tiled WMS",
-  component: Map
+  component: Map,
 };
 
 export const TiledWMS = () => {

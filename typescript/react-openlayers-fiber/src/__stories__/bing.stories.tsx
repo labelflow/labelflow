@@ -6,7 +6,7 @@ import "ol/ol.css";
 
 export default {
   title: "Components/Bing",
-  component: Map
+  component: Map,
 };
 
 const styles = [
@@ -14,7 +14,7 @@ const styles = [
   "Aerial",
   "AerialWithLabelsOnDemand",
   "CanvasDark",
-  "OrdnanceSurvey"
+  "OrdnanceSurvey",
 ];
 
 export const Bing = () => {
@@ -26,7 +26,7 @@ export const Bing = () => {
       {/* eslint-disable-next-line jsx-a11y/no-onchange */}
       <select
         value={currentStyle}
-        onChange={e => setCurrentStyle(e.target.value)}
+        onChange={(e) => setCurrentStyle(e.target.value)}
       >
         {styles.map((style, index) => (
           <option key={index} value={style}>
@@ -42,7 +42,7 @@ export const Bing = () => {
         {styles.map((style, index) => (
           <olLayerTile
             key={index}
-            visible={style == currentStyle}
+            visible={style === currentStyle}
             preload={Infinity}
           >
             <olSourceBingMaps

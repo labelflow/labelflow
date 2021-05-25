@@ -33,6 +33,7 @@ export const DrawAndModifyFeatures = () => {
   return (
     <>
       <form>
+        {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
         <label htmlFor="type">Geometry type &nbsp;</label>
         {/* This example does not work with onBlur */}
         {/* eslint-disable-next-line jsx-a11y/no-onchange */}

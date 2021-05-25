@@ -1,13 +1,12 @@
 import React from "react";
-
-import { Map } from "../map";
 import { useInterval } from "react-use";
+import { Map } from "../map";
 
 import "ol/ol.css";
 
 export default {
   title: "Examples/1-Basic",
-  component: Map
+  component: Map,
 };
 
 /**

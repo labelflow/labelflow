@@ -93,7 +93,7 @@ export declare namespace ReactOlFiber {
               child: Child
             ) => (container: Container, child: Child) => void);
         onUpdate?: (...args: any[]) => void;
-        children?: React.ReactNode;
+        children?: React.ReactNode | React.ReactNodeArray;
         ref?: React.Ref<React.ReactNode>;
         key?: React.Key;
         args?:
@@ -118,7 +118,7 @@ export declare namespace ReactOlFiber {
             child: Child
           ) => (container: Container, child: Child) => void);
       onUpdate?: (...args: any[]) => void;
-      children?: React.ReactNode;
+      children?: React.ReactNode | React.ReactNodeArray;
       ref?: React.Ref<React.ReactNode>;
       key?: React.Key;
       // This should be the keys of static methods of Catalogue[T]["object"]

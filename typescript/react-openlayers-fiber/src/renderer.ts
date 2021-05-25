@@ -244,10 +244,10 @@ const defaultAttach = <
 ): Detach<ParentItem, ChildItem> => {
   if (!child) throw error001();
 
-  const { kind: containerKind } = parent[MetaOlFiber];
+  const { kind: parentKind } = parent[MetaOlFiber];
   const { kind: childKind } = child[MetaOlFiber];
 
-  switch (containerKind) {
+  switch (parentKind) {
     case "Map": {
       switch (childKind) {
         case "View":
@@ -280,7 +280,7 @@ const defaultAttach = <
               getAs("olOverlay", newChild)
             );
         default:
-          throw error002(containerKind, childKind);
+          throw error002(parentKind, childKind);
       }
     }
     case "Layer": {
@@ -293,7 +293,7 @@ const defaultAttach = <
           return (newParent, _newChild) =>
             getAs("olLayerLayer", newParent).unset("source"); // Dubious at best
         default:
-          throw error002(containerKind, childKind);
+          throw error002(parentKind, childKind);
       }
     }
     case "Source": {
@@ -311,7 +311,7 @@ const defaultAttach = <
           return (newParent, _newChild) =>
             getAs("olSourceCluster", newParent).unset("source"); // Dubious at best
         default:
-          throw error002(containerKind, childKind);
+          throw error002(parentKind, childKind);
       }
     }
     case "Feature": {
@@ -324,11 +324,11 @@ const defaultAttach = <
           return (newParent, _newChild) =>
             getAs("olFeature", newParent).unset("geometry"); // Dubious at best
         default:
-          throw error002(containerKind, childKind);
+          throw error002(parentKind, childKind);
       }
     }
     default:
-      throw error002(containerKind, childKind);
+      throw error002(parentKind, childKind);
   }
 };
 
@@ -553,7 +553,7 @@ const removeChild = <
   ChildItem extends CatalogueItem
 >(
   parent: Instance<ParentItem>,
-  child: Instance<ChildItem, ParentItem> | TextInstance | SuspenseInstance
+  child: Instance<ChildItem, ParentItem> // | TextInstance | SuspenseInstance // FIXME one day
 ): void => {
   if (!child) throw error001();
   const { attach, detach } = child[MetaOlFiber];
@@ -658,17 +658,24 @@ function switchInstance(
 ) {
   const { parent } = instance[MetaOlFiber];
   const newInstance = createInstance(type, newProps, null, null, fiber);
+  if (isNil(parent)) {
+    throw new Error(
+      `React-Openlayers-Fiber Error: Trying to switch instance which has no parent!`
+    );
+  }
   removeChild(parent, instance);
   appendChild(parent, newInstance);
   // This evil hack switches the react-internal fiber node
   // https://github.com/facebook/react/issues/14983
   // https://github.com/facebook/react/pull/15021
-  [fiber, fiber.alternate].forEach((fiber: any) => {
-    if (fiber !== null) {
-      fiber.stateNode = newInstance;
-      if (fiber.ref) {
-        if (typeof fiber.ref === "function") fiber.ref(newInstance);
-        else (fiber.ref as ReactReconciler.RefObject).current = newInstance;
+  [fiber, fiber.alternate].forEach((theFiber: any) => {
+    if (theFiber !== null) {
+      // eslint-disable-next-line no-param-reassign
+      theFiber.stateNode = newInstance;
+      if (theFiber.ref) {
+        if (typeof theFiber.ref === "function") theFiber.ref(newInstance);
+        // eslint-disable-next-line no-param-reassign
+        else (theFiber.ref as ReactReconciler.RefObject).current = newInstance;
       }
     }
   });

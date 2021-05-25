@@ -8,20 +8,21 @@ import "ol/ol.css";
 
 export default {
   title: "OL Examples/Cluster",
-  component: Map
+  component: Map,
 };
 
-const e = 4500000;
+const x = 4500000;
 const coordinates = range(0, 2000).map(() => {
-  return [2 * e * Math.random() - e, 2 * e * Math.random() - e];
+  return [2 * x * Math.random() - x, 2 * x * Math.random() - x];
 });
-const styleCache = {};
+const styleCache: any[] = [];
 
 export const Cluster = () => {
   const [distance, setDistance] = useState(40);
   return (
     <div>
       <form>
+        {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
         <label htmlFor="distance">cluster distance</label>
         <input
           id="distance"
@@ -30,7 +31,7 @@ export const Cluster = () => {
           max="100"
           step="1"
           value={distance}
-          onChange={e => setDistance(parseInt(e.target.value, 10))}
+          onChange={(e) => setDistance(parseInt(e.target.value, 10))}
         />
       </form>
       <Map>
@@ -39,26 +40,26 @@ export const Cluster = () => {
           <olSourceOSM />
         </olLayerTile>
         <olLayerVector
-          style={feature => {
-            const size = feature.get("features").length;
-            let style = styleCache[size];
+          style={(feature) => {
+            const size: number = feature.get("features").length;
+            let style: any = styleCache[size];
             if (!style) {
               style = new Style({
                 image: new CircleStyle({
                   radius: 10,
                   stroke: new Stroke({
-                    color: "#fff"
+                    color: "#fff",
                   }),
                   fill: new Fill({
-                    color: "#3399CC"
-                  })
+                    color: "#3399CC",
+                  }),
                 }),
                 text: new Text({
                   text: size.toString(),
                   fill: new Fill({
-                    color: "#fff"
-                  })
-                })
+                    color: "#fff",
+                  }),
+                }),
               });
               styleCache[size] = style;
             }

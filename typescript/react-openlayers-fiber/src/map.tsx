@@ -1,10 +1,4 @@
-import React, {
-  useRef,
-  useLayoutEffect,
-  useState,
-  forwardRef,
-  ReactNode,
-} from "react";
+import React, { useRef, useLayoutEffect, useState, forwardRef } from "react";
 import { Map as OlMap } from "ol";
 import { isNull } from "lodash";
 import { render } from "./renderer";
@@ -16,16 +10,13 @@ import { ReactOlFiber } from "./types";
 const defaultArgs = [{}] as [ConstructorParameters<typeof OlMap>[0]];
 const defaultStyle = { width: "100%", height: "640px" };
 
-export const Map = forwardRef<ReactNode>(
+export type Props = ReactOlFiber.IntrinsicElements["olMap"] & {
+  style?: React.CSSProperties;
+};
+
+export const Map = forwardRef<OlMap, Props>(
   (
-    {
-      children,
-      args = defaultArgs,
-      style = defaultStyle,
-      ...mapProps
-    }: ReactOlFiber.IntrinsicElements["olMap"] & {
-      style?: React.CSSProperties;
-    },
+    { children, args = defaultArgs, style = defaultStyle, ...mapProps }: Props,
     ref
   ): React.ReactElement => {
     const containerRef = useRef<HTMLDivElement>(null);
