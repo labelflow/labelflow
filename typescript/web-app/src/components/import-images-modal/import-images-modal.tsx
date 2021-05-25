@@ -129,7 +129,7 @@ export const ImportImagesModal = ({
               bg="gray.50"
               flex="1">
               {/* We make the label taking all the available place in the Stack in order to make
-              the all surface clickable since we prevent the onClick on the dropzone parent (see the comment above) */}
+              the whole surface clickable since we prevent the onClick on the dropzone parent (see the comment above) */}
               <chakra.label
                 htmlFor="file-uploader"
                 color="gray.700"
