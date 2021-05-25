@@ -10,29 +10,29 @@ import "ol/ol.css";
 
 export default {
   title: "OL Examples/Dynamic data",
-  component: Map
+  component: Map,
 };
 
 const imageStyle = new Style({
   image: new CircleStyle({
     radius: 5,
     fill: new Fill({ color: "yellow" }),
-    stroke: new Stroke({ color: "red", width: 1 })
-  })
+    stroke: new Stroke({ color: "red", width: 1 }),
+  }),
 });
 
 const headInnerImageStyle = new Style({
   image: new CircleStyle({
     radius: 2,
-    fill: new Fill({ color: "blue" })
-  })
+    fill: new Fill({ color: "blue" }),
+  }),
 });
 
 const headOuterImageStyle = new Style({
   image: new CircleStyle({
     radius: 5,
-    fill: new Fill({ color: "black" })
-  })
+    fill: new Fill({ color: "black" }),
+  }),
 });
 
 const n = 200;
@@ -43,7 +43,7 @@ const p = 2e6;
 
 export const DynamicData = () => {
   const mapRef = useRef<olMap>();
-  const onPostrender = event => {
+  const onPostrender = (event) => {
     const vectorContext = getVectorContext(event);
     const frameState = event.frameState;
     const theta = (2 * Math.PI * frameState.time) / omegaTheta;

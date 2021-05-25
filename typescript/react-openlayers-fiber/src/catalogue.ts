@@ -625,6 +625,7 @@ export type Catalogue = CatalogueOl &
 
 export type CatalogueKey = keyof Catalogue;
 export type CatalogueItem = Catalogue[CatalogueKey];
+export type Kind = CatalogueItem["kind"];
 
 // /////////////////////////////////////////////////////////////////////////////
 // Catalogue Value

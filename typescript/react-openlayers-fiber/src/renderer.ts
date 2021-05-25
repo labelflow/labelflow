@@ -21,12 +21,7 @@ import {
 } from "lodash/fp";
 
 // Imports from the imperative lib
-import {
-  Map as OlMap,
-  Object as OlObject,
-  View as OlView,
-  Feature as OlFeature,
-} from "ol";
+import { Map as OlMap, Object as OlObject } from "ol";
 
 import { ReactOlFiber } from "./types";
 import { catalogue, CatalogueKey, CatalogueItem, Catalogue } from "./catalogue";
@@ -68,8 +63,6 @@ export type Type = keyof ReactOlFiber.IntrinsicElements;
 
 export type Props = ReactOlFiber.IntrinsicElements[Type];
 
-export type Container = OlObject;
-
 const MetaOlFiber = Symbol("MetaOlFiber");
 
 export type Instance<
@@ -84,6 +77,9 @@ export type Instance<
     detach?: Detach<ParentItem, SelfItem>;
   };
 };
+
+export type Container<Item extends CatalogueItem = CatalogueItem> =
+  Instance<Item>;
 
 // export type OpaqueHandle = Fiber;
 export type OpaqueHandle = any;
@@ -186,8 +182,8 @@ const applyProp = (
  */
 const applyProps = (
   olObject: OlObject,
-  oldProps: Props = {},
   newProps: Props,
+  oldProps: Props = {},
   isNewInstance = false
 ): void => {
   forEach((key) => {
@@ -370,13 +366,13 @@ const prepareForCommit = (
 
 const resetAfterCommit = (_containerInfo: Container): void => {};
 
-const createInstance = (
-  type: Type,
+const createInstance = <SelfItem extends CatalogueItem>(
+  type: SelfItem["type"] | "primitive" | "new",
   props: Props,
   _rootContainerInstance: Container | null,
   _hostContext: HostContext | null,
   _internalInstanceHandle: OpaqueHandle
-): Instance => {
+): Instance<SelfItem> => {
   let olObject;
   let kind;
 
@@ -467,7 +463,7 @@ const createInstance = (
       attach,
     };
 
-    applyProps(olObject, {}, otherProps, true);
+    applyProps(olObject, otherProps, {}, true);
   }
   return olObject;
 };
@@ -650,9 +646,12 @@ const appendChild = <
 };
 
 // Code from react-three-fiber : https://github.com/pmndrs/react-three-fiber/blob/master/src/renderer.tsx#L450
-function switchInstance(
-  instance: Instance,
-  type: Type,
+function switchInstance<
+  SelfItem extends CatalogueItem,
+  ParentItem extends CatalogueItem
+>(
+  instance: Instance<SelfItem, ParentItem>,
+  type: SelfItem["type"] | "primitive" | "new",
   newProps: any,
   fiber: ReactReconciler.Fiber
 ) {
@@ -664,7 +663,7 @@ function switchInstance(
     );
   }
   removeChild(parent, instance);
-  appendChild(parent, newInstance);
+  appendChild(parent, newInstance as Instance<SelfItem, ParentItem>);
   // This evil hack switches the react-internal fiber node
   // https://github.com/facebook/react/issues/14983
   // https://github.com/facebook/react/pull/15021
@@ -726,7 +725,7 @@ const commitUpdate = (
     switchInstance(instance, type, newProps, internalInstanceHandle);
   } else {
     // Otherwise just overwrite props
-    applyProps(olObject, restOld, restNew);
+    applyProps(olObject as OlObject, restNew, restOld, false);
   }
 
   if (typeof onUpdate === "function") {
@@ -739,13 +738,13 @@ const insertInContainerBefore = (
   child: Instance | TextInstance,
   _beforeChild: Instance | TextInstance
 ): void => {
+  if (!child) throw error001();
+  // eslint-disable-next-line no-param-reassign
   child[MetaOlFiber].parent = container;
   // There can only be one map in its parent div
 };
 
-const resetTextContent = (_instance: Instance): void => {
-  return null;
-};
+const resetTextContent = (_instance: Instance): void => {};
 
 const insertBefore = (
   parentInstance: Instance,
@@ -757,9 +756,9 @@ const insertBefore = (
 
 const appendInitialChild = (
   parentInstance: Instance,
-  child: Instance | TextInstance
+  childInstance: Instance | TextInstance
 ): void => {
-  return appendChild(parentInstance, child);
+  return appendChild(parentInstance, childInstance);
 };
 
 const appendChildToContainer = (
@@ -986,7 +985,12 @@ export function render(what: React.ReactNode, where: HTMLElement) {
   if (instances.has(where)) {
     container = instances.get(where);
   } else {
-    container = reconciler.createContainer(where, false, false);
+    container = reconciler.createContainer(
+      where as unknown as Container<CatalogueItem>, // FIXME
+      0,
+      false,
+      null
+    );
     instances.set(where, container);
   }
 

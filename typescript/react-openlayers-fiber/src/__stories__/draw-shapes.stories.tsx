@@ -1,5 +1,10 @@
+/* eslint-disable consistent-return */
 import React, { useState } from "react";
-import { createBox, createRegularPolygon } from "ol/interaction/Draw";
+import {
+  createBox,
+  createRegularPolygon,
+  GeometryFunction,
+} from "ol/interaction/Draw";
 import Polygon from "ol/geom/Polygon";
 
 import { Map } from "../map";
@@ -12,13 +17,18 @@ export default {
   component: Map,
 };
 
-function useGeometryFunction(shapeType) {
+type ShapeType = "None" | "Circle" | "Square" | "Box" | "Star";
+function useGeometryFunction(
+  shapeType: ShapeType
+): GeometryFunction | undefined {
   if (["None", "Circle"].includes(shapeType)) return;
   if (shapeType === "Square") {
     return createRegularPolygon(4);
-  } else if (shapeType === "Box") {
+  }
+  if (shapeType === "Box") {
     return createBox();
-  } else if (shapeType === "Star") {
+  }
+  if (shapeType === "Star") {
     return function (coordinates, geometry) {
       const center = coordinates[0];
       const last = coordinates[1];
@@ -28,7 +38,7 @@ function useGeometryFunction(shapeType) {
       const rotation = Math.atan2(dy, dx);
       const newCoordinates = [];
       const numPoints = 12;
-      for (let i = 0; i < numPoints; ++i) {
+      for (let i = 0; i < numPoints; i += 1) {
         const angle = rotation + (i * 2 * Math.PI) / numPoints;
         const fraction = i % 2 === 0 ? 1 : 0.5;
         const offsetX = radius * fraction * Math.cos(angle);
@@ -37,6 +47,7 @@ function useGeometryFunction(shapeType) {
       }
       newCoordinates.push(newCoordinates[0].slice());
       if (!geometry) {
+        // eslint-disable-next-line no-param-reassign
         geometry = new Polygon([newCoordinates]);
       } else {
         geometry.setCoordinates([newCoordinates]);
@@ -47,7 +58,7 @@ function useGeometryFunction(shapeType) {
 }
 
 export const DrawShapes = () => {
-  const [shapeType, setShapeType] = useState("Circle");
+  const [shapeType, setShapeType] = useState<ShapeType>("Circle");
   const geometryFunction = useGeometryFunction(shapeType);
   const vectorSourceRef = useResource();
 
@@ -83,7 +94,7 @@ export const DrawShapes = () => {
             args={{
               source: vectorSourceRef.current,
               type: "Circle",
-              geometryFunction: geometryFunction,
+              geometryFunction,
             }}
           />
         ) : null}
