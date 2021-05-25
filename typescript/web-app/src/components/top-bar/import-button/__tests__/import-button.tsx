@@ -14,24 +14,30 @@ jest.mock("../../../../connectors/apollo-client/resolvers/image");
 const mockedCreateImage = jest.fn();
 (createImage as jest.Mock<any>).mockImplementation(mockedCreateImage);
 
-beforeAll(() => {
-  // @ts-ignore
-  global.URL.createObjectURL = jest.fn(() => "mockedUrl");
-});
-
 beforeEach(() => {
   localforage.clear();
+  jest.clearAllMocks();
 });
 
 const files = [
   new File(["Hello"], "hello.png", { type: "image/png" }),
   new File(["World"], "world.png", { type: "image/png" }),
-  new File(["Error"], "error.pdf", { type: "application/pdf" }),
 ];
 
 const Wrapper = ({ children }: PropsWithChildren<{}>) => (
   <ApolloProvider client={client}>{children}</ApolloProvider>
 );
+
+const openModalAndDragFiles = async (filesToUpload: File[] | File = files) => {
+  render(<ImportButton />, {
+    wrapper: Wrapper,
+  });
+
+  userEvent.click(screen.getByRole("button"));
+
+  const input = screen.getByLabelText(/drop folders or images/i);
+  await waitFor(() => userEvent.upload(input, filesToUpload));
+};
 
 test("Open the modal when we click on the import button", async () => {
   render(<ImportButton />, {
@@ -44,16 +50,22 @@ test("Open the modal when we click on the import button", async () => {
 });
 
 test("1 file should be created when the user drops a single picture on the modal", async () => {
-  render(<ImportButton />, {
-    wrapper: Wrapper,
-  });
+  await openModalAndDragFiles(files[0]);
 
-  userEvent.click(screen.getByRole("button"));
-
-  // Drag files
-  const input = screen.getByLabelText(/drop folders or images/i);
-  await waitFor(() => userEvent.upload(input, files[0]));
-
-  // Expect files uploaded
   expect(createImage).toHaveBeenCalledTimes(1);
+});
+
+test("2 files should be created when the user drops 2 pictures on the modal", async () => {
+  await openModalAndDragFiles(files);
+
+  expect(createImage).toHaveBeenCalledTimes(2);
+});
+
+test("when the user drags invalid formats, only the valid pictures are uploaded", async () => {
+  await openModalAndDragFiles([
+    ...files,
+    new File(["Error"], "error.pdf", { type: "application/pdf" }),
+  ]);
+
+  expect(createImage).toHaveBeenCalledTimes(2);
 });
