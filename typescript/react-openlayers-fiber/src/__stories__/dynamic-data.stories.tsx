@@ -44,7 +44,7 @@ const p = 2e6;
 
 export const DynamicData = () => {
   const mapRef = useRef<olMap>();
-  const onPostrender = (event: RenderEvent) => {
+  const onPostrender = (event: RenderEvent | Event) => {
     const vectorContext = getVectorContext(event as RenderEvent);
     const { frameState } = event;
     const theta = (2 * Math.PI * frameState.time) / omegaTheta;
