@@ -13,8 +13,6 @@ import { appendToListInStorage, getListFromStorage } from "./utils";
 const typeName = "Image";
 const typeNamePlural = "Image:list";
 
-// Lorem ipsum
-
 const getUrlFromKey = memoize(async (key: string) => {
   const file = await localforage.getItem(`${key}:blob`);
   const url = window.URL.createObjectURL(file);
