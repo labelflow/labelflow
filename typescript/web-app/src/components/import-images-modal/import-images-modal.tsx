@@ -80,13 +80,13 @@ export const ImportImagesModal = ({
 
   const files = [
     ...fileRejections.map(
-      (r: { file: FileWithPath; errors: Array<FileError> }) => ({
-        path: r.file.path,
-        errors: r.errors,
+      ({ file, errors }: { file: FileWithPath; errors: Array<FileError> }) => ({
+        path: file.path,
+        errors,
       })
     ),
-    ...acceptedFiles.map((f) => ({
-      path: f.path,
+    ...acceptedFiles.map(({ path }) => ({
+      path,
       errors: [],
     })),
   ];
