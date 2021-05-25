@@ -58,12 +58,6 @@ test("should display the rejected images name", async () => {
   expect(screen.getByText(/errors/i)).toBeDefined();
 });
 
-test("should not display the rejected images name if everything is fine", async () => {
-  await renderModalAndImport(files.slice(0, 2));
-
-  expect(screen.queryByText(/items rejected/i)).not.toBeInTheDocument();
-});
-
 test("should display the amount of error when a file could not be imported", async () => {
   await renderModalAndImport(files.slice(2, 3));
 
