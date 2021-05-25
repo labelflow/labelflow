@@ -1,11 +1,11 @@
-import { IconButton, useDisclosure } from "@chakra-ui/react";
-import { useMutation } from "@apollo/client";
+import { Button, useDisclosure } from "@chakra-ui/react";
+import { useApolloClient } from "@apollo/client";
 import gql from "graphql-tag";
 import { ImportImagesModal } from "./import-images-modal";
 
 const createImageMutation = gql`
   mutation createImageMutation($file: Upload!) {
-    createImage(file: $file) {
+    createImage(data: { file: $file }) {
       id
     }
   }
@@ -14,11 +14,17 @@ const createImageMutation = gql`
 export const ImportButton = () => {
   const { isOpen, onClose, onOpen } = useDisclosure();
 
-  // @ts-ignore
-  const [createImage, { data }] = useMutation(createImageMutation);
+  const apolloClient = useApolloClient();
 
-  const onImportSucceed = (files: any) => {
-    files.forEach(console.log);
+  const onImportSucceed = (files: File[]) => {
+    Promise.all(
+      files.map((file) =>
+        apolloClient.mutate({
+          mutation: createImageMutation,
+          variables: { file },
+        })
+      )
+    );
   };
 
   return (
@@ -28,9 +34,9 @@ export const ImportButton = () => {
         onClose={onClose}
         onImportSucceed={onImportSucceed}
       />
-      <IconButton aria-label="import" onClick={onOpen}>
+      <Button aria-label="import" onClick={onOpen}>
         Import
-      </IconButton>
+      </Button>
     </>
   );
 };
