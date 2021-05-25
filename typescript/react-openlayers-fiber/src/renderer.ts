@@ -49,8 +49,8 @@ export type Attach<
 > =
   | string
   | ((
-      container: ParentItem["object"],
-      child: ChildItem["object"],
+      parent: Omit<Instance<ParentItem>, typeof MetaOlFiber>,
+      child: Omit<Instance<ChildItem, ParentItem>, typeof MetaOlFiber>,
       parentInstance: Instance<ParentItem>,
       childInstance: Instance<ChildItem, ParentItem>
     ) => Detach<ParentItem, ChildItem>);
@@ -93,6 +93,10 @@ export type HydratableInstance<
   ParentItem extends CatalogueItem = CatalogueItem
 > = Instance<Item, ParentItem>;
 export type PublicInstance<
+  Item extends CatalogueItem = CatalogueItem,
+  ParentItem extends CatalogueItem = CatalogueItem
+> = Instance<Item, ParentItem>;
+export type SuspenseInstance<
   Item extends CatalogueItem = CatalogueItem,
   ParentItem extends CatalogueItem = CatalogueItem
 > = Instance<Item, ParentItem>;
@@ -358,15 +362,19 @@ const getChildHostContext = (
     : type;
 };
 
-const prepareForCommit = (_containerInfo: Container): void => {};
+const prepareForCommit = (
+  _containerInfo: Container
+): Record<string, any> | null => {
+  return null;
+};
 
 const resetAfterCommit = (_containerInfo: Container): void => {};
 
 const createInstance = (
   type: Type,
   props: Props,
-  _rootContainerInstance: Container,
-  _hostContext: HostContext,
+  _rootContainerInstance: Container | null,
+  _hostContext: HostContext | null,
   _internalInstanceHandle: OpaqueHandle
 ): Instance => {
   let olObject;
@@ -501,9 +509,9 @@ const shouldSetTextContent = (_type: Type, _props: Props): boolean => {
   return false;
 };
 
-const shouldDeprioritizeSubtree = (_type: Type, _props: Props): boolean => {
-  return false;
-};
+// const shouldDeprioritizeSubtree = (_type: Type, _props: Props): boolean => {
+//   return false;
+// };
 
 const createTextInstance = (
   _text: string,
@@ -514,12 +522,16 @@ const createTextInstance = (
   return null;
 };
 
-const scheduleTimeout:
-  | ((handler: TimerHandler, timeout: number) => TimeoutHandle | NoTimeout)
-  | null = isFunction(setTimeout) ? setTimeout : null;
+// const scheduleTimeout:
+//   | ((handler: TimerHandler, timeout: number) => TimeoutHandle | NoTimeout)
+//   | null = isFunction(setTimeout) ? setTimeout : null;
 
-const cancelTimeout: ((handle: TimeoutHandle | NoTimeout) => void) | null =
-  isFunction(clearTimeout) ? clearTimeout : null;
+// const cancelTimeout: ((handle: TimeoutHandle | NoTimeout) => void) | null =
+//   isFunction(clearTimeout) ? clearTimeout : null;
+
+const scheduleTimeout = setTimeout;
+
+const cancelTimeout = clearTimeout;
 
 const noTimeout: NoTimeout = -1;
 
@@ -541,7 +553,7 @@ const removeChild = <
   ChildItem extends CatalogueItem
 >(
   parent: Instance<ParentItem>,
-  child: Instance<ChildItem, ParentItem> | TextInstance
+  child: Instance<ChildItem, ParentItem> | TextInstance | SuspenseInstance
 ): void => {
   if (!child) throw error001();
   const { attach, detach } = child[MetaOlFiber];
@@ -561,7 +573,7 @@ const removeChild = <
 
 const removeChildFromContainer = (
   _container: Container,
-  child: Instance | TextInstance
+  child: Instance | TextInstance | SuspenseInstance
 ): void => {
   // Probably not neded
   // There can only be one map in its parent div
@@ -630,6 +642,7 @@ const appendChild = <
       };
     }
   } else if (isFunction(attach)) {
+    // eslint-disable-next-line no-param-reassign
     child[MetaOlFiber].detach = attach(parent, child, parent, child);
   } else {
     throw new Error(`React-Openlayers-Fiber Error: Unsupported "attach" type.`);
@@ -792,7 +805,21 @@ const unhideTextInstance = () => {
   );
 };
 
-const reconciler = ReactReconciler({
+const reconciler = ReactReconciler<
+  Type,
+  Props,
+  Container,
+  Instance,
+  TextInstance,
+  SuspenseInstance,
+  HydratableInstance,
+  PublicInstance,
+  HostContext,
+  UpdatePayload,
+  ChildSet,
+  TimeoutHandle,
+  NoTimeout
+>({
   // List from ./node_modules/react-reconciler/cjs/react-reconciler-persistent.development.js
   // -------------------
   getPublicInstance,
@@ -805,7 +832,7 @@ const reconciler = ReactReconciler({
   finalizeInitialChildren,
   prepareUpdate,
   shouldSetTextContent,
-  shouldDeprioritizeSubtree,
+  // shouldDeprioritizeSubtree,
   createTextInstance,
   // -------------------
   scheduleTimeout,
@@ -814,19 +841,19 @@ const reconciler = ReactReconciler({
   now,
   // -------------------
   isPrimaryRenderer: false,
-  warnsIfNotActing: true,
+  // warnsIfNotActing: true,
   supportsMutation: true,
   supportsPersistence: false,
   supportsHydration: false,
   // -------------------
-  DEPRECATED_mountResponderInstance: noOp,
-  DEPRECATED_unmountResponderInstance: noOp,
-  getFundamentalComponentInstance: noOp,
-  mountFundamentalComponent: noOp,
-  shouldUpdateFundamentalComponent: noOp,
-  getInstanceFromNode: noOp,
-  getInstanceFromScope: () => noOp,
-  beforeRemoveInstance: noOp,
+  // DEPRECATED_mountResponderInstance: noOp,
+  // DEPRECATED_unmountResponderInstance: noOp,
+  // getFundamentalComponentInstance: noOp,
+  // mountFundamentalComponent: noOp,
+  // shouldUpdateFundamentalComponent: noOp,
+  // getInstanceFromNode: noOp,
+  // getInstanceFromScope: () => noOp,
+  // beforeRemoveInstance: noOp,
   // -------------------
   //      Mutation
   //     (optional)
@@ -845,8 +872,10 @@ const reconciler = ReactReconciler({
   hideTextInstance,
   unhideInstance,
   unhideTextInstance,
-  updateFundamentalComponent: noOp,
-  unmountFundamentalComponent: noOp,
+  preparePortalMount: noOp,
+  queueMicrotask,
+  // updateFundamentalComponent: noOp,
+  // unmountFundamentalComponent: noOp,
   // // -------------------
   // //     Persistence
   // //     (optional)
