@@ -40,6 +40,12 @@ export const ImportImagesModal = ({
   const onDrop = useCallback((acceptedFiles) => {
     onImportSucceed(acceptedFiles);
   }, []);
+
+  /*
+   * We need a state with the accepted and reject files to be able to reset the list
+   * when we close the modal because react-dropzone doesn't provide a way to reset its
+   * internal state
+   */
   const [{ acceptedFiles, fileRejections }, setDropzoneResult] = useState<{
     acceptedFiles: Array<FileWithPath>;
     fileRejections: Array<FileRejection>;
@@ -51,8 +57,6 @@ export const ImportImagesModal = ({
   });
 
   useEffect(() => {
-    if (!dropzoneResult.acceptedFiles && !dropzoneResult.fileRejections) return;
-
     if (
       isEmpty(dropzoneResult.acceptedFiles) &&
       isEmpty(dropzoneResult.fileRejections)
@@ -76,13 +80,13 @@ export const ImportImagesModal = ({
 
   const files = [
     ...fileRejections.map(
-      (r: { file: FileWithPath; errors: Array<FileError> }) => ({
-        path: r.file.path,
-        errors: r.errors,
+      ({ file, errors }: { file: FileWithPath; errors: Array<FileError> }) => ({
+        path: file.path,
+        errors,
       })
     ),
-    ...acceptedFiles.map((f) => ({
-      path: f.path,
+    ...acceptedFiles.map(({ path }) => ({
+      path,
       errors: [],
     })),
   ];
@@ -94,8 +98,7 @@ export const ImportImagesModal = ({
       onClose={() => {
         setDropzoneResult({ acceptedFiles: [], fileRejections: [] });
         onClose();
-      }}
-    >
+      }}>
       <ModalOverlay />
       <ModalContent height="80vh">
         <ModalHeader textAlign="center" padding="6">
@@ -115,8 +118,7 @@ export const ImportImagesModal = ({
           pr="6"
           pl="6"
           overflowY="hidden"
-          flexDirection="column"
-        >
+          flexDirection="column">
           {isEmpty(acceptedFiles) && isEmpty(fileRejections) ? (
             <Stack
               as="form"
@@ -125,10 +127,9 @@ export const ImportImagesModal = ({
               borderColor="gray.700"
               borderRadius="md"
               bg="gray.50"
-              flex="1"
-            >
+              flex="1">
               {/* We make the label taking all the available place in the Stack in order to make
-              the all surface clickable since we prevent the onClick on the dropzone parent (see the comment above) */}
+              the whole surface clickable since we prevent the onClick on the dropzone parent (see the comment above) */}
               <chakra.label
                 htmlFor="file-uploader"
                 color="gray.700"
@@ -138,8 +139,7 @@ export const ImportImagesModal = ({
                 flexDirection="column"
                 alignItems="center"
                 justifyContent="Center"
-                flex="1"
-              >
+                flex="1">
                 <UploadIcon fontSize="9xl" color="gray.700" />
                 Drop folders or images
                 <input {...dropzoneResult.getInputProps()} id="file-uploader" />
@@ -154,8 +154,10 @@ export const ImportImagesModal = ({
                 <Box as="section" overflowY="auto">
                   <Table size="sm" variant="stripped">
                     <Tbody>
-                      {files.map(({ path, errors }, i) => (
-                        <Tr key={path} bg={i % 2 === 0 ? "gray.50" : "inherit"}>
+                      {files.map(({ path, errors }, index) => (
+                        <Tr
+                          key={path}
+                          bg={index % 2 === 0 ? "gray.50" : "inherit"}>
                           <Td pl="2" pr="2" fontSize="md">
                             {isEmpty(errors) ? (
                               <RiImageLine />
@@ -176,12 +178,10 @@ export const ImportImagesModal = ({
                             <Td
                               color="gray.400"
                               fontSize="md"
-                              textAlign="right"
-                            >
+                              textAlign="right">
                               <Tooltip
                                 label={errors.map((e) => e.message).join(". ")}
-                                placement="left"
-                              >
+                                placement="left">
                                 <Text as="span" color="red.600">
                                   {errors.length} errors
                                 </Text>

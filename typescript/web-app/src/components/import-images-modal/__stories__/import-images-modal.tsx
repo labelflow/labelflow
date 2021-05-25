@@ -19,3 +19,18 @@ export const Default = () => {
     </div>
   );
 };
+
+export const OpenedByDefault = () => {
+  const { isOpen, onOpen, onClose } = useDisclosure({ defaultIsOpen: true });
+
+  return (
+    <div>
+      <Button onClick={onOpen}>Display</Button>
+      <ImportImagesModal
+        isOpen={isOpen}
+        onClose={onClose}
+        onImportSucceed={() => {}}
+      />
+    </div>
+  );
+};

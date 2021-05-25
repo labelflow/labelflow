@@ -19,7 +19,9 @@ describe("Example resolver test suite", () => {
   });
 
   test("Query example when db is empty", async () => {
-    const queryResult = await examples();
+    mockedLocalForage.getItem.mockReturnValue(Promise.resolve(null));
+
+    const queryResult = await examples(undefined, {});
 
     expect(queryResult.length).toBe(0);
   });
@@ -56,7 +58,7 @@ describe("Example resolver test suite", () => {
       ])
     );
 
-    const queryResult = await examples();
+    const queryResult = await examples(undefined, {});
 
     expect(queryResult.length).toEqual(5);
     expect(mockedLocalForage.getItem.mock.calls[0][0]).toEqual(`Example:list`);

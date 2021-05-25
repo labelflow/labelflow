@@ -1,8 +1,7 @@
-import { useQuery, ApolloProvider, useMutation } from "@apollo/client";
+import { useQuery, useMutation } from "@apollo/client";
 import gql from "graphql-tag";
 
 import { Layout } from "../components/layout";
-import { client } from "../connectors/apollo-client";
 import { Example } from "../types.generated";
 
 const examplesQuery = gql`
@@ -40,20 +39,14 @@ const IndexPage = () => {
       <div>
         {examplesResult?.examples
           ? examplesResult.examples.map((example: Example) => (
-              <p key={example.id}>
-                {example.id} - {example.name}
-              </p>
-            ))
+            <p key={example.id}>
+              {example.id} - {example.name}
+            </p>
+          ))
           : null}
       </div>
     </Layout>
   );
 };
 
-const App = () => (
-  <ApolloProvider client={client}>
-    <IndexPage />
-  </ApolloProvider>
-);
-
-export default App;
+export default IndexPage;
