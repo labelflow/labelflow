@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from "uuid";
 import {
   MutationCreateExampleArgs,
   QueryExampleArgs,
+  QueryExamplesArgs,
 } from "../../../types.generated";
 import { appendToListInStorage, getListFromStorage } from "./utils";
 
@@ -14,8 +15,11 @@ export const example = async (_: any, args: QueryExampleArgs) => {
   const entity = await localforage.getItem(`${typeName}:${args?.where?.id}`);
   return entity;
 };
-export const examples = async () => {
-  return getListFromStorage(typeNamePlural);
+export const examples = async (_: any, args: QueryExamplesArgs) => {
+  return getListFromStorage(typeNamePlural, {
+    first: args.first,
+    skip: args.skip,
+  });
 };
 
 // Mutations

@@ -1,6 +1,6 @@
-import { useQuery, ApolloProvider, useMutation } from "@apollo/client";
+import { useQuery, useMutation } from "@apollo/client";
 import gql from "graphql-tag";
-import { client } from "../connectors/apollo-client";
+
 import { Example } from "../types.generated";
 
 const examplesQuery = gql`
@@ -48,10 +48,4 @@ const IndexPage = () => {
   );
 };
 
-const App = () => (
-  <ApolloProvider client={client}>
-    <IndexPage />
-  </ApolloProvider>
-);
-
-export default App;
+export default IndexPage;

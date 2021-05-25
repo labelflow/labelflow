@@ -7,11 +7,11 @@ type Example {
 }
 
 type Image {
-  id: ID
-  createdAt: DateTime
-  updatedAt: DateTime
-  url: String
-  name: String
-  height: Int
-  width: Int
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  url: String!
+  name: String!
+  height: Int!
+  width: Int!
 }
