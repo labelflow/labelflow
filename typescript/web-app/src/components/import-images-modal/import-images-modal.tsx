@@ -40,6 +40,12 @@ export const ImportImagesModal = ({
   const onDrop = useCallback((acceptedFiles) => {
     onImportSucceed(acceptedFiles);
   }, []);
+
+  /*
+   * We need a state with the accepted and reject files to be able to reset the list
+   * when we close the modal because react-dropzone doesn't provide a way to reset its
+   * internal state
+   */
   const [{ acceptedFiles, fileRejections }, setDropzoneResult] = useState<{
     acceptedFiles: Array<FileWithPath>;
     fileRejections: Array<FileRejection>;
