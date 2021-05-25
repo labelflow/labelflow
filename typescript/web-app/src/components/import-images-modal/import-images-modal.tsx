@@ -51,8 +51,6 @@ export const ImportImagesModal = ({
   });
 
   useEffect(() => {
-    if (!dropzoneResult.acceptedFiles && !dropzoneResult.fileRejections) return;
-
     if (
       isEmpty(dropzoneResult.acceptedFiles) &&
       isEmpty(dropzoneResult.fileRejections)
@@ -94,8 +92,7 @@ export const ImportImagesModal = ({
       onClose={() => {
         setDropzoneResult({ acceptedFiles: [], fileRejections: [] });
         onClose();
-      }}
-    >
+      }}>
       <ModalOverlay />
       <ModalContent height="80vh">
         <ModalHeader textAlign="center" padding="6">
@@ -115,8 +112,7 @@ export const ImportImagesModal = ({
           pr="6"
           pl="6"
           overflowY="hidden"
-          flexDirection="column"
-        >
+          flexDirection="column">
           {isEmpty(acceptedFiles) && isEmpty(fileRejections) ? (
             <Stack
               as="form"
@@ -125,8 +121,7 @@ export const ImportImagesModal = ({
               borderColor="gray.700"
               borderRadius="md"
               bg="gray.50"
-              flex="1"
-            >
+              flex="1">
               {/* We make the label taking all the available place in the Stack in order to make
               the all surface clickable since we prevent the onClick on the dropzone parent (see the comment above) */}
               <chakra.label
@@ -138,8 +133,7 @@ export const ImportImagesModal = ({
                 flexDirection="column"
                 alignItems="center"
                 justifyContent="Center"
-                flex="1"
-              >
+                flex="1">
                 <UploadIcon fontSize="9xl" color="gray.700" />
                 Drop folders or images
                 <input {...dropzoneResult.getInputProps()} id="file-uploader" />
@@ -176,12 +170,10 @@ export const ImportImagesModal = ({
                             <Td
                               color="gray.400"
                               fontSize="md"
-                              textAlign="right"
-                            >
+                              textAlign="right">
                               <Tooltip
                                 label={errors.map((e) => e.message).join(". ")}
-                                placement="left"
-                              >
+                                placement="left">
                                 <Text as="span" color="red.600">
                                   {errors.length} errors
                                 </Text>
