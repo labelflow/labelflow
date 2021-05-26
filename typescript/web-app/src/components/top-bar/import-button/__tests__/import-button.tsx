@@ -6,10 +6,7 @@ import localforage from "localforage";
 import { PropsWithChildren } from "react";
 
 import { client } from "../../../../connectors/apollo-client";
-import {
-  createImage,
-  clearGetUrlFromKeyMem,
-} from "../../../../connectors/apollo-client/resolvers/image";
+import { clearGetUrlFromKeyMem } from "../../../../connectors/apollo-client/resolvers/image";
 import { ImportButton } from "../import-button";
 
 beforeAll(() => {
@@ -86,17 +83,21 @@ test("should display a loading indicator", async () => {
   );
 });
 
-test.skip("2 files should be created when the user drops 2 pictures on the modal", async () => {
+test("2 files should be created when the user drops 2 pictures on the modal", async () => {
   await openModalAndDragFiles(files);
 
-  expect(createImage).toHaveBeenCalledTimes(2);
+  await waitFor(() =>
+    expect(screen.getAllByLabelText("Upload succeed")).toHaveLength(2)
+  );
 });
 
-test.skip("when the user drags invalid formats, only the valid pictures are uploaded", async () => {
+test("when the user drags invalid formats, only the valid pictures are uploaded", async () => {
   await openModalAndDragFiles([
     ...files,
     new File(["Error"], "error.pdf", { type: "application/pdf" }),
   ]);
 
-  expect(createImage).toHaveBeenCalledTimes(2);
+  await waitFor(() =>
+    expect(screen.getAllByLabelText("Upload succeed")).toHaveLength(2)
+  );
 });
