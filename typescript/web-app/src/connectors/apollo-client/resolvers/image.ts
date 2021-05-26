@@ -14,7 +14,11 @@ const typeName = "Image";
 const typeNamePlural = "Image:list";
 
 const getUrlFromKey = memoize(async (key: string) => {
-  const file = await localforage.getItem(`${key}:blob`);
+  const file = await localforage.getItem<File>(`${key}:blob`);
+  if (file === null) {
+    throw new Error("Cannot get an url for a non-existing file");
+  }
+
   const url = window.URL.createObjectURL(file);
   return url;
 });
@@ -61,9 +65,10 @@ export const createImage = async (
 ): Promise<Image> => {
   const { file, id, name } = args.data;
   const imageId = id ?? uuidv4();
-  const fileStorageKey = `${typeName}:${imageId}:blob`;
+  const newEntityKey = `${typeName}:${imageId}`;
+  const fileStorageKey = `${newEntityKey}:blob`;
   await localforage.setItem(fileStorageKey, file);
-  const url = await getUrlFromKey(fileStorageKey);
+  const url = await getUrlFromKey(newEntityKey);
 
   const newEntity = await new Promise<Image>((resolve, reject) => {
     const imageObject = new Image();
@@ -78,7 +83,7 @@ export const createImage = async (
       };
 
       // Set entity in db
-      const newEntityKey = `${typeName}:${imageId}`;
+
       await localforage.setItem(newEntityKey, newImageEntity);
       // Add entity to entity list
       await appendToListInStorage(typeNamePlural, newEntityKey);
