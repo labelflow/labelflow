@@ -5,7 +5,12 @@ import {
   FileWithPath,
   FileError,
 } from "react-dropzone";
-import { RiUploadCloud2Line, RiImageLine, RiFile3Line } from "react-icons/ri";
+import {
+  RiUploadCloud2Line,
+  RiImageLine,
+  RiFile3Line,
+  RiCheckboxCircleFill,
+} from "react-icons/ri";
 import { isEmpty } from "lodash/fp";
 import {
   chakra,
@@ -29,6 +34,8 @@ import { useApolloClient } from "@apollo/client";
 import gql from "graphql-tag";
 
 const UploadIcon = chakra(RiUploadCloud2Line);
+const SucceedIcon = chakra(RiCheckboxCircleFill);
+// const LoadingIcon = chakra(RiContrastFill);
 
 const createImageMutation = gql`
   mutation createImageMutation($file: Upload!) {
@@ -94,16 +101,18 @@ export const ImportImagesModal = ({
 
   useEffect(() => {
     if (isEmpty(acceptedFiles)) return;
+
     acceptedFiles.forEach(async (acceptedFile) => {
       try {
         await apolloClient.mutate({
           mutation: createImageMutation,
           variables: { file: acceptedFile },
         });
-        setFileUploadStatuses({
-          ...fileUploadStatuses,
+
+        setFileUploadStatuses((previousFileUploadStatuses) => ({
+          ...previousFileUploadStatuses,
           [acceptedFile.path ?? acceptedFile.name]: true,
-        });
+        }));
       } catch (err) {
         // TODO: Spot possibles errors (no more space on disk?)
         /* eslint-disable no-console */
@@ -215,9 +224,11 @@ export const ImportImagesModal = ({
                           </Td>
                           {isEmpty(errors) ? (
                             <Td>
-                              {fileUploadStatuses[path ?? name]
-                                ? "Upload succeed"
-                                : "loading..."}
+                              {fileUploadStatuses[path ?? name] ? (
+                                <SucceedIcon aria-label="Upload succeed" />
+                              ) : (
+                                "loading..."
+                              )}
                             </Td>
                           ) : (
                             <Td

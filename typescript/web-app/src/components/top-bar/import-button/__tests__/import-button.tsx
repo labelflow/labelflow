@@ -22,6 +22,24 @@ beforeEach(async () => {
   return jest.clearAllMocks();
 });
 
+// @ts-ignore
+global.Image = class Image extends HTMLElement {
+  width: number;
+
+  height: number;
+
+  constructor() {
+    super();
+    this.width = 42;
+    this.height = 36;
+    setTimeout(() => {
+      this?.onload?.(new Event("onload")); // simulate success
+    }, 100);
+  }
+};
+// @ts-ignore
+customElements.define("image-custom", global.Image);
+
 const files = [
   new File(["Hello"], "hello.png", { type: "image/png" }),
   new File(["World"], "world.png", { type: "image/png" }),
@@ -52,10 +70,12 @@ test("Open the modal when we click on the import button", async () => {
   await waitFor(() => screen.getByLabelText(/drop folders or images/i));
 });
 
-test.skip("1 file should be created when the user drops a single picture on the modal", async () => {
+test("1 file should be created when the user drops a single picture on the modal", async () => {
   await openModalAndDragFiles(files[0]);
 
-  expect(screen.getByLabelText("Upload succeed")).toBeDefined();
+  await waitFor(() =>
+    expect(screen.getByLabelText("Upload succeed")).toBeDefined()
+  );
 });
 
 test.skip("2 files should be created when the user drops 2 pictures on the modal", async () => {

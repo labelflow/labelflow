@@ -19,6 +19,10 @@ const Wrapper = ({ children }: PropsWithChildren<{}>) => (
 
 const onImportSucceed = jest.fn();
 
+beforeAll(() => {
+  global.URL.createObjectURL = jest.fn(() => "mockedUrl");
+});
+
 beforeEach(() => {
   onImportSucceed.mockClear();
 });
