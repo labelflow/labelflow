@@ -209,7 +209,7 @@ export const ImportImagesModal = ({
                           key={path}
                           bg={index % 2 === 0 ? "gray.50" : "inherit"}
                         >
-                          <Td pl="2" pr="2" fontSize="md">
+                          <Td pl="2" pr="2" fontSize="xl">
                             {isEmpty(errors) ? (
                               <RiImageLine />
                             ) : (
@@ -224,11 +224,27 @@ export const ImportImagesModal = ({
                             </Tooltip>
                           </Td>
                           {isEmpty(errors) ? (
-                            <Td>
+                            <Td fontSize="xl" textAlign="right">
                               {fileUploadStatuses[path ?? name] ? (
-                                <SucceedIcon aria-label="Upload succeed" />
+                                <Tooltip label="Upload succeed">
+                                  <span>
+                                    <SucceedIcon
+                                      display="inline-block"
+                                      color="green.500"
+                                      aria-label="Upload succeed"
+                                    />
+                                  </span>
+                                </Tooltip>
                               ) : (
-                                <LoadingIcon aria-label="Loading indicator" />
+                                <Tooltip label="Loading indicator">
+                                  <span>
+                                    <LoadingIcon
+                                      display="inline-block"
+                                      color="gray.800"
+                                      aria-label="Loading indicator"
+                                    />
+                                  </span>
+                                </Tooltip>
                               )}
                             </Td>
                           ) : (
