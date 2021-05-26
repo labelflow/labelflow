@@ -29,7 +29,7 @@ export const MapboxVectorTiles = () => {
       <olView initialCenter={[0, 0]} initialZoom={2} />
       {isLibLoaded ? (
         <olLayerVectorTile
-          declutter={true}
+          declutter
           style={createMapboxStreetsV6Style(Style, Fill, Stroke, Icon, Text)}
         >
           <olSourceVectorTile

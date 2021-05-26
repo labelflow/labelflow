@@ -1,10 +1,10 @@
 import React, { useRef } from "react";
 import { Fill, Stroke, RegularShape, Style } from "ol/style";
-import { Map as olMap } from "ol";
+import { Map as OlMap } from "ol";
 import { range } from "lodash/fp";
 import { getVectorContext } from "ol/render";
 import { Point } from "ol/geom";
-
+import RenderEvent from "ol/render/Event";
 import { Map } from "../map";
 
 import "ol/ol.css";
@@ -17,14 +17,14 @@ export default {
 const stroke = new Stroke({ color: "black", width: 2 });
 const fill = new Fill({ color: "red" });
 const point = new Point([0, 0]);
-const styles = {};
+const styles: Style[] = [];
 
 export const Performance = () => {
-  const mapRef = useRef<olMap>();
+  const mapRef = useRef<OlMap>(null);
 
-  const onPostrender = (event) => {
+  const onPostrender = (event: RenderEvent): boolean => {
     const vectorContext = getVectorContext(event);
-    range(0, 1000).forEach((v, i) => {
+    range(0, 1000).forEach(() => {
       const coordinates = [
         1000000 * Math.random(), // + i * 10000,
         6000000 + 1000000 * Math.random(), // + i * 10000
@@ -49,7 +49,8 @@ export const Performance = () => {
       vectorContext.drawGeometry(point);
     });
 
-    mapRef.current.render();
+    mapRef.current?.render();
+    return true;
   };
 
   return (
