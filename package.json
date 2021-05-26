@@ -12,6 +12,7 @@
     "build:web-app": "cd ./typescript/web-app && yarn build",
     "start:web-app": "cd ./typescript/web-app && yarn start",
     "codegen": "graphql-codegen --config ./codegen.yml",
+    "codegen:ci": "graphql-codegen --config ./codegen.yml && git diff --exit-code",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
     "chromatic": "npx chromatic"
