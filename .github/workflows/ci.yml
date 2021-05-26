@@ -21,7 +21,7 @@ jobs:
         id: yarn-cache
         with:
           path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-yarn-${{secrets.ACTIONS_CACHE_VERSION}}-${{ hashFiles('/yarn.lock') }}
+          key: ${{ runner.os }}-yarn-${{secrets.ACTIONS_CACHE_VERSION}}-${{ hashFiles('yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
       - name: Fetch/Save cypress cache
@@ -29,7 +29,7 @@ jobs:
         id: cypress-cache
         with:
           path: /home/runner/.cache/Cypress
-          key: ${{ runner.os }}-cypress-${{secrets.ACTIONS_CACHE_VERSION}}-${{ hashFiles('/yarn.lock') }}
+          key: ${{ runner.os }}-cypress-${{secrets.ACTIONS_CACHE_VERSION}}-${{ hashFiles('yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-cypress-
       - name: install dependencies
@@ -39,7 +39,7 @@ jobs:
         id: node-modules-cache
         with:
           path: "**/node_modules"
-          key: ${{ runner.os }}-modules-${{secrets.ACTIONS_CACHE_VERSION}}-${{ hashFiles('/yarn.lock') }}
+          key: ${{ runner.os }}-modules-${{secrets.ACTIONS_CACHE_VERSION}}-${{ hashFiles('yarn.lock') }}
 
   lint-typescript:
     name: Lint Typescript code
@@ -53,7 +53,7 @@ jobs:
         id: node-modules-cache
         with:
           path: "**/node_modules"
-          key: ${{ runner.os }}-modules-${{secrets.ACTIONS_CACHE_VERSION}}-${{ hashFiles('/yarn.lock') }}
+          key: ${{ runner.os }}-modules-${{secrets.ACTIONS_CACHE_VERSION}}-${{ hashFiles('yarn.lock') }}
       - name: lint project code
         run: yarn lint
 
@@ -93,7 +93,7 @@ jobs:
         id: node-modules-cache
         with:
           path: "**/node_modules"
-          key: ${{ runner.os }}-modules-${{secrets.ACTIONS_CACHE_VERSION}}-${{ hashFiles('/yarn.lock') }}
+          key: ${{ runner.os }}-modules-${{secrets.ACTIONS_CACHE_VERSION}}-${{ hashFiles('yarn.lock') }}
       - name: check node_modules
         run: ls typescript/web-app/node_modules
       - name: run tests
@@ -113,7 +113,7 @@ jobs:
         id: node-modules-cache
         with:
           path: "**/node_modules"
-          key: ${{ runner.os }}-modules-${{secrets.ACTIONS_CACHE_VERSION}}-${{ hashFiles('/yarn.lock') }}
+          key: ${{ runner.os }}-modules-${{secrets.ACTIONS_CACHE_VERSION}}-${{ hashFiles('yarn.lock') }}
       - name: Publish to Chromatic
         uses: chromaui/action@v1
         # Chromatic GitHub Action options
@@ -134,13 +134,13 @@ jobs:
         id: node-modules-cache
         with:
           path: "**/node_modules"
-          key: ${{ runner.os }}-modules-${{secrets.ACTIONS_CACHE_VERSION}}-${{ hashFiles('/yarn.lock') }}
+          key: ${{ runner.os }}-modules-${{secrets.ACTIONS_CACHE_VERSION}}-${{ hashFiles('yarn.lock') }}
       - name: Fetch/Save cypress cache
         uses: actions/cache@v2
         id: cypress-cache
         with:
           path: /home/runner/.cache/Cypress
-          key: ${{ runner.os }}-cypress-${{secrets.ACTIONS_CACHE_VERSION}}-${{ hashFiles('/yarn.lock') }}
+          key: ${{ runner.os }}-cypress-${{secrets.ACTIONS_CACHE_VERSION}}-${{ hashFiles('yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-cypress-
       - name: Cypress run
