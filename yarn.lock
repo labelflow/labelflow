@@ -3610,6 +3610,7 @@ __metadata:
     "@graphql-tools/merge": ^6.2.14
     "@graphql-tools/schema": 7.1.5
     "@storybook/react": ^6.2.9
+    "@testing-library/dom": ^7.31.0
     "@testing-library/jest-dom": ^5.12.0
     "@testing-library/react": 11.2.6
     "@testing-library/user-event": ^13.1.9
@@ -4642,7 +4643,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@testing-library/dom@npm:^7.28.1":
+"@testing-library/dom@npm:^7.28.1, @testing-library/dom@npm:^7.31.0":
   version: 7.31.0
   resolution: "@testing-library/dom@npm:7.31.0"
   dependencies:
