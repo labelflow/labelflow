@@ -10,6 +10,7 @@ import {
   RiImageLine,
   RiFile3Line,
   RiCheckboxCircleFill,
+  RiContrastFill,
 } from "react-icons/ri";
 import { isEmpty } from "lodash/fp";
 import {
@@ -35,7 +36,7 @@ import gql from "graphql-tag";
 
 const UploadIcon = chakra(RiUploadCloud2Line);
 const SucceedIcon = chakra(RiCheckboxCircleFill);
-// const LoadingIcon = chakra(RiContrastFill);
+const LoadingIcon = chakra(RiContrastFill);
 
 const createImageMutation = gql`
   mutation createImageMutation($file: Upload!) {
@@ -227,7 +228,7 @@ export const ImportImagesModal = ({
                               {fileUploadStatuses[path ?? name] ? (
                                 <SucceedIcon aria-label="Upload succeed" />
                               ) : (
-                                "loading..."
+                                <LoadingIcon aria-label="Loading indicator" />
                               )}
                             </Td>
                           ) : (

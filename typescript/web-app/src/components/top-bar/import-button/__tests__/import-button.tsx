@@ -78,6 +78,14 @@ test("1 file should be created when the user drops a single picture on the modal
   );
 });
 
+test("should display a loading indicator", async () => {
+  await openModalAndDragFiles(files[0]);
+
+  await waitFor(() =>
+    expect(screen.getByLabelText("Loading indicator")).toBeDefined()
+  );
+});
+
 test.skip("2 files should be created when the user drops 2 pictures on the modal", async () => {
   await openModalAndDragFiles(files);
 
