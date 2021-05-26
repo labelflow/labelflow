@@ -3,13 +3,13 @@ import { Fill, RegularShape, Stroke, Style } from "ol/style";
 import { Interaction } from "ol/interaction";
 import { debounce } from "lodash/fp";
 
-import { useResource, useUpdate } from "../hooks";
-import { Map } from "../map";
-
 import "ol/ol.css";
 import GeometryType from "ol/geom/GeometryType";
 import { Geometry } from "ol/geom";
 import VectorSource from "ol/source/Vector";
+
+import { useResource, useUpdate } from "../hooks";
+import { Map } from "../map";
 
 export default {
   title: "Components/KitchenSink",
@@ -131,7 +131,9 @@ export const KitchenSink = () => {
         {vectorSourceRef?.current ? (
           <olInteractionDraw
             type={"Polygon" as GeometryType}
-            source={(vectorSourceRef.current as unknown) as VectorSource<Geometry>}
+            source={
+              vectorSourceRef.current as unknown as VectorSource<Geometry>
+            }
             ref={drawRef}
           />
         ) : null}
