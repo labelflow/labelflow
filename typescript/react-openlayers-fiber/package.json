@@ -32,6 +32,7 @@
     "@types/jest": "24.0.13",
     "@types/lodash": "4.14.154",
     "@types/ol": "6.4.1",
+    "@types/proj4": "^2.5.0",
     "@types/react": "17.0.0",
     "@types/react-dom": "17.0.0",
     "@types/react-reconciler": "^0.26.1",

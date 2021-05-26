@@ -23,7 +23,8 @@ for (let i = 0; i < 14; i += 1) {
 }
 
 export const VectorTiles = () => {
-  const [mapboxStyle, setMapboxStyle] = useState(null);
+  const [mapboxStyle, setMapboxStyle] =
+    useState<{ zoom: number; center: [number, number] }>();
   const mapRef = useResource<olMap>();
 
   useEffect(() => {
@@ -32,15 +33,15 @@ export const VectorTiles = () => {
       mapRef.current,
       "https://sterblue-basemap-vectortiles.s3-eu-west-1.amazonaws.com/global-osm/basemap.json"
     )
-      .then(function (map) {
-        const mapboxStyle = map.get("mapbox-style");
-        setMapboxStyle(mapboxStyle);
+      .then((map: any) => {
+        const newMapboxStyle = map.get("mapbox-style");
+        setMapboxStyle(newMapboxStyle);
 
-        map.getLayers().forEach(function (layer) {
+        map.getLayers().forEach(function (layer: any) {
           const mapboxSource = layer.get("mapbox-source");
           if (
             mapboxSource &&
-            mapboxStyle.sources[mapboxSource].type === "vector"
+            newMapboxStyle.sources[mapboxSource].type === "vector"
           ) {
             const source = layer.getSource();
             layer.setSource(
@@ -51,21 +52,20 @@ export const VectorTiles = () => {
             );
           }
         });
-        return;
       })
-      .catch((e) => {
+      .catch((e: any) => {
         console.error(e.message);
       });
   }, [mapRef.current]);
 
   return (
     <Map ref={mapRef}>
-      {mapboxStyle ? (
+      {mapboxStyle && (
         <olView
-          initialZoom={mapboxStyle.zoom}
+          initialZoom={mapboxStyle && mapboxStyle?.zoom}
           initialCenter={mapboxStyle.center}
         />
-      ) : null}
+      )}
     </Map>
   );
 };

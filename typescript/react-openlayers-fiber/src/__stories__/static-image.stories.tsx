@@ -1,5 +1,5 @@
 import React from "react";
-import { getCenter } from "ol/extent";
+import { Extent, getCenter } from "ol/extent";
 import Projection from "ol/proj/Projection";
 
 import { Map } from "../map";
@@ -11,14 +11,14 @@ export default {
   component: Map,
 };
 
-const extent = [0, 0, 1024, 968];
+const extent: Extent = [0, 0, 1024, 968];
 const attributions = '© <a href="http://xkcd.com/license.html">xkcd</a>';
 
 export const StaticImage = () => {
   const projection = new Projection({
     code: "xkcd-image",
     units: "pixels",
-    extent: extent,
+    extent,
   });
 
   return (

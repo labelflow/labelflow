@@ -3625,6 +3625,7 @@ __metadata:
     "@types/jest": 24.0.13
     "@types/lodash": 4.14.154
     "@types/ol": 6.4.1
+    "@types/proj4": ^2.5.0
     "@types/react": 17.0.0
     "@types/react-dom": 17.0.0
     "@types/react-reconciler": ^0.26.1
@@ -6595,6 +6596,13 @@ __metadata:
   version: 1.0.0
   resolution: "@types/pretty-hrtime@npm:1.0.0"
   checksum: 72900a48f78b726c0465433d2f8da204e4899454254566c9665b99e1acb2cea5292de56b83f819f61eab3a621e08fb46008f534ab585824d3928ef7d1bbf9bb9
+  languageName: node
+  linkType: hard
+
+"@types/proj4@npm:^2.5.0":
+  version: 2.5.0
+  resolution: "@types/proj4@npm:2.5.0"
+  checksum: 743741f98f8358fd4c303f831fdfcd42c880b5b79517de53ff698d89225afabb68495bdcfa38ab6bdab2aca7bbc500f7c105e2600ed6225651503d74e7f2c02d
   languageName: node
   linkType: hard
 

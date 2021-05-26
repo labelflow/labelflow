@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { toLonLat } from "ol/proj";
 import { toStringHDMS, Coordinate } from "ol/coordinate";
-import { Overlay } from "ol";
+import { MapBrowserEvent, Overlay } from "ol";
 
 import { Map } from "../map";
 import { useResource } from "../hooks";
@@ -14,13 +14,14 @@ export default {
 };
 
 export const Popup = () => {
-  const [coordinates, setCoordinates] = useState<Coordinate>(undefined);
+  const [coordinates, setCoordinates] =
+    useState<Coordinate | undefined>(undefined);
   const [displayPopup, setDisplayPopup] = useState(false);
-  const popupRef = useResource<HTMLElement>();
+  const popupRef = useResource<HTMLDivElement>();
   const overlayRef = useResource<Overlay>();
 
-  const onSingleclick = (evt) => {
-    const coordinate = evt.coordinate;
+  const onSingleclick = (evt: MapBrowserEvent<UIEvent>) => {
+    const { coordinate } = evt;
     setCoordinates(coordinate);
     overlayRef.current.setPosition(coordinate);
     setDisplayPopup(true);
@@ -42,6 +43,7 @@ export const Popup = () => {
         {displayPopup ? (
           <>
             <button
+              type="button"
               onClick={(): void => {
                 setDisplayPopup(false);
                 setCoordinates(undefined);
@@ -57,7 +59,7 @@ export const Popup = () => {
             </button>
             <div id="popup-content">
               <p>You clicked here:</p>
-              <code>{toStringHDMS(toLonLat(coordinates))}</code>
+              <code>{coordinates && toStringHDMS(toLonLat(coordinates))}</code>
             </div>
           </>
         ) : null}

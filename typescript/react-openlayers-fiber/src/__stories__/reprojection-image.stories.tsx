@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import proj4 from "proj4";
-import { getCenter } from "ol/extent";
+import { Extent, getCenter } from "ol/extent";
 import { register } from "ol/proj/proj4";
 import { transform } from "ol/proj";
 
@@ -24,7 +24,7 @@ register(proj4);
 
 export const ReprojectionImage = () => {
   const [isImageSmooth, setImageSmoothing] = useState(true);
-  const imageExtent = [0, 0, 700000, 1300000];
+  const imageExtent: Extent = [0, 0, 700000, 1300000];
 
   return (
     <>
@@ -51,11 +51,13 @@ export const ReprojectionImage = () => {
         </olLayerTile>
         <olLayerImage>
           <olSourceImageStatic
-            url="https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/British_National_Grid.svg/2000px-British_National_Grid.svg.png"
+            // url="https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/British_National_Grid.svg/2000px-British_National_Grid.svg.png"
+            // eslint-disable-next-line react/no-unknown-property
             crossOrigin=""
             projection="EPSG:27700"
             imageExtent={imageExtent}
             args={{
+              url: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/British_National_Grid.svg/2000px-British_National_Grid.svg.png",
               imageSmoothing: isImageSmooth,
             }}
           />

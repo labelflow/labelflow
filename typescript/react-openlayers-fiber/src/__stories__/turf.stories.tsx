@@ -1,8 +1,9 @@
 import React, { useEffect } from "react";
-import * as turf from "@turf/turf";
+
 import { Vector } from "ol/source";
 import { fromLonLat } from "ol/proj";
-import GeoJSON, { GeoJSONFeature } from "ol/format/GeoJSON";
+import GeoJSON from "ol/format/GeoJSON";
+import { Feature, LineString, lineDistance, along } from "@turf/turf";
 
 import { Map } from "../map";
 import { useResource } from "../hooks";
@@ -24,7 +25,6 @@ export const Turf = () => {
     )
       .then((res) => res.json())
       .then((json) => {
-        console.log("TURF", turf);
         const format = new GeoJSON();
         const features = format.readFeatures(json);
         const street = features[0];
@@ -36,9 +36,13 @@ export const Turf = () => {
         const distance = 0.2;
 
         // get the line length in kilometers
-        const length = turf.lineDistance(turfLine, "kilometers");
+        const length = lineDistance(turfLine, { units: "kilometers" });
         for (let i = 1; i <= length / distance; i += 1) {
-          const turfPoint = turf.along(turfLine, i * distance, "kilometers");
+          const turfPoint = along(
+            turfLine as Feature<LineString>,
+            i * distance,
+            { units: "kilometers" }
+          );
 
           // convert the generated point to a OpenLayers feature
           const marker = format.readFeature(turfPoint);
@@ -48,8 +52,6 @@ export const Turf = () => {
 
         street.getGeometry().transform("EPSG:4326", "EPSG:3857");
         sourceVectorRef.current.addFeature(street);
-
-        return;
       })
       .catch((e) => {
         throw e;
