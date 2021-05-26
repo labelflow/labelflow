@@ -25,8 +25,18 @@ import {
   Td,
   Text,
 } from "@chakra-ui/react";
+import { useApolloClient } from "@apollo/client";
+import gql from "graphql-tag";
 
 const UploadIcon = chakra(RiUploadCloud2Line);
+
+const createImageMutation = gql`
+  mutation createImageMutation($file: Upload!) {
+    createImage(data: { file: $file }) {
+      id
+    }
+  }
+`;
 
 export const ImportImagesModal = ({
   onImportSucceed,
@@ -41,6 +51,7 @@ export const ImportImagesModal = ({
     onImportSucceed(acceptedFiles);
   }, []);
 
+  const apolloClient = useApolloClient();
   /*
    * We need a state with the accepted and reject files to be able to reset the list
    * when we close the modal because react-dropzone doesn't provide a way to reset its
@@ -50,6 +61,9 @@ export const ImportImagesModal = ({
     acceptedFiles: Array<FileWithPath>;
     fileRejections: Array<FileRejection>;
   }>({ acceptedFiles: [], fileRejections: [] });
+  const [fileUploadStatuses, setFileUploadStatuses] = useState<{
+    [key: string]: boolean;
+  }>({});
 
   const dropzoneResult = useDropzone({
     onDrop,
@@ -78,15 +92,37 @@ export const ImportImagesModal = ({
     },
   };
 
+  useEffect(() => {
+    if (isEmpty(acceptedFiles)) return;
+    acceptedFiles.forEach(async (acceptedFile) => {
+      try {
+        await apolloClient.mutate({
+          mutation: createImageMutation,
+          variables: { file: acceptedFile },
+        });
+        setFileUploadStatuses({
+          ...fileUploadStatuses,
+          [acceptedFile.path ?? acceptedFile.name]: true,
+        });
+      } catch (err) {
+        // TODO: Spot possibles errors (no more space on disk?)
+        /* eslint-disable no-console */
+        console.error(err);
+      }
+    });
+  }, [acceptedFiles]);
+
   const files = [
     ...fileRejections.map(
       ({ file, errors }: { file: FileWithPath; errors: Array<FileError> }) => ({
         path: file.path,
+        name: file.name,
         errors,
       })
     ),
-    ...acceptedFiles.map(({ path }) => ({
+    ...acceptedFiles.map(({ path, name }) => ({
       path,
+      name,
       errors: [],
     })),
   ];
@@ -158,7 +194,7 @@ export const ImportImagesModal = ({
                 <Box as="section" overflowY="auto">
                   <Table size="sm" variant="stripped">
                     <Tbody>
-                      {files.map(({ path, errors }, index) => (
+                      {files.map(({ path, name, errors }, index) => (
                         <Tr
                           key={path}
                           bg={index % 2 === 0 ? "gray.50" : "inherit"}
@@ -178,7 +214,11 @@ export const ImportImagesModal = ({
                             </Tooltip>
                           </Td>
                           {isEmpty(errors) ? (
-                            <Td />
+                            <Td>
+                              {fileUploadStatuses[path ?? name]
+                                ? "Upload succeed"
+                                : "loading..."}
+                            </Td>
                           ) : (
                             <Td
                               color="gray.400"

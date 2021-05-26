@@ -1,14 +1,21 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { ApolloProvider } from "@apollo/client";
+import { PropsWithChildren } from "react";
 import "@testing-library/jest-dom/extend-expect";
 
 import { ImportImagesModal } from "../import-images-modal";
+import { client } from "../../../../../connectors/apollo-client";
 
 const files = [
   new File(["Hello"], "hello.png", { type: "image/png" }),
   new File(["World"], "world.png", { type: "image/png" }),
   new File(["Error"], "error.pdf", { type: "application/pdf" }),
 ];
+
+const Wrapper = ({ children }: PropsWithChildren<{}>) => (
+  <ApolloProvider client={client}>{children}</ApolloProvider>
+);
 
 const onImportSucceed = jest.fn();
 
@@ -23,7 +30,8 @@ function renderModalAndImport(filesToImport = files, props = {}) {
       onClose={() => {}}
       onImportSucceed={onImportSucceed}
       {...props}
-    />
+    />,
+    { wrapper: Wrapper }
   );
   const input = screen.getByLabelText(/drop folders or images/i);
   return waitFor(() => userEvent.upload(input, filesToImport));
@@ -71,7 +79,9 @@ test("should display the amount of error when a file could not be imported", asy
 });
 
 test("should not display the modal by default", async () => {
-  render(<ImportImagesModal onImportSucceed={onImportSucceed} />);
+  render(<ImportImagesModal onImportSucceed={onImportSucceed} />, {
+    wrapper: Wrapper,
+  });
 
   expect(screen.queryByText(/Import/i)).not.toBeInTheDocument();
 });
