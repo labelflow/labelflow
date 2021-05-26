@@ -1,0 +1,73 @@
+scalar DateTime
+
+type Example {
+  id: ID
+  createdAt: DateTime
+  updatedAt: DateTime
+  name: String
+}
+
+input ExampleCreateInput {
+  name: String!
+  id: ID
+}
+
+enum ExampleOrderByInput {
+  id_ASC
+  id_DESC
+}
+
+input ExampleWhereInput {
+  id: ID
+}
+
+input ExampleWhereUniqueInput {
+  id: ID!
+}
+
+type Image {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  url: String!
+  name: String!
+  height: Int!
+  width: Int!
+}
+
+input ImageCreateInputWithFile {
+  id: ID
+  name: String
+  file: Upload!
+}
+
+input ImageCreateInputWithUrl {
+  id: ID
+  name: String!
+  width: Int!
+  height: Int!
+  url: String!
+}
+
+input ImageWhereInput {
+  id: ID
+}
+
+input ImageWhereUniqueInput {
+  id: ID!
+}
+
+type Mutation {
+  createExample(data: ExampleCreateInput!): Example
+  createImage(data: ImageCreateInputWithFile!): Image
+}
+
+type Query {
+  hello: String
+  examples(where: ExampleWhereInput, first: Int, skip: Int, orderBy: ExampleOrderByInput): [Example!]!
+  example(where: ExampleWhereUniqueInput!): Example!
+  images(where: ImageWhereInput, first: Int, skip: Int): [Image!]!
+  image(where: ImageWhereUniqueInput!): Image!
+}
+
+scalar Upload

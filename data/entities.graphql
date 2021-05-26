@@ -1,0 +1,17 @@
+# This file contains the type definitions of each main entity
+type Example {
+  id: ID
+  createdAt: DateTime
+  updatedAt: DateTime
+  name: String
+}
+
+type Image {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  url: String!
+  name: String!
+  height: Int!
+  width: Int!
+}
