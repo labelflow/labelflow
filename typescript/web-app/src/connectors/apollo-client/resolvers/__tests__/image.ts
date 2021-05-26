@@ -1,14 +1,26 @@
-import localforage from "localforage";
+import "fake-indexeddb/auto";
+
 import { createImage, image, images, clearGetUrlFromKeyMem } from "../image";
+import { db } from "../../../database";
+
+/**
+ * We bypass the structured clone algorithm as its current js implementation
+ * as its current js implementation doesn't support blobs.
+ * It might make our tests a bit different from what would actually happen
+ * in a browser.
+ */
+jest.mock("fake-indexeddb/build/lib/structuredClone", () => ({
+  default: (i: any) => i,
+}));
 
 beforeAll(() => {
   global.URL.createObjectURL = jest.fn(() => "mockedUrl");
 });
 
 describe("Image resolver test suite", () => {
-  beforeEach(() => {
-    clearGetUrlFromKeyMem();
-    return localforage.clear();
+  beforeEach(async () => {
+    db.tables.map((table) => table.clear());
+    return clearGetUrlFromKeyMem();
   });
 
   // @ts-ignore

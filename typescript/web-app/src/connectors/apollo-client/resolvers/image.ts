@@ -1,4 +1,3 @@
-import localforage from "localforage";
 import { v4 as uuidv4 } from "uuid";
 import memoize from "mem";
 import type {
@@ -8,14 +7,16 @@ import type {
   QueryImagesArgs,
 } from "../../../types.generated";
 
-import { appendToListInStorage, getListFromStorage } from "./utils";
+import { db } from "../../database";
 
-const typeName = "Image";
-const typeNamePlural = "Image:list";
+const getUrlFromKey = memoize(async (id: string) => {
+  const file = await db.files.get(id);
 
-const getUrlFromKey = memoize(async (key: string) => {
-  const file = await localforage.getItem(`${key}:blob`);
-  const url = window.URL.createObjectURL(file);
+  if (file === undefined) {
+    throw new Error("Cannot get url or undefined file");
+  }
+
+  const url = window.URL.createObjectURL(file.blob);
   return url;
 });
 
@@ -23,30 +24,38 @@ export const clearGetUrlFromKeyMem = () => {
   memoize.clear(getUrlFromKey);
 };
 
-const getImageByKey = async (key: string): Promise<Image> => {
-  const entity = await localforage.getItem<Image>(key);
-  const url = await getUrlFromKey(key);
+const getImageByKey = async (id: string): Promise<Image> => {
+  const entity = await db.images.get(id);
+
+  if (entity === undefined) {
+    throw new Error("No image with such id");
+  }
+
+  const url = await getUrlFromKey(entity.fileId);
 
   return { ...entity, url } as Image;
 };
 
 // Queries
 export const image = async (_: any, args: QueryImageArgs) => {
-  const imageEntity = await getImageByKey(`${typeName}:${args?.where?.id}`);
+  const imageEntity = await getImageByKey(args?.where?.id);
   return imageEntity;
 };
 
+// @ts-ignore
 export const images = async (_: any, args: QueryImagesArgs) => {
-  const imagesList = await getListFromStorage<Image>(typeNamePlural, {
-    first: args.first,
-    skip: args.skip,
-  });
+  // const imagesList = await getListFromStorage<Image>(typeNamePlural, {
+  //   first: args.first,
+  //   skip: args.skip,
+  // });
+
+  const imagesList = await db.images.toArray();
 
   const entitiesWithUrls = await Promise.all(
-    imagesList.map(async (imageEntity) => {
+    imagesList.map(async (imageEntity: any) => {
       return {
         ...imageEntity,
-        url: await getUrlFromKey(`${typeName}:${imageEntity.id}`),
+        url: await getUrlFromKey(imageEntity.fileId),
       };
     })
   );
@@ -61,9 +70,10 @@ export const createImage = async (
 ): Promise<Image> => {
   const { file, id, name } = args.data;
   const imageId = id ?? uuidv4();
-  const fileStorageKey = `${typeName}:${imageId}:blob`;
-  await localforage.setItem(fileStorageKey, file);
-  const url = await getUrlFromKey(fileStorageKey);
+  const fileId = id ?? uuidv4();
+
+  await db.files.add({ id: fileId, imageId, blob: file });
+  const url = await getUrlFromKey(fileId);
 
   const newEntity = await new Promise<Image>((resolve, reject) => {
     const imageObject = new Image();
@@ -75,15 +85,11 @@ export const createImage = async (
         name: name ?? file.name,
         width: imageObject.width,
         height: imageObject.height,
+        fileId,
       };
 
-      // Set entity in db
-      const newEntityKey = `${typeName}:${imageId}`;
-      await localforage.setItem(newEntityKey, newImageEntity);
-      // Add entity to entity list
-      await appendToListInStorage(typeNamePlural, newEntityKey);
-
-      resolve(await getImageByKey(newEntityKey));
+      await db.images.add(newImageEntity);
+      resolve(await getImageByKey(imageId));
     };
     imageObject.onerror = reject;
     imageObject.src = url;
