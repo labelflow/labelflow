@@ -141,8 +141,6 @@ jobs:
         with:
           path: /home/runner/.cache/Cypress
           key: ${{ runner.os }}-cypress-${{secrets.ACTIONS_CACHE_VERSION}}-${{ hashFiles('yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-cypress-
       - name: Cypress run
         uses: cypress-io/github-action@v2
         with:
