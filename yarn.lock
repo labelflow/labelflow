@@ -3658,6 +3658,7 @@ __metadata:
     "@emotion/react": ^11
     "@emotion/styled": ^11
     "@graphql-tools/merge": ^6.2.14
+    "@storybook/react": ^6.2.9
     "@testing-library/jest-dom": ^5.12.0
     "@testing-library/react": 11.2.6
     "@testing-library/user-event": ^13.1.9
