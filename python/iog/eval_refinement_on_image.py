@@ -26,8 +26,10 @@ from PIL import Image
 import cv2
 import argparse
 
+image_name = "data/VOCdevkit/VOC2012/JPEGImages/2009_000366.jpg"
 
-def process(image_name):
+
+def process():
 
     # Set gpu_id to -1 to run in CPU mode, otherwise set the id of the corresponding gpu
     gpu_id = 0
@@ -51,7 +53,7 @@ def process(image_name):
     )
 
     # load pretrain_dict
-    pretrain_dict = torch.load("data/IOG_PASCAL_SBD.pth")
+    pretrain_dict = torch.load("/Users/etiennedupont/Code/iog/data/IOG_PASCAL_SBD.pth")
 
     net.load_state_dict(pretrain_dict)
     # net.to(device)
@@ -61,7 +63,7 @@ def process(image_name):
 
     image = np.array(Image.open(image_name).convert("RGB"))
     im_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-    roi = cv2.selectROI(im_rgb)
+    roi = (136, 147, 200, 193)
     image = image.astype(np.float32)
 
     bbox = np.zeros_like(image[..., 0])
@@ -122,6 +124,7 @@ def process(image_name):
     blending[blending > 255.0] = 255
 
     # find contours
+    # print("result shape: ", result.shape)
     # im_mask = cv2.cvtColor(result.astype(np.uint8), cv2.COLOR_BGR2GRAY)
     im_mask = (result * 255).astype(np.uint8)
     ret, thresh = cv2.threshold(im_mask, 127, 255, 0)
@@ -131,22 +134,13 @@ def process(image_name):
     contours, hierarchy = cv2.findContours(
         opening, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE
     )
+    # print("contours", contours)
     cv2.drawContours(im_rgb, contours, -1, (0, 255, 0), 3)
-    cv2.imshow("resulting segmentation", im_rgb)
-    # cv2.imshow('resulting segmentation', cv2.cvtColor(blending.astype(np.uint8), cv2.COLOR_RGB2BGR))
+    cv2.imwrite("result.png", im_rgb)
+    # cv2.imwrite('resulting segmentation', cv2.cvtColor(blending.astype(np.uint8), cv2.COLOR_RGB2BGR))
     cv2.waitKey(0)
     cv2.destroyAllWindows()
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Run class agnostic segmentation")
-    parser.add_argument(
-        "--image_name",
-        type=str,
-        default="samples/IMG-20201203-WA0023.jpg",
-        help="path to target image",
-    )
-
-    args = parser.parse_args()
-
-    process(args.image_name)
+    process()
