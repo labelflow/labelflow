@@ -1,5 +1,9 @@
+import { addDecorator } from "@storybook/react";
 import { Button, useDisclosure } from "@chakra-ui/react";
 import { ImportImagesModal } from "../import-images-modal";
+import { chakraDecorator } from "../../../utils/chakra-decorator";
+
+addDecorator(chakraDecorator);
 
 export default {
   title: "Import images modal",
