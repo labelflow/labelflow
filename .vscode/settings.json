@@ -1,6 +1,5 @@
 {
   "python.formatting.provider": "black",
-  "python.pythonPath": ".venv/bin/python3",
   "[python]": {
     "editor.formatOnSave": true,
     "gitlens.codeLens.symbolScopes": ["!Module"],
@@ -12,11 +11,13 @@
       "source.fixAll.eslint": true
     }
   },
+  "eslint.workingDirectories": [{ "mode": "auto" }],
   "cSpell.words": [
     "Heatmap",
     "Mapbox",
     "WMTS",
     "Zoomify",
     "openlayers"
-  ]
+  ],
+  "python.pythonPath": ".venv/bin/python"
 }

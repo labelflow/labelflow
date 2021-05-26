@@ -37,7 +37,7 @@ export const Turf = () => {
 
         // get the line length in kilometers
         const length = turf.lineDistance(turfLine, "kilometers");
-        for (let i = 1; i <= length / distance; i++) {
+        for (let i = 1; i <= length / distance; i += 1) {
           const turfPoint = turf.along(turfLine, i * distance, "kilometers");
 
           // convert the generated point to a OpenLayers feature

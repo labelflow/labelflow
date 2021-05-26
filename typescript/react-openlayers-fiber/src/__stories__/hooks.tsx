@@ -15,10 +15,12 @@ export function useInterval(callback: () => void, delay: number | null): void {
       }
     }
     if (!isNumber(delay)) {
-      return null;
+      return undefined;
     }
     const id = setInterval(tick, delay);
-    return (): void => clearInterval(id);
+    return () => {
+      clearInterval(id);
+    };
   }, [delay]);
 }
 

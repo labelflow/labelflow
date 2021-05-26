@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import { Map as olMap } from "ol";
+import { Map as OlMap } from "ol";
 import { Style, Fill, Stroke, Circle as CircleStyle } from "ol/style";
 import { Point, MultiPoint } from "ol/geom";
 import { getVectorContext } from "ol/render";
@@ -43,9 +43,9 @@ const r = 2e6;
 const p = 2e6;
 
 export const DynamicData = () => {
-  const mapRef = useRef<olMap>();
-  const onPostrender = (event: RenderEvent | Event) => {
-    const vectorContext = getVectorContext(event as RenderEvent);
+  const mapRef = useRef<OlMap>(null);
+  const onPostrender = (event: RenderEvent) => {
+    const vectorContext = getVectorContext(event);
     const { frameState } = event;
     const theta = (2 * Math.PI * frameState.time) / omegaTheta;
     const coordinates = [];

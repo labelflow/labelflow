@@ -4,6 +4,9 @@
 // and then doing some CMD-D magic in VSCode...
 // Had to do this because of https://github.com/microsoft/TypeScript/issues/40816
 import { ListenerFunction } from "ol/events";
+import RenderEvent from "ol/render/Event";
+
+export type RenderListenerFunction = (p0: RenderEvent) => boolean;
 
 export type Events = Partial<{
   onAdd: ListenerFunction;
@@ -77,9 +80,9 @@ export type Events = Partial<{
   onPointerdrag: ListenerFunction;
   onPointermove: ListenerFunction;
   onPostcompose: ListenerFunction;
-  onPostrender: ListenerFunction;
+  onPostrender: RenderListenerFunction;
   onPrecompose: ListenerFunction;
-  onPrerender: ListenerFunction;
+  onPrerender: RenderListenerFunction;
   onPropertychange: ListenerFunction;
   onRemove: ListenerFunction;
   onRemovefeature: ListenerFunction;

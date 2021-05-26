@@ -5,7 +5,9 @@ import {
   createRegularPolygon,
   GeometryFunction,
 } from "ol/interaction/Draw";
+import OlSourceVector from "ol/source/Vector";
 import Polygon from "ol/geom/Polygon";
+import GeometryType from "ol/geom/GeometryType";
 
 import { Map } from "../map";
 import { useResource } from "../hooks";
@@ -30,8 +32,8 @@ function useGeometryFunction(
   }
   if (shapeType === "Star") {
     return function (coordinates, geometry) {
-      const center = coordinates[0];
-      const last = coordinates[1];
+      const center = coordinates[0] as [number, number];
+      const last = coordinates[1] as [number, number];
       const dx = center[0] - last[0];
       const dy = center[1] - last[1];
       const radius = Math.sqrt(dx * dx + dy * dy);
@@ -60,7 +62,7 @@ function useGeometryFunction(
 export const DrawShapes = () => {
   const [shapeType, setShapeType] = useState<ShapeType>("Circle");
   const geometryFunction = useGeometryFunction(shapeType);
-  const vectorSourceRef = useResource();
+  const vectorSourceRef = useResource<OlSourceVector>();
 
   return (
     <>
@@ -72,9 +74,9 @@ export const DrawShapes = () => {
         <select
           id="type"
           value={shapeType}
-          onChange={(e): void => setShapeType(e.target.value)}
+          onChange={(e): void => setShapeType(e.target.value as ShapeType)}
         >
-          <option value="Circle">Cirle</option>
+          <option value="Circle">Circle</option>
           <option value="Square">Square</option>
           <option value="Box">Box</option>
           <option value="Star">Star</option>
@@ -93,7 +95,7 @@ export const DrawShapes = () => {
           <olInteractionDraw
             args={{
               source: vectorSourceRef.current,
-              type: "Circle",
+              type: "Circle" as GeometryType,
               geometryFunction,
             }}
           />

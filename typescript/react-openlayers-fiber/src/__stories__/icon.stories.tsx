@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { Overlay, Map as OlMap } from "ol";
 
+import OverlayPositioning from "ol/OverlayPositioning";
+import IconAnchorUnits from "ol/style/IconAnchorUnits";
+import { Point } from "ol/geom";
 import { Map } from "../map";
 import { useResource } from "../hooks";
 import icon from "./icon.png";
@@ -13,13 +16,13 @@ export default {
 export const Icon = () => {
   const [displayPopup, setDisplayPopup] = useState(false);
   const mapRef = useResource<OlMap>();
-  const popupRef = useResource();
+  const popupRef = useResource<HTMLDivElement>();
   const overlayRef = useResource<Overlay>();
 
-  const onClick = (evt): void => {
+  const onClick = (evt: any): void => {
     const feature = mapRef.current.forEachFeatureAtPixel(evt.pixel, (f) => f);
     if (feature) {
-      const coordinates = feature.getGeometry().getCoordinates();
+      const coordinates = (feature.getGeometry() as Point).getCoordinates();
       overlayRef.current.setPosition(coordinates);
       setDisplayPopup(true);
     } else {
@@ -27,14 +30,16 @@ export const Icon = () => {
     }
   };
 
-  const onPointermove = (e) => {
+  const onPointermove = (e: any) => {
     if (e.dragging) {
       setDisplayPopup(false);
       return;
     }
     const pixel = mapRef.current.getEventPixel(e.originalEvent);
     const hit = mapRef.current.hasFeatureAtPixel(pixel);
-    mapRef.current.getTarget().style.cursor = hit ? "pointer" : "";
+    (mapRef.current.getTarget() as HTMLElement).style.cursor = hit
+      ? "pointer"
+      : "";
   };
 
   return (
@@ -49,7 +54,7 @@ export const Icon = () => {
           <olOverlay
             ref={overlayRef}
             offset={[0, -50]}
-            positioning="bottom-center"
+            positioning={"bottom-center" as OverlayPositioning}
             element={popupRef.current}
             args={{
               stopEvent: false,
@@ -73,8 +78,8 @@ export const Icon = () => {
                   attach="image"
                   args={{
                     anchor: [0.5, 46],
-                    anchorXUnits: "fraction",
-                    anchorYUnits: "pixels",
+                    anchorXUnits: "fraction" as IconAnchorUnits,
+                    anchorYUnits: "pixels" as IconAnchorUnits,
                     src: icon,
                   }}
                 />

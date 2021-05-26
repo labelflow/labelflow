@@ -60,8 +60,7 @@ export const DrawAndModifyFeatures = () => {
           <olStyleStyle attach="style" fill={fill} stroke={stroke}>
             <olStyleCircle
               attach="image"
-              radius={7}
-              args={{ fill: circleFill }}
+              args={{ radius: 7, fill: circleFill }}
             />
           </olStyleStyle>
         </olLayerVector>

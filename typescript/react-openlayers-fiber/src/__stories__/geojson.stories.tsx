@@ -82,8 +82,8 @@ const styles = {
   }),
 };
 
-const styleFunction = function (feature) {
-  return styles[feature.getGeometry().getType()];
+const styleFunction = function (feature: any) {
+  return styles[feature.getGeometry().getType() as keyof typeof styles];
 };
 
 const geojsonObject = {

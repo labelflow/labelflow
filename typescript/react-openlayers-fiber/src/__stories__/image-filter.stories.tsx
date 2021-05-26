@@ -22,11 +22,11 @@ const kernels = {
   edge: [0, 1, 0, 1, -4, 1, 0, 1, 0],
 };
 
-function normalize(kernel) {
+function normalize(kernel: any) {
   const len = kernel.length;
-  const normal = new Array(len);
-  let i,
-    sum = 0;
+  const normal: Array<number> & { normalized?: boolean } = new Array(len);
+  let i;
+  let sum = 0;
   for (i = 0; i < len; i += 1) {
     sum += kernel[i];
   }
@@ -36,7 +36,7 @@ function normalize(kernel) {
   } else {
     normal.normalized = true;
   }
-  for (i = 0; i < len; ++i) {
+  for (i = 0; i < len; i += 1) {
     normal[i] = kernel[i] / sum;
   }
   return normal;
@@ -48,7 +48,7 @@ function normalize(kernel) {
  * @param {CanvasRenderingContext2D} context Canvas 2d context.
  * @param {Array<number>} kernel Kernel.
  */
-function convolve(context, kernel) {
+function convolve(context: any, kernel: any) {
   const { width, height } = context.canvas;
 
   const size = Math.sqrt(kernel.length);
@@ -59,15 +59,15 @@ function convolve(context, kernel) {
   const output = context.createImageData(width, height);
   const outputData = output.data;
 
-  for (let pixelY = 0; pixelY < height; ++pixelY) {
+  for (let pixelY = 0; pixelY < height; pixelY += 1) {
     const pixelsAbove = pixelY * width;
-    for (let pixelX = 0; pixelX < width; ++pixelX) {
-      let r = 0,
-        g = 0,
-        b = 0,
-        a = 0;
-      for (let kernelY = 0; kernelY < size; ++kernelY) {
-        for (let kernelX = 0; kernelX < size; ++kernelX) {
+    for (let pixelX = 0; pixelX < width; pixelX += 1) {
+      let r = 0;
+      let g = 0;
+      let b = 0;
+      let a = 0;
+      for (let kernelY = 0; kernelY < size; kernelY += 1) {
+        for (let kernelX = 0; kernelX < size; kernelX += 1) {
           const weight = kernel[kernelY * size + kernelX];
           const neighborY = Math.min(
             height - 1,
@@ -94,15 +94,18 @@ function convolve(context, kernel) {
   context.putImageData(output, 0, 0);
 }
 
-const center = fromLonLat([-120, 50]);
+// const center = fromLonLat([-120, 50]);
 
 export const ImageFilter = () => {
   const [selectedKernel, setSelectedKernel] = useState("sharpen");
   const mapRef = useResource<olMap>();
 
-  const onPostrender = (event): void => {
-    const normalizedSelectedKernel = normalize(kernels[selectedKernel]);
+  const onPostrender = (event: any): boolean => {
+    const normalizedSelectedKernel = normalize(
+      kernels[selectedKernel as keyof typeof kernels]
+    );
     convolve(event.context, normalizedSelectedKernel);
+    return true;
   };
 
   useEffect(() => {
