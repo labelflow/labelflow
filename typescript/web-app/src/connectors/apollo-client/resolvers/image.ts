@@ -5,6 +5,7 @@ import type {
   MutationCreateImageArgs,
   QueryImageArgs,
   QueryImagesArgs,
+  Maybe,
 } from "../../../types.generated";
 
 import { db } from "../../database";
@@ -24,7 +25,7 @@ export const clearGetUrlFromImageIdMem = () => {
   memoize.clear(getUrlFromImageId);
 };
 
-const getImageByKey = async (id: string): Promise<Image> => {
+const getImageById = async (id: string): Promise<Image> => {
   const entity = await db.image.get(id);
 
   if (entity === undefined) {
@@ -36,20 +37,26 @@ const getImageByKey = async (id: string): Promise<Image> => {
   return { ...entity, url } as Image;
 };
 
-// Queries
-export const image = async (_: any, args: QueryImageArgs) => {
-  const imageEntity = await getImageByKey(args?.where?.id);
-  return imageEntity;
+const getPaginatedImages = async (
+  skip?: Maybe<number>,
+  first?: Maybe<number>
+): Promise<any[]> => {
+  const query = db.image.offset(skip ?? 0);
+
+  if (first) {
+    return query.limit(first).toArray();
+  }
+
+  return query.toArray();
 };
 
-// @ts-ignore
-export const images = async (_: any, args: QueryImagesArgs) => {
-  // const imagesList = await getListFromStorage<Image>(typeNamePlural, {
-  //   first: args.first,
-  //   skip: args.skip,
-  // });
+// Queries
+export const image = async (_: any, args: QueryImageArgs) => {
+  return getImageById(args?.where?.id);
+};
 
-  const imagesList = await db.image.toArray();
+export const images = async (_: any, args: QueryImagesArgs) => {
+  const imagesList = await getPaginatedImages(args?.skip, args?.first);
 
   const entitiesWithUrls = await Promise.all(
     imagesList.map(async (imageEntity: any) => {
@@ -89,7 +96,7 @@ export const createImage = async (
       };
 
       await db.image.add(newImageEntity);
-      resolve(await getImageByKey(imageId));
+      resolve(await getImageById(imageId));
     };
     imageObject.onerror = reject;
     imageObject.src = url;
