@@ -1,10 +1,17 @@
 import numpy as np
+import numbers
 import skimage
+from skimage.filters.thresholding import (
+    threshold_local,
+    threshold_minimum,
+    threshold_mean,
+    threshold_otsu,
+)
 from skimage.segmentation import watershed, mark_boundaries
 from skimage.io import imread, imsave
 from skimage.util import regular_grid, crop
-from skimage.filters import sobel
-from skimage.morphology import opening, closing, disk, dilation
+from skimage.filters import sobel, rank, gaussian
+from skimage.morphology import opening, closing, disk, dilation, erosion
 from skimage.exposure import equalize_adapthist, rescale_intensity, equalize_hist
 from skimage.color import rgb2gray, gray2rgb
 from addict import Dict
@@ -37,9 +44,11 @@ def process(input):
         bounding_box = [[0, 0], [img_original.shape[0], img_original.shape[2]]]
         img_cropped = img_original
 
-    # Adaptive equalization (Optional, default True)
+    # Adaptive equalization (Optional, default True: equalize_hist)
     equalize = True if input.parameters.equalize is None else input.parameters.equalize
-    if equalize == "adaptive":
+    if equalize == True or equalize == "hist":
+        img_equalized = equalize_hist(img_cropped)
+    elif equalize == "adaptive":
         img_equalized = equalize_adapthist(img_cropped, clip_limit=0.03)
     elif isinstance(equalize, Sequence):
         percentile_low, percentile_high = np.percentile(
@@ -48,24 +57,52 @@ def process(input):
         img_equalized = rescale_intensity(
             img_cropped, in_range=(percentile_low, percentile_high)
         )
-    elif equalize == True:
-        img_equalized = equalize_hist(img_cropped)
     else:
         img_equalized = img_cropped
+
+    img_gray = rgb2gray(img_equalized)
+
+    # Thresholding (Optional, default True: threshold_mean)
+    threshold = (
+        True if input.parameters.threshold is None else input.parameters.threshold
+    )
+    if threshold == True or threshold == "mean":
+        thresh = threshold_mean(img_gray)
+        img_thresholded = img_gray > thresh
+    elif threshold == "minimum":
+        thresh = threshold_minimum(img_gray)
+        img_thresholded = img_gray > thresh
+    elif threshold == "otsu":
+        thresh = threshold_otsu(img_gray)
+        img_thresholded = img_gray > thresh
+    elif threshold == "local":
+        local_size = input.parameters.thresholdLocalSize or 35
+        thresh = threshold_local(img_gray, local_size, offset=-0.2)
+        img_thresholded = img_gray > thresh
+    elif threshold == "localOtsu":
+        local_size = input.parameters.thresholdLocalSize or 35
+        selem = disk(local_size)
+        thresh = rank.otsu(img_gray, selem)
+        img_thresholded = img_gray > thresh
+    elif isinstance(threshold, numbers.Number) and not threshold == False:
+        thresh = threshold
+        img_thresholded = img_gray > thresh
+    else:
+        img_thresholded = img_gray
 
     # Morphological opening (Optional)
     opening_size = input.parameters.openingSize or 0
     if opening_size > 0:
         selem = disk(opening_size)
-        img_opened = opening(rgb2gray(img_equalized), selem)
+        img_opened = opening(img_thresholded, selem)
     else:
-        img_opened = img_equalized
+        img_opened = img_thresholded
 
     # Morphological closing (Optional)
     closing_size = input.parameters.closingSize or 0
     if closing_size > 0:
         selem = disk(closing_size)
-        img_closed = closing(rgb2gray(img_opened), selem)
+        img_closed = closing(img_opened, selem)
     else:
         img_closed = img_opened
 
@@ -76,9 +113,12 @@ def process(input):
         else input.parameters.edgeDetection
     )
     if edge_detection:
-        img_edges = sobel(rgb2gray(img_closed))
+        img_edges = sobel(img_closed)
     else:
-        img_edges = rgb2gray(img_closed)
+        img_edges = img_closed
+
+    # Blur the edge to get smoother watershed
+    img_edges = gaussian(img_edges, sigma=2)
 
     # Initialize seed array
     seeds = np.zeros(img_edges.shape, dtype=int)
@@ -119,6 +159,7 @@ def process(input):
         img_original,
         img_cropped,
         img_equalized,
+        img_thresholded,
         img_opened,
         img_closed,
         img_edges,

@@ -10,14 +10,15 @@ from ..segmentation_watershed import process
 def test_answer():
 
     input = {
-        "image": {"url": "b.jpg"},
+        "image": {"url": "a.jpg"},
         "input": {
             "boundingBox": [[20, 20], [150, 150]],
             "interiorPoints": [[70, 100], [80, 80]],
             "exteriorPoints": [
                 [25, 25],
                 [35, 65],
-                [100, 105],
+                [110, 105],
+                [100, 115],
                 [20, 20],
                 [149, 149],
                 [20, 149],
@@ -27,9 +28,11 @@ def test_answer():
             ],
         },
         "parameters": {
-            "equalize": [70, 98],
+            "equalize": [10, 90],
             "openingSize": 0,
-            "closingSize": 20,
+            "closingSize": 5,
+            "threshold": "minimum",
+            "thresholdLocalSize": 35,
             "edgeDetection": True,
             "compactness": 0.000001,
             "seedRadius": 5,
@@ -40,6 +43,7 @@ def test_answer():
         img_original,
         img_cropped,
         img_equalized,
+        img_thresholded,
         img_opened,
         img_closed,
         img_edges,
@@ -56,6 +60,7 @@ def test_answer():
     imsave(f"{url}.results/img_original.png", img_original)
     imsave(f"{url}.results/img_cropped.png", img_cropped)
     imsave(f"{url}.results/img_equalized.png", img_equalized)
+    imsave(f"{url}.results/img_thresholded.png", img_thresholded)
     imsave(f"{url}.results/img_opened.png", img_opened)
     imsave(f"{url}.results/img_closed.png", img_closed)
     imsave(f"{url}.results/img_edges.png", img_edges)
