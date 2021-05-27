@@ -5,8 +5,8 @@ import {
   FetchResult,
 } from "@apollo/client";
 import gql from "graphql-tag";
-
-import type { Image } from "../types.generated";
+import { Layout } from "../../components/layout";
+import type { Image } from "../../types.generated";
 
 const imagesQuery = gql`
   query {
@@ -43,7 +43,7 @@ const importImage = (
   });
 };
 
-const TestImages = () => {
+const ImagePage = () => {
   const { data: imagesResult } =
     useQuery<{ images: Pick<Image, "id" | "url" | "name">[] }>(imagesQuery);
   const [createImage] = useMutation(createImageMutation, {
@@ -51,17 +51,19 @@ const TestImages = () => {
   });
 
   return (
-    <div>
-      <input
-        name="upload"
-        type="file"
-        onChange={(e) => importImage(e?.target?.files?.[0], createImage)}
-      />
-      {imagesResult?.images?.map(({ id, name, url }) => (
-        <img key={id} alt={name} src={url} width="300px" height="300px" />
-      ))}
-    </div>
+    <Layout>
+      <div>
+        <input
+          name="upload"
+          type="file"
+          onChange={(e) => importImage(e?.target?.files?.[0], createImage)}
+        />
+        {imagesResult?.images?.map(({ id, name, url }) => (
+          <img key={id} alt={name} src={url} width="300px" height="300px" />
+        ))}
+      </div>
+    </Layout>
   );
 };
 
-export default TestImages;
+export default ImagePage;
