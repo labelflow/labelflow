@@ -1,72 +1,114 @@
-import localforage from "localforage";
+import "fake-indexeddb/auto";
+
 import { createExample, example, examples } from "../example";
-
-jest.mock("localforage", () => ({
-  setItem: jest.fn(async () => {}),
-  getItem: jest.fn(async () => {}),
-}));
-
-const mockedLocalForage = <
-  {
-    getItem: jest.Mock<Promise<any>>;
-    setItem: jest.Mock<Promise<any>>;
-  }
->(localforage as unknown);
+import { db } from "../../../database";
 
 describe("Example resolver test suite", () => {
-  beforeEach(() => {
-    jest.resetAllMocks();
+  beforeEach(async () => {
+    db.tables.map((table) => table.clear());
   });
 
   test("Query example when db is empty", async () => {
-    mockedLocalForage.getItem.mockReturnValue(Promise.resolve(null));
-
     const queryResult = await examples(undefined, {});
-
     expect(queryResult.length).toBe(0);
   });
 
-  test("Create example", async () => {
+  test("Successfully creating an example", async () => {
     const createResult = await createExample(undefined, {
       data: { name: "test" },
     });
 
     expect(createResult?.name).toBe("test");
-    expect(mockedLocalForage.setItem.mock.calls[0][0]).toEqual(
-      `Example:${createResult.id}`
-    );
+
+    const queryResult = await db.example.get(createResult.id);
+    expect(createResult).toEqual(queryResult);
   });
 
-  test("Query example", async () => {
-    await example(undefined, {
-      where: { id: "testId" },
+  test("Querying one example", async () => {
+    const testExample = {
+      id: "1234567",
+      updatedAt: "someDate",
+      createdAt: "anotherDate",
+      name: "test",
+    };
+
+    await db.example.add(testExample);
+
+    const queryResult = await example(undefined, {
+      where: { id: "1234567" },
     });
 
-    expect(mockedLocalForage.getItem.mock.calls[0][0]).toEqual(
-      "Example:testId"
-    );
+    expect(queryResult).toEqual(testExample);
   });
 
-  test("Query examples", async () => {
-    mockedLocalForage.getItem.mockReturnValue(
-      Promise.resolve([
-        "Example:1",
-        "Example:2",
-        "Example:3",
-        "Example:4",
-        "Example:5",
-      ])
+  test("Querying Several examples", async () => {
+    const testExamples = [
+      {
+        id: "1",
+        updatedAt: "someDate",
+        createdAt: "anotherDate",
+        name: "test1",
+      },
+      {
+        id: "2",
+        updatedAt: "someDate",
+        createdAt: "anotherDate",
+        name: "test2",
+      },
+      {
+        id: "3",
+        updatedAt: "someDate",
+        createdAt: "anotherDate",
+        name: "test3",
+      },
+    ];
+
+    await Promise.all(
+      testExamples.map((testExample) => db.example.add(testExample))
     );
 
     const queryResult = await examples(undefined, {});
 
-    expect(queryResult.length).toEqual(5);
-    expect(mockedLocalForage.getItem.mock.calls[0][0]).toEqual(`Example:list`);
-    expect(mockedLocalForage.getItem.mock.calls[1][0]).toEqual(`Example:1`);
-    expect(mockedLocalForage.getItem.mock.calls[2][0]).toEqual(`Example:2`);
-    expect(mockedLocalForage.getItem.mock.calls[3][0]).toEqual(`Example:3`);
-    expect(mockedLocalForage.getItem.mock.calls[4][0]).toEqual(`Example:4`);
-    expect(mockedLocalForage.getItem.mock.calls[5][0]).toEqual(`Example:5`);
-    expect(mockedLocalForage.getItem.mock.calls[6]).toBeUndefined();
+    expect(queryResult).toEqual(expect.arrayContaining(testExamples));
+    expect(testExamples).toEqual(expect.arrayContaining(queryResult));
+    expect(queryResult[3]).toBeUndefined();
+  });
+
+  test("Querying paginated examples", async () => {
+    const testExamples = [
+      {
+        id: "1",
+        updatedAt: "someDate",
+        createdAt: "anotherDate",
+        name: "test1",
+      },
+      {
+        id: "2",
+        updatedAt: "someDate",
+        createdAt: "anotherDate",
+        name: "test2",
+      },
+      {
+        id: "3",
+        updatedAt: "someDate",
+        createdAt: "anotherDate",
+        name: "test3",
+      },
+      {
+        id: "4",
+        updatedAt: "someDate",
+        createdAt: "anotherDate",
+        name: "test4",
+      },
+    ];
+
+    await Promise.all(
+      testExamples.map((testExample) => db.example.add(testExample))
+    );
+
+    const queryResult = await examples(undefined, { skip: 1, first: 2 });
+
+    expect(testExamples).toEqual(expect.arrayContaining(queryResult));
+    expect(queryResult.length).toBe(2);
   });
 });
