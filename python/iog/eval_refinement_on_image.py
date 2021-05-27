@@ -53,7 +53,7 @@ def process():
     )
 
     # load pretrain_dict
-    pretrain_dict = torch.load("/Users/etiennedupont/Code/iog/data/IOG_PASCAL_SBD.pth")
+    pretrain_dict = torch.load("data/IOG_PASCAL_SBD.pth")
 
     net.load_state_dict(pretrain_dict)
     # net.to(device)
@@ -102,6 +102,8 @@ def process():
     tr_sample = trns(sample)
 
     inputs = tr_sample["concat"][None]
+    # print("tr_sample: ", tr_sample)
+    # print("inputs: ", inputs)
     # inputs = inputs.to(device)
     outputs = net.forward(inputs)[-1]
     # outputs = fine_out.to(torch.device('cpu'))
