@@ -47,7 +47,7 @@ const FileImportError = ({ errors }: { errors: Array<FileError> }) => {
       <Tooltip label={errors[0].message} placement="left">
         <Text as="span">
           {errors[0].code === "file-invalid-type"
-            ? "Incompatible file format"
+            ? "File type must be jpeg, png or bmp"
             : errors[0].message}
         </Text>
       </Tooltip>
