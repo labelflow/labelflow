@@ -1,67 +1,41 @@
-import {
-  useQuery,
-  useMutation,
-  MutationFunctionOptions,
-  FetchResult,
-} from "@apollo/client";
+import React, { useState } from "react";
+import { useQuery } from "@apollo/client";
+import { Button, HStack, Box } from "@chakra-ui/react";
 import gql from "graphql-tag";
+import { useRouter } from "next/router";
 import { Layout } from "../../components/layout";
 import type { Image } from "../../types.generated";
+import { ImageNav } from "../../components/image-navigation-tool-bar";
 
 const imagesQuery = gql`
   query {
     images {
       id
-      name
-      url
     }
   }
 `;
-
-const createImageMutation = gql`
-  mutation ($data: ImageCreateInputWithFile) {
-    createImage(data: $data) {
-      id
-      name
-    }
-  }
-`;
-
-const importImage = (
-  file: File | undefined,
-  createImage: (
-    options?: MutationFunctionOptions<any, Record<string, any>> | undefined
-  ) => Promise<FetchResult<any, Record<string, any>, Record<string, any>>>
-) => {
-  if (file == null) {
-    return;
-  }
-  createImage({
-    variables: {
-      data: { file },
-    },
-  });
-};
 
 const ImagePage = () => {
+  const router = useRouter();
+
+  const { id }: { id?: string } = router.query;
+
   const { data: imagesResult } =
-    useQuery<{ images: Pick<Image, "id" | "url" | "name">[] }>(imagesQuery);
-  const [createImage] = useMutation(createImageMutation, {
-    refetchQueries: [{ query: imagesQuery }],
-  });
+    useQuery<{ images: Pick<Image, "id">[] }>(imagesQuery);
+
+  const [counter, setCounter] = useState(0);
 
   return (
     <Layout>
-      <div>
-        <input
-          name="upload"
-          type="file"
-          onChange={(e) => importImage(e?.target?.files?.[0], createImage)}
-        />
-        {imagesResult?.images?.map(({ id, name, url }) => (
-          <img key={id} alt={name} src={url} width="300px" height="300px" />
-        ))}
-      </div>
+      <HStack background="green" p={10}>
+        <ImageNav imageId={id} images={imagesResult?.images} router={router} />
+        <Box>
+          <Button colorScheme="blue" onClick={() => setCounter(counter + 1)}>
+            Done, and look at this state that persists when you change page:
+            {counter}
+          </Button>
+        </Box>
+      </HStack>
     </Layout>
   );
 };

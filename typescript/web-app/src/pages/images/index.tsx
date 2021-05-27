@@ -5,6 +5,7 @@ import {
   FetchResult,
 } from "@apollo/client";
 import gql from "graphql-tag";
+import NextLink from "next/link";
 import { Layout } from "../../components/layout";
 import type { Image } from "../../types.generated";
 
@@ -57,9 +58,25 @@ const ImagesPage = () => {
           type="file"
           onChange={(e) => importImage(e?.target?.files?.[0], createImage)}
         />
-        {imagesResult?.images?.map(({ id, name, url }) => (
-          <img key={id} alt={name} src={url} width="300px" height="300px" />
-        ))}
+        <ul>
+          {imagesResult?.images?.map(({ id, name, url }) => (
+            <NextLink href={`/images/${id}`}>
+              {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
+              <a>
+                <li>
+                  <span>{id}</span>
+                  <img
+                    key={id}
+                    alt={name}
+                    src={url}
+                    width="300px"
+                    height="300px"
+                  />
+                </li>
+              </a>
+            </NextLink>
+          ))}
+        </ul>
       </div>
     </Layout>
   );
