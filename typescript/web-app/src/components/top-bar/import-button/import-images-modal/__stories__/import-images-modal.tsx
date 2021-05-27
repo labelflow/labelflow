@@ -8,7 +8,7 @@ addDecorator(chakraDecorator);
 addDecorator(apolloDecorator);
 
 export default {
-  title: "Import images modal",
+  title: "web-app/Import images modal",
 };
 
 export const Default = () => {
