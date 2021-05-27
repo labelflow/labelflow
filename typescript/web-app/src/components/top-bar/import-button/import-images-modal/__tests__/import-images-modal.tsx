@@ -19,6 +19,24 @@ const Wrapper = ({ children }: PropsWithChildren<{}>) => (
 
 const onImportSucceed = jest.fn();
 
+// @ts-ignore
+global.Image = class Image extends HTMLElement {
+  width: number;
+
+  height: number;
+
+  constructor() {
+    super();
+    this.width = 42;
+    this.height = 36;
+    setTimeout(() => {
+      this?.onload?.(new Event("onload")); // simulate success
+    }, 100);
+  }
+};
+// @ts-ignore
+customElements.define("image-custom", global.Image);
+
 beforeAll(() => {
   global.URL.createObjectURL = jest.fn(() => "mockedUrl");
 });
@@ -54,6 +72,33 @@ test("should display the number of images", async () => {
   expect(
     screen.queryByLabelText(/drop folders or images/i)
   ).not.toBeInTheDocument();
+});
+
+test("should display an indicator when upload succeed", async () => {
+  await renderModalAndImport(files.slice(0, 1));
+
+  await waitFor(() =>
+    expect(screen.getByLabelText("Upload succeed")).toBeDefined()
+  );
+});
+
+test("should display a loading indicator when file is uploading", async () => {
+  await renderModalAndImport(files.slice(0, 1));
+
+  await waitFor(() =>
+    expect(screen.getByLabelText("Loading indicator")).toBeDefined()
+  );
+  await waitFor(() =>
+    expect(screen.getByLabelText("Upload succeed")).toBeDefined()
+  );
+});
+
+test("when the user drags invalid formats, only the valid pictures are uploaded", async () => {
+  await renderModalAndImport();
+
+  await waitFor(() =>
+    expect(screen.getAllByLabelText("Upload succeed")).toHaveLength(2)
+  );
 });
 
 test("should display the images name", async () => {

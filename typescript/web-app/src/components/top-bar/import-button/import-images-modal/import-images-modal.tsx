@@ -1,4 +1,4 @@
-import { useCallback, useState, useEffect } from "react";
+import { useCallback, useState, useEffect, useRef } from "react";
 import {
   useDropzone,
   FileRejection,
@@ -55,6 +55,15 @@ export const ImportImagesModal = ({
   isOpen?: boolean;
   onClose?: () => void;
 }) => {
+  const isMounted = useRef(false);
+
+  useEffect(() => {
+    isMounted.current = true;
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
+
   const onDrop = useCallback((acceptedFiles) => {
     onImportSucceed(acceptedFiles);
   }, []);
@@ -110,10 +119,16 @@ export const ImportImagesModal = ({
           variables: { file: acceptedFile },
         });
 
-        setFileUploadStatuses((previousFileUploadStatuses) => ({
-          ...previousFileUploadStatuses,
-          [acceptedFile.path ?? acceptedFile.name]: true,
-        }));
+        /**
+         * If the modal is closed we still want to create images but
+         * we don't want to update the state of an unmounted component
+         */
+        if (isMounted.current) {
+          setFileUploadStatuses((previousFileUploadStatuses) => ({
+            ...previousFileUploadStatuses,
+            [acceptedFile.path ?? acceptedFile.name]: true,
+          }));
+        }
       } catch (err) {
         // TODO: Spot possibles errors (no more space on disk?)
         /* eslint-disable no-console */
