@@ -35,24 +35,8 @@ export const Dropzone = ({
     if (isEmpty(acceptedFiles) && isEmpty(fileRejections)) return;
 
     const files: Array<DroppedFile> = [
-      ...fileRejections.map(
-        ({
-          file,
-          errors,
-        }: {
-          file: FileWithPath;
-          errors: Array<FileError>;
-        }) => ({
-          path: file.path,
-          name: file.name,
-          errors,
-        })
-      ),
-      ...acceptedFiles.map(({ path, name }) => ({
-        path,
-        name,
-        errors: [],
-      })),
+      ...fileRejections,
+      ...acceptedFiles.map((file) => ({ file, errors: [] })),
     ];
 
     onDropEnd(files);
@@ -75,8 +59,7 @@ export const Dropzone = ({
       borderColor="gray.700"
       borderRadius="md"
       bg="gray.50"
-      flex="1"
-    >
+      flex="1">
       {/* We make the label taking all the available place in the Stack in order to make
               the whole surface clickable since we prevent the onClick on the dropzone parent (see the comment above) */}
       <chakra.label
@@ -88,8 +71,7 @@ export const Dropzone = ({
         flexDirection="column"
         alignItems="center"
         justifyContent="Center"
-        flex="1"
-      >
+        flex="1">
         <UploadIcon fontSize="9xl" color="gray.700" />
         Drop folders or images
         <input {...getInputProps()} id="file-uploader" />

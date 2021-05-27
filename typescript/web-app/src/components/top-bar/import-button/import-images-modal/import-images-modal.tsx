@@ -60,7 +60,7 @@ export const ImportImagesModal = ({
         try {
           await apolloClient.mutate({
             mutation: createImageMutation,
-            variables: { file: acceptedFile },
+            variables: { file: acceptedFile.file },
           });
 
           /**
@@ -70,7 +70,7 @@ export const ImportImagesModal = ({
           if (isMounted.current) {
             setFileUploadStatuses((previousFileUploadStatuses) => ({
               ...previousFileUploadStatuses,
-              [acceptedFile.path ?? acceptedFile.name]: true,
+              [acceptedFile.file.path ?? acceptedFile.file.name]: true,
             }));
           }
         } catch (err) {
@@ -88,8 +88,7 @@ export const ImportImagesModal = ({
       onClose={() => {
         setFiles([]);
         onClose();
-      }}
-    >
+      }}>
       <ModalOverlay />
       <ModalContent height="80vh">
         <ModalHeader textAlign="center" padding="6">
@@ -109,8 +108,7 @@ export const ImportImagesModal = ({
           pr="6"
           pl="6"
           overflowY="hidden"
-          flexDirection="column"
-        >
+          flexDirection="column">
           {isEmpty(files) ? (
             <Dropzone onDropEnd={setFiles} />
           ) : (

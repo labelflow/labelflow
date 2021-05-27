@@ -34,56 +34,59 @@ export const Files = ({
     <Box as="section" overflowY="auto">
       <Table size="sm" variant="stripped">
         <Tbody>
-          {files.map(({ path, name, errors }, index) => (
-            <Tr key={path} bg={index % 2 === 0 ? "gray.50" : "inherit"}>
-              <Td pl="2" pr="2" fontSize="xl">
-                {isEmpty(errors) ? <RiImageLine /> : <RiFile3Line />}
-              </Td>
-              <Td pl="0" fontSize="md" lineHeight="md">
-                <Tooltip label={path}>
-                  <Text isTruncated maxWidth="sm" textAlign="left">
-                    {path}
-                  </Text>
-                </Tooltip>
-              </Td>
-              {isEmpty(errors) ? (
-                <Td fontSize="xl" textAlign="right">
-                  {fileUploadStatuses[path ?? name] ? (
-                    <Tooltip label="Upload succeed" placement="left">
-                      <span>
-                        <SucceedIcon
-                          display="inline-block"
-                          color="green.500"
-                          aria-label="Upload succeed"
-                        />
-                      </span>
-                    </Tooltip>
-                  ) : (
-                    <Tooltip label="Loading indicator" placement="left">
-                      <span>
-                        <LoadingIcon
-                          display="inline-block"
-                          color="gray.800"
-                          aria-label="Loading indicator"
-                        />
-                      </span>
-                    </Tooltip>
-                  )}
+          {files.map(({ file, errors }, index) => {
+            const { path, name } = file;
+
+            return (
+              <Tr key={path} bg={index % 2 === 0 ? "gray.50" : "inherit"}>
+                <Td pl="2" pr="2" fontSize="xl">
+                  {isEmpty(errors) ? <RiImageLine /> : <RiFile3Line />}
                 </Td>
-              ) : (
-                <Td color="gray.400" fontSize="md" textAlign="right">
-                  <Tooltip
-                    label={errors.map((e) => e.message).join(". ")}
-                    placement="left"
-                  >
-                    <Text as="span" color="red.600">
-                      {errors.length} errors
+                <Td pl="0" fontSize="md" lineHeight="md">
+                  <Tooltip label={path}>
+                    <Text isTruncated maxWidth="sm" textAlign="left">
+                      {path}
                     </Text>
                   </Tooltip>
                 </Td>
-              )}
-            </Tr>
-          ))}
+                {isEmpty(errors) ? (
+                  <Td fontSize="xl" textAlign="right">
+                    {fileUploadStatuses[path ?? name] ? (
+                      <Tooltip label="Upload succeed" placement="left">
+                        <span>
+                          <SucceedIcon
+                            display="inline-block"
+                            color="green.500"
+                            aria-label="Upload succeed"
+                          />
+                        </span>
+                      </Tooltip>
+                    ) : (
+                      <Tooltip label="Loading indicator" placement="left">
+                        <span>
+                          <LoadingIcon
+                            display="inline-block"
+                            color="gray.800"
+                            aria-label="Loading indicator"
+                          />
+                        </span>
+                      </Tooltip>
+                    )}
+                  </Td>
+                ) : (
+                  <Td color="gray.400" fontSize="md" textAlign="right">
+                    <Tooltip
+                      label={errors.map((e) => e.message).join(". ")}
+                      placement="left">
+                      <Text as="span" color="red.600">
+                        {errors.length} errors
+                      </Text>
+                    </Tooltip>
+                  </Td>
+                )}
+              </Tr>
+            );
+          })}
         </Tbody>
       </Table>
     </Box>
