@@ -5,7 +5,7 @@ import OverlayPositioning from "ol/OverlayPositioning";
 import IconAnchorUnits from "ol/style/IconAnchorUnits";
 import { Point } from "ol/geom";
 import { Map } from "../map";
-import { useResource } from "../hooks";
+
 import icon from "./icon.png";
 
 export default {
@@ -15,15 +15,18 @@ export default {
 
 export const Icon = () => {
   const [displayPopup, setDisplayPopup] = useState(false);
-  const mapRef = useResource<OlMap>();
-  const popupRef = useResource<HTMLDivElement>();
-  const overlayRef = useResource<Overlay>();
+
+  const [map, setMap] = useState<OlMap | null>(null);
+  const [popup, setPopup] = useState<HTMLDivElement | null>(null);
+  const [overlay, setOverlay] = useState<Overlay>();
 
   const onClick = (evt: any): void => {
-    const feature = mapRef.current.forEachFeatureAtPixel(evt.pixel, (f) => f);
+    if (!map) return;
+    const feature = map.forEachFeatureAtPixel(evt.pixel, (f) => f);
     if (feature) {
+      if (!overlay) return;
       const coordinates = (feature.getGeometry() as Point).getCoordinates();
-      overlayRef.current.setPosition(coordinates);
+      overlay.setPosition(coordinates);
       setDisplayPopup(true);
     } else {
       setDisplayPopup(false);
@@ -31,31 +34,30 @@ export const Icon = () => {
   };
 
   const onPointermove = (e: any) => {
+    if (!map) return;
     if (e.dragging) {
       setDisplayPopup(false);
       return;
     }
-    const pixel = mapRef.current.getEventPixel(e.originalEvent);
-    const hit = mapRef.current.hasFeatureAtPixel(pixel);
-    (mapRef.current.getTarget() as HTMLElement).style.cursor = hit
-      ? "pointer"
-      : "";
+    const pixel = map.getEventPixel(e.originalEvent);
+    const hit = map.hasFeatureAtPixel(pixel);
+    (map.getTarget() as HTMLElement).style.cursor = hit ? "pointer" : "";
   };
 
   return (
     <div>
-      <div ref={popupRef}>
+      <div ref={setPopup}>
         {displayPopup ? (
           <p style={{ backgroundColor: "white" }}>Null Island</p>
         ) : null}
       </div>
-      <Map ref={mapRef} onPointermove={onPointermove} onClick={onClick}>
-        {popupRef?.current ? (
+      <Map ref={setMap} onPointermove={onPointermove} onClick={onClick}>
+        {popup ? (
           <olOverlay
-            ref={overlayRef}
+            ref={setOverlay}
             offset={[0, -50]}
             positioning={"bottom-center" as OverlayPositioning}
-            element={popupRef.current}
+            element={popup}
             args={{
               stopEvent: false,
             }}

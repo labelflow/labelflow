@@ -4,7 +4,6 @@ import { toStringHDMS, Coordinate } from "ol/coordinate";
 import { MapBrowserEvent, Overlay } from "ol";
 
 import { Map } from "../map";
-import { useResource } from "../hooks";
 
 import "ol/ol.css";
 
@@ -17,20 +16,21 @@ export const Popup = () => {
   const [coordinates, setCoordinates] =
     useState<Coordinate | undefined>(undefined);
   const [displayPopup, setDisplayPopup] = useState(false);
-  const popupRef = useResource<HTMLDivElement>();
-  const overlayRef = useResource<Overlay>();
+  const [popup, setPopup] = useState<HTMLDivElement | null>();
+  const [overlay, setOverlay] = useState<Overlay>();
 
   const onSingleclick = (evt: MapBrowserEvent<UIEvent>) => {
+    if (!overlay) return;
     const { coordinate } = evt;
     setCoordinates(coordinate);
-    overlayRef.current.setPosition(coordinate);
+    overlay.setPosition(coordinate);
     setDisplayPopup(true);
   };
 
   return (
     <div>
       <div
-        ref={popupRef}
+        ref={setPopup}
         style={{
           backgroundColor: "white",
           boxShadow: "0 1px 4px rgba(0,0,0,0.2)",
@@ -65,10 +65,10 @@ export const Popup = () => {
         ) : null}
       </div>
       <Map onSingleclick={onSingleclick}>
-        {popupRef?.current ? (
+        {popup ? (
           <olOverlay
-            ref={overlayRef}
-            element={popupRef.current}
+            ref={setOverlay}
+            element={popup}
             autoPan
             autoPanAnimation={{
               duration: 250,

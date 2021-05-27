@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { Map as olMap } from "ol";
+import { Map as OlMap } from "ol";
 import { fromLonLat } from "ol/proj";
 
 import { Map } from "../map";
-import { useResource } from "../hooks";
 
 import "ol/ol.css";
 
@@ -98,7 +97,7 @@ function convolve(context: any, kernel: any) {
 
 export const ImageFilter = () => {
   const [selectedKernel, setSelectedKernel] = useState("sharpen");
-  const mapRef = useResource<olMap>();
+  const [map, setMap] = useState<OlMap | null>(null);
 
   const onPostrender = (event: any): boolean => {
     const normalizedSelectedKernel = normalize(
@@ -109,9 +108,9 @@ export const ImageFilter = () => {
   };
 
   useEffect(() => {
-    if (!mapRef.current) return;
-    mapRef.current.render();
-  }, [mapRef.current, selectedKernel]);
+    if (!map) return;
+    map.render();
+  }, [map, selectedKernel]);
 
   return (
     <>
@@ -129,7 +128,7 @@ export const ImageFilter = () => {
         <option>emboss</option>
         <option value="edge">edge detect</option>
       </select>
-      <Map ref={mapRef}>
+      <Map ref={setMap}>
         <olView initialCenter={fromLonLat([-120, 50])} initialZoom={6} />
         <olLayerTile onPostrender={onPostrender} args={{ preload: Infinity }}>
           <olSourceBingMaps

@@ -4,7 +4,6 @@ import VectorSource from "ol/source/Vector";
 import GeometryType from "ol/geom/GeometryType";
 
 import { Map } from "../map";
-import { useResource } from "../hooks";
 
 import "ol/ol.css";
 
@@ -28,7 +27,7 @@ export const DrawAndModifyFeatures = () => {
   const [geometryType, setGeometryType] = useState<GeometryType>(
     "Point" as GeometryType
   );
-  const vectorSourceRef = useResource<VectorSource>();
+  const [vectorSource, setVectorSource] = useState<VectorSource>();
 
   return (
     <>
@@ -56,7 +55,7 @@ export const DrawAndModifyFeatures = () => {
           <olSourceOSM />
         </olLayerTile>
         <olLayerVector>
-          <olSourceVector ref={vectorSourceRef} />
+          <olSourceVector ref={setVectorSource} />
           <olStyleStyle attach="style" fill={fill} stroke={stroke}>
             <olStyleCircle
               attach="image"
@@ -64,18 +63,18 @@ export const DrawAndModifyFeatures = () => {
             />
           </olStyleStyle>
         </olLayerVector>
-        {vectorSourceRef?.current ? (
+        {vectorSource ? (
           <>
-            <olInteractionModify source={vectorSourceRef.current} />
+            <olInteractionModify source={vectorSource} />
             <olInteractionDraw
               args={{
                 type: geometryType,
-                source: vectorSourceRef.current,
+                source: vectorSource,
                 snapTolerance: 30,
               }}
             />
             <olInteractionSnap
-              source={vectorSourceRef.current}
+              source={vectorSource}
               args={{ pixelTolerance: 30 }}
             />
           </>
