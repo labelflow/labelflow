@@ -75,7 +75,7 @@ export const Files = ({
       <Text>
         Completed{" "}
         {Object.entries(fileUploadStatuses).filter((entry) => entry[1]).length}{" "}
-        of {files.length} items
+        of {Object.keys(fileUploadStatuses).length} items
       </Text>
     </Box>
     <Flex direction="column" overflowY="auto" width="100%" height="100%">

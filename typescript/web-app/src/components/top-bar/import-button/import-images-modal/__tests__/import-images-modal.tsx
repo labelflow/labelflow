@@ -47,22 +47,22 @@ function renderModalAndImport(filesToImport = files, props = {}) {
   return waitFor(() => userEvent.upload(input, filesToImport));
 }
 
-test("should display the number of images", async () => {
+test("should display the number of valid images", async () => {
   await renderModalAndImport();
 
   await waitFor(() =>
-    expect(screen.getByText(/Completed 2 of 3 items/i)).toBeDefined()
+    expect(screen.getByText(/Completed 2 of 2 items/i)).toBeDefined()
   );
   expect(
     screen.queryByLabelText(/drop folders or images/i)
   ).not.toBeInTheDocument();
 });
 
-test("should update completed number as images are uploaded", async () => {
+test("should update completed number as valid images are uploaded", async () => {
   await renderModalAndImport();
 
   await waitFor(() =>
-    expect(screen.getByText(/Completed 1 of 3 items/i)).toBeDefined()
+    expect(screen.getByText(/Completed 1 of 2 items/i)).toBeDefined()
   );
 });
 
