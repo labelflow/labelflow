@@ -6,7 +6,7 @@ import { chakraDecorator } from "../../../utils/chakra-decorator";
 addDecorator(chakraDecorator);
 
 export default {
-  title: "Import images modal",
+  title: "web-app/Import images modal",
 };
 
 export const Default = () => {

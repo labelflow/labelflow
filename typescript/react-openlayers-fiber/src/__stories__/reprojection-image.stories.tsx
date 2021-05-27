@@ -9,7 +9,7 @@ import { Map } from "../map";
 import "ol/ol.css";
 
 export default {
-  title: "OL Examples/Reprojection image",
+  title: "react-openlayers-fiber/OL Examples",
   component: Map,
 };
 

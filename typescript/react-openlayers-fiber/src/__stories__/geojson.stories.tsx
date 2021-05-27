@@ -7,7 +7,7 @@ import { Map } from "../map";
 import "ol/ol.css";
 
 export default {
-  title: "OL Examples/GeoJSON",
+  title: "react-openlayers-fiber/OL Examples",
   component: Map,
 };
 

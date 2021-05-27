@@ -9,7 +9,7 @@ import { useResource } from "../hooks";
 import "ol/ol.css";
 
 export default {
-  title: "OL Examples/Draw and modify features",
+  title: "react-openlayers-fiber/OL Examples",
   component: Map,
 };
 

@@ -12,7 +12,7 @@ import { useResource, useUpdate } from "../hooks";
 import { Map } from "../map";
 
 export default {
-  title: "Components/KitchenSink",
+  title: "react-openlayers-fiber/Other Examples",
   component: Map,
 };
 

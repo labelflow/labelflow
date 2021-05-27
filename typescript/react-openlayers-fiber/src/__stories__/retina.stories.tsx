@@ -5,7 +5,7 @@ import { Map } from "../map";
 import "ol/ol.css";
 
 export default {
-  title: "Components/Retina",
+  title: "react-openlayers-fiber/Other Examples",
   component: Map,
 };
 

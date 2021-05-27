@@ -8,7 +8,7 @@ import { useResource } from "../hooks";
 import "ol/ol.css";
 
 export default {
-  title: "OL Examples/Image filter",
+  title: "react-openlayers-fiber/OL Examples",
   component: Map,
 };
 

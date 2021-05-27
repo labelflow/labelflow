@@ -13,7 +13,7 @@ declare global {
 }
 
 export default {
-  title: "OL Examples/Mapbox Vector Tiles",
+  title: "react-openlayers-fiber/OL Examples",
   component: Map,
 };
 

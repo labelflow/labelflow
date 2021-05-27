@@ -16,6 +16,7 @@ import "ol/ol.css";
 
 export default {
   title: "OL Examples/Draw shapes",
+  title: "react-openlayers-fiber/OL Examples",
   component: Map,
 };
 

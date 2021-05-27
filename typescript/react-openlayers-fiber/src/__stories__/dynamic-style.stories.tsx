@@ -7,7 +7,7 @@ import { useInterval } from "./hooks";
 import "ol/ol.css";
 
 export default {
-  title: "Examples/3-Dynamic style",
+  title: "react-openlayers-fiber/Other Examples",
   component: Map,
 };
 

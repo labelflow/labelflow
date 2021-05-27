@@ -10,7 +10,7 @@ import { Map } from "../map";
 import "ol/ol.css";
 
 export default {
-  title: "Examples/4-Performances",
+  title: "react-openlayers-fiber/Other Examples",
   component: Map,
 };
 

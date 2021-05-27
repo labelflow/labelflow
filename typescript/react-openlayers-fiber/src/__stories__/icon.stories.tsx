@@ -9,7 +9,7 @@ import { useResource } from "../hooks";
 import icon from "./icon.png";
 
 export default {
-  title: "OL Examples/Icon",
+  title: "react-openlayers-fiber/OL Examples",
   component: Map,
 };
 
