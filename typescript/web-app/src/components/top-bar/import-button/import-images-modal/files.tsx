@@ -31,10 +31,7 @@ export const Files = ({
     <Box p="2" bg="gray.200" borderTopRadius="md">
       <Text>
         Completed{" "}
-        {
-          Object.entries(fileUploadStatuses).filter(([_, value]) => value)
-            .length
-        }{" "}
+        {Object.entries(fileUploadStatuses).filter((entry) => entry[1]).length}{" "}
         of {files.length} items
       </Text>
     </Box>
