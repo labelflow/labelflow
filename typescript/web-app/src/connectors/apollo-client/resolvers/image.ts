@@ -63,7 +63,7 @@ export const createImage = async (
   const imageId = id ?? uuidv4();
   const fileStorageKey = `${typeName}:${imageId}:blob`;
   await localforage.setItem(fileStorageKey, file);
-  const url = await getUrlFromKey(fileStorageKey);
+  const url = await getUrlFromKey(`${typeName}:${imageId}`);
 
   const newEntity = await new Promise<Image>((resolve, reject) => {
     const imageObject = new Image();
