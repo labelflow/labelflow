@@ -1,14 +1,12 @@
-import React, { ReactPortal, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Fill, RegularShape, Stroke, Style } from "ol/style";
-import { Interaction } from "ol/interaction";
+import { Draw } from "ol/interaction";
 import { debounce } from "lodash/fp";
 
 import "ol/ol.css";
 import GeometryType from "ol/geom/GeometryType";
-import { Geometry } from "ol/geom";
 import VectorSource from "ol/source/Vector";
 
-import { useResource, useUpdate } from "../hooks";
 import { Map } from "../map";
 
 export default {
@@ -51,19 +49,19 @@ const polygonStyle = new Style({
 export const KitchenSink = () => {
   const [currentStyle, setCurrentStyle] = useState(bingstyles[0]);
   const [center, setCenter] = useState([0, 0]);
-  const vectorSourceRef = useResource<ReactPortal>();
-  const drawRef = useUpdate(
-    (drawInteraction: Interaction) => {
-      // There are better ways to do this! This is just to demonstrate
-      // the use of useUpdate
+
+  const [vectorSource, setVectorSource] = useState<VectorSource>();
+  const [drawInteraction, setDrawInteraction] = useState<Draw>();
+
+  useEffect(() => {
+    if (drawInteraction) {
       if (currentStyle === bingstyles[0]) {
         drawInteraction.setActive(false);
       } else {
         drawInteraction.setActive(true);
       }
-    },
-    [currentStyle]
-  );
+    }
+  }, [currentStyle, drawInteraction]);
 
   return (
     <>
@@ -108,7 +106,7 @@ export const KitchenSink = () => {
         ))}
 
         <olLayerVector>
-          <olSourceVector features={[]} ref={vectorSourceRef}>
+          <olSourceVector features={[]} ref={setVectorSource}>
             <olFeature style={pointStyle}>
               <olGeomPoint args={[[0, 0]]} />
             </olFeature>
@@ -128,13 +126,11 @@ export const KitchenSink = () => {
             </olFeature>
           </olSourceVector>
         </olLayerVector>
-        {vectorSourceRef?.current ? (
+        {vectorSource ? (
           <olInteractionDraw
             type={"Polygon" as GeometryType}
-            source={
-              vectorSourceRef.current as unknown as VectorSource<Geometry>
-            }
-            ref={drawRef}
+            source={vectorSource}
+            ref={setDrawInteraction}
           />
         ) : null}
       </Map>
