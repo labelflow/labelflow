@@ -97,4 +97,41 @@ describe("Image resolver test suite", () => {
     expect(queryResult.length).toEqual(2);
     expect(queryResult).toEqual([createResult1, createResult2]);
   });
+
+  test("Querying paginated images", async () => {
+    const testImages = [
+      {
+        id: "1",
+        name: "test1",
+      },
+      {
+        id: "2",
+        name: "test2",
+      },
+      {
+        id: "3",
+        name: "test3",
+      },
+      {
+        id: "4",
+        name: "test4",
+      },
+    ];
+
+    await Promise.all(
+      testImages.map((testExample) =>
+        createImage(undefined, {
+          data: {
+            file: new Blob(),
+            ...testExample,
+          },
+        })
+      )
+    );
+
+    const queryResult = await images(undefined, { skip: 1, first: 1 });
+
+    expect(queryResult.length).toBe(1);
+    expect(queryResult[0].id).toBe("2");
+  });
 });
