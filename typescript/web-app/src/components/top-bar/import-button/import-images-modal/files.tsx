@@ -79,14 +79,24 @@ export const Files = ({
                   </Td>
                 ) : (
                   <Td color="gray.400" fontSize="md" textAlign="right">
-                    <Tooltip
-                      label={errors.map((e) => e.message).join(". ")}
-                      placement="left"
-                    >
-                      <Text as="span" color="red.600">
-                        {errors.length} errors
-                      </Text>
-                    </Tooltip>
+                    {errors.length === 1 ? (
+                      <Tooltip label={errors[0].message} placement="left">
+                        <Text as="span">
+                          {errors[0].code === "file-invalid-type"
+                            ? "Incompatible file format"
+                            : errors[0].message}
+                        </Text>
+                      </Tooltip>
+                    ) : (
+                      <Tooltip
+                        label={errors.map((e) => e.message).join(". ")}
+                        placement="left"
+                      >
+                        <Text as="span" color="red.600">
+                          {errors.length} errors
+                        </Text>
+                      </Tooltip>
+                    )}
                   </Td>
                 )}
               </Tr>

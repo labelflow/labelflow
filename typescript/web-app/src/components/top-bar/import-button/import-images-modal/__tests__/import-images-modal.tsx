@@ -104,15 +104,16 @@ test("should display the rejected images name", async () => {
   await renderModalAndImport();
 
   expect(screen.getByText(/error.pdf/i)).toBeDefined();
-  expect(screen.getByText(/errors/i)).toBeDefined();
+  expect(screen.getByText(/incompatible file format/i)).toBeDefined();
 });
 
-test("should display the amount of error when a file could not be imported", async () => {
+test("should display the error description when a file could not be imported", async () => {
   await renderModalAndImport(files.slice(2, 3));
 
-  userEvent.hover(screen.getByText(/1 errors/i));
+  expect(screen.getByText(/incompatible file format/i)).toBeDefined();
 
-  expect(screen.getByText(/1 errors/i)).toBeDefined();
+  userEvent.hover(screen.getByText(/incompatible file format/i));
+
   // We need to wait for the tooltip to be rendered before checking its content.
   await waitFor(() =>
     expect(screen.getByText(/File type must be/i)).toBeDefined()
