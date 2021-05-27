@@ -44,10 +44,10 @@ const getPaginatedImages = async (
   const query = db.image.offset(skip ?? 0);
 
   if (first) {
-    return query.limit(first).toArray();
+    return query.limit(first).sortBy("updatedAt");
   }
 
-  return query.toArray();
+  return query.sortBy("updatedAt");
 };
 
 // Queries

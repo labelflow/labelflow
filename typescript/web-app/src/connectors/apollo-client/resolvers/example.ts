@@ -16,10 +16,10 @@ export const examples = async (_: any, args: QueryExamplesArgs) => {
   const query = db.example.offset(args.skip ?? 0);
 
   if (args.first) {
-    return query.limit(args.first).toArray();
+    return query.limit(args.first).sortBy("updatedAt");
   }
 
-  return query.toArray();
+  return query.sortBy("updatedAt");
 };
 
 // Mutations
