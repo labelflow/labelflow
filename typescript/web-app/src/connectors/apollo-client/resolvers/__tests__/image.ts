@@ -1,6 +1,11 @@
 import "fake-indexeddb/auto";
 
-import { createImage, image, images, clearGetUrlFromKeyMem } from "../image";
+import {
+  createImage,
+  image,
+  images,
+  clearGetUrlFromImageIdMem,
+} from "../image";
 import { db } from "../../../database";
 
 /**
@@ -20,7 +25,7 @@ beforeAll(() => {
 describe("Image resolver test suite", () => {
   beforeEach(async () => {
     db.tables.map((table) => table.clear());
-    return clearGetUrlFromKeyMem();
+    return clearGetUrlFromImageIdMem();
   });
 
   // @ts-ignore

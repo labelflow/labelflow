@@ -3614,7 +3614,6 @@ __metadata:
     "@testing-library/jest-dom": ^5.12.0
     "@testing-library/react": 11.2.6
     "@testing-library/user-event": ^13.1.9
-    "@types/localforage": ^0.0.34
     "@types/node": 12.12.21
     "@types/react": 17.0.3
     "@types/react-dom": 17.0.1
@@ -3624,7 +3623,6 @@ __metadata:
     framer-motion: ^4
     graphql: ^15.5.0
     graphql-tag: ^2.12.4
-    localforage: ^1.9.0
     lodash: ^4.17.21
     mem: ^8.1.1
     next: 10.x
@@ -4922,15 +4920,6 @@ __metadata:
   dependencies:
     "@types/node": "*"
   checksum: 3aaf557d5b82e733d5a17b7f55af5d6be953363c3a594f006d64265790fe87c301c6e1400c0b6b1cf72add50a0ceddc25afb8231ab8302a2e5b6ebfbfac30e5d
-  languageName: node
-  linkType: hard
-
-"@types/localforage@npm:^0.0.34":
-  version: 0.0.34
-  resolution: "@types/localforage@npm:0.0.34"
-  dependencies:
-    localforage: "*"
-  checksum: ab11d232639161871799b38c6a5f2e131e2ef58d0662aa11bff08bcfd849b59ab2868aad2ec5d9c34d73aff46c7f07c5c33da17e32e8f5321e0ac42c98a1c3f6
   languageName: node
   linkType: hard
 
@@ -11601,13 +11590,6 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"immediate@npm:~3.0.5":
-  version: 3.0.6
-  resolution: "immediate@npm:3.0.6"
-  checksum: e86d4d20e2da86f9a4629d9aee9d56dfae7d3a7ace7f569b0538f2ec2570d86b3cbdc52c546d23be2cfd28306670f44676fc833cd96d9506659b8c5ab8202ca4
-  languageName: node
-  linkType: hard
-
 "immer@npm:8.0.1":
   version: 8.0.1
   resolution: "immer@npm:8.0.1"
@@ -13450,15 +13432,6 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"lie@npm:3.1.1":
-  version: 3.1.1
-  resolution: "lie@npm:3.1.1"
-  dependencies:
-    immediate: ~3.0.5
-  checksum: 33a07ffeb7eb5aaec59a5f7a72ba7e6a2ce9d011bd7894f36ed11e2da43f076467019e5f9826c5864500c6a792450aa54b263f31cef0a1774553851dce8a501c
-  languageName: node
-  linkType: hard
-
 "lines-and-columns@npm:^1.1.6":
   version: 1.1.6
   resolution: "lines-and-columns@npm:1.1.6"
@@ -13569,15 +13542,6 @@ fsevents@^1.2.7:
     emojis-list: ^3.0.0
     json5: ^1.0.1
   checksum: 9fd690e57ad78d32ff2942383b4a7a175eba575280ba5aca3b4d03183fec34aa0db314f49bd3301adf7e60b02471644161bf53149e8f2d18fd6a52627e95a927
-  languageName: node
-  linkType: hard
-
-"localforage@npm:*, localforage@npm:^1.9.0":
-  version: 1.9.0
-  resolution: "localforage@npm:1.9.0"
-  dependencies:
-    lie: 3.1.1
-  checksum: 0645f5ec6fe28799081a9a21dc23796fbb665dcc20e09061228302750a05671bd13a42688e41b523f1598fff5d8e219f468d826595b75db07b555d4ff223943e
   languageName: node
   linkType: hard
 

@@ -9,8 +9,8 @@ import type {
 
 import { db } from "../../database";
 
-const getUrlFromKey = memoize(async (id: string) => {
-  const file = await db.files.get(id);
+const getUrlFromImageId = memoize(async (id: string) => {
+  const file = await db.file.get(id);
 
   if (file === undefined) {
     throw new Error("Cannot get url or undefined file");
@@ -20,18 +20,18 @@ const getUrlFromKey = memoize(async (id: string) => {
   return url;
 });
 
-export const clearGetUrlFromKeyMem = () => {
-  memoize.clear(getUrlFromKey);
+export const clearGetUrlFromImageIdMem = () => {
+  memoize.clear(getUrlFromImageId);
 };
 
 const getImageByKey = async (id: string): Promise<Image> => {
-  const entity = await db.images.get(id);
+  const entity = await db.image.get(id);
 
   if (entity === undefined) {
     throw new Error("No image with such id");
   }
 
-  const url = await getUrlFromKey(entity.fileId);
+  const url = await getUrlFromImageId(entity.fileId);
 
   return { ...entity, url } as Image;
 };
@@ -49,13 +49,13 @@ export const images = async (_: any, args: QueryImagesArgs) => {
   //   skip: args.skip,
   // });
 
-  const imagesList = await db.images.toArray();
+  const imagesList = await db.image.toArray();
 
   const entitiesWithUrls = await Promise.all(
     imagesList.map(async (imageEntity: any) => {
       return {
         ...imageEntity,
-        url: await getUrlFromKey(imageEntity.fileId),
+        url: await getUrlFromImageId(imageEntity.fileId),
       };
     })
   );
@@ -72,8 +72,8 @@ export const createImage = async (
   const imageId = id ?? uuidv4();
   const fileId = id ?? uuidv4();
 
-  await db.files.add({ id: fileId, imageId, blob: file });
-  const url = await getUrlFromKey(fileId);
+  await db.file.add({ id: fileId, imageId, blob: file });
+  const url = await getUrlFromImageId(fileId);
 
   const newEntity = await new Promise<Image>((resolve, reject) => {
     const imageObject = new Image();
@@ -88,7 +88,7 @@ export const createImage = async (
         fileId,
       };
 
-      await db.images.add(newImageEntity);
+      await db.image.add(newImageEntity);
       resolve(await getImageByKey(imageId));
     };
     imageObject.onerror = reject;
