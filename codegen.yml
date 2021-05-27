@@ -7,3 +7,8 @@ generates:
   ./data/__generated__/schema.graphql:
     plugins:
       - schema-ast
+  ./data/__generated__/introspection.json:
+    plugins:
+      - introspection
+    config:
+      minify: false

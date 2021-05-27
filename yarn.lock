@@ -2950,6 +2950,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@graphql-codegen/introspection@npm:^1.18.2":
+  version: 1.18.2
+  resolution: "@graphql-codegen/introspection@npm:1.18.2"
+  dependencies:
+    "@graphql-codegen/plugin-helpers": ^1.18.5
+    tslib: ~2.2.0
+  peerDependencies:
+    graphql: ^0.8.0 || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0
+  checksum: 55b8788f882b2a4cb3b4370d8460e9bf8faf6184848e656b306eafbc3f08eda6104b21a24c55ee88ceef8b7bb77e26d38ed63ff72387827f23bf17f6288edcfb
+  languageName: node
+  linkType: hard
+
 "@graphql-codegen/plugin-helpers@npm:^1.18.2, @graphql-codegen/plugin-helpers@npm:^1.18.5":
   version: 1.18.6
   resolution: "@graphql-codegen/plugin-helpers@npm:1.18.6"
@@ -13331,6 +13343,7 @@ fsevents@^1.2.7:
   dependencies:
     "@babel/core": ^7.14.3
     "@graphql-codegen/cli": ^1.21.4
+    "@graphql-codegen/introspection": ^1.18.2
     "@graphql-codegen/schema-ast": ^1.18.2
     "@graphql-codegen/typescript": ^1.22.0
     "@graphql-codegen/typescript-resolvers": ^1.19.1
