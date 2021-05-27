@@ -96,15 +96,26 @@ describe("Image resolver test suite", () => {
   });
 
   test("Querying paginated images", async () => {
+    // need to wait in between tests, otherwise createdAt timestamp
+    // are the same and we can't order the query result properly
+    const sleep = () => {
+      return new Promise((resolve) => {
+        setTimeout(resolve, 1);
+      });
+    };
+
     await createImage(undefined, {
       data: { file: new Blob(), name: "test1" },
     });
+    await sleep();
     await createImage(undefined, {
       data: { file: new Blob(), name: "test2" },
     });
+    await sleep();
     await createImage(undefined, {
       data: { file: new Blob(), name: "test3" },
     });
+    await sleep();
     await createImage(undefined, {
       data: { file: new Blob(), name: "test4" },
     });
