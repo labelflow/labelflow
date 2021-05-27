@@ -39,10 +39,10 @@ const IndexPage = () => {
       <div>
         {examplesResult?.examples
           ? examplesResult.examples.map((example: Example) => (
-            <p key={example.id}>
-              {example.id} - {example.name}
-            </p>
-          ))
+              <p key={example.id}>
+                {example.id} - {example.name}
+              </p>
+            ))
           : null}
       </div>
     </Layout>

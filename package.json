@@ -12,6 +12,7 @@
     "build:web-app": "cd ./typescript/web-app && yarn build",
     "start:web-app": "cd ./typescript/web-app && yarn start",
     "codegen": "graphql-codegen --config ./codegen.yml",
+    "codegen:ci": "graphql-codegen --config ./codegen.yml && git diff --exit-code",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
     "chromatic": "npx chromatic"
@@ -39,6 +40,8 @@
     "eslint-plugin-prettier": "3.4.0",
     "eslint-plugin-react": "7.23.2",
     "eslint-plugin-react-hooks": "4.2.0",
+    "graphql": "15.5.0",
+    "graphql-tag": "2.12.4",
     "jest": "26.6.3",
     "jest-transform-graphql": "^2.1.0",
     "prettier": "2.3.0",
@@ -46,6 +49,7 @@
     "react-dom": "17.0.2",
     "ts-jest": "26.5.6",
     "ts-node": "9.1.1",
-    "typescript": "4.2.4"
+    "typescript": "4.2.4",
+    "webpack": "4.46.0"
   }
 }

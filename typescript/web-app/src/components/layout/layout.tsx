@@ -1,7 +1,7 @@
 import { PropsWithChildren } from "react";
 import { ChakraProvider, Flex, Box } from "@chakra-ui/react";
 
-import { theme } from "../../../theme";
+import { theme } from "../../theme";
 import { TopBar } from "../top-bar";
 
 export const Layout = ({ children }: PropsWithChildren<{}>) => {
