@@ -15,6 +15,7 @@
     "@emotion/styled": "^11",
     "@graphql-tools/merge": "^6.2.14",
     "@graphql-tools/schema": "7.1.5",
+    "@labelflow/react-openlayers-fiber": "workspace:typescript/react-openlayers-fiber",
     "dexie": "^3.0.3",
     "framer-motion": "^4",
     "graphql": "^15.5.0",

@@ -3641,6 +3641,7 @@ __metadata:
     "@emotion/styled": ^11
     "@graphql-tools/merge": ^6.2.14
     "@graphql-tools/schema": 7.1.5
+    "@labelflow/react-openlayers-fiber": "workspace:typescript/react-openlayers-fiber"
     "@storybook/react": ^6.2.9
     "@testing-library/dom": ^7.31.0
     "@testing-library/jest-dom": ^5.12.0

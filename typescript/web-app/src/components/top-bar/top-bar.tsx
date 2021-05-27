@@ -1,10 +1,23 @@
-import { Flex } from "@chakra-ui/react";
+import * as React from "react";
+import { HStack } from "@chakra-ui/react";
 import { Logo } from "../logo";
 
-export const TopBar = () => {
+export type Props = {
+  leftContent?: React.ReactNode;
+};
+
+export const TopBar = ({ leftContent }: Props) => {
   return (
-    <Flex as="header" alignItems="center" bg="white" p="4" h="64px">
+    <HStack
+      as="header"
+      alignItems="center"
+      bg="white"
+      padding={4}
+      spacing={4}
+      h="64px"
+    >
       <Logo h="26px" />
-    </Flex>
+      {leftContent}
+    </HStack>
   );
 };
