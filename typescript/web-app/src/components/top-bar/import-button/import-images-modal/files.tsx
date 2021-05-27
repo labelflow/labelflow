@@ -5,20 +5,63 @@ import {
   RiContrastFill,
 } from "react-icons/ri";
 import { isEmpty } from "lodash/fp";
-import {
-  chakra,
-  Box,
-  Table,
-  Tbody,
-  Tooltip,
-  Tr,
-  Td,
-  Text,
-} from "@chakra-ui/react";
+import { chakra, Box, Tooltip, Text, Flex } from "@chakra-ui/react";
+import { FileError } from "react-dropzone";
+
 import { DroppedFile, FileUploadStatuses } from "./types";
 
 const SucceedIcon = chakra(RiCheckboxCircleFill);
 const LoadingIcon = chakra(RiContrastFill);
+
+const FileImportProgress = ({ imported }: { imported: boolean }) => {
+  if (imported) {
+    return (
+      <Tooltip label="Upload succeed" placement="left">
+        <span>
+          <SucceedIcon
+            display="inline-block"
+            color="green.500"
+            aria-label="Upload succeed"
+          />
+        </span>
+      </Tooltip>
+    );
+  }
+
+  return (
+    <Tooltip label="Loading indicator" placement="left">
+      <span>
+        <LoadingIcon
+          display="inline-block"
+          color="gray.800"
+          aria-label="Loading indicator"
+        />
+      </span>
+    </Tooltip>
+  );
+};
+
+const FileImportError = ({ errors }: { errors: Array<FileError> }) => {
+  if (errors.length === 1) {
+    return (
+      <Tooltip label={errors[0].message} placement="left">
+        <Text as="span">
+          {errors[0].code === "file-invalid-type"
+            ? "Incompatible file format"
+            : errors[0].message}
+        </Text>
+      </Tooltip>
+    );
+  }
+
+  return (
+    <Tooltip label={errors.map((e) => e.message).join(". ")} placement="left">
+      <Text as="span" color="red.600">
+        {errors.length} errors
+      </Text>
+    </Tooltip>
+  );
+};
 
 export const Files = ({
   files,
@@ -27,83 +70,50 @@ export const Files = ({
   files: Array<DroppedFile>;
   fileUploadStatuses: FileUploadStatuses;
 }) => (
-  <>
-    <Box p="2" bg="gray.200" borderTopRadius="md">
+  <Flex direction="column" height="100%">
+    <Box p="2" bg="gray.200" borderTopRadius="md" w="100%">
       <Text>
         Completed{" "}
         {Object.entries(fileUploadStatuses).filter((entry) => entry[1]).length}{" "}
         of {files.length} items
       </Text>
     </Box>
-    <Box as="section" overflowY="auto">
-      <Table size="sm" variant="stripped">
-        <Tbody>
-          {files.map(({ file, errors }, index) => {
-            const { path, name } = file;
-
-            return (
-              <Tr key={path} bg={index % 2 === 0 ? "gray.50" : "inherit"}>
-                <Td pl="2" pr="2" fontSize="xl">
-                  {isEmpty(errors) ? <RiImageLine /> : <RiFile3Line />}
-                </Td>
-                <Td pl="0" fontSize="md" lineHeight="md">
-                  <Tooltip label={path}>
-                    <Text isTruncated maxWidth="sm" textAlign="left">
-                      {path}
-                    </Text>
-                  </Tooltip>
-                </Td>
-                {isEmpty(errors) ? (
-                  <Td fontSize="xl" textAlign="right">
-                    {fileUploadStatuses[path ?? name] ? (
-                      <Tooltip label="Upload succeed" placement="left">
-                        <span>
-                          <SucceedIcon
-                            display="inline-block"
-                            color="green.500"
-                            aria-label="Upload succeed"
-                          />
-                        </span>
-                      </Tooltip>
-                    ) : (
-                      <Tooltip label="Loading indicator" placement="left">
-                        <span>
-                          <LoadingIcon
-                            display="inline-block"
-                            color="gray.800"
-                            aria-label="Loading indicator"
-                          />
-                        </span>
-                      </Tooltip>
-                    )}
-                  </Td>
-                ) : (
-                  <Td color="gray.400" fontSize="md" textAlign="right">
-                    {errors.length === 1 ? (
-                      <Tooltip label={errors[0].message} placement="left">
-                        <Text as="span">
-                          {errors[0].code === "file-invalid-type"
-                            ? "Incompatible file format"
-                            : errors[0].message}
-                        </Text>
-                      </Tooltip>
-                    ) : (
-                      <Tooltip
-                        label={errors.map((e) => e.message).join(". ")}
-                        placement="left"
-                      >
-                        <Text as="span" color="red.600">
-                          {errors.length} errors
-                        </Text>
-                      </Tooltip>
-                    )}
-                  </Td>
-                )}
-              </Tr>
-            );
-          })}
-        </Tbody>
-      </Table>
-    </Box>
-  </>
+    <Flex direction="column" overflowY="auto" width="100%" height="100%">
+      {files.map(({ file, errors }, index) => (
+        <Flex
+          key={file.path}
+          w="100%"
+          alignItems="center"
+          p="2"
+          bg={index % 2 === 0 ? "gray.50" : "inherit"}>
+          <Box flex={0} pr="2">
+            {isEmpty(errors) ? <RiImageLine /> : <RiFile3Line />}
+          </Box>
+          <Box
+            pr="2"
+            flexGrow={1}
+            flexShrink={1}
+            overflow="hidden"
+            textOverflow="ellipsis"
+            whiteSpace="nowrap">
+            {file.path}
+          </Box>
+          <Box
+            whiteSpace="nowrap"
+            flex={0}
+            color="gray.400"
+            fontSize="md"
+            textAlign="right">
+            {isEmpty(errors) ? (
+              <FileImportProgress
+                imported={fileUploadStatuses[file.path ?? file.name]}
+              />
+            ) : (
+              <FileImportError errors={errors} />
+            )}
+          </Box>
+        </Flex>
+      ))}
+    </Flex>
+  </Flex>
 );
