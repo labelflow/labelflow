@@ -1,4 +1,5 @@
 import Dexie from "dexie";
+import versions from "./versions";
 import type {
   Example,
   Image as GeneratedImageType,
@@ -21,12 +22,10 @@ interface Database extends Dexie {
   file: Dexie.Table<File, string>;
 }
 
-export const databaseWithoutTables = new Dexie("database");
+export const databaseWithoutTables = new Dexie("labelflow_local");
 
-databaseWithoutTables.version(1).stores({
-  example: "id,createdAt,updatedAt,name",
-  image: "id,createdAt,updatedAt,name,width,height,fileId",
-  file: "id,imageId,blob",
-});
+versions.map(({ version, stores }) =>
+  databaseWithoutTables.version(version).stores(stores)
+);
 
 export const db = databaseWithoutTables as Database;
