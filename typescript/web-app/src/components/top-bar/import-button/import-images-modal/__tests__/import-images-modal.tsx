@@ -50,10 +50,20 @@ function renderModalAndImport(filesToImport = files, props = {}) {
 test("should display the number of images", async () => {
   await renderModalAndImport();
 
-  expect(screen.getByText(/uploading 3 items/i)).toBeDefined();
+  await waitFor(() =>
+    expect(screen.getByText(/Completed 2 of 3 items/i)).toBeDefined()
+  );
   expect(
     screen.queryByLabelText(/drop folders or images/i)
   ).not.toBeInTheDocument();
+});
+
+test("should update completed number as images are uploaded", async () => {
+  await renderModalAndImport();
+
+  await waitFor(() =>
+    expect(screen.getByText(/Completed 1 of 3 items/i)).toBeDefined()
+  );
 });
 
 test("should display an indicator when upload succeed", async () => {
@@ -129,8 +139,18 @@ test("should call the onClose handler", async () => {
 test("should clear the modal content when closed", async () => {
   await renderModalAndImport();
 
-  userEvent.click(screen.getByLabelText("Close"));
+  await waitFor(() => {
+    userEvent.click(screen.getByLabelText("Close"));
+  });
 
-  expect(screen.queryByText(/uploading 2 items/i)).not.toBeInTheDocument();
-  expect(screen.queryByText(/errors/i)).not.toBeInTheDocument();
+  const input = screen.getByLabelText(/drop folders or images/i);
+  await waitFor(() =>
+    userEvent.upload(input, [
+      new File(["Bonjour"], "bonjour.png", { type: "image/png" }),
+    ])
+  );
+
+  await waitFor(() =>
+    expect(screen.getByText(/Completed 1 of 1 items/i)).toBeDefined()
+  );
 });

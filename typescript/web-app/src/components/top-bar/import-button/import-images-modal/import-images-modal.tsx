@@ -58,6 +58,18 @@ export const ImportImagesModal = ({
       .filter((file) => isEmpty(file.errors))
       .forEach(async (acceptedFile) => {
         try {
+          /**
+           * We keep track of files that started being uploaded before
+           * the modal was closed
+           */
+          const fileKey = acceptedFile.file.path ?? acceptedFile.file.name;
+          if (isMounted.current) {
+            setFileUploadStatuses((previousFileUploadStatuses) => ({
+              ...previousFileUploadStatuses,
+              [fileKey]: false,
+            }));
+          }
+
           await apolloClient.mutate({
             mutation: createImageMutation,
             variables: { file: acceptedFile.file },
@@ -68,10 +80,14 @@ export const ImportImagesModal = ({
            * we don't want to update the state of an unmounted component
            */
           if (isMounted.current) {
-            setFileUploadStatuses((previousFileUploadStatuses) => ({
-              ...previousFileUploadStatuses,
-              [acceptedFile.file.path ?? acceptedFile.file.name]: true,
-            }));
+            setFileUploadStatuses((previousFileUploadStatuses) => {
+              if (previousFileUploadStatuses[fileKey] === undefined)
+                return previousFileUploadStatuses;
+              return {
+                ...previousFileUploadStatuses,
+                [fileKey]: true,
+              };
+            });
           }
         } catch (err) {
           // TODO: Spot possibles errors (no more space on disk?)
@@ -87,8 +103,10 @@ export const ImportImagesModal = ({
       size="xl"
       onClose={() => {
         setFiles([]);
+        setFileUploadStatuses({});
         onClose();
-      }}>
+      }}
+    >
       <ModalOverlay />
       <ModalContent height="80vh">
         <ModalHeader textAlign="center" padding="6">
@@ -108,7 +126,8 @@ export const ImportImagesModal = ({
           pr="6"
           pl="6"
           overflowY="hidden"
-          flexDirection="column">
+          flexDirection="column"
+        >
           {isEmpty(files) ? (
             <Dropzone onDropEnd={setFiles} />
           ) : (

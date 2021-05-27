@@ -29,7 +29,14 @@ export const Files = ({
 }) => (
   <>
     <Box p="2" bg="gray.200" borderTopRadius="md">
-      <Text>Uploading {files.length} items</Text>
+      <Text>
+        Completed{" "}
+        {
+          Object.entries(fileUploadStatuses).filter(([_, value]) => value)
+            .length
+        }{" "}
+        of {files.length} items
+      </Text>
     </Box>
     <Box as="section" overflowY="auto">
       <Table size="sm" variant="stripped">
@@ -77,7 +84,8 @@ export const Files = ({
                   <Td color="gray.400" fontSize="md" textAlign="right">
                     <Tooltip
                       label={errors.map((e) => e.message).join(". ")}
-                      placement="left">
+                      placement="left"
+                    >
                       <Text as="span" color="red.600">
                         {errors.length} errors
                       </Text>
