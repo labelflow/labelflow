@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 import { Vector } from "ol/source";
 import { fromLonLat } from "ol/proj";
@@ -6,7 +6,6 @@ import GeoJSON from "ol/format/GeoJSON";
 import { Feature, LineString, lineDistance, along } from "@turf/turf";
 
 import { Map } from "../map";
-import { useResource } from "../hooks";
 
 import "ol/ol.css";
 
@@ -16,10 +15,11 @@ export default {
 };
 
 export const Turf = () => {
-  const sourceVectorRef = useResource<Vector>();
+  const [vectorSource, setVectorSource] = useState<Vector>();
 
   useEffect(() => {
-    if (!sourceVectorRef.current) return;
+    if (!vectorSource) return;
+
     fetch(
       "https://openlayers.org/en/latest/examples/data/geojson/roads-seoul.geojson"
     )
@@ -47,16 +47,16 @@ export const Turf = () => {
           // convert the generated point to a OpenLayers feature
           const marker = format.readFeature(turfPoint);
           marker.getGeometry().transform("EPSG:4326", "EPSG:3857");
-          sourceVectorRef.current.addFeature(marker);
+          vectorSource.addFeature(marker);
         }
 
         street.getGeometry().transform("EPSG:4326", "EPSG:3857");
-        sourceVectorRef.current.addFeature(street);
+        vectorSource.addFeature(street);
       })
       .catch((e) => {
         throw e;
       });
-  }, [sourceVectorRef.current]);
+  }, [vectorSource]);
 
   return (
     <Map>
@@ -68,7 +68,7 @@ export const Turf = () => {
         <olSourceOSM />
       </olLayerTile>
       <olLayerVector>
-        <olSourceVector ref={sourceVectorRef} />
+        <olSourceVector ref={setVectorSource} />
       </olLayerVector>
     </Map>
   );
