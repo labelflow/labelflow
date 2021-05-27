@@ -25,7 +25,6 @@
     "react-dom": "17.x"
   },
   "devDependencies": {
-    "@babel/core": "^7.14.3",
     "@storybook/addon-knobs": "^6.2.9",
     "@storybook/react": "^6.2.9",
     "@turf/turf": "6.3.0",
@@ -37,8 +36,6 @@
     "@types/react-dom": "17.0.0",
     "@types/react-reconciler": "^0.26.1",
     "@types/storybook__react": "4.0.1",
-    "@types/webpack": "4.41.6",
-    "babel-loader": "^8.2.2",
     "ol": "6.4.3",
     "ol-mapbox-style": "6.1.4",
     "proj4": "2.6.3",

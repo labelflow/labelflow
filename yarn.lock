@@ -3603,7 +3603,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@labelflow/react-openlayers-fiber@workspace:typescript/react-openlayers-fiber"
   dependencies:
-    "@babel/core": ^7.14.3
     "@storybook/addon-knobs": ^6.2.9
     "@storybook/react": ^6.2.9
     "@turf/turf": 6.3.0
@@ -3615,8 +3614,6 @@ __metadata:
     "@types/react-dom": 17.0.0
     "@types/react-reconciler": ^0.26.1
     "@types/storybook__react": 4.0.1
-    "@types/webpack": 4.41.6
-    babel-loader: ^8.2.2
     lodash: 4.17.20
     ol: 6.4.3
     ol-mapbox-style: 6.1.4
@@ -6737,15 +6734,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/tapable@npm:*":
-  version: 2.2.2
-  resolution: "@types/tapable@npm:2.2.2"
-  dependencies:
-    tapable: ^2.2.0
-  checksum: 997dc289d3a234e73e5ebf6e628f61c0488f4bd57ab9507ab4f4783c2ee06bf0e42bd2e2e6b04901e5fad73e9bb63c83bea75ea33d64dd23d572a6bf2e1f0bb0
-  languageName: node
-  linkType: hard
-
 "@types/tapable@npm:^1, @types/tapable@npm:^1.0.5":
   version: 1.0.7
   resolution: "@types/tapable@npm:1.0.7"
@@ -6823,20 +6811,6 @@ __metadata:
     "@types/source-list-map": "*"
     source-map: ^0.7.3
   checksum: 26aba8ae682529be737eff726dcf08019460b180e9d22e80925e65240c908312096067b5547ac3dcb6d7b383a4bf0473eb68d0fd4ff483b17f3147fefce149af
-  languageName: node
-  linkType: hard
-
-"@types/webpack@npm:4.41.6":
-  version: 4.41.6
-  resolution: "@types/webpack@npm:4.41.6"
-  dependencies:
-    "@types/anymatch": "*"
-    "@types/node": "*"
-    "@types/tapable": "*"
-    "@types/uglify-js": "*"
-    "@types/webpack-sources": "*"
-    source-map: ^0.6.0
-  checksum: 516532ad7c3bc2ea0d58495e0395096c9d30a66fecf6e92bc6a8d7557a3ec67c38fff0d8587f2c2959cef3a39a2c709d1e22d676459fabf2d736a133d2ab4cc3
   languageName: node
   linkType: hard
 
@@ -20657,13 +20631,6 @@ resolve@^2.0.0-next.3:
   version: 1.1.3
   resolution: "tapable@npm:1.1.3"
   checksum: b2c2ab20260394b867fd249d8b6ab3e4645e00f9cce16b558b0de5a86291ef05f536f578744549d1618c9032c7f99bc1d6f68967e4aa11cb0dca4461dc4714bc
-  languageName: node
-  linkType: hard
-
-"tapable@npm:^2.2.0":
-  version: 2.2.0
-  resolution: "tapable@npm:2.2.0"
-  checksum: f8ed725aedb3d777bf908ff06c02d1a2108667d3e64af87dd45354ac8de67e7e4fe1a567e215057fb1a2a5437b31d80cc5e5ddbb8327f7280afd4494967a9a93
   languageName: node
   linkType: hard
 
