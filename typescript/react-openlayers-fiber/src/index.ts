@@ -17,6 +17,4 @@ export { MapContext, MapProvider, MapConsumer, useMap } from "./context";
 
 export { Map } from "./map";
 
-export { useResource, useUpdate } from "./hooks";
-
 export * from "./types";
