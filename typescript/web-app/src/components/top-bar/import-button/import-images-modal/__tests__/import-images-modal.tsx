@@ -17,8 +17,6 @@ const Wrapper = ({ children }: PropsWithChildren<{}>) => (
   <ApolloProvider client={client}>{children}</ApolloProvider>
 );
 
-const onImportSucceed = jest.fn();
-
 // @ts-ignore
 global.Image = class Image extends HTMLElement {
   width: number;
@@ -41,29 +39,13 @@ beforeAll(() => {
   global.URL.createObjectURL = jest.fn(() => "mockedUrl");
 });
 
-beforeEach(() => {
-  onImportSucceed.mockClear();
-});
-
 function renderModalAndImport(filesToImport = files, props = {}) {
-  render(
-    <ImportImagesModal
-      isOpen
-      onClose={() => {}}
-      onImportSucceed={onImportSucceed}
-      {...props}
-    />,
-    { wrapper: Wrapper }
-  );
+  render(<ImportImagesModal isOpen onClose={() => {}} {...props} />, {
+    wrapper: Wrapper,
+  });
   const input = screen.getByLabelText(/drop folders or images/i);
   return waitFor(() => userEvent.upload(input, filesToImport));
 }
-
-test("should return the list of images the user picked", async () => {
-  await renderModalAndImport();
-
-  expect(onImportSucceed).toHaveBeenCalledWith(files.slice(0, 2));
-});
 
 test("should display the number of images", async () => {
   await renderModalAndImport();
@@ -128,7 +110,7 @@ test("should display the amount of error when a file could not be imported", asy
 });
 
 test("should not display the modal by default", async () => {
-  render(<ImportImagesModal onImportSucceed={onImportSucceed} />, {
+  render(<ImportImagesModal />, {
     wrapper: Wrapper,
   });
 

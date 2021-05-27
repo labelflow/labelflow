@@ -1,12 +1,6 @@
-import { useCallback, useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
+import { FileError } from "react-dropzone";
 import {
-  useDropzone,
-  FileRejection,
-  FileWithPath,
-  FileError,
-} from "react-dropzone";
-import {
-  RiUploadCloud2Line,
   RiImageLine,
   RiFile3Line,
   RiCheckboxCircleFill,
@@ -16,7 +10,6 @@ import { isEmpty } from "lodash/fp";
 import {
   chakra,
   Box,
-  Stack,
   Heading,
   Modal,
   ModalOverlay,
@@ -34,7 +27,8 @@ import {
 import { useApolloClient } from "@apollo/client";
 import gql from "graphql-tag";
 
-const UploadIcon = chakra(RiUploadCloud2Line);
+import { Dropzone } from "./dropzone";
+
 const SucceedIcon = chakra(RiCheckboxCircleFill);
 const LoadingIcon = chakra(RiContrastFill);
 
@@ -47,11 +41,9 @@ const createImageMutation = gql`
 `;
 
 export const ImportImagesModal = ({
-  onImportSucceed,
   isOpen = false,
   onClose = () => {},
 }: {
-  onImportSucceed: (images: Array<File>) => void;
   isOpen?: boolean;
   onClose?: () => void;
 }) => {
@@ -64,100 +56,55 @@ export const ImportImagesModal = ({
     };
   }, []);
 
-  const onDrop = useCallback((acceptedFiles) => {
-    onImportSucceed(acceptedFiles);
-  }, []);
-
   const apolloClient = useApolloClient();
   /*
    * We need a state with the accepted and reject files to be able to reset the list
    * when we close the modal because react-dropzone doesn't provide a way to reset its
    * internal state
    */
-  const [{ acceptedFiles, fileRejections }, setDropzoneResult] = useState<{
-    acceptedFiles: Array<FileWithPath>;
-    fileRejections: Array<FileRejection>;
-  }>({ acceptedFiles: [], fileRejections: [] });
+  const [files, setFiles] = useState<
+    Array<{ name: string; path?: string; errors: Array<FileError> }>
+  >([]);
   const [fileUploadStatuses, setFileUploadStatuses] = useState<{
     [key: string]: boolean;
   }>({});
 
-  const dropzoneResult = useDropzone({
-    onDrop,
-    accept: "image/jpeg, image/png, image/bmp",
-  });
-
   useEffect(() => {
-    if (
-      isEmpty(dropzoneResult.acceptedFiles) &&
-      isEmpty(dropzoneResult.fileRejections)
-    )
-      return;
+    if (isEmpty(files)) return;
 
-    setDropzoneResult({
-      acceptedFiles: dropzoneResult.acceptedFiles,
-      fileRejections: dropzoneResult.fileRejections,
-    });
-  }, [dropzoneResult.acceptedFiles, dropzoneResult.fileRejections]);
+    files
+      .filter((file) => isEmpty(file.errors))
+      .forEach(async (acceptedFile) => {
+        try {
+          await apolloClient.mutate({
+            mutation: createImageMutation,
+            variables: { file: acceptedFile },
+          });
 
-  const rootProps = {
-    ...dropzoneResult.getRootProps(),
-    /* There is a problem of event propagation causing the file explorer to open twice when you use click rather than drag and drop.
-     * We applied the following workaround: https://github.com/react-dropzone/react-dropzone/issues/541#issuecomment-473106192 */
-    onClick: (e: any) => {
-      e.stopPropagation();
-    },
-  };
-
-  useEffect(() => {
-    if (isEmpty(acceptedFiles)) return;
-
-    acceptedFiles.forEach(async (acceptedFile) => {
-      try {
-        await apolloClient.mutate({
-          mutation: createImageMutation,
-          variables: { file: acceptedFile },
-        });
-
-        /**
-         * If the modal is closed we still want to create images but
-         * we don't want to update the state of an unmounted component
-         */
-        if (isMounted.current) {
-          setFileUploadStatuses((previousFileUploadStatuses) => ({
-            ...previousFileUploadStatuses,
-            [acceptedFile.path ?? acceptedFile.name]: true,
-          }));
+          /**
+           * If the modal is closed we still want to create images but
+           * we don't want to update the state of an unmounted component
+           */
+          if (isMounted.current) {
+            setFileUploadStatuses((previousFileUploadStatuses) => ({
+              ...previousFileUploadStatuses,
+              [acceptedFile.path ?? acceptedFile.name]: true,
+            }));
+          }
+        } catch (err) {
+          // TODO: Spot possibles errors (no more space on disk?)
+          /* eslint-disable no-console */
+          console.error(err);
         }
-      } catch (err) {
-        // TODO: Spot possibles errors (no more space on disk?)
-        /* eslint-disable no-console */
-        console.error(err);
-      }
-    });
-  }, [acceptedFiles]);
-
-  const files = [
-    ...fileRejections.map(
-      ({ file, errors }: { file: FileWithPath; errors: Array<FileError> }) => ({
-        path: file.path,
-        name: file.name,
-        errors,
-      })
-    ),
-    ...acceptedFiles.map(({ path, name }) => ({
-      path,
-      name,
-      errors: [],
-    })),
-  ];
+      });
+  }, [files]);
 
   return (
     <Modal
       isOpen={isOpen}
       size="xl"
       onClose={() => {
-        setDropzoneResult({ acceptedFiles: [], fileRejections: [] });
+        setFiles([]);
         onClose();
       }}
     >
@@ -182,34 +129,16 @@ export const ImportImagesModal = ({
           overflowY="hidden"
           flexDirection="column"
         >
-          {isEmpty(acceptedFiles) && isEmpty(fileRejections) ? (
-            <Stack
-              as="form"
-              {...rootProps}
-              border="1px dashed"
-              borderColor="gray.700"
-              borderRadius="md"
-              bg="gray.50"
-              flex="1"
-            >
-              {/* We make the label taking all the available place in the Stack in order to make
-              the whole surface clickable since we prevent the onClick on the dropzone parent (see the comment above) */}
-              <chakra.label
-                htmlFor="file-uploader"
-                color="gray.700"
-                fontWeight="700"
-                fontSize="lg"
-                display="flex"
-                flexDirection="column"
-                alignItems="center"
-                justifyContent="Center"
-                flex="1"
-              >
-                <UploadIcon fontSize="9xl" color="gray.700" />
-                Drop folders or images
-                <input {...dropzoneResult.getInputProps()} id="file-uploader" />
-              </chakra.label>
-            </Stack>
+          {isEmpty(files) ? (
+            <Dropzone
+              onDropEnd={(
+                droppedFiles: Array<{
+                  name: string;
+                  path?: string;
+                  errors: Array<FileError>;
+                }>
+              ) => setFiles(droppedFiles)}
+            />
           ) : (
             !isEmpty(files) && (
               <>
