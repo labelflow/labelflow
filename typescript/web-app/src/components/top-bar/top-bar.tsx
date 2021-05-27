@@ -15,6 +15,7 @@ export const TopBar = ({ leftContent }: Props) => {
       padding={4}
       spacing={4}
       h="64px"
+      flex={0}
     >
       <Logo h="26px" />
       {leftContent}

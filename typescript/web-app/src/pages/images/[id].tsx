@@ -72,10 +72,8 @@ const ImagePage = () => {
         </Breadcrumb>
       }
     >
-      <Box>
-        Ok {image?.id}
-        <ChakraImage src={image?.url} />
-      </Box>
+      <ChakraImage src={image?.url} />
+
       <HStack
         background="green"
         padding={4}
