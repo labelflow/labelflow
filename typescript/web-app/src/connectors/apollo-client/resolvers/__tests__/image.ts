@@ -68,11 +68,10 @@ describe("Image resolver test suite", () => {
       data: {
         name: "test image",
         file: new Blob(),
-        id: "myID",
       },
     });
 
-    expect(createResult.id).toEqual("myID");
+    expect(createResult.name).toEqual("test image");
     expect(await image(undefined, { where: { id: createResult.id } })).toEqual(
       createResult
     );
@@ -82,13 +81,11 @@ describe("Image resolver test suite", () => {
     const createResult1 = await createImage(undefined, {
       data: {
         file: new Blob(),
-        id: "1",
       },
     });
     const createResult2 = await createImage(undefined, {
       data: {
         file: new Blob(),
-        id: "2",
       },
     });
 
@@ -99,39 +96,22 @@ describe("Image resolver test suite", () => {
   });
 
   test("Querying paginated images", async () => {
-    const testImages = [
-      {
-        id: "1",
-        name: "test1",
-      },
-      {
-        id: "2",
-        name: "test2",
-      },
-      {
-        id: "3",
-        name: "test3",
-      },
-      {
-        id: "4",
-        name: "test4",
-      },
-    ];
-
-    await Promise.all(
-      testImages.map((testExample) =>
-        createImage(undefined, {
-          data: {
-            file: new Blob(),
-            ...testExample,
-          },
-        })
-      )
-    );
+    await createImage(undefined, {
+      data: { file: new Blob(), name: "test1" },
+    });
+    await createImage(undefined, {
+      data: { file: new Blob(), name: "test2" },
+    });
+    await createImage(undefined, {
+      data: { file: new Blob(), name: "test3" },
+    });
+    await createImage(undefined, {
+      data: { file: new Blob(), name: "test4" },
+    });
 
     const queryResult = await images(undefined, { skip: 1, first: 1 });
 
     expect(queryResult.length).toBe(1);
-    expect(queryResult[0].id).toBe("2");
+    expect(queryResult[0].name).toBe("test2");
   });
 });

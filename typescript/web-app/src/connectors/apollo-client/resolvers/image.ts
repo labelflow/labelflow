@@ -41,13 +41,13 @@ const getPaginatedImages = async (
   skip?: Maybe<number>,
   first?: Maybe<number>
 ): Promise<any[]> => {
-  const query = db.image.offset(skip ?? 0);
+  const query = await db.image.orderBy("createdAt").offset(skip ?? 0);
 
   if (first) {
-    return query.limit(first).sortBy("updatedAt");
+    return query.limit(first).toArray();
   }
 
-  return query.sortBy("updatedAt");
+  return query.toArray();
 };
 
 // Queries
@@ -75,9 +75,9 @@ export const createImage = async (
   _: any,
   args: MutationCreateImageArgs
 ): Promise<Image> => {
-  const { file, id, name } = args.data;
-  const imageId = id ?? uuidv4();
-  const fileId = id ?? uuidv4();
+  const { file, name } = args.data;
+  const imageId = uuidv4();
+  const fileId = uuidv4();
 
   await db.file.add({ id: fileId, imageId, blob: file });
   const url = await getUrlFromImageId(fileId);
