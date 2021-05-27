@@ -1,9 +1,11 @@
 import { addDecorator } from "@storybook/react";
 import { Button, useDisclosure } from "@chakra-ui/react";
 import { ImportImagesModal } from "../import-images-modal";
-import { chakraDecorator } from "../../../utils/chakra-decorator";
+import { chakraDecorator } from "../../../../../utils/chakra-decorator";
+import { apolloDecorator } from "../../../../../utils/apollo-decorator";
 
 addDecorator(chakraDecorator);
+addDecorator(apolloDecorator);
 
 export default {
   title: "Import images modal",
@@ -15,11 +17,7 @@ export const Default = () => {
   return (
     <div>
       <Button onClick={onOpen}>Display</Button>
-      <ImportImagesModal
-        isOpen={isOpen}
-        onClose={onClose}
-        onImportSucceed={() => {}}
-      />
+      <ImportImagesModal isOpen={isOpen} onClose={onClose} />
     </div>
   );
 };
@@ -30,11 +28,7 @@ export const OpenedByDefault = () => {
   return (
     <div>
       <Button onClick={onOpen}>Display</Button>
-      <ImportImagesModal
-        isOpen={isOpen}
-        onClose={onClose}
-        onImportSucceed={() => {}}
-      />
+      <ImportImagesModal isOpen={isOpen} onClose={onClose} />
     </div>
   );
 };

@@ -8,15 +8,14 @@ import {
   FileRejection,
 } from "react-dropzone";
 import { isEmpty } from "lodash/fp";
+import { DroppedFile } from "./types";
 
 const UploadIcon = chakra(RiUploadCloud2Line);
 
 export const Dropzone = ({
   onDropEnd,
 }: {
-  onDropEnd: (
-    images: Array<{ name: string; path?: string; errors: Array<FileError> }>
-  ) => void;
+  onDropEnd: (images: Array<DroppedFile>) => void;
 }) => {
   const {
     acceptedFiles,
@@ -35,7 +34,7 @@ export const Dropzone = ({
   useEffect(() => {
     if (isEmpty(acceptedFiles) && isEmpty(fileRejections)) return;
 
-    const files = [
+    const files: Array<DroppedFile> = [
       ...fileRejections.map(
         ({
           file,
