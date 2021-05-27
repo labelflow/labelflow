@@ -85,7 +85,8 @@ export const Files = ({
           w="100%"
           alignItems="center"
           p="2"
-          bg={index % 2 === 0 ? "gray.50" : "inherit"}>
+          bg={index % 2 === 0 ? "gray.50" : "inherit"}
+        >
           <Box flex={0} pr="2">
             {isEmpty(errors) ? <RiImageLine /> : <RiFile3Line />}
           </Box>
@@ -95,7 +96,8 @@ export const Files = ({
             flexShrink={1}
             overflow="hidden"
             textOverflow="ellipsis"
-            whiteSpace="nowrap">
+            whiteSpace="nowrap"
+          >
             {file.path}
           </Box>
           <Box
@@ -103,7 +105,8 @@ export const Files = ({
             flex={0}
             color="gray.400"
             fontSize="md"
-            textAlign="right">
+            textAlign="right"
+          >
             {isEmpty(errors) ? (
               <FileImportProgress
                 imported={fileUploadStatuses[file.path ?? file.name]}
