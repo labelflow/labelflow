@@ -226,7 +226,10 @@ export const ImportImagesModal = ({
                           {isEmpty(errors) ? (
                             <Td fontSize="xl" textAlign="right">
                               {fileUploadStatuses[path ?? name] ? (
-                                <Tooltip label="Upload succeed">
+                                <Tooltip
+                                  label="Upload succeed"
+                                  placement="left"
+                                >
                                   <span>
                                     <SucceedIcon
                                       display="inline-block"
@@ -236,7 +239,10 @@ export const ImportImagesModal = ({
                                   </span>
                                 </Tooltip>
                               ) : (
-                                <Tooltip label="Loading indicator">
+                                <Tooltip
+                                  label="Loading indicator"
+                                  placement="left"
+                                >
                                   <span>
                                     <LoadingIcon
                                       display="inline-block"
