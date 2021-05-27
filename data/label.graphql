@@ -1,0 +1,15 @@
+input LabelCreateInput {
+  imageId: ID!
+  x: Int!
+  y: Int!
+  width: Int!
+  height: Int!
+}
+
+input LabelWhereInput {
+  id: ID
+}
+
+input LabelWhereUniqueInput {
+  id: ID!
+}

@@ -3,6 +3,7 @@ import versions from "./versions";
 import type {
   Example,
   Image as GeneratedImageType,
+  Label,
   Scalars,
 } from "../../types.generated";
 
@@ -20,6 +21,7 @@ interface Database extends Dexie {
   example: Dexie.Table<Example, string>;
   image: Dexie.Table<Image, string>;
   file: Dexie.Table<File, string>;
+  label: Dexie.Table<Label, string>;
 }
 
 export const databaseWithoutTables = new Dexie("labelflow_local");

@@ -1,12 +1,14 @@
 type Query {
   hello: String
+  example(where: ExampleWhereUniqueInput!): Example!
   examples(
     where: ExampleWhereInput
     first: Int
     skip: Int
     orderBy: ExampleOrderByInput
   ): [Example!]!
-  example(where: ExampleWhereUniqueInput!): Example!
-  images(where: ImageWhereInput, first: Int, skip: Int): [Image!]!
   image(where: ImageWhereUniqueInput!): Image!
+  images(where: ImageWhereInput, first: Int, skip: Int): [Image!]!
+  label(where: LabelWhereUniqueInput!): Label!
+  labels(where: LabelWhereInput, first: Int, skip: Int): [Label!]!
 }

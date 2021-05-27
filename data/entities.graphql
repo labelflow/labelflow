@@ -15,3 +15,14 @@ type Image {
   height: Int!
   width: Int!
 }
+
+type Label {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  imageId: ID!
+  x: Int!
+  y: Int!
+  height: Int!
+  width: Int!
+}
