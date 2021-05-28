@@ -7,7 +7,7 @@
   "license": "UNLICENSED",
   "author": "Vincent Lecrubier <vincent.lecrubier@labelflow.ai>",
   "main": "src/index.ts",
-  "types": "lib/index.d.ts",
+  "types": "src/types.ts",
   "scripts": {
     "type-check": "tsc",
     "test": "jest",

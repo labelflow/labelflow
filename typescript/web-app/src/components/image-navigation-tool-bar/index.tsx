@@ -76,7 +76,14 @@ export const ImageNav = ({ imageId, images, router }: Props) => {
   }, [imageIndex]);
 
   return (
-    <HStack h={10} p={0} spacing={1} background="white" rounded={6}>
+    <HStack
+      h={10}
+      p={0}
+      spacing={1}
+      background="white"
+      rounded={6}
+      pointerEvents="initial"
+    >
       {imageIndex != null && imageIndex > 0 && images != null ? (
         <NextLink href={`/images/${images[imageIndex - 1]?.id}`}>
           <IconButton
