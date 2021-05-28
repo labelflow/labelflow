@@ -1,3 +1,4 @@
 scalar DateTime
 scalar ID
 scalar Upload
+scalar ColorHex

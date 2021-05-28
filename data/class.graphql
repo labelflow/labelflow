@@ -1,0 +1,13 @@
+input ClassCreateInput {
+  name: String!
+  color: ColorHex!
+}
+
+input ClassWhereInput {
+  id: ID
+  name: String
+}
+
+input ClassWhereUniqueInput {
+  id: ID!
+}

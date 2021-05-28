@@ -22,8 +22,18 @@ type Label {
   createdAt: DateTime!
   updatedAt: DateTime!
   imageId: ID!
+  classId: ID
   x: Int!
   y: Int!
   height: Int!
   width: Int!
+}
+
+type Class{
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  name: String!
+  color: ColorHex!
+  labels: [Label!]!
 }

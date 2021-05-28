@@ -1,3 +1,28 @@
+type Class {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  name: String!
+  color: ColorHex!
+  labels: [Label!]!
+}
+
+input ClassCreateInput {
+  name: String!
+  color: ColorHex!
+}
+
+input ClassWhereInput {
+  id: ID
+  name: String
+}
+
+input ClassWhereUniqueInput {
+  id: ID!
+}
+
+scalar ColorHex
+
 scalar DateTime
 
 type Example {
@@ -61,6 +86,7 @@ type Label {
   createdAt: DateTime!
   updatedAt: DateTime!
   imageId: ID!
+  classId: ID
   x: Int!
   y: Int!
   height: Int!
@@ -73,6 +99,7 @@ input LabelCreateInput {
   y: Int!
   width: Int!
   height: Int!
+  classId: ID
 }
 
 input LabelWhereInput {
@@ -87,6 +114,7 @@ type Mutation {
   createExample(data: ExampleCreateInput!): Example
   createImage(data: ImageCreateInputWithFile!): Image
   createLabel(data: LabelCreateInput!): Label
+  createClass(data: ClassCreateInput!): Class
 }
 
 type Query {
@@ -97,6 +125,8 @@ type Query {
   images(where: ImageWhereInput, first: Int, skip: Int): [Image!]!
   label(where: LabelWhereUniqueInput!): Label!
   labels(where: LabelWhereInput, first: Int, skip: Int): [Label!]!
+  class(where: ClassWhereUniqueInput!): Class!
+  classes(where: ClassWhereInput, first: Int, skip: Int): [Class!]!
 }
 
 scalar Upload
