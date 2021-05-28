@@ -19,13 +19,10 @@ import { Layout } from "../../components/layout";
 import type { Image } from "../../types.generated";
 import { ImageNav } from "../../components/image-navigation-tool-bar";
 
-const Toto = dynamic<Pick<Image, "id" | "url" | "name">>(
-  () => import("../../components/openlayers-map"),
-  {
-    ssr: false,
-    loading: () => <div>loading</div>,
-  }
-);
+const Toto = dynamic(() => import("../../components/openlayers-map"), {
+  ssr: false,
+  loading: () => <div>loading</div>,
+});
 
 const imagesQuery = gql`
   query {
