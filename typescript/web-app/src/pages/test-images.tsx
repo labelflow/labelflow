@@ -14,6 +14,9 @@ const imagesQuery = gql`
       id
       name
       url
+      labels {
+        id
+      }
     }
   }
 `;
@@ -56,7 +59,6 @@ const importImage = (
 };
 
 const addLabelToImage = (id: string, createLabel: any) => {
-  console.log("here");
   createLabel({
     variables: {
       data: {
@@ -75,6 +77,7 @@ const TestImages = () => {
     useQuery<{ images: Pick<Image, "id" | "url" | "name" | "labels">[] }>(
       imagesQuery
     );
+
   const [createImage] = useMutation(createImageMutation, {
     refetchQueries: [{ query: imagesQuery }],
   });
@@ -101,7 +104,13 @@ const TestImages = () => {
           >
             Add label
           </button>
-          <span>{labels}</span>
+          <ul>
+            {labels
+              ? labels.map(({ id: labelId }) => (
+                  <li key={labelId}> {labelId} </li>
+                ))
+              : "no label"}
+          </ul>
         </div>
       ))}
     </div>
