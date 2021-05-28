@@ -1,6 +1,5 @@
-import { useMemo } from "react";
 import { Extent, getCenter } from "ol/extent";
-import { Box } from "@chakra-ui/react";
+
 import memoize from "mem";
 import Projection from "ol/proj/Projection";
 

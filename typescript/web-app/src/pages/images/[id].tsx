@@ -5,7 +5,6 @@ import {
   HStack,
   Box,
   Text,
-  Image as ChakraImage,
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbLink,
