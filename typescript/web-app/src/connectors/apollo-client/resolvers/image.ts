@@ -98,7 +98,12 @@ export const createImage = async (
       await db.image.add(newImageEntity);
       resolve(await getImageById(imageId));
     };
-    imageObject.onerror = reject;
+    imageObject.onerror = async () => {
+      reject(
+        new Error("Could not load the image, it may be damaged or corrupted.")
+      );
+      await db.file.delete(fileId);
+    };
     imageObject.src = url;
   });
 
