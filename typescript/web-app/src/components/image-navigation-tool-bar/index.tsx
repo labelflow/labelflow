@@ -13,7 +13,7 @@ import { NextRouter } from "next/router";
 import NextLink from "next/link";
 import { Image } from "../../types.generated";
 
-type Props = {
+export type Props = {
   imageId: string | undefined;
   images: Pick<Image, "id">[] | undefined;
   router: NextRouter;
@@ -26,20 +26,20 @@ export const ImageNav = ({ imageId, images, router }: Props) => {
       ? findIndex({ id: imageId }, images)
       : undefined;
 
-  const imageNumber = images?.length;
+  const imageCount = images?.length;
 
   const handleKeyPress = (event: any) => {
     if (!images) return;
     if (!inputRef.current) return;
-    if (imageNumber == null) return;
+    if (imageCount == null) return;
     if (event.key === "Enter") {
       const value = parseInt(event.target.value, 10);
-      if (value >= 1 && value <= imageNumber) {
+      if (value >= 1 && value <= imageCount) {
         router.push(`/images/${images[value - 1]?.id}`);
       } else if (value < 1) {
         inputRef.current.value = `1`;
-      } else if (value > imageNumber) {
-        inputRef.current.value = `${imageNumber}`;
+      } else if (value > imageCount) {
+        inputRef.current.value = `${imageCount}`;
       }
     }
   };
@@ -52,19 +52,20 @@ export const ImageNav = ({ imageId, images, router }: Props) => {
   const handleBlur = () => {
     if (!inputRef.current) return;
     if (imageIndex == null) return;
-    inputRef.current.value =
-      imageIndex != null && imageIndex >= 0 ? `${imageIndex + 1}` : "-";
+    inputRef.current.value = imageIndex >= 0 ? `${imageIndex + 1}` : "-";
   };
 
   useEffect(() => {
-    if (!inputRef.current) return;
-    if (imageIndex == null) return;
-    inputRef.current.value =
-      imageIndex != null && imageIndex >= 0 ? `${imageIndex + 1}` : "-";
+    handleBlur();
   }, [imageIndex]);
 
   return (
-    <InputGroup>
+    <InputGroup
+      w="fit-content"
+      variant="filled"
+      background="white"
+      color="gray.800"
+    >
       <InputLeftAddon p={0}>
         {imageIndex != null && imageIndex > 0 && images != null ? (
           <NextLink href={`/images/${images[imageIndex - 1]?.id}`}>
@@ -96,7 +97,7 @@ export const ImageNav = ({ imageId, images, router }: Props) => {
         pl={0}
         pr={0}
         w="3em"
-        background="gray.100"
+        // background="gray.100"
       />
 
       <Text
@@ -110,12 +111,12 @@ export const ImageNav = ({ imageId, images, router }: Props) => {
         pl={0}
         pr={0}
         w="1em"
-        background="gray.100"
+        // background="gray.100"
       />
 
       <Text
         as="input"
-        defaultValue={`${imageNumber ?? "-"}`}
+        defaultValue={`${imageCount ?? "-"}`}
         disabled
         opacity={1}
         border="none"
@@ -124,14 +125,14 @@ export const ImageNav = ({ imageId, images, router }: Props) => {
         pl={0}
         pr={0}
         w="3em"
-        background="gray.100"
+        // background="gray.100"
       />
 
       <InputRightAddon p={0}>
         {imageIndex != null &&
-        imageNumber != null &&
+        imageCount != null &&
         imageIndex >= 0 &&
-        imageIndex < imageNumber - 1 &&
+        imageIndex < imageCount - 1 &&
         images != null ? (
           <NextLink href={`/images/${images[imageIndex + 1]?.id}`}>
             <IconButton
