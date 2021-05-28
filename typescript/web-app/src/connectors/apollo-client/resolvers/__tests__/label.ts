@@ -14,13 +14,17 @@ jest.mock("fake-indexeddb/build/lib/structuredClone", () => ({
   default: (i: any) => i,
 }));
 
-// beforeAll(() => {
-//   global.URL.createObjectURL = jest.fn(() => "mockedUrl");
-// });
+// need to wait in between tests, otherwise createdAt timestamp
+// are the same and we can't order the query result properly
+const sleep = () => {
+  return new Promise((resolve) => {
+    setTimeout(resolve, 1);
+  });
+};
 
 describe("Label resolver test suite", () => {
   beforeEach(async () => {
-    db.tables.map((table) => table.clear());
+    Promise.all(db.tables.map((table) => table.clear()));
   });
 
   test("Query label when db is empty", async () => {
@@ -29,32 +33,16 @@ describe("Label resolver test suite", () => {
     expect(queryResult.length).toEqual(0);
   });
 
-  // test("Query label when id doesn't exists", async () => {
-  //   const queryResult = await label(undefined, {
-  //     where: { id: "this id doesn't exists" },
-  //   });
+  test("Query label when id doesn't exists", async () => {
+    const queryNoId = async () =>
+      label(undefined, {
+        where: { id: "this id doesn't exists" },
+      });
 
-  //   expect(queryResult.length).toEqual(0);
-  // });
-
-  test("Create label with Blob", async () => {
-    const createResult = await createLabel(undefined, {
-      data: {
-        imageId: "0024fbc1-387b-444f-8ad0-d7a3e316726a",
-        x: 3.14,
-        y: 42.0,
-        height: 768,
-        width: 362,
-      },
-    });
-
-    expect(createResult?.x).toEqual(3.14);
-    expect(await label(undefined, { where: { id: createResult.id } })).toEqual(
-      createResult
-    );
+    expect(queryNoId()).rejects.toThrow();
   });
 
-  test("Create label with URL and specified ID", async () => {
+  test("Create label", async () => {
     const createResult = await createLabel(undefined, {
       data: {
         imageId: "0024fbc1-387b-444f-8ad0-d7a3e316726a",
@@ -65,7 +53,7 @@ describe("Label resolver test suite", () => {
       },
     });
 
-    expect(createResult.imageId).toEqual(
+    expect(createResult?.imageId).toEqual(
       "0024fbc1-387b-444f-8ad0-d7a3e316726a"
     );
     expect(await label(undefined, { where: { id: createResult.id } })).toEqual(
@@ -83,6 +71,7 @@ describe("Label resolver test suite", () => {
         width: 362,
       },
     });
+    await sleep();
     const createResult2 = await createLabel(undefined, {
       data: {
         imageId: "another image id",
@@ -100,14 +89,6 @@ describe("Label resolver test suite", () => {
   });
 
   test("Querying paginated labels", async () => {
-    // need to wait in between tests, otherwise createdAt timestamp
-    // are the same and we can't order the query result properly
-    const sleep = () => {
-      return new Promise((resolve) => {
-        setTimeout(resolve, 1);
-      });
-    };
-
     await createLabel(undefined, {
       data: {
         imageId: "imageId1",
