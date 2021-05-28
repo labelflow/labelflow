@@ -86,6 +86,16 @@ test("should update completed number as valid images are uploaded", async () => 
   await waitFor(() =>
     expect(screen.getByText(/Completed 1 of 2 items/i)).toBeDefined()
   );
+
+  /**
+   * This behavior is already tested in the previous test.
+   * However, we need to wait for the upload to finish.
+   * Otherwise, the cleanup in the `beforeEach` messes
+   * with the ongoing logic.
+   */
+  await waitFor(() =>
+    expect(screen.getAllByLabelText("Upload succeed")).toHaveLength(2)
+  );
 });
 
 test("should display an indicator when upload succeed", async () => {

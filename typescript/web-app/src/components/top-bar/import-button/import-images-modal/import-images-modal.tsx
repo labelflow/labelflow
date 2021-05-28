@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { isEmpty } from "lodash/fp";
 import {
   Heading,
@@ -32,15 +32,6 @@ export const ImportImagesModal = ({
   isOpen?: boolean;
   onClose?: () => void;
 }) => {
-  const isMounted = useRef(false);
-
-  useEffect(() => {
-    isMounted.current = true;
-    return () => {
-      isMounted.current = false;
-    };
-  }, []);
-
   const apolloClient = useApolloClient();
   const [isCloseable, setCloseable] = useState(true);
   /*
@@ -66,18 +57,12 @@ export const ImportImagesModal = ({
               variables: { file: acceptedFile.file },
             });
 
-            /**
-             * If the modal is closed we still want to create images but
-             * we don't want to update the state of an unmounted component
-             */
-            if (isMounted.current) {
-              setFileUploadStatuses((previousFileUploadStatuses) => {
-                return {
-                  ...previousFileUploadStatuses,
-                  [acceptedFile.file.path ?? acceptedFile.file.name]: true,
-                };
-              });
-            }
+            setFileUploadStatuses((previousFileUploadStatuses) => {
+              return {
+                ...previousFileUploadStatuses,
+                [acceptedFile.file.path ?? acceptedFile.file.name]: true,
+              };
+            });
           } catch (err) {
             // TODO: Spot possibles errors (no more space on disk?)
             /* eslint-disable no-console */
@@ -85,9 +70,7 @@ export const ImportImagesModal = ({
           }
         })
     ).then(() => {
-      if (isMounted.current) {
-        setCloseable(true);
-      }
+      setCloseable(true);
     });
   }, [files]);
 
