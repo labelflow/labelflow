@@ -46,14 +46,14 @@ export const createLabel = async (
   _: any,
   args: MutationCreateLabelArgs
 ): Promise<Label> => {
-  const { imageId, x, y, height, width, classId } = args.data;
+  const { imageId, x, y, height, width, labelClassId } = args.data;
   const labelId = uuidv4();
   const newLabelEntity = {
     id: labelId,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     imageId,
-    classId,
+    labelClassId,
     x,
     y,
     height,
