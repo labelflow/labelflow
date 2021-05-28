@@ -8,7 +8,8 @@ export default [
       example: "id,createdAt,updatedAt,name",
       image: "id,createdAt,updatedAt,name,width,height,fileId",
       file: "id,imageId,blob",
-      label: "id,createdAt,updatedAt,imageId,x,y,height,width",
+      label: "id,createdAt,updatedAt,imageId,x,y,height,width,labelClassId",
+      labelClass: "id,createdAt,updatedAt,name,color",
     },
   },
 ];
