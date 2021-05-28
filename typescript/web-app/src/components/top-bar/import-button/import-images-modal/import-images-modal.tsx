@@ -42,6 +42,7 @@ export const ImportImagesModal = ({
   }, []);
 
   const apolloClient = useApolloClient();
+  const [isCloseable, setCloseable] = useState(true);
   /*
    * We need a state with the accepted and reject files to be able to reset the list
    * when we close the modal because react-dropzone doesn't provide a way to reset its
@@ -54,47 +55,40 @@ export const ImportImagesModal = ({
   useEffect(() => {
     if (isEmpty(files)) return;
 
-    files
-      .filter((file) => isEmpty(file.errors))
-      .forEach(async (acceptedFile) => {
-        try {
-          /**
-           * We keep track of files that started being uploaded before
-           * the modal was closed
-           */
-          const fileKey = acceptedFile.file.path ?? acceptedFile.file.name;
-          if (isMounted.current) {
-            setFileUploadStatuses((previousFileUploadStatuses) => ({
-              ...previousFileUploadStatuses,
-              [fileKey]: false,
-            }));
-          }
-
-          await apolloClient.mutate({
-            mutation: createImageMutation,
-            variables: { file: acceptedFile.file },
-          });
-
-          /**
-           * If the modal is closed we still want to create images but
-           * we don't want to update the state of an unmounted component
-           */
-          if (isMounted.current) {
-            setFileUploadStatuses((previousFileUploadStatuses) => {
-              if (previousFileUploadStatuses[fileKey] === undefined)
-                return previousFileUploadStatuses;
-              return {
-                ...previousFileUploadStatuses,
-                [fileKey]: true,
-              };
+    setCloseable(false);
+    Promise.all(
+      files
+        .filter((file) => isEmpty(file.errors))
+        .map(async (acceptedFile) => {
+          try {
+            await apolloClient.mutate({
+              mutation: createImageMutation,
+              variables: { file: acceptedFile.file },
             });
+
+            /**
+             * If the modal is closed we still want to create images but
+             * we don't want to update the state of an unmounted component
+             */
+            if (isMounted.current) {
+              setFileUploadStatuses((previousFileUploadStatuses) => {
+                return {
+                  ...previousFileUploadStatuses,
+                  [acceptedFile.file.path ?? acceptedFile.file.name]: true,
+                };
+              });
+            }
+          } catch (err) {
+            // TODO: Spot possibles errors (no more space on disk?)
+            /* eslint-disable no-console */
+            console.error(err);
           }
-        } catch (err) {
-          // TODO: Spot possibles errors (no more space on disk?)
-          /* eslint-disable no-console */
-          console.error(err);
-        }
-      });
+        })
+    ).then(() => {
+      if (isMounted.current) {
+        setCloseable(true);
+      }
+    });
   }, [files]);
 
   return (
@@ -102,6 +96,7 @@ export const ImportImagesModal = ({
       isOpen={isOpen}
       size="xl"
       onClose={() => {
+        if (!isCloseable) return;
         setFiles([]);
         setFileUploadStatuses({});
         onClose();
@@ -118,7 +113,7 @@ export const ImportImagesModal = ({
             are not uploaded on LabelFlow servers.
           </Text>
         </ModalHeader>
-        <ModalCloseButton />
+        <ModalCloseButton disabled={!isCloseable} />
         <ModalBody
           display="flex"
           pt="0"

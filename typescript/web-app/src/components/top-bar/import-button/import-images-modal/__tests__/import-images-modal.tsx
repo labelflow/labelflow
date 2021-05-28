@@ -169,8 +169,29 @@ test("should call the onClose handler", async () => {
   expect(onClose).toHaveBeenCalled();
 });
 
+test("should not close the modal while file are uploading", async () => {
+  await renderModalAndImport(files.slice(0, 1));
+
+  expect(screen.getByLabelText("Loading indicator")).toBeDefined();
+  expect(screen.getByLabelText("Close")).toBeDisabled();
+
+  /**
+   * This behavior is already tested in the previous test.
+   * However, we need to wait for the upload to finish.
+   * Otherwise, the cleanup in the `beforeEach` messes
+   * with the ongoing logic.
+   */
+  await waitFor(() =>
+    expect(screen.getByLabelText("Upload succeed")).toBeDefined()
+  );
+});
+
 test("should clear the modal content when closed", async () => {
   await renderModalAndImport();
+
+  await waitFor(() =>
+    expect(screen.getAllByLabelText("Upload succeed")).toHaveLength(2)
+  );
 
   await waitFor(() => {
     userEvent.click(screen.getByLabelText("Close"));
