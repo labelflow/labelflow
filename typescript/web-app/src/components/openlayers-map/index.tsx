@@ -1,42 +1,56 @@
-import * as React from "react";
+import { useMemo } from "react";
 import { Extent, getCenter } from "ol/extent";
 import { Box } from "@chakra-ui/react";
-
+import memoize from "mem";
 import Projection from "ol/proj/Projection";
 
 import { Map } from "@labelflow/react-openlayers-fiber";
-
+import type { Image } from "../../types.generated";
 import "ol/ol.css";
 
-const Toto = () => {
-  const extent: Extent = [0, 0, 1024, 968];
+const empty: any[] = [];
 
-  const attributions = '© <a href="http://xkcd.com/license.html">xkcd</a>';
+const getOlObjectsForImage = memoize((imageId, image: Image) => {
+  const url = image?.url;
+  const extent: Extent = [0, 0, image?.width ?? 640, image?.height ?? 480];
+  const center = getCenter(extent);
   const projection = new Projection({
-    code: "xkcd-image",
+    code: imageId,
     units: "pixels",
     extent,
   });
-  console.log(getCenter(extent));
+  return { url, center, extent, projection };
+});
+
+type Props = { image: Image };
+
+const Toto = ({ image }: Props) => {
+  const { url, extent, projection, center } = getOlObjectsForImage(
+    image?.id,
+    image
+  );
+
+  //   const { url, extent, projection } = {
+  //     url: "https://imgs.xkcd.com/comics/online_communities.png",
+  //     extent: [0, 0, 1024, 968],
+  //     projection: new Projection({
+  //       code: "xkcd-image",
+  //       units: "pixels",
+  //       extent: [0, 0, 1024, 968],
+  //     }),
+  //   };
+
+  console.log("============================");
+  console.log(image);
+  console.log({ url, extent, projection });
+
   return (
-    <Box flex="1" position="relative">
-      <Map args={{ controls: [] }}>
-        <olView
-          initialCenter={getCenter(extent)}
-          initialZoom={2}
-          maxZoom={8}
-          initialProjection={projection}
-        />
-        <olLayerImage>
-          <olSourceImageStatic
-            initialProjection={projection}
-            initialUrl="https://imgs.xkcd.com/comics/online_communities.png"
-            attributions={attributions}
-            imageExtent={extent}
-          />
-        </olLayerImage>
-      </Map>
-    </Box>
+    <Map args={{ controls: empty }} style={{ height: "100%", width: "100%" }}>
+      <olView args={{ projection, center }} initialZoom={1} maxZoom={8} />
+      <olLayerImage>
+        <olSourceImageStatic args={{ url, imageExtent: extent, projection }} />
+      </olLayerImage>
+    </Map>
   );
 };
 

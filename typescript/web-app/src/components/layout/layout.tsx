@@ -14,7 +14,7 @@ export const Layout = ({ children, topBarLeftContent }: Props) => {
     <ChakraProvider theme={theme} resetCSS>
       <Flex direction="column" h="100vh">
         <TopBar leftContent={topBarLeftContent} />
-        <Box as="main" bg="gray.100" flex="1">
+        <Box as="main" bg="gray.100" flex="1" position="relative">
           {children}
         </Box>
       </Flex>

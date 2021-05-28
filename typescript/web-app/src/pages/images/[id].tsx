@@ -40,6 +40,8 @@ const imageQuery = gql`
   query image($id: ID!) {
     image(where: { id: $id }) {
       id
+      width
+      height
       url
       name
     }
@@ -55,7 +57,7 @@ const ImagePage = () => {
     useQuery<{ images: Pick<Image, "id">[] }>(imagesQuery);
 
   const { data: imageResult } = useQuery<{
-    image: Pick<Image, "id" | "url" | "name">;
+    image: Pick<Image, "id" | "url" | "name" | "width" | "height">;
   }>(imageQuery, { variables: { id } });
 
   const image = imageResult?.image;
@@ -76,16 +78,21 @@ const ImagePage = () => {
           </BreadcrumbItem>
 
           <BreadcrumbItem isCurrentPage>
-            <Text>{image?.name}</Text>
+            <Text
+              maxWidth="20rem"
+              textOverflow="ellipsis"
+              whiteSpace="nowrap"
+              overflow="hidden"
+            >
+              {image?.name}
+            </Text>
           </BreadcrumbItem>
         </Breadcrumb>
       }
     >
       <Toto image={image} />
-      {/* <ChakraImage src={image?.url} /> */}
 
       <HStack
-        // background="green"
         padding={4}
         spacing={4}
         position="absolute"
@@ -96,7 +103,6 @@ const ImagePage = () => {
         <ImageNav imageId={id} images={imagesResult?.images} router={router} />
       </HStack>
       <HStack
-        // background="yellow"
         padding={4}
         spacing={4}
         position="absolute"
