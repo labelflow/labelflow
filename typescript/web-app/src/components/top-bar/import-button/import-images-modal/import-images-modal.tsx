@@ -65,8 +65,12 @@ export const ImportImagesModal = ({
             });
           } catch (err) {
             // TODO: Spot possibles errors (no more space on disk?)
-            /* eslint-disable no-console */
-            console.error(err);
+            setFileUploadStatuses((previousFileUploadStatuses) => {
+              return {
+                ...previousFileUploadStatuses,
+                [acceptedFile.file.path ?? acceptedFile.file.name]: err.message,
+              };
+            });
           }
         })
     ).then(() => {

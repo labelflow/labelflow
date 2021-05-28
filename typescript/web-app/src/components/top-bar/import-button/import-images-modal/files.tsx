@@ -2,6 +2,7 @@ import {
   RiImageLine,
   RiFile3Line,
   RiCheckboxCircleFill,
+  RiErrorWarningFill,
   RiContrastFill,
 } from "react-icons/ri";
 import { isEmpty } from "lodash/fp";
@@ -12,9 +13,24 @@ import { DroppedFile, FileUploadStatuses } from "./types";
 
 const SucceedIcon = chakra(RiCheckboxCircleFill);
 const LoadingIcon = chakra(RiContrastFill);
+const ErrorIcon = chakra(RiErrorWarningFill);
 
-const FileImportProgress = ({ imported }: { imported: boolean }) => {
-  if (imported) {
+const FileImportProgress = ({ status }: { status: boolean | string }) => {
+  if (typeof status === "string") {
+    return (
+      <Tooltip label={status} placement="left">
+        <span>
+          <ErrorIcon
+            display="inline-block"
+            color="red.500"
+            aria-label="Error indicator"
+          />
+        </span>
+      </Tooltip>
+    );
+  }
+
+  if (status) {
     return (
       <Tooltip label="Upload succeed" placement="left">
         <span>
@@ -74,7 +90,11 @@ export const Files = ({
     <Box p="2" bg="gray.200" borderTopRadius="md" w="100%">
       <Text>
         Completed{" "}
-        {Object.entries(fileUploadStatuses).filter((entry) => entry[1]).length}{" "}
+        {
+          Object.entries(fileUploadStatuses).filter(
+            (entry) => entry[1] === true
+          ).length
+        }{" "}
         of {files.filter((file) => isEmpty(file.errors)).length} items
       </Text>
     </Box>
@@ -109,7 +129,7 @@ export const Files = ({
           >
             {isEmpty(errors) ? (
               <FileImportProgress
-                imported={fileUploadStatuses[file.path ?? file.name]}
+                status={fileUploadStatuses[file.path ?? file.name]}
               />
             ) : (
               <FileImportError errors={errors} />

@@ -13,4 +13,4 @@ export type DroppedFile = {
  * A lookup table containing only the status of
  * the file being uploaded
  */
-export type FileUploadStatuses = Record<string, boolean>;
+export type FileUploadStatuses = Record<string, boolean | string>;
