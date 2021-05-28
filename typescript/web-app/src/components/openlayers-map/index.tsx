@@ -9,19 +9,26 @@ import "ol/ol.css";
 
 const empty: any[] = [];
 
-const getOlObjectsForImage = memoize((imageId, image: Image) => {
-  const url = image?.url;
-  const extent: Extent = [0, 0, image?.width ?? 640, image?.height ?? 480];
-  const center = getCenter(extent);
-  const projection = new Projection({
-    code: imageId,
-    units: "pixels",
-    extent,
-  });
-  return { url, center, extent, projection };
-});
+const getOlObjectsForImage = memoize(
+  (
+    imageId,
+    image?: Pick<Image, "id" | "url" | "name" | "width" | "height">
+  ) => {
+    const url = image?.url;
+    const extent: Extent = [0, 0, image?.width ?? 640, image?.height ?? 480];
+    const center = getCenter(extent);
+    const projection = new Projection({
+      code: imageId,
+      units: "pixels",
+      extent,
+    });
+    return { url, center, extent, projection };
+  }
+);
 
-type Props = { image: Image };
+type Props = {
+  image?: Pick<Image, "id" | "url" | "name" | "width" | "height">;
+};
 
 const Toto = ({ image }: Props) => {
   const { url, extent, projection, center } = getOlObjectsForImage(
@@ -39,15 +46,15 @@ const Toto = ({ image }: Props) => {
   //     }),
   //   };
 
-  console.log("============================");
-  console.log(image);
-  console.log({ url, extent, projection });
-
   return (
     <Map args={{ controls: empty }} style={{ height: "100%", width: "100%" }}>
       <olView args={{ projection, center }} initialZoom={1} maxZoom={8} />
       <olLayerImage>
-        <olSourceImageStatic args={{ url, imageExtent: extent, projection }} />
+        {url != null && (
+          <olSourceImageStatic
+            args={{ url, imageExtent: extent, projection }}
+          />
+        )}
       </olLayerImage>
     </Map>
   );
