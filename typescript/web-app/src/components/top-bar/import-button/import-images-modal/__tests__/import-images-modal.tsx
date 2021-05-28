@@ -49,6 +49,18 @@ global.Image = class Image extends HTMLElement {
 // @ts-ignore
 customElements.define("image-custom", global.Image);
 
+/**
+ * This behavior is already tested in the previous test.
+ * However, we need to wait for the upload to finish.
+ * Otherwise, the cleanup in the `beforeEach` messes
+ * with the ongoing logic.
+ */
+async function ensuresUploadsAreFinished(number = 2) {
+  await waitFor(() =>
+    expect(screen.getAllByLabelText("Upload succeed")).toHaveLength(number)
+  );
+}
+
 beforeAll(() => {
   global.URL.createObjectURL = jest.fn(() => "mockedUrl");
 });
@@ -87,15 +99,7 @@ test("should update completed number as valid images are uploaded", async () => 
     expect(screen.getByText(/Completed 1 of 2 items/i)).toBeDefined()
   );
 
-  /**
-   * This behavior is already tested in the previous test.
-   * However, we need to wait for the upload to finish.
-   * Otherwise, the cleanup in the `beforeEach` messes
-   * with the ongoing logic.
-   */
-  await waitFor(() =>
-    expect(screen.getAllByLabelText("Upload succeed")).toHaveLength(2)
-  );
+  await ensuresUploadsAreFinished();
 });
 
 test("should display an indicator when upload succeed", async () => {
@@ -131,15 +135,7 @@ test("should display the images name", async () => {
   expect(screen.getByText(/hello.png/i)).toBeDefined();
   expect(screen.getByText(/world.png/i)).toBeDefined();
 
-  /**
-   * This behavior is already tested in the previous test.
-   * However, we need to wait for the upload to finish.
-   * Otherwise, the cleanup in the `beforeEach` messes
-   * with the ongoing logic.
-   */
-  await waitFor(() =>
-    expect(screen.getAllByLabelText("Upload succeed")).toHaveLength(2)
-  );
+  await ensuresUploadsAreFinished();
 });
 
 test("should display the rejected images name", async () => {
@@ -185,15 +181,7 @@ test("should not close the modal while file are uploading", async () => {
   expect(screen.getByLabelText("Loading indicator")).toBeDefined();
   expect(screen.getByLabelText("Close")).toBeDisabled();
 
-  /**
-   * This behavior is already tested in the previous test.
-   * However, we need to wait for the upload to finish.
-   * Otherwise, the cleanup in the `beforeEach` messes
-   * with the ongoing logic.
-   */
-  await waitFor(() =>
-    expect(screen.getByLabelText("Upload succeed")).toBeDefined()
-  );
+  await ensuresUploadsAreFinished(1);
 });
 
 test("should clear the modal content when closed", async () => {
