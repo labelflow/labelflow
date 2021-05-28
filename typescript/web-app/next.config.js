@@ -15,6 +15,7 @@ module.exports = {
       exclude: /node_modules/,
       loader: "graphql-tag/loader",
     });
+    console.log(config.module.rules);
     // Important: return the modified config
     return config;
   },

@@ -15,6 +15,13 @@ import { useRouter } from "next/router";
 import { RiArrowRightSLine } from "react-icons/ri";
 import NextLink from "next/link";
 
+import { Extent, getCenter } from "ol/extent";
+import Projection from "ol/proj/Projection";
+
+import { Map } from "@labelflow/react-openlayers-fiber";
+
+import "ol/ol.css";
+
 import { Layout } from "../../components/layout";
 import type { Image } from "../../types.generated";
 import { ImageNav } from "../../components/image-navigation-tool-bar";
@@ -53,6 +60,14 @@ const ImagePage = () => {
 
   const [counter, setCounter] = useState(0);
 
+  const extent: Extent = [0, 0, 1024, 968];
+  const attributions = '© <a href="http://xkcd.com/license.html">xkcd</a>';
+  const projection = new Projection({
+    code: "xkcd-image",
+    units: "pixels",
+    extent,
+  });
+
   return (
     <Layout
       topBarLeftContent={
@@ -72,7 +87,24 @@ const ImagePage = () => {
         </Breadcrumb>
       }
     >
-      <ChakraImage src={image?.url} />
+      {/* <ChakraImage src={image?.url} /> */}
+
+      <Map>
+        <olView
+          initialCenter={getCenter(extent)}
+          initialZoom={2}
+          maxZoom={8}
+          initialProjection={projection}
+        />
+        <olLayerImage>
+          <olSourceImageStatic
+            initialProjection={projection}
+            initialUrl="https://imgs.xkcd.com/comics/online_communities.png"
+            attributions={attributions}
+            imageExtent={extent}
+          />
+        </olLayerImage>
+      </Map>
 
       <HStack
         background="green"
