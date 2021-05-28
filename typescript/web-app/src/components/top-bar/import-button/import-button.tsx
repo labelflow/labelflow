@@ -7,22 +7,16 @@ const UploadIcon = chakra(RiUploadCloud2Line);
 export const ImportButton = () => {
   const { isOpen, onClose, onOpen } = useDisclosure();
 
-  const onImportSucceed = () => {};
-
   return (
     <>
-      <ImportImagesModal
-        isOpen={isOpen}
-        onClose={onClose}
-        onImportSucceed={onImportSucceed}
-      />
+      <ImportImagesModal isOpen={isOpen} onClose={onClose} />
       <Button
-        aria-label="import"
+        aria-label="Add images"
         leftIcon={<UploadIcon />}
         onClick={onOpen}
         variant="ghost"
       >
-        Import
+        Add images
       </Button>
     </>
   );
