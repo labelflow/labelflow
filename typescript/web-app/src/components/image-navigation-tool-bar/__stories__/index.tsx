@@ -23,6 +23,10 @@ const Template: Story<Props> = (args: Props) => (
   </HStack>
 );
 
+const router = {
+  push: (x: string) => console.log(`Navigate to ${x}`),
+} as unknown as NextRouter;
+
 // @ts-ignore
 export const NoInput = Template.bind({});
 NoInput.args = {};
@@ -31,50 +35,53 @@ export const NoImage = Template.bind({});
 NoImage.args = {
   imageId: "a",
   images: [],
-  router: {} as unknown as NextRouter,
+  router,
 };
 
 export const NoImageNoId = Template.bind({});
-NoImageNoId.args = { images: [], router: {} as unknown as NextRouter };
+NoImageNoId.args = {
+  images: [],
+  router,
+};
 
 export const OneImage = Template.bind({});
 OneImage.args = {
   imageId: "a",
   images: [{ id: "a" }],
-  router: {} as unknown as NextRouter,
+  router,
 };
 
 export const OneWrongImage = Template.bind({});
 OneWrongImage.args = {
   imageId: "a",
   images: [{ id: "b" }],
-  router: {} as unknown as NextRouter,
+  router,
 };
 
 export const Basic1 = Template.bind({});
 Basic1.args = {
   imageId: "a",
   images: [{ id: "a" }, { id: "b" }, { id: "c" }],
-  router: {} as unknown as NextRouter,
+  router,
 };
 
 export const Basic2 = Template.bind({});
 Basic2.args = {
   imageId: "b",
   images: [{ id: "a" }, { id: "b" }, { id: "c" }],
-  router: {} as unknown as NextRouter,
+  router,
 };
 
 export const Basic3 = Template.bind({});
 Basic3.args = {
   imageId: "c",
   images: [{ id: "a" }, { id: "b" }, { id: "c" }],
-  router: {} as unknown as NextRouter,
+  router,
 };
 
 export const BasicWrongImage = Template.bind({});
 BasicWrongImage.args = {
   imageId: "d",
   images: [{ id: "a" }, { id: "b" }, { id: "c" }],
-  router: {} as unknown as NextRouter,
+  router,
 };

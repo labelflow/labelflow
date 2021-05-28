@@ -1,16 +1,16 @@
-import React, { useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   IconButton,
-  Input,
   Text,
-  InputRightAddon,
-  InputLeftAddon,
-  InputGroup,
+  HStack,
+  NumberInput,
+  NumberInputField,
 } from "@chakra-ui/react";
 import { RiArrowRightSLine, RiArrowLeftSLine } from "react-icons/ri";
-import { findIndex } from "lodash/fp";
+import { findIndex, isNaN, isNumber } from "lodash/fp";
 import { NextRouter } from "next/router";
 import NextLink from "next/link";
+
 import { Image } from "../../types.generated";
 
 export type Props = {
@@ -19,8 +19,14 @@ export type Props = {
   router: NextRouter;
 };
 
+const digitsPerRem = 0.55;
+
+const parse = (x: string): number | undefined =>
+  !isNaN(parseInt(x, 10)) ? parseInt(x, 10) - 1 : undefined;
+const format = (x: number | undefined): string =>
+  isNumber(x) && !isNaN(x) && x >= 0 ? `${x + 1}` : `-`;
+
 export const ImageNav = ({ imageId, images, router }: Props) => {
-  const inputRef = useRef<HTMLInputElement | null>(null);
   const imageIndex: number | undefined =
     images != null && imageId != null
       ? findIndex({ id: imageId }, images)
@@ -28,126 +34,124 @@ export const ImageNav = ({ imageId, images, router }: Props) => {
 
   const imageCount = images?.length;
 
-  const handleKeyPress = (event: any) => {
+  const digitCount = Math.max(1, Math.ceil(Math.log10(imageCount ?? 1)));
+
+  const [value, setValue] = useState<string>(format(imageIndex));
+
+  const goTo = (val: string): void => {
     if (!images) return;
-    if (!inputRef.current) return;
     if (imageCount == null) return;
-    if (event.key === "Enter") {
-      const value = parseInt(event.target.value, 10);
-      if (value >= 1 && value <= imageCount) {
-        router.push(`/images/${images[value - 1]?.id}`);
-      } else if (value < 1) {
-        inputRef.current.value = `1`;
-      } else if (value > imageCount) {
-        inputRef.current.value = `${imageCount}`;
-      }
+    const newIndex = parse(val);
+    if (newIndex == null || isNaN(newIndex)) return;
+    if (newIndex >= 0 && newIndex <= imageCount - 1) {
+      router.push(`/images/${images[newIndex]?.id}`);
     }
   };
 
-  const handleClick = () => {
-    if (!inputRef.current) return;
-    inputRef.current.select();
+  const reset = () => {
+    setValue(format(imageIndex));
+  };
+
+  const handleKeyPress = (event: any) => {
+    if (event.key === "Enter") {
+      goTo(event.target.value);
+    }
   };
 
   const handleBlur = () => {
-    if (!inputRef.current) return;
-    if (imageIndex == null) return;
-    inputRef.current.value = imageIndex >= 0 ? `${imageIndex + 1}` : "-";
+    // On blur we could go to the value input by the user:
+    // goTo(value);
+    //
+    // But that would prevent the user from ever cancelling their input
+    // So instead, we reset the number:
+    reset();
+  };
+
+  const selectText: React.MouseEventHandler<HTMLInputElement> = (event) => {
+    (event.target as HTMLInputElement).select();
   };
 
   useEffect(() => {
-    handleBlur();
+    reset();
   }, [imageIndex]);
 
   return (
-    <InputGroup
-      w="fit-content"
-      variant="filled"
-      background="white"
-      color="gray.800"
-    >
-      <InputLeftAddon p={0}>
-        {imageIndex != null && imageIndex > 0 && images != null ? (
-          <NextLink href={`/images/${images[imageIndex - 1]?.id}`}>
-            <IconButton
-              aria-label="Previous image"
-              icon={<RiArrowLeftSLine size="1.5em" />}
-            />
-          </NextLink>
-        ) : (
+    <HStack h={10} p={0} spacing={1} background="white" rounded={6}>
+      {imageIndex != null && imageIndex > 0 && images != null ? (
+        <NextLink href={`/images/${images[imageIndex - 1]?.id}`}>
           <IconButton
-            disabled
             aria-label="Previous image"
+            variant="ghost"
             icon={<RiArrowLeftSLine size="1.5em" />}
           />
-        )}
-      </InputLeftAddon>
+        </NextLink>
+      ) : (
+        <IconButton
+          disabled
+          variant="ghost"
+          aria-label="No previous image"
+          icon={<RiArrowLeftSLine size="1.5em" />}
+        />
+      )}
 
-      <Input
-        ref={inputRef}
-        onKeyPress={handleKeyPress}
-        onClick={handleClick}
-        onBlur={handleBlur}
-        border="none"
-        placeholder=""
+      <NumberInput
+        rounded={6}
+        allowMouseWheel
+        defaultValue={imageIndex != null ? imageIndex + 1 : "-"}
+        min={1}
+        max={imageCount}
+        variant="filled"
         textAlign="right"
-        defaultValue={
-          imageIndex != null && imageIndex >= 0 ? `${imageIndex + 1}` : "-"
-        }
-        pl={0}
-        pr={0}
-        w="3em"
-        // background="gray.100"
-      />
+        size="sm"
+        value={value}
+        onChange={setValue}
+        onKeyPress={handleKeyPress}
+        onBlur={handleBlur}
+      >
+        <NumberInputField
+          rounded={6}
+          onClick={selectText}
+          textAlign="right"
+          background="gray.50"
+          w={`${digitCount * digitsPerRem + 1}rem`}
+          pr={2}
+          pl={0}
+        />
+      </NumberInput>
 
+      <Text textAlign="center" userSelect="none">
+        {" "}
+        /{" "}
+      </Text>
       <Text
-        as="input"
-        defaultValue={` / `}
-        disabled
-        opacity={1}
-        border="none"
-        placeholder=" / "
-        textAlign="center"
-        pl={0}
         pr={0}
-        w="1em"
-        // background="gray.100"
-      />
-
-      <Text
-        as="input"
-        defaultValue={`${imageCount ?? "-"}`}
-        disabled
-        opacity={1}
-        border="none"
-        placeholder=""
+        pl={2}
+        w={`${digitCount * digitsPerRem + 1}rem`}
         textAlign="left"
-        pl={0}
-        pr={0}
-        w="3em"
-        // background="gray.100"
-      />
+        cursor="default"
+        fontSize="sm"
+      >{`${imageCount ?? "-"}`}</Text>
 
-      <InputRightAddon p={0}>
-        {imageIndex != null &&
-        imageCount != null &&
-        imageIndex >= 0 &&
-        imageIndex < imageCount - 1 &&
-        images != null ? (
-          <NextLink href={`/images/${images[imageIndex + 1]?.id}`}>
-            <IconButton
-              aria-label="Next image"
-              icon={<RiArrowRightSLine size="1.5em" />}
-            />
-          </NextLink>
-        ) : (
+      {imageIndex != null &&
+      imageCount != null &&
+      imageIndex >= 0 &&
+      imageIndex < imageCount - 1 &&
+      images != null ? (
+        <NextLink href={`/images/${images[imageIndex + 1]?.id}`}>
           <IconButton
-            disabled
             aria-label="Next image"
+            variant="ghost"
             icon={<RiArrowRightSLine size="1.5em" />}
           />
-        )}
-      </InputRightAddon>
-    </InputGroup>
+        </NextLink>
+      ) : (
+        <IconButton
+          disabled
+          variant="ghost"
+          aria-label="No next image"
+          icon={<RiArrowRightSLine size="1.5em" />}
+        />
+      )}
+    </HStack>
   );
 };
