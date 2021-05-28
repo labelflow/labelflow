@@ -4,7 +4,7 @@ input LabelCreateInput {
   y: Int!
   width: Int!
   height: Int!
-  classId: ID
+  labelClassId: ID
 }
 
 input LabelWhereInput {

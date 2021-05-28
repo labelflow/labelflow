@@ -1,13 +1,13 @@
-input ClassCreateInput {
+input LabelClassCreateInput {
   name: String!
   color: ColorHex!
 }
 
-input ClassWhereInput {
+input LabelClassWhereInput {
   id: ID
   name: String
 }
 
-input ClassWhereUniqueInput {
+input LabelClassWhereUniqueInput {
   id: ID!
 }
