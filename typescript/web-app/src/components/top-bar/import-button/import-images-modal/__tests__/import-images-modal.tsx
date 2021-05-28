@@ -54,14 +54,17 @@ beforeAll(() => {
 });
 
 beforeEach(async () => {
-  db.tables.map((table) => table.clear());
-  return clearGetUrlFromImageIdMem();
+  // Warning! The order matters for those 2 lines.
+  // Otherwise, there is a failing race condition.
+  await Promise.all(db.tables.map((table) => table.clear()));
+  clearGetUrlFromImageIdMem();
 });
 
 function renderModalAndImport(filesToImport = files, props = {}) {
   render(<ImportImagesModal isOpen onClose={() => {}} {...props} />, {
     wrapper: Wrapper,
   });
+
   const input = screen.getByLabelText(/drop folders or images/i);
   return waitFor(() => userEvent.upload(input, filesToImport));
 }
@@ -117,10 +120,20 @@ test("should display the images name", async () => {
 
   expect(screen.getByText(/hello.png/i)).toBeDefined();
   expect(screen.getByText(/world.png/i)).toBeDefined();
+
+  /**
+   * This behavior is already tested in the previous test.
+   * However, we need to wait for the upload to finish.
+   * Otherwise, the cleanup in the `beforeEach` messes
+   * with the ongoing logic.
+   */
+  await waitFor(() =>
+    expect(screen.getAllByLabelText("Upload succeed")).toHaveLength(2)
+  );
 });
 
 test("should display the rejected images name", async () => {
-  await renderModalAndImport();
+  await renderModalAndImport(files.slice(2, 3));
 
   expect(screen.getByText(/error.pdf/i)).toBeDefined();
   expect(screen.getByText(/file type must be jpeg, png or bmp/i)).toBeDefined();
