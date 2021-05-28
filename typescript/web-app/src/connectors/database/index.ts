@@ -13,7 +13,7 @@ export interface File {
   blob: File;
 }
 
-interface Image extends Omit<GeneratedImageType, "url"> {
+interface Image extends Omit<GeneratedImageType, "url" | "labels"> {
   fileId: Scalars["ID"];
 }
 

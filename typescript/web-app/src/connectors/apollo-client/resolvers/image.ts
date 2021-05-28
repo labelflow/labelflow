@@ -25,6 +25,12 @@ export const clearGetUrlFromImageIdMem = () => {
   memoize.clear(getUrlFromImageId);
 };
 
+const getLabelsByImageId = async (id: string) => {
+  const getResults = await db.label.where({ imageId: id }).toArray();
+
+  return getResults ?? [];
+};
+
 const getImageById = async (id: string): Promise<Image> => {
   const entity = await db.image.get(id);
 
@@ -33,8 +39,9 @@ const getImageById = async (id: string): Promise<Image> => {
   }
 
   const url = await getUrlFromImageId(entity.fileId);
+  const labels = await getLabelsByImageId(id);
 
-  return { ...entity, url } as Image;
+  return { ...entity, url, labels } as Image;
 };
 
 const getPaginatedImages = async (
@@ -62,6 +69,7 @@ export const images = async (_: any, args: QueryImagesArgs) => {
     imagesList.map(async (imageEntity: any) => {
       return {
         ...imageEntity,
+        labels: await getLabelsByImageId(imageEntity.id),
         url: await getUrlFromImageId(imageEntity.fileId),
       };
     })

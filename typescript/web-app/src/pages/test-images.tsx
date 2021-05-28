@@ -27,6 +27,18 @@ const createImageMutation = gql`
   }
 `;
 
+const createLabelMutation = gql`
+  mutation ($data: LabelCreateInput) {
+    createLabel(data: $data) {
+      imageId
+      x
+      y
+      height
+      width
+    }
+  }
+`;
+
 const importImage = (
   file: File | undefined,
   createImage: (
@@ -43,10 +55,31 @@ const importImage = (
   });
 };
 
+const addLabelToImage = (id: string, createLabel: any) => {
+  console.log("here");
+  createLabel({
+    variables: {
+      data: {
+        imageId: id,
+        x: 10,
+        y: 10,
+        height: 9,
+        width: 9,
+      },
+    },
+  });
+};
+
 const TestImages = () => {
   const { data: imagesResult } =
-    useQuery<{ images: Pick<Image, "id" | "url" | "name">[] }>(imagesQuery);
+    useQuery<{ images: Pick<Image, "id" | "url" | "name" | "labels">[] }>(
+      imagesQuery
+    );
   const [createImage] = useMutation(createImageMutation, {
+    refetchQueries: [{ query: imagesQuery }],
+  });
+
+  const [createLabel] = useMutation(createLabelMutation, {
     refetchQueries: [{ query: imagesQuery }],
   });
 
@@ -57,8 +90,19 @@ const TestImages = () => {
         type="file"
         onChange={(e) => importImage(e?.target?.files?.[0], createImage)}
       />
-      {imagesResult?.images?.map(({ id, name, url }) => (
-        <img key={id} alt={name} src={url} width="300px" height="300px" />
+      {imagesResult?.images?.map(({ id, name, url, labels }) => (
+        <div key={id}>
+          <img alt={name} src={url} width="300px" height="300px" />
+          <button
+            type="button"
+            onClick={() => {
+              addLabelToImage(id, createLabel);
+            }}
+          >
+            Add label
+          </button>
+          <span>{labels}</span>
+        </div>
       ))}
     </div>
   );

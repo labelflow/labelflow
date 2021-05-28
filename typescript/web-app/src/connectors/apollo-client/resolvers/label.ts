@@ -58,6 +58,7 @@ export const createLabel = async (
     height,
     width,
   };
+
   await db.label.add(newLabelEntity);
   return newLabelEntity;
 };

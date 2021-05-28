@@ -51,6 +51,7 @@ export type Image = {
   name: Scalars['String'];
   height: Scalars['Int'];
   width: Scalars['Int'];
+  labels: Array<Label>;
 };
 
 export type ImageCreateInputWithFile = {
@@ -319,6 +320,7 @@ export type ImageResolvers<ContextType = any, ParentType extends ResolversParent
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   height?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   width?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  labels?: Resolver<Array<ResolversTypes['Label']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
