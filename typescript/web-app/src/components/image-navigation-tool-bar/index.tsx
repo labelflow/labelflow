@@ -119,7 +119,6 @@ export const ImageNav = ({ imageId, images, router }: Props) => {
           rounded={6}
           onClick={selectText}
           textAlign="right"
-          background="gray.50"
           w={`${digitCount * digitsPerRem + 1}rem`}
           pr={2}
           pl={0}
