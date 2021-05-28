@@ -5,8 +5,7 @@
     "dev": "next",
     "build": "next build",
     "start": "next start",
-    "type-check": "tsc",
-    "test": "jest"
+    "type-check": "tsc"
   },
   "dependencies": {
     "@apollo/client": "^3.3.18",
