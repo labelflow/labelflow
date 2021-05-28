@@ -42,6 +42,16 @@ const createLabelMutation = gql`
   }
 `;
 
+const createLabelClassMutation = gql`
+  mutation ($data: LabelClassCreateInput) {
+    createLabelClass(data: $data) {
+      id
+      name
+      color
+    }
+  }
+`;
+
 const importImage = (
   file: File | undefined,
   createImage: (
@@ -72,6 +82,18 @@ const addLabelToImage = (id: string, createLabel: any) => {
   });
 };
 
+const addClass = (createLabelClass: any) => {
+  console.log("create class toto");
+  createLabelClass({
+    variables: {
+      data: {
+        name: "toto",
+        color: 0xffffff,
+      },
+    },
+  });
+};
+
 const TestImages = () => {
   const { data: imagesResult } =
     useQuery<{ images: Pick<Image, "id" | "url" | "name" | "labels">[] }>(
@@ -86,6 +108,8 @@ const TestImages = () => {
     refetchQueries: [{ query: imagesQuery }],
   });
 
+  const [createLabelClass] = useMutation(createLabelClassMutation);
+
   return (
     <div>
       <input
@@ -93,6 +117,14 @@ const TestImages = () => {
         type="file"
         onChange={(e) => importImage(e?.target?.files?.[0], createImage)}
       />
+      <button
+        type="button"
+        onClick={() => {
+          addClass(createLabelClass);
+        }}
+      >
+        Add class
+      </button>
       {imagesResult?.images?.map(({ id, name, url, labels }) => (
         <div key={id}>
           <img alt={name} src={url} width="300px" height="300px" />
