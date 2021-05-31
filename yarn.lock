@@ -15105,6 +15105,7 @@ fsevents@^1.2.7:
     eslint-plugin-react-hooks: 4.2.0
     graphql: 15.5.0
     jest: 26.6.3
+    mockdate: ^3.0.5
     prettier: 2.3.0
     react: 17.0.2
     react-dom: 17.0.2
@@ -16124,6 +16125,13 @@ fsevents@^1.2.7:
   bin:
     mkdirp: bin/cmd.js
   checksum: 9dd9792e891927b14ca02226dbe1daeb717b9517a001620d5e2658bbc72c5e4f06887b6cbcbb60595fa5a56e701073cf250f1ed69c1988a6b89faf9fd6a4d049
+  languageName: node
+  linkType: hard
+
+"mockdate@npm:^3.0.5":
+  version: 3.0.5
+  resolution: "mockdate@npm:3.0.5"
+  checksum: 8098a98f0af3a143b7a3f9625c6ae525cad0b72c9798a82b9429e6c89bcb0c67e238126e5df8962169e8a503a51af18d03eea222051c8e67f62707277880ece0
   languageName: node
   linkType: hard
 

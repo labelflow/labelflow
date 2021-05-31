@@ -8,6 +8,11 @@ import {
 } from "../image";
 import { db } from "../../../database";
 
+import {
+  initMockedDate,
+  incrementMockedDate,
+} from "../../../../../../../.jest/utils";
+
 /**
  * We bypass the structured clone algorithm as its current js implementation
  * as its current js implementation doesn't support blobs.
@@ -25,6 +30,7 @@ beforeAll(() => {
 describe("Image resolver test suite", () => {
   beforeEach(async () => {
     db.tables.map((table) => table.clear());
+    initMockedDate();
     return clearGetUrlFromImageIdMem();
   });
 
@@ -83,6 +89,8 @@ describe("Image resolver test suite", () => {
         file: new Blob(),
       },
     });
+
+    incrementMockedDate(1);
     const createResult2 = await createImage(undefined, {
       data: {
         file: new Blob(),
@@ -96,26 +104,21 @@ describe("Image resolver test suite", () => {
   });
 
   test("Querying paginated images", async () => {
-    // need to wait in between tests, otherwise createdAt timestamp
-    // are the same and we can't order the query result properly
-    const sleep = () => {
-      return new Promise((resolve) => {
-        setTimeout(resolve, 1);
-      });
-    };
-
     await createImage(undefined, {
       data: { file: new Blob(), name: "test1" },
     });
-    await sleep();
+
+    incrementMockedDate(1);
     await createImage(undefined, {
       data: { file: new Blob(), name: "test2" },
     });
-    await sleep();
+
+    incrementMockedDate(1);
     await createImage(undefined, {
       data: { file: new Blob(), name: "test3" },
     });
-    await sleep();
+
+    incrementMockedDate(1);
     await createImage(undefined, {
       data: { file: new Blob(), name: "test4" },
     });

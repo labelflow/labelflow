@@ -3,6 +3,10 @@ import "fake-indexeddb/auto";
 // import { v4 as uuidv4 } from "uuid";
 import { createLabel, label, labels } from "../label";
 import { db } from "../../../database";
+import {
+  initMockedDate,
+  incrementMockedDate,
+} from "../../../../../../../.jest/utils";
 
 /**
  * We bypass the structured clone algorithm as its current js implementation
@@ -14,17 +18,10 @@ jest.mock("fake-indexeddb/build/lib/structuredClone", () => ({
   default: (i: any) => i,
 }));
 
-// need to wait in between tests, otherwise createdAt timestamp
-// are the same and we can't order the query result properly
-const sleep = () => {
-  return new Promise((resolve) => {
-    setTimeout(resolve, 1);
-  });
-};
-
 describe("Label resolver test suite", () => {
   beforeEach(async () => {
     Promise.all(db.tables.map((table) => table.clear()));
+    initMockedDate();
   });
 
   test("Query label when db is empty", async () => {
@@ -71,7 +68,8 @@ describe("Label resolver test suite", () => {
         width: 362,
       },
     });
-    await sleep();
+
+    incrementMockedDate(1);
     const createResult2 = await createLabel(undefined, {
       data: {
         imageId: "another image id",
@@ -98,7 +96,8 @@ describe("Label resolver test suite", () => {
         width: 362,
       },
     });
-    await sleep();
+
+    incrementMockedDate(1);
     await createLabel(undefined, {
       data: {
         imageId: "imageId2",
@@ -108,7 +107,8 @@ describe("Label resolver test suite", () => {
         width: 362,
       },
     });
-    await sleep();
+
+    incrementMockedDate(1);
     await createLabel(undefined, {
       data: {
         imageId: "imageId3",
@@ -118,7 +118,8 @@ describe("Label resolver test suite", () => {
         width: 362,
       },
     });
-    await sleep();
+
+    incrementMockedDate(1);
     await createLabel(undefined, {
       data: {
         imageId: "imageId4",
