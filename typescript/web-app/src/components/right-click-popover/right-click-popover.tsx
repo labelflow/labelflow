@@ -19,7 +19,8 @@ import { useCombobox } from "downshift";
 import { LabelClass } from "../../types.generated";
 
 export const ItemListClass = (props: any) => {
-  const { color, shortcut, className, highlight, index, itemProps } = props;
+  const { item, highlight, index, itemProps } = props;
+  const { type, color, name, shortcut } = item;
 
   return (
     <Box
@@ -28,31 +29,47 @@ export const ItemListClass = (props: any) => {
         marginRight: "-13px",
       }}
       bgColor={highlight ? "gray.100" : "transparent"}
-      key={`${className}${index}`}
+      key={`${name}${index}`}
       {...itemProps}
     >
-      <Flex
-        justifyContent="space-between"
-        alignItems="center"
-        style={{ marginLeft: "25px", marginRight: "23px" }}
-        height="35px"
-      >
-        <Flex alignItems="center">
-          <RiCheckboxBlankCircleFill
-            color={color}
-            style={{ marginRight: 10 }}
-            size="25px"
-          />
-          <Text>{className}</Text>
+      {type === "CreateClassItem" ? (
+        <Flex
+          justifyContent="space-between"
+          alignItems="center"
+          style={{ marginLeft: "25px", marginRight: "23px" }}
+          height="35px"
+        >
+          <Flex justifyContent="flex-start">
+            <Text fontWeight="light" fontStyle="italic">
+              Create class&nbsp;
+            </Text>
+            <Text fontWeight="bold" fontStyle="italic">{`“${name}”`}</Text>
+          </Flex>
         </Flex>
-        <Kbd style={{ justifyContent: "center" }}>{shortcut}</Kbd>
-      </Flex>
+      ) : (
+        <Flex
+          justifyContent="space-between"
+          alignItems="center"
+          style={{ marginLeft: "25px", marginRight: "23px" }}
+          height="35px"
+        >
+          <Flex alignItems="center">
+            <RiCheckboxBlankCircleFill
+              color={color}
+              style={{ marginRight: 5 }}
+              size="25px"
+            />
+            <Text>{name}</Text>
+          </Flex>
+          <Kbd style={{ justifyContent: "center" }}>{shortcut}</Kbd>
+        </Flex>
+      )}
     </Box>
   );
 };
 
 export const ClassSelectionCombobox = (props: any) => {
-  const { onSelectedClassChange, labelClasses } = props;
+  const { onSelectedClassChange, labelClasses, createNewClass } = props;
   const [inputItems, setInputItems] = useState(labelClasses);
   const {
     reset,
@@ -63,18 +80,33 @@ export const ClassSelectionCombobox = (props: any) => {
     highlightedIndex,
     getItemProps,
   } = useCombobox({
+    itemToString: (
+      item: LabelClass | { name: string; type: string } | null
+    ): string => item?.name ?? "",
     items: inputItems,
     onInputValueChange: ({ inputValue: inputValueCombobox }) => {
-      setInputItems(
-        labelClasses.filter((labelClass: LabelClass) =>
-          labelClass.name
+      const createClassItem =
+        inputValueCombobox &&
+        labelClasses.filter(
+          (labelClass: LabelClass) => labelClass.name === inputValueCombobox
+        ).length === 0
+          ? [{ name: inputValueCombobox, type: "CreateClassItem" }]
+          : [];
+
+      const filteredLabelClasses = labelClasses.filter(
+        (labelClass: LabelClass) => {
+          return labelClass.name
             .toLowerCase()
-            .startsWith((inputValueCombobox ?? "").toLowerCase())
-        )
+            .startsWith((inputValueCombobox ?? "").toLowerCase());
+        }
       );
+      return setInputItems([...filteredLabelClasses, ...createClassItem]);
     },
     onSelectedItemChange: ({ selectedItem }) =>
-      onSelectedClassChange(selectedItem),
+      selectedItem?.type === "CreateClassItem"
+        ? createNewClass(selectedItem.name)
+        : onSelectedClassChange(selectedItem),
+    defaultHighlightedIndex: 0,
   });
   return (
     <Box>
@@ -102,11 +134,10 @@ export const ClassSelectionCombobox = (props: any) => {
         {inputItems.map((item, index) => (
           <ItemListClass
             itemProps={getItemProps({ item, index })}
-            color={item.color}
-            shortcut={item.shortcut}
-            className={item.name}
+            item={item}
             highlight={highlightedIndex === index}
             index={index}
+            key={`${item}${index}`}
           />
         ))}
       </Box>
@@ -118,12 +149,14 @@ export const RightClickPopover = ({
   isOpen = false,
   onClose = () => {},
   onSelectedClassChange,
+  createNewClass,
   labelClasses,
 }: {
   isOpen?: boolean;
   onClose?: () => void;
   onSelectedClassChange?: (item: LabelClass) => void;
   labelClasses: LabelClass[];
+  createNewClass: (name: string) => void;
 }) => {
   return (
     <Popover
@@ -137,6 +170,7 @@ export const RightClickPopover = ({
           <ClassSelectionCombobox
             onSelectedClassChange={onSelectedClassChange}
             labelClasses={labelClasses}
+            createNewClass={createNewClass}
           />
         </PopoverBody>
       </PopoverContent>

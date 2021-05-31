@@ -17,6 +17,10 @@ const labelClasses = [
   { name: "Plane", color: "#0E6AD3", shortcut: "5" },
 ];
 
+const createNewClass = (name: string): void => {
+  alert(`New label class created: ${name}`);
+};
+
 export const Default = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -28,6 +32,7 @@ export const Default = () => {
         onClose={onClose}
         labelClasses={labelClasses}
         onSelectedClassChange={console.log}
+        createNewClass={createNewClass}
       />
     </div>
   );
@@ -44,6 +49,7 @@ export const OpenedByDefault = () => {
         onClose={onClose}
         labelClasses={labelClasses}
         onSelectedClassChange={console.log}
+        createNewClass={createNewClass}
       />
     </div>
   );
