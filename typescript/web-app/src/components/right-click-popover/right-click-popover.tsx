@@ -35,28 +35,41 @@ import { RiCheckboxBlankCircleFill } from "react-icons/ri";
 import { useCombobox } from "downshift";
 
 const items = [
-  { name: "person", color: "#7E5ACB", shortcut: "1" },
-  { name: "dog", color: "#4F5797 ", shortcut: "2" },
-  { name: "car", color: "#C0B55E", shortcut: "3" },
-  { name: "cycle", color: "#56FDCC", shortcut: "4" },
-  { name: "plane", color: "#0E6AD3", shortcut: "5" },
+  { name: "Person", color: "#7E5ACB", shortcut: "1" },
+  { name: "Dog", color: "#4F5797 ", shortcut: "2" },
+  { name: "Car", color: "#C0B55E", shortcut: "3" },
+  { name: "Cycle", color: "#56FDCC", shortcut: "4" },
+  { name: "Plane", color: "#0E6AD3", shortcut: "5" },
 ];
 
 export const ItemListClass = (props: any) => {
-  const { color, shortcut, className, highlight } = props;
+  const { color, shortcut, className, highlight, index, itemProps } = props;
 
   return (
-    <Flex
-      justifyContent="space-between"
-      alignItems="center"
-      style={{ backgroundColor: highlight ? "#EDF2F7" : "transparent" }}
+    <Box
+      style={{
+        marginLeft: "-13px",
+        marginRight: "-13px",
+      }}
+      bgColor={highlight ? "gray.100" : "transparent"}
+      key={`${className}${index}`}
+      {...itemProps}
     >
-      <Flex alignItems="center">
-        <RiCheckboxBlankCircleFill color={color} style={{ marginRight: 10 }} />
-        <Text>{className}</Text>
+      <Flex
+        justifyContent="space-between"
+        alignItems="center"
+        style={{ marginLeft: "25px", marginRight: "23px" }}
+      >
+        <Flex alignItems="center">
+          <RiCheckboxBlankCircleFill
+            color={color}
+            style={{ marginRight: 10 }}
+          />
+          <Text>{className}</Text>
+        </Flex>
+        <Kbd style={{ justifyContent: "center" }}>{shortcut}</Kbd>
       </Flex>
-      <Kbd style={{ justifyContent: "center" }}>{shortcut}</Kbd>
-    </Flex>
+    </Box>
   );
 };
 
@@ -82,27 +95,27 @@ export const DropdownCombobox = () => {
     },
   });
   return (
-    <Box {...getComboboxProps()}>
-      <InputGroup>
-        <InputLeftElement pointerEvents="none">
-          <IoSearch />
-        </InputLeftElement>
-        <Input {...getInputProps()} placeholder="Search..." />
-        <InputRightElement>
-          <Kbd>/</Kbd>
-        </InputRightElement>
-      </InputGroup>
-      <Box
-        style={{ marginLeft: "12px", marginRight: "10px" }}
-        {...getMenuProps()}
-      >
+    <Box>
+      <Box {...getComboboxProps()}>
+        <InputGroup>
+          <InputLeftElement pointerEvents="none">
+            <IoSearch />
+          </InputLeftElement>
+          <Input {...getInputProps()} placeholder="Search..." />
+          <InputRightElement>
+            <Kbd>/</Kbd>
+          </InputRightElement>
+        </InputGroup>
+      </Box>
+      <Box style={{ marginTop: "5px" }} {...getMenuProps()}>
         {inputItems.map((item, index) => (
           <ItemListClass
-            {...getItemProps({ item, index })}
+            itemProps={getItemProps({ item, index })}
             color={item.color}
             shortcut={item.shortcut}
             className={item.name}
             highlight={highlightedIndex === index}
+            index={index}
           />
         ))}
       </Box>
@@ -124,7 +137,7 @@ export const RightClickPopover = ({
         onClose();
       }}
     >
-      <PopoverContent>
+      <PopoverContent borderColor="gray.200">
         <PopoverBody>
           <DropdownCombobox />
         </PopoverBody>
