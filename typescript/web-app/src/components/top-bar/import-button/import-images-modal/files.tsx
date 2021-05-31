@@ -22,6 +22,7 @@ const FileImportProgress = ({ status }: { status: boolean | string }) => {
         <span>
           <ErrorIcon
             display="inline-block"
+            fontSize="xl"
             color="red.500"
             aria-label="Error indicator"
           />
@@ -36,6 +37,7 @@ const FileImportProgress = ({ status }: { status: boolean | string }) => {
         <span>
           <SucceedIcon
             display="inline-block"
+            fontSize="xl"
             color="green.500"
             aria-label="Upload succeed"
           />
@@ -49,6 +51,7 @@ const FileImportProgress = ({ status }: { status: boolean | string }) => {
       <span>
         <LoadingIcon
           display="inline-block"
+          fontSize="xl"
           color="gray.800"
           aria-label="Loading indicator"
         />
