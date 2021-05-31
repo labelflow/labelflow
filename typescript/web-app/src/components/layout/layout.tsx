@@ -1,12 +1,12 @@
-import * as React from "react";
+import { ReactNode } from "react";
 import { ChakraProvider, Flex, Box } from "@chakra-ui/react";
 
 import { theme } from "../../theme";
 import { TopBar } from "../top-bar";
 
 export type Props = {
-  topBarLeftContent?: React.ReactNode;
-  children: React.ReactNode;
+  topBarLeftContent?: ReactNode;
+  children: ReactNode;
 };
 
 export const Layout = ({ children, topBarLeftContent }: Props) => {

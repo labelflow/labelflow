@@ -1,10 +1,10 @@
-import * as React from "react";
+import { ReactNode } from "react";
 import { HStack, Spacer } from "@chakra-ui/react";
 import { Logo } from "../logo";
 import { ImportButton } from "./import-button";
 
 export type Props = {
-  leftContent?: React.ReactNode;
+  leftContent?: ReactNode;
 };
 
 export const TopBar = ({ leftContent }: Props) => {
