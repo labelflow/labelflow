@@ -68,43 +68,16 @@ export const DropdownCombobox = () => {
   });
   return (
     <Box>
-      <Grid
-        {...getComboboxProps()}
-        templateColumns="6fr 1fr"
-        justifyContent="center"
-        alignItems="center"
-        gap="3"
-      >
-        <GridItem colSpan={1}>
-          <ItemListClass color="#ff0000" shortcut="1">
-            <Editable defaultValue="No class selected">
-              <EditablePreview />
-              <EditableInput {...getInputProps()} />
-            </Editable>
-          </ItemListClass>
-        </GridItem>
-        <GridItem colSpan={1}>
-          <IconButton
-            type="button"
-            {...getToggleButtonProps()}
-            aria-label="toggle menu"
-            icon={<BsChevronDown />}
-            background="white"
-          />
-        </GridItem>
-      </Grid>
-
       <div {...getMenuProps()}>
-        {isOpen &&
-          inputItems.map((item, index) => (
-            <ItemListClass
-              {...getItemProps({ item, index })}
-              color="#00FF00"
-              shortcut={index}
-            >
-              <Text>{item}</Text>
-            </ItemListClass>
-          ))}
+        {inputItems.map((item, index) => (
+          <ItemListClass
+            {...getItemProps({ item, index })}
+            color="#00FF00"
+            shortcut={index}
+          >
+            <Text>{item}</Text>
+          </ItemListClass>
+        ))}
       </div>
     </Box>
   );
