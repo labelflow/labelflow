@@ -85,12 +85,16 @@ export const ImageNav = ({ imageId, images, router }: Props) => {
 
   useHotkeys(
     keymap.goToPreviousImage.key,
-    () => typeof imageIndex === "number" && goToIndex(imageIndex - 1)
+    () => typeof imageIndex === "number" && goToIndex(imageIndex - 1),
+    {},
+    [goToIndex, imageIndex]
   );
 
   useHotkeys(
     keymap.goToNextImage.key,
-    () => typeof imageIndex === "number" && goToIndex(imageIndex + 1)
+    () => typeof imageIndex === "number" && goToIndex(imageIndex + 1),
+    {},
+    [goToIndex, imageIndex]
   );
 
   return (
