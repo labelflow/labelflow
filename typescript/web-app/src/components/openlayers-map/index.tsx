@@ -1,7 +1,5 @@
-// import { useEffect, useRef } from "react";
 import { Extent, getCenter } from "ol/extent";
 import { Size } from "ol/size";
-// import { View as OlView } from "ol";
 import memoize from "mem";
 import Projection from "ol/proj/Projection";
 import useMeasure from "react-use-measure";
@@ -19,10 +17,13 @@ const empty: any[] = [];
  */
 const viewPadding = [72, 72, 72, 72];
 
+/**
+ * Standard projection, the same for all images, with arbitrary extent
+ */
 const standardProjection = new Projection({
   code: "standardImageStaticProjection",
   units: "pixels",
-  extent: [0, 0, 10000, 10000],
+  extent: [0, 0, 1000000, 1000000],
 });
 
 /**
@@ -40,6 +41,7 @@ const getMemoizedProperties = memoize(
     const extent: Extent = [0, 0, imageWidth, imageHeight];
     const center = getCenter(extent);
     const projection = standardProjection;
+    // // We could also use an image-specific projection, as in openlayers examples:
     // const projection = new Projection({
     //   code: imageId,
     //   units: "pixels",

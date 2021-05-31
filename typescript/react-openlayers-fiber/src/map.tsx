@@ -58,20 +58,24 @@ export const Map = forwardRef<OlMap, Props>(
       }
     }, [children, mapContainerRef.current, map]);
 
-    useEffect(() => {
-      if (isNil(containerRef)) return;
-      if (isNil(mapContainerRef.current)) {
+    const setRef = (value: HTMLDivElement): void => {
+      if (isNil(value)) {
         return;
       }
       if (isFunction(containerRef)) {
-        containerRef(mapContainerRef.current);
-        return;
+        containerRef(value);
+      } else if (!isNil(containerRef)) {
+        // eslint-disable-next-line no-param-reassign
+        (containerRef as MutableRefObject<HTMLDivElement>).current = value;
       }
-      // eslint-disable-next-line no-param-reassign
-      (containerRef as MutableRefObject<HTMLDivElement>).current =
-        mapContainerRef.current;
-    }, [mapContainerRef.current]);
+      if (isFunction(mapContainerRef)) {
+        mapContainerRef(value);
+      } else if (!isNil(mapContainerRef)) {
+        // eslint-disable-next-line no-param-reassign
+        (mapContainerRef as MutableRefObject<HTMLDivElement>).current = value;
+      }
+    };
 
-    return <div style={style} ref={mapContainerRef} />;
+    return <div style={style} ref={setRef} />;
   }
 );

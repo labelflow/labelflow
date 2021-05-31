@@ -14,11 +14,14 @@ module.exports = {
 
     // Add graphql import
     // See https://www.npmjs.com/package/graphql-tag#webpack-loading-and-preprocessing
-    config.module.rules.push({
-      test: /\.(graphql|gql)$/,
-      exclude: /node_modules/,
-      loader: "graphql-tag/loader",
-    });
+    config.module.rules = [
+      ...config.module.rules,
+      {
+        test: /\.(graphql|gql)$/,
+        exclude: /node_modules/,
+        loader: "graphql-tag/loader",
+      }
+    ];
 
     // Transpile other packages of the monorepo
     // E.g.: `@labelflow/react-openlayers-fiber`
@@ -33,7 +36,9 @@ module.exports = {
         include: [resolvedBaseUrl],
         use: defaultLoaders.babel,
         exclude: (excludePath) => {
-          // return /node_modules/.test(excludePath) && ! /\/ol/.test(excludePath)
+          // To allow to resolve files inside `node_modules`, we could add a condition like this:
+          //     return /node_modules/.test(excludePath) && ! /\/ol/.test(excludePath)
+          // This is not needed for now though:
           return /node_modules/.test(excludePath)
         },
       },
