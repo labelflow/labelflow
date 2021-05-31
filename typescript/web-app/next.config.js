@@ -43,18 +43,21 @@ module.exports = {
     // See https://github.com/vercel/next.js/blob/bd589349d2a90c41e7fc9549ea2438febfc9a510/packages/next/build/webpack-config.ts#L637
     config.externals = config.externals.map(external => {
       if (!(typeof external === 'function')) {
+        // `externals` options that are hardcoded strings and arrays are used diretly
         return external
       } else {
+        // Override `externals` options that are functions
         const isWebpack5 = nextConfig.future.webpack5;
         if (isWebpack5) {
           throw new Error("Webpack 5 not yet supported, check next.config.js")
         } else {
+          // Return a webpack4-like `externals` option function
           return (context, request, callback) => {
             if (/^ol/.test(request)) {
-              // Make an exception for ol, continue without externalizing the import
+              // Make an exception for ol, never externalize this import, it must be transpiled and bundled
               callback();
             } else {
-              // Use the normal NextJS externals
+              // Use the normal NextJS externals function
               external(context, request, callback)
             }
           }

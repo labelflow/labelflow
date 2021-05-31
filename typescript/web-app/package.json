@@ -28,6 +28,7 @@
     "react-dom": "17.x",
     "react-dropzone": "^11.3.2",
     "react-icons": "^4.2.0",
+    "react-use-measure": "^2.0.4",
     "uuid": "^8.3.2"
   },
   "devDependencies": {

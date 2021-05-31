@@ -19,7 +19,7 @@ import { Layout } from "../../components/layout";
 import type { Image } from "../../types.generated";
 import { ImageNav } from "../../components/image-navigation-tool-bar";
 
-const Toto = dynamic(() => import("../../components/openlayers-map"), {
+const OpenlayersMap = dynamic(() => import("../../components/openlayers-map"), {
   ssr: false,
   loading: () => <div>loading</div>,
 });
@@ -86,7 +86,7 @@ const ImagePage = () => {
         </Breadcrumb>
       }
     >
-      <Toto image={image} />
+      <OpenlayersMap image={image} />
 
       <HStack
         padding={4}
