@@ -67,21 +67,10 @@ const OpenlayersMap = ({ image }: Props) => {
   const { url, size, extent, center, projection, width, height } =
     getMemoizedProperties(image.id, image);
 
-  console.log("bounds");
-  console.log(bounds);
-
-  console.log("size");
-  console.log(size);
-
   const resolution = Math.max(
     width / (bounds.width - viewPadding[1] - viewPadding[3]),
     height / (bounds.height - viewPadding[0] - viewPadding[2])
   );
-
-  if (isBoundsValid) {
-    console.log("resolution");
-    console.log(resolution);
-  }
 
   return (
     <Map
