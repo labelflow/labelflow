@@ -12,6 +12,8 @@ import { NextRouter } from "next/router";
 import NextLink from "next/link";
 import { useHotkeys } from "react-hotkeys-hook";
 
+import { keymap } from "../../keymap";
+
 import { Image } from "../../types.generated";
 
 export type Props = {
@@ -82,12 +84,12 @@ export const ImageNav = ({ imageId, images, router }: Props) => {
   }, [imageIndex]);
 
   useHotkeys(
-    "left",
+    keymap.goToPreviousImage.key,
     () => typeof imageIndex === "number" && goToIndex(imageIndex - 1)
   );
 
   useHotkeys(
-    "right",
+    keymap.goToNextImage.key,
     () => typeof imageIndex === "number" && goToIndex(imageIndex + 1)
   );
 
