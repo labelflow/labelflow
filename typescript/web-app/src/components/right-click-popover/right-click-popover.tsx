@@ -35,12 +35,18 @@ export const ItemListClass = (props: any) => {
   const { color, shortcut, children } = props;
 
   return (
-    <Flex>
-      <RiCheckboxBlankCircleFill color={color} />
-      <Spacer />
-      {children}
-      <Spacer />
-      <Kbd w="10%">{shortcut}</Kbd>
+    <Flex
+      style={{ width: "100%" }}
+      justifyContent="space-between"
+      alignItems="center"
+    >
+      <Flex alignItems="center">
+        <RiCheckboxBlankCircleFill color={color} style={{ marginRight: 10 }} />
+        <Spacer />
+        {children}
+      </Flex>
+
+      <Kbd style={{ justifyContent: "center" }}>{shortcut}</Kbd>
     </Flex>
   );
 };
