@@ -1,12 +1,12 @@
 import { addDecorator } from "@storybook/react";
 import { Button, useDisclosure } from "@chakra-ui/react";
-import { RightClickModal } from "../right-click-modal";
+import { RightClickPopover } from "../right-click-popover";
 import { chakraDecorator } from "../../../utils/chakra-decorator";
 
 addDecorator(chakraDecorator);
 
 export default {
-  title: "web-app/Right click modal",
+  title: "web-app/Right click popover",
 };
 
 export const Default = () => {
@@ -15,7 +15,7 @@ export const Default = () => {
   return (
     <div>
       <Button onClick={onOpen}>Display</Button>
-      <RightClickModal isOpen={isOpen} onClose={onClose} />
+      <RightClickPopover isOpen={isOpen} onClose={onClose} />
     </div>
   );
 };
@@ -26,7 +26,7 @@ export const OpenedByDefault = () => {
   return (
     <div>
       <Button onClick={onOpen}>Display</Button>
-      <RightClickModal isOpen={isOpen} onClose={onClose} />
+      <RightClickPopover isOpen={isOpen} onClose={onClose} />
     </div>
   );
 };

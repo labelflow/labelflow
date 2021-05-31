@@ -6,12 +6,9 @@ import {
   Heading,
   IconButton,
   Editable,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalCloseButton,
+  Popover,
+  PopoverContent,
+  PopoverBody,
   Table,
   Tbody,
   Tooltip,
@@ -22,12 +19,35 @@ import {
   EditablePreview,
   Grid,
   GridItem,
+  Kbd,
+  HStack,
 } from "@chakra-ui/react";
 import { BsChevronDown } from "react-icons/bs";
 import { RiCheckboxBlankCircleFill } from "react-icons/ri";
 import { useCombobox } from "downshift";
 
 const items = ["person", "dog", "car", "cycle", "plane"];
+
+export const ItemListClass = (
+  color: string,
+  isEditable: boolean,
+  name: string,
+  shortcut: string,
+  getInputProps
+) => (
+  <HStack spacing="24px">
+    <RiCheckboxBlankCircleFill color={color} />
+    {isEditable ? (
+      <Editable defaultValue={name}>
+        <EditablePreview />
+        <EditableInput {...getInputProps()} />
+      </Editable>
+    ) : (
+      <Text>Some text</Text>
+    )}
+    <Kbd>1</Kbd>
+  </HStack>
+);
 
 export const DropdownCombobox = () => {
   const [inputItems, setInputItems] = useState(items);
@@ -54,21 +74,20 @@ export const DropdownCombobox = () => {
     <Box>
       <Grid
         {...getComboboxProps()}
-        templateColumns="1fr 5fr 1fr"
+        templateColumns="6fr 1fr"
         justifyContent="center"
         alignItems="center"
-        gap={3}
+        gap="3"
       >
         <GridItem colSpan={1}>
-          <Box alignItems="center" justifyContent="center" display="flex">
+          <HStack spacing="24px">
             <RiCheckboxBlankCircleFill color="#ff0000" />
-          </Box>
-        </GridItem>
-        <GridItem colSpan={1}>
-          <Editable defaultValue="No class selected">
-            <EditablePreview />
-            <EditableInput {...getInputProps()} />
-          </Editable>
+            <Editable defaultValue="No class selected">
+              <EditablePreview />
+              <EditableInput {...getInputProps()} />
+            </Editable>
+            <Kbd>1</Kbd>
+          </HStack>
         </GridItem>
         <GridItem colSpan={1}>
           <IconButton
@@ -98,7 +117,7 @@ export const DropdownCombobox = () => {
   );
 };
 
-export const RightClickModal = ({
+export const RightClickPopover = ({
   isOpen = false,
   onClose = () => {},
 }: {
@@ -106,29 +125,20 @@ export const RightClickModal = ({
   onClose?: () => void;
 }) => {
   return (
-    <Modal
+    <Popover
       isOpen={isOpen}
       onClose={() => {
         onClose();
       }}
     >
-      <ModalOverlay />
-      <ModalContent>
-        <ModalBody
-          display="flex"
-          pt="0"
-          pb="6"
-          pr="6"
-          pl="6"
-          overflowY="hidden"
-          flexDirection="column"
-        >
-          <Text fontSize="lg" fontWeight="medium">
+      <PopoverContent>
+        <PopoverBody>
+          {/* <Text fontSize="lg" fontWeight="medium">
             Implement combo box with downshift JS
-          </Text>
+          </Text> */}
           <DropdownCombobox />
-        </ModalBody>
-      </ModalContent>
-    </Modal>
+        </PopoverBody>
+      </PopoverContent>
+    </Popover>
   );
 };
