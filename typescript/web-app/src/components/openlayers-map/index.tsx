@@ -30,7 +30,7 @@ const standardProjection = new Projection({
  */
 const getMemoizedProperties = memoize(
   (
-    imageId,
+    _imageId,
     image?: Pick<Image, "id" | "url" | "name" | "width" | "height">
   ) => {
     const url = image?.url;
