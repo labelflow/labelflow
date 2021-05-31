@@ -156,17 +156,6 @@ describe("Label resolver test suite", () => {
       },
     });
 
-    incrementMockedDate(1);
-    await createLabel(undefined, {
-      data: {
-        imageId: "imageId4",
-        x: 3.14,
-        y: 42.0,
-        height: 768,
-        width: 362,
-      },
-    });
-
     const queryResult = await labels(undefined, { skip: 1, first: 1 });
 
     expect(queryResult.length).toBe(1);

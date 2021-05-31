@@ -26,7 +26,7 @@ export const clearGetUrlFromImageIdMem = () => {
 };
 
 const getLabelsByImageId = async (id: string) => {
-  const getResults = await db.label.where({ imageId: id }).toArray();
+  const getResults = await db.label.where({ imageId: id }).sortBy("createdAt");
 
   return getResults ?? [];
 };

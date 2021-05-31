@@ -6,6 +6,7 @@ import {
   images,
   clearGetUrlFromImageIdMem,
 } from "../image";
+import { createLabel } from "../label";
 import { db } from "../../../database";
 
 import {
@@ -127,5 +128,53 @@ describe("Image resolver test suite", () => {
 
     expect(queryResult.length).toBe(1);
     expect(queryResult[0].name).toBe("test2");
+  });
+
+  test("Querying an image with labels", async () => {
+    const newImage = await createImage(undefined, {
+      data: { file: new Blob(), name: "test1" },
+    });
+
+    await createLabel(undefined, {
+      data: {
+        imageId: newImage.id,
+        x: 1,
+        y: 1,
+        height: 1,
+        width: 1,
+      },
+    });
+
+    incrementMockedDate(-10);
+
+    await createLabel(undefined, {
+      data: {
+        imageId: newImage.id,
+        x: 2,
+        y: 2,
+        height: 2,
+        width: 2,
+      },
+    });
+
+    incrementMockedDate(200);
+    await createLabel(undefined, {
+      data: {
+        imageId: newImage.id,
+        x: 3,
+        y: 3,
+        height: 3,
+        width: 3,
+      },
+    });
+
+    const { labels } = await image(undefined, {
+      where: { id: newImage.id },
+    });
+
+    const labelHeights = labels.map((l) => l.height);
+
+    // labels should show in the right order
+    expect(labelHeights).toEqual([2, 1, 3]);
   });
 });
