@@ -21,33 +21,29 @@ import {
   GridItem,
   Kbd,
   HStack,
+  Flex,
+  Spacer,
 } from "@chakra-ui/react";
+
 import { BsChevronDown } from "react-icons/bs";
 import { RiCheckboxBlankCircleFill } from "react-icons/ri";
 import { useCombobox } from "downshift";
 
 const items = ["person", "dog", "car", "cycle", "plane"];
 
-export const ItemListClass = (
-  color: string,
-  isEditable: boolean,
-  name: string,
-  shortcut: string,
-  getInputProps
-) => (
-  <HStack spacing="24px">
-    <RiCheckboxBlankCircleFill color={color} />
-    {isEditable ? (
-      <Editable defaultValue={name}>
-        <EditablePreview />
-        <EditableInput {...getInputProps()} />
-      </Editable>
-    ) : (
-      <Text>Some text</Text>
-    )}
-    <Kbd>1</Kbd>
-  </HStack>
-);
+export const ItemListClass = (props: any) => {
+  const { color, shortcut, children } = props;
+
+  return (
+    <Flex>
+      <RiCheckboxBlankCircleFill color={color} />
+      <Spacer />
+      {children}
+      <Spacer />
+      <Kbd w="10%">{shortcut}</Kbd>
+    </Flex>
+  );
+};
 
 export const DropdownCombobox = () => {
   const [inputItems, setInputItems] = useState(items);
@@ -80,14 +76,12 @@ export const DropdownCombobox = () => {
         gap="3"
       >
         <GridItem colSpan={1}>
-          <HStack spacing="24px">
-            <RiCheckboxBlankCircleFill color="#ff0000" />
+          <ItemListClass color="#ff0000" shortcut="1">
             <Editable defaultValue="No class selected">
               <EditablePreview />
               <EditableInput {...getInputProps()} />
             </Editable>
-            <Kbd>1</Kbd>
-          </HStack>
+          </ItemListClass>
         </GridItem>
         <GridItem colSpan={1}>
           <IconButton
@@ -99,20 +93,19 @@ export const DropdownCombobox = () => {
           />
         </GridItem>
       </Grid>
-      <ul {...getMenuProps()}>
+
+      <div {...getMenuProps()}>
         {isOpen &&
           inputItems.map((item, index) => (
-            <li
-              style={
-                highlightedIndex === index ? { backgroundColor: "#bde4ff" } : {}
-              }
-              key={`${item}${index}`}
+            <ItemListClass
               {...getItemProps({ item, index })}
+              color="#00FF00"
+              shortcut={index}
             >
-              {item}
-            </li>
+              <Text>{item}</Text>
+            </ItemListClass>
           ))}
-      </ul>
+      </div>
     </Box>
   );
 };
