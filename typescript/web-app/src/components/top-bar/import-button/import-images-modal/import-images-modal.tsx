@@ -46,36 +46,40 @@ export const ImportImagesModal = ({
   useEffect(() => {
     if (isEmpty(files)) return;
 
-    setCloseable(false);
-    Promise.all(
-      files
-        .filter((file) => isEmpty(file.errors))
-        .map(async (acceptedFile) => {
-          try {
-            await apolloClient.mutate({
-              mutation: createImageMutation,
-              variables: { file: acceptedFile.file },
-            });
+    const createImages = async () => {
+      await Promise.all(
+        files
+          .filter((file) => isEmpty(file.errors))
+          .map(async (acceptedFile) => {
+            try {
+              await apolloClient.mutate({
+                mutation: createImageMutation,
+                variables: { file: acceptedFile.file },
+              });
 
-            setFileUploadStatuses((previousFileUploadStatuses) => {
-              return {
-                ...previousFileUploadStatuses,
-                [acceptedFile.file.path ?? acceptedFile.file.name]: true,
-              };
-            });
-          } catch (err) {
-            // TODO: Spot possibles errors (no more space on disk?)
-            setFileUploadStatuses((previousFileUploadStatuses) => {
-              return {
-                ...previousFileUploadStatuses,
-                [acceptedFile.file.path ?? acceptedFile.file.name]: err.message,
-              };
-            });
-          }
-        })
-    ).then(() => {
+              setFileUploadStatuses((previousFileUploadStatuses) => {
+                return {
+                  ...previousFileUploadStatuses,
+                  [acceptedFile.file.path ?? acceptedFile.file.name]: true,
+                };
+              });
+            } catch (err) {
+              setFileUploadStatuses((previousFileUploadStatuses) => {
+                return {
+                  ...previousFileUploadStatuses,
+                  [acceptedFile.file.path ?? acceptedFile.file.name]:
+                    err.message,
+                };
+              });
+            }
+          })
+      );
+
       setCloseable(true);
-    });
+    };
+
+    setCloseable(false);
+    createImages();
   }, [files]);
 
   return (
