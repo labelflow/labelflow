@@ -23,32 +23,38 @@ import {
   HStack,
   Flex,
   Spacer,
+  Input,
+  InputGroup,
+  InputLeftElement,
+  InputRightElement,
+  Icon,
 } from "@chakra-ui/react";
+import { IoSearch } from "react-icons/io5";
 
-import { BsChevronDown } from "react-icons/bs";
 import { RiCheckboxBlankCircleFill } from "react-icons/ri";
 import { useCombobox } from "downshift";
 
-const items = ["person", "dog", "car", "cycle", "plane"];
+const items = [
+  { name: "person", color: "#7E5ACB", shortcut: "1" },
+  { name: "dog", color: "#4F5797 ", shortcut: "2" },
+  { name: "car", color: "#C0B55E", shortcut: "3" },
+  { name: "cycle", color: "#56FDCC", shortcut: "4" },
+  { name: "plane", color: "#0E6AD3", shortcut: "5" },
+];
 
-export const ItemListClass = (props: {
-  color: string;
-  shortcut: string;
-  className: string;
-}) => {
-  const { color, shortcut, className } = props;
+export const ItemListClass = (props: any) => {
+  const { color, shortcut, className, highlight } = props;
 
   return (
     <Flex
-      style={{ width: "100%" }}
       justifyContent="space-between"
       alignItems="center"
+      style={{ backgroundColor: highlight ? "#EDF2F7" : "transparent" }}
     >
       <Flex alignItems="center">
         <RiCheckboxBlankCircleFill color={color} style={{ marginRight: 10 }} />
         <Text>{className}</Text>
       </Flex>
-
       <Kbd style={{ justifyContent: "center" }}>{shortcut}</Kbd>
     </Flex>
   );
@@ -70,23 +76,36 @@ export const DropdownCombobox = () => {
     onInputValueChange: ({ inputValue }) => {
       setInputItems(
         items.filter((item) =>
-          item.toLowerCase().startsWith(inputValue.toLowerCase())
+          item.name.toLowerCase().startsWith(inputValue.toLowerCase())
         )
       );
     },
   });
   return (
-    <Box>
-      <div {...getMenuProps()}>
+    <Box {...getComboboxProps()}>
+      <InputGroup>
+        <InputLeftElement pointerEvents="none">
+          <IoSearch />
+        </InputLeftElement>
+        <Input {...getInputProps()} placeholder="Search..." />
+        <InputRightElement>
+          <Kbd>/</Kbd>
+        </InputRightElement>
+      </InputGroup>
+      <Box
+        style={{ marginLeft: "12px", marginRight: "10px" }}
+        {...getMenuProps()}
+      >
         {inputItems.map((item, index) => (
           <ItemListClass
             {...getItemProps({ item, index })}
-            color="#00FF00"
-            shortcut={index}
-            className={item}
+            color={item.color}
+            shortcut={item.shortcut}
+            className={item.name}
+            highlight={highlightedIndex === index}
           />
         ))}
-      </div>
+      </Box>
     </Box>
   );
 };
@@ -107,9 +126,6 @@ export const RightClickPopover = ({
     >
       <PopoverContent>
         <PopoverBody>
-          {/* <Text fontSize="lg" fontWeight="medium">
-            Implement combo box with downshift JS
-          </Text> */}
           <DropdownCombobox />
         </PopoverBody>
       </PopoverContent>
