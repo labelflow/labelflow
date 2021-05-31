@@ -10,6 +10,9 @@ import { RiArrowRightSLine, RiArrowLeftSLine } from "react-icons/ri";
 import { findIndex, isNaN, isNumber } from "lodash/fp";
 import { NextRouter } from "next/router";
 import NextLink from "next/link";
+import { useHotkeys } from "react-hotkeys-hook";
+
+import { keymap } from "../../keymap";
 
 import { Image } from "../../types.generated";
 
@@ -38,14 +41,19 @@ export const ImageNav = ({ imageId, images, router }: Props) => {
 
   const [value, setValue] = useState<string>(format(imageIndex));
 
-  const goTo = (val: string): void => {
+  const goToIndex = (newIndex: number | undefined) => {
     if (!images) return;
     if (imageCount == null) return;
-    const newIndex = parse(val);
+
     if (newIndex == null || isNaN(newIndex)) return;
     if (newIndex >= 0 && newIndex <= imageCount - 1) {
       router.push(`/images/${images[newIndex]?.id}`);
     }
+  };
+
+  const goTo = (val: string): void => {
+    const newIndex = parse(val);
+    goToIndex(newIndex);
   };
 
   const reset = () => {
@@ -74,6 +82,20 @@ export const ImageNav = ({ imageId, images, router }: Props) => {
   useEffect(() => {
     reset();
   }, [imageIndex]);
+
+  useHotkeys(
+    keymap.goToPreviousImage.key,
+    () => typeof imageIndex === "number" && goToIndex(imageIndex - 1),
+    {},
+    [goToIndex, imageIndex]
+  );
+
+  useHotkeys(
+    keymap.goToNextImage.key,
+    () => typeof imageIndex === "number" && goToIndex(imageIndex + 1),
+    {},
+    [goToIndex, imageIndex]
+  );
 
   return (
     <HStack
