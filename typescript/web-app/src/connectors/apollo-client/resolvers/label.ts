@@ -47,6 +47,13 @@ export const createLabel = async (
   args: MutationCreateLabelArgs
 ): Promise<Label> => {
   const { imageId, x, y, height, width } = args.data;
+
+  // We need to ensure the image exists before adding the labels
+  const image = await db.image.get(imageId);
+  if (image == null) {
+    throw new Error(`The image id ${imageId} doesn't exist.`);
+  }
+
   const labelId = uuidv4();
   const newLabelEntity = {
     id: labelId,

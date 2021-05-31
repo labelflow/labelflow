@@ -18,6 +18,18 @@ jest.mock("fake-indexeddb/build/lib/structuredClone", () => ({
   default: (i: any) => i,
 }));
 
+const createEmptyImage = async (imageId: string) => {
+  return db.image.add({
+    id: imageId,
+    createdAt: null,
+    updatedAt: null,
+    name: "",
+    width: 0,
+    height: 0,
+    fileId: "",
+  });
+};
+
 describe("Label resolver test suite", () => {
   beforeEach(async () => {
     Promise.all(db.tables.map((table) => table.clear()));
@@ -39,7 +51,24 @@ describe("Label resolver test suite", () => {
     expect(queryNoId()).rejects.toThrow();
   });
 
+  test("Creating a label should fail if its image doesn't exist", async () => {
+    const createResultNoImage = async () =>
+      createLabel(undefined, {
+        data: {
+          imageId: "0024fbc1-387b-444f-8ad0-d7a3e316726a",
+          x: 3.14,
+          y: 42.0,
+          height: 768,
+          width: 362,
+        },
+      });
+
+    expect(createResultNoImage()).rejects.toThrow();
+  });
+
   test("Create label", async () => {
+    await createEmptyImage("0024fbc1-387b-444f-8ad0-d7a3e316726a");
+
     const createResult = await createLabel(undefined, {
       data: {
         imageId: "0024fbc1-387b-444f-8ad0-d7a3e316726a",
@@ -59,6 +88,9 @@ describe("Label resolver test suite", () => {
   });
 
   test("Query labels", async () => {
+    await createEmptyImage("an image id");
+    await createEmptyImage("another image id");
+
     const createResult1 = await createLabel(undefined, {
       data: {
         imageId: "an image id",
@@ -87,6 +119,11 @@ describe("Label resolver test suite", () => {
   });
 
   test("Querying paginated labels", async () => {
+    await createEmptyImage("imageId1");
+    await createEmptyImage("imageId2");
+    await createEmptyImage("imageId3");
+    await createEmptyImage("imageId4");
+
     await createLabel(undefined, {
       data: {
         imageId: "imageId1",
