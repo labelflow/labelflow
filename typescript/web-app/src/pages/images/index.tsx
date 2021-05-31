@@ -5,8 +5,9 @@ import {
   FetchResult,
 } from "@apollo/client";
 import gql from "graphql-tag";
-
-import type { Image } from "../types.generated";
+import NextLink from "next/link";
+import { Layout } from "../../components/layout";
+import type { Image } from "../../types.generated";
 
 const imagesQuery = gql`
   query {
@@ -20,7 +21,6 @@ const imagesQuery = gql`
     }
   }
 `;
-
 const createImageMutation = gql`
   mutation ($data: ImageCreateInputWithFile) {
     createImage(data: $data) {
@@ -58,21 +58,7 @@ const importImage = (
   });
 };
 
-const addLabelToImage = (id: string, createLabel: any) => {
-  createLabel({
-    variables: {
-      data: {
-        imageId: id,
-        x: 10,
-        y: 10,
-        height: 9,
-        width: 9,
-      },
-    },
-  });
-};
-
-const TestImages = () => {
+const ImagesPage = () => {
   const { data: imagesResult } =
     useQuery<{ images: Pick<Image, "id" | "url" | "name" | "labels">[] }>(
       imagesQuery
@@ -87,34 +73,29 @@ const TestImages = () => {
   });
 
   return (
-    <div>
-      <input
-        name="upload"
-        type="file"
-        onChange={(e) => importImage(e?.target?.files?.[0], createImage)}
-      />
-      {imagesResult?.images?.map(({ id, name, url, labels }) => (
-        <div key={id}>
-          <img alt={name} src={url} width="300px" height="300px" />
-          <button
-            type="button"
-            onClick={() => {
-              addLabelToImage(id, createLabel);
-            }}
-          >
-            Add label
-          </button>
-          <ul>
-            {labels
-              ? labels.map(({ id: labelId }) => (
-                  <li key={labelId}> {labelId} </li>
-                ))
-              : "no label"}
-          </ul>
-        </div>
-      ))}
-    </div>
+    <Layout>
+      <div>
+        <input
+          name="upload"
+          type="file"
+          onChange={(e) => importImage(e?.target?.files?.[0], createImage)}
+        />
+        <ul>
+          {imagesResult?.images?.map(({ id, name, url }) => (
+            <NextLink href={`/images/${id}`} key={id}>
+              {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
+              <a>
+                <li>
+                  <span>{id}</span>
+                  <img alt={name} src={url} width="300px" height="300px" />
+                </li>
+              </a>
+            </NextLink>
+          ))}
+        </ul>
+      </div>
+    </Layout>
   );
 };
 
-export default TestImages;
+export default ImagesPage;
