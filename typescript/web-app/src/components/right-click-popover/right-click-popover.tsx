@@ -31,7 +31,7 @@ import {
 } from "@chakra-ui/react";
 import { IoSearch } from "react-icons/io5";
 
-import { RiCheckboxBlankCircleFill } from "react-icons/ri";
+import { RiCheckboxBlankCircleFill, RiCloseCircleFill } from "react-icons/ri";
 import { useCombobox } from "downshift";
 
 const items = [
@@ -79,6 +79,7 @@ export const DropdownCombobox = () => {
     isOpen,
     getToggleButtonProps,
     getLabelProps,
+    inputValue,
     getMenuProps,
     getInputProps,
     getComboboxProps,
@@ -86,10 +87,10 @@ export const DropdownCombobox = () => {
     getItemProps,
   } = useCombobox({
     items: inputItems,
-    onInputValueChange: ({ inputValue }) => {
+    onInputValueChange: ({ inputValue: inputValueCombobox }) => {
       setInputItems(
         items.filter((item) =>
-          item.name.toLowerCase().startsWith(inputValue.toLowerCase())
+          item.name.toLowerCase().startsWith(inputValueCombobox.toLowerCase())
         )
       );
     },
@@ -103,7 +104,16 @@ export const DropdownCombobox = () => {
           </InputLeftElement>
           <Input {...getInputProps()} placeholder="Search..." />
           <InputRightElement>
-            <Kbd>/</Kbd>
+            {inputValue ? (
+              <Flex marginRight="35px">
+                <Box sx={{ color: "gray.300" }} marginRight="5px">
+                  <RiCloseCircleFill size="25px" />
+                </Box>
+                <Kbd fontSize="md">↩</Kbd>
+              </Flex>
+            ) : (
+              <Kbd>/</Kbd>
+            )}
           </InputRightElement>
         </InputGroup>
       </Box>
