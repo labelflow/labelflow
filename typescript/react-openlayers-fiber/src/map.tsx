@@ -4,7 +4,6 @@ import React, {
   useLayoutEffect,
   useState,
   forwardRef,
-  useEffect,
 } from "react";
 import { Map as OlMap } from "ol";
 import { isNull, isFunction, isNil } from "lodash/fp";
