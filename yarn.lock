@@ -12808,7 +12808,7 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"graphql-tag@npm:^2.11.0, graphql-tag@npm:^2.12.0, graphql-tag@npm:^2.12.4":
+"graphql-tag@npm:2.12.4, graphql-tag@npm:^2.11.0, graphql-tag@npm:^2.12.0, graphql-tag@npm:^2.12.4":
   version: 2.12.4
   resolution: "graphql-tag@npm:2.12.4"
   dependencies:
@@ -14620,6 +14620,15 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
+"jest-transform-graphql@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "jest-transform-graphql@npm:2.1.0"
+  peerDependencies:
+    graphql-tag: ^2.0.0
+  checksum: db51e354e64515804ce15d64263a0e802d86b674e7a2799ed29a2371281d2d468aa8997febbedf09ea022b5d8a0405be11e7794be6220e576666c8d0d6b86429
+  languageName: node
+  linkType: hard
+
 "jest-util@npm:^26.1.0, jest-util@npm:^26.6.2":
   version: 26.6.2
   resolution: "jest-util@npm:26.6.2"
@@ -15106,7 +15115,9 @@ fsevents@^1.2.7:
     eslint-plugin-react: 7.23.2
     eslint-plugin-react-hooks: 4.2.0
     graphql: 15.5.0
+    graphql-tag: 2.12.4
     jest: 26.6.3
+    jest-transform-graphql: ^2.1.0
     prettier: 2.3.0
     react: 17.0.2
     react-dom: 17.0.2

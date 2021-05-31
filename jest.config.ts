@@ -9,4 +9,8 @@ export default {
       tsconfig: "tsconfig.jest.json",
     },
   },
+  transform: {
+    "\\.(gql|graphql)$": "jest-transform-graphql",
+    "\\.[jt]sx?$": "ts-jest",
+  },
 };

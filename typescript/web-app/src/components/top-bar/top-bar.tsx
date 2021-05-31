@@ -1,6 +1,7 @@
 import * as React from "react";
-import { HStack } from "@chakra-ui/react";
+import { HStack, Spacer } from "@chakra-ui/react";
 import { Logo } from "../logo";
+import { ImportButton } from "./import-button";
 
 export type Props = {
   leftContent?: React.ReactNode;
@@ -19,6 +20,8 @@ export const TopBar = ({ leftContent }: Props) => {
     >
       <Logo h="26px" />
       {leftContent}
+      <Spacer />
+      <ImportButton />
     </HStack>
   );
 };
