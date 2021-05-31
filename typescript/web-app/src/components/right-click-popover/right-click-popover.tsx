@@ -1,46 +1,22 @@
-import { useCallback, useState, useEffect } from "react";
+import { useState } from "react";
 import {
-  chakra,
   Box,
-  Stack,
-  Heading,
-  IconButton,
-  Editable,
   Popover,
   PopoverContent,
   PopoverBody,
-  Table,
-  Tbody,
-  Tooltip,
-  Tr,
-  Td,
   Text,
-  EditableInput,
-  EditablePreview,
-  Grid,
-  GridItem,
   Kbd,
-  HStack,
   Flex,
-  Spacer,
   Input,
   InputGroup,
   InputLeftElement,
   InputRightElement,
-  Icon,
 } from "@chakra-ui/react";
 import { IoSearch } from "react-icons/io5";
 
 import { RiCheckboxBlankCircleFill, RiCloseCircleFill } from "react-icons/ri";
 import { useCombobox } from "downshift";
-
-const items = [
-  { name: "Person", color: "#7E5ACB", shortcut: "1" },
-  { name: "Dog", color: "#4F5797 ", shortcut: "2" },
-  { name: "Car", color: "#C0B55E", shortcut: "3" },
-  { name: "Cycle", color: "#56FDCC", shortcut: "4" },
-  { name: "Plane", color: "#0E6AD3", shortcut: "5" },
-];
+import { LabelClass } from "../../types.generated";
 
 export const ItemListClass = (props: any) => {
   const { color, shortcut, className, highlight, index, itemProps } = props;
@@ -59,11 +35,13 @@ export const ItemListClass = (props: any) => {
         justifyContent="space-between"
         alignItems="center"
         style={{ marginLeft: "25px", marginRight: "23px" }}
+        height="35px"
       >
         <Flex alignItems="center">
           <RiCheckboxBlankCircleFill
             color={color}
             style={{ marginRight: 10 }}
+            size="25px"
           />
           <Text>{className}</Text>
         </Flex>
@@ -73,12 +51,11 @@ export const ItemListClass = (props: any) => {
   );
 };
 
-export const DropdownCombobox = () => {
-  const [inputItems, setInputItems] = useState(items);
+export const ClassSelectionCombobox = (props: any) => {
+  const { onSelectedClassChange, labelClasses } = props;
+  const [inputItems, setInputItems] = useState(labelClasses);
   const {
-    isOpen,
-    getToggleButtonProps,
-    getLabelProps,
+    reset,
     inputValue,
     getMenuProps,
     getInputProps,
@@ -89,11 +66,15 @@ export const DropdownCombobox = () => {
     items: inputItems,
     onInputValueChange: ({ inputValue: inputValueCombobox }) => {
       setInputItems(
-        items.filter((item) =>
-          item.name.toLowerCase().startsWith(inputValueCombobox.toLowerCase())
+        labelClasses.filter((labelClass: LabelClass) =>
+          labelClass.name
+            .toLowerCase()
+            .startsWith((inputValueCombobox ?? "").toLowerCase())
         )
       );
     },
+    onSelectedItemChange: ({ selectedItem }) =>
+      onSelectedClassChange(selectedItem),
   });
   return (
     <Box>
@@ -107,7 +88,7 @@ export const DropdownCombobox = () => {
             {inputValue ? (
               <Flex marginRight="35px">
                 <Box sx={{ color: "gray.300" }} marginRight="5px">
-                  <RiCloseCircleFill size="25px" />
+                  <RiCloseCircleFill size="25px" onClick={reset} />
                 </Box>
                 <Kbd fontSize="md">↩</Kbd>
               </Flex>
@@ -136,9 +117,13 @@ export const DropdownCombobox = () => {
 export const RightClickPopover = ({
   isOpen = false,
   onClose = () => {},
+  onSelectedClassChange,
+  labelClasses,
 }: {
   isOpen?: boolean;
   onClose?: () => void;
+  onSelectedClassChange?: (item: LabelClass) => void;
+  labelClasses: LabelClass[];
 }) => {
   return (
     <Popover
@@ -149,7 +134,10 @@ export const RightClickPopover = ({
     >
       <PopoverContent borderColor="gray.200">
         <PopoverBody>
-          <DropdownCombobox />
+          <ClassSelectionCombobox
+            onSelectedClassChange={onSelectedClassChange}
+            labelClasses={labelClasses}
+          />
         </PopoverBody>
       </PopoverContent>
     </Popover>
