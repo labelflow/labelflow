@@ -60,18 +60,12 @@ const ImagesPage = () => {
         />
         <ul>
           {imagesResult?.images?.map(({ id, name, url }) => (
-            <NextLink href={`/images/${id}`}>
+            <NextLink href={`/images/${id}`} key={id}>
               {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
               <a>
                 <li>
                   <span>{id}</span>
-                  <img
-                    key={id}
-                    alt={name}
-                    src={url}
-                    width="300px"
-                    height="300px"
-                  />
+                  <img alt={name} src={url} width="300px" height="300px" />
                 </li>
               </a>
             </NextLink>

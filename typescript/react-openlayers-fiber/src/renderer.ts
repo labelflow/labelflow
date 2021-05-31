@@ -658,12 +658,20 @@ function switchInstance<
   const { parent } = instance[MetaOlFiber];
   const newInstance = createInstance(type, newProps, null, null, fiber);
   if (isNil(parent)) {
-    throw new Error(
-      `React-Openlayers-Fiber Error: Trying to switch instance which has no parent!`
-    );
+    if (type === "olMap") {
+      console.warn(
+        `React-Openlayers-Fiber Warning: Trying to switch olMap! This is poorly supported for now, it will only cause problems if you change the args of the olMap between renders.`
+      );
+    } else {
+      throw new Error(
+        `React-Openlayers-Fiber Error: Trying to switch instance which has no parent!`
+      );
+    }
+  } else {
+    removeChild(parent, instance);
+    appendChild(parent, newInstance as Instance<SelfItem, ParentItem>);
   }
-  removeChild(parent, instance);
-  appendChild(parent, newInstance as Instance<SelfItem, ParentItem>);
+
   // This evil hack switches the react-internal fiber node
   // https://github.com/facebook/react/issues/14983
   // https://github.com/facebook/react/pull/15021

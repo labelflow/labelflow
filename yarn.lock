@@ -3641,6 +3641,7 @@ __metadata:
     "@emotion/styled": ^11
     "@graphql-tools/merge": ^6.2.14
     "@graphql-tools/schema": 7.1.5
+    "@labelflow/react-openlayers-fiber": "workspace:typescript/react-openlayers-fiber"
     "@storybook/react": ^6.2.9
     "@testing-library/dom": ^7.31.0
     "@testing-library/jest-dom": ^5.12.0
@@ -3659,10 +3660,12 @@ __metadata:
     mem: ^8.1.1
     next: 10.x
     next-seo: 4.24.0
+    ol: 6.4.3
     react: 17.x
     react-dom: 17.x
     react-dropzone: ^11.3.2
     react-icons: ^4.2.0
+    react-use-measure: ^2.0.4
     typescript: 4.2.4
     uuid: ^8.3.2
   languageName: unknown
@@ -18599,6 +18602,18 @@ fsevents@^1.2.7:
     react: "*"
     tslib: "*"
   checksum: 4b63c77bbd288488276f78444b0e90fe9892f12d3bdaa34deff8a3c89849713abd4457ea824951b8e0f8199207b5614300cf019d57fcbfc244b33a5cc1865268
+  languageName: node
+  linkType: hard
+
+"react-use-measure@npm:^2.0.4":
+  version: 2.0.4
+  resolution: "react-use-measure@npm:2.0.4"
+  dependencies:
+    debounce: ^1.2.0
+  peerDependencies:
+    react: ">=16.13"
+    react-dom: ">=16.13"
+  checksum: 5328749ed9700b43aff6f61ba9925c220efff3477dac55605a9e411ac28832ab4ff142675ff084712f48f9a2baed3f829974785e7dac47636f6fd1d14e339113
   languageName: node
   linkType: hard
 
