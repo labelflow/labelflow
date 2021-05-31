@@ -1,4 +1,5 @@
 import { Extent, getCenter } from "ol/extent";
+import { Size } from "ol/size";
 
 import memoize from "mem";
 import Projection from "ol/proj/Projection";
@@ -9,12 +10,16 @@ import "ol/ol.css";
 
 const empty: any[] = [];
 
+/**
+ * Memoize openlayers parameters that we pass to the
+ */
 const getOlObjectsForImage = memoize(
   (
     imageId,
     image?: Pick<Image, "id" | "url" | "name" | "width" | "height">
   ) => {
     const url = image?.url;
+    const size: Size = [image?.width ?? 640, image?.height ?? 480];
     const extent: Extent = [0, 0, image?.width ?? 640, image?.height ?? 480];
     const center = getCenter(extent);
     const projection = new Projection({
@@ -22,7 +27,7 @@ const getOlObjectsForImage = memoize(
       units: "pixels",
       extent,
     });
-    return { url, center, extent, projection };
+    return { url, size, extent, center, projection };
   }
 );
 
@@ -31,28 +36,17 @@ type Props = {
 };
 
 const Toto = ({ image }: Props) => {
-  const { url, extent, projection, center } = getOlObjectsForImage(
+  const { url, size, extent, center, projection } = getOlObjectsForImage(
     image?.id,
     image
   );
-
-  //   const { url, extent, projection } = {
-  //     url: "https://imgs.xkcd.com/comics/online_communities.png",
-  //     extent: [0, 0, 1024, 968],
-  //     projection: new Projection({
-  //       code: "xkcd-image",
-  //       units: "pixels",
-  //       extent: [0, 0, 1024, 968],
-  //     }),
-  //   };
-
   return (
     <Map args={{ controls: empty }} style={{ height: "100%", width: "100%" }}>
       <olView args={{ projection, center }} initialZoom={1} maxZoom={8} />
-      <olLayerImage>
+      <olLayerImage extent={extent}>
         {url != null && (
           <olSourceImageStatic
-            args={{ url, imageExtent: extent, projection }}
+            args={{ url, imageExtent: extent, imageSize: size, projection }}
           />
         )}
       </olLayerImage>
