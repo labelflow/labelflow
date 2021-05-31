@@ -20,9 +20,11 @@ import {
   Text,
   EditableInput,
   EditablePreview,
-  SimpleGrid
+  Grid,
+  GridItem,
 } from "@chakra-ui/react";
 import { BsChevronDown } from "react-icons/bs";
+import { RiCheckboxBlankCircleFill } from "react-icons/ri";
 import { useCombobox } from "downshift";
 
 const items = ["person", "dog", "car", "cycle", "plane"];
@@ -50,19 +52,34 @@ export const DropdownCombobox = () => {
   });
   return (
     <Box>
-      <SimpleGrid {...getComboboxProps()} columns={2}>
-        <Editable defaultValue="abcd" width="50%">
-          <EditablePreview />
-          <EditableInput {...getInputProps()} />
-        </Editable>
-        <IconButton
-          type="button"
-          {...getToggleButtonProps()}
-          aria-label="toggle menu"
-          icon={<BsChevronDown />}
-          background="white"
-        />
-      </SimpleGrid>
+      <Grid
+        {...getComboboxProps()}
+        templateColumns="1fr 5fr 1fr"
+        justifyContent="center"
+        alignItems="center"
+        gap={3}
+      >
+        <GridItem colSpan={1}>
+          <Box alignItems="center" justifyContent="center" display="flex">
+            <RiCheckboxBlankCircleFill color="#ff0000" />
+          </Box>
+        </GridItem>
+        <GridItem colSpan={1}>
+          <Editable defaultValue="No class selected">
+            <EditablePreview />
+            <EditableInput {...getInputProps()} />
+          </Editable>
+        </GridItem>
+        <GridItem colSpan={1}>
+          <IconButton
+            type="button"
+            {...getToggleButtonProps()}
+            aria-label="toggle menu"
+            icon={<BsChevronDown />}
+            background="white"
+          />
+        </GridItem>
+      </Grid>
       <ul {...getMenuProps()}>
         {isOpen &&
           inputItems.map((item, index) => (
