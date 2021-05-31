@@ -31,8 +31,12 @@ import { useCombobox } from "downshift";
 
 const items = ["person", "dog", "car", "cycle", "plane"];
 
-export const ItemListClass = (props: any) => {
-  const { color, shortcut, children } = props;
+export const ItemListClass = (props: {
+  color: string;
+  shortcut: string;
+  className: string;
+}) => {
+  const { color, shortcut, className } = props;
 
   return (
     <Flex
@@ -42,8 +46,7 @@ export const ItemListClass = (props: any) => {
     >
       <Flex alignItems="center">
         <RiCheckboxBlankCircleFill color={color} style={{ marginRight: 10 }} />
-        <Spacer />
-        {children}
+        <Text>{className}</Text>
       </Flex>
 
       <Kbd style={{ justifyContent: "center" }}>{shortcut}</Kbd>
@@ -80,9 +83,8 @@ export const DropdownCombobox = () => {
             {...getItemProps({ item, index })}
             color="#00FF00"
             shortcut={index}
-          >
-            <Text>{item}</Text>
-          </ItemListClass>
+            className={item}
+          />
         ))}
       </div>
     </Box>
