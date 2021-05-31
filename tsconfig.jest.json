@@ -1,6 +1,11 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "jsx": "react-jsx"
-  }
+    "jsx": "react-jsx",
+  },
+  "exclude": [
+    "node_modules",
+    "**/*.graphql",
+    "cypress"
+  ],
 }

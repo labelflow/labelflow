@@ -32,6 +32,7 @@
     "uuid": "^8.3.2"
   },
   "devDependencies": {
+    "@labelflow/dev-utils": "workspace:typescript/dev-utils",
     "@storybook/react": "^6.2.9",
     "@testing-library/dom": "^7.31.0",
     "@testing-library/jest-dom": "^5.12.0",

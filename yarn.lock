@@ -3599,6 +3599,14 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@labelflow/dev-utils@workspace:typescript/dev-utils":
+  version: 0.0.0-use.local
+  resolution: "@labelflow/dev-utils@workspace:typescript/dev-utils"
+  dependencies:
+    mockdate: ^3.0.5
+  languageName: unknown
+  linkType: soft
+
 "@labelflow/react-openlayers-fiber@workspace:typescript/react-openlayers-fiber":
   version: 0.0.0-use.local
   resolution: "@labelflow/react-openlayers-fiber@workspace:typescript/react-openlayers-fiber"
@@ -3641,6 +3649,7 @@ __metadata:
     "@emotion/styled": ^11
     "@graphql-tools/merge": ^6.2.14
     "@graphql-tools/schema": 7.1.5
+    "@labelflow/dev-utils": "workspace:typescript/dev-utils"
     "@labelflow/react-openlayers-fiber": "workspace:typescript/react-openlayers-fiber"
     "@storybook/react": ^6.2.9
     "@testing-library/dom": ^7.31.0
@@ -15119,6 +15128,7 @@ fsevents@^1.2.7:
     graphql-tag: 2.12.4
     jest: 26.6.3
     jest-transform-graphql: ^2.1.0
+    mockdate: ^3.0.5
     prettier: 2.3.0
     react: 17.0.2
     react-dom: 17.0.2

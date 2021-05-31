@@ -1,12 +1,11 @@
 import "fake-indexeddb/auto";
 
-// import { v4 as uuidv4 } from "uuid";
-import { createLabel, label, labels } from "../label";
-import { db } from "../../../database";
 import {
   initMockedDate,
   incrementMockedDate,
-} from "../../../../../../../.jest/utils";
+} from "@labelflow/dev-utils/utils";
+import { createLabel, label, labels } from "../label";
+import { db } from "../../../database";
 
 /**
  * We bypass the structured clone algorithm as its current js implementation

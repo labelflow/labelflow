@@ -25,13 +25,7 @@ export const clearGetUrlFromImageIdMem = () => {
   memoize.clear(getUrlFromImageId);
 };
 
-const getLabelsByImageId = async (id: string) => {
-  const getResults = await db.label.where({ imageId: id }).sortBy("createdAt");
-
-  return getResults ?? [];
-};
-
-const getImageById = async (id: string): Promise<Image> => {
+const getImageById = async (id: string): Promise<Partial<Image>> => {
   const entity = await db.image.get(id);
 
   if (entity === undefined) {
@@ -39,9 +33,8 @@ const getImageById = async (id: string): Promise<Image> => {
   }
 
   const url = await getUrlFromImageId(entity.fileId);
-  const labels = await getLabelsByImageId(id);
 
-  return { ...entity, url, labels } as Image;
+  return { ...entity, url };
 };
 
 const getPaginatedImages = async (
@@ -57,6 +50,15 @@ const getPaginatedImages = async (
   return query.toArray();
 };
 
+const imageLabelResolver = async (image: any) => {
+  console.log("=============>", image);
+  const getResults = await db.label
+    .where({ imageId: image.id })
+    .sortBy("createdAt");
+
+  return getResults ?? [];
+};
+
 // Queries
 export const image = async (_: any, args: QueryImageArgs) => {
   return getImageById(args?.where?.id);
@@ -69,7 +71,6 @@ export const images = async (_: any, args: QueryImagesArgs) => {
     imagesList.map(async (imageEntity: any) => {
       return {
         ...imageEntity,
-        labels: await getLabelsByImageId(imageEntity.id),
         url: await getUrlFromImageId(imageEntity.fileId),
       };
     })
@@ -82,7 +83,7 @@ export const images = async (_: any, args: QueryImagesArgs) => {
 export const createImage = async (
   _: any,
   args: MutationCreateImageArgs
-): Promise<Image> => {
+): Promise<Partial<Image>> => {
   const { file, name } = args.data;
   const imageId = uuidv4();
   const fileId = uuidv4();
@@ -90,7 +91,7 @@ export const createImage = async (
   await db.file.add({ id: fileId, imageId, blob: file });
   const url = await getUrlFromImageId(fileId);
 
-  const newEntity = await new Promise<Image>((resolve, reject) => {
+  const newEntity = await new Promise<Partial<Image>>((resolve, reject) => {
     const imageObject = new Image();
     imageObject.onload = async () => {
       const newImageEntity = {
@@ -126,5 +127,9 @@ export default {
 
   Mutation: {
     createImage,
+  },
+
+  Image: {
+    labels: imageLabelResolver,
   },
 };
