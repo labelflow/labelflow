@@ -1,7 +1,7 @@
 import "fake-indexeddb/auto";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { ApolloProvider, useApolloClient } from "@apollo/client";
+import { ApolloProvider } from "@apollo/client";
 import { PropsWithChildren } from "react";
 import "@testing-library/jest-dom/extend-expect";
 
@@ -25,12 +25,13 @@ const Wrapper = ({ children }: PropsWithChildren<{}>) => (
  * Mock the apollo client to avoid creating corrupted files that allows
  * us to identify a behaviour.
  */
-jest.mock("@apollo/client", () => {
-  const original = jest.requireActual("@apollo/client");
+jest.mock("../../../../../connectors/apollo-client", () => {
+  const original = jest.requireActual(
+    "../../../../../connectors/apollo-client"
+  );
 
   return {
-    ...original,
-    useApolloClient: jest.fn(original.useApolloClient),
+    client: { ...original.client, mutate: jest.fn(original.client.mutate) },
   };
 });
 
@@ -83,16 +84,6 @@ beforeEach(async () => {
   // Otherwise, there is a failing race condition.
   await Promise.all(db.tables.map((table) => table.clear()));
   clearGetUrlFromImageIdMem();
-
-  /**
-   * Clear apollo mock and set his implementation back to default one.
-   */
-  (useApolloClient as jest.Mock).mockClear();
-  (useApolloClient as jest.Mock).mockImplementation(() => {
-    const original = jest.requireActual("@apollo/client");
-
-    return original.useApolloClient();
-  });
 });
 
 function renderModalAndImport(filesToImport = files, props = {}) {
@@ -134,20 +125,8 @@ test("should display an indicator when upload succeed", async () => {
 });
 
 test("should display an indicator when upload failed", async () => {
-  /**
-   * Using `mockImplementationOnce` do not work here. Need to check why the hook is called multiple times.
-   */
-  (useApolloClient as jest.Mock).mockImplementation(() => {
-    const original = jest.requireActual("@apollo/client");
-
-    return {
-      ...original.useApolloClient(),
-      mutate: async () => {
-        console.log("Mock mutate");
-
-        throw new Error("Error");
-      },
-    };
+  (client.mutate as jest.Mock).mockImplementationOnce(() => {
+    throw new Error("Error");
   });
 
   await renderModalAndImport(files.slice(0, 1));

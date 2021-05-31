@@ -12,7 +12,7 @@ export const ImportButton = () => {
       <ImportImagesModal isOpen={isOpen} onClose={onClose} />
       <Button
         aria-label="Add images"
-        leftIcon={<UploadIcon />}
+        leftIcon={<UploadIcon fontSize="xl" />}
         onClick={onOpen}
         variant="ghost"
       >
