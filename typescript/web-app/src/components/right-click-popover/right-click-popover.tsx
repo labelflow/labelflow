@@ -18,6 +18,8 @@ import { RiCheckboxBlankCircleFill, RiCloseCircleFill } from "react-icons/ri";
 import { useCombobox } from "downshift";
 import { LabelClass } from "../../types.generated";
 
+type CreateClassInput = { name: string; type: string };
+
 export const ItemListClass = (props: any) => {
   const { item, highlight, index, itemProps } = props;
   const { type, color, name, shortcut } = item;
@@ -80,9 +82,8 @@ export const ClassSelectionCombobox = (props: any) => {
     highlightedIndex,
     getItemProps,
   } = useCombobox({
-    itemToString: (
-      item: LabelClass | { name: string; type: string } | null
-    ): string => item?.name ?? "",
+    itemToString: (item: LabelClass | CreateClassInput | null): string =>
+      item?.name ?? "",
     items: inputItems,
     onInputValueChange: ({ inputValue: inputValueCombobox }) => {
       const createClassItem =
@@ -102,10 +103,16 @@ export const ClassSelectionCombobox = (props: any) => {
       );
       return setInputItems([...filteredLabelClasses, ...createClassItem]);
     },
-    onSelectedItemChange: ({ selectedItem }) =>
-      selectedItem?.type === "CreateClassItem"
-        ? createNewClass(selectedItem.name)
-        : onSelectedClassChange(selectedItem),
+    onSelectedItemChange: ({ selectedItem }) => {
+      const isItemOfCreateInput =
+        selectedItem &&
+        Object.keys(selectedItem).includes("type") &&
+        (selectedItem as CreateClassInput).type === "CreateClassItem";
+
+      return isItemOfCreateInput
+        ? createNewClass(selectedItem?.name)
+        : onSelectedClassChange(selectedItem);
+    },
     defaultHighlightedIndex: 0,
   });
   return (
@@ -131,15 +138,17 @@ export const ClassSelectionCombobox = (props: any) => {
         </InputGroup>
       </Box>
       <Box style={{ marginTop: "5px" }} {...getMenuProps()}>
-        {inputItems.map((item, index) => (
-          <ItemListClass
-            itemProps={getItemProps({ item, index })}
-            item={item}
-            highlight={highlightedIndex === index}
-            index={index}
-            key={`${item}${index}`}
-          />
-        ))}
+        {inputItems.map(
+          (item: LabelClass | CreateClassInput, index: number) => (
+            <ItemListClass
+              itemProps={getItemProps({ item, index })}
+              item={item}
+              highlight={highlightedIndex === index}
+              index={index}
+              key={`${item}`}
+            />
+          )
+        )}
       </Box>
     </Box>
   );
