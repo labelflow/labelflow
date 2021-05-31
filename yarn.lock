@@ -3669,6 +3669,8 @@ __metadata:
     react-use-measure: ^2.0.4
     typescript: 4.2.4
     uuid: ^8.3.2
+    zundo: ^1.0.0
+    zustand: ^3.5.1
   languageName: unknown
   linkType: soft
 
@@ -22528,5 +22530,24 @@ typescript@4.2.4:
   version: 0.8.15
   resolution: "zen-observable@npm:0.8.15"
   checksum: 7d155f8a75b9314f9f31e70a31edcd897b0e8a1313737502ab84a573e49d2c333b738e415c156334a6e910c363ce546b59fa7921eff61440285caa99c843df74
+  languageName: node
+  linkType: hard
+
+"zundo@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "zundo@npm:1.0.0"
+  peerDependencies:
+    react: ">=16"
+    zustand: 3.5.1
+  checksum: a5e6244c770f6e2edf4a42aa0dcdcd513168773325921f1b8c952aa1ab913a3ca919ffc0dc8cd0f4126b588aa2da20806842c936dd2992bf631741479662311c
+  languageName: node
+  linkType: hard
+
+"zustand@npm:^3.5.1":
+  version: 3.5.1
+  resolution: "zustand@npm:3.5.1"
+  peerDependencies:
+    react: ">=16.8"
+  checksum: fdd1e6caaecbb0c3b7e869064752ace7113a16eabca56ab2f8cae6b1a0588ead08662289b7b7dde6a550d9ddf30881af370292406ca0b37d6d5d78a93e7db2b2
   languageName: node
   linkType: hard

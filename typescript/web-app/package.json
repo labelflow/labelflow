@@ -30,7 +30,9 @@
     "react-hotkeys-hook": "3.3.1",
     "react-icons": "^4.2.0",
     "react-use-measure": "^2.0.4",
-    "uuid": "^8.3.2"
+    "uuid": "^8.3.2",
+    "zundo": "^1.0.0",
+    "zustand": "^3.5.1"
   },
   "devDependencies": {
     "@storybook/react": "^6.2.9",
