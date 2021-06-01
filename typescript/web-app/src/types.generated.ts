@@ -82,9 +82,8 @@ export type Label = {
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
   imageId: Scalars['ID'];
-  labelClassId?: Maybe<Scalars['ID']>;
-  x: Scalars['Int'];
-  y: Scalars['Int'];
+  x: Scalars['Float'];
+  y: Scalars['Float'];
   height: Scalars['Int'];
   width: Scalars['Int'];
 };
@@ -115,19 +114,11 @@ export type LabelClassWhereUniqueInput = {
 
 export type LabelCreateInput = {
   imageId: Scalars['ID'];
-  x: Scalars['Int'];
-  y: Scalars['Int'];
+  x: Scalars['Float'];
+  y: Scalars['Float'];
   width: Scalars['Int'];
   height: Scalars['Int'];
   labelClassId?: Maybe<Scalars['ID']>;
-};
-
-export type LabelWhereInput = {
-  id?: Maybe<Scalars['ID']>;
-};
-
-export type LabelWhereUniqueInput = {
-  id: Scalars['ID'];
 };
 
 export type Mutation = {
@@ -165,8 +156,6 @@ export type Query = {
   examples: Array<Example>;
   image: Image;
   images: Array<Image>;
-  label: Label;
-  labels: Array<Label>;
   labelClass: LabelClass;
   labelClasses: Array<LabelClass>;
 };
@@ -192,18 +181,6 @@ export type QueryImageArgs = {
 
 export type QueryImagesArgs = {
   where?: Maybe<ImageWhereInput>;
-  first?: Maybe<Scalars['Int']>;
-  skip?: Maybe<Scalars['Int']>;
-};
-
-
-export type QueryLabelArgs = {
-  where: LabelWhereUniqueInput;
-};
-
-
-export type QueryLabelsArgs = {
-  where?: Maybe<LabelWhereInput>;
   first?: Maybe<Scalars['Int']>;
   skip?: Maybe<Scalars['Int']>;
 };
@@ -315,13 +292,12 @@ export type ResolversTypes = {
   ImageWhereInput: ImageWhereInput;
   ImageWhereUniqueInput: ImageWhereUniqueInput;
   Label: ResolverTypeWrapper<Label>;
+  Float: ResolverTypeWrapper<Scalars['Float']>;
   LabelClass: ResolverTypeWrapper<LabelClass>;
   LabelClassCreateInput: LabelClassCreateInput;
   LabelClassWhereInput: LabelClassWhereInput;
   LabelClassWhereUniqueInput: LabelClassWhereUniqueInput;
   LabelCreateInput: LabelCreateInput;
-  LabelWhereInput: LabelWhereInput;
-  LabelWhereUniqueInput: LabelWhereUniqueInput;
   Mutation: ResolverTypeWrapper<{}>;
   Query: ResolverTypeWrapper<{}>;
   Upload: ResolverTypeWrapper<Scalars['Upload']>;
@@ -345,13 +321,12 @@ export type ResolversParentTypes = {
   ImageWhereInput: ImageWhereInput;
   ImageWhereUniqueInput: ImageWhereUniqueInput;
   Label: Label;
+  Float: Scalars['Float'];
   LabelClass: LabelClass;
   LabelClassCreateInput: LabelClassCreateInput;
   LabelClassWhereInput: LabelClassWhereInput;
   LabelClassWhereUniqueInput: LabelClassWhereUniqueInput;
   LabelCreateInput: LabelCreateInput;
-  LabelWhereInput: LabelWhereInput;
-  LabelWhereUniqueInput: LabelWhereUniqueInput;
   Mutation: {};
   Query: {};
   Upload: Scalars['Upload'];
@@ -391,9 +366,8 @@ export type LabelResolvers<ContextType = any, ParentType extends ResolversParent
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   imageId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  labelClassId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
-  x?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  y?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  x?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  y?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   height?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   width?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -422,8 +396,6 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   examples?: Resolver<Array<ResolversTypes['Example']>, ParentType, ContextType, RequireFields<QueryExamplesArgs, never>>;
   image?: Resolver<ResolversTypes['Image'], ParentType, ContextType, RequireFields<QueryImageArgs, 'where'>>;
   images?: Resolver<Array<ResolversTypes['Image']>, ParentType, ContextType, RequireFields<QueryImagesArgs, never>>;
-  label?: Resolver<ResolversTypes['Label'], ParentType, ContextType, RequireFields<QueryLabelArgs, 'where'>>;
-  labels?: Resolver<Array<ResolversTypes['Label']>, ParentType, ContextType, RequireFields<QueryLabelsArgs, never>>;
   labelClass?: Resolver<ResolversTypes['LabelClass'], ParentType, ContextType, RequireFields<QueryLabelClassArgs, 'where'>>;
   labelClasses?: Resolver<Array<ResolversTypes['LabelClass']>, ParentType, ContextType, RequireFields<QueryLabelClassesArgs, never>>;
 };

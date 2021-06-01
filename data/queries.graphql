@@ -9,8 +9,10 @@ type Query {
   ): [Example!]!
   image(where: ImageWhereUniqueInput!): Image!
   images(where: ImageWhereInput, first: Int, skip: Int): [Image!]!
-  label(where: LabelWhereUniqueInput!): Label!
-  labels(where: LabelWhereInput, first: Int, skip: Int): [Label!]!
   labelClass(where: LabelClassWhereUniqueInput!): LabelClass!
-  labelClasses(where: LabelClassWhereInput, first: Int, skip: Int): [LabelClass!]!
+  labelClasses(
+    where: LabelClassWhereInput
+    first: Int
+    skip: Int
+  ): [LabelClass!]!
 }

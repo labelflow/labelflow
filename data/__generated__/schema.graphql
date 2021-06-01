@@ -63,9 +63,8 @@ type Label {
   createdAt: DateTime!
   updatedAt: DateTime!
   imageId: ID!
-  labelClassId: ID
-  x: Int!
-  y: Int!
+  x: Float!
+  y: Float!
   height: Int!
   width: Int!
 }
@@ -95,19 +94,11 @@ input LabelClassWhereUniqueInput {
 
 input LabelCreateInput {
   imageId: ID!
-  x: Int!
-  y: Int!
+  x: Float!
+  y: Float!
   width: Int!
   height: Int!
   labelClassId: ID
-}
-
-input LabelWhereInput {
-  id: ID
-}
-
-input LabelWhereUniqueInput {
-  id: ID!
 }
 
 type Mutation {
@@ -123,8 +114,6 @@ type Query {
   examples(where: ExampleWhereInput, first: Int, skip: Int, orderBy: ExampleOrderByInput): [Example!]!
   image(where: ImageWhereUniqueInput!): Image!
   images(where: ImageWhereInput, first: Int, skip: Int): [Image!]!
-  label(where: LabelWhereUniqueInput!): Label!
-  labels(where: LabelWhereInput, first: Int, skip: Int): [Label!]!
   labelClass(where: LabelClassWhereUniqueInput!): LabelClass!
   labelClasses(where: LabelClassWhereInput, first: Int, skip: Int): [LabelClass!]!
 }
