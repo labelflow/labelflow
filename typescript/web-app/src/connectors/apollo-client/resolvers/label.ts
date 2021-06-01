@@ -29,7 +29,11 @@ const createLabel = async (
   };
 
   await db.label.add(newLabelEntity);
-  return newLabelEntity;
+  const result = await db.label.get(labelId);
+  if (!result) {
+    throw new Error("Could not create the label entity");
+  }
+  return result;
 };
 
 export default {
