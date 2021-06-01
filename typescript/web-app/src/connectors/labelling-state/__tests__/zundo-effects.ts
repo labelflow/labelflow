@@ -162,7 +162,7 @@ test("Redo nothing should not have effect when no effect was performed", async (
   const store = createUndoStore();
   await store.getState().redo();
 
-  expect(store.getState().prevEffects).toHaveLength(0);
+  expect(store.getState().pastEffects).toHaveLength(0);
 });
 
 test("It should reset internal state of the store when cleared", () => {
@@ -304,4 +304,20 @@ test("It executes properly several async undo/redo operations", async () => {
   await store.getState().undo();
   await store.getState().redo();
   expect(state).toEqual("do1-do2-do3-undo3-redo3-undo3-redo3-undo3-redo3-");
+});
+
+test("It should not allow to redo an undo if an effect was performed", async () => {
+  const testEffect = {
+    do: jest.fn(),
+    undo: jest.fn(),
+    redo: jest.fn(),
+  };
+
+  const store = createUndoStore();
+
+  store.getState().perform(testEffect);
+  store.getState().undo();
+  store.getState().perform(testEffect);
+
+  expect(store.getState().canRedo()).toBeFalsy();
 });
