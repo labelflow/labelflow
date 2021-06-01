@@ -1,29 +1,35 @@
 import { useState } from "react";
 import { Button, ButtonGroup } from "@chakra-ui/react";
-import { useStore } from "../connectors/zundo-effects";
+import { useUndoStore } from "../connectors/zundo-effects";
+import { useLabellingStore } from "../connectors/labelling-state";
 import { Layout } from "../components/layout";
 
 const IndexPage = () => {
-  const [bearsCount, setBearsCount] = useState(0);
+  const fishes = useLabellingStore((state) => state.fishes);
 
   const increaseBearPopulationEffect = () => ({
     do: () => {
-      setBearsCount((previousBearCount) => previousBearCount + 1);
+      useLabellingStore.setState((state) => ({
+        fishes: state.fishes + 1,
+      }));
     },
     undo: () => {
-      setBearsCount((previousBearCount) => previousBearCount - 1);
+      useLabellingStore.setState((state) => ({
+        fishes: state.fishes - 1,
+      }));
     },
   });
 
-  const { perform, undo, redo, canRedo, canUndo } = useStore();
-  const increaseBearPopulation = () => perform(increaseBearPopulationEffect());
+  const { perform, undo, redo, canRedo, canUndo } = useUndoStore();
 
   return (
     <Layout>
       <h1>Hello world</h1>
-      <h1>{bearsCount} around here ...</h1>
+      <h1>{fishes} around here ...</h1>
       <ButtonGroup>
-        <Button onClick={increaseBearPopulation}>one up</Button>
+        <Button onClick={() => perform(increaseBearPopulationEffect())}>
+          one up
+        </Button>
         <Button onClick={undo} disabled={!canUndo()}>
           undo
         </Button>
