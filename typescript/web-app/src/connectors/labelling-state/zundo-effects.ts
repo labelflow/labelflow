@@ -7,7 +7,7 @@ type StoredState<Payload extends any = any> = {
 };
 
 export interface UndoStoreState {
-  prevEffects: StoredState[];
+  pastEffects: StoredState[];
   futureEffects: StoredState[];
   undo: () => void;
   redo: () => void;
@@ -32,39 +32,39 @@ export const createUndoStore = () => {
   // @ts-ignore
   return createVanilla<UndoStoreState>((set, get) => {
     return {
-      prevEffects: [],
+      pastEffects: [],
       futureEffects: [],
 
       perform: (effect: Effect) => {
-        const { prevEffects } = get();
+        const { pastEffects } = get();
         const payload = effect.do();
         const redo = effect?.redo ?? effect.do;
-        prevEffects.push({ payload, redo, undo: effect.undo });
+        pastEffects.push({ payload, redo, undo: effect.undo });
       },
 
       undo: () => {
-        const { prevEffects, futureEffects } = get();
-        if (prevEffects.length > 0) {
-          const prevState = prevEffects.pop() as StoredState;
+        const { pastEffects, futureEffects } = get();
+        if (pastEffects.length > 0) {
+          const prevState = pastEffects.pop() as StoredState;
           const payload = prevState.undo(prevState.payload);
           futureEffects.push({ ...prevState, payload });
         }
       },
       redo: () => {
-        const { prevEffects, futureEffects } = get();
+        const { pastEffects, futureEffects } = get();
         if (futureEffects.length > 0) {
           const futureState = futureEffects.pop() as StoredState;
           const payload = futureState.redo(futureState.payload);
 
-          prevEffects.push({ ...futureState, payload });
+          pastEffects.push({ ...futureState, payload });
         }
       },
       clear: () => {
-        set({ prevEffects: [], futureEffects: [] });
+        set({ pastEffects: [], futureEffects: [] });
       },
       canUndo: () => {
-        const { prevEffects } = get();
-        return prevEffects.length > 0;
+        const { pastEffects } = get();
+        return pastEffects.length > 0;
       },
       canRedo: () => {
         const { futureEffects } = get();
