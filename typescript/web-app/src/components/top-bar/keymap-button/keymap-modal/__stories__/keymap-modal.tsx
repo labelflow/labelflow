@@ -1,14 +1,36 @@
-import { addDecorator } from "@storybook/react";
 import { Button, useDisclosure } from "@chakra-ui/react";
 import { KeymapModal } from "../keymap-modal";
-import { chakraDecorator } from "../../../../../utils/chakra-decorator";
-import { apolloDecorator } from "../../../../../utils/apollo-decorator";
-
-addDecorator(chakraDecorator);
-addDecorator(apolloDecorator);
 
 export default {
   title: "web-app/Keymap modal",
+};
+
+const keymap = {
+  goToPreviousImage: {
+    key: "left",
+    description: "Navigate to the previous image",
+    category: "Navigation",
+  },
+  goToNextImage: {
+    key: "right",
+    description: "Navigate to the next image",
+    category: "Navigation",
+  },
+  esc: {
+    key: "esc",
+    description: "Cancel current action",
+    category: "General",
+  },
+  undo: {
+    key: "command+z,ctrl+z",
+    description: "Undo",
+    category: "General",
+  },
+  redo: {
+    key: "command+y,ctrl+y,command+shift+z,ctrl+shift+z",
+    description: "Redo",
+    category: "General",
+  },
 };
 
 export const Default = () => {
@@ -17,7 +39,7 @@ export const Default = () => {
   return (
     <div>
       <Button onClick={onOpen}>Display</Button>
-      <KeymapModal isOpen={isOpen} onClose={onClose} />
+      <KeymapModal keymap={keymap} isOpen={isOpen} onClose={onClose} />
     </div>
   );
 };
@@ -28,7 +50,7 @@ export const OpenedByDefault = () => {
   return (
     <div>
       <Button onClick={onOpen}>Display</Button>
-      <KeymapModal isOpen={isOpen} onClose={onClose} />
+      <KeymapModal keymap={keymap} isOpen={isOpen} onClose={onClose} />
     </div>
   );
 };

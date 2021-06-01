@@ -10,15 +10,17 @@ import {
   UseModalProps,
 } from "@chakra-ui/react";
 import { isEmpty } from "lodash/fp";
-import { keymap } from "../../../../keymap";
+import { keymap as labelflowKeymap, Keymap } from "../../../../keymap";
 import { Keys } from "./keys";
 
 export const KeymapModal = ({
   isOpen,
   onClose,
+  keymap = labelflowKeymap,
 }: {
   isOpen: UseModalProps["isOpen"];
   onClose: UseModalProps["onClose"];
+  keymap?: Keymap;
 }) => {
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="xl">

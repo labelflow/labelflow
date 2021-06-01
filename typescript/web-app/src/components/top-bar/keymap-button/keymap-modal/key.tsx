@@ -1,3 +1,4 @@
+import { Fragment } from "react";
 import { Kbd, Tooltip } from "@chakra-ui/react";
 
 /**
@@ -40,7 +41,7 @@ export const Key = ({ keys }: { keys: string }) => {
   return (
     <>
       {keyCombos.map((keyCombo, keyComboIndex) => (
-        <>
+        <Fragment key={keyCombo.join("+")}>
           {keyComboIndex === 0 ? null : "  or  "}
           <Tooltip
             label={keyCombo.join(" + ")}
@@ -48,14 +49,14 @@ export const Key = ({ keys }: { keys: string }) => {
           >
             <span>
               {keyCombo.map((key, keyIndex) => (
-                <>
+                <Fragment key={key}>
                   {keyIndex === 0 ? null : " "}
                   <Kbd>{displayKey(key)}</Kbd>
-                </>
+                </Fragment>
               ))}
             </span>
           </Tooltip>
-        </>
+        </Fragment>
       ))}
     </>
   );
