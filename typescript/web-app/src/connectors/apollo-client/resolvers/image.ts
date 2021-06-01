@@ -51,7 +51,7 @@ const getPaginatedImages = async (
 };
 
 // Queries
-const labels = async (image: any) => {
+const labels = async (image: Image) => {
   const getResults = await db.label
     .where({ imageId: image.id })
     .sortBy("createdAt");
