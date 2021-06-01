@@ -1,19 +1,11 @@
 import "fake-indexeddb/auto";
-
 import {
   initMockedDate,
   incrementMockedDate,
 } from "@labelflow/dev-utils/mockdate";
 import gql from "graphql-tag";
-import {
-  // createImage,
-  // image,
-  // images,
-  clearGetUrlFromImageIdMem,
-} from "../image";
-// import { createLabel } from "../label";
+import { clearGetUrlFromImageIdMem } from "../image";
 import { db } from "../../../database";
-
 import { client } from "../../index";
 
 /**
@@ -113,6 +105,23 @@ describe("Image resolver test suite", () => {
     });
 
     expect(queryResult.data.images.length).toEqual(0);
+  });
+
+  test("Query image that does not exist", async () => {
+    return expect(
+      client.query({
+        query: gql`
+          query getImages($id: ID!) {
+            image(where: { id: $id }) {
+              id
+            }
+          }
+        `,
+        variables: {
+          id: "some-id",
+        },
+      })
+    ).rejects.toThrow("No image with such id");
   });
 
   test("Create image with Blob", async () => {
