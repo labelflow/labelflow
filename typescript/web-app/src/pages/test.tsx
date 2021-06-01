@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Button, ButtonGroup } from "@chakra-ui/react";
 import { useUndoStore } from "../connectors/zundo-effects";
 import { useLabellingStore } from "../connectors/labelling-state";
