@@ -30,18 +30,6 @@ const createImageMutation = gql`
   }
 `;
 
-const createLabelMutation = gql`
-  mutation ($data: LabelCreateInput) {
-    createLabel(data: $data) {
-      imageId
-      x
-      y
-      height
-      width
-    }
-  }
-`;
-
 const importImage = (
   file: File | undefined,
   createImage: (
@@ -65,10 +53,6 @@ const ImagesPage = () => {
     );
 
   const [createImage] = useMutation(createImageMutation, {
-    refetchQueries: [{ query: imagesQuery }],
-  });
-
-  const [createLabel] = useMutation(createLabelMutation, {
     refetchQueries: [{ query: imagesQuery }],
   });
 
