@@ -147,3 +147,30 @@ test("It should be able to redo when effect was undone", () => {
 
   expect(store.getState().canRedo()).toBeTruthy();
 });
+
+test("Undo nothing should not have effect when no effect was performed", () => {
+  const store = createUndoStore();
+  store.getState().undo();
+
+  expect(store.getState().futureEffects).toHaveLength(0);
+});
+
+test("Redo nothing should not have effect when no effect was performed", () => {
+  const store = createUndoStore();
+  store.getState().redo();
+
+  expect(store.getState().prevEffects).toHaveLength(0);
+});
+
+test("It should reset internal state of the store when cleared", () => {
+  const testEffect: Effect = {
+    do: () => {},
+    undo: () => {},
+  };
+
+  const store = createUndoStore();
+  store.getState().perform(testEffect);
+
+  store.getState().clear();
+  expect(store.getState().canUndo()).toBeFalsy();
+});
