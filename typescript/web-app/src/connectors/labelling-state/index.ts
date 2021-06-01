@@ -1,34 +1,56 @@
-import { undoMiddleware, UndoState } from "zundo";
+import { undoMiddleware } from "zundo";
 import create, { State, StateCreator } from "zustand";
 import { persist, devtools } from "zustand/middleware";
+import { SideEffectState, sideEffect } from "./side-effect-middleware";
 
 /**
  * The state type. Note that it extends UndoState
  */
-export interface StoreState extends UndoState {
+export interface StoreState extends SideEffectState {
   bears: number;
   increasePopulation: () => void;
   removeAllBears: () => void;
-  effect: () => () => void;
 }
 
 /**
  * The state creator and resolver functions
  */
-const stateCreator: StateCreator<StoreState> = (set) => ({
+const stateCreator: StateCreator<StoreState> = (set, get) => ({
   bears: 0,
-  increasePopulation: () => {
-    console.log("Do beeaarrrrr++");
+  noSideEffect: () =>
     set((state) => ({
       bears: state.bears + 1,
-      effect: () => {
-        console.log("Undo beeaarrrrr++");
-        return () => console.log("REDO beeaarrrrr++");
+    })),
+  onlySideEffect: () => {
+    const index = get().bears;
+    // const index = 1;
+    console.log(`BEAR: Do beeaarrrrr++ from ${index} to ${index + 1}`);
+    set((state) => ({
+      unperformEffect: () => {
+        console.log(`BEAR: Undo beeaarrrrr++ from ${index} to ${index + 1}`);
+      },
+      reperformEffect: () => {
+        console.log(`BEAR: Redo beeaarrrrr++ from ${index} to ${index + 1}`);
+      },
+    }));
+  },
+  increasePopulation: () => {
+    const index = get().bears;
+    // const index = 1;
+    console.log(`BEAR: Do beeaarrrrr++ from ${index} to ${index + 1}`);
+    set((state) => ({
+      bears: state.bears + 1,
+      unperformEffect: () => {
+        console.log(`BEAR: Undo beeaarrrrr++ from ${index} to ${index + 1}`);
+      },
+      reperformEffect: () => {
+        console.log(`BEAR: Redo beeaarrrrr++ from ${index} to ${index + 1}`);
       },
     }));
   },
   removeAllBears: () => set({ bears: 0 }),
-  effect: () => () => undefined,
+  undoEffect: () => undefined,
+  redoEffect: () => undefined,
 });
 
 /**
@@ -40,38 +62,11 @@ const log =
   (set, get, api) =>
     config(
       (args) => {
-        // console.log("applying", args);
+        // console.log("LOG: applying", args);
         set(args);
-        // console.log("new state", get());
+        // console.log("LOG: new state", get());
       },
       get,
-      api
-    );
-
-/**
- * The side-effect middleware
- */
-const sideEffect =
-  <T extends UndoState>(config: StateCreator<T>): StateCreator<T> =>
-  (set, get, api) =>
-    config(
-      (args) => {
-        console.log("WOOOWWW a: ", args);
-        console.log("WOOOWWW   b: ", api);
-        set(args);
-        console.log("LOLLLLL:", get());
-      },
-      () => {
-        console.log("GETTT");
-        const state = get();
-        return {
-          ...state,
-          undo: () => {
-            console.log("Undooooo=======================");
-            return state?.undo?.();
-          },
-        };
-      },
       api
     );
 
