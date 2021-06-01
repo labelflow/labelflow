@@ -11,7 +11,6 @@ type Query {
   images(where: ImageWhereInput, first: Int, skip: Int): [Image!]!
   labelClass(where: LabelClassWhereUniqueInput!): LabelClass!
   labelClasses(
-    where: LabelClassWhereInput
     first: Int
     skip: Int
   ): [LabelClass!]!
