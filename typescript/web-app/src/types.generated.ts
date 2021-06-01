@@ -94,14 +94,6 @@ export type LabelCreateInput = {
   height: Scalars['Int'];
 };
 
-export type LabelWhereInput = {
-  id?: Maybe<Scalars['ID']>;
-};
-
-export type LabelWhereUniqueInput = {
-  id: Scalars['ID'];
-};
-
 export type Mutation = {
   __typename?: 'Mutation';
   createExample?: Maybe<Example>;
@@ -131,8 +123,6 @@ export type Query = {
   examples: Array<Example>;
   image: Image;
   images: Array<Image>;
-  label: Label;
-  labels: Array<Label>;
 };
 
 
@@ -156,18 +146,6 @@ export type QueryImageArgs = {
 
 export type QueryImagesArgs = {
   where?: Maybe<ImageWhereInput>;
-  first?: Maybe<Scalars['Int']>;
-  skip?: Maybe<Scalars['Int']>;
-};
-
-
-export type QueryLabelArgs = {
-  where: LabelWhereUniqueInput;
-};
-
-
-export type QueryLabelsArgs = {
-  where?: Maybe<LabelWhereInput>;
   first?: Maybe<Scalars['Int']>;
   skip?: Maybe<Scalars['Int']>;
 };
@@ -268,8 +246,6 @@ export type ResolversTypes = {
   Label: ResolverTypeWrapper<Label>;
   Float: ResolverTypeWrapper<Scalars['Float']>;
   LabelCreateInput: LabelCreateInput;
-  LabelWhereInput: LabelWhereInput;
-  LabelWhereUniqueInput: LabelWhereUniqueInput;
   Mutation: ResolverTypeWrapper<{}>;
   Query: ResolverTypeWrapper<{}>;
   Upload: ResolverTypeWrapper<Scalars['Upload']>;
@@ -294,8 +270,6 @@ export type ResolversParentTypes = {
   Label: Label;
   Float: Scalars['Float'];
   LabelCreateInput: LabelCreateInput;
-  LabelWhereInput: LabelWhereInput;
-  LabelWhereUniqueInput: LabelWhereUniqueInput;
   Mutation: {};
   Query: {};
   Upload: Scalars['Upload'];
@@ -350,8 +324,6 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   examples?: Resolver<Array<ResolversTypes['Example']>, ParentType, ContextType, RequireFields<QueryExamplesArgs, never>>;
   image?: Resolver<ResolversTypes['Image'], ParentType, ContextType, RequireFields<QueryImageArgs, 'where'>>;
   images?: Resolver<Array<ResolversTypes['Image']>, ParentType, ContextType, RequireFields<QueryImagesArgs, never>>;
-  label?: Resolver<ResolversTypes['Label'], ParentType, ContextType, RequireFields<QueryLabelArgs, 'where'>>;
-  labels?: Resolver<Array<ResolversTypes['Label']>, ParentType, ContextType, RequireFields<QueryLabelsArgs, never>>;
 };
 
 export interface UploadScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Upload'], any> {

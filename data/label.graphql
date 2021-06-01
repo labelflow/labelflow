@@ -5,11 +5,3 @@ input LabelCreateInput {
   width: Int!
   height: Int!
 }
-
-input LabelWhereInput {
-  id: ID
-}
-
-input LabelWhereUniqueInput {
-  id: ID!
-}

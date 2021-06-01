@@ -50,7 +50,8 @@ const getPaginatedImages = async (
   return query.toArray();
 };
 
-const imageLabelResolver = async (image: any) => {
+// Queries
+const labels = async (image: any) => {
   const getResults = await db.label
     .where({ imageId: image.id })
     .sortBy("createdAt");
@@ -58,12 +59,11 @@ const imageLabelResolver = async (image: any) => {
   return getResults ?? [];
 };
 
-// Queries
-export const image = (_: any, args: QueryImageArgs) => {
+const image = (_: any, args: QueryImageArgs) => {
   return getImageById(args?.where?.id);
 };
 
-export const images = async (_: any, args: QueryImagesArgs) => {
+const images = async (_: any, args: QueryImagesArgs) => {
   const imagesList = await getPaginatedImages(args?.skip, args?.first);
 
   const entitiesWithUrls = await Promise.all(
@@ -79,7 +79,7 @@ export const images = async (_: any, args: QueryImagesArgs) => {
 };
 
 // Mutations
-export const createImage = async (
+const createImage = async (
   _: any,
   args: MutationCreateImageArgs
 ): Promise<Partial<Image>> => {
@@ -129,6 +129,6 @@ export default {
   },
 
   Image: {
-    labels: imageLabelResolver,
+    labels,
   },
 };

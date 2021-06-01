@@ -75,14 +75,6 @@ input LabelCreateInput {
   height: Int!
 }
 
-input LabelWhereInput {
-  id: ID
-}
-
-input LabelWhereUniqueInput {
-  id: ID!
-}
-
 type Mutation {
   createExample(data: ExampleCreateInput!): Example
   createImage(data: ImageCreateInputWithFile!): Image
@@ -95,8 +87,6 @@ type Query {
   examples(where: ExampleWhereInput, first: Int, skip: Int, orderBy: ExampleOrderByInput): [Example!]!
   image(where: ImageWhereUniqueInput!): Image!
   images(where: ImageWhereInput, first: Int, skip: Int): [Image!]!
-  label(where: LabelWhereUniqueInput!): Label!
-  labels(where: LabelWhereInput, first: Int, skip: Int): [Label!]!
 }
 
 scalar Upload

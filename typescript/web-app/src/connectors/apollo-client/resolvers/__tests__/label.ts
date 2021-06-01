@@ -18,17 +18,9 @@ jest.mock("fake-indexeddb/build/lib/structuredClone", () => ({
   default: (i: any) => i,
 }));
 
-const createEmptyImage = (imageId: string) => {
-  return db.image.add({
-    id: imageId,
-    createdAt: null,
-    updatedAt: null,
-    name: "",
-    width: 0,
-    height: 0,
-    fileId: "",
-  });
-};
+beforeAll(() => {
+  global.URL.createObjectURL = jest.fn(() => "mockedUrl");
+});
 
 const labelData = {
   x: 3.14,
@@ -59,36 +51,47 @@ describe("Label resolver test suite", () => {
     initMockedDate();
   });
 
-  test("Query labels when db is empty", async () => {
-    const queryResult = await client.query({
-      query: gql`
-        query {
-          labels {
+  // @ts-ignore
+  global.Image = class Image extends HTMLElement {
+    width: number;
+
+    height: number;
+
+    constructor() {
+      super();
+      this.width = 42;
+      this.height = 36;
+      setTimeout(() => {
+        this?.onload?.(new Event("onload")); // simulate success
+      }, 100);
+    }
+  };
+  // @ts-ignore
+  customElements.define("image-custom", global.Image);
+
+  const createImage = async (name: String) => {
+    const mutationResult = await client.mutate({
+      mutation: gql`
+        mutation createImage($file: Upload!, $name: String!) {
+          createImage(data: { name: $name, file: $file }) {
             id
           }
         }
       `,
+      variables: {
+        file: new Blob(),
+        name,
+      },
     });
 
-    expect(queryResult.data.labels.length).toEqual(0);
-  });
+    const {
+      data: {
+        createImage: { id },
+      },
+    } = mutationResult;
 
-  test("Query label when id doesn't exists", async () => {
-    return expect(
-      client.query({
-        query: gql`
-          query getLabel($id: ID!) {
-            label(where: { id: $id }) {
-              id
-            }
-          }
-        `,
-        variables: {
-          id: "some-id",
-        },
-      })
-    ).rejects.toThrow("No label with such id");
-  });
+    return id;
+  };
 
   test("Creating a label should fail if its image doesn't exist", async () => {
     const imageId = "0024fbc1-387b-444f-8ad0-d7a3e316726a";
@@ -101,107 +104,75 @@ describe("Label resolver test suite", () => {
   });
 
   test("Create label", async () => {
-    await createEmptyImage("0024fbc1-387b-444f-8ad0-d7a3e316726a");
+    const imageId = await createImage("an image");
 
     const createResult = await createLabel({
       ...labelData,
-      imageId: "0024fbc1-387b-444f-8ad0-d7a3e316726a",
+      imageId,
     });
 
     expect(
       await client.query({
         query: gql`
-          query getLabel($id: ID!) {
-            label(where: { id: $id }) {
-              id
+          query getImage($id: ID!) {
+            image(where: { id: $id }) {
+              labels {
+                id
+              }
             }
           }
         `,
         variables: {
-          id: createResult.data.createLabel.id,
+          id: imageId,
         },
       })
     ).toEqual(
       expect.objectContaining({
-        data: {
-          label: expect.objectContaining({
-            id: createResult.data.createLabel.id,
+        data: expect.objectContaining({
+          image: expect.objectContaining({
+            labels: [
+              expect.objectContaining({ id: createResult.data.createLabel.id }),
+            ],
           }),
-        },
+        }),
       })
     );
   });
 
-  test("Query labels", async () => {
-    await createEmptyImage("an image id");
-    await createEmptyImage("another image id");
+  test("Create several labels", async () => {
+    const imageId = await createImage("an image");
 
-    const createResult1 = await createLabel({
+    await createLabel({
       ...labelData,
-      imageId: "an image id",
+      x: 1,
+      imageId,
     });
-
     incrementMockedDate(1);
-    const createResult2 = await createLabel({
+    await createLabel({
       ...labelData,
-      imageId: "another image id",
+      x: 2,
+      imageId,
     });
 
     const queryResult = await client.query({
       query: gql`
-        query {
-          labels {
-            id
-          }
-        }
-      `,
-    });
-
-    expect(queryResult.data.labels.length).toEqual(2);
-    expect(queryResult.data.labels).toEqual([
-      createResult1.data.createLabel,
-      createResult2.data.createLabel,
-    ]);
-  });
-
-  test("Querying paginated labels", async () => {
-    await createEmptyImage("imageId1");
-    await createEmptyImage("imageId2");
-    await createEmptyImage("imageId3");
-
-    await createLabel({
-      ...labelData,
-      imageId: "imageId1",
-    });
-
-    incrementMockedDate(1);
-    await createLabel({
-      ...labelData,
-      imageId: "imageId2",
-    });
-
-    incrementMockedDate(1);
-    await createLabel({
-      ...labelData,
-      imageId: "imageId3",
-    });
-
-    const queryResult = await client.query({
-      query: gql`
-        query getLabels($skip: Int, $first: Int) {
-          labels(skip: $skip, first: $first) {
-            id
-            imageId
+        query getImage($id: ID!) {
+          image(where: { id: $id }) {
+            labels {
+              x
+            }
           }
         }
       `,
       variables: {
-        skip: 1,
-        first: 1,
+        id: imageId,
       },
     });
 
-    expect(queryResult.data.labels.length).toBe(1);
-    expect(queryResult.data.labels[0].imageId).toBe("imageId2");
+    expect(
+      queryResult.data.image.labels.map(
+        (label: { x: number }): number => label.x
+      )
+    ).toEqual([1, 2]);
   });
 });
