@@ -110,3 +110,40 @@ test("It can redo multiple undo in a row", () => {
   store.getState().redo();
   expect(testEffect1.redo).toHaveBeenCalledTimes(1);
 });
+
+test("It should not be able to undo when no effect was performed", () => {
+  const store = createUndoStore();
+
+  expect(store.getState().canUndo()).toBeFalsy();
+});
+
+test("It should be able to undo when effect was performed", () => {
+  const testEffect: Effect = {
+    do: () => {},
+    undo: () => {},
+  };
+
+  const store = createUndoStore();
+  store.getState().perform(testEffect);
+
+  expect(store.getState().canUndo()).toBeTruthy();
+});
+
+test("It should not be able to redo when no effect was undone", () => {
+  const store = createUndoStore();
+
+  expect(store.getState().canRedo()).toBeFalsy();
+});
+
+test("It should be able to redo when effect was undone", () => {
+  const testEffect: Effect = {
+    do: () => {},
+    undo: () => {},
+  };
+
+  const store = createUndoStore();
+  store.getState().perform(testEffect);
+  store.getState().undo();
+
+  expect(store.getState().canRedo()).toBeTruthy();
+});

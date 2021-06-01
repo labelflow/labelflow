@@ -17,6 +17,8 @@ export interface UndoStoreState {
   setStore: Function;
   // handle on the parent store's getter
   getStore: Function;
+  canUndo: () => boolean;
+  canRedo: () => boolean;
 }
 
 export type Effect<Payload extends any = any> = {
