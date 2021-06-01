@@ -15,7 +15,7 @@ const IndexPage = () => {
     },
   });
 
-  const { perform, undo, redo } = useStore();
+  const { perform, undo, redo, canRedo, canUndo } = useStore();
   const increaseBearPopulation = () => perform(increaseBearPopulationEffect());
 
   return (
@@ -24,8 +24,12 @@ const IndexPage = () => {
       <h1>{bearsCount} around here ...</h1>
       <ButtonGroup>
         <Button onClick={increaseBearPopulation}>one up</Button>
-        <Button onClick={undo}>undo</Button>
-        <Button onClick={redo}>redo</Button>
+        <Button onClick={undo} disabled={!canUndo()}>
+          undo
+        </Button>
+        <Button onClick={redo} disabled={!canRedo()}>
+          redo
+        </Button>
       </ButtonGroup>
     </Layout>
   );
