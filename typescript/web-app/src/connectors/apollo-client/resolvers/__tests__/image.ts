@@ -2,8 +2,8 @@ import "fake-indexeddb/auto";
 
 import {
   initMockedDate,
-  // incrementMockedDate,
-} from "@labelflow/dev-utils/utils";
+  incrementMockedDate,
+} from "@labelflow/dev-utils/mockdate";
 import gql from "graphql-tag";
 import {
   // createImage,
@@ -32,9 +32,10 @@ beforeAll(() => {
 
 describe("Image resolver test suite", () => {
   beforeEach(async () => {
-    db.tables.map((table) => table.clear());
+    await Promise.all(db.tables.map((table) => table.clear()));
+    await client.clearStore();
     initMockedDate();
-    return clearGetUrlFromImageIdMem();
+    clearGetUrlFromImageIdMem();
   });
 
   // @ts-ignore
@@ -55,7 +56,52 @@ describe("Image resolver test suite", () => {
   // @ts-ignore
   customElements.define("image-custom", global.Image);
 
-  test.only("Query image when db is empty", async () => {
+  const createImage = async (name: String) => {
+    const mutationResult = await client.mutate({
+      mutation: gql`
+        mutation createImage($file: Upload!, $name: String!) {
+          createImage(data: { name: $name, file: $file }) {
+            id
+          }
+        }
+      `,
+      variables: {
+        file: new Blob(),
+        name,
+      },
+    });
+
+    const {
+      data: {
+        createImage: { id },
+      },
+    } = mutationResult;
+
+    return id;
+  };
+
+  const createLabel = (imageId: number, x: number) => {
+    return client.mutate({
+      mutation: gql`
+        mutation createLabel($data: LabelCreateInput!) {
+          createLabel(data: $data) {
+            id
+          }
+        }
+      `,
+      variables: {
+        data: {
+          imageId,
+          x,
+          y: 1,
+          height: 1,
+          width: 1,
+        },
+      },
+    });
+  };
+
+  test("Query images when db is empty", async () => {
     const queryResult = await client.query({
       query: gql`
         query {
@@ -69,122 +115,107 @@ describe("Image resolver test suite", () => {
     expect(queryResult.data.images.length).toEqual(0);
   });
 
-  // test("Create image with Blob", async () => {
-  //   const createResult = await createImage(undefined, {
-  //     data: { name: "test image", file: new Blob() },
-  //   });
+  test("Create image with Blob", async () => {
+    const id = await createImage("new test image");
 
-  //   expect(createResult?.name).toEqual("test image");
-  //   expect(await image(undefined, { where: { id: createResult.id } })).toEqual(
-  //     createResult
-  //   );
-  // });
+    const queryResult = await client.query({
+      query: gql`
+        query getImage($id: ID!) {
+          image(where: { id: $id }) {
+            id
+            name
+            url
+          }
+        }
+      `,
+      variables: {
+        id,
+      },
+    });
 
-  // test("Create image with URL and specified ID", async () => {
-  //   const createResult = await createImage(undefined, {
-  //     data: {
-  //       name: "test image",
-  //       file: new Blob(),
-  //     },
-  //   });
+    expect(queryResult.data.image).toEqual(
+      expect.objectContaining({
+        id,
+        name: "new test image",
+        url: "mockedUrl",
+      })
+    );
+  });
 
-  //   expect(createResult.name).toEqual("test image");
-  //   expect(await image(undefined, { where: { id: createResult.id } })).toEqual(
-  //     createResult
-  //   );
-  // });
+  test("Query several images", async () => {
+    const imageId2 = await createImage("image 2");
+    incrementMockedDate(1);
+    const imageId1 = await createImage("image 1");
+    incrementMockedDate(1);
+    const imageId3 = await createImage("image 3");
 
-  // test("Query images", async () => {
-  //   const createResult1 = await createImage(undefined, {
-  //     data: {
-  //       file: new Blob(),
-  //     },
-  //   });
+    const queryResult = await client.query({
+      query: gql`
+        query {
+          images {
+            id
+          }
+        }
+      `,
+    });
 
-  //   incrementMockedDate(1);
-  //   const createResult2 = await createImage(undefined, {
-  //     data: {
-  //       file: new Blob(),
-  //     },
-  //   });
+    expect(queryResult.data.images.length).toEqual(3);
+    expect(
+      queryResult.data.images.map((image: { id: string }) => image.id)
+    ).toEqual([imageId2, imageId1, imageId3]);
+  });
 
-  //   const queryResult = await images(undefined, {});
+  test("Querying paginated images", async () => {
+    await createImage("image 2");
+    incrementMockedDate(1);
+    const imageId1 = await createImage("image 1");
+    incrementMockedDate(1);
+    const imageId3 = await createImage("image 3");
+    incrementMockedDate(1);
+    await createImage("image 4");
 
-  //   expect(queryResult.length).toEqual(2);
-  //   expect(queryResult).toEqual([createResult1, createResult2]);
-  // });
+    const queryResult = await client.query({
+      query: gql`
+        query {
+          images(first: 2, skip: 1) {
+            id
+          }
+        }
+      `,
+    });
 
-  // test("Querying paginated images", async () => {
-  //   await createImage(undefined, {
-  //     data: { file: new Blob(), name: "test1" },
-  //   });
+    expect(queryResult.data.images.length).toEqual(2);
+    expect(
+      queryResult.data.images.map((image: { id: string }) => image.id)
+    ).toEqual([imageId1, imageId3]);
+  });
 
-  //   incrementMockedDate(1);
-  //   await createImage(undefined, {
-  //     data: { file: new Blob(), name: "test2" },
-  //   });
+  test("Querying an image with labels", async () => {
+    const imageId = await createImage("an image");
 
-  //   incrementMockedDate(1);
-  //   await createImage(undefined, {
-  //     data: { file: new Blob(), name: "test3" },
-  //   });
+    await createLabel(imageId, 2);
+    incrementMockedDate(1);
+    await createLabel(imageId, 1);
 
-  //   incrementMockedDate(1);
-  //   await createImage(undefined, {
-  //     data: { file: new Blob(), name: "test4" },
-  //   });
+    const queryResult = await client.query({
+      query: gql`
+        query getImage($id: ID!) {
+          image(where: { id: $id }) {
+            id
+            labels {
+              x
+            }
+          }
+        }
+      `,
+      variables: {
+        id: imageId,
+      },
+    });
 
-  //   const queryResult = await images(undefined, { skip: 1, first: 1 });
-
-  //   expect(queryResult.length).toBe(1);
-  //   expect(queryResult[0].name).toBe("test2");
-  // });
-
-  // test("Querying an image with labels", async () => {
-  //   const newImage = await createImage(undefined, {
-  //     data: { file: new Blob(), name: "test1" },
-  //   });
-
-  //   await createLabel(undefined, {
-  //     data: {
-  //       imageId: newImage.id,
-  //       x: 1,
-  //       y: 1,
-  //       height: 1,
-  //       width: 1,
-  //     },
-  //   });
-
-  //   incrementMockedDate(-10);
-
-  //   await createLabel(undefined, {
-  //     data: {
-  //       imageId: newImage.id,
-  //       x: 2,
-  //       y: 2,
-  //       height: 2,
-  //       width: 2,
-  //     },
-  //   });
-
-  //   incrementMockedDate(200);
-  //   await createLabel(undefined, {
-  //     data: {
-  //       imageId: newImage.id,
-  //       x: 3,
-  //       y: 3,
-  //       height: 3,
-  //       width: 3,
-  //     },
-  //   });
-
-  //   const { labels } = await image(undefined, {
-  //     where: { id: newImage.id },
-  //   });
-
-  //   const labelHeights = labels.map((l) => l.height);
-
-  //   // labels should show in the right order
-  //   expect(labelHeights).toEqual([2, 1, 3]);
-  // });
+    // labels should show in the right order
+    expect(
+      queryResult.data.image.labels.map((l: { x: number }) => l.x)
+    ).toEqual([2, 1]);
+  });
 });

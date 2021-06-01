@@ -41,7 +41,7 @@ const getPaginatedImages = async (
   skip?: Maybe<number>,
   first?: Maybe<number>
 ): Promise<any[]> => {
-  const query = await db.image.orderBy("createdAt").offset(skip ?? 0);
+  const query = db.image.orderBy("createdAt").offset(skip ?? 0);
 
   if (first) {
     return query.limit(first).toArray();
@@ -51,7 +51,6 @@ const getPaginatedImages = async (
 };
 
 const imageLabelResolver = async (image: any) => {
-  console.log("=============>", image);
   const getResults = await db.label
     .where({ imageId: image.id })
     .sortBy("createdAt");
@@ -60,7 +59,7 @@ const imageLabelResolver = async (image: any) => {
 };
 
 // Queries
-export const image = async (_: any, args: QueryImageArgs) => {
+export const image = (_: any, args: QueryImageArgs) => {
   return getImageById(args?.where?.id);
 };
 

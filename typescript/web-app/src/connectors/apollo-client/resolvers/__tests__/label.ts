@@ -3,7 +3,7 @@ import "fake-indexeddb/auto";
 import {
   initMockedDate,
   incrementMockedDate,
-} from "@labelflow/dev-utils/utils";
+} from "@labelflow/dev-utils/mockdate";
 import { createLabel, label, labels } from "../label";
 import { db } from "../../../database";
 
