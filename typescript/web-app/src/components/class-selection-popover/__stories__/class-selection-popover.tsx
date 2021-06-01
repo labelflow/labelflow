@@ -1,20 +1,20 @@
 import { addDecorator } from "@storybook/react";
 import { Button, useDisclosure } from "@chakra-ui/react";
-import { RightClickPopover } from "../right-click-popover";
+import { ClassSelectionPopover } from "../class-selection-popover";
 import { chakraDecorator } from "../../../utils/chakra-decorator";
 
 addDecorator(chakraDecorator);
 
 export default {
-  title: "web-app/Right click popover",
+  title: "web-app/Class selection popover",
 };
 
 const labelClasses = [
-  { name: "Person", color: "#7E5ACB", shortcut: "1" },
-  { name: "Dog", color: "#4F5797 ", shortcut: "2" },
-  { name: "Car", color: "#C0B55E", shortcut: "3" },
-  { name: "Cycle", color: "#56FDCC", shortcut: "4" },
-  { name: "Plane", color: "#0E6AD3", shortcut: "5" },
+  { name: "Person", color: "#6B7280", shortcut: "1" },
+  { name: "Dog", color: "#EF4444 ", shortcut: "2" },
+  { name: "Car", color: "#F59E0B", shortcut: "3" },
+  { name: "Cycle", color: "#10B981", shortcut: "4" },
+  { name: "Plane", color: "#3B82F6", shortcut: "5" },
 ];
 
 const createNewClass = (name: string): void => {
@@ -27,7 +27,7 @@ export const Default = () => {
   return (
     <div>
       <Button onClick={onOpen}>Display</Button>
-      <RightClickPopover
+      <ClassSelectionPopover
         isOpen={isOpen}
         onClose={onClose}
         labelClasses={labelClasses}
@@ -44,7 +44,7 @@ export const OpenedByDefault = () => {
   return (
     <div>
       <Button onClick={onOpen}>Display</Button>
-      <RightClickPopover
+      <ClassSelectionPopover
         isOpen={isOpen}
         onClose={onClose}
         labelClasses={labelClasses}

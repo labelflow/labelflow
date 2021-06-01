@@ -4,7 +4,6 @@ import {
   Popover,
   PopoverContent,
   PopoverBody,
-  Text,
   Kbd,
   Flex,
   Input,
@@ -14,63 +13,14 @@ import {
 } from "@chakra-ui/react";
 import { IoSearch } from "react-icons/io5";
 
-import { RiCheckboxBlankCircleFill, RiCloseCircleFill } from "react-icons/ri";
+import { RiCloseCircleFill } from "react-icons/ri";
 import { useCombobox } from "downshift";
+import { ItemListClass } from "../item-list-class";
 import { LabelClass } from "../../types.generated";
 
 type CreateClassInput = { name: string; type: string };
 
-export const ItemListClass = (props: any) => {
-  const { item, highlight, index, itemProps } = props;
-  const { type, color, name, shortcut } = item;
-
-  return (
-    <Box
-      style={{
-        marginLeft: "-13px",
-        marginRight: "-13px",
-      }}
-      bgColor={highlight ? "gray.100" : "transparent"}
-      key={`${name}${index}`}
-      {...itemProps}
-    >
-      {type === "CreateClassItem" ? (
-        <Flex
-          justifyContent="space-between"
-          alignItems="center"
-          style={{ marginLeft: "25px", marginRight: "23px" }}
-          height="35px"
-        >
-          <Flex justifyContent="flex-start">
-            <Text fontWeight="light" fontStyle="italic">
-              Create class&nbsp;
-            </Text>
-            <Text fontWeight="bold" fontStyle="italic">{`“${name}”`}</Text>
-          </Flex>
-        </Flex>
-      ) : (
-        <Flex
-          justifyContent="space-between"
-          alignItems="center"
-          style={{ marginLeft: "25px", marginRight: "23px" }}
-          height="35px"
-        >
-          <Flex alignItems="center">
-            <RiCheckboxBlankCircleFill
-              color={color}
-              style={{ marginRight: 5 }}
-              size="25px"
-            />
-            <Text>{name}</Text>
-          </Flex>
-          <Kbd style={{ justifyContent: "center" }}>{shortcut}</Kbd>
-        </Flex>
-      )}
-    </Box>
-  );
-};
-
-export const ClassSelectionCombobox = (props: any) => {
+const ClassSelectionCombobox = (props: any) => {
   const { onSelectedClassChange, labelClasses, createNewClass } = props;
   const [inputItems, setInputItems] = useState(labelClasses);
   const {
@@ -154,7 +104,7 @@ export const ClassSelectionCombobox = (props: any) => {
   );
 };
 
-export const RightClickPopover = ({
+export const ClassSelectionPopover = ({
   isOpen = false,
   onClose = () => {},
   onSelectedClassChange,
