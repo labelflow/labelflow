@@ -63,6 +63,7 @@ type Label {
   createdAt: DateTime!
   updatedAt: DateTime!
   imageId: ID!
+  labelClass: LabelClass!
   x: Float!
   y: Float!
   height: Int!
@@ -89,11 +90,11 @@ input LabelClassWhereUniqueInput {
 
 input LabelCreateInput {
   imageId: ID!
+  labelClassId: ID!
   x: Float!
   y: Float!
   width: Int!
   height: Int!
-  labelClassId: ID
 }
 
 type Mutation {

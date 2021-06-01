@@ -82,6 +82,7 @@ export type Label = {
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
   imageId: Scalars['ID'];
+  labelClass: LabelClass;
   x: Scalars['Float'];
   y: Scalars['Float'];
   height: Scalars['Int'];
@@ -109,11 +110,11 @@ export type LabelClassWhereUniqueInput = {
 
 export type LabelCreateInput = {
   imageId: Scalars['ID'];
+  labelClassId: Scalars['ID'];
   x: Scalars['Float'];
   y: Scalars['Float'];
   width: Scalars['Int'];
   height: Scalars['Int'];
-  labelClassId?: Maybe<Scalars['ID']>;
 };
 
 export type Mutation = {
@@ -358,6 +359,7 @@ export type LabelResolvers<ContextType = any, ParentType extends ResolversParent
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   imageId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  labelClass?: Resolver<ResolversTypes['LabelClass'], ParentType, ContextType>;
   x?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   y?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   height?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
