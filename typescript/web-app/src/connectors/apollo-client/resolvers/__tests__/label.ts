@@ -1,11 +1,12 @@
 import "fake-indexeddb/auto";
 import {
   initMockedDate,
-  // incrementMockedDate,
+  incrementMockedDate,
 } from "@labelflow/dev-utils/mockdate";
 import gql from "graphql-tag";
 import { db } from "../../../database";
 import { client } from "../../index";
+import { LabelCreateInput } from "../../../../types.generated";
 
 /**
  * We bypass the structured clone algorithm as its current js implementation
@@ -17,17 +18,39 @@ jest.mock("fake-indexeddb/build/lib/structuredClone", () => ({
   default: (i: any) => i,
 }));
 
-// const createEmptyImage = async (imageId: string) => {
-//   return db.image.add({
-//     id: imageId,
-//     createdAt: null,
-//     updatedAt: null,
-//     name: "",
-//     width: 0,
-//     height: 0,
-//     fileId: "",
-//   });
-// };
+const createEmptyImage = (imageId: string) => {
+  return db.image.add({
+    id: imageId,
+    createdAt: null,
+    updatedAt: null,
+    name: "",
+    width: 0,
+    height: 0,
+    fileId: "",
+  });
+};
+
+const labelData = {
+  x: 3.14,
+  y: 42.0,
+  height: 768,
+  width: 362,
+};
+
+const createLabel = (data: LabelCreateInput) => {
+  return client.mutate({
+    mutation: gql`
+      mutation createLabel($data: LabelCreateInput!) {
+        createLabel(data: $data) {
+          id
+        }
+      }
+    `,
+    variables: {
+      data,
+    },
+  });
+};
 
 describe("Label resolver test suite", () => {
   beforeEach(async () => {
@@ -51,133 +74,134 @@ describe("Label resolver test suite", () => {
   });
 
   test("Query label when id doesn't exists", async () => {
-    const id = "some-id";
-    const queryNoId = async () => {
+    return expect(
       client.query({
         query: gql`
-          query getLabels($id: ID!) {
+          query getLabel($id: ID!) {
             label(where: { id: $id }) {
               id
             }
           }
         `,
         variables: {
-          id,
+          id: "some-id",
         },
-      });
-    };
-
-    expect(queryNoId()).rejects.toThrow();
+      })
+    ).rejects.toThrow("No label with such id");
   });
 
-  // test("Creating a label should fail if its image doesn't exist", async () => {
-  //   const createResultNoImage = async () =>
-  //     createLabel(undefined, {
-  //       data: {
-  //         imageId: "0024fbc1-387b-444f-8ad0-d7a3e316726a",
-  //         x: 3.14,
-  //         y: 42.0,
-  //         height: 768,
-  //         width: 362,
-  //       },
-  //     });
+  test("Creating a label should fail if its image doesn't exist", async () => {
+    const imageId = "0024fbc1-387b-444f-8ad0-d7a3e316726a";
+    return expect(
+      createLabel({
+        ...labelData,
+        imageId,
+      })
+    ).rejects.toThrow(`The image id ${imageId} doesn't exist.`);
+  });
 
-  //   expect(createResultNoImage()).rejects.toThrow();
-  // });
+  test("Create label", async () => {
+    await createEmptyImage("0024fbc1-387b-444f-8ad0-d7a3e316726a");
 
-  // test("Create label", async () => {
-  //   await createEmptyImage("0024fbc1-387b-444f-8ad0-d7a3e316726a");
+    const createResult = await createLabel({
+      ...labelData,
+      imageId: "0024fbc1-387b-444f-8ad0-d7a3e316726a",
+    });
 
-  //   const createResult = await createLabel(undefined, {
-  //     data: {
-  //       imageId: "0024fbc1-387b-444f-8ad0-d7a3e316726a",
-  //       x: 3.14,
-  //       y: 42.0,
-  //       height: 768,
-  //       width: 362,
-  //     },
-  //   });
+    expect(
+      await client.query({
+        query: gql`
+          query getLabel($id: ID!) {
+            label(where: { id: $id }) {
+              id
+            }
+          }
+        `,
+        variables: {
+          id: createResult.data.createLabel.id,
+        },
+      })
+    ).toEqual(
+      expect.objectContaining({
+        data: {
+          label: expect.objectContaining({
+            id: createResult.data.createLabel.id,
+          }),
+        },
+      })
+    );
+  });
 
-  //   expect(createResult?.imageId).toEqual(
-  //     "0024fbc1-387b-444f-8ad0-d7a3e316726a"
-  //   );
-  //   expect(await label(undefined, { where: { id: createResult.id } })).toEqual(
-  //     createResult
-  //   );
-  // });
+  test("Query labels", async () => {
+    await createEmptyImage("an image id");
+    await createEmptyImage("another image id");
 
-  // test("Query labels", async () => {
-  //   await createEmptyImage("an image id");
-  //   await createEmptyImage("another image id");
+    const createResult1 = await createLabel({
+      ...labelData,
+      imageId: "an image id",
+    });
 
-  //   const createResult1 = await createLabel(undefined, {
-  //     data: {
-  //       imageId: "an image id",
-  //       x: 3.14,
-  //       y: 42.0,
-  //       height: 768,
-  //       width: 362,
-  //     },
-  //   });
+    incrementMockedDate(1);
+    const createResult2 = await createLabel({
+      ...labelData,
+      imageId: "another image id",
+    });
 
-  //   incrementMockedDate(1);
-  //   const createResult2 = await createLabel(undefined, {
-  //     data: {
-  //       imageId: "another image id",
-  //       x: 3.14,
-  //       y: 42.0,
-  //       height: 768,
-  //       width: 362,
-  //     },
-  //   });
+    const queryResult = await client.query({
+      query: gql`
+        query {
+          labels {
+            id
+          }
+        }
+      `,
+    });
 
-  //   const queryResult = await labels(undefined, {});
+    expect(queryResult.data.labels.length).toEqual(2);
+    expect(queryResult.data.labels).toEqual([
+      createResult1.data.createLabel,
+      createResult2.data.createLabel,
+    ]);
+  });
 
-  //   expect(queryResult.length).toEqual(2);
-  //   expect(queryResult).toEqual([createResult1, createResult2]);
-  // });
+  test("Querying paginated labels", async () => {
+    await createEmptyImage("imageId1");
+    await createEmptyImage("imageId2");
+    await createEmptyImage("imageId3");
 
-  // test("Querying paginated labels", async () => {
-  //   await createEmptyImage("imageId1");
-  //   await createEmptyImage("imageId2");
-  //   await createEmptyImage("imageId3");
-  //   await createEmptyImage("imageId4");
+    await createLabel({
+      ...labelData,
+      imageId: "imageId1",
+    });
 
-  //   await createLabel(undefined, {
-  //     data: {
-  //       imageId: "imageId1",
-  //       x: 3.14,
-  //       y: 42.0,
-  //       height: 768,
-  //       width: 362,
-  //     },
-  //   });
+    incrementMockedDate(1);
+    await createLabel({
+      ...labelData,
+      imageId: "imageId2",
+    });
 
-  //   incrementMockedDate(1);
-  //   await createLabel(undefined, {
-  //     data: {
-  //       imageId: "imageId2",
-  //       x: 3.14,
-  //       y: 42.0,
-  //       height: 768,
-  //       width: 362,
-  //     },
-  //   });
+    incrementMockedDate(1);
+    await createLabel({
+      ...labelData,
+      imageId: "imageId3",
+    });
 
-  //   incrementMockedDate(1);
-  //   await createLabel(undefined, {
-  //     data: {
-  //       imageId: "imageId3",
-  //       x: 3.14,
-  //       y: 42.0,
-  //       height: 768,
-  //       width: 362,
-  //     },
-  //   });
+    const queryResult = await client.query({
+      query: gql`
+        query getLabels($skip: Int, $first: Int) {
+          labels(skip: $skip, first: $first) {
+            id
+            imageId
+          }
+        }
+      `,
+      variables: {
+        skip: 1,
+        first: 1,
+      },
+    });
 
-  //   const queryResult = await labels(undefined, { skip: 1, first: 1 });
-
-  //   expect(queryResult.length).toBe(1);
-  //   expect(queryResult[0].imageId).toBe("imageId2");
-  // });
+    expect(queryResult.data.labels.length).toBe(1);
+    expect(queryResult.data.labels[0].imageId).toBe("imageId2");
+  });
 });

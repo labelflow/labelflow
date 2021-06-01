@@ -80,16 +80,16 @@ export type Label = {
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
   imageId: Scalars['ID'];
-  x: Scalars['Int'];
-  y: Scalars['Int'];
+  x: Scalars['Float'];
+  y: Scalars['Float'];
   height: Scalars['Int'];
   width: Scalars['Int'];
 };
 
 export type LabelCreateInput = {
   imageId: Scalars['ID'];
-  x: Scalars['Int'];
-  y: Scalars['Int'];
+  x: Scalars['Float'];
+  y: Scalars['Float'];
   width: Scalars['Int'];
   height: Scalars['Int'];
 };
@@ -266,6 +266,7 @@ export type ResolversTypes = {
   ImageWhereInput: ImageWhereInput;
   ImageWhereUniqueInput: ImageWhereUniqueInput;
   Label: ResolverTypeWrapper<Label>;
+  Float: ResolverTypeWrapper<Scalars['Float']>;
   LabelCreateInput: LabelCreateInput;
   LabelWhereInput: LabelWhereInput;
   LabelWhereUniqueInput: LabelWhereUniqueInput;
@@ -291,6 +292,7 @@ export type ResolversParentTypes = {
   ImageWhereInput: ImageWhereInput;
   ImageWhereUniqueInput: ImageWhereUniqueInput;
   Label: Label;
+  Float: Scalars['Float'];
   LabelCreateInput: LabelCreateInput;
   LabelWhereInput: LabelWhereInput;
   LabelWhereUniqueInput: LabelWhereUniqueInput;
@@ -329,8 +331,8 @@ export type LabelResolvers<ContextType = any, ParentType extends ResolversParent
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   imageId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  x?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  y?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  x?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  y?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   height?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   width?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;

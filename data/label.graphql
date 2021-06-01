@@ -1,7 +1,7 @@
 input LabelCreateInput {
   imageId: ID!
-  x: Int!
-  y: Int!
+  x: Float!
+  y: Float!
   width: Int!
   height: Int!
 }
