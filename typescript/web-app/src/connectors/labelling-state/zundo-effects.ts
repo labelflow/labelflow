@@ -1,7 +1,7 @@
 import createVanilla from "zustand/vanilla";
 
 type StoredState<Payload extends any = any> = {
-  payload: Payload;
+  payload: Promise<Payload>;
   undo: (previousPayload: Payload) => Promise<Payload> | Payload;
   redo: (previousPayload: Payload) => Promise<Payload> | Payload;
 };
@@ -35,28 +35,33 @@ export const createUndoStore = () => {
       pastEffects: [],
       futureEffects: [],
 
-      perform: (effect: Effect) => {
+      perform: async (effect: Effect) => {
         const { pastEffects } = get();
         const payload = effect.do();
         const redo = effect?.redo ?? effect.do;
         pastEffects.push({ payload, redo, undo: effect.undo });
+        await payload;
       },
 
-      undo: () => {
+      undo: async () => {
         const { pastEffects, futureEffects } = get();
         if (pastEffects.length > 0) {
           const prevState = pastEffects.pop() as StoredState;
-          const payload = prevState.undo(prevState.payload);
+          const payload = (async () =>
+            prevState.undo(await prevState.payload))();
           futureEffects.push({ ...prevState, payload });
+          await payload;
         }
       },
-      redo: () => {
+      redo: async () => {
         const { pastEffects, futureEffects } = get();
         if (futureEffects.length > 0) {
           const futureState = futureEffects.pop() as StoredState;
-          const payload = futureState.redo(futureState.payload);
+          const payload = (async () =>
+            futureState.redo(await futureState.payload))();
 
           pastEffects.push({ ...futureState, payload });
+          await payload;
         }
       },
       clear: () => {

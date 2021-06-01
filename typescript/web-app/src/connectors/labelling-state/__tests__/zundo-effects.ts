@@ -1,5 +1,8 @@
 import { createUndoStore, Effect } from "../zundo-effects";
 
+const sleep = (sleepTime: number): Promise<void> =>
+  new Promise((resolve) => setTimeout(resolve, sleepTime));
+
 test("It calls the `do` of the effect when it is performed", () => {
   const testEffect: Effect = { do: jest.fn(), undo: jest.fn() };
 
@@ -8,17 +11,17 @@ test("It calls the `do` of the effect when it is performed", () => {
   expect(testEffect.do).toHaveBeenCalledTimes(1);
 });
 
-test("It calls the `undo` of the effect when we undo the last effect", () => {
+test("It calls the `undo` of the effect when we undo the last effect", async () => {
   const testEffect: Effect = { do: jest.fn(), undo: jest.fn() };
   const store = createUndoStore();
 
   store.getState().perform(testEffect);
-  store.getState().undo();
+  await store.getState().undo();
 
   expect(testEffect.undo).toHaveBeenCalledTimes(1);
 });
 
-test("It calls the `redo` of an undone effect", () => {
+test("It calls the `redo` of an undone effect", async () => {
   const testEffect: Effect = {
     do: jest.fn(),
     undo: jest.fn(),
@@ -27,13 +30,13 @@ test("It calls the `redo` of an undone effect", () => {
   const store = createUndoStore();
 
   store.getState().perform(testEffect);
-  store.getState().undo();
-  store.getState().redo();
+  await store.getState().undo();
+  await store.getState().redo();
 
   expect(testEffect.redo).toHaveBeenCalledTimes(1);
 });
 
-test("It can undo a 'redone' effect", () => {
+test("It can undo a 'redone' effect", async () => {
   const testEffect: Effect = {
     do: jest.fn(),
     undo: jest.fn(),
@@ -42,14 +45,14 @@ test("It can undo a 'redone' effect", () => {
   const store = createUndoStore();
 
   store.getState().perform(testEffect);
-  store.getState().undo();
-  store.getState().redo();
-  store.getState().undo();
+  await store.getState().undo();
+  await store.getState().redo();
+  await store.getState().undo();
 
   expect(testEffect.undo).toHaveBeenCalledTimes(2);
 });
 
-test("It fallbacks on `do` if no `redo` is provided", () => {
+test("It fallbacks on `do` if no `redo` is provided", async () => {
   const testEffect: Effect = {
     do: jest.fn(),
     undo: jest.fn(),
@@ -57,13 +60,13 @@ test("It fallbacks on `do` if no `redo` is provided", () => {
   const store = createUndoStore();
 
   store.getState().perform(testEffect);
-  store.getState().undo();
-  store.getState().redo();
+  await store.getState().undo();
+  await store.getState().redo();
 
   expect(testEffect.do).toHaveBeenCalledTimes(2);
 });
 
-test("It can undo multiple effects in a row", () => {
+test("It can undo multiple effects in a row", async () => {
   const testEffect1: Effect = {
     do: jest.fn(),
     undo: jest.fn(),
@@ -77,14 +80,14 @@ test("It can undo multiple effects in a row", () => {
 
   store.getState().perform(testEffect1);
   store.getState().perform(testEffect2);
-  store.getState().undo();
+  await store.getState().undo();
   expect(testEffect2.undo).toHaveBeenCalledTimes(1);
   expect(testEffect1.undo).toHaveBeenCalledTimes(0);
-  store.getState().undo();
+  await store.getState().undo();
   expect(testEffect1.undo).toHaveBeenCalledTimes(1);
 });
 
-test("It can redo multiple undo in a row", () => {
+test("It can redo multiple undo in a row", async () => {
   const testEffect1: Effect = {
     do: jest.fn(),
     undo: jest.fn(),
@@ -100,14 +103,14 @@ test("It can redo multiple undo in a row", () => {
 
   store.getState().perform(testEffect1);
   store.getState().perform(testEffect2);
-  store.getState().undo();
-  store.getState().undo();
+  await store.getState().undo();
+  await store.getState().undo();
 
-  store.getState().redo();
+  await store.getState().redo();
   expect(testEffect1.redo).toHaveBeenCalledTimes(1);
   expect(testEffect2.redo).toHaveBeenCalledTimes(0);
 
-  store.getState().redo();
+  await store.getState().redo();
   expect(testEffect1.redo).toHaveBeenCalledTimes(1);
 });
 
@@ -135,7 +138,7 @@ test("It should not be able to redo when no effect was undone", () => {
   expect(store.getState().canRedo()).toBeFalsy();
 });
 
-test("It should be able to redo when effect was undone", () => {
+test("It should be able to redo when effect was undone", async () => {
   const testEffect: Effect = {
     do: () => {},
     undo: () => {},
@@ -143,21 +146,21 @@ test("It should be able to redo when effect was undone", () => {
 
   const store = createUndoStore();
   store.getState().perform(testEffect);
-  store.getState().undo();
+  await store.getState().undo();
 
   expect(store.getState().canRedo()).toBeTruthy();
 });
 
-test("Undo nothing should not have effect when no effect was performed", () => {
+test("Undo nothing should not have effect when no effect was performed", async () => {
   const store = createUndoStore();
-  store.getState().undo();
+  await store.getState().undo();
 
   expect(store.getState().futureEffects).toHaveLength(0);
 });
 
-test("Redo nothing should not have effect when no effect was performed", () => {
+test("Redo nothing should not have effect when no effect was performed", async () => {
   const store = createUndoStore();
-  store.getState().redo();
+  await store.getState().redo();
 
   expect(store.getState().prevEffects).toHaveLength(0);
 });
@@ -175,7 +178,7 @@ test("It should reset internal state of the store when cleared", () => {
   expect(store.getState().canUndo()).toBeFalsy();
 });
 
-test("It passes the result of the do to the undo", () => {
+test("It passes the result of the do to the undo", async () => {
   const testEffect: Effect = {
     do: () => 0,
     undo: jest.fn(),
@@ -183,12 +186,12 @@ test("It passes the result of the do to the undo", () => {
 
   const store = createUndoStore();
   store.getState().perform(testEffect);
-  store.getState().undo();
+  await store.getState().undo();
 
   expect(testEffect.undo).toHaveBeenCalledWith(0);
 });
 
-test("It passes the result of the undo to the redo", () => {
+test("It passes the result of the undo to the redo", async () => {
   const testEffect: Effect = {
     do: () => 0,
     undo: () => 1,
@@ -197,8 +200,108 @@ test("It passes the result of the undo to the redo", () => {
 
   const store = createUndoStore();
   store.getState().perform(testEffect);
-  store.getState().undo();
-  store.getState().redo();
+  await store.getState().undo();
+  await store.getState().redo();
 
   expect(testEffect.redo).toHaveBeenCalledWith(1);
+});
+
+test("It executes an async effect", async () => {
+  const testEffect: Effect = {
+    do: async () => 0,
+    undo: jest.fn(),
+  };
+
+  const store = createUndoStore();
+  store.getState().perform(testEffect);
+  await store.getState().undo();
+
+  expect(testEffect.undo).toHaveBeenCalledWith(0);
+});
+
+test("It executes three undo not awaited", async () => {
+  let state = "";
+  const testEffect: Effect = {
+    do: async () => {
+      state += "do-";
+    },
+    undo: async () => {
+      state += "undo-";
+    },
+  };
+
+  const store = createUndoStore();
+  store.getState().perform(testEffect);
+  store.getState().perform(testEffect);
+  store.getState().perform(testEffect);
+  store.getState().undo();
+  store.getState().undo();
+  await store.getState().undo();
+
+  expect(state).toEqual("do-do-do-undo-undo-undo-");
+});
+
+test("It executes awaited async operations in the right order", async () => {
+  let state = "";
+  const testEffect: (index: number) => Effect = (index) => {
+    return {
+      do: async () => {
+        await sleep(10 - index * 3);
+        state += `do${index}-`;
+      },
+      undo: async () => {
+        state += `undo${index}-`;
+      },
+      redo: async () => {
+        state += `redo${index}-`;
+      },
+    };
+  };
+
+  const store = createUndoStore();
+
+  await Promise.all([
+    store.getState().perform(testEffect(1)),
+    store.getState().perform(testEffect(2)),
+    store.getState().perform(testEffect(3)),
+    store.getState().undo(),
+    store.getState().undo(),
+    store.getState().undo(),
+    store.getState().redo(),
+    store.getState().redo(),
+    store.getState().redo(),
+  ]);
+
+  expect(state).toEqual("do3-undo3-redo3-do2-undo2-redo2-do1-undo1-redo1-");
+});
+
+test("It executes properly several async undo/redo operations", async () => {
+  let state = "";
+  const testEffect: (index: number) => Effect = (index) => {
+    return {
+      do: async () => {
+        await sleep(index * 3);
+        state += `do${index}-`;
+      },
+      undo: async () => {
+        state += `undo${index}-`;
+      },
+      redo: async () => {
+        state += `redo${index}-`;
+      },
+    };
+  };
+
+  const store = createUndoStore();
+
+  store.getState().perform(testEffect(1));
+  store.getState().perform(testEffect(2));
+  store.getState().perform(testEffect(3));
+  await store.getState().undo();
+  await store.getState().redo();
+  await store.getState().undo();
+  await store.getState().redo();
+  await store.getState().undo();
+  await store.getState().redo();
+  expect(state).toEqual("do1-do2-do3-undo3-redo3-undo3-redo3-undo3-redo3-");
 });
