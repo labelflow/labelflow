@@ -1,13 +1,18 @@
 import { v4 as uuidv4 } from "uuid";
 import type { Label, MutationCreateLabelArgs } from "../../../types.generated";
 
-import { db } from "../../database";
+import { db, Label as LabelDb } from "../../database";
+
+// Queries
+const labelClass = async (label: LabelDb) => {
+  return db.labelClass.get(label.labelClassId);
+};
 
 // Mutations
 const createLabel = async (
   _: any,
   args: MutationCreateLabelArgs
-): Promise<Label> => {
+): Promise<Partial<Label>> => {
   const { imageId, x, y, height, width, labelClassId } = args.data;
 
   // We need to ensure the image exists before adding the labels
@@ -21,8 +26,8 @@ const createLabel = async (
     id: labelId,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
-    imageId,
     labelClassId,
+    imageId,
     x,
     y,
     height,
@@ -40,5 +45,8 @@ const createLabel = async (
 export default {
   Mutation: {
     createLabel,
+  },
+  Label: {
+    labelClass,
   },
 };
