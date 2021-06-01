@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button, ButtonGroup } from "@chakra-ui/react";
-import { useStore } from "../connectors/labelling-state";
+import { useStore } from "../connectors/zundo-effects";
 import { Layout } from "../components/layout";
 
 const IndexPage = () => {
