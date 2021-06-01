@@ -104,7 +104,7 @@ const createImage = async (
       };
 
       await db.image.add(newImageEntity);
-      resolve(await getImageById(imageId));
+      resolve(getImageById(imageId));
     };
     imageObject.onerror = async () => {
       reject(
