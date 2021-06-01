@@ -174,3 +174,31 @@ test("It should reset internal state of the store when cleared", () => {
   store.getState().clear();
   expect(store.getState().canUndo()).toBeFalsy();
 });
+
+test("It passes the result of the do to the undo", () => {
+  const testEffect: Effect = {
+    do: () => 0,
+    undo: jest.fn(),
+  };
+
+  const store = createUndoStore();
+  store.getState().perform(testEffect);
+  store.getState().undo();
+
+  expect(testEffect.undo).toHaveBeenCalledWith(0);
+});
+
+test("It passes the result of the undo to the redo", () => {
+  const testEffect: Effect = {
+    do: () => 0,
+    undo: () => 1,
+    redo: jest.fn(),
+  };
+
+  const store = createUndoStore();
+  store.getState().perform(testEffect);
+  store.getState().undo();
+  store.getState().redo();
+
+  expect(testEffect.redo).toHaveBeenCalledWith(1);
+});
