@@ -47,10 +47,10 @@ export const createUndoStore = () => {
       undo: async () => {
         const { pastEffects, futureEffects } = get();
         if (pastEffects.length > 0) {
-          const prevState = pastEffects.pop() as StoredState;
+          const pastState = pastEffects.pop() as StoredState;
           const payload = (async () =>
-            prevState.undo(await prevState.payload))();
-          futureEffects.push({ ...prevState, payload });
+            pastState.undo(await pastState.payload))();
+          futureEffects.push({ ...pastState, payload });
           await payload;
         }
       },
