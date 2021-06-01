@@ -37,6 +37,7 @@ export const createUndoStore = () => {
 
       perform: async (effect: Effect) => {
         const { pastEffects } = get();
+        set({ futureEffects: [] });
         const payload = effect.do();
         const redo = effect?.redo ?? effect.do;
         pastEffects.push({ payload, redo, undo: effect.undo });
