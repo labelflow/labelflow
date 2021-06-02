@@ -9,16 +9,16 @@ type StoredState<Payload extends any = any> = {
 export interface UndoStoreState {
   pastEffects: StoredState[];
   futureEffects: StoredState[];
-  undo: () => void;
-  redo: () => void;
+  perform: (effect: Effect) => Promise<void>;
+  undo: () => Promise<void>;
+  redo: () => Promise<void>;
   clear: () => void;
-  perform: (effect: Effect) => void;
+  canUndo: () => boolean;
+  canRedo: () => boolean;
   // handle on the parent store's setter
   setStore: Function;
   // handle on the parent store's getter
   getStore: Function;
-  canUndo: () => boolean;
-  canRedo: () => boolean;
 }
 
 export type Effect<Payload extends any = any> = {
