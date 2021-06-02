@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Box,
   Popover,
@@ -21,7 +21,7 @@ import { LabelClass } from "../../types.generated";
 type CreateClassInput = { name: string; type: string };
 
 const ClassSelectionCombobox = (props: any) => {
-  const { onSelectedClassChange, labelClasses, createNewClass } = props;
+  const { onSelectedClassChange, labelClasses, createNewClass, isOpen } = props;
   const [inputItems, setInputItems] = useState(labelClasses);
   const {
     reset,
@@ -65,6 +65,12 @@ const ClassSelectionCombobox = (props: any) => {
     },
     defaultHighlightedIndex: 0,
   });
+
+  useEffect(() => {
+    if (isOpen) {
+      reset();
+    }
+  }, [isOpen]);
   return (
     <Box>
       <Box {...getComboboxProps()}>
@@ -95,7 +101,7 @@ const ClassSelectionCombobox = (props: any) => {
               item={item}
               highlight={highlightedIndex === index}
               index={index}
-              key={`${item}`}
+              key={`${item.name}`}
             />
           )
         )}
@@ -127,6 +133,7 @@ export const ClassSelectionPopover = ({
       <PopoverContent borderColor="gray.200">
         <PopoverBody>
           <ClassSelectionCombobox
+            isOpen={isOpen}
             onSelectedClassChange={onSelectedClassChange}
             labelClasses={labelClasses}
             createNewClass={createNewClass}
