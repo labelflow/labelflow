@@ -1,5 +1,7 @@
+const withPWA = require('next-pwa')
+
 const path = require("path");
-module.exports = {
+module.exports = withPWA({
   images: {
     deviceSizes: [
       320, 480, 640, 750, 828, 960, 1080, 1200, 1440, 1920, 2048, 2560, 3840,
@@ -82,4 +84,4 @@ module.exports = {
   onDemandEntries: {
     maxInactiveAge: 1000 * 60 * 60,
   },
-};
+});
