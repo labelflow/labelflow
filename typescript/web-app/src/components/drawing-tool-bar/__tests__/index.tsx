@@ -7,9 +7,7 @@ import { DrawingToolbar } from "..";
 test("should display tooltip", async () => {
   render(<DrawingToolbar />);
 
-  const selectionToolButton = screen.queryByLabelText(/Select tool/i);
-
-  expect(selectionToolButton).toBeInTheDocument();
+  const selectionToolButton = await screen.getByLabelText(/Select tool/i);
 
   userEvent.hover(selectionToolButton as HTMLElement);
 

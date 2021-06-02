@@ -82,9 +82,7 @@ const ImagePage = () => {
       }
     >
       <OpenlayersMap image={image} />
-
       <DrawingToolbar />
-
       <ImageNavigationToolbar
         imageId={id}
         images={imagesResult?.images}
