@@ -102,10 +102,8 @@ def process():
     tr_sample = trns(sample)
 
     inputs = tr_sample["concat"][None]
-    # print("tr_sample: ", tr_sample)
-    # print("inputs: ", inputs)
     # inputs = inputs.to(device)
-    outputs = net.forward(inputs)[-1]
+    outputs = net.forward(inputs)[-1]  # We just keep the fine net output
     # outputs = fine_out.to(torch.device('cpu'))
     pred = np.transpose(outputs.data.numpy()[0, :, :, :], (1, 2, 0))
     pred = 1 / (1 + np.exp(-pred))
