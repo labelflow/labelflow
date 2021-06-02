@@ -32,7 +32,7 @@ export const displayKey = (key: string) =>
     .replace(/del/g, "⌧")
     .replace(/delete/g, "⌧");
 
-export const Key = ({ keys }: { keys: string }) => {
+export const Shortcut = ({ keys }: { keys: string }) => {
   const keyCombos = keys
     .replace(/\s/g, "") // Remove spaces
     .split(",") // Split into several key combos

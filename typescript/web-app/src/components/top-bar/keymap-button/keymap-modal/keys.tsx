@@ -2,7 +2,7 @@ import { Fragment } from "react";
 import { groupBy } from "lodash/fp";
 import { Box, Text, Flex } from "@chakra-ui/react";
 import { Keymap } from "../../../../keymap";
-import { Key } from "./key";
+import { Shortcut } from "./shortcut";
 
 export const Keys = ({ keys }: { keys: Keymap }) => {
   const categories = groupBy(
@@ -46,7 +46,7 @@ export const Keys = ({ keys }: { keys: Keymap }) => {
                       fontSize="md"
                       textAlign="right"
                     >
-                      <Key keys={key} />
+                      <Shortcut keys={key} />
                     </Box>
                   </Flex>
                 )
