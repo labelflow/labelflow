@@ -1,7 +1,7 @@
 import { AppProps } from "next/app";
 import { useEffect } from "react";
 import { ApolloProvider } from "@apollo/client";
-import { client } from "../connectors/apollo-client";
+import { client } from "../connectors/apollo-service-worker/client";
 
 function App({ Component, pageProps }: AppProps) {
   // This hook only run once in browser after the component is rendered for the first time.

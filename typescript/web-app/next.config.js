@@ -1,6 +1,34 @@
 const withPWA = require('next-pwa')
-
+const webpack = require("webpack");
 const path = require("path");
+
+
+// A JavaScript class.
+class MyExampleWebpackPlugin {
+  // Define `apply` as its prototype method which is supplied with compiler as its argument
+  apply(compiler) {
+
+    compiler.hooks.done.tap('MyExampleWebpackPlugin', (
+      stats /* stats is passed as argument when done hook is tapped.  */
+    ) => {
+      console.log('Hello World!');
+    });
+    // Specify the event hook to attach to
+    compiler.hooks.emit.tapAsync(
+      'MyExampleWebpackPlugin',
+      (compilation, callback) => {
+        console.log('This is an example plugin!');
+        console.log('Here’s the `compilation` object which represents a single build of assets:', compilation);
+
+        // Manipulate the build using the plugin API provided by webpack
+        compilation.addModule(/* ... */);
+
+        callback();
+      }
+    );
+  }
+}
+
 module.exports = withPWA({
   images: {
     deviceSizes: [
@@ -13,6 +41,8 @@ module.exports = withPWA({
   webpack: (config, { defaultLoaders, isServer, config: nextConfig, ...others }) => {
     // Note: we provide webpack above so you should not `require` it
     // Perform customizations to webpack config
+
+    const isWebpack5 = nextConfig.future.webpack5;
 
     // Add graphql import
     // See https://www.npmjs.com/package/graphql-tag#webpack-loading-and-preprocessing
@@ -58,7 +88,7 @@ module.exports = withPWA({
         return external
       } else {
         // `externals` options that are functions are overridden, to force externalize of the packages we want
-        const isWebpack5 = nextConfig.future.webpack5;
+
         if (isWebpack5) {
           throw new Error("Webpack 5 not yet supported, check next.config.js")
         } else {
@@ -76,6 +106,51 @@ module.exports = withPWA({
       }
     })
 
+
+    // Allow to transpile node modules that depends on node built-ins into browser.
+    // E.g.: `apollo-server-core`
+    // See https://github.com/webpack-contrib/css-loader/issues/447
+    // See https://github.com/vercel/next.js/issues/7755
+    if (!isServer) {
+      if (isWebpack5) {
+        console.warn("Webpack 5 not yet supported, check next.config.js, doing best effort")
+        // See https://github.com/webpack-contrib/css-loader/issues/447#issuecomment-761853289
+        // See https://github.com/vercel/next.js/issues/7755#issuecomment-812805708
+        config.resolve = {
+          ...config.resolve ?? {},
+          fallback: {
+            ...config.resolve?.fallback ?? {},
+            module: false,
+            dgram: false,
+            dns: false,
+            fs: false,
+            http2: false,
+            net: false,
+            tls: false,
+            child_process: false
+          },
+        }
+      } else {
+        // Webpack 4 uses the `node` option
+        config.node = {
+          ...config.node ?? {},
+          module: 'empty',
+          dgram: 'empty',
+          dns: 'mock',
+          fs: 'empty',
+          http2: 'empty',
+          net: 'empty',
+          tls: 'empty',
+          child_process: 'empty'
+        }
+      }
+    }
+
+    // console.log("isServer");
+    // console.log(isServer);
+    // console.log("config.plugins");
+    // console.log(config.plugins);
+
     // Important: return the modified config
     return config;
   },
@@ -88,9 +163,21 @@ module.exports = withPWA({
   // See https://github.com/shadowwalker/next-pwa#usage-without-custom-server-nextjs-9
   pwa: {
     dest: 'public',
+    swSrc: "./src/worker/index.ts",
+    compileSrc: true,
     // Register false, since we register manually in `_app.tsx`, and ask the user when to upgrade
     register: false,
+    // Cache on frontend nav, it pre-fetches stuff more eagerly
     // See https://github.com/shadowwalker/next-pwa#available-options
-    cacheOnFrontEndNav: true
+    cacheOnFrontEndNav: true,
+    // Add plugins to the webpack config of the service worker bundler
+    // See https://developers.google.com/web/tools/workbox/reference-docs/latest/module-workbox-webpack-plugin.InjectManifest
+    webpackCompilationPlugins: [
+      // new webpack.NormalModuleReplacementPlugin(
+      //   /^fs$/,
+      //   'react'
+      // ),
+      new MyExampleWebpackPlugin()
+    ]
   }
 });
