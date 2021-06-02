@@ -2,7 +2,7 @@
 // See https://github.com/shadowwalker/next-pwa/blob/master/examples/custom-ts-worker/worker/index.ts
 import { precacheAndRoute } from "workbox-precaching";
 import { util } from "./util";
-import { server } from "../connectors/apollo-service-worker/graphql-server";
+import { server } from "./graphql-server";
 
 declare let self: ServiceWorkerGlobalScope;
 

@@ -99,7 +99,6 @@ module.exports = withPWA({
         // `externals` options that are functions are overridden, to force externalize of the packages we want
 
         if (isWebpack5) {
-          console.warn("Webpack 5 not yet supported, check next.config.js, doing best effort")
           // Return a webpack5-like `externals` option function
           return ({ context, request, contextInfo, getResolve }, callback) => {
             if (/^ol/.test(request)) {
@@ -132,7 +131,6 @@ module.exports = withPWA({
     // See https://github.com/vercel/next.js/issues/7755
     if (!isServer) {
       if (isWebpack5) {
-        console.warn("Webpack 5 not yet supported, check next.config.js, doing best effort")
         // See https://github.com/webpack-contrib/css-loader/issues/447#issuecomment-761853289
         // See https://github.com/vercel/next.js/issues/7755#issuecomment-812805708
         config.resolve = {

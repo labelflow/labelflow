@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { ApolloProvider } from "@apollo/client";
 import type { Workbox } from "workbox-window";
 
-import { client } from "../connectors/apollo-service-worker/client";
+import { client } from "../connectors/apollo-client-service-worker/client";
 
 declare global {
   interface Window {
