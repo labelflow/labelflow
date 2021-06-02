@@ -1,5 +1,4 @@
 import { Box, Text, Kbd, Flex } from "@chakra-ui/react";
-
 import { RiCheckboxBlankCircleFill } from "react-icons/ri";
 
 /**
@@ -40,7 +39,7 @@ export const ClassListItem = (props: {
             <Text fontWeight="light" fontStyle="italic">
               Create class&nbsp;
             </Text>
-            <Text fontWeight="bold" fontStyle="italic">{`“${name}”`}</Text>
+            <Text fontWeight="bold" fontStyle="italic">{`"${name}"`}</Text>
           </Flex>
         </Flex>
       ) : (

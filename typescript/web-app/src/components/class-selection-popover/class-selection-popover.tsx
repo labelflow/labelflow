@@ -124,12 +124,7 @@ export const ClassSelectionPopover = ({
   createNewClass: (name: string) => void;
 }) => {
   return (
-    <Popover
-      isOpen={isOpen}
-      onClose={() => {
-        onClose();
-      }}
-    >
+    <Popover isOpen={isOpen} onClose={onClose}>
       <PopoverContent borderColor="gray.200">
         <PopoverBody>
           <ClassSelectionCombobox

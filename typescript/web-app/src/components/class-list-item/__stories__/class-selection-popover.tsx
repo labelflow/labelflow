@@ -1,7 +1,7 @@
+import { omit } from "lodash/fp";
 import { addDecorator } from "@storybook/react";
 import { ClassListItem } from "../class-list-item";
 import { chakraDecorator } from "../../../utils/chakra-decorator";
-import { omit } from "lodash/fp";
 
 addDecorator(chakraDecorator);
 

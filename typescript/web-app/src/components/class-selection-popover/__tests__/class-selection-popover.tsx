@@ -1,6 +1,8 @@
 import { render, screen } from "@testing-library/react";
-import { ClassSelectionPopover } from "../class-selection-popover";
+import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom/extend-expect";
+import { ClassSelectionPopover } from "../class-selection-popover";
+import { LabelClass } from "../../../types.generated";
 
 const labelClasses = [
   {
@@ -21,44 +23,81 @@ const labelClasses = [
     color: "#EF4444 ",
     shortcut: "2",
   },
-  {
-    id: "coaisndoiasndis",
-    createdAt: "today",
-    updatedAt: "today",
-    labels: [],
-    name: "Car",
-    color: "#F59E0B",
-    shortcut: "3",
-  },
-  {
-    id: "coaisndoiasndid",
-    createdAt: "today",
-    updatedAt: "today",
-    labels: [],
-    name: "Cycle",
-    color: "#10B981",
-    shortcut: "4",
-  },
-  {
-    id: "coaisndoiasndiq",
-    createdAt: "today",
-    updatedAt: "today",
-    labels: [],
-    name: "Plane",
-    color: "#3B82F6",
-    shortcut: "5",
-  },
 ];
 
-test("Should render component", () => {
+const [onClose, onSelectedClassChange, createNewClass] = [
+  jest.fn(),
+  jest.fn(),
+  jest.fn(),
+];
+
+const renderClassSelectionPopover = (labelClassesInput: LabelClass[]): void => {
   render(
     <ClassSelectionPopover
       isOpen
-      onClose={jest.fn()}
-      labelClasses={labelClasses}
-      onSelectedClassChange={console.log}
-      createNewClass={jest.fn()}
+      onClose={onClose}
+      labelClasses={labelClassesInput}
+      onSelectedClassChange={onSelectedClassChange}
+      createNewClass={createNewClass}
     />
   );
-  expect(screen.queryByPlaceholderText(/search/i)).toBeInTheDocument();
+};
+
+describe("Class selection popover tests", () => {
+  beforeEach(() => {
+    jest.resetAllMocks();
+  });
+
+  test("Should render component", () => {
+    renderClassSelectionPopover(labelClasses);
+
+    expect(screen.queryByPlaceholderText(/search/i)).toBeInTheDocument();
+  });
+
+  test("Should render no classes if none were given", () => {
+    renderClassSelectionPopover([]);
+
+    expect(screen.queryByText(/person/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/dog/i)).not.toBeInTheDocument();
+  });
+
+  test("Should render all classes in the list", () => {
+    renderClassSelectionPopover(labelClasses);
+
+    expect(screen.queryByText(/person/i)).toBeInTheDocument();
+    expect(screen.queryByText(/dog/i)).toBeInTheDocument();
+  });
+
+  test("Should render matching classes with user search", async () => {
+    renderClassSelectionPopover(labelClasses);
+    userEvent.type(screen.getByPlaceholderText(/search/i), "Perso");
+
+    expect(screen.queryByText(/person/i)).toBeInTheDocument();
+    expect(screen.queryByText(/dog/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Create class/)).toBeInTheDocument();
+    expect(screen.queryByText(/"Perso"/)).toBeInTheDocument();
+  });
+
+  test("Should call onSelectedClassChange when clicking on existing class", async () => {
+    renderClassSelectionPopover(labelClasses);
+    userEvent.click(screen.getByRole("option", { name: /Person/ }));
+
+    expect(onSelectedClassChange).toHaveBeenCalledWith({
+      id: "coaisndoiasndi",
+      createdAt: "today",
+      updatedAt: "today",
+      labels: [],
+      name: "Person",
+      color: "#6B7280",
+      shortcut: "1",
+    });
+  });
+
+  test("Should call onSelectedClassChange when clicking on create new class", async () => {
+    renderClassSelectionPopover(labelClasses);
+    userEvent.type(screen.getByPlaceholderText(/search/i), "Perso");
+    userEvent.click(screen.getByRole("option", { name: /Create class/ }));
+
+    expect(createNewClass).toHaveBeenCalledWith("Perso");
+  });
 });
