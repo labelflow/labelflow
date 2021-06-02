@@ -138,32 +138,37 @@ describe("Label resolver test suite", () => {
       labelClassId,
     });
 
-    expect(
-      await client.query({
-        query: gql`
-          query getImage($id: ID!) {
-            image(where: { id: $id }) {
-              labels {
-                id
-              }
+    const queryResult = await client.query({
+      query: gql`
+        query getImage($id: ID!) {
+          image(where: { id: $id }) {
+            labels {
+              id
             }
           }
-        `,
-        variables: {
-          id: imageId,
-        },
-      })
-    ).toEqual(
-      expect.objectContaining({
-        data: expect.objectContaining({
-          image: expect.objectContaining({
-            labels: [
-              expect.objectContaining({ id: createResult.data.createLabel.id }),
-            ],
-          }),
-        }),
-      })
+        }
+      `,
+      variables: {
+        id: imageId,
+      },
+    });
+
+    expect(queryResult.data.image.labels[0].id).toEqual(
+      createResult.data.createLabel.id
     );
+  });
+
+  test("Create label with an id", async () => {
+    const labelId = "some randomn id";
+
+    const imageId = await createImage("an image");
+    const createResult = await createLabel({
+      ...labelData,
+      id: labelId,
+      imageId,
+    });
+
+    expect(createResult.data.createLabel.id).toEqual(labelId);
   });
 
   test("Create several labels", async () => {

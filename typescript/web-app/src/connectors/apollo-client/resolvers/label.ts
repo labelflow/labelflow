@@ -13,7 +13,7 @@ const createLabel = async (
   _: any,
   args: MutationCreateLabelArgs
 ): Promise<Partial<Label>> => {
-  const { imageId, x, y, height, width, labelClassId } = args.data;
+  const { id, imageId, x, y, height, width, labelClassId } = args.data;
 
   // We need to ensure the image exists before adding the labels
   const image = await db.image.get(imageId);
@@ -21,7 +21,8 @@ const createLabel = async (
     throw new Error(`The image id ${imageId} doesn't exist.`);
   }
 
-  const labelId = uuidv4();
+  const labelId = id ?? uuidv4();
+
   const newLabelEntity = {
     id: labelId,
     createdAt: new Date().toISOString(),

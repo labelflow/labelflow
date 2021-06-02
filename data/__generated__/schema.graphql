@@ -39,11 +39,13 @@ type Image {
 }
 
 input ImageCreateInputWithFile {
+  id: ID
   name: String
   file: Upload!
 }
 
 input ImageCreateInputWithUrl {
+  id: ID
   name: String!
   width: Int!
   height: Int!
@@ -89,6 +91,7 @@ input LabelClassWhereUniqueInput {
 }
 
 input LabelCreateInput {
+  id: ID
   imageId: ID!
   labelClassId: ID!
   x: Float!

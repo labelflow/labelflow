@@ -57,11 +57,13 @@ export type Image = {
 };
 
 export type ImageCreateInputWithFile = {
+  id?: Maybe<Scalars['ID']>;
   name?: Maybe<Scalars['String']>;
   file: Scalars['Upload'];
 };
 
 export type ImageCreateInputWithUrl = {
+  id?: Maybe<Scalars['ID']>;
   name: Scalars['String'];
   width: Scalars['Int'];
   height: Scalars['Int'];
@@ -109,6 +111,7 @@ export type LabelClassWhereUniqueInput = {
 };
 
 export type LabelCreateInput = {
+  id?: Maybe<Scalars['ID']>;
   imageId: Scalars['ID'];
   labelClassId: Scalars['ID'];
   x: Scalars['Float'];
