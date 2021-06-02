@@ -1,4 +1,7 @@
 // tslint:disable:file-header
+
+// See https://github.com/shadowwalker/next-pwa/blob/master/examples/custom-ts-worker/types/service-worker.d.ts
+
 /**
  * Copyright (c) 2016, Tiernan Cridland
  *
