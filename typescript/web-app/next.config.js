@@ -84,4 +84,13 @@ module.exports = withPWA({
   onDemandEntries: {
     maxInactiveAge: 1000 * 60 * 60,
   },
+  // Put the Service Worker code in the `public` folder to avoid having to serve it separately
+  // See https://github.com/shadowwalker/next-pwa#usage-without-custom-server-nextjs-9
+  pwa: {
+    dest: 'public',
+    // Register false, since we register manually in `_app.tsx`, and ask the user when to upgrade
+    register: false,
+    // See https://github.com/shadowwalker/next-pwa#available-options
+    cacheOnFrontEndNav: true
+  }
 });
