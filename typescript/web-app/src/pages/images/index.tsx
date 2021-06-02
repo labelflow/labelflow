@@ -15,6 +15,9 @@ const imagesQuery = gql`
       id
       name
       url
+      labels {
+        id
+      }
     }
   }
 `;
@@ -45,7 +48,10 @@ const importImage = (
 
 const ImagesPage = () => {
   const { data: imagesResult } =
-    useQuery<{ images: Pick<Image, "id" | "url" | "name">[] }>(imagesQuery);
+    useQuery<{ images: Pick<Image, "id" | "url" | "name" | "labels">[] }>(
+      imagesQuery
+    );
+
   const [createImage] = useMutation(createImageMutation, {
     refetchQueries: [{ query: imagesQuery }],
   });
