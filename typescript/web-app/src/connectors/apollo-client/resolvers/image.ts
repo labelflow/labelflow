@@ -83,8 +83,8 @@ const createImage = async (
   _: any,
   args: MutationCreateImageArgs
 ): Promise<Partial<Image>> => {
-  const { file, name } = args.data;
-  const imageId = uuidv4();
+  const { file, id, name } = args.data;
+  const imageId = id ?? uuidv4();
   const fileId = uuidv4();
 
   await db.file.add({ id: fileId, imageId, blob: file });

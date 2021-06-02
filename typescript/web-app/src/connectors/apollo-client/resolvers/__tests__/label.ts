@@ -131,6 +131,19 @@ describe("Label resolver test suite", () => {
     );
   });
 
+  test("Create label with an id", async () => {
+    const labelId = "some randomn id";
+
+    const imageId = await createImage("an image");
+    const createResult = await createLabel({
+      ...labelData,
+      id: labelId,
+      imageId,
+    });
+
+    expect(createResult.data.createLabel.id).toEqual(labelId);
+  });
+
   test("Create several labels", async () => {
     const imageId = await createImage("an image");
 
