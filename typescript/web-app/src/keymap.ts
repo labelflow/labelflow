@@ -1,4 +1,12 @@
-export const keymap = {
+export type Keymap = {
+  [key: string]: {
+    key: string;
+    description: string;
+    category: string;
+  };
+};
+
+export const keymap: Keymap = {
   toolSelect: { key: "v", description: "Selection tool", category: "Tools" },
   goToPreviousImage: {
     key: "left",
