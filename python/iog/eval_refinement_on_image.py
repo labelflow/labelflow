@@ -30,8 +30,17 @@ import argparse
 
 image_name = "data/VOCdevkit/VOC2012/JPEGImages/2009_000366.jpg"
 roi = (136, 147, 200, 193)
-# refinement_points_outside = [(233, 309), (292, 288)]
-refinement_points_outside = [(0, 0)]
+refinement_points_outside = [(233, 309), (292, 288)]
+refinement_points_outside_scaled = list(
+    map(
+        lambda point: (
+            (point[0] - roi[0]) * 512 / roi[2],
+            (point[1] - roi[1]) * 512 / roi[3],
+        ),
+        refinement_points_outside,
+    )
+)
+# refinement_points_outside = [(0, 0)]
 
 
 def print_mask(outputs, name, gt, image, im_rgb):
@@ -55,18 +64,18 @@ def print_mask(outputs, name, gt, image, im_rgb):
 
     # find contours
     # print("result shape: ", result.shape)
-    # im_mask = cv2.cvtColor(result.astype(np.uint8), cv2.COLOR_BGR2GRAY)
-    im_mask = (result * 255).astype(np.uint8)
-    ret, thresh = cv2.threshold(im_mask, 127, 255, 0)
+    im_mask = cv2.cvtColor(blending.astype(np.uint8), cv2.COLOR_RGB2BGR)
+    # im_mask = (result * 255).astype(np.uint8)
+    # ret, thresh = cv2.threshold(im_mask, 127, 255, 0)
     # kernel = np.ones((5, 5), np.uint8)
-    kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (1, 1))
-    opening = cv2.morphologyEx(thresh, cv2.MORPH_CLOSE, kernel, iterations=1)
-    contours, hierarchy = cv2.findContours(
-        opening, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE
-    )
+    # kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (1, 1))
+    # opening = cv2.morphologyEx(thresh, cv2.MORPH_CLOSE, kernel, iterations=1)
+    # contours, hierarchy = cv2.findContours(
+    #     opening, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE
+    # )
     # print("contours", contours)
-    cv2.drawContours(im_rgb, contours, -1, (0, 255, 0), 3)
-    cv2.imwrite(f"{name}.png", im_rgb)
+    # cv2.drawContours(im_rgb, contours, -1, (0, 255, 0), 3)
+    cv2.imwrite(f"{name}.png", im_mask)
 
 
 def process():
@@ -105,13 +114,14 @@ def process():
     im_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
     image = image.astype(np.float32)
-    len_x, len_y, _ = image.shape
-    refinement_points_outside_scaled = list(
-        map(
-            lambda tup: (tup[0] * 512 / len_x, tup[1] * 512 / len_y),
-            refinement_points_outside,
-        )
-    )
+    # len_x, len_y, _ = image.shape
+    # refinement_points_outside_scaled = list(
+    #     map(
+    #         lambda tup: (tup[0] * 512 / len_x, tup[1] * 512 / len_y),
+    #         refinement_points_outside,
+    #     )
+    # )
+    # refinement_points_outside_scaled = [(256, 256)]
     print("refinement_points_outside_scaled = ", refinement_points_outside_scaled)
 
     bbox = np.zeros_like(image[..., 0])
@@ -170,6 +180,10 @@ def process():
         # one result
         print("IOG_points shape: ", IOG_points.shape)
         points_center = IOG_points[0, 0:1, :, :]
+        cv2.imwrite(
+            f"points_center{index}.png",
+            np.transpose((points_center * 1).numpy().astype(np.uint8), (1, 2, 0)),
+        ),
         points_bg = IOG_points[0, 1:2, :, :]
         points_bg = 255 * np.maximum(
             points_bg / 255,
@@ -177,6 +191,11 @@ def process():
                 (IOG_points.shape[2], IOG_points.shape[3]), center=point, sigma=10
             ),
         )
+        cv2.imwrite(
+            f"points_bg{index}.png",
+            np.transpose((points_bg * 1).numpy().astype(np.uint8), (1, 2, 0)),
+        ),
+        # points_bg = torch.zeros((IOG_points.shape[2], IOG_points.shape[3]))
         IOG_points[0, 1:2, :, :] = points_bg
         outputs = net.refine(backbone_features, IOG_points)
         # Save result without refinements
@@ -187,7 +206,6 @@ def process():
             image,
             im_rgb,
         )
-    # cv2.imwrite('resulting segmentation', cv2.cvtColor(blending.astype(np.uint8), cv2.COLOR_RGB2BGR))
     cv2.waitKey(0)
     cv2.destroyAllWindows()
 
