@@ -111,16 +111,16 @@ test("It can redo multiple undo in a row", async () => {
   expect(testEffect2.redo).toHaveBeenCalledTimes(0);
 
   await store.getState().redo();
-  expect(testEffect1.redo).toHaveBeenCalledTimes(1);
+  expect(testEffect2.redo).toHaveBeenCalledTimes(1);
 });
 
-test("It should not be able to undo when no effect was performed", () => {
+test("It should inform the user that he can't undo some effect", () => {
   const store = createUndoStore();
 
   expect(store.getState().canUndo()).toBeFalsy();
 });
 
-test("It should be able to undo when effect was performed", () => {
+test("It should inform the user when he can undo some effect", () => {
   const testEffect: Effect = {
     do: () => {},
     undo: () => {},
