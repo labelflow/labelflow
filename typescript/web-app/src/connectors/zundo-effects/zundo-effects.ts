@@ -29,7 +29,6 @@ export type Effect<Payload extends any = any> = {
 
 // factory to create undoStore. contains memory about past and future states and has methods to traverse states
 export const createUndoStore = () => {
-  // @ts-ignore
   return createVanilla<UndoStoreState>((set, get) => {
     return {
       pastEffects: [],
