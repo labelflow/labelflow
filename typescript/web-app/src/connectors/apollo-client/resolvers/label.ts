@@ -5,7 +5,11 @@ import { db, Label as LabelDb } from "../../database";
 
 // Queries
 const labelClass = async (label: LabelDb) => {
-  return db.labelClass.get(label.labelClassId);
+  if (!label?.labelClassId) {
+    return null;
+  }
+
+  return db.labelClass.get(label.labelClassId) ?? null;
 };
 
 // Mutations

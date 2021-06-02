@@ -65,7 +65,7 @@ type Label {
   createdAt: DateTime!
   updatedAt: DateTime!
   imageId: ID!
-  labelClass: LabelClass!
+  labelClass: LabelClass
   x: Float!
   y: Float!
   height: Int!
@@ -93,7 +93,7 @@ input LabelClassWhereUniqueInput {
 input LabelCreateInput {
   id: ID
   imageId: ID!
-  labelClassId: ID!
+  labelClassId: ID
   x: Float!
   y: Float!
   width: Int!

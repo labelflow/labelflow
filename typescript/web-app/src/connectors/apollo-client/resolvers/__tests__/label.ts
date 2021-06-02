@@ -128,8 +128,41 @@ describe("Label resolver test suite", () => {
     ).rejects.toThrow(`The image id ${imageId} doesn't exist.`);
   });
 
-  test("Create label", async () => {
+  test("Create label without labelClass", async () => {
     const imageId = await createImage("an image");
+
+    const createResult = await createLabel({
+      ...labelData,
+      imageId,
+    });
+
+    const queryResult = await client.query({
+      query: gql`
+        query getImage($id: ID!) {
+          image(where: { id: $id }) {
+            labels {
+              id
+              labelClass
+            }
+          }
+        }
+      `,
+      variables: {
+        id: imageId,
+      },
+    });
+
+    expect(queryResult.data.image.labels[0].id).toEqual(
+      createResult.data.createLabel.id
+    );
+
+    expect(queryResult.data.image.labels[0].labelClass).toBeNull();
+  });
+
+  test("Create label with labelClass", async () => {
+    const imageId = await createImage("an image");
+
+    const aClassName = "a class";
     const labelClassId = await createLabelClass("a class");
 
     const createResult = await createLabel({
@@ -144,6 +177,9 @@ describe("Label resolver test suite", () => {
           image(where: { id: $id }) {
             labels {
               id
+              labelClass {
+                name
+              }
             }
           }
         }
@@ -155,6 +191,10 @@ describe("Label resolver test suite", () => {
 
     expect(queryResult.data.image.labels[0].id).toEqual(
       createResult.data.createLabel.id
+    );
+
+    expect(queryResult.data.image.labels[0].labelClass.name).toEqual(
+      aClassName
     );
   });
 
