@@ -206,7 +206,7 @@ test("It passes the result of the undo to the redo", async () => {
   expect(testEffect.redo).toHaveBeenCalledWith(1);
 });
 
-test("It executes an async effect", async () => {
+test("It should accept async function for `do` function", async () => {
   const testEffect: Effect = {
     do: async () => 0,
     undo: jest.fn(),

@@ -13,8 +13,7 @@ export const useLabellingStore = create<LabellingState>(
       addAFish: () => set({ fishes: get().fishes + 1 }),
     }),
     {
-      name: "labelling-state", // unique name
-      getStorage: () => localStorage, // (optional) by default the 'localStorage' is used
+      name: "labelling-state",
     }
   )
 );
