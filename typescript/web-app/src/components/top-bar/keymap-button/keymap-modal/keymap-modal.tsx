@@ -30,9 +30,6 @@ export const KeymapModal = ({
           <Heading as="h2" size="lg" pb="2">
             Keyboard shortcuts
           </Heading>
-          <Text fontSize="lg" fontWeight="medium">
-            {" "}
-          </Text>
         </ModalHeader>
         <ModalCloseButton />
         <ModalBody
@@ -44,7 +41,7 @@ export const KeymapModal = ({
           overflowY="auto"
           flexDirection="column"
         >
-          {!isEmpty(keymap) && <Keys keys={keymap} />}
+          <Keys keys={keymap} />
         </ModalBody>
       </ModalContent>
     </Modal>
