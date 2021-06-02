@@ -15,7 +15,7 @@ import { IoSearch } from "react-icons/io5";
 
 import { RiCloseCircleFill } from "react-icons/ri";
 import { useCombobox } from "downshift";
-import { ItemListClass } from "../item-list-class";
+import { ClassListItem } from "../class-list-item";
 import { LabelClass } from "../../types.generated";
 
 type CreateClassInput = { name: string; type: string };
@@ -90,7 +90,7 @@ const ClassSelectionCombobox = (props: any) => {
       <Box style={{ marginTop: "5px" }} {...getMenuProps()}>
         {inputItems.map(
           (item: LabelClass | CreateClassInput, index: number) => (
-            <ItemListClass
+            <ClassListItem
               itemProps={getItemProps({ item, index })}
               item={item}
               highlight={highlightedIndex === index}

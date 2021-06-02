@@ -10,7 +10,7 @@ import { RiCheckboxBlankCircleFill } from "react-icons/ri";
  * @param props
  * @returns
  */
-export const ItemListClass = (props: {
+export const ClassListItem = (props: {
   item: any;
   highlight: boolean;
   index: number;
