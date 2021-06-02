@@ -10,11 +10,51 @@ export default {
 };
 
 const labelClasses = [
-  { name: "Person", color: "#6B7280", shortcut: "1" },
-  { name: "Dog", color: "#EF4444 ", shortcut: "2" },
-  { name: "Car", color: "#F59E0B", shortcut: "3" },
-  { name: "Cycle", color: "#10B981", shortcut: "4" },
-  { name: "Plane", color: "#3B82F6", shortcut: "5" },
+  {
+    id: "coaisndoiasndi",
+    createdAt: "today",
+    updatedAt: "today",
+    name: "Person",
+    color: "#6B7280",
+    shortcut: "1",
+    labels: [],
+  },
+  {
+    id: "coaisndoiasndi",
+    createdAt: "today",
+    updatedAt: "today",
+    name: "Dog",
+    color: "#EF4444 ",
+    shortcut: "2",
+    labels: [],
+  },
+  {
+    id: "coaisndoiasndi",
+    createdAt: "today",
+    updatedAt: "today",
+    name: "Car",
+    color: "#F59E0B",
+    shortcut: "3",
+    labels: [],
+  },
+  {
+    id: "coaisndoiasndi",
+    createdAt: "today",
+    updatedAt: "today",
+    name: "Cycle",
+    color: "#10B981",
+    shortcut: "4",
+    labels: [],
+  },
+  {
+    id: "coaisndoiasndi",
+    createdAt: "today",
+    updatedAt: "today",
+    name: "Plane",
+    color: "#3B82F6",
+    shortcut: "5",
+    labels: [],
+  },
 ];
 
 const createNewClass = (name: string): void => {
