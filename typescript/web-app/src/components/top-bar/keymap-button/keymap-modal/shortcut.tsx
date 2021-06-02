@@ -14,8 +14,12 @@ export const displayKey = (key: string) =>
     .replace(/up/g, "↑")
     .replace(/down/g, "↓")
     .replace(/command/g, "⌘")
-    .replace(/control/g, "⌃")
-    .replace(/ctrl/g, "⌃")
+    // We do not want to show "⌃" for ctrl so we comment this...
+    //   .replace(/control/g, "⌃")
+    //   .replace(/ctrl/g, "⌃")
+    // ... and use this instead:
+    .replace(/control/g, "ctrl")
+    .replace(/ctrl/g, "ctrl")
     .replace(/option/g, "⌥")
     .replace(/alt/g, "⌥")
     .replace(/shift/g, "⇧")
