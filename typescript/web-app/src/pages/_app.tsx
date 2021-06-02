@@ -1,7 +1,15 @@
 import { AppProps } from "next/app";
 import { useEffect } from "react";
 import { ApolloProvider } from "@apollo/client";
+import type { Workbox } from "workbox-window";
+
 import { client } from "../connectors/apollo-service-worker/client";
+
+declare global {
+  interface Window {
+    workbox: Workbox;
+  }
+}
 
 function App({ Component, pageProps }: AppProps) {
   // This hook only run once in browser after the component is rendered for the first time.
@@ -34,16 +42,17 @@ function App({ Component, pageProps }: AppProps) {
       // A common UX pattern for progressive web apps is to show a banner when a service worker has updated and waiting to install.
       // NOTE: MUST set skipWaiting to false in next.config.js pwa object
       // https://developers.google.com/web/tools/workbox/guides/advanced-recipes#offer_a_page_reload_for_users
-      const promptNewVersionAvailable = (event) => {
+      const promptNewVersionAvailable = (/* event: any */) => {
         // `event.wasWaitingBeforeRegister` will be false if this is the first time the updated service worker is waiting.
         // When `event.wasWaitingBeforeRegister` is true, a previously updated service worker is still waiting.
         // You may want to customize the UI prompt accordingly.
         if (
-          confirm(
+          // eslint-disable-next-line no-alert
+          window.confirm(
             "A newer version of this web app is available, reload to update?"
           )
         ) {
-          wb.addEventListener("controlling", (event) => {
+          wb.addEventListener("controlling", (/* event: any */) => {
             window.location.reload();
           });
 
@@ -59,7 +68,7 @@ function App({ Component, pageProps }: AppProps) {
       wb.addEventListener("waiting", promptNewVersionAvailable);
 
       // ISSUE - this is not working as expected, why?
-      // I could only make message event listenser work when I manually add this listenser into sw.js file
+      // I could only make message event listener work when I manually add this listener into sw.js file
       wb.addEventListener("message", (event) => {
         console.log(`Event ${event.type} is triggered.`);
         console.log(event);

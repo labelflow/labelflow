@@ -1,5 +1,8 @@
 module.exports = {
   stories: ["../typescript/**/__stories__/*.tsx"],
+  core: {
+    builder: "webpack5",
+  },
   webpackFinal: async (config) => {
     return {
       ...config,

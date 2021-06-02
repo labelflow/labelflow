@@ -38,13 +38,14 @@ class MyExampleWebpackPlugin {
 }
 
 module.exports = withPWA({
+  // module.exports = {
   images: {
     deviceSizes: [
       320, 480, 640, 750, 828, 960, 1080, 1200, 1440, 1920, 2048, 2560, 3840,
     ],
   },
   future: {
-    webpack5: false,
+    webpack5: true,
   },
   webpack: (config, { defaultLoaders, isServer, config: nextConfig, ...others }) => {
     // Note: we provide webpack above so you should not `require` it
@@ -98,16 +99,26 @@ module.exports = withPWA({
         // `externals` options that are functions are overridden, to force externalize of the packages we want
 
         if (isWebpack5) {
-          throw new Error("Webpack 5 not yet supported, check next.config.js")
+          console.warn("Webpack 5 not yet supported, check next.config.js, doing best effort")
+          // Return a webpack5-like `externals` option function
+          return ({ context, request, contextInfo, getResolve }, callback) => {
+            if (/^ol/.test(request)) {
+              // Make an exception for `ol`, never externalize this import, it must be transpiled and bundled
+              return callback?.();
+            } else {
+              // Use the standard NextJS `externals` function
+              return external({ context, request, contextInfo, getResolve }, callback);
+            }
+          }
         } else {
           // Return a webpack4-like `externals` option function
           return (context, request, callback) => {
             if (/^ol/.test(request)) {
               // Make an exception for `ol`, never externalize this import, it must be transpiled and bundled
-              callback();
+              return callback?.();
             } else {
               // Use the standard NextJS `externals` function
-              external(context, request, callback)
+              return external(context, request, callback);
             }
           }
         }
@@ -180,12 +191,13 @@ module.exports = withPWA({
     cacheOnFrontEndNav: true,
     // Add plugins to the webpack config of the service worker bundler
     // See https://developers.google.com/web/tools/workbox/reference-docs/latest/module-workbox-webpack-plugin.InjectManifest
-    webpackCompilationPlugins: [
-      // new webpack.NormalModuleReplacementPlugin(
-      //   /^fs$/,
-      //   'react'
-      // ),
-      new MyExampleWebpackPlugin()
-    ]
+    // webpackCompilationPlugins: [
+    //   // new webpack.NormalModuleReplacementPlugin(
+    //   //   /^fs$/,
+    //   //   'react'
+    //   // ),
+    //   // new MyExampleWebpackPlugin()
+    // ]
   }
-});
+}
+);
