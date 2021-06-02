@@ -4,7 +4,6 @@ import {
   incrementMockedDate,
 } from "@labelflow/dev-utils/mockdate";
 import gql from "graphql-tag";
-// import { v4 as uuidv4 } from "uuid";
 import { db } from "../../../database";
 import { client } from "../../index";
 

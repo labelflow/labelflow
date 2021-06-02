@@ -19,10 +19,17 @@ const createLabel = async (
 ): Promise<Partial<Label>> => {
   const { id, imageId, x, y, height, width, labelClassId } = args.data;
 
-  // We need to ensure the image exists before adding the labels
-  const image = await db.image.get(imageId);
-  if (image == null) {
+  // Since we don't have any constraint checks with Dexie
+  // We need to ensure that the imageId and the labelClassId
+  // matches some entity before being able to continue.
+  if ((await db.image.get(imageId)) == null) {
     throw new Error(`The image id ${imageId} doesn't exist.`);
+  }
+
+  if (labelClassId != null) {
+    if ((await db.labelClass.get(labelClassId)) == null) {
+      throw new Error(`The labelClass id ${labelClassId} doesn't exist.`);
+    }
   }
 
   const labelId = id ?? uuidv4();

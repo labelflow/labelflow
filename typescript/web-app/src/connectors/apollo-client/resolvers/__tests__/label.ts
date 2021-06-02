@@ -116,8 +116,18 @@ describe("Label resolver test suite", () => {
     return id;
   };
 
-  test("Creating a label should fail if its image / labelClassId doesn't exist", async () => {
+  test("Creating a label should fail if its image doesn't exist", async () => {
     const imageId = "0024fbc1-387b-444f-8ad0-d7a3e316726a";
+    return expect(
+      createLabel({
+        ...labelData,
+        imageId,
+      })
+    ).rejects.toThrow(`The image id ${imageId} doesn't exist.`);
+  });
+
+  test("Creating a label should fail if its labelClassId doesn't exist", async () => {
+    const imageId = await createImage("an image");
     const labelClassId = "0024fbc1-387b-444f-8ad0-d7a3e316726a";
     return expect(
       createLabel({
@@ -125,7 +135,7 @@ describe("Label resolver test suite", () => {
         imageId,
         labelClassId,
       })
-    ).rejects.toThrow(`The image id ${imageId} doesn't exist.`);
+    ).rejects.toThrow(`The labelClass id ${labelClassId} doesn't exist.`);
   });
 
   test("Create label without labelClass", async () => {
