@@ -13,13 +13,13 @@ export const example = async (_: any, args: QueryExampleArgs) => {
 };
 
 export const examples = async (_: any, args: QueryExamplesArgs) => {
-  const query = db.example.offset(args.skip ?? 0);
+  const query = await db.example.orderBy("createdAt").offset(args.skip ?? 0);
 
   if (args.first) {
-    return query.limit(args.first).sortBy("updatedAt");
+    return query.limit(args.first).toArray();
   }
 
-  return query.sortBy("updatedAt");
+  return query.toArray();
 };
 
 // Mutations
