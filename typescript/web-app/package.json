@@ -41,7 +41,7 @@
   "devDependencies": {
     "@babel/core": "7.14.3",
     "@labelflow/dev-utils": "workspace:typescript/dev-utils",
-    "@storybook/react": "^6.2.9",
+    "@storybook/react": "6.3.0-beta.9",
     "@testing-library/dom": "^7.31.0",
     "@testing-library/jest-dom": "^5.12.0",
     "@testing-library/react": "11.2.6",
