@@ -242,7 +242,7 @@ describe("LabelClass resolver test suite", () => {
     ).toEqual([id0, id2]);
   });
 
-  test("Querying an labelClass with labels", async () => {
+  test("Querying a labelClass with labels", async () => {
     const labelClassId = await createLabelClass({
       name: "some labelClass",
       color: "#ff0000",
