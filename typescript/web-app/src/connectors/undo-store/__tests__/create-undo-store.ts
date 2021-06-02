@@ -1,4 +1,4 @@
-import { createUndoStore, Effect } from "../zundo-effects";
+import { createUndoStore, Effect } from "../create-undo-store";
 
 const sleep = (sleepTime: number): Promise<void> =>
   new Promise((resolve) => setTimeout(resolve, sleepTime));

@@ -1,5 +1,5 @@
 import { Button, ButtonGroup } from "@chakra-ui/react";
-import { useUndoStore } from "../connectors/zundo-effects";
+import { useUndoStore } from "../connectors/undo-store";
 import { useLabellingStore } from "../connectors/labelling-state";
 import { Layout } from "../components/layout";
 

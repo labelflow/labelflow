@@ -6,7 +6,7 @@ type StoredState<Payload extends any = any> = {
   redo: (previousPayload: Payload) => Promise<Payload> | Payload;
 };
 
-export interface UndoStoreState {
+type UndoStoreState = {
   pastEffects: StoredState[];
   futureEffects: StoredState[];
   perform: (effect: Effect) => Promise<void>;
@@ -15,7 +15,7 @@ export interface UndoStoreState {
   clear: () => void;
   canUndo: () => boolean;
   canRedo: () => boolean;
-}
+};
 
 export type Effect<Payload extends any = any> = {
   do: () => Promise<Payload> | Payload;
