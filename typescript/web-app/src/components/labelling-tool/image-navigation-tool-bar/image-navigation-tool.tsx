@@ -1,6 +1,8 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useState, useEffect } from "react";
 import {
   IconButton,
+  Tooltip,
   Text,
   HStack,
   NumberInput,
@@ -12,9 +14,9 @@ import { NextRouter } from "next/router";
 import NextLink from "next/link";
 import { useHotkeys } from "react-hotkeys-hook";
 
-import { keymap } from "../../keymap";
+import { keymap } from "../../../keymap";
 
-import { Image } from "../../types.generated";
+import { Image } from "../../../types.generated";
 
 export type Props = {
   imageId: string | undefined;
@@ -29,7 +31,7 @@ const parse = (x: string): number | undefined =>
 const format = (x: number | undefined): string =>
   isNumber(x) && !isNaN(x) && x >= 0 ? `${x + 1}` : `-`;
 
-export const ImageNav = ({ imageId, images, router }: Props) => {
+export const ImageNavigationTool = ({ imageId, images, router }: Props) => {
   const imageIndex: number | undefined =
     images != null && imageId != null
       ? findIndex({ id: imageId }, images)
@@ -107,45 +109,53 @@ export const ImageNav = ({ imageId, images, router }: Props) => {
       pointerEvents="initial"
     >
       {imageIndex != null && imageIndex > 0 && images != null ? (
-        <NextLink href={`/images/${images[imageIndex - 1]?.id}`}>
-          <IconButton
-            aria-label="Previous image"
-            variant="ghost"
-            icon={<RiArrowLeftSLine size="1.5em" />}
-          />
+        <NextLink href={`/images/${images[imageIndex - 1]?.id}`} passHref>
+          <a>
+            <Tooltip
+              label={`Previous image [${keymap.goToPreviousImage.key}]`}
+              placement="top"
+            >
+              <IconButton
+                aria-label="Previous image"
+                backgroundColor="white"
+                icon={<RiArrowLeftSLine size="1.5em" />}
+              />
+            </Tooltip>
+          </a>
         </NextLink>
       ) : (
         <IconButton
           disabled
-          variant="ghost"
+          backgroundColor="white"
           aria-label="No previous image"
           icon={<RiArrowLeftSLine size="1.5em" />}
         />
       )}
-
-      <NumberInput
-        rounded={6}
-        allowMouseWheel
-        defaultValue={imageIndex != null ? imageIndex + 1 : "-"}
-        min={1}
-        max={imageCount}
-        variant="filled"
-        textAlign="right"
-        size="sm"
-        value={value}
-        onChange={setValue}
-        onKeyPress={handleKeyPress}
-        onBlur={handleBlur}
-      >
-        <NumberInputField
+      <Tooltip label="Current image index" placement="top">
+        <NumberInput
           rounded={6}
-          onClick={selectText}
+          allowMouseWheel
+          defaultValue={imageIndex != null ? imageIndex + 1 : "-"}
+          min={1}
+          max={imageCount}
+          variant="filled"
           textAlign="right"
-          w={`${digitCount * digitsPerRem + 1}rem`}
-          pr={2}
-          pl={0}
-        />
-      </NumberInput>
+          size="sm"
+          value={value}
+          onChange={setValue}
+          onKeyPress={handleKeyPress}
+          onBlur={handleBlur}
+        >
+          <NumberInputField
+            rounded={6}
+            onClick={selectText}
+            textAlign="right"
+            w={`${digitCount * digitsPerRem + 1}rem`}
+            pr={2}
+            pl={0}
+          />
+        </NumberInput>
+      </Tooltip>
 
       <Text textAlign="center" userSelect="none">
         {" "}
@@ -166,16 +176,23 @@ export const ImageNav = ({ imageId, images, router }: Props) => {
       imageIndex < imageCount - 1 &&
       images != null ? (
         <NextLink href={`/images/${images[imageIndex + 1]?.id}`}>
-          <IconButton
-            aria-label="Next image"
-            variant="ghost"
-            icon={<RiArrowRightSLine size="1.5em" />}
-          />
+          <a>
+            <Tooltip
+              label={`Next image [${keymap.goToNextImage.key}]`}
+              placement="top"
+            >
+              <IconButton
+                aria-label="Next image"
+                backgroundColor="white"
+                icon={<RiArrowRightSLine size="1.5em" />}
+              />
+            </Tooltip>
+          </a>
         </NextLink>
       ) : (
         <IconButton
           disabled
-          variant="ghost"
+          backgroundColor="white"
           aria-label="No next image"
           icon={<RiArrowRightSLine size="1.5em" />}
         />

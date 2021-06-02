@@ -3829,6 +3829,14 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@labelflow/dev-utils@workspace:typescript/dev-utils":
+  version: 0.0.0-use.local
+  resolution: "@labelflow/dev-utils@workspace:typescript/dev-utils"
+  dependencies:
+    mockdate: ^3.0.5
+  languageName: unknown
+  linkType: soft
+
 "@labelflow/react-openlayers-fiber@workspace:typescript/react-openlayers-fiber":
   version: 0.0.0-use.local
   resolution: "@labelflow/react-openlayers-fiber@workspace:typescript/react-openlayers-fiber"
@@ -3871,6 +3879,7 @@ __metadata:
     "@emotion/styled": ^11
     "@graphql-tools/merge": ^6.2.14
     "@graphql-tools/schema": 7.1.5
+    "@labelflow/dev-utils": "workspace:typescript/dev-utils"
     "@labelflow/react-openlayers-fiber": "workspace:typescript/react-openlayers-fiber"
     "@storybook/react": ^6.2.9
     "@testing-library/dom": ^7.31.0
@@ -16616,6 +16625,13 @@ fsevents@^1.2.7:
   bin:
     mkdirp: bin/cmd.js
   checksum: 9dd9792e891927b14ca02226dbe1daeb717b9517a001620d5e2658bbc72c5e4f06887b6cbcbb60595fa5a56e701073cf250f1ed69c1988a6b89faf9fd6a4d049
+  languageName: node
+  linkType: hard
+
+"mockdate@npm:^3.0.5":
+  version: 3.0.5
+  resolution: "mockdate@npm:3.0.5"
+  checksum: 8098a98f0af3a143b7a3f9625c6ae525cad0b72c9798a82b9429e6c89bcb0c67e238126e5df8962169e8a503a51af18d03eea222051c8e67f62707277880ece0
   languageName: node
   linkType: hard
 
