@@ -7,9 +7,9 @@ import "@testing-library/jest-dom/extend-expect";
 
 import { ImportImagesModal } from "../import-images-modal";
 
-import { db } from "../../../../../connectors/database";
-import { client } from "../../../../../connectors/apollo-client";
-import { clearGetUrlFromImageIdMem } from "../../../../../connectors/apollo-client/resolvers/image";
+import { db } from "../../../../../../connectors/database";
+import { client } from "../../../../../../connectors/apollo-client";
+import { clearGetUrlFromImageIdMem } from "../../../../../../connectors/apollo-client/resolvers/image";
 
 const files = [
   new File(["Hello"], "hello.png", { type: "image/png" }),
