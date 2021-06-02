@@ -5,7 +5,7 @@ import Projection from "ol/proj/Projection";
 import useMeasure from "react-use-measure";
 
 import { Map } from "@labelflow/react-openlayers-fiber";
-import type { Image } from "../../types.generated";
+import type { Image } from "../../../types.generated";
 import "ol/ol.css";
 
 const empty: any[] = [];
@@ -55,7 +55,7 @@ type Props = {
   image?: Pick<Image, "id" | "url" | "name" | "width" | "height">;
 };
 
-const OpenlayersMap = ({ image }: Props) => {
+export const OpenlayersMap = ({ image }: Props) => {
   const [ref, bounds] = useMeasure();
 
   const isBoundsValid = bounds.width > 0 || bounds.height > 0;
@@ -115,5 +115,3 @@ const OpenlayersMap = ({ image }: Props) => {
     </Map>
   );
 };
-
-export default OpenlayersMap;

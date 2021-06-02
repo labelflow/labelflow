@@ -12,7 +12,7 @@ import {
 import {
   keymap as labelflowKeymap,
   Keymap as LabelflowKeymap,
-} from "../../../../keymap";
+} from "../../../../../keymap";
 import { Keymap } from "./keymap";
 
 export const KeymapModal = ({
