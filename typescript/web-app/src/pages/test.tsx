@@ -6,7 +6,7 @@ import { Layout } from "../components/layout";
 const IndexPage = () => {
   const fishes = useLabellingStore((state) => state.fishes);
 
-  const increaseBearPopulationEffect = () => ({
+  const increaseFishPopulationEffect = () => ({
     do: () => {
       useLabellingStore.setState((state) => ({
         fishes: state.fishes + 1,
@@ -26,7 +26,7 @@ const IndexPage = () => {
       <h1>Hello world</h1>
       <h1>{fishes} around here ...</h1>
       <ButtonGroup>
-        <Button onClick={() => perform(increaseBearPopulationEffect())}>
+        <Button onClick={() => perform(increaseFishPopulationEffect())}>
           one up
         </Button>
         <Button onClick={undo} disabled={!canUndo()}>
