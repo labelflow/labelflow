@@ -5,7 +5,7 @@ import Projection from "ol/proj/Projection";
 import useMeasure from "react-use-measure";
 
 import { Map } from "@labelflow/react-openlayers-fiber";
-import type { Image } from "../../types.generated";
+import type { Image } from "../../../types.generated";
 import "ol/ol.css";
 
 const empty: any[] = [];

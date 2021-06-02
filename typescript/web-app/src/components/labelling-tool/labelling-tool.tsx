@@ -1,10 +1,11 @@
 import { Box, HStack, VStack } from "@chakra-ui/react";
 import { NextRouter } from "next/router";
-import { DrawingToolbar } from "../drawing-tool-bar";
 
 import type { Image } from "../../types.generated";
-import { ImageNavigationToolbar } from "../image-navigation-tool-bar";
-import OpenlayersMap from "../openlayers-map";
+
+import { OpenlayersMap } from "./openlayers-map";
+import { DrawingToolbar } from "./drawing-tool-bar";
+import { ImageNavigationToolbar } from "./image-navigation-tool-bar";
 
 export type Props = {
   image?: Pick<Image, "id" | "url" | "name" | "width" | "height">;

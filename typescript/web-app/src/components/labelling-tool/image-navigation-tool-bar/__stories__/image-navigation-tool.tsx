@@ -4,7 +4,7 @@ import { NextRouter } from "next/router";
 import { HStack, Button, Flex } from "@chakra-ui/react";
 
 import { ImageNavigationTool, Props } from "../image-navigation-tool";
-import { chakraDecorator } from "../../../utils/chakra-decorator";
+import { chakraDecorator } from "../../../../utils/chakra-decorator";
 
 addDecorator(chakraDecorator);
 

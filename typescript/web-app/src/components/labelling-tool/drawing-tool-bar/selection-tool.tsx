@@ -3,7 +3,7 @@ import { BiPointer } from "react-icons/bi";
 
 import { useHotkeys } from "react-hotkeys-hook";
 
-import { keymap } from "../../keymap";
+import { keymap } from "../../../keymap";
 
 export type Props = {};
 
