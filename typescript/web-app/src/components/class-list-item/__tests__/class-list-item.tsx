@@ -5,7 +5,7 @@ import "@testing-library/jest-dom/extend-expect";
 import { ClassListItem } from "../class-list-item";
 
 const classDefault = { color: "#00ff00", name: "someClass", shortCut: "1" };
-const classCreate = { type: "CreateClassItem", name: "someClass" };
+const classCreate = { type: "CreateClassItem", name: "nonExistingClass" };
 
 test("should display class name", () => {
   render(
@@ -29,6 +29,6 @@ test("should propose to create class", () => {
       itemProps={{}}
     />
   );
-  expect(screen.queryByText(/someClass/i)).toBeInTheDocument();
+  expect(screen.queryByText(/nonExistingClass/i)).toBeInTheDocument();
   expect(screen.queryByText(/Create class/i)).toBeInTheDocument();
 });
