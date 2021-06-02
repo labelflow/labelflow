@@ -4,7 +4,7 @@ import { Box, Text, Flex } from "@chakra-ui/react";
 import { Keymap } from "../../../../keymap";
 import { Shortcut } from "./shortcut";
 
-export const Keys = ({ keys }: { keys: Keymap }) => {
+export const Keymap = ({ keys }: { keys: Keymap }) => {
   const categories = groupBy(
     ([, { category }]) => category,
     Object.entries(keys)

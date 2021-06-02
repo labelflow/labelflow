@@ -11,7 +11,7 @@ import {
 } from "@chakra-ui/react";
 import { isEmpty } from "lodash/fp";
 import { keymap as labelflowKeymap, Keymap } from "../../../../keymap";
-import { Keys } from "./keys";
+import { Keymap } from "./keymap";
 
 export const KeymapModal = ({
   isOpen,
@@ -41,7 +41,7 @@ export const KeymapModal = ({
           overflowY="auto"
           flexDirection="column"
         >
-          <Keys keys={keymap} />
+          <Keymap keys={keymap} />
         </ModalBody>
       </ModalContent>
     </Modal>
