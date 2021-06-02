@@ -25,9 +25,9 @@ const Wrapper = ({ children }: PropsWithChildren<{}>) => (
  * Mock the apollo client to avoid creating corrupted files that allows
  * us to identify a behaviour.
  */
-jest.mock("../../../../../connectors/apollo-client", () => {
+jest.mock("../../../../../../connectors/apollo-client", () => {
   const original = jest.requireActual(
-    "../../../../../connectors/apollo-client"
+    "../../../../../../connectors/apollo-client"
   );
 
   return {
