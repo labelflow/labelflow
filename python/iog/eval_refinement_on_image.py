@@ -18,7 +18,9 @@ import dataloaders.sbd as sbd
 from dataloaders import custom_transforms as tr
 from networks.loss import class_cross_entropy_loss
 from dataloaders.helpers import *
-from networks.mainnetwork import *
+
+# from networks.mainnetwork import *
+from networks.refinementnetwork import *
 
 import matplotlib.pyplot as plt
 
@@ -53,7 +55,7 @@ def process():
     )
 
     # load pretrain_dict
-    pretrain_dict = torch.load("data/IOG_PASCAL_SBD.pth")
+    pretrain_dict = torch.load("data/IOG_PASCAL_SBD_REFINEMENT.pth")
 
     net.load_state_dict(pretrain_dict)
     # net.to(device)
@@ -103,7 +105,9 @@ def process():
 
     inputs = tr_sample["concat"][None]
     # inputs = inputs.to(device)
-    outputs = net.forward(inputs)[-1]  # We just keep the fine net output
+    outputs = net.inference(inputs, tr_sample["IOG_points"].unsqueeze(0))[
+        -1
+    ]  # We just keep the fine net output
     # outputs = fine_out.to(torch.device('cpu'))
     pred = np.transpose(outputs.data.numpy()[0, :, :, :], (1, 2, 0))
     pred = 1 / (1 + np.exp(-pred))

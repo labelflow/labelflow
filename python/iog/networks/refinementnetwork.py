@@ -233,7 +233,7 @@ class SegmentationNetwork(nn.Module):
             outlist.append(out)
         return outlist
 
-    def inference(self, input):
+    def inference(self, input, IOG_points):
         """Runs the model without refinement (same as calling mainnetwork.forward)
 
         Args:
@@ -254,8 +254,11 @@ class SegmentationNetwork(nn.Module):
             low_level_feat_2,
             low_level_feat_1,
         ]
-        low_level_feat_4_psp = self.psp4(low_level_feat_4.clone())
-        res_out = [low_level_feat_4_psp, *backbone_out[1:]]
+        distance_map = self.iog_points(IOG_points)
+        feats_concat = torch.cat((low_level_feat_4, distance_map), dim=1)  # 2048+64
+
+        low_level_feat_4 = self.psp4(feats_concat)
+        res_out = [low_level_feat_4, *backbone_out[1:]]
         coarse_fms, coarse_outs = self.Coarse_net(res_out)
         fine_out = self.Fine_net(coarse_fms)
         coarse_outs[0] = self.upsample(coarse_outs[0])
