@@ -58,7 +58,9 @@ export const ClassListItem = (props: {
             />
             <Text>{name}</Text>
           </Flex>
-          <Kbd style={{ justifyContent: "center" }}>{shortcut}</Kbd>
+          {shortcut && (
+            <Kbd style={{ justifyContent: "center" }}>{shortcut}</Kbd>
+          )}
         </Flex>
       )}
     </Box>

@@ -4,7 +4,11 @@ import "@testing-library/jest-dom/extend-expect";
 
 import { ClassListItem } from "../class-list-item";
 
-const classDefault = { color: "#00ff00", name: "someClass", shortCut: "1" };
+const classDefault = {
+  color: "#F59E0B",
+  name: "someClass",
+  shortcut: "myShortcut",
+};
 const classCreate = { type: "CreateClassItem", name: "nonExistingClass" };
 
 test("should display class name", () => {
@@ -18,6 +22,7 @@ test("should display class name", () => {
   );
   expect(screen.queryByText(/someClass/i)).toBeInTheDocument();
   expect(screen.queryByText(/Create class/i)).not.toBeInTheDocument();
+  expect(screen.queryByText(/myShortcut/i)).toBeInTheDocument();
 });
 
 test("should propose to create class", () => {
