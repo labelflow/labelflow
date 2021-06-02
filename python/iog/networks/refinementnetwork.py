@@ -270,6 +270,36 @@ class SegmentationNetwork(nn.Module):
             coarse_outs[3],
             fine_out,
         )
+    
+    def refine(self, backbone_out, IOG_points):
+        """Refines the result from new IOG points
+
+        Args:
+            backbone_out ([type]): Initial output of the backbone (with initial IOG points)
+            IOG_points ([type]): New IOG points added (aggregated over several refinements)
+
+        Returns:
+            [type]: [description]
+        """
+        [
+            feats_orig,
+            low_level_feat_3_orig,
+            low_level_feat_2_orig,
+            low_level_feat_1_orig,
+        ] = backbone_out
+        distance_map = self.iog_points(IOG_points)
+        feats_concat = torch.cat((feats_orig, distance_map), dim=1)  # 2048+64
+
+        low_level_feat_4 = self.psp4(feats_concat)
+        res_out = [
+            low_level_feat_4,
+            low_level_feat_3_orig,
+            low_level_feat_2_orig,
+            low_level_feat_1_orig,
+        ]
+        coarse_fms, coarse_outs = self.Coarse_net(res_out)
+        fine_out = self.Fine_net(coarse_fms)
+        return fine_out
 
     def freeze_bn(self):
         for m in self.modules():
