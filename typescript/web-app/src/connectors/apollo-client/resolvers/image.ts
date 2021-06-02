@@ -25,7 +25,7 @@ export const clearGetUrlFromImageIdMem = () => {
   memoize.clear(getUrlFromImageId);
 };
 
-const getImageById = async (id: string): Promise<Image> => {
+const getImageById = async (id: string): Promise<Partial<Image>> => {
   const entity = await db.image.get(id);
 
   if (entity === undefined) {
@@ -34,28 +34,36 @@ const getImageById = async (id: string): Promise<Image> => {
 
   const url = await getUrlFromImageId(entity.fileId);
 
-  return { ...entity, url } as Image;
+  return { ...entity, url };
 };
 
 const getPaginatedImages = async (
   skip?: Maybe<number>,
   first?: Maybe<number>
 ): Promise<any[]> => {
-  const query = db.image.offset(skip ?? 0);
+  const query = db.image.orderBy("createdAt").offset(skip ?? 0);
 
   if (first) {
-    return query.limit(first).sortBy("updatedAt");
+    return query.limit(first).toArray();
   }
 
-  return query.sortBy("updatedAt");
+  return query.toArray();
 };
 
 // Queries
-export const image = async (_: any, args: QueryImageArgs) => {
+const labels = async (image: any) => {
+  const getResults = await db.label
+    .where({ imageId: image.id })
+    .sortBy("createdAt");
+
+  return getResults ?? [];
+};
+
+const image = (_: any, args: QueryImageArgs) => {
   return getImageById(args?.where?.id);
 };
 
-export const images = async (_: any, args: QueryImagesArgs) => {
+const images = async (_: any, args: QueryImagesArgs) => {
   const imagesList = await getPaginatedImages(args?.skip, args?.first);
 
   const entitiesWithUrls = await Promise.all(
@@ -71,18 +79,18 @@ export const images = async (_: any, args: QueryImagesArgs) => {
 };
 
 // Mutations
-export const createImage = async (
+const createImage = async (
   _: any,
   args: MutationCreateImageArgs
-): Promise<Image> => {
+): Promise<Partial<Image>> => {
   const { file, id, name } = args.data;
   const imageId = id ?? uuidv4();
-  const fileId = id ?? uuidv4();
+  const fileId = uuidv4();
 
   await db.file.add({ id: fileId, imageId, blob: file });
   const url = await getUrlFromImageId(fileId);
 
-  const newEntity = await new Promise<Image>((resolve, reject) => {
+  const newEntity = await new Promise<Partial<Image>>((resolve, reject) => {
     const imageObject = new Image();
     imageObject.onload = async () => {
       const newImageEntity = {
@@ -96,7 +104,7 @@ export const createImage = async (
       };
 
       await db.image.add(newImageEntity);
-      resolve(await getImageById(imageId));
+      resolve(getImageById(imageId));
     };
     imageObject.onerror = async () => {
       reject(
@@ -118,5 +126,9 @@ export default {
 
   Mutation: {
     createImage,
+  },
+
+  Image: {
+    labels,
   },
 };

@@ -33,6 +33,7 @@ type Image {
   name: String!
   height: Int!
   width: Int!
+  labels: [Label!]!
 }
 
 input ImageCreateInputWithFile {
@@ -57,17 +58,38 @@ input ImageWhereUniqueInput {
   id: ID!
 }
 
+type Label {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  imageId: ID!
+  x: Float!
+  y: Float!
+  height: Int!
+  width: Int!
+}
+
+input LabelCreateInput {
+  id: ID
+  imageId: ID!
+  x: Float!
+  y: Float!
+  width: Int!
+  height: Int!
+}
+
 type Mutation {
   createExample(data: ExampleCreateInput!): Example
   createImage(data: ImageCreateInputWithFile!): Image
+  createLabel(data: LabelCreateInput!): Label
 }
 
 type Query {
   hello: String
-  examples(where: ExampleWhereInput, first: Int, skip: Int, orderBy: ExampleOrderByInput): [Example!]!
   example(where: ExampleWhereUniqueInput!): Example!
-  images(where: ImageWhereInput, first: Int, skip: Int): [Image!]!
+  examples(where: ExampleWhereInput, first: Int, skip: Int, orderBy: ExampleOrderByInput): [Example!]!
   image(where: ImageWhereUniqueInput!): Image!
+  images(where: ImageWhereInput, first: Int, skip: Int): [Image!]!
 }
 
 scalar Upload

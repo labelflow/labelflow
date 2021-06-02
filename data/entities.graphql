@@ -14,4 +14,16 @@ type Image {
   name: String!
   height: Int!
   width: Int!
+  labels: [Label!]!
+}
+
+type Label {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  imageId: ID!
+  x: Float!
+  y: Float!
+  height: Int!
+  width: Int!
 }

@@ -1,9 +1,5 @@
-import { useState } from "react";
 import { useQuery } from "@apollo/client";
 import {
-  Button,
-  HStack,
-  Box,
   Text,
   Breadcrumb,
   BreadcrumbItem,
@@ -17,9 +13,11 @@ import NextLink from "next/link";
 
 import { Layout } from "../../components/layout";
 import type { Image } from "../../types.generated";
-import { ImageNav } from "../../components/image-navigation-tool-bar";
 
-const OpenlayersMap = dynamic(() => import("../../components/openlayers-map"), {
+// The dynamic import is needed because openlayers use web apis that are not available
+// in NodeJS, like `Blob`, so it crashes when rendering in NextJS server side.
+// And anyway, it would not make sense to render canvas server side, it would just be a loss.
+const LabellingTool = dynamic(() => import("../../components/labelling-tool"), {
   ssr: false,
   loading: () => <div>loading</div>,
 });
@@ -58,8 +56,6 @@ const ImagePage = () => {
 
   const image = imageResult?.image;
 
-  const [counter, setCounter] = useState(0);
-
   return (
     <Layout
       topBarLeftContent={
@@ -86,33 +82,11 @@ const ImagePage = () => {
         </Breadcrumb>
       }
     >
-      <OpenlayersMap image={image} />
-
-      <HStack
-        padding={4}
-        spacing={4}
-        position="absolute"
-        bottom={0}
-        left={0}
-        pointerEvents="none"
-      >
-        <ImageNav imageId={id} images={imagesResult?.images} router={router} />
-      </HStack>
-      <HStack
-        padding={4}
-        spacing={4}
-        position="absolute"
-        bottom={0}
-        right={0}
-        pointerEvents="none"
-      >
-        <Box pointerEvents="initial">
-          <Button colorScheme="blue" onClick={() => setCounter(counter + 1)}>
-            Done, and look at this state that persists when you change page:
-            {counter}
-          </Button>
-        </Box>
-      </HStack>
+      <LabellingTool
+        image={image}
+        images={imagesResult?.images}
+        router={router}
+      />
     </Layout>
   );
 };

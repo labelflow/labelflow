@@ -3,19 +3,19 @@ import { addDecorator, Story } from "@storybook/react";
 import { NextRouter } from "next/router";
 import { HStack, Button, Flex } from "@chakra-ui/react";
 
-import { ImageNav, Props } from "../index";
-import { chakraDecorator } from "../../../utils/chakra-decorator";
+import { ImageNavigationTool, Props } from "../image-navigation-tool";
+import { chakraDecorator } from "../../../../utils/chakra-decorator";
 
 addDecorator(chakraDecorator);
 
 export default {
   title: "web-app/Image Navigation Toolbar",
-  component: ImageNav,
+  component: ImageNavigationTool,
 };
 
 const Template: Story<Props> = (args: Props) => (
   <HStack background="gray.100" padding={4} spacing={4}>
-    <ImageNav {...args} />
+    <ImageNavigationTool {...args} />
     <Button variant="solid" background="white" color="gray.800">
       Button just to compare
     </Button>

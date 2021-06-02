@@ -1,0 +1,8 @@
+input LabelCreateInput {
+  id: ID
+  imageId: ID!
+  x: Float!
+  y: Float!
+  width: Int!
+  height: Int!
+}
