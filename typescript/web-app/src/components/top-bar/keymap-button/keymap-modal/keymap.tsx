@@ -1,10 +1,10 @@
 import { Fragment } from "react";
 import { groupBy } from "lodash/fp";
 import { Box, Text, Flex } from "@chakra-ui/react";
-import { Keymap } from "../../../../keymap";
+import { Keymap as KeymapType } from "../../../../keymap";
 import { Shortcut } from "./shortcut";
 
-export const Keymap = ({ keys }: { keys: Keymap }) => {
+export const Keymap = ({ keys }: { keys: KeymapType }) => {
   const categories = groupBy(
     ([, { category }]) => category,
     Object.entries(keys)
@@ -20,9 +20,9 @@ export const Keymap = ({ keys }: { keys: Keymap }) => {
             </Box>
             <Flex direction="column" width="100%" pb={8}>
               {Object.entries(categoryElements).map(
-                ([, [name, { key, description }]], index) => (
+                ([, [id, { key, description }]], index) => (
                   <Flex
-                    key={name}
+                    key={id}
                     w="100%"
                     alignItems="center"
                     p={2}

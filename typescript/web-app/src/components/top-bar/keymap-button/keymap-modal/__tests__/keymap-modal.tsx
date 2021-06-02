@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 import "@testing-library/jest-dom/extend-expect";
@@ -16,13 +16,13 @@ const keymap = {
 test("should display the key map and full text on hover", async () => {
   render(<KeymapModal keymap={keymap} isOpen onClose={() => {}} />);
 
-  const arrowKey = screen.queryByText(/←/i);
+  const arrowKey = screen.getByText(/←/i);
 
-  expect(arrowKey).toBeInTheDocument();
+  expect(await screen.queryAllByText(/left/i)).toHaveLength(0);
 
   userEvent.hover(arrowKey as HTMLElement);
 
-  await waitFor(() => expect(screen.queryAllByText(/left/i)).toBeDefined());
+  expect(await screen.findAllByText(/left/i)).toHaveLength(2);
 
   expect(screen.queryByText(/Navigation/i)).toBeInTheDocument();
 });

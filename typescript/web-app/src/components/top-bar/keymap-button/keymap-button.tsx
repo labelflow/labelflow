@@ -2,7 +2,7 @@ import { IconButton, Tooltip, useDisclosure, chakra } from "@chakra-ui/react";
 import { FaRegKeyboard } from "react-icons/fa";
 import { KeymapModal } from "./keymap-modal";
 
-const UploadIcon = chakra(FaRegKeyboard);
+const KeymapIcon = chakra(FaRegKeyboard);
 
 export const KeymapButton = () => {
   const { isOpen, onClose, onOpen } = useDisclosure();
@@ -13,7 +13,7 @@ export const KeymapButton = () => {
       <Tooltip label="Keyboard shortcuts">
         <IconButton
           aria-label="Add images"
-          icon={<UploadIcon fontSize="xl" />}
+          icon={<KeymapIcon fontSize="xl" />}
           onClick={onOpen}
           variant="ghost"
         />

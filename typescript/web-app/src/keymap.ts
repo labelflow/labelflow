@@ -1,4 +1,12 @@
-export const keymap = {
+export type Keymap = {
+  [key: string]: {
+    key: string;
+    description: string;
+    category: string;
+  };
+};
+
+export const keymap: Keymap = {
   goToPreviousImage: {
     key: "left",
     description: "Navigate to the previous image",
@@ -10,5 +18,3 @@ export const keymap = {
     category: "Navigation",
   },
 };
-
-export type Keymap = typeof keymap;
