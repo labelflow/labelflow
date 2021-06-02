@@ -233,6 +233,44 @@ class SegmentationNetwork(nn.Module):
             outlist.append(out)
         return outlist
 
+    def inference(self, input):
+        """Runs the model without refinement (same as calling mainnetwork.forward)
+
+        Args:
+            input ([type]): see 'mainnetwork.py'
+
+        Returns:
+            [type]: [description]
+        """
+        (
+            low_level_feat_4,
+            low_level_feat_3,
+            low_level_feat_2,
+            low_level_feat_1,
+        ) = self.backbone(input)
+        low_level_feat_4 = self.psp4(low_level_feat_4.copy())
+        res_out = [
+            low_level_feat_4,
+            low_level_feat_3,
+            low_level_feat_2,
+            low_level_feat_1,
+        ]
+        coarse_fms, coarse_outs = self.Coarse_net(res_out)
+        fine_out = self.Fine_net(coarse_fms)
+        coarse_outs[0] = self.upsample(coarse_outs[0])
+        coarse_outs[1] = self.upsample(coarse_outs[1])
+        coarse_outs[2] = self.upsample(coarse_outs[2])
+        coarse_outs[3] = self.upsample(coarse_outs[3])
+        fine_out = self.upsample(fine_out)
+        return (
+            [*res_out[1:]],
+            coarse_outs[0],
+            coarse_outs[1],
+            coarse_outs[2],
+            coarse_outs[3],
+            fine_out,
+        )
+
     def freeze_bn(self):
         for m in self.modules():
             if isinstance(m, nn.BatchNorm2d):
