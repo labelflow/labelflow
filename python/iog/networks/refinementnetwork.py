@@ -248,13 +248,14 @@ class SegmentationNetwork(nn.Module):
             low_level_feat_2,
             low_level_feat_1,
         ) = self.backbone(input)
-        low_level_feat_4 = self.psp4(low_level_feat_4.copy())
-        res_out = [
+        backbone_out = [
             low_level_feat_4,
             low_level_feat_3,
             low_level_feat_2,
             low_level_feat_1,
         ]
+        low_level_feat_4_psp = self.psp4(low_level_feat_4.clone())
+        res_out = [low_level_feat_4_psp, *backbone_out[1:]]
         coarse_fms, coarse_outs = self.Coarse_net(res_out)
         fine_out = self.Fine_net(coarse_fms)
         coarse_outs[0] = self.upsample(coarse_outs[0])
@@ -263,14 +264,14 @@ class SegmentationNetwork(nn.Module):
         coarse_outs[3] = self.upsample(coarse_outs[3])
         fine_out = self.upsample(fine_out)
         return (
-            [*res_out[1:]],
+            backbone_out,
             coarse_outs[0],
             coarse_outs[1],
             coarse_outs[2],
             coarse_outs[3],
             fine_out,
         )
-    
+
     def refine(self, backbone_out, IOG_points):
         """Refines the result from new IOG points
 
