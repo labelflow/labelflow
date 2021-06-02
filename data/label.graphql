@@ -1,16 +1,9 @@
 input LabelCreateInput {
+  id: ID
   imageId: ID!
-  x: Int!
-  y: Int!
+  labelClassId: ID!
+  x: Float!
+  y: Float!
   width: Int!
   height: Int!
-  labelClassId: ID
-}
-
-input LabelWhereInput {
-  id: ID
-}
-
-input LabelWhereUniqueInput {
-  id: ID!
 }

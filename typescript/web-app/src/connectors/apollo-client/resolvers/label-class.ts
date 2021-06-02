@@ -9,21 +9,14 @@ import type {
 
 import { db } from "../../database";
 
-const getLabelsByLabelClassId = async (id: string) => {
-  const getResults = await db.label.where({ labelClassId: id }).toArray();
-
-  return getResults ?? [];
-};
-
-const getLabelClassById = async (id: string): Promise<LabelClass> => {
+const getLabelClassById = async (id: string): Promise<Partial<LabelClass>> => {
   const entity = await db.labelClass.get(id);
 
   if (entity === undefined) {
     throw new Error("No labelClass with such id");
   }
-  const labels = await getLabelsByLabelClassId(id);
 
-  return { ...entity, labels };
+  return entity;
 };
 
 const getPaginatedLabelClasses = async (
@@ -40,28 +33,26 @@ const getPaginatedLabelClasses = async (
 };
 
 // Queries
-export const labelClass = async (_: any, args: QueryLabelClassArgs) => {
+const labels = async (labelClass: LabelClass) => {
+  const getResults = await db.label
+    .where({ labelClassId: labelClass.id })
+    .sortBy("createdAt");
+
+  return getResults ?? [];
+};
+
+const labelClass = async (_: any, args: QueryLabelClassArgs) => {
   return getLabelClassById(args?.where?.id);
 };
 
-export const labelClasses = async (_: any, args: QueryLabelClassesArgs) => {
-  const entities = await getPaginatedLabelClasses(args?.skip, args?.first);
-  const entitiesWithLabels = await Promise.all(
-    entities.map(async (entity: any) => {
-      return {
-        ...entity,
-        labels: await getLabelsByLabelClassId(entity.id),
-      };
-    })
-  );
-  return entitiesWithLabels;
-};
+const labelClasses = async (_: any, args: QueryLabelClassesArgs) =>
+  getPaginatedLabelClasses(args?.skip, args?.first);
 
 // Mutations
-export const createLabelClass = async (
+const createLabelClass = async (
   _: any,
   args: MutationCreateLabelClassArgs
-): Promise<LabelClass> => {
+): Promise<Partial<LabelClass>> => {
   const { color, name } = args.data;
   const labelClassId = uuidv4();
   const newLabelClassEntity = {
@@ -83,5 +74,9 @@ export default {
 
   Mutation: {
     createLabelClass,
+  },
+
+  LabelClass: {
+    labels,
   },
 };

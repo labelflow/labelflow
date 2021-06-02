@@ -22,14 +22,14 @@ type Label {
   createdAt: DateTime!
   updatedAt: DateTime!
   imageId: ID!
-  labelClassId: ID
-  x: Int!
-  y: Int!
+  labelClass: LabelClass!
+  x: Float!
+  y: Float!
   height: Int!
   width: Int!
 }
 
-type LabelClass{
+type LabelClass {
   id: ID!
   createdAt: DateTime!
   updatedAt: DateTime!

@@ -1,12 +1,12 @@
 import "fake-indexeddb/auto";
-
 import {
-  createImage,
-  image,
-  images,
-  clearGetUrlFromImageIdMem,
-} from "../image";
+  initMockedDate,
+  incrementMockedDate,
+} from "@labelflow/dev-utils/mockdate";
+import gql from "graphql-tag";
+import { clearGetUrlFromImageIdMem } from "../image";
 import { db } from "../../../database";
+import { client } from "../../index";
 
 /**
  * We bypass the structured clone algorithm as its current js implementation
@@ -24,8 +24,10 @@ beforeAll(() => {
 
 describe("Image resolver test suite", () => {
   beforeEach(async () => {
-    db.tables.map((table) => table.clear());
-    return clearGetUrlFromImageIdMem();
+    await Promise.all(db.tables.map((table) => table.clear()));
+    await client.clearStore();
+    initMockedDate();
+    clearGetUrlFromImageIdMem();
   });
 
   // @ts-ignore
@@ -46,83 +48,205 @@ describe("Image resolver test suite", () => {
   // @ts-ignore
   customElements.define("image-custom", global.Image);
 
-  test("Query image when db is empty", async () => {
-    const queryResult = await images(undefined, {});
+  const createImage = async (name: String) => {
+    const mutationResult = await client.mutate({
+      mutation: gql`
+        mutation createImage($file: Upload!, $name: String!) {
+          createImage(data: { name: $name, file: $file }) {
+            id
+          }
+        }
+      `,
+      variables: {
+        file: new Blob(),
+        name,
+      },
+    });
 
-    expect(queryResult.length).toEqual(0);
+    const {
+      data: {
+        createImage: { id },
+      },
+    } = mutationResult;
+
+    return id;
+  };
+
+  const createLabel = (imageId: number, x: number) => {
+    return client.mutate({
+      mutation: gql`
+        mutation createLabel($data: LabelCreateInput!) {
+          createLabel(data: $data) {
+            id
+          }
+        }
+      `,
+      variables: {
+        data: {
+          imageId,
+          x,
+          y: 1,
+          height: 1,
+          width: 1,
+        },
+      },
+    });
+  };
+
+  test("Query images when db is empty", async () => {
+    const queryResult = await client.query({
+      query: gql`
+        query {
+          images {
+            id
+          }
+        }
+      `,
+    });
+
+    expect(queryResult.data.images.length).toEqual(0);
+  });
+
+  test("Query image that does not exist", async () => {
+    return expect(
+      client.query({
+        query: gql`
+          query getImages($id: ID!) {
+            image(where: { id: $id }) {
+              id
+            }
+          }
+        `,
+        variables: {
+          id: "some-id",
+        },
+      })
+    ).rejects.toThrow("No image with such id");
   });
 
   test("Create image with Blob", async () => {
-    const createResult = await createImage(undefined, {
-      data: { name: "test image", file: new Blob() },
+    const id = await createImage("new test image");
+
+    const queryResult = await client.query({
+      query: gql`
+        query getImage($id: ID!) {
+          image(where: { id: $id }) {
+            id
+            name
+            url
+          }
+        }
+      `,
+      variables: {
+        id,
+      },
     });
 
-    expect(createResult?.name).toEqual("test image");
-    expect(await image(undefined, { where: { id: createResult.id } })).toEqual(
-      createResult
+    expect(queryResult.data.image).toEqual(
+      expect.objectContaining({
+        id,
+        name: "new test image",
+        url: "mockedUrl",
+      })
     );
   });
 
-  test("Create image with URL and specified ID", async () => {
-    const createResult = await createImage(undefined, {
-      data: {
-        name: "test image",
+  test("Create image with an id", async () => {
+    const name = "an image";
+    const imageId = "a custom id";
+
+    const mutationResult = await client.mutate({
+      mutation: gql`
+        mutation createImage($imageId: ID, $file: Upload!, $name: String!) {
+          createImage(data: { id: $imageId, name: $name, file: $file }) {
+            id
+          }
+        }
+      `,
+      variables: {
+        imageId,
         file: new Blob(),
+        name,
       },
     });
 
-    expect(createResult.name).toEqual("test image");
-    expect(await image(undefined, { where: { id: createResult.id } })).toEqual(
-      createResult
-    );
+    expect(mutationResult.data.createImage.id).toEqual(imageId);
   });
 
-  test("Query images", async () => {
-    const createResult1 = await createImage(undefined, {
-      data: {
-        file: new Blob(),
-      },
-    });
-    const createResult2 = await createImage(undefined, {
-      data: {
-        file: new Blob(),
-      },
+  test("Query several images", async () => {
+    const imageId2 = await createImage("image 2");
+    incrementMockedDate(1);
+    const imageId1 = await createImage("image 1");
+    incrementMockedDate(1);
+    const imageId3 = await createImage("image 3");
+
+    const queryResult = await client.query({
+      query: gql`
+        query {
+          images {
+            id
+          }
+        }
+      `,
     });
 
-    const queryResult = await images(undefined, {});
-
-    expect(queryResult.length).toEqual(2);
-    expect(queryResult).toEqual([createResult1, createResult2]);
+    expect(queryResult.data.images.length).toEqual(3);
+    expect(
+      queryResult.data.images.map((image: { id: string }) => image.id)
+    ).toEqual([imageId2, imageId1, imageId3]);
   });
 
   test("Querying paginated images", async () => {
-    // need to wait in between tests, otherwise createdAt timestamp
-    // are the same and we can't order the query result properly
-    const sleep = () => {
-      return new Promise((resolve) => {
-        setTimeout(resolve, 1);
-      });
-    };
+    await createImage("image 2");
+    incrementMockedDate(1);
+    const imageId1 = await createImage("image 1");
+    incrementMockedDate(1);
+    const imageId3 = await createImage("image 3");
+    incrementMockedDate(1);
+    await createImage("image 4");
 
-    await createImage(undefined, {
-      data: { file: new Blob(), name: "test1" },
-    });
-    await sleep();
-    await createImage(undefined, {
-      data: { file: new Blob(), name: "test2" },
-    });
-    await sleep();
-    await createImage(undefined, {
-      data: { file: new Blob(), name: "test3" },
-    });
-    await sleep();
-    await createImage(undefined, {
-      data: { file: new Blob(), name: "test4" },
+    const queryResult = await client.query({
+      query: gql`
+        query {
+          images(first: 2, skip: 1) {
+            id
+          }
+        }
+      `,
     });
 
-    const queryResult = await images(undefined, { skip: 1, first: 1 });
+    expect(queryResult.data.images.length).toEqual(2);
+    expect(
+      queryResult.data.images.map((image: { id: string }) => image.id)
+    ).toEqual([imageId1, imageId3]);
+  });
 
-    expect(queryResult.length).toBe(1);
-    expect(queryResult[0].name).toBe("test2");
+  test("Querying an image with labels", async () => {
+    const imageId = await createImage("an image");
+
+    await createLabel(imageId, 2);
+    incrementMockedDate(1);
+    await createLabel(imageId, 1);
+
+    const queryResult = await client.query({
+      query: gql`
+        query getImage($id: ID!) {
+          image(where: { id: $id }) {
+            id
+            labels {
+              x
+            }
+          }
+        }
+      `,
+      variables: {
+        id: imageId,
+      },
+    });
+
+    // labels should show in the right order
+    expect(
+      queryResult.data.image.labels.map((l: { x: number }) => l.x)
+    ).toEqual([2, 1]);
   });
 });

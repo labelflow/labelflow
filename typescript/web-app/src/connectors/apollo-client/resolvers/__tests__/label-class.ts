@@ -1,8 +1,12 @@
 import "fake-indexeddb/auto";
-
+import {
+  initMockedDate,
+  incrementMockedDate,
+} from "@labelflow/dev-utils/mockdate";
+import gql from "graphql-tag";
 // import { v4 as uuidv4 } from "uuid";
-import { createLabelClass, labelClass, labelClasses } from "../label-class";
 import { db } from "../../../database";
+import { client } from "../../index";
 
 /**
  * We bypass the structured clone algorithm as its current js implementation
@@ -14,99 +18,260 @@ jest.mock("fake-indexeddb/build/lib/structuredClone", () => ({
   default: (i: any) => i,
 }));
 
-// need to wait in between tests, otherwise createdAt timestamp
-// are the same and we can't order the query result properly
-const sleep = () => {
-  return new Promise((resolve) => {
-    setTimeout(resolve, 1);
+beforeAll(() => {
+  global.URL.createObjectURL = jest.fn(() => "mockedUrl");
+});
+
+const createLabelClass = async (data: { name: string; color: string }) => {
+  const mutationResult = await client.mutate({
+    mutation: gql`
+      mutation createLabelClass($data: LabelClassCreateInput!) {
+        createLabelClass(data: $data) {
+          id
+        }
+      }
+    `,
+    variables: {
+      data,
+    },
+  });
+
+  const {
+    data: {
+      createLabelClass: { id },
+    },
+  } = mutationResult;
+
+  return id;
+};
+
+const createLabel = async (labelClassId: number, x: number) => {
+  const {
+    data: {
+      createImage: { id: imageId },
+    },
+  } = await client.mutate({
+    mutation: gql`
+      mutation createImage($file: Upload!, $name: String!) {
+        createImage(data: { name: $name, file: $file }) {
+          id
+        }
+      }
+    `,
+    variables: {
+      file: new Blob(),
+      name: "someImageName",
+    },
+  });
+  return client.mutate({
+    mutation: gql`
+      mutation createLabel($data: LabelCreateInput!) {
+        createLabel(data: $data) {
+          id
+        }
+      }
+    `,
+    variables: {
+      data: {
+        imageId,
+        labelClassId,
+        x,
+        y: 1,
+        height: 1,
+        width: 1,
+      },
+    },
   });
 };
 
 describe("LabelClass resolver test suite", () => {
   beforeEach(async () => {
     Promise.all(db.tables.map((table) => table.clear()));
+    await client.clearStore();
+    initMockedDate();
   });
 
-  test("Query labelClass when db is empty", async () => {
-    const queryResult = await labelClasses(undefined, {});
+  // @ts-ignore
+  global.Image = class Image extends HTMLElement {
+    width: number;
 
-    expect(queryResult.length).toEqual(0);
+    height: number;
+
+    constructor() {
+      super();
+      this.width = 42;
+      this.height = 36;
+      setTimeout(() => {
+        this?.onload?.(new Event("onload")); // simulate success
+      }, 100);
+    }
+  };
+  // @ts-ignore
+  customElements.define("image-custom", global.Image);
+
+  test("Query labelClass when db is empty", async () => {
+    const queryResult = await client.query({
+      query: gql`
+        query {
+          labelClasses {
+            id
+          }
+        }
+      `,
+    });
+
+    expect(queryResult.data.labelClasses.length).toEqual(0);
   });
 
   test("Query labelClass when id doesn't exists", async () => {
-    const queryNoId = async () =>
-      labelClass(undefined, {
-        where: { id: "this id doesn't exists" },
-      });
-
-    expect(queryNoId()).rejects.toThrow();
+    return expect(
+      client.query({
+        query: gql`
+          query getLabelClass($id: ID!) {
+            labelClass(where: { id: $id }) {
+              id
+            }
+          }
+        `,
+        variables: {
+          id: "some-id",
+        },
+      })
+    ).rejects.toThrow("No labelClass with such id");
   });
 
   test("Create labelClass", async () => {
-    const createResult = await createLabelClass(undefined, {
-      data: {
-        name: "toto",
-        color: 0xffffff,
+    const id = await createLabelClass({
+      name: "toto",
+      color: "#ff0000",
+    });
+
+    const queryResult = await client.query({
+      query: gql`
+        query getLabelClass($id: ID!) {
+          labelClass(where: { id: $id }) {
+            id
+            name
+            color
+          }
+        }
+      `,
+      variables: {
+        id,
       },
     });
 
-    expect(createResult?.name).toEqual("toto");
-    expect(
-      await labelClass(undefined, { where: { id: createResult.id } })
-    ).toEqual(createResult);
+    expect(queryResult.data.labelClass).toEqual(
+      expect.objectContaining({
+        id,
+        name: "toto",
+        color: "#ff0000",
+      })
+    );
   });
 
   test("Query labelClasses", async () => {
-    const createResult1 = await createLabelClass(undefined, {
-      data: {
-        name: "1",
-        color: 0xffffff,
-      },
+    const id1 = await createLabelClass({
+      name: "labelClass1",
+      color: "#ff0000",
     });
-    await sleep();
-    const createResult2 = await createLabelClass(undefined, {
-      data: {
-        name: "2",
-        color: 0xffffff,
-      },
+    incrementMockedDate(1);
+    const id0 = await createLabelClass({
+      name: "labelClass0",
+      color: "#ff0000",
+    });
+    incrementMockedDate(1);
+    const id2 = await createLabelClass({
+      name: "labelClass2",
+      color: "#ff0000",
     });
 
-    const queryResult = await labelClasses(undefined, {});
-    expect(queryResult.length).toEqual(2);
-    expect(queryResult).toEqual([createResult1, createResult2]);
+    const queryResult = await client.query({
+      query: gql`
+        query {
+          labelClasses {
+            id
+          }
+        }
+      `,
+    });
+
+    expect(queryResult.data.labelClasses.length).toEqual(3);
+    expect(
+      queryResult.data.labelClasses.map(
+        (labelClasses: { id: string }) => labelClasses.id
+      )
+    ).toEqual([id1, id0, id2]);
   });
 
   test("Querying paginated labelClasses", async () => {
-    await createLabelClass(undefined, {
-      data: {
-        name: "1",
-        color: 0xffffff,
-      },
+    await createLabelClass({
+      name: "labelClass1",
+      color: "#ff0000",
     });
-    await sleep();
-    await createLabelClass(undefined, {
-      data: {
-        name: "2",
-        color: 0xffffff,
-      },
+    incrementMockedDate(1);
+    const id0 = await createLabelClass({
+      name: "labelClass0",
+      color: "#ff0000",
     });
-    await sleep();
-    await createLabelClass(undefined, {
-      data: {
-        name: "3",
-        color: 0xffffff,
-      },
+    incrementMockedDate(1);
+    const id2 = await createLabelClass({
+      name: "labelClass2",
+      color: "#ff0000",
     });
-    await sleep();
-    await createLabelClass(undefined, {
-      data: {
-        name: "4",
-        color: 0xffffff,
+    incrementMockedDate(1);
+    await createLabelClass({
+      name: "labelClass3",
+      color: "#ff0000",
+    });
+
+    const queryResult = await client.query({
+      query: gql`
+        query {
+          labelClasses(first: 2, skip: 1) {
+            id
+          }
+        }
+      `,
+    });
+
+    expect(queryResult.data.labelClasses.length).toEqual(2);
+    expect(
+      queryResult.data.labelClasses.map(
+        (labelClass: { id: string }) => labelClass.id
+      )
+    ).toEqual([id0, id2]);
+  });
+
+  test("Querying an labelClass with labels", async () => {
+    const labelClassId = await createLabelClass({
+      name: "some labelClass",
+      color: "#ff0000",
+    });
+
+    await createLabel(labelClassId, 2);
+    incrementMockedDate(1);
+    await createLabel(labelClassId, 1);
+
+    const queryResult = await client.query({
+      query: gql`
+        query getLabelClass($id: ID!) {
+          labelClass(where: { id: $id }) {
+            id
+            labels {
+              x
+            }
+          }
+        }
+      `,
+      variables: {
+        id: labelClassId,
       },
     });
 
-    const queryResult = await labelClasses(undefined, { skip: 1, first: 1 });
-    expect(queryResult.length).toBe(1);
-    expect(queryResult[0].name).toBe("2");
+    // labels should show in the right order
+    expect(
+      queryResult.data.labelClass.labels.map((l: { x: number }) => l.x)
+    ).toEqual([2, 1]);
   });
 });

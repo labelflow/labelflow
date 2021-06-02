@@ -3,11 +3,6 @@ input LabelClassCreateInput {
   color: ColorHex!
 }
 
-input LabelClassWhereInput {
-  id: ID
-  name: String
-}
-
 input LabelClassWhereUniqueInput {
   id: ID!
 }

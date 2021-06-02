@@ -39,11 +39,13 @@ type Image {
 }
 
 input ImageCreateInputWithFile {
+  id: ID
   name: String
   file: Upload!
 }
 
 input ImageCreateInputWithUrl {
+  id: ID
   name: String!
   width: Int!
   height: Int!
@@ -63,9 +65,9 @@ type Label {
   createdAt: DateTime!
   updatedAt: DateTime!
   imageId: ID!
-  labelClassId: ID
-  x: Int!
-  y: Int!
+  labelClass: LabelClass!
+  x: Float!
+  y: Float!
   height: Int!
   width: Int!
 }
@@ -84,30 +86,18 @@ input LabelClassCreateInput {
   color: ColorHex!
 }
 
-input LabelClassWhereInput {
-  id: ID
-  name: String
-}
-
 input LabelClassWhereUniqueInput {
   id: ID!
 }
 
 input LabelCreateInput {
+  id: ID
   imageId: ID!
-  x: Int!
-  y: Int!
+  labelClassId: ID!
+  x: Float!
+  y: Float!
   width: Int!
   height: Int!
-  labelClassId: ID
-}
-
-input LabelWhereInput {
-  id: ID
-}
-
-input LabelWhereUniqueInput {
-  id: ID!
 }
 
 type Mutation {
@@ -123,10 +113,8 @@ type Query {
   examples(where: ExampleWhereInput, first: Int, skip: Int, orderBy: ExampleOrderByInput): [Example!]!
   image(where: ImageWhereUniqueInput!): Image!
   images(where: ImageWhereInput, first: Int, skip: Int): [Image!]!
-  label(where: LabelWhereUniqueInput!): Label!
-  labels(where: LabelWhereInput, first: Int, skip: Int): [Label!]!
   labelClass(where: LabelClassWhereUniqueInput!): LabelClass!
-  labelClasses(where: LabelClassWhereInput, first: Int, skip: Int): [LabelClass!]!
+  labelClasses(first: Int, skip: Int): [LabelClass!]!
 }
 
 scalar Upload

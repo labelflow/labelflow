@@ -3599,6 +3599,14 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@labelflow/dev-utils@workspace:typescript/dev-utils":
+  version: 0.0.0-use.local
+  resolution: "@labelflow/dev-utils@workspace:typescript/dev-utils"
+  dependencies:
+    mockdate: ^3.0.5
+  languageName: unknown
+  linkType: soft
+
 "@labelflow/react-openlayers-fiber@workspace:typescript/react-openlayers-fiber":
   version: 0.0.0-use.local
   resolution: "@labelflow/react-openlayers-fiber@workspace:typescript/react-openlayers-fiber"
@@ -3641,6 +3649,8 @@ __metadata:
     "@emotion/styled": ^11
     "@graphql-tools/merge": ^6.2.14
     "@graphql-tools/schema": 7.1.5
+    "@labelflow/dev-utils": "workspace:typescript/dev-utils"
+    "@labelflow/react-openlayers-fiber": "workspace:typescript/react-openlayers-fiber"
     "@storybook/react": ^6.2.9
     "@testing-library/dom": ^7.31.0
     "@testing-library/jest-dom": ^5.12.0
@@ -3660,10 +3670,13 @@ __metadata:
     mem: ^8.1.1
     next: 10.x
     next-seo: 4.24.0
+    ol: 6.4.3
     react: 17.x
     react-dom: 17.x
     react-dropzone: ^11.3.2
+    react-hotkeys-hook: 3.3.1
     react-icons: ^4.2.0
+    react-use-measure: ^2.0.4
     typescript: 4.2.4
     uuid: ^8.3.2
   languageName: unknown
@@ -12807,7 +12820,7 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"graphql-tag@npm:^2.11.0, graphql-tag@npm:^2.12.0, graphql-tag@npm:^2.12.4":
+"graphql-tag@npm:2.12.4, graphql-tag@npm:^2.11.0, graphql-tag@npm:^2.12.0, graphql-tag@npm:^2.12.4":
   version: 2.12.4
   resolution: "graphql-tag@npm:2.12.4"
   dependencies:
@@ -13090,6 +13103,13 @@ fsevents@^1.2.7:
   dependencies:
     lru-cache: ^6.0.0
   checksum: 838315facefdb2d0beb99c68d5a419e5f4f6151385fac4aff021d5817349b77f7780f18e04f48b11ad0fbeaf6ac5594351bc3eecdb353b8db41a4e080abdde67
+  languageName: node
+  linkType: hard
+
+"hotkeys-js@npm:3.8.3":
+  version: 3.8.3
+  resolution: "hotkeys-js@npm:3.8.3"
+  checksum: 82a313b372845358dd45299c5f0873b08fbf05342f91606a58859acf4b95a60860d2a139a2fa589f2d001420e5196c9d00b6db28cce9dbe5b36e3b19c3ec0be0
   languageName: node
   linkType: hard
 
@@ -14619,6 +14639,15 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
+"jest-transform-graphql@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "jest-transform-graphql@npm:2.1.0"
+  peerDependencies:
+    graphql-tag: ^2.0.0
+  checksum: db51e354e64515804ce15d64263a0e802d86b674e7a2799ed29a2371281d2d468aa8997febbedf09ea022b5d8a0405be11e7794be6220e576666c8d0d6b86429
+  languageName: node
+  linkType: hard
+
 "jest-util@npm:^26.1.0, jest-util@npm:^26.6.2":
   version: 26.6.2
   resolution: "jest-util@npm:26.6.2"
@@ -15105,7 +15134,9 @@ fsevents@^1.2.7:
     eslint-plugin-react: 7.23.2
     eslint-plugin-react-hooks: 4.2.0
     graphql: 15.5.0
+    graphql-tag: 2.12.4
     jest: 26.6.3
+    jest-transform-graphql: ^2.1.0
     prettier: 2.3.0
     react: 17.0.2
     react-dom: 17.0.2
@@ -16125,6 +16156,13 @@ fsevents@^1.2.7:
   bin:
     mkdirp: bin/cmd.js
   checksum: 9dd9792e891927b14ca02226dbe1daeb717b9517a001620d5e2658bbc72c5e4f06887b6cbcbb60595fa5a56e701073cf250f1ed69c1988a6b89faf9fd6a4d049
+  languageName: node
+  linkType: hard
+
+"mockdate@npm:^3.0.5":
+  version: 3.0.5
+  resolution: "mockdate@npm:3.0.5"
+  checksum: 8098a98f0af3a143b7a3f9625c6ae525cad0b72c9798a82b9429e6c89bcb0c67e238126e5df8962169e8a503a51af18d03eea222051c8e67f62707277880ece0
   languageName: node
   linkType: hard
 
@@ -18364,6 +18402,18 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
+"react-hotkeys-hook@npm:3.3.1":
+  version: 3.3.1
+  resolution: "react-hotkeys-hook@npm:3.3.1"
+  dependencies:
+    hotkeys-js: 3.8.3
+  peerDependencies:
+    react: ">=16.8.1"
+    react-dom: ">=16.8.1"
+  checksum: 906bf87a34713862899ad6c516b36e19895ab6395da39577a0da18b8c0ed473ee6fa83f1c91ca586f0d3609cd94ffac20f850651ffc57ce11c1cad93272c69c6
+  languageName: node
+  linkType: hard
+
 "react-icons@npm:4.2.0, react-icons@npm:^4.2.0":
   version: 4.2.0
   resolution: "react-icons@npm:4.2.0"
@@ -18589,6 +18639,18 @@ fsevents@^1.2.7:
     react: "*"
     tslib: "*"
   checksum: 4b63c77bbd288488276f78444b0e90fe9892f12d3bdaa34deff8a3c89849713abd4457ea824951b8e0f8199207b5614300cf019d57fcbfc244b33a5cc1865268
+  languageName: node
+  linkType: hard
+
+"react-use-measure@npm:^2.0.4":
+  version: 2.0.4
+  resolution: "react-use-measure@npm:2.0.4"
+  dependencies:
+    debounce: ^1.2.0
+  peerDependencies:
+    react: ">=16.13"
+    react-dom: ">=16.13"
+  checksum: 5328749ed9700b43aff6f61ba9925c220efff3477dac55605a9e411ac28832ab4ff142675ff084712f48f9a2baed3f829974785e7dac47636f6fd1d14e339113
   languageName: node
   linkType: hard
 
