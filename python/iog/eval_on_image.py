@@ -64,6 +64,18 @@ def process(image_name):
     roi = cv2.selectROI(im_rgb)
     image = image.astype(np.float32)
 
+    def click_event(event, x, y, flags, params):
+
+        # checking for left mouse clicks
+        if event == cv2.EVENT_LBUTTONDOWN:
+
+            # displaying the coordinates
+            # on the Shell
+            print("(", x, " ", y, ")")
+
+    # cv2.imshow("image", image)
+    # cv2.setMouseCallback("image", click_event)
+
     bbox = np.zeros_like(image[..., 0])
     # bbox[0: 130, 220: 320] = 1 # for ponny
     # bbox[220: 390, 370: 570] = 1
