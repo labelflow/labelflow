@@ -131,3 +131,6 @@ __pycache__
 **/public/workbox-*.js
 **/public/sw.js
 **/public/worker-*.js
+**/public/workbox-*.js.map
+**/public/sw.js.map
+**/public/worker-*.js.map

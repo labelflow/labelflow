@@ -1,3 +1,5 @@
+// Custom service worker code
+// See https://github.com/shadowwalker/next-pwa/blob/master/examples/custom-ts-worker/worker/index.ts
 import { util } from "./util";
 
 declare let self: ServiceWorkerGlobalScope;
@@ -37,7 +39,7 @@ self.addEventListener("notificationclick", (event) => {
       .then(function (clientList) {
         if (clientList.length > 0) {
           let client = clientList[0];
-          for (let i = 0; i < clientList.length; i++) {
+          for (let i = 0; i < clientList.length; i += 1) {
             if (clientList[i].focused) {
               client = clientList[i];
             }
