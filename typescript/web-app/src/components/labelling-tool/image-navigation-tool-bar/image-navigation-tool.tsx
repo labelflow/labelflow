@@ -14,9 +14,9 @@ import { NextRouter } from "next/router";
 import NextLink from "next/link";
 import { useHotkeys } from "react-hotkeys-hook";
 
-import { keymap } from "../../keymap";
+import { keymap } from "../../../keymap";
 
-import { Image } from "../../types.generated";
+import { Image } from "../../../types.generated";
 
 export type Props = {
   imageId: string | undefined;
