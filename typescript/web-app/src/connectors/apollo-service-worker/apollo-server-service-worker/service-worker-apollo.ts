@@ -6,7 +6,7 @@ import {
   runHttpQuery,
 } from "apollo-server-core";
 
-import { Request as ApolloRequest } from "apollo-server-env";
+import type { Request as ApolloRequest } from "apollo-server-env";
 
 export async function graphQLServiceWorker(
   request: Request,

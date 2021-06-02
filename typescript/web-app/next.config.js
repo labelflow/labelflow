@@ -5,27 +5,35 @@ const path = require("path");
 
 // A JavaScript class.
 class MyExampleWebpackPlugin {
+  constructor() {
+    console.log("HEEYYYY")
+  }
   // Define `apply` as its prototype method which is supplied with compiler as its argument
   apply(compiler) {
+
+    compiler.hooks.run.tap('MyExampleWebpackPlugin', compilation => {
+      throw new Error("STOOPPP");
+      console.log('========================The webpack build process is starting!!!');
+    });
 
     compiler.hooks.done.tap('MyExampleWebpackPlugin', (
       stats /* stats is passed as argument when done hook is tapped.  */
     ) => {
-      console.log('Hello World!');
+      console.log('Hello World====================!');
     });
-    // Specify the event hook to attach to
-    compiler.hooks.emit.tapAsync(
-      'MyExampleWebpackPlugin',
-      (compilation, callback) => {
-        console.log('This is an example plugin!');
-        console.log('Here’s the `compilation` object which represents a single build of assets:', compilation);
+    // // Specify the event hook to attach to
+    // compiler.hooks.emit.tapAsync(
+    //   'MyExampleWebpackPlugin',
+    //   (compilation, callback) => {
+    //     console.log('This is an example plugin====================================!');
+    //     console.log('Here’s the `compilation` object which represents a single build of assets:', compilation);
 
-        // Manipulate the build using the plugin API provided by webpack
-        compilation.addModule(/* ... */);
+    //     // Manipulate the build using the plugin API provided by webpack
+    //     compilation.addModule(/* ... */);
 
-        callback();
-      }
-    );
+    //     callback();
+    //   }
+    // );
   }
 }
 

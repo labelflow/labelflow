@@ -23,8 +23,8 @@ export type {
   PlaygroundRenderPageOptions,
 } from "apollo-server-core";
 
-export * from "graphql-tools";
-export * from "graphql-subscriptions";
+// export * from "graphql-tools";
+// export * from "graphql-subscriptions";
 
 // ApolloServer integration.
 export { ApolloServer } from "./apollo-server";
