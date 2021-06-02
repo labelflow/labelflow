@@ -128,11 +128,15 @@ python/iog/data
 __pycache__
 
 # See https://github.com/shadowwalker/next-pwa/tree/master/examples/custom-worker#recommend-gitignore
-**/public/fallback-development.js
+**/public/fallback-*.js
 **/public/workbox-*.js
 **/public/sw.js
 **/public/worker-*.js
-**/public/fallback-development.js.map
+**/public/fallback-*.js.map
 **/public/workbox-*.js.map
 **/public/sw.js.map
 **/public/worker-*.js.map
+**/public/fallback-*.js.*
+**/public/workbox-*.js.*
+**/public/sw.js.*
+**/public/worker-*.js.*
