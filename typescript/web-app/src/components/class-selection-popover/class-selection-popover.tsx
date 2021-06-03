@@ -10,6 +10,7 @@ import {
   InputGroup,
   InputLeftElement,
   InputRightElement,
+  chakra,
 } from "@chakra-ui/react";
 import { IoSearch } from "react-icons/io5";
 
@@ -19,6 +20,9 @@ import { ClassListItem } from "../class-list-item";
 import { LabelClass } from "../../types.generated";
 
 type CreateClassInput = { name: string; type: string };
+
+const MagnifierIcon = chakra(IoSearch);
+const CloseCircleIcon = chakra(RiCloseCircleFill);
 
 const ClassSelectionCombobox = (props: any) => {
   const { onSelectedClassChange, labelClasses, createNewClass, isOpen } = props;
@@ -71,18 +75,20 @@ const ClassSelectionCombobox = (props: any) => {
   }, [isOpen]);
   return (
     <Box>
-      <Box {...getComboboxProps()}>
+      <Box {...getComboboxProps()} pl="3" pr="3">
         <InputGroup>
           <InputLeftElement pointerEvents="none">
-            <IoSearch />
+            <MagnifierIcon fontSize="2xl" />
           </InputLeftElement>
           <Input {...getInputProps()} placeholder="Search..." />
           <InputRightElement>
             {inputValue ? (
-              <Flex marginRight="35px">
-                <Box sx={{ color: "gray.300" }} marginRight="5px">
-                  <RiCloseCircleFill size="25px" onClick={reset} />
-                </Box>
+              <Flex mr="5">
+                <CloseCircleIcon
+                  fontSize="2xl"
+                  onClick={reset}
+                  color="gray.300"
+                />
                 <Kbd fontSize="md">↩</Kbd>
               </Flex>
             ) : (
@@ -91,7 +97,7 @@ const ClassSelectionCombobox = (props: any) => {
           </InputRightElement>
         </InputGroup>
       </Box>
-      <Box style={{ marginTop: "5px" }} {...getMenuProps()}>
+      <Box pt="1" {...getMenuProps()}>
         {inputItems.map(
           (item: LabelClass | CreateClassInput, index: number) => (
             <ClassListItem
@@ -124,7 +130,7 @@ export const ClassSelectionPopover = ({
   return (
     <Popover isOpen={isOpen} onClose={onClose}>
       <PopoverContent borderColor="gray.200">
-        <PopoverBody>
+        <PopoverBody pl="0" pr="0">
           <ClassSelectionCombobox
             isOpen={isOpen}
             onSelectedClassChange={onSelectedClassChange}

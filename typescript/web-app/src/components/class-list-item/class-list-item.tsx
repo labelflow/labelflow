@@ -1,5 +1,7 @@
-import { Box, Text, Kbd, Flex } from "@chakra-ui/react";
+import { Box, Text, Kbd, Flex, chakra } from "@chakra-ui/react";
 import { RiCheckboxBlankCircleFill } from "react-icons/ri";
+
+const CircleIcon = chakra(RiCheckboxBlankCircleFill);
 
 /**
  * Represent a LabelClass item with its color as
@@ -20,21 +22,12 @@ export const ClassListItem = (props: {
 
   return (
     <Box
-      style={{
-        marginLeft: "-13px",
-        marginRight: "-13px",
-      }}
       bgColor={highlight ? "gray.100" : "transparent"}
       key={`${name}${index}`}
       {...itemProps}
     >
       {type === "CreateClassItem" ? (
-        <Flex
-          justifyContent="space-between"
-          alignItems="center"
-          style={{ marginLeft: "25px", marginRight: "23px" }}
-          height="35px"
-        >
+        <Flex justifyContent="space-between" alignItems="center">
           <Flex justifyContent="flex-start">
             <Text fontWeight="light" fontStyle="italic">
               Create class&nbsp;
@@ -46,19 +39,19 @@ export const ClassListItem = (props: {
         <Flex
           justifyContent="space-between"
           alignItems="center"
-          style={{ marginLeft: "25px", marginRight: "23px" }}
-          height="35px"
+          pl="3"
+          pr="3"
+          pt="1"
+          pb="1"
         >
           <Flex alignItems="center">
-            <RiCheckboxBlankCircleFill
-              color={color}
-              style={{ marginRight: 5 }}
-              size="25px"
-            />
+            <CircleIcon color={color} fontSize="2xl" ml="2" mr="2" />
             <Text>{name}</Text>
           </Flex>
           {shortcut && (
-            <Kbd style={{ justifyContent: "center" }}>{shortcut}</Kbd>
+            <Kbd style={{ justifyContent: "center" }} mr="2">
+              {shortcut}
+            </Kbd>
           )}
         </Flex>
       )}
