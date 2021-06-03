@@ -8,6 +8,8 @@ import { Map } from "@labelflow/react-openlayers-fiber";
 import type { Image } from "../../../types.generated";
 import "ol/ol.css";
 
+import { DrawBoundingBoxInteraction } from "./draw-bounding-box-interaction";
+
 const empty: any[] = [];
 
 /**
@@ -112,6 +114,9 @@ export const OpenlayersMap = ({ image }: Props) => {
           />
         )}
       </olLayerImage>
+
+      {/* <Labels imageId={image.id} /> */}
+      <DrawBoundingBoxInteraction imageId={image.id} />
     </Map>
   );
 };
