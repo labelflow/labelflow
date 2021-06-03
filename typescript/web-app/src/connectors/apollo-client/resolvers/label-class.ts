@@ -22,7 +22,7 @@ const getLabelClassById = async (id: string): Promise<Partial<LabelClass>> => {
 const getPaginatedLabelClasses = async (
   skip?: Maybe<number>,
   first?: Maybe<number>
-): Promise<any[]> => {
+): Promise<Partial<LabelClass>[]> => {
   const query = await db.labelClass.orderBy("createdAt").offset(skip ?? 0);
 
   if (first) {
@@ -41,9 +41,8 @@ const labels = async (labelClass: LabelClass) => {
   return getResults ?? [];
 };
 
-const labelClass = async (_: any, args: QueryLabelClassArgs) => {
-  return getLabelClassById(args?.where?.id);
-};
+const labelClass = async (_: any, args: QueryLabelClassArgs) =>
+  getLabelClassById(args?.where?.id);
 
 const labelClasses = async (_: any, args: QueryLabelClassesArgs) =>
   getPaginatedLabelClasses(args?.skip, args?.first);
@@ -53,12 +52,14 @@ const createLabelClass = async (
   _: any,
   args: MutationCreateLabelClassArgs
 ): Promise<Partial<LabelClass>> => {
-  const { color, name } = args.data;
-  const labelClassId = uuidv4();
+  const { color, name, id } = args.data;
+  const labelClassId = id ?? uuidv4();
+  const now = new Date();
+
   const newLabelClassEntity = {
     id: labelClassId,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
+    createdAt: now.toISOString(),
+    updatedAt: now.toISOString(),
     name,
     color,
   };

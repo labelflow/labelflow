@@ -4,7 +4,6 @@ import {
   incrementMockedDate,
 } from "@labelflow/dev-utils/mockdate";
 import gql from "graphql-tag";
-// import { v4 as uuidv4 } from "uuid";
 import { db } from "../../../database";
 import { client } from "../../index";
 
@@ -22,7 +21,11 @@ beforeAll(() => {
   global.URL.createObjectURL = jest.fn(() => "mockedUrl");
 });
 
-const createLabelClass = async (data: { name: string; color: string }) => {
+const createLabelClass = async (data: {
+  name: string;
+  color: string;
+  id?: string;
+}) => {
   const mutationResult = await client.mutate({
     mutation: gql`
       mutation createLabelClass($data: LabelClassCreateInput!) {
@@ -170,6 +173,30 @@ describe("LabelClass resolver test suite", () => {
     );
   });
 
+  test("Create labelClass with an ID", async () => {
+    const labelClassId = "a custom id";
+    const id = await createLabelClass({
+      id: labelClassId,
+      name: "toto",
+      color: "#ff0000",
+    });
+
+    const queryResult = await client.query({
+      query: gql`
+        query getLabelClass($id: ID!) {
+          labelClass(where: { id: $id }) {
+            id
+          }
+        }
+      `,
+      variables: {
+        id,
+      },
+    });
+
+    expect(queryResult.data.labelClass.id).toEqual(labelClassId);
+  });
+
   test("Query labelClasses", async () => {
     const id1 = await createLabelClass({
       name: "labelClass1",
@@ -243,7 +270,7 @@ describe("LabelClass resolver test suite", () => {
     ).toEqual([id0, id2]);
   });
 
-  test("Querying an labelClass with labels", async () => {
+  test("Querying a labelClass with labels", async () => {
     const labelClassId = await createLabelClass({
       name: "some labelClass",
       color: "#ff0000",

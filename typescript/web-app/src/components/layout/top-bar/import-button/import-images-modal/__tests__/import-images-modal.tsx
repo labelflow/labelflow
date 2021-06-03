@@ -7,9 +7,9 @@ import "@testing-library/jest-dom/extend-expect";
 
 import { ImportImagesModal } from "../import-images-modal";
 
-import { db } from "../../../../../connectors/database";
-import { client } from "../../../../../connectors/apollo-client";
-import { clearGetUrlFromImageIdMem } from "../../../../../connectors/apollo-client/resolvers/image";
+import { db } from "../../../../../../connectors/database";
+import { client } from "../../../../../../connectors/apollo-client";
+import { clearGetUrlFromImageIdMem } from "../../../../../../connectors/apollo-client/resolvers/image";
 
 const files = [
   new File(["Hello"], "hello.png", { type: "image/png" }),
@@ -25,9 +25,9 @@ const Wrapper = ({ children }: PropsWithChildren<{}>) => (
  * Mock the apollo client to avoid creating corrupted files that allows
  * us to identify a behaviour.
  */
-jest.mock("../../../../../connectors/apollo-client", () => {
+jest.mock("../../../../../../connectors/apollo-client", () => {
   const original = jest.requireActual(
-    "../../../../../connectors/apollo-client"
+    "../../../../../../connectors/apollo-client"
   );
 
   return {

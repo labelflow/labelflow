@@ -19,7 +19,7 @@ interface Image extends Omit<GeneratedImageType, "url" | "labels"> {
 }
 
 export interface Label extends Omit<GeneratedLabel, "labelClass"> {
-  labelClassId: Scalars["ID"];
+  labelClassId: Scalars["ID"] | undefined | null;
 }
 
 type LabelClass = Omit<GeneratedLabelClass, "labels">;

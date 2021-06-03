@@ -84,7 +84,7 @@ export type Label = {
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
   imageId: Scalars['ID'];
-  labelClass: LabelClass;
+  labelClass?: Maybe<LabelClass>;
   x: Scalars['Float'];
   y: Scalars['Float'];
   height: Scalars['Int'];
@@ -102,6 +102,7 @@ export type LabelClass = {
 };
 
 export type LabelClassCreateInput = {
+  id?: Maybe<Scalars['ID']>;
   name: Scalars['String'];
   color: Scalars['ColorHex'];
 };
@@ -113,7 +114,7 @@ export type LabelClassWhereUniqueInput = {
 export type LabelCreateInput = {
   id?: Maybe<Scalars['ID']>;
   imageId: Scalars['ID'];
-  labelClassId: Scalars['ID'];
+  labelClassId?: Maybe<Scalars['ID']>;
   x: Scalars['Float'];
   y: Scalars['Float'];
   width: Scalars['Int'];
@@ -362,7 +363,7 @@ export type LabelResolvers<ContextType = any, ParentType extends ResolversParent
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   imageId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  labelClass?: Resolver<ResolversTypes['LabelClass'], ParentType, ContextType>;
+  labelClass?: Resolver<Maybe<ResolversTypes['LabelClass']>, ParentType, ContextType>;
   x?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   y?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   height?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
