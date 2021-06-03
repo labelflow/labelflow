@@ -76,7 +76,7 @@ It lets the user chain `undo` instructions even if the corresponding
 effects are not resolved yet.
 
 A side effect of this is that the user might see some actions get cancelled
-in an order different from the one they triggered.
+in a different order from the one they triggered.
 
 A way to mitigate this strange UX behavior is to implement optimistic response on the
 `do`, `undo` and `redo` functions. By making those function update the UI almost instantly,
