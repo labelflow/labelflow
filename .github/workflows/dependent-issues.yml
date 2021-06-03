@@ -15,11 +15,12 @@ on:
       # this action is required to pass before merging. Can be removed
       # otherwise.
       - synchronize
+      - closed
 
   # Schedule a daily check. Useful if you reference cross-repository
   # issues or pull requests. Can be removed otherwise.
   schedule:
-    - cron: '*/5 * * * *'
+    - cron: '0/5 * * * *'
 
 jobs:
   check:
