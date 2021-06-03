@@ -395,7 +395,6 @@ const createInstance = <SelfItem extends CatalogueItem>(
       attach,
       onUpdate,
       children,
-      ref,
       key,
       ...otherProps
     } = props as ReactOlFiber.IntrinsicElementsArgsObject[keyof ReactOlFiber.IntrinsicElementsArgsObject];
