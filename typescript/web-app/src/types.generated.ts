@@ -87,8 +87,8 @@ export type Label = {
   labelClass?: Maybe<LabelClass>;
   x: Scalars['Float'];
   y: Scalars['Float'];
-  height: Scalars['Int'];
-  width: Scalars['Int'];
+  height: Scalars['Float'];
+  width: Scalars['Float'];
 };
 
 export type LabelClass = {
@@ -117,8 +117,8 @@ export type LabelCreateInput = {
   labelClassId?: Maybe<Scalars['ID']>;
   x: Scalars['Float'];
   y: Scalars['Float'];
-  width: Scalars['Int'];
-  height: Scalars['Int'];
+  width: Scalars['Float'];
+  height: Scalars['Float'];
 };
 
 export type Mutation = {
@@ -366,8 +366,8 @@ export type LabelResolvers<ContextType = any, ParentType extends ResolversParent
   labelClass?: Resolver<Maybe<ResolversTypes['LabelClass']>, ParentType, ContextType>;
   x?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   y?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
-  height?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  width?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  height?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  width?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 

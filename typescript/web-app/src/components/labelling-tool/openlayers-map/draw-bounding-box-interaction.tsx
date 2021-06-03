@@ -12,8 +12,8 @@ const createLabelMutation = gql`
     $imageId: ID!
     $x: Float!
     $y: Float!
-    $width: Int!
-    $height: Int!
+    $width: Float!
+    $height: Float!
   ) {
     createLabel(
       data: { imageId: $imageId, x: $x, y: $y, width: $width, height: $height }
@@ -72,8 +72,8 @@ export const DrawBoundingBoxInteraction = ({ imageId }: Props) => {
             imageId,
             x,
             y,
-            width: Math.floor(destX - x),
-            height: Math.floor(destY - y),
+            width: destX - x,
+            height: destY - y,
           })
         );
       }}
