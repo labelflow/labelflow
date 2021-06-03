@@ -1,0 +1,9 @@
+input LabelClassCreateInput {
+  id: ID
+  name: String!
+  color: ColorHex!
+}
+
+input LabelClassWhereUniqueInput {
+  id: ID!
+}
