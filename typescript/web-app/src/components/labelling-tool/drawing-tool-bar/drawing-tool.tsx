@@ -18,6 +18,7 @@ export const DrawingTool = () => {
         aria-label="Drawing tool"
         pointerEvents="initial"
         onClick={() => setSelectedTool(Tools.BOUNDING_BOX)}
+        isActive={selectedTool === Tools.BOUNDING_BOX}
       />
     </Tooltip>
   );
