@@ -694,7 +694,7 @@ describe("Atomic converters", () => {
   });
 });
 
-describe("Exporting a dataset to coco format", () => {
+xdescribe("Exporting a dataset to coco format", () => {
   test("The exportToCoco graphql endpoint returns something", async () => {
     expect(
       (
