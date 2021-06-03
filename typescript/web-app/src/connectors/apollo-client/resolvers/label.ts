@@ -1,27 +1,45 @@
 import { v4 as uuidv4 } from "uuid";
 import type { Label, MutationCreateLabelArgs } from "../../../types.generated";
 
-import { db } from "../../database";
+import { db, Label as LabelDb } from "../../database";
+
+// Queries
+const labelClass = async (label: LabelDb) => {
+  if (!label?.labelClassId) {
+    return null;
+  }
+
+  return db.labelClass.get(label.labelClassId) ?? null;
+};
 
 // Mutations
 const createLabel = async (
   _: any,
   args: MutationCreateLabelArgs
-): Promise<Label> => {
-  const { id, imageId, x, y, height, width } = args.data;
+): Promise<Partial<Label>> => {
+  const { id, imageId, x, y, height, width, labelClassId } = args.data;
 
-  // We need to ensure the image exists before adding the labels
-  const image = await db.image.get(imageId);
-  if (image == null) {
+  // Since we don't have any constraint checks with Dexie
+  // We need to ensure that the imageId and the labelClassId
+  // matches some entity before being able to continue.
+  if ((await db.image.get(imageId)) == null) {
     throw new Error(`The image id ${imageId} doesn't exist.`);
   }
 
+  if (labelClassId != null) {
+    if ((await db.labelClass.get(labelClassId)) == null) {
+      throw new Error(`The labelClass id ${labelClassId} doesn't exist.`);
+    }
+  }
+
   const labelId = id ?? uuidv4();
+  const now = new Date();
 
   const newLabelEntity = {
     id: labelId,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
+    createdAt: now.toISOString(),
+    updatedAt: now.toISOString(),
+    labelClassId,
     imageId,
     x,
     y,
@@ -40,5 +58,8 @@ const createLabel = async (
 export default {
   Mutation: {
     createLabel,
+  },
+  Label: {
+    labelClass,
   },
 };

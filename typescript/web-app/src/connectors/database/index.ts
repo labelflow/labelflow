@@ -3,8 +3,9 @@ import versions from "./versions";
 import type {
   Example,
   Image as GeneratedImageType,
-  Label,
+  Label as GeneratedLabel,
   Scalars,
+  LabelClass as GeneratedLabelClass,
 } from "../../types.generated";
 
 export interface File {
@@ -17,11 +18,18 @@ interface Image extends Omit<GeneratedImageType, "url" | "labels"> {
   fileId: Scalars["ID"];
 }
 
+export interface Label extends Omit<GeneratedLabel, "labelClass"> {
+  labelClassId: Scalars["ID"] | undefined | null;
+}
+
+type LabelClass = Omit<GeneratedLabelClass, "labels">;
+
 interface Database extends Dexie {
   example: Dexie.Table<Example, string>;
   image: Dexie.Table<Image, string>;
   file: Dexie.Table<File, string>;
   label: Dexie.Table<Label, string>;
+  labelClass: Dexie.Table<LabelClass, string>;
 }
 
 export const databaseWithoutTables = new Dexie("labelflow_local");

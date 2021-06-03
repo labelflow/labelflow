@@ -51,7 +51,7 @@ const getPaginatedImages = async (
 };
 
 // Queries
-const labels = async (image: any) => {
+const labels = async (image: Image) => {
   const getResults = await db.label
     .where({ imageId: image.id })
     .sortBy("createdAt");
@@ -92,10 +92,12 @@ const createImage = async (
 
   const newEntity = await new Promise<Partial<Image>>((resolve, reject) => {
     const imageObject = new Image();
+    const now = new Date();
+
     imageObject.onload = async () => {
       const newImageEntity = {
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
+        createdAt: now.toISOString(),
+        updatedAt: now.toISOString(),
         id: imageId,
         name: name ?? file.name,
         width: imageObject.width,

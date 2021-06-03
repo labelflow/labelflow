@@ -1,3 +1,5 @@
+scalar ColorHex
+
 scalar DateTime
 
 type Example {
@@ -63,15 +65,36 @@ type Label {
   createdAt: DateTime!
   updatedAt: DateTime!
   imageId: ID!
+  labelClass: LabelClass
   x: Float!
   y: Float!
   height: Int!
   width: Int!
 }
 
+type LabelClass {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  name: String!
+  color: ColorHex!
+  labels: [Label!]!
+}
+
+input LabelClassCreateInput {
+  id: ID
+  name: String!
+  color: ColorHex!
+}
+
+input LabelClassWhereUniqueInput {
+  id: ID!
+}
+
 input LabelCreateInput {
   id: ID
   imageId: ID!
+  labelClassId: ID
   x: Float!
   y: Float!
   width: Int!
@@ -82,6 +105,7 @@ type Mutation {
   createExample(data: ExampleCreateInput!): Example
   createImage(data: ImageCreateInputWithFile!): Image
   createLabel(data: LabelCreateInput!): Label
+  createLabelClass(data: LabelClassCreateInput!): LabelClass
 }
 
 type Query {
@@ -90,6 +114,8 @@ type Query {
   examples(where: ExampleWhereInput, first: Int, skip: Int, orderBy: ExampleOrderByInput): [Example!]!
   image(where: ImageWhereUniqueInput!): Image!
   images(where: ImageWhereInput, first: Int, skip: Int): [Image!]!
+  labelClass(where: LabelClassWhereUniqueInput!): LabelClass!
+  labelClasses(first: Int, skip: Int): [LabelClass!]!
 }
 
 scalar Upload
