@@ -13,20 +13,25 @@ import {
   chakra,
 } from "@chakra-ui/react";
 import { IoSearch } from "react-icons/io5";
-
 import { RiCloseCircleFill } from "react-icons/ri";
 import { useCombobox, UseComboboxStateChange } from "downshift";
 import { ClassListItem } from "../class-list-item";
 import { LabelClass } from "../../types.generated";
 
-type CreateClassInput = { name: string; type: string };
+export type CreateClassInput = { name: string; type: string };
 
 const MagnifierIcon = chakra(IoSearch);
 const CloseCircleIcon = chakra(RiCloseCircleFill);
 
-const ClassSelectionCombobox = (props: any) => {
+const ClassSelectionCombobox = (props: {
+  onSelectedClassChange: (item: LabelClass) => void;
+  labelClasses: LabelClass[];
+  isOpen: boolean;
+  createNewClass: (name: string) => void;
+}) => {
   const { onSelectedClassChange, labelClasses, createNewClass, isOpen } = props;
-  const [inputItems, setInputItems] = useState(labelClasses);
+  const [inputItems, setInputItems] =
+    useState<(LabelClass | CreateClassInput)[]>(labelClasses);
   const {
     reset,
     inputValue,
@@ -58,12 +63,18 @@ const ClassSelectionCombobox = (props: any) => {
     },
     onSelectedItemChange: ({
       selectedItem,
-    }: UseComboboxStateChange<{ name: string; type?: string }>): void => {
-      const isItemOfCreateInput = selectedItem?.type === "CreateClassItem";
-
-      return isItemOfCreateInput
-        ? createNewClass(selectedItem?.name)
-        : onSelectedClassChange(selectedItem);
+    }: UseComboboxStateChange<LabelClass | CreateClassInput>): void => {
+      if (
+        selectedItem != null &&
+        "type" in selectedItem &&
+        selectedItem?.type === "CreateClassItem"
+      ) {
+        return createNewClass(selectedItem.name);
+      }
+      if (selectedItem != null && "id" in selectedItem) {
+        return onSelectedClassChange(selectedItem);
+      }
+      return undefined;
     },
     defaultHighlightedIndex: 0,
   });
@@ -123,7 +134,7 @@ export const ClassSelectionPopover = ({
 }: {
   isOpen?: boolean;
   onClose?: () => void;
-  onSelectedClassChange?: (item: LabelClass) => void;
+  onSelectedClassChange: (item: LabelClass) => void;
   labelClasses: LabelClass[];
   createNewClass: (name: string) => void;
 }) => {

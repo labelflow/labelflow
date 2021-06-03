@@ -12,7 +12,7 @@ const CircleIcon = chakra(RiCheckboxBlankCircleFill);
  * @returns
  */
 export const ClassListItem = (props: {
-  item: any;
+  item: { name: string; type?: string; color?: string; shortcut?: string };
   highlight: boolean;
   index: number;
   itemProps: any;
