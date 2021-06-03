@@ -33,11 +33,12 @@ const createLabel = async (
   }
 
   const labelId = id ?? uuidv4();
+  const now = new Date();
 
   const newLabelEntity = {
     id: labelId,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
+    createdAt: now.toISOString(),
+    updatedAt: now.toISOString(),
     labelClassId,
     imageId,
     x,

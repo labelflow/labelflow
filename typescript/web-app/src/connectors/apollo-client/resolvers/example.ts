@@ -27,9 +27,10 @@ export const createExample = async (
   _: any,
   args: MutationCreateExampleArgs
 ) => {
+  const now = new Date();
   const newExampleEntity = {
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
+    createdAt: now.toISOString(),
+    updatedAt: now.toISOString(),
     id: uuidv4(),
 
     // Add your specific fields here

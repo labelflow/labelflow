@@ -223,20 +223,17 @@ describe("Label resolver test suite", () => {
 
   test("Create several labels", async () => {
     const imageId = await createImage("an image");
-    const labelClassId = await createLabelClass("a class");
 
     await createLabel({
       ...labelData,
       x: 1,
       imageId,
-      labelClassId,
     });
     incrementMockedDate(1);
     await createLabel({
       ...labelData,
       x: 2,
       imageId,
-      labelClassId,
     });
 
     const queryResult = await client.query({
