@@ -10,19 +10,19 @@ import { graphQLServiceWorker } from "./service-worker-apollo";
 declare let self: ServiceWorkerGlobalScope;
 
 export class ApolloServer extends ApolloServerBase {
-  installListener(path = "/graphql") {
-    console.log("apollo service worker activated on /graphql");
+  installListener(path = "/worker/graphql") {
+    // console.log(`apollo service worker activated on ${path}`);
     self.addEventListener("fetch", (event: any) => {
       const { request } = event;
       const url = new URL(request.url);
 
-      console.log("apollo service worker answering random request");
+      // console.log("apollo service worker answering random request");
 
       if (url.pathname !== path) {
         return;
       }
 
-      console.log("It's a gql request!");
+      // console.log("It's a gql request!");
 
       event.respondWith(
         (async () => {

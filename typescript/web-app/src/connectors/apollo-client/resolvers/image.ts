@@ -11,13 +11,17 @@ import type {
 import { db } from "../../database";
 
 const getUrlFromImageId = memoize(async (id: string) => {
-  const file = await db.file.get(id);
-
-  if (file === undefined) {
-    throw new Error("Cannot get url or undefined file");
+  if (window != null) {
+    // We are not in a service worker, we are in normal web window
+    const file = await db.file.get(id);
+    if (file === undefined) {
+      throw new Error("Cannot get url or undefined file");
+    }
+    const url = window.URL.createObjectURL(file.blob);
+    return url;
   }
-
-  const url = window.URL.createObjectURL(file.blob);
+  // We are in a service worker, the image will be server by the worker separately
+  const url = `/worker/images/${id}`;
   return url;
 });
 

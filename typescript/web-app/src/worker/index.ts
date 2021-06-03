@@ -1,8 +1,9 @@
 // Custom service worker code
 // See https://github.com/shadowwalker/next-pwa/blob/master/examples/custom-ts-worker/worker/index.ts
 import { precacheAndRoute } from "workbox-precaching";
-import { util } from "./util";
-import { server } from "./graphql-server";
+
+import { server as graphqlServer } from "./graphql-server";
+import { server as imageServer } from "./image-server";
 
 declare let self: ServiceWorkerGlobalScope;
 
@@ -13,18 +14,16 @@ declare let self: ServiceWorkerGlobalScope;
 const manifest = self.__WB_MANIFEST;
 precacheAndRoute(manifest);
 
-console.log("manifest");
-console.log(manifest);
-
 // To disable all workbox logging during development, you can set self.__WB_DISABLE_DEV_LOGS to true
 // https://developers.google.com/web/tools/workbox/guides/configure-workbox#disable_logging
 //
 // self.__WB_DISABLE_DEV_LOGS = true
 
-util();
-
 // Install the listener of the graphql server
-server.installListener();
+graphqlServer.installListener();
+
+// Install the listener of the image server
+imageServer.installListener();
 
 // listen to message event from window
 self.addEventListener("message", (event) => {
@@ -34,6 +33,10 @@ self.addEventListener("message", (event) => {
   // OR use next-pwa injected workbox object
   //     window.workbox.messageSW({command: 'log', message: 'hello world'})
   console.log(event?.data);
+  if (event?.data?.type === "SKIP_WAITING") {
+    console.log("Skip waiting, reload service worker");
+    self.skipWaiting();
+  }
 });
 
 self.addEventListener("push", (event) => {
@@ -65,3 +68,12 @@ self.addEventListener("notificationclick", (event) => {
       })
   );
 });
+
+// self.addEventListener("install", (/* event */) => {
+//   // The promise that skipWaiting() returns can be safely ignored.
+//   self.skipWaiting();
+
+//   // Perform any other actions required for your
+//   // service worker to install, potentially inside
+//   // of event.waitUntil();
+// });
