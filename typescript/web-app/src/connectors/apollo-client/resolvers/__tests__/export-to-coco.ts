@@ -3,11 +3,11 @@ import gql from "graphql-tag";
 import { v4 as uuidv4 } from "uuid";
 import { client } from "../../index";
 import {
-  exportLabelClassToCoco,
+  convertLabelClassToCocoCategory,
   CocoCategory,
-  exportLabelClassesToCoco,
+  convertLabelClassesToCocoCategories,
   CocoAnnotation,
-  exportLabelToCoco,
+  convertLabelToCocoAnnotation,
 } from "../export-to-coco";
 import type { Label, LabelClass } from "../../../../types.generated";
 
@@ -40,7 +40,7 @@ describe("to found", () => {
   test("Should create coco json category from a label class", () => {
     const myLabelClass = createLabelClass("My Label Class");
 
-    const cocoCategory = exportLabelClassToCoco(myLabelClass, 1);
+    const cocoCategory = convertLabelClassToCocoCategory(myLabelClass, 1);
 
     const expectedCocoCategory: CocoCategory = {
       id: 1,
@@ -57,7 +57,7 @@ describe("to found", () => {
       createLabelClass("Class 2"),
     ];
 
-    const cocoCategories = exportLabelClassesToCoco(labelClassList);
+    const cocoCategories = convertLabelClassesToCocoCategories(labelClassList);
 
     const expectedCocoCategories: CocoCategory[] = [
       {
@@ -87,7 +87,7 @@ describe("to found", () => {
       y: 1,
     };
 
-    const cocoAnnotation = exportLabelToCoco(label, 1, 42, 0);
+    const cocoAnnotation = convertLabelToCocoAnnotation(label, 1, 42, 0);
 
     const expectedAnnotation: CocoAnnotation = {
       id: 1,

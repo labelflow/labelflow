@@ -16,14 +16,14 @@ type Polygon = number[][];
 export type CocoAnnotation = {
   id: number;
   image_id: number;
-  category_id: number;
+  category_id: number | null;
   segmentation: string | Polygon;
   area: number;
   bbox: [x: number, y: number, width: number, height: number];
   iscrowd: 0 | 1;
 };
 
-export const exportLabelClassToCoco = (
+export const convertLabelClassToCocoCategory = (
   labelClass: LabelClass,
   id: number
 ): CocoCategory => {
@@ -34,19 +34,19 @@ export const exportLabelClassToCoco = (
   };
 };
 
-export const exportLabelClassesToCoco = (
+export const convertLabelClassesToCocoCategories = (
   labelClasses: LabelClass[]
 ): CocoCategory[] => {
   return labelClasses.map((value, index) =>
-    exportLabelClassToCoco(value, index + 1)
+    convertLabelClassToCocoCategory(value, index + 1)
   );
 };
 
-export const exportLabelToCoco = (
+export const convertLabelToCocoAnnotation = (
   { x, y, width, height }: Label,
   id: number,
   imageId: number,
-  categoryId: number
+  categoryId: number | null = null
 ): CocoAnnotation => {
   return {
     id,
