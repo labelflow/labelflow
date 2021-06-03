@@ -40,6 +40,7 @@ const createLabelEffect = ({
     client.mutate({
       mutation: createLabelMutation,
       variables: { imageId, x, y, width, height },
+      refetchQueries: ["getImageLabels"],
     });
   },
   undo: () => console.log(imageId),
