@@ -4105,7 +4105,7 @@ __metadata:
     lodash: ^4.17.21
     mem: ^8.1.1
     next: 10.x
-    next-pwa: ^5.2.21
+    next-pwa: "patch:next-pwa@5.2.21#./next-pwa.patch"
     next-seo: 4.24.0
     ol: 6.4.3
     react: 17.x
@@ -18707,7 +18707,7 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"next-pwa@npm:^5.2.21":
+next-pwa@5.2.21:
   version: 5.2.21
   resolution: "next-pwa@npm:5.2.21"
   dependencies:
@@ -18720,6 +18720,22 @@ fsevents@^1.2.7:
   peerDependencies:
     next: ">=7.0.0"
   checksum: 715f7c492f98b38ad0f607d0d2e3aee73e74638ae9663bc0d5bb50baf6c9b2017f411f497f9747f1ec4a19c059691eeb54adf1d24ebb2a6cb718ce2ca9a909a8
+  languageName: node
+  linkType: hard
+
+"next-pwa@patch:next-pwa@5.2.21#./next-pwa.patch::locator=%40labelflow%2Fweb-app%40workspace%3Atypescript%2Fweb-app":
+  version: 5.2.21
+  resolution: "next-pwa@patch:next-pwa@npm%3A5.2.21#./next-pwa.patch::version=5.2.21&hash=b3d8a5&locator=%40labelflow%2Fweb-app%40workspace%3Atypescript%2Fweb-app"
+  dependencies:
+    babel-loader: ^8.2.2
+    clean-webpack-plugin: ^3.0.0
+    globby: ^11.0.3
+    terser-webpack-plugin: ^5.1.1
+    workbox-webpack-plugin: ^6.1.5
+    workbox-window: ^6.1.5
+  peerDependencies:
+    next: ">=7.0.0"
+  checksum: 1cc80bf8a39c02a9ead116eaf2f5d4d0ecdc511564eeebd11f7244a0fff03239620721c911096dede0c0dbc07e93b68611272c481d787c52bf4712813194a590
   languageName: node
   linkType: hard
 

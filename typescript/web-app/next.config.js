@@ -3,6 +3,8 @@ const webpack = require("webpack");
 const path = require("path");
 
 
+
+
 // A JavaScript class.
 class MyExampleWebpackPlugin {
   constructor() {
@@ -11,16 +13,96 @@ class MyExampleWebpackPlugin {
   // Define `apply` as its prototype method which is supplied with compiler as its argument
   apply(compiler) {
 
-    compiler.hooks.run.tap('MyExampleWebpackPlugin', compilation => {
-      throw new Error("STOOPPP");
-      console.log('========================The webpack build process is starting!!!');
+    console.log('=>>>>>>>>>>>>>>>>>>>>APPLLY');
+
+    // compiler.hooks.entryOption.tap('MyExampleWebpackPlugin', (context, entry) => {
+    //   // Works
+    //   console.log('==============Synchronously tapping the entryOption hook.');
+    // });
+
+    compiler.hooks.compile.tap('MyExampleWebpackPlugin', (params) => {
+      console.log('==============Synchronously tapping the compile hook.');
+      console.log(Object.keys(params.normalModuleFactory.hooks));
+      params.normalModuleFactory.hooks.beforeResolve.tapPromise("MyExampleWebpackPlugin", async (resolveData) => {
+        // console.log('======>>>>>Asynchronously tapping the normalModuleFactory beforeResolve hook.')
+        // console.log(resolveData)
+        if (resolveData.request == "apollo-server-core") {
+          console.log("NOOOOOOOO")
+          console.log(resolveData)
+          return false;
+        }
+        return;
+      })
+      // console.log(Object.keys(params));
+
     });
 
-    compiler.hooks.done.tap('MyExampleWebpackPlugin', (
-      stats /* stats is passed as argument when done hook is tapped.  */
-    ) => {
-      console.log('Hello World====================!');
-    });
+    // compiler.hooks.thisCompilation.tap('MyExampleWebpackPlugin', (params) => {
+    //   // Works
+    //   console.log('==============Synchronously tapping the thisCompilation hook.');
+    //   // console.log(Object.keys(params));
+
+    // });
+
+    // compiler.hooks.compilation.tap('MyExampleWebpackPlugin', (params) => {
+    //   // Works
+    //   console.log('==============Synchronously tapping the compilation hook.');
+    //   // console.log(Object.keys(params));
+
+    // });
+
+
+    // compiler.hooks.afterPlugins.tap('MyExampleWebpackPlugin', (params) => {
+    //   console.log('==============Synchronously tapping the afterPlugins hook.');
+    //   console.log(Object.keys(params));
+
+    // });
+
+
+
+
+
+    // compiler.hooks.afterEnvironment.tap('MyExampleWebpackPlugin', (params) => {
+    //   console.log('==============Synchronously tapping the afterEnvironment hook.');
+    //   console.log(Object.keys(params));
+
+    // });
+
+    // compiler.hooks.watchRun.tap(
+    //   'MyExampleWebpackPlugin',
+    //   (source, target, routesList) => {
+    //     // await new Promise((resolve) => setTimeout(resolve, 1000));
+    //     console.log('=============Synchronously tapping the watchRun hook with a delay.');
+    //   }
+    // );
+
+    // compiler.hooks.run.tapPromise(
+    //   'MyExampleWebpackPlugin',
+    //   async (source, target, routesList) => {
+    //     // await new Promise((resolve) => setTimeout(resolve, 1000));
+    //     console.log('=============Asynchronously tapping the run hook with a delay.');
+    //   }
+    // );
+
+    // compiler.hooks.watchRun.tapPromise(
+    //   'MyExampleWebpackPlugin',
+    //   async (source, target, routesList) => {
+    //     // await new Promise((resolve) => setTimeout(resolve, 1000));
+    //     console.log('=============Asynchronously tapping the watchRun hook with a delay.');
+    //   }
+    // );
+
+
+    // compiler.hooks.run.tap('MyExampleWebpackPlugin', compilation => {
+    //   // throw new Error("STOOPPP");
+    //   console.log('========================The webpack build process is starting!!!');
+    // });
+
+    // compiler.hooks.done.tap('MyExampleWebpackPlugin', (
+    //   stats /* stats is passed as argument when done hook is tapped.  */
+    // ) => {
+    //   console.log('Hello World====================!');
+    // });
     // // Specify the event hook to attach to
     // compiler.hooks.emit.tapAsync(
     //   'MyExampleWebpackPlugin',
@@ -59,8 +141,8 @@ module.exports = withPWA({
       ...config.module.rules,
       {
         test: /\.(graphql|gql)$/,
-        exclude: /node_modules/,
-        loader: "graphql-tag/loader",
+        use: "graphql-tag/loader",
+        exclude: /node_modules/
       }
     ];
 
@@ -74,8 +156,8 @@ module.exports = withPWA({
       ...config.module.rules,
       {
         test: /\.(tsx|ts|js|mjs|jsx)$/,
-        include: [resolvedBaseUrl],
         use: defaultLoaders.babel,
+        include: [resolvedBaseUrl],
         exclude: (excludePath) => {
           // To allow to resolve files inside `node_modules`, we could add a condition like this:
           //     return /node_modules/.test(excludePath) && ! /\/ol/.test(excludePath)
@@ -140,10 +222,15 @@ module.exports = withPWA({
             module: false,
             dgram: false,
             dns: false,
+            path: false,
             fs: false,
+            os: false,
+            crypto: false,
+            stream: false,
             http2: false,
             net: false,
             tls: false,
+            zlib: false,
             child_process: false
           },
         }
@@ -151,14 +238,19 @@ module.exports = withPWA({
         // Webpack 4 uses the `node` option
         config.node = {
           ...config.node ?? {},
-          module: 'empty',
-          dgram: 'empty',
-          dns: 'mock',
-          fs: 'empty',
-          http2: 'empty',
-          net: 'empty',
-          tls: 'empty',
-          child_process: 'empty'
+          module: "empty",
+          dgram: "empty",
+          dns: "empty",
+          path: "empty",
+          fs: "empty",
+          os: "empty",
+          crypto: "empty",
+          stream: "empty",
+          http2: "empty",
+          net: "empty",
+          tls: "empty",
+          zlib: "empty",
+          child_process: "empty"
         }
       }
     }
@@ -167,6 +259,8 @@ module.exports = withPWA({
     // console.log(isServer);
     // console.log("config.plugins");
     // console.log(config.plugins);
+
+    config.stats = { errorDetails: true };
 
     // Important: return the modified config
     return config;
@@ -189,13 +283,55 @@ module.exports = withPWA({
     cacheOnFrontEndNav: true,
     // Add plugins to the webpack config of the service worker bundler
     // See https://developers.google.com/web/tools/workbox/reference-docs/latest/module-workbox-webpack-plugin.InjectManifest
-    // webpackCompilationPlugins: [
-    //   // new webpack.NormalModuleReplacementPlugin(
-    //   //   /^fs$/,
-    //   //   'react'
-    //   // ),
-    //   // new MyExampleWebpackPlugin()
-    // ]
+    webpackCompilationPlugins: [
+      // new webpack.NormalModuleReplacementPlugin(
+      //   /^fs$/,
+      //   'react'
+      // ),
+
+      // new MyExampleWebpackPlugin()
+
+
+      // new webpack.IgnorePlugin({
+      //   resourceRegExp: /(module)|(dgram)|(dns)|(fs)|(http2)|(net)|(tls)|(child_process)/,
+      //   // contextRegExp: /fs-capacitor\/lib$/,
+      // }),
+
+      // new webpack.IgnorePlugin({
+      //   resourceRegExp: /^@apollographql\/graphql-upload-8-fork$/,
+      //   // contextRegExp: /fs-capacitor\/lib$/,
+      // }),
+
+      // new webpack.BannerPlugin({
+      //   banner: 'yoyoyoyo=true;',
+      //   raw: true
+      // }),
+
+      // webpack.node.NodeTargetPlugin,
+
+
+
+      // // This works
+      // new webpack.IgnorePlugin({
+      //   checkResource(resource, context) {
+      //     // do something with resource
+      //     console.log("=========================")
+      //     console.log(resource)
+      //     console.log(context)
+      //     if (resource == "@apollographql/graphql-upload-8-fork") {
+      //       console.log("IGNORE")
+      //       return true;
+      //     }
+      //     if (resource == "apollo-server-core") {
+      //       console.log("IGNORE")
+      //       return true;
+      //     }
+      //     return false;
+      //   },
+      // })
+
+
+    ]
   }
 }
 );
