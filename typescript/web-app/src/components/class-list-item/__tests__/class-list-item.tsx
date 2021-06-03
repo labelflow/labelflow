@@ -19,9 +19,9 @@ test("should display class name", () => {
       itemProps={{}}
     />
   );
-  expect(screen.queryByText(/someClass/i)).toBeInTheDocument();
+  expect(screen.getByText(/someClass/i)).toBeInTheDocument();
   expect(screen.queryByText(/Create class/i)).not.toBeInTheDocument();
-  expect(screen.queryByText(/myShortcut/i)).toBeInTheDocument();
+  expect(screen.getByText(/myShortcut/i)).toBeInTheDocument();
 });
 
 test("should propose to create class", () => {
@@ -33,6 +33,6 @@ test("should propose to create class", () => {
       itemProps={{}}
     />
   );
-  expect(screen.queryByText(/nonExistingClass/i)).toBeInTheDocument();
-  expect(screen.queryByText(/Create class/i)).toBeInTheDocument();
+  expect(screen.getByText(/nonExistingClass/i)).toBeInTheDocument();
+  expect(screen.getByText(/Create class/i)).toBeInTheDocument();
 });

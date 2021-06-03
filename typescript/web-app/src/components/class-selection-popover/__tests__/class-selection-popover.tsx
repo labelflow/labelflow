@@ -51,7 +51,7 @@ describe("Class selection popover tests", () => {
   test("Should render component", () => {
     renderClassSelectionPopover(labelClasses);
 
-    expect(screen.queryByPlaceholderText(/search/i)).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(/search/i)).toBeInTheDocument();
   });
 
   test("Should render no classes if none were given", () => {
@@ -64,18 +64,18 @@ describe("Class selection popover tests", () => {
   test("Should render all classes in the list", () => {
     renderClassSelectionPopover(labelClasses);
 
-    expect(screen.queryByText(/person/i)).toBeInTheDocument();
-    expect(screen.queryByText(/dog/i)).toBeInTheDocument();
+    expect(screen.getByText(/person/i)).toBeInTheDocument();
+    expect(screen.getByText(/dog/i)).toBeInTheDocument();
   });
 
   test("Should render matching classes with user search", async () => {
     renderClassSelectionPopover(labelClasses);
     userEvent.type(screen.getByPlaceholderText(/search/i), "Perso");
 
-    expect(screen.queryByText(/person/i)).toBeInTheDocument();
+    expect(screen.getByText(/person/i)).toBeInTheDocument();
     expect(screen.queryByText(/dog/i)).not.toBeInTheDocument();
-    expect(screen.queryByText(/Create class/)).toBeInTheDocument();
-    expect(screen.queryByText(/"Perso"/)).toBeInTheDocument();
+    expect(screen.getByText(/Create class/)).toBeInTheDocument();
+    expect(screen.getByText(/"Perso"/)).toBeInTheDocument();
   });
 
   test("Should call onSelectedClassChange when clicking on existing class", async () => {
