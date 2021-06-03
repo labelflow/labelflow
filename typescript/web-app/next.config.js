@@ -1,126 +1,7 @@
 const withPWA = require('next-pwa')
-const webpack = require("webpack");
 const path = require("path");
 
-
-
-
-// A JavaScript class.
-class MyExampleWebpackPlugin {
-  constructor() {
-    console.log("HEEYYYY")
-  }
-  // Define `apply` as its prototype method which is supplied with compiler as its argument
-  apply(compiler) {
-
-    console.log('=>>>>>>>>>>>>>>>>>>>>APPLLY');
-
-    // compiler.hooks.entryOption.tap('MyExampleWebpackPlugin', (context, entry) => {
-    //   // Works
-    //   console.log('==============Synchronously tapping the entryOption hook.');
-    // });
-
-    compiler.hooks.compile.tap('MyExampleWebpackPlugin', (params) => {
-      console.log('==============Synchronously tapping the compile hook.');
-      console.log(Object.keys(params.normalModuleFactory.hooks));
-      params.normalModuleFactory.hooks.beforeResolve.tapPromise("MyExampleWebpackPlugin", async (resolveData) => {
-        // console.log('======>>>>>Asynchronously tapping the normalModuleFactory beforeResolve hook.')
-        // console.log(resolveData)
-        if (resolveData.request == "apollo-server-core") {
-          console.log("NOOOOOOOO")
-          console.log(resolveData)
-          return false;
-        }
-        return;
-      })
-      // console.log(Object.keys(params));
-
-    });
-
-    // compiler.hooks.thisCompilation.tap('MyExampleWebpackPlugin', (params) => {
-    //   // Works
-    //   console.log('==============Synchronously tapping the thisCompilation hook.');
-    //   // console.log(Object.keys(params));
-
-    // });
-
-    // compiler.hooks.compilation.tap('MyExampleWebpackPlugin', (params) => {
-    //   // Works
-    //   console.log('==============Synchronously tapping the compilation hook.');
-    //   // console.log(Object.keys(params));
-
-    // });
-
-
-    // compiler.hooks.afterPlugins.tap('MyExampleWebpackPlugin', (params) => {
-    //   console.log('==============Synchronously tapping the afterPlugins hook.');
-    //   console.log(Object.keys(params));
-
-    // });
-
-
-
-
-
-    // compiler.hooks.afterEnvironment.tap('MyExampleWebpackPlugin', (params) => {
-    //   console.log('==============Synchronously tapping the afterEnvironment hook.');
-    //   console.log(Object.keys(params));
-
-    // });
-
-    // compiler.hooks.watchRun.tap(
-    //   'MyExampleWebpackPlugin',
-    //   (source, target, routesList) => {
-    //     // await new Promise((resolve) => setTimeout(resolve, 1000));
-    //     console.log('=============Synchronously tapping the watchRun hook with a delay.');
-    //   }
-    // );
-
-    // compiler.hooks.run.tapPromise(
-    //   'MyExampleWebpackPlugin',
-    //   async (source, target, routesList) => {
-    //     // await new Promise((resolve) => setTimeout(resolve, 1000));
-    //     console.log('=============Asynchronously tapping the run hook with a delay.');
-    //   }
-    // );
-
-    // compiler.hooks.watchRun.tapPromise(
-    //   'MyExampleWebpackPlugin',
-    //   async (source, target, routesList) => {
-    //     // await new Promise((resolve) => setTimeout(resolve, 1000));
-    //     console.log('=============Asynchronously tapping the watchRun hook with a delay.');
-    //   }
-    // );
-
-
-    // compiler.hooks.run.tap('MyExampleWebpackPlugin', compilation => {
-    //   // throw new Error("STOOPPP");
-    //   console.log('========================The webpack build process is starting!!!');
-    // });
-
-    // compiler.hooks.done.tap('MyExampleWebpackPlugin', (
-    //   stats /* stats is passed as argument when done hook is tapped.  */
-    // ) => {
-    //   console.log('Hello World====================!');
-    // });
-    // // Specify the event hook to attach to
-    // compiler.hooks.emit.tapAsync(
-    //   'MyExampleWebpackPlugin',
-    //   (compilation, callback) => {
-    //     console.log('This is an example plugin====================================!');
-    //     console.log('Here’s the `compilation` object which represents a single build of assets:', compilation);
-
-    //     // Manipulate the build using the plugin API provided by webpack
-    //     compilation.addModule(/* ... */);
-
-    //     callback();
-    //   }
-    // );
-  }
-}
-
 module.exports = withPWA({
-  // module.exports = {
   images: {
     deviceSizes: [
       320, 480, 640, 750, 828, 960, 1080, 1200, 1440, 1920, 2048, 2560, 3840,
@@ -255,13 +136,6 @@ module.exports = withPWA({
       }
     }
 
-    // console.log("isServer");
-    // console.log(isServer);
-    // console.log("config.plugins");
-    // console.log(config.plugins);
-
-    config.stats = { errorDetails: true };
-
     // Important: return the modified config
     return config;
   },
@@ -283,55 +157,7 @@ module.exports = withPWA({
     cacheOnFrontEndNav: true,
     // Add plugins to the webpack config of the service worker bundler
     // See https://developers.google.com/web/tools/workbox/reference-docs/latest/module-workbox-webpack-plugin.InjectManifest
-    webpackCompilationPlugins: [
-      // new webpack.NormalModuleReplacementPlugin(
-      //   /^fs$/,
-      //   'react'
-      // ),
-
-      // new MyExampleWebpackPlugin()
-
-
-      // new webpack.IgnorePlugin({
-      //   resourceRegExp: /(module)|(dgram)|(dns)|(fs)|(http2)|(net)|(tls)|(child_process)/,
-      //   // contextRegExp: /fs-capacitor\/lib$/,
-      // }),
-
-      // new webpack.IgnorePlugin({
-      //   resourceRegExp: /^@apollographql\/graphql-upload-8-fork$/,
-      //   // contextRegExp: /fs-capacitor\/lib$/,
-      // }),
-
-      // new webpack.BannerPlugin({
-      //   banner: 'yoyoyoyo=true;',
-      //   raw: true
-      // }),
-
-      // webpack.node.NodeTargetPlugin,
-
-
-
-      // // This works
-      // new webpack.IgnorePlugin({
-      //   checkResource(resource, context) {
-      //     // do something with resource
-      //     console.log("=========================")
-      //     console.log(resource)
-      //     console.log(context)
-      //     if (resource == "@apollographql/graphql-upload-8-fork") {
-      //       console.log("IGNORE")
-      //       return true;
-      //     }
-      //     if (resource == "apollo-server-core") {
-      //       console.log("IGNORE")
-      //       return true;
-      //     }
-      //     return false;
-      //   },
-      // })
-
-
-    ]
+    webpackCompilationPlugins: []
   }
 }
 );
