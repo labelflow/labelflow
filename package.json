@@ -31,7 +31,7 @@
     "@graphql-codegen/typescript-resolvers": "^1.19.1",
     "@storybook/builder-webpack5": "next",
     "@storybook/manager-webpack5": "next",
-    "@storybook/react": "^6.2.9",
+    "@storybook/react": "6.3.0-beta.9",
     "@typescript-eslint/eslint-plugin": "4.23.0",
     "@typescript-eslint/parser": "4.23.0",
     "babel-loader": "^8.2.2",
