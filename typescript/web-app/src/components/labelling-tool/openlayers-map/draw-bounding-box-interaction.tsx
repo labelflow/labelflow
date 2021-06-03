@@ -49,7 +49,6 @@ const createLabelEffect = ({
 const geometryFunction = createBox();
 
 export const DrawBoundingBoxInteraction = ({ imageId }: Props) => {
-  // @ts-ignore
   const selectedTool = useLabellingStore((state) => state.selectedTool);
   const { perform } = useUndoStore();
 
@@ -63,11 +62,11 @@ export const DrawBoundingBoxInteraction = ({ imageId }: Props) => {
         type: GeometryType.CIRCLE,
         geometryFunction,
       }}
-      // @ts-ignore
       onDrawend={(drawEvent: DrawEvent) => {
         const [x, y, destX, destY] = drawEvent.feature
           .getGeometry()
           .getExtent();
+
         perform(
           createLabelEffect({
             imageId,
@@ -77,7 +76,6 @@ export const DrawBoundingBoxInteraction = ({ imageId }: Props) => {
             height: Math.floor(destY - y),
           })
         );
-        return false;
       }}
     />
   );

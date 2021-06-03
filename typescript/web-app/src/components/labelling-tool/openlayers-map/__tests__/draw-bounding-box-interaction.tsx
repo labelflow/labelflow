@@ -1,5 +1,7 @@
+/* eslint-disable import/first */
 import "fake-indexeddb/auto";
 
+// @ts-ignore Needs to be done before ol is imported
 global.URL.createObjectURL = jest.fn(() => "mockedUrl");
 
 import { ApolloProvider } from "@apollo/client";
@@ -8,6 +10,7 @@ import { render } from "@testing-library/react";
 import gql from "graphql-tag";
 import { Feature, Map as OlMap } from "ol";
 import { fromExtent } from "ol/geom/Polygon";
+import { DrawEvent, DrawEventType } from "ol/interaction/Draw";
 import { client } from "../../../../connectors/apollo-client";
 import { db } from "../../../../connectors/database";
 import { DrawBoundingBoxInteraction } from "../draw-bounding-box-interaction";
@@ -16,7 +19,6 @@ import {
   useLabellingStore,
   Tools,
 } from "../../../../connectors/labelling-state";
-import { DrawEvent } from "ol/interaction/Draw";
 
 /**
  * We bypass the structured clone algorithm as its current js implementation
@@ -90,40 +92,37 @@ const createImage = async (name: String) => {
   return id;
 };
 
-describe("Bounding box drawing interaction", () => {
-  test("", async () => {
-    const mapRef: { current: OlMap | null } = { current: null };
-    const id = await createImage("myImage");
-    useLabellingStore.setState({ selectedTool: Tools.BOUNDING_BOX });
-    (client.mutate as jest.Mock).mockReset();
-    (client.mutate as jest.Mock).mockImplementationOnce(jest.fn());
-    render(<DrawBoundingBoxInteraction imageId={id} />, {
-      wrapper: ({ children }) => (
-        <Map
-          args={{ interactions: [] }}
-          ref={(map) => {
-            mapRef.current = map;
-          }}
-        >
-          <ApolloProvider client={client}>{children}</ApolloProvider>
-        </Map>
-      ),
-    });
-
-    mapRef.current
-      ?.getInteractions()
-      .getArray()?.[0]
-      .dispatchEvent(
-        new DrawEvent(
-          //@ts-ignore
-          "drawend",
-          new Feature(fromExtent([100, 200, 200, 300]))
-        )
-      );
-    expect(client.mutate).toHaveBeenCalledWith(
-      expect.objectContaining({
-        variables: { imageId: id, x: 100, y: 200, width: 100, height: 100 },
-      })
-    );
+it("create a label in the db on the end of a draw interaction", async () => {
+  const mapRef: { current: OlMap | null } = { current: null };
+  const id = await createImage("myImage");
+  useLabellingStore.setState({ selectedTool: Tools.BOUNDING_BOX });
+  (client.mutate as jest.Mock).mockReset();
+  (client.mutate as jest.Mock).mockImplementationOnce(jest.fn());
+  render(<DrawBoundingBoxInteraction imageId={id} />, {
+    wrapper: ({ children }) => (
+      <Map
+        args={{ interactions: [] }}
+        ref={(map) => {
+          mapRef.current = map;
+        }}
+      >
+        <ApolloProvider client={client}>{children}</ApolloProvider>
+      </Map>
+    ),
   });
+
+  const drawInteraction = mapRef.current?.getInteractions().getArray()?.[0];
+
+  drawInteraction?.dispatchEvent(
+    new DrawEvent(
+      "drawend" as DrawEventType,
+      new Feature(fromExtent([100, 200, 200, 300]))
+    )
+  );
+
+  expect(client.mutate).toHaveBeenCalledWith(
+    expect.objectContaining({
+      variables: { imageId: id, x: 100, y: 200, width: 100, height: 100 },
+    })
+  );
 });
