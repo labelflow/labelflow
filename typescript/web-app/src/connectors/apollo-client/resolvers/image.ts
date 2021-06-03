@@ -10,8 +10,25 @@ import type {
 
 import { db } from "../../database";
 
+let windowExists: boolean | null = null;
+// Robust way to detect if window exists, only once
+const detectWindow = () => {
+  if (windowExists === null) {
+    try {
+      if (window) {
+        windowExists = true;
+      } else {
+        windowExists = false;
+      }
+    } catch (e) {
+      windowExists = false;
+    }
+  }
+};
+detectWindow();
+
 const getUrlFromImageId = memoize(async (id: string) => {
-  if (window != null) {
+  if (windowExists) {
     // We are not in a service worker, we are in normal web window
     const file = await db.file.get(id);
     if (file === undefined) {

@@ -20,10 +20,10 @@ precacheAndRoute(manifest);
 // self.__WB_DISABLE_DEV_LOGS = true
 
 // Install the listener of the graphql server
-graphqlServer.installListener();
+graphqlServer.installListener("/worker/graphql");
 
 // Install the listener of the image server
-imageServer.installListener();
+imageServer.installListener("/worker/images");
 
 // listen to message event from window
 self.addEventListener("message", (event) => {

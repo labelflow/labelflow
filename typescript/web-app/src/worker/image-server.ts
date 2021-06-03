@@ -1,30 +1,31 @@
+import { isString, trimCharsEnd } from "lodash/fp";
+
 declare let self: ServiceWorkerGlobalScope;
 
 export const server = {
   installListener: (path = "/worker/images") => {
-    console.log(`image service worker activated on ${path}`);
+    const trimedPath = trimCharsEnd("/", path);
+    console.log(`image service worker activated on ${trimedPath}`);
+    // const regex = new RegExp(`${trimedPath}/(?<id>.*)`);
+    const regex = /\/worker\/images\/(?<id>.*)/;
     self.addEventListener("fetch", (event: any) => {
       const { request } = event;
       const url = new URL(request.url);
 
-      // expected output: Array ["T", "I"]
+      console.log("Imaggege");
+      console.log(url.pathname);
+      const found = url.pathname.match(regex);
 
-      if (!url.pathname.startsWith(path)) {
+      if (!isString(found?.groups?.id)) {
         return;
       }
 
-      console.log("image service worker answering random request");
-      console.log(url.pathname);
+      const id = found?.groups?.id as string;
 
-      const regex = /(\/worker\/images\/)(.*)/g;
-      const found = url.pathname.match(regex);
+      console.log("Imaggege IDDD");
+      console.log(id);
 
-      console.log("found");
-      console.log(found);
-
-      console.log("It's a image request!");
-
-      const response = new Response("Hi", {
+      const response = new Response(id, {
         status: 200,
         statusText: "ok",
       });
