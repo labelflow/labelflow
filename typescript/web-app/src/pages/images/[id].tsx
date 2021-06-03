@@ -19,7 +19,10 @@ import type { Image } from "../../types.generated";
 // And anyway, it would not make sense to render canvas server side, it would just be a loss.
 const LabellingTool = dynamic(() => import("../../components/labelling-tool"), {
   ssr: false,
-  loading: () => <div>loading</div>,
+  loading: ({ error }) => {
+    if (error) throw error;
+    return <div>loading</div>;
+  },
 });
 
 const imagesQuery = gql`
