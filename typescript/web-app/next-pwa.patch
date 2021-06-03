@@ -1,8 +1,8 @@
 diff --git a/build-custom-worker.js b/build-custom-worker.js
-index b741ebc639ffc16a56001bb33212a6d4752be9f5..b55643c34cf15cca9ba0f060f0d7f4a372f9d74e 100644
+index b741ebc639ffc16a56001bb33212a6d4752be9f5..aa12a73fd35e94031495a5ad245bc8d97b71b68b 100644
 --- a/build-custom-worker.js
 +++ b/build-custom-worker.js
-@@ -34,7 +34,22 @@ const buildCustomWorker = ({ id, basedir, destdir, plugins, success, minify }) =
+@@ -34,10 +34,30 @@ const buildCustomWorker = ({ id, basedir, destdir, plugins, success, minify }) =
        main: customWorkerEntry
      },
      resolve: {
@@ -26,11 +26,19 @@ index b741ebc639ffc16a56001bb33212a6d4752be9f5..b55643c34cf15cca9ba0f060f0d7f4a3
      },
      module: {
        rules: [
++        {
++          test: /\.(graphql|gql)$/,
++          use: "graphql-tag/loader",
++          exclude: /node_modules/
++        },
+         {
+           test: /\.(t|j)s$/i,
+           use: [
 diff --git a/build-fallback-worker.js b/build-fallback-worker.js
-index af3ce017de6f008500f567f58f4f96749a27004e..0b6d120fe0216ffc0e2320aeed4b5b9445543a8d 100644
+index af3ce017de6f008500f567f58f4f96749a27004e..109ac79286a1cc19c3504252b46d60bfe9b7c327 100644
 --- a/build-fallback-worker.js
 +++ b/build-fallback-worker.js
-@@ -68,7 +68,22 @@ const buildFallbackWorker = ({ id, fallbacks, basedir, destdir, success, minify
+@@ -68,10 +68,30 @@ const buildFallbackWorker = ({ id, fallbacks, basedir, destdir, success, minify
        main: fallbackJs
      },
      resolve: {
@@ -54,3 +62,11 @@ index af3ce017de6f008500f567f58f4f96749a27004e..0b6d120fe0216ffc0e2320aeed4b5b94
      },
      module: {
        rules: [
++        {
++          test: /\.(graphql|gql)$/,
++          use: "graphql-tag/loader",
++          exclude: /node_modules/
++        },
+         {
+           test: /\.js$/i,
+           use: [

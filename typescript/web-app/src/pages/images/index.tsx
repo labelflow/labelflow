@@ -22,7 +22,7 @@ const imagesQuery = gql`
   }
 `;
 const createImageMutation = gql`
-  mutation ($data: ImageCreateInputWithFile) {
+  mutation ($data: ImageCreateInputWithFile!) {
     createImage(data: $data) {
       id
       name
