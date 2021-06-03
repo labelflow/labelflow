@@ -53,8 +53,8 @@ const createLabelClass = async (
   _: any,
   args: MutationCreateLabelClassArgs
 ): Promise<Partial<LabelClass>> => {
-  const { color, name } = args.data;
-  const labelClassId = uuidv4();
+  const { color, name, id } = args.data;
+  const labelClassId = id ?? uuidv4();
   const newLabelClassEntity = {
     id: labelClassId,
     createdAt: new Date().toISOString(),

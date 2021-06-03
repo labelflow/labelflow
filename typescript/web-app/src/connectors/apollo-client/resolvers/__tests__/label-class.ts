@@ -21,7 +21,11 @@ beforeAll(() => {
   global.URL.createObjectURL = jest.fn(() => "mockedUrl");
 });
 
-const createLabelClass = async (data: { name: string; color: string }) => {
+const createLabelClass = async (data: {
+  name: string;
+  color: string;
+  id?: string;
+}) => {
   const mutationResult = await client.mutate({
     mutation: gql`
       mutation createLabelClass($data: LabelClassCreateInput!) {
@@ -167,6 +171,30 @@ describe("LabelClass resolver test suite", () => {
         color: "#ff0000",
       })
     );
+  });
+
+  test("Create labelClass with an ID", async () => {
+    const labelClassId = "a custom id";
+    const id = await createLabelClass({
+      id: labelClassId,
+      name: "toto",
+      color: "#ff0000",
+    });
+
+    const queryResult = await client.query({
+      query: gql`
+        query getLabelClass($id: ID!) {
+          labelClass(where: { id: $id }) {
+            id
+          }
+        }
+      `,
+      variables: {
+        id,
+      },
+    });
+
+    expect(queryResult.data.labelClass.id).toEqual(labelClassId);
   });
 
   test("Query labelClasses", async () => {
