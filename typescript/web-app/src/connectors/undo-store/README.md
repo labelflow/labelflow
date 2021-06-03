@@ -66,7 +66,7 @@ Note that:
 - The `undo` function will only be called after the `do` function is finished.
 - The `redo` (or `do` if no `redo` was provided) function will only be called after the `undo` function is finished.
 - The returned value of `do` will be passed as an argument of `undo`.
-- The returned value will of `undo` will be passed as an argument of `redo` (or `do` if no `redo` was provided).
+- The returned value of `undo` will be passed as an argument of `redo` (or `do` if no `redo` was provided).
 
 ### 2. It does not guaranty the order of resolution of the effects.
 
