@@ -59,6 +59,24 @@ export type CocoDataset = {
 
 export type CacheLabelClassIdToCocoCategoryId = Map<string | undefined, number>;
 
+const initCocoDataset: Pick<CocoDataset, "info" | "licenses"> = {
+  info: {
+    contributor: "",
+    date_created: "",
+    description: "",
+    url: "",
+    version: "",
+    year: "",
+  },
+  licenses: [
+    {
+      name: "",
+      id: 0,
+      url: "",
+    },
+  ],
+};
+
 export const convertLabelClassToCocoCategory = (
   labelClass: LabelClass,
   id: number
@@ -146,6 +164,34 @@ export const addImageToCocoDataset = (
     images: [...cocoDataset.images, imageCoco],
     annotations: [...cocoDataset.annotations, ...annotationsCoco],
   };
+};
+
+export const convertImagesAndLabelClassesToCocoDataset = (
+  images: Image[],
+  labelClasses: LabelClass[]
+): CocoDataset => {
+  const categories = convertLabelClassesToCocoCategories(labelClasses);
+
+  const mapping: CacheLabelClassIdToCocoCategoryId = labelClasses.reduce(
+    (previousMapping, currentLabelClass, index) => {
+      previousMapping.set(currentLabelClass.id, index + 1);
+      return previousMapping;
+    },
+    new Map()
+  );
+
+  const initialDataset: CocoDataset = {
+    ...initCocoDataset,
+    annotations: [],
+    categories,
+    images: [],
+  };
+
+  return images.reduce(
+    (previousCocoDataset, currentImage) =>
+      addImageToCocoDataset(previousCocoDataset, currentImage, mapping),
+    initialDataset
+  );
 };
 
 const exportToCoco = async (_: any): Promise<String | undefined> => {

@@ -14,6 +14,7 @@ import {
   CocoImage,
   CocoDataset,
   addImageToCocoDataset,
+  convertImagesAndLabelClassesToCocoDataset,
 } from "../export-to-coco";
 import type { Label, LabelClass, Image } from "../../../../types.generated";
 
@@ -493,6 +494,203 @@ describe("Atomic converters", () => {
     };
 
     expect(cocoDatasetNew).toEqual(expectedCocoDatasetNew);
+  });
+
+  test("Should return coco dataset from images and labelclasses", () => {
+    const images = [
+      {
+        id: "myImageId1",
+        name: "myImage1.ext",
+        createdAt: date,
+        updatedAt: date,
+        height: 200,
+        width: 300,
+        labels: [
+          {
+            id: "test",
+            createdAt: date,
+            updatedAt: date,
+            height: 2,
+            imageId: "myImageId1",
+            width: 2,
+            x: 0,
+            y: 1,
+            labelClass: {
+              id: "labelClassId1",
+              createdAt: date,
+              updatedAt: date,
+              name: "labelClass1",
+              color: "#000000",
+              labels: [],
+            },
+          },
+          {
+            id: "test-id-2",
+            createdAt: date,
+            updatedAt: date,
+            height: 2,
+            imageId: "myImageId1",
+            width: 2,
+            x: 0,
+            y: 1,
+            labelClass: {
+              id: "labelClassId2",
+              createdAt: date,
+              updatedAt: date,
+              name: "labelClass2",
+              color: "#000000",
+              labels: [],
+            },
+          },
+        ],
+        url: "myUrl1",
+      },
+      {
+        id: "myImageId2",
+        name: "myImage2.ext",
+        createdAt: date,
+        updatedAt: date,
+        height: 200,
+        width: 300,
+        labels: [
+          {
+            id: "test",
+            createdAt: date,
+            updatedAt: date,
+            height: 2,
+            imageId: "myImageId2",
+            width: 2,
+            x: 0,
+            y: 1,
+            labelClass: {
+              id: "labelClassId3",
+              createdAt: date,
+              updatedAt: date,
+              name: "labelClass3",
+              color: "#000000",
+              labels: [],
+            },
+          },
+        ],
+        url: "myUrl2",
+      },
+    ];
+
+    const labelClasses = [
+      {
+        id: "labelClassId1",
+        createdAt: date,
+        updatedAt: date,
+        name: "labelClass1",
+        color: "#000000",
+        labels: [],
+      },
+      {
+        id: "labelClassId2",
+        createdAt: date,
+        updatedAt: date,
+        name: "labelClass2",
+        color: "#000000",
+        labels: [],
+      },
+      {
+        id: "labelClassId3",
+        createdAt: date,
+        updatedAt: date,
+        name: "labelClass3",
+        color: "#000000",
+        labels: [],
+      },
+    ];
+
+    const expectCocoDataset: CocoDataset = {
+      info: {
+        contributor: "",
+        date_created: "",
+        description: "",
+        url: "",
+        version: "",
+        year: "",
+      },
+      licenses: [
+        {
+          name: "",
+          id: 0,
+          url: "",
+        },
+      ],
+      categories: [
+        {
+          id: 1,
+          name: "labelClass1",
+          supercategory: "",
+        },
+        {
+          id: 2,
+          name: "labelClass2",
+          supercategory: "",
+        },
+        {
+          id: 3,
+          name: "labelClass3",
+          supercategory: "",
+        },
+      ],
+      images: [
+        {
+          id: 1,
+          date_captured: date,
+          height: 100,
+          width: 200,
+          coco_url: "myUrl",
+          file_name: "myImage.ext",
+          flickr_url: "",
+          license: 0,
+        },
+        {
+          id: 2,
+          date_captured: date,
+          height: 200,
+          width: 300,
+          coco_url: "myUrl1",
+          file_name: "myImage1.ext",
+          flickr_url: "",
+          license: 0,
+        },
+      ],
+      annotations: [
+        {
+          id: 1,
+          image_id: 1,
+          category_id: 1,
+          segmentation: [],
+          area: 8,
+          bbox: [0, 1, 2, 4],
+          iscrowd: 0,
+        },
+        {
+          id: 2,
+          image_id: 1,
+          category_id: 0,
+          segmentation: [],
+          area: 8,
+          bbox: [0, 1, 2, 4],
+          iscrowd: 0,
+        },
+        {
+          id: 3,
+          image_id: 2,
+          category_id: 0,
+          segmentation: [],
+          area: 4,
+          bbox: [0, 1, 2, 2],
+          iscrowd: 0,
+        },
+      ],
+    };
+    expect(
+      convertImagesAndLabelClassesToCocoDataset(images, labelClasses)
+    ).toEqual(expectCocoDataset);
   });
 });
 
