@@ -120,6 +120,8 @@ interface ExtendableMessageEvent extends ExtendableEvent {
 // ServiceWorkerGlobalScope
 
 interface ServiceWorkerGlobalScope {
+  atob(value: string): string;
+  btoa(value: string): string;
   caches: CacheStorage;
   clients: Clients;
   registration: ServiceWorkerRegistration;

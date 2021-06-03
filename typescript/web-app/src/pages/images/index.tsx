@@ -64,6 +64,7 @@ const ImagesPage = () => {
           type="file"
           onChange={(e) => importImage(e?.target?.files?.[0], createImage)}
         />
+        This image is generated dynamicaly on the service worker:
         <img alt="Random" src="/worker/images/toto" />
         <ul>
           {imagesResult?.images?.map(({ id, name, url }) => (
