@@ -145,26 +145,24 @@ export const convertImageToCocoImage = (
   };
 };
 
-export const addImageToCocoDataset = (
-  cocoDataset: CocoDataset,
-  image: Image,
-  mapping: CacheLabelClassIdToCocoCategoryId
-): CocoDataset => {
-  const imageId: number = cocoDataset.images.length + 1;
-  const imageCoco: CocoImage = convertImageToCocoImage(image, imageId);
-  const annotationsCoco: CocoAnnotation[] =
-    convertLabelsOfImageToCocoAnnotations(
-      image.labels,
-      imageId,
-      mapping,
-      cocoDataset.annotations.length + 1
-    );
-  return {
-    ...cocoDataset,
-    images: [...cocoDataset.images, imageCoco],
-    annotations: [...cocoDataset.annotations, ...annotationsCoco],
+export const addImageToCocoDataset =
+  (mapping: CacheLabelClassIdToCocoCategoryId) =>
+  (cocoDataset: CocoDataset, image: Image): CocoDataset => {
+    const imageId: number = cocoDataset.images.length + 1;
+    const imageCoco: CocoImage = convertImageToCocoImage(image, imageId);
+    const annotationsCoco: CocoAnnotation[] =
+      convertLabelsOfImageToCocoAnnotations(
+        image.labels,
+        imageId,
+        mapping,
+        cocoDataset.annotations.length + 1
+      );
+    return {
+      ...cocoDataset,
+      images: [...cocoDataset.images, imageCoco],
+      annotations: [...cocoDataset.annotations, ...annotationsCoco],
+    };
   };
-};
 
 export const convertImagesAndLabelClassesToCocoDataset = (
   images: Image[],
@@ -186,12 +184,9 @@ export const convertImagesAndLabelClassesToCocoDataset = (
     categories,
     images: [],
   };
+  const addImageToCocoDatasetWithMapping = addImageToCocoDataset(mapping);
 
-  return images.reduce(
-    (previousCocoDataset, currentImage) =>
-      addImageToCocoDataset(previousCocoDataset, currentImage, mapping),
-    initialDataset
-  );
+  return images.reduce(addImageToCocoDatasetWithMapping, initialDataset);
 };
 
 const exportToCoco = async (_: any): Promise<String | undefined> => {
