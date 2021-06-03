@@ -79,7 +79,7 @@ A side effect of this is that the user might see some actions get cancelled
 in a different order from the one they triggered.
 
 A way to mitigate this strange UX behavior is to implement optimistic response on the
-`do`, `undo` and `redo` functions. By making those function update the UI almost instantly,
+`do`, `undo` and `redo` functions. By making those functions update the UI almost instantly,
 it should let the user see the changes in the order they triggered them.
 (Note: This problem is not specific to the undo redo).
 
