@@ -1,0 +1,4 @@
+data/obj_train_data/2007_000549.jpg
+data/obj_train_data/2007_000529.jpg
+data/obj_train_data/2007_000528.jpg
+data/obj_train_data/2007_000515.jpg

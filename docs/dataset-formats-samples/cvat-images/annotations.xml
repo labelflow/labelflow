@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<annotations>
+  <version>1.1</version>
+  <meta>
+    <task>
+      <id>82294</id>
+      <name>label_test_project</name>
+      <size>4</size>
+      <mode>annotation</mode>
+      <overlap>0</overlap>
+      <bugtracker></bugtracker>
+      <created>2021-06-03 10:32:06.509936+01:00</created>
+      <updated>2021-06-03 10:57:21.833605+01:00</updated>
+      <start_frame>0</start_frame>
+      <stop_frame>3</stop_frame>
+      <frame_filter></frame_filter>
+      <labels>
+        <label>
+          <name>cat</name>
+          <color>#33ddff</color>
+          <attributes>
+          </attributes>
+        </label>
+        <label>
+          <name>Other object</name>
+          <color>#fa3253</color>
+          <attributes>
+          </attributes>
+        </label>
+        <label>
+          <name>abcd_category</name>
+          <color>#db21b7</color>
+          <attributes>
+          </attributes>
+        </label>
+      </labels>
+      <segments>
+        <segment>
+          <id>126582</id>
+          <start>0</start>
+          <stop>3</stop>
+          <url>http://cvat.org/?id=126582</url>
+        </segment>
+      </segments>
+      <owner>
+        <username>etiennedupont</username>
+        <email>etiennedupont911@gmail.com</email>
+      </owner>
+      <assignee></assignee>
+    </task>
+    <dumped>2021-06-03 11:24:54.770316+01:00</dumped>
+  </meta>
+  <image id="3" name="2007_000549.jpg" width="375" height="500">
+    <tag label="cat" source="manual">
+    </tag>
+  </image>
+  <image id="2" name="2007_000529.jpg" width="500" height="375">
+    <cuboid label="Other object" occluded="0" source="manual" xtl1="289.80" ytl1="151.76" xbl1="289.80" ybl1="241.91" xtr1="400.69" ytr1="151.67" xbr1="400.69" ybr1="241.91" xtl2="500.12" ytl2="159.61" xbl2="500.12" ybl2="249.55" xtr2="389.49" ytr2="159.69" xbr2="389.49" ybr2="249.55" z_order="0">
+    </cuboid>
+  </image>
+  <image id="1" name="2007_000528.jpg" width="500" height="375">
+    <polygon label="cat" occluded="0" source="manual" points="147.16,218.73;128.00,265.60;135.56,273.67;189.50,253.51;208.65,267.12;221.75,269.64;237.38,257.54;243.93,262.08;263.08,224.27;241.92,205.63;252.00,200.58;265.10,197.06;270.14,185.46;276.69,172.36;285.77,173.37;293.33,159.25;305.42,162.28;310.46,154.72;306.94,134.56;317.52,99.27;319.03,85.16;314.50,78.10;306.43,83.15;296.85,92.72;284.25,105.32;245.95,104.31;233.35,97.26;221.25,84.66;212.18,67.02;206.13,65.00;200.58,74.07;199.58,87.68;200.08,105.32;198.06,113.89;200.08,119.94;194.03,136.57;191.51,158.25;189.50,168.33;171.35,188.49;158.75,200.08" z_order="0">
+    </polygon>
+  </image>
+  <image id="0" name="2007_000515.jpg" width="500" height="375">
+    <box label="Other object" occluded="0" source="manual" xtl="129.01" ytl="62.48" xbr="388.08" ybr="316.51" z_order="0">
+    </box>
+    <cuboid label="Other object" occluded="0" source="manual" xtl1="64.50" ytl1="173.48" xbl1="64.50" ybl1="208.14" xtr1="121.45" ytr1="173.39" xbr1="121.45" ybr1="208.14" xtl2="149.89" ytl2="169.99" xbl2="149.89" ybl2="204.57" xtr2="93.14" ytr2="170.09" xbr2="93.14" ybr2="204.58" z_order="0">
+    </cuboid>
+  </image>
+</annotations>

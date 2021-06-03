@@ -1,0 +1,12 @@
+<annotation>
+  <filename>2007_000529.jpg</filename>
+  <folder></folder>
+  <source>
+    <sourceImage></sourceImage>
+    <sourceAnnotation>Datumaro</sourceAnnotation>
+  </source>
+  <imagesize>
+    <nrows>375</nrows>
+    <ncols>500</ncols>
+  </imagesize>
+</annotation>

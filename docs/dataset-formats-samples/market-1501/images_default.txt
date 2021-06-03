@@ -1,0 +1,4 @@
+bounding_box_default/2007_000549.jpg
+bounding_box_default/2007_000529.jpg
+bounding_box_default/2007_000528.jpg
+bounding_box_default/2007_000515.jpg
