@@ -13,4 +13,6 @@ export default {
     "\\.(gql|graphql)$": "jest-transform-graphql",
     "\\.[jt]sx?$": "ts-jest",
   },
+  transformIgnorePatterns: ["<rootDir>/node_modules/(?!(ol)/)"],
+  setupFiles: ["jest-canvas-mock"],
 };
