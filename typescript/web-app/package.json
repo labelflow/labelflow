@@ -36,7 +36,8 @@
     "react-icons": "^4.2.0",
     "react-use-measure": "^2.0.4",
     "uuid": "^8.3.2",
-    "workbox-precaching": "^6.1.5"
+    "workbox-precaching": "^6.1.5",
+    "zustand": "^3.5.1"
   },
   "devDependencies": {
     "@babel/core": "7.14.3",

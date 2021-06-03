@@ -11,9 +11,11 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  ColorHex: any;
   DateTime: any;
   Upload: any;
 };
+
 
 
 export type Example = {
@@ -82,15 +84,37 @@ export type Label = {
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
   imageId: Scalars['ID'];
+  labelClass?: Maybe<LabelClass>;
   x: Scalars['Float'];
   y: Scalars['Float'];
   height: Scalars['Int'];
   width: Scalars['Int'];
 };
 
+export type LabelClass = {
+  __typename?: 'LabelClass';
+  id: Scalars['ID'];
+  createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
+  name: Scalars['String'];
+  color: Scalars['ColorHex'];
+  labels: Array<Label>;
+};
+
+export type LabelClassCreateInput = {
+  id?: Maybe<Scalars['ID']>;
+  name: Scalars['String'];
+  color: Scalars['ColorHex'];
+};
+
+export type LabelClassWhereUniqueInput = {
+  id: Scalars['ID'];
+};
+
 export type LabelCreateInput = {
   id?: Maybe<Scalars['ID']>;
   imageId: Scalars['ID'];
+  labelClassId?: Maybe<Scalars['ID']>;
   x: Scalars['Float'];
   y: Scalars['Float'];
   width: Scalars['Int'];
@@ -102,6 +126,7 @@ export type Mutation = {
   createExample?: Maybe<Example>;
   createImage?: Maybe<Image>;
   createLabel?: Maybe<Label>;
+  createLabelClass?: Maybe<LabelClass>;
 };
 
 
@@ -119,6 +144,11 @@ export type MutationCreateLabelArgs = {
   data: LabelCreateInput;
 };
 
+
+export type MutationCreateLabelClassArgs = {
+  data: LabelClassCreateInput;
+};
+
 export type Query = {
   __typename?: 'Query';
   hello?: Maybe<Scalars['String']>;
@@ -126,6 +156,8 @@ export type Query = {
   examples: Array<Example>;
   image: Image;
   images: Array<Image>;
+  labelClass: LabelClass;
+  labelClasses: Array<LabelClass>;
 };
 
 
@@ -149,6 +181,17 @@ export type QueryImageArgs = {
 
 export type QueryImagesArgs = {
   where?: Maybe<ImageWhereInput>;
+  first?: Maybe<Scalars['Int']>;
+  skip?: Maybe<Scalars['Int']>;
+};
+
+
+export type QueryLabelClassArgs = {
+  where: LabelClassWhereUniqueInput;
+};
+
+
+export type QueryLabelClassesArgs = {
   first?: Maybe<Scalars['Int']>;
   skip?: Maybe<Scalars['Int']>;
 };
@@ -232,6 +275,7 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
+  ColorHex: ResolverTypeWrapper<Scalars['ColorHex']>;
   DateTime: ResolverTypeWrapper<Scalars['DateTime']>;
   Example: ResolverTypeWrapper<Example>;
   String: ResolverTypeWrapper<Scalars['String']>;
@@ -248,6 +292,9 @@ export type ResolversTypes = {
   ImageWhereUniqueInput: ImageWhereUniqueInput;
   Label: ResolverTypeWrapper<Label>;
   Float: ResolverTypeWrapper<Scalars['Float']>;
+  LabelClass: ResolverTypeWrapper<LabelClass>;
+  LabelClassCreateInput: LabelClassCreateInput;
+  LabelClassWhereUniqueInput: LabelClassWhereUniqueInput;
   LabelCreateInput: LabelCreateInput;
   Mutation: ResolverTypeWrapper<{}>;
   Query: ResolverTypeWrapper<{}>;
@@ -257,6 +304,7 @@ export type ResolversTypes = {
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
+  ColorHex: Scalars['ColorHex'];
   DateTime: Scalars['DateTime'];
   Example: Example;
   String: Scalars['String'];
@@ -272,12 +320,19 @@ export type ResolversParentTypes = {
   ImageWhereUniqueInput: ImageWhereUniqueInput;
   Label: Label;
   Float: Scalars['Float'];
+  LabelClass: LabelClass;
+  LabelClassCreateInput: LabelClassCreateInput;
+  LabelClassWhereUniqueInput: LabelClassWhereUniqueInput;
   LabelCreateInput: LabelCreateInput;
   Mutation: {};
   Query: {};
   Upload: Scalars['Upload'];
   Boolean: Scalars['Boolean'];
 };
+
+export interface ColorHexScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['ColorHex'], any> {
+  name: 'ColorHex';
+}
 
 export interface DateTimeScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['DateTime'], any> {
   name: 'DateTime';
@@ -308,6 +363,7 @@ export type LabelResolvers<ContextType = any, ParentType extends ResolversParent
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   imageId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  labelClass?: Resolver<Maybe<ResolversTypes['LabelClass']>, ParentType, ContextType>;
   x?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   y?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   height?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
@@ -315,10 +371,21 @@ export type LabelResolvers<ContextType = any, ParentType extends ResolversParent
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type LabelClassResolvers<ContextType = any, ParentType extends ResolversParentTypes['LabelClass'] = ResolversParentTypes['LabelClass']> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  color?: Resolver<ResolversTypes['ColorHex'], ParentType, ContextType>;
+  labels?: Resolver<Array<ResolversTypes['Label']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   createExample?: Resolver<Maybe<ResolversTypes['Example']>, ParentType, ContextType, RequireFields<MutationCreateExampleArgs, 'data'>>;
   createImage?: Resolver<Maybe<ResolversTypes['Image']>, ParentType, ContextType, RequireFields<MutationCreateImageArgs, 'data'>>;
   createLabel?: Resolver<Maybe<ResolversTypes['Label']>, ParentType, ContextType, RequireFields<MutationCreateLabelArgs, 'data'>>;
+  createLabelClass?: Resolver<Maybe<ResolversTypes['LabelClass']>, ParentType, ContextType, RequireFields<MutationCreateLabelClassArgs, 'data'>>;
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
@@ -327,6 +394,8 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   examples?: Resolver<Array<ResolversTypes['Example']>, ParentType, ContextType, RequireFields<QueryExamplesArgs, never>>;
   image?: Resolver<ResolversTypes['Image'], ParentType, ContextType, RequireFields<QueryImageArgs, 'where'>>;
   images?: Resolver<Array<ResolversTypes['Image']>, ParentType, ContextType, RequireFields<QueryImagesArgs, never>>;
+  labelClass?: Resolver<ResolversTypes['LabelClass'], ParentType, ContextType, RequireFields<QueryLabelClassArgs, 'where'>>;
+  labelClasses?: Resolver<Array<ResolversTypes['LabelClass']>, ParentType, ContextType, RequireFields<QueryLabelClassesArgs, never>>;
 };
 
 export interface UploadScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Upload'], any> {
@@ -334,10 +403,12 @@ export interface UploadScalarConfig extends GraphQLScalarTypeConfig<ResolversTyp
 }
 
 export type Resolvers<ContextType = any> = {
+  ColorHex?: GraphQLScalarType;
   DateTime?: GraphQLScalarType;
   Example?: ExampleResolvers<ContextType>;
   Image?: ImageResolvers<ContextType>;
   Label?: LabelResolvers<ContextType>;
+  LabelClass?: LabelClassResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   Upload?: GraphQLScalarType;
