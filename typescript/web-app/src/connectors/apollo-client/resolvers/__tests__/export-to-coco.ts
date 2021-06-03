@@ -410,7 +410,7 @@ describe("Atomic converters", () => {
       url: "myUrl1",
     };
 
-    const cocoDatasetNew = addImageToCocoDataset(cocoDataset, myImage, mapping);
+    const cocoDatasetNew = addImageToCocoDataset(mapping)(cocoDataset, myImage);
 
     const expectedCocoDatasetNew: CocoDataset = {
       info: {
@@ -496,15 +496,15 @@ describe("Atomic converters", () => {
     expect(cocoDatasetNew).toEqual(expectedCocoDatasetNew);
   });
 
-  test("Should return coco dataset from images and labelclasses", () => {
+  test("Should return coco dataset from images and labelClasses", () => {
     const images = [
       {
         id: "myImageId1",
         name: "myImage1.ext",
         createdAt: date,
         updatedAt: date,
-        height: 200,
-        width: 300,
+        height: 100,
+        width: 200,
         labels: [
           {
             id: "test",
@@ -530,7 +530,7 @@ describe("Atomic converters", () => {
             updatedAt: date,
             height: 2,
             imageId: "myImageId1",
-            width: 2,
+            width: 4,
             x: 0,
             y: 1,
             labelClass: {
@@ -642,8 +642,8 @@ describe("Atomic converters", () => {
           date_captured: date,
           height: 100,
           width: 200,
-          coco_url: "myUrl",
-          file_name: "myImage.ext",
+          coco_url: "myUrl1",
+          file_name: "myImage1.ext",
           flickr_url: "",
           license: 0,
         },
@@ -652,8 +652,8 @@ describe("Atomic converters", () => {
           date_captured: date,
           height: 200,
           width: 300,
-          coco_url: "myUrl1",
-          file_name: "myImage1.ext",
+          coco_url: "myUrl2",
+          file_name: "myImage2.ext",
           flickr_url: "",
           license: 0,
         },
@@ -664,23 +664,23 @@ describe("Atomic converters", () => {
           image_id: 1,
           category_id: 1,
           segmentation: [],
-          area: 8,
-          bbox: [0, 1, 2, 4],
+          area: 4,
+          bbox: [0, 1, 2, 2],
           iscrowd: 0,
         },
         {
           id: 2,
           image_id: 1,
-          category_id: 0,
+          category_id: 2,
           segmentation: [],
           area: 8,
-          bbox: [0, 1, 2, 4],
+          bbox: [0, 1, 4, 2],
           iscrowd: 0,
         },
         {
           id: 3,
           image_id: 2,
-          category_id: 0,
+          category_id: 3,
           segmentation: [],
           area: 4,
           bbox: [0, 1, 2, 2],
