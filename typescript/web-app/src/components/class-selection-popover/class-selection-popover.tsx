@@ -14,7 +14,7 @@ import {
 import { IoSearch } from "react-icons/io5";
 
 import { RiCloseCircleFill } from "react-icons/ri";
-import { useCombobox } from "downshift";
+import { useCombobox, UseComboboxStateChange } from "downshift";
 import { ClassListItem } from "../class-list-item";
 import { LabelClass } from "../../types.generated";
 
@@ -32,8 +32,7 @@ const ClassSelectionCombobox = (props: any) => {
     highlightedIndex,
     getItemProps,
   } = useCombobox({
-    itemToString: (item: LabelClass | CreateClassInput | null): string =>
-      item?.name ?? "",
+    itemToString: (item: { name: string } | null): string => item?.name ?? "",
     items: inputItems,
     onInputValueChange: ({ inputValue: inputValueCombobox }) => {
       const createClassItem =
@@ -53,11 +52,10 @@ const ClassSelectionCombobox = (props: any) => {
       );
       return setInputItems([...filteredLabelClasses, ...createClassItem]);
     },
-    onSelectedItemChange: ({ selectedItem }) => {
-      const isItemOfCreateInput =
-        selectedItem &&
-        Object.keys(selectedItem).includes("type") &&
-        (selectedItem as CreateClassInput).type === "CreateClassItem";
+    onSelectedItemChange: ({
+      selectedItem,
+    }: UseComboboxStateChange<{ name: string; type?: string }>): void => {
+      const isItemOfCreateInput = selectedItem?.type === "CreateClassItem";
 
       return isItemOfCreateInput
         ? createNewClass(selectedItem?.name)
