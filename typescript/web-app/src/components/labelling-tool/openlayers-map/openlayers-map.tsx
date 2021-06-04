@@ -6,7 +6,7 @@ import useMeasure from "react-use-measure";
 import { ApolloProvider, useApolloClient } from "@apollo/client";
 
 import { Map } from "@labelflow/react-openlayers-fiber";
-import type { Image } from "../../../types.generated";
+import type { Image } from "../../../graphql-types.generated";
 import "ol/ol.css";
 
 import { DrawBoundingBoxInteraction } from "./draw-bounding-box-interaction";

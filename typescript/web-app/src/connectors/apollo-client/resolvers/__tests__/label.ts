@@ -2,7 +2,7 @@ import { incrementMockedDate } from "@labelflow/dev-utils/mockdate";
 import gql from "graphql-tag";
 import { client } from "../../index";
 import { setupTestsWithLocalDatabase } from "../../../../utils/setup-local-db-tests";
-import { LabelCreateInput } from "../../../../types.generated";
+import { LabelCreateInput } from "../../../../graphql-types.generated";
 
 setupTestsWithLocalDatabase();
 
@@ -252,5 +252,147 @@ describe("Label resolver test suite", () => {
     expect(queryResult.data.image.labels[0].labelClass.id).toEqual(
       labelClassId
     );
+  });
+
+  test("should delete a label", async () => {
+    const imageId = await createImage("an image");
+    const createResult = await createLabel({
+      ...labelData,
+      imageId,
+    });
+    const labelId = createResult.data.createLabel.id;
+
+    client.mutate({
+      mutation: gql`
+        mutation deleteLabel($id: ID!) {
+          deleteLabel(where: { id: $id }) {
+            id
+          }
+        }
+      `,
+      variables: {
+        id: labelId,
+      },
+    });
+
+    const queryResult = await client.query({
+      query: gql`
+        query getImage($id: ID!) {
+          image(where: { id: $id }) {
+            labels {
+              id
+            }
+          }
+        }
+      `,
+      variables: {
+        id: imageId,
+      },
+    });
+
+    expect(queryResult.data.image.labels).toHaveLength(0);
+  });
+
+  test("should throw when the label to delete doesn't exist", () => {
+    return expect(
+      client.mutate({
+        mutation: gql`
+          mutation deleteLabel($id: ID!) {
+            deleteLabel(where: { id: $id }) {
+              id
+            }
+          }
+        `,
+        variables: {
+          id: "id-of-a-label-that-doesnt-exist",
+        },
+      })
+    ).rejects.toThrow("No label with such id");
+  });
+
+  test("should update a label", async () => {
+    const imageId = await createImage("an image");
+    const createResult = await createLabel({
+      ...labelData,
+      imageId,
+    });
+    const labelId = createResult.data.createLabel.id;
+
+    client.mutate({
+      mutation: gql`
+        mutation updateLabel($id: ID!, $data: LabelUpdateInput!) {
+          updateLabel(where: { id: $id }, data: $data) {
+            id
+          }
+        }
+      `,
+      variables: {
+        id: labelId,
+        data: { x: 6.28 },
+      },
+    });
+
+    const queryResult = await client.query({
+      query: gql`
+        query getImage($id: ID!) {
+          image(where: { id: $id }) {
+            labels {
+              id
+              x
+              y
+            }
+          }
+        }
+      `,
+      variables: {
+        id: imageId,
+      },
+    });
+
+    expect(queryResult.data.image.labels[0].x).toEqual(6.28);
+    expect(queryResult.data.image.labels[0].y).toEqual(labelData.y);
+  });
+
+  test("should throw when the label to updated doesn't exist", () => {
+    return expect(
+      client.mutate({
+        mutation: gql`
+          mutation updateLabel($id: ID!, $data: LabelUpdateInput!) {
+            updateLabel(where: { id: $id }, data: $data) {
+              id
+            }
+          }
+        `,
+        variables: {
+          id: "id-of-a-label-that-doesnt-exist",
+          data: { x: 6.28 },
+        },
+      })
+    ).rejects.toThrow("No label with such id");
+  });
+
+  test("should throw when the label is updated with a non-existing labelClass id", async () => {
+    const imageId = await createImage("an image");
+    const createResult = await createLabel({
+      ...labelData,
+      imageId,
+    });
+    const labelId = createResult.data.createLabel.id;
+
+    return expect(
+      client.mutate({
+        mutation: gql`
+          mutation updateLabel($id: ID!, $data: LabelUpdateInput!) {
+            updateLabel(where: { id: $id }, data: $data) {
+              id
+            }
+          }
+        `,
+        variables: {
+          id: labelId,
+          data: { labelClassId: "id-of-a-label-class-that-doesnt-exist" },
+        },
+      })
+    ).rejects.toThrow("No label class with such id");
   });
 });

@@ -7,3 +7,15 @@ input LabelCreateInput {
   width: Float!
   height: Float!
 }
+
+input LabelWhereUniqueInput {
+  id: ID!
+}
+
+input LabelUpdateInput {
+  labelClassId: ID
+  x: Float
+  y: Float
+  width: Float
+  height: Float
+}

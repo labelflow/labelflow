@@ -51,22 +51,21 @@ export type Image = {
   updatedAt: Scalars['DateTime'];
   url: Scalars['String'];
   name: Scalars['String'];
+  path: Scalars['String'];
+  mimetype: Scalars['String'];
   height: Scalars['Int'];
   width: Scalars['Int'];
   labels: Array<Label>;
 };
 
-export type ImageCreateInputWithFile = {
+export type ImageCreateInput = {
   id?: Maybe<Scalars['ID']>;
   name?: Maybe<Scalars['String']>;
-  file: Scalars['Upload'];
-};
-
-export type ImageCreateInputWithUrl = {
-  id?: Maybe<Scalars['ID']>;
-  name: Scalars['String'];
-  width: Scalars['Int'];
-  height: Scalars['Int'];
+  path?: Maybe<Scalars['String']>;
+  mimetype?: Maybe<Scalars['String']>;
+  height?: Maybe<Scalars['Int']>;
+  width?: Maybe<Scalars['Int']>;
+  file?: Maybe<Scalars['Upload']>;
   url?: Maybe<Scalars['String']>;
 };
 
@@ -121,11 +120,25 @@ export type LabelCreateInput = {
   height: Scalars['Float'];
 };
 
+export type LabelUpdateInput = {
+  labelClassId?: Maybe<Scalars['ID']>;
+  x?: Maybe<Scalars['Float']>;
+  y?: Maybe<Scalars['Float']>;
+  width?: Maybe<Scalars['Float']>;
+  height?: Maybe<Scalars['Float']>;
+};
+
+export type LabelWhereUniqueInput = {
+  id: Scalars['ID'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   createExample?: Maybe<Example>;
   createImage?: Maybe<Image>;
   createLabel?: Maybe<Label>;
+  updateLabel?: Maybe<Label>;
+  deleteLabel?: Maybe<Label>;
   createLabelClass?: Maybe<LabelClass>;
 };
 
@@ -136,12 +149,23 @@ export type MutationCreateExampleArgs = {
 
 
 export type MutationCreateImageArgs = {
-  data: ImageCreateInputWithFile;
+  data: ImageCreateInput;
 };
 
 
 export type MutationCreateLabelArgs = {
   data: LabelCreateInput;
+};
+
+
+export type MutationUpdateLabelArgs = {
+  where: LabelWhereUniqueInput;
+  data: LabelUpdateInput;
+};
+
+
+export type MutationDeleteLabelArgs = {
+  where: LabelWhereUniqueInput;
 };
 
 
@@ -286,8 +310,7 @@ export type ResolversTypes = {
   ID: ResolverTypeWrapper<Scalars['ID']>;
   Image: ResolverTypeWrapper<Image>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
-  ImageCreateInputWithFile: ImageCreateInputWithFile;
-  ImageCreateInputWithUrl: ImageCreateInputWithUrl;
+  ImageCreateInput: ImageCreateInput;
   ImageWhereInput: ImageWhereInput;
   ImageWhereUniqueInput: ImageWhereUniqueInput;
   Label: ResolverTypeWrapper<Label>;
@@ -296,6 +319,8 @@ export type ResolversTypes = {
   LabelClassCreateInput: LabelClassCreateInput;
   LabelClassWhereUniqueInput: LabelClassWhereUniqueInput;
   LabelCreateInput: LabelCreateInput;
+  LabelUpdateInput: LabelUpdateInput;
+  LabelWhereUniqueInput: LabelWhereUniqueInput;
   Mutation: ResolverTypeWrapper<{}>;
   Query: ResolverTypeWrapper<{}>;
   Upload: ResolverTypeWrapper<Scalars['Upload']>;
@@ -314,8 +339,7 @@ export type ResolversParentTypes = {
   ID: Scalars['ID'];
   Image: Image;
   Int: Scalars['Int'];
-  ImageCreateInputWithFile: ImageCreateInputWithFile;
-  ImageCreateInputWithUrl: ImageCreateInputWithUrl;
+  ImageCreateInput: ImageCreateInput;
   ImageWhereInput: ImageWhereInput;
   ImageWhereUniqueInput: ImageWhereUniqueInput;
   Label: Label;
@@ -324,6 +348,8 @@ export type ResolversParentTypes = {
   LabelClassCreateInput: LabelClassCreateInput;
   LabelClassWhereUniqueInput: LabelClassWhereUniqueInput;
   LabelCreateInput: LabelCreateInput;
+  LabelUpdateInput: LabelUpdateInput;
+  LabelWhereUniqueInput: LabelWhereUniqueInput;
   Mutation: {};
   Query: {};
   Upload: Scalars['Upload'];
@@ -352,6 +378,8 @@ export type ImageResolvers<ContextType = any, ParentType extends ResolversParent
   updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   url?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  path?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  mimetype?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   height?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   width?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   labels?: Resolver<Array<ResolversTypes['Label']>, ParentType, ContextType>;
@@ -385,6 +413,8 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   createExample?: Resolver<Maybe<ResolversTypes['Example']>, ParentType, ContextType, RequireFields<MutationCreateExampleArgs, 'data'>>;
   createImage?: Resolver<Maybe<ResolversTypes['Image']>, ParentType, ContextType, RequireFields<MutationCreateImageArgs, 'data'>>;
   createLabel?: Resolver<Maybe<ResolversTypes['Label']>, ParentType, ContextType, RequireFields<MutationCreateLabelArgs, 'data'>>;
+  updateLabel?: Resolver<Maybe<ResolversTypes['Label']>, ParentType, ContextType, RequireFields<MutationUpdateLabelArgs, 'where' | 'data'>>;
+  deleteLabel?: Resolver<Maybe<ResolversTypes['Label']>, ParentType, ContextType, RequireFields<MutationDeleteLabelArgs, 'where'>>;
   createLabelClass?: Resolver<Maybe<ResolversTypes['LabelClass']>, ParentType, ContextType, RequireFields<MutationCreateLabelClassArgs, 'data'>>;
 };
 
