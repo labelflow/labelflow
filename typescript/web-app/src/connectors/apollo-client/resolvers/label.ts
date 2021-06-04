@@ -2,6 +2,8 @@ import { v4 as uuidv4 } from "uuid";
 import type {
   Label,
   MutationCreateLabelArgs,
+  MutationDeleteLabelArgs,
+  MutationUpdateLabelArgs,
 } from "../../../graphql-types.generated";
 
 import { db, DbLabel } from "../../database";
@@ -58,9 +60,47 @@ const createLabel = async (
   return result;
 };
 
+const deleteLabel = async (_: any, args: MutationDeleteLabelArgs) => {
+  const labelId = args.where.id;
+
+  const label = await db.label.get(labelId);
+
+  if (!label) {
+    throw new Error("No label with such id");
+  }
+
+  await db.label.delete(labelId);
+
+  return label;
+};
+
+const updateLabel = async (_: any, args: MutationUpdateLabelArgs) => {
+  const labelId = args.where.id;
+
+  const label = await db.label.get(labelId);
+
+  if ("labelClassId" in args.data && args.data.labelClassId != null) {
+    const labelClassToConnect = await db.labelClass.get(args.data.labelClassId);
+
+    if (!labelClassToConnect) {
+      throw new Error("No label class with such id");
+    }
+  }
+
+  if (!label) {
+    throw new Error("No label with such id");
+  }
+
+  await db.label.update(labelId, args.data);
+
+  return db.label.get(labelId);
+};
+
 export default {
   Mutation: {
     createLabel,
+    deleteLabel,
+    updateLabel,
   },
   Label: {
     labelClass,
