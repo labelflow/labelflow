@@ -1,4 +1,4 @@
-import { Label, LabelClass, Image } from "../../../types.generated";
+import { Label, LabelClass, Image } from "../../../graphql-types.generated";
 import {
   convertLabelClassToCocoCategory,
   convertLabelClassesToCocoCategories,
@@ -59,6 +59,8 @@ describe("Coco converters", () => {
     width,
     labels,
     url: `http://${name}`,
+    path: "/path",
+    mimetype: "file/ext",
   });
 
   test("Should convert a label class to a coco category", () => {

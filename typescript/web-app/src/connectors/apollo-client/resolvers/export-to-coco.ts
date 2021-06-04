@@ -7,7 +7,7 @@ import {
   CacheLabelClassIdToCocoCategoryId,
   CocoDataset,
 } from "../../../data-converters/coco-format/types";
-import { Label, LabelClass } from "../../../types.generated";
+import { Label, LabelClass } from "../../../graphql-types.generated";
 import { db } from "../../database";
 
 const exportToCoco = async (): Promise<string | undefined> => {

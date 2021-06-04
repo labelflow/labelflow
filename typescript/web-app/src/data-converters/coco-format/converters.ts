@@ -1,4 +1,4 @@
-import { Label, LabelClass, Image } from "../../types.generated";
+import { Label, LabelClass, Image } from "../../graphql-types.generated";
 import {
   CocoCategory,
   CocoAnnotation,
