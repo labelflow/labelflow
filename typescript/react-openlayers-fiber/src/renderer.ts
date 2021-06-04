@@ -389,15 +389,8 @@ const createInstance = <SelfItem extends CatalogueItem>(
     kind = null;
   } else {
     // <olMap/> and all other similar elements from ol
-    const {
-      args,
-      constructFrom,
-      attach,
-      onUpdate,
-      children,
-      key,
-      ...otherProps
-    } = props as ReactOlFiber.IntrinsicElementsArgsObject[keyof ReactOlFiber.IntrinsicElementsArgsObject];
+    const { args, constructFrom, attach, onUpdate, children, ...otherProps } =
+      props as ReactOlFiber.IntrinsicElementsArgsObject[keyof ReactOlFiber.IntrinsicElementsArgsObject];
 
     const target = catalogue[type as CatalogueKey];
     if (isNil(target)) {
