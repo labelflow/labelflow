@@ -1,3 +1,4 @@
+/* eslint-disable-next-line import/no-extraneous-dependencies */
 import { initMockedDate } from "@labelflow/dev-utils/mockdate";
 import { clearGetUrlFromImageIdMem } from "../connectors/apollo-client/resolvers/image";
 import { db } from "../connectors/database";
@@ -5,6 +6,7 @@ import { client } from "../connectors/apollo-client";
 
 export function setupTestsWithLocalDatabase() {
   beforeAll(() => {
+    // @ts-ignore
     global.URL.createObjectURL = jest.fn(() => "mockedUrl");
     if (!client.clearStore) {
       console.warn(
