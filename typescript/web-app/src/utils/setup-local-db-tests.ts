@@ -6,6 +6,7 @@ import { client } from "../connectors/apollo-client";
 
 export function setupTestsWithLocalDatabase() {
   beforeAll(() => {
+    // @ts-ignore
     global.URL.createObjectURL = jest.fn(() => "mockedUrl");
     if (!client.clearStore) {
       console.warn(
