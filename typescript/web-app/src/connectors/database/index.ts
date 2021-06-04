@@ -6,7 +6,7 @@ import type {
   Image as GeneratedImage,
   Label as GeneratedLabel,
   LabelClass as GeneratedLabelClass,
-} from "../../types.generated";
+} from "../../graphql-types.generated";
 
 export type DbFile = {
   id?: string;

@@ -6,7 +6,7 @@ import type {
   QueryImageArgs,
   QueryImagesArgs,
   Maybe,
-} from "../../../types.generated";
+} from "../../../graphql-types.generated";
 
 import { db } from "../../database";
 

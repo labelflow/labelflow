@@ -5,7 +5,7 @@ import type {
   QueryLabelClassArgs,
   QueryLabelClassesArgs,
   Maybe,
-} from "../../../types.generated";
+} from "../../../graphql-types.generated";
 
 import { db } from "../../database";
 
