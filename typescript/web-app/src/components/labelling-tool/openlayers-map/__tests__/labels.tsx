@@ -10,7 +10,7 @@ import { Map as OlMap } from "ol";
 import VectorLayer from "ol/layer/Vector";
 import { client } from "../../../../connectors/apollo-client";
 import { Labels } from "../labels";
-import { LabelCreateInput } from "../../../../types.generated";
+import { LabelCreateInput } from "../../../../graphql-types.generated";
 import { setupTestsWithLocalDatabase } from "../../../../utils/setup-local-db-tests";
 
 setupTestsWithLocalDatabase();

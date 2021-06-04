@@ -2,7 +2,7 @@ import gql from "graphql-tag";
 import { useQuery } from "@apollo/client";
 import { fromExtent } from "ol/geom/Polygon";
 
-import { Label } from "../../../types.generated";
+import { Label } from "../../../graphql-types.generated";
 
 const getImageLabelsQuery = gql`
   query getImageLabels($imageId: ID!) {
