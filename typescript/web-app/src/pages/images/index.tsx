@@ -1,13 +1,20 @@
-import {
-  useQuery,
-  useMutation,
-  MutationFunctionOptions,
-  FetchResult,
-} from "@apollo/client";
+import { useQuery } from "@apollo/client";
 import gql from "graphql-tag";
 import NextLink from "next/link";
+import {
+  List,
+  ListItem,
+  VStack,
+  Image,
+  Center,
+  Wrap,
+  WrapItem,
+  Heading,
+} from "@chakra-ui/react";
+import { isEmpty } from "lodash/fp";
+import { ImportButton } from "../../components/import-button";
 import { Layout } from "../../components/layout";
-import type { Image } from "../../types.generated";
+import type { Image as ImageType } from "../../types.generated";
 
 const imagesQuery = gql`
   query {
@@ -21,63 +28,52 @@ const imagesQuery = gql`
     }
   }
 `;
-const createImageMutation = gql`
-  mutation ($data: ImageCreateInputWithFile) {
-    createImage(data: $data) {
-      id
-      name
-    }
-  }
-`;
-
-const importImage = (
-  file: File | undefined,
-  createImage: (
-    options?: MutationFunctionOptions<any, Record<string, any>> | undefined
-  ) => Promise<FetchResult<any, Record<string, any>, Record<string, any>>>
-) => {
-  if (file == null) {
-    return;
-  }
-  createImage({
-    variables: {
-      data: { file },
-    },
-  });
-};
 
 const ImagesPage = () => {
   const { data: imagesResult } =
-    useQuery<{ images: Pick<Image, "id" | "url" | "name" | "labels">[] }>(
+    useQuery<{ images: Pick<ImageType, "id" | "url" | "name" | "labels">[] }>(
       imagesQuery
     );
 
-  const [createImage] = useMutation(createImageMutation, {
-    refetchQueries: [{ query: imagesQuery }],
-  });
-
   return (
     <Layout>
-      <div>
-        <input
-          name="upload"
-          type="file"
-          onChange={(e) => importImage(e?.target?.files?.[0], createImage)}
-        />
-        <ul>
-          {imagesResult?.images?.map(({ id, name, url }) => (
-            <NextLink href={`/images/${id}`} key={id}>
-              {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-              <a>
-                <li>
-                  <span>{id}</span>
-                  <img alt={name} src={url} width="300px" height="300px" />
-                </li>
-              </a>
-            </NextLink>
-          ))}
-        </ul>
-      </div>
+      {isEmpty(imagesResult?.images) && (
+        <Center h="100%">
+          <ImportButton />
+        </Center>
+      )}
+
+      <Wrap h="100%" spacing={8} padding={8} justify="space-evenly">
+        {imagesResult?.images?.map(({ id, name, url }) => (
+          <NextLink href={`/images/${id}`} key={id}>
+            {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
+            <a>
+              <WrapItem p={4} background="white" rounded={8}>
+                <VStack w="20rem" h="20rem" justify="space-between">
+                  <Heading
+                    as="h3"
+                    size="sm"
+                    overflow="hidden"
+                    textOverflow="ellipsis"
+                    whiteSpace="nowrap"
+                    w="full"
+                  >
+                    {name}
+                  </Heading>
+                  <Image
+                    background="gray.100"
+                    alt={name}
+                    src={url}
+                    objectFit="contain"
+                    h="18rem"
+                    w="full"
+                  />
+                </VStack>
+              </WrapItem>
+            </a>
+          </NextLink>
+        ))}
+      </Wrap>
     </Layout>
   );
 };
