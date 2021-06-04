@@ -4,6 +4,7 @@
 // and then doing some CMD-D magic in VSCode...
 // Had to do this because of https://github.com/microsoft/TypeScript/issues/40816
 import { ListenerFunction } from "ol/events";
+import { DrawEvent } from "ol/interaction/Draw";
 import RenderEvent from "ol/render/Event";
 
 export type RenderListenerFunction = (p0: RenderEvent) => boolean;
@@ -64,7 +65,7 @@ export type Events = Partial<{
   onClick: ListenerFunction;
   onDblclick: ListenerFunction;
   onDrawabort: ListenerFunction;
-  onDrawend: ListenerFunction;
+  onDrawend: (drawEvent: DrawEvent) => void;
   onDrawstart: ListenerFunction;
   onEnterfullscreen: ListenerFunction;
   onError: ListenerFunction;

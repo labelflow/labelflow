@@ -3633,7 +3633,7 @@ __metadata:
     scheduler: 0.20.1
     typescript: 4.2.4
   peerDependencies:
-    ol: 6.4.3
+    ol: 6.5.0
     react: 17.x
     react-dom: 17.x
   languageName: unknown
@@ -3668,7 +3668,7 @@ __metadata:
     mem: ^8.1.1
     next: 10.x
     next-seo: 4.24.0
-    ol: 6.4.3
+    ol: 6.5.0
     react: 17.x
     react-dom: 17.x
     react-dropzone: ^11.3.2
@@ -9365,7 +9365,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"color-name@npm:~1.1.4":
+"color-name@npm:^1.1.4, color-name@npm:~1.1.4":
   version: 1.1.4
   resolution: "color-name@npm:1.1.4"
   checksum: 3e1c9a4dee12eada307436f61614dd11fe300469db2b83f80c8b7a7cd8a1015f0f18dd13403f018927b249003777ff60baba4a03c65f12e6bddc0dfd9642021f
@@ -9940,6 +9940,13 @@ __metadata:
   bin:
     cssesc: bin/cssesc
   checksum: 673783eda1f89af3faefc0e4b833f40621f484ce102a23396e7a65cc4c42798bd91ee3656c8b04a0a5ca38d40ada5bc8663e4541c380a7a81af2de5b2322e443
+  languageName: node
+  linkType: hard
+
+"cssfontparser@npm:^1.2.1":
+  version: 1.2.1
+  resolution: "cssfontparser@npm:1.2.1"
+  checksum: ee7bef1622227795bfd31a55838fa4c0ae091914433295bbf7d680eea8623cb90279dd8eec20e2cc97092b000a71468c803149f55bff5e443596ddef29250151
   languageName: node
   linkType: hard
 
@@ -14258,6 +14265,16 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
+"jest-canvas-mock@npm:^2.3.1":
+  version: 2.3.1
+  resolution: "jest-canvas-mock@npm:2.3.1"
+  dependencies:
+    cssfontparser: ^1.2.1
+    moo-color: ^1.0.2
+  checksum: 91032df290a0c8781bbd4b9a343aca245c327e07501adda250b17c1d127acd58394f7a042a9401cfee780c5ff1d45942f0402007bb98109885d64021537959da
+  languageName: node
+  linkType: hard
+
 "jest-changed-files@npm:^26.6.2":
   version: 26.6.2
   resolution: "jest-changed-files@npm:26.6.2"
@@ -15136,6 +15153,7 @@ fsevents@^1.2.7:
     graphql: 15.5.0
     graphql-tag: 2.12.4
     jest: 26.6.3
+    jest-canvas-mock: ^2.3.1
     jest-transform-graphql: ^2.1.0
     prettier: 2.3.0
     react: 17.0.2
@@ -16173,6 +16191,15 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
+"moo-color@npm:^1.0.2":
+  version: 1.0.2
+  resolution: "moo-color@npm:1.0.2"
+  dependencies:
+    color-name: ^1.1.4
+  checksum: f1bbca496dbd314e15bfb9e2552339712940cfec83786cb1f8f3cf54449ef0fec26e38f8c36ca51ac7068a43fdd86db5fb0ce79d07c798eb20bc192e5e415209
+  languageName: node
+  linkType: hard
+
 "move-concurrently@npm:^1.0.1":
   version: 1.0.1
   resolution: "move-concurrently@npm:1.0.1"
@@ -16860,6 +16887,17 @@ fsevents@^1.2.7:
     pbf: 3.2.1
     rbush: ^3.0.1
   checksum: 5d93ad85114900ec5bc523680e39e8f9a33f3dd136d8a9856671c888821c2e70e24c3312c4c2753264edcdc5ef056f53592d0a23fbda9e6aa918a1679777cbfe
+  languageName: node
+  linkType: hard
+
+"ol@npm:6.5.0":
+  version: 6.5.0
+  resolution: "ol@npm:6.5.0"
+  dependencies:
+    ol-mapbox-style: ^6.1.1
+    pbf: 3.2.1
+    rbush: ^3.0.1
+  checksum: b27bd413ca3d730af5f97c2450a351f65c693c1f98f839b923af1acaded66d0ed9f97c3d0b87745e42753c8e5415fe2609b70b156975d193cee769ff3f24a665
   languageName: node
   linkType: hard
 
