@@ -31,32 +31,42 @@ export const createUndoStore = () => {
       futureEffects: [],
 
       perform: async (effect: Effect) => {
-        const { pastEffects } = get();
         set({ futureEffects: [] });
         const payload = effect.do();
         const redo = effect?.redo ?? effect.do;
-        pastEffects.push({ payload, redo, undo: effect.undo });
+        set((state) => ({
+          pastEffects: [
+            ...state.pastEffects,
+            { payload, redo, undo: effect.undo },
+          ],
+        }));
         await payload;
       },
 
       undo: async () => {
-        const { pastEffects, futureEffects } = get();
+        const { pastEffects } = get();
         if (pastEffects.length > 0) {
-          const pastState = pastEffects.pop()!;
+          const pastState = pastEffects[pastEffects.length - 1];
           const payload = (async () =>
             pastState.undo(await pastState.payload))();
-          futureEffects.push({ ...pastState, payload });
+          set((state) => ({
+            pastEffects: state.pastEffects.slice(0, -1),
+            futureEffects: [...state.futureEffects, { ...pastState, payload }],
+          }));
+
           await payload;
         }
       },
       redo: async () => {
-        const { pastEffects, futureEffects } = get();
+        const { futureEffects } = get();
         if (futureEffects.length > 0) {
-          const futureState = futureEffects.pop() as StoredState;
+          const futureState = futureEffects[futureEffects.length - 1];
           const payload = (async () =>
             futureState.redo(await futureState.payload))();
-
-          pastEffects.push({ ...futureState, payload });
+          set((state) => ({
+            futureEffects: state.futureEffects.slice(0, -1),
+            pastEffects: [...state.pastEffects, { ...futureState, payload }],
+          }));
           await payload;
         }
       },
