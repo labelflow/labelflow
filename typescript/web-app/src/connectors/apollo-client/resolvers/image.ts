@@ -84,7 +84,7 @@ const images = async (_: any, args: QueryImagesArgs) => {
 const createImage = async (
   _: any,
   args: MutationCreateImageArgs
-): Promise<Partial<Image>> => {
+): Promise<DbImage> => {
   const { file, id, name, height, width, mimetype, path, url } = args.data;
   if (file && !url) {
     // File Content based upload
@@ -95,7 +95,7 @@ const createImage = async (
       await db.file.add({ id: fileId, imageId, blob: file });
       const imageSrc = await getUrlFromFileId(fileId);
 
-      const newEntity = await new Promise<Partial<Image>>((resolve, reject) => {
+      const newEntity = await new Promise<DbImage>((resolve, reject) => {
         const imageObject = new Image();
         const now = new Date();
 
@@ -144,10 +144,11 @@ const createImage = async (
 
     const now = new Date();
 
-    const newImageEntity: Partial<Image> = {
+    const newImageEntity: DbImage = {
       createdAt: now.toISOString(),
       updatedAt: now.toISOString(),
       id: imageId,
+      url,
       path,
       mimetype,
       name,

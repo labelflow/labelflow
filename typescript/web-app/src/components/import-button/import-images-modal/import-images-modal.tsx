@@ -74,7 +74,6 @@ export const ImportImagesModal = ({
             }
           })
       );
-
       setCloseable(true);
     };
 

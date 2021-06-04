@@ -2,8 +2,6 @@ import { useQuery } from "@apollo/client";
 import gql from "graphql-tag";
 import NextLink from "next/link";
 import {
-  List,
-  ListItem,
   VStack,
   Image,
   Center,

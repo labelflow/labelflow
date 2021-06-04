@@ -4,8 +4,8 @@ import { ApolloProvider } from "@apollo/client";
 import { PropsWithChildren } from "react";
 import "@testing-library/jest-dom/extend-expect";
 
-import { client } from "../../../../../../connectors/apollo-client";
-import { setupTestsWithLocalDatabase } from "../../../../../../utils/setup-local-db-tests";
+import { client } from "../../../../connectors/apollo-client";
+import { setupTestsWithLocalDatabase } from "../../../../utils/setup-local-db-tests";
 
 import { ImportImagesModal } from "../import-images-modal";
 
@@ -25,10 +25,8 @@ setupTestsWithLocalDatabase();
  * Mock the apollo client to avoid creating corrupted files that allows
  * us to identify a behaviour.
  */
-jest.mock("../../../../../../connectors/apollo-client", () => {
-  const original = jest.requireActual(
-    "../../../../../../connectors/apollo-client"
-  );
+jest.mock("../../../../connectors/apollo-client", () => {
+  const original = jest.requireActual("../../../../connectors/apollo-client");
 
   return {
     client: { ...original.client, mutate: jest.fn(original.client.mutate) },
