@@ -3669,6 +3669,7 @@ __metadata:
     next: 10.x
     next-seo: 4.24.0
     ol: 6.4.3
+    probe-image-size: ^7.2.0
     react: 17.x
     react-dom: 17.x
     react-dropzone: ^11.3.2
@@ -10183,7 +10184,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"debug@npm:^3.0.0, debug@npm:^3.1.0":
+"debug@npm:^3.0.0, debug@npm:^3.1.0, debug@npm:^3.2.6":
   version: 3.2.7
   resolution: "debug@npm:3.2.7"
   dependencies:
@@ -13287,7 +13288,7 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"iconv-lite@npm:0.4.24, iconv-lite@npm:^0.4.24":
+"iconv-lite@npm:0.4.24, iconv-lite@npm:^0.4.24, iconv-lite@npm:^0.4.4":
   version: 0.4.24
   resolution: "iconv-lite@npm:0.4.24"
   dependencies:
@@ -15433,6 +15434,13 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
+"lodash.merge@npm:^4.6.2":
+  version: 4.6.2
+  resolution: "lodash.merge@npm:4.6.2"
+  checksum: 4e2bb42a87a148991458d7c384bc197e96f7115e9536fc8e2c86ae9e99ce1c1f693ff15eb85761952535f48d72253aed8e673d9f32dde3e671cd91e3fde220a7
+  languageName: node
+  linkType: hard
+
 "lodash.mergewith@npm:4.6.2":
   version: 4.6.2
   resolution: "lodash.mergewith@npm:4.6.2"
@@ -16300,6 +16308,19 @@ fsevents@^1.2.7:
   version: 1.4.0
   resolution: "natural-compare@npm:1.4.0"
   checksum: 2daf93d9bb516eddb06e2e80657a605af2e494d47c65d090ba43691aaffbc41f520840f1c9d3b7b641977af950217a4ab6ffb85bafcd5dfa8ba6fe4e68c43b53
+  languageName: node
+  linkType: hard
+
+"needle@npm:^2.5.2":
+  version: 2.6.0
+  resolution: "needle@npm:2.6.0"
+  dependencies:
+    debug: ^3.2.6
+    iconv-lite: ^0.4.4
+    sax: ^1.2.4
+  bin:
+    needle: bin/needle
+  checksum: 0a00060d586b984ccfe89ba95228a9510ec258eeba62349450d590ea5a92831cd997b191f211220bd112236fc8734c7e6cd64d674b7e6d55784fa992d9e3a7a4
   languageName: node
   linkType: hard
 
@@ -17811,6 +17832,17 @@ fsevents@^1.2.7:
     clipboard:
       optional: true
   checksum: 9d55785f1ea68e2a2e6b0a5ea1241811ed986182af76053ecf50245521414597d70b17dc5804a7ad961dfd459e6883a89ad3f86bb064ac3484e3ef24b7891f4f
+  languageName: node
+  linkType: hard
+
+"probe-image-size@npm:^7.2.0":
+  version: 7.2.0
+  resolution: "probe-image-size@npm:7.2.0"
+  dependencies:
+    lodash.merge: ^4.6.2
+    needle: ^2.5.2
+    stream-parser: ~0.3.1
+  checksum: bc4d786c1cac8b8db09e1a18b80a7bd31ccd7c3cd4e903d7019128cc0b1382c43449a4d2cfc0a579ff6088ed453c1875ab49ce596199a90f1c81596ed751f602
   languageName: node
   linkType: hard
 
@@ -19417,6 +19449,13 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
+"sax@npm:^1.2.4":
+  version: 1.2.4
+  resolution: "sax@npm:1.2.4"
+  checksum: 9d7668d69105e89e2c1a4b2fdc12c72e1a2f78b825f7b4a8a2ea5cdfebf70920bd17715bed55264c3b3959616a0695f8ad2d098bf6944fbd0953ee9c695dceef
+  languageName: node
+  linkType: hard
+
 "saxes@npm:^5.0.1":
   version: 5.0.1
   resolution: "saxes@npm:5.0.1"
@@ -20266,7 +20305,7 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
-"stream-parser@npm:^0.3.1":
+"stream-parser@npm:^0.3.1, stream-parser@npm:~0.3.1":
   version: 0.3.1
   resolution: "stream-parser@npm:0.3.1"
   dependencies:

@@ -1,5 +1,6 @@
 import { v4 as uuidv4 } from "uuid";
 import memoize from "mem";
+import probe from "probe-image-size/http";
 import type {
   Image,
   MutationCreateImageArgs,
@@ -179,3 +180,13 @@ export default {
     labels,
   },
 };
+
+const tessst = async () => {
+  console.log(
+    await probe(
+      "https://images.unsplash.com/photo-1622495727087-8fbb9ace0f39?ixid=MnwxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1619&q=80"
+    )
+  );
+};
+
+tessst();

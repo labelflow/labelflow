@@ -24,6 +24,7 @@
     "next": "10.x",
     "next-seo": "4.24.0",
     "ol": "6.4.3",
+    "probe-image-size": "^7.2.0",
     "react": "17.x",
     "react-dom": "17.x",
     "react-dropzone": "^11.3.2",
