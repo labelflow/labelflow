@@ -2,7 +2,7 @@ import { incrementMockedDate } from "@labelflow/dev-utils/mockdate";
 import gql from "graphql-tag";
 import { client } from "../../index";
 import { setupTestsWithLocalDatabase } from "../../../../utils/setup-local-db-tests";
-import { LabelCreateInput } from "../../../../types.generated";
+import { LabelCreateInput } from "../../../../graphql-types.generated";
 
 setupTestsWithLocalDatabase();
 

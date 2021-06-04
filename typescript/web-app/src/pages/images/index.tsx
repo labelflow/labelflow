@@ -7,7 +7,7 @@ import {
 import gql from "graphql-tag";
 import NextLink from "next/link";
 import { Layout } from "../../components/layout";
-import type { Image } from "../../types.generated";
+import type { Image } from "../../graphql-types.generated";
 
 const imagesQuery = gql`
   query {

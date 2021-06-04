@@ -6,11 +6,11 @@ import type {
   QueryImageArgs,
   QueryImagesArgs,
   Maybe,
-} from "../../../types.generated";
+} from "../../../graphql-types.generated";
 
-import { db } from "../../database";
+import { db, DbImage } from "../../database";
 
-const getUrlFromImageId = memoize(async (id: string) => {
+const getUrlFromFileId = memoize(async (id: string): Promise<string> => {
   const file = await db.file.get(id);
 
   if (file === undefined) {
@@ -21,20 +21,22 @@ const getUrlFromImageId = memoize(async (id: string) => {
   return url;
 });
 
-export const clearGetUrlFromImageIdMem = () => {
-  memoize.clear(getUrlFromImageId);
+export const clearGetUrlFromFileIdMem = () => {
+  memoize.clear(getUrlFromFileId);
 };
 
-const getImageById = async (id: string): Promise<Partial<Image>> => {
+const getImageById = async (id: string): Promise<DbImage> => {
   const entity = await db.image.get(id);
 
   if (entity === undefined) {
     throw new Error("No image with such id");
   }
 
-  const url = await getUrlFromImageId(entity.fileId);
-
-  return { ...entity, url };
+  if (!("url" in entity)) {
+    const url = await getUrlFromFileId(entity.fileId);
+    return { ...entity, url };
+  }
+  return entity;
 };
 
 const getPaginatedImages = async (
@@ -70,7 +72,7 @@ const images = async (_: any, args: QueryImagesArgs) => {
     imagesList.map(async (imageEntity: any) => {
       return {
         ...imageEntity,
-        url: await getUrlFromImageId(imageEntity.fileId),
+        url: await getUrlFromFileId(imageEntity.fileId),
       };
     })
   );
@@ -88,7 +90,7 @@ const createImage = async (
   const fileId = uuidv4();
 
   await db.file.add({ id: fileId, imageId, blob: file });
-  const url = await getUrlFromImageId(fileId);
+  const url = await getUrlFromFileId(fileId);
 
   const newEntity = await new Promise<Partial<Image>>((resolve, reject) => {
     const imageObject = new Image();
@@ -99,7 +101,9 @@ const createImage = async (
         createdAt: now.toISOString(),
         updatedAt: now.toISOString(),
         id: imageId,
+        path: file.name,
         name: name ?? file.name,
+        mimetype: file.type,
         width: imageObject.width,
         height: imageObject.height,
         fileId,
