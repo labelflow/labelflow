@@ -81,14 +81,14 @@ const convertLabelsOfImageToCocoAnnotations = (
   mapping: CacheLabelClassIdToCocoCategoryId,
   idOffset: number = 1
 ): CocoAnnotation[] => {
-  return labels.map((label, index) =>
-    convertLabelToCocoAnnotation(
+  return labels.map((label, index) => {
+    return convertLabelToCocoAnnotation(
       label,
       idOffset + index,
       imageId,
       mapping.get(label?.labelClass?.id)
-    )
-  );
+    );
+  });
 };
 
 const convertImageToCocoImage = (

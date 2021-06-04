@@ -1,56 +1,50 @@
+import { convertImagesAndLabelClassesToCocoDataset } from "../../../data-converters/coco-format/converters";
+import { Image, Label, LabelClass } from "../../../graphql-types.generated";
 import {
-  addImageToCocoDataset,
-  convertLabelClassesToCocoCategories,
-  initialCocoDataset,
-} from "../../../data-converters/coco-format/converters";
-import {
-  CacheLabelClassIdToCocoCategoryId,
-  CocoDataset,
-} from "../../../data-converters/coco-format/types";
-import { Label, LabelClass } from "../../../graphql-types.generated";
-import { db } from "../../database";
+  getLabelsByImageId,
+  getPaginatedImages,
+  getUrlFromFileId,
+} from "./image";
+import { getPaginatedLabelClasses } from "./label-class";
 
 const exportToCoco = async (): Promise<string | undefined> => {
-  const labelClasses = await db.labelClass.orderBy("createdAt").toArray();
-  const categories = convertLabelClassesToCocoCategories(
-    labelClasses as LabelClass[]
-  );
+  const dbImages = await getPaginatedImages();
 
-  const mapping: CacheLabelClassIdToCocoCategoryId = labelClasses.reduce(
-    (previousMapping, currentLabelClass, index) => {
-      previousMapping.set(currentLabelClass.id, index + 1);
-      return previousMapping;
-    },
-    new Map()
-  );
-  const addImageToCocoDatasetWithMapping = addImageToCocoDataset(mapping);
-  const images = await db.image.orderBy("createdAt").toArray();
-
-  const initialDataset: CocoDataset = {
-    ...initialCocoDataset,
-    categories,
-  };
-  const cocoDataset: CocoDataset = await images.reduce(
-    async (_previousCocoDataset, currentImage) => {
-      const previousCocoDataset = await _previousCocoDataset;
-      const labelsOfImage = await db.label
-        .where({ imageId: currentImage.id })
-        .sortBy("createdAt");
-      const labelsOfImageWithLabelClasses = labelsOfImage.map((label) => ({
-        ...label,
-        labelClass: labelClasses.find(
-          (labelClass) => labelClass.id === label.labelClassId
+  const images: Image[] = await Promise.all(
+    dbImages.map(
+      async (image): Promise<Image> => ({
+        ...image,
+        labels: (
+          await getLabelsByImageId(image.id)
+        ).map(
+          (dbLabel): Label => ({
+            ...dbLabel,
+            // TODO: Is it possible top avoid this without requesting the whole label
+            // @ts-ignore
+            labelClass: {
+              id: dbLabel.labelClassId!,
+            },
+          })
         ),
-      }));
-      return addImageToCocoDatasetWithMapping(previousCocoDataset, {
-        ...currentImage,
-        url: "", // No url should be persisted for now
-        labels: labelsOfImageWithLabelClasses as Label[],
-      });
-    },
-    new Promise((resolve) => resolve(initialDataset)) as Promise<CocoDataset>
+        url: await getUrlFromFileId(image.fileId),
+      })
+    )
   );
-  return btoa(JSON.stringify(cocoDataset));
+
+  const labelClasses: LabelClass[] = (await getPaginatedLabelClasses()).map(
+    (labelClass) => ({
+      ...labelClass,
+      labels: [],
+    })
+  );
+
+  const json = JSON.stringify(
+    convertImagesAndLabelClassesToCocoDataset(images, labelClasses)
+  );
+
+  return json;
+
+  // const file = new File(json, "export.json");
 };
 
 export default {
