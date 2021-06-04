@@ -1,6 +1,4 @@
 /* eslint-disable import/first */
-import "fake-indexeddb/auto";
-
 // @ts-ignore Needs to be done before ol is imported
 global.URL.createObjectURL = jest.fn(() => "mockedUrl");
 
@@ -12,49 +10,14 @@ import { Feature, Map as OlMap } from "ol";
 import { fromExtent } from "ol/geom/Polygon";
 import { DrawEvent, DrawEventType } from "ol/interaction/Draw";
 import { client } from "../../../../connectors/apollo-client";
-import { db } from "../../../../connectors/database";
 import { DrawBoundingBoxInteraction } from "../draw-bounding-box-interaction";
-import { clearGetUrlFromImageIdMem } from "../../../../connectors/apollo-client/resolvers/image";
 import {
   useLabellingStore,
   Tools,
 } from "../../../../connectors/labelling-state";
+import { setupTestsWithLocalDatabase } from "../../../../utils/setup-local-db-tests";
 
-/**
- * We bypass the structured clone algorithm as its current js implementation
- * as its current js implementation doesn't support blobs.
- * It might make our tests a bit different from what would actually happen
- * in a browser.
- */
-jest.mock("fake-indexeddb/build/lib/structuredClone", () => ({
-  default: (i: any) => i,
-}));
-// @ts-ignore
-global.Image = class Image extends HTMLElement {
-  width: number;
-
-  height: number;
-
-  constructor() {
-    super();
-    this.width = 42;
-    this.height = 36;
-    setTimeout(() => {
-      this?.onload?.(new Event("onload")); // simulate success
-    }, 100);
-  }
-};
-// @ts-ignore
-customElements.define("image-custom", global.Image);
-
-beforeAll(() => {});
-
-beforeEach(async () => {
-  // Warning! The order matters for those 2 lines.
-  // Otherwise, there is a failing race condition.
-  await Promise.all(db.tables.map((table) => table.clear()));
-  clearGetUrlFromImageIdMem();
-});
+setupTestsWithLocalDatabase();
 
 /**
  * Mock the apollo client to avoid creating corrupted files that allows
