@@ -134,9 +134,9 @@ const createImage = async (
     }
   }
   if (!file && url) {
-    if (!path || !mimetype || !name || !width || !height)
+    if (!mimetype || !width || !height)
       throw new Error(
-        "File upload with a `url` field must include all of the following fields: `path`, `mimetype`, `name`, `width`, `height`."
+        "File upload with a `url` field must include all of the following fields: `mimetype`, `width`, `height`."
       );
 
     // File URL based upload
@@ -149,9 +149,9 @@ const createImage = async (
       updatedAt: now.toISOString(),
       id: imageId,
       url,
-      path,
+      path: path ?? url,
       mimetype,
-      name,
+      name: name ?? url.substring(url.lastIndexOf("/") + 1),
       width,
       height,
     };
