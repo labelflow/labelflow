@@ -7,9 +7,8 @@ import "@testing-library/jest-dom/extend-expect";
 
 import { ImportImagesModal } from "../import-images-modal";
 
-import { db } from "../../../../../../connectors/database";
 import { client } from "../../../../../../connectors/apollo-client";
-import { clearGetUrlFromImageIdMem } from "../../../../../../connectors/apollo-client/resolvers/image";
+import { setupTestsWithLocalDatabase } from "../../../../../../utils/setup-local-db-tests";
 
 const files = [
   new File(["Hello"], "hello.png", { type: "image/png" }),
@@ -20,6 +19,18 @@ const files = [
 const Wrapper = ({ children }: PropsWithChildren<{}>) => (
   <ApolloProvider client={client}>{children}</ApolloProvider>
 );
+
+/**
+ * We bypass the structured clone algorithm as its current js implementation
+ * as its current js implementation doesn't support blobs.
+ * It might make our tests a bit different from what would actually happen
+ * in a browser.
+ */
+jest.mock("fake-indexeddb/build/lib/structuredClone", () => ({
+  default: (i: any) => i,
+}));
+
+setupTestsWithLocalDatabase();
 
 /**
  * Mock the apollo client to avoid creating corrupted files that allows
@@ -36,34 +47,6 @@ jest.mock("../../../../../../connectors/apollo-client", () => {
 });
 
 /**
- * We bypass the structured clone algorithm as its current js implementation
- * as its current js implementation doesn't support blobs.
- * It might make our tests a bit different from what would actually happen
- * in a browser.
- */
-jest.mock("fake-indexeddb/build/lib/structuredClone", () => ({
-  default: (i: any) => i,
-}));
-
-// @ts-ignore
-global.Image = class Image extends HTMLElement {
-  width: number;
-
-  height: number;
-
-  constructor() {
-    super();
-    this.width = 42;
-    this.height = 36;
-    setTimeout(() => {
-      this?.onload?.(new Event("onload")); // simulate success
-    }, 100);
-  }
-};
-// @ts-ignore
-customElements.define("image-custom", global.Image);
-
-/**
  * This behavior is already tested in the previous test.
  * However, we need to wait for the upload to finish.
  * Otherwise, the cleanup in the `beforeEach` messes
@@ -74,17 +57,6 @@ async function ensuresUploadsAreFinished(number = 2) {
     expect(screen.getAllByLabelText("Upload succeed")).toHaveLength(number)
   );
 }
-
-beforeAll(() => {
-  global.URL.createObjectURL = jest.fn(() => "mockedUrl");
-});
-
-beforeEach(async () => {
-  // Warning! The order matters for those 2 lines.
-  // Otherwise, there is a failing race condition.
-  await Promise.all(db.tables.map((table) => table.clear()));
-  clearGetUrlFromImageIdMem();
-});
 
 function renderModalAndImport(filesToImport = files, props = {}) {
   render(<ImportImagesModal isOpen onClose={() => {}} {...props} />, {
