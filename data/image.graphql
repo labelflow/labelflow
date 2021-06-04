@@ -1,15 +1,12 @@
-input ImageCreateInputWithFile {
+input ImageCreateInput {
   id: ID
   name: String
-  file: Upload!
-}
-
-input ImageCreateInputWithUrl {
-  id: ID
-  name: String!
-  width: Int!
-  height: Int!
-  url: String # not used for now
+  path: String
+  mimetype: String
+  height: Int
+  width: Int
+  file: Upload # Either file or url are needed
+  url: String # Either file or url are needed
 }
 
 input ImageWhereInput {
