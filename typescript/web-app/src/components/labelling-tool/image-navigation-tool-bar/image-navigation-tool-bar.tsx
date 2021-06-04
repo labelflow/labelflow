@@ -1,6 +1,6 @@
 import { NextRouter } from "next/router";
 
-import { Image } from "../../../types.generated";
+import { Image } from "../../../graphql-types.generated";
 import { ImageNavigationTool } from "./image-navigation-tool";
 
 export type Props = {

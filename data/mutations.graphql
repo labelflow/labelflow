@@ -1,6 +1,6 @@
 type Mutation {
   createExample(data: ExampleCreateInput!): Example
-  createImage(data: ImageCreateInputWithFile!): Image
+  createImage(data: ImageCreateInput!): Image
   createLabel(data: LabelCreateInput!): Label
   createLabelClass(data: LabelClassCreateInput!): LabelClass
 }

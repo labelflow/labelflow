@@ -5,7 +5,9 @@
   "repository": "git@github.com:Labelflow/labelflow.git",
   "scripts": {
     "lint": "eslint 'typescript/**/*.{ts,tsx}'",
+    "lint:all": "eslint 'typescript/**/*.{ts,tsx}'",
     "test": "jest",
+    "test:all": "jest",
     "cypress:open": "cypress open",
     "cypress:run": "cypress run",
     "dev:web-app": "cd ./typescript/web-app && yarn dev",
@@ -14,6 +16,7 @@
     "codegen": "graphql-codegen --config ./codegen.yml",
     "codegen:ci": "graphql-codegen --config ./codegen.yml && git diff --exit-code",
     "storybook": "start-storybook -p 6006",
+    "storybook:all": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
     "chromatic": "npx chromatic"
   },
@@ -40,6 +43,7 @@
     "eslint-plugin-prettier": "3.4.0",
     "eslint-plugin-react": "7.23.2",
     "eslint-plugin-react-hooks": "4.2.0",
+    "fake-indexeddb": "^3.1.2",
     "graphql": "15.5.0",
     "graphql-tag": "2.12.4",
     "jest": "26.6.3",

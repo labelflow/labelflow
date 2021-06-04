@@ -51,22 +51,21 @@ export type Image = {
   updatedAt: Scalars['DateTime'];
   url: Scalars['String'];
   name: Scalars['String'];
+  path: Scalars['String'];
+  mimetype: Scalars['String'];
   height: Scalars['Int'];
   width: Scalars['Int'];
   labels: Array<Label>;
 };
 
-export type ImageCreateInputWithFile = {
+export type ImageCreateInput = {
   id?: Maybe<Scalars['ID']>;
   name?: Maybe<Scalars['String']>;
-  file: Scalars['Upload'];
-};
-
-export type ImageCreateInputWithUrl = {
-  id?: Maybe<Scalars['ID']>;
-  name: Scalars['String'];
-  width: Scalars['Int'];
-  height: Scalars['Int'];
+  path?: Maybe<Scalars['String']>;
+  mimetype?: Maybe<Scalars['String']>;
+  height?: Maybe<Scalars['Int']>;
+  width?: Maybe<Scalars['Int']>;
+  file?: Maybe<Scalars['Upload']>;
   url?: Maybe<Scalars['String']>;
 };
 
@@ -136,7 +135,7 @@ export type MutationCreateExampleArgs = {
 
 
 export type MutationCreateImageArgs = {
-  data: ImageCreateInputWithFile;
+  data: ImageCreateInput;
 };
 
 
@@ -287,8 +286,7 @@ export type ResolversTypes = {
   ID: ResolverTypeWrapper<Scalars['ID']>;
   Image: ResolverTypeWrapper<Image>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
-  ImageCreateInputWithFile: ImageCreateInputWithFile;
-  ImageCreateInputWithUrl: ImageCreateInputWithUrl;
+  ImageCreateInput: ImageCreateInput;
   ImageWhereInput: ImageWhereInput;
   ImageWhereUniqueInput: ImageWhereUniqueInput;
   Label: ResolverTypeWrapper<Label>;
@@ -315,8 +313,7 @@ export type ResolversParentTypes = {
   ID: Scalars['ID'];
   Image: Image;
   Int: Scalars['Int'];
-  ImageCreateInputWithFile: ImageCreateInputWithFile;
-  ImageCreateInputWithUrl: ImageCreateInputWithUrl;
+  ImageCreateInput: ImageCreateInput;
   ImageWhereInput: ImageWhereInput;
   ImageWhereUniqueInput: ImageWhereUniqueInput;
   Label: Label;
@@ -353,6 +350,8 @@ export type ImageResolvers<ContextType = any, ParentType extends ResolversParent
   updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   url?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  path?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  mimetype?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   height?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   width?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   labels?: Resolver<Array<ResolversTypes['Label']>, ParentType, ContextType>;

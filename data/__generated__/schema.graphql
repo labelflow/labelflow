@@ -33,22 +33,21 @@ type Image {
   updatedAt: DateTime!
   url: String!
   name: String!
+  path: String!
+  mimetype: String!
   height: Int!
   width: Int!
   labels: [Label!]!
 }
 
-input ImageCreateInputWithFile {
+input ImageCreateInput {
   id: ID
   name: String
-  file: Upload!
-}
-
-input ImageCreateInputWithUrl {
-  id: ID
-  name: String!
-  width: Int!
-  height: Int!
+  path: String
+  mimetype: String
+  height: Int
+  width: Int
+  file: Upload
   url: String
 }
 
@@ -103,7 +102,7 @@ input LabelCreateInput {
 
 type Mutation {
   createExample(data: ExampleCreateInput!): Example
-  createImage(data: ImageCreateInputWithFile!): Image
+  createImage(data: ImageCreateInput!): Image
   createLabel(data: LabelCreateInput!): Label
   createLabelClass(data: LabelClassCreateInput!): LabelClass
 }
