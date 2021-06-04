@@ -5,7 +5,6 @@ global.URL.createObjectURL = jest.fn(() => "mockedUrl");
 import { ApolloProvider } from "@apollo/client";
 import { Map } from "@labelflow/react-openlayers-fiber";
 import { render } from "@testing-library/react";
-import gql from "graphql-tag";
 import { Feature, Map as OlMap } from "ol";
 import { fromExtent } from "ol/geom/Polygon";
 import { DrawEvent, DrawEventType } from "ol/interaction/Draw";
@@ -16,52 +15,26 @@ import {
   Tools,
 } from "../../../../connectors/labelling-state";
 import { setupTestsWithLocalDatabase } from "../../../../utils/setup-local-db-tests";
+import { useUndoStore } from "../../../../connectors/undo-store";
 
 setupTestsWithLocalDatabase();
 
-/**
- * Mock the apollo client to avoid creating corrupted files that allows
- * us to identify a behaviour.
- */
-jest.mock("../../../../connectors/apollo-client", () => {
-  const original = jest.requireActual("../../../../connectors/apollo-client");
-
-  return {
-    client: { ...original.client, mutate: jest.fn(original.client.mutate) },
-  };
-});
-
-const createImage = async (name: String) => {
-  const mutationResult = await client.mutate({
-    mutation: gql`
-      mutation createImage($file: Upload!, $name: String!) {
-        createImage(data: { name: $name, file: $file }) {
-          id
-        }
-      }
-    `,
-    variables: {
-      file: new Blob(),
-      name,
-    },
-  });
-
-  const {
-    data: {
-      createImage: { id },
-    },
-  } = mutationResult;
-
-  return id;
-};
+jest.mock("../../../../connectors/apollo-client", () => ({
+  client: { mutate: jest.fn() },
+}));
 
 it("create a label in the db on the end of a draw interaction", async () => {
   const mapRef: { current: OlMap | null } = { current: null };
-  const id = await createImage("myImage");
+
+  const imageId = "mocked-image-id";
   useLabellingStore.setState({ selectedTool: Tools.BOUNDING_BOX });
   (client.mutate as jest.Mock).mockReset();
-  (client.mutate as jest.Mock).mockImplementationOnce(jest.fn());
-  render(<DrawBoundingBoxInteraction imageId={id} />, {
+  (client.mutate as jest.Mock).mockImplementationOnce(
+    jest.fn(() => ({
+      data: { createLabel: { id: "mocked-label-id" } },
+    }))
+  );
+  render(<DrawBoundingBoxInteraction imageId={imageId} />, {
     wrapper: ({ children }) => (
       <Map
         args={{ interactions: [] }}
@@ -85,7 +58,48 @@ it("create a label in the db on the end of a draw interaction", async () => {
 
   expect(client.mutate).toHaveBeenCalledWith(
     expect.objectContaining({
-      variables: { imageId: id, x: 100, y: 200, width: 100, height: 100 },
+      variables: { imageId, x: 100, y: 200, width: 100, height: 100 },
+    })
+  );
+});
+
+it("is possible to undo the creation of the label", async () => {
+  const mapRef: { current: OlMap | null } = { current: null };
+  const imageId = "mocked-image-id";
+
+  useLabellingStore.setState({ selectedTool: Tools.BOUNDING_BOX });
+  (client.mutate as jest.Mock).mockReset();
+  (client.mutate as jest.Mock).mockImplementationOnce(
+    jest.fn(() => ({
+      data: { createLabel: { id: "mocked-label-id" } },
+    }))
+  );
+
+  render(<DrawBoundingBoxInteraction imageId={imageId} />, {
+    wrapper: ({ children }) => (
+      <Map
+        args={{ interactions: [] }}
+        ref={(map) => {
+          mapRef.current = map;
+        }}
+      >
+        <ApolloProvider client={client}>{children}</ApolloProvider>
+      </Map>
+    ),
+  });
+  const drawInteraction = mapRef.current?.getInteractions().getArray()?.[0];
+  drawInteraction?.dispatchEvent(
+    new DrawEvent(
+      "drawend" as DrawEventType,
+      new Feature(fromExtent([100, 200, 200, 300]))
+    )
+  );
+
+  await useUndoStore.getState().undo();
+
+  expect(client.mutate).toHaveBeenLastCalledWith(
+    expect.objectContaining({
+      variables: { id: "mocked-label-id" },
     })
   );
 });
