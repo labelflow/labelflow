@@ -292,4 +292,21 @@ describe("Label resolver test suite", () => {
 
     expect(queryResult.data.image.labels).toHaveLength(0);
   });
+
+  test("should throw when the label to delete doesn't exist", () => {
+    return expect(
+      client.mutate({
+        mutation: gql`
+          mutation deleteLabel($id: ID!) {
+            deleteLabel(data: { id: $id }) {
+              id
+            }
+          }
+        `,
+        variables: {
+          id: "id-of-a-label-that-doesnt-exist",
+        },
+      })
+    ).rejects.toThrow("No label with such id");
+  });
 });

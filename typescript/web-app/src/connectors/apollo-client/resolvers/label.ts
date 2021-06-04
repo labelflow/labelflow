@@ -64,6 +64,10 @@ const deleteLabel = async (_: any, args: MutationDeleteLabelArgs) => {
 
   const label = await db.label.get(labelId);
 
+  if (!label) {
+    throw new Error("No label with such id");
+  }
+
   await db.label.delete(labelId);
 
   return label;
