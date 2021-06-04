@@ -3,6 +3,7 @@ import type {
   Label,
   MutationCreateLabelArgs,
   MutationDeleteLabelArgs,
+  MutationUpdateLabelArgs,
 } from "../../../types.generated";
 
 import { db, Label as LabelDb } from "../../database";
@@ -60,7 +61,7 @@ const createLabel = async (
 };
 
 const deleteLabel = async (_: any, args: MutationDeleteLabelArgs) => {
-  const labelId = args.data.id;
+  const labelId = args.where.id;
 
   const label = await db.label.get(labelId);
 
@@ -73,10 +74,33 @@ const deleteLabel = async (_: any, args: MutationDeleteLabelArgs) => {
   return label;
 };
 
+const updateLabel = async (_: any, args: MutationUpdateLabelArgs) => {
+  const labelId = args.where.id;
+
+  const label = await db.label.get(labelId);
+
+  if ("labelClassId" in args.data && args.data.labelClassId != null) {
+    const labelClassToConnect = await db.labelClass.get(args.data.labelClassId);
+
+    if (!labelClassToConnect) {
+      throw new Error("No label class with such id");
+    }
+  }
+
+  if (!label) {
+    throw new Error("No label with such id");
+  }
+
+  await db.label.update(labelId, args.data);
+
+  return db.label.get(labelId);
+};
+
 export default {
   Mutation: {
     createLabel,
     deleteLabel,
+    updateLabel,
   },
   Label: {
     labelClass,

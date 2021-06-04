@@ -121,6 +121,14 @@ export type LabelCreateInput = {
   height: Scalars['Int'];
 };
 
+export type LabelUpdateInput = {
+  labelClassId?: Maybe<Scalars['ID']>;
+  x?: Maybe<Scalars['Float']>;
+  y?: Maybe<Scalars['Float']>;
+  width?: Maybe<Scalars['Int']>;
+  height?: Maybe<Scalars['Int']>;
+};
+
 export type LabelWhereUniqueInput = {
   id: Scalars['ID'];
 };
@@ -130,6 +138,7 @@ export type Mutation = {
   createExample?: Maybe<Example>;
   createImage?: Maybe<Image>;
   createLabel?: Maybe<Label>;
+  updateLabel?: Maybe<Label>;
   deleteLabel?: Maybe<Label>;
   createLabelClass?: Maybe<LabelClass>;
 };
@@ -150,8 +159,14 @@ export type MutationCreateLabelArgs = {
 };
 
 
+export type MutationUpdateLabelArgs = {
+  where: LabelWhereUniqueInput;
+  data: LabelUpdateInput;
+};
+
+
 export type MutationDeleteLabelArgs = {
-  data: LabelWhereUniqueInput;
+  where: LabelWhereUniqueInput;
 };
 
 
@@ -306,6 +321,7 @@ export type ResolversTypes = {
   LabelClassCreateInput: LabelClassCreateInput;
   LabelClassWhereUniqueInput: LabelClassWhereUniqueInput;
   LabelCreateInput: LabelCreateInput;
+  LabelUpdateInput: LabelUpdateInput;
   LabelWhereUniqueInput: LabelWhereUniqueInput;
   Mutation: ResolverTypeWrapper<{}>;
   Query: ResolverTypeWrapper<{}>;
@@ -335,6 +351,7 @@ export type ResolversParentTypes = {
   LabelClassCreateInput: LabelClassCreateInput;
   LabelClassWhereUniqueInput: LabelClassWhereUniqueInput;
   LabelCreateInput: LabelCreateInput;
+  LabelUpdateInput: LabelUpdateInput;
   LabelWhereUniqueInput: LabelWhereUniqueInput;
   Mutation: {};
   Query: {};
@@ -397,7 +414,8 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   createExample?: Resolver<Maybe<ResolversTypes['Example']>, ParentType, ContextType, RequireFields<MutationCreateExampleArgs, 'data'>>;
   createImage?: Resolver<Maybe<ResolversTypes['Image']>, ParentType, ContextType, RequireFields<MutationCreateImageArgs, 'data'>>;
   createLabel?: Resolver<Maybe<ResolversTypes['Label']>, ParentType, ContextType, RequireFields<MutationCreateLabelArgs, 'data'>>;
-  deleteLabel?: Resolver<Maybe<ResolversTypes['Label']>, ParentType, ContextType, RequireFields<MutationDeleteLabelArgs, 'data'>>;
+  updateLabel?: Resolver<Maybe<ResolversTypes['Label']>, ParentType, ContextType, RequireFields<MutationUpdateLabelArgs, 'where' | 'data'>>;
+  deleteLabel?: Resolver<Maybe<ResolversTypes['Label']>, ParentType, ContextType, RequireFields<MutationDeleteLabelArgs, 'where'>>;
   createLabelClass?: Resolver<Maybe<ResolversTypes['LabelClass']>, ParentType, ContextType, RequireFields<MutationCreateLabelClassArgs, 'data'>>;
 };
 

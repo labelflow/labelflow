@@ -2,6 +2,7 @@ type Mutation {
   createExample(data: ExampleCreateInput!): Example
   createImage(data: ImageCreateInputWithFile!): Image
   createLabel(data: LabelCreateInput!): Label
-  deleteLabel(data: LabelWhereUniqueInput!): Label
+  updateLabel(where: LabelWhereUniqueInput!, data: LabelUpdateInput!): Label
+  deleteLabel(where: LabelWhereUniqueInput!): Label
   createLabelClass(data: LabelClassCreateInput!): LabelClass
 }
