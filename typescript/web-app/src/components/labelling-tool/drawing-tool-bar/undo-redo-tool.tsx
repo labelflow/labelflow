@@ -1,5 +1,5 @@
 import { IconButton, Tooltip } from "@chakra-ui/react";
-import { FaUndo, FaRedo } from "react-icons/fa";
+import { BiUndo, BiRedo } from "react-icons/bi";
 import { useHotkeys } from "react-hotkeys-hook";
 
 import { useUndoStore } from "../../../connectors/undo-store";
@@ -23,7 +23,7 @@ export const UndoTool = () => {
   return (
     <Tooltip label={`Undo tool [${keymap.undo.key}]`} placement="right">
       <IconButton
-        icon={<FaUndo size="1.3em" />}
+        icon={<BiUndo size="1.3em" />}
         onClick={undo}
         backgroundColor="white"
         aria-label="Undo tool"
@@ -49,7 +49,7 @@ export const RedoTool = () => {
   return (
     <Tooltip label={`Redo tool [${keymap.redo.key}]`} placement="right">
       <IconButton
-        icon={<FaRedo size="1.3em" />}
+        icon={<BiRedo size="1.3em" />}
         onClick={redo}
         backgroundColor="white"
         aria-label="Redo tool"
