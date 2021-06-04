@@ -1,26 +1,10 @@
-import "fake-indexeddb/auto";
-import {
-  initMockedDate,
-  incrementMockedDate,
-} from "@labelflow/dev-utils/mockdate";
+import { incrementMockedDate } from "@labelflow/dev-utils/mockdate";
 import gql from "graphql-tag";
-import { db } from "../../../database";
 import { client } from "../../index";
+import { setupTestsWithLocalDatabase } from "../../../../utils/setup-local-db-tests";
 import { LabelCreateInput } from "../../../../types.generated";
 
-/**
- * We bypass the structured clone algorithm as its current js implementation
- * as its current js implementation doesn't support blobs.
- * It might make our tests a bit different from what would actually happen
- * in a browser.
- */
-jest.mock("fake-indexeddb/build/lib/structuredClone", () => ({
-  default: (i: any) => i,
-}));
-
-beforeAll(() => {
-  global.URL.createObjectURL = jest.fn(() => "mockedUrl");
-});
+setupTestsWithLocalDatabase();
 
 const labelData = {
   x: 3.14,
@@ -45,30 +29,6 @@ const createLabel = (data: LabelCreateInput) => {
 };
 
 describe("Label resolver test suite", () => {
-  beforeEach(async () => {
-    Promise.all(db.tables.map((table) => table.clear()));
-    await client.clearStore();
-    initMockedDate();
-  });
-
-  // @ts-ignore
-  global.Image = class Image extends HTMLElement {
-    width: number;
-
-    height: number;
-
-    constructor() {
-      super();
-      this.width = 42;
-      this.height = 36;
-      setTimeout(() => {
-        this?.onload?.(new Event("onload")); // simulate success
-      }, 100);
-    }
-  };
-  // @ts-ignore
-  customElements.define("image-custom", global.Image);
-
   const createImage = async (name: String) => {
     const mutationResult = await client.mutate({
       mutation: gql`
