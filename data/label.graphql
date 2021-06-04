@@ -7,3 +7,7 @@ input LabelCreateInput {
   width: Int!
   height: Int!
 }
+
+input LabelWhereUniqueInput {
+  id: ID!
+}

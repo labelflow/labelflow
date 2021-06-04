@@ -101,10 +101,15 @@ input LabelCreateInput {
   height: Int!
 }
 
+input LabelWhereUniqueInput {
+  id: ID!
+}
+
 type Mutation {
   createExample(data: ExampleCreateInput!): Example
   createImage(data: ImageCreateInputWithFile!): Image
   createLabel(data: LabelCreateInput!): Label
+  deleteLabel(data: LabelWhereUniqueInput!): Label
   createLabelClass(data: LabelClassCreateInput!): LabelClass
 }
 

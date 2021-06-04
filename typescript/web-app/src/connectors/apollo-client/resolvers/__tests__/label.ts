@@ -253,4 +253,43 @@ describe("Label resolver test suite", () => {
       labelClassId
     );
   });
+
+  test("should delete a label", async () => {
+    const imageId = await createImage("an image");
+    const createResult = await createLabel({
+      ...labelData,
+      imageId,
+    });
+    const labelId = createResult.data.createLabel.id;
+
+    client.mutate({
+      mutation: gql`
+        mutation deleteLabel($id: ID!) {
+          deleteLabel(data: { id: $id }) {
+            id
+          }
+        }
+      `,
+      variables: {
+        id: labelId,
+      },
+    });
+
+    const queryResult = await client.query({
+      query: gql`
+        query getImage($id: ID!) {
+          image(where: { id: $id }) {
+            labels {
+              id
+            }
+          }
+        }
+      `,
+      variables: {
+        id: imageId,
+      },
+    });
+
+    expect(queryResult.data.image.labels).toHaveLength(0);
+  });
 });

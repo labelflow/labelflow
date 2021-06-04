@@ -1,5 +1,9 @@
 import { v4 as uuidv4 } from "uuid";
-import type { Label, MutationCreateLabelArgs } from "../../../types.generated";
+import type {
+  Label,
+  MutationCreateLabelArgs,
+  MutationDeleteLabelArgs,
+} from "../../../types.generated";
 
 import { db, Label as LabelDb } from "../../database";
 
@@ -55,9 +59,20 @@ const createLabel = async (
   return result;
 };
 
+const deleteLabel = async (_: any, args: MutationDeleteLabelArgs) => {
+  const labelId = args.data.id;
+
+  const label = await db.label.get(labelId);
+
+  await db.label.delete(labelId);
+
+  return label;
+};
+
 export default {
   Mutation: {
     createLabel,
+    deleteLabel,
   },
   Label: {
     labelClass,
