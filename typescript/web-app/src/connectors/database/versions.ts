@@ -6,7 +6,8 @@ export default [
     version: 0.1,
     stores: {
       example: "id,createdAt,updatedAt,name",
-      image: "id,createdAt,updatedAt,name,width,height,fileId",
+      image:
+        "id,createdAt,updatedAt,url,name,path,mimetype,width,height,fileId",
       file: "id,imageId,blob",
       label: "id,createdAt,updatedAt,imageId,x,y,height,width,labelClassId",
       labelClass: "id,createdAt,updatedAt,name,color",
