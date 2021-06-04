@@ -96,14 +96,28 @@ input LabelCreateInput {
   labelClassId: ID
   x: Float!
   y: Float!
-  width: Int!
-  height: Int!
+  width: Float!
+  height: Float!
+}
+
+input LabelUpdateInput {
+  labelClassId: ID
+  x: Float
+  y: Float
+  width: Float
+  height: Float
+}
+
+input LabelWhereUniqueInput {
+  id: ID!
 }
 
 type Mutation {
   createExample(data: ExampleCreateInput!): Example
   createImage(data: ImageCreateInput!): Image
   createLabel(data: LabelCreateInput!): Label
+  updateLabel(where: LabelWhereUniqueInput!, data: LabelUpdateInput!): Label
+  deleteLabel(where: LabelWhereUniqueInput!): Label
   createLabelClass(data: LabelClassCreateInput!): LabelClass
 }
 
