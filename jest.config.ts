@@ -4,6 +4,7 @@ export default {
   collectCoverage: true,
   testMatch: ["<rootDir>/typescript/**/__tests__/**/*.{ts,tsx}"],
   testPathIgnorePatterns: ["node_modules"],
+  setupFilesAfterEnv: ["<rootDir>/setupTests.ts"],
   globals: {
     "ts-jest": {
       tsconfig: "tsconfig.jest.json",

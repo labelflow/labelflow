@@ -1,4 +1,3 @@
-import "fake-indexeddb/auto";
 import { initMockedDate } from "@labelflow/dev-utils/mockdate";
 import { clearGetUrlFromImageIdMem } from "../connectors/apollo-client/resolvers/image";
 import { db } from "../connectors/database";

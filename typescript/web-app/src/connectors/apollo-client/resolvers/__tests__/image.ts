@@ -1,18 +1,7 @@
-import "fake-indexeddb/auto";
 import { incrementMockedDate } from "@labelflow/dev-utils/mockdate";
 import gql from "graphql-tag";
 import { client } from "../../index";
 import { setupTestsWithLocalDatabase } from "../../../../utils/setup-local-db-tests";
-
-/**
- * We bypass the structured clone algorithm as its current js implementation
- * as its current js implementation doesn't support blobs.
- * It might make our tests a bit different from what would actually happen
- * in a browser.
- */
-jest.mock("fake-indexeddb/build/lib/structuredClone", () => ({
-  default: (i: any) => i,
-}));
 
 setupTestsWithLocalDatabase();
 

@@ -1,14 +1,13 @@
-import "fake-indexeddb/auto";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { ApolloProvider } from "@apollo/client";
 import { PropsWithChildren } from "react";
 import "@testing-library/jest-dom/extend-expect";
 
-import { ImportImagesModal } from "../import-images-modal";
-
 import { client } from "../../../../../../connectors/apollo-client";
 import { setupTestsWithLocalDatabase } from "../../../../../../utils/setup-local-db-tests";
+
+import { ImportImagesModal } from "../import-images-modal";
 
 const files = [
   new File(["Hello"], "hello.png", { type: "image/png" }),
@@ -19,16 +18,6 @@ const files = [
 const Wrapper = ({ children }: PropsWithChildren<{}>) => (
   <ApolloProvider client={client}>{children}</ApolloProvider>
 );
-
-/**
- * We bypass the structured clone algorithm as its current js implementation
- * as its current js implementation doesn't support blobs.
- * It might make our tests a bit different from what would actually happen
- * in a browser.
- */
-jest.mock("fake-indexeddb/build/lib/structuredClone", () => ({
-  default: (i: any) => i,
-}));
 
 setupTestsWithLocalDatabase();
 
