@@ -7,9 +7,9 @@ import type {
   Maybe,
 } from "../../../graphql-types.generated";
 
-import { db } from "../../database";
+import { db, DbLabelClass } from "../../database";
 
-const getLabelClassById = async (id: string): Promise<Partial<LabelClass>> => {
+const getLabelClassById = async (id: string): Promise<DbLabelClass> => {
   const entity = await db.labelClass.get(id);
 
   if (entity === undefined) {
@@ -22,7 +22,7 @@ const getLabelClassById = async (id: string): Promise<Partial<LabelClass>> => {
 const getPaginatedLabelClasses = async (
   skip?: Maybe<number>,
   first?: Maybe<number>
-): Promise<Partial<LabelClass>[]> => {
+): Promise<DbLabelClass[]> => {
   const query = await db.labelClass.orderBy("createdAt").offset(skip ?? 0);
 
   if (first) {
@@ -51,7 +51,7 @@ const labelClasses = async (_: any, args: QueryLabelClassesArgs) =>
 const createLabelClass = async (
   _: any,
   args: MutationCreateLabelClassArgs
-): Promise<Partial<LabelClass>> => {
+): Promise<DbLabelClass> => {
   const { color, name, id } = args.data;
   const labelClassId = id ?? uuidv4();
   const now = new Date();

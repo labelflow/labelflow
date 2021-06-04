@@ -4,10 +4,10 @@ import type {
   MutationCreateLabelArgs,
 } from "../../../graphql-types.generated";
 
-import { db, Label as LabelDb } from "../../database";
+import { db, DbLabel } from "../../database";
 
 // Queries
-const labelClass = async (label: LabelDb) => {
+const labelClass = async (label: DbLabel) => {
   if (!label?.labelClassId) {
     return null;
   }
@@ -19,7 +19,7 @@ const labelClass = async (label: LabelDb) => {
 const createLabel = async (
   _: any,
   args: MutationCreateLabelArgs
-): Promise<Partial<Label>> => {
+): Promise<Label> => {
   const { id, imageId, x, y, height, width, labelClassId } = args.data;
 
   // Since we don't have any constraint checks with Dexie
