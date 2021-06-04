@@ -14,7 +14,7 @@ import {
 import { isEmpty } from "lodash/fp";
 import { ImportButton } from "../../components/import-button";
 import { Layout } from "../../components/layout";
-import type { Image as ImageType } from "../../types.generated";
+import type { Image as ImageType } from "../../graphql-types.generated";
 
 const imagesQuery = gql`
   query {

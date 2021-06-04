@@ -6,11 +6,11 @@ import type {
   QueryImageArgs,
   QueryImagesArgs,
   Maybe,
-} from "../../../types.generated";
+} from "../../../graphql-types.generated";
 
-import { db } from "../../database";
+import { db, DbImage } from "../../database";
 
-const getUrlFromFileId = memoize(async (id: string) => {
+const getUrlFromFileId = memoize(async (id: string): Promise<string> => {
   const file = await db.file.get(id);
 
   if (file === undefined) {
@@ -21,20 +21,22 @@ const getUrlFromFileId = memoize(async (id: string) => {
   return url;
 });
 
-export const clearGetUrlFromImageIdMem = () => {
+export const clearGetUrlFromFileIdMem = () => {
   memoize.clear(getUrlFromFileId);
 };
 
-const getImageById = async (id: string): Promise<Partial<Image>> => {
+const getImageById = async (id: string): Promise<DbImage> => {
   const entity = await db.image.get(id);
 
   if (entity === undefined) {
     throw new Error("No image with such id");
   }
 
-  const url = await getUrlFromFileId(entity.fileId);
-
-  return { ...entity, url };
+  if (!("url" in entity)) {
+    const url = await getUrlFromFileId(entity.fileId);
+    return { ...entity, url };
+  }
+  return entity;
 };
 
 const getPaginatedImages = async (
