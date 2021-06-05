@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from "uuid";
 import memoize from "mem";
-import probe from "probe-image-size/sync";
-import type probe2 from "probe-image-size";
+import probe from "probe-image-size";
+
 import type {
   Image,
   MutationCreateImageArgs,
@@ -90,7 +90,6 @@ const createImage = async (
   const { file, id, name, height, width, mimetype, path, url } = args.data;
   if (file && !url) {
     // File Content based upload
-    console.log("File content based upload");
     try {
       const imageId = id ?? uuidv4();
       const fileId = uuidv4();
@@ -138,7 +137,6 @@ const createImage = async (
   }
   if (!file && url) {
     // File URL based upload
-    console.log("File url based upload");
 
     const fetchHeaders = new Headers();
     fetchHeaders.append(
@@ -156,8 +154,6 @@ const createImage = async (
       headers: fetchHeaders,
       credentials: "omit",
     });
-
-    console.log("Okkk");
 
     const blob = await fetchResult.blob();
 
@@ -177,7 +173,13 @@ const createImage = async (
       if (!finalWidth || !finalHeight || !finalMimetype) {
         const probeInput = new Uint8Array(await blob.arrayBuffer());
 
-        const probeResult = probe(probeInput) as probe2.ProbeResult;
+        const probeResult = probe.sync(probeInput as Buffer);
+
+        if (probeResult == null) {
+          throw new Error(
+            "Could not load the image, it may be damaged or corrupted."
+          );
+        }
 
         if (!finalWidth) finalWidth = probeResult.width;
         if (!finalHeight) finalHeight = probeResult.height;
