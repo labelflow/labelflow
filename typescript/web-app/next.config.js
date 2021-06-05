@@ -6,7 +6,7 @@ module.exports = {
     ],
   },
   future: {
-    webpack5: false,
+    webpack5: true,
   },
   webpack: (config, { defaultLoaders, isServer, config: nextConfig, ...others }) => {
     // Note: we provide webpack above so you should not `require` it
@@ -105,7 +105,7 @@ module.exports = {
             fs: false,
             os: false,
             crypto: false,
-            // stream: false,
+            stream: "stream-browserify", // Needed for `probe-image-size`
             http2: false,
             net: false,
             tls: false,

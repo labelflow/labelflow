@@ -1,6 +1,7 @@
 import { v4 as uuidv4 } from "uuid";
 import memoize from "mem";
-import probe from "probe-image-size/http";
+import probe from "probe-image-size/sync";
+import type probe2 from "probe-image-size";
 import type {
   Image,
   MutationCreateImageArgs,
@@ -89,12 +90,13 @@ const createImage = async (
   const { file, id, name, height, width, mimetype, path, url } = args.data;
   if (file && !url) {
     // File Content based upload
+    console.log("File content based upload");
     try {
       const imageId = id ?? uuidv4();
       const fileId = uuidv4();
 
       await db.file.add({ id: fileId, imageId, blob: file });
-      const imageSrc = await getUrlFromFileId(fileId);
+      const localUrl = await getUrlFromFileId(fileId);
 
       const newEntity = await new Promise<DbImage>((resolve, reject) => {
         const imageObject = new Image();
@@ -124,7 +126,7 @@ const createImage = async (
           );
           await db.file.delete(fileId);
         };
-        imageObject.src = imageSrc;
+        imageObject.src = localUrl;
       });
 
       return newEntity;
@@ -135,31 +137,75 @@ const createImage = async (
     }
   }
   if (!file && url) {
-    if (!mimetype || !width || !height)
-      throw new Error(
-        "File upload with a `url` field must include all of the following fields: `mimetype`, `width`, `height`."
-      );
-
     // File URL based upload
+    console.log("File url based upload");
+
+    const fetchHeaders = new Headers();
+    fetchHeaders.append(
+      "Accept",
+      // "image/tiff,image/jpeg,image/png,image/webp,image/*,*/*;q=0.8"
+      "image/tiff,image/jpeg,image/png,image/*,*/*;q=0.8"
+    );
+    fetchHeaders.append("Sec-Fetch-Dest", "image");
+    fetchHeaders.append("Cache-Control", "no-cache");
+
+    const fetchResult = await fetch(url, {
+      method: "GET",
+      mode: "cors",
+      cache: "no-cache",
+      headers: fetchHeaders,
+      credentials: "omit",
+    });
+
+    console.log("Okkk");
+
+    const blob = await fetchResult.blob();
+
+    const fileId = uuidv4();
     const imageId = id ?? uuidv4();
 
     const now = new Date();
 
-    const newImageEntity: DbImage = {
-      createdAt: now.toISOString(),
-      updatedAt: now.toISOString(),
-      id: imageId,
-      url,
-      path: path ?? url,
-      mimetype,
-      name: name ?? url.substring(url.lastIndexOf("/") + 1),
-      width,
-      height,
-    };
+    await db.file.add({ id: fileId, imageId, blob });
 
-    await db.image.add(newImageEntity);
+    try {
+      // Probe the file to get its dimensions and mimetype if not provided
+      let finalWidth = width;
+      let finalHeight = height;
+      let finalMimetype = mimetype;
 
-    return getImageById(imageId);
+      if (!finalWidth || !finalHeight || !finalMimetype) {
+        const probeInput = new Uint8Array(await blob.arrayBuffer());
+
+        const probeResult = probe(probeInput) as probe2.ProbeResult;
+
+        if (!finalWidth) finalWidth = probeResult.width;
+        if (!finalHeight) finalHeight = probeResult.height;
+        if (!finalMimetype) finalMimetype = probeResult.mime;
+      }
+
+      const newImageEntity: DbImage = {
+        createdAt: now.toISOString(),
+        updatedAt: now.toISOString(),
+        id: imageId,
+        // url: localUrl,
+        path: path ?? url,
+        mimetype: finalMimetype,
+        name: name ?? url.substring(url.lastIndexOf("/") + 1),
+        width: finalWidth,
+        height: finalHeight,
+        fileId,
+      };
+
+      await db.image.add(newImageEntity);
+
+      return await getImageById(imageId);
+    } catch (e) {
+      await db.file.delete(fileId);
+      throw new Error(
+        "Could not load the image, it may be damaged or corrupted."
+      );
+    }
   }
   throw new Error(
     "File upload must include either a `file` field of type `Upload`, or a `url` field of type `String`"
@@ -180,13 +226,3 @@ export default {
     labels,
   },
 };
-
-const tessst = async () => {
-  console.log(
-    await probe(
-      "https://images.unsplash.com/photo-1622495727087-8fbb9ace0f39?ixid=MnwxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1619&q=80"
-    )
-  );
-};
-
-tessst();

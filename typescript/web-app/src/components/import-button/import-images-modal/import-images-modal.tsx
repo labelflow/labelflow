@@ -8,6 +8,8 @@ import {
   ModalHeader,
   ModalBody,
   ModalCloseButton,
+  Button,
+  Image,
   Text,
 } from "@chakra-ui/react";
 import { useApolloClient } from "@apollo/client";
@@ -17,9 +19,17 @@ import { Dropzone } from "./dropzone";
 import { Files } from "./files";
 import { DroppedFile, FileUploadStatuses } from "./types";
 
-const createImageMutation = gql`
+const createImageFromFileMutation = gql`
   mutation createImageMutation($file: Upload!) {
     createImage(data: { file: $file }) {
+      id
+    }
+  }
+`;
+
+const createImageFromUrlMutation = gql`
+  mutation createImageMutation($url: String!) {
+    createImage(data: { url: $url }) {
       id
     }
   }
@@ -53,7 +63,7 @@ export const ImportImagesModal = ({
           .map(async (acceptedFile) => {
             try {
               await apolloClient.mutate({
-                mutation: createImageMutation,
+                mutation: createImageFromFileMutation,
                 variables: { file: acceptedFile.file },
               });
 
@@ -81,6 +91,9 @@ export const ImportImagesModal = ({
     createImages();
   }, [files]);
 
+  const testurl =
+    "https://images.unsplash.com/photo-1593642634443-44adaa06623a?auto=format&fit=crop&w=600&q=80";
+
   return (
     <Modal
       isOpen={isOpen}
@@ -102,6 +115,36 @@ export const ImportImagesModal = ({
             Start working with your images. Stay in control of your data. Images
             are not uploaded on LabelFlow servers.
           </Text>
+          <Image src={testurl} h="2rem" />
+          <Button
+            onClick={async () => {
+              try {
+                console.log("Let's go");
+                await apolloClient.mutate({
+                  mutation: createImageFromUrlMutation,
+                  variables: {
+                    url: testurl,
+                  },
+                });
+
+                setFileUploadStatuses((previousFileUploadStatuses) => {
+                  return {
+                    ...previousFileUploadStatuses,
+                    fake: true,
+                  };
+                });
+              } catch (err) {
+                setFileUploadStatuses((previousFileUploadStatuses) => {
+                  return {
+                    ...previousFileUploadStatuses,
+                    fake: err.message,
+                  };
+                });
+              }
+            }}
+          >
+            Import Fake image from URL
+          </Button>
         </ModalHeader>
         <ModalCloseButton disabled={!isCloseable} />
         <ModalBody

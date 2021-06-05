@@ -3657,6 +3657,7 @@ __metadata:
     "@testing-library/react": 11.2.6
     "@testing-library/user-event": ^13.1.9
     "@types/node": 12.12.21
+    "@types/probe-image-size": ^7.0.0
     "@types/react": 17.0.3
     "@types/react-dom": 17.0.1
     "@types/uuid": ^8.3.0
@@ -3676,6 +3677,7 @@ __metadata:
     react-hotkeys-hook: 3.3.1
     react-icons: ^4.2.0
     react-use-measure: ^2.0.4
+    stream-browserify: ^3.0.0
     typescript: 4.2.4
     uuid: ^8.3.2
     zustand: ^3.5.1
@@ -6584,6 +6586,15 @@ __metadata:
   version: 1.0.0
   resolution: "@types/pretty-hrtime@npm:1.0.0"
   checksum: 72900a48f78b726c0465433d2f8da204e4899454254566c9665b99e1acb2cea5292de56b83f819f61eab3a621e08fb46008f534ab585824d3928ef7d1bbf9bb9
+  languageName: node
+  linkType: hard
+
+"@types/probe-image-size@npm:^7.0.0":
+  version: 7.0.0
+  resolution: "@types/probe-image-size@npm:7.0.0"
+  dependencies:
+    "@types/node": "*"
+  checksum: dfcdaf36b5e4c47c9ed5a0e8bdf0eae2ba9a2a373e2afe273d413fd9150da8c149940031d5fe1ed5068be42a3abc68891254e953922a2207374e0b7b6b27588a
   languageName: node
   linkType: hard
 
@@ -20250,7 +20261,7 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
-"stream-browserify@npm:3.0.0":
+"stream-browserify@npm:3.0.0, stream-browserify@npm:^3.0.0":
   version: 3.0.0
   resolution: "stream-browserify@npm:3.0.0"
   dependencies:
