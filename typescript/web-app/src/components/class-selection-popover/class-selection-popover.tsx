@@ -19,6 +19,12 @@ import { ClassListItem } from "../class-list-item";
 import { LabelClass } from "../../graphql-types.generated";
 
 export type CreateClassInput = { name: string; type: string };
+export type NoneClass = { id: string; name: string; color: string };
+const noneClass = {
+  id: "",
+  name: "None",
+  color: "gray.200",
+};
 
 const MagnifierIcon = chakra(IoSearch);
 const CloseCircleIcon = chakra(RiCloseCircleFill);
@@ -38,8 +44,10 @@ export const ClassSelectionPopover = ({
   createNewClass: (name: string) => void;
   selectedLabelClass: LabelClass | null;
 }) => {
-  const [inputItems, setInputItems] =
-    useState<(LabelClass | CreateClassInput)[]>(labelClasses);
+  const labelClassesWithNoneClass = [...labelClasses, noneClass];
+  const [inputItems, setInputItems] = useState<
+    (LabelClass | CreateClassInput | NoneClass)[]
+  >(labelClassesWithNoneClass);
   const {
     reset,
     inputValue,
@@ -54,13 +62,13 @@ export const ClassSelectionPopover = ({
     onInputValueChange: ({ inputValue: inputValueCombobox }) => {
       const createClassItem =
         inputValueCombobox &&
-        labelClasses.filter(
+        labelClassesWithNoneClass.filter(
           (labelClass: LabelClass) => labelClass.name === inputValueCombobox
         ).length === 0
           ? [{ name: inputValueCombobox, type: "CreateClassItem" }]
           : [];
 
-      const filteredLabelClasses = labelClasses.filter(
+      const filteredLabelClasses = labelClassesWithNoneClass.filter(
         (labelClass: LabelClass) => {
           return labelClass.name
             .toLowerCase()
@@ -128,7 +136,7 @@ export const ClassSelectionPopover = ({
                     highlight={highlightedIndex === index}
                     selected={selectedLabelClass?.id === item?.id}
                     index={index}
-                    key={`${item.name}`}
+                    key={`${item.name}${index}`}
                   />
                 )
               )}
