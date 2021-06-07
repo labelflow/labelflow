@@ -8,17 +8,17 @@ from enum import Enum
 
 
 def get_auth(s):
-    """ Parse USER[:PASS] strings and prompt for password if none was
-    supplied. """
-    user, _, password = s.partition(':')
-    password = password or os.environ.get('PASS') or getpass.getpass()
+    """Parse USER[:PASS] strings and prompt for password if none was
+    supplied."""
+    user, _, password = s.partition(":")
+    password = password or os.environ.get("PASS") or getpass.getpass()
     return user, password
 
 
 def parse_label_arg(s):
-    """ If s is a file load it as JSON, otherwise parse s as JSON."""
+    """If s is a file load it as JSON, otherwise parse s as JSON."""
     if os.path.exists(s):
-        fp = open(s, 'r')
+        fp = open(s, "r")
         return json.load(fp)
     else:
         return json.loads(s)
@@ -49,48 +49,42 @@ class ResourceType(Enum):
 #######################################################################
 
 parser = argparse.ArgumentParser(
-    description='Perform common operations related to CVAT tasks.\n\n'
+    description="Perform common operations related to CVAT tasks.\n\n"
 )
-task_subparser = parser.add_subparsers(dest='action')
+task_subparser = parser.add_subparsers(dest="action")
 
 #######################################################################
 # Positional arguments
 #######################################################################
 
 parser.add_argument(
-    '--auth',
+    "--auth",
     type=get_auth,
-    metavar='USER:[PASS]',
+    metavar="USER:[PASS]",
     default=getpass.getuser(),
-    help='''defaults to the current user and supports the PASS
+    help="""defaults to the current user and supports the PASS
             environment variable or password prompt
-            (default user: %(default)s).'''
+            (default user: %(default)s).""",
 )
 parser.add_argument(
-    '--server-host',
-    type=str,
-    default='localhost',
-    help='host (default: %(default)s)'
+    "--server-host", type=str, default="localhost", help="host (default: %(default)s)"
 )
 parser.add_argument(
-    '--server-port',
-    type=int,
-    default='8080',
-    help='port (default: %(default)s)'
+    "--server-port", type=int, default="8080", help="port (default: %(default)s)"
 )
 parser.add_argument(
-    '--https',
+    "--https",
     default=False,
-    action='store_true',
-    help='using https connection (default: %(default)s)'
+    action="store_true",
+    help="using https connection (default: %(default)s)",
 )
 parser.add_argument(
-    '--debug',
-    action='store_const',
-    dest='loglevel',
+    "--debug",
+    action="store_const",
+    dest="loglevel",
     const=logging.DEBUG,
     default=logging.INFO,
-    help='show debug output'
+    help="show debug output",
 )
 
 #######################################################################
@@ -98,132 +92,103 @@ parser.add_argument(
 #######################################################################
 
 task_create_parser = task_subparser.add_parser(
-    'create',
-    description='Create a new CVAT task.'
+    "create", description="Create a new CVAT task."
 )
+task_create_parser.add_argument("name", type=str, help="name of the task")
 task_create_parser.add_argument(
-    'name',
-    type=str,
-    help='name of the task'
-)
-task_create_parser.add_argument(
-    '--labels',
-    default='[]',
+    "--labels",
+    default="[]",
     type=parse_label_arg,
-    help='string or file containing JSON labels specification'
+    help="string or file containing JSON labels specification",
 )
 task_create_parser.add_argument(
-    '--project',
-    default=None,
-    type=int,
-    help='project ID if project exists'
+    "--project", default=None, type=int, help="project ID if project exists"
 )
 task_create_parser.add_argument(
-    '--overlap',
+    "--overlap",
     default=0,
     type=int,
-    help='the number of intersected frames between different segments'
+    help="the number of intersected frames between different segments",
 )
 task_create_parser.add_argument(
-    '--segment_size',
-    default=0,
-    type=int,
-    help='the number of frames in a segment'
+    "--segment_size", default=0, type=int, help="the number of frames in a segment"
 )
+task_create_parser.add_argument("--bug", default="", type=str, help="bug tracker URL")
 task_create_parser.add_argument(
-    '--bug',
-    default='',
-    type=str,
-    help='bug tracker URL'
-)
-task_create_parser.add_argument(
-    'resource_type',
-    default='local',
+    "resource_type",
+    default="local",
     choices=list(ResourceType),
     type=ResourceType.argparse,
-    help='type of files specified'
+    help="type of files specified",
 )
 task_create_parser.add_argument(
-    'resources',
+    "resources", type=str, help="list of paths or URLs", nargs="+"
+)
+task_create_parser.add_argument(
+    "--annotation_path", default="", type=str, help="path to annotation file"
+)
+task_create_parser.add_argument(
+    "--annotation_format",
+    default="CVAT 1.1",
     type=str,
-    help='list of paths or URLs',
-    nargs='+'
+    help="format of the annotation file being uploaded, e.g. CVAT 1.1",
 )
 task_create_parser.add_argument(
-    '--annotation_path',
-    default='',
-    type=str,
-    help='path to annotation file'
-)
-task_create_parser.add_argument(
-    '--annotation_format',
-    default='CVAT 1.1',
-    type=str,
-    help='format of the annotation file being uploaded, e.g. CVAT 1.1'
-)
-task_create_parser.add_argument(
-    '--completion_verification_period',
+    "--completion_verification_period",
     default=20,
     type=int,
-    help='''number of seconds to wait until checking
-            if data compression finished (necessary before uploading annotations)'''
+    help="""number of seconds to wait until checking
+            if data compression finished (necessary before uploading annotations)""",
 )
 task_create_parser.add_argument(
-    '--dataset_repository_url',
-    default='',
+    "--dataset_repository_url",
+    default="",
     type=str,
-    help=('git repository to store annotations e.g.'
-          ' https://github.com/user/repos [annotation/<anno_file_name.zip>]')
+    help=(
+        "git repository to store annotations e.g."
+        " https://github.com/user/repos [annotation/<anno_file_name.zip>]"
+    ),
 )
 task_create_parser.add_argument(
-    '--lfs',
+    "--lfs",
     default=False,
-    action='store_true',
-    help='using lfs for dataset repository (default: %(default)s)'
+    action="store_true",
+    help="using lfs for dataset repository (default: %(default)s)",
 )
 task_create_parser.add_argument(
-    '--image_quality',
+    "--image_quality",
     default=70,
     type=int,
-    help='''set the image quality option in the advanced configuration
-            when creating tasks.(default: %(default)s)'''
+    help="""set the image quality option in the advanced configuration
+            when creating tasks.(default: %(default)s)""",
 )
 task_create_parser.add_argument(
-    '--frame_step',
+    "--frame_step",
     default=1,
     type=int,
-    help='''set the frame step option in the advanced configuration
-            when uploading image series or videos (default: %(default)s)'''
+    help="""set the frame step option in the advanced configuration
+            when uploading image series or videos (default: %(default)s)""",
 )
 #######################################################################
 # Delete
 #######################################################################
 
-delete_parser = task_subparser.add_parser(
-    'delete',
-    description='Delete a CVAT task.'
-)
-delete_parser.add_argument(
-    'task_ids',
-    type=int,
-    help='list of task IDs',
-    nargs='+'
-)
+delete_parser = task_subparser.add_parser("delete", description="Delete a CVAT task.")
+delete_parser.add_argument("task_ids", type=int, help="list of task IDs", nargs="+")
 
 #######################################################################
 # List
 #######################################################################
 
 ls_parser = task_subparser.add_parser(
-    'ls',
-    description='List all CVAT tasks in simple or JSON format.'
+    "ls", description="List all CVAT tasks in simple or JSON format."
 )
 ls_parser.add_argument(
-    '--json',
-    dest='use_json_output',
+    "--json",
+    dest="use_json_output",
     default=False,
-    action='store_true',
-    help='output JSON data'
+    action="store_true",
+    help="output JSON data",
 )
 
 #######################################################################
@@ -231,32 +196,21 @@ ls_parser.add_argument(
 #######################################################################
 
 frames_parser = task_subparser.add_parser(
-    'frames',
-    description='Download all frame images for a CVAT task.'
+    "frames", description="Download all frame images for a CVAT task."
+)
+frames_parser.add_argument("task_id", type=int, help="task ID")
+frames_parser.add_argument(
+    "frame_ids", type=int, help="list of frame IDs to download", nargs="+"
 )
 frames_parser.add_argument(
-    'task_id',
-    type=int,
-    help='task ID'
+    "--outdir", type=str, default="", help="directory to save images (default: CWD)"
 )
 frames_parser.add_argument(
-    'frame_ids',
-    type=int,
-    help='list of frame IDs to download',
-    nargs='+'
-)
-frames_parser.add_argument(
-    '--outdir',
+    "--quality",
     type=str,
-    default='',
-    help='directory to save images (default: CWD)'
-)
-frames_parser.add_argument(
-    '--quality',
-    type=str,
-    choices=('original', 'compressed'),
-    default='original',
-    help='choose quality of images (default: %(default)s)'
+    choices=("original", "compressed"),
+    default="original",
+    help="choose quality of images (default: %(default)s)",
 )
 
 #######################################################################
@@ -264,25 +218,16 @@ frames_parser.add_argument(
 #######################################################################
 
 dump_parser = task_subparser.add_parser(
-    'dump',
-    description='Download annotations for a CVAT task.'
+    "dump", description="Download annotations for a CVAT task."
 )
+dump_parser.add_argument("task_id", type=int, help="task ID")
+dump_parser.add_argument("filename", type=str, help="output file")
 dump_parser.add_argument(
-    'task_id',
-    type=int,
-    help='task ID'
-)
-dump_parser.add_argument(
-    'filename',
+    "--format",
+    dest="fileformat",
     type=str,
-    help='output file'
-)
-dump_parser.add_argument(
-    '--format',
-    dest='fileformat',
-    type=str,
-    default='CVAT for images 1.1',
-    help='annotation format (default: %(default)s)'
+    default="CVAT for images 1.1",
+    help="annotation format (default: %(default)s)",
 )
 
 #######################################################################
@@ -290,23 +235,14 @@ dump_parser.add_argument(
 #######################################################################
 
 upload_parser = task_subparser.add_parser(
-    'upload',
-    description='Upload annotations for a CVAT task.'
+    "upload", description="Upload annotations for a CVAT task."
 )
+upload_parser.add_argument("task_id", type=int, help="task ID")
+upload_parser.add_argument("filename", type=str, help="upload file")
 upload_parser.add_argument(
-    'task_id',
-    type=int,
-    help='task ID'
-)
-upload_parser.add_argument(
-    'filename',
+    "--format",
+    dest="fileformat",
     type=str,
-    help='upload file'
-)
-upload_parser.add_argument(
-    '--format',
-    dest='fileformat',
-    type=str,
-    default='CVAT 1.1',
-    help='annotation format (default: %(default)s)'
+    default="CVAT 1.1",
+    help="annotation format (default: %(default)s)",
 )
