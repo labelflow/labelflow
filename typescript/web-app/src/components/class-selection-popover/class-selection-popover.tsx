@@ -16,7 +16,7 @@ import { IoSearch } from "react-icons/io5";
 import { RiCloseCircleFill } from "react-icons/ri";
 import { useCombobox, UseComboboxStateChange } from "downshift";
 import { ClassListItem } from "../class-list-item";
-import { LabelClass } from "../../types.generated";
+import { LabelClass } from "../../graphql-types.generated";
 
 export type CreateClassInput = { name: string; type: string };
 
