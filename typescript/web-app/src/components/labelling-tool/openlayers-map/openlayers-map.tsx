@@ -3,10 +3,14 @@ import { Size } from "ol/size";
 import memoize from "mem";
 import Projection from "ol/proj/Projection";
 import useMeasure from "react-use-measure";
+import { ApolloProvider, useApolloClient } from "@apollo/client";
 
 import { Map } from "@labelflow/react-openlayers-fiber";
-import type { Image } from "../../../types.generated";
+import type { Image } from "../../../graphql-types.generated";
 import "ol/ol.css";
+
+import { DrawBoundingBoxInteraction } from "./draw-bounding-box-interaction";
+import { Labels } from "./labels";
 
 const empty: any[] = [];
 
@@ -56,6 +60,7 @@ type Props = {
 };
 
 export const OpenlayersMap = ({ image }: Props) => {
+  const client = useApolloClient();
   const [ref, bounds] = useMeasure();
 
   const isBoundsValid = bounds.width > 0 || bounds.height > 0;
@@ -78,40 +83,45 @@ export const OpenlayersMap = ({ image }: Props) => {
       style={{ height: "100%", width: "100%" }}
       containerRef={ref}
     >
-      {
-        // Before useMeasure has time to properly measure the div, we have a negative resolution,
-        // There is no point rendering the view in that case
-        isBoundsValid && (
-          <olView
-            args={{ extent }}
-            center={center}
-            initialProjection={projection}
-            resolution={resolution}
-            // Max zoom = 16 pixels of screen per pixel of image
-            minResolution={1.0 / 16.0}
-            maxResolution={resolution}
-            constrainOnlyCenter
-            showFullExtent
-            padding={viewPadding}
-          />
-        )
-      }
-      <olLayerImage extent={extent}>
-        {url != null && (
-          <olSourceImageStatic
-            // ol/source/image does not have `setXXX` methods, only options in the constructor, so
-            // to change anything, you need to recreate the object. So we pass all in args.
-            // See https://openlayers.org/en/latest/apidoc/module-ol_source_Image.ImageSourceEvent.html
-            args={{
-              url,
-              imageExtent: extent,
-              imageSize: size,
-              projection,
-              crossOrigin: "anonymous",
-            }}
-          />
-        )}
-      </olLayerImage>
+      <ApolloProvider client={client}>
+        {
+          // Before useMeasure has time to properly measure the div, we have a negative resolution,
+          // There is no point rendering the view in that case
+          isBoundsValid && (
+            <olView
+              args={{ extent }}
+              center={center}
+              initialProjection={projection}
+              resolution={resolution}
+              // Max zoom = 16 pixels of screen per pixel of image
+              minResolution={1.0 / 16.0}
+              maxResolution={resolution}
+              constrainOnlyCenter
+              showFullExtent
+              padding={viewPadding}
+            />
+          )
+        }
+        <olLayerImage extent={extent}>
+          {url != null && (
+            <olSourceImageStatic
+              // ol/source/image does not have `setXXX` methods, only options in the constructor, so
+              // to change anything, you need to recreate the object. So we pass all in args.
+              // See https://openlayers.org/en/latest/apidoc/module-ol_source_Image.ImageSourceEvent.html
+              args={{
+                url,
+                imageExtent: extent,
+                imageSize: size,
+                projection,
+                crossOrigin: "anonymous",
+              }}
+            />
+          )}
+        </olLayerImage>
+
+        <Labels imageId={image.id} />
+        <DrawBoundingBoxInteraction imageId={image.id} />
+      </ApolloProvider>
     </Map>
   );
 };

@@ -12,14 +12,17 @@ import { RiArrowRightSLine } from "react-icons/ri";
 import NextLink from "next/link";
 
 import { Layout } from "../../components/layout";
-import type { Image } from "../../types.generated";
+import type { Image } from "../../graphql-types.generated";
 
 // The dynamic import is needed because openlayers use web apis that are not available
 // in NodeJS, like `Blob`, so it crashes when rendering in NextJS server side.
 // And anyway, it would not make sense to render canvas server side, it would just be a loss.
 const LabellingTool = dynamic(() => import("../../components/labelling-tool"), {
   ssr: false,
-  loading: () => <div>loading</div>,
+  loading: ({ error }) => {
+    if (error) throw error;
+    return <div>loading</div>;
+  },
 });
 
 const imagesQuery = gql`

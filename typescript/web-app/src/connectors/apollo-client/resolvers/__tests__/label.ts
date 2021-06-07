@@ -1,26 +1,10 @@
-import "fake-indexeddb/auto";
-import {
-  initMockedDate,
-  incrementMockedDate,
-} from "@labelflow/dev-utils/mockdate";
+import { incrementMockedDate } from "@labelflow/dev-utils/mockdate";
 import gql from "graphql-tag";
-import { db } from "../../../database";
 import { client } from "../../index";
-import { LabelCreateInput } from "../../../../types.generated";
+import { setupTestsWithLocalDatabase } from "../../../../utils/setup-local-db-tests";
+import { LabelCreateInput } from "../../../../graphql-types.generated";
 
-/**
- * We bypass the structured clone algorithm as its current js implementation
- * as its current js implementation doesn't support blobs.
- * It might make our tests a bit different from what would actually happen
- * in a browser.
- */
-jest.mock("fake-indexeddb/build/lib/structuredClone", () => ({
-  default: (i: any) => i,
-}));
-
-beforeAll(() => {
-  global.URL.createObjectURL = jest.fn(() => "mockedUrl");
-});
+setupTestsWithLocalDatabase();
 
 const labelData = {
   x: 3.14,
@@ -45,30 +29,6 @@ const createLabel = (data: LabelCreateInput) => {
 };
 
 describe("Label resolver test suite", () => {
-  beforeEach(async () => {
-    Promise.all(db.tables.map((table) => table.clear()));
-    await client.clearStore();
-    initMockedDate();
-  });
-
-  // @ts-ignore
-  global.Image = class Image extends HTMLElement {
-    width: number;
-
-    height: number;
-
-    constructor() {
-      super();
-      this.width = 42;
-      this.height = 36;
-      setTimeout(() => {
-        this?.onload?.(new Event("onload")); // simulate success
-      }, 100);
-    }
-  };
-  // @ts-ignore
-  customElements.define("image-custom", global.Image);
-
   const createImage = async (name: String) => {
     const mutationResult = await client.mutate({
       mutation: gql`
@@ -292,5 +252,147 @@ describe("Label resolver test suite", () => {
     expect(queryResult.data.image.labels[0].labelClass.id).toEqual(
       labelClassId
     );
+  });
+
+  test("should delete a label", async () => {
+    const imageId = await createImage("an image");
+    const createResult = await createLabel({
+      ...labelData,
+      imageId,
+    });
+    const labelId = createResult.data.createLabel.id;
+
+    client.mutate({
+      mutation: gql`
+        mutation deleteLabel($id: ID!) {
+          deleteLabel(where: { id: $id }) {
+            id
+          }
+        }
+      `,
+      variables: {
+        id: labelId,
+      },
+    });
+
+    const queryResult = await client.query({
+      query: gql`
+        query getImage($id: ID!) {
+          image(where: { id: $id }) {
+            labels {
+              id
+            }
+          }
+        }
+      `,
+      variables: {
+        id: imageId,
+      },
+    });
+
+    expect(queryResult.data.image.labels).toHaveLength(0);
+  });
+
+  test("should throw when the label to delete doesn't exist", () => {
+    return expect(
+      client.mutate({
+        mutation: gql`
+          mutation deleteLabel($id: ID!) {
+            deleteLabel(where: { id: $id }) {
+              id
+            }
+          }
+        `,
+        variables: {
+          id: "id-of-a-label-that-doesnt-exist",
+        },
+      })
+    ).rejects.toThrow("No label with such id");
+  });
+
+  test("should update a label", async () => {
+    const imageId = await createImage("an image");
+    const createResult = await createLabel({
+      ...labelData,
+      imageId,
+    });
+    const labelId = createResult.data.createLabel.id;
+
+    client.mutate({
+      mutation: gql`
+        mutation updateLabel($id: ID!, $data: LabelUpdateInput!) {
+          updateLabel(where: { id: $id }, data: $data) {
+            id
+          }
+        }
+      `,
+      variables: {
+        id: labelId,
+        data: { x: 6.28 },
+      },
+    });
+
+    const queryResult = await client.query({
+      query: gql`
+        query getImage($id: ID!) {
+          image(where: { id: $id }) {
+            labels {
+              id
+              x
+              y
+            }
+          }
+        }
+      `,
+      variables: {
+        id: imageId,
+      },
+    });
+
+    expect(queryResult.data.image.labels[0].x).toEqual(6.28);
+    expect(queryResult.data.image.labels[0].y).toEqual(labelData.y);
+  });
+
+  test("should throw when the label to updated doesn't exist", () => {
+    return expect(
+      client.mutate({
+        mutation: gql`
+          mutation updateLabel($id: ID!, $data: LabelUpdateInput!) {
+            updateLabel(where: { id: $id }, data: $data) {
+              id
+            }
+          }
+        `,
+        variables: {
+          id: "id-of-a-label-that-doesnt-exist",
+          data: { x: 6.28 },
+        },
+      })
+    ).rejects.toThrow("No label with such id");
+  });
+
+  test("should throw when the label is updated with a non-existing labelClass id", async () => {
+    const imageId = await createImage("an image");
+    const createResult = await createLabel({
+      ...labelData,
+      imageId,
+    });
+    const labelId = createResult.data.createLabel.id;
+
+    return expect(
+      client.mutate({
+        mutation: gql`
+          mutation updateLabel($id: ID!, $data: LabelUpdateInput!) {
+            updateLabel(where: { id: $id }, data: $data) {
+              id
+            }
+          }
+        `,
+        variables: {
+          id: labelId,
+          data: { labelClassId: "id-of-a-label-class-that-doesnt-exist" },
+        },
+      })
+    ).rejects.toThrow("No label class with such id");
   });
 });

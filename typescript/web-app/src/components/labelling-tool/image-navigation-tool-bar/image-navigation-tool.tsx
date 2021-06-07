@@ -16,7 +16,7 @@ import { useHotkeys } from "react-hotkeys-hook";
 
 import { keymap } from "../../../keymap";
 
-import { Image } from "../../../types.generated";
+import { Image } from "../../../graphql-types.generated";
 
 export type Props = {
   imageId: string | undefined;

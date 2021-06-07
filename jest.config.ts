@@ -4,6 +4,7 @@ export default {
   collectCoverage: true,
   testMatch: ["<rootDir>/typescript/**/__tests__/**/*.{ts,tsx}"],
   testPathIgnorePatterns: ["node_modules"],
+  setupFilesAfterEnv: ["<rootDir>/setupTests.ts"],
   globals: {
     "ts-jest": {
       tsconfig: "tsconfig.jest.json",
@@ -13,4 +14,6 @@ export default {
     "\\.(gql|graphql)$": "jest-transform-graphql",
     "\\.[jt]sx?$": "ts-jest",
   },
+  transformIgnorePatterns: ["<rootDir>/node_modules/(?!(ol)/)"],
+  setupFiles: ["jest-canvas-mock"],
 };

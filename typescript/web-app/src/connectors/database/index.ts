@@ -1,35 +1,39 @@
 import Dexie from "dexie";
 import versions from "./versions";
 import type {
-  Example,
-  Image as GeneratedImageType,
-  Label as GeneratedLabel,
   Scalars,
+  Example as GeneratedExample,
+  Image as GeneratedImage,
+  Label as GeneratedLabel,
   LabelClass as GeneratedLabelClass,
-} from "../../types.generated";
+} from "../../graphql-types.generated";
 
-export interface File {
+export type DbFile = {
   id?: string;
   imageId: string;
-  blob: File;
-}
+  blob: Blob;
+};
 
-interface Image extends Omit<GeneratedImageType, "url" | "labels"> {
-  fileId: Scalars["ID"];
-}
+export type DbImage =
+  | (Omit<GeneratedImage, "url" | "labels"> & {
+      fileId: Scalars["ID"];
+    })
+  | Omit<GeneratedImage, "labels">;
 
-export interface Label extends Omit<GeneratedLabel, "labelClass"> {
+export type DbLabel = Omit<GeneratedLabel, "labelClass"> & {
   labelClassId: Scalars["ID"] | undefined | null;
-}
+};
 
-type LabelClass = Omit<GeneratedLabelClass, "labels">;
+export type DbLabelClass = Omit<GeneratedLabelClass, "labels">;
+
+export type DbExample = GeneratedExample;
 
 interface Database extends Dexie {
-  example: Dexie.Table<Example, string>;
-  image: Dexie.Table<Image, string>;
-  file: Dexie.Table<File, string>;
-  label: Dexie.Table<Label, string>;
-  labelClass: Dexie.Table<LabelClass, string>;
+  example: Dexie.Table<DbExample, string>;
+  image: Dexie.Table<DbImage, string>;
+  file: Dexie.Table<DbFile, string>;
+  label: Dexie.Table<DbLabel, string>;
+  labelClass: Dexie.Table<DbLabelClass, string>;
 }
 
 export const databaseWithoutTables = new Dexie("labelflow_local");
