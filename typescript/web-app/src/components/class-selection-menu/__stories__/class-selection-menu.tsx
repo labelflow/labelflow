@@ -1,6 +1,8 @@
+import { useState } from "react";
 import { addDecorator } from "@storybook/react";
 import { ClassSelectionMenu } from "../class-selection-menu";
 import { chakraDecorator } from "../../../utils/chakra-decorator";
+import { LabelClass } from "../../../graphql-types.generated";
 
 addDecorator(chakraDecorator);
 
@@ -61,11 +63,37 @@ const createNewClass = (name: string): void => {
 };
 
 export const Default = () => {
+  const [selectedLabel, setSelectedLabel] = useState<LabelClass | null>(null);
   return (
     <ClassSelectionMenu
       labelClasses={labelClasses}
-      onSelectedClassChange={console.log}
+      onSelectedClassChange={(labelClass: LabelClass) =>
+        setSelectedLabel(labelClass)
+      }
       createNewClass={createNewClass}
+      selectedLabelClass={selectedLabel}
+    />
+  );
+};
+
+export const WithSelectedLabelClass = () => {
+  const [selectedLabel, setSelectedLabel] = useState<LabelClass | null>({
+    id: "coaisndoiasndi",
+    createdAt: "today",
+    updatedAt: "today",
+    name: "Plane",
+    color: "#3B82F6",
+    shortcut: "5",
+    labels: [],
+  });
+  return (
+    <ClassSelectionMenu
+      labelClasses={labelClasses}
+      onSelectedClassChange={(labelClass: LabelClass) =>
+        setSelectedLabel(labelClass)
+      }
+      createNewClass={createNewClass}
+      selectedLabelClass={selectedLabel}
     />
   );
 };
