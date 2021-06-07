@@ -1,13 +1,10 @@
-import "fake-indexeddb/auto";
-
 import { createExample, example, examples } from "../example";
 import { db } from "../../../database";
+import { setupTestsWithLocalDatabase } from "../../../../utils/setup-local-db-tests";
+
+setupTestsWithLocalDatabase();
 
 describe("Example resolver test suite", () => {
-  beforeEach(async () => {
-    db.tables.map((table) => table.clear());
-  });
-
   test("Query example when db is empty", async () => {
     const queryResult = await examples(undefined, {});
     expect(queryResult.length).toBe(0);

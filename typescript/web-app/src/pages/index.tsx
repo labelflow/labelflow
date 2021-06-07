@@ -2,7 +2,7 @@ import { useQuery, useMutation } from "@apollo/client";
 import gql from "graphql-tag";
 
 import { Layout } from "../components/layout";
-import { Example } from "../types.generated";
+import { Example } from "../graphql-types.generated";
 
 const examplesQuery = gql`
   query {

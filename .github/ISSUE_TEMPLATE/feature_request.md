@@ -2,7 +2,7 @@
 name: Feature request
 about: Suggest an idea for this project
 title: ''
-labels: 0:grooming needed
+labels: A-grooming needed
 assignees: ''
 
 ---

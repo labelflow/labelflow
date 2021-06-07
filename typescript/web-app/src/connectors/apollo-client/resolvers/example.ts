@@ -3,7 +3,7 @@ import {
   MutationCreateExampleArgs,
   QueryExampleArgs,
   QueryExamplesArgs,
-} from "../../../types.generated";
+} from "../../../graphql-types.generated";
 
 import { db } from "../../database";
 

@@ -1,7 +1,7 @@
 import { Box, HStack, VStack } from "@chakra-ui/react";
 import { NextRouter } from "next/router";
 
-import type { Image } from "../../types.generated";
+import type { Image } from "../../graphql-types.generated";
 
 import { OpenlayersMap } from "./openlayers-map";
 import { DrawingToolbar } from "./drawing-tool-bar";
