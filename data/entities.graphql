@@ -27,8 +27,8 @@ type Label {
   labelClass: LabelClass
   x: Float!
   y: Float!
-  height: Int!
-  width: Int!
+  height: Float!
+  width: Float!
 }
 
 type LabelClass {
