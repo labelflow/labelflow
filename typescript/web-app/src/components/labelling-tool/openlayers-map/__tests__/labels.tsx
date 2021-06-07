@@ -54,7 +54,7 @@ const createLabel = (data: LabelCreateInput) => {
   });
 };
 
-it("Displays created labels", async () => {
+it("displays a single label", async () => {
   const mapRef: { current: OlMap | null } = { current: null };
   const imageId = await createImage("myImage");
   await createLabel({
@@ -83,5 +83,45 @@ it("Displays created labels", async () => {
         .getSource()
         .getFeatures()
     ).toHaveLength(1);
+  });
+});
+
+it("displays created labels", async () => {
+  const mapRef: { current: OlMap | null } = { current: null };
+  const imageId = await createImage("myImage");
+  await createLabel({
+    x: 3.14,
+    y: 42.0,
+    height: 768,
+    width: 362,
+    imageId,
+  });
+
+  await createLabel({
+    x: 6.28,
+    y: 84.0,
+    height: 768,
+    width: 362,
+    imageId,
+  });
+
+  render(<Labels imageId={imageId} />, {
+    wrapper: ({ children }) => (
+      <Map
+        ref={(map) => {
+          mapRef.current = map;
+        }}
+      >
+        <ApolloProvider client={client}>{children}</ApolloProvider>
+      </Map>
+    ),
+  });
+
+  await waitFor(() => {
+    expect(
+      (mapRef.current?.getLayers().getArray()[0] as VectorLayer)
+        .getSource()
+        .getFeatures()
+    ).toHaveLength(2);
   });
 });
