@@ -68,7 +68,6 @@ it("Displays created labels", async () => {
   render(<Labels imageId={imageId} />, {
     wrapper: ({ children }) => (
       <Map
-        args={{ interactions: [] }}
         ref={(map) => {
           mapRef.current = map;
         }}
