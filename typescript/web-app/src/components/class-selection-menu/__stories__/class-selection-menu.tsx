@@ -1,12 +1,11 @@
 import { addDecorator } from "@storybook/react";
-import { Button, useDisclosure } from "@chakra-ui/react";
-import { ClassSelectionButton } from "../class-selection-button";
+import { ClassSelectionMenu } from "../class-selection-menu";
 import { chakraDecorator } from "../../../utils/chakra-decorator";
 
 addDecorator(chakraDecorator);
 
 export default {
-  title: "web-app/Class selection popover",
+  title: "web-app/Class selection menu",
 };
 
 const labelClasses = [
@@ -62,35 +61,11 @@ const createNewClass = (name: string): void => {
 };
 
 export const Default = () => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
-
   return (
-    <div>
-      <Button onClick={onOpen}>Display</Button>
-      <ClassSelectionButton
-        isOpen={isOpen}
-        onClose={onClose}
-        labelClasses={labelClasses}
-        onSelectedClassChange={console.log}
-        createNewClass={createNewClass}
-      />
-    </div>
-  );
-};
-
-export const OpenedByDefault = () => {
-  const { isOpen, onOpen, onClose } = useDisclosure({ defaultIsOpen: true });
-
-  return (
-    <div>
-      <Button onClick={onOpen}>Display</Button>
-      <ClassSelectionButton
-        isOpen={isOpen}
-        onClose={onClose}
-        labelClasses={labelClasses}
-        onSelectedClassChange={console.log}
-        createNewClass={createNewClass}
-      />
-    </div>
+    <ClassSelectionMenu
+      labelClasses={labelClasses}
+      onSelectedClassChange={console.log}
+      createNewClass={createNewClass}
+    />
   );
 };
