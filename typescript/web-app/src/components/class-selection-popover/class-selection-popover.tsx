@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import {
   Box,
   Popover,
@@ -100,8 +100,13 @@ export const ClassSelectionPopover = ({
       reset();
     }
   }, [isOpen]);
+  const initialFocusRef = useRef();
   return (
-    <Popover isOpen={isOpen} onClose={onClose}>
+    <Popover
+      isOpen={isOpen}
+      onClose={onClose}
+      initialFocusRef={initialFocusRef}
+    >
       <PopoverContent borderColor="gray.200">
         <PopoverBody pl="0" pr="0">
           <Box>
@@ -110,7 +115,11 @@ export const ClassSelectionPopover = ({
                 <InputLeftElement pointerEvents="none">
                   <MagnifierIcon fontSize="2xl" />
                 </InputLeftElement>
-                <Input {...getInputProps()} placeholder="Search..." />
+                <Input
+                  {...getInputProps()}
+                  placeholder="Search..."
+                  ref={initialFocusRef}
+                />
                 <InputRightElement>
                   {inputValue ? (
                     <Flex mr="5">
