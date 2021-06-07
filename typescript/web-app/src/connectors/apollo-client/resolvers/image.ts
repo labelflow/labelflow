@@ -8,7 +8,7 @@ import type {
   Maybe,
 } from "../../../graphql-types.generated";
 
-import { db, DbImage, DbLabel } from "../../database";
+import { db, DbImage } from "../../database";
 
 export const getUrlFromFileId = memoize(async (id: string): Promise<string> => {
   const file = await db.file.get(id);
@@ -52,9 +52,7 @@ export const getPaginatedImages = async (
   return query.toArray();
 };
 
-export const getLabelsByImageId = async (
-  imageId: string
-): Promise<DbLabel[]> => {
+export const getLabelsByImageId = async (imageId: string) => {
   const getResults = await db.label.where({ imageId }).sortBy("createdAt");
 
   return getResults ?? [];

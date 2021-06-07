@@ -157,7 +157,7 @@ export type Query = {
   images: Array<Image>;
   labelClass: LabelClass;
   labelClasses: Array<LabelClass>;
-  exportToCoco?: Maybe<Scalars['String']>;
+  exportToCoco: Scalars['String'];
 };
 
 
@@ -396,7 +396,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   images?: Resolver<Array<ResolversTypes['Image']>, ParentType, ContextType, RequireFields<QueryImagesArgs, never>>;
   labelClass?: Resolver<ResolversTypes['LabelClass'], ParentType, ContextType, RequireFields<QueryLabelClassArgs, 'where'>>;
   labelClasses?: Resolver<Array<ResolversTypes['LabelClass']>, ParentType, ContextType, RequireFields<QueryLabelClassesArgs, never>>;
-  exportToCoco?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  exportToCoco?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
 };
 
 export interface UploadScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Upload'], any> {

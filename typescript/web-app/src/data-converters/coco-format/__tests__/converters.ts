@@ -101,7 +101,7 @@ describe("Coco converters", () => {
     expect(cocoCategories).toEqual(expectedCocoCategories);
   });
 
-  test("Should convert a label class to a coco annotation without category", () => {
+  test("Should convert a label to a coco annotation without category", () => {
     const label = createLabel("a-label-id", "an-image-id");
 
     const cocoAnnotation = convertLabelToCocoAnnotation(label, 1, 42, null);
@@ -122,12 +122,10 @@ describe("Coco converters", () => {
   test("Should convert a label class to coco annotation and assign it to a category", () => {
     const label = createLabel("a-label-id", "an-image-id");
 
-    const cocoAnnotation = convertLabelToCocoAnnotation(label, 1, 42, 0);
+    const cocoAnnotation = convertLabelToCocoAnnotation(label, 1, 42, 1);
 
     const expectedAnnotation: Partial<CocoAnnotation> = {
-      id: 1,
-      image_id: 42,
-      category_id: 0,
+      category_id: 1,
       // ...
     };
 
@@ -149,8 +147,8 @@ describe("Coco converters", () => {
     ];
 
     const mapping: CacheLabelClassIdToCocoCategoryId = new Map();
-    mapping.set("id-a-label-class", 0);
-    mapping.set("id-another-label-class", 1);
+    mapping.set("id-a-label-class", 1);
+    mapping.set("id-another-label-class", 2);
 
     const cocoAnnotations = convertLabelsOfImageToCocoAnnotations(
       labels,
@@ -162,13 +160,13 @@ describe("Coco converters", () => {
       {
         id: 1,
         image_id: 1,
-        category_id: 0,
+        category_id: 1,
         // ...
       },
       {
         id: 2,
         image_id: 1,
-        category_id: 1,
+        category_id: 2,
         // ...
       },
     ];

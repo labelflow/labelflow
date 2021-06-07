@@ -34,7 +34,7 @@ const createLabelClass = async (data: {
   return id;
 };
 
-const createLabelWithClass = (imageId: string, labelClassId: string) => {
+const createLabelWithLabelClass = (imageId: string, labelClassId: string) => {
   return client.mutate({
     mutation: gql`
       mutation createLabel($data: LabelCreateInput!) {
@@ -97,7 +97,7 @@ describe("Exporting a dataset to coco format", () => {
     );
   });
 
-  test("The exportToCoco graphql endpoint returns an empty dataset when a label class exist", async () => {
+  test("The exportToCoco graphql endpoint returns a dataset with a category when a label class exist", async () => {
     await createLabelClass({
       name: "label-class-1",
       color: "#000000",
@@ -130,13 +130,13 @@ describe("Exporting a dataset to coco format", () => {
     );
   });
 
-  test("The exportToCoco graphql endpoint returns an empty dataset when a label class, and an image exist", async () => {
+  test("The exportToCoco graphql endpoint returns a dataset with a category and an image when a label class, and an image exist", async () => {
     await createLabelClass({
       name: "label-class-1",
       color: "#000000",
       id: "id-label-class-1",
     });
-    await createLabelWithClass(
+    await createLabelWithLabelClass(
       await createImage("image-1"),
       "id-label-class-1"
     );
