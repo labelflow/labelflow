@@ -1,4 +1,5 @@
 const path = require("path");
+
 module.exports = {
   images: {
     deviceSizes: [
@@ -92,6 +93,9 @@ module.exports = {
     // See https://github.com/vercel/next.js/issues/7755
     if (!isServer) {
       if (isWebpack5) {
+        // See https://www.npmjs.com/package/node-polyfill-webpack-plugin
+        const NodePolyfillPlugin = require("node-polyfill-webpack-plugin")
+
         // See https://github.com/webpack-contrib/css-loader/issues/447#issuecomment-761853289
         // See https://github.com/vercel/next.js/issues/7755#issuecomment-812805708
         config.resolve = {
@@ -101,20 +105,19 @@ module.exports = {
             module: false,
             dgram: false,
             dns: false,
-            path: false,
             fs: false,
-            os: false,
-            crypto: false,
-            stream: "stream-browserify", // Needed for `probe-image-size`
             http2: false,
-            http: false,
-            https: false,
             net: false,
             tls: false,
-            zlib: false,
             child_process: false
           },
         }
+        config.plugins = [
+          ...config?.plugins ?? [],
+          new NodePolyfillPlugin({
+            excludeAliases: ["console"]
+          })
+        ]
       } else {
         // Webpack 4 uses the `node` option
         config.node = {
@@ -126,6 +129,7 @@ module.exports = {
           fs: "empty",
           os: "empty",
           crypto: "empty",
+          process: "empty",
           // stream: "empty",
           http2: "empty",
           http: "empty",

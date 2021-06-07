@@ -1,3 +1,5 @@
+const NodePolyfillPlugin = require("node-polyfill-webpack-plugin")
+
 module.exports = {
   stories: ["../typescript/**/__stories__/*.tsx"],
   core: {
@@ -6,6 +8,7 @@ module.exports = {
   webpackFinal: async (config) => {
     return {
       ...config ?? {},
+
       module: {
         ...config?.module ?? {},
         rules: [
@@ -29,20 +32,19 @@ module.exports = {
           module: false,
           dgram: false,
           dns: false,
-          path: false,
           fs: false,
-          os: false,
-          crypto: false,
-          stream: "stream-browserify", // Needed for `probe-image-size`
           http2: false,
-          http: false,
-          https: false,
           net: false,
           tls: false,
-          zlib: false,
           child_process: false
         },
       },
+      plugins: [
+        ...config?.plugins ?? [],
+        new NodePolyfillPlugin({
+          excludeAliases: ["console"]
+        })
+      ]
     };
   },
 };
