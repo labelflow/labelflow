@@ -12,8 +12,6 @@ export const server = {
       const { request } = event;
       const url = new URL(request.url);
 
-      console.log("Imaggege");
-      console.log(url.pathname);
       const found = url.pathname.match(regex);
 
       if (!isString(found?.groups?.id)) {

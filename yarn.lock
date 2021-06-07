@@ -19432,7 +19432,7 @@ next-pwa@5.2.21:
 
 "next-pwa@patch:next-pwa@5.2.21#./next-pwa.patch::locator=%40labelflow%2Fweb-app%40workspace%3Atypescript%2Fweb-app":
   version: 5.2.21
-  resolution: "next-pwa@patch:next-pwa@npm%3A5.2.21#./next-pwa.patch::version=5.2.21&hash=6fd41b&locator=%40labelflow%2Fweb-app%40workspace%3Atypescript%2Fweb-app"
+  resolution: "next-pwa@patch:next-pwa@npm%3A5.2.21#./next-pwa.patch::version=5.2.21&hash=2a109d&locator=%40labelflow%2Fweb-app%40workspace%3Atypescript%2Fweb-app"
   dependencies:
     babel-loader: ^8.2.2
     clean-webpack-plugin: ^3.0.0
@@ -19442,7 +19442,7 @@ next-pwa@5.2.21:
     workbox-window: ^6.1.5
   peerDependencies:
     next: ">=7.0.0"
-  checksum: 51a0b0608515dc7242710c5870e20dd7bd9de4e6e8b31e53d675c722abc9208766a551a5b83ca7bf858c569ca108786d237dcafb6353e7fd97d5b5c6e7b2dac3
+  checksum: c9c6e9133f9e098b9ca3925d66f63a511dccf97278204a1016e0973bd2f8cd3be4d14ee5543865ad58c59f21dd4ca826f004e693bf6df8583c944c2c66e8292e
   languageName: node
   linkType: hard
 

@@ -12,15 +12,35 @@ import type {
 
 import { db, DbImage } from "../../database";
 
-const getUrlFromFileId = memoize(async (id: string): Promise<string> => {
-  const file = await db.file.get(id);
-
-  if (file === undefined) {
-    throw new Error("Cannot get url or undefined file");
+let windowExists: boolean | null = null;
+// Robust way to detect if window exists, only once
+const detectWindow = () => {
+  if (windowExists === null) {
+    try {
+      if (window) {
+        windowExists = true;
+      } else {
+        windowExists = false;
+      }
+    } catch (e) {
+      windowExists = false;
+    }
   }
+};
+detectWindow();
 
-  const url = window.URL.createObjectURL(file.blob);
-  return url;
+const getUrlFromFileId = memoize(async (id: string): Promise<string> => {
+  if (windowExists) {
+    const file = await db.file.get(id);
+    if (file === undefined) {
+      throw new Error("Cannot get url or undefined file");
+    }
+    const url = window.URL.createObjectURL(file.blob);
+    return url;
+  }
+  throw new Error(
+    "On server, the `getUrlFromFileId` function should not be called"
+  );
 });
 
 export const clearGetUrlFromFileIdMem = () => {
@@ -90,6 +110,7 @@ const createImage = async (
   const { file, id, name, height, width, mimetype, path, url } = args.data;
   if (file && !url) {
     // File Content based upload
+    console.log("File Content based upload");
     try {
       const imageId = id ?? uuidv4();
       const fileId = uuidv4();
@@ -137,6 +158,7 @@ const createImage = async (
   }
   if (!file && url) {
     // File URL based upload
+    console.log("File URL based upload");
 
     const fetchHeaders = new Headers();
     fetchHeaders.append(
@@ -173,9 +195,16 @@ const createImage = async (
       if (!finalWidth || !finalHeight || !finalMimetype) {
         const probeInput = new Uint8Array(await blob.arrayBuffer());
 
+        console.log("ok");
+
+        console.log("probeInput");
+        console.log(probeInput);
+
         const probeResult = probe.sync(probeInput as Buffer);
 
         if (probeResult == null) {
+          console.log("probeResult");
+          console.log(probeResult);
           throw new Error(
             "Could not load the image, it may be damaged or corrupted."
           );
@@ -190,7 +219,7 @@ const createImage = async (
         createdAt: now.toISOString(),
         updatedAt: now.toISOString(),
         id: imageId,
-        // url: localUrl,
+        url,
         path: path ?? url,
         mimetype: finalMimetype,
         name: name ?? url.substring(url.lastIndexOf("/") + 1),
@@ -201,10 +230,12 @@ const createImage = async (
 
       await db.image.add(newImageEntity);
 
+      console.log("Yooooo");
       const result = await getImageById(imageId);
-
+      console.log("xxx");
       return result;
     } catch (e) {
+      console.error(e);
       await db.file.delete(fileId);
       throw new Error(
         "Could not load the image, it may be damaged or corrupted."
