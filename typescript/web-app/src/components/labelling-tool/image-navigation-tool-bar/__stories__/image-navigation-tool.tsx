@@ -1,16 +1,15 @@
 import React from "react";
-import { addDecorator, Story } from "@storybook/react";
+import { Story } from "@storybook/react";
 import { NextRouter } from "next/router";
 import { HStack, Button, Flex } from "@chakra-ui/react";
 
 import { ImageNavigationTool, Props } from "../image-navigation-tool";
 import { chakraDecorator } from "../../../../utils/chakra-decorator";
 
-addDecorator(chakraDecorator);
-
 export default {
   title: "web-app/Image Navigation Toolbar",
   component: ImageNavigationTool,
+  decorators: [chakraDecorator],
 };
 
 const Template: Story<Props> = (args: Props) => (

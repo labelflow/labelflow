@@ -44,6 +44,7 @@ const imagesQuery = gql`
 export const ImageNavigationTool = () => {
   const router = useRouter();
   const imageId = router.query.id;
+  console.log(imageId);
 
   const images =
     useQuery<{ images: Pick<Image, "id">[] }>(imagesQuery)?.data?.images;
