@@ -33,25 +33,26 @@ export const ClassListItem = (props: {
   })();
 
   return (
-    <Box bgColor={bgColor} key={`${name}${index}`} {...itemProps}>
+    <Box
+      bgColor={bgColor}
+      key={`${name}${index}`}
+      {...itemProps}
+      pl="3"
+      pr="3"
+      pt="1"
+      pb="1"
+    >
       {type === "CreateClassItem" ? (
         <Flex justifyContent="space-between" alignItems="center">
           <Flex justifyContent="flex-start">
-            <Text fontWeight="light" fontStyle="italic">
+            <Text fontWeight="light" fontStyle="italic" ml="3">
               Create class&nbsp;
             </Text>
             <Text fontWeight="bold" fontStyle="italic">{`"${name}"`}</Text>
           </Flex>
         </Flex>
       ) : (
-        <Flex
-          justifyContent="space-between"
-          alignItems="center"
-          pl="3"
-          pr="3"
-          pt="1"
-          pb="1"
-        >
+        <Flex justifyContent="space-between" alignItems="center">
           <Flex alignItems="center">
             <CircleIcon color={color} fontSize="2xl" ml="2" mr="2" />
             <Text>{name}</Text>
