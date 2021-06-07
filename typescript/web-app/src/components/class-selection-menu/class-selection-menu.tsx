@@ -67,6 +67,7 @@ export const ClassSelectionMenu = ({
           onClose();
         }}
         createNewClass={createNewClass}
+        selectedLabelClass={selectedLabelClass}
       />
     </Box>
   );

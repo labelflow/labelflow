@@ -29,12 +29,14 @@ export const ClassSelectionPopover = ({
   onSelectedClassChange,
   createNewClass,
   labelClasses,
+  selectedLabelClass,
 }: {
   isOpen?: boolean;
   onClose?: () => void;
   onSelectedClassChange: (item: LabelClass) => void;
   labelClasses: LabelClass[];
   createNewClass: (name: string) => void;
+  selectedLabelClass: LabelClass | null;
 }) => {
   const [inputItems, setInputItems] =
     useState<(LabelClass | CreateClassInput)[]>(labelClasses);
@@ -124,6 +126,7 @@ export const ClassSelectionPopover = ({
                     itemProps={getItemProps({ item, index })}
                     item={item}
                     highlight={highlightedIndex === index}
+                    selected={selectedLabelClass?.id === item?.id}
                     index={index}
                     key={`${item.name}`}
                   />
