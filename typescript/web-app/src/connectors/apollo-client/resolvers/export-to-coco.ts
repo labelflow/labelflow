@@ -7,6 +7,9 @@ import {
 } from "./image";
 import { getPaginatedLabelClasses } from "./label-class";
 
+const jsonToDataUri = (json: string): string =>
+  `data:application/json;base64,${btoa(json)}`;
+
 const exportToCoco = async (): Promise<string | undefined> => {
   const dbImages = await getPaginatedImages();
 
@@ -42,9 +45,7 @@ const exportToCoco = async (): Promise<string | undefined> => {
     convertImagesAndLabelClassesToCocoDataset(images, labelClasses)
   );
 
-  return json;
-
-  // const file = new File(json, "export.json");
+  return jsonToDataUri(json);
 };
 
 export default {

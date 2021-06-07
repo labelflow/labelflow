@@ -92,7 +92,9 @@ describe("Exporting a dataset to coco format", () => {
           `,
         })
       ).data.exportToCoco
-    ).toEqual(JSON.stringify(initialCocoDataset));
+    ).toEqual(
+      `data:application/json;base64,${btoa(JSON.stringify(initialCocoDataset))}`
+    );
   });
 
   test("The exportToCoco graphql endpoint returns an empty dataset when a label class exist", async () => {
@@ -123,7 +125,9 @@ describe("Exporting a dataset to coco format", () => {
           `,
         })
       ).data.exportToCoco
-    ).toEqual(JSON.stringify(expectedDataset));
+    ).toEqual(
+      `data:application/json;base64,${btoa(JSON.stringify(expectedDataset))}`
+    );
   });
 
   test("The exportToCoco graphql endpoint returns an empty dataset when a label class, and an image exist", async () => {
@@ -181,6 +185,8 @@ describe("Exporting a dataset to coco format", () => {
           `,
         })
       ).data.exportToCoco
-    ).toEqual(JSON.stringify(expectedDataset));
+    ).toEqual(
+      `data:application/json;base64,${btoa(JSON.stringify(expectedDataset))}`
+    );
   });
 });
