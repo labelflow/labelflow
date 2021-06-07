@@ -3,16 +3,10 @@ import { Fill, RegularShape, Stroke, Style } from "ol/style";
 import { Draw } from "ol/interaction";
 import { debounce } from "lodash/fp";
 
-import "ol/ol.css";
 import GeometryType from "ol/geom/GeometryType";
 import VectorSource from "ol/source/Vector";
 
 import { Map } from "../map";
-
-export default {
-  title: "react-openlayers-fiber/Other Examples",
-  component: Map,
-};
 
 const bingstyles = [
   "Road",
