@@ -6,16 +6,9 @@ import { StyleLike } from "ol/style/Style";
 import { Map } from "../map";
 import { useLoadExternalLib } from "./hooks";
 
-import "ol/ol.css";
-
 declare global {
   function createMapboxStreetsV6Style(...args: unknown[]): StyleLike;
 }
-
-export default {
-  title: "react-openlayers-fiber/OL Examples",
-  component: Map,
-};
 
 const key =
   "pk.eyJ1IjoieXZvbm5pY2tzdGVyYmx1ZSIsImEiOiJja2huN2hmMG0yOGI5MnhvOTZ0cnB6ZjdsIn0.34GurIy5Nwnd-ErxGyO0LA";

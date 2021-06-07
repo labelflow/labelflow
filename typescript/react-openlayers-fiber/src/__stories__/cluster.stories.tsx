@@ -4,13 +4,6 @@ import { Style, Circle as CircleStyle, Fill, Stroke, Text } from "ol/style";
 
 import { Map } from "../map";
 
-import "ol/ol.css";
-
-export default {
-  title: "react-openlayers-fiber/OL Examples",
-  component: Map,
-};
-
 const x = 4500000;
 const coordinates = range(0, 2000).map(() => {
   return [2 * x * Math.random() - x, 2 * x * Math.random() - x];

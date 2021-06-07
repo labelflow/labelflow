@@ -5,13 +5,6 @@ import { MapBrowserEvent, Overlay } from "ol";
 
 import { Map } from "../map";
 
-import "ol/ol.css";
-
-export default {
-  title: "react-openlayers-fiber/OL Examples",
-  component: Map,
-};
-
 export const Popup = () => {
   const [coordinates, setCoordinates] =
     useState<Coordinate | undefined>(undefined);

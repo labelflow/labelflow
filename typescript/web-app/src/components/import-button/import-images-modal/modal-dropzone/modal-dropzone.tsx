@@ -15,10 +15,34 @@ import { Dropzone } from "./dropzone";
 import { FilesStatuses } from "./file-statuses";
 import { DroppedFile, UploadStatuses } from "../types";
 
+import { UploadTarget } from "../../../../graphql-types.generated";
+
 const createImageFromFileMutation = gql`
   mutation createImageMutation($file: Upload!) {
     createImage(data: { file: $file }) {
       id
+    }
+  }
+`;
+
+const createImageFromUrlMutation = gql`
+  mutation createImageMutation($url: String!) {
+    createImage(data: { url: $url }) {
+      id
+    }
+  }
+`;
+
+const getImageUploadTargetMutation = gql`
+  mutation getUploadTarget {
+    getUploadTarget {
+      ... on UploadTargetDirect {
+        direct
+      }
+      ... on UploadTargetHttp {
+        uploadUrl
+        downloadUrl
+      }
     }
   }
 `;
@@ -51,19 +75,56 @@ export const ImportImagesModalDropzone = ({
           .filter((file) => isEmpty(file.errors))
           .map(async (acceptedFile) => {
             try {
-              await apolloClient.mutate({
-                mutation: createImageFromFileMutation,
-                variables: { file: acceptedFile.file },
+              // Ask server how to upload image
+              const { data } = await apolloClient.mutate({
+                mutation: getImageUploadTargetMutation,
               });
 
-              setFileUploadStatuses((previousFileUploadStatuses) => {
-                return {
-                  ...previousFileUploadStatuses,
-                  [acceptedFile.file.path ?? acceptedFile.file.name]: true,
-                };
-              });
+              const target: UploadTarget = data.getUploadTarget;
+
+              // eslint-disable-next-line no-underscore-dangle
+              if (target.__typename === "UploadTargetDirect") {
+                // Direct file upload through graphql upload mutation
+                await apolloClient.mutate({
+                  mutation: createImageFromFileMutation,
+                  variables: { file: acceptedFile.file },
+                });
+
+                return setFileUploadStatuses((previousFileUploadStatuses) => {
+                  return {
+                    ...previousFileUploadStatuses,
+                    [acceptedFile.file.path ?? acceptedFile.file.name]: true,
+                  };
+                });
+              }
+
+              // eslint-disable-next-line no-underscore-dangle
+              if (target.__typename === "UploadTargetHttp") {
+                // File upload to the url provided by the server
+                await fetch(target.uploadUrl, {
+                  method: "PUT",
+                  body: acceptedFile.file,
+                });
+
+                await apolloClient.mutate({
+                  mutation: createImageFromUrlMutation,
+                  variables: { url: target.downloadUrl },
+                });
+
+                return setFileUploadStatuses((previousFileUploadStatuses) => {
+                  return {
+                    ...previousFileUploadStatuses,
+                    [acceptedFile.file.path ?? acceptedFile.file.name]: true,
+                  };
+                });
+              }
+
+              throw new Error(
+                // eslint-disable-next-line no-underscore-dangle
+                `Unrecognized upload target provided by server: ${target.__typename}`
+              );
             } catch (err) {
-              setFileUploadStatuses((previousFileUploadStatuses) => {
+              return setFileUploadStatuses((previousFileUploadStatuses) => {
                 return {
                   ...previousFileUploadStatuses,
                   [acceptedFile.file.path ?? acceptedFile.file.name]:

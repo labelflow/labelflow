@@ -2,13 +2,6 @@ import React from "react";
 
 import { Map } from "../map";
 
-import "ol/ol.css";
-
-export default {
-  title: "react-openlayers-fiber/Other Examples",
-  component: Map,
-};
-
 export const Retina = () => (
   <Map>
     <olView initialCenter={[0, 0]} initialZoom={2} />
