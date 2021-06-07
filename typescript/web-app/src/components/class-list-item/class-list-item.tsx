@@ -49,7 +49,7 @@ export const ClassListItem = (props: {
             <Text>{name}</Text>
           </Flex>
           {shortcut && (
-            <Kbd style={{ justifyContent: "center" }} mr="2">
+            <Kbd justifyContent="center" mr="2">
               {shortcut}
             </Kbd>
           )}
