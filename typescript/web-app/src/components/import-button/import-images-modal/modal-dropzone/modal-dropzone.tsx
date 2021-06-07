@@ -80,12 +80,12 @@ export const ImportImagesModalDropzone = ({
     createImages();
   }, [files]);
 
-  useEffect(() => {
-    return () => {
-      setFiles([]);
-      setFileUploadStatuses({});
-    };
-  }, []);
+  // useEffect(() => {
+  //   return () => {
+  //     setFiles([]);
+  //     setFileUploadStatuses({});
+  //   };
+  // }, []);
 
   return (
     <>

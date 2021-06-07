@@ -168,26 +168,3 @@ test("should not close the modal while file are uploading", async () => {
 
   await ensuresUploadsAreFinished(1);
 });
-
-test("should clear the modal content when closed", async () => {
-  await renderModalAndImport();
-
-  await waitFor(() =>
-    expect(screen.getAllByLabelText("Upload succeed")).toHaveLength(2)
-  );
-
-  await waitFor(() => {
-    userEvent.click(screen.getByLabelText("Close"));
-  });
-
-  const input = screen.getByLabelText(/drop folders or images/i);
-  await waitFor(() =>
-    userEvent.upload(input, [
-      new File(["Bonjour"], "bonjour.png", { type: "image/png" }),
-    ])
-  );
-
-  await waitFor(() =>
-    expect(screen.getByText(/Completed 1 of 1 items/i)).toBeDefined()
-  );
-});

@@ -78,12 +78,12 @@ export const ImportImagesModalUrlList = ({
     createImages();
   }, [urls]);
 
-  useEffect(() => {
-    return () => {
-      setUrls([]);
-      setUploadStatuses({});
-    };
-  }, []);
+  // useEffect(() => {
+  //   return () => {
+  //     setUrls([]);
+  //     setUploadStatuses({});
+  //   };
+  // }, []);
 
   return (
     <>
