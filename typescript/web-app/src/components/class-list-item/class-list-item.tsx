@@ -23,7 +23,7 @@ export const ClassListItem = (props: {
 
   // arrow function instead of nested ternaries to avoid eslint error
   const bgColor = (() => {
-    if (selected) {
+    if (selected && type !== "CreateClassItem") {
       return "gray.300";
     }
     if (highlight) {
