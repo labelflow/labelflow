@@ -24,7 +24,6 @@ export const Labels = ({ imageId }: { imageId: string }) => {
     onError: (e) => {
       throw e;
     },
-    onCompleted: () => {},
   });
 
   const labels = data?.image?.labels ?? [];
