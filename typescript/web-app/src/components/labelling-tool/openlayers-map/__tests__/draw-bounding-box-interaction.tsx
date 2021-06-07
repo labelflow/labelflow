@@ -55,7 +55,7 @@ const createImage = async (name: String) => {
   return id;
 };
 
-it("create a label in the db on the end of a draw interaction", async () => {
+it("create a label when the user has finished to draw a bounding box on the labelling interface", async () => {
   const mapRef: { current: OlMap | null } = { current: null };
   const id = await createImage("myImage");
   useLabellingStore.setState({ selectedTool: Tools.BOUNDING_BOX });
