@@ -107,6 +107,8 @@ module.exports = {
             crypto: false,
             stream: "stream-browserify", // Needed for `probe-image-size`
             http2: false,
+            http: false,
+            https: false,
             net: false,
             tls: false,
             zlib: false,
@@ -126,6 +128,8 @@ module.exports = {
           crypto: "empty",
           // stream: "empty",
           http2: "empty",
+          http: "empty",
+          https: "empty",
           net: "empty",
           tls: "empty",
           zlib: "empty",
