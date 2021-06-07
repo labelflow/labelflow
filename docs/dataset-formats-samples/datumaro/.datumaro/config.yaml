@@ -1,7 +1,0 @@
-format_version: 1
-project_name: label_test_project
-sources:
-  task_82294_images:
-    format: cvat_rest_api_task_images
-    options: {}
-    url: ''

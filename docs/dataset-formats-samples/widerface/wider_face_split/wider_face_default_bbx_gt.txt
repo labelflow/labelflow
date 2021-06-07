@@ -1,9 +1,0 @@
-0--cat/2007_000549.jpg
-0
-no_label/2007_000529.jpg
-0
-no_label/2007_000528.jpg
-0
-no_label/2007_000515.jpg
-1
-129.01 62.48 259.07 254.03 - - - False - - Other object
