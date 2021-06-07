@@ -4,13 +4,6 @@ import { Fill, Stroke } from "ol/style";
 import { Map } from "../map";
 import { useInterval } from "./hooks";
 
-import "ol/ol.css";
-
-export default {
-  title: "react-openlayers-fiber/Other Examples",
-  component: Map,
-};
-
 const stroke = new Stroke({ color: "black", width: 2 });
 const fill = new Fill({ color: "red" });
 

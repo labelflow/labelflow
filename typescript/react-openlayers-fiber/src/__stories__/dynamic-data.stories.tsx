@@ -7,13 +7,6 @@ import RenderEvent from "ol/render/Event";
 
 import { Map } from "../map";
 
-import "ol/ol.css";
-
-export default {
-  title: "react-openlayers-fiber/OL Examples",
-  component: Map,
-};
-
 const imageStyle = new Style({
   image: new CircleStyle({
     radius: 5,
