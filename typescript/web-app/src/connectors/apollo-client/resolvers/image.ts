@@ -121,7 +121,7 @@ const createImage = async (
     imageObject.src = url;
   });
 
-  return newEntity;
+  return { ...newEntity, url };
 };
 
 export default {
