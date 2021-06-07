@@ -25,36 +25,20 @@ const LabellingTool = dynamic(() => import("../../components/labelling-tool"), {
   },
 });
 
-const imagesQuery = gql`
-  query {
-    images {
-      id
-    }
-  }
-`;
-
 const imageQuery = gql`
   query image($id: ID!) {
     image(where: { id: $id }) {
       id
-      width
-      height
-      url
       name
     }
   }
 `;
 
 const ImagePage = () => {
-  const router = useRouter();
-
-  const { id }: { id?: string } = router.query;
-
-  const { data: imagesResult } =
-    useQuery<{ images: Pick<Image, "id">[] }>(imagesQuery);
+  const { id } = useRouter().query;
 
   const { data: imageResult } = useQuery<{
-    image: Pick<Image, "id" | "url" | "name" | "width" | "height">;
+    image: Pick<Image, "id" | "name">;
   }>(imageQuery, { variables: { id } });
 
   const image = imageResult?.image;
@@ -85,11 +69,7 @@ const ImagePage = () => {
         </Breadcrumb>
       }
     >
-      <LabellingTool
-        image={image}
-        images={imagesResult?.images}
-        router={router}
-      />
+      <LabellingTool />
     </Layout>
   );
 };

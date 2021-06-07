@@ -9,6 +9,7 @@ import gql from "graphql-tag";
 import { Feature, Map as OlMap } from "ol";
 import { fromExtent } from "ol/geom/Polygon";
 import { DrawEvent, DrawEventType } from "ol/interaction/Draw";
+import { useRouter } from "next/router";
 import { client } from "../../../../connectors/apollo-client";
 import { DrawBoundingBoxInteraction } from "../draw-bounding-box-interaction";
 import {
@@ -30,6 +31,10 @@ jest.mock("../../../../connectors/apollo-client", () => {
     client: { ...original.client, mutate: jest.fn(original.client.mutate) },
   };
 });
+
+jest.mock("next/router", () => ({
+  useRouter: jest.fn(),
+}));
 
 const createImage = async (name: String) => {
   const mutationResult = await client.mutate({
@@ -61,7 +66,11 @@ it("create a label when the user has finished to draw a bounding box on the labe
   useLabellingStore.setState({ selectedTool: Tools.BOUNDING_BOX });
   (client.mutate as jest.Mock).mockReset();
   (client.mutate as jest.Mock).mockImplementationOnce(jest.fn());
-  render(<DrawBoundingBoxInteraction imageId={id} />, {
+  (useRouter as jest.Mock).mockImplementation(() => ({
+    query: { id },
+  }));
+
+  render(<DrawBoundingBoxInteraction />, {
     wrapper: ({ children }) => (
       <Map
         args={{ interactions: [] }}

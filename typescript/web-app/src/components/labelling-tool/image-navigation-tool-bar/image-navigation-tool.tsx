@@ -10,9 +10,11 @@ import {
 } from "@chakra-ui/react";
 import { RiArrowRightSLine, RiArrowLeftSLine } from "react-icons/ri";
 import { findIndex, isNaN, isNumber } from "lodash/fp";
-import { NextRouter } from "next/router";
+import { useRouter, NextRouter } from "next/router";
 import NextLink from "next/link";
 import { useHotkeys } from "react-hotkeys-hook";
+import { useQuery } from "@apollo/client";
+import gql from "graphql-tag";
 
 import { keymap } from "../../../keymap";
 
@@ -31,10 +33,24 @@ const parse = (x: string): number | undefined =>
 const format = (x: number | undefined): string =>
   isNumber(x) && !isNaN(x) && x >= 0 ? `${x + 1}` : `-`;
 
-export const ImageNavigationTool = ({ imageId, images, router }: Props) => {
+const imagesQuery = gql`
+  query {
+    images {
+      id
+    }
+  }
+`;
+
+export const ImageNavigationTool = () => {
+  const router = useRouter();
+  const imageId = router.query.id;
+
+  const images =
+    useQuery<{ images: Pick<Image, "id">[] }>(imagesQuery)?.data?.images;
+
   const imageIndex: number | undefined =
     images != null && imageId != null
-      ? findIndex({ id: imageId }, images)
+      ? findIndex({ id: imageId as string }, images)
       : undefined;
 
   const imageCount = images?.length;
