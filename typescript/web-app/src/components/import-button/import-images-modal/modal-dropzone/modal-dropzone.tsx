@@ -3,11 +3,8 @@ import { useState, useEffect } from "react";
 import { isEmpty } from "lodash/fp";
 import {
   Heading,
-  ModalOverlay,
-  ModalContent,
   ModalHeader,
   ModalBody,
-  ModalCloseButton,
   Button,
   Text,
 } from "@chakra-ui/react";
@@ -27,15 +24,11 @@ const createImageFromFileMutation = gql`
 `;
 
 export const ImportImagesModalDropzone = ({
-  isOpen = false,
-  onClose = () => {},
   setMode,
-  isCloseable = false,
-  setCloseable = (t: boolean) => {},
+  setCloseable = () => {},
 }: {
-  isOpen?: boolean;
-  onClose?: () => void;
   setMode?: (mode: "urlList") => void;
+  setCloseable?: (_t: boolean) => void;
 }) => {
   const apolloClient = useApolloClient();
 
@@ -87,6 +80,13 @@ export const ImportImagesModalDropzone = ({
     createImages();
   }, [files]);
 
+  useEffect(() => {
+    return () => {
+      setFiles([]);
+      setFileUploadStatuses({});
+    };
+  }, []);
+
   return (
     <>
       <ModalHeader textAlign="center" padding="6">
@@ -107,7 +107,7 @@ export const ImportImagesModalDropzone = ({
           </Button>
         </Text>
       </ModalHeader>
-      <ModalCloseButton disabled={!isCloseable} />
+
       <ModalBody
         display="flex"
         pt="0"

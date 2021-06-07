@@ -1,5 +1,7 @@
 import { ChangeEvent, useState } from "react";
 import { Stack, VStack, Button, Textarea } from "@chakra-ui/react";
+import { isWebUri } from "valid-url";
+
 import { DroppedUrl } from "../types";
 
 export const UrlList = ({
@@ -39,7 +41,14 @@ export const UrlList = ({
       </Stack>
       <Button
         onClick={() => {
-          onDropEnd(value.split("\n").map((url) => ({ url, errors: [] })));
+          onDropEnd(
+            value.split("\n").map((url) => {
+              if (!isWebUri(url)) {
+                return { url, errors: [new Error("Invalid URL")] };
+              }
+              return { url, errors: [] };
+            })
+          );
         }}
       >
         Start Import

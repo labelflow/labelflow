@@ -4,7 +4,6 @@ import {
   Heading,
   ModalHeader,
   ModalBody,
-  ModalCloseButton,
   Button,
   Text,
 } from "@chakra-ui/react";
@@ -24,55 +23,49 @@ const createImageFromUrlMutation = gql`
 `;
 
 export const ImportImagesModalUrlList = ({
-  isOpen = false,
-  onClose = () => {},
   setMode = () => {},
-  isCloseable = false,
-  setCloseable = (t: boolean) => {},
+  setCloseable = () => {},
 }: {
-  isOpen?: boolean;
-  onClose?: () => void;
-  setMode?: (mode: string) => {};
+  setMode?: (mode: "dropzone") => void;
+  setCloseable?: (_t: boolean) => void;
 }) => {
   const apolloClient = useApolloClient();
 
   /*
-   * We need a state with the accepted and reject files to be able to reset the list
+   * We need a state with the accepted and reject urls to be able to reset the list
    * when we close the modal because react-dropzone doesn't provide a way to reset its
    * internal state
    */
-  const [files, setFiles] = useState<Array<DroppedUrl>>([]);
-  const [fileUploadStatuses, setFileUploadStatuses] = useState<UploadStatuses>(
-    {}
-  );
+  const [urls, setUrls] = useState<Array<DroppedUrl>>([]);
+  const [uploadStatuses, setUploadStatuses] = useState<UploadStatuses>({});
 
   useEffect(() => {
-    if (isEmpty(files)) return;
+    if (isEmpty(urls)) return;
 
     const createImages = async () => {
       await Promise.all(
-        files
-          .filter((file) => isEmpty(file.errors))
+        urls
+          .filter((url) => isEmpty(url.errors))
           .map(async (acceptedUrl) => {
             try {
               await apolloClient.mutate({
                 mutation: createImageFromUrlMutation,
                 variables: {
-                  url: acceptedUrl,
+                  url: acceptedUrl.url,
                 },
               });
 
-              setFileUploadStatuses((previousFileUploadStatuses) => {
+              setUploadStatuses((previousUploadStatuses) => {
                 return {
-                  ...previousFileUploadStatuses,
-                  fake: true,
+                  ...previousUploadStatuses,
+                  [acceptedUrl.url]: true,
                 };
               });
             } catch (err) {
-              setFileUploadStatuses((previousFileUploadStatuses) => {
+              setUploadStatuses((previousUploadStatuses) => {
                 return {
-                  ...previousFileUploadStatuses,
-                  fake: err.message,
+                  ...previousUploadStatuses,
+                  [acceptedUrl.url]: err.message,
                 };
               });
             }
@@ -83,7 +76,14 @@ export const ImportImagesModalUrlList = ({
 
     setCloseable(false);
     createImages();
-  }, [files]);
+  }, [urls]);
+
+  useEffect(() => {
+    return () => {
+      setUrls([]);
+      setUploadStatuses({});
+    };
+  }, []);
 
   return (
     <>
@@ -105,7 +105,7 @@ export const ImportImagesModalUrlList = ({
           </Button>
         </Text>
       </ModalHeader>
-      <ModalCloseButton disabled={!isCloseable} />
+
       <ModalBody
         display="flex"
         pt="0"
@@ -115,14 +115,11 @@ export const ImportImagesModalUrlList = ({
         overflowY="hidden"
         flexDirection="column"
       >
-        {isEmpty(files) ? (
-          <UrlList onDropEnd={setFiles} />
+        {isEmpty(urls) ? (
+          <UrlList onDropEnd={setUrls} />
         ) : (
-          !isEmpty(files) && (
-            <UrlStatuses
-              files={files}
-              fileUploadStatuses={fileUploadStatuses}
-            />
+          !isEmpty(urls) && (
+            <UrlStatuses urls={urls} uploadStatuses={uploadStatuses} />
           )
         )}
       </ModalBody>

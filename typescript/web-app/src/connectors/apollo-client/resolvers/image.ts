@@ -201,7 +201,9 @@ const createImage = async (
 
       await db.image.add(newImageEntity);
 
-      return await getImageById(imageId);
+      const result = await getImageById(imageId);
+
+      return result;
     } catch (e) {
       await db.file.delete(fileId);
       throw new Error(

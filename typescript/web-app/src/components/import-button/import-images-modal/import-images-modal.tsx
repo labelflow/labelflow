@@ -1,5 +1,10 @@
 import { useState } from "react";
-import { Modal, ModalOverlay, ModalContent } from "@chakra-ui/react";
+import {
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalCloseButton,
+} from "@chakra-ui/react";
 import { ImportImagesModalDropzone } from "./modal-dropzone/modal-dropzone";
 import { ImportImagesModalUrlList } from "./modal-url-list/modal-url-list";
 
@@ -19,29 +24,21 @@ export const ImportImagesModal = ({
       size="xl"
       onClose={() => {
         if (!isCloseable) return;
-        console.log("CLOOOSE");
-        // setFiles([]);
-        // setFileUploadStatuses({});
         onClose();
       }}
     >
       <ModalOverlay />
       <ModalContent height="80vh">
+        <ModalCloseButton disabled={!isCloseable} />
         {mode === "dropzone" && (
           <ImportImagesModalDropzone
-            isOpen={isOpen}
-            onClose={onClose}
             setMode={setMode}
-            isCloseable={isCloseable}
             setCloseable={setCloseable}
           />
         )}
         {mode === "urlList" && (
           <ImportImagesModalUrlList
-            isOpen={isOpen}
-            onClose={onClose}
             setMode={setMode}
-            isCloseable={isCloseable}
             setCloseable={setCloseable}
           />
         )}
