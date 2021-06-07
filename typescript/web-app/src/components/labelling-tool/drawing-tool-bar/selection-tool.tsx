@@ -32,6 +32,7 @@ export const SelectionTool = () => {
         backgroundColor="white"
         aria-label="Select tool"
         pointerEvents="initial"
+        isActive={selectedTool === Tools.SELECTION}
       />
     </Tooltip>
   );
