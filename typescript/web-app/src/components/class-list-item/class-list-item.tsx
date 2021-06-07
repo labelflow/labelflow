@@ -13,19 +13,27 @@ const CircleIcon = chakra(RiCheckboxBlankCircleFill);
  */
 export const ClassListItem = (props: {
   item: { name: string; type?: string; color?: string; shortcut?: string };
-  highlight: boolean;
+  highlight?: boolean;
+  selected?: boolean;
   index: number;
   itemProps: any;
 }) => {
-  const { item, highlight, index, itemProps } = props;
+  const { item, highlight, selected, index, itemProps } = props;
   const { type, color, name, shortcut } = item;
 
+  // arrow function instead of nested ternaries to avoid eslint error
+  const bgColor = (() => {
+    if (selected) {
+      return "gray.300";
+    }
+    if (highlight) {
+      return "gray.100";
+    }
+    return "transparent";
+  })();
+
   return (
-    <Box
-      bgColor={highlight ? "gray.100" : "transparent"}
-      key={`${name}${index}`}
-      {...itemProps}
-    >
+    <Box bgColor={bgColor} key={`${name}${index}`} {...itemProps}>
       {type === "CreateClassItem" ? (
         <Flex justifyContent="space-between" alignItems="center">
           <Flex justifyContent="flex-start">

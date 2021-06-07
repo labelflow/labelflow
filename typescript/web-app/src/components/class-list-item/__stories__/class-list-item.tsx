@@ -29,10 +29,15 @@ export const Highlighted = () => {
   );
 };
 
+export const Selected = () => {
+  return (
+    <ClassListItem selected index={0} item={classDefault} itemProps={{}} />
+  );
+};
+
 export const NoShortcut = () => {
   return (
     <ClassListItem
-      highlight={false}
       index={0}
       item={omit("shortcut", classDefault)}
       itemProps={{}}
@@ -41,14 +46,7 @@ export const NoShortcut = () => {
 };
 
 export const NewClass = () => {
-  return (
-    <ClassListItem
-      highlight={false}
-      index={0}
-      item={classCreate}
-      itemProps={{}}
-    />
-  );
+  return <ClassListItem index={0} item={classCreate} itemProps={{}} />;
 };
 
 export const NewClassHighlighted = () => {
