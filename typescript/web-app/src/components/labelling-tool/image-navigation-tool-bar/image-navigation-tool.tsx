@@ -10,7 +10,7 @@ import {
 } from "@chakra-ui/react";
 import { RiArrowRightSLine, RiArrowLeftSLine } from "react-icons/ri";
 import { findIndex, isNaN, isNumber } from "lodash/fp";
-import { useRouter, NextRouter } from "next/router";
+import { useRouter } from "next/router";
 import NextLink from "next/link";
 import { useHotkeys } from "react-hotkeys-hook";
 import { useQuery } from "@apollo/client";
@@ -19,12 +19,6 @@ import gql from "graphql-tag";
 import { keymap } from "../../../keymap";
 
 import { Image } from "../../../graphql-types.generated";
-
-export type Props = {
-  imageId: string | undefined;
-  images: Pick<Image, "id">[] | undefined;
-  router: NextRouter;
-};
 
 const digitsPerRem = 0.55;
 

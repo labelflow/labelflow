@@ -4,14 +4,14 @@ import gql from "graphql-tag";
 import { DecoratorFn, Story } from "@storybook/react";
 import { Box } from "@chakra-ui/react";
 import { withNextRouter } from "storybook-addon-next-router";
+import Bluebird from "bluebird";
 
 import { client } from "../../../connectors/apollo-client";
 import { chakraDecorator } from "../../../utils/chakra-decorator";
 import { apolloDecorator } from "../../../utils/apollo-decorator";
+import { db } from "../../../connectors/database";
 
 import { LabellingTool } from "../labelling-tool";
-
-import { db } from "../../../connectors/database";
 
 const images = [
   {
@@ -35,7 +35,7 @@ export default {
   decorators: [
     chakraDecorator,
     apolloDecorator,
-    withImageIdInQueryStringRouter,
+    withImageIdInQueryStringRouterDecorator,
     inGreyBoxDecorator,
   ],
 };
@@ -95,18 +95,17 @@ async function mockImagesLoader({
     return { images: [] };
   }
 
-  const loadedImages = await Promise.all(
-    imageArray.map(({ url, name }) =>
-      fetch(url)
-        .then((res) => res.blob())
-        .then((blob) => createImage(name, blob))
-    )
+  // We use mapSeries to ensure images are created in the same order
+  const loadedImages = await Bluebird.mapSeries(imageArray, ({ url, name }) =>
+    fetch(url)
+      .then((res) => res.blob())
+      .then((blob) => createImage(name, blob))
   );
 
   return { images: loadedImages };
 }
 
-function withImageIdInQueryStringRouter(
+function withImageIdInQueryStringRouterDecorator(
   storyFn: Parameters<DecoratorFn>[0],
   context: Parameters<DecoratorFn>[1]
 ): ReturnType<DecoratorFn> {

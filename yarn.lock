@@ -3668,10 +3668,12 @@ __metadata:
     "@testing-library/jest-dom": ^5.12.0
     "@testing-library/react": 11.2.6
     "@testing-library/user-event": ^13.1.9
+    "@types/bluebird": ^3.5.35
     "@types/node": 12.12.21
     "@types/react": 17.0.3
     "@types/react-dom": 17.0.1
     "@types/uuid": ^8.3.0
+    bluebird: ^3.7.2
     dexie: ^3.0.3
     framer-motion: ^4
     graphql: ^15.5.0
@@ -6340,6 +6342,13 @@ __metadata:
   dependencies:
     "@babel/types": ^7.3.0
   checksum: 676150e00d1f6b535a3c53f9c22ae4abb3707abdbf71a9ebf200a8722fc0cd9b7c677165c0dea35616fed5af9f93b40aaa58ba56fd21bb2c843cd03c12419afd
+  languageName: node
+  linkType: hard
+
+"@types/bluebird@npm:^3.5.35":
+  version: 3.5.35
+  resolution: "@types/bluebird@npm:3.5.35"
+  checksum: cfad2f2de7f3bbd0dd93f991de8d1b128778b5dc82ceb64158a83d159a5d14f5a4e592f75c7b196c714920e5063dc3d2d1bfd7e2dd1404698edad5ce2d5d7b8c
   languageName: node
   linkType: hard
 
