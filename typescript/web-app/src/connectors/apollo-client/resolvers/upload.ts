@@ -16,8 +16,8 @@ const getUploadTarget = async (): Promise<UploadTarget> => {
   // We run in the worker scope or nodejs
   const fileId = uuidv4();
   return {
-    uploadUrl: `${self.location.protocol}://${self.location.host}/worker/images/${fileId}`,
-    downloadUrl: `${self.location.protocol}://${self.location.host}/worker/images/${fileId}`,
+    uploadUrl: `${self.location.protocol}//${self.location.host}/worker/images/${fileId}`,
+    downloadUrl: `${self.location.protocol}//${self.location.host}/worker/images/${fileId}`,
   };
 };
 
