@@ -55,11 +55,6 @@ const labelClasses = [
     shortcut: "5",
     labels: [],
   },
-  // {
-  //   id: "",
-  //   name: "Toto",
-  //   color: "gray.300",
-  // },
 ];
 
 const createNewClass = (name: string): void => {
