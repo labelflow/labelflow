@@ -5,9 +5,9 @@ import type {
   QueryLabelClassArgs,
   QueryLabelClassesArgs,
   Maybe,
-} from "../../../graphql-types.generated";
+} from "../../graphql-types.generated";
 
-import { db, DbLabelClass } from "../../database";
+import { db, DbLabelClass } from "../database";
 
 const getLabelClassById = async (id: string): Promise<DbLabelClass> => {
   const entity = await db.labelClass.get(id);

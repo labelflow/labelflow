@@ -4,7 +4,7 @@ import GeometryType from "ol/geom/GeometryType";
 import gql from "graphql-tag";
 import { useLabellingStore, Tools } from "../../../connectors/labelling-state";
 import { useUndoStore, Effect } from "../../../connectors/undo-store";
-import { client } from "../../../connectors/apollo-client";
+import { client } from "../../../connectors/apollo-client-schema";
 
 const createLabelMutation = gql`
   mutation createLabel(

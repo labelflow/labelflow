@@ -7,10 +7,10 @@ import type {
   QueryImageArgs,
   QueryImagesArgs,
   Maybe,
-} from "../../../graphql-types.generated";
+} from "../../graphql-types.generated";
 
-import { db, DbImage } from "../../database";
-import { windowExists, selfExists } from "../../../utils/window-exists";
+import { db, DbImage } from "../database";
+import { windowExists, selfExists } from "../../utils/window-exists";
 
 declare let self: ServiceWorkerGlobalScope;
 

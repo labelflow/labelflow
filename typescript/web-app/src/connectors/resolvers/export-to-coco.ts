@@ -1,5 +1,5 @@
-import { convertLabelflowDatasetToCocoDataset } from "../../../data-converters/coco-format/converters";
-import { Image } from "../../../graphql-types.generated";
+import { convertLabelflowDatasetToCocoDataset } from "../../data-converters/coco-format/converters";
+import { Image } from "../../graphql-types.generated";
 import { getPaginatedImages, getUrlFromFileId } from "./image";
 import { getPaginatedLabelClasses } from "./label-class";
 import { getLabels } from "./label";

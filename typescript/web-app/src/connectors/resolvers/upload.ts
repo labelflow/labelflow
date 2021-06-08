@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from "uuid";
-import type { UploadTarget } from "../../../graphql-types.generated";
-import { windowExists } from "../../../utils/window-exists";
+import type { UploadTarget } from "../../graphql-types.generated";
+import { windowExists } from "../../utils/window-exists";
 
 declare let self: ServiceWorkerGlobalScope;
 

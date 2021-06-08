@@ -8,7 +8,7 @@ import Bluebird from "bluebird";
 
 import { get } from "lodash/fp";
 import { chakraDecorator } from "../../../../utils/chakra-decorator";
-import { client } from "../../../../connectors/apollo-client";
+import { client } from "../../../../connectors/apollo-client-schema";
 import { db } from "../../../../connectors/database";
 
 import { ImageNavigationTool } from "../image-navigation-tool";
