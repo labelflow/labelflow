@@ -1,10 +1,13 @@
-import { Button, useDisclosure, chakra } from "@chakra-ui/react";
+import { Button, ButtonProps, useDisclosure, chakra } from "@chakra-ui/react";
+
 import { RiUploadCloud2Line } from "react-icons/ri";
 import { ImportImagesModal } from "./import-images-modal";
 
 const UploadIcon = chakra(RiUploadCloud2Line);
 
-export const ImportButton = () => {
+type Props = ButtonProps;
+
+export const ImportButton = ({ ...props }: Props) => {
   const { isOpen, onClose, onOpen } = useDisclosure();
 
   return (
@@ -15,6 +18,7 @@ export const ImportButton = () => {
         leftIcon={<UploadIcon fontSize="xl" />}
         onClick={onOpen}
         variant="ghost"
+        {...props}
       >
         Add images
       </Button>

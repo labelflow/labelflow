@@ -2,13 +2,6 @@ import React from "react";
 
 import { Map } from "../map";
 
-import "ol/ol.css";
-
-export default {
-  title: "react-openlayers-fiber/OL Examples",
-  component: Map,
-};
-
 export const Zoomify = () => {
   const imgWidth = 4000;
   const imgHeight = 3000;

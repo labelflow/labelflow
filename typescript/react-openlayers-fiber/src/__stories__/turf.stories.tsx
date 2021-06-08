@@ -7,13 +7,6 @@ import { Feature, LineString, lineDistance, along } from "@turf/turf";
 
 import { Map } from "../map";
 
-import "ol/ol.css";
-
-export default {
-  title: "react-openlayers-fiber/OL Examples",
-  component: Map,
-};
-
 export const Turf = () => {
   const [vectorSource, setVectorSource] = useState<Vector>();
 

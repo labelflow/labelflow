@@ -11,7 +11,7 @@ import type {
 export type DbFile = {
   id?: string;
   imageId: string;
-  blob: File;
+  blob: Blob;
 };
 
 export type DbImage =

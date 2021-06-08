@@ -1,8 +1,8 @@
 import { addDecorator } from "@storybook/react";
 import { Button, useDisclosure } from "@chakra-ui/react";
 import { ImportImagesModal } from "../import-images-modal";
-import { chakraDecorator } from "../../../../../../utils/chakra-decorator";
-import { apolloDecorator } from "../../../../../../utils/apollo-decorator";
+import { chakraDecorator } from "../../../../utils/chakra-decorator";
+import { apolloDecorator } from "../../../../utils/apollo-decorator";
 
 addDecorator(chakraDecorator);
 addDecorator(apolloDecorator);
