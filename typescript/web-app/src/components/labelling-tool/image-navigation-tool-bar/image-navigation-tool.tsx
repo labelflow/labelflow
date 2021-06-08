@@ -112,6 +112,7 @@ export const ImageNavigationTool = ({ imageId, images, router }: Props) => {
         <NextLink href={`/images/${images[imageIndex - 1]?.id}`} passHref>
           <a>
             <Tooltip
+              openDelay={300}
               label={`Previous image [${keymap.goToPreviousImage.key}]`}
               placement="top"
             >
@@ -131,7 +132,7 @@ export const ImageNavigationTool = ({ imageId, images, router }: Props) => {
           icon={<RiArrowLeftSLine size="1.5em" />}
         />
       )}
-      <Tooltip label="Current image index" placement="top">
+      <Tooltip label="Current image index" placement="top" openDelay={300}>
         <NumberInput
           rounded={6}
           allowMouseWheel
@@ -180,6 +181,7 @@ export const ImageNavigationTool = ({ imageId, images, router }: Props) => {
             <Tooltip
               label={`Next image [${keymap.goToNextImage.key}]`}
               placement="top"
+              openDelay={300}
             >
               <IconButton
                 aria-label="Next image"
