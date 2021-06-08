@@ -1,9 +1,11 @@
-import { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   Box,
+  Button,
   Popover,
   PopoverContent,
   PopoverBody,
+  PopoverTrigger,
   Kbd,
   Flex,
   Input,
@@ -30,19 +32,21 @@ const MagnifierIcon = chakra(IoSearch);
 const CloseCircleIcon = chakra(RiCloseCircleFill);
 
 export const ClassSelectionPopover = ({
-  isOpen = false,
+  isOpen,
   onClose = () => {},
   onSelectedClassChange,
   createNewClass,
   labelClasses,
   selectedLabelClass,
+  trigger,
 }: {
   isOpen?: boolean;
   onClose?: () => void;
   onSelectedClassChange: (item: LabelClass) => void;
   labelClasses: LabelClass[];
   createNewClass: (name: string) => void;
-  selectedLabelClass?: LabelClass | null;
+  selectedLabelClass: LabelClass | null;
+  trigger?: React.ReactNode;
 }) => {
   const labelClassesWithNoneClass = [...labelClasses, noneClass];
   const [inputItems, setInputItems] = useState<
@@ -110,6 +114,7 @@ export const ClassSelectionPopover = ({
       onClose={onClose}
       initialFocusRef={initialFocusRef}
     >
+      {trigger && <PopoverTrigger>{trigger}</PopoverTrigger>}
       <PopoverContent borderColor="gray.200">
         <PopoverBody pl="0" pr="0">
           <Box>

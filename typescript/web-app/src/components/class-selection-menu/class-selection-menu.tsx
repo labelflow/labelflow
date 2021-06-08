@@ -1,3 +1,4 @@
+import React from "react";
 import {
   Box,
   Text,
@@ -15,6 +16,31 @@ const CircleIcon = chakra(RiCheckboxBlankCircleFill);
 
 const SelectorIcon = chakra(HiSelector);
 
+const ClassSelectionButton = React.forwardRef((props, ref) => {
+  const { selectedLabelClass } = props;
+  return (
+    <Button
+      rightIcon={<SelectorIcon fontSize="md" />}
+      pl="5"
+      pr="5"
+      minW="60"
+      justifyContent="space-between"
+      ref={ref}
+      onClick={props.open}
+      bg="white"
+    >
+      <Flex alignItems="center">
+        <CircleIcon
+          color={selectedLabelClass?.color ?? "gray.300"}
+          fontSize="2xl"
+          mr="2"
+        />
+        <Text>{selectedLabelClass?.name ?? "None"}</Text>
+      </Flex>
+    </Button>
+  );
+});
+
 export const ClassSelectionMenu = ({
   labelClasses,
   onSelectedClassChange,
@@ -26,40 +52,27 @@ export const ClassSelectionMenu = ({
   createNewClass: (name: string) => void;
   selectedLabelClass: LabelClass | null;
 }) => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const selectedLabelClassName = selectedLabelClass?.name;
+  const [isOpen, setIsOpen] = React.useState(false);
+  const open = () => setIsOpen(!isOpen);
+  const close = () => setIsOpen(false);
 
   return (
     <Box pl="3" pr="3">
-      <Button
-        onClick={onOpen}
-        rightIcon={<SelectorIcon fontSize="md" />}
-        pl="5"
-        pr="5"
-        minW="60"
-        justifyContent="space-between"
-        pointerEvents={isOpen ? "none" : "auto"}
-        bg="white"
-      >
-        <Flex alignItems="center">
-          <CircleIcon
-            color={selectedLabelClass?.color ?? "gray.300"}
-            fontSize="2xl"
-            mr="2"
-          />
-          <Text>{selectedLabelClassName ?? "None"}</Text>
-        </Flex>
-      </Button>
       <ClassSelectionPopover
         isOpen={isOpen}
-        onClose={onClose}
         labelClasses={labelClasses}
         onSelectedClassChange={(labelClass: LabelClass) => {
           onSelectedClassChange(labelClass);
-          onClose();
+          close();
         }}
         createNewClass={createNewClass}
         selectedLabelClass={selectedLabelClass}
+        trigger={
+          <ClassSelectionButton
+            open={open}
+            selectedLabelClass={selectedLabelClass}
+          />
+        }
       />
     </Box>
   );
