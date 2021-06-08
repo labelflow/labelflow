@@ -1,23 +1,14 @@
 import {
   Box,
-  Input,
-  InputGroup,
-  InputRightElement,
-  InputLeftElement,
-  Kbd,
   Text,
-  Spacer,
   Flex,
   Button,
   chakra,
   useDisclosure,
 } from "@chakra-ui/react";
-import { useState } from "react";
 import { HiSelector } from "react-icons/hi";
 import { RiCheckboxBlankCircleFill } from "react-icons/ri";
-import { omit } from "lodash/fp";
 import { LabelClass } from "../../graphql-types.generated";
-import { ClassListItem } from "../class-list-item";
 import { ClassSelectionPopover } from "../class-selection-popover";
 
 const CircleIcon = chakra(RiCheckboxBlankCircleFill);

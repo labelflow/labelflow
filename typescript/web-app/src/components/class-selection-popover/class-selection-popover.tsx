@@ -19,9 +19,9 @@ import { ClassListItem } from "../class-list-item";
 import { LabelClass } from "../../graphql-types.generated";
 
 export type CreateClassInput = { name: string; type: string };
-export type NoneClass = { id: string; name: string; color: string };
+export type NoneClass = { name: string; color: string };
+
 const noneClass = {
-  id: "",
   name: "None",
   color: "gray.200",
 };
@@ -63,13 +63,14 @@ export const ClassSelectionPopover = ({
       const createClassItem =
         inputValueCombobox &&
         labelClassesWithNoneClass.filter(
-          (labelClass: LabelClass) => labelClass.name === inputValueCombobox
+          (labelClass: LabelClass | NoneClass) =>
+            labelClass.name === inputValueCombobox
         ).length === 0
           ? [{ name: inputValueCombobox, type: "CreateClassItem" }]
           : [];
 
       const filteredLabelClasses = labelClassesWithNoneClass.filter(
-        (labelClass: LabelClass) => {
+        (labelClass: LabelClass | NoneClass) => {
           return labelClass.name
             .toLowerCase()
             .startsWith((inputValueCombobox ?? "").toLowerCase());
@@ -79,7 +80,9 @@ export const ClassSelectionPopover = ({
     },
     onSelectedItemChange: ({
       selectedItem,
-    }: UseComboboxStateChange<LabelClass | CreateClassInput>): void => {
+    }: UseComboboxStateChange<
+      LabelClass | CreateClassInput | NoneClass
+    >): void => {
       if (
         selectedItem != null &&
         "type" in selectedItem &&
@@ -137,12 +140,17 @@ export const ClassSelectionPopover = ({
             </Box>
             <Box pt="1" {...getMenuProps()}>
               {inputItems.map(
-                (item: LabelClass | CreateClassInput, index: number) => (
+                (
+                  item: LabelClass | CreateClassInput | NoneClass,
+                  index: number
+                ) => (
                   <ClassListItem
                     itemProps={getItemProps({ item, index })}
                     item={item}
                     highlight={highlightedIndex === index}
-                    selected={selectedLabelClass?.id === item?.id}
+                    selected={
+                      "id" in item && item.id === selectedLabelClass?.id
+                    }
                     index={index}
                     key={`${item.name}${index}`}
                   />
