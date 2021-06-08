@@ -46,11 +46,24 @@ export const NoShortcut = () => {
 };
 
 export const NewClass = () => {
-  return <ClassListItem index={0} item={classCreate} itemProps={{}} />;
+  return (
+    <ClassListItem
+      index={0}
+      item={classCreate}
+      itemProps={{}}
+      isCreateClassItem
+    />
+  );
 };
 
 export const NewClassHighlighted = () => {
   return (
-    <ClassListItem highlight index={0} item={classCreate} itemProps={{}} />
+    <ClassListItem
+      highlight
+      index={0}
+      item={classCreate}
+      itemProps={{}}
+      isCreateClassItem
+    />
   );
 };
