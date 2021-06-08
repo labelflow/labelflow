@@ -1,9 +1,7 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import { useEffect, useMemo, useState } from "react";
+
 import gql from "graphql-tag";
 import { DecoratorFn, Story } from "@storybook/react";
-import { NextRouter, createRouter } from "next/router";
-import { RouterContext } from "next/dist/next-server/lib/router-context";
 import { Box } from "@chakra-ui/react";
 import { withNextRouter } from "storybook-addon-next-router";
 
@@ -12,56 +10,49 @@ import { chakraDecorator } from "../../../utils/chakra-decorator";
 import { apolloDecorator } from "../../../utils/apollo-decorator";
 
 import { LabellingTool } from "../labelling-tool";
-import { Image } from "../../../graphql-types.generated";
+
 import { db } from "../../../connectors/database";
+
+const images = [
+  {
+    name: "Hello puffin 1",
+    url: "https://images.unsplash.com/photo-1612564148954-59545876eaa0?auto=format&fit=crop&w=600&q=80",
+  },
+  {
+    name: "Hello puffin 2",
+    url: "https://images.unsplash.com/photo-1580629905303-faaa03202631?auto=format&fit=crop&w=600&q=80",
+  },
+  {
+    name: "Hello puffin 3",
+    url: "https://images.unsplash.com/photo-1490718720478-364a07a997cd?auto=format&fit=crop&w=600&q=80",
+  },
+];
 
 export default {
   title: "web-app/Labelling Tool",
   component: LabellingTool,
-  decorators: [chakraDecorator, apolloDecorator, inGreyBoxDecorator],
+  loaders: [mockImagesLoader],
+  decorators: [
+    chakraDecorator,
+    apolloDecorator,
+    withImageIdInQueryStringRouter,
+    inGreyBoxDecorator,
+  ],
 };
 
 export const OneImage: Story = () => {
   return <LabellingTool />;
 };
-
-OneImage.decorators = [
-  (storyFn, context) =>
-    withNextRouter({
-      query: { id: context.images[0].id },
-    })(storyFn, context),
-  mockImagesDecorator([
-    {
-      name: "Hello puffin 1",
-      url: "https://images.unsplash.com/photo-1612564148954-59545876eaa0?auto=format&fit=crop&w=600&q=80",
-    },
-  ]),
-];
+OneImage.parameters = { mockImages: { images: images.slice(0, 1) } };
 
 export const ThreeImages: Story = () => {
   return <LabellingTool />;
 };
+ThreeImages.parameters = { mockImages: { images } };
 
-ThreeImages.decorators = [
-  (storyFn, context) =>
-    withNextRouter({
-      query: { id: context.images[0].id },
-    })(storyFn, context),
-  mockImagesDecorator([
-    {
-      name: "Hello puffin 1",
-      url: "https://images.unsplash.com/photo-1612564148954-59545876eaa0?auto=format&fit=crop&w=600&q=80",
-    },
-    {
-      name: "Hello puffin 2",
-      url: "https://images.unsplash.com/photo-1580629905303-faaa03202631?auto=format&fit=crop&w=600&q=80",
-    },
-    {
-      name: "Hello puffin 3",
-      url: "https://images.unsplash.com/photo-1490718720478-364a07a997cd?auto=format&fit=crop&w=600&q=80",
-    },
-  ]),
-];
+/* ----------- */
+/*   Helpers   */
+/* ----------- */
 
 async function createImage(name: String, file: Blob) {
   const mutationResult = await client.mutate({
@@ -89,33 +80,43 @@ async function createImage(name: String, file: Blob) {
   return image;
 }
 
-function mockImagesDecorator(imageArray: { name: string; url: string }[]) {
-  return function decorator(
-    StoryComponent: Parameters<DecoratorFn>[0],
-    StoryContext: Parameters<DecoratorFn>[1]
-  ): ReturnType<DecoratorFn> {
-    const [images, setImages] = useState<Array<Image>>();
+async function mockImagesLoader({
+  parameters,
+}: {
+  parameters: { mockImages?: { images?: { name: string; url: string }[] } };
+}) {
+  // first, clean the database and the apollo client
+  await Promise.all(db.tables.map((table) => table.clear()));
+  await client.clearStore();
 
-    useEffect(() => {
-      Promise.all(
-        imageArray.map(({ url, name }) =>
-          fetch(url)
-            .then((res) => res.blob())
-            .then((blob) => createImage(name, blob))
-        )
-      ).then(setImages);
+  const imageArray = parameters?.mockImages?.images;
 
-      return () => {
-        db.tables.map((table) => table.clear());
-      };
-    }, []);
+  if (imageArray == null) {
+    return { images: [] };
+  }
 
-    return images ? (
-      <StoryComponent {...StoryContext} images={images} />
-    ) : (
-      <div>Loading mocked images into storybook...</div>
-    );
-  };
+  const loadedImages = await Promise.all(
+    imageArray.map(({ url, name }) =>
+      fetch(url)
+        .then((res) => res.blob())
+        .then((blob) => createImage(name, blob))
+    )
+  );
+
+  return { images: loadedImages };
+}
+
+function withImageIdInQueryStringRouter(
+  storyFn: Parameters<DecoratorFn>[0],
+  context: Parameters<DecoratorFn>[1]
+): ReturnType<DecoratorFn> {
+  // hardcoded to take the first loaded image Id
+  // and store it in the query parameters
+  // If needed this could be adjusted with
+  // Story.parameters
+  return withNextRouter({
+    query: { id: context.loaded.images[0].id },
+  })(storyFn, context);
 }
 
 function inGreyBoxDecorator(
