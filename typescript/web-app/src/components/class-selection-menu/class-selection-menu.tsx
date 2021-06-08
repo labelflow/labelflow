@@ -50,7 +50,7 @@ export const ClassSelectionMenu = ({
   labelClasses: LabelClass[];
   onSelectedClassChange: (item: LabelClass) => void;
   createNewClass: (name: string) => void;
-  selectedLabelClass: LabelClass | null;
+  selectedLabelClass?: LabelClass | null;
 }) => {
   const [isOpen, setIsOpen] = React.useState(false);
   const open = () => setIsOpen(!isOpen);

@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import {
   Box,
-  Button,
   Popover,
   PopoverContent,
   PopoverBody,
@@ -42,10 +41,10 @@ export const ClassSelectionPopover = ({
 }: {
   isOpen?: boolean;
   onClose?: () => void;
-  onSelectedClassChange: (item: LabelClass) => void;
+  onSelectedClassChange: (item: LabelClass | NoneClass) => void;
   labelClasses: LabelClass[];
   createNewClass: (name: string) => void;
-  selectedLabelClass: LabelClass | null;
+  selectedLabelClass?: LabelClass | null;
   trigger?: React.ReactNode;
 }) => {
   const labelClassesWithNoneClass = [...labelClasses, noneClass];
@@ -94,8 +93,9 @@ export const ClassSelectionPopover = ({
       ) {
         return createNewClass(selectedItem.name);
       }
-      if (selectedItem != null && "id" in selectedItem) {
-        return onSelectedClassChange(selectedItem);
+      // TODO: Maybe third callback to handle specifically the "none class"
+      if (selectedItem != null) {
+        return onSelectedClassChange(selectedItem as LabelClass | NoneClass);
       }
       return undefined;
     },
