@@ -78,13 +78,6 @@ export const ImportImagesModalUrlList = ({
     createImages();
   }, [urls]);
 
-  // useEffect(() => {
-  //   return () => {
-  //     setUrls([]);
-  //     setUploadStatuses({});
-  //   };
-  // }, []);
-
   return (
     <>
       <ModalHeader textAlign="center" padding="6">

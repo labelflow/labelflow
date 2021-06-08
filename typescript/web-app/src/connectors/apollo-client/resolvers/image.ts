@@ -147,7 +147,6 @@ const createImage = async (
     const fetchHeaders = new Headers();
     fetchHeaders.append(
       "Accept",
-      // "image/tiff,image/jpeg,image/png,image/webp,image/*,*/*;q=0.8"
       "image/tiff,image/jpeg,image/png,image/*,*/*;q=0.8"
     );
     fetchHeaders.append("Sec-Fetch-Dest", "image");
