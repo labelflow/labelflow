@@ -11,7 +11,7 @@ export default {
   title: "web-app/Class selection menu",
 };
 
-const Template: Story<Props> = (args: Props) => (
+const Template = (args: any) => (
   <HStack background="gray.100" padding={4} spacing={4}>
     <ClassSelectionMenu {...args} />
     <Button variant="solid" background="white" color="gray.800">
