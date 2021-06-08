@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import { useState, useEffect } from "react";
 import { isEmpty } from "lodash/fp";
 import {
@@ -174,12 +173,10 @@ export const ImportImagesModalDropzone = ({
         {isEmpty(files) ? (
           <Dropzone onDropEnd={setFiles} />
         ) : (
-          !isEmpty(files) && (
-            <FilesStatuses
-              files={files}
-              fileUploadStatuses={fileUploadStatuses}
-            />
-          )
+          <FilesStatuses
+            files={files}
+            fileUploadStatuses={fileUploadStatuses}
+          />
         )}
       </ModalBody>
     </>

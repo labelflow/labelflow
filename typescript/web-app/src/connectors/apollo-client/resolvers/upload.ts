@@ -1,9 +1,5 @@
 import { v4 as uuidv4 } from "uuid";
-import type {
-  UploadTarget,
-  UploadTargetDirect,
-  UploadTargetHttp,
-} from "../../../graphql-types.generated";
+import type { UploadTarget } from "../../../graphql-types.generated";
 import { windowExists } from "../../../utils/window-exists";
 
 declare let self: ServiceWorkerGlobalScope;
@@ -34,16 +30,10 @@ export default {
     // See https://www.apollographql.com/docs/apollo-server/schema/unions-interfaces/#resolving-a-union
     // eslint-disable-next-line no-underscore-dangle
     __resolveType(obj: UploadTarget) {
-      if (
-        (obj as UploadTargetDirect).direct === false ||
-        (obj as UploadTargetDirect).direct === true
-      ) {
+      if ("direct" in obj) {
         return "UploadTargetDirect";
       }
-      if (
-        (obj as UploadTargetHttp).uploadUrl &&
-        (obj as UploadTargetHttp).downloadUrl
-      ) {
+      if ("uploadUrl" in obj || "downloadUrl" in obj) {
         return "UploadTargetHttp";
       }
       return null; // GraphQLError is thrown
