@@ -19,7 +19,7 @@ const getLabelClassById = async (id: string): Promise<DbLabelClass> => {
   return entity;
 };
 
-const getPaginatedLabelClasses = async (
+export const getPaginatedLabelClasses = async (
   skip?: Maybe<number>,
   first?: Maybe<number>
 ): Promise<DbLabelClass[]> => {

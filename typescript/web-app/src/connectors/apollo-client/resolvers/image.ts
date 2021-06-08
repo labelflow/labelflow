@@ -61,7 +61,7 @@ const getImageById = async (id: string): Promise<DbImage> => {
   return entity;
 };
 
-const getPaginatedImages = async (
+export const getPaginatedImages = async (
   skip?: Maybe<number>,
   first?: Maybe<number>
 ): Promise<any[]> => {
@@ -74,13 +74,15 @@ const getPaginatedImages = async (
   return query.toArray();
 };
 
-// Queries
-const labels = async (image: Image) => {
-  const getResults = await db.label
-    .where({ imageId: image.id })
-    .sortBy("createdAt");
+export const getLabelsByImageId = async (imageId: string) => {
+  const getResults = await db.label.where({ imageId }).sortBy("createdAt");
 
   return getResults ?? [];
+};
+
+// Queries
+const labels = async ({ id }: Image) => {
+  return getLabelsByImageId(id);
 };
 
 const image = (_: any, args: QueryImageArgs) => {
