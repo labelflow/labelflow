@@ -18,8 +18,6 @@ const ClassSelectionButton = React.forwardRef<
   return (
     <Button
       rightIcon={<SelectorIcon fontSize="md" />}
-      pl="5"
-      pr="5"
       minW="60"
       justifyContent="space-between"
       ref={ref}
