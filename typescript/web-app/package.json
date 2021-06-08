@@ -16,6 +16,7 @@
     "@graphql-tools/schema": "7.1.5",
     "@labelflow/react-openlayers-fiber": "workspace:typescript/react-openlayers-fiber",
     "dexie": "^3.0.3",
+    "downshift": "^6.1.3",
     "framer-motion": "^4",
     "graphql": "^15.5.0",
     "graphql-tag": "^2.12.4",
