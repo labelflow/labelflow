@@ -8,14 +8,18 @@ export enum Tools {
 
 export type LabellingState = {
   selectedTool: Tools;
+  selectedLabelId: string | null;
   setSelectedTool: (tool: Tools) => void;
+  setSelectedLabelId: (labelId: string) => void;
 };
 
 export const useLabellingStore = create<LabellingState>(
   persist(
     (set) => ({
       selectedTool: Tools.SELECTION,
+      selectedLabelId: null,
       setSelectedTool: (tool) => set({ selectedTool: tool }),
+      setSelectedLabelId: (labelId) => set({ selectedLabelId: labelId }),
     }),
     {
       name: "labelling-state",

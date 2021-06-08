@@ -2,17 +2,21 @@
 // @ts-ignore Needs to be done before ol is imported
 global.URL.createObjectURL = jest.fn(() => "mockedUrl");
 
-import { Ref } from "react";
+import { createRef } from "react";
 import { ApolloProvider } from "@apollo/client";
 import { render, waitFor } from "@testing-library/react";
 import useMeasure from "react-use-measure";
 import gql from "graphql-tag";
 import { Map as OlMap } from "ol";
+import VectorLayer from "ol/layer/Vector";
 import { client } from "../../../../connectors/apollo-client";
 import { OpenlayersMap } from "../openlayers-map";
 import { LabelCreateInput } from "../../../../graphql-types.generated";
 import { setupTestsWithLocalDatabase } from "../../../../utils/setup-local-db-tests";
-import { useLabellingStore } from "../../../../connectors/labelling-state";
+import {
+  useLabellingStore,
+  Tools,
+} from "../../../../connectors/labelling-state";
 
 setupTestsWithLocalDatabase();
 
@@ -67,16 +71,17 @@ const createLabel = async (data: LabelCreateInput) => {
   return label;
 };
 
-it("should select label when user clicks on it", async () => {
-  const mapRef: Ref<OlMap> = { current: null };
+test("should select label when user clicks on it", async () => {
+  const mapRef = createRef<OlMap>();
   const image = await createImage("myImage");
   const label = await createLabel({
-    x: 100,
-    y: 200,
-    height: 100,
-    width: 100,
+    x: 0,
+    y: 0,
+    height: 1000,
+    width: 1000,
     imageId: image.id,
   });
+  useLabellingStore.setState({ selectedTool: Tools.SELECTION });
 
   render(<OpenlayersMap ref={mapRef} image={image} />, {
     wrapper: ({ children }) => (
@@ -84,15 +89,30 @@ it("should select label when user clicks on it", async () => {
     ),
   });
 
+  await waitFor(() => {
+    // @ts-ignore
+    const features = (mapRef.current?.getLayers().getArray()[1] as VectorLayer)
+      .getSource()
+      .getFeatures();
+    expect(features).toHaveLength(1);
+
+    // TODO: Figure out why openlayers map does not find the feature
+    jest
+      // @ts-ignore
+      .spyOn(mapRef.current, "getFeaturesAtPixel")
+      // @ts-ignore
+      .mockImplementationOnce(() => features);
+  });
+
   mapRef.current?.dispatchEvent({
     type: "click",
     // @ts-ignore
-    pixel: [110, 210],
+    pixel: [50, 50],
   });
 
   await waitFor(() => {
     expect(useLabellingStore.getState()).toMatchObject({
-      selectedLabel: label.id,
+      selectedLabelId: label.id,
     });
   });
 });

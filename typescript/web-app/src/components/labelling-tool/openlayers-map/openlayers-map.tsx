@@ -1,4 +1,4 @@
-import { forwardRef, Ref } from "react";
+import { forwardRef, createRef } from "react";
 import { Extent, getCenter } from "ol/extent";
 import { Size } from "ol/size";
 import { Map as OlMap } from "ol";
@@ -6,8 +6,10 @@ import memoize from "mem";
 import Projection from "ol/proj/Projection";
 import useMeasure from "react-use-measure";
 import { ApolloProvider, useApolloClient } from "@apollo/client";
+import { isFunction, isNil } from "lodash/fp";
 
 import { Map } from "@labelflow/react-openlayers-fiber";
+import { useLabellingStore, Tools } from "../../../connectors/labelling-state";
 import type { Image } from "../../../graphql-types.generated";
 import "ol/ol.css";
 
@@ -61,7 +63,13 @@ type Props = {
   image?: Pick<Image, "id" | "url" | "name" | "width" | "height">;
 };
 
-export const OpenlayersMap = forwardRef(({ image }: Props, ref: Ref<OlMap>) => {
+export const OpenlayersMap = forwardRef<OlMap, Props>(({ image }, ref) => {
+  const internalRef = createRef<OlMap>();
+  const selectedTool = useLabellingStore((state) => state.selectedTool);
+  const setSelectedLabelId = useLabellingStore(
+    (state) => state.setSelectedLabelId
+  );
+
   const client = useApolloClient();
   const [containerRef, bounds] = useMeasure();
 
@@ -81,11 +89,36 @@ export const OpenlayersMap = forwardRef(({ image }: Props, ref: Ref<OlMap>) => {
 
   return (
     <Map
-      ref={ref}
+      ref={(value) => {
+        if (isNil(value)) {
+          return;
+        }
+        if (isFunction(ref)) {
+          ref(value);
+        } else if (!isNil(ref)) {
+          // eslint-disable-next-line no-param-reassign
+          ref.current = value;
+        }
+        // @ts-ignore
+        internalRef.current = value;
+      }}
       args={{ controls: empty }}
       style={{ height: "100%", width: "100%" }}
       containerRef={containerRef}
-      onClick={(e: { pixel: Array<number> }) => console.log("OHE", e.pixel)}
+      onClick={(e: { pixel: Array<number> }) => {
+        const map = internalRef?.current;
+        if (!map || selectedTool !== Tools.SELECTION) {
+          return null;
+        }
+
+        const [feature] = map.getFeaturesAtPixel(e.pixel);
+        if (feature) {
+          const { id } = feature.getProperties();
+          setSelectedLabelId(id);
+        }
+
+        return "";
+      }}
     >
       <ApolloProvider client={client}>
         {
