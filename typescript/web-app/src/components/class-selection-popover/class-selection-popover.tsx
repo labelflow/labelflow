@@ -19,12 +19,12 @@ import { useCombobox, UseComboboxStateChange } from "downshift";
 import { ClassListItem } from "../class-list-item";
 import { LabelClass } from "../../graphql-types.generated";
 
-// TODO: Move types outside of components scope
-export type CreateClassInput = { name: string; type: string };
-export type NoneClass = { name: string; color: string };
+type CreateClassInput = { name: string; type: string };
+type NoneClass = { name: string; color: string; type: string };
 
 const noneClass = {
   name: "None",
+  type: "NoneClass",
   color: "gray.200",
 };
 
@@ -42,10 +42,10 @@ export const ClassSelectionPopover = ({
 }: {
   isOpen?: boolean;
   onClose?: () => void;
-  onSelectedClassChange: (item: LabelClass | NoneClass) => void;
+  onSelectedClassChange: (item: LabelClass | null) => void;
   labelClasses: LabelClass[];
   createNewClass: (name: string) => void;
-  selectedLabelClass?: LabelClass | NoneClass;
+  selectedLabelClass?: LabelClass | null;
   trigger?: React.ReactNode;
 }) => {
   const labelClassesWithNoneClass = [...labelClasses, noneClass];
@@ -94,9 +94,15 @@ export const ClassSelectionPopover = ({
       ) {
         return createNewClass(selectedItem.name);
       }
-      // TODO: Maybe third callback to handle specifically the "none class"
-      if (selectedItem != null) {
-        return onSelectedClassChange(selectedItem as LabelClass | NoneClass);
+      if (
+        selectedItem != null &&
+        "type" in selectedItem &&
+        selectedItem?.type === "NoneClass"
+      ) {
+        return onSelectedClassChange(null);
+      }
+      if (selectedItem != null && "id" in selectedItem) {
+        return onSelectedClassChange(selectedItem);
       }
       return undefined;
     },
@@ -155,10 +161,13 @@ export const ClassSelectionPopover = ({
                     item={item}
                     highlight={highlightedIndex === index}
                     selected={
-                      ("id" in item &&
-                        item.id === (selectedLabelClass as LabelClass)?.id) ||
-                      (selectedLabelClass?.name === "None" &&
-                        item.name === "None")
+                      ("id" in item && item.id === selectedLabelClass?.id) ||
+                      (selectedLabelClass === null &&
+                        "type" in item &&
+                        item.type === "NoneClass")
+                    }
+                    isCreateClassItem={
+                      "type" in item && item.type === "CreateClassItem"
                     }
                     index={index}
                     key={`${item.name}${index}`}

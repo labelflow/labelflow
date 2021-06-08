@@ -4,16 +4,14 @@ import { HiSelector } from "react-icons/hi";
 import { RiCheckboxBlankCircleFill } from "react-icons/ri";
 import { LabelClass } from "../../graphql-types.generated";
 import { ClassSelectionPopover } from "../class-selection-popover";
-import { NoneClass } from "../class-selection-popover/class-selection-popover";
 
 const CircleIcon = chakra(RiCheckboxBlankCircleFill);
-
 const SelectorIcon = chakra(HiSelector);
 
 const ClassSelectionButton = React.forwardRef<
   null,
   {
-    selectedLabelClass?: LabelClass | NoneClass;
+    selectedLabelClass?: LabelClass | null;
     open: () => void;
   }
 >(({ selectedLabelClass, open }, ref) => {
@@ -47,9 +45,9 @@ export const ClassSelectionMenu = ({
   selectedLabelClass,
 }: {
   labelClasses: LabelClass[];
-  onSelectedClassChange: (item: LabelClass | NoneClass) => void;
+  onSelectedClassChange: (item: LabelClass | null) => void;
   createNewClass: (name: string) => void;
-  selectedLabelClass?: LabelClass | NoneClass;
+  selectedLabelClass?: LabelClass | null;
 }) => {
   const [isOpen, setIsOpen] = React.useState(false);
   const open = () => setIsOpen(!isOpen);
@@ -60,7 +58,7 @@ export const ClassSelectionMenu = ({
       <ClassSelectionPopover
         isOpen={isOpen}
         labelClasses={labelClasses}
-        onSelectedClassChange={(labelClass: LabelClass | NoneClass) => {
+        onSelectedClassChange={(labelClass: LabelClass | null) => {
           onSelectedClassChange(labelClass);
           close();
         }}

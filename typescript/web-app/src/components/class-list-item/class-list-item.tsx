@@ -17,13 +17,15 @@ export const ClassListItem = (props: {
   selected?: boolean;
   index: number;
   itemProps: any;
+  isCreateClassItem?: boolean;
 }) => {
-  const { item, highlight, selected, index, itemProps } = props;
-  const { type, color, name, shortcut } = item;
+  const { item, highlight, selected, index, itemProps, isCreateClassItem } =
+    props;
+  const { color, name, shortcut } = item;
 
   // arrow function instead of nested ternaries to avoid eslint error
   const bgColor = (() => {
-    if (selected && type !== "CreateClassItem") {
+    if (selected && !isCreateClassItem) {
       return "gray.300";
     }
     if (highlight) {
@@ -42,7 +44,7 @@ export const ClassListItem = (props: {
       pt="1"
       pb="1"
     >
-      {type === "CreateClassItem" ? (
+      {isCreateClassItem ? (
         <Flex justifyContent="space-between" alignItems="center">
           <Flex justifyContent="flex-start">
             <Text fontWeight="light" fontStyle="italic" ml="3">
