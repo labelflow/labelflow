@@ -6,7 +6,6 @@ import {
   PopoverBody,
   PopoverTrigger,
   Kbd,
-  Flex,
   Input,
   InputGroup,
   InputLeftElement,
