@@ -1,11 +1,6 @@
-import { Label, LabelClass, Image } from "../../graphql-types.generated";
-import {
-  CocoCategory,
-  CocoAnnotation,
-  CacheLabelClassIdToCocoCategoryId,
-  CocoImage,
-  CocoDataset,
-} from "./types";
+import { Image } from "../../graphql-types.generated";
+import { DbLabel, DbLabelClass } from "../../connectors/database";
+import { CocoCategory, CocoAnnotation, CocoImage, CocoDataset } from "./types";
 
 export {
   initialCocoDataset,
@@ -14,8 +9,8 @@ export {
   convertLabelToCocoAnnotation,
   convertLabelsOfImageToCocoAnnotations,
   convertImageToCocoImage,
-  addImageToCocoDataset,
-  convertImagesAndLabelClassesToCocoDataset,
+  convertImagesToCocoImages,
+  convertLabelflowDatasetToCocoDataset,
 };
 
 const initialCocoDataset: CocoDataset = {
@@ -40,7 +35,7 @@ const initialCocoDataset: CocoDataset = {
 };
 
 const convertLabelClassToCocoCategory = (
-  labelClass: LabelClass,
+  labelClass: DbLabelClass,
   id: number
 ): CocoCategory => {
   return {
@@ -50,16 +45,23 @@ const convertLabelClassToCocoCategory = (
   };
 };
 
-const convertLabelClassesToCocoCategories = (
-  labelClasses: LabelClass[]
-): CocoCategory[] => {
-  return labelClasses.map((value, index) =>
-    convertLabelClassToCocoCategory(value, index + 1)
-  );
+const convertLabelClassesToCocoCategories = (labelClasses: DbLabelClass[]) => {
+  const labelClassIdsMap: Record<string, number> = {};
+
+  const cocoCategories = labelClasses.map((labelClass, index) => {
+    const cocoCategoryId = index + 1;
+    labelClassIdsMap[labelClass.id] = cocoCategoryId;
+    return convertLabelClassToCocoCategory(labelClass, cocoCategoryId);
+  });
+
+  return {
+    cocoCategories,
+    labelClassIdsMap,
+  };
 };
 
 const convertLabelToCocoAnnotation = (
-  { x, y, width, height }: Label,
+  { x, y, width, height }: DbLabel,
   id: number,
   imageId: number,
   categoryId: number | null = null
@@ -76,17 +78,17 @@ const convertLabelToCocoAnnotation = (
 };
 
 const convertLabelsOfImageToCocoAnnotations = (
-  labels: Label[],
-  imageId: number,
-  mapping: CacheLabelClassIdToCocoCategoryId,
-  idOffset: number = 1
-): CocoAnnotation[] => {
+  labels: DbLabel[],
+  imageIdsMap: Record<string, number>,
+  labelClassIdsMap: Record<string, number>
+) => {
   return labels.map((label, index) => {
+    const cocoAnnotationId = index + 1;
     return convertLabelToCocoAnnotation(
       label,
-      idOffset + index,
-      imageId,
-      mapping.get(label?.labelClass?.id)
+      cocoAnnotationId,
+      imageIdsMap[label.imageId],
+      label.labelClassId ? labelClassIdsMap[label.labelClassId] : null
     );
   });
 };
@@ -107,44 +109,37 @@ const convertImageToCocoImage = (
   };
 };
 
-const addImageToCocoDataset =
-  (mapping: CacheLabelClassIdToCocoCategoryId) =>
-  (cocoDataset: CocoDataset, image: Image): CocoDataset => {
-    const imageId: number = cocoDataset.images.length + 1;
-    const imageCoco: CocoImage = convertImageToCocoImage(image, imageId);
-    const annotationsCoco: CocoAnnotation[] =
-      convertLabelsOfImageToCocoAnnotations(
-        image.labels,
-        imageId,
-        mapping,
-        cocoDataset.annotations.length + 1
-      );
-    return {
-      ...cocoDataset,
-      images: [...cocoDataset.images, imageCoco],
-      annotations: [...cocoDataset.annotations, ...annotationsCoco],
-    };
-  };
+const convertImagesToCocoImages = (images: Image[]) => {
+  const imageIdsMap: Record<string, number> = {};
+  const cocoImages = images.map((image, index) => {
+    const cocoImageId = index + 1;
+    imageIdsMap[image.id] = cocoImageId;
+    return convertImageToCocoImage(image, cocoImageId);
+  });
 
-const convertImagesAndLabelClassesToCocoDataset = (
+  return { cocoImages, imageIdsMap };
+};
+
+const convertLabelflowDatasetToCocoDataset = (
   images: Image[],
-  labelClasses: LabelClass[]
+  labels: DbLabel[],
+  labelClasses: DbLabelClass[]
 ): CocoDataset => {
-  const categories = convertLabelClassesToCocoCategories(labelClasses);
+  const { cocoImages, imageIdsMap } = convertImagesToCocoImages(images);
 
-  const mapping: CacheLabelClassIdToCocoCategoryId = labelClasses.reduce(
-    (previousMapping, currentLabelClass, index) => {
-      previousMapping.set(currentLabelClass.id, index + 1);
-      return previousMapping;
-    },
-    new Map()
+  const { cocoCategories, labelClassIdsMap } =
+    convertLabelClassesToCocoCategories(labelClasses);
+
+  const cocoAnnotations = convertLabelsOfImageToCocoAnnotations(
+    labels,
+    imageIdsMap,
+    labelClassIdsMap
   );
 
-  const initialDataset: CocoDataset = {
+  return {
     ...initialCocoDataset,
-    categories,
+    categories: cocoCategories,
+    images: cocoImages,
+    annotations: cocoAnnotations,
   };
-  const addImageToCocoDatasetWithMapping = addImageToCocoDataset(mapping);
-
-  return images.reduce(addImageToCocoDatasetWithMapping, initialDataset);
 };

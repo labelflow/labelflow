@@ -1,39 +1,33 @@
-import { Label, LabelClass, Image } from "../../../graphql-types.generated";
+import { DbLabel, DbLabelClass } from "../../../connectors/database";
+import { Image } from "../../../graphql-types.generated";
 import {
   convertLabelClassToCocoCategory,
   convertLabelClassesToCocoCategories,
   convertLabelToCocoAnnotation,
   convertLabelsOfImageToCocoAnnotations,
   convertImageToCocoImage,
-  addImageToCocoDataset,
   initialCocoDataset,
-  convertImagesAndLabelClassesToCocoDataset,
+  convertLabelflowDatasetToCocoDataset,
+  convertImagesToCocoImages,
 } from "../converters";
-import {
-  CocoCategory,
-  CocoAnnotation,
-  CacheLabelClassIdToCocoCategoryId,
-  CocoImage,
-  CocoDataset,
-} from "../types";
+import { CocoCategory, CocoAnnotation, CocoImage } from "../types";
 
 describe("Coco converters", () => {
   const date = new Date("1995-12-17T03:24:00").toISOString();
 
-  const createLabelClass = (name: string): LabelClass => ({
+  const createLabelClass = (name: string): DbLabelClass => ({
     id: `id-${name}`,
     createdAt: date,
     updatedAt: date,
     name,
     color: "#000000",
-    labels: [],
   });
 
   const createLabel = (
     id: string,
     imageId: string,
-    labelClass?: LabelClass
-  ): Label => ({
+    labelClassId?: string
+  ): DbLabel => ({
     id,
     createdAt: date,
     updatedAt: date,
@@ -42,25 +36,20 @@ describe("Coco converters", () => {
     y: 2,
     width: 3,
     height: 4,
-    labelClass,
+    labelClassId,
   });
 
-  const createImage = (
-    name: string,
-    height: number,
-    width: number,
-    labels: Label[] = []
-  ): Image => ({
+  const createImage = (name: string, height: number, width: number): Image => ({
     id: `id-${name}`,
     name: `${name}.ext`,
     createdAt: date,
     updatedAt: date,
     height,
     width,
-    labels,
     url: `http://${name}`,
     path: "/path",
     mimetype: "file/ext",
+    labels: [],
   });
 
   test("Should convert a label class to a coco category", () => {
@@ -79,26 +68,31 @@ describe("Coco converters", () => {
 
   test("Should convert some label classes to coco categories", () => {
     const labelClassList = [
-      createLabelClass("Label Class 1"),
-      createLabelClass("Label Class 2"),
+      createLabelClass("a-label-class"),
+      createLabelClass("another-label-class"),
     ];
 
-    const cocoCategories = convertLabelClassesToCocoCategories(labelClassList);
+    const { cocoCategories, labelClassIdsMap } =
+      convertLabelClassesToCocoCategories(labelClassList);
 
-    const expectedCocoCategories: CocoCategory[] = [
+    const expectedCocoCategories = [
       {
         id: 1,
-        name: "Label Class 1",
-        supercategory: "",
+        // ...
       },
       {
         id: 2,
-        name: "Label Class 2",
-        supercategory: "",
+        // ...
       },
     ];
 
-    expect(cocoCategories).toEqual(expectedCocoCategories);
+    const expectedLabelClassIdsMap = {
+      "id-a-label-class": 1,
+      "id-another-label-class": 2,
+    };
+
+    expect(cocoCategories).toMatchObject(expectedCocoCategories);
+    expect(labelClassIdsMap).toMatchObject(expectedLabelClassIdsMap);
   });
 
   test("Should convert a label to a coco annotation without category", () => {
@@ -129,34 +123,31 @@ describe("Coco converters", () => {
       // ...
     };
 
-    expect(cocoAnnotation).toEqual(expect.objectContaining(expectedAnnotation));
+    expect(cocoAnnotation).toMatchObject(expectedAnnotation);
   });
 
   test("Should convert some labels to coco annotations and assign them to an image without id offset", () => {
-    const labels: Label[] = [
-      createLabel(
-        "a-label-id",
-        "fake-image-id",
-        createLabelClass("a-label-class")
-      ),
-      createLabel(
-        "another-label-id",
-        "fake-image-id",
-        createLabelClass("another-label-class")
-      ),
+    const labels = [
+      createLabel("a-label-id", "an-image-id", "id-a-label-class"),
+      createLabel("another-label-id", "an-image-id", "id-another-label-class"),
     ];
 
-    const mapping: CacheLabelClassIdToCocoCategoryId = new Map();
-    mapping.set("id-a-label-class", 1);
-    mapping.set("id-another-label-class", 2);
+    const imageIdsMap = {
+      "an-image-id": 1,
+    };
+
+    const labelClassIdMap = {
+      "id-a-label-class": 1,
+      "id-another-label-class": 2,
+    };
 
     const cocoAnnotations = convertLabelsOfImageToCocoAnnotations(
       labels,
-      1,
-      mapping
+      imageIdsMap,
+      labelClassIdMap
     );
 
-    const expectedAnnotations: Partial<CocoAnnotation>[] = [
+    const expectedAnnotations = [
       {
         id: 1,
         image_id: 1,
@@ -171,61 +162,10 @@ describe("Coco converters", () => {
       },
     ];
 
-    expect(cocoAnnotations).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining(expectedAnnotations[0]),
-        expect.objectContaining(expectedAnnotations[1]),
-      ])
-    );
+    expect(cocoAnnotations).toMatchObject(expectedAnnotations);
   });
 
-  test("Should convert some labels to coco annotations and assign them to an image with id offset", () => {
-    const labels: Label[] = [
-      createLabel(
-        "a-label-id",
-        "fake-image-id",
-        createLabelClass("a-label-class")
-      ),
-      createLabel(
-        "another-label-id",
-        "fake-image-id",
-        createLabelClass("another-label-class")
-      ),
-    ];
-
-    const mapping: CacheLabelClassIdToCocoCategoryId = new Map();
-    mapping.set("id-a-label-class", 0);
-    mapping.set("id-another-label-class", 1);
-
-    const offset = 10;
-
-    const cocoAnnotations = convertLabelsOfImageToCocoAnnotations(
-      labels,
-      1,
-      mapping,
-      offset
-    );
-
-    const expectedAnnotations: Partial<CocoAnnotation>[] = [
-      {
-        id: offset,
-        // ...
-      },
-      {
-        id: offset + 1,
-        // ...
-      },
-    ];
-
-    expect(cocoAnnotations).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining(expectedAnnotations[0]),
-        expect.objectContaining(expectedAnnotations[1]),
-      ])
-    );
-  });
-
-  test("Should create coco json image from an image", () => {
+  test("Should convert an image to coco json image", () => {
     const image = createImage("an-image", 1, 2);
 
     const cocoImage = convertImageToCocoImage(image, 1);
@@ -244,148 +184,65 @@ describe("Coco converters", () => {
     expect(cocoImage).toEqual(expectedCocoImage);
   });
 
-  test("Should add coco json image and annotations from an image to a coco dataset without image", () => {
-    const labelClass1 = createLabelClass("label-class-1");
-    const labelClass2 = createLabelClass("label-class-2");
+  test("Should convert a list of images to coco images", () => {
+    const images = [
+      createImage("an-image", 1, 2),
+      createImage("another-image", 3, 4),
+    ];
 
-    const label1 = createLabel("id-label-1", "id-image-1", labelClass1);
-    const label2 = createLabel("id-label-2", "id-image-1", labelClass2);
-    const label3 = createLabel("id-label-3", "id-image-2", labelClass2);
+    const { cocoImages, imageIdsMap } = convertImagesToCocoImages(images);
 
-    const image1 = createImage("image-1", 1, 2, [label1, label2]);
-    const image2 = createImage("image-2", 1, 2, [label3]);
+    const expectedCocoImage = [
+      {
+        id: 1,
+        // ...
+      },
+      {
+        id: 2,
+        // ...
+      },
+    ];
 
-    const mapping: CacheLabelClassIdToCocoCategoryId = new Map();
-    mapping.set("id-label-class-1", 1);
-    mapping.set("id-label-class-2", 2);
-
-    const aCocoDatasetWithoutImages = {
-      ...initialCocoDataset, // default coco dataset
-      categories: convertLabelClassesToCocoCategories([
-        labelClass1,
-        labelClass2,
-      ]),
+    const expectedMapping = {
+      "id-an-image": 1,
+      "id-another-image": 2,
     };
 
-    const cocoDatasetWithImage1 = addImageToCocoDataset(mapping)(
-      aCocoDatasetWithoutImages,
-      image1
-    );
-
-    const expectedCocoDatasetWithImage1: CocoDataset = {
-      info: aCocoDatasetWithoutImages.info,
-      licenses: aCocoDatasetWithoutImages.licenses,
-      categories: aCocoDatasetWithoutImages.categories,
-      annotations: [
-        {
-          id: 1,
-          image_id: 1,
-          category_id: 1,
-          segmentation: [],
-          area: 12,
-          bbox: [1, 2, 3, 4],
-          iscrowd: 0,
-        },
-        {
-          id: 2,
-          image_id: 1,
-          category_id: 2,
-          segmentation: [],
-          area: 12,
-          bbox: [1, 2, 3, 4],
-          iscrowd: 0,
-        },
-      ],
-      images: [
-        {
-          id: 1,
-          date_captured: date,
-          height: 1,
-          width: 2,
-          coco_url: "http://image-1",
-          file_name: "image-1.ext",
-          flickr_url: "",
-          license: 0,
-        },
-      ],
-    };
-
-    expect(cocoDatasetWithImage1).toEqual(expectedCocoDatasetWithImage1);
-
-    const cocoDatasetWithImage2 = addImageToCocoDataset(mapping)(
-      cocoDatasetWithImage1,
-      image2
-    );
-
-    const expectedCocoDatasetWithImage2: CocoDataset = {
-      ...expectedCocoDatasetWithImage1,
-      annotations: [
-        ...expectedCocoDatasetWithImage1.annotations,
-        {
-          id: 3,
-          image_id: 2,
-          category_id: 2,
-          segmentation: [],
-          area: 12,
-          bbox: [1, 2, 3, 4],
-          iscrowd: 0,
-        },
-      ],
-      images: [
-        ...expectedCocoDatasetWithImage1.images,
-        {
-          id: 2,
-          date_captured: date,
-          height: 1,
-          width: 2,
-          coco_url: "http://image-2",
-          file_name: "image-2.ext",
-          flickr_url: "",
-          license: 0,
-        },
-      ],
-    };
-
-    expect(cocoDatasetWithImage2).toEqual(expectedCocoDatasetWithImage2);
+    expect(cocoImages).toMatchObject(expectedCocoImage);
+    expect(imageIdsMap).toEqual(expectedMapping);
   });
 
   test("Should convert a set of images and label classes to a coco dataset", () => {
     const labelClass1 = createLabelClass("label-class-1");
     const labelClass2 = createLabelClass("label-class-2");
 
-    const label1 = createLabel("id-label-1", "id-image-1", labelClass1);
-    const label2 = createLabel("id-label-2", "id-image-1", labelClass2);
-    const label3 = createLabel("id-label-3", "id-image-2", labelClass2);
+    const image1 = createImage("image-1", 1, 2);
+    const image2 = createImage("image-2", 1, 2);
 
-    const image1 = createImage("image-1", 1, 2, [label1, label2]);
-    const image2 = createImage("image-2", 1, 2, [label3]);
+    const label1 = createLabel("id-label-1", image1.id, labelClass1.id);
+    const label2 = createLabel("id-label-2", image1.id, labelClass2.id);
+    const label3 = createLabel("id-label-3", image2.id, labelClass2.id);
 
-    const expectedCocoDataset: CocoDataset = {
+    const expectedCocoDataset = {
       ...initialCocoDataset, // default coco dataset
-      categories: convertLabelClassesToCocoCategories([
-        labelClass1,
-        labelClass2,
-      ]),
-      images: [
+      categories: [
         {
           id: 1,
-          date_captured: date,
-          height: 1,
-          width: 2,
-          coco_url: "http://image-1",
-          file_name: "image-1.ext",
-          flickr_url: "",
-          license: 0,
+          // ...
         },
         {
           id: 2,
-          date_captured: date,
-          height: 1,
-          width: 2,
-          coco_url: "http://image-2",
-          file_name: "image-2.ext",
-          flickr_url: "",
-          license: 0,
+          // ...
+        },
+      ],
+      images: [
+        {
+          id: 1,
+          // ...
+        },
+        {
+          id: 2,
+          // ...
         },
       ],
       annotations: [
@@ -393,37 +250,29 @@ describe("Coco converters", () => {
           id: 1,
           image_id: 1,
           category_id: 1,
-          segmentation: [],
-          area: 12,
-          bbox: [1, 2, 3, 4],
-          iscrowd: 0,
+          // ...
         },
         {
           id: 2,
           image_id: 1,
           category_id: 2,
-          segmentation: [],
-          area: 12,
-          bbox: [1, 2, 3, 4],
-          iscrowd: 0,
+          // ...
         },
         {
           id: 3,
           image_id: 2,
           category_id: 2,
-          segmentation: [],
-          area: 12,
-          bbox: [1, 2, 3, 4],
-          iscrowd: 0,
+          // ...
         },
       ],
     };
 
     expect(
-      convertImagesAndLabelClassesToCocoDataset(
+      convertLabelflowDatasetToCocoDataset(
         [image1, image2],
+        [label1, label2, label3],
         [labelClass1, labelClass2]
       )
-    ).toEqual(expectedCocoDataset);
+    ).toMatchObject(expectedCocoDataset);
   });
 });

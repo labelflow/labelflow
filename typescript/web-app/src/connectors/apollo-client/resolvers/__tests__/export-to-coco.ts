@@ -4,6 +4,7 @@ import { client } from "../../index";
 import { setupTestsWithLocalDatabase } from "../../../../utils/setup-local-db-tests";
 import { initialCocoDataset } from "../../../../data-converters/coco-format/converters";
 import { CocoDataset } from "../../../../data-converters/coco-format/types";
+import { jsonToDataUri } from "../export-to-coco";
 
 setupTestsWithLocalDatabase();
 
@@ -92,9 +93,7 @@ describe("Exporting a dataset to coco format", () => {
           `,
         })
       ).data.exportToCoco
-    ).toEqual(
-      `data:application/json;base64,${btoa(JSON.stringify(initialCocoDataset))}`
-    );
+    ).toEqual(jsonToDataUri(JSON.stringify(initialCocoDataset)));
   });
 
   test("The exportToCoco graphql endpoint returns a dataset with a category when a label class exist", async () => {
@@ -125,9 +124,7 @@ describe("Exporting a dataset to coco format", () => {
           `,
         })
       ).data.exportToCoco
-    ).toEqual(
-      `data:application/json;base64,${btoa(JSON.stringify(expectedDataset))}`
-    );
+    ).toEqual(jsonToDataUri(JSON.stringify(expectedDataset)));
   });
 
   test("The exportToCoco graphql endpoint returns a dataset with a category and an image when a label class, and an image exist", async () => {
@@ -185,8 +182,6 @@ describe("Exporting a dataset to coco format", () => {
           `,
         })
       ).data.exportToCoco
-    ).toEqual(
-      `data:application/json;base64,${btoa(JSON.stringify(expectedDataset))}`
-    );
+    ).toEqual(jsonToDataUri(JSON.stringify(expectedDataset)));
   });
 });
