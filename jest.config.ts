@@ -15,5 +15,9 @@ export default {
     "\\.[jt]sx?$": "ts-jest",
   },
   transformIgnorePatterns: ["<rootDir>/node_modules/(?!(ol)/)"],
+  moduleNameMapper: {
+    "\\.(css|less|sass|scss)$": "<rootDir>/jest/style-mock.js",
+    "typeface-.*$": "<rootDir>/jest/style-mock.js",
+  },
   setupFiles: ["jest-canvas-mock"],
 };

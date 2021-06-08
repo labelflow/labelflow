@@ -125,3 +125,35 @@ it("displays created labels", async () => {
     ).toHaveLength(2);
   });
 });
+
+it("should select label when user clicks on it", async () => {
+  const mapRef: { current: OlMap | null } = { current: null };
+  const imageId = await createImage("myImage");
+  await createLabel({
+    x: 3.14,
+    y: 42.0,
+    height: 768,
+    width: 362,
+    imageId,
+  });
+
+  render(<Labels imageId={imageId} />, {
+    wrapper: ({ children }) => (
+      <Map
+        ref={(map) => {
+          mapRef.current = map;
+        }}
+      >
+        <ApolloProvider client={client}>{children}</ApolloProvider>
+      </Map>
+    ),
+  });
+
+  await waitFor(() => {
+    expect(
+      (mapRef.current?.getLayers().getArray()[0] as VectorLayer)
+        .getSource()
+        .getFeatures()
+    ).toHaveLength(1);
+  });
+});

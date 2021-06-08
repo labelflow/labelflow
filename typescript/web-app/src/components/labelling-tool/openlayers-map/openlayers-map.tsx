@@ -1,5 +1,7 @@
+import { forwardRef, Ref } from "react";
 import { Extent, getCenter } from "ol/extent";
 import { Size } from "ol/size";
+import { Map as OlMap } from "ol";
 import memoize from "mem";
 import Projection from "ol/proj/Projection";
 import useMeasure from "react-use-measure";
@@ -59,9 +61,9 @@ type Props = {
   image?: Pick<Image, "id" | "url" | "name" | "width" | "height">;
 };
 
-export const OpenlayersMap = ({ image }: Props) => {
+export const OpenlayersMap = forwardRef(({ image }: Props, ref: Ref<OlMap>) => {
   const client = useApolloClient();
-  const [ref, bounds] = useMeasure();
+  const [containerRef, bounds] = useMeasure();
 
   const isBoundsValid = bounds.width > 0 || bounds.height > 0;
 
@@ -79,9 +81,11 @@ export const OpenlayersMap = ({ image }: Props) => {
 
   return (
     <Map
+      ref={ref}
       args={{ controls: empty }}
       style={{ height: "100%", width: "100%" }}
-      containerRef={ref}
+      containerRef={containerRef}
+      onClick={(e: { pixel: Array<number> }) => console.log("OHE", e.pixel)}
     >
       <ApolloProvider client={client}>
         {
@@ -124,4 +128,4 @@ export const OpenlayersMap = ({ image }: Props) => {
       </ApolloProvider>
     </Map>
   );
-};
+});
