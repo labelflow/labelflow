@@ -78,13 +78,6 @@ export const ImportImagesModalUrlList = ({
     createImages();
   }, [urls]);
 
-  // useEffect(() => {
-  //   return () => {
-  //     setUrls([]);
-  //     setUploadStatuses({});
-  //   };
-  // }, []);
-
   return (
     <>
       <ModalHeader textAlign="center" padding="6">
@@ -118,9 +111,7 @@ export const ImportImagesModalUrlList = ({
         {isEmpty(urls) ? (
           <UrlList onDropEnd={setUrls} />
         ) : (
-          !isEmpty(urls) && (
-            <UrlStatuses urls={urls} uploadStatuses={uploadStatuses} />
-          )
+          <UrlStatuses urls={urls} uploadStatuses={uploadStatuses} />
         )}
       </ModalBody>
     </>
