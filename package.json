@@ -29,6 +29,8 @@
     "@graphql-codegen/schema-ast": "^1.18.2",
     "@graphql-codegen/typescript": "^1.22.0",
     "@graphql-codegen/typescript-resolvers": "^1.19.1",
+    "@storybook/addon-actions": "6.3.0-beta.15",
+    "@storybook/addons": "6.3.0-beta.15",
     "@storybook/builder-webpack5": "next",
     "@storybook/manager-webpack5": "next",
     "@storybook/react": "6.3.0-beta.15",

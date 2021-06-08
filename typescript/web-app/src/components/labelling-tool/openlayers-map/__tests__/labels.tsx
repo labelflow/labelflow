@@ -7,11 +7,16 @@ import { Map } from "@labelflow/react-openlayers-fiber";
 import { render, waitFor } from "@testing-library/react";
 import gql from "graphql-tag";
 import { Map as OlMap } from "ol";
+import { useRouter } from "next/router";
 import VectorLayer from "ol/layer/Vector";
 import { client } from "../../../../connectors/apollo-client";
 import { Labels } from "../labels";
 import { LabelCreateInput } from "../../../../graphql-types.generated";
 import { setupTestsWithLocalDatabase } from "../../../../utils/setup-local-db-tests";
+
+jest.mock("next/router", () => ({
+  useRouter: jest.fn(),
+}));
 
 setupTestsWithLocalDatabase();
 
@@ -65,7 +70,11 @@ it("displays a single label", async () => {
     imageId,
   });
 
-  render(<Labels imageId={imageId} />, {
+  (useRouter as jest.Mock).mockImplementation(() => ({
+    query: { id: imageId },
+  }));
+
+  render(<Labels />, {
     wrapper: ({ children }) => (
       <Map
         ref={(map) => {
@@ -105,7 +114,11 @@ it("displays created labels", async () => {
     imageId,
   });
 
-  render(<Labels imageId={imageId} />, {
+  (useRouter as jest.Mock).mockImplementation(() => ({
+    query: { id: imageId },
+  }));
+
+  render(<Labels />, {
     wrapper: ({ children }) => (
       <Map
         ref={(map) => {
