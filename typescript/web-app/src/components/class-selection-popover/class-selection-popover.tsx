@@ -100,7 +100,7 @@ export const ClassSelectionPopover = ({
       reset();
     }
   }, [isOpen]);
-  const initialFocusRef = useRef();
+  const initialFocusRef = useRef(null);
   return (
     <Popover
       isOpen={isOpen}
@@ -116,9 +116,8 @@ export const ClassSelectionPopover = ({
                   <MagnifierIcon fontSize="2xl" />
                 </InputLeftElement>
                 <Input
-                  {...getInputProps()}
+                  {...getInputProps({ ref: initialFocusRef })}
                   placeholder="Search..."
-                  ref={initialFocusRef}
                 />
                 <InputRightElement>
                   {inputValue ? (
