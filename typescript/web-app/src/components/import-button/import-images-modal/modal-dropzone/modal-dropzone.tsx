@@ -141,13 +141,6 @@ export const ImportImagesModalDropzone = ({
     createImages();
   }, [files]);
 
-  // useEffect(() => {
-  //   return () => {
-  //     setFiles([]);
-  //     setFileUploadStatuses({});
-  //   };
-  // }, []);
-
   return (
     <>
       <ModalHeader textAlign="center" padding="6">
