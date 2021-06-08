@@ -8,6 +8,8 @@ import type {
 
 import { db, DbLabel } from "../../database";
 
+export const getLabels = () => db.label.toArray();
+
 // Queries
 const labelClass = async (label: DbLabel) => {
   if (!label?.labelClassId) {
