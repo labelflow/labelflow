@@ -114,6 +114,7 @@ input LabelWhereUniqueInput {
 
 type Mutation {
   createExample(data: ExampleCreateInput!): Example
+  getUploadTarget: UploadTarget!
   createImage(data: ImageCreateInput!): Image
   createLabel(data: LabelCreateInput!): Label
   updateLabel(where: LabelWhereUniqueInput!, data: LabelUpdateInput!): Label
@@ -133,3 +134,14 @@ type Query {
 }
 
 scalar Upload
+
+union UploadTarget = UploadTargetDirect | UploadTargetHttp
+
+type UploadTargetDirect {
+  direct: Boolean!
+}
+
+type UploadTargetHttp {
+  uploadUrl: String!
+  downloadUrl: String!
+}

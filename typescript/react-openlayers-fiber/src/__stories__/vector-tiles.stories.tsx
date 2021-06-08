@@ -7,13 +7,6 @@ import { defaultResolutions } from "ol-mapbox-style/dist/util";
 
 import { Map } from "../map";
 
-import "ol/ol.css";
-
-export default {
-  title: "react-openlayers-fiber/OL Examples",
-  component: Map,
-};
-
 // Match the server resolutions
 const maxResolution = 360 / 512;
 defaultResolutions.length = 14;

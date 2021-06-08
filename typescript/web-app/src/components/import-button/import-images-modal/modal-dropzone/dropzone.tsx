@@ -3,7 +3,7 @@ import { chakra, Stack } from "@chakra-ui/react";
 import { RiUploadCloud2Line } from "react-icons/ri";
 import { useDropzone, FileWithPath, FileRejection } from "react-dropzone";
 import { isEmpty } from "lodash/fp";
-import { DroppedFile } from "./types";
+import { DroppedFile } from "../types";
 
 const UploadIcon = chakra(RiUploadCloud2Line);
 
@@ -70,7 +70,7 @@ export const Dropzone = ({
         flex="1"
       >
         <UploadIcon fontSize="9xl" color="gray.700" />
-        Drop folders or images
+        Drop folders or images, or click to browse your files
         <input {...getInputProps()} id="file-uploader" />
       </chakra.label>
     </Stack>

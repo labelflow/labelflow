@@ -10,7 +10,15 @@ export type DroppedFile = {
 };
 
 /**
+ * Dropped url
+ */
+export type DroppedUrl = {
+  url: string;
+  errors: Array<Error>;
+};
+
+/**
  * A lookup table containing only the status of
  * the file being uploaded
  */
-export type FileUploadStatuses = Record<string, boolean | string>;
+export type UploadStatuses = Record<string, boolean | string>;

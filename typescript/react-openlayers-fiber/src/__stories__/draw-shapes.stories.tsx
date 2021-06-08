@@ -11,13 +11,6 @@ import GeometryType from "ol/geom/GeometryType";
 
 import { Map } from "../map";
 
-import "ol/ol.css";
-
-export default {
-  title: "react-openlayers-fiber/OL Examples",
-  component: Map,
-};
-
 type ShapeType = "None" | "Circle" | "Square" | "Box" | "Star";
 function useGeometryFunction(
   shapeType: ShapeType

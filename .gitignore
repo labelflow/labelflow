@@ -126,3 +126,5 @@ cypress/videos
 python/iog/data
 .venv
 __pycache__
+
+storybook-static
