@@ -46,21 +46,46 @@ export const ClassListItem = (props: {
     >
       {isCreateClassItem ? (
         <Flex justifyContent="space-between" alignItems="center">
-          <Flex justifyContent="flex-start">
-            <Text fontWeight="light" fontStyle="italic" ml="3">
-              Create class&nbsp;
-            </Text>
-            <Text fontWeight="bold" fontStyle="italic">{`"${name}"`}</Text>
-          </Flex>
+          <Text
+            whiteSpace="nowrap"
+            overflow="hidden"
+            fontWeight="light"
+            flexShrink={0}
+            fontStyle="italic"
+            ml="3"
+          >
+            Create class&nbsp;
+          </Text>
+          <Text
+            flexGrow={1}
+            whiteSpace="nowrap"
+            overflow="hidden"
+            textOverflow="ellipsis"
+            fontWeight="bold"
+            fontStyle="italic"
+          >{`"${name}"`}</Text>
         </Flex>
       ) : (
         <Flex justifyContent="space-between" alignItems="center">
-          <Flex alignItems="center">
-            <CircleIcon color={color} fontSize="2xl" ml="2" mr="2" />
-            <Text>{name}</Text>
-          </Flex>
+          <CircleIcon
+            flexShrink={0}
+            flexGrow={0}
+            color={color}
+            fontSize="2xl"
+            ml="2"
+            mr="2"
+          />
+          <Text
+            flexGrow={1}
+            whiteSpace="nowrap"
+            overflow="hidden"
+            textOverflow="ellipsis"
+          >
+            {name}
+          </Text>
+
           {shortcut && (
-            <Kbd justifyContent="center" mr="2">
+            <Kbd flexShrink={0} flexGrow={0} justifyContent="center" mr="2">
               {shortcut}
             </Kbd>
           )}
