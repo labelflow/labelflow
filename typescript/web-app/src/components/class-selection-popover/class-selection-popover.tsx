@@ -120,6 +120,7 @@ export const ClassSelectionPopover = ({
       isOpen={isOpen}
       onClose={onClose}
       initialFocusRef={initialFocusRef}
+      placement="bottom-start"
     >
       {trigger && <PopoverTrigger>{trigger}</PopoverTrigger>}
       <PopoverContent borderColor="gray.200">
