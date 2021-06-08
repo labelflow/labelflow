@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Text, Flex, Button, chakra } from "@chakra-ui/react";
+import { Tooltip, Text, Flex, Button, chakra } from "@chakra-ui/react";
 import { HiSelector } from "react-icons/hi";
 import { RiCheckboxBlankCircleFill } from "react-icons/ri";
 import { LabelClass } from "../../graphql-types.generated";
@@ -24,14 +24,20 @@ const ClassSelectionButton = React.forwardRef<
       onClick={toggle}
       bg="white"
     >
-      <Flex alignItems="center">
-        <CircleIcon
-          color={selectedLabelClass?.color ?? "gray.300"}
-          fontSize="2xl"
-          mr="2"
-        />
-        <Text>{selectedLabelClass?.name ?? "None"}</Text>
-      </Flex>
+      <Tooltip
+        label={`Selected class (${selectedLabelClass?.name ?? "None"})`}
+        placement="bottom"
+        openDelay={1000}
+      >
+        <Flex alignItems="center">
+          <CircleIcon
+            color={selectedLabelClass?.color ?? "gray.300"}
+            fontSize="2xl"
+            mr="2"
+          />
+          <Text>{selectedLabelClass?.name ?? "None"}</Text>
+        </Flex>
+      </Tooltip>
     </Button>
   );
 });
