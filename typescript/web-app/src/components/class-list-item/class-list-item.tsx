@@ -1,4 +1,4 @@
-import { Box, Text, Kbd, Flex, chakra } from "@chakra-ui/react";
+import { Box, Text, Kbd, Flex, chakra, Tooltip } from "@chakra-ui/react";
 import { RiCheckboxBlankCircleFill } from "react-icons/ri";
 
 const CircleIcon = chakra(RiCheckboxBlankCircleFill);
@@ -13,47 +13,97 @@ const CircleIcon = chakra(RiCheckboxBlankCircleFill);
  */
 export const ClassListItem = (props: {
   item: { name: string; type?: string; color?: string; shortcut?: string };
-  highlight: boolean;
+  highlight?: boolean;
+  selected?: boolean;
   index: number;
   itemProps: any;
+  isCreateClassItem?: boolean;
 }) => {
-  const { item, highlight, index, itemProps } = props;
-  const { type, color, name, shortcut } = item;
+  const { item, highlight, selected, index, itemProps, isCreateClassItem } =
+    props;
+  const { color, name, shortcut } = item;
+
+  // arrow function instead of nested ternaries to avoid eslint error
+  const bgColor = (() => {
+    if (selected && !isCreateClassItem) {
+      return "gray.300";
+    }
+    if (highlight) {
+      return "gray.100";
+    }
+    return "transparent";
+  })();
 
   return (
     <Box
-      bgColor={highlight ? "gray.100" : "transparent"}
+      bgColor={bgColor}
       key={`${name}${index}`}
       {...itemProps}
+      pl="3"
+      pr="3"
+      pt="1"
+      pb="1"
     >
-      {type === "CreateClassItem" ? (
-        <Flex justifyContent="space-between" alignItems="center">
-          <Flex justifyContent="flex-start">
-            <Text fontWeight="light" fontStyle="italic">
+      {isCreateClassItem ? (
+        <Tooltip
+          placement="right"
+          openDelay={300}
+          label={`Create class ${name}`}
+          aria-label={`Create class ${name}`}
+        >
+          <Flex justifyContent="space-between" alignItems="center">
+            <Text
+              whiteSpace="nowrap"
+              overflow="hidden"
+              fontWeight="light"
+              flexShrink={0}
+              fontStyle="italic"
+              ml="3"
+            >
               Create class&nbsp;
             </Text>
-            <Text fontWeight="bold" fontStyle="italic">{`"${name}"`}</Text>
+            <Text
+              flexGrow={1}
+              whiteSpace="nowrap"
+              overflow="hidden"
+              textOverflow="ellipsis"
+              fontWeight="bold"
+              fontStyle="italic"
+            >{`"${name}"`}</Text>
           </Flex>
-        </Flex>
+        </Tooltip>
       ) : (
-        <Flex
-          justifyContent="space-between"
-          alignItems="center"
-          pl="3"
-          pr="3"
-          pt="1"
-          pb="1"
+        <Tooltip
+          placement="right"
+          openDelay={300}
+          label={name}
+          aria-label={name}
         >
-          <Flex alignItems="center">
-            <CircleIcon color={color} fontSize="2xl" ml="2" mr="2" />
-            <Text>{name}</Text>
+          <Flex justifyContent="space-between" alignItems="center">
+            <CircleIcon
+              flexShrink={0}
+              flexGrow={0}
+              color={color}
+              fontSize="2xl"
+              ml="2"
+              mr="2"
+            />
+            <Text
+              flexGrow={1}
+              whiteSpace="nowrap"
+              overflow="hidden"
+              textOverflow="ellipsis"
+            >
+              {name}
+            </Text>
+
+            {shortcut && (
+              <Kbd flexShrink={0} flexGrow={0} justifyContent="center" mr="2">
+                {shortcut}
+              </Kbd>
+            )}
           </Flex>
-          {shortcut && (
-            <Kbd justifyContent="center" mr="2">
-              {shortcut}
-            </Kbd>
-          )}
-        </Flex>
+        </Tooltip>
       )}
     </Box>
   );

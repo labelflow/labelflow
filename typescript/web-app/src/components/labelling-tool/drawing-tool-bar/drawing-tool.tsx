@@ -9,7 +9,7 @@ export const DrawingTool = () => {
   const setSelectedTool = useLabellingStore((state) => state.setSelectedTool);
 
   return (
-    <Tooltip label="Drawing tool" placement="right">
+    <Tooltip label="Drawing tool" placement="right" openDelay={300}>
       <IconButton
         icon={<RiCheckboxBlankLine size="1.3em" />}
         role="checkbox"
