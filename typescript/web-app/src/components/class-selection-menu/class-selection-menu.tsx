@@ -39,6 +39,7 @@ export const ClassSelectionMenu = ({
         minW="60"
         justifyContent="space-between"
         pointerEvents={isOpen ? "none" : "auto"}
+        bg="white"
       >
         <Flex alignItems="center">
           <CircleIcon
