@@ -174,12 +174,10 @@ export const ImportImagesModalDropzone = ({
         {isEmpty(files) ? (
           <Dropzone onDropEnd={setFiles} />
         ) : (
-          !isEmpty(files) && (
-            <FilesStatuses
-              files={files}
-              fileUploadStatuses={fileUploadStatuses}
-            />
-          )
+          <FilesStatuses
+            files={files}
+            fileUploadStatuses={fileUploadStatuses}
+          />
         )}
       </ModalBody>
     </>
