@@ -34,14 +34,17 @@ const imageQuery = gql`
   }
 `;
 
+type ImageQueryResponse = {
+  image: Pick<Image, "id" | "name">;
+};
+
 const ImagePage = () => {
-  const { id } = useRouter().query;
+  const id = useRouter()?.query?.id;
 
-  const { data: imageResult } = useQuery<{
-    image: Pick<Image, "id" | "name">;
-  }>(imageQuery, { variables: { id } });
-
-  const image = imageResult?.image;
+  const imageName = useQuery<ImageQueryResponse>(imageQuery, {
+    variables: { id },
+    skip: typeof id !== "string",
+  }).data?.image.name;
 
   return (
     <Layout
@@ -63,7 +66,7 @@ const ImagePage = () => {
               whiteSpace="nowrap"
               overflow="hidden"
             >
-              {image?.name}
+              {imageName}
             </Text>
           </BreadcrumbItem>
         </Breadcrumb>
