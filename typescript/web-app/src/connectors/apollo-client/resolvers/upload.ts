@@ -1,15 +1,28 @@
+import { v4 as uuidv4 } from "uuid";
 import type {
   UploadTarget,
   UploadTargetDirect,
   UploadTargetHttp,
 } from "../../../graphql-types.generated";
+import { windowExists } from "../../../utils/window-exists";
+
+declare let self: ServiceWorkerGlobalScope;
 
 /**
  * A way for the server to tell how it wants to accept file uploads
  * @returns a presigned URL for the client to upload files to, or `null` if the server wants to accept direct graphql uploads
  */
 const getUploadTarget = async (): Promise<UploadTarget> => {
-  return { direct: true };
+  if (windowExists) {
+    // We run in the window scope
+    return { direct: true };
+  }
+  // We run in the worker scope or nodejs
+  const fileId = uuidv4();
+  return {
+    uploadUrl: `${self.location.protocol}://${self.location.host}/worker/images/${fileId}`,
+    downloadUrl: `${self.location.protocol}://${self.location.host}/worker/images/${fileId}`,
+  };
 };
 
 export default {

@@ -11,23 +11,7 @@ import type {
 } from "../../../graphql-types.generated";
 
 import { db, DbImage } from "../../database";
-
-let windowExists: boolean | null = null;
-// Robust way to detect if window exists, only once
-const detectWindow = () => {
-  if (windowExists === null) {
-    try {
-      if (window) {
-        windowExists = true;
-      } else {
-        windowExists = false;
-      }
-    } catch (e) {
-      windowExists = false;
-    }
-  }
-};
-detectWindow();
+import { windowExists } from "../../../utils/window-exists";
 
 const getUrlFromFileId = memoize(async (id: string): Promise<string> => {
   if (windowExists) {
@@ -45,20 +29,6 @@ const getUrlFromFileId = memoize(async (id: string): Promise<string> => {
 
 export const clearGetUrlFromFileIdMem = () => {
   memoize.clear(getUrlFromFileId);
-};
-
-const getImageById = async (id: string): Promise<DbImage> => {
-  const entity = await db.image.get(id);
-
-  if (entity === undefined) {
-    throw new Error("No image with such id");
-  }
-
-  if (!("url" in entity)) {
-    const url = await getUrlFromFileId(entity.fileId);
-    return { ...entity, url };
-  }
-  return entity;
 };
 
 export const getPaginatedImages = async (
@@ -81,12 +51,25 @@ export const getLabelsByImageId = async (imageId: string) => {
 };
 
 // Queries
-const labels = async ({ id }: Image) => {
+const labels = async ({ id }: DbImage) => {
   return getLabelsByImageId(id);
 };
 
-const image = (_: any, args: QueryImageArgs) => {
-  return getImageById(args?.where?.id);
+const url = async (dbImage: DbImage) => {
+  if ("fileId" in dbImage) {
+    return getUrlFromFileId(dbImage.fileId);
+  }
+  if ("url" in dbImage) {
+    return dbImage.url;
+  }
+};
+
+const image = async (_: any, args: QueryImageArgs) => {
+  const entity = await db.image.get(args?.where?.id);
+  if (entity === undefined) {
+    throw new Error("No image with such id");
+  }
+  return entity;
 };
 
 const images = async (_: any, args: QueryImagesArgs) => {
@@ -96,7 +79,6 @@ const images = async (_: any, args: QueryImagesArgs) => {
     imagesList.map(async (imageEntity: any) => {
       return {
         ...imageEntity,
-        url: await getUrlFromFileId(imageEntity.fileId),
       };
     })
   );
@@ -138,7 +120,7 @@ const createImage = async (
           };
 
           await db.image.add(newImageEntity);
-          resolve(getImageById(imageId));
+          resolve(newImageEntity);
         };
         imageObject.onerror = async () => {
           reject(
@@ -232,10 +214,7 @@ const createImage = async (
 
       await db.image.add(newImageEntity);
 
-      console.log("Yooooo");
-      const result = await getImageById(imageId);
-      console.log("xxx");
-      return result;
+      return newImageEntity;
     } catch (e) {
       console.error(e);
       await db.file.delete(fileId);
@@ -261,5 +240,6 @@ export default {
 
   Image: {
     labels,
+    url,
   },
 };

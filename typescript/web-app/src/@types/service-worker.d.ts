@@ -148,4 +148,15 @@ interface ServiceWorkerGlobalScope {
 
   fetch(request: Request | string): Promise<Response>;
   skipWaiting(): Promise<void>;
+  location: {
+    hash: string;
+    host: string;
+    hostname: string;
+    href: string;
+    origin: string;
+    pathname: string;
+    port: string;
+    protocol: string;
+    search: string;
+  };
 }
