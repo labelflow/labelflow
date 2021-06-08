@@ -39,9 +39,9 @@
   },
   "devDependencies": {
     "@labelflow/dev-utils": "workspace:typescript/dev-utils",
-    "@storybook/addon-actions": "^6.2.9",
-    "@storybook/addons": "^6.2.9",
-    "@storybook/react": "^6.2.9",
+    "@storybook/addon-actions": "6.3.0-beta.15",
+    "@storybook/addons": "6.3.0-beta.15",
+    "@storybook/react": "6.3.0-beta.15",
     "@testing-library/dom": "^7.31.0",
     "@testing-library/jest-dom": "^5.12.0",
     "@testing-library/react": "11.2.6",

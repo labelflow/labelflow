@@ -3372,16 +3372,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@hapi/accept@npm:5.0.2":
-  version: 5.0.2
-  resolution: "@hapi/accept@npm:5.0.2"
-  dependencies:
-    "@hapi/boom": 9.x.x
-    "@hapi/hoek": 9.x.x
-  checksum: ea9ae15ac21887927082321dbb12334d5ea8db6564a2e0130b759757b515a33c5f00dab08a69ec0de7dad972978456c2f2810e86f006cf6efd8b7d251229a9aa
-  languageName: node
-  linkType: hard
-
 "@hapi/boom@npm:9.x.x":
   version: 9.1.2
   resolution: "@hapi/boom@npm:9.1.2"
@@ -3680,9 +3670,9 @@ __metadata:
     "@graphql-tools/schema": 7.1.5
     "@labelflow/dev-utils": "workspace:typescript/dev-utils"
     "@labelflow/react-openlayers-fiber": "workspace:typescript/react-openlayers-fiber"
-    "@storybook/addon-actions": ^6.2.9
-    "@storybook/addons": ^6.2.9
-    "@storybook/react": ^6.2.9
+    "@storybook/addon-actions": 6.3.0-beta.15
+    "@storybook/addons": 6.3.0-beta.15
+    "@storybook/react": 6.3.0-beta.15
     "@testing-library/dom": ^7.31.0
     "@testing-library/jest-dom": ^5.12.0
     "@testing-library/react": 11.2.6
@@ -3809,24 +3799,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@next/env@npm:10.2.3":
-  version: 10.2.3
-  resolution: "@next/env@npm:10.2.3"
-  checksum: 51b1783739f0ff2666c6c3a07e68b135a4d4641533efada19b3b5889f18f17f83a6d13db7f416f6543403b5ba65d5b95bebf72f3a1322fabb4a267036acd12eb
-  languageName: node
-  linkType: hard
-
 "@next/polyfill-module@npm:10.2.0":
   version: 10.2.0
   resolution: "@next/polyfill-module@npm:10.2.0"
   checksum: 57616853ef5aee3a1f11ff8cfa04846184efb95e514cce3abc706e9470e35cedd0966ab9328c8957878255f51fab7e3f6211db0aaee318de4476bed1d490fbe1
-  languageName: node
-  linkType: hard
-
-"@next/polyfill-module@npm:10.2.3":
-  version: 10.2.3
-  resolution: "@next/polyfill-module@npm:10.2.3"
-  checksum: d78f72491e6b378094f8c2fd332f9c90f587cd0a8e8a1650071c71f71b0dd48d92d8e7828ef3906a36b441bc2add7eed83931f56187591947bab8d5dc0b7adaa
   languageName: node
   linkType: hard
 
@@ -3852,28 +3828,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@next/react-dev-overlay@npm:10.2.3":
-  version: 10.2.3
-  resolution: "@next/react-dev-overlay@npm:10.2.3"
-  dependencies:
-    "@babel/code-frame": 7.12.11
-    anser: 1.4.9
-    chalk: 4.0.0
-    classnames: 2.2.6
-    css.escape: 1.5.1
-    data-uri-to-buffer: 3.0.1
-    platform: 1.3.6
-    shell-quote: 1.7.2
-    source-map: 0.8.0-beta.0
-    stacktrace-parser: 0.1.10
-    strip-ansi: 6.0.0
-  peerDependencies:
-    react: ^16.9.0 || ^17
-    react-dom: ^16.9.0 || ^17
-  checksum: 8f0489200ecd34785c21d9c55a79fc533652b9ef45636ec34e99549ab5d3e6ea6fcb90f9f530c7b7acda164f1e70d6f8c4256ef2dcab0d194d4b5f34ed87c39c
-  languageName: node
-  linkType: hard
-
 "@next/react-refresh-utils@npm:10.2.0":
   version: 10.2.0
   resolution: "@next/react-refresh-utils@npm:10.2.0"
@@ -3884,19 +3838,6 @@ __metadata:
     webpack:
       optional: true
   checksum: 5b7f9068aa6315bb1c460a1f1c804baf7a62ad701d2b26061f2a6032bc5014dc5b4881f8c313b3bdd1e9616fabf038abfaf83c8955f826750b64b2af96bfe060
-  languageName: node
-  linkType: hard
-
-"@next/react-refresh-utils@npm:10.2.3":
-  version: 10.2.3
-  resolution: "@next/react-refresh-utils@npm:10.2.3"
-  peerDependencies:
-    react-refresh: 0.8.3
-    webpack: ^4 || ^5
-  peerDependenciesMeta:
-    webpack:
-      optional: true
-  checksum: 1f2a3452466ab8bcd1b08bc3909bbc30393c1adbe0054b19704dd6ceec85740d4d7912fafeccda27f68354b54b344df95558cbc40ad176f4b5489c7663fa7d38
   languageName: node
   linkType: hard
 
@@ -4256,39 +4197,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/addon-actions@npm:^6.2.9":
-  version: 6.2.9
-  resolution: "@storybook/addon-actions@npm:6.2.9"
-  dependencies:
-    "@storybook/addons": 6.2.9
-    "@storybook/api": 6.2.9
-    "@storybook/client-api": 6.2.9
-    "@storybook/components": 6.2.9
-    "@storybook/core-events": 6.2.9
-    "@storybook/theming": 6.2.9
-    core-js: ^3.8.2
-    fast-deep-equal: ^3.1.3
-    global: ^4.4.0
-    lodash: ^4.17.20
-    polished: ^4.0.5
-    prop-types: ^15.7.2
-    react-inspector: ^5.1.0
-    regenerator-runtime: ^0.13.7
-    ts-dedent: ^2.0.0
-    util-deprecate: ^1.0.2
-    uuid-browser: ^3.1.0
-  peerDependencies:
-    react: ^16.8.0 || ^17.0.0
-    react-dom: ^16.8.0 || ^17.0.0
-  peerDependenciesMeta:
-    react:
-      optional: true
-    react-dom:
-      optional: true
-  checksum: 071c4a5b18982fe5bf48a5534b406271f2e8bc62f46c08a6d0b7cd04463ed3773d4a761f5331996d7f2efb7b01a1afdf4d1bd169f82ff167899e708f187655a9
-  languageName: node
-  linkType: hard
-
 "@storybook/addon-knobs@npm:^6.2.9":
   version: 6.2.9
   resolution: "@storybook/addon-knobs@npm:6.2.9"
@@ -4324,7 +4232,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/addons@npm:6.2.9, @storybook/addons@npm:^6.2.9":
+"@storybook/addons@npm:6.2.9":
   version: 6.2.9
   resolution: "@storybook/addons@npm:6.2.9"
   dependencies:
@@ -9658,7 +9566,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"browserslist@npm:4.16.6, browserslist@npm:^4.12.0, browserslist@npm:^4.14.5, browserslist@npm:^4.16.6":
+"browserslist@npm:^4.12.0, browserslist@npm:^4.14.5, browserslist@npm:^4.16.6":
   version: 4.16.6
   resolution: "browserslist@npm:4.16.6"
   dependencies:
@@ -9963,13 +9871,6 @@ __metadata:
   version: 1.0.30001228
   resolution: "caniuse-lite@npm:1.0.30001228"
   checksum: a4eb04288e9b7f7bda158126f37e8dab97a5fc851dab192083f36906d8bf76e0526afa0692a662267ea4b3df0b0ba13f847457ac2be0f1ea209ec3013b7caabe
-  languageName: node
-  linkType: hard
-
-"caniuse-lite@npm:^1.0.30001228":
-  version: 1.0.30001235
-  resolution: "caniuse-lite@npm:1.0.30001235"
-  checksum: 4951fd24c07f6e1c5b05e4b2e121564eb0f50eca4aceb6901e60764a5fa5361c79721e2ccc60fb2134312f3b46ae8dda622e325e2f2ed5b864d844640e5bf8b9
   languageName: node
   linkType: hard
 
@@ -16440,12 +16341,10 @@ fsevents@^1.2.7:
     jest: 26.6.3
     jest-canvas-mock: ^2.3.1
     jest-transform-graphql: ^2.1.0
-    next: ^10.2.3
     node-polyfill-webpack-plugin: ^1.1.2
     prettier: 2.3.0
     react: 17.0.2
     react-dom: 17.0.2
-    storybook-addon-next-router: ^2.0.4
     ts-jest: 26.5.6
     ts-node: 9.1.1
     typescript: 4.2.4
@@ -17772,79 +17671,6 @@ fsevents@^1.2.7:
   bin:
     next: dist/bin/next
   checksum: 2c5c1da075664ff9646a66fb6495982f1258a81cb1264dcd909df13411a6c55ccbb1c777a67c27cff3d7ff901c627f14144ebaa647080e07cf8fee840c3eae45
-  languageName: node
-  linkType: hard
-
-"next@npm:^10.2.3":
-  version: 10.2.3
-  resolution: "next@npm:10.2.3"
-  dependencies:
-    "@babel/runtime": 7.12.5
-    "@hapi/accept": 5.0.2
-    "@next/env": 10.2.3
-    "@next/polyfill-module": 10.2.3
-    "@next/react-dev-overlay": 10.2.3
-    "@next/react-refresh-utils": 10.2.3
-    "@opentelemetry/api": 0.14.0
-    assert: 2.0.0
-    ast-types: 0.13.2
-    browserify-zlib: 0.2.0
-    browserslist: 4.16.6
-    buffer: 5.6.0
-    caniuse-lite: ^1.0.30001228
-    chalk: 2.4.2
-    chokidar: 3.5.1
-    constants-browserify: 1.0.0
-    crypto-browserify: 3.12.0
-    cssnano-simple: 2.0.0
-    domain-browser: 4.19.0
-    encoding: 0.1.13
-    etag: 1.8.1
-    find-cache-dir: 3.3.1
-    get-orientation: 1.1.2
-    https-browserify: 1.0.0
-    jest-worker: 27.0.0-next.5
-    native-url: 0.3.4
-    node-fetch: 2.6.1
-    node-html-parser: 1.4.9
-    node-libs-browser: ^2.2.1
-    os-browserify: 0.3.0
-    p-limit: 3.1.0
-    path-browserify: 1.0.1
-    pnp-webpack-plugin: 1.6.4
-    postcss: 8.2.13
-    process: 0.11.10
-    prop-types: 15.7.2
-    querystring-es3: 0.2.1
-    raw-body: 2.4.1
-    react-is: 16.13.1
-    react-refresh: 0.8.3
-    stream-browserify: 3.0.0
-    stream-http: 3.1.1
-    string_decoder: 1.3.0
-    styled-jsx: 3.3.2
-    timers-browserify: 2.0.12
-    tty-browserify: 0.0.1
-    use-subscription: 1.5.1
-    util: 0.12.3
-    vm-browserify: 1.1.2
-    watchpack: 2.1.1
-  peerDependencies:
-    fibers: ">= 3.1.0"
-    node-sass: ^4.0.0 || ^5.0.0
-    react: ^16.6.0 || ^17
-    react-dom: ^16.6.0 || ^17
-    sass: ^1.3.0
-  peerDependenciesMeta:
-    fibers:
-      optional: true
-    node-sass:
-      optional: true
-    sass:
-      optional: true
-  bin:
-    next: dist/bin/next
-  checksum: e32ff7cc79cb2fb21a2bb954778f582dbb76525e7b5286ddeaeb832e67c631da54c2369f144dd5f30d3e770666667d9c0d5e1ca9699681a2da26db8b628037a2
   languageName: node
   linkType: hard
 
