@@ -1,4 +1,4 @@
-import { Box, Text, Kbd, Flex, chakra } from "@chakra-ui/react";
+import { Box, Text, Kbd, Flex, chakra, Tooltip } from "@chakra-ui/react";
 import { RiCheckboxBlankCircleFill } from "react-icons/ri";
 
 const CircleIcon = chakra(RiCheckboxBlankCircleFill);
@@ -45,51 +45,65 @@ export const ClassListItem = (props: {
       pb="1"
     >
       {isCreateClassItem ? (
-        <Flex justifyContent="space-between" alignItems="center">
-          <Text
-            whiteSpace="nowrap"
-            overflow="hidden"
-            fontWeight="light"
-            flexShrink={0}
-            fontStyle="italic"
-            ml="3"
-          >
-            Create class&nbsp;
-          </Text>
-          <Text
-            flexGrow={1}
-            whiteSpace="nowrap"
-            overflow="hidden"
-            textOverflow="ellipsis"
-            fontWeight="bold"
-            fontStyle="italic"
-          >{`"${name}"`}</Text>
-        </Flex>
+        <Tooltip
+          placement="right"
+          openDelay={300}
+          label={`Create class ${name}`}
+          aria-label={`Create class ${name}`}
+        >
+          <Flex justifyContent="space-between" alignItems="center">
+            <Text
+              whiteSpace="nowrap"
+              overflow="hidden"
+              fontWeight="light"
+              flexShrink={0}
+              fontStyle="italic"
+              ml="3"
+            >
+              Create class&nbsp;
+            </Text>
+            <Text
+              flexGrow={1}
+              whiteSpace="nowrap"
+              overflow="hidden"
+              textOverflow="ellipsis"
+              fontWeight="bold"
+              fontStyle="italic"
+            >{`"${name}"`}</Text>
+          </Flex>
+        </Tooltip>
       ) : (
-        <Flex justifyContent="space-between" alignItems="center">
-          <CircleIcon
-            flexShrink={0}
-            flexGrow={0}
-            color={color}
-            fontSize="2xl"
-            ml="2"
-            mr="2"
-          />
-          <Text
-            flexGrow={1}
-            whiteSpace="nowrap"
-            overflow="hidden"
-            textOverflow="ellipsis"
-          >
-            {name}
-          </Text>
+        <Tooltip
+          placement="right"
+          openDelay={300}
+          label={name}
+          aria-label={name}
+        >
+          <Flex justifyContent="space-between" alignItems="center">
+            <CircleIcon
+              flexShrink={0}
+              flexGrow={0}
+              color={color}
+              fontSize="2xl"
+              ml="2"
+              mr="2"
+            />
+            <Text
+              flexGrow={1}
+              whiteSpace="nowrap"
+              overflow="hidden"
+              textOverflow="ellipsis"
+            >
+              {name}
+            </Text>
 
-          {shortcut && (
-            <Kbd flexShrink={0} flexGrow={0} justifyContent="center" mr="2">
-              {shortcut}
-            </Kbd>
-          )}
-        </Flex>
+            {shortcut && (
+              <Kbd flexShrink={0} flexGrow={0} justifyContent="center" mr="2">
+                {shortcut}
+              </Kbd>
+            )}
+          </Flex>
+        </Tooltip>
       )}
     </Box>
   );

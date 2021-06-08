@@ -26,7 +26,7 @@ const labelClasses = [
     id: "coaisndoiasndi0",
     createdAt: "today",
     updatedAt: "today",
-    name: "Person",
+    name: "SuperUltraLongNameOIANSOINASOINAOSINASOINAOINS",
     color: "#6B7280",
     shortcut: "1",
     labels: [],
@@ -88,15 +88,9 @@ export const Default = () => {
 };
 
 export const WithSelectedLabelClass = () => {
-  const [selectedLabel, setSelectedLabel] = useState<LabelClass | null>({
-    id: "coaisndoiasndi4",
-    createdAt: "today",
-    updatedAt: "today",
-    name: "Plane",
-    color: "#3B82F6",
-    shortcut: "5",
-    labels: [],
-  });
+  const [selectedLabel, setSelectedLabel] = useState<LabelClass | null>(
+    labelClasses[0]
+  );
   return (
     <Template
       labelClasses={labelClasses}

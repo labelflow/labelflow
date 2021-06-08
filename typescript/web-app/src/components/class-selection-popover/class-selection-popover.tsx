@@ -134,17 +134,22 @@ export const ClassSelectionPopover = ({
                 <Input
                   {...getInputProps({ ref: initialFocusRef })}
                   placeholder="Search..."
+                  pr="4rem"
                 />
-                <InputRightElement>
+                <InputRightElement
+                  width="4rem"
+                  justifyContent="flex-end"
+                  pr="2"
+                >
                   {inputValue ? (
-                    <Flex mr="5">
+                    <>
                       <CloseCircleIcon
                         fontSize="2xl"
                         onClick={reset}
                         color="gray.300"
                       />
                       <Kbd fontSize="md">↩</Kbd>
-                    </Flex>
+                    </>
                   ) : (
                     <Kbd>/</Kbd>
                   )}
