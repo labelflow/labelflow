@@ -42,7 +42,7 @@ export const ClassSelectionPopover = ({
   onSelectedClassChange: (item: LabelClass) => void;
   labelClasses: LabelClass[];
   createNewClass: (name: string) => void;
-  selectedLabelClass: LabelClass | null;
+  selectedLabelClass?: LabelClass | null;
 }) => {
   const labelClassesWithNoneClass = [...labelClasses, noneClass];
   const [inputItems, setInputItems] = useState<
