@@ -31,6 +31,7 @@ test("should propose to create class", () => {
       index={0}
       item={classCreate}
       itemProps={{}}
+      isCreateClassItem
     />
   );
   expect(screen.getByText(/nonExistingClass/i)).toBeDefined();
