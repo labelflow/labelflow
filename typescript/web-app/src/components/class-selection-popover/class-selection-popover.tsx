@@ -19,6 +19,7 @@ import { useCombobox, UseComboboxStateChange } from "downshift";
 import { ClassListItem } from "../class-list-item";
 import { LabelClass } from "../../graphql-types.generated";
 
+// TODO: Move types outside of components scope
 export type CreateClassInput = { name: string; type: string };
 export type NoneClass = { name: string; color: string };
 
@@ -44,7 +45,7 @@ export const ClassSelectionPopover = ({
   onSelectedClassChange: (item: LabelClass | NoneClass) => void;
   labelClasses: LabelClass[];
   createNewClass: (name: string) => void;
-  selectedLabelClass?: LabelClass | null;
+  selectedLabelClass?: LabelClass | NoneClass;
   trigger?: React.ReactNode;
 }) => {
   const labelClassesWithNoneClass = [...labelClasses, noneClass];
@@ -154,7 +155,10 @@ export const ClassSelectionPopover = ({
                     item={item}
                     highlight={highlightedIndex === index}
                     selected={
-                      "id" in item && item.id === selectedLabelClass?.id
+                      ("id" in item &&
+                        item.id === (selectedLabelClass as LabelClass)?.id) ||
+                      (selectedLabelClass?.name === "None" &&
+                        item.name === "None")
                     }
                     index={index}
                     key={`${item.name}${index}`}
