@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { addDecorator } from "@storybook/react";
+import { HStack, Button, Flex } from "@chakra-ui/react";
 import { ClassSelectionMenu } from "../class-selection-menu";
 import { chakraDecorator } from "../../../utils/chakra-decorator";
 import { LabelClass } from "../../../graphql-types.generated";
@@ -9,6 +10,16 @@ addDecorator(chakraDecorator);
 export default {
   title: "web-app/Class selection menu",
 };
+
+const Template: Story<Props> = (args: Props) => (
+  <HStack background="gray.100" padding={4} spacing={4}>
+    <ClassSelectionMenu {...args} />
+    <Button variant="solid" background="white" color="gray.800">
+      Button just to compare
+    </Button>
+    <Flex> </Flex>
+  </HStack>
+);
 
 const labelClasses = [
   {
@@ -65,7 +76,7 @@ const createNewClass = (name: string): void => {
 export const Default = () => {
   const [selectedLabel, setSelectedLabel] = useState<LabelClass | null>(null);
   return (
-    <ClassSelectionMenu
+    <Template
       labelClasses={labelClasses}
       onSelectedClassChange={(labelClass: LabelClass) =>
         setSelectedLabel(labelClass)
@@ -87,7 +98,7 @@ export const WithSelectedLabelClass = () => {
     labels: [],
   });
   return (
-    <ClassSelectionMenu
+    <Template
       labelClasses={labelClasses}
       onSelectedClassChange={(labelClass: LabelClass) =>
         setSelectedLabel(labelClass)
