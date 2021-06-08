@@ -12,16 +12,16 @@ const ClassSelectionButton = React.forwardRef<
   null,
   {
     selectedLabelClass?: LabelClass | null;
-    open: () => void;
+    toggle: () => void;
   }
->(({ selectedLabelClass, open }, ref) => {
+>(({ selectedLabelClass, toggle }, ref) => {
   return (
     <Button
       rightIcon={<SelectorIcon fontSize="md" />}
       minW="60"
       justifyContent="space-between"
       ref={ref}
-      onClick={open}
+      onClick={toggle}
       bg="white"
     >
       <Flex alignItems="center">
@@ -48,27 +48,26 @@ export const ClassSelectionMenu = ({
   selectedLabelClass?: LabelClass | null;
 }) => {
   const [isOpen, setIsOpen] = React.useState(false);
-  const open = () => setIsOpen(!isOpen);
+  const toggle = () => setIsOpen(!isOpen);
   const close = () => setIsOpen(false);
 
   return (
-    <Box pl="3" pr="3">
-      <ClassSelectionPopover
-        isOpen={isOpen}
-        labelClasses={labelClasses}
-        onSelectedClassChange={(labelClass: LabelClass | null) => {
-          onSelectedClassChange(labelClass);
-          close();
-        }}
-        createNewClass={createNewClass}
-        selectedLabelClass={selectedLabelClass}
-        trigger={
-          <ClassSelectionButton
-            open={open}
-            selectedLabelClass={selectedLabelClass}
-          />
-        }
-      />
-    </Box>
+    <ClassSelectionPopover
+      isOpen={isOpen}
+      onClose={close}
+      labelClasses={labelClasses}
+      onSelectedClassChange={(labelClass: LabelClass | null) => {
+        onSelectedClassChange(labelClass);
+        close();
+      }}
+      createNewClass={createNewClass}
+      selectedLabelClass={selectedLabelClass}
+      trigger={
+        <ClassSelectionButton
+          toggle={toggle}
+          selectedLabelClass={selectedLabelClass}
+        />
+      }
+    />
   );
 };
