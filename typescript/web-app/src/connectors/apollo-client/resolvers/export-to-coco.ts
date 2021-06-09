@@ -2,7 +2,7 @@ import { convertLabelflowDatasetToCocoDataset } from "../../../data-converters/c
 import { Image } from "../../../graphql-types.generated";
 import { getPaginatedImages, getUrlFromFileId } from "./image";
 import { getLabels } from "./label";
-import { LabelClassDataSource } from "../datasources/types";
+import { ContextWithDataSources } from "../datasources/types";
 
 export const jsonToDataUri = (json: string): string =>
   `data:application/json;base64,${btoa(json)}`;
@@ -10,7 +10,7 @@ export const jsonToDataUri = (json: string): string =>
 const exportToCoco = async (
   _: any,
   _args: any,
-  context: { dataSources: { labelClassDataSource: LabelClassDataSource } }
+  context: ContextWithDataSources
 ): Promise<string | undefined> => {
   const {
     dataSources: { labelClassDataSource },

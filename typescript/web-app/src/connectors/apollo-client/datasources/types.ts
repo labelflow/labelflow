@@ -4,6 +4,13 @@ import type {
   Maybe,
 } from "../../../graphql-types.generated";
 
+export type ContextWithDataSources = {
+  dataSources: {
+    labelClassDataSource: LabelClassDataSource;
+    labelDataSource: LabelDataSource;
+  };
+};
+
 export type LabelClassDataSource = {
   getPaginatedLabelClasses: (params?: {
     skip?: Maybe<number>;

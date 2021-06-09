@@ -5,7 +5,7 @@ import type {
   MutationDeleteLabelArgs,
   MutationUpdateLabelArgs,
 } from "../../../graphql-types.generated";
-import { LabelClassDataSource } from "../datasources/types";
+import { ContextWithDataSources } from "../datasources/types";
 
 import { db, DbLabel } from "../../database";
 
@@ -15,7 +15,7 @@ export const getLabels = () => db.label.toArray();
 const labelClass = async (
   parent: DbLabel,
   _args: any,
-  context: { dataSources: { labelClassDataSource: LabelClassDataSource } }
+  context: ContextWithDataSources
 ) => {
   const {
     dataSources: { labelClassDataSource },
@@ -24,7 +24,7 @@ const labelClass = async (
   if (parent.labelClassId == null) return null;
 
   try {
-    return labelClassDataSource.getLabelClassById(parent.labelClassId);
+    return await labelClassDataSource.getLabelClassById(parent.labelClassId);
   } catch (e) {
     return null;
   }

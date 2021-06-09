@@ -5,13 +5,13 @@ import type {
   QueryLabelClassesArgs,
 } from "../../../graphql-types.generated";
 
-import { LabelClassDataSource, LabelDataSource } from "../datasources/types";
+import { ContextWithDataSources } from "../datasources/types";
 
 // Queries
 const labels = async (
   parent: LabelClass,
   _: any,
-  context: { dataSources: { labelDataSource: LabelDataSource } }
+  context: ContextWithDataSources
 ) => {
   const {
     dataSources: { labelDataSource },
@@ -22,7 +22,7 @@ const labels = async (
 const labelClass = async (
   _: any,
   args: QueryLabelClassArgs,
-  context: { dataSources: { labelClassDataSource: LabelClassDataSource } }
+  context: ContextWithDataSources
 ): Promise<LabelClass> => {
   const {
     dataSources: { labelClassDataSource },
@@ -34,16 +34,19 @@ const labelClass = async (
 const labelClasses = async (
   _: any,
   args: QueryLabelClassesArgs,
-  {
+  context: ContextWithDataSources
+) => {
+  const {
     dataSources: { labelClassDataSource },
-  }: { dataSources: { labelClassDataSource: LabelClassDataSource } }
-) => labelClassDataSource.getPaginatedLabelClasses(args);
+  } = context;
+  return labelClassDataSource.getPaginatedLabelClasses(args);
+};
 
 // Mutations
 const createLabelClass = async (
   _: any,
   args: MutationCreateLabelClassArgs,
-  context: { dataSources: { labelClassDataSource: LabelClassDataSource } }
+  context: ContextWithDataSources
 ): Promise<LabelClass> => {
   const {
     dataSources: { labelClassDataSource },
