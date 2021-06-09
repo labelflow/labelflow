@@ -11,6 +11,7 @@ import VectorLayer from "ol/layer/Vector";
 import { client } from "../../../../connectors/apollo-client";
 import { Labels } from "../labels";
 import { LabelCreateInput } from "../../../../graphql-types.generated";
+import { useLabellingStore } from "../../../../connectors/labelling-state";
 import { setupTestsWithLocalDatabase } from "../../../../utils/setup-local-db-tests";
 
 setupTestsWithLocalDatabase();
@@ -39,8 +40,8 @@ const createImage = async (name: String) => {
   return id;
 };
 
-const createLabel = (data: LabelCreateInput) => {
-  return client.mutate({
+const createLabel = async (data: LabelCreateInput) => {
+  const mutationResult = await client.mutate({
     mutation: gql`
       mutation createLabel($data: LabelCreateInput!) {
         createLabel(data: $data) {
@@ -52,6 +53,14 @@ const createLabel = (data: LabelCreateInput) => {
       data,
     },
   });
+
+  const {
+    data: {
+      createLabel: { id },
+    },
+  } = mutationResult;
+
+  return id;
 };
 
 it("displays a single label", async () => {
@@ -126,16 +135,18 @@ it("displays created labels", async () => {
   });
 });
 
-it("should select label when user clicks on it", async () => {
+it("should change style of selected label", async () => {
   const mapRef: { current: OlMap | null } = { current: null };
   const imageId = await createImage("myImage");
-  await createLabel({
+  const labelId = await createLabel({
     x: 3.14,
     y: 42.0,
     height: 768,
     width: 362,
     imageId,
   });
+
+  useLabellingStore.setState({ selectedLabelId: labelId });
 
   render(<Labels imageId={imageId} />, {
     wrapper: ({ children }) => (
@@ -150,10 +161,12 @@ it("should select label when user clicks on it", async () => {
   });
 
   await waitFor(() => {
-    expect(
-      (mapRef.current?.getLayers().getArray()[0] as VectorLayer)
-        .getSource()
-        .getFeatures()
-    ).toHaveLength(1);
+    const [feature] = (mapRef.current?.getLayers().getArray()[0] as VectorLayer)
+      .getSource()
+      .getFeatures();
+
+    /* This make this test dependent of the styling.
+     * We could add a selected property on the feature but it is not needed for the moment. */
+    expect(feature.getStyle()).toMatchObject({ zIndex_: 2 });
   });
 });

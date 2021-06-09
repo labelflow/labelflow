@@ -39,24 +39,24 @@ export const Labels = ({ imageId }: { imageId: string }) => {
     <olLayerVector>
       <olSourceVector>
         {labels.map(({ id, x, y, width, height }: Label) => {
+          const isSelected = id === selectedLabelId;
+          const style = new Style({
+            fill: new Fill({
+              color: `${color}${isSelected ? "40" : "10"}`,
+            }),
+            stroke: new Stroke({
+              color,
+              width: 2,
+            }),
+            zIndex: isSelected ? 2 : 1,
+          });
+
           return (
             <olFeature
               key={id}
               id={id}
               geometry={fromExtent([x, y, x + width, y + height])}
-              style={() => {
-                const isSelected = id === selectedLabelId;
-                return new Style({
-                  fill: new Fill({
-                    color: `${color}${isSelected ? "40" : "10"}`,
-                  }),
-                  stroke: new Stroke({
-                    color,
-                    width: 2,
-                  }),
-                  zIndex: isSelected ? 2 : 1,
-                });
-              }}
+              style={style}
             />
           );
         })}
