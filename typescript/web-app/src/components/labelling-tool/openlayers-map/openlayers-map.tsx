@@ -1,4 +1,4 @@
-import { forwardRef, createRef, useRef } from "react";
+import { forwardRef, createRef, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import { RouterContext } from "next/dist/next-server/lib/router-context";
 import { Extent, getCenter } from "ol/extent";
@@ -19,7 +19,7 @@ import "ol/ol.css";
 
 import { DrawBoundingBoxInteraction } from "./draw-bounding-box-interaction";
 import { Labels } from "./labels";
-import { EditLabelClassInteraction } from "./edit-label-class";
+import { EditLabelClass, EditLabelClassInteraction } from "./edit-label-class";
 
 const empty: any[] = [];
 
@@ -73,6 +73,7 @@ const imageQuery = gql`
 `;
 
 export const OpenlayersMap = forwardRef<OlMap>((_, ref) => {
+  const [editClass, setEditClass] = useState(false);
   const editClassOverlayRef = useRef<HTMLElement>();
   const router = useRouter();
   const imageId = router.query?.id;
@@ -108,6 +109,11 @@ export const OpenlayersMap = forwardRef<OlMap>((_, ref) => {
   );
   return (
     <>
+      <EditLabelClass
+        editClassOverlayRef={editClassOverlayRef}
+        isOpen={editClass}
+        onClose={() => setEditClass(false)}
+      />
       <div
         style={{ display: "flex", width: "100%", height: "100%" }}
         onContextMenu={(e) => {
@@ -190,6 +196,7 @@ export const OpenlayersMap = forwardRef<OlMap>((_, ref) => {
               <DrawBoundingBoxInteraction />
               <EditLabelClassInteraction
                 editClassOverlayRef={editClassOverlayRef}
+                setEditClass={setEditClass}
               />
             </ApolloProvider>
           </RouterContext.Provider>

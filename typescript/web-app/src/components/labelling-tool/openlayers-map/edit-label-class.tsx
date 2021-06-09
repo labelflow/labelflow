@@ -5,14 +5,12 @@ import { Coordinate } from "ol/coordinate";
 import { ClassSelectionPopover } from "../../class-selection-popover";
 import { useLabellingStore } from "../../../connectors/labelling-state";
 
-export const EditLabelClass = (props) => {
+export const EditLabelClass = ({ editClassOverlayRef, isOpen, onClose }) => {
   return (
     <div ref={editClassOverlayRef}>
-      <ClassSelectionPopover
-        isOpen
-        onClose={() => setEditClass(false)}
-        labelClasses={[]}
-      />
+      {isOpen && (
+        <ClassSelectionPopover isOpen onClose={onClose} labelClasses={[]} />
+      )}
     </div>
   );
 };
@@ -23,10 +21,10 @@ const isContextMenuEvent = (mapBrowserEvent: MapBrowserEvent) => {
 
 export const EditLabelClassInteraction = ({
   editClassOverlayRef,
+  setEditClass,
 }: {
   editClassOverlayRef: React.MutableRefObject<HTMLElement | undefined>;
 }) => {
-  const [editClass, setEditClass] = useState(false);
   const [editMenuLocation, setEditMenuLocation] =
     useState<Coordinate | undefined>(undefined);
 
@@ -41,9 +39,6 @@ export const EditLabelClassInteraction = ({
         style={null} // To prevent default styling of the selected feature in open layers
         onSelect={(e: SelectEvent) => {
           const selectedFeatures = e.target.getFeatures().getArray();
-          console.log(selectedFeatures);
-          e.preventDefault();
-          e.stopPropagation();
           if (selectedFeatures?.length > 0) {
             const selectedFeature = selectedFeatures[0];
             const { id } = selectedFeature.getProperties();
