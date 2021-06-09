@@ -8,12 +8,15 @@ import { render, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import gql from "graphql-tag";
 import { Map as OlMap } from "ol";
+import { useRouter } from "next/router";
 import VectorLayer from "ol/layer/Vector";
 import { client } from "../../../../connectors/apollo-client";
 import { Labels } from "../labels";
 import { LabelCreateInput } from "../../../../graphql-types.generated";
 import { useLabellingStore } from "../../../../connectors/labelling-state";
 import { setupTestsWithLocalDatabase } from "../../../../utils/setup-local-db-tests";
+
+jest.mock("next/router");
 
 setupTestsWithLocalDatabase();
 
@@ -64,9 +67,19 @@ const createLabel = async (data: LabelCreateInput) => {
   return id;
 };
 
+let imageId: string;
+
+beforeEach(async () => {
+  imageId = await createImage("myImage");
+
+  (useRouter as jest.Mock).mockImplementation(() => ({
+    query: { id: imageId },
+  }));
+});
+
 it("displays a single label", async () => {
   const mapRef: { current: OlMap | null } = { current: null };
-  const imageId = await createImage("myImage");
+
   await createLabel({
     x: 3.14,
     y: 42.0,
@@ -75,7 +88,7 @@ it("displays a single label", async () => {
     imageId,
   });
 
-  render(<Labels imageId={imageId} />, {
+  render(<Labels />, {
     wrapper: ({ children }) => (
       <Map
         ref={(map) => {
@@ -98,7 +111,6 @@ it("displays a single label", async () => {
 
 it("displays created labels", async () => {
   const mapRef: { current: OlMap | null } = { current: null };
-  const imageId = await createImage("myImage");
   await createLabel({
     x: 3.14,
     y: 42.0,
@@ -115,7 +127,7 @@ it("displays created labels", async () => {
     imageId,
   });
 
-  render(<Labels imageId={imageId} />, {
+  render(<Labels />, {
     wrapper: ({ children }) => (
       <Map
         ref={(map) => {
@@ -138,7 +150,6 @@ it("displays created labels", async () => {
 
 it("should change style of selected label", async () => {
   const mapRef: { current: OlMap | null } = { current: null };
-  const imageId = await createImage("myImage");
   const labelId = await createLabel({
     x: 3.14,
     y: 42.0,
@@ -149,7 +160,7 @@ it("should change style of selected label", async () => {
 
   useLabellingStore.setState({ selectedLabelId: labelId });
 
-  render(<Labels imageId={imageId} />, {
+  render(<Labels />, {
     wrapper: ({ children }) => (
       <Map
         ref={(map) => {
@@ -174,7 +185,6 @@ it("should change style of selected label", async () => {
 
 it("should change style of selected label", async () => {
   const mapRef: { current: OlMap | null } = { current: null };
-  const imageId = await createImage("myImage");
   const labelId = await createLabel({
     x: 3.14,
     y: 42.0,
@@ -185,7 +195,7 @@ it("should change style of selected label", async () => {
 
   useLabellingStore.setState({ selectedLabelId: labelId });
 
-  const { container } = render(<Labels imageId={imageId} />, {
+  const { container } = render(<Labels />, {
     wrapper: ({ children }) => (
       <Map
         ref={(map) => {

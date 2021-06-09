@@ -1,4 +1,5 @@
 const path = require("path");
+
 module.exports = {
   images: {
     deviceSizes: [
@@ -6,11 +7,13 @@ module.exports = {
     ],
   },
   future: {
-    webpack5: false,
+    webpack5: true,
   },
   webpack: (config, { defaultLoaders, isServer, config: nextConfig, ...others }) => {
     // Note: we provide webpack above so you should not `require` it
     // Perform customizations to webpack config
+
+    const isWebpack5 = nextConfig.future.webpack5;
 
     // Add graphql import
     // See https://www.npmjs.com/package/graphql-tag#webpack-loading-and-preprocessing
@@ -18,8 +21,8 @@ module.exports = {
       ...config.module.rules,
       {
         test: /\.(graphql|gql)$/,
-        exclude: /node_modules/,
-        loader: "graphql-tag/loader",
+        use: "graphql-tag/loader",
+        exclude: /node_modules/
       }
     ];
 
@@ -33,8 +36,8 @@ module.exports = {
       ...config.module.rules,
       {
         test: /\.(tsx|ts|js|mjs|jsx)$/,
-        include: [resolvedBaseUrl],
         use: defaultLoaders.babel,
+        include: [resolvedBaseUrl],
         exclude: (excludePath) => {
           // To allow to resolve files inside `node_modules`, we could add a condition like this:
           //     return /node_modules/.test(excludePath) && ! /\/ol/.test(excludePath)
@@ -56,23 +59,88 @@ module.exports = {
         return external
       } else {
         // `externals` options that are functions are overridden, to force externalize of the packages we want
-        const isWebpack5 = nextConfig.future.webpack5;
+
         if (isWebpack5) {
-          throw new Error("Webpack 5 not yet supported, check next.config.js")
+          // Return a webpack5-like `externals` option function
+          return ({ context, request, contextInfo, getResolve }, callback) => {
+            if (/^ol/.test(request)) {
+              // Make an exception for `ol`, never externalize this import, it must be transpiled and bundled
+              return callback?.();
+            } else {
+              // Use the standard NextJS `externals` function
+              return external({ context, request, contextInfo, getResolve }, callback);
+            }
+          }
         } else {
           // Return a webpack4-like `externals` option function
           return (context, request, callback) => {
             if (/^ol/.test(request)) {
               // Make an exception for `ol`, never externalize this import, it must be transpiled and bundled
-              callback();
+              return callback?.();
             } else {
               // Use the standard NextJS `externals` function
-              external(context, request, callback)
+              return external(context, request, callback);
             }
           }
         }
       }
     })
+
+
+    // Allow to transpile node modules that depends on node built-ins into browser.
+    // E.g.: `apollo-server-core`
+    // See https://github.com/webpack-contrib/css-loader/issues/447
+    // See https://github.com/vercel/next.js/issues/7755
+    if (!isServer) {
+      if (isWebpack5) {
+        // See https://www.npmjs.com/package/node-polyfill-webpack-plugin
+        const NodePolyfillPlugin = require("node-polyfill-webpack-plugin")
+
+        // See https://github.com/webpack-contrib/css-loader/issues/447#issuecomment-761853289
+        // See https://github.com/vercel/next.js/issues/7755#issuecomment-812805708
+        config.resolve = {
+          ...config.resolve ?? {},
+          fallback: {
+            ...config.resolve?.fallback ?? {},
+            module: false,
+            dgram: false,
+            dns: false,
+            fs: false,
+            http2: false,
+            net: false,
+            tls: false,
+            child_process: false
+          },
+        }
+        config.plugins = [
+          ...config?.plugins ?? [],
+          new NodePolyfillPlugin({
+            excludeAliases: ["console"]
+          })
+        ]
+      } else {
+        // Webpack 4 uses the `node` option
+        config.node = {
+          ...config.node ?? {},
+          module: "empty",
+          dgram: "empty",
+          dns: "empty",
+          path: "empty",
+          fs: "empty",
+          os: "empty",
+          crypto: "empty",
+          process: "empty",
+          // stream: "empty",
+          http2: "empty",
+          http: "empty",
+          https: "empty",
+          net: "empty",
+          tls: "empty",
+          zlib: "empty",
+          child_process: "empty"
+        }
+      }
+    }
 
     // Important: return the modified config
     return config;

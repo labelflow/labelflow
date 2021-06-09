@@ -4,13 +4,6 @@ import { Circle as CircleStyle, Fill, Stroke, Style } from "ol/style";
 
 import { Map } from "../map";
 
-import "ol/ol.css";
-
-export default {
-  title: "react-openlayers-fiber/OL Examples",
-  component: Map,
-};
-
 const image = new CircleStyle({
   radius: 5,
   // fill: null,

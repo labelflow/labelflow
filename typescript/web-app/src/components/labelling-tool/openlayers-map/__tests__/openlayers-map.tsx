@@ -9,6 +9,7 @@ import useMeasure from "react-use-measure";
 import gql from "graphql-tag";
 import { Map as OlMap } from "ol";
 import VectorLayer from "ol/layer/Vector";
+import { useRouter } from "next/router";
 import { client } from "../../../../connectors/apollo-client";
 import { OpenlayersMap } from "../openlayers-map";
 import { LabelCreateInput } from "../../../../graphql-types.generated";
@@ -22,6 +23,8 @@ setupTestsWithLocalDatabase();
 
 jest.mock("react-use-measure");
 
+jest.mock("next/router");
+
 // @ts-ignore
 useMeasure.mockImplementation(() => [null, { width: 1000, height: 1000 }]);
 
@@ -31,9 +34,6 @@ const createImage = async (name: String) => {
       mutation createImage($file: Upload!, $name: String!) {
         createImage(data: { name: $name, file: $file }) {
           id
-          height
-          width
-          url
         }
       }
     `,
@@ -44,10 +44,12 @@ const createImage = async (name: String) => {
   });
 
   const {
-    data: { createImage: image },
+    data: {
+      createImage: { id },
+    },
   } = mutationResult;
 
-  return image;
+  return id;
 };
 
 const createLabel = async (data: LabelCreateInput) => {
@@ -73,17 +75,22 @@ const createLabel = async (data: LabelCreateInput) => {
 
 test("should select label when user clicks on it", async () => {
   const mapRef = createRef<OlMap>();
-  const image = await createImage("myImage");
+  const imageId = await createImage("myImage");
+
+  (useRouter as jest.Mock).mockImplementation(() => ({
+    query: { id: imageId },
+  }));
+
   const label = await createLabel({
     x: 0,
     y: 0,
     height: 1000,
     width: 1000,
-    imageId: image.id,
+    imageId,
   });
   useLabellingStore.setState({ selectedTool: Tools.SELECTION });
 
-  render(<OpenlayersMap ref={mapRef} image={image} />, {
+  render(<OpenlayersMap ref={mapRef} />, {
     wrapper: ({ children }) => (
       <ApolloProvider client={client}>{children}</ApolloProvider>
     ),

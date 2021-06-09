@@ -10,19 +10,15 @@ import {
 } from "@chakra-ui/react";
 import { RiArrowRightSLine, RiArrowLeftSLine } from "react-icons/ri";
 import { findIndex, isNaN, isNumber } from "lodash/fp";
-import { NextRouter } from "next/router";
+import { useRouter } from "next/router";
 import NextLink from "next/link";
 import { useHotkeys } from "react-hotkeys-hook";
+import { useQuery } from "@apollo/client";
+import gql from "graphql-tag";
 
 import { keymap } from "../../../keymap";
 
 import { Image } from "../../../graphql-types.generated";
-
-export type Props = {
-  imageId: string | undefined;
-  images: Pick<Image, "id">[] | undefined;
-  router: NextRouter;
-};
 
 const digitsPerRem = 0.55;
 
@@ -31,10 +27,24 @@ const parse = (x: string): number | undefined =>
 const format = (x: number | undefined): string =>
   isNumber(x) && !isNaN(x) && x >= 0 ? `${x + 1}` : `-`;
 
-export const ImageNavigationTool = ({ imageId, images, router }: Props) => {
+const imagesQuery = gql`
+  query {
+    images {
+      id
+    }
+  }
+`;
+
+export const ImageNavigationTool = () => {
+  const router = useRouter();
+  const imageId = router.query.id;
+
+  const images =
+    useQuery<{ images: Pick<Image, "id">[] }>(imagesQuery)?.data?.images;
+
   const imageIndex: number | undefined =
     images != null && imageId != null
-      ? findIndex({ id: imageId }, images)
+      ? findIndex({ id: imageId as string }, images)
       : undefined;
 
   const imageCount = images?.length;
@@ -112,6 +122,7 @@ export const ImageNavigationTool = ({ imageId, images, router }: Props) => {
         <NextLink href={`/images/${images[imageIndex - 1]?.id}`} passHref>
           <a>
             <Tooltip
+              openDelay={300}
               label={`Previous image [${keymap.goToPreviousImage.key}]`}
               placement="top"
             >
@@ -131,7 +142,7 @@ export const ImageNavigationTool = ({ imageId, images, router }: Props) => {
           icon={<RiArrowLeftSLine size="1.5em" />}
         />
       )}
-      <Tooltip label="Current image index" placement="top">
+      <Tooltip label="Current image index" placement="top" openDelay={300}>
         <NumberInput
           rounded={6}
           allowMouseWheel
@@ -180,6 +191,7 @@ export const ImageNavigationTool = ({ imageId, images, router }: Props) => {
             <Tooltip
               label={`Next image [${keymap.goToNextImage.key}]`}
               placement="top"
+              openDelay={300}
             >
               <IconButton
                 aria-label="Next image"

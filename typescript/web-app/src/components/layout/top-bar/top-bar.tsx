@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 import { HStack, Spacer } from "@chakra-ui/react";
 import { Logo } from "../../logo";
-import { ImportButton } from "./import-button";
+import { ImportButton } from "../../import-button";
 import { KeymapButton } from "./keymap-button";
 
 export type Props = {

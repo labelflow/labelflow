@@ -8,11 +8,6 @@ import { Map } from "../map";
 
 import icon from "./icon.png";
 
-export default {
-  title: "react-openlayers-fiber/OL Examples",
-  component: Map,
-};
-
 export const Icon = () => {
   const [displayPopup, setDisplayPopup] = useState(false);
 

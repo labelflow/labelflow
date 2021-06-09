@@ -5,13 +5,6 @@ import GeometryType from "ol/geom/GeometryType";
 
 import { Map } from "../map";
 
-import "ol/ol.css";
-
-export default {
-  title: "react-openlayers-fiber/OL Examples",
-  component: Map,
-};
-
 const fill = new Fill({
   color: "rgba(255, 255, 255, 0.2)",
 });

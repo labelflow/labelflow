@@ -2,13 +2,6 @@ import React from "react";
 import { useInterval } from "react-use";
 import { Map } from "../map";
 
-import "ol/ol.css";
-
-export default {
-  title: "react-openlayers-fiber/Other Examples",
-  component: Map,
-};
-
 /**
  * In this story we prefix the props with initial for the view, so it should be initially at these values
  * and allow free movement after, never reseting the view position
