@@ -5,6 +5,7 @@ global.URL.createObjectURL = jest.fn(() => "mockedUrl");
 import { ApolloProvider } from "@apollo/client";
 import { Map } from "@labelflow/react-openlayers-fiber";
 import { render, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import gql from "graphql-tag";
 import { Map as OlMap } from "ol";
 import VectorLayer from "ol/layer/Vector";
@@ -168,5 +169,49 @@ it("should change style of selected label", async () => {
     /* This make this test dependent of the styling.
      * We could add a selected property on the feature but it is not needed for the moment. */
     expect(feature.getStyle()).toMatchObject({ zIndex_: 2 });
+  });
+});
+
+it("should change style of selected label", async () => {
+  const mapRef: { current: OlMap | null } = { current: null };
+  const imageId = await createImage("myImage");
+  const labelId = await createLabel({
+    x: 3.14,
+    y: 42.0,
+    height: 768,
+    width: 362,
+    imageId,
+  });
+
+  useLabellingStore.setState({ selectedLabelId: labelId });
+
+  const { container } = render(<Labels imageId={imageId} />, {
+    wrapper: ({ children }) => (
+      <Map
+        ref={(map) => {
+          mapRef.current = map;
+        }}
+      >
+        <ApolloProvider client={client}>{children}</ApolloProvider>
+      </Map>
+    ),
+  });
+
+  await waitFor(() => {
+    expect(
+      (mapRef.current?.getLayers().getArray()[0] as VectorLayer)
+        .getSource()
+        .getFeatures()
+    ).toHaveLength(1);
+  });
+
+  userEvent.type(container, "{delete}");
+
+  await waitFor(() => {
+    expect(
+      (mapRef.current?.getLayers().getArray()[0] as VectorLayer)
+        .getSource()
+        .getFeatures()
+    ).toHaveLength(0);
   });
 });

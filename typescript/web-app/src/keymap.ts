@@ -8,6 +8,11 @@ export type Keymap = {
 
 export const keymap: Keymap = {
   toolSelect: { key: "v", description: "Selection tool", category: "Tools" },
+  deleteLabel: {
+    key: "del,delete,backspace",
+    description: "Delete selected label",
+    category: "Tools",
+  },
   goToPreviousImage: {
     key: "left",
     description: "Navigate to the previous image",

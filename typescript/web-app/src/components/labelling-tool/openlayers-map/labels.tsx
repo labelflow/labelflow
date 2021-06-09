@@ -2,7 +2,10 @@ import gql from "graphql-tag";
 import { useQuery } from "@apollo/client";
 import { fromExtent } from "ol/geom/Polygon";
 import { Fill, Stroke, Style } from "ol/style";
+import { useHotkeys } from "react-hotkeys-hook";
 
+import { client } from "../../../connectors/apollo-client";
+import { keymap } from "../../../keymap";
 import { useLabellingStore } from "../../../connectors/labelling-state";
 import { Label } from "../../../graphql-types.generated";
 
@@ -20,6 +23,14 @@ const getImageLabelsQuery = gql`
   }
 `;
 
+const deleteLabel = gql`
+  mutation deleteLabel($id: ID!) {
+    deleteLabel(where: { id: $id }) {
+      id
+    }
+  }
+`;
+
 export const Labels = ({ imageId }: { imageId: string }) => {
   const selectedLabelId = useLabellingStore((state) => state.selectedLabelId);
   const { data } = useQuery(getImageLabelsQuery, {
@@ -28,6 +39,19 @@ export const Labels = ({ imageId }: { imageId: string }) => {
       throw e;
     },
   });
+
+  useHotkeys(
+    keymap.deleteLabel.key,
+    () => {
+      client.mutate({
+        mutation: deleteLabel,
+        variables: { id: selectedLabelId },
+        refetchQueries: ["getImageLabels"],
+      });
+    },
+    {},
+    [selectedLabelId]
+  );
 
   const labels = data?.image?.labels ?? [];
 
