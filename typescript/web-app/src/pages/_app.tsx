@@ -67,12 +67,12 @@ function App({ Component, pageProps }: AppProps) {
 
       wb.addEventListener("waiting", promptNewVersionAvailable);
 
-      // ISSUE - this is not working as expected, why?
-      // I could only make message event listener work when I manually add this listener into sw.js file
-      wb.addEventListener("message", (event) => {
-        console.log(`Event ${event.type} is triggered.`);
-        console.log(event);
-      });
+      // // ISSUE - this is not working as expected, why?
+      // // I could only make message event listener work when I manually add this listener into sw.js file
+      // wb.addEventListener("message", (event) => {
+      //   console.log(`Event ${event.type} is triggered.`);
+      //   console.log(event);
+      // });
 
       /*
       wb.addEventListener('redundant', event => {

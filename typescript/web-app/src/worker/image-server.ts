@@ -4,11 +4,14 @@ import { db } from "../connectors/database";
 declare let self: ServiceWorkerGlobalScope;
 
 export const server = {
-  installListener: (path = "/worker/images") => {
-    const trimedPath = trimCharsEnd("/", path);
-    const regex = new RegExp(`${trimedPath}/(?<fileId>.*)`);
+  installListener: (path = "/api/worker/files") => {
+    const trimmedPath = trimCharsEnd("/", path);
+    const regex = new RegExp(`${trimmedPath}/(?<fileId>.*)`);
 
     self.addEventListener("fetch", (event: any) => {
+      console.log("FETCH EVENT (IMAGE SIDE)");
+      console.log(event);
+
       const { request } = event;
 
       if (request.method === "GET") {

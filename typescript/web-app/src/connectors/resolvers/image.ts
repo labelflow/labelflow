@@ -27,7 +27,7 @@ export const getUrlFromFileId = memoize(
     }
     if (selfExists) {
       // in worker scope
-      return `${self.location.origin}/worker/images/${fileId}`;
+      return `${self.location.origin}/api/worker/files/${fileId}`;
     }
     throw new Error(
       "Cannot determine if running in window scope or in worker scope, are you running in node js ?"
@@ -54,7 +54,7 @@ export const getFileIdFromUrl = (url: string): string | null => {
     );
   }
   if (currentLocation.origin === urlLocation.origin) {
-    return urlLocation.pathname.replace("/worker/images/", "");
+    return urlLocation.pathname.replace("/api/worker/files/", "");
   }
   // Return
   return null;

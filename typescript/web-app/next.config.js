@@ -164,7 +164,8 @@ module.exports = withPWA({
     cacheOnFrontEndNav: true,
     // Add plugins to the webpack config of the service worker bundler
     // See https://developers.google.com/web/tools/workbox/reference-docs/latest/module-workbox-webpack-plugin.InjectManifest
-    webpackCompilationPlugins: []
+    webpackCompilationPlugins: [],
+    // exclude: ["/api/worker/"]
   }
 }
 );

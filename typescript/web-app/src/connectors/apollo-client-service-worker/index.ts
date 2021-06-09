@@ -1,6 +1,9 @@
-import { ApolloClient, InMemoryCache } from "@apollo/client";
+import { ApolloClient, InMemoryCache, HttpLink, concat } from "@apollo/client";
+import { awaitServiceWorkerLink } from "./await-service-worker-link";
+
+const httpLink = new HttpLink({ uri: "/api/worker/graphql" });
 
 export const client = new ApolloClient({
-  uri: "/worker/graphql",
+  link: concat(awaitServiceWorkerLink, httpLink),
   cache: new InMemoryCache(),
 });
