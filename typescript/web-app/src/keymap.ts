@@ -23,4 +23,14 @@ export const keymap: Keymap = {
     description: "Navigate to the next image",
     category: "Navigation",
   },
+  undo: {
+    key: "cmd+z,ctrl+z",
+    description: "Undo last action",
+    category: "Edit",
+  },
+  redo: {
+    key: "cmd+shift+z,ctrl+y,ctrl+shift+y",
+    description: "Redo last action",
+    category: "Edit",
+  },
 };
