@@ -173,3 +173,75 @@ it("should unset the selected label when the effect is undone", async () => {
     });
   });
 });
+
+it("is possible to redo an undone action", async () => {
+  const mapRef: { current: OlMap | null } = { current: null };
+  render(<DrawBoundingBoxInteraction />, {
+    wrapper: ({ children }) => (
+      <Map
+        args={{ interactions: [] }}
+        ref={(map) => {
+          mapRef.current = map;
+        }}
+      >
+        <ApolloProvider client={client}>{children}</ApolloProvider>
+      </Map>
+    ),
+  });
+
+  const drawInteraction = mapRef.current?.getInteractions().getArray()?.[0];
+  drawInteraction?.dispatchEvent(
+    new DrawEvent(
+      "drawend" as DrawEventType,
+      new Feature(fromExtent([100, 200, 200, 300]))
+    )
+  );
+
+  await useUndoStore.getState().undo();
+  await useUndoStore.getState().redo();
+
+  expect(client.mutate).toHaveBeenCalledWith(
+    expect.objectContaining({
+      variables: {
+        imageId: "mocked-image-id",
+        x: 100,
+        y: 200,
+        width: 100,
+        height: 100,
+      },
+    })
+  );
+});
+
+it("should set back the selected label when the effect is redone after an undone", async () => {
+  const mapRef: { current: OlMap | null } = { current: null };
+  render(<DrawBoundingBoxInteraction />, {
+    wrapper: ({ children }) => (
+      <Map
+        args={{ interactions: [] }}
+        ref={(map) => {
+          mapRef.current = map;
+        }}
+      >
+        <ApolloProvider client={client}>{children}</ApolloProvider>
+      </Map>
+    ),
+  });
+
+  const drawInteraction = mapRef.current?.getInteractions().getArray()?.[0];
+  drawInteraction?.dispatchEvent(
+    new DrawEvent(
+      "drawend" as DrawEventType,
+      new Feature(fromExtent([100, 200, 200, 300]))
+    )
+  );
+
+  await useUndoStore.getState().undo();
+  await useUndoStore.getState().redo();
+
+  await waitFor(() => {
+    expect(useLabellingStore.getState()).toMatchObject({
+      selectedLabelId: "mocked-label-id",
+    });
+  });
+});
