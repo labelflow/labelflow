@@ -4,6 +4,8 @@ import gql from "graphql-tag";
 import { fromExtent } from "ol/geom/Polygon";
 import { Fill, Stroke, Style } from "ol/style";
 import { useHotkeys } from "react-hotkeys-hook";
+import { MapBrowserEvent } from "ol";
+import { SelectEvent } from "ol/interaction/Select";
 
 import { client } from "../../../connectors/apollo-client";
 import { keymap } from "../../../keymap";
@@ -82,6 +84,10 @@ const createDeleteLabelEffect = (
   },
 });
 
+const isContextMenuEvent = (mapBrowserEvent: MapBrowserEvent) => {
+  return mapBrowserEvent?.type === "contextmenu";
+};
+
 export const Labels = () => {
   const selectedLabelId = useLabellingStore((state) => state.selectedLabelId);
   const setSelectedLabelId = useLabellingStore(
@@ -119,31 +125,50 @@ export const Labels = () => {
   const color = "#E53E3E";
 
   return (
-    <olLayerVector>
-      <olSourceVector>
-        {labels.map(({ id, x, y, width, height }: Label) => {
-          const isSelected = id === selectedLabelId;
-          const style = new Style({
-            fill: new Fill({
-              color: `${color}${isSelected ? "40" : "10"}`,
-            }),
-            stroke: new Stroke({
-              color,
-              width: 2,
-            }),
-            zIndex: isSelected ? 2 : 1,
-          });
+    <>
+      <olLayerVector>
+        <olSourceVector>
+          {labels.map(({ id, x, y, width, height }: Label) => {
+            const isSelected = id === selectedLabelId;
+            const style = new Style({
+              fill: new Fill({
+                color: `${color}${isSelected ? "40" : "10"}`,
+              }),
+              stroke: new Stroke({
+                color,
+                width: 2,
+              }),
+              zIndex: isSelected ? 2 : 1,
+            });
 
-          return (
-            <olFeature
-              key={id}
-              id={id}
-              geometry={fromExtent([x, y, x + width, y + height])}
-              style={style}
-            />
-          );
-        })}
-      </olSourceVector>
-    </olLayerVector>
+            return (
+              <olFeature
+                key={id}
+                id={id}
+                geometry={fromExtent([x, y, x + width, y + height])}
+                style={style}
+              />
+            );
+          })}
+        </olSourceVector>
+      </olLayerVector>
+      {/* TODO: decide if this should go here, directly in map or in a standalone component  */}
+      <olInteractionSelect
+        args={{ condition: isContextMenuEvent }}
+        // TODO: figure out why typescript is drunk as the style property should be of type StyleLike|null
+        style={null} // To prevent default styling of the selected feature in open layers
+        onSelect={(e: SelectEvent) => {
+          const selectedFeatures = e.target.getFeatures().getArray();
+          console.log(selectedFeatures);
+          e.preventDefault();
+          e.stopPropagation();
+          if (selectedFeatures?.length > 0) {
+            const selectedFeature = selectedFeatures[0];
+            const { id } = selectedFeature.getProperties();
+            setSelectedLabelId(id);
+          }
+        }}
+      />
+    </>
   );
 };
