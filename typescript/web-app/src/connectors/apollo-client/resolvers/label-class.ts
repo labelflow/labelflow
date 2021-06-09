@@ -5,17 +5,18 @@ import type {
   QueryLabelClassesArgs,
 } from "../../../graphql-types.generated";
 
-import { db } from "../../database";
-
-import { LabelClassDataSource } from "../datasources/types";
+import { LabelClassDataSource, LabelDataSource } from "../datasources/types";
 
 // Queries
-const labels = async (labelClass: LabelClass) => {
-  const getResults = await db.label
-    .where({ labelClassId: labelClass.id })
-    .sortBy("createdAt");
-
-  return getResults ?? [];
+const labels = async (
+  parent: LabelClass,
+  _: any,
+  context: { dataSources: { labelDataSource: LabelDataSource } }
+) => {
+  const {
+    dataSources: { labelDataSource },
+  } = context;
+  return labelDataSource.getLabelsByClassId(parent.id);
 };
 
 const labelClass = async (

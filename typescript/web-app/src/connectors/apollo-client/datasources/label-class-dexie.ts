@@ -4,7 +4,7 @@ import type { LabelClassDataSource } from "./types";
 import { db } from "../../database";
 
 const labelClassDataSource: LabelClassDataSource = {
-  getPaginatedLabelClasses: async ({ skip, first }) => {
+  getPaginatedLabelClasses: async ({ skip, first } = {}) => {
     const query = await db.labelClass.orderBy("createdAt").offset(skip ?? 0);
 
     if (first) {

@@ -1,8 +1,11 @@
-import type { LabelClass, Maybe } from "../../../graphql-types.generated";
-// import type { DbLabelClass } from "../../database";
+import type {
+  LabelClass,
+  Label,
+  Maybe,
+} from "../../../graphql-types.generated";
 
 export type LabelClassDataSource = {
-  getPaginatedLabelClasses: (params: {
+  getPaginatedLabelClasses: (params?: {
     skip?: Maybe<number>;
     first?: Maybe<number>;
   }) => Promise<LabelClass[]>;
@@ -14,4 +17,8 @@ export type LabelClassDataSource = {
     name: string;
     id?: Maybe<string>;
   }) => Promise<string>;
+};
+
+export type LabelDataSource = {
+  getLabelsByClassId: (id: string) => Promise<Array<Label>>;
 };

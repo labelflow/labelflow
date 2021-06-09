@@ -5,18 +5,29 @@ import type {
   MutationDeleteLabelArgs,
   MutationUpdateLabelArgs,
 } from "../../../graphql-types.generated";
+import { LabelClassDataSource } from "../datasources/types";
 
 import { db, DbLabel } from "../../database";
 
 export const getLabels = () => db.label.toArray();
 
 // Queries
-const labelClass = async (label: DbLabel) => {
-  if (!label?.labelClassId) {
+const labelClass = async (
+  parent: DbLabel,
+  _args: any,
+  context: { dataSources: { labelClassDataSource: LabelClassDataSource } }
+) => {
+  const {
+    dataSources: { labelClassDataSource },
+  } = context;
+
+  if (parent.labelClassId == null) return null;
+
+  try {
+    return labelClassDataSource.getLabelClassById(parent.labelClassId);
+  } catch (e) {
     return null;
   }
-
-  return db.labelClass.get(label.labelClassId) ?? null;
 };
 
 // Mutations
