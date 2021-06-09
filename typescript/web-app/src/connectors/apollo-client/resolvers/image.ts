@@ -1,5 +1,7 @@
 import { v4 as uuidv4 } from "uuid";
 import memoize from "mem";
+import probe from "probe-image-size";
+
 import type {
   Image,
   MutationCreateImageArgs,
@@ -10,7 +12,7 @@ import type {
 
 import { db, DbImage } from "../../database";
 
-const getUrlFromFileId = memoize(async (id: string): Promise<string> => {
+export const getUrlFromFileId = memoize(async (id: string): Promise<string> => {
   const file = await db.file.get(id);
 
   if (file === undefined) {
@@ -39,7 +41,7 @@ const getImageById = async (id: string): Promise<DbImage> => {
   return entity;
 };
 
-const getPaginatedImages = async (
+export const getPaginatedImages = async (
   skip?: Maybe<number>,
   first?: Maybe<number>
 ): Promise<any[]> => {
@@ -52,13 +54,15 @@ const getPaginatedImages = async (
   return query.toArray();
 };
 
-// Queries
-const labels = async (image: Image) => {
-  const getResults = await db.label
-    .where({ imageId: image.id })
-    .sortBy("createdAt");
+export const getLabelsByImageId = async (imageId: string) => {
+  const getResults = await db.label.where({ imageId }).sortBy("createdAt");
 
   return getResults ?? [];
+};
+
+// Queries
+const labels = async ({ id }: Image) => {
+  return getLabelsByImageId(id);
 };
 
 const image = (_: any, args: QueryImageArgs) => {
@@ -84,44 +88,133 @@ const images = async (_: any, args: QueryImagesArgs) => {
 const createImage = async (
   _: any,
   args: MutationCreateImageArgs
-): Promise<Partial<Image>> => {
-  const { file, id, name } = args.data;
-  const imageId = id ?? uuidv4();
-  const fileId = uuidv4();
+): Promise<DbImage> => {
+  const { file, id, name, height, width, mimetype, path, url } = args.data;
+  if (file && !url) {
+    // File Content based upload
+    try {
+      const imageId = id ?? uuidv4();
+      const fileId = uuidv4();
 
-  await db.file.add({ id: fileId, imageId, blob: file });
-  const url = await getUrlFromFileId(fileId);
+      await db.file.add({ id: fileId, imageId, blob: file });
+      const localUrl = await getUrlFromFileId(fileId);
 
-  const newEntity = await new Promise<Partial<Image>>((resolve, reject) => {
-    const imageObject = new Image();
+      const newEntity = await new Promise<DbImage>((resolve, reject) => {
+        const imageObject = new Image();
+        const now = new Date();
+
+        imageObject.onload = async () => {
+          const newImageEntity = {
+            createdAt: now.toISOString(),
+            updatedAt: now.toISOString(),
+            id: imageId,
+            path: path ?? (file as File).name,
+            mimetype: mimetype ?? file.type,
+            name: name ?? file.name,
+            width: width ?? imageObject.width,
+            height: height ?? imageObject.height,
+            fileId,
+          };
+
+          await db.image.add(newImageEntity);
+          resolve(getImageById(imageId));
+        };
+        imageObject.onerror = async () => {
+          reject(
+            new Error(
+              "Could not load the image, it may be damaged or corrupted."
+            )
+          );
+          await db.file.delete(fileId);
+        };
+        imageObject.src = localUrl;
+      });
+
+      return newEntity;
+    } catch (e) {
+      throw new Error(
+        "File upload with a `file` field of type `Upload` is not supported on this server, upload with a `url` field of type `String` instead"
+      );
+    }
+  }
+  if (!file && url) {
+    // File URL based upload
+
+    const fetchHeaders = new Headers();
+    fetchHeaders.append(
+      "Accept",
+      "image/tiff,image/jpeg,image/png,image/*,*/*;q=0.8"
+    );
+    fetchHeaders.append("Sec-Fetch-Dest", "image");
+    fetchHeaders.append("Cache-Control", "no-cache");
+
+    const fetchResult = await fetch(url, {
+      method: "GET",
+      mode: "cors",
+      cache: "no-cache",
+      headers: fetchHeaders,
+      credentials: "omit",
+    });
+
+    const blob = await fetchResult.blob();
+
+    const fileId = uuidv4();
+    const imageId = id ?? uuidv4();
+
     const now = new Date();
 
-    imageObject.onload = async () => {
-      const newImageEntity = {
+    await db.file.add({ id: fileId, imageId, blob });
+
+    try {
+      // Probe the file to get its dimensions and mimetype if not provided
+      let finalWidth = width;
+      let finalHeight = height;
+      let finalMimetype = mimetype;
+
+      if (!finalWidth || !finalHeight || !finalMimetype) {
+        const probeInput = new Uint8Array(await blob.arrayBuffer());
+
+        const probeResult = probe.sync(probeInput as Buffer);
+
+        if (probeResult == null) {
+          throw new Error(
+            "Could not load the image, it may be damaged or corrupted."
+          );
+        }
+
+        if (!finalWidth) finalWidth = probeResult.width;
+        if (!finalHeight) finalHeight = probeResult.height;
+        if (!finalMimetype) finalMimetype = probeResult.mime;
+      }
+
+      const newImageEntity: DbImage = {
         createdAt: now.toISOString(),
         updatedAt: now.toISOString(),
         id: imageId,
-        path: file.name,
-        name: name ?? file.name,
-        mimetype: file.type,
-        width: imageObject.width,
-        height: imageObject.height,
+        // url: localUrl,
+        path: path ?? url,
+        mimetype: finalMimetype,
+        name: name ?? url.substring(url.lastIndexOf("/") + 1),
+        width: finalWidth,
+        height: finalHeight,
         fileId,
       };
 
       await db.image.add(newImageEntity);
-      resolve(getImageById(imageId));
-    };
-    imageObject.onerror = async () => {
-      reject(
-        new Error("Could not load the image, it may be damaged or corrupted.")
-      );
-      await db.file.delete(fileId);
-    };
-    imageObject.src = url;
-  });
 
-  return newEntity;
+      const result = await getImageById(imageId);
+
+      return result;
+    } catch (e) {
+      await db.file.delete(fileId);
+      throw new Error(
+        "Could not load the image, it may be damaged or corrupted."
+      );
+    }
+  }
+  throw new Error(
+    "File upload must include either a `file` field of type `Upload`, or a `url` field of type `String`"
+  );
 };
 
 export default {

@@ -4,13 +4,6 @@ import { fromLonLat } from "ol/proj";
 
 import { Map } from "../map";
 
-import "ol/ol.css";
-
-export default {
-  title: "react-openlayers-fiber/OL Examples",
-  component: Map,
-};
-
 const kernels = {
   none: [0, 0, 0, 0, 1, 0, 0, 0, 0],
   sharpen: [0, -1, 0, -1, 5, -1, 0, -1, 0],

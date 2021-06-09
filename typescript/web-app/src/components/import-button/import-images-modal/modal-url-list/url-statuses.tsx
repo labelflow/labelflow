@@ -1,0 +1,66 @@
+import { RiImageLine, RiFile3Line } from "react-icons/ri";
+import { isEmpty } from "lodash/fp";
+import { Box, Text, Flex } from "@chakra-ui/react";
+
+import { DroppedUrl, UploadStatuses } from "../types";
+import { ImportProgress } from "../import-progress";
+import { ImportError } from "../import-error";
+
+export const UrlStatuses = ({
+  urls,
+  uploadStatuses,
+}: {
+  urls: Array<DroppedUrl>;
+  uploadStatuses: UploadStatuses;
+}) => (
+  <Flex direction="column" height="100%">
+    <Box p="2" bg="gray.200" borderTopRadius="md" w="100%">
+      <Text>
+        Completed{" "}
+        {
+          Object.entries(uploadStatuses).filter((entry) => entry[1] === true)
+            .length
+        }{" "}
+        of {urls.filter((url) => isEmpty(url.errors)).length} items
+      </Text>
+    </Box>
+    <Flex direction="column" overflowY="auto" width="100%" height="100%">
+      {urls.map(({ url, errors }, index) => (
+        <Flex
+          key={url}
+          w="100%"
+          alignItems="center"
+          p="2"
+          bg={index % 2 === 0 ? "gray.50" : "inherit"}
+        >
+          <Box flex={0} pr="2">
+            {isEmpty(errors) ? <RiImageLine /> : <RiFile3Line />}
+          </Box>
+          <Box
+            pr="2"
+            flexGrow={1}
+            flexShrink={1}
+            overflow="hidden"
+            textOverflow="ellipsis"
+            whiteSpace="nowrap"
+          >
+            {url}
+          </Box>
+          <Box
+            whiteSpace="nowrap"
+            flex={0}
+            color="gray.400"
+            fontSize="md"
+            textAlign="right"
+          >
+            {isEmpty(errors) ? (
+              <ImportProgress status={uploadStatuses[url]} />
+            ) : (
+              <ImportError errors={errors} />
+            )}
+          </Box>
+        </Flex>
+      ))}
+    </Flex>
+  </Flex>
+);

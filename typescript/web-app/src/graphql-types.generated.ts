@@ -135,6 +135,7 @@ export type LabelWhereUniqueInput = {
 export type Mutation = {
   __typename?: 'Mutation';
   createExample?: Maybe<Example>;
+  getUploadTarget: UploadTarget;
   createImage?: Maybe<Image>;
   createLabel?: Maybe<Label>;
   updateLabel?: Maybe<Label>;
@@ -182,6 +183,7 @@ export type Query = {
   images: Array<Image>;
   labelClass: LabelClass;
   labelClasses: Array<LabelClass>;
+  exportToCoco: Scalars['String'];
 };
 
 
@@ -220,6 +222,19 @@ export type QueryLabelClassesArgs = {
   skip?: Maybe<Scalars['Int']>;
 };
 
+
+export type UploadTarget = UploadTargetDirect | UploadTargetHttp;
+
+export type UploadTargetDirect = {
+  __typename?: 'UploadTargetDirect';
+  direct: Scalars['Boolean'];
+};
+
+export type UploadTargetHttp = {
+  __typename?: 'UploadTargetHttp';
+  uploadUrl: Scalars['String'];
+  downloadUrl: Scalars['String'];
+};
 
 
 
@@ -324,7 +339,10 @@ export type ResolversTypes = {
   Mutation: ResolverTypeWrapper<{}>;
   Query: ResolverTypeWrapper<{}>;
   Upload: ResolverTypeWrapper<Scalars['Upload']>;
+  UploadTarget: ResolversTypes['UploadTargetDirect'] | ResolversTypes['UploadTargetHttp'];
+  UploadTargetDirect: ResolverTypeWrapper<UploadTargetDirect>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
+  UploadTargetHttp: ResolverTypeWrapper<UploadTargetHttp>;
 };
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -353,7 +371,10 @@ export type ResolversParentTypes = {
   Mutation: {};
   Query: {};
   Upload: Scalars['Upload'];
+  UploadTarget: ResolversParentTypes['UploadTargetDirect'] | ResolversParentTypes['UploadTargetHttp'];
+  UploadTargetDirect: UploadTargetDirect;
   Boolean: Scalars['Boolean'];
+  UploadTargetHttp: UploadTargetHttp;
 };
 
 export interface ColorHexScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['ColorHex'], any> {
@@ -411,6 +432,7 @@ export type LabelClassResolvers<ContextType = any, ParentType extends ResolversP
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   createExample?: Resolver<Maybe<ResolversTypes['Example']>, ParentType, ContextType, RequireFields<MutationCreateExampleArgs, 'data'>>;
+  getUploadTarget?: Resolver<ResolversTypes['UploadTarget'], ParentType, ContextType>;
   createImage?: Resolver<Maybe<ResolversTypes['Image']>, ParentType, ContextType, RequireFields<MutationCreateImageArgs, 'data'>>;
   createLabel?: Resolver<Maybe<ResolversTypes['Label']>, ParentType, ContextType, RequireFields<MutationCreateLabelArgs, 'data'>>;
   updateLabel?: Resolver<Maybe<ResolversTypes['Label']>, ParentType, ContextType, RequireFields<MutationUpdateLabelArgs, 'where' | 'data'>>;
@@ -426,11 +448,27 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   images?: Resolver<Array<ResolversTypes['Image']>, ParentType, ContextType, RequireFields<QueryImagesArgs, never>>;
   labelClass?: Resolver<ResolversTypes['LabelClass'], ParentType, ContextType, RequireFields<QueryLabelClassArgs, 'where'>>;
   labelClasses?: Resolver<Array<ResolversTypes['LabelClass']>, ParentType, ContextType, RequireFields<QueryLabelClassesArgs, never>>;
+  exportToCoco?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
 };
 
 export interface UploadScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Upload'], any> {
   name: 'Upload';
 }
+
+export type UploadTargetResolvers<ContextType = any, ParentType extends ResolversParentTypes['UploadTarget'] = ResolversParentTypes['UploadTarget']> = {
+  __resolveType: TypeResolveFn<'UploadTargetDirect' | 'UploadTargetHttp', ParentType, ContextType>;
+};
+
+export type UploadTargetDirectResolvers<ContextType = any, ParentType extends ResolversParentTypes['UploadTargetDirect'] = ResolversParentTypes['UploadTargetDirect']> = {
+  direct?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type UploadTargetHttpResolvers<ContextType = any, ParentType extends ResolversParentTypes['UploadTargetHttp'] = ResolversParentTypes['UploadTargetHttp']> = {
+  uploadUrl?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  downloadUrl?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
 
 export type Resolvers<ContextType = any> = {
   ColorHex?: GraphQLScalarType;
@@ -442,6 +480,9 @@ export type Resolvers<ContextType = any> = {
   Mutation?: MutationResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   Upload?: GraphQLScalarType;
+  UploadTarget?: UploadTargetResolvers<ContextType>;
+  UploadTargetDirect?: UploadTargetDirectResolvers<ContextType>;
+  UploadTargetHttp?: UploadTargetHttpResolvers<ContextType>;
 };
 
 

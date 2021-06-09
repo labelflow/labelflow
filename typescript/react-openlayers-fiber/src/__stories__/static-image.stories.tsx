@@ -4,13 +4,6 @@ import Projection from "ol/proj/Projection";
 
 import { Map } from "../map";
 
-import "ol/ol.css";
-
-export default {
-  title: "react-openlayers-fiber/OL Examples",
-  component: Map,
-};
-
 const extent: Extent = [0, 0, 1024, 968];
 const attributions = '© <a href="http://xkcd.com/license.html">xkcd</a>';
 

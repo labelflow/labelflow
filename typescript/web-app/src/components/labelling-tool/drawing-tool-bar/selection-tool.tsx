@@ -23,6 +23,7 @@ export const SelectionTool = () => {
     <Tooltip
       label={`Selection tool [${keymap.toolSelect.key}]`}
       placement="right"
+      openDelay={300}
     >
       <IconButton
         icon={<BiPointer size="1.3em" />}
@@ -32,6 +33,7 @@ export const SelectionTool = () => {
         backgroundColor="white"
         aria-label="Select tool"
         pointerEvents="initial"
+        isActive={selectedTool === Tools.SELECTION}
       />
     </Tooltip>
   );

@@ -8,33 +8,45 @@ import { render } from "@testing-library/react";
 import { Feature, Map as OlMap } from "ol";
 import { fromExtent } from "ol/geom/Polygon";
 import { DrawEvent, DrawEventType } from "ol/interaction/Draw";
+
 import { client } from "../../../../connectors/apollo-client";
-import { DrawBoundingBoxInteraction } from "../draw-bounding-box-interaction";
+import { useUndoStore } from "../../../../connectors/undo-store";
 import {
   useLabellingStore,
   Tools,
 } from "../../../../connectors/labelling-state";
 import { setupTestsWithLocalDatabase } from "../../../../utils/setup-local-db-tests";
-import { useUndoStore } from "../../../../connectors/undo-store";
+
+import { DrawBoundingBoxInteraction } from "../draw-bounding-box-interaction";
 
 setupTestsWithLocalDatabase();
 
-jest.mock("../../../../connectors/apollo-client", () => ({
-  client: { mutate: jest.fn() },
+jest.mock("../../../../connectors/apollo-client", () => {
+  const original = jest.requireActual("../../../../connectors/apollo-client");
+  return {
+    client: {
+      ...original.client,
+      mutate: jest.fn(() => ({
+        data: { createLabel: { id: "mocked-label-id" } },
+      })),
+    },
+  };
+});
+
+jest.mock("next/router", () => ({
+  useRouter: () => ({
+    query: { id: "mocked-image-id" },
+  }),
 }));
 
-it("create a label in the db on the end of a draw interaction", async () => {
-  const mapRef: { current: OlMap | null } = { current: null };
-
-  const imageId = "mocked-image-id";
+beforeEach(() => {
+  (client.mutate as jest.Mock).mockClear();
   useLabellingStore.setState({ selectedTool: Tools.BOUNDING_BOX });
-  (client.mutate as jest.Mock).mockReset();
-  (client.mutate as jest.Mock).mockImplementationOnce(
-    jest.fn(() => ({
-      data: { createLabel: { id: "mocked-label-id" } },
-    }))
-  );
-  render(<DrawBoundingBoxInteraction imageId={imageId} />, {
+});
+
+it("create a label when the user has finished to draw a bounding box on the labelling interface", async () => {
+  const mapRef: { current: OlMap | null } = { current: null };
+  render(<DrawBoundingBoxInteraction />, {
     wrapper: ({ children }) => (
       <Map
         args={{ interactions: [] }}
@@ -48,7 +60,6 @@ it("create a label in the db on the end of a draw interaction", async () => {
   });
 
   const drawInteraction = mapRef.current?.getInteractions().getArray()?.[0];
-
   drawInteraction?.dispatchEvent(
     new DrawEvent(
       "drawend" as DrawEventType,
@@ -58,24 +69,20 @@ it("create a label in the db on the end of a draw interaction", async () => {
 
   expect(client.mutate).toHaveBeenCalledWith(
     expect.objectContaining({
-      variables: { imageId, x: 100, y: 200, width: 100, height: 100 },
+      variables: {
+        imageId: "mocked-image-id",
+        x: 100,
+        y: 200,
+        width: 100,
+        height: 100,
+      },
     })
   );
 });
 
 it("is possible to undo the creation of the label", async () => {
   const mapRef: { current: OlMap | null } = { current: null };
-  const imageId = "mocked-image-id";
-
-  useLabellingStore.setState({ selectedTool: Tools.BOUNDING_BOX });
-  (client.mutate as jest.Mock).mockReset();
-  (client.mutate as jest.Mock).mockImplementationOnce(
-    jest.fn(() => ({
-      data: { createLabel: { id: "mocked-label-id" } },
-    }))
-  );
-
-  render(<DrawBoundingBoxInteraction imageId={imageId} />, {
+  render(<DrawBoundingBoxInteraction />, {
     wrapper: ({ children }) => (
       <Map
         args={{ interactions: [] }}
@@ -87,6 +94,7 @@ it("is possible to undo the creation of the label", async () => {
       </Map>
     ),
   });
+
   const drawInteraction = mapRef.current?.getInteractions().getArray()?.[0];
   drawInteraction?.dispatchEvent(
     new DrawEvent(

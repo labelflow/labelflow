@@ -1,5 +1,6 @@
-import gql from "graphql-tag";
+import { useRouter } from "next/router";
 import { useQuery } from "@apollo/client";
+import gql from "graphql-tag";
 import { fromExtent } from "ol/geom/Polygon";
 
 import { Label } from "../../../graphql-types.generated";
@@ -18,13 +19,14 @@ const getImageLabelsQuery = gql`
   }
 `;
 
-export const Labels = ({ imageId }: { imageId: string }) => {
+export const Labels = () => {
+  const imageId = useRouter().query?.id;
   const { data } = useQuery(getImageLabelsQuery, {
-    variables: { imageId },
+    skip: typeof imageId !== "string",
+    variables: { imageId: imageId as string },
     onError: (e) => {
       throw e;
     },
-    onCompleted: () => {},
   });
 
   const labels = data?.image?.labels ?? [];
