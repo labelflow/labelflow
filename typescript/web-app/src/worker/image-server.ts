@@ -9,9 +9,6 @@ export const server = {
     const regex = new RegExp(`${trimmedPath}/(?<fileId>.*)`);
 
     self.addEventListener("fetch", (event: any) => {
-      console.log("FETCH EVENT (IMAGE SIDE)");
-      console.log(event);
-
       const { request } = event;
 
       if (request.method === "GET") {

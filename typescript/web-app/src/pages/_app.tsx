@@ -39,6 +39,12 @@ function App({ Component, pageProps }: AppProps) {
         console.log(event);
       });
 
+      wb.addEventListener("redundant", (event) => {
+        console.log(`Event ${event.type} is triggered.`);
+        console.log(event);
+        window.location.reload();
+      });
+
       // A common UX pattern for progressive web apps is to show a banner when a service worker has updated and waiting to install.
       // NOTE: MUST set skipWaiting to false in next.config.js pwa object
       // https://developers.google.com/web/tools/workbox/guides/advanced-recipes#offer_a_page_reload_for_users
