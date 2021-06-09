@@ -3,6 +3,7 @@ import { SchemaLink } from "@apollo/client/link/schema";
 import { ApolloClient, InMemoryCache } from "@apollo/client";
 import typeDefs from "../../../../../data/__generated__/schema.graphql";
 import { resolvers } from "./resolvers";
+import labelClassDataSource from "./datasources/label-class-dexie";
 
 const schema = makeExecutableSchema({
   typeDefs,
@@ -10,6 +11,11 @@ const schema = makeExecutableSchema({
 });
 
 export const client = new ApolloClient({
-  link: new SchemaLink({ schema }),
+  link: new SchemaLink({
+    schema,
+    context: () => {
+      return { dataSources: { labelClassDataSource } };
+    },
+  }),
   cache: new InMemoryCache(),
 });

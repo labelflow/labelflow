@@ -55,7 +55,7 @@ export type Image = {
   mimetype: Scalars['String'];
   height: Scalars['Int'];
   width: Scalars['Int'];
-  labels: Array<Label>;
+  labels?: Maybe<Array<Label>>;
 };
 
 export type ImageCreateInput = {
@@ -97,7 +97,7 @@ export type LabelClass = {
   updatedAt: Scalars['DateTime'];
   name: Scalars['String'];
   color: Scalars['ColorHex'];
-  labels: Array<Label>;
+  labels?: Maybe<Array<Label>>;
 };
 
 export type LabelClassCreateInput = {
@@ -403,7 +403,7 @@ export type ImageResolvers<ContextType = any, ParentType extends ResolversParent
   mimetype?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   height?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   width?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  labels?: Resolver<Array<ResolversTypes['Label']>, ParentType, ContextType>;
+  labels?: Resolver<Maybe<Array<ResolversTypes['Label']>>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -426,7 +426,7 @@ export type LabelClassResolvers<ContextType = any, ParentType extends ResolversP
   updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   color?: Resolver<ResolversTypes['ColorHex'], ParentType, ContextType>;
-  labels?: Resolver<Array<ResolversTypes['Label']>, ParentType, ContextType>;
+  labels?: Resolver<Maybe<Array<ResolversTypes['Label']>>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 

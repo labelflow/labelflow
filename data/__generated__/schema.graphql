@@ -37,7 +37,7 @@ type Image {
   mimetype: String!
   height: Int!
   width: Int!
-  labels: [Label!]!
+  labels: [Label!]
 }
 
 input ImageCreateInput {
@@ -77,7 +77,7 @@ type LabelClass {
   updatedAt: DateTime!
   name: String!
   color: ColorHex!
-  labels: [Label!]!
+  labels: [Label!]
 }
 
 input LabelClassCreateInput {
