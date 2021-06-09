@@ -106,86 +106,95 @@ export const OpenlayersMap = forwardRef<OlMap>((_, ref) => {
     width / (bounds.width - viewPadding[1] - viewPadding[3]),
     height / (bounds.height - viewPadding[0] - viewPadding[2])
   );
-
   return (
-    <Map
-      ref={(value) => {
-        if (isNil(value)) {
-          return;
-        }
-        if (isFunction(ref)) {
-          ref(value);
-        } else if (!isNil(ref)) {
-          // eslint-disable-next-line no-param-reassign
-          ref.current = value;
-        }
-        // @ts-ignore
-        internalRef.current = value;
-      }}
-      args={{ controls: empty }}
-      style={{ height: "100%", width: "100%" }}
-      containerRef={containerRef}
-      onClick={(e: { pixel: Array<number> }) => {
-        const map = internalRef?.current;
-        if (!map || selectedTool !== Tools.SELECTION) {
-          return null;
-        }
+    <>
+      <div
+        style={{ display: "flex", width: "100%", height: "100%" }}
+        onContextMenu={(e) => {
+          e.preventDefault();
+          return false;
+        }}
+      >
+        <Map
+          ref={(value) => {
+            if (isNil(value)) {
+              return;
+            }
+            if (isFunction(ref)) {
+              ref(value);
+            } else if (!isNil(ref)) {
+              // eslint-disable-next-line no-param-reassign
+              ref.current = value;
+            }
+            // @ts-ignore
+            internalRef.current = value;
+          }}
+          args={{ controls: empty }}
+          style={{ height: "100%", width: "100%" }}
+          containerRef={containerRef}
+          onClick={(e: { pixel: Array<number> }) => {
+            const map = internalRef?.current;
+            if (!map || selectedTool !== Tools.SELECTION) {
+              return null;
+            }
 
-        const [feature] = map.getFeaturesAtPixel(e.pixel);
-        if (feature) {
-          const { id } = feature.getProperties();
-          setSelectedLabelId(id);
-        }
+            const [feature] = map.getFeaturesAtPixel(e.pixel);
+            if (feature) {
+              const { id } = feature.getProperties();
+              setSelectedLabelId(id);
+            }
 
-        return "";
-      }}
-    >
-      {/* Need to bridge contexts across renderers
-       * See https://github.com/facebook/react/issues/17275 */}
-      <RouterContext.Provider value={router}>
-        <ApolloProvider client={client}>
-          {
-            // Before useMeasure has time to properly measure the div, we have a negative resolution,
-            // There is no point rendering the view in that case
-            isBoundsValid && (
-              <olView
-                args={{ extent }}
-                center={center}
-                initialProjection={projection}
-                resolution={resolution}
-                // Max zoom = 16 pixels of screen per pixel of image
-                minResolution={1.0 / 16.0}
-                maxResolution={resolution}
-                constrainOnlyCenter
-                showFullExtent
-                padding={viewPadding}
-              />
-            )
-          }
-          <olLayerImage extent={extent}>
-            {url != null && (
-              <olSourceImageStatic
-                // ol/source/image does not have `setXXX` methods, only options in the constructor, so
-                // to change anything, you need to recreate the object. So we pass all in args.
-                // See https://openlayers.org/en/latest/apidoc/module-ol_source_Image.ImageSourceEvent.html
-                args={{
-                  url,
-                  imageExtent: extent,
-                  imageSize: size,
-                  projection,
-                  crossOrigin: "anonymous",
-                }}
-              />
-            )}
-          </olLayerImage>
+            return "";
+          }}
+        >
+          {/* Need to bridge contexts across renderers
+           * See https://github.com/facebook/react/issues/17275 */}
+          <RouterContext.Provider value={router}>
+            <ApolloProvider client={client}>
+              {
+                // Before useMeasure has time to properly measure the div, we have a negative resolution,
+                // There is no point rendering the view in that case
+                isBoundsValid && (
+                  <olView
+                    args={{ extent }}
+                    center={center}
+                    initialProjection={projection}
+                    resolution={resolution}
+                    // Max zoom = 16 pixels of screen per pixel of image
+                    minResolution={1.0 / 16.0}
+                    maxResolution={resolution}
+                    constrainOnlyCenter
+                    showFullExtent
+                    padding={viewPadding}
+                  />
+                )
+              }
+              <olLayerImage extent={extent}>
+                {url != null && (
+                  <olSourceImageStatic
+                    // ol/source/image does not have `setXXX` methods, only options in the constructor, so
+                    // to change anything, you need to recreate the object. So we pass all in args.
+                    // See https://openlayers.org/en/latest/apidoc/module-ol_source_Image.ImageSourceEvent.html
+                    args={{
+                      url,
+                      imageExtent: extent,
+                      imageSize: size,
+                      projection,
+                      crossOrigin: "anonymous",
+                    }}
+                  />
+                )}
+              </olLayerImage>
 
-          <Labels />
-          <DrawBoundingBoxInteraction />
+              <Labels />
+              <DrawBoundingBoxInteraction />
               <EditLabelClassInteraction
                 editClassOverlayRef={editClassOverlayRef}
               />
-        </ApolloProvider>
-      </RouterContext.Provider>
-    </Map>
+            </ApolloProvider>
+          </RouterContext.Provider>
+        </Map>
+      </div>
+    </>
   );
 });
