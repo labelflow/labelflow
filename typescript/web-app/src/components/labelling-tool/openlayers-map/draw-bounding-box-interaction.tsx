@@ -22,6 +22,14 @@ const createLabelMutation = gql`
   }
 `;
 
+const deleteLabelMutation = gql`
+  mutation deleteLabel($id: ID!) {
+    deleteLabel(where: { id: $id }) {
+      id
+    }
+  }
+`;
+
 const createLabelEffect = ({
   client,
   imageId,
@@ -37,14 +45,21 @@ const createLabelEffect = ({
   width: number;
   height: number;
 }): Effect => ({
-  do: () => {
-    client.mutate({
+  do: async () => {
+    const { data } = await client.mutate({
       mutation: createLabelMutation,
       variables: { imageId, x, y, width, height },
       refetchQueries: ["getImageLabels"],
     });
+    return data?.createLabel?.id;
   },
-  undo: () => console.log(imageId),
+  undo: async (id: string): Promise<void> => {
+    await client.mutate({
+      mutation: deleteLabelMutation,
+      variables: { id },
+      refetchQueries: ["getImageLabels"],
+    });
+  },
 });
 
 const geometryFunction = createBox();
