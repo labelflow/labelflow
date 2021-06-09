@@ -20,7 +20,7 @@ export const SelectFeatures = () => {
           return click(mapBrowserEvent) && altKeyOnly(mapBrowserEvent);
         };
       default:
-        return undefined;
+        return () => false;
     }
   };
   return (
