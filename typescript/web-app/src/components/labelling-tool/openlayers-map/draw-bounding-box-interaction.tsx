@@ -30,25 +30,33 @@ const deleteLabelMutation = gql`
   }
 `;
 
-const createLabelEffect = ({
-  imageId,
-  x,
-  y,
-  width,
-  height,
-}: {
-  imageId: string;
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-}): Effect => ({
+const createLabelEffect = (
+  {
+    imageId,
+    x,
+    y,
+    width,
+    height,
+  }: {
+    imageId: string;
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  },
+  {
+    setSelectedLabelId,
+  }: { setSelectedLabelId: (labelId: string | null) => void }
+): Effect => ({
   do: async () => {
     const { data } = await client.mutate({
       mutation: createLabelMutation,
       variables: { imageId, x, y, width, height },
       refetchQueries: ["getImageLabels"],
     });
+
+    setSelectedLabelId(data?.createLabel?.id);
+
     return data?.createLabel?.id;
   },
   undo: async (id: string): Promise<void> => {
@@ -57,6 +65,8 @@ const createLabelEffect = ({
       variables: { id },
       refetchQueries: ["getImageLabels"],
     });
+
+    setSelectedLabelId(null);
   },
 });
 
@@ -66,6 +76,9 @@ export const DrawBoundingBoxInteraction = () => {
   const imageId = useRouter().query?.id;
 
   const selectedTool = useLabellingStore((state) => state.selectedTool);
+  const setSelectedLabelId = useLabellingStore(
+    (state) => state.setSelectedLabelId
+  );
   const { perform } = useUndoStore();
 
   if (selectedTool !== Tools.BOUNDING_BOX) {
@@ -87,13 +100,18 @@ export const DrawBoundingBoxInteraction = () => {
           .getExtent();
 
         perform(
-          createLabelEffect({
-            imageId,
-            x,
-            y,
-            width: destX - x,
-            height: destY - y,
-          })
+          createLabelEffect(
+            {
+              imageId,
+              x,
+              y,
+              width: destX - x,
+              height: destY - y,
+            },
+            {
+              setSelectedLabelId,
+            }
+          )
         );
       }}
     />

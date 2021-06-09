@@ -183,7 +183,7 @@ it("should change style of selected label", async () => {
   });
 });
 
-it("should change style of selected label", async () => {
+it("should delete selected label on delete key pressed", async () => {
   const mapRef: { current: OlMap | null } = { current: null };
   const labelId = await createLabel({
     x: 3.14,
@@ -223,5 +223,50 @@ it("should change style of selected label", async () => {
         .getSource()
         .getFeatures()
     ).toHaveLength(0);
+
+    expect(useLabellingStore.getState()).toMatchObject({
+      selectedLabelId: null,
+    });
+  });
+});
+
+it("should not delete a label when none was selected", async () => {
+  const mapRef: { current: OlMap | null } = { current: null };
+  await createLabel({
+    x: 3.14,
+    y: 42.0,
+    height: 768,
+    width: 362,
+    imageId,
+  });
+
+  const { container } = render(<Labels />, {
+    wrapper: ({ children }) => (
+      <Map
+        ref={(map) => {
+          mapRef.current = map;
+        }}
+      >
+        <ApolloProvider client={client}>{children}</ApolloProvider>
+      </Map>
+    ),
+  });
+
+  await waitFor(() => {
+    expect(
+      (mapRef.current?.getLayers().getArray()[0] as VectorLayer)
+        .getSource()
+        .getFeatures()
+    ).toHaveLength(1);
+  });
+
+  userEvent.type(container, "{delete}");
+
+  await waitFor(() => {
+    expect(
+      (mapRef.current?.getLayers().getArray()[0] as VectorLayer)
+        .getSource()
+        .getFeatures()
+    ).toHaveLength(1);
   });
 });

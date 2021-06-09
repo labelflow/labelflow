@@ -10,7 +10,7 @@ export type LabellingState = {
   selectedTool: Tools;
   selectedLabelId: string | null;
   setSelectedTool: (tool: Tools) => void;
-  setSelectedLabelId: (labelId: string) => void;
+  setSelectedLabelId: (labelId: string | null) => void;
 };
 
 export const useLabellingStore = create<LabellingState>(

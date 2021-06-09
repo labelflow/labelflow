@@ -34,6 +34,9 @@ const deleteLabel = gql`
 
 export const Labels = () => {
   const selectedLabelId = useLabellingStore((state) => state.selectedLabelId);
+  const setSelectedLabelId = useLabellingStore(
+    (state) => state.setSelectedLabelId
+  );
   const imageId = useRouter().query?.id;
   const { data } = useQuery(getImageLabelsQuery, {
     skip: typeof imageId !== "string",
@@ -46,11 +49,17 @@ export const Labels = () => {
   useHotkeys(
     keymap.deleteLabel.key,
     () => {
-      client.mutate({
-        mutation: deleteLabel,
-        variables: { id: selectedLabelId },
-        refetchQueries: ["getImageLabels"],
-      });
+      if (!selectedLabelId) {
+        return;
+      }
+
+      client
+        .mutate({
+          mutation: deleteLabel,
+          variables: { id: selectedLabelId },
+          refetchQueries: ["getImageLabels"],
+        })
+        .then(() => setSelectedLabelId(null));
     },
     {},
     [selectedLabelId]
