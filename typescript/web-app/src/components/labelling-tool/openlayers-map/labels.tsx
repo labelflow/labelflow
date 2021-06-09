@@ -31,6 +31,10 @@ export const Labels = ({ imageId }: { imageId: string }) => {
 
   const labels = data?.image?.labels ?? [];
 
+  // TODO: Put in PR description question about rrggbbaa hex notation (supported at 92%)
+  // Alternative is to use https://github.com/sindresorhus/hex-rgb
+  const color = "#E53E3E";
+
   return (
     <olLayerVector>
       <olSourceVector>
@@ -44,13 +48,13 @@ export const Labels = ({ imageId }: { imageId: string }) => {
                 const isSelected = id === selectedLabelId;
                 return new Style({
                   fill: new Fill({
-                    color: `rgba(90, 24, 24, ${isSelected ? "0.4" : "0.1"}`,
+                    color: `${color}${isSelected ? "40" : "10"}`,
                   }),
                   stroke: new Stroke({
-                    color: "#E53E3E",
+                    color,
                     width: 2,
                   }),
-                  zIndex: isSelected ? 1000 : 1,
+                  zIndex: isSelected ? 2 : 1,
                 });
               }}
             />
