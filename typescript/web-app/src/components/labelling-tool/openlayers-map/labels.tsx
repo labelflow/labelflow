@@ -118,10 +118,6 @@ export const Labels = () => {
 
   const labels = data?.image?.labels ?? [];
 
-  // TODO: Put in PR description question about rrggbbaa hex notation (supported at 92%)
-  // Alternative is to use https://github.com/sindresorhus/hex-rgb
-  const color = "#E53E3E";
-
   return (
     <>
       <olLayerVector>

@@ -72,7 +72,7 @@ const imageQuery = gql`
 
 export const OpenlayersMap = () => {
   const [editClass, setEditClass] = useState(false);
-  const editClassOverlayRef = useRef<HTMLElement>();
+  const editClassOverlayRef = useRef<HTMLDivElement | null>(null);
   const router = useRouter();
   const imageId = router.query?.id;
 
@@ -102,7 +102,7 @@ export const OpenlayersMap = () => {
   return (
     <>
       <EditLabelClass
-        editClassOverlayRef={editClassOverlayRef}
+        ref={editClassOverlayRef}
         isOpen={editClass}
         onClose={() => setEditClass(false)}
       />

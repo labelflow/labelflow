@@ -1,4 +1,4 @@
-import React from "react";
+import { forwardRef } from "react";
 import { useMutation, useQuery } from "@apollo/client";
 import gql from "graphql-tag";
 
@@ -34,7 +34,10 @@ const updateLabelQuery = gql`
   }
 `;
 
-export const EditLabelClass = ({ editClassOverlayRef, isOpen, onClose }) => {
+export const EditLabelClass = forwardRef<
+  HTMLDivElement | null,
+  { isOpen: boolean; onClose: () => void }
+>(({ isOpen, onClose }, ref) => {
   const { data } = useQuery(labelClassesQuery);
   const [createLabelClass] = useMutation(createLabelQuery, {
     refetchQueries: ["getLabelClasses"],
@@ -45,7 +48,7 @@ export const EditLabelClass = ({ editClassOverlayRef, isOpen, onClose }) => {
   const selectedLabelId = useLabellingStore((state) => state.selectedLabelId);
   const labelClasses = data?.labelClasses ?? [];
   return (
-    <div ref={editClassOverlayRef}>
+    <div ref={ref}>
       {isOpen && (
         <ClassSelectionPopover
           isOpen
@@ -82,4 +85,4 @@ export const EditLabelClass = ({ editClassOverlayRef, isOpen, onClose }) => {
       )}
     </div>
   );
-};
+});

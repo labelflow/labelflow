@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { MutableRefObject, useState } from "react";
 import { click } from "ol/events/condition";
 import { SelectEvent } from "ol/interaction/Select";
 import { Coordinate } from "ol/coordinate";
-import { useLabellingStore, Tools } from "../../../connectors/labelling-state";
 import { MapBrowserEvent } from "ol";
+import { useLabellingStore, Tools } from "../../../connectors/labelling-state";
 
 const isContextMenuEvent = (mapBrowserEvent: MapBrowserEvent) => {
   return mapBrowserEvent?.type === "contextmenu";
@@ -13,7 +13,13 @@ const shouldSelectFeature = (mapBrowserEvent: MapBrowserEvent) => {
   return click(mapBrowserEvent) || isContextMenuEvent(mapBrowserEvent);
 };
 
-export const SelectInteraction = ({ setEditClass, editClassOverlayRef }) => {
+export const SelectInteraction = ({
+  setEditClass = () => {},
+  editClassOverlayRef,
+}: {
+  setEditClass?: (editClass: boolean) => void;
+  editClassOverlayRef?: MutableRefObject<HTMLDivElement | null>;
+}) => {
   const [editMenuLocation, setEditMenuLocation] =
     useState<Coordinate | undefined>(undefined);
   const selectedTool = useLabellingStore((state) => state.selectedTool);
@@ -48,7 +54,7 @@ export const SelectInteraction = ({ setEditClass, editClassOverlayRef }) => {
         }}
         condition={shouldSelectFeature}
       />
-      {editClassOverlayRef.current ? (
+      {editClassOverlayRef?.current ? (
         <olOverlay
           element={editClassOverlayRef.current}
           position={editMenuLocation}
