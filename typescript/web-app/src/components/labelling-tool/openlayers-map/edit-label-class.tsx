@@ -54,11 +54,23 @@ export const EditLabelClass = ({ editClassOverlayRef, isOpen, onClose }) => {
           isOpen
           onClose={onClose}
           labelClasses={labelClasses}
-          createNewClass={(name) =>
-            createLabelClass({
+          createNewClass={async (name) => {
+            const {
+              data: {
+                createLabelClass: { id },
+              },
+            } = await createLabelClass({
               variables: { data: { name, color: "#DD3322" } },
-            })
-          }
+            });
+            updateLabelClass({
+              variables: {
+                where: { id: selectedLabelId },
+                data: { labelClassId: id ?? null },
+              },
+              refetchQueries: ["getImageLabels"],
+            });
+            onClose();
+          }}
           onSelectedClassChange={(item) => {
             updateLabelClass({
               variables: {
