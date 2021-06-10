@@ -20,6 +20,10 @@ const getImageLabelsQuery = gql`
         y
         width
         height
+        labelClass {
+          id
+          color
+        }
       }
     }
   }
@@ -122,14 +126,15 @@ export const Labels = () => {
     <>
       <olLayerVector>
         <olSourceVector>
-          {labels.map(({ id, x, y, width, height }: Label) => {
+          {labels.map(({ id, x, y, width, height, labelClass }: Label) => {
             const isSelected = id === selectedLabelId;
+            const labelClassColor = labelClass?.color ?? "#E2E8F0";
             const style = new Style({
               fill: new Fill({
-                color: `${color}${isSelected ? "40" : "10"}`,
+                color: `${labelClassColor}${isSelected ? "40" : "10"}`,
               }),
               stroke: new Stroke({
-                color,
+                color: labelClassColor,
                 width: 2,
               }),
               zIndex: isSelected ? 2 : 1,
