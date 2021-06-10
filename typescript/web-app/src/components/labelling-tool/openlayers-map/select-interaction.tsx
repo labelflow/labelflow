@@ -18,6 +18,8 @@ export const SelectInteraction = () => {
         const selectEvent = e as SelectEvent;
         if (selectEvent.selected.length > 0) {
           setSelectedLabelId(selectEvent.selected[0].getProperties().id);
+        } else {
+          setSelectedLabelId(null);
         }
         /* the onSelect handler should return a boolean.
          * It seems to be used for internal state purpose. Sometimes openlayers
