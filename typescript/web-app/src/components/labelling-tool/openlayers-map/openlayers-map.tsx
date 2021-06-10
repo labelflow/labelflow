@@ -1,23 +1,20 @@
-import { forwardRef, createRef } from "react";
 import { useRouter } from "next/router";
 import { RouterContext } from "next/dist/next-server/lib/router-context";
 import { Extent, getCenter } from "ol/extent";
 import { Size } from "ol/size";
-import { Map as OlMap } from "ol";
 import memoize from "mem";
 import Projection from "ol/proj/Projection";
 import useMeasure from "react-use-measure";
-import { isFunction, isNil } from "lodash/fp";
 import { ApolloProvider, useApolloClient, useQuery } from "@apollo/client";
 
 import gql from "graphql-tag";
 
 import { Map } from "@labelflow/react-openlayers-fiber";
-import { useLabellingStore, Tools } from "../../../connectors/labelling-state";
 import type { Image } from "../../../graphql-types.generated";
 import "ol/ol.css";
 
 import { DrawBoundingBoxInteraction } from "./draw-bounding-box-interaction";
+import { SelectInteraction } from "./select-interaction";
 import { Labels } from "./labels";
 
 const empty: any[] = [];
@@ -71,7 +68,7 @@ const imageQuery = gql`
   }
 `;
 
-export const OpenlayersMap = forwardRef<OlMap>((_, ref) => {
+export const OpenlayersMap = () => {
   const router = useRouter();
   const imageId = router.query?.id;
 
@@ -81,12 +78,6 @@ export const OpenlayersMap = forwardRef<OlMap>((_, ref) => {
     variables: { id: imageId },
     skip: typeof imageId !== "string",
   }).data?.image;
-
-  const internalRef = createRef<OlMap>();
-  const selectedTool = useLabellingStore((state) => state.selectedTool);
-  const setSelectedLabelId = useLabellingStore(
-    (state) => state.setSelectedLabelId
-  );
 
   const client = useApolloClient();
   const [containerRef, bounds] = useMeasure();
@@ -107,36 +98,9 @@ export const OpenlayersMap = forwardRef<OlMap>((_, ref) => {
 
   return (
     <Map
-      ref={(value) => {
-        if (isNil(value)) {
-          return;
-        }
-        if (isFunction(ref)) {
-          ref(value);
-        } else if (!isNil(ref)) {
-          // eslint-disable-next-line no-param-reassign
-          ref.current = value;
-        }
-        // @ts-ignore
-        internalRef.current = value;
-      }}
       args={{ controls: empty }}
       style={{ height: "100%", width: "100%" }}
       containerRef={containerRef}
-      onClick={(e: { pixel: Array<number> }) => {
-        const map = internalRef?.current;
-        if (!map || selectedTool !== Tools.SELECTION) {
-          return null;
-        }
-
-        const [feature] = map.getFeaturesAtPixel(e.pixel);
-        if (feature) {
-          const { id } = feature.getProperties();
-          setSelectedLabelId(id);
-        }
-
-        return "";
-      }}
     >
       {/* Need to bridge contexts across renderers
        * See https://github.com/facebook/react/issues/17275 */}
@@ -179,8 +143,9 @@ export const OpenlayersMap = forwardRef<OlMap>((_, ref) => {
 
           <Labels />
           <DrawBoundingBoxInteraction />
+          <SelectInteraction />
         </ApolloProvider>
       </RouterContext.Provider>
     </Map>
   );
-});
+};
