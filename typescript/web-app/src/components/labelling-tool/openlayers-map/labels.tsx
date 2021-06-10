@@ -8,6 +8,7 @@ import { Label } from "../../../graphql-types.generated";
 const getImageLabelsQuery = gql`
   query getImageLabels($imageId: ID!) {
     image(where: { id: $imageId }) {
+      id
       labels {
         id
         x
