@@ -1,4 +1,5 @@
 import dynamic from "next/dynamic";
+import { Box } from "@chakra-ui/layout";
 
 import { Layout } from "../components/layout";
 
@@ -13,9 +14,15 @@ const GraphiQL = dynamic(() => import("../components/graphiql"), {
 const GraphqlPlayground = () => {
   return (
     <Layout>
-      <div style={{ height: "100%", width: "100%", borderTop: "solid 1px" }}>
+      <Box
+        h="100%"
+        w="100%"
+        borderTop="solid 1px"
+        borderColor="#d0d0d0"
+        boxSizing="border-box"
+      >
         <GraphiQL />
-      </div>
+      </Box>
     </Layout>
   );
 };
