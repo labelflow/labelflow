@@ -19,6 +19,10 @@ export const SelectInteraction = () => {
         if (selectEvent.selected.length > 0) {
           setSelectedLabelId(selectEvent.selected[0].getProperties().id);
         }
+        /* the onSelect handler should return a boolean.
+         * It seems to be used for internal state purpose. Sometimes openlayers
+         * takes over react lifecycle and change the selected label style.
+         * Returning false prevent this side effect. */
         return false;
       }}
       condition={click}
