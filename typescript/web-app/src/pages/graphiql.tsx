@@ -1,5 +1,5 @@
 import dynamic from "next/dynamic";
-import { Box } from "@chakra-ui/layout";
+import { Box } from "@chakra-ui/react";
 
 import { Layout } from "../components/layout";
 
