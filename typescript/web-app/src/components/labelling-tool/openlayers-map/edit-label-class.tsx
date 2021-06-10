@@ -110,11 +110,9 @@ export const EditLabelClassInteraction = ({
         // TODO: figure out why typescript is drunk as the style property should be of type StyleLike|null
         style={null} // To prevent default styling of the selected feature in open layers
         onSelect={(e: SelectEvent) => {
-          const selectedFeatures = e.target.getFeatures().getArray();
-          if (selectedFeatures?.length > 0) {
-            const selectedFeature = selectedFeatures[0];
-            const { id } = selectedFeature.getProperties();
-            setSelectedLabelId(id);
+          const selectEvent = e as SelectEvent;
+          if (selectEvent.selected.length > 0) {
+            setSelectedLabelId(selectEvent.selected[0].getProperties().id);
             setEditClass(true);
             setEditMenuLocation(e.mapBrowserEvent.coordinate);
           }
