@@ -17,7 +17,7 @@ import "ol/ol.css";
 import { DrawBoundingBoxInteraction } from "./draw-bounding-box-interaction";
 import { SelectInteraction } from "./select-interaction";
 import { Labels } from "./labels";
-import { EditLabelClass, EditLabelClassInteraction } from "./edit-label-class";
+import { EditLabelClass } from "./edit-label-class";
 
 const empty: any[] = [];
 
@@ -159,8 +159,7 @@ export const OpenlayersMap = () => {
 
               <Labels />
               <DrawBoundingBoxInteraction />
-              <SelectInteraction />
-              <EditLabelClassInteraction
+              <SelectInteraction
                 editClassOverlayRef={editClassOverlayRef}
                 setEditClass={setEditClass}
               />

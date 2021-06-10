@@ -1,7 +1,4 @@
-import React, { useState } from "react";
-import { MapBrowserEvent, Overlay } from "ol";
-import { SelectEvent } from "ol/interaction/Select";
-import { Coordinate } from "ol/coordinate";
+import React from "react";
 import { useMutation, useQuery } from "@apollo/client";
 import gql from "graphql-tag";
 
@@ -84,47 +81,5 @@ export const EditLabelClass = ({ editClassOverlayRef, isOpen, onClose }) => {
         />
       )}
     </div>
-  );
-};
-
-const isContextMenuEvent = (mapBrowserEvent: MapBrowserEvent) => {
-  return mapBrowserEvent?.type === "contextmenu";
-};
-
-export const EditLabelClassInteraction = ({
-  editClassOverlayRef,
-  setEditClass,
-}: {
-  editClassOverlayRef: React.MutableRefObject<HTMLElement | undefined>;
-}) => {
-  const [editMenuLocation, setEditMenuLocation] =
-    useState<Coordinate | undefined>(undefined);
-
-  const setSelectedLabelId = useLabellingStore(
-    (state) => state.setSelectedLabelId
-  );
-  return (
-    <>
-      <olInteractionSelect
-        args={{ condition: isContextMenuEvent }}
-        // TODO: figure out why typescript is drunk as the style property should be of type StyleLike|null
-        style={null} // To prevent default styling of the selected feature in open layers
-        onSelect={(e: SelectEvent) => {
-          const selectEvent = e as SelectEvent;
-          if (selectEvent.selected.length > 0) {
-            setSelectedLabelId(selectEvent.selected[0].getProperties().id);
-            setEditClass(true);
-            setEditMenuLocation(e.mapBrowserEvent.coordinate);
-          }
-        }}
-      />
-
-      {editClassOverlayRef.current ? (
-        <olOverlay
-          element={editClassOverlayRef.current}
-          position={editMenuLocation}
-        />
-      ) : null}
-    </>
   );
 };
