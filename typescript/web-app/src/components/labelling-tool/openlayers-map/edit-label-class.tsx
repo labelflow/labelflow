@@ -26,12 +26,26 @@ const createLabelQuery = gql`
   }
 `;
 
+const updateLabelQuery = gql`
+  mutation updateLabelClass(
+    $where: LabelWhereUniqueInput!
+    $data: LabelUpdateInput!
+  ) {
+    updateLabel(where: $where, data: $data) {
+      id
+    }
+  }
+`;
+
 export const EditLabelClass = ({ editClassOverlayRef, isOpen, onClose }) => {
   const { data } = useQuery(labelClassesQuery);
   const [createLabelClass] = useMutation(createLabelQuery, {
     refetchQueries: ["getLabelClasses"],
   });
-
+  const [updateLabelClass] = useMutation(updateLabelQuery, {
+    refetchQueries: ["getLabelClasses"],
+  });
+  const selectedLabelId = useLabellingStore((state) => state.selectedLabelId);
   const labelClasses = data?.labelClasses ?? [];
   return (
     <div ref={editClassOverlayRef}>
@@ -45,6 +59,16 @@ export const EditLabelClass = ({ editClassOverlayRef, isOpen, onClose }) => {
               variables: { data: { name, color: "#DD3322" } },
             })
           }
+          onSelectedClassChange={(item) => {
+            updateLabelClass({
+              variables: {
+                where: { id: selectedLabelId },
+                data: { labelClassId: item?.id ?? null },
+              },
+              refetchQueries: ["getImageLabels"],
+            });
+            onClose();
+          }}
         />
       )}
     </div>
