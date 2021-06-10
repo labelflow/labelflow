@@ -56,6 +56,37 @@ it("should select a feature when user clicks on it", async () => {
   });
 });
 
+it("should unselect selected label if user clicks on nothing", async () => {
+  useLabellingStore.setState({ selectedTool: Tools.SELECTION });
+
+  const mapRef: { current: OlMap | null } = { current: null };
+  render(<SelectInteraction />, {
+    wrapper: ({ children }) => (
+      <Map
+        args={{ interactions: [] }}
+        ref={(map) => {
+          mapRef.current = map;
+        }}
+      >
+        {children}
+      </Map>
+    ),
+  });
+
+  const selectInteraction = mapRef.current?.getInteractions().getArray()?.[0];
+  selectInteraction?.dispatchEvent({
+    type: "select",
+    // @ts-ignore
+    selected: [],
+  });
+
+  await waitFor(() => {
+    expect(useLabellingStore.getState()).toMatchObject({
+      selectedLabelId: null,
+    });
+  });
+});
+
 it("should not select label if the selection tools is not enabled", async () => {
   useLabellingStore.setState({ selectedTool: Tools.BOUNDING_BOX });
 
