@@ -38,6 +38,9 @@ const deleteLabelMutation = gql`
       width
       height
       imageId
+      labelClass {
+        id
+      }
     }
   }
 `;
@@ -49,9 +52,17 @@ const createLabelMutation = gql`
     $y: Float!
     $width: Float!
     $height: Float!
+    $labelClassId: ID
   ) {
     createLabel(
-      data: { imageId: $imageId, x: $x, y: $y, width: $width, height: $height }
+      data: {
+        imageId: $imageId
+        x: $x
+        y: $y
+        width: $width
+        height: $height
+        labelClassId: $labelClassId
+      }
     ) {
       id
     }
@@ -74,9 +85,11 @@ const createDeleteLabelEffect = (
     return data?.deleteLabel;
   },
   undo: async (deletedLabel) => {
+    const { id: labelId, x, y, width, height, imageId } = deletedLabel;
+    const labelClassId = deletedLabel?.labelClass?.id;
     const { data } = await client.mutate({
       mutation: createLabelMutation,
-      variables: deletedLabel,
+      variables: { id: labelId, x, y, width, height, imageId, labelClassId },
       refetchQueries: ["getImageLabels"],
     });
 
