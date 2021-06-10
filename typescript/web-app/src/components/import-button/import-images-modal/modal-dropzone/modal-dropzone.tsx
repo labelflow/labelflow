@@ -48,10 +48,12 @@ const getImageUploadTargetMutation = gql`
 
 export const ImportImagesModalDropzone = ({
   setMode,
-  setCloseable = () => {},
+  onUploadStart = () => {},
+  onUploadEnd = () => {},
 }: {
   setMode?: (mode: "urlList") => void;
-  setCloseable?: (_t: boolean) => void;
+  onUploadStart?: () => void;
+  onUploadEnd?: () => void;
 }) => {
   const apolloClient = useApolloClient();
 
@@ -133,10 +135,10 @@ export const ImportImagesModalDropzone = ({
             }
           })
       );
-      setCloseable(true);
+      onUploadEnd();
     };
 
-    setCloseable(false);
+    onUploadStart();
     createImages();
   }, [files]);
 
