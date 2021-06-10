@@ -2,9 +2,6 @@ import {
   ApolloLink,
   FetchResult,
   Observable,
-  // fromPromise,
-  // Operation,
-  // NextLink,
 } from "@apollo/client";
 
 import { windowExists } from "../../utils/window-exists";
