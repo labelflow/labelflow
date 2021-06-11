@@ -35,7 +35,7 @@ const standardProjection = new Projection({
 });
 
 /**
- * Memoize openlayers parameters that we pass to the
+ * Memoize openlayers parameters that we pass to the open layers components
  */
 const getMemoizedProperties = memoize(
   (_imageId, image: Pick<Image, "id" | "url" | "width" | "height">) => {

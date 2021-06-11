@@ -1,8 +1,8 @@
 /* eslint-disable-next-line import/no-extraneous-dependencies */
 import { initMockedDate } from "@labelflow/dev-utils/mockdate";
-import { clearGetUrlFromFileIdMem } from "../connectors/apollo-client/resolvers/image";
+import { clearGetUrlFromFileIdMem } from "../connectors/resolvers/image";
 import { db } from "../connectors/database";
-import { client } from "../connectors/apollo-client";
+import { client } from "../connectors/apollo-client-schema";
 
 export function setupTestsWithLocalDatabase() {
   beforeAll(() => {

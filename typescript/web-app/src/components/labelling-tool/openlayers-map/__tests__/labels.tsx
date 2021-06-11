@@ -10,7 +10,7 @@ import gql from "graphql-tag";
 import { Map as OlMap } from "ol";
 import { useRouter } from "next/router";
 import VectorLayer from "ol/layer/Vector";
-import { client } from "../../../../connectors/apollo-client";
+import { client } from "../../../../connectors/apollo-client-schema";
 import { Labels } from "../labels";
 import { LabelCreateInput } from "../../../../graphql-types.generated";
 import { useLabellingStore } from "../../../../connectors/labelling-state";
