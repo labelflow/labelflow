@@ -16,6 +16,7 @@ import {
 import type { Workbox } from "workbox-window";
 import { theme } from "../theme";
 import { client } from "../connectors/apollo-client-service-worker";
+import { QueryParamProvider } from "../utils/query-params-provider";
 
 declare global {
   interface Window {
@@ -77,66 +78,71 @@ function App({ Component, pageProps }: AppProps) {
   }, []);
 
   return (
-    <ApolloProvider client={client}>
-      <ChakraProvider theme={theme} resetCSS>
-        <AlertDialog
-          isOpen={isOpen}
-          leastDestructiveRef={cancelRef}
-          onClose={onClose}
-        >
-          <AlertDialogOverlay>
-            <AlertDialogContent>
-              <AlertDialogHeader fontSize="lg" fontWeight="bold">
-                Update available
-              </AlertDialogHeader>
+    <QueryParamProvider>
+      <ApolloProvider client={client}>
+        <ChakraProvider theme={theme} resetCSS>
+          <AlertDialog
+            isOpen={isOpen}
+            leastDestructiveRef={cancelRef}
+            onClose={onClose}
+          >
+            <AlertDialogOverlay>
+              <AlertDialogContent>
+                <AlertDialogHeader fontSize="lg" fontWeight="bold">
+                  Update available
+                </AlertDialogHeader>
 
-              <AlertDialogBody>
-                A newer version of Labelflow is available, would you like to
-                update and reload the page?
-              </AlertDialogBody>
+                <AlertDialogBody>
+                  A newer version of Labelflow is available, would you like to
+                  update and reload the page?
+                </AlertDialogBody>
 
-              <AlertDialogFooter>
-                <Button
-                  ref={cancelRef}
-                  onClick={() => {
-                    console.log(
-                      "User rejected to reload the web app, keep using old version. New version will be automatically load when user open the app next time."
-                    );
-                    onClose();
-                  }}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  colorScheme="brand"
-                  onClick={() => {
-                    if (
-                      typeof window !== "undefined" &&
-                      "serviceWorker" in navigator &&
-                      window.workbox !== undefined
-                    ) {
-                      const wb = window.workbox;
-                      wb.addEventListener("controlling", (/* event: any */) => {
-                        window.location.reload();
-                      });
+                <AlertDialogFooter>
+                  <Button
+                    ref={cancelRef}
+                    onClick={() => {
+                      console.log(
+                        "User rejected to reload the web app, keep using old version. New version will be automatically load when user open the app next time."
+                      );
+                      onClose();
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    colorScheme="brand"
+                    onClick={() => {
+                      if (
+                        typeof window !== "undefined" &&
+                        "serviceWorker" in navigator &&
+                        window.workbox !== undefined
+                      ) {
+                        const wb = window.workbox;
+                        wb.addEventListener(
+                          "controlling",
+                          (/* event: any */) => {
+                            window.location.reload();
+                          }
+                        );
 
-                      // Send a message to the waiting service worker, instructing it to activate.
-                      wb.messageSkipWaiting();
-                    }
+                        // Send a message to the waiting service worker, instructing it to activate.
+                        wb.messageSkipWaiting();
+                      }
 
-                    onClose();
-                  }}
-                  ml={3}
-                >
-                  Update and Reload
-                </Button>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialogOverlay>
-        </AlertDialog>
-        <Component {...pageProps} />
-      </ChakraProvider>
-    </ApolloProvider>
+                      onClose();
+                    }}
+                    ml={3}
+                  >
+                    Update and Reload
+                  </Button>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialogOverlay>
+          </AlertDialog>
+          <Component {...pageProps} />
+        </ChakraProvider>
+      </ApolloProvider>
+    </QueryParamProvider>
   );
 }
 

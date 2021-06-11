@@ -1,6 +1,8 @@
-import { Button, ButtonProps, useDisclosure, chakra } from "@chakra-ui/react";
+import { Button, ButtonProps, chakra } from "@chakra-ui/react";
+import { useQueryParam } from "use-query-params";
 
 import { RiUploadCloud2Line } from "react-icons/ri";
+import { BoolParam } from "../../utils/query-param-bool";
 import { ImportImagesModal } from "./import-images-modal";
 
 const UploadIcon = chakra(RiUploadCloud2Line);
@@ -8,15 +10,18 @@ const UploadIcon = chakra(RiUploadCloud2Line);
 type Props = ButtonProps;
 
 export const ImportButton = ({ ...props }: Props) => {
-  const { isOpen, onClose, onOpen } = useDisclosure();
+  const [isOpen, setIsOpen] = useQueryParam("modal-import", BoolParam);
 
   return (
     <>
-      <ImportImagesModal isOpen={isOpen} onClose={onClose} />
+      <ImportImagesModal
+        isOpen={isOpen ?? false}
+        onClose={() => setIsOpen(false)}
+      />
       <Button
         aria-label="Add images"
         leftIcon={<UploadIcon fontSize="xl" />}
-        onClick={onOpen}
+        onClick={() => setIsOpen(true)}
         variant="ghost"
         {...props}
       >
