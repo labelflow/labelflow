@@ -1,5 +1,4 @@
 import create from "zustand";
-import { persist } from "zustand/middleware";
 
 export enum Tools {
   SELECTION = "SELECTION",
@@ -8,17 +7,14 @@ export enum Tools {
 
 export type LabellingState = {
   selectedTool: Tools;
+  selectedLabelId: string | null;
   setSelectedTool: (tool: Tools) => void;
+  setSelectedLabelId: (labelId: string | null) => void;
 };
 
-export const useLabellingStore = create<LabellingState>(
-  persist(
-    (set) => ({
-      selectedTool: Tools.SELECTION,
-      setSelectedTool: (tool) => set({ selectedTool: tool }),
-    }),
-    {
-      name: "labelling-state",
-    }
-  )
-);
+export const useLabellingStore = create<LabellingState>((set) => ({
+  selectedTool: Tools.SELECTION,
+  selectedLabelId: null,
+  setSelectedTool: (tool) => set({ selectedTool: tool }),
+  setSelectedLabelId: (labelId) => set({ selectedLabelId: labelId }),
+}));
