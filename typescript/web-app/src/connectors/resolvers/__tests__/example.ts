@@ -1,6 +1,6 @@
 import { createExample, example, examples } from "../example";
-import { db } from "../../../database";
-import { setupTestsWithLocalDatabase } from "../../../../utils/setup-local-db-tests";
+import { db } from "../../database";
+import { setupTestsWithLocalDatabase } from "../../../utils/setup-local-db-tests";
 
 setupTestsWithLocalDatabase();
 

@@ -14,7 +14,7 @@ const examplesQuery = gql`
 `;
 
 const createExamplesMutation = gql`
-  mutation ($name: String) {
+  mutation ($name: String!) {
     createExample(data: { name: $name }) {
       id
       name
@@ -27,6 +27,7 @@ const IndexPage = () => {
   const [createExample] = useMutation(createExamplesMutation, {
     refetchQueries: [{ query: examplesQuery }],
   });
+
   return (
     <Layout>
       <h1>Hello world</h1>

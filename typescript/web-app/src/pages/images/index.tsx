@@ -62,6 +62,7 @@ const ImagesPage = () => {
                     background="gray.100"
                     alt={name}
                     src={url}
+                    ignoreFallback
                     objectFit="contain"
                     h="18rem"
                     w="full"

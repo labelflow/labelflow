@@ -3,9 +3,9 @@ import {
   MutationCreateExampleArgs,
   QueryExampleArgs,
   QueryExamplesArgs,
-} from "../../../graphql-types.generated";
+} from "../../graphql-types.generated";
 
-import { db } from "../../database";
+import { db } from "../database";
 
 // Queries
 export const example = async (_: any, args: QueryExampleArgs) => {

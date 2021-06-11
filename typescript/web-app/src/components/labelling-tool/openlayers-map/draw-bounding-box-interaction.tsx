@@ -2,9 +2,9 @@ import { useRouter } from "next/router";
 import { createBox, DrawEvent } from "ol/interaction/Draw";
 import GeometryType from "ol/geom/GeometryType";
 import gql from "graphql-tag";
+import { ApolloClient, useApolloClient } from "@apollo/client";
 import { useLabellingStore, Tools } from "../../../connectors/labelling-state";
 import { useUndoStore, Effect } from "../../../connectors/undo-store";
-import { client } from "../../../connectors/apollo-client";
 
 const createLabelMutation = gql`
   mutation createLabel(
@@ -31,12 +31,14 @@ const deleteLabelMutation = gql`
 `;
 
 const createLabelEffect = ({
+  client,
   imageId,
   x,
   y,
   width,
   height,
 }: {
+  client: ApolloClient<{}>;
   imageId: string;
   x: number;
   y: number;
@@ -64,6 +66,7 @@ const geometryFunction = createBox();
 
 export const DrawBoundingBoxInteraction = () => {
   const imageId = useRouter().query?.id;
+  const client = useApolloClient();
 
   const selectedTool = useLabellingStore((state) => state.selectedTool);
   const { perform } = useUndoStore();
@@ -88,6 +91,7 @@ export const DrawBoundingBoxInteraction = () => {
 
         perform(
           createLabelEffect({
+            client,
             imageId,
             x,
             y,

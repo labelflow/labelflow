@@ -1,6 +1,7 @@
+const withPWA = require('next-pwa')
 const path = require("path");
 
-module.exports = {
+module.exports = withPWA({
   images: {
     deviceSizes: [
       320, 480, 640, 750, 828, 960, 1080, 1200, 1440, 1920, 2048, 2560, 3840,
@@ -150,4 +151,21 @@ module.exports = {
   onDemandEntries: {
     maxInactiveAge: 1000 * 60 * 60,
   },
-};
+  // Put the Service Worker code in the `public` folder to avoid having to serve it separately
+  // See https://github.com/shadowwalker/next-pwa#usage-without-custom-server-nextjs-9
+  pwa: {
+    dest: 'public',
+    swSrc: "./src/worker/index.ts",
+    compileSrc: true,
+    // Register false, since we register manually in `_app.tsx`, and ask the user when to upgrade
+    register: false,
+    // Cache on frontend nav, it pre-fetches stuff more eagerly
+    // See https://github.com/shadowwalker/next-pwa#available-options
+    cacheOnFrontEndNav: true,
+    // Add plugins to the webpack config of the service worker bundler
+    // See https://developers.google.com/web/tools/workbox/reference-docs/latest/module-workbox-webpack-plugin.InjectManifest
+    webpackCompilationPlugins: [],
+    // exclude: ["/api/worker/"]
+  }
+}
+);
