@@ -1,8 +1,13 @@
-import create from "zustand";
+import create from "zustand-store-addons";
+
+import {
+  getRouterValue,
+  setRouterValue,
+} from "../../utils/query-param-get-set";
 
 export enum Tools {
-  SELECTION = "SELECTION",
-  BOUNDING_BOX = "BOUNDING_BOX",
+  SELECTION = "select",
+  BOUNDING_BOX = "box",
 }
 
 export type LabellingState = {
@@ -12,9 +17,17 @@ export type LabellingState = {
   setSelectedLabelId: (labelId: string | null) => void;
 };
 
-export const useLabellingStore = create<LabellingState>((set) => ({
-  selectedTool: Tools.SELECTION,
-  selectedLabelId: null,
-  setSelectedTool: (tool) => set({ selectedTool: tool }),
-  setSelectedLabelId: (labelId) => set({ selectedLabelId: labelId }),
-}));
+export const useLabellingStore = create(
+  (set) => ({
+    selectedTool: getRouterValue("selectedTool") ?? Tools.SELECTION,
+    selectedLabelId: getRouterValue("selectedLabelId") ?? null,
+    setSelectedTool: (tool: Tools) => set({ selectedTool: tool }),
+    setSelectedLabelId: (labelId: string) => set({ selectedLabelId: labelId }),
+  }),
+  {
+    watchers: {
+      selectedTool: setRouterValue("selectedTool"),
+      selectedLabelId: setRouterValue("selectedLabelId"),
+    },
+  }
+);
