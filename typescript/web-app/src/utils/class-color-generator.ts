@@ -21,6 +21,9 @@ const colorSequence = [
   "rose",
 ];
 
+export const hexColorSequence = colorSequence.map((colorName) =>
+  get(`${colorName}.500`, colors)
+);
 export const previousHexToNextHexMap: { [key: string]: string } =
   colorSequence.reduce((accumulator, colorName, index) => {
     const indexOfNextColor = (index + 4) % colorSequence.length; // The number that you are adding to index and the length of the array have to be prime numbers between each other
