@@ -7,13 +7,16 @@ export const getRouterValue = <T extends string>(name: string): T =>
 export const setRouterValue =
   <T extends string>(name: string) =>
   (value: T): void => {
-    const router = Router;
+    const { query, pathname } = Router;
     if (value === null || value === undefined) {
       // Remove params that are undefined
       // This gives simpler, more beautiful URLs
-      delete router.query[kebabCase(name)];
+      delete query[kebabCase(name)];
     } else {
-      router.query[kebabCase(name)] = value;
+      query[kebabCase(name)] = value;
     }
-    Router.replace(router);
+    Router.replace({ pathname, query }, undefined, {
+      shallow: true,
+      scroll: false,
+    });
   };
