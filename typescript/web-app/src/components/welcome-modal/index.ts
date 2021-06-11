@@ -1,1 +1,1 @@
-export { ImportImagesModal } from "./welcome-modal";
+export { WelcomeModal } from "./welcome-modal";
