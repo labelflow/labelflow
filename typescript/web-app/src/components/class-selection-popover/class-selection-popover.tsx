@@ -120,6 +120,7 @@ export const ClassSelectionPopover = ({
       onClose={onClose}
       initialFocusRef={initialFocusRef}
       placement="bottom-start"
+      preventOverflow
     >
       {trigger && <PopoverTrigger>{trigger}</PopoverTrigger>}
       <PopoverContent borderColor="gray.200">

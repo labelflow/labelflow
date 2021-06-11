@@ -101,11 +101,6 @@ export const OpenlayersMap = () => {
   );
   return (
     <>
-      <EditLabelClass
-        ref={editClassOverlayRef}
-        isOpen={editClass}
-        onClose={() => setEditClass(false)}
-      />
       <div
         style={{ display: "flex", width: "100%", height: "100%" }}
         onContextMenu={(e) => {
@@ -166,6 +161,11 @@ export const OpenlayersMap = () => {
             </ApolloProvider>
           </RouterContext.Provider>
         </Map>
+        <EditLabelClass
+          ref={editClassOverlayRef}
+          isOpen={editClass}
+          onClose={() => setEditClass(false)}
+        />
       </div>
     </>
   );

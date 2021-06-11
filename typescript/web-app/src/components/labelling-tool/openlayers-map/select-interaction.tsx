@@ -3,6 +3,7 @@ import { click } from "ol/events/condition";
 import { SelectEvent } from "ol/interaction/Select";
 import { Coordinate } from "ol/coordinate";
 import { MapBrowserEvent } from "ol";
+import OverlayPositioning from "ol/OverlayPositioning";
 import { useLabellingStore, Tools } from "../../../connectors/labelling-state";
 
 const isContextMenuEvent = (mapBrowserEvent: MapBrowserEvent) => {
@@ -36,7 +37,6 @@ export const SelectInteraction = ({
       <olInteractionSelect
         onSelect={(e) => {
           const selectEvent = e as SelectEvent;
-          console.log(selectEvent);
           if (selectEvent.selected.length > 0) {
             setSelectedLabelId(selectEvent.selected[0].getProperties().id);
             if (isContextMenuEvent(selectEvent?.mapBrowserEvent)) {
@@ -58,6 +58,7 @@ export const SelectInteraction = ({
         <olOverlay
           element={editClassOverlayRef.current}
           position={editMenuLocation}
+          positioning={OverlayPositioning.CENTER_CENTER}
         />
       ) : null}
     </>

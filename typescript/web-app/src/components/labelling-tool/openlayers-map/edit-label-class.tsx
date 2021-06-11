@@ -36,7 +36,10 @@ const updateLabelQuery = gql`
 
 export const EditLabelClass = forwardRef<
   HTMLDivElement | null,
-  { isOpen: boolean; onClose: () => void }
+  {
+    isOpen: boolean;
+    onClose: () => void;
+  }
 >(({ isOpen, onClose }, ref) => {
   const { data } = useQuery(labelClassesQuery);
   const [createLabelClass] = useMutation(createLabelQuery, {
@@ -47,12 +50,14 @@ export const EditLabelClass = forwardRef<
   });
   const selectedLabelId = useLabellingStore((state) => state.selectedLabelId);
   const labelClasses = data?.labelClasses ?? [];
+
   return (
     <div ref={ref}>
       {isOpen && (
         <ClassSelectionPopover
           isOpen
           onClose={onClose}
+          trigger={<div style={{ width: 0, height: 0 }} />} // Needed to have the popover displayed preventing overflow
           labelClasses={labelClasses}
           createNewClass={async (name) => {
             const {
