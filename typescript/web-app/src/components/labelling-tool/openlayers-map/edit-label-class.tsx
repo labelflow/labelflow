@@ -19,6 +19,17 @@ const labelClassesQuery = gql`
   }
 `;
 
+const labelQuery = gql`
+  query getLabel($id: ID!) {
+    label(where: { id: $id }) {
+      id
+      labelClass {
+        id
+      }
+    }
+  }
+`;
+
 const createLabelQuery = gql`
   mutation createLabelClass($data: LabelClassCreateInput!) {
     createLabelClass(data: $data) {
@@ -46,6 +57,7 @@ export const EditLabelClass = forwardRef<
   }
 >(({ isOpen, onClose }, ref) => {
   const { data } = useQuery(labelClassesQuery);
+  const labelClasses = data?.labelClasses ?? [];
   const [createLabelClass] = useMutation(createLabelQuery, {
     refetchQueries: ["getLabelClasses"],
   });
@@ -53,7 +65,12 @@ export const EditLabelClass = forwardRef<
     refetchQueries: ["getLabelClasses"],
   });
   const selectedLabelId = useLabellingStore((state) => state.selectedLabelId);
-  const labelClasses = data?.labelClasses ?? [];
+  const { data: labelQueryData } = useQuery(labelQuery, {
+    variables: { id: selectedLabelId },
+    skip: selectedLabelId == null,
+  });
+  const selectedLabelClassId = labelQueryData?.label?.labelClass?.id;
+
   return (
     <div ref={ref}>
       {isOpen && (
@@ -62,6 +79,7 @@ export const EditLabelClass = forwardRef<
           onClose={onClose}
           trigger={<div style={{ width: 0, height: 0 }} />} // Needed to have the popover displayed preventing overflow
           labelClasses={labelClasses}
+          selectedLabelClass={{ id: selectedLabelClassId }}
           createNewClass={async (name) => {
             const newClassColor =
               labelClasses.length < 1
