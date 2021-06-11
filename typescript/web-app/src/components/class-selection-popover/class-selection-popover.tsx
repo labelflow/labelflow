@@ -36,7 +36,7 @@ export const ClassSelectionPopover = ({
   onSelectedClassChange,
   createNewClass,
   labelClasses,
-  selectedLabelClass,
+  selectedLabelClassId,
   trigger,
 }: {
   isOpen?: boolean;
@@ -44,7 +44,7 @@ export const ClassSelectionPopover = ({
   onSelectedClassChange: (item: LabelClass | null) => void;
   labelClasses: LabelClass[];
   createNewClass: (name: string) => void;
-  selectedLabelClass?: LabelClass | null;
+  selectedLabelClassId?: string | null;
   trigger?: React.ReactNode;
 }) => {
   const labelClassesWithNoneClass = [...labelClasses, noneClass];
@@ -167,8 +167,8 @@ export const ClassSelectionPopover = ({
                     item={item}
                     highlight={highlightedIndex === index}
                     selected={
-                      ("id" in item && item.id === selectedLabelClass?.id) ||
-                      (selectedLabelClass === null &&
+                      ("id" in item && item.id === selectedLabelClassId) ||
+                      (selectedLabelClassId === null &&
                         "type" in item &&
                         item.type === "NoneClass")
                     }

@@ -79,7 +79,7 @@ export const EditLabelClass = forwardRef<
           onClose={onClose}
           trigger={<div style={{ width: 0, height: 0 }} />} // Needed to have the popover displayed preventing overflow
           labelClasses={labelClasses}
-          selectedLabelClass={{ id: selectedLabelClassId }}
+          selectedLabelClassId={selectedLabelClassId}
           createNewClass={async (name) => {
             const newClassColor =
               labelClasses.length < 1
