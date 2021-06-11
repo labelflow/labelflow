@@ -4,6 +4,10 @@ import gql from "graphql-tag";
 
 import { ClassSelectionPopover } from "../../class-selection-popover";
 import { useLabellingStore } from "../../../connectors/labelling-state";
+import {
+  getNextClassColor,
+  hexColorSequence,
+} from "../../../utils/class-color-generator";
 
 const labelClassesQuery = gql`
   query getLabelClasses {
@@ -50,7 +54,6 @@ export const EditLabelClass = forwardRef<
   });
   const selectedLabelId = useLabellingStore((state) => state.selectedLabelId);
   const labelClasses = data?.labelClasses ?? [];
-
   return (
     <div ref={ref}>
       {isOpen && (
@@ -60,12 +63,18 @@ export const EditLabelClass = forwardRef<
           trigger={<div style={{ width: 0, height: 0 }} />} // Needed to have the popover displayed preventing overflow
           labelClasses={labelClasses}
           createNewClass={async (name) => {
+            const newClassColor =
+              labelClasses.length < 1
+                ? hexColorSequence[0]
+                : getNextClassColor(
+                    labelClasses[labelClasses.length - 1].color
+                  );
             const {
               data: {
                 createLabelClass: { id },
               },
             } = await createLabelClass({
-              variables: { data: { name, color: "#DD3322" } },
+              variables: { data: { name, color: newClassColor } },
             });
             updateLabelClass({
               variables: {
