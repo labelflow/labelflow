@@ -16,12 +16,12 @@ export const ImportButton = ({ ...props }: Props) => {
     <>
       <ImportImagesModal
         isOpen={isOpen ?? false}
-        onClose={() => setIsOpen(false)}
+        onClose={() => setIsOpen(false, "replaceIn")}
       />
       <Button
         aria-label="Add images"
         leftIcon={<UploadIcon fontSize="xl" />}
-        onClick={() => setIsOpen(true)}
+        onClick={() => setIsOpen(true, "replaceIn")}
         variant="ghost"
         {...props}
       >
