@@ -123,9 +123,9 @@ export const ClassSelectionPopover = ({
     >
       {trigger && <PopoverTrigger>{trigger}</PopoverTrigger>}
       <PopoverContent borderColor="gray.200">
-        <PopoverBody pl="0" pr="0">
+        <PopoverBody pl="0" pr="0" pt="0">
           <Box>
-            <Box {...getComboboxProps()} pl="3" pr="3">
+            <Box {...getComboboxProps()} pl="3" pr="3" pt="3">
               <InputGroup>
                 <InputLeftElement pointerEvents="none">
                   <MagnifierIcon fontSize="2xl" />
