@@ -9,6 +9,7 @@ import { useUndoStore, Effect } from "../../../connectors/undo-store";
 
 const createLabelMutation = gql`
   mutation createLabel(
+    $id: ID
     $imageId: ID!
     $x: Float!
     $y: Float!
@@ -16,7 +17,14 @@ const createLabelMutation = gql`
     $height: Float!
   ) {
     createLabel(
-      data: { imageId: $imageId, x: $x, y: $y, width: $width, height: $height }
+      data: {
+        id: $id
+        imageId: $imageId
+        x: $x
+        y: $y
+        width: $width
+        height: $height
+      }
     ) {
       id
     }
@@ -64,7 +72,7 @@ const createLabelEffect = (
 
     return data?.createLabel?.id;
   },
-  undo: async (id: string): Promise<void> => {
+  undo: async (id: string): Promise<string> => {
     await client.mutate({
       mutation: deleteLabelMutation,
       variables: { id },
@@ -72,6 +80,18 @@ const createLabelEffect = (
     });
 
     setSelectedLabelId(null);
+    return id;
+  },
+  redo: async (id: string) => {
+    const { data } = await client.mutate({
+      mutation: createLabelMutation,
+      variables: { id, imageId, x, y, width, height },
+      refetchQueries: ["getImageLabels"],
+    });
+
+    setSelectedLabelId(data?.createLabel?.id);
+
+    return data?.createLabel?.id;
   },
 });
 

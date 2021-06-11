@@ -72,10 +72,10 @@ const createDeleteLabelEffect = (
     client: ApolloClient<object>;
   }
 ): Effect => ({
-  do: async (labelId = id) => {
+  do: async () => {
     const { data } = await client.mutate({
       mutation: deleteLabelMutation,
-      variables: { id: labelId },
+      variables: { id },
       refetchQueries: ["getImageLabels"],
     });
     setSelectedLabelId(null);
@@ -93,6 +93,15 @@ const createDeleteLabelEffect = (
     setSelectedLabelId(data?.createLabel?.id);
 
     return data?.createLabel?.id;
+  },
+  redo: async (labelId: string) => {
+    const { data } = await client.mutate({
+      mutation: deleteLabelMutation,
+      variables: { id: labelId },
+      refetchQueries: ["getImageLabels"],
+    });
+    setSelectedLabelId(null);
+    return data?.deleteLabel;
   },
 });
 
