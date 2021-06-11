@@ -3,7 +3,7 @@
 import { precacheAndRoute } from "workbox-precaching";
 
 import { server as graphqlServer } from "./graphql-server";
-import { server as imageServer } from "./image-server";
+import { server as fileServer } from "./file-server";
 
 declare let self: ServiceWorkerGlobalScope;
 
@@ -66,8 +66,8 @@ self.addEventListener("activate", (event) => {
 // Install the listener of the graphql server
 graphqlServer.installListener("/api/worker/graphql");
 
-// Install the listener of the image server
-imageServer.installListener("/api/worker/files");
+// Install the listener of the file server
+fileServer.installListener("/api/worker/files");
 
 // Inject the manifest
 // See https://github.com/GoogleChrome/workbox/issues/2519#issuecomment-634164566
