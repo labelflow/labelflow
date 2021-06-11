@@ -41,7 +41,7 @@ function App({ Component, pageProps }: AppProps) {
 
       // add event listeners to handle any of PWA lifecycle event
       // https://developers.google.com/web/tools/workbox/reference-docs/latest/module-workbox-window.Workbox#events
-      wb.addEventListener("redundant", (event) => {
+      wb.addEventListener("redundant", () => {
         window.location.reload();
       });
 
