@@ -37,8 +37,9 @@ const deleteLabelMutation = gql`
   }
 `;
 
-const createLabelMutation = gql`
+const createLabelWithIdMutation = gql`
   mutation createLabel(
+    $id: ID!
     $imageId: ID!
     $x: Float!
     $y: Float!
@@ -46,7 +47,14 @@ const createLabelMutation = gql`
     $height: Float!
   ) {
     createLabel(
-      data: { imageId: $imageId, x: $x, y: $y, width: $width, height: $height }
+      data: {
+        id: $id
+        imageId: $imageId
+        x: $x
+        y: $y
+        width: $width
+        height: $height
+      }
     ) {
       id
     }
@@ -73,8 +81,10 @@ const createDeleteLabelEffect = (
     return data?.deleteLabel;
   },
   undo: async (deletedLabel) => {
+    /* It is important to use the same id for the re-creation when the label
+     * was created in the current session to enable the undoing of the creation effect */
     const { data } = await client.mutate({
-      mutation: createLabelMutation,
+      mutation: createLabelWithIdMutation,
       variables: deletedLabel,
       refetchQueries: ["getImageLabels"],
     });
