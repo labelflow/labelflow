@@ -9,7 +9,7 @@ import { Feature, Map as OlMap } from "ol";
 import { fromExtent } from "ol/geom/Polygon";
 import { DrawEvent, DrawEventType } from "ol/interaction/Draw";
 
-import { client } from "../../../../connectors/apollo-client";
+import { client } from "../../../../connectors/apollo-client-schema";
 import { useUndoStore } from "../../../../connectors/undo-store";
 import {
   useLabellingStore,
@@ -21,8 +21,10 @@ import { DrawBoundingBoxInteraction } from "../draw-bounding-box-interaction";
 
 setupTestsWithLocalDatabase();
 
-jest.mock("../../../../connectors/apollo-client", () => {
-  const original = jest.requireActual("../../../../connectors/apollo-client");
+jest.mock("../../../../connectors/apollo-client-schema", () => {
+  const original = jest.requireActual(
+    "../../../../connectors/apollo-client-schema"
+  );
   return {
     client: {
       ...original.client,

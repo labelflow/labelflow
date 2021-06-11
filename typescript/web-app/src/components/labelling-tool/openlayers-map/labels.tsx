@@ -1,11 +1,10 @@
 import { useRouter } from "next/router";
-import { useQuery } from "@apollo/client";
+import { ApolloClient, useQuery, useApolloClient } from "@apollo/client";
 import gql from "graphql-tag";
 import { fromExtent } from "ol/geom/Polygon";
 import { Fill, Stroke, Style } from "ol/style";
 import { useHotkeys } from "react-hotkeys-hook";
 
-import { client } from "../../../connectors/apollo-client";
 import { keymap } from "../../../keymap";
 import { useLabellingStore } from "../../../connectors/labelling-state";
 import { useUndoStore, Effect } from "../../../connectors/undo-store";
@@ -14,6 +13,7 @@ import { Label } from "../../../graphql-types.generated";
 const getImageLabelsQuery = gql`
   query getImageLabels($imageId: ID!) {
     image(where: { id: $imageId }) {
+      id
       labels {
         id
         x
@@ -45,8 +45,9 @@ const deleteLabelMutation = gql`
   }
 `;
 
-const createLabelMutation = gql`
+const createLabelWithIdMutation = gql`
   mutation createLabel(
+    $id: ID!
     $imageId: ID!
     $x: Float!
     $y: Float!
@@ -56,6 +57,7 @@ const createLabelMutation = gql`
   ) {
     createLabel(
       data: {
+        id: $id
         imageId: $imageId
         x: $x
         y: $y
@@ -73,12 +75,16 @@ const createDeleteLabelEffect = (
   { id }: { id: string },
   {
     setSelectedLabelId,
-  }: { setSelectedLabelId: (labelId: string | null) => void }
+    client,
+  }: {
+    setSelectedLabelId: (labelId: string | null) => void;
+    client: ApolloClient<object>;
+  }
 ): Effect => ({
-  do: async (labelId = id) => {
+  do: async () => {
     const { data } = await client.mutate({
       mutation: deleteLabelMutation,
-      variables: { id: labelId },
+      variables: { id },
       refetchQueries: ["getImageLabels"],
     });
     setSelectedLabelId(null);
@@ -87,8 +93,10 @@ const createDeleteLabelEffect = (
   undo: async (deletedLabel) => {
     const { id: labelId, x, y, width, height, imageId } = deletedLabel;
     const labelClassId = deletedLabel?.labelClass?.id;
+    /* It is important to use the same id for the re-creation when the label
+     * was created in the current session to enable the undoing of the creation effect */
     const { data } = await client.mutate({
-      mutation: createLabelMutation,
+      mutation: createLabelWithIdMutation,
       variables: { id: labelId, x, y, width, height, imageId, labelClassId },
       refetchQueries: ["getImageLabels"],
     });
@@ -97,9 +105,19 @@ const createDeleteLabelEffect = (
 
     return data?.createLabel?.id;
   },
+  redo: async (labelId: string) => {
+    const { data } = await client.mutate({
+      mutation: deleteLabelMutation,
+      variables: { id: labelId },
+      refetchQueries: ["getImageLabels"],
+    });
+    setSelectedLabelId(null);
+    return data?.deleteLabel;
+  },
 });
 
 export const Labels = () => {
+  const client = useApolloClient();
   const selectedLabelId = useLabellingStore((state) => state.selectedLabelId);
   const setSelectedLabelId = useLabellingStore(
     (state) => state.setSelectedLabelId
@@ -122,7 +140,10 @@ export const Labels = () => {
       }
 
       perform(
-        createDeleteLabelEffect({ id: selectedLabelId }, { setSelectedLabelId })
+        createDeleteLabelEffect(
+          { id: selectedLabelId },
+          { setSelectedLabelId, client }
+        )
       );
     },
     {},

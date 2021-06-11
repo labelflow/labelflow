@@ -9,8 +9,7 @@ import type {
 } from "../../graphql-types.generated";
 
 export type DbFile = {
-  id?: string;
-  imageId: string;
+  id: string;
   blob: Blob;
 };
 

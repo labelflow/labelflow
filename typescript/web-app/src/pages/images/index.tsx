@@ -15,23 +15,18 @@ import { Layout } from "../../components/layout";
 import type { Image as ImageType } from "../../graphql-types.generated";
 
 const imagesQuery = gql`
-  query {
+  query getImages {
     images {
       id
       name
       url
-      labels {
-        id
-      }
     }
   }
 `;
 
 const ImagesPage = () => {
   const { data: imagesResult } =
-    useQuery<{ images: Pick<ImageType, "id" | "url" | "name" | "labels">[] }>(
-      imagesQuery
-    );
+    useQuery<{ images: Pick<ImageType, "id" | "url" | "name">[] }>(imagesQuery);
 
   return (
     <Layout>
@@ -62,6 +57,7 @@ const ImagesPage = () => {
                     background="gray.100"
                     alt={name}
                     src={url}
+                    ignoreFallback
                     objectFit="contain"
                     h="18rem"
                     w="full"

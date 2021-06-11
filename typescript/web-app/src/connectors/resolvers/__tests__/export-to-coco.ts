@@ -1,9 +1,9 @@
 import gql from "graphql-tag";
-import { client } from "../../index";
+import { client } from "../../apollo-client-schema";
 
-import { setupTestsWithLocalDatabase } from "../../../../utils/setup-local-db-tests";
-import { initialCocoDataset } from "../../../../data-converters/coco-format/converters";
-import { CocoDataset } from "../../../../data-converters/coco-format/types";
+import { setupTestsWithLocalDatabase } from "../../../utils/setup-local-db-tests";
+import { initialCocoDataset } from "../../../data-converters/coco-format/converters";
+import { CocoDataset } from "../../../data-converters/coco-format/types";
 import { jsonToDataUri } from "../export-to-coco";
 
 setupTestsWithLocalDatabase();

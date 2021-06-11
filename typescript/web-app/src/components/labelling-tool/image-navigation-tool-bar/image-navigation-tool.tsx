@@ -28,7 +28,7 @@ const format = (x: number | undefined): string =>
   isNumber(x) && !isNaN(x) && x >= 0 ? `${x + 1}` : `-`;
 
 const imagesQuery = gql`
-  query {
+  query getImageList {
     images {
       id
     }

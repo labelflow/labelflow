@@ -5,9 +5,9 @@ import type {
   MutationDeleteLabelArgs,
   MutationUpdateLabelArgs,
   QueryLabelArgs,
-} from "../../../graphql-types.generated";
+} from "../../graphql-types.generated";
 
-import { db, DbLabel } from "../../database";
+import { db, DbLabel } from "../database";
 
 export const getLabels = () => db.label.toArray();
 

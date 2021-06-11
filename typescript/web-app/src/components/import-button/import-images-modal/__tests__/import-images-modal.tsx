@@ -4,7 +4,7 @@ import { ApolloProvider } from "@apollo/client";
 import { PropsWithChildren } from "react";
 import "@testing-library/jest-dom/extend-expect";
 
-import { client } from "../../../../connectors/apollo-client";
+import { client } from "../../../../connectors/apollo-client-schema";
 import { setupTestsWithLocalDatabase } from "../../../../utils/setup-local-db-tests";
 
 import { ImportImagesModal } from "../import-images-modal";
@@ -25,8 +25,10 @@ setupTestsWithLocalDatabase();
  * Mock the apollo client to avoid creating corrupted files that allows
  * us to identify a behaviour.
  */
-jest.mock("../../../../connectors/apollo-client", () => {
-  const original = jest.requireActual("../../../../connectors/apollo-client");
+jest.mock("../../../../connectors/apollo-client-schema", () => {
+  const original = jest.requireActual(
+    "../../../../connectors/apollo-client-schema"
+  );
 
   return {
     client: { ...original.client, mutate: jest.fn(original.client.mutate) },
@@ -167,4 +169,16 @@ test("should not close the modal while file are uploading", async () => {
   expect(screen.getByLabelText("Close")).toBeDisabled();
 
   await ensuresUploadsAreFinished(1);
+});
+
+test("should display a start labeling button only when all the files are done", async () => {
+  await renderModalAndImport(files);
+
+  expect(
+    screen.queryByRole("button", { name: /Start labeling/ })
+  ).not.toBeInTheDocument();
+
+  await waitFor(() =>
+    expect(screen.getByRole("button", { name: /Start labeling/ })).toBeDefined()
+  );
 });
