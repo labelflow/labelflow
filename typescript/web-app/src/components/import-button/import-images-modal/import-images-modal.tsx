@@ -57,11 +57,14 @@ export const ImportImagesModal = ({
             }}
           />
         )}
-        <ModalFooter
-          justifyContent="center"
-          visibility={hasUploaded ? "visible" : "hidden"}
-        >
-          <Button colorScheme="brand" onClick={onClose}>
+        <ModalFooter visibility={hasUploaded ? "visible" : "hidden"}>
+          <Button
+            colorScheme="brand"
+            onClick={() => {
+              onClose();
+              setHasUploaded(false);
+            }}
+          >
             Start labeling
           </Button>
         </ModalFooter>
