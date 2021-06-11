@@ -14,6 +14,7 @@ import type { Image } from "../../../graphql-types.generated";
 import "ol/ol.css";
 
 import { DrawBoundingBoxInteraction } from "./draw-bounding-box-interaction";
+import { SelectInteraction } from "./select-interaction";
 import { Labels } from "./labels";
 
 const empty: any[] = [];
@@ -79,7 +80,7 @@ export const OpenlayersMap = () => {
   }).data?.image;
 
   const client = useApolloClient();
-  const [ref, bounds] = useMeasure();
+  const [containerRef, bounds] = useMeasure();
 
   const isBoundsValid = bounds.width > 0 || bounds.height > 0;
 
@@ -99,7 +100,7 @@ export const OpenlayersMap = () => {
     <Map
       args={{ controls: empty }}
       style={{ height: "100%", width: "100%" }}
-      containerRef={ref}
+      containerRef={containerRef}
     >
       {/* Need to bridge contexts across renderers
        * See https://github.com/facebook/react/issues/17275 */}
@@ -142,6 +143,7 @@ export const OpenlayersMap = () => {
 
           <Labels />
           <DrawBoundingBoxInteraction />
+          <SelectInteraction />
         </ApolloProvider>
       </RouterContext.Provider>
     </Map>
