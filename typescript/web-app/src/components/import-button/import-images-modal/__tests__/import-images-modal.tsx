@@ -170,3 +170,15 @@ test("should not close the modal while file are uploading", async () => {
 
   await ensuresUploadsAreFinished(1);
 });
+
+test("should display a start labeling button only when all the files are done", async () => {
+  await renderModalAndImport(files);
+
+  expect(
+    screen.queryByRole("button", { name: /Start labeling/ })
+  ).not.toBeInTheDocument();
+
+  await waitFor(() =>
+    expect(screen.getByRole("button", { name: /Start labeling/ })).toBeDefined()
+  );
+});

@@ -24,10 +24,12 @@ const createImageFromUrlMutation = gql`
 
 export const ImportImagesModalUrlList = ({
   setMode = () => {},
-  setCloseable = () => {},
+  onUploadStart = () => {},
+  onUploadEnd = () => {},
 }: {
   setMode?: (mode: "dropzone") => void;
-  setCloseable?: (_t: boolean) => void;
+  onUploadStart?: () => void;
+  onUploadEnd?: () => void;
 }) => {
   const apolloClient = useApolloClient();
 
@@ -71,10 +73,10 @@ export const ImportImagesModalUrlList = ({
             }
           })
       );
-      setCloseable(true);
+      onUploadEnd();
     };
 
-    setCloseable(false);
+    onUploadStart();
     createImages();
   }, [urls]);
 
