@@ -36,7 +36,6 @@ class MyDocument extends Document {
           <meta name="msapplication-TileColor" content="#03C3BF" />
           <meta name="msapplication-tap-highlight" content="no" />
           <meta name="theme-color" content="#03C3BF" />
-
           {/* <link
             rel="apple-touch-icon"
             href="/static/icons/touch-icon-iphone.png"
@@ -56,7 +55,6 @@ class MyDocument extends Document {
             sizes="167x167"
             href="/static/icons/touch-icon-ipad-retina.png"
           /> */}
-
           <link
             rel="icon"
             type="image/png"
@@ -76,31 +74,6 @@ class MyDocument extends Document {
             color="#03C3BF"
           /> */}
           <link rel="shortcut icon" href="/favicon.ico" />
-
-          {/* <meta name="twitter:card" content="summary" />
-          <meta name="twitter:url" content="https://app.labelflow.ai" />
-          <meta name="twitter:title" content="Labelflow" />
-          <meta
-            name="twitter:description"
-            content="The open source image labelling and dataset cleaning platform."
-          />
-          <meta
-            name="twitter:image"
-            content="https://app.labelflow.ai/static/icons/icon-192x192.png"
-          />
-          <meta name="twitter:creator" content="@DavidWShadow" />
-          <meta property="og:type" content="website" />
-          <meta property="og:title" content="Labelflow" />
-          <meta
-            property="og:description"
-            content="The open source image labelling and dataset cleaning platform."
-          />
-          <meta property="og:site_name" content="Labelflow" />
-          <meta property="og:url" content="https://app.labelflow.ai" />
-          <meta
-            property="og:image"
-            content="https://app.labelflow.ai/static/icons/icon-256x256.png"
-          /> */}
         </Head>
         <body>
           <Main />

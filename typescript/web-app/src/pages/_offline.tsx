@@ -1,11 +1,15 @@
+import { ChakraProvider, Heading, Text } from "@chakra-ui/react";
 import { Layout } from "../components/layout";
+import { theme } from "../theme";
 
 const OfflinePage = () => {
   return (
-    <Layout>
-      <h1>Offline</h1>
-      <div>You are offline</div>
-    </Layout>
+    <ChakraProvider theme={theme} resetCSS>
+      <Layout>
+        <Heading>Offline</Heading>
+        <Text>You are offline</Text>
+      </Layout>
+    </ChakraProvider>
   );
 };
 

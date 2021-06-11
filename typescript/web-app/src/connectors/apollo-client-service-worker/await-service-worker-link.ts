@@ -1,13 +1,6 @@
-import {
-  ApolloLink,
-  FetchResult,
-  Observable,
-  // fromPromise,
-  // Operation,
-  // NextLink,
-} from "@apollo/client";
+import { ApolloLink, FetchResult, Observable } from "@apollo/client";
 
-import { windowExists } from "../../utils/window-exists";
+import { isInWindowScope } from "../../utils/detect-scope";
 
 // Ways to know that the server is ready
 let isServerReady = false;
@@ -39,7 +32,7 @@ const setServerReady = () => {
 };
 
 const checkServerReady = async () => {
-  if (!windowExists) {
+  if (!isInWindowScope) {
     rejectIsServerReadyPromise?.(
       "Not in window scope, service worker does not exist"
     );
