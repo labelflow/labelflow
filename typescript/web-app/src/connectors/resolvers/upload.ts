@@ -16,6 +16,7 @@ const getUploadTarget = async (): Promise<UploadTarget> => {
   // We run in the worker scope or nodejs
   const fileId = uuidv4();
   return {
+    // Upload and download URL do not have to be the same. But in our implementation it is:
     uploadUrl: `${self.location.protocol}//${self.location.host}/api/worker/files/${fileId}`,
     downloadUrl: `${self.location.protocol}//${self.location.host}/api/worker/files/${fileId}`,
   };
