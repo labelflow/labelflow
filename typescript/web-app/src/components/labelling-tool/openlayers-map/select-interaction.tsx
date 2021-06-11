@@ -14,6 +14,16 @@ export const SelectInteraction = () => {
 
   return (
     <olInteractionSelect
+      /*
+       * Prevent openlayers to apply its own style on the selected features. An
+       * alternative could be to use the "features" property to switch
+       * to a kind of controlled mode.
+       *
+       * Select interaction accept "null" for the style property.
+       * See https://openlayers.org/en/latest/apidoc/module-ol_interaction_Select-Select.html
+       */
+      // @ts-ignore
+      style={null}
       onSelect={(e) => {
         const selectEvent = e as SelectEvent;
         if (selectEvent.selected.length > 0) {
@@ -21,10 +31,8 @@ export const SelectInteraction = () => {
         } else {
           setSelectedLabelId(null);
         }
-        /* the onSelect handler should return a boolean.
-         * It seems to be used for internal state purpose. Sometimes openlayers
-         * takes over react lifecycle and change the selected label style.
-         * Returning false prevent this side effect. */
+
+        // Typescript forces us to return a boolean
         return false;
       }}
       condition={click}
