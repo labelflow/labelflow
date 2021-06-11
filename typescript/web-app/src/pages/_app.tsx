@@ -42,24 +42,7 @@ function App({ Component, pageProps }: AppProps) {
 
       // add event listeners to handle any of PWA lifecycle event
       // https://developers.google.com/web/tools/workbox/reference-docs/latest/module-workbox-window.Workbox#events
-      wb.addEventListener("installed", (event) => {
-        console.log(`Event ${event.type} is triggered.`);
-        console.log(event);
-      });
-
-      wb.addEventListener("controlling", (event) => {
-        console.log(`Event ${event.type} is triggered.`);
-        console.log(event);
-      });
-
-      wb.addEventListener("activated", (event) => {
-        console.log(`Event ${event.type} is triggered.`);
-        console.log(event);
-      });
-
-      wb.addEventListener("redundant", (event) => {
-        console.log(`Event ${event.type} is triggered.`);
-        console.log(event);
+      wb.addEventListener("redundant", () => {
         window.location.reload();
       });
 
@@ -102,7 +85,7 @@ function App({ Component, pageProps }: AppProps) {
                     ref={cancelRef}
                     onClick={() => {
                       console.log(
-                        "User rejected to reload the web app, keep using old version. New version will be automatically load when user open the app next time."
+                        "User rejected to reload the web app, keep using old version. New version will be automatically loaded when the user opens the app next time."
                       );
                       onClose();
                     }}
