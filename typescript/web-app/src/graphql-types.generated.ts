@@ -184,6 +184,7 @@ export type Query = {
   labelClass: LabelClass;
   labelClasses: Array<LabelClass>;
   exportToCoco: Scalars['String'];
+  label: Label;
 };
 
 
@@ -220,6 +221,11 @@ export type QueryLabelClassArgs = {
 export type QueryLabelClassesArgs = {
   first?: Maybe<Scalars['Int']>;
   skip?: Maybe<Scalars['Int']>;
+};
+
+
+export type QueryLabelArgs = {
+  where: LabelWhereUniqueInput;
 };
 
 
@@ -449,6 +455,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   labelClass?: Resolver<ResolversTypes['LabelClass'], ParentType, ContextType, RequireFields<QueryLabelClassArgs, 'where'>>;
   labelClasses?: Resolver<Array<ResolversTypes['LabelClass']>, ParentType, ContextType, RequireFields<QueryLabelClassesArgs, never>>;
   exportToCoco?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  label?: Resolver<ResolversTypes['Label'], ParentType, ContextType, RequireFields<QueryLabelArgs, 'where'>>;
 };
 
 export interface UploadScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Upload'], any> {

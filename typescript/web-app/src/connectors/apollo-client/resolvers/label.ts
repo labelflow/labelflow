@@ -4,11 +4,21 @@ import type {
   MutationCreateLabelArgs,
   MutationDeleteLabelArgs,
   MutationUpdateLabelArgs,
+  QueryLabelArgs,
 } from "../../../graphql-types.generated";
 
 import { db, DbLabel } from "../../database";
 
 export const getLabels = () => db.label.toArray();
+
+const getLabelById = async (id: string): Promise<DbLabel> => {
+  const entity = await db.label.get(id);
+  if (entity === undefined) {
+    throw new Error("No label with such id");
+  }
+
+  return entity;
+};
 
 // Queries
 const labelClass = async (label: DbLabel) => {
@@ -17,6 +27,10 @@ const labelClass = async (label: DbLabel) => {
   }
 
   return db.labelClass.get(label.labelClassId) ?? null;
+};
+
+const label = (_: any, args: QueryLabelArgs) => {
+  return getLabelById(args?.where?.id);
 };
 
 // Mutations
@@ -99,6 +113,9 @@ const updateLabel = async (_: any, args: MutationUpdateLabelArgs) => {
 };
 
 export default {
+  Query: {
+    label,
+  },
   Mutation: {
     createLabel,
     deleteLabel,
