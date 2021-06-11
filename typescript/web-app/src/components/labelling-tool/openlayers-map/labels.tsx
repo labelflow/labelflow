@@ -78,6 +78,8 @@ const createDeleteLabelEffect = (
     return data?.deleteLabel;
   },
   undo: async (deletedLabel) => {
+    /* It is important to use the same id for the re-creation when the label
+     * was created in the current session to enable the undoing of the creation effect */
     const { data } = await client.mutate({
       mutation: createLabelWithIdMutation,
       variables: deletedLabel,
