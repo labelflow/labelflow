@@ -5,7 +5,7 @@ import { GraphQLOptions, runHttpQuery } from "apollo-server-core";
 import type { Request as ApolloRequest } from "apollo-server-env";
 
 export async function graphQLServiceWorker(
-  request: Request,
+  request: ApolloRequest,
   options: GraphQLOptions
 ) {
   if (!options) {
@@ -20,7 +20,7 @@ export async function graphQLServiceWorker(
         request.method === "POST"
           ? await request.json()
           : JSON.parse(request.url.split("?")[1]),
-      request: request as unknown as ApolloRequest,
+      request,
     });
 
     const response = new Response(graphqlResponse);
