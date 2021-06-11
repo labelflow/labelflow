@@ -10,13 +10,16 @@ import type {
 } from "../../graphql-types.generated";
 
 import { db, DbImage } from "../database";
-import { windowExists, selfExists } from "../../utils/window-exists";
+import {
+  isInWindowScope,
+  isInServiceWorkerScope,
+} from "../../utils/detect-scope";
 
 declare let self: ServiceWorkerGlobalScope;
 
 export const getUrlFromFileId = memoize(
   async (fileId: string): Promise<string> => {
-    if (windowExists) {
+    if (isInWindowScope) {
       // in window scope
       const file = await db.file.get(fileId);
       if (file === undefined) {
@@ -25,7 +28,7 @@ export const getUrlFromFileId = memoize(
       const url = window.URL.createObjectURL(file.blob);
       return url;
     }
-    if (selfExists) {
+    if (isInServiceWorkerScope) {
       // in worker scope
       return `${self.location.origin}/api/worker/files/${fileId}`;
     }
@@ -42,10 +45,10 @@ export const clearGetUrlFromFileIdMem = () => {
 export const getFileIdFromUrl = (url: string): string | null => {
   const urlLocation = new URL(url);
   let currentLocation;
-  if (windowExists) {
+  if (isInWindowScope) {
     currentLocation = window.location;
   }
-  if (selfExists) {
+  if (isInServiceWorkerScope) {
     currentLocation = self.location;
   }
   if (currentLocation === undefined) {
