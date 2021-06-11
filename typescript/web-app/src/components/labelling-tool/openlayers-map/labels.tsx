@@ -1,11 +1,10 @@
 import { useRouter } from "next/router";
-import { useQuery } from "@apollo/client";
+import { ApolloClient, useQuery, useApolloClient } from "@apollo/client";
 import gql from "graphql-tag";
 import { fromExtent } from "ol/geom/Polygon";
 import { Fill, Stroke, Style } from "ol/style";
 import { useHotkeys } from "react-hotkeys-hook";
 
-import { client } from "../../../connectors/apollo-client";
 import { keymap } from "../../../keymap";
 import { useLabellingStore } from "../../../connectors/labelling-state";
 import { useUndoStore, Effect } from "../../../connectors/undo-store";
@@ -58,7 +57,11 @@ const createDeleteLabelEffect = (
   { id }: { id: string },
   {
     setSelectedLabelId,
-  }: { setSelectedLabelId: (labelId: string | null) => void }
+    client,
+  }: {
+    setSelectedLabelId: (labelId: string | null) => void;
+    client: ApolloClient<object>;
+  }
 ): Effect => ({
   do: async (labelId = id) => {
     const { data } = await client.mutate({
@@ -83,6 +86,7 @@ const createDeleteLabelEffect = (
 });
 
 export const Labels = () => {
+  const client = useApolloClient();
   const selectedLabelId = useLabellingStore((state) => state.selectedLabelId);
   const setSelectedLabelId = useLabellingStore(
     (state) => state.setSelectedLabelId
@@ -105,7 +109,10 @@ export const Labels = () => {
       }
 
       perform(
-        createDeleteLabelEffect({ id: selectedLabelId }, { setSelectedLabelId })
+        createDeleteLabelEffect(
+          { id: selectedLabelId },
+          { setSelectedLabelId, client }
+        )
       );
     },
     {},
