@@ -51,7 +51,7 @@ export const ImportImagesModalDropzone = ({
   onUploadStart = () => {},
   onUploadEnd = () => {},
 }: {
-  setMode?: (mode: "url-list") => void;
+  setMode?: (mode: "url-list", updateType?: "replaceIn") => void;
   onUploadStart?: () => void;
   onUploadEnd?: () => void;
 }) => {
@@ -156,7 +156,7 @@ export const ImportImagesModalDropzone = ({
             variant="link"
             fontSize="lg"
             fontWeight="medium"
-            onClick={() => setMode?.("url-list")}
+            onClick={() => setMode?.("url-list", "replaceIn")}
           >
             Import from a list of URLs instead
           </Button>
