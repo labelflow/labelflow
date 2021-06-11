@@ -23,7 +23,6 @@
     "graphql": "^15.5.0",
     "graphql-subscriptions": "^1.2.1",
     "graphql-tag": "^2.12.4",
-    "graphql-tools": "^7.0.5",
     "lodash": "^4.17.21",
     "mem": "^8.1.1",
     "next": "10.x",
