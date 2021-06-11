@@ -1,10 +1,6 @@
 /* eslint-env serviceworker */
 // https://github.com/stutrek/apollo-server-service-worker/blob/master/src/serviceWorkerApollo.ts
-import {
-  GraphQLOptions,
-  //   HttpQueryError,
-  runHttpQuery,
-} from "apollo-server-core";
+import { GraphQLOptions, runHttpQuery } from "apollo-server-core";
 
 import type { Request as ApolloRequest } from "apollo-server-env";
 
