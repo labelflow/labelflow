@@ -1,5 +1,5 @@
 import gql from "graphql-tag";
-import { client } from "../../apollo-client-schema/index";
+import { client } from "../../apollo-client-schema";
 
 import { setupTestsWithLocalDatabase } from "../../../utils/setup-local-db-tests";
 import { initialCocoDataset } from "../../../data-converters/coco-format/converters";
