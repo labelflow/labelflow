@@ -1,0 +1,23 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Class color generator mapping has the right value 1`] = `
+Object {
+  "#06b6d4": "#8b5cf6",
+  "#0ea5e9": "#a855f7",
+  "#10b981": "#3b82f6",
+  "#14b8a6": "#6366f1",
+  "#22c55e": "#0ea5e9",
+  "#3b82f6": "#d946ef",
+  "#6366f1": "#ec4899",
+  "#84cc16": "#06b6d4",
+  "#8b5cf6": "#f43f5e",
+  "#a855f7": "#ef4444",
+  "#d946ef": "#f97316",
+  "#eab308": "#14b8a6",
+  "#ec4899": "#f59e0b",
+  "#ef4444": "#84cc16",
+  "#f43f5e": "#eab308",
+  "#f59e0b": "#10b981",
+  "#f97316": "#22c55e",
+}
+`;

@@ -33,6 +33,7 @@
     "react-hotkeys-hook": "3.3.1",
     "react-icons": "^4.2.0",
     "react-use-measure": "^2.0.4",
+    "tailwindcss": "^2.1.4",
     "uuid": "^8.3.2",
     "valid-url": "^1.0.9",
     "zustand": "^3.5.1"
@@ -51,6 +52,7 @@
     "@types/probe-image-size": "^7.0.0",
     "@types/react": "17.0.3",
     "@types/react-dom": "17.0.1",
+    "@types/tailwindcss": "^2.0.5",
     "@types/uuid": "^8.3.0",
     "@types/valid-url": "^1.0.3",
     "bluebird": "^3.7.2",
