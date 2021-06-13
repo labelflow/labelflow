@@ -1,8 +1,20 @@
 import { Image, HStack, VStack, Text, Tag } from "@chakra-ui/react";
 
-type Props = { colorScheme?: string };
+type Props = {
+  colorScheme?: string;
+  logoSrc: string;
+  title: string;
+  tag: string;
+  subtext: string;
+};
 
-export const ExportFormatCard = ({ colorScheme = "brand" }: Props) => {
+export const ExportFormatCard = ({
+  colorScheme,
+  logoSrc,
+  title,
+  tag,
+  subtext,
+}: Props) => {
   return (
     <VStack
       alignItems="flex-start"
@@ -18,7 +30,7 @@ export const ExportFormatCard = ({ colorScheme = "brand" }: Props) => {
       cursor="pointer"
     >
       <HStack justifyContent="flex-start" alignItems="flex-end">
-        <Image src="/assets/export-formats/coco.png" w="14" h="14" />
+        <Image src={logoSrc} w="14" h="14" />
         <VStack
           alignItems="flex-start"
           spacing="1"
@@ -26,7 +38,7 @@ export const ExportFormatCard = ({ colorScheme = "brand" }: Props) => {
           height="100%"
         >
           <Text as="h3" fontSize="lg" fontWeight="semibold" lineHeight="short">
-            Export to COCO
+            {title}
           </Text>
           <Tag
             mt="0"
@@ -39,12 +51,12 @@ export const ExportFormatCard = ({ colorScheme = "brand" }: Props) => {
             boxShadow="inset 0 0 0px 1px"
             fontWeight="bold"
           >
-            JSON
+            {tag}
           </Tag>
         </VStack>
       </HStack>
-      <Text lineHeight="short" color="gray.600" mt="0">
-        Annotation file used with Pytorch and Detectron 2
+      <Text lineHeight="short" color="gray.600">
+        {subtext}
       </Text>
     </VStack>
   );
