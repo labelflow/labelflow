@@ -70,15 +70,14 @@ export const ExportModal = ({
           </Heading>
 
           <Text
-            as="div"
             fontSize="lg"
             fontWeight="medium"
             color="gray.800"
-            display="flex"
-            justifyContent="center"
+            role="heading"
           >
             Your project contains&nbsp;
             <Skeleton
+              as="span"
               isLoaded={data?.labelsAggregates?.totalCount !== undefined}
               minW="1ch"
             >
