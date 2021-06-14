@@ -5,10 +5,8 @@ import { isInWindowScope } from "../../utils/detect-scope";
 // Ways to know that the server is ready
 let isServerReady = false;
 let resolveIsServerReadyPromise: (() => void) | undefined;
-let rejectIsServerReadyPromise: ((reason?: any) => void) | undefined;
-const isServerReadyPromise = new Promise<void>((resolve, reject) => {
+const isServerReadyPromise = new Promise<void>((resolve) => {
   resolveIsServerReadyPromise = resolve;
-  rejectIsServerReadyPromise = reject;
 });
 
 const waitServerReady = async (callback: (error?: Error) => void) => {
