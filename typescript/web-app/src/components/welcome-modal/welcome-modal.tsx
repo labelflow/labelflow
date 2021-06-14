@@ -19,7 +19,7 @@ export const WelcomeModal = () => {
   return (
     <Modal isOpen={isOpen} size="xl">
       <ModalOverlay />
-      <ModalContent height="80vh" width="80vw">
+      <ModalContent height="80vh">
         <ModalHeader textAlign="center" padding="6">
           <Heading as="h2" size="lg" pb="2">
             Import
@@ -27,19 +27,11 @@ export const WelcomeModal = () => {
           <Text fontSize="lg" fontWeight="medium">
             Start working with your images. Stay in control of your data. Images
             are not uploaded on LabelFlow servers.{" "}
-            <Button
-              colorScheme="brand"
-              variant="link"
-              fontSize="lg"
-              fontWeight="medium"
-              onClick={() => setMode?.("urlList")}
-            >
-              Import from a list of URLs instead
-            </Button>
           </Text>
         </ModalHeader>
 
         <ModalBody
+          width="80vw"
           display="flex"
           pt="0"
           pb="6"
