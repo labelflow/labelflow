@@ -7,7 +7,7 @@ import { KeymapModal } from "./keymap-modal";
 const KeymapIcon = chakra(FaRegKeyboard);
 
 type Props = ButtonProps & {
-  showModal: boolean;
+  showModal?: boolean;
 };
 
 export const KeymapButton = ({ showModal = true, ...props }: Props) => {

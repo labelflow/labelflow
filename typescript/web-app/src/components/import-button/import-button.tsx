@@ -8,7 +8,7 @@ import { ImportImagesModal } from "./import-images-modal";
 const UploadIcon = chakra(RiUploadCloud2Line);
 
 type Props = ButtonProps & {
-  showModal: boolean;
+  showModal?: boolean;
 };
 
 export const ImportButton = ({ showModal = true, ...props }: Props) => {
