@@ -1,3 +1,4 @@
+/* eslint-disable import/order */
 /* eslint-disable import/first */
 // @ts-ignore Needs to be done before ol is imported
 global.URL.createObjectURL = jest.fn(() => "mockedUrl");
@@ -8,15 +9,18 @@ import { render, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import gql from "graphql-tag";
 import { Map as OlMap } from "ol";
-import { useRouter } from "next/router";
+
 import VectorLayer from "ol/layer/Vector";
+import { mockNextRouter } from "../../../../utils/router-mocks";
+
+mockNextRouter();
+
+import { useRouter } from "next/router";
 import { client } from "../../../../connectors/apollo-client-schema";
 import { Labels } from "../labels";
 import { LabelCreateInput } from "../../../../graphql-types.generated";
 import { useLabellingStore } from "../../../../connectors/labelling-state";
 import { setupTestsWithLocalDatabase } from "../../../../utils/setup-local-db-tests";
-
-jest.mock("next/router");
 
 setupTestsWithLocalDatabase();
 

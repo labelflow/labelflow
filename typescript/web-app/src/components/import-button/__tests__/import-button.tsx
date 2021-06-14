@@ -1,3 +1,4 @@
+/* eslint-disable import/first */
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { ApolloProvider } from "@apollo/client";
@@ -6,6 +7,9 @@ import "@testing-library/jest-dom/extend-expect";
 
 import { client } from "../../../connectors/apollo-client-schema";
 import { setupTestsWithLocalDatabase } from "../../../utils/setup-local-db-tests";
+import { mockUseQueryParams } from "../../../utils/router-mocks";
+
+mockUseQueryParams();
 
 import { ImportButton } from "../import-button";
 
