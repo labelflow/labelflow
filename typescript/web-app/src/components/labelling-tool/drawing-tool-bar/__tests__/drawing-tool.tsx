@@ -1,21 +1,11 @@
+/* eslint-disable import/first */
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { mockNextRouter } from "../../../../utils/router-mocks";
+
+mockNextRouter();
 
 import { DrawingTool } from "../drawing-tool";
-
-jest.mock("next/router", () => {
-  // @ts-ignore
-  const router = {
-    pathname: "/",
-    query: {},
-    replace: ({ pathname, query }: { pathname: any; query: any }) => {
-      router.query = query;
-      router.pathname = pathname;
-    },
-    useRouter: jest.fn(() => router),
-  };
-  return router;
-});
 
 describe("Drawing tool", () => {
   it("should not be selected by default", () => {

@@ -1,19 +1,17 @@
+/* eslint-disable import/first */
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { ApolloProvider } from "@apollo/client";
-import { PropsWithChildren, useState } from "react";
+import { PropsWithChildren } from "react";
 import "@testing-library/jest-dom/extend-expect";
 
 import { client } from "../../../../connectors/apollo-client-schema";
 import { setupTestsWithLocalDatabase } from "../../../../utils/setup-local-db-tests";
+import { mockUseQueryParams } from "../../../../utils/router-mocks";
+
+mockUseQueryParams();
 
 import { ImportImagesModal } from "../import-images-modal";
-
-jest.mock("use-query-params", () => ({
-  useQueryParam: () => useState(false),
-  withDefault: () => undefined,
-  StringParam: () => undefined,
-}));
 
 const files = [
   new File(["Hello"], "hello.png", { type: "image/png" }),

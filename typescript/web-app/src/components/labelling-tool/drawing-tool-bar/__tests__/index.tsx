@@ -1,12 +1,12 @@
+/* eslint-disable import/first */
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom/extend-expect";
+import { mockNextRouter } from "../../../../utils/router-mocks";
+
+mockNextRouter();
 
 import { DrawingToolbar } from "..";
-
-jest.mock("next/router", () => ({
-  query: {},
-}));
 
 test("should display tooltip", async () => {
   render(<DrawingToolbar />);

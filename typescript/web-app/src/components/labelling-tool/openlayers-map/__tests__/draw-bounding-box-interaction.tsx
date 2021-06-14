@@ -9,6 +9,10 @@ import { Feature, Map as OlMap } from "ol";
 import { fromExtent } from "ol/geom/Polygon";
 import { DrawEvent, DrawEventType } from "ol/interaction/Draw";
 
+import { mockNextRouter } from "../../../../utils/router-mocks";
+
+mockNextRouter({ query: { id: "mocked-image-id" } });
+
 import { client } from "../../../../connectors/apollo-client-schema";
 import { useUndoStore } from "../../../../connectors/undo-store";
 import {
@@ -33,20 +37,6 @@ jest.mock("../../../../connectors/apollo-client-schema", () => {
       })),
     },
   };
-});
-
-jest.mock("next/router", () => {
-  // @ts-ignore
-  const router = {
-    pathname: "/",
-    query: { id: "mocked-image-id" },
-    replace: ({ pathname, query }: { pathname: any; query: any }) => {
-      router.query = query;
-      router.pathname = pathname;
-    },
-    useRouter: jest.fn(() => router),
-  };
-  return router;
 });
 
 beforeEach(() => {
