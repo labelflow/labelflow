@@ -6,7 +6,7 @@ import { ImageNavigationToolbar } from "./image-navigation-tool-bar";
 
 export const LabellingTool = () => {
   return (
-    <Box height="100%" position="relative">
+    <Box height="100%" position="relative" overflow="hidden">
       <OpenlayersMap />
       <VStack
         padding={4}

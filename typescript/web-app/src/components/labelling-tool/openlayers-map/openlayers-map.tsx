@@ -1,3 +1,4 @@
+import { useRef, useCallback } from "react";
 import { useRouter } from "next/router";
 import { RouterContext } from "next/dist/next-server/lib/router-context";
 import { Extent, getCenter } from "ol/extent";
@@ -16,6 +17,7 @@ import "ol/ol.css";
 import { DrawBoundingBoxInteraction } from "./draw-bounding-box-interaction";
 import { SelectInteraction } from "./select-interaction";
 import { Labels } from "./labels";
+import { CursorGuides } from "./cursor-guides";
 
 const empty: any[] = [];
 
@@ -71,6 +73,7 @@ const imageQuery = gql`
 export const OpenlayersMap = () => {
   const router = useRouter();
   const imageId = router.query?.id;
+  const pointerPositionRef = useRef<Array<number> | null>(null);
 
   const image = useQuery<{
     image: Pick<Image, "id" | "url" | "width" | "height">;
@@ -83,6 +86,12 @@ export const OpenlayersMap = () => {
   const [containerRef, bounds] = useMeasure();
 
   const isBoundsValid = bounds.width > 0 || bounds.height > 0;
+  const onPointerMove = useCallback((e: { originalEvent: PointerEvent }) => {
+    pointerPositionRef.current = [
+      e.originalEvent.offsetX,
+      e.originalEvent.offsetY,
+    ];
+  }, []);
 
   if (image == null) {
     return null;
@@ -97,55 +106,59 @@ export const OpenlayersMap = () => {
   );
 
   return (
-    <Map
-      args={{ controls: empty }}
-      style={{ height: "100%", width: "100%" }}
-      containerRef={containerRef}
-    >
-      {/* Need to bridge contexts across renderers
-       * See https://github.com/facebook/react/issues/17275 */}
-      <RouterContext.Provider value={router}>
-        <ApolloProvider client={client}>
-          {
-            // Before useMeasure has time to properly measure the div, we have a negative resolution,
-            // There is no point rendering the view in that case
-            isBoundsValid && (
-              <olView
-                args={{ extent }}
-                center={center}
-                initialProjection={projection}
-                resolution={resolution}
-                // Max zoom = 16 pixels of screen per pixel of image
-                minResolution={1.0 / 16.0}
-                maxResolution={resolution}
-                constrainOnlyCenter
-                showFullExtent
-                padding={viewPadding}
-              />
-            )
-          }
-          <olLayerImage extent={extent}>
-            {url != null && (
-              <olSourceImageStatic
-                // ol/source/image does not have `setXXX` methods, only options in the constructor, so
-                // to change anything, you need to recreate the object. So we pass all in args.
-                // See https://openlayers.org/en/latest/apidoc/module-ol_source_Image.ImageSourceEvent.html
-                args={{
-                  url,
-                  imageExtent: extent,
-                  imageSize: size,
-                  projection,
-                  crossOrigin: "anonymous",
-                }}
-              />
-            )}
-          </olLayerImage>
+    <>
+      <CursorGuides pointerPositionRef={pointerPositionRef} />
+      <Map
+        args={{ controls: empty }}
+        style={{ height: "100%", width: "100%" }}
+        containerRef={containerRef}
+        onPointermove={onPointerMove}
+      >
+        {/* Need to bridge contexts across renderers
+         * See https://github.com/facebook/react/issues/17275 */}
+        <RouterContext.Provider value={router}>
+          <ApolloProvider client={client}>
+            {
+              // Before useMeasure has time to properly measure the div, we have a negative resolution,
+              // There is no point rendering the view in that case
+              isBoundsValid && (
+                <olView
+                  args={{ extent }}
+                  center={center}
+                  initialProjection={projection}
+                  resolution={resolution}
+                  // Max zoom = 16 pixels of screen per pixel of image
+                  minResolution={1.0 / 16.0}
+                  maxResolution={resolution}
+                  constrainOnlyCenter
+                  showFullExtent
+                  padding={viewPadding}
+                />
+              )
+            }
+            <olLayerImage extent={extent}>
+              {url != null && (
+                <olSourceImageStatic
+                  // ol/source/image does not have `setXXX` methods, only options in the constructor, so
+                  // to change anything, you need to recreate the object. So we pass all in args.
+                  // See https://openlayers.org/en/latest/apidoc/module-ol_source_Image.ImageSourceEvent.html
+                  args={{
+                    url,
+                    imageExtent: extent,
+                    imageSize: size,
+                    projection,
+                    crossOrigin: "anonymous",
+                  }}
+                />
+              )}
+            </olLayerImage>
 
-          <Labels />
-          <DrawBoundingBoxInteraction />
-          <SelectInteraction />
-        </ApolloProvider>
-      </RouterContext.Provider>
-    </Map>
+            <Labels />
+            <DrawBoundingBoxInteraction />
+            <SelectInteraction />
+          </ApolloProvider>
+        </RouterContext.Provider>
+      </Map>
+    </>
   );
 };
