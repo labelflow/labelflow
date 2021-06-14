@@ -18,7 +18,6 @@ export const COCO = () => {
       colorScheme="brand"
       logoSrc="/assets/export-formats/coco.png"
       title="Export to COCO"
-      tag="JSON"
       subtext="Annotation file used with Pytorch and Detectron 2"
     />
   );
@@ -31,7 +30,6 @@ export const Loading = () => {
       colorScheme="brand"
       logoSrc="/assets/export-formats/coco.png"
       title="Export to COCO"
-      tag="JSON"
       subtext="Annotation file used with Pytorch and Detectron 2"
     />
   );
@@ -44,7 +42,6 @@ export const Disabled = () => {
       colorScheme="gray"
       logoSrc="/assets/export-formats/tensorflow-grey.png"
       title="Export to TensorFlow (soon)"
-      tag="CSV"
       subtext="TF Object Detection file in its human readable format"
     />
   );
@@ -56,7 +53,6 @@ export const TensorFlow = () => {
       colorScheme="gray"
       logoSrc="/assets/export-formats/tensorflow-grey.png"
       title="Export to TensorFlow (soon)"
-      tag="CSV"
       subtext="TF Object Detection file in its human readable format"
     />
   );
@@ -70,14 +66,53 @@ export const SideBySide = () => {
         colorScheme="brand"
         logoSrc="/assets/export-formats/coco.png"
         title="Export to COCO"
-        tag="JSON"
         subtext="Annotation file used with Pytorch and Detectron 2"
       />
       <ExportFormatCard
         colorScheme="gray"
         logoSrc="/assets/export-formats/tensorflow-grey.png"
         title="Export to TensorFlow (soon)"
-        tag="CSV"
+        subtext="TF Object Detection file in its human readable format"
+      />
+    </HStack>
+  );
+};
+
+export const SideBySideWithOneDisabled = () => {
+  return (
+    <HStack spacing="4">
+      <ExportFormatCard
+        colorScheme="brand"
+        logoSrc="/assets/export-formats/coco.png"
+        title="Export to COCO"
+        subtext="Annotation file used with Pytorch and Detectron 2"
+      />
+      <ExportFormatCard
+        disabled
+        colorScheme="gray"
+        logoSrc="/assets/export-formats/tensorflow-grey.png"
+        title="Export to TensorFlow (soon)"
+        subtext="TF Object Detection file in its human readable format"
+      />
+    </HStack>
+  );
+};
+
+export const SideBySideWithOneLoadingAndOneDisabled = () => {
+  return (
+    <HStack spacing="4">
+      <ExportFormatCard
+        loading
+        colorScheme="brand"
+        logoSrc="/assets/export-formats/coco.png"
+        title="Export to COCO"
+        subtext="Annotation file used with Pytorch and Detectron 2"
+      />
+      <ExportFormatCard
+        disabled
+        colorScheme="gray"
+        logoSrc="/assets/export-formats/tensorflow-grey.png"
+        title="Export to TensorFlow (soon)"
         subtext="TF Object Detection file in its human readable format"
       />
     </HStack>

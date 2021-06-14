@@ -3,9 +3,9 @@ import {
   HStack,
   VStack,
   Text,
-  Tag,
   Box,
   Spinner,
+  useTheme,
 } from "@chakra-ui/react";
 
 type Props = {
@@ -14,7 +14,6 @@ type Props = {
   colorScheme: string;
   logoSrc: string;
   title: string;
-  tag: string;
   subtext: string;
 };
 
@@ -22,26 +21,23 @@ export const ExportFormatCard = ({
   colorScheme,
   logoSrc,
   title,
-  tag,
   subtext,
   loading,
   disabled,
 }: Props) => {
+  const theme = useTheme();
   return (
     <Box
       alignItems="flex-start"
       w="xs"
-      borderWidth={1}
       borderRadius="lg"
       overflow="hidden"
-      backgroundColor={`${colorScheme}.50`}
-      borderColor={loading ? "gray.200" : `${colorScheme}.200`}
       p="2"
       transition="background-color ease 0.2s"
       _hover={
         loading || disabled
           ? undefined
-          : { backgroundColor: `${colorScheme}.100` }
+          : { backgroundColor: `${colorScheme}.50` }
       }
       cursor={disabled ? "not-allowed" : "pointer"}
       position="relative"
@@ -55,16 +51,16 @@ export const ExportFormatCard = ({
           bottom="0"
           left="0"
           right="0"
-          backgroundColor="#ffffffdd"
+          backgroundColor={`${theme.colors[colorScheme][50]}99`}
           display="flex"
           justifyContent="center"
           alignItems="center"
         >
-          <Spinner size="lg" color="brand.500" />
+          <Spinner size="xl" color="brand.500" />
         </Box>
       )}
-      <HStack justifyContent="flex-start" alignItems="flex-end">
-        <Image src={logoSrc} w="14" h="14" />
+      <HStack justifyContent="flex-start" alignItems="flex-end" spacing={4}>
+        <Image src={logoSrc} w="16" h="16" />
         <VStack
           alignItems="flex-start"
           spacing="1"
@@ -73,35 +69,22 @@ export const ExportFormatCard = ({
         >
           <Text
             as="h3"
-            fontSize="lg"
             color={disabled ? `gray.400` : "gray.800"}
             fontWeight="semibold"
             lineHeight="short"
           >
             {title}
           </Text>
-          <Tag
-            mt="0"
-            size="sm"
-            borderRadius="full"
-            variant="outline"
-            color={disabled ? `gray.300` : `${colorScheme}.700`}
-            // used to override chakra's default color
-            // shadow color will fallback to `color`
-            boxShadow="inset 0 0 0px 1px"
-            fontWeight="bold"
+
+          <Text
+            fontSize="sm"
+            lineHeight="short"
+            color={disabled ? `gray.300` : "gray.600"}
           >
-            {tag}
-          </Tag>
+            {subtext}
+          </Text>
         </VStack>
       </HStack>
-      <Text
-        lineHeight="short"
-        color={disabled ? `gray.300` : "gray.600"}
-        mt="2"
-      >
-        {subtext}
-      </Text>
     </Box>
   );
 };
