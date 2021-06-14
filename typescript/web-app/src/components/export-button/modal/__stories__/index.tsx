@@ -24,6 +24,19 @@ export const COCO = () => {
   );
 };
 
+export const Loading = () => {
+  return (
+    <ExportFormatCard
+      loading
+      colorScheme="brand"
+      logoSrc="/assets/export-formats/coco.png"
+      title="Export to COCO"
+      tag="JSON"
+      subtext="Annotation file used with Pytorch and Detectron 2"
+    />
+  );
+};
+
 export const TensorFlow = () => {
   return (
     <ExportFormatCard
