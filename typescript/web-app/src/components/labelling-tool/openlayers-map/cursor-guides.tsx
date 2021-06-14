@@ -28,11 +28,19 @@ export const CursorGuides = ({
       horizontalBarRef.current.style.visibility = "visible";
       verticalBarRef.current.style.visibility = "visible";
 
-      horizontalBarRef.current.style.top = `${pointerPositionRef.current[1]}px`;
-      horizontalBarRef.current.style.left = `calc(-100% + ${pointerPositionRef.current[0]}px)`;
+      horizontalBarRef.current.style.top = `${
+        pointerPositionRef.current[1] / window.devicePixelRatio
+      }px`;
+      horizontalBarRef.current.style.left = `calc(-100% + ${
+        pointerPositionRef.current[0] / window.devicePixelRatio
+      }px)`;
 
-      verticalBarRef.current.style.top = `calc(-100% + ${pointerPositionRef.current[1]}px)`;
-      verticalBarRef.current.style.left = `${pointerPositionRef.current[0]}px`;
+      verticalBarRef.current.style.top = `calc(-100% + ${
+        pointerPositionRef.current[1] / window.devicePixelRatio
+      }px)`;
+      verticalBarRef.current.style.left = `${
+        pointerPositionRef.current[0] / window.devicePixelRatio
+      }px`;
     };
     followMouse();
   }, [selectedTool]);
