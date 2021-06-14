@@ -11,6 +11,6 @@ export default {
   title: "web-app/Export Button",
 };
 
-export const Default = () => {
+export const WithButton = () => {
   return <ExportButton />;
 };

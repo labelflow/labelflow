@@ -75,13 +75,15 @@ export const ExportFormatCard = ({
             color={disabled ? `gray.400` : "gray.800"}
             fontWeight="semibold"
             lineHeight="short"
+            whiteSpace="nowrap"
           >
             {title}
           </Text>
 
           <Text
-            fontSize="sm"
+            fontSize="smaller"
             lineHeight="short"
+            letterSpacing="tight"
             color={disabled ? `gray.300` : "gray.600"}
           >
             {subtext}

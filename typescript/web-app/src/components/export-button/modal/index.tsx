@@ -28,7 +28,6 @@ export const ExportModal = ({
   isOpen?: boolean;
   onClose?: () => void;
 }) => {
-
   const [queryExportToCoco, { loading }] = useLazyQuery(exportToCocoQuery, {
     fetchPolicy: "network-only",
     onCompleted: ({ exportToCoco }) => {
@@ -54,12 +53,12 @@ export const ExportModal = ({
   return (
     <Modal isOpen={isOpen} size="3xl" onClose={onClose}>
       <ModalOverlay />
-      <ModalContent height="80vh">
+      <ModalContent height="auto">
         <ModalHeader textAlign="center" padding="6">
-          <Heading as="h2" size="lg" pb="2">
+          <Heading as="h2" size="lg" pb="2" color="gray.800">
             Export Labels
           </Heading>
-          <Text fontSize="lg" fontWeight="medium">
+          <Text fontSize="lg" fontWeight="medium" color="gray.800">
             Your project contains 11 labels. HARDCODED FOR NOW.
           </Text>
         </ModalHeader>
@@ -73,7 +72,15 @@ export const ExportModal = ({
           overflowY="hidden"
           flexDirection="column"
         >
-          <HStack spacing="4" justifyContent="center">
+          <HStack
+            spacing="4"
+            justifyContent="center"
+            pt="14"
+            pb="10"
+            pl="8"
+            pr="8"
+            flexWrap="wrap"
+          >
             <ExportFormatCard
               loading={loading}
               onClick={queryExportToCoco}
