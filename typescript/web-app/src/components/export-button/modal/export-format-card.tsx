@@ -37,7 +37,13 @@ export const ExportFormatCard = ({
           justifyContent="flex-end"
           height="100%"
         >
-          <Text as="h3" fontSize="lg" fontWeight="semibold" lineHeight="short">
+          <Text
+            as="h3"
+            fontSize="lg"
+            color="gray.800"
+            fontWeight="semibold"
+            lineHeight="short"
+          >
             {title}
           </Text>
           <Tag
