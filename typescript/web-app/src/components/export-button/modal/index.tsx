@@ -1,7 +1,5 @@
 import { useState } from "react";
 import {
-  Box,
-  Button,
   HStack,
   Heading,
   Modal,
@@ -33,9 +31,19 @@ export const ExportModal = ({
 }) => {
   const [isCloseable, setCloseable] = useState(true);
 
-  const [exportToCoco, { loading }] = useLazyQuery(exportToCocoQuery, {
-    onCompleted: ({ data }) => {
-      console.log(data);
+  const [queryExportToCoco, { loading }] = useLazyQuery(exportToCocoQuery, {
+    fetchPolicy: "network-only",
+    onCompleted: ({ exportToCoco }) => {
+      if (typeof exportToCoco !== "string") {
+        throw new Error("");
+      }
+
+      const base64Export = exportToCoco.replace(
+        "data:application/json;base64,",
+        ""
+      );
+      console.log(JSON.parse(atob(base64Export)));
+
       // decode from base64 and start download
     },
   });
@@ -72,7 +80,7 @@ export const ExportModal = ({
           <HStack spacing="4" justifyContent="center">
             <ExportFormatCard
               loading={loading}
-              onClick={exportToCoco}
+              onClick={queryExportToCoco}
               colorScheme="brand"
               logoSrc="/assets/export-formats/coco.png"
               title="Export to COCO"
