@@ -1,7 +1,7 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { ApolloProvider } from "@apollo/client";
-import { PropsWithChildren } from "react";
+import { PropsWithChildren, useState } from "react";
 import "@testing-library/jest-dom/extend-expect";
 
 import { client } from "../../../connectors/apollo-client-schema";
@@ -14,6 +14,12 @@ const files = [
   new File(["World"], "world.png", { type: "image/png" }),
   new File(["Error"], "error.pdf", { type: "application/pdf" }),
 ];
+
+jest.mock("use-query-params", () => ({
+  useQueryParam: () => useState(false),
+  withDefault: () => undefined,
+  StringParam: () => undefined,
+}));
 
 const Wrapper = ({ children }: PropsWithChildren<{}>) => (
   <ApolloProvider client={client}>{children}</ApolloProvider>
