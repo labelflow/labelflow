@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import NextLink from "next/link";
 import {
   Modal,
@@ -21,7 +21,7 @@ export const WelcomeModal = () => {
   const isOpen = true;
 
   return (
-    <Modal isOpen={isOpen} size="3xl">
+    <Modal isOpen={isOpen} onClose={() => {}} size="3xl">
       <ModalOverlay />
       <ModalContent margin="3.75rem">
         <ModalHeader textAlign="center" padding="6">
