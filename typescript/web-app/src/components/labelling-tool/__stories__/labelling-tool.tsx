@@ -34,12 +34,11 @@ export default {
   component: LabellingTool,
   loaders: [mockImagesLoader],
   decorators: [
-    withNextRouter,
+    inGreyBoxDecorator,
     queryParamsDecorator,
     chakraDecorator,
     apolloDecorator,
     withImageIdInQueryStringRouterDecorator,
-    inGreyBoxDecorator,
   ],
 };
 
