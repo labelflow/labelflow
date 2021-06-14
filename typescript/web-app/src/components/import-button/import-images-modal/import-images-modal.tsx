@@ -28,7 +28,7 @@ export const ImportImagesModal = ({
   );
 
   useEffect(() => {
-    if (router.isReady && !isOpen) {
+    if (router?.isReady && !isOpen) {
       setMode(undefined, "replaceIn");
     }
   }, [isOpen, router.isReady]);
