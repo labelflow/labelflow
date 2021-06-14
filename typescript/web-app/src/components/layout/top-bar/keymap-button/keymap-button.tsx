@@ -19,7 +19,7 @@ export const KeymapButton = () => {
         <IconButton
           aria-label="Add images"
           icon={<KeymapIcon fontSize="xl" />}
-          onClick={() => setIsOpen(false, "replaceIn")}
+          onClick={() => setIsOpen(true, "replaceIn")}
           variant="ghost"
         />
       </Tooltip>
