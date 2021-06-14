@@ -31,7 +31,7 @@ export const ImportImagesModal = ({
     if (router?.isReady && !isOpen) {
       setMode(undefined, "replaceIn");
     }
-  }, [isOpen, router.isReady]);
+  }, [isOpen, router?.isReady]);
 
   return (
     <Modal
