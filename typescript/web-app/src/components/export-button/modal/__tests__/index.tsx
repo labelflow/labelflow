@@ -103,8 +103,8 @@ test("Label count should be consistent", async () => {
   });
   render(<ExportModal isOpen />, { wrapper });
   await waitFor(() => {
-    expect(
-      screen.getByRole("heading", { name: "Your project contains 2 labels." })
-    ).toBeInTheDocument();
+    expect(screen.getByTestId("export-modal-labels-count")?.innerHTML).toEqual(
+      "2"
+    );
   });
 });
