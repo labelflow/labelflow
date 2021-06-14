@@ -37,14 +37,19 @@ export const ExportModal = ({
       if (typeof exportToCoco !== "string") {
         throw new Error("");
       }
-
-      const base64Export = exportToCoco.replace(
-        "data:application/json;base64,",
-        ""
-      );
-      console.log(JSON.parse(atob(base64Export)));
-
-      // decode from base64 and start download
+      const dateObject = new Date();
+      const date = `${dateObject
+        .toLocaleDateString()
+        .split("/")
+        .reverse()
+        .join("-")}T${String(dateObject.getHours()).padStart(2, "0")}${String(
+        dateObject.getMinutes()
+      ).padStart(2, "0")}${String(dateObject.getSeconds()).padStart(2, "0")}`;
+      const projectName = `project-${date}-Coco.json`;
+      const element = document.createElement("a");
+      element.setAttribute("href", exportToCoco);
+      element.setAttribute("download", projectName);
+      element.click();
     },
   });
 
