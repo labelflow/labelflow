@@ -25,12 +25,13 @@ export const QueryParamProviderComponent = (props: {
 
   const history = useMemo(
     () => ({
-      push: ({ search }: Location) =>
+      push: ({ search }: Location) => {
         router.push(
           { pathname: router.pathname, query: router.query },
           { search, pathname },
           { shallow: true, scroll: false }
-        ),
+        );
+      },
       replace: ({ search }: Location) => {
         router.replace(
           { pathname: router.pathname, query: router.query },

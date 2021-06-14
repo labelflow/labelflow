@@ -7,6 +7,7 @@ import {
   ModalFooter,
   Button,
 } from "@chakra-ui/react";
+import { useRouter } from "next/router";
 import { useQueryParam, StringParam, withDefault } from "use-query-params";
 import { ImportImagesModalDropzone } from "./modal-dropzone/modal-dropzone";
 import { ImportImagesModalUrlList } from "./modal-url-list/modal-url-list";
@@ -18,6 +19,7 @@ export const ImportImagesModal = ({
   isOpen?: boolean;
   onClose?: () => void;
 }) => {
+  const router = useRouter();
   const [isCloseable, setCloseable] = useState(true);
   const [hasUploaded, setHasUploaded] = useState(false);
   const [mode, setMode] = useQueryParam(
@@ -26,8 +28,10 @@ export const ImportImagesModal = ({
   );
 
   useEffect(() => {
-    if (!isOpen) setMode(undefined);
-  }, [isOpen]);
+    if (router.isReady && !isOpen) {
+      setMode(undefined, "replaceIn");
+    }
+  }, [isOpen, router.isReady]);
 
   return (
     <Modal
