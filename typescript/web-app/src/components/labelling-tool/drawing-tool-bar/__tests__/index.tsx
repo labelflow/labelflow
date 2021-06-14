@@ -4,6 +4,10 @@ import "@testing-library/jest-dom/extend-expect";
 
 import { DrawingToolbar } from "..";
 
+jest.mock("next/router", () => ({
+  query: {},
+}));
+
 test("should display tooltip", async () => {
   render(<DrawingToolbar />);
 
