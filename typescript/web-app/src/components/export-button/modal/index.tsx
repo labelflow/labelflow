@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
   HStack,
   Heading,
@@ -29,7 +28,6 @@ export const ExportModal = ({
   isOpen?: boolean;
   onClose?: () => void;
 }) => {
-  const [isCloseable, setCloseable] = useState(true);
 
   const [queryExportToCoco, { loading }] = useLazyQuery(exportToCocoQuery, {
     fetchPolicy: "network-only",
@@ -47,21 +45,14 @@ export const ExportModal = ({
       ).padStart(2, "0")}${String(dateObject.getSeconds()).padStart(2, "0")}`;
       const projectName = `project-${date}-Coco.json`;
       const element = document.createElement("a");
-      element.setAttribute("href", exportToCoco);
-      element.setAttribute("download", projectName);
+      element.href = exportToCoco;
+      element.download = projectName;
       element.click();
     },
   });
 
   return (
-    <Modal
-      isOpen={isOpen}
-      size="3xl"
-      onClose={() => {
-        if (!isCloseable) return;
-        onClose();
-      }}
-    >
+    <Modal isOpen={isOpen} size="3xl" onClose={onClose}>
       <ModalOverlay />
       <ModalContent height="80vh">
         <ModalHeader textAlign="center" padding="6">
@@ -100,7 +91,7 @@ export const ExportModal = ({
             />
           </HStack>
         </ModalBody>
-        <ModalCloseButton disabled={!isCloseable} />
+        <ModalCloseButton />
       </ModalContent>
     </Modal>
   );
