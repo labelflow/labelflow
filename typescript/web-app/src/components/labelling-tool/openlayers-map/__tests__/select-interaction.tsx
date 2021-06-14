@@ -6,6 +6,9 @@ import { render, waitFor } from "@testing-library/react";
 import { Map } from "@labelflow/react-openlayers-fiber";
 import { Feature, Map as OlMap } from "ol";
 import { fromExtent } from "ol/geom/Polygon";
+import { mockNextRouter } from "../../../../utils/router-mocks";
+
+mockNextRouter();
 
 import {
   useLabellingStore,
