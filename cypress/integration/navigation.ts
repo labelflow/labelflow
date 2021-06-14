@@ -1,4 +1,15 @@
+import { db } from "../../typescript/web-app/src/connectors/database";
+
 describe("Labelling tool", () => {
+  beforeEach(() => {
+    return Promise.all([
+      db.image.clear(),
+      db.label.clear(),
+      db.labelClass.clear(),
+      db.file.clear(),
+    ]);
+  });
+
   it("should clear the undo redo store between images", () => {
     cy.visit("http://localhost:3000/images");
     cy.contains("Add images").click();
@@ -14,7 +25,7 @@ describe("Labelling tool", () => {
     cy.get("main").click(200, 200);
     cy.get("main").click(300, 300);
     cy.get('[aria-label="Next image"]').click();
-    console.log(cy.get('[aria-label="Undo tool"]'));
-    // expect(cy.get('[aria-label="Undo tool"]')).to.have.prop("disabled", true);
+
+    cy.get('[aria-label="Undo tool"]').should("be.disabled");
   });
 });
