@@ -35,11 +35,19 @@ jest.mock("../../../../connectors/apollo-client-schema", () => {
   };
 });
 
-jest.mock("next/router", () => ({
-  useRouter: () => ({
+jest.mock("next/router", () => {
+  // @ts-ignore
+  const router = {
+    pathname: "/",
     query: { id: "mocked-image-id" },
-  }),
-}));
+    replace: ({ pathname, query }: { pathname: any; query: any }) => {
+      router.query = query;
+      router.pathname = pathname;
+    },
+    useRouter: jest.fn(() => router),
+  };
+  return router;
+});
 
 beforeEach(() => {
   (client.mutate as jest.Mock).mockClear();

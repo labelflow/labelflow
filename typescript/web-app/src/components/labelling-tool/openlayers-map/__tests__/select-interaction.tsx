@@ -13,6 +13,20 @@ import {
 } from "../../../../connectors/labelling-state";
 import { SelectInteraction } from "../select-interaction";
 
+jest.mock("next/router", () => {
+  // @ts-ignore
+  const router = {
+    pathname: "/",
+    query: {},
+    replace: ({ pathname, query }: { pathname: any; query: any }) => {
+      router.query = query;
+      router.pathname = pathname;
+    },
+    useRouter: jest.fn(() => router),
+  };
+  return router;
+});
+
 beforeEach(() => {
   useLabellingStore.setState({
     selectedLabelId: null,

@@ -16,7 +16,19 @@ import { LabelCreateInput } from "../../../../graphql-types.generated";
 import { useLabellingStore } from "../../../../connectors/labelling-state";
 import { setupTestsWithLocalDatabase } from "../../../../utils/setup-local-db-tests";
 
-jest.mock("next/router");
+jest.mock("next/router", () => {
+  // @ts-ignore
+  const router = {
+    pathname: "/",
+    query: {},
+    replace: ({ pathname, query }: { pathname: any; query: any }) => {
+      router.query = query;
+      router.pathname = pathname;
+    },
+    useRouter: jest.fn(() => router),
+  };
+  return router;
+});
 
 setupTestsWithLocalDatabase();
 
