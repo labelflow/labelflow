@@ -1,7 +1,7 @@
 import { Image, HStack, VStack, Text, Tag } from "@chakra-ui/react";
 
 type Props = {
-  colorScheme?: string;
+  colorScheme: string;
   logoSrc: string;
   title: string;
   tag: string;
