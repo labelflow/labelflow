@@ -1,57 +1,108 @@
 import React, { useState } from "react";
+import NextLink from "next/link";
 import {
   Modal,
   ModalOverlay,
   ModalContent,
   ModalFooter,
+  VStack,
+  HStack,
   Button,
+  Center,
   Text,
   Heading,
   ModalBody,
   ModalHeader,
+  useColorModeValue as mode,
 } from "@chakra-ui/react";
+import { Logo } from "../logo";
 
 export const WelcomeModal = () => {
   const isOpen = true;
 
-  const [hasUploaded, setHasUploaded] = useState(false);
-
   return (
-    <Modal isOpen={isOpen} size="xl">
+    <Modal isOpen={isOpen} size="3xl">
       <ModalOverlay />
-      <ModalContent height="80vh">
+      <ModalContent margin="3.75rem">
         <ModalHeader textAlign="center" padding="6">
-          <Heading as="h2" size="lg" pb="2">
-            Import
-          </Heading>
-          <Text fontSize="lg" fontWeight="medium">
-            Start working with your images. Stay in control of your data. Images
-            are not uploaded on LabelFlow servers.{" "}
-          </Text>
+          <Center>
+            <Logo maxW="lg" mt="8" mb="8" />
+          </Center>
         </ModalHeader>
 
-        <ModalBody
-          width="80vw"
-          display="flex"
-          pt="0"
-          pb="6"
-          pr="6"
-          pl="6"
-          overflowY="hidden"
-          flexDirection="column"
-        >
-          Ok
-        </ModalBody>
-        <ModalFooter visibility={hasUploaded ? "visible" : "hidden"}>
-          <Button
-            colorScheme="brand"
-            onClick={() => {
-              onClose();
-              setHasUploaded(false);
-            }}
+        <ModalBody>
+          <VStack
+            justifyContent="space-evenly"
+            spacing="4"
+            h="full"
+            mt="0"
+            mb="8"
           >
-            Start labeling
-          </Button>
+            <Heading
+              as="h1"
+              size="2xl"
+              maxW="lg"
+              color={mode("gray.600", "gray.300")}
+              fontWeight="extrabold"
+              // letterSpacing="tight"
+              textAlign="center"
+            >
+              The open standard{" "}
+              <Text
+                color="brand.500"
+                // bgGradient="linear(to-l, brand.500,brand.400)"
+                // bgClip="text"
+                display="inline"
+              >
+                image labeling tool
+              </Text>
+            </Heading>
+
+            <Text
+              color={mode("gray.600", "gray.400")}
+              mt="16"
+              maxW="lg"
+              fontSize="lg"
+              fontWeight="medium"
+            >
+              Create and manage your image data, workflows and teams in a single
+              place. Stay in control of your data, focus on building the next
+              big thing.
+            </Text>
+          </VStack>
+        </ModalBody>
+        <ModalFooter>
+          <HStack direction={{ base: "column", md: "row" }} spacing="4" mt="8">
+            <NextLink href="https://github.com/Labelflow/labelflow">
+              <Button size="lg" minW="210px" variant="link" height="14" px="8">
+                See code on Github
+              </Button>
+            </NextLink>
+            <NextLink href="/images?modal-import">
+              <Button
+                size="lg"
+                minW="210px"
+                colorScheme="brand"
+                height="14"
+                px="8"
+              >
+                Start Labelling!
+              </Button>
+            </NextLink>
+
+            {/* <Button
+                size="lg"
+                bg="white"
+                color="gray.900"
+                _hover={{ bg: "gray.50" }}
+                height="14"
+                px="8"
+                shadow="base"
+                leftIcon={<Box as={HiPlay} fontSize="2xl" />}
+              >
+                Watch Demo
+              </Button> */}
+          </HStack>
         </ModalFooter>
       </ModalContent>
     </Modal>
