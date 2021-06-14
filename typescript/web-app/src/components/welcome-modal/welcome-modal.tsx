@@ -73,11 +73,19 @@ export const WelcomeModal = () => {
         </ModalBody>
         <ModalFooter>
           <HStack direction={{ base: "column", md: "row" }} spacing="4" mt="8">
-            <NextLink href="https://github.com/Labelflow/labelflow">
-              <Button size="lg" minW="210px" variant="link" height="14" px="8">
-                See code on Github
-              </Button>
-            </NextLink>
+            <Button
+              as="a"
+              href="https://github.com/Labelflow/labelflow"
+              target="blank"
+              size="lg"
+              minW="210px"
+              variant="link"
+              height="14"
+              px="8"
+            >
+              See code on Github
+            </Button>
+
             <NextLink href="/images?modal-import">
               <Button
                 size="lg"
