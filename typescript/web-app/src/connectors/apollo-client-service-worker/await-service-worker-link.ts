@@ -33,9 +33,7 @@ const setServerReady = () => {
 
 const checkServerReady = async () => {
   if (!isInWindowScope) {
-    rejectIsServerReadyPromise?.(
-      "Not in window scope, service worker does not exist"
-    );
+    console.log("Not in window scope, service worker does not exist");
     return;
   }
   const wb = window.workbox;
