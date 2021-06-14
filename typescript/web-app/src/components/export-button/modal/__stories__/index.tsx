@@ -37,6 +37,19 @@ export const Loading = () => {
   );
 };
 
+export const Disabled = () => {
+  return (
+    <ExportFormatCard
+      disabled
+      colorScheme="gray"
+      logoSrc="/assets/export-formats/tensorflow-grey.png"
+      title="Export to TensorFlow (soon)"
+      tag="CSV"
+      subtext="TF Object Detection file in its human readable format"
+    />
+  );
+};
+
 export const TensorFlow = () => {
   return (
     <ExportFormatCard

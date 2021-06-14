@@ -9,6 +9,7 @@ import {
 } from "@chakra-ui/react";
 
 type Props = {
+  disabled?: boolean;
   loading?: boolean;
   colorScheme: string;
   logoSrc: string;
@@ -24,6 +25,7 @@ export const ExportFormatCard = ({
   tag,
   subtext,
   loading,
+  disabled,
 }: Props) => {
   return (
     <Box
@@ -36,8 +38,12 @@ export const ExportFormatCard = ({
       borderColor={loading ? "gray.200" : `${colorScheme}.200`}
       p="2"
       transition="background-color ease 0.2s"
-      _hover={loading ? undefined : { backgroundColor: `${colorScheme}.100` }}
-      cursor="pointer"
+      _hover={
+        loading || disabled
+          ? undefined
+          : { backgroundColor: `${colorScheme}.100` }
+      }
+      cursor={disabled ? "not-allowed" : "pointer"}
       position="relative"
     >
       {loading && (
@@ -68,7 +74,7 @@ export const ExportFormatCard = ({
           <Text
             as="h3"
             fontSize="lg"
-            color="gray.800"
+            color={disabled ? `gray.400` : "gray.800"}
             fontWeight="semibold"
             lineHeight="short"
           >
@@ -79,7 +85,7 @@ export const ExportFormatCard = ({
             size="sm"
             borderRadius="full"
             variant="outline"
-            color={`${colorScheme}.700`}
+            color={disabled ? `gray.300` : `${colorScheme}.700`}
             // used to override chakra's default color
             // shadow color will fallback to `color`
             boxShadow="inset 0 0 0px 1px"
@@ -89,7 +95,11 @@ export const ExportFormatCard = ({
           </Tag>
         </VStack>
       </HStack>
-      <Text lineHeight="short" color="gray.600" mt="2">
+      <Text
+        lineHeight="short"
+        color={disabled ? `gray.300` : "gray.600"}
+        mt="2"
+      >
         {subtext}
       </Text>
     </Box>
