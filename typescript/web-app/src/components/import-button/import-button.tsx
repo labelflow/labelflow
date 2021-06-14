@@ -7,17 +7,21 @@ import { ImportImagesModal } from "./import-images-modal";
 
 const UploadIcon = chakra(RiUploadCloud2Line);
 
-type Props = ButtonProps;
+type Props = ButtonProps & {
+  showModal: boolean;
+};
 
-export const ImportButton = ({ ...props }: Props) => {
+export const ImportButton = ({ showModal = true, ...props }: Props) => {
   const [isOpen, setIsOpen] = useQueryParam("modal-import", BoolParam);
 
   return (
     <>
-      <ImportImagesModal
-        isOpen={isOpen ?? false}
-        onClose={() => setIsOpen(false, "replaceIn")}
-      />
+      {showModal && (
+        <ImportImagesModal
+          isOpen={isOpen ?? false}
+          onClose={() => setIsOpen(false, "replaceIn")}
+        />
+      )}
       <Button
         aria-label="Add images"
         leftIcon={<UploadIcon fontSize="xl" />}
