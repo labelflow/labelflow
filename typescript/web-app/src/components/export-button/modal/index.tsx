@@ -13,7 +13,16 @@ import {
   Text,
 } from "@chakra-ui/react";
 
+import { useLazyQuery } from "@apollo/client";
+import gql from "graphql-tag";
+
 import { ExportFormatCard } from "./export-format-card";
+
+const exportToCocoQuery = gql`
+  query exportToCoco {
+    exportToCoco
+  }
+`;
 
 export const ExportModal = ({
   isOpen = false,
@@ -23,6 +32,13 @@ export const ExportModal = ({
   onClose?: () => void;
 }) => {
   const [isCloseable, setCloseable] = useState(true);
+
+  const [exportToCoco, { loading }] = useLazyQuery(exportToCocoQuery, {
+    onCompleted: ({ data }) => {
+      console.log(data);
+      // decode from base64 and start download
+    },
+  });
 
   return (
     <Modal
@@ -55,10 +71,11 @@ export const ExportModal = ({
         >
           <HStack spacing="4" justifyContent="center">
             <ExportFormatCard
+              loading={loading}
+              onClick={exportToCoco}
               colorScheme="brand"
               logoSrc="/assets/export-formats/coco.png"
               title="Export to COCO"
-              tag="JSON"
               subtext="Annotation file used with Pytorch and Detectron 2"
             />
             <ExportFormatCard
@@ -66,7 +83,6 @@ export const ExportModal = ({
               colorScheme="gray"
               logoSrc="/assets/export-formats/tensorflow-grey.png"
               title="Export to TensorFlow (soon)"
-              tag="CSV"
               subtext="TF Object Detection file in its human readable format"
             />
           </HStack>

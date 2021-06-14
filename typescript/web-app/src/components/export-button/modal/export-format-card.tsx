@@ -11,6 +11,7 @@ import {
 type Props = {
   disabled?: boolean;
   loading?: boolean;
+  onClick?: () => void;
   colorScheme: string;
   logoSrc: string;
   title: string;
@@ -24,6 +25,7 @@ export const ExportFormatCard = ({
   subtext,
   loading,
   disabled,
+  onClick,
 }: Props) => {
   const theme = useTheme();
   return (
@@ -41,6 +43,7 @@ export const ExportFormatCard = ({
       }
       cursor={disabled ? "not-allowed" : "pointer"}
       position="relative"
+      onClick={disabled || loading ? undefined : onClick}
     >
       {loading && (
         <Box
