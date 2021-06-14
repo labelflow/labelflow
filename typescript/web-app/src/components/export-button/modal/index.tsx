@@ -27,7 +27,7 @@ export const ExportModal = ({
   return (
     <Modal
       isOpen={isOpen}
-      size="xl"
+      size="3xl"
       onClose={() => {
         if (!isCloseable) return;
         onClose();
@@ -53,7 +53,7 @@ export const ExportModal = ({
           overflowY="hidden"
           flexDirection="column"
         >
-          <HStack spacing="4">
+          <HStack spacing="4" justifyContent="center">
             <ExportFormatCard
               colorScheme="brand"
               logoSrc="/assets/export-formats/coco.png"
@@ -62,6 +62,7 @@ export const ExportModal = ({
               subtext="Annotation file used with Pytorch and Detectron 2"
             />
             <ExportFormatCard
+              disabled
               colorScheme="gray"
               logoSrc="/assets/export-formats/tensorflow-grey.png"
               title="Export to TensorFlow (soon)"
