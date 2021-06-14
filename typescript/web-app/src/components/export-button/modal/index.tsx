@@ -8,9 +8,10 @@ import {
   ModalHeader,
   ModalOverlay,
   Text,
+  Skeleton,
 } from "@chakra-ui/react";
 
-import { useLazyQuery } from "@apollo/client";
+import { useLazyQuery, useQuery } from "@apollo/client";
 import gql from "graphql-tag";
 
 import { ExportFormatCard } from "./export-format-card";
@@ -21,6 +22,14 @@ const exportToCocoQuery = gql`
   }
 `;
 
+const countLabelsQuery = gql`
+  query countLabels {
+    labelsAggregates {
+      totalCount
+    }
+  }
+`;
+
 export const ExportModal = ({
   isOpen = false,
   onClose = () => {},
@@ -28,6 +37,7 @@ export const ExportModal = ({
   isOpen?: boolean;
   onClose?: () => void;
 }) => {
+  const { data } = useQuery(countLabelsQuery);
   const [queryExportToCoco, { loading }] = useLazyQuery(exportToCocoQuery, {
     fetchPolicy: "network-only",
     onCompleted: ({ exportToCoco }) => {
@@ -58,8 +68,23 @@ export const ExportModal = ({
           <Heading as="h2" size="lg" pb="2" color="gray.800">
             Export Labels
           </Heading>
-          <Text fontSize="lg" fontWeight="medium" color="gray.800">
-            Your project contains 11 labels. HARDCODED FOR NOW.
+
+          <Text
+            as="div"
+            fontSize="lg"
+            fontWeight="medium"
+            color="gray.800"
+            display="flex"
+            justifyContent="center"
+          >
+            Your project contains&nbsp;
+            <Skeleton
+              isLoaded={data?.labelsAggregates?.totalCount !== undefined}
+              minW="1ch"
+            >
+              {data?.labelsAggregates?.totalCount}
+            </Skeleton>
+            &nbsp;labels.
           </Text>
         </ModalHeader>
 
