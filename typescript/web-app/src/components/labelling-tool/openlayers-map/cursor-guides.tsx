@@ -1,5 +1,6 @@
 import { useRef, useEffect } from "react";
 import { Box } from "@chakra-ui/react";
+import { noop, difference } from "lodash/fp";
 
 import { useLabellingStore, Tools } from "../../../connectors/labelling-state";
 
@@ -24,27 +25,36 @@ export const CursorGuides = ({
   devicePixelRatio = pixelRatio,
 }: {
   pointerPositionRef: { current: Array<number> | null };
-  devicePixelRatio: number;
+  devicePixelRatio?: number;
 }) => {
   const selectedTool = useLabellingStore((state) => state.selectedTool);
   const horizontalBarRef = useRef<HTMLDivElement | null>(null);
   const verticalBarRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    const followMouse = () => {
-      requestAnimationFrame(followMouse);
-      if (!horizontalBarRef.current || !verticalBarRef.current) return;
+    if (!horizontalBarRef.current || !verticalBarRef.current) return noop;
 
-      if (selectedTool !== Tools.BOUNDING_BOX) {
-        horizontalBarRef.current.style.visibility = "hidden";
-        verticalBarRef.current.style.visibility = "hidden";
-        return;
-      }
+    if (selectedTool !== Tools.BOUNDING_BOX) {
+      horizontalBarRef.current.style.visibility = "hidden";
+      verticalBarRef.current.style.visibility = "hidden";
+      return noop;
+    }
+
+    horizontalBarRef.current.style.visibility = "visible";
+    verticalBarRef.current.style.visibility = "visible";
+
+    let requestId: number;
+    let previousPosition = pointerPositionRef.current;
+
+    const followMouse = () => {
+      requestId = requestAnimationFrame(followMouse);
 
       if (!pointerPositionRef?.current) return;
+      if (!horizontalBarRef.current || !verticalBarRef.current) return;
+      if (difference(previousPosition, pointerPositionRef.current).length === 0)
+        return;
 
-      horizontalBarRef.current.style.visibility = "visible";
-      verticalBarRef.current.style.visibility = "visible";
+      previousPosition = pointerPositionRef.current;
 
       horizontalBarRef.current.style.top = `${
         pointerPositionRef.current[1] / devicePixelRatio
@@ -61,6 +71,8 @@ export const CursorGuides = ({
       }px`;
     };
     followMouse();
+
+    return () => cancelAnimationFrame(requestId);
   }, [selectedTool]);
 
   const guideColor = "#05FF00";
