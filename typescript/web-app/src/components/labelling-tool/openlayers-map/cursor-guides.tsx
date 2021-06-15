@@ -38,11 +38,8 @@ export const CursorGuides = ({
 
       previousPosition = pointerPositionRef.current;
 
-      horizontalBarRef.current.style.top = `${pointerPositionRef.current[1]}px`;
-      horizontalBarRef.current.style.left = `calc(-100% + ${pointerPositionRef.current[0]}px)`;
-
-      verticalBarRef.current.style.top = `calc(-100% + ${pointerPositionRef.current[1]}px)`;
-      verticalBarRef.current.style.left = `${pointerPositionRef.current[0]}px`;
+      horizontalBarRef.current.style.transform = `translate(calc(-50% + ${pointerPositionRef.current[0]}px), ${pointerPositionRef.current[1]}px)`;
+      verticalBarRef.current.style.transform = `translate(${pointerPositionRef.current[0]}px, calc(-50% + ${pointerPositionRef.current[1]}px))`;
     };
     followMouse();
 
