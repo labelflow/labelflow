@@ -1,6 +1,4 @@
 import { MutableRefObject, useState } from "react";
-import { click } from "ol/events/condition";
-import { SelectEvent } from "ol/interaction/Select";
 import { Coordinate } from "ol/coordinate";
 import { MapBrowserEvent } from "ol";
 import OverlayPositioning from "ol/OverlayPositioning";
@@ -50,12 +48,12 @@ export const SelectInteraction = ({
         handleEvent={(e) => {
           const eventType = e?.type ?? null;
           switch (eventType) {
-            case "click":
+            case "singleclick":
               return clickHandler(e);
             case "contextmenu":
               return contextMenuHandler(e);
             default:
-              return false;
+              return true;
           }
         }}
       />
