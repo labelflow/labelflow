@@ -6,14 +6,6 @@ import { MapBrowserEvent } from "ol";
 import OverlayPositioning from "ol/OverlayPositioning";
 import { useLabellingStore, Tools } from "../../../connectors/labelling-state";
 
-const isContextMenuEvent = (mapBrowserEvent: MapBrowserEvent) => {
-  return mapBrowserEvent?.type === "contextmenu";
-};
-
-const shouldSelectFeature = (mapBrowserEvent: MapBrowserEvent) => {
-  return click(mapBrowserEvent) || isContextMenuEvent(mapBrowserEvent);
-};
-
 export const SelectInteraction = ({
   setEditClass = () => {},
   editClassOverlayRef,
@@ -32,34 +24,40 @@ export const SelectInteraction = ({
     return null;
   }
 
+  const clickHandler = (e: MapBrowserEvent<UIEvent>) => {
+    const { map } = e;
+    const feature = map.forEachFeatureAtPixel(e.pixel, (f: any) => f);
+    setSelectedLabelId(feature?.getProperties().id ?? null);
+    return true;
+  };
+
+  const contextMenuHandler = (e: MapBrowserEvent<UIEvent>) => {
+    const { map } = e;
+    const feature = map.forEachFeatureAtPixel(e.pixel, (f: any) => f);
+    const selectedLabelId = feature?.getProperties().id ?? null;
+    setSelectedLabelId(selectedLabelId);
+    if (selectedLabelId) {
+      setEditClass(true);
+      setEditMenuLocation(map.getCoordinateFromPixel(e.pixel));
+    }
+    return true;
+  };
+
   return (
     <>
-      <olInteractionSelect
-        /*
-         * Prevent openlayers to apply its own style on the selected features. An
-         * alternative could be to use the "features" property to switch
-         * to a kind of controlled mode.
-         *
-         * Select interaction accept "null" for the style property.
-         * See https://openlayers.org/en/latest/apidoc/module-ol_interaction_Select-Select.html
-         */
-        // @ts-ignore
+      <olInteractionPointer
         style={null}
-        onSelect={(e) => {
-          const selectEvent = e as SelectEvent;
-          if (selectEvent.selected.length > 0) {
-            setSelectedLabelId(selectEvent.selected[0].getProperties().id);
-            if (isContextMenuEvent(selectEvent?.mapBrowserEvent)) {
-              setEditClass(true);
-              setEditMenuLocation(e.mapBrowserEvent.coordinate);
-            }
-          } else {
-            setSelectedLabelId(null);
+        handleEvent={(e) => {
+          const eventType = e?.type ?? null;
+          switch (eventType) {
+            case "click":
+              return clickHandler(e);
+            case "contextmenu":
+              return contextMenuHandler(e);
+            default:
+              return false;
           }
-          // Typescript forces us to return a boolean
-          return false;
         }}
-        condition={shouldSelectFeature}
       />
       {editClassOverlayRef?.current ? (
         <olOverlay

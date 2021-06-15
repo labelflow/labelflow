@@ -99,6 +99,7 @@ export const OpenlayersMap = () => {
     width / (bounds.width - viewPadding[1] - viewPadding[3]),
     height / (bounds.height - viewPadding[0] - viewPadding[2])
   );
+
   return (
     <>
       <div
