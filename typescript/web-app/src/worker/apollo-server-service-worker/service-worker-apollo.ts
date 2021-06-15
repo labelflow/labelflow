@@ -39,7 +39,7 @@ export async function graphQLServiceWorker(
     if (retries < maxRetries) {
       console.log("Problem with the database, retrying after reset");
       resetDatabase();
-      return graphQLServiceWorker(request, options, 1);
+      return graphQLServiceWorker(request, options, retries + 1);
     }
 
     if (error.name !== "HttpQueryError") {
