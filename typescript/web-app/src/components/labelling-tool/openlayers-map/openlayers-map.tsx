@@ -94,11 +94,13 @@ export const OpenlayersMap = () => {
       if (!mapRef.current) return;
       const target = mapRef.current.getTarget() as HTMLElement;
 
-      if (selectedTool === Tools.BOUNDING_BOX) {
+      if (e.dragging) {
+        target.style.cursor = "grabbing";
+      } else if (selectedTool === Tools.BOUNDING_BOX) {
         target.style.cursor = "crosshair";
       } else if (selectedTool === Tools.SELECTION) {
         const hit = mapRef.current.hasFeatureAtPixel(e.pixel);
-        target.style.cursor = hit ? "pointer" : "move";
+        target.style.cursor = hit ? "pointer" : "grab";
       } else {
         target.style.cursor = "default";
       }
