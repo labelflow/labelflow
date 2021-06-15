@@ -120,6 +120,7 @@ type Mutation {
   updateLabel(where: LabelWhereUniqueInput!, data: LabelUpdateInput!): Label
   deleteLabel(where: LabelWhereUniqueInput!): Label
   createLabelClass(data: LabelClassCreateInput!): LabelClass
+  deleteLabelClass(where: LabelClassWhereUniqueInput!): LabelClass
 }
 
 type Query {

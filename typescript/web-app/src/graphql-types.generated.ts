@@ -141,6 +141,7 @@ export type Mutation = {
   updateLabel?: Maybe<Label>;
   deleteLabel?: Maybe<Label>;
   createLabelClass?: Maybe<LabelClass>;
+  deleteLabelClass?: Maybe<LabelClass>;
 };
 
 
@@ -172,6 +173,11 @@ export type MutationDeleteLabelArgs = {
 
 export type MutationCreateLabelClassArgs = {
   data: LabelClassCreateInput;
+};
+
+
+export type MutationDeleteLabelClassArgs = {
+  where: LabelClassWhereUniqueInput;
 };
 
 export type Query = {
@@ -444,6 +450,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   updateLabel?: Resolver<Maybe<ResolversTypes['Label']>, ParentType, ContextType, RequireFields<MutationUpdateLabelArgs, 'where' | 'data'>>;
   deleteLabel?: Resolver<Maybe<ResolversTypes['Label']>, ParentType, ContextType, RequireFields<MutationDeleteLabelArgs, 'where'>>;
   createLabelClass?: Resolver<Maybe<ResolversTypes['LabelClass']>, ParentType, ContextType, RequireFields<MutationCreateLabelClassArgs, 'data'>>;
+  deleteLabelClass?: Resolver<Maybe<ResolversTypes['LabelClass']>, ParentType, ContextType, RequireFields<MutationDeleteLabelClassArgs, 'where'>>;
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
