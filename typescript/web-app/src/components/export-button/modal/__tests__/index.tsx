@@ -105,7 +105,7 @@ test("Export Modal should display the number of labels", async () => {
 
   await waitFor(() => {
     expect(screen.getByRole("banner").textContent).toEqual(
-      expect.stringContaining("2\xa0labels")
+      expect.stringContaining("2 labels")
     );
   });
 });

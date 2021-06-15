@@ -68,18 +68,15 @@ export const ExportModal = ({
           <Heading as="h2" size="lg" pb="2" color="gray.800">
             Export Labels
           </Heading>
-
-          <Text fontSize="lg" fontWeight="medium" color="gray.800">
-            Your project contains&nbsp;
-            <Skeleton
-              as="span"
-              isLoaded={data?.labelsAggregates?.totalCount !== undefined}
-              minW="1ch"
-            >
-              {data?.labelsAggregates?.totalCount}
-            </Skeleton>
-            &nbsp;labels.
-          </Text>
+          <Skeleton
+            w="fit-content"
+            m="auto"
+            isLoaded={data?.labelsAggregates?.totalCount !== undefined}
+          >
+            <Text fontSize="lg" fontWeight="medium" color="gray.800">
+              Your project contains {data?.labelsAggregates?.totalCount} labels.
+            </Text>
+          </Skeleton>
         </ModalHeader>
 
         <ModalBody
