@@ -5,7 +5,7 @@ import { isEqual } from "lodash/fp";
 
 import { useLabellingStore, Tools } from "../../../connectors/labelling-state";
 
-export const CursorGuides = ({ map }: { map: OlMap }) => {
+export const CursorGuides = ({ map }: { map: OlMap | null }) => {
   const selectedTool = useLabellingStore((state) => state.selectedTool);
   const horizontalBarRef = useRef<HTMLDivElement | null>(null);
   const verticalBarRef = useRef<HTMLDivElement | null>(null);
