@@ -35,10 +35,20 @@ interface Database extends Dexie {
   labelClass: Dexie.Table<DbLabelClass, string>;
 }
 
-export const databaseWithoutTables = new Dexie("labelflow_local");
+// eslint-disable-next-line import/no-mutable-exports
+export let db: Database;
 
-versions.map(({ version, stores }) =>
-  databaseWithoutTables.version(version).stores(stores)
-);
+export const resetDatabase = () => {
+  console.log("Initializing database");
+  if (db) {
+    try {
+      db.close();
+    } catch (e) {
+      console.log("Could not close existing database");
+    }
+  }
+  db = new Dexie("labelflow_local") as Database;
+  versions.map(({ version, stores }) => db.version(version).stores(stores));
+};
 
-export const db = databaseWithoutTables as Database;
+resetDatabase();
