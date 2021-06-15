@@ -33,7 +33,7 @@ export const displayKey = (key: string) =>
     .replace(/end/g, "↘︎")
     .replace(/pageup/g, "⇞")
     .replace(/pagedown/g, "⇟")
-    .replace(/del/g, "⌧")
+    // .replace(/del/g, "⌧")
     .replace(/delete/g, "⌧");
 
 export const Shortcut = ({ keys }: { keys: string }) => {

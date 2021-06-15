@@ -1,3 +1,4 @@
+/* eslint-disable import/order */
 /* eslint-disable import/first */
 // @ts-ignore Needs to be done before ol is imported
 global.URL.createObjectURL = jest.fn(() => "mockedUrl");
@@ -5,18 +6,21 @@ global.URL.createObjectURL = jest.fn(() => "mockedUrl");
 import { ApolloProvider } from "@apollo/client";
 import { Map } from "@labelflow/react-openlayers-fiber";
 import { render, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import gql from "graphql-tag";
 import { Map as OlMap } from "ol";
-import { useRouter } from "next/router";
+
 import VectorLayer from "ol/layer/Vector";
+import { mockNextRouter } from "../../../../utils/router-mocks";
+
+mockNextRouter();
+
+import { useRouter } from "next/router";
 import { client } from "../../../../connectors/apollo-client-schema";
 import { Labels } from "../labels";
 import { LabelCreateInput } from "../../../../graphql-types.generated";
+import { useLabellingStore } from "../../../../connectors/labelling-state";
 import { setupTestsWithLocalDatabase } from "../../../../utils/setup-local-db-tests";
-
-jest.mock("next/router", () => ({
-  useRouter: jest.fn(),
-}));
 
 setupTestsWithLocalDatabase();
 
@@ -44,8 +48,8 @@ const createImage = async (name: String) => {
   return id;
 };
 
-const createLabel = (data: LabelCreateInput) => {
-  return client.mutate({
+const createLabel = async (data: LabelCreateInput) => {
+  const mutationResult = await client.mutate({
     mutation: gql`
       mutation createLabel($data: LabelCreateInput!) {
         createLabel(data: $data) {
@@ -57,11 +61,29 @@ const createLabel = (data: LabelCreateInput) => {
       data,
     },
   });
+
+  const {
+    data: {
+      createLabel: { id },
+    },
+  } = mutationResult;
+
+  return id;
 };
+
+let imageId: string;
+
+beforeEach(async () => {
+  imageId = await createImage("myImage");
+
+  (useRouter as jest.Mock).mockImplementation(() => ({
+    query: { id: imageId },
+  }));
+});
 
 it("displays a single label", async () => {
   const mapRef: { current: OlMap | null } = { current: null };
-  const imageId = await createImage("myImage");
+
   await createLabel({
     x: 3.14,
     y: 42.0,
@@ -69,10 +91,6 @@ it("displays a single label", async () => {
     width: 362,
     imageId,
   });
-
-  (useRouter as jest.Mock).mockImplementation(() => ({
-    query: { id: imageId },
-  }));
 
   render(<Labels />, {
     wrapper: ({ children }) => (
@@ -97,7 +115,6 @@ it("displays a single label", async () => {
 
 it("displays created labels", async () => {
   const mapRef: { current: OlMap | null } = { current: null };
-  const imageId = await createImage("myImage");
   await createLabel({
     x: 3.14,
     y: 42.0,
@@ -113,10 +130,6 @@ it("displays created labels", async () => {
     width: 362,
     imageId,
   });
-
-  (useRouter as jest.Mock).mockImplementation(() => ({
-    query: { id: imageId },
-  }));
 
   render(<Labels />, {
     wrapper: ({ children }) => (
@@ -136,5 +149,128 @@ it("displays created labels", async () => {
         .getSource()
         .getFeatures()
     ).toHaveLength(2);
+  });
+});
+
+it("should change style of selected label", async () => {
+  const mapRef: { current: OlMap | null } = { current: null };
+  const labelId = await createLabel({
+    x: 3.14,
+    y: 42.0,
+    height: 768,
+    width: 362,
+    imageId,
+  });
+
+  useLabellingStore.setState({ selectedLabelId: labelId });
+
+  render(<Labels />, {
+    wrapper: ({ children }) => (
+      <Map
+        ref={(map) => {
+          mapRef.current = map;
+        }}
+      >
+        <ApolloProvider client={client}>{children}</ApolloProvider>
+      </Map>
+    ),
+  });
+
+  await waitFor(() => {
+    const [feature] = (mapRef.current?.getLayers().getArray()[0] as VectorLayer)
+      .getSource()
+      .getFeatures();
+
+    /* This make this test dependent of the styling.
+     * We could add a selected property on the feature but it is not needed for the moment. */
+    expect(feature.getStyle()).toMatchObject({ zIndex_: 2 });
+  });
+});
+
+it("should delete selected label on delete key pressed", async () => {
+  const mapRef: { current: OlMap | null } = { current: null };
+  const labelId = await createLabel({
+    x: 3.14,
+    y: 42.0,
+    height: 768,
+    width: 362,
+    imageId,
+  });
+
+  useLabellingStore.setState({ selectedLabelId: labelId });
+
+  const { container } = render(<Labels />, {
+    wrapper: ({ children }) => (
+      <Map
+        ref={(map) => {
+          mapRef.current = map;
+        }}
+      >
+        <ApolloProvider client={client}>{children}</ApolloProvider>
+      </Map>
+    ),
+  });
+
+  await waitFor(() => {
+    expect(
+      (mapRef.current?.getLayers().getArray()[0] as VectorLayer)
+        .getSource()
+        .getFeatures()
+    ).toHaveLength(1);
+  });
+
+  userEvent.type(container, "{delete}");
+
+  await waitFor(() => {
+    expect(
+      (mapRef.current?.getLayers().getArray()[0] as VectorLayer)
+        .getSource()
+        .getFeatures()
+    ).toHaveLength(0);
+
+    expect(useLabellingStore.getState()).toMatchObject({
+      selectedLabelId: null,
+    });
+  });
+});
+
+it("should not delete a label when none was selected", async () => {
+  const mapRef: { current: OlMap | null } = { current: null };
+  await createLabel({
+    x: 3.14,
+    y: 42.0,
+    height: 768,
+    width: 362,
+    imageId,
+  });
+
+  const { container } = render(<Labels />, {
+    wrapper: ({ children }) => (
+      <Map
+        ref={(map) => {
+          mapRef.current = map;
+        }}
+      >
+        <ApolloProvider client={client}>{children}</ApolloProvider>
+      </Map>
+    ),
+  });
+
+  await waitFor(() => {
+    expect(
+      (mapRef.current?.getLayers().getArray()[0] as VectorLayer)
+        .getSource()
+        .getFeatures()
+    ).toHaveLength(1);
+  });
+
+  userEvent.type(container, "{delete}");
+
+  await waitFor(() => {
+    expect(
+      (mapRef.current?.getLayers().getArray()[0] as VectorLayer)
+        .getSource()
+        .getFeatures()
+    ).toHaveLength(1);
   });
 });

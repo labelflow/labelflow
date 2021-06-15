@@ -27,7 +27,7 @@ export const ImportImagesModalUrlList = ({
   onUploadStart = () => {},
   onUploadEnd = () => {},
 }: {
-  setMode?: (mode: "dropzone") => void;
+  setMode?: (mode: "dropzone", updateType?: "replaceIn") => void;
   onUploadStart?: () => void;
   onUploadEnd?: () => void;
 }) => {
@@ -94,7 +94,7 @@ export const ImportImagesModalUrlList = ({
             variant="link"
             fontSize="lg"
             fontWeight="medium"
-            onClick={() => setMode("dropzone")}
+            onClick={() => setMode("dropzone", "replaceIn")}
           >
             Import by dropping your files instead
           </Button>

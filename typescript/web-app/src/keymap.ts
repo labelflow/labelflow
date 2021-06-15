@@ -13,6 +13,11 @@ export const keymap: Keymap = {
     description: "Bounding box tool",
     category: "Tools",
   },
+  deleteLabel: {
+    key: "del,delete,backspace",
+    description: "Delete selected label",
+    category: "Tools",
+  },
   goToPreviousImage: {
     key: "left",
     description: "Navigate to the previous image",
