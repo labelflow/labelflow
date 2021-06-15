@@ -1,5 +1,5 @@
-import React from "react";
-import NextLink from "next/link";
+import { useState, useEffect } from "react";
+
 import {
   Modal,
   ModalOverlay,
@@ -15,11 +15,30 @@ import {
   ModalHeader,
   useColorModeValue as mode,
 } from "@chakra-ui/react";
-import { InitialSetup } from "./initial-setup";
-import { Logo } from "../logo";
 
-export const WelcomeModal = () => {
-  const isOpen = true;
+import { Logo } from "../../logo";
+
+export const WelcomeModal = ({
+  isServiceWorkerActive,
+}: {
+  isServiceWorkerActive: boolean;
+}) => {
+  const [hasUserClickedStart, setHasUserClickedStart] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+
+  // This modal should open when isServiceWorkerActive becomes false
+  // But close only when the use hasUserClickedStart becomes true
+  useEffect(() => {
+    if (!isServiceWorkerActive && !hasUserClickedStart) {
+      setIsOpen(true);
+      return;
+    }
+    if (isServiceWorkerActive && hasUserClickedStart) {
+      setIsOpen(false);
+    }
+    // In the 2 other cases, we do nothing, this is an hysteresis
+    // To "latch" the modal to open once it opened once
+  }, [isServiceWorkerActive, hasUserClickedStart]);
 
   return (
     <Modal isOpen={isOpen} onClose={() => {}} size="3xl">
@@ -34,7 +53,7 @@ export const WelcomeModal = () => {
         <ModalBody>
           <VStack
             justifyContent="space-evenly"
-            spacing="4"
+            spacing="8"
             h="full"
             mt="0"
             mb="8"
@@ -47,6 +66,7 @@ export const WelcomeModal = () => {
               fontWeight="extrabold"
               // letterSpacing="tight"
               textAlign="center"
+              // textAlign="justify"
             >
               The open standard{" "}
               <Text
@@ -65,12 +85,13 @@ export const WelcomeModal = () => {
               maxW="lg"
               fontSize="lg"
               fontWeight="medium"
+              textAlign="justify"
             >
               Create and manage your image data, workflows and teams in a single
               place. Stay in control of your data, focus on building the next
               big thing.
             </Text>
-            <InitialSetup />
+            {/* <InitialSetup /> */}
           </VStack>
         </ModalBody>
         <ModalFooter>
@@ -88,17 +109,20 @@ export const WelcomeModal = () => {
               See code on Github
             </Button>
 
-            <NextLink href="/images?modal-import">
-              <Button
-                size="lg"
-                minW="210px"
-                colorScheme="brand"
-                height="14"
-                px="8"
-              >
-                Start Labelling!
-              </Button>
-            </NextLink>
+            {/* <NextLink href="/images?modal-import"> */}
+            <Button
+              size="lg"
+              minW="210px"
+              colorScheme="brand"
+              height="14"
+              px="8"
+              isLoading={hasUserClickedStart && !isServiceWorkerActive}
+              onClick={() => setHasUserClickedStart(true)}
+              loadingText="Loading the application"
+            >
+              Start Labelling!
+            </Button>
+            {/* </NextLink> */}
 
             {/* <Button
                 size="lg"
