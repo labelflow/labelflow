@@ -8,6 +8,7 @@ import Bluebird from "bluebird";
 
 import { client } from "../../../connectors/apollo-client-schema";
 import { chakraDecorator } from "../../../utils/chakra-decorator";
+import { queryParamsDecorator } from "../../../utils/query-params-decorator";
 import { apolloDecorator } from "../../../utils/apollo-decorator";
 import { db } from "../../../connectors/database";
 
@@ -33,10 +34,11 @@ export default {
   component: LabellingTool,
   loaders: [mockImagesLoader],
   decorators: [
+    inGreyBoxDecorator,
+    queryParamsDecorator,
     chakraDecorator,
     apolloDecorator,
     withImageIdInQueryStringRouterDecorator,
-    inGreyBoxDecorator,
   ],
 };
 

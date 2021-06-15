@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Modal,
   ModalOverlay,
@@ -7,6 +7,8 @@ import {
   ModalFooter,
   Button,
 } from "@chakra-ui/react";
+import { useRouter } from "next/router";
+import { useQueryParam, StringParam, withDefault } from "use-query-params";
 import { ImportImagesModalDropzone } from "./modal-dropzone/modal-dropzone";
 import { ImportImagesModalUrlList } from "./modal-url-list/modal-url-list";
 
@@ -17,9 +19,19 @@ export const ImportImagesModal = ({
   isOpen?: boolean;
   onClose?: () => void;
 }) => {
+  const router = useRouter();
   const [isCloseable, setCloseable] = useState(true);
   const [hasUploaded, setHasUploaded] = useState(false);
-  const [mode, setMode] = useState<"dropzone" | "urlList">("dropzone");
+  const [mode, setMode] = useQueryParam(
+    "import-mode",
+    withDefault(StringParam, "dropzone")
+  );
+
+  useEffect(() => {
+    if (router?.isReady && !isOpen) {
+      setMode(undefined, "replaceIn");
+    }
+  }, [isOpen, router?.isReady]);
 
   return (
     <Modal
@@ -33,7 +45,7 @@ export const ImportImagesModal = ({
       <ModalOverlay />
       <ModalContent height="80vh">
         <ModalCloseButton disabled={!isCloseable} />
-        {mode === "dropzone" && (
+        {mode !== "url-list" && (
           <ImportImagesModalDropzone
             setMode={setMode}
             onUploadStart={() => {
@@ -45,7 +57,7 @@ export const ImportImagesModal = ({
             }}
           />
         )}
-        {mode === "urlList" && (
+        {mode === "url-list" && (
           <ImportImagesModalUrlList
             setMode={setMode}
             onUploadStart={() => {
@@ -57,6 +69,7 @@ export const ImportImagesModal = ({
             }}
           />
         )}
+
         <ModalFooter visibility={hasUploaded ? "visible" : "hidden"}>
           <Button
             colorScheme="brand"
