@@ -20,6 +20,7 @@ import { ImportButton } from "../../components/import-button";
 
 import { Layout } from "../../components/layout";
 import type { Image as ImageType } from "../../graphql-types.generated";
+import { EmptyStateImage } from "../../components/empty-state";
 
 export const imagesQuery = gql`
   query getImages {
@@ -63,6 +64,7 @@ const ImagesPage = () => {
               py={{ base: "16", sm: "20" }}
               textAlign="center"
             >
+              <EmptyStateImage w="full" />
               <Heading as="h2">You don&apos;t have any images.</Heading>
               <Text mt="4" fontSize="lg">
                 Fortunately, it’s very easy to add some.
