@@ -8,5 +8,5 @@ export default {
 };
 
 export const Default = () => {
-  return <WelcomeModal />;
+  return <WelcomeModal isServiceWorkerActive={false} />;
 };
