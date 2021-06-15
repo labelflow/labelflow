@@ -37,8 +37,16 @@ export const CursorGuides = ({
 
       previousPosition = pointerPositionRef.current;
 
-      horizontalBarRef.current.style.transform = `translateY(${pointerPositionRef.current[1]}px)`;
-      verticalBarRef.current.style.transform = `translateX(${pointerPositionRef.current[0]}px)`;
+      /*
+       * The guides are 2px thick to stick to bouding boxes stroke width.
+       * So we have withdraw 1 to follow the bounding box edges.
+       */
+      horizontalBarRef.current.style.transform = `translateY(${
+        pointerPositionRef.current[1] - 1
+      }px)`;
+      verticalBarRef.current.style.transform = `translateX(${
+        pointerPositionRef.current[0] - 1
+      }px)`;
     };
     followMouse();
 
@@ -53,7 +61,7 @@ export const CursorGuides = ({
         ref={horizontalBarRef}
         bg={guideColor}
         w="100%"
-        h="1px"
+        h="2px"
         position="absolute"
         pointerEvents="none"
         willChange="transform"
@@ -62,7 +70,7 @@ export const CursorGuides = ({
       <Box
         ref={verticalBarRef}
         bg={guideColor}
-        w="1px"
+        w="2px"
         h="100%"
         position="absolute"
         pointerEvents="none"
