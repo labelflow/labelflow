@@ -103,8 +103,8 @@ test("Label count should be consistent", async () => {
   });
   render(<ExportModal isOpen />, { wrapper });
   await waitFor(() => {
-    expect(screen.getByTestId("export-modal-labels-count")?.innerHTML).toEqual(
-      "2"
+    expect(screen.getByRole("banner").textContent).toEqual(
+      expect.stringContaining("2\xa0labels")
     );
   });
 });

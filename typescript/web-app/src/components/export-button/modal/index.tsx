@@ -75,7 +75,6 @@ export const ExportModal = ({
               as="span"
               isLoaded={data?.labelsAggregates?.totalCount !== undefined}
               minW="1ch"
-              data-testid="export-modal-labels-count"
             >
               {data?.labelsAggregates?.totalCount}
             </Skeleton>
