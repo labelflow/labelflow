@@ -1,9 +1,9 @@
 import { Button, ButtonProps, useDisclosure, chakra } from "@chakra-ui/react";
 
-import { RiDownload2Line } from "react-icons/ri";
+import { RiDownloadCloud2Line } from "react-icons/ri";
 import { ExportModal } from "./modal";
 
-const DownloadIcon = chakra(RiDownload2Line);
+const DownloadIcon = chakra(RiDownloadCloud2Line);
 
 type Props = ButtonProps;
 
