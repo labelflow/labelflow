@@ -15,6 +15,7 @@ import {
   ModalHeader,
   useColorModeValue as mode,
 } from "@chakra-ui/react";
+import { InitialSetup } from "./initial-setup";
 import { Logo } from "../logo";
 
 export const WelcomeModal = () => {
@@ -69,6 +70,7 @@ export const WelcomeModal = () => {
               place. Stay in control of your data, focus on building the next
               big thing.
             </Text>
+            <InitialSetup />
           </VStack>
         </ModalBody>
         <ModalFooter>
