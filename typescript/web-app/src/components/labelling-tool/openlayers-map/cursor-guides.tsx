@@ -57,6 +57,7 @@ export const CursorGuides = ({
         h="1px"
         position="absolute"
         pointerEvents="none"
+        willChange="transform"
         zIndex={2}
       />
       <Box
@@ -66,6 +67,7 @@ export const CursorGuides = ({
         h="200%"
         position="absolute"
         pointerEvents="none"
+        willChange="transform"
         zIndex={2}
       />
     </>
