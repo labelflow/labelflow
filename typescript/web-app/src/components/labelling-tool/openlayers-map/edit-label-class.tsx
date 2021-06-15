@@ -64,7 +64,7 @@ const updateLabelQuery = gql`
   }
 `;
 
-const createDeleteLabelClassEffect = (
+const createCreateLabelClassEffect = (
   {
     name,
     color,
@@ -84,7 +84,7 @@ const createDeleteLabelClassEffect = (
     } = await client.mutate({
       mutation: createLabelClassQuery,
       variables: { data: { name, color } },
-      refetchQueries: ["getLabelClasses"],
+      refetchQueries: [{ query: labelClassesQuery }],
     });
 
     const {
@@ -132,7 +132,7 @@ const createDeleteLabelClassEffect = (
       variables: {
         where: { id: labelClassId },
       },
-      refetchQueries: ["getLabelClasses"],
+      refetchQueries: [{ query: labelClassesQuery }],
     });
 
     return {
@@ -150,7 +150,7 @@ const createDeleteLabelClassEffect = (
     await client.mutate({
       mutation: createLabelClassQuery,
       variables: { data: { name, color, id: labelClassId } },
-      refetchQueries: ["getLabelClasses"],
+      refetchQueries: [{ query: labelClassesQuery }],
     });
 
     await client.mutate({
@@ -187,13 +187,61 @@ const createNewClassFactory =
         ? hexColorSequence[0]
         : getNextClassColor(labelClasses[labelClasses.length - 1].color);
     perform(
-      createDeleteLabelClassEffect(
+      createCreateLabelClassEffect(
         { name, color: newClassColor, selectedLabelId },
         { client }
       )
     );
     onClose();
   };
+
+const createUpdateLabelClassEffect = (
+  {
+    selectedLabelId,
+    selectedLabelClassId,
+  }: { selectedLabelId: string | null; selectedLabelClassId: string | null },
+  {
+    client,
+  }: {
+    client: ApolloClient<object>;
+  }
+): Effect => ({
+  do: async () => {
+    const {
+      data: {
+        label: { labelClass },
+      },
+    } = await client.query({
+      query: labelQuery,
+      variables: { id: selectedLabelId },
+    });
+
+    const labelClassIdPrevious = labelClass?.id ?? null;
+
+    await client.mutate({
+      mutation: updateLabelQuery,
+      variables: {
+        where: { id: selectedLabelId },
+        data: { labelClassId: selectedLabelClassId ?? null },
+      },
+      refetchQueries: ["getImageLabels"],
+    });
+
+    return labelClassIdPrevious;
+  },
+  undo: async (labelClassIdPrevious: string) => {
+    await client.mutate({
+      mutation: updateLabelQuery,
+      variables: {
+        where: { id: selectedLabelId },
+        data: { labelClassId: labelClassIdPrevious ?? null },
+      },
+      refetchQueries: ["getImageLabels"],
+    });
+
+    return labelClassIdPrevious;
+  },
+});
 
 export const EditLabelClass = forwardRef<
   HTMLDivElement | null,
@@ -206,9 +254,6 @@ export const EditLabelClass = forwardRef<
   const { data } = useQuery(labelClassesQuery);
   const { perform } = useUndoStore();
   const labelClasses = data?.labelClasses ?? [];
-  const [updateLabelClass] = useMutation(updateLabelQuery, {
-    refetchQueries: ["getLabelClasses"],
-  });
   const selectedLabelId = useLabellingStore((state) => state.selectedLabelId);
   const { data: labelQueryData } = useQuery(labelQuery, {
     variables: { id: selectedLabelId },
@@ -233,13 +278,15 @@ export const EditLabelClass = forwardRef<
           selectedLabelClassId={selectedLabelClassId}
           createNewClass={async (name) => createNewClass(name, selectedLabelId)}
           onSelectedClassChange={(item) => {
-            updateLabelClass({
-              variables: {
-                where: { id: selectedLabelId },
-                data: { labelClassId: item?.id ?? null },
-              },
-              refetchQueries: ["getImageLabels"],
-            });
+            perform(
+              createUpdateLabelClassEffect(
+                {
+                  selectedLabelId,
+                  selectedLabelClassId: item?.id ?? null,
+                },
+                { client }
+              )
+            );
             onClose();
           }}
         />
