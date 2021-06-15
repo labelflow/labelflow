@@ -1,7 +1,8 @@
-import { useRef, useCallback } from "react";
+import { useRef } from "react";
 import { useRouter } from "next/router";
 import { RouterContext } from "next/dist/next-server/lib/router-context";
 import { Extent, getCenter } from "ol/extent";
+import { Map as OlMap } from "ol";
 import { Size } from "ol/size";
 import memoize from "mem";
 import Projection from "ol/proj/Projection";
@@ -11,7 +12,6 @@ import { ApolloProvider, useApolloClient, useQuery } from "@apollo/client";
 import gql from "graphql-tag";
 
 import { Map } from "@labelflow/react-openlayers-fiber";
-import { MapBrowserEvent } from "ol";
 import type { Image } from "../../../graphql-types.generated";
 import "ol/ol.css";
 
@@ -72,9 +72,9 @@ const imageQuery = gql`
 `;
 
 export const OpenlayersMap = () => {
+  const mapRef = useRef<OlMap>(null);
   const router = useRouter();
   const imageId = router.query?.id;
-  const pointerPositionRef = useRef<Array<number> | null>(null);
 
   const image = useQuery<{
     image: Pick<Image, "id" | "url" | "width" | "height">;
@@ -87,9 +87,6 @@ export const OpenlayersMap = () => {
   const [containerRef, bounds] = useMeasure();
 
   const isBoundsValid = bounds.width > 0 || bounds.height > 0;
-  const onPointerMove = useCallback((e: MapBrowserEvent) => {
-    pointerPositionRef.current = e.pixel;
-  }, []);
 
   if (image == null) {
     return null;
@@ -105,12 +102,12 @@ export const OpenlayersMap = () => {
 
   return (
     <>
-      <CursorGuides pointerPositionRef={pointerPositionRef} />
+      <CursorGuides map={mapRef.current} />
       <Map
+        ref={mapRef}
         args={{ controls: empty }}
         style={{ height: "100%", width: "100%" }}
         containerRef={containerRef}
-        onPointermove={onPointerMove}
       >
         {/* Need to bridge contexts across renderers
          * See https://github.com/facebook/react/issues/17275 */}
