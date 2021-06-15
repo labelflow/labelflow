@@ -6,6 +6,8 @@ import type { Request as ApolloRequest } from "apollo-server-env";
 
 import { resetDatabase } from "../../connectors/database";
 
+const maxRetries = 1;
+
 export async function graphQLServiceWorker(
   request: ApolloRequest,
   options: GraphQLOptions,
@@ -34,10 +36,10 @@ export async function graphQLServiceWorker(
 
     return response;
   } catch (error) {
-    if (retries < 1) {
+    if (retries < maxRetries) {
       console.log("Problem with the database, retrying after reset");
       resetDatabase();
-      return graphQLServiceWorker(request, options, 1);
+      return graphQLServiceWorker(request, options, retries + 1);
     }
 
     if (error.name !== "HttpQueryError") {
