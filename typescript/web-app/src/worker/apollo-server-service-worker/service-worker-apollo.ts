@@ -4,10 +4,15 @@ import { GraphQLOptions, runHttpQuery } from "apollo-server-core";
 
 import type { Request as ApolloRequest } from "apollo-server-env";
 
+import { resetDatabase } from "../../connectors/database";
+
+const maxRetries = 1;
+
 export async function graphQLServiceWorker(
   request: ApolloRequest,
-  options: GraphQLOptions
-) {
+  options: GraphQLOptions,
+  retries = 0
+): Promise<Response> {
   if (!options) {
     throw new Error("Apollo Server requires options.");
   }
@@ -31,9 +36,16 @@ export async function graphQLServiceWorker(
 
     return response;
   } catch (error) {
+    if (retries < maxRetries) {
+      console.log("Problem with the database, retrying after reset");
+      resetDatabase();
+      return graphQLServiceWorker(request, options, retries + 1);
+    }
+
     if (error.name !== "HttpQueryError") {
       throw error;
     }
+
     const response = new Response(error.message, {
       status: error.statusCode,
       statusText: error.statusText,
