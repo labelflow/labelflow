@@ -40,6 +40,13 @@ export let db: Database;
 
 export const resetDatabase = () => {
   console.log("Initializing database");
+  if (db) {
+    try {
+      db.close();
+    } catch (e) {
+      console.log("Could not close existing database");
+    }
+  }
   db = new Dexie("labelflow_local") as Database;
   versions.map(({ version, stores }) => db.version(version).stores(stores));
 };
