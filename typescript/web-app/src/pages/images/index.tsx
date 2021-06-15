@@ -13,11 +13,10 @@ import {
   Wrap,
   WrapItem,
   Heading,
-  Tooltip,
 } from "@chakra-ui/react";
 import { isEmpty } from "lodash/fp";
-import { ImportButton } from "../../components/import-button";
 import { RiArrowRightSLine } from "react-icons/ri";
+import { ImportButton } from "../../components/import-button";
 
 import { Layout } from "../../components/layout";
 import type { Image as ImageType } from "../../graphql-types.generated";
