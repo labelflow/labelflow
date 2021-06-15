@@ -1,6 +1,6 @@
 import { useRef, useEffect } from "react";
 import { Box } from "@chakra-ui/react";
-import { noop, difference } from "lodash/fp";
+import { noop, isEqual } from "lodash/fp";
 
 import { useLabellingStore, Tools } from "../../../connectors/labelling-state";
 
@@ -31,10 +31,9 @@ export const CursorGuides = ({
     const followMouse = () => {
       requestId = requestAnimationFrame(followMouse);
 
-      if (!pointerPositionRef?.current) return;
+      if (!pointerPositionRef.current) return;
       if (!horizontalBarRef.current || !verticalBarRef.current) return;
-      if (difference(previousPosition, pointerPositionRef.current).length === 0)
-        return;
+      if (isEqual(previousPosition, pointerPositionRef.current)) return;
 
       previousPosition = pointerPositionRef.current;
 
