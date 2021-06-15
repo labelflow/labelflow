@@ -1,8 +1,8 @@
-import { useRef } from "react";
+import { useRef, useCallback } from "react";
 import { useRouter } from "next/router";
 import { RouterContext } from "next/dist/next-server/lib/router-context";
 import { Extent, getCenter } from "ol/extent";
-import { Map as OlMap } from "ol";
+import { Map as OlMap, MapBrowserEvent } from "ol";
 import { Size } from "ol/size";
 import memoize from "mem";
 import Projection from "ol/proj/Projection";
@@ -19,6 +19,7 @@ import { DrawBoundingBoxInteraction } from "./draw-bounding-box-interaction";
 import { SelectInteraction } from "./select-interaction";
 import { Labels } from "./labels";
 import { CursorGuides } from "./cursor-guides";
+import { useLabellingStore, Tools } from "../../../connectors/labelling-state";
 
 const empty: any[] = [];
 
@@ -75,6 +76,7 @@ export const OpenlayersMap = () => {
   const mapRef = useRef<OlMap>(null);
   const router = useRouter();
   const imageId = router.query?.id;
+  const selectedTool = useLabellingStore((state) => state.selectedTool);
 
   const image = useQuery<{
     image: Pick<Image, "id" | "url" | "width" | "height">;
@@ -87,6 +89,22 @@ export const OpenlayersMap = () => {
   const [containerRef, bounds] = useMeasure();
 
   const isBoundsValid = bounds.width > 0 || bounds.height > 0;
+  const onPointermove = useCallback(
+    (e: MapBrowserEvent) => {
+      if (!mapRef.current) return;
+      const target = mapRef.current.getTarget() as HTMLElement;
+
+      if (selectedTool === Tools.BOUNDING_BOX) {
+        target.style.cursor = "crosshair";
+      } else if (selectedTool === Tools.SELECTION) {
+        const hit = mapRef.current.hasFeatureAtPixel(e.pixel);
+        target.style.cursor = hit ? "pointer" : "move";
+      } else {
+        target.style.cursor = "default";
+      }
+    },
+    [selectedTool]
+  );
 
   if (image == null) {
     return null;
@@ -107,6 +125,7 @@ export const OpenlayersMap = () => {
         ref={mapRef}
         args={{ controls: empty }}
         style={{ height: "100%", width: "100%" }}
+        onPointermove={onPointermove}
         containerRef={containerRef}
       >
         {/* Need to bridge contexts across renderers
