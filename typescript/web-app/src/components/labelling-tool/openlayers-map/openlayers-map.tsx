@@ -11,6 +11,7 @@ import { ApolloProvider, useApolloClient, useQuery } from "@apollo/client";
 import gql from "graphql-tag";
 
 import { Map } from "@labelflow/react-openlayers-fiber";
+import { MapBrowserEvent } from "ol";
 import type { Image } from "../../../graphql-types.generated";
 import "ol/ol.css";
 
@@ -86,11 +87,8 @@ export const OpenlayersMap = () => {
   const [containerRef, bounds] = useMeasure();
 
   const isBoundsValid = bounds.width > 0 || bounds.height > 0;
-  const onPointerMove = useCallback((e: { originalEvent: PointerEvent }) => {
-    pointerPositionRef.current = [
-      e.originalEvent.offsetX,
-      e.originalEvent.offsetY,
-    ];
+  const onPointerMove = useCallback((e: MapBrowserEvent) => {
+    pointerPositionRef.current = e.pixel;
   }, []);
 
   if (image == null) {
