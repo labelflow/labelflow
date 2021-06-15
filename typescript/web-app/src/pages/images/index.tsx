@@ -32,7 +32,8 @@ const ImagesPage = () => {
     <Layout>
       {isEmpty(imagesResult?.images) && (
         <Center h="100%">
-          <ImportButton />
+          {/* Don't duplicate the modal */}
+          <ImportButton showModal={false} />
         </Center>
       )}
 

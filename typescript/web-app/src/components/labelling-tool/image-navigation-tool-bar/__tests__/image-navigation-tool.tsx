@@ -1,7 +1,14 @@
+/* eslint-disable import/first */
+/* eslint-disable import/order */
+
 import { incrementMockedDate } from "@labelflow/dev-utils/mockdate";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom/extend-expect";
+import { mockNextRouter } from "../../../../utils/router-mocks";
+
+mockNextRouter();
+
 import { useRouter } from "next/router";
 import gql from "graphql-tag";
 import { ApolloProvider } from "@apollo/client";
@@ -10,12 +17,6 @@ import { client } from "../../../../connectors/apollo-client-schema";
 import { setupTestsWithLocalDatabase } from "../../../../utils/setup-local-db-tests";
 
 setupTestsWithLocalDatabase();
-
-jest.mock("next/router", () => ({
-  useRouter: jest.fn(() => ({
-    query: {},
-  })),
-}));
 
 const createImage = async (name: String) => {
   const mutationResult = await client.mutate({

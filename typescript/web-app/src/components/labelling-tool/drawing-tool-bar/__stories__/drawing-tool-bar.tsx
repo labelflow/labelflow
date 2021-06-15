@@ -1,16 +1,26 @@
 import React from "react";
-import { addDecorator, Story } from "@storybook/react";
+import { Story } from "@storybook/react";
 import { VStack } from "@chakra-ui/react";
+import { withNextRouter } from "storybook-addon-next-router";
 
 import { chakraDecorator } from "../../../../utils/chakra-decorator";
+import { queryParamsDecorator } from "../../../../utils/query-params-decorator";
 
 import { DrawingToolbar, Props } from "../drawing-tool-bar";
-
-addDecorator(chakraDecorator);
 
 export default {
   title: "web-app/Drawing Toolbar",
   component: DrawingToolbar,
+  parameters: {
+    nextRouter: {
+      path: "/images/[id]",
+      asPath: "/images/mock-image-id",
+      query: {
+        id: "mock-image-id",
+      },
+    },
+  },
+  decorators: [chakraDecorator, queryParamsDecorator, withNextRouter],
 };
 
 const Template: Story<Props> = (args: Props) => (

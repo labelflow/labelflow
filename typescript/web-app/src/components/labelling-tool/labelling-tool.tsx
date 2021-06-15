@@ -1,10 +1,19 @@
 import { Box, HStack, VStack } from "@chakra-ui/react";
+import { useRouter } from "next/router";
+import { useEffect } from "react";
 
 import { OpenlayersMap } from "./openlayers-map";
 import { DrawingToolbar } from "./drawing-tool-bar";
 import { ImageNavigationToolbar } from "./image-navigation-tool-bar";
+import { useUndoStore } from "../../connectors/undo-store";
 
 export const LabellingTool = () => {
+  const { clear } = useUndoStore();
+  const router = useRouter();
+  const imageId = router.query.id;
+
+  useEffect(() => clear(), [imageId]);
+
   return (
     <Box height="100%" position="relative" overflow="hidden">
       <OpenlayersMap />

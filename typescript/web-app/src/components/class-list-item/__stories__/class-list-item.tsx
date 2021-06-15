@@ -1,12 +1,11 @@
 import { omit } from "lodash/fp";
-import { addDecorator } from "@storybook/react";
+
 import { ClassListItem } from "../class-list-item";
 import { chakraDecorator } from "../../../utils/chakra-decorator";
 
-addDecorator(chakraDecorator);
-
 export default {
   title: "web-app/Class list item",
+  decorators: [chakraDecorator],
 };
 
 const classDefault = { color: "#F59E0B", name: "aClass", shortcut: "1" };
