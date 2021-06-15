@@ -70,7 +70,6 @@ const createImage = async (name: String) => {
 
 test("File should be downloaded when user clicks on Export to COCO", async () => {
   render(<ExportModal isOpen />, { wrapper });
-  // expect(screen.queryByText("Export to COCO")).toBeInTheDocument();
   const anchorMocked = {
     href: "",
     click: jest.fn(),
@@ -82,14 +81,14 @@ test("File should be downloaded when user clicks on Export to COCO", async () =>
     }
     return createElementOriginal(name, options);
   });
-  // .mockReturnValueOnce(anchorMocked);
+
   userEvent.click(screen.getByText("Export to COCO"));
+
   await waitFor(() => expect(anchorMocked.click).toHaveBeenCalledTimes(1));
 });
 
-test("Label count should be consistent", async () => {
+test("Export Modal should display the number of labels", async () => {
   const imageId = await createImage("an image");
-
   await createLabel({
     ...labelData,
     x: 1,
@@ -101,7 +100,9 @@ test("Label count should be consistent", async () => {
     x: 2,
     imageId,
   });
+
   render(<ExportModal isOpen />, { wrapper });
+
   await waitFor(() => {
     expect(screen.getByRole("banner").textContent).toEqual(
       expect.stringContaining("2\xa0labels")
