@@ -38,8 +38,8 @@ export const CursorGuides = ({
 
       previousPosition = pointerPositionRef.current;
 
-      horizontalBarRef.current.style.transform = `translate(calc(-50% + ${pointerPositionRef.current[0]}px), ${pointerPositionRef.current[1]}px)`;
-      verticalBarRef.current.style.transform = `translate(${pointerPositionRef.current[0]}px, calc(-50% + ${pointerPositionRef.current[1]}px))`;
+      horizontalBarRef.current.style.transform = `translateY(${pointerPositionRef.current[1]}px)`;
+      verticalBarRef.current.style.transform = `translateX(${pointerPositionRef.current[0]}px)`;
     };
     followMouse();
 
@@ -53,7 +53,7 @@ export const CursorGuides = ({
       <Box
         ref={horizontalBarRef}
         bg={guideColor}
-        w="200%"
+        w="100%"
         h="1px"
         position="absolute"
         pointerEvents="none"
@@ -64,7 +64,7 @@ export const CursorGuides = ({
         ref={verticalBarRef}
         bg={guideColor}
         w="1px"
-        h="200%"
+        h="100%"
         position="absolute"
         pointerEvents="none"
         willChange="transform"
