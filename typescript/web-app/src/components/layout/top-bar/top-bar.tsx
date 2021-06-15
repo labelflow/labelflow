@@ -2,6 +2,7 @@ import { ReactNode } from "react";
 import { HStack, Spacer } from "@chakra-ui/react";
 import { Logo } from "../../logo";
 import { ImportButton } from "../../import-button";
+import { ExportButton } from "../../export-button";
 import { KeymapButton } from "./keymap-button";
 
 export type Props = {
@@ -24,6 +25,7 @@ export const TopBar = ({ leftContent }: Props) => {
       <Spacer />
       <KeymapButton />
       <ImportButton />
+      <ExportButton />
     </HStack>
   );
 };
