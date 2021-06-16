@@ -21,7 +21,7 @@ describe("Labelling tool", () => {
     cy.contains("Start Import").click();
     cy.get(`[aria-label="Close"]`).click();
     cy.contains("photo").click();
-    cy.get('[aria-label="Drawing tool"]').click();
+    cy.get('[aria-label="Drawing tool"]', { timeout: 15000 }).click();
     cy.get("main").click(200, 200);
     cy.get("main").click(300, 300);
     cy.get('[aria-label="Next image"]').click();
