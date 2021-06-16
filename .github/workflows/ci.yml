@@ -6,6 +6,7 @@ on:
   pull_request:
     branches:
       - main
+      - "feature/**"
 jobs:
   install-typescript:
     name: Install Typescript packages
@@ -98,6 +99,25 @@ jobs:
         run: ls typescript/web-app/node_modules
       - name: run tests
         run: yarn test
+
+  check-codegen-diff:
+    name: Check diff after codegen
+    runs-on: ubuntu-20.04
+    needs: install-typescript
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
+      - name: Fetch node_modules from cache
+        uses: actions/cache@v2
+        id: node-modules-cache
+        with:
+          path: "**/node_modules"
+          key: ${{ runner.os }}-modules-${{secrets.ACTIONS_CACHE_VERSION}}-${{ hashFiles('yarn.lock') }}
+      - name: run codegen:ci script
+        run: yarn codegen:ci
+      - name: Check for failure
+        if: ${{ failure() }}
+        run: echo "::error::Codegen diff detected, please commit your schema changes." && exit 1
 
   chromatic-deployment:
     name: Storybook deployment

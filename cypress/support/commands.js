@@ -23,3 +23,16 @@
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
+
+// From https://github.com/cypress-io/cypress/issues/702#issuecomment-435873135
+beforeEach(() => {
+  // https://github.com/cypress-io/cypress/issues/702
+  // run this once before all code
+  return window.caches.keys().then(function (cacheNames) {
+    return Promise.all(
+      cacheNames.map(function (cacheName) {
+        return window.caches.delete(cacheName);
+      })
+    );
+  })
+});

@@ -12,6 +12,30 @@ type Image {
   updatedAt: DateTime!
   url: String!
   name: String!
+  path: String!
+  mimetype: String!
   height: Int!
   width: Int!
+  labels: [Label!]!
+}
+
+type Label {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  imageId: ID!
+  labelClass: LabelClass
+  x: Float!
+  y: Float!
+  height: Float!
+  width: Float!
+}
+
+type LabelClass {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  name: String!
+  color: ColorHex!
+  labels: [Label!]!
 }

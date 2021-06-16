@@ -1,0 +1,10 @@
+union UploadTarget = UploadTargetDirect | UploadTargetHttp
+
+type UploadTargetDirect {
+  direct: Boolean!
+}
+
+type UploadTargetHttp {
+  uploadUrl: String!
+  downloadUrl: String!
+}

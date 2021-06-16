@@ -124,5 +124,17 @@ cypress/videos
 !.env
 
 # Python
+python/iog/data
 .venv
 __pycache__
+
+storybook-static
+# See https://github.com/shadowwalker/next-pwa/tree/master/examples/custom-worker#recommend-gitignore
+**/public/fallback-*.js
+**/public/workbox-*.js
+**/public/sw.js
+**/public/worker-*.js
+**/public/fallback-*.js.*
+**/public/workbox-*.js.*
+**/public/sw.js.*
+**/public/worker-*.js.*
