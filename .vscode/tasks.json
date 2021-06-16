@@ -96,6 +96,18 @@
             "problemMatcher": []
         },
         {
+            "label": "jest:here",
+            "type": "process",
+            "command": "yarn",
+            "args": [
+                "test",
+                "--watch",
+                "${file}"
+            ],
+            "group": "test",
+            "problemMatcher": []
+        },
+        {
             "label": "cypress:open",
             "type": "process",
             "command": "yarn",
