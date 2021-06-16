@@ -11,7 +11,7 @@
             "problemMatcher": []
         },
         {
-            "label": "dev:web-app",
+            "label": "web-app:dev",
             "type": "process",
             "command": "yarn",
             "args": [
@@ -24,7 +24,7 @@
             "problemMatcher": []
         },
         {
-            "label": "build:web-app",
+            "label": "web-app:build",
             "type": "process",
             "command": "yarn",
             "args": [
@@ -37,7 +37,7 @@
             "problemMatcher": []
         },
         {
-            "label": "start:web-app",
+            "label": "web-app:start",
             "type": "process",
             "command": "yarn",
             "args": [
@@ -50,13 +50,11 @@
             "problemMatcher": []
         },
         {
-            "label": "dev:web-site",
+            "label": "web-site:dev",
             "type": "process",
             "command": "yarn",
             "args": [
-                "dev",
-                "-p",
-                "3001"
+                "dev"
             ],
             "options": {
                 "cwd": "./typescript/web-site"
