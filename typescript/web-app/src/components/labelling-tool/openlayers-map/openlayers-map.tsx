@@ -1,8 +1,10 @@
-import { useRef, useCallback } from "react";
+import { useRef, useCallback, useState } from "react";
 import { useRouter } from "next/router";
+import { IconButton, VStack } from "@chakra-ui/react";
 import { RouterContext } from "next/dist/next-server/lib/router-context";
 import { Extent, getCenter } from "ol/extent";
-import { Map as OlMap, MapBrowserEvent } from "ol";
+import { zoomByDelta } from "ol/interaction/Interaction";
+import { Map as OlMap, View as OlView, MapBrowserEvent } from "ol";
 import { Size } from "ol/size";
 import memoize from "mem";
 import Projection from "ol/proj/Projection";
@@ -74,9 +76,22 @@ const imageQuery = gql`
 
 export const OpenlayersMap = () => {
   const mapRef = useRef<OlMap>(null);
+  const viewRef = useRef<OlView>(null);
+  const [{ canZoomIn, canZoomOut }, setZoomPossibilities] = useState<{
+    canZoomIn: boolean;
+    canZoomOut: boolean;
+  }>({ canZoomIn: true, canZoomOut: false });
   const router = useRouter();
   const imageId = router.query?.id;
   const selectedTool = useLabellingStore((state) => state.selectedTool);
+  /*
+  const { canZoomIn, canZoomOut } = useLabellingStore(
+    (state) => state.zoomPossibilities
+  );
+  const setZoomPossibilites = useLabellingStore(
+    (state) => state.setZoomPossibilities
+  );
+   */
 
   const image = useQuery<{
     image: Pick<Image, "id" | "url" | "width" | "height">;
@@ -125,6 +140,38 @@ export const OpenlayersMap = () => {
       {selectedTool === Tools.BOUNDING_BOX && (
         <CursorGuides map={mapRef.current} />
       )}
+      <VStack
+        padding={4}
+        spacing={4}
+        position="absolute"
+        top={0}
+        right={0}
+        pointerEvents="none"
+        zIndex={1}
+      >
+        <IconButton
+          icon={<span>-</span>}
+          backgroundColor="white"
+          aria-label="zoom out"
+          pointerEvents="initial"
+          isDisabled={!canZoomOut}
+          onClick={() => {
+            if (!viewRef.current) return;
+            zoomByDelta(viewRef.current, -0.5);
+          }}
+        />
+        <IconButton
+          icon={<span>+</span>}
+          backgroundColor="white"
+          aria-label="zoom in"
+          pointerEvents="initial"
+          isDisabled={!canZoomIn}
+          onClick={() => {
+            if (!viewRef.current) return;
+            zoomByDelta(viewRef.current, 0.5);
+          }}
+        />
+      </VStack>
       <Map
         ref={mapRef}
         args={{ controls: empty }}
@@ -141,6 +188,20 @@ export const OpenlayersMap = () => {
               // There is no point rendering the view in that case
               isBoundsValid && (
                 <olView
+                  ref={viewRef}
+                  onChange_resolution={() => {
+                    if (!viewRef.current) return false;
+                    // TODO: Ajouter une marge d'erreur pour gérer le 2.99999999999
+                    setZoomPossibilities({
+                      canZoomIn:
+                        viewRef.current.getZoom() <
+                        viewRef.current.getMaxZoom(),
+                      canZoomOut:
+                        viewRef.current.getZoom() >
+                        viewRef.current.getMinZoom(),
+                    });
+                    return false;
+                  }}
                   args={{ extent }}
                   center={center}
                   initialProjection={projection}
