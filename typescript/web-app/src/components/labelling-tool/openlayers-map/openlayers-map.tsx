@@ -122,7 +122,9 @@ export const OpenlayersMap = () => {
 
   return (
     <>
-      <CursorGuides map={mapRef.current} />
+      {selectedTool === Tools.BOUNDING_BOX && (
+        <CursorGuides map={mapRef.current} />
+      )}
       <Map
         ref={mapRef}
         args={{ controls: empty }}

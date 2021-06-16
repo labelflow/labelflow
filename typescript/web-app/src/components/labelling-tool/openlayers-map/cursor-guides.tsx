@@ -1,12 +1,8 @@
 import { useRef, useEffect } from "react";
 import { Map as OlMap, MapBrowserEvent } from "ol";
 import { Box } from "@chakra-ui/react";
-import { isEqual } from "lodash/fp";
-
-import { useLabellingStore, Tools } from "../../../connectors/labelling-state";
 
 export const CursorGuides = ({ map }: { map: OlMap | null }) => {
-  const selectedTool = useLabellingStore((state) => state.selectedTool);
   const horizontalBarRef = useRef<HTMLDivElement | null>(null);
   const verticalBarRef = useRef<HTMLDivElement | null>(null);
 
@@ -15,18 +11,11 @@ export const CursorGuides = ({ map }: { map: OlMap | null }) => {
     if (!map) return;
     const onPointerMove = (e: MapBrowserEvent) => {
       if (!horizontalBarRef.current || !verticalBarRef.current) return;
-
-      if (selectedTool !== Tools.BOUNDING_BOX) {
-        horizontalBarRef.current.style.visibility = "hidden";
-        verticalBarRef.current.style.visibility = "hidden";
+      if (
+        previousPosition[0] === e.pixel[0] &&
+        previousPosition[1] === e.pixel[1]
+      )
         return;
-      }
-
-      horizontalBarRef.current.style.visibility = "visible";
-      verticalBarRef.current.style.visibility = "visible";
-
-      if (!horizontalBarRef.current || !verticalBarRef.current) return;
-      if (isEqual(previousPosition, e.pixel)) return;
 
       previousPosition = e.pixel;
 
@@ -44,7 +33,7 @@ export const CursorGuides = ({ map }: { map: OlMap | null }) => {
     map.on("pointermove", onPointerMove);
     /* eslint-disable-next-line consistent-return */
     return () => map.un("pointermove", onPointerMove);
-  }, [selectedTool, map]);
+  }, [map]);
 
   const guideColor = "#05FF00";
 
