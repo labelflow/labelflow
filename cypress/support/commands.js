@@ -26,33 +26,7 @@
 
 // From https://github.com/cypress-io/cypress/issues/702#issuecomment-435873135
 beforeEach(() => {
-  // if (window.navigator && navigator.serviceWorker) {
-  //   console.log("resetting service worker in cypress")
-  //   navigator.serviceWorker.getRegistrations().then((registrations) => {
-  //     console.log("registrations")
-  //     console.log(registrations)
-  //     return Promise.all(
-  //       registrations.map((registration) => {
-  //         return registration.unregister();
-  //       }));
-  //   }).then(() => {
-  //     return navigator.serviceWorker.getRegistrations()
-  //   }).then((registrations) => {
-  //     console.log("registrations")
-  //     console.log(registrations)
-  //     // window.location.reload();
-  //     // https://github.com/cypress-io/cypress/issues/702
-  //     return window.caches.keys()
-  //   }).then((cacheNames) => {
-  //     return Promise.all(
-  //       cacheNames.map((cacheName) => {
-  //         return window.caches.delete(cacheName);
-  //       })
-  //     );
-  //   });
-  // }
-
-
+  // https://github.com/cypress-io/cypress/issues/702
   // run this once before all code
   return window.caches.keys().then(function (cacheNames) {
     return Promise.all(

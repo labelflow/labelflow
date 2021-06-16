@@ -68,17 +68,10 @@ export const WelcomeModal = ({
               maxW="lg"
               color={mode("gray.600", "gray.300")}
               fontWeight="extrabold"
-              // letterSpacing="tight"
               textAlign="center"
-              // textAlign="justify"
             >
               The open standard{" "}
-              <Text
-                color="brand.500"
-                // bgGradient="linear(to-l, brand.500,brand.400)"
-                // bgClip="text"
-                display="inline"
-              >
+              <Text color="brand.500" display="inline">
                 image labeling tool
               </Text>
             </Heading>
@@ -95,7 +88,6 @@ export const WelcomeModal = ({
               place. Stay in control of your data, focus on building the next
               big thing.
             </Text>
-            {/* <InitialSetup /> */}
           </VStack>
         </ModalBody>
         <ModalFooter>
@@ -113,7 +105,6 @@ export const WelcomeModal = ({
               See code on Github
             </Button>
 
-            {/* <NextLink href="/images?modal-import"> */}
             <Button
               size="lg"
               minW="210px"
@@ -126,20 +117,6 @@ export const WelcomeModal = ({
             >
               Start Labelling!
             </Button>
-            {/* </NextLink> */}
-
-            {/* <Button
-                size="lg"
-                bg="white"
-                color="gray.900"
-                _hover={{ bg: "gray.50" }}
-                height="14"
-                px="8"
-                shadow="base"
-                leftIcon={<Box as={HiPlay} fontSize="2xl" />}
-              >
-                Watch Demo
-              </Button> */}
           </HStack>
         </ModalFooter>
       </ModalContent>
