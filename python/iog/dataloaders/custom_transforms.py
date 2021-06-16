@@ -213,7 +213,7 @@ class IOGPoints(object):
 
 class IOGPointRefinement(object):
     """
-    Returns one IOG Point (top-left and bottom-right or top-right and bottom-left) in a given binary mask
+    Add one IOG Point to the original list of iog points
     sigma: sigma of Gaussian to create a heatmap from a point
     pad_pixel: number of pixels fo the maximum perturbation
     elem: which element of the sample to choose as the binary mask
@@ -224,22 +224,27 @@ class IOGPointRefinement(object):
         self.elem = elem
         self.pad_pixel = pad_pixel
 
+    def getPosition(self, point_mask):
+        """Gives the position of the max element of a mask"""
+        a = np.mat(point_mask)
+        row, column = a.shape  # get the matrix of a row and column
+        _positon = np.argmax(a)  # get the index of max in the a
+        m, n = divmod(_positon, column)
+        row = m
+        column = n
+        return column, row
+
     def __call__(self, sample):
 
-        if sample[self.elem].ndim == 3:
-            raise ValueError("IOGPoints not implemented for multiple object per image.")
         _target = sample[self.elem]
 
-        targetshape = _target.shape
-        if np.max(_target) == 0:
-            sample["IOG_points"] = np.zeros(
-                [targetshape[0], targetshape[1], 2], dtype=_target.dtype
-            )  #  TODO: handle one_mask_per_point case
-        else:
-            _points = helpers.iog_points(_target, self.pad_pixel)
-            sample["IOG_points"] = helpers.make_gt(
-                _target, _points, sigma=self.sigma, one_mask_per_point=False
-            )
+        (m, n, _) = _target.shape
+        sample["IOG_points"] = np.zeros([m, n, 2], dtype=_target.dtype)
+        for i in range(2):  # fg and bg
+            if np.max(_target[:, :, i]) > 0:
+                sample["IOG_points"][:, :, i] = helpers.make_gaussian(
+                    (m, n), center=self.getPosition(_target[:, :, i]), sigma=self.sigma
+                )
 
         return sample
 
