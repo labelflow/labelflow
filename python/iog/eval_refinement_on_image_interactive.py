@@ -28,19 +28,47 @@ from PIL import Image
 import cv2
 import argparse
 
-image_name = "data/VOCdevkit/VOC2012/JPEGImages/2009_000366.jpg"
-roi = (136, 147, 200, 193)
-refinement_points_outside = [(233, 309), (292, 288)]
-refinement_points_outside_scaled = list(
-    map(
-        lambda point: (
-            (point[0] - roi[0]) * 512 / roi[2],
-            (point[1] - roi[1]) * 512 / roi[3],
-        ),
-        refinement_points_outside,
+# image_name = "data/VOCdevkit/VOC2012/JPEGImages/2009_000366.jpg"
+# roi = (136, 147, 200, 193)
+# refinement_points_outside = [(233, 309), (292, 288)]
+# refinement_points_outside_scaled = list(
+#     map(
+#         lambda point: (
+#             (point[0] - roi[0]) * 512 / roi[2],
+#             (point[1] - roi[1]) * 512 / roi[3],
+#         ),
+#         refinement_points_outside,
+#     )
+# )
+
+
+def scale_point(point, roi):
+    return (
+        (point[0] - roi[0]) * 512 / roi[2],
+        (point[1] - roi[1]) * 512 / roi[3],
     )
-)
-# refinement_points_outside = [(0, 0)]
+
+
+def create_mask(outputs, gt, image):
+    pred = np.transpose(outputs.data.numpy()[0, :, :, :], (1, 2, 0))
+    pred = 1 / (1 + np.exp(-pred))
+    pred = np.squeeze(pred)
+    gt = tens2image(gt)
+    bbox = get_bbox(gt, pad=30, zero_pad=True)
+    result = crop2fullmask(pred, bbox, gt, zero_pad=True, relax=0, mask_relax=False)
+
+    light = np.zeros_like(image)
+    light[:, :, 2] = 255.0
+
+    alpha = 0.5
+
+    blending = (alpha * light + (1 - alpha) * image) * result[..., None] + (
+        1 - result[..., None]
+    ) * image
+
+    blending[blending > 255.0] = 255
+    im_mask = cv2.cvtColor(blending.astype(np.uint8), cv2.COLOR_RGB2BGR)
+    return im_mask
 
 
 def print_mask(outputs, name, gt, image, im_rgb):
@@ -62,23 +90,11 @@ def print_mask(outputs, name, gt, image, im_rgb):
 
     blending[blending > 255.0] = 255
 
-    # find contours
-    # print("result shape: ", result.shape)
     im_mask = cv2.cvtColor(blending.astype(np.uint8), cv2.COLOR_RGB2BGR)
-    # im_mask = (result * 255).astype(np.uint8)
-    # ret, thresh = cv2.threshold(im_mask, 127, 255, 0)
-    # kernel = np.ones((5, 5), np.uint8)
-    # kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (1, 1))
-    # opening = cv2.morphologyEx(thresh, cv2.MORPH_CLOSE, kernel, iterations=1)
-    # contours, hierarchy = cv2.findContours(
-    #     opening, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE
-    # )
-    # print("contours", contours)
-    # cv2.drawContours(im_rgb, contours, -1, (0, 255, 0), 3)
     cv2.imwrite(f"{name}.png", im_mask)
 
 
-def process():
+def process(image_name):
 
     # Set gpu_id to -1 to run in CPU mode, otherwise set the id of the corresponding gpu
     gpu_id = 0
@@ -112,14 +128,13 @@ def process():
 
     image = np.array(Image.open(image_name).convert("RGB"))
     im_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-    # roi = cv2.selectROI(im_rgb)
+    roi = cv2.selectROI(im_rgb)
+    print("ROI selected = ", roi)
 
     image = image.astype(np.float32)
     # print("refinement_points_outside_scaled = ", refinement_points_outside_scaled)
 
     bbox = np.zeros_like(image[..., 0])
-    # bbox[0: 130, 220: 320] = 1 # for ponny
-    # bbox[220: 390, 370: 570] = 1
     bbox[int(roi[1]) : int(roi[1] + roi[3]), int(roi[0]) : int(roi[0] + roi[2])] = 1
     void_pixels = 1 - bbox
     sample = {"image": image, "gt": bbox, "void_pixels": void_pixels}
@@ -163,38 +178,77 @@ def process():
     # Save result without refinements
     print_mask(
         outputs,
-        "result_without_refinement",
+        "outputs/result_without_refinement",
         tr_sample["gt"],
         image,
         im_rgb,
     )
+    index = -1
+
+    #### Create window
+    cv2.namedWindow("TEST")
+
     # Generate results with refinement
-    for index, point in enumerate(refinement_points_outside_scaled):
+    while True:
+        mask_img = create_mask(outputs, tr_sample["gt"], image)
+        # mouseX, mouseY, inside = None, None, None
+
+        def record_mouse_position(event, x, y, flags, param):
+            global mouseX, mouseY, foreground
+            if event == cv2.EVENT_LBUTTONDOWN and not (flags & cv2.EVENT_FLAG_CTRLKEY):
+                cv2.circle(mask_img, (x, y), 100, (255, 0, 0), -1)
+                print("FOREGROUND click at (", x, " ,", y, ")")
+                mouseX, mouseY, foreground = x, y, True
+            if event == cv2.EVENT_LBUTTONDOWN and (flags & cv2.EVENT_FLAG_CTRLKEY):
+                cv2.circle(mask_img, (x, y), 100, (0, 255, 0), -1)
+                print("BACKGROUND click at (", x, " ,", y, ")")
+                mouseX, mouseY, foreground = x, y, False
+
+        cv2.setMouseCallback("TEST", record_mouse_position)
+        cv2.imshow("TEST", mask_img)
+        k = cv2.waitKey(0) & 0xFF
+        if k == 27:
+            break
+        refinement_point = scale_point((mouseX, mouseY), roi)
+        index += 1
         # one result
-        print("IOG_points shape: ", IOG_points.shape)
-        points_center = IOG_points[0, 0:1, :, :]
-        cv2.imwrite(
-            f"points_center{index}.png",
-            np.transpose((points_center * 1).numpy().astype(np.uint8), (1, 2, 0)),
-        ),
+        # print("IOG_points shape: ", IOG_points.shape)
+        points_fg = IOG_points[0, 0:1, :, :]
         points_bg = IOG_points[0, 1:2, :, :]
-        points_bg = 255 * np.maximum(
-            points_bg / 255,
-            make_gaussian(
-                (IOG_points.shape[2], IOG_points.shape[3]), center=point, sigma=10
-            ),
-        )
+        if not foreground:
+            points_bg = 255 * np.maximum(
+                points_bg / 255,
+                make_gaussian(
+                    (IOG_points.shape[2], IOG_points.shape[3]),
+                    center=refinement_point,
+                    sigma=10,
+                ),
+            )
+        else:
+            points_fg = 255 * np.maximum(
+                points_fg / 255,
+                make_gaussian(
+                    (IOG_points.shape[2], IOG_points.shape[3]),
+                    center=refinement_point,
+                    sigma=10,
+                ),
+            )
         cv2.imwrite(
-            f"points_bg{index}.png",
+            f"outputs/points_fg{index}.png",
+            np.transpose((points_fg * 1).numpy().astype(np.uint8), (1, 2, 0)),
+        ),
+        cv2.imwrite(
+            f"outputs/points_bg{index}.png",
             np.transpose((points_bg * 1).numpy().astype(np.uint8), (1, 2, 0)),
         ),
         # points_bg = torch.zeros((IOG_points.shape[2], IOG_points.shape[3]))
+        IOG_points[0, 0:1, :, :] = points_fg
         IOG_points[0, 1:2, :, :] = points_bg
         outputs = net.refine(backbone_features, IOG_points)
         # Save result without refinements
         print_mask(
             outputs,
-            f"result_with_refinement_{index}",
+            f"outputs/result_with_refinement_{index}",
             tr_sample["gt"],
             image,
             im_rgb,
@@ -204,4 +258,14 @@ def process():
 
 
 if __name__ == "__main__":
-    process()
+    parser = argparse.ArgumentParser(description="Run class agnostic segmentation")
+    parser.add_argument(
+        "--image_name",
+        type=str,
+        default="samples/IMG-20201203-WA0023.jpg",
+        help="path to target image",
+    )
+
+    args = parser.parse_args()
+
+    process(args.image_name)
