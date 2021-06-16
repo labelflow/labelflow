@@ -58,20 +58,24 @@ describe("Labelling tool", () => {
     cy.get("main").click(500, 150);
     expect(useLabellingStore.getState().selectedLabelId).to.equal(initialSelectedId);
     // // Check there are no labelClasses created
-    // const labelClassCountBefore = await db.labelClass.count();
-    // expect(labelClassCountBefore).to.equal(0);
+    const labelClassCountBefore = db.labelClass.count();
+    // cy.log(Object.keys(cy.wrap(labelClassCountBefore)).join(", "))
+    // console.log(cy.wrap(labelClassCountBefore))
+    cy.wrap(labelClassCountBefore).should('eq', 0);
+    // expect(cy.wrap(labelClassCountBefore)).to.equal(0);
     // Create new class
     cy.get("main").rightclick(500, 150);
     cy.focused().type("My new class{enter}");
-    cy.focused().type("My new class{enter}");
     // // Check there is 1 labelClass created
-    // const labelClassCountAfter1 = await db.labelClass.count();
+    const labelClassCountAfter1 = db.labelClass.count();
+    cy.wrap(labelClassCountAfter1).should('eq', 1);
     // expect(labelClassCountAfter1).to.equal(1);
     // Create second class
     cy.get("main").rightclick(500, 150);
     cy.focused().type("My other class{enter}");
     // Check there are 2 labelClass created
-    // const labelClassCountAfter2 = await db.labelClass.count();
+    const labelClassCountAfter2 = db.labelClass.count();
+    cy.wrap(labelClassCountAfter2).should('eq', 3);
     // expect(labelClassCountAfter2).to.equal(2);
     // const label = await db.label.get(initialSelectedId)
     // const labelClass = await db.labelClass.get(label?.labelClassId as string);
