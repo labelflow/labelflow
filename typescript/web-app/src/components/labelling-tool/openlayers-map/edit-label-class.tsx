@@ -259,7 +259,7 @@ export const EditLabelClass = forwardRef<
     variables: { id: selectedLabelId },
     skip: selectedLabelId == null,
   });
-  const selectedLabelClassId = labelQueryData?.label?.labelClass?.id;
+  const selectedLabelClassId = labelQueryData?.label?.labelClass?.id ?? null;
   const createNewClass = createNewClassFactory({
     labelClasses,
     perform,
