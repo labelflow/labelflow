@@ -15,21 +15,25 @@ import {
   ModalHeader,
   useColorModeValue as mode,
 } from "@chakra-ui/react";
+import { useQueryParam } from "use-query-params";
 
 import { Logo } from "../../logo";
+import { BoolParam } from "../../../utils/query-param-bool";
 
 export const WelcomeModal = ({
   isServiceWorkerActive,
 }: {
   isServiceWorkerActive: boolean;
 }) => {
+  // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
+  const [isDisabled] = useQueryParam("modal-welcome-disable", BoolParam);
   const [hasUserClickedStart, setHasUserClickedStart] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
   // This modal should open when isServiceWorkerActive becomes false
   // But close only when the use hasUserClickedStart becomes true
   useEffect(() => {
-    if (!isServiceWorkerActive && !hasUserClickedStart) {
+    if (!isServiceWorkerActive && !hasUserClickedStart && !isDisabled) {
       setIsOpen(true);
       return;
     }

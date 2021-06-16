@@ -11,7 +11,8 @@ describe("Labelling tool", () => {
   });
 
   it("should clear the undo redo store between images", () => {
-    cy.visit("http://localhost:3000/images");
+    // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
+    cy.visit("http://localhost:3000/images?modal-welcome-disable");
     cy.contains("Add images").click();
     cy.contains("Import from a list of URLs instead").click();
     cy.get("textarea").type(
@@ -19,7 +20,6 @@ describe("Labelling tool", () => {
     );
     cy.contains("Start Import").click();
     cy.get(`[aria-label="Close"]`).click();
-    cy.visit("http://localhost:3000/images");
     cy.contains("photo").click();
     cy.get('[aria-label="Drawing tool"]').click();
     cy.get("main").click(200, 200);
