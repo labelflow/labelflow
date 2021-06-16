@@ -1,0 +1,38 @@
+{
+  "name": "strapi-starter-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "develop": "next dev",
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
+  },
+  "dependencies": {
+    "moment": "^2.24.0",
+    "next": "^9.5.4",
+    "prop-types": "15.7.2",
+    "react": "16.13.1",
+    "react-dom": "16.13.1",
+    "react-markdown": "^4.2.2",
+    "react-moment": "^0.9.6"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "2.x",
+    "@typescript-eslint/parser": "2.x",
+    "babel-eslint": "10.x",
+    "eslint": "6.x",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-config-react-app": "^5.2.1",
+    "eslint-plugin-flowtype": "4.x",
+    "eslint-plugin-import": "2.x",
+    "eslint-plugin-jsx-a11y": "6.x",
+    "eslint-plugin-prettier": "^3.1.4",
+    "eslint-plugin-react": "7.x",
+    "eslint-plugin-react-hooks": "2.x",
+    "prettier": "^2.1.2"
+  }
+}
