@@ -5,6 +5,7 @@ import dataloaders.helpers as helpers
 import scipy.misc as sm
 from dataloaders.helpers import *
 
+
 class ScaleNRotate(object):
     """Scale (zoom-in, zoom-out) and Rotate the image and the ground truth.
     Args:
@@ -14,8 +15,9 @@ class ScaleNRotate(object):
         2.  rots [list]: list of fixed possible rotation angles
             scales [list]: list of fixed possible scales
     """
-    def __init__(self, rots=(-30, 30), scales=(.75, 1.25), semseg=False):
-        assert (isinstance(rots, type(scales)))
+
+    def __init__(self, rots=(-30, 30), scales=(0.75, 1.25), semseg=False):
+        assert isinstance(rots, type(scales))
         self.rots = rots
         self.scales = scales
         self.semseg = semseg
@@ -24,30 +26,34 @@ class ScaleNRotate(object):
 
         if type(self.rots) == tuple:
             # Continuous range of scales and rotations
-            rot = (self.rots[1] - self.rots[0]) * random.random() - \
-                  (self.rots[1] - self.rots[0])/2
+            rot = (self.rots[1] - self.rots[0]) * random.random() - (
+                self.rots[1] - self.rots[0]
+            ) / 2
 
-            sc = (self.scales[1] - self.scales[0]) * random.random() - \
-                 (self.scales[1] - self.scales[0]) / 2 + 1
+            sc = (
+                (self.scales[1] - self.scales[0]) * random.random()
+                - (self.scales[1] - self.scales[0]) / 2
+                + 1
+            )
         elif type(self.rots) == list:
             # Fixed range of scales and rotations
             rot = self.rots[random.randint(0, len(self.rots))]
             sc = self.scales[random.randint(0, len(self.scales))]
 
         for elem in sample.keys():
-            if 'meta' in elem:
+            if "meta" in elem:
                 continue
 
             tmp = sample[elem]
 
             h, w = tmp.shape[:2]
             center = (w / 2, h / 2)
-            assert(center != 0)  # Strange behaviour warpAffine
+            assert center != 0  # Strange behaviour warpAffine
             M = cv2.getRotationMatrix2D(center, rot, sc)
 
             if ((tmp == 0) | (tmp == 1)).all():
                 flagval = cv2.INTER_NEAREST
-            elif 'gt' in elem and self.semseg:
+            elif "gt" in elem and self.semseg:
                 flagval = cv2.INTER_NEAREST
             else:
                 flagval = cv2.INTER_CUBIC
@@ -58,7 +64,9 @@ class ScaleNRotate(object):
         return sample
 
     def __str__(self):
-        return 'ScaleNRotate:(rot='+str(self.rots)+',scale='+str(self.scales)+')'
+        return (
+            "ScaleNRotate:(rot=" + str(self.rots) + ",scale=" + str(self.scales) + ")"
+        )
 
 
 class FixedResize(object):
@@ -66,11 +74,12 @@ class FixedResize(object):
     Args:
         resolutions (dict): the list of resolutions
     """
+
     def __init__(self, resolutions=None, flagvals=None):
         self.resolutions = resolutions
         self.flagvals = flagvals
         if self.flagvals is not None:
-            assert(len(self.resolutions) == len(self.flagvals))
+            assert len(self.resolutions) == len(self.flagvals)
 
     def __call__(self, sample):
 
@@ -82,41 +91,61 @@ class FixedResize(object):
 
         for elem in elems:
 
-            if 'meta' in elem or 'bbox' in elem or ('extreme_points_coord' in elem and elem not in self.resolutions):
+            if (
+                "meta" in elem
+                or "bbox" in elem
+                or ("extreme_points_coord" in elem and elem not in self.resolutions)
+            ):
                 continue
-            if 'extreme_points_coord' in elem and elem in self.resolutions:
-                bbox = sample['bbox']
-                crop_size = np.array([bbox[3]-bbox[1]+1, bbox[4]-bbox[2]+1])
+            if "extreme_points_coord" in elem and elem in self.resolutions:
+                bbox = sample["bbox"]
+                crop_size = np.array([bbox[3] - bbox[1] + 1, bbox[4] - bbox[2] + 1])
                 res = np.array(self.resolutions[elem]).astype(np.float32)
-                sample[elem] = np.round(sample[elem]*res/crop_size).astype(np.int)
+                sample[elem] = np.round(sample[elem] * res / crop_size).astype(np.int)
                 continue
             if elem in self.resolutions:
                 if self.resolutions[elem] is None:
                     continue
                 if isinstance(sample[elem], list):
                     if sample[elem][0].ndim == 3:
-                        output_size = np.append(self.resolutions[elem], [3, len(sample[elem])])
+                        output_size = np.append(
+                            self.resolutions[elem], [3, len(sample[elem])]
+                        )
                     else:
-                        output_size = np.append(self.resolutions[elem], len(sample[elem]))
+                        output_size = np.append(
+                            self.resolutions[elem], len(sample[elem])
+                        )
                     tmp = sample[elem]
                     sample[elem] = np.zeros(output_size, dtype=np.float32)
                     for ii, crop in enumerate(tmp):
                         if self.flagvals is None:
-                            sample[elem][..., ii] = helpers.fixed_resize(crop, self.resolutions[elem])
+                            sample[elem][..., ii] = helpers.fixed_resize(
+                                crop, self.resolutions[elem]
+                            )
                         else:
-                            sample[elem][..., ii] = helpers.fixed_resize(crop, self.resolutions[elem], flagval=self.flagvals[elem])
+                            sample[elem][..., ii] = helpers.fixed_resize(
+                                crop,
+                                self.resolutions[elem],
+                                flagval=self.flagvals[elem],
+                            )
                 else:
                     if self.flagvals is None:
-                        sample[elem] = helpers.fixed_resize(sample[elem], self.resolutions[elem])
+                        sample[elem] = helpers.fixed_resize(
+                            sample[elem], self.resolutions[elem]
+                        )
                     else:
-                        sample[elem] = helpers.fixed_resize(sample[elem], self.resolutions[elem], flagval=self.flagvals[elem])
+                        sample[elem] = helpers.fixed_resize(
+                            sample[elem],
+                            self.resolutions[elem],
+                            flagval=self.flagvals[elem],
+                        )
             else:
                 del sample[elem]
 
         return sample
 
     def __str__(self):
-        return 'FixedResize:'+str(self.resolutions)
+        return "FixedResize:" + str(self.resolutions)
 
 
 class RandomHorizontalFlip(object):
@@ -126,7 +155,7 @@ class RandomHorizontalFlip(object):
 
         if random.random() < 0.5:
             for elem in sample.keys():
-                if 'meta' in elem:
+                if "meta" in elem:
                     continue
                 tmp = sample[elem]
                 tmp = cv2.flip(tmp, flipCode=1)
@@ -135,7 +164,7 @@ class RandomHorizontalFlip(object):
         return sample
 
     def __str__(self):
-        return 'RandomHorizontalFlip'
+        return "RandomHorizontalFlip"
 
 
 class IOGPoints(object):
@@ -145,33 +174,89 @@ class IOGPoints(object):
     pad_pixel: number of pixels fo the maximum perturbation
     elem: which element of the sample to choose as the binary mask
     """
-    def __init__(self, sigma=10, elem='crop_gt',pad_pixel =10):
+
+    def __init__(self, sigma=10, elem="crop_gt", pad_pixel=10):
         self.sigma = sigma
         self.elem = elem
-        self.pad_pixel =pad_pixel
+        self.pad_pixel = pad_pixel
 
     def __call__(self, sample):
 
         if sample[self.elem].ndim == 3:
-            raise ValueError('IOGPoints not implemented for multiple object per image.')
+            raise ValueError("IOGPoints not implemented for multiple object per image.")
         _target = sample[self.elem]
 
-        targetshape=_target.shape
+        targetshape = _target.shape
         if np.max(_target) == 0:
-            sample['IOG_points'] = np.zeros([targetshape[0],targetshape[1],2], dtype=_target.dtype) #  TODO: handle one_mask_per_point case
+            sample["IOG_points"] = np.zeros(
+                [targetshape[0], targetshape[1], 2], dtype=_target.dtype
+            )  #  TODO: handle one_mask_per_point case
         else:
             _points = helpers.iog_points(_target, self.pad_pixel)
-            sample['IOG_points'] = helpers.make_gt(_target, _points, sigma=self.sigma, one_mask_per_point=False)
+            sample["IOG_points"] = helpers.make_gt(
+                _target, _points, sigma=self.sigma, one_mask_per_point=False
+            )
 
         return sample
 
     def __str__(self):
-        return 'IOGPoints:(sigma='+str(self.sigma)+', pad_pixel='+str(self.pad_pixel)+', elem='+str(self.elem)+')'
+        return (
+            "IOGPoints:(sigma="
+            + str(self.sigma)
+            + ", pad_pixel="
+            + str(self.pad_pixel)
+            + ", elem="
+            + str(self.elem)
+            + ")"
+        )
+
+
+class IOGPointRefinement(object):
+    """
+    Returns one IOG Point (top-left and bottom-right or top-right and bottom-left) in a given binary mask
+    sigma: sigma of Gaussian to create a heatmap from a point
+    pad_pixel: number of pixels fo the maximum perturbation
+    elem: which element of the sample to choose as the binary mask
+    """
+
+    def __init__(self, sigma=10, elem="crop_gt", pad_pixel=10):
+        self.sigma = sigma
+        self.elem = elem
+        self.pad_pixel = pad_pixel
+
+    def __call__(self, sample):
+
+        if sample[self.elem].ndim == 3:
+            raise ValueError("IOGPoints not implemented for multiple object per image.")
+        _target = sample[self.elem]
+
+        targetshape = _target.shape
+        if np.max(_target) == 0:
+            sample["IOG_points"] = np.zeros(
+                [targetshape[0], targetshape[1], 2], dtype=_target.dtype
+            )  #  TODO: handle one_mask_per_point case
+        else:
+            _points = helpers.iog_points(_target, self.pad_pixel)
+            sample["IOG_points"] = helpers.make_gt(
+                _target, _points, sigma=self.sigma, one_mask_per_point=False
+            )
+
+        return sample
+
+    def __str__(self):
+        return (
+            "IOGPoints:(sigma="
+            + str(self.sigma)
+            + ", pad_pixel="
+            + str(self.pad_pixel)
+            + ", elem="
+            + str(self.elem)
+            + ")"
+        )
 
 
 class ConcatInputs(object):
-
-    def __init__(self, elems=('image', 'point')):
+    def __init__(self, elems=("image", "point")):
         self.elems = elems
 
     def __call__(self, sample):
@@ -179,7 +264,7 @@ class ConcatInputs(object):
         res = sample[self.elems[0]]
 
         for elem in self.elems[1:]:
-            assert(sample[self.elems[0]].shape[:2] == sample[elem].shape[:2])
+            assert sample[self.elems[0]].shape[:2] == sample[elem].shape[:2]
 
             # Check if third dimension is missing
             tmp = sample[elem]
@@ -188,21 +273,25 @@ class ConcatInputs(object):
 
             res = np.concatenate((res, tmp), axis=2)
 
-        sample['concat'] = res
+        sample["concat"] = res
         return sample
 
     def __str__(self):
-        return 'ExtremePoints:'+str(self.elems)
+        return "ExtremePoints:" + str(self.elems)
 
 
 class CropFromMask(object):
     """
     Returns image cropped in bounding box from a given mask
     """
-    def __init__(self, crop_elems=('image', 'gt','void_pixels'),
-                 mask_elem='gt',
-                 relax=0,
-                 zero_pad=False):
+
+    def __init__(
+        self,
+        crop_elems=("image", "gt", "void_pixels"),
+        mask_elem="gt",
+        relax=0,
+        zero_pad=False,
+    ):
 
         self.crop_elems = crop_elems
         self.mask_elem = mask_elem
@@ -225,31 +314,55 @@ class CropFromMask(object):
                     if np.max(_target[..., k]) == 0:
                         _crop.append(np.zeros(_tmp_img.shape, dtype=_img.dtype))
                     else:
-                        _crop.append(helpers.crop_from_mask(_tmp_img, _tmp_target, relax=self.relax, zero_pad=self.zero_pad))
+                        _crop.append(
+                            helpers.crop_from_mask(
+                                _tmp_img,
+                                _tmp_target,
+                                relax=self.relax,
+                                zero_pad=self.zero_pad,
+                            )
+                        )
             else:
                 for k in range(0, _target.shape[-1]):
                     if np.max(_target[..., k]) == 0:
                         _crop.append(np.zeros(_img.shape, dtype=_img.dtype))
                     else:
                         _tmp_target = _target[..., k]
-                        _crop.append(helpers.crop_from_mask(_img, _tmp_target, relax=self.relax, zero_pad=self.zero_pad))
+                        _crop.append(
+                            helpers.crop_from_mask(
+                                _img,
+                                _tmp_target,
+                                relax=self.relax,
+                                zero_pad=self.zero_pad,
+                            )
+                        )
             if len(_crop) == 1:
-                sample['crop_' + elem] = _crop[0]
+                sample["crop_" + elem] = _crop[0]
             else:
-                sample['crop_' + elem] = _crop
+                sample["crop_" + elem] = _crop
 
         return sample
 
     def __str__(self):
-        return 'CropFromMask:(crop_elems='+str(self.crop_elems)+', mask_elem='+str(self.mask_elem)+\
-               ', relax='+str(self.relax)+',zero_pad='+str(self.zero_pad)+')'
+        return (
+            "CropFromMask:(crop_elems="
+            + str(self.crop_elems)
+            + ", mask_elem="
+            + str(self.mask_elem)
+            + ", relax="
+            + str(self.relax)
+            + ",zero_pad="
+            + str(self.zero_pad)
+            + ")"
+        )
 
 
 class ToImage(object):
     """
     Return the given elements between 0 and 255
     """
-    def __init__(self, norm_elem='image', custom_max=255.):
+
+    def __init__(self, norm_elem="image", custom_max=255.0):
         self.norm_elem = norm_elem
         self.custom_max = custom_max
 
@@ -257,14 +370,20 @@ class ToImage(object):
         if isinstance(self.norm_elem, tuple):
             for elem in self.norm_elem:
                 tmp = sample[elem]
-                sample[elem] = self.custom_max * (tmp - tmp.min()) / (tmp.max() - tmp.min() + 1e-10)
+                sample[elem] = (
+                    self.custom_max
+                    * (tmp - tmp.min())
+                    / (tmp.max() - tmp.min() + 1e-10)
+                )
         else:
             tmp = sample[self.norm_elem]
-            sample[self.norm_elem] = self.custom_max * (tmp - tmp.min()) / (tmp.max() - tmp.min() + 1e-10)
+            sample[self.norm_elem] = (
+                self.custom_max * (tmp - tmp.min()) / (tmp.max() - tmp.min() + 1e-10)
+            )
         return sample
 
     def __str__(self):
-        return 'NormalizeImage'
+        return "NormalizeImage"
 
 
 class ToTensor(object):
@@ -273,9 +392,9 @@ class ToTensor(object):
     def __call__(self, sample):
 
         for elem in sample.keys():
-            if 'meta' in elem:
+            if "meta" in elem:
                 continue
-            elif 'bbox' in elem:
+            elif "bbox" in elem:
                 tmp = sample[elem]
                 sample[elem] = torch.from_numpy(tmp)
                 continue
@@ -294,4 +413,4 @@ class ToTensor(object):
         return sample
 
     def __str__(self):
-        return 'ToTensor'
+        return "ToTensor"
