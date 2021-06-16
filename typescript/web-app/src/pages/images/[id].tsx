@@ -1,9 +1,12 @@
+import { useEffect } from "react";
 import { useQuery } from "@apollo/client";
 import {
   Text,
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbLink,
+  Center,
+  Spinner,
 } from "@chakra-ui/react";
 import gql from "graphql-tag";
 import dynamic from "next/dynamic";
@@ -21,7 +24,11 @@ const LabellingTool = dynamic(() => import("../../components/labelling-tool"), {
   ssr: false,
   loading: ({ error }) => {
     if (error) throw error;
-    return <div>loading</div>;
+    return (
+      <Center h="full">
+        <Spinner size="xl" />
+      </Center>
+    );
   },
 });
 
@@ -39,12 +46,24 @@ type ImageQueryResponse = {
 };
 
 const ImagePage = () => {
-  const id = useRouter()?.query?.id;
+  const router = useRouter();
+  const id = router?.query?.id;
 
-  const imageName = useQuery<ImageQueryResponse>(imageQuery, {
-    variables: { id },
-    skip: typeof id !== "string",
-  }).data?.image.name;
+  const { data: imageResult, error } = useQuery<ImageQueryResponse>(
+    imageQuery,
+    {
+      variables: { id },
+      skip: typeof id !== "string",
+    }
+  );
+
+  const imageName = imageResult?.image.name;
+
+  useEffect(() => {
+    if (error) {
+      router.replace("/images");
+    }
+  }, [error]);
 
   return (
     <Layout
@@ -72,7 +91,12 @@ const ImagePage = () => {
         </Breadcrumb>
       }
     >
-      <LabellingTool />
+      {!imageResult && (
+        <Center h="full">
+          <Spinner size="xl" />
+        </Center>
+      )}
+      {imageResult && <LabellingTool />}
     </Layout>
   );
 };

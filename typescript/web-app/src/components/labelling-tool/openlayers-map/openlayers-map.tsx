@@ -1,7 +1,8 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useCallback } from "react";
 import { useRouter } from "next/router";
 import { RouterContext } from "next/dist/next-server/lib/router-context";
 import { Extent, getCenter } from "ol/extent";
+import { Map as OlMap, MapBrowserEvent } from "ol";
 import { Size } from "ol/size";
 import memoize from "mem";
 import Projection from "ol/proj/Projection";
@@ -18,6 +19,8 @@ import { DrawBoundingBoxInteraction } from "./draw-bounding-box-interaction";
 import { SelectInteraction } from "./select-interaction";
 import { Labels } from "./labels";
 import { EditLabelClass } from "./edit-label-class";
+import { CursorGuides } from "./cursor-guides";
+import { useLabellingStore, Tools } from "../../../connectors/labelling-state";
 
 const empty: any[] = [];
 
@@ -73,8 +76,10 @@ const imageQuery = gql`
 export const OpenlayersMap = () => {
   const [editClass, setEditClass] = useState(false);
   const editClassOverlayRef = useRef<HTMLDivElement | null>(null);
+  const mapRef = useRef<OlMap>(null);
   const router = useRouter();
   const imageId = router.query?.id;
+  const selectedTool = useLabellingStore((state) => state.selectedTool);
 
   const image = useQuery<{
     image: Pick<Image, "id" | "url" | "width" | "height">;
@@ -87,6 +92,24 @@ export const OpenlayersMap = () => {
   const [containerRef, bounds] = useMeasure();
 
   const isBoundsValid = bounds.width > 0 || bounds.height > 0;
+  const onPointermove = useCallback(
+    (e: MapBrowserEvent) => {
+      if (!mapRef.current) return;
+      const target = mapRef.current.getTarget() as HTMLElement;
+
+      if (e.dragging) {
+        target.style.cursor = "grabbing";
+      } else if (selectedTool === Tools.BOUNDING_BOX) {
+        target.style.cursor = "crosshair";
+      } else if (selectedTool === Tools.SELECTION) {
+        const hit = mapRef.current.hasFeatureAtPixel(e.pixel);
+        target.style.cursor = hit ? "pointer" : "grab";
+      } else {
+        target.style.cursor = "default";
+      }
+    },
+    [selectedTool]
+  );
 
   if (image == null) {
     return null;
@@ -109,9 +132,14 @@ export const OpenlayersMap = () => {
           return false;
         }}
       >
+        {selectedTool === Tools.BOUNDING_BOX && (
+          <CursorGuides map={mapRef.current} />
+        )}
         <Map
+          ref={mapRef}
           args={{ controls: empty }}
           style={{ height: "100%", width: "100%" }}
+          onPointermove={onPointermove}
           containerRef={containerRef}
         >
           {/* Need to bridge contexts across renderers
