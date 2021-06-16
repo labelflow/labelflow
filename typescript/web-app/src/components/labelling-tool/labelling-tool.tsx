@@ -15,7 +15,7 @@ export const LabellingTool = () => {
   useEffect(() => clear(), [imageId]);
 
   return (
-    <Box height="100%" position="relative">
+    <Box height="100%" position="relative" overflow="hidden">
       <OpenlayersMap />
       <VStack
         padding={4}
