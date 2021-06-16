@@ -1,14 +1,13 @@
 import { useState } from "react";
-import { addDecorator } from "@storybook/react";
+
 import { HStack, Button, Flex } from "@chakra-ui/react";
 import { ClassSelectionMenu } from "../class-selection-menu";
 import { chakraDecorator } from "../../../utils/chakra-decorator";
 import { LabelClass } from "../../../graphql-types.generated";
 
-addDecorator(chakraDecorator);
-
 export default {
   title: "web-app/Class selection menu",
+  decorators: [chakraDecorator],
 };
 
 const Template = (args: any) => (
