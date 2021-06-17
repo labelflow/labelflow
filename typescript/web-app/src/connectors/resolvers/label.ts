@@ -98,7 +98,16 @@ const updateLabel = async (_: any, args: MutationUpdateLabelArgs) => {
   return db.label.get(labelId);
 };
 
+const labelsAggregates = () => {
+  return {};
+};
+
+const totalCount = () => {
+  return db.label.count();
+};
+
 export default {
+  Query: { labelsAggregates },
   Mutation: {
     createLabel,
     deleteLabel,
@@ -107,4 +116,5 @@ export default {
   Label: {
     labelClass,
   },
+  LabelsAggregates: { totalCount },
 };
