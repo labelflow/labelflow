@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
 import type { Workbox } from "workbox-window";
+import { useQueryParam, StringParam } from "use-query-params";
 import { UpdateServiceWorkerModal } from "./update-service-worker-modal/update-service-worker-modal";
 import { WelcomeModal } from "./welcome-modal";
 
@@ -10,12 +11,43 @@ declare global {
 }
 
 export const AppLifecycleManager = () => {
+  // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
+  // This param can have several values:
+  //   - undefined: Normal behavior, only show the update modal when needed
+  //   - "open": Force the update modal to open even if not needed
+  //   - "cancel": Don't update the service worker, Don't ever open the update modal
+  //   - "update": Do update the service worker when needed, Don't ever open the update modal
+  const [paramModalUpdateServiceWorker, setParamModalUpdateServiceWorker] =
+    useQueryParam("modal-update-service-worker", StringParam);
+
   // By default (including during SSR) we consider the service worker to be ready
   // since this is the nominal case that happen all the time except during the very first visi
   const [isServiceWorkerActive, setIsServiceWorkerActive] = useState(true);
 
   const [isUpdateServiceWorkerModalOpen, setIsUpdateServiceWorkerModalOpen] =
     useState(false);
+
+  const closeUpdateServiceWorkerModal = useCallback(() => {
+    setIsUpdateServiceWorkerModalOpen(false);
+  }, [setIsUpdateServiceWorkerModalOpen]);
+
+  const updateServiceWorker = useCallback(() => {
+    if (
+      typeof window !== "undefined" &&
+      "serviceWorker" in navigator &&
+      window.workbox !== undefined
+    ) {
+      const wb = window.workbox;
+      wb.addEventListener("controlling", (/* event: any */) => {
+        window.location.reload();
+      });
+
+      // Send a message to the waiting service worker, instructing it to activate.
+      wb.messageSkipWaiting();
+    }
+    setParamModalUpdateServiceWorker(undefined);
+    setIsUpdateServiceWorkerModalOpen(false);
+  }, [setIsUpdateServiceWorkerModalOpen]);
 
   // This hook only run once in browser after the component is rendered for the first time.
   // It has same effect as the old componentDidMount lifecycle callback.
@@ -50,37 +82,26 @@ export const AppLifecycleManager = () => {
       // NOTE: MUST set skipWaiting to false in next.config.js pwa object
       // https://developers.google.com/web/tools/workbox/guides/advanced-recipes#offer_a_page_reload_for_users
       const promptNewVersionAvailable = (/* event: any */) => {
+        if (paramModalUpdateServiceWorker === "cancel") {
+          return;
+        }
+        if (paramModalUpdateServiceWorker === "update") {
+          updateServiceWorker();
+          return;
+        }
         setIsUpdateServiceWorkerModalOpen(true);
       };
 
-      wb.addEventListener("waiting", promptNewVersionAvailable);
+      if (paramModalUpdateServiceWorker === "open") {
+        promptNewVersionAvailable();
+      } else {
+        wb.addEventListener("waiting", promptNewVersionAvailable);
+      }
 
       // never forget to call register as auto register is turned off in next.config.js
       wb.register();
     }
   }, []);
-
-  const closeUpdateServiceWorkerModal = useCallback(() => {
-    setIsUpdateServiceWorkerModalOpen(false);
-  }, [setIsUpdateServiceWorkerModalOpen]);
-
-  const updateServiceWorker = useCallback(() => {
-    if (
-      typeof window !== "undefined" &&
-      "serviceWorker" in navigator &&
-      window.workbox !== undefined
-    ) {
-      const wb = window.workbox;
-      wb.addEventListener("controlling", (/* event: any */) => {
-        window.location.reload();
-      });
-
-      // Send a message to the waiting service worker, instructing it to activate.
-      wb.messageSkipWaiting();
-    }
-
-    setIsUpdateServiceWorkerModalOpen(false);
-  }, [setIsUpdateServiceWorkerModalOpen]);
 
   return (
     <>

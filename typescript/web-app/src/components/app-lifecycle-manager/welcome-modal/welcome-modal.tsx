@@ -15,10 +15,10 @@ import {
   ModalHeader,
   useColorModeValue as mode,
 } from "@chakra-ui/react";
-import { useQueryParam } from "use-query-params";
+import { useQueryParam, StringParam } from "use-query-params";
 
 import { Logo } from "../../logo";
-import { BoolParam } from "../../../utils/query-param-bool";
+import {} from "../../../utils/query-param-bool";
 
 export const WelcomeModal = ({
   isServiceWorkerActive,
@@ -26,14 +26,26 @@ export const WelcomeModal = ({
   isServiceWorkerActive: boolean;
 }) => {
   // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
-  const [isDisabled] = useQueryParam("modal-welcome-disable", BoolParam);
+  // This param can have several values:
+  //   - undefined: Normal behavior, only show the welcome modal when needed
+  //   - "open": Force the welcome modal to open even if not needed
+  //   - "closed": Don't ever open the welcome modal
+  const [paramModalWelcome, setParamModalWelcome] = useQueryParam(
+    "modal-welcome",
+    StringParam
+  );
   const [hasUserClickedStart, setHasUserClickedStart] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
   // This modal should open when isServiceWorkerActive becomes false
   // But close only when the use hasUserClickedStart becomes true
   useEffect(() => {
-    if (!isServiceWorkerActive && !hasUserClickedStart && !isDisabled) {
+    if (
+      (!isServiceWorkerActive &&
+        !hasUserClickedStart &&
+        !(paramModalWelcome === "closed")) ||
+      paramModalWelcome === "open"
+    ) {
       setIsOpen(true);
       return;
     }
@@ -42,7 +54,7 @@ export const WelcomeModal = ({
     }
     // In the 2 other cases, we do nothing, this is an hysteresis
     // To "latch" the modal to open once it opened once
-  }, [isServiceWorkerActive, hasUserClickedStart]);
+  }, [isServiceWorkerActive, hasUserClickedStart, paramModalWelcome]);
 
   return (
     <Modal isOpen={isOpen} onClose={() => {}} size="3xl">
@@ -112,7 +124,10 @@ export const WelcomeModal = ({
               height="14"
               px="8"
               isLoading={hasUserClickedStart && !isServiceWorkerActive}
-              onClick={() => setHasUserClickedStart(true)}
+              onClick={() => {
+                setParamModalWelcome(undefined, "replaceIn");
+                setHasUserClickedStart(true);
+              }}
               loadingText="Loading the application"
             >
               Start Labelling!
