@@ -28,7 +28,9 @@ export const LabellingTool = () => {
   useEffect(() => clear(), [imageId]);
 
   return (
-    <LabellingContext.Provider value={{ setView, zoomByDelta }}>
+    <LabellingContext.Provider
+      value={{ setView, zoomByDelta, zoomFactor: 0.5 }}
+    >
       <Box height="100%" position="relative" overflow="hidden">
         <OpenlayersMap />
         <VStack

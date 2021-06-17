@@ -46,6 +46,7 @@ it("should disable zoom out if image is at maximum resolution", async () => {
 const contextValue = {
   zoomByDelta: jest.fn(),
   setView: jest.fn(),
+  zoomFactor: 0.6,
 };
 
 it("should zoom out by a zoom factor", async () => {
@@ -60,7 +61,9 @@ it("should zoom out by a zoom factor", async () => {
 
   userEvent.click(screen.getByRole("button", { name: "Zoom out" }));
 
-  expect(contextValue.zoomByDelta).toHaveBeenCalledWith(-0.5);
+  expect(contextValue.zoomByDelta).toHaveBeenCalledWith(
+    -contextValue.zoomFactor
+  );
 });
 
 it("should zoom in by a zoom factor", async () => {
@@ -75,5 +78,7 @@ it("should zoom in by a zoom factor", async () => {
 
   userEvent.click(screen.getByRole("button", { name: "Zoom in" }));
 
-  expect(contextValue.zoomByDelta).toHaveBeenCalledWith(0.5);
+  expect(contextValue.zoomByDelta).toHaveBeenCalledWith(
+    contextValue.zoomFactor
+  );
 });

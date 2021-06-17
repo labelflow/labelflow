@@ -78,7 +78,7 @@ export const OpenlayersMap = () => {
   const viewRef = useRef<OlView | null>(null);
   const router = useRouter();
   const imageId = router.query?.id;
-  const { setView } = useContext(LabellingContext);
+  const { setView, zoomFactor } = useContext(LabellingContext);
   const selectedTool = useLabellingStore((state) => state.selectedTool);
   const setCanZoomIn = useLabellingStore((state) => state.setCanZoomIn);
   const setCanZoomOut = useLabellingStore((state) => state.setCanZoomOut);
@@ -153,12 +153,13 @@ export const OpenlayersMap = () => {
                   }}
                   onChange_resolution={() => {
                     if (!viewRef.current) return false;
-                    // TODO: Ajouter une marge d'erreur pour gérer le 2.99999999999
                     setCanZoomIn(
-                      viewRef.current.getZoom() < viewRef.current.getMaxZoom()
+                      viewRef.current.getZoom() + zoomFactor <
+                        viewRef.current.getMaxZoom()
                     );
                     setCanZoomOut(
-                      viewRef.current.getZoom() > viewRef.current.getMinZoom()
+                      viewRef.current.getZoom() - zoomFactor >
+                        viewRef.current.getMinZoom()
                     );
                     return false;
                   }}
