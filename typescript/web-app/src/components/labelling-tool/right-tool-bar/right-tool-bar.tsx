@@ -13,7 +13,7 @@ export const RightToolbar = () => {
       <IconButton
         icon={<span>-</span>}
         backgroundColor="white"
-        aria-label="zoom out"
+        aria-label="Zoom out"
         pointerEvents="initial"
         isDisabled={!canZoomOut}
         onClick={() => {
@@ -23,7 +23,7 @@ export const RightToolbar = () => {
       <IconButton
         icon={<span>+</span>}
         backgroundColor="white"
-        aria-label="zoom in"
+        aria-label="Zoom in"
         pointerEvents="initial"
         isDisabled={!canZoomIn}
         onClick={() => {
