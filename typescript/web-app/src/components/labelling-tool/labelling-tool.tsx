@@ -16,6 +16,7 @@ export const LabellingTool = () => {
   const zoomByDelta = useCallback(
     (ratio: number) => {
       if (!view) return;
+      /* eslint-disable-next-line consistent-return */
       return olZoomByDelta(view, ratio);
     },
     [view]

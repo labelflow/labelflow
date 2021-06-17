@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { IconButton, VStack } from "@chakra-ui/react";
+import { IconButton } from "@chakra-ui/react";
 import { useLabellingStore } from "../../../connectors/labelling-state";
 import { LabellingContext } from "../labelling-context";
 

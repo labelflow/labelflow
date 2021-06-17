@@ -75,7 +75,7 @@ const imageQuery = gql`
 
 export const OpenlayersMap = () => {
   const mapRef = useRef<OlMap>(null);
-  const viewRef = useRef<OlView>(null);
+  const viewRef = useRef<OlView | null>(null);
   const router = useRouter();
   const imageId = router.query?.id;
   const { setView } = useContext(LabellingContext);
@@ -146,7 +146,8 @@ export const OpenlayersMap = () => {
               // There is no point rendering the view in that case
               isBoundsValid && (
                 <olView
-                  ref={(value) => {
+                  ref={(value: OlView) => {
+                    if (!value) return;
                     viewRef.current = value;
                     setView(value);
                   }}
