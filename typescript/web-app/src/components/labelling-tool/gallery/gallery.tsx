@@ -20,7 +20,7 @@ const paginatedImagesQuery = gql`
 
 export const Gallery = () => {
   const [containerRef, { width }] = useMeasure();
-  const { data, loading, fetchMore } = useQuery<{
+  const { data, fetchMore } = useQuery<{
     images: Array<ImageType | null>;
   }>(paginatedImagesQuery, { variables: { first: 10, skip: 10 } });
 

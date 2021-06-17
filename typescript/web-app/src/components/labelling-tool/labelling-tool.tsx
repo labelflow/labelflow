@@ -16,33 +16,28 @@ export const LabellingTool = () => {
   useEffect(() => clear(), [imageId]);
 
   return (
-    <Flex flexDirection="column" height="100%">
-      <Box flex="1" position="relative" overflow="hidden">
-        <OpenlayersMap />
-        <VStack
-          padding={4}
-          spacing={4}
-          position="absolute"
-          top={0}
-          left={0}
-          pointerEvents="none"
-        >
-          <DrawingToolbar />
-        </VStack>
-        <HStack
-          padding={4}
-          spacing={4}
-          position="absolute"
-          bottom={0}
-          left={0}
-          pointerEvents="none"
-        >
-          <ImageNavigationToolbar />
-        </HStack>
-      </Box>
-      <Box height="110px" bg="white">
-        <Gallery />
-      </Box>
-    </Flex>
+    <Box height="100%" position="relative" overflow="hidden" flex="1">
+      <OpenlayersMap />
+      <VStack
+        padding={4}
+        spacing={4}
+        position="absolute"
+        top={0}
+        left={0}
+        pointerEvents="none"
+      >
+        <DrawingToolbar />
+      </VStack>
+      <HStack
+        padding={4}
+        spacing={4}
+        position="absolute"
+        bottom={0}
+        left={0}
+        pointerEvents="none"
+      >
+        <ImageNavigationToolbar />
+      </HStack>
+    </Box>
   );
 };
