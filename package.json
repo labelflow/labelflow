@@ -19,7 +19,7 @@
     "storybook:all": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
     "chromatic": "npx chromatic",
-    "build": "cd typescript/strapi ; yarn build"
+    "build": "cd typescript/strapi ; yarn build ; yarn install ; yarn build"
   },
   "workspaces": [
     "typescript/*",
