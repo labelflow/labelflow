@@ -1,10 +1,5 @@
 import { forwardRef } from "react";
-import {
-  useMutation,
-  useQuery,
-  useApolloClient,
-  ApolloClient,
-} from "@apollo/client";
+import { useQuery, useApolloClient, ApolloClient } from "@apollo/client";
 import gql from "graphql-tag";
 
 import { ClassSelectionPopover } from "../../class-selection-popover";
