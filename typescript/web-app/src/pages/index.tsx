@@ -1,51 +1,35 @@
-import { useQuery, useMutation } from "@apollo/client";
+import { useEffect } from "react";
+import { Spinner, Center } from "@chakra-ui/react";
+import { useQuery } from "@apollo/client";
 import gql from "graphql-tag";
-
+import { useRouter } from "next/router";
+import type { Image as ImageType } from "../graphql-types.generated";
 import { Layout } from "../components/layout";
-import { Example } from "../graphql-types.generated";
 
-const examplesQuery = gql`
-  query {
-    examples {
+export const firstImageQuery = gql`
+  query getFirstImage {
+    images(first: 1) {
       id
-      name
-    }
-  }
-`;
-
-const createExamplesMutation = gql`
-  mutation ($name: String!) {
-    createExample(data: { name: $name }) {
-      id
-      name
     }
   }
 `;
 
 const IndexPage = () => {
-  const { data: examplesResult } = useQuery(examplesQuery);
-  const [createExample] = useMutation(createExamplesMutation, {
-    refetchQueries: [{ query: examplesQuery }],
-  });
+  const router = useRouter();
+  const { data: firstImageResult, error } =
+    useQuery<{ images: Pick<ImageType, "id">[] }>(firstImageQuery);
+
+  useEffect(() => {
+    if (firstImageResult && !error) {
+      router.replace("/images");
+    }
+  }, [firstImageResult, error]);
 
   return (
     <Layout>
-      <h1>Hello world</h1>
-      <button
-        type="button"
-        onClick={() => createExample({ variables: { name: "Test" } })}
-      >
-        Add example
-      </button>
-      <div>
-        {examplesResult?.examples
-          ? examplesResult.examples.map((example: Example) => (
-              <p key={example.id}>
-                {example.id} - {example.name}
-              </p>
-            ))
-          : null}
-      </div>
+      <Center h="full">
+        <Spinner size="xl" />
+      </Center>
     </Layout>
   );
 };

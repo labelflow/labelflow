@@ -1,5 +1,6 @@
 import { useRouter } from "next/router";
 import { createBox, DrawEvent } from "ol/interaction/Draw";
+import { Fill, Stroke, Style } from "ol/style";
 import GeometryType from "ol/geom/GeometryType";
 import { ApolloClient, useApolloClient } from "@apollo/client";
 import gql from "graphql-tag";
@@ -114,12 +115,25 @@ export const DrawBoundingBoxInteraction = () => {
     return null;
   }
 
+  const color = "#E53E3E";
+
+  const style = new Style({
+    fill: new Fill({
+      color: `${color}10`,
+    }),
+    stroke: new Stroke({
+      color,
+      width: 2,
+    }),
+  });
+
   return (
     <olInteractionDraw
       args={{
         type: GeometryType.CIRCLE,
         geometryFunction,
       }}
+      style={style}
       onDrawend={(drawEvent: DrawEvent) => {
         const [x, y, destX, destY] = drawEvent.feature
           .getGeometry()
