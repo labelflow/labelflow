@@ -1,3 +1,5 @@
+import { View as OlView } from "ol";
+import { zoomByDelta as olZoomByDelta } from "ol/interaction/Interaction";
 import create from "zustand-store-addons";
 
 import {
@@ -11,18 +13,38 @@ export enum Tools {
 }
 
 export type LabellingState = {
+  zoomFactor: number;
+  view: OlView | null;
+  canZoomIn: boolean;
+  canZoomOut: boolean;
   selectedTool: Tools;
   selectedLabelId: string | null;
+  setCanZoomIn: (canZoomIn: boolean) => void;
+  setCanZoomOut: (canZoomOut: boolean) => void;
   setSelectedTool: (tool: Tools) => void;
   setSelectedLabelId: (labelId: string | null) => void;
+  zoomByDelta: (ratio: number) => void;
 };
 
 export const useLabellingStore = create(
-  (set) => ({
+  (set, get) => ({
+    view: null,
+    zoomFactor: 0.5,
+    canZoomIn: true,
+    canZoomOut: false,
     selectedTool: getRouterValue("selectedTool") ?? Tools.SELECTION,
     selectedLabelId: getRouterValue("selectedLabelId") ?? null,
+    setView: (view: OlView) => set({ view }),
     setSelectedTool: (tool: Tools) => set({ selectedTool: tool }),
     setSelectedLabelId: (labelId: string) => set({ selectedLabelId: labelId }),
+    setCanZoomIn: (canZoomIn: boolean) => set({ canZoomIn }),
+    setCanZoomOut: (canZoomOut: boolean) => set({ canZoomOut }),
+    zoomByDelta: (ratio: number) => {
+      const { view } = get();
+      if (!view) return;
+      /* eslint-disable-next-line consistent-return */
+      return olZoomByDelta(view, ratio);
+    },
   }),
   {
     watchers: {

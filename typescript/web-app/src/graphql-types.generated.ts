@@ -132,6 +132,11 @@ export type LabelWhereUniqueInput = {
   id: Scalars['ID'];
 };
 
+export type LabelsAggregates = {
+  __typename?: 'LabelsAggregates';
+  totalCount: Scalars['Int'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   createExample?: Maybe<Example>;
@@ -183,6 +188,7 @@ export type Query = {
   images: Array<Image>;
   labelClass: LabelClass;
   labelClasses: Array<LabelClass>;
+  labelsAggregates: LabelsAggregates;
   exportToCoco: Scalars['String'];
 };
 
@@ -336,6 +342,7 @@ export type ResolversTypes = {
   LabelCreateInput: LabelCreateInput;
   LabelUpdateInput: LabelUpdateInput;
   LabelWhereUniqueInput: LabelWhereUniqueInput;
+  LabelsAggregates: ResolverTypeWrapper<LabelsAggregates>;
   Mutation: ResolverTypeWrapper<{}>;
   Query: ResolverTypeWrapper<{}>;
   Upload: ResolverTypeWrapper<Scalars['Upload']>;
@@ -368,6 +375,7 @@ export type ResolversParentTypes = {
   LabelCreateInput: LabelCreateInput;
   LabelUpdateInput: LabelUpdateInput;
   LabelWhereUniqueInput: LabelWhereUniqueInput;
+  LabelsAggregates: LabelsAggregates;
   Mutation: {};
   Query: {};
   Upload: Scalars['Upload'];
@@ -430,6 +438,11 @@ export type LabelClassResolvers<ContextType = any, ParentType extends ResolversP
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type LabelsAggregatesResolvers<ContextType = any, ParentType extends ResolversParentTypes['LabelsAggregates'] = ResolversParentTypes['LabelsAggregates']> = {
+  totalCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   createExample?: Resolver<Maybe<ResolversTypes['Example']>, ParentType, ContextType, RequireFields<MutationCreateExampleArgs, 'data'>>;
   getUploadTarget?: Resolver<ResolversTypes['UploadTarget'], ParentType, ContextType>;
@@ -448,6 +461,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   images?: Resolver<Array<ResolversTypes['Image']>, ParentType, ContextType, RequireFields<QueryImagesArgs, never>>;
   labelClass?: Resolver<ResolversTypes['LabelClass'], ParentType, ContextType, RequireFields<QueryLabelClassArgs, 'where'>>;
   labelClasses?: Resolver<Array<ResolversTypes['LabelClass']>, ParentType, ContextType, RequireFields<QueryLabelClassesArgs, never>>;
+  labelsAggregates?: Resolver<ResolversTypes['LabelsAggregates'], ParentType, ContextType>;
   exportToCoco?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
 };
 
@@ -477,6 +491,7 @@ export type Resolvers<ContextType = any> = {
   Image?: ImageResolvers<ContextType>;
   Label?: LabelResolvers<ContextType>;
   LabelClass?: LabelClassResolvers<ContextType>;
+  LabelsAggregates?: LabelsAggregatesResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   Upload?: GraphQLScalarType;
