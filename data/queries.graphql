@@ -11,6 +11,7 @@ type Query {
   images(where: ImageWhereInput, first: Int, skip: Int): [Image!]!
   labelClass(where: LabelClassWhereUniqueInput!): LabelClass!
   labelClasses(first: Int, skip: Int): [LabelClass!]!
+  labelsAggregates: LabelsAggregates!
   exportToCoco: String!
   label(where: LabelWhereUniqueInput!): Label!
 }

@@ -2,7 +2,7 @@ import { useRef, useState, useCallback } from "react";
 import { useRouter } from "next/router";
 import { RouterContext } from "next/dist/next-server/lib/router-context";
 import { Extent, getCenter } from "ol/extent";
-import { Map as OlMap, MapBrowserEvent } from "ol";
+import { Map as OlMap, View as OlView, MapBrowserEvent } from "ol";
 import { Size } from "ol/size";
 import memoize from "mem";
 import Projection from "ol/proj/Projection";
@@ -77,9 +77,14 @@ export const OpenlayersMap = () => {
   const [editClass, setEditClass] = useState(false);
   const editClassOverlayRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<OlMap>(null);
+  const viewRef = useRef<OlView | null>(null);
   const router = useRouter();
   const imageId = router.query?.id;
   const selectedTool = useLabellingStore((state) => state.selectedTool);
+  const setCanZoomIn = useLabellingStore((state) => state.setCanZoomIn);
+  const setCanZoomOut = useLabellingStore((state) => state.setCanZoomOut);
+  const setView = useLabellingStore((state) => state.setView);
+  const zoomFactor = useLabellingStore((state) => state.zoomFactor);
 
   const image = useQuery<{
     image: Pick<Image, "id" | "url" | "width" | "height">;
@@ -151,6 +156,23 @@ export const OpenlayersMap = () => {
                 // There is no point rendering the view in that case
                 isBoundsValid && (
                   <olView
+                    ref={(value: OlView) => {
+                      if (!value) return;
+                      viewRef.current = value;
+                      setView(value);
+                    }}
+                    onChange_resolution={() => {
+                      if (!viewRef.current) return false;
+                      setCanZoomIn(
+                        viewRef.current.getZoom() + zoomFactor <
+                          viewRef.current.getMaxZoom()
+                      );
+                      setCanZoomOut(
+                        viewRef.current.getZoom() - zoomFactor >
+                          viewRef.current.getMinZoom()
+                      );
+                      return false;
+                    }}
                     args={{ extent }}
                     center={center}
                     initialProjection={projection}

@@ -4,7 +4,8 @@ module.exports = {
   stories: ["../typescript/**/__stories__/*.tsx"],
   core: {
     builder: "webpack5",
-  },
+  },  
+  typescript: { reactDocgen: "react-docgen" },
   webpackFinal: async (config) => {
     return {
       ...config ?? {},

@@ -28,54 +28,54 @@ const createLabel = (data: LabelCreateInput) => {
   });
 };
 
+const createImage = async (name: String) => {
+  const mutationResult = await client.mutate({
+    mutation: gql`
+      mutation createImage($file: Upload!, $name: String!) {
+        createImage(data: { name: $name, file: $file }) {
+          id
+        }
+      }
+    `,
+    variables: {
+      file: new Blob(),
+      name,
+    },
+  });
+
+  const {
+    data: {
+      createImage: { id },
+    },
+  } = mutationResult;
+
+  return id;
+};
+
+const createLabelClass = async (name: String) => {
+  const {
+    data: {
+      createLabelClass: { id },
+    },
+  } = await client.mutate({
+    mutation: gql`
+      mutation createLabelClass($name: String!) {
+        createLabelClass(data: { name: $name, color: "#ffffff" }) {
+          id
+          name
+          color
+        }
+      }
+    `,
+    variables: {
+      name,
+    },
+  });
+
+  return id;
+};
+
 describe("Label resolver test suite", () => {
-  const createImage = async (name: String) => {
-    const mutationResult = await client.mutate({
-      mutation: gql`
-        mutation createImage($file: Upload!, $name: String!) {
-          createImage(data: { name: $name, file: $file }) {
-            id
-          }
-        }
-      `,
-      variables: {
-        file: new Blob(),
-        name,
-      },
-    });
-
-    const {
-      data: {
-        createImage: { id },
-      },
-    } = mutationResult;
-
-    return id;
-  };
-
-  const createLabelClass = async (name: String) => {
-    const {
-      data: {
-        createLabelClass: { id },
-      },
-    } = await client.mutate({
-      mutation: gql`
-        mutation createLabelClass($name: String!) {
-          createLabelClass(data: { name: $name, color: "#ffffff" }) {
-            id
-            name
-            color
-          }
-        }
-      `,
-      variables: {
-        name,
-      },
-    });
-
-    return id;
-  };
-
   test("Creating a label should fail if its image doesn't exist", async () => {
     const imageId = "0024fbc1-387b-444f-8ad0-d7a3e316726a";
     return expect(
@@ -443,5 +443,71 @@ describe("Label resolver test suite", () => {
     expect(queryResult.data.label).toEqual(
       expect.objectContaining({ ...labelData, id: labelId })
     );
+  });
+});
+
+describe("LabelsAggregates resolver test suite", () => {
+  test("totalCount should be 0 before image creation", async () => {
+    const queryResult = await client.query({
+      query: gql`
+        query getLabelsCount {
+          labelsAggregates {
+            totalCount
+          }
+        }
+      `,
+    });
+
+    expect(queryResult.data.labelsAggregates.totalCount).toEqual(0);
+  });
+
+  test("totalCount should be 1 after creation of one label", async () => {
+    const imageId = await createImage("an image");
+
+    await createLabel({
+      ...labelData,
+      x: 1,
+      imageId,
+    });
+
+    const queryResult = await client.query({
+      query: gql`
+        query getLabelsCount {
+          labelsAggregates {
+            totalCount
+          }
+        }
+      `,
+    });
+
+    expect(queryResult.data.labelsAggregates.totalCount).toEqual(1);
+  });
+
+  test("totalCount should be 1 after creation of one label", async () => {
+    const imageId = await createImage("an image");
+
+    await createLabel({
+      ...labelData,
+      x: 1,
+      imageId,
+    });
+    incrementMockedDate(1);
+    await createLabel({
+      ...labelData,
+      x: 2,
+      imageId,
+    });
+
+    const queryResult = await client.query({
+      query: gql`
+        query getLabelsCount {
+          labelsAggregates {
+            totalCount
+          }
+        }
+      `,
+    });
+
+    expect(queryResult.data.labelsAggregates.totalCount).toEqual(2);
   });
 });
