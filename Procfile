@@ -1,0 +1,1 @@
+web: cd typescript/strapi ; yarn start
