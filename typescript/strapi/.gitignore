@@ -112,5 +112,3 @@ exports
 *.cache
 build
 .strapi-updater.json
-
-ca-certificate.crt
