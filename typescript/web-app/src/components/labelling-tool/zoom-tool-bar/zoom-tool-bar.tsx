@@ -8,23 +8,13 @@ import { LabellingContext } from "../labelling-context";
 const ZoomOutIcon = chakra(RiZoomOutLine);
 const ZoomInIcon = chakra(RiZoomInLine);
 
-export const RightToolbar = () => {
+export const ZoomToolbar = () => {
   const { zoomByDelta, zoomFactor } = useContext(LabellingContext);
   const canZoomIn = useLabellingStore((state) => state.canZoomIn);
   const canZoomOut = useLabellingStore((state) => state.canZoomOut);
 
   return (
     <>
-      <IconButton
-        icon={<ZoomOutIcon fontSize="lg" />}
-        backgroundColor="white"
-        aria-label="Zoom out"
-        pointerEvents="initial"
-        isDisabled={!canZoomOut}
-        onClick={() => {
-          zoomByDelta(-zoomFactor);
-        }}
-      />
       <IconButton
         icon={<ZoomInIcon fontSize="lg" />}
         backgroundColor="white"
@@ -33,6 +23,16 @@ export const RightToolbar = () => {
         isDisabled={!canZoomIn}
         onClick={() => {
           zoomByDelta(zoomFactor);
+        }}
+      />
+      <IconButton
+        icon={<ZoomOutIcon fontSize="lg" />}
+        backgroundColor="white"
+        aria-label="Zoom out"
+        pointerEvents="initial"
+        isDisabled={!canZoomOut}
+        onClick={() => {
+          zoomByDelta(-zoomFactor);
         }}
       />
     </>

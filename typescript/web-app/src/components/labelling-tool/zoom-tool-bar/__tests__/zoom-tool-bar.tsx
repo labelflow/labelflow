@@ -1,7 +1,7 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
-import { RightToolbar } from "../right-tool-bar";
+import { ZoomToolbar } from "../zoom-tool-bar";
 import { useLabellingStore } from "../../../../connectors/labelling-state";
 import { LabellingContext } from "../../labelling-context";
 
@@ -10,20 +10,20 @@ beforeEach(() => {
 });
 
 it("should display zoom in and out buttons", () => {
-  render(<RightToolbar />);
+  render(<ZoomToolbar />);
 
   expect(screen.getByRole("button", { name: "Zoom out" })).toBeDefined();
   expect(screen.getByRole("button", { name: "Zoom in" })).toBeDefined();
 });
 
 it("should disable zoom out by default", () => {
-  render(<RightToolbar />);
+  render(<ZoomToolbar />);
 
   expect(screen.getByRole("button", { name: "Zoom out" })).toBeDisabled();
 });
 
 it("should disable zoom in if image is at minimal resolution", async () => {
-  render(<RightToolbar />);
+  render(<ZoomToolbar />);
 
   await waitFor(() => {
     useLabellingStore.setState({ canZoomIn: false });
@@ -34,7 +34,7 @@ it("should disable zoom in if image is at minimal resolution", async () => {
 
 it("should disable zoom out if image is at maximum resolution", async () => {
   useLabellingStore.setState({ canZoomOut: true });
-  render(<RightToolbar />);
+  render(<ZoomToolbar />);
 
   await waitFor(() => {
     useLabellingStore.setState({ canZoomOut: false });
@@ -51,7 +51,7 @@ const contextValue = {
 
 it("should zoom out by a zoom factor", async () => {
   useLabellingStore.setState({ canZoomOut: true });
-  render(<RightToolbar />, {
+  render(<ZoomToolbar />, {
     wrapper: ({ children }) => (
       <LabellingContext.Provider value={contextValue}>
         {children}
@@ -68,7 +68,7 @@ it("should zoom out by a zoom factor", async () => {
 
 it("should zoom in by a zoom factor", async () => {
   useLabellingStore.setState({ canZoomIn: true });
-  render(<RightToolbar />, {
+  render(<ZoomToolbar />, {
     wrapper: ({ children }) => (
       <LabellingContext.Provider value={contextValue}>
         {children}
