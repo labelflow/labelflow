@@ -40,6 +40,8 @@
     "react-hotkeys-hook": "3.3.1",
     "react-icons": "^4.2.0",
     "react-use-measure": "^2.0.4",
+    "react-window": "^1.8.6",
+    "react-window-infinite-loader": "^1.0.7",
     "use-query-params": "^1.2.2",
     "uuid": "^8.3.2",
     "valid-url": "^1.0.9",

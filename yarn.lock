@@ -4013,6 +4013,8 @@ __metadata:
     react-hotkeys-hook: 3.3.1
     react-icons: ^4.2.0
     react-use-measure: ^2.0.4
+    react-window: ^1.8.6
+    react-window-infinite-loader: ^1.0.7
     storybook-addon-next-router: ^2.0.4
     typescript: 4.2.4
     use-query-params: ^1.2.2
@@ -18287,7 +18289,7 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"memoize-one@npm:^5.0.0":
+"memoize-one@npm:>=3.1.1 <6, memoize-one@npm:^5.0.0":
   version: 5.2.1
   resolution: "memoize-one@npm:5.2.1"
   checksum: 6b7dab7d8d9dca696d500dbc7f6b1445cbc4168d8208ee2746dd1a7f75378445d9bc6a2def7868afee81c87e630294456310f33f3f1eb738f69d748c797d87d5
@@ -21472,6 +21474,29 @@ next-pwa@5.2.21:
     react: ^16.8.0
     react-dom: ^16.8.0
   checksum: d302e53280d63c4a6567a6c32167e87a2dcaf3386ede5f180f92e6558421d9151d300ce9f159d11d80965a6158ae473f03ee2f0b4094049be49d94ff3825c32f
+  languageName: node
+  linkType: hard
+
+"react-window-infinite-loader@npm:^1.0.7":
+  version: 1.0.7
+  resolution: "react-window-infinite-loader@npm:1.0.7"
+  peerDependencies:
+    react: ^15.3.0 || ^16.0.0-alpha || ^17.0.0
+    react-dom: ^15.3.0 || ^16.0.0-alpha || ^17.0.0
+  checksum: 5460b4fd84ce9a068572d25a6a25a83377f5cf7f0302dc365961db8ebae82e32f1caa83fe2a01caf2b5e4d6abc33c867d2d20cd962c654e8602168043fe38768
+  languageName: node
+  linkType: hard
+
+"react-window@npm:^1.8.6":
+  version: 1.8.6
+  resolution: "react-window@npm:1.8.6"
+  dependencies:
+    "@babel/runtime": ^7.0.0
+    memoize-one: ">=3.1.1 <6"
+  peerDependencies:
+    react: ^15.0.0 || ^16.0.0 || ^17.0.0
+    react-dom: ^15.0.0 || ^16.0.0 || ^17.0.0
+  checksum: e2bfdfbe39f165c8ca4005b36837288546db5701fc6b53da0acb352317f5dad14cd7abbdff3b13644a8615074fa9841996249b2776f8f94e7efa4e37236b06a4
   languageName: node
   linkType: hard
 
