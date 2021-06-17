@@ -9,8 +9,10 @@ import {
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { useQueryParam, StringParam, withDefault } from "use-query-params";
+import { useQuery } from "@apollo/client";
 import { ImportImagesModalDropzone } from "./modal-dropzone/modal-dropzone";
 import { ImportImagesModalUrlList } from "./modal-url-list/modal-url-list";
+import { imagesQuery } from "../../../pages/images";
 
 export const ImportImagesModal = ({
   isOpen = false,
@@ -20,6 +22,8 @@ export const ImportImagesModal = ({
   onClose?: () => void;
 }) => {
   const router = useRouter();
+  const { refetch: refetchImages } = useQuery(imagesQuery);
+
   const [isCloseable, setCloseable] = useState(true);
   const [hasUploaded, setHasUploaded] = useState(false);
   const [mode, setMode] = useQueryParam(
@@ -32,6 +36,12 @@ export const ImportImagesModal = ({
       setMode(undefined, "replaceIn");
     }
   }, [isOpen, router?.isReady]);
+
+  useEffect(() => {
+    if (hasUploaded) {
+      refetchImages();
+    }
+  }, [hasUploaded]);
 
   return (
     <Modal
