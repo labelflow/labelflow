@@ -21,7 +21,7 @@ const IndexPage = () => {
 
   useEffect(() => {
     if (firstImageResult && !error) {
-      router.replace("/images");
+      router.replace({ pathname: "/images", query: router.query });
     }
   }, [firstImageResult, error]);
 
