@@ -13,15 +13,11 @@ export const QueryParamProviderComponent = (props: {
   const match = router.asPath.match(/[^?]+/);
   const pathname = match ? match[0] : router.asPath;
 
-  const location = useMemo(
-    () =>
-      typeof window !== "undefined"
-        ? window.location
-        : ({
-            search: router.asPath.replace(/[^?]+/u, ""),
-          } as Location),
-    [router.asPath]
-  );
+  const location = useMemo(() => {
+    return {
+      search: router.asPath.replace(/[^?]+/u, ""),
+    } as Location;
+  }, [router.asPath]);
 
   const history = useMemo(
     () => ({
