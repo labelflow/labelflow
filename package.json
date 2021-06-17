@@ -22,7 +22,8 @@
     "build": "cd typescript/strapi ; yarn build"
   },
   "workspaces": [
-    "typescript/*"
+    "typescript/*",
+    "typescript/strapi/.cache"
   ],
   "devDependencies": {
     "@babel/core": "^7.14.3",
