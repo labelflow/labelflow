@@ -12623,9 +12623,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"backend@workspace:typescript/backend":
+"backend@workspace:typescript/strapi":
   version: 0.0.0-use.local
-  resolution: "backend@workspace:typescript/backend"
+  resolution: "backend@workspace:typescript/strapi"
   dependencies:
     "@babel/runtime": 7.14.6
     jquery: 3.6.0
