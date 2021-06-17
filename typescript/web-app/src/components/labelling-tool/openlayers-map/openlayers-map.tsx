@@ -1,4 +1,4 @@
-import { useRef, useCallback, useContext } from "react";
+import { useRef, useCallback } from "react";
 import { useRouter } from "next/router";
 import { RouterContext } from "next/dist/next-server/lib/router-context";
 import { Extent, getCenter } from "ol/extent";
