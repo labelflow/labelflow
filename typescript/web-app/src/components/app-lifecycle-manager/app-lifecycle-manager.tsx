@@ -105,7 +105,10 @@ export const AppLifecycleManager = () => {
 
   return (
     <>
-      <WelcomeModal isServiceWorkerActive={isServiceWorkerActive} />
+      <WelcomeModal
+        isServiceWorkerActive={isServiceWorkerActive}
+        updateServiceWorker={updateServiceWorker}
+      />
       <UpdateServiceWorkerModal
         isOpen={isUpdateServiceWorkerModalOpen}
         onClose={closeUpdateServiceWorkerModal}

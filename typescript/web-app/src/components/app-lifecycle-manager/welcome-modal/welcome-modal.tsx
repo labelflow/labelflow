@@ -21,8 +21,10 @@ import { Logo } from "../../logo";
 
 export const WelcomeModal = ({
   isServiceWorkerActive,
+  updateServiceWorker,
 }: {
   isServiceWorkerActive: boolean;
+  updateServiceWorker?: () => void;
 }) => {
   // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
   // This param can have several values:
@@ -126,6 +128,11 @@ export const WelcomeModal = ({
               onClick={() => {
                 setParamModalWelcome(undefined, "replaceIn");
                 setHasUserClickedStart(true);
+                // This is needed to fix a rare bug in which the welcome modal is stuck
+                // in the "loading app" state when a new service worker is waiting AND
+                // the welcome modal is open.
+                // This never happens except in nominal user flows, but still
+                updateServiceWorker?.();
               }}
               loadingText="Loading the application"
             >
