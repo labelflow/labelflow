@@ -20,7 +20,6 @@ import { SelectInteraction } from "./select-interaction";
 import { Labels } from "./labels";
 import { CursorGuides } from "./cursor-guides";
 import { useLabellingStore, Tools } from "../../../connectors/labelling-state";
-import { LabellingContext } from "../labelling-context";
 
 const empty: any[] = [];
 
@@ -78,10 +77,11 @@ export const OpenlayersMap = () => {
   const viewRef = useRef<OlView | null>(null);
   const router = useRouter();
   const imageId = router.query?.id;
-  const { setView, zoomFactor } = useContext(LabellingContext);
   const selectedTool = useLabellingStore((state) => state.selectedTool);
   const setCanZoomIn = useLabellingStore((state) => state.setCanZoomIn);
   const setCanZoomOut = useLabellingStore((state) => state.setCanZoomOut);
+  const setView = useLabellingStore((state) => state.setView);
+  const zoomFactor = useLabellingStore((state) => state.zoomFactor);
 
   const image = useQuery<{
     image: Pick<Image, "id" | "url" | "width" | "height">;

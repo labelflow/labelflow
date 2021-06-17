@@ -3,7 +3,6 @@ import userEvent from "@testing-library/user-event";
 
 import { ZoomToolbar } from "../zoom-tool-bar";
 import { useLabellingStore } from "../../../../connectors/labelling-state";
-import { LabellingContext } from "../../labelling-context";
 
 beforeEach(() => {
   jest.clearAllMocks();
@@ -43,42 +42,28 @@ it("should disable zoom out if image is at maximum resolution", async () => {
   expect(screen.getByRole("button", { name: "Zoom out" })).toBeDisabled();
 });
 
-const contextValue = {
+useLabellingStore.setState({
   zoomByDelta: jest.fn(),
   setView: jest.fn(),
   zoomFactor: 0.6,
-};
+});
 
 it("should zoom out by a zoom factor", async () => {
   useLabellingStore.setState({ canZoomOut: true });
-  render(<ZoomToolbar />, {
-    wrapper: ({ children }) => (
-      <LabellingContext.Provider value={contextValue}>
-        {children}
-      </LabellingContext.Provider>
-    ),
-  });
+  render(<ZoomToolbar />);
 
   userEvent.click(screen.getByRole("button", { name: "Zoom out" }));
 
-  expect(contextValue.zoomByDelta).toHaveBeenCalledWith(
-    -contextValue.zoomFactor
-  );
+  const state = useLabellingStore.getState();
+  expect(state.zoomByDelta).toHaveBeenCalledWith(-state.zoomFactor);
 });
 
 it("should zoom in by a zoom factor", async () => {
   useLabellingStore.setState({ canZoomIn: true });
-  render(<ZoomToolbar />, {
-    wrapper: ({ children }) => (
-      <LabellingContext.Provider value={contextValue}>
-        {children}
-      </LabellingContext.Provider>
-    ),
-  });
+  render(<ZoomToolbar />);
 
   userEvent.click(screen.getByRole("button", { name: "Zoom in" }));
 
-  expect(contextValue.zoomByDelta).toHaveBeenCalledWith(
-    contextValue.zoomFactor
-  );
+  const state = useLabellingStore.getState();
+  expect(state.zoomByDelta).toHaveBeenCalledWith(state.zoomFactor);
 });
