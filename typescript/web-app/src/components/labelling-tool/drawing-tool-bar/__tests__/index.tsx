@@ -11,7 +11,7 @@ import { DrawingToolbar } from "..";
 test("should display tooltip", async () => {
   render(<DrawingToolbar />);
 
-  const selectionToolButton = await screen.getByLabelText(/Select tool/i);
+  const selectionToolButton = await screen.getByLabelText(/Selection tool/i);
 
   userEvent.hover(selectionToolButton as HTMLElement);
 
