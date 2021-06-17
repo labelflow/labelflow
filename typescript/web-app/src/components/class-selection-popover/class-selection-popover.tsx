@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useMemo } from "react";
 import {
   Box,
   Popover,
@@ -30,6 +30,34 @@ const noneClass = {
 const MagnifierIcon = chakra(IoSearch);
 const CloseCircleIcon = chakra(RiCloseCircleFill);
 
+const filterLabelClasses = ({
+  labelClasses,
+  inputValueCombobox,
+}: {
+  labelClasses: LabelClass[];
+  inputValueCombobox: string;
+}): (LabelClass | CreateClassInput | NoneClass)[] => {
+  const labelClassesWithNoneClass = [...labelClasses, noneClass];
+  const createClassItem =
+    inputValueCombobox &&
+    labelClassesWithNoneClass.filter(
+      (labelClass: LabelClass | NoneClass) =>
+        labelClass.name === inputValueCombobox
+    ).length === 0
+      ? [{ name: inputValueCombobox, type: "CreateClassItem" }]
+      : [];
+
+  const filteredLabelClasses = labelClassesWithNoneClass.filter(
+    (labelClass: LabelClass | NoneClass) => {
+      return labelClass.name
+        .toLowerCase()
+        .startsWith((inputValueCombobox ?? "").toLowerCase());
+    }
+  );
+
+  return [...filteredLabelClasses, ...createClassItem];
+};
+
 export const ClassSelectionPopover = ({
   isOpen,
   onClose = () => {},
@@ -47,10 +75,15 @@ export const ClassSelectionPopover = ({
   selectedLabelClassId?: string | null;
   trigger?: React.ReactNode;
 }) => {
-  const labelClassesWithNoneClass = [...labelClasses, noneClass];
-  const [inputItems, setInputItems] = useState<
-    (LabelClass | CreateClassInput | NoneClass)[]
-  >(labelClassesWithNoneClass);
+  const [inputValueCombobox, setInputValueCombobox] = useState<string>("");
+  const filteredLabelClasses = useMemo(
+    () =>
+      filterLabelClasses({
+        labelClasses,
+        inputValueCombobox,
+      }),
+    [labelClasses, inputValueCombobox]
+  );
   const {
     reset,
     inputValue,
@@ -61,25 +94,9 @@ export const ClassSelectionPopover = ({
     getItemProps,
   } = useCombobox({
     itemToString: (item: { name: string } | null): string => item?.name ?? "",
-    items: inputItems,
-    onInputValueChange: ({ inputValue: inputValueCombobox }) => {
-      const createClassItem =
-        inputValueCombobox &&
-        labelClassesWithNoneClass.filter(
-          (labelClass: LabelClass | NoneClass) =>
-            labelClass.name === inputValueCombobox
-        ).length === 0
-          ? [{ name: inputValueCombobox, type: "CreateClassItem" }]
-          : [];
-
-      const filteredLabelClasses = labelClassesWithNoneClass.filter(
-        (labelClass: LabelClass | NoneClass) => {
-          return labelClass.name
-            .toLowerCase()
-            .startsWith((inputValueCombobox ?? "").toLowerCase());
-        }
-      );
-      return setInputItems([...filteredLabelClasses, ...createClassItem]);
+    items: filteredLabelClasses,
+    onInputValueChange: ({ inputValue: newInputValue }) => {
+      return setInputValueCombobox(newInputValue ?? "");
     },
     onSelectedItemChange: ({
       selectedItem,
@@ -157,28 +174,30 @@ export const ClassSelectionPopover = ({
               </InputGroup>
             </Box>
             <Box pt="1" {...getMenuProps()}>
-              {inputItems.map(
+              {filteredLabelClasses.map(
                 (
                   item: LabelClass | CreateClassInput | NoneClass,
                   index: number
-                ) => (
-                  <ClassListItem
-                    itemProps={getItemProps({ item, index })}
-                    item={item}
-                    highlight={highlightedIndex === index}
-                    selected={
-                      ("id" in item && item.id === selectedLabelClassId) ||
-                      (selectedLabelClassId === null &&
-                        "type" in item &&
-                        item.type === "NoneClass")
-                    }
-                    isCreateClassItem={
-                      "type" in item && item.type === "CreateClassItem"
-                    }
-                    index={index}
-                    key={`${item.name}${index}`}
-                  />
-                )
+                ) => {
+                  return (
+                    <ClassListItem
+                      itemProps={getItemProps({ item, index })}
+                      item={item}
+                      highlight={highlightedIndex === index}
+                      selected={
+                        ("id" in item && item.id === selectedLabelClassId) ||
+                        (selectedLabelClassId === null &&
+                          "type" in item &&
+                          item.type === "NoneClass")
+                      }
+                      isCreateClassItem={
+                        "type" in item && item.type === "CreateClassItem"
+                      }
+                      index={index}
+                      key={`${item.name}${index}`}
+                    />
+                  );
+                }
               )}
             </Box>
           </Box>
