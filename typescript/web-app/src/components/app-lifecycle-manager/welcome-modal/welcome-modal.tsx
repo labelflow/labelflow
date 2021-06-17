@@ -18,7 +18,6 @@ import {
 import { useQueryParam, StringParam } from "use-query-params";
 
 import { Logo } from "../../logo";
-import {} from "../../../utils/query-param-bool";
 
 export const WelcomeModal = ({
   isServiceWorkerActive,
