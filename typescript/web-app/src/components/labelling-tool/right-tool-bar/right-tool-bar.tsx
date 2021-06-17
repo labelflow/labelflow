@@ -1,7 +1,12 @@
 import { useContext } from "react";
-import { IconButton } from "@chakra-ui/react";
+import { IconButton, chakra } from "@chakra-ui/react";
+import { RiZoomInLine, RiZoomOutLine } from "react-icons/ri";
+
 import { useLabellingStore } from "../../../connectors/labelling-state";
 import { LabellingContext } from "../labelling-context";
+
+const ZoomOutIcon = chakra(RiZoomOutLine);
+const ZoomInIcon = chakra(RiZoomInLine);
 
 export const RightToolbar = () => {
   const { zoomByDelta, zoomFactor } = useContext(LabellingContext);
@@ -11,7 +16,7 @@ export const RightToolbar = () => {
   return (
     <>
       <IconButton
-        icon={<span>-</span>}
+        icon={<ZoomOutIcon fontSize="lg" />}
         backgroundColor="white"
         aria-label="Zoom out"
         pointerEvents="initial"
@@ -21,7 +26,7 @@ export const RightToolbar = () => {
         }}
       />
       <IconButton
-        icon={<span>+</span>}
+        icon={<ZoomInIcon fontSize="lg" />}
         backgroundColor="white"
         aria-label="Zoom in"
         pointerEvents="initial"
