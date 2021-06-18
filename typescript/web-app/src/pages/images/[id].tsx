@@ -100,10 +100,12 @@ const ImagePage = () => {
             <Spinner size="xl" />
           </Center>
         ) : (
-          <LabellingTool />
+          <Box flex="1">
+            <LabellingTool />
+          </Box>
         )}
 
-        <Box height="110px" bg="white">
+        <Box height="110px" bg="white" overflow="hidden">
           <Gallery />
         </Box>
       </Flex>

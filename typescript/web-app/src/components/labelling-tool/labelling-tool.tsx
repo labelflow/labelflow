@@ -5,7 +5,6 @@ import { useEffect } from "react";
 import { OpenlayersMap } from "./openlayers-map";
 import { DrawingToolbar } from "./drawing-tool-bar";
 import { ImageNavigationToolbar } from "./image-navigation-tool-bar";
-import { Gallery } from "./gallery";
 import { useUndoStore } from "../../connectors/undo-store";
 
 export const LabellingTool = () => {
@@ -16,7 +15,7 @@ export const LabellingTool = () => {
   useEffect(() => clear(), [imageId]);
 
   return (
-    <Box height="100%" position="relative" overflow="hidden" flex="1">
+    <Box height="100%" position="relative" overflow="hidden">
       <OpenlayersMap />
       <VStack
         padding={4}
