@@ -124,6 +124,7 @@ type Mutation {
   updateLabel(where: LabelWhereUniqueInput!, data: LabelUpdateInput!): Label
   deleteLabel(where: LabelWhereUniqueInput!): Label
   createLabelClass(data: LabelClassCreateInput!): LabelClass
+  deleteLabelClass(where: LabelClassWhereUniqueInput!): LabelClass
 }
 
 type Query {
@@ -136,6 +137,7 @@ type Query {
   labelClasses(first: Int, skip: Int): [LabelClass!]!
   labelsAggregates: LabelsAggregates!
   exportToCoco: String!
+  label(where: LabelWhereUniqueInput!): Label!
 }
 
 scalar Upload

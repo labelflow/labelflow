@@ -13,4 +13,5 @@ type Query {
   labelClasses(first: Int, skip: Int): [LabelClass!]!
   labelsAggregates: LabelsAggregates!
   exportToCoco: String!
+  label(where: LabelWhereUniqueInput!): Label!
 }

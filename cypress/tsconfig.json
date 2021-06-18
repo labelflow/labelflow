@@ -7,7 +7,8 @@
     "isolatedModules": false,
     // be explicit about types included
     // to avoid clashing with Jest types
-    "types": ["cypress"]
+    "types": ["cypress"],
+    "target": "es2019"
   },
   "include": ["../node_modules/cypress", "./**/*.ts"],
   "exclude": ["node_modules"]

@@ -395,6 +395,55 @@ describe("Label resolver test suite", () => {
       })
     ).rejects.toThrow("No label class with such id");
   });
+
+  test("Query label when id doesn't exists", async () => {
+    return expect(
+      client.query({
+        query: gql`
+          query getlabel($id: ID!) {
+            label(where: { id: $id }) {
+              id
+            }
+          }
+        `,
+        variables: {
+          id: "some-id",
+        },
+      })
+    ).rejects.toThrow("No label with such id");
+  });
+
+  test("Query a specific label from ID should return the label", async () => {
+    const labelId = "my-label-id";
+
+    const imageId = await createImage("an-image");
+    await createLabel({
+      ...labelData,
+      id: labelId,
+      imageId,
+    });
+
+    const queryResult = await client.query({
+      query: gql`
+        query getLabel($id: ID!) {
+          label(where: { id: $id }) {
+            id
+            x
+            y
+            width
+            height
+          }
+        }
+      `,
+      variables: {
+        id: labelId,
+      },
+    });
+
+    expect(queryResult.data.label).toEqual(
+      expect.objectContaining({ ...labelData, id: labelId })
+    );
+  });
 });
 
 describe("LabelsAggregates resolver test suite", () => {
