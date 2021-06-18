@@ -3,8 +3,9 @@ import { Map as OlMap, MapBrowserEvent } from "ol";
 import { Box } from "@chakra-ui/react";
 
 const style = {
-  "mix-blend-mode": "exclusion",
-  backgroundColor: "#ffffff",
+  backgroundColor: "#000000",
+  borderColor: "#ffffff",
+  borderWidth: "1px",
 };
 
 export const CursorGuides = ({ map }: { map: OlMap | null }) => {
@@ -29,10 +30,10 @@ export const CursorGuides = ({ map }: { map: OlMap | null }) => {
        * So we have withdraw 1 to follow the bounding box edges.
        */
       horizontalBarRef.current.style.transform = `translateY(${
-        e.pixel[1] - 1
+        e.pixel[1] - 1.5
       }px)`;
       verticalBarRef.current.style.transform = `translateX(${
-        e.pixel[0] - 1
+        e.pixel[0] - 1.5
       }px)`;
     };
     map.on("pointermove", onPointerMove);
@@ -45,7 +46,7 @@ export const CursorGuides = ({ map }: { map: OlMap | null }) => {
       <Box
         ref={horizontalBarRef}
         w="100%"
-        h="2px"
+        h="3px"
         position="absolute"
         pointerEvents="none"
         willChange="transform"
@@ -54,7 +55,7 @@ export const CursorGuides = ({ map }: { map: OlMap | null }) => {
       />
       <Box
         ref={verticalBarRef}
-        w="2px"
+        w="3px"
         h="100%"
         position="absolute"
         pointerEvents="none"
