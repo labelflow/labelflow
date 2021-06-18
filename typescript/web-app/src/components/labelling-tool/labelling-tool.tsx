@@ -1,4 +1,4 @@
-import { Box, HStack, VStack, Flex } from "@chakra-ui/react";
+import { Box, HStack, VStack } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 
