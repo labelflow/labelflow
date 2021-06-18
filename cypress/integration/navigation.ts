@@ -23,7 +23,6 @@ describe("Labelling tool", () => {
     cy.contains("photo").click();
     cy.get('[aria-label="Drawing tool"]', { timeout: 15000 }).click();
     // Create one bb
-    cy.wait(500);// Not sure why we need this, but the test randomly fails it we don't add this
     cy.get("main").click(400, 100);
     cy.get("main").click(600, 200);
 
@@ -31,28 +30,23 @@ describe("Labelling tool", () => {
     // Create new class
     cy.get("main").rightclick(500, 150);
     cy.focused().type("My new class{enter}");
-    cy.wait(500); // Not sure why we need this, but the test randomly fails it we don't add this
     cy.get("main").rightclick(500, 150);
     cy.get(`[aria-current="true"]`).contains("My new class").should("be.visible");
     // Assign label to class None
     cy.contains("None").click();
-    cy.wait(500); // Not sure why we need this, but the test randomly fails it we don't add this
     cy.get("main").rightclick(500, 150);
     cy.get(`[aria-current="true"]`).contains("None").should("be.visible");
     // Undo label class assignment
     cy.get('[aria-label="Undo tool"]').click();
-    cy.wait(500); // Not sure why we need this, but the test randomly fails it we don't add this
     cy.get("main").rightclick(500, 150);
     cy.get(`[aria-current="true"]`).contains("My new class").should("be.visible");
     // Redo label class assignment
     cy.get("main").click(350, 50);
     cy.get('[aria-label="Redo tool"]').click();
-    cy.wait(500); // Not sure why we need this, but the test randomly fails it we don't add this
     cy.get("main").rightclick(500, 150);
     cy.get(`[aria-current="true"]`).contains("None").should("be.visible");
     // Assign label to class My new class
     cy.contains("My new class").click();
-    cy.wait(500); // Not sure why we need this, but the test randomly fails it we don't add this
     cy.get("main").rightclick(500, 150);
     cy.get(`[aria-current="true"]`).contains("My new class").should("be.visible");
     cy.get('[aria-label="Next image"]').click();
