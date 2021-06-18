@@ -15,6 +15,7 @@ export * from "./mapbox-vector-tiles.stories";
 export * from "./popup.stories";
 export * from "./reprojection-image.stories";
 export * from "./reprojection-wgs84.stories";
+export * from "./select-features.stories";
 export * from "./static-image.stories";
 export * from "./turf.stories";
 export * from "./vector-tiles.stories";

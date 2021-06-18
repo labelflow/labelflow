@@ -31,7 +31,7 @@ export const SelectionTool = () => {
         aria-checked={selectedTool === Tools.SELECTION}
         onClick={() => setSelectedTool(Tools.SELECTION)}
         backgroundColor="white"
-        aria-label="Select tool"
+        aria-label="Selection tool"
         pointerEvents="initial"
         isActive={selectedTool === Tools.SELECTION}
       />

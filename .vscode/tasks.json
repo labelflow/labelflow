@@ -1,0 +1,139 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "yarn install",
+            "type": "process",
+            "command": "yarn",
+            "group": "build",
+            "problemMatcher": []
+        },
+        {
+            "label": "web-app:dev",
+            "type": "process",
+            "command": "yarn",
+            "args": [
+                "dev"
+            ],
+            "options": {
+                "cwd": "./typescript/web-app"
+            },
+            "group": "build",
+            "problemMatcher": []
+        },
+        {
+            "label": "web-app:build",
+            "type": "process",
+            "command": "yarn",
+            "args": [
+                "build"
+            ],
+            "options": {
+                "cwd": "./typescript/web-app"
+            },
+            "group": "build",
+            "problemMatcher": []
+        },
+        {
+            "label": "web-app:start",
+            "type": "process",
+            "command": "yarn",
+            "args": [
+                "start"
+            ],
+            "options": {
+                "cwd": "./typescript/web-app"
+            },
+            "group": "build",
+            "problemMatcher": []
+        },
+        {
+            "label": "web-site:dev",
+            "type": "process",
+            "command": "yarn",
+            "args": [
+                "dev"
+            ],
+            "options": {
+                "cwd": "./typescript/web-site"
+            },
+            "group": "build",
+            "problemMatcher": []
+        },
+        {
+            "label": "storybook",
+            "type": "process",
+            "command": "yarn",
+            "args": [
+                "storybook"
+            ],
+            "group": "build",
+            "problemMatcher": []
+        },
+        {
+            "label": "jest",
+            "type": "process",
+            "command": "yarn",
+            "args": [
+                "test",
+                "${input:jestTestPath}"
+            ],
+            "group": "test",
+            "problemMatcher": []
+        },
+        {
+            "label": "jest:watch",
+            "type": "process",
+            "command": "yarn",
+            "args": [
+                "test",
+                "--watch",
+                "${input:jestTestPath}"
+            ],
+            "group": "test",
+            "problemMatcher": []
+        },
+        {
+            "label": "jest:here",
+            "type": "process",
+            "command": "yarn",
+            "args": [
+                "test",
+                "--watch",
+                "${file}"
+            ],
+            "group": "test",
+            "problemMatcher": []
+        },
+        {
+            "label": "cypress:open",
+            "type": "process",
+            "command": "yarn",
+            "args": [
+                "cypress:open"
+            ],
+            "group": "test",
+            "problemMatcher": []
+        },
+        {
+            "label": "cypress:run",
+            "type": "process",
+            "command": "yarn",
+            "args": [
+                "cypress:run"
+            ],
+            "group": "test",
+            "problemMatcher": []
+        }
+    ],
+    "inputs": [
+        {
+            "type": "promptString",
+            "id": "jestTestPath",
+            "description": "Path to your test. Leave it empty to match all tests.",
+            "default": ""
+        }
+    ]
+}
