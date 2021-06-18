@@ -12,7 +12,7 @@ describe("Labelling tool", () => {
 
   it("should clear the undo redo store between images", () => {
     // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
-    cy.visit("http://localhost:3000/images?modal-welcome=closed&modal-update-service-worker=closed");
+    cy.visit("http://localhost:3000/images?modal-welcome=closed&modal-update-service-worker=update");
     cy.contains("Add images").click();
     cy.contains("Import from a list of URLs instead").click();
     cy.get("textarea").type(
