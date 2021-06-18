@@ -2,7 +2,7 @@ import React from "react";
 import Link from "next/link";
 import { useQuery } from "@apollo/client";
 import gql from "graphql-tag";
-import { Image, Box } from "@chakra-ui/react";
+import { Image, Box, Skeleton, Badge } from "@chakra-ui/react";
 import { FixedSizeList as List } from "react-window";
 import InfiniteLoader from "react-window-infinite-loader";
 import useMeasure from "react-use-measure";
@@ -45,15 +45,28 @@ export const Gallery = () => {
     style: React.CSSProperties;
   }) => (
     <Link href={`/images/${data?.images?.[index]?.id}`}>
-      <Image
-        src={data?.images?.[index]?.url}
-        align="center center"
-        fit="cover"
-        bgColor="gray.200"
-        border="solid 1px"
-        borderColor="gray.600"
-        style={style}
-      />
+      <Box style={style} pl="7.5px" pr="7.5px" pb={4} position="relative">
+        <Badge
+          pointerEvents="none"
+          position="absolute"
+          top="5px"
+          left="12.5px"
+          bg="rgba(0, 0, 0, 0.6)"
+          color="white"
+          borderRadius="full"
+        >
+          {index + 1}
+        </Badge>
+        <Image
+          src={data?.images?.[index]?.url}
+          fallback={<Skeleton height="100%" width="100%" borderRadius="md" />}
+          height="100%"
+          width="100%"
+          align="center center"
+          fit="cover"
+          borderRadius="md"
+        />
+      </Box>
     </Link>
   );
 
@@ -81,7 +94,7 @@ export const Gallery = () => {
   };
 
   return (
-    <Box ref={containerRef}>
+    <Box ref={containerRef} pt={4}>
       {width && (
         <InfiniteLoader
           isItemLoaded={(index: number) => data?.images?.[index] != null}
@@ -99,7 +112,7 @@ export const Gallery = () => {
               className="List"
               height={90}
               itemCount={itemCount}
-              itemSize={135}
+              itemSize={150}
               onItemsRendered={onItemsRendered}
               ref={ref}
               layout="horizontal"

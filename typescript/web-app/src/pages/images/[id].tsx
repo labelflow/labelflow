@@ -105,7 +105,7 @@ const ImagePage = () => {
           </Box>
         )}
 
-        <Box height="110px" bg="white" overflow="hidden">
+        <Box bg="white" overflow="hidden">
           <Gallery />
         </Box>
       </Flex>
