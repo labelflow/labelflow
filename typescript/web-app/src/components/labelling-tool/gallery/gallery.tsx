@@ -33,74 +33,24 @@ const getImageOffset = (width: number) => {
   return Math.floor(width / itemWidth / 2);
 };
 
-export const Gallery = () => {
-  const listRef = useRef<List | null>(null);
-  const previousImageIndex = useRef<number | null>();
-  const router = useRouter();
-  const imageId = router.query.id;
+const usePaginatedImages = (): {
+  count: number;
+  data:
+    | {
+        images: Array<ImageType | null>;
+      }
+    | undefined;
+  loading: boolean;
+  loadMoreItems: (min: number, max: number) => Promise<any>;
+} => {
   /* We need to replace it with a proper count query */
   const imagesResult =
     useQuery<{ images: Pick<ImageType, "id">[] }>(imagesCountQuery);
-  const itemCount = imagesResult?.data?.images?.length ?? 0;
-  const currentImageIndex = imagesResult?.data?.images.findIndex(
-    (image) => image.id === imageId
-  );
-  const [containerRef, { width }] = useMeasure();
-
-  useEffect(() => {
-    if (!currentImageIndex || !listRef.current || !width) return;
-    // Initialize previousImageIndex when user just came in
-    if (!previousImageIndex.current) {
-      previousImageIndex.current = currentImageIndex;
-    }
-    if (previousImageIndex.current <= currentImageIndex) {
-      listRef.current.scrollToItem(currentImageIndex + getImageOffset(width));
-    } else {
-      listRef.current.scrollToItem(currentImageIndex - getImageOffset(width));
-    }
-    previousImageIndex.current = currentImageIndex;
-  }, [currentImageIndex, listRef.current, width]);
+  const count = imagesResult?.data?.images?.length ?? 0;
 
   const { data, loading, fetchMore } = useQuery<{
     images: Array<ImageType | null>;
   }>(paginatedImagesQuery, { variables: { first: 10, skip: 10 } });
-
-  const Item = ({
-    index,
-    style,
-  }: {
-    index: number;
-    style: React.CSSProperties;
-  }) => (
-    <Link href={`/images/${data?.images?.[index]?.id}`}>
-      <Box style={style} pl="7.5px" pr="7.5px" pb={4} position="relative">
-        <Badge
-          pointerEvents="none"
-          position="absolute"
-          top="5px"
-          left="12.5px"
-          bg="rgba(0, 0, 0, 0.6)"
-          color="white"
-          borderRadius="full"
-        >
-          {index + 1}
-        </Badge>
-        <Image
-          src={data?.images?.[index]?.url}
-          fallback={<Skeleton height="100%" width="100%" borderRadius="md" />}
-          height="100%"
-          width="100%"
-          align="center center"
-          fit="cover"
-          border="2px solid"
-          borderColor={
-            imageId === data?.images?.[index]?.id ? "brand.500" : "transparent"
-          }
-          borderRadius="md"
-        />
-      </Box>
-    </Link>
-  );
 
   const loadMoreItems = (min: number, max: number) => {
     return fetchMore({
@@ -124,6 +74,48 @@ export const Gallery = () => {
       },
     });
   };
+
+  return {
+    count,
+    data,
+    loading: imagesResult.loading || loading,
+    loadMoreItems,
+  };
+};
+
+export const Gallery = () => {
+  const listRef = useRef<List | null>(null);
+  const previousImageIndex = useRef<number | null>();
+  const router = useRouter();
+  const imageId = router.query.id;
+  /* We need to replace it with a proper count query */
+  const imagesResult =
+    useQuery<{ images: Pick<ImageType, "id">[] }>(imagesCountQuery);
+  const currentImageIndex = imagesResult?.data?.images.findIndex(
+    (image) => image.id === imageId
+  );
+  const [containerRef, { width }] = useMeasure();
+
+  const {
+    count: itemCount,
+    data,
+    loading,
+    loadMoreItems,
+  } = usePaginatedImages();
+
+  useEffect(() => {
+    if (!currentImageIndex || !listRef.current || !width) return;
+    // Initialize previousImageIndex when user just came in
+    if (!previousImageIndex.current) {
+      previousImageIndex.current = currentImageIndex;
+    }
+    if (previousImageIndex.current <= currentImageIndex) {
+      listRef.current.scrollToItem(currentImageIndex + getImageOffset(width));
+    } else {
+      listRef.current.scrollToItem(currentImageIndex - getImageOffset(width));
+    }
+    previousImageIndex.current = currentImageIndex;
+  }, [currentImageIndex, listRef.current, width]);
 
   const isLoading = !width && loading && imagesResult.loading;
 
@@ -151,7 +143,50 @@ export const Gallery = () => {
               layout="horizontal"
               width={width}
             >
-              {Item}
+              {({ index, style }) => (
+                <Link href={`/images/${data?.images?.[index]?.id}`}>
+                  <Box
+                    style={style}
+                    pl="7.5px"
+                    pr="7.5px"
+                    pb={4}
+                    position="relative"
+                  >
+                    <Badge
+                      pointerEvents="none"
+                      position="absolute"
+                      top="5px"
+                      left="12.5px"
+                      bg="rgba(0, 0, 0, 0.6)"
+                      color="white"
+                      borderRadius="full"
+                    >
+                      {index + 1}
+                    </Badge>
+                    <Image
+                      src={data?.images?.[index]?.url}
+                      fallback={
+                        <Skeleton
+                          height="100%"
+                          width="100%"
+                          borderRadius="md"
+                        />
+                      }
+                      height="100%"
+                      width="100%"
+                      align="center center"
+                      fit="cover"
+                      border="2px solid"
+                      borderColor={
+                        imageId === data?.images?.[index]?.id
+                          ? "brand.500"
+                          : "transparent"
+                      }
+                      borderRadius="md"
+                    />
+                  </Box>
+                </Link>
+              )}
             </List>
           )}
         </InfiniteLoader>
