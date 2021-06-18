@@ -71,15 +71,15 @@ const createLabelClass = async (
 const deleteLabelClass = async (_: any, args: MutationDeleteLabelClassArgs) => {
   const labelClassId = args.where.id;
 
-  const labelClass = await db.labelClass.get(labelClassId);
+  const labelClassToDelete = await db.labelClass.get(labelClassId);
 
-  if (!labelClass) {
+  if (!labelClassToDelete) {
     throw new Error("No labelClass with such id");
   }
 
   await db.labelClass.delete(labelClassId);
 
-  return labelClass;
+  return labelClassToDelete;
 };
 
 export default {

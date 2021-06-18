@@ -79,21 +79,21 @@ const createLabel = async (
 const deleteLabel = async (_: any, args: MutationDeleteLabelArgs) => {
   const labelId = args.where.id;
 
-  const label = await db.label.get(labelId);
+  const labelToDelete = await db.label.get(labelId);
 
-  if (!label) {
+  if (!labelToDelete) {
     throw new Error("No label with such id");
   }
 
   await db.label.delete(labelId);
 
-  return label;
+  return labelToDelete;
 };
 
 const updateLabel = async (_: any, args: MutationUpdateLabelArgs) => {
   const labelId = args.where.id;
 
-  const label = await db.label.get(labelId);
+  const labelToUpdate = await db.label.get(labelId);
 
   if ("labelClassId" in args.data && args.data.labelClassId != null) {
     const labelClassToConnect = await db.labelClass.get(args.data.labelClassId);
@@ -103,7 +103,7 @@ const updateLabel = async (_: any, args: MutationUpdateLabelArgs) => {
     }
   }
 
-  if (!label) {
+  if (!labelToUpdate) {
     throw new Error("No label with such id");
   }
 

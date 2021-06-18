@@ -50,6 +50,7 @@ export const SelectFeatures = () => {
         />
       </Map>
       <form className="form-inline">
+        {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
         <label htmlFor="type">Action type &nbsp;</label>
         <select id="type" onChange={(e) => setSelectMethod(e.target.value)}>
           <option value="click" selected>
