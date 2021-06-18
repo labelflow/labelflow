@@ -21,7 +21,7 @@ describe("Labelling tool", () => {
     cy.contains("Start Import").click();
     cy.get(`[aria-label="Close"]`).click();
     cy.contains("photo").click();
-    cy.get('[aria-label="Drawing tool"]', { timeout: 15000 }).click();
+    cy.get('[aria-label="Drawing tool"]', { timeout: 30000 }).click();
     // Create one bb
     cy.get("main").click(400, 100);
     cy.get("main").click(600, 200);
