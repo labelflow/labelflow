@@ -1,5 +1,6 @@
 import { View as OlView } from "ol";
 import { zoomByDelta as olZoomByDelta } from "ol/interaction/Interaction";
+// import type ZustandCreate from "zustand";
 import create from "zustand-store-addons";
 
 import {
@@ -9,16 +10,24 @@ import {
 
 export enum Tools {
   SELECTION = "select",
-  BOUNDING_BOX = "box",
+  BOX = "box",
+}
+
+export enum BoxDrawingToolState {
+  IDLE = "idle",
+  DRAWING = "drawing",
 }
 
 export type LabellingState = {
   zoomFactor: number;
   view: OlView | null;
+  setView: (view: OlView) => void;
   canZoomIn: boolean;
   canZoomOut: boolean;
-  selectedTool: Tools;
   selectedLabelId: string | null;
+  selectedTool: Tools;
+  boxDrawingToolState: BoxDrawingToolState;
+  setBoxDrawingToolState: (state: BoxDrawingToolState) => void;
   setCanZoomIn: (canZoomIn: boolean) => void;
   setCanZoomOut: (canZoomOut: boolean) => void;
   setSelectedTool: (tool: Tools) => void;
@@ -26,7 +35,7 @@ export type LabellingState = {
   zoomByDelta: (ratio: number) => void;
 };
 
-export const useLabellingStore = create(
+export const useLabellingStore = create<LabellingState>(
   (set, get) => ({
     view: null,
     zoomFactor: 0.5,
@@ -34,6 +43,9 @@ export const useLabellingStore = create(
     canZoomOut: false,
     selectedTool: getRouterValue("selectedTool") ?? Tools.SELECTION,
     selectedLabelId: getRouterValue("selectedLabelId") ?? null,
+    boxDrawingToolState: BoxDrawingToolState.IDLE,
+    setBoxDrawingToolState: (boxDrawingToolState: BoxDrawingToolState) =>
+      set({ boxDrawingToolState }),
     setView: (view: OlView) => set({ view }),
     setSelectedTool: (tool: Tools) => set({ selectedTool: tool }),
     setSelectedLabelId: (labelId: string) => set({ selectedLabelId: labelId }),

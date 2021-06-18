@@ -140,7 +140,7 @@ export const ClassSelectionPopover = ({
       preventOverflow
     >
       {trigger && <PopoverTrigger>{trigger}</PopoverTrigger>}
-      <PopoverContent borderColor="gray.200">
+      <PopoverContent borderColor="gray.200" cursor="default">
         <PopoverBody pl="0" pr="0" pt="0">
           <Box>
             <Box {...getComboboxProps()} pl="3" pr="3" pt="3">

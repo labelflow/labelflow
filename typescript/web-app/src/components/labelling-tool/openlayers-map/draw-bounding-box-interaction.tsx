@@ -5,7 +5,11 @@ import GeometryType from "ol/geom/GeometryType";
 import { ApolloClient, useApolloClient } from "@apollo/client";
 import gql from "graphql-tag";
 
-import { useLabellingStore, Tools } from "../../../connectors/labelling-state";
+import {
+  useLabellingStore,
+  Tools,
+  BoxDrawingToolState,
+} from "../../../connectors/labelling-state";
 import { useUndoStore, Effect } from "../../../connectors/undo-store";
 
 const createLabelMutation = gql`
@@ -103,12 +107,16 @@ export const DrawBoundingBoxInteraction = () => {
   const imageId = useRouter().query?.id;
 
   const selectedTool = useLabellingStore((state) => state.selectedTool);
+
+  const setBoxDrawingToolState = useLabellingStore(
+    (state) => state.setBoxDrawingToolState
+  );
   const setSelectedLabelId = useLabellingStore(
     (state) => state.setSelectedLabelId
   );
   const { perform } = useUndoStore();
 
-  if (selectedTool !== Tools.BOUNDING_BOX) {
+  if (selectedTool !== Tools.BOX) {
     return null;
   }
   if (typeof imageId !== "string") {
@@ -134,6 +142,14 @@ export const DrawBoundingBoxInteraction = () => {
         geometryFunction,
       }}
       style={style}
+      onDrawabort={() => {
+        setBoxDrawingToolState(BoxDrawingToolState.IDLE);
+        return true;
+      }}
+      onDrawstart={() => {
+        setBoxDrawingToolState(BoxDrawingToolState.DRAWING);
+        return true;
+      }}
       onDrawend={(drawEvent: DrawEvent) => {
         const [x, y, destX, destY] = drawEvent.feature
           .getGeometry()
@@ -154,6 +170,7 @@ export const DrawBoundingBoxInteraction = () => {
             }
           )
         );
+        setBoxDrawingToolState(BoxDrawingToolState.IDLE);
       }}
     />
   );

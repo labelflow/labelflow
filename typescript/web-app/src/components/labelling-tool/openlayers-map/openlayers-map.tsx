@@ -21,7 +21,11 @@ import { SelectInteraction } from "./select-interaction";
 import { Labels } from "./labels";
 import { EditLabelClass } from "./edit-label-class";
 import { CursorGuides } from "./cursor-guides";
-import { useLabellingStore, Tools } from "../../../connectors/labelling-state";
+import {
+  useLabellingStore,
+  Tools,
+  BoxDrawingToolState,
+} from "../../../connectors/labelling-state";
 
 const empty: any[] = [];
 
@@ -83,6 +87,9 @@ export const OpenlayersMap = () => {
   const router = useRouter();
   const imageId = router.query?.id;
   const selectedTool = useLabellingStore((state) => state.selectedTool);
+  const boxDrawingToolState = useLabellingStore(
+    (state) => state.boxDrawingToolState
+  );
   const setCanZoomIn = useLabellingStore((state) => state.setCanZoomIn);
   const setCanZoomOut = useLabellingStore((state) => state.setCanZoomOut);
   const setView = useLabellingStore((state) => state.setView);
@@ -106,7 +113,7 @@ export const OpenlayersMap = () => {
 
       if (e.dragging) {
         target.style.cursor = "grabbing";
-      } else if (selectedTool === Tools.BOUNDING_BOX) {
+      } else if (selectedTool === Tools.BOX) {
         target.style.cursor = "crosshair";
       } else if (selectedTool === Tools.SELECTION) {
         const hit = mapRef.current.hasFeatureAtPixel(e.pixel);
@@ -139,9 +146,9 @@ export const OpenlayersMap = () => {
           return false;
         }}
       >
-        {selectedTool === Tools.BOUNDING_BOX && (
-          <CursorGuides map={mapRef.current} />
-        )}
+        {selectedTool === Tools.BOX &&
+          boxDrawingToolState !== BoxDrawingToolState.DRAWING &&
+          !editClass && <CursorGuides map={mapRef.current} />}
         <Map
           ref={mapRef}
           args={{ controls: empty }}
