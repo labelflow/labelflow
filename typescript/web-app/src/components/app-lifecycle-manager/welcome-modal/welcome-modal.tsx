@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 import {
   Modal,
@@ -15,10 +15,9 @@ import {
   ModalHeader,
   useColorModeValue as mode,
 } from "@chakra-ui/react";
-import { useQueryParam } from "use-query-params";
+import { useQueryParam, StringParam } from "use-query-params";
 
 import { Logo } from "../../logo";
-import { BoolParam } from "../../../utils/query-param-bool";
 
 export const WelcomeModal = ({
   isServiceWorkerActive,
@@ -26,14 +25,26 @@ export const WelcomeModal = ({
   isServiceWorkerActive: boolean;
 }) => {
   // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
-  const [isDisabled] = useQueryParam("modal-welcome-disable", BoolParam);
+  // This param can have several values:
+  //   - undefined: Normal behavior, only show the welcome modal when needed
+  //   - "open": Force the welcome modal to open even if not needed
+  //   - "closed": Don't ever open the welcome modal
+  const [paramModalWelcome, setParamModalWelcome] = useQueryParam(
+    "modal-welcome",
+    StringParam
+  );
   const [hasUserClickedStart, setHasUserClickedStart] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
   // This modal should open when isServiceWorkerActive becomes false
   // But close only when the use hasUserClickedStart becomes true
   useEffect(() => {
-    if (!isServiceWorkerActive && !hasUserClickedStart && !isDisabled) {
+    if (
+      (!isServiceWorkerActive &&
+        !hasUserClickedStart &&
+        !(paramModalWelcome === "closed")) ||
+      paramModalWelcome === "open"
+    ) {
       setIsOpen(true);
       return;
     }
@@ -42,7 +53,28 @@ export const WelcomeModal = ({
     }
     // In the 2 other cases, we do nothing, this is an hysteresis
     // To "latch" the modal to open once it opened once
-  }, [isServiceWorkerActive, hasUserClickedStart]);
+  }, [isServiceWorkerActive, hasUserClickedStart, paramModalWelcome]);
+
+  const handleClickStartLabelling = useCallback(() => {
+    setParamModalWelcome(undefined, "replaceIn");
+    setHasUserClickedStart(true);
+    // This is needed to fix a rare bug in which the welcome modal is stuck
+    // in the "loading app" state when a new service worker is waiting AND
+    // the welcome modal is open.
+    // This never happens except in nominal user flows, but still
+    if (
+      typeof window !== "undefined" &&
+      "serviceWorker" in navigator &&
+      window.workbox !== undefined
+    ) {
+      const wb = window.workbox;
+      wb.addEventListener("controlling", (/* event: any */) => {
+        window.location.reload();
+      });
+      // Send a message to the waiting service worker, instructing it to activate.
+      wb.messageSkipWaiting();
+    }
+  }, [setHasUserClickedStart, setParamModalWelcome]);
 
   return (
     <Modal isOpen={isOpen} onClose={() => {}} size="3xl">
@@ -112,7 +144,7 @@ export const WelcomeModal = ({
               height="14"
               px="8"
               isLoading={hasUserClickedStart && !isServiceWorkerActive}
-              onClick={() => setHasUserClickedStart(true)}
+              onClick={handleClickStartLabelling}
               loadingText="Loading the application"
             >
               Start Labelling!
