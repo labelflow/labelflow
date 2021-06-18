@@ -63,7 +63,15 @@ export const AppLifecycleManager = () => {
 
       const checkServiceWorkerStatus = async () => {
         const sw = await wb.getSW();
-        if (sw.state !== "activated") {
+        if (
+          !(
+            (
+              sw.state === "activated" || // Nominal case, service worker already installed and running, no new service worker waiting
+              sw.state === "installed"
+            )
+            // Service worker already installed and running, but there is a new service worker waiting
+          )
+        ) {
           setIsServiceWorkerActive(false);
           wb.addEventListener("activated", () => {
             setIsServiceWorkerActive(true);
