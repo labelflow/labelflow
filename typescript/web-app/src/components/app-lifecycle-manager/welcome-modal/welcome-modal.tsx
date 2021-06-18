@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 import {
   Modal,
@@ -21,10 +21,8 @@ import { Logo } from "../../logo";
 
 export const WelcomeModal = ({
   isServiceWorkerActive,
-  updateServiceWorker,
 }: {
   isServiceWorkerActive: boolean;
-  updateServiceWorker?: () => void;
 }) => {
   // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
   // This param can have several values:
@@ -56,6 +54,27 @@ export const WelcomeModal = ({
     // In the 2 other cases, we do nothing, this is an hysteresis
     // To "latch" the modal to open once it opened once
   }, [isServiceWorkerActive, hasUserClickedStart, paramModalWelcome]);
+
+  const handleClickStartLabelling = useCallback(() => {
+    setParamModalWelcome(undefined, "replaceIn");
+    setHasUserClickedStart(true);
+    // This is needed to fix a rare bug in which the welcome modal is stuck
+    // in the "loading app" state when a new service worker is waiting AND
+    // the welcome modal is open.
+    // This never happens except in nominal user flows, but still
+    if (
+      typeof window !== "undefined" &&
+      "serviceWorker" in navigator &&
+      window.workbox !== undefined
+    ) {
+      const wb = window.workbox;
+      wb.addEventListener("controlling", (/* event: any */) => {
+        window.location.reload();
+      });
+      // Send a message to the waiting service worker, instructing it to activate.
+      wb.messageSkipWaiting();
+    }
+  }, [setHasUserClickedStart, setParamModalWelcome]);
 
   return (
     <Modal isOpen={isOpen} onClose={() => {}} size="3xl">
@@ -125,15 +144,7 @@ export const WelcomeModal = ({
               height="14"
               px="8"
               isLoading={hasUserClickedStart && !isServiceWorkerActive}
-              onClick={() => {
-                setParamModalWelcome(undefined, "replaceIn");
-                setHasUserClickedStart(true);
-                // This is needed to fix a rare bug in which the welcome modal is stuck
-                // in the "loading app" state when a new service worker is waiting AND
-                // the welcome modal is open.
-                // This never happens except in nominal user flows, but still
-                updateServiceWorker?.();
-              }}
+              onClick={handleClickStartLabelling}
               loadingText="Loading the application"
             >
               Start Labelling!

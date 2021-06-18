@@ -28,8 +28,9 @@ export const AppLifecycleManager = () => {
     useState(false);
 
   const closeUpdateServiceWorkerModal = useCallback(() => {
+    setParamModalUpdateServiceWorker(undefined, "replaceIn");
     setIsUpdateServiceWorkerModalOpen(false);
-  }, [setIsUpdateServiceWorkerModalOpen]);
+  }, [setIsUpdateServiceWorkerModalOpen, setParamModalUpdateServiceWorker]);
 
   const updateServiceWorker = useCallback(() => {
     if (
@@ -45,9 +46,9 @@ export const AppLifecycleManager = () => {
       // Send a message to the waiting service worker, instructing it to activate.
       wb.messageSkipWaiting();
     }
-    setParamModalUpdateServiceWorker(undefined);
+    setParamModalUpdateServiceWorker(undefined, "replaceIn");
     setIsUpdateServiceWorkerModalOpen(false);
-  }, [setIsUpdateServiceWorkerModalOpen]);
+  }, [setIsUpdateServiceWorkerModalOpen, setParamModalUpdateServiceWorker]);
 
   // This hook only run once in browser after the component is rendered for the first time.
   // It has same effect as the old componentDidMount lifecycle callback.
@@ -105,10 +106,7 @@ export const AppLifecycleManager = () => {
 
   return (
     <>
-      <WelcomeModal
-        isServiceWorkerActive={isServiceWorkerActive}
-        updateServiceWorker={updateServiceWorker}
-      />
+      <WelcomeModal isServiceWorkerActive={isServiceWorkerActive} />
       <UpdateServiceWorkerModal
         isOpen={isUpdateServiceWorkerModalOpen}
         onClose={closeUpdateServiceWorkerModal}
