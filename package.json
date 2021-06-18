@@ -15,8 +15,8 @@
     "start:web-app": "cd ./typescript/web-app && yarn start",
     "codegen": "graphql-codegen --config ./codegen.yml",
     "codegen:ci": "graphql-codegen --config ./codegen.yml && git diff --exit-code",
-    "storybook": "start-storybook -p 6006",
-    "storybook:all": "start-storybook -p 6006",
+    "storybook": "start-storybook -s ./typescript/web-app/public -p 6006",
+    "storybook:all": "start-storybook -s ./typescript/web-app/public -p 6006",
     "build-storybook": "build-storybook",
     "chromatic": "npx chromatic",
     "build": "cd typescript/strapi ; yarn build ; yarn install ; yarn build"

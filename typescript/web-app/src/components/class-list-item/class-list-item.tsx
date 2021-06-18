@@ -43,6 +43,7 @@ export const ClassListItem = (props: {
       pr="3"
       pt="1"
       pb="1"
+      aria-current={selected && !isCreateClassItem}
     >
       {isCreateClassItem ? (
         <Tooltip

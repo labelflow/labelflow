@@ -10,9 +10,9 @@ describe("Labelling tool", () => {
     ]);
   });
 
-  it("should clear the undo redo store between images", () => {
+  it("Should execute the golden path without errors", () => {
     // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
-    cy.visit("http://localhost:3000/images?modal-welcome-disable");
+    cy.visit("http://localhost:3000/images?modal-welcome=closed&modal-update-service-worker=update");
     cy.contains("Add images").click();
     cy.contains("Import from a list of URLs instead").click();
     cy.get("textarea").type(
@@ -21,11 +21,35 @@ describe("Labelling tool", () => {
     cy.contains("Start Import").click();
     cy.get(`[aria-label="Close"]`).click();
     cy.contains("photo").click();
-    cy.get('[aria-label="Drawing tool"]', { timeout: 15000 }).click();
-    cy.get("main").click(200, 200);
-    cy.get("main").click(300, 300);
-    cy.get('[aria-label="Next image"]').click();
+    cy.get('[aria-label="Drawing tool"]', { timeout: 30000 }).click();
+    // Create one bb
+    cy.get("main").click(400, 100);
+    cy.get("main").click(600, 200);
 
+    cy.get('[aria-label="Selection tool"]').click();
+    // Create new class
+    cy.get("main").rightclick(500, 150);
+    cy.focused().type("My new class{enter}");
+    cy.get("main").rightclick(500, 150);
+    cy.get(`[aria-current="true"]`).contains("My new class").should("be.visible");
+    // Assign label to class None
+    cy.contains("None").click();
+    cy.get("main").rightclick(500, 150);
+    cy.get(`[aria-current="true"]`).contains("None").should("be.visible");
+    // Undo label class assignment
+    cy.get('[aria-label="Undo tool"]').click();
+    cy.get("main").rightclick(500, 150);
+    cy.get(`[aria-current="true"]`).contains("My new class").should("be.visible");
+    // Redo label class assignment
+    cy.get("main").click(350, 50);
+    cy.get('[aria-label="Redo tool"]').click();
+    cy.get("main").rightclick(500, 150);
+    cy.get(`[aria-current="true"]`).contains("None").should("be.visible");
+    // Assign label to class My new class
+    cy.contains("My new class").click();
+    cy.get("main").rightclick(500, 150);
+    cy.get(`[aria-current="true"]`).contains("My new class").should("be.visible");
+    cy.get('[aria-label="Next image"]').click();
     cy.get('[aria-label="Undo tool"]').should("be.disabled");
   });
 });

@@ -4,11 +4,21 @@ import type {
   MutationCreateLabelArgs,
   MutationDeleteLabelArgs,
   MutationUpdateLabelArgs,
+  QueryLabelArgs,
 } from "../../graphql-types.generated";
 
 import { db, DbLabel } from "../database";
 
 export const getLabels = () => db.label.toArray();
+
+const getLabelById = async (id: string): Promise<DbLabel> => {
+  const entity = await db.label.get(id);
+  if (entity === undefined) {
+    throw new Error("No label with such id");
+  }
+
+  return entity;
+};
 
 // Queries
 const labelClass = async (label: DbLabel) => {
@@ -17,6 +27,10 @@ const labelClass = async (label: DbLabel) => {
   }
 
   return db.labelClass.get(label.labelClassId) ?? null;
+};
+
+const label = (_: any, args: QueryLabelArgs) => {
+  return getLabelById(args?.where?.id);
 };
 
 // Mutations
@@ -65,21 +79,21 @@ const createLabel = async (
 const deleteLabel = async (_: any, args: MutationDeleteLabelArgs) => {
   const labelId = args.where.id;
 
-  const label = await db.label.get(labelId);
+  const labelToDelete = await db.label.get(labelId);
 
-  if (!label) {
+  if (!labelToDelete) {
     throw new Error("No label with such id");
   }
 
   await db.label.delete(labelId);
 
-  return label;
+  return labelToDelete;
 };
 
 const updateLabel = async (_: any, args: MutationUpdateLabelArgs) => {
   const labelId = args.where.id;
 
-  const label = await db.label.get(labelId);
+  const labelToUpdate = await db.label.get(labelId);
 
   if ("labelClassId" in args.data && args.data.labelClassId != null) {
     const labelClassToConnect = await db.labelClass.get(args.data.labelClassId);
@@ -89,7 +103,7 @@ const updateLabel = async (_: any, args: MutationUpdateLabelArgs) => {
     }
   }
 
-  if (!label) {
+  if (!labelToUpdate) {
     throw new Error("No label with such id");
   }
 
@@ -98,7 +112,19 @@ const updateLabel = async (_: any, args: MutationUpdateLabelArgs) => {
   return db.label.get(labelId);
 };
 
+const labelsAggregates = () => {
+  return {};
+};
+
+const totalCount = () => {
+  return db.label.count();
+};
+
 export default {
+  Query: {
+    label,
+    labelsAggregates,
+  },
   Mutation: {
     createLabel,
     deleteLabel,
@@ -107,4 +133,5 @@ export default {
   Label: {
     labelClass,
   },
+  LabelsAggregates: { totalCount },
 };

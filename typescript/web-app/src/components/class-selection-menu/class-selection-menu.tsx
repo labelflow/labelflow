@@ -67,7 +67,7 @@ export const ClassSelectionMenu = ({
         close();
       }}
       createNewClass={createNewClass}
-      selectedLabelClass={selectedLabelClass}
+      selectedLabelClassId={selectedLabelClass?.id}
       trigger={
         <ClassSelectionButton
           toggle={toggle}

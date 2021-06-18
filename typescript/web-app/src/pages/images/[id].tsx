@@ -61,7 +61,7 @@ const ImagePage = () => {
 
   useEffect(() => {
     if (error) {
-      router.replace("/images");
+      router.replace({ pathname: "/images", query: router.query });
     }
   }, [error]);
 

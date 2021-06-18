@@ -31,6 +31,10 @@ type Label {
   width: Float!
 }
 
+type LabelsAggregates {
+  totalCount:Int!
+}
+
 type LabelClass {
   id: ID!
   createdAt: DateTime!
