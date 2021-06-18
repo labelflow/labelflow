@@ -1,4 +1,4 @@
-import { forwardRef } from "react";
+import { forwardRef, useMemo } from "react";
 import { useQuery, useApolloClient, ApolloClient } from "@apollo/client";
 import gql from "graphql-tag";
 
@@ -164,7 +164,7 @@ const createCreateLabelClassEffect = (
   },
 });
 
-const createNewClassFactory =
+const createNewClassCurry =
   ({
     labelClasses,
     perform,
@@ -255,12 +255,16 @@ export const EditLabelClass = forwardRef<
     skip: selectedLabelId == null,
   });
   const selectedLabelClassId = labelQueryData?.label?.labelClass?.id ?? null;
-  const createNewClass = createNewClassFactory({
-    labelClasses,
-    perform,
-    onClose,
-    client,
-  });
+  const createNewClass = useMemo(
+    () =>
+      createNewClassCurry({
+        labelClasses,
+        perform,
+        onClose,
+        client,
+      }),
+    [labelClasses]
+  );
 
   return (
     <div ref={ref}>
