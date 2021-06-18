@@ -60,7 +60,18 @@ const deleteLabelClassQuery = gql`
   }
 `;
 
-const createCreateLabelClassEffect = (
+const updateLabelQuery = gql`
+  mutation updateLabelClass(
+    $where: LabelWhereUniqueInput!
+    $data: LabelUpdateInput!
+  ) {
+    updateLabel(where: $where, data: $data) {
+      id
+    }
+  }
+`;
+
+const createCreateLabelClassEffectBoundingBoxMode = (
   {
     name,
     color,
@@ -119,7 +130,112 @@ const createCreateLabelClassEffect = (
   },
 });
 
-const createNewClassCurry =
+const createCreateLabelClassEffectSelectionMode = (
+  {
+    name,
+    color,
+    selectedLabelId,
+  }: { name: string; color: string; selectedLabelId: string | null },
+  {
+    client,
+  }: {
+    client: ApolloClient<object>;
+  }
+): Effect => ({
+  do: async () => {
+    const {
+      data: {
+        createLabelClass: { id: labelClassId },
+      },
+    } = await client.mutate({
+      mutation: createLabelClassQuery,
+      variables: { data: { name, color } },
+      refetchQueries: [{ query: labelClassesQuery }],
+    });
+
+    const {
+      data: {
+        label: { labelClass },
+      },
+    } = await client.query({
+      query: labelQuery,
+      variables: { id: selectedLabelId },
+    });
+
+    const labelClassIdPrevious = labelClass?.id ?? null;
+
+    await client.mutate({
+      mutation: updateLabelQuery,
+      variables: {
+        where: { id: selectedLabelId },
+        data: { labelClassId: labelClassId ?? null },
+      },
+      refetchQueries: ["getImageLabels"],
+    });
+
+    return {
+      labelClassId,
+      labelClassIdPrevious,
+    };
+  },
+  undo: async ({
+    labelClassId,
+    labelClassIdPrevious,
+  }: {
+    labelClassId: string;
+    labelClassIdPrevious: string;
+  }) => {
+    await client.mutate({
+      mutation: updateLabelQuery,
+      variables: {
+        where: { id: selectedLabelId },
+        data: { labelClassId: labelClassIdPrevious ?? null },
+      },
+      refetchQueries: ["getImageLabels"],
+    });
+    await client.mutate({
+      mutation: deleteLabelClassQuery,
+      variables: {
+        where: { id: labelClassId },
+      },
+      refetchQueries: [{ query: labelClassesQuery }],
+    });
+
+    return {
+      labelClassId,
+      labelClassIdPrevious,
+    };
+  },
+  redo: async ({
+    labelClassId,
+    labelClassIdPrevious,
+  }: {
+    labelClassId: string;
+    labelClassIdPrevious: string;
+  }) => {
+    await client.mutate({
+      mutation: createLabelClassQuery,
+      variables: { data: { name, color, id: labelClassId } },
+      refetchQueries: [{ query: labelClassesQuery }],
+    });
+
+    await client.mutate({
+      mutation: updateLabelQuery,
+      variables: {
+        where: { id: selectedLabelId },
+        data: { labelClassId: labelClassId ?? null },
+      },
+      refetchQueries: ["getImageLabels"],
+    });
+
+    return {
+      labelClassId,
+      labelClassIdPrevious,
+    };
+  },
+});
+
+const createNewClassBoundingBoxCurry =
   ({
     labelClasses,
     perform,
@@ -135,14 +251,37 @@ const createNewClassCurry =
         ? hexColorSequence[0]
         : getNextClassColor(labelClasses[labelClasses.length - 1].color);
     perform(
-      createCreateLabelClassEffect(
+      createCreateLabelClassEffectBoundingBoxMode(
         { name, color: newClassColor, selectedLabelClassIdPrevious },
         { client }
       )
     );
   };
 
-const createUpdateLabelClassEffect = ({
+const createNewClassSelectionCurry =
+  ({
+    labelClasses,
+    perform,
+    client,
+  }: {
+    labelClasses: LabelClass[];
+    perform: any;
+    client: ApolloClient<object>;
+  }) =>
+  async (name: string, selectedLabelId: string | null) => {
+    const newClassColor =
+      labelClasses.length < 1
+        ? hexColorSequence[0]
+        : getNextClassColor(labelClasses[labelClasses.length - 1].color);
+    perform(
+      createCreateLabelClassEffectSelectionMode(
+        { name, color: newClassColor, selectedLabelId },
+        { client }
+      )
+    );
+  };
+
+const createUpdateLabelClassEffectBoundingBox = ({
   selectedLabelClassId,
   selectedLabelClassIdPrevious,
 }: {
@@ -154,6 +293,51 @@ const createUpdateLabelClassEffect = ({
   },
   undo: async () => {
     useLabellingStore.setState({ selectedLabelClassIdPrevious });
+  },
+});
+
+const createUpdateLabelClassEffectSelection = (
+  {
+    selectedLabelId,
+    selectedLabelClassId,
+  }: { selectedLabelId: string | null; selectedLabelClassId: string | null },
+  {
+    client,
+  }: {
+    client: ApolloClient<object>;
+  }
+): Effect => ({
+  do: async () => {
+    const {
+      data: {
+        label: { labelClass },
+      },
+    } = await client.query({
+      query: labelQuery,
+      variables: { id: selectedLabelId },
+    });
+    const labelClassIdPrevious = labelClass?.id ?? null;
+    await client.mutate({
+      mutation: updateLabelQuery,
+      variables: {
+        where: { id: selectedLabelId },
+        data: { labelClassId: selectedLabelClassId ?? null },
+      },
+      refetchQueries: ["getImageLabels"],
+    });
+    return labelClassIdPrevious;
+  },
+  undo: async (labelClassIdPrevious: string) => {
+    await client.mutate({
+      mutation: updateLabelQuery,
+      variables: {
+        where: { id: selectedLabelId },
+        data: { labelClassId: labelClassIdPrevious ?? null },
+      },
+      refetchQueries: ["getImageLabels"],
+    });
+
+    return labelClassIdPrevious;
   },
 });
 
@@ -180,12 +364,40 @@ export const EditLabelMenu = () => {
       : selectedLabelData?.label?.labelClass;
   const createNewClass = useMemo(
     () =>
-      createNewClassCurry({
-        labelClasses,
-        perform,
-        client,
-      }),
-    [labelClasses]
+      selectedTool === Tools.BOUNDING_BOX
+        ? createNewClassBoundingBoxCurry({
+            labelClasses,
+            perform,
+            client,
+          })
+        : createNewClassSelectionCurry({
+            labelClasses,
+            perform,
+            client,
+          }),
+    [labelClasses, selectedTool]
+  );
+  const onSelectedClassChange = useMemo(
+    () =>
+      selectedTool === Tools.BOUNDING_BOX
+        ? (item: LabelClass | null) =>
+            perform(
+              createUpdateLabelClassEffectBoundingBox({
+                selectedLabelClassId: item?.id ?? null,
+                selectedLabelClassIdPrevious: selectedLabelClassId,
+              })
+            )
+        : (item: LabelClass | null) =>
+            perform(
+              createUpdateLabelClassEffectSelection(
+                {
+                  selectedLabelClassId: item?.id ?? null,
+                  selectedLabelId,
+                },
+                { client }
+              )
+            ),
+    [selectedLabelId, selectedLabelClassId, selectedTool]
   );
 
   const displayClassSelectionMenu =
@@ -200,12 +412,7 @@ export const EditLabelMenu = () => {
           labelClasses={labelClasses}
           createNewClass={async (name) => createNewClass(name, selectedLabelId)}
           onSelectedClassChange={(item) => {
-            perform(
-              createUpdateLabelClassEffect({
-                selectedLabelClassId: item?.id ?? null,
-                selectedLabelClassIdPrevious: selectedLabelClassId,
-              })
-            );
+            onSelectedClassChange(item);
           }}
         />
       )}
