@@ -3,7 +3,7 @@ import { useQuery, useApolloClient, ApolloClient } from "@apollo/client";
 import gql from "graphql-tag";
 
 import { ClassSelectionMenu } from "../../class-selection-menu";
-import { useLabellingStore } from "../../../connectors/labelling-state";
+import { Tools, useLabellingStore } from "../../../connectors/labelling-state";
 import {
   getNextClassColor,
   hexColorSequence,
@@ -149,6 +149,7 @@ export const EditLabelMenu = () => {
   const { data } = useQuery(labelClassesQuery);
   const { perform } = useUndoStore();
   const labelClasses = data?.labelClasses ?? [];
+  const selectedTool = useLabellingStore((state) => state.selectedTool);
   const selectedLabelId = useLabellingStore((state) => state.selectedLabelId);
   const selectedLabelClassId = useLabellingStore(
     (state) => state.selectedLabelClassId
@@ -167,19 +168,29 @@ export const EditLabelMenu = () => {
     [labelClasses]
   );
 
+  const displayClassSelectionMenu =
+    selectedTool === Tools.BOUNDING_BOX ||
+    (selectedTool === Tools.SELECTION && selectedLabelId != null);
+
+  console.log(displayClassSelectionMenu, selectedLabelId, selectedTool);
+
   return (
-    <ClassSelectionMenu
-      selectedLabelClass={selectedLabelClass}
-      labelClasses={labelClasses}
-      createNewClass={async (name) => createNewClass(name, selectedLabelId)}
-      onSelectedClassChange={(item) => {
-        perform(
-          createUpdateLabelClassEffect({
-            selectedLabelClassId: item?.id ?? null,
-            selectedLabelClassIdPrevious: selectedLabelClassId,
-          })
-        );
-      }}
-    />
+    <>
+      {displayClassSelectionMenu && (
+        <ClassSelectionMenu
+          selectedLabelClass={selectedLabelClass}
+          labelClasses={labelClasses}
+          createNewClass={async (name) => createNewClass(name, selectedLabelId)}
+          onSelectedClassChange={(item) => {
+            perform(
+              createUpdateLabelClassEffect({
+                selectedLabelClassId: item?.id ?? null,
+                selectedLabelClassIdPrevious: selectedLabelClassId,
+              })
+            );
+          }}
+        />
+      )}
+    </>
   );
 };
