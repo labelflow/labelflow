@@ -25,6 +25,7 @@ export const LabellingTool = () => {
         top={0}
         left={0}
         pointerEvents="none"
+        alignItems="flex-start"
       >
         <DrawingToolbar />
       </VStack>

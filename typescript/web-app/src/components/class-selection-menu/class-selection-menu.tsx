@@ -23,6 +23,7 @@ const ClassSelectionButton = React.forwardRef<
       ref={ref}
       onClick={toggle}
       bg="white"
+      pointerEvents="initial"
     >
       <Tooltip
         label={`Selected class (${selectedLabelClass?.name ?? "None"})`}
