@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -22,6 +23,7 @@ const paginatedImagesQuery = gql`
   query paginatedImages($first: Int, $skip: Int) {
     images(first: $first, skip: $skip) {
       id
+      name
       url
     }
   }
@@ -120,7 +122,7 @@ export const Gallery = () => {
   const isLoading = !width && loading && imagesResult.loading;
 
   return (
-    <Box ref={containerRef} pt={4}>
+    <Box as="nav" ref={containerRef} pt={4}>
       {!isLoading && (
         <InfiniteLoader
           isItemLoaded={(index: number) => data?.images?.[index] != null}
@@ -144,48 +146,63 @@ export const Gallery = () => {
               width={width}
             >
               {({ index, style }) => (
-                <Link href={`/images/${data?.images?.[index]?.id}`}>
-                  <Box
-                    style={style}
-                    pl="7.5px"
-                    pr="7.5px"
-                    pb={4}
-                    position="relative"
-                  >
-                    <Badge
-                      pointerEvents="none"
-                      position="absolute"
-                      top="5px"
-                      left="12.5px"
-                      bg="rgba(0, 0, 0, 0.6)"
-                      color="white"
-                      borderRadius="full"
+                <Box
+                  style={style}
+                  pl="7.5px"
+                  pr="7.5px"
+                  pb={4}
+                  position="relative"
+                >
+                  {data?.images?.[index] ? (
+                    <Link
+                      href={`/images/${data?.images?.[index]?.id}`}
+                      passHref
                     >
-                      {index + 1}
-                    </Badge>
-                    <Image
-                      src={data?.images?.[index]?.url}
-                      fallback={
-                        <Skeleton
+                      <a
+                        aria-current={
+                          imageId === data?.images?.[index]?.id
+                            ? "page"
+                            : undefined
+                        }
+                      >
+                        <Badge
+                          pointerEvents="none"
+                          position="absolute"
+                          top="5px"
+                          left="12.5px"
+                          bg="rgba(0, 0, 0, 0.6)"
+                          color="white"
+                          borderRadius="full"
+                        >
+                          {index + 1}
+                        </Badge>
+                        <Image
+                          src={data?.images?.[index]?.url}
+                          fallback={
+                            <Skeleton
+                              height="100%"
+                              width="100%"
+                              borderRadius="md"
+                            />
+                          }
                           height="100%"
                           width="100%"
+                          align="center center"
+                          fit="cover"
+                          border="2px solid"
+                          borderColor={
+                            imageId === data?.images?.[index]?.id
+                              ? "brand.500"
+                              : "transparent"
+                          }
                           borderRadius="md"
                         />
-                      }
-                      height="100%"
-                      width="100%"
-                      align="center center"
-                      fit="cover"
-                      border="2px solid"
-                      borderColor={
-                        imageId === data?.images?.[index]?.id
-                          ? "brand.500"
-                          : "transparent"
-                      }
-                      borderRadius="md"
-                    />
-                  </Box>
-                </Link>
+                      </a>
+                    </Link>
+                  ) : (
+                    <Skeleton height="100%" width="100%" borderRadius="md" />
+                  )}
+                </Box>
               )}
             </List>
           )}

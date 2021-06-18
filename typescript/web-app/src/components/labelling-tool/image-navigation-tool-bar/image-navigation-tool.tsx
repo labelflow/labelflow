@@ -144,6 +144,7 @@ export const ImageNavigationTool = () => {
       )}
       <Tooltip label="Current image index" placement="top" openDelay={300}>
         <NumberInput
+          name="current-image"
           rounded={6}
           allowMouseWheel
           defaultValue={imageIndex != null ? imageIndex + 1 : "-"}
