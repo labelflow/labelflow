@@ -17,6 +17,7 @@ import { RiCloseCircleFill } from "react-icons/ri";
 import { useCombobox, UseComboboxStateChange } from "downshift";
 import { ClassListItem } from "../class-list-item";
 import { LabelClass } from "../../graphql-types.generated";
+import { noneClassColor } from "../../utils/class-color-generator"
 
 type CreateClassInput = { name: string; type: string };
 type NoneClass = { name: string; color: string; type: string };
@@ -24,7 +25,7 @@ type NoneClass = { name: string; color: string; type: string };
 const noneClass = {
   name: "None",
   type: "NoneClass",
-  color: "gray.200",
+  color: noneClassColor,
 };
 
 const MagnifierIcon = chakra(IoSearch);

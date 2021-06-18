@@ -21,6 +21,16 @@ const labelClassesQuery = gql`
   }
 `;
 
+const labelClassQuery = gql`
+  query getLabelClass($id: ID!) {
+    labelClass(where: { id: $id }) {
+      id
+      name
+      color
+    }
+  }
+`;
+
 const createLabelClassQuery = gql`
   mutation createLabelClass($data: LabelClassCreateInput!) {
     createLabelClass(data: $data) {
@@ -143,6 +153,10 @@ export const EditLabelMenu = () => {
   const selectedLabelClassId = useLabellingStore(
     (state) => state.selectedLabelClassId
   );
+  const { data: dataLabelClass } = useQuery(labelClassQuery, {
+    variables: { id: selectedLabelClassId },
+  });
+  const selectedLabelClass = dataLabelClass?.labelClass;
   const createNewClass = useMemo(
     () =>
       createNewClassCurry({
@@ -155,6 +169,7 @@ export const EditLabelMenu = () => {
 
   return (
     <ClassSelectionMenu
+      selectedLabelClass={selectedLabelClass}
       labelClasses={labelClasses}
       createNewClass={async (name) => createNewClass(name, selectedLabelId)}
       onSelectedClassChange={(item) => {

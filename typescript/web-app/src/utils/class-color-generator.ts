@@ -95,6 +95,9 @@ export const hexColorSequence = [
   "#C026D3",
 ];
 
+// It's charkra's gray.200
+export const noneClassColor = "#E2E8F0";
+
 export const previousHexToNextHexMap: { [key: string]: string } =
   hexColorSequence.reduce((accumulator, colorHex, index) => {
     const indexOfNextColor = (index + 1) % hexColorSequence.length; // The number that you are adding to index and the length of the array have to be prime numbers between each other

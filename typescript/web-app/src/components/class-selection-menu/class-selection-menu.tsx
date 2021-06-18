@@ -67,7 +67,10 @@ export const ClassSelectionMenu = ({
         onSelectedClassChange(labelClass);
         close();
       }}
-      createNewClass={createNewClass}
+      createNewClass={(name: string) => {
+        createNewClass(name);
+        close();
+      }}
       selectedLabelClassId={selectedLabelClass?.id}
       trigger={
         <ClassSelectionButton
