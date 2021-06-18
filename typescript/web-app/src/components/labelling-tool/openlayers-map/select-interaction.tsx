@@ -1,8 +1,18 @@
-import { click } from "ol/events/condition";
-import { SelectEvent } from "ol/interaction/Select";
+import { MutableRefObject, useState } from "react";
+import { Coordinate } from "ol/coordinate";
+import { MapBrowserEvent } from "ol";
+import OverlayPositioning from "ol/OverlayPositioning";
 import { useLabellingStore, Tools } from "../../../connectors/labelling-state";
 
-export const SelectInteraction = () => {
+export const SelectInteraction = ({
+  setEditClass = () => {},
+  editClassOverlayRef,
+}: {
+  setEditClass?: (editClass: boolean) => void;
+  editClassOverlayRef?: MutableRefObject<HTMLDivElement | null>;
+}) => {
+  const [editMenuLocation, setEditMenuLocation] =
+    useState<Coordinate | undefined>(undefined);
   const selectedTool = useLabellingStore((state) => state.selectedTool);
   const setSelectedLabelId = useLabellingStore(
     (state) => state.setSelectedLabelId
@@ -12,30 +22,48 @@ export const SelectInteraction = () => {
     return null;
   }
 
-  return (
-    <olInteractionSelect
-      /*
-       * Prevent openlayers to apply its own style on the selected features. An
-       * alternative could be to use the "features" property to switch
-       * to a kind of controlled mode.
-       *
-       * Select interaction accept "null" for the style property.
-       * See https://openlayers.org/en/latest/apidoc/module-ol_interaction_Select-Select.html
-       */
-      // @ts-ignore
-      style={null}
-      onSelect={(e) => {
-        const selectEvent = e as SelectEvent;
-        if (selectEvent.selected.length > 0) {
-          setSelectedLabelId(selectEvent.selected[0].getProperties().id);
-        } else {
-          setSelectedLabelId(null);
-        }
+  const clickHandler = (e: MapBrowserEvent<UIEvent>) => {
+    const { map } = e;
+    const feature = map.forEachFeatureAtPixel(e.pixel, (f: any) => f);
+    setSelectedLabelId(feature?.getProperties().id ?? null);
+    return true;
+  };
 
-        // Typescript forces us to return a boolean
-        return false;
-      }}
-      condition={click}
-    />
+  const contextMenuHandler = (e: MapBrowserEvent<UIEvent>) => {
+    const { map } = e;
+    const feature = map.forEachFeatureAtPixel(e.pixel, (f: any) => f);
+    const selectedLabelId = feature?.getProperties().id ?? null;
+    setSelectedLabelId(selectedLabelId);
+    if (selectedLabelId) {
+      setEditClass(true);
+      setEditMenuLocation(map.getCoordinateFromPixel(e.pixel));
+    }
+    return true;
+  };
+
+  return (
+    <>
+      <olInteractionPointer
+        style={null}
+        handleEvent={(e) => {
+          const eventType = e?.type ?? null;
+          switch (eventType) {
+            case "singleclick":
+              return clickHandler(e);
+            case "contextmenu":
+              return contextMenuHandler(e);
+            default:
+              return true;
+          }
+        }}
+      />
+      {editClassOverlayRef?.current ? (
+        <olOverlay
+          element={editClassOverlayRef.current}
+          position={editMenuLocation}
+          positioning={OverlayPositioning.CENTER_CENTER}
+        />
+      ) : null}
+    </>
   );
 };

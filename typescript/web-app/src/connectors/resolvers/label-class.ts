@@ -2,6 +2,7 @@ import { v4 as uuidv4 } from "uuid";
 import type {
   LabelClass,
   MutationCreateLabelClassArgs,
+  MutationDeleteLabelClassArgs,
   QueryLabelClassArgs,
   QueryLabelClassesArgs,
   Maybe,
@@ -67,6 +68,20 @@ const createLabelClass = async (
   return getLabelClassById(newLabelClassEntity.id);
 };
 
+const deleteLabelClass = async (_: any, args: MutationDeleteLabelClassArgs) => {
+  const labelClassId = args.where.id;
+
+  const labelClassToDelete = await db.labelClass.get(labelClassId);
+
+  if (!labelClassToDelete) {
+    throw new Error("No labelClass with such id");
+  }
+
+  await db.labelClass.delete(labelClassId);
+
+  return labelClassToDelete;
+};
+
 export default {
   Query: {
     labelClass,
@@ -75,6 +90,7 @@ export default {
 
   Mutation: {
     createLabelClass,
+    deleteLabelClass,
   },
 
   LabelClass: {

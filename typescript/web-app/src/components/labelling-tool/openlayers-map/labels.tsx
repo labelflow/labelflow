@@ -20,6 +20,10 @@ const getImageLabelsQuery = gql`
         y
         width
         height
+        labelClass {
+          id
+          color
+        }
       }
     }
   }
@@ -34,6 +38,9 @@ const deleteLabelMutation = gql`
       width
       height
       imageId
+      labelClass {
+        id
+      }
     }
   }
 `;
@@ -46,6 +53,7 @@ const createLabelWithIdMutation = gql`
     $y: Float!
     $width: Float!
     $height: Float!
+    $labelClassId: ID
   ) {
     createLabel(
       data: {
@@ -55,6 +63,7 @@ const createLabelWithIdMutation = gql`
         y: $y
         width: $width
         height: $height
+        labelClassId: $labelClassId
       }
     ) {
       id
@@ -82,11 +91,13 @@ const createDeleteLabelEffect = (
     return data?.deleteLabel;
   },
   undo: async (deletedLabel) => {
+    const { id: labelId, x, y, width, height, imageId } = deletedLabel;
+    const labelClassId = deletedLabel?.labelClass?.id;
     /* It is important to use the same id for the re-creation when the label
      * was created in the current session to enable the undoing of the creation effect */
     const { data } = await client.mutate({
       mutation: createLabelWithIdMutation,
-      variables: deletedLabel,
+      variables: { id: labelId, x, y, width, height, imageId, labelClassId },
       refetchQueries: ["getImageLabels"],
     });
 
@@ -141,34 +152,35 @@ export const Labels = () => {
 
   const labels = data?.image?.labels ?? [];
 
-  const color = "#E53E3E";
-
   return (
-    <olLayerVector>
-      <olSourceVector>
-        {labels.map(({ id, x, y, width, height }: Label) => {
-          const isSelected = id === selectedLabelId;
-          const style = new Style({
-            fill: new Fill({
-              color: `${color}${isSelected ? "40" : "10"}`,
-            }),
-            stroke: new Stroke({
-              color,
-              width: 2,
-            }),
-            zIndex: isSelected ? 2 : 1,
-          });
+    <>
+      <olLayerVector>
+        <olSourceVector>
+          {labels.map(({ id, x, y, width, height, labelClass }: Label) => {
+            const isSelected = id === selectedLabelId;
+            const labelClassColor = labelClass?.color ?? "#E2E8F0";
+            const style = new Style({
+              fill: new Fill({
+                color: `${labelClassColor}${isSelected ? "40" : "10"}`,
+              }),
+              stroke: new Stroke({
+                color: labelClassColor,
+                width: 2,
+              }),
+              zIndex: isSelected ? 2 : 1,
+            });
 
-          return (
-            <olFeature
-              key={id}
-              id={id}
-              geometry={fromExtent([x, y, x + width, y + height])}
-              style={style}
-            />
-          );
-        })}
-      </olSourceVector>
-    </olLayerVector>
+            return (
+              <olFeature
+                key={id}
+                id={id}
+                geometry={fromExtent([x, y, x + width, y + height])}
+                style={style}
+              />
+            );
+          })}
+        </olSourceVector>
+      </olLayerVector>
+    </>
   );
 };

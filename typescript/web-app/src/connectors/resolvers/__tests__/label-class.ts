@@ -32,7 +32,7 @@ const createLabelClass = async (data: {
   return id;
 };
 
-const createLabel = async (labelClassId: number, x: number) => {
+const createLabel = async (labelClassId: string, x: number) => {
   const {
     data: {
       createImage: { id: imageId },
@@ -155,6 +155,58 @@ describe("LabelClass resolver test suite", () => {
     });
 
     expect(queryResult.data.labelClass.id).toEqual(labelClassId);
+  });
+
+  test("should delete a label class", async () => {
+    const labelId = await createLabelClass({
+      name: "toto",
+      color: "#ff0000",
+    });
+
+    client.mutate({
+      mutation: gql`
+        mutation deleteLabelClass($id: ID!) {
+          deleteLabelClass(where: { id: $id }) {
+            id
+          }
+        }
+      `,
+      variables: {
+        id: labelId,
+      },
+    });
+
+    const queryResult = await client.query({
+      query: gql`
+        query getLabelClass($id: ID!) {
+          labelClass(where: { id: $id }) {
+            id
+          }
+        }
+      `,
+      variables: {
+        id: labelId,
+      },
+    });
+
+    expect(queryResult.data.labelClasses).not.toBeDefined();
+  });
+
+  test("should throw when the label class to delete doesn't exist", () => {
+    return expect(
+      client.mutate({
+        mutation: gql`
+          mutation deleteLabelClass($id: ID!) {
+            deleteLabelClass(where: { id: $id }) {
+              id
+            }
+          }
+        `,
+        variables: {
+          id: "id-of-a-label-that-doesnt-exist",
+        },
+      })
+    ).rejects.toThrow("No labelClass with such id");
   });
 
   test("Query labelClasses", async () => {
