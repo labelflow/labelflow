@@ -1,5 +1,6 @@
 import React from "react";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { useQuery } from "@apollo/client";
 import gql from "graphql-tag";
 import { Image, Box, Skeleton, Badge } from "@chakra-ui/react";
@@ -27,6 +28,8 @@ const paginatedImagesQuery = gql`
 `;
 
 export const Gallery = () => {
+  const router = useRouter();
+  const imageId = router.query.id;
   /* We need to replace it with a proper count query */
   const itemCount =
     useQuery<{ images: Pick<ImageType, "id">[] }>(imagesCountQuery)?.data
@@ -64,6 +67,10 @@ export const Gallery = () => {
           width="100%"
           align="center center"
           fit="cover"
+          border="2px solid"
+          borderColor={
+            imageId === data?.images?.[index]?.id ? "brand.500" : "transparent"
+          }
           borderRadius="md"
         />
       </Box>
