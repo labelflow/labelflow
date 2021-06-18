@@ -1,4 +1,4 @@
-import { useRef, useState, useCallback } from "react";
+import { useRef, useCallback } from "react";
 import { useRouter } from "next/router";
 import { RouterContext } from "next/dist/next-server/lib/router-context";
 import { Extent, getCenter } from "ol/extent";
@@ -79,19 +79,25 @@ const imageQuery = gql`
 `;
 
 export const OpenlayersMap = () => {
-  const [editClass, setEditClass] = useState(false);
   const editClassOverlayRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<OlMap>(null);
   const viewRef = useRef<OlView | null>(null);
   const sourceVectorLabelsRef = useRef<OlSourceVector | null>(null);
   const router = useRouter();
   const imageId = router.query?.id;
+  const isContextMenuOpen = useLabellingStore(
+    (state) => state.isContextMenuOpen
+  );
+  const setIsContextMenuOpen = useLabellingStore(
+    (state) => state.setIsContextMenuOpen
+  );
   const selectedTool = useLabellingStore((state) => state.selectedTool);
   const boxDrawingToolState = useLabellingStore(
     (state) => state.boxDrawingToolState
   );
   const setCanZoomIn = useLabellingStore((state) => state.setCanZoomIn);
   const setCanZoomOut = useLabellingStore((state) => state.setCanZoomOut);
+
   const setView = useLabellingStore((state) => state.setView);
   const zoomFactor = useLabellingStore((state) => state.zoomFactor);
 
@@ -148,7 +154,7 @@ export const OpenlayersMap = () => {
       >
         {selectedTool === Tools.BOX &&
           boxDrawingToolState !== BoxDrawingToolState.DRAWING &&
-          !editClass && <CursorGuides map={mapRef.current} />}
+          !isContextMenuOpen && <CursorGuides map={mapRef.current} />}
         <Map
           ref={mapRef}
           args={{ controls: empty }}
@@ -217,15 +223,15 @@ export const OpenlayersMap = () => {
               <SelectInteraction
                 editClassOverlayRef={editClassOverlayRef}
                 sourceVectorLabelsRef={sourceVectorLabelsRef}
-                setEditClass={setEditClass}
+                setIsContextMenuOpen={setIsContextMenuOpen}
               />
             </ApolloProvider>
           </RouterContext.Provider>
         </Map>
         <EditLabelClass
           ref={editClassOverlayRef}
-          isOpen={editClass}
-          onClose={() => setEditClass(false)}
+          isOpen={isContextMenuOpen}
+          onClose={() => setIsContextMenuOpen(false)}
         />
       </div>
     </>

@@ -1,4 +1,4 @@
-import { Dispatch, MutableRefObject, SetStateAction, useState } from "react";
+import { MutableRefObject, useState } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 import { Coordinate } from "ol/coordinate";
 import { MapBrowserEvent } from "ol";
@@ -12,11 +12,11 @@ import { useLabellingStore, Tools } from "../../../connectors/labelling-state";
 import { keymap } from "../../../keymap";
 
 export const SelectInteraction = ({
-  setEditClass = () => {},
+  setIsContextMenuOpen = () => {},
   editClassOverlayRef,
   sourceVectorLabelsRef,
 }: {
-  setEditClass?: Dispatch<SetStateAction<boolean>>;
+  setIsContextMenuOpen?: (state: boolean) => void;
   editClassOverlayRef?: MutableRefObject<HTMLDivElement | null>;
   sourceVectorLabelsRef: MutableRefObject<OlSourceVector<Geometry> | null>;
 }) => {
@@ -30,11 +30,19 @@ export const SelectInteraction = ({
   useHotkeys(
     keymap.openLabelClassSelectionPopover.key,
     () => {
+      console.log("click c");
       if (sourceVectorLabelsRef.current == null) return;
+
+      console.log(
+        "sourceVectorLabelsRef.current.getFeatures()",
+        sourceVectorLabelsRef.current.getFeatures()
+      );
 
       const selectedFeatures = sourceVectorLabelsRef.current
         .getFeatures()
         .filter((feature) => feature.getProperties().isSelected === true);
+
+      console.log("selectedFeatures", selectedFeatures);
 
       const extent = createEmpty();
       selectedFeatures.forEach((feature) => {
@@ -42,10 +50,10 @@ export const SelectInteraction = ({
       });
 
       setEditMenuLocation(getCenter(extent));
-      setEditClass((x: boolean) => !x);
+      setIsContextMenuOpen(true);
     },
     {},
-    [sourceVectorLabelsRef, setEditClass]
+    [sourceVectorLabelsRef, setIsContextMenuOpen]
   );
 
   const clickHandler = (e: MapBrowserEvent<UIEvent>) => {
@@ -61,7 +69,7 @@ export const SelectInteraction = ({
     const selectedLabelIdFromFeature = feature?.getProperties().id ?? null;
     setSelectedLabelId(selectedLabelIdFromFeature);
     if (selectedLabelIdFromFeature) {
-      setEditClass(true);
+      setIsContextMenuOpen(true);
       setEditMenuLocation(map.getCoordinateFromPixel(e.pixel));
     }
     return true;
