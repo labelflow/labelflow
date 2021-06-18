@@ -1,4 +1,4 @@
-import React from "react";
+import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useQuery } from "@apollo/client";
@@ -27,16 +27,41 @@ const paginatedImagesQuery = gql`
   }
 `;
 
+const itemHeight = 90;
+const itemWidth = 150;
+const getImageOffset = (width: number) => {
+  return Math.floor(width / itemWidth / 2);
+};
+
 export const Gallery = () => {
+  const listRef = useRef<List | null>(null);
+  const previousImageIndex = useRef<number | null>();
   const router = useRouter();
   const imageId = router.query.id;
   /* We need to replace it with a proper count query */
-  const itemCount =
-    useQuery<{ images: Pick<ImageType, "id">[] }>(imagesCountQuery)?.data
-      ?.images?.length;
-
+  const imagesResult =
+    useQuery<{ images: Pick<ImageType, "id">[] }>(imagesCountQuery);
+  const itemCount = imagesResult?.data?.images?.length ?? 0;
+  const currentImageIndex = imagesResult?.data?.images.findIndex(
+    (image) => image.id === imageId
+  );
   const [containerRef, { width }] = useMeasure();
-  const { data, fetchMore } = useQuery<{
+
+  useEffect(() => {
+    if (!currentImageIndex || !listRef.current || !width) return;
+    // Initialize previousImageIndex when user just came in
+    if (!previousImageIndex.current) {
+      previousImageIndex.current = currentImageIndex;
+    }
+    if (previousImageIndex.current <= currentImageIndex) {
+      listRef.current.scrollToItem(currentImageIndex + getImageOffset(width));
+    } else {
+      listRef.current.scrollToItem(currentImageIndex - getImageOffset(width));
+    }
+    previousImageIndex.current = currentImageIndex;
+  }, [currentImageIndex, listRef.current, width]);
+
+  const { data, loading, fetchMore } = useQuery<{
     images: Array<ImageType | null>;
   }>(paginatedImagesQuery, { variables: { first: 10, skip: 10 } });
 
@@ -78,7 +103,7 @@ export const Gallery = () => {
   );
 
   const loadMoreItems = (min: number, max: number) => {
-    fetchMore({
+    return fetchMore({
       variables: { first: max - min, skip: min },
       updateQuery: (previousResult, { fetchMoreResult, variables }) => {
         const newImageStartIndex = variables?.skip;
@@ -100,28 +125,29 @@ export const Gallery = () => {
     });
   };
 
+  const isLoading = !width && loading && imagesResult.loading;
+
   return (
     <Box ref={containerRef} pt={4}>
-      {width && (
+      {!isLoading && (
         <InfiniteLoader
           isItemLoaded={(index: number) => data?.images?.[index] != null}
           itemCount={itemCount}
           loadMoreItems={loadMoreItems}
         >
-          {({
-            onItemsRendered,
-            ref,
-          }: {
-            onItemsRendered: () => void;
-            ref: React.Ref<HTMLElement>;
-          }) => (
+          {({ onItemsRendered, ref: internalRef }) => (
             <List
+              ref={(value) => {
+                if (typeof internalRef === "function") {
+                  internalRef(value);
+                }
+                listRef.current = value;
+              }}
               className="List"
-              height={90}
+              height={itemHeight}
               itemCount={itemCount}
-              itemSize={150}
+              itemSize={itemWidth}
               onItemsRendered={onItemsRendered}
-              ref={ref}
               layout="horizontal"
               width={width}
             >
