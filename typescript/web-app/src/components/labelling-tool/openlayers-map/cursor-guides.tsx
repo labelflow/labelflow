@@ -2,6 +2,12 @@ import { useRef, useEffect } from "react";
 import { Map as OlMap, MapBrowserEvent } from "ol";
 import { Box } from "@chakra-ui/react";
 
+const style = {
+  backgroundColor: "#000000",
+  borderColor: "#ffffff",
+  borderWidth: "1px",
+};
+
 export const CursorGuides = ({ map }: { map: OlMap | null }) => {
   const horizontalBarRef = useRef<HTMLDivElement | null>(null);
   const verticalBarRef = useRef<HTMLDivElement | null>(null);
@@ -24,10 +30,10 @@ export const CursorGuides = ({ map }: { map: OlMap | null }) => {
        * So we have withdraw 1 to follow the bounding box edges.
        */
       horizontalBarRef.current.style.transform = `translateY(${
-        e.pixel[1] - 1
+        e.pixel[1] - 1.5
       }px)`;
       verticalBarRef.current.style.transform = `translateX(${
-        e.pixel[0] - 1
+        e.pixel[0] - 1.5
       }px)`;
     };
     map.on("pointermove", onPointerMove);
@@ -35,29 +41,27 @@ export const CursorGuides = ({ map }: { map: OlMap | null }) => {
     return () => map.un("pointermove", onPointerMove);
   }, [map]);
 
-  const guideColor = "#05FF00";
-
   return (
     <>
       <Box
         ref={horizontalBarRef}
-        bg={guideColor}
         w="100%"
-        h="2px"
+        h="3px"
         position="absolute"
         pointerEvents="none"
         willChange="transform"
         zIndex={2}
+        style={style}
       />
       <Box
         ref={verticalBarRef}
-        bg={guideColor}
-        w="2px"
+        w="3px"
         h="100%"
         position="absolute"
         pointerEvents="none"
         willChange="transform"
         zIndex={2}
+        style={style}
       />
     </>
   );
