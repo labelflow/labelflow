@@ -2,6 +2,11 @@ import { useRef, useEffect } from "react";
 import { Map as OlMap, MapBrowserEvent } from "ol";
 import { Box } from "@chakra-ui/react";
 
+const style = {
+  "mix-blend-mode": "exclusion",
+  backgroundColor: "#ffffff",
+};
+
 export const CursorGuides = ({ map }: { map: OlMap | null }) => {
   const horizontalBarRef = useRef<HTMLDivElement | null>(null);
   const verticalBarRef = useRef<HTMLDivElement | null>(null);
@@ -35,29 +40,27 @@ export const CursorGuides = ({ map }: { map: OlMap | null }) => {
     return () => map.un("pointermove", onPointerMove);
   }, [map]);
 
-  const guideColor = "#05FF00";
-
   return (
     <>
       <Box
         ref={horizontalBarRef}
-        bg={guideColor}
         w="100%"
         h="2px"
         position="absolute"
         pointerEvents="none"
         willChange="transform"
         zIndex={2}
+        style={style}
       />
       <Box
         ref={verticalBarRef}
-        bg={guideColor}
         w="2px"
         h="100%"
         position="absolute"
         pointerEvents="none"
         willChange="transform"
         zIndex={2}
+        style={style}
       />
     </>
   );
