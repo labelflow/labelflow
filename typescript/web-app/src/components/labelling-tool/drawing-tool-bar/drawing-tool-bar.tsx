@@ -1,7 +1,7 @@
 import { HStack } from "@chakra-ui/react";
 
 import { SelectionTool } from "./selection-tool";
-import { EditLabelMenu } from "./edit-label-menu";
+import { EditLabelClassMenu } from "./edit-label-class-menu";
 import { DrawingTool } from "./drawing-tool";
 import { UndoTool, RedoTool } from "./undo-redo-tool";
 
@@ -12,7 +12,7 @@ export const DrawingToolbar = () => {
     <>
       <HStack spacing={4}>
         <SelectionTool />
-        <EditLabelMenu />
+        <EditLabelClassMenu />
       </HStack>
       <DrawingTool />
       <UndoTool />

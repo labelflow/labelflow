@@ -44,7 +44,7 @@ const labelQuery = gql`
   }
 `;
 
-export const EditLabelMenu = () => {
+export const EditLabelClassMenu = () => {
   const client = useApolloClient();
   const { data } = useQuery(labelClassesQuery);
   const { perform } = useUndoStore();
