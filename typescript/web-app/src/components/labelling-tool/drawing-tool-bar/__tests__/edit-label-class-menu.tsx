@@ -29,6 +29,7 @@ jest.mock("../../../../connectors/apollo-client-schema", () => {
       mutate: jest.fn(() => {
         return { data: { createLabelClass: { id: "label class id" } } };
       }),
+      mutateOriginal: original.client.mutate,
       query: jest.fn(() => {
         return {
           data: {
