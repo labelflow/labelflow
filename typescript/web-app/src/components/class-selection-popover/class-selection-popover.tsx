@@ -17,7 +17,7 @@ import { RiCloseCircleFill } from "react-icons/ri";
 import { useCombobox, UseComboboxStateChange } from "downshift";
 import { ClassListItem } from "../class-list-item";
 import { LabelClass } from "../../graphql-types.generated";
-import { noneClassColor } from "../../utils/class-color-generator"
+import { noneClassColor } from "../../utils/class-color-generator";
 
 type CreateClassInput = { name: string; type: string };
 type NoneClass = { name: string; color: string; type: string };
@@ -67,6 +67,7 @@ export const ClassSelectionPopover = ({
   labelClasses,
   selectedLabelClassId,
   trigger,
+  parentName,
 }: {
   isOpen?: boolean;
   onClose?: () => void;
@@ -75,6 +76,7 @@ export const ClassSelectionPopover = ({
   createNewClass: (name: string) => void;
   selectedLabelClassId?: string | null;
   trigger?: React.ReactNode;
+  parentName?: string;
 }) => {
   const [inputValueCombobox, setInputValueCombobox] = useState<string>("");
   const filteredLabelClasses = useMemo(
@@ -139,6 +141,7 @@ export const ClassSelectionPopover = ({
       initialFocusRef={initialFocusRef}
       placement="bottom-start"
       preventOverflow
+      id={parentName} // Needed to identify the component in cypress tests
     >
       {trigger && <PopoverTrigger>{trigger}</PopoverTrigger>}
       <PopoverContent borderColor="gray.200" pointerEvents="initial">

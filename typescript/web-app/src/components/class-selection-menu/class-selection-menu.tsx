@@ -63,6 +63,7 @@ export const ClassSelectionMenu = ({
       isOpen={isOpen}
       onClose={close}
       labelClasses={labelClasses}
+      parentName="class-selection-menu"
       onSelectedClassChange={(labelClass: LabelClass | null) => {
         onSelectedClassChange(labelClass);
         close();

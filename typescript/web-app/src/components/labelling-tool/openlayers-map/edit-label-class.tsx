@@ -63,6 +63,7 @@ export const EditLabelClass = forwardRef<
         <ClassSelectionPopover
           isOpen
           onClose={onClose}
+          parentName="edit-label-class"
           trigger={<div style={{ width: 0, height: 0 }} />} // Needed to have the popover displayed preventing overflow
           labelClasses={labelClasses}
           selectedLabelClassId={selectedLabelClassId}
