@@ -24,6 +24,7 @@ const ClassSelectionButton = React.forwardRef<
       onClick={toggle}
       bg="white"
       pointerEvents="initial"
+      aria-label="class-selection-menu-trigger"
     >
       <Tooltip
         label={`Selected class (${selectedLabelClass?.name ?? "None"})`}
