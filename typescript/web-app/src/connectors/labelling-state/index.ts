@@ -45,17 +45,21 @@ export const useLabellingStore = create<LabellingState>(
     canZoomOut: false,
     isContextMenuOpen: false,
     setIsContextMenuOpen: (isContextMenuOpen: boolean) =>
-      set({ isContextMenuOpen }),
+      set((state) => ({ ...state, isContextMenuOpen })),
     selectedTool: getRouterValue("selectedTool") ?? Tools.SELECTION,
     selectedLabelId: getRouterValue("selectedLabelId") ?? null,
     boxDrawingToolState: BoxDrawingToolState.IDLE,
     setBoxDrawingToolState: (boxDrawingToolState: BoxDrawingToolState) =>
-      set({ boxDrawingToolState }),
-    setView: (view: OlView) => set({ view }),
-    setSelectedTool: (selectedTool: Tools) => set({ selectedTool }),
-    setSelectedLabelId: (selectedLabelId: string) => set({ selectedLabelId }),
-    setCanZoomIn: (canZoomIn: boolean) => set({ canZoomIn }),
-    setCanZoomOut: (canZoomOut: boolean) => set({ canZoomOut }),
+      set((state) => ({ ...state, boxDrawingToolState })),
+    setView: (view: OlView) => set((state) => ({ ...state, view })),
+    setSelectedTool: (selectedTool: Tools) =>
+      set((state) => ({ ...state, selectedTool })),
+    setSelectedLabelId: (selectedLabelId: string | null) =>
+      set((state) => ({ ...state, selectedLabelId })),
+    setCanZoomIn: (canZoomIn: boolean) =>
+      set((state) => ({ ...state, canZoomIn })),
+    setCanZoomOut: (canZoomOut: boolean) =>
+      set((state) => ({ ...state, canZoomOut })),
     zoomByDelta: (ratio: number) => {
       const { view } = get();
       if (!view) return;
