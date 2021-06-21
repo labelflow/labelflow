@@ -35,7 +35,7 @@ const deleteLabelClassQuery = gql`
   }
 `;
 
-const createCreateLabelClassEffectBoundingBoxMode = (
+export const createCreateLabelClassEffect = (
   {
     name,
     color,
@@ -110,7 +110,7 @@ export const createNewLabelClassCurry =
         ? hexColorSequence[0]
         : getNextClassColor(labelClasses[labelClasses.length - 1].color);
     perform(
-      createCreateLabelClassEffectBoundingBoxMode(
+      createCreateLabelClassEffect(
         { name, color: newClassColor, selectedLabelClassIdPrevious },
         { client }
       )
