@@ -7,7 +7,6 @@ import gql from "graphql-tag";
 import { mockNextRouter } from "../../../../utils/router-mocks";
 
 import { client } from "../../../../connectors/apollo-client-schema";
-import { useUndoStore } from "../../../../connectors/undo-store";
 import {
   useLabellingStore,
   Tools,
@@ -30,7 +29,6 @@ jest.mock("../../../../connectors/apollo-client-schema", () => {
       mutate: jest.fn(() => {
         return { data: { createLabelClass: { id: "label class id" } } };
       }),
-      mutateOriginal: original.client.mutate,
       query: jest.fn(() => {
         return {
           data: {
@@ -123,84 +121,6 @@ it("should create a class", async () => {
   });
 });
 
-it("should undo a class creation", async () => {
-  renderEditLabelClassMenu();
-
-  userEvent.type(screen.getByPlaceholderText(/Search/), "newClass{enter}");
-
-  await act(async () => {
-    await useUndoStore.getState().undo();
-  });
-
-  await waitFor(() => {
-    expect(client.mutate).toHaveBeenNthCalledWith(
-      3,
-      expect.objectContaining({
-        variables: {
-          data: {
-            labelClassId: "previous label class id",
-          },
-          where: { id: "my label id" },
-        },
-      })
-    );
-  });
-
-  await waitFor(() => {
-    expect(client.mutate).toHaveBeenNthCalledWith(
-      4,
-      expect.objectContaining({
-        variables: {
-          where: {
-            id: "label class id",
-          },
-        },
-      })
-    );
-  });
-});
-
-it("should redo a class creation", async () => {
-  renderEditLabelClassMenu();
-
-  await userEvent.type(
-    screen.getByPlaceholderText(/Search/),
-    "newClass{enter}"
-  );
-
-  await act(async () => {
-    await useUndoStore.getState().undo();
-    await useUndoStore.getState().redo();
-  });
-
-  await waitFor(() => {
-    expect(client.mutate).toHaveBeenNthCalledWith(
-      5,
-      expect.objectContaining({
-        variables: {
-          data: expect.objectContaining({
-            name: "newClass",
-          }),
-        },
-      })
-    );
-  });
-
-  await waitFor(() => {
-    expect(client.mutate).toHaveBeenNthCalledWith(
-      6,
-      expect.objectContaining({
-        variables: {
-          data: {
-            labelClassId: "label class id",
-          },
-          where: { id: "my label id" },
-        },
-      })
-    );
-  });
-});
-
 it("should change a class", async () => {
   renderEditLabelClassMenu();
 
@@ -212,63 +132,6 @@ it("should change a class", async () => {
 
   await waitFor(() => {
     expect(client.mutate).toHaveBeenCalledWith(
-      expect.objectContaining({
-        variables: {
-          data: {
-            labelClassId: "existing label class id",
-          },
-          where: { id: "my label id" },
-        },
-      })
-    );
-  });
-});
-
-it("should undo a class change", async () => {
-  renderEditLabelClassMenu();
-
-  await waitFor(() =>
-    expect(screen.getByText(/existing label class/)).toBeDefined()
-  );
-
-  await userEvent.click(screen.getByText(/existing label class/));
-
-  await act(async () => {
-    await useUndoStore.getState().undo();
-  });
-
-  await waitFor(() => {
-    expect(client.mutate).toHaveBeenNthCalledWith(
-      2,
-      expect.objectContaining({
-        variables: {
-          data: {
-            labelClassId: "previous label class id",
-          },
-          where: { id: "my label id" },
-        },
-      })
-    );
-  });
-});
-
-it("should redo a class change", async () => {
-  renderEditLabelClassMenu();
-
-  await waitFor(() =>
-    expect(screen.getByText(/existing label class/)).toBeDefined()
-  );
-
-  await userEvent.click(screen.getByText(/existing label class/));
-
-  await act(async () => {
-    await useUndoStore.getState().undo();
-    await useUndoStore.getState().redo();
-  });
-
-  await waitFor(() => {
-    expect(client.mutate).toHaveBeenNthCalledWith(
-      3,
       expect.objectContaining({
         variables: {
           data: {
