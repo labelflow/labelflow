@@ -325,6 +325,7 @@ const createUpdateLabelClassEffectSelection = (
       },
       refetchQueries: ["getImageLabels"],
     });
+    useLabellingStore.setState({ selectedLabelClassId });
     return labelClassIdPrevious;
   },
   undo: async (labelClassIdPrevious: string) => {
@@ -336,6 +337,7 @@ const createUpdateLabelClassEffectSelection = (
       },
       refetchQueries: ["getImageLabels"],
     });
+    useLabellingStore.setState({ selectedLabelClassId: labelClassIdPrevious });
 
     return labelClassIdPrevious;
   },
