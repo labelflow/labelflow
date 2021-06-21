@@ -12,6 +12,8 @@ export const createUpdateLabelClassEffect = ({
     useLabellingStore.setState({ selectedLabelClassId });
   },
   undo: async () => {
-    useLabellingStore.setState({ selectedLabelClassIdPrevious });
+    useLabellingStore.setState({
+      selectedLabelClassId: selectedLabelClassIdPrevious,
+    });
   },
 });
