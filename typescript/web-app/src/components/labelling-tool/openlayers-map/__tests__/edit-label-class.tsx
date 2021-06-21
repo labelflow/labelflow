@@ -1,15 +1,9 @@
-/* eslint-disable import/first */
-// @ts-ignore Needs to be done before ol is imported
-global.URL.createObjectURL = jest.fn(() => "mockedUrl");
-
 import { ApolloProvider } from "@apollo/client";
 import { render, screen, waitFor, act } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import gql from "graphql-tag";
 
 import { mockNextRouter } from "../../../../utils/router-mocks";
-
-mockNextRouter({ query: { id: "mocked-image-id" } });
 
 import { client } from "../../../../connectors/apollo-client-schema";
 import { useUndoStore } from "../../../../connectors/undo-store";
@@ -20,6 +14,8 @@ import {
 import { setupTestsWithLocalDatabase } from "../../../../utils/setup-local-db-tests";
 
 import { EditLabelClass } from "../edit-label-class";
+
+mockNextRouter({ query: { id: "mocked-image-id" } });
 
 setupTestsWithLocalDatabase();
 
