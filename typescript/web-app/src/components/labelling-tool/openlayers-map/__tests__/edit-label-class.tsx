@@ -1,3 +1,4 @@
+/* eslint-disable import/first */
 import { ApolloProvider } from "@apollo/client";
 import { render, screen, waitFor, act } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
