@@ -69,13 +69,13 @@ it("create a label when the user has finished to draw a bounding box on the labe
 
   expect(client.mutate).toHaveBeenCalledWith(
     expect.objectContaining({
-      variables: {
+      variables: expect.objectContaining({
         imageId: "mocked-image-id",
         x: 100,
         y: 200,
         width: 100,
         height: 100,
-      },
+      }),
     })
   );
 });
@@ -200,15 +200,16 @@ it("is possible to redo an undone action", async () => {
   await useUndoStore.getState().undo();
   await useUndoStore.getState().redo();
 
-  expect(client.mutate).toHaveBeenCalledWith(
+  expect(client.mutate).toHaveBeenNthCalledWith(
+    3,
     expect.objectContaining({
-      variables: {
+      variables: expect.objectContaining({
         imageId: "mocked-image-id",
         x: 100,
         y: 200,
         width: 100,
         height: 100,
-      },
+      }),
     })
   );
 });
