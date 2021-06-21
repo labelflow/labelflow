@@ -1,6 +1,5 @@
 /* eslint-disable import/first */
 import { createUpdateLabelClassOfLabelEffect } from "../update-label-class-of-label";
-import { useLabellingStore } from "../../labelling-state";
 import { useUndoStore } from "../../undo-store";
 import { client } from "../../apollo-client-schema";
 
