@@ -4017,8 +4017,7 @@ __metadata:
     react-hotkeys-hook: 3.3.1
     react-icons: ^4.2.0
     react-use-measure: ^2.0.4
-    react-window: ^1.8.6
-    react-window-infinite-loader: ^1.0.7
+    react-virtual: ^2.7.1
     storybook-addon-next-router: ^2.0.4
     typescript: 4.2.4
     use-query-params: ^1.2.2
@@ -4480,6 +4479,13 @@ __metadata:
     react: ^16.8.0 || 17.x
     react-dom: ^16.8.0 || 17.x
   checksum: 3073e3f0f971c9ec7df479bae4ba337935a9e06106792ff2fd1084bef69570f67a2b1b752f1dc81d88e291d226c272bcf2ccc1d681a3c83851d6b7d4bbfb394a
+  languageName: node
+  linkType: hard
+
+"@reach/observe-rect@npm:^1.1.0":
+  version: 1.2.0
+  resolution: "@reach/observe-rect@npm:1.2.0"
+  checksum: 4aa32fa1ab410527cecf62e3143664e4b7823212bb7b79b5fd84d0d390fa086fcdba27fceebc0e24e2958f2a0649d5b88ec8b0ed907c72730964ac33eb3089af
   languageName: node
   linkType: hard
 
@@ -18344,7 +18350,7 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"memoize-one@npm:>=3.1.1 <6, memoize-one@npm:^5.0.0":
+"memoize-one@npm:^5.0.0":
   version: 5.2.1
   resolution: "memoize-one@npm:5.2.1"
   checksum: 6b7dab7d8d9dca696d500dbc7f6b1445cbc4168d8208ee2746dd1a7f75378445d9bc6a2def7868afee81c87e630294456310f33f3f1eb738f69d748c797d87d5
@@ -21543,26 +21549,14 @@ next-pwa@5.2.21:
   languageName: node
   linkType: hard
 
-"react-window-infinite-loader@npm:^1.0.7":
-  version: 1.0.7
-  resolution: "react-window-infinite-loader@npm:1.0.7"
-  peerDependencies:
-    react: ^15.3.0 || ^16.0.0-alpha || ^17.0.0
-    react-dom: ^15.3.0 || ^16.0.0-alpha || ^17.0.0
-  checksum: 5460b4fd84ce9a068572d25a6a25a83377f5cf7f0302dc365961db8ebae82e32f1caa83fe2a01caf2b5e4d6abc33c867d2d20cd962c654e8602168043fe38768
-  languageName: node
-  linkType: hard
-
-"react-window@npm:^1.8.6":
-  version: 1.8.6
-  resolution: "react-window@npm:1.8.6"
+"react-virtual@npm:^2.7.1":
+  version: 2.7.1
+  resolution: "react-virtual@npm:2.7.1"
   dependencies:
-    "@babel/runtime": ^7.0.0
-    memoize-one: ">=3.1.1 <6"
+    "@reach/observe-rect": ^1.1.0
   peerDependencies:
-    react: ^15.0.0 || ^16.0.0 || ^17.0.0
-    react-dom: ^15.0.0 || ^16.0.0 || ^17.0.0
-  checksum: e2bfdfbe39f165c8ca4005b36837288546db5701fc6b53da0acb352317f5dad14cd7abbdff3b13644a8615074fa9841996249b2776f8f94e7efa4e37236b06a4
+    react: ^16.6.3 || ^17.0.0
+  checksum: a504a97627a2c04d751eaf20a1de1e427832e052c8231f3857361ce101917f768c4ee8fcfb5d4ae2d3fb2dca487fc125d12eaaa1f65367e4ab41de3d57ab133a
   languageName: node
   linkType: hard
 
