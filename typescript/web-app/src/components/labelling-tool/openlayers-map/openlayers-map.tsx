@@ -173,8 +173,10 @@ export const OpenlayersMap = () => {
                   <olView
                     ref={(value: OlView) => {
                       if (!value) return;
-                      viewRef.current = value;
-                      setView(value);
+                      if (viewRef.current !== value) {
+                        viewRef.current = value;
+                        setView(value);
+                      }
                     }}
                     onChange_resolution={() => {
                       if (!viewRef.current) return false;
