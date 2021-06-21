@@ -5,7 +5,6 @@ import { createUpdateLabelClassEffect } from "../update-label-class";
 const { perform } = useUndoStore.getState();
 
 beforeEach(() => {
-  //   useLabellingStore.destroy();
   useLabellingStore.setState({
     selectedLabelClassId: "previous label class id",
   });
