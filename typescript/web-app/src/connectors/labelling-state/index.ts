@@ -44,22 +44,27 @@ export const useLabellingStore = create<LabellingState>(
     canZoomIn: true,
     canZoomOut: false,
     isContextMenuOpen: false,
+
     setIsContextMenuOpen: (isContextMenuOpen: boolean) =>
-      set((state) => ({ ...state, isContextMenuOpen })),
+      // @ts-ignore See https://github.com/Diablow/zustand-store-addons/issues/2
+      set({ isContextMenuOpen }),
     selectedTool: getRouterValue("selectedTool") ?? Tools.SELECTION,
     selectedLabelId: getRouterValue("selectedLabelId") ?? null,
     boxDrawingToolState: BoxDrawingToolState.IDLE,
     setBoxDrawingToolState: (boxDrawingToolState: BoxDrawingToolState) =>
-      set((state) => ({ ...state, boxDrawingToolState })),
-    setView: (view: OlView) => set((state) => ({ ...state, view })),
-    setSelectedTool: (selectedTool: Tools) =>
-      set((state) => ({ ...state, selectedTool })),
+      // @ts-ignore See https://github.com/Diablow/zustand-store-addons/issues/2
+      set({ boxDrawingToolState }),
+    // @ts-ignore See https://github.com/Diablow/zustand-store-addons/issues/2
+    setView: (view: OlView) => set({ view }),
+    // @ts-ignore See https://github.com/Diablow/zustand-store-addons/issues/2
+    setSelectedTool: (selectedTool: Tools) => set({ selectedTool }),
     setSelectedLabelId: (selectedLabelId: string | null) =>
-      set((state) => ({ ...state, selectedLabelId })),
-    setCanZoomIn: (canZoomIn: boolean) =>
-      set((state) => ({ ...state, canZoomIn })),
-    setCanZoomOut: (canZoomOut: boolean) =>
-      set((state) => ({ ...state, canZoomOut })),
+      // @ts-ignore See https://github.com/Diablow/zustand-store-addons/issues/2
+      set({ selectedLabelId }),
+    // @ts-ignore See https://github.com/Diablow/zustand-store-addons/issues/2
+    setCanZoomIn: (canZoomIn: boolean) => set({ canZoomIn }),
+    // @ts-ignore See https://github.com/Diablow/zustand-store-addons/issues/2
+    setCanZoomOut: (canZoomOut: boolean) => set({ canZoomOut }),
     zoomByDelta: (ratio: number) => {
       const { view } = get();
       if (!view) return;

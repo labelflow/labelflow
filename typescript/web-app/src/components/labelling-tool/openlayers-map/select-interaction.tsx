@@ -49,11 +49,11 @@ export const SelectInteraction = ({
         extend(extent, feature.getGeometry().getExtent());
       });
 
-      setEditMenuLocation(getCenter(extent));
       setIsContextMenuOpen(true);
+      setEditMenuLocation(getCenter(extent));
     },
     {},
-    [sourceVectorLabelsRef, setIsContextMenuOpen]
+    [sourceVectorLabelsRef, setIsContextMenuOpen, setEditMenuLocation]
   );
 
   const clickHandler = (e: MapBrowserEvent<UIEvent>) => {
