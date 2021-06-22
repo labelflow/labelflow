@@ -6,14 +6,14 @@ import { withNextRouter } from "storybook-addon-next-router";
 import gql from "graphql-tag";
 import Bluebird from "bluebird";
 
-import { client } from "../../../../connectors/apollo-client-schema";
-import { chakraDecorator } from "../../../../utils/chakra-decorator";
-import { apolloDecorator } from "../../../../utils/apollo-decorator";
-import { db } from "../../../../connectors/database";
+import { client } from "../../../connectors/apollo-client-schema";
+import { chakraDecorator } from "../../../utils/chakra-decorator";
+import { apolloDecorator } from "../../../utils/apollo-decorator";
+import { db } from "../../../connectors/database";
 
 import { Gallery } from "../gallery";
 
-import imageSampleCollection from "../../../../utils/image-sample-collection";
+import imageSampleCollection from "../../../utils/image-sample-collection";
 
 const images = imageSampleCollection.slice(0, 15);
 

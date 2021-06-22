@@ -18,7 +18,7 @@ import NextLink from "next/link";
 
 import { Layout } from "../../components/layout";
 import type { Image } from "../../graphql-types.generated";
-import { Gallery } from "../../components/labelling-tool/gallery";
+import { Gallery } from "../../components/gallery";
 
 // The dynamic import is needed because openlayers use web apis that are not available
 // in NodeJS, like `Blob`, so it crashes when rendering in NextJS server side.

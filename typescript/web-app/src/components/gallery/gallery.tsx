@@ -4,7 +4,7 @@ import { useQuery } from "@apollo/client";
 import gql from "graphql-tag";
 import { Box } from "@chakra-ui/react";
 import { useVirtual } from "react-virtual";
-import { Image as ImageType } from "../../../graphql-types.generated";
+import { Image as ImageType } from "../../graphql-types.generated";
 
 import { GalleryItem } from "./gallery-item";
 import { usePaginatedImages } from "./use-paginated-images";
@@ -30,10 +30,10 @@ export const Gallery = () => {
     (image) => image.id === imageId
   );
 
-  const { count: itemCount, data, askForItemsInRange } = usePaginatedImages();
+  const { data } = usePaginatedImages();
 
   const { virtualItems, totalSize, scrollToIndex } = useVirtual({
-    size: itemCount,
+    size: data?.images?.length ?? 0,
     parentRef: listRef,
     estimateSize: useCallback(() => itemWidth, []),
     horizontal: true,
@@ -47,16 +47,6 @@ export const Gallery = () => {
 
     scrollToIndex(currentImageIndex, { align: "center" });
   }, [currentImageIndex, scrollToIndex]);
-
-  useEffect(() => {
-    if (virtualItems.length === 0) {
-      return;
-    }
-
-    const start = virtualItems[0].index;
-    const end = virtualItems[virtualItems.length - 1].index;
-    askForItemsInRange(start, end);
-  }, [virtualItems]);
 
   return (
     <Box ref={listRef} as="nav" pt={4} overflow="auto">
