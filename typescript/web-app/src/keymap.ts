@@ -44,7 +44,7 @@ export const keymap: Keymap = {
     category: "Tools", // TODO: change that category?
   },
   focusLabelClassSearch: {
-    key: "/",
+    key: "s", // TODO: We changed the key "/" to "s" because the slash key was not detected by useHotKeys
     description: "Focus on search input in label class selection",
     category: "Tools", // TODO: change that category?
   },
