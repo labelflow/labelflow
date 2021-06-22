@@ -41,7 +41,7 @@ export const Gallery = () => {
   });
 
   useEffect(() => {
-    if (!currentImageIndex || currentImageIndex === -1) {
+    if (currentImageIndex == null || currentImageIndex === -1) {
       return;
     }
 
