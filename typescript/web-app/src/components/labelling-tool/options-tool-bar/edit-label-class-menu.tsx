@@ -1,7 +1,8 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useQuery, useApolloClient } from "@apollo/client";
 import gql from "graphql-tag";
 
+import { useHotkeys } from "react-hotkeys-hook";
 import { ClassSelectionMenu } from "../../class-selection-menu";
 import { Tools, useLabellingStore } from "../../../connectors/labelling-state";
 import { useUndoStore } from "../../../connectors/undo-store";
@@ -10,7 +11,6 @@ import { createNewLabelClassAndUpdateLabelCurry } from "../../../connectors/undo
 import { createUpdateLabelClassOfLabelEffect } from "../../../connectors/undo-store/effects/update-label-class-of-label";
 import { createNewLabelClassCurry } from "../../../connectors/undo-store/effects/create-label-class";
 import { createUpdateLabelClassEffect } from "../../../connectors/undo-store/effects/update-label-class";
-import { useHotkeys } from "react-hotkeys-hook";
 import { keymap } from "../../../keymap";
 
 const labelClassesQuery = gql`
@@ -48,6 +48,7 @@ const labelQuery = gql`
 
 export const EditLabelClassMenu = () => {
   const client = useApolloClient();
+  const [isOpen, setIsOpen] = useState(false);
   const { data } = useQuery(labelClassesQuery);
   const { perform } = useUndoStore();
   const labelClasses = data?.labelClasses ?? [];
@@ -125,6 +126,7 @@ export const EditLabelClassMenu = () => {
         const indexOfLabelClass = (digit + 9) % 10;
         if (indexOfLabelClass < labelClasses.length) {
           onSelectedClassChange(labelClasses[indexOfLabelClass]);
+          setIsOpen(false);
         }
       }
     },
@@ -136,6 +138,8 @@ export const EditLabelClassMenu = () => {
     <>
       {displayClassSelectionMenu && (
         <ClassSelectionMenu
+          isOpen={isOpen}
+          setIsOpen={setIsOpen}
           selectedLabelClass={selectedLabelClass}
           labelClasses={labelClasses}
           createNewClass={async (name) =>

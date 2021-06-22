@@ -75,6 +75,7 @@ export const EditLabelClass = forwardRef<
               { client }
             )
           );
+          onClose();
         }
       }
     },

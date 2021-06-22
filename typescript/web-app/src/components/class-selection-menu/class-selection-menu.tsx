@@ -45,19 +45,22 @@ const ClassSelectionButton = React.forwardRef<
 });
 
 export const ClassSelectionMenu = ({
+  isOpen,
+  setIsOpen,
   labelClasses,
   onSelectedClassChange,
   createNewClass,
   selectedLabelClass,
   isClassSelectionPopoverOpenedOnRightClick,
 }: {
+  isOpen: boolean;
+  setIsOpen: (b: boolean) => void;
   labelClasses: LabelClass[];
   onSelectedClassChange: (item: LabelClass | null) => void;
   createNewClass: (name: string) => void;
   selectedLabelClass?: LabelClass | null;
   isClassSelectionPopoverOpenedOnRightClick?: boolean;
 }) => {
-  const [isOpen, setIsOpen] = React.useState(false);
   const toggle = () => setIsOpen(!isOpen);
   const close = () => setIsOpen(false);
 

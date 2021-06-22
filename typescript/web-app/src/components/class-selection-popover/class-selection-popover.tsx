@@ -157,7 +157,6 @@ export const ClassSelectionPopover = ({
     keymap.focusLabelClassSearch.key,
     (keyboardEvent) => {
       if (activateShortcuts) {
-        console.log("Inside event!", keyboardEvent, parentName);
         searchInputRef.current.focus();
         keyboardEvent.preventDefault();
       }
@@ -202,12 +201,12 @@ export const ClassSelectionPopover = ({
                       <Kbd fontSize="md">↩</Kbd>
                     </>
                   ) : (
-                    <Kbd>/</Kbd>
+                    <Kbd>s</Kbd>
                   )}
                 </InputRightElement>
               </InputGroup>
             </Box>
-            <Box pt="1" {...getMenuProps()}>
+            <Box pt="1" {...getMenuProps()} overflowY="scroll" maxHeight="340">
               {filteredLabelClasses.map(
                 (
                   item: LabelClass | CreateClassInput | NoneClass,
