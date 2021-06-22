@@ -146,12 +146,10 @@ export const ClassSelectionPopover = ({
       reset();
     }
   }, [isOpen]);
-  const initialFocusRef = useRef(null);
   return (
     <Popover
       isOpen={isOpen}
       onClose={onClose}
-      initialFocusRef={initialFocusRef}
       placement="bottom-start"
       preventOverflow
       id={parentName} // Needed to identify the component in cypress tests
@@ -165,11 +163,7 @@ export const ClassSelectionPopover = ({
                 <InputLeftElement pointerEvents="none">
                   <MagnifierIcon fontSize="2xl" />
                 </InputLeftElement>
-                <Input
-                  {...getInputProps({ ref: initialFocusRef })}
-                  placeholder="Search..."
-                  pr="4rem"
-                />
+                <Input {...getInputProps()} placeholder="Search..." pr="4rem" />
                 <InputRightElement
                   width="4rem"
                   justifyContent="flex-end"
