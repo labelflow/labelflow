@@ -18,6 +18,8 @@ import { useCombobox, UseComboboxStateChange } from "downshift";
 import { ClassListItem } from "../class-list-item";
 import { LabelClass } from "../../graphql-types.generated";
 import { noneClassColor } from "../../utils/class-color-generator";
+import { useHotkeys } from "react-hotkeys-hook";
+import { keymap } from "../../keymap";
 
 type CreateClassInput = { name: string; type: string };
 type NoneClass = { name: string; color: string; type: string };
@@ -146,6 +148,19 @@ export const ClassSelectionPopover = ({
       reset();
     }
   }, [isOpen]);
+
+  const searchInputRef = useRef(null);
+
+  useHotkeys(
+    // "*",
+    keymap.focusLabelClassSearch.key,
+    (keyboardEvent) => {
+      console.log("Inside event!", keyboardEvent);
+      // searchInputRef.current.focus();
+    },
+    {},
+    []
+  );
   return (
     <Popover
       isOpen={isOpen}
@@ -163,7 +178,11 @@ export const ClassSelectionPopover = ({
                 <InputLeftElement pointerEvents="none">
                   <MagnifierIcon fontSize="2xl" />
                 </InputLeftElement>
-                <Input {...getInputProps()} placeholder="Search..." pr="4rem" />
+                <Input
+                  {...getInputProps({ ref: searchInputRef })}
+                  placeholder="Search..."
+                  pr="4rem"
+                />
                 <InputRightElement
                   width="4rem"
                   justifyContent="flex-end"

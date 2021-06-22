@@ -43,4 +43,9 @@ export const keymap: Keymap = {
     description: "Select class corresponding to shortcut",
     category: "Tools", // TODO: change that category?
   },
+  focusLabelClassSearch: {
+    key: "/",
+    description: "Focus on search input in label class selection",
+    category: "Tools", // TODO: change that category?
+  },
 };
