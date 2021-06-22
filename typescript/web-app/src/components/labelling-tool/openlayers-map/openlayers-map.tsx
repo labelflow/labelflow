@@ -74,7 +74,12 @@ const imageQuery = gql`
 `;
 
 export const OpenlayersMap = () => {
-  const [editClass, setEditClass] = useState(false);
+  const isClassSelectionPopoverOpenedOnRightClick = useLabellingStore(
+    (state) => state.isClassSelectionPopoverOpenedOnRightClick
+  );
+  const setIsClassSelectionPopoverOpenedOnRightClick = useLabellingStore(
+    (state) => state.setIsClassSelectionPopoverOpenedOnRightClick
+  );
   const editClassOverlayRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<OlMap>(null);
   const viewRef = useRef<OlView | null>(null);
@@ -207,15 +212,15 @@ export const OpenlayersMap = () => {
               <DrawBoundingBoxInteraction />
               <SelectInteraction
                 editClassOverlayRef={editClassOverlayRef}
-                setEditClass={setEditClass}
+                setEditClass={setIsClassSelectionPopoverOpenedOnRightClick}
               />
             </ApolloProvider>
           </RouterContext.Provider>
         </Map>
         <EditLabelClass
           ref={editClassOverlayRef}
-          isOpen={editClass}
-          onClose={() => setEditClass(false)}
+          isOpen={isClassSelectionPopoverOpenedOnRightClick}
+          onClose={() => setIsClassSelectionPopoverOpenedOnRightClick(false)}
         />
       </div>
     </>
