@@ -79,10 +79,23 @@ export const ClassSelectionPopover = ({
   parentName?: string;
 }) => {
   const [inputValueCombobox, setInputValueCombobox] = useState<string>("");
+  const labelClassesWithShortcut = useMemo(
+    () =>
+      labelClasses.map((labelClass, index) => {
+        if (index > 9) {
+          return labelClass;
+        }
+        return {
+          ...labelClass,
+          shortcut: `${(index + 1) % 10}`,
+        };
+      }),
+    [labelClasses]
+  );
   const filteredLabelClasses = useMemo(
     () =>
       filterLabelClasses({
-        labelClasses,
+        labelClasses: labelClassesWithShortcut,
         inputValueCombobox,
       }),
     [labelClasses, inputValueCombobox]
