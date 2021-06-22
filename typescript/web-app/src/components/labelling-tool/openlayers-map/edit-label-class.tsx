@@ -1,12 +1,14 @@
 import { forwardRef, useMemo } from "react";
 import { useQuery, useApolloClient } from "@apollo/client";
 import gql from "graphql-tag";
+import { useHotkeys } from "react-hotkeys-hook";
 
 import { ClassSelectionPopover } from "../../class-selection-popover";
 import { useLabellingStore } from "../../../connectors/labelling-state";
 import { useUndoStore } from "../../../connectors/undo-store";
 import { createNewLabelClassAndUpdateLabelCurry } from "../../../connectors/undo-store/effects/create-label-class-and-update-label";
 import { createUpdateLabelClassOfLabelEffect } from "../../../connectors/undo-store/effects/update-label-class-of-label";
+import { keymap } from "../../../keymap";
 
 const labelClassesQuery = gql`
   query getLabelClasses {
@@ -54,6 +56,26 @@ export const EditLabelClass = forwardRef<
         onClose,
         client,
       }),
+    [labelClasses]
+  );
+  useHotkeys(
+    keymap.changeClass.key,
+    (keyboardEvent) => {
+      const digit = Number(keyboardEvent.code[5]);
+      const indexOfLabelClass = (digit + 9) % 10;
+      if (indexOfLabelClass < labelClasses.length) {
+        perform(
+          createUpdateLabelClassOfLabelEffect(
+            {
+              selectedLabelId,
+              selectedLabelClassId: labelClasses[indexOfLabelClass]?.id,
+            },
+            { client }
+          )
+        );
+      }
+    },
+    {},
     [labelClasses]
   );
 
