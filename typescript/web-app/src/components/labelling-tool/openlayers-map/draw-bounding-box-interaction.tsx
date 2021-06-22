@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { useRouter } from "next/router";
 import { createBox, DrawEvent } from "ol/interaction/Draw";
 import { Fill, Stroke, Style } from "ol/style";
@@ -152,26 +153,28 @@ export const DrawBoundingBoxInteraction = () => {
   });
   const { perform } = useUndoStore();
 
+  const selectedLabelClass = dataLabelClass?.labelClass;
+
+  const style = useMemo(() => {
+    const color = selectedLabelClass?.color ?? noneClassColor;
+
+    return new Style({
+      fill: new Fill({
+        color: `${color}10`,
+      }),
+      stroke: new Stroke({
+        color,
+        width: 2,
+      }),
+    });
+  }, [selectedLabelClass?.color]);
+
   if (selectedTool !== Tools.BOX) {
     return null;
   }
   if (typeof imageId !== "string") {
     return null;
   }
-
-  const selectedLabelClass = dataLabelClass?.labelClass;
-
-  const color = selectedLabelClass?.color ?? noneClassColor;
-
-  const style = new Style({
-    fill: new Fill({
-      color: `${color}10`,
-    }),
-    stroke: new Stroke({
-      color,
-      width: 2,
-    }),
-  });
 
   return (
     <olInteractionDraw
@@ -185,7 +188,6 @@ export const DrawBoundingBoxInteraction = () => {
         return true;
       }}
       onDrawstart={() => {
-        console.log("Okkkkeee");
         setBoxDrawingToolState(BoxDrawingToolState.DRAWING);
         return true;
       }}
