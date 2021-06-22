@@ -57,7 +57,7 @@ export const GalleryItem = memo(
                   width="100%"
                   align="center center"
                   fit="cover"
-                  border="2px solid"
+                  border="4px solid"
                   borderColor={isSelected ? "brand.500" : "transparent"}
                   borderRadius="md"
                 />
