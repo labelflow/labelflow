@@ -3942,7 +3942,7 @@ __metadata:
     "@types/react-dom": 17.0.0
     "@types/react-reconciler": ^0.26.1
     "@types/storybook__react": 4.0.1
-    lodash: 4.17.20
+    lodash: ^4.17.21
     ol: 6.4.3
     ol-mapbox-style: 6.1.4
     proj4: 2.6.3
@@ -3985,8 +3985,6 @@ __metadata:
     "@types/probe-image-size": ^7.0.0
     "@types/react": 17.0.3
     "@types/react-dom": 17.0.1
-    "@types/react-window": ^1.8.3
-    "@types/react-window-infinite-loader": ^1.0.3
     "@types/uuid": ^8.3.0
     "@types/valid-url": ^1.0.3
     apollo-server-core: ^2.25.0
@@ -8134,25 +8132,6 @@ __metadata:
   dependencies:
     "@types/react": "*"
   checksum: a94068eee2b8f6e80b160afbd9b30e6f0ba9b20aa22de1be7754f8983e7b8769d3875636272c664997ea617ae5599c8ee38e410f3ef2ea115ba2c7e1c33f3551
-  languageName: node
-  linkType: hard
-
-"@types/react-window-infinite-loader@npm:^1.0.3":
-  version: 1.0.3
-  resolution: "@types/react-window-infinite-loader@npm:1.0.3"
-  dependencies:
-    "@types/react": "*"
-    "@types/react-window": "*"
-  checksum: 10f14ad2c53c1d84f9bf807cccb7f6a6d301ff87ef1130bbe976fb8190f8b4293509165169034a7583b51b3087353bb9dad98382280de2cd5cbd5efd7e0bc686
-  languageName: node
-  linkType: hard
-
-"@types/react-window@npm:*, @types/react-window@npm:^1.8.3":
-  version: 1.8.3
-  resolution: "@types/react-window@npm:1.8.3"
-  dependencies:
-    "@types/react": "*"
-  checksum: 0e807a51df46cdb0a22786d5b6507e3b71c86506a2cb9fe70404ff1b38c854cf8d83e95da905503272ebe3ac5e5ca8090f3c568066e94fc190452a69336798a6
   languageName: node
   linkType: hard
 
@@ -17984,13 +17963,6 @@ fsevents@^1.2.7:
   version: 4.4.2
   resolution: "lodash.truncate@npm:4.4.2"
   checksum: b1b0d7d993bb73d0032fe909d4523a836b6aa91566fa88ff78c3eac008bd3d3b2ba0f2e8381d7f906b1d6913a64982f34bea95dd556355c0d418bfddf3ab7b06
-  languageName: node
-  linkType: hard
-
-"lodash@npm:4.17.20":
-  version: 4.17.20
-  resolution: "lodash@npm:4.17.20"
-  checksum: c62101d2500c383b5f174a7e9e6fe8098149ddd6e9ccfa85f36d4789446195f5c4afd3cfba433026bcaf3da271256566b04a2bf2618e5a39f6e67f8c12030cb6
   languageName: node
   linkType: hard
 
