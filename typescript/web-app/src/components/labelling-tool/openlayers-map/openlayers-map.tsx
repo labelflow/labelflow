@@ -151,9 +151,6 @@ export const OpenlayersMap = () => {
         return false;
       }}
     >
-      {selectedTool === Tools.BOX &&
-        boxDrawingToolState !== BoxDrawingToolState.DRAWING &&
-        !isContextMenuOpen && <CursorGuides map={mapRef.current} />}
       <Map
         ref={mapRef}
         args={{ controls: empty }}
@@ -229,6 +226,11 @@ export const OpenlayersMap = () => {
           </ApolloProvider>
         </RouterContext.Provider>
       </Map>
+      {selectedTool === Tools.BOX &&
+        boxDrawingToolState !== BoxDrawingToolState.DRAWING &&
+        !isContextMenuOpen && <CursorGuides map={mapRef.current} />}
+      {/* This div is needed to prevent a weird error that seems related to the EditLabelClass component */}
+      <div />
       <EditLabelClass
         ref={editClassOverlayRef}
         isOpen={isContextMenuOpen}

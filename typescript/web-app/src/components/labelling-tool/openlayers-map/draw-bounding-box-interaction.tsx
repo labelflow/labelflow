@@ -70,7 +70,7 @@ const createLabelEffect = (
     y: number;
     width: number;
     height: number;
-    selectedLabelClassId: string;
+    selectedLabelClassId: string | null;
   },
   {
     setSelectedLabelId,
@@ -185,6 +185,7 @@ export const DrawBoundingBoxInteraction = () => {
         return true;
       }}
       onDrawstart={() => {
+        console.log("Okkkkeee");
         setBoxDrawingToolState(BoxDrawingToolState.DRAWING);
         return true;
       }}
