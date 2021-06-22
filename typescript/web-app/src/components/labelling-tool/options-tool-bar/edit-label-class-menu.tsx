@@ -10,6 +10,8 @@ import { createNewLabelClassAndUpdateLabelCurry } from "../../../connectors/undo
 import { createUpdateLabelClassOfLabelEffect } from "../../../connectors/undo-store/effects/update-label-class-of-label";
 import { createNewLabelClassCurry } from "../../../connectors/undo-store/effects/create-label-class";
 import { createUpdateLabelClassEffect } from "../../../connectors/undo-store/effects/update-label-class";
+import { useHotkeys } from "react-hotkeys-hook";
+import { keymap } from "../../../keymap";
 
 const labelClassesQuery = gql`
   query getLabelClasses {
@@ -49,6 +51,9 @@ export const EditLabelClassMenu = () => {
   const { data } = useQuery(labelClassesQuery);
   const { perform } = useUndoStore();
   const labelClasses = data?.labelClasses ?? [];
+  const isClassSelectionPopoverOpenedOnRightClick = useLabellingStore(
+    (state) => state.isClassSelectionPopoverOpenedOnRightClick
+  );
   const selectedTool = useLabellingStore((state) => state.selectedTool);
   const selectedLabelId = useLabellingStore((state) => state.selectedLabelId);
   const { data: selectedLabelData } = useQuery(labelQuery, {
@@ -111,6 +116,22 @@ export const EditLabelClassMenu = () => {
     selectedTool === Tools.BOUNDING_BOX ||
     (selectedTool === Tools.SELECTION && selectedLabelId != null);
 
+  useHotkeys(
+    keymap.changeClass.key,
+    (keyboardEvent) => {
+      if (!isClassSelectionPopoverOpenedOnRightClick) {
+        // We do not want to interfere with the right click popover shortcuts if it is opened
+        const digit = Number(keyboardEvent.code[5]);
+        const indexOfLabelClass = (digit + 9) % 10;
+        if (indexOfLabelClass < labelClasses.length) {
+          onSelectedClassChange(labelClasses[indexOfLabelClass]);
+        }
+      }
+    },
+    {},
+    [labelClasses, onSelectedClassChange]
+  );
+
   return (
     <>
       {displayClassSelectionMenu && (
@@ -125,6 +146,9 @@ export const EditLabelClassMenu = () => {
           onSelectedClassChange={(item) => {
             onSelectedClassChange(item);
           }}
+          isClassSelectionPopoverOpenedOnRightClick={
+            isClassSelectionPopoverOpenedOnRightClick
+          }
         />
       )}
     </>

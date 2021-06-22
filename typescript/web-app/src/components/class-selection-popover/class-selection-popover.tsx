@@ -15,10 +15,10 @@ import {
 import { IoSearch } from "react-icons/io5";
 import { RiCloseCircleFill } from "react-icons/ri";
 import { useCombobox, UseComboboxStateChange } from "downshift";
+import { useHotkeys } from "react-hotkeys-hook";
 import { ClassListItem } from "../class-list-item";
 import { LabelClass } from "../../graphql-types.generated";
 import { noneClassColor } from "../../utils/class-color-generator";
-import { useHotkeys } from "react-hotkeys-hook";
 import { keymap } from "../../keymap";
 
 type CreateClassInput = { name: string; type: string };
@@ -70,6 +70,7 @@ export const ClassSelectionPopover = ({
   selectedLabelClassId,
   trigger,
   parentName,
+  activateShortcuts,
 }: {
   isOpen?: boolean;
   onClose?: () => void;
@@ -79,6 +80,7 @@ export const ClassSelectionPopover = ({
   selectedLabelClassId?: string | null;
   trigger?: React.ReactNode;
   parentName?: string;
+  activateShortcuts?: boolean;
 }) => {
   const [inputValueCombobox, setInputValueCombobox] = useState<string>("");
   const labelClassesWithShortcut = useMemo(
@@ -152,14 +154,16 @@ export const ClassSelectionPopover = ({
   const searchInputRef = useRef(null);
 
   useHotkeys(
-    // "*",
     keymap.focusLabelClassSearch.key,
     (keyboardEvent) => {
-      console.log("Inside event!", keyboardEvent);
-      // searchInputRef.current.focus();
+      if (activateShortcuts) {
+        console.log("Inside event!", keyboardEvent, parentName);
+        searchInputRef.current.focus();
+        keyboardEvent.preventDefault();
+      }
     },
     {},
-    []
+    [activateShortcuts]
   );
   return (
     <Popover

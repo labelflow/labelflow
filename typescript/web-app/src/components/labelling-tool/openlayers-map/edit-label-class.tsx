@@ -61,22 +61,25 @@ export const EditLabelClass = forwardRef<
   useHotkeys(
     keymap.changeClass.key,
     (keyboardEvent) => {
-      const digit = Number(keyboardEvent.code[5]);
-      const indexOfLabelClass = (digit + 9) % 10;
-      if (indexOfLabelClass < labelClasses.length) {
-        perform(
-          createUpdateLabelClassOfLabelEffect(
-            {
-              selectedLabelId,
-              selectedLabelClassId: labelClasses[indexOfLabelClass]?.id,
-            },
-            { client }
-          )
-        );
+      if (isOpen) {
+        // We do not want to interfere with the class menu shortcuts if this modal is closed
+        const digit = Number(keyboardEvent.code[5]);
+        const indexOfLabelClass = (digit + 9) % 10;
+        if (indexOfLabelClass < labelClasses.length) {
+          perform(
+            createUpdateLabelClassOfLabelEffect(
+              {
+                selectedLabelId,
+                selectedLabelClassId: labelClasses[indexOfLabelClass]?.id,
+              },
+              { client }
+            )
+          );
+        }
       }
     },
     {},
-    [labelClasses]
+    [labelClasses, isOpen]
   );
 
   return (
@@ -102,6 +105,7 @@ export const EditLabelClass = forwardRef<
             );
             onClose();
           }}
+          activateShortcuts={isOpen}
         />
       )}
     </div>

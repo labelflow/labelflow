@@ -49,11 +49,13 @@ export const ClassSelectionMenu = ({
   onSelectedClassChange,
   createNewClass,
   selectedLabelClass,
+  isClassSelectionPopoverOpenedOnRightClick,
 }: {
   labelClasses: LabelClass[];
   onSelectedClassChange: (item: LabelClass | null) => void;
   createNewClass: (name: string) => void;
   selectedLabelClass?: LabelClass | null;
+  isClassSelectionPopoverOpenedOnRightClick?: boolean;
 }) => {
   const [isOpen, setIsOpen] = React.useState(false);
   const toggle = () => setIsOpen(!isOpen);
@@ -80,6 +82,7 @@ export const ClassSelectionMenu = ({
           selectedLabelClass={selectedLabelClass}
         />
       }
+      activateShortcuts={!isClassSelectionPopoverOpenedOnRightClick}
     />
   );
 };
