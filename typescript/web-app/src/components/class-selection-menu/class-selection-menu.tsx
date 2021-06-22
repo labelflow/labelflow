@@ -23,6 +23,8 @@ const ClassSelectionButton = React.forwardRef<
       ref={ref}
       onClick={toggle}
       bg="white"
+      pointerEvents="initial"
+      aria-label="class-selection-menu-trigger"
     >
       <Tooltip
         label={`Selected class (${selectedLabelClass?.name ?? "None"})`}
@@ -62,12 +64,16 @@ export const ClassSelectionMenu = ({
       isOpen={isOpen}
       onClose={close}
       labelClasses={labelClasses}
+      parentName="class-selection-menu"
       onSelectedClassChange={(labelClass: LabelClass | null) => {
         onSelectedClassChange(labelClass);
         close();
       }}
-      createNewClass={createNewClass}
-      selectedLabelClassId={selectedLabelClass?.id}
+      createNewClass={(name: string) => {
+        createNewClass(name);
+        close();
+      }}
+      selectedLabelClassId={selectedLabelClass?.id ?? null}
       trigger={
         <ClassSelectionButton
           toggle={toggle}

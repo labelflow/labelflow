@@ -49,14 +49,16 @@ describe("Class selection popover tests", () => {
   test("Should render component", () => {
     renderClassSelectionMenu(labelClasses);
 
-    expect(screen.getByRole("button", { name: /None/ })).toBeDefined();
+    expect(
+      screen.getByRole("button", { name: "class-selection-menu-trigger" })
+    ).toBeDefined();
   });
 
   test("Should render with a selected label class", () => {
     renderClassSelectionMenu(labelClasses, labelClasses[0]);
 
     expect(
-      screen.getByRole("button", { name: labelClasses[0].name })
+      screen.getByRole("button", { name: "class-selection-menu-trigger" })
     ).toBeDefined();
   });
 
@@ -64,7 +66,9 @@ describe("Class selection popover tests", () => {
     renderClassSelectionMenu(labelClasses);
 
     expect(screen.getByRole("dialog", { hidden: true })).toBeDefined();
-    userEvent.click(screen.getByRole("button", { name: "None" }));
+    userEvent.click(
+      screen.getByRole("button", { name: "class-selection-menu-trigger" })
+    );
 
     expect(screen.getByRole("dialog", { hidden: false })).toBeDefined();
   });
@@ -72,7 +76,9 @@ describe("Class selection popover tests", () => {
   test("Should close popover when clicking on a class", () => {
     renderClassSelectionMenu(labelClasses);
 
-    userEvent.click(screen.getByRole("button", { name: "None" }));
+    userEvent.click(
+      screen.getByRole("button", { name: "class-selection-menu-trigger" })
+    );
     userEvent.click(
       screen.getByRole("option", { name: RegExp(labelClasses[0].name) })
     );
@@ -84,7 +90,9 @@ describe("Class selection popover tests", () => {
   test("Should close popover when creating a new class", () => {
     renderClassSelectionMenu(labelClasses);
 
-    userEvent.click(screen.getByRole("button", { name: "None" }));
+    userEvent.click(
+      screen.getByRole("button", { name: "class-selection-menu-trigger" })
+    );
     userEvent.type(screen.getByPlaceholderText(/search/i), "Perso");
     userEvent.click(screen.getByRole("option", { name: /Create class/ }));
 
