@@ -140,6 +140,7 @@ export const DrawBoundingBoxInteraction = () => {
   );
   const { data: dataLabelClass } = useQuery(labelClassQuery, {
     variables: { id: selectedLabelClassId },
+    skip: selectedLabelClassId == null
   });
   const { perform } = useUndoStore();
 

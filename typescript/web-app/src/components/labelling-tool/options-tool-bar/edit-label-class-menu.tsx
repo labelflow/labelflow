@@ -60,6 +60,7 @@ export const EditLabelClassMenu = () => {
   );
   const { data: dataLabelClass } = useQuery(labelClassQuery, {
     variables: { id: selectedLabelClassId },
+    skip: selectedLabelClassId == null,
   });
   const selectedLabelClass =
     selectedTool === Tools.BOUNDING_BOX
