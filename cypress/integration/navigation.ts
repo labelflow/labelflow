@@ -106,10 +106,10 @@ describe("Labelling tool", () => {
     cy.get('[aria-label="class-selection-menu-trigger"]').contains("My new class")
     // ############## Class selection with shortcut ############## 
     cy.get("main").rightclick(500, 150);
-    cy.wait(500).focused().type("2");
+    cy.focused().type("2");
     cy.get('[aria-label="class-selection-menu-trigger"]').contains("My other new class")
     cy.get("main").click(500, 150);
-    cy.wait(500).get('[aria-label="class-selection-menu-trigger"]').type("1");
+    cy.get('[aria-label="class-selection-menu-trigger"]').type("1");
     cy.get('[aria-label="class-selection-menu-trigger"]').contains("My new class")
     // Image navigation
     cy.get('[aria-label="Next image"]').click();
