@@ -144,98 +144,96 @@ export const OpenlayersMap = () => {
   );
 
   return (
-    <>
-      <div
-        style={{ display: "flex", width: "100%", height: "100%" }}
-        onContextMenu={(e) => {
-          e.preventDefault();
-          return false;
-        }}
+    <div
+      style={{ display: "flex", width: "100%", height: "100%" }}
+      onContextMenu={(e) => {
+        e.preventDefault();
+        return false;
+      }}
+    >
+      {selectedTool === Tools.BOX &&
+        boxDrawingToolState !== BoxDrawingToolState.DRAWING &&
+        !isContextMenuOpen && <CursorGuides map={mapRef.current} />}
+      <Map
+        ref={mapRef}
+        args={{ controls: empty }}
+        style={{ height: "100%", width: "100%" }}
+        onPointermove={onPointermove}
+        containerRef={containerRef}
       >
-        {selectedTool === Tools.BOX &&
-          boxDrawingToolState !== BoxDrawingToolState.DRAWING &&
-          !isContextMenuOpen && <CursorGuides map={mapRef.current} />}
-        <Map
-          ref={mapRef}
-          args={{ controls: empty }}
-          style={{ height: "100%", width: "100%" }}
-          onPointermove={onPointermove}
-          containerRef={containerRef}
-        >
-          {/* Need to bridge contexts across renderers
-           * See https://github.com/facebook/react/issues/17275 */}
-          <RouterContext.Provider value={router}>
-            <ApolloProvider client={client}>
-              {
-                // Before useMeasure has time to properly measure the div, we have a negative resolution,
-                // There is no point rendering the view in that case
-                isBoundsValid && (
-                  <olView
-                    ref={(value: OlView) => {
-                      if (!value) return;
-                      if (viewRef.current !== value) {
-                        viewRef.current = value;
-                        setView(value);
-                      }
-                    }}
-                    onChange_resolution={() => {
-                      if (!viewRef.current) return false;
-                      setCanZoomIn(
-                        viewRef.current.getZoom() + zoomFactor <
-                          viewRef.current.getMaxZoom()
-                      );
-                      setCanZoomOut(
-                        viewRef.current.getZoom() - zoomFactor >
-                          viewRef.current.getMinZoom()
-                      );
-                      return false;
-                    }}
-                    args={{ extent }}
-                    center={center}
-                    initialProjection={projection}
-                    resolution={resolution}
-                    // Max zoom = 16 pixels of screen per pixel of image
-                    minResolution={1.0 / 16.0}
-                    maxResolution={resolution}
-                    constrainOnlyCenter
-                    showFullExtent
-                    padding={viewPadding}
-                  />
-                )
-              }
-              <olLayerImage extent={extent}>
-                {url != null && (
-                  <olSourceImageStatic
-                    // ol/source/image does not have `setXXX` methods, only options in the constructor, so
-                    // to change anything, you need to recreate the object. So we pass all in args.
-                    // See https://openlayers.org/en/latest/apidoc/module-ol_source_Image.ImageSourceEvent.html
-                    args={{
-                      url,
-                      imageExtent: extent,
-                      imageSize: size,
-                      projection,
-                      crossOrigin: "anonymous",
-                    }}
-                  />
-                )}
-              </olLayerImage>
+        {/* Need to bridge contexts across renderers
+         * See https://github.com/facebook/react/issues/17275 */}
+        <RouterContext.Provider value={router}>
+          <ApolloProvider client={client}>
+            {
+              // Before useMeasure has time to properly measure the div, we have a negative resolution,
+              // There is no point rendering the view in that case
+              isBoundsValid && (
+                <olView
+                  ref={(value: OlView) => {
+                    if (!value) return;
+                    if (viewRef.current !== value) {
+                      viewRef.current = value;
+                      setView(value);
+                    }
+                  }}
+                  onChange_resolution={() => {
+                    if (!viewRef.current) return false;
+                    setCanZoomIn(
+                      viewRef.current.getZoom() + zoomFactor <
+                        viewRef.current.getMaxZoom()
+                    );
+                    setCanZoomOut(
+                      viewRef.current.getZoom() - zoomFactor >
+                        viewRef.current.getMinZoom()
+                    );
+                    return false;
+                  }}
+                  args={{ extent }}
+                  center={center}
+                  initialProjection={projection}
+                  resolution={resolution}
+                  // Max zoom = 16 pixels of screen per pixel of image
+                  minResolution={1.0 / 16.0}
+                  maxResolution={resolution}
+                  constrainOnlyCenter
+                  showFullExtent
+                  padding={viewPadding}
+                />
+              )
+            }
+            <olLayerImage extent={extent}>
+              {url != null && (
+                <olSourceImageStatic
+                  // ol/source/image does not have `setXXX` methods, only options in the constructor, so
+                  // to change anything, you need to recreate the object. So we pass all in args.
+                  // See https://openlayers.org/en/latest/apidoc/module-ol_source_Image.ImageSourceEvent.html
+                  args={{
+                    url,
+                    imageExtent: extent,
+                    imageSize: size,
+                    projection,
+                    crossOrigin: "anonymous",
+                  }}
+                />
+              )}
+            </olLayerImage>
 
-              <Labels sourceVectorLabelsRef={sourceVectorLabelsRef} />
-              <DrawBoundingBoxInteraction />
-              <SelectInteraction
-                editClassOverlayRef={editClassOverlayRef}
-                sourceVectorLabelsRef={sourceVectorLabelsRef}
-                setIsContextMenuOpen={setIsContextMenuOpen}
-              />
-            </ApolloProvider>
-          </RouterContext.Provider>
-        </Map>
-        <EditLabelClass
-          ref={editClassOverlayRef}
-          isOpen={isContextMenuOpen}
-          onClose={() => setIsContextMenuOpen(false)}
-        />
-      </div>
-    </>
+            <Labels sourceVectorLabelsRef={sourceVectorLabelsRef} />
+            <DrawBoundingBoxInteraction />
+            <SelectInteraction
+              editClassOverlayRef={editClassOverlayRef}
+              sourceVectorLabelsRef={sourceVectorLabelsRef}
+              setIsContextMenuOpen={setIsContextMenuOpen}
+            />
+          </ApolloProvider>
+        </RouterContext.Provider>
+      </Map>
+      <EditLabelClass
+        ref={editClassOverlayRef}
+        isOpen={isContextMenuOpen}
+        onClose={() => setIsContextMenuOpen(false)}
+      />
+    </div>
   );
 };
