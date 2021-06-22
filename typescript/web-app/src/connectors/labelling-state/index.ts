@@ -50,6 +50,10 @@ export const useLabellingStore = create(
       /* eslint-disable-next-line consistent-return */
       return olZoomByDelta(view, ratio);
     },
+    isClassSelectionPopoverOpenedOnRightClick: false,
+    setIsClassSelectionPopoverOpenedOnRightClick: (
+      isClassSelectionPopoverOpenedOnRightClick: boolean
+    ) => set({ isClassSelectionPopoverOpenedOnRightClick }),
   }),
   {
     watchers: {
