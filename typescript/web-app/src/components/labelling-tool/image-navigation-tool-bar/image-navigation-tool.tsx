@@ -9,16 +9,13 @@ import {
   NumberInputField,
 } from "@chakra-ui/react";
 import { RiArrowRightSLine, RiArrowLeftSLine } from "react-icons/ri";
-import { findIndex, isNaN, isNumber } from "lodash/fp";
+import { isNaN, isNumber } from "lodash/fp";
 import { useRouter } from "next/router";
 import NextLink from "next/link";
 import { useHotkeys } from "react-hotkeys-hook";
-import { useQuery } from "@apollo/client";
-import gql from "graphql-tag";
 
+import { useImagesNavigation } from "../../../hooks/use-images-navigation";
 import { keymap } from "../../../keymap";
-
-import { Image } from "../../../graphql-types.generated";
 
 const digitsPerRem = 0.55;
 
@@ -27,31 +24,15 @@ const parse = (x: string): number | undefined =>
 const format = (x: number | undefined): string =>
   isNumber(x) && !isNaN(x) && x >= 0 ? `${x + 1}` : `-`;
 
-const imagesQuery = gql`
-  query getImageList {
-    images {
-      id
-    }
-  }
-`;
-
 export const ImageNavigationTool = () => {
   const router = useRouter();
-  const imageId = router.query.id;
-
-  const images =
-    useQuery<{ images: Pick<Image, "id">[] }>(imagesQuery)?.data?.images;
-
-  const imageIndex: number | undefined =
-    images != null && imageId != null
-      ? findIndex({ id: imageId as string }, images)
-      : undefined;
+  const { images, currentImageIndex } = useImagesNavigation();
 
   const imageCount = images?.length;
 
   const digitCount = Math.max(1, Math.ceil(Math.log10(imageCount ?? 1)));
 
-  const [value, setValue] = useState<string>(format(imageIndex));
+  const [value, setValue] = useState<string>(format(currentImageIndex));
 
   const goToIndex = (newIndex: number | undefined) => {
     if (!images) return;
@@ -69,7 +50,7 @@ export const ImageNavigationTool = () => {
   };
 
   const reset = () => {
-    setValue(format(imageIndex));
+    setValue(format(currentImageIndex));
   };
 
   const handleKeyPress = (event: any) => {
@@ -93,20 +74,22 @@ export const ImageNavigationTool = () => {
 
   useEffect(() => {
     reset();
-  }, [imageIndex]);
+  }, [currentImageIndex]);
 
   useHotkeys(
     keymap.goToPreviousImage.key,
-    () => typeof imageIndex === "number" && goToIndex(imageIndex - 1),
+    () =>
+      typeof currentImageIndex === "number" && goToIndex(currentImageIndex - 1),
     {},
-    [goToIndex, imageIndex]
+    [goToIndex, currentImageIndex]
   );
 
   useHotkeys(
     keymap.goToNextImage.key,
-    () => typeof imageIndex === "number" && goToIndex(imageIndex + 1),
+    () =>
+      typeof currentImageIndex === "number" && goToIndex(currentImageIndex + 1),
     {},
-    [goToIndex, imageIndex]
+    [goToIndex, currentImageIndex]
   );
 
   return (
@@ -118,8 +101,11 @@ export const ImageNavigationTool = () => {
       rounded={6}
       pointerEvents="initial"
     >
-      {imageIndex != null && imageIndex > 0 && images != null ? (
-        <NextLink href={`/images/${images[imageIndex - 1]?.id}`} passHref>
+      {currentImageIndex != null && currentImageIndex > 0 && images != null ? (
+        <NextLink
+          href={`/images/${images[currentImageIndex - 1]?.id}`}
+          passHref
+        >
           <a>
             <Tooltip
               openDelay={300}
@@ -147,7 +133,7 @@ export const ImageNavigationTool = () => {
           name="current-image"
           rounded={6}
           allowMouseWheel
-          defaultValue={imageIndex != null ? imageIndex + 1 : "-"}
+          defaultValue={currentImageIndex != null ? currentImageIndex + 1 : "-"}
           min={1}
           max={imageCount}
           variant="filled"
@@ -182,12 +168,12 @@ export const ImageNavigationTool = () => {
         fontSize="sm"
       >{`${imageCount ?? "-"}`}</Text>
 
-      {imageIndex != null &&
+      {currentImageIndex != null &&
       imageCount != null &&
-      imageIndex >= 0 &&
-      imageIndex < imageCount - 1 &&
+      currentImageIndex >= 0 &&
+      currentImageIndex < imageCount - 1 &&
       images != null ? (
-        <NextLink href={`/images/${images[imageIndex + 1]?.id}`}>
+        <NextLink href={`/images/${images[currentImageIndex + 1]?.id}`}>
           <a>
             <Tooltip
               label={`Next image [${keymap.goToNextImage.key}]`}
