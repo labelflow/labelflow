@@ -1,5 +1,5 @@
 /**
- * Takes to array and an index. Merge the second one in the first at the given index.
+ * Takes two array and an index. Merge the second one in the first at the given index.
  * Note that this is not an insertion. The values of the second array will update the ones of the first
  * if they overlap.
  *
