@@ -28,9 +28,7 @@ export const useImagesNavigation = () => {
     return {
       images,
       currentImageIndex: undefined,
-      previousImageIndex: undefined,
       previousImageId: undefined,
-      nextImageIndex: undefined,
       nextImageId: undefined,
     };
   }
@@ -43,9 +41,7 @@ export const useImagesNavigation = () => {
     return {
       images,
       currentImageIndex: null,
-      previousImageIndex: null,
       previousImageId: null,
-      nextImageIndex: null,
       nextImageId: null,
     };
   }
@@ -63,9 +59,7 @@ export const useImagesNavigation = () => {
   return {
     images,
     currentImageIndex,
-    previousImageIndex,
     previousImageId,
-    nextImageIndex,
     nextImageId,
   };
 };
