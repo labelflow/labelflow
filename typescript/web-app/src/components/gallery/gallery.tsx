@@ -7,13 +7,14 @@ import { useVirtual } from "react-virtual";
 import { Image as ImageType } from "../../graphql-types.generated";
 
 import { GalleryItem } from "./gallery-item";
-import { usePaginatedImages } from "./use-paginated-images";
 import { itemHeight, itemWidth, scrollbarHeight } from "./constants";
 
-const imagesCountQuery = gql`
-  query getImageList {
+const allImagesQuery = gql`
+  query allImages {
     images {
       id
+      # name
+      url
     }
   }
 `;
@@ -23,14 +24,14 @@ export const Gallery = () => {
   const router = useRouter();
   const imageId = router.query.id as string;
 
-  // TODO: This should be done on the backend side.
-  const imagesResult =
-    useQuery<{ images: Pick<ImageType, "id">[] }>(imagesCountQuery);
-  const currentImageIndex = imagesResult?.data?.images.findIndex(
+  const { data } =
+    useQuery<{
+      images: Array<ImageType>;
+    }>(allImagesQuery);
+
+  const currentImageIndex = data?.images.findIndex(
     (image) => image.id === imageId
   );
-
-  const { data } = usePaginatedImages();
 
   const { virtualItems, totalSize, scrollToIndex } = useVirtual({
     size: data?.images?.length ?? 0,
