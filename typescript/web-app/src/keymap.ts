@@ -39,7 +39,7 @@ export const keymap: Keymap = {
     category: "Edit",
   },
   changeClass: {
-    key: "0,1,2,3,4,5,6,7,8,9",
+    key: "0,1,2,3,4,5,6,7,8,9", // TODO: display is messy on the shortcut modal with such an amount of shortcut, how to tackle that?
     description: "Select class corresponding to shortcut",
     category: "Tools", // TODO: change that category?
   },
