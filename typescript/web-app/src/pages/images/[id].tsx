@@ -91,12 +91,7 @@ const ImagePage = () => {
         </Breadcrumb>
       }
     >
-      {!imageResult && (
-        <Center h="full">
-          <Spinner size="xl" />
-        </Center>
-      )}
-      {imageResult && <LabellingTool />}
+      <LabellingTool />
     </Layout>
   );
 };
