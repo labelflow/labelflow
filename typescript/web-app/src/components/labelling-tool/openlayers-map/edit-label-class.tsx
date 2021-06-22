@@ -5,8 +5,8 @@ import gql from "graphql-tag";
 import { ClassSelectionPopover } from "../../class-selection-popover";
 import { useLabellingStore } from "../../../connectors/labelling-state";
 import { useUndoStore } from "../../../connectors/undo-store";
-import { createNewLabelClassAndUpdateLabelCurry } from "../../../connectors/effects/create-label-class-and-update-label";
-import { createUpdateLabelClassOfLabelEffect } from "../../../connectors/effects/update-label-class-of-label";
+import { createNewLabelClassAndUpdateLabelCurry } from "../../../connectors/undo-store/effects/create-label-class-and-update-label";
+import { createUpdateLabelClassOfLabelEffect } from "../../../connectors/undo-store/effects/update-label-class-of-label";
 
 const labelClassesQuery = gql`
   query getLabelClasses {

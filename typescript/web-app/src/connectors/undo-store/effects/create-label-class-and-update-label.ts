@@ -1,13 +1,13 @@
 import { ApolloClient } from "@apollo/client";
 import gql from "graphql-tag";
 
-import { useLabellingStore } from "../labelling-state";
+import { useLabellingStore } from "../../labelling-state";
 import {
   getNextClassColor,
   hexColorSequence,
-} from "../../utils/class-color-generator";
-import { Effect } from "../undo-store";
-import { LabelClass } from "../../graphql-types.generated";
+} from "../../../utils/class-color-generator";
+import { Effect } from "..";
+import { LabelClass } from "../../../graphql-types.generated";
 
 const labelClassesQuery = gql`
   query getLabelClasses {

@@ -1,8 +1,8 @@
 import { createUpdateLabelClassOfLabelEffect } from "../update-label-class-of-label";
-import { useUndoStore } from "../../undo-store";
-import { client } from "../../apollo-client-schema";
+import { useUndoStore } from "../..";
+import { client } from "../../../apollo-client-schema";
 
-import { setupTestsWithLocalDatabase } from "../../../utils/setup-local-db-tests";
+import { setupTestsWithLocalDatabase } from "../../../../utils/setup-local-db-tests";
 
 setupTestsWithLocalDatabase();
 

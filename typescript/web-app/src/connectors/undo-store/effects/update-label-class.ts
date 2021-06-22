@@ -1,5 +1,5 @@
-import { useLabellingStore } from "../labelling-state";
-import { Effect } from "../undo-store";
+import { useLabellingStore } from "../../labelling-state";
+import { Effect } from "..";
 
 export const createUpdateLabelClassEffect = ({
   selectedLabelClassId,

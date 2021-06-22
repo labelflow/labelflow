@@ -6,10 +6,10 @@ import { ClassSelectionMenu } from "../../class-selection-menu";
 import { Tools, useLabellingStore } from "../../../connectors/labelling-state";
 import { useUndoStore } from "../../../connectors/undo-store";
 import { LabelClass } from "../../../graphql-types.generated";
-import { createNewLabelClassAndUpdateLabelCurry } from "../../../connectors/effects/create-label-class-and-update-label";
-import { createUpdateLabelClassOfLabelEffect } from "../../../connectors/effects/update-label-class-of-label";
-import { createNewLabelClassCurry } from "../../../connectors/effects/create-label-class";
-import { createUpdateLabelClassEffect } from "../../../connectors/effects/update-label-class";
+import { createNewLabelClassAndUpdateLabelCurry } from "../../../connectors/undo-store/effects/create-label-class-and-update-label";
+import { createUpdateLabelClassOfLabelEffect } from "../../../connectors/undo-store/effects/update-label-class-of-label";
+import { createNewLabelClassCurry } from "../../../connectors/undo-store/effects/create-label-class";
+import { createUpdateLabelClassEffect } from "../../../connectors/undo-store/effects/update-label-class";
 
 const labelClassesQuery = gql`
   query getLabelClasses {
