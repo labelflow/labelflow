@@ -19,9 +19,6 @@ const Wrapper = ({ children }: React.PropsWithChildren<{}>) => (
 );
 
 test("The currentImageIndex is undefined while loading", async () => {
-  await createImage("image1");
-  await createImage("image2");
-  await createImage("image3");
   const { result } = renderHook(() => useImagesNavigation(), {
     wrapper: Wrapper,
   });
@@ -77,6 +74,263 @@ test("It returns the index of the selected image when loaded", async () => {
   expect(result.current.currentImageIndex).toEqual(1);
 });
 
+describe("Previous and Next indexes", () => {
+  test("Previous and Next indexes are undefined while loading", () => {
+    const { result } = renderHook(() => useImagesNavigation(), {
+      wrapper: Wrapper,
+    });
+
+    expect(result.current.previousImageIndex).toEqual(undefined);
+    expect(result.current.nextImageIndex).toEqual(undefined);
+  });
+
+  test("Previous and Next indexes are null when there is no image", async () => {
+    const { result, waitForValueToChange } = renderHook(
+      () => useImagesNavigation(),
+      {
+        wrapper: Wrapper,
+      }
+    );
+
+    await waitForValueToChange(() => result.current.previousImageIndex);
+
+    expect(result.current.previousImageIndex).toEqual(null);
+    expect(result.current.nextImageIndex).toEqual(null);
+  });
+
+  test("Previous and Next indexes are null when the selected image id can't be found in images", async () => {
+    await createImage("image1");
+    await createImage("image2");
+    await createImage("image3");
+    (useRouter as jest.Mock).mockImplementation(() => ({
+      query: { id: "fake-id" },
+    }));
+    const { result, waitForValueToChange } = renderHook(
+      () => useImagesNavigation(),
+      {
+        wrapper: Wrapper,
+      }
+    );
+
+    await waitForValueToChange(() => result.current.previousImageIndex);
+
+    expect(result.current.previousImageIndex).toEqual(null);
+    expect(result.current.nextImageIndex).toEqual(null);
+  });
+
+  test("Previous index is null when the selected image is the first", async () => {
+    const id1 = await createImage("image1");
+    incrementMockedDate(1);
+    await createImage("image2");
+    incrementMockedDate(1);
+    await createImage("image3");
+    (useRouter as jest.Mock).mockImplementation(() => ({
+      query: { id: id1 },
+    }));
+    const { result, waitForValueToChange } = renderHook(
+      () => useImagesNavigation(),
+      {
+        wrapper: Wrapper,
+      }
+    );
+
+    await waitForValueToChange(() => result.current.previousImageIndex);
+
+    expect(result.current.previousImageIndex).toEqual(null);
+  });
+
+  test("Next index is null when the selected image is the last", async () => {
+    await createImage("image1");
+    incrementMockedDate(1);
+    await createImage("image2");
+    incrementMockedDate(1);
+    const id3 = await createImage("image3");
+    (useRouter as jest.Mock).mockImplementation(() => ({
+      query: { id: id3 },
+    }));
+    const { result, waitForValueToChange } = renderHook(
+      () => useImagesNavigation(),
+      {
+        wrapper: Wrapper,
+      }
+    );
+
+    await waitForValueToChange(() => result.current.nextImageIndex);
+
+    expect(result.current.nextImageIndex).toEqual(null);
+  });
+
+  test("Previous index is 0 when the selected image is the second", async () => {
+    await createImage("image1");
+    incrementMockedDate(1);
+    const id2 = await createImage("image2");
+    incrementMockedDate(1);
+    await createImage("image3");
+    (useRouter as jest.Mock).mockImplementation(() => ({
+      query: { id: id2 },
+    }));
+    const { result, waitForValueToChange } = renderHook(
+      () => useImagesNavigation(),
+      {
+        wrapper: Wrapper,
+      }
+    );
+
+    await waitForValueToChange(() => result.current.previousImageIndex);
+
+    expect(result.current.previousImageIndex).toEqual(0);
+  });
+
+  test("Next index is 2 when the selected image is the second", async () => {
+    await createImage("image1");
+    incrementMockedDate(1);
+    const id2 = await createImage("image2");
+    incrementMockedDate(1);
+    await createImage("image3");
+    (useRouter as jest.Mock).mockImplementation(() => ({
+      query: { id: id2 },
+    }));
+    const { result, waitForValueToChange } = renderHook(
+      () => useImagesNavigation(),
+      {
+        wrapper: Wrapper,
+      }
+    );
+
+    await waitForValueToChange(() => result.current.nextImageIndex);
+
+    expect(result.current.nextImageIndex).toEqual(2);
+  });
+});
+
+describe("Previous and Next ids", () => {
+  test("Previous and Next ids are undefined while loading", () => {
+    const { result } = renderHook(() => useImagesNavigation(), {
+      wrapper: Wrapper,
+    });
+
+    expect(result.current.previousImageId).toEqual(undefined);
+    expect(result.current.nextImageId).toEqual(undefined);
+  });
+
+  test("Previous and Next ids are null when there is no image", async () => {
+    const { result, waitForValueToChange } = renderHook(
+      () => useImagesNavigation(),
+      {
+        wrapper: Wrapper,
+      }
+    );
+
+    await waitForValueToChange(() => result.current.previousImageId);
+
+    expect(result.current.previousImageId).toEqual(null);
+    expect(result.current.nextImageId).toEqual(null);
+  });
+
+  test("Previous and Next ids are null when the selected image id can't be found in images", async () => {
+    await createImage("image1");
+    await createImage("image2");
+    await createImage("image3");
+    (useRouter as jest.Mock).mockImplementation(() => ({
+      query: { id: "fake-id" },
+    }));
+    const { result, waitForValueToChange } = renderHook(
+      () => useImagesNavigation(),
+      {
+        wrapper: Wrapper,
+      }
+    );
+
+    await waitForValueToChange(() => result.current.previousImageId);
+
+    expect(result.current.previousImageId).toEqual(null);
+    expect(result.current.nextImageId).toEqual(null);
+  });
+
+  test("Previous id is null when the selected image is the first", async () => {
+    const id1 = await createImage("image1");
+    incrementMockedDate(1);
+    await createImage("image2");
+    incrementMockedDate(1);
+    await createImage("image3");
+    (useRouter as jest.Mock).mockImplementation(() => ({
+      query: { id: id1 },
+    }));
+    const { result, waitForValueToChange } = renderHook(
+      () => useImagesNavigation(),
+      {
+        wrapper: Wrapper,
+      }
+    );
+
+    await waitForValueToChange(() => result.current.previousImageId);
+
+    expect(result.current.previousImageId).toEqual(null);
+  });
+
+  test("Next id is null when the selected image is the last", async () => {
+    await createImage("image1");
+    incrementMockedDate(1);
+    await createImage("image2");
+    incrementMockedDate(1);
+    const id3 = await createImage("image3");
+    (useRouter as jest.Mock).mockImplementation(() => ({
+      query: { id: id3 },
+    }));
+    const { result, waitForValueToChange } = renderHook(
+      () => useImagesNavigation(),
+      {
+        wrapper: Wrapper,
+      }
+    );
+
+    await waitForValueToChange(() => result.current.nextImageId);
+
+    expect(result.current.nextImageId).toEqual(null);
+  });
+
+  test("Previous id is the first one when the selected image is the second", async () => {
+    const id1 = await createImage("image1");
+    incrementMockedDate(1);
+    const id2 = await createImage("image2");
+    incrementMockedDate(1);
+    await createImage("image3");
+    (useRouter as jest.Mock).mockImplementation(() => ({
+      query: { id: id2 },
+    }));
+    const { result, waitForValueToChange } = renderHook(
+      () => useImagesNavigation(),
+      {
+        wrapper: Wrapper,
+      }
+    );
+
+    await waitForValueToChange(() => result.current.previousImageId);
+
+    expect(result.current.previousImageId).toEqual(id1);
+  });
+
+  test("Next id is the last one when the selected image is the second", async () => {
+    await createImage("image1");
+    incrementMockedDate(1);
+    const id2 = await createImage("image2");
+    incrementMockedDate(1);
+    const id3 = await createImage("image3");
+    (useRouter as jest.Mock).mockImplementation(() => ({
+      query: { id: id2 },
+    }));
+    const { result, waitForValueToChange } = renderHook(
+      () => useImagesNavigation(),
+      {
+        wrapper: Wrapper,
+      }
+    );
+
+    await waitForValueToChange(() => result.current.nextImageId);
+
+    expect(result.current.nextImageId).toEqual(id3);
+  });
+});
 /* ----------- */
 /*   Helpers   */
 /* ----------- */

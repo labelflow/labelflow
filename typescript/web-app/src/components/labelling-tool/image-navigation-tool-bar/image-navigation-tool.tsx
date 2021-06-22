@@ -26,7 +26,8 @@ const format = (x: number | undefined | null): string =>
 
 export const ImageNavigationTool = () => {
   const router = useRouter();
-  const { images, currentImageIndex } = useImagesNavigation();
+  const { images, currentImageIndex, previousImageId, nextImageId } =
+    useImagesNavigation();
 
   const imageCount = images?.length;
 
@@ -101,11 +102,8 @@ export const ImageNavigationTool = () => {
       rounded={6}
       pointerEvents="initial"
     >
-      {currentImageIndex != null && currentImageIndex > 0 && images != null ? (
-        <NextLink
-          href={`/images/${images[currentImageIndex - 1]?.id}`}
-          passHref
-        >
+      {previousImageId != null ? (
+        <NextLink href={`/images/${previousImageId}`} passHref>
           <a>
             <Tooltip
               openDelay={300}
@@ -168,12 +166,8 @@ export const ImageNavigationTool = () => {
         fontSize="sm"
       >{`${imageCount ?? "-"}`}</Text>
 
-      {currentImageIndex != null &&
-      imageCount != null &&
-      currentImageIndex >= 0 &&
-      currentImageIndex < imageCount - 1 &&
-      images != null ? (
-        <NextLink href={`/images/${images[currentImageIndex + 1]?.id}`}>
+      {nextImageId != null ? (
+        <NextLink href={`/images/${nextImageId}`}>
           <a>
             <Tooltip
               label={`Next image [${keymap.goToNextImage.key}]`}
