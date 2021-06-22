@@ -13,13 +13,24 @@ const allImagesQuery = gql`
   }
 `;
 
+/**
+ * A Hook to handle image navigation.
+ *
+ * Beware, this hook does a single request fetching all the images.
+ *
+ * @returns An object containing `images`, `currentImageIndex`, `previousImageId`
+ * and `nextImageId`. They all are undefined while images are loading.
+ * `currentImageIndex`, `previousImageId` and `nextImageId` can be null if they can't
+ * be found in images or they don't exist (ie: `nextImageId` doesn't exist if `currentImageIndex`
+ * is already the last index of the array).
+ */
 export const useImagesNavigation = () => {
   const router = useRouter();
   const currentImageId = router.query.id as string | undefined;
 
   const { data } =
     useQuery<{
-      images: Array<Image>;
+      images: Array<Pick<Image, "id" | "url">>;
     }>(allImagesQuery);
 
   const images = data?.images;
