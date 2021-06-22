@@ -2,7 +2,7 @@ import { useRouter } from "next/router";
 import { createBox, DrawEvent } from "ol/interaction/Draw";
 import { Fill, Stroke, Style } from "ol/style";
 import GeometryType from "ol/geom/GeometryType";
-import { ApolloClient, useApolloClient } from "@apollo/client";
+import { ApolloClient, useApolloClient, useQuery } from "@apollo/client";
 import gql from "graphql-tag";
 
 import {
@@ -11,7 +11,17 @@ import {
   BoxDrawingToolState,
 } from "../../../connectors/labelling-state";
 import { useUndoStore, Effect } from "../../../connectors/undo-store";
+import { noneClassColor } from "../../../utils/class-color-generator";
 
+const labelClassQuery = gql`
+  query getLabelClass($id: ID!) {
+    labelClass(where: { id: $id }) {
+      id
+      name
+      color
+    }
+  }
+`;
 const createLabelMutation = gql`
   mutation createLabel(
     $id: ID
@@ -20,6 +30,7 @@ const createLabelMutation = gql`
     $y: Float!
     $width: Float!
     $height: Float!
+    $labelClassId: ID
   ) {
     createLabel(
       data: {
@@ -29,6 +40,7 @@ const createLabelMutation = gql`
         y: $y
         width: $width
         height: $height
+        labelClassId: $labelClassId
       }
     ) {
       id
@@ -51,12 +63,14 @@ const createLabelEffect = (
     y,
     width,
     height,
+    selectedLabelClassId,
   }: {
     imageId: string;
     x: number;
     y: number;
     width: number;
     height: number;
+    selectedLabelClassId: string;
   },
   {
     setSelectedLabelId,
@@ -69,7 +83,14 @@ const createLabelEffect = (
   do: async () => {
     const { data } = await client.mutate({
       mutation: createLabelMutation,
-      variables: { imageId, x, y, width, height },
+      variables: {
+        imageId,
+        x,
+        y,
+        width,
+        height,
+        labelClassId: selectedLabelClassId,
+      },
       refetchQueries: ["getImageLabels"],
     });
 
@@ -90,7 +111,15 @@ const createLabelEffect = (
   redo: async (id: string) => {
     const { data } = await client.mutate({
       mutation: createLabelMutation,
-      variables: { id, imageId, x, y, width, height },
+      variables: {
+        id,
+        imageId,
+        x,
+        y,
+        width,
+        height,
+        labelClassId: selectedLabelClassId,
+      },
       refetchQueries: ["getImageLabels"],
     });
 
@@ -114,6 +143,13 @@ export const DrawBoundingBoxInteraction = () => {
   const setSelectedLabelId = useLabellingStore(
     (state) => state.setSelectedLabelId
   );
+  const selectedLabelClassId = useLabellingStore(
+    (state) => state.selectedLabelClassId
+  );
+  const { data: dataLabelClass } = useQuery(labelClassQuery, {
+    variables: { id: selectedLabelClassId },
+    skip: selectedLabelClassId == null,
+  });
   const { perform } = useUndoStore();
 
   if (selectedTool !== Tools.BOX) {
@@ -123,7 +159,9 @@ export const DrawBoundingBoxInteraction = () => {
     return null;
   }
 
-  const color = "#E53E3E";
+  const selectedLabelClass = dataLabelClass?.labelClass;
+
+  const color = selectedLabelClass?.color ?? noneClassColor;
 
   const style = new Style({
     fill: new Fill({
@@ -140,8 +178,8 @@ export const DrawBoundingBoxInteraction = () => {
       args={{
         type: GeometryType.CIRCLE,
         geometryFunction,
+        style, // Needed here to trigger the rerender of the component when the selected class changes
       }}
-      style={style}
       onDrawabort={() => {
         setBoxDrawingToolState(BoxDrawingToolState.IDLE);
         return true;
@@ -163,6 +201,7 @@ export const DrawBoundingBoxInteraction = () => {
               y,
               width: destX - x,
               height: destY - y,
+              selectedLabelClassId,
             },
             {
               setSelectedLabelId,

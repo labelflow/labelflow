@@ -27,13 +27,14 @@ export type LabellingState = {
   isContextMenuOpen: boolean;
   setIsContextMenuOpen: (isContextMenuOpen: boolean) => void;
   selectedLabelId: string | null;
-  selectedTool: Tools;
+  selectedLabelClassId: string | null;
   boxDrawingToolState: BoxDrawingToolState;
   setBoxDrawingToolState: (state: BoxDrawingToolState) => void;
   setCanZoomIn: (canZoomIn: boolean) => void;
   setCanZoomOut: (canZoomOut: boolean) => void;
   setSelectedTool: (selectedTool: Tools) => void;
-  setSelectedLabelId: (selectedLabelId: string | null) => void;
+  setSelectedLabelId: (labelId: string | null) => void;
+  setSelectedLabelClassId: (selectedLabelClassId: string | null) => void;
   zoomByDelta: (ratio: number) => void;
 };
 
@@ -50,6 +51,7 @@ export const useLabellingStore = create<LabellingState>(
       set({ isContextMenuOpen }),
     selectedTool: getRouterValue("selectedTool") ?? Tools.SELECTION,
     selectedLabelId: getRouterValue("selectedLabelId") ?? null,
+    selectedLabelClassId: getRouterValue("selectedLabelClassId") ?? null,
     boxDrawingToolState: BoxDrawingToolState.IDLE,
     setBoxDrawingToolState: (boxDrawingToolState: BoxDrawingToolState) =>
       // @ts-ignore See https://github.com/Diablow/zustand-store-addons/issues/2
@@ -61,6 +63,9 @@ export const useLabellingStore = create<LabellingState>(
     setSelectedLabelId: (selectedLabelId: string | null) =>
       // @ts-ignore See https://github.com/Diablow/zustand-store-addons/issues/2
       set({ selectedLabelId }),
+    setSelectedLabelClassId: (labelClassId: string | null) =>
+      // @ts-ignore See https://github.com/Diablow/zustand-store-addons/issues/2
+      set({ selectedLabelClassId: labelClassId }),
     // @ts-ignore See https://github.com/Diablow/zustand-store-addons/issues/2
     setCanZoomIn: (canZoomIn: boolean) => set({ canZoomIn }),
     // @ts-ignore See https://github.com/Diablow/zustand-store-addons/issues/2
@@ -76,6 +81,7 @@ export const useLabellingStore = create<LabellingState>(
     watchers: {
       selectedTool: setRouterValue("selectedTool"),
       selectedLabelId: setRouterValue("selectedLabelId"),
+      selectedLabelClassId: setRouterValue("selectedLabelClassId"),
     },
   }
 );

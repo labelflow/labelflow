@@ -1,15 +1,12 @@
-import { forwardRef, Ref } from "react";
-import { useQuery, useApolloClient, ApolloClient } from "@apollo/client";
+import { forwardRef, useMemo, Ref } from "react";
+import { useQuery, useApolloClient } from "@apollo/client";
 import gql from "graphql-tag";
 
 import { ClassSelectionPopover } from "../../class-selection-popover";
 import { useLabellingStore } from "../../../connectors/labelling-state";
-import {
-  getNextClassColor,
-  hexColorSequence,
-} from "../../../utils/class-color-generator";
-import { useUndoStore, Effect } from "../../../connectors/undo-store";
-import { LabelClass } from "../../../graphql-types.generated";
+import { useUndoStore } from "../../../connectors/undo-store";
+import { createNewLabelClassAndUpdateLabelCurry } from "../../../connectors/undo-store/effects/create-label-class-and-update-label";
+import { createUpdateLabelClassOfLabelEffect } from "../../../connectors/undo-store/effects/update-label-class-of-label";
 
 const labelClassesQuery = gql`
   query getLabelClasses {
@@ -31,212 +28,6 @@ const labelQuery = gql`
     }
   }
 `;
-
-const createLabelClassQuery = gql`
-  mutation createLabelClass($data: LabelClassCreateInput!) {
-    createLabelClass(data: $data) {
-      id
-    }
-  }
-`;
-
-const deleteLabelClassQuery = gql`
-  mutation deleteLabelClass($where: LabelClassWhereUniqueInput!) {
-    deleteLabelClass(where: $where) {
-      id
-    }
-  }
-`;
-
-const updateLabelQuery = gql`
-  mutation updateLabelClass(
-    $where: LabelWhereUniqueInput!
-    $data: LabelUpdateInput!
-  ) {
-    updateLabel(where: $where, data: $data) {
-      id
-    }
-  }
-`;
-
-const createCreateLabelClassEffect = (
-  {
-    name,
-    color,
-    selectedLabelId,
-  }: { name: string; color: string; selectedLabelId: string | null },
-  {
-    client,
-  }: {
-    client: ApolloClient<object>;
-  }
-): Effect => ({
-  do: async () => {
-    const {
-      data: {
-        createLabelClass: { id: labelClassId },
-      },
-    } = await client.mutate({
-      mutation: createLabelClassQuery,
-      variables: { data: { name, color } },
-      refetchQueries: [{ query: labelClassesQuery }],
-    });
-
-    const {
-      data: {
-        label: { labelClass },
-      },
-    } = await client.query({
-      query: labelQuery,
-      variables: { id: selectedLabelId },
-    });
-
-    const labelClassIdPrevious = labelClass?.id ?? null;
-
-    await client.mutate({
-      mutation: updateLabelQuery,
-      variables: {
-        where: { id: selectedLabelId },
-        data: { labelClassId: labelClassId ?? null },
-      },
-      refetchQueries: ["getImageLabels"],
-    });
-
-    return {
-      labelClassId,
-      labelClassIdPrevious,
-    };
-  },
-  undo: async ({
-    labelClassId,
-    labelClassIdPrevious,
-  }: {
-    labelClassId: string;
-    labelClassIdPrevious: string;
-  }) => {
-    await client.mutate({
-      mutation: updateLabelQuery,
-      variables: {
-        where: { id: selectedLabelId },
-        data: { labelClassId: labelClassIdPrevious ?? null },
-      },
-      refetchQueries: ["getImageLabels"],
-    });
-    await client.mutate({
-      mutation: deleteLabelClassQuery,
-      variables: {
-        where: { id: labelClassId },
-      },
-      refetchQueries: [{ query: labelClassesQuery }],
-    });
-
-    return {
-      labelClassId,
-      labelClassIdPrevious,
-    };
-  },
-  redo: async ({
-    labelClassId,
-    labelClassIdPrevious,
-  }: {
-    labelClassId: string;
-    labelClassIdPrevious: string;
-  }) => {
-    await client.mutate({
-      mutation: createLabelClassQuery,
-      variables: { data: { name, color, id: labelClassId } },
-      refetchQueries: [{ query: labelClassesQuery }],
-    });
-
-    await client.mutate({
-      mutation: updateLabelQuery,
-      variables: {
-        where: { id: selectedLabelId },
-        data: { labelClassId: labelClassId ?? null },
-      },
-      refetchQueries: ["getImageLabels"],
-    });
-
-    return {
-      labelClassId,
-      labelClassIdPrevious,
-    };
-  },
-});
-
-const createNewClassFactory =
-  ({
-    labelClasses,
-    perform,
-    onClose,
-    client,
-  }: {
-    labelClasses: LabelClass[];
-    perform: any;
-    onClose: () => void;
-    client: ApolloClient<object>;
-  }) =>
-  async (name: string, selectedLabelId: string | null) => {
-    const newClassColor =
-      labelClasses.length < 1
-        ? hexColorSequence[0]
-        : getNextClassColor(labelClasses[labelClasses.length - 1].color);
-    perform(
-      createCreateLabelClassEffect(
-        { name, color: newClassColor, selectedLabelId },
-        { client }
-      )
-    );
-    onClose();
-  };
-
-const createUpdateLabelClassEffect = (
-  {
-    selectedLabelId,
-    selectedLabelClassId,
-  }: { selectedLabelId: string | null; selectedLabelClassId: string | null },
-  {
-    client,
-  }: {
-    client: ApolloClient<object>;
-  }
-): Effect => ({
-  do: async () => {
-    const {
-      data: {
-        label: { labelClass },
-      },
-    } = await client.query({
-      query: labelQuery,
-      variables: { id: selectedLabelId },
-    });
-
-    const labelClassIdPrevious = labelClass?.id ?? null;
-
-    await client.mutate({
-      mutation: updateLabelQuery,
-      variables: {
-        where: { id: selectedLabelId },
-        data: { labelClassId: selectedLabelClassId ?? null },
-      },
-      refetchQueries: ["getImageLabels"],
-    });
-
-    return labelClassIdPrevious;
-  },
-  undo: async (labelClassIdPrevious: string) => {
-    await client.mutate({
-      mutation: updateLabelQuery,
-      variables: {
-        where: { id: selectedLabelId },
-        data: { labelClassId: labelClassIdPrevious ?? null },
-      },
-      refetchQueries: ["getImageLabels"],
-    });
-
-    return labelClassIdPrevious;
-  },
-});
 
 /**
  * The target is an invisibly small element that
@@ -285,24 +76,29 @@ export const EditLabelClass = forwardRef<
     skip: selectedLabelId == null,
   });
   const selectedLabelClassId = labelQueryData?.label?.labelClass?.id ?? null;
-  const createNewClass = createNewClassFactory({
-    labelClasses,
-    perform,
-    onClose,
-    client,
-  });
+  const createNewClass = useMemo(
+    () =>
+      createNewLabelClassAndUpdateLabelCurry({
+        labelClasses,
+        perform,
+        onClose,
+        client,
+      }),
+    [labelClasses]
+  );
 
   return (
     <ClassSelectionPopover
       isOpen={isOpen}
       onClose={onClose}
+      parentName="edit-label-class"
       trigger={<Target outerRef={ref} />} // Needed to have the popover displayed preventing overflow
       labelClasses={labelClasses}
       selectedLabelClassId={selectedLabelClassId}
       createNewClass={async (name) => createNewClass(name, selectedLabelId)}
       onSelectedClassChange={(item) => {
         perform(
-          createUpdateLabelClassEffect(
+          createUpdateLabelClassOfLabelEffect(
             {
               selectedLabelId,
               selectedLabelClassId: item?.id ?? null,
