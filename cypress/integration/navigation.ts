@@ -27,6 +27,7 @@ describe("Labelling tool", () => {
     cy.get('[aria-label="Drawing tool"]', { timeout: 30000 }).click();
     // Create new label class
     cy.get('[aria-label="class-selection-menu-trigger"]').click()
+    cy.focused().type("s");
     cy.wait(500).focused().type("A new class{enter}"); // TODO: check why we need this waiting time
     cy.get('[aria-label="class-selection-menu-trigger"]').click()
     cy.get('[id="popover-body-class-selection-menu"]').contains("A new class").closest('[role="option"]').should("have.attr","aria-current","true"); 
@@ -39,6 +40,7 @@ describe("Labelling tool", () => {
     // ############## Right click popover tests ############## 
     // Create new class
     cy.get("main").rightclick(500, 150);
+    cy.focused().type("s");
     cy.focused().type("My new class{enter}");
     cy.get("main").rightclick(500, 150);
     cy.get('[id="popover-body-edit-label-class"]').contains("My new class").closest('[role="option"]').should("have.attr","aria-current","true"); //TODO: check this with a cypress wizard
@@ -68,6 +70,7 @@ describe("Labelling tool", () => {
     // ############## Class selection menu tests ############## 
     // Create new class and assign it to label
     cy.get('[aria-label="class-selection-menu-trigger"]').click()
+    cy.focused().type("s");
     cy.wait(500).focused().type("My other new class{enter}"); // TODO: check why we need this waiting time
     cy.get('[aria-label="class-selection-menu-trigger"]').click()
     cy.get('[id="popover-body-class-selection-menu"]').contains("My other new class").closest('[role="option"]').should("have.attr","aria-current","true"); 
@@ -101,8 +104,16 @@ describe("Labelling tool", () => {
     cy.get("main").click(600, 400);
     cy.get('[aria-label="Selection tool"]').click();
     cy.get('[aria-label="class-selection-menu-trigger"]').contains("My new class")
+    // ############## Class selection with shortcut ############## 
+    cy.get("main").rightclick(500, 150);
+    cy.wait(500).focused().type("2");
+    cy.get('[aria-label="class-selection-menu-trigger"]').contains("My other new class")
+    cy.get("main").click(500, 150);
+    cy.wait(500).get('[aria-label="class-selection-menu-trigger"]').type("1");
+    cy.get('[aria-label="class-selection-menu-trigger"]').contains("My new class")
     // Image navigation
     cy.get('[aria-label="Next image"]').click();
     cy.get('[aria-label="Undo tool"]').should("be.disabled");
+
   });
 });
