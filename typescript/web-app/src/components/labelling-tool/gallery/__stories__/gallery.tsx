@@ -13,23 +13,9 @@ import { db } from "../../../../connectors/database";
 
 import { Gallery } from "../gallery";
 
-const images = [
-  "https://images.unsplash.com/photo-1579513141590-c597876aefbc?auto=format&fit=crop&w=882&q=80",
-  "https://images.unsplash.com/photo-1504710685809-7bb702595f8f?auto=format&fit=crop&w=934&q=80",
-  "https://images.unsplash.com/photo-1569579933032-9e16447c50e3?auto=format&fit=crop&w=2100&q=80",
-  "https://images.unsplash.com/photo-1595687453172-253f44ed3975?auto=format&fit=crop&w=2100&q=80",
-  "https://images.unsplash.com/photo-1574082595167-86d59cefcc3a?auto=format&fit=crop&w=2100&q=80",
-  "https://images.unsplash.com/photo-1504618223053-559bdef9dd5a?auto=format&fit=crop&w=2100&q=80",
-  "https://images.unsplash.com/photo-1490718720478-364a07a997cd?auto=format&fit=crop&w=933&q=80",
-  "https://images.unsplash.com/photo-1557054068-bf70b5f32470?auto=format&fit=crop&w=2098&q=80",
-  "https://images.unsplash.com/photo-1580629905303-faaa03202631?auto=format&fit=crop&w=1001&q=80",
-  "https://images.unsplash.com/photo-1562519990-50eb51e282b2?auto=format&fit=crop&w=2089&q=80",
-  "https://images.unsplash.com/photo-1565085360602-de694f1d7650?auto=format&fit=crop&w=2100&q=80",
-  "https://images.unsplash.com/photo-1594389615321-4f50c5d7878c?auto=format&fit=crop&w=2100&q=80",
-  "https://images.unsplash.com/photo-1548613053-22087dd8edb8?auto=format&fit=crop&w=975&q=80",
-  "https://images.unsplash.com/photo-1567672935596-057a100fcced?auto=format&fit=crop&w=933&q=80",
-  "https://images.unsplash.com/photo-1540380403593-2f4cbbc006dd?auto=format&fit=crop&w=934&q=80",
-];
+import imageSampleCollection from "../../../../utils/image-sample-collection";
+
+const images = imageSampleCollection.slice(0, 15);
 
 export default {
   title: "web-app/Gallery",
