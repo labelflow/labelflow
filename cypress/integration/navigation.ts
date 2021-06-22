@@ -26,8 +26,8 @@ describe("Labelling tool", () => {
     });
     cy.contains("Start Import").click();
     cy.get(`[aria-label="Close"]`).click();
-    cy.contains("photo").click();
-    cy.get('[aria-label="Drawing tool"]', { timeout: 30000 }).click();
+    cy.get("main").contains("photo").click();
+    cy.get('[aria-label="Drawing tool"]').click();
     // 1. Create one bounding box
     cy.get("main").click(400, 100);
     cy.get("main").click(600, 200);

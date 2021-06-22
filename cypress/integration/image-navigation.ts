@@ -23,7 +23,7 @@ describe("Labelling tool", () => {
     cy.contains("Insert example images").click();
     cy.contains("Start Import").click();
     cy.get(`[aria-label="Close"]`).click();
-    cy.contains("photo").click();
+    cy.get("main").contains("photo").click();
 
     // Check that we can reach the end of the list
     cy.get("main nav").scrollTo("right");
