@@ -26,6 +26,7 @@ export type LabellingState = {
   canZoomOut: boolean;
   isContextMenuOpen: boolean;
   setIsContextMenuOpen: (isContextMenuOpen: boolean) => void;
+  selectedTool: Tools;
   selectedLabelId: string | null;
   selectedLabelClassId: string | null;
   boxDrawingToolState: BoxDrawingToolState;
