@@ -5,7 +5,6 @@ import { withNextRouter } from "storybook-addon-next-router";
 
 import { chakraDecorator } from "../../../../utils/chakra-decorator";
 import { queryParamsDecorator } from "../../../../utils/query-params-decorator";
-import { apolloDecorator } from "../../../../utils/apollo-decorator";
 
 import { DrawingToolbar, Props } from "../drawing-tool-bar";
 
@@ -21,12 +20,7 @@ export default {
       },
     },
   },
-  decorators: [
-    chakraDecorator,
-    queryParamsDecorator,
-    apolloDecorator,
-    withNextRouter,
-  ],
+  decorators: [chakraDecorator, queryParamsDecorator, withNextRouter],
 };
 
 const Template: Story<Props> = (args: Props) => (

@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import { OpenlayersMap } from "./openlayers-map";
 import { DrawingToolbar } from "./drawing-tool-bar";
 import { ZoomToolbar } from "./zoom-tool-bar";
+import { OptionsToolBar } from "./options-tool-bar";
 import { ImageNavigationToolbar } from "./image-navigation-tool-bar";
 import { useUndoStore } from "../../connectors/undo-store";
 
@@ -18,17 +19,20 @@ export const LabellingTool = () => {
   return (
     <Box height="100%" position="relative" overflow="hidden">
       <OpenlayersMap />
-      <VStack
-        padding={4}
-        spacing={4}
+      <HStack
         position="absolute"
         top={0}
         left={0}
+        padding={4}
+        spacing={4}
         pointerEvents="none"
         alignItems="flex-start"
       >
-        <DrawingToolbar />
-      </VStack>
+        <VStack spacing={4} alignItems="flex-start">
+          <DrawingToolbar />
+        </VStack>
+        <OptionsToolBar />
+      </HStack>
       <VStack
         padding={4}
         spacing={4}
