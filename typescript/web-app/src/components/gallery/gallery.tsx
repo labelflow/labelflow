@@ -16,7 +16,7 @@ export const Gallery = () => {
   const { images, currentImageIndex } = useImagesNavigation();
 
   const { virtualItems, totalSize, scrollToIndex } = useVirtual({
-    size: images.length ?? 0,
+    size: images?.length ?? 0,
     parentRef: listRef,
     estimateSize: useCallback(() => itemWidth, []),
     horizontal: true,
@@ -42,9 +42,9 @@ export const Gallery = () => {
           <GalleryItem
             key={item.index}
             size={item.size}
-            id={images[item.index]?.id}
-            url={images[item.index]?.url}
-            isSelected={imageId === images[item.index]?.id}
+            id={images?.[item.index]?.id}
+            url={images?.[item.index]?.url}
+            isSelected={imageId === images?.[item.index]?.id}
             start={item.start}
             index={item.index}
           />

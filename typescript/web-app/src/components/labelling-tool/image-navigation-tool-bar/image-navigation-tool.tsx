@@ -21,7 +21,7 @@ const digitsPerRem = 0.55;
 
 const parse = (x: string): number | undefined =>
   !isNaN(parseInt(x, 10)) ? parseInt(x, 10) - 1 : undefined;
-const format = (x: number | undefined): string =>
+const format = (x: number | undefined | null): string =>
   isNumber(x) && !isNaN(x) && x >= 0 ? `${x + 1}` : `-`;
 
 export const ImageNavigationTool = () => {

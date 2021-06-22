@@ -2,7 +2,7 @@ import { useRouter } from "next/router";
 import { useQuery } from "@apollo/client";
 import gql from "graphql-tag";
 
-import { Image as ImageType } from "../graphql-types.generated";
+import { Image } from "../graphql-types.generated";
 
 const allImagesQuery = gql`
   query allImages {
@@ -19,18 +19,18 @@ export const useImagesNavigation = () => {
 
   const { data } =
     useQuery<{
-      images: Array<ImageType>;
+      images: Array<Image>;
     }>(allImagesQuery);
 
-  let currentImageIndex = data?.images.findIndex(
+  let currentImageIndex: number | undefined | null = data?.images.findIndex(
     (image) => image.id === imageId
   );
 
   if (currentImageIndex === -1) {
-    currentImageIndex = undefined;
+    currentImageIndex = null;
   }
 
-  const images = data?.images ?? [];
+  const images = data?.images;
 
   return { images, currentImageIndex };
 };
