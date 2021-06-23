@@ -39,11 +39,9 @@ beforeEach(() => {
 
 /* Source: https://glebbahmutov.com/cypress-examples/6.5.0/recipes/form-input-by-label.html#simple-custom-command */
 Cypress.Commands.add("getByLabel", (label) => {
-  cy.log("**getByLabel**");
   cy.contains("label", label)
     .invoke("attr", "for")
     .then((id) => {
       cy.get("#" + id);
     });
 });
-
