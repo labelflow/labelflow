@@ -26,10 +26,12 @@ const labelClasses = [
 ];
 
 const [onSelectedClassChange, createNewClass] = [jest.fn(), jest.fn()];
+const setIsOpen = jest.fn();
 
 const renderClassSelectionMenu = (
   labelClassesInput: LabelClass[],
-  selectedLabelClass?: LabelClass
+  selectedLabelClass?: LabelClass,
+  isOpen: boolean = false
 ): void => {
   render(
     <ClassSelectionMenu
@@ -37,6 +39,8 @@ const renderClassSelectionMenu = (
       onSelectedClassChange={onSelectedClassChange}
       createNewClass={createNewClass}
       selectedLabelClass={selectedLabelClass}
+      isOpen={isOpen}
+      setIsOpen={setIsOpen}
     />
   );
 };
@@ -70,33 +74,25 @@ describe("Class selection popover tests", () => {
       screen.getByRole("button", { name: "class-selection-menu-trigger" })
     );
 
-    expect(screen.getByRole("dialog", { hidden: false })).toBeDefined();
+    expect(setIsOpen).toHaveBeenCalledWith(true);
   });
 
   test("Should close popover when clicking on a class", () => {
-    renderClassSelectionMenu(labelClasses);
-
-    userEvent.click(
-      screen.getByRole("button", { name: "class-selection-menu-trigger" })
-    );
+    renderClassSelectionMenu(labelClasses, undefined, true);
     userEvent.click(
       screen.getByRole("option", { name: RegExp(labelClasses[0].name) })
     );
 
     expect(onSelectedClassChange).toHaveBeenCalledWith(labelClasses[0]);
-    expect(screen.getByRole("dialog", { hidden: true })).toBeDefined();
+    expect(setIsOpen).toHaveBeenCalledWith(false);
   });
 
   test("Should close popover when creating a new class", () => {
-    renderClassSelectionMenu(labelClasses);
-
-    userEvent.click(
-      screen.getByRole("button", { name: "class-selection-menu-trigger" })
-    );
+    renderClassSelectionMenu(labelClasses, undefined, true);
     userEvent.type(screen.getByPlaceholderText(/search/i), "Perso");
     userEvent.click(screen.getByRole("option", { name: /Create class/ }));
 
     expect(createNewClass).toHaveBeenCalledWith("Perso");
-    expect(screen.getByRole("dialog", { hidden: true })).toBeDefined();
+    expect(setIsOpen).toHaveBeenCalledWith(false);
   });
 });

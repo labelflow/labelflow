@@ -151,12 +151,12 @@ export const ClassSelectionPopover = ({
     }
   }, [isOpen]);
 
-  const searchInputRef = useRef(null);
+  const searchInputRef = useRef<HTMLInputElement | null>(null);
 
   useHotkeys(
     keymap.focusLabelClassSearch.key,
     (keyboardEvent) => {
-      if (activateShortcuts) {
+      if (activateShortcuts && searchInputRef.current != null) {
         searchInputRef.current.focus();
         keyboardEvent.preventDefault();
       }
