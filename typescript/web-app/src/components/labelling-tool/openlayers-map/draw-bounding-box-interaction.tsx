@@ -18,6 +18,7 @@ const labelClassQuery = gql`
     }
   }
 `;
+
 const createLabelMutation = gql`
   mutation createLabel(
     $id: ID

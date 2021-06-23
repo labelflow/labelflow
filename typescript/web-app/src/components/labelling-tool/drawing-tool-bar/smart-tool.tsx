@@ -5,7 +5,12 @@ require("@tensorflow/tfjs-backend-webgl");
 import { useState } from "react";
 import { useRouter } from "next/router";
 import { IconButton, Tooltip } from "@chakra-ui/react";
-import { useQuery } from "@apollo/client";
+import {
+  ApolloClient,
+  InMemoryCache,
+  useApolloClient,
+  useQuery,
+} from "@apollo/client";
 import { BiBrain } from "react-icons/bi";
 import { gql } from "graphql-tag";
 import { load } from "@tensorflow-models/coco-ssd";
@@ -20,13 +25,43 @@ const queryImage = gql`
     image(where: { id: $id }) {
       id
       url
+      height
     }
   }
 `;
 
+const createLabelMutation = gql`
+  mutation createLabel(
+    $id: ID
+    $imageId: ID!
+    $x: Float!
+    $y: Float!
+    $width: Float!
+    $height: Float!
+    $labelClassId: ID
+  ) {
+    createLabel(
+      data: {
+        id: $id
+        imageId: $imageId
+        x: $x
+        y: $y
+        width: $width
+        height: $height
+        labelClassId: $labelClassId
+      }
+    ) {
+      id
+    }
+  }
+`;
+
+const modelPromise = load();
+
 const runSmartTool = async (
   setSmartToolRunning: (b: boolean) => void,
-  imageUrl: string
+  imageData: { id: string; url: string; height: number },
+  client: ApolloClient<Object>
 ) => {
   setSmartToolRunning(true);
   const imageLoadPromise = new Promise<HTMLImageElement>((resolve) => {
@@ -34,22 +69,38 @@ const runSmartTool = async (
     image.onload = () => {
       resolve(image);
     };
-    image.src = imageUrl;
+    image.src = imageData.url;
   });
   const image = await imageLoadPromise;
-  const model = await load();
+  const model = await modelPromise;
   const predictions = await model.detect(image);
   console.log("Predictions", predictions);
+  await Promise.all(
+    predictions.map((prediction) => {
+      const [x, y, width, height] = prediction.bbox;
+      return client.mutate({
+        mutation: createLabelMutation,
+        variables: {
+          imageId: imageData.id,
+          x,
+          y: imageData.height - y - height,
+          width,
+          height,
+          labelClassId: null,
+        },
+        refetchQueries: ["getImageLabels"],
+      });
+    })
+  );
   setSmartToolRunning(false);
 };
 
 export const SmartTool = () => {
   const [smartToolRunning, setSmartToolRunning] = useState(false);
+  const client = useApolloClient();
   const router = useRouter();
   const imageId = router.query.id;
-  const {
-    data: { image },
-  } = useQuery(queryImage, {
+  const { data } = useQuery(queryImage, {
     variables: { id: imageId },
     skip: imageId == null,
   });
@@ -64,7 +115,7 @@ export const SmartTool = () => {
       <IconButton
         icon={<BiBrain size="1.3em" />}
         role="checkbox"
-        onClick={() => runSmartTool(setSmartToolRunning, image?.url)}
+        onClick={() => runSmartTool(setSmartToolRunning, data?.image, client)}
         backgroundColor="white"
         aria-label="Smart tool"
         pointerEvents="initial"
