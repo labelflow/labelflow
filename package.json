@@ -4,8 +4,8 @@
   "version": "0.0.1",
   "repository": "git@github.com:Labelflow/labelflow.git",
   "scripts": {
-    "lint": "eslint 'typescript/**/*.{ts,tsx}'",
-    "lint:all": "eslint 'typescript/**/*.{ts,tsx}'",
+    "lint": "eslint '{cypress,typescript}/**/*.{ts,tsx}'",
+    "lint:all": "eslint '{cypress,typescript}/**/*.{ts,tsx}'",
     "test": "jest",
     "test:all": "jest",
     "cypress:open": "cypress open",
