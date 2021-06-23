@@ -76,8 +76,6 @@ const createLabelClassQuery = gql`
   }
 `;
 
-const modelPromise = load();
-
 const runSmartTool = async (
   setSmartToolRunning: (b: boolean) => void,
   imageData: { id: string; url: string; height: number },
@@ -93,9 +91,9 @@ const runSmartTool = async (
     image.src = imageData.url;
   });
   const image = await imageLoadPromise;
-  const model = await modelPromise;
-  const predictions = await model.detect(image, undefined, 0.25);
-  console.log("Predictions", predictions);
+  const model = await load();
+  const predictions = await model.detect(image, undefined, 0.5);
+  // console.log("Predictions", predictions);
   await Promise.all(
     predictions.map((prediction) => {
       const [x, y, width, height] = prediction.bbox;
@@ -128,25 +126,20 @@ export const SmartTool = () => {
   const [createNewLabelClass] = useMutation(createLabelClassQuery);
   const labelClasses = dataLabelClasses?.labelClasses;
   useEffect(() => {
-    const myFunction = async () => {
-      if (!loading && labelClasses != null && labelClasses.length === 0) {
-        await Promise.all(
-          classesCoco.map(async (classCoco, index) => {
-            const { id } = await createNewLabelClass({
-              variables: {
-                data: {
-                  name: classCoco,
-                  color: hexColorSequence[index % hexColorSequence.length],
-                },
+    if (!loading && labelClasses != null && labelClasses.length === 0) {
+      Promise.all(
+        classesCoco.map((classCoco, index) =>
+          createNewLabelClass({
+            variables: {
+              data: {
+                name: classCoco,
+                color: hexColorSequence[index % hexColorSequence.length],
               },
-            });
-            console.log(id);
-            return id;
+            },
           })
-        );
-      }
-    };
-    myFunction();
+        )
+      );
+    }
   }, [loading, labelClasses]);
   const router = useRouter();
   const imageId = router.query.id;
