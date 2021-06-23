@@ -44,7 +44,7 @@ export const useImagesNavigation = () => {
     };
   }
 
-  const currentImageIndex: number | null = images.findIndex(
+  const currentImageIndex = images.findIndex(
     (image) => image.id === currentImageId
   );
 
