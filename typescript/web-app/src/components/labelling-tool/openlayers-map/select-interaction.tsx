@@ -48,7 +48,7 @@ export const SelectInteraction = ({
         handleEvent={(e) => {
           const eventType = e?.type ?? null;
           switch (eventType) {
-            case "singleclick":
+            case "click":
               return clickHandler(e);
             case "contextmenu":
               return contextMenuHandler(e);

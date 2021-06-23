@@ -19,10 +19,12 @@ export type LabellingState = {
   canZoomOut: boolean;
   selectedTool: Tools;
   selectedLabelId: string | null;
+  selectedLabelClassId: string | null;
   setCanZoomIn: (canZoomIn: boolean) => void;
   setCanZoomOut: (canZoomOut: boolean) => void;
   setSelectedTool: (tool: Tools) => void;
   setSelectedLabelId: (labelId: string | null) => void;
+  setSelectedLabelClassId: (selectedLabelClassId: string | null) => void;
   zoomByDelta: (ratio: number) => void;
 };
 
@@ -34,9 +36,12 @@ export const useLabellingStore = create(
     canZoomOut: false,
     selectedTool: getRouterValue("selectedTool") ?? Tools.SELECTION,
     selectedLabelId: getRouterValue("selectedLabelId") ?? null,
+    selectedLabelClassId: getRouterValue("selectedLabelClassId") ?? null,
     setView: (view: OlView) => set({ view }),
     setSelectedTool: (tool: Tools) => set({ selectedTool: tool }),
     setSelectedLabelId: (labelId: string) => set({ selectedLabelId: labelId }),
+    setSelectedLabelClassId: (labelClassId: string) =>
+      set({ selectedLabelClassId: labelClassId }),
     setCanZoomIn: (canZoomIn: boolean) => set({ canZoomIn }),
     setCanZoomOut: (canZoomOut: boolean) => set({ canZoomOut }),
     zoomByDelta: (ratio: number) => {
@@ -50,6 +55,7 @@ export const useLabellingStore = create(
     watchers: {
       selectedTool: setRouterValue("selectedTool"),
       selectedLabelId: setRouterValue("selectedLabelId"),
+      selectedLabelClassId: setRouterValue("selectedLabelClassId"),
     },
   }
 );

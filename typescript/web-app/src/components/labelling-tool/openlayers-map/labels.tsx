@@ -9,6 +9,7 @@ import { keymap } from "../../../keymap";
 import { useLabellingStore } from "../../../connectors/labelling-state";
 import { useUndoStore, Effect } from "../../../connectors/undo-store";
 import { Label } from "../../../graphql-types.generated";
+import { noneClassColor } from "../../../utils/class-color-generator";
 
 const getImageLabelsQuery = gql`
   query getImageLabels($imageId: ID!) {
@@ -158,7 +159,7 @@ export const Labels = () => {
         <olSourceVector>
           {labels.map(({ id, x, y, width, height, labelClass }: Label) => {
             const isSelected = id === selectedLabelId;
-            const labelClassColor = labelClass?.color ?? "#E2E8F0";
+            const labelClassColor = labelClass?.color ?? noneClassColor;
             const style = new Style({
               fill: new Fill({
                 color: `${labelClassColor}${isSelected ? "40" : "10"}`,

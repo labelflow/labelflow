@@ -13,7 +13,7 @@ import {
 } from "../../../../connectors/labelling-state";
 import { setupTestsWithLocalDatabase } from "../../../../utils/setup-local-db-tests";
 
-import { EditLabelClass } from "../edit-label-class";
+import { EditLabelClassMenu } from "../edit-label-class-menu";
 
 mockNextRouter({ query: { id: "mocked-image-id" } });
 
@@ -53,10 +53,8 @@ jest.mock("../../../../connectors/apollo-client-schema", () => {
   };
 });
 
-const onClose = jest.fn();
-
-const renderEditLabelClass = () => {
-  return render(<EditLabelClass isOpen onClose={onClose} />, {
+const renderEditLabelClassMenu = () => {
+  return render(<EditLabelClassMenu />, {
     wrapper: ({ children }) => (
       <ApolloProvider client={client}>{children}</ApolloProvider>
     ),
@@ -91,7 +89,7 @@ beforeEach(async () => {
 });
 
 it("should create a class", async () => {
-  renderEditLabelClass();
+  renderEditLabelClassMenu();
 
   await userEvent.type(
     screen.getByPlaceholderText(/Search/),
@@ -125,7 +123,7 @@ it("should create a class", async () => {
 });
 
 it("should change a class", async () => {
-  renderEditLabelClass();
+  renderEditLabelClassMenu();
 
   await waitFor(() =>
     expect(screen.getByText(/existing label class/)).toBeDefined()
