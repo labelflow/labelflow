@@ -2,14 +2,14 @@
 require("@tensorflow/tfjs-backend-cpu");
 require("@tensorflow/tfjs-backend-webgl");
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { IconButton, Tooltip } from "@chakra-ui/react";
 import {
   ApolloClient,
-  InMemoryCache,
   useApolloClient,
   useQuery,
+  useMutation,
 } from "@apollo/client";
 import { BiBrain } from "react-icons/bi";
 import { gql } from "graphql-tag";
@@ -17,6 +17,8 @@ import { load } from "@tensorflow-models/coco-ssd";
 // import { useHotkeys } from "react-hotkeys-hook";
 
 import { keymap } from "../../../keymap";
+import { classesCoco } from "./smart-tool-classes";
+import { hexColorSequence } from "../../../utils/class-color-generator";
 
 export type Props = {};
 
@@ -56,12 +58,31 @@ const createLabelMutation = gql`
   }
 `;
 
+const labelClassesQuery = gql`
+  query getLabelClasses {
+    labelClasses {
+      id
+      name
+      color
+    }
+  }
+`;
+
+const createLabelClassQuery = gql`
+  mutation createLabelClass($data: LabelClassCreateInput!) {
+    createLabelClass(data: $data) {
+      id
+    }
+  }
+`;
+
 const modelPromise = load();
 
 const runSmartTool = async (
   setSmartToolRunning: (b: boolean) => void,
   imageData: { id: string; url: string; height: number },
-  client: ApolloClient<Object>
+  client: ApolloClient<Object>,
+  labelClasses: { id: string; name: string; color: string }[]
 ) => {
   setSmartToolRunning(true);
   const imageLoadPromise = new Promise<HTMLImageElement>((resolve) => {
@@ -73,7 +94,7 @@ const runSmartTool = async (
   });
   const image = await imageLoadPromise;
   const model = await modelPromise;
-  const predictions = await model.detect(image);
+  const predictions = await model.detect(image, undefined, 0.25);
   console.log("Predictions", predictions);
   await Promise.all(
     predictions.map((prediction) => {
@@ -86,7 +107,12 @@ const runSmartTool = async (
           y: imageData.height - y - height,
           width,
           height,
-          labelClassId: null,
+          labelClassId:
+            labelClasses[
+              classesCoco.findIndex(
+                (classCoco) => classCoco === prediction.class
+              )
+            ]?.id,
         },
         refetchQueries: ["getImageLabels"],
       });
@@ -98,6 +124,30 @@ const runSmartTool = async (
 export const SmartTool = () => {
   const [smartToolRunning, setSmartToolRunning] = useState(false);
   const client = useApolloClient();
+  const { data: dataLabelClasses, loading } = useQuery(labelClassesQuery);
+  const [createNewLabelClass] = useMutation(createLabelClassQuery);
+  const labelClasses = dataLabelClasses?.labelClasses;
+  useEffect(() => {
+    const myFunction = async () => {
+      if (!loading && labelClasses != null && labelClasses.length === 0) {
+        await Promise.all(
+          classesCoco.map(async (classCoco, index) => {
+            const { id } = await createNewLabelClass({
+              variables: {
+                data: {
+                  name: classCoco,
+                  color: hexColorSequence[index % hexColorSequence.length],
+                },
+              },
+            });
+            console.log(id);
+            return id;
+          })
+        );
+      }
+    };
+    myFunction();
+  }, [loading, labelClasses]);
   const router = useRouter();
   const imageId = router.query.id;
   const { data } = useQuery(queryImage, {
@@ -115,7 +165,9 @@ export const SmartTool = () => {
       <IconButton
         icon={<BiBrain size="1.3em" />}
         role="checkbox"
-        onClick={() => runSmartTool(setSmartToolRunning, data?.image, client)}
+        onClick={() =>
+          runSmartTool(setSmartToolRunning, data?.image, client, labelClasses)
+        }
         backgroundColor="white"
         aria-label="Smart tool"
         pointerEvents="initial"
