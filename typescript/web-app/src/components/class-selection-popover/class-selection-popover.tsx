@@ -68,7 +68,6 @@ export const ClassSelectionPopover = ({
   labelClasses,
   selectedLabelClassId,
   trigger,
-  parentName,
 }: {
   isOpen?: boolean;
   onClose?: () => void;
@@ -77,7 +76,6 @@ export const ClassSelectionPopover = ({
   createNewClass: (name: string) => void;
   selectedLabelClassId?: string | null;
   trigger?: React.ReactNode;
-  parentName?: string;
 }) => {
   const [inputValueCombobox, setInputValueCombobox] = useState<string>("");
   const filteredLabelClasses = useMemo(
