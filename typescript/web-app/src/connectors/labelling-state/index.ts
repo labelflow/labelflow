@@ -1,6 +1,7 @@
 import { View as OlView } from "ol";
 import { zoomByDelta as olZoomByDelta } from "ol/interaction/Interaction";
-// import type ZustandCreate from "zustand";
+// Needed to correct https://github.com/Diablow/zustand-store-addons/issues/2
+import type { UseStore } from "zustand";
 import create from "zustand-store-addons";
 
 import {
@@ -85,4 +86,4 @@ export const useLabellingStore = create<LabellingState>(
       selectedLabelClassId: setRouterValue("selectedLabelClassId"),
     },
   }
-);
+) as UseStore<LabellingState>; // Needed to correct https://github.com/Diablow/zustand-store-addons/issues/2
