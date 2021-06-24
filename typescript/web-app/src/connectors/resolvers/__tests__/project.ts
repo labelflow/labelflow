@@ -1,9 +1,27 @@
 // import { incrementMockedDate } from "@labelflow/dev-utils/mockdate";
 import gql from "graphql-tag";
+import { incrementMockedDate } from "@labelflow/dev-utils/mockdate";
 import { client } from "../../apollo-client-schema";
 import { setupTestsWithLocalDatabase } from "../../../utils/setup-local-db-tests";
 
 setupTestsWithLocalDatabase();
+
+const createProject = (name: string, projectId?: string | null) => {
+  return client.mutate({
+    mutation: gql`
+      mutation createProject($projectId: String, $name: String!) {
+        createProject(data: { id: $projectId, name: $name }) {
+          id
+          name
+        }
+      }
+    `,
+    variables: {
+      name,
+      projectId,
+    },
+  });
+};
 
 describe("Project resolver test suite", () => {
   test("Create project should return the project id", async () => {
@@ -53,20 +71,7 @@ describe("Project resolver test suite", () => {
   test("Read project", async () => {
     const name = "My new project";
     const projectId = "some id";
-    await client.mutate({
-      mutation: gql`
-        mutation createProject($projectId: String, $name: String!) {
-          createProject(data: { id: $projectId, name: $name }) {
-            id
-            name
-          }
-        }
-      `,
-      variables: {
-        name,
-        projectId,
-      },
-    });
+    createProject(name, projectId);
 
     const queryResult = await client.query({
       query: gql`
@@ -106,5 +111,41 @@ describe("Project resolver test suite", () => {
         },
       })
     ).rejects.toThrow("No project with such id");
+  });
+
+  test("Read multiple projects", async () => {
+    await createProject("project 1");
+    await createProject("project 2");
+
+    const queryResults = await client.query({
+      query: gql`
+        query getProjects {
+          projects {
+            id
+            name
+          }
+        }
+      `,
+    });
+    expect(queryResults.data.projects).toHaveLength(2);
+  });
+
+  test("Read multiple projects in order", async () => {
+    await createProject("project 1");
+    incrementMockedDate(1);
+    await createProject("project 2");
+
+    const queryResults = await client.query({
+      query: gql`
+        query getProjects {
+          projects {
+            id
+            name
+          }
+        }
+      `,
+    });
+    expect(queryResults.data.projects[0].name).toEqual("project 1");
+    expect(queryResults.data.projects[1].name).toEqual("project 2");
   });
 });

@@ -2,6 +2,7 @@ import { v4 as uuidv4 } from "uuid";
 import type {
   MutationCreateProjectArgs,
   QueryProjectArgs,
+  QueryProjectsArgs,
 } from "../../graphql-types.generated";
 import { db, DbProject } from "../database";
 
@@ -20,7 +21,11 @@ const project = (_: any, args: QueryProjectArgs): Promise<DbProject> => {
   return getProjectById(args.where.id);
 };
 
-// const projects;
+const projects = async (): Promise<DbProject[]> => {
+  const query = await db.project.orderBy("createdAt");
+
+  return query.toArray();
+};
 
 // Mutations
 const createProject = async (
@@ -48,6 +53,7 @@ const createProject = async (
 export default {
   Query: {
     project,
+    projects,
   },
   Mutation: {
     createProject,
