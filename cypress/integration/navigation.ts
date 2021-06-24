@@ -33,10 +33,10 @@ describe("Labelling tool", () => {
 
     // Create new label class
     cy.get('[aria-label="Open class selection popover"]').click();
-    cy.focused().type("s");
     // @ts-ignore
-    cy.getByLabel("Search in class selection popover").should("be.focused");
-    cy.focused().type("A new class{enter}");
+    cy.getByLabel("Search in class selection popover").type(
+      "A new class{enter}"
+    );
 
     // Assert it is selected
     cy.get('[aria-label="Open class selection popover"]').click();
@@ -53,8 +53,10 @@ describe("Labelling tool", () => {
     // ############## Right click popover tests ##############
     // Create new class
     cy.get("main").rightclick(500, 150);
-    cy.focused().type("s");
-    cy.focused().type("My new class{enter}");
+    // @ts-ignore
+    cy.getByLabel("Search in class selection popover").type(
+      "My new class{enter}"
+    );
     cy.get("main").rightclick(500, 150);
 
     cy.get('[aria-label="Class selection popover"]')
@@ -101,10 +103,10 @@ describe("Labelling tool", () => {
     // ############## Class selection menu tests ##############
     // Create new class and assign it to label
     cy.get('[aria-label="Open class selection popover"]').click();
-    cy.focused().type("s");
     // @ts-ignore
-    cy.getByLabel("Search in class selection popover").should("be.focused");
-    cy.focused().type("My other new class{enter}");
+    cy.getByLabel("Search in class selection popover").type(
+      "My other new class{enter}"
+    );
     cy.get('[aria-label="Open class selection popover"]').click();
     cy.get('[aria-label="Class selection popover"]')
       .contains("My other new class")
@@ -159,16 +161,29 @@ describe("Labelling tool", () => {
       "My new class"
     );
     // ############## Class selection with shortcut ##############
+    // A class can be selected by shortcut from the right click popover
     cy.get("main").rightclick(500, 150);
     cy.focused().type("2");
     cy.get('[aria-label="Open class selection popover"]').contains(
       "My other new class"
     );
+    // A class can be selected by shortcut when a label is selected
     cy.get("main").click(500, 150);
     cy.get('[aria-label="Open class selection popover"]').type("1");
     cy.get('[aria-label="Open class selection popover"]').contains(
       "My new class"
     );
+    // Shortcut for focusing the search input works in the right click popover
+    cy.get("main").rightclick(500, 150);
+    cy.focused().type("s");
+    // @ts-ignore
+    cy.getByLabel("Search in class selection popover").should("be.focused");
+    // Shortcut for focusing the search input works in the class selection menu popover
+    cy.get("main").click(500, 150);
+    cy.get('[aria-label="Open class selection popover"]').click();
+    cy.focused().type("s");
+    // @ts-ignore
+    cy.getByLabel("Search in class selection popover").should("be.focused");
 
     // Image navigation
     cy.get('[aria-label="Next image"]').click();
