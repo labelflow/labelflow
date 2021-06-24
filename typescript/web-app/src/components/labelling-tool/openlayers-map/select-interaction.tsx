@@ -49,8 +49,12 @@ export const SelectInteraction = ({
         extend(extent, feature.getGeometry().getExtent());
       });
 
+      const center = getCenter(extent);
+
+      console.log("center", center);
+
       setIsContextMenuOpen(true);
-      setEditMenuLocation(getCenter(extent));
+      setEditMenuLocation(center);
     },
     {},
     [sourceVectorLabelsRef, setIsContextMenuOpen, setEditMenuLocation]
@@ -69,11 +73,15 @@ export const SelectInteraction = ({
     const selectedLabelIdFromFeature = feature?.getProperties().id ?? null;
     setSelectedLabelId(selectedLabelIdFromFeature);
     if (selectedLabelIdFromFeature) {
+      const center = map.getCoordinateFromPixel(e.pixel);
+      console.log("center right click", center);
       setIsContextMenuOpen(true);
-      setEditMenuLocation(map.getCoordinateFromPixel(e.pixel));
+      setEditMenuLocation(center);
     }
     return true;
   };
+
+  console.log("RENDERRR Select interaction", editClassOverlayRef.current);
 
   return (
     <>

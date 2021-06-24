@@ -1,4 +1,5 @@
 import { useRef, useCallback } from "react";
+import { Spinner, Center } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { RouterContext } from "next/dist/next-server/lib/router-context";
 import { Extent, getCenter } from "ol/extent";
@@ -143,6 +144,9 @@ export const OpenlayersMap = () => {
     height / (bounds.height - viewPadding[0] - viewPadding[2])
   );
 
+  console.log("Render Map ", mapRef.current);
+  console.log("isContextMenuOpen", isContextMenuOpen);
+
   return (
     <div
       style={{ display: "flex", width: "100%", height: "100%" }}
@@ -230,9 +234,31 @@ export const OpenlayersMap = () => {
         boxDrawingToolState !== BoxDrawingToolState.DRAWING &&
         !isContextMenuOpen && <CursorGuides map={mapRef.current} />}
       {/* This div is needed to prevent a weird error that seems related to the EditLabelClass component */}
-      <div />
+      <div
+        key="toto"
+        style={{
+          position: "absolute",
+          pointerEvents: "none",
+          height: "100%",
+          width: "100%",
+        }}
+      >
+        {url == null && (
+          <Center h="full">
+            <Spinner size="xl" />
+          </Center>
+        )}
+      </div>
+
       <EditLabelClass
-        ref={editClassOverlayRef}
+        key="hey"
+        ref={(e) => {
+          console.log("Render EditLabelClass", e);
+          if (e) {
+            console.log("Difff", editClassOverlayRef.current !== e);
+            editClassOverlayRef.current = e;
+          }
+        }}
         isOpen={isContextMenuOpen}
         onClose={() => setIsContextMenuOpen(false)}
       />
