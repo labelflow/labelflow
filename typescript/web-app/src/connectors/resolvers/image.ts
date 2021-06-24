@@ -307,10 +307,19 @@ const createImage = async (
   );
 };
 
+const imagesAggregates = () => {
+  return {};
+};
+
+const totalCount = () => {
+  return db.image.count();
+};
+
 export default {
   Query: {
     image,
     images,
+    imagesAggregates,
   },
 
   Mutation: {
@@ -321,4 +330,6 @@ export default {
     labels: labelsResolver,
     url: urlResolver,
   },
+
+  ImagesAggregates: { totalCount },
 };

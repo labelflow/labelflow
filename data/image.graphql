@@ -16,3 +16,7 @@ input ImageWhereInput {
 input ImageWhereUniqueInput {
   id: ID!
 }
+
+type ImagesAggregates {
+  totalCount:Int!
+}
