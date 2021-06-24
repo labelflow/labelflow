@@ -1,6 +1,4 @@
 /* eslint-disable import/first */
-require("@tensorflow/tfjs-backend-cpu");
-require("@tensorflow/tfjs-backend-webgl");
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
@@ -13,7 +11,8 @@ import {
 } from "@apollo/client";
 import { BiBrain } from "react-icons/bi";
 import { gql } from "graphql-tag";
-import { load } from "@tensorflow-models/coco-ssd";
+import type { ObjectDetection } from "@tensorflow-models/coco-ssd";
+
 // import { useHotkeys } from "react-hotkeys-hook";
 
 import { keymap } from "../../../keymap";
@@ -76,6 +75,19 @@ const createLabelClassQuery = gql`
   }
 `;
 
+let modelSingleton: ObjectDetection | null = null;
+const getModel = async () => {
+  if (modelSingleton == null) {
+    const { load } = await import("@tensorflow-models/coco-ssd");
+    await Promise.all([
+      import("@tensorflow/tfjs-backend-cpu"),
+      import("@tensorflow/tfjs-backend-webgl"),
+    ]);
+    modelSingleton = await load();
+  }
+  return modelSingleton;
+};
+
 const runSmartTool = async (
   setSmartToolRunning: (b: boolean) => void,
   imageData: { id: string; url: string; height: number },
@@ -91,7 +103,7 @@ const runSmartTool = async (
     image.src = imageData.url;
   });
   const image = await imageLoadPromise;
-  const model = await load();
+  const model = await getModel();
   const predictions = await model.detect(image, undefined, 0.5);
   // console.log("Predictions", predictions);
   await Promise.all(
