@@ -36,15 +36,16 @@ export const SelectInteraction = ({
         .getFeatures()
         .filter((feature) => feature.getProperties().isSelected === true);
 
-      const extent = createEmpty();
-      selectedFeatures.forEach((feature) => {
-        extend(extent, feature.getGeometry().getExtent());
-      });
+      if (selectedFeatures.length > 0) {
+        const extent = createEmpty();
+        selectedFeatures.forEach((feature) => {
+          extend(extent, feature.getGeometry().getExtent());
+        });
 
-      const center = getCenter(extent);
-
-      setIsContextMenuOpen(true);
-      setEditMenuLocation(center);
+        const center = getCenter(extent);
+        setIsContextMenuOpen(true);
+        setEditMenuLocation(center);
+      }
     },
     {},
     [sourceVectorLabelsRef, setIsContextMenuOpen, setEditMenuLocation]
