@@ -53,26 +53,20 @@ describe("Class selection popover tests", () => {
   test("Should render component", () => {
     renderClassSelectionMenu(labelClasses);
 
-    expect(
-      screen.getByRole("button", { name: "class-selection-menu-trigger" })
-    ).toBeDefined();
+    expect(screen.getByRole("button")).toBeDefined();
   });
 
   test("Should render with a selected label class", () => {
     renderClassSelectionMenu(labelClasses, labelClasses[0]);
 
-    expect(
-      screen.getByRole("button", { name: "class-selection-menu-trigger" })
-    ).toBeDefined();
+    expect(screen.getByRole("button")).toBeDefined();
   });
 
   test("Should open popover when clicking on the button", () => {
     renderClassSelectionMenu(labelClasses);
 
     expect(screen.getByRole("dialog", { hidden: true })).toBeDefined();
-    userEvent.click(
-      screen.getByRole("button", { name: "class-selection-menu-trigger" })
-    );
+    userEvent.click(screen.getByRole("button"));
 
     expect(setIsOpen).toHaveBeenCalledWith(true);
   });

@@ -1,4 +1,5 @@
 import { useRef, useCallback } from "react";
+import { Center, Spinner } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { RouterContext } from "next/dist/next-server/lib/router-context";
 import { Extent, getCenter } from "ol/extent";
@@ -122,7 +123,11 @@ export const OpenlayersMap = () => {
   );
 
   if (image == null) {
-    return null;
+    return (
+      <Center position="absolute" top={0} bottom={0} left={0} right={0}>
+        <Spinner size="xl" />
+      </Center>
+    );
   }
 
   const { url, size, extent, center, projection, width, height } =
@@ -136,7 +141,12 @@ export const OpenlayersMap = () => {
   return (
     <>
       <div
-        style={{ display: "flex", width: "100%", height: "100%" }}
+        style={{
+          display: "flex",
+          width: "100%",
+          height: "100%",
+          position: "relative",
+        }}
         onContextMenu={(e) => {
           e.preventDefault();
           return false;
