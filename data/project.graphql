@@ -1,0 +1,13 @@
+input ProjectCreateInput {
+  id: ID!
+  name: String!
+}
+
+input ProjectWhereUniqueInput {
+  id: ID!
+}
+
+input ProjectUpdateInput {
+  id: ID!
+  name: String!
+}

@@ -1,10 +1,20 @@
 type Mutation {
   createExample(data: ExampleCreateInput!): Example
+
   getUploadTarget: UploadTarget!
   createImage(data: ImageCreateInput!): Image
+
   createLabel(data: LabelCreateInput!): Label
   updateLabel(where: LabelWhereUniqueInput!, data: LabelUpdateInput!): Label
   deleteLabel(where: LabelWhereUniqueInput!): Label
+
   createLabelClass(data: LabelClassCreateInput!): LabelClass
   deleteLabelClass(where: LabelClassWhereUniqueInput!): LabelClass
+
+  createProject(data: ProjectCreateInput!): Project
+  updateProject(
+    where: ProjectWhereUniqueInput!
+    data: ProjectUpdateInput!
+  ): Project
+  deleteProject(where: ProjectWhereUniqueInput!): Project
 }

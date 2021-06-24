@@ -56,6 +56,7 @@ export type Image = {
   height: Scalars['Int'];
   width: Scalars['Int'];
   labels: Array<Label>;
+  projectId?: Maybe<Scalars['ID']>;
 };
 
 export type ImageCreateInput = {
@@ -103,6 +104,7 @@ export type LabelClass = {
   name: Scalars['String'];
   color: Scalars['ColorHex'];
   labels: Array<Label>;
+  projectId?: Maybe<Scalars['ID']>;
 };
 
 export type LabelClassCreateInput = {
@@ -152,6 +154,9 @@ export type Mutation = {
   deleteLabel?: Maybe<Label>;
   createLabelClass?: Maybe<LabelClass>;
   deleteLabelClass?: Maybe<LabelClass>;
+  createProject?: Maybe<Project>;
+  updateProject?: Maybe<Project>;
+  deleteProject?: Maybe<Project>;
 };
 
 
@@ -190,6 +195,46 @@ export type MutationDeleteLabelClassArgs = {
   where: LabelClassWhereUniqueInput;
 };
 
+
+export type MutationCreateProjectArgs = {
+  data: ProjectCreateInput;
+};
+
+
+export type MutationUpdateProjectArgs = {
+  where: ProjectWhereUniqueInput;
+  data: ProjectUpdateInput;
+};
+
+
+export type MutationDeleteProjectArgs = {
+  where: ProjectWhereUniqueInput;
+};
+
+export type Project = {
+  __typename?: 'Project';
+  id: Scalars['ID'];
+  createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
+  name: Scalars['String'];
+  images?: Maybe<Array<Image>>;
+  labelClasses?: Maybe<Array<LabelClass>>;
+};
+
+export type ProjectCreateInput = {
+  id: Scalars['ID'];
+  name: Scalars['String'];
+};
+
+export type ProjectUpdateInput = {
+  id: Scalars['ID'];
+  name: Scalars['String'];
+};
+
+export type ProjectWhereUniqueInput = {
+  id: Scalars['ID'];
+};
+
 export type Query = {
   __typename?: 'Query';
   hello?: Maybe<Scalars['String']>;
@@ -201,8 +246,10 @@ export type Query = {
   labelClass: LabelClass;
   labelClasses: Array<LabelClass>;
   labelsAggregates: LabelsAggregates;
-  exportToCoco: Scalars['String'];
   label: Label;
+  project: Array<Project>;
+  projects: Array<Project>;
+  exportToCoco: Scalars['String'];
 };
 
 
@@ -244,6 +291,17 @@ export type QueryLabelClassesArgs = {
 
 export type QueryLabelArgs = {
   where: LabelWhereUniqueInput;
+};
+
+
+export type QueryProjectArgs = {
+  where: ProjectWhereUniqueInput;
+};
+
+
+export type QueryProjectsArgs = {
+  first?: Maybe<Scalars['Int']>;
+  skip?: Maybe<Scalars['Int']>;
 };
 
 
@@ -363,6 +421,10 @@ export type ResolversTypes = {
   LabelWhereUniqueInput: LabelWhereUniqueInput;
   LabelsAggregates: ResolverTypeWrapper<LabelsAggregates>;
   Mutation: ResolverTypeWrapper<{}>;
+  Project: ResolverTypeWrapper<Project>;
+  ProjectCreateInput: ProjectCreateInput;
+  ProjectUpdateInput: ProjectUpdateInput;
+  ProjectWhereUniqueInput: ProjectWhereUniqueInput;
   Query: ResolverTypeWrapper<{}>;
   Upload: ResolverTypeWrapper<Scalars['Upload']>;
   UploadTarget: ResolversTypes['UploadTargetDirect'] | ResolversTypes['UploadTargetHttp'];
@@ -397,6 +459,10 @@ export type ResolversParentTypes = {
   LabelWhereUniqueInput: LabelWhereUniqueInput;
   LabelsAggregates: LabelsAggregates;
   Mutation: {};
+  Project: Project;
+  ProjectCreateInput: ProjectCreateInput;
+  ProjectUpdateInput: ProjectUpdateInput;
+  ProjectWhereUniqueInput: ProjectWhereUniqueInput;
   Query: {};
   Upload: Scalars['Upload'];
   UploadTarget: ResolversParentTypes['UploadTargetDirect'] | ResolversParentTypes['UploadTargetHttp'];
@@ -432,6 +498,7 @@ export type ImageResolvers<ContextType = any, ParentType extends ResolversParent
   height?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   width?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   labels?: Resolver<Array<ResolversTypes['Label']>, ParentType, ContextType>;
+  projectId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -460,6 +527,7 @@ export type LabelClassResolvers<ContextType = any, ParentType extends ResolversP
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   color?: Resolver<ResolversTypes['ColorHex'], ParentType, ContextType>;
   labels?: Resolver<Array<ResolversTypes['Label']>, ParentType, ContextType>;
+  projectId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -477,6 +545,19 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   deleteLabel?: Resolver<Maybe<ResolversTypes['Label']>, ParentType, ContextType, RequireFields<MutationDeleteLabelArgs, 'where'>>;
   createLabelClass?: Resolver<Maybe<ResolversTypes['LabelClass']>, ParentType, ContextType, RequireFields<MutationCreateLabelClassArgs, 'data'>>;
   deleteLabelClass?: Resolver<Maybe<ResolversTypes['LabelClass']>, ParentType, ContextType, RequireFields<MutationDeleteLabelClassArgs, 'where'>>;
+  createProject?: Resolver<Maybe<ResolversTypes['Project']>, ParentType, ContextType, RequireFields<MutationCreateProjectArgs, 'data'>>;
+  updateProject?: Resolver<Maybe<ResolversTypes['Project']>, ParentType, ContextType, RequireFields<MutationUpdateProjectArgs, 'where' | 'data'>>;
+  deleteProject?: Resolver<Maybe<ResolversTypes['Project']>, ParentType, ContextType, RequireFields<MutationDeleteProjectArgs, 'where'>>;
+};
+
+export type ProjectResolvers<ContextType = any, ParentType extends ResolversParentTypes['Project'] = ResolversParentTypes['Project']> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  images?: Resolver<Maybe<Array<ResolversTypes['Image']>>, ParentType, ContextType>;
+  labelClasses?: Resolver<Maybe<Array<ResolversTypes['LabelClass']>>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
@@ -489,8 +570,10 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   labelClass?: Resolver<ResolversTypes['LabelClass'], ParentType, ContextType, RequireFields<QueryLabelClassArgs, 'where'>>;
   labelClasses?: Resolver<Array<ResolversTypes['LabelClass']>, ParentType, ContextType, RequireFields<QueryLabelClassesArgs, never>>;
   labelsAggregates?: Resolver<ResolversTypes['LabelsAggregates'], ParentType, ContextType>;
-  exportToCoco?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   label?: Resolver<ResolversTypes['Label'], ParentType, ContextType, RequireFields<QueryLabelArgs, 'where'>>;
+  project?: Resolver<Array<ResolversTypes['Project']>, ParentType, ContextType, RequireFields<QueryProjectArgs, 'where'>>;
+  projects?: Resolver<Array<ResolversTypes['Project']>, ParentType, ContextType, RequireFields<QueryProjectsArgs, never>>;
+  exportToCoco?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
 };
 
 export interface UploadScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Upload'], any> {
@@ -522,6 +605,7 @@ export type Resolvers<ContextType = any> = {
   LabelClass?: LabelClassResolvers<ContextType>;
   LabelsAggregates?: LabelsAggregatesResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
+  Project?: ProjectResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   Upload?: GraphQLScalarType;
   UploadTarget?: UploadTargetResolvers<ContextType>;

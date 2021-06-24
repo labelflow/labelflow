@@ -17,6 +17,7 @@ type Image {
   height: Int!
   width: Int!
   labels: [Label!]!
+  projectId: ID
 }
 
 type Label {
@@ -38,4 +39,14 @@ type LabelClass {
   name: String!
   color: ColorHex!
   labels: [Label!]!
+  projectId: ID
+}
+
+type Project {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  name: String!
+  images: [Image!]
+  labelClasses: [LabelClass!]
 }
