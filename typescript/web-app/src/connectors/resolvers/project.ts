@@ -45,14 +45,13 @@ const createProject = async (
   const date = new Date().toISOString();
   const projectId = id ?? uuidv4();
 
-  await db.project.add({
-    id: projectId,
-    createdAt: date,
-    updatedAt: date,
-    name,
-  });
-
   try {
+    await db.project.add({
+      id: projectId,
+      createdAt: date,
+      updatedAt: date,
+      name,
+    });
     return await getProjectById(projectId);
   } catch (e) {
     throw new Error("Could not create the project");
