@@ -8,6 +8,11 @@ export type Keymap = {
 
 export const keymap: Keymap = {
   toolSelect: { key: "v", description: "Selection tool", category: "Tools" },
+  toolSmart: {
+    key: "s",
+    description: "Smart labelling tool",
+    category: "Tools",
+  },
   toolBoundingBox: {
     key: "b",
     description: "Bounding box tool",
