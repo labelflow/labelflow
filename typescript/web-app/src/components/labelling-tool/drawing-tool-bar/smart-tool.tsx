@@ -122,7 +122,6 @@ const runSmartTool = async (
   const image = await imageLoadPromise;
   const model = await getModel({ toast });
   const predictions = await model.detect(image, undefined, 0.5);
-  // console.log("Predictions", predictions);
   await Promise.all(
     predictions.map((prediction) => {
       const [x, y, width, height] = prediction.bbox;
