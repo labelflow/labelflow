@@ -161,12 +161,12 @@ describe("Labelling tool", () => {
     // ############## Class selection with shortcut ##############
     cy.get("main").rightclick(500, 150);
     cy.focused().type("2");
-    cy.get('[aria-label="class-selection-menu-trigger"]').contains(
+    cy.get('[aria-label="Open class selection popover"]').contains(
       "My other new class"
     );
     cy.get("main").click(500, 150);
-    cy.get('[aria-label="class-selection-menu-trigger"]').type("1");
-    cy.get('[aria-label="class-selection-menu-trigger"]').contains(
+    cy.get('[aria-label="Open class selection popover"]').type("1");
+    cy.get('[aria-label="Open class selection popover"]').contains(
       "My new class"
     );
 
