@@ -206,4 +206,60 @@ describe("Project resolver test suite", () => {
     expect(queryResults.data.projects[0].name).toEqual("project 2");
     expect(queryResults.data.projects[1].name).toEqual("project 3");
   });
+
+  test("should delete a project", async () => {
+    const name = "My new project";
+    const projectId = "some id";
+    await createProject(name, projectId);
+
+    const mutationResult = await client.mutate({
+      mutation: gql`
+        mutation deleteProject($id: ID!) {
+          deleteProject(where: { id: $id }) {
+            id
+            name
+          }
+        }
+      `,
+      variables: {
+        id: projectId,
+      },
+    });
+
+    expect(mutationResult.data.deleteProject.name).toEqual(name);
+
+    return expect(
+      client.query({
+        query: gql`
+          query getProject($id: ID!) {
+            project(where: { id: $id }) {
+              id
+              name
+            }
+          }
+        `,
+        variables: {
+          id: projectId,
+        },
+      })
+    ).rejects.toThrow("No project with such id");
+  });
+
+  test("should throw an error if the project to delete does not exist", () => {
+    return expect(
+      client.mutate({
+        mutation: gql`
+          mutation deleteProject($id: ID!) {
+            deleteProject(where: { id: $id }) {
+              id
+              name
+            }
+          }
+        `,
+        variables: {
+          id: "not existing project id",
+        },
+      })
+    ).rejects.toThrow("No project with such id");
+  });
 });

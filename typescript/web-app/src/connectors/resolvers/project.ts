@@ -1,6 +1,7 @@
 import { v4 as uuidv4 } from "uuid";
 import type {
   MutationCreateProjectArgs,
+  MutationDeleteProjectArgs,
   QueryProjectArgs,
   QueryProjectsArgs,
 } from "../../graphql-types.generated";
@@ -57,6 +58,14 @@ const createProject = async (
   }
 };
 
+const deleteProject = async (_: any, args: MutationDeleteProjectArgs) => {
+  const projectToDelete = await getProjectById(args.where.id);
+
+  await db.project.delete(args.where.id);
+
+  return projectToDelete;
+};
+
 export default {
   Query: {
     project,
@@ -64,5 +73,6 @@ export default {
   },
   Mutation: {
     createProject,
+    deleteProject,
   },
 };
