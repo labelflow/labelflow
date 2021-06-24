@@ -175,12 +175,15 @@ describe("Labelling tool", () => {
     );
     // Shortcut for focusing the search input works in the right click popover
     cy.get("main").rightclick(500, 150);
+    cy.get('[aria-label="Class selection popover"]').should("be.visible");
     cy.focused().type("s");
     // @ts-ignore
     cy.getByLabel("Search in class selection popover").should("be.focused");
     // Shortcut for focusing the search input works in the class selection menu popover
     cy.get("main").click(500, 150);
+    cy.get('[aria-label="Class selection popover"]').should("not.be.visible");
     cy.get('[aria-label="Open class selection popover"]').click();
+    cy.get('[aria-label="Class selection popover"]').should("be.visible");
     cy.focused().type("s");
     // @ts-ignore
     cy.getByLabel("Search in class selection popover").should("be.focused");
