@@ -3,7 +3,6 @@ import gql from "graphql-tag";
 import { incrementMockedDate } from "@labelflow/dev-utils/mockdate";
 import { client } from "../../apollo-client-schema";
 import { setupTestsWithLocalDatabase } from "../../../utils/setup-local-db-tests";
-import project from "../project";
 
 setupTestsWithLocalDatabase();
 
