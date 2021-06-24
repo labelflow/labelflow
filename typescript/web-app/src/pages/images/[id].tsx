@@ -95,15 +95,9 @@ const ImagePage = () => {
       }
     >
       <Flex height="100%" flexDirection="column">
-        {!imageResult ? (
-          <Center flex="1">
-            <Spinner size="xl" />
-          </Center>
-        ) : (
-          <Box flex="1">
-            <LabellingTool />
-          </Box>
-        )}
+        <Box flex="1">
+          <LabellingTool />
+        </Box>
 
         <Box bg="white" overflow="hidden">
           <Gallery />
