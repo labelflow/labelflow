@@ -222,7 +222,7 @@ export type Project = {
 };
 
 export type ProjectCreateInput = {
-  id: Scalars['ID'];
+  id?: Maybe<Scalars['ID']>;
   name: Scalars['String'];
 };
 

@@ -11,6 +11,7 @@ export default [
       file: "id,blob",
       label: "id,createdAt,updatedAt,imageId,x,y,height,width,labelClassId",
       labelClass: "id,createdAt,updatedAt,name,color",
+      project: "id,createdAt,updatedAt,name",
     },
   },
 ];

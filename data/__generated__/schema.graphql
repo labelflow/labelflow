@@ -146,7 +146,7 @@ type Project {
 }
 
 input ProjectCreateInput {
-  id: ID!
+  id: ID
   name: String!
 }
 
