@@ -148,4 +148,62 @@ describe("Project resolver test suite", () => {
     expect(queryResults.data.projects[0].name).toEqual("project 1");
     expect(queryResults.data.projects[1].name).toEqual("project 2");
   });
+
+  test("Should return no projects when db is empty", async () => {
+    const queryResults = await client.query({
+      query: gql`
+        query getProjects {
+          projects {
+            id
+            name
+          }
+        }
+      `,
+    });
+    expect(queryResults.data.projects).toHaveLength(0);
+  });
+
+  test("Read paginated projects", async () => {
+    await createProject("project 1");
+    incrementMockedDate(1);
+    await createProject("project 2");
+    incrementMockedDate(1);
+    await createProject("project 3");
+
+    const queryResults = await client.query({
+      query: gql`
+        query {
+          projects(first: 2) {
+            id
+            name
+          }
+        }
+      `,
+    });
+    expect(queryResults.data.projects).toHaveLength(2);
+    expect(queryResults.data.projects[0].name).toEqual("project 1");
+    expect(queryResults.data.projects[1].name).toEqual("project 2");
+  });
+
+  test("Read paginated projects with skip", async () => {
+    await createProject("project 1");
+    incrementMockedDate(1);
+    await createProject("project 2");
+    incrementMockedDate(1);
+    await createProject("project 3");
+
+    const queryResults = await client.query({
+      query: gql`
+        query {
+          projects(first: 2, skip: 1) {
+            id
+            name
+          }
+        }
+      `,
+    });
+    expect(queryResults.data.projects).toHaveLength(2);
+    expect(queryResults.data.projects[0].name).toEqual("project 2");
+    expect(queryResults.data.projects[1].name).toEqual("project 3");
+  });
 });

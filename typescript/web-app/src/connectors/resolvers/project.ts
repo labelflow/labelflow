@@ -21,8 +21,15 @@ const project = (_: any, args: QueryProjectArgs): Promise<DbProject> => {
   return getProjectById(args.where.id);
 };
 
-const projects = async (): Promise<DbProject[]> => {
-  const query = await db.project.orderBy("createdAt");
+const projects = async (
+  _: any,
+  args: QueryProjectsArgs
+): Promise<DbProject[]> => {
+  const query = await db.project.orderBy("createdAt").offset(args?.skip ?? 0);
+
+  if (args?.first) {
+    return query.limit(args.first).toArray();
+  }
 
   return query.toArray();
 };
