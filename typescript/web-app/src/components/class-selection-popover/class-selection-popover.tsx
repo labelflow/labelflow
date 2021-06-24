@@ -11,6 +11,7 @@ import {
   InputLeftElement,
   InputRightElement,
   chakra,
+  Text,
 } from "@chakra-ui/react";
 import { IoSearch } from "react-icons/io5";
 import { RiCloseCircleFill } from "react-icons/ri";
@@ -67,7 +68,6 @@ export const ClassSelectionPopover = ({
   labelClasses,
   selectedLabelClassId,
   trigger,
-  parentName,
 }: {
   isOpen?: boolean;
   onClose?: () => void;
@@ -76,7 +76,6 @@ export const ClassSelectionPopover = ({
   createNewClass: (name: string) => void;
   selectedLabelClassId?: string | null;
   trigger?: React.ReactNode;
-  parentName?: string;
 }) => {
   const [inputValueCombobox, setInputValueCombobox] = useState<string>("");
   const filteredLabelClasses = useMemo(
@@ -92,6 +91,7 @@ export const ClassSelectionPopover = ({
     inputValue,
     getMenuProps,
     getInputProps,
+    getLabelProps,
     getComboboxProps,
     highlightedIndex,
     getItemProps,
@@ -141,10 +141,13 @@ export const ClassSelectionPopover = ({
       initialFocusRef={initialFocusRef}
       placement="bottom-start"
       preventOverflow
-      id={parentName} // Needed to identify the component in cypress tests
     >
       {trigger && <PopoverTrigger>{trigger}</PopoverTrigger>}
-      <PopoverContent borderColor="gray.200" pointerEvents="initial">
+      <PopoverContent
+        borderColor="gray.200"
+        pointerEvents="initial"
+        aria-label="Class selection popover"
+      >
         <PopoverBody pl="0" pr="0" pt="0">
           <Box>
             <Box {...getComboboxProps()} pl="3" pr="3" pt="3">
@@ -152,6 +155,21 @@ export const ClassSelectionPopover = ({
                 <InputLeftElement pointerEvents="none">
                   <MagnifierIcon fontSize="2xl" />
                 </InputLeftElement>
+                {/* Visually hidden accessible label. See: https://www.w3.org/WAI/tutorials/forms/labels/#hiding-label-text */}
+                <Text
+                  as="label"
+                  {...getLabelProps()}
+                  border={0}
+                  clip="rect(0 0 0 0)"
+                  height="1px"
+                  margin="-1px"
+                  overflow="hidden"
+                  padding={0}
+                  position="absolute"
+                  width="1px"
+                >
+                  Search in class selection popover
+                </Text>
                 <Input
                   {...getInputProps({ ref: initialFocusRef })}
                   placeholder="Search..."
