@@ -1,5 +1,6 @@
 import { MutableRefObject, useState } from "react";
 import { Coordinate } from "ol/coordinate";
+import VectorLayer from "ol/layer/Vector";
 import { MapBrowserEvent } from "ol";
 import OverlayPositioning from "ol/OverlayPositioning";
 import { useLabellingStore, Tools } from "../../../connectors/labelling-state";
@@ -24,7 +25,19 @@ export const SelectInteraction = ({
 
   const clickHandler = (e: MapBrowserEvent<UIEvent>) => {
     const { map } = e;
-    const feature = map.forEachFeatureAtPixel(e.pixel, (f: any) => f);
+    const featuresAtPixel = map.getFeaturesAtPixel(e.pixel);
+    const coordinate = map.getCoordinateFromPixel(e.pixel);
+    // TODO: Find a more robust way to get the right layer
+    const vectorLayer = map
+      .getLayers()
+      .getArray()
+      .find((layer) => "getStyle" in layer) as VectorLayer;
+    if (!vectorLayer) throw Error("Could not found vector layer");
+    const source = vectorLayer.getSource();
+    // @ts-ignore
+    const feature = source.getClosestFeatureToCoordinate(coordinate, (f) =>
+      featuresAtPixel.find((fAtPixel) => f === fAtPixel)
+    );
     setSelectedLabelId(feature?.getProperties().id ?? null);
     return true;
   };
