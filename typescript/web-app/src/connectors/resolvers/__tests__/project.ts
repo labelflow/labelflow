@@ -3,6 +3,7 @@ import gql from "graphql-tag";
 import { incrementMockedDate } from "@labelflow/dev-utils/mockdate";
 import { client } from "../../apollo-client-schema";
 import { setupTestsWithLocalDatabase } from "../../../utils/setup-local-db-tests";
+import project from "../project";
 
 setupTestsWithLocalDatabase();
 
@@ -258,6 +259,74 @@ describe("Project resolver test suite", () => {
         `,
         variables: {
           id: "not existing project id",
+        },
+      })
+    ).rejects.toThrow("No project with such id");
+  });
+
+  test("Should update a project with a new name", async () => {
+    const name = "My new project";
+    const projectId = "some id";
+    await createProject(name, projectId);
+
+    const mutationResult = await client.mutate({
+      mutation: gql`
+        mutation updateProject($id: ID!, $data: ProjectUpdateInput!) {
+          updateProject(where: { id: $id }, data: $data) {
+            id
+            name
+          }
+        }
+      `,
+      variables: {
+        id: projectId,
+        data: { name: "My new project new name" },
+      },
+    });
+
+    expect(mutationResult.data.updateProject).toEqual(
+      expect.objectContaining({
+        id: projectId,
+        name: "My new project new name",
+      })
+    );
+
+    const queryResult = await client.query({
+      query: gql`
+        query getProject($id: ID!) {
+          project(where: { id: $id }) {
+            id
+            name
+          }
+        }
+      `,
+      variables: {
+        id: projectId,
+      },
+    });
+
+    expect(queryResult.data.project).toEqual(
+      expect.objectContaining({
+        id: projectId,
+        name: "My new project new name",
+      })
+    );
+  });
+
+  test("Should throw when trying to update a project that doesn't exist", () => {
+    return expect(
+      client.mutate({
+        mutation: gql`
+          mutation updateProject($id: ID!, $data: ProjectUpdateInput!) {
+            updateProject(where: { id: $id }, data: $data) {
+              id
+              name
+            }
+          }
+        `,
+        variables: {
+          id: "id that doesn't exists",
+          data: { name: "My new project new name" },
         },
       })
     ).rejects.toThrow("No project with such id");

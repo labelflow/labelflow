@@ -151,7 +151,6 @@ input ProjectCreateInput {
 }
 
 input ProjectUpdateInput {
-  id: ID!
   name: String!
 }
 

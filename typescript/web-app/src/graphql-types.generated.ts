@@ -227,7 +227,6 @@ export type ProjectCreateInput = {
 };
 
 export type ProjectUpdateInput = {
-  id: Scalars['ID'];
   name: Scalars['String'];
 };
 
