@@ -30,19 +30,11 @@ export const SelectInteraction = ({
   useHotkeys(
     keymap.openLabelClassSelectionPopover.key,
     () => {
-      console.log("click c");
       if (sourceVectorLabelsRef.current == null) return;
-
-      console.log(
-        "sourceVectorLabelsRef.current.getFeatures()",
-        sourceVectorLabelsRef.current.getFeatures()
-      );
 
       const selectedFeatures = sourceVectorLabelsRef.current
         .getFeatures()
         .filter((feature) => feature.getProperties().isSelected === true);
-
-      console.log("selectedFeatures", selectedFeatures);
 
       const extent = createEmpty();
       selectedFeatures.forEach((feature) => {
@@ -50,8 +42,6 @@ export const SelectInteraction = ({
       });
 
       const center = getCenter(extent);
-
-      console.log("center", center);
 
       setIsContextMenuOpen(true);
       setEditMenuLocation(center);
@@ -74,14 +64,12 @@ export const SelectInteraction = ({
     setSelectedLabelId(selectedLabelIdFromFeature);
     if (selectedLabelIdFromFeature) {
       const center = map.getCoordinateFromPixel(e.pixel);
-      console.log("center right click", center);
+
       setIsContextMenuOpen(true);
       setEditMenuLocation(center);
     }
     return true;
   };
-
-  console.log("RENDERRR Select interaction", editClassOverlayRef.current);
 
   return (
     <>

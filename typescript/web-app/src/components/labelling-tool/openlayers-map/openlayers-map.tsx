@@ -147,9 +147,6 @@ export const OpenlayersMap = () => {
         )
       : 1;
 
-  console.log("Render Map ", mapRef.current);
-  console.log("isContextMenuOpen", isContextMenuOpen);
-
   return (
     <div
       style={{ display: "flex", width: "100%", height: "100%" }}
@@ -256,9 +253,7 @@ export const OpenlayersMap = () => {
       <EditLabelClass
         key="hey"
         ref={(e) => {
-          console.log("Render EditLabelClass", e);
-          if (e) {
-            console.log("Difff", editClassOverlayRef.current !== e);
+          if (e && editClassOverlayRef.current !== e) {
             editClassOverlayRef.current = e;
           }
         }}
