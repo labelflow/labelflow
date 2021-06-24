@@ -7,6 +7,8 @@ import {
   BreadcrumbLink,
   Center,
   Spinner,
+  Box,
+  Flex,
 } from "@chakra-ui/react";
 import gql from "graphql-tag";
 import dynamic from "next/dynamic";
@@ -16,6 +18,7 @@ import NextLink from "next/link";
 
 import { Layout } from "../../components/layout";
 import type { Image } from "../../graphql-types.generated";
+import { Gallery } from "../../components/gallery";
 
 // The dynamic import is needed because openlayers use web apis that are not available
 // in NodeJS, like `Blob`, so it crashes when rendering in NextJS server side.
@@ -91,7 +94,15 @@ const ImagePage = () => {
         </Breadcrumb>
       }
     >
-      <LabellingTool />
+      <Flex height="100%" flexDirection="column">
+        <Box flex="1">
+          <LabellingTool />
+        </Box>
+
+        <Box bg="white" overflow="hidden">
+          <Gallery />
+        </Box>
+      </Flex>
     </Layout>
   );
 };

@@ -207,4 +207,25 @@ describe("Image resolver test suite", () => {
       queryResult.data.image.labels.map((l: { x: number }) => l.x)
     ).toEqual([2, 1]);
   });
+
+  test("It returns the correct count of images", async () => {
+    await Promise.all([
+      createImage("Image 1"),
+      createImage("Image 2"),
+      createImage("Image 3"),
+    ]);
+
+    const queryResult = await client.query({
+      query: gql`
+        query getImagesNumber {
+          imagesAggregates {
+            totalCount
+          }
+        }
+      `,
+    });
+
+    // labels should show in the right order
+    expect(queryResult.data.imagesAggregates.totalCount).toEqual(3);
+  });
 });
