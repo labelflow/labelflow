@@ -247,7 +247,7 @@ export type Query = {
   labelClasses: Array<LabelClass>;
   labelsAggregates: LabelsAggregates;
   label: Label;
-  project: Array<Project>;
+  project: Project;
   projects: Array<Project>;
   exportToCoco: Scalars['String'];
 };
@@ -571,7 +571,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   labelClasses?: Resolver<Array<ResolversTypes['LabelClass']>, ParentType, ContextType, RequireFields<QueryLabelClassesArgs, never>>;
   labelsAggregates?: Resolver<ResolversTypes['LabelsAggregates'], ParentType, ContextType>;
   label?: Resolver<ResolversTypes['Label'], ParentType, ContextType, RequireFields<QueryLabelArgs, 'where'>>;
-  project?: Resolver<Array<ResolversTypes['Project']>, ParentType, ContextType, RequireFields<QueryProjectArgs, 'where'>>;
+  project?: Resolver<ResolversTypes['Project'], ParentType, ContextType, RequireFields<QueryProjectArgs, 'where'>>;
   projects?: Resolver<Array<ResolversTypes['Project']>, ParentType, ContextType, RequireFields<QueryProjectsArgs, never>>;
   exportToCoco?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
 };

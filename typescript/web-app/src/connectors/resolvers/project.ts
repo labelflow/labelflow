@@ -1,5 +1,8 @@
 import { v4 as uuidv4 } from "uuid";
-import type { MutationCreateProjectArgs } from "../../graphql-types.generated";
+import type {
+  MutationCreateProjectArgs,
+  QueryProjectArgs,
+} from "../../graphql-types.generated";
 import { db, DbProject } from "../database";
 
 const getProjectById = async (id: string): Promise<DbProject> => {
@@ -13,6 +16,11 @@ const getProjectById = async (id: string): Promise<DbProject> => {
 };
 
 // Queries
+const project = (_: any, args: QueryProjectArgs): Promise<DbProject> => {
+  return getProjectById(args.where.id);
+};
+
+// const projects;
 
 // Mutations
 const createProject = async (
@@ -38,9 +46,9 @@ const createProject = async (
 };
 
 export default {
-  // Query: {
-
-  // },
+  Query: {
+    project,
+  },
   Mutation: {
     createProject,
   },

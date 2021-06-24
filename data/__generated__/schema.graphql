@@ -170,7 +170,7 @@ type Query {
   labelClasses(first: Int, skip: Int): [LabelClass!]!
   labelsAggregates: LabelsAggregates!
   label(where: LabelWhereUniqueInput!): Label!
-  project(where: ProjectWhereUniqueInput!): [Project!]!
+  project(where: ProjectWhereUniqueInput!): Project!
   projects(first: Int, skip: Int): [Project!]!
   exportToCoco: String!
 }
