@@ -123,7 +123,7 @@ const createDeleteLabelEffect = (
 export const Labels = ({
   sourceVectorLabelsRef,
 }: {
-  sourceVectorLabelsRef: MutableRefObject<OlSourceVector<Geometry> | null>;
+  sourceVectorLabelsRef?: MutableRefObject<OlSourceVector<Geometry> | null>;
 }) => {
   const client = useApolloClient();
   const selectedLabelId = useLabellingStore((state) => state.selectedLabelId);
