@@ -49,7 +49,11 @@ const standardProjection = new Projection({
  * Memoize openlayers parameters that we pass to the open layers components
  */
 const getMemoizedProperties = memoize(
-  (_imageId, image: Pick<Image, "id" | "url" | "width" | "height">) => {
+  (
+    _imageId,
+    image: Pick<Image, "id" | "url" | "width" | "height"> | null | undefined
+  ) => {
+    if (image == null) return {};
     const { url, width, height } = image;
     const size: Size = [width, height];
     const extent: Extent = [0, 0, width, height];
@@ -132,17 +136,16 @@ export const OpenlayersMap = () => {
     [selectedTool]
   );
 
-  if (image == null) {
-    return null;
-  }
-
   const { url, size, extent, center, projection, width, height } =
-    getMemoizedProperties(image.id, image);
+    getMemoizedProperties(image?.id, image);
 
-  const resolution = Math.max(
-    width / (bounds.width - viewPadding[1] - viewPadding[3]),
-    height / (bounds.height - viewPadding[0] - viewPadding[2])
-  );
+  const resolution =
+    width && height
+      ? Math.max(
+          width / (bounds.width - viewPadding[1] - viewPadding[3]),
+          height / (bounds.height - viewPadding[0] - viewPadding[2])
+        )
+      : 1;
 
   console.log("Render Map ", mapRef.current);
   console.log("isContextMenuOpen", isContextMenuOpen);
