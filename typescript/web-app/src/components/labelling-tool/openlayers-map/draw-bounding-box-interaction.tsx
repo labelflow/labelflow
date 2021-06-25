@@ -3,7 +3,12 @@ import { useRouter } from "next/router";
 import { createBox, DrawEvent } from "ol/interaction/Draw";
 import { Fill, Stroke, Style } from "ol/style";
 import GeometryType from "ol/geom/GeometryType";
-import { ApolloClient, useApolloClient, useQuery } from "@apollo/client";
+import {
+  ApolloCache,
+  ApolloClient,
+  useApolloClient,
+  useQuery,
+} from "@apollo/client";
 import gql from "graphql-tag";
 
 import {
@@ -57,6 +62,77 @@ const deleteLabelMutation = gql`
   }
 `;
 
+type CreateLabelInputs = {
+  imageId: string;
+  id?: string;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  labelClassId: string | null;
+};
+
+const createdLabelFragment = gql`
+  fragment NewLabel on Label {
+    id
+    x
+    y
+    width
+    height
+    labelClass {
+      id
+    }
+  }
+`;
+
+function addLabelToImageInCache(
+  cache: ApolloCache<{
+    createLabel: {
+      id: string;
+      __typename: string;
+    };
+  }>,
+  {
+    imageId,
+    id,
+    x,
+    y,
+    width,
+    height,
+    labelClassId,
+  }: CreateLabelInputs & { id: string }
+) {
+  const createdLabel = {
+    id,
+    x,
+    y,
+    width,
+    height,
+    labelClass:
+      labelClassId != null
+        ? {
+            id: labelClassId,
+            __typename: "LabelClass",
+          }
+        : null,
+    __typename: "Label",
+  };
+
+  cache.modify({
+    id: cache.identify({ id: imageId, __typename: "Image" }),
+    fields: {
+      labels: (existingLabelsRefs) => {
+        const newLabelRef = cache.writeFragment({
+          data: createdLabel,
+          fragment: createdLabelFragment,
+        });
+
+        return [...existingLabelsRefs, newLabelRef];
+      },
+    },
+  });
+}
+
 const createLabelEffect = (
   {
     imageId,
@@ -82,22 +158,37 @@ const createLabelEffect = (
   }
 ): Effect => ({
   do: async () => {
+    const createLabelInputs = {
+      x,
+      y,
+      width,
+      height,
+      imageId,
+      labelClassId: selectedLabelClassId,
+    };
+
     const { data } = await client.mutate({
       mutation: createLabelMutation,
-      variables: {
-        imageId,
-        x,
-        y,
-        width,
-        height,
-        labelClassId: selectedLabelClassId,
+      variables: createLabelInputs,
+      optimisticResponse: {
+        createLabel: { id: `temp-${Date.now()}`, __typename: "Label" },
       },
-      refetchQueries: ["getImageLabels"],
+      update(cache, { data: mutationPayloadData }) {
+        const id = mutationPayloadData?.createLabel?.id;
+        if (typeof id !== "string") {
+          return;
+        }
+
+        addLabelToImageInCache(cache, { ...createLabelInputs, id });
+      },
     });
 
-    setSelectedLabelId(data?.createLabel?.id);
+    if (typeof data?.createLabel?.id !== "string") {
+      throw new Error("Couldn't get the id of the newly created label");
+    }
 
-    return data?.createLabel?.id;
+    setSelectedLabelId(data.createLabel.id);
+    return data.createLabel.id;
   },
   undo: async (id: string): Promise<string> => {
     await client.mutate({
@@ -110,23 +201,32 @@ const createLabelEffect = (
     return id;
   },
   redo: async (id: string) => {
+    const createLabelInputs = {
+      id,
+      x,
+      y,
+      width,
+      height,
+      imageId,
+      labelClassId: selectedLabelClassId,
+    };
     const { data } = await client.mutate({
       mutation: createLabelMutation,
-      variables: {
-        id,
-        imageId,
-        x,
-        y,
-        width,
-        height,
-        labelClassId: selectedLabelClassId,
+      variables: createLabelInputs,
+      optimisticResponse: {
+        createLabel: { id: `temp-${Date.now()}`, __typename: "Label" },
       },
-      refetchQueries: ["getImageLabels"],
+      update(cache) {
+        addLabelToImageInCache(cache, createLabelInputs);
+      },
     });
 
-    setSelectedLabelId(data?.createLabel?.id);
+    if (typeof data?.createLabel?.id !== "string") {
+      throw new Error("Couldn't get the id of the newly created label");
+    }
 
-    return data?.createLabel?.id;
+    setSelectedLabelId(data.createLabel.id);
+    return data.createLabel.id;
   },
 });
 
