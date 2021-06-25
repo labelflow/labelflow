@@ -51,6 +51,7 @@ export const ImportImagesModal = ({
         if (!isCloseable) return;
         onClose();
       }}
+      isCentered
     >
       <ModalOverlay />
       <ModalContent height="80vh">
