@@ -218,7 +218,7 @@ jobs:
             pr-{{PR_NUMBER}}.app.labelflow.ai
       # Bundlewatch
       # See https://bundlewatch.io/#/getting-started/using-bundlewatch?id=setup-ci-auth-variables-needed-by-bundlewatch
-      - run: cd typescript/web-app && yarn bundlewatch
+      - run: cd typescript/web-app && yarn build && yarn bundlewatch
         # env:
         #   CI_REPO_OWNER: labelflow
         #   CI_REPO_NAME: labelflow
