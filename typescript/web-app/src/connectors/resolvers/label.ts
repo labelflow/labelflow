@@ -43,7 +43,8 @@ const createLabel = async (
   // Since we don't have any constraint checks with Dexie
   // We need to ensure that the imageId and the labelClassId
   // matches some entity before being able to continue.
-  if ((await db.image.get(imageId)) == null) {
+  const image = await db.image.get(imageId);
+  if (image == null) {
     throw new Error(`The image id ${imageId} doesn't exist.`);
   }
 
@@ -52,7 +53,16 @@ const createLabel = async (
       throw new Error(`The labelClass id ${labelClassId} doesn't exist.`);
     }
   }
-
+  const imageWidth = image.width;
+  const imageHeight = image.height;
+  if (
+    (x < 0 && x + width < 0) ||
+    (x + width > imageWidth && x > imageWidth) ||
+    (y < 0 && y + height < 0) ||
+    (y + height > imageHeight && y > imageHeight)
+  ) {
+    throw new Error("Bounding box out of image bounds");
+  }
   const labelId = id ?? uuidv4();
   const now = new Date();
 
