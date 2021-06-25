@@ -2,8 +2,8 @@ import React from "react";
 import { Tooltip, Text, Flex, Button, chakra } from "@chakra-ui/react";
 import { HiSelector } from "react-icons/hi";
 import { RiCheckboxBlankCircleFill } from "react-icons/ri";
-import { LabelClass } from "../../graphql-types.generated";
-import { ClassSelectionPopover } from "../class-selection-popover";
+import { LabelClass } from "../../../../graphql-types.generated";
+import { ClassSelectionPopover } from "../../../class-selection-popover";
 
 const CircleIcon = chakra(RiCheckboxBlankCircleFill);
 const SelectorIcon = chakra(HiSelector);
@@ -45,17 +45,22 @@ const ClassSelectionButton = React.forwardRef<
 });
 
 export const ClassSelectionMenu = ({
+  isOpen,
+  setIsOpen,
   labelClasses,
   onSelectedClassChange,
   createNewClass,
   selectedLabelClass,
+  isContextMenuOpen,
 }: {
+  isOpen: boolean;
+  setIsOpen: (b: boolean) => void;
   labelClasses: LabelClass[];
   onSelectedClassChange: (item: LabelClass | null) => void;
   createNewClass: (name: string) => void;
   selectedLabelClass?: LabelClass | null;
+  isContextMenuOpen?: boolean;
 }) => {
-  const [isOpen, setIsOpen] = React.useState(false);
   const toggle = () => setIsOpen(!isOpen);
   const close = () => setIsOpen(false);
 
@@ -80,6 +85,7 @@ export const ClassSelectionMenu = ({
           selectedLabelClass={selectedLabelClass}
         />
       }
+      activateShortcuts={!isContextMenuOpen}
     />
   );
 };
