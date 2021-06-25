@@ -68,6 +68,7 @@ export const ClassSelectionPopover = ({
   labelClasses,
   selectedLabelClassId,
   trigger,
+  ariaLabel = "Class selection popover",
 }: {
   isOpen?: boolean;
   onClose?: () => void;
@@ -75,7 +76,8 @@ export const ClassSelectionPopover = ({
   labelClasses: LabelClass[];
   createNewClass: (name: string) => void;
   selectedLabelClassId?: string | null;
-  trigger?: React.ReactNode;
+  trigger: React.ReactNode;
+  ariaLabel?: string;
 }) => {
   const [inputValueCombobox, setInputValueCombobox] = useState<string>("");
   const filteredLabelClasses = useMemo(
@@ -86,6 +88,7 @@ export const ClassSelectionPopover = ({
       }),
     [labelClasses, inputValueCombobox]
   );
+
   const {
     reset,
     inputValue,
@@ -142,11 +145,12 @@ export const ClassSelectionPopover = ({
       placement="bottom-start"
       preventOverflow
     >
-      {trigger && <PopoverTrigger>{trigger}</PopoverTrigger>}
+      <PopoverTrigger>{trigger}</PopoverTrigger>
       <PopoverContent
         borderColor="gray.200"
+        cursor="default"
         pointerEvents="initial"
-        aria-label="Class selection popover"
+        aria-label={ariaLabel}
       >
         <PopoverBody pl="0" pr="0" pt="0">
           <Box>
