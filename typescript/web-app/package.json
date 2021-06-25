@@ -53,9 +53,9 @@
   "devDependencies": {
     "@babel/core": "7.14.3",
     "@labelflow/dev-utils": "workspace:typescript/dev-utils",
-    "@storybook/addon-actions": "6.3.0-beta.15",
-    "@storybook/addons": "6.3.0-beta.15",
-    "@storybook/react": "6.3.0-beta.15",
+    "@storybook/addon-actions": "6.3.0",
+    "@storybook/addons": "6.3.0",
+    "@storybook/react": "6.3.0",
     "@testing-library/dom": "^7.31.0",
     "@testing-library/jest-dom": "^5.12.0",
     "@testing-library/react": "11.2.6",

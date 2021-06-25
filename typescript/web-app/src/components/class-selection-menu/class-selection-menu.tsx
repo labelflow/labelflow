@@ -61,6 +61,7 @@ export const ClassSelectionMenu = ({
 
   return (
     <ClassSelectionPopover
+      ariaLabel="Class selection menu popover"
       isOpen={isOpen}
       onClose={close}
       labelClasses={labelClasses}

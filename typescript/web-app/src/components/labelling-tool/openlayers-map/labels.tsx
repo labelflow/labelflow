@@ -1,6 +1,9 @@
+import { MutableRefObject } from "react";
 import { useRouter } from "next/router";
 import { ApolloClient, useQuery, useApolloClient } from "@apollo/client";
 import gql from "graphql-tag";
+import { Vector as OlSourceVector } from "ol/source";
+import { Geometry } from "ol/geom";
 import { fromExtent } from "ol/geom/Polygon";
 import { Fill, Stroke, Style } from "ol/style";
 import { useHotkeys } from "react-hotkeys-hook";
@@ -117,7 +120,11 @@ const createDeleteLabelEffect = (
   },
 });
 
-export const Labels = () => {
+export const Labels = ({
+  sourceVectorLabelsRef,
+}: {
+  sourceVectorLabelsRef?: MutableRefObject<OlSourceVector<Geometry> | null>;
+}) => {
   const client = useApolloClient();
   const selectedLabelId = useLabellingStore((state) => state.selectedLabelId);
   const setSelectedLabelId = useLabellingStore(
@@ -156,7 +163,7 @@ export const Labels = () => {
   return (
     <>
       <olLayerVector>
-        <olSourceVector>
+        <olSourceVector ref={sourceVectorLabelsRef}>
           {labels.map(({ id, x, y, width, height, labelClass }: Label) => {
             const isSelected = id === selectedLabelId;
             const labelClassColor = labelClass?.color ?? noneClassColor;
@@ -175,6 +182,7 @@ export const Labels = () => {
               <olFeature
                 key={id}
                 id={id}
+                properties={{ isSelected }}
                 geometry={fromExtent([x, y, x + width, y + height])}
                 style={style}
               />

@@ -63,7 +63,7 @@ export const EditLabelClassMenu = () => {
     skip: selectedLabelClassId == null,
   });
   const selectedLabelClass =
-    selectedTool === Tools.BOUNDING_BOX
+    selectedTool === Tools.BOX
       ? dataLabelClass?.labelClass
       : selectedLabelData?.label?.labelClass;
   const createNewClass = useMemo(
@@ -86,7 +86,7 @@ export const EditLabelClassMenu = () => {
   );
   const onSelectedClassChange = useMemo(
     () =>
-      selectedTool === Tools.BOUNDING_BOX
+      selectedTool === Tools.BOX
         ? (item: LabelClass | null) =>
             perform(
               createUpdateLabelClassEffect({
@@ -108,7 +108,7 @@ export const EditLabelClassMenu = () => {
   );
 
   const displayClassSelectionMenu =
-    selectedTool === Tools.BOUNDING_BOX ||
+    selectedTool === Tools.BOX ||
     (selectedTool === Tools.SELECTION && selectedLabelId != null);
 
   return (
@@ -118,7 +118,7 @@ export const EditLabelClassMenu = () => {
           selectedLabelClass={selectedLabelClass}
           labelClasses={labelClasses}
           createNewClass={async (name) =>
-            selectedTool === Tools.BOUNDING_BOX
+            selectedTool === Tools.BOX
               ? createNewClass(name, selectedLabelClassId)
               : createNewClassAndUpdateLabel(name, selectedLabelId)
           }

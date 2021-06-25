@@ -34,6 +34,7 @@ const [onClose, onSelectedClassChange, createNewClass] = [
 const renderClassSelectionPopover = (labelClassesInput: LabelClass[]): void => {
   render(
     <ClassSelectionPopover
+      trigger={<div>Ok</div>}
       isOpen
       onClose={onClose}
       labelClasses={labelClassesInput}

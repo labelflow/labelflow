@@ -98,7 +98,6 @@ const ImagePage = () => {
         <Box flex="1">
           <LabellingTool />
         </Box>
-
         <Box bg="white" overflow="hidden">
           <Gallery />
         </Box>
