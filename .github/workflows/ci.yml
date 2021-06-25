@@ -198,6 +198,8 @@ jobs:
         uses: amondnet/vercel-action@v20
         id: vercel
         env:
+          # @next/bundle-analyzer
+          # See https://www.npmjs.com/package/@next/bundle-analyzer
           ANALYZE: "true"
         with:
           scope: ${{ secrets.VERCEL_ORG_ID}}
@@ -214,6 +216,15 @@ jobs:
           #   pr-{{PR_NUMBER}}.app.labelflow.ai
           alias-domains: | #Optional
             pr-{{PR_NUMBER}}.app.labelflow.ai
+      # Bundlewatch
+      # See https://bundlewatch.io/#/getting-started/using-bundlewatch?id=setup-ci-auth-variables-needed-by-bundlewatch
+      - run: cd typescript/web-app && yarn bundlewatch
+        # env:
+        #   CI_REPO_OWNER: labelflow
+        #   CI_REPO_NAME: labelflow
+        #   CI_COMMIT_SHA: ${{ env.GITHUB_SHA }}
+        #   CI_BRANCH: ${{ env.GITHUB_HEAD_REF }}
+        #   BUNDLEWATCH_GITHUB_TOKEN: ${{ secrets.BUNDLEWATCH_GITHUB_TOKEN }}
       - run: npx vercel logs ${{steps.vercel.outputs.preview-url}} --token ${{ secrets.VERCEL_TOKEN }}
       - name: update deployment status
         uses: bobheadxi/deployments@v0.4.3
