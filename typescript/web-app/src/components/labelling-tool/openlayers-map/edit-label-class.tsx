@@ -43,6 +43,9 @@ export const EditLabelClass = forwardRef<
   const { perform } = useUndoStore();
   const labelClasses = data?.labelClasses ?? [];
   const selectedLabelId = useLabellingStore((state) => state.selectedLabelId);
+  const isContextMenuOpen = useLabellingStore(
+    (state) => state.isContextMenuOpen
+  );
   const { data: labelQueryData } = useQuery(labelQuery, {
     variables: { id: selectedLabelId },
     skip: selectedLabelId == null,
@@ -88,6 +91,7 @@ export const EditLabelClass = forwardRef<
       <ClassSelectionPopover
         isOpen={isOpen}
         onClose={onClose}
+        activateShortcuts={isContextMenuOpen}
         trigger={<div style={{ width: 0, height: 0 }} />} // Needed to have the popover displayed preventing overflow
         labelClasses={labelClasses}
         selectedLabelClassId={selectedLabelClassId}
