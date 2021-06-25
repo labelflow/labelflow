@@ -25,8 +25,8 @@ const createImageFromFileMutation = gql`
 `;
 
 const createImageFromUrlMutation = gql`
-  mutation createImageMutation($url: String!) {
-    createImage(data: { url: $url }) {
+  mutation createImageMutation($url: String!, $name: String!) {
+    createImage(data: { url: $url, name: $name }) {
       id
     }
   }
@@ -109,7 +109,10 @@ export const ImportImagesModalDropzone = ({
 
                 await apolloClient.mutate({
                   mutation: createImageFromUrlMutation,
-                  variables: { url: target.downloadUrl },
+                  variables: {
+                    url: target.downloadUrl,
+                    name: acceptedFile.file.name,
+                  },
                 });
 
                 return setFileUploadStatuses((previousFileUploadStatuses) => {
