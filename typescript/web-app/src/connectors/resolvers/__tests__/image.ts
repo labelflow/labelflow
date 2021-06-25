@@ -132,11 +132,12 @@ describe("Image resolver test suite", () => {
   });
 
   test("Create image with a createdAt", async () => {
-
     const mutationResult = await client.mutate({
       mutation: gql`
         mutation createImage($file: Upload!) {
-          createImage(data: { file: $file createdAt: "some custom date string"}) {
+          createImage(
+            data: { file: $file, createdAt: "some custom date string" }
+          ) {
             createdAt
           }
         }
@@ -146,7 +147,9 @@ describe("Image resolver test suite", () => {
       },
     });
 
-    expect(mutationResult.data.createImage.createdAt).toEqual( "some custom date string");
+    expect(mutationResult.data.createImage.createdAt).toEqual(
+      "some custom date string"
+    );
   });
 
   test("Query several images", async () => {

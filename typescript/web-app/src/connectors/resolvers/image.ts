@@ -137,7 +137,7 @@ const createImage = async (
 
       const newEntity = await new Promise<DbImage>((resolve, reject) => {
         const imageObject = new Image();
-        const now = args?.data?.createdAt ?? (new Date()).toISOString();
+        const now = args?.data?.createdAt ?? new Date().toISOString();
 
         imageObject.onload = async () => {
           const newImageEntity = {
@@ -193,7 +193,7 @@ const createImage = async (
       const fileId = identifiedFileId;
       const imageId = id ?? uuidv4();
 
-      const now = args?.data?.createdAt ?? (new Date()).toISOString();
+      const now = args?.data?.createdAt ?? new Date().toISOString();
 
       // Probe the file to get its dimensions and mimetype if not provided
       let finalWidth = width;
@@ -260,7 +260,7 @@ const createImage = async (
     const fileId = uuidv4();
     const imageId = id ?? uuidv4();
 
-    const now = args?.data?.createdAt ?? (new Date()).toISOString();
+    const now = args?.data?.createdAt ?? new Date().toISOString();
 
     await db.file.add({ id: fileId, blob });
 
