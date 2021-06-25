@@ -190,11 +190,11 @@ export const OpenlayersMap = () => {
                     );
                     return false;
                   }}
-                  args={{ 
+                  args={{
                     extent,
                     maxResolution: resolution,
                     // Max zoom = 16 pixels of screen per pixel of image
-                    minResolution: 1.0 / 16.0 
+                    minResolution: 1.0 / 16.0,
                   }}
                   center={center}
                   initialProjection={projection}
