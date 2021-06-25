@@ -263,6 +263,7 @@ describe("Navigation", () => {
     cy.log("Image navigation");
     cy.get('[aria-label="Next image"]').click();
     cy.get('[aria-label="Undo tool"]').should("be.disabled");
+    cy.url().should("not.include", "selected-label-id");
 
     cy.get("main nav").scrollTo("right");
     cy.get("main nav").within(() => {
