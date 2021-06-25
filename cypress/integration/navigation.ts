@@ -111,9 +111,7 @@ describe("Labelling tool", () => {
       // @ts-ignore
       cy.getByLabel("Search in class selection popover").should("be.focused");
     });
-
-      "My other new class{enter}"
-    );
+    cy.focused().type("My other new class{enter}");
     cy.get('[aria-label="Open class selection popover"]').click();
     cy.get('[aria-label="Class selection popover"]')
       .contains("My other new class")
