@@ -38,6 +38,7 @@ type Image {
   height: Int!
   width: Int!
   labels: [Label!]!
+  projectId: ID
 }
 
 input ImageCreateInput {
@@ -82,6 +83,7 @@ type LabelClass {
   name: String!
   color: ColorHex!
   labels: [Label!]!
+  projectId: ID
 }
 
 input LabelClassCreateInput {
@@ -129,6 +131,31 @@ type Mutation {
   deleteLabel(where: LabelWhereUniqueInput!): Label
   createLabelClass(data: LabelClassCreateInput!): LabelClass
   deleteLabelClass(where: LabelClassWhereUniqueInput!): LabelClass
+  createProject(data: ProjectCreateInput!): Project
+  updateProject(where: ProjectWhereUniqueInput!, data: ProjectUpdateInput!): Project
+  deleteProject(where: ProjectWhereUniqueInput!): Project
+}
+
+type Project {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  name: String!
+  images: [Image!]
+  labelClasses: [LabelClass!]
+}
+
+input ProjectCreateInput {
+  id: ID
+  name: String!
+}
+
+input ProjectUpdateInput {
+  name: String!
+}
+
+input ProjectWhereUniqueInput {
+  id: ID!
 }
 
 type Query {
@@ -141,8 +168,10 @@ type Query {
   labelClass(where: LabelClassWhereUniqueInput!): LabelClass!
   labelClasses(first: Int, skip: Int): [LabelClass!]!
   labelsAggregates: LabelsAggregates!
-  exportToCoco: String!
   label(where: LabelWhereUniqueInput!): Label!
+  project(where: ProjectWhereUniqueInput!): Project!
+  projects(first: Int, skip: Int): [Project!]!
+  exportToCoco: String!
 }
 
 scalar Upload
