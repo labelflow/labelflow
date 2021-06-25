@@ -228,7 +228,7 @@ describe("Navigation", () => {
     );
     cy.get("main").rightclick(500, 150);
     cy.get('[aria-label="Class selection popover"]').should("be.visible");
-    cy.focused().type("/");
+    // cy.focused().type("/");
 
     cy.get('[aria-label="Class selection popover"]').within(() => {
       // // @ts-ignore
@@ -237,6 +237,7 @@ describe("Navigation", () => {
       // );
       // // @ts-ignore
       // cy.getByLabel("Search in class selection popover").click();
+      cy.focused().type("/");
       // @ts-ignore
       cy.getByLabel("Search in class selection popover").should("be.focused");
     });
