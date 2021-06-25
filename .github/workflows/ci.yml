@@ -216,15 +216,6 @@ jobs:
           #   pr-{{PR_NUMBER}}.app.labelflow.ai
           alias-domains: | #Optional
             pr-{{PR_NUMBER}}.app.labelflow.ai
-      # Bundlewatch
-      # See https://bundlewatch.io/#/getting-started/using-bundlewatch?id=setup-ci-auth-variables-needed-by-bundlewatch
-      - run: cd typescript/web-app && yarn build && yarn bundlewatch
-        # env:
-        #   CI_REPO_OWNER: labelflow
-        #   CI_REPO_NAME: labelflow
-        #   CI_COMMIT_SHA: ${{ env.GITHUB_SHA }}
-        #   CI_BRANCH: ${{ env.GITHUB_HEAD_REF }}
-        #   BUNDLEWATCH_GITHUB_TOKEN: ${{ secrets.BUNDLEWATCH_GITHUB_TOKEN }}
       - run: npx vercel logs ${{steps.vercel.outputs.preview-url}} --token ${{ secrets.VERCEL_TOKEN }}
       - name: update deployment status
         uses: bobheadxi/deployments@v0.4.3
@@ -235,6 +226,28 @@ jobs:
           status: ${{ job.status }}
           deployment_id: ${{ steps.deployment.outputs.deployment_id }}
           env_url: ${{steps.vercel.outputs.preview-url}}
+
+  bundle-size-webapp-pr:
+    name: Bundle sise webapp PR branch
+    if: "! contains( github.ref, 'main')"
+    runs-on: ubuntu-20.04
+    needs: install-typescript
+    steps:
+     
+      - name: Check out repository code
+        uses: actions/checkout@v2
+      - run: yarn
+      # Bundlewatch
+      # See https://bundlewatch.io/#/getting-started/using-bundlewatch?id=setup-ci-auth-variables-needed-by-bundlewatch
+      - run: cd typescript/web-app
+      - run: yarn build
+      - run: yarn bundlewatch
+        # env:
+        #   CI_REPO_OWNER: labelflow
+        #   CI_REPO_NAME: labelflow
+        #   CI_COMMIT_SHA: ${{ env.GITHUB_SHA }}
+        #   CI_BRANCH: ${{ env.GITHUB_HEAD_REF }}
+        #   BUNDLEWATCH_GITHUB_TOKEN: ${{ secrets.BUNDLEWATCH_GITHUB_TOKEN }}
 
   deploy-website-pr:
     name: Deploy website PR branch
