@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
+import { useErrorHandler } from "react-error-boundary";
 import type { Workbox } from "workbox-window";
 import { useQueryParam, StringParam } from "use-query-params";
 import { UpdateServiceWorkerModal } from "./update-service-worker-modal/update-service-worker-modal";
@@ -28,7 +29,7 @@ export const AppLifecycleManager = ({ assumeServiceWorkerActive }: Props) => {
     assumeServiceWorkerActive
   );
 
-  console.log("assumeServiceWorkerActive", assumeServiceWorkerActive);
+  const handleError = useErrorHandler();
 
   const [isUpdateServiceWorkerModalOpen, setIsUpdateServiceWorkerModalOpen] =
     useState(paramModalUpdateServiceWorker === "open");
@@ -39,33 +40,49 @@ export const AppLifecycleManager = ({ assumeServiceWorkerActive }: Props) => {
   }, [setIsUpdateServiceWorkerModalOpen, setParamModalUpdateServiceWorker]);
 
   const updateServiceWorker = useCallback(() => {
-    if (
-      typeof window !== "undefined" &&
-      "serviceWorker" in navigator &&
-      window.workbox !== undefined
-    ) {
+    if (typeof window === "undefined") {
+      setParamModalUpdateServiceWorker(undefined, "replaceIn");
+      setIsUpdateServiceWorkerModalOpen(false);
+      return;
+    }
+    try {
       const wb = window.workbox;
+
+      if (!wb) {
+        throw new Error(
+          "Workbox is unavailable, are you on firefox in incognito mode?"
+        );
+      }
+
       wb.addEventListener("controlling", (/* event: any */) => {
         window.location.reload();
       });
 
       // Send a message to the waiting service worker, instructing it to activate.
       wb.messageSkipWaiting();
+
+      setParamModalUpdateServiceWorker(undefined, "replaceIn");
+      setIsUpdateServiceWorkerModalOpen(false);
+    } catch (e) {
+      handleError(e);
     }
-    setParamModalUpdateServiceWorker(undefined, "replaceIn");
-    setIsUpdateServiceWorkerModalOpen(false);
   }, [setIsUpdateServiceWorkerModalOpen, setParamModalUpdateServiceWorker]);
 
   // This hook only run once in browser after the component is rendered for the first time.
   // It has same effect as the old componentDidMount lifecycle callback.
   // See https://github.com/shadowwalker/next-pwa/blob/master/examples/lifecycle/pages/index.js
   useEffect(() => {
-    if (
-      typeof window !== "undefined" &&
-      "serviceWorker" in navigator &&
-      window.workbox !== undefined
-    ) {
+    if (typeof window === "undefined") {
+      return;
+    }
+    try {
       const wb = window.workbox;
+
+      if (!wb) {
+        throw new Error(
+          "Workbox is unavailable, are you on firefox in incognito mode?"
+        );
+      }
 
       const checkServiceWorkerStatus = async () => {
         const sw = await wb.getSW();
@@ -118,6 +135,9 @@ export const AppLifecycleManager = ({ assumeServiceWorkerActive }: Props) => {
 
       // never forget to call register as auto register is turned off in next.config.js
       wb.register();
+    } catch (e) {
+      console.log("AWW");
+      handleError(e);
     }
   }, []);
 

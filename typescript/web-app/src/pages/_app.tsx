@@ -1,5 +1,6 @@
-import { NextPage, NextPageContext } from "next";
-import { AppProps, AppContext, Container } from "next/app";
+import { ErrorBoundary, FallbackProps } from "react-error-boundary";
+
+import { AppProps, AppContext } from "next/app";
 
 import { ApolloProvider } from "@apollo/client";
 import { useCookie } from "next-cookie";
@@ -10,11 +11,24 @@ import { theme } from "../theme";
 import { client } from "../connectors/apollo-client-service-worker";
 import { QueryParamProvider } from "../utils/query-params-provider";
 import { AppLifecycleManager } from "../components/app-lifecycle-manager";
+import ErrorPage from "./_error";
 
 interface InitialProps {
   assumeServiceWorkerActive: boolean;
   cookie: string;
 }
+
+const ErrorFallback = (props: FallbackProps) => {
+  return (
+    <ChakraProvider theme={theme} resetCSS>
+      <QueryParamProvider>
+        <ApolloProvider client={client}>
+          <ErrorPage {...props} />
+        </ApolloProvider>
+      </QueryParamProvider>
+    </ChakraProvider>
+  );
+};
 
 const App = (props: AppProps & InitialProps) => {
   const {
@@ -45,16 +59,24 @@ const App = (props: AppProps & InitialProps) => {
   }
 
   return (
-    <QueryParamProvider>
-      <ApolloProvider client={client}>
-        <ChakraProvider theme={theme} resetCSS>
-          <AppLifecycleManager
-            assumeServiceWorkerActive={assumeServiceWorkerActiveFromServer}
-          />
-          <Component {...pageProps} />
-        </ChakraProvider>
-      </ApolloProvider>
-    </QueryParamProvider>
+    <ErrorBoundary
+      FallbackComponent={ErrorFallback}
+      onReset={() => {
+        console.log("reset app");
+        // reset the state of your app so the error doesn't happen again
+      }}
+    >
+      <ChakraProvider theme={theme} resetCSS>
+        <QueryParamProvider>
+          <ApolloProvider client={client}>
+            <AppLifecycleManager
+              assumeServiceWorkerActive={assumeServiceWorkerActiveFromServer}
+            />
+            <Component {...pageProps} />
+          </ApolloProvider>
+        </QueryParamProvider>
+      </ChakraProvider>
+    </ErrorBoundary>
   );
 };
 
