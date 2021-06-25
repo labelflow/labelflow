@@ -41,7 +41,7 @@ jest.mock("../../../../connectors/apollo-client-schema", () => {
 
 beforeEach(() => {
   (client.mutate as jest.Mock).mockClear();
-  useLabellingStore.setState({ selectedTool: Tools.BOUNDING_BOX });
+  useLabellingStore.setState({ selectedTool: Tools.BOX });
 });
 
 it("create a label when the user has finished to draw a bounding box on the labelling interface", async () => {
