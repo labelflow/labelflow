@@ -32,7 +32,7 @@ export const SelectInteraction = ({
       .getLayers()
       .getArray()
       .find((layer) => "getStyle" in layer) as VectorLayer;
-    if (!vectorLayer) throw Error("Could not found vector layer");
+    if (!vectorLayer) throw Error("Could not find vector layer");
     const source = vectorLayer.getSource();
     // @ts-ignore
     const feature = source.getClosestFeatureToCoordinate(coordinate, (f) =>
