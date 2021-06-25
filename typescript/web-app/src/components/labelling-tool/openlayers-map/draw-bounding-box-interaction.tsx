@@ -77,42 +77,28 @@ const createLabelEffect = (
   {
     setSelectedLabelId,
     client,
-    toast,
   }: {
     setSelectedLabelId: (labelId: string | null) => void;
     client: ApolloClient<object>;
-    toast: (toastInput: UseToastOptions) => void;
   }
 ): Effect => ({
   do: async () => {
-    try {
-      const { data } = await client.mutate({
-        mutation: createLabelMutation,
-        variables: {
-          imageId,
-          x,
-          y,
-          width,
-          height,
-          labelClassId: selectedLabelClassId,
-        },
-        refetchQueries: ["getImageLabels"],
-      });
+    const { data } = await client.mutate({
+      mutation: createLabelMutation,
+      variables: {
+        imageId,
+        x,
+        y,
+        width,
+        height,
+        labelClassId: selectedLabelClassId,
+      },
+      refetchQueries: ["getImageLabels"],
+    });
 
-      setSelectedLabelId(data?.createLabel?.id);
+    setSelectedLabelId(data?.createLabel?.id);
 
-      return data?.createLabel?.id;
-    } catch (error) {
-      toast({
-        title: "Error creating bounding box",
-        description: error?.message,
-        isClosable: true,
-        status: "error",
-        position: "bottom-right",
-        duration: 10000,
-      });
-    }
-    return undefined;
+    return data?.createLabel?.id;
   },
   undo: async (id: string): Promise<string> => {
     await client.mutate({
@@ -208,12 +194,11 @@ export const DrawBoundingBoxInteraction = () => {
         setBoxDrawingToolState(BoxDrawingToolState.DRAWING);
         return true;
       }}
-      onDrawend={(drawEvent: DrawEvent) => {
+      onDrawend={async (drawEvent: DrawEvent) => {
         const [x, y, destX, destY] = drawEvent.feature
           .getGeometry()
           .getExtent();
-
-        perform(
+        const createLabelPromise = perform(
           createLabelEffect(
             {
               imageId,
@@ -231,6 +216,18 @@ export const DrawBoundingBoxInteraction = () => {
           )
         );
         setBoxDrawingToolState(BoxDrawingToolState.IDLE);
+        try {
+          await createLabelPromise;
+        } catch (error) {
+          toast({
+            title: "Error creating bounding box",
+            description: error?.message,
+            isClosable: true,
+            status: "error",
+            position: "bottom-right",
+            duration: 10000,
+          });
+        }
       }}
     />
   );
