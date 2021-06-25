@@ -60,7 +60,6 @@ export const ImportImagesModalUrlList = ({
                   createdAt: createdAt.toISOString(),
                 },
               });
-              now.setMilliseconds(now.getMilliseconds() + 1);
 
               setUploadStatuses((previousUploadStatuses) => {
                 return {
