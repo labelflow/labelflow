@@ -18,6 +18,11 @@ export const keymap: Keymap = {
     description: "Bounding box tool",
     category: "Tools",
   },
+  openLabelClassSelectionPopover: {
+    key: "c",
+    description: "Change class of currently selected label",
+    category: "Tools",
+  },
   deleteLabel: {
     key: "del,delete,backspace",
     description: "Delete selected label",
