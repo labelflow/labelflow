@@ -227,17 +227,21 @@ describe("Navigation", () => {
       "Shortcut for focusing the search input works in the right click popover"
     );
     cy.get("main").rightclick(500, 150);
-    cy.get('[aria-label="Class selection popover"]').should("be.visible");
-    // cy.focused().type("/");
+    cy.get('[aria-label="Class selection popover"]')
+      .should("be.visible")
+      .and("be.focused");
+    // cy.get("body").type("/");
 
     cy.get('[aria-label="Class selection popover"]').within(() => {
-      // // @ts-ignore
-      // cy.getByLabel("Search in class selection popover").should(
-      //   "not.be.focused"
-      // );
-      // // @ts-ignore
-      // cy.getByLabel("Search in class selection popover").click();
-      cy.focused().type("/");
+      // @ts-ignore
+      cy.getByLabel("Search in class selection popover").should(
+        "not.be.focused"
+      );
+    });
+    // // @ts-ignore
+    // cy.getByLabel("Search in class selection popover").click();
+    cy.get("main").type("/");
+    cy.get('[aria-label="Class selection popover"]').within(() => {
       // @ts-ignore
       cy.getByLabel("Search in class selection popover").should("be.focused");
     });
@@ -252,6 +256,13 @@ describe("Navigation", () => {
     cy.get('[aria-label="Open class selection popover"]').click();
 
     cy.get('[aria-label="Class selection menu popover"]').should("be.visible");
+
+    cy.get('[aria-label="Class selection menu popover"]').within(() => {
+      // @ts-ignore
+      cy.getByLabel("Search in class selection popover").should(
+        "not.be.focused"
+      );
+    });
 
     cy.focused().type("/");
 
