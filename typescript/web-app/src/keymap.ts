@@ -39,7 +39,7 @@ export const keymap: Keymap = {
     category: "Edit",
   },
   redo: {
-    key: "cmd+shift+z,ctrl+y,ctrl+shift+y",
+    key: "cmd+y,cmd+shift+z,ctrl+y,ctrl+shift+y",
     description: "Redo last action",
     category: "Edit",
   },
@@ -49,7 +49,7 @@ export const keymap: Keymap = {
     category: "Tools", // TODO: change that category?
   },
   focusLabelClassSearch: {
-    key: "s", // TODO: We changed the key "/" to "s" because the slash key was not detected by useHotKeys
+    key: "/,f,cmd+f,ctrl+f", // TODO: We changed the key "/" to "s" because the slash key was not detected by useHotKeys
     description: "Focus on search input in label class selection",
     category: "Tools", // TODO: change that category?
   },

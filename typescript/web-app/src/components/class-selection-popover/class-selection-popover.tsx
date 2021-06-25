@@ -160,6 +160,7 @@ export const ClassSelectionPopover = ({
     keymap.focusLabelClassSearch.key,
     (keyboardEvent) => {
       if (activateShortcuts && searchInputRef.current != null) {
+        console.log("OK slasshh");
         searchInputRef.current.focus();
         keyboardEvent.preventDefault();
       }
@@ -223,7 +224,7 @@ export const ClassSelectionPopover = ({
                       <Kbd fontSize="md">↩</Kbd>
                     </>
                   ) : (
-                    <Kbd>s</Kbd>
+                    <Kbd>/</Kbd>
                   )}
                 </InputRightElement>
               </InputGroup>
