@@ -19,8 +19,8 @@ export const LabellingTool = () => {
   const imageId = router.query.id;
 
   useEffect(() => {
-    setSelectedLabelId(null);
     clear();
+    return () => setSelectedLabelId(null);
   }, [imageId]);
 
   return (
