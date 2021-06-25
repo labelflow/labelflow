@@ -85,29 +85,26 @@ export const EditLabelClass = forwardRef<
 
   return (
     <div ref={ref}>
-      {isOpen && (
-        <ClassSelectionPopover
-          isOpen
-          onClose={onClose}
-          trigger={<div style={{ width: 0, height: 0 }} />} // Needed to have the popover displayed preventing overflow
-          labelClasses={labelClasses}
-          selectedLabelClassId={selectedLabelClassId}
-          createNewClass={async (name) => createNewClass(name, selectedLabelId)}
-          onSelectedClassChange={(item) => {
-            perform(
-              createUpdateLabelClassOfLabelEffect(
-                {
-                  selectedLabelId,
-                  selectedLabelClassId: item?.id ?? null,
-                },
-                { client }
-              )
-            );
-            onClose();
-          }}
-          activateShortcuts={isOpen}
-        />
-      )}
+      <ClassSelectionPopover
+        isOpen={isOpen}
+        onClose={onClose}
+        trigger={<div style={{ width: 0, height: 0 }} />} // Needed to have the popover displayed preventing overflow
+        labelClasses={labelClasses}
+        selectedLabelClassId={selectedLabelClassId}
+        createNewClass={async (name) => createNewClass(name, selectedLabelId)}
+        onSelectedClassChange={(item) => {
+          perform(
+            createUpdateLabelClassOfLabelEffect(
+              {
+                selectedLabelId,
+                selectedLabelClassId: item?.id ?? null,
+              },
+              { client }
+            )
+          );
+          onClose();
+        }}
+      />
     </div>
   );
 });

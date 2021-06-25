@@ -64,8 +64,8 @@ export const Default = () => {
 
   return (
     <div>
-      <Button onClick={onOpen}>Display</Button>
       <ClassSelectionPopover
+        trigger={<Button onClick={onOpen}>Display</Button>}
         isOpen={isOpen}
         onClose={onClose}
         labelClasses={labelClasses}
@@ -81,8 +81,8 @@ export const OpenedByDefault = () => {
 
   return (
     <div>
-      <Button onClick={onOpen}>Display</Button>
       <ClassSelectionPopover
+        trigger={<Button onClick={onOpen}>Display</Button>}
         isOpen={isOpen}
         onClose={onClose}
         labelClasses={labelClasses}

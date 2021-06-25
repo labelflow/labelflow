@@ -51,7 +51,7 @@ export const ClassSelectionMenu = ({
   onSelectedClassChange,
   createNewClass,
   selectedLabelClass,
-  isClassSelectionPopoverOpenedOnRightClick,
+  isContextMenuOpen,
 }: {
   isOpen: boolean;
   setIsOpen: (b: boolean) => void;
@@ -59,13 +59,14 @@ export const ClassSelectionMenu = ({
   onSelectedClassChange: (item: LabelClass | null) => void;
   createNewClass: (name: string) => void;
   selectedLabelClass?: LabelClass | null;
-  isClassSelectionPopoverOpenedOnRightClick?: boolean;
+  isContextMenuOpen?: boolean;
 }) => {
   const toggle = () => setIsOpen(!isOpen);
   const close = () => setIsOpen(false);
 
   return (
     <ClassSelectionPopover
+      ariaLabel="Class selection menu popover"
       isOpen={isOpen}
       onClose={close}
       labelClasses={labelClasses}
@@ -84,7 +85,7 @@ export const ClassSelectionMenu = ({
           selectedLabelClass={selectedLabelClass}
         />
       }
-      activateShortcuts={!isClassSelectionPopoverOpenedOnRightClick}
+      activateShortcuts={!isContextMenuOpen}
     />
   );
 };

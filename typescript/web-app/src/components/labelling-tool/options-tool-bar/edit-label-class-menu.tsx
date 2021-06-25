@@ -52,8 +52,8 @@ export const EditLabelClassMenu = () => {
   const { data } = useQuery(labelClassesQuery);
   const { perform } = useUndoStore();
   const labelClasses = data?.labelClasses ?? [];
-  const isClassSelectionPopoverOpenedOnRightClick = useLabellingStore(
-    (state) => state.isClassSelectionPopoverOpenedOnRightClick
+  const isContextMenuOpen = useLabellingStore(
+    (state) => state.isContextMenuOpen
   );
   const selectedTool = useLabellingStore((state) => state.selectedTool);
   const selectedLabelId = useLabellingStore((state) => state.selectedLabelId);
@@ -69,7 +69,7 @@ export const EditLabelClassMenu = () => {
     skip: selectedLabelClassId == null,
   });
   const selectedLabelClass =
-    selectedTool === Tools.BOUNDING_BOX
+    selectedTool === Tools.BOX
       ? dataLabelClass?.labelClass
       : selectedLabelData?.label?.labelClass;
   const createNewClass = useMemo(
@@ -92,7 +92,7 @@ export const EditLabelClassMenu = () => {
   );
   const onSelectedClassChange = useMemo(
     () =>
-      selectedTool === Tools.BOUNDING_BOX
+      selectedTool === Tools.BOX
         ? (item: LabelClass | null) =>
             perform(
               createUpdateLabelClassEffect({
@@ -114,13 +114,13 @@ export const EditLabelClassMenu = () => {
   );
 
   const displayClassSelectionMenu =
-    selectedTool === Tools.BOUNDING_BOX ||
+    selectedTool === Tools.BOX ||
     (selectedTool === Tools.SELECTION && selectedLabelId != null);
 
   useHotkeys(
     keymap.changeClass.key,
     (keyboardEvent) => {
-      if (!isClassSelectionPopoverOpenedOnRightClick) {
+      if (!isContextMenuOpen) {
         // We do not want to interfere with the right click popover shortcuts if it is opened
         const digit = Number(keyboardEvent.code[5]);
         const indexOfLabelClass = (digit + 9) % 10;
@@ -143,16 +143,14 @@ export const EditLabelClassMenu = () => {
           selectedLabelClass={selectedLabelClass}
           labelClasses={labelClasses}
           createNewClass={async (name) =>
-            selectedTool === Tools.BOUNDING_BOX
+            selectedTool === Tools.BOX
               ? createNewClass(name, selectedLabelClassId)
               : createNewClassAndUpdateLabel(name, selectedLabelId)
           }
           onSelectedClassChange={(item) => {
             onSelectedClassChange(item);
           }}
-          isClassSelectionPopoverOpenedOnRightClick={
-            isClassSelectionPopoverOpenedOnRightClick
-          }
+          isContextMenuOpen={isContextMenuOpen}
         />
       )}
     </>
