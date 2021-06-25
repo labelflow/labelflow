@@ -2,8 +2,8 @@ import React from "react";
 import { Tooltip, Text, Flex, Button, chakra } from "@chakra-ui/react";
 import { HiSelector } from "react-icons/hi";
 import { RiCheckboxBlankCircleFill } from "react-icons/ri";
-import { LabelClass } from "../../graphql-types.generated";
-import { ClassSelectionPopover } from "../class-selection-popover";
+import { LabelClass } from "../../../../graphql-types.generated";
+import { ClassSelectionPopover } from "../../../class-selection-popover";
 
 const CircleIcon = chakra(RiCheckboxBlankCircleFill);
 const SelectorIcon = chakra(HiSelector);

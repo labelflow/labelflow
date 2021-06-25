@@ -2,7 +2,7 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom/extend-expect";
 import { ClassSelectionMenu } from "../class-selection-menu";
-import { LabelClass } from "../../../graphql-types.generated";
+import { LabelClass } from "../../../../../graphql-types.generated";
 
 const labelClasses = [
   {

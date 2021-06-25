@@ -3,7 +3,7 @@ import { useQuery, useApolloClient } from "@apollo/client";
 import gql from "graphql-tag";
 
 import { useHotkeys } from "react-hotkeys-hook";
-import { ClassSelectionMenu } from "../../class-selection-menu";
+import { ClassSelectionMenu } from "./class-selection-menu";
 import { Tools, useLabellingStore } from "../../../connectors/labelling-state";
 import { useUndoStore } from "../../../connectors/undo-store";
 import { LabelClass } from "../../../graphql-types.generated";
