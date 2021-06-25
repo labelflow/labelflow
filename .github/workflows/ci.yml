@@ -241,12 +241,12 @@ jobs:
       # See https://bundlewatch.io/#/getting-started/using-bundlewatch?id=setup-ci-auth-variables-needed-by-bundlewatch
       - run: cd typescript/web-app && yarn build
       - run: cd typescript/web-app && yarn bundlewatch
-        # env:
+        env:
         #   CI_REPO_OWNER: labelflow
         #   CI_REPO_NAME: labelflow
         #   CI_COMMIT_SHA: ${{ env.GITHUB_SHA }}
         #   CI_BRANCH: ${{ env.GITHUB_HEAD_REF }}
-        #   BUNDLEWATCH_GITHUB_TOKEN: ${{ secrets.BUNDLEWATCH_GITHUB_TOKEN }}
+          BUNDLEWATCH_GITHUB_TOKEN: ${{ secrets.BUNDLEWATCH_GITHUB_TOKEN }}
 
   deploy-website-pr:
     name: Deploy website PR branch

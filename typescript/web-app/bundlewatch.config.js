@@ -1,7 +1,7 @@
 const bundlewatchConfig = {
   files: [{
     path: './.next/static/**/*.js',
-    maxSize: '100kb',
+    maxSize: '10000kb',
   }],
   "ci": {
     "trackBranches": ["main"]
