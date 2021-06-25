@@ -53,8 +53,8 @@ const createLabel = async (
       throw new Error(`The labelClass id ${labelClassId} doesn't exist.`);
     }
   }
-  const imageWidth = image.width;
-  const imageHeight = image.height;
+  const imageWidth = image?.width ?? x + width;
+  const imageHeight = image?.height ?? y + height;
   if (
     (x < 0 && x + width < 0) ||
     (x + width > imageWidth && x > imageWidth) ||
