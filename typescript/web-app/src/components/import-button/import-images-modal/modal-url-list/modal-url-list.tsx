@@ -15,8 +15,8 @@ import { UrlStatuses } from "./url-statuses";
 import { DroppedUrl, UploadStatuses } from "../types";
 
 const createImageFromUrlMutation = gql`
-  mutation createImageMutation($url: String!) {
-    createImage(data: { url: $url }) {
+  mutation createImageMutation($url: String!, $createdAt: DateTime) {
+    createImage(data: { url: $url, createdAt: $createdAt }) {
       id
     }
   }
@@ -45,17 +45,22 @@ export const ImportImagesModalUrlList = ({
     if (isEmpty(urls)) return;
 
     const createImages = async () => {
+      const now = new Date();
       await Promise.all(
         urls
           .filter((url) => isEmpty(url.errors))
-          .map(async (acceptedUrl) => {
+          .map(async (acceptedUrl, index) => {
             try {
+              const createdAt = new Date();
+              createdAt.setTime(now.getTime() + index);
               await apolloClient.mutate({
                 mutation: createImageFromUrlMutation,
                 variables: {
                   url: acceptedUrl.url,
+                  createdAt: createdAt.toISOString(),
                 },
               });
+              now.setMilliseconds(now.getMilliseconds() + 1);
 
               setUploadStatuses((previousUploadStatuses) => {
                 return {
