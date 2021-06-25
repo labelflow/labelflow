@@ -1,11 +1,13 @@
-import { useMemo } from "react";
+import { useMemo, useRef } from "react";
 import { useRouter } from "next/router";
+import { Draw as OlDraw } from "ol/interaction";
 import { createBox, DrawEvent } from "ol/interaction/Draw";
 import { Fill, Stroke, Style } from "ol/style";
 import GeometryType from "ol/geom/GeometryType";
 import { ApolloClient, useApolloClient, useQuery } from "@apollo/client";
 import gql from "graphql-tag";
 
+import { useHotkeys } from "react-hotkeys-hook";
 import {
   useLabellingStore,
   Tools,
@@ -13,6 +15,7 @@ import {
 } from "../../../connectors/labelling-state";
 import { useUndoStore, Effect } from "../../../connectors/undo-store";
 import { noneClassColor } from "../../../utils/class-color-generator";
+import { keymap } from "../../../keymap";
 
 const labelClassQuery = gql`
   query getLabelClass($id: ID!) {
@@ -133,6 +136,7 @@ const createLabelEffect = (
 const geometryFunction = createBox();
 
 export const DrawBoundingBoxInteraction = () => {
+  const drawRef = useRef<OlDraw>(null);
   const client = useApolloClient();
   const imageId = useRouter().query?.id;
 
@@ -154,6 +158,13 @@ export const DrawBoundingBoxInteraction = () => {
   const { perform } = useUndoStore();
 
   const selectedLabelClass = dataLabelClass?.labelClass;
+
+  useHotkeys(
+    keymap.cancelAction.key,
+    () => drawRef.current?.abortDrawing(),
+    {},
+    [drawRef]
+  );
 
   const style = useMemo(() => {
     const color = selectedLabelClass?.color ?? noneClassColor;
@@ -178,6 +189,7 @@ export const DrawBoundingBoxInteraction = () => {
 
   return (
     <olInteractionDraw
+      ref={drawRef}
       args={{
         type: GeometryType.CIRCLE,
         geometryFunction,
