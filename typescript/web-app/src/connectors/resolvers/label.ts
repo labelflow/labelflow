@@ -66,16 +66,19 @@ const createLabel = async (
   const labelId = id ?? uuidv4();
   const now = new Date();
 
+  const boundedX = Math.max(x, 0);
+  const boundedY = Math.max(y, 0);
+
   const newLabelEntity = {
     id: labelId,
     createdAt: now.toISOString(),
     updatedAt: now.toISOString(),
     labelClassId,
     imageId,
-    x,
-    y,
-    height,
-    width,
+    x: boundedX,
+    y: boundedY,
+    height: Math.min(imageHeight, y + height) - boundedY,
+    width: Math.min(imageWidth, x + width) - boundedX,
   };
 
   await db.label.add(newLabelEntity);
