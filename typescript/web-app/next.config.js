@@ -1,7 +1,10 @@
-const withPWA = require('next-pwa')
+const withPWA = require('next-pwa');
+const withBundleAnalyzer = require('@next/bundle-analyzer')({
+  enabled: process.env.ANALYZE === 'true',
+});
 const path = require("path");
 
-module.exports = withPWA({
+module.exports = withBundleAnalyzer(withPWA({
   images: {
     deviceSizes: [
       320, 480, 640, 750, 828, 960, 1080, 1200, 1440, 1920, 2048, 2560, 3840,
@@ -168,4 +171,4 @@ module.exports = withPWA({
     // exclude: ["/api/worker/"]
   }
 }
-);
+));
