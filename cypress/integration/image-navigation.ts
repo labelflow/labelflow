@@ -1,6 +1,6 @@
 import { db } from "../../typescript/web-app/src/connectors/database";
 
-describe("Labelling tool", () => {
+describe("Image Navigation", () => {
   beforeEach(() => {
     return Promise.all([
       db.image.clear(),
