@@ -183,13 +183,12 @@ export const OpenlayersMap = () => {
                       );
                       return false;
                     }}
-                    args={{ extent }}
+                    args={{ extent, maxResolution: resolution }}
                     center={center}
                     initialProjection={projection}
                     resolution={resolution}
                     // Max zoom = 16 pixels of screen per pixel of image
                     minResolution={1.0 / 16.0}
-                    maxResolution={resolution}
                     constrainOnlyCenter
                     showFullExtent
                     padding={viewPadding}
