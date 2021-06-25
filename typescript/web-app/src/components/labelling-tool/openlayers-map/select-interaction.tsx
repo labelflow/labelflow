@@ -1,7 +1,6 @@
 import { MutableRefObject, useState } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 import { Coordinate } from "ol/coordinate";
-import VectorLayer from "ol/layer/Vector";
 import { MapBrowserEvent } from "ol";
 import { Vector as OlSourceVector } from "ol/source";
 import { Geometry } from "ol/geom";
@@ -56,13 +55,7 @@ export const SelectInteraction = ({
     const { map } = e;
     const featuresAtPixel = map.getFeaturesAtPixel(e.pixel);
     const coordinate = map.getCoordinateFromPixel(e.pixel);
-    // TODO: Find a more robust way to get the right layer
-    const vectorLayer = map
-      .getLayers()
-      .getArray()
-      .find((layer) => "getStyle" in layer) as VectorLayer;
-    if (!vectorLayer) throw Error("Could not find vector layer");
-    const source = vectorLayer.getSource();
+    const source = sourceVectorLabelsRef.current;
     // @ts-ignore
     const feature = source.getClosestFeatureToCoordinate(coordinate, (f) =>
       featuresAtPixel.find((fAtPixel) => f === fAtPixel)
