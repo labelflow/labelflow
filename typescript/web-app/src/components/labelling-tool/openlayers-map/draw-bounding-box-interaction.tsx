@@ -5,6 +5,7 @@ import { Fill, Stroke, Style } from "ol/style";
 import GeometryType from "ol/geom/GeometryType";
 import { ApolloClient, useApolloClient, useQuery } from "@apollo/client";
 import gql from "graphql-tag";
+import { UseToastOptions, useToast } from "@chakra-ui/react";
 
 import {
   useLabellingStore,
@@ -76,28 +77,42 @@ const createLabelEffect = (
   {
     setSelectedLabelId,
     client,
+    toast,
   }: {
     setSelectedLabelId: (labelId: string | null) => void;
     client: ApolloClient<object>;
+    toast: (toastInput: UseToastOptions) => void;
   }
 ): Effect => ({
   do: async () => {
-    const { data } = await client.mutate({
-      mutation: createLabelMutation,
-      variables: {
-        imageId,
-        x,
-        y,
-        width,
-        height,
-        labelClassId: selectedLabelClassId,
-      },
-      refetchQueries: ["getImageLabels"],
-    });
+    try {
+      const { data } = await client.mutate({
+        mutation: createLabelMutation,
+        variables: {
+          imageId,
+          x,
+          y,
+          width,
+          height,
+          labelClassId: selectedLabelClassId,
+        },
+        refetchQueries: ["getImageLabels"],
+      });
 
-    setSelectedLabelId(data?.createLabel?.id);
+      setSelectedLabelId(data?.createLabel?.id);
 
-    return data?.createLabel?.id;
+      return data?.createLabel?.id;
+    } catch (error) {
+      toast({
+        title: "Error creating bounding box",
+        description: error?.message,
+        isClosable: true,
+        status: "error",
+        position: "bottom-right",
+        duration: 10000,
+      });
+    }
+    return undefined;
   },
   undo: async (id: string): Promise<string> => {
     await client.mutate({
@@ -155,6 +170,8 @@ export const DrawBoundingBoxInteraction = () => {
 
   const selectedLabelClass = dataLabelClass?.labelClass;
 
+  const toast = useToast();
+
   const style = useMemo(() => {
     const color = selectedLabelClass?.color ?? noneClassColor;
 
@@ -209,6 +226,7 @@ export const DrawBoundingBoxInteraction = () => {
             {
               setSelectedLabelId,
               client,
+              toast,
             }
           )
         );
