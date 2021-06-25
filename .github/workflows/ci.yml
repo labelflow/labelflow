@@ -228,7 +228,7 @@ jobs:
           env_url: ${{steps.vercel.outputs.preview-url}}
 
   bundle-size-webapp-pr:
-    name: Bundle sise webapp PR branch
+    name: Bundle size webapp PR branch
     if: "! contains( github.ref, 'main')"
     runs-on: ubuntu-20.04
     needs: install-typescript
@@ -239,9 +239,8 @@ jobs:
       - run: yarn
       # Bundlewatch
       # See https://bundlewatch.io/#/getting-started/using-bundlewatch?id=setup-ci-auth-variables-needed-by-bundlewatch
-      - run: cd typescript/web-app
-      - run: yarn build
-      - run: yarn bundlewatch
+      - run: cd typescript/web-app && yarn build
+      - run: cd typescript/web-app && yarn bundlewatch
         # env:
         #   CI_REPO_OWNER: labelflow
         #   CI_REPO_NAME: labelflow
