@@ -53,7 +53,13 @@ export const SelectInteraction = ({
 
   const clickHandler = (e: MapBrowserEvent<UIEvent>) => {
     const { map } = e;
-    const feature = map.forEachFeatureAtPixel(e.pixel, (f: any) => f);
+    const featuresAtPixel = map.getFeaturesAtPixel(e.pixel);
+    const coordinate = map.getCoordinateFromPixel(e.pixel);
+    const source = sourceVectorLabelsRef.current;
+    // @ts-ignore
+    const feature = source.getClosestFeatureToCoordinate(coordinate, (f) =>
+      featuresAtPixel.find((fAtPixel) => f === fAtPixel)
+    );
     setSelectedLabelId(feature?.getProperties().id ?? null);
     return true;
   };

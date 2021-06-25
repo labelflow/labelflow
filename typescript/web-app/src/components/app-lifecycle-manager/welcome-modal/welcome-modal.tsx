@@ -77,7 +77,7 @@ export const WelcomeModal = ({
   }, [setHasUserClickedStart, setParamModalWelcome]);
 
   return (
-    <Modal isOpen={isOpen} onClose={() => {}} size="3xl">
+    <Modal isOpen={isOpen} onClose={() => {}} size="3xl" isCentered>
       <ModalOverlay />
       <ModalContent margin="3.75rem">
         <ModalHeader textAlign="center" padding="6">
