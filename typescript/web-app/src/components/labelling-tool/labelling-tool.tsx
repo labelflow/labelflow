@@ -8,13 +8,20 @@ import { ZoomToolbar } from "./zoom-tool-bar";
 import { OptionsToolBar } from "./options-tool-bar";
 import { ImageNavigationToolbar } from "./image-navigation-tool-bar";
 import { useUndoStore } from "../../connectors/undo-store";
+import { useLabellingStore } from "../../connectors/labelling-state";
 
 export const LabellingTool = () => {
   const { clear } = useUndoStore();
+  const setSelectedLabelId = useLabellingStore(
+    (state) => state.setSelectedLabelId
+  );
   const router = useRouter();
   const imageId = router.query.id;
 
-  useEffect(() => clear(), [imageId]);
+  useEffect(() => {
+    setSelectedLabelId(null);
+    clear();
+  }, [imageId]);
 
   return (
     <Box height="100%" position="relative" overflow="hidden">
