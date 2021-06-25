@@ -29,6 +29,7 @@
     "lodash": "^4.17.21",
     "mem": "^8.1.1",
     "next": "10.x",
+    "next-cookie": "^2.6.2",
     "next-pwa": "patch:next-pwa@5.2.21#./next-pwa.patch",
     "next-seo": "4.24.0",
     "node-polyfill-webpack-plugin": "^1.1.2",

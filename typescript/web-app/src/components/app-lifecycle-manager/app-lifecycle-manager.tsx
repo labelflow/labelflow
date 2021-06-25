@@ -10,7 +10,9 @@ declare global {
   }
 }
 
-export const AppLifecycleManager = () => {
+type Props = { assumeServiceWorkerActive: boolean };
+
+export const AppLifecycleManager = ({ assumeServiceWorkerActive }: Props) => {
   // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
   // This param can have several values:
   //   - undefined: Normal behavior, only show the update modal when needed
@@ -21,11 +23,15 @@ export const AppLifecycleManager = () => {
     useQueryParam("modal-update-service-worker", StringParam);
 
   // By default (including during SSR) we consider the service worker to be ready
-  // since this is the nominal case that happen all the time except during the very first visi
-  const [isServiceWorkerActive, setIsServiceWorkerActive] = useState(true);
+  // since this is the nominal case that happen all the time except during the very first visit
+  const [isServiceWorkerActive, setIsServiceWorkerActive] = useState(
+    assumeServiceWorkerActive
+  );
+
+  console.log("assumeServiceWorkerActive", assumeServiceWorkerActive);
 
   const [isUpdateServiceWorkerModalOpen, setIsUpdateServiceWorkerModalOpen] =
-    useState(false);
+    useState(paramModalUpdateServiceWorker === "open");
 
   const closeUpdateServiceWorkerModal = useCallback(() => {
     setParamModalUpdateServiceWorker(undefined, "replaceIn");
@@ -76,6 +82,9 @@ export const AppLifecycleManager = () => {
           wb.addEventListener("activated", () => {
             setIsServiceWorkerActive(true);
           });
+        } else {
+          console.log("Service worker active");
+          setIsServiceWorkerActive(true);
         }
       };
 
