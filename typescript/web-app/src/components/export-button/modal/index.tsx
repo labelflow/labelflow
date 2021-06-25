@@ -61,7 +61,7 @@ export const ExportModal = ({
   });
 
   return (
-    <Modal isOpen={isOpen} size="3xl" onClose={onClose}>
+    <Modal isOpen={isOpen} size="3xl" onClose={onClose} isCentered>
       <ModalOverlay />
       <ModalContent height="auto">
         <ModalHeader textAlign="center" padding="6">
