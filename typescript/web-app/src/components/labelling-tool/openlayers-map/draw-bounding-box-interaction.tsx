@@ -5,7 +5,7 @@ import { Fill, Stroke, Style } from "ol/style";
 import GeometryType from "ol/geom/GeometryType";
 import { ApolloClient, useApolloClient, useQuery } from "@apollo/client";
 import gql from "graphql-tag";
-import { UseToastOptions, useToast } from "@chakra-ui/react";
+import { useToast } from "@chakra-ui/react";
 
 import {
   useLabellingStore,
@@ -211,7 +211,6 @@ export const DrawBoundingBoxInteraction = () => {
             {
               setSelectedLabelId,
               client,
-              toast,
             }
           )
         );
