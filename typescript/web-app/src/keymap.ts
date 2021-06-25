@@ -33,6 +33,11 @@ export const keymap: Keymap = {
     description: "Navigate to the next image",
     category: "Navigation",
   },
+  cancelAction: {
+    key: "esc",
+    description: "Cancel current action",
+    category: "Edit",
+  },
   undo: {
     key: "cmd+z,ctrl+z",
     description: "Undo last action",
