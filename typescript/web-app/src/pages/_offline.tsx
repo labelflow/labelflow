@@ -26,6 +26,8 @@ const OfflinePage = () => {
               variant="solid"
               mt="8"
               as="a"
+              target="_blank"
+              rel="noreferrer"
               href="https://github.com/Labelflow/labelflow/issues"
             >
               Report this issue

@@ -59,6 +59,8 @@ const ErrorPage = ({ statusCode, error, resetErrorBoundary }: Props) => {
                 colorScheme="brand"
                 variant="solid"
                 as="a"
+                target="_blank"
+                rel="noreferrer"
                 href="https://github.com/Labelflow/labelflow/issues"
               >
                 Report this issue
