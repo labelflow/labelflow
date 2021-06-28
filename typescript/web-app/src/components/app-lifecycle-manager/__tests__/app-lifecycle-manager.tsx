@@ -22,6 +22,12 @@ describe("App lifecyle manager", () => {
           state: "waiting",
         };
       }),
+      addEventListener: jest.fn((eventName, callback: () => void) => {
+        if (eventName === "waiting") {
+          setTimeout(callback, 10);
+        }
+      }),
+      register: jest.fn(() => {}),
     } as unknown as Workbox;
     render(<AppLifecycleManager assumeServiceWorkerActive />);
     await waitFor(() => {
@@ -39,6 +45,12 @@ describe("App lifecyle manager", () => {
           state: "activated",
         };
       }),
+      addEventListener: jest.fn((eventName, callback: () => void) => {
+        if (eventName === "waiting") {
+          setTimeout(callback, 10);
+        }
+      }),
+      register: jest.fn(() => {}),
     } as unknown as Workbox;
     render(<AppLifecycleManager assumeServiceWorkerActive />);
     await waitFor(() => {
@@ -61,6 +73,7 @@ describe("App lifecyle manager", () => {
           setTimeout(callback, 10);
         }
       }),
+      register: jest.fn(() => {}),
     } as unknown as Workbox;
     render(<AppLifecycleManager assumeServiceWorkerActive />);
     await waitFor(() => {
