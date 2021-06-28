@@ -288,5 +288,8 @@ describe("Navigation", () => {
     cy.get('[aria-current="page"]').should(($a) => {
       expect($a).to.contain("7");
     });
+
+    cy.get('[aria-label="Export"]').click();
+    cy.contains("Your project contains 2 labels").should("be.visible");
   });
 });
