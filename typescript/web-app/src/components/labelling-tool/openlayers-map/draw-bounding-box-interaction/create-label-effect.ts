@@ -1,4 +1,4 @@
-import { ApolloCache, ApolloClient } from "@apollo/client";
+import { ApolloCache, ApolloClient, Reference } from "@apollo/client";
 import gql from "graphql-tag";
 
 import { Effect } from "../../../../connectors/undo-store";
@@ -60,7 +60,7 @@ const createdLabelFragment = gql`
   }
 `;
 
-function addLabelToImageInCache(
+export function addLabelToImageInCache(
   cache: ApolloCache<{
     createLabel: {
       id: string;
@@ -103,6 +103,22 @@ function addLabelToImageInCache(
         });
 
         return [...existingLabelsRefs, newLabelRef];
+      },
+    },
+  });
+}
+
+export function removeLabelFromImageCache(
+  cache: ApolloCache<{ deleteLabel: { id: string; __typename: string } }>,
+  { imageId, id }: { imageId: string; id: string }
+) {
+  cache.modify({
+    id: cache.identify({ id: imageId, __typename: "Image" }),
+    fields: {
+      labels: (existingLabelsRefs: Reference[] = [], { readField }) => {
+        return existingLabelsRefs.filter(
+          (labelRef) => readField("id", labelRef) !== id
+        );
       },
     },
   });
@@ -169,7 +185,10 @@ export const createLabelEffect = (
     await client.mutate({
       mutation: deleteLabelMutation,
       variables: { id },
-      refetchQueries: ["getImageLabels"],
+      optimisticResponse: { deleteLabel: { id, __typename: "Label" } },
+      update(cache) {
+        removeLabelFromImageCache(cache, { imageId, id });
+      },
     });
 
     setSelectedLabelId(null);
