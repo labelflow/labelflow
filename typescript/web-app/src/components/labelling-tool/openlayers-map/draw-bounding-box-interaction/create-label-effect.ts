@@ -10,7 +10,7 @@ type CreateLabelInputs = {
   y: number;
   width: number;
   height: number;
-  labelClassId: string | null;
+  labelClassId: string | null | undefined;
 };
 
 const createLabelMutation = gql`
