@@ -8,6 +8,8 @@ import { ApolloClient, useApolloClient, useQuery } from "@apollo/client";
 import gql from "graphql-tag";
 import { useToast } from "@chakra-ui/react";
 
+// Changes
+
 import { useHotkeys } from "react-hotkeys-hook";
 import {
   useLabellingStore,
