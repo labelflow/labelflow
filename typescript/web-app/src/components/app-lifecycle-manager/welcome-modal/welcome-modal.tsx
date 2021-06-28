@@ -79,10 +79,14 @@ export const WelcomeModal = ({
 
   return (
     <>
-      <Box h="full" p="32">
-        <Heading>This is your first visit</Heading>
-        <Text>But the Chakra UI modal does not show in the Static SSR....</Text>
-      </Box>
+      {isOpen && (
+        <Box h="full" p="32">
+          <Heading>This is your first visit</Heading>
+          <Text>
+            But the Chakra UI modal does not show in the Static SSR....
+          </Text>
+        </Box>
+      )}
       <Modal isOpen={isOpen} onClose={() => {}} size="3xl" isCentered>
         <ModalOverlay />
         <ModalContent margin="3.75rem">
