@@ -47,7 +47,6 @@ export const useLabellingStore = create<LabellingState>(
     canZoomIn: true,
     canZoomOut: false,
     isContextMenuOpen: false,
-
     setIsContextMenuOpen: (isContextMenuOpen: boolean) =>
       // @ts-ignore See https://github.com/Diablow/zustand-store-addons/issues/2
       set({ isContextMenuOpen }),
