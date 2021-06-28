@@ -44,9 +44,10 @@ const App = (props: AppProps & InitialProps) => {
   );
 
   if (!assumeServiceWorkerActiveFromServer) {
+    console.log("This is your first visit");
     if (!assumeServiceWorkerActiveFromClient) {
       console.warn(
-        "Set the cookie programmatically in JS because it was not set with server http response. This should not happen"
+        "Set the cookie client side in browser because it was not set with server http response. This should not happen"
       );
       parsedCookie?.set("assumeServiceWorkerActive", true, {
         path: "/",
@@ -89,6 +90,7 @@ App.getInitialProps = async (context: AppContext): Promise<InitialProps> => {
   );
 
   // Set the cookie via http response
+  console.warn("Set the cookie server side in http response");
   parsedCookie?.set("assumeServiceWorkerActive", true, {
     path: "/",
     httpOnly: false,

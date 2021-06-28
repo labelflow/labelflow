@@ -9,6 +9,7 @@ import {
   HStack,
   Button,
   Center,
+  Box,
   Text,
   Heading,
   ModalBody,
@@ -34,7 +35,7 @@ export const WelcomeModal = ({
     StringParam
   );
   const [hasUserClickedStart, setHasUserClickedStart] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(!isServiceWorkerActive);
 
   // This modal should open when isServiceWorkerActive becomes false
   // But close only when the use hasUserClickedStart becomes true
@@ -77,81 +78,91 @@ export const WelcomeModal = ({
   }, [setHasUserClickedStart, setParamModalWelcome]);
 
   return (
-    <Modal isOpen={isOpen} onClose={() => {}} size="3xl" isCentered>
-      <ModalOverlay />
-      <ModalContent margin="3.75rem">
-        <ModalHeader textAlign="center" padding="6">
-          <Center>
-            <Logo maxW="lg" mt="8" mb="8" />
-          </Center>
-        </ModalHeader>
+    <>
+      <Box h="full" p="32">
+        <Heading>This is your first visit</Heading>
+        <Text>But the Chakra UI modal does not show in the Static SSR....</Text>
+      </Box>
+      <Modal isOpen={isOpen} onClose={() => {}} size="3xl" isCentered>
+        <ModalOverlay />
+        <ModalContent margin="3.75rem">
+          <ModalHeader textAlign="center" padding="6">
+            <Center>
+              <Logo maxW="lg" mt="8" mb="8" />
+            </Center>
+          </ModalHeader>
 
-        <ModalBody>
-          <VStack
-            justifyContent="space-evenly"
-            spacing="8"
-            h="full"
-            mt="0"
-            mb="8"
-          >
-            <Heading
-              as="h1"
-              size="2xl"
-              maxW="lg"
-              color={mode("gray.600", "gray.300")}
-              fontWeight="extrabold"
-              textAlign="center"
+          <ModalBody>
+            <VStack
+              justifyContent="space-evenly"
+              spacing="8"
+              h="full"
+              mt="0"
+              mb="8"
             >
-              The open standard{" "}
-              <Text color="brand.500" display="inline">
-                image labeling tool
+              <Heading
+                as="h1"
+                size="2xl"
+                maxW="lg"
+                color={mode("gray.600", "gray.300")}
+                fontWeight="extrabold"
+                textAlign="center"
+              >
+                The open standard{" "}
+                <Text color="brand.500" display="inline">
+                  image labeling tool
+                </Text>
+              </Heading>
+
+              <Text
+                color={mode("gray.600", "gray.400")}
+                mt="16"
+                maxW="lg"
+                fontSize="lg"
+                fontWeight="medium"
+                textAlign="justify"
+              >
+                Create and manage your image data, workflows and teams in a
+                single place. Stay in control of your data, focus on building
+                the next big thing.
               </Text>
-            </Heading>
+            </VStack>
+          </ModalBody>
+          <ModalFooter>
+            <HStack
+              direction={{ base: "column", md: "row" }}
+              spacing="4"
+              mt="8"
+            >
+              <Button
+                as="a"
+                href="https://github.com/Labelflow/labelflow"
+                target="blank"
+                size="lg"
+                minW="210px"
+                variant="link"
+                height="14"
+                px="8"
+              >
+                See code on Github
+              </Button>
 
-            <Text
-              color={mode("gray.600", "gray.400")}
-              mt="16"
-              maxW="lg"
-              fontSize="lg"
-              fontWeight="medium"
-              textAlign="justify"
-            >
-              Create and manage your image data, workflows and teams in a single
-              place. Stay in control of your data, focus on building the next
-              big thing.
-            </Text>
-          </VStack>
-        </ModalBody>
-        <ModalFooter>
-          <HStack direction={{ base: "column", md: "row" }} spacing="4" mt="8">
-            <Button
-              as="a"
-              href="https://github.com/Labelflow/labelflow"
-              target="blank"
-              size="lg"
-              minW="210px"
-              variant="link"
-              height="14"
-              px="8"
-            >
-              See code on Github
-            </Button>
-
-            <Button
-              size="lg"
-              minW="210px"
-              colorScheme="brand"
-              height="14"
-              px="8"
-              isLoading={hasUserClickedStart && !isServiceWorkerActive}
-              onClick={handleClickStartLabelling}
-              loadingText="Loading the application"
-            >
-              Start Labelling!
-            </Button>
-          </HStack>
-        </ModalFooter>
-      </ModalContent>
-    </Modal>
+              <Button
+                size="lg"
+                minW="210px"
+                colorScheme="brand"
+                height="14"
+                px="8"
+                isLoading={hasUserClickedStart && !isServiceWorkerActive}
+                onClick={handleClickStartLabelling}
+                loadingText="Loading the application"
+              >
+                Start Labelling!
+              </Button>
+            </HStack>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+    </>
   );
 };
