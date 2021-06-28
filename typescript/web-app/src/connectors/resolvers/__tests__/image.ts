@@ -123,7 +123,11 @@ describe("Image resolver test suite", () => {
       mime: "something",
     });
 
-    const mutationResult = await client.mutate({
+    const {
+      data: {
+        createImage: { id },
+      },
+    } = await client.mutate({
       mutation: gql`
         mutation createImage($url: String!) {
           createImage(data: { url: $url }) {
@@ -135,12 +139,6 @@ describe("Image resolver test suite", () => {
         url: "https://images.unsplash.com/photo-1579513141590-c597876aefbc?auto=format&fit=crop&w=882&q=80",
       },
     });
-
-    const {
-      data: {
-        createImage: { id },
-      },
-    } = mutationResult;
 
     const queryResult = await client.query({
       query: gql`
