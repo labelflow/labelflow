@@ -25,7 +25,7 @@ describe("App lifecyle manager", () => {
       }),
       addEventListener: jest.fn((eventName, callback: () => void) => {
         if (eventName === "waiting") {
-          timeout = setTimeout(callback, 10);
+          timeout = setTimeout(callback, 10) as unknown as number;
         }
       }),
       removeEventListener: jest.fn((eventName) => {
@@ -54,7 +54,7 @@ describe("App lifecyle manager", () => {
       }),
       addEventListener: jest.fn((eventName, callback: () => void) => {
         if (eventName === "waiting") {
-          timeout = setTimeout(callback, 10);
+          timeout = setTimeout(callback, 10) as unknown as number;
         }
       }),
       removeEventListener: jest.fn((eventName) => {
@@ -83,7 +83,7 @@ describe("App lifecyle manager", () => {
       }),
       addEventListener: jest.fn((eventName, callback: () => void) => {
         if (eventName === "waiting") {
-          timeout = setTimeout(callback, 10);
+          timeout = setTimeout(callback, 10) as unknown as number;
         }
       }),
       removeEventListener: jest.fn((eventName) => {
@@ -93,7 +93,7 @@ describe("App lifecyle manager", () => {
       }),
       register: jest.fn(() => {}),
     } as unknown as Workbox;
-    render(<AppLifecycleManager assumeServiceWorkerActive={false} />);
+    render(<AppLifecycleManager assumeServiceWorkerActive />);
     await waitFor(() => {
       expect(screen.queryByText("image labeling tool")).not.toBeInTheDocument();
     });
