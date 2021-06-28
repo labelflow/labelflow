@@ -5,6 +5,7 @@ import { Fill, Stroke, Style } from "ol/style";
 import GeometryType from "ol/geom/GeometryType";
 import { ApolloClient, useApolloClient, useQuery } from "@apollo/client";
 import gql from "graphql-tag";
+import { useToast } from "@chakra-ui/react";
 
 import {
   useLabellingStore,
@@ -155,6 +156,8 @@ export const DrawBoundingBoxInteraction = () => {
 
   const selectedLabelClass = dataLabelClass?.labelClass;
 
+  const toast = useToast();
+
   const style = useMemo(() => {
     const color = selectedLabelClass?.color ?? noneClassColor;
 
@@ -191,12 +194,11 @@ export const DrawBoundingBoxInteraction = () => {
         setBoxDrawingToolState(BoxDrawingToolState.DRAWING);
         return true;
       }}
-      onDrawend={(drawEvent: DrawEvent) => {
+      onDrawend={async (drawEvent: DrawEvent) => {
         const [x, y, destX, destY] = drawEvent.feature
           .getGeometry()
           .getExtent();
-
-        perform(
+        const createLabelPromise = perform(
           createLabelEffect(
             {
               imageId,
@@ -213,6 +215,18 @@ export const DrawBoundingBoxInteraction = () => {
           )
         );
         setBoxDrawingToolState(BoxDrawingToolState.IDLE);
+        try {
+          await createLabelPromise;
+        } catch (error) {
+          toast({
+            title: "Error creating bounding box",
+            description: error?.message,
+            isClosable: true,
+            status: "error",
+            position: "bottom-right",
+            duration: 10000,
+          });
+        }
       }}
     />
   );
