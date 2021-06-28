@@ -136,7 +136,6 @@ export const AppLifecycleManager = ({ assumeServiceWorkerActive }: Props) => {
       // never forget to call register as auto register is turned off in next.config.js
       wb.register();
     } catch (e) {
-      console.log("AWW");
       handleError(e);
     }
   }, []);
