@@ -99,7 +99,7 @@ export declare namespace ReactOlFiber {
         args?:
           | ConstructorParameters<Catalogue[T]["object"]>
           | ConstructorParameters<Catalogue[T]["object"]>[0];
-      } & Events & { [key: string]: any }; // Event listeners (generated manually dirtily for now) // Other props that can be set using a specific setter but that dont exist in the object (see geom.point.coordinates for example)
+      } & Events & { [key: string]: any }; // Event listeners (generated manually dirtily for now) // Other props that can be set using a specific setter but that don't exist in the object (see geom.point.coordinates for example)
   };
 
   /**
@@ -129,7 +129,7 @@ export declare namespace ReactOlFiber {
       //   | ConstructorParameters<Catalogue[T]["object"]>
       //   | ConstructorParameters<Catalogue[T]["object"]>[0];
       args?: any;
-    } & Events & { [key: string]: any }; // Events listener (generated manually dirtily for now) // Other props that can be set using a specific setter but that dont exist in the object (see geom.point.coordinates for example)
+    } & Events & { [key: string]: any }; // Events listener (generated manually dirtily for now) // Other props that can be set using a specific setter but that don't exist in the object (see geom.point.coordinates for example)
   };
 
   /**

@@ -1,5 +1,6 @@
-import { useMemo } from "react";
+import { useMemo, useRef } from "react";
 import { useRouter } from "next/router";
+import { Draw as OlDraw } from "ol/interaction";
 import { createBox, DrawEvent } from "ol/interaction/Draw";
 import { Fill, Stroke, Style } from "ol/style";
 import GeometryType from "ol/geom/GeometryType";
@@ -7,11 +8,13 @@ import { useApolloClient, useQuery } from "@apollo/client";
 import gql from "graphql-tag";
 import { useToast } from "@chakra-ui/react";
 
+import { useHotkeys } from "react-hotkeys-hook";
 import {
   useLabellingStore,
   Tools,
   BoxDrawingToolState,
 } from "../../../../connectors/labelling-state";
+import { keymap } from "../../../../keymap";
 import { useUndoStore } from "../../../../connectors/undo-store";
 import { noneClassColor } from "../../../../utils/class-color-generator";
 import { createLabelEffect } from "./create-label-effect";
@@ -29,6 +32,7 @@ const labelClassQuery = gql`
 const geometryFunction = createBox();
 
 export const DrawBoundingBoxInteraction = () => {
+  const drawRef = useRef<OlDraw>(null);
   const client = useApolloClient();
   const imageId = useRouter().query?.id;
 
@@ -50,6 +54,13 @@ export const DrawBoundingBoxInteraction = () => {
   const { perform } = useUndoStore();
 
   const selectedLabelClass = dataLabelClass?.labelClass;
+
+  useHotkeys(
+    keymap.cancelAction.key,
+    () => drawRef.current?.abortDrawing(),
+    {},
+    [drawRef]
+  );
 
   const toast = useToast();
 
@@ -76,6 +87,7 @@ export const DrawBoundingBoxInteraction = () => {
 
   return (
     <olInteractionDraw
+      ref={drawRef}
       args={{
         type: GeometryType.CIRCLE,
         geometryFunction,
