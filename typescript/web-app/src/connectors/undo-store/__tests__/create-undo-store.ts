@@ -321,3 +321,31 @@ test("It should not allow to redo an undo if an effect was performed", async () 
 
   expect(store.getState().canRedo()).toBeFalsy();
 });
+
+test("It throws an error when an effect throws an error", async () => {
+  const testEffect: Effect = {
+    do: async () => {
+      throw new Error("Crashing!");
+    },
+    undo: jest.fn(),
+  };
+  const store = createUndoStore();
+  await expect(store.getState().perform(testEffect)).rejects.toEqual(
+    new Error("Crashing!")
+  );
+});
+
+test("It does not store an effect that throws an error when performed", async () => {
+  const testEffect: Effect = {
+    do: async () => {
+      throw new Error("Crashing!");
+    },
+    undo: jest.fn(),
+  };
+  const store = createUndoStore();
+
+  await store
+    .getState()
+    .perform(testEffect)
+    .catch(() => expect(store.getState().pastEffects).toHaveLength(0));
+});
