@@ -9,7 +9,6 @@ import {
   HStack,
   Button,
   Center,
-  Box,
   Text,
   Heading,
   ModalBody,

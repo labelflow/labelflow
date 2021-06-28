@@ -23,7 +23,7 @@ describe("App lifecyle manager", () => {
         };
       }),
     } as unknown as Workbox;
-    render(<AppLifecycleManager />);
+    render(<AppLifecycleManager assumeServiceWorkerActive />);
     await waitFor(() => {
       expect(screen.queryByText("image labeling tool")).toBeDefined();
     });
@@ -40,7 +40,7 @@ describe("App lifecyle manager", () => {
         };
       }),
     } as unknown as Workbox;
-    render(<AppLifecycleManager />);
+    render(<AppLifecycleManager assumeServiceWorkerActive />);
     await waitFor(() => {
       expect(screen.queryByText("image labeling tool")).not.toBeInTheDocument();
     });
@@ -62,7 +62,7 @@ describe("App lifecyle manager", () => {
         }
       }),
     } as unknown as Workbox;
-    render(<AppLifecycleManager />);
+    render(<AppLifecycleManager assumeServiceWorkerActive />);
     await waitFor(() => {
       expect(screen.queryByText("image labeling tool")).not.toBeInTheDocument();
     });
