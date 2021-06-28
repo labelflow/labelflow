@@ -3,6 +3,7 @@ import { Story } from "@storybook/react";
 import { VStack } from "@chakra-ui/react";
 import { withNextRouter } from "storybook-addon-next-router";
 
+import { apolloDecorator } from "../../../../utils/apollo-decorator";
 import { chakraDecorator } from "../../../../utils/chakra-decorator";
 import { queryParamsDecorator } from "../../../../utils/query-params-decorator";
 
@@ -20,7 +21,12 @@ export default {
       },
     },
   },
-  decorators: [chakraDecorator, queryParamsDecorator, withNextRouter],
+  decorators: [
+    chakraDecorator,
+    apolloDecorator,
+    queryParamsDecorator,
+    withNextRouter,
+  ],
 };
 
 const Template: Story<Props> = (args: Props) => (
