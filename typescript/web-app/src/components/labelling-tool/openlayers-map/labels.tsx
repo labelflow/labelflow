@@ -95,6 +95,8 @@ const createDeleteLabelEffect = (
     }>({
       mutation: deleteLabelMutation,
       variables: { id },
+      /* Note that there is no optimistic response here, only a cache update.
+       * We could add it but it feels like premature optimization */
       update(cache, { data: updateData }) {
         if (typeof updateData?.deleteLabel?.imageId !== "string") {
           return;
@@ -132,18 +134,25 @@ const createDeleteLabelEffect = (
     const { data } = await client.mutate({
       mutation: createLabelWithIdMutation,
       variables: createLabelInputs,
+      optimisticResponse: { createLabel: { id: labelId, __typename: "Label" } },
       update(cache) {
         addLabelToImageInCache(cache, createLabelInputs);
       },
     });
 
-    setSelectedLabelId(data?.createLabel?.id);
-    return data?.createLabel?.id;
+    if (typeof data?.createLabel?.id !== "string") {
+      throw new Error("Couldn't get the id of the newly created label");
+    }
+
+    setSelectedLabelId(data.createLabel.id);
+    return data.createLabel.id;
   },
   redo: async (labelId: string) => {
     const { data } = await client.mutate({
       mutation: deleteLabelMutation,
       variables: { id: labelId },
+      /* Note that there is no optimistic response here, only a cache update.
+       * We could add it but it feels like premature optimization */
       update(cache, { data: updateData }) {
         if (typeof updateData?.deleteLabel?.imageId !== "string") {
           return;
