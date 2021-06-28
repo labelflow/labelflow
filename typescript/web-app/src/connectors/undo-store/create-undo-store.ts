@@ -1,6 +1,9 @@
 import createVanilla from "zustand/vanilla";
+import { filter } from "lodash/fp";
+import { v4 as uuidv4 } from "uuid";
 
 type StoredState<Payload extends any = any> = {
+  id: string; // Needed in order to retrieve and remove failed operations from the queue
   payload: Promise<Payload>;
   undo: (previousPayload: Payload) => Promise<Payload> | Payload;
   redo: (previousPayload: Payload) => Promise<Payload> | Payload;
@@ -34,13 +37,26 @@ export const createUndoStore = () => {
         set({ futureEffects: [] });
         const payload = effect.do();
         const redo = effect?.redo ?? effect.do;
+        const effectId = uuidv4();
         set((state) => ({
           pastEffects: [
             ...state.pastEffects,
-            { payload, redo, undo: effect.undo },
+            { payload, redo, undo: effect.undo, id: effectId },
           ],
         }));
-        await payload;
+        try {
+          await payload;
+        } catch (error) {
+          // Remove effect from queue as it was not executed properly
+          set((state) => ({
+            pastEffects: filter<StoredState>(
+              (effectElement) => effectElement?.id !== effectId,
+              state.pastEffects
+            ),
+          }));
+
+          throw error;
+        }
       },
 
       undo: async () => {

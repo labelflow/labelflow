@@ -24,11 +24,21 @@ import { setupTestsWithLocalDatabase } from "../../../../utils/setup-local-db-te
 
 setupTestsWithLocalDatabase();
 
+const imageWidth = 500;
+const imageHeight = 900;
+
 const createImage = async (name: String) => {
   const mutationResult = await client.mutate({
     mutation: gql`
-      mutation createImage($file: Upload!, $name: String!) {
-        createImage(data: { name: $name, file: $file }) {
+      mutation createImage(
+        $file: Upload!
+        $name: String!
+        $width: Int
+        $height: Int
+      ) {
+        createImage(
+          data: { name: $name, file: $file, width: $width, height: $height }
+        ) {
           id
         }
       }
@@ -36,6 +46,8 @@ const createImage = async (name: String) => {
     variables: {
       file: new Blob(),
       name,
+      width: imageWidth,
+      height: imageHeight,
     },
   });
 

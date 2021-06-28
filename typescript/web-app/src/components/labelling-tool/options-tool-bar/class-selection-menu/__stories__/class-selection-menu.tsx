@@ -2,8 +2,8 @@ import { useState } from "react";
 
 import { HStack, Button, Flex } from "@chakra-ui/react";
 import { ClassSelectionMenu } from "../class-selection-menu";
-import { chakraDecorator } from "../../../utils/chakra-decorator";
-import { LabelClass } from "../../../graphql-types.generated";
+import { chakraDecorator } from "../../../../../utils/chakra-decorator";
+import { LabelClass } from "../../../../../graphql-types.generated";
 
 export default {
   title: "web-app/Class selection menu",
