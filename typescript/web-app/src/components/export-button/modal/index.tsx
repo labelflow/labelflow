@@ -38,7 +38,7 @@ export const ExportModal = ({
   isOpen?: boolean;
   onClose?: () => void;
 }) => {
-  const { data, refetch } = useQuery(countLabelsQuery);
+  const { data } = useQuery(countLabelsQuery);
   const [queryExportToCoco, { loading }] = useLazyQuery(exportToCocoQuery, {
     fetchPolicy: "network-only",
     onCompleted: ({ exportToCoco }) => {
@@ -60,12 +60,6 @@ export const ExportModal = ({
       element.click();
     },
   });
-
-  useEffect(() => {
-    if (isOpen) {
-      refetch();
-    }
-  }, [isOpen]);
 
   return (
     <Modal isOpen={isOpen} size="3xl" onClose={onClose} isCentered>
