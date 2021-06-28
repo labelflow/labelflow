@@ -11,6 +11,7 @@ import { theme } from "../theme";
 import { client } from "../connectors/apollo-client-service-worker";
 import { QueryParamProvider } from "../utils/query-params-provider";
 import { AppLifecycleManager } from "../components/app-lifecycle-manager";
+import { isInWindowScope } from "../utils/detect-scope";
 import ErrorPage from "./_error";
 
 interface InitialProps {
@@ -44,8 +45,7 @@ const App = (props: AppProps & InitialProps) => {
   );
 
   if (!assumeServiceWorkerActiveFromServer) {
-    console.log("This is your first visit");
-    if (!assumeServiceWorkerActiveFromClient) {
+    if (!assumeServiceWorkerActiveFromClient && isInWindowScope) {
       console.warn(
         "Set the cookie client side in browser because it was not set with server http response. This should not happen"
       );
@@ -60,13 +60,7 @@ const App = (props: AppProps & InitialProps) => {
   }
 
   return (
-    <ErrorBoundary
-      FallbackComponent={ErrorFallback}
-      onReset={() => {
-        console.log("reset app");
-        // reset the state of your app so the error doesn't happen again
-      }}
-    >
+    <ErrorBoundary FallbackComponent={ErrorFallback}>
       <ChakraProvider theme={theme} resetCSS>
         <QueryParamProvider>
           <ApolloProvider client={client}>
