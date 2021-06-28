@@ -18,7 +18,7 @@ import type { Image } from "../../../graphql-types.generated";
 import "ol/ol.css";
 
 import { DrawBoundingBoxInteraction } from "./draw-bounding-box-interaction";
-import { SelectInteraction } from "./select-interaction";
+import { SelectAndModifyFeature } from "./select-and-modify-feature/";
 import { Labels } from "./labels";
 import { EditLabelClass } from "./edit-label-class";
 import { CursorGuides } from "./cursor-guides";
@@ -226,7 +226,7 @@ export const OpenlayersMap = () => {
 
               <Labels sourceVectorLabelsRef={sourceVectorLabelsRef} />
               <DrawBoundingBoxInteraction />
-              <SelectInteraction
+              <SelectAndModifyFeature
                 editClassOverlayRef={editClassOverlayRef}
                 sourceVectorLabelsRef={sourceVectorLabelsRef}
                 setIsContextMenuOpen={setIsContextMenuOpen}

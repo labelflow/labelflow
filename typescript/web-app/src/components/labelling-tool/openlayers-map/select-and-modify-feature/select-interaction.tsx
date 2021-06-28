@@ -1,24 +1,29 @@
 import { MutableRefObject, useState } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 import { Coordinate } from "ol/coordinate";
-import { MapBrowserEvent } from "ol";
+import { Collection, Feature, MapBrowserEvent } from "ol";
 import { Vector as OlSourceVector } from "ol/source";
 import { Geometry } from "ol/geom";
 import { createEmpty, extend, getCenter } from "ol/extent";
 
 import OverlayPositioning from "ol/OverlayPositioning";
-import { useLabellingStore, Tools } from "../../../connectors/labelling-state";
+import {
+  useLabellingStore,
+  Tools,
+} from "../../../../connectors/labelling-state";
 
-import { keymap } from "../../../keymap";
+import { keymap } from "../../../../keymap";
 
 export const SelectInteraction = ({
   setIsContextMenuOpen = () => {},
   editClassOverlayRef,
   sourceVectorLabelsRef,
+  setSelectedFeatures,
 }: {
   setIsContextMenuOpen?: (state: boolean) => void;
   editClassOverlayRef?: MutableRefObject<HTMLDivElement | null>;
   sourceVectorLabelsRef: MutableRefObject<OlSourceVector<Geometry> | null>;
+  setSelectedFeatures: (features: Collection<Feature<Geometry>>) => void;
 }) => {
   const [editMenuLocation, setEditMenuLocation] =
     useState<Coordinate | undefined>(undefined);
@@ -61,6 +66,7 @@ export const SelectInteraction = ({
       featuresAtPixel.find((fAtPixel) => f === fAtPixel)
     );
     setSelectedLabelId(feature?.getProperties().id ?? null);
+    setSelectedFeatures(new Collection([feature]));
     return true;
   };
 
