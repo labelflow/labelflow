@@ -16,23 +16,14 @@ describe("App lifecyle manager", () => {
   });
 
   test("Should render modal when needed", async () => {
-    let timeout: number;
     window.workbox = {
       getSW: jest.fn(async () => {
         return {
           state: "waiting",
         };
       }),
-      addEventListener: jest.fn((eventName, callback: () => void) => {
-        if (eventName === "waiting") {
-          timeout = setTimeout(callback, 10) as unknown as number;
-        }
-      }),
-      removeEventListener: jest.fn((eventName) => {
-        if (eventName === "waiting") {
-          clearTimeout(timeout);
-        }
-      }),
+      addEventListener: jest.fn(() => {}),
+      removeEventListener: jest.fn(() => {}),
       register: jest.fn(() => {}),
     } as unknown as Workbox;
     render(<AppLifecycleManager assumeServiceWorkerActive={false} />);
@@ -45,23 +36,14 @@ describe("App lifecyle manager", () => {
   });
 
   test("Should not render modal when not needed", async () => {
-    let timeout: number;
     window.workbox = {
       getSW: jest.fn(async () => {
         return {
           state: "activated",
         };
       }),
-      addEventListener: jest.fn((eventName, callback: () => void) => {
-        if (eventName === "waiting") {
-          timeout = setTimeout(callback, 10) as unknown as number;
-        }
-      }),
-      removeEventListener: jest.fn((eventName) => {
-        if (eventName === "waiting") {
-          clearTimeout(timeout);
-        }
-      }),
+      addEventListener: jest.fn(() => {}),
+      removeEventListener: jest.fn(() => {}),
       register: jest.fn(() => {}),
     } as unknown as Workbox;
     render(<AppLifecycleManager assumeServiceWorkerActive />);
