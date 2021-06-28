@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import {
   HStack,
   Heading,
@@ -37,7 +38,7 @@ export const ExportModal = ({
   isOpen?: boolean;
   onClose?: () => void;
 }) => {
-  const { data } = useQuery(countLabelsQuery);
+  const { data, refetch } = useQuery(countLabelsQuery);
   const [queryExportToCoco, { loading }] = useLazyQuery(exportToCocoQuery, {
     fetchPolicy: "network-only",
     onCompleted: ({ exportToCoco }) => {
@@ -59,6 +60,12 @@ export const ExportModal = ({
       element.click();
     },
   });
+
+  useEffect(() => {
+    if (isOpen) {
+      refetch();
+    }
+  }, [isOpen]);
 
   return (
     <Modal isOpen={isOpen} size="3xl" onClose={onClose} isCentered>
