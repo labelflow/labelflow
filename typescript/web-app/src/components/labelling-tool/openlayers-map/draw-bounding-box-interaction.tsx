@@ -166,7 +166,7 @@ export const DrawBoundingBoxInteraction = () => {
     {},
     [drawRef]
   );
-  
+
   const toast = useToast();
 
   const style = useMemo(() => {
