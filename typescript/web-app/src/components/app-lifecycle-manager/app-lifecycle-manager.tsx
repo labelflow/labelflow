@@ -84,6 +84,10 @@ export const AppLifecycleManager = ({ assumeServiceWorkerActive }: Props) => {
         );
       }
 
+      const setServiceWorkerIsActive = () => {
+        setIsServiceWorkerActive(true);
+      };
+
       const checkServiceWorkerStatus = async () => {
         const sw = await wb.getSW();
         if (
@@ -96,9 +100,7 @@ export const AppLifecycleManager = ({ assumeServiceWorkerActive }: Props) => {
           )
         ) {
           setIsServiceWorkerActive(false);
-          wb.addEventListener("activated", () => {
-            setIsServiceWorkerActive(true);
-          });
+          wb.addEventListener("activated", setServiceWorkerIsActive);
         } else {
           console.log("Service worker active");
           setIsServiceWorkerActive(true);
@@ -122,6 +124,7 @@ export const AppLifecycleManager = ({ assumeServiceWorkerActive }: Props) => {
         }
         if (paramModalUpdateServiceWorker === "update") {
           updateServiceWorker();
+          wb.removeEventListener("waiting", promptNewVersionAvailable);
           return;
         }
         setIsUpdateServiceWorkerModalOpen(true);
@@ -135,6 +138,12 @@ export const AppLifecycleManager = ({ assumeServiceWorkerActive }: Props) => {
 
       // never forget to call register as auto register is turned off in next.config.js
       wb.register();
+
+      // eslint-disable-next-line consistent-return
+      return () => {
+        wb.removeEventListener("waiting", promptNewVersionAvailable);
+        wb.removeEventListener("activated", setServiceWorkerIsActive);
+      };
     } catch (e) {
       handleError(e);
     }

@@ -16,6 +16,7 @@ describe("App lifecyle manager", () => {
   });
 
   test("Should render modal when needed", async () => {
+    let timeout: number;
     window.workbox = {
       getSW: jest.fn(async () => {
         return {
@@ -24,12 +25,17 @@ describe("App lifecyle manager", () => {
       }),
       addEventListener: jest.fn((eventName, callback: () => void) => {
         if (eventName === "waiting") {
-          setTimeout(callback, 10);
+          timeout = setTimeout(callback, 10);
+        }
+      }),
+      removeEventListener: jest.fn((eventName) => {
+        if (eventName === "waiting") {
+          clearTimeout(timeout);
         }
       }),
       register: jest.fn(() => {}),
     } as unknown as Workbox;
-    render(<AppLifecycleManager assumeServiceWorkerActive />);
+    render(<AppLifecycleManager assumeServiceWorkerActive={false} />);
     await waitFor(() => {
       expect(screen.queryByText("image labeling tool")).toBeDefined();
     });
@@ -39,6 +45,7 @@ describe("App lifecyle manager", () => {
   });
 
   test("Should not render modal when not needed", async () => {
+    let timeout: number;
     window.workbox = {
       getSW: jest.fn(async () => {
         return {
@@ -47,7 +54,12 @@ describe("App lifecyle manager", () => {
       }),
       addEventListener: jest.fn((eventName, callback: () => void) => {
         if (eventName === "waiting") {
-          setTimeout(callback, 10);
+          timeout = setTimeout(callback, 10);
+        }
+      }),
+      removeEventListener: jest.fn((eventName) => {
+        if (eventName === "waiting") {
+          clearTimeout(timeout);
         }
       }),
       register: jest.fn(() => {}),
@@ -62,6 +74,7 @@ describe("App lifecyle manager", () => {
   });
 
   test("Should render update modal when service worker waiting", async () => {
+    let timeout: number;
     window.workbox = {
       getSW: jest.fn(async () => {
         return {
@@ -70,12 +83,17 @@ describe("App lifecyle manager", () => {
       }),
       addEventListener: jest.fn((eventName, callback: () => void) => {
         if (eventName === "waiting") {
-          setTimeout(callback, 10);
+          timeout = setTimeout(callback, 10);
+        }
+      }),
+      removeEventListener: jest.fn((eventName) => {
+        if (eventName === "waiting") {
+          clearTimeout(timeout);
         }
       }),
       register: jest.fn(() => {}),
     } as unknown as Workbox;
-    render(<AppLifecycleManager assumeServiceWorkerActive />);
+    render(<AppLifecycleManager assumeServiceWorkerActive={false} />);
     await waitFor(() => {
       expect(screen.queryByText("image labeling tool")).not.toBeInTheDocument();
     });
