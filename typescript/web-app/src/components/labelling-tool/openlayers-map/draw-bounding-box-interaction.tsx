@@ -93,7 +93,7 @@ const createLabelEffect = (
         height,
         labelClassId: selectedLabelClassId,
       },
-      refetchQueries: ["getImageLabels"],
+      refetchQueries: ["getImageLabels", "countLabels"],
     });
 
     setSelectedLabelId(data?.createLabel?.id);
