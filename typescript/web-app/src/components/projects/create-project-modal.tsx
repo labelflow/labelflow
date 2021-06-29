@@ -12,9 +12,11 @@ import {
   Button,
   ModalHeader,
   Heading,
-  Text,
   ModalBody,
   Input,
+  FormControl,
+  FormErrorMessage,
+  FormHelperText,
 } from "@chakra-ui/react";
 
 const debounceTime = 200;
@@ -92,9 +94,15 @@ export const CreateProjectModal = ({
   const isInvalid = () => errorMessage !== "";
 
   return (
-    <Modal isOpen={isOpen} size="xl" onClose={closeModal}>
+    <Modal isOpen={isOpen} size="3xl" onClose={closeModal}>
       <ModalOverlay />
-      <ModalContent>
+      <ModalContent
+        as="form"
+        onSubmit={(e) => {
+          e.preventDefault();
+          createProject();
+        }}
+      >
         <ModalCloseButton />
 
         <ModalHeader textAlign="center" padding="6">
@@ -104,22 +112,20 @@ export const CreateProjectModal = ({
         </ModalHeader>
 
         <ModalBody pt="0" pb="6" pr="6" pl="6">
-          <Input
-            placeholder="Project name"
-            size="md"
-            onChange={handleChangeProjectName}
-            isInvalid={isInvalid()}
-            errorBorderColor="red.500"
-          />
-          <Text color="red.500" visibility={isInvalid() ? "visible" : "hidden"}>
-            {errorMessage}
-          </Text>
+          <FormControl isInvalid={isInvalid()} isRequired>
+            <Input
+              placeholder="Project name"
+              size="md"
+              onChange={handleChangeProjectName}
+            />
+            <FormErrorMessage>{errorMessage}</FormErrorMessage>
+          </FormControl>
         </ModalBody>
 
         <ModalFooter>
           <Button
+            type="submit"
             colorScheme="brand"
-            onClick={createProject}
             disabled={projectName === "" || isInvalid()}
           >
             Start
