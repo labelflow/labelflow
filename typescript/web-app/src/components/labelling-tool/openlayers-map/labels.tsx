@@ -13,6 +13,10 @@ import { useLabellingStore } from "../../../connectors/labelling-state";
 import { useUndoStore, Effect } from "../../../connectors/undo-store";
 import { Label } from "../../../graphql-types.generated";
 import { noneClassColor } from "../../../utils/class-color-generator";
+import {
+  addLabelToImageInCache,
+  removeLabelFromImageCache,
+} from "./draw-bounding-box-interaction/create-label-effect";
 
 const getImageLabelsQuery = gql`
   query getImageLabels($imageId: ID!) {
@@ -86,35 +90,83 @@ const createDeleteLabelEffect = (
   }
 ): Effect => ({
   do: async () => {
-    const { data } = await client.mutate({
+    const { data } = await client.mutate<{
+      deleteLabel: Label & { __typename: "Label" };
+    }>({
       mutation: deleteLabelMutation,
       variables: { id },
-      refetchQueries: ["getImageLabels"],
+      refetchQueries: ["countLabels"],
+      /* Note that there is no optimistic response here, only a cache update.
+       * We could add it but it feels like premature optimization */
+      update(cache, { data: updateData }) {
+        if (typeof updateData?.deleteLabel?.imageId !== "string") {
+          return;
+        }
+        removeLabelFromImageCache(cache, {
+          id,
+          imageId: updateData.deleteLabel.imageId,
+        });
+      },
     });
     setSelectedLabelId(null);
     return data?.deleteLabel;
   },
-  undo: async (deletedLabel) => {
+  undo: async (
+    deletedLabel: Pick<
+      Label,
+      "id" | "x" | "y" | "width" | "height" | "imageId" | "labelClass"
+    >
+  ) => {
     const { id: labelId, x, y, width, height, imageId } = deletedLabel;
     const labelClassId = deletedLabel?.labelClass?.id;
+
+    const createLabelInputs = {
+      id: labelId,
+      x,
+      y,
+      width,
+      height,
+      imageId,
+      labelClassId,
+    };
+
     /* It is important to use the same id for the re-creation when the label
      * was created in the current session to enable the undoing of the creation effect */
     const { data } = await client.mutate({
       mutation: createLabelWithIdMutation,
-      variables: { id: labelId, x, y, width, height, imageId, labelClassId },
-      refetchQueries: ["getImageLabels"],
+      variables: createLabelInputs,
+      refetchQueries: ["countLabels"],
+      optimisticResponse: { createLabel: { id: labelId, __typename: "Label" } },
+      update(cache) {
+        addLabelToImageInCache(cache, createLabelInputs);
+      },
     });
 
-    setSelectedLabelId(data?.createLabel?.id);
+    if (typeof data?.createLabel?.id !== "string") {
+      throw new Error("Couldn't get the id of the newly created label");
+    }
 
-    return data?.createLabel?.id;
+    setSelectedLabelId(data.createLabel.id);
+    return data.createLabel.id;
   },
   redo: async (labelId: string) => {
     const { data } = await client.mutate({
       mutation: deleteLabelMutation,
       variables: { id: labelId },
-      refetchQueries: ["getImageLabels"],
+      refetchQueries: ["countLabels"],
+      /* Note that there is no optimistic response here, only a cache update.
+       * We could add it but it feels like premature optimization */
+      update(cache, { data: updateData }) {
+        if (typeof updateData?.deleteLabel?.imageId !== "string") {
+          return;
+        }
+        removeLabelFromImageCache(cache, {
+          id,
+          imageId: updateData.deleteLabel.imageId,
+        });
+      },
     });
+
     setSelectedLabelId(null);
     return data?.deleteLabel;
   },

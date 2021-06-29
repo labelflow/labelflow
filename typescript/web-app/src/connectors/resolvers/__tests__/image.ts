@@ -1,7 +1,11 @@
 import { incrementMockedDate } from "@labelflow/dev-utils/mockdate";
 import gql from "graphql-tag";
+import probe from "probe-image-size";
+
 import { client } from "../../apollo-client-schema";
 import { setupTestsWithLocalDatabase } from "../../../utils/setup-local-db-tests";
+
+jest.mock("probe-image-size");
 
 setupTestsWithLocalDatabase();
 
@@ -104,6 +108,57 @@ describe("Image resolver test suite", () => {
       expect.objectContaining({
         id,
         name: "new test image",
+        url: "mockedUrl",
+      })
+    );
+  });
+
+  test("Create image with url", async () => {
+    // @ts-ignore
+    fetch.mockResponseOnce(new Blob());
+    // @ts-ignore
+    probe.sync.mockReturnValueOnce({
+      width: 10,
+      height: 10,
+      mime: "something",
+    });
+
+    const {
+      data: {
+        createImage: { id },
+      },
+    } = await client.mutate({
+      mutation: gql`
+        mutation createImage($url: String!) {
+          createImage(data: { url: $url }) {
+            id
+          }
+        }
+      `,
+      variables: {
+        url: "https://images.unsplash.com/photo-1579513141590-c597876aefbc?auto=format&fit=crop&w=882&q=80",
+      },
+    });
+
+    const queryResult = await client.query({
+      query: gql`
+        query getImage($id: ID!) {
+          image(where: { id: $id }) {
+            id
+            name
+            url
+          }
+        }
+      `,
+      variables: {
+        id,
+      },
+    });
+
+    expect(queryResult.data.image).toEqual(
+      expect.objectContaining({
+        id,
+        name: "photo-1579513141590-c597876aefbc",
         url: "mockedUrl",
       })
     );

@@ -25,8 +25,12 @@ const createImageFromFileMutation = gql`
 `;
 
 const createImageFromUrlMutation = gql`
-  mutation createImageMutation($url: String!, $createdAt: DateTime) {
-    createImage(data: { url: $url, createdAt: $createdAt }) {
+  mutation createImageMutation(
+    $url: String!
+    $createdAt: DateTime
+    $name: String!
+  ) {
+    createImage(data: { url: $url, createdAt: $createdAt, name: $name }) {
       id
     }
   }
@@ -120,6 +124,7 @@ export const ImportImagesModalDropzone = ({
                   variables: {
                     url: target.downloadUrl,
                     createdAt: createdAt.toISOString(),
+                    name: acceptedFile.file.name,
                   },
                 });
 

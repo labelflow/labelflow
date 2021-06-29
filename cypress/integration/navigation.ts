@@ -39,6 +39,7 @@ describe("Navigation", () => {
     // We need to pick the drawing tool in order to see the class selection picker
     cy.log("pick the drawing tool in order to see the class selection picker");
     cy.get('[aria-label="Drawing tool"]').click();
+    cy.get("header").contains("photo-").should("be.visible");
 
     // Create new label class
     cy.log("Create new label class");
@@ -298,5 +299,8 @@ describe("Navigation", () => {
         .split("?")[0]
         .split("https://images.unsplash.com/")[1]
     ).should("exist");
+
+    cy.get('[aria-label="Export"]').click();
+    cy.contains("Your project contains 2 labels").should("be.visible");
   });
 });
