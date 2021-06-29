@@ -1,4 +1,5 @@
 import { ApolloClient, useApolloClient } from "@apollo/client";
+import { useToast } from "@chakra-ui/react";
 import gql from "graphql-tag";
 import { Collection, Feature } from "ol";
 import { Geometry } from "ol/geom";
@@ -114,6 +115,7 @@ export const TranslateFeature = ({
 }) => {
   const client = useApolloClient();
   const { perform } = useUndoStore();
+  const toast = useToast();
   return (
     <olInteractionTranslate
       args={{ features: selectedFeatures }}
@@ -125,9 +127,20 @@ export const TranslateFeature = ({
         const width = destinationX - x;
         const height = destinationY - y;
         const { id: labelId } = feature.getProperties();
-        perform(
-          updateLabelEffect({ labelId, x, y, width, height }, { client })
-        );
+        try {
+          await perform(
+            updateLabelEffect({ labelId, x, y, width, height }, { client })
+          );
+        } catch (error) {
+          toast({
+            title: "Error creating bounding box",
+            description: error?.message,
+            isClosable: true,
+            status: "error",
+            position: "bottom-right",
+            duration: 10000,
+          });
+        }
       }}
     />
   );
