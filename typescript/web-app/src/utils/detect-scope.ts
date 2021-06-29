@@ -19,7 +19,7 @@ const detectScope = () => {
         // Detect browser
         // See https://stackoverflow.com/a/7944490/2371254
         const ua = navigator.userAgent.toLowerCase();
-        if (ua.indexOf("safari") != -1) {
+        if (ua.indexOf("safari") !== -1) {
           if (ua.indexOf("chrome") > -1) {
             browserName = "chrome";
           } else {
