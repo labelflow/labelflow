@@ -34,7 +34,10 @@ export const WelcomeModal = ({
     StringParam
   );
   const [hasUserClickedStart, setHasUserClickedStart] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(
+    (!isServiceWorkerActive && !(paramModalWelcome === "closed")) ||
+      paramModalWelcome === "open"
+  );
 
   // This modal should open when isServiceWorkerActive becomes false
   // But close only when the use hasUserClickedStart becomes true
