@@ -4,6 +4,9 @@ import gql from "graphql-tag";
 import { Collection, Feature } from "ol";
 import { Geometry } from "ol/geom";
 import { TranslateEvent } from "ol/interaction/Translate";
+import { MutableRefObject, useEffect, useState } from "react";
+import { Vector as OlSourceVector } from "ol/source";
+import { useLabellingStore } from "../../../../connectors/labelling-state";
 import { Effect, useUndoStore } from "../../../../connectors/undo-store";
 
 const updateLabelMutation = gql`
@@ -108,42 +111,78 @@ const updateLabelEffect = (
   },
 });
 
+const sleep = (time: number) =>
+  new Promise((resolve) => setTimeout(resolve, time));
+const timeout = 1000; // ms
+
 export const TranslateFeature = ({
-  selectedFeatures,
+  //   selectedFeatures,
+  sourceVectorLabelsRef,
 }: {
-  selectedFeatures: Collection<Feature<Geometry>> | null;
+  //   selectedFeatures: Collection<Feature<Geometry>> | null;
+  sourceVectorLabelsRef: MutableRefObject<OlSourceVector<Geometry> | null>;
 }) => {
+  const [selectedFeatures, setSelectedFeatures] =
+    useState<Collection<Feature<Geometry>> | null>(null);
   const client = useApolloClient();
   const { perform } = useUndoStore();
   const toast = useToast();
-  return (
-    selectedFeatures != null && (
-      <olInteractionTranslate
-        args={{ features: selectedFeatures }}
-        onTranslateend={async (event: TranslateEvent) => {
-          const feature = event.features.getArray()[0];
-          const [x, y, destinationX, destinationY] = feature
-            .getGeometry()
-            .getExtent();
-          const width = destinationX - x;
-          const height = destinationY - y;
-          const { id: labelId } = feature.getProperties();
-          try {
-            await perform(
-              updateLabelEffect({ labelId, x, y, width, height }, { client })
-            );
-          } catch (error) {
-            toast({
-              title: "Error creating bounding box",
-              description: error?.message,
-              isClosable: true,
-              status: "error",
-              position: "bottom-right",
-              duration: 10000,
-            });
+  const selectedLabelId = useLabellingStore((state) => state.selectedLabelId);
+
+  useEffect(() => {
+    const getSelectedLabelInOpenLayers = async () => {
+      if (selectedLabelId == null) {
+        setSelectedFeatures(null);
+      } else if (sourceVectorLabelsRef.current != null) {
+        if (sourceVectorLabelsRef.current.getFeatures()?.length === 0) {
+          const startDate = Date.now();
+          // We need this to wait for the labels to be added to open layers on the first render
+          while (
+            sourceVectorLabelsRef.current.getFeatures()?.length === 0 &&
+            startDate - Date.now() < timeout
+          ) {
+            // eslint-disable-next-line no-await-in-loop
+            await sleep(100);
           }
-        }}
-      />
-    )
-  );
+        }
+        if (sourceVectorLabelsRef.current.getFeatures()?.length > 0) {
+          const selectedFeature = sourceVectorLabelsRef.current
+            .getFeatures()
+            .filter(
+              (feature) => feature.getProperties().id === selectedLabelId
+            )?.[0];
+          setSelectedFeatures(new Collection([selectedFeature]));
+        }
+      }
+    };
+    getSelectedLabelInOpenLayers();
+  }, [sourceVectorLabelsRef.current, selectedLabelId]);
+  return selectedFeatures != null ? (
+    <olInteractionTranslate
+      args={{ features: selectedFeatures }}
+      onTranslateend={async (event: TranslateEvent) => {
+        const feature = event.features.getArray()[0];
+        const [x, y, destinationX, destinationY] = feature
+          .getGeometry()
+          .getExtent();
+        const width = destinationX - x;
+        const height = destinationY - y;
+        const { id: labelId } = feature.getProperties();
+        try {
+          await perform(
+            updateLabelEffect({ labelId, x, y, width, height }, { client })
+          );
+        } catch (error) {
+          toast({
+            title: "Error creating bounding box",
+            description: error?.message,
+            isClosable: true,
+            status: "error",
+            position: "bottom-right",
+            duration: 10000,
+          });
+        }
+      }}
+    />
+  ) : null;
 };

@@ -1,7 +1,7 @@
 import { MutableRefObject, useState, useEffect } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 import { Coordinate } from "ol/coordinate";
-import { Collection, Feature, MapBrowserEvent } from "ol";
+import { MapBrowserEvent } from "ol";
 import { Vector as OlSourceVector } from "ol/source";
 import { Geometry } from "ol/geom";
 import { createEmpty, extend, getCenter } from "ol/extent";
@@ -18,12 +18,10 @@ export const SelectInteraction = ({
   setIsContextMenuOpen = () => {},
   editClassOverlayRef,
   sourceVectorLabelsRef,
-  setSelectedFeatures,
 }: {
   setIsContextMenuOpen?: (state: boolean) => void;
   editClassOverlayRef?: MutableRefObject<HTMLDivElement | null>;
   sourceVectorLabelsRef: MutableRefObject<OlSourceVector<Geometry> | null>;
-  setSelectedFeatures: (features: Collection<Feature<Geometry>>) => void;
 }) => {
   const [editMenuLocation, setEditMenuLocation] =
     useState<Coordinate | undefined>(undefined);
@@ -32,36 +30,6 @@ export const SelectInteraction = ({
   const setSelectedLabelId = useLabellingStore(
     (state) => state.setSelectedLabelId
   );
-  const selectedLabelId = useLabellingStore((state) => state.selectedLabelId);
-
-  useEffect(() => {
-    const sleep = (time: number) =>
-      new Promise((resolve) => setTimeout(resolve, time));
-    const timeout = 1000; // ms
-    const getSelectedLabelInOpenLayers = async () => {
-      // Make sure we set the selected feature in state on the first render if there is already a selectedLabelId
-      if (selectedLabelId != null && sourceVectorLabelsRef.current != null) {
-        const startDate = Date.now();
-        // We need this to wait for the labels to be added to open layers on the first render
-        while (
-          sourceVectorLabelsRef.current.getFeatures()?.length === 0 &&
-          startDate - Date.now() < timeout
-        ) {
-          // eslint-disable-next-line no-await-in-loop
-          await sleep(100);
-        }
-        if (sourceVectorLabelsRef.current.getFeatures()?.length > 0) {
-          const selectedFeature = sourceVectorLabelsRef.current
-            .getFeatures()
-            .filter(
-              (feature) => feature.getProperties().id === selectedLabelId
-            )?.[0];
-          setSelectedFeatures(new Collection([selectedFeature]));
-        }
-      }
-    };
-    getSelectedLabelInOpenLayers();
-  }, [sourceVectorLabelsRef.current]);
 
   useHotkeys(
     keymap.openLabelClassSelectionPopover.key,
@@ -97,7 +65,6 @@ export const SelectInteraction = ({
       featuresAtPixel.find((fAtPixel) => f === fAtPixel)
     );
     setSelectedLabelId(feature?.getProperties().id ?? null);
-    setSelectedFeatures(new Collection([feature]));
     return true;
   };
 
