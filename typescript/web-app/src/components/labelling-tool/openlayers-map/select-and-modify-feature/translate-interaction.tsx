@@ -111,37 +111,39 @@ const updateLabelEffect = (
 export const TranslateFeature = ({
   selectedFeatures,
 }: {
-  selectedFeatures: Collection<Feature<Geometry>>;
+  selectedFeatures: Collection<Feature<Geometry>> | null;
 }) => {
   const client = useApolloClient();
   const { perform } = useUndoStore();
   const toast = useToast();
   return (
-    <olInteractionTranslate
-      args={{ features: selectedFeatures }}
-      onTranslateend={async (event: TranslateEvent) => {
-        const feature = event.features.getArray()[0];
-        const [x, y, destinationX, destinationY] = feature
-          .getGeometry()
-          .getExtent();
-        const width = destinationX - x;
-        const height = destinationY - y;
-        const { id: labelId } = feature.getProperties();
-        try {
-          await perform(
-            updateLabelEffect({ labelId, x, y, width, height }, { client })
-          );
-        } catch (error) {
-          toast({
-            title: "Error creating bounding box",
-            description: error?.message,
-            isClosable: true,
-            status: "error",
-            position: "bottom-right",
-            duration: 10000,
-          });
-        }
-      }}
-    />
+    selectedFeatures != null && (
+      <olInteractionTranslate
+        args={{ features: selectedFeatures }}
+        onTranslateend={async (event: TranslateEvent) => {
+          const feature = event.features.getArray()[0];
+          const [x, y, destinationX, destinationY] = feature
+            .getGeometry()
+            .getExtent();
+          const width = destinationX - x;
+          const height = destinationY - y;
+          const { id: labelId } = feature.getProperties();
+          try {
+            await perform(
+              updateLabelEffect({ labelId, x, y, width, height }, { client })
+            );
+          } catch (error) {
+            toast({
+              title: "Error creating bounding box",
+              description: error?.message,
+              isClosable: true,
+              status: "error",
+              position: "bottom-right",
+              duration: 10000,
+            });
+          }
+        }}
+      />
+    )
   );
 };
