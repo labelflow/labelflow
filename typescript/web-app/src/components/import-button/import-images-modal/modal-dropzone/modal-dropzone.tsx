@@ -15,7 +15,7 @@ import { FilesStatuses } from "./file-statuses";
 import { DroppedFile, UploadStatuses } from "../types";
 
 import { UploadTarget } from "../../../../graphql-types.generated";
-import { browserName } from "../../../../utils/detect-scope";
+import { browser } from "../../../../utils/detect-scope";
 
 const createImageFromFileMutation = gql`
   mutation createImageMutation($file: Upload!, $createdAt: DateTime) {
@@ -126,7 +126,7 @@ export const ImportImagesModalDropzone = ({
               if (target.__typename === "UploadTargetHttp") {
                 // File upload to the url provided by the server
 
-                if (browserName === "safari") {
+                if (browser?.name === "safari") {
                   // This special case is needed for Safari
                   // See https://github.com/Labelflow/labelflow/issues/228
                   // See https://stackoverflow.com/questions/63144979/fetch-event-listener-not-triggering-in-service-worker-for-file-upload-via-mult
