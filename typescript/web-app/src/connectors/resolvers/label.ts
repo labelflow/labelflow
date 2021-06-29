@@ -20,6 +20,42 @@ const getLabelById = async (id: string): Promise<DbLabel> => {
   return entity;
 };
 
+const resizeLabelToFitInsideImageBounds = async (labelData: {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  imageId: string;
+}): Promise<{
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}> => {
+  const { x, y, width, height, imageId } = labelData;
+  const image = await db.image.get(imageId);
+  const imageWidth = image?.width ?? x + width;
+  const imageHeight = image?.height ?? y + height;
+  if (
+    (x < 0 && x + width < 0) ||
+    (x + width > imageWidth && x > imageWidth) ||
+    (y < 0 && y + height < 0) ||
+    (y + height > imageHeight && y > imageHeight)
+  ) {
+    throw new Error("Bounding box out of image bounds");
+  }
+
+  const boundedX = Math.max(x, 0);
+  const boundedY = Math.max(y, 0);
+
+  return {
+    x: boundedX,
+    y: boundedY,
+    height: Math.min(imageHeight, y + height) - boundedY,
+    width: Math.min(imageWidth, x + width) - boundedX,
+  };
+};
+
 // Queries
 const labelClass = async (label: DbLabel) => {
   if (!label?.labelClassId) {
@@ -53,21 +89,17 @@ const createLabel = async (
       throw new Error(`The labelClass id ${labelClassId} doesn't exist.`);
     }
   }
-  const imageWidth = image?.width ?? x + width;
-  const imageHeight = image?.height ?? y + height;
-  if (
-    (x < 0 && x + width < 0) ||
-    (x + width > imageWidth && x > imageWidth) ||
-    (y < 0 && y + height < 0) ||
-    (y + height > imageHeight && y > imageHeight)
-  ) {
-    throw new Error("Bounding box out of image bounds");
-  }
+
   const labelId = id ?? uuidv4();
   const now = new Date();
 
-  const boundedX = Math.max(x, 0);
-  const boundedY = Math.max(y, 0);
+  const resizedLabel = await resizeLabelToFitInsideImageBounds({
+    x,
+    y,
+    width,
+    height,
+    imageId,
+  });
 
   const newLabelEntity = {
     id: labelId,
@@ -75,10 +107,10 @@ const createLabel = async (
     updatedAt: now.toISOString(),
     labelClassId,
     imageId,
-    x: boundedX,
-    y: boundedY,
-    height: Math.min(imageHeight, y + height) - boundedY,
-    width: Math.min(imageWidth, x + width) - boundedX,
+    x: resizedLabel.x,
+    y: resizedLabel.y,
+    height: resizedLabel.height,
+    width: resizedLabel.width,
   };
 
   await db.label.add(newLabelEntity);
@@ -114,9 +146,20 @@ const updateLabel = async (_: any, args: MutationUpdateLabelArgs) => {
     }
   }
 
-  await db.label.update(labelId, args.data);
+  const labelData = await getLabelById(labelId);
+  const imageId = labelData?.imageId;
+  const { x, y, width, height } = labelData;
+  const resizedLabel = await resizeLabelToFitInsideImageBounds({
+    x: args.data?.x ?? x,
+    y: args.data?.y ?? y,
+    height: args.data?.height ?? height,
+    width: args.data?.width ?? width,
+    imageId,
+  });
 
-  return getLabelById(labelId);
+  await db.label.update(labelId, { ...args.data, ...resizedLabel });
+
+  return labelData;
 };
 
 const labelsAggregates = () => {

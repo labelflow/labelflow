@@ -330,7 +330,7 @@ describe("Label resolver test suite", () => {
     });
     const labelId = createResult.data.createLabel.id;
 
-    client.mutate({
+    await client.mutate({
       mutation: gql`
         mutation updateLabel($id: ID!, $data: LabelUpdateInput!) {
           updateLabel(where: { id: $id }, data: $data) {
