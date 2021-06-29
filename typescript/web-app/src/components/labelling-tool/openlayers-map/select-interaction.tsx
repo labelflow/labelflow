@@ -107,10 +107,11 @@ export const SelectInteraction = ({
             switch (eventType) {
               case "contextmenu": {
                 // TODO: Find a way to avoid race condition
+                contextMenuHandler(e);
                 setTimeout(() => {
                   drawInteractionRef.current?.abortDrawing();
-                }, 1);
-                return contextMenuHandler(e);
+                }, 100);
+                return true;
               }
               default:
                 return true;
