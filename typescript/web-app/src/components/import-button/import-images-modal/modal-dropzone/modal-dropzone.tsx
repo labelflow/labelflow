@@ -47,7 +47,7 @@ const getImageUploadTargetMutation = gql`
   }
 `;
 
-const fileToDataUrl = (file: File): Promise<string> => {
+const encodeFileToDataUrl = (file: File): Promise<string> => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = (evt) => {
@@ -120,7 +120,7 @@ export const ImportImagesModalDropzone = ({
                   // This special case is needed for Safari
                   // See https://github.com/Labelflow/labelflow/issues/228
                   // See https://stackoverflow.com/questions/63144979/fetch-event-listener-not-triggering-in-service-worker-for-file-upload-via-mult
-                  const url = await fileToDataUrl(acceptedFile.file);
+                  const url = await encodeFileToDataUrl(acceptedFile.file);
 
                   await apolloClient.mutate({
                     mutation: createImageFromUrlMutation,
