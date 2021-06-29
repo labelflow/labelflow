@@ -18,16 +18,20 @@ import { UploadTarget } from "../../../../graphql-types.generated";
 import { browserName } from "../../../../utils/detect-scope";
 
 const createImageFromFileMutation = gql`
-  mutation createImageMutation($file: Upload!) {
-    createImage(data: { file: $file }) {
+  mutation createImageMutation($file: Upload!, $createdAt: DateTime) {
+    createImage(data: { file: $file, createdAt: $createdAt }) {
       id
     }
   }
 `;
 
 const createImageFromUrlMutation = gql`
-  mutation createImageMutation($url: String!, $name: String!) {
-    createImage(data: { url: $url, name: $name }) {
+  mutation createImageMutation(
+    $url: String!
+    $createdAt: DateTime
+    $name: String!
+  ) {
+    createImage(data: { url: $url, createdAt: $createdAt, name: $name }) {
       id
     }
   }
@@ -84,10 +88,11 @@ export const ImportImagesModalDropzone = ({
     if (isEmpty(files)) return;
 
     const createImages = async () => {
+      const now = new Date();
       await Promise.all(
         files
           .filter((file) => isEmpty(file.errors))
-          .map(async (acceptedFile) => {
+          .map(async (acceptedFile, index) => {
             try {
               // Ask server how to upload image
               const { data } = await apolloClient.mutate({
@@ -99,9 +104,14 @@ export const ImportImagesModalDropzone = ({
               // eslint-disable-next-line no-underscore-dangle
               if (target.__typename === "UploadTargetDirect") {
                 // Direct file upload through graphql upload mutation
+                const createdAt = new Date();
+                createdAt.setTime(now.getTime() + index);
                 await apolloClient.mutate({
                   mutation: createImageFromFileMutation,
-                  variables: { file: acceptedFile.file },
+                  variables: {
+                    file: acceptedFile.file,
+                    createdAt: createdAt.toISOString(),
+                  },
                 });
 
                 return setFileUploadStatuses((previousFileUploadStatuses) => {
@@ -142,10 +152,13 @@ export const ImportImagesModalDropzone = ({
                   body: acceptedFile.file,
                 });
 
+                const createdAt = new Date();
+                createdAt.setTime(now.getTime() + index);
                 await apolloClient.mutate({
                   mutation: createImageFromUrlMutation,
                   variables: {
                     url: target.downloadUrl,
+                    createdAt: createdAt.toISOString(),
                     name: acceptedFile.file.name,
                   },
                 });

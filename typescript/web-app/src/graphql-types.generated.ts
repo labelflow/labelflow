@@ -61,6 +61,7 @@ export type Image = {
 
 export type ImageCreateInput = {
   id?: Maybe<Scalars['ID']>;
+  createdAt?: Maybe<Scalars['DateTime']>;
   name?: Maybe<Scalars['String']>;
   path?: Maybe<Scalars['String']>;
   mimetype?: Maybe<Scalars['String']>;

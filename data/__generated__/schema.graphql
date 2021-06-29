@@ -43,6 +43,7 @@ type Image {
 
 input ImageCreateInput {
   id: ID
+  createdAt: DateTime
   name: String
   path: String
   mimetype: String
