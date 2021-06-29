@@ -18,9 +18,31 @@ const getProjectById = async (id: string): Promise<DbProject> => {
   return project;
 };
 
+const getOneProjectByName = async (name: string): Promise<DbProject> => {
+  const project = await db.project.where({ name }).toArray();
+
+  if (project.length === 0) {
+    throw new Error("No project with such name");
+  }
+
+  return project[0];
+};
+
 // Queries
 const project = (_: any, args: QueryProjectArgs): Promise<DbProject> => {
-  return getProjectById(args.where.id);
+  const { id, name } = args?.where;
+
+  if (id != null) {
+    return getProjectById(id);
+  }
+
+  if (name != null) {
+    return getOneProjectByName(name);
+  }
+
+  throw new Error(
+    "You need to specify the ID or the name of the project to find it."
+  );
 };
 
 const projects = async (

@@ -230,6 +230,11 @@ export type ProjectUpdateInput = {
   name: Scalars['String'];
 };
 
+export type ProjectWhereInput = {
+  id?: Maybe<Scalars['String']>;
+  name?: Maybe<Scalars['String']>;
+};
+
 export type ProjectWhereUniqueInput = {
   id: Scalars['ID'];
 };
@@ -294,7 +299,7 @@ export type QueryLabelArgs = {
 
 
 export type QueryProjectArgs = {
-  where: ProjectWhereUniqueInput;
+  where: ProjectWhereInput;
 };
 
 
@@ -423,6 +428,7 @@ export type ResolversTypes = {
   Project: ResolverTypeWrapper<Project>;
   ProjectCreateInput: ProjectCreateInput;
   ProjectUpdateInput: ProjectUpdateInput;
+  ProjectWhereInput: ProjectWhereInput;
   ProjectWhereUniqueInput: ProjectWhereUniqueInput;
   Query: ResolverTypeWrapper<{}>;
   Upload: ResolverTypeWrapper<Scalars['Upload']>;
@@ -461,6 +467,7 @@ export type ResolversParentTypes = {
   Project: Project;
   ProjectCreateInput: ProjectCreateInput;
   ProjectUpdateInput: ProjectUpdateInput;
+  ProjectWhereInput: ProjectWhereInput;
   ProjectWhereUniqueInput: ProjectWhereUniqueInput;
   Query: {};
   Upload: Scalars['Upload'];

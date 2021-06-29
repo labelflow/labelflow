@@ -330,4 +330,39 @@ describe("Project resolver test suite", () => {
       })
     ).rejects.toThrow("No project with such id");
   });
+
+  test("Find project by name", async () => {
+    const name = "My new project";
+    const projectId = "some id";
+    await createProject(name, projectId);
+
+    const queryResult = await client.query({
+      query: gql`
+        query getProject($name: String!) {
+          project(where: { name: $name }) {
+            id
+            name
+          }
+        }
+      `,
+      variables: {
+        name,
+      },
+    });
+
+    expect(queryResult.data.project).toEqual(
+      expect.objectContaining({
+        id: projectId,
+        name,
+      })
+    );
+  });
+
+  test("Creating a project with a name that already exist should fail", async () => {
+    await createProject("my project", "an-id");
+
+    return expect(createProject("my project", "an-id")).rejects.toThrow(
+      "Could not create the project"
+    );
+  });
 });
