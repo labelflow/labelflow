@@ -135,7 +135,7 @@ export const WelcomeModal = ({
             justifyContent="center"
             width="full"
             spacing="4"
-            mb="8"
+            mb="10"
           >
             <Button
               as="a"
