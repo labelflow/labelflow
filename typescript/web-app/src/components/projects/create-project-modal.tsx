@@ -1,7 +1,7 @@
 import { useApolloClient, useQuery } from "@apollo/client";
 import gql from "graphql-tag";
-import { useEffect, useState } from "react";
-import { debounce } from "lodash/fp";
+import { useEffect, useState, useCallback } from "react";
+import debounce from "lodash/fp/debounce";
 
 import {
   Modal,
@@ -16,7 +16,6 @@ import {
   ModalBody,
   Input,
 } from "@chakra-ui/react";
-import { useCallback } from "react";
 
 const debounceTime = 200;
 
@@ -48,11 +47,18 @@ export const CreateProjectModal = ({
   const [projectName, setProjectName] = useState<String>("");
   const [errorMessage, setErrorMessage] = useState<String>("");
 
-  const closeModal = () => {
+  const closeModal = useCallback(() => {
     onClose();
     setErrorMessage("");
     setProjectName("");
-  };
+  }, []);
+
+  const handleChangeProjectName = useCallback(
+    debounce(debounceTime, (e: any) => {
+      setProjectName(e.target.value.trim());
+    }),
+    []
+  );
 
   const createProject = async () => {
     if (projectName === "") return;
@@ -84,13 +90,6 @@ export const CreateProjectModal = ({
   }, [existingProject]);
 
   const isInvalid = () => errorMessage !== "";
-
-  const handleChangeProjectName = useCallback(
-    debounce(debounceTime, (e: any) => {
-      setProjectName(e.target.value.trim());
-    }),
-    []
-  );
 
   return (
     <Modal isOpen={isOpen} size="xl" onClose={closeModal}>
