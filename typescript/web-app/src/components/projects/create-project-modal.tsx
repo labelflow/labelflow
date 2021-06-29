@@ -16,7 +16,6 @@ import {
   Input,
   FormControl,
   FormErrorMessage,
-  FormHelperText,
 } from "@chakra-ui/react";
 
 const debounceTime = 200;
@@ -112,7 +111,11 @@ export const CreateProjectModal = ({
         </ModalHeader>
 
         <ModalBody pt="0" pb="6" pr="6" pl="6">
-          <FormControl isInvalid={isInvalid()} isRequired>
+          <FormControl
+            paddingBottom={isInvalid() ? "0" : "7"}
+            isInvalid={isInvalid()}
+            isRequired
+          >
             <Input
               placeholder="Project name"
               size="md"
