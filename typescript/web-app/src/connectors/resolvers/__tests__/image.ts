@@ -186,6 +186,27 @@ describe("Image resolver test suite", () => {
     expect(mutationResult.data.createImage.id).toEqual(imageId);
   });
 
+  test("Create image with a createdAt", async () => {
+    const mutationResult = await client.mutate({
+      mutation: gql`
+        mutation createImage($file: Upload!) {
+          createImage(
+            data: { file: $file, createdAt: "some custom date string" }
+          ) {
+            createdAt
+          }
+        }
+      `,
+      variables: {
+        file: new Blob(),
+      },
+    });
+
+    expect(mutationResult.data.createImage.createdAt).toEqual(
+      "some custom date string"
+    );
+  });
+
   test("Query several images", async () => {
     const imageId2 = await createImage("image 2");
     incrementMockedDate(1);

@@ -28,7 +28,13 @@ describe("Navigation", () => {
     });
     cy.contains("Start Import").click();
     cy.get(`[aria-label="Close"]`).click();
-    cy.get("main").contains("photo").click();
+    cy.get("main")
+      .contains(
+        imageSampleCollection[0]
+          .split("?")[0]
+          .split("https://images.unsplash.com/")[1]
+      )
+      .click();
 
     // We need to pick the drawing tool in order to see the class selection picker
     cy.log("pick the drawing tool in order to see the class selection picker");
@@ -288,6 +294,11 @@ describe("Navigation", () => {
     cy.get('[aria-current="page"]').should(($a) => {
       expect($a).to.contain("7");
     });
+    cy.contains(
+      imageSampleCollection[6]
+        .split("?")[0]
+        .split("https://images.unsplash.com/")[1]
+    ).should("exist");
 
     cy.get('[aria-label="Export"]').click();
     cy.contains("Your project contains 2 labels").should("be.visible");
