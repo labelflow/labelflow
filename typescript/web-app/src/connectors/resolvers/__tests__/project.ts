@@ -45,6 +45,20 @@ describe("Project resolver test suite", () => {
     expect(typeof mutationResult.data.createProject.id).toEqual("string");
   });
 
+  test("Creating a project should fail the project name already exists", async () => {
+    await createProject("my project", "an-id");
+
+    return expect(createProject("my project", "an-id")).rejects.toEqual(
+      new Error("Could not create the project")
+    );
+  });
+
+  test("Create project should fail if the project name is empty", () => {
+    return expect(createProject("", "an-id")).rejects.toEqual(
+      new Error("Could not create the project with an empty name")
+    );
+  });
+
   test("Create project with an id should return the same id", async () => {
     const name = "My new project";
     const projectId = "some id";
@@ -110,7 +124,7 @@ describe("Project resolver test suite", () => {
           id: "a id that doesn't exist",
         },
       })
-    ).rejects.toThrow("No project with such id");
+    ).rejects.toEqual(new Error("No project with such id"));
   });
 
   test("Read multiple projects", async () => {
@@ -242,7 +256,7 @@ describe("Project resolver test suite", () => {
           id: projectId,
         },
       })
-    ).rejects.toThrow("No project with such id");
+    ).rejects.toEqual(new Error("No project with such id"));
   });
 
   test("should throw an error if the project to delete does not exist", () => {
@@ -260,7 +274,7 @@ describe("Project resolver test suite", () => {
           id: "not existing project id",
         },
       })
-    ).rejects.toThrow("No project with such id");
+    ).rejects.toEqual(new Error("No project with such id"));
   });
 
   test("Should update a project with a new name", async () => {
@@ -328,7 +342,7 @@ describe("Project resolver test suite", () => {
           data: { name: "My new project new name" },
         },
       })
-    ).rejects.toThrow("No project with such id");
+    ).rejects.toEqual(new Error("No project with such id"));
   });
 
   test("Find project by name", async () => {
@@ -355,14 +369,6 @@ describe("Project resolver test suite", () => {
         id: projectId,
         name,
       })
-    );
-  });
-
-  test("Creating a project with a name that already exist should fail", async () => {
-    await createProject("my project", "an-id");
-
-    return expect(createProject("my project", "an-id")).rejects.toThrow(
-      "Could not create the project"
     );
   });
 });

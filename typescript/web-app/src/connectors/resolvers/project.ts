@@ -1,3 +1,4 @@
+import { trim } from "lodash/fp";
 import { v4 as uuidv4 } from "uuid";
 import type {
   MutationCreateProjectArgs,
@@ -63,9 +64,14 @@ const createProject = async (
   _: any,
   args: MutationCreateProjectArgs
 ): Promise<DbProject> => {
-  const { id, name } = args.data;
   const date = new Date().toISOString();
-  const projectId = id ?? uuidv4();
+
+  const projectId = args?.data?.id ?? uuidv4();
+  const name = trim(args?.data?.name);
+
+  if (name === "") {
+    throw new Error("Could not create the project with an empty name");
+  }
 
   try {
     await db.project.add({
