@@ -1,4 +1,4 @@
-import { useMemo, useRef } from "react";
+import { useMemo, useRef, forwardRef, MutableRefObject } from "react";
 import { useRouter } from "next/router";
 import { Draw as OlDraw } from "ol/interaction";
 import { createBox, DrawEvent } from "ol/interaction/Draw";
@@ -31,110 +31,118 @@ const labelClassQuery = gql`
 
 const geometryFunction = createBox();
 
-export const DrawBoundingBoxInteraction = () => {
-  const drawRef = useRef<OlDraw>(null);
-  const client = useApolloClient();
-  const imageId = useRouter().query?.id;
+export const DrawBoundingBoxInteraction = forwardRef<MutableRefObject<OlDraw>>(
+  (_, ref) => {
+    const drawRef = useRef<OlDraw | null>(null);
+    const client = useApolloClient();
+    const imageId = useRouter().query?.id;
 
-  const selectedTool = useLabellingStore((state) => state.selectedTool);
+    const selectedTool = useLabellingStore((state) => state.selectedTool);
 
-  const setBoxDrawingToolState = useLabellingStore(
-    (state) => state.setBoxDrawingToolState
-  );
-  const setSelectedLabelId = useLabellingStore(
-    (state) => state.setSelectedLabelId
-  );
-  const selectedLabelClassId = useLabellingStore(
-    (state) => state.selectedLabelClassId
-  );
-  const { data: dataLabelClass } = useQuery(labelClassQuery, {
-    variables: { id: selectedLabelClassId },
-    skip: selectedLabelClassId == null,
-  });
-  const { perform } = useUndoStore();
-
-  const selectedLabelClass = dataLabelClass?.labelClass;
-
-  useHotkeys(
-    keymap.cancelAction.key,
-    () => drawRef.current?.abortDrawing(),
-    {},
-    [drawRef]
-  );
-
-  const toast = useToast();
-
-  const style = useMemo(() => {
-    const color = selectedLabelClass?.color ?? noneClassColor;
-
-    return new Style({
-      fill: new Fill({
-        color: `${color}10`,
-      }),
-      stroke: new Stroke({
-        color,
-        width: 2,
-      }),
+    const setBoxDrawingToolState = useLabellingStore(
+      (state) => state.setBoxDrawingToolState
+    );
+    const setSelectedLabelId = useLabellingStore(
+      (state) => state.setSelectedLabelId
+    );
+    const selectedLabelClassId = useLabellingStore(
+      (state) => state.selectedLabelClassId
+    );
+    const { data: dataLabelClass } = useQuery(labelClassQuery, {
+      variables: { id: selectedLabelClassId },
+      skip: selectedLabelClassId == null,
     });
-  }, [selectedLabelClass?.color]);
+    const { perform } = useUndoStore();
 
-  if (selectedTool !== Tools.BOX) {
-    return null;
-  }
-  if (typeof imageId !== "string") {
-    return null;
-  }
+    const selectedLabelClass = dataLabelClass?.labelClass;
 
-  return (
-    <olInteractionDraw
-      ref={drawRef}
-      args={{
-        type: GeometryType.CIRCLE,
-        geometryFunction,
-        style, // Needed here to trigger the rerender of the component when the selected class changes
-      }}
-      onDrawabort={() => {
-        setBoxDrawingToolState(BoxDrawingToolState.IDLE);
-        return true;
-      }}
-      onDrawstart={() => {
-        setBoxDrawingToolState(BoxDrawingToolState.DRAWING);
-        return true;
-      }}
-      onDrawend={async (drawEvent: DrawEvent) => {
-        const [x, y, destX, destY] = drawEvent.feature
-          .getGeometry()
-          .getExtent();
-        const createLabelPromise = perform(
-          createLabelEffect(
-            {
-              imageId,
-              x,
-              y,
-              width: destX - x,
-              height: destY - y,
-              selectedLabelClassId,
-            },
-            {
-              setSelectedLabelId,
-              client,
-            }
-          )
-        );
-        setBoxDrawingToolState(BoxDrawingToolState.IDLE);
-        try {
-          await createLabelPromise;
-        } catch (error) {
-          toast({
-            title: "Error creating bounding box",
-            description: error?.message,
-            isClosable: true,
-            status: "error",
-            position: "bottom-right",
-            duration: 10000,
-          });
-        }
-      }}
-    />
-  );
-};
+    useHotkeys(
+      keymap.cancelAction.key,
+      () => drawRef.current?.abortDrawing(),
+      {},
+      [drawRef]
+    );
+
+    const toast = useToast();
+
+    const style = useMemo(() => {
+      const color = selectedLabelClass?.color ?? noneClassColor;
+
+      return new Style({
+        fill: new Fill({
+          color: `${color}10`,
+        }),
+        stroke: new Stroke({
+          color,
+          width: 2,
+        }),
+      });
+    }, [selectedLabelClass?.color]);
+
+    if (selectedTool !== Tools.BOX) {
+      return null;
+    }
+    if (typeof imageId !== "string") {
+      return null;
+    }
+
+    return (
+      <olInteractionDraw
+        ref={(value: OlDraw) => {
+          if (!value) return;
+          drawRef.current = value;
+          if (!ref) return;
+          // eslint-disable-next-line no-param-reassign
+          ref.current = value;
+        }}
+        args={{
+          type: GeometryType.CIRCLE,
+          geometryFunction,
+          style, // Needed here to trigger the rerender of the component when the selected class changes
+        }}
+        onDrawabort={() => {
+          setBoxDrawingToolState(BoxDrawingToolState.IDLE);
+          return true;
+        }}
+        onDrawstart={() => {
+          setBoxDrawingToolState(BoxDrawingToolState.DRAWING);
+          return true;
+        }}
+        onDrawend={async (drawEvent: DrawEvent) => {
+          const [x, y, destX, destY] = drawEvent.feature
+            .getGeometry()
+            .getExtent();
+          const createLabelPromise = perform(
+            createLabelEffect(
+              {
+                imageId,
+                x,
+                y,
+                width: destX - x,
+                height: destY - y,
+                selectedLabelClassId,
+              },
+              {
+                setSelectedLabelId,
+                client,
+              }
+            )
+          );
+          setBoxDrawingToolState(BoxDrawingToolState.IDLE);
+          try {
+            await createLabelPromise;
+          } catch (error) {
+            toast({
+              title: "Error creating bounding box",
+              description: error?.message,
+              isClosable: true,
+              status: "error",
+              position: "bottom-right",
+              duration: 10000,
+            });
+          }
+        }}
+      />
+    );
+  }
+);
