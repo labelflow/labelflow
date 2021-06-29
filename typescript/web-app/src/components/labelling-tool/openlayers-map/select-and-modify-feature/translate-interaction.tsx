@@ -115,6 +115,14 @@ const sleep = (time: number) =>
   new Promise((resolve) => setTimeout(resolve, time));
 const timeout = 1000; // ms
 
+const getSelectedFeature = (
+  layerRef: MutableRefObject<OlSourceVector<Geometry> | null>,
+  selectedLabelId: string
+): Feature<Geometry> | undefined =>
+  layerRef.current
+    ?.getFeatures()
+    ?.filter((feature) => feature.getProperties().id === selectedLabelId)?.[0];
+
 export const TranslateFeature = ({
   //   selectedFeatures,
   sourceVectorLabelsRef,
@@ -134,29 +142,33 @@ export const TranslateFeature = ({
       if (selectedLabelId == null) {
         setSelectedFeatures(null);
       } else if (sourceVectorLabelsRef.current != null) {
-        if (sourceVectorLabelsRef.current.getFeatures()?.length === 0) {
+        if (
+          getSelectedFeature(sourceVectorLabelsRef, selectedLabelId) == null
+        ) {
+          // TODO: find a way to do this without a while, maybe keeping track of the labels added to open layers?
+          // We need this to wait for the labels to be added to open layers on the first render or when they have just been created
           const startDate = Date.now();
-          // We need this to wait for the labels to be added to open layers on the first render
           while (
-            sourceVectorLabelsRef.current.getFeatures()?.length === 0 &&
+            getSelectedFeature(sourceVectorLabelsRef, selectedLabelId) ==
+              null &&
             startDate - Date.now() < timeout
           ) {
             // eslint-disable-next-line no-await-in-loop
             await sleep(100);
           }
         }
-        if (sourceVectorLabelsRef.current.getFeatures()?.length > 0) {
-          const selectedFeature = sourceVectorLabelsRef.current
-            .getFeatures()
-            .filter(
-              (feature) => feature.getProperties().id === selectedLabelId
-            )?.[0];
+        const selectedFeature = getSelectedFeature(
+          sourceVectorLabelsRef,
+          selectedLabelId
+        );
+        if (selectedFeature != null) {
           setSelectedFeatures(new Collection([selectedFeature]));
         }
       }
     };
     getSelectedLabelInOpenLayers();
   }, [sourceVectorLabelsRef.current, selectedLabelId]);
+
   return selectedFeatures != null ? (
     <olInteractionTranslate
       args={{ features: selectedFeatures }}
