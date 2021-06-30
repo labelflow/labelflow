@@ -210,7 +210,7 @@ jobs:
           NEXT_PUBLIC_GITHUB_ACTION_PATH: ${{ github.action_path }}
           NEXT_PUBLIC_GITHUB_ACTOR: ${{ github.actor }}
           NEXT_PUBLIC_GITHUB_BASE_REF: ${{ github.base_ref }}
-          NEXT_PUBLIC_GITHUB_EVENT: ${{ github.event }}
+          NEXT_PUBLIC_GITHUB_EVENT: ${{ toJSON(github.event) }}
           NEXT_PUBLIC_GITHUB_EVENT_NAME: ${{ github.event_name }}
           NEXT_PUBLIC_GITHUB_EVENT_PATH: ${{ github.event_path }}
           NEXT_PUBLIC_GITHUB_HEAD_REF: ${{ github.head_ref }}
@@ -321,7 +321,7 @@ jobs:
           NEXT_PUBLIC_GITHUB_ACTION_PATH: ${{ github.action_path }}
           NEXT_PUBLIC_GITHUB_ACTOR: ${{ github.actor }}
           NEXT_PUBLIC_GITHUB_BASE_REF: ${{ github.base_ref }}
-          NEXT_PUBLIC_GITHUB_EVENT: ${{ github.event }}
+          NEXT_PUBLIC_GITHUB_EVENT: ${{ toJSON(github.event) }}
           NEXT_PUBLIC_GITHUB_EVENT_NAME: ${{ github.event_name }}
           NEXT_PUBLIC_GITHUB_EVENT_PATH: ${{ github.event_path }}
           NEXT_PUBLIC_GITHUB_HEAD_REF: ${{ github.head_ref }}
