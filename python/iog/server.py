@@ -25,8 +25,14 @@ async def model_inference(request):
     image = np.asarray(bytearray(binary), dtype="uint8")
     image = cv2.imdecode(image, cv2.IMREAD_COLOR)
 
+
     cv2.imwrite("test.jpg", image)
-    roi = []
+    x = inputs["x"]
+    y = inputs["y"]
+    width = inputs["width"]
+    height = inputs["height"]
+    roi = [x, image.shape[0] - y - height, width, height]
+    print(roi)
     process(image, roi)
     return JSONResponse({"hello": "world"})
 

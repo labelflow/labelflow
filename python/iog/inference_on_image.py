@@ -172,6 +172,9 @@ def process(image, roi):
     contours, hierarchy = cv2.findContours(
         opening, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE
     )
+    cv2.drawContours(im_rgb, contours, -1, (0, 255, 0), 3)
+    # cv2.rectangle(im_rgb, (roi[0], roi[1]), (roi[0]+ roi[2], roi[1]+roi[3]))
+    cv2.imwrite("result.jpg", im_rgb)
     print(contours)
     # Generate results with refinement
     # trns_refinement = transforms.Compose(
