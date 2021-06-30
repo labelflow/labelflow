@@ -233,7 +233,7 @@ export type ProjectUpdateInput = {
 
 export type ProjectWhereUniqueInput = {
   id?: Maybe<Scalars['ID']>;
-  name?: Maybe<Scalars['ID']>;
+  name?: Maybe<Scalars['String']>;
 };
 
 export type Query = {

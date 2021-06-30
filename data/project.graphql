@@ -5,7 +5,7 @@ input ProjectCreateInput {
 
 input ProjectWhereUniqueInput {
   id: ID
-  name: ID
+  name: String
 }
 
 input ProjectUpdateInput {
