@@ -1,3 +1,3 @@
-import GraphiQL from "./graphiql";
+import { GraphiQL } from "./graphiql";
 
 export default GraphiQL;

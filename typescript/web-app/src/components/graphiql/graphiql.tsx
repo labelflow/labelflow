@@ -18,5 +18,3 @@ export const GraphiQL = () => {
     />
   );
 };
-
-export default GraphiQL;
