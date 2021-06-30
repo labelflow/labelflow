@@ -227,11 +227,10 @@ export const OpenlayersMap = () => {
               </olLayerImage>
 
               <Labels sourceVectorLabelsRef={sourceVectorLabelsRef} />
-              <DrawBoundingBoxInteraction ref={drawInteractionRef} />
+              <DrawBoundingBoxInteraction />
               <SelectInteraction
                 editClassOverlayRef={editClassOverlayRef}
                 sourceVectorLabelsRef={sourceVectorLabelsRef}
-                drawInteractionRef={drawInteractionRef}
                 setIsContextMenuOpen={setIsContextMenuOpen}
               />
             </ThemeProvider>

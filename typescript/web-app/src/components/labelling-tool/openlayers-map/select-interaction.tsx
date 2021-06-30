@@ -4,7 +4,6 @@ import { Coordinate } from "ol/coordinate";
 import { MapBrowserEvent } from "ol";
 import { Vector as OlSourceVector } from "ol/source";
 import { Geometry } from "ol/geom";
-import OlDrawInteraction from "ol/interaction/Draw";
 import { createEmpty, extend, getCenter } from "ol/extent";
 
 import OverlayPositioning from "ol/OverlayPositioning";
@@ -16,12 +15,10 @@ export const SelectInteraction = ({
   setIsContextMenuOpen = () => {},
   editClassOverlayRef,
   sourceVectorLabelsRef,
-  drawInteractionRef,
 }: {
   setIsContextMenuOpen?: (state: boolean) => void;
   editClassOverlayRef?: MutableRefObject<HTMLDivElement | null>;
   sourceVectorLabelsRef: MutableRefObject<OlSourceVector<Geometry> | null>;
-  drawInteractionRef: MutableRefObject<OlDrawInteraction | null>;
 }) => {
   const [editMenuLocation, setEditMenuLocation] =
     useState<Coordinate | undefined>(undefined);
@@ -106,11 +103,7 @@ export const SelectInteraction = ({
             const eventType = e?.type ?? null;
             switch (eventType) {
               case "contextmenu": {
-                // TODO: Find a way to avoid race condition
                 contextMenuHandler(e);
-                setTimeout(() => {
-                  drawInteractionRef.current?.abortDrawing();
-                }, 100);
                 return true;
               }
               default:
