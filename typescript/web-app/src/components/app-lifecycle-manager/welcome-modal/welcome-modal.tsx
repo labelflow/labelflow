@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 
 import {
+  chakra,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -17,7 +18,11 @@ import {
 } from "@chakra-ui/react";
 import { useQueryParam, StringParam } from "use-query-params";
 
+import { RiGithubFill } from "react-icons/ri";
+
 import { Logo } from "../../logo";
+
+const GithubIcon = chakra(RiGithubFill);
 
 export const WelcomeModal = ({
   isServiceWorkerActive,
@@ -119,16 +124,22 @@ export const WelcomeModal = ({
               fontWeight="medium"
               textAlign="justify"
             >
-              Create and manage your image data, workflows and teams in a single
-              place. Stay in control of your data, focus on building the next
-              big thing.
+              Stay in control of your data, label your images without them
+              leaving your computer. Focus on building the next big thing.
             </Text>
           </VStack>
         </ModalBody>
         <ModalFooter>
-          <HStack direction={{ base: "column", md: "row" }} spacing="4" mt="8">
+          <HStack
+            direction={{ base: "column", md: "row" }}
+            justifyContent="center"
+            width="full"
+            spacing="4"
+            mb="10"
+          >
             <Button
               as="a"
+              leftIcon={<GithubIcon fontSize="xl" />}
               href="https://github.com/Labelflow/labelflow"
               target="blank"
               size="lg"
