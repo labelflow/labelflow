@@ -2,6 +2,10 @@ from starlette.applications import Starlette
 from starlette.responses import JSONResponse
 from starlette.routing import Route
 import uvicorn
+import base64
+import numpy as np
+import cv2
+
 
 
 # class ModelInference(HTTPEndpoint):
@@ -10,11 +14,22 @@ import uvicorn
 
 
 async def model_inference(request):
-    print(request)
+    inputs = await request.json()
+
+    # Retrieve image as DataUrl
+    dataurl = inputs["imageUrl"]
+
+    # Decode image
+    image_b64 = dataurl.split(",")[1]
+    binary = base64.b64decode(image_b64)
+    image = np.asarray(bytearray(binary), dtype="uint8")
+    image = cv2.imdecode(image, cv2.IMREAD_COLOR)
+
+    cv2.imwrite("test.jpg", image)
     return JSONResponse({"hello": "world"})
 
 
-routes = [Route("/", model_inference)]
+routes = [Route("/", model_inference, methods=['POST'])]
 
 app = Starlette(debug=True, routes=routes)
 
@@ -24,3 +39,4 @@ app = Starlette(debug=True, routes=routes)
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", port=5000, log_level="info")
+
