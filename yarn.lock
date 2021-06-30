@@ -4302,7 +4302,7 @@ __metadata:
     next: 10.x
     next-cookie: ^2.6.2
     next-pwa: "patch:next-pwa@5.2.21#./next-pwa.patch"
-    next-seo: 4.24.0
+    next-seo: ^4.26.0
     node-polyfill-webpack-plugin: ^1.1.2
     ol: 6.5.0
     postcss: ^8.3.5
@@ -20057,6 +20057,17 @@ next-pwa@5.2.21:
     react: ^16.0.0 || ^17.0.0
     react-dom: ^16.0.0 || ^17.0.0
   checksum: 5e4edc43703df3898667a757bcbdfd3fa6de5d5cb86b19fb8190cd1d1c1ca776adf33d09827a8511005f1a245818f630f6864ab25d1d77b7469b70d902097e61
+  languageName: node
+  linkType: hard
+
+"next-seo@npm:^4.26.0":
+  version: 4.26.0
+  resolution: "next-seo@npm:4.26.0"
+  peerDependencies:
+    next: ^8.1.1-canary.54 || >=9.0.0
+    react: ">=16.0.0"
+    react-dom: ">=16.0.0"
+  checksum: 5276a4a69ecc85c4ead7436d4df25b01380dfa23185f7e32c82f88b2d69191f4753eec0114bc9d7e2a97b1c724abc0501190c2d90213b8b79bc4884e550d41af
   languageName: node
   linkType: hard
 

@@ -33,7 +33,7 @@
     "next": "10.x",
     "next-cookie": "^2.6.2",
     "next-pwa": "patch:next-pwa@5.2.21#./next-pwa.patch",
-    "next-seo": "4.24.0",
+    "next-seo": "^4.26.0",
     "node-polyfill-webpack-plugin": "^1.1.2",
     "ol": "6.5.0",
     "postcss": "^8.3.5",
