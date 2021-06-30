@@ -6,6 +6,7 @@ import {
   ModalOverlay,
   ModalContent,
   ModalFooter,
+  Box,
   VStack,
   HStack,
   Button,
@@ -22,12 +23,16 @@ import { RiGithubFill } from "react-icons/ri";
 
 import { Logo } from "../../logo";
 
+import { ArtworkLaunching } from "./artwork-launching";
+
 const GithubIcon = chakra(RiGithubFill);
 
 export const WelcomeModal = ({
   isServiceWorkerActive,
+  initiallyHasUserClickedStart = false,
 }: {
   isServiceWorkerActive: boolean;
+  initiallyHasUserClickedStart?: boolean;
 }) => {
   // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
   // This param can have several values:
@@ -38,7 +43,9 @@ export const WelcomeModal = ({
     "modal-welcome",
     StringParam
   );
-  const [hasUserClickedStart, setHasUserClickedStart] = useState(false);
+  const [hasUserClickedStart, setHasUserClickedStart] = useState(
+    initiallyHasUserClickedStart
+  );
   const [isOpen, setIsOpen] = useState(
     (!isServiceWorkerActive && !(paramModalWelcome === "closed")) ||
       paramModalWelcome === "open"
@@ -102,41 +109,86 @@ export const WelcomeModal = ({
           </Center>
         </ModalHeader>
 
-        <ModalBody>
-          <VStack
-            justifyContent="space-evenly"
-            spacing="8"
-            h="full"
-            mt="0"
-            mb="8"
-          >
-            <Heading
-              as="h1"
-              size="2xl"
-              maxW="lg"
-              color={mode("gray.600", "gray.300")}
-              fontWeight="extrabold"
+        {hasUserClickedStart && !isServiceWorkerActive ? (
+          <ModalBody>
+            {/* <VStack
+              maxW="2xl"
+              mx="auto"
+              mt="0"
+              mb="8"
               textAlign="center"
+              spacing={4}
             >
-              The open standard{" "}
-              <Text color="brand.500" display="inline">
-                image labeling tool
+              <Heading as="h2" maxW="lg">
+                Please wait while the application finishes loading.
+              </Heading>
+              <Text mt="4" fontSize="lg" maxW="lg">
+                This application runs completely offline, This allows you to
+                have a lightning fast labelling tool even with no internet
+                connection, and guarantees we don&apos;t use your data.
               </Text>
-            </Heading>
-
-            <Text
-              color={mode("gray.600", "gray.400")}
-              mt="16"
-              maxW="lg"
-              fontSize="lg"
-              fontWeight="medium"
-              textAlign="justify"
+              <ArtworkLaunching width={200} height={200} />
+            </VStack> */}
+            <VStack
+              justifyContent="space-evenly"
+              spacing="8"
+              h="full"
+              mt="0"
+              mb="8"
             >
-              Stay in control of your data, label your images without them
-              leaving your computer. Focus on building the next big thing.
-            </Text>
-          </VStack>
-        </ModalBody>
+              <Text
+                color={mode("gray.600", "gray.400")}
+                maxW="lg"
+                fontSize="lg"
+                fontWeight="medium"
+                textAlign="justify"
+              >
+                Please wait while the application finishes loading. Labelflow
+                runs completely offline, this allows you to have a lightning
+                fast labelling tool even with no internet connection, and
+                guarantees we don&apos;t use your data.
+              </Text>
+              <ArtworkLaunching />
+            </VStack>
+          </ModalBody>
+        ) : (
+          <ModalBody>
+            <VStack
+              justifyContent="space-evenly"
+              spacing="8"
+              h="full"
+              mt="0"
+              mb="8"
+            >
+              <Heading
+                as="h1"
+                size="2xl"
+                maxW="lg"
+                color={mode("gray.600", "gray.300")}
+                fontWeight="extrabold"
+                textAlign="center"
+              >
+                The open standard{" "}
+                <Text color="brand.500" display="inline">
+                  image labeling tool
+                </Text>
+              </Heading>
+
+              <Text
+                color={mode("gray.600", "gray.400")}
+                mt="16"
+                maxW="lg"
+                fontSize="lg"
+                fontWeight="medium"
+                textAlign="justify"
+              >
+                Stay in control of your data, label your images without them
+                leaving your computer. Focus on building the next big thing.
+              </Text>
+            </VStack>
+          </ModalBody>
+        )}
+
         <ModalFooter>
           <HStack
             direction={{ base: "column", md: "row" }}

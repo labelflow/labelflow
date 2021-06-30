@@ -11,3 +11,9 @@ export default {
 export const Default = () => {
   return <WelcomeModal isServiceWorkerActive={false} />;
 };
+
+export const Clicked = () => {
+  return (
+    <WelcomeModal isServiceWorkerActive={false} initiallyHasUserClickedStart />
+  );
+};
