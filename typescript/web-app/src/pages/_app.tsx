@@ -25,7 +25,6 @@ const ErrorFallback = (props: FallbackProps) => {
     <ChakraProvider theme={theme} resetCSS>
       <QueryParamProvider>
         <ApolloProvider client={client}>
-          <Meta />
           <ErrorPage {...props} />
         </ApolloProvider>
       </QueryParamProvider>
