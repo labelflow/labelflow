@@ -4322,6 +4322,7 @@ __metadata:
     uuid: ^8.3.2
     valid-url: ^1.0.9
     webpack: 5.38.1
+    webpack-bundle-analyzer: ^4.4.2
     workbox-precaching: ^6.1.5
     workbox-window: 6.1.5
     zustand: ^3.5.1
@@ -26665,6 +26666,25 @@ typescript@4.2.4:
   bin:
     webpack-bundle-analyzer: lib/bin/analyzer.js
   checksum: b0f737db7102cfb59108d816caa6d6c5076c47eef275ec2055065df19d133a5e367e19242f8d62161fd6f622bff42c3b3cc544d8edf8099f2a5b170f8d2eb598
+  languageName: node
+  linkType: hard
+
+"webpack-bundle-analyzer@npm:^4.4.2":
+  version: 4.4.2
+  resolution: "webpack-bundle-analyzer@npm:4.4.2"
+  dependencies:
+    acorn: ^8.0.4
+    acorn-walk: ^8.0.0
+    chalk: ^4.1.0
+    commander: ^6.2.0
+    gzip-size: ^6.0.0
+    lodash: ^4.17.20
+    opener: ^1.5.2
+    sirv: ^1.0.7
+    ws: ^7.3.1
+  bin:
+    webpack-bundle-analyzer: lib/bin/analyzer.js
+  checksum: 3715568f56db36c0c8f8bf420197c3291bb3c9a9de1c0f3b1d91cd81036b5e09a6695023c76b4c918b75ac9f32be54358f6107cadd3666e758f3c4d6ccda34cd
   languageName: node
   linkType: hard
 
