@@ -179,6 +179,11 @@ jobs:
           # Bundlewatch
           # See https://bundlewatch.io/#/getting-started/using-bundlewatch?id=setup-ci-auth-variables-needed-by-bundlewatch
           BUNDLEWATCH_GITHUB_TOKEN: ${{ secrets.BUNDLEWATCH_GITHUB_TOKEN }}
+          CI_REPO_OWNER: labelflow
+          CI_REPO_NAME: labelflow
+          CI_COMMIT_SHA: ${{ github.sha }}
+          CI_BRANCH: ${{ github.ref	}}
+          CI_BRANCH_BASE: refs/heads/main
 
   deploy-webapp-pr:
     name: Deploy webapp PR branch
