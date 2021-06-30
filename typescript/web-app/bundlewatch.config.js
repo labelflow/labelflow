@@ -30,7 +30,7 @@ const bundlewatchConfig = {
     }
   ],
   "ci": {
-    "trackBranches": ["main"]
+    "trackBranches": ["main", "refs/heads/main"]
   }
 }
 
