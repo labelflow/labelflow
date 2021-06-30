@@ -22,9 +22,10 @@ const Error404Page = () => {
               <Heading as="h2">Page not found</Heading>
 
               <Text mt="4" fontSize="lg">
-                There is nothing to see here. <br /> If you followed a link to
-                arrive here, you might not have access to the content at this
-                page, or the link might be broken.
+                There is nothing to see here.
+                <br />
+                If you followed a link to get here, you might not have access to
+                the content at this page, or the link might be broken.
               </Text>
 
               <HStack
