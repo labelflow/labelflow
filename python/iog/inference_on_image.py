@@ -28,6 +28,16 @@ from PIL import Image
 import cv2
 import argparse
 
+
+def transform_contour_to_geojson_polygon(contour: list) -> list:
+    polygon = list(map(lambda item: item[0].tolist(), contour))
+    return [*polygon, polygon[0]]
+
+
+def transform_contours_to_geojson_polygons(contours: list) -> list:
+    return list(map(transform_contour_to_geojson_polygon, contours))
+
+
 def process(image, roi):
 
     # Set gpu_id to -1 to run in CPU mode, otherwise set the id of the corresponding gpu
@@ -59,7 +69,6 @@ def process(image, roi):
 
     # Generate result of the validation images
     net.eval()
-
 
     im_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
@@ -143,7 +152,7 @@ def process(image, roi):
     opening = cv2.morphologyEx(thresh, cv2.MORPH_CLOSE, kernel, iterations=1)
     contours, hierarchy = cv2.findContours(
         opening, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE
-    ) 
+    )
     pred = np.transpose(outputs.data.numpy()[0, :, :, :], (1, 2, 0))
     pred = 1 / (1 + np.exp(-pred))
     pred = np.squeeze(pred)
@@ -175,7 +184,9 @@ def process(image, roi):
     cv2.drawContours(im_rgb, contours, -1, (0, 255, 0), 3)
     # cv2.rectangle(im_rgb, (roi[0], roi[1]), (roi[0]+ roi[2], roi[1]+roi[3]))
     cv2.imwrite("result.jpg", im_rgb)
-    print(contours)
+    # print(transform_contours_to_geojson_polygons(contours))
+    return transform_contours_to_geojson_polygons(contours)
+
     # Generate results with refinement
     # trns_refinement = transforms.Compose(
     #     [
@@ -249,17 +260,3 @@ def process(image, roi):
     #     )
     # cv2.waitKey(0)
     # cv2.destroyAllWindows()
-
-
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Run class agnostic segmentation")
-    parser.add_argument(
-        "--image_name",
-        type=str,
-        default="samples/IMG-20201203-WA0023.jpg",
-        help="path to target image",
-    )
-
-    args = parser.parse_args()
-
-    process(args.image_name)

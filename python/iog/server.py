@@ -25,7 +25,6 @@ async def model_inference(request):
     image = np.asarray(bytearray(binary), dtype="uint8")
     image = cv2.imdecode(image, cv2.IMREAD_COLOR)
 
-
     cv2.imwrite("test.jpg", image)
     x = inputs["x"]
     y = inputs["y"]
@@ -33,11 +32,11 @@ async def model_inference(request):
     height = inputs["height"]
     roi = [x, image.shape[0] - y - height, width, height]
     print(roi)
-    process(image, roi)
-    return JSONResponse({"hello": "world"})
+    # process(image, roi)
+    return JSONResponse({"polygons": process(image, roi)})
 
 
-routes = [Route("/", model_inference, methods=['POST'])]
+routes = [Route("/", model_inference, methods=["POST"])]
 
 app = Starlette(debug=True, routes=routes)
 
@@ -47,4 +46,3 @@ app = Starlette(debug=True, routes=routes)
 
 if __name__ == "__main__":
     uvicorn.run("server:app", host="0.0.0.0", port=5000, log_level="info")
-
