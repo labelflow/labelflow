@@ -313,4 +313,33 @@ describe("LabelClass resolver test suite", () => {
       queryResult.data.labelClass.labels.map((l: { x: number }) => l.x)
     ).toEqual([2, 1]);
   });
+
+  test("It returns the correct count of labelClasses", async () => {
+    await Promise.all([
+      createLabelClass({
+        name: "some labelClass",
+        color: "#ff0000",
+      }),
+      createLabelClass({
+        name: "another labelClass",
+        color: "#ff0000",
+      }),
+      createLabelClass({
+        name: "last labelClass",
+        color: "#ff0000",
+      }),
+    ]);
+
+    const queryResult = await client.query({
+      query: gql`
+        query getLabelClassesNumber {
+          labelClassesAggregates {
+            totalCount
+          }
+        }
+      `,
+    });
+
+    expect(queryResult.data.labelClassesAggregates.totalCount).toEqual(3);
+  });
 });
