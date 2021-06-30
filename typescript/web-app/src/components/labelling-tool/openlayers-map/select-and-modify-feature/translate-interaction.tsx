@@ -8,6 +8,7 @@ import { MutableRefObject, useEffect, useState } from "react";
 import { Vector as OlSourceVector } from "ol/source";
 import { useLabellingStore } from "../../../../connectors/labelling-state";
 import { Effect, useUndoStore } from "../../../../connectors/undo-store";
+import { useCallback } from "react";
 
 const updateLabelMutation = gql`
   mutation updateLabel(
@@ -111,67 +112,51 @@ const updateLabelEffect = (
   },
 });
 
-const sleep = (time: number) =>
-  new Promise((resolve) => setTimeout(resolve, time));
-const timeout = 1000; // ms
-
-const getSelectedFeature = (
-  layerRef: MutableRefObject<OlSourceVector<Geometry> | null>,
-  selectedLabelId: string
-): Feature<Geometry> | undefined =>
-  layerRef.current
-    ?.getFeatures()
-    ?.filter((feature) => feature.getProperties().id === selectedLabelId)?.[0];
-
 export const TranslateFeature = ({
-  //   selectedFeatures,
   sourceVectorLabelsRef,
 }: {
-  //   selectedFeatures: Collection<Feature<Geometry>> | null;
   sourceVectorLabelsRef: MutableRefObject<OlSourceVector<Geometry> | null>;
 }) => {
   const [selectedFeatures, setSelectedFeatures] =
     useState<Collection<Feature<Geometry>> | null>(null);
+  const [selectedFeature, setSelectedFeature] =
+    useState<Feature<Geometry> | null>(null);
   const client = useApolloClient();
   const { perform } = useUndoStore();
   const toast = useToast();
   const selectedLabelId = useLabellingStore((state) => state.selectedLabelId);
 
-  useEffect(() => {
-    const getSelectedLabelInOpenLayers = async () => {
+  const getSelectedFeature = useCallback(() => {
+    if (selectedFeature?.getProperties()?.id !== selectedLabelId) {
       if (selectedLabelId == null) {
-        setSelectedFeatures(null);
-      } else if (sourceVectorLabelsRef.current != null) {
-        if (
-          getSelectedFeature(sourceVectorLabelsRef, selectedLabelId) == null
-        ) {
-          // TODO: find a way to do this without a while, maybe keeping track of the labels added to open layers?
-          // We need this to wait for the labels to be added to open layers on the first render or when they have just been created
-          const startDate = Date.now();
-          while (
-            getSelectedFeature(sourceVectorLabelsRef, selectedLabelId) ==
-              null &&
-            startDate - Date.now() < timeout
-          ) {
-            // eslint-disable-next-line no-await-in-loop
-            await sleep(100);
-          }
-        }
-        const selectedFeature = getSelectedFeature(
-          sourceVectorLabelsRef,
-          selectedLabelId
-        );
-        if (selectedFeature != null) {
-          setSelectedFeatures(new Collection([selectedFeature]));
+        setSelectedFeature(null);
+      } else {
+        const featureFromSource = sourceVectorLabelsRef.current
+          ?.getFeatures()
+          ?.filter(
+            (feature) => feature.getProperties().id === selectedLabelId
+          )?.[0];
+        console.log("Got feature", featureFromSource);
+        if (featureFromSource != null) {
+          setSelectedFeature(featureFromSource);
         }
       }
-    };
-    getSelectedLabelInOpenLayers();
-  }, [sourceVectorLabelsRef.current, selectedLabelId]);
+    }
+  }, [selectedLabelId, sourceVectorLabelsRef.current]);
 
-  return selectedFeatures != null ? (
+  useEffect(() => {
+    sourceVectorLabelsRef.current?.on("addfeature", getSelectedFeature);
+    return () =>
+      sourceVectorLabelsRef.current?.un("addfeature", getSelectedFeature);
+  }, [sourceVectorLabelsRef.current]);
+
+  useEffect(() => {
+    getSelectedFeature();
+  }, [selectedLabelId]);
+
+  return selectedFeature != null ? (
     <olInteractionTranslate
-      args={{ features: selectedFeatures }}
+      args={{ features: new Collection([selectedFeature]) }}
       onTranslateend={async (event: TranslateEvent) => {
         const feature = event.features.getArray()[0];
         const [x, y, destinationX, destinationY] = feature
