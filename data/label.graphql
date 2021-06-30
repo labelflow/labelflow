@@ -21,5 +21,5 @@ input LabelUpdateInput {
 }
 
 type LabelsAggregates {
-  totalCount:Int!
+  totalCount: Int!
 }

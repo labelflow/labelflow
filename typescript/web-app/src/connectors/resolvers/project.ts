@@ -1,8 +1,10 @@
+import { trim } from "lodash/fp";
 import { v4 as uuidv4 } from "uuid";
 import type {
   MutationCreateProjectArgs,
   MutationDeleteProjectArgs,
   MutationUpdateProjectArgs,
+  ProjectWhereUniqueInput,
   QueryProjectArgs,
   QueryProjectsArgs,
 } from "../../graphql-types.generated";
@@ -18,9 +20,33 @@ const getProjectById = async (id: string): Promise<DbProject> => {
   return project;
 };
 
+const getProjectByName = async (
+  name: string | undefined
+): Promise<DbProject> => {
+  const project = await db.project.get({ name });
+
+  if (project === undefined) {
+    throw new Error("No project with such name");
+  }
+
+  return project;
+};
+
+const getProjectFromWhereUniqueInput = async (
+  where: ProjectWhereUniqueInput
+): Promise<DbProject> => {
+  const { id, name } = where;
+
+  if (id != null) return getProjectById(id);
+
+  if (name != null) return getProjectByName(name);
+
+  throw new Error("Invalid where unique input for project entity");
+};
+
 // Queries
-const project = (_: any, args: QueryProjectArgs): Promise<DbProject> => {
-  return getProjectById(args.where.id);
+const project = async (_: any, args: QueryProjectArgs): Promise<DbProject> => {
+  return getProjectFromWhereUniqueInput(args.where);
 };
 
 const projects = async (
@@ -41,9 +67,14 @@ const createProject = async (
   _: any,
   args: MutationCreateProjectArgs
 ): Promise<DbProject> => {
-  const { id, name } = args.data;
   const date = new Date().toISOString();
-  const projectId = id ?? uuidv4();
+
+  const projectId = args?.data?.id ?? uuidv4();
+  const name = trim(args?.data?.name);
+
+  if (name === "") {
+    throw new Error("Could not create the project with an empty name");
+  }
 
   try {
     await db.project.add({
@@ -62,15 +93,17 @@ const updateProject = async (
   _: any,
   args: MutationUpdateProjectArgs
 ): Promise<DbProject> => {
-  await db.project.update(args.where.id, args.data);
+  const projectToUpdate = await getProjectFromWhereUniqueInput(args.where);
 
-  return getProjectById(args.where.id);
+  await db.project.update(projectToUpdate, args.data);
+
+  return getProjectById(projectToUpdate.id);
 };
 
 const deleteProject = async (_: any, args: MutationDeleteProjectArgs) => {
-  const projectToDelete = await getProjectById(args.where.id);
+  const projectToDelete = await getProjectFromWhereUniqueInput(args.where);
 
-  await db.project.delete(args.where.id);
+  await db.project.delete(projectToDelete.id);
 
   return projectToDelete;
 };
