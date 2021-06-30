@@ -202,9 +202,8 @@ jobs:
           no_override: false
       - name: Check out repository code
         uses: actions/checkout@v2
-      - name: Deploy webapp on Vercel
-        uses: amondnet/vercel-action@v20
-        id: vercel
+      - name: Set env vars
+        run: printenv > ./typescript/web-app/.env.local ; printenv
         env:
           NEXT_PUBLIC_GITHUB_ACTION: ${{ github.action }}
           NEXT_PUBLIC_GITHUB_ACTION_PATH: ${{ github.action_path }}
@@ -224,6 +223,9 @@ jobs:
           NEXT_PUBLIC_GITHUB_WORKFLOW: ${{ github.workflow }}
           NEXT_PUBLIC_GITHUB_WORKSPACE: ${{ github.workspace }}
           NEXT_PUBLIC_ENV_JSON: ${{ toJSON(env) }}
+      - name: Deploy webapp on Vercel
+        uses: amondnet/vercel-action@v20
+        id: vercel
         with:
           scope: ${{ secrets.VERCEL_ORG_ID}}
           vercel-token: ${{ secrets.VERCEL_TOKEN }} # Required
@@ -313,9 +315,8 @@ jobs:
           no_override: true
       - name: Check out repository code
         uses: actions/checkout@v2
-      - name: Deploy webapp on Vercel
-        uses: amondnet/vercel-action@v20
-        id: vercel
+      - name: Set env vars
+        run: printenv > ./typescript/web-app/.env.local ; printenv
         env:
           NEXT_PUBLIC_GITHUB_ACTION: ${{ github.action }}
           NEXT_PUBLIC_GITHUB_ACTION_PATH: ${{ github.action_path }}
@@ -335,6 +336,9 @@ jobs:
           NEXT_PUBLIC_GITHUB_WORKFLOW: ${{ github.workflow }}
           NEXT_PUBLIC_GITHUB_WORKSPACE: ${{ github.workspace }}
           NEXT_PUBLIC_ENV_JSON: ${{ toJSON(env) }}
+      - name: Deploy webapp on Vercel
+        uses: amondnet/vercel-action@v20
+        id: vercel
         with:
           scope: ${{ secrets.VERCEL_ORG_ID}}
           vercel-token: ${{ secrets.VERCEL_TOKEN }} # Required
