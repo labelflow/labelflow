@@ -4,7 +4,6 @@ import { useRouter } from "next/router";
 import { RouterContext } from "next/dist/next-server/lib/router-context";
 import { Extent, getCenter } from "ol/extent";
 import { Map as OlMap, View as OlView, MapBrowserEvent } from "ol";
-import OlDrawInteraction from "ol/interaction/Draw";
 import { Vector as OlSourceVector } from "ol/source";
 import { Size } from "ol/size";
 import memoize from "mem";
@@ -90,7 +89,6 @@ export const OpenlayersMap = () => {
   const mapRef = useRef<OlMap>(null);
   const viewRef = useRef<OlView | null>(null);
   const sourceVectorLabelsRef = useRef<OlSourceVector | null>(null);
-  const drawInteractionRef = useRef<OlDrawInteraction | null>(null);
   const router = useRouter();
   const imageId = router.query?.id;
   const isContextMenuOpen = useLabellingStore(
