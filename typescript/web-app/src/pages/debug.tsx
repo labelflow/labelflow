@@ -29,6 +29,28 @@ const DebugPage = () => {
             </Text>
 
             <Text mt="4" fontSize="lg">
+              <Link
+                href={`https://github.com/${NEXT_PUBLIC_VERCEL_GIT_REPO_OWNER}/${NEXT_PUBLIC_VERCEL_GIT_REPO_SLUG}/tree/${NEXT_PUBLIC_VERCEL_GIT_COMMIT_REF}`}
+              >
+                Link to branch
+              </Link>
+            </Text>
+
+            <Text mt="4" fontSize="lg">
+              <Link
+                href={`https://github.com/${NEXT_PUBLIC_VERCEL_GIT_REPO_OWNER}/${NEXT_PUBLIC_VERCEL_GIT_REPO_SLUG}/commit/${NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA}`}
+              >
+                Link to commit
+              </Link>
+            </Text>
+
+            <Text mt="4" fontSize="lg">
+              <Link href={`https://${NEXT_PUBLIC_VERCEL_URL}`}>
+                Permanent link to deployment
+              </Link>
+            </Text>
+
+            <Text mt="4" fontSize="lg">
               Environment:
             </Text>
 
