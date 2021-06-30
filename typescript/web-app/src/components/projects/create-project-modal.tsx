@@ -1,4 +1,4 @@
-import { useApolloClient, useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import gql from "graphql-tag";
 import { useEffect, useState, useCallback } from "react";
 import debounce from "lodash/fp/debounce";
@@ -16,6 +16,7 @@ import {
   Input,
   FormControl,
   FormErrorMessage,
+  FormLabel,
 } from "@chakra-ui/react";
 
 const debounceTime = 200;
@@ -43,10 +44,8 @@ export const CreateProjectModal = ({
   isOpen?: boolean;
   onClose?: () => void;
 }) => {
-  const client = useApolloClient();
-
-  const [projectName, setProjectName] = useState<String>("");
-  const [errorMessage, setErrorMessage] = useState<String>("");
+  const [projectName, setProjectName] = useState<string>("");
+  const [errorMessage, setErrorMessage] = useState<string>("");
 
   const closeModal = useCallback(() => {
     onClose();
@@ -61,25 +60,15 @@ export const CreateProjectModal = ({
     []
   );
 
-  const createProject = async () => {
-    if (projectName === "") return;
-
-    try {
-      await client.mutate({
-        mutation: createProjectMutation,
-        variables: {
-          name: projectName,
-        },
-      });
-
-      closeModal();
-    } catch (e) {
-      setErrorMessage(e.message);
-    }
-  };
-
   const { data: existingProject } = useQuery(getProjectByNameQuery, {
     variables: { name: projectName },
+    skip: projectName === "",
+  });
+
+  const [mutate] = useMutation(createProjectMutation, {
+    variables: {
+      name: projectName,
+    },
   });
 
   useEffect(() => {
@@ -90,10 +79,24 @@ export const CreateProjectModal = ({
     }
   }, [existingProject]);
 
-  const isInvalid = () => errorMessage !== "";
+  const createProject = async () => {
+    if (projectName === "") return;
+
+    try {
+      await mutate();
+
+      closeModal();
+    } catch (e) {
+      setErrorMessage(e.message);
+    }
+  };
+
+  const isInputValid = () => errorMessage === "";
+
+  const canCreateProject = () => projectName !== "" && isInputValid();
 
   return (
-    <Modal isOpen={isOpen} size="3xl" onClose={closeModal}>
+    <Modal isOpen={isOpen} size="xl" onClose={closeModal}>
       <ModalOverlay />
       <ModalContent
         as="form"
@@ -110,16 +113,16 @@ export const CreateProjectModal = ({
           </Heading>
         </ModalHeader>
 
-        <ModalBody pt="0" pb="6" pr="6" pl="6">
-          <FormControl
-            paddingBottom={isInvalid() ? "0" : "7"}
-            isInvalid={isInvalid()}
-            isRequired
-          >
+        <ModalBody pt="0" pb="6" pr="20" pl="20">
+          <FormControl isInvalid={!isInputValid()} isRequired>
+            <FormLabel>Name</FormLabel>
             <Input
+              defaultValue={projectName}
               placeholder="Project name"
               size="md"
               onChange={handleChangeProjectName}
+              aria-label="Project name input"
+              textAlign="center"
             />
             <FormErrorMessage>{errorMessage}</FormErrorMessage>
           </FormControl>
@@ -129,7 +132,8 @@ export const CreateProjectModal = ({
           <Button
             type="submit"
             colorScheme="brand"
-            disabled={projectName === "" || isInvalid()}
+            disabled={!canCreateProject()}
+            aria-label="Create project"
           >
             Start
           </Button>
