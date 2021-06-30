@@ -38,6 +38,8 @@ const DebugPage = () => {
                 Link to server bundle analysis
               </Link>
               <br />
+              <Link href="/graphiql">Link to Graphiql</Link>
+              <br />
               <Link
                 href={`https://github.com/${process.env.NEXT_PUBLIC_VERCEL_GIT_REPO_OWNER}/${process.env.NEXT_PUBLIC_VERCEL_GIT_REPO_SLUG}/tree/${process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_REF}`}
               >
@@ -56,10 +58,11 @@ const DebugPage = () => {
             </Text>
 
             <Heading as="h3" pt="8" pb="4" fontSize="lg">
-              Environment:
+              Client environment:
             </Heading>
 
             <Code as="p">
+              {/* We have to explicitly write `process.env.XXX`, we can't map over `process.env` */}
               NEXT_PUBLIC_VERCEL_ENV: {process.env.NEXT_PUBLIC_VERCEL_ENV}{" "}
               <br />
               NEXT_PUBLIC_VERCEL_URL: {process.env.NEXT_PUBLIC_VERCEL_URL}{" "}
