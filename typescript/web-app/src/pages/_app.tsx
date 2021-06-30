@@ -12,6 +12,7 @@ import { client } from "../connectors/apollo-client-service-worker";
 import { QueryParamProvider } from "../utils/query-params-provider";
 import { AppLifecycleManager } from "../components/app-lifecycle-manager";
 import { isInWindowScope } from "../utils/detect-scope";
+import { Meta } from "../components/meta";
 import ErrorPage from "./_error";
 
 interface InitialProps {
@@ -24,6 +25,7 @@ const ErrorFallback = (props: FallbackProps) => {
     <ChakraProvider theme={theme} resetCSS>
       <QueryParamProvider>
         <ApolloProvider client={client}>
+          <Meta />
           <ErrorPage {...props} />
         </ApolloProvider>
       </QueryParamProvider>
@@ -64,6 +66,7 @@ const App = (props: AppProps & InitialProps) => {
       <ChakraProvider theme={theme} resetCSS>
         <QueryParamProvider>
           <ApolloProvider client={client}>
+            <Meta />
             <AppLifecycleManager
               assumeServiceWorkerActive={assumeServiceWorkerActiveFromServer}
             />

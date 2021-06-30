@@ -15,7 +15,7 @@ import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import { RiArrowRightSLine } from "react-icons/ri";
 import NextLink from "next/link";
-
+import { Meta } from "../../components/meta";
 import { Layout } from "../../components/layout";
 import type { Image } from "../../graphql-types.generated";
 import { Gallery } from "../../components/gallery";
@@ -69,40 +69,43 @@ const ImagePage = () => {
   }, [error]);
 
   return (
-    <Layout
-      topBarLeftContent={
-        <Breadcrumb
-          spacing="8px"
-          separator={<RiArrowRightSLine color="gray.500" />}
-        >
-          <BreadcrumbItem>
-            <NextLink href="/images">
-              <BreadcrumbLink>Images</BreadcrumbLink>
-            </NextLink>
-          </BreadcrumbItem>
+    <>
+      <Meta title={`Labelflow | Image ${imageName ?? ""}`} />
+      <Layout
+        topBarLeftContent={
+          <Breadcrumb
+            spacing="8px"
+            separator={<RiArrowRightSLine color="gray.500" />}
+          >
+            <BreadcrumbItem>
+              <NextLink href="/images">
+                <BreadcrumbLink>Images</BreadcrumbLink>
+              </NextLink>
+            </BreadcrumbItem>
 
-          <BreadcrumbItem isCurrentPage>
-            <Text
-              maxWidth="20rem"
-              textOverflow="ellipsis"
-              whiteSpace="nowrap"
-              overflow="hidden"
-            >
-              {imageName}
-            </Text>
-          </BreadcrumbItem>
-        </Breadcrumb>
-      }
-    >
-      <Flex height="100%" flexDirection="column">
-        <Box flex="1">
-          <LabellingTool />
-        </Box>
-        <Box bg="white" overflow="hidden">
-          <Gallery />
-        </Box>
-      </Flex>
-    </Layout>
+            <BreadcrumbItem isCurrentPage>
+              <Text
+                maxWidth="20rem"
+                textOverflow="ellipsis"
+                whiteSpace="nowrap"
+                overflow="hidden"
+              >
+                {imageName}
+              </Text>
+            </BreadcrumbItem>
+          </Breadcrumb>
+        }
+      >
+        <Flex height="100%" flexDirection="column">
+          <Box flex="1">
+            <LabellingTool />
+          </Box>
+          <Box bg="white" overflow="hidden">
+            <Gallery />
+          </Box>
+        </Flex>
+      </Layout>
+    </>
   );
 };
 
