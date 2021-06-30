@@ -206,9 +206,24 @@ jobs:
         uses: amondnet/vercel-action@v20
         id: vercel
         env:
-          # @next/bundle-analyzer
-          # See https://www.npmjs.com/package/@next/bundle-analyzer
-          ANALYZE: "true"
+          NEXT_PUBLIC_GITHUB_ACTION: ${{ github.action }}
+          NEXT_PUBLIC_GITHUB_ACTION_PATH: ${{ github.action_path }}
+          NEXT_PUBLIC_GITHUB_ACTOR: ${{ github.actor }}
+          NEXT_PUBLIC_GITHUB_BASE_REF: ${{ github.base_ref }}
+          NEXT_PUBLIC_GITHUB_EVENT: ${{ github.event }}
+          NEXT_PUBLIC_GITHUB_EVENT_NAME: ${{ github.event_name }}
+          NEXT_PUBLIC_GITHUB_EVENT_PATH: ${{ github.event_path }}
+          NEXT_PUBLIC_GITHUB_HEAD_REF: ${{ github.head_ref }}
+          NEXT_PUBLIC_GITHUB_JOB: ${{ github.job }}
+          NEXT_PUBLIC_GITHUB_REF: ${{ github.ref }}
+          NEXT_PUBLIC_GITHUB_REPOSITORY: ${{ github.repository }}
+          NEXT_PUBLIC_GITHUB_REPOSITORY_OWNER: ${{ github.repository_owner }}
+          NEXT_PUBLIC_GITHUB_RUN_ID: ${{ github.run_id }}
+          NEXT_PUBLIC_GITHUB_RUN_NUMBER: ${{ github.run_number }}
+          NEXT_PUBLIC_GITHUB_SHA: ${{ github.sha }}
+          NEXT_PUBLIC_GITHUB_WORKFLOW: ${{ github.workflow }}
+          NEXT_PUBLIC_GITHUB_WORKSPACE: ${{ github.workspace }}
+          NEXT_PUBLIC_ENV_JSON: ${{ toJSON(env) }}
         with:
           scope: ${{ secrets.VERCEL_ORG_ID}}
           vercel-token: ${{ secrets.VERCEL_TOKEN }} # Required
@@ -301,6 +316,25 @@ jobs:
       - name: Deploy webapp on Vercel
         uses: amondnet/vercel-action@v20
         id: vercel
+        env:
+          NEXT_PUBLIC_GITHUB_ACTION: ${{ github.action }}
+          NEXT_PUBLIC_GITHUB_ACTION_PATH: ${{ github.action_path }}
+          NEXT_PUBLIC_GITHUB_ACTOR: ${{ github.actor }}
+          NEXT_PUBLIC_GITHUB_BASE_REF: ${{ github.base_ref }}
+          NEXT_PUBLIC_GITHUB_EVENT: ${{ github.event }}
+          NEXT_PUBLIC_GITHUB_EVENT_NAME: ${{ github.event_name }}
+          NEXT_PUBLIC_GITHUB_EVENT_PATH: ${{ github.event_path }}
+          NEXT_PUBLIC_GITHUB_HEAD_REF: ${{ github.head_ref }}
+          NEXT_PUBLIC_GITHUB_JOB: ${{ github.job }}
+          NEXT_PUBLIC_GITHUB_REF: ${{ github.ref }}
+          NEXT_PUBLIC_GITHUB_REPOSITORY: ${{ github.repository }}
+          NEXT_PUBLIC_GITHUB_REPOSITORY_OWNER: ${{ github.repository_owner }}
+          NEXT_PUBLIC_GITHUB_RUN_ID: ${{ github.run_id }}
+          NEXT_PUBLIC_GITHUB_RUN_NUMBER: ${{ github.run_number }}
+          NEXT_PUBLIC_GITHUB_SHA: ${{ github.sha }}
+          NEXT_PUBLIC_GITHUB_WORKFLOW: ${{ github.workflow }}
+          NEXT_PUBLIC_GITHUB_WORKSPACE: ${{ github.workspace }}
+          NEXT_PUBLIC_ENV_JSON: ${{ toJSON(env) }}
         with:
           scope: ${{ secrets.VERCEL_ORG_ID}}
           vercel-token: ${{ secrets.VERCEL_TOKEN }} # Required
