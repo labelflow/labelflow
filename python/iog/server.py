@@ -6,7 +6,7 @@ import base64
 import numpy as np
 import cv2
 
-
+from inference_on_image import process
 
 # class ModelInference(HTTPEndpoint):
 #     async def get(self, request):
@@ -26,6 +26,8 @@ async def model_inference(request):
     image = cv2.imdecode(image, cv2.IMREAD_COLOR)
 
     cv2.imwrite("test.jpg", image)
+    roi = []
+    process(image, roi)
     return JSONResponse({"hello": "world"})
 
 
@@ -38,5 +40,5 @@ app = Starlette(debug=True, routes=routes)
 # http://www.uvicorn.org/#running-programmatically
 
 if __name__ == "__main__":
-    uvicorn.run("main:app", host="0.0.0.0", port=5000, log_level="info")
+    uvicorn.run("server:app", host="0.0.0.0", port=5000, log_level="info")
 
