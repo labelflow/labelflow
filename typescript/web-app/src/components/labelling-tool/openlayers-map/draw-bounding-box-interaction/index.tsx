@@ -32,7 +32,7 @@ const labelClassQuery = gql`
 const geometryFunction = createBox();
 
 export const DrawBoundingBoxInteraction = () => {
-  const drawRef = useRef<OlDraw | null>(null);
+  const drawRef = useRef<OlDraw>(null);
   const client = useApolloClient();
   const imageId = useRouter().query?.id;
 
