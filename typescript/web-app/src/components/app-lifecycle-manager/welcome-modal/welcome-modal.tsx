@@ -90,7 +90,7 @@ export const WelcomeModal = ({
       <ModalContent margin="3.75rem">
         <ModalHeader textAlign="center" padding="6">
           <Center>
-            <Logo maxW="lg" mt="8" mb="8" />
+            <Logo maxW="lg" mt="8" mb="8" h="min-content" />
           </Center>
         </ModalHeader>
 
