@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
+import { useErrorHandler } from "react-error-boundary";
 import type { Workbox } from "workbox-window";
 import { useQueryParam, StringParam } from "use-query-params";
 import { UpdateServiceWorkerModal } from "./update-service-worker-modal/update-service-worker-modal";
@@ -10,7 +11,9 @@ declare global {
   }
 }
 
-export const AppLifecycleManager = () => {
+type Props = { assumeServiceWorkerActive: boolean };
+
+export const AppLifecycleManager = ({ assumeServiceWorkerActive }: Props) => {
   // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
   // This param can have several values:
   //   - undefined: Normal behavior, only show the update modal when needed
@@ -21,11 +24,15 @@ export const AppLifecycleManager = () => {
     useQueryParam("modal-update-service-worker", StringParam);
 
   // By default (including during SSR) we consider the service worker to be ready
-  // since this is the nominal case that happen all the time except during the very first visi
-  const [isServiceWorkerActive, setIsServiceWorkerActive] = useState(true);
+  // since this is the nominal case that happen all the time except during the very first visit
+  const [isServiceWorkerActive, setIsServiceWorkerActive] = useState(
+    assumeServiceWorkerActive
+  );
+
+  const handleError = useErrorHandler();
 
   const [isUpdateServiceWorkerModalOpen, setIsUpdateServiceWorkerModalOpen] =
-    useState(false);
+    useState(paramModalUpdateServiceWorker === "open");
 
   const closeUpdateServiceWorkerModal = useCallback(() => {
     setParamModalUpdateServiceWorker(undefined, "replaceIn");
@@ -33,33 +40,53 @@ export const AppLifecycleManager = () => {
   }, [setIsUpdateServiceWorkerModalOpen, setParamModalUpdateServiceWorker]);
 
   const updateServiceWorker = useCallback(() => {
-    if (
-      typeof window !== "undefined" &&
-      "serviceWorker" in navigator &&
-      window.workbox !== undefined
-    ) {
+    if (typeof window === "undefined") {
+      setParamModalUpdateServiceWorker(undefined, "replaceIn");
+      setIsUpdateServiceWorkerModalOpen(false);
+      return;
+    }
+    try {
       const wb = window.workbox;
+
+      if (!wb) {
+        throw new Error(
+          "Workbox is unavailable, are you on firefox in incognito mode?"
+        );
+      }
+
       wb.addEventListener("controlling", (/* event: any */) => {
         window.location.reload();
       });
 
       // Send a message to the waiting service worker, instructing it to activate.
       wb.messageSkipWaiting();
+
+      setParamModalUpdateServiceWorker(undefined, "replaceIn");
+      setIsUpdateServiceWorkerModalOpen(false);
+    } catch (e) {
+      handleError(e);
     }
-    setParamModalUpdateServiceWorker(undefined, "replaceIn");
-    setIsUpdateServiceWorkerModalOpen(false);
   }, [setIsUpdateServiceWorkerModalOpen, setParamModalUpdateServiceWorker]);
 
   // This hook only run once in browser after the component is rendered for the first time.
   // It has same effect as the old componentDidMount lifecycle callback.
   // See https://github.com/shadowwalker/next-pwa/blob/master/examples/lifecycle/pages/index.js
   useEffect(() => {
-    if (
-      typeof window !== "undefined" &&
-      "serviceWorker" in navigator &&
-      window.workbox !== undefined
-    ) {
+    if (typeof window === "undefined") {
+      return;
+    }
+    try {
       const wb = window.workbox;
+
+      if (!wb) {
+        throw new Error(
+          "Workbox is unavailable, are you on firefox in incognito mode?"
+        );
+      }
+
+      const setServiceWorkerIsActive = () => {
+        setIsServiceWorkerActive(true);
+      };
 
       const checkServiceWorkerStatus = async () => {
         const sw = await wb.getSW();
@@ -73,9 +100,10 @@ export const AppLifecycleManager = () => {
           )
         ) {
           setIsServiceWorkerActive(false);
-          wb.addEventListener("activated", () => {
-            setIsServiceWorkerActive(true);
-          });
+          wb.addEventListener("activated", setServiceWorkerIsActive);
+        } else {
+          console.log("Service worker active");
+          setIsServiceWorkerActive(true);
         }
       };
 
@@ -96,6 +124,7 @@ export const AppLifecycleManager = () => {
         }
         if (paramModalUpdateServiceWorker === "update") {
           updateServiceWorker();
+          wb.removeEventListener("waiting", promptNewVersionAvailable);
           return;
         }
         setIsUpdateServiceWorkerModalOpen(true);
@@ -109,6 +138,14 @@ export const AppLifecycleManager = () => {
 
       // never forget to call register as auto register is turned off in next.config.js
       wb.register();
+
+      // eslint-disable-next-line consistent-return
+      return () => {
+        wb.removeEventListener("waiting", promptNewVersionAvailable);
+        wb.removeEventListener("activated", setServiceWorkerIsActive);
+      };
+    } catch (e) {
+      handleError(e);
     }
   }, []);
 

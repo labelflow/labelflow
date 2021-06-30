@@ -1,8 +1,9 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useQuery, useApolloClient } from "@apollo/client";
 import gql from "graphql-tag";
 
-import { ClassSelectionMenu } from "../../class-selection-menu";
+import { useHotkeys } from "react-hotkeys-hook";
+import { ClassSelectionMenu } from "./class-selection-menu";
 import { Tools, useLabellingStore } from "../../../connectors/labelling-state";
 import { useUndoStore } from "../../../connectors/undo-store";
 import { LabelClass } from "../../../graphql-types.generated";
@@ -10,6 +11,7 @@ import { createNewLabelClassAndUpdateLabelCurry } from "../../../connectors/undo
 import { createUpdateLabelClassOfLabelEffect } from "../../../connectors/undo-store/effects/update-label-class-of-label";
 import { createNewLabelClassCurry } from "../../../connectors/undo-store/effects/create-label-class";
 import { createUpdateLabelClassEffect } from "../../../connectors/undo-store/effects/update-label-class";
+import { keymap } from "../../../keymap";
 
 const labelClassesQuery = gql`
   query getLabelClasses {
@@ -46,9 +48,13 @@ const labelQuery = gql`
 
 export const EditLabelClassMenu = () => {
   const client = useApolloClient();
+  const [isOpen, setIsOpen] = useState(false);
   const { data } = useQuery(labelClassesQuery);
   const { perform } = useUndoStore();
   const labelClasses = data?.labelClasses ?? [];
+  const isContextMenuOpen = useLabellingStore(
+    (state) => state.isContextMenuOpen
+  );
   const selectedTool = useLabellingStore((state) => state.selectedTool);
   const selectedLabelId = useLabellingStore((state) => state.selectedLabelId);
   const { data: selectedLabelData } = useQuery(labelQuery, {
@@ -63,7 +69,7 @@ export const EditLabelClassMenu = () => {
     skip: selectedLabelClassId == null,
   });
   const selectedLabelClass =
-    selectedTool === Tools.BOUNDING_BOX
+    selectedTool === Tools.BOX
       ? dataLabelClass?.labelClass
       : selectedLabelData?.label?.labelClass;
   const createNewClass = useMemo(
@@ -86,7 +92,7 @@ export const EditLabelClassMenu = () => {
   );
   const onSelectedClassChange = useMemo(
     () =>
-      selectedTool === Tools.BOUNDING_BOX
+      selectedTool === Tools.BOX
         ? (item: LabelClass | null) =>
             perform(
               createUpdateLabelClassEffect({
@@ -108,23 +114,43 @@ export const EditLabelClassMenu = () => {
   );
 
   const displayClassSelectionMenu =
-    selectedTool === Tools.BOUNDING_BOX ||
+    selectedTool === Tools.BOX ||
     (selectedTool === Tools.SELECTION && selectedLabelId != null);
+
+  useHotkeys(
+    keymap.changeClass.key,
+    (keyboardEvent) => {
+      if (!isContextMenuOpen) {
+        // We do not want to interfere with the right click popover shortcuts if it is opened
+        const digit = Number(keyboardEvent.code[5]);
+        const indexOfLabelClass = (digit + 9) % 10;
+        if (indexOfLabelClass < labelClasses.length) {
+          onSelectedClassChange(labelClasses[indexOfLabelClass]);
+          setIsOpen(false);
+        }
+      }
+    },
+    {},
+    [labelClasses, onSelectedClassChange]
+  );
 
   return (
     <>
       {displayClassSelectionMenu && (
         <ClassSelectionMenu
+          isOpen={isOpen}
+          setIsOpen={setIsOpen}
           selectedLabelClass={selectedLabelClass}
           labelClasses={labelClasses}
           createNewClass={async (name) =>
-            selectedTool === Tools.BOUNDING_BOX
+            selectedTool === Tools.BOX
               ? createNewClass(name, selectedLabelClassId)
               : createNewClassAndUpdateLabel(name, selectedLabelId)
           }
           onSelectedClassChange={(item) => {
             onSelectedClassChange(item);
           }}
+          isContextMenuOpen={isContextMenuOpen}
         />
       )}
     </>

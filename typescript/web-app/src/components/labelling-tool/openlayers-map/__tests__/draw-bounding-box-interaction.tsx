@@ -4,7 +4,7 @@ global.URL.createObjectURL = jest.fn(() => "mockedUrl");
 
 import { ApolloProvider } from "@apollo/client";
 import { Map } from "@labelflow/react-openlayers-fiber";
-import { render, waitFor } from "@testing-library/react";
+import { render, waitFor, screen } from "@testing-library/react";
 import { Feature, Map as OlMap } from "ol";
 import { fromExtent } from "ol/geom/Polygon";
 import { DrawEvent, DrawEventType } from "ol/interaction/Draw";
@@ -41,7 +41,7 @@ jest.mock("../../../../connectors/apollo-client-schema", () => {
 
 beforeEach(() => {
   (client.mutate as jest.Mock).mockClear();
-  useLabellingStore.setState({ selectedTool: Tools.BOUNDING_BOX });
+  useLabellingStore.setState({ selectedTool: Tools.BOX });
 });
 
 it("create a label when the user has finished to draw a bounding box on the labelling interface", async () => {
@@ -244,5 +244,48 @@ it("should set back the selected label when the effect is redone after an undone
     expect(useLabellingStore.getState()).toMatchObject({
       selectedLabelId: "mocked-label-id",
     });
+  });
+});
+
+it("handles cases where the label creation throws an error", async () => {
+  const mapRef: { current: OlMap | null } = { current: null };
+  render(<DrawBoundingBoxInteraction />, {
+    wrapper: ({ children }) => (
+      <Map
+        args={{ interactions: [] }}
+        ref={(map) => {
+          mapRef.current = map;
+        }}
+      >
+        <ApolloProvider client={client}>{children}</ApolloProvider>
+      </Map>
+    ),
+  });
+
+  (client.mutate as jest.Mock).mockImplementationOnce(async () => {
+    throw new Error("Can't create label");
+  });
+
+  const drawInteraction = mapRef.current?.getInteractions().getArray()?.[0];
+  drawInteraction?.dispatchEvent(
+    new DrawEvent(
+      "drawend" as DrawEventType,
+      new Feature(fromExtent([100, 200, 200, 300]))
+    )
+  );
+
+  expect(client.mutate).toHaveBeenCalledWith(
+    expect.objectContaining({
+      variables: expect.objectContaining({
+        imageId: "mocked-image-id",
+        x: 100,
+        y: 200,
+        width: 100,
+        height: 100,
+      }),
+    })
+  );
+  await waitFor(() => {
+    expect(screen.getByText("Error creating bounding box")).toBeDefined();
   });
 });

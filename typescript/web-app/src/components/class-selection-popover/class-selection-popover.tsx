@@ -16,9 +16,11 @@ import {
 import { IoSearch } from "react-icons/io5";
 import { RiCloseCircleFill } from "react-icons/ri";
 import { useCombobox, UseComboboxStateChange } from "downshift";
+import { useHotkeys } from "react-hotkeys-hook";
 import { ClassListItem } from "../class-list-item";
 import { LabelClass } from "../../graphql-types.generated";
 import { noneClassColor } from "../../utils/class-color-generator";
+import { keymap } from "../../keymap";
 
 type CreateClassInput = { name: string; type: string };
 type NoneClass = { name: string; color: string; type: string };
@@ -68,6 +70,8 @@ export const ClassSelectionPopover = ({
   labelClasses,
   selectedLabelClassId,
   trigger,
+  activateShortcuts,
+  ariaLabel = "Class selection popover",
 }: {
   isOpen?: boolean;
   onClose?: () => void;
@@ -76,16 +80,32 @@ export const ClassSelectionPopover = ({
   createNewClass: (name: string) => void;
   selectedLabelClassId?: string | null;
   trigger?: React.ReactNode;
+  activateShortcuts?: boolean;
+  ariaLabel?: string;
 }) => {
   const [inputValueCombobox, setInputValueCombobox] = useState<string>("");
+  const labelClassesWithShortcut = useMemo(
+    () =>
+      labelClasses.map((labelClass, index) => {
+        if (index > 9) {
+          return labelClass;
+        }
+        return {
+          ...labelClass,
+          shortcut: `${(index + 1) % 10}`,
+        };
+      }),
+    [labelClasses]
+  );
   const filteredLabelClasses = useMemo(
     () =>
       filterLabelClasses({
-        labelClasses,
+        labelClasses: labelClassesWithShortcut,
         inputValueCombobox,
       }),
     [labelClasses, inputValueCombobox]
   );
+
   const {
     reset,
     inputValue,
@@ -133,20 +153,33 @@ export const ClassSelectionPopover = ({
       reset();
     }
   }, [isOpen]);
-  const initialFocusRef = useRef(null);
+
+  const searchInputRef = useRef<HTMLInputElement | null>(null);
+
+  useHotkeys(
+    keymap.focusLabelClassSearch.key,
+    (keyboardEvent) => {
+      if (activateShortcuts && searchInputRef.current != null) {
+        searchInputRef.current.focus();
+        keyboardEvent.preventDefault();
+      }
+    },
+    {},
+    [activateShortcuts]
+  );
   return (
     <Popover
       isOpen={isOpen}
       onClose={onClose}
-      initialFocusRef={initialFocusRef}
       placement="bottom-start"
       preventOverflow
     >
-      {trigger && <PopoverTrigger>{trigger}</PopoverTrigger>}
+      <PopoverTrigger>{trigger}</PopoverTrigger>
       <PopoverContent
         borderColor="gray.200"
+        cursor="default"
         pointerEvents="initial"
-        aria-label="Class selection popover"
+        aria-label={ariaLabel}
       >
         <PopoverBody pl="0" pr="0" pt="0">
           <Box>
@@ -171,7 +204,7 @@ export const ClassSelectionPopover = ({
                   Search in class selection popover
                 </Text>
                 <Input
-                  {...getInputProps({ ref: initialFocusRef })}
+                  {...getInputProps({ ref: searchInputRef })}
                   placeholder="Search..."
                   pr="4rem"
                 />
@@ -195,7 +228,7 @@ export const ClassSelectionPopover = ({
                 </InputRightElement>
               </InputGroup>
             </Box>
-            <Box pt="1" {...getMenuProps()}>
+            <Box pt="1" {...getMenuProps()} overflowY="scroll" maxHeight="340">
               {filteredLabelClasses.map(
                 (
                   item: LabelClass | CreateClassInput | NoneClass,

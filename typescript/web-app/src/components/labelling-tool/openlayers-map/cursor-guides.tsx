@@ -50,7 +50,6 @@ export const CursorGuides = ({ map }: { map: OlMap | null }) => {
         position="absolute"
         pointerEvents="none"
         willChange="transform"
-        zIndex={2}
         style={style}
       />
       <Box
@@ -60,7 +59,6 @@ export const CursorGuides = ({ map }: { map: OlMap | null }) => {
         position="absolute"
         pointerEvents="none"
         willChange="transform"
-        zIndex={2}
         style={style}
       />
     </>

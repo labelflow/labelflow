@@ -75,4 +75,4 @@ test("should clear the modal content when closed", async () => {
   await waitFor(() =>
     expect(screen.getByText(/Completed 1 of 1 items/i)).toBeDefined()
   );
-});
+}, 15000);

@@ -1,6 +1,7 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 
 import {
+  chakra,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -17,7 +18,11 @@ import {
 } from "@chakra-ui/react";
 import { useQueryParam, StringParam } from "use-query-params";
 
+import { RiGithubFill } from "react-icons/ri";
+
 import { Logo } from "../../logo";
+
+const GithubIcon = chakra(RiGithubFill);
 
 export const WelcomeModal = ({
   isServiceWorkerActive,
@@ -34,7 +39,12 @@ export const WelcomeModal = ({
     StringParam
   );
   const [hasUserClickedStart, setHasUserClickedStart] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(
+    (!isServiceWorkerActive && !(paramModalWelcome === "closed")) ||
+      paramModalWelcome === "open"
+  );
+
+  const startLabellingButtonRef = useRef<HTMLButtonElement>(null);
 
   // This modal should open when isServiceWorkerActive becomes false
   // But close only when the use hasUserClickedStart becomes true
@@ -77,12 +87,18 @@ export const WelcomeModal = ({
   }, [setHasUserClickedStart, setParamModalWelcome]);
 
   return (
-    <Modal isOpen={isOpen} onClose={() => {}} size="3xl">
+    <Modal
+      isOpen={isOpen}
+      onClose={() => {}}
+      size="3xl"
+      isCentered
+      initialFocusRef={startLabellingButtonRef}
+    >
       <ModalOverlay />
       <ModalContent margin="3.75rem">
         <ModalHeader textAlign="center" padding="6">
           <Center>
-            <Logo maxW="lg" mt="8" mb="8" />
+            <Logo maxW="lg" mt="8" mb="8" h="min-content" />
           </Center>
         </ModalHeader>
 
@@ -116,16 +132,22 @@ export const WelcomeModal = ({
               fontWeight="medium"
               textAlign="justify"
             >
-              Create and manage your image data, workflows and teams in a single
-              place. Stay in control of your data, focus on building the next
-              big thing.
+              Stay in control of your data, label your images without them
+              leaving your computer. Focus on building the next big thing.
             </Text>
           </VStack>
         </ModalBody>
         <ModalFooter>
-          <HStack direction={{ base: "column", md: "row" }} spacing="4" mt="8">
+          <HStack
+            direction={{ base: "column", md: "row" }}
+            justifyContent="center"
+            width="full"
+            spacing="4"
+            mb="10"
+          >
             <Button
               as="a"
+              leftIcon={<GithubIcon fontSize="xl" />}
               href="https://github.com/Labelflow/labelflow"
               target="blank"
               size="lg"
@@ -138,6 +160,7 @@ export const WelcomeModal = ({
             </Button>
 
             <Button
+              ref={startLabellingButtonRef}
               size="lg"
               minW="210px"
               colorScheme="brand"

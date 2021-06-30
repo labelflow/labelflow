@@ -5,8 +5,10 @@ import { isInWindowScope } from "../../utils/detect-scope";
 // Ways to know that the server is ready
 let isServerReady = false;
 let resolveIsServerReadyPromise: (() => void) | undefined;
-const isServerReadyPromise = new Promise<void>((resolve) => {
+let rejectIsServerReadyPromise: ((reason: any) => void) | undefined;
+const isServerReadyPromise = new Promise<void>((resolve, reject) => {
   resolveIsServerReadyPromise = resolve;
+  rejectIsServerReadyPromise = reject;
 });
 
 const waitServerReady = async (callback: (error?: Error) => void) => {
@@ -23,7 +25,7 @@ const setServerReady = () => {
     resolveIsServerReadyPromise();
   } else {
     console.error(
-      "Cannot resolve the resolveIsServerReadyPromise in client, this should not happen"
+      "Cannot resolve the isServerReadyPromise in client, this should not happen"
     );
   }
   isServerReady = true;
@@ -35,6 +37,20 @@ const checkServerReady = async () => {
     return;
   }
   const wb = window.workbox;
+  if (!wb) {
+    if (rejectIsServerReadyPromise) {
+      rejectIsServerReadyPromise(
+        "GraphQL client-side server can't launch because workbox is unavailable, are you on Firefox in incognito mode?"
+      );
+    } else {
+      console.error(
+        "Cannot reject the isServerReadyPromise in client, this should not happen"
+      );
+    }
+
+    isServerReady = true;
+    return;
+  }
   const sw = await wb.getSW();
   if (
     sw.state === "activated" || // Nominal case, service worker already installed and running, no new service worker waiting
