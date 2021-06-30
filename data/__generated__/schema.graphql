@@ -155,13 +155,9 @@ input ProjectUpdateInput {
   name: String!
 }
 
-input ProjectWhereInput {
-  id: String
-  name: String
-}
-
 input ProjectWhereUniqueInput {
-  id: ID!
+  id: ID
+  name: ID
 }
 
 type Query {
@@ -175,7 +171,7 @@ type Query {
   labelClasses(first: Int, skip: Int): [LabelClass!]!
   labelsAggregates: LabelsAggregates!
   label(where: LabelWhereUniqueInput!): Label!
-  project(where: ProjectWhereInput!): Project!
+  project(where: ProjectWhereUniqueInput!): Project!
   projects(first: Int, skip: Int): [Project!]!
   exportToCoco: String!
 }
