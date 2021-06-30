@@ -45,7 +45,7 @@ describe("Project resolver test suite", () => {
     expect(typeof mutationResult.data.createProject.id).toEqual("string");
   });
 
-  test("Creating a project should fail the project name already exists", async () => {
+  test("Creating a project should fail if the project name already exists", async () => {
     await createProject("my project", "an-id");
 
     return expect(createProject("my project", "an-id")).rejects.toEqual(
