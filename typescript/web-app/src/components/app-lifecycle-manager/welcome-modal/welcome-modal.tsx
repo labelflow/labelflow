@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 
 import {
   chakra,
@@ -44,6 +44,8 @@ export const WelcomeModal = ({
       paramModalWelcome === "open"
   );
 
+  const startLabellingButtonRef = useRef<HTMLButtonElement>(null);
+
   // This modal should open when isServiceWorkerActive becomes false
   // But close only when the use hasUserClickedStart becomes true
   useEffect(() => {
@@ -85,12 +87,18 @@ export const WelcomeModal = ({
   }, [setHasUserClickedStart, setParamModalWelcome]);
 
   return (
-    <Modal isOpen={isOpen} onClose={() => {}} size="3xl" isCentered>
+    <Modal
+      isOpen={isOpen}
+      onClose={() => {}}
+      size="3xl"
+      isCentered
+      initialFocusRef={startLabellingButtonRef}
+    >
       <ModalOverlay />
       <ModalContent margin="3.75rem">
         <ModalHeader textAlign="center" padding="6">
           <Center>
-            <Logo maxW="lg" mt="8" mb="8" />
+            <Logo maxW="lg" mt="8" mb="8" h="min-content" />
           </Center>
         </ModalHeader>
 
@@ -152,6 +160,7 @@ export const WelcomeModal = ({
             </Button>
 
             <Button
+              ref={startLabellingButtonRef}
               size="lg"
               minW="210px"
               colorScheme="brand"
