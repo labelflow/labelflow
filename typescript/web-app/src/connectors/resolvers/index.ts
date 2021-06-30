@@ -6,6 +6,8 @@ import labelResolvers from "./label";
 import labelClassResolvers from "./label-class";
 import projectResolvers from "./project";
 import uploadResolvers from "./upload";
+import scalarsResolvers from "./scalars";
+import debugResolvers from "./debug";
 
 export const resolvers = mergeResolvers([
   exampleResolvers,
@@ -15,4 +17,6 @@ export const resolvers = mergeResolvers([
   labelClassResolvers,
   projectResolvers,
   uploadResolvers,
+  scalarsResolvers,
+  debugResolvers,
 ]);

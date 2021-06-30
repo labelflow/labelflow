@@ -1,16 +1,28 @@
+import { gql, useQuery } from "@apollo/client";
 import {
   Heading,
   Link,
   VStack,
-  Text,
+  UnorderedList,
+  ListItem,
   Code,
   Center,
   Box,
 } from "@chakra-ui/react";
+import { detect } from "detect-browser";
+import { isInWindowScope, isInServiceWorkerScope } from "../utils/detect-scope";
 
 import { Layout } from "../components/layout";
 
+export const debugQuery = gql`
+  query getDebug {
+    debug
+  }
+`;
+
 const DebugPage = () => {
+  const { data: debugResult } = useQuery<{ debug: any }>(debugQuery);
+
   return (
     <Layout>
       <Center h="full">
@@ -20,8 +32,9 @@ const DebugPage = () => {
             mx="auto"
             px={{ base: "6", lg: "8" }}
             py={{ base: "16", sm: "20" }}
-            textAlign="center"
+            textAlign="start"
             spacing="0"
+            alignItems="start"
           >
             <Heading as="h2">Debug information</Heading>
 
@@ -29,62 +42,98 @@ const DebugPage = () => {
               Links:
             </Heading>
 
-            <Text fontSize="lg">
-              <Link href="/_next/static/bundle-analyzer/client.html">
-                Link to client bundle analysis
-              </Link>
-              <br />
-              <Link href="/_next/static/bundle-analyzer/server.html">
-                Link to server bundle analysis
-              </Link>
-              <br />
-              <Link href="/graphiql">Link to Graphiql</Link>
-              <br />
-              <Link
-                href={`https://github.com/${process.env.NEXT_PUBLIC_VERCEL_GIT_REPO_OWNER}/${process.env.NEXT_PUBLIC_VERCEL_GIT_REPO_SLUG}/tree/${process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_REF}`}
-              >
-                Link to Github branch
-              </Link>
-              <br />
-              <Link
-                href={`https://github.com/${process.env.NEXT_PUBLIC_VERCEL_GIT_REPO_OWNER}/${process.env.NEXT_PUBLIC_VERCEL_GIT_REPO_SLUG}/commit/${process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA}`}
-              >
-                Link to Github commit
-              </Link>
-              <br />
-              <Link href={`https://${process.env.NEXT_PUBLIC_VERCEL_URL}`}>
-                Link to Vercel deployment
-              </Link>
-            </Text>
+            <UnorderedList fontSize="lg" pl="8">
+              <ListItem>
+                <Link
+                  href={`https://github.com/${process.env.NEXT_PUBLIC_VERCEL_GIT_REPO_OWNER}/${process.env.NEXT_PUBLIC_VERCEL_GIT_REPO_SLUG}/issues/new/choose`}
+                >
+                  Link to Github issue tracker
+                </Link>
+              </ListItem>
+
+              <ListItem>
+                <Link href="/_next/static/bundle-analyzer/client.html">
+                  Link to client bundle analysis
+                </Link>
+              </ListItem>
+
+              <ListItem>
+                <Link href="/_next/static/bundle-analyzer/server.html">
+                  Link to server bundle analysis
+                </Link>
+              </ListItem>
+
+              <ListItem>
+                <Link href="/graphiql">Link to Graphiql</Link>
+              </ListItem>
+
+              <ListItem>
+                <Link
+                  href={`https://github.com/${process.env.NEXT_PUBLIC_VERCEL_GIT_REPO_OWNER}/${process.env.NEXT_PUBLIC_VERCEL_GIT_REPO_SLUG}/tree/${process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_REF}`}
+                >
+                  Link to Github branch
+                </Link>
+              </ListItem>
+
+              <ListItem>
+                <Link
+                  href={`https://github.com/${process.env.NEXT_PUBLIC_VERCEL_GIT_REPO_OWNER}/${process.env.NEXT_PUBLIC_VERCEL_GIT_REPO_SLUG}/commit/${process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA}`}
+                >
+                  Link to Github commit
+                </Link>
+              </ListItem>
+
+              <ListItem>
+                <Link href={`https://${process.env.NEXT_PUBLIC_VERCEL_URL}`}>
+                  Link to Vercel deployment
+                </Link>
+              </ListItem>
+            </UnorderedList>
 
             <Heading as="h3" pt="8" pb="4" fontSize="lg">
               Client environment:
             </Heading>
 
-            <Code as="p">
-              {/* We have to explicitly write `process.env.XXX`, we can't map over `process.env` */}
-              NEXT_PUBLIC_VERCEL_ENV: {process.env.NEXT_PUBLIC_VERCEL_ENV}{" "}
-              <br />
-              NEXT_PUBLIC_VERCEL_URL: {process.env.NEXT_PUBLIC_VERCEL_URL}{" "}
-              <br />
-              NEXT_PUBLIC_VERCEL_GIT_PROVIDER:{" "}
-              {process.env.NEXT_PUBLIC_VERCEL_GIT_PROVIDER} <br />
-              NEXT_PUBLIC_VERCEL_GIT_REPO_SLUG:{" "}
-              {process.env.NEXT_PUBLIC_VERCEL_GIT_REPO_SLUG} <br />
-              NEXT_PUBLIC_VERCEL_GIT_REPO_OWNER:{" "}
-              {process.env.NEXT_PUBLIC_VERCEL_GIT_REPO_OWNER} <br />
-              NEXT_PUBLIC_VERCEL_GIT_REPO_ID:{" "}
-              {process.env.NEXT_PUBLIC_VERCEL_GIT_REPO_ID} <br />
-              NEXT_PUBLIC_VERCEL_GIT_COMMIT_REF:{" "}
-              {process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_REF} <br />
-              NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA:{" "}
-              {process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA} <br />
-              NEXT_PUBLIC_VERCEL_GIT_COMMIT_MESSAGE:{" "}
-              {process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_MESSAGE} <br />
-              NEXT_PUBLIC_VERCEL_GIT_COMMIT_AUTHOR_LOGIN:{" "}
-              {process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_AUTHOR_LOGIN} <br />
-              NEXT_PUBLIC_VERCEL_GIT_COMMIT_AUTHOR_NAME:{" "}
-              {process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_AUTHOR_NAME}
+            <Code as="p" whiteSpace="pre-wrap">
+              {JSON.stringify(
+                {
+                  isInWindowScope,
+                  isInServiceWorkerScope,
+                  ...process.env,
+                  ...detect(),
+                  // We have to explicitly write `process.env.XXX`, we can't map over `process.env`
+                  NEXT_PUBLIC_VERCEL_ENV: process.env.NEXT_PUBLIC_VERCEL_ENV,
+                  NEXT_PUBLIC_VERCEL_URL: process.env.NEXT_PUBLIC_VERCEL_URL,
+                  NEXT_PUBLIC_VERCEL_GIT_PROVIDER:
+                    process.env.NEXT_PUBLIC_VERCEL_GIT_PROVIDER,
+                  NEXT_PUBLIC_VERCEL_GIT_REPO_SLUG:
+                    process.env.NEXT_PUBLIC_VERCEL_GIT_REPO_SLUG,
+                  NEXT_PUBLIC_VERCEL_GIT_REPO_OWNER:
+                    process.env.NEXT_PUBLIC_VERCEL_GIT_REPO_OWNER,
+                  NEXT_PUBLIC_VERCEL_GIT_REPO_ID:
+                    process.env.NEXT_PUBLIC_VERCEL_GIT_REPO_ID,
+                  NEXT_PUBLIC_VERCEL_GIT_COMMIT_REF:
+                    process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_REF,
+                  NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA:
+                    process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA,
+                  NEXT_PUBLIC_VERCEL_GIT_COMMIT_MESSAGE:
+                    process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_MESSAGE,
+                  NEXT_PUBLIC_VERCEL_GIT_COMMIT_AUTHOR_LOGIN:
+                    process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_AUTHOR_LOGIN,
+                  NEXT_PUBLIC_VERCEL_GIT_COMMIT_AUTHOR_NAME:
+                    process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_AUTHOR_NAME,
+                },
+                null,
+                2
+              )}
+            </Code>
+
+            <Heading as="h3" pt="8" pb="4" fontSize="lg">
+              Server environment:
+            </Heading>
+
+            <Code as="p" whiteSpace="pre-wrap">
+              {JSON.stringify(debugResult?.debug, null, 2)}
             </Code>
           </VStack>
         </Box>
