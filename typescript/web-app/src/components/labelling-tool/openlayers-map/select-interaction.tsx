@@ -100,6 +100,22 @@ export const SelectInteraction = ({
           }}
         />
       )}
+      {selectedTool === Tools.BOX && (
+        <olInteractionPointer
+          style={null}
+          handleEvent={(e) => {
+            const eventType = e?.type ?? null;
+            switch (eventType) {
+              case "contextmenu": {
+                contextMenuHandler(e);
+                return true;
+              }
+              default:
+                return true;
+            }
+          }}
+        />
+      )}
       {editClassOverlayRef?.current && (
         <olOverlay
           element={editClassOverlayRef.current}
