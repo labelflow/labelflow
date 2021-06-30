@@ -122,7 +122,6 @@ export const CreateProjectModal = ({
               size="md"
               onChange={handleChangeProjectName}
               aria-label="Project name input"
-              textAlign="center"
             />
             <FormErrorMessage>{errorMessage}</FormErrorMessage>
           </FormControl>
