@@ -104,6 +104,7 @@ export const CreateProjectModal = ({
           e.preventDefault();
           createProject();
         }}
+        method="post"
       >
         <ModalCloseButton />
 
