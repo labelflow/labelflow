@@ -4297,6 +4297,7 @@ __metadata:
     graphql: ^15.5.0
     graphql-subscriptions: ^1.2.1
     graphql-tag: ^2.12.4
+    graphql-type-json: ^0.3.2
     lodash: ^4.17.21
     mem: ^8.1.1
     next: 10.x
@@ -16068,6 +16069,15 @@ fsevents@^1.2.7:
   peerDependencies:
     graphql: ^0.13.0 || ^14.0.0 || ^15.0.0
   checksum: 93f62ea9b1d66c5a9a5b43ef510be462b4d64e0e469e9d49b42f9b1343a445902096170f6c58b35988495ae628fd456666254cb2cbf14ea2814bb053c9c84057
+  languageName: node
+  linkType: hard
+
+"graphql-type-json@npm:^0.3.2":
+  version: 0.3.2
+  resolution: "graphql-type-json@npm:0.3.2"
+  peerDependencies:
+    graphql: ">=0.8.0"
+  checksum: dbc2ca9b003788012b278209a92d9b084ab5061da8c596d0ffd65dce2e770c29d26dded1812186293bb0bf33b476369dcda1576a10cd4e5b12d2458c878977f3
   languageName: node
   linkType: hard
 
