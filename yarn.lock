@@ -4323,7 +4323,11 @@ __metadata:
     valid-url: ^1.0.9
     webpack: 5.38.1
     webpack-bundle-analyzer: ^4.4.2
-    workbox-precaching: ^6.1.5
+    workbox-core: 6.1.5
+    workbox-expiration: 6.1.5
+    workbox-precaching: 6.1.5
+    workbox-routing: 6.1.5
+    workbox-strategies: 6.1.5
     workbox-window: 6.1.5
     zustand: ^3.5.1
     zustand-store-addons: ^0.1.11
@@ -27056,14 +27060,14 @@ typescript@4.2.4:
   languageName: node
   linkType: hard
 
-"workbox-core@npm:^6.1.5":
+"workbox-core@npm:6.1.5, workbox-core@npm:^6.1.5":
   version: 6.1.5
   resolution: "workbox-core@npm:6.1.5"
   checksum: 46657ad47d159b90af8c0c34837487babff0a1b03ad23bac0830f7fa5aa3cefdb4c9bb26abd4617a2c7624dd059972ae288ccc890b7b36e0de4792a1de6faf66
   languageName: node
   linkType: hard
 
-"workbox-expiration@npm:^6.1.5":
+"workbox-expiration@npm:6.1.5, workbox-expiration@npm:^6.1.5":
   version: 6.1.5
   resolution: "workbox-expiration@npm:6.1.5"
   dependencies:
@@ -27093,7 +27097,7 @@ typescript@4.2.4:
   languageName: node
   linkType: hard
 
-"workbox-precaching@npm:^6.1.5":
+"workbox-precaching@npm:6.1.5, workbox-precaching@npm:^6.1.5":
   version: 6.1.5
   resolution: "workbox-precaching@npm:6.1.5"
   dependencies:
@@ -27127,7 +27131,7 @@ typescript@4.2.4:
   languageName: node
   linkType: hard
 
-"workbox-routing@npm:^6.1.5":
+"workbox-routing@npm:6.1.5, workbox-routing@npm:^6.1.5":
   version: 6.1.5
   resolution: "workbox-routing@npm:6.1.5"
   dependencies:
@@ -27136,7 +27140,7 @@ typescript@4.2.4:
   languageName: node
   linkType: hard
 
-"workbox-strategies@npm:^6.1.5":
+"workbox-strategies@npm:6.1.5, workbox-strategies@npm:^6.1.5":
   version: 6.1.5
   resolution: "workbox-strategies@npm:6.1.5"
   dependencies:

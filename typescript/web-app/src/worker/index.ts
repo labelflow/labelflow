@@ -1,11 +1,35 @@
 // Custom service worker code
-// See https://github.com/shadowwalker/next-pwa/blob/master/examples/custom-ts-worker/worker/index.ts
-import { precacheAndRoute } from "workbox-precaching";
+// This can be customized
+// See https://github.com/shadowwalker/next-pwa/blob/master/examples/offline-fallback/service-worker.js
+
+import { clientsClaim } from "workbox-core";
+import { ExpirationPlugin } from "workbox-expiration";
+import {
+  // NetworkOnly,
+  // NetworkFirst,
+  CacheFirst,
+  StaleWhileRevalidate,
+} from "workbox-strategies";
+import {
+  registerRoute,
+  // setDefaultHandler,
+  setCatchHandler,
+} from "workbox-routing";
+import {
+  matchPrecache,
+  precacheAndRoute,
+  cleanupOutdatedCaches,
+} from "workbox-precaching";
 
 import { server as graphqlServer } from "./graphql-server";
 import { server as fileServer } from "./file-server";
 
 declare let self: ServiceWorkerGlobalScope;
+
+// To disable all workbox logging during development, you can set self.__WB_DISABLE_DEV_LOGS to true
+// https://developers.google.com/web/tools/workbox/guides/configure-workbox#disable_logging
+//
+// self.__WB_DISABLE_DEV_LOGS = true
 
 self.addEventListener("message", (event) => {
   // HOW TO TEST THIS?
@@ -24,9 +48,18 @@ self.addEventListener("message", (event) => {
   console.warn(event?.data);
 });
 
-self.addEventListener("activate", (event) => {
-  event?.waitUntil(self.clients.claim());
-});
+clientsClaim();
+// Inject the manifest
+// See https://github.com/GoogleChrome/workbox/issues/2519#issuecomment-634164566
+// eslint-disable-next-line @typescript-eslint/no-use-before-define
+// eslint-disable-next-line no-underscore-dangle
+const WB_MANIFEST = self.__WB_MANIFEST;
+console.log("WB_MANIFEST");
+console.log(WB_MANIFEST);
+
+precacheAndRoute(WB_MANIFEST);
+
+cleanupOutdatedCaches();
 
 // Install the listener of the graphql server
 graphqlServer.installListener("/api/worker/graphql");
@@ -34,15 +67,183 @@ graphqlServer.installListener("/api/worker/graphql");
 // Install the listener of the file server
 fileServer.installListener("/api/worker/files");
 
-// Inject the manifest
-// See https://github.com/GoogleChrome/workbox/issues/2519#issuecomment-634164566
-// eslint-disable-next-line @typescript-eslint/no-use-before-define
-// eslint-disable-next-line no-underscore-dangle
-const manifest = self.__WB_MANIFEST;
+registerRoute(
+  "/",
+  new StaleWhileRevalidate({
+    cacheName: "start-url",
+    plugins: [
+      new ExpirationPlugin({
+        maxEntries: 1,
+        maxAgeSeconds: 86400 * 365,
+        purgeOnQuotaError: true,
+      }),
+    ],
+  }),
+  "GET"
+);
+registerRoute(
+  /_next\/.*$/i,
+  new StaleWhileRevalidate({
+    cacheName: "next-js-artifacts",
+    plugins: [
+      new ExpirationPlugin({
+        maxEntries: 10000,
+        maxAgeSeconds: 86400 * 7,
+        purgeOnQuotaError: true,
+      }),
+    ],
+  }),
+  "GET"
+);
+registerRoute(
+  /^https:\/\/fonts\.(?:googleapis|gstatic)\.com\/.*/i,
+  new CacheFirst({
+    cacheName: "google-fonts",
+    plugins: [
+      new ExpirationPlugin({
+        maxEntries: 10,
+        maxAgeSeconds: 86400 * 365,
+        purgeOnQuotaError: true,
+      }),
+    ],
+  }),
+  "GET"
+);
+registerRoute(
+  /\/static\/.*\.(?:eot|otf|ttc|ttf|woff|woff2|font.css)$/i,
+  new StaleWhileRevalidate({
+    cacheName: "static-font-assets",
+    plugins: [
+      new ExpirationPlugin({
+        maxEntries: 10,
+        maxAgeSeconds: 86400 * 7,
+        purgeOnQuotaError: true,
+      }),
+    ],
+  }),
+  "GET"
+);
+registerRoute(
+  /\/static\/.*\.(?:jpg|jpeg|gif|png|svg|ico|webp)$/i,
+  new StaleWhileRevalidate({
+    cacheName: "static-image-assets",
+    plugins: [
+      new ExpirationPlugin({
+        maxEntries: 100000,
+        maxAgeSeconds: 86400,
+        purgeOnQuotaError: true,
+      }),
+    ],
+  }),
+  "GET"
+);
+registerRoute(
+  /\/static\/.*\.(?:js)$/i,
+  new StaleWhileRevalidate({
+    cacheName: "static-js-assets",
+    plugins: [
+      new ExpirationPlugin({
+        maxEntries: 1000,
+        maxAgeSeconds: 86400,
+        purgeOnQuotaError: true,
+      }),
+    ],
+  }),
+  "GET"
+);
+registerRoute(
+  /\/static\/.*\.(?:css|less)$/i,
+  new StaleWhileRevalidate({
+    cacheName: "static-style-assets",
+    plugins: [
+      new ExpirationPlugin({
+        maxEntries: 100,
+        maxAgeSeconds: 86400,
+        purgeOnQuotaError: true,
+      }),
+    ],
+  }),
+  "GET"
+);
+registerRoute(
+  /\/static\/.*\.(?:json|xml|csv)$/i,
+  new StaleWhileRevalidate({
+    cacheName: "static-data-assets",
+    plugins: [
+      new ExpirationPlugin({
+        maxEntries: 1000,
+        maxAgeSeconds: 86400,
+        purgeOnQuotaError: true,
+      }),
+    ],
+  }),
+  "GET"
+);
+// registerRoute(
+//   /\/api\/.*$/i,
+//   new NetworkFirst({
+//     cacheName: "apis",
+//     networkTimeoutSeconds: 5,
+//     plugins: [
+//       new ExpirationPlugin({
+//         maxEntries: 100,
+//         maxAgeSeconds: 86400,
+//         purgeOnQuotaError: true,
+//       }),
+//     ],
+//   }),
+//   "GET"
+// );
+// registerRoute(
+//   /.*/i,
+//   new StaleWhileRevalidate({
+//     cacheName: "others",
+//     plugins: [
+//       new ExpirationPlugin({
+//         maxEntries: 100000,
+//         maxAgeSeconds: 86400,
+//         purgeOnQuotaError: true,
+//       }),
+//     ],
+//   }),
+//   "GET"
+// );
 
-precacheAndRoute(manifest);
+// following lines gives you control of the offline fallback strategies
+// https://developers.google.com/web/tools/workbox/guides/advanced-recipes#comprehensive_fallbacks
 
-// To disable all workbox logging during development, you can set self.__WB_DISABLE_DEV_LOGS to true
-// https://developers.google.com/web/tools/workbox/guides/configure-workbox#disable_logging
-//
-// self.__WB_DISABLE_DEV_LOGS = true
+// // Use a stale-while-revalidate strategy for all other requests.
+// setDefaultHandler(new StaleWhileRevalidate({}));
+
+// This "catch" handler is triggered when any of the other routes fail to
+// generate a response.
+setCatchHandler(async ({ event }) => {
+  // The FALLBACK_URL entries must be added to the cache ahead of time, either
+  // via runtime or precaching. If they are precached, then call
+  // `matchPrecache(FALLBACK_URL)` (from the `workbox-precaching` package)
+  // to get the response from the correct cache.
+  //
+  // Use event, request, and url to figure out how to respond.
+  // One approach would be to use request.destination, see
+  // https://medium.com/dev-channel/service-worker-caching-strategies-based-on-request-types-57411dd7652c
+  switch (event.request.destination) {
+    case "document":
+      // If using precached URLs:
+      return (await matchPrecache("/_fallback")) ?? Response.error();
+    // return caches.match('/fallback')
+    // break;
+    // case "image":
+    //   // If using precached URLs:
+    //   return matchPrecache("/static/images/fallback.png");
+    // // return caches.match('/static/images/fallback.png')
+    // // break;
+    // case "font":
+    //   // If using precached URLs:
+    //   return matchPrecache(FALLBACK_FONT_URL);
+    // // return caches.match('/static/fonts/fallback.otf')
+    // // break
+    default:
+      // If we don't have a fallback, just return an error response.
+      return Response.error();
+  }
+});
