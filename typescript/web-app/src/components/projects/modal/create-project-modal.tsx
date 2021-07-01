@@ -22,7 +22,7 @@ import {
 const debounceTime = 200;
 
 const createProjectMutation = gql`
-  mutation createProject($name: String) {
+  mutation createProject($name: String!) {
     createProject(data: { name: $name }) {
       id
     }
