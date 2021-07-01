@@ -93,6 +93,11 @@ export const DrawBoundingBoxInteraction = () => {
         geometryFunction,
         style, // Needed here to trigger the rerender of the component when the selected class changes
       }}
+      condition={(e) => {
+        // 0 is the main mouse button. See: https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/button
+        // @ts-ignore
+        return e.originalEvent.button === 0;
+      }}
       onDrawabort={() => {
         setBoxDrawingToolState(BoxDrawingToolState.IDLE);
         return true;

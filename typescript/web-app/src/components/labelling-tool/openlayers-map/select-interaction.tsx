@@ -51,22 +51,26 @@ export const SelectInteraction = ({
     [sourceVectorLabelsRef, setIsContextMenuOpen, setEditMenuLocation]
   );
 
-  const clickHandler = (e: MapBrowserEvent<UIEvent>) => {
+  const getClosestFeature = (e: MapBrowserEvent<UIEvent>) => {
     const { map } = e;
     const featuresAtPixel = map.getFeaturesAtPixel(e.pixel);
     const coordinate = map.getCoordinateFromPixel(e.pixel);
     const source = sourceVectorLabelsRef.current;
     // @ts-ignore
-    const feature = source.getClosestFeatureToCoordinate(coordinate, (f) =>
+    return source.getClosestFeatureToCoordinate(coordinate, (f) =>
       featuresAtPixel.find((fAtPixel) => f === fAtPixel)
     );
+  };
+
+  const clickHandler = (e: MapBrowserEvent<UIEvent>) => {
+    const feature = getClosestFeature(e);
     setSelectedLabelId(feature?.getProperties().id ?? null);
     return true;
   };
 
   const contextMenuHandler = (e: MapBrowserEvent<UIEvent>) => {
     const { map } = e;
-    const feature = map.forEachFeatureAtPixel(e.pixel, (f: any) => f);
+    const feature = getClosestFeature(e);
     const selectedLabelIdFromFeature = feature?.getProperties().id ?? null;
     setSelectedLabelId(selectedLabelIdFromFeature);
     if (selectedLabelIdFromFeature) {
@@ -90,6 +94,22 @@ export const SelectInteraction = ({
                 return clickHandler(e);
               case "contextmenu":
                 return contextMenuHandler(e);
+              default:
+                return true;
+            }
+          }}
+        />
+      )}
+      {selectedTool === Tools.BOX && (
+        <olInteractionPointer
+          style={null}
+          handleEvent={(e) => {
+            const eventType = e?.type ?? null;
+            switch (eventType) {
+              case "contextmenu": {
+                contextMenuHandler(e);
+                return true;
+              }
               default:
                 return true;
             }

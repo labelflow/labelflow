@@ -237,7 +237,8 @@ export type ProjectUpdateInput = {
 };
 
 export type ProjectWhereUniqueInput = {
-  id: Scalars['ID'];
+  id?: Maybe<Scalars['ID']>;
+  name?: Maybe<Scalars['String']>;
 };
 
 export type Query = {
