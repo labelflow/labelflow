@@ -125,6 +125,7 @@ cypress/videos
 
 # Python
 python/iog/data
+python/iog/results
 .venv
 __pycache__
 

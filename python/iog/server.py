@@ -86,7 +86,7 @@ def resolve_iog_inference(
     image = np.asarray(bytearray(binary), dtype="uint8")
     image = cv2.imdecode(image, cv2.IMREAD_COLOR)
 
-    cv2.imwrite("test.jpg", image)
+    cv2.imwrite("results/test.jpg", image)
 
     roi = [x, image.shape[0] - y - height, width, height]
     return {"polygons": process(image, roi)}
@@ -108,7 +108,7 @@ async def model_inference(request):
     image = np.asarray(bytearray(binary), dtype="uint8")
     image = cv2.imdecode(image, cv2.IMREAD_COLOR)
 
-    cv2.imwrite("test.jpg", image)
+    cv2.imwrite("results/test.jpg", image)
     x = inputs["x"]
     y = inputs["y"]
     width = inputs["width"]
