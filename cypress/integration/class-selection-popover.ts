@@ -57,13 +57,11 @@ describe("Class selection popover", () => {
     cy.get('[aria-label="Open class selection popover"]').click();
     cy.get('[aria-label="Class selection menu popover"]').within(() => {
       // @ts-ignore
-      cy.getByLabel("Search in class selection popover").should(
-        "not.be.focused"
-      );
+      cy.get('[name="class-selection-search"]').should("not.be.focused");
       // @ts-ignore
-      cy.getByLabel("Search in class selection popover").click();
+      cy.get('[name="class-selection-search"]').click();
       // @ts-ignore
-      cy.getByLabel("Search in class selection popover").should("be.focused");
+      cy.get('[name="class-selection-search"]').should("be.focused");
     });
 
     cy.focused().type("A new class{enter}");
@@ -88,9 +86,7 @@ describe("Class selection popover", () => {
 
     cy.get('[aria-label="Class selection popover"]').within(() => {
       // @ts-ignore
-      cy.getByLabel("Search in class selection popover").type(
-        "My new class{enter}"
-      );
+      cy.get('[name="class-selection-search"]').type("My new class{enter}");
     });
     cy.get("main").rightclick(500, 150);
 
@@ -149,13 +145,11 @@ describe("Class selection popover", () => {
 
     cy.get('[aria-label="Class selection menu popover"]').within(() => {
       // @ts-ignore
-      cy.getByLabel("Search in class selection popover").should(
-        "not.be.focused"
-      );
+      cy.get('[name="class-selection-search"]').should("not.be.focused");
       // @ts-ignore
-      cy.getByLabel("Search in class selection popover").click();
+      cy.get('[name="class-selection-search"]').click();
       // @ts-ignore
-      cy.getByLabel("Search in class selection popover").should("be.focused");
+      cy.get('[name="class-selection-search"]').should("be.focused");
     });
     cy.focused().type("My other new class{enter}");
     cy.get('[aria-label="Open class selection popover"]').click();
@@ -252,16 +246,14 @@ describe("Class selection popover", () => {
 
     cy.get('[aria-label="Class selection popover"]').within(() => {
       // @ts-ignore
-      cy.getByLabel("Search in class selection popover").should(
-        "not.be.focused"
-      );
+      cy.get('[name="class-selection-search"]').should("not.be.focused");
     });
     // // @ts-ignore
-    // cy.getByLabel("Search in class selection popover").click();
+    // cy.get('[name="class-selection-search"]').click();
     cy.focused().type("/");
     cy.get('[aria-label="Class selection popover"]').within(() => {
       // @ts-ignore
-      cy.getByLabel("Search in class selection popover").should("be.focused");
+      cy.get('[name="class-selection-search"]').should("be.focused");
     });
     // Shortcut for focusing the search input works in the class selection menu popover
     cy.log(
@@ -277,16 +269,14 @@ describe("Class selection popover", () => {
 
     cy.get('[aria-label="Class selection menu popover"]').within(() => {
       // @ts-ignore
-      cy.getByLabel("Search in class selection popover").should(
-        "not.be.focused"
-      );
+      cy.get('[name="class-selection-search"]').should("not.be.focused");
     });
 
     cy.focused().type("/");
 
     cy.get('[aria-label="Class selection menu popover"]').within(() => {
       // @ts-ignore
-      cy.getByLabel("Search in class selection popover").should("be.focused");
+      cy.get('[name="class-selection-search"]').should("be.focused");
     });
   });
 });

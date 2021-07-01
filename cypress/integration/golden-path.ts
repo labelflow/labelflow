@@ -50,9 +50,9 @@ describe("Golden path", () => {
     cy.get('[aria-label="Open class selection popover"]').click();
     cy.get('[aria-label="Class selection menu popover"]').within(() => {
       // @ts-ignore
-      cy.getByLabel("Search in class selection popover").click();
+      cy.get('[name="class-selection-search"]').click();
       // @ts-ignore
-      cy.getByLabel("Search in class selection popover").should("be.focused");
+      cy.get('[name="class-selection-search"]').should("be.focused");
     });
     cy.focused().type("A new class{enter}");
 
@@ -71,9 +71,7 @@ describe("Golden path", () => {
 
     cy.get('[aria-label="Class selection popover"]').within(() => {
       // @ts-ignore
-      cy.getByLabel("Search in class selection popover").type(
-        "My new class{enter}"
-      );
+      cy.get('[name="class-selection-search"]').type("My new class{enter}");
     });
 
     cy.log("Image navigation");
