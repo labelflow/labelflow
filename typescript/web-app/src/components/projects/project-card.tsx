@@ -62,6 +62,7 @@ export const ProjectCard = (props: {
             size="sm"
             mr="2"
             onClick={(e) => {
+              e.preventDefault();
               e.stopPropagation();
               editProject();
             }}
@@ -72,6 +73,7 @@ export const ProjectCard = (props: {
             isRound
             size="sm"
             onClick={(e) => {
+              e.preventDefault();
               e.stopPropagation();
               deleteProject();
             }}

@@ -31,6 +31,7 @@ export const NewProjectCard = () => {
         alignItems="center"
         justify="space-evenly"
         onClick={() => setIsOpen(true, "replaceIn")}
+        cursor="pointer"
       >
         <PlusIcon color="gray.400" h="60px" w="60" />
         <Text fontSize="16px" fontWeight="semibold" color="gray.500">
