@@ -12,6 +12,7 @@ export const NewProjectCard = () => {
 
   const [isOpen, setIsOpen] = useQueryParam("modal-create-project", BoolParam);
 
+  // This card is flexible, so its width will depend on the width of its parent
   return (
     <>
       <CreateProjectModal
@@ -20,7 +21,7 @@ export const NewProjectCard = () => {
       />
 
       <Flex
-        w="sm"
+        w="100%"
         h="2xs"
         border="2px"
         borderRadius="16px"

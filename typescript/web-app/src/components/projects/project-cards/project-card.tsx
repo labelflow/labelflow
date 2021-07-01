@@ -36,9 +36,10 @@ export const ProjectCard = (props: {
     deleteProject,
   } = props;
 
+  // This card is flexible, so its width will depend on the width of its parent
   return (
     <Box
-      w="sm"
+      w="100%"
       h="2xs"
       borderWidth="0px"
       borderRadius="16px"

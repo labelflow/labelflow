@@ -19,5 +19,5 @@ input ImageWhereUniqueInput {
 }
 
 type ImagesAggregates {
-  totalCount:Int!
+  totalCount: Int!
 }

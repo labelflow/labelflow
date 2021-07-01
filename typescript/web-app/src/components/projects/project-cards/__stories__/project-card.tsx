@@ -29,7 +29,7 @@ const property = {
 };
 
 const Template = (args: any) => (
-  <Box background="gray.100" padding={4}>
+  <Box background="gray.100" padding={4} w="sm">
     <ProjectCard {...args} />
   </Box>
 );
