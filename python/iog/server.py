@@ -9,14 +9,16 @@ import cv2
 from inference_on_image import process
 
 
-
-from ariadne import QueryType, MutationType, ObjectType, ScalarType, make_executable_schema
+from ariadne import (
+    QueryType,
+    MutationType,
+    ScalarType,
+    make_executable_schema,
+)
 from ariadne.asgi import GraphQL
 from starlette.applications import Starlette
 import uvicorn
-import databases
-import sqlalchemy
-import os
+
 
 ################################################################################
 # GraphQL section, from the Ariadne docs
@@ -27,7 +29,7 @@ type_defs = """
     scalar Json
 
     type iogInferenceResult {
-        polygons: [[Float!]]! 
+        polygons: [[[Float!]]]! 
     }
 
     type Query {
@@ -57,11 +59,14 @@ type_defs = """
 
 datetime_scalar = ScalarType("DateTime")
 
+
 @datetime_scalar.serializer
 def serialize_datetime(value):
     return value.isoformat()
 
+
 query = QueryType()
+
 
 @query.field("hello")
 def resolve_hello(*_):
@@ -70,11 +75,11 @@ def resolve_hello(*_):
 
 mutation = MutationType()
 
+
 @mutation.field("iogInference")
-def resolve_iog_inference(*_, imageUrl, x, y, width, height, pointsInside = [], pointsOutside = []):
-    print("HEY")
-
-
+def resolve_iog_inference(
+    *_, imageUrl, x, y, width, height, pointsInside=[], pointsOutside=[]
+):
     # Decode image
     image_b64 = imageUrl.split(",")[1]
     binary = base64.b64decode(image_b64)
@@ -84,13 +89,12 @@ def resolve_iog_inference(*_, imageUrl, x, y, width, height, pointsInside = [], 
     cv2.imwrite("test.jpg", image)
 
     roi = [x, image.shape[0] - y - height, width, height]
-    print(roi)
-    # process(image, roi)
-    return JSONResponse({"polygons": process(image, roi)})
-    return { "polygons": process(image, roi) }
+    return {"polygons": process(image, roi)}
+
 
 # Create executable schema instance
 schema = make_executable_schema(type_defs, query, mutation, datetime_scalar)
+
 
 async def model_inference(request):
     inputs = await request.json()
