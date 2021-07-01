@@ -2,6 +2,8 @@ const withPWA = require('next-pwa');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
 const path = require("path");
 
+
+
 module.exports = withPWA({
   images: {
     deviceSizes: [
@@ -180,6 +182,7 @@ module.exports = withPWA({
     // Add plugins to the webpack config of the service worker bundler
     // See https://developers.google.com/web/tools/workbox/reference-docs/latest/module-workbox-webpack-plugin.InjectManifest
     webpackCompilationPlugins: [],
+    offlineGoogleAnalytics: true,
     // exclude: ["/api/worker/"]
   }
 }

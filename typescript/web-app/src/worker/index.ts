@@ -20,8 +20,9 @@ import {
   precacheAndRoute,
   cleanupOutdatedCaches,
 } from "workbox-precaching";
+import * as googleAnalytics from "workbox-google-analytics";
 
-import { server as graphqlServer } from "./graphql-server";
+import { ApolloServerServiceWorker } from "./apollo-server-service-worker";
 import { server as fileServer } from "./file-server";
 
 declare let self: ServiceWorkerGlobalScope;
@@ -59,10 +60,12 @@ console.log(WB_MANIFEST);
 
 precacheAndRoute(WB_MANIFEST);
 
+googleAnalytics.initialize({});
+
 cleanupOutdatedCaches();
 
 // Install the listener of the graphql server
-graphqlServer.installListener("/api/worker/graphql");
+registerRoute("/api/worker/graphql", new ApolloServerServiceWorker({}), "POST");
 
 // Install the listener of the file server
 fileServer.installListener("/api/worker/files");

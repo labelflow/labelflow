@@ -1,14 +1,25 @@
 /* eslint-env serviceworker */
-// https://github.com/stutrek/apollo-server-service-worker/blob/master/src/serviceWorkerApollo.ts
-import { GraphQLOptions, runHttpQuery } from "apollo-server-core";
-
+// This is a fork of https://github.com/stutrek/apollo-server-service-worker , which seems unmaintained and has an MIT license.
+// This puts Apollo Server inside a service worker. You can back it with IndexedDB, your API, whatever you need.
+// This will let you use a DB sync protocol, such as [PC]ouchDB or Dexie. Syncable to keep a local database in sync while providing a GraphQL API to the windows.
+// See https://github.com/stutrek/apollo-server-service-worker/blob/master/src/ApolloServer.ts
+// See https://github.com/stutrek/apollo-server-service-worker/blob/master/src/serviceWorkerApollo.ts
+import {
+  ApolloServerBase,
+  GraphQLOptions,
+  runHttpQuery,
+} from "apollo-server-core";
 import type { Request as ApolloRequest } from "apollo-server-env";
+import { RouteHandlerCallback, RouteHandlerObject } from "workbox-core";
 
-import { resetDatabase } from "../../connectors/database";
+import { resetDatabase } from "../connectors/database";
 
 const maxRetries = 1;
 
-export async function graphQLServiceWorker(
+/**
+ * The function that actually processes the request
+ */
+async function graphQLServiceWorker(
   request: ApolloRequest,
   options: GraphQLOptions,
   retries = 0
@@ -58,4 +69,23 @@ export async function graphQLServiceWorker(
     }
     return response;
   }
+}
+
+/**
+ * A class to bridge between ApolloServerBase and workbox RouteHandlerObject
+ */
+export class ApolloServerServiceWorker
+  extends ApolloServerBase
+  implements RouteHandlerObject
+{
+  handle: RouteHandlerCallback = async ({ request }) => {
+    const options = await this.graphQLServerOptions({
+      req: request,
+    });
+    const response = await graphQLServiceWorker(
+      request as unknown as ApolloRequest,
+      options
+    );
+    return response;
+  };
 }
