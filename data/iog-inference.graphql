@@ -1,0 +1,13 @@
+type IogInferenceResult {
+  polygons: [[[Float!]]]!
+}
+
+input IogInferenceInput {
+  imageUrl: String!
+  x: Float!
+  y: Float!
+  width: Float!
+  height: Float!
+  pointsInside: [[Float!]]
+  pointsOutside: [[Float!]]
+}

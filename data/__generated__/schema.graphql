@@ -59,6 +59,20 @@ input ImageWhereUniqueInput {
   id: ID!
 }
 
+input IogInferenceInput {
+  imageUrl: String!
+  x: Float!
+  y: Float!
+  width: Float!
+  height: Float!
+  pointsInside: [[Float!]]
+  pointsOutside: [[Float!]]
+}
+
+type IogInferenceResult {
+  polygons: [[[Float!]]]!
+}
+
 type Label {
   id: ID!
   createdAt: DateTime!
@@ -120,6 +134,7 @@ type Mutation {
   updateLabel(where: LabelWhereUniqueInput!, data: LabelUpdateInput!): Label
   deleteLabel(where: LabelWhereUniqueInput!): Label
   createLabelClass(data: LabelClassCreateInput!): LabelClass
+  iogInference(data: IogInferenceInput!): IogInferenceResult
 }
 
 type Query {

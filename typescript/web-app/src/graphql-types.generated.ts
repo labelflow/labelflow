@@ -77,6 +77,21 @@ export type ImageWhereUniqueInput = {
   id: Scalars['ID'];
 };
 
+export type IogInferenceInput = {
+  imageUrl: Scalars['String'];
+  x: Scalars['Float'];
+  y: Scalars['Float'];
+  width: Scalars['Float'];
+  height: Scalars['Float'];
+  pointsInside?: Maybe<Array<Maybe<Array<Scalars['Float']>>>>;
+  pointsOutside?: Maybe<Array<Maybe<Array<Scalars['Float']>>>>;
+};
+
+export type IogInferenceResult = {
+  __typename?: 'IogInferenceResult';
+  polygons: Array<Maybe<Array<Maybe<Array<Scalars['Float']>>>>>;
+};
+
 export type Label = {
   __typename?: 'Label';
   id: Scalars['ID'];
@@ -141,6 +156,7 @@ export type Mutation = {
   updateLabel?: Maybe<Label>;
   deleteLabel?: Maybe<Label>;
   createLabelClass?: Maybe<LabelClass>;
+  iogInference?: Maybe<IogInferenceResult>;
 };
 
 
@@ -172,6 +188,11 @@ export type MutationDeleteLabelArgs = {
 
 export type MutationCreateLabelClassArgs = {
   data: LabelClassCreateInput;
+};
+
+
+export type MutationIogInferenceArgs = {
+  data: IogInferenceInput;
 };
 
 export type Query = {
@@ -328,8 +349,10 @@ export type ResolversTypes = {
   ImageCreateInput: ImageCreateInput;
   ImageWhereInput: ImageWhereInput;
   ImageWhereUniqueInput: ImageWhereUniqueInput;
-  Label: ResolverTypeWrapper<Label>;
+  IogInferenceInput: IogInferenceInput;
   Float: ResolverTypeWrapper<Scalars['Float']>;
+  IogInferenceResult: ResolverTypeWrapper<IogInferenceResult>;
+  Label: ResolverTypeWrapper<Label>;
   LabelClass: ResolverTypeWrapper<LabelClass>;
   LabelClassCreateInput: LabelClassCreateInput;
   LabelClassWhereUniqueInput: LabelClassWhereUniqueInput;
@@ -360,8 +383,10 @@ export type ResolversParentTypes = {
   ImageCreateInput: ImageCreateInput;
   ImageWhereInput: ImageWhereInput;
   ImageWhereUniqueInput: ImageWhereUniqueInput;
-  Label: Label;
+  IogInferenceInput: IogInferenceInput;
   Float: Scalars['Float'];
+  IogInferenceResult: IogInferenceResult;
+  Label: Label;
   LabelClass: LabelClass;
   LabelClassCreateInput: LabelClassCreateInput;
   LabelClassWhereUniqueInput: LabelClassWhereUniqueInput;
@@ -407,6 +432,11 @@ export type ImageResolvers<ContextType = any, ParentType extends ResolversParent
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type IogInferenceResultResolvers<ContextType = any, ParentType extends ResolversParentTypes['IogInferenceResult'] = ResolversParentTypes['IogInferenceResult']> = {
+  polygons?: Resolver<Array<Maybe<Array<Maybe<Array<ResolversTypes['Float']>>>>>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type LabelResolvers<ContextType = any, ParentType extends ResolversParentTypes['Label'] = ResolversParentTypes['Label']> = {
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
@@ -438,6 +468,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   updateLabel?: Resolver<Maybe<ResolversTypes['Label']>, ParentType, ContextType, RequireFields<MutationUpdateLabelArgs, 'where' | 'data'>>;
   deleteLabel?: Resolver<Maybe<ResolversTypes['Label']>, ParentType, ContextType, RequireFields<MutationDeleteLabelArgs, 'where'>>;
   createLabelClass?: Resolver<Maybe<ResolversTypes['LabelClass']>, ParentType, ContextType, RequireFields<MutationCreateLabelClassArgs, 'data'>>;
+  iogInference?: Resolver<Maybe<ResolversTypes['IogInferenceResult']>, ParentType, ContextType, RequireFields<MutationIogInferenceArgs, 'data'>>;
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
@@ -475,6 +506,7 @@ export type Resolvers<ContextType = any> = {
   DateTime?: GraphQLScalarType;
   Example?: ExampleResolvers<ContextType>;
   Image?: ImageResolvers<ContextType>;
+  IogInferenceResult?: IogInferenceResultResolvers<ContextType>;
   Label?: LabelResolvers<ContextType>;
   LabelClass?: LabelClassResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
