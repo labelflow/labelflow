@@ -1,12 +1,10 @@
-import { MutableRefObject, useEffect, useState, useCallback } from "react";
 import { ApolloClient, useApolloClient } from "@apollo/client";
 import { useToast } from "@chakra-ui/react";
 import gql from "graphql-tag";
 import { Collection, Feature } from "ol";
 import { Geometry } from "ol/geom";
 import { TranslateEvent } from "ol/interaction/Translate";
-import { Vector as OlSourceVector } from "ol/source";
-import { useLabellingStore } from "../../../../connectors/labelling-state";
+
 import { Effect, useUndoStore } from "../../../../connectors/undo-store";
 
 const updateLabelMutation = gql`
@@ -112,43 +110,13 @@ const updateLabelEffect = (
 });
 
 export const TranslateFeature = ({
-  sourceVectorLabelsRef,
+  selectedFeature,
 }: {
-  sourceVectorLabelsRef: MutableRefObject<OlSourceVector<Geometry> | null>;
+  selectedFeature: Feature<Geometry> | null;
 }) => {
-  const [selectedFeature, setSelectedFeature] =
-    useState<Feature<Geometry> | null>(null);
   const client = useApolloClient();
   const { perform } = useUndoStore();
   const toast = useToast();
-  const selectedLabelId = useLabellingStore((state) => state.selectedLabelId);
-
-  const getSelectedFeature = useCallback(() => {
-    if (selectedFeature?.getProperties()?.id !== selectedLabelId) {
-      if (selectedLabelId == null) {
-        setSelectedFeature(null);
-      } else {
-        const featureFromSource = sourceVectorLabelsRef.current
-          ?.getFeatures()
-          ?.filter(
-            (feature) => feature.getProperties().id === selectedLabelId
-          )?.[0];
-        if (featureFromSource != null) {
-          setSelectedFeature(featureFromSource);
-        }
-      }
-    }
-  }, [selectedLabelId, sourceVectorLabelsRef.current]);
-
-  useEffect(() => {
-    sourceVectorLabelsRef.current?.on("addfeature", getSelectedFeature);
-    return () =>
-      sourceVectorLabelsRef.current?.un("addfeature", getSelectedFeature);
-  }, [sourceVectorLabelsRef.current]);
-
-  useEffect(() => {
-    getSelectedFeature();
-  }, [selectedLabelId]);
 
   return selectedFeature != null ? (
     <olInteractionTranslate
