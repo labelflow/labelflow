@@ -2,9 +2,9 @@ import { Button, useDisclosure } from "@chakra-ui/react";
 import { withNextRouter } from "storybook-addon-next-router";
 
 import { CreateProjectModal } from "../create-project-modal";
-import { chakraDecorator } from "../../../utils/chakra-decorator";
-import { apolloDecorator } from "../../../utils/apollo-decorator";
-import { queryParamsDecorator } from "../../../utils/query-params-decorator";
+import { chakraDecorator } from "../../../../utils/chakra-decorator";
+import { apolloDecorator } from "../../../../utils/apollo-decorator";
+import { queryParamsDecorator } from "../../../../utils/query-params-decorator";
 
 export default {
   title: "web-app/Create project modal",

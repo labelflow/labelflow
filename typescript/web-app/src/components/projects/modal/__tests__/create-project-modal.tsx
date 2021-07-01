@@ -5,9 +5,9 @@ import { PropsWithChildren } from "react";
 import "@testing-library/jest-dom/extend-expect";
 import { gql } from "graphql-tag";
 
-import { client } from "../../../connectors/apollo-client-schema";
-import { setupTestsWithLocalDatabase } from "../../../utils/setup-local-db-tests";
-import { mockUseQueryParams } from "../../../utils/router-mocks";
+import { client } from "../../../../connectors/apollo-client-schema";
+import { setupTestsWithLocalDatabase } from "../../../../utils/setup-local-db-tests";
+import { mockUseQueryParams } from "../../../../utils/router-mocks";
 import { CreateProjectModal } from "../create-project-modal";
 
 mockUseQueryParams();
