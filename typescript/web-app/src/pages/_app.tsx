@@ -86,7 +86,6 @@ App.getInitialProps = async (context: AppContext): Promise<InitialProps> => {
   );
 
   // Set the cookie via http response
-  console.warn("Set the cookie server side in http response");
   parsedCookie?.set("assumeServiceWorkerActive", true, {
     path: "/",
     httpOnly: false,

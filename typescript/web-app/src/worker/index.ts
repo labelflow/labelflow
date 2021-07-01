@@ -5,7 +5,7 @@
 import { clientsClaim } from "workbox-core";
 import { ExpirationPlugin } from "workbox-expiration";
 import {
-  // NetworkOnly,
+  NetworkOnly,
   // NetworkFirst,
   CacheFirst,
   StaleWhileRevalidate,
@@ -67,22 +67,31 @@ graphqlServer.installListener("/api/worker/graphql");
 // Install the listener of the file server
 fileServer.installListener("/api/worker/files");
 
+// registerRoute(
+//   /(\/$)|(\/graphiql\/?$)|(\/images\/?$)|(\/images\/.*\/?$)/i,
+//   new StaleWhileRevalidate({
+//     cacheName: "next-js-pages",
+//     plugins: [
+//       new ExpirationPlugin({
+//         maxEntries: 1,
+//         maxAgeSeconds: 86400 * 365,
+//         purgeOnQuotaError: true,
+//       }),
+//     ],
+//   }),
+//   "GET"
+// );
+
+// registerRoute(/\/_next\/webpack-hmr\/.*$/i, new NetworkOnly({}), "GET");
+
 registerRoute(
-  "/",
-  new StaleWhileRevalidate({
-    cacheName: "start-url",
-    plugins: [
-      new ExpirationPlugin({
-        maxEntries: 1,
-        maxAgeSeconds: 86400 * 365,
-        purgeOnQuotaError: true,
-      }),
-    ],
-  }),
+  /\/_next\/static\/webpack\/.*\.hot-update\..*$/i,
+  new NetworkOnly({}),
   "GET"
 );
+
 registerRoute(
-  /_next\/.*$/i,
+  /\/_next\/static\/.*$/i,
   new StaleWhileRevalidate({
     cacheName: "next-js-artifacts",
     plugins: [
@@ -179,35 +188,6 @@ registerRoute(
   }),
   "GET"
 );
-// registerRoute(
-//   /\/api\/.*$/i,
-//   new NetworkFirst({
-//     cacheName: "apis",
-//     networkTimeoutSeconds: 5,
-//     plugins: [
-//       new ExpirationPlugin({
-//         maxEntries: 100,
-//         maxAgeSeconds: 86400,
-//         purgeOnQuotaError: true,
-//       }),
-//     ],
-//   }),
-//   "GET"
-// );
-// registerRoute(
-//   /.*/i,
-//   new StaleWhileRevalidate({
-//     cacheName: "others",
-//     plugins: [
-//       new ExpirationPlugin({
-//         maxEntries: 100000,
-//         maxAgeSeconds: 86400,
-//         purgeOnQuotaError: true,
-//       }),
-//     ],
-//   }),
-//   "GET"
-// );
 
 // following lines gives you control of the offline fallback strategies
 // https://developers.google.com/web/tools/workbox/guides/advanced-recipes#comprehensive_fallbacks
