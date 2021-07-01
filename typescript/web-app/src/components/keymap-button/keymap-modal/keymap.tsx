@@ -1,7 +1,7 @@
 import { Fragment } from "react";
 import { groupBy } from "lodash/fp";
 import { Box, Text, Flex } from "@chakra-ui/react";
-import { Keymap as KeymapType } from "../../../../../keymap";
+import { Keymap as KeymapType } from "../../../keymap";
 import { Shortcut } from "./shortcut";
 
 export const Keymap = ({ keys }: { keys: KeymapType }) => {
