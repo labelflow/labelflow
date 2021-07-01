@@ -1,14 +1,13 @@
+import { MutableRefObject, useEffect, useState, useCallback } from "react";
 import { ApolloClient, useApolloClient } from "@apollo/client";
 import { useToast } from "@chakra-ui/react";
 import gql from "graphql-tag";
 import { Collection, Feature } from "ol";
 import { Geometry } from "ol/geom";
 import { TranslateEvent } from "ol/interaction/Translate";
-import { MutableRefObject, useEffect, useState } from "react";
 import { Vector as OlSourceVector } from "ol/source";
 import { useLabellingStore } from "../../../../connectors/labelling-state";
 import { Effect, useUndoStore } from "../../../../connectors/undo-store";
-import { useCallback } from "react";
 
 const updateLabelMutation = gql`
   mutation updateLabel(
@@ -117,8 +116,6 @@ export const TranslateFeature = ({
 }: {
   sourceVectorLabelsRef: MutableRefObject<OlSourceVector<Geometry> | null>;
 }) => {
-  const [selectedFeatures, setSelectedFeatures] =
-    useState<Collection<Feature<Geometry>> | null>(null);
   const [selectedFeature, setSelectedFeature] =
     useState<Feature<Geometry> | null>(null);
   const client = useApolloClient();
@@ -136,7 +133,6 @@ export const TranslateFeature = ({
           ?.filter(
             (feature) => feature.getProperties().id === selectedLabelId
           )?.[0];
-        console.log("Got feature", featureFromSource);
         if (featureFromSource != null) {
           setSelectedFeature(featureFromSource);
         }
