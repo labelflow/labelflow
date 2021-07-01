@@ -122,9 +122,6 @@ def process(image, roi):
 
     index = -1
 
-    #### Create window
-    cv2.namedWindow("TEST")
-
     pred = np.transpose(outputs.data.numpy()[0, :, :, :], (1, 2, 0))
     pred = 1 / (1 + np.exp(-pred))
     pred = np.squeeze(pred)
