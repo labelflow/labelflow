@@ -2,8 +2,8 @@ import { Flex, Text, chakra } from "@chakra-ui/react";
 import { FaPlus } from "react-icons/fa";
 import { useQueryParam } from "use-query-params";
 
-import { BoolParam } from "../../../utils/query-param-bool";
-import { CreateProjectModal } from "../modal";
+import { BoolParam } from "../../utils/query-param-bool";
+import { CreateProjectModal } from "./create-project-modal";
 
 const PlusIcon = chakra(FaPlus);
 

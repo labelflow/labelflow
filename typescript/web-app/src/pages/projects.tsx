@@ -4,9 +4,8 @@ import NextLink from "next/link";
 import { SimpleGrid } from "@chakra-ui/react";
 import { Meta } from "../components/meta";
 import { Layout } from "../components/layout";
-import { NewProjectCard } from "../components/projects/project-cards/new-project-card";
+import { NewProjectCard, ProjectCard } from "../components/projects";
 import type { Project as ProjectType } from "../graphql-types.generated";
-import { ProjectCard } from "../components/projects/project-cards";
 
 const getProjectsQuery = gql`
   query getProjects {
