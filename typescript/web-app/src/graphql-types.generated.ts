@@ -61,6 +61,7 @@ export type Image = {
 
 export type ImageCreateInput = {
   id?: Maybe<Scalars['ID']>;
+  createdAt?: Maybe<Scalars['DateTime']>;
   name?: Maybe<Scalars['String']>;
   path?: Maybe<Scalars['String']>;
   mimetype?: Maybe<Scalars['String']>;
@@ -231,7 +232,8 @@ export type ProjectUpdateInput = {
 };
 
 export type ProjectWhereUniqueInput = {
-  id: Scalars['ID'];
+  id?: Maybe<Scalars['ID']>;
+  name?: Maybe<Scalars['String']>;
 };
 
 export type Query = {

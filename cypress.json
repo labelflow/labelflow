@@ -1,4 +1,8 @@
 {
   "projectId": "jmqq5y",
-  "defaultCommandTimeout": 30000
+  "defaultCommandTimeout": 30000,
+  "retries": {
+    "runMode": 2,
+    "openMode": 0
+  }
 }

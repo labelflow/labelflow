@@ -1,19 +1,23 @@
-import { useMemo } from "react";
+import { useMemo, useRef } from "react";
 import { useRouter } from "next/router";
+import { Draw as OlDraw } from "ol/interaction";
 import { createBox, DrawEvent } from "ol/interaction/Draw";
 import { Fill, Stroke, Style } from "ol/style";
 import GeometryType from "ol/geom/GeometryType";
-import { ApolloClient, useApolloClient, useQuery } from "@apollo/client";
+import { useApolloClient, useQuery } from "@apollo/client";
 import gql from "graphql-tag";
 import { useToast } from "@chakra-ui/react";
 
+import { useHotkeys } from "react-hotkeys-hook";
 import {
   useLabellingStore,
   Tools,
   BoxDrawingToolState,
-} from "../../../connectors/labelling-state";
-import { useUndoStore, Effect } from "../../../connectors/undo-store";
-import { noneClassColor } from "../../../utils/class-color-generator";
+} from "../../../../connectors/labelling-state";
+import { keymap } from "../../../../keymap";
+import { useUndoStore } from "../../../../connectors/undo-store";
+import { noneClassColor } from "../../../../utils/class-color-generator";
+import { createLabelEffect } from "./create-label-effect";
 
 const labelClassQuery = gql`
   query getLabelClass($id: ID!) {
@@ -24,116 +28,11 @@ const labelClassQuery = gql`
     }
   }
 `;
-const createLabelMutation = gql`
-  mutation createLabel(
-    $id: ID
-    $imageId: ID!
-    $x: Float!
-    $y: Float!
-    $width: Float!
-    $height: Float!
-    $labelClassId: ID
-  ) {
-    createLabel(
-      data: {
-        id: $id
-        imageId: $imageId
-        x: $x
-        y: $y
-        width: $width
-        height: $height
-        labelClassId: $labelClassId
-      }
-    ) {
-      id
-    }
-  }
-`;
-
-const deleteLabelMutation = gql`
-  mutation deleteLabel($id: ID!) {
-    deleteLabel(where: { id: $id }) {
-      id
-    }
-  }
-`;
-
-const createLabelEffect = (
-  {
-    imageId,
-    x,
-    y,
-    width,
-    height,
-    selectedLabelClassId,
-  }: {
-    imageId: string;
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-    selectedLabelClassId: string | null;
-  },
-  {
-    setSelectedLabelId,
-    client,
-  }: {
-    setSelectedLabelId: (labelId: string | null) => void;
-    client: ApolloClient<object>;
-  }
-): Effect => ({
-  do: async () => {
-    const { data } = await client.mutate({
-      mutation: createLabelMutation,
-      variables: {
-        imageId,
-        x,
-        y,
-        width,
-        height,
-        labelClassId: selectedLabelClassId,
-      },
-      refetchQueries: ["getImageLabels"],
-    });
-
-    setSelectedLabelId(data?.createLabel?.id);
-
-    return data?.createLabel?.id;
-  },
-  undo: async (id: string): Promise<string> => {
-    await client.mutate({
-      mutation: deleteLabelMutation,
-      variables: { id },
-      refetchQueries: ["getImageLabels"],
-    });
-
-    setSelectedLabelId(null);
-    return id;
-  },
-  redo: async (id: string) => {
-    const { data } = await client.mutate({
-      mutation: createLabelMutation,
-      variables: {
-        id,
-        imageId,
-        x,
-        y,
-        width,
-        height,
-        labelClassId: selectedLabelClassId,
-      },
-      refetchQueries: ["getImageLabels"],
-    });
-
-    setSelectedLabelId(data?.createLabel?.id);
-
-    return data?.createLabel?.id;
-  },
-});
 
 const geometryFunction = createBox();
 
 export const DrawBoundingBoxInteraction = () => {
+  const drawRef = useRef<OlDraw>(null);
   const client = useApolloClient();
   const imageId = useRouter().query?.id;
 
@@ -155,6 +54,13 @@ export const DrawBoundingBoxInteraction = () => {
   const { perform } = useUndoStore();
 
   const selectedLabelClass = dataLabelClass?.labelClass;
+
+  useHotkeys(
+    keymap.cancelAction.key,
+    () => drawRef.current?.abortDrawing(),
+    {},
+    [drawRef]
+  );
 
   const toast = useToast();
 
@@ -181,10 +87,16 @@ export const DrawBoundingBoxInteraction = () => {
 
   return (
     <olInteractionDraw
+      ref={drawRef}
       args={{
         type: GeometryType.CIRCLE,
         geometryFunction,
         style, // Needed here to trigger the rerender of the component when the selected class changes
+      }}
+      condition={(e) => {
+        // 0 is the main mouse button. See: https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/button
+        // @ts-ignore
+        return e.originalEvent.button === 0;
       }}
       onDrawabort={() => {
         setBoxDrawingToolState(BoxDrawingToolState.IDLE);

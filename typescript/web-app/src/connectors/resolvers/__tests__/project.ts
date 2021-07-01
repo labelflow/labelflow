@@ -45,6 +45,20 @@ describe("Project resolver test suite", () => {
     expect(typeof mutationResult.data.createProject.id).toEqual("string");
   });
 
+  test("Creating a project should fail if the project name already exists", async () => {
+    await createProject("my project", "an-id");
+
+    return expect(createProject("my project", "an-id")).rejects.toEqual(
+      new Error("Could not create the project")
+    );
+  });
+
+  test("Create project should fail if the project name is empty", () => {
+    return expect(createProject("", "an-id")).rejects.toEqual(
+      new Error("Could not create the project with an empty name")
+    );
+  });
+
   test("Create project with an id should return the same id", async () => {
     const name = "My new project";
     const projectId = "some id";
@@ -110,7 +124,7 @@ describe("Project resolver test suite", () => {
           id: "a id that doesn't exist",
         },
       })
-    ).rejects.toThrow("No project with such id");
+    ).rejects.toEqual(new Error("No project with such id"));
   });
 
   test("Read multiple projects", async () => {
@@ -242,7 +256,44 @@ describe("Project resolver test suite", () => {
           id: projectId,
         },
       })
-    ).rejects.toThrow("No project with such id");
+    ).rejects.toEqual(new Error("No project with such id"));
+  });
+
+  test("should delete a project by its name", async () => {
+    const name = "My new project";
+    const projectId = "some id";
+    await createProject(name, projectId);
+
+    const mutationResult = await client.mutate({
+      mutation: gql`
+        mutation deleteProject($name: String!) {
+          deleteProject(where: { name: $name }) {
+            id
+            name
+          }
+        }
+      `,
+      variables: {
+        name,
+      },
+    });
+
+    expect(mutationResult.data.deleteProject.name).toEqual(name);
+
+    return expect(
+      client.query({
+        query: gql`
+          query getProject($id: ID!) {
+            project(where: { id: $id }) {
+              id
+            }
+          }
+        `,
+        variables: {
+          id: projectId,
+        },
+      })
+    ).rejects.toEqual(new Error("No project with such id"));
   });
 
   test("should throw an error if the project to delete does not exist", () => {
@@ -260,7 +311,7 @@ describe("Project resolver test suite", () => {
           id: "not existing project id",
         },
       })
-    ).rejects.toThrow("No project with such id");
+    ).rejects.toEqual(new Error("No project with such id"));
   });
 
   test("Should update a project with a new name", async () => {
@@ -312,6 +363,55 @@ describe("Project resolver test suite", () => {
     );
   });
 
+  test("Should update a project with a new name by its name", async () => {
+    const name = "My new project";
+    const projectId = "some id";
+    await createProject(name, projectId);
+
+    const mutationResult = await client.mutate({
+      mutation: gql`
+        mutation updateProject($name: String!, $data: ProjectUpdateInput!) {
+          updateProject(where: { name: $name }, data: $data) {
+            id
+            name
+          }
+        }
+      `,
+      variables: {
+        name,
+        data: { name: "My new project new name" },
+      },
+    });
+
+    expect(mutationResult.data.updateProject).toEqual(
+      expect.objectContaining({
+        id: projectId,
+        name: "My new project new name",
+      })
+    );
+
+    const queryResult = await client.query({
+      query: gql`
+        query getProject($id: ID!) {
+          project(where: { id: $id }) {
+            id
+            name
+          }
+        }
+      `,
+      variables: {
+        id: projectId,
+      },
+    });
+
+    expect(queryResult.data.project).toEqual(
+      expect.objectContaining({
+        id: projectId,
+        name: "My new project new name",
+      })
+    );
+  });
+
   test("Should throw when trying to update a project that doesn't exist", () => {
     return expect(
       client.mutate({
@@ -328,6 +428,33 @@ describe("Project resolver test suite", () => {
           data: { name: "My new project new name" },
         },
       })
-    ).rejects.toThrow("No project with such id");
+    ).rejects.toEqual(new Error("No project with such id"));
+  });
+
+  test("Find project by name", async () => {
+    const name = "My new project";
+    const projectId = "some id";
+    await createProject(name, projectId);
+
+    const queryResult = await client.query({
+      query: gql`
+        query getProject($name: String!) {
+          project(where: { name: $name }) {
+            id
+            name
+          }
+        }
+      `,
+      variables: {
+        name,
+      },
+    });
+
+    expect(queryResult.data.project).toEqual(
+      expect.objectContaining({
+        id: projectId,
+        name,
+      })
+    );
   });
 });
