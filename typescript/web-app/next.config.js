@@ -182,7 +182,6 @@ module.exports = withPWA({
     // Add plugins to the webpack config of the service worker bundler
     // See https://developers.google.com/web/tools/workbox/reference-docs/latest/module-workbox-webpack-plugin.InjectManifest
     webpackCompilationPlugins: [],
-    offlineGoogleAnalytics: true,
     // exclude: ["/api/worker/"]
   }
 }

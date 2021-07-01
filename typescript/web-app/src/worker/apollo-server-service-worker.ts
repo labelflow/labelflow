@@ -10,7 +10,7 @@ import {
   runHttpQuery,
 } from "apollo-server-core";
 import type { Request as ApolloRequest } from "apollo-server-env";
-import { RouteHandlerCallback, RouteHandlerObject } from "workbox-core";
+import { RouteHandlerCallbackOptions, RouteHandlerObject } from "workbox-core";
 
 import { resetDatabase } from "../connectors/database";
 
@@ -78,7 +78,7 @@ export class ApolloServerServiceWorker
   extends ApolloServerBase
   implements RouteHandlerObject
 {
-  handle: RouteHandlerCallback = async ({ request }) => {
+  async handle({ request }: RouteHandlerCallbackOptions): Promise<Response> {
     const options = await this.graphQLServerOptions({
       req: request,
     });
@@ -87,5 +87,5 @@ export class ApolloServerServiceWorker
       options
     );
     return response;
-  };
+  }
 }

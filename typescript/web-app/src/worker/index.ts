@@ -7,6 +7,7 @@ import { ExpirationPlugin } from "workbox-expiration";
 import {
   NetworkOnly,
   // NetworkFirst,
+  CacheOnly,
   CacheFirst,
   StaleWhileRevalidate,
 } from "workbox-strategies";
@@ -20,10 +21,13 @@ import {
   precacheAndRoute,
   cleanupOutdatedCaches,
 } from "workbox-precaching";
-import * as googleAnalytics from "workbox-google-analytics";
+import { initialize as initializeGoogleAnalytics } from "workbox-google-analytics";
+
+import typeDefs from "../../../../data/__generated__/schema.graphql";
+import { resolvers } from "../connectors/resolvers";
 
 import { ApolloServerServiceWorker } from "./apollo-server-service-worker";
-import { server as fileServer } from "./file-server";
+import { UploadServer } from "./upload-server";
 
 declare let self: ServiceWorkerGlobalScope;
 
@@ -60,15 +64,41 @@ console.log(WB_MANIFEST);
 
 precacheAndRoute(WB_MANIFEST);
 
-googleAnalytics.initialize({});
+console.log("Init ok 1");
+initializeGoogleAnalytics({});
 
+console.log("Init ok 2");
 cleanupOutdatedCaches();
 
-// Install the listener of the graphql server
-registerRoute("/api/worker/graphql", new ApolloServerServiceWorker({}), "POST");
+console.log("Init ok 3");
 
-// Install the listener of the file server
-fileServer.installListener("/api/worker/files");
+registerRoute(
+  "/api/worker/graphql",
+  new ApolloServerServiceWorker({
+    typeDefs,
+    resolvers,
+    context: ({ req, res }) => ({ req, res }),
+    introspection: true,
+  }),
+  "POST"
+);
+
+console.log("Graphql ok");
+
+registerRoute(
+  "/api/worker/uploads",
+  new CacheOnly({
+    cacheName: "uploads",
+  }),
+  "GET"
+);
+registerRoute(
+  "/api/worker/uploads",
+  new UploadServer({ cacheName: "uploads" }),
+  "PUT"
+);
+
+console.log("Uploads ok");
 
 // registerRoute(
 //   /(\/$)|(\/graphiql\/?$)|(\/images\/?$)|(\/images\/.*\/?$)/i,
@@ -86,6 +116,8 @@ fileServer.installListener("/api/worker/files");
 // );
 
 // registerRoute(/\/_next\/webpack-hmr\/.*$/i, new NetworkOnly({}), "GET");
+
+// See https://github.com/shadowwalker/next-pwa/issues/38
 
 registerRoute(
   /\/_next\/static\/webpack\/.*\.hot-update\..*$/i,
