@@ -156,7 +156,8 @@ input ProjectUpdateInput {
 }
 
 input ProjectWhereUniqueInput {
-  id: ID!
+  id: ID
+  name: String
 }
 
 type Query {

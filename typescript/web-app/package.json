@@ -17,10 +17,10 @@
     "@graphql-tools/merge": "^6.2.14",
     "@graphql-tools/schema": "7.1.5",
     "@labelflow/react-openlayers-fiber": "workspace:typescript/react-openlayers-fiber",
-    "@next/bundle-analyzer": "^11.0.1",
     "apollo-server-core": "^2.25.0",
     "apollo-server-env": "^3.1.0",
     "autoprefixer": "^10.2.6",
+    "detect-browser": "^5.2.0",
     "dexie": "^3.0.3",
     "downshift": "^6.1.3",
     "framer-motion": "^4",
@@ -33,7 +33,7 @@
     "next": "10.x",
     "next-cookie": "^2.6.2",
     "next-pwa": "patch:next-pwa@5.2.21#./next-pwa.patch",
-    "next-seo": "4.24.0",
+    "next-seo": "^4.26.0",
     "node-polyfill-webpack-plugin": "^1.1.2",
     "ol": "6.5.0",
     "postcss": "^8.3.5",
@@ -78,6 +78,7 @@
     "storybook-addon-next-router": "^2.0.4",
     "typescript": "4.2.4",
     "webpack": "5.38.1",
+    "webpack-bundle-analyzer": "^4.4.2",
     "workbox-window": "6.1.5"
   }
 }
