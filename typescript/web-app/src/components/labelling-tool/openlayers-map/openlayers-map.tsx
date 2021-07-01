@@ -230,6 +230,7 @@ export const OpenlayersMap = () => {
                 editClassOverlayRef={editClassOverlayRef}
                 sourceVectorLabelsRef={sourceVectorLabelsRef}
                 setIsContextMenuOpen={setIsContextMenuOpen}
+                map={mapRef.current}
               />
             </ThemeProvider>
           </ApolloProvider>
