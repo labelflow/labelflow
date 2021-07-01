@@ -65,7 +65,7 @@ export const CreateProjectModal = ({
     skip: projectName === "",
   });
 
-  const [mutate] = useMutation(createProjectMutation, {
+  const [createProjectMutate] = useMutation(createProjectMutation, {
     variables: {
       name: projectName,
     },
@@ -83,7 +83,7 @@ export const CreateProjectModal = ({
     if (projectName === "") return;
 
     try {
-      await mutate();
+      await createProjectMutate();
 
       closeModal();
     } catch (e) {
@@ -104,7 +104,6 @@ export const CreateProjectModal = ({
           e.preventDefault();
           createProject();
         }}
-        method="post"
       >
         <ModalCloseButton />
 
