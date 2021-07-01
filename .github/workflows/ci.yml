@@ -205,10 +205,6 @@ jobs:
       - name: Deploy webapp on Vercel
         uses: amondnet/vercel-action@v20
         id: vercel
-        env:
-          # @next/bundle-analyzer
-          # See https://www.npmjs.com/package/@next/bundle-analyzer
-          ANALYZE: "true"
         with:
           scope: ${{ secrets.VERCEL_ORG_ID}}
           vercel-token: ${{ secrets.VERCEL_TOKEN }} # Required

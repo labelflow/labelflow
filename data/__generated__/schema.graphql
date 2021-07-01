@@ -65,6 +65,8 @@ type ImagesAggregates {
   totalCount: Int!
 }
 
+scalar JSON
+
 type Label {
   id: ID!
   createdAt: DateTime!
@@ -174,6 +176,7 @@ type Query {
   project(where: ProjectWhereUniqueInput!): Project!
   projects(first: Int, skip: Int): [Project!]!
   exportToCoco: String!
+  debug: JSON!
 }
 
 scalar Upload
