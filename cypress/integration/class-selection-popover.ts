@@ -1,45 +1,56 @@
-import { db } from "../../typescript/web-app/src/connectors/database";
-import imageSampleCollection from "../../typescript/web-app/src/utils/image-sample-collection";
+import gql from "graphql-tag";
 
-describe("Navigation", () => {
-  beforeEach(() => {
-    return Promise.all([
+import { db } from "../../typescript/web-app/src/connectors/database";
+import { client } from "../../typescript/web-app/src/connectors/apollo-client-schema";
+
+async function createImage(url: string) {
+  const mutationResult = await client.mutate({
+    mutation: gql`
+      mutation createImage($url: String) {
+        createImage(data: { url: $url }) {
+          id
+          name
+          width
+          height
+          url
+        }
+      }
+    `,
+    variables: {
+      url,
+    },
+  });
+
+  const {
+    data: { createImage: image },
+  } = mutationResult;
+
+  return image;
+}
+
+describe("Class selection popover", () => {
+  let imageId: string;
+  beforeEach(async () => {
+    await Promise.all([
       db.image.clear(),
       db.label.clear(),
       db.labelClass.clear(),
       db.file.clear(),
     ]);
-  });
 
-  it("Should execute the golden path without errors", () => {
-    // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
-
-    cy.visit(
-      "http://localhost:3000/images?modal-welcome=closed&modal-update-service-worker=update"
+    const { id } = await createImage(
+      "https://images.unsplash.com/photo-1579513141590-c597876aefbc?auto=format&fit=crop&w=882&q=80"
     );
 
-    cy.contains("You don't have any images.").should("be.visible");
-    cy.get("header").within(() => {
-      cy.contains("Add images").click();
-    });
-    cy.contains("Import from a list of URLs instead").click();
-    cy.get("textarea").type(imageSampleCollection.slice(0, 15).join("\n"), {
-      delay: 0,
-    });
-    cy.contains("Start Import").click();
-    cy.get(`[aria-label="Close"]`).click();
-    cy.get("main")
-      .contains(
-        imageSampleCollection[0]
-          .split("?")[0]
-          .split("https://images.unsplash.com/")[1]
-      )
-      .click();
+    imageId = id;
+  });
 
-    // We need to pick the drawing tool in order to see the class selection picker
-    cy.log("pick the drawing tool in order to see the class selection picker");
+  it("Should work", () => {
+    // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
+    cy.visit(
+      `/images/${imageId}?modal-welcome=closed&modal-update-service-worker=update`
+    );
     cy.get('[aria-label="Drawing tool"]').click();
-    cy.get("header").contains("photo-").should("be.visible");
 
     // Create new label class
     cy.log("Create new label class");
@@ -247,7 +258,7 @@ describe("Navigation", () => {
     });
     // // @ts-ignore
     // cy.getByLabel("Search in class selection popover").click();
-    cy.get("main").type("/");
+    cy.focused().type("/");
     cy.get('[aria-label="Class selection popover"]').within(() => {
       // @ts-ignore
       cy.getByLabel("Search in class selection popover").should("be.focused");
@@ -277,30 +288,5 @@ describe("Navigation", () => {
       // @ts-ignore
       cy.getByLabel("Search in class selection popover").should("be.focused");
     });
-    // Image navigation
-    cy.log("Image navigation");
-    cy.get('[aria-label="Next image"]').click();
-    cy.get('[aria-label="Undo tool"]').should("be.disabled");
-    cy.url().should("not.include", "selected-label-id");
-
-    cy.get("main nav").scrollTo("right");
-    cy.get("main nav").within(() => {
-      cy.contains("15").closest("a").click();
-    });
-
-    cy.get('input[name="current-image"]').should("have.value", "15");
-    cy.get('input[name="current-image"]').type("7{enter}");
-
-    cy.get('[aria-current="page"]').should(($a) => {
-      expect($a).to.contain("7");
-    });
-    cy.contains(
-      imageSampleCollection[6]
-        .split("?")[0]
-        .split("https://images.unsplash.com/")[1]
-    ).should("exist");
-
-    cy.get('[aria-label="Export"]').click();
-    cy.contains("Your project contains 2 labels").should("be.visible");
   });
 });
