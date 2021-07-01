@@ -39,6 +39,7 @@ export const ProjectCard = (props: {
   return (
     <Box
       w="sm"
+      h="2xs"
       borderWidth="0px"
       borderRadius="16px"
       overflow="hidden"
