@@ -55,7 +55,6 @@ const ProjectPage = () => {
               <a style={{ width: "100%" }}>
                 <ProjectCard
                   projectName={name}
-                  imageUrl="https://images.unsplash.com/photo-1579513141590-c597876aefbc?auto=format&fit=crop&w=882&q=80"
                   imagesCount={0}
                   labelClassesCount={0}
                   labelsCount={0}
