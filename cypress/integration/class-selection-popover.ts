@@ -102,61 +102,42 @@ describe("Class selection popover", () => {
     cy.get('[aria-label="loading indicator"]').should("not.exist");
     cy.get('[aria-label="Selection tool"]').click();
 
-    // ############## Right click popover tests ##############
-    // Create new class
-    cy.log("Create new class");
     cy.get("main").rightclick(500, 150);
-
     cy.get('[aria-label="Class selection popover"]').within(() => {
       cy.get('[name="class-selection-search"]').type("My new class{enter}");
     });
-    cy.get("main").rightclick(500, 150);
 
+    cy.get("main").rightclick(500, 150);
     cy.get('[aria-label="Class selection popover"]')
       .contains("My new class")
       .closest('[role="option"]')
       .should("have.attr", "aria-current", "true");
-    // Check that this new class is set as the label class ID in drawing mode
-    cy.log(
-      "Check that this new class is set as the label class ID in drawing mode"
-    );
+
     cy.get('[aria-label="Drawing tool"]').click();
     cy.contains("My new class").should("be.visible");
+
     cy.get('[aria-label="Selection tool"]').click();
-    // Assign label to class None
-    cy.log("Assign label to class None");
     cy.get("main").rightclick(500, 150);
     cy.get('[aria-label="Class selection popover"]').contains("None").click();
+
     cy.get("main").rightclick(500, 150);
     cy.get('[aria-label="Class selection popover"]')
       .contains("None")
       .closest('[role="option"]')
       .should("have.attr", "aria-current", "true");
-    // Undo label class assignment
-    cy.log("Undo label class assignment");
+
     cy.get('[aria-label="Undo tool"]').click();
     cy.get("main").rightclick(500, 150);
     cy.get('[aria-label="Class selection popover"]')
       .contains("My new class")
       .closest('[role="option"]')
       .should("have.attr", "aria-current", "true");
-    // Redo label class assignment
-    cy.log("Redo label class assignment");
+
     cy.get("main").click(350, 50);
     cy.get('[aria-label="Redo tool"]').click();
     cy.get("main").rightclick(500, 150);
     cy.get('[aria-label="Class selection popover"]')
       .contains("None")
-      .closest('[role="option"]')
-      .should("have.attr", "aria-current", "true");
-    // Assign label to class My new class
-    cy.log("Assign label to class My new class");
-    cy.get('[aria-label="Class selection popover"]')
-      .contains("My new class")
-      .click();
-    cy.get("main").rightclick(500, 150);
-    cy.get('[aria-label="Class selection popover"]')
-      .contains("My new class")
       .closest('[role="option"]')
       .should("have.attr", "aria-current", "true");
   });
@@ -168,78 +149,55 @@ describe("Class selection popover", () => {
     cy.visit(
       `/images/${imageId}?modal-welcome=closed&modal-update-service-worker=update`
     );
-
     cy.get('[aria-label="loading indicator"]').should("not.exist");
     cy.get('[aria-label="Selection tool"]').click();
+
     cy.get("main").click(500, 150);
-
-    // ############## Class selection menu tests ##############
-    // Create new class and assign it to label
-    cy.log("Create new class and assign it to label");
     cy.get('[aria-label="Open class selection popover"]').click();
-
     cy.get('[aria-label="Class selection menu popover"]').within(() => {
       cy.get('[name="class-selection-search"]').should("not.be.focused");
       cy.get('[name="class-selection-search"]').click();
       cy.get('[name="class-selection-search"]').should("be.focused");
     });
     cy.focused().type("My other new class{enter}");
+
     cy.get('[aria-label="Open class selection popover"]').click();
     cy.get('[aria-label="Class selection popover"]')
       .contains("My other new class")
       .closest('[role="option"]')
       .should("have.attr", "aria-current", "true");
-    // Check that this new class is set as the label class ID in drawing mode
-    cy.log(
-      "Check that this new class is set as the label class ID in drawing mode"
-    );
+
     cy.get('[aria-label="Drawing tool"]').click();
     cy.get('[aria-label="Class selection menu popover"]').within(() => {
       cy.contains("My other new class").should("be.visible");
     });
+
     cy.get('[aria-label="Selection tool"]').click();
-    // Assign label to class None
-    cy.log("Assign label to class None");
     cy.get('[aria-label="Open class selection popover"]').click();
     cy.get('[aria-label="Class selection menu popover"]')
       .contains("None")
       .click();
+
     cy.get('[aria-label="Open class selection popover"]').click();
     cy.get('[aria-label="Class selection menu popover"]')
       .contains("None")
       .closest('[role="option"]')
       .should("have.attr", "aria-current", "true");
-    // Undo label class assignment
-    cy.log("Undo label class assignment");
+
     cy.get('[aria-label="Undo tool"]').click();
     cy.get('[aria-label="Open class selection popover"]').click();
     cy.get('[aria-label="Class selection menu popover"]')
       .contains("My other new class")
       .closest('[role="option"]')
       .should("have.attr", "aria-current", "true");
-    // Redo label class assignment
-    cy.log("Redo label class assignment");
-    cy.get('[aria-label="Open class selection popover"]').click();
+
     cy.get('[aria-label="Redo tool"]').click();
     cy.get('[aria-label="Open class selection popover"]').click();
     cy.get('[aria-label="Class selection menu popover"]')
       .contains("None")
       .closest('[role="option"]')
       .should("have.attr", "aria-current", "true");
-    // Assign label to class My other new class
-    cy.log("Assign label to class My other new class");
-    cy.get('[aria-label="Class selection menu popover"]')
-      .contains("My other new class")
-      .click();
-    cy.get('[aria-label="Open class selection popover"]').click();
-    cy.get('[aria-label="Class selection menu popover"]')
-      .contains("My other new class")
-      .closest('[role="option"]')
-      .should("have.attr", "aria-current", "true");
-    // Create a new label with a different label class selected in drawing mode
-    cy.log(
-      "Create a new label with a different label class selected in drawing mode"
-    );
+
     cy.get('[aria-label="Drawing tool"]').click();
     cy.get('[aria-label="Open class selection popover"]').click();
     cy.get('[aria-label="Class selection menu popover"]')
@@ -247,6 +205,7 @@ describe("Class selection popover", () => {
       .click();
     cy.get("main").click(400, 300);
     cy.get("main").click(600, 400);
+
     cy.get('[aria-label="Selection tool"]').click();
     cy.get('[aria-label="Open class selection popover"]').contains(
       "My new class"
@@ -262,9 +221,6 @@ describe("Class selection popover", () => {
     cy.get('[aria-label="loading indicator"]').should("not.exist");
     cy.get('[aria-label="Selection tool"]').click();
 
-    // ############## Class selection with shortcut ##############
-    // A class can be selected by shortcut from the right click popover
-    cy.log("A class can be selected by shortcut from the right click popover");
     cy.get("main").rightclick(500, 150);
     cy.get('[aria-label="Class selection popover"]')
       .should("be.visible")
@@ -273,43 +229,31 @@ describe("Class selection popover", () => {
     cy.get('[aria-label="Open class selection popover"]').contains(
       "My new class"
     );
-    // A class can be selected by shortcut when a label is selected
-    cy.log("A class can be selected by shortcut when a label is selected");
-    cy.get("main").click(500, 150);
+
     cy.get('[aria-label="Open class selection popover"]').type("1");
     cy.get('[aria-label="Open class selection popover"]').contains(
       "A new class"
     );
-    // Shortcut for focusing the search input works in the right click popover
-    cy.log(
-      "Shortcut for focusing the search input works in the right click popover"
-    );
+
     cy.get("main").rightclick(500, 150);
     cy.get('[aria-label="Class selection popover"]')
       .should("be.visible")
       .and("be.focused");
-    // cy.get("body").type("/");
-
     cy.get('[aria-label="Class selection popover"]').within(() => {
       cy.get('[name="class-selection-search"]').should("not.be.focused");
     });
-    // cy.get('[name="class-selection-search"]').click();
     cy.focused().type("/");
+
     cy.get('[aria-label="Class selection popover"]').within(() => {
       cy.get('[name="class-selection-search"]').should("be.focused");
     });
-    // Shortcut for focusing the search input works in the class selection menu popover
-    cy.log(
-      "Shortcut for focusing the search input works in the class selection menu popover"
-    );
+
     cy.get("main").click(500, 150);
     cy.get('[aria-label="Class selection menu popover"]').should(
       "not.be.visible"
     );
     cy.get('[aria-label="Open class selection popover"]').click();
-
     cy.get('[aria-label="Class selection menu popover"]').should("be.visible");
-
     cy.get('[aria-label="Class selection menu popover"]').within(() => {
       cy.get('[name="class-selection-search"]').should("not.be.focused");
     });
