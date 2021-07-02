@@ -102,8 +102,6 @@ describe("Class selection popover", () => {
     cy.get('[aria-label="loading indicator"]').should("not.exist");
     cy.get('[aria-label="Selection tool"]').click();
 
-    cy.wait(1000);
-
     // ############## Right click popover tests ##############
     // Create new class
     cy.log("Create new class");

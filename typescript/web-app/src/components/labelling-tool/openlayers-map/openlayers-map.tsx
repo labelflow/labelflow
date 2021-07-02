@@ -250,7 +250,7 @@ export const OpenlayersMap = () => {
       >
         {url == null && (
           <Center h="full">
-            <Spinner size="xl" />
+            <Spinner aria-label="loading indicator" size="xl" />
           </Center>
         )}
       </div>
