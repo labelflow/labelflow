@@ -94,7 +94,7 @@ describe("Class selection popover", () => {
     });
   });
 
-  it.only("right clicks on a label to change its class", () => {
+  it("right clicks on a label to change its class", () => {
     // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
     cy.visit(
       `/images/${imageId}?modal-welcome=closed&modal-update-service-worker=update`
@@ -168,6 +168,7 @@ describe("Class selection popover", () => {
     cy.visit(
       `/images/${imageId}?modal-welcome=closed&modal-update-service-worker=update`
     );
+    cy.get('[aria-label="loading indicator"]').should("not.exist");
     cy.get('[aria-label="Drawing tool"]').click();
 
     // Assert it is selected
@@ -268,6 +269,7 @@ describe("Class selection popover", () => {
     cy.visit(
       `/images/${imageId}?modal-welcome=closed&modal-update-service-worker=update`
     );
+    cy.get('[aria-label="loading indicator"]').should("not.exist");
     cy.get('[aria-label="Drawing tool"]').click();
 
     // Create new label class
