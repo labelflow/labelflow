@@ -161,8 +161,8 @@ describe("Class selection popover", () => {
       .should("have.attr", "aria-current", "true");
   });
 
-  it("uses the class selection menu to change the class of created labels", async () => {
-    await createLabelClass("My new class", "#65A30D");
+  it("uses the class selection menu to change the class of created labels", () => {
+    cy.wrap(createLabelClass("My new class", "#65A30D"));
 
     // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
     cy.visit(
@@ -265,50 +265,13 @@ describe("Class selection popover", () => {
   });
 
   it("uses shortcuts to change classes", () => {
+    cy.wrap(createLabelClass("My new class", "#65A30D"));
     // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
     cy.visit(
       `/images/${imageId}?modal-welcome=closed&modal-update-service-worker=update`
     );
     cy.get('[aria-label="loading indicator"]').should("not.exist");
-    cy.get('[aria-label="Drawing tool"]').click();
-
-    // Create new label class
-    cy.log("Create new label class");
-    cy.get('[aria-label="Open class selection popover"]').click();
-    cy.get('[aria-label="Class selection menu popover"]').within(() => {
-      cy.get('[name="class-selection-search"]').should("not.be.focused");
-      cy.get('[name="class-selection-search"]').click();
-      cy.get('[name="class-selection-search"]').should("be.focused");
-    });
-
-    cy.focused().type("A new class{enter}");
-
-    cy.get('[aria-label="Open class selection popover"]')
-      .contains("A new class")
-      .should("exist");
-
-    // 1. Create one bounding box
-    cy.log("Create one bounding box");
-    cy.get("main").click(400, 100);
-    cy.get("main").click(600, 200);
-
-    cy.get('[aria-label="Open class selection popover"]').click();
-    cy.get('[aria-label="Class selection menu popover"]').within(() => {
-      cy.get('[name="class-selection-search"]').should("not.be.focused");
-      cy.get('[name="class-selection-search"]').click();
-      cy.get('[name="class-selection-search"]').should("be.focused");
-    });
-
-    cy.focused().type("My new class{enter}");
-
-    cy.get('[aria-label="Open class selection popover"]')
-      .contains("My new class")
-      .should("exist");
-
-    cy.get("main").click(400, 300);
-    cy.get("main").click(600, 400);
-
-    // cy.wait(1000);
+    cy.get('[aria-label="Selection tool"]').click();
 
     // ############## Class selection with shortcut ##############
     // A class can be selected by shortcut from the right click popover
