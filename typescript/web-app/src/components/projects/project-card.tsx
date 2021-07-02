@@ -11,6 +11,7 @@ import {
   chakra,
 } from "@chakra-ui/react";
 import { HiTrash, HiPencilAlt } from "react-icons/hi";
+import { EmptyStateImage } from "../empty-state";
 
 const EditIcon = chakra(HiPencilAlt);
 const TrashIcon = chakra(HiTrash);
@@ -47,7 +48,11 @@ export const ProjectCard = (props: {
       bg="white"
     >
       <AspectRatio maxH="36">
-        <Image src={imageUrl} alt={imageAlt} alignSelf="center" fit="cover" />
+        {imageUrl ? (
+          <Image src={imageUrl} alt={imageAlt} alignSelf="center" fit="cover" />
+        ) : (
+          <EmptyStateImage />
+        )}
       </AspectRatio>
       <VStack pt="2" pl="5" pr="5" pb="5" align="left">
         <Flex alignItems="center">

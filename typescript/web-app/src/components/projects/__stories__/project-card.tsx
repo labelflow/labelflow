@@ -1,4 +1,5 @@
 import { withNextRouter } from "storybook-addon-next-router";
+import { omit } from "lodash/fp";
 
 import { Box } from "@chakra-ui/react";
 import { chakraDecorator } from "../../../utils/chakra-decorator";
@@ -36,6 +37,10 @@ const Template = (args: any) => (
 
 export const Default = () => {
   return <Template {...property} />;
+};
+
+export const NoImages = () => {
+  return <Template {...omit(["imageUrl"], property)} />;
 };
 
 export const OverflowingValues = () => {
