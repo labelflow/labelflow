@@ -1,6 +1,9 @@
 from starlette.applications import Starlette
 from starlette.responses import JSONResponse
 from starlette.routing import Route
+from starlette.middleware import Middleware
+from starlette.middleware.cors import CORSMiddleware
+
 import uvicorn
 import base64
 import numpy as np
@@ -121,7 +124,18 @@ async def model_inference(request):
 
 routes = [Route("/", model_inference, methods=["POST"])]
 
-app = Starlette(debug=True, routes=routes)
+app = Starlette(
+    debug=True,
+    routes=routes,
+    middleware=[
+        Middleware(
+            CORSMiddleware,
+            allow_origins=["*"],
+            allow_methods=["POST"],
+            allow_headers=["*"],
+        )
+    ],
+)
 
 # Add Graphql endpoint
 app.mount("/graphql", GraphQL(schema, debug=True))
