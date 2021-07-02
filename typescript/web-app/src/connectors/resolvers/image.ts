@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from "uuid";
-
+import probe from "probe-image-size";
 import type {
   MutationCreateImageArgs,
   QueryImageArgs,
@@ -81,35 +81,51 @@ const probeImage = async ({
     return { width, height, mimetype };
   }
 
-  const probe = await import("probe-image-size");
-  const fetchResult = await fetch(url, {
-    method: "GET",
-    mode: "cors",
-    headers: new Headers({
-      Accept: "image/tiff,image/jpeg,image/png,image/*,*/*;q=0.8",
-      "Sec-Fetch-Dest": "image",
-    }),
-    credentials: "omit",
-  });
-  if (fetchResult.status !== 200) {
-    throw new Error(
-      `Could not fetch image at url ${url} properly, code ${fetchResult.status}`
-    );
-  }
-  const blob = await fetchResult.blob();
-  const probeInput = new Uint8Array(await blob.arrayBuffer());
-  const probeResult = probe.sync(probeInput as Buffer);
-  if (probeResult == null) {
-    throw new Error(
-      `Could not probe the external image at url ${url} it may be damaged or corrupted.`
-    );
-  }
+  try {
+    console.log("yoyo1");
+    // const probe = await import(/* webpackPrefetch: true */ "probe-image-size");
+    console.log("yoyo2", url, await cachePromise);
 
-  return {
-    width: width ?? probeResult.width,
-    height: height ?? probeResult.height,
-    mimetype: mimetype ?? probeResult.mime,
-  };
+    const cacheResult = await (await cachePromise).match(url);
+    console.log("cacheResult", cacheResult);
+    const fetchResult =
+      cacheResult ??
+      (await fetch(url, {
+        method: "GET",
+        mode: "cors",
+        headers: new Headers({
+          Accept: "image/tiff,image/jpeg,image/png,image/*,*/*;q=0.8",
+          "Sec-Fetch-Dest": "image",
+        }),
+        credentials: "omit",
+      }));
+    console.log("yoyo3", fetchResult);
+    if (fetchResult.status !== 200) {
+      throw new Error(
+        `Could not fetch image at url ${url} properly, code ${fetchResult.status}`
+      );
+    }
+    const blob = await fetchResult.blob();
+    console.log("yoyo4");
+    const probeInput = new Uint8Array(await blob.arrayBuffer());
+    console.log("yoyo5");
+    const probeResult = probe.sync(probeInput as Buffer);
+    console.log("yoyo6", probeResult);
+    if (probeResult == null) {
+      throw new Error(
+        `Could not probe the external image at url ${url} it may be damaged or corrupted.`
+      );
+    }
+
+    return {
+      width: width ?? probeResult.width,
+      height: height ?? probeResult.height,
+      mimetype: mimetype ?? probeResult.mime,
+    };
+  } catch (e) {
+    console.error(e);
+    throw e;
+  }
 };
 
 // Mutations
@@ -122,7 +138,7 @@ const createImage = async (
   const now = args?.data?.createdAt ?? new Date().toISOString();
   const imageId = id ?? uuidv4();
   let finalUrl: string | undefined;
-
+  console.log("create Image", args.data);
   if (
     !(
       (!file && !externalUrl && url) ||
@@ -130,6 +146,7 @@ const createImage = async (
       (file && !externalUrl && !url)
     )
   ) {
+    console.log("file,externalUrl,url", file, externalUrl, url);
     throw new Error(
       "Image creation upload must include either a `file` field of type `Upload`, or a `url` field of type `String`, or a `externalUrl` field of type `String`"
     );
@@ -142,6 +159,7 @@ const createImage = async (
 
   if (!file && externalUrl && !url) {
     // External file based upload
+    console.log("External file based upload", externalUrl);
     const fetchResult = await fetch(externalUrl, {
       method: "GET",
       mode: "cors",
@@ -152,13 +170,17 @@ const createImage = async (
       credentials: "omit",
     });
 
+    console.log("External file based upload 2 ", externalUrl);
+
     if (fetchResult.status !== 200) {
       throw new Error(
         `Could not fetch image at url ${url} properly, code ${fetchResult.status}`
       );
     }
 
+    console.log("External file based upload3", fetchResult);
     const uploadTarget = await getUploadTarget();
+    console.log("External file based upload4", uploadTarget);
 
     // eslint-disable-next-line no-underscore-dangle
     if (uploadTarget.__typename !== "UploadTargetHttp") {
@@ -166,9 +188,24 @@ const createImage = async (
         "This Server does not support file upload. You can create images by providing a `file` directly in the `createImage` mutation"
       );
     }
+    console.log("External file based upload5", uploadTarget);
     finalUrl = uploadTarget.downloadUrl;
 
-    (await cachePromise).put(finalUrl, fetchResult);
+    console.log("External file based upload6", uploadTarget);
+
+    const responseOfGet = new Response(await fetchResult.blob(), {
+      status: 200,
+      statusText: "OK",
+      headers: new Headers({
+        "Content-Type":
+          fetchResult.headers.get("Content-Type") ?? "application/octet-stream",
+        "Content-Length": fetchResult.headers.get("Content-Length") ?? "0",
+      }),
+    });
+
+    await (await cachePromise).put(finalUrl, responseOfGet);
+
+    console.log("External file based upload7", uploadTarget);
   }
 
   if (file && !externalUrl && !url) {
@@ -184,9 +221,19 @@ const createImage = async (
     }
     finalUrl = uploadTarget.downloadUrl;
 
-    (await cachePromise).put(finalUrl, file);
+    const response = new Response(file, {
+      status: 200,
+      statusText: "OK",
+      headers: new Headers({
+        "Content-Type": file.type ?? "application/octet-stream",
+        "Content-Length": file.size.toString() ?? "0",
+      }),
+    });
+
+    await (await cachePromise).put(finalUrl, response);
   }
 
+  console.log("ok1");
   // Probe the file to get its dimensions and mimetype if not provided
   const imageMetaData = await probeImage({
     width,
@@ -194,6 +241,7 @@ const createImage = async (
     mimetype,
     url: finalUrl!,
   });
+  console.log("ok2");
 
   const newImageEntity: DbImage = {
     createdAt: now,
@@ -201,12 +249,12 @@ const createImage = async (
     id: imageId,
     url: finalUrl!,
     externalUrl,
-    path: path ?? finalUrl!,
+    path: path ?? externalUrl!,
     name:
       name ??
-      finalUrl!.substring(
-        finalUrl!.lastIndexOf("/") + 1,
-        finalUrl!.indexOf("?")
+      externalUrl!.substring(
+        externalUrl!.lastIndexOf("/") + 1,
+        externalUrl!.indexOf("?")
       ),
     ...imageMetaData,
   };
@@ -237,7 +285,6 @@ export default {
 
   Image: {
     labels: labelsResolver,
-    url: urlResolver,
   },
 
   ImagesAggregates: { totalCount },

@@ -14,11 +14,12 @@ declare let self: ServiceWorkerGlobalScope;
 export const getUploadTarget = async (): Promise<UploadTarget> => {
   if (isInWindowScope) {
     // We run in the window scope
-    return { direct: true };
+    return { __typename: "UploadTargetDirect", direct: true };
   }
   // We run in the worker scope or nodejs
   const fileId = uuidv4();
   return {
+    __typename: "UploadTargetHttp",
     // Upload and download URL do not have to be the same. But in our implementation it is:
     uploadUrl: `${self.location.protocol}//${self.location.host}${uploadsRoute}/${fileId}`,
     downloadUrl: `${self.location.protocol}//${self.location.host}${uploadsRoute}/${fileId}`,

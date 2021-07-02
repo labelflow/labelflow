@@ -47,6 +47,7 @@ async function graphQLServiceWorker(
 
     return response;
   } catch (error) {
+    console.error(error);
     if (retries < maxRetries) {
       console.log("Problem with the database, retrying after reset");
       resetDatabase();

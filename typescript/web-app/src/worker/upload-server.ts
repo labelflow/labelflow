@@ -11,31 +11,32 @@ export class UploadServer implements RouteHandlerObject {
   }
 
   async handle({ request }: RouteHandlerCallbackOptions): Promise<Response> {
-    console.log("Handling an upload");
     if (!this.cache) {
       this.cache = await this.cachePromise;
     }
-    const requestOfGet = new Request({
-      ...request,
-      bodyUsed: false,
-      body: null,
-      method: "GET",
-    });
-    const responseOfGet = new Response((request as Request).body, {
+
+    const blob = await request.blob();
+
+    const responseOfGet = new Response(blob, {
       status: 200,
       statusText: "OK",
       headers: new Headers({
         "Content-Type":
-          (request as Request).headers.get("Content-Type") ??
+          request.headers?.get?.("Content-Type") ??
+          blob.type ??
           "application/octet-stream",
+        "Content-Length":
+          request.headers?.get?.("Content-Length") ??
+          blob.size.toString() ??
+          "0",
       }),
     });
-    this.cache.put(requestOfGet, responseOfGet);
+
+    await this.cache.put(request.url, responseOfGet);
 
     const response = new Response("", {
       status: 200,
       statusText: "OK",
-      headers: new Headers(),
     });
 
     return response;

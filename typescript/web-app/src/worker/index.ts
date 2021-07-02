@@ -23,6 +23,7 @@ import {
 } from "workbox-precaching";
 import { initialize as initializeGoogleAnalytics } from "workbox-google-analytics";
 
+import { trimCharsEnd } from "lodash/fp";
 import typeDefs from "../../../../data/__generated__/schema.graphql";
 import { resolvers } from "../connectors/resolvers";
 import { uploadsCacheName, uploadsRoute } from "../connectors/resolvers/upload";
@@ -79,15 +80,18 @@ registerRoute(
   "POST"
 );
 
+const trimmedUploadsRoute = trimCharsEnd("/", uploadsRoute);
+const uploadsRouteRegex = new RegExp(`${trimmedUploadsRoute}/(?<fileId>.*)`);
+
 registerRoute(
-  uploadsRoute,
+  uploadsRouteRegex,
   new CacheOnly({
     cacheName: uploadsCacheName,
   }),
   "GET"
 );
 registerRoute(
-  uploadsRoute,
+  uploadsRouteRegex,
   new UploadServer({ cacheName: uploadsCacheName }),
   "PUT"
 );

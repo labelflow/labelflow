@@ -127,6 +127,7 @@ export const ImportImagesModalDropzone = ({
                 // File upload to the url provided by the server
 
                 if (browser?.name === "safari") {
+                  console.log("Safari mode put", target.uploadUrl);
                   // This special case is needed for Safari
                   // See https://github.com/Labelflow/labelflow/issues/228
                   // See https://stackoverflow.com/questions/63144979/fetch-event-listener-not-triggering-in-service-worker-for-file-upload-via-mult
@@ -147,6 +148,7 @@ export const ImportImagesModalDropzone = ({
                     };
                   });
                 }
+
                 await fetch(target.uploadUrl, {
                   method: "PUT",
                   body: acceptedFile.file,
