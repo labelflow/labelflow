@@ -37,6 +37,18 @@ const getProjectByNameQuery = gql`
   }
 `;
 
+const getProjectsQuery = gql`
+  query getProjects {
+    projects {
+      id
+      name
+      images {
+        url
+      }
+    }
+  }
+`;
+
 export const CreateProjectModal = ({
   isOpen = false,
   onClose = () => {},
@@ -46,11 +58,13 @@ export const CreateProjectModal = ({
 }) => {
   const [projectName, setProjectName] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState<string>("");
+  const [hasAdded, setHasAdded] = useState(false);
 
   const closeModal = useCallback(() => {
     onClose();
     setErrorMessage("");
     setProjectName("");
+    setHasAdded(true);
   }, []);
 
   const handleChangeProjectName = useCallback(
@@ -59,6 +73,14 @@ export const CreateProjectModal = ({
     }),
     []
   );
+
+  const { refetch: refetchImages } = useQuery(getProjectsQuery);
+
+  useEffect(() => {
+    if (hasAdded) {
+      refetchImages();
+    }
+  }, [hasAdded]);
 
   const { data: existingProject } = useQuery(getProjectByNameQuery, {
     variables: { name: projectName },
@@ -103,6 +125,7 @@ export const CreateProjectModal = ({
         onSubmit={(e) => {
           e.preventDefault();
           createProject();
+          setHasAdded(false);
         }}
       >
         <ModalCloseButton />
