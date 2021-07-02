@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { ApolloClient, useQuery, useApolloClient } from "@apollo/client";
 import gql from "graphql-tag";
 import { Vector as OlSourceVector } from "ol/source";
-import { Geometry } from "ol/geom";
+import { Geometry, MultiPoint } from "ol/geom";
 import { fromExtent } from "ol/geom/Polygon";
 import { Fill, Stroke, Style } from "ol/style";
 import { useHotkeys } from "react-hotkeys-hook";
@@ -17,6 +17,8 @@ import {
   addLabelToImageInCache,
   removeLabelFromImageCache,
 } from "./draw-bounding-box-interaction/create-label-effect";
+import CircleStyle from "ol/style/Circle";
+import { Feature } from "ol";
 
 const getImageLabelsQuery = gql`
   query getImageLabels($imageId: ID!) {
@@ -219,16 +221,31 @@ export const Labels = ({
           {labels.map(({ id, x, y, width, height, labelClass }: Label) => {
             const isSelected = id === selectedLabelId;
             const labelClassColor = labelClass?.color ?? noneClassColor;
-            const style = new Style({
-              fill: new Fill({
-                color: `${labelClassColor}${isSelected ? "40" : "10"}`,
+            const style = [
+              new Style({
+                fill: new Fill({
+                  color: `${labelClassColor}${isSelected ? "40" : "10"}`,
+                }),
+                stroke: new Stroke({
+                  color: labelClassColor,
+                  width: 2,
+                }),
+                zIndex: isSelected ? 2 : 1,
               }),
-              stroke: new Stroke({
-                color: labelClassColor,
-                width: 2,
+              new Style({
+                image: new CircleStyle({
+                  radius: 5,
+                  fill: new Fill({
+                    color: labelClassColor,
+                  }),
+                }),
+                geometry: (feature) => {
+                  const coordinates = feature.getGeometry().getCoordinates()[0];
+                  return new MultiPoint(coordinates);
+                },
+                zIndex: isSelected ? 2 : 1,
               }),
-              zIndex: isSelected ? 2 : 1,
-            });
+            ];
 
             return (
               <olFeature
