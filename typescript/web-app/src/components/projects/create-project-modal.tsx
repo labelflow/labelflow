@@ -19,7 +19,7 @@ import {
   FormLabel,
 } from "@chakra-ui/react";
 
-const debounceTime = 2000;
+const debounceTime = 200;
 
 const createProjectMutation = gql`
   mutation createProject($name: String!) {
@@ -57,18 +57,24 @@ export const CreateProjectModal = ({
   onClose?: () => void;
 }) => {
   const [projectName, setProjectName] = useState<string>("");
+  const [projectNameTrimmed, setProjectNameTrimmed] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [hasAdded, setHasAdded] = useState(false);
+  const [queryExistingProjects, { data: existingProject }] = useLazyQuery(
+    getProjectByNameQuery
+  );
+  const { refetch: refetchProjects } = useQuery(getProjectsQuery);
+  const [createProjectMutate] = useMutation(createProjectMutation, {
+    variables: {
+      name: projectNameTrimmed,
+    },
+  });
 
   const closeModal = useCallback(() => {
     onClose();
     setErrorMessage("");
     setProjectName("");
   }, []);
-
-  const handleChangeProjectName = (e: any) => setProjectName(e.target.value);
-
-  const { refetch: refetchProjects } = useQuery(getProjectsQuery);
 
   useEffect(() => {
     if (hasAdded) {
@@ -77,9 +83,10 @@ export const CreateProjectModal = ({
     }
   }, [hasAdded]);
 
-  const [queryExistingProjects, { data: existingProject }] = useLazyQuery(
-    getProjectByNameQuery
-  );
+  const handleProjectNameChange = (e: any) => {
+    setProjectName(e.target.value);
+    setProjectNameTrimmed(e.target.value.trim());
+  };
 
   const debouncedQuery = useRef(
     debounce(debounceTime, (nextName: string) => {
@@ -90,16 +97,10 @@ export const CreateProjectModal = ({
   ).current;
 
   useEffect(() => {
-    if (projectName.trim() === "") return;
+    if (projectNameTrimmed === "") return;
 
-    debouncedQuery(projectName.trim());
-  }, [projectName]);
-
-  const [createProjectMutate] = useMutation(createProjectMutation, {
-    variables: {
-      name: projectName.trim(),
-    },
-  });
+    debouncedQuery(projectNameTrimmed);
+  }, [projectNameTrimmed]);
 
   useEffect(() => {
     if (existingProject != null) {
@@ -110,7 +111,7 @@ export const CreateProjectModal = ({
   }, [existingProject]);
 
   const createProject = async () => {
-    if (projectName.trim() === "") return;
+    if (projectNameTrimmed === "") return;
 
     try {
       await createProjectMutate();
@@ -123,7 +124,7 @@ export const CreateProjectModal = ({
 
   const isInputValid = () => errorMessage === "";
 
-  const canCreateProject = () => projectName.trim() !== "" && isInputValid();
+  const canCreateProject = () => projectNameTrimmed !== "" && isInputValid();
 
   return (
     <Modal isOpen={isOpen} size="xl" onClose={closeModal}>
@@ -151,7 +152,7 @@ export const CreateProjectModal = ({
               value={projectName}
               placeholder="Project name"
               size="md"
-              onChange={handleChangeProjectName}
+              onChange={handleProjectNameChange}
               aria-label="Project name input"
             />
             <FormErrorMessage>{errorMessage}</FormErrorMessage>
