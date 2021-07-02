@@ -63,11 +63,11 @@ describe("Golden path", () => {
       .should("have.attr", "aria-current", "true");
 
     cy.get("main").click(450, 160);
-    cy.get("main").click(500, 170);
+    cy.get("main").click(500, 260);
 
     cy.get('[aria-label="Selection tool"]').click();
 
-    cy.get("main").rightclick(500, 150);
+    cy.get("main").rightclick(475, 200);
     cy.get('[aria-label="Class selection popover"]').within(() => {
       cy.get('[name="class-selection-search"]').type("My new class{enter}");
     });
