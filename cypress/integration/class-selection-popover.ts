@@ -168,21 +168,10 @@ describe("Class selection popover", () => {
     cy.visit(
       `/images/${imageId}?modal-welcome=closed&modal-update-service-worker=update`
     );
+
     cy.get('[aria-label="loading indicator"]').should("not.exist");
-    cy.get('[aria-label="Drawing tool"]').click();
-
-    // Assert it is selected
-    cy.log("Assert it is selected");
-    cy.get('[aria-label="Open class selection popover"]').click();
-    cy.get('[aria-label="Class selection menu popover"]')
-      .contains("A new class")
-      .click();
-
-    // 1. Create one bounding box
-    cy.log("Create one bounding box");
-    cy.get("main").click(400, 100);
-    cy.get("main").click(600, 200);
     cy.get('[aria-label="Selection tool"]').click();
+    cy.get("main").click(500, 150);
 
     // ############## Class selection menu tests ##############
     // Create new class and assign it to label
