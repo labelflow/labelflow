@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useLazyQuery } from "@apollo/client";
 import gql from "graphql-tag";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import debounce from "lodash/fp/debounce";
 
 import {
@@ -66,8 +66,7 @@ export const CreateProjectModal = ({
     setProjectName("");
   }, []);
 
-  const handleChangeProjectName = (e: any) =>
-    setProjectName(e.target.value.trim());
+  const handleChangeProjectName = (e: any) => setProjectName(e.target.value);
 
   const { refetch: refetchProjects } = useQuery(getProjectsQuery);
 
@@ -78,27 +77,27 @@ export const CreateProjectModal = ({
     }
   }, [hasAdded]);
 
-  const [queryExistingProject, { data: existingProject }] = useLazyQuery(
-    getProjectByNameQuery,
-    {
-      variables: { name: projectName },
-    }
+  const [queryExistingProjects, { data: existingProject }] = useLazyQuery(
+    getProjectByNameQuery
   );
 
-  const debouncedQuery = useCallback(
-    debounce(debounceTime, queryExistingProject),
-    []
-  );
+  const debouncedQuery = useRef(
+    debounce(debounceTime, (nextName: string) => {
+      queryExistingProjects({
+        variables: { name: nextName },
+      });
+    })
+  ).current;
 
   useEffect(() => {
-    if (projectName === "") return;
+    if (projectName.trim() === "") return;
 
-    debouncedQuery();
+    debouncedQuery(projectName.trim());
   }, [projectName]);
 
   const [createProjectMutate] = useMutation(createProjectMutation, {
     variables: {
-      name: projectName,
+      name: projectName.trim(),
     },
   });
 
@@ -111,7 +110,7 @@ export const CreateProjectModal = ({
   }, [existingProject]);
 
   const createProject = async () => {
-    if (projectName === "") return;
+    if (projectName.trim() === "") return;
 
     try {
       await createProjectMutate();
@@ -124,7 +123,7 @@ export const CreateProjectModal = ({
 
   const isInputValid = () => errorMessage === "";
 
-  const canCreateProject = () => projectName !== "" && isInputValid();
+  const canCreateProject = () => projectName.trim() !== "" && isInputValid();
 
   return (
     <Modal isOpen={isOpen} size="xl" onClose={closeModal}>
