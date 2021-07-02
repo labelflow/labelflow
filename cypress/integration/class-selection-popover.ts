@@ -207,9 +207,9 @@ describe("Class selection popover", () => {
     cy.get("main").click(600, 400);
 
     cy.get('[aria-label="Selection tool"]').click();
-    cy.get('[aria-label="Open class selection popover"]').contains(
-      "My new class"
-    );
+    cy.get('[aria-label="Open class selection popover"]')
+      .contains("My new class")
+      .should("be.visible");
   });
 
   it("uses shortcuts to change classes", () => {
