@@ -32,6 +32,7 @@ type Image {
   createdAt: DateTime!
   updatedAt: DateTime!
   url: String!
+  externalUrl: String
   name: String!
   path: String!
   mimetype: String!
@@ -51,6 +52,7 @@ input ImageCreateInput {
   width: Int
   file: Upload
   url: String
+  externalUrl: String
 }
 
 input ImageWhereInput {

@@ -5,8 +5,8 @@ export class UploadServer implements RouteHandlerObject {
 
   private cache?: Cache;
 
-  constructor(options: { cacheName?: string; route?: string }) {
-    const cacheName = options.cacheName ?? "uploads";
+  constructor(options: { cacheName: string }) {
+    const { cacheName } = options;
     this.cachePromise = caches.open(cacheName);
   }
 

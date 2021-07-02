@@ -25,7 +25,7 @@ import { initialize as initializeGoogleAnalytics } from "workbox-google-analytic
 
 import typeDefs from "../../../../data/__generated__/schema.graphql";
 import { resolvers } from "../connectors/resolvers";
-
+import { uploadsCacheName, uploadsRoute } from "../connectors/resolvers/upload";
 import { ApolloServerServiceWorker } from "./apollo-server-service-worker";
 import { UploadServer } from "./upload-server";
 
@@ -59,18 +59,14 @@ clientsClaim();
 // eslint-disable-next-line @typescript-eslint/no-use-before-define
 // eslint-disable-next-line no-underscore-dangle
 const WB_MANIFEST = self.__WB_MANIFEST;
-console.log("WB_MANIFEST");
+console.log("WB_MANIFEST"); // TODO check if next routes are in there in prod mode https://github.com/shadowwalker/next-pwa/issues/38
 console.log(WB_MANIFEST);
 
 precacheAndRoute(WB_MANIFEST);
 
-console.log("Init ok 1");
 initializeGoogleAnalytics({});
 
-console.log("Init ok 2");
 cleanupOutdatedCaches();
-
-console.log("Init ok 3");
 
 registerRoute(
   "/api/worker/graphql",
@@ -83,22 +79,18 @@ registerRoute(
   "POST"
 );
 
-console.log("Graphql ok");
-
 registerRoute(
-  "/api/worker/uploads",
+  uploadsRoute,
   new CacheOnly({
-    cacheName: "uploads",
+    cacheName: uploadsCacheName,
   }),
   "GET"
 );
 registerRoute(
-  "/api/worker/uploads",
-  new UploadServer({ cacheName: "uploads" }),
+  uploadsRoute,
+  new UploadServer({ cacheName: uploadsCacheName }),
   "PUT"
 );
-
-console.log("Uploads ok");
 
 // registerRoute(
 //   /(\/$)|(\/graphiql\/?$)|(\/images\/?$)|(\/images\/.*\/?$)/i,
