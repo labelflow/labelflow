@@ -56,8 +56,8 @@ export const CreateProjectModal = ({
   isOpen?: boolean;
   onClose?: () => void;
 }) => {
+  const [inputValue, setInputValue] = useState<string>("");
   const [projectName, setProjectName] = useState<string>("");
-  const [projectNameTrimmed, setProjectNameTrimmed] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [hasAdded, setHasAdded] = useState(false);
   const [queryExistingProjects, { data: existingProject }] = useLazyQuery(
@@ -66,14 +66,14 @@ export const CreateProjectModal = ({
   const { refetch: refetchProjects } = useQuery(getProjectsQuery);
   const [createProjectMutate] = useMutation(createProjectMutation, {
     variables: {
-      name: projectNameTrimmed,
+      name: projectName,
     },
   });
 
   const closeModal = useCallback(() => {
     onClose();
     setErrorMessage("");
-    setProjectName("");
+    setInputValue("");
   }, []);
 
   useEffect(() => {
@@ -83,9 +83,9 @@ export const CreateProjectModal = ({
     }
   }, [hasAdded]);
 
-  const handleProjectNameChange = (e: any) => {
-    setProjectName(e.target.value);
-    setProjectNameTrimmed(e.target.value.trim());
+  const handleInputValueChange = (e: any) => {
+    setInputValue(e.target.value);
+    setProjectName(e.target.value.trim());
   };
 
   const debouncedQuery = useRef(
@@ -97,10 +97,10 @@ export const CreateProjectModal = ({
   ).current;
 
   useEffect(() => {
-    if (projectNameTrimmed === "") return;
+    if (projectName === "") return;
 
-    debouncedQuery(projectNameTrimmed);
-  }, [projectNameTrimmed]);
+    debouncedQuery(projectName);
+  }, [projectName]);
 
   useEffect(() => {
     if (existingProject != null) {
@@ -111,7 +111,7 @@ export const CreateProjectModal = ({
   }, [existingProject]);
 
   const createProject = async () => {
-    if (projectNameTrimmed === "") return;
+    if (projectName === "") return;
 
     try {
       await createProjectMutate();
@@ -124,7 +124,7 @@ export const CreateProjectModal = ({
 
   const isInputValid = () => errorMessage === "";
 
-  const canCreateProject = () => projectNameTrimmed !== "" && isInputValid();
+  const canCreateProject = () => projectName !== "" && isInputValid();
 
   return (
     <Modal isOpen={isOpen} size="xl" onClose={closeModal}>
@@ -149,10 +149,10 @@ export const CreateProjectModal = ({
           <FormControl isInvalid={!isInputValid()} isRequired>
             <FormLabel>Name</FormLabel>
             <Input
-              value={projectName}
+              value={inputValue}
               placeholder="Project name"
               size="md"
-              onChange={handleProjectNameChange}
+              onChange={handleInputValueChange}
               aria-label="Project name input"
             />
             <FormErrorMessage>{errorMessage}</FormErrorMessage>
