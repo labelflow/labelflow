@@ -105,12 +105,12 @@ describe("Class selection popover", () => {
     // ############## Right click popover tests ##############
     // Create new class
     cy.log("Create new class");
-    cy.get("main").rightclick(500, 175);
+    cy.get("main").rightclick(500, 150);
 
     cy.get('[aria-label="Class selection popover"]').within(() => {
       cy.get('[name="class-selection-search"]').type("My new class{enter}");
     });
-    cy.get("main").rightclick(500, 175);
+    cy.get("main").rightclick(500, 150);
 
     cy.get('[aria-label="Class selection popover"]')
       .contains("My new class")
