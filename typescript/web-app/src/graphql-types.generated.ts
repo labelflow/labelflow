@@ -13,6 +13,7 @@ export type Scalars = {
   Float: number;
   ColorHex: any;
   DateTime: any;
+  JSON: any;
   Upload: any;
 };
 
@@ -83,6 +84,7 @@ export type ImagesAggregates = {
   __typename?: 'ImagesAggregates';
   totalCount: Scalars['Int'];
 };
+
 
 export type Label = {
   __typename?: 'Label';
@@ -251,6 +253,7 @@ export type Query = {
   project: Project;
   projects: Array<Project>;
   exportToCoco: Scalars['String'];
+  debug: Scalars['JSON'];
 };
 
 
@@ -412,6 +415,7 @@ export type ResolversTypes = {
   ImageWhereInput: ImageWhereInput;
   ImageWhereUniqueInput: ImageWhereUniqueInput;
   ImagesAggregates: ResolverTypeWrapper<ImagesAggregates>;
+  JSON: ResolverTypeWrapper<Scalars['JSON']>;
   Label: ResolverTypeWrapper<Label>;
   Float: ResolverTypeWrapper<Scalars['Float']>;
   LabelClass: ResolverTypeWrapper<LabelClass>;
@@ -450,6 +454,7 @@ export type ResolversParentTypes = {
   ImageWhereInput: ImageWhereInput;
   ImageWhereUniqueInput: ImageWhereUniqueInput;
   ImagesAggregates: ImagesAggregates;
+  JSON: Scalars['JSON'];
   Label: Label;
   Float: Scalars['Float'];
   LabelClass: LabelClass;
@@ -507,6 +512,10 @@ export type ImagesAggregatesResolvers<ContextType = any, ParentType extends Reso
   totalCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
+
+export interface JsonScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['JSON'], any> {
+  name: 'JSON';
+}
 
 export type LabelResolvers<ContextType = any, ParentType extends ResolversParentTypes['Label'] = ResolversParentTypes['Label']> = {
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
@@ -575,6 +584,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   project?: Resolver<ResolversTypes['Project'], ParentType, ContextType, RequireFields<QueryProjectArgs, 'where'>>;
   projects?: Resolver<Array<ResolversTypes['Project']>, ParentType, ContextType, RequireFields<QueryProjectsArgs, never>>;
   exportToCoco?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  debug?: Resolver<ResolversTypes['JSON'], ParentType, ContextType>;
 };
 
 export interface UploadScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Upload'], any> {
@@ -602,6 +612,7 @@ export type Resolvers<ContextType = any> = {
   Example?: ExampleResolvers<ContextType>;
   Image?: ImageResolvers<ContextType>;
   ImagesAggregates?: ImagesAggregatesResolvers<ContextType>;
+  JSON?: GraphQLScalarType;
   Label?: LabelResolvers<ContextType>;
   LabelClass?: LabelClassResolvers<ContextType>;
   LabelsAggregates?: LabelsAggregatesResolvers<ContextType>;
