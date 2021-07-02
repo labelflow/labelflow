@@ -242,7 +242,12 @@ describe("Class selection popover", () => {
     cy.get('[aria-label="Class selection popover"]').within(() => {
       cy.get('[name="class-selection-search"]').should("not.be.focused");
     });
-    cy.focused().type("/");
+
+    cy.focused().trigger("keydown", {
+      key: "/",
+      code: "Slash",
+      keyCode: "191",
+    });
 
     cy.get('[aria-label="Class selection popover"]').within(() => {
       cy.get('[name="class-selection-search"]').should("be.focused");
@@ -258,7 +263,11 @@ describe("Class selection popover", () => {
       cy.get('[name="class-selection-search"]').should("not.be.focused");
     });
 
-    cy.focused().type("/");
+    cy.focused().trigger("keydown", {
+      key: "/",
+      code: "Slash",
+      keyCode: "191",
+    });
 
     cy.get('[aria-label="Class selection menu popover"]').within(() => {
       cy.get('[name="class-selection-search"]').should("be.focused");
