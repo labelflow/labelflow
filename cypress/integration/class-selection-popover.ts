@@ -45,7 +45,7 @@ describe("Class selection popover", () => {
     imageId = id;
   });
 
-  it("Should work", () => {
+  it("right clicks on a label to change its class", () => {
     // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
     cy.visit(
       `/images/${imageId}?modal-welcome=closed&modal-update-service-worker=update`
@@ -56,11 +56,8 @@ describe("Class selection popover", () => {
     cy.log("Create new label class");
     cy.get('[aria-label="Open class selection popover"]').click();
     cy.get('[aria-label="Class selection menu popover"]').within(() => {
-      // @ts-ignore
       cy.get('[name="class-selection-search"]').should("not.be.focused");
-      // @ts-ignore
       cy.get('[name="class-selection-search"]').click();
-      // @ts-ignore
       cy.get('[name="class-selection-search"]').should("be.focused");
     });
 
@@ -85,7 +82,6 @@ describe("Class selection popover", () => {
     cy.get("main").rightclick(500, 150);
 
     cy.get('[aria-label="Class selection popover"]').within(() => {
-      // @ts-ignore
       cy.get('[name="class-selection-search"]').type("My new class{enter}");
     });
     cy.get("main").rightclick(500, 150);
@@ -137,6 +133,40 @@ describe("Class selection popover", () => {
       .contains("My new class")
       .closest('[role="option"]')
       .should("have.attr", "aria-current", "true");
+  });
+
+  it("uses the class selection menu to change the class of created labels", () => {
+    // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
+    cy.visit(
+      `/images/${imageId}?modal-welcome=closed&modal-update-service-worker=update`
+    );
+    cy.get('[aria-label="Drawing tool"]').click();
+
+    // Create new label class
+    cy.log("Create new label class");
+    cy.get('[aria-label="Open class selection popover"]').click();
+    cy.get('[aria-label="Class selection menu popover"]').within(() => {
+      cy.get('[name="class-selection-search"]').should("not.be.focused");
+      cy.get('[name="class-selection-search"]').click();
+      cy.get('[name="class-selection-search"]').should("be.focused");
+    });
+
+    cy.focused().type("A new class{enter}");
+
+    cy.get('[aria-label="Open class selection popover"]').click();
+    cy.get('[aria-label="Class selection menu popover"]').within(() => {
+      cy.get('[name="class-selection-search"]').should("not.be.focused");
+      cy.get('[name="class-selection-search"]').click();
+      cy.get('[name="class-selection-search"]').should("be.focused");
+    });
+
+    cy.focused().type("My new class{enter}");
+
+    // 1. Create one bounding box
+    cy.log("Create one bounding box");
+    cy.get("main").click(400, 100);
+    cy.get("main").click(600, 200);
+    cy.get('[aria-label="Selection tool"]').click();
 
     // ############## Class selection menu tests ##############
     // Create new class and assign it to label
@@ -144,11 +174,8 @@ describe("Class selection popover", () => {
     cy.get('[aria-label="Open class selection popover"]').click();
 
     cy.get('[aria-label="Class selection menu popover"]').within(() => {
-      // @ts-ignore
       cy.get('[name="class-selection-search"]').should("not.be.focused");
-      // @ts-ignore
       cy.get('[name="class-selection-search"]').click();
-      // @ts-ignore
       cy.get('[name="class-selection-search"]').should("be.focused");
     });
     cy.focused().type("My other new class{enter}");
@@ -219,20 +246,70 @@ describe("Class selection popover", () => {
     cy.get('[aria-label="Open class selection popover"]').contains(
       "My new class"
     );
+  });
+
+  it("uses shortcuts to change classes", () => {
+    // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
+    cy.visit(
+      `/images/${imageId}?modal-welcome=closed&modal-update-service-worker=update`
+    );
+    cy.get('[aria-label="Drawing tool"]').click();
+
+    // Create new label class
+    cy.log("Create new label class");
+    cy.get('[aria-label="Open class selection popover"]').click();
+    cy.get('[aria-label="Class selection menu popover"]').within(() => {
+      cy.get('[name="class-selection-search"]').should("not.be.focused");
+      cy.get('[name="class-selection-search"]').click();
+      cy.get('[name="class-selection-search"]').should("be.focused");
+    });
+
+    cy.focused().type("A new class{enter}");
+
+    cy.get('[aria-label="Open class selection popover"]')
+      .contains("A new class")
+      .should("exist");
+
+    // 1. Create one bounding box
+    cy.log("Create one bounding box");
+    cy.get("main").click(400, 100);
+    cy.get("main").click(600, 200);
+
+    cy.get('[aria-label="Open class selection popover"]').click();
+    cy.get('[aria-label="Class selection menu popover"]').within(() => {
+      cy.get('[name="class-selection-search"]').should("not.be.focused");
+      cy.get('[name="class-selection-search"]').click();
+      cy.get('[name="class-selection-search"]').should("be.focused");
+    });
+
+    cy.focused().type("My new class{enter}");
+
+    cy.get('[aria-label="Open class selection popover"]')
+      .contains("My new class")
+      .should("exist");
+
+    cy.get("main").click(400, 300);
+    cy.get("main").click(600, 400);
+
+    // cy.wait(1000);
+
     // ############## Class selection with shortcut ##############
     // A class can be selected by shortcut from the right click popover
     cy.log("A class can be selected by shortcut from the right click popover");
     cy.get("main").rightclick(500, 150);
+    cy.get('[aria-label="Class selection popover"]')
+      .should("be.visible")
+      .and("be.focused");
     cy.focused().type("2");
     cy.get('[aria-label="Open class selection popover"]').contains(
-      "My other new class"
+      "My new class"
     );
     // A class can be selected by shortcut when a label is selected
     cy.log("A class can be selected by shortcut when a label is selected");
     cy.get("main").click(500, 150);
     cy.get('[aria-label="Open class selection popover"]').type("1");
     cy.get('[aria-label="Open class selection popover"]').contains(
-      "My new class"
+      "A new class"
     );
     // Shortcut for focusing the search input works in the right click popover
     cy.log(
@@ -245,14 +322,11 @@ describe("Class selection popover", () => {
     // cy.get("body").type("/");
 
     cy.get('[aria-label="Class selection popover"]').within(() => {
-      // @ts-ignore
       cy.get('[name="class-selection-search"]').should("not.be.focused");
     });
-    // // @ts-ignore
     // cy.get('[name="class-selection-search"]').click();
     cy.focused().type("/");
     cy.get('[aria-label="Class selection popover"]').within(() => {
-      // @ts-ignore
       cy.get('[name="class-selection-search"]').should("be.focused");
     });
     // Shortcut for focusing the search input works in the class selection menu popover
@@ -268,14 +342,12 @@ describe("Class selection popover", () => {
     cy.get('[aria-label="Class selection menu popover"]').should("be.visible");
 
     cy.get('[aria-label="Class selection menu popover"]').within(() => {
-      // @ts-ignore
       cy.get('[name="class-selection-search"]').should("not.be.focused");
     });
 
     cy.focused().type("/");
 
     cy.get('[aria-label="Class selection menu popover"]').within(() => {
-      // @ts-ignore
       cy.get('[name="class-selection-search"]').should("be.focused");
     });
   });
