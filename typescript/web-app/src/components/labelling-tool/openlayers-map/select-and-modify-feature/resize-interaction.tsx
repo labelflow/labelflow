@@ -1,10 +1,8 @@
 import { useEffect, useState, useCallback, useRef, useMemo } from "react";
 import { Feature, MapBrowserEvent, Map as OlMap } from "ol";
-import { Geometry } from "ol/geom";
 import { Coordinate, distance } from "ol/coordinate";
 import Polygon, { fromExtent } from "ol/geom/Polygon";
 import { Extent } from "ol/extent";
-import { TranslateEvent } from "ol/interaction/Translate";
 
 type FeatureVertices = [Coordinate, Coordinate, Coordinate, Coordinate];
 
