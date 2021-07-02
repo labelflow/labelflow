@@ -13,10 +13,10 @@ describe("Golden path", () => {
 
   it("Should execute the golden path without errors", () => {
     // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
-
     cy.visit("/images?modal-welcome=closed&modal-update-service-worker=update");
 
     cy.contains("You don't have any images.").should("be.visible");
+
     cy.get("header").within(() => {
       cy.contains("Add images").click();
     });
@@ -26,6 +26,7 @@ describe("Golden path", () => {
     });
     cy.contains("Start Import").click();
     cy.get(`[aria-label="Close"]`).click();
+
     cy.get("main")
       .contains(
         imageSampleCollection[0]
@@ -36,22 +37,21 @@ describe("Golden path", () => {
 
     cy.url().should("match", /.*\/images\/([a-zA-Z0-9_-]*)/);
     cy.get("header").within(() => {
-      cy.contains("photo-").should("exist");
+      cy.contains(
+        imageSampleCollection[0]
+          .split("?")[0]
+          .split("https://images.unsplash.com/")[1]
+      ).should("exist");
     });
-
     cy.get('[aria-label="loading indicator"]').should("not.exist");
 
     cy.get('[aria-label="Drawing tool"]').click();
-
     cy.get("main").click(450, 100);
     cy.get("main").click(500, 150);
 
-    cy.log("Create new label class");
     cy.get('[aria-label="Open class selection popover"]').click();
     cy.get('[aria-label="Class selection menu popover"]').within(() => {
-      // @ts-ignore
       cy.get('[name="class-selection-search"]').click();
-      // @ts-ignore
       cy.get('[name="class-selection-search"]').should("be.focused");
     });
     cy.focused().type("A new class{enter}");
@@ -68,14 +68,12 @@ describe("Golden path", () => {
     cy.get('[aria-label="Selection tool"]').click();
 
     cy.get("main").rightclick(500, 150);
-
     cy.get('[aria-label="Class selection popover"]').within(() => {
-      // @ts-ignore
       cy.get('[name="class-selection-search"]').type("My new class{enter}");
     });
 
-    cy.log("Image navigation");
     cy.get('[aria-label="Next image"]').click();
+
     cy.get('[aria-label="Undo tool"]').should("be.disabled");
     cy.url().should("not.include", "selected-label-id");
 
@@ -85,12 +83,12 @@ describe("Golden path", () => {
     });
 
     cy.get('input[name="current-image"]').should("have.value", "15");
+
     cy.get('input[name="current-image"]').type("7{enter}");
 
     cy.get('[aria-current="page"]').should(($a) => {
       expect($a).to.contain("7");
     });
-
     cy.contains(
       imageSampleCollection[6]
         .split("?")[0]
@@ -98,6 +96,7 @@ describe("Golden path", () => {
     ).should("exist");
 
     cy.get('[aria-label="Export"]').click();
+
     cy.contains("Your project contains 2 labels").should("be.visible");
   });
 });
