@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@apollo/client";
+import { useMutation, useQuery, useLazyQuery } from "@apollo/client";
 import gql from "graphql-tag";
 import { useEffect, useState, useCallback } from "react";
 import debounce from "lodash/fp/debounce";
@@ -19,7 +19,7 @@ import {
   FormLabel,
 } from "@chakra-ui/react";
 
-const debounceTime = 200;
+const debounceTime = 2000;
 
 const createProjectMutation = gql`
   mutation createProject($name: String!) {
@@ -66,12 +66,8 @@ export const CreateProjectModal = ({
     setProjectName("");
   }, []);
 
-  const handleChangeProjectName = useCallback(
-    debounce(debounceTime, (e: any) => {
-      setProjectName(e.target.value.trim());
-    }),
-    []
-  );
+  const handleChangeProjectName = (e: any) =>
+    setProjectName(e.target.value.trim());
 
   const { refetch: refetchProjects } = useQuery(getProjectsQuery);
 
@@ -82,10 +78,23 @@ export const CreateProjectModal = ({
     }
   }, [hasAdded]);
 
-  const { data: existingProject } = useQuery(getProjectByNameQuery, {
-    variables: { name: projectName },
-    skip: projectName === "",
-  });
+  const [queryExistingProject, { data: existingProject }] = useLazyQuery(
+    getProjectByNameQuery,
+    {
+      variables: { name: projectName },
+    }
+  );
+
+  const debouncedQuery = useCallback(
+    debounce(debounceTime, queryExistingProject),
+    []
+  );
+
+  useEffect(() => {
+    if (projectName === "") return;
+
+    debouncedQuery();
+  }, [projectName]);
 
   const [createProjectMutate] = useMutation(createProjectMutation, {
     variables: {
@@ -140,7 +149,7 @@ export const CreateProjectModal = ({
           <FormControl isInvalid={!isInputValid()} isRequired>
             <FormLabel>Name</FormLabel>
             <Input
-              defaultValue={projectName}
+              value={projectName}
               placeholder="Project name"
               size="md"
               onChange={handleChangeProjectName}

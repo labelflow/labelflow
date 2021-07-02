@@ -1,5 +1,5 @@
 /* eslint-disable import/first */
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { ApolloProvider } from "@apollo/client";
 import { PropsWithChildren } from "react";
@@ -46,10 +46,12 @@ it("should reset the modal state after closing the modal", async () => {
     );
   });
 
-  userEvent.type(
-    screen.getByLabelText(/project name input/i),
-    "my project name"
-  );
+  const inputFirstModal = screen.getByLabelText(
+    /project name input/i
+  ) as HTMLInputElement;
+
+  userEvent.type(inputFirstModal, "my project name");
+
   userEvent.click(screen.getByLabelText("Close"));
 
   await waitFor(() => {
@@ -58,16 +60,17 @@ it("should reset the modal state after closing the modal", async () => {
     ).not.toBeInTheDocument();
   });
 
+  // Re open create project modal and ensure the content is empty
   userEvent.click(screen.getByText(/Create new project.../));
 
-  const input = screen.getByLabelText(
+  await waitFor(() => {
+    expect(screen.getByLabelText(/project name input/i)).toBeDefined();
+  });
+
+  const inputSecondModal = screen.getByLabelText(
     /project name input/i
   ) as HTMLInputElement;
 
-  await waitFor(() => {
-    expect(input.value).toEqual("");
-    expect(screen.getByLabelText(/create project/i)).toHaveAttribute(
-      "disabled"
-    );
-  });
+  expect(inputSecondModal.value).toEqual("");
+  expect(screen.getByLabelText(/create project/i)).toHaveAttribute("disabled");
 });
