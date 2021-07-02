@@ -64,7 +64,6 @@ export const CreateProjectModal = ({
     onClose();
     setErrorMessage("");
     setProjectName("");
-    setHasAdded(true);
   }, []);
 
   const handleChangeProjectName = useCallback(
@@ -74,11 +73,12 @@ export const CreateProjectModal = ({
     []
   );
 
-  const { refetch: refetchImages } = useQuery(getProjectsQuery);
+  const { refetch: refetchProjects } = useQuery(getProjectsQuery);
 
   useEffect(() => {
     if (hasAdded) {
-      refetchImages();
+      refetchProjects();
+      setHasAdded(false);
     }
   }, [hasAdded]);
 
@@ -125,7 +125,7 @@ export const CreateProjectModal = ({
         onSubmit={(e) => {
           e.preventDefault();
           createProject();
-          setHasAdded(false);
+          setHasAdded(true);
         }}
       >
         <ModalCloseButton />
