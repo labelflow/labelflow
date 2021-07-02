@@ -2,6 +2,7 @@ import gql from "graphql-tag";
 
 import { db } from "../../typescript/web-app/src/connectors/database";
 import { client } from "../../typescript/web-app/src/connectors/apollo-client-schema";
+import { LabelCreateInput } from "../../typescript/web-app/src/graphql-types.generated";
 
 async function createImage(url: string) {
   const mutationResult = await client.mutate({
@@ -28,6 +29,45 @@ async function createImage(url: string) {
   return image;
 }
 
+const createLabel = (data: LabelCreateInput) => {
+  return client.mutate({
+    mutation: gql`
+      mutation createLabel($data: LabelCreateInput!) {
+        createLabel(data: $data) {
+          id
+        }
+      }
+    `,
+    variables: {
+      data,
+    },
+  });
+};
+
+const createLabelClass = async (name: String, color = "#ffffff") => {
+  const {
+    data: {
+      createLabelClass: { id },
+    },
+  } = await client.mutate({
+    mutation: gql`
+      mutation createLabelClass($name: String!, $color: String!) {
+        createLabelClass(data: { name: $name, color: $color }) {
+          id
+          name
+          color
+        }
+      }
+    `,
+    variables: {
+      name,
+      color,
+    },
+  });
+
+  return id;
+};
+
 describe("Class selection popover", () => {
   let imageId: string;
   beforeEach(async () => {
@@ -41,50 +81,38 @@ describe("Class selection popover", () => {
     const { id } = await createImage(
       "https://images.unsplash.com/photo-1579513141590-c597876aefbc?auto=format&fit=crop&w=882&q=80"
     );
-
     imageId = id;
+
+    const labelClassId = await createLabelClass("A new class", "#F87171");
+    await createLabel({
+      imageId,
+      x: 0,
+      y: 900,
+      width: 900,
+      height: 600,
+      labelClassId,
+    });
   });
 
-  it("right clicks on a label to change its class", () => {
+  it.only("right clicks on a label to change its class", () => {
     // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
     cy.visit(
       `/images/${imageId}?modal-welcome=closed&modal-update-service-worker=update`
     );
-    cy.get('[aria-label="Drawing tool"]').click();
-
-    // Create new label class
-    cy.log("Create new label class");
-    cy.get('[aria-label="Open class selection popover"]').click();
-    cy.get('[aria-label="Class selection menu popover"]').within(() => {
-      cy.get('[name="class-selection-search"]').should("not.be.focused");
-      cy.get('[name="class-selection-search"]').click();
-      cy.get('[name="class-selection-search"]').should("be.focused");
-    });
-
-    cy.focused().type("A new class{enter}");
-    // Assert it is selected
-    cy.log("Assert it is selected");
-    cy.get('[aria-label="Open class selection popover"]').click();
-    cy.get('[aria-label="Class selection menu popover"]')
-      .contains("A new class")
-      .closest('[role="option"]')
-      .should("have.attr", "aria-current", "true");
-
-    // 1. Create one bounding box
-    cy.log("Create one bounding box");
-    cy.get("main").click(400, 100);
-    cy.get("main").click(600, 200);
+    cy.get('[aria-label="loading indicator"]').should("not.exist");
     cy.get('[aria-label="Selection tool"]').click();
+
+    cy.wait(1000);
 
     // ############## Right click popover tests ##############
     // Create new class
     cy.log("Create new class");
-    cy.get("main").rightclick(500, 150);
+    cy.get("main").rightclick(500, 175);
 
     cy.get('[aria-label="Class selection popover"]').within(() => {
       cy.get('[name="class-selection-search"]').type("My new class{enter}");
     });
-    cy.get("main").rightclick(500, 150);
+    cy.get("main").rightclick(500, 175);
 
     cy.get('[aria-label="Class selection popover"]')
       .contains("My new class")
@@ -135,32 +163,21 @@ describe("Class selection popover", () => {
       .should("have.attr", "aria-current", "true");
   });
 
-  it("uses the class selection menu to change the class of created labels", () => {
+  it("uses the class selection menu to change the class of created labels", async () => {
+    await createLabelClass("My new class", "#65A30D");
+
     // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
     cy.visit(
       `/images/${imageId}?modal-welcome=closed&modal-update-service-worker=update`
     );
     cy.get('[aria-label="Drawing tool"]').click();
 
-    // Create new label class
-    cy.log("Create new label class");
+    // Assert it is selected
+    cy.log("Assert it is selected");
     cy.get('[aria-label="Open class selection popover"]').click();
-    cy.get('[aria-label="Class selection menu popover"]').within(() => {
-      cy.get('[name="class-selection-search"]').should("not.be.focused");
-      cy.get('[name="class-selection-search"]').click();
-      cy.get('[name="class-selection-search"]').should("be.focused");
-    });
-
-    cy.focused().type("A new class{enter}");
-
-    cy.get('[aria-label="Open class selection popover"]').click();
-    cy.get('[aria-label="Class selection menu popover"]').within(() => {
-      cy.get('[name="class-selection-search"]').should("not.be.focused");
-      cy.get('[name="class-selection-search"]').click();
-      cy.get('[name="class-selection-search"]').should("be.focused");
-    });
-
-    cy.focused().type("My new class{enter}");
+    cy.get('[aria-label="Class selection menu popover"]')
+      .contains("A new class")
+      .click();
 
     // 1. Create one bounding box
     cy.log("Create one bounding box");
