@@ -82,10 +82,9 @@ const probeImage = async ({
   }
 
   try {
+    // TODO: It would be nice to import "probe-image-size" asynchronously to reduce initial bundle size of sw, but webpack config todo.
     // const probe = await import(/* webpackPrefetch: true */ "probe-image-size");
-
     const cacheResult = await (await cachePromise).match(url);
-
     const fetchResult =
       cacheResult ??
       (await fetch(url, {
