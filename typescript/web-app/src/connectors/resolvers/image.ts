@@ -82,12 +82,10 @@ const probeImage = async ({
   }
 
   try {
-    console.log("yoyo1");
     // const probe = await import(/* webpackPrefetch: true */ "probe-image-size");
-    console.log("yoyo2", url, await cachePromise);
 
     const cacheResult = await (await cachePromise).match(url);
-    console.log("cacheResult", cacheResult);
+
     const fetchResult =
       cacheResult ??
       (await fetch(url, {
@@ -99,18 +97,18 @@ const probeImage = async ({
         }),
         credentials: "omit",
       }));
-    console.log("yoyo3", fetchResult);
+
     if (fetchResult.status !== 200) {
       throw new Error(
         `Could not fetch image at url ${url} properly, code ${fetchResult.status}`
       );
     }
     const blob = await fetchResult.blob();
-    console.log("yoyo4");
+
     const probeInput = new Uint8Array(await blob.arrayBuffer());
-    console.log("yoyo5");
+
     const probeResult = probe.sync(probeInput as Buffer);
-    console.log("yoyo6", probeResult);
+
     if (probeResult == null) {
       throw new Error(
         `Could not probe the external image at url ${url} it may be damaged or corrupted.`
@@ -138,7 +136,7 @@ const createImage = async (
   const now = args?.data?.createdAt ?? new Date().toISOString();
   const imageId = id ?? uuidv4();
   let finalUrl: string | undefined;
-  console.log("create Image", args.data);
+
   if (
     !(
       (!file && !externalUrl && url) ||
@@ -146,7 +144,6 @@ const createImage = async (
       (file && !externalUrl && !url)
     )
   ) {
-    console.log("file,externalUrl,url", file, externalUrl, url);
     throw new Error(
       "Image creation upload must include either a `file` field of type `Upload`, or a `url` field of type `String`, or a `externalUrl` field of type `String`"
     );
@@ -159,7 +156,7 @@ const createImage = async (
 
   if (!file && externalUrl && !url) {
     // External file based upload
-    console.log("External file based upload", externalUrl);
+
     const fetchResult = await fetch(externalUrl, {
       method: "GET",
       mode: "cors",
@@ -170,17 +167,13 @@ const createImage = async (
       credentials: "omit",
     });
 
-    console.log("External file based upload 2 ", externalUrl);
-
     if (fetchResult.status !== 200) {
       throw new Error(
         `Could not fetch image at url ${url} properly, code ${fetchResult.status}`
       );
     }
 
-    console.log("External file based upload3", fetchResult);
     const uploadTarget = await getUploadTarget();
-    console.log("External file based upload4", uploadTarget);
 
     // eslint-disable-next-line no-underscore-dangle
     if (uploadTarget.__typename !== "UploadTargetHttp") {
@@ -188,10 +181,8 @@ const createImage = async (
         "This Server does not support file upload. You can create images by providing a `file` directly in the `createImage` mutation"
       );
     }
-    console.log("External file based upload5", uploadTarget);
-    finalUrl = uploadTarget.downloadUrl;
 
-    console.log("External file based upload6", uploadTarget);
+    finalUrl = uploadTarget.downloadUrl;
 
     const responseOfGet = new Response(await fetchResult.blob(), {
       status: 200,
@@ -204,8 +195,6 @@ const createImage = async (
     });
 
     await (await cachePromise).put(finalUrl, responseOfGet);
-
-    console.log("External file based upload7", uploadTarget);
   }
 
   if (file && !externalUrl && !url) {
@@ -233,7 +222,6 @@ const createImage = async (
     await (await cachePromise).put(finalUrl, response);
   }
 
-  console.log("ok1");
   // Probe the file to get its dimensions and mimetype if not provided
   const imageMetaData = await probeImage({
     width,
@@ -241,7 +229,6 @@ const createImage = async (
     mimetype,
     url: finalUrl!,
   });
-  console.log("ok2");
 
   const newImageEntity: DbImage = {
     createdAt: now,
