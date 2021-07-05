@@ -157,9 +157,17 @@ export const ClassSelectionPopover = ({
   const searchInputRef = useRef<HTMLInputElement | null>(null);
 
   useHotkeys(
-    keymap.focusLabelClassSearch.key,
+    // "/" key doesn't seem to be recognised on AZERTY keyboards, so we use "*" to catch any input.
+    "*",
     (keyboardEvent) => {
-      if (activateShortcuts && searchInputRef.current != null) {
+      if (
+        // Manually checks if input is bound in keymap
+        keymap.focusLabelClassSearch.key
+          .split(",")
+          .includes(keyboardEvent.key) &&
+        activateShortcuts &&
+        searchInputRef.current != null
+      ) {
         searchInputRef.current.focus();
         keyboardEvent.preventDefault();
       }
