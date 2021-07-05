@@ -60,6 +60,7 @@ export const CreateProjectModal = ({
   const [projectName, setProjectName] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [hasAdded, setHasAdded] = useState(false);
+
   const [queryExistingProjects, { data: existingProject }] = useLazyQuery(
     getProjectByNameQuery
   );
@@ -154,6 +155,7 @@ export const CreateProjectModal = ({
               size="md"
               onChange={handleInputValueChange}
               aria-label="Project name input"
+              autoFocus
             />
             <FormErrorMessage>{errorMessage}</FormErrorMessage>
           </FormControl>
