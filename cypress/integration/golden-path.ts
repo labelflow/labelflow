@@ -21,7 +21,7 @@ describe("Golden path", () => {
       cy.contains("Add images").click();
     });
     cy.contains("Import from a list of URLs instead").click();
-    cy.get("textarea").type(imageSampleCollection.slice(0, 15).join("\n"), {
+    cy.get("textarea").type(imageSampleCollection.slice(0, 8).join("\n"), {
       delay: 0,
     });
     cy.contains("Start Import").click();
@@ -48,6 +48,10 @@ describe("Golden path", () => {
     cy.get('[aria-label="Drawing tool"]').click();
     cy.get("main").click(450, 100);
     cy.get("main").click(500, 150);
+
+    cy.url().should("include", "selected-label-id");
+    cy.get("body").type("{del}");
+    cy.url().should("not.include", "selected-label-id");
 
     cy.get('[aria-label="Open class selection popover"]').click();
     cy.get('[aria-label="Class selection menu popover"]').within(() => {
@@ -79,10 +83,10 @@ describe("Golden path", () => {
 
     cy.get("main nav").scrollTo("right");
     cy.get("main nav").within(() => {
-      cy.contains("15").closest("a").click();
+      cy.contains("8").closest("a").click();
     });
 
-    cy.get('input[name="current-image"]').should("have.value", "15");
+    cy.get('input[name="current-image"]').should("have.value", "8");
 
     cy.get('input[name="current-image"]').type("7{enter}");
 
@@ -97,6 +101,6 @@ describe("Golden path", () => {
 
     cy.get('[aria-label="Export"]').click();
 
-    cy.contains("Your project contains 2 labels").should("be.visible");
+    cy.contains("Your project contains 1 labels").should("be.visible");
   });
 });

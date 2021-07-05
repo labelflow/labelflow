@@ -25,6 +25,7 @@ export type LabellingState = {
   setView: (view: OlView) => void;
   canZoomIn: boolean;
   canZoomOut: boolean;
+  isImageLoading: boolean;
   isContextMenuOpen: boolean;
   setIsContextMenuOpen: (isContextMenuOpen: boolean) => void;
   selectedTool: Tools;
@@ -43,6 +44,7 @@ export type LabellingState = {
 export const useLabellingStore = create<LabellingState>(
   (set, get) => ({
     view: null,
+    isImageLoading: true,
     zoomFactor: 0.5,
     canZoomIn: true,
     canZoomOut: false,
@@ -71,6 +73,8 @@ export const useLabellingStore = create<LabellingState>(
     setCanZoomIn: (canZoomIn: boolean) => set({ canZoomIn }),
     // @ts-ignore See https://github.com/Diablow/zustand-store-addons/issues/2
     setCanZoomOut: (canZoomOut: boolean) => set({ canZoomOut }),
+    // @ts-ignore See https://github.com/Diablow/zustand-store-addons/issues/2
+    setIsImageLoading: (isImageLoading: boolean) => set({ isImageLoading }),
     zoomByDelta: (ratio: number) => {
       const { view } = get();
       if (!view) return;

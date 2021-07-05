@@ -98,6 +98,9 @@ export const OpenlayersMap = () => {
     (state) => state.setIsContextMenuOpen
   );
   const selectedTool = useLabellingStore((state) => state.selectedTool);
+  const setIsImageLoading = useLabellingStore(
+    (state) => state.setIsImageLoading
+  );
   const boxDrawingToolState = useLabellingStore(
     (state) => state.boxDrawingToolState
   );
@@ -220,6 +223,8 @@ export const OpenlayersMap = () => {
                       projection,
                       crossOrigin: "anonymous",
                     }}
+                    onImageloadstart={() => setIsImageLoading(true)}
+                    onImageloadend={() => setIsImageLoading(false)}
                   />
                 )}
               </olLayerImage>
