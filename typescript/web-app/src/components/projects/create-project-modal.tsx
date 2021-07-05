@@ -83,7 +83,7 @@ export const CreateProjectModal = ({
     }
   }, [hasAdded]);
 
-  const handleInputValueChange = (e: any) => {
+  const handleInputValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
     setProjectName(e.target.value.trim());
   };
