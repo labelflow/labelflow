@@ -50,7 +50,9 @@ test("should enable start button when project name is not empty", async () => {
 
   const button = screen.getByLabelText(/create project/i);
 
-  expect(button).not.toHaveAttribute("disabled");
+  await waitFor(() => {
+    expect(button).not.toHaveAttribute("disabled");
+  });
 });
 
 test("should create a project when the form is submitted", async () => {
