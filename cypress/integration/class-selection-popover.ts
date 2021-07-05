@@ -203,6 +203,10 @@ describe("Class selection popover", () => {
     cy.get('[aria-label="Class selection menu popover"]')
       .contains("My new class")
       .click();
+    cy.get('[aria-label="Class selection menu popover"]').should(
+      "not.be.visible"
+    );
+
     cy.get("main").click(400, 300);
     cy.get("main").click(600, 400);
 

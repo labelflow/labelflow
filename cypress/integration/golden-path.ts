@@ -66,6 +66,12 @@ describe("Golden path", () => {
       .closest('[role="option"]')
       .should("have.attr", "aria-current", "true");
 
+    cy.get("main").type("{esc}");
+
+    cy.get('[aria-label="Class selection menu popover"]').should(
+      "not.be.visible"
+    );
+
     cy.get("main").click(450, 160);
     cy.get("main").click(500, 260);
 
