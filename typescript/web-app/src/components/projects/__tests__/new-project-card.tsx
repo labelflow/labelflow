@@ -41,9 +41,6 @@ it("should reset the modal state after closing the modal", async () => {
 
   await waitFor(() => {
     expect(screen.getByLabelText(/project name input/i)).toBeDefined();
-    expect(screen.getByLabelText(/create project/i)).toHaveAttribute(
-      "disabled"
-    );
   });
 
   const inputFirstModal = screen.getByLabelText(
@@ -72,5 +69,7 @@ it("should reset the modal state after closing the modal", async () => {
   ) as HTMLInputElement;
 
   expect(inputSecondModal.value).toEqual("");
-  expect(screen.getByLabelText(/create project/i)).toHaveAttribute("disabled");
+  expect(screen.getByLabelText(/create project/i)).not.toHaveAttribute(
+    "disabled"
+  );
 });
