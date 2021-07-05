@@ -223,8 +223,14 @@ export const OpenlayersMap = () => {
                       projection,
                       crossOrigin: "anonymous",
                     }}
-                    onImageloadstart={() => setIsImageLoading(true)}
-                    onImageloadend={() => setIsImageLoading(false)}
+                    onImageloadstart={() => {
+                      setIsImageLoading(true);
+                      return true;
+                    }}
+                    onImageloadend={() => {
+                      setIsImageLoading(false);
+                      return true;
+                    }}
                   />
                 )}
               </olLayerImage>
