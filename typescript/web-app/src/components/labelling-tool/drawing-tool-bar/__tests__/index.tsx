@@ -5,12 +5,15 @@ import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom/extend-expect";
 import { client } from "../../../../connectors/apollo-client-schema";
 import { mockNextRouter } from "../../../../utils/router-mocks";
+import { useLabellingStore } from "../../../../connectors/labelling-state";
 
 mockNextRouter();
 
 import { DrawingToolbar } from "..";
 
 test("should display tooltip", async () => {
+  useLabellingStore.setState({ isImageLoading: false });
+
   render(<DrawingToolbar />, {
     wrapper: ({ children }) => (
       <ApolloProvider client={client}>{children}</ApolloProvider>

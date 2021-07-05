@@ -35,7 +35,7 @@ const LabellingTool = dynamic(() => import("../../components/labelling-tool"), {
     if (error) throw error;
     return (
       <Center h="full">
-        <Spinner size="xl" />
+        <Spinner aria-label="loading indicator" size="xl" />
       </Center>
     );
   },
