@@ -56,7 +56,7 @@ export const ProjectCard = (props: {
       </AspectRatio>
       <VStack pt="2" pl="5" pr="5" pb="5" align="left">
         <Flex alignItems="center">
-          <Text fontWeight="semibold" fontSize="16px" isTruncated maxW="25ch">
+          <Text fontWeight="semibold" fontSize="md" isTruncated>
             {projectName}
           </Text>
           <Spacer />
@@ -84,32 +84,26 @@ export const ProjectCard = (props: {
             }}
           />
         </Flex>
-        {/* TODO: fix the overflow of the numbers displayed in the card */}
+
         <HStack lineHeight="base" spacing="5" pt="2">
-          <Box>
-            <Text fontWeight="semibold" fontSize="16px" as="span">
-              {imagesCount}{" "}
-            </Text>
-            <Text fontWeight="semibold" color="gray.400" as="span">
+          <Text fontWeight="semibold" isTruncated>
+            <Text as="span">{imagesCount} </Text>
+            <Text color="gray.400" as="span">
               Images
             </Text>
-          </Box>
-          <Box>
-            <Text fontWeight="semibold" fontSize="16px" as="span">
-              {labelClassesCount}{" "}
-            </Text>
-            <Text fontWeight="semibold" color="gray.400" as="span">
+          </Text>
+          <Text fontWeight="semibold" isTruncated>
+            <Text as="span">{labelClassesCount} </Text>
+            <Text color="gray.400" as="span">
               Classes
             </Text>
-          </Box>
-          <Box>
-            <Text fontWeight="semibold" fontSize="16px" as="span">
-              {labelsCount}{" "}
-            </Text>
-            <Text fontWeight="semibold" color="gray.400" as="span">
+          </Text>
+          <Text fontWeight="semibold" isTruncated>
+            <Text as="span">{labelsCount} </Text>
+            <Text color="gray.400" as="span">
               Labels
             </Text>
-          </Box>
+          </Text>
         </HStack>
       </VStack>
     </Box>
