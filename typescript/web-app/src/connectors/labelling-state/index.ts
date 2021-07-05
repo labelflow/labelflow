@@ -33,6 +33,7 @@ export type LabellingState = {
   selectedLabelClassId: string | null;
   boxDrawingToolState: BoxDrawingToolState;
   setBoxDrawingToolState: (state: BoxDrawingToolState) => void;
+  setIsImageLoading: (isImageLoading: boolean) => void;
   setCanZoomIn: (canZoomIn: boolean) => void;
   setCanZoomOut: (canZoomOut: boolean) => void;
   setSelectedTool: (selectedTool: Tools) => void;
