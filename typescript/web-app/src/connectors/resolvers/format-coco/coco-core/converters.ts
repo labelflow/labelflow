@@ -1,5 +1,5 @@
-import { Image } from "../../graphql-types.generated";
-import { DbLabel, DbLabelClass } from "../../connectors/database";
+import { Image } from "../../../../graphql-types.generated";
+import { DbLabel, DbLabelClass } from "../../../database";
 import { CocoCategory, CocoAnnotation, CocoImage, CocoDataset } from "./types";
 
 export {

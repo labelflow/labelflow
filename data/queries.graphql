@@ -24,4 +24,6 @@ type Query {
   projects(first: Int, skip: Int): [Project!]!
 
   exportToCoco: String!
+
+  debug: JSON!
 }

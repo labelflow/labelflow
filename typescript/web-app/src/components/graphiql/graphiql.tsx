@@ -7,7 +7,14 @@ export const GraphiQL = () => {
     url: `${window.location.origin}/api/worker/graphql`,
   });
 
-  return <GraphiQLOriginal fetcher={fetcher} editorTheme="dracula" />;
+  return (
+    <GraphiQLOriginal
+      fetcher={fetcher}
+      editorTheme="dracula"
+      defaultVariableEditorOpen
+      defaultSecondaryEditorOpen
+      headerEditorEnabled
+      shouldPersistHeaders
+    />
+  );
 };
-
-export default GraphiQL;
