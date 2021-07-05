@@ -18,13 +18,13 @@ const Wrapper = ({ children }: PropsWithChildren<{}>) => (
 
 setupTestsWithLocalDatabase();
 
-jest.mock("lodash/fp/debounce", () => jest.fn((nr, fn) => fn));
+jest.mock("lodash/fp/debounce", () => jest.fn((_, fn) => fn));
 
-function renderModal(props = {}) {
+const renderModal = (props = {}) => {
   render(<CreateProjectModal isOpen onClose={() => {}} {...props} />, {
     wrapper: Wrapper,
   });
-}
+};
 
 test("should initialize modal with an empty input and a disabled button", async () => {
   renderModal();
