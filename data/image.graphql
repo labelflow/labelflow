@@ -12,7 +12,7 @@ input ImageCreateInput {
 }
 
 input ImageWhereInput {
-  id: ID
+  projectId: ID
 }
 
 input ImageWhereUniqueInput {

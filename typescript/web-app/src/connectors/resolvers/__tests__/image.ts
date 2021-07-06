@@ -10,9 +10,9 @@ jest.mock("probe-image-size");
 setupTestsWithLocalDatabase();
 
 describe("Image resolver test suite", () => {
-  const projectId = "test project id";
+  const testProjectId = "test project id";
 
-  const createImage = async (name: String) => {
+  const createImage = async (name: String, projectId = testProjectId) => {
     const mutationResult = await client.mutate({
       mutation: gql`
         mutation createImage($file: Upload!, $name: String!, $projectId: ID!) {
@@ -141,7 +141,7 @@ describe("Image resolver test suite", () => {
         }
       `,
       variables: {
-        projectId,
+        projectId: testProjectId,
         url: "https://images.unsplash.com/photo-1579513141590-c597876aefbc?auto=format&fit=crop&w=882&q=80",
       },
     });
@@ -191,7 +191,7 @@ describe("Image resolver test suite", () => {
       `,
       variables: {
         id: imageId,
-        projectId,
+        projectId: testProjectId,
         file: new Blob(),
         name,
       },
@@ -216,7 +216,7 @@ describe("Image resolver test suite", () => {
         }
       `,
       variables: {
-        projectId,
+        projectId: testProjectId,
         file: new Blob(),
       },
     });
@@ -322,5 +322,28 @@ describe("Image resolver test suite", () => {
 
     // labels should show in the right order
     expect(queryResult.data.imagesAggregates.totalCount).toEqual(3);
+  });
+
+  it("should query images linked to a project", async () => {
+    const imageId1 = await createImage("Image 1", "project 1");
+    incrementMockedDate(1);
+    const imageId2 = await createImage("Image 2", "project 1");
+    incrementMockedDate(1);
+    await createImage("Image 1", "project 2");
+
+    const queryResult = await client.query({
+      query: gql`
+        query {
+          images(where: { projectId: "project 1" }) {
+            id
+          }
+        }
+      `,
+    });
+
+    expect(queryResult.data.images.length).toEqual(2);
+    expect(
+      queryResult.data.images.map((image: { id: string }) => image.id)
+    ).toEqual([imageId1, imageId2]);
   });
 });

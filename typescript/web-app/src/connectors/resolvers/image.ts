@@ -7,6 +7,7 @@ import type {
   QueryImageArgs,
   QueryImagesArgs,
   Maybe,
+  ImageWhereInput,
 } from "../../graphql-types.generated";
 
 import { db, DbImage } from "../database";
@@ -64,11 +65,19 @@ export const getFileIdFromUrl = (url: string): string | null => {
 };
 
 export const getPaginatedImages = async (
+  where?: Maybe<ImageWhereInput>,
   skip?: Maybe<number>,
   first?: Maybe<number>
 ): Promise<any[]> => {
-  const query = db.image.orderBy("createdAt").offset(skip ?? 0);
+  const query = db.image.orderBy("createdAt");
 
+  if (where?.projectId) {
+    query.filter((image) => image.projectId === where.projectId);
+  }
+
+  if (skip) {
+    query.offset(skip);
+  }
   if (first) {
     return query.limit(first).toArray();
   }
@@ -106,7 +115,11 @@ const image = async (_: any, args: QueryImageArgs) => {
 };
 
 const images = async (_: any, args: QueryImagesArgs) => {
-  const imagesList = await getPaginatedImages(args?.skip, args?.first);
+  const imagesList = await getPaginatedImages(
+    args?.where,
+    args?.skip,
+    args?.first
+  );
 
   const entitiesWithUrls = await Promise.all(
     imagesList.map(async (imageEntity: any) => {

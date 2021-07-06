@@ -74,7 +74,7 @@ export type ImageCreateInput = {
 };
 
 export type ImageWhereInput = {
-  id?: Maybe<Scalars['ID']>;
+  projectId?: Maybe<Scalars['ID']>;
 };
 
 export type ImageWhereUniqueInput = {
