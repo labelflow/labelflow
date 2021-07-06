@@ -7,7 +7,6 @@ describe("Golden path", () => {
       db.image.clear(),
       db.label.clear(),
       db.labelClass.clear(),
-      db.file.clear(),
     ]);
   });
 

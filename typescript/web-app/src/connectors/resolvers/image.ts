@@ -235,12 +235,16 @@ const createImage = async (
     id: imageId,
     url: finalUrl!,
     externalUrl,
-    path: path ?? externalUrl!,
+    path: path ?? externalUrl ?? finalUrl!,
     name:
       name ??
-      externalUrl!.substring(
-        externalUrl!.lastIndexOf("/") + 1,
-        externalUrl!.indexOf("?")
+      externalUrl?.substring(
+        externalUrl?.lastIndexOf("/") + 1,
+        externalUrl?.indexOf("?")
+      ) ??
+      finalUrl!.substring(
+        finalUrl!.lastIndexOf("/") + 1,
+        finalUrl!.indexOf("?")
       ),
     ...imageMetaData,
   };

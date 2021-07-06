@@ -75,7 +75,6 @@ describe("Class selection popover", () => {
       db.image.clear(),
       db.label.clear(),
       db.labelClass.clear(),
-      db.file.clear(),
     ]);
 
     const { id } = await createImage(
