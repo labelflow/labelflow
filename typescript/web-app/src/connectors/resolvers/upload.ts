@@ -1,11 +1,24 @@
 import { v4 as uuidv4 } from "uuid";
-import type { UploadTarget } from "../../graphql-types.generated";
+import type {
+  UploadTarget,
+  UploadTargetHttp,
+} from "../../graphql-types.generated";
 import { isInWindowScope } from "../../utils/detect-scope";
 
 export const uploadsCacheName = "uploads";
 export const uploadsRoute = "/api/worker/uploads";
 
 declare let self: ServiceWorkerGlobalScope;
+
+export const getUploadTargetHttp = (): UploadTargetHttp => {
+  const fileId = uuidv4();
+  return {
+    __typename: "UploadTargetHttp",
+    // Upload and download URL do not have to be the same. But in our implementation it is:
+    uploadUrl: `${self.location.protocol}//${self.location.host}${uploadsRoute}/${fileId}`,
+    downloadUrl: `${self.location.protocol}//${self.location.host}${uploadsRoute}/${fileId}`,
+  };
+};
 
 /**
  * A way for the server to tell how it wants to accept file uploads
@@ -16,14 +29,9 @@ export const getUploadTarget = async (): Promise<UploadTarget> => {
     // We run in the window scope
     return { __typename: "UploadTargetDirect", direct: true };
   }
+
   // We run in the worker scope or nodejs
-  const fileId = uuidv4();
-  return {
-    __typename: "UploadTargetHttp",
-    // Upload and download URL do not have to be the same. But in our implementation it is:
-    uploadUrl: `${self.location.protocol}//${self.location.host}${uploadsRoute}/${fileId}`,
-    downloadUrl: `${self.location.protocol}//${self.location.host}${uploadsRoute}/${fileId}`,
-  };
+  return getUploadTargetHttp();
 };
 
 export default {

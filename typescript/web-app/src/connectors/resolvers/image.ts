@@ -9,7 +9,7 @@ import type {
 
 import { db, DbImage } from "../database";
 
-import { uploadsCacheName, getUploadTarget } from "./upload";
+import { uploadsCacheName, getUploadTargetHttp } from "./upload";
 
 const cachePromise = caches.open(uploadsCacheName);
 
@@ -172,7 +172,7 @@ const createImage = async (
       );
     }
 
-    const uploadTarget = await getUploadTarget();
+    const uploadTarget = await getUploadTargetHttp();
 
     // eslint-disable-next-line no-underscore-dangle
     if (uploadTarget.__typename !== "UploadTargetHttp") {
@@ -199,7 +199,7 @@ const createImage = async (
   if (file && !externalUrl && !url) {
     // File Content based upload
 
-    const uploadTarget = await getUploadTarget();
+    const uploadTarget = await getUploadTargetHttp();
 
     // eslint-disable-next-line no-underscore-dangle
     if (uploadTarget.__typename !== "UploadTargetHttp") {
