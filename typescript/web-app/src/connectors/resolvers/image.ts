@@ -124,20 +124,21 @@ const createImage = async (
   _: any,
   args: MutationCreateImageArgs
 ): Promise<DbImage> => {
-  const { file, id, name, height, width, mimetype, path, url } = args.data;
+  const { file, id, name, height, width, mimetype, path, url, createdAt } =
+    args.data;
+
+  const imageId = id ?? uuidv4();
+  const fileId = uuidv4();
+  const now = createdAt ?? new Date().toISOString();
+
   if (file && !url) {
     // File Content based upload
-
     try {
-      const imageId = id ?? uuidv4();
-      const fileId = uuidv4();
-
       await db.file.add({ id: fileId, blob: file });
       const localUrl = await getUrlFromFileId(fileId);
 
       const newEntity = await new Promise<DbImage>((resolve, reject) => {
         const imageObject = new Image();
-        const now = args?.data?.createdAt ?? new Date().toISOString();
 
         imageObject.onload = async () => {
           const newImageEntity = {
@@ -173,9 +174,9 @@ const createImage = async (
       );
     }
   }
+
   if (!file && url) {
     // File URL based upload
-
     const identifiedFileId = getFileIdFromUrl(url);
 
     if (identifiedFileId) {
@@ -189,11 +190,6 @@ const createImage = async (
       }
 
       const { blob } = dbFile;
-
-      const fileId = identifiedFileId;
-      const imageId = id ?? uuidv4();
-
-      const now = args?.data?.createdAt ?? new Date().toISOString();
 
       // Probe the file to get its dimensions and mimetype if not provided
       let finalWidth = width;
@@ -226,7 +222,7 @@ const createImage = async (
         name: name ?? url.substring(url.lastIndexOf("/") + 1, url.indexOf("?")),
         width: finalWidth,
         height: finalHeight,
-        fileId,
+        fileId: identifiedFileId,
       };
 
       await db.image.add(newImageEntity);
@@ -256,11 +252,6 @@ const createImage = async (
       );
     }
     const blob = await fetchResult.blob();
-
-    const fileId = uuidv4();
-    const imageId = id ?? uuidv4();
-
-    const now = args?.data?.createdAt ?? new Date().toISOString();
 
     await db.file.add({ id: fileId, blob });
 
