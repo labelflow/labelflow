@@ -132,6 +132,17 @@ const images = async (_: any, args: QueryImagesArgs) => {
   return entitiesWithUrls;
 };
 
+const imagesCount = async (_: any, { where }: QueryImagesArgs) => {
+  const query = db.image.toCollection();
+
+  // TODO: Add collection enhancement function to handle where clauses
+  if (where?.projectId) {
+    query.filter((currentImage) => currentImage.projectId === where.projectId);
+  }
+
+  return query.count();
+};
+
 // Mutations
 const createImage = async (
   _: any,
@@ -337,6 +348,7 @@ export default {
     image,
     images,
     imagesAggregates,
+    imagesCount,
   },
 
   Mutation: {

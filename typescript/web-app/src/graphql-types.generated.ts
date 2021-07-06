@@ -252,6 +252,7 @@ export type Query = {
   image: Image;
   images: Array<Image>;
   imagesAggregates: ImagesAggregates;
+  imagesCount: Scalars['Int'];
   labelClass: LabelClass;
   labelClasses: Array<LabelClass>;
   labelClassesAggregates: LabelClassesAggregates;
@@ -286,6 +287,11 @@ export type QueryImagesArgs = {
   where?: Maybe<ImageWhereInput>;
   first?: Maybe<Scalars['Int']>;
   skip?: Maybe<Scalars['Int']>;
+};
+
+
+export type QueryImagesCountArgs = {
+  where?: Maybe<ImageWhereInput>;
 };
 
 
@@ -591,6 +597,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   image?: Resolver<ResolversTypes['Image'], ParentType, ContextType, RequireFields<QueryImageArgs, 'where'>>;
   images?: Resolver<Array<ResolversTypes['Image']>, ParentType, ContextType, RequireFields<QueryImagesArgs, never>>;
   imagesAggregates?: Resolver<ResolversTypes['ImagesAggregates'], ParentType, ContextType>;
+  imagesCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType, RequireFields<QueryImagesCountArgs, never>>;
   labelClass?: Resolver<ResolversTypes['LabelClass'], ParentType, ContextType, RequireFields<QueryLabelClassArgs, 'where'>>;
   labelClasses?: Resolver<Array<ResolversTypes['LabelClass']>, ParentType, ContextType, RequireFields<QueryLabelClassesArgs, never>>;
   labelClassesAggregates?: Resolver<ResolversTypes['LabelClassesAggregates'], ParentType, ContextType>;
