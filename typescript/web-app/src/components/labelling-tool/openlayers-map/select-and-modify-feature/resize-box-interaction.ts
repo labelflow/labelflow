@@ -163,10 +163,18 @@ export class ResizeBox extends PointerInteraction {
       }
       // Is it inside feature
       if (
-        coordinate[0] > this.featureVertices[0][0] + this.pixelTolerance &&
-        coordinate[0] < this.featureVertices[2][0] + this.pixelTolerance &&
-        coordinate[1] > this.featureVertices[0][1] + this.pixelTolerance &&
-        coordinate[1] > this.featureVertices[0][1] + this.pixelTolerance
+        coordinateInPixels[0] >
+          map.getPixelFromCoordinate(this.featureVertices[0])[0] +
+            this.pixelTolerance &&
+        coordinateInPixels[0] <
+          map.getPixelFromCoordinate(this.featureVertices[2])[0] +
+            this.pixelTolerance &&
+        coordinateInPixels[1] <
+          map.getPixelFromCoordinate(this.featureVertices[0])[1] +
+            this.pixelTolerance &&
+        coordinateInPixels[1] >
+          map.getPixelFromCoordinate(this.featureVertices[2])[1] +
+            this.pixelTolerance
       ) {
         return {
           distanceToElement: null,
