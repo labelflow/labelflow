@@ -1,11 +1,11 @@
 input ImageCreateInput {
   id: ID
   createdAt: DateTime
-  name: String
+  name: String!
   path: String
-  mimetype: String
-  height: Int
-  width: Int
+  mimetype: String!
+  height: Int!
+  width: Int!
   file: Upload # Either file or url are needed
   url: String # Either file or url are needed
 }
