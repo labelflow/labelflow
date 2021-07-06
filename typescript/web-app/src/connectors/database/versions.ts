@@ -1,5 +1,14 @@
 import { Transaction, Dexie } from "dexie";
 
+type DbVersion = {
+  name: string;
+  version: number;
+  stores: {
+    [key: string]: string;
+  };
+  upgrade: ((t: Transaction) => Promise<void>) | ((t: Transaction) => void);
+};
+
 // https://dexie.org/docs/Version/Version.stores()
 // First key is set to be the primary key and has to be unique
 export default [
@@ -48,4 +57,4 @@ export default [
       });
     },
   },
-];
+] as Array<DbVersion>;
