@@ -204,15 +204,15 @@ export class ResizeBox extends PointerInteraction {
   }
 
   handleMoveEvent(e: MapBrowserEvent) {
-    const mapTarget = this.getMap()?.getTarget();
-    if (mapTarget != null) {
+    const mapTargetViewport = e.map.getViewport();
+    if (mapTargetViewport != null) {
       const { insideTolerance, vertex } = this.getClosestVertex(e.coordinate);
       if (insideTolerance) {
         const cursor =
           vertex === "bottomLeft" || vertex === "topRight"
             ? "nesw-resize"
             : "nwse-resize";
-        mapTarget.style.cursor = cursor;
+        mapTargetViewport.style.cursor = cursor;
         e.stopPropagation();
         return;
       }
@@ -220,17 +220,15 @@ export class ResizeBox extends PointerInteraction {
       const { insideTolerance: insideLineTolerance, line } =
         this.getClosestLine(e.coordinate);
       if (insideLineTolerance) {
-        console.log("Inside tolerance line!");
         const cursor =
           line === "left" || line === "right" ? "ew-resize" : "ns-resize";
-        (mapTarget as HTMLElement).style.cursor = cursor;
+        (mapTargetViewport as HTMLElement).style.cursor = cursor;
         e.stopPropagation();
       }
     }
   }
 
-  stopDown(handled) {
-    console.log("Received here", handled);
+  static stopDown(handled: boolean) {
     return handled;
   }
 }
