@@ -6,6 +6,11 @@ import { Polygon } from "ol/geom";
 import { fromExtent } from "ol/geom/Polygon";
 
 type FeatureVertices = [Coordinate, Coordinate, Coordinate, Coordinate];
+type ClosestElement = {
+  distanceToElement: number | null;
+  element: string | null;
+  insideTolerance: boolean | null;
+};
 
 export class ResizeBox extends PointerInteraction {
   feature: Feature<Polygon> | null;
@@ -87,7 +92,7 @@ export class ResizeBox extends PointerInteraction {
     return extent;
   };
 
-  getClosestVertex = (coordinate: Coordinate) => {
+  getClosestElement = (coordinate: Coordinate): ClosestElement => {
     const map = this.getMap();
     if (this.featureVertices != null && coordinate != null && map != null) {
       const coordinateInPixels = map.getPixelFromCoordinate(coordinate);
@@ -97,22 +102,15 @@ export class ResizeBox extends PointerInteraction {
       const minimalDistanceIndex = distanceToVertices.indexOf(
         Math.min(...distanceToVertices)
       );
-      return {
-        distanceToVertex: distanceToVertices[minimalDistanceIndex],
-        vertex: this.vertexEnum[minimalDistanceIndex],
-        insideTolerance:
-          distanceToVertices[minimalDistanceIndex] < this.pixelTolerance,
-      };
+      if (distanceToVertices[minimalDistanceIndex] < this.pixelTolerance) {
+        return {
+          distanceToElement: distanceToVertices[minimalDistanceIndex],
+          element: this.vertexEnum[minimalDistanceIndex],
+          insideTolerance:
+            distanceToVertices[minimalDistanceIndex] < this.pixelTolerance,
+        };
+      }
     }
-    return {
-      distanceToVertex: null,
-      vertex: null,
-      insideTolerance: null,
-    };
-  };
-
-  getClosestLine = (coordinate: Coordinate) => {
-    const map = this.getMap();
     if (
       this.featureVertices != null &&
       coordinate != null &&
@@ -130,45 +128,45 @@ export class ResizeBox extends PointerInteraction {
       if (distanceToClosestPoint < this.pixelTolerance) {
         if (closestPoint[0] === this.featureVertices[0][0]) {
           return {
-            distanceToLine: distanceToClosestPoint,
-            line: "left",
+            distanceToElement: distanceToClosestPoint,
+            element: "left",
             insideTolerance: true,
           };
         }
         if (closestPoint[0] === this.featureVertices[2][0]) {
           return {
-            distanceToLine: distanceToClosestPoint,
-            line: "right",
+            distanceToElement: distanceToClosestPoint,
+            element: "right",
             insideTolerance: true,
           };
         }
         if (closestPoint[1] === this.featureVertices[0][1]) {
           return {
-            distanceToLine: distanceToClosestPoint,
-            line: "bottom",
+            distanceToElement: distanceToClosestPoint,
+            element: "bottom",
             insideTolerance: true,
           };
         }
         if (closestPoint[1] === this.featureVertices[2][1]) {
           return {
-            distanceToLine: distanceToClosestPoint,
-            line: "top",
+            distanceToElement: distanceToClosestPoint,
+            element: "top",
             insideTolerance: true,
           };
         }
       }
     }
     return {
-      distanceToLine: null,
-      line: null,
+      distanceToElement: null,
+      element: null,
       insideTolerance: null,
     };
   };
 
   handleDownEvent(e: MapBrowserEvent) {
-    const { insideTolerance, vertex } = this.getClosestVertex(e.coordinate);
+    const { insideTolerance, element } = this.getClosestElement(e.coordinate);
     if (insideTolerance) {
-      this.selectedElement = vertex;
+      this.selectedElement = element;
       return true;
     }
     return false;
@@ -206,23 +204,28 @@ export class ResizeBox extends PointerInteraction {
   handleMoveEvent(e: MapBrowserEvent) {
     const mapTargetViewport = e.map.getViewport();
     if (mapTargetViewport != null) {
-      const { insideTolerance, vertex } = this.getClosestVertex(e.coordinate);
+      const { insideTolerance, element } = this.getClosestElement(e.coordinate);
       if (insideTolerance) {
-        const cursor =
-          vertex === "bottomLeft" || vertex === "topRight"
-            ? "nesw-resize"
-            : "nwse-resize";
-        mapTargetViewport.style.cursor = cursor;
-        e.stopPropagation();
-        return;
-      }
-
-      const { insideTolerance: insideLineTolerance, line } =
-        this.getClosestLine(e.coordinate);
-      if (insideLineTolerance) {
-        const cursor =
-          line === "left" || line === "right" ? "ew-resize" : "ns-resize";
-        (mapTargetViewport as HTMLElement).style.cursor = cursor;
+        switch (element) {
+          case "bottomLeft":
+          case "topRight":
+            mapTargetViewport.style.cursor = "nesw-resize";
+            break;
+          case "bottomRight":
+          case "topLeft":
+            mapTargetViewport.style.cursor = "nwse-resize";
+            break;
+          case "left":
+          case "right":
+            mapTargetViewport.style.cursor = "ew-resize";
+            break;
+          case "top":
+          case "bottom":
+            mapTargetViewport.style.cursor = "ns-resize";
+            break;
+          default:
+            break;
+        }
         e.stopPropagation();
       }
     }
