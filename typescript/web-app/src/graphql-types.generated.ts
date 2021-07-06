@@ -63,11 +63,11 @@ export type Image = {
 export type ImageCreateInput = {
   id?: Maybe<Scalars['ID']>;
   createdAt?: Maybe<Scalars['DateTime']>;
-  name?: Maybe<Scalars['String']>;
+  name: Scalars['String'];
   path?: Maybe<Scalars['String']>;
-  mimetype?: Maybe<Scalars['String']>;
-  height?: Maybe<Scalars['Int']>;
-  width?: Maybe<Scalars['Int']>;
+  mimetype: Scalars['String'];
+  height: Scalars['Int'];
+  width: Scalars['Int'];
   file?: Maybe<Scalars['Upload']>;
   url?: Maybe<Scalars['String']>;
 };
