@@ -1,3 +1,6 @@
+import { useQuery } from "@apollo/client";
+import gql from "graphql-tag";
+import NextLink from "next/link";
 import {
   VStack,
   Box,
@@ -7,27 +10,37 @@ import {
   Text,
   Breadcrumb,
   BreadcrumbItem,
+  BreadcrumbLink,
   Wrap,
   WrapItem,
   Heading,
-  BreadcrumbLink,
+  chakra,
 } from "@chakra-ui/react";
+import { useRouter } from "next/router";
 import { isEmpty } from "lodash/fp";
 import { RiArrowRightSLine } from "react-icons/ri";
-import NextLink from "next/link";
-import gql from "graphql-tag";
-import { useQuery } from "@apollo/client";
-import { useEffect } from "react";
-import { useRouter } from "next/router";
+import { KeymapButton } from "../../../../components/keymap-button";
+import { ImportButton } from "../../../../components/import-button";
+import { ExportButton } from "../../../../components/export-button";
+import { Meta } from "../../../../components/meta";
+import { Layout } from "../../../../components/layout";
+import type {
+  Image as ImageType,
+  Project as ProjectType,
+} from "../../../../graphql-types.generated";
+import { EmptyStateImage } from "../../../../components/empty-state";
 
-import { Meta } from "../../components/meta";
-import { Layout } from "../../components/layout";
-import { Project } from "../../graphql-types.generated";
-import { ImportButton } from "../../components/import-button";
-import { ExportButton } from "../../components/export-button";
-import { KeymapButton } from "../../components/keymap-button";
-import { EmptyStateImage } from "../../components/empty-state";
-import type { Image as ImageType } from "../../graphql-types.generated";
+const ArrowRightIcon = chakra(RiArrowRightSLine);
+
+export const imagesQuery = gql`
+  query getImages($projectId: ID!) {
+    images(where: { projectId: $projectId }) {
+      id
+      name
+      url
+    }
+  }
+`;
 
 const projectQuery = gql`
   query project($id: ID!) {
@@ -38,56 +51,40 @@ const projectQuery = gql`
   }
 `;
 
-const imagesOfProjectQuery = gql`
-  query getImagesOfProject($projectId: ID!) {
-    images(where: { projectId: $projectId }) {
-      id
-      name
-      url
-    }
-  }
-`;
-
-type ProjectQueryResponse = {
-  project: Pick<Project, "id" | "name">;
-};
-
-const ProjectPage = () => {
+const ImagesPage = () => {
   const router = useRouter();
-  const id = router?.query?.id;
+  const { projectId } = router?.query;
 
-  const { data: imagesResult } = useQuery<{
-    images: Pick<ImageType, "id" | "url" | "name">[];
-  }>(imagesOfProjectQuery, {
+  const { data: projectResult } = useQuery<{
+    project: Pick<ProjectType, "id" | "name">;
+  }>(projectQuery, {
     variables: {
-      projectId: id,
+      id: projectId,
     },
   });
 
-  const { data: projectResult, error } = useQuery<ProjectQueryResponse>(
-    projectQuery,
-    {
-      variables: { id },
-      skip: typeof id !== "string",
-    }
-  );
-
-  useEffect(() => {
-    if (error) {
-      router.replace({ pathname: "/projects", query: router.query });
-    }
-  }, [error]);
+  const { data: imagesResult } = useQuery<{
+    images: Pick<ImageType, "id" | "url" | "name">[];
+  }>(imagesQuery, {
+    variables: {
+      projectId,
+    },
+  });
 
   const projectName = projectResult?.project.name;
 
   return (
     <>
-      <Meta title={`Labelflow | Project ${projectName ?? ""}`} />
+      <Meta title="Labelflow | Images" />
       <Layout
         topBarLeftContent={
           <Breadcrumb
+            overflow="hidden"
+            textOverflow="ellipsis"
+            whiteSpace="nowrap"
             spacing="8px"
-            separator={<RiArrowRightSLine color="gray.500" />}
+            sx={{ "*": { display: "inline !important" } }}
+            separator={<ArrowRightIcon color="gray.500" />}
           >
             <BreadcrumbItem>
               <NextLink href="/projects">
@@ -96,14 +93,11 @@ const ProjectPage = () => {
             </BreadcrumbItem>
 
             <BreadcrumbItem isCurrentPage>
-              <Text
-                maxWidth="20rem"
-                textOverflow="ellipsis"
-                whiteSpace="nowrap"
-                overflow="hidden"
-              >
-                {projectName}
-              </Text>
+              <Text>{projectName}</Text>
+            </BreadcrumbItem>
+
+            <BreadcrumbItem>
+              <Text>Images</Text>
             </BreadcrumbItem>
           </Breadcrumb>
         }
@@ -131,9 +125,7 @@ const ProjectPage = () => {
                 textAlign="center"
               >
                 <EmptyStateImage w="full" />
-                <Heading as="h2">
-                  You don&apos;t have any images in this project.
-                </Heading>
+                <Heading as="h2">You don&apos;t have any images.</Heading>
                 <Text mt="4" fontSize="lg">
                   Fortunately, it’s very easy to add some.
                 </Text>
@@ -151,8 +143,8 @@ const ProjectPage = () => {
 
         {imagesResult && !isEmpty(imagesResult?.images) && (
           <Wrap h="full" spacing={8} padding={8} justify="space-evenly">
-            {imagesResult?.images?.map(({ id: imageId, name, url }) => (
-              <NextLink href={`/images/${imageId}`} key={imageId}>
+            {imagesResult?.images?.map(({ id, name, url }) => (
+              <NextLink href={`/images/${id}`} key={id}>
                 {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
                 <a>
                   <WrapItem p={4} background="white" rounded={8}>
@@ -188,4 +180,4 @@ const ProjectPage = () => {
   );
 };
 
-export default ProjectPage;
+export default ImagesPage;
