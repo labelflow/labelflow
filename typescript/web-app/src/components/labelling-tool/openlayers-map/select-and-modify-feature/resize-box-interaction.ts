@@ -85,6 +85,14 @@ export class ResizeBox extends PointerInteraction {
           return [x, y, newX, newY];
         case "bottomRight":
           return [x, newY, newX, destY];
+        case "left":
+          return [newX, y, destX, destY];
+        case "right":
+          return [x, y, newX, destY];
+        case "top":
+          return [x, y, destX, newY];
+        case "bottom":
+          return [x, newY, destX, destY];
         default:
           return extent;
       }
