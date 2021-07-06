@@ -102,7 +102,12 @@ export class ResizeBox extends PointerInteraction {
 
   getClosestElement = (coordinate: Coordinate): ClosestElement => {
     const map = this.getMap();
-    if (this.featureVertices != null && coordinate != null && map != null) {
+    if (
+      this.featureVertices != null &&
+      coordinate != null &&
+      map != null &&
+      this.feature != null
+    ) {
       const coordinateInPixels = map.getPixelFromCoordinate(coordinate);
       const distanceToVertices = this.featureVertices?.map((vertex) =>
         distance(coordinateInPixels, map.getPixelFromCoordinate(vertex))
@@ -118,17 +123,10 @@ export class ResizeBox extends PointerInteraction {
             distanceToVertices[minimalDistanceIndex] < this.pixelTolerance,
         };
       }
-    }
-    if (
-      this.featureVertices != null &&
-      coordinate != null &&
-      map != null &&
-      this.feature != null
-    ) {
+
       const closestPoint = this.feature
         .getGeometry()
         .getClosestPoint(coordinate);
-      const coordinateInPixels = map.getPixelFromCoordinate(coordinate);
       const distanceToClosestPoint = distance(
         coordinateInPixels,
         map?.getPixelFromCoordinate(closestPoint)
@@ -163,7 +161,21 @@ export class ResizeBox extends PointerInteraction {
           };
         }
       }
+      // Is it inside feature
+      if (
+        coordinate[0] > this.featureVertices[0][0] + this.pixelTolerance &&
+        coordinate[0] < this.featureVertices[2][0] + this.pixelTolerance &&
+        coordinate[1] > this.featureVertices[0][1] + this.pixelTolerance &&
+        coordinate[1] > this.featureVertices[0][1] + this.pixelTolerance
+      ) {
+        return {
+          distanceToElement: null,
+          element: "feature",
+          insideTolerance: true,
+        };
+      }
     }
+
     return {
       distanceToElement: null,
       element: null,
@@ -230,6 +242,9 @@ export class ResizeBox extends PointerInteraction {
           case "top":
           case "bottom":
             mapTargetViewport.style.cursor = "ns-resize";
+            break;
+          case "feature":
+            mapTargetViewport.style.cursor = "move";
             break;
           default:
             break;
