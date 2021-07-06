@@ -26,22 +26,4 @@ export function setupTestsWithLocalDatabase() {
     }
     initMockedDate();
   });
-
-  // @ts-ignore
-  global.Image = class Image extends HTMLElement {
-    width: number;
-
-    height: number;
-
-    constructor() {
-      super();
-      this.width = 42;
-      this.height = 36;
-      setTimeout(() => {
-        this?.onload?.(new Event("onload")); // simulate success
-      }, 100);
-    }
-  };
-  // @ts-ignore
-  customElements.define("image-custom", global.Image);
 }
