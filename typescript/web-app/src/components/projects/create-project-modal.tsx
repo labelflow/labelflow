@@ -168,7 +168,7 @@ export const CreateProjectModal = ({
             disabled={!canCreateProject()}
             aria-label="Create project"
           >
-            Start
+            Start Labelling
           </Button>
         </ModalFooter>
       </ModalContent>
