@@ -52,7 +52,9 @@ export const resetDatabase = () => {
     }
   }
   db = new Dexie("labelflow_local") as Database;
-  versions.map(({ version, stores }) => db.version(version).stores(stores));
+  versions.map(({ version, stores, upgrade }) =>
+    db.version(version).stores(stores).upgrade(upgrade)
+  );
 };
 
 resetDatabase();
