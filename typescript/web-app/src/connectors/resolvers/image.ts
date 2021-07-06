@@ -124,8 +124,18 @@ const createImage = async (
   _: any,
   args: MutationCreateImageArgs
 ): Promise<DbImage> => {
-  const { file, id, name, height, width, mimetype, path, url, createdAt } =
-    args.data;
+  const {
+    file,
+    id,
+    name,
+    height,
+    width,
+    mimetype,
+    path,
+    url,
+    createdAt,
+    projectId,
+  } = args.data;
 
   const imageId = id ?? uuidv4();
   const fileId = uuidv4();
@@ -151,6 +161,7 @@ const createImage = async (
             width: width ?? imageObject.width,
             height: height ?? imageObject.height,
             fileId,
+            projectId,
           };
 
           await db.image.add(newImageEntity);
@@ -223,6 +234,7 @@ const createImage = async (
         width: finalWidth,
         height: finalHeight,
         fileId: identifiedFileId,
+        projectId,
       };
 
       await db.image.add(newImageEntity);
@@ -287,6 +299,7 @@ const createImage = async (
       width: finalWidth,
       height: finalHeight,
       fileId,
+      projectId,
     };
 
     await db.image.add(newImageEntity);

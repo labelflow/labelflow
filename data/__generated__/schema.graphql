@@ -43,12 +43,13 @@ type Image {
 
 input ImageCreateInput {
   id: ID
+  projectId: ID!
   createdAt: DateTime
-  name: String!
+  name: String
   path: String
-  mimetype: String!
-  height: Int!
-  width: Int!
+  mimetype: String
+  height: Int
+  width: Int
   file: Upload
   url: String
 }

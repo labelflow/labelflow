@@ -10,16 +10,21 @@ jest.mock("probe-image-size");
 setupTestsWithLocalDatabase();
 
 describe("Image resolver test suite", () => {
+  const projectId = "test project id";
+
   const createImage = async (name: String) => {
     const mutationResult = await client.mutate({
       mutation: gql`
-        mutation createImage($file: Upload!, $name: String!) {
-          createImage(data: { name: $name, file: $file }) {
+        mutation createImage($file: Upload!, $name: String!, $projectId: ID!) {
+          createImage(
+            data: { name: $name, file: $file, projectId: $projectId }
+          ) {
             id
           }
         }
       `,
       variables: {
+        projectId,
         file: new Blob(),
         name,
       },
@@ -129,13 +134,14 @@ describe("Image resolver test suite", () => {
       },
     } = await client.mutate({
       mutation: gql`
-        mutation createImage($url: String!) {
-          createImage(data: { url: $url }) {
+        mutation createImage($url: String!, $projectId: ID!) {
+          createImage(data: { url: $url, projectId: $projectId }) {
             id
           }
         }
       `,
       variables: {
+        projectId,
         url: "https://images.unsplash.com/photo-1579513141590-c597876aefbc?auto=format&fit=crop&w=882&q=80",
       },
     });
@@ -170,14 +176,22 @@ describe("Image resolver test suite", () => {
 
     const mutationResult = await client.mutate({
       mutation: gql`
-        mutation createImage($imageId: ID, $file: Upload!, $name: String!) {
-          createImage(data: { id: $imageId, name: $name, file: $file }) {
+        mutation createImage(
+          $id: ID
+          $file: Upload!
+          $name: String!
+          $projectId: ID!
+        ) {
+          createImage(
+            data: { id: $id, name: $name, file: $file, projectId: $projectId }
+          ) {
             id
           }
         }
       `,
       variables: {
-        imageId,
+        id: imageId,
+        projectId,
         file: new Blob(),
         name,
       },
@@ -189,15 +203,20 @@ describe("Image resolver test suite", () => {
   test("Create image with a createdAt", async () => {
     const mutationResult = await client.mutate({
       mutation: gql`
-        mutation createImage($file: Upload!) {
+        mutation createImage($file: Upload!, $projectId: ID!) {
           createImage(
-            data: { file: $file, createdAt: "some custom date string" }
+            data: {
+              file: $file
+              createdAt: "some custom date string"
+              projectId: $projectId
+            }
           ) {
             createdAt
           }
         }
       `,
       variables: {
+        projectId,
         file: new Blob(),
       },
     });
