@@ -62,6 +62,7 @@
     "prettier": "2.3.0",
     "react": "17.0.2",
     "react-dom": "17.0.2",
+    "service-worker-mock": "^2.0.5",
     "ts-jest": "26.5.6",
     "ts-loader": "^9.2.3",
     "ts-node": "9.1.1",

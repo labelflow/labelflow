@@ -4,6 +4,18 @@ import "@testing-library/jest-dom";
 import "fake-indexeddb/auto";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import fetchMock from "jest-fetch-mock";
+// eslint-disable-next-line import/no-extraneous-dependencies
+import CacheStorage from "service-worker-mock/models/CacheStorage";
+// eslint-disable-next-line import/no-extraneous-dependencies
+import Request from "service-worker-mock/models/Request";
+// eslint-disable-next-line import/no-extraneous-dependencies
+import Response from "service-worker-mock/models/Response";
+
+Object.assign(global, {
+  caches: new CacheStorage(),
+  Request,
+  Response,
+});
 
 fetchMock.enableMocks();
 

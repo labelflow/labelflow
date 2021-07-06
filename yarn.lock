@@ -14410,6 +14410,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"dom-urls@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "dom-urls@npm:1.1.0"
+  dependencies:
+    urijs: ^1.16.1
+  checksum: dbee20163ad6a86d299e208053d6d24b22481f46c74e265451d8ba62cfa5db7789b29da1eefa89f4784a5dc2e127abe9a33a70a18524bc847bfbc9b626e58948
+  languageName: node
+  linkType: hard
+
 "dom-walk@npm:^0.1.0":
   version: 0.1.2
   resolution: "dom-walk@npm:0.1.2"
@@ -19554,6 +19563,7 @@ fsevents@^1.2.7:
     prettier: 2.3.0
     react: 17.0.2
     react-dom: 17.0.2
+    service-worker-mock: ^2.0.5
     ts-jest: 26.5.6
     ts-loader: ^9.2.3
     ts-node: 9.1.1
@@ -19808,6 +19818,13 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
+"lodash._basefor@npm:^3.0.0":
+  version: 3.0.3
+  resolution: "lodash._basefor@npm:3.0.3"
+  checksum: 87a35e9f8eb285e56716aee98be1aeec9cf689a87f156ecf34bdb39af4bf6ebf149c2242c0b10421ac9405e546fb9a49c6f70a0e5c348b274e9ca385352127ba
+  languageName: node
+  linkType: hard
+
 "lodash.clonedeep@npm:^4.5.0":
   version: 4.5.0
   resolution: "lodash.clonedeep@npm:4.5.0"
@@ -19836,6 +19853,20 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
+"lodash.isarguments@npm:^3.0.0":
+  version: 3.1.0
+  resolution: "lodash.isarguments@npm:3.1.0"
+  checksum: 9ba5e1bba66e757ca981967246a66d759ceff19acf084b6a84ab7b5e0fe0338538317d37ccbdf603db687a1d25ba9d075c0d6bb781dc621938c4b0e5ad735c8d
+  languageName: node
+  linkType: hard
+
+"lodash.isarray@npm:^3.0.0":
+  version: 3.0.4
+  resolution: "lodash.isarray@npm:3.0.4"
+  checksum: 9335120bb50e1755441d3384c14f943a99d4e0d12076bb1a4a31d8b52e7693d790e4e1a429eba604fd64f5c074b372cd8b03f501a06ba1ad1785acf0ad4c0fff
+  languageName: node
+  linkType: hard
+
 "lodash.isboolean@npm:^3.0.3":
   version: 3.0.3
   resolution: "lodash.isboolean@npm:3.0.3"
@@ -19857,6 +19888,17 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
+"lodash.isplainobject@npm:^3.0.2":
+  version: 3.2.0
+  resolution: "lodash.isplainobject@npm:3.2.0"
+  dependencies:
+    lodash._basefor: ^3.0.0
+    lodash.isarguments: ^3.0.0
+    lodash.keysin: ^3.0.0
+  checksum: a36a02180810473e993b8fe5bb0154cf8b2c35553ca4d8286d17ce39e5bb8f596734f88e1c588f457c7b1445cebe6562cb90dde7fb84d811f9e2c7582825e6fa
+  languageName: node
+  linkType: hard
+
 "lodash.isplainobject@npm:^4.0.6":
   version: 4.0.6
   resolution: "lodash.isplainobject@npm:4.0.6"
@@ -19868,6 +19910,16 @@ fsevents@^1.2.7:
   version: 4.0.1
   resolution: "lodash.isstring@npm:4.0.1"
   checksum: 20c46960b74fd63c27b534f1725cd4141ac19b35c7250affee37c8b7899b1a4c5e9820becfafe571a4d48cd4c86206ee03c2e93fe943dbeab82ddd5cab710540
+  languageName: node
+  linkType: hard
+
+"lodash.keysin@npm:^3.0.0":
+  version: 3.0.8
+  resolution: "lodash.keysin@npm:3.0.8"
+  dependencies:
+    lodash.isarguments: ^3.0.0
+    lodash.isarray: ^3.0.0
+  checksum: 52d6e923857ce246f5876f4bc44ddf88981618609b14905dbc10a05cf3205b8df90eb1a5e268f406111478c50b9c337cfd9a73b2c974784ee14fa213b4330da4
   languageName: node
   linkType: hard
 
@@ -23681,6 +23733,15 @@ next-pwa@5.2.21:
   languageName: node
   linkType: hard
 
+"realistic-structured-clone@npm:^1.0.1":
+  version: 1.0.1
+  resolution: "realistic-structured-clone@npm:1.0.1"
+  dependencies:
+    lodash.isplainobject: ^3.0.2
+  checksum: b536c8ccdeff637b333feca283e01db1e0dfc907b5301e754651af44177470cc1b89ed88627f2ab35a0d6159f5d25f0938f674a4cfdc8aaf3a95bf705e1a80ac
+  languageName: node
+  linkType: hard
+
 "realistic-structured-clone@npm:^2.0.1":
   version: 2.0.2
   resolution: "realistic-structured-clone@npm:2.0.2"
@@ -24636,6 +24697,18 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
+"service-worker-mock@npm:^2.0.5":
+  version: 2.0.5
+  resolution: "service-worker-mock@npm:2.0.5"
+  dependencies:
+    dom-urls: ^1.1.0
+    shelving-mock-indexeddb: ^1.1.0
+    url-search-params: ^0.10.0
+    w3c-hr-time: ^1.0.1
+  checksum: 126427a1503e2a570f649ed4cab09dfe6963964675f03f1ad82222b6ce9aea454226c533e78c49356117d488381267c4a23e7b4e3bc5cf85277a6e9e9f5c5e74
+  languageName: node
+  linkType: hard
+
 "set-blocking@npm:^2.0.0, set-blocking@npm:~2.0.0":
   version: 2.0.0
   resolution: "set-blocking@npm:2.0.0"
@@ -24754,6 +24827,23 @@ resolve@^2.0.0-next.3:
   version: 0.1.1
   resolution: "shellwords@npm:0.1.1"
   checksum: 3559ff550917ece921d252edf42eb54827540e9676e537137ace236df8f9b78e48c542ae0b3f8876fea0faf5826c97629d5b8cb9ac7dee287260e9804fb8132c
+  languageName: node
+  linkType: hard
+
+"shelving-mock-event@npm:^1.0.12":
+  version: 1.0.12
+  resolution: "shelving-mock-event@npm:1.0.12"
+  checksum: b39298f06272429a54b203e9e4e5bff68a1ebb416ceedfba14f05c3b8c11e2bf12fc45ca9f927b2ca2fa5a70158d5a3cd4b8137f08b8af85e4b3f7d29a26446a
+  languageName: node
+  linkType: hard
+
+"shelving-mock-indexeddb@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "shelving-mock-indexeddb@npm:1.1.0"
+  dependencies:
+    realistic-structured-clone: ^1.0.1
+    shelving-mock-event: ^1.0.12
+  checksum: 50a0525be61799428cc151ac9876ae60a80f4eb05ec844689e6097716663ed4d6be8443dda500a0f7e05e01de6530e9ba05b43cb3c5df65c06de04b5156ae7f8
   languageName: node
   linkType: hard
 
@@ -27101,6 +27191,13 @@ typescript@4.2.4:
   languageName: node
   linkType: hard
 
+"urijs@npm:^1.16.1":
+  version: 1.19.6
+  resolution: "urijs@npm:1.19.6"
+  checksum: 8c5c469d2e38ce1ddc0b2ed08e3dbce4e432e5f020c0fde07437aceafd2fc249f545e17921ea137b541bacb46508b414d1f0ec62ee5afd0ed5dad404f47653be
+  languageName: node
+  linkType: hard
+
 "urix@npm:^0.1.0":
   version: 0.1.0
   resolution: "urix@npm:0.1.0"
@@ -27131,6 +27228,13 @@ typescript@4.2.4:
   dependencies:
     prepend-http: ^2.0.0
   checksum: 334817036b300c35023798b8ceac23ea61b51f231a867112e3a85778d65191a3ccb67e7b69b608d45433d55da392cf0d72cd3c85f2542f6ec34733e455c229d5
+  languageName: node
+  linkType: hard
+
+"url-search-params@npm:^0.10.0":
+  version: 0.10.2
+  resolution: "url-search-params@npm:0.10.2"
+  checksum: 7388309e435fdbc378d23247aaa03ea44e10b788ab567165f237988998cb6fc7506393422256b42876d70694129ee1f392e2721518d01d6fe5453624732c5b1c
   languageName: node
   linkType: hard
 
@@ -27455,7 +27559,7 @@ typescript@4.2.4:
   languageName: node
   linkType: hard
 
-"w3c-hr-time@npm:^1.0.2":
+"w3c-hr-time@npm:^1.0.1, w3c-hr-time@npm:^1.0.2":
   version: 1.0.2
   resolution: "w3c-hr-time@npm:1.0.2"
   dependencies:
