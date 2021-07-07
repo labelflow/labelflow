@@ -39,10 +39,12 @@ export const createCreateLabelClassEffect = (
   {
     name,
     color,
+    projectId,
     selectedLabelClassIdPrevious,
   }: {
     name: string;
     color: string;
+    projectId: string;
     selectedLabelClassIdPrevious: string | null;
   },
   {
@@ -58,7 +60,7 @@ export const createCreateLabelClassEffect = (
       },
     } = await client.mutate({
       mutation: createLabelClassQuery,
-      variables: { data: { name, color } },
+      variables: { data: { name, color, projectId } },
       refetchQueries: [{ query: labelClassesQuery }],
     });
 
@@ -84,7 +86,7 @@ export const createCreateLabelClassEffect = (
   redo: async (labelClassId: string) => {
     await client.mutate({
       mutation: createLabelClassQuery,
-      variables: { data: { name, color, id: labelClassId } },
+      variables: { data: { name, color, id: labelClassId, projectId } },
       refetchQueries: [{ query: labelClassesQuery }],
     });
 
@@ -97,10 +99,12 @@ export const createCreateLabelClassEffect = (
 export const createNewLabelClassCurry =
   ({
     labelClasses,
+    projectId,
     perform,
     client,
   }: {
     labelClasses: LabelClass[];
+    projectId: string;
     perform: any;
     client: ApolloClient<object>;
   }) =>
@@ -111,7 +115,7 @@ export const createNewLabelClassCurry =
         : getNextClassColor(labelClasses[labelClasses.length - 1].color);
     perform(
       createCreateLabelClassEffect(
-        { name, color: newClassColor, selectedLabelClassIdPrevious },
+        { name, color: newClassColor, selectedLabelClassIdPrevious, projectId },
         { client }
       )
     );
