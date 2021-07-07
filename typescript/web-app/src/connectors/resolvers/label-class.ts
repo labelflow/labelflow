@@ -6,6 +6,7 @@ import type {
   QueryLabelClassArgs,
   QueryLabelClassesArgs,
   Maybe,
+  LabelClassWhereInput,
 } from "../../graphql-types.generated";
 
 import { db, DbLabelClass } from "../database";
@@ -21,11 +22,19 @@ const getLabelClassById = async (id: string): Promise<DbLabelClass> => {
 };
 
 export const getPaginatedLabelClasses = async (
+  where?: Maybe<LabelClassWhereInput>,
   skip?: Maybe<number>,
   first?: Maybe<number>
 ): Promise<DbLabelClass[]> => {
-  const query = await db.labelClass.orderBy("createdAt").offset(skip ?? 0);
+  const query = db.labelClass.orderBy("createdAt");
 
+  if (where?.projectId) {
+    query.filter((image) => image.projectId === where.projectId);
+  }
+
+  if (skip) {
+    query.offset(skip);
+  }
   if (first) {
     return query.limit(first).toArray();
   }
@@ -46,7 +55,7 @@ const labelClass = async (_: any, args: QueryLabelClassArgs) =>
   getLabelClassById(args?.where?.id);
 
 const labelClasses = async (_: any, args: QueryLabelClassesArgs) =>
-  getPaginatedLabelClasses(args?.skip, args?.first);
+  getPaginatedLabelClasses(args?.where, args?.skip, args?.first);
 
 // Mutations
 const createLabelClass = async (

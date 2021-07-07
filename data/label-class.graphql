@@ -5,6 +5,10 @@ input LabelClassCreateInput {
   projectId: ID!
 }
 
+input LabelClassWhereInput {
+  projectId: ID
+}
+
 input LabelClassWhereUniqueInput {
   id: ID!
 }

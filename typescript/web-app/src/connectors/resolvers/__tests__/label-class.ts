@@ -360,4 +360,41 @@ describe("LabelClass resolver test suite", () => {
 
     expect(queryResult.data.labelClassesAggregates.totalCount).toEqual(3);
   });
+
+  it("should query label classes linked to a project", async () => {
+    const labelClassId2 = await createLabelClass({
+      name: "second labelClass",
+      color: "#ff0000",
+      projectId: "project 1",
+    });
+    incrementMockedDate(1);
+    const labelClassId1 = await createLabelClass({
+      name: "first labelClass",
+      color: "#ff0000",
+      projectId: "project 1",
+    });
+    incrementMockedDate(1);
+    await createLabelClass({
+      name: "other first labelClass",
+      color: "#ff0000",
+      projectId: "project 2",
+    });
+
+    const queryResult = await client.query({
+      query: gql`
+        query {
+          labelClasses(where: { projectId: "project 1" }) {
+            id
+          }
+        }
+      `,
+    });
+
+    expect(queryResult.data.labelClasses.length).toEqual(2);
+    expect(
+      queryResult.data.labelClasses.map(
+        (labelClass: { id: string }) => labelClass.id
+      )
+    ).toEqual([labelClassId2, labelClassId1]);
+  });
 });

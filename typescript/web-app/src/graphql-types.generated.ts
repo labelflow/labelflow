@@ -118,6 +118,10 @@ export type LabelClassCreateInput = {
   projectId: Scalars['ID'];
 };
 
+export type LabelClassWhereInput = {
+  projectId?: Maybe<Scalars['ID']>;
+};
+
 export type LabelClassWhereUniqueInput = {
   id: Scalars['ID'];
 };
@@ -304,6 +308,7 @@ export type QueryLabelClassArgs = {
 
 
 export type QueryLabelClassesArgs = {
+  where?: Maybe<LabelClassWhereInput>;
   first?: Maybe<Scalars['Int']>;
   skip?: Maybe<Scalars['Int']>;
 };
@@ -436,6 +441,7 @@ export type ResolversTypes = {
   Float: ResolverTypeWrapper<Scalars['Float']>;
   LabelClass: ResolverTypeWrapper<LabelClass>;
   LabelClassCreateInput: LabelClassCreateInput;
+  LabelClassWhereInput: LabelClassWhereInput;
   LabelClassWhereUniqueInput: LabelClassWhereUniqueInput;
   LabelClassesAggregates: ResolverTypeWrapper<LabelClassesAggregates>;
   LabelCreateInput: LabelCreateInput;
@@ -476,6 +482,7 @@ export type ResolversParentTypes = {
   Float: Scalars['Float'];
   LabelClass: LabelClass;
   LabelClassCreateInput: LabelClassCreateInput;
+  LabelClassWhereInput: LabelClassWhereInput;
   LabelClassWhereUniqueInput: LabelClassWhereUniqueInput;
   LabelClassesAggregates: LabelClassesAggregates;
   LabelCreateInput: LabelCreateInput;
