@@ -150,7 +150,9 @@ type Project {
   updatedAt: DateTime!
   name: String!
   images: [Image!]
+  imagesCount: Int!
   labelClasses: [LabelClass!]
+  labelClassesCount: Int!
 }
 
 input ProjectCreateInput {

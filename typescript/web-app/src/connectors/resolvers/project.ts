@@ -44,7 +44,45 @@ const getProjectFromWhereUniqueInput = async (
   throw new Error("Invalid where unique input for project entity");
 };
 
+const getImagesByProjectId = async (projectId: string) => {
+  const getResults = await db.image.where({ projectId }).sortBy("createdAt");
+
+  return getResults ?? [];
+};
+
+const countImagesByProjectId = async (projectId: string) => {
+  return db.image.where({ projectId }).count();
+};
+
+const getLabelClassesByProjectId = async (projectId: string) => {
+  const getResults = await db.labelClass
+    .where({ projectId })
+    .sortBy("createdAt");
+
+  return getResults ?? [];
+};
+
+const countLabelClassesByProjectId = async (projectId: string) => {
+  return db.labelClass.where({ projectId }).count();
+};
+
 // Queries
+const imagesResolver = async ({ id }: DbProject) => {
+  return getImagesByProjectId(id);
+};
+
+const imagesCountResolver = async ({ id }: DbProject) => {
+  return countImagesByProjectId(id);
+};
+
+const labelClassesResolver = async ({ id }: DbProject) => {
+  return getLabelClassesByProjectId(id);
+};
+
+const labelClassesCountResolver = async ({ id }: DbProject) => {
+  return countLabelClassesByProjectId(id);
+};
+
 const project = async (_: any, args: QueryProjectArgs): Promise<DbProject> => {
   return getProjectFromWhereUniqueInput(args.where);
 };
@@ -113,9 +151,17 @@ export default {
     project,
     projects,
   },
+
   Mutation: {
     createProject,
     updateProject,
     deleteProject,
+  },
+
+  Project: {
+    images: imagesResolver,
+    imagesCount: imagesCountResolver,
+    labelClasses: labelClassesResolver,
+    labelClassesCount: labelClassesCountResolver,
   },
 };

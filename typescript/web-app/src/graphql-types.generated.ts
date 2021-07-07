@@ -227,7 +227,9 @@ export type Project = {
   updatedAt: Scalars['DateTime'];
   name: Scalars['String'];
   images?: Maybe<Array<Image>>;
+  imagesCount: Scalars['Int'];
   labelClasses?: Maybe<Array<LabelClass>>;
+  labelClassesCount: Scalars['Int'];
 };
 
 export type ProjectCreateInput = {
@@ -586,7 +588,9 @@ export type ProjectResolvers<ContextType = any, ParentType extends ResolversPare
   updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   images?: Resolver<Maybe<Array<ResolversTypes['Image']>>, ParentType, ContextType>;
+  imagesCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   labelClasses?: Resolver<Maybe<Array<ResolversTypes['LabelClass']>>, ParentType, ContextType>;
+  labelClassesCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 

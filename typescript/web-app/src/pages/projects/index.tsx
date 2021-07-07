@@ -14,16 +14,15 @@ const getProjectsQuery = gql`
     projects {
       id
       name
-      images {
-        url
-      }
+      imagesCount
+      labelClassesCount
     }
   }
 `;
 
 const ProjectPage = () => {
   const { data: projectsResult } =
-    useQuery<{ projects: Pick<ProjectType, "id" | "name" | "images">[] }>(
+    useQuery<{ projects: Pick<ProjectType, "id" | "name">[] }>(
       getProjectsQuery
     );
 
@@ -49,21 +48,24 @@ const ProjectPage = () => {
           justifyItems="center"
         >
           <NewProjectCard />
-          {projectsResult?.projects?.map(({ id, name }) => (
-            <NextLink href={`/projects/${id}`} key={id}>
-              {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-              <a style={{ width: "100%" }}>
-                <ProjectCard
-                  projectName={name}
-                  imagesCount={0}
-                  labelClassesCount={0}
-                  labelsCount={0}
-                  editProject={() => {}}
-                  deleteProject={() => {}}
-                />
-              </a>
-            </NextLink>
-          ))}
+          {/* @ts-ignore */}
+          {projectsResult?.projects?.map(
+            ({ id, name, imagesCount, labelClassesCount }) => (
+              <NextLink href={`/projects/${id}`} key={id}>
+                {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
+                <a style={{ width: "100%" }}>
+                  <ProjectCard
+                    projectName={name}
+                    imagesCount={imagesCount}
+                    labelClassesCount={labelClassesCount}
+                    labelsCount={0}
+                    editProject={() => {}}
+                    deleteProject={() => {}}
+                  />
+                </a>
+              </NextLink>
+            )
+          )}
         </SimpleGrid>
       </Layout>
     </>
