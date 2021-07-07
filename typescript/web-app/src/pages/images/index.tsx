@@ -29,13 +29,16 @@ export const imagesQuery = gql`
       id
       name
       url
+      projectId
     }
   }
 `;
 
 const ImagesPage = () => {
   const { data: imagesResult } =
-    useQuery<{ images: Pick<ImageType, "id" | "url" | "name">[] }>(imagesQuery);
+    useQuery<{
+      images: Pick<ImageType, "id" | "url" | "name" | "projectId">[];
+    }>(imagesQuery);
 
   return (
     <>
@@ -82,8 +85,8 @@ const ImagesPage = () => {
 
         {imagesResult && !isEmpty(imagesResult?.images) && (
           <Wrap h="full" spacing={8} padding={8} justify="space-evenly">
-            {imagesResult?.images?.map(({ id, name, url }) => (
-              <NextLink href={`/images/${id}`} key={id}>
+            {imagesResult?.images?.map(({ id, name, url, projectId }) => (
+              <NextLink href={`/projects/${projectId}/images/${id}`} key={id}>
                 {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
                 <a>
                   <WrapItem p={4} background="white" rounded={8}>
