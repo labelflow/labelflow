@@ -21,6 +21,7 @@ const maxRetries = 1;
  */
 async function graphQLServiceWorker(
   request: ApolloRequest,
+  requestJson: any,
   options: GraphQLOptions,
   retries = 0
 ): Promise<Response> {
@@ -34,7 +35,7 @@ async function graphQLServiceWorker(
       options,
       query:
         request.method === "POST"
-          ? await request.json()
+          ? requestJson
           : JSON.parse(request.url.split("?")[1]),
       request,
     });
@@ -47,11 +48,9 @@ async function graphQLServiceWorker(
 
     return response;
   } catch (error) {
-    console.error(error);
     if (retries < maxRetries) {
-      console.log("Problem with the database, retrying after reset");
       resetDatabase();
-      return graphQLServiceWorker(request, options, retries + 1);
+      return graphQLServiceWorker(request, requestJson, options, retries + 1);
     }
 
     if (error.name !== "HttpQueryError") {
@@ -85,6 +84,7 @@ export class ApolloServerServiceWorker
     });
     const response = await graphQLServiceWorker(
       request as unknown as ApolloRequest,
+      await request.json(),
       options
     );
     return response;
