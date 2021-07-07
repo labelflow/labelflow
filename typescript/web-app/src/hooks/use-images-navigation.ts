@@ -31,6 +31,7 @@ export const useImagesNavigation = () => {
   const router = useRouter();
   const { projectId, imageId: currentImageId } = router?.query;
 
+  // Refetch images ?
   const { data } = useQuery<{
     project: Pick<Project, "id" | "images" | "imagesCount">;
   }>(projectDataQuery, { variables: { projectId } });

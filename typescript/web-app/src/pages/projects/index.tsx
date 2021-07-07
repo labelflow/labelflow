@@ -22,9 +22,12 @@ const getProjectsQuery = gql`
 
 const ProjectPage = () => {
   const { data: projectsResult } =
-    useQuery<{ projects: Pick<ProjectType, "id" | "name">[] }>(
-      getProjectsQuery
-    );
+    useQuery<{
+      projects: Pick<
+        ProjectType,
+        "id" | "name" | "imagesCount" | "labelClassesCount"
+      >[];
+    }>(getProjectsQuery);
 
   return (
     <>
