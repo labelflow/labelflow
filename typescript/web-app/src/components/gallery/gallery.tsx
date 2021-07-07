@@ -21,7 +21,8 @@ import { itemHeight, itemWidth, scrollbarHeight } from "./constants";
 export const Gallery = () => {
   const listRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
-  const imageId = router.query.id as string;
+  const imageId = router?.query?.imageId as string;
+  const projectId = router?.query?.projectId as string;
 
   const { images, currentImageIndex } = useImagesNavigation();
 
@@ -52,7 +53,8 @@ export const Gallery = () => {
           <GalleryItem
             key={item.index}
             size={item.size}
-            id={images?.[item.index]?.id}
+            imageId={images?.[item.index]?.id}
+            projectId={projectId}
             url={images?.[item.index]?.url}
             isSelected={imageId === images?.[item.index]?.id}
             start={item.start}
