@@ -34,7 +34,7 @@ const geometryFunction = createBox();
 export const DrawBoundingBoxInteraction = () => {
   const drawRef = useRef<OlDraw>(null);
   const client = useApolloClient();
-  const imageId = useRouter().query?.id;
+  const { imageId } = useRouter().query;
 
   const selectedTool = useLabellingStore((state) => state.selectedTool);
 
