@@ -32,8 +32,8 @@ import { EmptyStateImage } from "../../../../components/empty-state";
 
 const ArrowRightIcon = chakra(RiArrowRightSLine);
 
-export const imagesQuery = gql`
-  query getImages($projectId: ID!) {
+export const imagesOfProjectQuery = gql`
+  query getImagesOfProject($projectId: ID!) {
     images(where: { projectId: $projectId }) {
       id
       name
@@ -65,7 +65,7 @@ const ImagesPage = () => {
 
   const { data: imagesResult } = useQuery<{
     images: Pick<ImageType, "id" | "url" | "name">[];
-  }>(imagesQuery, {
+  }>(imagesOfProjectQuery, {
     variables: {
       projectId,
     },

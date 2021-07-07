@@ -55,7 +55,6 @@ const ImagesPage = () => {
         topBarRightContent={
           <>
             <KeymapButton />
-            <ImportButton />
             <ExportButton />
           </>
         }
@@ -77,16 +76,6 @@ const ImagesPage = () => {
               >
                 <EmptyStateImage w="full" />
                 <Heading as="h2">You don&apos;t have any images.</Heading>
-                <Text mt="4" fontSize="lg">
-                  Fortunately, it’s very easy to add some.
-                </Text>
-
-                <ImportButton
-                  colorScheme="brand"
-                  variant="solid"
-                  mt="8"
-                  showModal={false}
-                />
               </Box>
             </Box>
           </Center>

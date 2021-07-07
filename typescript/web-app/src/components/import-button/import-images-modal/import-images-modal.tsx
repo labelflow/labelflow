@@ -12,7 +12,7 @@ import { useQueryParam, StringParam, withDefault } from "use-query-params";
 import { useQuery } from "@apollo/client";
 import { ImportImagesModalDropzone } from "./modal-dropzone/modal-dropzone";
 import { ImportImagesModalUrlList } from "./modal-url-list/modal-url-list";
-import { imagesQuery } from "../../../pages/images";
+import { imagesOfProjectQuery } from "../../../pages/projects/[projectId]/images";
 
 export const ImportImagesModal = ({
   isOpen = false,
@@ -22,7 +22,13 @@ export const ImportImagesModal = ({
   onClose?: () => void;
 }) => {
   const router = useRouter();
-  const { refetch: refetchImages } = useQuery(imagesQuery);
+  const { projectId } = router?.query;
+
+  const { refetch: refetchImages } = useQuery(imagesOfProjectQuery, {
+    variables: {
+      projectId,
+    },
+  });
 
   const [isCloseable, setCloseable] = useState(true);
   const [hasUploaded, setHasUploaded] = useState(false);

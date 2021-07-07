@@ -17,7 +17,6 @@ import { useRouter } from "next/router";
 import { RiArrowRightSLine } from "react-icons/ri";
 import NextLink from "next/link";
 import { KeymapButton } from "../../components/keymap-button";
-import { ImportButton } from "../../components/import-button";
 import { ExportButton } from "../../components/export-button";
 import { Meta } from "../../components/meta";
 import { Layout } from "../../components/layout";
@@ -101,7 +100,6 @@ const ImagePage = () => {
         topBarRightContent={
           <>
             <KeymapButton />
-            <ImportButton />
             <ExportButton />
           </>
         }
