@@ -1,8 +1,14 @@
-import { print } from "graphql";
+import { print, GraphQLResolveInfo } from "graphql";
+import { MutationIogInferenceArgs } from "../../graphql-types.generated";
 
 const ENDPOINT = "http://0.0.0.0:5000/graphql";
 
-const iogInference = async (_, args, request, { operation }) => {
+const iogInference = async (
+  _parent: any,
+  args: MutationIogInferenceArgs,
+  _context: any,
+  { operation }: GraphQLResolveInfo
+) => {
   return fetch(ENDPOINT, {
     method: "POST",
     headers: {
