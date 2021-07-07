@@ -5,10 +5,13 @@
 
 import {
   upperFirst,
-
-  // lowerFirst,
+  lowerFirst,
   // isObject,
   omit,
+  fromPairs,
+  toPairs,
+  map,
+  isObject,
 } from "lodash/fp";
 
 // /////////////////////////////////////////////////////////////////////////////
@@ -708,7 +711,7 @@ const catalogueOlStyle = Object.fromEntries(
 ) as CatalogueOlStyle;
 
 // eslint-disable-next-line import/no-mutable-exports
-export const catalogue: Catalogue = {
+export let catalogue: Catalogue = {
   ...catalogueOl,
   ...catalogueOlLayer,
   ...catalogueOlControl,
@@ -718,35 +721,35 @@ export const catalogue: Catalogue = {
   ...catalogueOlStyle,
 };
 
-/// ////////////////////////////////////////////////////////////////////////////
+/// ////////////////////////////////////////////////////////////////////////
 
-// /// ////////////////////////////////////////////////////////////////////////////
-// // A way to extend the catalogue
-// export const extend = <T>(objects: { [key: string]: T }): void => {
-//   // Cleanup the input
-//   const cleanedUpObjects = fromPairs(
-//     map(<U>([key, value]: [string, U | CatalogueItem<U>]): [
-//       string,
-//       CatalogueItem<U>
-//     ] => {
-//       if (!isObject((value as CatalogueItem<U>).object)) {
-//         // If it's directly an object we put it nicely in a catalogue item
-//         return [
-//           lowerFirst(key),
-//           {
-//             type: lowerFirst(key),
-//             kind: null,
-//             object: value as U,
-//           },
-//         ];
-//       }
-//       // If it's already a catalogue item it's good
-//       return [
-//         lowerFirst(key),
-//         { kind: null, ...(value as CatalogueItem<U>), type: lowerFirst(key) },
-//       ];
-//     }, toPairs(objects))
-//   );
-//   // Update the catalogue
-//   catalogue = { ...catalogue, ...cleanedUpObjects };
-// };
+/// ////////////////////////////////////////////////////////////////////////////
+// A way to extend the catalogue
+export const extend = <T>(objects: { [key: string]: T }): void => {
+  // Cleanup the input
+  const cleanedUpObjects = fromPairs(
+    map(<U>([key, value]: [string, U | CatalogueItem<U>]): [
+      string,
+      CatalogueItem<U>
+    ] => {
+      if (!isObject((value as CatalogueItem<U>).object)) {
+        // If it's directly an object we put it nicely in a catalogue item
+        return [
+          lowerFirst(key),
+          {
+            type: lowerFirst(key),
+            kind: null,
+            object: value as U,
+          },
+        ];
+      }
+      // If it's already a catalogue item it's good
+      return [
+        lowerFirst(key),
+        { kind: null, ...(value as CatalogueItem<U>), type: lowerFirst(key) },
+      ];
+    }, toPairs(objects))
+  );
+  // Update the catalogue
+  catalogue = { ...catalogue, ...cleanedUpObjects };
+};
