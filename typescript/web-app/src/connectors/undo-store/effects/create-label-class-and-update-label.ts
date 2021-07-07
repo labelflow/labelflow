@@ -9,9 +9,9 @@ import {
 import { Effect } from "..";
 import { LabelClass } from "../../../graphql-types.generated";
 
-const labelClassesQuery = gql`
-  query getLabelClasses {
-    labelClasses {
+const labelClassesOfProjectQuery = gql`
+  query getLabelClassesOfProject($projectId: ID!) {
+    labelClasses(where: { projectId: $projectId }) {
       id
       name
       color
@@ -83,7 +83,9 @@ export const createCreateLabelClassAndUpdateLabelEffect = (
     } = await client.mutate({
       mutation: createLabelClassQuery,
       variables: { data: { name, color, projectId } },
-      refetchQueries: [{ query: labelClassesQuery }],
+      refetchQueries: [
+        { query: labelClassesOfProjectQuery, variables: { projectId } },
+      ],
     });
 
     const {
@@ -132,7 +134,9 @@ export const createCreateLabelClassAndUpdateLabelEffect = (
       variables: {
         where: { id: labelClassId },
       },
-      refetchQueries: [{ query: labelClassesQuery }],
+      refetchQueries: [
+        { query: labelClassesOfProjectQuery, variables: { projectId } },
+      ],
     });
 
     useLabellingStore.setState({ selectedLabelClassId: labelClassIdPrevious });
@@ -151,7 +155,9 @@ export const createCreateLabelClassAndUpdateLabelEffect = (
     await client.mutate({
       mutation: createLabelClassQuery,
       variables: { data: { name, color, id: labelClassId, projectId } },
-      refetchQueries: [{ query: labelClassesQuery }],
+      refetchQueries: [
+        { query: labelClassesOfProjectQuery, variables: { projectId } },
+      ],
     });
 
     await client.mutate({

@@ -1,5 +1,6 @@
 import { forwardRef, useMemo } from "react";
 import { useQuery, useApolloClient } from "@apollo/client";
+import { useRouter } from "next/router";
 import gql from "graphql-tag";
 import { useHotkeys } from "react-hotkeys-hook";
 
@@ -10,9 +11,9 @@ import { createNewLabelClassAndUpdateLabelCurry } from "../../../connectors/undo
 import { createUpdateLabelClassOfLabelEffect } from "../../../connectors/undo-store/effects/update-label-class-of-label";
 import { keymap } from "../../../keymap";
 
-const labelClassesQuery = gql`
-  query getLabelClasses {
-    labelClasses {
+const labelClassesOfProjectQuery = gql`
+  query getLabelClassesOfProject($projectId: ID!) {
+    labelClasses(where: { projectId: $projectId }) {
       id
       name
       color
@@ -38,8 +39,13 @@ export const EditLabelClass = forwardRef<
     onClose: () => void;
   }
 >(({ isOpen, onClose }, ref) => {
+  const router = useRouter();
+  const projectId = router.query.projectId as string;
+
   const client = useApolloClient();
-  const { data } = useQuery(labelClassesQuery);
+  const { data } = useQuery(labelClassesOfProjectQuery, {
+    variables: { projectId },
+  });
   const { perform } = useUndoStore();
   const labelClasses = data?.labelClasses ?? [];
   const selectedLabelId = useLabellingStore((state) => state.selectedLabelId);
@@ -55,6 +61,7 @@ export const EditLabelClass = forwardRef<
     () =>
       createNewLabelClassAndUpdateLabelCurry({
         labelClasses,
+        projectId,
         perform,
         onClose,
         client,

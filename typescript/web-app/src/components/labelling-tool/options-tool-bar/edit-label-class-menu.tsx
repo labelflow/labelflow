@@ -3,6 +3,7 @@ import { useQuery, useApolloClient } from "@apollo/client";
 import gql from "graphql-tag";
 
 import { useHotkeys } from "react-hotkeys-hook";
+import { useRouter } from "next/router";
 import { ClassSelectionMenu } from "./class-selection-menu";
 import { Tools, useLabellingStore } from "../../../connectors/labelling-state";
 import { useUndoStore } from "../../../connectors/undo-store";
@@ -13,9 +14,9 @@ import { createNewLabelClassCurry } from "../../../connectors/undo-store/effects
 import { createUpdateLabelClassEffect } from "../../../connectors/undo-store/effects/update-label-class";
 import { keymap } from "../../../keymap";
 
-const labelClassesQuery = gql`
-  query getLabelClasses {
-    labelClasses {
+const labelClassesOfProjectQuery = gql`
+  query getLabelClassesOfProject($projectId: ID!) {
+    labelClasses(where: { projectId: $projectId }) {
       id
       name
       color
@@ -47,9 +48,13 @@ const labelQuery = gql`
 `;
 
 export const EditLabelClassMenu = () => {
+  const router = useRouter();
+  const projectId = router.query.projectId as string;
   const client = useApolloClient();
   const [isOpen, setIsOpen] = useState(false);
-  const { data } = useQuery(labelClassesQuery);
+  const { data } = useQuery(labelClassesOfProjectQuery, {
+    variables: { projectId },
+  });
   const { perform } = useUndoStore();
   const labelClasses = data?.labelClasses ?? [];
   const isContextMenuOpen = useLabellingStore(
@@ -76,6 +81,7 @@ export const EditLabelClassMenu = () => {
     () =>
       createNewLabelClassCurry({
         labelClasses,
+        projectId,
         perform,
         client,
       }),
@@ -85,6 +91,7 @@ export const EditLabelClassMenu = () => {
     () =>
       createNewLabelClassAndUpdateLabelCurry({
         labelClasses,
+        projectId,
         perform,
         client,
       }),
