@@ -53,7 +53,7 @@ const createLabelClass = async (
   _: any,
   args: MutationCreateLabelClassArgs
 ): Promise<DbLabelClass> => {
-  const { color, name, id } = args.data;
+  const { color, name, id, projectId } = args.data;
   const labelClassId = id ?? uuidv4();
   const now = new Date();
 
@@ -63,6 +63,7 @@ const createLabelClass = async (
     updatedAt: now.toISOString(),
     name,
     color,
+    projectId,
   };
   await db.labelClass.add(newLabelClassEntity);
   return getLabelClassById(newLabelClassEntity.id);

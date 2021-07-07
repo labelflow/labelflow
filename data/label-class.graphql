@@ -2,6 +2,7 @@ input LabelClassCreateInput {
   id: ID
   name: String!
   color: ColorHex!
+  projectId: ID!
 }
 
 input LabelClassWhereUniqueInput {

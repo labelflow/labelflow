@@ -8,6 +8,7 @@ setupTestsWithLocalDatabase();
 const createLabelClass = async (data: {
   name: string;
   color: string;
+  projectId: string;
   id?: string;
 }) => {
   const mutationResult = await client.mutate({
@@ -39,8 +40,8 @@ const createLabel = async (labelClassId: string, x: number) => {
     },
   } = await client.mutate({
     mutation: gql`
-      mutation createImage($file: Upload!, $name: String!) {
-        createImage(data: { name: $name, file: $file }) {
+      mutation createImage($file: Upload!, $name: String!, $projectId: ID!) {
+        createImage(data: { name: $name, file: $file, projectId: $projectId }) {
           id
         }
       }
@@ -48,6 +49,7 @@ const createLabel = async (labelClassId: string, x: number) => {
     variables: {
       file: new Blob(),
       name: "someImageName",
+      projectId: "a project id",
     },
   });
   return client.mutate({
@@ -107,6 +109,7 @@ describe("LabelClass resolver test suite", () => {
     const id = await createLabelClass({
       name: "toto",
       color: "#ff0000",
+      projectId: "a project id",
     });
 
     const queryResult = await client.query({
@@ -116,6 +119,7 @@ describe("LabelClass resolver test suite", () => {
             id
             name
             color
+            projectId
           }
         }
       `,
@@ -129,6 +133,7 @@ describe("LabelClass resolver test suite", () => {
         id,
         name: "toto",
         color: "#ff0000",
+        projectId: "a project id",
       })
     );
   });
@@ -139,6 +144,7 @@ describe("LabelClass resolver test suite", () => {
       id: labelClassId,
       name: "toto",
       color: "#ff0000",
+      projectId: "a project id",
     });
 
     const queryResult = await client.query({
@@ -161,6 +167,7 @@ describe("LabelClass resolver test suite", () => {
     const labelId = await createLabelClass({
       name: "toto",
       color: "#ff0000",
+      projectId: "a project id",
     });
 
     client.mutate({
@@ -213,16 +220,19 @@ describe("LabelClass resolver test suite", () => {
     const id1 = await createLabelClass({
       name: "labelClass1",
       color: "#ff0000",
+      projectId: "a project id",
     });
     incrementMockedDate(1);
     const id0 = await createLabelClass({
       name: "labelClass0",
       color: "#ff0000",
+      projectId: "a project id",
     });
     incrementMockedDate(1);
     const id2 = await createLabelClass({
       name: "labelClass2",
       color: "#ff0000",
+      projectId: "a project id",
     });
 
     const queryResult = await client.query({
@@ -247,21 +257,25 @@ describe("LabelClass resolver test suite", () => {
     await createLabelClass({
       name: "labelClass1",
       color: "#ff0000",
+      projectId: "a project id",
     });
     incrementMockedDate(1);
     const id0 = await createLabelClass({
       name: "labelClass0",
       color: "#ff0000",
+      projectId: "a project id",
     });
     incrementMockedDate(1);
     const id2 = await createLabelClass({
       name: "labelClass2",
       color: "#ff0000",
+      projectId: "a project id",
     });
     incrementMockedDate(1);
     await createLabelClass({
       name: "labelClass3",
       color: "#ff0000",
+      projectId: "a project id",
     });
 
     const queryResult = await client.query({
@@ -286,6 +300,7 @@ describe("LabelClass resolver test suite", () => {
     const labelClassId = await createLabelClass({
       name: "some labelClass",
       color: "#ff0000",
+      projectId: "a project id",
     });
 
     await createLabel(labelClassId, 2);
@@ -319,14 +334,17 @@ describe("LabelClass resolver test suite", () => {
       createLabelClass({
         name: "some labelClass",
         color: "#ff0000",
+        projectId: "a project id",
       }),
       createLabelClass({
         name: "another labelClass",
         color: "#ff0000",
+        projectId: "a project id",
       }),
       createLabelClass({
         name: "last labelClass",
         color: "#ff0000",
+        projectId: "a project id",
       }),
     ]);
 

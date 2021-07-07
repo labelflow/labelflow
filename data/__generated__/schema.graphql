@@ -87,13 +87,14 @@ type LabelClass {
   name: String!
   color: ColorHex!
   labels: [Label!]!
-  projectId: ID
+  projectId: ID!
 }
 
 input LabelClassCreateInput {
   id: ID
   name: String!
   color: ColorHex!
+  projectId: ID!
 }
 
 input LabelClassWhereUniqueInput {

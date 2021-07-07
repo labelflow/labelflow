@@ -108,13 +108,14 @@ export type LabelClass = {
   name: Scalars['String'];
   color: Scalars['ColorHex'];
   labels: Array<Label>;
-  projectId?: Maybe<Scalars['ID']>;
+  projectId: Scalars['ID'];
 };
 
 export type LabelClassCreateInput = {
   id?: Maybe<Scalars['ID']>;
   name: Scalars['String'];
   color: Scalars['ColorHex'];
+  projectId: Scalars['ID'];
 };
 
 export type LabelClassWhereUniqueInput = {
@@ -554,7 +555,7 @@ export type LabelClassResolvers<ContextType = any, ParentType extends ResolversP
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   color?: Resolver<ResolversTypes['ColorHex'], ParentType, ContextType>;
   labels?: Resolver<Array<ResolversTypes['Label']>, ParentType, ContextType>;
-  projectId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
+  projectId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
