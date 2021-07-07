@@ -9,7 +9,8 @@ const iogInference = async (_, args, request, operation) => {
     },
     body: JSON.stringify({
       operationName: "iogInference",
-      query: `mutation iogInference($imageUrl: String!, $x: Float!, $y: Float!, $width: Float!, $height: Float!) { iogInference(imageUrl: $imageUrl, x: $x, y: $y, width: $width, height: $height) { polygons } }`,
+      query:
+        "mutation iogInference($imageUrl: String!, $x: Float!, $y: Float!, $width: Float!, $height: Float!) { iogInference(data: {imageUrl: $imageUrl, x: $x, y: $y, width: $width, height: $height}) { polygons } }",
       variables: args.data,
     }),
   }).then((res) =>

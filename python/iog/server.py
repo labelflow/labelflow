@@ -35,6 +35,16 @@ type_defs = """
         polygons: [[[Float!]]]! 
     }
 
+    input iogInferenceInput {
+        imageUrl: String!, 
+        x: Float!, 
+        y: Float!, 
+        width: Float!, 
+        height: Float!, 
+        pointsInside: [[Float!]],
+        pointsOutside: [[Float!]]
+    }
+
     type Query {
         hello: String!
         projects(first: Int): [Project!]!
@@ -42,13 +52,7 @@ type_defs = """
 
     type Mutation {
         iogInference(
-            imageUrl: String!, 
-            x: Float!, 
-            y: Float!, 
-            width: Float!, 
-            height: Float!, 
-            pointsInside: [[Float!]],
-            pointsOutside: [[Float!]]
+            data: iogInferenceInput
         ): iogInferenceResult
     }
 
@@ -80,9 +84,15 @@ mutation = MutationType()
 
 
 @mutation.field("iogInference")
-def resolve_iog_inference(
-    *_, imageUrl, x, y, width, height, pointsInside=[], pointsOutside=[]
-):
+def resolve_iog_inference(*_, data):
+    imageUrl = data["imageUrl"]
+    x = data["x"]
+    y = data["y"]
+    width = data["width"]
+    height = data["height"]
+    pointsInside = data.get("pointsInside", [])
+    pointsOutside = data.get("pointsOutside", [])
+
     # Decode image
     image_b64 = imageUrl.split(",")[1]
     binary = base64.b64decode(image_b64)
