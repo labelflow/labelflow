@@ -1,6 +1,5 @@
 import gql from "graphql-tag";
 
-import { db } from "../../typescript/web-app/src/connectors/database";
 import { client } from "../../typescript/web-app/src/connectors/apollo-client-schema";
 import { LabelCreateInput } from "../../typescript/web-app/src/graphql-types.generated";
 
@@ -70,28 +69,25 @@ const createLabelClass = async (name: String, color = "#ffffff") => {
 
 describe("Class selection popover", () => {
   let imageId: string;
-  beforeEach(async () => {
-    await Promise.all([
-      db.image.clear(),
-      db.label.clear(),
-      db.labelClass.clear(),
-    ]);
+  beforeEach(() =>
+    cy.window().then(async () => {
+      console.log("Create data");
+      const { id } = await createImage(
+        "https://images.unsplash.com/photo-1579513141590-c597876aefbc?auto=format&fit=crop&w=882&q=80"
+      );
+      imageId = id;
 
-    const { id } = await createImage(
-      "https://images.unsplash.com/photo-1579513141590-c597876aefbc?auto=format&fit=crop&w=882&q=80"
-    );
-    imageId = id;
-
-    const labelClassId = await createLabelClass("A new class", "#F87171");
-    await createLabel({
-      imageId,
-      x: 0,
-      y: 900,
-      width: 900,
-      height: 600,
-      labelClassId,
-    });
-  });
+      const labelClassId = await createLabelClass("A new class", "#F87171");
+      await createLabel({
+        imageId,
+        x: 0,
+        y: 900,
+        width: 900,
+        height: 600,
+        labelClassId,
+      });
+    })
+  );
 
   it("right clicks on a label to change its class", () => {
     // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
