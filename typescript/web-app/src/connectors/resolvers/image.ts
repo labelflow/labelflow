@@ -11,8 +11,6 @@ import { db, DbImage } from "../database";
 
 import { uploadsCacheName, getUploadTargetHttp } from "./upload";
 
-const cachePromise = caches.open(uploadsCacheName);
-
 export const getPaginatedImages = async (
   skip?: Maybe<number>,
   first?: Maybe<number>
@@ -108,7 +106,7 @@ const probeImage = async ({
   try {
     // TODO: It would be nice to import "probe-image-size" asynchronously to reduce initial bundle size of sw, but webpack config todo.
     // const probe = await import(/* webpackPrefetch: true */ "probe-image-size");
-    const cacheResult = await (await cachePromise).match(url);
+    const cacheResult = await (await caches.open(uploadsCacheName)).match(url);
 
     const fetchResult =
       cacheResult ??
@@ -218,7 +216,7 @@ const createImage = async (
       }),
     });
 
-    await (await cachePromise).put(finalUrl, responseOfGet);
+    await (await caches.open(uploadsCacheName)).put(finalUrl, responseOfGet);
   }
 
   if (file && !externalUrl && !url) {
@@ -243,7 +241,7 @@ const createImage = async (
       }),
     });
 
-    await (await cachePromise).put(finalUrl, response);
+    await (await caches.open(uploadsCacheName)).put(finalUrl, response);
   }
 
   // Probe the file to get its dimensions and mimetype if not provided

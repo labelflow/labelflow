@@ -1,20 +1,14 @@
 import { RouteHandlerObject, RouteHandlerCallbackOptions } from "workbox-core";
 
 export class UploadServer implements RouteHandlerObject {
-  private cachePromise: Promise<Cache>;
-
-  private cache?: Cache;
+  private cacheName: string;
 
   constructor(options: { cacheName: string }) {
     const { cacheName } = options;
-    this.cachePromise = caches.open(cacheName);
+    this.cacheName = cacheName;
   }
 
   async handle({ request }: RouteHandlerCallbackOptions): Promise<Response> {
-    if (!this.cache) {
-      this.cache = await this.cachePromise;
-    }
-
     const blob = await request.blob();
 
     const responseOfGet = new Response(blob, {
@@ -32,7 +26,8 @@ export class UploadServer implements RouteHandlerObject {
       }),
     });
 
-    await this.cache.put(request.url, responseOfGet);
+    const cache = await caches.open(this.cacheName);
+    await cache.put(request.url, responseOfGet);
 
     const response = new Response("", {
       status: 200,

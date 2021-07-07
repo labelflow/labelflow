@@ -80,15 +80,15 @@ const uploadsRouteRegex = new RegExp(`${trimmedUploadsRoute}/(?<fileId>.*)`);
 
 registerRoute(
   uploadsRouteRegex,
+  new UploadServer({ cacheName: uploadsCacheName }),
+  "PUT"
+);
+registerRoute(
+  uploadsRouteRegex,
   new CacheOnly({
     cacheName: uploadsCacheName,
   }),
   "GET"
-);
-registerRoute(
-  uploadsRouteRegex,
-  new UploadServer({ cacheName: uploadsCacheName }),
-  "PUT"
 );
 
 // registerRoute(/\/_next\/webpack-hmr\/.*$/i, new NetworkOnly({}), "GET");
