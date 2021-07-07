@@ -25,7 +25,10 @@ export class ResizeBox extends PointerInteraction {
 
   lastTranslateCoordinates: Coordinate | null = null;
 
-  constructor(opt_options) {
+  constructor(opt_options: {
+    pixelTolerance?: number;
+    selectedFeature?: Feature<Polygon>;
+  }) {
     const options = opt_options || {};
 
     super(options);
