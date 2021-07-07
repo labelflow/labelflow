@@ -55,7 +55,7 @@ type ImageQueryResponse = {
 
 const ImagePage = () => {
   const router = useRouter();
-  const id = router?.query?.id;
+  const id = router?.query?.imageId;
 
   const { data: imageResult, error } = useQuery<ImageQueryResponse>(
     imageQuery,

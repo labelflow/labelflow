@@ -53,27 +53,44 @@ const imageQuery = gql`
   }
 `;
 
+const projectQuery = gql`
+  query project($id: ID!) {
+    project(where: { id: $id }) {
+      id
+      name
+    }
+  }
+`;
+
 type ImageQueryResponse = {
   image: Pick<Image, "id" | "name">;
 };
 
 const ImagePage = () => {
   const router = useRouter();
-  const { imageId } = router?.query;
+  const { projectId, imageId } = router?.query;
 
   const { data: imageResult, error } = useQuery<ImageQueryResponse>(
     imageQuery,
     {
-      variables: { imageId },
+      variables: { id: imageId },
       skip: typeof imageId !== "string",
     }
   );
 
+  const { data: projectResult } = useQuery(projectQuery, {
+    variables: { id: projectId },
+  });
+
   const imageName = imageResult?.image.name;
+  const projectName = projectResult?.project.name;
 
   useEffect(() => {
     if (error) {
-      router.replace({ pathname: "/images", query: router.query });
+      router.replace({
+        pathname: `/projects/${projectId}/images`,
+        query: router.query,
+      });
     }
   }, [error]);
 
@@ -91,7 +108,19 @@ const ImagePage = () => {
             separator={<ArrowRightIcon color="gray.500" />}
           >
             <BreadcrumbItem>
-              <NextLink href="/images">
+              <NextLink href="/projects">
+                <BreadcrumbLink>Projects</BreadcrumbLink>
+              </NextLink>
+            </BreadcrumbItem>
+
+            <BreadcrumbItem isCurrentPage>
+              <NextLink href={`/projects/${projectId}/images`}>
+                <Text>{projectName}</Text>
+              </NextLink>
+            </BreadcrumbItem>
+
+            <BreadcrumbItem>
+              <NextLink href={`/projects/${projectId}/images`}>
                 <BreadcrumbLink>Images</BreadcrumbLink>
               </NextLink>
             </BreadcrumbItem>

@@ -90,7 +90,7 @@ export const OpenlayersMap = () => {
   const viewRef = useRef<OlView | null>(null);
   const sourceVectorLabelsRef = useRef<OlSourceVector | null>(null);
   const router = useRouter();
-  const imageId = router.query?.id;
+  const { imageId } = router.query;
   const isContextMenuOpen = useLabellingStore(
     (state) => state.isContextMenuOpen
   );

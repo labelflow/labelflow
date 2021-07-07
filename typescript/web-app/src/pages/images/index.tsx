@@ -17,7 +17,6 @@ import {
 import { isEmpty } from "lodash/fp";
 import { RiArrowRightSLine } from "react-icons/ri";
 import { KeymapButton } from "../../components/keymap-button";
-import { ImportButton } from "../../components/import-button";
 import { ExportButton } from "../../components/export-button";
 import { Meta } from "../../components/meta";
 import { Layout } from "../../components/layout";

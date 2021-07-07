@@ -144,7 +144,7 @@ const ImagesPage = () => {
         {imagesResult && !isEmpty(imagesResult?.images) && (
           <Wrap h="full" spacing={8} padding={8} justify="space-evenly">
             {imagesResult?.images?.map(({ id, name, url }) => (
-              <NextLink href={`/images/${id}`} key={id}>
+              <NextLink href={`/projects/${projectId}/images/${id}`} key={id}>
                 {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
                 <a>
                   <WrapItem p={4} background="white" rounded={8}>
