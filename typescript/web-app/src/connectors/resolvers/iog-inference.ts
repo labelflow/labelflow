@@ -1,6 +1,8 @@
+import { print } from "graphql";
+
 const ENDPOINT = "http://0.0.0.0:5000/graphql";
 
-const iogInference = async (_, args, request, operation) => {
+const iogInference = async (_, args, request, { operation }) => {
   return fetch(ENDPOINT, {
     method: "POST",
     headers: {
@@ -9,8 +11,7 @@ const iogInference = async (_, args, request, operation) => {
     },
     body: JSON.stringify({
       operationName: "iogInference",
-      query:
-        "mutation iogInference($imageUrl: String!, $x: Float!, $y: Float!, $width: Float!, $height: Float!) { iogInference(data: {imageUrl: $imageUrl, x: $x, y: $y, width: $width, height: $height}) { polygons } }",
+      query: print(operation),
       variables: args.data,
     }),
   }).then((res) =>
