@@ -23,6 +23,8 @@ export class ResizeBox extends PointerInteraction {
 
   vertexEnum = ["bottomLeft", "topLeft", "topRight", "bottomRight"];
 
+  lastTranslateCoordinates: Coordinate | null = null;
+
   constructor(opt_options) {
     const options = opt_options || {};
 
@@ -64,7 +66,7 @@ export class ResizeBox extends PointerInteraction {
     ];
   };
 
-  getNewFeatureExtentFromDragEvent = ({
+  getNewFeatureGeometryFromDragEvent = ({
     extent,
     vertex,
     coordinate,
@@ -72,32 +74,45 @@ export class ResizeBox extends PointerInteraction {
     extent: Extent;
     vertex: string;
     coordinate: Coordinate;
-  }): Extent => {
-    if (extent != null && coordinate != null && vertex != null) {
+  }): Polygon => {
+    if (
+      extent != null &&
+      coordinate != null &&
+      vertex != null &&
+      this.feature != null
+    ) {
+      const geometry = this.feature.getGeometry();
       const [x, y, destX, destY] = extent;
       const [newX, newY] = coordinate;
       switch (vertex) {
         case "bottomLeft":
-          return [newX, newY, destX, destY];
+          return fromExtent([newX, newY, destX, destY]);
         case "topLeft":
-          return [newX, y, destX, newY];
+          return fromExtent([newX, y, destX, newY]);
         case "topRight":
-          return [x, y, newX, newY];
+          return fromExtent([x, y, newX, newY]);
         case "bottomRight":
-          return [x, newY, newX, destY];
+          return fromExtent([x, newY, newX, destY]);
         case "left":
-          return [newX, y, destX, destY];
+          return fromExtent([newX, y, destX, destY]);
         case "right":
-          return [x, y, newX, destY];
+          return fromExtent([x, y, newX, destY]);
         case "top":
-          return [x, y, destX, newY];
+          return fromExtent([x, y, destX, newY]);
         case "bottom":
-          return [x, newY, destX, destY];
+          return fromExtent([x, newY, destX, destY]);
+        case "feature":
+          if (this.lastTranslateCoordinates != null) {
+            const deltaX = newX - this.lastTranslateCoordinates[0];
+            const deltaY = newY - this.lastTranslateCoordinates[1];
+            geometry.translate(deltaX, deltaY);
+          }
+          return geometry;
         default:
-          return extent;
+          return geometry;
       }
     }
-    return extent;
+    return fromExtent(extent);
   };
 
   getClosestElement = (coordinate: Coordinate): ClosestElement => {
@@ -195,6 +210,9 @@ export class ResizeBox extends PointerInteraction {
     const { insideTolerance, element } = this.getClosestElement(e.coordinate);
     if (insideTolerance) {
       this.selectedElement = element;
+      if (element === "feature") {
+        this.lastTranslateCoordinates = e.coordinate;
+      }
       return true;
     }
     return false;
@@ -209,6 +227,7 @@ export class ResizeBox extends PointerInteraction {
         destX,
         destY,
       });
+      this.lastTranslateCoordinates = null;
     } else {
       this.featureVertices = null;
     }
@@ -218,12 +237,15 @@ export class ResizeBox extends PointerInteraction {
   handleDragEvent(e: MapBrowserEvent) {
     if (this.selectedElement != null && this.feature != null) {
       const extent = this.feature.getGeometry().getExtent();
-      const newExtent = this.getNewFeatureExtentFromDragEvent({
+      const newGeometry = this.getNewFeatureGeometryFromDragEvent({
         extent,
         vertex: this.selectedElement,
         coordinate: e.coordinate,
       });
-      this.feature.setGeometry(fromExtent(newExtent));
+      this.feature.setGeometry(newGeometry);
+      if (this.selectedElement === "feature") {
+        this.lastTranslateCoordinates = e.coordinate;
+      }
       e.preventDefault();
       e.stopPropagation();
     }
