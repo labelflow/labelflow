@@ -115,7 +115,7 @@ const ImagePage = () => {
 
             <BreadcrumbItem isCurrentPage>
               <NextLink href={`/projects/${projectId}/images`}>
-                <Text>{projectName}</Text>
+                <BreadcrumbLink>{projectName}</BreadcrumbLink>
               </NextLink>
             </BreadcrumbItem>
 
