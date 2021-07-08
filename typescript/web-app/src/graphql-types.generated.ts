@@ -149,6 +149,10 @@ export type LabelUpdateInput = {
   height?: Maybe<Scalars['Float']>;
 };
 
+export type LabelWhereInput = {
+  imageId?: Maybe<Scalars['ID']>;
+};
+
 export type LabelWhereUniqueInput = {
   id: Scalars['ID'];
 };
@@ -237,6 +241,7 @@ export type Project = {
   labelClassesCount: Scalars['Int'];
   labelsCount: Scalars['Int'];
   imagesAggregates: ImagesAggregates;
+  labelsAggregates: LabelsAggregates;
   labelClassesAggregates: LabelClassesAggregates;
 };
 
@@ -324,6 +329,11 @@ export type QueryLabelClassesArgs = {
 
 export type QueryLabelClassesAggregatesArgs = {
   where?: Maybe<LabelClassWhereInput>;
+};
+
+
+export type QueryLabelsAggregatesArgs = {
+  where?: Maybe<LabelWhereInput>;
 };
 
 
@@ -459,6 +469,7 @@ export type ResolversTypes = {
   LabelClassesAggregates: ResolverTypeWrapper<LabelClassesAggregates>;
   LabelCreateInput: LabelCreateInput;
   LabelUpdateInput: LabelUpdateInput;
+  LabelWhereInput: LabelWhereInput;
   LabelWhereUniqueInput: LabelWhereUniqueInput;
   LabelsAggregates: ResolverTypeWrapper<LabelsAggregates>;
   Mutation: ResolverTypeWrapper<{}>;
@@ -500,6 +511,7 @@ export type ResolversParentTypes = {
   LabelClassesAggregates: LabelClassesAggregates;
   LabelCreateInput: LabelCreateInput;
   LabelUpdateInput: LabelUpdateInput;
+  LabelWhereInput: LabelWhereInput;
   LabelWhereUniqueInput: LabelWhereUniqueInput;
   LabelsAggregates: LabelsAggregates;
   Mutation: {};
@@ -614,6 +626,7 @@ export type ProjectResolvers<ContextType = any, ParentType extends ResolversPare
   labelClassesCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   labelsCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   imagesAggregates?: Resolver<ResolversTypes['ImagesAggregates'], ParentType, ContextType>;
+  labelsAggregates?: Resolver<ResolversTypes['LabelsAggregates'], ParentType, ContextType>;
   labelClassesAggregates?: Resolver<ResolversTypes['LabelClassesAggregates'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -629,7 +642,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   labelClass?: Resolver<ResolversTypes['LabelClass'], ParentType, ContextType, RequireFields<QueryLabelClassArgs, 'where'>>;
   labelClasses?: Resolver<Array<ResolversTypes['LabelClass']>, ParentType, ContextType, RequireFields<QueryLabelClassesArgs, never>>;
   labelClassesAggregates?: Resolver<ResolversTypes['LabelClassesAggregates'], ParentType, ContextType, RequireFields<QueryLabelClassesAggregatesArgs, never>>;
-  labelsAggregates?: Resolver<ResolversTypes['LabelsAggregates'], ParentType, ContextType>;
+  labelsAggregates?: Resolver<ResolversTypes['LabelsAggregates'], ParentType, ContextType, RequireFields<QueryLabelsAggregatesArgs, never>>;
   label?: Resolver<ResolversTypes['Label'], ParentType, ContextType, RequireFields<QueryLabelArgs, 'where'>>;
   project?: Resolver<ResolversTypes['Project'], ParentType, ContextType, RequireFields<QueryProjectArgs, 'where'>>;
   projects?: Resolver<Array<ResolversTypes['Project']>, ParentType, ContextType, RequireFields<QueryProjectsArgs, never>>;

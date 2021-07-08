@@ -8,6 +8,10 @@ input LabelCreateInput {
   height: Float!
 }
 
+input LabelWhereInput {
+  imageId: ID
+}
+
 input LabelWhereUniqueInput {
   id: ID!
 }

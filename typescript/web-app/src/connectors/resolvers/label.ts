@@ -1,3 +1,4 @@
+import { isEmpty } from "lodash/fp";
 import { v4 as uuidv4 } from "uuid";
 import type {
   Label,
@@ -8,6 +9,7 @@ import type {
 } from "../../graphql-types.generated";
 
 import { db, DbLabel } from "../database";
+import { projectTypename } from "./project";
 
 export const getLabels = () => db.label.toArray();
 
@@ -119,11 +121,38 @@ const updateLabel = async (_: any, args: MutationUpdateLabelArgs) => {
   return getLabelById(labelId);
 };
 
-const labelsAggregates = () => {
+// `parent` is the result of the previous resolver, for example, for project, it should contain `id`, `name`, `updatedAt` and `createdAt`
+const labelsAggregates = (parent: any) => {
+  // eslint-disable-next-line no-underscore-dangle
+  const typename = parent?.__typename;
+
+  if (typename === projectTypename) {
+    return {
+      where: {
+        projectId: parent.id,
+      },
+    };
+  }
+
   return {};
 };
 
-const totalCount = () => {
+const totalCount = async (parent: {
+  where: {
+    // From equalityCriterias of dexie js
+    [key: string]: any;
+  };
+}) => {
+  if (!isEmpty(parent.where)) {
+    const imagesOfProject = await db.image.where(parent.where).toArray();
+
+    return db.label
+      .filter((currentLabel) =>
+        imagesOfProject.some((image) => currentLabel.imageId === image.id)
+      )
+      .count();
+  }
+
   return db.label.count();
 };
 
@@ -141,4 +170,5 @@ export default {
     labelClass,
   },
   LabelsAggregates: { totalCount },
+  Project: { labelsAggregates },
 };

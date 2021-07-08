@@ -127,6 +127,10 @@ input LabelUpdateInput {
   height: Float
 }
 
+input LabelWhereInput {
+  imageId: ID
+}
+
 input LabelWhereUniqueInput {
   id: ID!
 }
@@ -160,6 +164,7 @@ type Project {
   labelClassesCount: Int!
   labelsCount: Int!
   imagesAggregates: ImagesAggregates!
+  labelsAggregates: LabelsAggregates!
   labelClassesAggregates: LabelClassesAggregates!
 }
 
@@ -188,7 +193,7 @@ type Query {
   labelClass(where: LabelClassWhereUniqueInput!): LabelClass!
   labelClasses(where: LabelClassWhereInput, first: Int, skip: Int): [LabelClass!]!
   labelClassesAggregates(where: LabelClassWhereInput): LabelClassesAggregates!
-  labelsAggregates: LabelsAggregates!
+  labelsAggregates(where: LabelWhereInput): LabelsAggregates!
   label(where: LabelWhereUniqueInput!): Label!
   project(where: ProjectWhereUniqueInput!): Project!
   projects(first: Int, skip: Int): [Project!]!

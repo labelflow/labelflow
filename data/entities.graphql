@@ -53,5 +53,6 @@ type Project {
   labelClassesCount: Int!
   labelsCount: Int!
   imagesAggregates: ImagesAggregates!
+  labelsAggregates: LabelsAggregates!
   labelClassesAggregates: LabelClassesAggregates!
 }

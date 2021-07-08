@@ -35,19 +35,27 @@ const createImage = async (name: String) => {
   const mutationResult = await client.mutate({
     mutation: gql`
       mutation createImage(
+        $projectId: ID!
         $file: Upload!
         $name: String!
         $width: Int
         $height: Int
       ) {
         createImage(
-          data: { name: $name, file: $file, width: $width, height: $height }
+          data: {
+            projectId: $projectId
+            name: $name
+            file: $file
+            width: $width
+            height: $height
+          }
         ) {
           id
         }
       }
     `,
     variables: {
+      projectId: "Some id",
       file: new Blob(),
       name,
       width: imageWidth,
@@ -71,8 +79,10 @@ const createLabelClass = async (name: String) => {
     },
   } = await client.mutate({
     mutation: gql`
-      mutation createLabelClass($name: String!) {
-        createLabelClass(data: { name: $name, color: "#ffffff" }) {
+      mutation createLabelClass($projectId: ID!, $name: String!) {
+        createLabelClass(
+          data: { projectId: $projectId, name: $name, color: "#ffffff" }
+        ) {
           id
           name
           color
@@ -80,6 +90,7 @@ const createLabelClass = async (name: String) => {
       }
     `,
     variables: {
+      projectId: "Some id",
       name,
     },
   });

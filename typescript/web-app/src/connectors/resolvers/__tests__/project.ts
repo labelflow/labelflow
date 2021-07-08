@@ -523,7 +523,9 @@ describe("Project resolver test suite", () => {
               imagesAggregates {
                 totalCount
               }
-              labelsCount
+              labelsAggregates {
+                totalCount
+              }
               labelClassesAggregates {
                 totalCount
               }
@@ -541,7 +543,9 @@ describe("Project resolver test suite", () => {
       expect(queryResult.data.project.imagesAggregates.totalCount).toEqual(
         count
       );
-      expect(queryResult.data.project.labelsCount).toEqual(count);
+      expect(queryResult.data.project.labelsAggregates.totalCount).toEqual(
+        count
+      );
       expect(
         queryResult.data.project.labelClassesAggregates.totalCount
       ).toEqual(count);

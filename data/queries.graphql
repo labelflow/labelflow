@@ -22,7 +22,7 @@ type Query {
   ): [LabelClass!]!
   labelClassesAggregates(where: LabelClassWhereInput): LabelClassesAggregates!
 
-  labelsAggregates: LabelsAggregates!
+  labelsAggregates(where: LabelWhereInput): LabelsAggregates!
   label(where: LabelWhereUniqueInput!): Label!
 
   project(where: ProjectWhereUniqueInput!): Project!
