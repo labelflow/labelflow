@@ -4,10 +4,11 @@ import { ApolloClient, useQuery, useApolloClient } from "@apollo/client";
 import gql from "graphql-tag";
 import { Vector as OlSourceVector } from "ol/source";
 import { Geometry, MultiPoint } from "ol/geom";
-import { fromExtent } from "ol/geom/Polygon";
+import Polygon, { fromExtent } from "ol/geom/Polygon";
 import { Fill, Stroke, Style } from "ol/style";
 import { useHotkeys } from "react-hotkeys-hook";
-
+import CircleStyle from "ol/style/Circle";
+import { Feature } from "ol";
 import { keymap } from "../../../keymap";
 import { useLabellingStore } from "../../../connectors/labelling-state";
 import { useUndoStore, Effect } from "../../../connectors/undo-store";
@@ -17,8 +18,6 @@ import {
   addLabelToImageInCache,
   removeLabelFromImageCache,
 } from "./draw-bounding-box-interaction/create-label-effect";
-import CircleStyle from "ol/style/Circle";
-import { Feature } from "ol";
 
 const getImageLabelsQuery = gql`
   query getImageLabels($imageId: ID!) {
@@ -240,7 +239,7 @@ export const Labels = ({
                     }),
                   }),
                   geometry: (feature) => {
-                    const coordinates = feature
+                    const coordinates = (feature as Feature<Polygon>)
                       .getGeometry()
                       .getCoordinates()[0];
                     return new MultiPoint(coordinates);
