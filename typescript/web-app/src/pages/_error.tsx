@@ -15,6 +15,8 @@ import { EmptyStateOops } from "../components/empty-state";
 
 type Props = FallbackProps & {
   statusCode?: number;
+  error?: Error;
+  resetErrorBoundary?: () => void;
 };
 
 const ErrorPage = ({ statusCode, error, resetErrorBoundary }: Props) => {
@@ -58,6 +60,11 @@ const ErrorPage = ({ statusCode, error, resetErrorBoundary }: Props) => {
                 {resetErrorBoundary && (
                   <Button onClick={resetErrorBoundary}>Retry</Button>
                 )}
+
+                <Button as="a" target="_blank" rel="noreferrer" href="/debug">
+                  See debug info
+                </Button>
+
                 <Button
                   colorScheme="brand"
                   variant="solid"

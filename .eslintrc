@@ -11,6 +11,7 @@
       "error",
       {
         "devDependencies": [
+          "cypress/**/*.ts",
           "**/*.test.ts",
           "**/*.stories.ts",
           "**/__tests__/**/*.ts",

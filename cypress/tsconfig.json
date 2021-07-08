@@ -10,6 +10,6 @@
     "types": ["cypress"],
     "target": "es2019"
   },
-  "include": ["../node_modules/cypress", "./**/*.ts"],
-  "exclude": ["node_modules"]
+  "include": ["../node_modules/cypress", "**/*.ts", "**/*.tsx"],
+  "exclude": ["node_modules", "**/*.graphql"]
 }

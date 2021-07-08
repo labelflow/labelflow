@@ -9,6 +9,7 @@ import {
   Spinner,
   Box,
   Flex,
+  chakra,
 } from "@chakra-ui/react";
 import gql from "graphql-tag";
 import dynamic from "next/dynamic";
@@ -20,6 +21,8 @@ import { Layout } from "../../components/layout";
 import type { Image } from "../../graphql-types.generated";
 import { Gallery } from "../../components/gallery";
 
+const ArrowRightIcon = chakra(RiArrowRightSLine);
+
 // The dynamic import is needed because openlayers use web apis that are not available
 // in NodeJS, like `Blob`, so it crashes when rendering in NextJS server side.
 // And anyway, it would not make sense to render canvas server side, it would just be a loss.
@@ -29,7 +32,7 @@ const LabellingTool = dynamic(() => import("../../components/labelling-tool"), {
     if (error) throw error;
     return (
       <Center h="full">
-        <Spinner size="xl" />
+        <Spinner aria-label="loading indicator" size="xl" />
       </Center>
     );
   },
@@ -74,8 +77,12 @@ const ImagePage = () => {
       <Layout
         topBarLeftContent={
           <Breadcrumb
+            overflow="hidden"
+            textOverflow="ellipsis"
+            whiteSpace="nowrap"
             spacing="8px"
-            separator={<RiArrowRightSLine color="gray.500" />}
+            sx={{ "*": { display: "inline !important" } }}
+            separator={<ArrowRightIcon color="gray.500" />}
           >
             <BreadcrumbItem>
               <NextLink href="/images">
@@ -84,14 +91,7 @@ const ImagePage = () => {
             </BreadcrumbItem>
 
             <BreadcrumbItem isCurrentPage>
-              <Text
-                maxWidth="20rem"
-                textOverflow="ellipsis"
-                whiteSpace="nowrap"
-                overflow="hidden"
-              >
-                {imageName}
-              </Text>
+              <Text>{imageName}</Text>
             </BreadcrumbItem>
           </Breadcrumb>
         }
