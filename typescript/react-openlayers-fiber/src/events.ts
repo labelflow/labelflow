@@ -5,6 +5,7 @@
 // Had to do this because of https://github.com/microsoft/TypeScript/issues/40816
 import { ListenerFunction } from "ol/events";
 import { DrawEvent } from "ol/interaction/Draw";
+import { SelectEvent } from "ol/interaction/Select";
 import RenderEvent from "ol/render/Event";
 
 export type RenderListenerFunction = (p0: RenderEvent) => boolean;
@@ -88,7 +89,7 @@ export type Events = Partial<{
   onRemove: ListenerFunction;
   onRemovefeature: ListenerFunction;
   onRendercomplete: ListenerFunction;
-  onSelect: ListenerFunction;
+  onSelect: (selectEvent: SelectEvent) => void;
   onSingleclick: ListenerFunction;
   onTileloadend: ListenerFunction;
   onTileloaderror: ListenerFunction;

@@ -1,5 +1,6 @@
 type Query {
   hello: String
+
   example(where: ExampleWhereUniqueInput!): Example!
   examples(
     where: ExampleWhereInput
@@ -7,9 +8,21 @@ type Query {
     skip: Int
     orderBy: ExampleOrderByInput
   ): [Example!]!
+
   image(where: ImageWhereUniqueInput!): Image!
   images(where: ImageWhereInput, first: Int, skip: Int): [Image!]!
+  imagesAggregates: ImagesAggregates!
+
   labelClass(where: LabelClassWhereUniqueInput!): LabelClass!
   labelClasses(first: Int, skip: Int): [LabelClass!]!
+
+  labelsAggregates: LabelsAggregates!
+  label(where: LabelWhereUniqueInput!): Label!
+
+  project(where: ProjectWhereUniqueInput!): Project!
+  projects(first: Int, skip: Int): [Project!]!
+
   exportToCoco: String!
+
+  debug: JSON!
 }

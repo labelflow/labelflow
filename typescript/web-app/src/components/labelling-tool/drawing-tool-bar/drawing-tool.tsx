@@ -9,12 +9,13 @@ import { keymap } from "../../../keymap";
 export type Props = {};
 
 export const DrawingTool = () => {
+  const isImageLoading = useLabellingStore((state) => state.isImageLoading);
   const selectedTool = useLabellingStore((state) => state.selectedTool);
   const setSelectedTool = useLabellingStore((state) => state.setSelectedTool);
 
   useHotkeys(
     keymap.toolBoundingBox.key,
-    () => setSelectedTool(Tools.BOUNDING_BOX),
+    () => setSelectedTool(Tools.BOX),
     {},
     []
   );
@@ -27,13 +28,14 @@ export const DrawingTool = () => {
     >
       <IconButton
         icon={<RiCheckboxBlankLine size="1.3em" />}
+        isDisabled={isImageLoading}
         role="checkbox"
-        aria-checked={selectedTool === Tools.BOUNDING_BOX}
+        aria-checked={selectedTool === Tools.BOX}
         backgroundColor="white"
         aria-label="Drawing tool"
         pointerEvents="initial"
-        onClick={() => setSelectedTool(Tools.BOUNDING_BOX)}
-        isActive={selectedTool === Tools.BOUNDING_BOX}
+        onClick={() => setSelectedTool(Tools.BOX)}
+        isActive={selectedTool === Tools.BOX}
       />
     </Tooltip>
   );

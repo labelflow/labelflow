@@ -1,4 +1,5 @@
-const withPWA = require('next-pwa')
+const withPWA = require('next-pwa');
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
 const path = require("path");
 
 module.exports = withPWA({
@@ -10,7 +11,7 @@ module.exports = withPWA({
   future: {
     webpack5: true,
   },
-  webpack: (config, { defaultLoaders, isServer, config: nextConfig, ...others }) => {
+  webpack: (config, { defaultLoaders, dev, isServer, config: nextConfig, ...others }) => {
     // Note: we provide webpack above so you should not `require` it
     // Perform customizations to webpack config
 
@@ -141,6 +142,20 @@ module.exports = withPWA({
           child_process: "empty"
         }
       }
+    }
+
+    // Add webpack bundle analyzer with custom config to expose the reports publicly
+    // See https://github.com/vercel/next.js/blob/canary/packages/next-bundle-analyzer/index.js 
+    if (!dev) {
+      config.plugins.push(
+        new BundleAnalyzerPlugin({
+          analyzerMode: 'static',
+          openAnalyzer: false,
+          reportFilename: isServer
+            ? '../../static/bundle-analyzer/server.html'
+            : './static/bundle-analyzer/client.html',
+        })
+      )
     }
 
     // Important: return the modified config

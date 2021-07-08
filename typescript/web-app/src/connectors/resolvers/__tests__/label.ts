@@ -13,6 +13,9 @@ const labelData = {
   width: 362,
 };
 
+const imageWidth = 500;
+const imageHeight = 900;
+
 const createLabel = (data: LabelCreateInput) => {
   return client.mutate({
     mutation: gql`
@@ -28,54 +31,63 @@ const createLabel = (data: LabelCreateInput) => {
   });
 };
 
+const createImage = async (name: String) => {
+  const mutationResult = await client.mutate({
+    mutation: gql`
+      mutation createImage(
+        $file: Upload!
+        $name: String!
+        $width: Int
+        $height: Int
+      ) {
+        createImage(
+          data: { name: $name, file: $file, width: $width, height: $height }
+        ) {
+          id
+        }
+      }
+    `,
+    variables: {
+      file: new Blob(),
+      name,
+      width: imageWidth,
+      height: imageHeight,
+    },
+  });
+
+  const {
+    data: {
+      createImage: { id },
+    },
+  } = mutationResult;
+
+  return id;
+};
+
+const createLabelClass = async (name: String) => {
+  const {
+    data: {
+      createLabelClass: { id },
+    },
+  } = await client.mutate({
+    mutation: gql`
+      mutation createLabelClass($name: String!) {
+        createLabelClass(data: { name: $name, color: "#ffffff" }) {
+          id
+          name
+          color
+        }
+      }
+    `,
+    variables: {
+      name,
+    },
+  });
+
+  return id;
+};
+
 describe("Label resolver test suite", () => {
-  const createImage = async (name: String) => {
-    const mutationResult = await client.mutate({
-      mutation: gql`
-        mutation createImage($file: Upload!, $name: String!) {
-          createImage(data: { name: $name, file: $file }) {
-            id
-          }
-        }
-      `,
-      variables: {
-        file: new Blob(),
-        name,
-      },
-    });
-
-    const {
-      data: {
-        createImage: { id },
-      },
-    } = mutationResult;
-
-    return id;
-  };
-
-  const createLabelClass = async (name: String) => {
-    const {
-      data: {
-        createLabelClass: { id },
-      },
-    } = await client.mutate({
-      mutation: gql`
-        mutation createLabelClass($name: String!) {
-          createLabelClass(data: { name: $name, color: "#ffffff" }) {
-            id
-            name
-            color
-          }
-        }
-      `,
-      variables: {
-        name,
-      },
-    });
-
-    return id;
-  };
-
   test("Creating a label should fail if its image doesn't exist", async () => {
     const imageId = "0024fbc1-387b-444f-8ad0-d7a3e316726a";
     return expect(
@@ -395,4 +407,199 @@ describe("Label resolver test suite", () => {
       })
     ).rejects.toThrow("No label class with such id");
   });
+
+  test("Query label when id doesn't exists", async () => {
+    return expect(
+      client.query({
+        query: gql`
+          query getlabel($id: ID!) {
+            label(where: { id: $id }) {
+              id
+            }
+          }
+        `,
+        variables: {
+          id: "some-id",
+        },
+      })
+    ).rejects.toThrow("No label with such id");
+  });
+
+  test("Query a specific label from ID should return the label", async () => {
+    const labelId = "my-label-id";
+
+    const imageId = await createImage("an-image");
+    await createLabel({
+      ...labelData,
+      id: labelId,
+      imageId,
+    });
+
+    const queryResult = await client.query({
+      query: gql`
+        query getLabel($id: ID!) {
+          label(where: { id: $id }) {
+            id
+            x
+            y
+            width
+            height
+          }
+        }
+      `,
+      variables: {
+        id: labelId,
+      },
+    });
+
+    expect(queryResult.data.label).toEqual(
+      expect.objectContaining({ ...labelData, id: labelId })
+    );
+  });
+});
+
+describe("LabelsAggregates resolver test suite", () => {
+  test("totalCount should be 0 before image creation", async () => {
+    const queryResult = await client.query({
+      query: gql`
+        query getLabelsCount {
+          labelsAggregates {
+            totalCount
+          }
+        }
+      `,
+    });
+
+    expect(queryResult.data.labelsAggregates.totalCount).toEqual(0);
+  });
+
+  test("totalCount should be 1 after creation of one label", async () => {
+    const imageId = await createImage("an image");
+
+    await createLabel({
+      ...labelData,
+      x: 1,
+      imageId,
+    });
+
+    const queryResult = await client.query({
+      query: gql`
+        query getLabelsCount {
+          labelsAggregates {
+            totalCount
+          }
+        }
+      `,
+    });
+
+    expect(queryResult.data.labelsAggregates.totalCount).toEqual(1);
+  });
+
+  test("totalCount should be 1 after creation of one label", async () => {
+    const imageId = await createImage("an image");
+
+    await createLabel({
+      ...labelData,
+      x: 1,
+      imageId,
+    });
+    incrementMockedDate(1);
+    await createLabel({
+      ...labelData,
+      x: 2,
+      imageId,
+    });
+
+    const queryResult = await client.query({
+      query: gql`
+        query getLabelsCount {
+          labelsAggregates {
+            totalCount
+          }
+        }
+      `,
+    });
+
+    expect(queryResult.data.labelsAggregates.totalCount).toEqual(2);
+  });
+});
+
+test("Create label should fail if called with bounding box out of image bounds", async () => {
+  const imageId = await createImage("an image");
+
+  // x out of bounds
+  await expect(
+    createLabel({
+      x: -300,
+      width: 50,
+      y: 10,
+      height: 20,
+      imageId,
+    })
+  ).rejects.toThrow("Bounding box out of image bounds");
+  await expect(
+    createLabel({
+      x: imageWidth + 10,
+      width: 50,
+      y: 10,
+      height: 20,
+      imageId,
+    })
+  ).rejects.toThrow("Bounding box out of image bounds");
+  // y out of bounds
+  await expect(
+    createLabel({
+      x: 10,
+      width: 10,
+      y: -100,
+      height: 10,
+      imageId,
+    })
+  ).rejects.toThrow("Bounding box out of image bounds");
+  await expect(
+    createLabel({
+      x: 10,
+      width: 10,
+      y: imageHeight + 10,
+      height: 20,
+      imageId,
+    })
+  ).rejects.toThrow("Bounding box out of image bounds");
+});
+
+test("It should resize bounding box to image size when it is bigger", async () => {
+  const labelId = "my-label-id";
+
+  const imageId = await createImage("an-image");
+  await createLabel({
+    x: -10,
+    width: imageWidth + 10 + 10,
+    y: -10,
+    height: imageHeight + 10 + 10,
+    id: labelId,
+    imageId,
+  });
+
+  const queryResult = await client.query({
+    query: gql`
+      query getLabel($id: ID!) {
+        label(where: { id: $id }) {
+          id
+          x
+          y
+          width
+          height
+        }
+      }
+    `,
+    variables: {
+      id: labelId,
+    },
+  });
+
+  const { x, y, width, height } = queryResult.data.label;
+  expect(x).toEqual(0);
+  expect(y).toEqual(0);
+  expect(width).toEqual(imageWidth);
+  expect(height).toEqual(imageHeight);
 });

@@ -1,7 +1,9 @@
 import { ReactNode } from "react";
-import { HStack, Spacer } from "@chakra-ui/react";
+import { HStack, Spacer, Box, VisuallyHidden } from "@chakra-ui/react";
+import NextLink from "next/link";
 import { Logo } from "../../logo";
 import { ImportButton } from "../../import-button";
+import { ExportButton } from "../../export-button";
 import { KeymapButton } from "./keymap-button";
 
 export type Props = {
@@ -19,11 +21,17 @@ export const TopBar = ({ leftContent }: Props) => {
       h="64px"
       flex={0}
     >
-      <Logo h="26px" />
+      <NextLink href="/">
+        <Box as="a" rel="home" cursor="pointer">
+          <VisuallyHidden>Labelflow</VisuallyHidden>
+          <Logo h="6" iconColor="brand.500" />
+        </Box>
+      </NextLink>
       {leftContent}
       <Spacer />
       <KeymapButton />
       <ImportButton />
+      <ExportButton />
     </HStack>
   );
 };

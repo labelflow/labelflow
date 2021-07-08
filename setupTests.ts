@@ -1,5 +1,9 @@
+import "@testing-library/jest-dom";
 /* eslint-disable-next-line import/no-extraneous-dependencies */
 import "fake-indexeddb/auto";
+import fetchMock from "jest-fetch-mock";
+
+fetchMock.enableMocks();
 
 /**
  * We bypass the structured clone algorithm as its current js implementation

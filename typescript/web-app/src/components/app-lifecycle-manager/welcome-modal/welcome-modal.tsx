@@ -1,6 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 
 import {
+  chakra,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -15,10 +16,13 @@ import {
   ModalHeader,
   useColorModeValue as mode,
 } from "@chakra-ui/react";
-import { useQueryParam } from "use-query-params";
+import { useQueryParam, StringParam } from "use-query-params";
+
+import { RiGithubFill } from "react-icons/ri";
 
 import { Logo } from "../../logo";
-import { BoolParam } from "../../../utils/query-param-bool";
+
+const GithubIcon = chakra(RiGithubFill);
 
 export const WelcomeModal = ({
   isServiceWorkerActive,
@@ -26,14 +30,31 @@ export const WelcomeModal = ({
   isServiceWorkerActive: boolean;
 }) => {
   // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
-  const [isDisabled] = useQueryParam("modal-welcome-disable", BoolParam);
+  // This param can have several values:
+  //   - undefined: Normal behavior, only show the welcome modal when needed
+  //   - "open": Force the welcome modal to open even if not needed
+  //   - "closed": Don't ever open the welcome modal
+  const [paramModalWelcome, setParamModalWelcome] = useQueryParam(
+    "modal-welcome",
+    StringParam
+  );
   const [hasUserClickedStart, setHasUserClickedStart] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(
+    (!isServiceWorkerActive && !(paramModalWelcome === "closed")) ||
+      paramModalWelcome === "open"
+  );
+
+  const startLabellingButtonRef = useRef<HTMLButtonElement>(null);
 
   // This modal should open when isServiceWorkerActive becomes false
   // But close only when the use hasUserClickedStart becomes true
   useEffect(() => {
-    if (!isServiceWorkerActive && !hasUserClickedStart && !isDisabled) {
+    if (
+      (!isServiceWorkerActive &&
+        !hasUserClickedStart &&
+        !(paramModalWelcome === "closed")) ||
+      paramModalWelcome === "open"
+    ) {
       setIsOpen(true);
       return;
     }
@@ -42,15 +63,42 @@ export const WelcomeModal = ({
     }
     // In the 2 other cases, we do nothing, this is an hysteresis
     // To "latch" the modal to open once it opened once
-  }, [isServiceWorkerActive, hasUserClickedStart]);
+  }, [isServiceWorkerActive, hasUserClickedStart, paramModalWelcome]);
+
+  const handleClickStartLabelling = useCallback(() => {
+    setParamModalWelcome(undefined, "replaceIn");
+    setHasUserClickedStart(true);
+    // This is needed to fix a rare bug in which the welcome modal is stuck
+    // in the "loading app" state when a new service worker is waiting AND
+    // the welcome modal is open.
+    // This never happens except in nominal user flows, but still
+    if (
+      typeof window !== "undefined" &&
+      "serviceWorker" in navigator &&
+      window.workbox !== undefined
+    ) {
+      const wb = window.workbox;
+      wb.addEventListener("controlling", (/* event: any */) => {
+        window.location.reload();
+      });
+      // Send a message to the waiting service worker, instructing it to activate.
+      wb.messageSkipWaiting();
+    }
+  }, [setHasUserClickedStart, setParamModalWelcome]);
 
   return (
-    <Modal isOpen={isOpen} onClose={() => {}} size="3xl">
+    <Modal
+      isOpen={isOpen}
+      onClose={() => {}}
+      size="3xl"
+      isCentered
+      initialFocusRef={startLabellingButtonRef}
+    >
       <ModalOverlay />
       <ModalContent margin="3.75rem">
         <ModalHeader textAlign="center" padding="6">
           <Center>
-            <Logo maxW="lg" mt="8" mb="8" />
+            <Logo maxW="lg" mt="8" mb="8" h="min-content" />
           </Center>
         </ModalHeader>
 
@@ -84,16 +132,22 @@ export const WelcomeModal = ({
               fontWeight="medium"
               textAlign="justify"
             >
-              Create and manage your image data, workflows and teams in a single
-              place. Stay in control of your data, focus on building the next
-              big thing.
+              Stay in control of your data, label your images without them
+              leaving your computer. Focus on building the next big thing.
             </Text>
           </VStack>
         </ModalBody>
         <ModalFooter>
-          <HStack direction={{ base: "column", md: "row" }} spacing="4" mt="8">
+          <HStack
+            direction={{ base: "column", md: "row" }}
+            justifyContent="center"
+            width="full"
+            spacing="4"
+            mb="10"
+          >
             <Button
               as="a"
+              leftIcon={<GithubIcon fontSize="xl" />}
               href="https://github.com/Labelflow/labelflow"
               target="blank"
               size="lg"
@@ -106,13 +160,14 @@ export const WelcomeModal = ({
             </Button>
 
             <Button
+              ref={startLabellingButtonRef}
               size="lg"
               minW="210px"
               colorScheme="brand"
               height="14"
               px="8"
               isLoading={hasUserClickedStart && !isServiceWorkerActive}
-              onClick={() => setHasUserClickedStart(true)}
+              onClick={handleClickStartLabelling}
               loadingText="Loading the application"
             >
               Start Labelling!

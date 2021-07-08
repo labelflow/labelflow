@@ -142,8 +142,8 @@ jobs:
           # 👇 Chromatic projectToken, refer to the manage page to obtain it.
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
 
-  cypress-e2e:
-    name: Cypress e2e Tests
+  e2e-analysis:
+    name: E2E Tests and bundle analysis
     runs-on: ubuntu-20.04
     needs: install-typescript
     steps:
@@ -165,7 +165,7 @@ jobs:
         uses: cypress-io/github-action@v2
         with:
           install: false
-          build: yarn build:web-app
+          build: yarn bundlewatch:web-app
           start: yarn start:web-app
           wait-on: "http://localhost:3000"
           wait-on-timeout: 300
@@ -176,6 +176,14 @@ jobs:
           # Recommended: pass the GitHub token lets this action correctly
           # determine the unique run id necessary to re-run the checks
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Bundlewatch
+          # See https://bundlewatch.io/#/getting-started/using-bundlewatch?id=setup-ci-auth-variables-needed-by-bundlewatch
+          BUNDLEWATCH_GITHUB_TOKEN: ${{ secrets.BUNDLEWATCH_GITHUB_TOKEN }}
+          CI_REPO_OWNER: labelflow
+          CI_REPO_NAME: labelflow
+          CI_COMMIT_SHA: ${{ github.event.pull_request.head.sha }}
+          CI_BRANCH: ${{ github.ref	}}
+          CI_BRANCH_BASE: refs/heads/main
 
   deploy-webapp-pr:
     name: Deploy webapp PR branch

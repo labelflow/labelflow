@@ -1,5 +1,6 @@
 input ImageCreateInput {
   id: ID
+  createdAt: DateTime
   name: String
   path: String
   mimetype: String
@@ -15,4 +16,8 @@ input ImageWhereInput {
 
 input ImageWhereUniqueInput {
   id: ID!
+}
+
+type ImagesAggregates {
+  totalCount:Int!
 }

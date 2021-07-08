@@ -1,7 +1,11 @@
 import { incrementMockedDate } from "@labelflow/dev-utils/mockdate";
 import gql from "graphql-tag";
+import probe from "probe-image-size";
+
 import { client } from "../../apollo-client-schema";
 import { setupTestsWithLocalDatabase } from "../../../utils/setup-local-db-tests";
+
+jest.mock("probe-image-size");
 
 setupTestsWithLocalDatabase();
 
@@ -109,6 +113,57 @@ describe("Image resolver test suite", () => {
     );
   });
 
+  test("Create image with url", async () => {
+    // @ts-ignore
+    fetch.mockResponseOnce(new Blob());
+    // @ts-ignore
+    probe.sync.mockReturnValueOnce({
+      width: 10,
+      height: 10,
+      mime: "something",
+    });
+
+    const {
+      data: {
+        createImage: { id },
+      },
+    } = await client.mutate({
+      mutation: gql`
+        mutation createImage($url: String!) {
+          createImage(data: { url: $url }) {
+            id
+          }
+        }
+      `,
+      variables: {
+        url: "https://images.unsplash.com/photo-1579513141590-c597876aefbc?auto=format&fit=crop&w=882&q=80",
+      },
+    });
+
+    const queryResult = await client.query({
+      query: gql`
+        query getImage($id: ID!) {
+          image(where: { id: $id }) {
+            id
+            name
+            url
+          }
+        }
+      `,
+      variables: {
+        id,
+      },
+    });
+
+    expect(queryResult.data.image).toEqual(
+      expect.objectContaining({
+        id,
+        name: "photo-1579513141590-c597876aefbc",
+        url: "mockedUrl",
+      })
+    );
+  });
+
   test("Create image with an id", async () => {
     const name = "an image";
     const imageId = "a custom id";
@@ -129,6 +184,27 @@ describe("Image resolver test suite", () => {
     });
 
     expect(mutationResult.data.createImage.id).toEqual(imageId);
+  });
+
+  test("Create image with a createdAt", async () => {
+    const mutationResult = await client.mutate({
+      mutation: gql`
+        mutation createImage($file: Upload!) {
+          createImage(
+            data: { file: $file, createdAt: "some custom date string" }
+          ) {
+            createdAt
+          }
+        }
+      `,
+      variables: {
+        file: new Blob(),
+      },
+    });
+
+    expect(mutationResult.data.createImage.createdAt).toEqual(
+      "some custom date string"
+    );
   });
 
   test("Query several images", async () => {
@@ -206,5 +282,26 @@ describe("Image resolver test suite", () => {
     expect(
       queryResult.data.image.labels.map((l: { x: number }) => l.x)
     ).toEqual([2, 1]);
+  });
+
+  test("It returns the correct count of images", async () => {
+    await Promise.all([
+      createImage("Image 1"),
+      createImage("Image 2"),
+      createImage("Image 3"),
+    ]);
+
+    const queryResult = await client.query({
+      query: gql`
+        query getImagesNumber {
+          imagesAggregates {
+            totalCount
+          }
+        }
+      `,
+    });
+
+    // labels should show in the right order
+    expect(queryResult.data.imagesAggregates.totalCount).toEqual(3);
   });
 });

@@ -9,6 +9,7 @@ import { keymap } from "../../../keymap";
 export type Props = {};
 
 export const SelectionTool = () => {
+  const isImageLoading = useLabellingStore((state) => state.isImageLoading);
   const selectedTool = useLabellingStore((state) => state.selectedTool);
   const setSelectedTool = useLabellingStore((state) => state.setSelectedTool);
 
@@ -27,11 +28,12 @@ export const SelectionTool = () => {
     >
       <IconButton
         icon={<BiPointer size="1.3em" />}
+        isDisabled={isImageLoading}
         role="checkbox"
         aria-checked={selectedTool === Tools.SELECTION}
         onClick={() => setSelectedTool(Tools.SELECTION)}
         backgroundColor="white"
-        aria-label="Select tool"
+        aria-label="Selection tool"
         pointerEvents="initial"
         isActive={selectedTool === Tools.SELECTION}
       />

@@ -13,6 +13,7 @@ export type Scalars = {
   Float: number;
   ColorHex: any;
   DateTime: any;
+  JSON: any;
   Upload: any;
 };
 
@@ -56,10 +57,12 @@ export type Image = {
   height: Scalars['Int'];
   width: Scalars['Int'];
   labels: Array<Label>;
+  projectId?: Maybe<Scalars['ID']>;
 };
 
 export type ImageCreateInput = {
   id?: Maybe<Scalars['ID']>;
+  createdAt?: Maybe<Scalars['DateTime']>;
   name?: Maybe<Scalars['String']>;
   path?: Maybe<Scalars['String']>;
   mimetype?: Maybe<Scalars['String']>;
@@ -77,6 +80,11 @@ export type ImageWhereUniqueInput = {
   id: Scalars['ID'];
 };
 
+export type ImagesAggregates = {
+  __typename?: 'ImagesAggregates';
+  totalCount: Scalars['Int'];
+};
+
 export type IogInferenceInput = {
   imageUrl: Scalars['String'];
   x: Scalars['Float'];
@@ -91,6 +99,7 @@ export type IogInferenceResult = {
   __typename?: 'IogInferenceResult';
   polygons: Array<Maybe<Array<Maybe<Array<Scalars['Float']>>>>>;
 };
+
 
 export type Label = {
   __typename?: 'Label';
@@ -113,6 +122,7 @@ export type LabelClass = {
   name: Scalars['String'];
   color: Scalars['ColorHex'];
   labels: Array<Label>;
+  projectId?: Maybe<Scalars['ID']>;
 };
 
 export type LabelClassCreateInput = {
@@ -147,6 +157,11 @@ export type LabelWhereUniqueInput = {
   id: Scalars['ID'];
 };
 
+export type LabelsAggregates = {
+  __typename?: 'LabelsAggregates';
+  totalCount: Scalars['Int'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   createExample?: Maybe<Example>;
@@ -156,6 +171,10 @@ export type Mutation = {
   updateLabel?: Maybe<Label>;
   deleteLabel?: Maybe<Label>;
   createLabelClass?: Maybe<LabelClass>;
+  deleteLabelClass?: Maybe<LabelClass>;
+  createProject?: Maybe<Project>;
+  updateProject?: Maybe<Project>;
+  deleteProject?: Maybe<Project>;
   iogInference?: Maybe<IogInferenceResult>;
 };
 
@@ -191,8 +210,53 @@ export type MutationCreateLabelClassArgs = {
 };
 
 
+export type MutationDeleteLabelClassArgs = {
+  where: LabelClassWhereUniqueInput;
+};
+
+
+export type MutationCreateProjectArgs = {
+  data: ProjectCreateInput;
+};
+
+
+export type MutationUpdateProjectArgs = {
+  where: ProjectWhereUniqueInput;
+  data: ProjectUpdateInput;
+};
+
+
+export type MutationDeleteProjectArgs = {
+  where: ProjectWhereUniqueInput;
+};
+
+
 export type MutationIogInferenceArgs = {
   data: IogInferenceInput;
+};
+
+export type Project = {
+  __typename?: 'Project';
+  id: Scalars['ID'];
+  createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
+  name: Scalars['String'];
+  images?: Maybe<Array<Image>>;
+  labelClasses?: Maybe<Array<LabelClass>>;
+};
+
+export type ProjectCreateInput = {
+  id?: Maybe<Scalars['ID']>;
+  name: Scalars['String'];
+};
+
+export type ProjectUpdateInput = {
+  name: Scalars['String'];
+};
+
+export type ProjectWhereUniqueInput = {
+  id?: Maybe<Scalars['ID']>;
+  name?: Maybe<Scalars['String']>;
 };
 
 export type Query = {
@@ -202,9 +266,15 @@ export type Query = {
   examples: Array<Example>;
   image: Image;
   images: Array<Image>;
+  imagesAggregates: ImagesAggregates;
   labelClass: LabelClass;
   labelClasses: Array<LabelClass>;
+  labelsAggregates: LabelsAggregates;
+  label: Label;
+  project: Project;
+  projects: Array<Project>;
   exportToCoco: Scalars['String'];
+  debug: Scalars['JSON'];
 };
 
 
@@ -239,6 +309,22 @@ export type QueryLabelClassArgs = {
 
 
 export type QueryLabelClassesArgs = {
+  first?: Maybe<Scalars['Int']>;
+  skip?: Maybe<Scalars['Int']>;
+};
+
+
+export type QueryLabelArgs = {
+  where: LabelWhereUniqueInput;
+};
+
+
+export type QueryProjectArgs = {
+  where: ProjectWhereUniqueInput;
+};
+
+
+export type QueryProjectsArgs = {
   first?: Maybe<Scalars['Int']>;
   skip?: Maybe<Scalars['Int']>;
 };
@@ -349,9 +435,11 @@ export type ResolversTypes = {
   ImageCreateInput: ImageCreateInput;
   ImageWhereInput: ImageWhereInput;
   ImageWhereUniqueInput: ImageWhereUniqueInput;
+  ImagesAggregates: ResolverTypeWrapper<ImagesAggregates>;
   IogInferenceInput: IogInferenceInput;
   Float: ResolverTypeWrapper<Scalars['Float']>;
   IogInferenceResult: ResolverTypeWrapper<IogInferenceResult>;
+  JSON: ResolverTypeWrapper<Scalars['JSON']>;
   Label: ResolverTypeWrapper<Label>;
   LabelClass: ResolverTypeWrapper<LabelClass>;
   LabelClassCreateInput: LabelClassCreateInput;
@@ -359,7 +447,12 @@ export type ResolversTypes = {
   LabelCreateInput: LabelCreateInput;
   LabelUpdateInput: LabelUpdateInput;
   LabelWhereUniqueInput: LabelWhereUniqueInput;
+  LabelsAggregates: ResolverTypeWrapper<LabelsAggregates>;
   Mutation: ResolverTypeWrapper<{}>;
+  Project: ResolverTypeWrapper<Project>;
+  ProjectCreateInput: ProjectCreateInput;
+  ProjectUpdateInput: ProjectUpdateInput;
+  ProjectWhereUniqueInput: ProjectWhereUniqueInput;
   Query: ResolverTypeWrapper<{}>;
   Upload: ResolverTypeWrapper<Scalars['Upload']>;
   UploadTarget: ResolversTypes['UploadTargetDirect'] | ResolversTypes['UploadTargetHttp'];
@@ -383,9 +476,11 @@ export type ResolversParentTypes = {
   ImageCreateInput: ImageCreateInput;
   ImageWhereInput: ImageWhereInput;
   ImageWhereUniqueInput: ImageWhereUniqueInput;
+  ImagesAggregates: ImagesAggregates;
   IogInferenceInput: IogInferenceInput;
   Float: Scalars['Float'];
   IogInferenceResult: IogInferenceResult;
+  JSON: Scalars['JSON'];
   Label: Label;
   LabelClass: LabelClass;
   LabelClassCreateInput: LabelClassCreateInput;
@@ -393,7 +488,12 @@ export type ResolversParentTypes = {
   LabelCreateInput: LabelCreateInput;
   LabelUpdateInput: LabelUpdateInput;
   LabelWhereUniqueInput: LabelWhereUniqueInput;
+  LabelsAggregates: LabelsAggregates;
   Mutation: {};
+  Project: Project;
+  ProjectCreateInput: ProjectCreateInput;
+  ProjectUpdateInput: ProjectUpdateInput;
+  ProjectWhereUniqueInput: ProjectWhereUniqueInput;
   Query: {};
   Upload: Scalars['Upload'];
   UploadTarget: ResolversParentTypes['UploadTargetDirect'] | ResolversParentTypes['UploadTargetHttp'];
@@ -429,6 +529,12 @@ export type ImageResolvers<ContextType = any, ParentType extends ResolversParent
   height?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   width?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   labels?: Resolver<Array<ResolversTypes['Label']>, ParentType, ContextType>;
+  projectId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type ImagesAggregatesResolvers<ContextType = any, ParentType extends ResolversParentTypes['ImagesAggregates'] = ResolversParentTypes['ImagesAggregates']> = {
+  totalCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -436,6 +542,10 @@ export type IogInferenceResultResolvers<ContextType = any, ParentType extends Re
   polygons?: Resolver<Array<Maybe<Array<Maybe<Array<ResolversTypes['Float']>>>>>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
+
+export interface JsonScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['JSON'], any> {
+  name: 'JSON';
+}
 
 export type LabelResolvers<ContextType = any, ParentType extends ResolversParentTypes['Label'] = ResolversParentTypes['Label']> = {
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
@@ -457,6 +567,12 @@ export type LabelClassResolvers<ContextType = any, ParentType extends ResolversP
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   color?: Resolver<ResolversTypes['ColorHex'], ParentType, ContextType>;
   labels?: Resolver<Array<ResolversTypes['Label']>, ParentType, ContextType>;
+  projectId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type LabelsAggregatesResolvers<ContextType = any, ParentType extends ResolversParentTypes['LabelsAggregates'] = ResolversParentTypes['LabelsAggregates']> = {
+  totalCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -468,7 +584,21 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   updateLabel?: Resolver<Maybe<ResolversTypes['Label']>, ParentType, ContextType, RequireFields<MutationUpdateLabelArgs, 'where' | 'data'>>;
   deleteLabel?: Resolver<Maybe<ResolversTypes['Label']>, ParentType, ContextType, RequireFields<MutationDeleteLabelArgs, 'where'>>;
   createLabelClass?: Resolver<Maybe<ResolversTypes['LabelClass']>, ParentType, ContextType, RequireFields<MutationCreateLabelClassArgs, 'data'>>;
+  deleteLabelClass?: Resolver<Maybe<ResolversTypes['LabelClass']>, ParentType, ContextType, RequireFields<MutationDeleteLabelClassArgs, 'where'>>;
+  createProject?: Resolver<Maybe<ResolversTypes['Project']>, ParentType, ContextType, RequireFields<MutationCreateProjectArgs, 'data'>>;
+  updateProject?: Resolver<Maybe<ResolversTypes['Project']>, ParentType, ContextType, RequireFields<MutationUpdateProjectArgs, 'where' | 'data'>>;
+  deleteProject?: Resolver<Maybe<ResolversTypes['Project']>, ParentType, ContextType, RequireFields<MutationDeleteProjectArgs, 'where'>>;
   iogInference?: Resolver<Maybe<ResolversTypes['IogInferenceResult']>, ParentType, ContextType, RequireFields<MutationIogInferenceArgs, 'data'>>;
+};
+
+export type ProjectResolvers<ContextType = any, ParentType extends ResolversParentTypes['Project'] = ResolversParentTypes['Project']> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  images?: Resolver<Maybe<Array<ResolversTypes['Image']>>, ParentType, ContextType>;
+  labelClasses?: Resolver<Maybe<Array<ResolversTypes['LabelClass']>>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
@@ -477,9 +607,15 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   examples?: Resolver<Array<ResolversTypes['Example']>, ParentType, ContextType, RequireFields<QueryExamplesArgs, never>>;
   image?: Resolver<ResolversTypes['Image'], ParentType, ContextType, RequireFields<QueryImageArgs, 'where'>>;
   images?: Resolver<Array<ResolversTypes['Image']>, ParentType, ContextType, RequireFields<QueryImagesArgs, never>>;
+  imagesAggregates?: Resolver<ResolversTypes['ImagesAggregates'], ParentType, ContextType>;
   labelClass?: Resolver<ResolversTypes['LabelClass'], ParentType, ContextType, RequireFields<QueryLabelClassArgs, 'where'>>;
   labelClasses?: Resolver<Array<ResolversTypes['LabelClass']>, ParentType, ContextType, RequireFields<QueryLabelClassesArgs, never>>;
+  labelsAggregates?: Resolver<ResolversTypes['LabelsAggregates'], ParentType, ContextType>;
+  label?: Resolver<ResolversTypes['Label'], ParentType, ContextType, RequireFields<QueryLabelArgs, 'where'>>;
+  project?: Resolver<ResolversTypes['Project'], ParentType, ContextType, RequireFields<QueryProjectArgs, 'where'>>;
+  projects?: Resolver<Array<ResolversTypes['Project']>, ParentType, ContextType, RequireFields<QueryProjectsArgs, never>>;
   exportToCoco?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  debug?: Resolver<ResolversTypes['JSON'], ParentType, ContextType>;
 };
 
 export interface UploadScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Upload'], any> {
@@ -506,10 +642,14 @@ export type Resolvers<ContextType = any> = {
   DateTime?: GraphQLScalarType;
   Example?: ExampleResolvers<ContextType>;
   Image?: ImageResolvers<ContextType>;
+  ImagesAggregates?: ImagesAggregatesResolvers<ContextType>;
   IogInferenceResult?: IogInferenceResultResolvers<ContextType>;
+  JSON?: GraphQLScalarType;
   Label?: LabelResolvers<ContextType>;
   LabelClass?: LabelClassResolvers<ContextType>;
+  LabelsAggregates?: LabelsAggregatesResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
+  Project?: ProjectResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   Upload?: GraphQLScalarType;
   UploadTarget?: UploadTargetResolvers<ContextType>;

@@ -2,3 +2,4 @@ scalar DateTime
 scalar ID
 scalar Upload
 scalar ColorHex
+scalar JSON

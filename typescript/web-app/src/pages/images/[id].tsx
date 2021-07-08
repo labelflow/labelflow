@@ -7,15 +7,21 @@ import {
   BreadcrumbLink,
   Center,
   Spinner,
+  Box,
+  Flex,
+  chakra,
 } from "@chakra-ui/react";
 import gql from "graphql-tag";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import { RiArrowRightSLine } from "react-icons/ri";
 import NextLink from "next/link";
-
+import { Meta } from "../../components/meta";
 import { Layout } from "../../components/layout";
 import type { Image } from "../../graphql-types.generated";
+import { Gallery } from "../../components/gallery";
+
+const ArrowRightIcon = chakra(RiArrowRightSLine);
 
 // The dynamic import is needed because openlayers use web apis that are not available
 // in NodeJS, like `Blob`, so it crashes when rendering in NextJS server side.
@@ -26,7 +32,7 @@ const LabellingTool = dynamic(() => import("../../components/labelling-tool"), {
     if (error) throw error;
     return (
       <Center h="full">
-        <Spinner size="xl" />
+        <Spinner aria-label="loading indicator" size="xl" />
       </Center>
     );
   },
@@ -61,43 +67,45 @@ const ImagePage = () => {
 
   useEffect(() => {
     if (error) {
-      router.replace("/images");
+      router.replace({ pathname: "/images", query: router.query });
     }
   }, [error]);
 
   return (
-    <Layout
-      topBarLeftContent={
-        <Breadcrumb
-          spacing="8px"
-          separator={<RiArrowRightSLine color="gray.500" />}
-        >
-          <BreadcrumbItem>
-            <NextLink href="/images">
-              <BreadcrumbLink>Images</BreadcrumbLink>
-            </NextLink>
-          </BreadcrumbItem>
+    <>
+      <Meta title={`Labelflow | Image ${imageName ?? ""}`} />
+      <Layout
+        topBarLeftContent={
+          <Breadcrumb
+            overflow="hidden"
+            textOverflow="ellipsis"
+            whiteSpace="nowrap"
+            spacing="8px"
+            sx={{ "*": { display: "inline !important" } }}
+            separator={<ArrowRightIcon color="gray.500" />}
+          >
+            <BreadcrumbItem>
+              <NextLink href="/images">
+                <BreadcrumbLink>Images</BreadcrumbLink>
+              </NextLink>
+            </BreadcrumbItem>
 
-          <BreadcrumbItem isCurrentPage>
-            <Text
-              maxWidth="20rem"
-              textOverflow="ellipsis"
-              whiteSpace="nowrap"
-              overflow="hidden"
-            >
-              {imageName}
-            </Text>
-          </BreadcrumbItem>
-        </Breadcrumb>
-      }
-    >
-      {!imageResult && (
-        <Center h="full">
-          <Spinner size="xl" />
-        </Center>
-      )}
-      {imageResult && <LabellingTool />}
-    </Layout>
+            <BreadcrumbItem isCurrentPage>
+              <Text>{imageName}</Text>
+            </BreadcrumbItem>
+          </Breadcrumb>
+        }
+      >
+        <Flex height="100%" flexDirection="column">
+          <Box flex="1">
+            <LabellingTool />
+          </Box>
+          <Box bg="white" overflow="hidden">
+            <Gallery />
+          </Box>
+        </Flex>
+      </Layout>
+    </>
   );
 };
 

@@ -1,6 +1,7 @@
 /* eslint-disable import/first */
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { useLabellingStore } from "../../../../connectors/labelling-state";
 import { mockNextRouter } from "../../../../utils/router-mocks";
 
 mockNextRouter();
@@ -8,6 +9,10 @@ mockNextRouter();
 import { DrawingTool } from "../drawing-tool";
 
 describe("Drawing tool", () => {
+  beforeEach(() => {
+    useLabellingStore.setState({ isImageLoading: false });
+  });
+
   it("should not be selected by default", () => {
     render(<DrawingTool />);
 

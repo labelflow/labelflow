@@ -38,10 +38,12 @@ type Image {
   height: Int!
   width: Int!
   labels: [Label!]!
+  projectId: ID
 }
 
 input ImageCreateInput {
   id: ID
+  createdAt: DateTime
   name: String
   path: String
   mimetype: String
@@ -59,6 +61,10 @@ input ImageWhereUniqueInput {
   id: ID!
 }
 
+type ImagesAggregates {
+  totalCount: Int!
+}
+
 input IogInferenceInput {
   imageUrl: String!
   x: Float!
@@ -72,6 +78,8 @@ input IogInferenceInput {
 type IogInferenceResult {
   polygons: [[[Float!]]]!
 }
+
+scalar JSON
 
 type Label {
   id: ID!
@@ -92,6 +100,7 @@ type LabelClass {
   name: String!
   color: ColorHex!
   labels: [Label!]!
+  projectId: ID
 }
 
 input LabelClassCreateInput {
@@ -126,6 +135,10 @@ input LabelWhereUniqueInput {
   id: ID!
 }
 
+type LabelsAggregates {
+  totalCount: Int!
+}
+
 type Mutation {
   createExample(data: ExampleCreateInput!): Example
   getUploadTarget: UploadTarget!
@@ -134,7 +147,34 @@ type Mutation {
   updateLabel(where: LabelWhereUniqueInput!, data: LabelUpdateInput!): Label
   deleteLabel(where: LabelWhereUniqueInput!): Label
   createLabelClass(data: LabelClassCreateInput!): LabelClass
+  deleteLabelClass(where: LabelClassWhereUniqueInput!): LabelClass
+  createProject(data: ProjectCreateInput!): Project
+  updateProject(where: ProjectWhereUniqueInput!, data: ProjectUpdateInput!): Project
+  deleteProject(where: ProjectWhereUniqueInput!): Project
   iogInference(data: IogInferenceInput!): IogInferenceResult
+}
+
+type Project {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  name: String!
+  images: [Image!]
+  labelClasses: [LabelClass!]
+}
+
+input ProjectCreateInput {
+  id: ID
+  name: String!
+}
+
+input ProjectUpdateInput {
+  name: String!
+}
+
+input ProjectWhereUniqueInput {
+  id: ID
+  name: String
 }
 
 type Query {
@@ -143,9 +183,15 @@ type Query {
   examples(where: ExampleWhereInput, first: Int, skip: Int, orderBy: ExampleOrderByInput): [Example!]!
   image(where: ImageWhereUniqueInput!): Image!
   images(where: ImageWhereInput, first: Int, skip: Int): [Image!]!
+  imagesAggregates: ImagesAggregates!
   labelClass(where: LabelClassWhereUniqueInput!): LabelClass!
   labelClasses(first: Int, skip: Int): [LabelClass!]!
+  labelsAggregates: LabelsAggregates!
+  label(where: LabelWhereUniqueInput!): Label!
+  project(where: ProjectWhereUniqueInput!): Project!
+  projects(first: Int, skip: Int): [Project!]!
   exportToCoco: String!
+  debug: JSON!
 }
 
 scalar Upload

@@ -1,8 +1,10 @@
 import { useRef, useCallback } from "react";
+import { Spinner, Center, ThemeProvider } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { RouterContext } from "next/dist/next-server/lib/router-context";
 import { Extent, getCenter } from "ol/extent";
-import { Map as OlMap, MapBrowserEvent } from "ol";
+import { Map as OlMap, View as OlView, MapBrowserEvent } from "ol";
+import { Vector as OlSourceVector } from "ol/source";
 import { Size } from "ol/size";
 import memoize from "mem";
 import Projection from "ol/proj/Projection";
@@ -18,8 +20,14 @@ import "ol/ol.css";
 import { DrawBoundingBoxInteraction } from "./draw-bounding-box-interaction";
 import { SelectInteraction } from "./select-interaction";
 import { Labels } from "./labels";
+import { EditLabelClass } from "./edit-label-class";
 import { CursorGuides } from "./cursor-guides";
-import { useLabellingStore, Tools } from "../../../connectors/labelling-state";
+import {
+  useLabellingStore,
+  Tools,
+  BoxDrawingToolState,
+} from "../../../connectors/labelling-state";
+import { theme } from "../../../theme";
 
 const empty: any[] = [];
 
@@ -42,7 +50,11 @@ const standardProjection = new Projection({
  * Memoize openlayers parameters that we pass to the open layers components
  */
 const getMemoizedProperties = memoize(
-  (_imageId, image: Pick<Image, "id" | "url" | "width" | "height">) => {
+  (
+    _imageId,
+    image: Pick<Image, "id" | "url" | "width" | "height"> | null | undefined
+  ) => {
+    if (image == null) return {};
     const { url, width, height } = image;
     const size: Size = [width, height];
     const extent: Extent = [0, 0, width, height];
@@ -73,10 +85,30 @@ const imageQuery = gql`
 `;
 
 export const OpenlayersMap = () => {
+  const editClassOverlayRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<OlMap>(null);
+  const viewRef = useRef<OlView | null>(null);
+  const sourceVectorLabelsRef = useRef<OlSourceVector | null>(null);
   const router = useRouter();
   const imageId = router.query?.id;
+  const isContextMenuOpen = useLabellingStore(
+    (state) => state.isContextMenuOpen
+  );
+  const setIsContextMenuOpen = useLabellingStore(
+    (state) => state.setIsContextMenuOpen
+  );
   const selectedTool = useLabellingStore((state) => state.selectedTool);
+  const setIsImageLoading = useLabellingStore(
+    (state) => state.setIsImageLoading
+  );
+  const boxDrawingToolState = useLabellingStore(
+    (state) => state.boxDrawingToolState
+  );
+  const setCanZoomIn = useLabellingStore((state) => state.setCanZoomIn);
+  const setCanZoomOut = useLabellingStore((state) => state.setCanZoomOut);
+
+  const setView = useLabellingStore((state) => state.setView);
+  const zoomFactor = useLabellingStore((state) => state.zoomFactor);
 
   const image = useQuery<{
     image: Pick<Image, "id" | "url" | "width" | "height">;
@@ -96,7 +128,7 @@ export const OpenlayersMap = () => {
 
       if (e.dragging) {
         target.style.cursor = "grabbing";
-      } else if (selectedTool === Tools.BOUNDING_BOX) {
+      } else if (selectedTool === Tools.BOX) {
         target.style.cursor = "crosshair";
       } else if (selectedTool === Tools.SELECTION) {
         const hit = mapRef.current.hasFeatureAtPixel(e.pixel);
@@ -108,23 +140,25 @@ export const OpenlayersMap = () => {
     [selectedTool]
   );
 
-  if (image == null) {
-    return null;
-  }
-
   const { url, size, extent, center, projection, width, height } =
-    getMemoizedProperties(image.id, image);
+    getMemoizedProperties(image?.id, image);
 
-  const resolution = Math.max(
-    width / (bounds.width - viewPadding[1] - viewPadding[3]),
-    height / (bounds.height - viewPadding[0] - viewPadding[2])
-  );
+  const resolution =
+    width && height
+      ? Math.max(
+          width / (bounds.width - viewPadding[1] - viewPadding[3]),
+          height / (bounds.height - viewPadding[0] - viewPadding[2])
+        )
+      : 1;
 
   return (
-    <>
-      {selectedTool === Tools.BOUNDING_BOX && (
-        <CursorGuides map={mapRef.current} />
-      )}
+    <div
+      style={{ display: "flex", width: "100%", height: "100%" }}
+      onContextMenu={(e) => {
+        e.preventDefault();
+        return false;
+      }}
+    >
       <Map
         ref={mapRef}
         args={{ controls: empty }}
@@ -136,47 +170,112 @@ export const OpenlayersMap = () => {
          * See https://github.com/facebook/react/issues/17275 */}
         <RouterContext.Provider value={router}>
           <ApolloProvider client={client}>
-            {
-              // Before useMeasure has time to properly measure the div, we have a negative resolution,
-              // There is no point rendering the view in that case
-              isBoundsValid && (
-                <olView
-                  args={{ extent }}
-                  center={center}
-                  initialProjection={projection}
-                  resolution={resolution}
-                  // Max zoom = 16 pixels of screen per pixel of image
-                  minResolution={1.0 / 16.0}
-                  maxResolution={resolution}
-                  constrainOnlyCenter
-                  showFullExtent
-                  padding={viewPadding}
-                />
-              )
-            }
-            <olLayerImage extent={extent}>
-              {url != null && (
-                <olSourceImageStatic
-                  // ol/source/image does not have `setXXX` methods, only options in the constructor, so
-                  // to change anything, you need to recreate the object. So we pass all in args.
-                  // See https://openlayers.org/en/latest/apidoc/module-ol_source_Image.ImageSourceEvent.html
-                  args={{
-                    url,
-                    imageExtent: extent,
-                    imageSize: size,
-                    projection,
-                    crossOrigin: "anonymous",
-                  }}
-                />
-              )}
-            </olLayerImage>
+            <ThemeProvider theme={theme}>
+              {
+                // Before useMeasure has time to properly measure the div, we have a negative resolution,
+                // There is no point rendering the view in that case
+                isBoundsValid && (
+                  <olView
+                    ref={(value: OlView) => {
+                      if (!value) return;
+                      if (viewRef.current !== value) {
+                        viewRef.current = value;
+                        setView(value);
+                      }
+                    }}
+                    onChange_resolution={() => {
+                      if (!viewRef.current) return false;
+                      setCanZoomIn(
+                        viewRef.current.getZoom() + zoomFactor <
+                          viewRef.current.getMaxZoom()
+                      );
+                      setCanZoomOut(
+                        viewRef.current.getZoom() - zoomFactor >
+                          viewRef.current.getMinZoom()
+                      );
+                      return false;
+                    }}
+                    args={{
+                      extent,
+                      maxResolution: resolution,
+                      // Max zoom = 16 pixels of screen per pixel of image
+                      minResolution: 1.0 / 16.0,
+                    }}
+                    center={center}
+                    initialProjection={projection}
+                    resolution={resolution}
+                    constrainOnlyCenter
+                    showFullExtent
+                    padding={viewPadding}
+                  />
+                )
+              }
+              <olLayerImage extent={extent}>
+                {url != null && (
+                  <olSourceImageStatic
+                    // ol/source/image does not have `setXXX` methods, only options in the constructor, so
+                    // to change anything, you need to recreate the object. So we pass all in args.
+                    // See https://openlayers.org/en/latest/apidoc/module-ol_source_Image.ImageSourceEvent.html
+                    args={{
+                      url,
+                      imageExtent: extent,
+                      imageSize: size,
+                      projection,
+                      crossOrigin: "anonymous",
+                    }}
+                    onImageloadstart={() => {
+                      setIsImageLoading(true);
+                      return true;
+                    }}
+                    onImageloadend={() => {
+                      setIsImageLoading(false);
+                      return true;
+                    }}
+                  />
+                )}
+              </olLayerImage>
 
-            <Labels />
-            <DrawBoundingBoxInteraction />
-            <SelectInteraction />
+              <Labels sourceVectorLabelsRef={sourceVectorLabelsRef} />
+              <DrawBoundingBoxInteraction />
+              <SelectInteraction
+                editClassOverlayRef={editClassOverlayRef}
+                sourceVectorLabelsRef={sourceVectorLabelsRef}
+                setIsContextMenuOpen={setIsContextMenuOpen}
+              />
+            </ThemeProvider>
           </ApolloProvider>
         </RouterContext.Provider>
       </Map>
-    </>
+      {selectedTool === Tools.BOX &&
+        boxDrawingToolState !== BoxDrawingToolState.DRAWING &&
+        !isContextMenuOpen && <CursorGuides map={mapRef.current} />}
+      {/* This div is needed to prevent a weird error that seems related to the EditLabelClass component */}
+      <div
+        key="toto"
+        style={{
+          position: "absolute",
+          pointerEvents: "none",
+          height: "100%",
+          width: "100%",
+        }}
+      >
+        {url == null && (
+          <Center h="full">
+            <Spinner aria-label="loading indicator" size="xl" />
+          </Center>
+        )}
+      </div>
+
+      <EditLabelClass
+        key="hey"
+        ref={(e) => {
+          if (e && editClassOverlayRef.current !== e) {
+            editClassOverlayRef.current = e;
+          }
+        }}
+        isOpen={isContextMenuOpen}
+        onClose={() => setIsContextMenuOpen(false)}
+      />
+    </div>
   );
 };

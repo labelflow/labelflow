@@ -19,3 +19,7 @@ input LabelUpdateInput {
   width: Float
   height: Float
 }
+
+type LabelsAggregates {
+  totalCount: Int!
+}

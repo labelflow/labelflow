@@ -6,6 +6,7 @@ import type {
   Image as GeneratedImage,
   Label as GeneratedLabel,
   LabelClass as GeneratedLabelClass,
+  Project as GeneratedProject,
 } from "../../graphql-types.generated";
 
 export type DbFile = {
@@ -27,12 +28,15 @@ export type DbLabelClass = Omit<GeneratedLabelClass, "labels">;
 
 export type DbExample = GeneratedExample;
 
+export type DbProject = Omit<GeneratedProject, "labelClasses" | "images">;
+
 interface Database extends Dexie {
   example: Dexie.Table<DbExample, string>;
   image: Dexie.Table<DbImage, string>;
   file: Dexie.Table<DbFile, string>;
   label: Dexie.Table<DbLabel, string>;
   labelClass: Dexie.Table<DbLabelClass, string>;
+  project: Dexie.Table<DbProject, string>;
 }
 
 // eslint-disable-next-line import/no-mutable-exports

@@ -34,5 +34,5 @@ beforeEach(() => {
         return window.caches.delete(cacheName);
       })
     );
-  })
+  });
 });
