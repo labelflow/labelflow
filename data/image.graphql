@@ -11,10 +11,6 @@ input ImageCreateInput {
   url: String # Either file or url are needed
 }
 
-input ImageWhereInput {
-  projectId: ID
-}
-
 input ImageWhereUniqueInput {
   id: ID!
 }

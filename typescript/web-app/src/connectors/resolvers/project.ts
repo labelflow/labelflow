@@ -52,10 +52,6 @@ const getImagesByProjectId = async (projectId: string) => {
   return getResults ?? [];
 };
 
-const countImagesByProjectId = async (projectId: string) => {
-  return db.image.where({ projectId }).count();
-};
-
 const getLabelClassesByProjectId = async (projectId: string) => {
   const getResults = await db.labelClass
     .where({ projectId })
@@ -64,40 +60,13 @@ const getLabelClassesByProjectId = async (projectId: string) => {
   return getResults ?? [];
 };
 
-const countLabelClassesByProjectId = async (projectId: string) => {
-  return db.labelClass.where({ projectId }).count();
-};
-
-const countLabelsByProjectId = async (projectId: string) => {
-  // Labels can only exists if they are linked to an image
-  const imagesOfProject = await getImagesByProjectId(projectId);
-
-  return db.label
-    .filter((label) =>
-      imagesOfProject.some((image) => label.imageId === image.id)
-    )
-    .count();
-};
-
 // Queries
 const imagesResolver = async ({ id }: DbProject) => {
   return getImagesByProjectId(id);
 };
 
-const imagesCountResolver = async ({ id }: DbProject) => {
-  return countImagesByProjectId(id);
-};
-
 const labelClassesResolver = async ({ id }: DbProject) => {
   return getLabelClassesByProjectId(id);
-};
-
-const labelClassesCountResolver = async ({ id }: DbProject) => {
-  return countLabelClassesByProjectId(id);
-};
-
-const labelsCountResolver = async ({ id }: DbProject) => {
-  return countLabelsByProjectId(id);
 };
 
 const project = async (_: any, args: QueryProjectArgs): Promise<DbProject> => {
@@ -177,9 +146,6 @@ export default {
 
   Project: {
     images: imagesResolver,
-    imagesCount: imagesCountResolver,
     labelClasses: labelClassesResolver,
-    labelClassesCount: labelClassesCountResolver,
-    labelsCount: labelsCountResolver,
   },
 };

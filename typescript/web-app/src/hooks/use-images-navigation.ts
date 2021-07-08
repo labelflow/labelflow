@@ -11,7 +11,6 @@ const projectDataQuery = gql`
         id
         url
       }
-      imagesCount
     }
   }
 `;
@@ -38,7 +37,7 @@ export const useImagesNavigation = () => {
 
   // TODO: Investigate why you have to specify undefined states
   const images = data?.project?.images ?? [];
-  const imagesCount = data?.project?.imagesCount ?? 0;
+  const imagesCount = images?.length ?? 0;
 
   if (images === undefined) {
     return {

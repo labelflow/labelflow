@@ -48,10 +48,7 @@ type Project {
   updatedAt: DateTime!
   name: String!
   images: [Image!]!
-  imagesCount: Int!
   labelClasses: [LabelClass!]!
-  labelClassesCount: Int!
-  labelsCount: Int!
   imagesAggregates: ImagesAggregates!
   labelsAggregates: LabelsAggregates!
   labelClassesAggregates: LabelClassesAggregates!
