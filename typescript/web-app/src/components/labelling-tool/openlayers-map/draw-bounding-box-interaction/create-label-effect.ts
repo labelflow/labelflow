@@ -2,6 +2,7 @@ import { ApolloCache, ApolloClient, Reference } from "@apollo/client";
 import gql from "graphql-tag";
 
 import { Effect } from "../../../../connectors/undo-store";
+import { projectsQuery } from "../../../../pages/projects";
 
 type CreateLabelInputs = {
   imageId: string;
@@ -161,7 +162,7 @@ export const createLabelEffect = (
     const { data } = await client.mutate({
       mutation: createLabelMutation,
       variables: createLabelInputs,
-      refetchQueries: ["countLabels"],
+      refetchQueries: ["countLabels", { query: projectsQuery }],
       optimisticResponse: {
         createLabel: { id: `temp-${Date.now()}`, __typename: "Label" },
       },
@@ -186,7 +187,7 @@ export const createLabelEffect = (
     await client.mutate({
       mutation: deleteLabelMutation,
       variables: { id },
-      refetchQueries: ["countLabels"],
+      refetchQueries: ["countLabels", { query: projectsQuery }],
       optimisticResponse: { deleteLabel: { id, __typename: "Label" } },
       update(cache) {
         removeLabelFromImageCache(cache, { imageId, id });
@@ -209,7 +210,7 @@ export const createLabelEffect = (
     const { data } = await client.mutate({
       mutation: createLabelMutation,
       variables: createLabelInputs,
-      refetchQueries: ["countLabels"],
+      refetchQueries: ["countLabels", { query: projectsQuery }],
       optimisticResponse: {
         createLabel: { id: `temp-${Date.now()}`, __typename: "Label" },
       },

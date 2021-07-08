@@ -14,9 +14,15 @@ export const projectsQuery = gql`
     projects {
       id
       name
-      imagesCount
-      labelClassesCount
-      labelsCount
+      imagesAggregates {
+        totalCount
+      }
+      labelsAggregates {
+        totalCount
+      }
+      labelClassesAggregates {
+        totalCount
+      }
     }
   }
 `;
@@ -26,7 +32,11 @@ const ProjectPage = () => {
     useQuery<{
       projects: Pick<
         ProjectType,
-        "id" | "name" | "imagesCount" | "labelClassesCount" | "labelsCount"
+        | "id"
+        | "name"
+        | "imagesAggregates"
+        | "labelClassesAggregates"
+        | "labelsAggregates"
       >[];
     }>(projectsQuery);
 
@@ -54,15 +64,21 @@ const ProjectPage = () => {
           <NewProjectCard />
           {/* @ts-ignore */}
           {projectsResult?.projects?.map(
-            ({ id, name, imagesCount, labelClassesCount, labelsCount }) => (
+            ({
+              id,
+              name,
+              imagesAggregates,
+              labelsAggregates,
+              labelClassesAggregates,
+            }) => (
               <NextLink href={`/projects/${id}`} key={id}>
                 {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
                 <a style={{ width: "100%" }}>
                   <ProjectCard
                     projectName={name}
-                    imagesCount={imagesCount}
-                    labelClassesCount={labelClassesCount}
-                    labelsCount={labelsCount}
+                    imagesCount={imagesAggregates.totalCount}
+                    labelClassesCount={labelClassesAggregates.totalCount}
+                    labelsCount={labelsAggregates.totalCount}
                     editProject={() => {}}
                     deleteProject={() => {}}
                   />
