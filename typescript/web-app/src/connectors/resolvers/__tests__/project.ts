@@ -513,7 +513,7 @@ describe("Project resolver test suite", () => {
     );
   });
 
-  it("should count project images, label classes and labels", async () => {
+  it.only("should count project images, label classes and labels", async () => {
     const name = "My new project";
     const projectId = "some id";
     createProject(name, projectId);
@@ -523,7 +523,9 @@ describe("Project resolver test suite", () => {
         query getProjectCounts($id: ID!) {
           project(where: { id: $id }) {
             id
-            imagesCount
+            imagesAggregates {
+              totalCount
+            }
             labelsCount
             labelClassesCount
           }
@@ -534,7 +536,9 @@ describe("Project resolver test suite", () => {
       },
     });
 
-    expect(initialCountQuery.data.project.imagesCount).toEqual(0);
+    expect(initialCountQuery.data.project.imagesAggregates.totalCount).toEqual(
+      0
+    );
     expect(initialCountQuery.data.project.labelsCount).toEqual(0);
     expect(initialCountQuery.data.project.labelClassesCount).toEqual(0);
 
@@ -545,7 +549,9 @@ describe("Project resolver test suite", () => {
         query getProjectCounts($id: ID!) {
           project(where: { id: $id }) {
             id
-            imagesCount
+            imagesAggregates {
+              totalCount
+            }
             labelsCount
             labelClassesCount
           }
@@ -557,7 +563,9 @@ describe("Project resolver test suite", () => {
       fetchPolicy: "network-only",
     });
 
-    expect(updateCountQuery.data.project.imagesCount).toEqual(1);
+    expect(updateCountQuery.data.project.imagesAggregates.totalCount).toEqual(
+      1
+    );
     expect(updateCountQuery.data.project.labelsCount).toEqual(1);
     expect(updateCountQuery.data.project.labelClassesCount).toEqual(1);
   });
