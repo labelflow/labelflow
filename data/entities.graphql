@@ -51,4 +51,5 @@ type Project {
   imagesCount: Int!
   labelClasses: [LabelClass!]!
   labelClassesCount: Int!
+  labelsCount: Int!
 }

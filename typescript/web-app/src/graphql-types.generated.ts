@@ -235,6 +235,7 @@ export type Project = {
   imagesCount: Scalars['Int'];
   labelClasses: Array<LabelClass>;
   labelClassesCount: Scalars['Int'];
+  labelsCount: Scalars['Int'];
 };
 
 export type ProjectCreateInput = {
@@ -599,6 +600,7 @@ export type ProjectResolvers<ContextType = any, ParentType extends ResolversPare
   imagesCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   labelClasses?: Resolver<Array<ResolversTypes['LabelClass']>, ParentType, ContextType>;
   labelClassesCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  labelsCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 

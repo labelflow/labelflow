@@ -66,6 +66,17 @@ const countLabelClassesByProjectId = async (projectId: string) => {
   return db.labelClass.where({ projectId }).count();
 };
 
+const countLabelsByProjectId = async (projectId: string) => {
+  // Labels can only exists if they are linked to an image
+  const imagesOfProject = await getImagesByProjectId(projectId);
+
+  return db.label
+    .filter((label) =>
+      imagesOfProject.some((image) => label.imageId === image.id)
+    )
+    .count();
+};
+
 // Queries
 const imagesResolver = async ({ id }: DbProject) => {
   return getImagesByProjectId(id);
@@ -81,6 +92,10 @@ const labelClassesResolver = async ({ id }: DbProject) => {
 
 const labelClassesCountResolver = async ({ id }: DbProject) => {
   return countLabelClassesByProjectId(id);
+};
+
+const labelsCountResolver = async ({ id }: DbProject) => {
+  return countLabelsByProjectId(id);
 };
 
 const project = async (_: any, args: QueryProjectArgs): Promise<DbProject> => {
@@ -163,5 +178,6 @@ export default {
     imagesCount: imagesCountResolver,
     labelClasses: labelClassesResolver,
     labelClassesCount: labelClassesCountResolver,
+    labelsCount: labelsCountResolver,
   },
 };

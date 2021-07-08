@@ -23,6 +23,61 @@ const createProject = (name: string, projectId?: string | null) => {
   });
 };
 
+const updateProjectWithImageLabelAndClass = async (projectId: string) => {
+  await client.mutate({
+    mutation: gql`
+      mutation createImage($data: ImageCreateInput!) {
+        createImage(data: $data) {
+          id
+        }
+      }
+    `,
+    variables: {
+      data: {
+        projectId,
+        file: new Blob(),
+        id: "image-id",
+      },
+    },
+  });
+
+  await client.mutate({
+    mutation: gql`
+      mutation createLabel($data: LabelCreateInput) {
+        createLabel(data: $data) {
+          id
+        }
+      }
+    `,
+    variables: {
+      data: {
+        imageId: "image-id",
+        x: 0,
+        y: 0,
+        width: 0,
+        height: 0,
+      },
+    },
+  });
+
+  await client.mutate({
+    mutation: gql`
+      mutation createLabelClass($data: LabelClassCreateInput) {
+        createLabelClass(data: $data) {
+          id
+        }
+      }
+    `,
+    variables: {
+      data: {
+        projectId,
+        name: "my-label",
+        color: "#ffffff",
+      },
+    },
+  });
+};
+
 describe("Project resolver test suite", () => {
   test("Create project should return the project id", async () => {
     const name = "My new project";
@@ -456,5 +511,54 @@ describe("Project resolver test suite", () => {
         name,
       })
     );
+  });
+
+  it.only("should count project images, label classes and labels", async () => {
+    const name = "My new project";
+    const projectId = "some id";
+    createProject(name, projectId);
+
+    const initialCountQuery = await client.query({
+      query: gql`
+        query getProjectCounts($id: ID!) {
+          project(where: { id: $id }) {
+            id
+            imagesCount
+            labelsCount
+            labelClassesCount
+          }
+        }
+      `,
+      variables: {
+        id: projectId,
+      },
+    });
+
+    expect(initialCountQuery.data.project.imagesCount).toEqual(0);
+    expect(initialCountQuery.data.project.labelsCount).toEqual(0);
+    expect(initialCountQuery.data.project.labelClassesCount).toEqual(0);
+
+    await updateProjectWithImageLabelAndClass(projectId);
+
+    const updateCountQuery = await client.query({
+      query: gql`
+        query getProjectCounts($id: ID!) {
+          project(where: { id: $id }) {
+            id
+            imagesCount
+            labelsCount
+            labelClassesCount
+          }
+        }
+      `,
+      variables: {
+        id: projectId,
+      },
+      fetchPolicy: "network-only",
+    });
+
+    expect(updateCountQuery.data.project.imagesCount).toEqual(1);
+    expect(updateCountQuery.data.project.labelsCount).toEqual(1);
+    expect(updateCountQuery.data.project.labelClassesCount).toEqual(1);
   });
 });
