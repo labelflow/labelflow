@@ -25,15 +25,21 @@ export class ResizeAndTranslateBox extends PointerInteraction {
 
   lastTranslateCoordinates: Coordinate | null = null;
 
+  onInteractionEnd:
+    | (() => void)
+    | ((feature: Feature<Polygon> | null) => void) = () => {};
+
   constructor(opt_options: {
     pixelTolerance?: number;
     selectedFeature?: Feature<Polygon>;
+    onInteractionEnd: (feature: Feature<Polygon> | null) => void;
   }) {
     const options = opt_options || {};
 
     super(options);
     this.pixelTolerance = options?.pixelTolerance ?? this.pixelTolerance;
     this.feature = options?.selectedFeature ?? null;
+    this.onInteractionEnd = options?.onInteractionEnd ?? this.onInteractionEnd;
     if (this.feature != null) {
       const [x, y, destX, destY] = this.feature.getGeometry().getExtent();
       this.featureVertices = this.getFeatureVerticesFromExtent({
@@ -231,6 +237,7 @@ export class ResizeAndTranslateBox extends PointerInteraction {
         destY,
       });
       this.lastTranslateCoordinates = null;
+      this.onInteractionEnd(this.feature);
     } else {
       this.featureVertices = null;
     }
