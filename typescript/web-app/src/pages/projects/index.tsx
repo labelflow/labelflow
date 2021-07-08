@@ -16,6 +16,7 @@ export const projectsQuery = gql`
       name
       imagesCount
       labelClassesCount
+      labelsCount
     }
   }
 `;
@@ -25,7 +26,7 @@ const ProjectPage = () => {
     useQuery<{
       projects: Pick<
         ProjectType,
-        "id" | "name" | "imagesCount" | "labelClassesCount"
+        "id" | "name" | "imagesCount" | "labelClassesCount" | "labelsCount"
       >[];
     }>(projectsQuery);
 
@@ -53,7 +54,7 @@ const ProjectPage = () => {
           <NewProjectCard />
           {/* @ts-ignore */}
           {projectsResult?.projects?.map(
-            ({ id, name, imagesCount, labelClassesCount }) => (
+            ({ id, name, imagesCount, labelClassesCount, labelsCount }) => (
               <NextLink href={`/projects/${id}`} key={id}>
                 {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
                 <a style={{ width: "100%" }}>
@@ -61,7 +62,7 @@ const ProjectPage = () => {
                     projectName={name}
                     imagesCount={imagesCount}
                     labelClassesCount={labelClassesCount}
-                    labelsCount={0}
+                    labelsCount={labelsCount}
                     editProject={() => {}}
                     deleteProject={() => {}}
                   />
