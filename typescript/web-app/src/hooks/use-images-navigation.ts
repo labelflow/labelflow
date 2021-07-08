@@ -4,9 +4,10 @@ import gql from "graphql-tag";
 
 import { Project, Image } from "../graphql-types.generated";
 
-const projectDataQuery = gql`
-  query projectData($projectId: ID!) {
+const allImagesOfAProjectQuery = gql`
+  query allImagesOfAProject($projectId: ID!) {
     project(where: { id: $projectId }) {
+      id
       images {
         id
         url
@@ -33,7 +34,7 @@ export const useImagesNavigation = () => {
   // Refetch images ?
   const { data } = useQuery<{
     project: Pick<Project, "id" | "images" | "imagesCount">;
-  }>(projectDataQuery, { variables: { projectId } });
+  }>(allImagesOfAProjectQuery, { variables: { projectId } });
 
   // TODO: Investigate why you have to specify undefined states
   const images = data?.project?.images ?? [];

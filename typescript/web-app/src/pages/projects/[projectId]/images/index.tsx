@@ -34,10 +34,13 @@ const ArrowRightIcon = chakra(RiArrowRightSLine);
 
 export const imagesOfProjectQuery = gql`
   query getImagesOfProject($projectId: ID!) {
-    images(where: { projectId: $projectId }) {
+    project(where: { id: $projectId }) {
       id
-      name
-      url
+      images {
+        id
+        name
+        url
+      }
     }
   }
 `;
