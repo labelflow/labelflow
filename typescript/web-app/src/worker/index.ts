@@ -52,10 +52,9 @@ clientsClaim();
 // eslint-disable-next-line @typescript-eslint/no-use-before-define
 // eslint-disable-next-line no-underscore-dangle
 const WB_MANIFEST = self.__WB_MANIFEST;
-console.log("WB_MANIFEST"); // TODO check if next routes are in there in prod mode https://github.com/shadowwalker/next-pwa/issues/38
-console.log(WB_MANIFEST);
-
 precacheAndRoute(WB_MANIFEST);
+// @ts-ignore
+self.WB_MANIFEST = WB_MANIFEST;
 
 initializeGoogleAnalytics({});
 
