@@ -154,9 +154,9 @@ type Project {
   createdAt: DateTime!
   updatedAt: DateTime!
   name: String!
-  images: [Image!]
+  images: [Image!]!
   imagesCount: Int!
-  labelClasses: [LabelClass!]
+  labelClasses: [LabelClass!]!
   labelClassesCount: Int!
 }
 
