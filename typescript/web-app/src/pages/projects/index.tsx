@@ -14,6 +14,10 @@ export const projectsQuery = gql`
     projects {
       id
       name
+      images(first: 1) {
+        id
+        url
+      }
       imagesAggregates {
         totalCount
       }
@@ -34,6 +38,7 @@ const ProjectPage = () => {
         ProjectType,
         | "id"
         | "name"
+        | "images"
         | "imagesAggregates"
         | "labelClassesAggregates"
         | "labelsAggregates"
@@ -67,6 +72,7 @@ const ProjectPage = () => {
             ({
               id,
               name,
+              images,
               imagesAggregates,
               labelsAggregates,
               labelClassesAggregates,
@@ -76,6 +82,7 @@ const ProjectPage = () => {
                 <a style={{ width: "100%" }}>
                   <ProjectCard
                     projectName={name}
+                    imageUrl={images[0]?.url}
                     imagesCount={imagesAggregates.totalCount}
                     labelClassesCount={labelClassesAggregates.totalCount}
                     labelsCount={labelsAggregates.totalCount}

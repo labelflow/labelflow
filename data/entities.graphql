@@ -47,7 +47,7 @@ type Project {
   createdAt: DateTime!
   updatedAt: DateTime!
   name: String!
-  images: [Image!]!
+  images(first: Int, skip: Int): [Image!]!
   labelClasses: [LabelClass!]!
   imagesAggregates: ImagesAggregates!
   labelsAggregates: LabelsAggregates!

@@ -31,10 +31,10 @@ export type DbExample = GeneratedExample;
 export type DbProject = Omit<
   GeneratedProject,
   | "images"
-  | "imagesCount"
+  | "imagesAggregates"
   | "labelClasses"
-  | "labelClassesCount"
-  | "labelsCount"
+  | "labelClassesAggregates"
+  | "labelsAggregates"
 >;
 
 interface Database extends Dexie {

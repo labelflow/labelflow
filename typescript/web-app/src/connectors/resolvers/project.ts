@@ -7,6 +7,9 @@ import type {
   ProjectWhereUniqueInput,
   QueryProjectArgs,
   QueryProjectsArgs,
+  Maybe,
+  ImageWhereInput,
+  QueryImagesArgs,
 } from "../../graphql-types.generated";
 import { db, DbProject } from "../database";
 
@@ -46,26 +49,44 @@ const getProjectFromWhereUniqueInput = async (
   throw new Error("Invalid where unique input for project entity");
 };
 
-const getImagesByProjectId = async (projectId: string) => {
-  const getResults = await db.image.where({ projectId }).sortBy("createdAt");
+export const getPaginatedImages = async (
+  skip?: Maybe<number>,
+  first?: Maybe<number>
+): Promise<any[]> => {
+  const query = db.image.orderBy("createdAt");
 
-  return getResults ?? [];
+  if (skip) {
+    query.offset(skip);
+  }
+  if (first) {
+    return query.limit(first).toArray();
+  }
+
+  return query.toArray();
 };
 
 const getLabelClassesByProjectId = async (projectId: string) => {
-  const getResults = await db.labelClass
-    .where({ projectId })
-    .sortBy("createdAt");
+  const getResults = await db.labelClass.where({ projectId });
 
   return getResults ?? [];
 };
 
 // Queries
-const imagesResolver = async ({ id }: DbProject) => {
-  return getImagesByProjectId(id);
+const images = async (_: any, args: QueryImagesArgs) => {
+  const imagesList = await getPaginatedImages(args?.skip, args?.first);
+
+  const entitiesWithUrls = await Promise.all(
+    imagesList.map(async (imageEntity: any) => {
+      return {
+        ...imageEntity,
+      };
+    })
+  );
+
+  return entitiesWithUrls;
 };
 
-const labelClassesResolver = async ({ id }: DbProject) => {
+const labelClasses = async ({ id }: DbProject) => {
   return getLabelClassesByProjectId(id);
 };
 
@@ -145,7 +166,7 @@ export default {
   },
 
   Project: {
-    images: imagesResolver,
-    labelClasses: labelClassesResolver,
+    images,
+    labelClasses,
   },
 };
