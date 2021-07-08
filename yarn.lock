@@ -19588,7 +19588,7 @@ fsevents@^1.2.7:
     prettier: 2.3.0
     react: 17.0.2
     react-dom: 17.0.2
-    service-worker-mock: ^2.0.5
+    service-worker-mock: "patch:service-worker-mock@2.0.5#./service-worker-mock.patch"
     ts-jest: 26.5.6
     ts-loader: ^9.2.3
     ts-node: 9.1.1
@@ -24722,7 +24722,7 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
-"service-worker-mock@npm:^2.0.5":
+service-worker-mock@2.0.5:
   version: 2.0.5
   resolution: "service-worker-mock@npm:2.0.5"
   dependencies:
@@ -24731,6 +24731,18 @@ resolve@^2.0.0-next.3:
     url-search-params: ^0.10.0
     w3c-hr-time: ^1.0.1
   checksum: 126427a1503e2a570f649ed4cab09dfe6963964675f03f1ad82222b6ce9aea454226c533e78c49356117d488381267c4a23e7b4e3bc5cf85277a6e9e9f5c5e74
+  languageName: node
+  linkType: hard
+
+"service-worker-mock@patch:service-worker-mock@2.0.5#./service-worker-mock.patch::locator=labelflow%40workspace%3A.":
+  version: 2.0.5
+  resolution: "service-worker-mock@patch:service-worker-mock@npm%3A2.0.5#./service-worker-mock.patch::version=2.0.5&hash=52e1b8&locator=labelflow%40workspace%3A."
+  dependencies:
+    dom-urls: ^1.1.0
+    shelving-mock-indexeddb: ^1.1.0
+    url-search-params: ^0.10.0
+    w3c-hr-time: ^1.0.1
+  checksum: 3717a9b3f6d8b2c8001b01617f7077a4cbc9214e625fa5f93fe7add008a7a654cfbfae6400a807d9067f4f100ebe3e8a60739c5930b1b7b5c588b967218b552b
   languageName: node
   linkType: hard
 
