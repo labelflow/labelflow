@@ -50,10 +50,15 @@ const getProjectFromWhereUniqueInput = async (
 };
 
 export const getPaginatedImages = async (
+  where?: Maybe<ImageWhereInput>,
   skip?: Maybe<number>,
   first?: Maybe<number>
 ): Promise<any[]> => {
   const query = db.image.orderBy("createdAt");
+
+  if (where?.projectId) {
+    query.filter((image) => image.projectId === where.projectId);
+  }
 
   if (skip) {
     query.offset(skip);
@@ -72,8 +77,10 @@ const getLabelClassesByProjectId = async (projectId: string) => {
 };
 
 // Queries
-const images = async (_: any, args: QueryImagesArgs) => {
-  const imagesList = await getPaginatedImages(args?.skip, args?.first);
+const images = async (parent: any, args: QueryImagesArgs) => {
+  const where = { projectId: parent.id };
+
+  const imagesList = await getPaginatedImages(where, args?.skip, args?.first);
 
   const entitiesWithUrls = await Promise.all(
     imagesList.map(async (imageEntity: any) => {
@@ -104,7 +111,13 @@ const projects = async (
     return query.limit(args.first).toArray();
   }
 
-  return query.toArray();
+  const queryResult = await query.toArray();
+
+  // eslint-disable-next-line @typescript-eslint/no-shadow
+  return queryResult.map((project) => ({
+    ...project,
+    __typename: projectTypename,
+  }));
 };
 
 // Mutations

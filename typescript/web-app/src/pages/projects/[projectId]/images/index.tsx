@@ -24,18 +24,16 @@ import { ImportButton } from "../../../../components/import-button";
 import { ExportButton } from "../../../../components/export-button";
 import { Meta } from "../../../../components/meta";
 import { Layout } from "../../../../components/layout";
-import type {
-  Image as ImageType,
-  Project as ProjectType,
-} from "../../../../graphql-types.generated";
+import type { Project as ProjectType } from "../../../../graphql-types.generated";
 import { EmptyStateImage } from "../../../../components/empty-state";
 
 const ArrowRightIcon = chakra(RiArrowRightSLine);
 
-export const imagesOfProjectQuery = gql`
-  query getImagesOfProject($projectId: ID!) {
+export const projectDataQuery = gql`
+  query getProjectData($projectId: ID!) {
     project(where: { id: $projectId }) {
       id
+      name
       images {
         id
         name
@@ -45,30 +43,13 @@ export const imagesOfProjectQuery = gql`
   }
 `;
 
-const projectQuery = gql`
-  query project($id: ID!) {
-    project(where: { id: $id }) {
-      id
-      name
-    }
-  }
-`;
-
 const ImagesPage = () => {
   const router = useRouter();
   const { projectId } = router?.query;
 
   const { data: projectResult } = useQuery<{
-    project: Pick<ProjectType, "id" | "name">;
-  }>(projectQuery, {
-    variables: {
-      id: projectId,
-    },
-  });
-
-  const { data: imagesResult } = useQuery<{
-    images: Pick<ImageType, "id" | "url" | "name">[];
-  }>(imagesOfProjectQuery, {
+    project: ProjectType;
+  }>(projectDataQuery, {
     variables: {
       projectId,
     },
@@ -112,12 +93,12 @@ const ImagesPage = () => {
           </>
         }
       >
-        {!imagesResult && (
+        {!projectResult && (
           <Center h="full">
             <Spinner size="xl" />
           </Center>
         )}
-        {imagesResult && isEmpty(imagesResult?.images) && (
+        {projectResult && isEmpty(projectResult?.project?.images) && (
           <Center h="full">
             <Box as="section">
               <Box
@@ -144,9 +125,9 @@ const ImagesPage = () => {
           </Center>
         )}
 
-        {imagesResult && !isEmpty(imagesResult?.images) && (
+        {projectResult && !isEmpty(projectResult?.project?.images) && (
           <Wrap h="full" spacing={8} padding={8} justify="space-evenly">
-            {imagesResult?.images?.map(({ id, name, url }) => (
+            {projectResult?.project?.images?.map(({ id, name, url }) => (
               <NextLink href={`/projects/${projectId}/images/${id}`} key={id}>
                 {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
                 <a>

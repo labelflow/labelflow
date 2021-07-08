@@ -9,12 +9,11 @@ import {
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { useQueryParam, StringParam, withDefault } from "use-query-params";
-import { useApolloClient, useQuery } from "@apollo/client";
+import { useApolloClient } from "@apollo/client";
 import { ImportImagesModalDropzone } from "./modal-dropzone/modal-dropzone";
 import { ImportImagesModalUrlList } from "./modal-url-list/modal-url-list";
-import { imagesOfProjectQuery } from "../../../pages/projects/[projectId]/images";
+import { projectDataQuery } from "../../../pages/projects/[projectId]/images";
 import { projectsQuery } from "../../../pages/projects";
-import { allImagesOfAProjectQuery } from "../../../hooks/use-images-navigation";
 
 export const ImportImagesModal = ({
   isOpen = false,
@@ -44,7 +43,7 @@ export const ImportImagesModal = ({
     // Manually refetch
     if (hasUploaded) {
       client.query({
-        query: imagesOfProjectQuery,
+        query: projectDataQuery,
         variables: {
           projectId,
         },
