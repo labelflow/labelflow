@@ -513,7 +513,7 @@ describe("Project resolver test suite", () => {
     );
   });
 
-  it.only("should count project images, label classes and labels", async () => {
+  it("should count project images, label classes and labels", async () => {
     const name = "My new project";
     const projectId = "some id";
     createProject(name, projectId);
