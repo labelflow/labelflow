@@ -160,6 +160,7 @@ type Project {
   labelClassesCount: Int!
   labelsCount: Int!
   imagesAggregates: ImagesAggregates!
+  labelClassesAggregates: LabelClassesAggregates!
 }
 
 input ProjectCreateInput {
@@ -186,7 +187,7 @@ type Query {
   imagesCount(where: ImageWhereInput): Int!
   labelClass(where: LabelClassWhereUniqueInput!): LabelClass!
   labelClasses(where: LabelClassWhereInput, first: Int, skip: Int): [LabelClass!]!
-  labelClassesAggregates: LabelClassesAggregates!
+  labelClassesAggregates(where: LabelClassWhereInput): LabelClassesAggregates!
   labelsAggregates: LabelsAggregates!
   label(where: LabelWhereUniqueInput!): Label!
   project(where: ProjectWhereUniqueInput!): Project!

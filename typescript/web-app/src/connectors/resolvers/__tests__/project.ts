@@ -513,60 +513,58 @@ describe("Project resolver test suite", () => {
     );
   });
 
-  it.only("should count project images, label classes and labels", async () => {
-    const name = "My new project";
-    const projectId = "some id";
-    createProject(name, projectId);
-
-    const initialCountQuery = await client.query({
-      query: gql`
-        query getProjectCounts($id: ID!) {
-          project(where: { id: $id }) {
-            id
-            imagesAggregates {
-              totalCount
+  it("should count project images, label classes and labels", async () => {
+    const getProjectCount = async (projectId: string) => {
+      return client.query({
+        query: gql`
+          query getProjectCounts($id: ID!) {
+            project(where: { id: $id }) {
+              id
+              imagesAggregates {
+                totalCount
+              }
+              labelsCount
+              labelClassesAggregates {
+                totalCount
+              }
             }
-            labelsCount
-            labelClassesCount
           }
-        }
-      `,
-      variables: {
-        id: projectId,
-      },
-    });
+        `,
+        variables: {
+          id: projectId,
+        },
+        fetchPolicy: "network-only",
+      });
+    };
 
-    expect(initialCountQuery.data.project.imagesAggregates.totalCount).toEqual(
-      0
-    );
-    expect(initialCountQuery.data.project.labelsCount).toEqual(0);
-    expect(initialCountQuery.data.project.labelClassesCount).toEqual(0);
+    const expectedResults = (queryResult: any, count: number) => {
+      expect(queryResult.data.project.imagesAggregates.totalCount).toEqual(
+        count
+      );
+      expect(queryResult.data.project.labelsCount).toEqual(count);
+      expect(
+        queryResult.data.project.labelClassesAggregates.totalCount
+      ).toEqual(count);
+    };
+
+    const projectId = "some id";
+    const otherId = "some other id";
+
+    createProject("My new project", projectId);
+    createProject("My other project", otherId);
+
+    const initialCountQuery = await getProjectCount(projectId);
+    const otherInitialCountQuery = await getProjectCount(otherId);
+
+    expectedResults(initialCountQuery, 0);
+    expectedResults(otherInitialCountQuery, 0);
 
     await updateProjectWithImageLabelAndClass(projectId);
 
-    const updateCountQuery = await client.query({
-      query: gql`
-        query getProjectCounts($id: ID!) {
-          project(where: { id: $id }) {
-            id
-            imagesAggregates {
-              totalCount
-            }
-            labelsCount
-            labelClassesCount
-          }
-        }
-      `,
-      variables: {
-        id: projectId,
-      },
-      fetchPolicy: "network-only",
-    });
+    const updateCountQuery = await getProjectCount(projectId);
+    const otherUpdateCountQuery = await getProjectCount(otherId);
 
-    expect(updateCountQuery.data.project.imagesAggregates.totalCount).toEqual(
-      1
-    );
-    expect(updateCountQuery.data.project.labelsCount).toEqual(1);
-    expect(updateCountQuery.data.project.labelClassesCount).toEqual(1);
+    expectedResults(updateCountQuery, 1);
+    expectedResults(otherUpdateCountQuery, 0);
   });
 });

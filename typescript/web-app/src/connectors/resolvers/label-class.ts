@@ -117,4 +117,8 @@ export default {
   },
 
   LabelClassesAggregates: { totalCount },
+
+  Project: {
+    labelClassesAggregates,
+  },
 };

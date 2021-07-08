@@ -237,6 +237,7 @@ export type Project = {
   labelClassesCount: Scalars['Int'];
   labelsCount: Scalars['Int'];
   imagesAggregates: ImagesAggregates;
+  labelClassesAggregates: LabelClassesAggregates;
 };
 
 export type ProjectCreateInput = {
@@ -318,6 +319,11 @@ export type QueryLabelClassesArgs = {
   where?: Maybe<LabelClassWhereInput>;
   first?: Maybe<Scalars['Int']>;
   skip?: Maybe<Scalars['Int']>;
+};
+
+
+export type QueryLabelClassesAggregatesArgs = {
+  where?: Maybe<LabelClassWhereInput>;
 };
 
 
@@ -608,6 +614,7 @@ export type ProjectResolvers<ContextType = any, ParentType extends ResolversPare
   labelClassesCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   labelsCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   imagesAggregates?: Resolver<ResolversTypes['ImagesAggregates'], ParentType, ContextType>;
+  labelClassesAggregates?: Resolver<ResolversTypes['LabelClassesAggregates'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -621,7 +628,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   imagesCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType, RequireFields<QueryImagesCountArgs, never>>;
   labelClass?: Resolver<ResolversTypes['LabelClass'], ParentType, ContextType, RequireFields<QueryLabelClassArgs, 'where'>>;
   labelClasses?: Resolver<Array<ResolversTypes['LabelClass']>, ParentType, ContextType, RequireFields<QueryLabelClassesArgs, never>>;
-  labelClassesAggregates?: Resolver<ResolversTypes['LabelClassesAggregates'], ParentType, ContextType>;
+  labelClassesAggregates?: Resolver<ResolversTypes['LabelClassesAggregates'], ParentType, ContextType, RequireFields<QueryLabelClassesAggregatesArgs, never>>;
   labelsAggregates?: Resolver<ResolversTypes['LabelsAggregates'], ParentType, ContextType>;
   label?: Resolver<ResolversTypes['Label'], ParentType, ContextType, RequireFields<QueryLabelArgs, 'where'>>;
   project?: Resolver<ResolversTypes['Project'], ParentType, ContextType, RequireFields<QueryProjectArgs, 'where'>>;
