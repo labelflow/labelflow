@@ -629,6 +629,11 @@ export type Catalogue = CatalogueOl &
 export type CatalogueKey = keyof Catalogue;
 export type CatalogueItem = Catalogue[CatalogueKey];
 export type Kind = CatalogueItem["kind"];
+export type ExtendedCatalogueItem<T> = {
+  object: T;
+  kind: Kind | null;
+  type: string;
+};
 
 // /////////////////////////////////////////////////////////////////////////////
 // Catalogue Value
@@ -728,11 +733,11 @@ export let catalogue: Catalogue = {
 export const extend = <T>(objects: { [key: string]: T }): void => {
   // Cleanup the input
   const cleanedUpObjects = fromPairs(
-    map(<U>([key, value]: [string, U | CatalogueItem<U>]): [
+    map(<U>([key, value]: [string, U | ExtendedCatalogueItem<U>]): [
       string,
-      CatalogueItem<U>
+      ExtendedCatalogueItem<U>
     ] => {
-      if (!isObject((value as CatalogueItem<U>).object)) {
+      if (!isObject((value as ExtendedCatalogueItem<U>).object)) {
         // If it's directly an object we put it nicely in a catalogue item
         return [
           lowerFirst(key),
@@ -746,7 +751,10 @@ export const extend = <T>(objects: { [key: string]: T }): void => {
       // If it's already a catalogue item it's good
       return [
         lowerFirst(key),
-        { kind: null, ...(value as CatalogueItem<U>), type: lowerFirst(key) },
+        {
+          ...(value as ExtendedCatalogueItem<U>),
+          type: lowerFirst(key),
+        },
       ];
     }, toPairs(objects))
   );
