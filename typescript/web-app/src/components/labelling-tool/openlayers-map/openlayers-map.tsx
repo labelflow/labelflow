@@ -122,7 +122,6 @@ export const OpenlayersMap = () => {
     (e: MapBrowserEvent) => {
       if (!mapRef.current) return;
       const target = mapRef.current.getTarget() as HTMLElement;
-
       if (e.dragging) {
         target.style.cursor = "grabbing";
       } else if (selectedTool === Tools.BOX) {

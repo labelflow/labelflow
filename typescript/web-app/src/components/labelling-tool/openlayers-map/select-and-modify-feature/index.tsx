@@ -2,15 +2,15 @@ import { MutableRefObject, useMemo } from "react";
 import { Map as OlMap } from "ol";
 import { Geometry } from "ol/geom";
 import { Vector as OlSourceVector } from "ol/source";
-import { extend, catalogue } from "@labelflow/react-openlayers-fiber";
-import { BoxResizeTranslateInteraction } from "./resize-interaction";
+import { extend } from "@labelflow/react-openlayers-fiber";
 import { SelectInteraction } from "./select-interaction";
-import { TranslateFeature } from "./translate-interaction";
 import { useLabellingStore } from "../../../../connectors/labelling-state";
-import { ResizeBox } from "./resize-box-interaction";
+import { ResizeAndTranslateBox } from "./resize-and-translate-box-interaction";
 
 // Extend react-openlayers-catalogue to include resize and translate interaction
-extend({ ResizeBox: { object: ResizeBox, kind: "Interaction" } });
+extend({
+  ResizeAndTranslateBox: { object: ResizeAndTranslateBox, kind: "Interaction" },
+});
 export const SelectAndModifyFeature = (props: {
   sourceVectorLabelsRef: MutableRefObject<OlSourceVector<Geometry> | null>;
   map: OlMap | null;
@@ -63,12 +63,7 @@ export const SelectAndModifyFeature = (props: {
   return (
     <>
       <SelectInteraction {...props} />
-      <resizeBox args={{ selectedFeature }} />
-      {/* <TranslateFeature selectedFeature={selectedFeature} />
-      <BoxResizeTranslateInteraction
-        selectedFeature={selectedFeature}
-        map={map}
-      /> */}
+      <resizeAndTranslateBox args={{ selectedFeature }} />
     </>
   );
 };

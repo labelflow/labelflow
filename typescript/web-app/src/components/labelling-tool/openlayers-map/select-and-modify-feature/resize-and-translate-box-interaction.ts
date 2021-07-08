@@ -12,7 +12,7 @@ type ClosestElement = {
   insideTolerance: boolean | null;
 };
 
-export class ResizeBox extends PointerInteraction {
+export class ResizeAndTranslateBox extends PointerInteraction {
   feature: Feature<Polygon> | null;
 
   featureVertices: FeatureVertices | null = null;
@@ -234,6 +234,7 @@ export class ResizeBox extends PointerInteraction {
     } else {
       this.featureVertices = null;
     }
+    this.selectedElement = null;
     return false;
   }
 
@@ -280,9 +281,12 @@ export class ResizeBox extends PointerInteraction {
             mapTargetViewport.style.cursor = "move";
             break;
           default:
+            mapTargetViewport.style.cursor = "";
             break;
         }
         e.stopPropagation();
+      } else {
+        mapTargetViewport.style.cursor = "";
       }
     }
   }
