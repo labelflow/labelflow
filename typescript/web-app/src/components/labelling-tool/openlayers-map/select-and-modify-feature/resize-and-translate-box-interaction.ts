@@ -29,14 +29,12 @@ export class ResizeAndTranslateBox extends PointerInteraction {
     | (() => void)
     | ((feature: Feature<Polygon> | null) => void) = () => {};
 
-  constructor(opt_options: {
+  constructor(options: {
     pixelTolerance?: number;
     selectedFeature?: Feature<Polygon>;
-    onInteractionEnd: (feature: Feature<Polygon> | null) => void;
+    onInteractionEnd?: (feature: Feature<Polygon> | null) => void;
   }) {
-    const options = opt_options || {};
-
-    super(options);
+    super(options ?? {});
     this.pixelTolerance = options?.pixelTolerance ?? this.pixelTolerance;
     this.feature = options?.selectedFeature ?? null;
     this.onInteractionEnd = options?.onInteractionEnd ?? this.onInteractionEnd;
