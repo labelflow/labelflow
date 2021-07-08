@@ -19,7 +19,7 @@ export class ResizeAndTranslateBox extends PointerInteraction {
 
   selectedElement: string | null = null;
 
-  pixelTolerance: number = 20;
+  pixelTolerance: number = 10;
 
   vertexEnum = ["bottomLeft", "topLeft", "topRight", "bottomRight"];
 
