@@ -58,30 +58,6 @@ const images = async (_: any, args: QueryImagesArgs) => {
 };
 
 /**
- * Manually convert a file or a blob to an array buffer
- * Useful for when (like in JEST...) the blobs don't have
- * the arrayBuffer() method
- */
-const toArrayBuffer = (
-  fileOrBlob: File | Blob | (Blob & { parts: Blob[] })
-): Promise<ArrayBuffer> => {
-  return (
-    fileOrBlob.arrayBuffer?.() ??
-    new Promise((resolve) => {
-      const fr = new FileReader();
-      fr.onload = () => {
-        resolve(fr.result as ArrayBuffer);
-      };
-      fr.readAsArrayBuffer(
-        "parts" in fileOrBlob
-          ? (fileOrBlob as Blob & { parts: Blob[] }).parts[0]
-          : fileOrBlob
-      );
-    })
-  );
-};
-
-/**
  * Given a partial image, return a completed version of the image, probing it if necessary
  */
 const probeImage = async ({
@@ -105,6 +81,7 @@ const probeImage = async ({
 
   // TODO: It would be nice to import "probe-image-size" asynchronously to reduce initial bundle size of sw, but webpack config todo.
   // const probe = await import(/* webpackPrefetch: true */ "probe-image-size");
+
   const cacheResult = await (await caches.open(uploadsCacheName)).match(url);
 
   const fetchResult =
@@ -124,9 +101,8 @@ const probeImage = async ({
       `Could not fetch image at url ${url} properly, code ${fetchResult.status}`
     );
   }
-  const blob = await fetchResult.blob();
 
-  const probeInput = new Uint8Array(await toArrayBuffer(blob));
+  const probeInput = new Uint8Array(await fetchResult.arrayBuffer());
 
   const probeResult = probe.sync(probeInput as Buffer);
 
