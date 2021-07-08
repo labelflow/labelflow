@@ -221,31 +221,36 @@ export const Labels = ({
           {labels.map(({ id, x, y, width, height, labelClass }: Label) => {
             const isSelected = id === selectedLabelId;
             const labelClassColor = labelClass?.color ?? noneClassColor;
-            const style = [
-              new Style({
-                fill: new Fill({
-                  color: `${labelClassColor}${isSelected ? "40" : "10"}`,
-                }),
-                stroke: new Stroke({
-                  color: labelClassColor,
-                  width: 2,
-                }),
-                zIndex: isSelected ? 2 : 1,
+            const labelStyle = new Style({
+              fill: new Fill({
+                color: `${labelClassColor}${isSelected ? "40" : "10"}`,
               }),
-              new Style({
-                image: new CircleStyle({
-                  radius: 5,
-                  fill: new Fill({
-                    color: labelClassColor,
+              stroke: new Stroke({
+                color: labelClassColor,
+                width: 2,
+              }),
+              zIndex: isSelected ? 2 : 1,
+            });
+            const verticesStyle = isSelected
+              ? new Style({
+                  image: new CircleStyle({
+                    radius: 5,
+                    fill: new Fill({
+                      color: labelClassColor,
+                    }),
                   }),
-                }),
-                geometry: (feature) => {
-                  const coordinates = feature.getGeometry().getCoordinates()[0];
-                  return new MultiPoint(coordinates);
-                },
-                zIndex: isSelected ? 2 : 1,
-              }),
-            ];
+                  geometry: (feature) => {
+                    const coordinates = feature
+                      .getGeometry()
+                      .getCoordinates()[0];
+                    return new MultiPoint(coordinates);
+                  },
+                  zIndex: isSelected ? 2 : 1,
+                })
+              : null;
+            const style = isSelected
+              ? [labelStyle, verticesStyle]
+              : [labelStyle];
 
             return (
               <olFeature
