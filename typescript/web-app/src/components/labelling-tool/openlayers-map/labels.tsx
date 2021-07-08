@@ -226,7 +226,7 @@ export const Labels = ({
               }),
               stroke: new Stroke({
                 color: labelClassColor,
-                width: 2,
+                width: isSelected ? 4 : 2,
               }),
               zIndex: isSelected ? 2 : 1,
             });
