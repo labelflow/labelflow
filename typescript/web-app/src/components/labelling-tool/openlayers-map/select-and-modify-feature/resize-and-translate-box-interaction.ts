@@ -132,8 +132,15 @@ export class ResizeAndTranslateBox extends PointerInteraction {
       map != null &&
       this.feature != null
     ) {
+      const [x, y, destX, destY] = this.feature.getGeometry().getExtent();
+      const vertices = this.getFeatureVerticesFromExtent({
+        x,
+        y,
+        destX,
+        destY,
+      });
       const coordinateInPixels = map.getPixelFromCoordinate(coordinate);
-      const distanceToVertices = this.featureVertices?.map((vertex) =>
+      const distanceToVertices = vertices?.map((vertex) =>
         distance(coordinateInPixels, map.getPixelFromCoordinate(vertex))
       );
       const minimalDistanceIndex = distanceToVertices.indexOf(
@@ -156,28 +163,28 @@ export class ResizeAndTranslateBox extends PointerInteraction {
         map?.getPixelFromCoordinate(closestPoint)
       );
       if (distanceToClosestPoint < this.pixelTolerance) {
-        if (closestPoint[0] === this.featureVertices[0][0]) {
+        if (closestPoint[0] === vertices[0][0]) {
           return {
             distanceToElement: distanceToClosestPoint,
             element: "left",
             insideTolerance: true,
           };
         }
-        if (closestPoint[0] === this.featureVertices[2][0]) {
+        if (closestPoint[0] === vertices[2][0]) {
           return {
             distanceToElement: distanceToClosestPoint,
             element: "right",
             insideTolerance: true,
           };
         }
-        if (closestPoint[1] === this.featureVertices[0][1]) {
+        if (closestPoint[1] === vertices[0][1]) {
           return {
             distanceToElement: distanceToClosestPoint,
             element: "bottom",
             insideTolerance: true,
           };
         }
-        if (closestPoint[1] === this.featureVertices[2][1]) {
+        if (closestPoint[1] === vertices[2][1]) {
           return {
             distanceToElement: distanceToClosestPoint,
             element: "top",
@@ -188,17 +195,13 @@ export class ResizeAndTranslateBox extends PointerInteraction {
       // Is it inside feature
       if (
         coordinateInPixels[0] >
-          map.getPixelFromCoordinate(this.featureVertices[0])[0] +
-            this.pixelTolerance &&
+          map.getPixelFromCoordinate(vertices[0])[0] + this.pixelTolerance &&
         coordinateInPixels[0] <
-          map.getPixelFromCoordinate(this.featureVertices[2])[0] +
-            this.pixelTolerance &&
+          map.getPixelFromCoordinate(vertices[2])[0] + this.pixelTolerance &&
         coordinateInPixels[1] <
-          map.getPixelFromCoordinate(this.featureVertices[0])[1] +
-            this.pixelTolerance &&
+          map.getPixelFromCoordinate(vertices[0])[1] + this.pixelTolerance &&
         coordinateInPixels[1] >
-          map.getPixelFromCoordinate(this.featureVertices[2])[1] +
-            this.pixelTolerance
+          map.getPixelFromCoordinate(vertices[2])[1] + this.pixelTolerance
       ) {
         return {
           distanceToElement: null,
