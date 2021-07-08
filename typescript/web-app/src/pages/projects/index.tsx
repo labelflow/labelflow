@@ -9,7 +9,7 @@ import { Layout } from "../../components/layout";
 import { NewProjectCard, ProjectCard } from "../../components/projects";
 import type { Project as ProjectType } from "../../graphql-types.generated";
 
-const getProjectsQuery = gql`
+export const projectsQuery = gql`
   query getProjects {
     projects {
       id
@@ -27,7 +27,7 @@ const ProjectPage = () => {
         ProjectType,
         "id" | "name" | "imagesCount" | "labelClassesCount"
       >[];
-    }>(getProjectsQuery);
+    }>(projectsQuery);
 
   return (
     <>

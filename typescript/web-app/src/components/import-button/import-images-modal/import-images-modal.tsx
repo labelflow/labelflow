@@ -13,6 +13,7 @@ import { useQuery } from "@apollo/client";
 import { ImportImagesModalDropzone } from "./modal-dropzone/modal-dropzone";
 import { ImportImagesModalUrlList } from "./modal-url-list/modal-url-list";
 import { imagesOfProjectQuery } from "../../../pages/projects/[projectId]/images";
+import { projectsQuery } from "../../../pages/projects";
 
 export const ImportImagesModal = ({
   isOpen = false,
@@ -29,6 +30,7 @@ export const ImportImagesModal = ({
       projectId,
     },
   });
+  const { refetch: refetchProjects } = useQuery(projectsQuery);
 
   const [isCloseable, setCloseable] = useState(true);
   const [hasUploaded, setHasUploaded] = useState(false);
@@ -46,6 +48,7 @@ export const ImportImagesModal = ({
   useEffect(() => {
     if (hasUploaded) {
       refetchImages();
+      refetchProjects();
     }
   }, [hasUploaded]);
 
