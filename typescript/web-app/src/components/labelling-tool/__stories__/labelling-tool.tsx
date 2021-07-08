@@ -52,15 +52,11 @@ export const ThreeImages: Story = () => {
 };
 ThreeImages.parameters = { mockImages: { images } };
 
-/* ----------- */
-/*   Helpers   */
-/* ----------- */
-
-async function createImage(name: String, file: Blob) {
+async function createImage(name: String, url: String) {
   const mutationResult = await client.mutate({
     mutation: gql`
-      mutation createImage($file: Upload!, $name: String!) {
-        createImage(data: { name: $name, file: $file }) {
+      mutation createImage($url: String!, $name: String!) {
+        createImage(data: { name: $name, url: $url }) {
           id
           name
           width
@@ -70,7 +66,7 @@ async function createImage(name: String, file: Blob) {
       }
     `,
     variables: {
-      file,
+      url,
       name,
     },
   });
@@ -99,9 +95,7 @@ async function mockImagesLoader({
 
   // We use mapSeries to ensure images are created in the same order
   const loadedImages = await Bluebird.mapSeries(imageArray, ({ url, name }) =>
-    fetch(url)
-      .then((res) => res.blob())
-      .then((blob) => createImage(name, blob))
+    createImage(name, url)
   );
 
   return { images: loadedImages };

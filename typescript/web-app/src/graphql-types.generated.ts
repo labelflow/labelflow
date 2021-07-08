@@ -51,6 +51,7 @@ export type Image = {
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
   url: Scalars['String'];
+  externalUrl?: Maybe<Scalars['String']>;
   name: Scalars['String'];
   path: Scalars['String'];
   mimetype: Scalars['String'];
@@ -70,6 +71,7 @@ export type ImageCreateInput = {
   width?: Maybe<Scalars['Int']>;
   file?: Maybe<Scalars['Upload']>;
   url?: Maybe<Scalars['String']>;
+  externalUrl?: Maybe<Scalars['String']>;
 };
 
 export type ImageWhereInput = {
@@ -498,6 +500,7 @@ export type ImageResolvers<ContextType = any, ParentType extends ResolversParent
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   url?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  externalUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   path?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   mimetype?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
