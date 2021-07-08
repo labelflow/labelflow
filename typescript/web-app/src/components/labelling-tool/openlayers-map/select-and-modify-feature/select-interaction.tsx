@@ -1,4 +1,4 @@
-import { MutableRefObject, useState, useEffect } from "react";
+import { MutableRefObject, useState } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 import { Coordinate } from "ol/coordinate";
 import { MapBrowserEvent } from "ol";

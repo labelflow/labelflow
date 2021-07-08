@@ -18,7 +18,7 @@ import type { Image } from "../../../graphql-types.generated";
 import "ol/ol.css";
 
 import { DrawBoundingBoxInteraction } from "./draw-bounding-box-interaction";
-import { SelectAndModifyFeature } from "./select-and-modify-feature/";
+import { SelectAndModifyFeature } from "./select-and-modify-feature";
 import { Labels } from "./labels";
 import { EditLabelClass } from "./edit-label-class";
 import { CursorGuides } from "./cursor-guides";
