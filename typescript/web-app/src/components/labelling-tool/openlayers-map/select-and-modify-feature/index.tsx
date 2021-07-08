@@ -1,16 +1,123 @@
 import { MutableRefObject, useEffect, useState, useCallback } from "react";
 import { Feature, Map as OlMap } from "ol";
-import { Geometry } from "ol/geom";
+import { Geometry, Polygon } from "ol/geom";
 import { Vector as OlSourceVector } from "ol/source";
 import { extend } from "@labelflow/react-openlayers-fiber";
+import gql from "graphql-tag";
+import { ApolloClient, useApolloClient } from "@apollo/client";
+import { useToast } from "@chakra-ui/react";
 import { SelectInteraction } from "./select-interaction";
 import { useLabellingStore } from "../../../../connectors/labelling-state";
 import { ResizeAndTranslateBox } from "./resize-and-translate-box-interaction";
+import { Effect, useUndoStore } from "../../../../connectors/undo-store";
 
 // Extend react-openlayers-catalogue to include resize and translate interaction
 extend({
   ResizeAndTranslateBox: { object: ResizeAndTranslateBox, kind: "Interaction" },
 });
+
+const updateLabelMutation = gql`
+  mutation updateLabel(
+    $id: ID!
+    $x: Float
+    $y: Float
+    $width: Float
+    $height: Float
+    $labelClassId: ID
+  ) {
+    updateLabel(
+      where: { id: $id }
+      data: {
+        x: $x
+        y: $y
+        width: $width
+        height: $height
+        labelClassId: $labelClassId
+      }
+    ) {
+      id
+    }
+  }
+`;
+
+const getLabelQuery = gql`
+  query getLabel($id: ID!) {
+    label(where: { id: $id }) {
+      x
+      y
+      width
+      height
+    }
+  }
+`;
+
+const updateLabelEffect = (
+  {
+    labelId,
+    x,
+    y,
+    width,
+    height,
+  }: {
+    labelId: string;
+    x?: number;
+    y?: number;
+    width?: number;
+    height?: number;
+  },
+  {
+    client,
+  }: {
+    client: ApolloClient<object>;
+  }
+): Effect => ({
+  do: async () => {
+    const { data: labelData } = await client.query({
+      query: getLabelQuery,
+      variables: { id: labelId },
+    });
+    const originalGeometry = labelData?.label;
+    await client.mutate({
+      mutation: updateLabelMutation,
+      variables: {
+        id: labelId,
+        x,
+        y,
+        width,
+        height,
+      },
+      refetchQueries: ["getImageLabels"],
+    });
+
+    return { id: labelId, originalGeometry };
+  },
+  undo: async ({
+    id,
+    originalGeometry,
+  }: {
+    id: string;
+    originalGeometry: {
+      x: number;
+      y: number;
+      width: number;
+      height: number;
+    };
+  }): Promise<string> => {
+    await client.mutate({
+      mutation: updateLabelMutation,
+      variables: {
+        id: labelId,
+        x: originalGeometry.x,
+        y: originalGeometry.y,
+        width: originalGeometry.width,
+        height: originalGeometry.height,
+      },
+      refetchQueries: ["getImageLabels"],
+    });
+    return id;
+  },
+});
+
 export const SelectAndModifyFeature = (props: {
   sourceVectorLabelsRef: MutableRefObject<OlSourceVector<Geometry> | null>;
   map: OlMap | null;
@@ -49,10 +156,41 @@ export const SelectAndModifyFeature = (props: {
     getSelectedFeature();
   }, [selectedLabelId]);
 
+  const client = useApolloClient();
+  const { perform } = useUndoStore();
+  const toast = useToast();
+
   return (
     <>
       <SelectInteraction {...props} />
-      <resizeAndTranslateBox args={{ selectedFeature }} />
+      {/* @ts-ignore - We need to add this because resizeAndTranslateBox is not included in the react-openalyers-fiber original catalogue */}
+      <resizeAndTranslateBox
+        args={{ selectedFeature }}
+        onInteractionEnd={async (feature: Feature<Polygon> | null) => {
+          if (feature != null) {
+            const [x, y, destinationX, destinationY] = feature
+              .getGeometry()
+              .getExtent();
+            const width = destinationX - x;
+            const height = destinationY - y;
+            const { id: labelId } = feature.getProperties();
+            try {
+              await perform(
+                updateLabelEffect({ labelId, x, y, width, height }, { client })
+              );
+            } catch (error) {
+              toast({
+                title: "Error updating bounding box",
+                description: error?.message,
+                isClosable: true,
+                status: "error",
+                position: "bottom-right",
+                duration: 10000,
+              });
+            }
+          }
+        }}
+      />
     </>
   );
 };
