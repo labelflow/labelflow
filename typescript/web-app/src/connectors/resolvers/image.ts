@@ -1,6 +1,7 @@
 import { v4 as uuidv4 } from "uuid";
 import memoize from "mem";
 import probe from "probe-image-size";
+import { isEmpty } from "lodash/fp";
 
 import type {
   MutationCreateImageArgs,
@@ -15,6 +16,7 @@ import {
   isInWindowScope,
   isInServiceWorkerScope,
 } from "../../utils/detect-scope";
+import { projectTypename } from "./project";
 
 declare let self: ServiceWorkerGlobalScope;
 
@@ -335,11 +337,32 @@ const createImage = async (
   );
 };
 
-const imagesAggregates = () => {
+// `parent` is the result of the previous resolver, for example, for project, it should contain `id`, `name`, `updatedAt` and `createdAt`
+const imagesAggregates = (parent: any) => {
+  // eslint-disable-next-line no-underscore-dangle
+  const typename = parent?.__typename;
+
+  if (typename === projectTypename) {
+    return {
+      where: {
+        projectId: parent.id,
+      },
+    };
+  }
+
   return {};
 };
 
-const totalCount = () => {
+const totalCount = (parent: {
+  where: {
+    // From equalityCriterias of dexie js
+    [key: string]: any;
+  };
+}) => {
+  if (!isEmpty(parent.where)) {
+    return db.image.where(parent.where).count();
+  }
+
   return db.image.count();
 };
 
@@ -361,4 +384,8 @@ export default {
   },
 
   ImagesAggregates: { totalCount },
+
+  Project: {
+    imagesAggregates,
+  },
 };

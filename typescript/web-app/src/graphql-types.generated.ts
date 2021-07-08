@@ -236,6 +236,7 @@ export type Project = {
   labelClasses: Array<LabelClass>;
   labelClassesCount: Scalars['Int'];
   labelsCount: Scalars['Int'];
+  imagesAggregates: ImagesAggregates;
 };
 
 export type ProjectCreateInput = {
@@ -295,6 +296,11 @@ export type QueryImagesArgs = {
   where?: Maybe<ImageWhereInput>;
   first?: Maybe<Scalars['Int']>;
   skip?: Maybe<Scalars['Int']>;
+};
+
+
+export type QueryImagesAggregatesArgs = {
+  where?: Maybe<ImageWhereInput>;
 };
 
 
@@ -601,6 +607,7 @@ export type ProjectResolvers<ContextType = any, ParentType extends ResolversPare
   labelClasses?: Resolver<Array<ResolversTypes['LabelClass']>, ParentType, ContextType>;
   labelClassesCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   labelsCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  imagesAggregates?: Resolver<ResolversTypes['ImagesAggregates'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -610,7 +617,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   examples?: Resolver<Array<ResolversTypes['Example']>, ParentType, ContextType, RequireFields<QueryExamplesArgs, never>>;
   image?: Resolver<ResolversTypes['Image'], ParentType, ContextType, RequireFields<QueryImageArgs, 'where'>>;
   images?: Resolver<Array<ResolversTypes['Image']>, ParentType, ContextType, RequireFields<QueryImagesArgs, never>>;
-  imagesAggregates?: Resolver<ResolversTypes['ImagesAggregates'], ParentType, ContextType>;
+  imagesAggregates?: Resolver<ResolversTypes['ImagesAggregates'], ParentType, ContextType, RequireFields<QueryImagesAggregatesArgs, never>>;
   imagesCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType, RequireFields<QueryImagesCountArgs, never>>;
   labelClass?: Resolver<ResolversTypes['LabelClass'], ParentType, ContextType, RequireFields<QueryLabelClassArgs, 'where'>>;
   labelClasses?: Resolver<Array<ResolversTypes['LabelClass']>, ParentType, ContextType, RequireFields<QueryLabelClassesArgs, never>>;

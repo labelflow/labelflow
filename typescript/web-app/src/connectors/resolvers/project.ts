@@ -10,6 +10,8 @@ import type {
 } from "../../graphql-types.generated";
 import { db, DbProject } from "../database";
 
+export const projectTypename = "Project";
+
 const getProjectById = async (id: string): Promise<DbProject> => {
   const project = await db.project.get(id);
 
@@ -17,7 +19,7 @@ const getProjectById = async (id: string): Promise<DbProject> => {
     throw new Error("No project with such id");
   }
 
-  return project;
+  return { ...project, __typename: projectTypename };
 };
 
 const getProjectByName = async (
@@ -29,7 +31,7 @@ const getProjectByName = async (
     throw new Error("No project with such name");
   }
 
-  return project;
+  return { ...project, __typename: projectTypename };
 };
 
 const getProjectFromWhereUniqueInput = async (

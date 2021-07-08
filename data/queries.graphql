@@ -11,7 +11,7 @@ type Query {
 
   image(where: ImageWhereUniqueInput!): Image!
   images(where: ImageWhereInput, first: Int, skip: Int): [Image!]!
-  imagesAggregates: ImagesAggregates!
+  imagesAggregates(where: ImageWhereInput): ImagesAggregates!
   imagesCount(where: ImageWhereInput): Int!
 
   labelClass(where: LabelClassWhereUniqueInput!): LabelClass!
