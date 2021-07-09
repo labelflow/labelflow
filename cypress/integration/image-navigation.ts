@@ -1,15 +1,4 @@
-import { db } from "../../typescript/web-app/src/connectors/database";
-
 describe("Image Navigation", () => {
-  beforeEach(() => {
-    return Promise.all([
-      db.image.clear(),
-      db.label.clear(),
-      db.labelClass.clear(),
-      db.file.clear(),
-    ]);
-  });
-
   it("Should let the user navigate within the image gallery", () => {
     // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
     cy.visit(

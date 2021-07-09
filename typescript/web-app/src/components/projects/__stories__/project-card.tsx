@@ -19,6 +19,7 @@ export default {
 };
 
 const property = {
+  url: "#",
   imageUrl: "https://bit.ly/2Z4KKcF",
   imageAlt: "Rear view of modern home with pool",
   projectName: "A project name",
@@ -30,7 +31,7 @@ const property = {
 };
 
 const Template = (args: any) => (
-  <Box background="gray.100" padding={4} w="sm">
+  <Box background="gray.100" padding={4}>
     <ProjectCard {...args} />
   </Box>
 );

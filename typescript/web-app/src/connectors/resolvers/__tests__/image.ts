@@ -1,18 +1,32 @@
 import { incrementMockedDate } from "@labelflow/dev-utils/mockdate";
 import gql from "graphql-tag";
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { mocked } from "ts-jest/utils";
 import probe from "probe-image-size";
 
 import { client } from "../../apollo-client-schema";
 import { setupTestsWithLocalDatabase } from "../../../utils/setup-local-db-tests";
 
-jest.mock("probe-image-size");
-
 setupTestsWithLocalDatabase();
+
+jest.mock("probe-image-size");
+const mockedProbeSync = mocked(probe.sync);
 
 describe("Image resolver test suite", () => {
   const testProjectId = "test project id";
 
   const createImage = async (name: String, projectId = testProjectId) => {
+    mockedProbeSync.mockReturnValue({
+      width: 42,
+      height: 36,
+      mime: "image/jpeg",
+      length: 1000,
+      hUnits: "px",
+      wUnits: "px",
+      url: "https://example.com/image.jpeg",
+      type: "jpg",
+    });
+
     const mutationResult = await client.mutate({
       mutation: gql`
         mutation createImage($file: Upload!, $name: String!, $projectId: ID!) {
@@ -113,7 +127,6 @@ describe("Image resolver test suite", () => {
       expect.objectContaining({
         id,
         name: "new test image",
-        url: "mockedUrl",
       })
     );
   });
@@ -165,7 +178,6 @@ describe("Image resolver test suite", () => {
       expect.objectContaining({
         id,
         name: "photo-1579513141590-c597876aefbc",
-        url: "mockedUrl",
       })
     );
   });

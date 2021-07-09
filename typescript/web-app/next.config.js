@@ -2,6 +2,8 @@ const withPWA = require('next-pwa');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
 const path = require("path");
 
+
+
 module.exports = withPWA({
   images: {
     deviceSizes: [

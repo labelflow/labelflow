@@ -29,7 +29,7 @@ const ProjectIndexPage = () => {
       });
     } else {
       router.replace({
-        pathname: `/projects`,
+        pathname: "/404",
       });
     }
   }, [error]);

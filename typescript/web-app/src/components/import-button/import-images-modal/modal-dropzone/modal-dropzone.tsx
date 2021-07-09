@@ -171,6 +171,7 @@ export const ImportImagesModalDropzone = ({
                     };
                   });
                 }
+
                 await fetch(target.uploadUrl, {
                   method: "PUT",
                   body: acceptedFile.file,

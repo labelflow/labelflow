@@ -1,7 +1,5 @@
 import { v4 as uuidv4 } from "uuid";
-import memoize from "mem";
 import probe from "probe-image-size";
-import { isEmpty } from "lodash/fp";
 
 import type {
   MutationCreateImageArgs,
@@ -12,59 +10,8 @@ import type {
 } from "../../graphql-types.generated";
 
 import { db, DbImage } from "../database";
-import {
-  isInWindowScope,
-  isInServiceWorkerScope,
-} from "../../utils/detect-scope";
+import { uploadsCacheName, getUploadTargetHttp } from "./upload";
 import { projectTypename } from "./project";
-
-declare let self: ServiceWorkerGlobalScope;
-
-export const getUrlFromFileId = memoize(
-  async (fileId: string): Promise<string> => {
-    if (isInWindowScope) {
-      // in window scope
-      const file = await db.file.get(fileId);
-      if (file === undefined) {
-        throw new Error("Cannot get url or undefined file");
-      }
-      const url = window.URL.createObjectURL(file.blob);
-      return url;
-    }
-    if (isInServiceWorkerScope) {
-      // in worker scope
-      return `${self.location.origin}/api/worker/files/${fileId}`;
-    }
-    throw new Error(
-      "Cannot determine if running in window scope or in worker scope, are you running in node js ?"
-    );
-  }
-);
-
-export const clearGetUrlFromFileIdMem = () => {
-  memoize.clear(getUrlFromFileId);
-};
-
-export const getFileIdFromUrl = (url: string): string | null => {
-  const urlLocation = new URL(url);
-  let currentLocation;
-  if (isInWindowScope) {
-    currentLocation = window.location;
-  }
-  if (isInServiceWorkerScope) {
-    currentLocation = self.location;
-  }
-  if (currentLocation === undefined) {
-    throw new Error(
-      "Cannot determine if running in window scope or in worker scope, are you running in node js ?"
-    );
-  }
-  if (currentLocation.origin === urlLocation.origin) {
-    return urlLocation.pathname.replace("/api/worker/files/", "");
-  }
-  // Return
-  return null;
-};
 
 export const getPaginatedImages = async (
   where?: Maybe<ImageWhereInput>,
@@ -98,16 +45,6 @@ export const labelsResolver = async ({ id }: DbImage) => {
   return getLabelsByImageId(id);
 };
 
-export const urlResolver = async (dbImage: DbImage) => {
-  if ("fileId" in dbImage) {
-    return getUrlFromFileId(dbImage.fileId);
-  }
-  if ("url" in dbImage) {
-    return dbImage.url;
-  }
-  throw new Error("Can't fin url of image which has no url nor file");
-};
-
 const image = async (_: any, args: QueryImageArgs) => {
   const entity = await db.image.get(args?.where?.id);
   if (entity === undefined) {
@@ -134,6 +71,68 @@ const images = async (_: any, args: QueryImagesArgs) => {
   return entitiesWithUrls;
 };
 
+/**
+ * Given a partial image, return a completed version of the image, probing it if necessary
+ */
+const probeImage = async ({
+  width,
+  height,
+  mimetype,
+  url,
+}: {
+  width: number | null | undefined;
+  height: number | null | undefined;
+  mimetype: string | null | undefined;
+  url: string;
+}): Promise<{
+  width: number;
+  height: number;
+  mimetype: string;
+}> => {
+  if (width && height && mimetype) {
+    return { width, height, mimetype };
+  }
+
+  // TODO: It would be nice to import "probe-image-size" asynchronously to reduce initial bundle size of sw, but webpack config todo.
+  // const probe = await import(/* webpackPrefetch: true */ "probe-image-size");
+
+  const cacheResult = await (await caches.open(uploadsCacheName)).match(url);
+
+  const fetchResult =
+    cacheResult ??
+    (await fetch(url, {
+      method: "GET",
+      mode: "cors",
+      headers: new Headers({
+        Accept: "image/tiff,image/jpeg,image/png,image/*,*/*;q=0.8",
+        "Sec-Fetch-Dest": "image",
+      }),
+      credentials: "omit",
+    }));
+
+  if (fetchResult.status !== 200) {
+    throw new Error(
+      `Could not fetch image at url ${url} properly, code ${fetchResult.status}`
+    );
+  }
+
+  const probeInput = new Uint8Array(await fetchResult.arrayBuffer());
+
+  const probeResult = probe.sync(probeInput as Buffer);
+
+  if (probeResult == null) {
+    throw new Error(
+      `Could not probe the external image at url ${url} it may be damaged or corrupted.`
+    );
+  }
+
+  return {
+    width: width ?? probeResult.width,
+    height: height ?? probeResult.height,
+    mimetype: mimetype ?? probeResult.mime,
+  };
+};
+
 // Mutations
 const createImage = async (
   _: any,
@@ -148,128 +147,40 @@ const createImage = async (
     mimetype,
     path,
     url,
-    createdAt,
+    externalUrl,
     projectId,
   } = args.data;
-
+  const now = args?.data?.createdAt ?? new Date().toISOString();
   const imageId = id ?? uuidv4();
-  const fileId = uuidv4();
-  const now = createdAt ?? new Date().toISOString();
+  let finalUrl: string | undefined;
 
-  if (file && !url) {
-    // File Content based upload
-    try {
-      await db.file.add({ id: fileId, blob: file });
-      const localUrl = await getUrlFromFileId(fileId);
-
-      const newEntity = await new Promise<DbImage>((resolve, reject) => {
-        const imageObject = new Image();
-
-        imageObject.onload = async () => {
-          const newImageEntity = {
-            createdAt: now,
-            updatedAt: now,
-            id: imageId,
-            path: path ?? (file as File).name,
-            mimetype: mimetype ?? file.type,
-            name: name ?? file.name,
-            width: width ?? imageObject.width,
-            height: height ?? imageObject.height,
-            fileId,
-            projectId,
-          };
-
-          await db.image.add(newImageEntity);
-          resolve(newImageEntity);
-        };
-        imageObject.onerror = async () => {
-          reject(
-            new Error(
-              "Could not load the image, it may be damaged or corrupted."
-            )
-          );
-          await db.file.delete(fileId);
-        };
-        imageObject.src = localUrl;
-      });
-
-      return newEntity;
-    } catch (e) {
-      throw new Error(
-        "File upload with a `file` field of type `Upload` is not supported on this server, upload with a `url` field of type `String` instead"
-      );
-    }
+  if (
+    !(
+      (!file && !externalUrl && url) ||
+      (!file && externalUrl && !url) ||
+      (file && !externalUrl && !url)
+    )
+  ) {
+    throw new Error(
+      "Image creation upload must include either a `file` field of type `Upload`, or a `url` field of type `String`, or a `externalUrl` field of type `String`"
+    );
   }
 
-  if (!file && url) {
-    // File URL based upload
-    const identifiedFileId = getFileIdFromUrl(url);
+  if (!file && !externalUrl && url) {
+    // No File Upload
+    finalUrl = url;
+  }
 
-    if (identifiedFileId) {
-      // Internal URL
-      const dbFile = await db.file.get(identifiedFileId);
+  if (!file && externalUrl && !url) {
+    // External file based upload
 
-      if (!dbFile) {
-        throw new Error(
-          `Could not find file at ${url}, did you upload it first to ${url} ?`
-        );
-      }
-
-      const { blob } = dbFile;
-
-      // Probe the file to get its dimensions and mimetype if not provided
-      let finalWidth = width;
-      let finalHeight = height;
-      let finalMimetype = mimetype;
-
-      if (!finalWidth || !finalHeight || !finalMimetype) {
-        const probeInput = new Uint8Array(await blob.arrayBuffer());
-
-        const probeResult = probe.sync(probeInput as Buffer);
-
-        if (probeResult == null) {
-          throw new Error(
-            `The image stored locally at ${url} may be damaged or corrupted.`
-          );
-        }
-
-        if (!finalWidth) finalWidth = probeResult.width;
-        if (!finalHeight) finalHeight = probeResult.height;
-        if (!finalMimetype) finalMimetype = probeResult.mime;
-      }
-
-      const newImageEntity: DbImage = {
-        createdAt: now,
-        updatedAt: now,
-        id: imageId,
-        url,
-        path: path ?? url,
-        mimetype: finalMimetype,
-        name: name ?? url.substring(url.lastIndexOf("/") + 1, url.indexOf("?")),
-        width: finalWidth,
-        height: finalHeight,
-        fileId: identifiedFileId,
-        projectId,
-      };
-
-      await db.image.add(newImageEntity);
-
-      return newImageEntity;
-    }
-
-    const fetchHeaders = new Headers();
-    fetchHeaders.append(
-      "Accept",
-      "image/tiff,image/jpeg,image/png,image/*,*/*;q=0.8"
-    );
-    fetchHeaders.append("Sec-Fetch-Dest", "image");
-    fetchHeaders.append("Cache-Control", "no-cache");
-
-    const fetchResult = await fetch(url, {
+    const fetchResult = await fetch(externalUrl, {
       method: "GET",
       mode: "cors",
-      cache: "no-cache",
-      headers: fetchHeaders,
+      headers: new Headers({
+        Accept: "image/tiff,image/jpeg,image/png,image/*,*/*;q=0.8",
+        "Sec-Fetch-Dest": "image",
+      }),
       credentials: "omit",
     });
 
@@ -278,52 +189,88 @@ const createImage = async (
         `Could not fetch image at url ${url} properly, code ${fetchResult.status}`
       );
     }
-    const blob = await fetchResult.blob();
 
-    await db.file.add({ id: fileId, blob });
+    const uploadTarget = await getUploadTargetHttp();
 
-    // Probe the file to get its dimensions and mimetype if not provided
-    let finalWidth = width;
-    let finalHeight = height;
-    let finalMimetype = mimetype;
-
-    if (!finalWidth || !finalHeight || !finalMimetype) {
-      const probeInput = new Uint8Array(await blob.arrayBuffer());
-
-      const probeResult = probe.sync(probeInput as Buffer);
-
-      if (probeResult == null) {
-        throw new Error(
-          `Could not probe the external image at url ${url} it may be damaged or corrupted.`
-        );
-      }
-
-      if (!finalWidth) finalWidth = probeResult.width;
-      if (!finalHeight) finalHeight = probeResult.height;
-      if (!finalMimetype) finalMimetype = probeResult.mime;
+    // eslint-disable-next-line no-underscore-dangle
+    if (uploadTarget.__typename !== "UploadTargetHttp") {
+      throw new Error(
+        "This Server does not support file upload. You can create images by providing a `file` directly in the `createImage` mutation"
+      );
     }
 
-    const newImageEntity: DbImage = {
-      createdAt: now,
-      updatedAt: now,
-      id: imageId,
-      url,
-      path: path ?? url,
-      mimetype: finalMimetype,
-      name: name ?? url.substring(url.lastIndexOf("/") + 1, url.indexOf("?")),
-      width: finalWidth,
-      height: finalHeight,
-      fileId,
-      projectId,
-    };
+    finalUrl = uploadTarget.downloadUrl;
 
-    await db.image.add(newImageEntity);
+    const responseOfGet = new Response(await fetchResult.blob(), {
+      status: 200,
+      statusText: "OK",
+      headers: new Headers({
+        "Content-Type":
+          fetchResult.headers.get("Content-Type") ?? "application/octet-stream",
+        "Content-Length": fetchResult.headers.get("Content-Length") ?? "0",
+      }),
+    });
 
-    return newImageEntity;
+    await (await caches.open(uploadsCacheName)).put(finalUrl, responseOfGet);
   }
-  throw new Error(
-    "File upload must include either a `file` field of type `Upload`, or a `url` field of type `String`"
-  );
+
+  if (file && !externalUrl && !url) {
+    // File Content based upload
+
+    const uploadTarget = await getUploadTargetHttp();
+
+    // eslint-disable-next-line no-underscore-dangle
+    if (uploadTarget.__typename !== "UploadTargetHttp") {
+      throw new Error(
+        "This Server does not support file upload. You can create images by providing a `file` directly in the `createImage` mutation"
+      );
+    }
+    finalUrl = uploadTarget.downloadUrl;
+
+    const response = new Response(file, {
+      status: 200,
+      statusText: "OK",
+      headers: new Headers({
+        "Content-Type": file.type ?? "application/octet-stream",
+        "Content-Length": file.size.toString() ?? "0",
+      }),
+    });
+
+    await (await caches.open(uploadsCacheName)).put(finalUrl, response);
+  }
+
+  // Probe the file to get its dimensions and mimetype if not provided
+  const imageMetaData = await probeImage({
+    width,
+    height,
+    mimetype,
+    url: finalUrl!,
+  });
+
+  const newImageEntity: DbImage = {
+    projectId,
+    createdAt: now,
+    updatedAt: now,
+    id: imageId,
+    url: finalUrl!,
+    externalUrl,
+    path: path ?? externalUrl ?? finalUrl!,
+    name:
+      name ??
+      externalUrl?.substring(
+        externalUrl?.lastIndexOf("/") + 1,
+        externalUrl?.indexOf("?")
+      ) ??
+      finalUrl!.substring(
+        finalUrl!.lastIndexOf("/") + 1,
+        finalUrl!.indexOf("?")
+      ),
+    ...imageMetaData,
+  };
+
+  await db.image.add(newImageEntity);
+
+  return newImageEntity;
 };
 
 const imagesAggregates = (parent: any) => {
@@ -359,7 +306,6 @@ export default {
 
   Image: {
     labels: labelsResolver,
-    url: urlResolver,
   },
 
   ImagesAggregates: { totalCount },

@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useLazyQuery } from "@apollo/client";
+import { useMutation, useLazyQuery } from "@apollo/client";
 import gql from "graphql-tag";
 import { useEffect, useState, useCallback, useRef } from "react";
 import debounce from "lodash/fp/debounce";
@@ -32,6 +32,7 @@ const createProjectMutation = gql`
 const getProjectByNameQuery = gql`
   query getProjectByName($name: String) {
     project(where: { name: $name }) {
+      id
       name
     }
   }
@@ -43,6 +44,7 @@ const getProjectsQuery = gql`
       id
       name
       images {
+        id
         url
       }
     }
@@ -59,16 +61,16 @@ export const CreateProjectModal = ({
   const [inputValue, setInputValue] = useState<string>("");
   const [projectName, setProjectName] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState<string>("");
-  const [hasAdded, setHasAdded] = useState(false);
 
   const [queryExistingProjects, { data: existingProject }] = useLazyQuery(
     getProjectByNameQuery
   );
-  const { refetch: refetchProjects } = useQuery(getProjectsQuery);
+
   const [createProjectMutate] = useMutation(createProjectMutation, {
     variables: {
       name: projectName,
     },
+    refetchQueries: [{ query: getProjectsQuery }],
   });
 
   const closeModal = useCallback(() => {
@@ -76,13 +78,6 @@ export const CreateProjectModal = ({
     setErrorMessage("");
     setInputValue("");
   }, []);
-
-  useEffect(() => {
-    if (hasAdded) {
-      refetchProjects();
-      setHasAdded(false);
-    }
-  }, [hasAdded]);
 
   const handleInputValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
@@ -135,7 +130,6 @@ export const CreateProjectModal = ({
         onSubmit={(e) => {
           e.preventDefault();
           createProject();
-          setHasAdded(true);
         }}
       >
         <ModalCloseButton />
@@ -168,7 +162,7 @@ export const CreateProjectModal = ({
             disabled={!canCreateProject()}
             aria-label="Create project"
           >
-            Start
+            Start Labelling
           </Button>
         </ModalFooter>
       </ModalContent>

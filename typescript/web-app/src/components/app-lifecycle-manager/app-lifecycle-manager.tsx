@@ -13,6 +13,10 @@ declare global {
 
 type Props = { assumeServiceWorkerActive: boolean };
 
+// See https://advancedweb.hu/how-to-add-timeout-to-a-promise-in-javascript/
+const timeout = <X,>(prom: Promise<X>, time: number): Promise<X> =>
+  Promise.race([prom, new Promise<X>((_r, rej) => setTimeout(rej, time))]);
+
 export const AppLifecycleManager = ({ assumeServiceWorkerActive }: Props) => {
   // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
   // This param can have several values:
@@ -85,25 +89,54 @@ export const AppLifecycleManager = ({ assumeServiceWorkerActive }: Props) => {
       }
 
       const setServiceWorkerIsActive = () => {
+        wb.removeEventListener("activated", setServiceWorkerIsActive);
+        wb.removeEventListener("controlling", setServiceWorkerIsActive);
         setIsServiceWorkerActive(true);
       };
 
-      const checkServiceWorkerStatus = async () => {
-        const sw = await wb.getSW();
-        if (
-          !(
-            (
-              sw.state === "activated" || // Nominal case, service worker already installed and running, no new service worker waiting
-              sw.state === "installed"
+      const checkServiceWorkerStatus = async (): Promise<void> => {
+        try {
+          if (!wb) {
+            throw new Error(
+              "Workbox is unavailable, are you on firefox in incognito mode?"
+            );
+          }
+
+          const sw = await timeout(wb.getSW(), 10000);
+
+          // Special case for potential rare case where the service worker
+          // stays stuck in the "activating" state. (Seen on Safari sometimes)
+          if (sw.state === "activating") {
+            await new Promise((_r, rej) => setTimeout(rej, 500));
+            if (sw.state === "activating") {
+              console.error(
+                "Forcing reload because service worker is stuck in activating state"
+              );
+              window.location.reload();
+            }
+          }
+
+          if (
+            !(
+              (
+                sw.state === "activated" || // Nominal case, service worker already installed and running, no new service worker waiting
+                sw.state === "installed"
+              )
+              // Service worker already installed and running, but there is a new service worker waiting
             )
-            // Service worker already installed and running, but there is a new service worker waiting
-          )
-        ) {
-          setIsServiceWorkerActive(false);
-          wb.addEventListener("activated", setServiceWorkerIsActive);
-        } else {
-          console.log("Service worker active");
+          ) {
+            setIsServiceWorkerActive(false);
+            wb.addEventListener("activated", setServiceWorkerIsActive);
+            wb.addEventListener("controlling", setServiceWorkerIsActive);
+            return;
+          }
+
           setIsServiceWorkerActive(true);
+        } catch (e) {
+          console.error(
+            "Forcing reload because service worker is unresponsive"
+          );
+          window.location.reload();
         }
       };
 
@@ -127,6 +160,7 @@ export const AppLifecycleManager = ({ assumeServiceWorkerActive }: Props) => {
           wb.removeEventListener("waiting", promptNewVersionAvailable);
           return;
         }
+
         setIsUpdateServiceWorkerModalOpen(true);
       };
 
@@ -143,6 +177,7 @@ export const AppLifecycleManager = ({ assumeServiceWorkerActive }: Props) => {
       return () => {
         wb.removeEventListener("waiting", promptNewVersionAvailable);
         wb.removeEventListener("activated", setServiceWorkerIsActive);
+        wb.removeEventListener("controlling", setServiceWorkerIsActive);
       };
     } catch (e) {
       handleError(e);

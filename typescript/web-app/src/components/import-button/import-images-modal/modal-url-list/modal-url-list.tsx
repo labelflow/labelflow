@@ -17,12 +17,16 @@ import { DroppedUrl, UploadStatuses } from "../types";
 
 const createImageFromUrlMutation = gql`
   mutation createImageMutation(
-    $url: String!
+    $externalUrl: String!
     $createdAt: DateTime
     $projectId: ID!
   ) {
     createImage(
-      data: { url: $url, createdAt: $createdAt, projectId: $projectId }
+      data: {
+        externalUrl: $externalUrl
+        createdAt: $createdAt
+        projectId: $projectId
+      }
     ) {
       id
     }
@@ -70,7 +74,7 @@ export const ImportImagesModalUrlList = ({
               await apolloClient.mutate({
                 mutation: createImageFromUrlMutation,
                 variables: {
-                  url: acceptedUrl.url,
+                  externalUrl: acceptedUrl.url,
                   createdAt: createdAt.toISOString(),
                   projectId,
                 },

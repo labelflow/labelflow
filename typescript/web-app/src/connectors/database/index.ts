@@ -9,11 +9,6 @@ import type {
   Project as GeneratedProject,
 } from "../../graphql-types.generated";
 
-export type DbFile = {
-  id: string;
-  blob: Blob;
-};
-
 export type DbImage =
   | (Omit<GeneratedImage, "url" | "labels"> & {
       fileId: Scalars["ID"];
@@ -40,7 +35,6 @@ export type DbProject = Omit<
 interface Database extends Dexie {
   example: Dexie.Table<DbExample, string>;
   image: Dexie.Table<DbImage, string>;
-  file: Dexie.Table<DbFile, string>;
   label: Dexie.Table<DbLabel, string>;
   labelClass: Dexie.Table<DbLabelClass, string>;
   project: Dexie.Table<DbProject, string>;

@@ -101,14 +101,14 @@ export const ExportModal = ({
               loading={loading}
               onClick={queryExportToCoco}
               colorScheme="brand"
-              logoSrc="/assets/export-formats/coco.png"
+              logoSrc="/static/export-formats/coco.png"
               title="Export to COCO"
               subtext="Annotation file used with Pytorch and Detectron 2"
             />
             <ExportFormatCard
               disabled
               colorScheme="gray"
-              logoSrc="/assets/export-formats/tensorflow-grey.png"
+              logoSrc="/static/export-formats/tensorflow-grey.png"
               title="Export to TensorFlow (soon)"
               subtext="TF Object Detection file in its human readable format"
             />

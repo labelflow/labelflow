@@ -7,8 +7,9 @@ input ImageCreateInput {
   mimetype: String
   height: Int
   width: Int
-  file: Upload # Either file or url are needed
-  url: String # Either file or url are needed
+  file: Upload # Either file or url or externalUrl are needed
+  url: String # Either file or url or externalUrl are needed
+  externalUrl: String # Either file or url or externalUrl are needed
 }
 
 input ImageWhereInput {

@@ -1,4 +1,4 @@
-import { Flex, Text, chakra } from "@chakra-ui/react";
+import { Flex, Text, chakra, Box } from "@chakra-ui/react";
 import { FaPlus } from "react-icons/fa";
 import { useQueryParam } from "use-query-params";
 
@@ -14,7 +14,12 @@ export const NewProjectCard = () => {
 
   // This card is flexible, so its width will depend on the width of its parent
   return (
-    <>
+    <Box
+      w="100%"
+      maxWidth={["100%", "100%", "50%", "33%", "25%"]}
+      boxSizing="border-box"
+      p={4}
+    >
       <CreateProjectModal
         isOpen={isOpen ?? false}
         onClose={() => setIsOpen(false, "replaceIn")}
@@ -38,6 +43,6 @@ export const NewProjectCard = () => {
           Create new project...
         </Text>
       </Flex>
-    </>
+    </Box>
   );
 };
