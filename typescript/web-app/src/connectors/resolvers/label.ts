@@ -38,7 +38,8 @@ const createLabel = async (
   _: any,
   args: MutationCreateLabelArgs
 ): Promise<Label> => {
-  const { id, imageId, x, y, height, width, labelClassId } = args.data;
+  const { id, imageId, x, y, height, width, labelClassId, geometry } =
+    args.data;
 
   // Since we don't have any constraint checks with Dexie
   // We need to ensure that the imageId and the labelClassId
@@ -77,6 +78,7 @@ const createLabel = async (
     imageId,
     x: boundedX,
     y: boundedY,
+    geometry,
     height: Math.min(imageHeight, y + height) - boundedY,
     width: Math.min(imageWidth, x + width) - boundedX,
   };

@@ -6,7 +6,7 @@ input LabelCreateInput {
   y: Float!
   width: Float!
   height: Float!
-  geometry: Geometry
+  geometry: Geometry!
 }
 
 input LabelWhereUniqueInput {
@@ -19,6 +19,7 @@ input LabelUpdateInput {
   y: Float
   width: Float
   height: Float
+  geometry: Geometry
 }
 
 input Geometry {

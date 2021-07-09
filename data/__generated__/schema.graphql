@@ -84,6 +84,7 @@ type Label {
   y: Float!
   height: Float!
   width: Float!
+  geometry: Geometry!
 }
 
 type LabelClass {
@@ -114,7 +115,7 @@ input LabelCreateInput {
   y: Float!
   width: Float!
   height: Float!
-  geometry: Geometry
+  geometry: Geometry!
 }
 
 input LabelUpdateInput {
@@ -123,6 +124,7 @@ input LabelUpdateInput {
   y: Float
   width: Float
   height: Float
+  geometry: Geometry
 }
 
 input LabelWhereUniqueInput {

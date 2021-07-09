@@ -32,6 +32,7 @@ const getImageLabelsQuery = gql`
           id
           color
         }
+        geometry
       }
     }
   }
@@ -216,30 +217,32 @@ export const Labels = ({
     <>
       <olLayerVector>
         <olSourceVector ref={sourceVectorLabelsRef}>
-          {labels.map(({ id, x, y, width, height, labelClass }: Label) => {
-            const isSelected = id === selectedLabelId;
-            const labelClassColor = labelClass?.color ?? noneClassColor;
-            const style = new Style({
-              fill: new Fill({
-                color: `${labelClassColor}${isSelected ? "40" : "10"}`,
-              }),
-              stroke: new Stroke({
-                color: labelClassColor,
-                width: 2,
-              }),
-              zIndex: isSelected ? 2 : 1,
-            });
+          {labels.map(
+            ({ id, x, y, width, height, labelClass, geometry }: Label) => {
+              const isSelected = id === selectedLabelId;
+              const labelClassColor = labelClass?.color ?? noneClassColor;
+              const style = new Style({
+                fill: new Fill({
+                  color: `${labelClassColor}${isSelected ? "40" : "10"}`,
+                }),
+                stroke: new Stroke({
+                  color: labelClassColor,
+                  width: 2,
+                }),
+                zIndex: isSelected ? 2 : 1,
+              });
 
-            return (
-              <olFeature
-                key={id}
-                id={id}
-                properties={{ isSelected }}
-                geometry={fromExtent([x, y, x + width, y + height])}
-                style={style}
-              />
-            );
-          })}
+              return (
+                <olFeature
+                  key={id}
+                  id={id}
+                  properties={{ isSelected }}
+                  geometry={geometry}
+                  style={style}
+                />
+              );
+            }
+          )}
         </olSourceVector>
       </olLayerVector>
     </>

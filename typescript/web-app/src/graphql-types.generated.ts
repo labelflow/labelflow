@@ -104,6 +104,7 @@ export type Label = {
   y: Scalars['Float'];
   height: Scalars['Float'];
   width: Scalars['Float'];
+  geometry: Geometry;
 };
 
 export type LabelClass = {
@@ -135,7 +136,7 @@ export type LabelCreateInput = {
   y: Scalars['Float'];
   width: Scalars['Float'];
   height: Scalars['Float'];
-  geometry?: Maybe<Geometry>;
+  geometry: Geometry;
 };
 
 export type LabelUpdateInput = {
@@ -144,6 +145,7 @@ export type LabelUpdateInput = {
   y?: Maybe<Scalars['Float']>;
   width?: Maybe<Scalars['Float']>;
   height?: Maybe<Scalars['Float']>;
+  geometry?: Maybe<Geometry>;
 };
 
 export type LabelWhereUniqueInput = {
@@ -538,6 +540,7 @@ export type LabelResolvers<ContextType = any, ParentType extends ResolversParent
   y?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   height?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   width?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  geometry?: Resolver<ResolversTypes['Geometry'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
