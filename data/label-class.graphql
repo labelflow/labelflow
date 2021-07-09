@@ -7,3 +7,7 @@ input LabelClassCreateInput {
 input LabelClassWhereUniqueInput {
   id: ID!
 }
+
+type LabelClassesAggregates {
+  totalCount: Int!
+}

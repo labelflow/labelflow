@@ -82,10 +82,19 @@ const deleteLabelClass = async (_: any, args: MutationDeleteLabelClassArgs) => {
   return labelClassToDelete;
 };
 
+const labelClassesAggregates = () => {
+  return {};
+};
+
+const totalCount = () => {
+  return db.labelClass.count();
+};
+
 export default {
   Query: {
     labelClass,
     labelClasses,
+    labelClassesAggregates,
   },
 
   Mutation: {
@@ -96,4 +105,6 @@ export default {
   LabelClass: {
     labels,
   },
+
+  LabelClassesAggregates: { totalCount },
 };

@@ -1,7 +1,7 @@
 import { IconButton, Tooltip, ButtonProps, chakra } from "@chakra-ui/react";
 import { FaRegKeyboard } from "react-icons/fa";
 import { useQueryParam } from "use-query-params";
-import { BoolParam } from "../../../../utils/query-param-bool";
+import { BoolParam } from "../../utils/query-param-bool";
 import { KeymapModal } from "./keymap-modal";
 
 const KeymapIcon = chakra(FaRegKeyboard);

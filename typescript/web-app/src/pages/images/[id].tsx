@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import { useQuery } from "@apollo/client";
 import {
   Text,
@@ -16,6 +16,9 @@ import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import { RiArrowRightSLine } from "react-icons/ri";
 import NextLink from "next/link";
+import { KeymapButton } from "../../components/keymap-button";
+import { ImportButton } from "../../components/import-button";
+import { ExportButton } from "../../components/export-button";
 import { Meta } from "../../components/meta";
 import { Layout } from "../../components/layout";
 import type { Image } from "../../graphql-types.generated";
@@ -94,6 +97,13 @@ const ImagePage = () => {
               <Text>{imageName}</Text>
             </BreadcrumbItem>
           </Breadcrumb>
+        }
+        topBarRightContent={
+          <>
+            <KeymapButton />
+            <ImportButton />
+            <ExportButton />
+          </>
         }
       >
         <Flex height="100%" flexDirection="column">

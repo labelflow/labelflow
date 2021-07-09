@@ -4,13 +4,21 @@ import { TopBar } from "./top-bar";
 
 export type Props = {
   topBarLeftContent?: ReactNode;
+  topBarRightContent?: ReactNode;
   children: ReactNode;
 };
 
-export const Layout = ({ children, topBarLeftContent }: Props) => {
+export const Layout = ({
+  children,
+  topBarLeftContent,
+  topBarRightContent,
+}: Props) => {
   return (
     <Flex direction="column" h="100vh">
-      <TopBar leftContent={topBarLeftContent} />
+      <TopBar
+        leftContent={topBarLeftContent}
+        rightContent={topBarRightContent}
+      />
       <Box as="main" bg="gray.100" flex="1">
         {children}
       </Box>
