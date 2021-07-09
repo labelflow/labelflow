@@ -113,19 +113,29 @@ export class ResizeAndTranslateBox extends PointerInteraction {
             destY,
           ]);
         case "topLeft":
-          return fromExtent([newX, y, destX, newY]);
+          return fromExtent([
+            Math.min(destX, newX),
+            y,
+            destX,
+            Math.max(y, newY),
+          ]);
         case "topRight":
-          return fromExtent([x, y, newX, newY]);
+          return fromExtent([x, y, Math.max(x, newX), Math.max(y, newY)]);
         case "bottomRight":
-          return fromExtent([x, newY, newX, destY]);
+          return fromExtent([
+            x,
+            Math.min(destY, newY),
+            Math.max(x, newX),
+            destY,
+          ]);
         case "left":
-          return fromExtent([newX, y, destX, destY]);
+          return fromExtent([Math.min(destX, newX), y, destX, destY]);
         case "right":
-          return fromExtent([x, y, newX, destY]);
+          return fromExtent([x, y, Math.max(x, newX), destY]);
         case "top":
-          return fromExtent([x, y, destX, newY]);
+          return fromExtent([x, y, destX, Math.max(y, newY)]);
         case "bottom":
-          return fromExtent([x, newY, destX, destY]);
+          return fromExtent([x, Math.min(destY, newY), destX, destY]);
         case "feature":
           if (this.lastTranslateCoordinates != null) {
             const deltaX = newX - this.lastTranslateCoordinates[0];
