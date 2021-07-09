@@ -329,38 +329,6 @@ describe("LabelClass resolver test suite", () => {
     ).toEqual([2, 1]);
   });
 
-  test("It returns the correct count of labelClasses", async () => {
-    await Promise.all([
-      createLabelClass({
-        name: "some labelClass",
-        color: "#ff0000",
-        projectId: "a project id",
-      }),
-      createLabelClass({
-        name: "another labelClass",
-        color: "#ff0000",
-        projectId: "a project id",
-      }),
-      createLabelClass({
-        name: "last labelClass",
-        color: "#ff0000",
-        projectId: "a project id",
-      }),
-    ]);
-
-    const queryResult = await client.query({
-      query: gql`
-        query getLabelClassesNumber {
-          labelClassesAggregates {
-            totalCount
-          }
-        }
-      `,
-    });
-
-    expect(queryResult.data.labelClassesAggregates.totalCount).toEqual(3);
-  });
-
   it("should query label classes linked to a project", async () => {
     const labelClassId2 = await createLabelClass({
       name: "second labelClass",
