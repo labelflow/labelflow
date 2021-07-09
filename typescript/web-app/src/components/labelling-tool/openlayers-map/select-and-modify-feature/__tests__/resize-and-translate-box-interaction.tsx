@@ -1,64 +1,76 @@
+/* eslint-disable import/first */
+// @ts-ignore Needs to be done before ol is imported
+global.URL.createObjectURL = jest.fn(() => "mockedUrl");
+
+import { render } from "@testing-library/react";
 import { Polygon } from "ol/geom";
-import { Feature, Map, MapBrowserEvent, View } from "ol";
-import { Interaction } from "ol/interaction";
-import { TranslateEvent } from "ol/interaction/Translate";
-import VectorSource from "ol/source/Vector";
-import VectorLayer from "ol/layer/Vector";
+import { Feature, MapBrowserEvent, Map as olMap } from "ol";
+import { Map, extend } from "@labelflow/react-openlayers-fiber";
+// import { Interaction } from "ol/interaction";
+// import { TranslateEvent } from "ol/interaction/Translate";
+// import VectorSource from "ol/source/Vector";
+// import VectorLayer from "ol/layer/Vector";
 import PointerInteraction from "ol/interaction/Pointer";
 import { ResizeAndTranslateBox } from "../resize-and-translate-box-interaction";
 
+// Extend react-openlayers-catalogue to include resize and translate interaction
+extend({
+  ResizeAndTranslateBox: { object: ResizeAndTranslateBox, kind: "Interaction" },
+});
+
 describe("Resize and translate box interaction", function () {
   let target: HTMLDivElement;
-  let map: Map;
+  let mapRef: { current: olMap };
   let source;
   let features: Feature<Polygon>[];
+  let resizeAndTranslate: ResizeAndTranslateBox;
 
   const width = 360;
   const height = 180;
 
   beforeEach(function (done) {
-    target = document.createElement("div");
-    const { style } = target;
-    style.position = "absolute";
-    style.left = "-1000px";
-    style.top = "-1000px";
-    style.width = `${width}px`;
-    style.height = `${height}px`;
-    document.body.appendChild(target);
-    source = new VectorSource();
-    features = [
-      new Feature<Polygon>({
-        geometry: new Polygon([
-          [
-            [10, 10],
-            [10, 30],
-            [20, 30],
-            [20, 10],
-            [10, 10],
-          ],
-        ]),
-      }),
-    ];
-    source.addFeatures(features);
-    const layer = new VectorLayer({ source });
-    map = new Map({
-      target,
-      layers: [layer],
-      view: new View({
-        projection: "EPSG:4326",
-        center: [0, 0],
-        resolution: 1,
-      }),
-    });
-    map.once("postrender", function () {
-      done();
-    });
+    // target = document.createElement("div");
+    // const { style } = target;
+    // style.position = "absolute";
+    // style.left = "-1000px";
+    // style.top = "-1000px";
+    // style.width = `${width}px`;
+    // style.height = `${height}px`;
+    // document.body.appendChild(target);
+    // source = new VectorSource();
+    // features = [
+    //   new Feature<Polygon>({
+    //     geometry: new Polygon([
+    //       [
+    //         [10, 10],
+    //         [10, 30],
+    //         [20, 30],
+    //         [20, 10],
+    //         [10, 10],
+    //       ],
+    //     ]),
+    //   }),
+    // ];
+    // source.addFeatures(features);
+    // const layer = new VectorLayer({ source });
+    // map = new Map({
+    //   target,
+    //   layers: [layer],
+    //   view: new View({
+    //     projection: "EPSG:4326",
+    //     center: [0, 0],
+    //     resolution: 1,
+    //   }),
+    // });
+    // map.once("postrender", function () {
+    //   done();
+    // });
   });
 
-  afterEach(function () {
-    map?.dispose();
-    document.body.removeChild(target);
-  });
+  // afterEach(function () {
+  //   mapRef?.current.dispose();
+  //   document.body.removeChild(target);
+  // });
 
   /**
    * Simulates a browser event on the map viewport.  The client x/y location
@@ -74,11 +86,11 @@ describe("Resize and translate box interaction", function () {
     y: number,
     opt_shiftKey: boolean = false
   ) {
-    const viewport = map?.getViewport();
+    const viewport = mapRef?.current.getViewport();
     // calculated in case body has top < 0 (test runner with small window)
     const position = viewport.getBoundingClientRect();
     const shiftKey = opt_shiftKey !== undefined ? opt_shiftKey : false;
-    const event = new MapBrowserEvent(type, map, {
+    const event = new MapBrowserEvent(type, mapRef.current, {
       type,
       target: viewport.firstChild,
       pointerId: 0,
@@ -87,12 +99,13 @@ describe("Resize and translate box interaction", function () {
       shiftKey,
       preventDefault() {},
     });
-    map.handleMapBrowserEvent(event);
+    console.log("Hello", mapRef.current);
+    mapRef.current.handleMapBrowserEvent(event);
   }
 
   describe("constructor", function () {
     it("creates a new interaction", function () {
-      const resizeAndTranslate = new ResizeAndTranslateBox({
+      resizeAndTranslate = new ResizeAndTranslateBox({
         selectedFeature: features[0],
       });
 
@@ -103,14 +116,40 @@ describe("Resize and translate box interaction", function () {
 
   describe("moving features, with features option", function () {
     beforeEach(function () {
-      const resizeAndTranslate = new ResizeAndTranslateBox({
-        selectedFeature: features[0],
+      // @ts-ignore
+      render(<resizeAndTranslateBox />, {
+        wrapper: ({ children }) => (
+          <Map
+            args={{
+              interactions: [],
+              features: [
+                new Feature<Polygon>({
+                  geometry: new Polygon([
+                    [
+                      [10, 10],
+                      [10, 30],
+                      [20, 30],
+                      [20, 10],
+                      [10, 10],
+                    ],
+                  ]),
+                }),
+              ],
+            }}
+            ref={(map) => {
+              if (map != null) {
+                mapRef = { current: map };
+              }
+            }}
+          >
+            {children}
+          </Map>
+        ),
       });
-      map.addInteraction(resizeAndTranslate);
     });
 
     it.only("moves a selected feature", function () {
-      simulateEvent("pointermove", 15, 15);
+      simulateEvent("pointermove", 10, 20);
       simulateEvent("pointerdown", 15, 15);
       simulateEvent("pointerdrag", 40, 40);
       simulateEvent("pointerup", 40, 40);
