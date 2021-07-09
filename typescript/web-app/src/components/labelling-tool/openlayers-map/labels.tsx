@@ -5,7 +5,6 @@ import gql from "graphql-tag";
 import { Vector as OlSourceVector } from "ol/source";
 import GeoJSON from "ol/format/GeoJSON";
 import { Geometry } from "ol/geom";
-import { fromExtent } from "ol/geom/Polygon";
 import { Fill, Stroke, Style } from "ol/style";
 import { useHotkeys } from "react-hotkeys-hook";
 
