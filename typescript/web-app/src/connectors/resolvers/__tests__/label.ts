@@ -467,6 +467,86 @@ describe("Label resolver test suite", () => {
       expect.objectContaining({ ...labelData, id: labelId })
     );
   });
+
+  test("Create label should fail if called with bounding box out of image bounds", async () => {
+    const imageId = await createImage("an image");
+
+    // x out of bounds
+    await expect(
+      createLabel({
+        x: -300,
+        width: 50,
+        y: 10,
+        height: 20,
+        imageId,
+      })
+    ).rejects.toThrow("Bounding box out of image bounds");
+    await expect(
+      createLabel({
+        x: imageWidth + 10,
+        width: 50,
+        y: 10,
+        height: 20,
+        imageId,
+      })
+    ).rejects.toThrow("Bounding box out of image bounds");
+    // y out of bounds
+    await expect(
+      createLabel({
+        x: 10,
+        width: 10,
+        y: -100,
+        height: 10,
+        imageId,
+      })
+    ).rejects.toThrow("Bounding box out of image bounds");
+    await expect(
+      createLabel({
+        x: 10,
+        width: 10,
+        y: imageHeight + 10,
+        height: 20,
+        imageId,
+      })
+    ).rejects.toThrow("Bounding box out of image bounds");
+  });
+
+  test("It should resize bounding box to image size when it is bigger", async () => {
+    const labelId = "my-label-id";
+
+    const imageId = await createImage("an-image");
+    await createLabel({
+      x: -10,
+      width: imageWidth + 10 + 10,
+      y: -10,
+      height: imageHeight + 10 + 10,
+      id: labelId,
+      imageId,
+    });
+
+    const queryResult = await client.query({
+      query: gql`
+        query getLabel($id: ID!) {
+          label(where: { id: $id }) {
+            id
+            x
+            y
+            width
+            height
+          }
+        }
+      `,
+      variables: {
+        id: labelId,
+      },
+    });
+
+    const { x, y, width, height } = queryResult.data.label;
+    expect(x).toEqual(0);
+    expect(y).toEqual(0);
+    expect(width).toEqual(imageWidth);
+    expect(height).toEqual(imageHeight);
+  });
 });
 
 describe("LabelsAggregates resolver test suite", () => {
@@ -506,7 +586,7 @@ describe("LabelsAggregates resolver test suite", () => {
     expect(queryResult.data.labelsAggregates.totalCount).toEqual(1);
   });
 
-  test("totalCount should be 1 after creation of one label", async () => {
+  test("totalCount should be 2 after creation of two labels", async () => {
     const imageId = await createImage("an image");
 
     await createLabel({
@@ -533,84 +613,4 @@ describe("LabelsAggregates resolver test suite", () => {
 
     expect(queryResult.data.labelsAggregates.totalCount).toEqual(2);
   });
-});
-
-test("Create label should fail if called with bounding box out of image bounds", async () => {
-  const imageId = await createImage("an image");
-
-  // x out of bounds
-  await expect(
-    createLabel({
-      x: -300,
-      width: 50,
-      y: 10,
-      height: 20,
-      imageId,
-    })
-  ).rejects.toThrow("Bounding box out of image bounds");
-  await expect(
-    createLabel({
-      x: imageWidth + 10,
-      width: 50,
-      y: 10,
-      height: 20,
-      imageId,
-    })
-  ).rejects.toThrow("Bounding box out of image bounds");
-  // y out of bounds
-  await expect(
-    createLabel({
-      x: 10,
-      width: 10,
-      y: -100,
-      height: 10,
-      imageId,
-    })
-  ).rejects.toThrow("Bounding box out of image bounds");
-  await expect(
-    createLabel({
-      x: 10,
-      width: 10,
-      y: imageHeight + 10,
-      height: 20,
-      imageId,
-    })
-  ).rejects.toThrow("Bounding box out of image bounds");
-});
-
-test("It should resize bounding box to image size when it is bigger", async () => {
-  const labelId = "my-label-id";
-
-  const imageId = await createImage("an-image");
-  await createLabel({
-    x: -10,
-    width: imageWidth + 10 + 10,
-    y: -10,
-    height: imageHeight + 10 + 10,
-    id: labelId,
-    imageId,
-  });
-
-  const queryResult = await client.query({
-    query: gql`
-      query getLabel($id: ID!) {
-        label(where: { id: $id }) {
-          id
-          x
-          y
-          width
-          height
-        }
-      }
-    `,
-    variables: {
-      id: labelId,
-    },
-  });
-
-  const { x, y, width, height } = queryResult.data.label;
-  expect(x).toEqual(0);
-  expect(y).toEqual(0);
-  expect(width).toEqual(imageWidth);
-  expect(height).toEqual(imageHeight);
 });

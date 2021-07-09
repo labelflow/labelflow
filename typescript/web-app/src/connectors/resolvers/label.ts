@@ -121,30 +121,21 @@ const updateLabel = async (_: any, args: MutationUpdateLabelArgs) => {
   return getLabelById(labelId);
 };
 
-// `parent` is the result of the previous resolver, for example, for project, it should contain `id`, `name`, `updatedAt` and `createdAt`
 const labelsAggregates = (parent: any) => {
+  // Forward `parent` to chained resolvers if it exists
+  return parent ?? {};
+};
+
+const totalCount = async (parent: any) => {
   // eslint-disable-next-line no-underscore-dangle
   const typename = parent?.__typename;
 
   if (typename === projectTypename) {
-    return {
-      where: {
+    const imagesOfProject = await db.image
+      .where({
         projectId: parent.id,
-      },
-    };
-  }
-
-  return {};
-};
-
-const totalCount = async (parent: {
-  where: {
-    // From equalityCriterias of dexie js
-    [key: string]: any;
-  };
-}) => {
-  if (!isEmpty(parent.where)) {
-    const imagesOfProject = await db.image.where(parent.where).toArray();
+      })
+      .toArray();
 
     return db.label
       .filter((currentLabel) =>
