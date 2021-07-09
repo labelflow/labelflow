@@ -80,19 +80,51 @@ describe("Resize and translate box interaction", () => {
       .trigger("pointerup", { eventConstructor: "PointerEvent", force: true });
   });
 
-  // it("resizes the label from one corner", () => {
-  //   // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
-  //   cy.visit(
-  //     `/images/${imageId}?modal-welcome=closed&modal-update-service-worker=update`
-  //   );
-  //   cy.get('[aria-label="loading indicator"]').should("not.exist");
-  //   cy.get('[aria-label="Selection tool"]').click();
-  //   // Select label
-  //   cy.get("main").click(500, 150);
-  //   // Click and drag to resize
-  //   cy.get("canvas")
-  //     .trigger("pointerdown", 250, 0, { eventConstructor: "PointerEvent" })
-  //     .trigger("pointermove", 500, 300, { eventConstructor: "PointerEvent" })
-  //     .trigger("pointerUp", { eventConstructor: "PointerEvent" });
-  // });
+  it("it fails to translate the label outside of the image", () => {
+    // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
+    cy.visit(
+      `/images/${imageId}?modal-welcome=closed&modal-update-service-worker=update`
+    );
+    cy.get('[aria-label="loading indicator"]').should("not.exist");
+    cy.get('[aria-label="Selection tool"]').click();
+    // Select label
+    cy.get("main").click(500, 150);
+    // Click and drag to translate
+    cy.get("canvas")
+      .trigger("pointerdown", 500, 150, { eventConstructor: "PointerEvent" })
+      .trigger("pointermove", 100, 150, { eventConstructor: "PointerEvent" })
+      .trigger("pointerup", { eventConstructor: "PointerEvent", force: true });
+  });
+
+  it("resizes the label from one corner", () => {
+    // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
+    cy.visit(
+      `/images/${imageId}?modal-welcome=closed&modal-update-service-worker=update`
+    );
+    cy.get('[aria-label="loading indicator"]').should("not.exist");
+    cy.get('[aria-label="Selection tool"]').click();
+    // Select label
+    cy.get("main").click(500, 150);
+    // Click and drag to resize
+    cy.get("canvas")
+      .trigger("pointerdown", 590, 215, { eventConstructor: "PointerEvent" })
+      .trigger("pointermove", 600, 300, { eventConstructor: "PointerEvent" })
+      .trigger("pointerup", { eventConstructor: "PointerEvent" });
+  });
+
+  it("resizes the label from one edge", () => {
+    // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
+    cy.visit(
+      `/images/${imageId}?modal-welcome=closed&modal-update-service-worker=update`
+    );
+    cy.get('[aria-label="loading indicator"]').should("not.exist");
+    cy.get('[aria-label="Selection tool"]').click();
+    // Select label
+    cy.get("main").click(500, 150);
+    // Click and drag to resize
+    cy.get("canvas")
+      .trigger("pointerdown", 590, 150, { eventConstructor: "PointerEvent" })
+      .trigger("pointermove", 550, 150, { eventConstructor: "PointerEvent" })
+      .trigger("pointerup", { eventConstructor: "PointerEvent" });
+  });
 });
