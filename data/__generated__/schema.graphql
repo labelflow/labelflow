@@ -32,6 +32,7 @@ type Image {
   createdAt: DateTime!
   updatedAt: DateTime!
   url: String!
+  externalUrl: String
   name: String!
   path: String!
   mimetype: String!
@@ -51,6 +52,7 @@ input ImageCreateInput {
   width: Int
   file: Upload
   url: String
+  externalUrl: String
 }
 
 input ImageWhereInput {
@@ -97,6 +99,10 @@ input LabelClassCreateInput {
 
 input LabelClassWhereUniqueInput {
   id: ID!
+}
+
+type LabelClassesAggregates {
+  totalCount: Int!
 }
 
 input LabelCreateInput {
@@ -171,6 +177,7 @@ type Query {
   imagesAggregates: ImagesAggregates!
   labelClass(where: LabelClassWhereUniqueInput!): LabelClass!
   labelClasses(first: Int, skip: Int): [LabelClass!]!
+  labelClassesAggregates: LabelClassesAggregates!
   labelsAggregates: LabelsAggregates!
   label(where: LabelWhereUniqueInput!): Label!
   project(where: ProjectWhereUniqueInput!): Project!

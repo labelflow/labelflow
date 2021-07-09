@@ -27,6 +27,7 @@
  */
 interface ExtendableEvent extends Event {
   waitUntil(fn: Promise<any>): void;
+  request: Request;
 }
 
 interface PushSubscriptionChangeEvent extends ExtendableEvent {

@@ -50,6 +50,7 @@ export const ImportImagesModal = ({
       onClose={() => {
         if (!isCloseable) return;
         onClose();
+        setHasUploaded(false);
       }}
       isCentered
     >

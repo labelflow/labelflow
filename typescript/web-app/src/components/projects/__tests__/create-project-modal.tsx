@@ -18,13 +18,13 @@ const Wrapper = ({ children }: PropsWithChildren<{}>) => (
 
 setupTestsWithLocalDatabase();
 
-jest.mock("lodash/fp/debounce", () => jest.fn((nr, fn) => fn));
+jest.mock("lodash/fp/debounce", () => jest.fn((_, fn) => fn));
 
-function renderModal(props = {}) {
+const renderModal = (props = {}) => {
   render(<CreateProjectModal isOpen onClose={() => {}} {...props} />, {
     wrapper: Wrapper,
   });
-}
+};
 
 test("should initialize modal with an empty input and a disabled button", async () => {
   renderModal();
@@ -50,7 +50,9 @@ test("should enable start button when project name is not empty", async () => {
 
   const button = screen.getByLabelText(/create project/i);
 
-  expect(button).not.toHaveAttribute("disabled");
+  await waitFor(() => {
+    expect(button).not.toHaveAttribute("disabled");
+  });
 });
 
 test("should create a project when the form is submitted", async () => {

@@ -16,7 +16,9 @@ import {
 } from "@chakra-ui/react";
 import { isEmpty } from "lodash/fp";
 import { RiArrowRightSLine } from "react-icons/ri";
+import { KeymapButton } from "../../components/keymap-button";
 import { ImportButton } from "../../components/import-button";
+import { ExportButton } from "../../components/export-button";
 import { Meta } from "../../components/meta";
 import { Layout } from "../../components/layout";
 import type { Image as ImageType } from "../../graphql-types.generated";
@@ -49,6 +51,13 @@ const ImagesPage = () => {
               <Text>Images</Text>
             </BreadcrumbItem>
           </Breadcrumb>
+        }
+        topBarRightContent={
+          <>
+            <KeymapButton />
+            <ImportButton />
+            <ExportButton />
+          </>
         }
       >
         {!imagesResult && (

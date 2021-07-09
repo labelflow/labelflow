@@ -1,6 +1,6 @@
-import { useMutation, useQuery } from "@apollo/client";
+import { useMutation, useLazyQuery } from "@apollo/client";
 import gql from "graphql-tag";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import debounce from "lodash/fp/debounce";
 
 import {
@@ -22,7 +22,7 @@ import {
 const debounceTime = 200;
 
 const createProjectMutation = gql`
-  mutation createProject($name: String) {
+  mutation createProject($name: String!) {
     createProject(data: { name: $name }) {
       id
     }
@@ -32,7 +32,21 @@ const createProjectMutation = gql`
 const getProjectByNameQuery = gql`
   query getProjectByName($name: String) {
     project(where: { name: $name }) {
+      id
       name
+    }
+  }
+`;
+
+const getProjectsQuery = gql`
+  query getProjects {
+    projects {
+      id
+      name
+      images {
+        id
+        url
+      }
     }
   }
 `;
@@ -44,32 +58,45 @@ export const CreateProjectModal = ({
   isOpen?: boolean;
   onClose?: () => void;
 }) => {
+  const [inputValue, setInputValue] = useState<string>("");
   const [projectName, setProjectName] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState<string>("");
+
+  const [queryExistingProjects, { data: existingProject }] = useLazyQuery(
+    getProjectByNameQuery
+  );
+
+  const [createProjectMutate] = useMutation(createProjectMutation, {
+    variables: {
+      name: projectName,
+    },
+    refetchQueries: [{ query: getProjectsQuery }],
+  });
 
   const closeModal = useCallback(() => {
     onClose();
     setErrorMessage("");
-    setProjectName("");
+    setInputValue("");
   }, []);
 
-  const handleChangeProjectName = useCallback(
-    debounce(debounceTime, (e: any) => {
-      setProjectName(e.target.value.trim());
-    }),
-    []
-  );
+  const handleInputValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValue(e.target.value);
+    setProjectName(e.target.value.trim());
+  };
 
-  const { data: existingProject } = useQuery(getProjectByNameQuery, {
-    variables: { name: projectName },
-    skip: projectName === "",
-  });
+  const debouncedQuery = useRef(
+    debounce(debounceTime, (nextName: string) => {
+      queryExistingProjects({
+        variables: { name: nextName },
+      });
+    })
+  ).current;
 
-  const [mutate] = useMutation(createProjectMutation, {
-    variables: {
-      name: projectName,
-    },
-  });
+  useEffect(() => {
+    if (projectName === "") return;
+
+    debouncedQuery(projectName);
+  }, [projectName]);
 
   useEffect(() => {
     if (existingProject != null) {
@@ -83,7 +110,7 @@ export const CreateProjectModal = ({
     if (projectName === "") return;
 
     try {
-      await mutate();
+      await createProjectMutate();
 
       closeModal();
     } catch (e) {
@@ -117,11 +144,12 @@ export const CreateProjectModal = ({
           <FormControl isInvalid={!isInputValid()} isRequired>
             <FormLabel>Name</FormLabel>
             <Input
-              defaultValue={projectName}
+              value={inputValue}
               placeholder="Project name"
               size="md"
-              onChange={handleChangeProjectName}
+              onChange={handleInputValueChange}
               aria-label="Project name input"
+              autoFocus
             />
             <FormErrorMessage>{errorMessage}</FormErrorMessage>
           </FormControl>
@@ -134,7 +162,7 @@ export const CreateProjectModal = ({
             disabled={!canCreateProject()}
             aria-label="Create project"
           >
-            Start
+            Start Labelling
           </Button>
         </ModalFooter>
       </ModalContent>

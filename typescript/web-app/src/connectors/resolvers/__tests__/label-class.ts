@@ -1,9 +1,15 @@
 import { incrementMockedDate } from "@labelflow/dev-utils/mockdate";
 import gql from "graphql-tag";
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { mocked } from "ts-jest/utils";
+import probe from "probe-image-size";
 import { client } from "../../apollo-client-schema";
 import { setupTestsWithLocalDatabase } from "../../../utils/setup-local-db-tests";
 
 setupTestsWithLocalDatabase();
+
+jest.mock("probe-image-size");
+const mockedProbeSync = mocked(probe.sync);
 
 const createLabelClass = async (data: {
   name: string;
@@ -33,6 +39,17 @@ const createLabelClass = async (data: {
 };
 
 const createLabel = async (labelClassId: string, x: number) => {
+  mockedProbeSync.mockReturnValue({
+    width: 42,
+    height: 36,
+    mime: "image/jpeg",
+    length: 1000,
+    hUnits: "px",
+    wUnits: "px",
+    url: "https://example.com/image.jpeg",
+    type: "jpg",
+  });
+
   const {
     data: {
       createImage: { id: imageId },
@@ -312,5 +329,34 @@ describe("LabelClass resolver test suite", () => {
     expect(
       queryResult.data.labelClass.labels.map((l: { x: number }) => l.x)
     ).toEqual([2, 1]);
+  });
+
+  test("It returns the correct count of labelClasses", async () => {
+    await Promise.all([
+      createLabelClass({
+        name: "some labelClass",
+        color: "#ff0000",
+      }),
+      createLabelClass({
+        name: "another labelClass",
+        color: "#ff0000",
+      }),
+      createLabelClass({
+        name: "last labelClass",
+        color: "#ff0000",
+      }),
+    ]);
+
+    const queryResult = await client.query({
+      query: gql`
+        query getLabelClassesNumber {
+          labelClassesAggregates {
+            totalCount
+          }
+        }
+      `,
+    });
+
+    expect(queryResult.data.labelClassesAggregates.totalCount).toEqual(3);
   });
 });

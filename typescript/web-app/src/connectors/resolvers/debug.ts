@@ -4,13 +4,20 @@ import {
   isInServiceWorkerScope,
 } from "../../utils/detect-scope";
 
+declare let self: ServiceWorkerGlobalScope;
+
 const debug = async (): Promise<any> => {
+  // eslint-disable-next-line no-underscore-dangle
+  // @ts-ignore
+  const { WB_MANIFEST } = self ?? {};
+
   return {
     serverType: "Standard Labelflow Client-Side Server",
     isInWindowScope,
     isInServiceWorkerScope,
     ...process.env,
     ...detect(),
+    WB_MANIFEST,
     NEXT_PUBLIC_VERCEL_ENV: process.env.NEXT_PUBLIC_VERCEL_ENV,
     NEXT_PUBLIC_VERCEL_URL: process.env.NEXT_PUBLIC_VERCEL_URL,
     NEXT_PUBLIC_VERCEL_GIT_PROVIDER:

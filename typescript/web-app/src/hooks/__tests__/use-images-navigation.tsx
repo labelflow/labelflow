@@ -3,6 +3,9 @@ import { renderHook } from "@testing-library/react-hooks";
 import gql from "graphql-tag";
 import { ApolloProvider } from "@apollo/client";
 import { useRouter } from "next/router";
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { mocked } from "ts-jest/utils";
+import probe from "probe-image-size";
 import { setupTestsWithLocalDatabase } from "../../utils/setup-local-db-tests";
 import { useImagesNavigation } from "../use-images-navigation";
 import { client } from "../../connectors/apollo-client-schema";
@@ -10,9 +13,46 @@ import { incrementMockedDate } from "../../../../dev-utils/mockdate";
 
 setupTestsWithLocalDatabase();
 
+jest.mock("probe-image-size");
+const mockedProbeSync = mocked(probe.sync);
+
 jest.mock("next/router", () => ({
   useRouter: jest.fn(() => ({ query: { id: "toto" } })),
 }));
+
+async function createImage(name: String) {
+  mockedProbeSync.mockReturnValue({
+    width: 42,
+    height: 36,
+    mime: "image/jpeg",
+    length: 1000,
+    hUnits: "px",
+    wUnits: "px",
+    url: "https://example.com/image.jpeg",
+    type: "jpg",
+  });
+  const mutationResult = await client.mutate({
+    mutation: gql`
+      mutation createImage($file: Upload!, $name: String!) {
+        createImage(data: { name: $name, file: $file }) {
+          id
+        }
+      }
+    `,
+    variables: {
+      file: new Blob(),
+      name,
+    },
+  });
+
+  const {
+    data: {
+      createImage: { id },
+    },
+  } = mutationResult;
+
+  return id;
+}
 
 const Wrapper = ({ children }: React.PropsWithChildren<{}>) => (
   <ApolloProvider client={client}>{children}</ApolloProvider>
@@ -202,30 +242,3 @@ describe("Previous and Next ids", () => {
     expect(result.current.nextImageId).toEqual(id3);
   });
 });
-/* ----------- */
-/*   Helpers   */
-/* ----------- */
-
-async function createImage(name: String) {
-  const mutationResult = await client.mutate({
-    mutation: gql`
-      mutation createImage($file: Upload!, $name: String!) {
-        createImage(data: { name: $name, file: $file }) {
-          id
-        }
-      }
-    `,
-    variables: {
-      file: new Blob(),
-      name,
-    },
-  });
-
-  const {
-    data: {
-      createImage: { id },
-    },
-  } = mutationResult;
-
-  return id;
-}

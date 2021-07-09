@@ -51,6 +51,7 @@ export type Image = {
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
   url: Scalars['String'];
+  externalUrl?: Maybe<Scalars['String']>;
   name: Scalars['String'];
   path: Scalars['String'];
   mimetype: Scalars['String'];
@@ -70,6 +71,7 @@ export type ImageCreateInput = {
   width?: Maybe<Scalars['Int']>;
   file?: Maybe<Scalars['Upload']>;
   url?: Maybe<Scalars['String']>;
+  externalUrl?: Maybe<Scalars['String']>;
 };
 
 export type ImageWhereInput = {
@@ -118,6 +120,11 @@ export type LabelClassCreateInput = {
 
 export type LabelClassWhereUniqueInput = {
   id: Scalars['ID'];
+};
+
+export type LabelClassesAggregates = {
+  __typename?: 'LabelClassesAggregates';
+  totalCount: Scalars['Int'];
 };
 
 export type LabelCreateInput = {
@@ -248,6 +255,7 @@ export type Query = {
   imagesAggregates: ImagesAggregates;
   labelClass: LabelClass;
   labelClasses: Array<LabelClass>;
+  labelClassesAggregates: LabelClassesAggregates;
   labelsAggregates: LabelsAggregates;
   label: Label;
   project: Project;
@@ -421,6 +429,7 @@ export type ResolversTypes = {
   LabelClass: ResolverTypeWrapper<LabelClass>;
   LabelClassCreateInput: LabelClassCreateInput;
   LabelClassWhereUniqueInput: LabelClassWhereUniqueInput;
+  LabelClassesAggregates: ResolverTypeWrapper<LabelClassesAggregates>;
   LabelCreateInput: LabelCreateInput;
   LabelUpdateInput: LabelUpdateInput;
   LabelWhereUniqueInput: LabelWhereUniqueInput;
@@ -460,6 +469,7 @@ export type ResolversParentTypes = {
   LabelClass: LabelClass;
   LabelClassCreateInput: LabelClassCreateInput;
   LabelClassWhereUniqueInput: LabelClassWhereUniqueInput;
+  LabelClassesAggregates: LabelClassesAggregates;
   LabelCreateInput: LabelCreateInput;
   LabelUpdateInput: LabelUpdateInput;
   LabelWhereUniqueInput: LabelWhereUniqueInput;
@@ -498,6 +508,7 @@ export type ImageResolvers<ContextType = any, ParentType extends ResolversParent
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   url?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  externalUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   path?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   mimetype?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -541,6 +552,11 @@ export type LabelClassResolvers<ContextType = any, ParentType extends ResolversP
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type LabelClassesAggregatesResolvers<ContextType = any, ParentType extends ResolversParentTypes['LabelClassesAggregates'] = ResolversParentTypes['LabelClassesAggregates']> = {
+  totalCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type LabelsAggregatesResolvers<ContextType = any, ParentType extends ResolversParentTypes['LabelsAggregates'] = ResolversParentTypes['LabelsAggregates']> = {
   totalCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -579,6 +595,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   imagesAggregates?: Resolver<ResolversTypes['ImagesAggregates'], ParentType, ContextType>;
   labelClass?: Resolver<ResolversTypes['LabelClass'], ParentType, ContextType, RequireFields<QueryLabelClassArgs, 'where'>>;
   labelClasses?: Resolver<Array<ResolversTypes['LabelClass']>, ParentType, ContextType, RequireFields<QueryLabelClassesArgs, never>>;
+  labelClassesAggregates?: Resolver<ResolversTypes['LabelClassesAggregates'], ParentType, ContextType>;
   labelsAggregates?: Resolver<ResolversTypes['LabelsAggregates'], ParentType, ContextType>;
   label?: Resolver<ResolversTypes['Label'], ParentType, ContextType, RequireFields<QueryLabelArgs, 'where'>>;
   project?: Resolver<ResolversTypes['Project'], ParentType, ContextType, RequireFields<QueryProjectArgs, 'where'>>;
@@ -615,6 +632,7 @@ export type Resolvers<ContextType = any> = {
   JSON?: GraphQLScalarType;
   Label?: LabelResolvers<ContextType>;
   LabelClass?: LabelClassResolvers<ContextType>;
+  LabelClassesAggregates?: LabelClassesAggregatesResolvers<ContextType>;
   LabelsAggregates?: LabelsAggregatesResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   Project?: ProjectResolvers<ContextType>;
