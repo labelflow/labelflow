@@ -1,7 +1,15 @@
 import "@testing-library/jest-dom";
-/* eslint-disable-next-line import/no-extraneous-dependencies */
 import "fake-indexeddb/auto";
 import fetchMock from "jest-fetch-mock";
+import CacheStorage from "service-worker-mock/models/CacheStorage";
+import Request from "service-worker-mock/models/Request";
+import Response from "service-worker-mock/models/Response";
+
+Object.assign(global, {
+  caches: new CacheStorage(),
+  Request,
+  Response,
+});
 
 fetchMock.enableMocks();
 

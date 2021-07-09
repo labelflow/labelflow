@@ -1,10 +1,17 @@
 import { incrementMockedDate } from "@labelflow/dev-utils/mockdate";
 import gql from "graphql-tag";
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { mocked } from "ts-jest/utils";
+import probe from "probe-image-size";
+
 import { client } from "../../apollo-client-schema";
 import { setupTestsWithLocalDatabase } from "../../../utils/setup-local-db-tests";
 import { LabelCreateInput } from "../../../graphql-types.generated";
 
 setupTestsWithLocalDatabase();
+
+jest.mock("probe-image-size");
+const mockedProbeSync = mocked(probe.sync);
 
 const labelData = {
   x: 3.14,
@@ -32,6 +39,16 @@ const createLabel = (data: LabelCreateInput) => {
 };
 
 const createImage = async (name: String) => {
+  mockedProbeSync.mockReturnValue({
+    width: 42,
+    height: 36,
+    mime: "image/jpeg",
+    length: 1000,
+    hUnits: "px",
+    wUnits: "px",
+    url: "https://example.com/image.jpeg",
+    type: "jpg",
+  });
   const mutationResult = await client.mutate({
     mutation: gql`
       mutation createImage(

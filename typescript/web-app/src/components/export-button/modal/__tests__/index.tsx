@@ -5,6 +5,9 @@ import { ApolloProvider } from "@apollo/client";
 import { ChakraProvider } from "@chakra-ui/react";
 import { PropsWithChildren } from "react";
 import gql from "graphql-tag";
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { mocked } from "ts-jest/utils";
+import probe from "probe-image-size";
 import { incrementMockedDate } from "@labelflow/dev-utils/mockdate";
 import { ExportModal } from "..";
 import { theme } from "../../../../theme";
@@ -13,6 +16,9 @@ import { setupTestsWithLocalDatabase } from "../../../../utils/setup-local-db-te
 import { LabelCreateInput } from "../../../../graphql-types.generated";
 
 setupTestsWithLocalDatabase();
+
+jest.mock("probe-image-size");
+const mockedProbeSync = mocked(probe.sync);
 
 const wrapper = ({ children }: PropsWithChildren<{}>) => (
   <ApolloProvider client={client}>
@@ -100,6 +106,16 @@ test("File should be downloaded when user clicks on Export to COCO", async () =>
 });
 
 test("Export Modal should display the number of labels", async () => {
+  mockedProbeSync.mockReturnValue({
+    width: 42,
+    height: 36,
+    mime: "image/jpeg",
+    length: 1000,
+    hUnits: "px",
+    wUnits: "px",
+    url: "https://example.com/image.jpeg",
+    type: "jpg",
+  });
   const imageId = await createImage("an image");
   await createLabel({
     ...labelData,
