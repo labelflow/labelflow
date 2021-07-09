@@ -1,7 +1,6 @@
 import gql from "graphql-tag";
 import { useQuery } from "@apollo/client";
-import NextLink from "next/link";
-import { SimpleGrid, Breadcrumb, BreadcrumbItem, Text } from "@chakra-ui/react";
+import { Flex, Breadcrumb, BreadcrumbItem, Text } from "@chakra-ui/react";
 import { RiArrowRightSLine } from "react-icons/ri";
 
 import { Meta } from "../../components/meta";
@@ -42,29 +41,21 @@ const ProjectPage = () => {
           </Breadcrumb>
         }
       >
-        <SimpleGrid
-          gap={12}
-          padding={12}
-          minChildWidth="24rem"
-          justifyItems="center"
-        >
+        <Flex direction="row" wrap="wrap" p={4}>
           <NewProjectCard />
           {projectsResult?.projects?.map(({ id, name }) => (
-            <NextLink href={`/projects/${id}`} key={id}>
-              {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-              <a style={{ width: "100%" }}>
-                <ProjectCard
-                  projectName={name}
-                  imagesCount={0}
-                  labelClassesCount={0}
-                  labelsCount={0}
-                  editProject={() => {}}
-                  deleteProject={() => {}}
-                />
-              </a>
-            </NextLink>
+            <ProjectCard
+              key={id}
+              url={`/projects/${id}`}
+              projectName={name}
+              imagesCount={0}
+              labelClassesCount={0}
+              labelsCount={0}
+              editProject={() => {}}
+              deleteProject={() => {}}
+            />
           ))}
-        </SimpleGrid>
+        </Flex>
       </Layout>
     </>
   );

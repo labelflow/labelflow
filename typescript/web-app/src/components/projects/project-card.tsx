@@ -10,6 +10,7 @@ import {
   AspectRatio,
   chakra,
 } from "@chakra-ui/react";
+import NextLink from "next/link";
 import { HiTrash, HiPencilAlt } from "react-icons/hi";
 import { EmptyStateImage } from "../empty-state";
 
@@ -17,6 +18,7 @@ const EditIcon = chakra(HiPencilAlt);
 const TrashIcon = chakra(HiTrash);
 
 export const ProjectCard = (props: {
+  url: string;
   projectName: string;
   imageUrl?: string;
   imageAlt?: string;
@@ -27,6 +29,7 @@ export const ProjectCard = (props: {
   deleteProject: () => void;
 }) => {
   const {
+    url,
     projectName,
     imageUrl,
     imageAlt,
@@ -41,71 +44,88 @@ export const ProjectCard = (props: {
   return (
     <Box
       w="100%"
-      h="2xs"
-      borderWidth="0px"
-      borderRadius="16px"
-      overflow="hidden"
-      bg="white"
+      maxWidth={["100%", "100%", "50%", "33%", "25%"]}
+      p={4}
+      boxSizing="border-box"
     >
-      <AspectRatio maxH="36">
-        {imageUrl ? (
-          <Image src={imageUrl} alt={imageAlt} alignSelf="center" fit="cover" />
-        ) : (
-          <EmptyStateImage />
-        )}
-      </AspectRatio>
-      <VStack pt="2" pl="5" pr="5" pb="5" align="left">
-        <Flex alignItems="center">
-          <Text fontWeight="semibold" fontSize="md" isTruncated>
-            {projectName}
-          </Text>
-          <Spacer />
-          <IconButton
-            icon={<EditIcon />}
-            aria-label="edit project"
-            isRound
-            size="sm"
-            mr="2"
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              editProject();
-            }}
-          />
-          <IconButton
-            icon={<TrashIcon />}
-            aria-label="delete project"
-            isRound
-            size="sm"
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              deleteProject();
-            }}
-          />
-        </Flex>
+      <NextLink href={url}>
+        <Box
+          as="a"
+          w="100%"
+          h="2xs"
+          borderWidth="0px"
+          borderRadius="16px"
+          overflow="hidden"
+          bg="white"
+          display="block"
+          cursor="pointer"
+        >
+          <AspectRatio maxH="36">
+            {imageUrl ? (
+              <Image
+                src={imageUrl}
+                alt={imageAlt}
+                alignSelf="center"
+                fit="cover"
+              />
+            ) : (
+              <EmptyStateImage />
+            )}
+          </AspectRatio>
+          <VStack pt="2" pl="5" pr="5" pb="5" align="left">
+            <Flex alignItems="center">
+              <Text fontWeight="semibold" fontSize="md" isTruncated>
+                {projectName}
+              </Text>
+              <Spacer />
+              <IconButton
+                icon={<EditIcon />}
+                aria-label="edit project"
+                isRound
+                size="sm"
+                mr="2"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  editProject();
+                }}
+              />
+              <IconButton
+                icon={<TrashIcon />}
+                aria-label="delete project"
+                isRound
+                size="sm"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  deleteProject();
+                }}
+              />
+            </Flex>
 
-        <HStack lineHeight="base" spacing="5" pt="2">
-          <Text fontWeight="semibold" isTruncated>
-            <Text as="span">{imagesCount} </Text>
-            <Text color="gray.400" as="span">
-              Images
-            </Text>
-          </Text>
-          <Text fontWeight="semibold" isTruncated>
-            <Text as="span">{labelClassesCount} </Text>
-            <Text color="gray.400" as="span">
-              Classes
-            </Text>
-          </Text>
-          <Text fontWeight="semibold" isTruncated>
-            <Text as="span">{labelsCount} </Text>
-            <Text color="gray.400" as="span">
-              Labels
-            </Text>
-          </Text>
-        </HStack>
-      </VStack>
+            <HStack lineHeight="base" spacing="5" pt="2">
+              <Text fontWeight="semibold" isTruncated>
+                <Text as="span">{imagesCount} </Text>
+                <Text color="gray.400" as="span">
+                  Images
+                </Text>
+              </Text>
+              <Text fontWeight="semibold" isTruncated>
+                <Text as="span">{labelClassesCount} </Text>
+                <Text color="gray.400" as="span">
+                  Classes
+                </Text>
+              </Text>
+              <Text fontWeight="semibold" isTruncated>
+                <Text as="span">{labelsCount} </Text>
+                <Text color="gray.400" as="span">
+                  Labels
+                </Text>
+              </Text>
+            </HStack>
+          </VStack>
+        </Box>
+      </NextLink>
     </Box>
   );
 };
