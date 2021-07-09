@@ -62,6 +62,10 @@ const createLabelWithLabelClass = (imageId: string, labelClassId: string) => {
         y: 1,
         height: 1,
         width: 1,
+        geometry: {
+          type: "Polygon",
+          coordinates: [],
+        },
       },
     },
   });

@@ -33,6 +33,10 @@ const labelData = {
   y: 42.0,
   height: 768,
   width: 362,
+  geometry: {
+    type: "Polygon",
+    coordinates: [],
+  },
 };
 
 const createLabel = (data: LabelCreateInput) => {

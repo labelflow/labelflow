@@ -85,7 +85,13 @@ const createLabel = async (data: LabelCreateInput) => {
       }
     `,
     variables: {
-      data,
+      data: {
+        ...data,
+        geometry: {
+          type: "Polygon",
+          coordinates: [],
+        },
+      },
     },
   });
 

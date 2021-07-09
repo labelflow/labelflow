@@ -18,6 +18,10 @@ const labelData = {
   y: 42.0,
   height: 768,
   width: 362,
+  geometry: {
+    type: "Polygon",
+    coordinates: [],
+  },
 };
 
 const imageWidth = 500;
@@ -461,6 +465,10 @@ describe("Label resolver test suite", () => {
             y
             width
             height
+            geometry {
+              type
+              coordinates
+            }
           }
         }
       `,
@@ -470,7 +478,11 @@ describe("Label resolver test suite", () => {
     });
 
     expect(queryResult.data.label).toEqual(
-      expect.objectContaining({ ...labelData, id: labelId })
+      expect.objectContaining({
+        ...labelData,
+        geometry: expect.objectContaining({ ...labelData.geometry }),
+        id: labelId,
+      })
     );
   });
 });
@@ -552,6 +564,10 @@ test("Create label should fail if called with bounding box out of image bounds",
       y: 10,
       height: 20,
       imageId,
+      geometry: {
+        type: "Polygon",
+        coordinates: [],
+      },
     })
   ).rejects.toThrow("Bounding box out of image bounds");
   await expect(
@@ -561,6 +577,10 @@ test("Create label should fail if called with bounding box out of image bounds",
       y: 10,
       height: 20,
       imageId,
+      geometry: {
+        type: "Polygon",
+        coordinates: [],
+      },
     })
   ).rejects.toThrow("Bounding box out of image bounds");
   // y out of bounds
@@ -571,6 +591,10 @@ test("Create label should fail if called with bounding box out of image bounds",
       y: -100,
       height: 10,
       imageId,
+      geometry: {
+        type: "Polygon",
+        coordinates: [],
+      },
     })
   ).rejects.toThrow("Bounding box out of image bounds");
   await expect(
@@ -580,6 +604,10 @@ test("Create label should fail if called with bounding box out of image bounds",
       y: imageHeight + 10,
       height: 20,
       imageId,
+      geometry: {
+        type: "Polygon",
+        coordinates: [],
+      },
     })
   ).rejects.toThrow("Bounding box out of image bounds");
 });
@@ -595,6 +623,10 @@ test("It should resize bounding box to image size when it is bigger", async () =
     height: imageHeight + 10 + 10,
     id: labelId,
     imageId,
+    geometry: {
+      type: "Polygon",
+      coordinates: [],
+    },
   });
 
   const queryResult = await client.query({

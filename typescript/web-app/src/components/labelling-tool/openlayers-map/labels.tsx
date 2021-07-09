@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import { ApolloClient, useQuery, useApolloClient } from "@apollo/client";
 import gql from "graphql-tag";
 import { Vector as OlSourceVector } from "ol/source";
+import GeoJSON from "ol/format/GeoJSON";
 import { Geometry } from "ol/geom";
 import { fromExtent } from "ol/geom/Polygon";
 import { Fill, Stroke, Style } from "ol/style";
@@ -32,7 +33,10 @@ const getImageLabelsQuery = gql`
           id
           color
         }
-        geometry
+        geometry {
+          type
+          coordinates
+        }
       }
     }
   }
@@ -50,6 +54,10 @@ const deleteLabelMutation = gql`
       labelClass {
         id
       }
+      geometry {
+        type
+        coordinates
+      }
     }
   }
 `;
@@ -63,6 +71,7 @@ const createLabelWithIdMutation = gql`
     $width: Float!
     $height: Float!
     $labelClassId: ID
+    $geometry: GeometryInput!
   ) {
     createLabel(
       data: {
@@ -73,6 +82,7 @@ const createLabelWithIdMutation = gql`
         width: $width
         height: $height
         labelClassId: $labelClassId
+        geometry: $geometry
       }
     ) {
       id
@@ -115,10 +125,25 @@ const createDeleteLabelEffect = (
   undo: async (
     deletedLabel: Pick<
       Label,
-      "id" | "x" | "y" | "width" | "height" | "imageId" | "labelClass"
+      | "id"
+      | "x"
+      | "y"
+      | "width"
+      | "height"
+      | "imageId"
+      | "labelClass"
+      | "geometry"
     >
   ) => {
-    const { id: labelId, x, y, width, height, imageId } = deletedLabel;
+    const {
+      id: labelId,
+      x,
+      y,
+      width,
+      height,
+      imageId,
+      geometry,
+    } = deletedLabel;
     const labelClassId = deletedLabel?.labelClass?.id;
 
     const createLabelInputs = {
@@ -129,6 +154,7 @@ const createDeleteLabelEffect = (
       height,
       imageId,
       labelClassId,
+      geometry,
     };
 
     /* It is important to use the same id for the re-creation when the label
@@ -217,32 +243,30 @@ export const Labels = ({
     <>
       <olLayerVector>
         <olSourceVector ref={sourceVectorLabelsRef}>
-          {labels.map(
-            ({ id, x, y, width, height, labelClass, geometry }: Label) => {
-              const isSelected = id === selectedLabelId;
-              const labelClassColor = labelClass?.color ?? noneClassColor;
-              const style = new Style({
-                fill: new Fill({
-                  color: `${labelClassColor}${isSelected ? "40" : "10"}`,
-                }),
-                stroke: new Stroke({
-                  color: labelClassColor,
-                  width: 2,
-                }),
-                zIndex: isSelected ? 2 : 1,
-              });
+          {labels.map(({ id, labelClass, geometry }: Label) => {
+            const isSelected = id === selectedLabelId;
+            const labelClassColor = labelClass?.color ?? noneClassColor;
+            const style = new Style({
+              fill: new Fill({
+                color: `${labelClassColor}${isSelected ? "40" : "10"}`,
+              }),
+              stroke: new Stroke({
+                color: labelClassColor,
+                width: 2,
+              }),
+              zIndex: isSelected ? 2 : 1,
+            });
 
-              return (
-                <olFeature
-                  key={id}
-                  id={id}
-                  properties={{ isSelected }}
-                  geometry={geometry}
-                  style={style}
-                />
-              );
-            }
-          )}
+            return (
+              <olFeature
+                key={id}
+                id={id}
+                properties={{ isSelected }}
+                geometry={new GeoJSON().readGeometry(geometry)}
+                style={style}
+              />
+            );
+          })}
         </olSourceVector>
       </olLayerVector>
     </>

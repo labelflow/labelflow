@@ -3,6 +3,7 @@ import GeoJSON from "ol/format/GeoJSON";
 import gql from "graphql-tag";
 
 import { Effect } from "../../../../connectors/undo-store";
+import { GeometryInput } from "../../../../graphql-types.generated";
 
 type CreateLabelInputs = {
   imageId: string;
@@ -12,7 +13,7 @@ type CreateLabelInputs = {
   width: number;
   height: number;
   labelClassId: string | null | undefined;
-  geometry: GeoJSON.Geometry;
+  geometry: GeometryInput;
 };
 
 const createLabelMutation = gql`
@@ -24,7 +25,7 @@ const createLabelMutation = gql`
     $width: Float!
     $height: Float!
     $labelClassId: ID
-    $geometry: Geometry
+    $geometry: GeometryInput!
   ) {
     createLabel(
       data: {
@@ -60,6 +61,10 @@ const createdLabelFragment = gql`
     height
     labelClass {
       id
+    }
+    geometry {
+      type
+      coordinates
     }
   }
 `;

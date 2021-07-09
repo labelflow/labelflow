@@ -63,6 +63,10 @@ describe("Image resolver test suite", () => {
           y: 1,
           height: 1,
           width: 1,
+          geometry: {
+            type: "Polygon",
+            coordinates: [],
+          },
         },
       },
     });

@@ -83,6 +83,10 @@ const createLabel = async (labelClassId: string, x: number) => {
         y: 1,
         height: 1,
         width: 1,
+        geometry: {
+          type: "Polygon",
+          coordinates: [],
+        },
       },
     },
   });

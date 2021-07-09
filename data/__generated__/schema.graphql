@@ -27,7 +27,12 @@ input ExampleWhereUniqueInput {
   id: ID!
 }
 
-input Geometry {
+type Geometry {
+  type: String!
+  coordinates: JSON!
+}
+
+input GeometryInput {
   type: String!
   coordinates: JSON
 }
@@ -79,12 +84,12 @@ type Label {
   createdAt: DateTime!
   updatedAt: DateTime!
   imageId: ID!
+  geometry: Geometry!
   labelClass: LabelClass
   x: Float!
   y: Float!
   height: Float!
   width: Float!
-  geometry: Geometry!
 }
 
 type LabelClass {
@@ -115,7 +120,7 @@ input LabelCreateInput {
   y: Float!
   width: Float!
   height: Float!
-  geometry: Geometry!
+  geometry: GeometryInput!
 }
 
 input LabelUpdateInput {
@@ -124,7 +129,7 @@ input LabelUpdateInput {
   y: Float
   width: Float
   height: Float
-  geometry: Geometry
+  geometry: GeometryInput
 }
 
 input LabelWhereUniqueInput {
