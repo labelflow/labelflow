@@ -106,7 +106,12 @@ export class ResizeAndTranslateBox extends PointerInteraction {
       const [newX, newY] = coordinate;
       switch (vertex) {
         case "bottomLeft":
-          return fromExtent([newX, newY, destX, destY]);
+          return fromExtent([
+            Math.min(newX, destX),
+            Math.min(newY, destY),
+            destX,
+            destY,
+          ]);
         case "topLeft":
           return fromExtent([newX, y, destX, newY]);
         case "topRight":
