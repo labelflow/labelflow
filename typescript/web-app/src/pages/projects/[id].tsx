@@ -49,7 +49,7 @@ const ProjectPage = () => {
 
   useEffect(() => {
     if (error) {
-      router.replace({ pathname: "/projects", query: router.query });
+      router.replace({ pathname: "/404" });
     }
   }, [error]);
 

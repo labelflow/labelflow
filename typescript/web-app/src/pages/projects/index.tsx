@@ -14,6 +14,7 @@ const getProjectsQuery = gql`
       id
       name
       images {
+        id
         url
       }
     }
