@@ -326,30 +326,21 @@ const createImage = async (
   );
 };
 
-// `parent` is the result of the previous resolver, for example, for project, it should contain `id`, `name`, `updatedAt` and `createdAt`
 const imagesAggregates = (parent: any) => {
+  // Forward `parent` to chained resolvers if it exists
+  return parent ?? {};
+};
+
+const totalCount = (parent: any) => {
   // eslint-disable-next-line no-underscore-dangle
   const typename = parent?.__typename;
 
   if (typename === projectTypename) {
-    return {
-      where: {
+    return db.image
+      .where({
         projectId: parent.id,
-      },
-    };
-  }
-
-  return {};
-};
-
-const totalCount = (parent: {
-  where: {
-    // From equalityCriterias of dexie js
-    [key: string]: any;
-  };
-}) => {
-  if (!isEmpty(parent.where)) {
-    return db.image.where(parent.where).count();
+      })
+      .count();
   }
 
   return db.image.count();

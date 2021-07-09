@@ -320,7 +320,6 @@ describe("Image resolver test suite", () => {
       `,
     });
 
-    // labels should show in the right order
     expect(queryResult.data.imagesAggregates.totalCount).toEqual(3);
   });
 
@@ -345,23 +344,5 @@ describe("Image resolver test suite", () => {
     expect(
       queryResult.data.images.map((image: { id: string }) => image.id)
     ).toEqual([imageId1, imageId2]);
-  });
-
-  it("should return the correct count of images for a project", async () => {
-    await Promise.all([
-      createImage("Image 1", "project 1"),
-      createImage("Image 2", "project 1"),
-      createImage("Image 3", "project 2"),
-    ]);
-
-    const queryResult = await client.query({
-      query: gql`
-        query getImagesNumber {
-          imagesCount(where: { projectId: "project 1" })
-        }
-      `,
-    });
-
-    expect(queryResult.data.imagesCount).toEqual(2);
   });
 });
