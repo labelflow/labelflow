@@ -6,6 +6,7 @@ input LabelCreateInput {
   y: Float!
   width: Float!
   height: Float!
+  geometry: Geometry
 }
 
 input LabelWhereUniqueInput {
@@ -18,6 +19,11 @@ input LabelUpdateInput {
   y: Float
   width: Float
   height: Float
+}
+
+input Geometry {
+  type: String!
+  coordinates: JSON
 }
 
 type LabelsAggregates {

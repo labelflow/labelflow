@@ -1,4 +1,5 @@
 import { ApolloCache, ApolloClient, Reference } from "@apollo/client";
+import GeoJSON from "ol/format/GeoJSON";
 import gql from "graphql-tag";
 
 import { Effect } from "../../../../connectors/undo-store";
@@ -11,6 +12,7 @@ type CreateLabelInputs = {
   width: number;
   height: number;
   labelClassId: string | null | undefined;
+  geometry: GeoJSON.Geometry;
 };
 
 const createLabelMutation = gql`
@@ -22,6 +24,7 @@ const createLabelMutation = gql`
     $width: Float!
     $height: Float!
     $labelClassId: ID
+    $geometry: Geometry
   ) {
     createLabel(
       data: {
@@ -32,6 +35,7 @@ const createLabelMutation = gql`
         width: $width
         height: $height
         labelClassId: $labelClassId
+        geometry: $geometry
       }
     ) {
       id
@@ -75,6 +79,7 @@ export function addLabelToImageInCache(
     width,
     height,
     labelClassId,
+    geometry,
   }: CreateLabelInputs & { id: string }
 ) {
   const createdLabel = {
@@ -90,6 +95,7 @@ export function addLabelToImageInCache(
             __typename: "LabelClass",
           }
         : null,
+    geometry,
     __typename: "Label",
   };
 
@@ -132,6 +138,7 @@ export const createLabelEffect = (
     width,
     height,
     selectedLabelClassId,
+    geometry,
   }: {
     imageId: string;
     x: number;
@@ -139,6 +146,7 @@ export const createLabelEffect = (
     width: number;
     height: number;
     selectedLabelClassId: string | null;
+    geometry: GeoJSON.Geometry;
   },
   {
     setSelectedLabelId,
@@ -156,6 +164,7 @@ export const createLabelEffect = (
       height,
       imageId,
       labelClassId: selectedLabelClassId,
+      geometry,
     };
 
     const { data } = await client.mutate({
@@ -205,6 +214,7 @@ export const createLabelEffect = (
       height,
       imageId,
       labelClassId: selectedLabelClassId,
+      geometry,
     };
     const { data } = await client.mutate({
       mutation: createLabelMutation,

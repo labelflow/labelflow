@@ -27,6 +27,11 @@ input ExampleWhereUniqueInput {
   id: ID!
 }
 
+input Geometry {
+  type: String!
+  coordinates: JSON
+}
+
 type Image {
   id: ID!
   createdAt: DateTime!
@@ -109,6 +114,7 @@ input LabelCreateInput {
   y: Float!
   width: Float!
   height: Float!
+  geometry: Geometry
 }
 
 input LabelUpdateInput {

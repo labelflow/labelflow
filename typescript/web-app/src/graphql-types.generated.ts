@@ -45,6 +45,11 @@ export type ExampleWhereUniqueInput = {
   id: Scalars['ID'];
 };
 
+export type Geometry = {
+  type: Scalars['String'];
+  coordinates?: Maybe<Scalars['JSON']>;
+};
+
 export type Image = {
   __typename?: 'Image';
   id: Scalars['ID'];
@@ -130,6 +135,7 @@ export type LabelCreateInput = {
   y: Scalars['Float'];
   width: Scalars['Float'];
   height: Scalars['Float'];
+  geometry?: Maybe<Geometry>;
 };
 
 export type LabelUpdateInput = {
@@ -410,6 +416,7 @@ export type ResolversTypes = {
   ExampleOrderByInput: ExampleOrderByInput;
   ExampleWhereInput: ExampleWhereInput;
   ExampleWhereUniqueInput: ExampleWhereUniqueInput;
+  Geometry: Geometry;
   ID: ResolverTypeWrapper<Scalars['ID']>;
   Image: ResolverTypeWrapper<Image>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
@@ -449,6 +456,7 @@ export type ResolversParentTypes = {
   ExampleCreateInput: ExampleCreateInput;
   ExampleWhereInput: ExampleWhereInput;
   ExampleWhereUniqueInput: ExampleWhereUniqueInput;
+  Geometry: Geometry;
   ID: Scalars['ID'];
   Image: Image;
   Int: Scalars['Int'];
