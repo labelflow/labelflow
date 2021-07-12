@@ -38,19 +38,6 @@ const getProjectByNameQuery = gql`
   }
 `;
 
-const getProjectsQuery = gql`
-  query getProjects {
-    projects {
-      id
-      name
-      images {
-        id
-        url
-      }
-    }
-  }
-`;
-
 export const CreateProjectModal = ({
   isOpen = false,
   onClose = () => {},
@@ -70,7 +57,8 @@ export const CreateProjectModal = ({
     variables: {
       name: projectName,
     },
-    refetchQueries: [{ query: getProjectsQuery }],
+    refetchQueries: ["getProjects"],
+    awaitRefetchQueries: true,
   });
 
   const closeModal = useCallback(() => {
