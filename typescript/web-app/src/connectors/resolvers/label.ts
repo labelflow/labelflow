@@ -1,13 +1,15 @@
 import { v4 as uuidv4 } from "uuid";
+import { bboxPolygon, polygon, intersect } from "@turf/turf";
+
 import type {
+  GeometryInput,
   Label,
   MutationCreateLabelArgs,
   MutationDeleteLabelArgs,
   MutationUpdateLabelArgs,
   QueryLabelArgs,
 } from "../../graphql-types.generated";
-
-import { db, DbLabel } from "../database";
+import { db, DbLabel, DbImage } from "../database";
 
 export const getLabels = () => db.label.toArray();
 
@@ -33,6 +35,13 @@ const label = (_: any, args: QueryLabelArgs) => {
   return getLabelById(args?.where?.id);
 };
 
+const cleanGeometryWithinImage = (geometry: GeometryInput, image: DbImage) => {
+  const geometryPolygon = polygon(geometry.coordinates);
+  const imagePolygon = bboxPolygon([0, 0, image.width, image.height]);
+  // const noKinksPolygon = turf.unkinkPolygon(geometry);
+  return intersect(imagePolygon, geometryPolygon);
+};
+
 // Mutations
 const createLabel = async (
   _: any,
@@ -54,8 +63,10 @@ const createLabel = async (
       throw new Error(`The labelClass id ${labelClassId} doesn't exist.`);
     }
   }
+
   const imageWidth = image?.width ?? x + width;
   const imageHeight = image?.height ?? y + height;
+
   if (
     (x < 0 && x + width < 0) ||
     (x + width > imageWidth && x > imageWidth) ||
@@ -64,6 +75,7 @@ const createLabel = async (
   ) {
     throw new Error("Bounding box out of image bounds");
   }
+
   const labelId = id ?? uuidv4();
   const now = new Date();
 
@@ -78,7 +90,7 @@ const createLabel = async (
     imageId,
     x: boundedX,
     y: boundedY,
-    geometry,
+    geometry: cleanGeometryWithinImage(geometry, image).geometry,
     height: Math.min(imageHeight, y + height) - boundedY,
     width: Math.min(imageWidth, x + width) - boundedX,
   };
