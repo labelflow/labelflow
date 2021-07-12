@@ -112,6 +112,10 @@ input LabelClassWhereUniqueInput {
   id: ID!
 }
 
+type LabelClassesAggregates {
+  totalCount: Int!
+}
+
 input LabelCreateInput {
   id: ID
   imageId: ID!
@@ -186,6 +190,7 @@ type Query {
   imagesAggregates: ImagesAggregates!
   labelClass(where: LabelClassWhereUniqueInput!): LabelClass!
   labelClasses(first: Int, skip: Int): [LabelClass!]!
+  labelClassesAggregates: LabelClassesAggregates!
   labelsAggregates: LabelsAggregates!
   label(where: LabelWhereUniqueInput!): Label!
   project(where: ProjectWhereUniqueInput!): Project!

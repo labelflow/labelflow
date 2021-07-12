@@ -111,6 +111,7 @@ dist
 out
 
 # cypress
+cypress/screenshots
 cypress/videos
 
 .yarn/*
