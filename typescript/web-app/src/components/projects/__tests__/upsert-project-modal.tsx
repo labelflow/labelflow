@@ -172,7 +172,7 @@ test("update project: should have project name pre-filled when renaming existing
   });
 });
 
-test.only("update project: should update a project when the form is submitted", async () => {
+test("update project: should update a project when the form is submitted", async () => {
   const projectName = "Bad Day";
   const projectNewName = "Good Day";
 
@@ -193,9 +193,7 @@ test.only("update project: should update a project when the form is submitted", 
 
   const onClose1 = jest.fn();
 
-  // act(() => {
   renderModal({ projectId, onClose: onClose1 });
-  // });
 
   const input1 = screen.getByLabelText(
     /project name input/i
@@ -207,17 +205,38 @@ test.only("update project: should update a project when the form is submitted", 
 
   const button = screen.getByLabelText(/update project/i);
 
-  // act(() => {
-  //   fireEvent.change(input1, { target: { value: projectNewName } });
-  //   fireEvent.click(button);
-  // });
-
-  // act(() => {
   userEvent.click(input1);
-  // userEvent.(input1, projectNewName);
+  userEvent.clear(input1);
   userEvent.type(input1, projectNewName);
   userEvent.click(button);
-  // });
+
+  expect(input1.value).toBe(projectNewName);
+
+  await waitFor(() => {
+    expect(onClose1).toHaveBeenCalled();
+  });
+
+  await act(async () => {
+    // Check that new name is in DB, works
+    const {
+      data: {
+        project: { name: name1 },
+      },
+    } = await client.query({
+      query: gql`
+        query getProjectById($id: ID) {
+          project(where: { id: $id }) {
+            id
+            name
+          }
+        }
+      `,
+      variables: { id: projectId },
+      fetchPolicy: "no-cache",
+    });
+
+    expect(name1).toEqual(projectNewName);
+  });
 
   await waitFor(() => {
     expect(onClose1).toHaveBeenCalled();
@@ -225,65 +244,6 @@ test.only("update project: should update a project when the form is submitted", 
       (screen.queryByLabelText(/project name input/i) as HTMLInputElement).value
     ).toBe("");
   });
-
-  console.log(
-    JSON.stringify(
-      await client.query({
-        query: gql`
-          query getProjects {
-            projects {
-              id
-              name
-            }
-          }
-        `,
-        fetchPolicy: "no-cache",
-      }),
-      null,
-      2
-    )
-  );
-
-  console.log("projectId", projectId);
-
-  // await new Promise((resolve) => setTimeout(resolve, 3000));
-
-  // Check that new name is in DB, works
-  const {
-    data: {
-      project: { name: name1 },
-    },
-  } = await client.query({
-    query: gql`
-      query getProjectById($id: ID) {
-        project(where: { id: $id }) {
-          id
-          name
-        }
-      }
-    `,
-    variables: { id: projectId },
-    fetchPolicy: "no-cache",
-  });
-  expect(name1).toEqual(projectNewName);
-
-  // console.log(
-  //   JSON.stringify(
-  //     await client.query({
-  //       query: gql`
-  //         query getProjects {
-  //           projects {
-  //             id
-  //             name
-  //           }
-  //         }
-  //       `,
-  //       fetchPolicy: "no-cache",
-  //     }),
-  //     null,
-  //     2
-  //   )
-  // );
 
   // // FIXME: This checks that we can find the project by name in the DB after renaming it, does NOT work
   // const {

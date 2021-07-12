@@ -84,6 +84,7 @@ export const UpsertProjectModal = ({
   useQuery(getProjectByIdQuery, {
     skip: typeof projectId !== "string",
     variables: { id: projectId },
+    fetchPolicy: "cache-and-network",
     onError: (e) => {
       setErrorMessage(e.message);
     },
@@ -116,6 +117,7 @@ export const UpsertProjectModal = ({
   const closeModal = useCallback(() => {
     onClose();
     setErrorMessage("");
+    setProjectName("");
     setInputValue("");
   }, [onClose]);
 
