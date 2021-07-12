@@ -60,7 +60,15 @@ const createLabelWithLabelClass = (imageId: string, labelClassId: string) => {
         labelClassId,
         geometry: {
           type: "Polygon",
-          coordinates: [],
+          coordinates: [
+            [
+              [0, 0],
+              [1, 0],
+              [1, 1],
+              [0, 1],
+              [0, 0],
+            ],
+          ],
         },
       },
     },
@@ -168,7 +176,7 @@ describe("Exporting a dataset to coco format", () => {
           category_id: 1,
           segmentation: [],
           area: 1,
-          bbox: [1, 1, 1, 1],
+          bbox: [0, 0, 1, 1],
           iscrowd: 0,
         },
       ],

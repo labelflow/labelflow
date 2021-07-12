@@ -61,7 +61,15 @@ describe("Image resolver test suite", () => {
           imageId,
           geometry: {
             type: "Polygon",
-            coordinates: [],
+            coordinates: [
+              [
+                [x, 0],
+                [x + 1, 0],
+                [x + 1, 1],
+                [x, 1],
+                [x, 0],
+              ],
+            ],
           },
         },
       },
