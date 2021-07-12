@@ -77,9 +77,11 @@ export const UpsertProjectModal = ({
   onClose?: () => void;
   projectId?: string;
 }) => {
-  const [inputValue, setInputValue] = useState<string>("");
-  const [projectName, setProjectName] = useState<string>("");
+  const [projectNameInputValue, setProjectNameInputValue] =
+    useState<string>("");
   const [errorMessage, setErrorMessage] = useState<string>("");
+
+  const projectName = projectNameInputValue.trim();
 
   useQuery(getProjectByIdQuery, {
     skip: typeof projectId !== "string",
@@ -89,8 +91,7 @@ export const UpsertProjectModal = ({
       setErrorMessage(e.message);
     },
     onCompleted: ({ project }) => {
-      setInputValue(project.name);
-      setProjectName(project.name);
+      setProjectNameInputValue(project.name);
     },
   });
 
@@ -117,13 +118,11 @@ export const UpsertProjectModal = ({
   const closeModal = useCallback(() => {
     onClose();
     setErrorMessage("");
-    setProjectName("");
-    setInputValue("");
+    setProjectNameInputValue("");
   }, [onClose]);
 
   const handleInputValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInputValue(e.target.value);
-    setProjectName(e.target.value.trim());
+    setProjectNameInputValue(e.target.value);
   };
 
   const debouncedQuery = useRef(
@@ -148,21 +147,25 @@ export const UpsertProjectModal = ({
     }
   }, [existingProject]);
 
-  const createProject = async () => {
-    if (projectName === "") return;
+  const createProject = useCallback(
+    async (event) => {
+      event.preventDefault();
+      if (projectName === "") return;
 
-    try {
-      if (projectId) {
-        await updateProjectMutate();
-      } else {
-        await createProjectMutate();
+      try {
+        if (projectId) {
+          await updateProjectMutate();
+        } else {
+          await createProjectMutate();
+        }
+
+        closeModal();
+      } catch (error) {
+        setErrorMessage(error.message);
       }
-
-      closeModal();
-    } catch (e) {
-      setErrorMessage(e.message);
-    }
-  };
+    },
+    [projectName, closeModal]
+  );
 
   const isInputValid = () => errorMessage === "";
 
@@ -171,13 +174,7 @@ export const UpsertProjectModal = ({
   return (
     <Modal isOpen={isOpen} size="xl" onClose={closeModal}>
       <ModalOverlay />
-      <ModalContent
-        as="form"
-        onSubmit={(e) => {
-          e.preventDefault();
-          createProject();
-        }}
-      >
+      <ModalContent as="form" onSubmit={createProject}>
         <ModalCloseButton />
 
         <ModalHeader textAlign="center" padding="6">
@@ -190,7 +187,7 @@ export const UpsertProjectModal = ({
           <FormControl isInvalid={!isInputValid()} isRequired>
             <FormLabel>Name</FormLabel>
             <Input
-              value={inputValue}
+              value={projectNameInputValue}
               placeholder="Project name"
               size="md"
               onChange={handleInputValueChange}
