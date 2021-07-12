@@ -145,7 +145,7 @@ export const UpsertProjectModal = ({
     } else {
       setErrorMessage("");
     }
-  }, [existingProject]);
+  }, [existingProject, projectId]);
 
   const createProject = useCallback(
     async (event) => {
