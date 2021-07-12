@@ -123,6 +123,10 @@ it("displays a single label", async () => {
     height: 768,
     width: 362,
     imageId,
+    geometry: {
+      type: "Polygon",
+      coordinates: [],
+    },
   });
 
   render(<Labels />, {
@@ -154,6 +158,10 @@ it("displays created labels", async () => {
     height: 768,
     width: 362,
     imageId,
+    geometry: {
+      type: "Polygon",
+      coordinates: [],
+    },
   });
 
   await createLabel({
@@ -162,6 +170,10 @@ it("displays created labels", async () => {
     height: 768,
     width: 362,
     imageId,
+    geometry: {
+      type: "Polygon",
+      coordinates: [],
+    },
   });
 
   render(<Labels />, {
@@ -193,6 +205,10 @@ it("should change style of selected label", async () => {
     height: 768,
     width: 362,
     imageId,
+    geometry: {
+      type: "Polygon",
+      coordinates: [],
+    },
   });
 
   useLabellingStore.setState({ selectedLabelId: labelId });
@@ -228,6 +244,10 @@ it("should delete selected label on delete key pressed", async () => {
     height: 768,
     width: 362,
     imageId,
+    geometry: {
+      type: "Polygon",
+      coordinates: [],
+    },
   });
 
   useLabellingStore.setState({ selectedLabelId: labelId });
@@ -275,6 +295,10 @@ it("should not delete a label when none was selected", async () => {
     height: 768,
     width: 362,
     imageId,
+    geometry: {
+      type: "Polygon",
+      coordinates: [],
+    },
   });
 
   const { container } = render(<Labels />, {

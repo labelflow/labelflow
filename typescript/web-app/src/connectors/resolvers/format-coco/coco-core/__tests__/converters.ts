@@ -37,6 +37,10 @@ describe("Coco converters", () => {
     width: 3,
     height: 4,
     labelClassId,
+    geometry: {
+      type: "Polygon",
+      coordinates: [],
+    },
   });
 
   const createImage = (name: string, height: number, width: number): Image => ({

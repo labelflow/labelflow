@@ -151,7 +151,7 @@ export const createLabelEffect = (
     width: number;
     height: number;
     selectedLabelClassId: string | null;
-    geometry: GeoJSON.Geometry;
+    geometry: GeoJSON.Polygon;
   },
   {
     setSelectedLabelId,
