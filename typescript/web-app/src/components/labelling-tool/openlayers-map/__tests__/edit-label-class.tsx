@@ -18,11 +18,9 @@ const testProjectId = "mocked-project-id";
 
 // FIXME: mockNextRouter wasn't working here so we had to re-implement the mock
 jest.mock("next/router", () => ({
-  useRouter: jest.fn(() => {
-    return {
-      query: { projectId: "mocked-project-id" },
-    };
-  }),
+  useRouter: jest.fn(() => ({
+    query: { projectId: "mocked-project-id" },
+  })),
 }));
 
 jest.mock("../../../../connectors/apollo-client-schema", () => {
