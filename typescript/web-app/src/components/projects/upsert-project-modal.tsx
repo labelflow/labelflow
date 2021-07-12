@@ -1,4 +1,4 @@
-import { useMutation, useLazyQuery } from "@apollo/client";
+import { useMutation, useLazyQuery, useQuery } from "@apollo/client";
 import gql from "graphql-tag";
 import { useEffect, useState, useCallback, useRef } from "react";
 import debounce from "lodash/fp/debounce";
@@ -29,9 +29,26 @@ const createProjectMutation = gql`
   }
 `;
 
+const updateProjectMutation = gql`
+  mutation updateProject($id: ID, $name: String!) {
+    updateProject(where: { id: $id }, data: { name: $name }) {
+      id
+    }
+  }
+`;
+
 const getProjectByNameQuery = gql`
   query getProjectByName($name: String) {
     project(where: { name: $name }) {
+      id
+      name
+    }
+  }
+`;
+
+const getProjectByIdQuery = gql`
+  query getProjectById($id: ID) {
+    project(where: { id: $id }) {
       id
       name
     }
@@ -51,19 +68,34 @@ const getProjectsQuery = gql`
   }
 `;
 
-export const CreateProjectModal = ({
+export const UpsertProjectModal = ({
   isOpen = false,
   onClose = () => {},
+  projectId = undefined,
 }: {
   isOpen?: boolean;
   onClose?: () => void;
+  projectId?: string;
 }) => {
   const [inputValue, setInputValue] = useState<string>("");
   const [projectName, setProjectName] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState<string>("");
 
+  useQuery(getProjectByIdQuery, {
+    skip: typeof projectId !== "string",
+    variables: { id: projectId },
+    onError: (e) => {
+      setErrorMessage(e.message);
+    },
+    onCompleted: ({ project }) => {
+      setInputValue(project.name);
+      setProjectName(project.name);
+    },
+  });
+
   const [queryExistingProjects, { data: existingProject }] = useLazyQuery(
-    getProjectByNameQuery
+    getProjectByNameQuery,
+    { fetchPolicy: "no-cache" }
   );
 
   const [createProjectMutate] = useMutation(createProjectMutation, {
@@ -73,11 +105,19 @@ export const CreateProjectModal = ({
     refetchQueries: [{ query: getProjectsQuery }],
   });
 
+  const [updateProjectMutate] = useMutation(updateProjectMutation, {
+    variables: {
+      id: projectId,
+      name: projectName,
+    },
+    refetchQueries: [{ query: getProjectsQuery }],
+  });
+
   const closeModal = useCallback(() => {
     onClose();
     setErrorMessage("");
     setInputValue("");
-  }, []);
+  }, [onClose]);
 
   const handleInputValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
@@ -99,7 +139,7 @@ export const CreateProjectModal = ({
   }, [projectName]);
 
   useEffect(() => {
-    if (existingProject != null) {
+    if (existingProject != null && existingProject?.project?.id !== projectId) {
       setErrorMessage("This name is already taken");
     } else {
       setErrorMessage("");
@@ -110,7 +150,11 @@ export const CreateProjectModal = ({
     if (projectName === "") return;
 
     try {
-      await createProjectMutate();
+      if (projectId) {
+        await updateProjectMutate();
+      } else {
+        await createProjectMutate();
+      }
 
       closeModal();
     } catch (e) {
@@ -136,7 +180,7 @@ export const CreateProjectModal = ({
 
         <ModalHeader textAlign="center" padding="6">
           <Heading as="h2" size="lg" pb="2">
-            New Project
+            {projectId ? "Edit project" : "New Project"}
           </Heading>
         </ModalHeader>
 
@@ -162,7 +206,7 @@ export const CreateProjectModal = ({
             disabled={!canCreateProject()}
             aria-label="Create project"
           >
-            Start Labelling
+            {projectId ? "Update project" : "Start Labelling"}
           </Button>
         </ModalFooter>
       </ModalContent>

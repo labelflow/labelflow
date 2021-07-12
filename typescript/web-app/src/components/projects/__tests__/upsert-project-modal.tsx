@@ -8,7 +8,7 @@ import { gql } from "graphql-tag";
 import { client } from "../../../connectors/apollo-client-schema";
 import { setupTestsWithLocalDatabase } from "../../../utils/setup-local-db-tests";
 import { mockUseQueryParams } from "../../../utils/router-mocks";
-import { CreateProjectModal } from "../create-project-modal";
+import { UpsertProjectModal } from "../upsert-project-modal";
 
 mockUseQueryParams();
 
@@ -21,7 +21,7 @@ setupTestsWithLocalDatabase();
 jest.mock("lodash/fp/debounce", () => jest.fn((_, fn) => fn));
 
 const renderModal = (props = {}) => {
-  render(<CreateProjectModal isOpen onClose={() => {}} {...props} />, {
+  render(<UpsertProjectModal isOpen onClose={() => {}} {...props} />, {
     wrapper: Wrapper,
   });
 };
