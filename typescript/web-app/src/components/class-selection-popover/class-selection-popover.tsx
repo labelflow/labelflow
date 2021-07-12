@@ -24,6 +24,8 @@ import { keymap } from "../../keymap";
 
 type CreateClassInput = { name: string; type: string };
 type NoneClass = { name: string; color: string; type: string };
+// The popover doesn't need all the attributes of the label class
+type LabelClassItem = Omit<LabelClass, "projectId">;
 
 const noneClass = {
   name: "None",
@@ -38,21 +40,21 @@ const filterLabelClasses = ({
   labelClasses,
   inputValueCombobox,
 }: {
-  labelClasses: LabelClass[];
+  labelClasses: LabelClassItem[];
   inputValueCombobox: string;
-}): (LabelClass | CreateClassInput | NoneClass)[] => {
+}): (LabelClassItem | CreateClassInput | NoneClass)[] => {
   const labelClassesWithNoneClass = [...labelClasses, noneClass];
   const createClassItem =
     inputValueCombobox &&
     labelClassesWithNoneClass.filter(
-      (labelClass: LabelClass | NoneClass) =>
+      (labelClass: LabelClassItem | NoneClass) =>
         labelClass.name === inputValueCombobox
     ).length === 0
       ? [{ name: inputValueCombobox, type: "CreateClassItem" }]
       : [];
 
   const filteredLabelClasses = labelClassesWithNoneClass.filter(
-    (labelClass: LabelClass | NoneClass) => {
+    (labelClass: LabelClassItem | NoneClass) => {
       return labelClass.name
         .toLowerCase()
         .startsWith((inputValueCombobox ?? "").toLowerCase());
@@ -75,8 +77,8 @@ export const ClassSelectionPopover = ({
 }: {
   isOpen?: boolean;
   onClose?: () => void;
-  onSelectedClassChange: (item: LabelClass | null) => void;
-  labelClasses: LabelClass[];
+  onSelectedClassChange: (item: LabelClassItem | null) => void;
+  labelClasses: LabelClassItem[];
   createNewClass: (name: string) => void;
   selectedLabelClassId?: string | null;
   trigger?: React.ReactNode;
@@ -124,7 +126,7 @@ export const ClassSelectionPopover = ({
     onSelectedItemChange: ({
       selectedItem,
     }: UseComboboxStateChange<
-      LabelClass | CreateClassInput | NoneClass
+      LabelClassItem | CreateClassInput | NoneClass
     >): void => {
       if (
         selectedItem != null &&
@@ -157,7 +159,7 @@ export const ClassSelectionPopover = ({
   const searchInputRef = useRef<HTMLInputElement | null>(null);
 
   useHotkeys(
-    // "/" key doesn't seem to be recognised on AZERTY keyboards, so we use "*" to catch any input.
+    // "/" key doesn't seem to be recognized on AZERTY keyboards, so we use "*" to catch any input.
     "*",
     (keyboardEvent) => {
       if (
@@ -240,7 +242,7 @@ export const ClassSelectionPopover = ({
             <Box pt="1" {...getMenuProps()} overflowY="scroll" maxHeight="340">
               {filteredLabelClasses.map(
                 (
-                  item: LabelClass | CreateClassInput | NoneClass,
+                  item: LabelClassItem | CreateClassInput | NoneClass,
                   index: number
                 ) => {
                   return (
