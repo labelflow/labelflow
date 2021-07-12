@@ -13,11 +13,37 @@ setupTestsWithLocalDatabase();
 jest.mock("probe-image-size");
 const mockedProbeSync = mocked(probe.sync);
 
+const getGeometryFromExtent = ({
+  x,
+  y,
+  width,
+  height,
+}: {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}): { type: string; coordinates: number[][][] } => ({
+  type: "Polygon",
+  coordinates: [
+    [
+      [x, y],
+      [x + width, y],
+      [x + width, y + height],
+      [x, y + height],
+      [x, y],
+    ],
+  ],
+});
+const labelDataExtent = {
+  x: 3.14,
+  y: 42,
+  height: 768,
+  width: 362,
+};
+
 const labelData = {
-  geometry: {
-    type: "Polygon",
-    coordinates: [],
-  },
+  geometry: getGeometryFromExtent(labelDataExtent),
 };
 
 const imageWidth = 500;
@@ -103,6 +129,19 @@ const createLabelClass = async (name: String) => {
 
   return id;
 };
+
+const getGeometryFromX = (x: number) => ({
+  type: "Polygon",
+  coordinates: [
+    [
+      [x, labelData.geometry.coordinates[0][0][1]],
+      labelData.geometry.coordinates[0][1],
+      labelData.geometry.coordinates[0][2],
+      [x, labelData.geometry.coordinates[0][3][1]],
+      [x, labelData.geometry.coordinates[0][4][1]],
+    ],
+  ],
+});
 
 describe("Label resolver test suite", () => {
   test("Creating a label should fail if its image doesn't exist", async () => {
@@ -214,12 +253,12 @@ describe("Label resolver test suite", () => {
     const imageId = await createImage("an image");
 
     await createLabel({
-      ...labelData,
+      geometry: getGeometryFromX(1),
       imageId,
     });
     incrementMockedDate(1);
     await createLabel({
-      ...labelData,
+      geometry: getGeometryFromX(2),
       imageId,
     });
 
@@ -343,8 +382,9 @@ describe("Label resolver test suite", () => {
       imageId,
     });
     const labelId = createResult.data.createLabel.id;
+    const newGeometry = getGeometryFromX(6.28);
 
-    client.mutate({
+    await client.mutate({
       mutation: gql`
         mutation updateLabel($id: ID!, $data: LabelUpdateInput!) {
           updateLabel(where: { id: $id }, data: $data) {
@@ -354,7 +394,9 @@ describe("Label resolver test suite", () => {
       `,
       variables: {
         id: labelId,
-        data: { x: 6.28 },
+        data: {
+          geometry: newGeometry,
+        },
       },
     });
 
@@ -364,6 +406,10 @@ describe("Label resolver test suite", () => {
           image(where: { id: $id }) {
             labels {
               id
+              geometry {
+                type
+                coordinates
+              }
               x
               y
             }
@@ -375,8 +421,11 @@ describe("Label resolver test suite", () => {
       },
     });
 
+    expect(queryResult.data.image.labels[0].geometry).toEqual(
+      expect.objectContaining(newGeometry)
+    );
     expect(queryResult.data.image.labels[0].x).toEqual(6.28);
-    expect(queryResult.data.image.labels[0].y).toEqual(labelData.y);
+    expect(queryResult.data.image.labels[0].y).toEqual(42);
   });
 
   test("should throw when the label to updated doesn't exist", () => {
@@ -391,7 +440,7 @@ describe("Label resolver test suite", () => {
         `,
         variables: {
           id: "id-of-a-label-that-doesnt-exist",
-          data: { x: 6.28 },
+          data: labelData,
         },
       })
     ).rejects.toThrow("No label with such id");
@@ -549,55 +598,47 @@ test("Create label should fail if called with bounding box out of image bounds",
   // x out of bounds
   await expect(
     createLabel({
-      x: -300,
-      width: 50,
-      y: 10,
-      height: 20,
       imageId,
-      geometry: {
-        type: "Polygon",
-        coordinates: [],
-      },
+      geometry: getGeometryFromExtent({
+        x: -300,
+        width: 50,
+        y: 10,
+        height: 20,
+      }),
     })
   ).rejects.toThrow("Bounding box out of image bounds");
   await expect(
     createLabel({
-      x: imageWidth + 10,
-      width: 50,
-      y: 10,
-      height: 20,
       imageId,
-      geometry: {
-        type: "Polygon",
-        coordinates: [],
-      },
+      geometry: getGeometryFromExtent({
+        x: imageWidth + 10,
+        width: 50,
+        y: 10,
+        height: 20,
+      }),
     })
   ).rejects.toThrow("Bounding box out of image bounds");
   // y out of bounds
   await expect(
     createLabel({
-      x: 10,
-      width: 10,
-      y: -100,
-      height: 10,
       imageId,
-      geometry: {
-        type: "Polygon",
-        coordinates: [],
-      },
+      geometry: getGeometryFromExtent({
+        x: 10,
+        width: 10,
+        y: -100,
+        height: 10,
+      }),
     })
   ).rejects.toThrow("Bounding box out of image bounds");
   await expect(
     createLabel({
-      x: 10,
-      width: 10,
-      y: imageHeight + 10,
-      height: 20,
       imageId,
-      geometry: {
-        type: "Polygon",
-        coordinates: [],
-      },
+      geometry: getGeometryFromExtent({
+        x: 10,
+        width: 10,
+        y: imageHeight + 10,
+        height: 20,
+      }),
     })
   ).rejects.toThrow("Bounding box out of image bounds");
 });
@@ -607,16 +648,14 @@ test("It should resize bounding box to image size when it is bigger", async () =
 
   const imageId = await createImage("an-image");
   await createLabel({
-    x: -10,
-    width: imageWidth + 10 + 10,
-    y: -10,
-    height: imageHeight + 10 + 10,
     id: labelId,
     imageId,
-    geometry: {
-      type: "Polygon",
-      coordinates: [],
-    },
+    geometry: getGeometryFromExtent({
+      x: -10,
+      width: imageWidth + 10 + 10,
+      y: -10,
+      height: imageHeight + 10 + 10,
+    }),
   });
 
   const queryResult = await client.query({
