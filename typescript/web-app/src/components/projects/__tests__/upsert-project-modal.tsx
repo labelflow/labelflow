@@ -240,9 +240,6 @@ test("update project: should update a project when the form is submitted", async
 
   await waitFor(() => {
     expect(onClose1).toHaveBeenCalled();
-    expect(
-      (screen.queryByLabelText(/project name input/i) as HTMLInputElement).value
-    ).toBe("");
   });
 
   // // FIXME: This checks that we can find the project by name in the DB after renaming it, does NOT work
