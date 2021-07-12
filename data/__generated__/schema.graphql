@@ -120,19 +120,11 @@ input LabelCreateInput {
   id: ID
   imageId: ID!
   labelClassId: ID
-  x: Float!
-  y: Float!
-  width: Float!
-  height: Float!
   geometry: GeometryInput!
 }
 
 input LabelUpdateInput {
   labelClassId: ID
-  x: Float
-  y: Float
-  width: Float
-  height: Float
   geometry: GeometryInput
 }
 

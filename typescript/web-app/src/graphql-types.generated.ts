@@ -143,19 +143,11 @@ export type LabelCreateInput = {
   id?: Maybe<Scalars['ID']>;
   imageId: Scalars['ID'];
   labelClassId?: Maybe<Scalars['ID']>;
-  x: Scalars['Float'];
-  y: Scalars['Float'];
-  width: Scalars['Float'];
-  height: Scalars['Float'];
   geometry: GeometryInput;
 };
 
 export type LabelUpdateInput = {
   labelClassId?: Maybe<Scalars['ID']>;
-  x?: Maybe<Scalars['Float']>;
-  y?: Maybe<Scalars['Float']>;
-  width?: Maybe<Scalars['Float']>;
-  height?: Maybe<Scalars['Float']>;
   geometry?: Maybe<GeometryInput>;
 };
 
