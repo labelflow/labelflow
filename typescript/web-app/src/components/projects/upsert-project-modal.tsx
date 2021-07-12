@@ -119,12 +119,6 @@ export const UpsertProjectModal = ({
     refetchQueries: [{ query: getProjectsQuery }],
   });
 
-  const closeModal = useCallback(() => {
-    onClose();
-    setErrorMessage("");
-    setProjectNameInputValue("");
-  }, [onClose]);
-
   const handleInputValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setProjectNameInputValue(e.target.value);
   };
@@ -168,24 +162,30 @@ export const UpsertProjectModal = ({
           await createProjectMutate();
         }
 
-        closeModal();
+        onClose();
       } catch (error) {
         setErrorMessage(error.message);
       }
     },
-    [projectName, closeModal]
+    [projectName, onClose]
   );
 
   const isInputValid = () => errorMessage === "";
 
   const canCreateProject = () => projectName !== "" && isInputValid();
 
+  useEffect(
+    () => () => {
+      if (!isOpen) {
+        setProjectNameInputValue("");
+        setErrorMessage("");
+      }
+    },
+    [isOpen]
+  );
+
   return (
-    <Modal
-      isOpen={isOpen && !(projectId && projectName === "")}
-      size="xl"
-      onClose={closeModal}
-    >
+    <Modal isOpen={isOpen} size="xl" onClose={onClose}>
       <ModalOverlay />
       <ModalContent as="form" onSubmit={createProject}>
         <ModalCloseButton />
