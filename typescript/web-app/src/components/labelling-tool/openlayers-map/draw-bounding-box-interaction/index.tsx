@@ -113,7 +113,7 @@ export const DrawBoundingBoxInteraction = () => {
           .getExtent();
         const geometry = new GeoJSON().writeGeometryObject(
           drawEvent.feature.getGeometry()
-        );
+        ) as GeoJSON.Polygon;
         const createLabelPromise = perform(
           createLabelEffect(
             {
