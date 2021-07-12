@@ -121,8 +121,39 @@ const updateLabel = async (_: any, args: MutationUpdateLabelArgs) => {
       throw new Error("No label class with such id");
     }
   }
+  if (!args?.data?.geometry) {
+    await db.label.update(labelId, args.data);
 
-  await db.label.update(labelId, args.data);
+    return getLabelById(labelId);
+  }
+  const labelData = await getLabelById(labelId);
+  const imageId = labelData?.imageId;
+  const image = await db.image.get(imageId);
+  const clippedGeometryObject = cleanGeometryWithinImage(
+    args?.data?.geometry,
+    image as DbImage
+  );
+
+  if (clippedGeometryObject?.geometry == null) {
+    throw new Error("Bounding box out of image bounds");
+  }
+
+  const now = new Date();
+  const [minX, minY, maxX, maxY] = bbox(clippedGeometryObject.geometry);
+  const width = maxX - minX;
+  const height = maxY - minY;
+
+  const newLabelEntity = {
+    ...args.data,
+    updatedAt: now.toISOString(),
+    x: minX,
+    y: minY,
+    geometry: clippedGeometryObject.geometry,
+    height,
+    width,
+  };
+
+  await db.label.update(labelId, newLabelEntity);
 
   return getLabelById(labelId);
 };
