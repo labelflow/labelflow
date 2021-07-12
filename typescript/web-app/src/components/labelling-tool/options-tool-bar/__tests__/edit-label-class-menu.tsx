@@ -6,6 +6,10 @@ import gql from "graphql-tag";
 
 import { mockNextRouter } from "../../../../utils/router-mocks";
 
+mockNextRouter({
+  query: { imageId: "mocked-image-id", projectId: "mocked-project-id" },
+});
+
 import { client } from "../../../../connectors/apollo-client-schema";
 import {
   useLabellingStore,
@@ -15,7 +19,7 @@ import { setupTestsWithLocalDatabase } from "../../../../utils/setup-local-db-te
 
 import { EditLabelClassMenu } from "../edit-label-class-menu";
 
-mockNextRouter({ query: { id: "mocked-image-id" } });
+const testProjectId = "mocked-project-id";
 
 setupTestsWithLocalDatabase();
 
@@ -81,6 +85,7 @@ beforeEach(async () => {
           id: "existing label class id",
           name: "existing label class",
           color: "0xaa45f7",
+          projectId: testProjectId,
         },
       },
     });
