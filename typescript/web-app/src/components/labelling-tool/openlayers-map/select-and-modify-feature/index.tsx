@@ -121,6 +121,8 @@ const updateLabelEffect = (
 export const SelectAndModifyFeature = (props: {
   sourceVectorLabelsRef: MutableRefObject<OlSourceVector<Geometry> | null>;
   map: OlMap | null;
+  setIsContextMenuOpen?: (state: boolean) => void;
+  editClassOverlayRef?: MutableRefObject<HTMLDivElement | null>;
 }) => {
   const { sourceVectorLabelsRef } = props;
   // We need to have this state in order to store the selected feature in the addfeature listener below
