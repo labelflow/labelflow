@@ -13,6 +13,7 @@ const labelClasses = [
     name: "Person",
     color: "#6B7280",
     shortcut: "1",
+    projectId: "mocked-project-id",
   },
   {
     id: "coaisndoiasndia",
@@ -22,6 +23,7 @@ const labelClasses = [
     name: "Dog",
     color: "#EF4444 ",
     shortcut: "2",
+    projectId: "mocked-project-id",
   },
 ];
 
@@ -91,6 +93,7 @@ describe("Class selection popover tests", () => {
       name: "Person",
       color: "#6B7280",
       shortcut: "1",
+      projectId: "mocked-project-id",
     });
   });
 
