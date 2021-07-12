@@ -33,11 +33,11 @@ export const useImagesNavigation = () => {
 
   // Refetch images ?
   const { data } = useQuery<{
-    project: Pick<Project, "id" | "images" | "imagesCount">;
+    project: Pick<Project, "id" | "images">;
   }>(allImagesOfAProjectQuery, { variables: { projectId } });
 
   // TODO: Investigate why you have to specify undefined states
-  const images = data?.project?.images ?? [];
+  const images = data?.project?.images;
   const imagesCount = images?.length ?? 0;
 
   if (images === undefined) {
