@@ -238,6 +238,7 @@ export type Project = {
   updatedAt: Scalars['DateTime'];
   name: Scalars['String'];
   images: Array<Image>;
+  labels: Array<Label>;
   labelClasses: Array<LabelClass>;
   imagesAggregates: ImagesAggregates;
   labelsAggregates: LabelsAggregates;
@@ -246,6 +247,12 @@ export type Project = {
 
 
 export type ProjectImagesArgs = {
+  first?: Maybe<Scalars['Int']>;
+  skip?: Maybe<Scalars['Int']>;
+};
+
+
+export type ProjectLabelsArgs = {
   first?: Maybe<Scalars['Int']>;
   skip?: Maybe<Scalars['Int']>;
 };
@@ -277,6 +284,7 @@ export type Query = {
   labelClassesAggregates: LabelClassesAggregates;
   labelsAggregates: LabelsAggregates;
   label: Label;
+  labels: Array<Label>;
   project: Project;
   projects: Array<Project>;
   exportToCoco: Scalars['String'];
@@ -338,6 +346,13 @@ export type QueryLabelsAggregatesArgs = {
 
 export type QueryLabelArgs = {
   where: LabelWhereUniqueInput;
+};
+
+
+export type QueryLabelsArgs = {
+  where?: Maybe<LabelWhereInput>;
+  first?: Maybe<Scalars['Int']>;
+  skip?: Maybe<Scalars['Int']>;
 };
 
 
@@ -621,6 +636,7 @@ export type ProjectResolvers<ContextType = any, ParentType extends ResolversPare
   updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   images?: Resolver<Array<ResolversTypes['Image']>, ParentType, ContextType, RequireFields<ProjectImagesArgs, never>>;
+  labels?: Resolver<Array<ResolversTypes['Label']>, ParentType, ContextType, RequireFields<ProjectLabelsArgs, never>>;
   labelClasses?: Resolver<Array<ResolversTypes['LabelClass']>, ParentType, ContextType>;
   imagesAggregates?: Resolver<ResolversTypes['ImagesAggregates'], ParentType, ContextType>;
   labelsAggregates?: Resolver<ResolversTypes['LabelsAggregates'], ParentType, ContextType>;
@@ -640,6 +656,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   labelClassesAggregates?: Resolver<ResolversTypes['LabelClassesAggregates'], ParentType, ContextType, RequireFields<QueryLabelClassesAggregatesArgs, never>>;
   labelsAggregates?: Resolver<ResolversTypes['LabelsAggregates'], ParentType, ContextType, RequireFields<QueryLabelsAggregatesArgs, never>>;
   label?: Resolver<ResolversTypes['Label'], ParentType, ContextType, RequireFields<QueryLabelArgs, 'where'>>;
+  labels?: Resolver<Array<ResolversTypes['Label']>, ParentType, ContextType, RequireFields<QueryLabelsArgs, never>>;
   project?: Resolver<ResolversTypes['Project'], ParentType, ContextType, RequireFields<QueryProjectArgs, 'where'>>;
   projects?: Resolver<Array<ResolversTypes['Project']>, ParentType, ContextType, RequireFields<QueryProjectsArgs, never>>;
   exportToCoco?: Resolver<ResolversTypes['String'], ParentType, ContextType>;

@@ -161,6 +161,7 @@ type Project {
   updatedAt: DateTime!
   name: String!
   images(first: Int, skip: Int): [Image!]!
+  labels(first: Int, skip: Int): [Label!]!
   labelClasses: [LabelClass!]!
   imagesAggregates: ImagesAggregates!
   labelsAggregates: LabelsAggregates!
@@ -193,6 +194,7 @@ type Query {
   labelClassesAggregates(where: LabelClassWhereInput): LabelClassesAggregates!
   labelsAggregates(where: LabelWhereInput): LabelsAggregates!
   label(where: LabelWhereUniqueInput!): Label!
+  labels(where: LabelWhereInput, first: Int, skip: Int): [Label!]!
   project(where: ProjectWhereUniqueInput!): Project!
   projects(first: Int, skip: Int): [Project!]!
   exportToCoco: String!

@@ -518,7 +518,71 @@ describe("Project resolver test suite", () => {
     );
   });
 
-  it("should count project images, label classes and labels", async () => {
+  it("should list a project images, label classes and labels", async () => {
+    mockedProbeSync.mockReturnValue({
+      width: 42,
+      height: 36,
+      mime: "image/jpeg",
+      length: 1000,
+      hUnits: "px",
+      wUnits: "px",
+      url: "https://example.com/image.jpeg",
+      type: "jpg",
+    });
+
+    const getProjectCount = async (projectId: string) => {
+      return client.query({
+        query: gql`
+          query getProjectCounts($id: ID!) {
+            project(where: { id: $id }) {
+              id
+              images {
+                id
+              }
+              labels {
+                id
+              }
+              labelClasses {
+                id
+              }
+            }
+          }
+        `,
+        variables: {
+          id: projectId,
+        },
+        fetchPolicy: "network-only",
+      });
+    };
+
+    const expectedResults = (queryResult: any, count: number) => {
+      expect(queryResult.data.project.images.length).toEqual(count);
+      expect(queryResult.data.project.labels.length).toEqual(count);
+      expect(queryResult.data.project.labelClasses.length).toEqual(count);
+    };
+
+    const projectId = "some id";
+    const otherId = "some other id";
+
+    createProject("My new project", projectId);
+    createProject("My other project", otherId);
+
+    const initialCountQuery = await getProjectCount(projectId);
+    const otherInitialCountQuery = await getProjectCount(otherId);
+
+    expectedResults(initialCountQuery, 0);
+    expectedResults(otherInitialCountQuery, 0);
+
+    await updateProjectWithImageLabelAndClass(projectId);
+
+    const updateCountQuery = await getProjectCount(projectId);
+    const otherUpdateCountQuery = await getProjectCount(otherId);
+
+    expectedResults(updateCountQuery, 1);
+    expectedResults(otherUpdateCountQuery, 0);
+  });
+
+  it("should count a project images, label classes and labels", async () => {
     mockedProbeSync.mockReturnValue({
       width: 42,
       height: 36,

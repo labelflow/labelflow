@@ -71,14 +71,16 @@ export const getPaginatedImages = async (
 };
 
 const getLabelClassesByProjectId = async (projectId: string) => {
-  const getResults = await db.labelClass.where({ projectId });
+  const getResults = await db.labelClass
+    .where({ projectId })
+    .sortBy("createdAt");
 
   return getResults ?? [];
 };
 
 // Queries
-const images = async (parent: any, args: QueryImagesArgs) => {
-  const where = { projectId: parent.id };
+const images = async (project: DbProject, args: QueryImagesArgs) => {
+  const where = { projectId: project.id };
 
   const imagesList = await getPaginatedImages(where, args?.skip, args?.first);
 
@@ -93,8 +95,22 @@ const images = async (parent: any, args: QueryImagesArgs) => {
   return entitiesWithUrls;
 };
 
-const labelClasses = async ({ id }: DbProject) => {
-  return getLabelClassesByProjectId(id);
+const labels = async (project: DbProject) => {
+  const imagesOfProject = await db.image
+    .where({
+      projectId: project.id,
+    })
+    .toArray();
+
+  return db.label
+    .filter((currentLabel) =>
+      imagesOfProject.some((image) => currentLabel.imageId === image.id)
+    )
+    .sortBy("createdAt");
+};
+
+const labelClasses = async (project: DbProject) => {
+  return getLabelClassesByProjectId(project.id);
 };
 
 const project = async (_: any, args: QueryProjectArgs): Promise<DbProject> => {
@@ -180,6 +196,7 @@ export default {
 
   Project: {
     images,
+    labels,
     labelClasses,
   },
 };

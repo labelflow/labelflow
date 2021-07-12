@@ -27,9 +27,10 @@ export type DbProject = Omit<
   GeneratedProject,
   | "images"
   | "imagesAggregates"
+  | "labels"
+  | "labelsAggregates"
   | "labelClasses"
   | "labelClassesAggregates"
-  | "labelsAggregates"
 >;
 
 interface Database extends Dexie {

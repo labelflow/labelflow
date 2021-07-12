@@ -49,6 +49,7 @@ type Project {
   updatedAt: DateTime!
   name: String!
   images(first: Int, skip: Int): [Image!]!
+  labels(first: Int, skip: Int): [Label!]!
   labelClasses: [LabelClass!]!
   imagesAggregates: ImagesAggregates!
   labelsAggregates: LabelsAggregates!
