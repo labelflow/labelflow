@@ -1,10 +1,15 @@
-// import { incrementMockedDate } from "@labelflow/dev-utils/mockdate";
 import gql from "graphql-tag";
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { mocked } from "ts-jest/utils";
+import probe from "probe-image-size";
 import { incrementMockedDate } from "@labelflow/dev-utils/mockdate";
 import { client } from "../../apollo-client-schema";
 import { setupTestsWithLocalDatabase } from "../../../utils/setup-local-db-tests";
 
 setupTestsWithLocalDatabase();
+
+jest.mock("probe-image-size");
+const mockedProbeSync = mocked(probe.sync);
 
 const createProject = (name: string, projectId?: string | null) => {
   return client.mutate({
@@ -514,6 +519,17 @@ describe("Project resolver test suite", () => {
   });
 
   it("should count project images, label classes and labels", async () => {
+    mockedProbeSync.mockReturnValue({
+      width: 42,
+      height: 36,
+      mime: "image/jpeg",
+      length: 1000,
+      hUnits: "px",
+      wUnits: "px",
+      url: "https://example.com/image.jpeg",
+      type: "jpg",
+    });
+
     const getProjectCount = async (projectId: string) => {
       return client.query({
         query: gql`
