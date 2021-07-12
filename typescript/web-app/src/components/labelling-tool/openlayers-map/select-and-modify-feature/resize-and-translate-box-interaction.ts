@@ -25,6 +25,8 @@ export class ResizeAndTranslateBox extends PointerInteraction {
 
   lastTranslateCoordinates: Coordinate | null = null;
 
+  featureChanged = false;
+
   onInteractionEnd:
     | (() => void)
     | ((feature: Feature<Polygon> | null) => void) = () => {};
@@ -263,7 +265,10 @@ export class ResizeAndTranslateBox extends PointerInteraction {
         destY,
       });
       this.lastTranslateCoordinates = null;
-      this.onInteractionEnd(this.feature);
+      if (this.featureChanged === true) {
+        this.onInteractionEnd(this.feature);
+        this.featureChanged = false;
+      }
     } else {
       this.featureVertices = null;
     }
@@ -280,6 +285,7 @@ export class ResizeAndTranslateBox extends PointerInteraction {
         coordinate: e.coordinate,
       });
       this.feature.setGeometry(newGeometry);
+      this.featureChanged = true;
       if (this.selectedElement === "feature") {
         this.lastTranslateCoordinates = e.coordinate;
       }
