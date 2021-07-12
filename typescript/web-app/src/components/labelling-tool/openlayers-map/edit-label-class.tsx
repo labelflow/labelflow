@@ -40,7 +40,7 @@ export const EditLabelClass = forwardRef<
   }
 >(({ isOpen, onClose }, ref) => {
   const router = useRouter();
-  const projectId = router.query.projectId as string;
+  const projectId = router?.query.projectId as string;
 
   const client = useApolloClient();
   const { data } = useQuery(labelClassesOfProjectQuery, {

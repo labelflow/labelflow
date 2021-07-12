@@ -4,8 +4,6 @@ import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import gql from "graphql-tag";
 
-import { mockNextRouter } from "../../../../utils/router-mocks";
-
 import { client } from "../../../../connectors/apollo-client-schema";
 import {
   useLabellingStore,
@@ -15,9 +13,17 @@ import { setupTestsWithLocalDatabase } from "../../../../utils/setup-local-db-te
 
 import { EditLabelClass } from "../edit-label-class";
 
-mockNextRouter({ query: { imageId: "mocked-image-id" } });
-
 setupTestsWithLocalDatabase();
+const testProjectId = "mocked-project-id";
+
+// FIXME: mockNextRouter wasn't working here so we had to re-implement the mock
+jest.mock("next/router", () => ({
+  useRouter: jest.fn(() => {
+    return {
+      query: { projectId: "mocked-project-id" },
+    };
+  }),
+}));
 
 jest.mock("../../../../connectors/apollo-client-schema", () => {
   const original = jest.requireActual(
@@ -68,26 +74,24 @@ beforeEach(async () => {
     selectedLabelId: "my label id",
     selectedTool: Tools.SELECTION,
   });
-  await waitFor(() => {
-    // @ts-ignore
-    client.mutateOriginal({
-      mutation: gql`
-        mutation createLabelClass($data: LabelClassCreateInput!) {
-          createLabelClass(data: $data) {
-            id
-          }
+  // @ts-ignore
+  await client.mutateOriginal({
+    mutation: gql`
+      mutation createLabelClass($data: LabelClassCreateInput!) {
+        createLabelClass(data: $data) {
+          id
         }
-      `,
-      variables: {
-        data: {
-          id: "existing label class id",
-          name: "existing label class",
-          color: "0xaa45f7",
-        },
+      }
+    `,
+    variables: {
+      data: {
+        id: "existing label class id",
+        name: "existing label class",
+        color: "0xaa45f7",
+        projectId: testProjectId,
       },
-    });
+    },
   });
-  jest.clearAllMocks();
 });
 
 it("should create a class", async () => {
