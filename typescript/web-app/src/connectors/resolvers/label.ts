@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from "uuid";
-import { bboxPolygon, polygon, intersect } from "@turf/turf";
+import { bboxPolygon, polygon, intersect, bbox } from "@turf/turf";
 
 import type {
   GeometryInput,
@@ -47,8 +47,7 @@ const createLabel = async (
   _: any,
   args: MutationCreateLabelArgs
 ): Promise<Label> => {
-  const { id, imageId, x, y, height, width, labelClassId, geometry } =
-    args.data;
+  const { id, imageId, labelClassId, geometry } = args.data;
 
   // Since we don't have any constraint checks with Dexie
   // We need to ensure that the imageId and the labelClassId
@@ -64,23 +63,18 @@ const createLabel = async (
     }
   }
 
-  const imageWidth = image?.width ?? x + width;
-  const imageHeight = image?.height ?? y + height;
-
-  if (
-    (x < 0 && x + width < 0) ||
-    (x + width > imageWidth && x > imageWidth) ||
-    (y < 0 && y + height < 0) ||
-    (y + height > imageHeight && y > imageHeight)
-  ) {
-    throw new Error("Bounding box out of image bounds");
-  }
-
   const labelId = id ?? uuidv4();
   const now = new Date();
 
-  const boundedX = Math.max(x, 0);
-  const boundedY = Math.max(y, 0);
+  const clippedGeometryObject = cleanGeometryWithinImage(geometry, image);
+
+  if (clippedGeometryObject?.geometry == null) {
+    throw new Error("Bounding box out of image bounds");
+  }
+
+  const [minX, minY, maxX, maxY] = bbox(clippedGeometryObject.geometry);
+  const width = maxX - minX;
+  const height = maxY - minY;
 
   const newLabelEntity = {
     id: labelId,
@@ -88,11 +82,11 @@ const createLabel = async (
     updatedAt: now.toISOString(),
     labelClassId,
     imageId,
-    x: boundedX,
-    y: boundedY,
-    geometry: cleanGeometryWithinImage(geometry, image).geometry,
-    height: Math.min(imageHeight, y + height) - boundedY,
-    width: Math.min(imageWidth, x + width) - boundedX,
+    x: minX,
+    y: minY,
+    geometry: clippedGeometryObject.geometry,
+    height,
+    width,
   };
 
   await db.label.add(newLabelEntity);
