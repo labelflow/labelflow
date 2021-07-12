@@ -7,12 +7,17 @@ import "@testing-library/jest-dom/extend-expect";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { mocked } from "ts-jest/utils";
 import probe from "probe-image-size";
+import gql from "graphql-tag";
 
 import { client } from "../../../connectors/apollo-client-schema";
 import { setupTestsWithLocalDatabase } from "../../../utils/setup-local-db-tests";
-import { mockUseQueryParams } from "../../../utils/router-mocks";
+import {
+  mockUseQueryParams,
+  mockNextRouter,
+} from "../../../utils/router-mocks";
 
 mockUseQueryParams();
+mockNextRouter({ query: { projectId: "mocked-project-id" } });
 
 import { ImportButton } from "../import-button";
 
@@ -43,6 +48,18 @@ jest.mock("../../../connectors/apollo-client-schema", () => {
   return {
     client: { ...original.client, mutate: jest.fn(original.client.mutate) },
   };
+});
+
+beforeEach(async () => {
+  await client.mutate({
+    mutation: gql`
+      mutation {
+        createProject(data: { name: "test project", id: "mocked-project-id" }) {
+          id
+        }
+      }
+    `,
+  });
 });
 
 test("should clear the modal content when closed", async () => {
