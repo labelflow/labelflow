@@ -71,7 +71,6 @@ describe("Class selection popover", () => {
   let imageId: string;
   beforeEach(() =>
     cy.window().then(async () => {
-      console.log("Create data");
       const { id } = await createImage(
         "https://images.unsplash.com/photo-1579513141590-c597876aefbc?auto=format&fit=crop&w=882&q=80"
       );
@@ -85,6 +84,18 @@ describe("Class selection popover", () => {
         width: 900,
         height: 600,
         labelClassId,
+        geometry: {
+          type: "Polygon",
+          coordinates: [
+            [
+              [0, 900],
+              [900, 900],
+              [900, 1500],
+              [0, 1500],
+              [0, 900],
+            ],
+          ],
+        },
       });
     })
   );
