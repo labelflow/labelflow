@@ -118,10 +118,6 @@ it("displays a single label", async () => {
   const mapRef: { current: OlMap | null } = { current: null };
 
   await createLabel({
-    x: 3.14,
-    y: 42.0,
-    height: 768,
-    width: 362,
     imageId,
     geometry: {
       type: "Polygon",
@@ -153,10 +149,6 @@ it("displays a single label", async () => {
 it("displays created labels", async () => {
   const mapRef: { current: OlMap | null } = { current: null };
   await createLabel({
-    x: 3.14,
-    y: 42.0,
-    height: 768,
-    width: 362,
     imageId,
     geometry: {
       type: "Polygon",
@@ -165,10 +157,6 @@ it("displays created labels", async () => {
   });
 
   await createLabel({
-    x: 6.28,
-    y: 84.0,
-    height: 768,
-    width: 362,
     imageId,
     geometry: {
       type: "Polygon",
@@ -200,10 +188,6 @@ it("displays created labels", async () => {
 it("should change style of selected label", async () => {
   const mapRef: { current: OlMap | null } = { current: null };
   const labelId = await createLabel({
-    x: 3.14,
-    y: 42.0,
-    height: 768,
-    width: 362,
     imageId,
     geometry: {
       type: "Polygon",
@@ -239,10 +223,6 @@ it("should change style of selected label", async () => {
 it("should delete selected label on delete key pressed", async () => {
   const mapRef: { current: OlMap | null } = { current: null };
   const labelId = await createLabel({
-    x: 3.14,
-    y: 42.0,
-    height: 768,
-    width: 362,
     imageId,
     geometry: {
       type: "Polygon",
@@ -290,10 +270,6 @@ it("should delete selected label on delete key pressed", async () => {
 it("should not delete a label when none was selected", async () => {
   const mapRef: { current: OlMap | null } = { current: null };
   await createLabel({
-    x: 3.14,
-    y: 42.0,
-    height: 768,
-    width: 362,
     imageId,
     geometry: {
       type: "Polygon",

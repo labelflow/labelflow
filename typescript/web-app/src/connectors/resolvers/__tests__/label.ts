@@ -14,10 +14,6 @@ jest.mock("probe-image-size");
 const mockedProbeSync = mocked(probe.sync);
 
 const labelData = {
-  x: 3.14,
-  y: 42.0,
-  height: 768,
-  width: 362,
   geometry: {
     type: "Polygon",
     coordinates: [],
@@ -219,13 +215,11 @@ describe("Label resolver test suite", () => {
 
     await createLabel({
       ...labelData,
-      x: 1,
       imageId,
     });
     incrementMockedDate(1);
     await createLabel({
       ...labelData,
-      x: 2,
       imageId,
     });
 
@@ -257,7 +251,6 @@ describe("Label resolver test suite", () => {
 
     await createLabel({
       ...labelData,
-      x: 1,
       imageId,
       labelClassId,
     });
@@ -507,7 +500,6 @@ describe("LabelsAggregates resolver test suite", () => {
 
     await createLabel({
       ...labelData,
-      x: 1,
       imageId,
     });
 
@@ -529,13 +521,11 @@ describe("LabelsAggregates resolver test suite", () => {
 
     await createLabel({
       ...labelData,
-      x: 1,
       imageId,
     });
     incrementMockedDate(1);
     await createLabel({
       ...labelData,
-      x: 2,
       imageId,
     });
 

@@ -8,10 +8,6 @@ import { GeometryInput } from "../../../../graphql-types.generated";
 type CreateLabelInputs = {
   imageId: string;
   id?: string;
-  x: number;
-  y: number;
-  width: number;
-  height: number;
   labelClassId: string | null | undefined;
   geometry: GeometryInput;
 };
@@ -20,10 +16,6 @@ const createLabelMutation = gql`
   mutation createLabel(
     $id: ID
     $imageId: ID!
-    $x: Float!
-    $y: Float!
-    $width: Float!
-    $height: Float!
     $labelClassId: ID
     $geometry: GeometryInput!
   ) {
@@ -31,10 +23,6 @@ const createLabelMutation = gql`
       data: {
         id: $id
         imageId: $imageId
-        x: $x
-        y: $y
-        width: $width
-        height: $height
         labelClassId: $labelClassId
         geometry: $geometry
       }
@@ -76,23 +64,10 @@ export function addLabelToImageInCache(
       __typename: string;
     };
   }>,
-  {
-    imageId,
-    id,
-    x,
-    y,
-    width,
-    height,
-    labelClassId,
-    geometry,
-  }: CreateLabelInputs & { id: string }
+  { imageId, id, labelClassId, geometry }: CreateLabelInputs & { id: string }
 ) {
   const createdLabel = {
     id,
-    x,
-    y,
-    width,
-    height,
     labelClass:
       labelClassId != null
         ? {
@@ -138,18 +113,10 @@ export function removeLabelFromImageCache(
 export const createLabelEffect = (
   {
     imageId,
-    x,
-    y,
-    width,
-    height,
     selectedLabelClassId,
     geometry,
   }: {
     imageId: string;
-    x: number;
-    y: number;
-    width: number;
-    height: number;
     selectedLabelClassId: string | null;
     geometry: GeoJSON.Polygon;
   },
@@ -163,10 +130,6 @@ export const createLabelEffect = (
 ): Effect => ({
   do: async () => {
     const createLabelInputs = {
-      x,
-      y,
-      width,
-      height,
       imageId,
       labelClassId: selectedLabelClassId,
       geometry,
@@ -175,18 +138,18 @@ export const createLabelEffect = (
     const { data } = await client.mutate({
       mutation: createLabelMutation,
       variables: createLabelInputs,
-      refetchQueries: ["countLabels"],
-      optimisticResponse: {
-        createLabel: { id: `temp-${Date.now()}`, __typename: "Label" },
-      },
-      update(cache, { data: mutationPayloadData }) {
-        const id = mutationPayloadData?.createLabel?.id;
-        if (typeof id !== "string") {
-          return;
-        }
+      refetchQueries: ["countLabels", "getImageLabels"],
+      // optimisticResponse: {
+      //   createLabel: { id: `temp-${Date.now()}`, __typename: "Label" },
+      // },
+      // update(cache, { data: mutationPayloadData }) {
+      //   const id = mutationPayloadData?.createLabel?.id;
+      //   if (typeof id !== "string") {
+      //     return;
+      //   }
 
-        addLabelToImageInCache(cache, { ...createLabelInputs, id });
-      },
+      //   addLabelToImageInCache(cache, { ...createLabelInputs, id });
+      // },
     });
 
     if (typeof data?.createLabel?.id !== "string") {
@@ -213,10 +176,6 @@ export const createLabelEffect = (
   redo: async (id: string) => {
     const createLabelInputs = {
       id,
-      x,
-      y,
-      width,
-      height,
       imageId,
       labelClassId: selectedLabelClassId,
       geometry,

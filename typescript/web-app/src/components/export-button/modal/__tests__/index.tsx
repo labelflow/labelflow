@@ -123,13 +123,11 @@ test("Export Modal should display the number of labels", async () => {
   const imageId = await createImage("an image");
   await createLabel({
     ...labelData,
-    x: 1,
     imageId,
   });
   incrementMockedDate(1);
   await createLabel({
     ...labelData,
-    x: 2,
     imageId,
   });
 

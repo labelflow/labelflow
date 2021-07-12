@@ -108,9 +108,6 @@ export const DrawBoundingBoxInteraction = () => {
         return true;
       }}
       onDrawend={async (drawEvent: DrawEvent) => {
-        const [x, y, destX, destY] = drawEvent.feature
-          .getGeometry()
-          .getExtent();
         const geometry = new GeoJSON().writeGeometryObject(
           drawEvent.feature.getGeometry()
         ) as GeoJSON.Polygon;
@@ -118,10 +115,6 @@ export const DrawBoundingBoxInteraction = () => {
           createLabelEffect(
             {
               imageId,
-              x,
-              y,
-              width: destX - x,
-              height: destY - y,
               selectedLabelClassId,
               geometry,
             },

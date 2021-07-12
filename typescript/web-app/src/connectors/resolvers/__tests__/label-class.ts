@@ -38,7 +38,7 @@ const createLabelClass = async (data: {
   return id;
 };
 
-const createLabel = async (labelClassId: string, x: number) => {
+const createLabel = async (labelClassId: string) => {
   mockedProbeSync.mockReturnValue({
     width: 42,
     height: 36,
@@ -79,10 +79,6 @@ const createLabel = async (labelClassId: string, x: number) => {
       data: {
         imageId,
         labelClassId,
-        x,
-        y: 1,
-        height: 1,
-        width: 1,
         geometry: {
           type: "Polygon",
           coordinates: [],

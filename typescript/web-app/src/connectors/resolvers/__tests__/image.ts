@@ -59,10 +59,6 @@ describe("Image resolver test suite", () => {
       variables: {
         data: {
           imageId,
-          x,
-          y: 1,
-          height: 1,
-          width: 1,
           geometry: {
             type: "Polygon",
             coordinates: [],

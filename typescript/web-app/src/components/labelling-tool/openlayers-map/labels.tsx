@@ -65,10 +65,6 @@ const createLabelWithIdMutation = gql`
   mutation createLabel(
     $id: ID!
     $imageId: ID!
-    $x: Float!
-    $y: Float!
-    $width: Float!
-    $height: Float!
     $labelClassId: ID
     $geometry: GeometryInput!
   ) {
@@ -76,10 +72,6 @@ const createLabelWithIdMutation = gql`
       data: {
         id: $id
         imageId: $imageId
-        x: $x
-        y: $y
-        width: $width
-        height: $height
         labelClassId: $labelClassId
         geometry: $geometry
       }
@@ -134,23 +126,11 @@ const createDeleteLabelEffect = (
       | "geometry"
     >
   ) => {
-    const {
-      id: labelId,
-      x,
-      y,
-      width,
-      height,
-      imageId,
-      geometry,
-    } = deletedLabel;
+    const { id: labelId, imageId, geometry } = deletedLabel;
     const labelClassId = deletedLabel?.labelClass?.id;
 
     const createLabelInputs = {
       id: labelId,
-      x,
-      y,
-      width,
-      height,
       imageId,
       labelClassId,
       geometry,
