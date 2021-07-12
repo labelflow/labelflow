@@ -16,6 +16,8 @@ import probe from "probe-image-size";
 import VectorLayer from "ol/layer/Vector";
 import { mockNextRouter } from "../../../../utils/router-mocks";
 
+const testProjectId = "mocked-project-id";
+
 mockNextRouter();
 
 import { useRouter } from "next/router";
@@ -50,9 +52,16 @@ const createImage = async (name: String) => {
         $name: String!
         $width: Int
         $height: Int
+        $projectId: ID!
       ) {
         createImage(
-          data: { name: $name, file: $file, width: $width, height: $height }
+          data: {
+            name: $name
+            file: $file
+            width: $width
+            height: $height
+            projectId: $projectId
+          }
         ) {
           id
         }
@@ -63,6 +72,7 @@ const createImage = async (name: String) => {
       name,
       width: imageWidth,
       height: imageHeight,
+      projectId: testProjectId,
     },
   });
 
@@ -104,7 +114,7 @@ beforeEach(async () => {
   imageId = await createImage("myImage");
 
   (useRouter as jest.Mock).mockImplementation(() => ({
-    query: { id: imageId },
+    query: { imageId, projectId: testProjectId },
   }));
 });
 

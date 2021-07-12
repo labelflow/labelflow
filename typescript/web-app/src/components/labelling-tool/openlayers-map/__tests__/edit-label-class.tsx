@@ -15,7 +15,7 @@ import { setupTestsWithLocalDatabase } from "../../../../utils/setup-local-db-te
 
 import { EditLabelClass } from "../edit-label-class";
 
-mockNextRouter({ query: { id: "mocked-image-id" } });
+mockNextRouter({ query: { imageId: "mocked-image-id" } });
 
 setupTestsWithLocalDatabase();
 
