@@ -95,7 +95,7 @@ export const UpsertProjectModal = ({
 
   const [queryExistingProjects, { data: existingProject }] = useLazyQuery(
     getProjectByNameQuery,
-    { fetchPolicy: "no-cache" }
+    { fetchPolicy: "network-only" }
   );
 
   const [createProjectMutate] = useMutation(createProjectMutation, {
@@ -204,7 +204,7 @@ export const UpsertProjectModal = ({
             type="submit"
             colorScheme="brand"
             disabled={!canCreateProject()}
-            aria-label="Create project"
+            aria-label={projectId ? "Update project" : "Create Project"}
           >
             {projectId ? "Update project" : "Start Labelling"}
           </Button>

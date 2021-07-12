@@ -1,4 +1,11 @@
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import {
+  render,
+  cleanup,
+  screen,
+  fireEvent,
+  waitFor,
+  act,
+} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { ApolloProvider } from "@apollo/client";
 import { PropsWithChildren } from "react";
@@ -21,7 +28,7 @@ setupTestsWithLocalDatabase();
 jest.mock("lodash/fp/debounce", () => jest.fn((_, fn) => fn));
 
 const renderModal = (props = {}) => {
-  render(<UpsertProjectModal isOpen onClose={() => {}} {...props} />, {
+  return render(<UpsertProjectModal isOpen onClose={() => {}} {...props} />, {
     wrapper: Wrapper,
   });
 };
@@ -111,7 +118,7 @@ test("should display an error message if project name already exists", async () 
     /project name input/i
   ) as HTMLInputElement;
 
-  fireEvent.change(input, { target: { value: "Good Day" } });
+  fireEvent.change(input, { target: { value: projectName } });
 
   const button = screen.getByLabelText(/create project/i);
 
@@ -128,4 +135,185 @@ test("should call the onClose handler", async () => {
   userEvent.click(screen.getByLabelText("Close"));
 
   expect(onClose).toHaveBeenCalled();
+});
+
+test("update project: should have project name pre-filled when renaming existing project", async () => {
+  const projectName = "Good Day";
+
+  const {
+    data: {
+      createProject: { id: projectId },
+    },
+  } = await client.mutate({
+    mutation: gql`
+      mutation createProject($name: String) {
+        createProject(data: { name: $name }) {
+          id
+        }
+      }
+    `,
+    variables: { name: projectName },
+  });
+
+  renderModal({ projectId });
+
+  const input = screen.getByLabelText(
+    /project name input/i
+  ) as HTMLInputElement;
+
+  await waitFor(() => {
+    expect(input.value).toBe(projectName);
+  });
+
+  const button = screen.getByLabelText(/update project/i);
+
+  await waitFor(() => {
+    expect(button).not.toHaveAttribute("disabled");
+  });
+});
+
+test.only("update project: should update a project when the form is submitted", async () => {
+  const projectName = "Bad Day";
+  const projectNewName = "Good Day";
+
+  const {
+    data: {
+      createProject: { id: projectId },
+    },
+  } = await client.mutate({
+    mutation: gql`
+      mutation createProject($name: String) {
+        createProject(data: { name: $name }) {
+          id
+        }
+      }
+    `,
+    variables: { name: projectName },
+  });
+
+  const onClose1 = jest.fn();
+
+  // act(() => {
+  renderModal({ projectId, onClose: onClose1 });
+  // });
+
+  const input1 = screen.getByLabelText(
+    /project name input/i
+  ) as HTMLInputElement;
+
+  await waitFor(() => {
+    expect(input1.value).toBe(projectName);
+  });
+
+  const button = screen.getByLabelText(/update project/i);
+
+  // act(() => {
+  //   fireEvent.change(input1, { target: { value: projectNewName } });
+  //   fireEvent.click(button);
+  // });
+
+  // act(() => {
+  userEvent.click(input1);
+  // userEvent.(input1, projectNewName);
+  userEvent.type(input1, projectNewName);
+  userEvent.click(button);
+  // });
+
+  await waitFor(() => {
+    expect(onClose1).toHaveBeenCalled();
+    expect(
+      (screen.queryByLabelText(/project name input/i) as HTMLInputElement).value
+    ).toBe("");
+  });
+
+  console.log(
+    JSON.stringify(
+      await client.query({
+        query: gql`
+          query getProjects {
+            projects {
+              id
+              name
+            }
+          }
+        `,
+        fetchPolicy: "no-cache",
+      }),
+      null,
+      2
+    )
+  );
+
+  console.log("projectId", projectId);
+
+  // await new Promise((resolve) => setTimeout(resolve, 3000));
+
+  // Check that new name is in DB, works
+  const {
+    data: {
+      project: { name: name1 },
+    },
+  } = await client.query({
+    query: gql`
+      query getProjectById($id: ID) {
+        project(where: { id: $id }) {
+          id
+          name
+        }
+      }
+    `,
+    variables: { id: projectId },
+    fetchPolicy: "no-cache",
+  });
+  expect(name1).toEqual(projectNewName);
+
+  // console.log(
+  //   JSON.stringify(
+  //     await client.query({
+  //       query: gql`
+  //         query getProjects {
+  //           projects {
+  //             id
+  //             name
+  //           }
+  //         }
+  //       `,
+  //       fetchPolicy: "no-cache",
+  //     }),
+  //     null,
+  //     2
+  //   )
+  // );
+
+  // // FIXME: This checks that we can find the project by name in the DB after renaming it, does NOT work
+  // const {
+  //   data: {
+  //     project: { name: name2 },
+  //   },
+  // } = await client.query({
+  //   query: gql`
+  //     query getProjectByName($name: String) {
+  //       project(where: { name: $name }) {
+  //         id
+  //         name
+  //       }
+  //     }
+  //   `,
+  //   variables: { name: projectNewName },
+  //   fetchPolicy: "no-cache",
+  // });
+  // expect(name2).toEqual(projectNewName);
+
+  const onClose2 = jest.fn();
+
+  cleanup();
+  renderModal({ projectId, onClose: onClose2 });
+
+  const input2 = screen.getByLabelText(
+    /project name input/i
+  ) as HTMLInputElement;
+
+  await waitFor(() => {
+    expect(input2.value).toBe(projectNewName);
+  });
 });

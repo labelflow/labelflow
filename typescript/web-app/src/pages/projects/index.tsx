@@ -32,7 +32,10 @@ const ProjectPage = () => {
       getProjectsQuery
     );
 
-  const [isOpen, setIsOpen] = useQueryParam("modal-create-project", BoolParam);
+  const [isCreatingProject, setIsCreatingProject] = useQueryParam(
+    "modal-create-project",
+    BoolParam
+  );
   const [editProjectId, setEditProjectId] = useQueryParam(
     "modal-edit-project",
     IdParam
@@ -43,10 +46,10 @@ const ProjectPage = () => {
       setEditProjectId(null, "replaceIn");
     }
 
-    if (isOpen) {
-      setIsOpen(false, "replaceIn");
+    if (isCreatingProject) {
+      setIsCreatingProject(false, "replaceIn");
     }
-  }, [editProjectId, isOpen]);
+  }, [editProjectId, isCreatingProject]);
 
   return (
     <>
@@ -64,7 +67,7 @@ const ProjectPage = () => {
         }
       >
         <UpsertProjectModal
-          isOpen={isOpen || editProjectId != null}
+          isOpen={isCreatingProject || editProjectId != null}
           onClose={onClose}
           projectId={editProjectId}
         />
@@ -72,7 +75,7 @@ const ProjectPage = () => {
         <Flex direction="row" wrap="wrap" p={4}>
           <NewProjectCard
             addProject={() => {
-              setIsOpen(true, "replaceIn");
+              setIsCreatingProject(true, "replaceIn");
             }}
           />
 
