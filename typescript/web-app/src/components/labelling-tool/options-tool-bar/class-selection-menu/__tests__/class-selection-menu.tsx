@@ -29,8 +29,8 @@ const [onSelectedClassChange, createNewClass] = [jest.fn(), jest.fn()];
 const setIsOpen = jest.fn();
 
 const renderClassSelectionMenu = (
-  labelClassesInput: LabelClass[],
-  selectedLabelClass?: LabelClass,
+  labelClassesInput: Omit<LabelClass, "projectId">[],
+  selectedLabelClass?: Omit<LabelClass, "projectId">,
   isOpen: boolean = false
 ): void => {
   render(
