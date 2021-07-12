@@ -95,10 +95,14 @@ export const UpsertProjectModal = ({
     },
   });
 
-  const [queryExistingProjects, { data: existingProject }] = useLazyQuery(
-    getProjectByNameQuery,
-    { fetchPolicy: "network-only" }
-  );
+  const [
+    queryExistingProjects,
+    {
+      data: existingProject,
+      loading: loadingExistingProjects,
+      variables: variablesExistingProjects,
+    },
+  ] = useLazyQuery(getProjectByNameQuery, { fetchPolicy: "network-only" });
 
   const [createProjectMutate] = useMutation(createProjectMutation, {
     variables: {
@@ -140,12 +144,17 @@ export const UpsertProjectModal = ({
   }, [projectName]);
 
   useEffect(() => {
-    if (existingProject != null && existingProject?.project?.id !== projectId) {
+    if (
+      existingProject != null &&
+      !loadingExistingProjects &&
+      existingProject?.project?.id !== projectId &&
+      variablesExistingProjects?.name === projectName
+    ) {
       setErrorMessage("This name is already taken");
     } else {
       setErrorMessage("");
     }
-  }, [existingProject, projectId]);
+  }, [existingProject, projectId, loadingExistingProjects, projectName]);
 
   const createProject = useCallback(
     async (event) => {
@@ -172,7 +181,11 @@ export const UpsertProjectModal = ({
   const canCreateProject = () => projectName !== "" && isInputValid();
 
   return (
-    <Modal isOpen={isOpen} size="xl" onClose={closeModal}>
+    <Modal
+      isOpen={isOpen && !(projectId && projectName === "")}
+      size="xl"
+      onClose={closeModal}
+    >
       <ModalOverlay />
       <ModalContent as="form" onSubmit={createProject}>
         <ModalCloseButton />
