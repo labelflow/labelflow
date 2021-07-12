@@ -34,7 +34,7 @@ type Geometry {
 
 input GeometryInput {
   type: String!
-  coordinates: JSON
+  coordinates: JSON!
 }
 
 type Image {

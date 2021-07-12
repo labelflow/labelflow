@@ -24,7 +24,7 @@ input LabelUpdateInput {
 
 input GeometryInput {
   type: String!
-  coordinates: JSON
+  coordinates: JSON!
 }
 
 type LabelsAggregates {

@@ -53,7 +53,7 @@ export type Geometry = {
 
 export type GeometryInput = {
   type: Scalars['String'];
-  coordinates?: Maybe<Scalars['JSON']>;
+  coordinates: Scalars['JSON'];
 };
 
 export type Image = {
