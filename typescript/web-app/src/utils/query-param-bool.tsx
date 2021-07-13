@@ -1,3 +1,5 @@
+import { isArray } from "lodash/fp";
+
 /**
  * Encode booleans as the presence or not of the param name in the url
  * Rather than with 0 and 1 like in `BooleanParam`
@@ -16,5 +18,23 @@ export const BoolParam = {
       return true;
     }
     return false;
+  },
+};
+
+export const IdParam = {
+  encode: (id: string | null | undefined): string | null | undefined => {
+    if (!id) {
+      return undefined; // Don't show param name in URL at all
+    }
+    return id; // Show param name in URL, with no value
+  },
+  decode: (
+    input: string | (string | null)[] | null | undefined
+  ): string | undefined => {
+    if (!input) return undefined;
+
+    if (isArray(input)) return input[0] ?? undefined;
+
+    return input;
   },
 };

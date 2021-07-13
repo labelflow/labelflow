@@ -17,7 +17,8 @@
     "Mapbox",
     "WMTS",
     "Zoomify",
-    "openlayers"
+    "openlayers",
+    "upsert"
   ],
   "python.pythonPath": ".venv/bin/python"
 }
