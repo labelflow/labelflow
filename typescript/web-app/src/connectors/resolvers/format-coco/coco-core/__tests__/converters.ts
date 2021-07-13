@@ -52,6 +52,7 @@ describe("Coco converters", () => {
     path: "/path",
     mimetype: "file/ext",
     labels: [],
+    projectId: testProjectId,
   });
 
   test("Should convert a label class to a coco category", () => {
