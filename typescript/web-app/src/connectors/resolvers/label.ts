@@ -25,42 +25,6 @@ const getLabelById = async (id: string): Promise<DbLabel> => {
   return entity;
 };
 
-const resizeLabelToFitInsideImageBounds = async (labelData: {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-  imageId: string;
-}): Promise<{
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-}> => {
-  const { x, y, width, height, imageId } = labelData;
-  const image = await db.image.get(imageId);
-  const imageWidth = image?.width ?? x + width;
-  const imageHeight = image?.height ?? y + height;
-  if (
-    (x < 0 && x + width < 0) ||
-    (x + width > imageWidth && x > imageWidth) ||
-    (y < 0 && y + height < 0) ||
-    (y + height > imageHeight && y > imageHeight)
-  ) {
-    throw new Error("Bounding box out of image bounds");
-  }
-
-  const boundedX = Math.max(x, 0);
-  const boundedY = Math.max(y, 0);
-
-  return {
-    x: boundedX,
-    y: boundedY,
-    height: Math.min(imageHeight, y + height) - boundedY,
-    width: Math.min(imageWidth, x + width) - boundedX,
-  };
-};
-
 // Queries
 const labelClass = async (label: DbLabel) => {
   if (!label?.labelClassId) {
