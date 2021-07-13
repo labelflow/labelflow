@@ -79,10 +79,18 @@ const createLabel = async (labelClassId: string, x: number) => {
       data: {
         imageId,
         labelClassId,
-        x,
-        y: 1,
-        height: 1,
-        width: 1,
+        geometry: {
+          type: "Polygon",
+          coordinates: [
+            [
+              [x, 0],
+              [x + 1, 0],
+              [x + 1, 1],
+              [x, 1],
+              [x, 0],
+            ],
+          ],
+        },
       },
     },
   });

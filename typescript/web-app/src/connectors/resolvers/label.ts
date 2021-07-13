@@ -1,12 +1,17 @@
 import { v4 as uuidv4 } from "uuid";
+import bboxPolygon from "@turf/bbox-polygon";
+import { polygon } from "@turf/helpers";
+import intersect from "@turf/intersect";
+import bbox from "@turf/bbox";
+
 import type {
+  GeometryInput,
   Label,
   MutationCreateLabelArgs,
   MutationDeleteLabelArgs,
   MutationUpdateLabelArgs,
   QueryLabelArgs,
 } from "../../graphql-types.generated";
-
 import { db, DbLabel } from "../database";
 
 export const getLabels = () => db.label.toArray();
@@ -33,12 +38,42 @@ const label = (_: any, args: QueryLabelArgs) => {
   return getLabelById(args?.where?.id);
 };
 
+const getBoundedGeometryFromImage = (
+  imageDimensions: { width: number; height: number },
+  geometry: GeometryInput
+) => {
+  const geometryPolygon = polygon(geometry.coordinates);
+  const imagePolygon = bboxPolygon([
+    0,
+    0,
+    imageDimensions.width,
+    imageDimensions.height,
+  ]);
+  const clippedGeometryObject = intersect(imagePolygon, geometryPolygon);
+
+  if (clippedGeometryObject?.geometry == null) {
+    throw new Error("Bounding box out of image bounds");
+  }
+
+  const [minX, minY, maxX, maxY] = bbox(clippedGeometryObject.geometry);
+  const width = maxX - minX;
+  const height = maxY - minY;
+
+  return {
+    geometry: clippedGeometryObject.geometry,
+    x: minX,
+    y: minY,
+    width,
+    height,
+  };
+};
+
 // Mutations
 const createLabel = async (
   _: any,
   args: MutationCreateLabelArgs
 ): Promise<Label> => {
-  const { id, imageId, x, y, height, width, labelClassId } = args.data;
+  const { id, imageId, labelClassId, geometry } = args.data;
 
   // Since we don't have any constraint checks with Dexie
   // We need to ensure that the imageId and the labelClassId
@@ -53,21 +88,17 @@ const createLabel = async (
       throw new Error(`The labelClass id ${labelClassId} doesn't exist.`);
     }
   }
-  const imageWidth = image?.width ?? x + width;
-  const imageHeight = image?.height ?? y + height;
-  if (
-    (x < 0 && x + width < 0) ||
-    (x + width > imageWidth && x > imageWidth) ||
-    (y < 0 && y + height < 0) ||
-    (y + height > imageHeight && y > imageHeight)
-  ) {
-    throw new Error("Bounding box out of image bounds");
-  }
+
   const labelId = id ?? uuidv4();
   const now = new Date();
 
-  const boundedX = Math.max(x, 0);
-  const boundedY = Math.max(y, 0);
+  const {
+    geometry: clippedGeometry,
+    x,
+    y,
+    width,
+    height,
+  } = getBoundedGeometryFromImage(image, geometry);
 
   const newLabelEntity = {
     id: labelId,
@@ -75,10 +106,11 @@ const createLabel = async (
     updatedAt: now.toISOString(),
     labelClassId,
     imageId,
-    x: boundedX,
-    y: boundedY,
-    height: Math.min(imageHeight, y + height) - boundedY,
-    width: Math.min(imageWidth, x + width) - boundedX,
+    x,
+    y,
+    width,
+    height,
+    geometry: clippedGeometry,
   };
 
   await db.label.add(newLabelEntity);
@@ -113,8 +145,38 @@ const updateLabel = async (_: any, args: MutationUpdateLabelArgs) => {
       throw new Error("No label class with such id");
     }
   }
+  if (!args?.data?.geometry) {
+    await db.label.update(labelId, args.data);
 
-  await db.label.update(labelId, args.data);
+    return getLabelById(labelId);
+  }
+
+  const { imageId } = await getLabelById(labelId);
+  const image = await db.image.get(imageId);
+  if (image == null) {
+    throw new Error(`The image id ${imageId} doesn't exist.`);
+  }
+
+  const {
+    geometry: clippedGeometry,
+    x,
+    y,
+    width,
+    height,
+  } = getBoundedGeometryFromImage(image, args.data.geometry);
+  const now = new Date();
+
+  const newLabelEntity = {
+    ...args.data,
+    updatedAt: now.toISOString(),
+    geometry: clippedGeometry,
+    x,
+    y,
+    height,
+    width,
+  };
+
+  await db.label.update(labelId, newLabelEntity);
 
   return getLabelById(labelId);
 };

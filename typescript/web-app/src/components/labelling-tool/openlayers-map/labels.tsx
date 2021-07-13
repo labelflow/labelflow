@@ -3,8 +3,8 @@ import { useRouter } from "next/router";
 import { ApolloClient, useQuery, useApolloClient } from "@apollo/client";
 import gql from "graphql-tag";
 import { Vector as OlSourceVector } from "ol/source";
+import GeoJSON from "ol/format/GeoJSON";
 import { Geometry } from "ol/geom";
-import { fromExtent } from "ol/geom/Polygon";
 import { Fill, Stroke, Style } from "ol/style";
 import { useHotkeys } from "react-hotkeys-hook";
 
@@ -32,6 +32,10 @@ const getImageLabelsQuery = gql`
           id
           color
         }
+        geometry {
+          type
+          coordinates
+        }
       }
     }
   }
@@ -49,6 +53,10 @@ const deleteLabelMutation = gql`
       labelClass {
         id
       }
+      geometry {
+        type
+        coordinates
+      }
     }
   }
 `;
@@ -57,21 +65,15 @@ const createLabelWithIdMutation = gql`
   mutation createLabel(
     $id: ID!
     $imageId: ID!
-    $x: Float!
-    $y: Float!
-    $width: Float!
-    $height: Float!
     $labelClassId: ID
+    $geometry: GeometryInput!
   ) {
     createLabel(
       data: {
         id: $id
         imageId: $imageId
-        x: $x
-        y: $y
-        width: $width
-        height: $height
         labelClassId: $labelClassId
+        geometry: $geometry
       }
     ) {
       id
@@ -114,20 +116,24 @@ const createDeleteLabelEffect = (
   undo: async (
     deletedLabel: Pick<
       Label,
-      "id" | "x" | "y" | "width" | "height" | "imageId" | "labelClass"
+      | "id"
+      | "x"
+      | "y"
+      | "width"
+      | "height"
+      | "imageId"
+      | "labelClass"
+      | "geometry"
     >
   ) => {
-    const { id: labelId, x, y, width, height, imageId } = deletedLabel;
+    const { id: labelId, imageId, geometry } = deletedLabel;
     const labelClassId = deletedLabel?.labelClass?.id;
 
     const createLabelInputs = {
       id: labelId,
-      x,
-      y,
-      width,
-      height,
       imageId,
       labelClassId,
+      geometry,
     };
 
     /* It is important to use the same id for the re-creation when the label
@@ -216,7 +222,7 @@ export const Labels = ({
     <>
       <olLayerVector>
         <olSourceVector ref={sourceVectorLabelsRef}>
-          {labels.map(({ id, x, y, width, height, labelClass }: Label) => {
+          {labels.map(({ id, labelClass, geometry }: Label) => {
             const isSelected = id === selectedLabelId;
             const labelClassColor = labelClass?.color ?? noneClassColor;
             const style = new Style({
@@ -235,7 +241,7 @@ export const Labels = ({
                 key={id}
                 id={id}
                 properties={{ isSelected }}
-                geometry={fromExtent([x, y, x + width, y + height])}
+                geometry={new GeoJSON().readGeometry(geometry)}
                 style={style}
               />
             );
