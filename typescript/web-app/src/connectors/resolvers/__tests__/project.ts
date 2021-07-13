@@ -715,7 +715,7 @@ describe("Project resolver test suite", () => {
         }
       `,
       variables: {
-        name,
+        name: newName,
       },
       fetchPolicy: "no-cache",
     });
