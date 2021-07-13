@@ -5,11 +5,18 @@ import { useHotkeys } from "react-hotkeys-hook";
 import { useUndoStore } from "../../../connectors/undo-store";
 
 import { keymap } from "../../../keymap";
+import {
+  useLabellingStore,
+  DrawingToolState,
+} from "../../../connectors/labelling-state";
 
 export type Props = {};
 
 export const UndoTool = () => {
   const { undo, canUndo } = useUndoStore();
+  const drawingToolState = useLabellingStore(
+    (state) => state.boxDrawingToolState
+  );
 
   useHotkeys(
     keymap.undo.key,
@@ -28,7 +35,7 @@ export const UndoTool = () => {
         backgroundColor="white"
         aria-label="Undo tool"
         pointerEvents="initial"
-        isDisabled={!canUndo()}
+        isDisabled={!canUndo() || drawingToolState === DrawingToolState.DRAWING}
       />
     </Tooltip>
   );
@@ -36,6 +43,9 @@ export const UndoTool = () => {
 
 export const RedoTool = () => {
   const { redo, canRedo } = useUndoStore();
+  const drawingToolState = useLabellingStore(
+    (state) => state.boxDrawingToolState
+  );
 
   useHotkeys(
     keymap.redo.key,
@@ -54,7 +64,7 @@ export const RedoTool = () => {
         backgroundColor="white"
         aria-label="Redo tool"
         pointerEvents="initial"
-        isDisabled={!canRedo()}
+        isDisabled={!canRedo() || drawingToolState === DrawingToolState.DRAWING}
       />
     </Tooltip>
   );
