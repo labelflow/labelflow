@@ -119,6 +119,7 @@ type LabelClassesAggregates {
 
 input LabelCreateInput {
   id: ID
+  type: String!
   imageId: ID!
   labelClassId: ID
   geometry: GeometryInput!
