@@ -11,7 +11,7 @@ setupTestsWithLocalDatabase();
 jest.mock("probe-image-size");
 const mockedProbeSync = mocked(probe.sync);
 
-const createProject = (name: string, projectId?: string | null) => {
+const createProject = async (name: string, projectId?: string | null) => {
   return client.mutate({
     mutation: gql`
       mutation createProject($projectId: String, $name: String!) {
@@ -143,10 +143,10 @@ describe("Project resolver test suite", () => {
     expect(mutationResult.data.createProject.id).toEqual(projectId);
   });
 
-  test("Read project", async () => {
+  test.only("Read project", async () => {
     const name = "My new project";
     const projectId = "some id";
-    createProject(name, projectId);
+    await createProject(name, projectId);
 
     const queryResult = await client.query({
       query: gql`
@@ -651,6 +651,8 @@ describe("Project resolver test suite", () => {
 
     expectedResults(updateCountQuery, 1);
     expectedResults(otherUpdateCountQuery, 0);
+  });
+
   test("Find project by name shortly after renaming it (bug that we noticed)", async () => {
     const name = "My old project";
     const newName = "My new project";
