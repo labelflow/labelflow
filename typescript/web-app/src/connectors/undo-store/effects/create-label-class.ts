@@ -1,5 +1,4 @@
-import { ApolloClient } from "@apollo/client";
-import gql from "graphql-tag";
+import { gql, ApolloClient } from "@apollo/client";
 
 import { useLabellingStore } from "../../labelling-state";
 import {

@@ -1,5 +1,5 @@
 // import { incrementMockedDate } from "@labelflow/dev-utils/mockdate";
-import gql from "graphql-tag";
+import { gql } from "@apollo/client";
 import { incrementMockedDate } from "@labelflow/dev-utils/mockdate";
 import { client } from "../../apollo-client-schema";
 import { setupTestsWithLocalDatabase } from "../../../utils/setup-local-db-tests";

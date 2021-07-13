@@ -11,8 +11,7 @@ import {
   Skeleton,
 } from "@chakra-ui/react";
 
-import { useLazyQuery, useQuery } from "@apollo/client";
-import gql from "graphql-tag";
+import { useLazyQuery, useQuery, gql } from "@apollo/client";
 
 import { ExportFormatCard } from "./export-format-card";
 
