@@ -24,13 +24,8 @@ const getProjectByName = async (
   name: string | undefined
 ): Promise<DbProject> => {
   const project = await db.project.get({ name });
-  // const project = await db.project.where({ name }).first();
 
   if (project === undefined) {
-    // console.log("project", project);
-    // console.log("list from dexie");
-    // console.log(await db.project.toArray());
-
     throw new Error(`No project with name "${name}"`);
   }
 
