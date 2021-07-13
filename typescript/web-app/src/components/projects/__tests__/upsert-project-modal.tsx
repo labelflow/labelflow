@@ -1,3 +1,4 @@
+/* eslint-disable import/first */
 import {
   render,
   cleanup,
@@ -15,15 +16,16 @@ import { gql } from "graphql-tag";
 import { client } from "../../../connectors/apollo-client-schema";
 import { setupTestsWithLocalDatabase } from "../../../utils/setup-local-db-tests";
 import { mockUseQueryParams } from "../../../utils/router-mocks";
-import { UpsertProjectModal } from "../upsert-project-modal";
 
 mockUseQueryParams();
+
+import { UpsertProjectModal } from "../upsert-project-modal";
+
+setupTestsWithLocalDatabase();
 
 const Wrapper = ({ children }: PropsWithChildren<{}>) => (
   <ApolloProvider client={client}>{children}</ApolloProvider>
 );
-
-setupTestsWithLocalDatabase();
 
 jest.mock("lodash/fp/debounce", () => jest.fn((_, fn) => fn));
 
@@ -263,6 +265,7 @@ test("update project: should update a project when the form is submitted", async
 
   const onClose2 = jest.fn();
 
+  // FIXME: the cleanup causes the test to be flaky
   cleanup();
   renderModal({ projectId, onClose: onClose2 });
 
