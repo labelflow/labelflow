@@ -100,14 +100,14 @@ export const EditLabelClassMenu = () => {
   const onSelectedClassChange = useMemo(
     () =>
       selectedTool === Tools.BOX
-        ? (item: LabelClass | null) =>
+        ? (item: Omit<LabelClass, "projectId"> | null) =>
             perform(
               createUpdateLabelClassEffect({
                 selectedLabelClassId: item?.id ?? null,
                 selectedLabelClassIdPrevious: selectedLabelClassId,
               })
             )
-        : (item: LabelClass | null) =>
+        : (item: Omit<LabelClass, "projectId"> | null) =>
             perform(
               createUpdateLabelClassOfLabelEffect(
                 {
