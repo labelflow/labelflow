@@ -83,10 +83,18 @@ const createLabelWithLabelClass = (imageId: string, labelClassId: string) => {
       data: {
         imageId,
         labelClassId,
-        x: 1,
-        y: 1,
-        height: 1,
-        width: 1,
+        geometry: {
+          type: "Polygon",
+          coordinates: [
+            [
+              [1, 1],
+              [2, 1],
+              [2, 2],
+              [1, 2],
+              [1, 1],
+            ],
+          ],
+        },
       },
     },
   });

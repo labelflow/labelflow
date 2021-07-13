@@ -8,7 +8,7 @@ import {
 } from "../../../utils/class-color-generator";
 import { Effect } from "..";
 import { LabelClass } from "../../../graphql-types.generated";
-import { projectsQuery } from "../../../pages/projects";
+import { getProjectsQuery } from "../../../pages/projects";
 
 const labelClassesOfProjectQuery = gql`
   query getLabelClassesOfProject($projectId: ID!) {
@@ -64,7 +64,7 @@ export const createCreateLabelClassEffect = (
       variables: { data: { name, color, projectId } },
       refetchQueries: [
         { query: labelClassesOfProjectQuery, variables: { projectId } },
-        { query: projectsQuery },
+        { query: getProjectsQuery },
       ],
     });
 
@@ -80,7 +80,7 @@ export const createCreateLabelClassEffect = (
       },
       refetchQueries: [
         { query: labelClassesOfProjectQuery, variables: { projectId } },
-        { query: projectsQuery },
+        { query: getProjectsQuery },
       ],
     });
 
@@ -96,7 +96,7 @@ export const createCreateLabelClassEffect = (
       variables: { data: { name, color, id: labelClassId, projectId } },
       refetchQueries: [
         { query: labelClassesOfProjectQuery, variables: { projectId } },
-        { query: projectsQuery },
+        { query: getProjectsQuery },
       ],
     });
 

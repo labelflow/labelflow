@@ -10,15 +10,7 @@ export const exportToCoco = async (
   args: QueryExportToCocoArgs
 ): Promise<string | undefined> => {
   const { projectId } = args.where;
-  const imagesWithUrl = await Promise.all(
-    (
-      await getPaginatedImages({ projectId })
-    ).map(
-      async (image): Promise<Image> => ({
-        ...image,
-      })
-    )
-  );
+  const imagesWithUrl: Image[] = await getPaginatedImages({ projectId });
   const labelClasses = await getPaginatedLabelClasses({ projectId });
   const labels = await getLabelsByProjectId(projectId);
 

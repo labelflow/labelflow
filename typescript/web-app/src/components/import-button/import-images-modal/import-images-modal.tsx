@@ -13,7 +13,7 @@ import { useApolloClient } from "@apollo/client";
 import { ImportImagesModalDropzone } from "./modal-dropzone/modal-dropzone";
 import { ImportImagesModalUrlList } from "./modal-url-list/modal-url-list";
 import { projectDataQuery } from "../../../pages/projects/[projectId]/images";
-import { projectsQuery } from "../../../pages/projects";
+import { getProjectsQuery } from "../../../pages/projects";
 
 export const ImportImagesModal = ({
   isOpen = false,
@@ -49,7 +49,7 @@ export const ImportImagesModal = ({
         },
         fetchPolicy: "network-only",
       });
-      client.query({ query: projectsQuery, fetchPolicy: "network-only" });
+      client.query({ query: getProjectsQuery, fetchPolicy: "network-only" });
     }
   }, [hasUploaded]);
 

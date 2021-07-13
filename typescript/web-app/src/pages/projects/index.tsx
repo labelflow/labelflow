@@ -2,13 +2,18 @@ import gql from "graphql-tag";
 import { useQuery } from "@apollo/client";
 import { Flex, Breadcrumb, BreadcrumbItem, Text } from "@chakra-ui/react";
 import { RiArrowRightSLine } from "react-icons/ri";
+import { useQueryParam } from "use-query-params";
+import { useCallback } from "react";
 
 import { Meta } from "../../components/meta";
 import { Layout } from "../../components/layout";
+import { IdParam, BoolParam } from "../../utils/query-param-bool";
 import { NewProjectCard, ProjectCard } from "../../components/projects";
 import type { Project as ProjectType } from "../../graphql-types.generated";
 
-export const projectsQuery = gql`
+import { UpsertProjectModal } from "../../components/projects/upsert-project-modal";
+
+export const getProjectsQuery = gql`
   query getProjects {
     projects {
       id
@@ -42,7 +47,26 @@ const ProjectPage = () => {
         | "labelClassesAggregates"
         | "labelsAggregates"
       >[];
-    }>(projectsQuery);
+    }>(getProjectsQuery);
+
+  const [isCreatingProject, setIsCreatingProject] = useQueryParam(
+    "modal-create-project",
+    BoolParam
+  );
+  const [editProjectId, setEditProjectId] = useQueryParam(
+    "modal-edit-project",
+    IdParam
+  );
+
+  const onClose = useCallback(() => {
+    if (editProjectId) {
+      setEditProjectId(null, "replaceIn");
+    }
+
+    if (isCreatingProject) {
+      setIsCreatingProject(false, "replaceIn");
+    }
+  }, [editProjectId, isCreatingProject]);
 
   return (
     <>
@@ -59,8 +83,19 @@ const ProjectPage = () => {
           </Breadcrumb>
         }
       >
+        <UpsertProjectModal
+          isOpen={isCreatingProject || editProjectId != null}
+          onClose={onClose}
+          projectId={editProjectId}
+        />
+
         <Flex direction="row" wrap="wrap" p={4}>
-          <NewProjectCard />
+          <NewProjectCard
+            addProject={() => {
+              setIsCreatingProject(true, "replaceIn");
+            }}
+          />
+
           {projectsResult?.projects?.map(
             ({
               id,
@@ -78,7 +113,9 @@ const ProjectPage = () => {
                 imagesCount={imagesAggregates.totalCount}
                 labelClassesCount={labelClassesAggregates.totalCount}
                 labelsCount={labelsAggregates.totalCount}
-                editProject={() => {}}
+                editProject={() => {
+                  setEditProjectId(id, "replaceIn");
+                }}
                 deleteProject={() => {}}
               />
             )

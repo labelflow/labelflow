@@ -31,7 +31,7 @@ const getProjectByName = async (
   const project = await db.project.get({ name });
 
   if (project === undefined) {
-    throw new Error("No project with such name");
+    throw new Error(`No project with name "${name}"`);
   }
 
   return { ...project, __typename: projectTypename };

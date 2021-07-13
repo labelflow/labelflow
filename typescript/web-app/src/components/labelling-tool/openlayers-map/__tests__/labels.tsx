@@ -85,7 +85,7 @@ const createImage = async (name: String) => {
   return id;
 };
 
-const createLabel = async (data: LabelCreateInput) => {
+const createLabel = async (data: Partial<LabelCreateInput>) => {
   const mutationResult = await client.mutate({
     mutation: gql`
       mutation createLabel($data: LabelCreateInput!) {
@@ -95,7 +95,21 @@ const createLabel = async (data: LabelCreateInput) => {
       }
     `,
     variables: {
-      data,
+      data: {
+        ...data,
+        geometry: {
+          type: "Polygon",
+          coordinates: [
+            [
+              [0, 0],
+              [1, 0],
+              [1, 1],
+              [0, 1],
+              [0, 0],
+            ],
+          ],
+        },
+      },
     },
   });
 
@@ -122,10 +136,6 @@ it("displays a single label", async () => {
   const mapRef: { current: OlMap | null } = { current: null };
 
   await createLabel({
-    x: 3.14,
-    y: 42.0,
-    height: 768,
-    width: 362,
     imageId,
   });
 
@@ -153,18 +163,10 @@ it("displays a single label", async () => {
 it("displays created labels", async () => {
   const mapRef: { current: OlMap | null } = { current: null };
   await createLabel({
-    x: 3.14,
-    y: 42.0,
-    height: 768,
-    width: 362,
     imageId,
   });
 
   await createLabel({
-    x: 6.28,
-    y: 84.0,
-    height: 768,
-    width: 362,
     imageId,
   });
 
@@ -192,10 +194,6 @@ it("displays created labels", async () => {
 it("should change style of selected label", async () => {
   const mapRef: { current: OlMap | null } = { current: null };
   const labelId = await createLabel({
-    x: 3.14,
-    y: 42.0,
-    height: 768,
-    width: 362,
     imageId,
   });
 
@@ -227,10 +225,6 @@ it("should change style of selected label", async () => {
 it("should delete selected label on delete key pressed", async () => {
   const mapRef: { current: OlMap | null } = { current: null };
   const labelId = await createLabel({
-    x: 3.14,
-    y: 42.0,
-    height: 768,
-    width: 362,
     imageId,
   });
 
@@ -274,10 +268,6 @@ it("should delete selected label on delete key pressed", async () => {
 it("should not delete a label when none was selected", async () => {
   const mapRef: { current: OlMap | null } = { current: null };
   await createLabel({
-    x: 3.14,
-    y: 42.0,
-    height: 768,
-    width: 362,
     imageId,
   });
 

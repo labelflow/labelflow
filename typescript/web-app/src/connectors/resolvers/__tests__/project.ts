@@ -25,6 +25,7 @@ const createProject = (name: string, projectId?: string | null) => {
       name,
       projectId,
     },
+    fetchPolicy: "no-cache",
   });
 };
 
@@ -650,5 +651,70 @@ describe("Project resolver test suite", () => {
 
     expectedResults(updateCountQuery, 1);
     expectedResults(otherUpdateCountQuery, 0);
+  test("Find project by name shortly after renaming it (bug that we noticed)", async () => {
+    const name = "My old project";
+    const newName = "My new project";
+    const projectId = "some id";
+    await createProject(name, projectId);
+
+    const queryResult1 = await client.query({
+      query: gql`
+        query getProject($name: String!) {
+          project(where: { name: $name }) {
+            id
+            name
+          }
+        }
+      `,
+      variables: {
+        name,
+      },
+      fetchPolicy: "no-cache",
+    });
+
+    expect(queryResult1.data.project).toEqual(
+      expect.objectContaining({
+        id: projectId,
+        name,
+      })
+    );
+
+    await client.mutate({
+      mutation: gql`
+        mutation updateProject($id: ID, $name: String!) {
+          updateProject(where: { id: $id }, data: { name: $name }) {
+            id
+            name
+          }
+        }
+      `,
+      variables: {
+        id: projectId,
+        name: newName,
+      },
+      fetchPolicy: "no-cache",
+    });
+
+    const queryResult2 = await client.query({
+      query: gql`
+        query getProject($name: String!) {
+          project(where: { name: $name }) {
+            id
+            name
+          }
+        }
+      `,
+      variables: {
+        name,
+      },
+      fetchPolicy: "no-cache",
+    });
+
+    expect(queryResult2.data.project).toEqual(
+      expect.objectContaining({
+        id: projectId,
+        name: newName,
+      })
+    );
   });
 });

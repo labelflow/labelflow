@@ -49,6 +49,17 @@ export type ExportWhereUniqueInput = {
   projectId: Scalars['ID'];
 };
 
+export type Geometry = {
+  __typename?: 'Geometry';
+  type: Scalars['String'];
+  coordinates: Scalars['JSON'];
+};
+
+export type GeometryInput = {
+  type: Scalars['String'];
+  coordinates: Scalars['JSON'];
+};
+
 export type Image = {
   __typename?: 'Image';
   id: Scalars['ID'];
@@ -99,6 +110,7 @@ export type Label = {
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
   imageId: Scalars['ID'];
+  geometry: Geometry;
   labelClass?: Maybe<LabelClass>;
   x: Scalars['Float'];
   y: Scalars['Float'];
@@ -141,18 +153,12 @@ export type LabelCreateInput = {
   id?: Maybe<Scalars['ID']>;
   imageId: Scalars['ID'];
   labelClassId?: Maybe<Scalars['ID']>;
-  x: Scalars['Float'];
-  y: Scalars['Float'];
-  width: Scalars['Float'];
-  height: Scalars['Float'];
+  geometry: GeometryInput;
 };
 
 export type LabelUpdateInput = {
   labelClassId?: Maybe<Scalars['ID']>;
-  x?: Maybe<Scalars['Float']>;
-  y?: Maybe<Scalars['Float']>;
-  width?: Maybe<Scalars['Float']>;
-  height?: Maybe<Scalars['Float']>;
+  geometry?: Maybe<GeometryInput>;
 };
 
 export type LabelWhereInput = {
@@ -476,6 +482,8 @@ export type ResolversTypes = {
   ExampleWhereInput: ExampleWhereInput;
   ExampleWhereUniqueInput: ExampleWhereUniqueInput;
   ExportWhereUniqueInput: ExportWhereUniqueInput;
+  Geometry: ResolverTypeWrapper<Geometry>;
+  GeometryInput: GeometryInput;
   ID: ResolverTypeWrapper<Scalars['ID']>;
   Image: ResolverTypeWrapper<Image>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
@@ -519,6 +527,8 @@ export type ResolversParentTypes = {
   ExampleWhereInput: ExampleWhereInput;
   ExampleWhereUniqueInput: ExampleWhereUniqueInput;
   ExportWhereUniqueInput: ExportWhereUniqueInput;
+  Geometry: Geometry;
+  GeometryInput: GeometryInput;
   ID: Scalars['ID'];
   Image: Image;
   Int: Scalars['Int'];
@@ -568,6 +578,12 @@ export type ExampleResolvers<ContextType = any, ParentType extends ResolversPare
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type GeometryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Geometry'] = ResolversParentTypes['Geometry']> = {
+  type?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  coordinates?: Resolver<ResolversTypes['JSON'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type ImageResolvers<ContextType = any, ParentType extends ResolversParentTypes['Image'] = ResolversParentTypes['Image']> = {
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
@@ -598,6 +614,7 @@ export type LabelResolvers<ContextType = any, ParentType extends ResolversParent
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   imageId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  geometry?: Resolver<ResolversTypes['Geometry'], ParentType, ContextType>;
   labelClass?: Resolver<Maybe<ResolversTypes['LabelClass']>, ParentType, ContextType>;
   x?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   y?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
@@ -697,6 +714,7 @@ export type Resolvers<ContextType = any> = {
   ColorHex?: GraphQLScalarType;
   DateTime?: GraphQLScalarType;
   Example?: ExampleResolvers<ContextType>;
+  Geometry?: GeometryResolvers<ContextType>;
   Image?: ImageResolvers<ContextType>;
   ImagesAggregates?: ImagesAggregatesResolvers<ContextType>;
   JSON?: GraphQLScalarType;

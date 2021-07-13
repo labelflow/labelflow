@@ -31,6 +31,16 @@ input ExportWhereUniqueInput {
   projectId: ID!
 }
 
+type Geometry {
+  type: String!
+  coordinates: JSON!
+}
+
+input GeometryInput {
+  type: String!
+  coordinates: JSON!
+}
+
 type Image {
   id: ID!
   createdAt: DateTime!
@@ -79,6 +89,7 @@ type Label {
   createdAt: DateTime!
   updatedAt: DateTime!
   imageId: ID!
+  geometry: Geometry!
   labelClass: LabelClass
   x: Float!
   y: Float!
@@ -119,18 +130,12 @@ input LabelCreateInput {
   id: ID
   imageId: ID!
   labelClassId: ID
-  x: Float!
-  y: Float!
-  width: Float!
-  height: Float!
+  geometry: GeometryInput!
 }
 
 input LabelUpdateInput {
   labelClassId: ID
-  x: Float
-  y: Float
-  width: Float
-  height: Float
+  geometry: GeometryInput
 }
 
 input LabelWhereInput {
