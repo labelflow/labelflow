@@ -6,15 +6,7 @@ import { getLabels } from "../label";
 import { jsonToDataUri } from "./json-to-data-uri";
 
 export const exportToCoco = async (): Promise<string | undefined> => {
-  const imagesWithUrl = await Promise.all(
-    (
-      await getPaginatedImages()
-    ).map(
-      async (image): Promise<Image> => ({
-        ...image,
-      })
-    )
-  );
+  const imagesWithUrl: Image[] = await getPaginatedImages();
   const labelClasses = await getPaginatedLabelClasses();
   const labels = await getLabels();
 
