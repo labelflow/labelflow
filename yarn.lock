@@ -5110,6 +5110,10 @@ __metadata:
     "@testing-library/react": 11.2.6
     "@testing-library/react-hooks": ^7.0.0
     "@testing-library/user-event": ^13.1.9
+    "@turf/bbox": ^6.5.0
+    "@turf/bbox-polygon": ^6.5.0
+    "@turf/helpers": ^6.5.0
+    "@turf/intersect": ^6.5.0
     "@types/bluebird": ^3.5.35
     "@types/node": 12.12.21
     "@types/probe-image-size": ^7.0.0
@@ -7751,6 +7755,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@turf/bbox-polygon@npm:^6.5.0":
+  version: 6.5.0
+  resolution: "@turf/bbox-polygon@npm:6.5.0"
+  dependencies:
+    "@turf/helpers": ^6.5.0
+  checksum: 21f8870462f66863d5894ad403239a34335f4324a97287305b132a59dd66639cd32545de29c7b0286c90be2b9a3fc83513ad3a024b1462a617039c44e8631134
+  languageName: node
+  linkType: hard
+
 "@turf/bbox@npm:*, @turf/bbox@npm:^6.3.0":
   version: 6.3.0
   resolution: "@turf/bbox@npm:6.3.0"
@@ -7758,6 +7771,16 @@ __metadata:
     "@turf/helpers": ^6.3.0
     "@turf/meta": ^6.3.0
   checksum: e28c2f7ab6ee0e22dac4aba1e9d60530de61c0d87285b8cf3819cca0875a19bad9330861c7717b025f63e9535892a96375f689beb97306ab7c2cba8c20c5ecfe
+  languageName: node
+  linkType: hard
+
+"@turf/bbox@npm:^6.5.0":
+  version: 6.5.0
+  resolution: "@turf/bbox@npm:6.5.0"
+  dependencies:
+    "@turf/helpers": ^6.5.0
+    "@turf/meta": ^6.5.0
+  checksum: 623f2dac62ff7b4f0e98f156bb25da0b2f50f4589507c3b770deb80460a7aeacf63802c867a5cfa8323568d6302b91b309441cf8764b4c6168ebda6985228afe
   languageName: node
   linkType: hard
 
@@ -8228,6 +8251,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@turf/helpers@npm:^6.5.0":
+  version: 6.5.0
+  resolution: "@turf/helpers@npm:6.5.0"
+  checksum: e531ab902beabe9c80ba2364fdd3af65af16678f25d1e32b44d485b4aecf268d4f6083dfbddf53c2448f693cf37e62559fbc07c08f6c68ef324512c48a02cfe0
+  languageName: node
+  linkType: hard
+
 "@turf/hex-grid@npm:^6.3.0":
   version: 6.3.0
   resolution: "@turf/hex-grid@npm:6.3.0"
@@ -8270,12 +8300,32 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@turf/intersect@npm:^6.5.0":
+  version: 6.5.0
+  resolution: "@turf/intersect@npm:6.5.0"
+  dependencies:
+    "@turf/helpers": ^6.5.0
+    "@turf/invariant": ^6.5.0
+    polygon-clipping: ^0.15.3
+  checksum: 2e677c8720843645edf166d30d77f5d421f823ab3dea17b8c30d5e0f0c486cd9b4a507c07e9131d3511a573dc6c57237bb2982531b1f41856aae6171e5952856
+  languageName: node
+  linkType: hard
+
 "@turf/invariant@npm:^6.3.0":
   version: 6.3.0
   resolution: "@turf/invariant@npm:6.3.0"
   dependencies:
     "@turf/helpers": ^6.3.0
   checksum: e140fa10003937360b12e812ee822d3270d63d21df58a938b6e3525d446346f407b4dfa97d2b9aac23d2d47d2495b3ac491142259fb43da57728df3e728b2bbb
+  languageName: node
+  linkType: hard
+
+"@turf/invariant@npm:^6.5.0":
+  version: 6.5.0
+  resolution: "@turf/invariant@npm:6.5.0"
+  dependencies:
+    "@turf/helpers": ^6.5.0
+  checksum: 83cd553ae4cb52fd76dc5574f9cf4b9b9b7d4675ceeef0152fbebbff7ed1c9b99f8ca33ae5a9e230629a5ee726d0250644ae56d4ac65b50c076af7081d602f33
   languageName: node
   linkType: hard
 
@@ -8474,6 +8524,15 @@ __metadata:
   dependencies:
     "@turf/helpers": ^6.3.0
   checksum: 149f613cb03d9131bb612d3cd6c0436611e47428865eda4c40440b47ed9222728fb5bcf9acca8604fc6059030b10b17f75f1e3729afb6e1b23e6723458e837d0
+  languageName: node
+  linkType: hard
+
+"@turf/meta@npm:^6.5.0":
+  version: 6.5.0
+  resolution: "@turf/meta@npm:6.5.0"
+  dependencies:
+    "@turf/helpers": ^6.5.0
+  checksum: 853336c9a5faacf68ee996ac95bd5a4590b3f431651e616aa4a114d89d6989b89447fe154d534a579a131405310bbc61c0311a6b805368435b22f126264a87a1
   languageName: node
   linkType: hard
 
@@ -22391,7 +22450,7 @@ next-pwa@5.2.21:
   languageName: node
   linkType: hard
 
-"polygon-clipping@npm:^0.15.2":
+"polygon-clipping@npm:^0.15.2, polygon-clipping@npm:^0.15.3":
   version: 0.15.3
   resolution: "polygon-clipping@npm:0.15.3"
   dependencies:

@@ -29,10 +29,18 @@ const wrapper = ({ children }: PropsWithChildren<{}>) => (
 );
 
 const labelData = {
-  x: 3.14,
-  y: 42.0,
-  height: 768,
-  width: 362,
+  geometry: {
+    type: "Polygon",
+    coordinates: [
+      [
+        [0, 0],
+        [1, 0],
+        [1, 1],
+        [0, 1],
+        [0, 0],
+      ],
+    ],
+  },
 };
 
 const createLabel = (data: LabelCreateInput) => {
@@ -119,13 +127,11 @@ test("Export Modal should display the number of labels", async () => {
   const imageId = await createImage("an image");
   await createLabel({
     ...labelData,
-    x: 1,
     imageId,
   });
   incrementMockedDate(1);
   await createLabel({
     ...labelData,
-    x: 2,
     imageId,
   });
 

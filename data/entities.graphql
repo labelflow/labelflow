@@ -26,11 +26,17 @@ type Label {
   createdAt: DateTime!
   updatedAt: DateTime!
   imageId: ID!
+  geometry: Geometry!
   labelClass: LabelClass
   x: Float!
   y: Float!
   height: Float!
   width: Float!
+}
+
+type Geometry {
+  type: String!
+  coordinates: JSON!
 }
 
 type LabelClass {

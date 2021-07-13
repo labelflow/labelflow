@@ -37,6 +37,10 @@ describe("Coco converters", () => {
     width: 3,
     height: 4,
     labelClassId,
+    geometry: {
+      type: "Polygon",
+      coordinates: [],
+    },
   });
 
   const createImage = (name: string, height: number, width: number): Image => ({
@@ -46,7 +50,8 @@ describe("Coco converters", () => {
     updatedAt: date,
     height,
     width,
-    url: `http://${name}`,
+    url: "",
+    externalUrl: `https://${name}`,
     path: "/path",
     mimetype: "file/ext",
     labels: [],
@@ -175,7 +180,7 @@ describe("Coco converters", () => {
       date_captured: date,
       height: 1,
       width: 2,
-      coco_url: "http://an-image",
+      coco_url: "https://an-image",
       file_name: "an-image.ext",
       flickr_url: "",
       license: 0,
