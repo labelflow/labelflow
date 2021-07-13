@@ -13,6 +13,11 @@ export const keymap: Keymap = {
     description: "Bounding box tool",
     category: "Tools",
   },
+  toolPolygon: {
+    key: "p",
+    description: "Polygon tool",
+    category: "Tools",
+  },
   openLabelClassSelectionPopover: {
     key: "c",
     description: "Change class of currently selected label",
