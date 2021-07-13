@@ -69,10 +69,6 @@ export const ExportModal = ({
     },
   });
 
-  console.log(data);
-
-  // const labelsCount = data?.project.labelsAggregates?.totalCount;
-
   return (
     <Modal isOpen={isOpen} size="3xl" onClose={onClose} isCentered>
       <ModalOverlay />
