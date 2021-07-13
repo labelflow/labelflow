@@ -7,7 +7,10 @@ import gql from "graphql-tag";
 import { ApolloClient, useApolloClient } from "@apollo/client";
 import { useToast } from "@chakra-ui/react";
 import { SelectInteraction } from "./select-interaction";
-import { useLabellingStore } from "../../../../connectors/labelling-state";
+import {
+  Tools,
+  useLabellingStore,
+} from "../../../../connectors/labelling-state";
 import { ResizeAndTranslateBox } from "./resize-and-translate-box-interaction";
 import { Effect, useUndoStore } from "../../../../connectors/undo-store";
 import { GeometryInput } from "../../../../graphql-types.generated";
@@ -103,6 +106,7 @@ export const SelectAndModifyFeature = (props: {
   const [selectedFeature, setSelectedFeature] =
     useState<Feature<Geometry> | null>(null);
   const selectedLabelId = useLabellingStore((state) => state.selectedLabelId);
+  const selectedTool = useLabellingStore((state) => state.selectedTool);
 
   const getSelectedFeature = useCallback(() => {
     if (selectedFeature?.getProperties()?.id !== selectedLabelId) {
@@ -126,8 +130,7 @@ export const SelectAndModifyFeature = (props: {
     sourceVectorLabelsRef.current?.on("addfeature", getSelectedFeature);
     return () =>
       sourceVectorLabelsRef.current?.un("addfeature", getSelectedFeature);
-  }, [sourceVectorLabelsRef.current]);
-
+  }, [sourceVectorLabelsRef.current, selectedLabelId]);
   useEffect(() => {
     getSelectedFeature();
   }, [selectedLabelId]);
@@ -135,35 +138,37 @@ export const SelectAndModifyFeature = (props: {
   const client = useApolloClient();
   const { perform } = useUndoStore();
   const toast = useToast();
-
   return (
     <>
       <SelectInteraction {...props} />
-      {/* @ts-ignore - We need to add this because resizeAndTranslateBox is not included in the react-openalyers-fiber original catalogue */}
-      <resizeAndTranslateBox
-        args={{ selectedFeature }}
-        onInteractionEnd={async (feature: Feature<Polygon> | null) => {
-          if (feature != null) {
-            const coordinates = feature.getGeometry().getCoordinates();
-            const geometry = { type: "Polygon", coordinates };
-            const { id: labelId } = feature.getProperties();
-            try {
-              await perform(
-                updateLabelEffect({ labelId, geometry }, { client })
-              );
-            } catch (error) {
-              toast({
-                title: "Error updating bounding box",
-                description: error?.message,
-                isClosable: true,
-                status: "error",
-                position: "bottom-right",
-                duration: 10000,
-              });
+
+      {selectedTool === Tools.SELECTION && (
+        /* @ts-ignore - We need to add this because resizeAndTranslateBox is not included in the react-openalyers-fiber original catalogue */
+        <resizeAndTranslateBox
+          args={{ selectedFeature }}
+          onInteractionEnd={async (feature: Feature<Polygon> | null) => {
+            if (feature != null) {
+              const coordinates = feature.getGeometry().getCoordinates();
+              const geometry = { type: "Polygon", coordinates };
+              const { id: labelId } = feature.getProperties();
+              try {
+                await perform(
+                  updateLabelEffect({ labelId, geometry }, { client })
+                );
+              } catch (error) {
+                toast({
+                  title: "Error updating bounding box",
+                  description: error?.message,
+                  isClosable: true,
+                  status: "error",
+                  position: "bottom-right",
+                  duration: 10000,
+                });
+              }
             }
-          }
-        }}
-      />
+          }}
+        />
+      )}
     </>
   );
 };
