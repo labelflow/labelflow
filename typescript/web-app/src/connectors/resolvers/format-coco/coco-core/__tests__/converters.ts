@@ -14,6 +14,7 @@ import { CocoCategory, CocoAnnotation, CocoImage } from "../types";
 
 describe("Coco converters", () => {
   const date = new Date("1995-12-17T03:24:00").toISOString();
+  const testProjectId = "test-project-id";
 
   const createLabelClass = (name: string): DbLabelClass => ({
     id: `id-${name}`,
@@ -21,6 +22,7 @@ describe("Coco converters", () => {
     updatedAt: date,
     name,
     color: "#000000",
+    projectId: testProjectId,
   });
 
   const createLabel = (
