@@ -1,5 +1,8 @@
 import { v4 as uuidv4 } from "uuid";
-import { bboxPolygon, polygon, intersect, bbox } from "@turf/turf";
+import bboxPolygon from "@turf/bbox-polygon";
+import polygon from "@turf/helpers";
+import intersect from "@turf/intersect";
+import bbox from "@turf/bbox";
 
 import type {
   GeometryInput,
