@@ -58,10 +58,18 @@ const updateProjectWithImageLabelAndClass = async (projectId: string) => {
     variables: {
       data: {
         imageId: "image-id",
-        x: 0,
-        y: 0,
-        width: 0,
-        height: 0,
+        geometry: {
+          type: "Polygon",
+          coordinates: [
+            [
+              [0, 0],
+              [42, 0],
+              [42, 36],
+              [0, 36],
+              [0, 0],
+            ],
+          ],
+        },
       },
     },
   });
