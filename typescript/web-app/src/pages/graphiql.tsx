@@ -1,5 +1,14 @@
 import dynamic from "next/dynamic";
-import { Box, Center, Spinner } from "@chakra-ui/react";
+import {
+  Box,
+  Breadcrumb,
+  BreadcrumbItem,
+  Center,
+  Spinner,
+  Text,
+} from "@chakra-ui/react";
+
+import { RiArrowRightSLine } from "react-icons/ri";
 import { Meta } from "../components/meta";
 import { Layout } from "../components/layout";
 
@@ -19,7 +28,18 @@ const GraphqlPlayground = () => {
   return (
     <>
       <Meta title="Labelflow | GraphiQL" />
-      <Layout>
+      <Layout
+        topBarLeftContent={
+          <Breadcrumb
+            spacing="8px"
+            separator={<RiArrowRightSLine color="gray.500" />}
+          >
+            <BreadcrumbItem>
+              <Text>Graphiql</Text>
+            </BreadcrumbItem>
+          </Breadcrumb>
+        }
+      >
         <Box
           h="100%"
           w="100%"

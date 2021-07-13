@@ -90,7 +90,7 @@ registerRoute(
   "GET"
 );
 
-// registerRoute(/\/_next\/webpack-hmr\/.*$/i, new NetworkOnly({}), "GET");
+registerRoute(/\/_next\/webpack-hmr\/.*$/i, new NetworkOnly({}), "GET");
 
 registerRoute(
   /\/_next\/static\/webpack\/.*\.hot-update\..*$/i,

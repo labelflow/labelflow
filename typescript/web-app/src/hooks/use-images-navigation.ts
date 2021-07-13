@@ -1,6 +1,5 @@
 import { useRouter } from "next/router";
-import { useQuery } from "@apollo/client";
-import gql from "graphql-tag";
+import { useQuery, gql } from "@apollo/client";
 
 import { Image } from "../graphql-types.generated";
 

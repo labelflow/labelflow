@@ -9,9 +9,7 @@ import { Size } from "ol/size";
 import memoize from "mem";
 import Projection from "ol/proj/Projection";
 import useMeasure from "react-use-measure";
-import { ApolloProvider, useApolloClient, useQuery } from "@apollo/client";
-
-import gql from "graphql-tag";
+import { ApolloProvider, useApolloClient, useQuery, gql } from "@apollo/client";
 
 import { Map } from "@labelflow/react-openlayers-fiber";
 import type { Image } from "../../../graphql-types.generated";

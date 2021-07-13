@@ -9,10 +9,19 @@ import {
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { useQueryParam, StringParam, withDefault } from "use-query-params";
-import { useQuery } from "@apollo/client";
+import { useQuery, gql } from "@apollo/client";
 import { ImportImagesModalDropzone } from "./modal-dropzone/modal-dropzone";
 import { ImportImagesModalUrlList } from "./modal-url-list/modal-url-list";
-import { imagesQuery } from "../../../pages/images";
+
+const imagesQuery = gql`
+  query getImages {
+    images {
+      id
+      name
+      url
+    }
+  }
+`;
 
 export const ImportImagesModal = ({
   isOpen = false,
