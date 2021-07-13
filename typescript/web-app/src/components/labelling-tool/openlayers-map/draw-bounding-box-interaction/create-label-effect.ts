@@ -138,18 +138,18 @@ export const createLabelEffect = (
     const { data } = await client.mutate({
       mutation: createLabelMutation,
       variables: createLabelInputs,
-      refetchQueries: ["countLabels", "getImageLabels"],
-      // optimisticResponse: {
-      //   createLabel: { id: `temp-${Date.now()}`, __typename: "Label" },
-      // },
-      // update(cache, { data: mutationPayloadData }) {
-      //   const id = mutationPayloadData?.createLabel?.id;
-      //   if (typeof id !== "string") {
-      //     return;
-      //   }
+      refetchQueries: ["countLabels"],
+      optimisticResponse: {
+        createLabel: { id: `temp-${Date.now()}`, __typename: "Label" },
+      },
+      update(cache, { data: mutationPayloadData }) {
+        const id = mutationPayloadData?.createLabel?.id;
+        if (typeof id !== "string") {
+          return;
+        }
 
-      //   addLabelToImageInCache(cache, { ...createLabelInputs, id });
-      // },
+        addLabelToImageInCache(cache, { ...createLabelInputs, id });
+      },
     });
 
     if (typeof data?.createLabel?.id !== "string") {
