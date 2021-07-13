@@ -1,6 +1,6 @@
 import { forwardRef, useMemo } from "react";
-import { useQuery, useApolloClient } from "@apollo/client";
-import gql from "graphql-tag";
+import { useQuery, useApolloClient, gql } from "@apollo/client";
+
 import { useHotkeys } from "react-hotkeys-hook";
 
 import { ClassSelectionPopover } from "../../class-selection-popover";

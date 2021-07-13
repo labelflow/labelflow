@@ -1,6 +1,5 @@
-import { ApolloCache, ApolloClient, Reference } from "@apollo/client";
+import { ApolloCache, ApolloClient, Reference, gql } from "@apollo/client";
 import GeoJSON from "ol/format/GeoJSON";
-import gql from "graphql-tag";
 
 import { Effect } from "../../../../connectors/undo-store";
 import { GeometryInput } from "../../../../graphql-types.generated";

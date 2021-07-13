@@ -1,7 +1,7 @@
 import { MutableRefObject } from "react";
 import { useRouter } from "next/router";
-import { ApolloClient, useQuery, useApolloClient } from "@apollo/client";
-import gql from "graphql-tag";
+import { ApolloClient, useQuery, useApolloClient, gql } from "@apollo/client";
+
 import { Vector as OlSourceVector } from "ol/source";
 import GeoJSON from "ol/format/GeoJSON";
 import { Geometry, MultiPoint } from "ol/geom";

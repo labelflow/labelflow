@@ -9,8 +9,8 @@ import {
 } from "@chakra-ui/react";
 import { RiArrowRightSLine } from "react-icons/ri";
 import NextLink from "next/link";
-import gql from "graphql-tag";
-import { useQuery } from "@apollo/client";
+import { gql, useQuery } from "@apollo/client";
+
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 

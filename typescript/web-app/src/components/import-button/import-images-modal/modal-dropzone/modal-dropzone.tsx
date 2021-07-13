@@ -7,8 +7,7 @@ import {
   Button,
   Text,
 } from "@chakra-ui/react";
-import { useApolloClient } from "@apollo/client";
-import gql from "graphql-tag";
+import { useApolloClient, gql } from "@apollo/client";
 
 import { Dropzone } from "./dropzone";
 import { FilesStatuses } from "./file-statuses";

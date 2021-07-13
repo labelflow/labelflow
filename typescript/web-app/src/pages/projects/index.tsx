@@ -1,5 +1,5 @@
-import gql from "graphql-tag";
-import { useQuery } from "@apollo/client";
+import { gql, useQuery } from "@apollo/client";
+
 import { Flex, Breadcrumb, BreadcrumbItem, Text } from "@chakra-ui/react";
 import { RiArrowRightSLine } from "react-icons/ri";
 import { useQueryParam } from "use-query-params";

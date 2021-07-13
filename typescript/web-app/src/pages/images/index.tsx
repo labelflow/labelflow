@@ -1,5 +1,5 @@
-import { useQuery } from "@apollo/client";
-import gql from "graphql-tag";
+import { useQuery, gql } from "@apollo/client";
+
 import NextLink from "next/link";
 import {
   VStack,
@@ -24,7 +24,7 @@ import { Layout } from "../../components/layout";
 import type { Image as ImageType } from "../../graphql-types.generated";
 import { EmptyStateImage } from "../../components/empty-state";
 
-export const imagesQuery = gql`
+const imagesQuery = gql`
   query getImages {
     images {
       id

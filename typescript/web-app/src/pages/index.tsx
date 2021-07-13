@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { Spinner, Center } from "@chakra-ui/react";
-import { useQuery } from "@apollo/client";
-import gql from "graphql-tag";
+import { useQuery, gql } from "@apollo/client";
+
 import { useRouter } from "next/router";
 import type { Image as ImageType } from "../graphql-types.generated";
 import { Layout } from "../components/layout";

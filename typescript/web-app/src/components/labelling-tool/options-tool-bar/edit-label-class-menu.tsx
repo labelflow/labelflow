@@ -1,6 +1,5 @@
 import { useMemo, useState } from "react";
-import { useQuery, useApolloClient } from "@apollo/client";
-import gql from "graphql-tag";
+import { gql, useQuery, useApolloClient } from "@apollo/client";
 
 import { useHotkeys } from "react-hotkeys-hook";
 import { ClassSelectionMenu } from "./class-selection-menu";
