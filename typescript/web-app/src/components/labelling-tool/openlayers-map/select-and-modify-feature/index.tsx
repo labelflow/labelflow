@@ -2,10 +2,12 @@ import { MutableRefObject, useEffect, useState, useCallback } from "react";
 import { Feature, Map as OlMap } from "ol";
 import { Geometry, Polygon } from "ol/geom";
 import { Vector as OlSourceVector } from "ol/source";
+import Collection from "ol/Collection";
 import { extend } from "@labelflow/react-openlayers-fiber";
 import gql from "graphql-tag";
-import { ApolloClient, useApolloClient } from "@apollo/client";
+import { ApolloClient, useApolloClient, useQuery } from "@apollo/client";
 import { useToast } from "@chakra-ui/react";
+import { ModifyEvent } from "ol/interaction/Modify";
 import { SelectInteraction } from "./select-interaction";
 import {
   Tools,
@@ -34,6 +36,7 @@ const updateLabelMutation = gql`
 const getLabelQuery = gql`
   query getLabel($id: ID!) {
     label(where: { id: $id }) {
+      type
       geometry {
         type
         coordinates
@@ -108,6 +111,11 @@ export const SelectAndModifyFeature = (props: {
   const selectedLabelId = useLabellingStore((state) => state.selectedLabelId);
   const selectedTool = useLabellingStore((state) => state.selectedTool);
 
+  const { data } = useQuery(getLabelQuery, {
+    skip: typeof selectedLabelId !== "string",
+    variables: { id: selectedLabelId },
+  });
+
   const getSelectedFeature = useCallback(() => {
     if (selectedFeature?.getProperties()?.id !== selectedLabelId) {
       if (selectedLabelId == null) {
@@ -142,7 +150,7 @@ export const SelectAndModifyFeature = (props: {
     <>
       <SelectInteraction {...props} />
 
-      {selectedTool === Tools.SELECTION && (
+      {selectedTool === Tools.SELECTION && data?.label?.type === "BoundingBox" && (
         /* @ts-ignore - We need to add this because resizeAndTranslateBox is not included in the react-openalyers-fiber original catalogue */
         <resizeAndTranslateBox
           args={{ selectedFeature }}
@@ -169,6 +177,37 @@ export const SelectAndModifyFeature = (props: {
           }}
         />
       )}
+      {selectedTool === Tools.SELECTION &&
+        data?.label?.type === "Polygon" &&
+        selectedFeature && (
+          <olInteractionModify
+            features={new Collection([selectedFeature])}
+            // @ts-ignore: FIXME
+            onModifyend={async (e: ModifyEvent) => {
+              const feature = e.features.item(0) as Feature<Polygon>;
+              if (feature != null) {
+                const coordinates = feature.getGeometry().getCoordinates();
+                const geometry = { type: "Polygon", coordinates };
+                const { id: labelId } = feature.getProperties();
+                try {
+                  await perform(
+                    updateLabelEffect({ labelId, geometry }, { client })
+                  );
+                } catch (error) {
+                  toast({
+                    title: "Error updating polygon",
+                    description: error?.message,
+                    isClosable: true,
+                    status: "error",
+                    position: "bottom-right",
+                    duration: 10000,
+                  });
+                }
+              }
+              return true;
+            }}
+          />
+        )}
     </>
   );
 };

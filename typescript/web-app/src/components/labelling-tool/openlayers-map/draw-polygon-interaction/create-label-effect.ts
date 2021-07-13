@@ -22,6 +22,7 @@ const createLabelMutation = gql`
     createLabel(
       data: {
         id: $id
+        type: "Polygon"
         imageId: $imageId
         labelClassId: $labelClassId
         geometry: $geometry

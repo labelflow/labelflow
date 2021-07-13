@@ -22,6 +22,7 @@ const createLabelMutation = gql`
     createLabel(
       data: {
         id: $id
+        type: "BoundingBox"
         imageId: $imageId
         labelClassId: $labelClassId
         geometry: $geometry

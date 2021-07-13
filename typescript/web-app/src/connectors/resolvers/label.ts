@@ -74,7 +74,7 @@ const createLabel = async (
   _: any,
   args: MutationCreateLabelArgs
 ): Promise<Label> => {
-  const { id, imageId, labelClassId, geometry } = args.data;
+  const { id, imageId, labelClassId, geometry, type } = args.data;
 
   // Since we don't have any constraint checks with Dexie
   // We need to ensure that the imageId and the labelClassId
@@ -103,7 +103,7 @@ const createLabel = async (
 
   const newLabelEntity = {
     id: labelId,
-    type: "polygon",
+    type: type ?? "Polygon",
     createdAt: now.toISOString(),
     updatedAt: now.toISOString(),
     labelClassId,
@@ -170,7 +170,6 @@ const updateLabel = async (_: any, args: MutationUpdateLabelArgs) => {
 
   const newLabelEntity = {
     ...args.data,
-    type: "polygon",
     updatedAt: now.toISOString(),
     geometry: clippedGeometry,
     x,
