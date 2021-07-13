@@ -1,7 +1,7 @@
 import { useMemo, useRef } from "react";
 import { useRouter } from "next/router";
 import { Draw as OlDraw } from "ol/interaction";
-import { createBox, DrawEvent } from "ol/interaction/Draw";
+import { DrawEvent, createRegularPolygon } from "ol/interaction/Draw";
 import GeoJSON from "ol/format/GeoJSON";
 import { Fill, Stroke, Style } from "ol/style";
 import GeometryType from "ol/geom/GeometryType";
@@ -13,7 +13,7 @@ import { useHotkeys } from "react-hotkeys-hook";
 import {
   useLabellingStore,
   Tools,
-  BoxDrawingToolState,
+  DrawingToolState,
 } from "../../../../connectors/labelling-state";
 import { keymap } from "../../../../keymap";
 import { useUndoStore } from "../../../../connectors/undo-store";
@@ -30,7 +30,7 @@ const labelClassQuery = gql`
   }
 `;
 
-const geometryFunction = createBox();
+// const geometryFunction = createRegularPolygon();
 
 export const DrawPolygonInteraction = () => {
   const drawRef = useRef<OlDraw>(null);
@@ -39,8 +39,8 @@ export const DrawPolygonInteraction = () => {
 
   const selectedTool = useLabellingStore((state) => state.selectedTool);
 
-  const setBoxDrawingToolState = useLabellingStore(
-    (state) => state.setBoxDrawingToolState
+  const setDrawingToolState = useLabellingStore(
+    (state) => state.setDrawingToolState
   );
   const setSelectedLabelId = useLabellingStore(
     (state) => state.setSelectedLabelId
@@ -79,7 +79,7 @@ export const DrawPolygonInteraction = () => {
     });
   }, [selectedLabelClass?.color]);
 
-  if (selectedTool !== Tools.BOX) {
+  if (selectedTool !== Tools.POLYGON) {
     return null;
   }
   if (typeof imageId !== "string") {
@@ -90,8 +90,8 @@ export const DrawPolygonInteraction = () => {
     <olInteractionDraw
       ref={drawRef}
       args={{
-        type: GeometryType.CIRCLE,
-        geometryFunction,
+        type: GeometryType.POLYGON,
+        // geometryFunction,
         style, // Needed here to trigger the rerender of the component when the selected class changes
       }}
       condition={(e) => {
@@ -100,11 +100,11 @@ export const DrawPolygonInteraction = () => {
         return e.originalEvent.button === 0;
       }}
       onDrawabort={() => {
-        setBoxDrawingToolState(BoxDrawingToolState.IDLE);
+        setDrawingToolState(DrawingToolState.IDLE);
         return true;
       }}
       onDrawstart={() => {
-        setBoxDrawingToolState(BoxDrawingToolState.DRAWING);
+        setDrawingToolState(DrawingToolState.DRAWING);
         return true;
       }}
       onDrawend={async (drawEvent: DrawEvent) => {
@@ -124,12 +124,12 @@ export const DrawPolygonInteraction = () => {
             }
           )
         );
-        setBoxDrawingToolState(BoxDrawingToolState.IDLE);
+        setDrawingToolState(DrawingToolState.IDLE);
         try {
           await createLabelPromise;
         } catch (error) {
           toast({
-            title: "Error creating bounding box",
+            title: "Error creating polygon",
             description: error?.message,
             isClosable: true,
             status: "error",

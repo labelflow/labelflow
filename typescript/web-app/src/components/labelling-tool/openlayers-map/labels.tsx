@@ -5,7 +5,7 @@ import gql from "graphql-tag";
 import { Vector as OlSourceVector } from "ol/source";
 import GeoJSON from "ol/format/GeoJSON";
 import { Geometry } from "ol/geom";
-import { Fill, Stroke, Style } from "ol/style";
+import { Fill, Stroke, Style, Circle } from "ol/style";
 import { useHotkeys } from "react-hotkeys-hook";
 
 import { keymap } from "../../../keymap";
@@ -232,6 +232,12 @@ export const Labels = ({
               stroke: new Stroke({
                 color: labelClassColor,
                 width: 2,
+              }),
+              image: new Circle({
+                radius: 7,
+                fill: new Fill({
+                  color: "#ffcc33",
+                }),
               }),
               zIndex: isSelected ? 2 : 1,
             });

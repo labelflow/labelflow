@@ -13,7 +13,7 @@ import { useHotkeys } from "react-hotkeys-hook";
 import {
   useLabellingStore,
   Tools,
-  BoxDrawingToolState,
+  DrawingToolState,
 } from "../../../../connectors/labelling-state";
 import { keymap } from "../../../../keymap";
 import { useUndoStore } from "../../../../connectors/undo-store";
@@ -39,8 +39,8 @@ export const DrawBoundingBoxInteraction = () => {
 
   const selectedTool = useLabellingStore((state) => state.selectedTool);
 
-  const setBoxDrawingToolState = useLabellingStore(
-    (state) => state.setBoxDrawingToolState
+  const setDrawingToolState = useLabellingStore(
+    (state) => state.setDrawingToolState
   );
   const setSelectedLabelId = useLabellingStore(
     (state) => state.setSelectedLabelId
@@ -100,11 +100,11 @@ export const DrawBoundingBoxInteraction = () => {
         return e.originalEvent.button === 0;
       }}
       onDrawabort={() => {
-        setBoxDrawingToolState(BoxDrawingToolState.IDLE);
+        setDrawingToolState(DrawingToolState.IDLE);
         return true;
       }}
       onDrawstart={() => {
-        setBoxDrawingToolState(BoxDrawingToolState.DRAWING);
+        setDrawingToolState(DrawingToolState.DRAWING);
         return true;
       }}
       onDrawend={async (drawEvent: DrawEvent) => {
@@ -124,7 +124,7 @@ export const DrawBoundingBoxInteraction = () => {
             }
           )
         );
-        setBoxDrawingToolState(BoxDrawingToolState.IDLE);
+        setDrawingToolState(DrawingToolState.IDLE);
         try {
           await createLabelPromise;
         } catch (error) {

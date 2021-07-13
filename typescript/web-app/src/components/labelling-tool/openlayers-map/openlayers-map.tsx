@@ -26,7 +26,7 @@ import { CursorGuides } from "./cursor-guides";
 import {
   useLabellingStore,
   Tools,
-  BoxDrawingToolState,
+  DrawingToolState,
 } from "../../../connectors/labelling-state";
 import { theme } from "../../../theme";
 
@@ -130,6 +130,8 @@ export const OpenlayersMap = () => {
       if (e.dragging) {
         target.style.cursor = "grabbing";
       } else if (selectedTool === Tools.BOX) {
+        target.style.cursor = "crosshair";
+      } else if (selectedTool === Tools.POLYGON) {
         target.style.cursor = "crosshair";
       } else if (selectedTool === Tools.SELECTION) {
         const hit = mapRef.current.hasFeatureAtPixel(e.pixel);
@@ -244,12 +246,15 @@ export const OpenlayersMap = () => {
                 sourceVectorLabelsRef={sourceVectorLabelsRef}
                 setIsContextMenuOpen={setIsContextMenuOpen}
               />
+              {sourceVectorLabelsRef.current && (
+                <olInteractionSnap source={sourceVectorLabelsRef.current} />
+              )}
             </ThemeProvider>
           </ApolloProvider>
         </RouterContext.Provider>
       </Map>
       {selectedTool === Tools.BOX &&
-        boxDrawingToolState !== BoxDrawingToolState.DRAWING &&
+        boxDrawingToolState !== DrawingToolState.DRAWING &&
         !isContextMenuOpen && <CursorGuides map={mapRef.current} />}
       {/* This div is needed to prevent a weird error that seems related to the EditLabelClass component */}
       <div
