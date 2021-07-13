@@ -24,7 +24,7 @@ export const NewProjectCard = (props: { addProject: () => void }) => {
         direction="column"
         alignItems="center"
         justify="space-evenly"
-        onClick={() => addProject()}
+        onClick={addProject}
         cursor="pointer"
       >
         <PlusIcon color="gray.400" h="60px" w="60" />
