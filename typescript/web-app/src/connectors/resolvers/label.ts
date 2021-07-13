@@ -12,6 +12,7 @@ import type {
   MutationUpdateLabelArgs,
   QueryLabelArgs,
 } from "../../graphql-types.generated";
+import { LabelType } from "../../graphql-types.generated";
 import { db, DbLabel } from "../database";
 
 export const getLabels = () => db.label.toArray();
@@ -102,6 +103,7 @@ const createLabel = async (
 
   const newLabelEntity = {
     id: labelId,
+    type: "polygon",
     createdAt: now.toISOString(),
     updatedAt: now.toISOString(),
     labelClassId,
@@ -168,6 +170,7 @@ const updateLabel = async (_: any, args: MutationUpdateLabelArgs) => {
 
   const newLabelEntity = {
     ...args.data,
+    type: "polygon",
     updatedAt: now.toISOString(),
     geometry: clippedGeometry,
     x,

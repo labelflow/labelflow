@@ -23,6 +23,7 @@ type Image {
 
 type Label {
   id: ID!
+  type: String!
   createdAt: DateTime!
   updatedAt: DateTime!
   imageId: ID!
