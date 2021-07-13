@@ -10,6 +10,7 @@ import { SelectInteraction } from "./select-interaction";
 import { useLabellingStore } from "../../../../connectors/labelling-state";
 import { ResizeAndTranslateBox } from "./resize-and-translate-box-interaction";
 import { Effect, useUndoStore } from "../../../../connectors/undo-store";
+import { GeometryInput } from "../../../../graphql-types.generated";
 
 // Extend react-openlayers-catalogue to include resize and translate interaction
 extend({
@@ -17,23 +18,10 @@ extend({
 });
 
 const updateLabelMutation = gql`
-  mutation updateLabel(
-    $id: ID!
-    $x: Float
-    $y: Float
-    $width: Float
-    $height: Float
-    $labelClassId: ID
-  ) {
+  mutation updateLabel($id: ID!, $geometry: GeometryInput, $labelClassId: ID) {
     updateLabel(
       where: { id: $id }
-      data: {
-        x: $x
-        y: $y
-        width: $width
-        height: $height
-        labelClassId: $labelClassId
-      }
+      data: { geometry: $geometry, labelClassId: $labelClassId }
     ) {
       id
     }
@@ -43,10 +31,10 @@ const updateLabelMutation = gql`
 const getLabelQuery = gql`
   query getLabel($id: ID!) {
     label(where: { id: $id }) {
-      x
-      y
-      width
-      height
+      geometry {
+        type
+        coordinates
+      }
     }
   }
 `;
@@ -54,16 +42,10 @@ const getLabelQuery = gql`
 const updateLabelEffect = (
   {
     labelId,
-    x,
-    y,
-    width,
-    height,
+    geometry,
   }: {
     labelId: string;
-    x?: number;
-    y?: number;
-    width?: number;
-    height?: number;
+    geometry?: GeometryInput;
   },
   {
     client,
@@ -76,15 +58,12 @@ const updateLabelEffect = (
       query: getLabelQuery,
       variables: { id: labelId },
     });
-    const originalGeometry = labelData?.label;
+    const originalGeometry = labelData?.label.geometry;
     await client.mutate({
       mutation: updateLabelMutation,
       variables: {
         id: labelId,
-        x,
-        y,
-        width,
-        height,
+        geometry,
       },
       refetchQueries: ["getImageLabels"],
     });
@@ -96,21 +75,16 @@ const updateLabelEffect = (
     originalGeometry,
   }: {
     id: string;
-    originalGeometry: {
-      x: number;
-      y: number;
-      width: number;
-      height: number;
-    };
+    originalGeometry: GeometryInput;
   }): Promise<string> => {
     await client.mutate({
       mutation: updateLabelMutation,
       variables: {
         id: labelId,
-        x: originalGeometry.x,
-        y: originalGeometry.y,
-        width: originalGeometry.width,
-        height: originalGeometry.height,
+        geometry: {
+          type: originalGeometry.type,
+          coordinates: originalGeometry.coordinates,
+        },
       },
       refetchQueries: ["getImageLabels"],
     });
@@ -170,15 +144,12 @@ export const SelectAndModifyFeature = (props: {
         args={{ selectedFeature }}
         onInteractionEnd={async (feature: Feature<Polygon> | null) => {
           if (feature != null) {
-            const [x, y, destinationX, destinationY] = feature
-              .getGeometry()
-              .getExtent();
-            const width = destinationX - x;
-            const height = destinationY - y;
+            const coordinates = feature.getGeometry().getCoordinates();
+            const geometry = { type: "Polygon", coordinates };
             const { id: labelId } = feature.getProperties();
             try {
               await perform(
-                updateLabelEffect({ labelId, x, y, width, height }, { client })
+                updateLabelEffect({ labelId, geometry }, { client })
               );
             } catch (error) {
               toast({
