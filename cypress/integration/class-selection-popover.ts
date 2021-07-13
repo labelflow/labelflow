@@ -79,10 +79,6 @@ describe("Class selection popover", () => {
       const labelClassId = await createLabelClass("A new class", "#F87171");
       await createLabel({
         imageId,
-        x: 0,
-        y: 900,
-        width: 900,
-        height: 600,
         labelClassId,
         geometry: {
           type: "Polygon",

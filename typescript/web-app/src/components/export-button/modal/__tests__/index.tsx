@@ -29,13 +29,17 @@ const wrapper = ({ children }: PropsWithChildren<{}>) => (
 );
 
 const labelData = {
-  x: 3.14,
-  y: 42.0,
-  height: 768,
-  width: 362,
   geometry: {
     type: "Polygon",
-    coordinates: [],
+    coordinates: [
+      [
+        [0, 0],
+        [1, 0],
+        [1, 1],
+        [0, 1],
+        [0, 0],
+      ],
+    ],
   },
 };
 
