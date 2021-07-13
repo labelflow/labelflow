@@ -7,9 +7,12 @@ import { Geometry } from "ol/geom";
 import { createEmpty, extend, getCenter } from "ol/extent";
 
 import OverlayPositioning from "ol/OverlayPositioning";
-import { useLabellingStore, Tools } from "../../../connectors/labelling-state";
+import {
+  useLabellingStore,
+  Tools,
+} from "../../../../connectors/labelling-state";
 
-import { keymap } from "../../../keymap";
+import { keymap } from "../../../../keymap";
 
 export const SelectInteraction = ({
   setIsContextMenuOpen = () => {},
@@ -22,6 +25,7 @@ export const SelectInteraction = ({
 }) => {
   const [editMenuLocation, setEditMenuLocation] =
     useState<Coordinate | undefined>(undefined);
+
   const selectedTool = useLabellingStore((state) => state.selectedTool);
   const setSelectedLabelId = useLabellingStore(
     (state) => state.setSelectedLabelId

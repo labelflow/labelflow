@@ -18,8 +18,8 @@ import type { Image } from "../../../graphql-types.generated";
 import "ol/ol.css";
 
 import { DrawBoundingBoxInteraction } from "./draw-bounding-box-interaction";
+import { SelectAndModifyFeature } from "./select-and-modify-feature";
 import { DrawPolygonInteraction } from "./draw-polygon-interaction";
-import { SelectInteraction } from "./select-interaction";
 import { Labels } from "./labels";
 import { EditLabelClass } from "./edit-label-class";
 import { CursorGuides } from "./cursor-guides";
@@ -126,7 +126,6 @@ export const OpenlayersMap = () => {
     (e: MapBrowserEvent) => {
       if (!mapRef.current) return;
       const target = mapRef.current.getTarget() as HTMLElement;
-
       if (e.dragging) {
         target.style.cursor = "grabbing";
       } else if (selectedTool === Tools.BOX) {
@@ -241,10 +240,11 @@ export const OpenlayersMap = () => {
               <Labels sourceVectorLabelsRef={sourceVectorLabelsRef} />
               <DrawBoundingBoxInteraction />
               <DrawPolygonInteraction />
-              <SelectInteraction
+              <SelectAndModifyFeature
                 editClassOverlayRef={editClassOverlayRef}
                 sourceVectorLabelsRef={sourceVectorLabelsRef}
                 setIsContextMenuOpen={setIsContextMenuOpen}
+                map={mapRef.current}
               />
               {sourceVectorLabelsRef.current && (
                 <olInteractionSnap source={sourceVectorLabelsRef.current} />
