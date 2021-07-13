@@ -78,6 +78,20 @@ const getLabelClassesByProjectId = async (projectId: string) => {
   return getResults ?? [];
 };
 
+export const getLabelsByProjectId = async (projectId: string) => {
+  const imagesOfProject = await db.image
+    .where({
+      projectId,
+    })
+    .toArray();
+
+  return db.label
+    .filter((currentLabel) =>
+      imagesOfProject.some((image) => currentLabel.imageId === image.id)
+    )
+    .sortBy("createdAt");
+};
+
 // Queries
 const images = async (project: DbProject, args: QueryImagesArgs) => {
   const where = { projectId: project.id };
@@ -96,17 +110,7 @@ const images = async (project: DbProject, args: QueryImagesArgs) => {
 };
 
 const labels = async (project: DbProject) => {
-  const imagesOfProject = await db.image
-    .where({
-      projectId: project.id,
-    })
-    .toArray();
-
-  return db.label
-    .filter((currentLabel) =>
-      imagesOfProject.some((image) => currentLabel.imageId === image.id)
-    )
-    .sortBy("createdAt");
+  return getLabelsByProjectId(project.id);
 };
 
 const labelClasses = async (project: DbProject) => {

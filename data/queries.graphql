@@ -28,7 +28,7 @@ type Query {
   project(where: ProjectWhereUniqueInput!): Project!
   projects(first: Int, skip: Int): [Project!]!
 
-  exportToCoco: String!
+  exportToCoco(where: ExportWhereUniqueInput!): String!
 
   debug: JSON!
 }

@@ -27,6 +27,10 @@ input ExampleWhereUniqueInput {
   id: ID!
 }
 
+input ExportWhereUniqueInput {
+  projectId: ID!
+}
+
 type Image {
   id: ID!
   createdAt: DateTime!
@@ -197,7 +201,7 @@ type Query {
   labels(where: LabelWhereInput, first: Int, skip: Int): [Label!]!
   project(where: ProjectWhereUniqueInput!): Project!
   projects(first: Int, skip: Int): [Project!]!
-  exportToCoco: String!
+  exportToCoco(where: ExportWhereUniqueInput!): String!
   debug: JSON!
 }
 

@@ -45,6 +45,10 @@ export type ExampleWhereUniqueInput = {
   id: Scalars['ID'];
 };
 
+export type ExportWhereUniqueInput = {
+  projectId: Scalars['ID'];
+};
+
 export type Image = {
   __typename?: 'Image';
   id: Scalars['ID'];
@@ -367,6 +371,11 @@ export type QueryProjectsArgs = {
 };
 
 
+export type QueryExportToCocoArgs = {
+  where: ExportWhereUniqueInput;
+};
+
+
 export type UploadTarget = UploadTargetDirect | UploadTargetHttp;
 
 export type UploadTargetDirect = {
@@ -466,6 +475,7 @@ export type ResolversTypes = {
   ExampleOrderByInput: ExampleOrderByInput;
   ExampleWhereInput: ExampleWhereInput;
   ExampleWhereUniqueInput: ExampleWhereUniqueInput;
+  ExportWhereUniqueInput: ExportWhereUniqueInput;
   ID: ResolverTypeWrapper<Scalars['ID']>;
   Image: ResolverTypeWrapper<Image>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
@@ -508,6 +518,7 @@ export type ResolversParentTypes = {
   ExampleCreateInput: ExampleCreateInput;
   ExampleWhereInput: ExampleWhereInput;
   ExampleWhereUniqueInput: ExampleWhereUniqueInput;
+  ExportWhereUniqueInput: ExportWhereUniqueInput;
   ID: Scalars['ID'];
   Image: Image;
   Int: Scalars['Int'];
@@ -659,7 +670,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   labels?: Resolver<Array<ResolversTypes['Label']>, ParentType, ContextType, RequireFields<QueryLabelsArgs, never>>;
   project?: Resolver<ResolversTypes['Project'], ParentType, ContextType, RequireFields<QueryProjectArgs, 'where'>>;
   projects?: Resolver<Array<ResolversTypes['Project']>, ParentType, ContextType, RequireFields<QueryProjectsArgs, never>>;
-  exportToCoco?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  exportToCoco?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<QueryExportToCocoArgs, 'where'>>;
   debug?: Resolver<ResolversTypes['JSON'], ParentType, ContextType>;
 };
 
