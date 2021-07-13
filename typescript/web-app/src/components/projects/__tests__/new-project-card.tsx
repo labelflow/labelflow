@@ -18,7 +18,7 @@ const Wrapper = ({ children }: PropsWithChildren<{}>) => (
   <ApolloProvider client={client}>{children}</ApolloProvider>
 );
 
-it.only("should call addProject function when you click on the card", async () => {
+it("should call addProject function when you click on the card", async () => {
   const addProjectMock = jest.fn(() => {});
 
   render(<NewProjectCard addProject={addProjectMock} />, { wrapper: Wrapper });
