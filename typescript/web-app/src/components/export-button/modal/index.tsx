@@ -12,20 +12,24 @@ import {
 } from "@chakra-ui/react";
 
 import { useLazyQuery, useQuery } from "@apollo/client";
+import { useRouter } from "next/router";
 import gql from "graphql-tag";
 
 import { ExportFormatCard } from "./export-format-card";
 
 const exportToCocoQuery = gql`
-  query exportToCoco {
-    exportToCoco
+  query exportToCoco($projectId: ID!) {
+    exportToCoco(where: { projectId: $projectId })
   }
 `;
 
-const countLabelsQuery = gql`
-  query countLabels {
-    labelsAggregates {
-      totalCount
+const countLabelsOfProjectQuery = gql`
+  query countLabelsOfProject($projectId: ID!) {
+    project(where: { id: $projectId }) {
+      id
+      labelsAggregates {
+        totalCount
+      }
     }
   }
 `;
@@ -37,8 +41,13 @@ export const ExportModal = ({
   isOpen?: boolean;
   onClose?: () => void;
 }) => {
-  const { data } = useQuery(countLabelsQuery);
+  const router = useRouter();
+  const { projectId } = router?.query;
+  const { data } = useQuery(countLabelsOfProjectQuery, {
+    variables: { projectId },
+  });
   const [queryExportToCoco, { loading }] = useLazyQuery(exportToCocoQuery, {
+    variables: { projectId },
     fetchPolicy: "network-only",
     onCompleted: ({ exportToCoco }) => {
       if (typeof exportToCoco !== "string") {
@@ -60,6 +69,10 @@ export const ExportModal = ({
     },
   });
 
+  console.log(data);
+
+  // const labelsCount = data?.project.labelsAggregates?.totalCount;
+
   return (
     <Modal isOpen={isOpen} size="3xl" onClose={onClose} isCentered>
       <ModalOverlay />
@@ -71,10 +84,11 @@ export const ExportModal = ({
           <Skeleton
             w="fit-content"
             m="auto"
-            isLoaded={data?.labelsAggregates?.totalCount !== undefined}
+            isLoaded={data?.project.labelsAggregates?.totalCount !== undefined}
           >
             <Text fontSize="lg" fontWeight="medium" color="gray.800">
-              Your project contains {data?.labelsAggregates?.totalCount} labels.
+              Your project contains {data?.project.labelsAggregates?.totalCount}{" "}
+              labels.
             </Text>
           </Skeleton>
         </ModalHeader>
