@@ -12,6 +12,7 @@ import {
 export enum Tools {
   SELECTION = "select",
   BOX = "box",
+  POLYGON = "polygon",
 }
 
 export enum BoxDrawingToolState {
