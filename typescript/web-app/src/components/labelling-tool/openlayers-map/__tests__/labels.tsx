@@ -75,7 +75,7 @@ const createImage = async (name: String) => {
   return id;
 };
 
-const createLabel = async (data: LabelCreateInput) => {
+const createLabel = async (data: Partial<LabelCreateInput>) => {
   const mutationResult = await client.mutate({
     mutation: gql`
       mutation createLabel($data: LabelCreateInput!) {
@@ -89,7 +89,15 @@ const createLabel = async (data: LabelCreateInput) => {
         ...data,
         geometry: {
           type: "Polygon",
-          coordinates: [],
+          coordinates: [
+            [
+              [0, 0],
+              [1, 0],
+              [1, 1],
+              [0, 1],
+              [0, 0],
+            ],
+          ],
         },
       },
     },
@@ -119,10 +127,6 @@ it("displays a single label", async () => {
 
   await createLabel({
     imageId,
-    geometry: {
-      type: "Polygon",
-      coordinates: [],
-    },
   });
 
   render(<Labels />, {
@@ -150,18 +154,10 @@ it("displays created labels", async () => {
   const mapRef: { current: OlMap | null } = { current: null };
   await createLabel({
     imageId,
-    geometry: {
-      type: "Polygon",
-      coordinates: [],
-    },
   });
 
   await createLabel({
     imageId,
-    geometry: {
-      type: "Polygon",
-      coordinates: [],
-    },
   });
 
   render(<Labels />, {
@@ -189,10 +185,6 @@ it("should change style of selected label", async () => {
   const mapRef: { current: OlMap | null } = { current: null };
   const labelId = await createLabel({
     imageId,
-    geometry: {
-      type: "Polygon",
-      coordinates: [],
-    },
   });
 
   useLabellingStore.setState({ selectedLabelId: labelId });
@@ -224,10 +216,6 @@ it("should delete selected label on delete key pressed", async () => {
   const mapRef: { current: OlMap | null } = { current: null };
   const labelId = await createLabel({
     imageId,
-    geometry: {
-      type: "Polygon",
-      coordinates: [],
-    },
   });
 
   useLabellingStore.setState({ selectedLabelId: labelId });
@@ -271,10 +259,6 @@ it("should not delete a label when none was selected", async () => {
   const mapRef: { current: OlMap | null } = { current: null };
   await createLabel({
     imageId,
-    geometry: {
-      type: "Polygon",
-      coordinates: [],
-    },
   });
 
   const { container } = render(<Labels />, {
