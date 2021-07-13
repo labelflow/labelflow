@@ -143,7 +143,7 @@ describe("Project resolver test suite", () => {
     expect(mutationResult.data.createProject.id).toEqual(projectId);
   });
 
-  test.only("Read project", async () => {
+  test("Read project", async () => {
     const name = "My new project";
     const projectId = "some id";
     await createProject(name, projectId);
