@@ -130,19 +130,6 @@ const createLabelClass = async (name: String) => {
   return id;
 };
 
-const getGeometryFromX = (x: number) => ({
-  type: "Polygon",
-  coordinates: [
-    [
-      [x, labelData.geometry.coordinates[0][0][1]],
-      labelData.geometry.coordinates[0][1],
-      labelData.geometry.coordinates[0][2],
-      [x, labelData.geometry.coordinates[0][3][1]],
-      [x, labelData.geometry.coordinates[0][4][1]],
-    ],
-  ],
-});
-
 describe("Label resolver test suite", () => {
   test("Creating a label should fail if its image doesn't exist", async () => {
     const imageId = "0024fbc1-387b-444f-8ad0-d7a3e316726a";
@@ -166,10 +153,53 @@ describe("Label resolver test suite", () => {
     ).rejects.toThrow(`The labelClass id ${labelClassId} doesn't exist.`);
   });
 
+  test("Create label and compute its bounding box", async () => {
+    const imageId = await createImage("an image");
+    const bbox = {
+      x: 0,
+      y: 0,
+      width: 1,
+      height: 1,
+    };
+    const geometry = getGeometryFromExtent(bbox);
+
+    const createResult = await createLabel({
+      geometry,
+      imageId,
+    });
+
+    const queryResult = await client.query({
+      query: gql`
+        query getImage($id: ID!) {
+          image(where: { id: $id }) {
+            labels {
+              id
+              x
+              y
+              width
+              height
+              labelClass
+            }
+          }
+        }
+      `,
+      variables: {
+        id: imageId,
+      },
+    });
+
+    expect(queryResult.data.image.labels[0].id).toEqual(
+      createResult.data.createLabel.id
+    );
+    expect(queryResult.data.image.labels[0]).toEqual(
+      expect.objectContaining(bbox)
+    );
+  });
+
   test("Create label without labelClass", async () => {
     const imageId = await createImage("an image");
 
-    const createResult = await createLabel({
+    await createLabel({
       ...labelData,
       imageId,
     });
@@ -190,10 +220,6 @@ describe("Label resolver test suite", () => {
       },
     });
 
-    expect(queryResult.data.image.labels[0].id).toEqual(
-      createResult.data.createLabel.id
-    );
-
     expect(queryResult.data.image.labels[0].labelClass).toBeNull();
   });
 
@@ -203,7 +229,7 @@ describe("Label resolver test suite", () => {
     const aClassName = "a class";
     const labelClassId = await createLabelClass("a class");
 
-    const createResult = await createLabel({
+    await createLabel({
       ...labelData,
       imageId,
       labelClassId,
@@ -227,10 +253,6 @@ describe("Label resolver test suite", () => {
       },
     });
 
-    expect(queryResult.data.image.labels[0].id).toEqual(
-      createResult.data.createLabel.id
-    );
-
     expect(queryResult.data.image.labels[0].labelClass.name).toEqual(
       aClassName
     );
@@ -253,12 +275,14 @@ describe("Label resolver test suite", () => {
     const imageId = await createImage("an image");
 
     await createLabel({
-      geometry: getGeometryFromX(1),
+      ...labelData,
+      id: "1",
       imageId,
     });
     incrementMockedDate(1);
     await createLabel({
-      geometry: getGeometryFromX(2),
+      ...labelData,
+      id: "2",
       imageId,
     });
 
@@ -267,7 +291,7 @@ describe("Label resolver test suite", () => {
         query getImage($id: ID!) {
           image(where: { id: $id }) {
             labels {
-              x
+              id
             }
           }
         }
@@ -278,10 +302,8 @@ describe("Label resolver test suite", () => {
     });
 
     expect(
-      queryResult.data.image.labels.map(
-        (label: { x: number }): number => label.x
-      )
-    ).toEqual([1, 2]);
+      queryResult.data.image.labels.map((label: { id: string }) => label.id)
+    ).toEqual(["1", "2"]);
   });
 
   test("Querying a label with its labelClass", async () => {
@@ -382,7 +404,13 @@ describe("Label resolver test suite", () => {
       imageId,
     });
     const labelId = createResult.data.createLabel.id;
-    const newGeometry = getGeometryFromX(6.28);
+    const bbox = {
+      x: 0,
+      y: 0,
+      width: 1,
+      height: 1,
+    };
+    const newGeometry = getGeometryFromExtent(bbox);
 
     await client.mutate({
       mutation: gql`
@@ -412,6 +440,8 @@ describe("Label resolver test suite", () => {
               }
               x
               y
+              width
+              height
             }
           }
         }
@@ -424,8 +454,9 @@ describe("Label resolver test suite", () => {
     expect(queryResult.data.image.labels[0].geometry).toEqual(
       expect.objectContaining(newGeometry)
     );
-    expect(queryResult.data.image.labels[0].x).toEqual(6.28);
-    expect(queryResult.data.image.labels[0].y).toEqual(42);
+    expect(queryResult.data.image.labels[0]).toEqual(
+      expect.objectContaining(bbox)
+    );
   });
 
   test("should throw when the label to updated doesn't exist", () => {
