@@ -576,39 +576,47 @@ describe("Label resolver test suite", () => {
     // x out of bounds
     await expect(
       createLabel({
-        x: -300,
-        width: 50,
-        y: 10,
-        height: 20,
         imageId,
+        geometry: getGeometryFromExtent({
+          x: -300,
+          width: 50,
+          y: 10,
+          height: 20,
+        }),
       })
     ).rejects.toThrow("Bounding box out of image bounds");
     await expect(
       createLabel({
-        x: imageWidth + 10,
-        width: 50,
-        y: 10,
-        height: 20,
         imageId,
+        geometry: getGeometryFromExtent({
+          x: imageWidth + 10,
+          width: 50,
+          y: 10,
+          height: 20,
+        }),
       })
     ).rejects.toThrow("Bounding box out of image bounds");
     // y out of bounds
     await expect(
       createLabel({
-        x: 10,
-        width: 10,
-        y: -100,
-        height: 10,
         imageId,
+        geometry: getGeometryFromExtent({
+          x: 10,
+          width: 10,
+          y: -100,
+          height: 10,
+        }),
       })
     ).rejects.toThrow("Bounding box out of image bounds");
     await expect(
       createLabel({
-        x: 10,
-        width: 10,
-        y: imageHeight + 10,
-        height: 20,
         imageId,
+        geometry: getGeometryFromExtent({
+          x: 10,
+          width: 10,
+          y: imageHeight + 10,
+          height: 20,
+        }),
       })
     ).rejects.toThrow("Bounding box out of image bounds");
   });
@@ -618,12 +626,14 @@ describe("Label resolver test suite", () => {
 
     const imageId = await createImage("an-image");
     await createLabel({
-      x: -10,
-      width: imageWidth + 10 + 10,
-      y: -10,
-      height: imageHeight + 10 + 10,
       id: labelId,
       imageId,
+      geometry: getGeometryFromExtent({
+        x: -10,
+        width: imageWidth + 10 + 10,
+        y: -10,
+        height: imageHeight + 10 + 10,
+      }),
     });
 
     const queryResult = await client.query({
