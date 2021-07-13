@@ -4,9 +4,7 @@ import {
   Kind as KindBase,
 } from "./catalogue";
 
-export {
-  catalogue, // , extend
-} from "./catalogue";
+export { catalogue, extend } from "./catalogue";
 
 export type Catalogue = CatalogueBase;
 

@@ -712,3 +712,208 @@ test("It should resize bounding box to image size when it is bigger", async () =
   expect(width).toEqual(imageWidth);
   expect(height).toEqual(imageHeight);
 });
+
+test("should update a label resizing it to fit in image", async () => {
+  const imageId = await createImage("an image");
+  const createResult = await createLabel({
+    ...labelData,
+    imageId,
+  });
+  const labelId = createResult.data.createLabel.id;
+
+  await client.mutate({
+    mutation: gql`
+      mutation updateLabel($id: ID!, $data: LabelUpdateInput!) {
+        updateLabel(where: { id: $id }, data: $data) {
+          id
+        }
+      }
+    `,
+    variables: {
+      id: labelId,
+      data: {
+        geometry: getGeometryFromExtent({
+          x: -10,
+          width: imageWidth + 20,
+          y: -10,
+          height: imageHeight + 10,
+        }),
+      },
+    },
+  });
+
+  const queryResult = await client.query({
+    query: gql`
+      query getImage($id: ID!) {
+        image(where: { id: $id }) {
+          labels {
+            id
+            x
+            y
+            width
+            height
+          }
+        }
+      }
+    `,
+    variables: {
+      id: imageId,
+    },
+  });
+
+  expect(queryResult.data.image.labels[0].x).toEqual(0);
+  expect(queryResult.data.image.labels[0].y).toEqual(0);
+  expect(queryResult.data.image.labels[0].width).toEqual(imageWidth);
+  expect(queryResult.data.image.labels[0].height).toEqual(imageHeight);
+});
+
+test("should throw when updating a label that will be outside of image bounds", async () => {
+  const imageId = await createImage("an image");
+  const createResult = await createLabel({
+    ...labelData,
+    imageId,
+  });
+  const labelId = createResult.data.createLabel.id;
+
+  await expect(
+    client.mutate({
+      mutation: gql`
+        mutation updateLabel($id: ID!, $data: LabelUpdateInput!) {
+          updateLabel(where: { id: $id }, data: $data) {
+            id
+          }
+        }
+      `,
+      variables: {
+        id: labelId,
+        data: {
+          geometry: getGeometryFromExtent({
+            x: -100,
+            width: 20,
+            y: -10,
+            height: imageHeight + 10,
+          }),
+        },
+      },
+    })
+  ).rejects.toThrow("Bounding box out of image bounds");
+  await expect(
+    client.mutate({
+      mutation: gql`
+        mutation updateLabel($id: ID!, $data: LabelUpdateInput!) {
+          updateLabel(where: { id: $id }, data: $data) {
+            id
+          }
+        }
+      `,
+      variables: {
+        id: labelId,
+        data: {
+          geometry: getGeometryFromExtent({
+            x: 0,
+            width: 20,
+            y: -100,
+            height: 10,
+          }),
+        },
+      },
+    })
+  ).rejects.toThrow("Bounding box out of image bounds");
+  await expect(
+    client.mutate({
+      mutation: gql`
+        mutation updateLabel($id: ID!, $data: LabelUpdateInput!) {
+          updateLabel(where: { id: $id }, data: $data) {
+            id
+          }
+        }
+      `,
+      variables: {
+        id: labelId,
+        data: {
+          geometry: getGeometryFromExtent({
+            x: imageWidth + 10,
+            width: imageWidth + 20,
+            y: 0,
+            height: 10,
+          }),
+        },
+      },
+    })
+  ).rejects.toThrow("Bounding box out of image bounds");
+  await expect(
+    client.mutate({
+      mutation: gql`
+        mutation updateLabel($id: ID!, $data: LabelUpdateInput!) {
+          updateLabel(where: { id: $id }, data: $data) {
+            id
+          }
+        }
+      `,
+      variables: {
+        id: labelId,
+        data: {
+          geometry: getGeometryFromExtent({
+            x: 0,
+            width: 20,
+            y: imageHeight + 10,
+            height: imageHeight + 20,
+          }),
+        },
+      },
+    })
+  ).rejects.toThrow("Bounding box out of image bounds");
+});
+
+test("should not change label size when only updating the label class", async () => {
+  const imageId = await createImage("an image");
+  const createResult = await createLabel({
+    ...labelData,
+    imageId,
+  });
+  const labelId = createResult.data.createLabel.id;
+  const labelClassId = await createLabelClass("a class");
+
+  await client.mutate({
+    mutation: gql`
+      mutation updateLabel($id: ID!, $data: LabelUpdateInput!) {
+        updateLabel(where: { id: $id }, data: $data) {
+          id
+        }
+      }
+    `,
+    variables: {
+      id: labelId,
+      data: {
+        labelClassId,
+      },
+    },
+  });
+
+  const queryResult = await client.query({
+    query: gql`
+      query getImage($id: ID!) {
+        image(where: { id: $id }) {
+          labels {
+            id
+            geometry {
+              type
+              coordinates
+            }
+            labelClass {
+              id
+            }
+          }
+        }
+      }
+    `,
+    variables: {
+      id: imageId,
+    },
+  });
+
+  expect(queryResult.data.image.labels[0].geometry).toEqual(
+    expect.objectContaining(labelData.geometry)
+  );
+  expect(queryResult.data.image.labels[0].labelClass.id).toEqual(labelClassId);
+});

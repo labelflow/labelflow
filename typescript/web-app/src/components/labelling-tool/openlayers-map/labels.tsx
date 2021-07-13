@@ -4,10 +4,12 @@ import { ApolloClient, useQuery, useApolloClient, gql } from "@apollo/client";
 
 import { Vector as OlSourceVector } from "ol/source";
 import GeoJSON from "ol/format/GeoJSON";
-import { Geometry } from "ol/geom";
+import { Geometry, MultiPoint } from "ol/geom";
+import Polygon from "ol/geom/Polygon";
 import { Fill, Stroke, Style } from "ol/style";
 import { useHotkeys } from "react-hotkeys-hook";
-
+import CircleStyle from "ol/style/Circle";
+import { Feature } from "ol";
 import { keymap } from "../../../keymap";
 import { useLabellingStore } from "../../../connectors/labelling-state";
 import { useUndoStore, Effect } from "../../../connectors/undo-store";
@@ -225,16 +227,36 @@ export const Labels = ({
           {labels.map(({ id, labelClass, geometry }: Label) => {
             const isSelected = id === selectedLabelId;
             const labelClassColor = labelClass?.color ?? noneClassColor;
-            const style = new Style({
+            const labelStyle = new Style({
               fill: new Fill({
                 color: `${labelClassColor}${isSelected ? "40" : "10"}`,
               }),
               stroke: new Stroke({
                 color: labelClassColor,
-                width: 2,
+                width: isSelected ? 4 : 2,
               }),
               zIndex: isSelected ? 2 : 1,
             });
+            const verticesStyle = isSelected
+              ? new Style({
+                  image: new CircleStyle({
+                    radius: 5,
+                    fill: new Fill({
+                      color: labelClassColor,
+                    }),
+                  }),
+                  geometry: (feature) => {
+                    const coordinates = (feature as Feature<Polygon>)
+                      .getGeometry()
+                      .getCoordinates()[0];
+                    return new MultiPoint(coordinates);
+                  },
+                  zIndex: isSelected ? 2 : 1,
+                })
+              : null;
+            const style = isSelected
+              ? [labelStyle, verticesStyle]
+              : [labelStyle];
 
             return (
               <olFeature

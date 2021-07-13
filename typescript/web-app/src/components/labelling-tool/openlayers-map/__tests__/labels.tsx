@@ -206,9 +206,8 @@ it("should change style of selected label", async () => {
       .getSource()
       .getFeatures();
 
-    /* This make this test dependent of the styling.
-     * We could add a selected property on the feature but it is not needed for the moment. */
-    expect(feature.getStyle()).toMatchObject({ zIndex_: 2 });
+    /* When the label is selected it contains two styles, one for the label, another for the vertices style */
+    expect(feature.getStyle()).toHaveLength(2);
   });
 });
 
