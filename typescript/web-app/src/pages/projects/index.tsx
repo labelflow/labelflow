@@ -12,6 +12,7 @@ import { NewProjectCard, ProjectCard } from "../../components/projects";
 import type { Project as ProjectType } from "../../graphql-types.generated";
 
 import { UpsertProjectModal } from "../../components/projects/upsert-project-modal";
+import { UpsertProjectDelete } from "../../components/projects/upsert-project-delete";
 
 const getProjectsQuery = gql`
   query getProjects {
@@ -40,6 +41,10 @@ const ProjectPage = () => {
     "modal-edit-project",
     IdParam
   );
+  const [deleteProjectId, setDeleteProjectId] = useQueryParam(
+    "alert-edit-project",
+    IdParam
+  );
 
   const onClose = useCallback(() => {
     if (editProjectId) {
@@ -49,7 +54,11 @@ const ProjectPage = () => {
     if (isCreatingProject) {
       setIsCreatingProject(false, "replaceIn");
     }
-  }, [editProjectId, isCreatingProject]);
+
+    if (deleteProjectId) {
+      setDeleteProjectId(null, "replaceIn");
+    }
+  }, [editProjectId, isCreatingProject, deleteProjectId]);
 
   return (
     <>
@@ -72,6 +81,12 @@ const ProjectPage = () => {
           projectId={editProjectId}
         />
 
+        <UpsertProjectDelete
+          isOpen={deleteProjectId != null}
+          onClose={onClose}
+          projectId={deleteProjectId}
+        />
+
         <Flex direction="row" wrap="wrap" p={4}>
           <NewProjectCard
             addProject={() => {
@@ -90,7 +105,9 @@ const ProjectPage = () => {
               editProject={() => {
                 setEditProjectId(id, "replaceIn");
               }}
-              deleteProject={() => {}}
+              deleteProject={() => {
+                setDeleteProjectId(id, "replaceIn");
+              }}
             />
           ))}
         </Flex>
