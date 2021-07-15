@@ -142,7 +142,7 @@ export type LabelClassesAggregates = {
 
 export type LabelCreateInput = {
   id?: Maybe<Scalars['ID']>;
-  type: Scalars['String'];
+  type?: Maybe<Scalars['String']>;
   imageId: Scalars['ID'];
   labelClassId?: Maybe<Scalars['ID']>;
   geometry: GeometryInput;
