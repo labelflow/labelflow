@@ -1,7 +1,7 @@
 import { useMemo, useRef } from "react";
 import { useRouter } from "next/router";
 import { Draw as OlDraw } from "ol/interaction";
-import { DrawEvent, createRegularPolygon } from "ol/interaction/Draw";
+import { createBox, DrawEvent } from "ol/interaction/Draw";
 import GeoJSON from "ol/format/GeoJSON";
 import { Fill, Stroke, Style } from "ol/style";
 import GeometryType from "ol/geom/GeometryType";
@@ -30,9 +30,9 @@ const labelClassQuery = gql`
   }
 `;
 
-// const geometryFunction = createRegularPolygon();
+const geometryFunction = createBox();
 
-export const DrawPolygonInteraction = () => {
+export const DrawBoundingBoxAndPolygonInteraction = () => {
   const drawRef = useRef<OlDraw>(null);
   const client = useApolloClient();
   const imageId = useRouter().query?.id;
@@ -79,21 +79,32 @@ export const DrawPolygonInteraction = () => {
     });
   }, [selectedLabelClass?.color]);
 
-  if (selectedTool !== Tools.POLYGON) {
+  if (![Tools.BOX, Tools.POLYGON].includes(selectedTool)) {
     return null;
   }
   if (typeof imageId !== "string") {
     return null;
   }
+  const interactionDrawArguments =
+    selectedTool === Tools.POLYGON
+      ? {
+          type: GeometryType.POLYGON,
+          style, // Needed here to trigger the rerender of the component when the selected class changes
+        }
+      : {
+          type: GeometryType.CIRCLE,
+          geometryFunction,
+          style, // Needed here to trigger the rerender of the component when the selected class changes
+        };
 
+  const errorMessage =
+    selectedTool === Tools.POLYGON
+      ? "Error creating polygon"
+      : "Error creating bounding box";
   return (
     <olInteractionDraw
       ref={drawRef}
-      args={{
-        type: GeometryType.POLYGON,
-        // geometryFunction,
-        style, // Needed here to trigger the rerender of the component when the selected class changes
-      }}
+      args={interactionDrawArguments}
       condition={(e) => {
         // 0 is the main mouse button. See: https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/button
         // @ts-ignore
@@ -129,7 +140,7 @@ export const DrawPolygonInteraction = () => {
           await createLabelPromise;
         } catch (error) {
           toast({
-            title: "Error creating polygon",
+            title: errorMessage,
             description: error?.message,
             isClosable: true,
             status: "error",

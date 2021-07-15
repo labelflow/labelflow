@@ -18,7 +18,7 @@ import { noneClassColor } from "../../../utils/class-color-generator";
 import {
   addLabelToImageInCache,
   removeLabelFromImageCache,
-} from "./draw-bounding-box-interaction/create-label-effect";
+} from "./draw-bounding-box-and-polygon-interaction/create-label-effect";
 
 const getImageLabelsQuery = gql`
   query getImageLabels($imageId: ID!) {

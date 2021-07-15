@@ -21,7 +21,7 @@ import {
 } from "../../../../connectors/labelling-state";
 import { setupTestsWithLocalDatabase } from "../../../../utils/setup-local-db-tests";
 
-import { DrawBoundingBoxInteraction } from "../draw-bounding-box-interaction";
+import { DrawBoundingBoxAndPolygonInteraction } from "../draw-bounding-box-and-polygon-interaction";
 
 setupTestsWithLocalDatabase();
 
@@ -46,7 +46,7 @@ beforeEach(() => {
 
 it("create a label when the user has finished to draw a bounding box on the labelling interface", async () => {
   const mapRef: { current: OlMap | null } = { current: null };
-  render(<DrawBoundingBoxInteraction />, {
+  render(<DrawBoundingBoxAndPolygonInteraction />, {
     wrapper: ({ children }) => (
       <Map
         args={{ interactions: [] }}
@@ -90,7 +90,7 @@ it("create a label when the user has finished to draw a bounding box on the labe
 
 it("is possible to undo the creation of the label", async () => {
   const mapRef: { current: OlMap | null } = { current: null };
-  render(<DrawBoundingBoxInteraction />, {
+  render(<DrawBoundingBoxAndPolygonInteraction />, {
     wrapper: ({ children }) => (
       <Map
         args={{ interactions: [] }}
@@ -122,7 +122,7 @@ it("is possible to undo the creation of the label", async () => {
 
 it("should select the newly created label", async () => {
   const mapRef: { current: OlMap | null } = { current: null };
-  render(<DrawBoundingBoxInteraction />, {
+  render(<DrawBoundingBoxAndPolygonInteraction />, {
     wrapper: ({ children }) => (
       <Map
         args={{ interactions: [] }}
@@ -152,7 +152,7 @@ it("should select the newly created label", async () => {
 
 it("should unset the selected label when the effect is undone", async () => {
   const mapRef: { current: OlMap | null } = { current: null };
-  render(<DrawBoundingBoxInteraction />, {
+  render(<DrawBoundingBoxAndPolygonInteraction />, {
     wrapper: ({ children }) => (
       <Map
         args={{ interactions: [] }}
@@ -184,7 +184,7 @@ it("should unset the selected label when the effect is undone", async () => {
 
 it("is possible to redo an undone action", async () => {
   const mapRef: { current: OlMap | null } = { current: null };
-  render(<DrawBoundingBoxInteraction />, {
+  render(<DrawBoundingBoxAndPolygonInteraction />, {
     wrapper: ({ children }) => (
       <Map
         args={{ interactions: [] }}
@@ -232,7 +232,7 @@ it("is possible to redo an undone action", async () => {
 
 it("should set back the selected label when the effect is redone after an undone", async () => {
   const mapRef: { current: OlMap | null } = { current: null };
-  render(<DrawBoundingBoxInteraction />, {
+  render(<DrawBoundingBoxAndPolygonInteraction />, {
     wrapper: ({ children }) => (
       <Map
         args={{ interactions: [] }}
@@ -265,7 +265,7 @@ it("should set back the selected label when the effect is redone after an undone
 
 it("handles cases where the label creation throws an error", async () => {
   const mapRef: { current: OlMap | null } = { current: null };
-  render(<DrawBoundingBoxInteraction />, {
+  render(<DrawBoundingBoxAndPolygonInteraction />, {
     wrapper: ({ children }) => (
       <Map
         args={{ interactions: [] }}

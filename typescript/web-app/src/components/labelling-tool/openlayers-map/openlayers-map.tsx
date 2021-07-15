@@ -17,9 +17,8 @@ import { Map } from "@labelflow/react-openlayers-fiber";
 import type { Image } from "../../../graphql-types.generated";
 import "ol/ol.css";
 
-import { DrawBoundingBoxInteraction } from "./draw-bounding-box-interaction";
+import { DrawBoundingBoxAndPolygonInteraction } from "./draw-bounding-box-and-polygon-interaction";
 import { SelectAndModifyFeature } from "./select-and-modify-feature";
-import { DrawPolygonInteraction } from "./draw-polygon-interaction";
 import { Labels } from "./labels";
 import { EditLabelClass } from "./edit-label-class";
 import { CursorGuides } from "./cursor-guides";
@@ -238,8 +237,7 @@ export const OpenlayersMap = () => {
               </olLayerImage>
 
               <Labels sourceVectorLabelsRef={sourceVectorLabelsRef} />
-              <DrawBoundingBoxInteraction />
-              <DrawPolygonInteraction />
+              <DrawBoundingBoxAndPolygonInteraction />
               <SelectAndModifyFeature
                 editClassOverlayRef={editClassOverlayRef}
                 sourceVectorLabelsRef={sourceVectorLabelsRef}
