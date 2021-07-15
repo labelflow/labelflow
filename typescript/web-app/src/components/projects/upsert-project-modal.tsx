@@ -185,7 +185,7 @@ export const UpsertProjectModal = ({
   );
 
   return (
-    <Modal isOpen={isOpen} size="xl" onClose={onClose}>
+    <Modal scrollBehavior="inside" isOpen={isOpen} size="xl" onClose={onClose}>
       <ModalOverlay />
       <ModalContent as="form" onSubmit={createProject}>
         <ModalCloseButton />

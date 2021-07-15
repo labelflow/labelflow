@@ -91,6 +91,7 @@ export const WelcomeModal = ({
       isOpen={isOpen}
       onClose={() => {}}
       size="3xl"
+      scrollBehavior="inside"
       isCentered
       initialFocusRef={startLabellingButtonRef}
     >
