@@ -109,7 +109,7 @@ export const WelcomeModal = ({
             spacing="8"
             h="full"
             mt="0"
-            mb="8"
+            pb="8"
           >
             <Heading
               as="h1"
