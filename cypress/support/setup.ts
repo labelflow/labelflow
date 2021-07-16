@@ -5,6 +5,7 @@ beforeEach(() =>
   cy.window().then(async () => {
     console.log("Clear database");
     await Promise.all([
+      db.project.clear(),
       db.image.clear(),
       db.label.clear(),
       db.labelClass.clear(),

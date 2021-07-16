@@ -16,7 +16,7 @@ export const LabellingTool = () => {
     (state) => state.setSelectedLabelId
   );
   const router = useRouter();
-  const imageId = router.query.id;
+  const imageId = router.query;
 
   useEffect(() => {
     clear();
