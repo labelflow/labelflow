@@ -16,8 +16,6 @@ import probe from "probe-image-size";
 import VectorLayer from "ol/layer/Vector";
 import { mockNextRouter } from "../../../../utils/router-mocks";
 
-const testProjectId = "mocked-project-id";
-
 mockNextRouter();
 
 import { useRouter } from "next/router";
@@ -33,6 +31,29 @@ const mockedProbeSync = mocked(probe.sync);
 
 const imageWidth = 500;
 const imageHeight = 900;
+
+const testProjectId = "test project id";
+
+const createProject = async (
+  name: string,
+  projectId: string = testProjectId
+) => {
+  return client.mutate({
+    mutation: gql`
+      mutation createProject($projectId: String, $name: String!) {
+        createProject(data: { id: $projectId, name: $name }) {
+          id
+          name
+        }
+      }
+    `,
+    variables: {
+      name,
+      projectId,
+    },
+    fetchPolicy: "no-cache",
+  });
+};
 
 const createImage = async (name: String) => {
   mockedProbeSync.mockReturnValue({
@@ -125,6 +146,7 @@ const createLabel = async (data: Partial<LabelCreateInput>) => {
 let imageId: string;
 
 beforeEach(async () => {
+  await createProject("Test project");
   imageId = await createImage("myImage");
 
   (useRouter as jest.Mock).mockImplementation(() => ({
