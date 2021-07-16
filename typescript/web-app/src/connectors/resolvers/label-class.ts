@@ -64,6 +64,15 @@ const createLabelClass = async (
   args: MutationCreateLabelClassArgs
 ): Promise<DbLabelClass> => {
   const { color, name, id, projectId } = args.data;
+
+  // Since we don't have any constraint checks with Dexie
+  // we need to ensure that the projectId matches some
+  // entity before being able to continue.
+  const project = await db.project.get(projectId);
+  if (project == null) {
+    throw new Error(`The project id ${projectId} doesn't exist.`);
+  }
+
   const labelClassId = id ?? uuidv4();
   const now = new Date();
 

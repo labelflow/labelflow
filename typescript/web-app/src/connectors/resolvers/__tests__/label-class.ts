@@ -156,11 +156,24 @@ describe("LabelClass resolver test suite", () => {
     ).rejects.toThrow("No labelClass with such id");
   });
 
-  test("Create labelClass", async () => {
+  it("should fail labelClass creation when there is a no project with the given id", async () => {
+    expect.assertions(1);
+    await expect(
+      createLabelClass({
+        name: "toto",
+        color: "#ff0000",
+        projectId: testProjectId,
+      })
+    ).rejects.toThrow("The project id test project id doesn't exist.");
+  });
+
+  it("should create labelClass when there is a project", async () => {
+    await createProject("Test project");
+
     const id = await createLabelClass({
       name: "toto",
       color: "#ff0000",
-      projectId: "a project id",
+      projectId: testProjectId,
     });
 
     const queryResult = await client.query({
@@ -177,6 +190,7 @@ describe("LabelClass resolver test suite", () => {
       variables: {
         id,
       },
+      fetchPolicy: "no-cache",
     });
 
     expect(queryResult.data.labelClass).toEqual(
@@ -184,18 +198,20 @@ describe("LabelClass resolver test suite", () => {
         id,
         name: "toto",
         color: "#ff0000",
-        projectId: "a project id",
+        projectId: testProjectId,
       })
     );
   });
 
-  test("Create labelClass with an ID", async () => {
+  it("should create labelClass with an ID", async () => {
+    await createProject("Test project");
+
     const labelClassId = "a custom id";
     const id = await createLabelClass({
       id: labelClassId,
       name: "toto",
       color: "#ff0000",
-      projectId: "a project id",
+      projectId: testProjectId,
     });
 
     const queryResult = await client.query({
@@ -214,11 +230,13 @@ describe("LabelClass resolver test suite", () => {
     expect(queryResult.data.labelClass.id).toEqual(labelClassId);
   });
 
-  test("should delete a label class", async () => {
+  it("should delete a label class", async () => {
+    await createProject("Test project");
+
     const labelId = await createLabelClass({
       name: "toto",
       color: "#ff0000",
-      projectId: "a project id",
+      projectId: testProjectId,
     });
 
     client.mutate({
@@ -267,23 +285,26 @@ describe("LabelClass resolver test suite", () => {
     ).rejects.toThrow("No labelClass with such id");
   });
 
-  test("Query labelClasses", async () => {
+  it("should query labelClasses ignoring linked projects", async () => {
+    await createProject("Test project 1", "project 1");
+    await createProject("Test project 2", "project 2");
+
     const id1 = await createLabelClass({
       name: "labelClass1",
       color: "#ff0000",
-      projectId: "a project id",
+      projectId: "project 1",
     });
     incrementMockedDate(1);
     const id0 = await createLabelClass({
       name: "labelClass0",
       color: "#ff0000",
-      projectId: "a project id",
+      projectId: "project 2",
     });
     incrementMockedDate(1);
     const id2 = await createLabelClass({
       name: "labelClass2",
       color: "#ff0000",
-      projectId: "a project id",
+      projectId: "project 1",
     });
 
     const queryResult = await client.query({
@@ -304,29 +325,32 @@ describe("LabelClass resolver test suite", () => {
     ).toEqual([id1, id0, id2]);
   });
 
-  test("Querying paginated labelClasses", async () => {
+  it("should query paginated labelClasses ignoring linked projects", async () => {
+    await createProject("Test project 1", "project 1");
+    await createProject("Test project 2", "project 2");
+
     await createLabelClass({
       name: "labelClass1",
       color: "#ff0000",
-      projectId: "a project id",
+      projectId: "project 2",
     });
     incrementMockedDate(1);
     const id0 = await createLabelClass({
       name: "labelClass0",
       color: "#ff0000",
-      projectId: "a project id",
+      projectId: "project 1",
     });
     incrementMockedDate(1);
     const id2 = await createLabelClass({
       name: "labelClass2",
       color: "#ff0000",
-      projectId: "a project id",
+      projectId: "project 2",
     });
     incrementMockedDate(1);
     await createLabelClass({
       name: "labelClass3",
       color: "#ff0000",
-      projectId: "a project id",
+      projectId: "project 1",
     });
 
     const queryResult = await client.query({
@@ -383,6 +407,9 @@ describe("LabelClass resolver test suite", () => {
   });
 
   it("should query label classes linked to a project", async () => {
+    await createProject("Test project 1", "project 1");
+    await createProject("Test project 2", "project 2");
+
     const labelClassId2 = await createLabelClass({
       name: "second labelClass",
       color: "#ff0000",
@@ -419,7 +446,10 @@ describe("LabelClass resolver test suite", () => {
     ).toEqual([labelClassId2, labelClassId1]);
   });
 
-  it("It should returns the correct count of labelClasses", async () => {
+  it("should returns the correct count of labelClasses", async () => {
+    await createProject("Test project 1", "project 1");
+    await createProject("Test project 2", "project 2");
+
     await Promise.all([
       createLabelClass({
         name: "first labelClass",
