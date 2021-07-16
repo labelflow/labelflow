@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import { HStack } from "@chakra-ui/react";
-import { get } from "lodash/fp";
 import { Story, DecoratorFn } from "@storybook/react";
 import { withNextRouter } from "storybook-addon-next-router";
 import gql from "graphql-tag";
