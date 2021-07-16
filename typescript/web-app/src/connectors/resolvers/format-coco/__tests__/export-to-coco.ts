@@ -1,4 +1,4 @@
-import gql from "graphql-tag";
+import { gql } from "@apollo/client";
 import probe from "probe-image-size";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { mocked } from "ts-jest/utils";

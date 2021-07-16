@@ -1,5 +1,5 @@
-import { ApolloCache, ApolloClient, Reference } from "@apollo/client";
-import gql from "graphql-tag";
+import { ApolloCache, ApolloClient, Reference, gql } from "@apollo/client";
+import GeoJSON from "ol/format/GeoJSON";
 
 import { Effect } from "../../../../connectors/undo-store";
 import { getProjectsQuery } from "../../../../pages/projects";

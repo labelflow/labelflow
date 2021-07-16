@@ -3,11 +3,11 @@
 // @ts-ignore Needs to be done before ol is imported
 global.URL.createObjectURL = jest.fn(() => "mockedUrl");
 
-import { ApolloProvider } from "@apollo/client";
+import { ApolloProvider, gql } from "@apollo/client";
 import { Map } from "@labelflow/react-openlayers-fiber";
 import { render, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import gql from "graphql-tag";
+
 import { Map as OlMap } from "ol";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { mocked } from "ts-jest/utils";
@@ -238,9 +238,8 @@ it("should change style of selected label", async () => {
       .getSource()
       .getFeatures();
 
-    /* This make this test dependent of the styling.
-     * We could add a selected property on the feature but it is not needed for the moment. */
-    expect(feature.getStyle()).toMatchObject({ zIndex_: 2 });
+    /* When the label is selected it contains two styles, one for the label, another for the vertices style */
+    expect(feature.getStyle()).toHaveLength(2);
   });
 });
 

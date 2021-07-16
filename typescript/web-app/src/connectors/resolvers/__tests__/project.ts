@@ -1,7 +1,7 @@
-import gql from "graphql-tag";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { mocked } from "ts-jest/utils";
 import probe from "probe-image-size";
+import { gql } from "@apollo/client";
 import { incrementMockedDate } from "@labelflow/dev-utils/mockdate";
 import { client } from "../../apollo-client-schema";
 import { setupTestsWithLocalDatabase } from "../../../utils/setup-local-db-tests";

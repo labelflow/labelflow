@@ -1,5 +1,5 @@
-import { useMutation, useLazyQuery, useQuery } from "@apollo/client";
-import gql from "graphql-tag";
+import { gql, useMutation, useLazyQuery, useQuery } from "@apollo/client";
+
 import { useEffect, useState, useCallback, useRef } from "react";
 import debounce from "lodash/fp/debounce";
 
