@@ -110,18 +110,20 @@ export const DrawingToolIcon = (props: {
             onClick={() => setSelectedTool(lastTool)}
             isActive={isActive}
           />
-          <IconButton
-            icon={<RiArrowDownSLine size="1.3em" />}
-            isDisabled={isDisabled}
-            role="checkbox"
-            aria-checked={selectedTool === Tools.BOX}
-            backgroundColor="white"
-            aria-label="Drawing tool"
-            pointerEvents="initial"
-            onClick={onClick}
-            isActive={isActive}
-            size="xs"
-          />
+          <PopoverTrigger>
+            <IconButton
+              icon={<RiArrowDownSLine size="1.3em" />}
+              isDisabled={isDisabled}
+              role="checkbox"
+              aria-checked={selectedTool === Tools.BOX}
+              backgroundColor="white"
+              aria-label="Drawing tool"
+              pointerEvents="initial"
+              onClick={onClick}
+              isActive={isActive}
+              size="xs"
+            />
+          </PopoverTrigger>
         </ButtonGroup>
       </Box>
     </Tooltip>
@@ -149,14 +151,12 @@ export const DrawingTool = () => {
   return (
     <>
       <Popover isOpen={isPopoverOpened} placement="right-start">
-        <PopoverTrigger>
-          <DrawingToolIcon
-            isDisabled={isImageLoading}
-            onClick={() => setIsPopoverOpened(!isPopoverOpened)}
-            selectedTool={selectedTool}
-            setSelectedTool={setSelectedTool}
-          />
-        </PopoverTrigger>
+        <DrawingToolIcon
+          isDisabled={isImageLoading}
+          onClick={() => setIsPopoverOpened(!isPopoverOpened)}
+          selectedTool={selectedTool}
+          setSelectedTool={setSelectedTool}
+        />
         <PopoverContent
           borderColor="gray.200"
           cursor="default"
@@ -196,40 +196,6 @@ export const DrawingTool = () => {
           </PopoverBody>
         </PopoverContent>
       </Popover>
-      {/* <Tooltip
-        label={`Drawing tool [${keymap.toolBoundingBox.key}]`}
-        placement="right"
-        openDelay={300}
-      >
-        <IconButton
-          icon={<RiCheckboxBlankLine size="1.3em" />}
-          isDisabled={isImageLoading}
-          role="checkbox"
-          aria-checked={selectedTool === Tools.BOX}
-          backgroundColor="white"
-          aria-label="Drawing tool"
-          pointerEvents="initial"
-          onClick={() => setSelectedTool(Tools.BOX)}
-          isActive={selectedTool === Tools.BOX}
-        />
-      </Tooltip>
-      <Tooltip
-        label={`Drawing tool [${keymap.toolPolygon.key}]`}
-        placement="right"
-        openDelay={300}
-      >
-        <IconButton
-          icon={<FaDrawPolygon size="1.3em" />}
-          isDisabled={isImageLoading}
-          role="checkbox"
-          aria-checked={selectedTool === Tools.POLYGON}
-          backgroundColor="white"
-          aria-label="Drawing tool"
-          pointerEvents="initial"
-          onClick={() => setSelectedTool(Tools.POLYGON)}
-          isActive={selectedTool === Tools.POLYGON}
-        />
-      </Tooltip> */}
     </>
   );
 };
