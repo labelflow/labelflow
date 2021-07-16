@@ -15,6 +15,27 @@ const mockedProbeSync = mocked(probe.sync);
 describe("Image resolver test suite", () => {
   const testProjectId = "test project id";
 
+  const createProject = async (
+    name: string,
+    projectId: string = testProjectId
+  ) => {
+    return client.mutate({
+      mutation: gql`
+        mutation createProject($projectId: String, $name: String!) {
+          createProject(data: { id: $projectId, name: $name }) {
+            id
+            name
+          }
+        }
+      `,
+      variables: {
+        name,
+        projectId,
+      },
+      fetchPolicy: "no-cache",
+    });
+  };
+
   const createImage = async (name: String, projectId = testProjectId) => {
     mockedProbeSync.mockReturnValue({
       width: 42,
@@ -82,7 +103,7 @@ describe("Image resolver test suite", () => {
     });
   };
 
-  test("Query images when db is empty", async () => {
+  it("should query images when db is empty", async () => {
     const queryResult = await client.query({
       query: gql`
         query {
@@ -96,8 +117,8 @@ describe("Image resolver test suite", () => {
     expect(queryResult.data.images.length).toEqual(0);
   });
 
-  test("Query image that does not exist", async () => {
-    return expect(
+  it("should query image that does not exist", async () => {
+    await expect(
       client.query({
         query: gql`
           query getImages($id: ID!) {
@@ -113,10 +134,21 @@ describe("Image resolver test suite", () => {
     ).rejects.toThrow("No image with such id");
   });
 
-  test("Create image with Blob", async () => {
-    const id = await createImage("new test image");
+  it("should fail when we want to create an image when there is no project created", async () => {
+    expect.assertions(1);
+    await expect(createImage("New test image")).rejects.toThrow(
+      "The project id test project id doesn't exist."
+    );
+  });
 
-    const queryResult = await client.query({
+  it("should create an image with the correct name when we want to create an image with Blob when there is a project", async () => {
+    await createProject("Test project");
+
+    const id = await createImage("New test image");
+
+    const {
+      data: { image },
+    } = await client.query({
       query: gql`
         query getImage($id: ID!) {
           image(where: { id: $id }) {
@@ -131,15 +163,17 @@ describe("Image resolver test suite", () => {
       },
     });
 
-    expect(queryResult.data.image).toEqual(
+    expect(image).toEqual(
       expect.objectContaining({
         id,
-        name: "new test image",
+        name: "New test image",
       })
     );
   });
 
-  test("Create image with url", async () => {
+  it("should create an image with the correct name when we want to create an image with url when there is a project", async () => {
+    await createProject("Test project");
+
     // @ts-ignore
     fetch.mockResponseOnce(new Blob());
     // @ts-ignore
@@ -167,7 +201,9 @@ describe("Image resolver test suite", () => {
       },
     });
 
-    const queryResult = await client.query({
+    const {
+      data: { image },
+    } = await client.query({
       query: gql`
         query getImage($id: ID!) {
           image(where: { id: $id }) {
@@ -182,7 +218,7 @@ describe("Image resolver test suite", () => {
       },
     });
 
-    expect(queryResult.data.image).toEqual(
+    expect(image).toEqual(
       expect.objectContaining({
         id,
         name: "photo-1579513141590-c597876aefbc",
@@ -190,7 +226,9 @@ describe("Image resolver test suite", () => {
     );
   });
 
-  test("Create image with an id", async () => {
+  it("should create an image with a custom id", async () => {
+    await createProject("Test project");
+
     const name = "an image";
     const imageId = "a custom id";
 
@@ -220,7 +258,9 @@ describe("Image resolver test suite", () => {
     expect(mutationResult.data.createImage.id).toEqual(imageId);
   });
 
-  test("Create image with a createdAt", async () => {
+  it("should create an image with the given createdAt value", async () => {
+    await createProject("Test project");
+
     const mutationResult = await client.mutate({
       mutation: gql`
         mutation createImage($file: Upload!, $projectId: ID!) {
@@ -246,12 +286,41 @@ describe("Image resolver test suite", () => {
     );
   });
 
-  test("Query several images", async () => {
-    const imageId2 = await createImage("image 2");
+  it("should query images linked to a project", async () => {
+    await createProject("Test project 1", "project 1");
+    await createProject("Test project 2", "project 2");
+
+    const imageId1 = await createImage("Image 1", "project 1");
     incrementMockedDate(1);
-    const imageId1 = await createImage("image 1");
+    const imageId2 = await createImage("Image 2", "project 1");
     incrementMockedDate(1);
-    const imageId3 = await createImage("image 3");
+    await createImage("Image 3", "project 2");
+
+    const queryResult = await client.query({
+      query: gql`
+        query {
+          images(where: { projectId: "project 1" }) {
+            id
+          }
+        }
+      `,
+    });
+
+    expect(queryResult.data.images.length).toEqual(2);
+    expect(
+      queryResult.data.images.map((image: { id: string }) => image.id)
+    ).toEqual([imageId1, imageId2]);
+  });
+
+  it("should query all the images ignoring with which projects there are linked", async () => {
+    await createProject("Test project 1", "project 1");
+    await createProject("Test project 2", "project 2");
+
+    const imageId2 = await createImage("image 2", "project 1");
+    incrementMockedDate(1);
+    const imageId1 = await createImage("image 1", "project 1");
+    incrementMockedDate(1);
+    const imageId3 = await createImage("image 3", "project 2");
 
     const queryResult = await client.query({
       query: gql`
@@ -269,14 +338,17 @@ describe("Image resolver test suite", () => {
     ).toEqual([imageId2, imageId1, imageId3]);
   });
 
-  test("Querying paginated images", async () => {
-    await createImage("image 2");
+  it("should query paginated images", async () => {
+    await createProject("Test project 1", "project 1");
+    await createProject("Test project 2", "project 2");
+
+    await createImage("image 2", "project 1");
     incrementMockedDate(1);
-    const imageId1 = await createImage("image 1");
+    const imageId1 = await createImage("image 1", "project 1");
     incrementMockedDate(1);
-    const imageId3 = await createImage("image 3");
+    const imageId3 = await createImage("image 3", "project 2");
     incrementMockedDate(1);
-    await createImage("image 4");
+    await createImage("image 4", "project 2");
 
     const queryResult = await client.query({
       query: gql`
@@ -294,7 +366,9 @@ describe("Image resolver test suite", () => {
     ).toEqual([imageId1, imageId3]);
   });
 
-  test("Querying an image with labels", async () => {
+  it("should query an image with his labels", async () => {
+    await createProject("Test project");
+
     const imageId = await createImage("an image");
 
     await createLabel(imageId, 2);
@@ -323,7 +397,9 @@ describe("Image resolver test suite", () => {
     ).toEqual([2, 1]);
   });
 
-  test("It returns the correct count of images", async () => {
+  it("should count the images", async () => {
+    await createProject("Test project");
+
     await Promise.all([
       createImage("Image 1"),
       createImage("Image 2"),
@@ -341,28 +417,5 @@ describe("Image resolver test suite", () => {
     });
 
     expect(queryResult.data.imagesAggregates.totalCount).toEqual(3);
-  });
-
-  it("should query images linked to a project", async () => {
-    const imageId1 = await createImage("Image 1", "project 1");
-    incrementMockedDate(1);
-    const imageId2 = await createImage("Image 2", "project 1");
-    incrementMockedDate(1);
-    await createImage("Image 1", "project 2");
-
-    const queryResult = await client.query({
-      query: gql`
-        query {
-          images(where: { projectId: "project 1" }) {
-            id
-          }
-        }
-      `,
-    });
-
-    expect(queryResult.data.images.length).toEqual(2);
-    expect(
-      queryResult.data.images.map((image: { id: string }) => image.id)
-    ).toEqual([imageId1, imageId2]);
   });
 });

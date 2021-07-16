@@ -49,6 +49,29 @@ const labelData = {
 const imageWidth = 500;
 const imageHeight = 900;
 
+const testProjectId = "test project id";
+
+const createProject = async (
+  name: string,
+  projectId: string = testProjectId
+) => {
+  return client.mutate({
+    mutation: gql`
+      mutation createProject($projectId: String, $name: String!) {
+        createProject(data: { id: $projectId, name: $name }) {
+          id
+          name
+        }
+      }
+    `,
+    variables: {
+      name,
+      projectId,
+    },
+    fetchPolicy: "no-cache",
+  });
+};
+
 const createLabel = (data: LabelCreateInput) => {
   return client.mutate({
     mutation: gql`
@@ -98,7 +121,7 @@ const createImage = async (name: String) => {
       }
     `,
     variables: {
-      projectId: "Some id",
+      projectId: testProjectId,
       file: new Blob(),
       name,
       width: imageWidth,
@@ -133,13 +156,18 @@ const createLabelClass = async (name: String) => {
       }
     `,
     variables: {
-      projectId: "Some id",
+      projectId: testProjectId,
       name,
     },
   });
 
   return id;
 };
+
+beforeEach(async () => {
+  // Images and label classes are always liked to a project
+  await createProject("Test project");
+});
 
 describe("Label resolver test suite", () => {
   test("Creating a label should fail if its image doesn't exist", async () => {

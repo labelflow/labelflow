@@ -150,6 +150,15 @@ const createImage = async (
     externalUrl,
     projectId,
   } = args.data;
+
+  // Since we don't have any constraint checks with Dexie
+  // we need to ensure that the projectId matches some
+  // entity before being able to continue.
+  const project = await db.project.get(projectId);
+  if (project == null) {
+    throw new Error(`The project id ${projectId} doesn't exist.`);
+  }
+
   const now = args?.data?.createdAt ?? new Date().toISOString();
   const imageId = id ?? uuidv4();
   let finalUrl: string | undefined;

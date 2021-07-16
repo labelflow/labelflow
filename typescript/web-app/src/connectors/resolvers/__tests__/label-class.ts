@@ -10,6 +10,7 @@ setupTestsWithLocalDatabase();
 
 jest.mock("probe-image-size");
 const mockedProbeSync = mocked(probe.sync);
+const testProjectId = "test project id";
 
 const createLabelClass = async (data: {
   name: string;
@@ -39,7 +40,11 @@ const createLabelClass = async (data: {
   return id;
 };
 
-const createLabel = async (labelClassId: string, x: number) => {
+const createLabel = async (
+  labelClassId: string,
+  x: number,
+  projectId: string = testProjectId
+) => {
   mockedProbeSync.mockReturnValue({
     width: 42,
     height: 36,
@@ -66,7 +71,7 @@ const createLabel = async (labelClassId: string, x: number) => {
     variables: {
       file: new Blob(),
       name: "someImageName",
-      projectId: "a project id",
+      projectId,
     },
   });
   return client.mutate({
@@ -95,6 +100,27 @@ const createLabel = async (labelClassId: string, x: number) => {
         },
       },
     },
+  });
+};
+
+const createProject = async (
+  name: string,
+  projectId: string = testProjectId
+) => {
+  return client.mutate({
+    mutation: gql`
+      mutation createProject($projectId: String, $name: String!) {
+        createProject(data: { id: $projectId, name: $name }) {
+          id
+          name
+        }
+      }
+    `,
+    variables: {
+      name,
+      projectId,
+    },
+    fetchPolicy: "no-cache",
   });
 };
 
@@ -321,16 +347,18 @@ describe("LabelClass resolver test suite", () => {
     ).toEqual([id0, id2]);
   });
 
-  test("Querying a labelClass with labels", async () => {
+  it("should query a labelClass with labels", async () => {
+    await createProject("Test project", "a project id");
+
     const labelClassId = await createLabelClass({
       name: "some labelClass",
       color: "#ff0000",
       projectId: "a project id",
     });
 
-    await createLabel(labelClassId, 2);
+    await createLabel(labelClassId, 2, "a project id");
     incrementMockedDate(1);
-    await createLabel(labelClassId, 1);
+    await createLabel(labelClassId, 1, "a project id");
 
     const queryResult = await client.query({
       query: gql`

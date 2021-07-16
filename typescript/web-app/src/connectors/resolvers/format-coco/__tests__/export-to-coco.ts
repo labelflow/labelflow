@@ -18,6 +18,29 @@ setupTestsWithLocalDatabase();
 
 const omitUrl = omit(["images", 0, "coco_url"]);
 
+const testProjectId = "test project id";
+
+const createProject = async (
+  name: string,
+  projectId: string = testProjectId
+) => {
+  return client.mutate({
+    mutation: gql`
+      mutation createProject($projectId: String, $name: String!) {
+        createProject(data: { id: $projectId, name: $name }) {
+          id
+          name
+        }
+      }
+    `,
+    variables: {
+      name,
+      projectId,
+    },
+    fetchPolicy: "no-cache",
+  });
+};
+
 const createImage = async (name: String): Promise<string> => {
   const mutationResult = await client.mutate({
     mutation: gql`
@@ -30,7 +53,7 @@ const createImage = async (name: String): Promise<string> => {
     variables: {
       file: new Blob(),
       name,
-      projectId: "a project id",
+      projectId: testProjectId,
     },
   });
 
@@ -57,7 +80,7 @@ const createLabelClass = async (data: {
       }
     `,
     variables: {
-      data: { ...data, projectId: "a project id" },
+      data: { ...data, projectId: testProjectId },
     },
   });
 
@@ -101,15 +124,23 @@ const createLabelWithLabelClass = (imageId: string, labelClassId: string) => {
 };
 
 describe("Exporting a dataset to coco format", () => {
+  beforeEach(async () => {
+    // Images and label classes are always liked to a project
+    await createProject("Test project");
+  });
+
   test("The exportToCoco graphql endpoint returns an empty dataset when no label class and no image exist", async () => {
     expect(
       (
         await client.query({
           query: gql`
-            query {
-              exportToCoco(where: { projectId: "a project id" })
+            query exportToCoco($projectId: ID!) {
+              exportToCoco(where: { projectId: $projectId })
             }
           `,
+          variables: {
+            projectId: testProjectId,
+          },
         })
       ).data.exportToCoco
     ).toEqual(jsonToDataUri(JSON.stringify(initialCocoDataset)));
@@ -137,10 +168,13 @@ describe("Exporting a dataset to coco format", () => {
       (
         await client.query({
           query: gql`
-            query {
-              exportToCoco(where: { projectId: "a project id" })
+            query exportToCoco($projectId: ID!) {
+              exportToCoco(where: { projectId: $projectId })
             }
           `,
+          variables: {
+            projectId: testProjectId,
+          },
         })
       ).data.exportToCoco
     ).toEqual(jsonToDataUri(JSON.stringify(expectedDataset)));
@@ -209,10 +243,13 @@ describe("Exporting a dataset to coco format", () => {
             (
               await client.query({
                 query: gql`
-                  query {
-                    exportToCoco(where: { projectId: "a project id" })
+                  query exportToCoco($projectId: ID!) {
+                    exportToCoco(where: { projectId: $projectId })
                   }
                 `,
+                variables: {
+                  projectId: testProjectId,
+                },
               })
             ).data.exportToCoco
           )
