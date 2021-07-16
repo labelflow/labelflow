@@ -34,8 +34,8 @@ export const ToolSelectionPopoverItem = (props: {
   const [highlight, setHighlight] = useState(false);
   return (
     <Box
-      pl="3"
-      pr="3"
+      pl="0"
+      pr="0"
       pt="1"
       pb="1"
       bgColor={highlight ? "gray.100" : defaultBgColor}
@@ -82,16 +82,24 @@ export const DrawingToolIcon = (props: {
     }
   }, [selectedTool]);
   const isActive = [Tools.BOX, Tools.POLYGON].includes(selectedTool);
+  const toolTipLabel = (() => {
+    if (lastTool === Tools.BOX) {
+      return `Bounding Box tool [${keymap.toolBoundingBox.key}]`;
+    }
+    return `Polygon tool [${keymap.toolPolygon.key}]`;
+  })();
+  const bgColor = (() => {
+    if (isDisabled) {
+      return "transparent";
+    }
+    if (isActive) {
+      return "gray.300";
+    }
+    return "white";
+  })();
   return (
-    <Tooltip
-      label={`Drawing tool [${keymap.toolBoundingBox.key}]`}
-      placement="right-start"
-      openDelay={300}
-    >
-      <Box
-        bgColor={isDisabled || isActive ? "gray.300" : "white"}
-        borderRadius="7px"
-      >
+    <Tooltip label={toolTipLabel} placement="right-start" openDelay={300}>
+      <Box bgColor={bgColor} borderRadius="7px">
         <ButtonGroup alignItems="flex-end" isAttached>
           <IconButton
             icon={
@@ -150,7 +158,14 @@ export const DrawingTool = () => {
   );
   return (
     <>
-      <Popover isOpen={isPopoverOpened} placement="right-start">
+      <Popover
+        isOpen={isPopoverOpened}
+        placement="right-start"
+        closeOnBlur
+        onClose={() => {
+          setIsPopoverOpened(false);
+        }}
+      >
         <DrawingToolIcon
           isDisabled={isImageLoading}
           onClick={() => setIsPopoverOpened(!isPopoverOpened)}
@@ -162,13 +177,13 @@ export const DrawingTool = () => {
           cursor="default"
           pointerEvents="initial"
           aria-label="changeme"
-          width="50"
+          width="60"
         >
           <PopoverBody pl="0" pr="0" pt="0">
             <Box>
               <ToolSelectionPopoverItem
                 name="Polygon"
-                shortcut="P"
+                shortcut={keymap.toolPolygon.key}
                 selected={selectedTool === Tools.POLYGON}
                 onClick={() => {
                   setSelectedTool(Tools.POLYGON);
@@ -181,7 +196,7 @@ export const DrawingTool = () => {
               </ToolSelectionPopoverItem>
               <ToolSelectionPopoverItem
                 name="Bounding Box"
-                shortcut="B"
+                shortcut={keymap.toolBoundingBox.key}
                 selected={selectedTool === Tools.BOX}
                 onClick={() => {
                   setSelectedTool(Tools.BOX);
