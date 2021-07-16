@@ -173,7 +173,10 @@ const updateProject = async (
 ): Promise<DbProject> => {
   const projectToUpdate = await getProjectFromWhereUniqueInput(args.where);
 
-  await db.project.update(projectToUpdate, args.data);
+  const updateResult = await db.project.update(projectToUpdate, args.data);
+  if (updateResult === 0) {
+    throw new Error("Could not update the project");
+  }
 
   return getProjectById(projectToUpdate.id);
 };
