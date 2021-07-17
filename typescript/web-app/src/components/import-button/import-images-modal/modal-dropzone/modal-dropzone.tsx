@@ -220,7 +220,6 @@ export const ImportImagesModalDropzone = ({
         pb="6"
         pr="6"
         pl="6"
-        overflowY="hidden"
         flexDirection="column"
       >
         {isEmpty(files) ? (
