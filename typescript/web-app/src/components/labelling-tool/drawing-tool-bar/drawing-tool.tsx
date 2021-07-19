@@ -1,19 +1,19 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback, Ref } from "react";
 import {
-  IconButton,
   Tooltip,
   Popover,
   PopoverContent,
+  Button,
   PopoverBody,
   PopoverTrigger,
   Box,
   Kbd,
   Flex,
   Text,
-  ButtonGroup,
+  chakra,
 } from "@chakra-ui/react";
-import { RiCheckboxBlankLine, RiArrowDownSLine } from "react-icons/ri";
-import { FaDrawPolygon } from "react-icons/fa";
+import { RiArrowDownSLine } from "react-icons/ri";
+import { BiShapePolygon, BiShapeSquare } from "react-icons/bi";
 import { useHotkeys } from "react-hotkeys-hook";
 
 import { useLabellingStore, Tools } from "../../../connectors/labelling-state";
@@ -21,6 +21,10 @@ import { useLabellingStore, Tools } from "../../../connectors/labelling-state";
 import { keymap } from "../../../keymap";
 
 export type Props = {};
+
+const ChakraBiShapeSquare = chakra(BiShapeSquare);
+const ChakraBiShapePolygon = chakra(BiShapePolygon);
+const ChakraRiArrowDownSLine = chakra(RiArrowDownSLine);
 
 export const ToolSelectionPopoverItem = (props: {
   name: string;
@@ -30,27 +34,18 @@ export const ToolSelectionPopoverItem = (props: {
   children: any;
 }) => {
   const { name, shortcut, selected, children, onClick } = props;
-  const defaultBgColor = selected ? "gray.300" : "transparent";
-  const [highlight, setHighlight] = useState(false);
+
   return (
     <Box
       pl="0"
       pr="0"
       pt="1"
       pb="1"
-      bgColor={highlight ? "gray.100" : defaultBgColor}
-      onMouseEnter={() => {
-        if (!selected) {
-          setHighlight(true);
-        }
+      _hover={{
+        backgroundColor: selected ? "gray.300" : "gray.100",
       }}
-      onMouseLeave={() => {
-        if (!selected) {
-          setHighlight(false);
-        }
-      }}
+      bgColor={selected ? "gray.300" : "transparent"}
       onClick={() => {
-        setHighlight(false);
         onClick();
       }}
     >
@@ -73,8 +68,10 @@ export const DrawingToolIcon = (props: {
   selectedTool: Tools;
   setSelectedTool: any;
   onClick: any;
+  buttonRef: Ref<HTMLButtonElement>;
 }) => {
-  const { isDisabled, onClick, selectedTool, setSelectedTool } = props;
+  const { isDisabled, onClick, selectedTool, setSelectedTool, buttonRef } =
+    props;
   const [lastTool, setLastTool] = useState(Tools.BOX);
   useEffect(() => {
     if ([Tools.BOX, Tools.POLYGON].includes(selectedTool)) {
@@ -88,52 +85,57 @@ export const DrawingToolIcon = (props: {
     }
     return `Polygon tool [${keymap.toolPolygon.key}]`;
   })();
-  const bgColor = (() => {
-    if (isDisabled) {
-      return "transparent";
-    }
-    if (isActive) {
-      return "gray.300";
-    }
-    return "white";
-  })();
+
   return (
-    <Tooltip label={toolTipLabel} placement="right-start" openDelay={300}>
-      <Box bgColor={bgColor} borderRadius="7px">
-        <ButtonGroup alignItems="flex-end" isAttached>
-          <IconButton
-            icon={
-              lastTool === Tools.BOX ? (
-                <RiCheckboxBlankLine size="1.3em" />
-              ) : (
-                <FaDrawPolygon size="1.3em" />
-              )
-            }
+    <Tooltip label={toolTipLabel} placement="right" openDelay={300}>
+      <Button
+        ref={buttonRef}
+        isDisabled={isDisabled}
+        role="checkbox"
+        aria-checked={selectedTool === Tools.BOX}
+        backgroundColor="white"
+        aria-label="Drawing tool"
+        pointerEvents="initial"
+        onClick={() => setSelectedTool(lastTool)}
+        isActive={isActive}
+        w="10"
+        padding="0"
+      >
+        {lastTool === Tools.BOX ? (
+          <ChakraBiShapeSquare size="1.3em" />
+        ) : (
+          <ChakraBiShapePolygon size="1.3em" />
+        )}
+
+        <PopoverTrigger>
+          <Button
+            as="div"
+            variant="link"
+            position="absolute"
+            right="0"
+            bottom="0"
+            height="4"
+            width="4"
+            minWidth="4"
+            maxWidth="4"
             isDisabled={isDisabled}
-            role="checkbox"
-            aria-checked={selectedTool === Tools.BOX}
-            backgroundColor="white"
-            aria-label="Drawing tool"
+            role="button"
+            aria-label="Select Drawing tool"
             pointerEvents="initial"
-            onClick={() => setSelectedTool(lastTool)}
+            onClick={onClick}
             isActive={isActive}
-          />
-          <PopoverTrigger>
-            <IconButton
-              icon={<RiArrowDownSLine size="1.3em" />}
-              isDisabled={isDisabled}
-              role="checkbox"
-              aria-checked={selectedTool === Tools.BOX}
-              backgroundColor="white"
-              aria-label="Drawing tool"
-              pointerEvents="initial"
-              onClick={onClick}
-              isActive={isActive}
-              size="xs"
+            padding="0"
+            textAlign="right"
+            color="gray.800"
+          >
+            <ChakraRiArrowDownSLine
+              position="relative"
+              size="0.7em"
+              transform="translate( 0.01em, 0.01em) rotate(-45deg) scale(2) "
             />
-          </PopoverTrigger>
-        </ButtonGroup>
-      </Box>
+          </Button>
+        </PopoverTrigger>
+      </Button>
     </Tooltip>
   );
 };
@@ -142,7 +144,14 @@ export const DrawingTool = () => {
   const isImageLoading = useLabellingStore((state) => state.isImageLoading);
   const selectedTool = useLabellingStore((state) => state.selectedTool);
   const setSelectedTool = useLabellingStore((state) => state.setSelectedTool);
-  const [isPopoverOpened, setIsPopoverOpened] = useState(false);
+  const [isPopoverOpened, doSetIsPopoverOpened] = useState(false);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const setIsPopoverOpened = useCallback((newState) => {
+    doSetIsPopoverOpened(newState);
+    if (!newState && buttonRef.current) {
+      buttonRef.current.focus();
+    }
+  }, []);
 
   useHotkeys(
     keymap.toolBoundingBox.key,
@@ -167,6 +176,7 @@ export const DrawingTool = () => {
         }}
       >
         <DrawingToolIcon
+          buttonRef={buttonRef}
           isDisabled={isImageLoading}
           onClick={() => setIsPopoverOpened(!isPopoverOpened)}
           selectedTool={selectedTool}
@@ -176,10 +186,10 @@ export const DrawingTool = () => {
           borderColor="gray.200"
           cursor="default"
           pointerEvents="initial"
-          aria-label="changeme"
+          aria-label="Change Drawing Tool"
           width="60"
         >
-          <PopoverBody pl="0" pr="0" pt="0">
+          <PopoverBody pl="0" pr="0">
             <Box>
               <ToolSelectionPopoverItem
                 name="Polygon"
@@ -191,7 +201,7 @@ export const DrawingTool = () => {
                 }}
               >
                 <Box ml="2">
-                  <FaDrawPolygon size="1.3em" />
+                  <BiShapePolygon size="1.3em" />
                 </Box>
               </ToolSelectionPopoverItem>
               <ToolSelectionPopoverItem
@@ -204,7 +214,7 @@ export const DrawingTool = () => {
                 }}
               >
                 <Box ml="2">
-                  <RiCheckboxBlankLine size="1.3em" />
+                  <BiShapeSquare size="1.3em" />
                 </Box>
               </ToolSelectionPopoverItem>
             </Box>
