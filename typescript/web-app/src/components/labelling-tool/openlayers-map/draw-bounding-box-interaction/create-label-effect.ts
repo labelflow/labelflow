@@ -33,7 +33,7 @@ const createLabelMutation = gql`
 `;
 
 const imageDimensionsQuery = gql`
-  query imageDimensions($id: ID) {
+  query imageDimensions($id: ID!) {
     image(where: { id: $id }) {
       id
       width
