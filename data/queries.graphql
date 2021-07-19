@@ -11,7 +11,7 @@ type Query {
 
   image(where: ImageWhereUniqueInput!): Image!
   images(where: ImageWhereInput, first: Int, skip: Int): [Image!]!
-  imagesAggregates(where: ImageWhereInput): ImagesAggregates!
+  imagesAggregates: ImagesAggregates!
 
   labelClass(where: LabelClassWhereUniqueInput!): LabelClass!
   labelClasses(
@@ -19,9 +19,9 @@ type Query {
     first: Int
     skip: Int
   ): [LabelClass!]!
-  labelClassesAggregates(where: LabelClassWhereInput): LabelClassesAggregates!
+  labelClassesAggregates: LabelClassesAggregates!
 
-  labelsAggregates(where: LabelWhereInput): LabelsAggregates!
+  labelsAggregates: LabelsAggregates!
   label(where: LabelWhereUniqueInput!): Label!
   labels(where: LabelWhereInput, first: Int, skip: Int): [Label!]!
 

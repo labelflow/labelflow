@@ -197,11 +197,11 @@ type Query {
   examples(where: ExampleWhereInput, first: Int, skip: Int, orderBy: ExampleOrderByInput): [Example!]!
   image(where: ImageWhereUniqueInput!): Image!
   images(where: ImageWhereInput, first: Int, skip: Int): [Image!]!
-  imagesAggregates(where: ImageWhereInput): ImagesAggregates!
+  imagesAggregates: ImagesAggregates!
   labelClass(where: LabelClassWhereUniqueInput!): LabelClass!
   labelClasses(where: LabelClassWhereInput, first: Int, skip: Int): [LabelClass!]!
-  labelClassesAggregates(where: LabelClassWhereInput): LabelClassesAggregates!
-  labelsAggregates(where: LabelWhereInput): LabelsAggregates!
+  labelClassesAggregates: LabelClassesAggregates!
+  labelsAggregates: LabelsAggregates!
   label(where: LabelWhereUniqueInput!): Label!
   labels(where: LabelWhereInput, first: Int, skip: Int): [Label!]!
   project(where: ProjectWhereUniqueInput!): Project!
