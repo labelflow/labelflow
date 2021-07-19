@@ -3,8 +3,7 @@ import { Feature, Map as OlMap } from "ol";
 import { Geometry, Polygon } from "ol/geom";
 import { Vector as OlSourceVector } from "ol/source";
 import { extend } from "@labelflow/react-openlayers-fiber";
-import gql from "graphql-tag";
-import { ApolloClient, useApolloClient } from "@apollo/client";
+import { ApolloClient, useApolloClient, gql } from "@apollo/client";
 import { useToast } from "@chakra-ui/react";
 import { SelectInteraction } from "./select-interaction";
 import {
