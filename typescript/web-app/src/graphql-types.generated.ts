@@ -73,7 +73,7 @@ export type Image = {
   height: Scalars['Int'];
   width: Scalars['Int'];
   labels: Array<Label>;
-  projectId?: Maybe<Scalars['ID']>;
+  projectId: Scalars['ID'];
 };
 
 export type ImageCreateInput = {
@@ -257,12 +257,6 @@ export type Project = {
 
 
 export type ProjectImagesArgs = {
-  first?: Maybe<Scalars['Int']>;
-  skip?: Maybe<Scalars['Int']>;
-};
-
-
-export type ProjectLabelsArgs = {
   first?: Maybe<Scalars['Int']>;
   skip?: Maybe<Scalars['Int']>;
 };
@@ -596,7 +590,7 @@ export type ImageResolvers<ContextType = any, ParentType extends ResolversParent
   height?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   width?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   labels?: Resolver<Array<ResolversTypes['Label']>, ParentType, ContextType>;
-  projectId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
+  projectId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -664,7 +658,7 @@ export type ProjectResolvers<ContextType = any, ParentType extends ResolversPare
   updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   images?: Resolver<Array<ResolversTypes['Image']>, ParentType, ContextType, RequireFields<ProjectImagesArgs, never>>;
-  labels?: Resolver<Array<ResolversTypes['Label']>, ParentType, ContextType, RequireFields<ProjectLabelsArgs, never>>;
+  labels?: Resolver<Array<ResolversTypes['Label']>, ParentType, ContextType>;
   labelClasses?: Resolver<Array<ResolversTypes['LabelClass']>, ParentType, ContextType>;
   imagesAggregates?: Resolver<ResolversTypes['ImagesAggregates'], ParentType, ContextType>;
   labelsAggregates?: Resolver<ResolversTypes['LabelsAggregates'], ParentType, ContextType>;
