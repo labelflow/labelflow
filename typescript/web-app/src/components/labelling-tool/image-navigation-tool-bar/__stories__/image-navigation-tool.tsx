@@ -3,7 +3,7 @@ import React from "react";
 import { Story, DecoratorFn } from "@storybook/react";
 import { withNextRouter } from "storybook-addon-next-router";
 import { HStack, Button, Flex } from "@chakra-ui/react";
-import gql from "graphql-tag";
+import { gql } from "@apollo/client";
 import Bluebird from "bluebird";
 
 import { get } from "lodash/fp";

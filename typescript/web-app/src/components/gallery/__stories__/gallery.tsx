@@ -2,7 +2,7 @@
 import { HStack } from "@chakra-ui/react";
 import { Story, DecoratorFn } from "@storybook/react";
 import { withNextRouter } from "storybook-addon-next-router";
-import gql from "graphql-tag";
+import { gql } from "@apollo/client";
 import Bluebird from "bluebird";
 
 import { client } from "../../../connectors/apollo-client-schema";

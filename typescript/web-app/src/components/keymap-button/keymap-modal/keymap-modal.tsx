@@ -25,7 +25,13 @@ export const KeymapModal = ({
   keymap?: LabelflowKeymap;
 }) => {
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size="xl" isCentered>
+    <Modal
+      scrollBehavior="inside"
+      isOpen={isOpen}
+      onClose={onClose}
+      size="xl"
+      isCentered
+    >
       <ModalOverlay />
       <ModalContent height="80vh">
         <ModalHeader textAlign="center" padding="6">
@@ -40,7 +46,6 @@ export const KeymapModal = ({
           pb="6"
           pr="6"
           pl="6"
-          overflowY="auto"
           flexDirection="column"
         >
           <Keymap keys={keymap} />

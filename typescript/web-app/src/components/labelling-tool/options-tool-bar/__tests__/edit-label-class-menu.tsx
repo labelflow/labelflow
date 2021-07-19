@@ -1,8 +1,7 @@
 /* eslint-disable import/first */
-import { ApolloProvider } from "@apollo/client";
+import { ApolloProvider, gql } from "@apollo/client";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import gql from "graphql-tag";
 
 import { mockNextRouter } from "../../../../utils/router-mocks";
 

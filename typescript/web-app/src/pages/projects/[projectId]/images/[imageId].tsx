@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { useQuery } from "@apollo/client";
+import { useQuery, gql } from "@apollo/client";
 import {
   Text,
   Breadcrumb,
@@ -11,7 +11,7 @@ import {
   Flex,
   chakra,
 } from "@chakra-ui/react";
-import gql from "graphql-tag";
+
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import { RiArrowRightSLine } from "react-icons/ri";

@@ -321,11 +321,6 @@ export type QueryImagesArgs = {
 };
 
 
-export type QueryImagesAggregatesArgs = {
-  where?: Maybe<ImageWhereInput>;
-};
-
-
 export type QueryLabelClassArgs = {
   where: LabelClassWhereUniqueInput;
 };
@@ -335,16 +330,6 @@ export type QueryLabelClassesArgs = {
   where?: Maybe<LabelClassWhereInput>;
   first?: Maybe<Scalars['Int']>;
   skip?: Maybe<Scalars['Int']>;
-};
-
-
-export type QueryLabelClassesAggregatesArgs = {
-  where?: Maybe<LabelClassWhereInput>;
-};
-
-
-export type QueryLabelsAggregatesArgs = {
-  where?: Maybe<LabelWhereInput>;
 };
 
 
@@ -672,11 +657,11 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   examples?: Resolver<Array<ResolversTypes['Example']>, ParentType, ContextType, RequireFields<QueryExamplesArgs, never>>;
   image?: Resolver<ResolversTypes['Image'], ParentType, ContextType, RequireFields<QueryImageArgs, 'where'>>;
   images?: Resolver<Array<ResolversTypes['Image']>, ParentType, ContextType, RequireFields<QueryImagesArgs, never>>;
-  imagesAggregates?: Resolver<ResolversTypes['ImagesAggregates'], ParentType, ContextType, RequireFields<QueryImagesAggregatesArgs, never>>;
+  imagesAggregates?: Resolver<ResolversTypes['ImagesAggregates'], ParentType, ContextType>;
   labelClass?: Resolver<ResolversTypes['LabelClass'], ParentType, ContextType, RequireFields<QueryLabelClassArgs, 'where'>>;
   labelClasses?: Resolver<Array<ResolversTypes['LabelClass']>, ParentType, ContextType, RequireFields<QueryLabelClassesArgs, never>>;
-  labelClassesAggregates?: Resolver<ResolversTypes['LabelClassesAggregates'], ParentType, ContextType, RequireFields<QueryLabelClassesAggregatesArgs, never>>;
-  labelsAggregates?: Resolver<ResolversTypes['LabelsAggregates'], ParentType, ContextType, RequireFields<QueryLabelsAggregatesArgs, never>>;
+  labelClassesAggregates?: Resolver<ResolversTypes['LabelClassesAggregates'], ParentType, ContextType>;
+  labelsAggregates?: Resolver<ResolversTypes['LabelsAggregates'], ParentType, ContextType>;
   label?: Resolver<ResolversTypes['Label'], ParentType, ContextType, RequireFields<QueryLabelArgs, 'where'>>;
   labels?: Resolver<Array<ResolversTypes['Label']>, ParentType, ContextType, RequireFields<QueryLabelsArgs, never>>;
   project?: Resolver<ResolversTypes['Project'], ParentType, ContextType, RequireFields<QueryProjectArgs, 'where'>>;

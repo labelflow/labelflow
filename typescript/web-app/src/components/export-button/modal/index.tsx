@@ -10,11 +10,8 @@ import {
   Text,
   Skeleton,
 } from "@chakra-ui/react";
-
-import { useLazyQuery, useQuery } from "@apollo/client";
 import { useRouter } from "next/router";
-import gql from "graphql-tag";
-
+import { useLazyQuery, useQuery, gql } from "@apollo/client";
 import { ExportFormatCard } from "./export-format-card";
 
 const exportToCocoQuery = gql`
@@ -70,7 +67,13 @@ export const ExportModal = ({
   });
 
   return (
-    <Modal isOpen={isOpen} size="3xl" onClose={onClose} isCentered>
+    <Modal
+      scrollBehavior="inside"
+      isOpen={isOpen}
+      size="3xl"
+      onClose={onClose}
+      isCentered
+    >
       <ModalOverlay />
       <ModalContent height="auto">
         <ModalHeader textAlign="center" padding="6">
@@ -95,7 +98,6 @@ export const ExportModal = ({
           pb="6"
           pr="6"
           pl="6"
-          overflowY="hidden"
           flexDirection="column"
         >
           <HStack

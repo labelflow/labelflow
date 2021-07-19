@@ -7,8 +7,7 @@ import {
   Button,
   Text,
 } from "@chakra-ui/react";
-import { useApolloClient } from "@apollo/client";
-import gql from "graphql-tag";
+import { useApolloClient, gql } from "@apollo/client";
 import { useRouter } from "next/router";
 
 import { UrlList } from "./url-list";
@@ -130,7 +129,6 @@ export const ImportImagesModalUrlList = ({
         pb="6"
         pr="6"
         pl="6"
-        overflowY="hidden"
         flexDirection="column"
       >
         {isEmpty(urls) ? (

@@ -1,5 +1,5 @@
 import { incrementMockedDate } from "@labelflow/dev-utils/mockdate";
-import gql from "graphql-tag";
+import { gql } from "@apollo/client";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { mocked } from "ts-jest/utils";
 import probe from "probe-image-size";

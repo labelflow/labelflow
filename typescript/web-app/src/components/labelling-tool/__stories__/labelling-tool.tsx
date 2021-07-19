@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
-import gql from "graphql-tag";
+import { gql } from "@apollo/client";
 import { DecoratorFn, Story } from "@storybook/react";
 import { Box } from "@chakra-ui/react";
 import { withNextRouter } from "storybook-addon-next-router";
