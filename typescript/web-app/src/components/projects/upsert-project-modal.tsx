@@ -55,19 +55,6 @@ const getProjectByIdQuery = gql`
   }
 `;
 
-const getProjectsQuery = gql`
-  query getProjects {
-    projects {
-      id
-      name
-      images {
-        id
-        url
-      }
-    }
-  }
-`;
-
 export const UpsertProjectModal = ({
   isOpen = false,
   onClose = () => {},
@@ -117,7 +104,8 @@ export const UpsertProjectModal = ({
       id: projectId,
       name: projectName,
     },
-    refetchQueries: [{ query: getProjectsQuery }],
+    refetchQueries: ["getProjects"],
+    awaitRefetchQueries: true,
   });
 
   const handleInputValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
