@@ -103,7 +103,7 @@ const createLabel = async (
 
   const newLabelEntity = {
     id: labelId,
-    type: type ?? "Polygon",
+    type: type ?? LabelType.Polygon,
     createdAt: now.toISOString(),
     updatedAt: now.toISOString(),
     labelClassId,
