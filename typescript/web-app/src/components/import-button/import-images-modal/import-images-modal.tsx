@@ -57,6 +57,7 @@ export const ImportImagesModal = ({
     <Modal
       isOpen={isOpen}
       size="xl"
+      scrollBehavior="inside"
       onClose={() => {
         if (!isCloseable) return;
         onClose();
