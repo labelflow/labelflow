@@ -4,7 +4,7 @@ import { Geometry, Polygon } from "ol/geom";
 import { Vector as OlSourceVector } from "ol/source";
 import { extend } from "@labelflow/react-openlayers-fiber";
 import gql from "graphql-tag";
-import { ApolloClient, useApolloClient } from "@apollo/client";
+import { ApolloClient, useApolloClient, useQuery } from "@apollo/client";
 import { useToast } from "@chakra-ui/react";
 import { SelectInteraction } from "./select-interaction";
 import {
@@ -36,6 +36,9 @@ const updateLabelMutation = gql`
       y
       width
       height
+      labelClass {
+        id
+      }
     }
   }
 `;
@@ -43,11 +46,16 @@ const updateLabelMutation = gql`
 const getLabelQuery = gql`
   query getLabel($id: ID!) {
     label(where: { id: $id }) {
+      id
       geometry {
         type
         coordinates
       }
       imageId
+      labelClass {
+        id
+        color
+      }
     }
   }
 `;
@@ -66,9 +74,11 @@ const updateLabelEffect = (
   {
     labelId,
     geometry,
+    imageId,
   }: {
     labelId: string;
-    geometry?: GeometryInput;
+    geometry: GeometryInput;
+    imageId?: string;
   },
   {
     client,
@@ -77,31 +87,32 @@ const updateLabelEffect = (
   }
 ): Effect => ({
   do: async () => {
-    console.log("Before query");
-    const { data: labelData } = await client.query({
+    const cache = client.cache;
+    const { image } = cache.readQuery<{
+      image: { width: number; height: number };
+    }>({
+      query: imageDimensionsQuery,
+      variables: { id: imageId },
+    });
+    const { label } = cache.readQuery({
       query: getLabelQuery,
       variables: { id: labelId },
     });
-    console.log("Image iD", labelData.label.imageId);
-    const { data: imageData } = await client.query({
-      query: imageDimensionsQuery,
-      variables: { id: labelData.label.imageId },
-    });
     const imageDimensions = {
-      width: imageData.image.width,
-      height: imageData.image.height,
+      width: image.width,
+      height: image.height,
     };
-    const originalGeometry = labelData?.label.geometry;
+    const originalGeometry = label.geometry;
     const boundedGeometry = getBoundedGeometryFromImage(
       imageDimensions,
       originalGeometry
     );
 
-    await client.mutate({
+    client.mutate({
       mutation: updateLabelMutation,
       variables: {
         id: labelId,
-        geometry: geometry,
+        geometry,
       },
       refetchQueries: ["getImageLabels"],
       optimisticResponse: {
@@ -112,11 +123,11 @@ const updateLabelEffect = (
           y: boundedGeometry.y,
           width: boundedGeometry.width,
           height: boundedGeometry.height,
+          labelClass: label.labelClass,
           __typename: "Label",
         },
       },
       update: (cache, { data }) => {
-        console.log("Will update", data?.updateLabel);
         cache.writeQuery({ query: getLabelQuery, data: data?.updateLabel });
       },
     });
@@ -157,6 +168,11 @@ export const SelectAndModifyFeature = (props: {
     useState<Feature<Geometry> | null>(null);
   const selectedLabelId = useLabellingStore((state) => state.selectedLabelId);
   const selectedTool = useLabellingStore((state) => state.selectedTool);
+
+  const { data: labelData } = useQuery(getLabelQuery, {
+    variables: { id: selectedLabelId },
+    skip: selectedLabelId == null,
+  });
 
   const getSelectedFeature = useCallback(() => {
     if (selectedFeature?.getProperties()?.id !== selectedLabelId) {
@@ -203,7 +219,10 @@ export const SelectAndModifyFeature = (props: {
               const { id: labelId } = feature.getProperties();
               try {
                 await perform(
-                  updateLabelEffect({ labelId, geometry }, { client })
+                  updateLabelEffect(
+                    { labelId, geometry, imageId: labelData?.label?.imageId },
+                    { client }
+                  )
                 );
               } catch (error) {
                 toast({
