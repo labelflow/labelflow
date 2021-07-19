@@ -3,7 +3,7 @@ import GeoJSON from "ol/format/GeoJSON";
 import gql from "graphql-tag";
 
 import { Effect } from "../../../../connectors/undo-store";
-import { GeometryInput } from "../../../../graphql-types.generated";
+import { GeometryInput, LabelType } from "../../../../graphql-types.generated";
 
 type CreateLabelInputs = {
   imageId: string;
@@ -16,13 +16,14 @@ const createLabelMutation = gql`
   mutation createLabel(
     $id: ID
     $imageId: ID!
+    $labelType: LabelType!
     $labelClassId: ID
     $geometry: GeometryInput!
   ) {
     createLabel(
       data: {
         id: $id
-        type: "BoundingBox"
+        type: $labelType
         imageId: $imageId
         labelClassId: $labelClassId
         geometry: $geometry
@@ -116,10 +117,12 @@ export const createLabelEffect = (
     imageId,
     selectedLabelClassId,
     geometry,
+    labelType,
   }: {
     imageId: string;
     selectedLabelClassId: string | null;
     geometry: GeoJSON.Polygon;
+    labelType: LabelType;
   },
   {
     setSelectedLabelId,
@@ -134,6 +137,7 @@ export const createLabelEffect = (
       imageId,
       labelClassId: selectedLabelClassId,
       geometry,
+      labelType,
     };
 
     const { data } = await client.mutate({
@@ -180,6 +184,7 @@ export const createLabelEffect = (
       imageId,
       labelClassId: selectedLabelClassId,
       geometry,
+      labelType,
     };
     const { data } = await client.mutate({
       mutation: createLabelMutation,

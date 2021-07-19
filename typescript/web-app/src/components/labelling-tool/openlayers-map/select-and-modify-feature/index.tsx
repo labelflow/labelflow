@@ -15,7 +15,7 @@ import {
 } from "../../../../connectors/labelling-state";
 import { ResizeAndTranslateBox } from "./resize-and-translate-box-interaction";
 import { Effect, useUndoStore } from "../../../../connectors/undo-store";
-import { GeometryInput } from "../../../../graphql-types.generated";
+import { GeometryInput, LabelType } from "../../../../graphql-types.generated";
 
 // Extend react-openlayers-catalogue to include resize and translate interaction
 extend({
@@ -150,7 +150,7 @@ export const SelectAndModifyFeature = (props: {
     <>
       <SelectInteraction {...props} />
 
-      {selectedTool === Tools.SELECTION && data?.label?.type === "BoundingBox" && (
+      {selectedTool === Tools.SELECTION && data?.label?.type === LabelType.Box && (
         /* @ts-ignore - We need to add this because resizeAndTranslateBox is not included in the react-openalyers-fiber original catalogue */
         <resizeAndTranslateBox
           args={{ selectedFeature }}
@@ -178,7 +178,7 @@ export const SelectAndModifyFeature = (props: {
         />
       )}
       {selectedTool === Tools.SELECTION &&
-        data?.label?.type === "Polygon" &&
+        data?.label?.type === LabelType.Polygon &&
         selectedFeature && (
           <olInteractionModify
             features={new Collection([selectedFeature])}

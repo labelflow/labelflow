@@ -1,6 +1,6 @@
 input LabelCreateInput {
   id: ID
-  type: String
+  type: LabelType
   imageId: ID!
   labelClassId: ID
   geometry: GeometryInput!

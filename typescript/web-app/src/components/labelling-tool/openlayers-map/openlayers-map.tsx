@@ -88,7 +88,8 @@ export const OpenlayersMap = () => {
   const editClassOverlayRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<OlMap>(null);
   const viewRef = useRef<OlView | null>(null);
-  const sourceVectorLabelsRef = useRef<OlSourceVector | null>(null);
+  const sourceVectorBoxesRef = useRef<OlSourceVector | null>(null);
+  const sourceVectorPolygonsRef = useRef<OlSourceVector | null>(null);
   const router = useRouter();
   const imageId = router.query?.id;
   const isContextMenuOpen = useLabellingStore(
@@ -236,16 +237,16 @@ export const OpenlayersMap = () => {
                 )}
               </olLayerImage>
 
-              <Labels sourceVectorLabelsRef={sourceVectorLabelsRef} />
+              <Labels sourceVectorLabelsRef={sourceVectorBoxesRef} />
               <DrawBoundingBoxAndPolygonInteraction />
               <SelectAndModifyFeature
                 editClassOverlayRef={editClassOverlayRef}
-                sourceVectorLabelsRef={sourceVectorLabelsRef}
+                sourceVectorLabelsRef={sourceVectorBoxesRef}
                 setIsContextMenuOpen={setIsContextMenuOpen}
                 map={mapRef.current}
               />
-              {sourceVectorLabelsRef.current && (
-                <olInteractionSnap source={sourceVectorLabelsRef.current} />
+              {sourceVectorBoxesRef.current && (
+                <olInteractionSnap source={sourceVectorBoxesRef.current} />
               )}
             </ThemeProvider>
           </ApolloProvider>

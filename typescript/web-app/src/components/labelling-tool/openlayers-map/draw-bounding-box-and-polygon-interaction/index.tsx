@@ -19,6 +19,7 @@ import { keymap } from "../../../../keymap";
 import { useUndoStore } from "../../../../connectors/undo-store";
 import { noneClassColor } from "../../../../utils/class-color-generator";
 import { createLabelEffect } from "./create-label-effect";
+import { LabelType } from "../../../../graphql-types.generated";
 
 const labelClassQuery = gql`
   query getLabelClass($id: ID!) {
@@ -128,6 +129,10 @@ export const DrawBoundingBoxAndPolygonInteraction = () => {
               imageId,
               selectedLabelClassId,
               geometry,
+              labelType:
+                selectedTool === Tools.POLYGON
+                  ? LabelType.Polygon
+                  : LabelType.Box,
             },
             {
               setSelectedLabelId,
