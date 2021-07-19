@@ -14,6 +14,7 @@ import {
 import { ResizeAndTranslateBox } from "./resize-and-translate-box-interaction";
 import { Effect, useUndoStore } from "../../../../connectors/undo-store";
 import { GeometryInput } from "../../../../graphql-types.generated";
+import { getBoundedGeometryFromImage } from "../../../../connectors/resolvers/label";
 
 // Extend react-openlayers-catalogue to include resize and translate interaction
 extend({
@@ -27,6 +28,14 @@ const updateLabelMutation = gql`
       data: { geometry: $geometry, labelClassId: $labelClassId }
     ) {
       id
+      geometry {
+        type
+        coordinates
+      }
+      x
+      y
+      width
+      height
     }
   }
 `;
@@ -38,6 +47,17 @@ const getLabelQuery = gql`
         type
         coordinates
       }
+      imageId
+    }
+  }
+`;
+
+const imageDimensionsQuery = gql`
+  query imageDimensions($id: ID!) {
+    image(where: { id: $id }) {
+      id
+      width
+      height
     }
   }
 `;
@@ -57,18 +77,48 @@ const updateLabelEffect = (
   }
 ): Effect => ({
   do: async () => {
+    console.log("Before query");
     const { data: labelData } = await client.query({
       query: getLabelQuery,
       variables: { id: labelId },
     });
+    console.log("Image iD", labelData.label.imageId);
+    const { data: imageData } = await client.query({
+      query: imageDimensionsQuery,
+      variables: { id: labelData.label.imageId },
+    });
+    const imageDimensions = {
+      width: imageData.image.width,
+      height: imageData.image.height,
+    };
     const originalGeometry = labelData?.label.geometry;
+    const boundedGeometry = getBoundedGeometryFromImage(
+      imageDimensions,
+      originalGeometry
+    );
+
     await client.mutate({
       mutation: updateLabelMutation,
       variables: {
         id: labelId,
-        geometry,
+        geometry: geometry,
       },
       refetchQueries: ["getImageLabels"],
+      optimisticResponse: {
+        updateLabel: {
+          id: labelId,
+          geometry: boundedGeometry.geometry,
+          x: boundedGeometry.x,
+          y: boundedGeometry.y,
+          width: boundedGeometry.width,
+          height: boundedGeometry.height,
+          __typename: "Label",
+        },
+      },
+      update: (cache, { data }) => {
+        console.log("Will update", data?.updateLabel);
+        cache.writeQuery({ query: getLabelQuery, data: data?.updateLabel });
+      },
     });
 
     return { id: labelId, originalGeometry };
