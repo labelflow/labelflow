@@ -79,10 +79,6 @@ const ImagesPage = () => {
             <BreadcrumbItem isCurrentPage>
               <Text>{projectName}</Text>
             </BreadcrumbItem>
-
-            <BreadcrumbItem>
-              <Text>Images</Text>
-            </BreadcrumbItem>
           </Breadcrumb>
         }
         topBarRightContent={
@@ -92,6 +88,13 @@ const ImagesPage = () => {
             <ExportButton />
           </>
         }
+        tabs={[
+          {
+            name: "images",
+            url: `/projects/${projectId}/images`,
+            isActive: true,
+          },
+        ]}
       >
         {!projectResult && (
           <Center h="full">
