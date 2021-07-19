@@ -42,7 +42,7 @@ export const Default = () => {
         <DrawingToolIcon
           buttonRef={buttonRef}
           isDisabled={false}
-          onClick={console.log}
+          onClickDetails={() => console.log("ok")}
           selectedTool={Tools.BOX}
           setSelectedTool={console.log}
         />

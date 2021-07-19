@@ -1,4 +1,11 @@
-import { useState, useEffect, useRef, useCallback, Ref } from "react";
+import {
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+  Ref,
+  MouseEventHandler,
+} from "react";
 import {
   Tooltip,
   Popover,
@@ -67,11 +74,16 @@ export const DrawingToolIcon = (props: {
   isDisabled: boolean;
   selectedTool: Tools;
   setSelectedTool: any;
-  onClick: any;
+  onClickDetails: MouseEventHandler<HTMLButtonElement>;
   buttonRef: Ref<HTMLButtonElement>;
 }) => {
-  const { isDisabled, onClick, selectedTool, setSelectedTool, buttonRef } =
-    props;
+  const {
+    isDisabled,
+    onClickDetails,
+    selectedTool,
+    setSelectedTool,
+    buttonRef,
+  } = props;
   const [lastTool, setLastTool] = useState(Tools.BOX);
   useEffect(() => {
     if ([Tools.BOX, Tools.POLYGON].includes(selectedTool)) {
@@ -120,9 +132,9 @@ export const DrawingToolIcon = (props: {
             maxWidth="4"
             isDisabled={isDisabled}
             role="button"
-            aria-label="Select Drawing tool"
+            aria-label="Change Drawing tool"
             pointerEvents="initial"
-            onClick={onClick}
+            onClick={onClickDetails}
             isActive={isActive}
             padding="0"
             textAlign="right"
@@ -178,7 +190,10 @@ export const DrawingTool = () => {
         <DrawingToolIcon
           buttonRef={buttonRef}
           isDisabled={isImageLoading}
-          onClick={() => setIsPopoverOpened(!isPopoverOpened)}
+          onClickDetails={(e) => {
+            setIsPopoverOpened(!isPopoverOpened);
+            e.stopPropagation();
+          }}
           selectedTool={selectedTool}
           setSelectedTool={setSelectedTool}
         />
