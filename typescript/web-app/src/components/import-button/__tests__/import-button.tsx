@@ -7,7 +7,7 @@ import "@testing-library/jest-dom/extend-expect";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { mocked } from "ts-jest/utils";
 import probe from "probe-image-size";
-import gql from "graphql-tag";
+import { gql } from "@apollo/client";
 
 import { client } from "../../../connectors/apollo-client-schema";
 import { setupTestsWithLocalDatabase } from "../../../utils/setup-local-db-tests";
