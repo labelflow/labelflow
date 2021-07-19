@@ -1,11 +1,3 @@
-type DbVersion = {
-  name: string;
-  version: number;
-  stores: {
-    [key: string]: string;
-  };
-};
-
 // https://dexie.org/docs/Version/Version.stores()
 // First key is set to be the primary key and has to be unique
 export default [
@@ -22,4 +14,4 @@ export default [
       project: "id,createdAt,updatedAt,&name",
     },
   },
-] as Array<DbVersion>;
+];
