@@ -58,8 +58,8 @@ export const UpsertProjectDelete = ({
     refetchQueries: [{ query: getProjectsQuery }],
   });
 
-  const deleteProject = () => {
-    deleteProjectMutate();
+  const deleteProject = async () => {
+    await deleteProjectMutate();
     onClose();
   };
 
@@ -81,10 +81,19 @@ export const UpsertProjectDelete = ({
           </AlertDialogBody>
 
           <AlertDialogFooter>
-            <Button ref={cancelRef} onClick={onClose}>
+            <Button
+              ref={cancelRef}
+              onClick={onClose}
+              aria-label="Cancel delete"
+            >
               Cancel
             </Button>
-            <Button colorScheme="red" onClick={deleteProject} ml={3}>
+            <Button
+              colorScheme="red"
+              onClick={deleteProject}
+              aria-label="Project delete"
+              ml={3}
+            >
               Delete
             </Button>
           </AlertDialogFooter>
