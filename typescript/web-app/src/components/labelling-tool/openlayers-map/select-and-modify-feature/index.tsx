@@ -105,7 +105,7 @@ const updateLabelEffect = (
     const originalGeometry = label.geometry;
     const boundedGeometry = getBoundedGeometryFromImage(
       imageDimensions,
-      originalGeometry
+      geometry
     );
 
     client.mutate({
