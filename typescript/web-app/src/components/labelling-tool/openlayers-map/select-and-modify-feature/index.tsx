@@ -87,17 +87,36 @@ const updateLabelEffect = (
   }
 ): Effect => ({
   do: async () => {
-    const cache = client.cache;
-    const { image } = cache.readQuery<{
+    const { cache } = client;
+    const imageResponse = cache.readQuery<{
       image: { width: number; height: number };
     }>({
       query: imageDimensionsQuery,
       variables: { id: imageId },
     });
-    const { label } = cache.readQuery({
+    if (imageResponse == null) {
+      throw new Error(`Missing image with id ${imageId}`);
+    }
+    const { image } = imageResponse;
+
+    const labelResponse = cache.readQuery<{
+      label: {
+        id: string;
+        geometry: GeometryInput;
+        imageId: string;
+        labelClass: {
+          id: string;
+          color: string;
+        };
+      };
+    }>({
       query: getLabelQuery,
       variables: { id: labelId },
     });
+    if (labelResponse == null) {
+      throw new Error(`Missing label with id ${imageId}`);
+    }
+    const { label } = labelResponse;
     const imageDimensions = {
       width: image.width,
       height: image.height,
@@ -127,8 +146,11 @@ const updateLabelEffect = (
           __typename: "Label",
         },
       },
-      update: (cache, { data }) => {
-        cache.writeQuery({ query: getLabelQuery, data: data?.updateLabel });
+      update: (apolloCache, { data }) => {
+        apolloCache.writeQuery({
+          query: getLabelQuery,
+          data: data?.updateLabel,
+        });
       },
     });
 
