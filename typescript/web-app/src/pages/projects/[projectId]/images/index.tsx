@@ -93,6 +93,11 @@ const ImagesPage = () => {
             url: `/projects/${projectId}/images`,
             isActive: true,
           },
+          {
+            name: "classes",
+            url: `/projects/${projectId}/classes`,
+            isActive: false,
+          },
         ]}
       >
         {!projectResult && (
