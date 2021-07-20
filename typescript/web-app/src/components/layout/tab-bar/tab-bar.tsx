@@ -12,9 +12,12 @@ export type Props = {
 };
 
 export const TabBar = ({ tabs }: Props) => {
+  if (!tabs || tabs.length === 0) {
+    return <></>;
+  }
+
   return (
     <Flex
-      as="header"
       alignItems="center"
       bg="gray.100"
       padding={0}
@@ -22,6 +25,7 @@ export const TabBar = ({ tabs }: Props) => {
       flex={0}
       borderBottom="2px solid"
       borderColor="gray.200"
+      aria-label="tab bar"
     >
       {tabs.map(({ name, url, isActive }) => (
         <NextLink href={url} css="margin: 0;" key={name}>
