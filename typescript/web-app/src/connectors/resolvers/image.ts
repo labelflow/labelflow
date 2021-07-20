@@ -285,18 +285,16 @@ const imagesAggregates = (parent: any) => {
 
 const totalCount = (
   parent: any,
-  _args,
+  _args: any,
   { repository }: { repository: Repository }
 ) => {
   // eslint-disable-next-line no-underscore-dangle
   const typename = parent?.__typename;
 
   if (typename === projectTypename) {
-    return db.image
-      .where({
-        projectId: parent.id,
-      })
-      .count();
+    return repository.image.count({
+      projectId: parent.id,
+    });
   }
 
   return repository.image.count();

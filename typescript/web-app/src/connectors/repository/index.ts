@@ -1,4 +1,4 @@
-import { db } from "../database";
+import { db, DbImage } from "../database";
 
 import type { Maybe, ImageWhereInput } from "../../graphql-types.generated";
 
@@ -25,11 +25,13 @@ export const getPaginatedImages = async (
 export const repository = {
   image: {
     list: getPaginatedImages,
-    getById: async (id: string) => db.image.get(id),
-    add: db.image.add,
-    delete: db.image.delete,
-    update: db.image.update,
-    count: db.image.count,
+    getById: (id: string) => db.image.get(id),
+    add: (image: DbImage) => db.image.add(image),
+    delete: (id: string) => db.image.delete(id),
+    update: (id: string, changes: Partial<DbImage>) =>
+      db.image.update(id, changes),
+    count: (where?: { [key: string]: string }) =>
+      where ? db.image.where(where).count() : db.image.count(),
   },
 };
 
