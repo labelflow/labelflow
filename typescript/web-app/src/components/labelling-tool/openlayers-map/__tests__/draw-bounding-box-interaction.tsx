@@ -11,7 +11,7 @@ import { DrawEvent, DrawEventType } from "ol/interaction/Draw";
 
 import { mockNextRouter } from "../../../../utils/router-mocks";
 
-mockNextRouter({ query: { id: "mocked-image-id" } });
+mockNextRouter({ query: { imageId: "mocked-image-id" } });
 
 import { client } from "../../../../connectors/apollo-client-schema";
 import { useUndoStore } from "../../../../connectors/undo-store";

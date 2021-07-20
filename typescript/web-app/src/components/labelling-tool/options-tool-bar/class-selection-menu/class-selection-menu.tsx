@@ -5,13 +5,16 @@ import { RiCheckboxBlankCircleFill } from "react-icons/ri";
 import { LabelClass } from "../../../../graphql-types.generated";
 import { ClassSelectionPopover } from "../../../class-selection-popover";
 
+// The class selection menu doesn't need all the attributes of the label class
+export type LabelClassItem = Omit<LabelClass, "projectId">;
+
 const CircleIcon = chakra(RiCheckboxBlankCircleFill);
 const SelectorIcon = chakra(HiSelector);
 
 const ClassSelectionButton = React.forwardRef<
   null,
   {
-    selectedLabelClass?: LabelClass | null;
+    selectedLabelClass?: LabelClassItem | null;
     toggle: () => void;
   }
 >(({ selectedLabelClass, toggle }, ref) => {
@@ -55,10 +58,10 @@ export const ClassSelectionMenu = ({
 }: {
   isOpen: boolean;
   setIsOpen: (b: boolean) => void;
-  labelClasses: LabelClass[];
-  onSelectedClassChange: (item: LabelClass | null) => void;
+  labelClasses: LabelClassItem[];
+  onSelectedClassChange: (item: LabelClassItem | null) => void;
   createNewClass: (name: string) => void;
-  selectedLabelClass?: LabelClass | null;
+  selectedLabelClass?: LabelClassItem | null;
   isContextMenuOpen?: boolean;
 }) => {
   const toggle = () => setIsOpen(!isOpen);
@@ -70,7 +73,7 @@ export const ClassSelectionMenu = ({
       isOpen={isOpen}
       onClose={close}
       labelClasses={labelClasses}
-      onSelectedClassChange={(labelClass: LabelClass | null) => {
+      onSelectedClassChange={(labelClass: LabelClassItem | null) => {
         onSelectedClassChange(labelClass);
         close();
       }}

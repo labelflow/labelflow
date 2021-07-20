@@ -47,6 +47,7 @@ beforeEach(async () => {
       {
         name: "new label class",
         color: "0xaa45f8",
+        projectId: "a project id",
         selectedLabelClassIdPrevious: "previous label class id",
       },
       { client }
@@ -62,6 +63,7 @@ it("should create the label class and update the labelling store", async () => {
         data: {
           name: "new label class",
           color: "0xaa45f8",
+          projectId: "a project id",
         },
       },
     })
@@ -87,7 +89,7 @@ it("should undo the label class creation the update of the labelling store", asy
   });
 });
 
-it("should redo the update of the label class of a label", async () => {
+it("should redo the update of the label class of a label and the update of the labelling store", async () => {
   await useUndoStore.getState().undo();
   await useUndoStore.getState().redo();
 
@@ -98,6 +100,7 @@ it("should redo the update of the label class of a label", async () => {
         data: {
           name: "new label class",
           color: "0xaa45f8",
+          projectId: "a project id",
           id: "label class id",
         },
       },

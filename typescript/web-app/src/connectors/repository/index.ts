@@ -1,18 +1,27 @@
 import { db } from "../database";
 
-const getPaginatedImages = async (
-  skip?: number | null,
-  first?: number | null
-): Promise<any[]> => {
-  const query = db.image.orderBy("createdAt").offset(skip ?? 0);
+import type { Maybe, ImageWhereInput } from "../../graphql-types.generated";
 
+export const getPaginatedImages = async (
+  where?: Maybe<ImageWhereInput>,
+  skip?: Maybe<number>,
+  first?: Maybe<number>
+): Promise<any[]> => {
+  const query = db.image.orderBy("createdAt");
+
+  if (where?.projectId) {
+    query.filter((image) => image.projectId === where.projectId);
+  }
+
+  if (skip) {
+    query.offset(skip);
+  }
   if (first) {
     return query.limit(first).toArray();
   }
 
   return query.toArray();
 };
-
 export const repository = {
   image: {
     list: getPaginatedImages,

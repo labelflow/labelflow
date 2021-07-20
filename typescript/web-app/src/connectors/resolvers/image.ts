@@ -1,23 +1,33 @@
 import { v4 as uuidv4 } from "uuid";
 import probe from "probe-image-size";
+
 import type {
   MutationCreateImageArgs,
   QueryImageArgs,
   QueryImagesArgs,
   Maybe,
+  ImageWhereInput,
 } from "../../graphql-types.generated";
 
 import { db, DbImage } from "../database";
-
 import { uploadsCacheName, getUploadTargetHttp } from "./upload";
+import { projectTypename } from "./project";
 import { Repository } from "../repository";
 
 export const getPaginatedImages = async (
+  where?: Maybe<ImageWhereInput>,
   skip?: Maybe<number>,
   first?: Maybe<number>
 ): Promise<any[]> => {
-  const query = db.image.orderBy("createdAt").offset(skip ?? 0);
+  const query = db.image.orderBy("createdAt");
 
+  if (where?.projectId) {
+    query.filter((image) => image.projectId === where.projectId);
+  }
+
+  if (skip) {
+    query.offset(skip);
+  }
   if (first) {
     return query.limit(first).toArray();
   }
@@ -53,7 +63,7 @@ const images = async (
   args: QueryImagesArgs,
   { repository }: { repository: Repository }
 ) => {
-  return repository.image.list(args?.skip, args?.first);
+  return repository.image.list(args?.where, args?.skip, args?.first);
 };
 
 /**
@@ -124,8 +134,27 @@ const createImage = async (
   args: MutationCreateImageArgs,
   { repository }: { repository: Repository }
 ): Promise<DbImage> => {
-  const { file, id, name, height, width, mimetype, path, url, externalUrl } =
-    args.data;
+  const {
+    file,
+    id,
+    name,
+    height,
+    width,
+    mimetype,
+    path,
+    url,
+    externalUrl,
+    projectId,
+  } = args.data;
+
+  // Since we don't have any constraint checks with Dexie
+  // we need to ensure that the projectId matches some
+  // entity before being able to continue.
+  const project = await db.project.get(projectId);
+  if (project == null) {
+    throw new Error(`The project id ${projectId} doesn't exist.`);
+  }
+
   const now = args?.data?.createdAt ?? new Date().toISOString();
   const imageId = id ?? uuidv4();
   let finalUrl: string | undefined;
@@ -224,6 +253,7 @@ const createImage = async (
   });
 
   const newImageEntity: DbImage = {
+    projectId,
     createdAt: now,
     updatedAt: now,
     id: imageId,
@@ -248,15 +278,27 @@ const createImage = async (
   return newImageEntity;
 };
 
-const imagesAggregates = () => {
-  return {};
+const imagesAggregates = (parent: any) => {
+  // Forward `parent` to chained resolvers if it exists
+  return parent ?? {};
 };
 
 const totalCount = (
-  _parent,
+  parent: any,
   _args,
   { repository }: { repository: Repository }
 ) => {
+  // eslint-disable-next-line no-underscore-dangle
+  const typename = parent?.__typename;
+
+  if (typename === projectTypename) {
+    return db.image
+      .where({
+        projectId: parent.id,
+      })
+      .count();
+  }
+
   return repository.image.count();
 };
 
@@ -276,4 +318,8 @@ export default {
   },
 
   ImagesAggregates: { totalCount },
+
+  Project: {
+    imagesAggregates,
+  },
 };

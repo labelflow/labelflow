@@ -1,4 +1,6 @@
-// import { incrementMockedDate } from "@labelflow/dev-utils/mockdate";
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { mocked } from "ts-jest/utils";
+import probe from "probe-image-size";
 import { gql } from "@apollo/client";
 import { incrementMockedDate } from "@labelflow/dev-utils/mockdate";
 import { client } from "../../apollo-client-schema";
@@ -6,7 +8,10 @@ import { setupTestsWithLocalDatabase } from "../../../utils/setup-local-db-tests
 
 setupTestsWithLocalDatabase();
 
-const createProject = (name: string, projectId?: string | null) => {
+jest.mock("probe-image-size");
+const mockedProbeSync = mocked(probe.sync);
+
+const createProject = async (name: string, projectId?: string | null) => {
   return client.mutate({
     mutation: gql`
       mutation createProject($projectId: String, $name: String!) {
@@ -21,6 +26,69 @@ const createProject = (name: string, projectId?: string | null) => {
       projectId,
     },
     fetchPolicy: "no-cache",
+  });
+};
+
+const updateProjectWithImageLabelAndClass = async (projectId: string) => {
+  await client.mutate({
+    mutation: gql`
+      mutation createImage($data: ImageCreateInput!) {
+        createImage(data: $data) {
+          id
+        }
+      }
+    `,
+    variables: {
+      data: {
+        projectId,
+        file: new Blob(),
+        id: "image-id",
+      },
+    },
+  });
+
+  await client.mutate({
+    mutation: gql`
+      mutation createLabel($data: LabelCreateInput) {
+        createLabel(data: $data) {
+          id
+        }
+      }
+    `,
+    variables: {
+      data: {
+        imageId: "image-id",
+        geometry: {
+          type: "Polygon",
+          coordinates: [
+            [
+              [0, 0],
+              [42, 0],
+              [42, 36],
+              [0, 36],
+              [0, 0],
+            ],
+          ],
+        },
+      },
+    },
+  });
+
+  await client.mutate({
+    mutation: gql`
+      mutation createLabelClass($data: LabelClassCreateInput) {
+        createLabelClass(data: $data) {
+          id
+        }
+      }
+    `,
+    variables: {
+      data: {
+        projectId,
+        name: "my-label",
+        color: "#ffffff",
+      },
+    },
   });
 };
 
@@ -86,7 +154,7 @@ describe("Project resolver test suite", () => {
   test("Read project", async () => {
     const name = "My new project";
     const projectId = "some id";
-    createProject(name, projectId);
+    await createProject(name, projectId);
 
     const queryResult = await client.query({
       query: gql`
@@ -459,6 +527,140 @@ describe("Project resolver test suite", () => {
     );
   });
 
+  it("should list a project images, label classes and labels", async () => {
+    mockedProbeSync.mockReturnValue({
+      width: 42,
+      height: 36,
+      mime: "image/jpeg",
+      length: 1000,
+      hUnits: "px",
+      wUnits: "px",
+      url: "https://example.com/image.jpeg",
+      type: "jpg",
+    });
+
+    const getProjectData = async (projectId: string) => {
+      return client.query({
+        query: gql`
+          query getProjectData($id: ID!) {
+            project(where: { id: $id }) {
+              id
+              images {
+                id
+              }
+              labels {
+                id
+              }
+              labelClasses {
+                id
+              }
+            }
+          }
+        `,
+        variables: {
+          id: projectId,
+        },
+        fetchPolicy: "network-only",
+      });
+    };
+
+    const expectedResults = (queryResult: any, count: number) => {
+      expect(queryResult.data.project.images.length).toEqual(count);
+      expect(queryResult.data.project.labels.length).toEqual(count);
+      expect(queryResult.data.project.labelClasses.length).toEqual(count);
+    };
+
+    const projectId = "some id";
+    const otherId = "some other id";
+
+    createProject("My new project", projectId);
+    createProject("My other project", otherId);
+
+    const initialCountQuery = await getProjectData(projectId);
+    const otherInitialCountQuery = await getProjectData(otherId);
+
+    expectedResults(initialCountQuery, 0);
+    expectedResults(otherInitialCountQuery, 0);
+
+    await updateProjectWithImageLabelAndClass(projectId);
+
+    const updateCountQuery = await getProjectData(projectId);
+    const otherUpdateCountQuery = await getProjectData(otherId);
+
+    expectedResults(updateCountQuery, 1);
+    expectedResults(otherUpdateCountQuery, 0);
+  });
+
+  it("should count a project images, label classes and labels", async () => {
+    mockedProbeSync.mockReturnValue({
+      width: 42,
+      height: 36,
+      mime: "image/jpeg",
+      length: 1000,
+      hUnits: "px",
+      wUnits: "px",
+      url: "https://example.com/image.jpeg",
+      type: "jpg",
+    });
+
+    const getProjectCount = async (projectId: string) => {
+      return client.query({
+        query: gql`
+          query getProjectCounts($id: ID!) {
+            project(where: { id: $id }) {
+              id
+              imagesAggregates {
+                totalCount
+              }
+              labelsAggregates {
+                totalCount
+              }
+              labelClassesAggregates {
+                totalCount
+              }
+            }
+          }
+        `,
+        variables: {
+          id: projectId,
+        },
+        fetchPolicy: "network-only",
+      });
+    };
+
+    const expectedResults = (queryResult: any, count: number) => {
+      expect(queryResult.data.project.imagesAggregates.totalCount).toEqual(
+        count
+      );
+      expect(queryResult.data.project.labelsAggregates.totalCount).toEqual(
+        count
+      );
+      expect(
+        queryResult.data.project.labelClassesAggregates.totalCount
+      ).toEqual(count);
+    };
+
+    const projectId = "some id";
+    const otherId = "some other id";
+
+    createProject("My new project", projectId);
+    createProject("My other project", otherId);
+
+    const initialCountQuery = await getProjectCount(projectId);
+    const otherInitialCountQuery = await getProjectCount(otherId);
+
+    expectedResults(initialCountQuery, 0);
+    expectedResults(otherInitialCountQuery, 0);
+
+    await updateProjectWithImageLabelAndClass(projectId);
+
+    const updateCountQuery = await getProjectCount(projectId);
+    const otherUpdateCountQuery = await getProjectCount(otherId);
+
+    expectedResults(updateCountQuery, 1);
+    expectedResults(otherUpdateCountQuery, 0);
+  });
+
   test("Find project by name shortly after renaming it (bug that we noticed)", async () => {
     const name = "My old project";
     const newName = "My new project";
@@ -513,7 +715,7 @@ describe("Project resolver test suite", () => {
         }
       `,
       variables: {
-        name,
+        name: newName,
       },
       fetchPolicy: "no-cache",
     });

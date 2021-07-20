@@ -13,6 +13,7 @@ import type {
   QueryLabelArgs,
 } from "../../graphql-types.generated";
 import { db, DbLabel } from "../database";
+import { projectTypename } from "./project";
 
 export const getLabels = () => db.label.toArray();
 
@@ -38,7 +39,7 @@ const label = (_: any, args: QueryLabelArgs) => {
   return getLabelById(args?.where?.id);
 };
 
-const getBoundedGeometryFromImage = (
+export const getBoundedGeometryFromImage = (
   imageDimensions: { width: number; height: number },
   geometry: GeometryInput
 ) => {
@@ -181,11 +182,29 @@ const updateLabel = async (_: any, args: MutationUpdateLabelArgs) => {
   return getLabelById(labelId);
 };
 
-const labelsAggregates = () => {
-  return {};
+const labelsAggregates = (parent: any) => {
+  // Forward `parent` to chained resolvers if it exists
+  return parent ?? {};
 };
 
-const totalCount = () => {
+const totalCount = async (parent: any) => {
+  // eslint-disable-next-line no-underscore-dangle
+  const typename = parent?.__typename;
+
+  if (typename === projectTypename) {
+    const imagesOfProject = await db.image
+      .where({
+        projectId: parent.id,
+      })
+      .toArray();
+
+    return db.label
+      .filter((currentLabel) =>
+        imagesOfProject.some((image) => currentLabel.imageId === image.id)
+      )
+      .count();
+  }
+
   return db.label.count();
 };
 
@@ -203,4 +222,5 @@ export default {
     labelClass,
   },
   LabelsAggregates: { totalCount },
+  Project: { labelsAggregates },
 };

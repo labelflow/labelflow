@@ -9,19 +9,11 @@ import {
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { useQueryParam, StringParam, withDefault } from "use-query-params";
-import { useQuery, gql } from "@apollo/client";
+import { useApolloClient } from "@apollo/client";
 import { ImportImagesModalDropzone } from "./modal-dropzone/modal-dropzone";
 import { ImportImagesModalUrlList } from "./modal-url-list/modal-url-list";
-
-const imagesQuery = gql`
-  query getImages {
-    images {
-      id
-      name
-      url
-    }
-  }
-`;
+import { projectDataQuery } from "../../../pages/projects/[projectId]/images";
+import { getProjectsQuery } from "../../../pages/projects";
 
 export const ImportImagesModal = ({
   isOpen = false,
@@ -30,8 +22,9 @@ export const ImportImagesModal = ({
   isOpen?: boolean;
   onClose?: () => void;
 }) => {
+  const client = useApolloClient();
   const router = useRouter();
-  const { refetch: refetchImages } = useQuery(imagesQuery);
+  const { projectId } = router?.query;
 
   const [isCloseable, setCloseable] = useState(true);
   const [hasUploaded, setHasUploaded] = useState(false);
@@ -47,8 +40,16 @@ export const ImportImagesModal = ({
   }, [isOpen, router?.isReady]);
 
   useEffect(() => {
+    // Manually refetch
     if (hasUploaded) {
-      refetchImages();
+      client.query({
+        query: projectDataQuery,
+        variables: {
+          projectId,
+        },
+        fetchPolicy: "network-only",
+      });
+      client.query({ query: getProjectsQuery, fetchPolicy: "network-only" });
     }
   }, [hasUploaded]);
 

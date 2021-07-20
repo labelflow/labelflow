@@ -32,6 +32,29 @@ const mockedProbeSync = mocked(probe.sync);
 const imageWidth = 500;
 const imageHeight = 900;
 
+const testProjectId = "test project id";
+
+const createProject = async (
+  name: string,
+  projectId: string = testProjectId
+) => {
+  return client.mutate({
+    mutation: gql`
+      mutation createProject($projectId: String, $name: String!) {
+        createProject(data: { id: $projectId, name: $name }) {
+          id
+          name
+        }
+      }
+    `,
+    variables: {
+      name,
+      projectId,
+    },
+    fetchPolicy: "no-cache",
+  });
+};
+
 const createImage = async (name: String) => {
   mockedProbeSync.mockReturnValue({
     width: 42,
@@ -50,9 +73,16 @@ const createImage = async (name: String) => {
         $name: String!
         $width: Int
         $height: Int
+        $projectId: ID!
       ) {
         createImage(
-          data: { name: $name, file: $file, width: $width, height: $height }
+          data: {
+            name: $name
+            file: $file
+            width: $width
+            height: $height
+            projectId: $projectId
+          }
         ) {
           id
         }
@@ -63,6 +93,7 @@ const createImage = async (name: String) => {
       name,
       width: imageWidth,
       height: imageHeight,
+      projectId: testProjectId,
     },
   });
 
@@ -115,10 +146,11 @@ const createLabel = async (data: Partial<LabelCreateInput>) => {
 let imageId: string;
 
 beforeEach(async () => {
+  await createProject("Test project");
   imageId = await createImage("myImage");
 
   (useRouter as jest.Mock).mockImplementation(() => ({
-    query: { id: imageId },
+    query: { imageId, projectId: testProjectId },
   }));
 });
 
