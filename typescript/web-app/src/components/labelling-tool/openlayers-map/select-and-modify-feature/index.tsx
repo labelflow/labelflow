@@ -270,7 +270,7 @@ export const SelectAndModifyFeature = (props: {
         labelData?.label?.type === LabelType.Polygon &&
         selectedFeature && (
           <olInteractionModify
-            features={new Collection([selectedFeature])}
+            args={{ features: new Collection([selectedFeature]) }}
             // @ts-ignore: FIXME
             onModifyend={async (e: ModifyEvent) => {
               const feature = e.features.item(0) as Feature<Polygon>;
