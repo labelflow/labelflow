@@ -39,8 +39,9 @@ export const ToolSelectionPopoverItem = (props: {
   selected?: boolean;
   onClick: any;
   children: any;
+  ariaLabel: string;
 }) => {
-  const { name, shortcut, selected, children, onClick } = props;
+  const { name, shortcut, selected, children, onClick, ariaLabel } = props;
 
   return (
     <Box
@@ -48,6 +49,8 @@ export const ToolSelectionPopoverItem = (props: {
       pr="0"
       pt="1"
       pb="1"
+      role="navigation"
+      aria-label={ariaLabel}
       _hover={{
         backgroundColor: selected ? "gray.300" : "gray.100",
       }}
@@ -97,16 +100,16 @@ export const DrawingToolIcon = (props: {
     }
     return `Polygon tool [${keymap.toolPolygon.key}]`;
   })();
-
+  // console.log(`selected tool = ${selectedTool}`);
   return (
     <Tooltip label={toolTipLabel} placement="right" openDelay={300}>
       <Button
         ref={buttonRef}
         isDisabled={isDisabled}
         role="checkbox"
-        aria-checked={selectedTool === Tools.BOX}
+        aria-checked={[Tools.BOX, Tools.POLYGON].includes(selectedTool)}
         backgroundColor="white"
-        aria-label="Drawing tool"
+        aria-label={`Drawing ${lastTool} tool`}
         pointerEvents="initial"
         onClick={() => setSelectedTool(lastTool)}
         isActive={isActive}
@@ -153,6 +156,7 @@ export const DrawingToolIcon = (props: {
 };
 
 export const DrawingTool = () => {
+  // console.log(window);
   const isImageLoading = useLabellingStore((state) => state.isImageLoading);
   const selectedTool = useLabellingStore((state) => state.selectedTool);
   const setSelectedTool = useLabellingStore((state) => state.setSelectedTool);
@@ -167,7 +171,9 @@ export const DrawingTool = () => {
 
   useHotkeys(
     keymap.toolBoundingBox.key,
-    () => setSelectedTool(Tools.BOX),
+    () => {
+      setSelectedTool(Tools.BOX);
+    },
     {},
     []
   );
@@ -207,19 +213,6 @@ export const DrawingTool = () => {
           <PopoverBody pl="0" pr="0">
             <Box>
               <ToolSelectionPopoverItem
-                name="Polygon"
-                shortcut={keymap.toolPolygon.key}
-                selected={selectedTool === Tools.POLYGON}
-                onClick={() => {
-                  setSelectedTool(Tools.POLYGON);
-                  setIsPopoverOpened(false);
-                }}
-              >
-                <Box ml="2">
-                  <BiShapePolygon size="1.3em" />
-                </Box>
-              </ToolSelectionPopoverItem>
-              <ToolSelectionPopoverItem
                 name="Bounding Box"
                 shortcut={keymap.toolBoundingBox.key}
                 selected={selectedTool === Tools.BOX}
@@ -227,9 +220,24 @@ export const DrawingTool = () => {
                   setSelectedTool(Tools.BOX);
                   setIsPopoverOpened(false);
                 }}
+                ariaLabel="Select bounding box tool"
               >
                 <Box ml="2">
                   <BiShapeSquare size="1.3em" />
+                </Box>
+              </ToolSelectionPopoverItem>
+              <ToolSelectionPopoverItem
+                name="Polygon"
+                shortcut={keymap.toolPolygon.key}
+                selected={selectedTool === Tools.POLYGON}
+                onClick={() => {
+                  setSelectedTool(Tools.POLYGON);
+                  setIsPopoverOpened(false);
+                }}
+                ariaLabel="Select polygon tool"
+              >
+                <Box ml="2">
+                  <BiShapePolygon size="1.3em" />
                 </Box>
               </ToolSelectionPopoverItem>
             </Box>
