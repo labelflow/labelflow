@@ -86,8 +86,8 @@ export const ExportModal = ({
             isLoaded={data?.project?.labelsAggregates?.totalCount !== undefined}
           >
             <Text fontSize="lg" fontWeight="medium" color="gray.800">
-              Your project contains {data?.project?.labelsAggregates?.totalCount}{" "}
-              labels.
+              Your project contains{" "}
+              {data?.project?.labelsAggregates?.totalCount} labels.
             </Text>
           </Skeleton>
         </ModalHeader>
