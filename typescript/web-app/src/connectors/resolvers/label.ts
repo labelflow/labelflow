@@ -39,7 +39,7 @@ const label = (_: any, args: QueryLabelArgs) => {
   return getLabelById(args?.where?.id);
 };
 
-const getBoundedGeometryFromImage = (
+export const getBoundedGeometryFromImage = (
   imageDimensions: { width: number; height: number },
   geometry: GeometryInput
 ) => {
