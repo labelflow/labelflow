@@ -1,56 +1,29 @@
 import { v4 as uuidv4 } from "uuid";
-import probe from "probe-image-size";
 
 import type {
   MutationCreateImageArgs,
   QueryImageArgs,
   QueryImagesArgs,
-  Maybe,
-  ImageWhereInput,
 } from "../../graphql-types.generated";
 
-import { db, DbImage } from "../database";
+import { DbImage } from "../database";
 import { uploadsCacheName, getUploadTargetHttp } from "./upload";
 import { projectTypename } from "./project";
+import { probeImage } from "./utils/probe-image";
 import { Repository } from "../repository";
 
-export const getPaginatedImages = async (
-  where?: Maybe<ImageWhereInput>,
-  skip?: Maybe<number>,
-  first?: Maybe<number>
-): Promise<any[]> => {
-  const query = db.image.orderBy("createdAt");
-
-  if (where?.projectId) {
-    query.filter((image) => image.projectId === where.projectId);
-  }
-
-  if (skip) {
-    query.offset(skip);
-  }
-  if (first) {
-    return query.limit(first).toArray();
-  }
-
-  return query.toArray();
-};
-
-export const getLabelsByImageId = async (imageId: string) => {
-  const getResults = await db.label.where({ imageId }).sortBy("createdAt");
-
-  return getResults ?? [];
-};
+type Context = { repository: Repository };
 
 // Queries
-export const labelsResolver = async ({ id }: DbImage) => {
-  return getLabelsByImageId(id);
+export const labelsResolver = async (
+  { id }: DbImage,
+  _args: any,
+  { repository }: Context
+) => {
+  return repository.label.list({ imageId: id });
 };
 
-const image = async (
-  _: any,
-  args: QueryImageArgs,
-  { repository }: { repository: Repository }
-) => {
+const image = async (_: any, args: QueryImageArgs, { repository }: Context) => {
   const entity = await repository.image.getById(args?.where?.id);
   if (entity === undefined) {
     throw new Error("No image with such id");
@@ -61,78 +34,16 @@ const image = async (
 const images = async (
   _: any,
   args: QueryImagesArgs,
-  { repository }: { repository: Repository }
+  { repository }: Context
 ) => {
   return repository.image.list(args?.where, args?.skip, args?.first);
-};
-
-/**
- * Given a partial image, return a completed version of the image, probing it if necessary
- */
-const probeImage = async ({
-  width,
-  height,
-  mimetype,
-  url,
-}: {
-  width: number | null | undefined;
-  height: number | null | undefined;
-  mimetype: string | null | undefined;
-  url: string;
-}): Promise<{
-  width: number;
-  height: number;
-  mimetype: string;
-}> => {
-  if (width && height && mimetype) {
-    return { width, height, mimetype };
-  }
-
-  // TODO: It would be nice to import "probe-image-size" asynchronously to reduce initial bundle size of sw, but webpack config todo.
-  // const probe = await import(/* webpackPrefetch: true */ "probe-image-size");
-
-  const cacheResult = await (await caches.open(uploadsCacheName)).match(url);
-
-  const fetchResult =
-    cacheResult ??
-    (await fetch(url, {
-      method: "GET",
-      mode: "cors",
-      headers: new Headers({
-        Accept: "image/tiff,image/jpeg,image/png,image/*,*/*;q=0.8",
-        "Sec-Fetch-Dest": "image",
-      }),
-      credentials: "omit",
-    }));
-
-  if (fetchResult.status !== 200) {
-    throw new Error(
-      `Could not fetch image at url ${url} properly, code ${fetchResult.status}`
-    );
-  }
-
-  const probeInput = new Uint8Array(await fetchResult.arrayBuffer());
-
-  const probeResult = probe.sync(probeInput as Buffer);
-
-  if (probeResult == null) {
-    throw new Error(
-      `Could not probe the external image at url ${url} it may be damaged or corrupted.`
-    );
-  }
-
-  return {
-    width: width ?? probeResult.width,
-    height: height ?? probeResult.height,
-    mimetype: mimetype ?? probeResult.mime,
-  };
 };
 
 // Mutations
 const createImage = async (
   _: any,
   args: MutationCreateImageArgs,
-  { repository }: { repository: Repository }
+  { repository }: Context
 ): Promise<DbImage> => {
   const {
     file,
@@ -150,7 +61,7 @@ const createImage = async (
   // Since we don't have any constraint checks with Dexie
   // we need to ensure that the projectId matches some
   // entity before being able to continue.
-  const project = await db.project.get(projectId);
+  const project = await repository.project.getById(projectId);
   if (project == null) {
     throw new Error(`The project id ${projectId} doesn't exist.`);
   }
@@ -283,11 +194,7 @@ const imagesAggregates = (parent: any) => {
   return parent ?? {};
 };
 
-const totalCount = (
-  parent: any,
-  _args: any,
-  { repository }: { repository: Repository }
-) => {
+const totalCount = (parent: any, _args: any, { repository }: Context) => {
   // eslint-disable-next-line no-underscore-dangle
   const typename = parent?.__typename;
 
