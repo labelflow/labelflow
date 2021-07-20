@@ -5,8 +5,8 @@ import { createBox, DrawEvent } from "ol/interaction/Draw";
 import GeoJSON from "ol/format/GeoJSON";
 import { Fill, Stroke, Style } from "ol/style";
 import GeometryType from "ol/geom/GeometryType";
-import { useApolloClient, useQuery } from "@apollo/client";
-import gql from "graphql-tag";
+import { useApolloClient, useQuery, gql } from "@apollo/client";
+
 import { useToast } from "@chakra-ui/react";
 
 import { useHotkeys } from "react-hotkeys-hook";
@@ -36,7 +36,7 @@ const geometryFunction = createBox();
 export const DrawBoundingBoxAndPolygonInteraction = () => {
   const drawRef = useRef<OlDraw>(null);
   const client = useApolloClient();
-  const imageId = useRouter().query?.id;
+  const { imageId } = useRouter()?.query;
 
   const selectedTool = useLabellingStore((state) => state.selectedTool);
 

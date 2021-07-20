@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
-import gql from "graphql-tag";
+import { gql } from "@apollo/client";
 import { DecoratorFn, Story } from "@storybook/react";
 import { Box } from "@chakra-ui/react";
 import { withNextRouter } from "storybook-addon-next-router";
@@ -52,11 +52,32 @@ export const ThreeImages: Story = () => {
 };
 ThreeImages.parameters = { mockImages: { images } };
 
-async function createImage(name: String, url: String) {
+async function createProject(name: string) {
   const mutationResult = await client.mutate({
     mutation: gql`
-      mutation createImage($url: String!, $name: String!) {
-        createImage(data: { name: $name, url: $url }) {
+      mutation createProject($name: String!) {
+        createProject(data: { name: $name }) {
+          id
+        }
+      }
+    `,
+    variables: { name },
+  });
+
+  const {
+    data: {
+      createProject: { id },
+    },
+  } = mutationResult;
+
+  return id;
+}
+
+async function createImage(name: String, url: String, projectId: string) {
+  const mutationResult = await client.mutate({
+    mutation: gql`
+      mutation createImage($url: String!, $name: String!, $projectId: ID!) {
+        createImage(data: { name: $name, url: $url, projectId: $projectId }) {
           id
           name
           width
@@ -68,6 +89,7 @@ async function createImage(name: String, url: String) {
     variables: {
       url,
       name,
+      projectId,
     },
   });
 
@@ -89,16 +111,19 @@ async function mockImagesLoader({
 
   const imageArray = parameters?.mockImages?.images;
 
+  // Because of race conditions we have to randomize the project name
+  const projectId = await createProject(`storybook project ${Date.now()}`);
+
   if (imageArray == null) {
     return { images: [] };
   }
 
   // We use mapSeries to ensure images are created in the same order
   const loadedImages = await Bluebird.mapSeries(imageArray, ({ url, name }) =>
-    createImage(name, url)
+    createImage(name, url, projectId)
   );
 
-  return { images: loadedImages };
+  return { images: loadedImages, projectId };
 }
 
 function withImageIdInQueryStringRouterDecorator(
@@ -110,7 +135,10 @@ function withImageIdInQueryStringRouterDecorator(
   // If needed this could be adjusted with
   // Story.parameters
   return withNextRouter({
-    query: { id: context.loaded.images[0].id },
+    query: {
+      imageId: context.loaded.images[0].id,
+      projectId: context.loaded.projectId,
+    },
   })(storyFn, context);
 }
 

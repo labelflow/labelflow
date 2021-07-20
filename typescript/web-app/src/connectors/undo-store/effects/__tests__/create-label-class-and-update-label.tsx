@@ -50,6 +50,7 @@ beforeEach(async () => {
       {
         name: "new label class",
         color: "0xaa45f8",
+        projectId: "a project id",
         selectedLabelId: "my label id",
       },
       { client }
@@ -57,7 +58,7 @@ beforeEach(async () => {
   );
 });
 
-it("should create the label class and update the labelling store", async () => {
+it("should create the label class and update the label and the labelling store", async () => {
   expect(client.mutate).toHaveBeenNthCalledWith(
     1,
     expect.objectContaining({
@@ -65,6 +66,7 @@ it("should create the label class and update the labelling store", async () => {
         data: {
           name: "new label class",
           color: "0xaa45f8",
+          projectId: "a project id",
         },
       },
     })
@@ -83,7 +85,7 @@ it("should create the label class and update the labelling store", async () => {
   });
 });
 
-it("should undo the label class creation and the update of the labelling store", async () => {
+it("should undo the label class creation and update the label and the labelling store", async () => {
   await useUndoStore.getState().undo();
 
   expect(client.mutate).toHaveBeenNthCalledWith(
@@ -108,7 +110,7 @@ it("should undo the label class creation and the update of the labelling store",
   });
 });
 
-it("should redo the update of the label class of a label", async () => {
+it("should redo the label class creation and the update of the label class of a label and the labelling store", async () => {
   await useUndoStore.getState().undo();
   await useUndoStore.getState().redo();
 
@@ -119,6 +121,7 @@ it("should redo the update of the label class of a label", async () => {
         data: {
           name: "new label class",
           color: "0xaa45f8",
+          projectId: "a project id",
           id: "label class id",
         },
       },

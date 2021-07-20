@@ -6,9 +6,11 @@ import type {
   QueryLabelClassArgs,
   QueryLabelClassesArgs,
   Maybe,
+  LabelClassWhereInput,
 } from "../../graphql-types.generated";
 
 import { db, DbLabelClass } from "../database";
+import { projectTypename } from "./project";
 
 const getLabelClassById = async (id: string): Promise<DbLabelClass> => {
   const entity = await db.labelClass.get(id);
@@ -21,11 +23,19 @@ const getLabelClassById = async (id: string): Promise<DbLabelClass> => {
 };
 
 export const getPaginatedLabelClasses = async (
+  where?: Maybe<LabelClassWhereInput>,
   skip?: Maybe<number>,
   first?: Maybe<number>
 ): Promise<DbLabelClass[]> => {
-  const query = await db.labelClass.orderBy("createdAt").offset(skip ?? 0);
+  const query = db.labelClass.orderBy("createdAt");
 
+  if (where?.projectId) {
+    query.filter((image) => image.projectId === where.projectId);
+  }
+
+  if (skip) {
+    query.offset(skip);
+  }
   if (first) {
     return query.limit(first).toArray();
   }
@@ -46,14 +56,23 @@ const labelClass = async (_: any, args: QueryLabelClassArgs) =>
   getLabelClassById(args?.where?.id);
 
 const labelClasses = async (_: any, args: QueryLabelClassesArgs) =>
-  getPaginatedLabelClasses(args?.skip, args?.first);
+  getPaginatedLabelClasses(args?.where, args?.skip, args?.first);
 
 // Mutations
 const createLabelClass = async (
   _: any,
   args: MutationCreateLabelClassArgs
 ): Promise<DbLabelClass> => {
-  const { color, name, id } = args.data;
+  const { color, name, id, projectId } = args.data;
+
+  // Since we don't have any constraint checks with Dexie
+  // we need to ensure that the projectId matches some
+  // entity before being able to continue.
+  const project = await db.project.get(projectId);
+  if (project == null) {
+    throw new Error(`The project id ${projectId} doesn't exist.`);
+  }
+
   const labelClassId = id ?? uuidv4();
   const now = new Date();
 
@@ -63,6 +82,7 @@ const createLabelClass = async (
     updatedAt: now.toISOString(),
     name,
     color,
+    projectId,
   };
   await db.labelClass.add(newLabelClassEntity);
   return getLabelClassById(newLabelClassEntity.id);
@@ -82,11 +102,23 @@ const deleteLabelClass = async (_: any, args: MutationDeleteLabelClassArgs) => {
   return labelClassToDelete;
 };
 
-const labelClassesAggregates = () => {
-  return {};
+const labelClassesAggregates = (parent: any) => {
+  // Forward `parent` to chained resolvers if it exists
+  return parent ?? {};
 };
 
-const totalCount = () => {
+const totalCount = (parent: any) => {
+  // eslint-disable-next-line no-underscore-dangle
+  const typename = parent?.__typename;
+
+  if (typename === projectTypename) {
+    return db.labelClass
+      .where({
+        projectId: parent.id,
+      })
+      .count();
+  }
+
   return db.labelClass.count();
 };
 
@@ -107,4 +139,8 @@ export default {
   },
 
   LabelClassesAggregates: { totalCount },
+
+  Project: {
+    labelClassesAggregates,
+  },
 };

@@ -1,7 +1,7 @@
 import { MutableRefObject } from "react";
 import { useRouter } from "next/router";
-import { ApolloClient, useQuery, useApolloClient } from "@apollo/client";
-import gql from "graphql-tag";
+import { ApolloClient, useQuery, useApolloClient, gql } from "@apollo/client";
+
 import { Vector as OlSourceVector } from "ol/source";
 import GeoJSON from "ol/format/GeoJSON";
 import { Geometry, MultiPoint } from "ol/geom";
@@ -19,6 +19,7 @@ import {
   addLabelToImageInCache,
   removeLabelFromImageCache,
 } from "./draw-bounding-box-and-polygon-interaction/create-label-effect";
+import { getProjectsQuery } from "../../../pages/projects";
 
 const getImageLabelsQuery = gql`
   query getImageLabels($imageId: ID!) {
@@ -99,7 +100,7 @@ const createDeleteLabelEffect = (
     }>({
       mutation: deleteLabelMutation,
       variables: { id },
-      refetchQueries: ["countLabels"],
+      refetchQueries: ["countLabels", { query: getProjectsQuery }],
       /* Note that there is no optimistic response here, only a cache update.
        * We could add it but it feels like premature optimization */
       update(cache, { data: updateData }) {
@@ -143,7 +144,7 @@ const createDeleteLabelEffect = (
     const { data } = await client.mutate({
       mutation: createLabelWithIdMutation,
       variables: createLabelInputs,
-      refetchQueries: ["countLabels"],
+      refetchQueries: ["countLabels", { query: getProjectsQuery }],
       optimisticResponse: { createLabel: { id: labelId, __typename: "Label" } },
       update(cache) {
         addLabelToImageInCache(cache, createLabelInputs);
@@ -161,7 +162,7 @@ const createDeleteLabelEffect = (
     const { data } = await client.mutate({
       mutation: deleteLabelMutation,
       variables: { id: labelId },
-      refetchQueries: ["countLabels"],
+      refetchQueries: ["countLabels", { query: getProjectsQuery }],
       /* Note that there is no optimistic response here, only a cache update.
        * We could add it but it feels like premature optimization */
       update(cache, { data: updateData }) {
@@ -191,7 +192,7 @@ export const Labels = ({
     (state) => state.setSelectedLabelId
   );
   const { perform } = useUndoStore();
-  const imageId = useRouter().query?.id;
+  const { imageId } = useRouter()?.query;
   const { data } = useQuery(getImageLabelsQuery, {
     skip: typeof imageId !== "string",
     variables: { imageId: imageId as string },

@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { useQuery } from "@apollo/client";
+import { useQuery, gql } from "@apollo/client";
 import {
   Text,
   Breadcrumb,
@@ -11,39 +11,51 @@ import {
   Flex,
   chakra,
 } from "@chakra-ui/react";
-import gql from "graphql-tag";
+
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import { RiArrowRightSLine } from "react-icons/ri";
 import NextLink from "next/link";
-import { KeymapButton } from "../../components/keymap-button";
-import { ImportButton } from "../../components/import-button";
-import { ExportButton } from "../../components/export-button";
-import { Meta } from "../../components/meta";
-import { Layout } from "../../components/layout";
-import type { Image } from "../../graphql-types.generated";
-import { Gallery } from "../../components/gallery";
+import { KeymapButton } from "../../../../components/keymap-button";
+import { ImportButton } from "../../../../components/import-button";
+import { ExportButton } from "../../../../components/export-button";
+import { Meta } from "../../../../components/meta";
+import { Layout } from "../../../../components/layout";
+import type { Image } from "../../../../graphql-types.generated";
+import { Gallery } from "../../../../components/gallery";
 
 const ArrowRightIcon = chakra(RiArrowRightSLine);
 
 // The dynamic import is needed because openlayers use web apis that are not available
 // in NodeJS, like `Blob`, so it crashes when rendering in NextJS server side.
 // And anyway, it would not make sense to render canvas server side, it would just be a loss.
-const LabellingTool = dynamic(() => import("../../components/labelling-tool"), {
-  ssr: false,
-  loading: ({ error }) => {
-    if (error) throw error;
-    return (
-      <Center h="full">
-        <Spinner aria-label="loading indicator" size="xl" />
-      </Center>
-    );
-  },
-});
+const LabellingTool = dynamic(
+  () => import("../../../../components/labelling-tool"),
+  {
+    ssr: false,
+    loading: ({ error }) => {
+      if (error) throw error;
+      return (
+        <Center h="full">
+          <Spinner aria-label="loading indicator" size="xl" />
+        </Center>
+      );
+    },
+  }
+);
 
 const imageQuery = gql`
   query image($id: ID!) {
     image(where: { id: $id }) {
+      id
+      name
+    }
+  }
+`;
+
+const getProjectQuery = gql`
+  query getProject($id: ID!) {
+    project(where: { id: $id }) {
       id
       name
     }
@@ -56,21 +68,29 @@ type ImageQueryResponse = {
 
 const ImagePage = () => {
   const router = useRouter();
-  const id = router?.query?.id;
+  const { projectId, imageId } = router?.query;
 
   const { data: imageResult, error } = useQuery<ImageQueryResponse>(
     imageQuery,
     {
-      variables: { id },
-      skip: typeof id !== "string",
+      variables: { id: imageId },
+      skip: typeof imageId !== "string",
     }
   );
 
+  const { data: projectResult } = useQuery(getProjectQuery, {
+    variables: { id: projectId },
+  });
+
   const imageName = imageResult?.image.name;
+  const projectName = projectResult?.project.name;
 
   useEffect(() => {
     if (error) {
-      router.replace({ pathname: "/images", query: router.query });
+      router.replace({
+        pathname: `/projects/${projectId}/images`,
+        query: router.query,
+      });
     }
   }, [error]);
 
@@ -88,7 +108,19 @@ const ImagePage = () => {
             separator={<ArrowRightIcon color="gray.500" />}
           >
             <BreadcrumbItem>
-              <NextLink href="/images">
+              <NextLink href="/projects">
+                <BreadcrumbLink>Projects</BreadcrumbLink>
+              </NextLink>
+            </BreadcrumbItem>
+
+            <BreadcrumbItem isCurrentPage>
+              <NextLink href={`/projects/${projectId}/images`}>
+                <BreadcrumbLink>{projectName}</BreadcrumbLink>
+              </NextLink>
+            </BreadcrumbItem>
+
+            <BreadcrumbItem>
+              <NextLink href={`/projects/${projectId}/images`}>
                 <BreadcrumbLink>Images</BreadcrumbLink>
               </NextLink>
             </BreadcrumbItem>

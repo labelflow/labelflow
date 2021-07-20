@@ -1,5 +1,5 @@
 import { incrementMockedDate } from "@labelflow/dev-utils/mockdate";
-import gql from "graphql-tag";
+import { gql } from "@apollo/client";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { mocked } from "ts-jest/utils";
 import probe from "probe-image-size";
@@ -50,6 +50,29 @@ const labelData = {
 const imageWidth = 500;
 const imageHeight = 900;
 
+const testProjectId = "test project id";
+
+const createProject = async (
+  name: string,
+  projectId: string = testProjectId
+) => {
+  return client.mutate({
+    mutation: gql`
+      mutation createProject($projectId: String, $name: String!) {
+        createProject(data: { id: $projectId, name: $name }) {
+          id
+          name
+        }
+      }
+    `,
+    variables: {
+      name,
+      projectId,
+    },
+    fetchPolicy: "no-cache",
+  });
+};
+
 const createLabel = (data: LabelCreateInput) => {
   return client.mutate({
     mutation: gql`
@@ -79,19 +102,27 @@ const createImage = async (name: String) => {
   const mutationResult = await client.mutate({
     mutation: gql`
       mutation createImage(
+        $projectId: ID!
         $file: Upload!
         $name: String!
         $width: Int
         $height: Int
       ) {
         createImage(
-          data: { name: $name, file: $file, width: $width, height: $height }
+          data: {
+            projectId: $projectId
+            name: $name
+            file: $file
+            width: $width
+            height: $height
+          }
         ) {
           id
         }
       }
     `,
     variables: {
+      projectId: testProjectId,
       file: new Blob(),
       name,
       width: imageWidth,
@@ -115,8 +146,10 @@ const createLabelClass = async (name: String) => {
     },
   } = await client.mutate({
     mutation: gql`
-      mutation createLabelClass($name: String!) {
-        createLabelClass(data: { name: $name, color: "#ffffff" }) {
+      mutation createLabelClass($projectId: ID!, $name: String!) {
+        createLabelClass(
+          data: { projectId: $projectId, name: $name, color: "#ffffff" }
+        ) {
           id
           name
           color
@@ -124,12 +157,18 @@ const createLabelClass = async (name: String) => {
       }
     `,
     variables: {
+      projectId: testProjectId,
       name,
     },
   });
 
   return id;
 };
+
+beforeEach(async () => {
+  // Images and label classes are always liked to a project
+  await createProject("Test project");
+});
 
 describe("Label resolver test suite", () => {
   test("Creating a label should fail if its image doesn't exist", async () => {
@@ -559,6 +598,96 @@ describe("Label resolver test suite", () => {
       })
     );
   });
+
+  test("Create label should fail if called with bounding box out of image bounds", async () => {
+    const imageId = await createImage("an image");
+
+    // x out of bounds
+    await expect(
+      createLabel({
+        imageId,
+        geometry: getGeometryFromExtent({
+          x: -300,
+          width: 50,
+          y: 10,
+          height: 20,
+        }),
+      })
+    ).rejects.toThrow("Bounding box out of image bounds");
+    await expect(
+      createLabel({
+        imageId,
+        geometry: getGeometryFromExtent({
+          x: imageWidth + 10,
+          width: 50,
+          y: 10,
+          height: 20,
+        }),
+      })
+    ).rejects.toThrow("Bounding box out of image bounds");
+    // y out of bounds
+    await expect(
+      createLabel({
+        imageId,
+        geometry: getGeometryFromExtent({
+          x: 10,
+          width: 10,
+          y: -100,
+          height: 10,
+        }),
+      })
+    ).rejects.toThrow("Bounding box out of image bounds");
+    await expect(
+      createLabel({
+        imageId,
+        geometry: getGeometryFromExtent({
+          x: 10,
+          width: 10,
+          y: imageHeight + 10,
+          height: 20,
+        }),
+      })
+    ).rejects.toThrow("Bounding box out of image bounds");
+  });
+
+  test("It should resize bounding box to image size when it is bigger", async () => {
+    const labelId = "my-label-id";
+
+    const imageId = await createImage("an-image");
+    await createLabel({
+      id: labelId,
+      imageId,
+      geometry: getGeometryFromExtent({
+        x: -10,
+        width: imageWidth + 10 + 10,
+        y: -10,
+        height: imageHeight + 10 + 10,
+      }),
+    });
+
+    const queryResult = await client.query({
+      query: gql`
+        query getLabel($id: ID!) {
+          label(where: { id: $id }) {
+            id
+            x
+            y
+            width
+            height
+          }
+        }
+      `,
+      variables: {
+        id: labelId,
+      },
+    });
+
+    const { x, y, width, height } = queryResult.data.label;
+    expect(x).toEqual(0);
+    expect(y).toEqual(0);
+    expect(width).toEqual(imageWidth);
+    expect(height).toEqual(imageHeight);
+  });
 });
 
 describe("LabelsAggregates resolver test suite", () => {
@@ -597,7 +726,7 @@ describe("LabelsAggregates resolver test suite", () => {
     expect(queryResult.data.labelsAggregates.totalCount).toEqual(1);
   });
 
-  test("totalCount should be 1 after creation of one label", async () => {
+  test("totalCount should be 2 after creation of two labels", async () => {
     const imageId = await createImage("an image");
 
     await createLabel({

@@ -26,22 +26,28 @@ const format = (x: number | undefined | null): string =>
 
 export const ImageNavigationTool = () => {
   const router = useRouter();
-  const { images, currentImageIndex, previousImageId, nextImageId } =
-    useImagesNavigation();
 
-  const imageCount = images?.length;
+  const { projectId } = router?.query;
 
-  const digitCount = Math.max(1, Math.ceil(Math.log10(imageCount ?? 1)));
+  const {
+    images,
+    imagesCount,
+    currentImageIndex,
+    previousImageId,
+    nextImageId,
+  } = useImagesNavigation();
+
+  const digitCount = Math.max(1, Math.ceil(Math.log10(imagesCount ?? 1)));
 
   const [value, setValue] = useState<string>(format(currentImageIndex));
 
   const goToIndex = (newIndex: number | undefined) => {
     if (!images) return;
-    if (imageCount == null) return;
+    if (imagesCount == null) return;
 
     if (newIndex == null || isNaN(newIndex)) return;
-    if (newIndex >= 0 && newIndex <= imageCount - 1) {
-      router.push(`/images/${images[newIndex]?.id}`);
+    if (newIndex >= 0 && newIndex <= imagesCount - 1) {
+      router.push(`/projects/${projectId}/images/${images[newIndex]?.id}`);
     }
   };
 
@@ -103,7 +109,10 @@ export const ImageNavigationTool = () => {
       pointerEvents="initial"
     >
       {previousImageId != null ? (
-        <NextLink href={`/images/${previousImageId}`} passHref>
+        <NextLink
+          href={`/projects/${projectId}/images/${previousImageId}`}
+          passHref
+        >
           <a>
             <Tooltip
               openDelay={300}
@@ -133,7 +142,7 @@ export const ImageNavigationTool = () => {
           allowMouseWheel
           defaultValue={currentImageIndex != null ? currentImageIndex + 1 : "-"}
           min={1}
-          max={imageCount}
+          max={imagesCount}
           variant="filled"
           textAlign="right"
           size="sm"
@@ -164,10 +173,10 @@ export const ImageNavigationTool = () => {
         textAlign="left"
         cursor="default"
         fontSize="sm"
-      >{`${imageCount ?? "-"}`}</Text>
+      >{`${imagesCount ?? "-"}`}</Text>
 
       {nextImageId != null ? (
-        <NextLink href={`/images/${nextImageId}`}>
+        <NextLink href={`/projects/${projectId}/images/${nextImageId}`}>
           <a>
             <Tooltip
               label={`Next image [${keymap.goToNextImage.key}]`}

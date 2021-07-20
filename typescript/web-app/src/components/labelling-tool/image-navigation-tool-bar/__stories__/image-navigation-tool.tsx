@@ -3,7 +3,7 @@ import React from "react";
 import { Story, DecoratorFn } from "@storybook/react";
 import { withNextRouter } from "storybook-addon-next-router";
 import { HStack, Button, Flex } from "@chakra-ui/react";
-import gql from "graphql-tag";
+import { gql } from "@apollo/client";
 import Bluebird from "bluebird";
 
 import { get } from "lodash/fp";
@@ -103,11 +103,32 @@ BasicWrongImage.parameters = {
 /*   Helpers   */
 /* ----------- */
 
-async function createImage(name: String, file: Blob) {
+async function createProject(name: string) {
   const mutationResult = await client.mutate({
     mutation: gql`
-      mutation createImage($file: Upload!, $name: String!) {
-        createImage(data: { name: $name, file: $file }) {
+      mutation createProject($name: String!) {
+        createProject(data: { name: $name }) {
+          id
+        }
+      }
+    `,
+    variables: { name },
+  });
+
+  const {
+    data: {
+      createProject: { id },
+    },
+  } = mutationResult;
+
+  return id;
+}
+
+async function createImage(name: String, file: Blob, projectId: string) {
+  const mutationResult = await client.mutate({
+    mutation: gql`
+      mutation createImage($file: Upload!, $name: String!, $projectId: ID!) {
+        createImage(data: { name: $name, file: $file, projectId: $projectId }) {
           id
           name
           width
@@ -119,6 +140,7 @@ async function createImage(name: String, file: Blob) {
     variables: {
       file,
       name,
+      projectId,
     },
   });
 
@@ -140,6 +162,9 @@ async function mockImagesLoader({
 
   const imageArray = parameters?.mockImages?.images;
 
+  // Because of race conditions we have to randomize the project name
+  const projectId = await createProject(`storybook project ${Date.now()}`);
+
   if (imageArray == null) {
     return { images: [] };
   }
@@ -148,21 +173,21 @@ async function mockImagesLoader({
   const loadedImages = await Bluebird.mapSeries(imageArray, ({ url, name }) =>
     fetch(url)
       .then((res) => res.blob())
-      .then((blob) => createImage(name, blob))
+      .then((blob) => createImage(name, blob, projectId))
   );
 
-  return { images: loadedImages };
+  return { images: loadedImages, projectId };
 }
 
 function withIdInQueryStringRouterDecorator(
   storyFn: Parameters<DecoratorFn>[0],
   context: Parameters<DecoratorFn>[1]
 ): ReturnType<DecoratorFn> {
-  const id = context.parameters?.withImageIdInQueryStringRouter?.id;
+  const imageId = context.parameters?.withImageIdInQueryStringRouter?.id;
 
-  if (typeof id === "string") {
+  if (typeof imageId === "string") {
     return withNextRouter({
-      query: { id },
+      query: { imageId, projectId: context.loaded.projectId },
     })(storyFn, context);
   }
 
@@ -171,9 +196,15 @@ function withIdInQueryStringRouterDecorator(
 
   if (typeof getFromLoaded === "function") {
     return withNextRouter({
-      query: { id: getFromLoaded(context.loaded) },
+      query: {
+        imageId: getFromLoaded(context.loaded),
+        projectId: context.loaded.projectId,
+      },
     })(storyFn, context);
   }
 
-  return withNextRouter({})(storyFn, context);
+  return withNextRouter({ projectId: context.loaded.projectId })(
+    storyFn,
+    context
+  );
 }

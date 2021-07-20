@@ -4,8 +4,7 @@ import { Geometry, Polygon } from "ol/geom";
 import { Vector as OlSourceVector } from "ol/source";
 import Collection from "ol/Collection";
 import { extend } from "@labelflow/react-openlayers-fiber";
-import gql from "graphql-tag";
-import { ApolloClient, useApolloClient, useQuery } from "@apollo/client";
+import { ApolloClient, useApolloClient, useQuery, gql } from "@apollo/client";
 import { useToast } from "@chakra-ui/react";
 import { ModifyEvent } from "ol/interaction/Modify";
 import { SelectInteraction } from "./select-interaction";
@@ -16,6 +15,7 @@ import {
 import { ResizeAndTranslateBox } from "./resize-and-translate-box-interaction";
 import { Effect, useUndoStore } from "../../../../connectors/undo-store";
 import { GeometryInput, LabelType } from "../../../../graphql-types.generated";
+import { getBoundedGeometryFromImage } from "../../../../connectors/resolvers/label";
 
 // Extend react-openlayers-catalogue to include resize and translate interaction
 extend({
@@ -29,6 +29,18 @@ const updateLabelMutation = gql`
       data: { geometry: $geometry, labelClassId: $labelClassId }
     ) {
       id
+      type
+      geometry {
+        type
+        coordinates
+      }
+      x
+      y
+      width
+      height
+      labelClass {
+        id
+      }
     }
   }
 `;
@@ -37,10 +49,26 @@ const getLabelQuery = gql`
   query getLabel($id: ID!) {
     label(where: { id: $id }) {
       type
+      id
       geometry {
         type
         coordinates
       }
+      imageId
+      labelClass {
+        id
+        color
+      }
+    }
+  }
+`;
+
+const imageDimensionsQuery = gql`
+  query imageDimensions($id: ID!) {
+    image(where: { id: $id }) {
+      id
+      width
+      height
     }
   }
 `;
@@ -49,9 +77,11 @@ const updateLabelEffect = (
   {
     labelId,
     geometry,
+    imageId,
   }: {
     labelId: string;
-    geometry?: GeometryInput;
+    geometry: GeometryInput;
+    imageId?: string;
   },
   {
     client,
@@ -60,18 +90,73 @@ const updateLabelEffect = (
   }
 ): Effect => ({
   do: async () => {
-    const { data: labelData } = await client.query({
+    const { cache } = client;
+    const imageResponse = cache.readQuery<{
+      image: { width: number; height: number };
+    }>({
+      query: imageDimensionsQuery,
+      variables: { id: imageId },
+    });
+    if (imageResponse == null) {
+      throw new Error(`Missing image with id ${imageId}`);
+    }
+    const { image } = imageResponse;
+
+    const labelResponse = cache.readQuery<{
+      label: {
+        id: string;
+        geometry: GeometryInput;
+        imageId: string;
+        labelClass: {
+          id: string;
+          color: string;
+        };
+        type: LabelType;
+      };
+    }>({
       query: getLabelQuery,
       variables: { id: labelId },
     });
-    const originalGeometry = labelData?.label.geometry;
-    await client.mutate({
+    if (labelResponse == null) {
+      throw new Error(`Missing label with id ${imageId}`);
+    }
+    const { label } = labelResponse;
+    const imageDimensions = {
+      width: image.width,
+      height: image.height,
+    };
+    const originalGeometry = label.geometry;
+    const boundedGeometry = getBoundedGeometryFromImage(
+      imageDimensions,
+      geometry
+    );
+
+    client.mutate({
       mutation: updateLabelMutation,
       variables: {
         id: labelId,
         geometry,
       },
       refetchQueries: ["getImageLabels"],
+      optimisticResponse: {
+        updateLabel: {
+          id: labelId,
+          geometry: boundedGeometry.geometry,
+          x: boundedGeometry.x,
+          y: boundedGeometry.y,
+          width: boundedGeometry.width,
+          height: boundedGeometry.height,
+          labelClass: label.labelClass,
+          type: label.type,
+          __typename: "Label",
+        },
+      },
+      update: (apolloCache, { data }) => {
+        apolloCache.writeQuery({
+          query: getLabelQuery,
+          data: data?.updateLabel,
+        });
+      },
     });
 
     return { id: labelId, originalGeometry };
@@ -111,9 +196,9 @@ export const SelectAndModifyFeature = (props: {
   const selectedLabelId = useLabellingStore((state) => state.selectedLabelId);
   const selectedTool = useLabellingStore((state) => state.selectedTool);
 
-  const { data } = useQuery(getLabelQuery, {
-    skip: typeof selectedLabelId !== "string",
+  const { data: labelData } = useQuery(getLabelQuery, {
     variables: { id: selectedLabelId },
+    skip: selectedLabelId == null,
   });
 
   const getSelectedFeature = useCallback(() => {
@@ -150,35 +235,39 @@ export const SelectAndModifyFeature = (props: {
     <>
       <SelectInteraction {...props} />
 
-      {selectedTool === Tools.SELECTION && data?.label?.type === LabelType.Box && (
-        /* @ts-ignore - We need to add this because resizeAndTranslateBox is not included in the react-openalyers-fiber original catalogue */
-        <resizeAndTranslateBox
-          args={{ selectedFeature }}
-          onInteractionEnd={async (feature: Feature<Polygon> | null) => {
-            if (feature != null) {
-              const coordinates = feature.getGeometry().getCoordinates();
-              const geometry = { type: "Polygon", coordinates };
-              const { id: labelId } = feature.getProperties();
-              try {
-                await perform(
-                  updateLabelEffect({ labelId, geometry }, { client })
-                );
-              } catch (error) {
-                toast({
-                  title: "Error updating bounding box",
-                  description: error?.message,
-                  isClosable: true,
-                  status: "error",
-                  position: "bottom-right",
-                  duration: 10000,
-                });
-              }
-            }
-          }}
-        />
-      )}
       {selectedTool === Tools.SELECTION &&
-        data?.label?.type === LabelType.Polygon &&
+        labelData?.label?.type === LabelType.Box && (
+          /* @ts-ignore - We need to add this because resizeAndTranslateBox is not included in the react-openalyers-fiber original catalogue */
+          <resizeAndTranslateBox
+            args={{ selectedFeature }}
+            onInteractionEnd={async (feature: Feature<Polygon> | null) => {
+              if (feature != null) {
+                const coordinates = feature.getGeometry().getCoordinates();
+                const geometry = { type: "Polygon", coordinates };
+                const { id: labelId } = feature.getProperties();
+                try {
+                  await perform(
+                    updateLabelEffect(
+                      { labelId, geometry, imageId: labelData?.label?.imageId },
+                      { client }
+                    )
+                  );
+                } catch (error) {
+                  toast({
+                    title: "Error updating bounding box",
+                    description: error?.message,
+                    isClosable: true,
+                    status: "error",
+                    position: "bottom-right",
+                    duration: 10000,
+                  });
+                }
+              }
+            }}
+          />
+        )}
+      {selectedTool === Tools.SELECTION &&
+        labelData?.label?.type === LabelType.Polygon &&
         selectedFeature && (
           <olInteractionModify
             features={new Collection([selectedFeature])}
@@ -191,7 +280,10 @@ export const SelectAndModifyFeature = (props: {
                 const { id: labelId } = feature.getProperties();
                 try {
                   await perform(
-                    updateLabelEffect({ labelId, geometry }, { client })
+                    updateLabelEffect(
+                      { labelId, geometry, imageId: labelData?.label?.imageId },
+                      { client }
+                    )
                   );
                 } catch (error) {
                   toast({

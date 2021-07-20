@@ -1,5 +1,5 @@
-import { useMutation, useLazyQuery, useQuery } from "@apollo/client";
-import gql from "graphql-tag";
+import { gql, useMutation, useLazyQuery, useQuery } from "@apollo/client";
+
 import { useEffect, useState, useCallback, useRef } from "react";
 import debounce from "lodash/fp/debounce";
 
@@ -55,19 +55,6 @@ const getProjectByIdQuery = gql`
   }
 `;
 
-const getProjectsQuery = gql`
-  query getProjects {
-    projects {
-      id
-      name
-      images {
-        id
-        url
-      }
-    }
-  }
-`;
-
 export const UpsertProjectModal = ({
   isOpen = false,
   onClose = () => {},
@@ -108,7 +95,8 @@ export const UpsertProjectModal = ({
     variables: {
       name: projectName,
     },
-    refetchQueries: [{ query: getProjectsQuery }],
+    refetchQueries: ["getProjects"],
+    awaitRefetchQueries: true,
   });
 
   const [updateProjectMutate] = useMutation(updateProjectMutation, {
@@ -116,7 +104,8 @@ export const UpsertProjectModal = ({
       id: projectId,
       name: projectName,
     },
-    refetchQueries: [{ query: getProjectsQuery }],
+    refetchQueries: ["getProjects"],
+    awaitRefetchQueries: true,
   });
 
   const handleInputValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -185,7 +174,13 @@ export const UpsertProjectModal = ({
   );
 
   return (
-    <Modal isOpen={isOpen} size="xl" onClose={onClose}>
+    <Modal
+      scrollBehavior="inside"
+      isOpen={isOpen}
+      size="xl"
+      onClose={onClose}
+      isCentered
+    >
       <ModalOverlay />
       <ModalContent as="form" onSubmit={createProject}>
         <ModalCloseButton />

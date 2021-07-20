@@ -27,6 +27,10 @@ input ExampleWhereUniqueInput {
   id: ID!
 }
 
+input ExportWhereUniqueInput {
+  projectId: ID!
+}
+
 type Geometry {
   type: String!
   coordinates: JSON!
@@ -49,11 +53,12 @@ type Image {
   height: Int!
   width: Int!
   labels: [Label!]!
-  projectId: ID
+  projectId: ID!
 }
 
 input ImageCreateInput {
   id: ID
+  projectId: ID!
   createdAt: DateTime
   name: String
   path: String
@@ -66,7 +71,7 @@ input ImageCreateInput {
 }
 
 input ImageWhereInput {
-  id: ID
+  projectId: ID
 }
 
 input ImageWhereUniqueInput {
@@ -100,13 +105,18 @@ type LabelClass {
   name: String!
   color: ColorHex!
   labels: [Label!]!
-  projectId: ID
+  projectId: ID!
 }
 
 input LabelClassCreateInput {
   id: ID
   name: String!
   color: ColorHex!
+  projectId: ID!
+}
+
+input LabelClassWhereInput {
+  projectId: ID
 }
 
 input LabelClassWhereUniqueInput {
@@ -133,6 +143,10 @@ enum LabelType {
 input LabelUpdateInput {
   labelClassId: ID
   geometry: GeometryInput
+}
+
+input LabelWhereInput {
+  imageId: ID
 }
 
 input LabelWhereUniqueInput {
@@ -162,8 +176,12 @@ type Project {
   createdAt: DateTime!
   updatedAt: DateTime!
   name: String!
-  images: [Image!]
-  labelClasses: [LabelClass!]
+  images(first: Int, skip: Int): [Image!]!
+  labels: [Label!]!
+  labelClasses: [LabelClass!]!
+  imagesAggregates: ImagesAggregates!
+  labelsAggregates: LabelsAggregates!
+  labelClassesAggregates: LabelClassesAggregates!
 }
 
 input ProjectCreateInput {
@@ -188,13 +206,14 @@ type Query {
   images(where: ImageWhereInput, first: Int, skip: Int): [Image!]!
   imagesAggregates: ImagesAggregates!
   labelClass(where: LabelClassWhereUniqueInput!): LabelClass!
-  labelClasses(first: Int, skip: Int): [LabelClass!]!
+  labelClasses(where: LabelClassWhereInput, first: Int, skip: Int): [LabelClass!]!
   labelClassesAggregates: LabelClassesAggregates!
   labelsAggregates: LabelsAggregates!
   label(where: LabelWhereUniqueInput!): Label!
+  labels(where: LabelWhereInput, first: Int, skip: Int): [Label!]!
   project(where: ProjectWhereUniqueInput!): Project!
   projects(first: Int, skip: Int): [Project!]!
-  exportToCoco: String!
+  exportToCoco(where: ExportWhereUniqueInput!): String!
   debug: JSON!
 }
 

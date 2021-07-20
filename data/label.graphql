@@ -6,6 +6,10 @@ input LabelCreateInput {
   geometry: GeometryInput!
 }
 
+input LabelWhereInput {
+  imageId: ID
+}
+
 input LabelWhereUniqueInput {
   id: ID!
 }
