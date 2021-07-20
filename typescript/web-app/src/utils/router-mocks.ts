@@ -15,7 +15,7 @@ export const mockUseQueryParams = (
   jest.mock("use-query-params", () => useQueryParamsMock(options));
 };
 
-export const nextRouterMock = ({
+const nextRouterMock = ({
   query: initialQuery = {},
   pathname: initialPathname = "/",
 } = {}) => {

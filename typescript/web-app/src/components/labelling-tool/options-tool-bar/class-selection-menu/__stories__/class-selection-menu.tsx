@@ -1,9 +1,8 @@
 import { useState } from "react";
 
 import { HStack, Button, Flex } from "@chakra-ui/react";
-import { ClassSelectionMenu } from "../class-selection-menu";
+import { ClassSelectionMenu, LabelClassItem } from "../class-selection-menu";
 import { chakraDecorator } from "../../../../../utils/chakra-decorator";
-import { LabelClass } from "../../../../../graphql-types.generated";
 
 export default {
   title: "web-app/Class selection menu",
@@ -20,14 +19,13 @@ const Template = (args: any) => (
   </HStack>
 );
 
-const labelClasses = [
+const labelClasses: LabelClassItem[] = [
   {
     id: "coaisndoiasndi0",
     createdAt: "today",
     updatedAt: "today",
     name: "SuperUltraLongNameOIANSOINASOINAOSINASOINAOINS",
     color: "#6B7280",
-    shortcut: "1",
     labels: [],
   },
   {
@@ -36,7 +34,6 @@ const labelClasses = [
     updatedAt: "today",
     name: "Dog",
     color: "#EF4444 ",
-    shortcut: "2",
     labels: [],
   },
   {
@@ -45,7 +42,6 @@ const labelClasses = [
     updatedAt: "today",
     name: "Car",
     color: "#F59E0B",
-    shortcut: "3",
     labels: [],
   },
   {
@@ -54,7 +50,6 @@ const labelClasses = [
     updatedAt: "today",
     name: "Cycle",
     color: "#10B981",
-    shortcut: "4",
     labels: [],
   },
   {
@@ -63,7 +58,6 @@ const labelClasses = [
     updatedAt: "today",
     name: "Plane",
     color: "#3B82F6",
-    shortcut: "5",
     labels: [],
   },
 ];
@@ -73,11 +67,12 @@ const createNewClass = (name: string): void => {
 };
 
 export const Default = () => {
-  const [selectedLabel, setSelectedLabel] = useState<LabelClass | null>(null);
+  const [selectedLabel, setSelectedLabel] =
+    useState<LabelClassItem | null>(null);
   return (
     <Template
       labelClasses={labelClasses}
-      onSelectedClassChange={(labelClass: LabelClass) =>
+      onSelectedClassChange={(labelClass: LabelClassItem) =>
         setSelectedLabel(labelClass)
       }
       createNewClass={createNewClass}
@@ -87,13 +82,13 @@ export const Default = () => {
 };
 
 export const WithSelectedLabelClass = () => {
-  const [selectedLabel, setSelectedLabel] = useState<LabelClass | null>(
+  const [selectedLabel, setSelectedLabel] = useState<LabelClassItem | null>(
     labelClasses[0]
   );
   return (
     <Template
       labelClasses={labelClasses}
-      onSelectedClassChange={(labelClass: LabelClass) =>
+      onSelectedClassChange={(labelClass: LabelClassItem) =>
         setSelectedLabel(labelClass)
       }
       createNewClass={createNewClass}

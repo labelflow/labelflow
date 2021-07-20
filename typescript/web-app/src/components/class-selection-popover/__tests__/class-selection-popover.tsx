@@ -1,8 +1,10 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom/extend-expect";
-import { ClassSelectionPopover } from "../class-selection-popover";
-import { LabelClass } from "../../../graphql-types.generated";
+import {
+  ClassSelectionPopover,
+  LabelClassItem,
+} from "../class-selection-popover";
 
 const labelClasses = [
   {
@@ -31,7 +33,9 @@ const [onClose, onSelectedClassChange, createNewClass] = [
   jest.fn(),
 ];
 
-const renderClassSelectionPopover = (labelClassesInput: LabelClass[]): void => {
+const renderClassSelectionPopover = (
+  labelClassesInput: LabelClassItem[]
+): void => {
   render(
     <ClassSelectionPopover
       trigger={<div>Ok</div>}

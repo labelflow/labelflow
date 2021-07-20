@@ -14,16 +14,21 @@ type Query {
   imagesAggregates: ImagesAggregates!
 
   labelClass(where: LabelClassWhereUniqueInput!): LabelClass!
-  labelClasses(first: Int, skip: Int): [LabelClass!]!
+  labelClasses(
+    where: LabelClassWhereInput
+    first: Int
+    skip: Int
+  ): [LabelClass!]!
   labelClassesAggregates: LabelClassesAggregates!
 
   labelsAggregates: LabelsAggregates!
   label(where: LabelWhereUniqueInput!): Label!
+  labels(where: LabelWhereInput, first: Int, skip: Int): [Label!]!
 
   project(where: ProjectWhereUniqueInput!): Project!
   projects(first: Int, skip: Int): [Project!]!
 
-  exportToCoco: String!
+  exportToCoco(where: ExportWhereUniqueInput!): String!
 
   debug: JSON!
 }

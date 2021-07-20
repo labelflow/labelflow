@@ -3,6 +3,7 @@ import GeoJSON from "ol/format/GeoJSON";
 import { getBoundedGeometryFromImage } from "../../../../connectors/resolvers/label";
 
 import { Effect } from "../../../../connectors/undo-store";
+import { getProjectsQuery } from "../../../../pages/projects";
 import { GeometryInput } from "../../../../graphql-types.generated";
 
 type CreateLabelInputs = {
@@ -166,7 +167,7 @@ export const createLabelEffect = (
     const { data } = await client.mutate({
       mutation: createLabelMutation,
       variables: createLabelInputs,
-      refetchQueries: ["countLabels"],
+      refetchQueries: ["countLabels", { query: getProjectsQuery }],
       optimisticResponse: {
         createLabel: { id: `temp-${Date.now()}`, __typename: "Label" },
       },
@@ -191,7 +192,7 @@ export const createLabelEffect = (
     await client.mutate({
       mutation: deleteLabelMutation,
       variables: { id },
-      refetchQueries: ["countLabels"],
+      refetchQueries: ["countLabels", { query: getProjectsQuery }],
       optimisticResponse: { deleteLabel: { id, __typename: "Label" } },
       update(cache) {
         removeLabelFromImageCache(cache, { imageId, id });
@@ -211,7 +212,7 @@ export const createLabelEffect = (
     const { data } = await client.mutate({
       mutation: createLabelMutation,
       variables: createLabelInputs,
-      refetchQueries: ["countLabels"],
+      refetchQueries: ["countLabels", { query: getProjectsQuery }],
       optimisticResponse: {
         createLabel: { id: `temp-${Date.now()}`, __typename: "Label" },
       },

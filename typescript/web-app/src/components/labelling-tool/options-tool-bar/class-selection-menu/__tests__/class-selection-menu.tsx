@@ -1,8 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom/extend-expect";
-import { ClassSelectionMenu } from "../class-selection-menu";
-import { LabelClass } from "../../../../../graphql-types.generated";
+import { ClassSelectionMenu, LabelClassItem } from "../class-selection-menu";
 
 const labelClasses = [
   {
@@ -29,8 +28,8 @@ const [onSelectedClassChange, createNewClass] = [jest.fn(), jest.fn()];
 const setIsOpen = jest.fn();
 
 const renderClassSelectionMenu = (
-  labelClassesInput: LabelClass[],
-  selectedLabelClass?: LabelClass,
+  labelClassesInput: LabelClassItem[],
+  selectedLabelClass?: LabelClassItem,
   isOpen: boolean = false
 ): void => {
   render(

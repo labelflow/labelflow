@@ -45,6 +45,10 @@ export type ExampleWhereUniqueInput = {
   id: Scalars['ID'];
 };
 
+export type ExportWhereUniqueInput = {
+  projectId: Scalars['ID'];
+};
+
 export type Geometry = {
   __typename?: 'Geometry';
   type: Scalars['String'];
@@ -69,11 +73,12 @@ export type Image = {
   height: Scalars['Int'];
   width: Scalars['Int'];
   labels: Array<Label>;
-  projectId?: Maybe<Scalars['ID']>;
+  projectId: Scalars['ID'];
 };
 
 export type ImageCreateInput = {
   id?: Maybe<Scalars['ID']>;
+  projectId: Scalars['ID'];
   createdAt?: Maybe<Scalars['DateTime']>;
   name?: Maybe<Scalars['String']>;
   path?: Maybe<Scalars['String']>;
@@ -86,7 +91,7 @@ export type ImageCreateInput = {
 };
 
 export type ImageWhereInput = {
-  id?: Maybe<Scalars['ID']>;
+  projectId?: Maybe<Scalars['ID']>;
 };
 
 export type ImageWhereUniqueInput = {
@@ -121,13 +126,18 @@ export type LabelClass = {
   name: Scalars['String'];
   color: Scalars['ColorHex'];
   labels: Array<Label>;
-  projectId?: Maybe<Scalars['ID']>;
+  projectId: Scalars['ID'];
 };
 
 export type LabelClassCreateInput = {
   id?: Maybe<Scalars['ID']>;
   name: Scalars['String'];
   color: Scalars['ColorHex'];
+  projectId: Scalars['ID'];
+};
+
+export type LabelClassWhereInput = {
+  projectId?: Maybe<Scalars['ID']>;
 };
 
 export type LabelClassWhereUniqueInput = {
@@ -149,6 +159,10 @@ export type LabelCreateInput = {
 export type LabelUpdateInput = {
   labelClassId?: Maybe<Scalars['ID']>;
   geometry?: Maybe<GeometryInput>;
+};
+
+export type LabelWhereInput = {
+  imageId?: Maybe<Scalars['ID']>;
 };
 
 export type LabelWhereUniqueInput = {
@@ -233,8 +247,18 @@ export type Project = {
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
   name: Scalars['String'];
-  images?: Maybe<Array<Image>>;
-  labelClasses?: Maybe<Array<LabelClass>>;
+  images: Array<Image>;
+  labels: Array<Label>;
+  labelClasses: Array<LabelClass>;
+  imagesAggregates: ImagesAggregates;
+  labelsAggregates: LabelsAggregates;
+  labelClassesAggregates: LabelClassesAggregates;
+};
+
+
+export type ProjectImagesArgs = {
+  first?: Maybe<Scalars['Int']>;
+  skip?: Maybe<Scalars['Int']>;
 };
 
 export type ProjectCreateInput = {
@@ -264,6 +288,7 @@ export type Query = {
   labelClassesAggregates: LabelClassesAggregates;
   labelsAggregates: LabelsAggregates;
   label: Label;
+  labels: Array<Label>;
   project: Project;
   projects: Array<Project>;
   exportToCoco: Scalars['String'];
@@ -302,6 +327,7 @@ export type QueryLabelClassArgs = {
 
 
 export type QueryLabelClassesArgs = {
+  where?: Maybe<LabelClassWhereInput>;
   first?: Maybe<Scalars['Int']>;
   skip?: Maybe<Scalars['Int']>;
 };
@@ -309,6 +335,13 @@ export type QueryLabelClassesArgs = {
 
 export type QueryLabelArgs = {
   where: LabelWhereUniqueInput;
+};
+
+
+export type QueryLabelsArgs = {
+  where?: Maybe<LabelWhereInput>;
+  first?: Maybe<Scalars['Int']>;
+  skip?: Maybe<Scalars['Int']>;
 };
 
 
@@ -320,6 +353,11 @@ export type QueryProjectArgs = {
 export type QueryProjectsArgs = {
   first?: Maybe<Scalars['Int']>;
   skip?: Maybe<Scalars['Int']>;
+};
+
+
+export type QueryExportToCocoArgs = {
+  where: ExportWhereUniqueInput;
 };
 
 
@@ -422,6 +460,7 @@ export type ResolversTypes = {
   ExampleOrderByInput: ExampleOrderByInput;
   ExampleWhereInput: ExampleWhereInput;
   ExampleWhereUniqueInput: ExampleWhereUniqueInput;
+  ExportWhereUniqueInput: ExportWhereUniqueInput;
   Geometry: ResolverTypeWrapper<Geometry>;
   GeometryInput: GeometryInput;
   ID: ResolverTypeWrapper<Scalars['ID']>;
@@ -436,10 +475,12 @@ export type ResolversTypes = {
   Float: ResolverTypeWrapper<Scalars['Float']>;
   LabelClass: ResolverTypeWrapper<LabelClass>;
   LabelClassCreateInput: LabelClassCreateInput;
+  LabelClassWhereInput: LabelClassWhereInput;
   LabelClassWhereUniqueInput: LabelClassWhereUniqueInput;
   LabelClassesAggregates: ResolverTypeWrapper<LabelClassesAggregates>;
   LabelCreateInput: LabelCreateInput;
   LabelUpdateInput: LabelUpdateInput;
+  LabelWhereInput: LabelWhereInput;
   LabelWhereUniqueInput: LabelWhereUniqueInput;
   LabelsAggregates: ResolverTypeWrapper<LabelsAggregates>;
   Mutation: ResolverTypeWrapper<{}>;
@@ -464,6 +505,7 @@ export type ResolversParentTypes = {
   ExampleCreateInput: ExampleCreateInput;
   ExampleWhereInput: ExampleWhereInput;
   ExampleWhereUniqueInput: ExampleWhereUniqueInput;
+  ExportWhereUniqueInput: ExportWhereUniqueInput;
   Geometry: Geometry;
   GeometryInput: GeometryInput;
   ID: Scalars['ID'];
@@ -478,10 +520,12 @@ export type ResolversParentTypes = {
   Float: Scalars['Float'];
   LabelClass: LabelClass;
   LabelClassCreateInput: LabelClassCreateInput;
+  LabelClassWhereInput: LabelClassWhereInput;
   LabelClassWhereUniqueInput: LabelClassWhereUniqueInput;
   LabelClassesAggregates: LabelClassesAggregates;
   LabelCreateInput: LabelCreateInput;
   LabelUpdateInput: LabelUpdateInput;
+  LabelWhereInput: LabelWhereInput;
   LabelWhereUniqueInput: LabelWhereUniqueInput;
   LabelsAggregates: LabelsAggregates;
   Mutation: {};
@@ -531,7 +575,7 @@ export type ImageResolvers<ContextType = any, ParentType extends ResolversParent
   height?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   width?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   labels?: Resolver<Array<ResolversTypes['Label']>, ParentType, ContextType>;
-  projectId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
+  projectId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -565,7 +609,7 @@ export type LabelClassResolvers<ContextType = any, ParentType extends ResolversP
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   color?: Resolver<ResolversTypes['ColorHex'], ParentType, ContextType>;
   labels?: Resolver<Array<ResolversTypes['Label']>, ParentType, ContextType>;
-  projectId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
+  projectId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -598,8 +642,12 @@ export type ProjectResolvers<ContextType = any, ParentType extends ResolversPare
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  images?: Resolver<Maybe<Array<ResolversTypes['Image']>>, ParentType, ContextType>;
-  labelClasses?: Resolver<Maybe<Array<ResolversTypes['LabelClass']>>, ParentType, ContextType>;
+  images?: Resolver<Array<ResolversTypes['Image']>, ParentType, ContextType, RequireFields<ProjectImagesArgs, never>>;
+  labels?: Resolver<Array<ResolversTypes['Label']>, ParentType, ContextType>;
+  labelClasses?: Resolver<Array<ResolversTypes['LabelClass']>, ParentType, ContextType>;
+  imagesAggregates?: Resolver<ResolversTypes['ImagesAggregates'], ParentType, ContextType>;
+  labelsAggregates?: Resolver<ResolversTypes['LabelsAggregates'], ParentType, ContextType>;
+  labelClassesAggregates?: Resolver<ResolversTypes['LabelClassesAggregates'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -615,9 +663,10 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   labelClassesAggregates?: Resolver<ResolversTypes['LabelClassesAggregates'], ParentType, ContextType>;
   labelsAggregates?: Resolver<ResolversTypes['LabelsAggregates'], ParentType, ContextType>;
   label?: Resolver<ResolversTypes['Label'], ParentType, ContextType, RequireFields<QueryLabelArgs, 'where'>>;
+  labels?: Resolver<Array<ResolversTypes['Label']>, ParentType, ContextType, RequireFields<QueryLabelsArgs, never>>;
   project?: Resolver<ResolversTypes['Project'], ParentType, ContextType, RequireFields<QueryProjectArgs, 'where'>>;
   projects?: Resolver<Array<ResolversTypes['Project']>, ParentType, ContextType, RequireFields<QueryProjectsArgs, never>>;
-  exportToCoco?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  exportToCoco?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<QueryExportToCocoArgs, 'where'>>;
   debug?: Resolver<ResolversTypes['JSON'], ParentType, ContextType>;
 };
 

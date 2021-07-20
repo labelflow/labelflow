@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import { HStack } from "@chakra-ui/react";
-import { get } from "lodash/fp";
 import { Story, DecoratorFn } from "@storybook/react";
 import { withNextRouter } from "storybook-addon-next-router";
 import { gql } from "@apollo/client";
@@ -24,7 +23,7 @@ export default {
   decorators: [
     chakraDecorator,
     apolloDecorator,
-    withIdInQueryStringRouterDecorator,
+    withIdsInQueryStringRouterDecorator,
   ],
 };
 
@@ -37,18 +36,37 @@ const Template: Story = () => (
 export const Images = Template.bind({});
 Images.parameters = {
   mockImages: { images },
-  withImageIdInQueryStringRouter: { getFromLoaded: get("images.0.id") },
 };
 
 /* ----------- */
 /*   Helpers   */
 /* ----------- */
 
-async function createImage(url: string) {
+async function createProject(name: string) {
   const mutationResult = await client.mutate({
     mutation: gql`
-      mutation createImage($url: String!) {
-        createImage(data: { url: $url }) {
+      mutation createProject($name: String!) {
+        createProject(data: { name: $name }) {
+          id
+        }
+      }
+    `,
+    variables: { name },
+  });
+  const {
+    data: {
+      createProject: { id },
+    },
+  } = mutationResult;
+
+  return id;
+}
+
+async function createImage(url: string, projectId: string) {
+  const mutationResult = await client.mutate({
+    mutation: gql`
+      mutation createImage($url: String!, $projectId: ID!) {
+        createImage(data: { url: $url, projectId: $projectId }) {
           id
           name
           width
@@ -59,6 +77,7 @@ async function createImage(url: string) {
     `,
     variables: {
       url,
+      projectId,
     },
   });
 
@@ -72,7 +91,7 @@ async function createImage(url: string) {
 async function mockImagesLoader({
   parameters,
 }: {
-  parameters: { mockImages?: { images?: string[] } };
+  parameters: { mockImages?: { images?: string[] }; mockProjectId?: string };
 }) {
   // first, clean the database and the apollo client
   await Promise.all(db.tables.map((table) => table.clear()));
@@ -80,38 +99,29 @@ async function mockImagesLoader({
 
   const imageArray = parameters?.mockImages?.images;
 
-  if (imageArray == null) {
+  // Because of race conditions we have to randomize the project name
+  const projectId = await createProject(`storybook project ${Date.now()}`);
+
+  if (imageArray == null || projectId == null) {
     return { images: [] };
   }
 
   // We use mapSeries to ensure images are created in the same order
   const loadedImages = await Bluebird.mapSeries(imageArray, (url) =>
-    createImage(url)
+    createImage(url, projectId)
   );
 
-  return { images: loadedImages };
+  return { projectId, images: loadedImages };
 }
 
-function withIdInQueryStringRouterDecorator(
+function withIdsInQueryStringRouterDecorator(
   storyFn: Parameters<DecoratorFn>[0],
   context: Parameters<DecoratorFn>[1]
 ): ReturnType<DecoratorFn> {
-  const id = context.parameters?.withImageIdInQueryStringRouter?.id;
-
-  if (typeof id === "string") {
-    return withNextRouter({
-      query: { id },
-    })(storyFn, context);
-  }
-
-  const getFromLoaded =
-    context.parameters?.withImageIdInQueryStringRouter?.getFromLoaded;
-
-  if (typeof getFromLoaded === "function") {
-    return withNextRouter({
-      query: { id: getFromLoaded(context.loaded) },
-    })(storyFn, context);
-  }
-
-  return withNextRouter({})(storyFn, context);
+  return withNextRouter({
+    query: {
+      imageId: context.loaded.images[0].id,
+      projectId: context.loaded.projectId,
+    },
+  })(storyFn, context);
 }
