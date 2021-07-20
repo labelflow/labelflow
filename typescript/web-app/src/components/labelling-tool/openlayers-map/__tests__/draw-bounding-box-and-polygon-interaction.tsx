@@ -6,7 +6,7 @@ import { ApolloProvider } from "@apollo/client";
 import { Map } from "@labelflow/react-openlayers-fiber";
 import { render, waitFor, screen } from "@testing-library/react";
 import { Feature, Map as OlMap } from "ol";
-import { fromExtent } from "ol/geom/Polygon";
+import Polygon, { fromExtent } from "ol/geom/Polygon";
 import { DrawEvent, DrawEventType } from "ol/interaction/Draw";
 
 import { mockNextRouter } from "../../../../utils/router-mocks";
@@ -312,4 +312,60 @@ it("handles cases where the label creation throws an error", async () => {
   await waitFor(() => {
     expect(screen.getByText("Error creating bounding box")).toBeDefined();
   });
+});
+
+it.only("create a label when the user has finished to draw a polygon on the labelling interface", async () => {
+  const mapRef: { current: OlMap | null } = { current: null };
+  render(<DrawBoundingBoxAndPolygonInteraction />, {
+    wrapper: ({ children }) => (
+      <Map
+        args={{ interactions: [] }}
+        ref={(map) => {
+          mapRef.current = map;
+        }}
+      >
+        <ApolloProvider client={client}>{children}</ApolloProvider>
+      </Map>
+    ),
+  });
+
+  useLabellingStore.setState({ selectedTool: Tools.POLYGON });
+
+  const drawInteraction = mapRef.current?.getInteractions().getArray()?.[0];
+  drawInteraction?.dispatchEvent(
+    new DrawEvent(
+      "drawend" as DrawEventType,
+      new Feature({
+        geometry: new Polygon([
+          [
+            [100, 200],
+            [200, 300],
+            [250, 350],
+            [200, 200],
+            [100, 200],
+          ],
+        ]),
+      })
+    )
+  );
+
+  expect(client.mutate).toHaveBeenCalledWith(
+    expect.objectContaining({
+      variables: expect.objectContaining({
+        imageId: "mocked-image-id",
+        geometry: {
+          type: "Polygon",
+          coordinates: [
+            [
+              [100, 200],
+              [200, 300],
+              [250, 350],
+              [200, 200],
+              [100, 200],
+            ],
+          ],
+        },
+      }),
+    })
+  );
 });
