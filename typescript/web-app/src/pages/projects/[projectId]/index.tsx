@@ -1,8 +1,7 @@
 import { useEffect } from "react";
 import { Spinner, Center } from "@chakra-ui/react";
 import { useRouter } from "next/router";
-import { useQuery } from "@apollo/client";
-import gql from "graphql-tag";
+import { useQuery, gql } from "@apollo/client";
 import { Layout } from "../../../components/layout";
 
 const getProject = gql`

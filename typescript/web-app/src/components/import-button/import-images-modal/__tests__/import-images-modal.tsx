@@ -1,13 +1,12 @@
 /* eslint-disable import/first */
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { ApolloProvider } from "@apollo/client";
+import { ApolloProvider, gql } from "@apollo/client";
 import { PropsWithChildren } from "react";
 import "@testing-library/jest-dom/extend-expect";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { mocked } from "ts-jest/utils";
 import probe from "probe-image-size";
-import gql from "graphql-tag";
 
 import { client } from "../../../../connectors/apollo-client-schema";
 import { setupTestsWithLocalDatabase } from "../../../../utils/setup-local-db-tests";

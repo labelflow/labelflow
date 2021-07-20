@@ -539,10 +539,10 @@ describe("Project resolver test suite", () => {
       type: "jpg",
     });
 
-    const getProjectCount = async (projectId: string) => {
+    const getProjectData = async (projectId: string) => {
       return client.query({
         query: gql`
-          query getProjectCounts($id: ID!) {
+          query getProjectData($id: ID!) {
             project(where: { id: $id }) {
               id
               images {
@@ -576,16 +576,16 @@ describe("Project resolver test suite", () => {
     createProject("My new project", projectId);
     createProject("My other project", otherId);
 
-    const initialCountQuery = await getProjectCount(projectId);
-    const otherInitialCountQuery = await getProjectCount(otherId);
+    const initialCountQuery = await getProjectData(projectId);
+    const otherInitialCountQuery = await getProjectData(otherId);
 
     expectedResults(initialCountQuery, 0);
     expectedResults(otherInitialCountQuery, 0);
 
     await updateProjectWithImageLabelAndClass(projectId);
 
-    const updateCountQuery = await getProjectCount(projectId);
-    const otherUpdateCountQuery = await getProjectCount(otherId);
+    const updateCountQuery = await getProjectData(projectId);
+    const otherUpdateCountQuery = await getProjectData(otherId);
 
     expectedResults(updateCountQuery, 1);
     expectedResults(otherUpdateCountQuery, 0);

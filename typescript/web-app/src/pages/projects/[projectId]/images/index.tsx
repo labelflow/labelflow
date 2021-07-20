@@ -1,5 +1,4 @@
-import { useQuery } from "@apollo/client";
-import gql from "graphql-tag";
+import { gql, useQuery } from "@apollo/client";
 import NextLink from "next/link";
 import {
   VStack,
@@ -135,7 +134,7 @@ const ImagesPage = () => {
                 {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
                 <a>
                   <WrapItem p={4} background="white" rounded={8}>
-                    <VStack w="20rem" h="20rem" justify="space-between">
+                    <VStack w="80" h="80" justify="space-between">
                       <Heading
                         as="h3"
                         size="sm"
@@ -152,7 +151,7 @@ const ImagesPage = () => {
                         src={url}
                         ignoreFallback
                         objectFit="contain"
-                        h="18rem"
+                        h="72"
                         w="full"
                       />
                     </VStack>

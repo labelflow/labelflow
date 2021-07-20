@@ -18,7 +18,7 @@ type Image {
   height: Int!
   width: Int!
   labels: [Label!]!
-  projectId: ID
+  projectId: ID!
 }
 
 type Label {
@@ -55,7 +55,7 @@ type Project {
   updatedAt: DateTime!
   name: String!
   images(first: Int, skip: Int): [Image!]!
-  labels(first: Int, skip: Int): [Label!]!
+  labels: [Label!]!
   labelClasses: [LabelClass!]!
   imagesAggregates: ImagesAggregates!
   labelsAggregates: LabelsAggregates!

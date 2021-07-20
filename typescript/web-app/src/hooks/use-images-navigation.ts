@@ -3,8 +3,8 @@ import { useQuery, gql } from "@apollo/client";
 
 import { Project, Image } from "../graphql-types.generated";
 
-const allImagesOfAProjectQuery = gql`
-  query allImagesOfAProject($projectId: ID!) {
+const getAllImagesOfAProjectQuery = gql`
+  query getAllImagesOfAProject($projectId: ID!) {
     project(where: { id: $projectId }) {
       id
       images {
@@ -33,7 +33,7 @@ export const useImagesNavigation = () => {
   // Refetch images ?
   const { data } = useQuery<{
     project: Pick<Project, "id" | "images">;
-  }>(allImagesOfAProjectQuery, { variables: { projectId } });
+  }>(getAllImagesOfAProjectQuery, { variables: { projectId } });
 
   // TODO: Investigate why you have to specify undefined states
   const images = data?.project?.images;

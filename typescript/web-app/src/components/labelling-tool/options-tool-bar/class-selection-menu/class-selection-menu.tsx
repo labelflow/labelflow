@@ -6,7 +6,7 @@ import { LabelClass } from "../../../../graphql-types.generated";
 import { ClassSelectionPopover } from "../../../class-selection-popover";
 
 // The class selection menu doesn't need all the attributes of the label class
-type LabelClassItem = Omit<LabelClass, "projectId">;
+export type LabelClassItem = Omit<LabelClass, "projectId">;
 
 const CircleIcon = chakra(RiCheckboxBlankCircleFill);
 const SelectorIcon = chakra(HiSelector);

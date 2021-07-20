@@ -4,12 +4,7 @@ import { db } from "../../typescript/web-app/src/connectors/database";
 beforeEach(() =>
   cy.window().then(async () => {
     console.log("Clear database");
-    await Promise.all([
-      db.project.clear(),
-      db.image.clear(),
-      db.label.clear(),
-      db.labelClass.clear(),
-    ]);
+    await Promise.all(db.tables.map((table) => table.clear()));
   })
 );
 

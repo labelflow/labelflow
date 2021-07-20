@@ -3,10 +3,9 @@ import { gql, useQuery, useApolloClient } from "@apollo/client";
 
 import { useHotkeys } from "react-hotkeys-hook";
 import { useRouter } from "next/router";
-import { ClassSelectionMenu } from "./class-selection-menu";
+import { ClassSelectionMenu, LabelClassItem } from "./class-selection-menu";
 import { Tools, useLabellingStore } from "../../../connectors/labelling-state";
 import { useUndoStore } from "../../../connectors/undo-store";
-import { LabelClass } from "../../../graphql-types.generated";
 import { createNewLabelClassAndUpdateLabelCurry } from "../../../connectors/undo-store/effects/create-label-class-and-update-label";
 import { createUpdateLabelClassOfLabelEffect } from "../../../connectors/undo-store/effects/update-label-class-of-label";
 import { createNewLabelClassCurry } from "../../../connectors/undo-store/effects/create-label-class";
@@ -48,7 +47,7 @@ const labelQuery = gql`
 
 export const EditLabelClassMenu = () => {
   const router = useRouter();
-  const projectId = router.query.projectId as string;
+  const projectId = router?.query.projectId as string;
   const client = useApolloClient();
   const [isOpen, setIsOpen] = useState(false);
   const { data } = useQuery(labelClassesOfProjectQuery, {
@@ -99,14 +98,14 @@ export const EditLabelClassMenu = () => {
   const onSelectedClassChange = useMemo(
     () =>
       selectedTool === Tools.BOX
-        ? (item: Omit<LabelClass, "projectId"> | null) =>
+        ? (item: LabelClassItem | null) =>
             perform(
               createUpdateLabelClassEffect({
                 selectedLabelClassId: item?.id ?? null,
                 selectedLabelClassIdPrevious: selectedLabelClassId,
               })
             )
-        : (item: Omit<LabelClass, "projectId"> | null) =>
+        : (item: LabelClassItem | null) =>
             perform(
               createUpdateLabelClassOfLabelEffect(
                 {
