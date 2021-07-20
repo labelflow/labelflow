@@ -10,9 +10,8 @@ import { DbImage } from "../database";
 import { uploadsCacheName, getUploadTargetHttp } from "./upload";
 import { projectTypename } from "./project";
 import { probeImage } from "./utils/probe-image";
-import { Repository } from "../repository";
 
-type Context = { repository: Repository };
+import { Context } from "./types";
 
 // Queries
 export const labelsResolver = async (

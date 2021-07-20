@@ -7,6 +7,7 @@ input LabelCreateInput {
 
 input LabelWhereInput {
   imageId: ID
+  labelClassId: ID
 }
 
 input LabelWhereUniqueInput {

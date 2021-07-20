@@ -163,6 +163,7 @@ export type LabelUpdateInput = {
 
 export type LabelWhereInput = {
   imageId?: Maybe<Scalars['ID']>;
+  labelClassId?: Maybe<Scalars['ID']>;
 };
 
 export type LabelWhereUniqueInput = {
