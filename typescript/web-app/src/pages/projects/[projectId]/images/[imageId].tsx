@@ -53,8 +53,8 @@ const imageQuery = gql`
   }
 `;
 
-const projectQuery = gql`
-  query project($id: ID!) {
+const getProjectQuery = gql`
+  query getProject($id: ID!) {
     project(where: { id: $id }) {
       id
       name
@@ -78,7 +78,7 @@ const ImagePage = () => {
     }
   );
 
-  const { data: projectResult } = useQuery(projectQuery, {
+  const { data: projectResult } = useQuery(getProjectQuery, {
     variables: { id: projectId },
   });
 
