@@ -47,6 +47,7 @@ export const TabBar = ({ tabs }: Props) => {
             borderBottom="2px solid"
             color={isActive ? "brand.500" : "inherit"}
             borderColor={isActive ? "currentColor" : "inherit"}
+            {...(isActive ? { "aria-current": "location" } : {})}
           >
             {name}
           </chakra.button>

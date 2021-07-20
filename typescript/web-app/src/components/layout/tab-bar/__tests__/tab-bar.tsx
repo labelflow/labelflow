@@ -20,6 +20,16 @@ describe("tab bar", () => {
     expect(screen.queryByLabelText("tab bar")).toBeInTheDocument();
     expect(screen.getAllByRole("button")).toHaveLength(1);
     expect(screen.getByText("test")).toBeDefined();
+    expect(screen.getByText("test")).toHaveAttribute(
+      "aria-current",
+      "location"
+    );
+  });
+
+  it("should display an inactive tab", () => {
+    renderTabBar([{ name: "test", url: "some link", isActive: false }]);
+
+    expect(screen.getByText("test")).not.toHaveAttribute("aria-current");
   });
 
   it("should display multiple tabs when there are several in the list", () => {
