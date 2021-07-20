@@ -15,6 +15,7 @@ import { ExportButton } from "../../../../components/export-button";
 import { Meta } from "../../../../components/meta";
 import { Layout } from "../../../../components/layout";
 import type { Project as ProjectType } from "../../../../graphql-types.generated";
+import { ProjectTabBar } from "../../../../components/layout/tab-bar/project-tab-bar";
 
 const ArrowRightIcon = chakra(RiArrowRightSLine);
 
@@ -34,7 +35,7 @@ export const projectDataQuery = gql`
 
 const ClassesPage = () => {
   const router = useRouter();
-  const { projectId } = router?.query;
+  const projectId = router?.query?.projectId as string;
 
   const { data: projectResult } = useQuery<{
     project: ProjectType;
@@ -77,18 +78,7 @@ const ClassesPage = () => {
             <ExportButton />
           </>
         }
-        tabs={[
-          {
-            name: "images",
-            url: `/projects/${projectId}/images`,
-            isActive: false,
-          },
-          {
-            name: "classes",
-            url: `/projects/${projectId}/classes`,
-            isActive: true,
-          },
-        ]}
+        tabBar={<ProjectTabBar currentTab="classes" projectId={projectId} />}
       >
         <></>
       </Layout>

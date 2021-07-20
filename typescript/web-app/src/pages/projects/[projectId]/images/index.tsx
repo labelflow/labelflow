@@ -25,6 +25,7 @@ import { Meta } from "../../../../components/meta";
 import { Layout } from "../../../../components/layout";
 import type { Project as ProjectType } from "../../../../graphql-types.generated";
 import { EmptyStateImage } from "../../../../components/empty-state";
+import { ProjectTabBar } from "../../../../components/layout/tab-bar/project-tab-bar";
 
 const ArrowRightIcon = chakra(RiArrowRightSLine);
 
@@ -44,7 +45,7 @@ export const projectDataQuery = gql`
 
 const ImagesPage = () => {
   const router = useRouter();
-  const { projectId } = router?.query;
+  const projectId = router?.query?.projectId as string;
 
   const { data: projectResult } = useQuery<{
     project: ProjectType;
@@ -87,18 +88,7 @@ const ImagesPage = () => {
             <ExportButton />
           </>
         }
-        tabs={[
-          {
-            name: "images",
-            url: `/projects/${projectId}/images`,
-            isActive: true,
-          },
-          {
-            name: "classes",
-            url: `/projects/${projectId}/classes`,
-            isActive: false,
-          },
-        ]}
+        tabBar={<ProjectTabBar currentTab="images" projectId={projectId} />}
       >
         {!projectResult && (
           <Center h="full">
