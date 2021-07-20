@@ -192,7 +192,7 @@ export const Labels = ({
     (state) => state.setSelectedLabelId
   );
   const { perform } = useUndoStore();
-  const { imageId } = useRouter().query;
+  const { imageId } = useRouter()?.query;
   const { data } = useQuery(getImageLabelsQuery, {
     skip: typeof imageId !== "string",
     variables: { imageId: imageId as string },

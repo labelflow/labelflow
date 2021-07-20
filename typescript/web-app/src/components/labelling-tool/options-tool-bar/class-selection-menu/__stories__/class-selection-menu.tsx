@@ -22,7 +22,7 @@ const Template = (args: any) => (
 
 type LabelClassItem = Omit<LabelClass, "projectId">;
 
-const labelClasses: Array<LabelClassItem> = [
+const labelClasses: LabelClassItem[] = [
   {
     id: "coaisndoiasndi0",
     createdAt: "today",

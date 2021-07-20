@@ -48,7 +48,7 @@ const labelQuery = gql`
 
 export const EditLabelClassMenu = () => {
   const router = useRouter();
-  const projectId = router.query.projectId as string;
+  const projectId = router?.query.projectId as string;
   const client = useApolloClient();
   const [isOpen, setIsOpen] = useState(false);
   const { data } = useQuery(labelClassesOfProjectQuery, {
