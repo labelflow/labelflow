@@ -1,9 +1,8 @@
 import { useState } from "react";
 
 import { HStack, Button, Flex } from "@chakra-ui/react";
-import { ClassSelectionMenu } from "../class-selection-menu";
+import { ClassSelectionMenu, LabelClassItem } from "../class-selection-menu";
 import { chakraDecorator } from "../../../../../utils/chakra-decorator";
-import { LabelClass } from "../../../../../graphql-types.generated";
 
 export default {
   title: "web-app/Class selection menu",
@@ -19,8 +18,6 @@ const Template = (args: any) => (
     <Flex> </Flex>
   </HStack>
 );
-
-type LabelClassItem = Omit<LabelClass, "projectId">;
 
 const labelClasses: LabelClassItem[] = [
   {

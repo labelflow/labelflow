@@ -1,8 +1,10 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom/extend-expect";
-import { ClassSelectionPopover } from "../class-selection-popover";
-import { LabelClass } from "../../../graphql-types.generated";
+import {
+  ClassSelectionPopover,
+  LabelClassItem,
+} from "../class-selection-popover";
 
 const labelClasses = [
   {
@@ -32,7 +34,7 @@ const [onClose, onSelectedClassChange, createNewClass] = [
 ];
 
 const renderClassSelectionPopover = (
-  labelClassesInput: Omit<LabelClass, "projectId">[]
+  labelClassesInput: LabelClassItem[]
 ): void => {
   render(
     <ClassSelectionPopover
