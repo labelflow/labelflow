@@ -314,7 +314,7 @@ it("handles cases where the label creation throws an error", async () => {
   });
 });
 
-it.only("create a label when the user has finished to draw a polygon on the labelling interface", async () => {
+it("create a label when the user has finished to draw a polygon on the labelling interface", async () => {
   const mapRef: { current: OlMap | null } = { current: null };
   render(<DrawBoundingBoxAndPolygonInteraction />, {
     wrapper: ({ children }) => (
