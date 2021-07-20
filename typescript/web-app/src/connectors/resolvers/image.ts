@@ -10,6 +10,7 @@ import type {
 import { db, DbImage } from "../database";
 
 import { uploadsCacheName, getUploadTargetHttp } from "./upload";
+import { Repository } from "../repository";
 
 export const getPaginatedImages = async (
   skip?: Maybe<number>,
@@ -35,26 +36,24 @@ export const labelsResolver = async ({ id }: DbImage) => {
   return getLabelsByImageId(id);
 };
 
-const image = async (_: any, args: QueryImageArgs) => {
-  const entity = await db.image.get(args?.where?.id);
+const image = async (
+  _: any,
+  args: QueryImageArgs,
+  { repository }: { repository: Repository }
+) => {
+  const entity = await repository.image.getById(args?.where?.id);
   if (entity === undefined) {
     throw new Error("No image with such id");
   }
   return entity;
 };
 
-const images = async (_: any, args: QueryImagesArgs) => {
-  const imagesList = await getPaginatedImages(args?.skip, args?.first);
-
-  const entitiesWithUrls = await Promise.all(
-    imagesList.map(async (imageEntity: any) => {
-      return {
-        ...imageEntity,
-      };
-    })
-  );
-
-  return entitiesWithUrls;
+const images = async (
+  _: any,
+  args: QueryImagesArgs,
+  { repository }: { repository: Repository }
+) => {
+  return repository.image.list(args?.skip, args?.first);
 };
 
 /**
@@ -122,7 +121,8 @@ const probeImage = async ({
 // Mutations
 const createImage = async (
   _: any,
-  args: MutationCreateImageArgs
+  args: MutationCreateImageArgs,
+  { repository }: { repository: Repository }
 ): Promise<DbImage> => {
   const { file, id, name, height, width, mimetype, path, url, externalUrl } =
     args.data;
@@ -243,7 +243,7 @@ const createImage = async (
     ...imageMetaData,
   };
 
-  await db.image.add(newImageEntity);
+  await repository.image.add(newImageEntity);
 
   return newImageEntity;
 };
@@ -252,8 +252,12 @@ const imagesAggregates = () => {
   return {};
 };
 
-const totalCount = () => {
-  return db.image.count();
+const totalCount = (
+  _parent,
+  _args,
+  { repository }: { repository: Repository }
+) => {
+  return repository.image.count();
 };
 
 export default {

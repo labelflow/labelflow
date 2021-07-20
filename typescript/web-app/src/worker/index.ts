@@ -23,6 +23,7 @@ import { resolvers } from "../connectors/resolvers";
 import { uploadsCacheName, uploadsRoute } from "../connectors/resolvers/upload";
 import { ApolloServerServiceWorker } from "./apollo-server-service-worker";
 import { UploadServer } from "./upload-server";
+import { repository } from "../connectors/repository";
 
 declare let self: ServiceWorkerGlobalScope;
 
@@ -68,7 +69,9 @@ registerRoute(
   new ApolloServerServiceWorker({
     typeDefs,
     resolvers,
-    context: ({ req, res }) => ({ req, res }),
+    context: ({ req, res }) => {
+      return { req, res, repository };
+    },
     introspection: true,
   }),
   "POST"
