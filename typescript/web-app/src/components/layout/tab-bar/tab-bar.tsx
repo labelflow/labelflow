@@ -32,7 +32,6 @@ export const TabBar = ({ tabs }: Props) => {
           <chakra.button
             fontSize="lg"
             textTransform="capitalize"
-            outline="0"
             display="flex"
             alignItems="center"
             justifyContent="center"
