@@ -269,36 +269,45 @@ export const SelectAndModifyFeature = (props: {
       {selectedTool === Tools.SELECTION &&
         labelData?.label?.type === LabelType.Polygon &&
         selectedFeature && (
-          <olInteractionModify
-            args={{ features: new Collection([selectedFeature]) }}
-            // @ts-ignore: FIXME
-            onModifyend={async (e: ModifyEvent) => {
-              const feature = e.features.item(0) as Feature<Polygon>;
-              if (feature != null) {
-                const coordinates = feature.getGeometry().getCoordinates();
-                const geometry = { type: "Polygon", coordinates };
-                const { id: labelId } = feature.getProperties();
-                try {
-                  await perform(
-                    updateLabelEffect(
-                      { labelId, geometry, imageId: labelData?.label?.imageId },
-                      { client }
-                    )
-                  );
-                } catch (error) {
-                  toast({
-                    title: "Error updating polygon",
-                    description: error?.message,
-                    isClosable: true,
-                    status: "error",
-                    position: "bottom-right",
-                    duration: 10000,
-                  });
+          <>
+            <olInteractionTranslate
+              args={{ features: new Collection([selectedFeature]) }}
+            />
+            <olInteractionModify
+              args={{ features: new Collection([selectedFeature]) }}
+              // @ts-ignore: FIXME
+              onModifyend={async (e: ModifyEvent) => {
+                const feature = e.features.item(0) as Feature<Polygon>;
+                if (feature != null) {
+                  const coordinates = feature.getGeometry().getCoordinates();
+                  const geometry = { type: "Polygon", coordinates };
+                  const { id: labelId } = feature.getProperties();
+                  try {
+                    await perform(
+                      updateLabelEffect(
+                        {
+                          labelId,
+                          geometry,
+                          imageId: labelData?.label?.imageId,
+                        },
+                        { client }
+                      )
+                    );
+                  } catch (error) {
+                    toast({
+                      title: "Error updating polygon",
+                      description: error?.message,
+                      isClosable: true,
+                      status: "error",
+                      position: "bottom-right",
+                      duration: 10000,
+                    });
+                  }
                 }
-              }
-              return true;
-            }}
-          />
+                return true;
+              }}
+            />
+          </>
         )}
     </>
   );
