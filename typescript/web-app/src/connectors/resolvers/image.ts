@@ -12,6 +12,7 @@ import { projectTypename } from "./project";
 import { probeImage } from "./utils/probe-image";
 
 import { Context } from "./types";
+import { throwIfResolvesToNil } from "./utils/throw-if-resolves-to-nil";
 
 // Queries
 export const labelsResolver = async (
@@ -22,13 +23,11 @@ export const labelsResolver = async (
   return repository.label.list({ imageId: id });
 };
 
-const image = async (_: any, args: QueryImageArgs, { repository }: Context) => {
-  const entity = await repository.image.getById(args?.where?.id);
-  if (entity === undefined) {
-    throw new Error("No image with such id");
-  }
-  return entity;
-};
+const image = async (_: any, args: QueryImageArgs, { repository }: Context) =>
+  throwIfResolvesToNil(
+    "No image with such id",
+    repository.image.getById
+  )(args?.where?.id);
 
 const images = async (
   _: any,
@@ -60,10 +59,10 @@ const createImage = async (
   // Since we don't have any constraint checks with Dexie
   // we need to ensure that the projectId matches some
   // entity before being able to continue.
-  const project = await repository.project.getById(projectId);
-  if (project == null) {
-    throw new Error(`The project id ${projectId} doesn't exist.`);
-  }
+  await throwIfResolvesToNil(
+    `The project id ${projectId} doesn't exist.`,
+    repository.project.getById
+  )(projectId);
 
   const now = args?.data?.createdAt ?? new Date().toISOString();
   const imageId = id ?? uuidv4();

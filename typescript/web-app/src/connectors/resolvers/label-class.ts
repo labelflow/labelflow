@@ -11,6 +11,7 @@ import { DbLabelClass } from "../database";
 import { projectTypename } from "./project";
 
 import { Context } from "./types";
+import { throwIfResolvesToNil } from "./utils/throw-if-resolves-to-nil";
 
 // Queries
 const labels = async (
@@ -25,15 +26,11 @@ const labelClass = async (
   _: any,
   args: QueryLabelClassArgs,
   { repository }: Context
-) => {
-  const result = await repository.labelClass.getById(args?.where?.id);
-
-  if (result === undefined) {
-    throw new Error("No labelClass with such id");
-  }
-
-  return result;
-};
+) =>
+  throwIfResolvesToNil(
+    "No labelClass with such id",
+    repository.labelClass.getById
+  )(args?.where?.id);
 
 const labelClasses = async (
   _: any,
@@ -52,10 +49,10 @@ const createLabelClass = async (
   // Since we don't have any constraint checks with Dexie
   // we need to ensure that the projectId matches some
   // entity before being able to continue.
-  const project = await repository.project.getById(projectId);
-  if (project == null) {
-    throw new Error(`The project id ${projectId} doesn't exist.`);
-  }
+  await throwIfResolvesToNil(
+    `The project id ${projectId} doesn't exist.`,
+    repository.project.getById
+  )(projectId);
 
   const labelClassId = id ?? uuidv4();
   const now = new Date();
@@ -70,15 +67,10 @@ const createLabelClass = async (
   };
   await repository.labelClass.add(newLabelClassEntity);
 
-  const fetchedNewLabelClassEntity = await repository.labelClass.getById(
-    newLabelClassEntity.id
-  );
-
-  if (fetchedNewLabelClassEntity === undefined) {
-    throw new Error("No labelClass with such id");
-  }
-
-  return fetchedNewLabelClassEntity;
+  return throwIfResolvesToNil(
+    "No labelClass with such id",
+    repository.labelClass.getById
+  )(newLabelClassEntity.id);
 };
 
 const deleteLabelClass = async (
@@ -88,11 +80,10 @@ const deleteLabelClass = async (
 ) => {
   const labelClassId = args.where.id;
 
-  const labelClassToDelete = await repository.labelClass.getById(labelClassId);
-
-  if (!labelClassToDelete) {
-    throw new Error("No labelClass with such id");
-  }
+  const labelClassToDelete = await throwIfResolvesToNil(
+    "No labelClass with such id",
+    repository.labelClass.getById
+  )(labelClassId);
 
   await repository.labelClass.delete(labelClassId);
 

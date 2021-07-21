@@ -13,6 +13,7 @@ import { db, DbProject } from "../database";
 import { Repository } from "../repository";
 
 import { Context } from "./types";
+import { throwIfResolvesToNil } from "./utils/throw-if-resolves-to-nil";
 
 export const projectTypename = "Project";
 
@@ -20,11 +21,10 @@ const getProjectById = async (
   id: string,
   repository: Repository
 ): Promise<DbProject> => {
-  const project = await repository.project.getById(id);
-
-  if (project === undefined) {
-    throw new Error("No project with such id");
-  }
+  const project = await throwIfResolvesToNil(
+    "No project with such id",
+    repository.project.getById
+  )(id);
 
   return { ...project, __typename: projectTypename };
 };
@@ -33,11 +33,10 @@ const getProjectByName = async (
   name: string,
   repository: Repository
 ): Promise<DbProject> => {
-  const project = await repository.project.getByName(name);
-
-  if (project === undefined) {
-    throw new Error(`No project with name "${name}"`);
-  }
+  const project = await throwIfResolvesToNil(
+    `No project with name "${name}"`,
+    repository.project.getByName
+  )(name);
 
   return { ...project, __typename: projectTypename };
 };

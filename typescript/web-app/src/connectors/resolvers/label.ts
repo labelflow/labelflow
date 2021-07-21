@@ -17,19 +17,13 @@ import { projectTypename } from "./project";
 
 import { Context } from "./types";
 import { Repository } from "../repository";
+import { throwIfResolvesToNil } from "./utils/throw-if-resolves-to-nil";
 
 const getLabelById = async (
   id: string,
   repository: Repository
-): Promise<DbLabel> => {
-  const entity = await repository.label.getById(id);
-
-  if (entity === undefined) {
-    throw new Error("No label with such id");
-  }
-
-  return entity;
-};
+): Promise<DbLabel> =>
+  throwIfResolvesToNil("No label with such id", repository.label.getById)(id);
 
 // Queries
 const labelClass = async (
@@ -89,15 +83,16 @@ const createLabel = async (
   // Since we don't have any constraint checks with Dexie
   // We need to ensure that the imageId and the labelClassId
   // matches some entity before being able to continue.
-  const image = await repository.image.getById(imageId);
-  if (image == null) {
-    throw new Error(`The image id ${imageId} doesn't exist.`);
-  }
+  const image = await throwIfResolvesToNil(
+    `The image id ${imageId} doesn't exist.`,
+    repository.image.getById
+  )(imageId);
 
   if (labelClassId != null) {
-    if ((await repository.labelClass.getById(labelClassId)) == null) {
-      throw new Error(`The labelClass id ${labelClassId} doesn't exist.`);
-    }
+    await throwIfResolvesToNil(
+      `The labelClass id ${labelClassId} doesn't exist.`,
+      repository.labelClass.getById
+    )(labelClassId);
   }
 
   const labelId = id ?? uuidv4();
@@ -125,11 +120,10 @@ const createLabel = async (
   };
 
   await repository.label.add(newLabelEntity);
-  const result = await repository.label.getById(labelId);
-  if (!result) {
-    throw new Error("Could not create the label entity");
-  }
-  return result;
+  return throwIfResolvesToNil(
+    "Could not create the label entity",
+    await repository.label.getById
+  )(labelId);
 };
 
 const deleteLabel = async (
@@ -139,11 +133,10 @@ const deleteLabel = async (
 ) => {
   const labelId = args.where.id;
 
-  const labelToDelete = await repository.label.getById(labelId);
-
-  if (!labelToDelete) {
-    throw new Error("No label with such id");
-  }
+  const labelToDelete = await throwIfResolvesToNil(
+    "No label with such id",
+    repository.label.getById
+  )(labelId);
 
   await repository.label.delete(labelId);
 
@@ -158,14 +151,12 @@ const updateLabel = async (
   const labelId = args.where.id;
 
   if ("labelClassId" in args.data && args.data.labelClassId != null) {
-    const labelClassToConnect = await repository.labelClass.getById(
-      args.data.labelClassId
-    );
-
-    if (!labelClassToConnect) {
-      throw new Error("No label class with such id");
-    }
+    await throwIfResolvesToNil(
+      "No label class with such id",
+      repository.labelClass.getById
+    )(args.data.labelClassId);
   }
+
   if (!args?.data?.geometry) {
     await repository.label.update(labelId, args.data);
 
@@ -173,10 +164,10 @@ const updateLabel = async (
   }
 
   const { imageId } = await getLabelById(labelId, repository);
-  const image = await repository.image.getById(imageId);
-  if (image == null) {
-    throw new Error(`The image id ${imageId} doesn't exist.`);
-  }
+  const image = await throwIfResolvesToNil(
+    `The image id ${imageId} doesn't exist.`,
+    repository.image.getById
+  )(imageId);
 
   const {
     geometry: clippedGeometry,
