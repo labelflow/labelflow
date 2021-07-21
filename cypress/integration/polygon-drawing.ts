@@ -52,21 +52,6 @@ async function createImage(url: string, projectId: string) {
   return image;
 }
 
-const createLabel = (data: LabelCreateInput) => {
-  return client.mutate({
-    mutation: gql`
-      mutation createLabel($data: LabelCreateInput!) {
-        createLabel(data: $data) {
-          id
-        }
-      }
-    `,
-    variables: {
-      data,
-    },
-  });
-};
-
 const createLabelClass = async (
   name: String,
   color = "#ffffff",

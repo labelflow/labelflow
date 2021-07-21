@@ -29,14 +29,14 @@ import { theme } from "../../../theme";
 
 const empty: any[] = [];
 
-/**
+/*
  * Padding around the openlayers view
  * [top, right, bottom, left] in pixels
  * See https://openlayers.org/en/latest/apidoc/module-ol_View-View.html#padding
  */
 const viewPadding = [72, 72, 72, 72];
 
-/**
+/*
  * Standard projection, the same for all images, with arbitrary extent
  */
 const standardProjection = new Projection({
@@ -44,7 +44,7 @@ const standardProjection = new Projection({
   units: "pixels",
 });
 
-/**
+/*
  * Memoize openlayers parameters that we pass to the open layers components
  */
 const getMemoizedProperties = memoize(
@@ -87,7 +87,6 @@ export const OpenlayersMap = () => {
   const mapRef = useRef<OlMap>(null);
   const viewRef = useRef<OlView | null>(null);
   const sourceVectorBoxesRef = useRef<OlSourceVector | null>(null);
-  const sourceVectorPolygonsRef = useRef<OlSourceVector | null>(null);
   const router = useRouter();
   const { imageId } = router?.query;
   const isContextMenuOpen = useLabellingStore(
