@@ -249,7 +249,7 @@ export const OpenlayersMap = () => {
           </ApolloProvider>
         </RouterContext.Provider>
       </Map>
-      {selectedTool === Tools.BOX &&
+      {[Tools.BOX, Tools.IOG].includes(selectedTool) &&
         boxDrawingToolState !== DrawingToolState.DRAWING &&
         !isContextMenuOpen && <CursorGuides map={mapRef.current} />}
       {/* This div is needed to prevent a weird error that seems related to the EditLabelClass component */}

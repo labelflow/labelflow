@@ -5,7 +5,7 @@ import { createBox, DrawEvent } from "ol/interaction/Draw";
 import GeoJSON from "ol/format/GeoJSON";
 import { Fill, Stroke, Style } from "ol/style";
 import GeometryType from "ol/geom/GeometryType";
-import { useApolloClient, useQuery, gql } from "@apollo/client";
+import { useApolloClient, useQuery, gql, useMutation } from "@apollo/client";
 
 import { useToast } from "@chakra-ui/react";
 
@@ -31,6 +31,37 @@ const labelClassQuery = gql`
   }
 `;
 
+const imageQuery = gql`
+  query getImage($id: ID!) {
+    image(where: { id: $id }) {
+      id
+      url
+    }
+  }
+`;
+
+const iogInferenceMutation = gql`
+  mutation iogInference(
+    $imageUrl: String!
+    $x: Float!
+    $y: Float!
+    $width: Float!
+    $height: Float!
+  ) {
+    iogInference(
+      data: {
+        imageUrl: $imageUrl
+        x: $x
+        y: $y
+        width: $width
+        height: $height
+      }
+    ) {
+      polygons
+    }
+  }
+`;
+
 const geometryFunction = createBox();
 
 export const DrawBoundingBoxAndPolygonInteraction = () => {
@@ -52,6 +83,10 @@ export const DrawBoundingBoxAndPolygonInteraction = () => {
   const { data: dataLabelClass } = useQuery(labelClassQuery, {
     variables: { id: selectedLabelClassId },
     skip: selectedLabelClassId == null,
+  });
+  const { data: dataImage } = useQuery(imageQuery, {
+    variables: { id: imageId },
+    skip: imageId == null,
   });
   const { perform } = useUndoStore();
 
@@ -102,6 +137,100 @@ export const DrawBoundingBoxAndPolygonInteraction = () => {
     selectedTool === Tools.POLYGON
       ? "Error creating polygon"
       : "Error creating bounding box";
+
+  const createLabelFromDrawEvent = async (drawEvent: DrawEvent) => {
+    const geometry = new GeoJSON().writeGeometryObject(
+      drawEvent.feature.getGeometry()
+    ) as GeoJSON.Polygon;
+    const createLabelPromise = perform(
+      createLabelEffect(
+        {
+          imageId,
+          selectedLabelClassId,
+          geometry,
+          labelType:
+            selectedTool === Tools.POLYGON ? LabelType.Polygon : LabelType.Box,
+        },
+        {
+          setSelectedLabelId,
+          client,
+        }
+      )
+    );
+    setDrawingToolState(DrawingToolState.IDLE);
+    try {
+      await createLabelPromise;
+    } catch (error) {
+      toast({
+        title: errorMessage,
+        description: error?.message,
+        isClosable: true,
+        status: "error",
+        position: "bottom-right",
+        duration: 10000,
+      });
+    }
+  };
+
+  const performIOGFromDrawEvent = async (drawEvent: DrawEvent) => {
+    const openLayersGeometry = drawEvent.feature.getGeometry();
+    const geometry = new GeoJSON().writeGeometryObject(
+      openLayersGeometry
+    ) as GeoJSON.Polygon;
+    const labelIdPromise = createLabelEffect(
+      {
+        imageId,
+        selectedLabelClassId,
+        geometry,
+        labelType:
+          selectedTool === Tools.POLYGON ? LabelType.Polygon : LabelType.Box,
+      },
+      {
+        setSelectedLabelId,
+        client,
+      }
+    ).do();
+    const inferencePromise = (async () => {
+      const dataUrl = await (async function () {
+        const blob = await fetch(dataImage?.image?.url).then((r) => r.blob());
+        return new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result);
+          reader.readAsDataURL(blob);
+        });
+      })();
+      const [x, y, xMax, yMax] = openLayersGeometry.getExtent();
+      return client.mutate({
+        mutation: iogInferenceMutation,
+        variables: {
+          x,
+          y,
+          height: yMax - y,
+          width: xMax - x,
+          imageUrl: dataUrl,
+        },
+      });
+    })();
+
+    setDrawingToolState(DrawingToolState.IDLE);
+    try {
+      const labelId = await labelIdPromise;
+      const inferenceResult = await inferencePromise;
+      // console.log(`labelId = ${labelId}`);
+      // console.log(
+      //   `inferenceResult = ${JSON.stringify(inferenceResult, null, 1)}`
+      // );
+    } catch (error) {
+      toast({
+        title: errorMessage,
+        description: error?.message,
+        isClosable: true,
+        status: "error",
+        position: "bottom-right",
+        duration: 10000,
+      });
+    }
+  };
   return (
     <olInteractionDraw
       ref={drawRef}
@@ -119,41 +248,11 @@ export const DrawBoundingBoxAndPolygonInteraction = () => {
         setDrawingToolState(DrawingToolState.DRAWING);
         return true;
       }}
-      onDrawend={async (drawEvent: DrawEvent) => {
-        const geometry = new GeoJSON().writeGeometryObject(
-          drawEvent.feature.getGeometry()
-        ) as GeoJSON.Polygon;
-        const createLabelPromise = perform(
-          createLabelEffect(
-            {
-              imageId,
-              selectedLabelClassId,
-              geometry,
-              labelType:
-                selectedTool === Tools.POLYGON
-                  ? LabelType.Polygon
-                  : LabelType.Box,
-            },
-            {
-              setSelectedLabelId,
-              client,
-            }
-          )
-        );
-        setDrawingToolState(DrawingToolState.IDLE);
-        try {
-          await createLabelPromise;
-        } catch (error) {
-          toast({
-            title: errorMessage,
-            description: error?.message,
-            isClosable: true,
-            status: "error",
-            position: "bottom-right",
-            duration: 10000,
-          });
-        }
-      }}
+      onDrawend={
+        selectedTool === Tools.IOG
+          ? performIOGFromDrawEvent
+          : createLabelFromDrawEvent
+      }
     />
   );
 };
