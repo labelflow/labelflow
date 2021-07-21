@@ -19,12 +19,11 @@ export const TabBar = ({ tabs }: Props) => {
   return (
     <Flex
       alignItems="center"
-      bg="gray.100"
       padding={0}
-      h="64px"
+      height="64px"
       flex={0}
-      borderBottom="2px solid"
-      borderColor="gray.200"
+      borderTop="1px solid"
+      borderColor="gray.100"
       aria-label="tab bar"
     >
       {tabs.map(({ name, url, isActive }) => (
@@ -39,13 +38,10 @@ export const TabBar = ({ tabs }: Props) => {
             paddingTop="4"
             paddingInlineStart="4"
             paddingInlineEnd="4"
-            mt="0"
-            mr="0"
-            ml="0"
-            mb="-2px"
+            margin="0"
             borderBottom="2px solid"
             color={isActive ? "brand.500" : "inherit"}
-            borderColor={isActive ? "currentColor" : "inherit"}
+            borderColor={isActive ? "currentColor" : "transparent"}
             {...(isActive ? { "aria-current": "location" } : {})}
           >
             {name}
