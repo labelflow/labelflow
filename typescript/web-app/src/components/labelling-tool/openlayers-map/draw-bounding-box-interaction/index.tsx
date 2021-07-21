@@ -2,10 +2,11 @@ import { useMemo, useRef } from "react";
 import { useRouter } from "next/router";
 import { Draw as OlDraw } from "ol/interaction";
 import { createBox, DrawEvent } from "ol/interaction/Draw";
+import GeoJSON from "ol/format/GeoJSON";
 import { Fill, Stroke, Style } from "ol/style";
 import GeometryType from "ol/geom/GeometryType";
-import { useApolloClient, useQuery } from "@apollo/client";
-import gql from "graphql-tag";
+import { useApolloClient, useQuery, gql } from "@apollo/client";
+
 import { useToast } from "@chakra-ui/react";
 
 import { useHotkeys } from "react-hotkeys-hook";
@@ -34,7 +35,7 @@ const geometryFunction = createBox();
 export const DrawBoundingBoxInteraction = () => {
   const drawRef = useRef<OlDraw>(null);
   const client = useApolloClient();
-  const imageId = useRouter().query?.id;
+  const { imageId } = useRouter()?.query;
 
   const selectedTool = useLabellingStore((state) => state.selectedTool);
 
@@ -107,18 +108,15 @@ export const DrawBoundingBoxInteraction = () => {
         return true;
       }}
       onDrawend={async (drawEvent: DrawEvent) => {
-        const [x, y, destX, destY] = drawEvent.feature
-          .getGeometry()
-          .getExtent();
+        const geometry = new GeoJSON().writeGeometryObject(
+          drawEvent.feature.getGeometry()
+        ) as GeoJSON.Polygon;
         const createLabelPromise = perform(
           createLabelEffect(
             {
               imageId,
-              x,
-              y,
-              width: destX - x,
-              height: destY - y,
               selectedLabelClassId,
+              geometry,
             },
             {
               setSelectedLabelId,

@@ -3,12 +3,15 @@
 // @ts-ignore Needs to be done before ol is imported
 global.URL.createObjectURL = jest.fn(() => "mockedUrl");
 
-import { ApolloProvider } from "@apollo/client";
+import { ApolloProvider, gql } from "@apollo/client";
 import { Map } from "@labelflow/react-openlayers-fiber";
 import { render, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import gql from "graphql-tag";
+
 import { Map as OlMap } from "ol";
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { mocked } from "ts-jest/utils";
+import probe from "probe-image-size";
 
 import VectorLayer from "ol/layer/Vector";
 import { mockNextRouter } from "../../../../utils/router-mocks";
@@ -23,11 +26,46 @@ import { useLabellingStore } from "../../../../connectors/labelling-state";
 import { setupTestsWithLocalDatabase } from "../../../../utils/setup-local-db-tests";
 
 setupTestsWithLocalDatabase();
+jest.mock("probe-image-size");
+const mockedProbeSync = mocked(probe.sync);
 
 const imageWidth = 500;
 const imageHeight = 900;
 
+const testProjectId = "test project id";
+
+const createProject = async (
+  name: string,
+  projectId: string = testProjectId
+) => {
+  return client.mutate({
+    mutation: gql`
+      mutation createProject($projectId: String, $name: String!) {
+        createProject(data: { id: $projectId, name: $name }) {
+          id
+          name
+        }
+      }
+    `,
+    variables: {
+      name,
+      projectId,
+    },
+    fetchPolicy: "no-cache",
+  });
+};
+
 const createImage = async (name: String) => {
+  mockedProbeSync.mockReturnValue({
+    width: 42,
+    height: 36,
+    mime: "image/jpeg",
+    length: 1000,
+    hUnits: "px",
+    wUnits: "px",
+    url: "https://example.com/image.jpeg",
+    type: "jpg",
+  });
   const mutationResult = await client.mutate({
     mutation: gql`
       mutation createImage(
@@ -35,9 +73,16 @@ const createImage = async (name: String) => {
         $name: String!
         $width: Int
         $height: Int
+        $projectId: ID!
       ) {
         createImage(
-          data: { name: $name, file: $file, width: $width, height: $height }
+          data: {
+            name: $name
+            file: $file
+            width: $width
+            height: $height
+            projectId: $projectId
+          }
         ) {
           id
         }
@@ -48,6 +93,7 @@ const createImage = async (name: String) => {
       name,
       width: imageWidth,
       height: imageHeight,
+      projectId: testProjectId,
     },
   });
 
@@ -60,7 +106,7 @@ const createImage = async (name: String) => {
   return id;
 };
 
-const createLabel = async (data: LabelCreateInput) => {
+const createLabel = async (data: Partial<LabelCreateInput>) => {
   const mutationResult = await client.mutate({
     mutation: gql`
       mutation createLabel($data: LabelCreateInput!) {
@@ -70,7 +116,21 @@ const createLabel = async (data: LabelCreateInput) => {
       }
     `,
     variables: {
-      data,
+      data: {
+        ...data,
+        geometry: {
+          type: "Polygon",
+          coordinates: [
+            [
+              [0, 0],
+              [1, 0],
+              [1, 1],
+              [0, 1],
+              [0, 0],
+            ],
+          ],
+        },
+      },
     },
   });
 
@@ -86,10 +146,11 @@ const createLabel = async (data: LabelCreateInput) => {
 let imageId: string;
 
 beforeEach(async () => {
+  await createProject("Test project");
   imageId = await createImage("myImage");
 
   (useRouter as jest.Mock).mockImplementation(() => ({
-    query: { id: imageId },
+    query: { imageId, projectId: testProjectId },
   }));
 });
 
@@ -97,10 +158,6 @@ it("displays a single label", async () => {
   const mapRef: { current: OlMap | null } = { current: null };
 
   await createLabel({
-    x: 3.14,
-    y: 42.0,
-    height: 768,
-    width: 362,
     imageId,
   });
 
@@ -128,18 +185,10 @@ it("displays a single label", async () => {
 it("displays created labels", async () => {
   const mapRef: { current: OlMap | null } = { current: null };
   await createLabel({
-    x: 3.14,
-    y: 42.0,
-    height: 768,
-    width: 362,
     imageId,
   });
 
   await createLabel({
-    x: 6.28,
-    y: 84.0,
-    height: 768,
-    width: 362,
     imageId,
   });
 
@@ -167,10 +216,6 @@ it("displays created labels", async () => {
 it("should change style of selected label", async () => {
   const mapRef: { current: OlMap | null } = { current: null };
   const labelId = await createLabel({
-    x: 3.14,
-    y: 42.0,
-    height: 768,
-    width: 362,
     imageId,
   });
 
@@ -193,19 +238,14 @@ it("should change style of selected label", async () => {
       .getSource()
       .getFeatures();
 
-    /* This make this test dependent of the styling.
-     * We could add a selected property on the feature but it is not needed for the moment. */
-    expect(feature.getStyle()).toMatchObject({ zIndex_: 2 });
+    /* When the label is selected it contains two styles, one for the label, another for the vertices style */
+    expect(feature.getStyle()).toHaveLength(2);
   });
 });
 
 it("should delete selected label on delete key pressed", async () => {
   const mapRef: { current: OlMap | null } = { current: null };
   const labelId = await createLabel({
-    x: 3.14,
-    y: 42.0,
-    height: 768,
-    width: 362,
     imageId,
   });
 
@@ -249,10 +289,6 @@ it("should delete selected label on delete key pressed", async () => {
 it("should not delete a label when none was selected", async () => {
   const mapRef: { current: OlMap | null } = { current: null };
   await createLabel({
-    x: 3.14,
-    y: 42.0,
-    height: 768,
-    width: 362,
     imageId,
   });
 

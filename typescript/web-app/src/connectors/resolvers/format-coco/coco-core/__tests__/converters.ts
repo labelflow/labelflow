@@ -14,6 +14,7 @@ import { CocoCategory, CocoAnnotation, CocoImage } from "../types";
 
 describe("Coco converters", () => {
   const date = new Date("1995-12-17T03:24:00").toISOString();
+  const testProjectId = "test-project-id";
 
   const createLabelClass = (name: string): DbLabelClass => ({
     id: `id-${name}`,
@@ -21,6 +22,7 @@ describe("Coco converters", () => {
     updatedAt: date,
     name,
     color: "#000000",
+    projectId: testProjectId,
   });
 
   const createLabel = (
@@ -37,6 +39,10 @@ describe("Coco converters", () => {
     width: 3,
     height: 4,
     labelClassId,
+    geometry: {
+      type: "Polygon",
+      coordinates: [],
+    },
   });
 
   const createImage = (name: string, height: number, width: number): Image => ({
@@ -46,10 +52,12 @@ describe("Coco converters", () => {
     updatedAt: date,
     height,
     width,
-    url: `http://${name}`,
+    url: "",
+    externalUrl: `https://${name}`,
     path: "/path",
     mimetype: "file/ext",
     labels: [],
+    projectId: testProjectId,
   });
 
   test("Should convert a label class to a coco category", () => {
@@ -175,7 +183,7 @@ describe("Coco converters", () => {
       date_captured: date,
       height: 1,
       width: 2,
-      coco_url: "http://an-image",
+      coco_url: "https://an-image",
       file_name: "an-image.ext",
       flickr_url: "",
       license: 0,

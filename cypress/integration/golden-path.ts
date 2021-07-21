@@ -1,19 +1,17 @@
-import { db } from "../../typescript/web-app/src/connectors/database";
 import imageSampleCollection from "../../typescript/web-app/src/utils/image-sample-collection";
 
 describe("Golden path", () => {
-  beforeEach(() => {
-    return Promise.all([
-      db.image.clear(),
-      db.label.clear(),
-      db.labelClass.clear(),
-      db.file.clear(),
-    ]);
-  });
-
   it("Should execute the golden path without errors", () => {
     // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
-    cy.visit("/images?modal-welcome=closed&modal-update-service-worker=update");
+    cy.visit(
+      "/projects?modal-welcome=closed&modal-update-service-worker=update"
+    );
+
+    cy.contains("Create new project...").click();
+    cy.get("input").type("cypress test project");
+    cy.contains("Start Labelling").click();
+
+    cy.contains("cypress test project").click();
 
     cy.contains("You don't have any images.").should("be.visible");
 

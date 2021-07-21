@@ -1,5 +1,4 @@
-import { ApolloClient } from "@apollo/client";
-import gql from "graphql-tag";
+import { gql, ApolloClient } from "@apollo/client";
 
 import { useLabellingStore } from "../../labelling-state";
 import {
@@ -8,10 +7,11 @@ import {
 } from "../../../utils/class-color-generator";
 import { Effect } from "..";
 import { LabelClass } from "../../../graphql-types.generated";
+import { getProjectsQuery } from "../../../pages/projects";
 
-const labelClassesQuery = gql`
-  query getLabelClasses {
-    labelClasses {
+const labelClassesOfProjectQuery = gql`
+  query getLabelClassesOfProject($projectId: ID!) {
+    labelClasses(where: { projectId: $projectId }) {
       id
       name
       color
@@ -39,10 +39,12 @@ export const createCreateLabelClassEffect = (
   {
     name,
     color,
+    projectId,
     selectedLabelClassIdPrevious,
   }: {
     name: string;
     color: string;
+    projectId: string;
     selectedLabelClassIdPrevious: string | null;
   },
   {
@@ -58,8 +60,11 @@ export const createCreateLabelClassEffect = (
       },
     } = await client.mutate({
       mutation: createLabelClassQuery,
-      variables: { data: { name, color } },
-      refetchQueries: [{ query: labelClassesQuery }],
+      variables: { data: { name, color, projectId } },
+      refetchQueries: [
+        { query: labelClassesOfProjectQuery, variables: { projectId } },
+        { query: getProjectsQuery },
+      ],
     });
 
     useLabellingStore.setState({ selectedLabelClassId: labelClassId });
@@ -72,7 +77,10 @@ export const createCreateLabelClassEffect = (
       variables: {
         where: { id: labelClassId },
       },
-      refetchQueries: [{ query: labelClassesQuery }],
+      refetchQueries: [
+        { query: labelClassesOfProjectQuery, variables: { projectId } },
+        { query: getProjectsQuery },
+      ],
     });
 
     useLabellingStore.setState({
@@ -84,8 +92,11 @@ export const createCreateLabelClassEffect = (
   redo: async (labelClassId: string) => {
     await client.mutate({
       mutation: createLabelClassQuery,
-      variables: { data: { name, color, id: labelClassId } },
-      refetchQueries: [{ query: labelClassesQuery }],
+      variables: { data: { name, color, id: labelClassId, projectId } },
+      refetchQueries: [
+        { query: labelClassesOfProjectQuery, variables: { projectId } },
+        { query: getProjectsQuery },
+      ],
     });
 
     useLabellingStore.setState({ selectedLabelClassId: labelClassId });
@@ -97,10 +108,12 @@ export const createCreateLabelClassEffect = (
 export const createNewLabelClassCurry =
   ({
     labelClasses,
+    projectId,
     perform,
     client,
   }: {
     labelClasses: LabelClass[];
+    projectId: string;
     perform: any;
     client: ApolloClient<object>;
   }) =>
@@ -111,7 +124,7 @@ export const createNewLabelClassCurry =
         : getNextClassColor(labelClasses[labelClasses.length - 1].color);
     perform(
       createCreateLabelClassEffect(
-        { name, color: newClassColor, selectedLabelClassIdPrevious },
+        { name, color: newClassColor, selectedLabelClassIdPrevious, projectId },
         { client }
       )
     );

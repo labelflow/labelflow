@@ -1,11 +1,19 @@
+/* eslint-disable import/first */
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom/extend-expect";
-import { ApolloProvider } from "@apollo/client";
+import { ApolloProvider, gql } from "@apollo/client";
 import { ChakraProvider } from "@chakra-ui/react";
 import { PropsWithChildren } from "react";
-import gql from "graphql-tag";
+
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { mocked } from "ts-jest/utils";
+import probe from "probe-image-size";
 import { incrementMockedDate } from "@labelflow/dev-utils/mockdate";
+import { mockNextRouter } from "../../../../utils/router-mocks";
+
+mockNextRouter({ query: { projectId: "mocked-project-id" } });
+
 import { ExportModal } from "..";
 import { theme } from "../../../../theme";
 import { client } from "../../../../connectors/apollo-client-schema";
@@ -13,6 +21,9 @@ import { setupTestsWithLocalDatabase } from "../../../../utils/setup-local-db-te
 import { LabelCreateInput } from "../../../../graphql-types.generated";
 
 setupTestsWithLocalDatabase();
+
+jest.mock("probe-image-size");
+const mockedProbeSync = mocked(probe.sync);
 
 const wrapper = ({ children }: PropsWithChildren<{}>) => (
   <ApolloProvider client={client}>
@@ -22,11 +33,34 @@ const wrapper = ({ children }: PropsWithChildren<{}>) => (
   </ApolloProvider>
 );
 
+const createProject = async (
+  projectId = "mocked-project-id",
+  name = "test project"
+) =>
+  client.mutate({
+    mutation: gql`
+      mutation createProject($name: String!, $projectId: ID) {
+        createProject(data: { name: $name, id: $projectId }) {
+          id
+        }
+      }
+    `,
+    variables: { projectId, name },
+  });
+
 const labelData = {
-  x: 3.14,
-  y: 42.0,
-  height: 768,
-  width: 362,
+  geometry: {
+    type: "Polygon",
+    coordinates: [
+      [
+        [0, 0],
+        [1, 0],
+        [1, 1],
+        [0, 1],
+        [0, 0],
+      ],
+    ],
+  },
 };
 
 const createLabel = (data: LabelCreateInput) => {
@@ -55,9 +89,16 @@ const createImage = async (name: String) => {
         $name: String!
         $width: Int
         $height: Int
+        $projectId: ID!
       ) {
         createImage(
-          data: { name: $name, file: $file, width: $width, height: $height }
+          data: {
+            name: $name
+            file: $file
+            width: $width
+            height: $height
+            projectId: $projectId
+          }
         ) {
           id
         }
@@ -68,6 +109,7 @@ const createImage = async (name: String) => {
       name,
       width: imageWidth,
       height: imageHeight,
+      projectId: "mocked-project-id",
     },
   });
 
@@ -81,6 +123,7 @@ const createImage = async (name: String) => {
 };
 
 test("File should be downloaded when user clicks on Export to COCO", async () => {
+  await createProject();
   render(<ExportModal isOpen />, { wrapper });
   const anchorMocked = {
     href: "",
@@ -100,16 +143,26 @@ test("File should be downloaded when user clicks on Export to COCO", async () =>
 });
 
 test("Export Modal should display the number of labels", async () => {
+  await createProject();
+  await createProject("second-project-id", "second-test-project");
+  mockedProbeSync.mockReturnValue({
+    width: 42,
+    height: 36,
+    mime: "image/jpeg",
+    length: 1000,
+    hUnits: "px",
+    wUnits: "px",
+    url: "https://example.com/image.jpeg",
+    type: "jpg",
+  });
   const imageId = await createImage("an image");
   await createLabel({
     ...labelData,
-    x: 1,
     imageId,
   });
   incrementMockedDate(1);
   await createLabel({
     ...labelData,
-    x: 2,
     imageId,
   });
 

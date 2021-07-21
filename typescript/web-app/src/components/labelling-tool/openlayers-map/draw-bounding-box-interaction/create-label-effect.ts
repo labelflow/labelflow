@@ -1,40 +1,44 @@
-import { ApolloCache, ApolloClient, Reference } from "@apollo/client";
-import gql from "graphql-tag";
+import { ApolloCache, ApolloClient, Reference, gql } from "@apollo/client";
+import GeoJSON from "ol/format/GeoJSON";
+import { getBoundedGeometryFromImage } from "../../../../connectors/resolvers/label";
 
 import { Effect } from "../../../../connectors/undo-store";
+import { getProjectsQuery } from "../../../../pages/projects";
+import { GeometryInput } from "../../../../graphql-types.generated";
 
 type CreateLabelInputs = {
   imageId: string;
   id?: string;
-  x: number;
-  y: number;
-  width: number;
-  height: number;
   labelClassId: string | null | undefined;
+  geometry: GeometryInput;
 };
 
 const createLabelMutation = gql`
   mutation createLabel(
     $id: ID
     $imageId: ID!
-    $x: Float!
-    $y: Float!
-    $width: Float!
-    $height: Float!
     $labelClassId: ID
+    $geometry: GeometryInput!
   ) {
     createLabel(
       data: {
         id: $id
         imageId: $imageId
-        x: $x
-        y: $y
-        width: $width
-        height: $height
         labelClassId: $labelClassId
+        geometry: $geometry
       }
     ) {
       id
+    }
+  }
+`;
+
+const imageDimensionsQuery = gql`
+  query imageDimensions($id: ID!) {
+    image(where: { id: $id }) {
+      id
+      width
+      height
     }
   }
 `;
@@ -57,6 +61,10 @@ const createdLabelFragment = gql`
     labelClass {
       id
     }
+    geometry {
+      type
+      coordinates
+    }
   }
 `;
 
@@ -67,45 +75,52 @@ export function addLabelToImageInCache(
       __typename: string;
     };
   }>,
-  {
-    imageId,
-    id,
-    x,
-    y,
-    width,
-    height,
-    labelClassId,
-  }: CreateLabelInputs & { id: string }
+  { imageId, id, labelClassId, geometry }: CreateLabelInputs & { id: string }
 ) {
-  const createdLabel = {
-    id,
-    x,
-    y,
-    width,
-    height,
-    labelClass:
-      labelClassId != null
-        ? {
-            id: labelClassId,
-            __typename: "LabelClass",
-          }
-        : null,
-    __typename: "Label",
-  };
-
-  cache.modify({
-    id: cache.identify({ id: imageId, __typename: "Image" }),
-    fields: {
-      labels: (existingLabelsRefs = []) => {
-        const newLabelRef = cache.writeFragment({
-          data: createdLabel,
-          fragment: createdLabelFragment,
-        });
-
-        return [...existingLabelsRefs, newLabelRef];
-      },
-    },
+  const imageDimensionsResult = cache.readQuery<{
+    image: { width: number; height: number };
+  }>({
+    query: imageDimensionsQuery,
+    variables: { id: imageId },
   });
+  if (imageDimensionsResult != null) {
+    const { image } = imageDimensionsResult;
+    const boundedGeometry = getBoundedGeometryFromImage(
+      { width: image.width, height: image.height },
+      geometry
+    );
+    const createdLabel = {
+      id,
+      labelClass:
+        labelClassId != null
+          ? {
+              id: labelClassId,
+              __typename: "LabelClass",
+            }
+          : null,
+      geometry: boundedGeometry.geometry,
+      x: boundedGeometry.x,
+      y: boundedGeometry.y,
+      width: boundedGeometry.width,
+      height: boundedGeometry.height,
+      __typename: "Label",
+    };
+    cache.modify({
+      id: cache.identify({ id: imageId, __typename: "Image" }),
+      fields: {
+        labels: (existingLabelsRefs = []) => {
+          const newLabelRef = cache.writeFragment({
+            data: createdLabel,
+            fragment: createdLabelFragment,
+          });
+
+          return [...existingLabelsRefs, newLabelRef];
+        },
+      },
+    });
+  } else {
+    throw new Error(`The image id ${imageId} doesn't exist.`);
+  }
 }
 
 export function removeLabelFromImageCache(
@@ -127,18 +142,12 @@ export function removeLabelFromImageCache(
 export const createLabelEffect = (
   {
     imageId,
-    x,
-    y,
-    width,
-    height,
     selectedLabelClassId,
+    geometry,
   }: {
     imageId: string;
-    x: number;
-    y: number;
-    width: number;
-    height: number;
     selectedLabelClassId: string | null;
+    geometry: GeoJSON.Polygon;
   },
   {
     setSelectedLabelId,
@@ -150,18 +159,15 @@ export const createLabelEffect = (
 ): Effect => ({
   do: async () => {
     const createLabelInputs = {
-      x,
-      y,
-      width,
-      height,
       imageId,
       labelClassId: selectedLabelClassId,
+      geometry,
     };
 
     const { data } = await client.mutate({
       mutation: createLabelMutation,
       variables: createLabelInputs,
-      refetchQueries: ["countLabels"],
+      refetchQueries: ["countLabels", { query: getProjectsQuery }],
       optimisticResponse: {
         createLabel: { id: `temp-${Date.now()}`, __typename: "Label" },
       },
@@ -186,7 +192,7 @@ export const createLabelEffect = (
     await client.mutate({
       mutation: deleteLabelMutation,
       variables: { id },
-      refetchQueries: ["countLabels"],
+      refetchQueries: ["countLabels", { query: getProjectsQuery }],
       optimisticResponse: { deleteLabel: { id, __typename: "Label" } },
       update(cache) {
         removeLabelFromImageCache(cache, { imageId, id });
@@ -199,17 +205,14 @@ export const createLabelEffect = (
   redo: async (id: string) => {
     const createLabelInputs = {
       id,
-      x,
-      y,
-      width,
-      height,
       imageId,
       labelClassId: selectedLabelClassId,
+      geometry,
     };
     const { data } = await client.mutate({
       mutation: createLabelMutation,
       variables: createLabelInputs,
-      refetchQueries: ["countLabels"],
+      refetchQueries: ["countLabels", { query: getProjectsQuery }],
       optimisticResponse: {
         createLabel: { id: `temp-${Date.now()}`, __typename: "Label" },
       },

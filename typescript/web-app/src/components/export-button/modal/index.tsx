@@ -10,22 +10,23 @@ import {
   Text,
   Skeleton,
 } from "@chakra-ui/react";
-
-import { useLazyQuery, useQuery } from "@apollo/client";
-import gql from "graphql-tag";
-
+import { useRouter } from "next/router";
+import { useLazyQuery, useQuery, gql } from "@apollo/client";
 import { ExportFormatCard } from "./export-format-card";
 
 const exportToCocoQuery = gql`
-  query exportToCoco {
-    exportToCoco
+  query exportToCoco($projectId: ID!) {
+    exportToCoco(where: { projectId: $projectId })
   }
 `;
 
-const countLabelsQuery = gql`
-  query countLabels {
-    labelsAggregates {
-      totalCount
+const countLabelsOfProjectQuery = gql`
+  query countLabelsOfProject($projectId: ID!) {
+    project(where: { id: $projectId }) {
+      id
+      labelsAggregates {
+        totalCount
+      }
     }
   }
 `;
@@ -37,8 +38,13 @@ export const ExportModal = ({
   isOpen?: boolean;
   onClose?: () => void;
 }) => {
-  const { data } = useQuery(countLabelsQuery);
+  const router = useRouter();
+  const { projectId } = router?.query;
+  const { data } = useQuery(countLabelsOfProjectQuery, {
+    variables: { projectId },
+  });
   const [queryExportToCoco, { loading }] = useLazyQuery(exportToCocoQuery, {
+    variables: { projectId },
     fetchPolicy: "network-only",
     onCompleted: ({ exportToCoco }) => {
       if (typeof exportToCoco !== "string") {
@@ -61,7 +67,13 @@ export const ExportModal = ({
   });
 
   return (
-    <Modal isOpen={isOpen} size="3xl" onClose={onClose} isCentered>
+    <Modal
+      scrollBehavior="inside"
+      isOpen={isOpen}
+      size="3xl"
+      onClose={onClose}
+      isCentered
+    >
       <ModalOverlay />
       <ModalContent height="auto">
         <ModalHeader textAlign="center" padding="6">
@@ -71,10 +83,11 @@ export const ExportModal = ({
           <Skeleton
             w="fit-content"
             m="auto"
-            isLoaded={data?.labelsAggregates?.totalCount !== undefined}
+            isLoaded={data?.project?.labelsAggregates?.totalCount !== undefined}
           >
             <Text fontSize="lg" fontWeight="medium" color="gray.800">
-              Your project contains {data?.labelsAggregates?.totalCount} labels.
+              Your project contains{" "}
+              {data?.project?.labelsAggregates?.totalCount} labels.
             </Text>
           </Skeleton>
         </ModalHeader>
@@ -85,7 +98,6 @@ export const ExportModal = ({
           pb="6"
           pr="6"
           pl="6"
-          overflowY="hidden"
           flexDirection="column"
         >
           <HStack
@@ -101,14 +113,14 @@ export const ExportModal = ({
               loading={loading}
               onClick={queryExportToCoco}
               colorScheme="brand"
-              logoSrc="/assets/export-formats/coco.png"
+              logoSrc="/static/export-formats/coco.png"
               title="Export to COCO"
               subtext="Annotation file used with Pytorch and Detectron 2"
             />
             <ExportFormatCard
               disabled
               colorScheme="gray"
-              logoSrc="/assets/export-formats/tensorflow-grey.png"
+              logoSrc="/static/export-formats/tensorflow-grey.png"
               title="Export to TensorFlow (soon)"
               subtext="TF Object Detection file in its human readable format"
             />

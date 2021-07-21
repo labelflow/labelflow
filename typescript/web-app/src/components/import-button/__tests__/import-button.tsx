@@ -1,15 +1,22 @@
 /* eslint-disable import/first */
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { ApolloProvider } from "@apollo/client";
+import { ApolloProvider, gql } from "@apollo/client";
 import { PropsWithChildren } from "react";
 import "@testing-library/jest-dom/extend-expect";
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { mocked } from "ts-jest/utils";
+import probe from "probe-image-size";
 
 import { client } from "../../../connectors/apollo-client-schema";
 import { setupTestsWithLocalDatabase } from "../../../utils/setup-local-db-tests";
-import { mockUseQueryParams } from "../../../utils/router-mocks";
+import {
+  mockUseQueryParams,
+  mockNextRouter,
+} from "../../../utils/router-mocks";
 
 mockUseQueryParams();
+mockNextRouter({ query: { projectId: "mocked-project-id" } });
 
 import { ImportButton } from "../import-button";
 
@@ -25,6 +32,9 @@ const Wrapper = ({ children }: PropsWithChildren<{}>) => (
 
 setupTestsWithLocalDatabase();
 
+jest.mock("probe-image-size");
+const mockedProbeSync = mocked(probe.sync);
+
 /**
  * Mock the apollo client to avoid creating corrupted files that allows
  * us to identify a behaviour.
@@ -39,7 +49,29 @@ jest.mock("../../../connectors/apollo-client-schema", () => {
   };
 });
 
+beforeEach(async () => {
+  await client.mutate({
+    mutation: gql`
+      mutation {
+        createProject(data: { name: "test project", id: "mocked-project-id" }) {
+          id
+        }
+      }
+    `,
+  });
+});
+
 test("should clear the modal content when closed", async () => {
+  mockedProbeSync.mockReturnValue({
+    width: 42,
+    height: 36,
+    mime: "image/jpeg",
+    length: 1000,
+    hUnits: "px",
+    wUnits: "px",
+    url: "https://example.com/image.jpeg",
+    type: "jpg",
+  });
   render(<ImportButton />, {
     wrapper: Wrapper,
   });

@@ -1,23 +1,18 @@
 import { convertLabelflowDatasetToCocoDataset } from "./coco-core/converters";
-import { Image } from "../../../graphql-types.generated";
-import { getPaginatedImages, getUrlFromFileId } from "../image";
+import { Image, QueryExportToCocoArgs } from "../../../graphql-types.generated";
+import { getPaginatedImages } from "../image";
 import { getPaginatedLabelClasses } from "../label-class";
-import { getLabels } from "../label";
+import { getLabelsByProjectId } from "../project";
 import { jsonToDataUri } from "./json-to-data-uri";
 
-export const exportToCoco = async (): Promise<string | undefined> => {
-  const imagesWithUrl = await Promise.all(
-    (
-      await getPaginatedImages()
-    ).map(
-      async (image): Promise<Image> => ({
-        ...image,
-        url: await getUrlFromFileId(image.fileId),
-      })
-    )
-  );
-  const labelClasses = await getPaginatedLabelClasses();
-  const labels = await getLabels();
+export const exportToCoco = async (
+  _: any,
+  args: QueryExportToCocoArgs
+): Promise<string | undefined> => {
+  const { projectId } = args.where;
+  const imagesWithUrl: Image[] = await getPaginatedImages({ projectId });
+  const labelClasses = await getPaginatedLabelClasses({ projectId });
+  const labels = await getLabelsByProjectId(projectId);
 
   const json = JSON.stringify(
     convertLabelflowDatasetToCocoDataset(imagesWithUrl, labels, labelClasses)

@@ -1,21 +1,20 @@
 import { useMemo, useState } from "react";
-import { useQuery, useApolloClient } from "@apollo/client";
-import gql from "graphql-tag";
+import { gql, useQuery, useApolloClient } from "@apollo/client";
 
 import { useHotkeys } from "react-hotkeys-hook";
-import { ClassSelectionMenu } from "./class-selection-menu";
+import { useRouter } from "next/router";
+import { ClassSelectionMenu, LabelClassItem } from "./class-selection-menu";
 import { Tools, useLabellingStore } from "../../../connectors/labelling-state";
 import { useUndoStore } from "../../../connectors/undo-store";
-import { LabelClass } from "../../../graphql-types.generated";
 import { createNewLabelClassAndUpdateLabelCurry } from "../../../connectors/undo-store/effects/create-label-class-and-update-label";
 import { createUpdateLabelClassOfLabelEffect } from "../../../connectors/undo-store/effects/update-label-class-of-label";
 import { createNewLabelClassCurry } from "../../../connectors/undo-store/effects/create-label-class";
 import { createUpdateLabelClassEffect } from "../../../connectors/undo-store/effects/update-label-class";
 import { keymap } from "../../../keymap";
 
-const labelClassesQuery = gql`
-  query getLabelClasses {
-    labelClasses {
+const labelClassesOfProjectQuery = gql`
+  query getLabelClassesOfProject($projectId: ID!) {
+    labelClasses(where: { projectId: $projectId }) {
       id
       name
       color
@@ -47,9 +46,13 @@ const labelQuery = gql`
 `;
 
 export const EditLabelClassMenu = () => {
+  const router = useRouter();
+  const projectId = router?.query.projectId as string;
   const client = useApolloClient();
   const [isOpen, setIsOpen] = useState(false);
-  const { data } = useQuery(labelClassesQuery);
+  const { data } = useQuery(labelClassesOfProjectQuery, {
+    variables: { projectId },
+  });
   const { perform } = useUndoStore();
   const labelClasses = data?.labelClasses ?? [];
   const isContextMenuOpen = useLabellingStore(
@@ -76,6 +79,7 @@ export const EditLabelClassMenu = () => {
     () =>
       createNewLabelClassCurry({
         labelClasses,
+        projectId,
         perform,
         client,
       }),
@@ -85,6 +89,7 @@ export const EditLabelClassMenu = () => {
     () =>
       createNewLabelClassAndUpdateLabelCurry({
         labelClasses,
+        projectId,
         perform,
         client,
       }),
@@ -93,14 +98,14 @@ export const EditLabelClassMenu = () => {
   const onSelectedClassChange = useMemo(
     () =>
       selectedTool === Tools.BOX
-        ? (item: LabelClass | null) =>
+        ? (item: LabelClassItem | null) =>
             perform(
               createUpdateLabelClassEffect({
                 selectedLabelClassId: item?.id ?? null,
                 selectedLabelClassIdPrevious: selectedLabelClassId,
               })
             )
-        : (item: LabelClass | null) =>
+        : (item: LabelClassItem | null) =>
             perform(
               createUpdateLabelClassOfLabelEffect(
                 {

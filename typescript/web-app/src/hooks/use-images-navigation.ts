@@ -1,14 +1,16 @@
 import { useRouter } from "next/router";
-import { useQuery } from "@apollo/client";
-import gql from "graphql-tag";
+import { useQuery, gql } from "@apollo/client";
 
-import { Image } from "../graphql-types.generated";
+import { Project, Image } from "../graphql-types.generated";
 
-const allImagesQuery = gql`
-  query allImages {
-    images {
+const getAllImagesOfAProjectQuery = gql`
+  query getAllImagesOfAProject($projectId: ID!) {
+    project(where: { id: $projectId }) {
       id
-      url
+      images {
+        id
+        url
+      }
     }
   }
 `;
@@ -26,18 +28,21 @@ const allImagesQuery = gql`
  */
 export const useImagesNavigation = () => {
   const router = useRouter();
-  const currentImageId = router.query.id as string | undefined;
+  const { projectId, imageId: currentImageId } = router?.query;
 
-  const { data } =
-    useQuery<{
-      images: Array<Pick<Image, "id" | "url">>;
-    }>(allImagesQuery);
+  // Refetch images ?
+  const { data } = useQuery<{
+    project: Pick<Project, "id" | "images">;
+  }>(getAllImagesOfAProjectQuery, { variables: { projectId } });
 
-  const images = data?.images;
+  // TODO: Investigate why you have to specify undefined states
+  const images = data?.project?.images;
+  const imagesCount = images?.length ?? 0;
 
   if (images === undefined) {
     return {
       images,
+      imagesCount,
       currentImageIndex: undefined,
       previousImageId: undefined,
       nextImageId: undefined,
@@ -45,12 +50,13 @@ export const useImagesNavigation = () => {
   }
 
   const currentImageIndex = images.findIndex(
-    (image) => image.id === currentImageId
+    (image: Partial<Image>) => image.id === currentImageId
   );
 
   if (currentImageIndex === -1) {
     return {
       images,
+      imagesCount,
       currentImageIndex: null,
       previousImageId: null,
       nextImageId: null,
@@ -63,12 +69,13 @@ export const useImagesNavigation = () => {
     previousImageIndex !== null ? images[previousImageIndex].id : null;
 
   const nextImageIndex =
-    currentImageIndex < images.length - 1 ? currentImageIndex + 1 : null;
+    currentImageIndex < imagesCount - 1 ? currentImageIndex + 1 : null;
   const nextImageId =
     nextImageIndex !== null ? images[nextImageIndex].id : null;
 
   return {
     images,
+    imagesCount,
     currentImageIndex,
     previousImageId,
     nextImageId,

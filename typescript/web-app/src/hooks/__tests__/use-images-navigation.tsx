@@ -1,8 +1,11 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import { renderHook } from "@testing-library/react-hooks";
-import gql from "graphql-tag";
-import { ApolloProvider } from "@apollo/client";
+import { ApolloProvider, gql } from "@apollo/client";
+
 import { useRouter } from "next/router";
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { mocked } from "ts-jest/utils";
+import probe from "probe-image-size";
 import { setupTestsWithLocalDatabase } from "../../utils/setup-local-db-tests";
 import { useImagesNavigation } from "../use-images-navigation";
 import { client } from "../../connectors/apollo-client-schema";
@@ -10,9 +13,66 @@ import { incrementMockedDate } from "../../../../dev-utils/mockdate";
 
 setupTestsWithLocalDatabase();
 
+jest.mock("probe-image-size");
+const mockedProbeSync = mocked(probe.sync);
+
+const testProjectId = "mocked-project-id";
+
 jest.mock("next/router", () => ({
-  useRouter: jest.fn(() => ({ query: { id: "toto" } })),
+  useRouter: jest.fn(() => ({
+    query: { projectId: testProjectId },
+  })),
 }));
+
+async function createImage(name: String) {
+  mockedProbeSync.mockReturnValue({
+    width: 42,
+    height: 36,
+    mime: "image/jpeg",
+    length: 1000,
+    hUnits: "px",
+    wUnits: "px",
+    url: "https://example.com/image.jpeg",
+    type: "jpg",
+  });
+  const mutationResult = await client.mutate({
+    mutation: gql`
+      mutation createImage($file: Upload!, $name: String!, $projectId: ID!) {
+        createImage(data: { name: $name, file: $file, projectId: $projectId }) {
+          id
+        }
+      }
+    `,
+    variables: {
+      file: new Blob(),
+      name,
+      projectId: testProjectId,
+    },
+  });
+
+  const {
+    data: {
+      createImage: { id },
+    },
+  } = mutationResult;
+
+  return id;
+}
+
+beforeEach(async () => {
+  await client.mutate({
+    mutation: gql`
+      mutation createProject($projectId: ID!) {
+        createProject(data: { name: "test project", id: $projectId }) {
+          id
+        }
+      }
+    `,
+    variables: {
+      projectId: testProjectId,
+    },
+  });
+});
 
 const Wrapper = ({ children }: React.PropsWithChildren<{}>) => (
   <ApolloProvider client={client}>{children}</ApolloProvider>
@@ -31,7 +91,7 @@ test("The currentImageIndex is null if it can't be found in the images", async (
   await createImage("image2");
   await createImage("image3");
   (useRouter as jest.Mock).mockImplementation(() => ({
-    query: { id: "fake-id" },
+    query: { imageId: "fake-id", projectId: testProjectId },
   }));
   const { result, waitForValueToChange } = renderHook(
     () => useImagesNavigation(),
@@ -63,7 +123,9 @@ test("It returns the index of the selected image when loaded", async () => {
   const id2 = await createImage("image2");
   incrementMockedDate(1);
   await createImage("image3");
-  (useRouter as jest.Mock).mockImplementation(() => ({ query: { id: id2 } }));
+  (useRouter as jest.Mock).mockImplementation(() => ({
+    query: { imageId: id2, projectId: testProjectId },
+  }));
   const { result, waitForValueToChange } = renderHook(
     () => useImagesNavigation(),
     { wrapper: Wrapper }
@@ -103,7 +165,7 @@ describe("Previous and Next ids", () => {
     await createImage("image2");
     await createImage("image3");
     (useRouter as jest.Mock).mockImplementation(() => ({
-      query: { id: "fake-id" },
+      query: { imageId: "fake-id", projectId: testProjectId },
     }));
     const { result, waitForValueToChange } = renderHook(
       () => useImagesNavigation(),
@@ -125,7 +187,7 @@ describe("Previous and Next ids", () => {
     incrementMockedDate(1);
     await createImage("image3");
     (useRouter as jest.Mock).mockImplementation(() => ({
-      query: { id: id1 },
+      query: { imageId: id1, projectId: testProjectId },
     }));
     const { result, waitForValueToChange } = renderHook(
       () => useImagesNavigation(),
@@ -146,7 +208,7 @@ describe("Previous and Next ids", () => {
     incrementMockedDate(1);
     const id3 = await createImage("image3");
     (useRouter as jest.Mock).mockImplementation(() => ({
-      query: { id: id3 },
+      query: { imageId: id3, projectId: testProjectId },
     }));
     const { result, waitForValueToChange } = renderHook(
       () => useImagesNavigation(),
@@ -167,7 +229,7 @@ describe("Previous and Next ids", () => {
     incrementMockedDate(1);
     await createImage("image3");
     (useRouter as jest.Mock).mockImplementation(() => ({
-      query: { id: id2 },
+      query: { imageId: id2, projectId: testProjectId },
     }));
     const { result, waitForValueToChange } = renderHook(
       () => useImagesNavigation(),
@@ -188,7 +250,7 @@ describe("Previous and Next ids", () => {
     incrementMockedDate(1);
     const id3 = await createImage("image3");
     (useRouter as jest.Mock).mockImplementation(() => ({
-      query: { id: id2 },
+      query: { imageId: id2, projectId: testProjectId },
     }));
     const { result, waitForValueToChange } = renderHook(
       () => useImagesNavigation(),
@@ -202,30 +264,3 @@ describe("Previous and Next ids", () => {
     expect(result.current.nextImageId).toEqual(id3);
   });
 });
-/* ----------- */
-/*   Helpers   */
-/* ----------- */
-
-async function createImage(name: String) {
-  const mutationResult = await client.mutate({
-    mutation: gql`
-      mutation createImage($file: Upload!, $name: String!) {
-        createImage(data: { name: $name, file: $file }) {
-          id
-        }
-      }
-    `,
-    variables: {
-      file: new Blob(),
-      name,
-    },
-  });
-
-  const {
-    data: {
-      createImage: { id },
-    },
-  } = mutationResult;
-
-  return id;
-}

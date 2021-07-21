@@ -7,8 +7,13 @@ import type {
   ProjectWhereUniqueInput,
   QueryProjectArgs,
   QueryProjectsArgs,
+  Maybe,
+  ImageWhereInput,
+  QueryImagesArgs,
 } from "../../graphql-types.generated";
 import { db, DbProject } from "../database";
+
+export const projectTypename = "Project";
 
 const getProjectById = async (id: string): Promise<DbProject> => {
   const project = await db.project.get(id);
@@ -17,7 +22,7 @@ const getProjectById = async (id: string): Promise<DbProject> => {
     throw new Error("No project with such id");
   }
 
-  return project;
+  return { ...project, __typename: projectTypename };
 };
 
 const getProjectByName = async (
@@ -26,10 +31,10 @@ const getProjectByName = async (
   const project = await db.project.get({ name });
 
   if (project === undefined) {
-    throw new Error("No project with such name");
+    throw new Error(`No project with name "${name}"`);
   }
 
-  return project;
+  return { ...project, __typename: projectTypename };
 };
 
 const getProjectFromWhereUniqueInput = async (
@@ -44,7 +49,74 @@ const getProjectFromWhereUniqueInput = async (
   throw new Error("Invalid where unique input for project entity");
 };
 
+export const getPaginatedImages = async (
+  where?: Maybe<ImageWhereInput>,
+  skip?: Maybe<number>,
+  first?: Maybe<number>
+): Promise<any[]> => {
+  const query = db.image.orderBy("createdAt");
+
+  if (where?.projectId) {
+    query.filter((image) => image.projectId === where.projectId);
+  }
+
+  if (skip) {
+    query.offset(skip);
+  }
+  if (first) {
+    return query.limit(first).toArray();
+  }
+
+  return query.toArray();
+};
+
+const getLabelClassesByProjectId = async (projectId: string) => {
+  const getResults = await db.labelClass
+    .where({ projectId })
+    .sortBy("createdAt");
+
+  return getResults ?? [];
+};
+
+export const getLabelsByProjectId = async (projectId: string) => {
+  const imagesOfProject = await db.image
+    .where({
+      projectId,
+    })
+    .toArray();
+
+  return db.label
+    .filter((currentLabel) =>
+      imagesOfProject.some((image) => currentLabel.imageId === image.id)
+    )
+    .sortBy("createdAt");
+};
+
 // Queries
+const images = async (project: DbProject, args: QueryImagesArgs) => {
+  const where = { projectId: project.id };
+
+  const imagesList = await getPaginatedImages(where, args?.skip, args?.first);
+
+  const entitiesWithUrls = await Promise.all(
+    imagesList.map(async (imageEntity: any) => {
+      return {
+        ...imageEntity,
+      };
+    })
+  );
+
+  return entitiesWithUrls;
+};
+
+const labels = async (project: DbProject) => {
+  return getLabelsByProjectId(project.id);
+};
+
+const labelClasses = async (project: DbProject) => {
+  return getLabelClassesByProjectId(project.id);
+};
+
 const project = async (_: any, args: QueryProjectArgs): Promise<DbProject> => {
   return getProjectFromWhereUniqueInput(args.where);
 };
@@ -59,7 +131,13 @@ const projects = async (
     return query.limit(args.first).toArray();
   }
 
-  return query.toArray();
+  const queryResult = await query.toArray();
+
+  // eslint-disable-next-line @typescript-eslint/no-shadow
+  return queryResult.map((project) => ({
+    ...project,
+    __typename: projectTypename,
+  }));
 };
 
 // Mutations
@@ -95,7 +173,10 @@ const updateProject = async (
 ): Promise<DbProject> => {
   const projectToUpdate = await getProjectFromWhereUniqueInput(args.where);
 
-  await db.project.update(projectToUpdate, args.data);
+  const updateResult = await db.project.update(projectToUpdate, args.data);
+  if (updateResult === 0) {
+    throw new Error("Could not update the project");
+  }
 
   return getProjectById(projectToUpdate.id);
 };
@@ -113,9 +194,16 @@ export default {
     project,
     projects,
   },
+
   Mutation: {
     createProject,
     updateProject,
     deleteProject,
+  },
+
+  Project: {
+    images,
+    labels,
+    labelClasses,
   },
 };

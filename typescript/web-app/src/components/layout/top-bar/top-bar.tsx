@@ -2,15 +2,13 @@ import { ReactNode } from "react";
 import { HStack, Spacer, Box, VisuallyHidden } from "@chakra-ui/react";
 import NextLink from "next/link";
 import { Logo } from "../../logo";
-import { ImportButton } from "../../import-button";
-import { ExportButton } from "../../export-button";
-import { KeymapButton } from "./keymap-button";
 
 export type Props = {
   leftContent?: ReactNode;
+  rightContent?: ReactNode;
 };
 
-export const TopBar = ({ leftContent }: Props) => {
+export const TopBar = ({ leftContent, rightContent }: Props) => {
   return (
     <HStack
       as="header"
@@ -29,9 +27,7 @@ export const TopBar = ({ leftContent }: Props) => {
       </NextLink>
       {leftContent}
       <Spacer />
-      <KeymapButton />
-      <ImportButton />
-      <ExportButton />
+      {rightContent}
     </HStack>
   );
 };

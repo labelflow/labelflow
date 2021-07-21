@@ -11,13 +11,14 @@ type Image {
   createdAt: DateTime!
   updatedAt: DateTime!
   url: String!
+  externalUrl: String
   name: String!
   path: String!
   mimetype: String!
   height: Int!
   width: Int!
   labels: [Label!]!
-  projectId: ID
+  projectId: ID!
 }
 
 type Label {
@@ -25,11 +26,17 @@ type Label {
   createdAt: DateTime!
   updatedAt: DateTime!
   imageId: ID!
+  geometry: Geometry!
   labelClass: LabelClass
   x: Float!
   y: Float!
   height: Float!
   width: Float!
+}
+
+type Geometry {
+  type: String!
+  coordinates: JSON!
 }
 
 type LabelClass {
@@ -39,7 +46,7 @@ type LabelClass {
   name: String!
   color: ColorHex!
   labels: [Label!]!
-  projectId: ID
+  projectId: ID!
 }
 
 type Project {
@@ -47,6 +54,10 @@ type Project {
   createdAt: DateTime!
   updatedAt: DateTime!
   name: String!
-  images: [Image!]
-  labelClasses: [LabelClass!]
+  images(first: Int, skip: Int): [Image!]!
+  labels: [Label!]!
+  labelClasses: [LabelClass!]!
+  imagesAggregates: ImagesAggregates!
+  labelsAggregates: LabelsAggregates!
+  labelClassesAggregates: LabelClassesAggregates!
 }

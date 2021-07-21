@@ -11,7 +11,7 @@ import { DrawEvent, DrawEventType } from "ol/interaction/Draw";
 
 import { mockNextRouter } from "../../../../utils/router-mocks";
 
-mockNextRouter({ query: { id: "mocked-image-id" } });
+mockNextRouter({ query: { imageId: "mocked-image-id" } });
 
 import { client } from "../../../../connectors/apollo-client-schema";
 import { useUndoStore } from "../../../../connectors/undo-store";
@@ -71,10 +71,18 @@ it("create a label when the user has finished to draw a bounding box on the labe
     expect.objectContaining({
       variables: expect.objectContaining({
         imageId: "mocked-image-id",
-        x: 100,
-        y: 200,
-        width: 100,
-        height: 100,
+        geometry: {
+          type: "Polygon",
+          coordinates: [
+            [
+              [100, 200],
+              [100, 300],
+              [200, 300],
+              [200, 200],
+              [100, 200],
+            ],
+          ],
+        },
       }),
     })
   );
@@ -205,10 +213,18 @@ it("is possible to redo an undone action", async () => {
     expect.objectContaining({
       variables: expect.objectContaining({
         imageId: "mocked-image-id",
-        x: 100,
-        y: 200,
-        width: 100,
-        height: 100,
+        geometry: {
+          type: "Polygon",
+          coordinates: [
+            [
+              [100, 200],
+              [100, 300],
+              [200, 300],
+              [200, 200],
+              [100, 200],
+            ],
+          ],
+        },
       }),
     })
   );
@@ -278,10 +294,18 @@ it("handles cases where the label creation throws an error", async () => {
     expect.objectContaining({
       variables: expect.objectContaining({
         imageId: "mocked-image-id",
-        x: 100,
-        y: 200,
-        width: 100,
-        height: 100,
+        geometry: {
+          type: "Polygon",
+          coordinates: [
+            [
+              [100, 200],
+              [100, 300],
+              [200, 300],
+              [200, 200],
+              [100, 200],
+            ],
+          ],
+        },
       }),
     })
   );
