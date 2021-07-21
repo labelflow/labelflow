@@ -101,7 +101,6 @@ export const DrawingToolIcon = (props: {
     }
     return `Polygon tool [${keymap.toolPolygon.key}]`;
   })();
-  // console.log(`selected tool = ${selectedTool}`);
   return (
     <Tooltip label={toolTipLabel} placement="right" openDelay={300}>
       <Button
