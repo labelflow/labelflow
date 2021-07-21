@@ -93,6 +93,8 @@ export const DrawBoundingBoxAndPolygonInteraction = () => {
 
   const selectedLabelClass = dataLabelClass?.labelClass;
 
+  const selectedLabelId = useLabellingStore((state) => state.selectedLabelId);
+
   useHotkeys(
     keymap.cancelAction.key,
     () => drawRef.current?.abortDrawing(),
@@ -183,8 +185,7 @@ export const DrawBoundingBoxAndPolygonInteraction = () => {
         imageId,
         selectedLabelClassId,
         geometry,
-        labelType:
-          selectedTool === Tools.POLYGON ? LabelType.Polygon : LabelType.Box,
+        labelType: LabelType.Polygon,
       },
       {
         setSelectedLabelId,
@@ -245,7 +246,8 @@ export const DrawBoundingBoxAndPolygonInteraction = () => {
       });
     }
   };
-  return (
+  return selectedTool !== Tools.IOG ||
+    (selectedTool === Tools.IOG && selectedLabelId == null) ? (
     <olInteractionDraw
       ref={drawRef}
       args={interactionDrawArguments}
@@ -267,6 +269,13 @@ export const DrawBoundingBoxAndPolygonInteraction = () => {
           ? performIOGFromDrawEvent
           : createLabelFromDrawEvent
       }
+    />
+  ) : (
+    <olInteractionPointer
+      handleDownEvent={() => {
+        console.log("I'm clicking inside the interaction");
+        return false;
+      }}
     />
   );
 };
