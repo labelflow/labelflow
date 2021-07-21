@@ -184,6 +184,7 @@ export const DrawingTool = () => {
     {},
     []
   );
+  useHotkeys(keymap.toolIog.key, () => setSelectedTool(Tools.IOG), {}, []);
   return (
     <>
       <Popover
