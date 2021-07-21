@@ -29,13 +29,33 @@ import cv2
 import argparse
 
 
-def transform_contour_to_geojson_polygon(contour: list) -> list:
-    polygon = list(map(lambda item: item[0].tolist(), contour))
+def transform_contour_to_geojson_polygon(
+    contour: list, imageHeight: int, roiHeight: int
+) -> list:
+    polygon = list(
+        map(lambda item: transform_contour_item(item, imageHeight, roiHeight), contour)
+    )
     return [*polygon, polygon[0]]
 
 
-def transform_contours_to_geojson_polygons(contours: list) -> list:
-    return list(map(transform_contour_to_geojson_polygon, contours))
+def transform_contour_item(item: list, imageHeight: int, roiHeight: int) -> list:
+    [x, y] = item[0].tolist()
+    return [x, imageHeight - y]
+
+    roi = [x, image.shape[0] - y - height, width, height]
+
+
+def transform_contours_to_geojson_polygons(
+    contours: list, imageHeight: int, roiHeight: int
+) -> list:
+    return list(
+        map(
+            lambda contour: transform_contour_to_geojson_polygon(
+                contour, imageHeight, roiHeight
+            ),
+            contours,
+        )
+    )
 
 
 def process(image, roi):
@@ -182,7 +202,10 @@ def process(image, roi):
     # cv2.rectangle(im_rgb, (roi[0], roi[1]), (roi[0]+ roi[2], roi[1]+roi[3]))
     cv2.imwrite("results/result.jpg", im_rgb)
     # print(transform_contours_to_geojson_polygons(contours))
-    return transform_contours_to_geojson_polygons(contours)
+
+    return transform_contours_to_geojson_polygons(
+        contours, imageHeight=image.shape[0], roiHeight=roi[3]
+    )
 
     # Generate results with refinement
     # trns_refinement = transforms.Compose(

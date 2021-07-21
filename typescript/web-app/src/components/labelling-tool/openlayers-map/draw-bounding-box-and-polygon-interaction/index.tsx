@@ -20,6 +20,7 @@ import { useUndoStore } from "../../../../connectors/undo-store";
 import { noneClassColor } from "../../../../utils/class-color-generator";
 import { createLabelEffect } from "./create-label-effect";
 import { LabelType } from "../../../../graphql-types.generated";
+import { updateLabelEffect } from "../select-and-modify-feature/update-label-effect";
 
 const labelClassQuery = gql`
   query getLabelClass($id: ID!) {
@@ -200,7 +201,7 @@ export const DrawBoundingBoxAndPolygonInteraction = () => {
         });
       })();
       const [x, y, xMax, yMax] = openLayersGeometry.getExtent();
-      return client.mutate({
+      const { data } = await client.mutate({
         mutation: iogInferenceMutation,
         variables: {
           x,
@@ -210,6 +211,19 @@ export const DrawBoundingBoxAndPolygonInteraction = () => {
           imageUrl: dataUrl,
         },
       });
+      console.log(data);
+
+      return updateLabelEffect(
+        {
+          geometry: {
+            type: "Polygon",
+            coordinates: data?.iogInference?.polygons,
+          },
+          labelId: await labelIdPromise,
+          imageId,
+        },
+        { client }
+      ).do();
     })();
 
     setDrawingToolState(DrawingToolState.IDLE);
