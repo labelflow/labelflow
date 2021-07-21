@@ -16,10 +16,11 @@ import { DbLabel } from "../database";
 import { projectTypename } from "./project";
 
 import { Context } from "./types";
+import { Repository } from "../repository";
 
 const getLabelById = async (
   id: string,
-  repository: Context["repository"]
+  repository: Repository
 ): Promise<DbLabel> => {
   const entity = await repository.label.getById(id);
 

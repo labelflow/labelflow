@@ -7,16 +7,20 @@ import type {
   ProjectWhereUniqueInput,
   QueryProjectArgs,
   QueryProjectsArgs,
-  Maybe,
-  ImageWhereInput,
   QueryImagesArgs,
 } from "../../graphql-types.generated";
 import { db, DbProject } from "../database";
+import { Repository } from "../repository";
+
+import { Context } from "./types";
 
 export const projectTypename = "Project";
 
-const getProjectById = async (id: string): Promise<DbProject> => {
-  const project = await db.project.get(id);
+const getProjectById = async (
+  id: string,
+  repository: Repository
+): Promise<DbProject> => {
+  const project = await repository.project.getById(id);
 
   if (project === undefined) {
     throw new Error("No project with such id");
@@ -26,9 +30,10 @@ const getProjectById = async (id: string): Promise<DbProject> => {
 };
 
 const getProjectByName = async (
-  name: string | undefined
+  name: string,
+  repository: Repository
 ): Promise<DbProject> => {
-  const project = await db.project.get({ name });
+  const project = await repository.project.getByName(name);
 
   if (project === undefined) {
     throw new Error(`No project with name "${name}"`);
@@ -38,104 +43,75 @@ const getProjectByName = async (
 };
 
 const getProjectFromWhereUniqueInput = async (
-  where: ProjectWhereUniqueInput
+  where: ProjectWhereUniqueInput,
+  repository: Repository
 ): Promise<DbProject> => {
   const { id, name } = where;
 
-  if (id != null) return getProjectById(id);
+  if (id != null) return getProjectById(id, repository);
 
-  if (name != null) return getProjectByName(name);
+  if (name != null) return getProjectByName(name, repository);
 
   throw new Error("Invalid where unique input for project entity");
 };
 
-export const getPaginatedImages = async (
-  where?: Maybe<ImageWhereInput>,
-  skip?: Maybe<number>,
-  first?: Maybe<number>
-): Promise<any[]> => {
-  const query = db.image.orderBy("createdAt");
-
-  if (where?.projectId) {
-    query.filter((image) => image.projectId === where.projectId);
-  }
-
-  if (skip) {
-    query.offset(skip);
-  }
-  if (first) {
-    return query.limit(first).toArray();
-  }
-
-  return query.toArray();
-};
-
-const getLabelClassesByProjectId = async (projectId: string) => {
-  const getResults = await db.labelClass
-    .where({ projectId })
-    .sortBy("createdAt");
-
-  return getResults ?? [];
-};
-
-export const getLabelsByProjectId = async (projectId: string) => {
-  const imagesOfProject = await db.image
-    .where({
-      projectId,
-    })
-    .toArray();
-
-  return db.label
-    .filter((currentLabel) =>
-      imagesOfProject.some((image) => currentLabel.imageId === image.id)
-    )
-    .sortBy("createdAt");
+const getLabelClassesByProjectId = (
+  projectId: string,
+  repository: Repository
+) => {
+  return repository.labelClass.list({ projectId });
 };
 
 // Queries
-const images = async (project: DbProject, args: QueryImagesArgs) => {
-  const where = { projectId: project.id };
-
-  const imagesList = await getPaginatedImages(where, args?.skip, args?.first);
-
-  const entitiesWithUrls = await Promise.all(
-    imagesList.map(async (imageEntity: any) => {
-      return {
-        ...imageEntity,
-      };
-    })
+const images = (
+  project: DbProject,
+  args: QueryImagesArgs,
+  { repository }: Context
+) => {
+  return repository.image.list(
+    { projectId: project.id },
+    args?.skip,
+    args?.first
   );
-
-  return entitiesWithUrls;
 };
 
-const labels = async (project: DbProject) => {
-  return getLabelsByProjectId(project.id);
+const labels = async (
+  project: DbProject,
+  _args: any,
+  { repository }: Context
+) => {
+  return repository.label.list({ projectId: project.id });
 };
 
-const labelClasses = async (project: DbProject) => {
-  return getLabelClassesByProjectId(project.id);
+const labelClasses = async (
+  project: DbProject,
+  _args: any,
+  { repository }: Context
+) => {
+  return getLabelClassesByProjectId(project.id, repository);
 };
 
-const project = async (_: any, args: QueryProjectArgs): Promise<DbProject> => {
-  return getProjectFromWhereUniqueInput(args.where);
+const project = async (
+  _: any,
+  args: QueryProjectArgs,
+  { repository }: Context
+): Promise<DbProject> => {
+  return getProjectFromWhereUniqueInput(args.where, repository);
 };
 
 const projects = async (
   _: any,
-  args: QueryProjectsArgs
+  args: QueryProjectsArgs,
+  { repository }: Context
 ): Promise<DbProject[]> => {
-  const query = db.project.orderBy("createdAt").offset(args?.skip ?? 0);
+  const queryResult = await repository.project.list(
+    null,
+    args.skip,
+    args.first
+  );
 
-  if (args?.first) {
-    return query.limit(args.first).toArray();
-  }
-
-  const queryResult = await query.toArray();
-
-  // eslint-disable-next-line @typescript-eslint/no-shadow
-  return queryResult.map((project) => ({
-    ...project,
+  return queryResult.map((projectWithoutTypename) => ({
+    ...projectWithoutTypename,
     __typename: projectTypename,
   }));
 };
@@ -143,7 +119,8 @@ const projects = async (
 // Mutations
 const createProject = async (
   _: any,
-  args: MutationCreateProjectArgs
+  args: MutationCreateProjectArgs,
+  { repository }: Context
 ): Promise<DbProject> => {
   const date = new Date().toISOString();
 
@@ -155,13 +132,13 @@ const createProject = async (
   }
 
   try {
-    await db.project.add({
+    await repository.project.add({
       id: projectId,
       createdAt: date,
       updatedAt: date,
       name,
     });
-    return await getProjectById(projectId);
+    return await getProjectById(projectId, repository);
   } catch (e) {
     throw new Error("Could not create the project");
   }
@@ -169,22 +146,36 @@ const createProject = async (
 
 const updateProject = async (
   _: any,
-  args: MutationUpdateProjectArgs
+  args: MutationUpdateProjectArgs,
+  { repository }: Context
 ): Promise<DbProject> => {
-  const projectToUpdate = await getProjectFromWhereUniqueInput(args.where);
+  const projectToUpdate = await getProjectFromWhereUniqueInput(
+    args.where,
+    repository
+  );
 
-  const updateResult = await db.project.update(projectToUpdate, args.data);
+  const updateResult = await repository.project.update(
+    projectToUpdate.id,
+    args.data
+  );
   if (updateResult === 0) {
     throw new Error("Could not update the project");
   }
 
-  return getProjectById(projectToUpdate.id);
+  return getProjectById(projectToUpdate.id, repository);
 };
 
-const deleteProject = async (_: any, args: MutationDeleteProjectArgs) => {
-  const projectToDelete = await getProjectFromWhereUniqueInput(args.where);
+const deleteProject = async (
+  _: any,
+  args: MutationDeleteProjectArgs,
+  { repository }: Context
+) => {
+  const projectToDelete = await getProjectFromWhereUniqueInput(
+    args.where,
+    repository
+  );
 
-  await db.project.delete(projectToDelete.id);
+  await repository.project.delete(projectToDelete.id);
 
   return projectToDelete;
 };

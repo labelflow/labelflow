@@ -1,4 +1,4 @@
-import { db, DbImage, DbLabel, DbLabelClass } from "../database";
+import { db, DbImage, DbLabel, DbLabelClass, DbProject } from "../database";
 
 import { list } from "./utils/list";
 
@@ -11,7 +11,7 @@ import type {
 
 type PartialWithNullAllowed<T> = { [P in keyof T]?: T[P] | undefined | null };
 
-const labelCount = async (
+const countLabels = async (
   where?: LabelWhereInput | { projectId?: Maybe<string> | undefined }
 ) => {
   if (where) {
@@ -35,6 +35,45 @@ const labelCount = async (
   return db.label.count();
 };
 
+const listLabels = async (
+  where?: LabelWhereInput | { projectId?: Maybe<string> | undefined },
+  skip?: number | null,
+  first?: number | null
+) => {
+  if (where && "projectId" in where) {
+    const imagesOfProject = await db.image
+      .where({
+        projectId: where.projectId,
+      })
+      .toArray();
+
+    const query = db.label
+      .orderBy("createdAt")
+      .filter((currentLabel) =>
+        imagesOfProject.some((image) => currentLabel.imageId === image.id)
+      );
+
+    if (skip) {
+      query.offset(skip);
+    }
+    if (first) {
+      query.limit(first);
+    }
+
+    return db.label
+      .filter((currentLabel) =>
+        imagesOfProject.some((image) => currentLabel.imageId === image.id)
+      )
+      .sortBy("createdAt");
+  }
+
+  return list<DbLabel, LabelWhereInput>(db.label)(
+    where as LabelWhereInput | null | undefined,
+    skip,
+    first
+  );
+};
+
 export const repository = {
   image: {
     list: list<DbImage, ImageWhereInput>(db.image),
@@ -45,12 +84,12 @@ export const repository = {
   },
   label: {
     getById: (id: string) => db.label.get(id),
-    list: list<DbLabel, LabelWhereInput>(db.label),
+    list: listLabels,
     add: (label: DbLabel) => db.label.add(label),
     delete: (id: string) => db.label.delete(id),
     update: (id: string, changes: PartialWithNullAllowed<DbLabel>) =>
       db.label.update(id, changes),
-    count: labelCount,
+    count: countLabels,
   },
   labelClass: {
     getById: (id: string) => db.labelClass.get(id),
@@ -60,7 +99,15 @@ export const repository = {
     count: (where?: LabelClassWhereInput) =>
       where ? db.labelClass.where(where).count() : db.labelClass.count(),
   },
-  project: { getById: (id: string) => db.project.get(id) },
+  project: {
+    list: list<DbProject, null>(db.project),
+    add: (project: DbProject) => db.project.add(project),
+    getById: (id: string) => db.project.get(id),
+    getByName: (name: string) => db.project.get({ name }),
+    update: (id: string, changes: PartialWithNullAllowed<DbProject>) =>
+      db.project.update(id, changes),
+    delete: (id: string) => db.project.delete(id),
+  },
 };
 
 export type Repository = typeof repository;
