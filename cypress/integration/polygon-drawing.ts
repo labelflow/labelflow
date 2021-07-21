@@ -115,7 +115,7 @@ describe("Polygon drawing", () => {
       );
       imageId = id;
 
-      await createLabelClass("A new class", "#F87171", projectId);
+      await createLabelClass("This is not a rocket", "#f4bedc", projectId);
     })
   );
 
@@ -126,7 +126,7 @@ describe("Polygon drawing", () => {
     );
     cy.get('[aria-label="loading indicator"]').should("not.exist");
     cy.get('[aria-label="Drawing polygon tool"]').should("not.exist");
-    cy.get('[aria-label="Drawing box tool"]').click();
+    cy.get('[aria-label="Drawing box tool"]').should("exist").click();
     cy.get('[aria-label="Change Drawing tool"]').click();
     cy.get('[aria-label="Select bounding box tool"]').should(
       "have.attr",
@@ -139,5 +139,38 @@ describe("Polygon drawing", () => {
 
     cy.get('[aria-label="Drawing polygon tool"]').should("exist");
     cy.get('[aria-label="Drawing box tool"]').should("not.exist");
+  });
+
+  it("draws a polygon", () => {
+    // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
+    cy.visit(
+      `/projects/${projectId}/images/${imageId}?modal-welcome=closed&modal-update-service-worker=update`
+    );
+    cy.get('[aria-label="loading indicator"]').should("not.exist");
+    cy.get('[aria-label="Change Drawing tool"]').should("exist").click();
+    cy.get('[aria-label="Select polygon tool"]').click();
+    cy.get("main").click(475, 75);
+    cy.get("main").click(450, 100);
+    cy.get("main").click(450, 200);
+    cy.get("main").click(425, 240);
+    cy.get("main").click(450, 260);
+    cy.get("main").click(475, 220);
+    cy.get("main").click(500, 260);
+    cy.get("main").click(525, 240);
+    cy.get("main").click(500, 200);
+    cy.get("main").dblclick(500, 100);
+
+    cy.get("main").rightclick(475, 100);
+
+    cy.get('[aria-label="Class selection popover"]')
+      .contains("This is not a rocket")
+      .closest('[role="option"]')
+      .should("have.attr", "aria-current", "false")
+      .click();
+    cy.get("main").rightclick(475, 100);
+    cy.get('[aria-label="Class selection popover"]')
+      .contains("This is not a rocket")
+      .closest('[role="option"]')
+      .should("have.attr", "aria-current", "true");
   });
 });
