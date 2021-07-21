@@ -104,7 +104,7 @@ export const SelectInteraction = ({
           }}
         />
       )}
-      {[Tools.BOX, Tools.POLYGON].includes(selectedTool) && (
+      {[Tools.BOX, Tools.POLYGON, Tools.IOG].includes(selectedTool) && (
         <olInteractionPointer
           style={null}
           handleEvent={(e) => {

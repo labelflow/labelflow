@@ -80,7 +80,7 @@ export const DrawBoundingBoxAndPolygonInteraction = () => {
     });
   }, [selectedLabelClass?.color]);
 
-  if (![Tools.BOX, Tools.POLYGON].includes(selectedTool)) {
+  if (![Tools.BOX, Tools.POLYGON, Tools.IOG].includes(selectedTool)) {
     return null;
   }
   if (typeof imageId !== "string") {

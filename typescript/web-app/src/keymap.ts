@@ -63,4 +63,9 @@ export const keymap: Keymap = {
     description: "Focus on search input in label class selection",
     category: "Tools", // TODO: change that category?
   },
+  toolIog: {
+    key: "i",
+    description: "Inside outside guidance tool",
+    category: "Tools",
+  },
 };

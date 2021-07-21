@@ -13,6 +13,7 @@ export enum Tools {
   SELECTION = "select",
   BOX = "box",
   POLYGON = "polygon",
+  IOG = "iog",
 }
 
 export enum DrawingToolState {

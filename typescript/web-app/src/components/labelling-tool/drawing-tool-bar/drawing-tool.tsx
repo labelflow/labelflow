@@ -20,7 +20,7 @@ import {
   chakra,
 } from "@chakra-ui/react";
 import { RiArrowDownSLine } from "react-icons/ri";
-import { BiShapePolygon, BiShapeSquare } from "react-icons/bi";
+import { BiShapePolygon, BiShapeSquare, BiArea } from "react-icons/bi";
 import { useHotkeys } from "react-hotkeys-hook";
 
 import { useLabellingStore, Tools } from "../../../connectors/labelling-state";
@@ -32,6 +32,7 @@ export type Props = {};
 const ChakraBiShapeSquare = chakra(BiShapeSquare);
 const ChakraBiShapePolygon = chakra(BiShapePolygon);
 const ChakraRiArrowDownSLine = chakra(RiArrowDownSLine);
+const ChakraBiArea = chakra(BiArea);
 
 export const ToolSelectionPopoverItem = (props: {
   name: string;
@@ -90,11 +91,11 @@ export const DrawingToolIcon = (props: {
   } = props;
   const [lastTool, setLastTool] = useState(Tools.BOX);
   useEffect(() => {
-    if ([Tools.BOX, Tools.POLYGON].includes(selectedTool)) {
+    if ([Tools.BOX, Tools.POLYGON, Tools.IOG].includes(selectedTool)) {
       setLastTool(selectedTool);
     }
   }, [selectedTool]);
-  const isActive = [Tools.BOX, Tools.POLYGON].includes(selectedTool);
+  const isActive = [Tools.BOX, Tools.POLYGON, Tools.IOG].includes(selectedTool);
   const toolTipLabel = (() => {
     if (lastTool === Tools.BOX) {
       return `Bounding Box tool [${keymap.toolBoundingBox.key}]`;
@@ -107,7 +108,9 @@ export const DrawingToolIcon = (props: {
         ref={buttonRef}
         isDisabled={isDisabled}
         role="checkbox"
-        aria-checked={[Tools.BOX, Tools.POLYGON].includes(selectedTool)}
+        aria-checked={[Tools.BOX, Tools.POLYGON, Tools.IOG].includes(
+          selectedTool
+        )}
         backgroundColor="white"
         aria-label={`Drawing ${lastTool} tool`}
         pointerEvents="initial"
@@ -116,11 +119,9 @@ export const DrawingToolIcon = (props: {
         w="10"
         padding="0"
       >
-        {lastTool === Tools.BOX ? (
-          <ChakraBiShapeSquare size="1.3em" />
-        ) : (
-          <ChakraBiShapePolygon size="1.3em" />
-        )}
+        {lastTool === Tools.BOX && <ChakraBiShapeSquare size="1.3em" />}
+        {lastTool === Tools.POLYGON && <ChakraBiShapePolygon size="1.3em" />}
+        {lastTool === Tools.IOG && <ChakraBiArea size="1.3em" />}
 
         <PopoverTrigger>
           <Button
@@ -238,6 +239,20 @@ export const DrawingTool = () => {
               >
                 <Box ml="2">
                   <BiShapePolygon size="1.3em" />
+                </Box>
+              </ToolSelectionPopoverItem>
+              <ToolSelectionPopoverItem
+                name="IOG tool"
+                shortcut={keymap.toolIog.key}
+                selected={selectedTool === Tools.IOG}
+                onClick={() => {
+                  setSelectedTool(Tools.IOG);
+                  setIsPopoverOpened(false);
+                }}
+                ariaLabel="Select iog tool"
+              >
+                <Box ml="2">
+                  <ChakraBiArea size="1.3em" />
                 </Box>
               </ToolSelectionPopoverItem>
             </Box>
