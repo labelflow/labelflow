@@ -7,6 +7,7 @@ import { extend } from "@labelflow/react-openlayers-fiber";
 import { ApolloClient, useApolloClient, useQuery, gql } from "@apollo/client";
 import { useToast } from "@chakra-ui/react";
 import { ModifyEvent } from "ol/interaction/Modify";
+import { TranslateEvent } from "ol/interaction/Translate";
 import { SelectInteraction } from "./select-interaction";
 import {
   Tools,
@@ -272,10 +273,39 @@ export const SelectAndModifyFeature = (props: {
           <>
             <olInteractionTranslate
               args={{ features: new Collection([selectedFeature]) }}
+              onTranslateend={async (e: TranslateEvent) => {
+                const feature = e.features.item(0) as Feature<Polygon>;
+                if (feature != null) {
+                  const coordinates = feature.getGeometry().getCoordinates();
+                  const geometry = { type: "Polygon", coordinates };
+                  const { id: labelId } = feature.getProperties();
+                  try {
+                    await perform(
+                      updateLabelEffect(
+                        {
+                          labelId,
+                          geometry,
+                          imageId: labelData?.label?.imageId,
+                        },
+                        { client }
+                      )
+                    );
+                  } catch (error) {
+                    toast({
+                      title: "Error updating polygon",
+                      description: error?.message,
+                      isClosable: true,
+                      status: "error",
+                      position: "bottom-right",
+                      duration: 10000,
+                    });
+                  }
+                }
+                return true;
+              }}
             />
             <olInteractionModify
               args={{ features: new Collection([selectedFeature]) }}
-              // @ts-ignore: FIXME
               onModifyend={async (e: ModifyEvent) => {
                 const feature = e.features.item(0) as Feature<Polygon>;
                 if (feature != null) {

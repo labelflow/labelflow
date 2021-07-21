@@ -54,7 +54,7 @@ export const getBoundedGeometryFromImage = (
   const clippedGeometryObject = intersect(imagePolygon, geometryPolygon);
 
   if (clippedGeometryObject?.geometry == null) {
-    throw new Error("Bounding box out of image bounds");
+    throw new Error("Label out of image bounds");
   }
 
   const [minX, minY, maxX, maxY] = bbox(clippedGeometryObject.geometry);
