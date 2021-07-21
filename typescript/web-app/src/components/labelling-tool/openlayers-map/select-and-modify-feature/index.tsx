@@ -5,7 +5,7 @@ import { Vector as OlSourceVector } from "ol/source";
 import Collection from "ol/Collection";
 import { extend } from "@labelflow/react-openlayers-fiber";
 import { ApolloClient, useApolloClient, useQuery, gql } from "@apollo/client";
-import { useToast } from "@chakra-ui/react";
+import { useToast, UseToastOptions } from "@chakra-ui/react";
 import { ModifyEvent } from "ol/interaction/Modify";
 import { TranslateEvent } from "ol/interaction/Translate";
 import { SelectInteraction } from "./select-interaction";
@@ -13,7 +13,10 @@ import {
   Tools,
   useLabellingStore,
 } from "../../../../connectors/labelling-state";
-import { ResizeAndTranslateBox } from "./resize-and-translate-box-interaction";
+import {
+  ResizeAndTranslateBox,
+  ResizeAndTranslateEvent,
+} from "./resize-and-translate-box-interaction";
 import { Effect, useUndoStore } from "../../../../connectors/undo-store";
 import { GeometryInput, LabelType } from "../../../../graphql-types.generated";
 import { getBoundedGeometryFromImage } from "../../../../connectors/resolvers/label";
@@ -184,6 +187,43 @@ const updateLabelEffect = (
   },
 });
 
+export const interactionEnd = async (
+  e: TranslateEvent | ModifyEvent | ResizeAndTranslateEvent | null,
+  perform: (effect: Effect<any>) => Promise<void>,
+  client: ApolloClient<Object>,
+  imageId: string,
+  toast: (options: UseToastOptions) => void
+) => {
+  const feature = e.features.item(0) as Feature<Polygon>;
+  if (feature != null) {
+    const coordinates = feature.getGeometry().getCoordinates();
+    const geometry = { type: "Polygon", coordinates };
+    const { id: labelId } = feature.getProperties();
+    try {
+      await perform(
+        updateLabelEffect(
+          {
+            labelId,
+            geometry,
+            imageId,
+          },
+          { client }
+        )
+      );
+    } catch (error) {
+      toast({
+        title: "Error updating label",
+        description: error?.message,
+        isClosable: true,
+        status: "error",
+        position: "bottom-right",
+        duration: 10000,
+      });
+    }
+  }
+  return true;
+};
+
 export const SelectAndModifyFeature = (props: {
   sourceVectorLabelsRef: MutableRefObject<OlSourceVector<Geometry> | null>;
   map: OlMap | null;
@@ -241,30 +281,15 @@ export const SelectAndModifyFeature = (props: {
           /* @ts-ignore - We need to add this because resizeAndTranslateBox is not included in the react-openalyers-fiber original catalogue */
           <resizeAndTranslateBox
             args={{ selectedFeature }}
-            onInteractionEnd={async (feature: Feature<Polygon> | null) => {
-              if (feature != null) {
-                const coordinates = feature.getGeometry().getCoordinates();
-                const geometry = { type: "Polygon", coordinates };
-                const { id: labelId } = feature.getProperties();
-                try {
-                  await perform(
-                    updateLabelEffect(
-                      { labelId, geometry, imageId: labelData?.label?.imageId },
-                      { client }
-                    )
-                  );
-                } catch (error) {
-                  toast({
-                    title: "Error updating bounding box",
-                    description: error?.message,
-                    isClosable: true,
-                    status: "error",
-                    position: "bottom-right",
-                    duration: 10000,
-                  });
-                }
-              }
-            }}
+            onInteractionEnd={async (e: ResizeAndTranslateEvent | null) =>
+              interactionEnd(
+                e,
+                perform,
+                client,
+                labelData?.label?.imageId,
+                toast
+              )
+            }
           />
         )}
       {selectedTool === Tools.SELECTION &&
@@ -273,69 +298,27 @@ export const SelectAndModifyFeature = (props: {
           <>
             <olInteractionTranslate
               args={{ features: new Collection([selectedFeature]) }}
-              onTranslateend={async (e: TranslateEvent) => {
-                const feature = e.features.item(0) as Feature<Polygon>;
-                if (feature != null) {
-                  const coordinates = feature.getGeometry().getCoordinates();
-                  const geometry = { type: "Polygon", coordinates };
-                  const { id: labelId } = feature.getProperties();
-                  try {
-                    await perform(
-                      updateLabelEffect(
-                        {
-                          labelId,
-                          geometry,
-                          imageId: labelData?.label?.imageId,
-                        },
-                        { client }
-                      )
-                    );
-                  } catch (error) {
-                    toast({
-                      title: "Error updating polygon",
-                      description: error?.message,
-                      isClosable: true,
-                      status: "error",
-                      position: "bottom-right",
-                      duration: 10000,
-                    });
-                  }
-                }
-                return true;
-              }}
+              onTranslateend={async (e: TranslateEvent | null) =>
+                interactionEnd(
+                  e,
+                  perform,
+                  client,
+                  labelData?.label?.imageId,
+                  toast
+                )
+              }
             />
             <olInteractionModify
               args={{ features: new Collection([selectedFeature]) }}
-              onModifyend={async (e: ModifyEvent) => {
-                const feature = e.features.item(0) as Feature<Polygon>;
-                if (feature != null) {
-                  const coordinates = feature.getGeometry().getCoordinates();
-                  const geometry = { type: "Polygon", coordinates };
-                  const { id: labelId } = feature.getProperties();
-                  try {
-                    await perform(
-                      updateLabelEffect(
-                        {
-                          labelId,
-                          geometry,
-                          imageId: labelData?.label?.imageId,
-                        },
-                        { client }
-                      )
-                    );
-                  } catch (error) {
-                    toast({
-                      title: "Error updating polygon",
-                      description: error?.message,
-                      isClosable: true,
-                      status: "error",
-                      position: "bottom-right",
-                      duration: 10000,
-                    });
-                  }
-                }
-                return true;
-              }}
+              onModifyend={async (e: ModifyEvent | null) =>
+                interactionEnd(
+                  e,
+                  perform,
+                  client,
+                  labelData?.label?.imageId,
+                  toast
+                )
+              }
             />
           </>
         )}
