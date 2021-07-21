@@ -8,14 +8,25 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { useApolloClient, gql } from "@apollo/client";
+import { useRouter } from "next/router";
 
 import { UrlList } from "./url-list";
 import { UrlStatuses } from "./url-statuses";
 import { DroppedUrl, UploadStatuses } from "../types";
 
 const createImageFromUrlMutation = gql`
-  mutation createImageMutation($externalUrl: String!, $createdAt: DateTime) {
-    createImage(data: { externalUrl: $externalUrl, createdAt: $createdAt }) {
+  mutation createImageMutation(
+    $externalUrl: String!
+    $createdAt: DateTime
+    $projectId: ID!
+  ) {
+    createImage(
+      data: {
+        externalUrl: $externalUrl
+        createdAt: $createdAt
+        projectId: $projectId
+      }
+    ) {
       id
     }
   }
@@ -32,6 +43,9 @@ export const ImportImagesModalUrlList = ({
 }) => {
   const apolloClient = useApolloClient();
 
+  const router = useRouter();
+  const { projectId } = router?.query;
+
   /*
    * We need a state with the accepted and reject urls to be able to reset the list
    * when we close the modal because react-dropzone doesn't provide a way to reset its
@@ -42,6 +56,10 @@ export const ImportImagesModalUrlList = ({
 
   useEffect(() => {
     if (isEmpty(urls)) return;
+
+    if (!projectId) {
+      throw new Error(`No project id`);
+    }
 
     const createImages = async () => {
       const now = new Date();
@@ -57,6 +75,7 @@ export const ImportImagesModalUrlList = ({
                 variables: {
                   externalUrl: acceptedUrl.url,
                   createdAt: createdAt.toISOString(),
+                  projectId,
                 },
               });
 
@@ -110,7 +129,6 @@ export const ImportImagesModalUrlList = ({
         pb="6"
         pr="6"
         pl="6"
-        overflowY="hidden"
         flexDirection="column"
       >
         {isEmpty(urls) ? (

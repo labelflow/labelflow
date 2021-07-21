@@ -3,8 +3,7 @@ import { Feature, Map as OlMap } from "ol";
 import { Geometry, Polygon } from "ol/geom";
 import { Vector as OlSourceVector } from "ol/source";
 import { extend } from "@labelflow/react-openlayers-fiber";
-import gql from "graphql-tag";
-import { ApolloClient, useApolloClient } from "@apollo/client";
+import { ApolloClient, useApolloClient, useQuery, gql } from "@apollo/client";
 import { useToast } from "@chakra-ui/react";
 import { SelectInteraction } from "./select-interaction";
 import {
@@ -14,6 +13,7 @@ import {
 import { ResizeAndTranslateBox } from "./resize-and-translate-box-interaction";
 import { Effect, useUndoStore } from "../../../../connectors/undo-store";
 import { GeometryInput } from "../../../../graphql-types.generated";
+import { getBoundedGeometryFromImage } from "../../../../connectors/resolvers/label";
 
 // Extend react-openlayers-catalogue to include resize and translate interaction
 extend({
@@ -27,6 +27,17 @@ const updateLabelMutation = gql`
       data: { geometry: $geometry, labelClassId: $labelClassId }
     ) {
       id
+      geometry {
+        type
+        coordinates
+      }
+      x
+      y
+      width
+      height
+      labelClass {
+        id
+      }
     }
   }
 `;
@@ -34,10 +45,26 @@ const updateLabelMutation = gql`
 const getLabelQuery = gql`
   query getLabel($id: ID!) {
     label(where: { id: $id }) {
+      id
       geometry {
         type
         coordinates
       }
+      imageId
+      labelClass {
+        id
+        color
+      }
+    }
+  }
+`;
+
+const imageDimensionsQuery = gql`
+  query imageDimensions($id: ID!) {
+    image(where: { id: $id }) {
+      id
+      width
+      height
     }
   }
 `;
@@ -46,9 +73,11 @@ const updateLabelEffect = (
   {
     labelId,
     geometry,
+    imageId,
   }: {
     labelId: string;
-    geometry?: GeometryInput;
+    geometry: GeometryInput;
+    imageId?: string;
   },
   {
     client,
@@ -57,18 +86,71 @@ const updateLabelEffect = (
   }
 ): Effect => ({
   do: async () => {
-    const { data: labelData } = await client.query({
+    const { cache } = client;
+    const imageResponse = cache.readQuery<{
+      image: { width: number; height: number };
+    }>({
+      query: imageDimensionsQuery,
+      variables: { id: imageId },
+    });
+    if (imageResponse == null) {
+      throw new Error(`Missing image with id ${imageId}`);
+    }
+    const { image } = imageResponse;
+
+    const labelResponse = cache.readQuery<{
+      label: {
+        id: string;
+        geometry: GeometryInput;
+        imageId: string;
+        labelClass: {
+          id: string;
+          color: string;
+        };
+      };
+    }>({
       query: getLabelQuery,
       variables: { id: labelId },
     });
-    const originalGeometry = labelData?.label.geometry;
-    await client.mutate({
+    if (labelResponse == null) {
+      throw new Error(`Missing label with id ${imageId}`);
+    }
+    const { label } = labelResponse;
+    const imageDimensions = {
+      width: image.width,
+      height: image.height,
+    };
+    const originalGeometry = label.geometry;
+    const boundedGeometry = getBoundedGeometryFromImage(
+      imageDimensions,
+      geometry
+    );
+
+    client.mutate({
       mutation: updateLabelMutation,
       variables: {
         id: labelId,
         geometry,
       },
       refetchQueries: ["getImageLabels"],
+      optimisticResponse: {
+        updateLabel: {
+          id: labelId,
+          geometry: boundedGeometry.geometry,
+          x: boundedGeometry.x,
+          y: boundedGeometry.y,
+          width: boundedGeometry.width,
+          height: boundedGeometry.height,
+          labelClass: label.labelClass,
+          __typename: "Label",
+        },
+      },
+      update: (apolloCache, { data }) => {
+        apolloCache.writeQuery({
+          query: getLabelQuery,
+          data: data?.updateLabel,
+        });
+      },
     });
 
     return { id: labelId, originalGeometry };
@@ -107,6 +189,11 @@ export const SelectAndModifyFeature = (props: {
     useState<Feature<Geometry> | null>(null);
   const selectedLabelId = useLabellingStore((state) => state.selectedLabelId);
   const selectedTool = useLabellingStore((state) => state.selectedTool);
+
+  const { data: labelData } = useQuery(getLabelQuery, {
+    variables: { id: selectedLabelId },
+    skip: selectedLabelId == null,
+  });
 
   const getSelectedFeature = useCallback(() => {
     if (selectedFeature?.getProperties()?.id !== selectedLabelId) {
@@ -153,7 +240,10 @@ export const SelectAndModifyFeature = (props: {
               const { id: labelId } = feature.getProperties();
               try {
                 await perform(
-                  updateLabelEffect({ labelId, geometry }, { client })
+                  updateLabelEffect(
+                    { labelId, geometry, imageId: labelData?.label?.imageId },
+                    { client }
+                  )
                 );
               } catch (error) {
                 toast({

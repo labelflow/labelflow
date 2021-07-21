@@ -14,14 +14,23 @@ import type { Project as ProjectType } from "../../graphql-types.generated";
 import { UpsertProjectModal } from "../../components/projects/upsert-project-modal";
 import { UpsertProjectDelete } from "../../components/projects/upsert-project-delete";
 
-const getProjectsQuery = gql`
+export const getProjectsQuery = gql`
   query getProjects {
     projects {
       id
       name
-      images {
+      images(first: 1) {
         id
         url
+      }
+      imagesAggregates {
+        totalCount
+      }
+      labelsAggregates {
+        totalCount
+      }
+      labelClassesAggregates {
+        totalCount
       }
     }
   }
@@ -29,9 +38,17 @@ const getProjectsQuery = gql`
 
 const ProjectPage = () => {
   const { data: projectsResult } =
-    useQuery<{ projects: Pick<ProjectType, "id" | "name" | "images">[] }>(
-      getProjectsQuery
-    );
+    useQuery<{
+      projects: Pick<
+        ProjectType,
+        | "id"
+        | "name"
+        | "images"
+        | "imagesAggregates"
+        | "labelClassesAggregates"
+        | "labelsAggregates"
+      >[];
+    }>(getProjectsQuery);
 
   const [isCreatingProject, setIsCreatingProject] = useQueryParam(
     "modal-create-project",
@@ -42,7 +59,7 @@ const ProjectPage = () => {
     IdParam
   );
   const [deleteProjectId, setDeleteProjectId] = useQueryParam(
-    "alert-edit-project",
+    "alert-delete-project",
     IdParam
   );
 
@@ -94,22 +111,32 @@ const ProjectPage = () => {
             }}
           />
 
-          {projectsResult?.projects?.map(({ id, name }) => (
-            <ProjectCard
-              key={id}
-              url={`/projects/${id}`}
-              projectName={name}
-              imagesCount={0}
-              labelClassesCount={0}
-              labelsCount={0}
-              editProject={() => {
-                setEditProjectId(id, "replaceIn");
-              }}
-              deleteProject={() => {
-                setDeleteProjectId(id, "replaceIn");
-              }}
-            />
-          ))}
+          {projectsResult?.projects?.map(
+            ({
+              id,
+              images,
+              name,
+              imagesAggregates,
+              labelsAggregates,
+              labelClassesAggregates,
+            }) => (
+              <ProjectCard
+                key={id}
+                url={`/projects/${id}`}
+                imageUrl={images[0]?.url}
+                projectName={name}
+                imagesCount={imagesAggregates.totalCount}
+                labelClassesCount={labelClassesAggregates.totalCount}
+                labelsCount={labelsAggregates.totalCount}
+                editProject={() => {
+                  setEditProjectId(id, "replaceIn");
+                }}
+                deleteProject={() => {
+                  setDeleteProjectId(id, "replaceIn");
+                }}
+              />
+            )
+          )}
         </Flex>
       </Layout>
     </>

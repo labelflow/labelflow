@@ -8,6 +8,7 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { useApolloClient, gql } from "@apollo/client";
+import { useRouter } from "next/router";
 
 import { Dropzone } from "./dropzone";
 import { FilesStatuses } from "./file-statuses";
@@ -17,8 +18,14 @@ import { UploadTarget } from "../../../../graphql-types.generated";
 import { browser } from "../../../../utils/detect-scope";
 
 const createImageFromFileMutation = gql`
-  mutation createImageMutation($file: Upload!, $createdAt: DateTime) {
-    createImage(data: { file: $file, createdAt: $createdAt }) {
+  mutation createImageMutation(
+    $file: Upload!
+    $createdAt: DateTime
+    $projectId: ID!
+  ) {
+    createImage(
+      data: { file: $file, createdAt: $createdAt, projectId: $projectId }
+    ) {
       id
     }
   }
@@ -29,8 +36,16 @@ const createImageFromUrlMutation = gql`
     $url: String!
     $createdAt: DateTime
     $name: String!
+    $projectId: ID!
   ) {
-    createImage(data: { url: $url, createdAt: $createdAt, name: $name }) {
+    createImage(
+      data: {
+        url: $url
+        createdAt: $createdAt
+        name: $name
+        projectId: $projectId
+      }
+    ) {
       id
     }
   }
@@ -73,6 +88,9 @@ export const ImportImagesModalDropzone = ({
 }) => {
   const apolloClient = useApolloClient();
 
+  const router = useRouter();
+  const { projectId } = router?.query;
+
   /*
    * We need a state with the accepted and reject files to be able to reset the list
    * when we close the modal because react-dropzone doesn't provide a way to reset its
@@ -85,6 +103,10 @@ export const ImportImagesModalDropzone = ({
 
   useEffect(() => {
     if (isEmpty(files)) return;
+
+    if (!projectId) {
+      throw new Error(`No project id`);
+    }
 
     const createImages = async () => {
       const now = new Date();
@@ -110,6 +132,7 @@ export const ImportImagesModalDropzone = ({
                   variables: {
                     file: acceptedFile.file,
                     createdAt: createdAt.toISOString(),
+                    projectId,
                   },
                 });
 
@@ -136,6 +159,7 @@ export const ImportImagesModalDropzone = ({
                     variables: {
                       url,
                       name: acceptedFile.file.name,
+                      projectId,
                     },
                   });
 
@@ -160,6 +184,7 @@ export const ImportImagesModalDropzone = ({
                     url: target.downloadUrl,
                     createdAt: createdAt.toISOString(),
                     name: acceptedFile.file.name,
+                    projectId,
                   },
                 });
 
@@ -220,7 +245,6 @@ export const ImportImagesModalDropzone = ({
         pb="6"
         pr="6"
         pl="6"
-        overflowY="hidden"
         flexDirection="column"
       >
         {isEmpty(files) ? (

@@ -1,3 +1,4 @@
+/* eslint-disable import/first */
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom/extend-expect";
@@ -9,6 +10,10 @@ import { PropsWithChildren } from "react";
 import { mocked } from "ts-jest/utils";
 import probe from "probe-image-size";
 import { incrementMockedDate } from "@labelflow/dev-utils/mockdate";
+import { mockNextRouter } from "../../../../utils/router-mocks";
+
+mockNextRouter({ query: { projectId: "mocked-project-id" } });
+
 import { ExportModal } from "..";
 import { theme } from "../../../../theme";
 import { client } from "../../../../connectors/apollo-client-schema";
@@ -27,6 +32,21 @@ const wrapper = ({ children }: PropsWithChildren<{}>) => (
     </ChakraProvider>
   </ApolloProvider>
 );
+
+const createProject = async (
+  projectId = "mocked-project-id",
+  name = "test project"
+) =>
+  client.mutate({
+    mutation: gql`
+      mutation createProject($name: String!, $projectId: ID) {
+        createProject(data: { name: $name, id: $projectId }) {
+          id
+        }
+      }
+    `,
+    variables: { projectId, name },
+  });
 
 const labelData = {
   geometry: {
@@ -69,9 +89,16 @@ const createImage = async (name: String) => {
         $name: String!
         $width: Int
         $height: Int
+        $projectId: ID!
       ) {
         createImage(
-          data: { name: $name, file: $file, width: $width, height: $height }
+          data: {
+            name: $name
+            file: $file
+            width: $width
+            height: $height
+            projectId: $projectId
+          }
         ) {
           id
         }
@@ -82,6 +109,7 @@ const createImage = async (name: String) => {
       name,
       width: imageWidth,
       height: imageHeight,
+      projectId: "mocked-project-id",
     },
   });
 
@@ -95,6 +123,7 @@ const createImage = async (name: String) => {
 };
 
 test("File should be downloaded when user clicks on Export to COCO", async () => {
+  await createProject();
   render(<ExportModal isOpen />, { wrapper });
   const anchorMocked = {
     href: "",
@@ -114,6 +143,8 @@ test("File should be downloaded when user clicks on Export to COCO", async () =>
 });
 
 test("Export Modal should display the number of labels", async () => {
+  await createProject();
+  await createProject("second-project-id", "second-test-project");
   mockedProbeSync.mockReturnValue({
     width: 42,
     height: 36,

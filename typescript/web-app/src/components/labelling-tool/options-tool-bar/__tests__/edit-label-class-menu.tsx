@@ -5,6 +5,10 @@ import userEvent from "@testing-library/user-event";
 
 import { mockNextRouter } from "../../../../utils/router-mocks";
 
+mockNextRouter({
+  query: { imageId: "mocked-image-id", projectId: "test project id" },
+});
+
 import { client } from "../../../../connectors/apollo-client-schema";
 import {
   useLabellingStore,
@@ -14,7 +18,7 @@ import { setupTestsWithLocalDatabase } from "../../../../utils/setup-local-db-te
 
 import { EditLabelClassMenu } from "../edit-label-class-menu";
 
-mockNextRouter({ query: { id: "mocked-image-id" } });
+const testProjectId = "test project id";
 
 setupTestsWithLocalDatabase();
 
@@ -52,6 +56,28 @@ jest.mock("../../../../connectors/apollo-client-schema", () => {
   };
 });
 
+const createProject = async (
+  name: string,
+  projectId: string = testProjectId
+) => {
+  // @ts-ignore
+  return client.mutateOriginal({
+    mutation: gql`
+      mutation createProject($projectId: String, $name: String!) {
+        createProject(data: { id: $projectId, name: $name }) {
+          id
+          name
+        }
+      }
+    `,
+    variables: {
+      name,
+      projectId,
+    },
+    fetchPolicy: "no-cache",
+  });
+};
+
 const renderEditLabelClassMenu = () => {
   return render(<EditLabelClassMenu />, {
     wrapper: ({ children }) => (
@@ -65,35 +91,35 @@ beforeEach(async () => {
     selectedLabelId: "my label id",
     selectedTool: Tools.SELECTION,
   });
-  await waitFor(() => {
-    // @ts-ignore
-    client.mutateOriginal({
-      mutation: gql`
-        mutation createLabelClass($data: LabelClassCreateInput!) {
-          createLabelClass(data: $data) {
-            id
-          }
+
+  await createProject("Test project");
+
+  // @ts-ignore
+  await client.mutateOriginal({
+    mutation: gql`
+      mutation createLabelClass($data: LabelClassCreateInput!) {
+        createLabelClass(data: $data) {
+          id
         }
-      `,
-      variables: {
-        data: {
-          id: "existing label class id",
-          name: "existing label class",
-          color: "0xaa45f7",
-        },
+      }
+    `,
+    variables: {
+      data: {
+        id: "existing label class id",
+        name: "existing label class",
+        color: "0xaa45f7",
+        projectId: testProjectId,
       },
-    });
+    },
   });
+
   jest.clearAllMocks();
 });
 
 it("should create a class", async () => {
   renderEditLabelClassMenu();
 
-  await userEvent.type(
-    screen.getByPlaceholderText(/Search/),
-    "newClass{enter}"
-  );
+  userEvent.type(screen.getByPlaceholderText(/Search/), "newClass{enter}");
 
   await waitFor(() => {
     expect(client.mutate).toHaveBeenCalledWith(
@@ -128,7 +154,7 @@ it("should change a class", async () => {
     expect(screen.getByText(/existing label class/)).toBeDefined()
   );
 
-  await userEvent.click(screen.getByText(/existing label class/));
+  userEvent.click(screen.getByText(/existing label class/));
 
   await waitFor(() => {
     expect(client.mutate).toHaveBeenCalledWith(

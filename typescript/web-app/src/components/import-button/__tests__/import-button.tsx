@@ -1,7 +1,7 @@
 /* eslint-disable import/first */
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { ApolloProvider } from "@apollo/client";
+import { ApolloProvider, gql } from "@apollo/client";
 import { PropsWithChildren } from "react";
 import "@testing-library/jest-dom/extend-expect";
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -10,9 +10,13 @@ import probe from "probe-image-size";
 
 import { client } from "../../../connectors/apollo-client-schema";
 import { setupTestsWithLocalDatabase } from "../../../utils/setup-local-db-tests";
-import { mockUseQueryParams } from "../../../utils/router-mocks";
+import {
+  mockUseQueryParams,
+  mockNextRouter,
+} from "../../../utils/router-mocks";
 
 mockUseQueryParams();
+mockNextRouter({ query: { projectId: "mocked-project-id" } });
 
 import { ImportButton } from "../import-button";
 
@@ -43,6 +47,18 @@ jest.mock("../../../connectors/apollo-client-schema", () => {
   return {
     client: { ...original.client, mutate: jest.fn(original.client.mutate) },
   };
+});
+
+beforeEach(async () => {
+  await client.mutate({
+    mutation: gql`
+      mutation {
+        createProject(data: { name: "test project", id: "mocked-project-id" }) {
+          id
+        }
+      }
+    `,
+  });
 });
 
 test("should clear the modal content when closed", async () => {

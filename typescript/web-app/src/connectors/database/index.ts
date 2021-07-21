@@ -23,7 +23,15 @@ export type DbLabelClass = Omit<GeneratedLabelClass, "labels">;
 
 export type DbExample = GeneratedExample;
 
-export type DbProject = Omit<GeneratedProject, "labelClasses" | "images">;
+export type DbProject = Omit<
+  GeneratedProject,
+  | "images"
+  | "imagesAggregates"
+  | "labels"
+  | "labelsAggregates"
+  | "labelClasses"
+  | "labelClassesAggregates"
+>;
 
 interface Database extends Dexie {
   example: Dexie.Table<DbExample, string>;

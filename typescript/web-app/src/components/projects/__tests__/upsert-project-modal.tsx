@@ -1,29 +1,29 @@
+/* eslint-disable import/first */
 import {
+  act,
   render,
-  cleanup,
   screen,
   fireEvent,
   waitFor,
-  act,
 } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { ApolloProvider } from "@apollo/client";
+import { ApolloProvider, gql } from "@apollo/client";
 import { PropsWithChildren } from "react";
 import "@testing-library/jest-dom/extend-expect";
-import { gql } from "graphql-tag";
 
 import { client } from "../../../connectors/apollo-client-schema";
 import { setupTestsWithLocalDatabase } from "../../../utils/setup-local-db-tests";
 import { mockUseQueryParams } from "../../../utils/router-mocks";
-import { UpsertProjectModal } from "../upsert-project-modal";
 
 mockUseQueryParams();
+
+import { UpsertProjectModal } from "../upsert-project-modal";
+
+setupTestsWithLocalDatabase();
 
 const Wrapper = ({ children }: PropsWithChildren<{}>) => (
   <ApolloProvider client={client}>{children}</ApolloProvider>
 );
-
-setupTestsWithLocalDatabase();
 
 jest.mock("lodash/fp/debounce", () => jest.fn((_, fn) => fn));
 
@@ -191,29 +191,31 @@ test("update project: should update a project when the form is submitted", async
     variables: { name: projectName },
   });
 
-  const onClose1 = jest.fn();
+  const onClose = jest.fn();
 
-  renderModal({ projectId, onClose: onClose1 });
+  renderModal({ projectId, onClose });
 
-  const input1 = screen.getByLabelText(
+  const input = screen.getByLabelText(
     /project name input/i
   ) as HTMLInputElement;
 
   await waitFor(() => {
-    expect(input1.value).toBe(projectName);
+    expect(input.value).toBe(projectName);
   });
 
   const button = screen.getByLabelText(/update project/i);
 
-  userEvent.click(input1);
-  userEvent.clear(input1);
-  userEvent.type(input1, projectNewName);
+  userEvent.click(input);
+  userEvent.clear(input);
+  userEvent.type(input, projectNewName);
+  await waitFor(() => {
+    expect(input.value).toBe(projectNewName);
+  });
+
   userEvent.click(button);
 
-  expect(input1.value).toBe(projectNewName);
-
   await waitFor(() => {
-    expect(onClose1).toHaveBeenCalled();
+    expect(onClose).toHaveBeenCalled();
   });
 
   await act(async () => {
@@ -236,41 +238,5 @@ test("update project: should update a project when the form is submitted", async
     });
 
     expect(name1).toEqual(projectNewName);
-  });
-
-  await waitFor(() => {
-    expect(onClose1).toHaveBeenCalled();
-  });
-
-  // // FIXME: This checks that we can find the project by name in the DB after renaming it, does NOT work
-  // const {
-  //   data: {
-  //     project: { name: name2 },
-  //   },
-  // } = await client.query({
-  //   query: gql`
-  //     query getProjectByName($name: String) {
-  //       project(where: { name: $name }) {
-  //         id
-  //         name
-  //       }
-  //     }
-  //   `,
-  //   variables: { name: projectNewName },
-  //   fetchPolicy: "no-cache",
-  // });
-  // expect(name2).toEqual(projectNewName);
-
-  const onClose2 = jest.fn();
-
-  cleanup();
-  renderModal({ projectId, onClose: onClose2 });
-
-  const input2 = screen.getByLabelText(
-    /project name input/i
-  ) as HTMLInputElement;
-
-  await waitFor(() => {
-    expect(input2.value).toBe(projectNewName);
   });
 });

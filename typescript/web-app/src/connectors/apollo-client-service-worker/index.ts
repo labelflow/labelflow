@@ -5,5 +5,16 @@ const httpLink = new HttpLink({ uri: "/api/worker/graphql" });
 
 export const client = new ApolloClient({
   link: concat(awaitServiceWorkerLink, httpLink),
-  cache: new InMemoryCache(),
+  cache: new InMemoryCache({
+    typePolicies: {
+      Label: {
+        fields: {
+          geometry: {
+            // Short for options.mergeObjects(existing, incoming), see https://www.apollographql.com/docs/react/caching/cache-field-behavior/#merging-non-normalized-objects
+            merge: true,
+          },
+        },
+      },
+    },
+  }),
 });
