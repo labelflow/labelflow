@@ -212,7 +212,6 @@ export const DrawBoundingBoxAndPolygonInteraction = () => {
           imageUrl: dataUrl,
         },
       });
-      console.log(data);
 
       return updateLabelEffect(
         {
@@ -229,12 +228,7 @@ export const DrawBoundingBoxAndPolygonInteraction = () => {
 
     setDrawingToolState(DrawingToolState.IDLE);
     try {
-      const labelId = await labelIdPromise;
-      const inferenceResult = await inferencePromise;
-      // console.log(`labelId = ${labelId}`);
-      // console.log(
-      //   `inferenceResult = ${JSON.stringify(inferenceResult, null, 1)}`
-      // );
+      await inferencePromise;
     } catch (error) {
       toast({
         title: errorMessage,
