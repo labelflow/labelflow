@@ -2,77 +2,14 @@ import { db, DbImage, DbLabel, DbLabelClass, DbProject } from "../database";
 
 import { list } from "./utils/list";
 
+import { countLabels, listLabels } from "./label";
+
 import type {
   ImageWhereInput,
   LabelClassWhereInput,
-  LabelWhereInput,
-  Maybe,
 } from "../../graphql-types.generated";
 
 type PartialWithNullAllowed<T> = { [P in keyof T]?: T[P] | undefined | null };
-
-const countLabels = async (
-  where?: LabelWhereInput | { projectId?: Maybe<string> | undefined }
-) => {
-  if (where) {
-    if ("projectId" in where) {
-      const imagesOfProject = await db.image
-        .where({
-          projectId: where.projectId,
-        })
-        .toArray();
-
-      return db.label
-        .filter((currentLabel) =>
-          imagesOfProject.some((image) => currentLabel.imageId === image.id)
-        )
-        .count();
-    }
-
-    return db.label.where(where).count();
-  }
-
-  return db.label.count();
-};
-
-const listLabels = async (
-  where?: LabelWhereInput | { projectId?: Maybe<string> | undefined },
-  skip?: number | null,
-  first?: number | null
-) => {
-  if (where && "projectId" in where) {
-    const imagesOfProject = await db.image
-      .where({
-        projectId: where.projectId,
-      })
-      .toArray();
-
-    const query = db.label
-      .orderBy("createdAt")
-      .filter((currentLabel) =>
-        imagesOfProject.some((image) => currentLabel.imageId === image.id)
-      );
-
-    if (skip) {
-      query.offset(skip);
-    }
-    if (first) {
-      query.limit(first);
-    }
-
-    return db.label
-      .filter((currentLabel) =>
-        imagesOfProject.some((image) => currentLabel.imageId === image.id)
-      )
-      .sortBy("createdAt");
-  }
-
-  return list<DbLabel, LabelWhereInput>(db.label)(
-    where as LabelWhereInput | null | undefined,
-    skip,
-    first
-  );
-};
 
 export const repository = {
   image: {
