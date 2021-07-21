@@ -49,8 +49,9 @@ export const ToolSelectionPopoverItem = (props: {
       pr="0"
       pt="1"
       pb="1"
-      role="navigation"
+      role="checkbox"
       aria-label={ariaLabel}
+      aria-checked={selected}
       _hover={{
         backgroundColor: selected ? "gray.300" : "gray.100",
       }}
