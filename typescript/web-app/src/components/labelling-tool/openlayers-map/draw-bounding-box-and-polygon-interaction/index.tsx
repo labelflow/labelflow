@@ -1,4 +1,4 @@
-import { useMemo, useRef } from "react";
+import { useMemo, useRef, useCallback, useState } from "react";
 import { useRouter } from "next/router";
 import { Draw as OlDraw } from "ol/interaction";
 import { createBox, DrawEvent } from "ol/interaction/Draw";
@@ -10,6 +10,9 @@ import { useApolloClient, useQuery, gql, useMutation } from "@apollo/client";
 import { useToast } from "@chakra-ui/react";
 
 import { useHotkeys } from "react-hotkeys-hook";
+import { Feature, MapBrowserEvent } from "ol";
+import { Geometry, Point, Polygon } from "ol/geom";
+import { Coordinate } from "ol/coordinate";
 import {
   useLabellingStore,
   Tools,
@@ -69,6 +72,9 @@ export const DrawBoundingBoxAndPolygonInteraction = () => {
   const drawRef = useRef<OlDraw>(null);
   const client = useApolloClient();
   const { imageId } = useRouter()?.query;
+
+  const [pointsInside, setPointsInside] = useState<Coordinate[]>([]);
+  const [pointsOutside, setPointsOutside] = useState<Coordinate[]>([]);
 
   const selectedTool = useLabellingStore((state) => state.selectedTool);
 
@@ -240,6 +246,33 @@ export const DrawBoundingBoxAndPolygonInteraction = () => {
       });
     }
   };
+
+  const createPointInsideOrOutside = useCallback(
+    (event: MapBrowserEvent<UIEvent>) => {
+      const { map } = event;
+
+      const idOfClickedFeature = map.forEachFeatureAtPixel(
+        event.pixel,
+        (feature) => feature.getProperties().id
+      );
+
+      if (idOfClickedFeature === selectedLabelId) {
+        setPointsOutside((previousPoints) => [
+          ...previousPoints,
+          event.coordinate,
+        ]);
+      } else {
+        setPointsInside((previousPoints) => [
+          ...previousPoints,
+          event.coordinate,
+        ]);
+      }
+
+      return false;
+    },
+    [selectedLabelId]
+  );
+
   return selectedTool !== Tools.IOG ||
     (selectedTool === Tools.IOG && selectedLabelId == null) ? (
     <olInteractionDraw
@@ -265,11 +298,23 @@ export const DrawBoundingBoxAndPolygonInteraction = () => {
       }
     />
   ) : (
-    <olInteractionPointer
-      handleDownEvent={() => {
-        console.log("I'm clicking inside the interaction");
-        return false;
-      }}
-    />
+    <>
+      <olInteractionPointer
+        args={{ handleDownEvent: createPointInsideOrOutside }}
+      />
+
+      <olLayerVector>
+        <olSourceVector>
+          {[
+            ...pointsInside.map((coordinates) => {
+              return <olFeature geometry={new Point(coordinates)} />;
+            }),
+            ...pointsOutside.map((coordinates) => {
+              return <olFeature geometry={new Point(coordinates)} />;
+            }),
+          ]}
+        </olSourceVector>
+      </olLayerVector>
+    </>
   );
 };

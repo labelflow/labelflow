@@ -222,55 +222,51 @@ export const Labels = ({
   const labels = data?.image?.labels ?? [];
 
   return (
-    <>
-      <olLayerVector>
-        <olSourceVector ref={sourceVectorLabelsRef}>
-          {labels.map(({ id, labelClass, geometry }: Label) => {
-            const isSelected = id === selectedLabelId;
-            const labelClassColor = labelClass?.color ?? noneClassColor;
-            const labelStyle = new Style({
-              fill: new Fill({
-                color: `${labelClassColor}${isSelected ? "40" : "10"}`,
-              }),
-              stroke: new Stroke({
-                color: labelClassColor,
-                width: isSelected ? 4 : 2,
-              }),
-              zIndex: isSelected ? 2 : 1,
-            });
-            const verticesStyle = isSelected
-              ? new Style({
-                  image: new CircleStyle({
-                    radius: 5,
-                    fill: new Fill({
-                      color: labelClassColor,
-                    }),
+    <olLayerVector>
+      <olSourceVector ref={sourceVectorLabelsRef}>
+        {labels.map(({ id, labelClass, geometry }: Label) => {
+          const isSelected = id === selectedLabelId;
+          const labelClassColor = labelClass?.color ?? noneClassColor;
+          const labelStyle = new Style({
+            fill: new Fill({
+              color: `${labelClassColor}${isSelected ? "40" : "10"}`,
+            }),
+            stroke: new Stroke({
+              color: labelClassColor,
+              width: isSelected ? 4 : 2,
+            }),
+            zIndex: isSelected ? 2 : 1,
+          });
+          const verticesStyle = isSelected
+            ? new Style({
+                image: new CircleStyle({
+                  radius: 5,
+                  fill: new Fill({
+                    color: labelClassColor,
                   }),
-                  geometry: (feature) => {
-                    const coordinates = (feature as Feature<Polygon>)
-                      .getGeometry()
-                      .getCoordinates()[0];
-                    return new MultiPoint(coordinates);
-                  },
-                  zIndex: isSelected ? 2 : 1,
-                })
-              : null;
-            const style = isSelected
-              ? [labelStyle, verticesStyle]
-              : [labelStyle];
+                }),
+                geometry: (feature) => {
+                  const coordinates = (feature as Feature<Polygon>)
+                    .getGeometry()
+                    .getCoordinates()[0];
+                  return new MultiPoint(coordinates);
+                },
+                zIndex: isSelected ? 2 : 1,
+              })
+            : null;
+          const style = isSelected ? [labelStyle, verticesStyle] : [labelStyle];
 
-            return (
-              <olFeature
-                key={id}
-                id={id}
-                properties={{ isSelected }}
-                geometry={new GeoJSON().readGeometry(geometry)}
-                style={style}
-              />
-            );
-          })}
-        </olSourceVector>
-      </olLayerVector>
-    </>
+          return (
+            <olFeature
+              key={id}
+              id={id}
+              properties={{ isSelected }}
+              geometry={new GeoJSON().readGeometry(geometry)}
+              style={style}
+            />
+          );
+        })}
+      </olSourceVector>
+    </olLayerVector>
   );
 };
