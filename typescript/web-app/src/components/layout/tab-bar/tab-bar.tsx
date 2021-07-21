@@ -27,7 +27,7 @@ export const TabBar = ({ tabs }: Props) => {
       role="tablist"
     >
       {tabs.map(({ name, url, isActive }) => (
-        <NextLink href={url} css="margin: 0;" key={name}>
+        <NextLink href={url} key={name}>
           <chakra.button
             role="tab"
             fontSize="lg"
