@@ -1,14 +1,18 @@
 import { gql, useQuery } from "@apollo/client";
 import NextLink from "next/link";
 import {
+  Box,
+  Kbd,
   Text,
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbLink,
+  Flex,
   chakra,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
-import { RiArrowRightSLine } from "react-icons/ri";
+import { RiCheckboxBlankCircleFill, RiArrowRightSLine } from "react-icons/ri";
+import { useMemo } from "react";
 import { KeymapButton } from "../../../../components/keymap-button";
 import { ImportButton } from "../../../../components/import-button";
 import { ExportButton } from "../../../../components/export-button";
@@ -16,18 +20,26 @@ import { Meta } from "../../../../components/meta";
 import { Layout } from "../../../../components/layout";
 import type { Project as ProjectType } from "../../../../graphql-types.generated";
 import { ProjectTabBar } from "../../../../components/layout/tab-bar/project-tab-bar";
+import { noneClassColor } from "../../../../utils/class-color-generator";
 
 const ArrowRightIcon = chakra(RiArrowRightSLine);
+const CircleIcon = chakra(RiCheckboxBlankCircleFill);
 
-export const projectDataQuery = gql`
-  query getProjectData($projectId: ID!) {
+const noneClass = {
+  id: "NoneClass",
+  name: "None",
+  color: noneClassColor,
+};
+
+export const projectLabelClassesQuery = gql`
+  query getProjectLabelClasses($projectId: ID!) {
     project(where: { id: $projectId }) {
       id
       name
-      images {
+      labelClasses {
         id
         name
-        url
+        color
       }
     }
   }
@@ -37,15 +49,33 @@ const ClassesPage = () => {
   const router = useRouter();
   const projectId = router?.query?.projectId as string;
 
-  const { data: projectResult } = useQuery<{
+  const { data: projectResult, loading } = useQuery<{
     project: ProjectType;
-  }>(projectDataQuery, {
+  }>(projectLabelClassesQuery, {
     variables: {
       projectId,
     },
   });
 
   const projectName = projectResult?.project.name;
+  const labelClasses = projectResult?.project.labelClasses ?? [];
+
+  const labelClassWithShortcut = useMemo(
+    () =>
+      [...labelClasses, noneClass].map((labelClass, index) => {
+        if (index > 9) {
+          return {
+            ...labelClass,
+            shortcut: null,
+          };
+        }
+        return {
+          ...labelClass,
+          shortcut: `${(index + 1) % 10}`,
+        };
+      }),
+    [labelClasses]
+  );
 
   return (
     <>
@@ -80,7 +110,37 @@ const ClassesPage = () => {
         }
         tabBar={<ProjectTabBar currentTab="classes" projectId={projectId} />}
       >
-        <></>
+        <Box bg="white" m="8px" borderRadius="8px" maxWidth="96">
+          {!loading &&
+            labelClassWithShortcut.map(({ id, name, color, shortcut }) => {
+              return (
+                <Flex key={id} alignItems="center" height="10">
+                  <CircleIcon
+                    flexShrink={0}
+                    flexGrow={0}
+                    color={color}
+                    fontSize="2xl"
+                    ml="2"
+                    mr="2"
+                  />
+                  <Text flexGrow={1} isTruncated>
+                    {name}
+                  </Text>
+
+                  {shortcut && (
+                    <Kbd
+                      flexShrink={0}
+                      flexGrow={0}
+                      justifyContent="center"
+                      mr="2"
+                    >
+                      {shortcut}
+                    </Kbd>
+                  )}
+                </Flex>
+              );
+            })}
+        </Box>
       </Layout>
     </>
   );

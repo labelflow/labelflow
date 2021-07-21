@@ -8,6 +8,7 @@ import {
 import { Effect } from "..";
 import { LabelClass } from "../../../graphql-types.generated";
 import { getProjectsQuery } from "../../../pages/projects";
+import { projectLabelClassesQuery } from "../../../pages/projects/[projectId]/classes";
 
 const labelClassesOfProjectQuery = gql`
   query getLabelClassesOfProject($projectId: ID!) {
@@ -86,6 +87,7 @@ export const createCreateLabelClassAndUpdateLabelEffect = (
       refetchQueries: [
         { query: labelClassesOfProjectQuery, variables: { projectId } },
         { query: getProjectsQuery },
+        { query: projectLabelClassesQuery, variables: { projectId } },
       ],
     });
 
@@ -138,6 +140,7 @@ export const createCreateLabelClassAndUpdateLabelEffect = (
       refetchQueries: [
         { query: labelClassesOfProjectQuery, variables: { projectId } },
         { query: getProjectsQuery },
+        { query: projectLabelClassesQuery, variables: { projectId } },
       ],
     });
 
@@ -160,6 +163,7 @@ export const createCreateLabelClassAndUpdateLabelEffect = (
       refetchQueries: [
         { query: labelClassesOfProjectQuery, variables: { projectId } },
         { query: getProjectsQuery },
+        { query: projectLabelClassesQuery, variables: { projectId } },
       ],
     });
 
