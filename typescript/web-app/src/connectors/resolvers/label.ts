@@ -12,13 +12,17 @@ import type {
   MutationUpdateLabelArgs,
   QueryLabelArgs,
 } from "../../graphql-types.generated";
-import { db, DbLabel } from "../database";
+import { DbLabel } from "../database";
 import { projectTypename } from "./project";
 
-export const getLabels = () => db.label.toArray();
+import { Context } from "./types";
 
-const getLabelById = async (id: string): Promise<DbLabel> => {
-  const entity = await db.label.get(id);
+const getLabelById = async (
+  id: string,
+  repository: Context["repository"]
+): Promise<DbLabel> => {
+  const entity = await repository.label.getById(id);
+
   if (entity === undefined) {
     throw new Error("No label with such id");
   }
@@ -27,16 +31,20 @@ const getLabelById = async (id: string): Promise<DbLabel> => {
 };
 
 // Queries
-const labelClass = async (label: DbLabel) => {
+const labelClass = async (
+  label: DbLabel,
+  _args: any,
+  { repository }: Context
+) => {
   if (!label?.labelClassId) {
     return null;
   }
 
-  return db.labelClass.get(label.labelClassId) ?? null;
+  return repository.labelClass.getById(label.labelClassId) ?? null;
 };
 
-const label = (_: any, args: QueryLabelArgs) => {
-  return getLabelById(args?.where?.id);
+const label = async (_: any, args: QueryLabelArgs, { repository }: Context) => {
+  return getLabelById(args?.where?.id, repository);
 };
 
 export const getBoundedGeometryFromImage = (
@@ -72,20 +80,21 @@ export const getBoundedGeometryFromImage = (
 // Mutations
 const createLabel = async (
   _: any,
-  args: MutationCreateLabelArgs
+  args: MutationCreateLabelArgs,
+  { repository }: Context
 ): Promise<Label> => {
   const { id, imageId, labelClassId, geometry } = args.data;
 
   // Since we don't have any constraint checks with Dexie
   // We need to ensure that the imageId and the labelClassId
   // matches some entity before being able to continue.
-  const image = await db.image.get(imageId);
+  const image = await repository.image.getById(imageId);
   if (image == null) {
     throw new Error(`The image id ${imageId} doesn't exist.`);
   }
 
   if (labelClassId != null) {
-    if ((await db.labelClass.get(labelClassId)) == null) {
+    if ((await repository.labelClass.getById(labelClassId)) == null) {
       throw new Error(`The labelClass id ${labelClassId} doesn't exist.`);
     }
   }
@@ -114,46 +123,56 @@ const createLabel = async (
     geometry: clippedGeometry,
   };
 
-  await db.label.add(newLabelEntity);
-  const result = await db.label.get(labelId);
+  await repository.label.add(newLabelEntity);
+  const result = await repository.label.getById(labelId);
   if (!result) {
     throw new Error("Could not create the label entity");
   }
   return result;
 };
 
-const deleteLabel = async (_: any, args: MutationDeleteLabelArgs) => {
+const deleteLabel = async (
+  _: any,
+  args: MutationDeleteLabelArgs,
+  { repository }: Context
+) => {
   const labelId = args.where.id;
 
-  const labelToDelete = await db.label.get(labelId);
+  const labelToDelete = await repository.label.getById(labelId);
 
   if (!labelToDelete) {
     throw new Error("No label with such id");
   }
 
-  await db.label.delete(labelId);
+  await repository.label.delete(labelId);
 
   return labelToDelete;
 };
 
-const updateLabel = async (_: any, args: MutationUpdateLabelArgs) => {
+const updateLabel = async (
+  _: any,
+  args: MutationUpdateLabelArgs,
+  { repository }: Context
+) => {
   const labelId = args.where.id;
 
   if ("labelClassId" in args.data && args.data.labelClassId != null) {
-    const labelClassToConnect = await db.labelClass.get(args.data.labelClassId);
+    const labelClassToConnect = await repository.labelClass.getById(
+      args.data.labelClassId
+    );
 
     if (!labelClassToConnect) {
       throw new Error("No label class with such id");
     }
   }
   if (!args?.data?.geometry) {
-    await db.label.update(labelId, args.data);
+    await repository.label.update(labelId, args.data);
 
-    return getLabelById(labelId);
+    return getLabelById(labelId, repository);
   }
 
-  const { imageId } = await getLabelById(labelId);
-  const image = await db.image.get(imageId);
+  const { imageId } = await getLabelById(labelId, repository);
+  const image = await repository.image.getById(imageId);
   if (image == null) {
     throw new Error(`The image id ${imageId} doesn't exist.`);
   }
@@ -177,9 +196,9 @@ const updateLabel = async (_: any, args: MutationUpdateLabelArgs) => {
     width,
   };
 
-  await db.label.update(labelId, newLabelEntity);
+  await repository.label.update(labelId, newLabelEntity);
 
-  return getLabelById(labelId);
+  return getLabelById(labelId, repository);
 };
 
 const labelsAggregates = (parent: any) => {
@@ -187,25 +206,15 @@ const labelsAggregates = (parent: any) => {
   return parent ?? {};
 };
 
-const totalCount = async (parent: any) => {
+const totalCount = async (parent: any, _args: any, { repository }: Context) => {
   // eslint-disable-next-line no-underscore-dangle
   const typename = parent?.__typename;
 
   if (typename === projectTypename) {
-    const imagesOfProject = await db.image
-      .where({
-        projectId: parent.id,
-      })
-      .toArray();
-
-    return db.label
-      .filter((currentLabel) =>
-        imagesOfProject.some((image) => currentLabel.imageId === image.id)
-      )
-      .count();
+    return repository.label.count({ projectId: parent.id });
   }
 
-  return db.label.count();
+  return repository.label.count();
 };
 
 export default {
