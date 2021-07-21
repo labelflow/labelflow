@@ -24,6 +24,7 @@ import { noneClassColor } from "../../../../utils/class-color-generator";
 import { createLabelEffect } from "./create-label-effect";
 import { LabelType } from "../../../../graphql-types.generated";
 import { updateLabelEffect } from "../select-and-modify-feature/update-label-effect";
+import CircleStyle from "ol/style/Circle";
 
 const labelClassQuery = gql`
   query getLabelClass($id: ID!) {
@@ -123,6 +124,32 @@ export const DrawBoundingBoxAndPolygonInteraction = () => {
       }),
     });
   }, [selectedLabelClass?.color]);
+
+  const createPointInsideOrOutside = useCallback(
+    (event: MapBrowserEvent<UIEvent>) => {
+      const { map } = event;
+
+      const idOfClickedFeature = map.forEachFeatureAtPixel(
+        event.pixel,
+        (feature) => feature.getProperties().id
+      );
+
+      if (idOfClickedFeature === selectedLabelId) {
+        setPointsOutside((previousPoints) => [
+          ...previousPoints,
+          event.coordinate,
+        ]);
+      } else {
+        setPointsInside((previousPoints) => [
+          ...previousPoints,
+          event.coordinate,
+        ]);
+      }
+
+      return false;
+    },
+    [selectedLabelId]
+  );
 
   if (![Tools.BOX, Tools.POLYGON, Tools.IOG].includes(selectedTool)) {
     return null;
@@ -247,32 +274,6 @@ export const DrawBoundingBoxAndPolygonInteraction = () => {
     }
   };
 
-  const createPointInsideOrOutside = useCallback(
-    (event: MapBrowserEvent<UIEvent>) => {
-      const { map } = event;
-
-      const idOfClickedFeature = map.forEachFeatureAtPixel(
-        event.pixel,
-        (feature) => feature.getProperties().id
-      );
-
-      if (idOfClickedFeature === selectedLabelId) {
-        setPointsOutside((previousPoints) => [
-          ...previousPoints,
-          event.coordinate,
-        ]);
-      } else {
-        setPointsInside((previousPoints) => [
-          ...previousPoints,
-          event.coordinate,
-        ]);
-      }
-
-      return false;
-    },
-    [selectedLabelId]
-  );
-
   return selectedTool !== Tools.IOG ||
     (selectedTool === Tools.IOG && selectedLabelId == null) ? (
     <olInteractionDraw
@@ -307,10 +308,46 @@ export const DrawBoundingBoxAndPolygonInteraction = () => {
         <olSourceVector>
           {[
             ...pointsInside.map((coordinates) => {
-              return <olFeature geometry={new Point(coordinates)} />;
+              return (
+                <olFeature
+                  geometry={new Point(coordinates)}
+                  style={
+                    new Style({
+                      image: new CircleStyle({
+                        radius: 8,
+                        fill: new Fill({
+                          color: "#23e623ff",
+                        }),
+                        stroke: new Stroke({
+                          color: "#ffffffff",
+                          width: 2,
+                        }),
+                      }),
+                    })
+                  }
+                />
+              );
             }),
             ...pointsOutside.map((coordinates) => {
-              return <olFeature geometry={new Point(coordinates)} />;
+              return (
+                <olFeature
+                  geometry={new Point(coordinates)}
+                  style={
+                    new Style({
+                      image: new CircleStyle({
+                        radius: 8,
+                        fill: new Fill({
+                          color: "#ff2323ff",
+                        }),
+                        stroke: new Stroke({
+                          color: "#ffffffff",
+                          width: 2,
+                        }),
+                      }),
+                    })
+                  }
+                />
+              );
             }),
           ]}
         </olSourceVector>
