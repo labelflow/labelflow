@@ -3,8 +3,8 @@ import GeoJSON from "ol/format/GeoJSON";
 import { getBoundedGeometryFromImage } from "../../../../connectors/resolvers/label";
 
 import { Effect } from "../../../../connectors/undo-store";
+import { GeometryInput, LabelType } from "../../../../graphql-types.generated";
 import { getProjectsQuery } from "../../../../pages/projects";
-import { GeometryInput } from "../../../../graphql-types.generated";
 
 type CreateLabelInputs = {
   imageId: string;
@@ -17,12 +17,14 @@ const createLabelMutation = gql`
   mutation createLabel(
     $id: ID
     $imageId: ID!
+    $labelType: LabelType!
     $labelClassId: ID
     $geometry: GeometryInput!
   ) {
     createLabel(
       data: {
         id: $id
+        type: $labelType
         imageId: $imageId
         labelClassId: $labelClassId
         geometry: $geometry
@@ -144,10 +146,12 @@ export const createLabelEffect = (
     imageId,
     selectedLabelClassId,
     geometry,
+    labelType,
   }: {
     imageId: string;
     selectedLabelClassId: string | null;
     geometry: GeoJSON.Polygon;
+    labelType: LabelType;
   },
   {
     setSelectedLabelId,
@@ -162,6 +166,7 @@ export const createLabelEffect = (
       imageId,
       labelClassId: selectedLabelClassId,
       geometry,
+      labelType,
     };
 
     const { data } = await client.mutate({
@@ -208,6 +213,7 @@ export const createLabelEffect = (
       imageId,
       labelClassId: selectedLabelClassId,
       geometry,
+      labelType,
     };
     const { data } = await client.mutate({
       mutation: createLabelMutation,

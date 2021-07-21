@@ -6,7 +6,7 @@ import probe from "probe-image-size";
 
 import { client } from "../../apollo-client-schema";
 import { setupTestsWithLocalDatabase } from "../../../utils/setup-local-db-tests";
-import { LabelCreateInput } from "../../../graphql-types.generated";
+import { LabelCreateInput, LabelType } from "../../../graphql-types.generated";
 
 setupTestsWithLocalDatabase();
 
@@ -38,6 +38,7 @@ const getGeometryFromExtent = ({
 const labelDataExtent = {
   x: 3.14,
   y: 42,
+  type: LabelType.Box,
   height: 768,
   width: 362,
 };

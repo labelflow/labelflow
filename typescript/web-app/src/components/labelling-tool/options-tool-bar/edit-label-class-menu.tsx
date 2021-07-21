@@ -71,10 +71,9 @@ export const EditLabelClassMenu = () => {
     variables: { id: selectedLabelClassId },
     skip: selectedLabelClassId == null,
   });
-  const selectedLabelClass =
-    selectedTool === Tools.BOX
-      ? dataLabelClass?.labelClass
-      : selectedLabelData?.label?.labelClass;
+  const selectedLabelClass = [Tools.BOX, Tools.POLYGON].includes(selectedTool)
+    ? dataLabelClass?.labelClass
+    : selectedLabelData?.label?.labelClass;
   const createNewClass = useMemo(
     () =>
       createNewLabelClassCurry({
@@ -97,7 +96,7 @@ export const EditLabelClassMenu = () => {
   );
   const onSelectedClassChange = useMemo(
     () =>
-      selectedTool === Tools.BOX
+      [Tools.BOX, Tools.POLYGON].includes(selectedTool)
         ? (item: LabelClassItem | null) =>
             perform(
               createUpdateLabelClassEffect({
@@ -119,7 +118,7 @@ export const EditLabelClassMenu = () => {
   );
 
   const displayClassSelectionMenu =
-    selectedTool === Tools.BOX ||
+    [Tools.BOX, Tools.POLYGON].includes(selectedTool) ||
     (selectedTool === Tools.SELECTION && selectedLabelId != null);
 
   useHotkeys(
@@ -148,7 +147,7 @@ export const EditLabelClassMenu = () => {
           selectedLabelClass={selectedLabelClass}
           labelClasses={labelClasses}
           createNewClass={async (name) =>
-            selectedTool === Tools.BOX
+            [Tools.BOX, Tools.POLYGON].includes(selectedTool)
               ? createNewClass(name, selectedLabelClassId)
               : createNewClassAndUpdateLabel(name, selectedLabelId)
           }

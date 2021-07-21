@@ -15,7 +15,7 @@ import { Map } from "@labelflow/react-openlayers-fiber";
 import type { Image } from "../../../graphql-types.generated";
 import "ol/ol.css";
 
-import { DrawBoundingBoxInteraction } from "./draw-bounding-box-interaction";
+import { DrawBoundingBoxAndPolygonInteraction } from "./draw-bounding-box-and-polygon-interaction";
 import { SelectAndModifyFeature } from "./select-and-modify-feature";
 import { Labels } from "./labels";
 import { EditLabelClass } from "./edit-label-class";
@@ -23,20 +23,20 @@ import { CursorGuides } from "./cursor-guides";
 import {
   useLabellingStore,
   Tools,
-  BoxDrawingToolState,
+  DrawingToolState,
 } from "../../../connectors/labelling-state";
 import { theme } from "../../../theme";
 
 const empty: any[] = [];
 
-/**
+/*
  * Padding around the openlayers view
  * [top, right, bottom, left] in pixels
  * See https://openlayers.org/en/latest/apidoc/module-ol_View-View.html#padding
  */
 const viewPadding = [72, 72, 72, 72];
 
-/**
+/*
  * Standard projection, the same for all images, with arbitrary extent
  */
 const standardProjection = new Projection({
@@ -44,7 +44,7 @@ const standardProjection = new Projection({
   units: "pixels",
 });
 
-/**
+/*
  * Memoize openlayers parameters that we pass to the open layers components
  */
 const getMemoizedProperties = memoize(
@@ -86,7 +86,7 @@ export const OpenlayersMap = () => {
   const editClassOverlayRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<OlMap>(null);
   const viewRef = useRef<OlView | null>(null);
-  const sourceVectorLabelsRef = useRef<OlSourceVector | null>(null);
+  const sourceVectorBoxesRef = useRef<OlSourceVector | null>(null);
   const router = useRouter();
   const { imageId } = router?.query;
   const isContextMenuOpen = useLabellingStore(
@@ -126,6 +126,8 @@ export const OpenlayersMap = () => {
       if (e.dragging) {
         target.style.cursor = "grabbing";
       } else if (selectedTool === Tools.BOX) {
+        target.style.cursor = "crosshair";
+      } else if (selectedTool === Tools.POLYGON) {
         target.style.cursor = "crosshair";
       } else if (selectedTool === Tools.SELECTION) {
         const hit = mapRef.current.hasFeatureAtPixel(e.pixel);
@@ -232,20 +234,23 @@ export const OpenlayersMap = () => {
                 )}
               </olLayerImage>
 
-              <Labels sourceVectorLabelsRef={sourceVectorLabelsRef} />
-              <DrawBoundingBoxInteraction />
+              <Labels sourceVectorLabelsRef={sourceVectorBoxesRef} />
+              <DrawBoundingBoxAndPolygonInteraction />
               <SelectAndModifyFeature
                 editClassOverlayRef={editClassOverlayRef}
-                sourceVectorLabelsRef={sourceVectorLabelsRef}
+                sourceVectorLabelsRef={sourceVectorBoxesRef}
                 setIsContextMenuOpen={setIsContextMenuOpen}
                 map={mapRef.current}
               />
+              {sourceVectorBoxesRef.current && (
+                <olInteractionSnap source={sourceVectorBoxesRef.current} />
+              )}
             </ThemeProvider>
           </ApolloProvider>
         </RouterContext.Provider>
       </Map>
       {selectedTool === Tools.BOX &&
-        boxDrawingToolState !== BoxDrawingToolState.DRAWING &&
+        boxDrawingToolState !== DrawingToolState.DRAWING &&
         !isContextMenuOpen && <CursorGuides map={mapRef.current} />}
       {/* This div is needed to prevent a weird error that seems related to the EditLabelClass component */}
       <div

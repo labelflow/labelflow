@@ -100,6 +100,7 @@ scalar JSON
 
 type Label {
   id: ID!
+  type: LabelType!
   createdAt: DateTime!
   updatedAt: DateTime!
   imageId: ID!
@@ -142,9 +143,15 @@ type LabelClassesAggregates {
 
 input LabelCreateInput {
   id: ID
+  type: LabelType
   imageId: ID!
   labelClassId: ID
   geometry: GeometryInput!
+}
+
+enum LabelType {
+  Polygon
+  Box
 }
 
 input LabelUpdateInput {

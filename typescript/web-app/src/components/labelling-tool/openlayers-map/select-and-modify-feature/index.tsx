@@ -2,49 +2,34 @@ import { MutableRefObject, useEffect, useState, useCallback } from "react";
 import { Feature, Map as OlMap } from "ol";
 import { Geometry, Polygon } from "ol/geom";
 import { Vector as OlSourceVector } from "ol/source";
+import Collection from "ol/Collection";
 import { extend } from "@labelflow/react-openlayers-fiber";
 import { ApolloClient, useApolloClient, useQuery, gql } from "@apollo/client";
-import { useToast } from "@chakra-ui/react";
+import { useToast, UseToastOptions } from "@chakra-ui/react";
+import { ModifyEvent } from "ol/interaction/Modify";
+import { TranslateEvent } from "ol/interaction/Translate";
 import { SelectInteraction } from "./select-interaction";
 import {
   Tools,
   useLabellingStore,
 } from "../../../../connectors/labelling-state";
-import { ResizeAndTranslateBox } from "./resize-and-translate-box-interaction";
+import {
+  ResizeAndTranslateBox,
+  ResizeAndTranslateEvent,
+} from "./resize-and-translate-box-interaction";
 import { Effect, useUndoStore } from "../../../../connectors/undo-store";
-import { GeometryInput } from "../../../../graphql-types.generated";
-import { getBoundedGeometryFromImage } from "../../../../connectors/resolvers/label";
+import { updateLabelEffect } from "./update-label-effect";
+import { LabelType } from "../../../../graphql-types.generated";
 
 // Extend react-openlayers-catalogue to include resize and translate interaction
 extend({
   ResizeAndTranslateBox: { object: ResizeAndTranslateBox, kind: "Interaction" },
 });
 
-const updateLabelMutation = gql`
-  mutation updateLabel($id: ID!, $geometry: GeometryInput, $labelClassId: ID) {
-    updateLabel(
-      where: { id: $id }
-      data: { geometry: $geometry, labelClassId: $labelClassId }
-    ) {
-      id
-      geometry {
-        type
-        coordinates
-      }
-      x
-      y
-      width
-      height
-      labelClass {
-        id
-      }
-    }
-  }
-`;
-
 const getLabelQuery = gql`
   query getLabel($id: ID!) {
     label(where: { id: $id }) {
+      type
       id
       geometry {
         type
@@ -59,123 +44,42 @@ const getLabelQuery = gql`
   }
 `;
 
-const imageDimensionsQuery = gql`
-  query imageDimensions($id: ID!) {
-    image(where: { id: $id }) {
-      id
-      width
-      height
+export const interactionEnd = async (
+  e: TranslateEvent | ModifyEvent | ResizeAndTranslateEvent | null,
+  perform: (effect: Effect<any>) => Promise<void>,
+  client: ApolloClient<Object>,
+  imageId: string,
+  toast: (options: UseToastOptions) => void
+) => {
+  const feature = e?.features?.item(0) as Feature<Polygon>;
+  if (feature != null) {
+    const coordinates = feature.getGeometry().getCoordinates();
+    const geometry = { type: "Polygon", coordinates };
+    const { id: labelId } = feature.getProperties();
+    try {
+      await perform(
+        updateLabelEffect(
+          {
+            labelId,
+            geometry,
+            imageId,
+          },
+          { client }
+        )
+      );
+    } catch (error) {
+      toast({
+        title: "Error updating label",
+        description: error?.message,
+        isClosable: true,
+        status: "error",
+        position: "bottom-right",
+        duration: 10000,
+      });
     }
   }
-`;
-
-const updateLabelEffect = (
-  {
-    labelId,
-    geometry,
-    imageId,
-  }: {
-    labelId: string;
-    geometry: GeometryInput;
-    imageId?: string;
-  },
-  {
-    client,
-  }: {
-    client: ApolloClient<object>;
-  }
-): Effect => ({
-  do: async () => {
-    const { cache } = client;
-    const imageResponse = cache.readQuery<{
-      image: { width: number; height: number };
-    }>({
-      query: imageDimensionsQuery,
-      variables: { id: imageId },
-    });
-    if (imageResponse == null) {
-      throw new Error(`Missing image with id ${imageId}`);
-    }
-    const { image } = imageResponse;
-
-    const labelResponse = cache.readQuery<{
-      label: {
-        id: string;
-        geometry: GeometryInput;
-        imageId: string;
-        labelClass: {
-          id: string;
-          color: string;
-        };
-      };
-    }>({
-      query: getLabelQuery,
-      variables: { id: labelId },
-    });
-    if (labelResponse == null) {
-      throw new Error(`Missing label with id ${imageId}`);
-    }
-    const { label } = labelResponse;
-    const imageDimensions = {
-      width: image.width,
-      height: image.height,
-    };
-    const originalGeometry = label.geometry;
-    const boundedGeometry = getBoundedGeometryFromImage(
-      imageDimensions,
-      geometry
-    );
-
-    client.mutate({
-      mutation: updateLabelMutation,
-      variables: {
-        id: labelId,
-        geometry,
-      },
-      refetchQueries: ["getImageLabels"],
-      optimisticResponse: {
-        updateLabel: {
-          id: labelId,
-          geometry: boundedGeometry.geometry,
-          x: boundedGeometry.x,
-          y: boundedGeometry.y,
-          width: boundedGeometry.width,
-          height: boundedGeometry.height,
-          labelClass: label.labelClass,
-          __typename: "Label",
-        },
-      },
-      update: (apolloCache, { data }) => {
-        apolloCache.writeQuery({
-          query: getLabelQuery,
-          data: data?.updateLabel,
-        });
-      },
-    });
-
-    return { id: labelId, originalGeometry };
-  },
-  undo: async ({
-    id,
-    originalGeometry,
-  }: {
-    id: string;
-    originalGeometry: GeometryInput;
-  }): Promise<string> => {
-    await client.mutate({
-      mutation: updateLabelMutation,
-      variables: {
-        id: labelId,
-        geometry: {
-          type: originalGeometry.type,
-          coordinates: originalGeometry.coordinates,
-        },
-      },
-      refetchQueries: ["getImageLabels"],
-    });
-    return id;
-  },
-});
+  return true;
+};
 
 export const SelectAndModifyFeature = (props: {
   sourceVectorLabelsRef: MutableRefObject<OlSourceVector<Geometry> | null>;
@@ -229,36 +133,52 @@ export const SelectAndModifyFeature = (props: {
     <>
       <SelectInteraction {...props} />
 
-      {selectedTool === Tools.SELECTION && (
-        /* @ts-ignore - We need to add this because resizeAndTranslateBox is not included in the react-openalyers-fiber original catalogue */
-        <resizeAndTranslateBox
-          args={{ selectedFeature }}
-          onInteractionEnd={async (feature: Feature<Polygon> | null) => {
-            if (feature != null) {
-              const coordinates = feature.getGeometry().getCoordinates();
-              const geometry = { type: "Polygon", coordinates };
-              const { id: labelId } = feature.getProperties();
-              try {
-                await perform(
-                  updateLabelEffect(
-                    { labelId, geometry, imageId: labelData?.label?.imageId },
-                    { client }
-                  )
-                );
-              } catch (error) {
-                toast({
-                  title: "Error updating bounding box",
-                  description: error?.message,
-                  isClosable: true,
-                  status: "error",
-                  position: "bottom-right",
-                  duration: 10000,
-                });
-              }
+      {selectedTool === Tools.SELECTION &&
+        labelData?.label?.type === LabelType.Box && (
+          /* @ts-ignore - We need to add this because resizeAndTranslateBox is not included in the react-openalyers-fiber original catalogue */
+          <resizeAndTranslateBox
+            args={{ selectedFeature }}
+            onInteractionEnd={async (e: ResizeAndTranslateEvent | null) =>
+              interactionEnd(
+                e,
+                perform,
+                client,
+                labelData?.label?.imageId,
+                toast
+              )
             }
-          }}
-        />
-      )}
+          />
+        )}
+      {selectedTool === Tools.SELECTION &&
+        labelData?.label?.type === LabelType.Polygon &&
+        selectedFeature && (
+          <>
+            <olInteractionTranslate
+              args={{ features: new Collection([selectedFeature]) }}
+              onTranslateend={async (e: TranslateEvent | null) =>
+                interactionEnd(
+                  e,
+                  perform,
+                  client,
+                  labelData?.label?.imageId,
+                  toast
+                )
+              }
+            />
+            <olInteractionModify
+              args={{ features: new Collection([selectedFeature]) }}
+              onModifyend={async (e: ModifyEvent | null) =>
+                interactionEnd(
+                  e,
+                  perform,
+                  client,
+                  labelData?.label?.imageId,
+                  toast
+                )
+              }
+            />
+          </>
+        )}
     </>
   );
 };
