@@ -323,12 +323,10 @@ export class ResizeAndTranslateBox extends PointerInteraction {
             mapTargetViewport.style.cursor = "move";
             break;
           default:
-            mapTargetViewport.style.cursor = "";
+            mapTargetViewport.style.cursor = "default";
             break;
         }
         e.stopPropagation();
-      } else {
-        mapTargetViewport.style.cursor = "";
       }
     }
   }
