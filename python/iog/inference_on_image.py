@@ -4,6 +4,8 @@ from collections import OrderedDict
 import glob
 import numpy as np
 import socket
+import base64
+
 
 # PyTorch includes
 import torch
@@ -53,15 +55,23 @@ def transform_contours_to_geojson_polygons(
             lambda contour: transform_contour_to_geojson_polygon(
                 contour, imageHeight, roiHeight
             ),
-            contours,
+            filter(lambda contour: len(contour) > 2, contours),
         )
     )
 
 
-def convert_net_output_to_geojson_polygon(res, gt_input, image, roi):
+def convert_data_url_to_image(data_url):
+    # Decode image
+    image_b64 = data_url.split(",")[1]
+    binary = base64.b64decode(image_b64)
+    image = np.asarray(bytearray(binary), dtype="uint8")
+    image = cv2.imdecode(image, cv2.IMREAD_COLOR)
+    return image
+
+
+def convert_net_output_to_geojson_polygon(fine_net_output, gt_input, image, roi):
     im_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-    outputs = res[-1]  # fine net output
-    backbone_features = res[0]  # output of resnet
+    outputs = fine_net_output  # fine net output
     # outputs = fine_out.to(torch.device('cpu'))
 
     # Save result without refinements
@@ -132,7 +142,78 @@ def convert_net_output_to_geojson_polygon(res, gt_input, image, roi):
     )
 
 
-def process(image, roi):
+# Network definition
+net = Network(
+    nInputChannels=5,
+    num_classes=1,
+    backbone="resnet101",
+    output_stride=16,
+    sync_bn=None,
+    freeze_bn=False,
+)
+
+# load pretrain_dict
+pretrain_dict = torch.load("data/IOG_PASCAL_SBD_REFINEMENT.pth")
+
+net.load_state_dict(pretrain_dict)
+# net.to(device)
+
+# Generate result of the validation images
+net.eval()
+
+
+trns = transforms.Compose(
+    [
+        tr.CropFromMask(
+            crop_elems=("image", "gt", "void_pixels"), relax=30, zero_pad=True
+        ),
+        tr.FixedResize(
+            resolutions={
+                "gt": None,
+                "crop_image": (512, 512),
+                "crop_gt": (512, 512),
+                "crop_void_pixels": (512, 512),
+            },
+            flagvals={
+                "gt": cv2.INTER_LINEAR,
+                "crop_image": cv2.INTER_LINEAR,
+                "crop_gt": cv2.INTER_LINEAR,
+                "crop_void_pixels": cv2.INTER_LINEAR,
+            },
+        ),
+        tr.IOGPoints(sigma=10, elem="crop_gt", pad_pixel=10),
+        tr.ToImage(norm_elem="IOG_points"),
+        tr.ConcatInputs(elems=("crop_image", "IOG_points")),
+        tr.ToTensor(),
+    ]
+)
+
+
+trns_refinement = transforms.Compose(
+    [
+        tr.CropFromMask(crop_elems=("point_refinement_mask",), relax=30, zero_pad=True),
+        tr.FixedResize(
+            resolutions={
+                "crop_point_refinement_mask": (512, 512),
+            },
+            flagvals={
+                "crop_point_refinement_mask": cv2.INTER_LINEAR,
+            },
+        ),
+        tr.IOGPointRefinement(
+            sigma=10, elem="crop_point_refinement_mask", pad_pixel=10
+        ),
+        tr.ToImage(norm_elem="IOG_points"),
+        tr.ToTensor(),
+    ]
+)
+
+cache = {}
+
+
+def process(data_url, x, y, width, height, id):
+    image = convert_data_url_to_image(data_url)
+    roi = [x, image.shape[0] - y - height, width, height]
 
     # Set gpu_id to -1 to run in CPU mode, otherwise set the id of the corresponding gpu
     gpu_id = 0
@@ -142,27 +223,6 @@ def process(image, roi):
 
     # Setting parameters
     resume_epoch = 100  # test epoch
-    nInputChannels = 5  # Number of input channels (RGB + heatmap of IOG points)
-
-    # Network definition
-    modelName = "IOG_pascal"
-    net = Network(
-        nInputChannels=nInputChannels,
-        num_classes=1,
-        backbone="resnet101",
-        output_stride=16,
-        sync_bn=None,
-        freeze_bn=False,
-    )
-
-    # load pretrain_dict
-    pretrain_dict = torch.load("data/IOG_PASCAL_SBD_REFINEMENT.pth")
-
-    net.load_state_dict(pretrain_dict)
-    # net.to(device)
-
-    # Generate result of the validation images
-    net.eval()
 
     # roi = (39, 289, 193, 79)
     # print("ROI selected = ", roi)
@@ -174,32 +234,6 @@ def process(image, roi):
     void_pixels = 1 - bbox
     sample = {"image": image, "gt": bbox, "void_pixels": void_pixels}
 
-    trns = transforms.Compose(
-        [
-            tr.CropFromMask(
-                crop_elems=("image", "gt", "void_pixels"), relax=30, zero_pad=True
-            ),
-            tr.FixedResize(
-                resolutions={
-                    "gt": None,
-                    "crop_image": (512, 512),
-                    "crop_gt": (512, 512),
-                    "crop_void_pixels": (512, 512),
-                },
-                flagvals={
-                    "gt": cv2.INTER_LINEAR,
-                    "crop_image": cv2.INTER_LINEAR,
-                    "crop_gt": cv2.INTER_LINEAR,
-                    "crop_void_pixels": cv2.INTER_LINEAR,
-                },
-            ),
-            tr.IOGPoints(sigma=10, elem="crop_gt", pad_pixel=10),
-            tr.ToImage(norm_elem="IOG_points"),
-            tr.ConcatInputs(elems=("crop_image", "IOG_points")),
-            tr.ToTensor(),
-        ]
-    )
-
     tr_sample = trns(sample)
 
     inputs = tr_sample["concat"][None]
@@ -207,7 +241,10 @@ def process(image, roi):
     # inputs = inputs.to(device)
     res = net.inference(inputs, IOG_points)
 
-    return convert_net_output_to_geojson_polygon(res, tr_sample["gt"], image, roi)
+    backbone_features = res[0]
+    cache[id] = {"backbone_features": backbone_features, "roi": roi, "image": image}
+
+    return convert_net_output_to_geojson_polygon(res[-1], tr_sample["gt"], image, roi)
 
     # Generate results with refinement
     # trns_refinement = transforms.Compose(
@@ -284,42 +321,35 @@ def process(image, roi):
     # cv2.destroyAllWindows()
 
 
-def refine():
-    # Generate results with refinement
-    trns_refinement = transforms.Compose(
-        [
-            tr.CropFromMask(
-                crop_elems=("point_refinement_mask",), relax=30, zero_pad=True
-            ),
-            tr.FixedResize(
-                resolutions={
-                    "crop_point_refinement_mask": (512, 512),
-                },
-                flagvals={
-                    "crop_point_refinement_mask": cv2.INTER_LINEAR,
-                },
-            ),
-            tr.IOGPointRefinement(
-                sigma=10, elem="crop_point_refinement_mask", pad_pixel=10
-            ),
-            tr.ToImage(norm_elem="IOG_points"),
-            tr.ToTensor(),
-        ]
-    )
+def refine(pointsInside, pointsOutside, id):
+    backbone_features = cache[id]["backbone_features"]
+    roi = cache[id]["roi"]
+    image = cache[id]["image"]
 
-    mask_img = create_mask(outputs, tr_sample["gt"], image)
+    bbox = np.zeros_like(image[..., 0])
+    bbox[int(roi[1]) : int(roi[1] + roi[3]), int(roi[0]) : int(roi[0] + roi[2])] = 1
+    void_pixels = 1 - bbox
+    sample = {"image": image, "gt": bbox, "void_pixels": void_pixels}
 
-    # foreground = False
-    # mouseX, mouseY = (87, 347)
-    refinement_point_mask = np.zeros_like(image)
-    if foreground:
-        refinement_point_mask[mouseY, mouseX, 0] = 1
-    else:
-        refinement_point_mask[mouseY, mouseX, 1] = 1
-    sample = {"point_refinement_mask": refinement_point_mask, "gt": bbox}
-    IOG_points = torch.maximum(
-        trns_refinement(sample)["IOG_points"].unsqueeze(0), IOG_points
-    )
+    tr_sample = trns(sample)
+    IOG_points = tr_sample["IOG_points"].unsqueeze(0)
+
+    for point in pointsInside:
+        print(point, image.shape[0])
+        refinement_point_mask = np.zeros_like(image)
+        refinement_point_mask[int(image.shape[0] - point[1]), int(point[0]), 0] = 1
+        sample = {"point_refinement_mask": refinement_point_mask, "gt": bbox}
+        IOG_points = torch.maximum(
+            trns_refinement(sample)["IOG_points"].unsqueeze(0), IOG_points
+        )
+
+    for point in pointsOutside:
+        refinement_point_mask = np.zeros_like(image)
+        refinement_point_mask[int(image.shape[0] - point[1]), int(point[0]), 1] = 1
+        sample = {"point_refinement_mask": refinement_point_mask, "gt": bbox}
+        IOG_points = torch.maximum(
+            trns_refinement(sample)["IOG_points"].unsqueeze(0), IOG_points
+        )
 
     # one result
     points_fg = IOG_points[0, 0:1, :, :]
@@ -327,16 +357,14 @@ def refine():
     cv2.imwrite(
         f"outputs/points_fg.png",
         np.transpose((points_fg * 1).numpy().astype(np.uint8), (1, 2, 0)),
-    ),
+    )
     cv2.imwrite(
         f"outputs/points_bg.png",
         np.transpose((points_bg * 1).numpy().astype(np.uint8), (1, 2, 0)),
-    ),
-    # points_bg = torch.zeros((IOG_points.shape[2], IOG_points.shape[3]))
-    IOG_points[0, 0:1, :, :] = points_fg
-    IOG_points[0, 1:2, :, :] = points_bg
-    outputs = net.refine(backbone_features, IOG_points)
-    # Save result without refinements
-    print_mask(
-        outputs, f"outputs/result_with_refinement_{index}", tr_sample["gt"], image
+    )
+
+    fine_net_output = net.refine(backbone_features, IOG_points)
+    print(fine_net_output)
+    return convert_net_output_to_geojson_polygon(
+        fine_net_output, tr_sample["gt"], image, roi
     )

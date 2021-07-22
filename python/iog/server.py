@@ -9,7 +9,7 @@ import base64
 import numpy as np
 import cv2
 
-from inference_on_image import process
+from inference_on_image import process, refine
 
 
 from ariadne import (
@@ -95,47 +95,24 @@ mutation = MutationType()
 
 @mutation.field("iogInference")
 def resolve_iog_inference(*_, data):
+    id = data["id"]
     imageUrl = data["imageUrl"]
     x = data["x"]
     y = data["y"]
     width = data["width"]
     height = data["height"]
-    pointsInside = data.get("pointsInside", [])
-    pointsOutside = data.get("pointsOutside", [])
 
-    # Decode image
-    image_b64 = imageUrl.split(",")[1]
-    binary = base64.b64decode(image_b64)
-    image = np.asarray(bytearray(binary), dtype="uint8")
-    image = cv2.imdecode(image, cv2.IMREAD_COLOR)
-
-    cv2.imwrite("results/test.jpg", image)
-
-    roi = [x, image.shape[0] - y - height, width, height]
-    return {"polygons": process(image, roi)}
+    return {"polygons": process(imageUrl, x, y, width, height, id)}
 
 
 @mutation.field("iogRefinement")
 def resolve_iog_refinement(*_, data):
     print(data)
-    imageUrl = data["imageUrl"]
-    x = data["x"]
-    y = data["y"]
-    width = data["width"]
-    height = data["height"]
+    id = data["id"]
     pointsInside = data.get("pointsInside", [])
     pointsOutside = data.get("pointsOutside", [])
 
-    # Decode image
-    image_b64 = imageUrl.split(",")[1]
-    binary = base64.b64decode(image_b64)
-    image = np.asarray(bytearray(binary), dtype="uint8")
-    image = cv2.imdecode(image, cv2.IMREAD_COLOR)
-
-    cv2.imwrite("results/test.jpg", image)
-
-    roi = [x, image.shape[0] - y - height, width, height]
-    return {"polygons": process(image, roi)}
+    return {"polygons": refine(pointsInside, pointsOutside, id)}
 
 
 # Create executable schema instance
