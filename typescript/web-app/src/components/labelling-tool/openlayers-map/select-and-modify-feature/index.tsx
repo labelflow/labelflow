@@ -4,10 +4,11 @@ import { Geometry, Polygon } from "ol/geom";
 import { Vector as OlSourceVector } from "ol/source";
 import Collection from "ol/Collection";
 import { extend } from "@labelflow/react-openlayers-fiber";
-import { ApolloClient, useApolloClient, useQuery, gql } from "@apollo/client";
+import { ApolloClient, useApolloClient, gql, useQuery } from "@apollo/client";
 import { useToast, UseToastOptions } from "@chakra-ui/react";
 import { ModifyEvent } from "ol/interaction/Modify";
 import { TranslateEvent } from "ol/interaction/Translate";
+import { useRouter } from "next/router";
 import { SelectInteraction } from "./select-interaction";
 import {
   Tools,
@@ -35,7 +36,6 @@ const getLabelQuery = gql`
         type
         coordinates
       }
-      imageId
       labelClass {
         id
         color
@@ -88,6 +88,9 @@ export const SelectAndModifyFeature = (props: {
   editClassOverlayRef?: MutableRefObject<HTMLDivElement | null>;
 }) => {
   const { sourceVectorLabelsRef } = props;
+  const router = useRouter();
+  const imageId = router?.query?.imageId as string;
+
   // We need to have this state in order to store the selected feature in the addfeature listener below
   const [selectedFeature, setSelectedFeature] =
     useState<Feature<Polygon> | null>(null);
@@ -122,6 +125,7 @@ export const SelectAndModifyFeature = (props: {
     return () =>
       sourceVectorLabelsRef.current?.un("addfeature", getSelectedFeature);
   }, [sourceVectorLabelsRef.current, selectedLabelId]);
+
   useEffect(() => {
     getSelectedFeature();
   }, [selectedLabelId]);
@@ -139,13 +143,7 @@ export const SelectAndModifyFeature = (props: {
           <resizeAndTranslateBox
             args={{ selectedFeature }}
             onInteractionEnd={async (e: ResizeAndTranslateEvent | null) =>
-              interactionEnd(
-                e,
-                perform,
-                client,
-                labelData?.label?.imageId,
-                toast
-              )
+              interactionEnd(e, perform, client, imageId, toast)
             }
           />
         )}
@@ -156,25 +154,13 @@ export const SelectAndModifyFeature = (props: {
             <olInteractionTranslate
               args={{ features: new Collection([selectedFeature]) }}
               onTranslateend={async (e: TranslateEvent | null) =>
-                interactionEnd(
-                  e,
-                  perform,
-                  client,
-                  labelData?.label?.imageId,
-                  toast
-                )
+                interactionEnd(e, perform, client, imageId, toast)
               }
             />
             <olInteractionModify
               args={{ features: new Collection([selectedFeature]) }}
               onModifyend={async (e: ModifyEvent | null) =>
-                interactionEnd(
-                  e,
-                  perform,
-                  client,
-                  labelData?.label?.imageId,
-                  toast
-                )
+                interactionEnd(e, perform, client, imageId, toast)
               }
             />
             <olInteractionPointer

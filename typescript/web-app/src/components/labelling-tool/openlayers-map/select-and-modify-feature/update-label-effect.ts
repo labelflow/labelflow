@@ -45,7 +45,6 @@ const getLabelQuery = gql`
         type
         coordinates
       }
-      imageId
       labelClass {
         id
         color
@@ -99,7 +98,7 @@ export const updateLabelEffect = (
       variables: { id: labelId },
     });
     if (labelResponse == null) {
-      throw new Error(`Missing label with id ${imageId}`);
+      throw new Error(`Missing label with id ${labelId}`);
     }
     const { label } = labelResponse;
     const imageDimensions = {
