@@ -183,66 +183,64 @@ export const DrawingTool = () => {
     []
   );
   return (
-    <>
-      <Popover
-        isOpen={isPopoverOpened}
-        placement="right-start"
-        closeOnBlur
-        onClose={() => {
-          setIsPopoverOpened(false);
+    <Popover
+      isOpen={isPopoverOpened}
+      placement="right-start"
+      closeOnBlur
+      onClose={() => {
+        setIsPopoverOpened(false);
+      }}
+    >
+      <DrawingToolIcon
+        buttonRef={buttonRef}
+        isDisabled={isImageLoading}
+        onClickDetails={(e) => {
+          setIsPopoverOpened(!isPopoverOpened);
+          e.stopPropagation();
         }}
+        selectedTool={selectedTool}
+        setSelectedTool={setSelectedTool}
+      />
+      <PopoverContent
+        borderColor="gray.200"
+        cursor="default"
+        pointerEvents="initial"
+        aria-label="Change Drawing Tool"
+        width="60"
       >
-        <DrawingToolIcon
-          buttonRef={buttonRef}
-          isDisabled={isImageLoading}
-          onClickDetails={(e) => {
-            setIsPopoverOpened(!isPopoverOpened);
-            e.stopPropagation();
-          }}
-          selectedTool={selectedTool}
-          setSelectedTool={setSelectedTool}
-        />
-        <PopoverContent
-          borderColor="gray.200"
-          cursor="default"
-          pointerEvents="initial"
-          aria-label="Change Drawing Tool"
-          width="60"
-        >
-          <PopoverBody pl="0" pr="0">
-            <Box>
-              <ToolSelectionPopoverItem
-                name="Bounding Box"
-                shortcut={keymap.toolBoundingBox.key}
-                selected={selectedTool === Tools.BOX}
-                onClick={() => {
-                  setSelectedTool(Tools.BOX);
-                  setIsPopoverOpened(false);
-                }}
-                ariaLabel="Select bounding box tool"
-              >
-                <Box ml="2">
-                  <BiShapeSquare size="1.3em" />
-                </Box>
-              </ToolSelectionPopoverItem>
-              <ToolSelectionPopoverItem
-                name="Polygon"
-                shortcut={keymap.toolPolygon.key}
-                selected={selectedTool === Tools.POLYGON}
-                onClick={() => {
-                  setSelectedTool(Tools.POLYGON);
-                  setIsPopoverOpened(false);
-                }}
-                ariaLabel="Select polygon tool"
-              >
-                <Box ml="2">
-                  <BiShapePolygon size="1.3em" />
-                </Box>
-              </ToolSelectionPopoverItem>
-            </Box>
-          </PopoverBody>
-        </PopoverContent>
-      </Popover>
-    </>
+        <PopoverBody pl="0" pr="0">
+          <Box>
+            <ToolSelectionPopoverItem
+              name="Bounding Box"
+              shortcut={keymap.toolBoundingBox.key}
+              selected={selectedTool === Tools.BOX}
+              onClick={() => {
+                setSelectedTool(Tools.BOX);
+                setIsPopoverOpened(false);
+              }}
+              ariaLabel="Select bounding box tool"
+            >
+              <Box ml="2">
+                <BiShapeSquare size="1.3em" />
+              </Box>
+            </ToolSelectionPopoverItem>
+            <ToolSelectionPopoverItem
+              name="Polygon"
+              shortcut={keymap.toolPolygon.key}
+              selected={selectedTool === Tools.POLYGON}
+              onClick={() => {
+                setSelectedTool(Tools.POLYGON);
+                setIsPopoverOpened(false);
+              }}
+              ariaLabel="Select polygon tool"
+            >
+              <Box ml="2">
+                <BiShapePolygon size="1.3em" />
+              </Box>
+            </ToolSelectionPopoverItem>
+          </Box>
+        </PopoverBody>
+      </PopoverContent>
+    </Popover>
   );
 };
