@@ -62,18 +62,10 @@ const ClassesPage = () => {
 
   const labelClassWithShortcut = useMemo(
     () =>
-      [...labelClasses, noneClass].map((labelClass, index) => {
-        if (index > 9) {
-          return {
-            ...labelClass,
-            shortcut: null,
-          };
-        }
-        return {
+      [...labelClasses, noneClass].map((labelClass, index) => ({
           ...labelClass,
-          shortcut: `${(index + 1) % 10}`,
-        };
-      }),
+            shortcut: index > 9 ? null : `${(index + 1) % 10}`,
+      })),
     [labelClasses]
   );
 
