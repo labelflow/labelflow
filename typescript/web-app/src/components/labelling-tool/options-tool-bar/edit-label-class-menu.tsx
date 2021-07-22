@@ -71,7 +71,8 @@ export const EditLabelClassMenu = () => {
     variables: { id: selectedLabelClassId },
     skip: selectedLabelClassId == null,
   });
-  const selectedLabelClass = [Tools.BOX, Tools.POLYGON].includes(selectedTool)
+  const isInDrawingMode = [Tools.BOX, Tools.POLYGON].includes(selectedTool);
+  const selectedLabelClass = isInDrawingMode
     ? dataLabelClass?.labelClass
     : selectedLabelData?.label?.labelClass;
   const createNewClass = useMemo(
@@ -96,7 +97,7 @@ export const EditLabelClassMenu = () => {
   );
   const onSelectedClassChange = useMemo(
     () =>
-      [Tools.BOX, Tools.POLYGON].includes(selectedTool)
+      isInDrawingMode
         ? (item: LabelClassItem | null) =>
             perform(
               createUpdateLabelClassEffect({
@@ -118,7 +119,7 @@ export const EditLabelClassMenu = () => {
   );
 
   const displayClassSelectionMenu =
-    [Tools.BOX, Tools.POLYGON].includes(selectedTool) ||
+    isInDrawingMode ||
     (selectedTool === Tools.SELECTION && selectedLabelId != null);
 
   useHotkeys(
@@ -147,7 +148,7 @@ export const EditLabelClassMenu = () => {
           selectedLabelClass={selectedLabelClass}
           labelClasses={labelClasses}
           createNewClass={async (name) =>
-            [Tools.BOX, Tools.POLYGON].includes(selectedTool)
+            isInDrawingMode
               ? createNewClass(name, selectedLabelClassId)
               : createNewClassAndUpdateLabel(name, selectedLabelId)
           }
