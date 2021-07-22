@@ -24,7 +24,7 @@ export const list =
       query.offset(skip);
     }
     if (first) {
-      return query.limit(first).toArray();
+      query.limit(first);
     }
 
     return query.toArray();
