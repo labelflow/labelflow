@@ -95,12 +95,11 @@ export const DrawingToolIcon = (props: {
     }
   }, [selectedTool]);
   const isActive = [Tools.BOX, Tools.POLYGON].includes(selectedTool);
-  const toolTipLabel = (() => {
-    if (lastTool === Tools.BOX) {
-      return `Bounding Box tool [${keymap.toolBoundingBox.key}]`;
-    }
-    return `Polygon tool [${keymap.toolPolygon.key}]`;
-  })();
+  const toolTipLabel =
+    lastTool === Tools.BOX
+      ? `Bounding Box tool [${keymap.toolBoundingBox.key}]`
+      : `Polygon tool [${keymap.toolPolygon.key}]`;
+
   return (
     <Tooltip label={toolTipLabel} placement="right" openDelay={300}>
       <Button
