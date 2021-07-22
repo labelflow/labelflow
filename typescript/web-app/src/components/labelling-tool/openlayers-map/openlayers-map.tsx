@@ -121,19 +121,19 @@ export const OpenlayersMap = () => {
   const isBoundsValid = bounds.width > 0 || bounds.height > 0;
   const onPointermove = useCallback(
     (e: MapBrowserEvent) => {
-      if (!mapRef.current) return;
-      const target = mapRef.current.getTarget() as HTMLElement;
+      const mapTargetViewport = e.map.getViewport();
+      if (!mapTargetViewport) return;
       if (e.dragging) {
-        target.style.cursor = "grabbing";
+        mapTargetViewport.style.cursor = "grabbing";
       } else if (selectedTool === Tools.BOX) {
-        target.style.cursor = "crosshair";
+        mapTargetViewport.style.cursor = "crosshair";
       } else if (selectedTool === Tools.POLYGON) {
-        target.style.cursor = "crosshair";
+        mapTargetViewport.style.cursor = "crosshair";
       } else if (selectedTool === Tools.SELECTION) {
-        const hit = mapRef.current.hasFeatureAtPixel(e.pixel);
-        target.style.cursor = hit ? "pointer" : "grab";
+        const hit = e.map.hasFeatureAtPixel(e.pixel);
+        mapTargetViewport.style.cursor = hit ? "pointer" : "grab";
       } else {
-        target.style.cursor = "default";
+        mapTargetViewport.style.cursor = "default";
       }
     },
     [selectedTool]
