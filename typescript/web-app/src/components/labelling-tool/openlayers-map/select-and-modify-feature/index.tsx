@@ -110,7 +110,7 @@ export const SelectAndModifyFeature = (props: {
             (feature) => feature.getProperties().id === selectedLabelId
           )?.[0];
         if (featureFromSource != null) {
-          setSelectedFeature(featureFromSource);
+          setSelectedFeature(featureFromSource as Feature<Polygon>);
         }
       }
     }
