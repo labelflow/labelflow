@@ -310,6 +310,7 @@ export const DrawBoundingBoxAndPolygonInteraction = () => {
             ...pointsInside.map((coordinates) => {
               return (
                 <olFeature
+                  key={coordinates.join("-")}
                   geometry={new Point(coordinates)}
                   style={
                     new Style({
@@ -331,6 +332,7 @@ export const DrawBoundingBoxAndPolygonInteraction = () => {
             ...pointsOutside.map((coordinates) => {
               return (
                 <olFeature
+                  key={coordinates.join("-")}
                   geometry={new Point(coordinates)}
                   style={
                     new Style({
