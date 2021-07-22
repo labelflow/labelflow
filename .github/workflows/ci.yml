@@ -185,8 +185,9 @@ jobs:
           CI_BRANCH: ${{ github.ref	}}
           CI_BRANCH_BASE: refs/heads/main
 
-  deploy-strapi:
-    name: Deploy Strapi on Heroku
+  deploy-strapi-main:
+    name: Deploy Strapi on Heroku production
+    if: contains( github.ref, 'main')
     runs-on: ubuntu-20.04
     steps:
       - name: Check out repository code
