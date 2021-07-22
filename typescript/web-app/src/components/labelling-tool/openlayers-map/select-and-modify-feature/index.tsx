@@ -90,7 +90,7 @@ export const SelectAndModifyFeature = (props: {
   const { sourceVectorLabelsRef } = props;
   // We need to have this state in order to store the selected feature in the addfeature listener below
   const [selectedFeature, setSelectedFeature] =
-    useState<Feature<Geometry> | null>(null);
+    useState<Feature<Polygon> | null>(null);
   const selectedLabelId = useLabellingStore((state) => state.selectedLabelId);
   const selectedTool = useLabellingStore((state) => state.selectedTool);
 
@@ -176,6 +176,25 @@ export const SelectAndModifyFeature = (props: {
                   toast
                 )
               }
+            />
+            <olInteractionPointer
+              args={{
+                handleMoveEvent: (e) => {
+                  const mapTargetViewport = e.map.getViewport();
+                  if (mapTargetViewport != null) {
+                    const clonedFeature = selectedFeature.clone();
+                    clonedFeature.getGeometry().scale(0.95);
+                    if (
+                      clonedFeature
+                        ?.getGeometry()
+                        ?.intersectsCoordinate(e.coordinate) ??
+                      false
+                    ) {
+                      mapTargetViewport.style.cursor = "move";
+                    }
+                  }
+                },
+              }}
             />
           </>
         )}
