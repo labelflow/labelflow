@@ -121,6 +121,7 @@ interface ExtendableMessageEvent extends ExtendableEvent {
 // ServiceWorkerGlobalScope
 
 interface ServiceWorkerGlobalScope {
+  private __WB_DISABLE_DEV_LOGS: boolean;
   atob(value: string): string;
   btoa(value: string): string;
   caches: CacheStorage;
