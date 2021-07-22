@@ -24,6 +24,7 @@
     "strapi-plugin-upload": "3.6.5",
     "strapi-plugin-users-permissions": "3.6.5",
     "strapi-provider-email-sendgrid": "3.6.5",
+    "strapi-provider-upload-supabase": "^0.0.1-beta.3",
     "strapi-utils": "3.6.5"
   },
   "author": {
