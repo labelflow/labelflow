@@ -110,7 +110,7 @@ const ClassesPage = () => {
         }
         tabBar={<ProjectTabBar currentTab="classes" projectId={projectId} />}
       >
-        <Box bg="white" m="8px" borderRadius="8px" maxWidth="96">
+        <Box bg="white" m="4" borderRadius="lg" maxWidth="96">
           {!loading &&
             labelClassWithShortcut.map(({ id, name, color, shortcut }) => {
               return (
