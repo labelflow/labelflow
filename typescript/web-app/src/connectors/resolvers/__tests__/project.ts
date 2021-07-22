@@ -290,10 +290,21 @@ describe("Project resolver test suite", () => {
     expect(queryResults.data.projects[1].name).toEqual("project 3");
   });
 
-  test("should delete a project", async () => {
+  test("should delete a project and its content", async () => {
+    mockedProbeSync.mockReturnValue({
+      width: 42,
+      height: 36,
+      mime: "image/jpeg",
+      length: 1000,
+      hUnits: "px",
+      wUnits: "px",
+      url: "https://example.com/image.jpeg",
+      type: "jpg",
+    });
     const name = "My new project";
     const projectId = "some id";
     await createProject(name, projectId);
+    await updateProjectWithImageLabelAndClass(projectId);
 
     const mutationResult = await client.mutate({
       mutation: gql`
@@ -310,6 +321,40 @@ describe("Project resolver test suite", () => {
     });
 
     expect(mutationResult.data.deleteProject.name).toEqual(name);
+
+    const labels = await client.query({
+      query: gql`
+        query {
+          labelsAggregates {
+            totalCount
+          }
+        }
+      `,
+    });
+
+    const labelClasses = await client.query({
+      query: gql`
+        query {
+          labelClassesAggregates {
+            totalCount
+          }
+        }
+      `,
+    });
+
+    const images = await client.query({
+      query: gql`
+        query {
+          imagesAggregates {
+            totalCount
+          }
+        }
+      `,
+    });
+
+    expect(labels.data.labelsAggregates.totalCount).toEqual(0);
+    expect(labelClasses.data.labelClassesAggregates.totalCount).toEqual(0);
+    expect(images.data.imagesAggregates.totalCount).toEqual(0);
 
     return expect(
       client.query({

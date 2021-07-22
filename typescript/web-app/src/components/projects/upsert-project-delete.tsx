@@ -77,7 +77,8 @@ export const UpsertProjectDelete = ({
           </AlertDialogHeader>
 
           <AlertDialogBody>
-            Are you sure? You cannot undo this action afterwards.
+            Are you sure? Images, Labels and Classes will be deleted. This
+            action cannot be undone.
           </AlertDialogBody>
 
           <AlertDialogFooter>

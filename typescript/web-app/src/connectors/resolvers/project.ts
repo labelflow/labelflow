@@ -181,8 +181,26 @@ const updateProject = async (
   return getProjectById(projectToUpdate.id);
 };
 
-const deleteProject = async (_: any, args: MutationDeleteProjectArgs) => {
+const deleteProject = async (
+  _: any,
+  args: MutationDeleteProjectArgs
+): Promise<DbProject> => {
   const projectToDelete = await getProjectFromWhereUniqueInput(args.where);
+
+  const labelsToDelete = (await getLabelsByProjectId(projectToDelete.id)).map(
+    (a) => a.id
+  );
+  await db.label.bulkDelete(labelsToDelete);
+
+  const labelClassesToDelete = (
+    await getLabelClassesByProjectId(projectToDelete.id)
+  ).map((a) => a.id);
+  await db.labelClass.bulkDelete(labelClassesToDelete);
+
+  const imagesToDelete = (
+    await getPaginatedImages({ projectId: projectToDelete.id })
+  ).map((a) => a.id);
+  await db.image.bulkDelete(imagesToDelete);
 
   await db.project.delete(projectToDelete.id);
 
