@@ -3,8 +3,9 @@ import { Feature, Map as OlMap } from "ol";
 import { Geometry, Polygon } from "ol/geom";
 import { Vector as OlSourceVector } from "ol/source";
 import { extend } from "@labelflow/react-openlayers-fiber";
-import { ApolloClient, useApolloClient, useQuery, gql } from "@apollo/client";
+import { ApolloClient, useApolloClient, gql, useQuery } from "@apollo/client";
 import { useToast } from "@chakra-ui/react";
+import { useRouter } from "next/router";
 import { SelectInteraction } from "./select-interaction";
 import {
   Tools,
@@ -50,7 +51,6 @@ const getLabelQuery = gql`
         type
         coordinates
       }
-      imageId
       labelClass {
         id
         color
@@ -113,7 +113,7 @@ const updateLabelEffect = (
       variables: { id: labelId },
     });
     if (labelResponse == null) {
-      throw new Error(`Missing label with id ${imageId}`);
+      throw new Error(`Missing label with id ${labelId}`);
     }
     const { label } = labelResponse;
     const imageDimensions = {
@@ -184,16 +184,14 @@ export const SelectAndModifyFeature = (props: {
   editClassOverlayRef?: MutableRefObject<HTMLDivElement | null>;
 }) => {
   const { sourceVectorLabelsRef } = props;
+  const router = useRouter();
+  const imageId = router?.query?.imageId as string;
+
   // We need to have this state in order to store the selected feature in the addfeature listener below
   const [selectedFeature, setSelectedFeature] =
     useState<Feature<Geometry> | null>(null);
   const selectedLabelId = useLabellingStore((state) => state.selectedLabelId);
   const selectedTool = useLabellingStore((state) => state.selectedTool);
-
-  const { data: labelData } = useQuery(getLabelQuery, {
-    variables: { id: selectedLabelId },
-    skip: selectedLabelId == null,
-  });
 
   const getSelectedFeature = useCallback(() => {
     if (selectedFeature?.getProperties()?.id !== selectedLabelId) {
@@ -218,6 +216,7 @@ export const SelectAndModifyFeature = (props: {
     return () =>
       sourceVectorLabelsRef.current?.un("addfeature", getSelectedFeature);
   }, [sourceVectorLabelsRef.current, selectedLabelId]);
+
   useEffect(() => {
     getSelectedFeature();
   }, [selectedLabelId]);
@@ -240,10 +239,7 @@ export const SelectAndModifyFeature = (props: {
               const { id: labelId } = feature.getProperties();
               try {
                 await perform(
-                  updateLabelEffect(
-                    { labelId, geometry, imageId: labelData?.label?.imageId },
-                    { client }
-                  )
+                  updateLabelEffect({ labelId, geometry, imageId }, { client })
                 );
               } catch (error) {
                 toast({
