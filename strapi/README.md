@@ -24,6 +24,12 @@ Then once setup is done, to redeploy each time, do:
 git subtree push --prefix strapi heroku main
 ```
 
+To see production logs:
+
+```
+heroku logs --tail 
+```
+
 ## How was this setup ?
 
 It was setup with:
