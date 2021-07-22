@@ -25,6 +25,7 @@ import { createLabelEffect } from "./create-label-effect";
 import { LabelType } from "../../../../graphql-types.generated";
 import { updateLabelEffect } from "../select-and-modify-feature/update-label-effect";
 import CircleStyle from "ol/style/Circle";
+import { useEffect } from "react";
 
 const labelClassQuery = gql`
   query getLabelClass($id: ID!) {
@@ -47,6 +48,7 @@ const imageQuery = gql`
 
 const iogInferenceMutation = gql`
   mutation iogInference(
+    $id: ID!
     $imageUrl: String!
     $x: Float!
     $y: Float!
@@ -55,11 +57,30 @@ const iogInferenceMutation = gql`
   ) {
     iogInference(
       data: {
+        id: $id
         imageUrl: $imageUrl
         x: $x
         y: $y
         width: $width
         height: $height
+      }
+    ) {
+      polygons
+    }
+  }
+`;
+
+const iogRefinementMutation = gql`
+  mutation iogRefinement(
+    $id: ID!
+    $pointsInside: [[Float!]]
+    $pointsOutside: [[Float!]]
+  ) {
+    iogRefinement(
+      data: {
+        id: $id
+        pointsInside: $pointsInside
+        pointsOutside: $pointsOutside
       }
     ) {
       polygons
@@ -110,6 +131,55 @@ export const DrawBoundingBoxAndPolygonInteraction = () => {
   );
 
   const toast = useToast();
+
+  const errorMessage =
+    selectedTool === Tools.POLYGON
+      ? "Error creating polygon"
+      : "Error creating bounding box";
+
+  const performIOGRefinement = async () => {
+    if (dataImage?.image != null && selectedLabelId != null) {
+      const inferencePromise = (async () => {
+        const { data } = await client.mutate({
+          mutation: iogRefinementMutation,
+          variables: {
+            id: selectedLabelId,
+            pointsInside,
+            pointsOutside,
+          },
+        });
+
+        return updateLabelEffect(
+          {
+            geometry: {
+              type: "Polygon",
+              coordinates: data?.iogRefinement?.polygons,
+            },
+            labelId: selectedLabelId,
+            imageId: dataImage?.image?.id,
+          },
+          { client }
+        ).do();
+      })();
+
+      try {
+        await inferencePromise;
+      } catch (error) {
+        toast({
+          title: errorMessage,
+          description: error?.message,
+          isClosable: true,
+          status: "error",
+          position: "bottom-right",
+          duration: 10000,
+        });
+      }
+    }
+  };
+
+  useEffect(() => {
+    performIOGRefinement();
+  }, [pointsInside, pointsOutside]);
 
   const style = useMemo(() => {
     const color = selectedLabelClass?.color ?? noneClassColor;
@@ -168,11 +238,6 @@ export const DrawBoundingBoxAndPolygonInteraction = () => {
           geometryFunction,
           style, // Needed here to trigger the rerender of the component when the selected class changes
         };
-
-  const errorMessage =
-    selectedTool === Tools.POLYGON
-      ? "Error creating polygon"
-      : "Error creating bounding box";
 
   const createLabelFromDrawEvent = async (drawEvent: DrawEvent) => {
     const geometry = new GeoJSON().writeGeometryObject(
@@ -238,6 +303,7 @@ export const DrawBoundingBoxAndPolygonInteraction = () => {
       const { data } = await client.mutate({
         mutation: iogInferenceMutation,
         variables: {
+          id: await labelIdPromise,
           x,
           y,
           height: yMax - y,

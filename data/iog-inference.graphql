@@ -3,11 +3,18 @@ type IogInferenceResult {
 }
 
 input IogInferenceInput {
+  id: ID!
   imageUrl: String!
   x: Float!
   y: Float!
   width: Float!
   height: Float!
+  pointsInside: [[Float!]]
+  pointsOutside: [[Float!]]
+}
+
+input IogRefinementInput {
+  id: ID!
   pointsInside: [[Float!]]
   pointsOutside: [[Float!]]
 }

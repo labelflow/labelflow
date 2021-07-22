@@ -104,6 +104,7 @@ export type ImagesAggregates = {
 };
 
 export type IogInferenceInput = {
+  id: Scalars['ID'];
   imageUrl: Scalars['String'];
   x: Scalars['Float'];
   y: Scalars['Float'];
@@ -116,6 +117,12 @@ export type IogInferenceInput = {
 export type IogInferenceResult = {
   __typename?: 'IogInferenceResult';
   polygons: Array<Maybe<Array<Maybe<Array<Scalars['Float']>>>>>;
+};
+
+export type IogRefinementInput = {
+  id: Scalars['ID'];
+  pointsInside?: Maybe<Array<Maybe<Array<Scalars['Float']>>>>;
+  pointsOutside?: Maybe<Array<Maybe<Array<Scalars['Float']>>>>;
 };
 
 
@@ -210,6 +217,7 @@ export type Mutation = {
   updateProject?: Maybe<Project>;
   deleteProject?: Maybe<Project>;
   iogInference?: Maybe<IogInferenceResult>;
+  iogRefinement?: Maybe<IogInferenceResult>;
 };
 
 
@@ -267,6 +275,11 @@ export type MutationDeleteProjectArgs = {
 
 export type MutationIogInferenceArgs = {
   data: IogInferenceInput;
+};
+
+
+export type MutationIogRefinementArgs = {
+  data: IogRefinementInput;
 };
 
 export type Project = {
@@ -501,6 +514,7 @@ export type ResolversTypes = {
   IogInferenceInput: IogInferenceInput;
   Float: ResolverTypeWrapper<Scalars['Float']>;
   IogInferenceResult: ResolverTypeWrapper<IogInferenceResult>;
+  IogRefinementInput: IogRefinementInput;
   JSON: ResolverTypeWrapper<Scalars['JSON']>;
   Label: ResolverTypeWrapper<Label>;
   LabelClass: ResolverTypeWrapper<LabelClass>;
@@ -549,6 +563,7 @@ export type ResolversParentTypes = {
   IogInferenceInput: IogInferenceInput;
   Float: Scalars['Float'];
   IogInferenceResult: IogInferenceResult;
+  IogRefinementInput: IogRefinementInput;
   JSON: Scalars['JSON'];
   Label: Label;
   LabelClass: LabelClass;
@@ -675,6 +690,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   updateProject?: Resolver<Maybe<ResolversTypes['Project']>, ParentType, ContextType, RequireFields<MutationUpdateProjectArgs, 'where' | 'data'>>;
   deleteProject?: Resolver<Maybe<ResolversTypes['Project']>, ParentType, ContextType, RequireFields<MutationDeleteProjectArgs, 'where'>>;
   iogInference?: Resolver<Maybe<ResolversTypes['IogInferenceResult']>, ParentType, ContextType, RequireFields<MutationIogInferenceArgs, 'data'>>;
+  iogRefinement?: Resolver<Maybe<ResolversTypes['IogInferenceResult']>, ParentType, ContextType, RequireFields<MutationIogRefinementArgs, 'data'>>;
 };
 
 export type ProjectResolvers<ContextType = any, ParentType extends ResolversParentTypes['Project'] = ResolversParentTypes['Project']> = {

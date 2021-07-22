@@ -36,12 +36,19 @@ type_defs = """
     }
 
     input iogInferenceInput {
+        id: ID!
         imageUrl: String!, 
         x: Float!, 
         y: Float!, 
         width: Float!, 
         height: Float!, 
         pointsInside: [[Float!]],
+        pointsOutside: [[Float!]]
+    }
+
+    input IogRefinementInput {
+        id: ID!
+        pointsInside: [[Float!]]
         pointsOutside: [[Float!]]
     }
 
@@ -53,6 +60,9 @@ type_defs = """
     type Mutation {
         iogInference(
             data: iogInferenceInput
+        ): iogInferenceResult
+        iogRefinement(
+            data: IogRefinementInput
         ): iogInferenceResult
     }
 
@@ -85,6 +95,29 @@ mutation = MutationType()
 
 @mutation.field("iogInference")
 def resolve_iog_inference(*_, data):
+    imageUrl = data["imageUrl"]
+    x = data["x"]
+    y = data["y"]
+    width = data["width"]
+    height = data["height"]
+    pointsInside = data.get("pointsInside", [])
+    pointsOutside = data.get("pointsOutside", [])
+
+    # Decode image
+    image_b64 = imageUrl.split(",")[1]
+    binary = base64.b64decode(image_b64)
+    image = np.asarray(bytearray(binary), dtype="uint8")
+    image = cv2.imdecode(image, cv2.IMREAD_COLOR)
+
+    cv2.imwrite("results/test.jpg", image)
+
+    roi = [x, image.shape[0] - y - height, width, height]
+    return {"polygons": process(image, roi)}
+
+
+@mutation.field("iogRefinement")
+def resolve_iog_refinement(*_, data):
+    print(data)
     imageUrl = data["imageUrl"]
     x = data["x"]
     y = data["y"]
