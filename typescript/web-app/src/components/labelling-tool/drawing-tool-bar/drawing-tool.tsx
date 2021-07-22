@@ -156,7 +156,6 @@ export const DrawingToolIcon = (props: {
 };
 
 export const DrawingTool = () => {
-  // console.log(window);
   const isImageLoading = useLabellingStore((state) => state.isImageLoading);
   const selectedTool = useLabellingStore((state) => state.selectedTool);
   const setSelectedTool = useLabellingStore((state) => state.setSelectedTool);
