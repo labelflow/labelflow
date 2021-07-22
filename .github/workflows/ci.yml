@@ -185,6 +185,20 @@ jobs:
           CI_BRANCH: ${{ github.ref	}}
           CI_BRANCH_BASE: refs/heads/main
 
+  deploy-strapi:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
+      - name: Deploy to Heroku
+        uses: akhileshns/heroku-deploy@v3.12.12 # This is the action
+        with:
+          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+          heroku_app_name: "labelflow-strapi"
+          heroku_email: "vincent.lecrubier@labelflow.ai"
+          team: "labelflow"
+          appdir: "strapi"
+
   deploy-webapp-pr:
     name: Deploy webapp PR branch
     if: "! contains( github.ref, 'main')"
