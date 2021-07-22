@@ -58,6 +58,80 @@ def transform_contours_to_geojson_polygons(
     )
 
 
+def convert_net_output_to_geojson_polygon(res, gt_input, image, roi):
+    im_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    outputs = res[-1]  # fine net output
+    backbone_features = res[0]  # output of resnet
+    # outputs = fine_out.to(torch.device('cpu'))
+
+    # Save result without refinements
+
+    # pred = np.transpose(outputs.data.numpy()[0, :, :, :], (1, 2, 0))
+    # pred = 1 / (1 + np.exp(-pred))
+    # pred = np.squeeze(pred)
+    # gt = tens2image(gt_input)
+    # bbox = get_bbox(gt, pad=30, zero_pad=True)
+    # result = crop2fullmask(pred, bbox, gt, zero_pad=True, relax=0, mask_relax=False)
+
+    # light = np.zeros_like(image)
+    # light[:, :, 2] = 255.0
+
+    # alpha = 0.5
+
+    # blending = (alpha * light + (1 - alpha) * image) * result[..., None] + (
+    #     1 - result[..., None]
+    # ) * image
+
+    # blending[blending > 255.0] = 255
+
+    # # find contours
+    # # im_mask = cv2.cvtColor(result.astype(np.uint8), cv2.COLOR_BGR2GRAY)
+    # im_mask = (result * 255).astype(np.uint8)
+    # ret, thresh = cv2.threshold(im_mask, 127, 255, 0)
+    # # kernel = np.ones((5, 5), np.uint8)
+    # kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (1, 1))
+    # opening = cv2.morphologyEx(thresh, cv2.MORPH_CLOSE, kernel, iterations=1)
+    # contours, hierarchy = cv2.findContours(
+    #     opening, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE
+    # )
+    pred = np.transpose(outputs.data.numpy()[0, :, :, :], (1, 2, 0))
+    pred = 1 / (1 + np.exp(-pred))
+    pred = np.squeeze(pred)
+    gt = tens2image(gt_input)
+    bbox = get_bbox(gt, pad=30, zero_pad=True)
+    result = crop2fullmask(pred, bbox, gt, zero_pad=True, relax=0, mask_relax=False)
+
+    light = np.zeros_like(image)
+    light[:, :, 2] = 255.0
+
+    alpha = 0.5
+
+    blending = (alpha * light + (1 - alpha) * image) * result[..., None] + (
+        1 - result[..., None]
+    ) * image
+
+    blending[blending > 255.0] = 255
+
+    # find contours
+    # im_mask = cv2.cvtColor(result.astype(np.uint8), cv2.COLOR_BGR2GRAY)
+    im_mask = (result * 255).astype(np.uint8)
+    ret, thresh = cv2.threshold(im_mask, 127, 255, 0)
+    # kernel = np.ones((5, 5), np.uint8)
+    kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (1, 1))
+    opening = cv2.morphologyEx(thresh, cv2.MORPH_CLOSE, kernel, iterations=1)
+    contours, hierarchy = cv2.findContours(
+        opening, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE
+    )
+    cv2.drawContours(im_rgb, contours, -1, (0, 255, 0), 3)
+    # cv2.rectangle(im_rgb, (roi[0], roi[1]), (roi[0]+ roi[2], roi[1]+roi[3]))
+    cv2.imwrite("results/result.jpg", im_rgb)
+    # print(transform_contours_to_geojson_polygons(contours))
+
+    return transform_contours_to_geojson_polygons(
+        contours, imageHeight=image.shape[0], roiHeight=roi[3]
+    )
+
+
 def process(image, roi):
 
     # Set gpu_id to -1 to run in CPU mode, otherwise set the id of the corresponding gpu
@@ -89,8 +163,6 @@ def process(image, roi):
 
     # Generate result of the validation images
     net.eval()
-
-    im_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
     # roi = (39, 289, 193, 79)
     # print("ROI selected = ", roi)
@@ -134,78 +206,8 @@ def process(image, roi):
     IOG_points = tr_sample["IOG_points"].unsqueeze(0)
     # inputs = inputs.to(device)
     res = net.inference(inputs, IOG_points)
-    outputs = res[-1]  # fine net output
-    backbone_features = res[0]  # output of resnet
-    # outputs = fine_out.to(torch.device('cpu'))
 
-    # Save result without refinements
-
-    index = -1
-
-    pred = np.transpose(outputs.data.numpy()[0, :, :, :], (1, 2, 0))
-    pred = 1 / (1 + np.exp(-pred))
-    pred = np.squeeze(pred)
-    gt = tens2image(tr_sample["gt"])
-    bbox = get_bbox(gt, pad=30, zero_pad=True)
-    result = crop2fullmask(pred, bbox, gt, zero_pad=True, relax=0, mask_relax=False)
-
-    light = np.zeros_like(image)
-    light[:, :, 2] = 255.0
-
-    alpha = 0.5
-
-    blending = (alpha * light + (1 - alpha) * image) * result[..., None] + (
-        1 - result[..., None]
-    ) * image
-
-    blending[blending > 255.0] = 255
-
-    # find contours
-    # im_mask = cv2.cvtColor(result.astype(np.uint8), cv2.COLOR_BGR2GRAY)
-    im_mask = (result * 255).astype(np.uint8)
-    ret, thresh = cv2.threshold(im_mask, 127, 255, 0)
-    # kernel = np.ones((5, 5), np.uint8)
-    kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (1, 1))
-    opening = cv2.morphologyEx(thresh, cv2.MORPH_CLOSE, kernel, iterations=1)
-    contours, hierarchy = cv2.findContours(
-        opening, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE
-    )
-    pred = np.transpose(outputs.data.numpy()[0, :, :, :], (1, 2, 0))
-    pred = 1 / (1 + np.exp(-pred))
-    pred = np.squeeze(pred)
-    gt = tens2image(tr_sample["gt"])
-    bbox = get_bbox(gt, pad=30, zero_pad=True)
-    result = crop2fullmask(pred, bbox, gt, zero_pad=True, relax=0, mask_relax=False)
-
-    light = np.zeros_like(image)
-    light[:, :, 2] = 255.0
-
-    alpha = 0.5
-
-    blending = (alpha * light + (1 - alpha) * image) * result[..., None] + (
-        1 - result[..., None]
-    ) * image
-
-    blending[blending > 255.0] = 255
-
-    # find contours
-    # im_mask = cv2.cvtColor(result.astype(np.uint8), cv2.COLOR_BGR2GRAY)
-    im_mask = (result * 255).astype(np.uint8)
-    ret, thresh = cv2.threshold(im_mask, 127, 255, 0)
-    # kernel = np.ones((5, 5), np.uint8)
-    kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (1, 1))
-    opening = cv2.morphologyEx(thresh, cv2.MORPH_CLOSE, kernel, iterations=1)
-    contours, hierarchy = cv2.findContours(
-        opening, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE
-    )
-    cv2.drawContours(im_rgb, contours, -1, (0, 255, 0), 3)
-    # cv2.rectangle(im_rgb, (roi[0], roi[1]), (roi[0]+ roi[2], roi[1]+roi[3]))
-    cv2.imwrite("results/result.jpg", im_rgb)
-    # print(transform_contours_to_geojson_polygons(contours))
-
-    return transform_contours_to_geojson_polygons(
-        contours, imageHeight=image.shape[0], roiHeight=roi[3]
-    )
+    return convert_net_output_to_geojson_polygon(res, tr_sample["gt"], image, roi)
 
     # Generate results with refinement
     # trns_refinement = transforms.Compose(
@@ -280,3 +282,61 @@ def process(image, roi):
     #     )
     # cv2.waitKey(0)
     # cv2.destroyAllWindows()
+
+
+def refine():
+    # Generate results with refinement
+    trns_refinement = transforms.Compose(
+        [
+            tr.CropFromMask(
+                crop_elems=("point_refinement_mask",), relax=30, zero_pad=True
+            ),
+            tr.FixedResize(
+                resolutions={
+                    "crop_point_refinement_mask": (512, 512),
+                },
+                flagvals={
+                    "crop_point_refinement_mask": cv2.INTER_LINEAR,
+                },
+            ),
+            tr.IOGPointRefinement(
+                sigma=10, elem="crop_point_refinement_mask", pad_pixel=10
+            ),
+            tr.ToImage(norm_elem="IOG_points"),
+            tr.ToTensor(),
+        ]
+    )
+
+    mask_img = create_mask(outputs, tr_sample["gt"], image)
+
+    # foreground = False
+    # mouseX, mouseY = (87, 347)
+    refinement_point_mask = np.zeros_like(image)
+    if foreground:
+        refinement_point_mask[mouseY, mouseX, 0] = 1
+    else:
+        refinement_point_mask[mouseY, mouseX, 1] = 1
+    sample = {"point_refinement_mask": refinement_point_mask, "gt": bbox}
+    IOG_points = torch.maximum(
+        trns_refinement(sample)["IOG_points"].unsqueeze(0), IOG_points
+    )
+
+    # one result
+    points_fg = IOG_points[0, 0:1, :, :]
+    points_bg = IOG_points[0, 1:2, :, :]
+    cv2.imwrite(
+        f"outputs/points_fg.png",
+        np.transpose((points_fg * 1).numpy().astype(np.uint8), (1, 2, 0)),
+    ),
+    cv2.imwrite(
+        f"outputs/points_bg.png",
+        np.transpose((points_bg * 1).numpy().astype(np.uint8), (1, 2, 0)),
+    ),
+    # points_bg = torch.zeros((IOG_points.shape[2], IOG_points.shape[3]))
+    IOG_points[0, 0:1, :, :] = points_fg
+    IOG_points[0, 1:2, :, :] = points_bg
+    outputs = net.refine(backbone_features, IOG_points)
+    # Save result without refinements
+    print_mask(
+        outputs, f"outputs/result_with_refinement_{index}", tr_sample["gt"], image
+    )
