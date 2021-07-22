@@ -32,5 +32,6 @@ It was setup with:
 npx create-strapi-app labelflow --use-npm
 ```
 
-Then: using Custom settings, Preset yes, Preset Blog, database Postgres
+Then using Custom settings, Preset yes, Preset Blog, database Postgres. See env vars in Heroku Labelflow organization here https://dashboard.heroku.com/apps/labelflow-strapi/settings.
 
+Then I added the Sendgrid plugin to send emails (See https://strapi.io/documentation/developer-docs/latest/development/plugins/email.html)
