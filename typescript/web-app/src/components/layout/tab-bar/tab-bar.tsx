@@ -24,11 +24,12 @@ export const TabBar = ({ tabs }: Props) => {
       flex={0}
       borderTop="1px solid"
       borderColor="gray.100"
-      aria-label="tab bar"
+      role="tablist"
     >
       {tabs.map(({ name, url, isActive }) => (
         <NextLink href={url} key={name}>
           <chakra.button
+            role="tab"
             fontSize="lg"
             textTransform="capitalize"
             display="flex"
@@ -42,7 +43,9 @@ export const TabBar = ({ tabs }: Props) => {
             borderBottom="2px solid"
             color={isActive ? "brand.500" : "inherit"}
             borderColor={isActive ? "currentColor" : "transparent"}
-            {...(isActive ? { "aria-current": "location" } : {})}
+            {...(isActive
+              ? { "aria-current": "location", "aria-selected": "true" }
+              : { "aria-selected": "false" })}
           >
             {name}
           </chakra.button>
