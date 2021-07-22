@@ -21,7 +21,6 @@
     "strapi-plugin-upload": "3.6.5",
     "strapi-plugin-i18n": "3.6.5",
     "strapi-connector-bookshelf": "3.6.5",
-    "strapi-provider-upload-supabase": "file:providers/strapi-provider-upload-supabase",
     "knex": "0.21.18",
     "pg": "8.5.1",
     "mime-types": "^2.1.27",
