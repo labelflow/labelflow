@@ -41,6 +41,7 @@ export type LabellingState = {
   setSelectedLabelId: (labelId: string | null) => void;
   setSelectedLabelClassId: (selectedLabelClassId: string | null) => void;
   zoomByDelta: (ratio: number) => void;
+  getState: () => LabellingState;
 };
 
 export const useLabellingStore = create<LabellingState>(
@@ -83,6 +84,7 @@ export const useLabellingStore = create<LabellingState>(
       /* eslint-disable-next-line consistent-return */
       return olZoomByDelta(view, ratio);
     },
+    getState: get,
   }),
   {
     watchers: {
