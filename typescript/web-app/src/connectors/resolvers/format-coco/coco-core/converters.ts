@@ -61,7 +61,7 @@ const convertLabelClassesToCocoCategories = (labelClasses: DbLabelClass[]) => {
 };
 
 const convertLabelToCocoAnnotation = (
-  { x, y, width, height }: DbLabel,
+  { x, y, width, height, geometry }: DbLabel,
   id: number,
   imageId: number,
   categoryId: number | null = null
@@ -70,8 +70,16 @@ const convertLabelToCocoAnnotation = (
     id,
     image_id: imageId,
     category_id: categoryId,
-    segmentation: [],
-    area: width * height,
+    segmentation: geometry.coordinates.map(
+      (polygon: [number, number][]): number[] =>
+        polygon?.reduce(
+          (polygonCoordinates: number[], coordinates) => [
+            ...polygonCoordinates,
+            ...coordinates,
+          ],
+          []
+        )
+    ),
     bbox: [x, y, width, height],
     iscrowd: 0,
   };

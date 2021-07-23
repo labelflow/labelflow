@@ -42,7 +42,15 @@ describe("Coco converters", () => {
     labelClassId,
     geometry: {
       type: "Polygon",
-      coordinates: [],
+      coordinates: [
+        [
+          [1, 2],
+          [1, 6],
+          [4, 6],
+          [4, 2],
+          [1, 2],
+        ],
+      ],
     },
   });
 
@@ -113,7 +121,7 @@ describe("Coco converters", () => {
       id: 1,
       image_id: 42,
       category_id: null,
-      segmentation: [],
+      segmentation: [[1, 2, 1, 6, 4, 6, 4, 2, 1, 2]],
       area: 12,
       bbox: [1, 2, 3, 4],
       iscrowd: 0,

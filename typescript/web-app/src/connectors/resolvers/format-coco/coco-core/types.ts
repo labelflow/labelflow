@@ -18,13 +18,13 @@ export type CocoCategory = {
   name: string;
   supercategory: string;
 };
-type Polygon = number[][];
+type Polygon = number[];
 
 export type CocoAnnotation = {
   id: number;
   image_id: number;
   category_id: number | null;
-  segmentation: string | Polygon;
+  segmentation: Polygon[];
   area: number;
   bbox: [x: number, y: number, width: number, height: number];
   iscrowd: 0 | 1;
