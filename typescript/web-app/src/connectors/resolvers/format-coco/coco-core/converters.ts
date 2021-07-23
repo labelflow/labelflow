@@ -89,7 +89,8 @@ const convertLabelToCocoAnnotation = (
         polygon?.reduce(
           (polygonCoordinates: number[], coordinates) => [
             ...polygonCoordinates,
-            ...coordinates,
+            coordinates[0],
+            imageDimensions.height - coordinates[1],
           ],
           []
         )

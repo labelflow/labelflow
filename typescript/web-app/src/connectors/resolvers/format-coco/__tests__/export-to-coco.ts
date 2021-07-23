@@ -217,7 +217,7 @@ describe("Exporting a dataset to coco format", () => {
           id: 1,
           image_id: 1,
           category_id: 1,
-          segmentation: [[1, 1, 2, 1, 2, 2, 1, 2, 1, 1]],
+          segmentation: [[1, 199, 2, 199, 2, 198, 1, 198, 1, 199]],
           area: 1,
           bbox: [1, 198, 1, 1],
           iscrowd: 0,

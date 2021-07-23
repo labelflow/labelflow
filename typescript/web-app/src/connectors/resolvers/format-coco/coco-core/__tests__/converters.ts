@@ -127,7 +127,7 @@ describe("Coco converters", () => {
       id: 1,
       image_id: 42,
       category_id: null,
-      segmentation: [[1, 2, 1, 6, 4, 6, 4, 2, 1, 2]],
+      segmentation: [[1, 198, 1, 194, 4, 194, 4, 198, 1, 198]],
       area: 12,
       bbox: [1, 194, 3, 4],
       iscrowd: 0,
