@@ -20,16 +20,9 @@ import { Meta } from "../../../../components/meta";
 import { Layout } from "../../../../components/layout";
 import type { Project as ProjectType } from "../../../../graphql-types.generated";
 import { ProjectTabBar } from "../../../../components/layout/tab-bar/project-tab-bar";
-import { noneClassColor } from "../../../../utils/class-color-generator";
 
 const ArrowRightIcon = chakra(RiArrowRightSLine);
 const CircleIcon = chakra(RiCheckboxBlankCircleFill);
-
-const noneClass = {
-  id: "NoneClass",
-  name: "None",
-  color: noneClassColor,
-};
 
 export const projectLabelClassesQuery = gql`
   query getProjectLabelClasses($projectId: ID!) {
@@ -92,7 +85,7 @@ const ClassesPage = () => {
 
   const labelClassWithShortcut = useMemo(
     () =>
-      [...labelClasses, noneClass].map((labelClass, index) => ({
+      labelClasses.map((labelClass, index) => ({
         ...labelClass,
         shortcut: index > 9 ? null : `${(index + 1) % 10}`,
       })),
@@ -132,7 +125,7 @@ const ClassesPage = () => {
         }
         tabBar={<ProjectTabBar currentTab="classes" projectId={projectId} />}
       >
-        <Box bg="white" m="4" borderRadius="lg" maxWidth="96">
+        <Box bg="white" m="10" borderRadius="lg" maxWidth="xl">
           {!loading &&
             labelClassWithShortcut.map(({ id, name, color, shortcut }) => (
               <ClassItem
