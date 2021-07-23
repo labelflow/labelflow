@@ -14,20 +14,18 @@ export type Props = {};
 
 export const UndoTool = () => {
   const { undo, canUndo } = useUndoStore();
-  const labellingStore = useLabellingStore();
   const drawingToolState = useLabellingStore(
     (state) => state.boxDrawingToolState
   );
   useHotkeys(
     keymap.undo.key,
     () => {
-      const { boxDrawingToolState } = labellingStore.getState();
-      if (boxDrawingToolState !== DrawingToolState.DRAWING) {
+      if (drawingToolState !== DrawingToolState.DRAWING) {
         undo();
       }
     },
     {},
-    []
+    [drawingToolState]
   );
 
   return (
@@ -46,7 +44,6 @@ export const UndoTool = () => {
 
 export const RedoTool = () => {
   const { redo, canRedo } = useUndoStore();
-  const labellingStore = useLabellingStore();
   const drawingToolState = useLabellingStore(
     (state) => state.boxDrawingToolState
   );
@@ -54,13 +51,12 @@ export const RedoTool = () => {
   useHotkeys(
     keymap.redo.key,
     () => {
-      const { boxDrawingToolState } = labellingStore.getState();
-      if (boxDrawingToolState !== DrawingToolState.DRAWING) {
+      if (drawingToolState !== DrawingToolState.DRAWING) {
         redo();
       }
     },
     {},
-    []
+    [drawingToolState]
   );
 
   return (
