@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { gql, useQuery, useApolloClient } from "@apollo/client";
 
 import { useHotkeys } from "react-hotkeys-hook";
@@ -64,9 +64,18 @@ export const EditLabelClassMenu = () => {
     variables: { id: selectedLabelId },
     skip: selectedLabelId == null,
   });
+
   const selectedLabelClassId = useLabellingStore(
     (state) => state.selectedLabelClassId
   );
+  const setSelectedLabelClassId = useLabellingStore(
+    (state) => state.setSelectedLabelClassId
+  );
+
+  useEffect(() => {
+    setSelectedLabelClassId(null);
+  }, [projectId]);
+
   const { data: dataLabelClass } = useQuery(labelClassQuery, {
     variables: { id: selectedLabelClassId },
     skip: selectedLabelClassId == null,
