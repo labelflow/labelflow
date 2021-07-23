@@ -1,3 +1,5 @@
+import { DbLabel } from "../../../database";
+
 export type CocoLicense = {
   name: string;
   id: number;
@@ -50,3 +52,7 @@ export type CocoDataset = {
 };
 
 export type CacheLabelClassIdToCocoCategoryId = Map<string | undefined, number>;
+
+export type DbLabelWithImageDimensions = DbLabel & {
+  imageDimensions: { width: number; height: number };
+};

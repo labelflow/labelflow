@@ -1,6 +1,12 @@
 import { Image } from "../../../../graphql-types.generated";
 import { DbLabel, DbLabelClass } from "../../../database";
-import { CocoCategory, CocoAnnotation, CocoImage, CocoDataset } from "./types";
+import {
+  CocoCategory,
+  CocoAnnotation,
+  CocoImage,
+  CocoDataset,
+  DbLabelWithImageDimensions,
+} from "./types";
 
 export {
   initialCocoDataset,
@@ -61,7 +67,15 @@ const convertLabelClassesToCocoCategories = (labelClasses: DbLabelClass[]) => {
 };
 
 const convertLabelToCocoAnnotation = (
-  { x, y, width, height, geometry }: DbLabel,
+  // @ts-ignore
+  {
+    x,
+    y,
+    width,
+    height,
+    geometry,
+    imageDimensions,
+  }: DbLabelWithImageDimensions,
   id: number,
   imageId: number,
   categoryId: number | null = null
@@ -81,13 +95,13 @@ const convertLabelToCocoAnnotation = (
         )
     ),
     area: width * height,
-    bbox: [x, y, width, height],
+    bbox: [x, imageDimensions.height - y - height, width, height],
     iscrowd: 0,
   };
 };
 
 const convertLabelsOfImageToCocoAnnotations = (
-  labels: DbLabel[],
+  labels: DbLabelWithImageDimensions[],
   imageIdsMap: Record<string, number>,
   labelClassIdsMap: Record<string, number>
 ) => {
@@ -131,7 +145,7 @@ const convertImagesToCocoImages = (images: Image[]) => {
 
 const convertLabelflowDatasetToCocoDataset = (
   images: Image[],
-  labels: DbLabel[],
+  labels: DbLabelWithImageDimensions[],
   labelClasses: DbLabelClass[]
 ): CocoDataset => {
   const { cocoImages, imageIdsMap } = convertImagesToCocoImages(images);
