@@ -1,16 +1,12 @@
 import { db, DbLabel } from "../database";
-
 import { list } from "./utils/list";
 
-import type { LabelWhereInput, Maybe } from "../../graphql-types.generated";
+import type { LabelWhereInput } from "../../graphql-types.generated";
 
 /* `count` and `list` need to handle a specific logic when you want it to be filtered by project
- * We can't do joins with dexies so we need to do it manually.
- */
+ * We can't do joins with dexies so we need to do it manually. */
 
-export const countLabels = async (
-  where?: LabelWhereInput | { projectId?: Maybe<string> | undefined }
-) => {
+export const countLabels = async (where?: LabelWhereInput) => {
   if (where) {
     if ("projectId" in where) {
       const imagesOfProject = await db.image
@@ -33,7 +29,7 @@ export const countLabels = async (
 };
 
 export const listLabels = async (
-  where?: LabelWhereInput | { projectId?: Maybe<string> | undefined },
+  where?: LabelWhereInput | null,
   skip?: number | null,
   first?: number | null
 ) => {
@@ -64,9 +60,5 @@ export const listLabels = async (
       .sortBy("createdAt");
   }
 
-  return list<DbLabel, LabelWhereInput>(db.label)(
-    where as LabelWhereInput | null | undefined,
-    skip,
-    first
-  );
+  return list<DbLabel, LabelWhereInput>(db.label)(where, skip, first);
 };
