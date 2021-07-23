@@ -13,12 +13,13 @@ import { useHotkeys } from "react-hotkeys-hook";
 import {
   useLabellingStore,
   Tools,
-  BoxDrawingToolState,
+  DrawingToolState,
 } from "../../../../connectors/labelling-state";
 import { keymap } from "../../../../keymap";
 import { useUndoStore } from "../../../../connectors/undo-store";
 import { noneClassColor } from "../../../../utils/class-color-generator";
 import { createLabelEffect } from "./create-label-effect";
+import { LabelType } from "../../../../graphql-types.generated";
 
 const labelClassQuery = gql`
   query getLabelClass($id: ID!) {
@@ -32,15 +33,15 @@ const labelClassQuery = gql`
 
 const geometryFunction = createBox();
 
-export const DrawBoundingBoxInteraction = () => {
+export const DrawBoundingBoxAndPolygonInteraction = () => {
   const drawRef = useRef<OlDraw>(null);
   const client = useApolloClient();
   const { imageId } = useRouter()?.query;
 
   const selectedTool = useLabellingStore((state) => state.selectedTool);
 
-  const setBoxDrawingToolState = useLabellingStore(
-    (state) => state.setBoxDrawingToolState
+  const setDrawingToolState = useLabellingStore(
+    (state) => state.setDrawingToolState
   );
   const setSelectedLabelId = useLabellingStore(
     (state) => state.setSelectedLabelId
@@ -79,32 +80,43 @@ export const DrawBoundingBoxInteraction = () => {
     });
   }, [selectedLabelClass?.color]);
 
-  if (selectedTool !== Tools.BOX) {
+  if (![Tools.BOX, Tools.POLYGON].includes(selectedTool)) {
     return null;
   }
   if (typeof imageId !== "string") {
     return null;
   }
+  const interactionDrawArguments =
+    selectedTool === Tools.POLYGON
+      ? {
+          type: GeometryType.POLYGON,
+          style, // Needed here to trigger the rerender of the component when the selected class changes
+        }
+      : {
+          type: GeometryType.CIRCLE,
+          geometryFunction,
+          style, // Needed here to trigger the rerender of the component when the selected class changes
+        };
 
+  const errorMessage =
+    selectedTool === Tools.POLYGON
+      ? "Error creating polygon"
+      : "Error creating bounding box";
   return (
     <olInteractionDraw
       ref={drawRef}
-      args={{
-        type: GeometryType.CIRCLE,
-        geometryFunction,
-        style, // Needed here to trigger the rerender of the component when the selected class changes
-      }}
+      args={interactionDrawArguments}
       condition={(e) => {
         // 0 is the main mouse button. See: https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/button
         // @ts-ignore
         return e.originalEvent.button === 0;
       }}
       onDrawabort={() => {
-        setBoxDrawingToolState(BoxDrawingToolState.IDLE);
+        setDrawingToolState(DrawingToolState.IDLE);
         return true;
       }}
       onDrawstart={() => {
-        setBoxDrawingToolState(BoxDrawingToolState.DRAWING);
+        setDrawingToolState(DrawingToolState.DRAWING);
         return true;
       }}
       onDrawend={async (drawEvent: DrawEvent) => {
@@ -117,6 +129,10 @@ export const DrawBoundingBoxInteraction = () => {
               imageId,
               selectedLabelClassId,
               geometry,
+              labelType:
+                selectedTool === Tools.POLYGON
+                  ? LabelType.Polygon
+                  : LabelType.Box,
             },
             {
               setSelectedLabelId,
@@ -124,12 +140,12 @@ export const DrawBoundingBoxInteraction = () => {
             }
           )
         );
-        setBoxDrawingToolState(BoxDrawingToolState.IDLE);
+        setDrawingToolState(DrawingToolState.IDLE);
         try {
           await createLabelPromise;
         } catch (error) {
           toast({
-            title: "Error creating bounding box",
+            title: errorMessage,
             description: error?.message,
             isClosable: true,
             status: "error",
