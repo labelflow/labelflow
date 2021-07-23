@@ -45,6 +45,36 @@ export const projectLabelClassesQuery = gql`
   }
 `;
 
+type ClassItemProps = {
+  name: string;
+  color: string;
+  shortcut: string | null;
+};
+
+const ClassItem = ({ name, color, shortcut }: ClassItemProps) => {
+  return (
+    <Flex alignItems="center" height="10">
+      <CircleIcon
+        flexShrink={0}
+        flexGrow={0}
+        color={color}
+        fontSize="2xl"
+        ml="2"
+        mr="2"
+      />
+      <Text flexGrow={1} isTruncated>
+        {name}
+      </Text>
+
+      {shortcut && (
+        <Kbd flexShrink={0} flexGrow={0} justifyContent="center" mr="2">
+          {shortcut}
+        </Kbd>
+      )}
+    </Flex>
+  );
+};
+
 const ClassesPage = () => {
   const router = useRouter();
   const projectId = router?.query?.projectId as string;
@@ -63,8 +93,8 @@ const ClassesPage = () => {
   const labelClassWithShortcut = useMemo(
     () =>
       [...labelClasses, noneClass].map((labelClass, index) => ({
-          ...labelClass,
-            shortcut: index > 9 ? null : `${(index + 1) % 10}`,
+        ...labelClass,
+        shortcut: index > 9 ? null : `${(index + 1) % 10}`,
       })),
     [labelClasses]
   );
@@ -104,34 +134,14 @@ const ClassesPage = () => {
       >
         <Box bg="white" m="4" borderRadius="lg" maxWidth="96">
           {!loading &&
-            labelClassWithShortcut.map(({ id, name, color, shortcut }) => {
-              return (
-                <Flex key={id} alignItems="center" height="10">
-                  <CircleIcon
-                    flexShrink={0}
-                    flexGrow={0}
-                    color={color}
-                    fontSize="2xl"
-                    ml="2"
-                    mr="2"
-                  />
-                  <Text flexGrow={1} isTruncated>
-                    {name}
-                  </Text>
-
-                  {shortcut && (
-                    <Kbd
-                      flexShrink={0}
-                      flexGrow={0}
-                      justifyContent="center"
-                      mr="2"
-                    >
-                      {shortcut}
-                    </Kbd>
-                  )}
-                </Flex>
-              );
-            })}
+            labelClassWithShortcut.map(({ id, name, color, shortcut }) => (
+              <ClassItem
+                key={id}
+                name={name}
+                color={color}
+                shortcut={shortcut}
+              />
+            ))}
         </Box>
       </Layout>
     </>
