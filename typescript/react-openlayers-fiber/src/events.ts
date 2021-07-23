@@ -5,7 +5,9 @@
 // Had to do this because of https://github.com/microsoft/TypeScript/issues/40816
 import { ListenerFunction } from "ol/events";
 import { DrawEvent } from "ol/interaction/Draw";
+import { ModifyEvent } from "ol/interaction/Modify";
 import { SelectEvent } from "ol/interaction/Select";
+import { TranslateEvent } from "ol/interaction/Translate";
 import RenderEvent from "ol/render/Event";
 
 export type RenderListenerFunction = (p0: RenderEvent) => boolean;
@@ -75,7 +77,7 @@ export type Events = Partial<{
   onImageloaderror: ListenerFunction;
   onImageloadstart: ListenerFunction;
   onLeavefullscreen: ListenerFunction;
-  onModifyend: ListenerFunction;
+  onModifyend: (event: ModifyEvent) => boolean | Promise<boolean>;
   onModifystart: ListenerFunction;
   onMoveend: ListenerFunction;
   onMovestart: ListenerFunction;
@@ -94,7 +96,7 @@ export type Events = Partial<{
   onTileloadend: ListenerFunction;
   onTileloaderror: ListenerFunction;
   onTileloadstart: ListenerFunction;
-  onTranslateend: ListenerFunction;
+  onTranslateend: (event: TranslateEvent) => boolean | Promise<boolean>;
   onTranslatestart: ListenerFunction;
   onTranslating: ListenerFunction;
 }>;
