@@ -71,10 +71,10 @@ export const EditLabelClassMenu = () => {
     variables: { id: selectedLabelClassId },
     skip: selectedLabelClassId == null,
   });
-  const selectedLabelClass =
-    selectedTool === Tools.BOX
-      ? dataLabelClass?.labelClass
-      : selectedLabelData?.label?.labelClass;
+  const isInDrawingMode = [Tools.BOX, Tools.POLYGON].includes(selectedTool);
+  const selectedLabelClass = isInDrawingMode
+    ? dataLabelClass?.labelClass
+    : selectedLabelData?.label?.labelClass;
   const createNewClass = useMemo(
     () =>
       createNewLabelClassCurry({
@@ -97,7 +97,7 @@ export const EditLabelClassMenu = () => {
   );
   const onSelectedClassChange = useMemo(
     () =>
-      selectedTool === Tools.BOX
+      isInDrawingMode
         ? (item: LabelClassItem | null) =>
             perform(
               createUpdateLabelClassEffect({
@@ -119,7 +119,7 @@ export const EditLabelClassMenu = () => {
   );
 
   const displayClassSelectionMenu =
-    selectedTool === Tools.BOX ||
+    isInDrawingMode ||
     (selectedTool === Tools.SELECTION && selectedLabelId != null);
 
   useHotkeys(
@@ -148,7 +148,7 @@ export const EditLabelClassMenu = () => {
           selectedLabelClass={selectedLabelClass}
           labelClasses={labelClasses}
           createNewClass={async (name) =>
-            selectedTool === Tools.BOX
+            isInDrawingMode
               ? createNewClass(name, selectedLabelClassId)
               : createNewClassAndUpdateLabel(name, selectedLabelId)
           }

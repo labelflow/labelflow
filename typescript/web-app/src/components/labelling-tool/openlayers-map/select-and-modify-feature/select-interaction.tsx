@@ -104,7 +104,7 @@ export const SelectInteraction = ({
           }}
         />
       )}
-      {selectedTool === Tools.BOX && (
+      {[Tools.BOX, Tools.POLYGON].includes(selectedTool) && (
         <olInteractionPointer
           style={null}
           handleEvent={(e) => {

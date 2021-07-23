@@ -12,7 +12,6 @@ export const SelectionTool = () => {
   const isImageLoading = useLabellingStore((state) => state.isImageLoading);
   const selectedTool = useLabellingStore((state) => state.selectedTool);
   const setSelectedTool = useLabellingStore((state) => state.setSelectedTool);
-
   useHotkeys(
     keymap.toolSelect.key,
     () => setSelectedTool(Tools.SELECTION),

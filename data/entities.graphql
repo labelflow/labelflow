@@ -21,8 +21,14 @@ type Image {
   projectId: ID!
 }
 
+enum LabelType{
+  Polygon
+  Box
+}
+
 type Label {
   id: ID!
+  type: LabelType!
   createdAt: DateTime!
   updatedAt: DateTime!
   imageId: ID!
