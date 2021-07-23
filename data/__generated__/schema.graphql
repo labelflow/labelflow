@@ -147,6 +147,8 @@ input LabelUpdateInput {
 
 input LabelWhereInput {
   imageId: ID
+  labelClassId: ID
+  projectId: ID
 }
 
 input LabelWhereUniqueInput {
