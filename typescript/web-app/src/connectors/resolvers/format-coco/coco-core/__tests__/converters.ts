@@ -1,4 +1,4 @@
-import { DbLabel, DbLabelClass } from "../../../../database";
+import { DbLabelClass } from "../../../../database";
 import { Image, LabelType } from "../../../../../graphql-types.generated";
 import {
   convertLabelClassToCocoCategory,
