@@ -41,7 +41,7 @@ export const repository = {
     delete: (id: string) => db.project.delete(id),
     getById: (id: string) => db.project.get(id),
     getByName: (name: string) => db.project.get({ name }),
-    list: list<DbProject, null>(db.project),
+    list: list<DbProject>(db.project),
     update: (id: string, changes: PartialWithNullAllowed<DbProject>) =>
       db.project.update(id, changes),
   },

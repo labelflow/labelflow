@@ -1,5 +1,5 @@
 export const list =
-  <ReturnedValue = any, Where = Record<string, any>>(
+  <ReturnedValue = unknown, Where extends Record<string, any> | null = null>(
     table: Dexie.Table<ReturnedValue>
   ) =>
   async (
