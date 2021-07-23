@@ -43,7 +43,7 @@ describe("Golden path", () => {
     });
     cy.get('[aria-label="loading indicator"]').should("not.exist");
 
-    cy.get('[aria-label="Drawing tool"]').click();
+    cy.get('[aria-label="Drawing box tool"]').click();
     cy.get("main").click(450, 100);
     cy.get("main").click(500, 150);
 

@@ -12,9 +12,10 @@ import {
 export enum Tools {
   SELECTION = "select",
   BOX = "box",
+  POLYGON = "polygon",
 }
 
-export enum BoxDrawingToolState {
+export enum DrawingToolState {
   IDLE = "idle",
   DRAWING = "drawing",
 }
@@ -31,8 +32,8 @@ export type LabellingState = {
   selectedTool: Tools;
   selectedLabelId: string | null;
   selectedLabelClassId: string | null;
-  boxDrawingToolState: BoxDrawingToolState;
-  setBoxDrawingToolState: (state: BoxDrawingToolState) => void;
+  boxDrawingToolState: DrawingToolState;
+  setDrawingToolState: (state: DrawingToolState) => void;
   setIsImageLoading: (isImageLoading: boolean) => void;
   setCanZoomIn: (canZoomIn: boolean) => void;
   setCanZoomOut: (canZoomOut: boolean) => void;
@@ -56,8 +57,8 @@ export const useLabellingStore = create<LabellingState>(
     selectedTool: getRouterValue("selectedTool") ?? Tools.SELECTION,
     selectedLabelId: getRouterValue("selectedLabelId") ?? null,
     selectedLabelClassId: getRouterValue("selectedLabelClassId") ?? null,
-    boxDrawingToolState: BoxDrawingToolState.IDLE,
-    setBoxDrawingToolState: (boxDrawingToolState: BoxDrawingToolState) =>
+    boxDrawingToolState: DrawingToolState.IDLE,
+    setDrawingToolState: (boxDrawingToolState: DrawingToolState) =>
       // @ts-ignore See https://github.com/Diablow/zustand-store-addons/issues/2
       set({ boxDrawingToolState }),
     // @ts-ignore See https://github.com/Diablow/zustand-store-addons/issues/2

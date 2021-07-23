@@ -107,6 +107,7 @@ export type ImagesAggregates = {
 export type Label = {
   __typename?: 'Label';
   id: Scalars['ID'];
+  type: LabelType;
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
   imageId: Scalars['ID'];
@@ -151,10 +152,16 @@ export type LabelClassesAggregates = {
 
 export type LabelCreateInput = {
   id?: Maybe<Scalars['ID']>;
+  type?: Maybe<LabelType>;
   imageId: Scalars['ID'];
   labelClassId?: Maybe<Scalars['ID']>;
   geometry: GeometryInput;
 };
+
+export enum LabelType {
+  Polygon = 'Polygon',
+  Box = 'Box'
+}
 
 export type LabelUpdateInput = {
   labelClassId?: Maybe<Scalars['ID']>;
@@ -481,6 +488,7 @@ export type ResolversTypes = {
   LabelClassWhereUniqueInput: LabelClassWhereUniqueInput;
   LabelClassesAggregates: ResolverTypeWrapper<LabelClassesAggregates>;
   LabelCreateInput: LabelCreateInput;
+  LabelType: LabelType;
   LabelUpdateInput: LabelUpdateInput;
   LabelWhereInput: LabelWhereInput;
   LabelWhereUniqueInput: LabelWhereUniqueInput;
@@ -592,6 +600,7 @@ export interface JsonScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes
 
 export type LabelResolvers<ContextType = any, ParentType extends ResolversParentTypes['Label'] = ResolversParentTypes['Label']> = {
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  type?: Resolver<ResolversTypes['LabelType'], ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   imageId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;

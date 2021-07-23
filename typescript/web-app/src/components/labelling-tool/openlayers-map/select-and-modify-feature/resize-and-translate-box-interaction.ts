@@ -1,8 +1,8 @@
-import { Feature, MapBrowserEvent } from "ol";
+import { Collection, Feature, MapBrowserEvent } from "ol";
 import PointerInteraction from "ol/interaction/Pointer";
 import { Coordinate, distance } from "ol/coordinate";
 import { Extent } from "ol/extent";
-import { Polygon } from "ol/geom";
+import { Geometry, Polygon } from "ol/geom";
 import { fromExtent } from "ol/geom/Polygon";
 
 type FeatureVertices = [Coordinate, Coordinate, Coordinate, Coordinate];
@@ -10,6 +10,9 @@ type ClosestElement = {
   distanceToElement: number | null;
   element: string | null;
   insideTolerance: boolean | null;
+};
+export type ResizeAndTranslateEvent = {
+  features: Collection<Feature<Geometry>>;
 };
 
 export class ResizeAndTranslateBox extends PointerInteraction {
@@ -29,12 +32,12 @@ export class ResizeAndTranslateBox extends PointerInteraction {
 
   onInteractionEnd:
     | (() => void)
-    | ((feature: Feature<Polygon> | null) => void) = () => {};
+    | ((event: ResizeAndTranslateEvent | null) => boolean) = () => true;
 
   constructor(options: {
     pixelTolerance?: number;
     selectedFeature?: Feature<Polygon>;
-    onInteractionEnd?: (feature: Feature<Polygon> | null) => void;
+    onInteractionEnd?: (event: ResizeAndTranslateEvent | null) => boolean;
   }) {
     super();
     this.pixelTolerance = options?.pixelTolerance ?? this.pixelTolerance;
@@ -266,7 +269,7 @@ export class ResizeAndTranslateBox extends PointerInteraction {
       });
       this.lastTranslateCoordinates = null;
       if (this.featureChanged === true) {
-        this.onInteractionEnd(this.feature);
+        this.onInteractionEnd({ features: new Collection([this.feature]) });
         this.featureChanged = false;
       }
     } else {
@@ -320,12 +323,10 @@ export class ResizeAndTranslateBox extends PointerInteraction {
             mapTargetViewport.style.cursor = "move";
             break;
           default:
-            mapTargetViewport.style.cursor = "";
+            mapTargetViewport.style.cursor = "default";
             break;
         }
         e.stopPropagation();
-      } else {
-        mapTargetViewport.style.cursor = "";
       }
     }
   }

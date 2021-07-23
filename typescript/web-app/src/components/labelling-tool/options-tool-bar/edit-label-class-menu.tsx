@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { gql, useQuery, useApolloClient } from "@apollo/client";
 
 import { useHotkeys } from "react-hotkeys-hook";
@@ -64,17 +64,26 @@ export const EditLabelClassMenu = () => {
     variables: { id: selectedLabelId },
     skip: selectedLabelId == null,
   });
+
   const selectedLabelClassId = useLabellingStore(
     (state) => state.selectedLabelClassId
   );
+  const setSelectedLabelClassId = useLabellingStore(
+    (state) => state.setSelectedLabelClassId
+  );
+
+  useEffect(() => {
+    setSelectedLabelClassId(null);
+  }, [projectId]);
+
   const { data: dataLabelClass } = useQuery(labelClassQuery, {
     variables: { id: selectedLabelClassId },
     skip: selectedLabelClassId == null,
   });
-  const selectedLabelClass =
-    selectedTool === Tools.BOX
-      ? dataLabelClass?.labelClass
-      : selectedLabelData?.label?.labelClass;
+  const isInDrawingMode = [Tools.BOX, Tools.POLYGON].includes(selectedTool);
+  const selectedLabelClass = isInDrawingMode
+    ? dataLabelClass?.labelClass
+    : selectedLabelData?.label?.labelClass;
   const createNewClass = useMemo(
     () =>
       createNewLabelClassCurry({
@@ -97,7 +106,7 @@ export const EditLabelClassMenu = () => {
   );
   const onSelectedClassChange = useMemo(
     () =>
-      selectedTool === Tools.BOX
+      isInDrawingMode
         ? (item: LabelClassItem | null) =>
             perform(
               createUpdateLabelClassEffect({
@@ -119,7 +128,7 @@ export const EditLabelClassMenu = () => {
   );
 
   const displayClassSelectionMenu =
-    selectedTool === Tools.BOX ||
+    isInDrawingMode ||
     (selectedTool === Tools.SELECTION && selectedLabelId != null);
 
   useHotkeys(
@@ -148,7 +157,7 @@ export const EditLabelClassMenu = () => {
           selectedLabelClass={selectedLabelClass}
           labelClasses={labelClasses}
           createNewClass={async (name) =>
-            selectedTool === Tools.BOX
+            isInDrawingMode
               ? createNewClass(name, selectedLabelClassId)
               : createNewClassAndUpdateLabel(name, selectedLabelId)
           }

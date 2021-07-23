@@ -13,6 +13,7 @@ import type {
   QueryLabelArgs,
 } from "../../graphql-types.generated";
 import { DbLabel } from "../database";
+import { LabelType } from "../../graphql-types.generated";
 import { projectTypename } from "./project";
 
 import { Context } from "./types";
@@ -56,7 +57,7 @@ export const getBoundedGeometryFromImage = (
   const clippedGeometryObject = intersect(imagePolygon, geometryPolygon);
 
   if (clippedGeometryObject?.geometry == null) {
-    throw new Error("Bounding box out of image bounds");
+    throw new Error("Label out of image bounds");
   }
 
   const [minX, minY, maxX, maxY] = bbox(clippedGeometryObject.geometry);
@@ -78,7 +79,7 @@ const createLabel = async (
   args: MutationCreateLabelArgs,
   { repository }: Context
 ): Promise<Label> => {
-  const { id, imageId, labelClassId, geometry } = args.data;
+  const { id, imageId, labelClassId, geometry, type } = args.data;
 
   // Since we don't have any constraint checks with Dexie
   // We need to ensure that the imageId and the labelClassId
@@ -108,6 +109,7 @@ const createLabel = async (
 
   const newLabelEntity = {
     id: labelId,
+    type: type ?? LabelType.Polygon,
     createdAt: now.toISOString(),
     updatedAt: now.toISOString(),
     labelClassId,
