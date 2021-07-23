@@ -67,7 +67,6 @@ const convertLabelClassesToCocoCategories = (labelClasses: DbLabelClass[]) => {
 };
 
 const convertLabelToCocoAnnotation = (
-  // @ts-ignore
   {
     x,
     y,
