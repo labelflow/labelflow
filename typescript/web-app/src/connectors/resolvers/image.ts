@@ -15,7 +15,7 @@ import { Context } from "./types";
 import { throwIfResolvesToNil } from "./utils/throw-if-resolves-to-nil";
 
 // Queries
-export const labelsResolver = async (
+const labelsResolver = async (
   { id }: DbImage,
   _args: any,
   { repository }: Context
