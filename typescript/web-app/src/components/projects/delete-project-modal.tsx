@@ -18,19 +18,6 @@ const getProjectByIdQuery = gql`
   }
 `;
 
-const getProjectsQuery = gql`
-  query getProjects {
-    projects {
-      id
-      name
-      images {
-        id
-        url
-      }
-    }
-  }
-`;
-
 const deleteProjectByIdMutation = gql`
   mutation deleteProjectById($id: ID) {
     deleteProject(where: { id: $id }) {
@@ -39,7 +26,7 @@ const deleteProjectByIdMutation = gql`
   }
 `;
 
-export const UpsertProjectDelete = ({
+export const DeleteProjectModal = ({
   isOpen = false,
   onClose = () => {},
   projectId = undefined,
@@ -55,7 +42,7 @@ export const UpsertProjectDelete = ({
 
   const [deleteProjectMutate] = useMutation(deleteProjectByIdMutation, {
     variables: { id: projectId },
-    refetchQueries: [{ query: getProjectsQuery }],
+    refetchQueries: ["getProjects"],
   });
 
   const deleteProject = async () => {

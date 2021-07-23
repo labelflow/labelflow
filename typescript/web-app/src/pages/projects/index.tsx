@@ -12,7 +12,7 @@ import { NewProjectCard, ProjectCard } from "../../components/projects";
 import type { Project as ProjectType } from "../../graphql-types.generated";
 
 import { UpsertProjectModal } from "../../components/projects/upsert-project-modal";
-import { UpsertProjectDelete } from "../../components/projects/upsert-project-delete";
+import { DeleteProjectModal } from "../../components/projects/delete-project-modal";
 
 export const getProjectsQuery = gql`
   query getProjects {
@@ -98,7 +98,7 @@ const ProjectPage = () => {
           projectId={editProjectId}
         />
 
-        <UpsertProjectDelete
+        <DeleteProjectModal
           isOpen={deleteProjectId != null}
           onClose={onClose}
           projectId={deleteProjectId}

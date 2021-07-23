@@ -191,17 +191,8 @@ const deleteProject = async (
     (a) => a.id
   );
   await db.label.bulkDelete(labelsToDelete);
-
-  const labelClassesToDelete = (
-    await getLabelClassesByProjectId(projectToDelete.id)
-  ).map((a) => a.id);
-  await db.labelClass.bulkDelete(labelClassesToDelete);
-
-  const imagesToDelete = (
-    await getPaginatedImages({ projectId: projectToDelete.id })
-  ).map((a) => a.id);
-  await db.image.bulkDelete(imagesToDelete);
-
+  await db.labelClass.where({ projectId: projectToDelete.id }).delete();
+  await db.image.where({ projectId: projectToDelete.id }).delete();
   await db.project.delete(projectToDelete.id);
 
   return projectToDelete;

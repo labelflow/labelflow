@@ -5,13 +5,12 @@ import {
   waitFor,
   act,
 } from "@testing-library/react";
-import { ApolloProvider } from "@apollo/client";
+import { ApolloProvider, gql } from "@apollo/client";
 import { PropsWithChildren } from "react";
-import { gql } from "graphql-tag";
 
 import { client } from "../../../connectors/apollo-client-schema";
 import { setupTestsWithLocalDatabase } from "../../../utils/setup-local-db-tests";
-import { UpsertProjectDelete } from "../upsert-project-delete";
+import { DeleteProjectModal } from "../delete-project-modal";
 
 const Wrapper = ({ children }: PropsWithChildren<{}>) => (
   <ApolloProvider client={client}>{children}</ApolloProvider>
@@ -20,7 +19,7 @@ const Wrapper = ({ children }: PropsWithChildren<{}>) => (
 setupTestsWithLocalDatabase();
 
 const renderModal = (props = {}) => {
-  return render(<UpsertProjectDelete isOpen {...props} />, {
+  return render(<DeleteProjectModal isOpen {...props} />, {
     wrapper: Wrapper,
   });
 };

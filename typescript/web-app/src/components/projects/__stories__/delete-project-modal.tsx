@@ -1,7 +1,7 @@
 import { Button, useDisclosure } from "@chakra-ui/react";
 import { withNextRouter } from "storybook-addon-next-router";
 
-import { UpsertProjectDelete } from "../upsert-project-delete";
+import { DeleteProjectModal } from "../delete-project-modal";
 import { chakraDecorator } from "../../../utils/chakra-decorator";
 import { apolloDecorator } from "../../../utils/apollo-decorator";
 import { queryParamsDecorator } from "../../../utils/query-params-decorator";
@@ -22,7 +22,7 @@ export const Default = () => {
   return (
     <div>
       <Button onClick={onOpen}>Display</Button>
-      <UpsertProjectDelete isOpen={isOpen} onClose={onClose} />
+      <DeleteProjectModal isOpen={isOpen} onClose={onClose} />
     </div>
   );
 };
@@ -33,7 +33,7 @@ export const OpenedByDefault = () => {
   return (
     <div>
       <Button onClick={onOpen}>Display</Button>
-      <UpsertProjectDelete isOpen={isOpen} onClose={onClose} />
+      <DeleteProjectModal isOpen={isOpen} onClose={onClose} />
     </div>
   );
 };
