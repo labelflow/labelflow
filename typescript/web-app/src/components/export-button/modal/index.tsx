@@ -24,6 +24,9 @@ const countLabelsOfProjectQuery = gql`
   query countLabelsOfProject($projectId: ID!) {
     project(where: { id: $projectId }) {
       id
+      imagesAggregates {
+        totalCount
+      }
       labelsAggregates {
         totalCount
       }
@@ -87,6 +90,7 @@ export const ExportModal = ({
           >
             <Text fontSize="lg" fontWeight="medium" color="gray.800">
               Your project contains{" "}
+              {data?.project?.imagesAggregates?.totalCount} images and{" "}
               {data?.project?.labelsAggregates?.totalCount} labels.
             </Text>
           </Skeleton>

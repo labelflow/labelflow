@@ -168,9 +168,8 @@ test("Export Modal should display the number of labels", async () => {
 
   render(<ExportModal isOpen />, { wrapper });
 
-  await waitFor(() => {
-    expect(screen.getByRole("banner").textContent).toEqual(
-      expect.stringContaining("2 labels")
-    );
-  });
+  // FIXME: This test fails because the query doesn't return anything
+  expect(screen.getByRole("banner").textContent).toEqual(
+    expect.stringContaining("1 images and 2 labels")
+  );
 });
