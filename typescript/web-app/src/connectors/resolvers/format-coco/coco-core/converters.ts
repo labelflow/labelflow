@@ -80,6 +80,7 @@ const convertLabelToCocoAnnotation = (
           []
         )
     ),
+    area: width * height,
     bbox: [x, y, width, height],
     iscrowd: 0,
   };
