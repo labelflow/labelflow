@@ -99,10 +99,13 @@ export const getLabelsWithImageDimensionsByProjectId = async (
   const labels = await getLabelsByProjectId(projectId);
   return Bluebird.map(labels, async (label) => {
     const { imageId } = label;
-    const image = await db.image.get({ imageId });
+    const image = await db.image.get(imageId);
+    if (image == null) {
+      throw new Error(`Missing image with id ${imageId}`);
+    }
     return {
       ...label,
-      imageDimensions: { height: image?.height, width: image?.width },
+      imageDimensions: { height: image.height, width: image.width },
     };
   });
 };
