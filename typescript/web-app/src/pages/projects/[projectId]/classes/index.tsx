@@ -111,8 +111,14 @@ const ClassesPage = () => {
               </NextLink>
             </BreadcrumbItem>
 
+            <BreadcrumbItem>
+              <NextLink href={`/projects/${projectId}`}>
+                <BreadcrumbLink>{projectName}</BreadcrumbLink>
+              </NextLink>
+            </BreadcrumbItem>
+
             <BreadcrumbItem isCurrentPage>
-              <Text>{projectName}</Text>
+              <Text>Classes</Text>
             </BreadcrumbItem>
           </Breadcrumb>
         }
