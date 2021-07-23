@@ -69,6 +69,20 @@ const DebugPage = () => {
 
               <ListItem>
                 <Link
+                  href={`https://app.supabase.io/project/zokyprbhquvvrleedkkk/editor/table`}
+                >
+                  Link to Database admin
+                </Link>
+              </ListItem>
+
+              <ListItem>
+                <Link href={`https://strapi.labelflow.ai/admin`}>
+                  Link to CMS admin
+                </Link>
+              </ListItem>
+
+              <ListItem>
+                <Link
                   href={`https://github.com/${process.env.NEXT_PUBLIC_VERCEL_GIT_REPO_OWNER}/${process.env.NEXT_PUBLIC_VERCEL_GIT_REPO_SLUG}/tree/${process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_REF}`}
                 >
                   Link to Github branch
@@ -86,6 +100,20 @@ const DebugPage = () => {
               <ListItem>
                 <Link href={`https://${process.env.NEXT_PUBLIC_VERCEL_URL}`}>
                   Link to Vercel deployment
+                </Link>
+              </ListItem>
+
+              <ListItem>
+                <Link
+                  href={`https://dashboard.heroku.com/apps/labelflow-strapi`}
+                >
+                  Link to CMS deployment on Heroku
+                </Link>
+              </ListItem>
+
+              <ListItem>
+                <Link href={`https://app.sendgrid.com/`}>
+                  Link to mailer provider
                 </Link>
               </ListItem>
             </UnorderedList>
