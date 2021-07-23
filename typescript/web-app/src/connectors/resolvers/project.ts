@@ -1,4 +1,3 @@
-import Bluebird from "bluebird";
 import { trim } from "lodash/fp";
 import { v4 as uuidv4 } from "uuid";
 import type {
@@ -97,17 +96,19 @@ export const getLabelsWithImageDimensionsByProjectId = async (
   projectId: string
 ) => {
   const labels = await getLabelsByProjectId(projectId);
-  return Bluebird.map(labels, async (label) => {
-    const { imageId } = label;
-    const image = await db.image.get(imageId);
-    if (image == null) {
-      throw new Error(`Missing image with id ${imageId}`);
-    }
-    return {
-      ...label,
-      imageDimensions: { height: image.height, width: image.width },
-    };
-  });
+  return Promise.all(
+    labels.map(async (label) => {
+      const { imageId } = label;
+      const image = await db.image.get(imageId);
+      if (image == null) {
+        throw new Error(`Missing image with id ${imageId}`);
+      }
+      return {
+        ...label,
+        imageDimensions: { height: image.height, width: image.width },
+      };
+    })
+  );
 };
 
 // Queries
