@@ -68,15 +68,13 @@ const DebugPage = () => {
               </ListItem>
 
               <ListItem>
-                <Link
-                  href={`https://app.supabase.io/project/zokyprbhquvvrleedkkk/editor/table`}
-                >
+                <Link href="https://app.supabase.io/project/zokyprbhquvvrleedkkk/editor/table">
                   Link to Database admin
                 </Link>
               </ListItem>
 
               <ListItem>
-                <Link href={`https://strapi.labelflow.ai/admin`}>
+                <Link href="https://strapi.labelflow.ai/admin">
                   Link to CMS admin
                 </Link>
               </ListItem>
@@ -104,15 +102,13 @@ const DebugPage = () => {
               </ListItem>
 
               <ListItem>
-                <Link
-                  href={`https://dashboard.heroku.com/apps/labelflow-strapi`}
-                >
+                <Link href="https://dashboard.heroku.com/apps/labelflow-strapi">
                   Link to CMS deployment on Heroku
                 </Link>
               </ListItem>
 
               <ListItem>
-                <Link href={`https://app.sendgrid.com/`}>
+                <Link href="https://app.sendgrid.com/">
                   Link to mailer provider
                 </Link>
               </ListItem>
