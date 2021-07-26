@@ -1,3 +1,3 @@
-import { Repository } from "../repository";
+import { Repository } from "../repository/types";
 
 export type Context = { repository: Repository };

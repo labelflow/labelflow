@@ -1,7 +1,7 @@
 import { convertLabelflowDatasetToCocoDataset } from "./coco-core/converters";
 import { QueryExportToCocoArgs } from "../../../web-app/src/graphql-types.generated";
 import { jsonToDataUri } from "./json-to-data-uri";
-import { Repository } from "../../../web-app/src/connectors/repository";
+import { Repository } from "../../../web-app/src/connectors/repository/types";
 
 export const exportToCoco = async (
   _: any,

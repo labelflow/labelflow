@@ -9,8 +9,9 @@ import type {
   QueryProjectsArgs,
   QueryImagesArgs,
 } from "../../web-app/src/graphql-types.generated";
+
 import { DbProject } from "../../web-app/src/connectors/database";
-import { Repository } from "../../web-app/src/connectors/repository"
+import { Repository } from "../../web-app/src/connectors/repository/types";
 
 import { Context } from "./types";
 import { throwIfResolvesToNil } from "./utils/throw-if-resolves-to-nil";
@@ -148,16 +149,16 @@ const updateProject = async (
   args: MutationUpdateProjectArgs,
   { repository }: Context
 ): Promise<DbProject> => {
-  const projectToUpdate = await getProjectFromWhereUniqueInput(
-    args.where,
-    repository
-  );
+  const projectToUpdate = await throwIfResolvesToNil(
+    "No project with such id",
+    repository.project.getById
+  )(args.where.id);
 
   const updateResult = await repository.project.update(
     projectToUpdate.id,
     args.data
   );
-  if (updateResult === 0) {
+  if (!updateResult) {
     throw new Error("Could not update the project");
   }
 
@@ -168,14 +169,12 @@ const deleteProject = async (
   _: any,
   args: MutationDeleteProjectArgs,
   { repository }: Context
-) => {
-  const projectToDelete = await getProjectFromWhereUniqueInput(
-    args.where,
-    repository
-  );
-
+): Promise<DbProject> => {
+  const projectToDelete = await throwIfResolvesToNil(
+    "No project with such id",
+    repository.project.getById
+  )(args.where.id);
   await repository.project.delete(projectToDelete.id);
-
   return projectToDelete;
 };
 
