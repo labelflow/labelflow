@@ -7,10 +7,7 @@ import type {
 } from "../../web-app/src/graphql-types.generated";
 
 import { DbImage } from "../../web-app/src/connectors/database";
-import {
-  uploadsCacheName,
-  getUploadTargetHttp,
-} from "../../web-app/src/connectors/resolvers/upload";
+import { uploadsCacheName, getUploadTargetHttp } from "./constants";
 import { projectTypename } from "./project";
 import { probeImage } from "../../web-app/src/connectors/resolvers/utils/probe-image";
 

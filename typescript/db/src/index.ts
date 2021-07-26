@@ -1,9 +1,11 @@
-import { PrismaClient } from "@prisma/client";
 import { ApolloServer } from "apollo-server";
 import { join } from "path";
 import { loadSchemaSync } from "@graphql-tools/load";
 import { GraphQLFileLoader } from "@graphql-tools/graphql-file-loader";
 import { addResolversToSchema } from "@graphql-tools/schema";
+
+import { resolvers } from "./resolvers";
+import { repository } from "./repository";
 
 const schema = loadSchemaSync(
   join(__dirname, "../../../data/__generated__/schema.graphql"),
@@ -12,16 +14,6 @@ const schema = loadSchemaSync(
   }
 );
 
-const prisma = new PrismaClient();
-
-const resolvers = {
-  Query: {
-    projects: () => {
-      return prisma.project.findMany();
-    },
-  },
-};
-
 const schemaWithResolvers = addResolversToSchema({
   schema,
   resolvers,
@@ -29,7 +21,7 @@ const schemaWithResolvers = addResolversToSchema({
 
 const server = new ApolloServer({
   introspection: true,
-  context: {},
+  context: {repository},
   schema: schemaWithResolvers,
 });
 

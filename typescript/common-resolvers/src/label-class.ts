@@ -7,7 +7,7 @@ import type {
   QueryLabelClassesArgs,
 } from "../../web-app/src/graphql-types.generated";
 
-import { DbLabelClass } from "../../web-app/src/connectors/database"
+import { DbLabelClass } from "../../web-app/src/connectors/database";
 import { projectTypename } from "./project";
 
 import { Context } from "./types";
