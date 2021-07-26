@@ -11,14 +11,16 @@ import {
   Flex,
   chakra,
   Divider,
+  Input,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import {
   RiCheckboxBlankCircleFill,
   RiArrowRightSLine,
   RiPencilFill,
+  RiCheckFill,
 } from "react-icons/ri";
-import { useMemo } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { KeymapButton } from "../../../../components/keymap-button";
 import { ImportButton } from "../../../../components/import-button";
 import { ExportButton } from "../../../../components/export-button";
@@ -30,6 +32,7 @@ import { ProjectTabBar } from "../../../../components/layout/tab-bar/project-tab
 const ArrowRightIcon = chakra(RiArrowRightSLine);
 const CircleIcon = chakra(RiCheckboxBlankCircleFill);
 const PenIcon = chakra(RiPencilFill);
+const CheckIcon = chakra(RiCheckFill);
 
 export const projectLabelClassesQuery = gql`
   query getProjectLabelClasses($projectId: ID!) {
@@ -46,12 +49,30 @@ export const projectLabelClassesQuery = gql`
 `;
 
 type ClassItemProps = {
+  id: string;
   name: string;
   color: string;
   shortcut: string | null;
+  edit: boolean;
+  setEditClassId: (classId: string | null) => void;
 };
 
-const ClassItem = ({ name, color, shortcut }: ClassItemProps) => {
+const ClassItem = ({
+  id,
+  name,
+  color,
+  shortcut,
+  edit,
+  setEditClassId,
+}: ClassItemProps) => {
+  const [editName, setEditName] = useState<string | null>(null);
+  useEffect(() => {
+    if (edit) {
+      setEditName(name);
+    } else {
+      setEditName(null);
+    }
+  }, [edit]);
   return (
     <Flex alignItems="center" height="10">
       <CircleIcon
@@ -62,9 +83,20 @@ const ClassItem = ({ name, color, shortcut }: ClassItemProps) => {
         ml="2"
         mr="2"
       />
-      <Text flexGrow={1} isTruncated>
-        {name}
-      </Text>
+
+      {edit && editName != null ? (
+        <Input
+          variant="flushed"
+          flexGrow={1}
+          isTruncated
+          value={editName}
+          onChange={(e) => setEditName(e.target.value)}
+        />
+      ) : (
+        <Text flexGrow={1} isTruncated>
+          {name}
+        </Text>
+      )}
 
       {shortcut && (
         <Kbd flexShrink={0} flexGrow={0} justifyContent="center" mr="1">
@@ -72,15 +104,31 @@ const ClassItem = ({ name, color, shortcut }: ClassItemProps) => {
         </Kbd>
       )}
 
-      <IconButton
-        variant="ghost"
-        aria-label={`Edit class ${name} name`}
-        icon={<PenIcon flexShrink={0} flexGrow={0} color="gray.600" />}
-        h="8"
-        w="8"
-        mr="2"
-        minWidth="8"
-      />
+      {edit && editName != null ? (
+        <IconButton
+          variant="ghost"
+          aria-label={`Edit class ${name} name`}
+          icon={<CheckIcon flexShrink={0} flexGrow={0} color="gray.600" />}
+          h="8"
+          w="8"
+          mr="2"
+          minWidth="8"
+          onClick={() => {
+            setEditClassId(null);
+          }}
+        />
+      ) : (
+        <IconButton
+          variant="ghost"
+          aria-label={`Edit class ${name} name`}
+          icon={<PenIcon flexShrink={0} flexGrow={0} color="gray.600" />}
+          h="8"
+          w="8"
+          mr="2"
+          minWidth="8"
+          onClick={() => setEditClassId(id)}
+        />
+      )}
     </Flex>
   );
 };
@@ -88,6 +136,8 @@ const ClassItem = ({ name, color, shortcut }: ClassItemProps) => {
 const ClassesPage = () => {
   const router = useRouter();
   const projectId = router?.query?.projectId as string;
+
+  const [editClassId, setEditClassId] = useState<string | null>(null);
 
   const { data: projectResult, loading } = useQuery<{
     project: ProjectType;
@@ -163,9 +213,12 @@ const ClassesPage = () => {
                 labelClassWithShortcut.map(({ id, name, color, shortcut }) => (
                   <ClassItem
                     key={id}
+                    id={id}
                     name={name}
                     color={color}
                     shortcut={shortcut}
+                    edit={editClassId === id}
+                    setEditClassId={setEditClassId}
                   />
                 ))}
             </>
