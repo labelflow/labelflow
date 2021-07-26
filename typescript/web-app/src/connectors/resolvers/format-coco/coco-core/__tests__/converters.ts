@@ -1,5 +1,5 @@
 import { DbLabel, DbLabelClass } from "../../../../database";
-import { Image } from "../../../../../graphql-types.generated";
+import { Image, LabelType } from "../../../../../graphql-types.generated";
 import {
   convertLabelClassToCocoCategory,
   convertLabelClassesToCocoCategories,
@@ -33,6 +33,7 @@ describe("Coco converters", () => {
     id,
     createdAt: date,
     updatedAt: date,
+    type: LabelType.Polygon,
     imageId,
     x: 1,
     y: 2,

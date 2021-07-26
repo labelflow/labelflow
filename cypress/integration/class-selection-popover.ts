@@ -158,7 +158,7 @@ describe("Class selection popover", () => {
       .closest('[role="option"]')
       .should("have.attr", "aria-current", "true");
 
-    cy.get('[aria-label="Drawing tool"]').click();
+    cy.get('[aria-label="Drawing box tool"]').click();
     cy.contains("My new class").should("be.visible");
 
     cy.get('[aria-label="Selection tool"]').click();
@@ -212,7 +212,7 @@ describe("Class selection popover", () => {
       .closest('[role="option"]')
       .should("have.attr", "aria-current", "true");
 
-    cy.get('[aria-label="Drawing tool"]').click();
+    cy.get('[aria-label="Drawing box tool"]').click();
     cy.get('[aria-label="Class selection menu popover"]').within(() => {
       cy.contains("My other new class").should("be.visible");
     });
@@ -243,7 +243,7 @@ describe("Class selection popover", () => {
       .closest('[role="option"]')
       .should("have.attr", "aria-current", "true");
 
-    cy.get('[aria-label="Drawing tool"]').click();
+    cy.get('[aria-label="Drawing box tool"]').click();
     cy.get('[aria-label="Open class selection popover"]').click();
     cy.get('[aria-label="Class selection menu popover"]')
       .contains("My new class")

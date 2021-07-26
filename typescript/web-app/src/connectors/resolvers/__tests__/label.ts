@@ -6,7 +6,7 @@ import probe from "probe-image-size";
 
 import { client } from "../../apollo-client-schema";
 import { setupTestsWithLocalDatabase } from "../../../utils/setup-local-db-tests";
-import { LabelCreateInput } from "../../../graphql-types.generated";
+import { LabelCreateInput, LabelType } from "../../../graphql-types.generated";
 
 setupTestsWithLocalDatabase();
 
@@ -38,6 +38,7 @@ const getGeometryFromExtent = ({
 const labelDataExtent = {
   x: 3.14,
   y: 42,
+  type: LabelType.Box,
   height: 768,
   width: 362,
 };
@@ -612,7 +613,7 @@ describe("Label resolver test suite", () => {
           height: 20,
         }),
       })
-    ).rejects.toThrow("Bounding box out of image bounds");
+    ).rejects.toThrow("Label out of image bounds");
     await expect(
       createLabel({
         imageId,
@@ -623,7 +624,7 @@ describe("Label resolver test suite", () => {
           height: 20,
         }),
       })
-    ).rejects.toThrow("Bounding box out of image bounds");
+    ).rejects.toThrow("Label out of image bounds");
     // y out of bounds
     await expect(
       createLabel({
@@ -635,7 +636,7 @@ describe("Label resolver test suite", () => {
           height: 10,
         }),
       })
-    ).rejects.toThrow("Bounding box out of image bounds");
+    ).rejects.toThrow("Label out of image bounds");
     await expect(
       createLabel({
         imageId,
@@ -646,7 +647,7 @@ describe("Label resolver test suite", () => {
           height: 20,
         }),
       })
-    ).rejects.toThrow("Bounding box out of image bounds");
+    ).rejects.toThrow("Label out of image bounds");
   });
 
   test("It should resize bounding box to image size when it is bigger", async () => {
@@ -766,7 +767,7 @@ test("Create label should fail if called with bounding box out of image bounds",
         height: 20,
       }),
     })
-  ).rejects.toThrow("Bounding box out of image bounds");
+  ).rejects.toThrow("Label out of image bounds");
   await expect(
     createLabel({
       imageId,
@@ -777,7 +778,7 @@ test("Create label should fail if called with bounding box out of image bounds",
         height: 20,
       }),
     })
-  ).rejects.toThrow("Bounding box out of image bounds");
+  ).rejects.toThrow("Label out of image bounds");
   // y out of bounds
   await expect(
     createLabel({
@@ -789,7 +790,7 @@ test("Create label should fail if called with bounding box out of image bounds",
         height: 10,
       }),
     })
-  ).rejects.toThrow("Bounding box out of image bounds");
+  ).rejects.toThrow("Label out of image bounds");
   await expect(
     createLabel({
       imageId,
@@ -800,7 +801,7 @@ test("Create label should fail if called with bounding box out of image bounds",
         height: 20,
       }),
     })
-  ).rejects.toThrow("Bounding box out of image bounds");
+  ).rejects.toThrow("Label out of image bounds");
 });
 
 test("It should resize bounding box to image size when it is bigger", async () => {
@@ -925,7 +926,7 @@ test("should throw when updating a label that will be outside of image bounds", 
         },
       },
     })
-  ).rejects.toThrow("Bounding box out of image bounds");
+  ).rejects.toThrow("Label out of image bounds");
   await expect(
     client.mutate({
       mutation: gql`
@@ -947,7 +948,7 @@ test("should throw when updating a label that will be outside of image bounds", 
         },
       },
     })
-  ).rejects.toThrow("Bounding box out of image bounds");
+  ).rejects.toThrow("Label out of image bounds");
   await expect(
     client.mutate({
       mutation: gql`
@@ -969,7 +970,7 @@ test("should throw when updating a label that will be outside of image bounds", 
         },
       },
     })
-  ).rejects.toThrow("Bounding box out of image bounds");
+  ).rejects.toThrow("Label out of image bounds");
   await expect(
     client.mutate({
       mutation: gql`
@@ -991,7 +992,7 @@ test("should throw when updating a label that will be outside of image bounds", 
         },
       },
     })
-  ).rejects.toThrow("Bounding box out of image bounds");
+  ).rejects.toThrow("Label out of image bounds");
 });
 
 test("should not change label size when only updating the label class", async () => {
