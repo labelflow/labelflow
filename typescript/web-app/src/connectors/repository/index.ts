@@ -1,6 +1,7 @@
 import { db } from "../database";
 import { list } from "./utils/list";
 import { countLabels, listLabels } from "./label";
+import { deleteProject } from "./project";
 
 import { Repository } from "./types";
 
@@ -30,7 +31,7 @@ export const repository: Repository = {
   },
   project: {
     add: (project) => db.project.add(project),
-    delete: (id) => db.project.delete(id),
+    delete: deleteProject,
     getById: (id) => db.project.get(id),
     getByName: (name) => db.project.get({ name }),
     list: list(db.project),

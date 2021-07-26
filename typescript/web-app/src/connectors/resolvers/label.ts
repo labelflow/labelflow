@@ -17,7 +17,7 @@ import { LabelType } from "../../graphql-types.generated";
 import { projectTypename } from "./project";
 
 import { Context } from "./types";
-import { Repository } from "../repository";
+import { Repository } from "../repository/types";
 import { throwIfResolvesToNil } from "./utils/throw-if-resolves-to-nil";
 
 const getLabelById = async (
