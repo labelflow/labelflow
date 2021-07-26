@@ -11,8 +11,19 @@ import {
   Skeleton,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
-import { useLazyQuery, useQuery, gql } from "@apollo/client";
+import { useLazyQuery, useQuery, gql, useApolloClient } from "@apollo/client";
+import JSZip from "jszip";
+import { useState } from "react";
 import { ExportFormatCard } from "./export-format-card";
+
+const getImagesQuery = gql`
+  query getImages {
+    images {
+      name
+      url
+    }
+  }
+`;
 
 const exportToCocoQuery = gql`
   query exportToCoco($projectId: ID!) {
@@ -39,17 +50,23 @@ export const ExportModal = ({
   onClose?: () => void;
 }) => {
   const router = useRouter();
+  const client = useApolloClient();
   const { projectId } = router?.query;
   const { data } = useQuery(countLabelsOfProjectQuery, {
     variables: { projectId },
   });
+  const [isExportRunning, setIsExportRunning] = useState(false);
   const [queryExportToCoco, { loading }] = useLazyQuery(exportToCocoQuery, {
     variables: { projectId },
     fetchPolicy: "network-only",
-    onCompleted: ({ exportToCoco }) => {
+    onCompleted: async ({ exportToCoco }) => {
+      setIsExportRunning(true);
       if (typeof exportToCoco !== "string") {
         throw new Error("");
       }
+      const {
+        data: { images },
+      } = await client.query({ query: getImagesQuery });
       const dateObject = new Date();
       const date = `${dateObject
         .toLocaleDateString()
@@ -58,10 +75,40 @@ export const ExportModal = ({
         .join("-")}T${String(dateObject.getHours()).padStart(2, "0")}${String(
         dateObject.getMinutes()
       ).padStart(2, "0")}${String(dateObject.getSeconds()).padStart(2, "0")}`;
-      const projectName = `project-${date}-Coco.json`;
+      const projectName = `project-${date}-Coco`;
+      const zip = new JSZip();
+      zip.file(
+        `${projectName}/annotations.json`,
+        exportToCoco.substr(exportToCoco.indexOf(",") + 1),
+        {
+          base64: true,
+        }
+      );
+      await Promise.all(
+        images.map(async ({ name, url }: { name: string; url: string }) => {
+          const dataUrl: string = await (async (): Promise<string> => {
+            const blob = await fetch(url).then((r) => r.blob());
+            return new Promise((resolve) => {
+              const reader = new FileReader();
+              reader.onload = () => resolve(reader.result as string);
+              reader.readAsDataURL(blob);
+            });
+          })();
+          zip.file(
+            `${projectName}/images/${name}.jpeg`, // TODO: insert the right extension here
+            dataUrl.substr(dataUrl.indexOf(",") + 1),
+            {
+              base64: true,
+            }
+          );
+        })
+      );
+      const blobZip = await zip.generateAsync({ type: "blob" });
+      const url = window.URL.createObjectURL(blobZip);
       const element = document.createElement("a");
-      element.href = exportToCoco;
-      element.download = projectName;
+      element.href = url;
+      element.download = `${projectName}.zip`;
+      setIsExportRunning(false);
       element.click();
     },
   });
@@ -110,7 +157,7 @@ export const ExportModal = ({
             flexWrap="wrap"
           >
             <ExportFormatCard
-              loading={loading}
+              loading={loading || isExportRunning}
               onClick={queryExportToCoco}
               colorScheme="brand"
               logoSrc="/static/export-formats/coco.png"
