@@ -1,4 +1,4 @@
-import { gql, useQuery } from "@apollo/client";
+import { gql, useMutation, useQuery } from "@apollo/client";
 import NextLink from "next/link";
 import {
   Box,
@@ -48,6 +48,15 @@ export const projectLabelClassesQuery = gql`
   }
 `;
 
+const updateLabelClassNameMutation = gql`
+  mutation updateLabelClassName($id: ID!, $name: String!) {
+    updateLabelClass(where: { id: $id }, data: { name: $name }) {
+      id
+      name
+    }
+  }
+`;
+
 type ClassItemProps = {
   id: string;
   name: string;
@@ -66,6 +75,7 @@ const ClassItem = ({
   setEditClassId,
 }: ClassItemProps) => {
   const [editName, setEditName] = useState<string | null>(null);
+  const [updateLabelClassName] = useMutation(updateLabelClassNameMutation);
   useEffect(() => {
     if (edit) {
       setEditName(name);
@@ -115,6 +125,10 @@ const ClassItem = ({
           minWidth="8"
           onClick={() => {
             setEditClassId(null);
+            updateLabelClassName({
+              variables: { id, name: editName },
+              refetchQueries: ["getProjectLabelClasses"],
+            });
           }}
         />
       ) : (
