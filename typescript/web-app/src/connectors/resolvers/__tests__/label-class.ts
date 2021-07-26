@@ -230,6 +230,67 @@ describe("LabelClass resolver test suite", () => {
     expect(queryResult.data.labelClass.id).toEqual(labelClassId);
   });
 
+  it("should update a label class", async () => {
+    await createProject("Test project");
+
+    const labelId = await createLabelClass({
+      name: "toto",
+      color: "#ff0000",
+      projectId: testProjectId,
+    });
+
+    await client.mutate({
+      mutation: gql`
+        mutation updateLabelClass($id: ID!) {
+          updateLabelClass(
+            where: { id: $id }
+            data: { name: "tata", color: "#0000ff" }
+          ) {
+            id
+          }
+        }
+      `,
+      variables: {
+        id: labelId,
+      },
+    });
+
+    const queryResult = await client.query({
+      query: gql`
+        query getLabelClass($id: ID!) {
+          labelClass(where: { id: $id }) {
+            id
+            name
+            color
+          }
+        }
+      `,
+      variables: {
+        id: labelId,
+      },
+    });
+
+    expect(queryResult.data.labelClass.name).toEqual("tata");
+    expect(queryResult.data.labelClass.color).toEqual("#0000ff");
+  });
+
+  it("should throw when the label class to update doesn't exist", () => {
+    return expect(
+      client.mutate({
+        mutation: gql`
+          mutation updateLabelClass($id: ID!) {
+            updateLabelClass(where: { id: $id }, data: { name: "tata" }) {
+              id
+            }
+          }
+        `,
+        variables: {
+          id: "id-of-a-label-that-doesnt-exist",
+        },
+      })
+    ).rejects.toThrow("No labelClass with such id");
+  });
+
   it("should delete a label class", async () => {
     await createProject("Test project");
 

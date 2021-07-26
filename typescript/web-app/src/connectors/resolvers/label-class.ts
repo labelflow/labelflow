@@ -88,6 +88,19 @@ const createLabelClass = async (
   return getLabelClassById(newLabelClassEntity.id);
 };
 
+const updateLabelClass = async (_: any, args: MutationUpdateLabelClassArgs) => {
+  const labelClassId = args.where.id;
+
+  const labelClassToUpdate = await getLabelClassById(labelClassId);
+
+  await db.labelClass.update(labelClassId, {
+    ...labelClassToUpdate,
+    ...args.data,
+  });
+
+  return getLabelClassById(labelClassId);
+};
+
 const deleteLabelClass = async (_: any, args: MutationDeleteLabelClassArgs) => {
   const labelClassId = args.where.id;
 
@@ -131,6 +144,7 @@ export default {
 
   Mutation: {
     createLabelClass,
+    updateLabelClass,
     deleteLabelClass,
   },
 
