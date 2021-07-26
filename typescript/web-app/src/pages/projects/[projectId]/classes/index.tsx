@@ -64,6 +64,7 @@ type ClassItemProps = {
   shortcut: string | null;
   edit: boolean;
   setEditClassId: (classId: string | null) => void;
+  projectId: string;
 };
 
 const ClassItem = ({
@@ -73,6 +74,7 @@ const ClassItem = ({
   shortcut,
   edit,
   setEditClassId,
+  projectId,
 }: ClassItemProps) => {
   const [editName, setEditName] = useState<string | null>(null);
   const [updateLabelClassName] = useMutation(updateLabelClassNameMutation);
@@ -127,7 +129,44 @@ const ClassItem = ({
             setEditClassId(null);
             updateLabelClassName({
               variables: { id, name: editName },
-              refetchQueries: ["getProjectLabelClasses"],
+              optimisticResponse: {
+                updateLabelClass: {
+                  id,
+                  name: editName,
+                  color,
+                  __typeName: "LabelClass",
+                },
+              },
+              update: (cache, { data: { updateLabelClass } }) => {
+                const projectCacheResult = cache.readQuery<{
+                  project: {
+                    id: string;
+                    name: string;
+                    labelClasses: {
+                      id: string;
+                      name: string;
+                      color: string;
+                    }[];
+                  };
+                }>({
+                  query: projectLabelClassesQuery,
+                  variables: { projectId },
+                });
+                if (projectCacheResult?.project == null) {
+                  throw new Error(`Missing project with id ${projectId}`);
+                }
+                const { project } = projectCacheResult;
+                const updatedProject = {
+                  ...project,
+                  labelClasses: project.labelClasses.map((labelClass) =>
+                    labelClass.id !== id ? labelClass : { ...updateLabelClass }
+                  ),
+                };
+                cache.writeQuery({
+                  query: projectLabelClassesQuery,
+                  data: { project: updatedProject },
+                });
+              },
             });
           }}
         />
@@ -233,6 +272,7 @@ const ClassesPage = () => {
                     shortcut={shortcut}
                     edit={editClassId === id}
                     setEditClassId={setEditClassId}
+                    projectId={projectId}
                   />
                 ))}
             </>
