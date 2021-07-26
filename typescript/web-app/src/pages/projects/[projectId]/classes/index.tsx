@@ -9,6 +9,7 @@ import {
   BreadcrumbLink,
   Flex,
   chakra,
+  Divider,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { RiCheckboxBlankCircleFill, RiArrowRightSLine } from "react-icons/ri";
@@ -131,17 +132,29 @@ const ClassesPage = () => {
         }
         tabBar={<ProjectTabBar currentTab="classes" projectId={projectId} />}
       >
-        <Box bg="white" m="10" borderRadius="lg" maxWidth="xl">
-          {!loading &&
-            labelClassWithShortcut.map(({ id, name, color, shortcut }) => (
-              <ClassItem
-                key={id}
-                name={name}
-                color={color}
-                shortcut={shortcut}
-              />
-            ))}
-        </Box>
+        <Flex flexDirection="column" alignItems="center">
+          <Box bg="white" m="10" borderRadius="lg" maxWidth="2xl" minWidth="xl">
+            <>
+              <Text
+                margin="2"
+                marginLeft="4"
+                fontWeight="bold"
+                alignSelf="center"
+                justifySelf="center"
+              >{`${labelClassWithShortcut.length} Classes`}</Text>
+              <Divider />
+              {!loading &&
+                labelClassWithShortcut.map(({ id, name, color, shortcut }) => (
+                  <ClassItem
+                    key={id}
+                    name={name}
+                    color={color}
+                    shortcut={shortcut}
+                  />
+                ))}
+            </>
+          </Box>
+        </Flex>
       </Layout>
     </>
   );
