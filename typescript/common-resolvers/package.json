@@ -1,0 +1,19 @@
+{
+  "name": "@labelflow/common-resolvers",
+  "version": "0.0.1",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "scripts": {
+    "dev": "nodemon src/index.ts"
+  },
+  "devDependencies": {
+    "typescript": "4.2.4"
+  },
+  "dependencies": {
+    "@graphql-tools/merge": "^6.2.14",
+    "graphql": "^15.5.1",
+    "graphql-type-json": "^0.3.2",
+    "probe-image-size": "^7.2.1",
+    "uuid": "^8.3.2"
+  }
+}

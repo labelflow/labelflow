@@ -5,9 +5,9 @@ import type {
   MutationDeleteLabelClassArgs,
   QueryLabelClassArgs,
   QueryLabelClassesArgs,
-} from "../../graphql-types.generated";
+} from "../../web-app/src/graphql-types.generated";
 
-import { DbLabelClass } from "../database";
+import { DbLabelClass } from "../../web-app/src/connectors/database"
 import { projectTypename } from "./project";
 
 import { Context } from "./types";

@@ -11,13 +11,13 @@ import type {
   MutationDeleteLabelArgs,
   MutationUpdateLabelArgs,
   QueryLabelArgs,
-} from "../../graphql-types.generated";
-import { DbLabel } from "../database";
-import { LabelType } from "../../graphql-types.generated";
+} from "../../web-app/src/graphql-types.generated";
+import { DbLabel } from "../../web-app/src/connectors/database";
+import { LabelType } from "../../web-app/src/graphql-types.generated";
 import { projectTypename } from "./project";
 
 import { Context } from "./types";
-import { Repository } from "../repository";
+import { Repository } from "../../web-app/src/connectors/repository";
 import { throwIfResolvesToNil } from "./utils/throw-if-resolves-to-nil";
 
 const getLabelById = async (

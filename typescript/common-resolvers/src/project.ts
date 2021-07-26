@@ -8,9 +8,9 @@ import type {
   QueryProjectArgs,
   QueryProjectsArgs,
   QueryImagesArgs,
-} from "../../graphql-types.generated";
-import { DbProject } from "../database";
-import { Repository } from "../repository";
+} from "../../web-app/src/graphql-types.generated";
+import { DbProject } from "../../web-app/src/connectors/database";
+import { Repository } from "../../web-app/src/connectors/repository"
 
 import { Context } from "./types";
 import { throwIfResolvesToNil } from "./utils/throw-if-resolves-to-nil";

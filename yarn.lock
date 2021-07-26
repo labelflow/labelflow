@@ -4543,7 +4543,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-tools/graphql-file-loader@npm:^6, @graphql-tools/graphql-file-loader@npm:^6.0.0, @graphql-tools/graphql-file-loader@npm:^6.2.7":
+"@graphql-tools/graphql-file-loader@npm:6.2.7, @graphql-tools/graphql-file-loader@npm:^6, @graphql-tools/graphql-file-loader@npm:^6.0.0":
   version: 6.2.7
   resolution: "@graphql-tools/graphql-file-loader@npm:6.2.7"
   dependencies:
@@ -4595,7 +4595,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-tools/load@npm:^6, @graphql-tools/load@npm:^6.0.0, @graphql-tools/load@npm:^6.2.8":
+"@graphql-tools/load@npm:6.2.8, @graphql-tools/load@npm:^6, @graphql-tools/load@npm:^6.0.0":
   version: 6.2.8
   resolution: "@graphql-tools/load@npm:6.2.8"
   dependencies:
@@ -5094,20 +5094,33 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@labelflow/common-resolvers@workspace:typescript/common-resolvers":
+  version: 0.0.0-use.local
+  resolution: "@labelflow/common-resolvers@workspace:typescript/common-resolvers"
+  dependencies:
+    "@graphql-tools/merge": ^6.2.14
+    graphql: ^15.5.1
+    graphql-type-json: ^0.3.2
+    probe-image-size: ^7.2.1
+    typescript: 4.2.4
+    uuid: ^8.3.2
+  languageName: unknown
+  linkType: soft
+
 "@labelflow/db@workspace:typescript/db":
   version: 0.0.0-use.local
   resolution: "@labelflow/db@workspace:typescript/db"
   dependencies:
-    "@graphql-tools/graphql-file-loader": ^6.2.7
-    "@graphql-tools/load": ^6.2.8
-    "@graphql-tools/schema": ^7.1.5
-    "@prisma/client": ^2.27.0
-    "@types/node": ^16.4.1
-    apollo-server: ^3.0.2
-    graphql: ^15.5.1
-    nodemon: ^2.0.12
-    prisma: ^2.27.0
-    ts-node: ^10.1.0
+    "@graphql-tools/graphql-file-loader": 6.2.7
+    "@graphql-tools/load": 6.2.8
+    "@graphql-tools/schema": 7.1.5
+    "@prisma/client": 2.27.0
+    "@types/node": 16.4.1
+    apollo-server: 3.0.2
+    graphql: 15.5.1
+    nodemon: 2.0.12
+    prisma: 2.27.0
+    ts-node: 10.1.0
     typescript: 4.2.4
   languageName: unknown
   linkType: soft
@@ -5164,6 +5177,7 @@ __metadata:
     "@graphiql/toolkit": ^0.2.2
     "@graphql-tools/merge": ^6.2.14
     "@graphql-tools/schema": 7.1.5
+    "@labelflow/common-resolvers": "workspace:typescript/common-resolvers"
     "@labelflow/dev-utils": "workspace:typescript/dev-utils"
     "@labelflow/react-openlayers-fiber": "workspace:typescript/react-openlayers-fiber"
     "@storybook/addon-actions": 6.3.0
@@ -5635,7 +5649,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@prisma/client@npm:^2.27.0":
+"@prisma/client@npm:2.27.0":
   version: 2.27.0
   resolution: "@prisma/client@npm:2.27.0"
   dependencies:
@@ -9803,6 +9817,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/node@npm:16.4.1":
+  version: 16.4.1
+  resolution: "@types/node@npm:16.4.1"
+  checksum: 8b9fda74322631febbf084e3c7a26b799a3a1b8f45d6bbaedfb8943c7b3eb743aa2e41c04de6f5f87f63c99451f3ed0b37822614cbd42ed55c8c9c8f9462d231
+  languageName: node
+  linkType: hard
+
 "@types/node@npm:^10.1.0":
   version: 10.17.60
   resolution: "@types/node@npm:10.17.60"
@@ -9821,13 +9842,6 @@ __metadata:
   version: 14.14.44
   resolution: "@types/node@npm:14.14.44"
   checksum: 5c4db716325fc8a25b5b76b800acf0ff00c8fa1e7cfcb764fc79d79594939488cb9d2a756e188eb8e8a36da51e8e2be1ffe859be901b338779cb0aa12ad73b3a
-  languageName: node
-  linkType: hard
-
-"@types/node@npm:^16.4.1":
-  version: 16.4.1
-  resolution: "@types/node@npm:16.4.1"
-  checksum: 8b9fda74322631febbf084e3c7a26b799a3a1b8f45d6bbaedfb8943c7b3eb743aa2e41c04de6f5f87f63c99451f3ed0b37822614cbd42ed55c8c9c8f9462d231
   languageName: node
   linkType: hard
 
@@ -11391,7 +11405,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"apollo-server@npm:^3.0.2":
+"apollo-server@npm:3.0.2":
   version: 3.0.2
   resolution: "apollo-server@npm:3.0.2"
   dependencies:
@@ -17453,7 +17467,7 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"graphql@npm:^15.5.1":
+"graphql@npm:15.5.1, graphql@npm:^15.5.1":
   version: 15.5.1
   resolution: "graphql@npm:15.5.1"
   checksum: 509cdc2fc072e7cd1b5a25cf3fe13838d41892b035434f02419c209608f89e323f5234ca7e2bde77e9371e629339cbd8435f1dbc8c250910e4e9ac0babfa6c64
@@ -21806,7 +21820,7 @@ next-pwa@5.2.21:
   languageName: node
   linkType: hard
 
-"nodemon@npm:^2.0.12":
+"nodemon@npm:2.0.12":
   version: 2.0.12
   resolution: "nodemon@npm:2.0.12"
   dependencies:
@@ -23216,7 +23230,7 @@ next-pwa@5.2.21:
   languageName: node
   linkType: hard
 
-"prisma@npm:^2.27.0":
+"prisma@npm:2.27.0":
   version: 2.27.0
   resolution: "prisma@npm:2.27.0"
   dependencies:
@@ -23248,6 +23262,17 @@ next-pwa@5.2.21:
     needle: ^2.5.2
     stream-parser: ~0.3.1
   checksum: bc4d786c1cac8b8db09e1a18b80a7bd31ccd7c3cd4e903d7019128cc0b1382c43449a4d2cfc0a579ff6088ed453c1875ab49ce596199a90f1c81596ed751f602
+  languageName: node
+  linkType: hard
+
+"probe-image-size@npm:^7.2.1":
+  version: 7.2.1
+  resolution: "probe-image-size@npm:7.2.1"
+  dependencies:
+    lodash.merge: ^4.6.2
+    needle: ^2.5.2
+    stream-parser: ~0.3.1
+  checksum: 997ba7bbe42a04a3f20fac58506b4b411609410587131b962b54f45d64399de60396ed2170aab0ea60d68f8b01f08ad81100e0dd92486eb5c863c37bc12e2971
   languageName: node
   linkType: hard
 
@@ -27247,28 +27272,7 @@ service-worker-mock@2.0.5:
   languageName: node
   linkType: hard
 
-"ts-node@npm:9.1.1, ts-node@npm:^9":
-  version: 9.1.1
-  resolution: "ts-node@npm:9.1.1"
-  dependencies:
-    arg: ^4.1.0
-    create-require: ^1.1.0
-    diff: ^4.0.1
-    make-error: ^1.1.1
-    source-map-support: ^0.5.17
-    yn: 3.1.1
-  peerDependencies:
-    typescript: ">=2.7"
-  bin:
-    ts-node: dist/bin.js
-    ts-node-script: dist/bin-script.js
-    ts-node-transpile-only: dist/bin-transpile.js
-    ts-script: dist/bin-script-deprecated.js
-  checksum: a90db4a342872cd0e7a80babdfcb15d2f7c06e700d735003098f7cc79db575c3380580c58a19ae0d0eaab553af083651d4237060c92170e6f8ac4e64693113ea
-  languageName: node
-  linkType: hard
-
-"ts-node@npm:^10.1.0":
+"ts-node@npm:10.1.0":
   version: 10.1.0
   resolution: "ts-node@npm:10.1.0"
   dependencies:
@@ -27299,6 +27303,27 @@ service-worker-mock@2.0.5:
     ts-node-transpile-only: dist/bin-transpile.js
     ts-script: dist/bin-script-deprecated.js
   checksum: d1b582dc3624061d86c2657507e21c3875919b7d108db16cde5507f2aa75b025be2e09b35ec607900eb525e429ebd14f0cf1c5f4b81292a191c0f8c7bfdf0720
+  languageName: node
+  linkType: hard
+
+"ts-node@npm:9.1.1, ts-node@npm:^9":
+  version: 9.1.1
+  resolution: "ts-node@npm:9.1.1"
+  dependencies:
+    arg: ^4.1.0
+    create-require: ^1.1.0
+    diff: ^4.0.1
+    make-error: ^1.1.1
+    source-map-support: ^0.5.17
+    yn: 3.1.1
+  peerDependencies:
+    typescript: ">=2.7"
+  bin:
+    ts-node: dist/bin.js
+    ts-node-script: dist/bin-script.js
+    ts-node-transpile-only: dist/bin-transpile.js
+    ts-script: dist/bin-script-deprecated.js
+  checksum: a90db4a342872cd0e7a80babdfcb15d2f7c06e700d735003098f7cc79db575c3380580c58a19ae0d0eaab553af083651d4237060c92170e6f8ac4e64693113ea
   languageName: node
   linkType: hard
 
@@ -27514,6 +27539,16 @@ service-worker-mock@2.0.5:
   languageName: node
   linkType: hard
 
+typescript@4.2.4:
+  version: 4.2.4
+  resolution: "typescript@npm:4.2.4"
+  bin:
+    tsc: bin/tsc
+    tsserver: bin/tsserver
+  checksum: edaede2fa77f56b7fba80ee624a2368ab1216e75b0434d968ccb47ab0a5e2f6d94f848b3b111c1237dd71e988cd376af26370dcdad3b94355c76e759f0dd0a1e
+  languageName: node
+  linkType: hard
+
 typescript@4.3.5:
   version: 4.3.5
   resolution: "typescript@npm:4.3.5"
@@ -27521,6 +27556,16 @@ typescript@4.3.5:
     tsc: bin/tsc
     tsserver: bin/tsserver
   checksum: d9a8e78d72dd19896e6bfa73ab2a0fcea6eca2700d1d6e7c33f67a970af54a3e0fed8f715a8c4e6a0ff7fc0995067b394b2003518ab0aa84cd396377e54b760c
+  languageName: node
+  linkType: hard
+
+"typescript@patch:typescript@4.2.4#builtin<compat/typescript>":
+  version: 4.2.4
+  resolution: "typescript@patch:typescript@npm%3A4.2.4#builtin<compat/typescript>::version=4.2.4&hash=ddfc1b"
+  bin:
+    tsc: bin/tsc
+    tsserver: bin/tsserver
+  checksum: 64658fdf27872904641dcaacf925e6b5a52fb4aa4881a5a726fc78a11b76748423ce9e996dac42313729321061c4dd38a06108014f8d07b222dcff2687037186
   languageName: node
   linkType: hard
 
