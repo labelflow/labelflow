@@ -4,6 +4,7 @@ import {
   Box,
   Kbd,
   Text,
+  IconButton,
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbLink,
@@ -12,7 +13,11 @@ import {
   Divider,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
-import { RiCheckboxBlankCircleFill, RiArrowRightSLine } from "react-icons/ri";
+import {
+  RiCheckboxBlankCircleFill,
+  RiArrowRightSLine,
+  RiPencilFill,
+} from "react-icons/ri";
 import { useMemo } from "react";
 import { KeymapButton } from "../../../../components/keymap-button";
 import { ImportButton } from "../../../../components/import-button";
@@ -24,6 +29,7 @@ import { ProjectTabBar } from "../../../../components/layout/tab-bar/project-tab
 
 const ArrowRightIcon = chakra(RiArrowRightSLine);
 const CircleIcon = chakra(RiCheckboxBlankCircleFill);
+const PenIcon = chakra(RiPencilFill);
 
 export const projectLabelClassesQuery = gql`
   query getProjectLabelClasses($projectId: ID!) {
@@ -61,10 +67,20 @@ const ClassItem = ({ name, color, shortcut }: ClassItemProps) => {
       </Text>
 
       {shortcut && (
-        <Kbd flexShrink={0} flexGrow={0} justifyContent="center" mr="2">
+        <Kbd flexShrink={0} flexGrow={0} justifyContent="center" mr="1">
           {shortcut}
         </Kbd>
       )}
+
+      <IconButton
+        variant="ghost"
+        aria-label={`Edit class ${name} name`}
+        icon={<PenIcon flexShrink={0} flexGrow={0} color="gray.600" />}
+        h="8"
+        w="8"
+        mr="2"
+        minWidth="8"
+      />
     </Flex>
   );
 };
