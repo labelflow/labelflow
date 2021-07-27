@@ -1,5 +1,5 @@
 import { PropsWithChildren } from "react";
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import { ChakraProvider } from "@chakra-ui/react";
 import { ApolloProvider, gql } from "@apollo/client";
 import { ClassesList } from "../class-list";
