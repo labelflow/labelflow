@@ -92,6 +92,25 @@ export const getLabelsByProjectId = async (projectId: string) => {
     .sortBy("createdAt");
 };
 
+export const getLabelsWithImageDimensionsByProjectId = async (
+  projectId: string
+) => {
+  const labels = await getLabelsByProjectId(projectId);
+  return Promise.all(
+    labels.map(async (label) => {
+      const { imageId } = label;
+      const image = await db.image.get(imageId);
+      if (image == null) {
+        throw new Error(`Missing image with id ${imageId}`);
+      }
+      return {
+        ...label,
+        imageDimensions: { height: image.height, width: image.width },
+      };
+    })
+  );
+};
+
 // Queries
 const images = async (project: DbProject, args: QueryImagesArgs) => {
   const where = { projectId: project.id };
