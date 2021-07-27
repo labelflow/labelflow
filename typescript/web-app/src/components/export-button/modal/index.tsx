@@ -22,6 +22,7 @@ const getImagesQuery = gql`
     images {
       name
       url
+      mimetype
     }
   }
 `;
@@ -86,33 +87,33 @@ export const ExportModal = ({
         }
       );
       await Promise.all(
-        images.map(async ({ name, url }: { name: string; url: string }) => {
-          const { dataUrl, mimeType } = await (async (): Promise<{
-            dataUrl: string;
-            mimeType: string;
-          }> => {
-            const blob = await fetch(url).then((r) => r.blob());
-            return new Promise((resolve) => {
-              const reader = new FileReader();
-              reader.onload = () =>
-                resolve({
-                  dataUrl: reader.result as string,
-                  mimeType: blob.type,
-                });
-              reader.readAsDataURL(blob);
-            });
-          })();
-          zip.file(
-            `${projectName}/images/${name.replace(
-              /\.[^/.]+$/,
-              ""
-            )}.${mime.extension(mimeType)}`,
-            dataUrl.substr(dataUrl.indexOf(",") + 1),
-            {
-              base64: true,
-            }
-          );
-        })
+        images.map(
+          async ({
+            name,
+            url,
+            mimetype,
+          }: {
+            name: string;
+            url: string;
+            mimetype: string;
+          }) => {
+            const dataUrl = await (async (): Promise<string> => {
+              const blob = await fetch(url).then((r) => r.blob());
+              return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result as string);
+                reader.readAsDataURL(blob);
+              });
+            })();
+            zip.file(
+              `${projectName}/images/${name}.${mime.extension(mimetype)}`,
+              dataUrl.substr(dataUrl.indexOf(",") + 1),
+              {
+                base64: true,
+              }
+            );
+          }
+        )
       );
       const blobZip = await zip.generateAsync({ type: "blob" });
       const url = window.URL.createObjectURL(blobZip);
