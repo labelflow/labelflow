@@ -150,7 +150,7 @@ const ClassItem = ({
           value={editName}
           onChange={(e) => setEditName(e.target.value)}
           onKeyPress={(e) => {
-            if (e.key === "Enter") {
+            if (e.key === "Enter" && editName !== "") {
               updateLabelClassNameWithOptimistic();
             }
           }}
@@ -177,6 +177,7 @@ const ClassItem = ({
           mr="2"
           minWidth="8"
           onClick={updateLabelClassNameWithOptimistic}
+          disabled={editName === ""}
         />
       ) : (
         <IconButton
