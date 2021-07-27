@@ -105,6 +105,8 @@ describe("Golden path", () => {
 
     cy.get('[aria-label="Export"]').click();
 
-    cy.contains("Your project contains 1 labels").should("be.visible");
+    cy.contains("Your project contains 8 images and 1 labels").should(
+      "be.visible"
+    );
   });
 });

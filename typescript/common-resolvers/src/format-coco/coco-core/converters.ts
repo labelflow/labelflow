@@ -1,5 +1,12 @@
-import { DbImage, DbLabel, DbLabelClass } from "../../types";
-import { CocoCategory, CocoAnnotation, CocoImage, CocoDataset } from "./types";
+import { DbImage, DbLabelClass } from "../../types";
+
+import {
+  CocoCategory,
+  CocoAnnotation,
+  CocoImage,
+  CocoDataset,
+  DbLabelWithImageDimensions,
+} from "./types";
 
 export {
   initialCocoDataset,
@@ -60,7 +67,14 @@ const convertLabelClassesToCocoCategories = (labelClasses: DbLabelClass[]) => {
 };
 
 const convertLabelToCocoAnnotation = (
-  { x, y, width, height }: DbLabel,
+  {
+    x,
+    y,
+    width,
+    height,
+    geometry,
+    imageDimensions,
+  }: DbLabelWithImageDimensions,
   id: number,
   imageId: number,
   categoryId: number | null = null
@@ -69,15 +83,25 @@ const convertLabelToCocoAnnotation = (
     id,
     image_id: imageId,
     category_id: categoryId,
-    segmentation: [],
+    segmentation: geometry.coordinates.map(
+      (polygon: [number, number][]): number[] =>
+        polygon?.reduce(
+          (polygonCoordinates: number[], coordinates) => [
+            ...polygonCoordinates,
+            coordinates[0],
+            imageDimensions.height - coordinates[1],
+          ],
+          []
+        )
+    ),
     area: width * height,
-    bbox: [x, y, width, height],
+    bbox: [x, imageDimensions.height - y - height, width, height],
     iscrowd: 0,
   };
 };
 
 const convertLabelsOfImageToCocoAnnotations = (
-  labels: DbLabel[],
+  labels: DbLabelWithImageDimensions[],
   imageIdsMap: Record<string, number>,
   labelClassIdsMap: Record<string, number>
 ) => {
@@ -121,7 +145,7 @@ const convertImagesToCocoImages = (images: DbImage[]) => {
 
 const convertLabelflowDatasetToCocoDataset = (
   images: DbImage[],
-  labels: DbLabel[],
+  labels: DbLabelWithImageDimensions[],
   labelClasses: DbLabelClass[]
 ): CocoDataset => {
   const { cocoImages, imageIdsMap } = convertImagesToCocoImages(images);

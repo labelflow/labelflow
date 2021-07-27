@@ -1,8 +1,9 @@
-import { DbLabel, DbLabelClass } from "../../../types";
+import { DbLabelClass } from "../../../types";
 import {
   Image,
   LabelType,
 } from "../../../../../web-app/src/graphql-types.generated";
+
 import {
   convertLabelClassToCocoCategory,
   convertLabelClassesToCocoCategories,
@@ -13,7 +14,12 @@ import {
   convertLabelflowDatasetToCocoDataset,
   convertImagesToCocoImages,
 } from "../converters";
-import { CocoCategory, CocoAnnotation, CocoImage } from "../types";
+import {
+  CocoCategory,
+  CocoAnnotation,
+  CocoImage,
+  DbLabelWithImageDimensions,
+} from "../types";
 
 describe("Coco converters", () => {
   const date = new Date("1995-12-17T03:24:00").toISOString();
@@ -28,11 +34,11 @@ describe("Coco converters", () => {
     projectId: testProjectId,
   });
 
-  const createLabel = (
+  const createLabelWithImageDimensions = (
     id: string,
     imageId: string,
     labelClassId?: string
-  ): DbLabel => ({
+  ): DbLabelWithImageDimensions => ({
     id,
     createdAt: date,
     updatedAt: date,
@@ -45,8 +51,17 @@ describe("Coco converters", () => {
     labelClassId,
     geometry: {
       type: "Polygon",
-      coordinates: [],
+      coordinates: [
+        [
+          [1, 2],
+          [1, 6],
+          [4, 6],
+          [4, 2],
+          [1, 2],
+        ],
+      ],
     },
+    imageDimensions: { width: 600, height: 200 },
   });
 
   const createImage = (name: string, height: number, width: number): Image => ({
@@ -108,7 +123,7 @@ describe("Coco converters", () => {
   });
 
   test("Should convert a label to a coco annotation without category", () => {
-    const label = createLabel("a-label-id", "an-image-id");
+    const label = createLabelWithImageDimensions("a-label-id", "an-image-id");
 
     const cocoAnnotation = convertLabelToCocoAnnotation(label, 1, 42, null);
 
@@ -116,9 +131,9 @@ describe("Coco converters", () => {
       id: 1,
       image_id: 42,
       category_id: null,
-      segmentation: [],
+      segmentation: [[1, 198, 1, 194, 4, 194, 4, 198, 1, 198]],
       area: 12,
-      bbox: [1, 2, 3, 4],
+      bbox: [1, 194, 3, 4],
       iscrowd: 0,
     };
 
@@ -126,7 +141,7 @@ describe("Coco converters", () => {
   });
 
   test("Should convert a label class to coco annotation and assign it to a category", () => {
-    const label = createLabel("a-label-id", "an-image-id");
+    const label = createLabelWithImageDimensions("a-label-id", "an-image-id");
 
     const cocoAnnotation = convertLabelToCocoAnnotation(label, 1, 42, 1);
 
@@ -140,8 +155,16 @@ describe("Coco converters", () => {
 
   test("Should convert some labels to coco annotations and assign them to an image without id offset", () => {
     const labels = [
-      createLabel("a-label-id", "an-image-id", "id-a-label-class"),
-      createLabel("another-label-id", "an-image-id", "id-another-label-class"),
+      createLabelWithImageDimensions(
+        "a-label-id",
+        "an-image-id",
+        "id-a-label-class"
+      ),
+      createLabelWithImageDimensions(
+        "another-label-id",
+        "an-image-id",
+        "id-another-label-class"
+      ),
     ];
 
     const imageIdsMap = {
@@ -231,9 +254,21 @@ describe("Coco converters", () => {
     const image1 = createImage("image-1", 1, 2);
     const image2 = createImage("image-2", 1, 2);
 
-    const label1 = createLabel("id-label-1", image1.id, labelClass1.id);
-    const label2 = createLabel("id-label-2", image1.id, labelClass2.id);
-    const label3 = createLabel("id-label-3", image2.id, labelClass2.id);
+    const label1 = createLabelWithImageDimensions(
+      "id-label-1",
+      image1.id,
+      labelClass1.id
+    );
+    const label2 = createLabelWithImageDimensions(
+      "id-label-2",
+      image1.id,
+      labelClass2.id
+    );
+    const label3 = createLabelWithImageDimensions(
+      "id-label-3",
+      image2.id,
+      labelClass2.id
+    );
 
     const expectedCocoDataset = {
       ...initialCocoDataset, // default coco dataset
