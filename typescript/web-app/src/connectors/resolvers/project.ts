@@ -200,9 +200,18 @@ const updateProject = async (
   return getProjectById(projectToUpdate.id);
 };
 
-const deleteProject = async (_: any, args: MutationDeleteProjectArgs) => {
+const deleteProject = async (
+  _: any,
+  args: MutationDeleteProjectArgs
+): Promise<DbProject> => {
   const projectToDelete = await getProjectFromWhereUniqueInput(args.where);
 
+  const labelsToDelete = (await getLabelsByProjectId(projectToDelete.id)).map(
+    (a) => a.id
+  );
+  await db.label.bulkDelete(labelsToDelete);
+  await db.labelClass.where({ projectId: projectToDelete.id }).delete();
+  await db.image.where({ projectId: projectToDelete.id }).delete();
   await db.project.delete(projectToDelete.id);
 
   return projectToDelete;
