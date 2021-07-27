@@ -3,6 +3,11 @@ import { db } from "../database";
 import { list } from "./utils/list";
 import { countLabels, listLabels } from "./label";
 import { deleteProject } from "./project";
+import {
+  getUploadTarget,
+  getUploadTargetHttp,
+  uploadsCacheName,
+} from "../resolvers/upload";
 
 export const repository: Repository = {
   image: {
@@ -35,5 +40,21 @@ export const repository: Repository = {
     getByName: (name) => db.project.get({ name }),
     list: list(db.project),
     update: async (id, changes) => (await db.project.update(id, changes)) === 1,
+  },
+  upload: {
+    getUploadTarget,
+    getUploadTargetHttp,
+    put: async (url: string, file: Blob) => {
+      const response = new Response(file, {
+        status: 200,
+        statusText: "OK",
+        headers: new Headers({
+          "Content-Type": file.type ?? "application/octet-stream",
+          "Content-Length": file.size.toString() ?? "0",
+        }),
+      });
+
+      await (await caches.open(uploadsCacheName)).put(url, response);
+    },
   },
 };

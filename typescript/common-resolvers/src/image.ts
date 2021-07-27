@@ -6,7 +6,7 @@ import type {
   QueryImagesArgs,
 } from "../../web-app/src/graphql-types.generated";
 
-import { uploadsCacheName, getUploadTargetHttp } from "./constants";
+// import { uploadsCacheName, getUploadTargetHttp } from "./constants";
 import { projectTypename } from "./project";
 import { probeImage } from "../../web-app/src/connectors/resolvers/utils/probe-image";
 
@@ -103,7 +103,7 @@ const createImage = async (
       );
     }
 
-    const uploadTarget = await getUploadTargetHttp();
+    const uploadTarget = await repository.upload.getUploadTargetHttp();
 
     // eslint-disable-next-line no-underscore-dangle
     if (uploadTarget.__typename !== "UploadTargetHttp") {
@@ -114,23 +114,14 @@ const createImage = async (
 
     finalUrl = uploadTarget.downloadUrl;
 
-    const responseOfGet = new Response(await fetchResult.blob(), {
-      status: 200,
-      statusText: "OK",
-      headers: new Headers({
-        "Content-Type":
-          fetchResult.headers.get("Content-Type") ?? "application/octet-stream",
-        "Content-Length": fetchResult.headers.get("Content-Length") ?? "0",
-      }),
-    });
-
-    await (await caches.open(uploadsCacheName)).put(finalUrl, responseOfGet);
+    await repository.upload.put(finalUrl, await fetchResult.blob());
+    // await (await caches.open(uploadsCacheName)).put(finalUrl, responseOfGet);
   }
 
   if (file && !externalUrl && !url) {
     // File Content based upload
 
-    const uploadTarget = await getUploadTargetHttp();
+    const uploadTarget = await repository.upload.getUploadTargetHttp();
 
     // eslint-disable-next-line no-underscore-dangle
     if (uploadTarget.__typename !== "UploadTargetHttp") {
@@ -140,16 +131,8 @@ const createImage = async (
     }
     finalUrl = uploadTarget.downloadUrl;
 
-    const response = new Response(file, {
-      status: 200,
-      statusText: "OK",
-      headers: new Headers({
-        "Content-Type": file.type ?? "application/octet-stream",
-        "Content-Length": file.size.toString() ?? "0",
-      }),
-    });
-
-    await (await caches.open(uploadsCacheName)).put(finalUrl, response);
+    // await (await caches.open(uploadsCacheName)).put(finalUrl, response);
+    await repository.upload.put(finalUrl, file);
   }
 
   // Probe the file to get its dimensions and mimetype if not provided

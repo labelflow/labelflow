@@ -8,6 +8,8 @@ import type {
   ImageWhereInput,
   LabelClassWhereInput,
   LabelWhereInput,
+  UploadTargetHttp,
+  UploadTarget,
 } from "../../web-app/src/graphql-types.generated";
 
 export type DbImage =
@@ -82,6 +84,11 @@ export type Repository = {
     getByName: GetByName<DbProject>;
     list: List<DbProject, null>;
     update: Update<DbProject>;
+  };
+  upload: {
+    getUploadTargetHttp: () => Promise<UploadTargetHttp> | UploadTargetHttp;
+    getUploadTarget: () => Promise<UploadTarget> | UploadTarget;
+    put: (url: string, file: Blob) => Promise<void>;
   };
 };
 

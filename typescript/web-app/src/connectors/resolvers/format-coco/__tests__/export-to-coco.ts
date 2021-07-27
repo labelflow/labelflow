@@ -3,13 +3,16 @@ import probe from "probe-image-size";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { mocked } from "ts-jest/utils";
 import { omit } from "lodash/fp";
+import { initialCocoDataset } from "@labelflow/common-resolvers/src/format-coco/coco-core/converters";
+import { CocoDataset } from "@labelflow/common-resolvers/src/format-coco/coco-core/types";
+import {
+  jsonToDataUri,
+  dataUriToJson,
+} from "@labelflow/common-resolvers/src/format-coco/json-to-data-uri";
+
 import { client } from "../../../apollo-client-schema";
 
 import { setupTestsWithLocalDatabase } from "../../../../utils/setup-local-db-tests";
-import { initialCocoDataset } from "../coco-core/converters";
-import { CocoDataset } from "../coco-core/types";
-import { jsonToDataUri } from "..";
-import { dataUriToJson } from "../json-to-data-uri";
 
 jest.mock("probe-image-size");
 const mockedProbeSync = mocked(probe.sync);
