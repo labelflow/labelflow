@@ -12,6 +12,7 @@ import {
   chakra,
   Divider,
   Input,
+  Tooltip,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import {
@@ -19,6 +20,8 @@ import {
   RiArrowRightSLine,
   RiPencilFill,
   RiCheckFill,
+  RiCloseFill,
+  RiDeleteBin5Fill,
 } from "react-icons/ri";
 import { useMemo, useState, useEffect, useCallback } from "react";
 import { KeymapButton } from "../../../../components/keymap-button";
@@ -33,6 +36,8 @@ const ArrowRightIcon = chakra(RiArrowRightSLine);
 const CircleIcon = chakra(RiCheckboxBlankCircleFill);
 const PenIcon = chakra(RiPencilFill);
 const CheckIcon = chakra(RiCheckFill);
+const CloseIcon = chakra(RiCloseFill);
+const DeleteIcon = chakra(RiDeleteBin5Fill);
 
 export const projectLabelClassesQuery = gql`
   query getProjectLabelClasses($projectId: ID!) {
@@ -168,28 +173,80 @@ const ClassItem = ({
       )}
 
       {edit && editName != null ? (
-        <IconButton
-          variant="ghost"
-          aria-label={`Edit class ${name} name`}
-          icon={<CheckIcon flexShrink={0} flexGrow={0} color="gray.600" />}
-          h="8"
-          w="8"
-          mr="2"
-          minWidth="8"
-          onClick={updateLabelClassNameWithOptimistic}
-          disabled={editName === ""}
-        />
+        <>
+          <Tooltip
+            placement="bottom"
+            openDelay={300}
+            label="Cancel"
+            aria-label="Cancel"
+          >
+            <IconButton
+              variant="ghost"
+              aria-label={`Edit class ${name} name`}
+              icon={<CloseIcon flexShrink={0} flexGrow={0} color="gray.600" />}
+              h="8"
+              w="8"
+              mr="2"
+              minWidth="8"
+              onClick={() => setEditClassId(null)}
+            />
+          </Tooltip>
+          <Tooltip
+            placement="bottom"
+            openDelay={300}
+            label="Save"
+            aria-label="Save"
+          >
+            <IconButton
+              variant="ghost"
+              aria-label={`Edit class ${name} name`}
+              icon={<CheckIcon flexShrink={0} flexGrow={0} color="gray.600" />}
+              h="8"
+              w="8"
+              mr="2"
+              minWidth="8"
+              onClick={updateLabelClassNameWithOptimistic}
+              disabled={editName === ""}
+            />
+          </Tooltip>
+        </>
       ) : (
-        <IconButton
-          variant="ghost"
-          aria-label={`Edit class ${name} name`}
-          icon={<PenIcon flexShrink={0} flexGrow={0} color="gray.600" />}
-          h="8"
-          w="8"
-          mr="2"
-          minWidth="8"
-          onClick={() => setEditClassId(id)}
-        />
+        <>
+          <Tooltip
+            placement="bottom"
+            openDelay={300}
+            label={`Edit name of class ${name}`}
+            aria-label={`Edit name of class ${name}`}
+          >
+            <IconButton
+              variant="ghost"
+              aria-label={`Edit class ${name} name`}
+              icon={<PenIcon flexShrink={0} flexGrow={0} color="gray.600" />}
+              h="8"
+              w="8"
+              mr="2"
+              minWidth="8"
+              onClick={() => setEditClassId(id)}
+            />
+          </Tooltip>
+          <Tooltip
+            placement="bottom"
+            openDelay={300}
+            label={`Delete class ${name}`}
+            aria-label={`Delete class ${name}`}
+          >
+            <IconButton
+              variant="ghost"
+              aria-label={`Delete class ${name}`}
+              icon={<DeleteIcon flexShrink={0} flexGrow={0} color="gray.600" />}
+              h="8"
+              w="8"
+              mr="2"
+              minWidth="8"
+              disabled
+            />
+          </Tooltip>
+        </>
       )}
     </Flex>
   );
