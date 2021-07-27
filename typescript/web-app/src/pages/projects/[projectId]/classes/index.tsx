@@ -20,7 +20,7 @@ import {
   RiPencilFill,
   RiCheckFill,
 } from "react-icons/ri";
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState, useEffect, useCallback } from "react";
 import { KeymapButton } from "../../../../components/keymap-button";
 import { ImportButton } from "../../../../components/import-button";
 import { ExportButton } from "../../../../components/export-button";
@@ -85,6 +85,52 @@ const ClassItem = ({
       setEditName(null);
     }
   }, [edit]);
+
+  const updateLabelClassNameWithOptimistic = useCallback(() => {
+    setEditClassId(null);
+    updateLabelClassName({
+      variables: { id, name: editName },
+      optimisticResponse: {
+        updateLabelClass: {
+          id,
+          name: editName,
+          color,
+          __typeName: "LabelClass",
+        },
+      },
+      update: (cache, { data: { updateLabelClass } }) => {
+        const projectCacheResult = cache.readQuery<{
+          project: {
+            id: string;
+            name: string;
+            labelClasses: {
+              id: string;
+              name: string;
+              color: string;
+            }[];
+          };
+        }>({
+          query: projectLabelClassesQuery,
+          variables: { projectId },
+        });
+        if (projectCacheResult?.project == null) {
+          throw new Error(`Missing project with id ${projectId}`);
+        }
+        const { project } = projectCacheResult;
+        const updatedProject = {
+          ...project,
+          labelClasses: project.labelClasses.map((labelClass) =>
+            labelClass.id !== id ? labelClass : { ...updateLabelClass }
+          ),
+        };
+        cache.writeQuery({
+          query: projectLabelClassesQuery,
+          data: { project: updatedProject },
+        });
+      },
+    });
+  }, [editName, id, projectId, setEditClassId]);
+
   return (
     <Flex alignItems="center" height="10">
       <CircleIcon
@@ -103,6 +149,11 @@ const ClassItem = ({
           isTruncated
           value={editName}
           onChange={(e) => setEditName(e.target.value)}
+          onKeyPress={(e) => {
+            if (e.key === "Enter") {
+              updateLabelClassNameWithOptimistic();
+            }
+          }}
         />
       ) : (
         <Text flexGrow={1} isTruncated>
@@ -125,50 +176,7 @@ const ClassItem = ({
           w="8"
           mr="2"
           minWidth="8"
-          onClick={() => {
-            setEditClassId(null);
-            updateLabelClassName({
-              variables: { id, name: editName },
-              optimisticResponse: {
-                updateLabelClass: {
-                  id,
-                  name: editName,
-                  color,
-                  __typeName: "LabelClass",
-                },
-              },
-              update: (cache, { data: { updateLabelClass } }) => {
-                const projectCacheResult = cache.readQuery<{
-                  project: {
-                    id: string;
-                    name: string;
-                    labelClasses: {
-                      id: string;
-                      name: string;
-                      color: string;
-                    }[];
-                  };
-                }>({
-                  query: projectLabelClassesQuery,
-                  variables: { projectId },
-                });
-                if (projectCacheResult?.project == null) {
-                  throw new Error(`Missing project with id ${projectId}`);
-                }
-                const { project } = projectCacheResult;
-                const updatedProject = {
-                  ...project,
-                  labelClasses: project.labelClasses.map((labelClass) =>
-                    labelClass.id !== id ? labelClass : { ...updateLabelClass }
-                  ),
-                };
-                cache.writeQuery({
-                  query: projectLabelClassesQuery,
-                  data: { project: updatedProject },
-                });
-              },
-            });
-          }}
+          onClick={updateLabelClassNameWithOptimistic}
         />
       ) : (
         <IconButton
