@@ -8,7 +8,7 @@ import {
 import { Effect } from "..";
 import { LabelClass } from "../../../graphql-types.generated";
 import { getProjectsQuery } from "../../../pages/projects";
-import { projectLabelClassesQuery } from "../../../pages/projects/[projectId]/classes";
+import { projectLabelClassesQuery } from "../../../components/project-class-list/class-item";
 
 const labelClassesOfProjectQuery = gql`
   query getLabelClassesOfProject($projectId: ID!) {
