@@ -20,6 +20,7 @@ import { ExportFormatCard } from "./export-format-card";
 const getImagesQuery = gql`
   query getImages {
     images {
+      id
       name
       url
       mimetype
@@ -89,10 +90,12 @@ export const ExportModal = ({
       await Promise.all(
         images.map(
           async ({
+            id,
             name,
             url,
             mimetype,
           }: {
+            id: string;
             name: string;
             url: string;
             mimetype: string;
@@ -106,7 +109,7 @@ export const ExportModal = ({
               });
             })();
             zip.file(
-              `${projectName}/images/${name}.${mime.extension(mimetype)}`,
+              `${projectName}/images/${name}_${id}.${mime.extension(mimetype)}`,
               dataUrl.substr(dataUrl.indexOf(",") + 1),
               {
                 base64: true,

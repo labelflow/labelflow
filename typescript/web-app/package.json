@@ -78,6 +78,7 @@
     "@testing-library/react-hooks": "^7.0.0",
     "@testing-library/user-event": "^13.1.9",
     "@types/bluebird": "^3.5.35",
+    "@types/mime-types": "^2.1.0",
     "@types/node": "12.12.21",
     "@types/probe-image-size": "^7.0.0",
     "@types/react": "17.0.3",

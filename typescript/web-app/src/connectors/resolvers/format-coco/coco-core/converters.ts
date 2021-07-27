@@ -94,12 +94,12 @@ const convertLabelsOfImageToCocoAnnotations = (
 };
 
 const convertImageToCocoImage = (
-  { createdAt, height, width, name, externalUrl }: Image,
+  { createdAt, height, width, name, externalUrl, id: idImage }: Image,
   id: number
 ): CocoImage => {
   return {
     id,
-    file_name: name,
+    file_name: `${name}_${idImage}`,
     coco_url: externalUrl ?? "",
     date_captured: createdAt,
     flickr_url: "",
