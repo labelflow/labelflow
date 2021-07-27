@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { gql, useMutation } from "@apollo/client";
+import { gql, useApolloClient } from "@apollo/client";
 import {
   Kbd,
   Text,
@@ -78,7 +78,7 @@ export const ClassItem = ({
   projectId,
 }: ClassItemProps) => {
   const [editName, setEditName] = useState<string | null>(null);
-  const [updateLabelClassName] = useMutation(updateLabelClassNameMutation);
+  const client = useApolloClient();
   useEffect(() => {
     if (edit) {
       setEditName(name);
@@ -89,7 +89,8 @@ export const ClassItem = ({
 
   const updateLabelClassNameWithOptimistic = useCallback(() => {
     setEditClassId(null);
-    updateLabelClassName({
+    client.mutate({
+      mutation: updateLabelClassNameMutation,
       variables: { id, name: editName },
       optimisticResponse: {
         updateLabelClass: {
@@ -99,25 +100,30 @@ export const ClassItem = ({
           __typeName: "LabelClass",
         },
       },
-      update: (cache, { data: { updateLabelClass } }) => {
-        const projectCacheResult = cache.readQuery<ProjectClassesQueryResult>({
-          query: projectLabelClassesQuery,
-          variables: { projectId },
-        });
-        if (projectCacheResult?.project == null) {
-          throw new Error(`Missing project with id ${projectId}`);
+      update: (cache, { data }) => {
+        if (data != null) {
+          const { updateLabelClass } = data;
+          const projectCacheResult = cache.readQuery<ProjectClassesQueryResult>(
+            {
+              query: projectLabelClassesQuery,
+              variables: { projectId },
+            }
+          );
+          if (projectCacheResult?.project == null) {
+            throw new Error(`Missing project with id ${projectId}`);
+          }
+          const { project } = projectCacheResult;
+          const updatedProject = {
+            ...project,
+            labelClasses: project.labelClasses.map((labelClass) =>
+              labelClass.id !== id ? labelClass : { ...updateLabelClass }
+            ),
+          };
+          cache.writeQuery({
+            query: projectLabelClassesQuery,
+            data: { project: updatedProject },
+          });
         }
-        const { project } = projectCacheResult;
-        const updatedProject = {
-          ...project,
-          labelClasses: project.labelClasses.map((labelClass) =>
-            labelClass.id !== id ? labelClass : { ...updateLabelClass }
-          ),
-        };
-        cache.writeQuery({
-          query: projectLabelClassesQuery,
-          data: { project: updatedProject },
-        });
       },
     });
   }, [editName, id, projectId, setEditClassId]);
