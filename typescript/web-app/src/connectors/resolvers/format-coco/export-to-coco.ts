@@ -1,7 +1,8 @@
 import { convertLabelflowDatasetToCocoDataset } from "./coco-core/converters";
-import { QueryExportToCocoArgs } from "../../../graphql-types.generated";
 import { jsonToDataUri } from "./json-to-data-uri";
+import { QueryExportToCocoArgs } from "../../../graphql-types.generated";
 import { Repository } from "../../repository/types";
+import { addImageDimensionsToLabels } from "../project";
 
 export const exportToCoco = async (
   _: any,
@@ -13,8 +14,16 @@ export const exportToCoco = async (
   const labelClasses = await repository.labelClass.list({ projectId });
   const labels = await repository.label.list({ projectId });
 
+  const labelsWithImageDimensions = await addImageDimensionsToLabels(
+    labels,
+    repository
+  );
   const json = JSON.stringify(
-    convertLabelflowDatasetToCocoDataset(imagesWithUrl, labels, labelClasses)
+    convertLabelflowDatasetToCocoDataset(
+      imagesWithUrl,
+      labelsWithImageDimensions,
+      labelClasses
+    )
   );
 
   return jsonToDataUri(json);

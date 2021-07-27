@@ -9,8 +9,9 @@ import type {
   QueryProjectsArgs,
   QueryImagesArgs,
 } from "../../graphql-types.generated";
-import { DbProject } from "../database";
+import { DbLabel, DbProject } from "../database";
 import { Repository } from "../repository/types";
+import { DbLabelWithImageDimensions } from "./format-coco/coco-core/types";
 
 import { Context } from "./types";
 import { throwIfResolvesToNil } from "./utils/throw-if-resolves-to-nil";
@@ -59,6 +60,25 @@ const getLabelClassesByProjectId = (
   repository: Repository
 ) => {
   return repository.labelClass.list({ projectId });
+};
+
+export const addImageDimensionsToLabels = async (
+  labels: DbLabel[],
+  repository: Repository
+): Promise<DbLabelWithImageDimensions[]> => {
+  return Promise.all(
+    labels.map(async (label) => {
+      const { imageId } = label;
+      const image = await repository.image.getById(imageId);
+      if (image == null) {
+        throw new Error(`Missing image with id ${imageId}`);
+      }
+      return {
+        ...label,
+        imageDimensions: { height: image.height, width: image.width },
+      };
+    })
+  );
 };
 
 // Queries
