@@ -1,8 +1,4 @@
-import {
-  DbImage,
-  DbLabel,
-  DbLabelClass,
-} from "../../../../web-app/src/connectors/database";
+import { DbImage, DbLabel, DbLabelClass } from "../../types";
 import { CocoCategory, CocoAnnotation, CocoImage, CocoDataset } from "./types";
 
 export {

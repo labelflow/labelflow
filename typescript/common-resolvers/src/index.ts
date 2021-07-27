@@ -14,3 +14,5 @@ export const commonResolvers = mergeResolvers([
   projectResolvers,
   scalarsResolvers,
 ]);
+
+export * from "./types";

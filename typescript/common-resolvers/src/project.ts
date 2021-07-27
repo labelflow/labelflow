@@ -10,10 +10,7 @@ import type {
   QueryImagesArgs,
 } from "../../web-app/src/graphql-types.generated";
 
-import { DbProject } from "../../web-app/src/connectors/database";
-import { Repository } from "../../web-app/src/connectors/repository/types";
-
-import { Context } from "./types";
+import { Context, DbProject, Repository } from "./types";
 import { throwIfResolvesToNil } from "./utils/throw-if-resolves-to-nil";
 
 export const projectTypename = "Project";

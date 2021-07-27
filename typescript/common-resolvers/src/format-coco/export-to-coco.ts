@@ -1,12 +1,12 @@
 import { convertLabelflowDatasetToCocoDataset } from "./coco-core/converters";
 import { QueryExportToCocoArgs } from "../../../web-app/src/graphql-types.generated";
 import { jsonToDataUri } from "./json-to-data-uri";
-import { Repository } from "../../../web-app/src/connectors/repository/types";
+import { Context } from "../types";
 
 export const exportToCoco = async (
   _: any,
   args: QueryExportToCocoArgs,
-  { repository }: { repository: Repository }
+  { repository }: Context
 ): Promise<string | undefined> => {
   const { projectId } = args.where;
   const imagesWithUrl = await repository.image.list({ projectId });

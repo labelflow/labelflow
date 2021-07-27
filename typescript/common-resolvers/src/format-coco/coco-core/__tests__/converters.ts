@@ -1,7 +1,4 @@
-import {
-  DbLabel,
-  DbLabelClass,
-} from "../../../../../web-app/src/connectors/database";
+import { DbLabel, DbLabelClass } from "../../../types";
 import {
   Image,
   LabelType,

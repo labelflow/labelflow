@@ -1,4 +1,5 @@
-import { db, DbLabel } from "../database";
+import { DbLabel } from "@labelflow/common-resolvers";
+import { db } from "../database";
 import { list } from "./utils/list";
 
 import type { LabelWhereInput } from "../../graphql-types.generated";

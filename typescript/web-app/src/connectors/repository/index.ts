@@ -1,9 +1,8 @@
+import { Repository } from "@labelflow/common-resolvers";
 import { db } from "../database";
 import { list } from "./utils/list";
 import { countLabels, listLabels } from "./label";
 import { deleteProject } from "./project";
-
-import { Repository } from "./types";
 
 export const repository: Repository = {
   image: {

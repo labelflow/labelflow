@@ -1,7 +1,6 @@
-import { db, DbProject } from "../database";
-
-import { Repository } from "./types";
-import { throwIfResolvesToNil } from "../resolvers/utils/throw-if-resolves-to-nil";
+import { Repository, DbProject } from "@labelflow/common-resolvers";
+import { throwIfResolvesToNil } from "@labelflow/common-resolvers/src/utils/throw-if-resolves-to-nil";
+import { db } from "../database";
 
 export const deleteProject: Repository["project"]["delete"] = async (id) => {
   const projectToDelete = await throwIfResolvesToNil<

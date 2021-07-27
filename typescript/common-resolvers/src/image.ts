@@ -6,12 +6,11 @@ import type {
   QueryImagesArgs,
 } from "../../web-app/src/graphql-types.generated";
 
-import { DbImage } from "../../web-app/src/connectors/database";
 import { uploadsCacheName, getUploadTargetHttp } from "./constants";
 import { projectTypename } from "./project";
 import { probeImage } from "../../web-app/src/connectors/resolvers/utils/probe-image";
 
-import { Context } from "./types";
+import { Context, DbImage } from "./types";
 import { throwIfResolvesToNil } from "./utils/throw-if-resolves-to-nil";
 
 // Queries
