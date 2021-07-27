@@ -36,6 +36,7 @@
     "jszip": "3.7.0",
     "lodash": "^4.17.21",
     "mem": "^8.1.1",
+    "mime-types": "2.1.31",
     "next": "10.x",
     "next-cookie": "^2.6.2",
     "next-pwa": "patch:next-pwa@5.2.21#./next-pwa.patch",

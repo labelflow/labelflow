@@ -14,6 +14,7 @@ import { useRouter } from "next/router";
 import { useLazyQuery, useQuery, gql, useApolloClient } from "@apollo/client";
 import JSZip from "jszip";
 import { useState } from "react";
+import mime from "mime-types";
 import { ExportFormatCard } from "./export-format-card";
 
 const getImagesQuery = gql`
@@ -86,16 +87,26 @@ export const ExportModal = ({
       );
       await Promise.all(
         images.map(async ({ name, url }: { name: string; url: string }) => {
-          const dataUrl: string = await (async (): Promise<string> => {
+          const { dataUrl, mimeType } = await (async (): Promise<{
+            dataUrl: string;
+            mimeType: string;
+          }> => {
             const blob = await fetch(url).then((r) => r.blob());
             return new Promise((resolve) => {
               const reader = new FileReader();
-              reader.onload = () => resolve(reader.result as string);
+              reader.onload = () =>
+                resolve({
+                  dataUrl: reader.result as string,
+                  mimeType: blob.type,
+                });
               reader.readAsDataURL(blob);
             });
           })();
           zip.file(
-            `${projectName}/images/${name}.jpeg`, // TODO: insert the right extension here
+            `${projectName}/images/${name.replace(
+              /\.[^/.]+$/,
+              ""
+            )}.${mime.extension(mimeType)}`,
             dataUrl.substr(dataUrl.indexOf(",") + 1),
             {
               base64: true,
