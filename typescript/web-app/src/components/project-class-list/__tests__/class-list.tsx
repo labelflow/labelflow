@@ -70,7 +70,7 @@ describe("Project class list tests", () => {
     expect(screen.getByText("0 Classes")).toBeDefined();
   });
 
-  it.only("Renders the project classes", async () => {
+  it("Renders the project classes", async () => {
     const projectId = "myProjectId";
     await createProject("myProject", projectId);
     await createLabelClassInProject({
