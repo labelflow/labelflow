@@ -111,7 +111,16 @@ const deleteLabelClass = async (_: any, args: MutationDeleteLabelClassArgs) => {
     throw new Error("No labelClass with such id");
   }
 
+  const labelsWithLabelClassToDelete = await db.label.filter(
+    (label) => label.labelClassId === labelClassId
+  );
+
+  const setLabelsToNoneLabelClassPromise = labelsWithLabelClassToDelete.modify({
+    labelClassId: null,
+  });
+
   await db.labelClass.delete(labelClassId);
+  await setLabelsToNoneLabelClassPromise;
 
   return labelClassToDelete;
 };

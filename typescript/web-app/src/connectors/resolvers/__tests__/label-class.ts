@@ -43,7 +43,8 @@ const createLabelClass = async (data: {
 const createLabel = async (
   labelClassId: string,
   x: number,
-  projectId: string = testProjectId
+  projectId: string = testProjectId,
+  labelId: string = "myLabelId"
 ) => {
   mockedProbeSync.mockReturnValue({
     width: 42,
@@ -84,6 +85,7 @@ const createLabel = async (
     `,
     variables: {
       data: {
+        id: labelId,
         imageId,
         labelClassId,
         geometry: {
@@ -294,13 +296,13 @@ describe("LabelClass resolver test suite", () => {
   it("should delete a label class", async () => {
     await createProject("Test project");
 
-    const labelId = await createLabelClass({
+    const labelClassId = await createLabelClass({
       name: "toto",
       color: "#ff0000",
       projectId: testProjectId,
     });
-
-    client.mutate({
+    await createLabel(labelClassId, 2, testProjectId);
+    await client.mutate({
       mutation: gql`
         mutation deleteLabelClass($id: ID!) {
           deleteLabelClass(where: { id: $id }) {
@@ -309,11 +311,10 @@ describe("LabelClass resolver test suite", () => {
         }
       `,
       variables: {
-        id: labelId,
+        id: labelClassId,
       },
     });
-
-    const queryResult = await client.query({
+    const queryResult = client.query({
       query: gql`
         query getLabelClass($id: ID!) {
           labelClass(where: { id: $id }) {
@@ -322,11 +323,67 @@ describe("LabelClass resolver test suite", () => {
         }
       `,
       variables: {
-        id: labelId,
+        id: labelClassId,
       },
     });
+    return expect(queryResult).rejects.toThrow("No labelClass with such id");
+  });
+  it("should set all the labels linked to label class to labelClassId none when the class is deleted", async () => {
+    await createProject("Test project");
 
-    expect(queryResult.data.labelClasses).not.toBeDefined();
+    const labelClassId = await createLabelClass({
+      name: "toto",
+      color: "#ff0000",
+      projectId: testProjectId,
+    });
+    await createLabel(labelClassId, 2, testProjectId);
+    const labelQueryResultBeforeDelete = await client.query({
+      query: gql`
+        query getLabelData($id: ID!) {
+          label(where: { id: $id }) {
+            id
+            labelClass {
+              id
+            }
+          }
+        }
+      `,
+      variables: {
+        id: "myLabelId",
+      },
+    });
+    expect(labelQueryResultBeforeDelete.data.label.labelClass.id).toBe(
+      labelClassId
+    );
+    await client.mutate({
+      mutation: gql`
+        mutation deleteLabelClass($id: ID!) {
+          deleteLabelClass(where: { id: $id }) {
+            id
+          }
+        }
+      `,
+      variables: {
+        id: labelClassId,
+      },
+    });
+    const labelQueryResult = await client.query({
+      query: gql`
+        query getLabelData($id: ID!) {
+          label(where: { id: $id }) {
+            id
+            labelClass {
+              id
+            }
+          }
+        }
+      `,
+      variables: {
+        id: "myLabelId",
+      },
+      fetchPolicy: "no-cache",
+    });
+    expect(labelQueryResult.data.label.labelClass).toBeNull();
   });
 
   test("should throw when the label class to delete doesn't exist", () => {
@@ -441,9 +498,9 @@ describe("LabelClass resolver test suite", () => {
       projectId: "a project id",
     });
 
-    await createLabel(labelClassId, 2, "a project id");
+    await createLabel(labelClassId, 2, "a project id", "myLabelId1");
     incrementMockedDate(1);
-    await createLabel(labelClassId, 1, "a project id");
+    await createLabel(labelClassId, 1, "a project id", "myLabelId2");
 
     const queryResult = await client.query({
       query: gql`
