@@ -135,6 +135,7 @@ export const ClassItem = ({
 
       {edit && editName != null ? (
         <Input
+          aria-label="edit-class-name-input"
           variant="flushed"
           flexGrow={1}
           isTruncated
@@ -168,7 +169,7 @@ export const ClassItem = ({
           >
             <IconButton
               variant="ghost"
-              aria-label={`Edit class ${name} name`}
+              aria-label="Cancel"
               icon={<CloseIcon flexShrink={0} flexGrow={0} color="gray.600" />}
               h="8"
               w="8"
@@ -185,7 +186,7 @@ export const ClassItem = ({
           >
             <IconButton
               variant="ghost"
-              aria-label={`Edit class ${name} name`}
+              aria-label="Save"
               icon={<CheckIcon flexShrink={0} flexGrow={0} color="gray.600" />}
               h="8"
               w="8"
