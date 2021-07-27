@@ -18,7 +18,6 @@ export const deleteProject: Repository["project"]["delete"] = async (id) => {
     .filter((label) => imagesToDelete.includes(label.imageId))
     .primaryKeys();
 
-  // @ts-ignore
   await db.label.bulkDelete(labelsToDeleteIds);
   await db.labelClass.where({ projectId: projectToDelete.id }).delete();
   await db.image.where({ projectId: projectToDelete.id }).delete();
