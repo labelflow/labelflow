@@ -5099,6 +5099,7 @@ __metadata:
   resolution: "@labelflow/common-resolvers@workspace:typescript/common-resolvers"
   dependencies:
     "@graphql-tools/merge": ^6.2.14
+    "@labelflow/graphql-types": "workspace:typescript/graphql-types"
     "@turf/bbox": ^6.5.0
     "@turf/bbox-polygon": ^6.5.0
     "@turf/helpers": ^6.5.0
@@ -5137,6 +5138,14 @@ __metadata:
   resolution: "@labelflow/dev-utils@workspace:typescript/dev-utils"
   dependencies:
     mockdate: ^3.0.5
+  languageName: unknown
+  linkType: soft
+
+"@labelflow/graphql-types@workspace:typescript/graphql-types":
+  version: 0.0.0-use.local
+  resolution: "@labelflow/graphql-types@workspace:typescript/graphql-types"
+  dependencies:
+    graphql: 15.5.1
   languageName: unknown
   linkType: soft
 
@@ -5186,6 +5195,7 @@ __metadata:
     "@graphql-tools/schema": 7.1.5
     "@labelflow/common-resolvers": "workspace:typescript/common-resolvers"
     "@labelflow/dev-utils": "workspace:typescript/dev-utils"
+    "@labelflow/graphql-types": "workspace:typescript/graphql-types"
     "@labelflow/react-openlayers-fiber": "workspace:typescript/react-openlayers-fiber"
     "@storybook/addon-actions": 6.3.0
     "@storybook/addons": 6.3.0

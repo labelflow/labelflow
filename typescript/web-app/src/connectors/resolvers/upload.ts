@@ -2,7 +2,7 @@ import { v4 as uuidv4 } from "uuid";
 import type {
   UploadTarget,
   UploadTargetHttp,
-} from "../../graphql-types.generated";
+} from "@labelflow/graphql-types";
 import { isInWindowScope } from "../../utils/detect-scope";
 
 export const uploadsCacheName = "uploads";

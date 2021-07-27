@@ -6,7 +6,7 @@ import probe from "probe-image-size";
 
 import { client } from "../../apollo-client-schema";
 import { setupTestsWithLocalDatabase } from "../../../utils/setup-local-db-tests";
-import { LabelCreateInput, LabelType } from "../../../graphql-types.generated";
+import { LabelCreateInput, LabelType } from "@labelflow/graphql-types";
 
 setupTestsWithLocalDatabase();
 

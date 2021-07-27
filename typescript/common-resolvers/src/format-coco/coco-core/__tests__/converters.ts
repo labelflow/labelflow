@@ -2,7 +2,7 @@ import { DbLabelClass } from "../../../types";
 import {
   Image,
   LabelType,
-} from "../../../../../web-app/src/graphql-types.generated";
+} from "@labelflow/graphql-types";
 
 import {
   convertLabelClassToCocoCategory,

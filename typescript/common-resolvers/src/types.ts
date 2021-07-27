@@ -10,7 +10,7 @@ import type {
   LabelWhereInput,
   UploadTargetHttp,
   UploadTarget,
-} from "../../web-app/src/graphql-types.generated";
+} from "@labelflow/graphql-types";
 
 export type DbImage =
   | (Omit<GeneratedImage, "url" | "labels"> & {

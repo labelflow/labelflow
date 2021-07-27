@@ -17,6 +17,7 @@
     "@graphql-tools/merge": "^6.2.14",
     "@graphql-tools/schema": "7.1.5",
     "@labelflow/common-resolvers": "workspace:typescript/common-resolvers",
+    "@labelflow/graphql-types": "workspace:typescript/graphql-types",
     "@labelflow/react-openlayers-fiber": "workspace:typescript/react-openlayers-fiber",
     "@turf/bbox": "^6.5.0",
     "@turf/bbox-polygon": "^6.5.0",

@@ -4,7 +4,7 @@ import type {
   MutationCreateImageArgs,
   QueryImageArgs,
   QueryImagesArgs,
-} from "../../web-app/src/graphql-types.generated";
+} from "@labelflow/graphql-types";
 
 // import { uploadsCacheName, getUploadTargetHttp } from "./constants";
 import { projectTypename } from "./project";

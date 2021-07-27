@@ -5,7 +5,7 @@ import type {
   MutationDeleteLabelClassArgs,
   QueryLabelClassArgs,
   QueryLabelClassesArgs,
-} from "../../web-app/src/graphql-types.generated";
+} from "@labelflow/graphql-types";
 
 import { projectTypename } from "./project";
 

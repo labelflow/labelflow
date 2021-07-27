@@ -11,8 +11,8 @@ import type {
   MutationDeleteLabelArgs,
   MutationUpdateLabelArgs,
   QueryLabelArgs,
-} from "../../web-app/src/graphql-types.generated";
-import { LabelType } from "../../web-app/src/graphql-types.generated";
+} from "@labelflow/graphql-types";
+import { LabelType } from "@labelflow/graphql-types";
 import { projectTypename } from "./project";
 
 import { DbLabel, Context, Repository } from "./types";

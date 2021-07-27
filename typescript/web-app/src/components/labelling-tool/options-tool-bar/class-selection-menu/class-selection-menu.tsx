@@ -2,7 +2,7 @@ import React from "react";
 import { Tooltip, Text, Flex, Button, chakra } from "@chakra-ui/react";
 import { HiSelector } from "react-icons/hi";
 import { RiCheckboxBlankCircleFill } from "react-icons/ri";
-import { LabelClass } from "../../../../graphql-types.generated";
+import { LabelClass } from "@labelflow/graphql-types";
 import { ClassSelectionPopover } from "../../../class-selection-popover";
 
 // The class selection menu doesn't need all the attributes of the label class

@@ -8,7 +8,7 @@ import type {
   QueryProjectArgs,
   QueryProjectsArgs,
   QueryImagesArgs,
-} from "../../web-app/src/graphql-types.generated";
+} from "@labelflow/graphql-types";
 
 import { Context, DbProject, Repository } from "./types";
 import { throwIfResolvesToNil } from "./utils/throw-if-resolves-to-nil";

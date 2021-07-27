@@ -13,7 +13,7 @@ import { Feature } from "ol";
 import { keymap } from "../../../keymap";
 import { useLabellingStore } from "../../../connectors/labelling-state";
 import { useUndoStore, Effect } from "../../../connectors/undo-store";
-import { Label } from "../../../graphql-types.generated";
+import { Label } from "@labelflow/graphql-types";
 import { noneClassColor } from "../../../utils/class-color-generator";
 import {
   addLabelToImageInCache,

@@ -10,6 +10,7 @@ import { PropsWithChildren } from "react";
 import { mocked } from "ts-jest/utils";
 import probe from "probe-image-size";
 import { incrementMockedDate } from "@labelflow/dev-utils/mockdate";
+import { LabelCreateInput } from "@labelflow/graphql-types";
 import { mockNextRouter } from "../../../../utils/router-mocks";
 
 mockNextRouter({ query: { projectId: "mocked-project-id" } });
@@ -18,7 +19,6 @@ import { ExportModal } from "..";
 import { theme } from "../../../../theme";
 import { client } from "../../../../connectors/apollo-client-schema";
 import { setupTestsWithLocalDatabase } from "../../../../utils/setup-local-db-tests";
-import { LabelCreateInput } from "../../../../graphql-types.generated";
 
 setupTestsWithLocalDatabase();
 
