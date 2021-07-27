@@ -2,7 +2,7 @@ import { convertLabelflowDatasetToCocoDataset } from "./coco-core/converters";
 import { jsonToDataUri } from "./json-to-data-uri";
 import { QueryExportToCocoArgs } from "../../../graphql-types.generated";
 import { Repository } from "../../repository/types";
-import { addImageDimensionsToLabels } from "../project";
+import { addImageDimensionsToLabels } from "./add-image-dimensions-to-labels";
 
 export const exportToCoco = async (
   _: any,
