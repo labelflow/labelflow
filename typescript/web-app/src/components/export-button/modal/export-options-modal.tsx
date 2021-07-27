@@ -12,19 +12,21 @@ import {
   Text,
   Switch,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 
-type ExportOptions = {
+export type ExportOptions = {
   exportImages: boolean;
 };
 
 const OptionLine = ({
   header,
   description,
+  isChecked,
   onChange = () => {},
 }: {
   header: string;
   description: string;
+  isChecked: boolean;
   onChange?: any;
 }) => (
   <Box pt="5" pb="5" pr="10" pl="10">
@@ -33,19 +35,28 @@ const OptionLine = ({
         <Heading size="md">{header}</Heading>
         <Text>{description}</Text>
       </Box>
-      <Switch size="md" colorScheme="brand" onChange={onChange} />
+      <Switch
+        isChecked={isChecked}
+        size="md"
+        colorScheme="brand"
+        onChange={onChange}
+      />
     </HStack>
   </Box>
 );
 
 export const ExportOptionsModal = ({
   isOpen = false,
-  onClick = () => {},
+  exportFunction = () => {},
   onClose = () => {},
-}: {
+}: //   options = { exportImages: false },
+//   setOptions = () => {},
+{
   isOpen?: boolean;
-  onClick?: (input: ExportOptions) => void;
+  exportFunction?: (options: ExportOptions) => void;
   onClose?: () => void;
+  //   options: ExportOptions;
+  //   setOptions?: Dispatch<SetStateAction<ExportOptions>>;
 }) => {
   const [options, setOptions] = useState<ExportOptions>({
     exportImages: false,
@@ -77,6 +88,7 @@ export const ExportOptionsModal = ({
           <OptionLine
             header="Export image files"
             description="Zip images together with the annotation file"
+            isChecked={options.exportImages}
             onChange={() => {
               setOptions((previousOptions) => ({
                 ...previousOptions,
@@ -88,7 +100,10 @@ export const ExportOptionsModal = ({
             colorScheme="brand"
             size="md"
             alignSelf="flex-end"
-            onClick={() => onClick(options)}
+            onClick={() => {
+              exportFunction(options);
+              onClose();
+            }}
           >
             Export
           </Button>
