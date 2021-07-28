@@ -19,8 +19,7 @@ from networks.refinementnetwork import Network
 from shapely.geometry import Polygon
 
 import cv2
-
-# comment
+import os
 
 
 def transform_contour_to_geojson_polygon(
@@ -66,7 +65,6 @@ def convert_data_url_to_image(data_url):
 
 
 def convert_net_output_to_geojson_polygon(fine_net_output, gt_input, image, roi):
-    im_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     outputs = fine_net_output  # fine net output
     pred = np.transpose(outputs.data.numpy()[0, :, :, :], (1, 2, 0))
     pred = 1 / (1 + np.exp(-pred))
@@ -104,13 +102,15 @@ def convert_net_output_to_geojson_polygon(fine_net_output, gt_input, image, roi)
     contours, hierarchy = cv2.findContours(
         opening, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE
     )
-    cv2.drawContours(im_rgb, contours, -1, (0, 255, 0), 3)
 
     now = datetime.now()
-    cv2.imwrite(f"results/result-{now}.jpg", im_rgb)
-    cv2.imwrite(f"results/mask-{now}.jpg", im_mask)
-    cv2.imwrite(f"results/pred-{now}.jpg", pred * 255)
-    # print(transform_contours_to_geojson_polygons(contours))
+    if os.environ.get("DEBUG", False):
+        im_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        cv2.drawContours(im_rgb, contours, -1, (0, 255, 0), 3)
+        cv2.imwrite(f"results/result-{now}.jpg", im_rgb)
+        cv2.imwrite(f"results/mask-{now}.jpg", im_mask)
+        cv2.imwrite(f"results/pred-{now}.jpg", pred * 255)
+        # print(transform_contours_to_geojson_polygons(contours))
 
     return transform_contours_to_geojson_polygons(
         contours, imageHeight=image.shape[0], roiHeight=roi[3]
@@ -253,18 +253,18 @@ def refine(pointsInside, pointsOutside, id):
             trns_refinement(sample)["IOG_points"].unsqueeze(0), IOG_points
         )
 
-    # one result
-    points_fg = IOG_points[0, 0:1, :, :]
-    points_bg = IOG_points[0, 1:2, :, :]
-    now = datetime.now()
-    cv2.imwrite(
-        f"outputs/points_fg-{now}.png",
-        np.transpose((points_fg * 1).numpy().astype(np.uint8), (1, 2, 0)),
-    )
-    cv2.imwrite(
-        f"outputs/points_bg-{now}.png",
-        np.transpose((points_bg * 1).numpy().astype(np.uint8), (1, 2, 0)),
-    )
+    if os.environ.get("DEBUG", False):
+        now = datetime.now()
+        points_fg = IOG_points[0, 0:1, :, :]
+        points_bg = IOG_points[0, 1:2, :, :]
+        cv2.imwrite(
+            f"outputs/points_fg-{now}.png",
+            np.transpose((points_fg * 1).numpy().astype(np.uint8), (1, 2, 0)),
+        )
+        cv2.imwrite(
+            f"outputs/points_bg-{now}.png",
+            np.transpose((points_bg * 1).numpy().astype(np.uint8), (1, 2, 0)),
+        )
 
     fine_net_output = net.refine(backbone_features, IOG_points)
     return convert_net_output_to_geojson_polygon(
