@@ -51,7 +51,9 @@ export const getBoundedGeometryFromImage = (
     imageDimensions.width,
     imageDimensions.height,
   ]);
-  const clippedGeometryObject = intersect(imagePolygon, geometryPolygon);
+  // const clippedGeometryObject = intersect(imagePolygon, geometryPolygon);
+
+  const clippedGeometryObject = geometryPolygon;
 
   if (clippedGeometryObject?.geometry == null) {
     throw new Error("Label out of image bounds");
