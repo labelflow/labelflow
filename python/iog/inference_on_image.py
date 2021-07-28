@@ -16,6 +16,7 @@ from dataloaders import custom_transforms as tr
 from dataloaders.helpers import tens2image, get_bbox, crop2fullmask
 
 from networks.refinementnetwork import Network
+from shapely.geometry import Polygon
 
 import cv2
 
@@ -36,13 +37,19 @@ def transform_contour_item(item: list, imageHeight: int, roiHeight: int) -> list
     return [x, imageHeight - y]
 
 
+def simplify_geojson_coordinates(coordinates):
+    polygon = Polygon(coordinates)
+    simplified_polygon = polygon.simplify(2)
+    return simplified_polygon.exterior.coords
+
+
 def transform_contours_to_geojson_polygons(
     contours: list, imageHeight: int, roiHeight: int
 ) -> list:
     return list(
         map(
-            lambda contour: transform_contour_to_geojson_polygon(
-                contour, imageHeight, roiHeight
+            lambda contour: simplify_geojson_coordinates(
+                transform_contour_to_geojson_polygon(contour, imageHeight, roiHeight)
             ),
             filter(lambda contour: len(contour) > 2, contours),
         )
