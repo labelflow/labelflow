@@ -1,5 +1,4 @@
 appdirs==1.4.4
-argh==0.26.2
 ariadne==0.13.0
 asyncpg==0.22.0
 black==21.5b1
@@ -19,13 +18,11 @@ numpy==1.20.3
 opencv-python==4.5.2.52
 pathspec==0.8.1
 Pillow==8.2.0
-psycopg2==2.8.6
 pycocotools==2.0.2
 pyparsing==2.4.7
 python-dateutil==2.8.1
 python-dotenv==0.17.1
 PyWavelets==1.1.1
-PyYAML==5.4.1
 regex==2021.4.4
 scikit-image==0.18.2
 scipy==1.6.3
