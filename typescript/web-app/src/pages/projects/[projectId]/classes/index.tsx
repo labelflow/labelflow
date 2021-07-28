@@ -20,7 +20,7 @@ import { ClassesList } from "../../../../components/project-class-list";
 const ArrowRightIcon = chakra(RiArrowRightSLine);
 
 const projectNameQuery = gql`
-  query getProjectName {
+  query getProjectName($projectId: ID!) {
     project(where: { id: $projectId }) {
       id
       name
