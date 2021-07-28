@@ -51,7 +51,7 @@ export const getBoundedGeometryFromImage = (
     imageDimensions.width,
     imageDimensions.height,
   ]);
-  // const clippedGeometryObject = intersect(imagePolygon, geometryPolygon);
+  // const clippedGeometryObject = intersect(imagePolygon, geometryPolygon); // TODO: fix this to be able to get several contours from the intersection, otherwise it only keeps one
 
   const clippedGeometryObject = geometryPolygon;
 
