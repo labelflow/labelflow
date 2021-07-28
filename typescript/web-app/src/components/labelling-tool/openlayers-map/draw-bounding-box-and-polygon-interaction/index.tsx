@@ -1,4 +1,4 @@
-import { useMemo, useRef, useCallback, useState } from "react";
+import { useMemo, useRef, useCallback, useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { Draw as OlDraw } from "ol/interaction";
 import { createBox, DrawEvent } from "ol/interaction/Draw";
@@ -13,6 +13,7 @@ import { useHotkeys } from "react-hotkeys-hook";
 import { Feature, MapBrowserEvent } from "ol";
 import { Geometry, Point, Polygon } from "ol/geom";
 import { Coordinate } from "ol/coordinate";
+import CircleStyle from "ol/style/Circle";
 import {
   useLabellingStore,
   Tools,
@@ -24,8 +25,6 @@ import { noneClassColor } from "../../../../utils/class-color-generator";
 import { createLabelEffect } from "./create-label-effect";
 import { LabelType } from "../../../../graphql-types.generated";
 import { updateLabelEffect } from "../select-and-modify-feature/update-label-effect";
-import CircleStyle from "ol/style/Circle";
-import { useEffect } from "react";
 
 const labelClassQuery = gql`
   query getLabelClass($id: ID!) {
@@ -122,6 +121,11 @@ export const DrawBoundingBoxAndPolygonInteraction = () => {
   const selectedLabelClass = dataLabelClass?.labelClass;
 
   const selectedLabelId = useLabellingStore((state) => state.selectedLabelId);
+
+  useEffect(() => {
+    setPointsInside([]);
+    setPointsOutside([]);
+  }, [imageId]);
 
   useHotkeys(
     keymap.cancelAction.key,
