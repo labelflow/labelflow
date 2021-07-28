@@ -38,34 +38,41 @@ export const ClassesList = ({ projectId }: { projectId: string }) => {
         labelClassId={deleteClassId}
         onClose={() => setDeleteClassId(null)}
       />
-      <Flex flexDirection="column" alignItems="center">
-        <Box bg="white" m="10" borderRadius="lg" maxWidth="2xl" minWidth="xl">
-          <>
-            <Text
-              margin="2"
-              marginLeft="4"
-              fontWeight="bold"
-              alignSelf="center"
-              justifySelf="center"
-            >{`${labelClassWithShortcut.length} Classes`}</Text>
-            <Divider />
-            {!loading &&
-              labelClassWithShortcut.map(({ id, name, color, shortcut }) => (
-                <ClassItem
-                  key={id}
-                  id={id}
-                  name={name}
-                  color={color}
-                  shortcut={shortcut}
-                  edit={editClassId === id}
-                  setEditClassId={setEditClassId}
-                  projectId={projectId}
-                  setDeleteClassId={setDeleteClassId}
-                />
-              ))}
-          </>
-        </Box>
-      </Flex>
+
+      <Box
+        d="flex"
+        flexDirection="column"
+        bg="white"
+        m="10"
+        borderRadius="lg"
+        maxWidth="2xl"
+        flexGrow={1}
+      >
+        <>
+          <Text
+            margin="2"
+            marginLeft="4"
+            fontWeight="bold"
+            alignSelf="center"
+            justifySelf="center"
+          >{`${labelClassWithShortcut.length} Classes`}</Text>
+          <Divider />
+          {!loading &&
+            labelClassWithShortcut.map(({ id, name, color, shortcut }) => (
+              <ClassItem
+                key={id}
+                id={id}
+                name={name}
+                color={color}
+                shortcut={shortcut}
+                edit={editClassId === id}
+                setEditClassId={setEditClassId}
+                projectId={projectId}
+                setDeleteClassId={setDeleteClassId}
+              />
+            ))}
+        </>
+      </Box>
     </>
   );
 };

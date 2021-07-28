@@ -6,6 +6,7 @@ import {
   BreadcrumbItem,
   BreadcrumbLink,
   chakra,
+  Center,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { RiArrowRightSLine } from "react-icons/ri";
@@ -81,7 +82,9 @@ const ProjectClassesPage = () => {
         }
         tabBar={<ProjectTabBar currentTab="classes" projectId={projectId} />}
       >
-        <ClassesList projectId={projectId} />
+        <Center>
+          <ClassesList projectId={projectId} />
+        </Center>
       </Layout>
     </>
   );
