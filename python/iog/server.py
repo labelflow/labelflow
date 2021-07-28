@@ -21,6 +21,7 @@ from ariadne import (
 from ariadne.asgi import GraphQL
 from starlette.applications import Starlette
 import uvicorn
+import json
 
 
 ################################################################################
@@ -95,6 +96,7 @@ mutation = MutationType()
 
 @mutation.field("iogInference")
 def resolve_iog_inference(*_, data):
+    # json.dump(data, open("inputs/inputs_inference.json", "w"))
     id = data["id"]
     imageUrl = data["imageUrl"]
     x = data["x"]
@@ -107,7 +109,8 @@ def resolve_iog_inference(*_, data):
 
 @mutation.field("iogRefinement")
 def resolve_iog_refinement(*_, data):
-    print(data)
+    # json.dump(data, open("inputs/inputs_refinement.json", "w"))
+    # print(data)
     id = data["id"]
     pointsInside = data.get("pointsInside", [])
     pointsOutside = data.get("pointsOutside", [])
