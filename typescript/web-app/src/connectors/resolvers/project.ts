@@ -92,6 +92,25 @@ export const getLabelsByProjectId = async (projectId: string) => {
     .sortBy("createdAt");
 };
 
+export const getLabelsWithImageDimensionsByProjectId = async (
+  projectId: string
+) => {
+  const labels = await getLabelsByProjectId(projectId);
+  return Promise.all(
+    labels.map(async (label) => {
+      const { imageId } = label;
+      const image = await db.image.get(imageId);
+      if (image == null) {
+        throw new Error(`Missing image with id ${imageId}`);
+      }
+      return {
+        ...label,
+        imageDimensions: { height: image.height, width: image.width },
+      };
+    })
+  );
+};
+
 // Queries
 const images = async (project: DbProject, args: QueryImagesArgs) => {
   const where = { projectId: project.id };
@@ -181,9 +200,18 @@ const updateProject = async (
   return getProjectById(projectToUpdate.id);
 };
 
-const deleteProject = async (_: any, args: MutationDeleteProjectArgs) => {
+const deleteProject = async (
+  _: any,
+  args: MutationDeleteProjectArgs
+): Promise<DbProject> => {
   const projectToDelete = await getProjectFromWhereUniqueInput(args.where);
 
+  const labelsToDelete = (await getLabelsByProjectId(projectToDelete.id)).map(
+    (a) => a.id
+  );
+  await db.label.bulkDelete(labelsToDelete);
+  await db.labelClass.where({ projectId: projectToDelete.id }).delete();
+  await db.image.where({ projectId: projectToDelete.id }).delete();
   await db.project.delete(projectToDelete.id);
 
   return projectToDelete;

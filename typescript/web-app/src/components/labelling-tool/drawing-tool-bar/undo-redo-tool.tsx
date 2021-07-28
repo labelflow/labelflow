@@ -17,14 +17,15 @@ export const UndoTool = () => {
   const drawingToolState = useLabellingStore(
     (state) => state.boxDrawingToolState
   );
-
   useHotkeys(
     keymap.undo.key,
     () => {
-      undo();
+      if (drawingToolState !== DrawingToolState.DRAWING) {
+        undo();
+      }
     },
     {},
-    []
+    [drawingToolState]
   );
 
   return (
@@ -50,10 +51,12 @@ export const RedoTool = () => {
   useHotkeys(
     keymap.redo.key,
     () => {
-      redo();
+      if (drawingToolState !== DrawingToolState.DRAWING) {
+        redo();
+      }
     },
     {},
-    []
+    [drawingToolState]
   );
 
   return (

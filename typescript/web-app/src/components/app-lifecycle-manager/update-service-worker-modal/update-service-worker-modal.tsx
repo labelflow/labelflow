@@ -25,6 +25,8 @@ export const UpdateServiceWorkerModal = ({
       leastDestructiveRef={cancelRef}
       onClose={onClose}
       isCentered
+      closeOnOverlayClick={false}
+      closeOnEsc={false}
     >
       <AlertDialogOverlay>
         <AlertDialogContent>
