@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { useQuery } from "@apollo/client";
-import { Box, Text, Flex, Divider } from "@chakra-ui/react";
+import { Box, Text, Divider } from "@chakra-ui/react";
 import {
   ClassItem,
   projectLabelClassesQuery,
@@ -51,7 +51,6 @@ export const ClassesList = ({ projectId }: { projectId: string }) => {
         <>
           <Text
             margin="2"
-            marginLeft="4"
             fontWeight="bold"
             alignSelf="center"
             justifySelf="center"

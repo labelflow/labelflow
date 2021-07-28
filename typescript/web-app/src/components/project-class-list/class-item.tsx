@@ -182,7 +182,6 @@ export const ClassItem = ({
               icon={<CloseIcon flexShrink={0} flexGrow={0} color="gray.600" />}
               h="8"
               w="8"
-              mr="2"
               minWidth="8"
               onClick={() => setEditClassId(null)}
             />
@@ -220,7 +219,6 @@ export const ClassItem = ({
               icon={<PenIcon flexShrink={0} flexGrow={0} color="gray.600" />}
               h="8"
               w="8"
-              mr="2"
               minWidth="8"
               onClick={() => setEditClassId(id)}
             />

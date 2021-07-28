@@ -1,5 +1,5 @@
 import { PropsWithChildren } from "react";
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor, fireEvent } from "@testing-library/react";
 import { ChakraProvider } from "@chakra-ui/react";
 import { ApolloProvider, gql } from "@apollo/client";
 import { ClassesList } from "../class-list";
@@ -95,5 +95,23 @@ describe("Project class list tests", () => {
       expect(screen.getByText("MySecondClass")).toBeDefined()
     );
     await waitFor(() => expect(screen.getByText("MyThirdClass")).toBeDefined());
+  });
+
+  it.only("Renders the class delete modal", async () => {
+    const projectId = "myProjectId";
+    await createProject("myProject", projectId);
+    await createLabelClassInProject({
+      projectId,
+      name: "MyFirstClass",
+      color: "blue",
+    });
+    render(<ClassesList projectId={projectId} />, { wrapper });
+
+    await waitFor(() =>
+      fireEvent.click(screen.getByLabelText(/Delete class MyFirstClass/i))
+    );
+    await waitFor(() =>
+      expect(screen.getByText("Delete Class MyFirstClass")).toBeDefined()
+    );
   });
 });

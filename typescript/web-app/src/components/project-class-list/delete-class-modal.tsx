@@ -34,7 +34,7 @@ export const DeleteLabelClassModal = ({
 }: {
   isOpen?: boolean;
   onClose?: () => void;
-  labelClassId: string | null;
+  labelClassId?: string | null;
 }) => {
   const cancelRef = useRef<HTMLButtonElement>(null);
   const { data } = useQuery(getLabelClassByIdQuery, {
