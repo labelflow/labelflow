@@ -43,6 +43,7 @@ type ClassItemProps = {
   edit: boolean;
   setEditClassId: (classId: string | null) => void;
   projectId: string;
+  setDeleteClassId: (classId: string | null) => void;
 };
 
 export const projectLabelClassesQuery = gql`
@@ -76,8 +77,10 @@ export const ClassItem = ({
   edit,
   setEditClassId,
   projectId,
+  setDeleteClassId,
 }: ClassItemProps) => {
   const [editName, setEditName] = useState<string | null>(null);
+
   const client = useApolloClient();
   useEffect(() => {
     if (edit) {
@@ -236,7 +239,7 @@ export const ClassItem = ({
               w="8"
               mr="2"
               minWidth="8"
-              disabled
+              onClick={() => setDeleteClassId(id)}
             />
           </Tooltip>
         </>

@@ -6,9 +6,11 @@ import {
   projectLabelClassesQuery,
   ProjectClassesQueryResult,
 } from "./class-item";
+import { DeleteLabelClassModal } from "./delete-class-modal";
 
 export const ClassesList = ({ projectId }: { projectId: string }) => {
   const [editClassId, setEditClassId] = useState<string | null>(null);
+  const [deleteClassId, setDeleteClassId] = useState<string | null>(null);
 
   const { data: projectResult, loading } = useQuery<ProjectClassesQueryResult>(
     projectLabelClassesQuery,
@@ -30,32 +32,40 @@ export const ClassesList = ({ projectId }: { projectId: string }) => {
   );
 
   return (
-    <Flex flexDirection="column" alignItems="center">
-      <Box bg="white" m="10" borderRadius="lg" maxWidth="2xl" minWidth="xl">
-        <>
-          <Text
-            margin="2"
-            marginLeft="4"
-            fontWeight="bold"
-            alignSelf="center"
-            justifySelf="center"
-          >{`${labelClassWithShortcut.length} Classes`}</Text>
-          <Divider />
-          {!loading &&
-            labelClassWithShortcut.map(({ id, name, color, shortcut }) => (
-              <ClassItem
-                key={id}
-                id={id}
-                name={name}
-                color={color}
-                shortcut={shortcut}
-                edit={editClassId === id}
-                setEditClassId={setEditClassId}
-                projectId={projectId}
-              />
-            ))}
-        </>
-      </Box>
-    </Flex>
+    <>
+      <DeleteLabelClassModal
+        isOpen={deleteClassId != null}
+        labelClassId={deleteClassId}
+        onClose={() => setDeleteClassId(null)}
+      />
+      <Flex flexDirection="column" alignItems="center">
+        <Box bg="white" m="10" borderRadius="lg" maxWidth="2xl" minWidth="xl">
+          <>
+            <Text
+              margin="2"
+              marginLeft="4"
+              fontWeight="bold"
+              alignSelf="center"
+              justifySelf="center"
+            >{`${labelClassWithShortcut.length} Classes`}</Text>
+            <Divider />
+            {!loading &&
+              labelClassWithShortcut.map(({ id, name, color, shortcut }) => (
+                <ClassItem
+                  key={id}
+                  id={id}
+                  name={name}
+                  color={color}
+                  shortcut={shortcut}
+                  edit={editClassId === id}
+                  setEditClassId={setEditClassId}
+                  projectId={projectId}
+                  setDeleteClassId={setDeleteClassId}
+                />
+              ))}
+          </>
+        </Box>
+      </Flex>
+    </>
   );
 };
