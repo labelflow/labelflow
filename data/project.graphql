@@ -8,6 +8,10 @@ input ProjectWhereUniqueInput {
   name: String
 }
 
+input ProjectWhereIDInput {
+  id: ID!
+}
+
 input ProjectUpdateInput {
   name: String!
 }

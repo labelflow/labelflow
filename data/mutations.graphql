@@ -17,8 +17,8 @@ type Mutation {
 
   createProject(data: ProjectCreateInput!): Project
   updateProject(
-    where: ProjectWhereUniqueInput!
+    where: ProjectWhereIDInput!
     data: ProjectUpdateInput!
   ): Project
-  deleteProject(where: ProjectWhereUniqueInput!): Project
+  deleteProject(where: ProjectWhereIDInput!): Project
 }

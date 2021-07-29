@@ -175,6 +175,8 @@ export type LabelUpdateInput = {
 
 export type LabelWhereInput = {
   imageId?: Maybe<Scalars['ID']>;
+  labelClassId?: Maybe<Scalars['ID']>;
+  projectId?: Maybe<Scalars['ID']>;
 };
 
 export type LabelWhereUniqueInput = {
@@ -251,13 +253,13 @@ export type MutationCreateProjectArgs = {
 
 
 export type MutationUpdateProjectArgs = {
-  where: ProjectWhereUniqueInput;
+  where: ProjectWhereIdInput;
   data: ProjectUpdateInput;
 };
 
 
 export type MutationDeleteProjectArgs = {
-  where: ProjectWhereUniqueInput;
+  where: ProjectWhereIdInput;
 };
 
 export type Project = {
@@ -287,6 +289,10 @@ export type ProjectCreateInput = {
 
 export type ProjectUpdateInput = {
   name: Scalars['String'];
+};
+
+export type ProjectWhereIdInput = {
+  id: Scalars['ID'];
 };
 
 export type ProjectWhereUniqueInput = {
@@ -508,6 +514,7 @@ export type ResolversTypes = {
   Project: ResolverTypeWrapper<Project>;
   ProjectCreateInput: ProjectCreateInput;
   ProjectUpdateInput: ProjectUpdateInput;
+  ProjectWhereIDInput: ProjectWhereIdInput;
   ProjectWhereUniqueInput: ProjectWhereUniqueInput;
   Query: ResolverTypeWrapper<{}>;
   Upload: ResolverTypeWrapper<Scalars['Upload']>;
@@ -554,6 +561,7 @@ export type ResolversParentTypes = {
   Project: Project;
   ProjectCreateInput: ProjectCreateInput;
   ProjectUpdateInput: ProjectUpdateInput;
+  ProjectWhereIDInput: ProjectWhereIdInput;
   ProjectWhereUniqueInput: ProjectWhereUniqueInput;
   Query: {};
   Upload: Scalars['Upload'];
