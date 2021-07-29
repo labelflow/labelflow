@@ -5,73 +5,54 @@ import type {
   MutationDeleteLabelClassArgs,
   QueryLabelClassArgs,
   QueryLabelClassesArgs,
-  Maybe,
-  LabelClassWhereInput,
 } from "../../graphql-types.generated";
 
-import { db, DbLabelClass } from "../database";
+import { DbLabelClass } from "../database";
 import { projectTypename } from "./project";
 
-const getLabelClassById = async (id: string): Promise<DbLabelClass> => {
-  const entity = await db.labelClass.get(id);
-
-  if (entity === undefined) {
-    throw new Error("No labelClass with such id");
-  }
-
-  return entity;
-};
-
-export const getPaginatedLabelClasses = async (
-  where?: Maybe<LabelClassWhereInput>,
-  skip?: Maybe<number>,
-  first?: Maybe<number>
-): Promise<DbLabelClass[]> => {
-  const query = db.labelClass.orderBy("createdAt");
-
-  if (where?.projectId) {
-    query.filter((image) => image.projectId === where.projectId);
-  }
-
-  if (skip) {
-    query.offset(skip);
-  }
-  if (first) {
-    return query.limit(first).toArray();
-  }
-
-  return query.toArray();
-};
+import { Context } from "./types";
+import { throwIfResolvesToNil } from "./utils/throw-if-resolves-to-nil";
 
 // Queries
-const labels = async (labelClass: LabelClass) => {
-  const getResults = await db.label
-    .where({ labelClassId: labelClass.id })
-    .sortBy("createdAt");
-
-  return getResults ?? [];
+const labels = async (
+  labelClass: LabelClass,
+  _args: any,
+  { repository }: Context
+) => {
+  return repository.label.list({ labelClassId: labelClass.id });
 };
 
-const labelClass = async (_: any, args: QueryLabelClassArgs) =>
-  getLabelClassById(args?.where?.id);
+const labelClass = async (
+  _: any,
+  args: QueryLabelClassArgs,
+  { repository }: Context
+) =>
+  throwIfResolvesToNil(
+    "No labelClass with such id",
+    repository.labelClass.getById
+  )(args?.where?.id);
 
-const labelClasses = async (_: any, args: QueryLabelClassesArgs) =>
-  getPaginatedLabelClasses(args?.where, args?.skip, args?.first);
+const labelClasses = async (
+  _: any,
+  args: QueryLabelClassesArgs,
+  { repository }: Context
+) => repository.labelClass.list(args?.where, args?.skip, args?.first);
 
 // Mutations
 const createLabelClass = async (
   _: any,
-  args: MutationCreateLabelClassArgs
+  args: MutationCreateLabelClassArgs,
+  { repository }: Context
 ): Promise<DbLabelClass> => {
   const { color, name, id, projectId } = args.data;
 
   // Since we don't have any constraint checks with Dexie
   // we need to ensure that the projectId matches some
   // entity before being able to continue.
-  const project = await db.project.get(projectId);
-  if (project == null) {
-    throw new Error(`The project id ${projectId} doesn't exist.`);
-  }
+  await throwIfResolvesToNil(
+    `The project id ${projectId} doesn't exist.`,
+    repository.project.getById
+  )(projectId);
 
   const labelClassId = id ?? uuidv4();
   const now = new Date();
@@ -84,20 +65,27 @@ const createLabelClass = async (
     color,
     projectId,
   };
-  await db.labelClass.add(newLabelClassEntity);
-  return getLabelClassById(newLabelClassEntity.id);
+  await repository.labelClass.add(newLabelClassEntity);
+
+  return throwIfResolvesToNil(
+    "No labelClass with such id",
+    repository.labelClass.getById
+  )(newLabelClassEntity.id);
 };
 
-const deleteLabelClass = async (_: any, args: MutationDeleteLabelClassArgs) => {
+const deleteLabelClass = async (
+  _: any,
+  args: MutationDeleteLabelClassArgs,
+  { repository }: Context
+) => {
   const labelClassId = args.where.id;
 
-  const labelClassToDelete = await db.labelClass.get(labelClassId);
+  const labelClassToDelete = await throwIfResolvesToNil(
+    "No labelClass with such id",
+    repository.labelClass.getById
+  )(labelClassId);
 
-  if (!labelClassToDelete) {
-    throw new Error("No labelClass with such id");
-  }
-
-  await db.labelClass.delete(labelClassId);
+  await repository.labelClass.delete(labelClassId);
 
   return labelClassToDelete;
 };
@@ -107,19 +95,17 @@ const labelClassesAggregates = (parent: any) => {
   return parent ?? {};
 };
 
-const totalCount = (parent: any) => {
+const totalCount = (parent: any, _args: any, { repository }: Context) => {
   // eslint-disable-next-line no-underscore-dangle
   const typename = parent?.__typename;
 
   if (typename === projectTypename) {
-    return db.labelClass
-      .where({
-        projectId: parent.id,
-      })
-      .count();
+    return repository.labelClass.count({
+      projectId: parent.id,
+    });
   }
 
-  return db.labelClass.count();
+  return repository.labelClass.count();
 };
 
 export default {

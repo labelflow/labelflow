@@ -1,21 +1,29 @@
 import { convertLabelflowDatasetToCocoDataset } from "./coco-core/converters";
-import { Image, QueryExportToCocoArgs } from "../../../graphql-types.generated";
-import { getPaginatedImages } from "../image";
-import { getPaginatedLabelClasses } from "../label-class";
-import { getLabelsWithImageDimensionsByProjectId } from "../project";
 import { jsonToDataUri } from "./json-to-data-uri";
+import { QueryExportToCocoArgs } from "../../../graphql-types.generated";
+import { Repository } from "../../repository/types";
+import { addImageDimensionsToLabels } from "./add-image-dimensions-to-labels";
 
 export const exportToCoco = async (
   _: any,
-  args: QueryExportToCocoArgs
+  args: QueryExportToCocoArgs,
+  { repository }: { repository: Repository }
 ): Promise<string | undefined> => {
   const { projectId } = args.where;
-  const imagesWithUrl: Image[] = await getPaginatedImages({ projectId });
-  const labelClasses = await getPaginatedLabelClasses({ projectId });
-  const labels = await getLabelsWithImageDimensionsByProjectId(projectId);
+  const imagesWithUrl = await repository.image.list({ projectId });
+  const labelClasses = await repository.labelClass.list({ projectId });
+  const labels = await repository.label.list({ projectId });
 
+  const labelsWithImageDimensions = await addImageDimensionsToLabels(
+    labels,
+    repository
+  );
   const json = JSON.stringify(
-    convertLabelflowDatasetToCocoDataset(imagesWithUrl, labels, labelClasses)
+    convertLabelflowDatasetToCocoDataset(
+      imagesWithUrl,
+      labelsWithImageDimensions,
+      labelClasses
+    )
   );
 
   return jsonToDataUri(json);
