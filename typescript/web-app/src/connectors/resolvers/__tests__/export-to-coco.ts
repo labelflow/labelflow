@@ -10,9 +10,9 @@ import {
   dataUriToJson,
 } from "@labelflow/common-resolvers/src/format-coco/json-to-data-uri";
 
-import { client } from "../../../apollo-client-schema";
+import { client } from "../../apollo-client-schema";
 
-import { setupTestsWithLocalDatabase } from "../../../../utils/setup-local-db-tests";
+import { setupTestsWithLocalDatabase } from "../../../utils/setup-local-db-tests";
 
 jest.mock("probe-image-size");
 const mockedProbeSync = mocked(probe.sync);
