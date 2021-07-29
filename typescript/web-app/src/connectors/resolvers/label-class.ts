@@ -101,27 +101,7 @@ const deleteLabelClass = async (
   _: any,
   args: MutationDeleteLabelClassArgs,
   { repository }: Context
-) => {
-  const labelClassId = args.where.id;
-
-  const labelClassToDelete = await throwIfResolvesToNil(
-    "No labelClass with such id",
-    repository.labelClass.getById
-  )(labelClassId);
-
-  const labelsWithLabelClassToDelete = await db.label.filter(
-    (label) => label.labelClassId === labelClassId
-  );
-
-  const setLabelsToNoneLabelClassPromise = labelsWithLabelClassToDelete.modify({
-    labelClassId: null,
-  });
-
-  await repository.labelClass.delete(labelClassId);
-  await setLabelsToNoneLabelClassPromise;
-
-  return labelClassToDelete;
-};
+) => repository.labelClass.delete(args.where.id);
 
 const labelClassesAggregates = (parent: any) => {
   // Forward `parent` to chained resolvers if it exists

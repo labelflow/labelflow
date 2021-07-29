@@ -4,6 +4,7 @@ import { countLabels, listLabels } from "./label";
 import { deleteProject } from "./project";
 
 import { Repository } from "./types";
+import { deleteLabelClass } from "./label-class";
 
 export const repository: Repository = {
   image: {
@@ -25,9 +26,11 @@ export const repository: Repository = {
     add: (labelClass) => db.labelClass.add(labelClass),
     count: (where?) =>
       where ? db.labelClass.where(where).count() : db.labelClass.count(),
-    delete: (id) => db.labelClass.delete(id),
+    delete: deleteLabelClass,
     getById: (id) => db.labelClass.get(id),
     list: list(db.labelClass),
+    update: async (id, changes) =>
+      (await db.labelClass.update(id, changes)) === 1,
   },
   project: {
     add: (project) => db.project.add(project),
