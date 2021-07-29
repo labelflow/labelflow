@@ -66,8 +66,7 @@ def convert_data_url_to_image(data_url):
 
 
 def convert_net_output_to_geojson_polygon(fine_net_output, gt_input, image, roi):
-    outputs = fine_net_output  # fine net output
-    pred = np.transpose(outputs.data.numpy()[0, :, :, :], (1, 2, 0))
+    pred = np.transpose(fine_net_output.to("cpu").data.numpy()[0, :, :, :], (1, 2, 0))
     pred = 1 / (1 + np.exp(-pred))
     pred = np.squeeze(pred)
     gt = tens2image(gt_input)
@@ -128,12 +127,15 @@ net.load_state_dict(pretrain_dict)
 net.eval()
 # Set gpu_id to -1 to run in CPU mode, otherwise set the id of the corresponding gpu
 gpu_id = 0
-device = torch.device("cuda:" + str(gpu_id) if torch.cuda.is_available() else "cpu")
+device = torch.device("cuda:" + str(gpu_id) if torch.cuda.is_available() and not os.environ.get("RUN_ON_CPU",False) else "cpu")
 if torch.cuda.is_available():
-    print("GPU available: {} ".format(gpu_id))
+    if os.environ.get("RUN_ON_CPU",False):
+        print("GPU available but will use CPU")
+    else:
+        print("GPU available, will use it")
 else:
     print("GPU unavailable")
-# net.to(device)
+net.to(device)
 
 trns = transforms.Compose(
     [
@@ -196,7 +198,8 @@ def process(data_url, x, y, width, height, id, *, cache: Cache):
     inputs = tr_sample["concat"][None]
     IOG_points = tr_sample["IOG_points"].unsqueeze(0)
     # inputs = inputs.to(device)
-    res = net.inference(inputs, IOG_points)
+    # res = net.inference(inputs, IOG_points)
+    res = net.inference(inputs.to(device), IOG_points.to(device))
 
     backbone_features = res[0]
     cache.write(
@@ -208,7 +211,7 @@ def process(data_url, x, y, width, height, id, *, cache: Cache):
 
 def refine(pointsInside, pointsOutside, id, *, cache: Cache):
     data = cache.read(id)
-    backbone_features = data["backbone_features"]
+    backbone_features =[value.to(device) for value in data["backbone_features"]]
     roi = data["roi"]
     image = data["image"]
 
@@ -249,7 +252,8 @@ def refine(pointsInside, pointsOutside, id, *, cache: Cache):
             np.transpose((points_bg * 1).numpy().astype(np.uint8), (1, 2, 0)),
         )
 
-    fine_net_output = net.refine(backbone_features, IOG_points)
+    # fine_net_output = net.refine(backbone_features, IOG_points)
+    fine_net_output = net.refine(backbone_features, IOG_points.to(device))
     return convert_net_output_to_geojson_polygon(
-        fine_net_output, tr_sample["gt"], image, roi
+        fine_net_output.to("cpu"), tr_sample["gt"], image, roi
     )
