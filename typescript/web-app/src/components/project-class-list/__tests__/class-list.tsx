@@ -97,7 +97,7 @@ describe("Project class list tests", () => {
     await waitFor(() => expect(screen.getByText("MyThirdClass")).toBeDefined());
   });
 
-  it.only("Renders the class delete modal", async () => {
+  it("Renders the class delete modal", async () => {
     const projectId = "myProjectId";
     await createProject("myProject", projectId);
     await createLabelClassInProject({
