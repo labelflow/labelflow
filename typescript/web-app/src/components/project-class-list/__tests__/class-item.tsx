@@ -36,6 +36,7 @@ const wrapper = ({ children }: PropsWithChildren<{}>) => (
 );
 
 const setEditClassId = jest.fn();
+const setDeleteClassId = jest.fn();
 
 describe("Project class list item tests", () => {
   beforeEach(() => {
@@ -48,6 +49,7 @@ describe("Project class list item tests", () => {
         edit={false}
         setEditClassId={setEditClassId}
         projectId="myProjectId"
+        setDeleteClassId={setDeleteClassId}
         {...classDefault}
       />,
       { wrapper }
@@ -68,6 +70,7 @@ describe("Project class list item tests", () => {
         edit={false}
         setEditClassId={setEditClassId}
         projectId="myProjectId"
+        setDeleteClassId={setDeleteClassId}
         {...classDefault}
       />,
       { wrapper }
@@ -79,12 +82,31 @@ describe("Project class list item tests", () => {
     expect(setEditClassId).toHaveBeenCalledWith("myClassId");
   });
 
+  it("Should call function to open delete class modal when delete button is clicked", async () => {
+    render(
+      <ClassItem
+        edit={false}
+        setEditClassId={setEditClassId}
+        projectId="myProjectId"
+        setDeleteClassId={setDeleteClassId}
+        {...classDefault}
+      />,
+      { wrapper }
+    );
+
+    fireEvent.click(
+      screen.getByRole("button", { name: "Delete class someClass" })
+    );
+    expect(setDeleteClassId).toHaveBeenCalledWith("myClassId");
+  });
+
   it("Should display clear and save options in edit mode", async () => {
     render(
       <ClassItem
         edit
         setEditClassId={setEditClassId}
         projectId="myProjectId"
+        setDeleteClassId={setDeleteClassId}
         {...classDefault}
       />,
       { wrapper }
@@ -103,6 +125,7 @@ describe("Project class list item tests", () => {
         edit
         setEditClassId={setEditClassId}
         projectId="myProjectId"
+        setDeleteClassId={setDeleteClassId}
         {...classDefault}
       />,
       { wrapper }
@@ -127,6 +150,7 @@ describe("Project class list item tests", () => {
         edit
         setEditClassId={setEditClassId}
         projectId="myProjectId"
+        setDeleteClassId={setDeleteClassId}
         {...classDefault}
       />,
       { wrapper }
