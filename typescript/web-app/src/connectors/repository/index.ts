@@ -6,8 +6,9 @@ import { deleteProject } from "./project";
 import {
   getUploadTarget,
   getUploadTargetHttp,
-  uploadsCacheName,
-} from "../resolvers/upload";
+  getFromStorage,
+  putInStorage,
+} from "./upload";
 
 export const repository: Repository = {
   image: {
@@ -44,17 +45,7 @@ export const repository: Repository = {
   upload: {
     getUploadTarget,
     getUploadTargetHttp,
-    put: async (url: string, file: Blob) => {
-      const response = new Response(file, {
-        status: 200,
-        statusText: "OK",
-        headers: new Headers({
-          "Content-Type": file.type ?? "application/octet-stream",
-          "Content-Length": file.size.toString() ?? "0",
-        }),
-      });
-
-      await (await caches.open(uploadsCacheName)).put(url, response);
-    },
+    put: putInStorage,
+    get: getFromStorage,
   },
 };

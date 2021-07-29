@@ -5,6 +5,7 @@ import labelResolvers from "./label";
 import labelClassResolvers from "./label-class";
 import projectResolvers from "./project";
 import scalarsResolvers from "./scalars";
+import uploadResolvers from "./upload";
 
 export const commonResolvers = mergeResolvers([
   formatCocoResolvers,
@@ -13,6 +14,7 @@ export const commonResolvers = mergeResolvers([
   labelClassResolvers,
   projectResolvers,
   scalarsResolvers,
+  uploadResolvers,
 ]);
 
 export * from "./types";

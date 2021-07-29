@@ -19,6 +19,7 @@
     "@labelflow/common-resolvers": "workspace:typescript/common-resolvers",
     "@prisma/client": "2.27.0",
     "apollo-server": "3.0.2",
-    "graphql": "15.5.1"
+    "graphql": "15.5.1",
+    "probe-image-size": "^7.2.1"
   }
 }

@@ -6,9 +6,8 @@ import type {
   QueryImagesArgs,
 } from "@labelflow/graphql-types";
 
-// import { uploadsCacheName, getUploadTargetHttp } from "./constants";
 import { projectTypename } from "./project";
-import { probeImage } from "../../web-app/src/connectors/resolvers/utils/probe-image";
+import { probeImage } from "./utils/probe-image";
 
 import { Context, DbImage } from "./types";
 import { throwIfResolvesToNil } from "./utils/throw-if-resolves-to-nil";
@@ -136,12 +135,15 @@ const createImage = async (
   }
 
   // Probe the file to get its dimensions and mimetype if not provided
-  const imageMetaData = await probeImage({
-    width,
-    height,
-    mimetype,
-    url: finalUrl!,
-  });
+  const imageMetaData = await probeImage(
+    {
+      width,
+      height,
+      mimetype,
+      url: finalUrl!,
+    },
+    repository
+  );
 
   const newImageEntity: DbImage = {
     projectId,

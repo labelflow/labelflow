@@ -21,7 +21,7 @@ const schemaWithResolvers = addResolversToSchema({
 
 const server = new ApolloServer({
   introspection: true,
-  context: {repository},
+  context: { repository },
   schema: schemaWithResolvers,
 });
 

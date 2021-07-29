@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 
-import { Repository } from "../../../web-app/src/connectors/repository/types";
+import { Repository } from "@labelflow/common-resolvers";
 
 const prisma = new PrismaClient();
 
