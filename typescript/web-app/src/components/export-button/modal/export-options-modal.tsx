@@ -12,7 +12,7 @@ import {
   Text,
   Switch,
 } from "@chakra-ui/react";
-import { Dispatch, SetStateAction, useState } from "react";
+import { useState } from "react";
 
 export type ExportOptions = {
   exportImages: boolean;
