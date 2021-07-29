@@ -219,7 +219,6 @@ def refine(pointsInside, pointsOutside, id, *, cache: Cache):
     IOG_points = tr_sample["IOG_points"].unsqueeze(0)
 
     for point in pointsInside:
-        print(point, image.shape[0])
         refinement_point_mask = np.zeros_like(image)
         refinement_point_mask[int(image.shape[0] - point[1]), int(point[0]), 0] = 1
         sample = {"point_refinement_mask": refinement_point_mask, "gt": bbox}
