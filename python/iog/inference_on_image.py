@@ -20,6 +20,7 @@ from shapely.geometry import Polygon
 
 import cv2
 import os
+from cache import Cache
 
 
 def transform_contour_to_geojson_polygon(
@@ -82,32 +83,25 @@ def convert_net_output_to_geojson_polygon(fine_net_output, gt_input, image, roi)
         pred, bbox, gt, zero_pad=True, relax=0, mask_relax=False, scikit=True
     )
 
-    light = np.zeros_like(image)
-    light[:, :, 2] = 255.0
-
-    alpha = 0.5
-
-    blending = (alpha * light + (1 - alpha) * image) * result[..., None] + (
-        1 - result[..., None]
-    ) * image
-
-    blending[blending > 255.0] = 255
-
     # find contours
     im_mask = (result * 255).astype(np.uint8)
-    ret, thresh = cv2.threshold(im_mask, 127, 255, 0)
-    # kernel = np.ones((5, 5), np.uint8)
+    _, thresh = cv2.threshold(im_mask, 127, 255, 0)
     kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (1, 1))
     opening = cv2.morphologyEx(thresh, cv2.MORPH_CLOSE, kernel, iterations=1)
-    contours, hierarchy = cv2.findContours(
-        opening, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE
-    )
+    contours, _ = cv2.findContours(opening, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
-    now = datetime.now()
     if os.environ.get("DEBUG", False):
-        im_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-        cv2.drawContours(im_rgb, contours, -1, (0, 255, 0), 3)
-        cv2.imwrite(f"results/result-{now}.jpg", im_rgb)
+        light = np.zeros_like(image)
+        light[:, :, 2] = 255.0
+        alpha = 0.5
+        blending = (alpha * light + (1 - alpha) * image) * result[..., None] + (
+            1 - result[..., None]
+        ) * image
+        blending[blending > 255.0] = 255
+        # im_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        # cv2.drawContours(im_rgb, contours, -1, (0, 255, 0), 3)
+        now = datetime.now()
+        cv2.imwrite(f"results/result-{now}.jpg", blending)
         cv2.imwrite(f"results/mask-{now}.jpg", im_mask)
         cv2.imwrite(f"results/pred-{now}.jpg", pred * 255)
         # print(transform_contours_to_geojson_polygons(contours))
@@ -131,11 +125,13 @@ net = Network(
 pretrain_dict = torch.load("data/IOG_PASCAL_SBD_REFINEMENT.pth")
 
 net.load_state_dict(pretrain_dict)
-# net.to(device)
-
-# Generate result of the validation images
 net.eval()
-
+# Set gpu_id to -1 to run in CPU mode, otherwise set the id of the corresponding gpu
+gpu_id = 0
+device = torch.device("cuda:" + str(gpu_id) if torch.cuda.is_available() else "cpu")
+if torch.cuda.is_available():
+    print("GPU available: {} ".format(gpu_id))
+# net.to(device)
 
 trns = transforms.Compose(
     [
@@ -183,28 +179,11 @@ trns_refinement = transforms.Compose(
     ]
 )
 
-cache = {}
 
-
-def clear_cache():
-    global cache
-    cache = {}
-    print("Cleared cache!")
-    return
-
-
-def process(data_url, x, y, width, height, id):
+def process(data_url, x, y, width, height, id, *, cache: Cache):
     image = convert_data_url_to_image(data_url)
     roi = [x, image.shape[0] - y - height, width, height]
-
-    # Set gpu_id to -1 to run in CPU mode, otherwise set the id of the corresponding gpu
-    gpu_id = 0
-    device = torch.device("cuda:" + str(gpu_id) if torch.cuda.is_available() else "cpu")
-    if torch.cuda.is_available():
-        print("Using GPU: {} ".format(gpu_id))
-
     image = image.astype(np.float32)
-
     bbox = np.zeros_like(image[..., 0])
     bbox[int(roi[1]) : int(roi[1] + roi[3]), int(roi[0]) : int(roi[0] + roi[2])] = 1
     void_pixels = 1 - bbox
@@ -218,15 +197,18 @@ def process(data_url, x, y, width, height, id):
     res = net.inference(inputs, IOG_points)
 
     backbone_features = res[0]
-    cache[id] = {"backbone_features": backbone_features, "roi": roi, "image": image}
+    cache.write(
+        {"backbone_features": backbone_features, "roi": roi, "image": image}, id
+    )
 
     return convert_net_output_to_geojson_polygon(res[-1], tr_sample["gt"], image, roi)
 
 
-def refine(pointsInside, pointsOutside, id):
-    backbone_features = cache[id]["backbone_features"]
-    roi = cache[id]["roi"]
-    image = cache[id]["image"]
+def refine(pointsInside, pointsOutside, id, *, cache: Cache):
+    data = cache.read(id)
+    backbone_features = data["backbone_features"]
+    roi = data["roi"]
+    image = data["image"]
 
     bbox = np.zeros_like(image[..., 0])
     bbox[int(roi[1]) : int(roi[1] + roi[3]), int(roi[0]) : int(roi[0] + roi[2])] = 1

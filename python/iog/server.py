@@ -21,7 +21,9 @@ from ariadne import (
 from ariadne.asgi import GraphQL
 from starlette.applications import Starlette
 import uvicorn
-import json
+
+# import json
+from cache import Cache
 
 
 ################################################################################
@@ -92,11 +94,13 @@ def resolve_hello(*_):
 
 
 mutation = MutationType()
+cache = Cache()
 
 
 @mutation.field("iogInference")
 def resolve_iog_inference(*_, data):
     # json.dump(data, open("inputs/inputs_inference.json", "w"))
+    cache.clear()
     id = data["id"]
     imageUrl = data["imageUrl"]
     x = data["x"]
@@ -104,7 +108,7 @@ def resolve_iog_inference(*_, data):
     width = data["width"]
     height = data["height"]
 
-    return {"polygons": process(imageUrl, x, y, width, height, id)}
+    return {"polygons": process(imageUrl, x, y, width, height, id, cache=cache)}
 
 
 @mutation.field("iogRefinement")
@@ -115,7 +119,7 @@ def resolve_iog_refinement(*_, data):
     pointsInside = data.get("pointsInside", [])
     pointsOutside = data.get("pointsOutside", [])
 
-    return {"polygons": refine(pointsInside, pointsOutside, id)}
+    return {"polygons": refine(pointsInside, pointsOutside, id, cache=cache)}
 
 
 # Create executable schema instance
