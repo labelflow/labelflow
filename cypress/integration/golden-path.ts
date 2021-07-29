@@ -104,7 +104,8 @@ describe("Golden path", () => {
     ).should("exist");
 
     cy.get('[aria-label="Export"]').click();
-
     cy.contains("Your project contains 1 labels").should("be.visible");
+    cy.contains("Export to COCO").should("exist").click();
+    cy.contains("Export Options").should("be.visible");
   });
 });
