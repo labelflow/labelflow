@@ -9,10 +9,6 @@ import { render, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 import { Map as OlMap } from "ol";
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { mocked } from "ts-jest/utils";
-import probe from "probe-image-size";
-
 import VectorLayer from "ol/layer/Vector";
 import { mockNextRouter } from "../../../../utils/router-mocks";
 

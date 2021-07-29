@@ -10,10 +10,10 @@ import { Fill, Stroke, Style } from "ol/style";
 import { useHotkeys } from "react-hotkeys-hook";
 import CircleStyle from "ol/style/Circle";
 import { Feature } from "ol";
+import { Label } from "@labelflow/graphql-types";
 import { keymap } from "../../../keymap";
 import { useLabellingStore } from "../../../connectors/labelling-state";
 import { useUndoStore, Effect } from "../../../connectors/undo-store";
-import { Label } from "@labelflow/graphql-types";
 import { noneClassColor } from "../../../utils/class-color-generator";
 import {
   addLabelToImageInCache,

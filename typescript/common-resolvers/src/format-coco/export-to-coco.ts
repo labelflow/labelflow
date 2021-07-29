@@ -1,5 +1,5 @@
-import { convertLabelflowDatasetToCocoDataset } from "./coco-core/converters";
 import { QueryExportToCocoArgs } from "@labelflow/graphql-types";
+import { convertLabelflowDatasetToCocoDataset } from "./coco-core/converters";
 import { jsonToDataUri } from "./json-to-data-uri";
 import { Context } from "../types";
 
