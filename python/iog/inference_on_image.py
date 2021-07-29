@@ -131,6 +131,8 @@ gpu_id = 0
 device = torch.device("cuda:" + str(gpu_id) if torch.cuda.is_available() else "cpu")
 if torch.cuda.is_available():
     print("GPU available: {} ".format(gpu_id))
+else:
+    print("GPU unavailable")
 # net.to(device)
 
 trns = transforms.Compose(
