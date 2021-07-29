@@ -11,9 +11,10 @@ export const uploadsRoute = "/api/worker/uploads";
  */
 const getUploadTarget = async (
   _parent: any,
-  _,
+  _args: null,
   { repository }: Context
 ): Promise<UploadTarget> => {
+  console.log(_args);
   return repository.upload.getUploadTarget();
 };
 
