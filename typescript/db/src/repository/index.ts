@@ -2,6 +2,7 @@ import { PrismaClient } from "@prisma/client";
 
 import { DbLabel, Repository } from "@labelflow/common-resolvers";
 import { getUploadTargetHttp, getFromStorage, putInStorage } from "./upload";
+import { countLabels } from "./label";
 
 const prisma = new PrismaClient();
 
@@ -29,7 +30,7 @@ export const repository: Repository = {
       const createdLabel = await prisma.label.create({ data: label });
       return createdLabel.id;
     },
-    count: async (where) => prisma.label.count({ where }),
+    count: countLabels,
     delete: async (id) => {
       await prisma.label.delete({ where: { id } });
     },
