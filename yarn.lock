@@ -5098,18 +5098,19 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@labelflow/common-resolvers@workspace:typescript/common-resolvers"
   dependencies:
-    "@graphql-tools/merge": ^6.2.14
+    "@graphql-tools/merge": 6.2.14
     "@labelflow/graphql-types": "workspace:typescript/graphql-types"
-    "@turf/bbox": ^6.5.0
-    "@turf/bbox-polygon": ^6.5.0
-    "@turf/helpers": ^6.5.0
-    "@turf/intersect": ^6.5.0
+    "@turf/bbox": 6.5.0
+    "@turf/bbox-polygon": 6.5.0
+    "@turf/helpers": 6.5.0
+    "@turf/intersect": 6.5.0
+    "@types/probe-image-size": 7.0.1
     graphql: 15.5.1
-    graphql-type-json: ^0.3.2
-    lodash: ^4.17.21
-    probe-image-size: ^7.2.1
+    graphql-type-json: 0.3.2
+    lodash: 4.17.21
+    probe-image-size: 7.2.1
     typescript: 4.3.5
-    uuid: ^8.3.2
+    uuid: 8.3.2
   languageName: unknown
   linkType: soft
 
@@ -5213,7 +5214,6 @@ __metadata:
     "@turf/intersect": ^6.5.0
     "@types/bluebird": ^3.5.35
     "@types/node": 12.12.21
-    "@types/probe-image-size": ^7.0.0
     "@types/react": 17.0.3
     "@types/react-dom": 17.0.1
     "@types/uuid": ^8.3.0
@@ -5242,7 +5242,6 @@ __metadata:
     node-polyfill-webpack-plugin: ^1.1.2
     ol: 6.5.0
     postcss: ^8.3.5
-    probe-image-size: ^7.2.0
     query-string: ^7.0.0
     react: 17.x
     react-dom: 17.x
@@ -7892,21 +7891,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@turf/bbox-polygon@npm:6.5.0, @turf/bbox-polygon@npm:^6.5.0":
+  version: 6.5.0
+  resolution: "@turf/bbox-polygon@npm:6.5.0"
+  dependencies:
+    "@turf/helpers": ^6.5.0
+  checksum: 21f8870462f66863d5894ad403239a34335f4324a97287305b132a59dd66639cd32545de29c7b0286c90be2b9a3fc83513ad3a024b1462a617039c44e8631134
+  languageName: node
+  linkType: hard
+
 "@turf/bbox-polygon@npm:^6.3.0":
   version: 6.3.0
   resolution: "@turf/bbox-polygon@npm:6.3.0"
   dependencies:
     "@turf/helpers": ^6.3.0
   checksum: 82d249bd8cbda30458b102c0b86ca8d2d1e1b56d5ac9a66062b19781727ae1466eb2d5cb031733ccfe82dacd52b7e89e0b2a259fb0c830d8ba03628a3e7d47c0
-  languageName: node
-  linkType: hard
-
-"@turf/bbox-polygon@npm:^6.5.0":
-  version: 6.5.0
-  resolution: "@turf/bbox-polygon@npm:6.5.0"
-  dependencies:
-    "@turf/helpers": ^6.5.0
-  checksum: 21f8870462f66863d5894ad403239a34335f4324a97287305b132a59dd66639cd32545de29c7b0286c90be2b9a3fc83513ad3a024b1462a617039c44e8631134
   languageName: node
   linkType: hard
 
@@ -7920,7 +7919,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@turf/bbox@npm:^6.5.0":
+"@turf/bbox@npm:6.5.0, @turf/bbox@npm:^6.5.0":
   version: 6.5.0
   resolution: "@turf/bbox@npm:6.5.0"
   dependencies:
@@ -8390,17 +8389,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@turf/helpers@npm:6.5.0, @turf/helpers@npm:^6.5.0":
+  version: 6.5.0
+  resolution: "@turf/helpers@npm:6.5.0"
+  checksum: e531ab902beabe9c80ba2364fdd3af65af16678f25d1e32b44d485b4aecf268d4f6083dfbddf53c2448f693cf37e62559fbc07c08f6c68ef324512c48a02cfe0
+  languageName: node
+  linkType: hard
+
 "@turf/helpers@npm:6.x, @turf/helpers@npm:^6.3.0":
   version: 6.3.0
   resolution: "@turf/helpers@npm:6.3.0"
   checksum: be72e760e86e831e50dafbf3a1aacd94c188e8cb69b5b67e4dbea0fe17c3065f0f1e35c08c24e7b40594f8c38d1595e9eb1d0749452efe4fb12525c3e81ea78c
-  languageName: node
-  linkType: hard
-
-"@turf/helpers@npm:^6.5.0":
-  version: 6.5.0
-  resolution: "@turf/helpers@npm:6.5.0"
-  checksum: e531ab902beabe9c80ba2364fdd3af65af16678f25d1e32b44d485b4aecf268d4f6083dfbddf53c2448f693cf37e62559fbc07c08f6c68ef324512c48a02cfe0
   languageName: node
   linkType: hard
 
@@ -8435,6 +8434,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@turf/intersect@npm:6.5.0, @turf/intersect@npm:^6.5.0":
+  version: 6.5.0
+  resolution: "@turf/intersect@npm:6.5.0"
+  dependencies:
+    "@turf/helpers": ^6.5.0
+    "@turf/invariant": ^6.5.0
+    polygon-clipping: ^0.15.3
+  checksum: 2e677c8720843645edf166d30d77f5d421f823ab3dea17b8c30d5e0f0c486cd9b4a507c07e9131d3511a573dc6c57237bb2982531b1f41856aae6171e5952856
+  languageName: node
+  linkType: hard
+
 "@turf/intersect@npm:^6.3.0":
   version: 6.3.0
   resolution: "@turf/intersect@npm:6.3.0"
@@ -8443,17 +8453,6 @@ __metadata:
     "@turf/invariant": ^6.3.0
     polygon-clipping: ^0.15.2
   checksum: bc2f3b9b38ff021b237fd64f09fc431752c0755e4e67b5fef69da18dc6b47e0409bb1de62de14238c7f036ca6ad7582be7c437d3aa12b564711cad9d3de0e3dd
-  languageName: node
-  linkType: hard
-
-"@turf/intersect@npm:^6.5.0":
-  version: 6.5.0
-  resolution: "@turf/intersect@npm:6.5.0"
-  dependencies:
-    "@turf/helpers": ^6.5.0
-    "@turf/invariant": ^6.5.0
-    polygon-clipping: ^0.15.3
-  checksum: 2e677c8720843645edf166d30d77f5d421f823ab3dea17b8c30d5e0f0c486cd9b4a507c07e9131d3511a573dc6c57237bb2982531b1f41856aae6171e5952856
   languageName: node
   linkType: hard
 
@@ -9924,12 +9923,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/probe-image-size@npm:^7.0.0":
-  version: 7.0.0
-  resolution: "@types/probe-image-size@npm:7.0.0"
+"@types/probe-image-size@npm:7.0.1":
+  version: 7.0.1
+  resolution: "@types/probe-image-size@npm:7.0.1"
   dependencies:
     "@types/node": "*"
-  checksum: dfcdaf36b5e4c47c9ed5a0e8bdf0eae2ba9a2a373e2afe273d413fd9150da8c149940031d5fe1ed5068be42a3abc68891254e953922a2207374e0b7b6b27588a
+  checksum: 5c29a8a0ba76514882986f5bc387092507e8fb61e5c8d0cff8c500b75dc0f85af10373749a47ff0d5299771a078af55bff4cbf802f70b70a8f2aaa52a3099ad0
   languageName: node
   linkType: hard
 
@@ -17452,7 +17451,7 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"graphql-type-json@npm:^0.3.2":
+"graphql-type-json@npm:0.3.2, graphql-type-json@npm:^0.3.2":
   version: 0.3.2
   resolution: "graphql-type-json@npm:0.3.2"
   peerDependencies:
@@ -23266,7 +23265,7 @@ next-pwa@5.2.21:
   languageName: node
   linkType: hard
 
-"probe-image-size@npm:7.2.1, probe-image-size@npm:^7.2.1":
+"probe-image-size@npm:7.2.1":
   version: 7.2.1
   resolution: "probe-image-size@npm:7.2.1"
   dependencies:
@@ -23274,17 +23273,6 @@ next-pwa@5.2.21:
     needle: ^2.5.2
     stream-parser: ~0.3.1
   checksum: 997ba7bbe42a04a3f20fac58506b4b411609410587131b962b54f45d64399de60396ed2170aab0ea60d68f8b01f08ad81100e0dd92486eb5c863c37bc12e2971
-  languageName: node
-  linkType: hard
-
-"probe-image-size@npm:^7.2.0":
-  version: 7.2.0
-  resolution: "probe-image-size@npm:7.2.0"
-  dependencies:
-    lodash.merge: ^4.6.2
-    needle: ^2.5.2
-    stream-parser: ~0.3.1
-  checksum: bc4d786c1cac8b8db09e1a18b80a7bd31ccd7c3cd4e903d7019128cc0b1382c43449a4d2cfc0a579ff6088ed453c1875ab49ce596199a90f1c81596ed751f602
   languageName: node
   linkType: hard
 
