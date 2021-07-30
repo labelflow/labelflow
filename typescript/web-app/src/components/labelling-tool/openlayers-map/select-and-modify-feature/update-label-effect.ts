@@ -1,6 +1,6 @@
 import { ApolloClient, gql } from "@apollo/client";
 import { GeometryInput, LabelType } from "@labelflow/graphql-types";
-import { getBoundedGeometryFromImage } from "@labelflow/common-resolvers/src/label";
+import { getBoundedGeometryFromImage } from "@labelflow/common-resolvers";
 import { Effect } from "../../../../connectors/undo-store";
 
 const updateLabelMutation = gql`

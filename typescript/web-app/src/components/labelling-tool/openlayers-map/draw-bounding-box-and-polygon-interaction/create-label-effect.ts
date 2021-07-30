@@ -1,5 +1,5 @@
 import { ApolloCache, ApolloClient, Reference, gql } from "@apollo/client";
-import { getBoundedGeometryFromImage } from "@labelflow/common-resolvers/src/label";
+import { getBoundedGeometryFromImage } from "@labelflow/common-resolvers";
 
 import { GeometryInput, LabelType } from "@labelflow/graphql-types";
 import { Effect } from "../../../../connectors/undo-store";

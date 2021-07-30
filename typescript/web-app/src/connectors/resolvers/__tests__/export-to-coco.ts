@@ -1,11 +1,11 @@
 import { gql } from "@apollo/client";
 import { omit } from "lodash/fp";
-import { initialCocoDataset } from "@labelflow/common-resolvers/src/format-coco/coco-core/converters";
-import { CocoDataset } from "@labelflow/common-resolvers/src/format-coco/coco-core/types";
 import {
+  initialCocoDataset,
+  CocoDataset,
   jsonToDataUri,
   dataUriToJson,
-} from "@labelflow/common-resolvers/src/format-coco/json-to-data-uri";
+} from "@labelflow/common-resolvers";
 
 import { client } from "../../apollo-client-schema";
 
