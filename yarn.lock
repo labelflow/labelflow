@@ -4614,7 +4614,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-tools/merge@npm:^6, @graphql-tools/merge@npm:^6.0.0, @graphql-tools/merge@npm:^6.2.12, @graphql-tools/merge@npm:^6.2.14":
+"@graphql-tools/merge@npm:6.2.14, @graphql-tools/merge@npm:^6, @graphql-tools/merge@npm:^6.0.0, @graphql-tools/merge@npm:^6.2.12, @graphql-tools/merge@npm:^6.2.14":
   version: 6.2.14
   resolution: "@graphql-tools/merge@npm:6.2.14"
   dependencies:
@@ -5119,7 +5119,7 @@ __metadata:
   dependencies:
     "@graphql-tools/graphql-file-loader": 6.2.7
     "@graphql-tools/load": 6.2.8
-    "@graphql-tools/merge": ^6.2.14
+    "@graphql-tools/merge": 6.2.14
     "@graphql-tools/schema": 7.1.5
     "@labelflow/common-resolvers": "workspace:typescript/common-resolvers"
     "@prisma/client": 2.27.0
@@ -5128,9 +5128,10 @@ __metadata:
     graphql: 15.5.1
     nodemon: 2.0.12
     prisma: 2.27.0
-    probe-image-size: ^7.2.1
+    probe-image-size: 7.2.1
     ts-node: 10.1.0
     typescript: 4.3.5
+    uuid: 8.3.2
   languageName: unknown
   linkType: soft
 
@@ -23265,6 +23266,17 @@ next-pwa@5.2.21:
   languageName: node
   linkType: hard
 
+"probe-image-size@npm:7.2.1, probe-image-size@npm:^7.2.1":
+  version: 7.2.1
+  resolution: "probe-image-size@npm:7.2.1"
+  dependencies:
+    lodash.merge: ^4.6.2
+    needle: ^2.5.2
+    stream-parser: ~0.3.1
+  checksum: 997ba7bbe42a04a3f20fac58506b4b411609410587131b962b54f45d64399de60396ed2170aab0ea60d68f8b01f08ad81100e0dd92486eb5c863c37bc12e2971
+  languageName: node
+  linkType: hard
+
 "probe-image-size@npm:^7.2.0":
   version: 7.2.0
   resolution: "probe-image-size@npm:7.2.0"
@@ -23273,17 +23285,6 @@ next-pwa@5.2.21:
     needle: ^2.5.2
     stream-parser: ~0.3.1
   checksum: bc4d786c1cac8b8db09e1a18b80a7bd31ccd7c3cd4e903d7019128cc0b1382c43449a4d2cfc0a579ff6088ed453c1875ab49ce596199a90f1c81596ed751f602
-  languageName: node
-  linkType: hard
-
-"probe-image-size@npm:^7.2.1":
-  version: 7.2.1
-  resolution: "probe-image-size@npm:7.2.1"
-  dependencies:
-    lodash.merge: ^4.6.2
-    needle: ^2.5.2
-    stream-parser: ~0.3.1
-  checksum: 997ba7bbe42a04a3f20fac58506b4b411609410587131b962b54f45d64399de60396ed2170aab0ea60d68f8b01f08ad81100e0dd92486eb5c863c37bc12e2971
   languageName: node
   linkType: hard
 
@@ -28190,21 +28191,21 @@ typescript@4.3.5:
   languageName: node
   linkType: hard
 
+"uuid@npm:8.3.2, uuid@npm:^8.0.0, uuid@npm:^8.3.0, uuid@npm:^8.3.2":
+  version: 8.3.2
+  resolution: "uuid@npm:8.3.2"
+  bin:
+    uuid: dist/bin/uuid
+  checksum: aed2bcef341f95635f308fea8831fb9038b18c485fe7e71feb89d2e05602dfecad0cb6f2246fae096d4da425cca6e8a71056f28abd97ad98cf770a2018853248
+  languageName: node
+  linkType: hard
+
 "uuid@npm:^3.1.0, uuid@npm:^3.3.2":
   version: 3.4.0
   resolution: "uuid@npm:3.4.0"
   bin:
     uuid: ./bin/uuid
   checksum: 1ce3f37e214d6d0dc94a6a9663a0365013ace66bc3fd5b203e6f5d2eeb978aaee1192367222386345d30b4c6a447928c501121aa84c637724bf105ef57284949
-  languageName: node
-  linkType: hard
-
-"uuid@npm:^8.0.0, uuid@npm:^8.3.0, uuid@npm:^8.3.2":
-  version: 8.3.2
-  resolution: "uuid@npm:8.3.2"
-  bin:
-    uuid: dist/bin/uuid
-  checksum: aed2bcef341f95635f308fea8831fb9038b18c485fe7e71feb89d2e05602dfecad0cb6f2246fae096d4da425cca6e8a71056f28abd97ad98cf770a2018853248
   languageName: node
   linkType: hard
 

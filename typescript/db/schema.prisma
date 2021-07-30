@@ -22,11 +22,16 @@ model Image {
   projectId String   @db.Uuid
 }
 
+enum LabelType {
+  Polygon
+  Box
+}
+
 model Label {
   id           String      @id @default(uuid()) @db.Uuid
   createdAt    DateTime    @default(now())
   updatedAt    DateTime    @updatedAt
-  type         String
+  type         LabelType
   x            Float
   y            Float
   height       Float

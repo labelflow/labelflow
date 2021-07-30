@@ -14,12 +14,13 @@
   "dependencies": {
     "@graphql-tools/graphql-file-loader": "6.2.7",
     "@graphql-tools/load": "6.2.8",
-    "@graphql-tools/merge": "^6.2.14",
+    "@graphql-tools/merge": "6.2.14",
     "@graphql-tools/schema": "7.1.5",
     "@labelflow/common-resolvers": "workspace:typescript/common-resolvers",
     "@prisma/client": "2.27.0",
     "apollo-server": "3.0.2",
     "graphql": "15.5.1",
-    "probe-image-size": "^7.2.1"
+    "probe-image-size": "7.2.1",
+    "uuid": "8.3.2"
   }
 }
