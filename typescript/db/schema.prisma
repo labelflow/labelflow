@@ -8,7 +8,7 @@ generator client {
 }
 
 model Image {
-  id        String   @id @db.Uuid @default(uuid())
+  id        String   @id @default(uuid()) @db.Uuid
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   url       String
@@ -18,14 +18,15 @@ model Image {
   width     Float
   height    Float
   labels    Label[]
-  project   Project @relation(fields: [projectId],references: [id])
-  projectId String @db.Uuid
+  project   Project  @relation(fields: [projectId], references: [id])
+  projectId String   @db.Uuid
 }
 
 model Label {
-  id           String      @id @db.Uuid @default(uuid())
+  id           String      @id @default(uuid()) @db.Uuid
   createdAt    DateTime    @default(now())
   updatedAt    DateTime    @updatedAt
+  type         String
   x            Float
   y            Float
   height       Float
@@ -33,23 +34,23 @@ model Label {
   geometry     Json
   image        Image       @relation(fields: [imageId], references: [id])
   labelClass   LabelClass? @relation(fields: [labelClassId], references: [id])
-  imageId      String @db.Uuid
-  labelClassId String @db.Uuid
+  imageId      String      @db.Uuid
+  labelClassId String      @db.Uuid
 }
 
 model LabelClass {
-  id        String   @id @db.Uuid @default(uuid())
+  id        String   @id @default(uuid()) @db.Uuid
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   name      String
   color     String
   labels    Label[]
   project   Project  @relation(fields: [projectId], references: [id])
-  projectId String @db.Uuid
+  projectId String   @db.Uuid
 }
 
 model Project {
-  id           String       @id @db.Uuid @default(uuid())
+  id           String       @id @default(uuid()) @db.Uuid
   createdAt    DateTime     @default(now())
   updatedAt    DateTime     @updatedAt
   name         String       @unique
