@@ -2,7 +2,7 @@ import { PrismaClient } from "@prisma/client";
 
 import { DbLabel, Repository } from "@labelflow/common-resolvers";
 import { getUploadTargetHttp, getFromStorage, putInStorage } from "./upload";
-import { countLabels } from "./label";
+import { countLabels, listLabels } from "./label";
 
 const prisma = new PrismaClient();
 
@@ -50,15 +50,7 @@ export const repository: Repository = {
         return false;
       }
     },
-    /* Needs to be casted as Prisma doesn't let us specify
-     * the type for geometry */
-    list: (where, skip = undefined, first = undefined) =>
-      prisma.label.findMany({
-        where,
-        orderBy: { createdAt: "asc" },
-        skip,
-        take: first,
-      }) as unknown as Promise<DbLabel[]>,
+    list: listLabels,
   },
   labelClass: {
     add: async (labelClass) => {
