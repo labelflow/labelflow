@@ -7,7 +7,7 @@ export default [
     stores: {
       example: "id,createdAt,updatedAt,name",
       image:
-        "id,createdAt,updatedAt,url,name,path,mimetype,width,height,projectId",
+        "id,createdAt,updatedAt,url,externalUrl,name,path,mimetype,width,height,projectId",
       label:
         "id,createdAt,updatedAt,imageId,x,y,height,width,labelClassId,geometry",
       labelClass: "id,createdAt,updatedAt,name,color,projectId",
