@@ -5145,7 +5145,7 @@ __metadata:
     "@turf/helpers": ^6.5.0
     "@turf/intersect": ^6.5.0
     "@types/bluebird": ^3.5.35
-    "@types/mime-types": ^2.1.0
+    "@types/mime-types": 2.1.0
     "@types/node": 12.12.21
     "@types/probe-image-size": ^7.0.0
     "@types/react": 17.0.3
@@ -9638,7 +9638,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/mime-types@npm:^2.1.0":
+"@types/mime-types@npm:2.1.0":
   version: 2.1.0
   resolution: "@types/mime-types@npm:2.1.0"
   checksum: 26915c3601cb8569f4a3665ea8e460adc97165d48a3898edf816066212eca0de3935a0c11d111a3aff8c0ebb4b7e03923001d8bac90c24896719e3ff4655e1a9
