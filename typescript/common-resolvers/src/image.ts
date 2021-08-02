@@ -1,4 +1,5 @@
 import { v4 as uuidv4 } from "uuid";
+import "isomorphic-fetch";
 
 import type {
   MutationCreateImageArgs,
@@ -85,14 +86,13 @@ const createImage = async (
 
   if (!file && externalUrl && !url) {
     // External file based upload
-
     const fetchResult = await fetch(externalUrl, {
       method: "GET",
       mode: "cors",
-      headers: new Headers({
+      headers: {
         Accept: "image/tiff,image/jpeg,image/png,image/*,*/*;q=0.8",
         "Sec-Fetch-Dest": "image",
-      }),
+      },
       credentials: "omit",
     });
 
@@ -113,7 +113,8 @@ const createImage = async (
 
     finalUrl = uploadTarget.downloadUrl;
 
-    await repository.upload.put(finalUrl, await fetchResult.blob());
+    const blob = await fetchResult.blob();
+    await repository.upload.put(finalUrl, blob);
     // await (await caches.open(uploadsCacheName)).put(finalUrl, responseOfGet);
   }
 
@@ -130,7 +131,6 @@ const createImage = async (
     }
     finalUrl = uploadTarget.downloadUrl;
 
-    // await (await caches.open(uploadsCacheName)).put(finalUrl, response);
     await repository.upload.put(finalUrl, file);
   }
 

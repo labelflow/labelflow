@@ -17,13 +17,15 @@ export const repository: Repository = {
       prisma.image.findUnique({
         where: { id },
       }),
-    list: (where, skip = undefined, first = undefined) =>
-      prisma.image.findMany({
+
+    list: (where, skip = undefined, first = undefined) => {
+      return prisma.image.findMany({
         where,
         orderBy: { createdAt: "asc" },
         skip,
         take: first,
-      }),
+      });
+    },
   },
   label: {
     add: async (label) => {

@@ -44,7 +44,7 @@ export const putInStorage = async (url: string, file: Blob) => {
   await (await caches.open(uploadsCacheName)).put(url, response);
 };
 
-export const getFromStorage = async (url: string): Promise<Response> => {
+export const getFromStorage = async (url: string): Promise<ArrayBuffer> => {
   const cacheResult = await (await caches.open(uploadsCacheName)).match(url);
 
   const fetchResult =
@@ -64,5 +64,5 @@ export const getFromStorage = async (url: string): Promise<Response> => {
       `Could not fetch image at url ${url} properly, code ${fetchResult.status}`
     );
   }
-  return fetchResult;
+  return fetchResult.arrayBuffer();
 };

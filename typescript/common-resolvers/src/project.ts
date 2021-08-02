@@ -135,6 +135,7 @@ const createProject = async (
       updatedAt: date,
       name,
     });
+
     return await getProjectById(projectId, repository);
   } catch (e) {
     throw new Error("Could not create the project");
