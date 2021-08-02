@@ -9,7 +9,7 @@ import type {
   QueryProjectsArgs,
   QueryImagesArgs,
 } from "../../graphql-types.generated";
-import { DbProject } from "../database";
+import { DbProject } from "../database/types";
 import { Repository } from "../repository/types";
 
 import { Context } from "./types";

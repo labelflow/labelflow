@@ -1,4 +1,4 @@
-import { DbImage, DbLabel, DbLabelClass, DbProject } from "../database";
+import { DbImage, DbLabel, DbLabelClass, DbProject } from "../database/types";
 import type {
   ImageWhereInput,
   LabelClassWhereInput,

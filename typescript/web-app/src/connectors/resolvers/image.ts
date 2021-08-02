@@ -7,7 +7,7 @@ import type {
   QueryImagesArgs,
 } from "../../graphql-types.generated";
 
-import { DbImage } from "../database";
+import { DbImage } from "../database/types";
 import { uploadsCacheName, getUploadTargetHttp } from "./upload";
 import { projectTypename } from "./project";
 import { probeImage } from "./utils/probe-image";

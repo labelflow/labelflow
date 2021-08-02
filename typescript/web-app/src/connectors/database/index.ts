@@ -2,39 +2,10 @@ import Dexie from "dexie";
 import { v4 as uuidv4 } from "uuid";
 import versions from "./versions";
 import sampleImages from "../../utils/image-sample-collection";
-import type {
-  Scalars,
-  Example as GeneratedExample,
-  Image as GeneratedImage,
-  Label as GeneratedLabel,
-  LabelClass as GeneratedLabelClass,
-  Project as GeneratedProject,
-} from "../../graphql-types.generated";
+import { DbExample, DbImage, DbLabel, DbLabelClass, DbProject } from "./types";
 import { getImageEntityFromMutationArgs } from "../resolvers/image";
 
-export type DbImage =
-  | (Omit<GeneratedImage, "url" | "labels"> & {
-      fileId: Scalars["ID"];
-    })
-  | Omit<GeneratedImage, "labels">;
-
-export type DbLabel = Omit<GeneratedLabel, "labelClass"> & {
-  labelClassId: Scalars["ID"] | undefined | null;
-};
-
-export type DbLabelClass = Omit<GeneratedLabelClass, "labels">;
-
-export type DbExample = GeneratedExample;
-
-export type DbProject = Omit<
-  GeneratedProject,
-  | "images"
-  | "imagesAggregates"
-  | "labels"
-  | "labelsAggregates"
-  | "labelClasses"
-  | "labelClassesAggregates"
->;
+export type { DbExample, DbImage, DbLabel, DbLabelClass, DbProject };
 
 interface Database extends Dexie {
   example: Dexie.Table<DbExample, string>;
