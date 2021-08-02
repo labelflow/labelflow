@@ -169,12 +169,6 @@ describe("Image resolver test suite", () => {
     // @ts-ignore
     fetch.mockResponseOnce(new Blob());
     // @ts-ignore
-    // probe.sync.mockReturnValueOnce({
-    //   width: 10,
-    //   height: 10,
-    //   mime: "something",
-    // });
-
     const {
       data: {
         createImage: { id },
