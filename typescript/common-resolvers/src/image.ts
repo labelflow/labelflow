@@ -115,7 +115,6 @@ const createImage = async (
 
     const blob = await fetchResult.blob();
     await repository.upload.put(finalUrl, blob);
-    // await (await caches.open(uploadsCacheName)).put(finalUrl, responseOfGet);
   }
 
   if (file && !externalUrl && !url) {
