@@ -1,3 +1,4 @@
+import mime from "mime-types";
 import { DbImage, DbLabelClass } from "../../../database";
 import {
   CocoCategory,
@@ -116,12 +117,20 @@ const convertLabelsOfImageToCocoAnnotations = (
 };
 
 const convertImageToCocoImage = (
-  { createdAt, height, width, name, externalUrl, id: idImage }: DbImage,
+  {
+    createdAt,
+    height,
+    width,
+    name,
+    externalUrl,
+    id: idImage,
+    mimetype,
+  }: DbImage,
   id: number
 ): CocoImage => {
   return {
     id,
-    file_name: `${name}_${idImage}`,
+    file_name: `${name}_${idImage}.${mime.extension(mimetype)}`,
     coco_url: externalUrl ?? "",
     date_captured: createdAt,
     flickr_url: "",
