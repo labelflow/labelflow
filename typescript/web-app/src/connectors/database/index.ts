@@ -36,7 +36,11 @@ export const resetDatabase = () => {
 
   // Create Demo project with sample images if this is the first time the user visits labelflow
   db.on("populate", () => {
-    shouldPopulateDb = true;
+    // Get if we are running tests with Jest, in this case we do not want to populate the DB to avoid breaking the tests https://stackoverflow.com/a/52231746/10266299
+    const isRunningJestTests = process.env.JEST_WORKER_ID != null;
+    if (!isRunningJestTests) {
+      shouldPopulateDb = true;
+    }
   });
   db.on("ready", async () => {
     if (shouldPopulateDb) {
