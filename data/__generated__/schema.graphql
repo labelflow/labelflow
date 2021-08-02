@@ -147,6 +147,8 @@ input LabelUpdateInput {
 
 input LabelWhereInput {
   imageId: ID
+  labelClassId: ID
+  projectId: ID
 }
 
 input LabelWhereUniqueInput {
@@ -167,8 +169,8 @@ type Mutation {
   createLabelClass(data: LabelClassCreateInput!): LabelClass
   deleteLabelClass(where: LabelClassWhereUniqueInput!): LabelClass
   createProject(data: ProjectCreateInput!): Project
-  updateProject(where: ProjectWhereUniqueInput!, data: ProjectUpdateInput!): Project
-  deleteProject(where: ProjectWhereUniqueInput!): Project
+  updateProject(where: ProjectWhereIDInput!, data: ProjectUpdateInput!): Project
+  deleteProject(where: ProjectWhereIDInput!): Project
 }
 
 type Project {
@@ -191,6 +193,10 @@ input ProjectCreateInput {
 
 input ProjectUpdateInput {
   name: String!
+}
+
+input ProjectWhereIDInput {
+  id: ID!
 }
 
 input ProjectWhereUniqueInput {

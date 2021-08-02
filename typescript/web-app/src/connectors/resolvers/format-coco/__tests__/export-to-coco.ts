@@ -45,7 +45,15 @@ const createImage = async (name: String): Promise<string> => {
   const mutationResult = await client.mutate({
     mutation: gql`
       mutation createImage($file: Upload!, $name: String!, $projectId: ID!) {
-        createImage(data: { name: $name, file: $file, projectId: $projectId }) {
+        createImage(
+          data: {
+            name: $name
+            file: $file
+            projectId: $projectId
+            width: 100
+            height: 200
+          }
+        ) {
           id
         }
       }
@@ -209,9 +217,9 @@ describe("Exporting a dataset to coco format", () => {
           id: 1,
           image_id: 1,
           category_id: 1,
-          segmentation: [],
+          segmentation: [[1, 199, 2, 199, 2, 198, 1, 198, 1, 199]],
           area: 1,
-          bbox: [1, 1, 1, 1],
+          bbox: [1, 198, 1, 1],
           iscrowd: 0,
         },
       ],
