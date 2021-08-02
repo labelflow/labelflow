@@ -1,6 +1,7 @@
 import Dexie from "dexie";
 import { v4 as uuidv4 } from "uuid";
 import versions from "./versions";
+import sampleImages from "../../utils/image-sample-collection";
 import type {
   Scalars,
   Example as GeneratedExample,
@@ -9,6 +10,7 @@ import type {
   LabelClass as GeneratedLabelClass,
   Project as GeneratedProject,
 } from "../../graphql-types.generated";
+import { getImageEntityFromMutationArgs } from "../resolvers/image";
 
 export type DbImage =
   | (Omit<GeneratedImage, "url" | "labels"> & {
@@ -44,6 +46,9 @@ interface Database extends Dexie {
 
 // eslint-disable-next-line import/no-mutable-exports
 export let db: Database;
+let shouldPopulateDb = false;
+
+const demoImageUrls = sampleImages.slice(0, 5);
 
 export const resetDatabase = () => {
   console.log("Initializing database");
@@ -57,13 +62,30 @@ export const resetDatabase = () => {
   db = new Dexie("labelflow_local") as Database;
   versions.map(({ version, stores }) => db.version(version).stores(stores));
   const currentDate = new Date().toISOString();
+
+  // Create Demo project with sample images if this is the first time the user visits labelflow
   db.on("populate", () => {
-    db.project.add({
-      name: "Demo project",
-      id: uuidv4(),
-      createdAt: currentDate,
-      updatedAt: currentDate,
-    });
+    shouldPopulateDb = true;
+  });
+  db.on("ready", async () => {
+    if (shouldPopulateDb) {
+      const projectId = uuidv4();
+      db.project.add({
+        name: "Demo project",
+        id: projectId,
+        createdAt: currentDate,
+        updatedAt: currentDate,
+      });
+      await Promise.all(
+        demoImageUrls.map(async (url) => {
+          const imageEntity = await getImageEntityFromMutationArgs({
+            projectId,
+            url,
+          });
+          db.image.add(imageEntity);
+        })
+      );
+    }
   });
 };
 

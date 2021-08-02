@@ -15,7 +15,9 @@ import { probeImage } from "./utils/probe-image";
 import { Context } from "./types";
 import { throwIfResolvesToNil } from "./utils/throw-if-resolves-to-nil";
 
-const getImageEntityFromMutationArgs = async (data: ImageCreateInput) => {
+export const getImageEntityFromMutationArgs = async (
+  data: ImageCreateInput
+) => {
   const {
     file,
     id,
