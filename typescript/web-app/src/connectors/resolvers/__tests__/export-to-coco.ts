@@ -7,18 +7,17 @@ import {
   dataUriToJson,
 } from "@labelflow/common-resolvers";
 
+import { probeImage } from "@labelflow/common-resolvers/src/utils/probe-image";
 import { client } from "../../apollo-client-schema";
 
 import { setupTestsWithLocalDatabase } from "../../../utils/setup-local-db-tests";
 
-import { probeImage } from "../../../../../common-resolvers/src/utils/probe-image";
-
-jest.mock("../../../../../common-resolvers/src/utils/probe-image");
+jest.mock("@labelflow/common-resolvers/src/utils/probe-image");
 const mockedProbeSync = probeImage as jest.Mock;
 
 setupTestsWithLocalDatabase();
 
-const omitUrl = omit(["images", 0, "coco_url"]);
+const omitUrl = omit("images.0.coco_url");
 
 const testProjectId = "test project id";
 
@@ -234,8 +233,8 @@ describe("Exporting a dataset to coco format", () => {
           coco_url: "mockedUrl",
           date_captured: new Date().toISOString(),
           flickr_url: "",
-          height: 36,
-          width: 42,
+          height: 200,
+          width: 100,
           license: 0,
         },
       ],
