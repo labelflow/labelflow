@@ -126,6 +126,10 @@ export const ClassItem = ({
             query: projectLabelClassesQuery,
             data: { project: updatedProject },
           });
+        } else {
+          throw new Error(
+            "Received null data in update label class name function"
+          );
         }
       },
     });
