@@ -148,7 +148,7 @@ export const ClassItem = ({
 
       {edit && editName != null ? (
         <Input
-          aria-label="edit-class-name-input"
+          aria-label="Class name input"
           variant="flushed"
           flexGrow={1}
           isTruncated

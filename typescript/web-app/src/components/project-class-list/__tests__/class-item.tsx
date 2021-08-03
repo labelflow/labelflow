@@ -128,7 +128,7 @@ describe("Project class list item tests", () => {
       { wrapper }
     );
     fireEvent.change(
-      screen.getByRole("textbox", { name: "edit-class-name-input" }),
+      screen.getByRole("textbox", { name: "Class name input" }),
       {
         target: { value: "NewClassName" },
       }
@@ -153,7 +153,7 @@ describe("Project class list item tests", () => {
       { wrapper }
     );
     fireEvent.change(
-      screen.getByRole("textbox", { name: "edit-class-name-input" }),
+      screen.getByRole("textbox", { name: "Class name input" }),
       {
         target: { value: "NewClassName" },
       }
