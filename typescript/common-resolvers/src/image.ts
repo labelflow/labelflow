@@ -6,6 +6,7 @@ import type {
   MutationCreateImageArgs,
   QueryImageArgs,
   QueryImagesArgs,
+  UploadTargetHttp,
 } from "@labelflow/graphql-types";
 
 import { projectTypename } from "./project";
@@ -15,7 +16,16 @@ import { Context, DbImage } from "./types";
 import { throwIfResolvesToNil } from "./utils/throw-if-resolves-to-nil";
 
 export const getImageEntityFromMutationArgs = async (
-  data: ImageCreateInput
+  data: ImageCreateInput,
+  {
+    putImage,
+    getImage,
+    getUploadTargetHttp,
+  }: {
+    putImage: (url: string, file: Blob) => Promise<void>;
+    getImage: (url: string) => Promise<ArrayBuffer>;
+    getUploadTargetHttp: () => Promise<UploadTargetHttp> | UploadTargetHttp;
+  }
 ) => {
   const {
     file,
@@ -55,7 +65,7 @@ export const getImageEntityFromMutationArgs = async (
       );
     }
 
-    const uploadTarget = await repository.upload.getUploadTargetHttp();
+    const uploadTarget = await getUploadTargetHttp();
 
     // eslint-disable-next-line no-underscore-dangle
     if (uploadTarget.__typename !== "UploadTargetHttp") {
@@ -67,13 +77,13 @@ export const getImageEntityFromMutationArgs = async (
     finalUrl = uploadTarget.downloadUrl;
 
     const blob = await fetchResult.blob();
-    await repository.upload.put(finalUrl, blob);
+    await putImage(finalUrl, blob);
   }
 
   if (file && !externalUrl && !url) {
     // File Content based upload
 
-    const uploadTarget = await repository.upload.getUploadTargetHttp();
+    const uploadTarget = await getUploadTargetHttp();
 
     // eslint-disable-next-line no-underscore-dangle
     if (uploadTarget.__typename !== "UploadTargetHttp") {
@@ -83,7 +93,7 @@ export const getImageEntityFromMutationArgs = async (
     }
     finalUrl = uploadTarget.downloadUrl;
 
-    await repository.upload.put(finalUrl, file);
+    await putImage(finalUrl, file);
   }
 
   // Probe the file to get its dimensions and mimetype if not provided
@@ -94,7 +104,7 @@ export const getImageEntityFromMutationArgs = async (
       mimetype,
       url: finalUrl!,
     },
-    repository
+    getImage
   );
 
   const newImageEntity: DbImage = {
@@ -171,7 +181,11 @@ const createImage = async (
     );
   }
 
-  const newImageEntity = await getImageEntityFromMutationArgs(args.data);
+  const newImageEntity = await getImageEntityFromMutationArgs(args.data, {
+    ...repository.upload,
+    putImage: repository.upload.put,
+    getImage: repository.upload.get,
+  });
 
   await repository.image.add(newImageEntity);
 

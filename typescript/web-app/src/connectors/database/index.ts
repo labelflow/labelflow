@@ -8,12 +8,16 @@ import {
   DbProject,
   getImageEntityFromMutationArgs,
 } from "@labelflow/common-resolvers";
-import versions from "./versions";
 import sampleImages from "../../utils/image-sample-collection";
 
-export type { DbExample, DbImage, DbLabel, DbLabelClass, DbProject };
+import versions from "./versions";
+import {
+  getFromStorage,
+  putInStorage,
+  getUploadTargetHttp,
+} from "../repository/upload";
 
-interface Database extends Dexie {
+export interface Database extends Dexie {
   example: Dexie.Table<DbExample, string>;
   image: Dexie.Table<DbImage, string>;
   label: Dexie.Table<DbLabel, string>;
@@ -59,10 +63,17 @@ export const resetDatabase = () => {
       });
       await Promise.all(
         demoImageUrls.map(async (url) => {
-          const imageEntity = await getImageEntityFromMutationArgs({
-            projectId,
-            url,
-          });
+          const imageEntity = await getImageEntityFromMutationArgs(
+            {
+              projectId,
+              url,
+            },
+            {
+              getUploadTargetHttp,
+              getImage: getFromStorage,
+              putImage: putInStorage,
+            }
+          );
           db.image.add(imageEntity);
         })
       );
