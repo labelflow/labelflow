@@ -88,12 +88,13 @@ describe("Project class list tests", () => {
       color: "red",
     });
     render(<ClassesList projectId={projectId} />, { wrapper });
-    await waitFor(() => expect(screen.getByText("3 Classes")).toBeDefined());
-    await waitFor(() => expect(screen.getByText("MyFirstClass")).toBeDefined());
-    await waitFor(() =>
-      expect(screen.getByText("MySecondClass")).toBeDefined()
-    );
-    await waitFor(() => expect(screen.getByText("MyThirdClass")).toBeDefined());
+
+    await waitFor(() => {
+      expect(screen.getByText("3 Classes")).toBeDefined();
+      expect(screen.getByText("MyFirstClass")).toBeDefined();
+      expect(screen.getByText("MySecondClass")).toBeDefined();
+      expect(screen.getByText("MyThirdClass")).toBeDefined();
+    });
   });
 
   it("Renders the class delete modal", async () => {
