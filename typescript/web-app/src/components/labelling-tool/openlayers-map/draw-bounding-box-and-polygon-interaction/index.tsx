@@ -10,6 +10,7 @@ import { useApolloClient, useQuery, gql } from "@apollo/client";
 import { useToast } from "@chakra-ui/react";
 
 import { useHotkeys } from "react-hotkeys-hook";
+import { LabelType } from "@labelflow/graphql-types";
 import {
   useLabellingStore,
   Tools,
@@ -19,7 +20,6 @@ import { keymap } from "../../../../keymap";
 import { useUndoStore } from "../../../../connectors/undo-store";
 import { noneClassColor } from "../../../../utils/class-color-generator";
 import { createLabelEffect } from "./create-label-effect";
-import { LabelType } from "../../../../graphql-types.generated";
 
 const labelClassQuery = gql`
   query getLabelClass($id: ID!) {

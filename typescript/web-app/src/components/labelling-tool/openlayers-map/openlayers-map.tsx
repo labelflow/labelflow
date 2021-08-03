@@ -12,7 +12,7 @@ import useMeasure from "react-use-measure";
 import { ApolloProvider, useApolloClient, useQuery, gql } from "@apollo/client";
 
 import { Map } from "@labelflow/react-openlayers-fiber";
-import type { Image } from "../../../graphql-types.generated";
+import type { Image } from "@labelflow/graphql-types";
 import "ol/ol.css";
 
 import { DrawBoundingBoxAndPolygonInteraction } from "./draw-bounding-box-and-polygon-interaction";

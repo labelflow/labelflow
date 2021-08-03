@@ -1,8 +1,5 @@
 import { v4 as uuidv4 } from "uuid";
-import type {
-  UploadTarget,
-  UploadTargetHttp,
-} from "../../graphql-types.generated";
+import type { UploadTarget, UploadTargetHttp } from "@labelflow/graphql-types";
 import { isInWindowScope } from "../../utils/detect-scope";
 
 export const uploadsCacheName = "uploads";
@@ -34,22 +31,38 @@ export const getUploadTarget = async (): Promise<UploadTarget> => {
   return getUploadTargetHttp();
 };
 
-export default {
-  Mutation: {
-    getUploadTarget,
-  },
+export const putInStorage = async (url: string, file: Blob) => {
+  const response = new Response(file, {
+    status: 200,
+    statusText: "OK",
+    headers: new Headers({
+      "Content-Type": file.type ?? "application/octet-stream",
+      "Content-Length": file.size.toString() ?? "0",
+    }),
+  });
 
-  UploadTarget: {
-    // See https://www.apollographql.com/docs/apollo-server/schema/unions-interfaces/#resolving-a-union
-    // eslint-disable-next-line no-underscore-dangle
-    __resolveType(obj: UploadTarget) {
-      if ("direct" in obj) {
-        return "UploadTargetDirect";
-      }
-      if ("uploadUrl" in obj || "downloadUrl" in obj) {
-        return "UploadTargetHttp";
-      }
-      return null; // GraphQLError is thrown
-    },
-  },
+  await (await caches.open(uploadsCacheName)).put(url, response);
+};
+
+export const getFromStorage = async (url: string): Promise<ArrayBuffer> => {
+  const cacheResult = await (await caches.open(uploadsCacheName)).match(url);
+
+  const fetchResult =
+    cacheResult ??
+    (await fetch(url, {
+      method: "GET",
+      mode: "cors",
+      headers: new Headers({
+        Accept: "image/tiff,image/jpeg,image/png,image/*,*/*;q=0.8",
+        "Sec-Fetch-Dest": "image",
+      }),
+      credentials: "omit",
+    }));
+
+  if (fetchResult.status !== 200) {
+    throw new Error(
+      `Could not fetch image at url ${url} properly, code ${fetchResult.status}`
+    );
+  }
+  return fetchResult.arrayBuffer();
 };

@@ -1,7 +1,7 @@
-import { db, DbLabel } from "../database";
+import { DbLabel } from "@labelflow/common-resolvers";
+import type { LabelWhereInput } from "@labelflow/graphql-types";
+import { db } from "../database";
 import { list } from "./utils/list";
-
-import type { LabelWhereInput } from "../../graphql-types.generated";
 
 /* `count` and `list` need to handle a specific logic when you want it to be filtered by project
  * We can't do joins with dexies so we need to do it manually. */
