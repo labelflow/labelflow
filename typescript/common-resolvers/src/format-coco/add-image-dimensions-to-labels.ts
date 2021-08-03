@@ -1,5 +1,4 @@
-import { DbLabel } from "../../database";
-import { Repository } from "../../repository/types";
+import { DbLabel, Repository } from "../types";
 import { DbLabelWithImageDimensions } from "./coco-core/types";
 
 export const addImageDimensionsToLabels = async (

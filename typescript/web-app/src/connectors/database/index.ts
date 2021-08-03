@@ -1,9 +1,15 @@
 import Dexie from "dexie";
 import { v4 as uuidv4 } from "uuid";
+import {
+  DbExample,
+  DbImage,
+  DbLabel,
+  DbLabelClass,
+  DbProject,
+  getImageEntityFromMutationArgs,
+} from "@labelflow/common-resolvers";
 import versions from "./versions";
 import sampleImages from "../../utils/image-sample-collection";
-import { DbExample, DbImage, DbLabel, DbLabelClass, DbProject } from "./types";
-import { getImageEntityFromMutationArgs } from "../resolvers/image";
 
 export type { DbExample, DbImage, DbLabel, DbLabelClass, DbProject };
 

@@ -1,3 +1,3 @@
-import type { Repository } from "../repository/types";
+import { Repository } from "@labelflow/common-resolvers";
 
 export type Context = { repository: Repository };

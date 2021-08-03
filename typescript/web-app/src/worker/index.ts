@@ -20,7 +20,10 @@ import { initialize as initializeGoogleAnalytics } from "workbox-google-analytic
 import { trimCharsEnd } from "lodash/fp";
 import typeDefs from "../../../../data/__generated__/schema.graphql";
 import { resolvers } from "../connectors/resolvers";
-import { uploadsCacheName, uploadsRoute } from "../connectors/resolvers/upload";
+import {
+  uploadsCacheName,
+  uploadsRoute,
+} from "../connectors/repository/upload";
 import { ApolloServerServiceWorker } from "./apollo-server-service-worker";
 import { UploadServer } from "./upload-server";
 import { repository } from "../connectors/repository";

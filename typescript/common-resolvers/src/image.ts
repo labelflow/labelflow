@@ -1,18 +1,17 @@
 import { v4 as uuidv4 } from "uuid";
+import "isomorphic-fetch";
 
 import type {
   ImageCreateInput,
   MutationCreateImageArgs,
   QueryImageArgs,
   QueryImagesArgs,
-} from "../../graphql-types.generated";
+} from "@labelflow/graphql-types";
 
-import { DbImage } from "../database/types";
-import { uploadsCacheName, getUploadTargetHttp } from "./upload";
 import { projectTypename } from "./project";
 import { probeImage } from "./utils/probe-image";
 
-import { Context } from "./types";
+import { Context, DbImage } from "./types";
 import { throwIfResolvesToNil } from "./utils/throw-if-resolves-to-nil";
 
 export const getImageEntityFromMutationArgs = async (
@@ -40,14 +39,13 @@ export const getImageEntityFromMutationArgs = async (
 
   if (!file && externalUrl && !url) {
     // External file based upload
-
     const fetchResult = await fetch(externalUrl, {
       method: "GET",
       mode: "cors",
-      headers: new Headers({
+      headers: {
         Accept: "image/tiff,image/jpeg,image/png,image/*,*/*;q=0.8",
         "Sec-Fetch-Dest": "image",
-      }),
+      },
       credentials: "omit",
     });
 
@@ -57,7 +55,7 @@ export const getImageEntityFromMutationArgs = async (
       );
     }
 
-    const uploadTarget = await getUploadTargetHttp();
+    const uploadTarget = await repository.upload.getUploadTargetHttp();
 
     // eslint-disable-next-line no-underscore-dangle
     if (uploadTarget.__typename !== "UploadTargetHttp") {
@@ -68,23 +66,14 @@ export const getImageEntityFromMutationArgs = async (
 
     finalUrl = uploadTarget.downloadUrl;
 
-    const responseOfGet = new Response(await fetchResult.blob(), {
-      status: 200,
-      statusText: "OK",
-      headers: new Headers({
-        "Content-Type":
-          fetchResult.headers.get("Content-Type") ?? "application/octet-stream",
-        "Content-Length": fetchResult.headers.get("Content-Length") ?? "0",
-      }),
-    });
-
-    await (await caches.open(uploadsCacheName)).put(finalUrl, responseOfGet);
+    const blob = await fetchResult.blob();
+    await repository.upload.put(finalUrl, blob);
   }
 
   if (file && !externalUrl && !url) {
     // File Content based upload
 
-    const uploadTarget = await getUploadTargetHttp();
+    const uploadTarget = await repository.upload.getUploadTargetHttp();
 
     // eslint-disable-next-line no-underscore-dangle
     if (uploadTarget.__typename !== "UploadTargetHttp") {
@@ -94,25 +83,19 @@ export const getImageEntityFromMutationArgs = async (
     }
     finalUrl = uploadTarget.downloadUrl;
 
-    const response = new Response(file, {
-      status: 200,
-      statusText: "OK",
-      headers: new Headers({
-        "Content-Type": file.type ?? "application/octet-stream",
-        "Content-Length": file.size.toString() ?? "0",
-      }),
-    });
-
-    await (await caches.open(uploadsCacheName)).put(finalUrl, response);
+    await repository.upload.put(finalUrl, file);
   }
 
   // Probe the file to get its dimensions and mimetype if not provided
-  const imageMetaData = await probeImage({
-    width,
-    height,
-    mimetype,
-    url: finalUrl!,
-  });
+  const imageMetaData = await probeImage(
+    {
+      width,
+      height,
+      mimetype,
+      url: finalUrl!,
+    },
+    repository
+  );
 
   const newImageEntity: DbImage = {
     projectId,
