@@ -23,7 +23,6 @@ const createProject = async (name: string, projectId?: string | null) => {
       name,
       projectId,
     },
-    fetchPolicy: "no-cache",
   });
 };
 
