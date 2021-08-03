@@ -44,13 +44,12 @@ export const DeleteLabelClassModal = ({
   const client = useApolloClient();
 
   const deleteLabelClass = useCallback(() => {
-    const deletePromise = client.mutate({
+    client.mutate({
       mutation: deleteLabelClassMutation,
       variables: { id: labelClassId },
       refetchQueries: ["getProjectLabelClasses"],
     });
     onClose();
-    return deletePromise;
   }, [labelClassId, client, onClose]);
 
   return (
