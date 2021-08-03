@@ -13,10 +13,7 @@ const classDefault = {
   id: "myClassId",
 };
 
-/**
- * Mock the apollo client to avoid creating corrupted files that allows
- * us to identify a behaviour.
- */
+// Mock apollo client to be able to test if the mutate function is called during the tests
 jest.mock("../../../connectors/apollo-client-schema", () => {
   const original = jest.requireActual(
     "../../../connectors/apollo-client-schema"
