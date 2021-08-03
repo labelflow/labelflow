@@ -1,7 +1,10 @@
-import { db, DbProject } from "../database";
+import {
+  throwIfResolvesToNil,
+  Repository,
+  DbProject,
+} from "@labelflow/common-resolvers";
 
-import { Repository } from "./types";
-import { throwIfResolvesToNil } from "../resolvers/utils/throw-if-resolves-to-nil";
+import { db } from "../database";
 
 export const deleteProject: Repository["project"]["delete"] = async (id) => {
   const projectToDelete = await throwIfResolvesToNil<
@@ -19,7 +22,6 @@ export const deleteProject: Repository["project"]["delete"] = async (id) => {
     .filter((label) => imagesToDelete.includes(label.imageId))
     .primaryKeys();
 
-  // @ts-ignore
   await db.label.bulkDelete(labelsToDeleteIds);
   await db.labelClass.where({ projectId: projectToDelete.id }).delete();
   await db.image.where({ projectId: projectToDelete.id }).delete();

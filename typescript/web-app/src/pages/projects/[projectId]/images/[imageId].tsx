@@ -16,12 +16,12 @@ import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import { RiArrowRightSLine } from "react-icons/ri";
 import NextLink from "next/link";
+import type { Image } from "@labelflow/graphql-types";
 import { KeymapButton } from "../../../../components/keymap-button";
 import { ImportButton } from "../../../../components/import-button";
 import { ExportButton } from "../../../../components/export-button";
 import { Meta } from "../../../../components/meta";
 import { Layout } from "../../../../components/layout";
-import type { Image } from "../../../../graphql-types.generated";
 import { Gallery } from "../../../../components/gallery";
 
 const ArrowRightIcon = chakra(RiArrowRightSLine);

@@ -5,9 +5,6 @@ import { incrementMockedDate } from "@labelflow/dev-utils/mockdate";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom/extend-expect";
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { mocked } from "ts-jest/utils";
-import probe from "probe-image-size";
 
 import { mockNextRouter } from "../../../../utils/router-mocks";
 
@@ -22,9 +19,10 @@ import { setupTestsWithLocalDatabase } from "../../../../utils/setup-local-db-te
 
 setupTestsWithLocalDatabase();
 
-jest.mock("probe-image-size");
-const mockedProbeSync = mocked(probe.sync);
+import { probeImage } from "@labelflow/common-resolvers/src/utils/probe-image";
 
+jest.mock("@labelflow/common-resolvers/src/utils/probe-image");
+const mockedProbeSync = probeImage as jest.Mock;
 const testProjectId = "mocked-project-id";
 
 const createImage = async (name: String) => {
@@ -32,11 +30,6 @@ const createImage = async (name: String) => {
     width: 42,
     height: 36,
     mime: "image/jpeg",
-    length: 1000,
-    hUnits: "px",
-    wUnits: "px",
-    url: "https://example.com/image.jpeg",
-    type: "jpg",
   });
   const mutationResult = await client.mutate({
     mutation: gql`

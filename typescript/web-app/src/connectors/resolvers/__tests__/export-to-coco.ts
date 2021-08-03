@@ -1,22 +1,23 @@
 import { gql } from "@apollo/client";
-import probe from "probe-image-size";
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { mocked } from "ts-jest/utils";
 import { omit } from "lodash/fp";
-import { client } from "../../../apollo-client-schema";
+import {
+  initialCocoDataset,
+  CocoDataset,
+  jsonToDataUri,
+  dataUriToJson,
+} from "@labelflow/common-resolvers";
 
-import { setupTestsWithLocalDatabase } from "../../../../utils/setup-local-db-tests";
-import { initialCocoDataset } from "../coco-core/converters";
-import { CocoDataset } from "../coco-core/types";
-import { jsonToDataUri } from "..";
-import { dataUriToJson } from "../json-to-data-uri";
+import { probeImage } from "@labelflow/common-resolvers/src/utils/probe-image";
+import { client } from "../../apollo-client-schema";
 
-jest.mock("probe-image-size");
-const mockedProbeSync = mocked(probe.sync);
+import { setupTestsWithLocalDatabase } from "../../../utils/setup-local-db-tests";
+
+jest.mock("@labelflow/common-resolvers/src/utils/probe-image");
+const mockedProbeSync = probeImage as jest.Mock;
 
 setupTestsWithLocalDatabase();
 
-const omitUrl = omit(["images", 0, "coco_url"]);
+const omitUrl = omit("images.0.coco_url");
 
 const testProjectId = "test project id";
 
@@ -190,14 +191,9 @@ describe("Exporting a dataset to coco format", () => {
 
   test("The exportToCoco graphql endpoint returns a dataset with a category and an image when a label class, and an image exist", async () => {
     mockedProbeSync.mockReturnValue({
-      width: 42,
-      height: 36,
+      width: 100,
+      height: 200,
       mime: "image/jpeg",
-      length: 1000,
-      hUnits: "px",
-      wUnits: "px",
-      url: "https://example.com/image.jpeg",
-      type: "jpg",
     });
 
     await createLabelClass({
@@ -237,8 +233,8 @@ describe("Exporting a dataset to coco format", () => {
           coco_url: "mockedUrl",
           date_captured: new Date().toISOString(),
           flickr_url: "",
-          height: 36,
-          width: 42,
+          height: 200,
+          width: 100,
           license: 0,
         },
       ],

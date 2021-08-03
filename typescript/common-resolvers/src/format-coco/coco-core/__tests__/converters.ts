@@ -1,5 +1,6 @@
-import { DbLabelClass } from "../../../../database";
-import { Image, LabelType } from "../../../../../graphql-types.generated";
+import { Image, LabelType } from "@labelflow/graphql-types";
+import { DbLabelClass } from "../../../types";
+
 import {
   convertLabelClassToCocoCategory,
   convertLabelClassesToCocoCategories,

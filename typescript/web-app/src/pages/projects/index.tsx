@@ -5,11 +5,11 @@ import { RiArrowRightSLine } from "react-icons/ri";
 import { useQueryParam } from "use-query-params";
 import { useCallback } from "react";
 
+import type { Project as ProjectType } from "@labelflow/graphql-types";
 import { Meta } from "../../components/meta";
 import { Layout } from "../../components/layout";
 import { IdParam, BoolParam } from "../../utils/query-param-bool";
 import { NewProjectCard, ProjectCard } from "../../components/projects";
-import type { Project as ProjectType } from "../../graphql-types.generated";
 
 import { UpsertProjectModal } from "../../components/projects/upsert-project-modal";
 import { DeleteProjectModal } from "../../components/projects/delete-project-modal";

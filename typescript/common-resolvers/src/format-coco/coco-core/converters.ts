@@ -1,5 +1,6 @@
 import mime from "mime-types";
-import { DbImage, DbLabelClass } from "../../../database";
+import { DbImage, DbLabelClass } from "../../types";
+
 import {
   CocoCategory,
   CocoAnnotation,

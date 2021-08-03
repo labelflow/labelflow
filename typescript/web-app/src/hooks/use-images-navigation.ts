@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import { useQuery, gql } from "@apollo/client";
 
-import { Project, Image } from "../graphql-types.generated";
+import { Project, Image } from "@labelflow/graphql-types";
 
 const getAllImagesOfAProjectQuery = gql`
   query getAllImagesOfAProject($projectId: ID!) {

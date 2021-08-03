@@ -5,12 +5,11 @@ import type {
   MutationDeleteLabelClassArgs,
   QueryLabelClassArgs,
   QueryLabelClassesArgs,
-} from "../../graphql-types.generated";
+} from "@labelflow/graphql-types";
 
-import { DbLabelClass } from "../database";
 import { projectTypename } from "./project";
 
-import { Context } from "./types";
+import { Context, DbLabelClass } from "./types";
 import { throwIfResolvesToNil } from "./utils/throw-if-resolves-to-nil";
 
 // Queries
