@@ -90,10 +90,7 @@ const updateLabelClass = async (
     ...args.data,
   });
 
-  return throwIfResolvesToNil(
-    "No labelClass with such id",
-    repository.labelClass.getById
-  )(labelClassId);
+  return repository.labelClass.getById(labelClassId);
 };
 
 const deleteLabelClass = async (
