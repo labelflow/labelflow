@@ -53,6 +53,7 @@ const createImage = async (name: String): Promise<string> => {
             projectId: $projectId
             width: 100
             height: 200
+            mimetype: "image/jpeg"
           }
         ) {
           id
@@ -193,7 +194,7 @@ describe("Exporting a dataset to coco format", () => {
     mockedProbeSync.mockReturnValue({
       width: 100,
       height: 200,
-      mime: "image/jpeg",
+      mimetype: "image/jpeg",
     });
 
     await createLabelClass({
@@ -201,10 +202,8 @@ describe("Exporting a dataset to coco format", () => {
       color: "#000000",
       id: "id-label-class-1",
     });
-    await createLabelWithLabelClass(
-      await createImage("image-1"),
-      "id-label-class-1"
-    );
+    const idImage = await createImage("image-1");
+    await createLabelWithLabelClass(idImage, "id-label-class-1");
 
     const expectedDataset: CocoDataset = {
       ...initialCocoDataset,
@@ -229,7 +228,7 @@ describe("Exporting a dataset to coco format", () => {
       images: [
         {
           id: 1,
-          file_name: "image-1",
+          file_name: `image-1_${idImage}.jpeg`,
           coco_url: "mockedUrl",
           date_captured: new Date().toISOString(),
           flickr_url: "",
