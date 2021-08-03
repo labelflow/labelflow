@@ -3,9 +3,7 @@ import { renderHook } from "@testing-library/react-hooks";
 import { ApolloProvider, gql } from "@apollo/client";
 
 import { useRouter } from "next/router";
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { mocked } from "ts-jest/utils";
-import probe from "probe-image-size";
+import { probeImage } from "@labelflow/common-resolvers/src/utils/probe-image";
 import { setupTestsWithLocalDatabase } from "../../utils/setup-local-db-tests";
 import { useImagesNavigation } from "../use-images-navigation";
 import { client } from "../../connectors/apollo-client-schema";
@@ -13,8 +11,8 @@ import { incrementMockedDate } from "../../../../dev-utils/mockdate";
 
 setupTestsWithLocalDatabase();
 
-jest.mock("probe-image-size");
-const mockedProbeSync = mocked(probe.sync);
+jest.mock("@labelflow/common-resolvers/src/utils/probe-image");
+const mockedProbeSync = probeImage as jest.Mock;
 
 const testProjectId = "mocked-project-id";
 
@@ -29,11 +27,6 @@ async function createImage(name: String) {
     width: 42,
     height: 36,
     mime: "image/jpeg",
-    length: 1000,
-    hUnits: "px",
-    wUnits: "px",
-    url: "https://example.com/image.jpeg",
-    type: "jpg",
   });
   const mutationResult = await client.mutate({
     mutation: gql`

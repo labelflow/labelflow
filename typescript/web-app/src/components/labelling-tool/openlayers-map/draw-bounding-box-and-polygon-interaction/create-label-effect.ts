@@ -1,9 +1,8 @@
 import { ApolloCache, ApolloClient, Reference, gql } from "@apollo/client";
-import GeoJSON from "ol/format/GeoJSON";
-import { getBoundedGeometryFromImage } from "../../../../connectors/resolvers/label";
+import { getBoundedGeometryFromImage } from "@labelflow/common-resolvers";
 
+import { GeometryInput, LabelType } from "@labelflow/graphql-types";
 import { Effect } from "../../../../connectors/undo-store";
-import { GeometryInput, LabelType } from "../../../../graphql-types.generated";
 import { getProjectsQuery } from "../../../../pages/projects";
 
 type CreateLabelInputs = {

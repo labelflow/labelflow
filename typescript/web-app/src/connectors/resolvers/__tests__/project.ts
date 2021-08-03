@@ -1,15 +1,13 @@
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { mocked } from "ts-jest/utils";
-import probe from "probe-image-size";
 import { gql } from "@apollo/client";
 import { incrementMockedDate } from "@labelflow/dev-utils/mockdate";
+import { probeImage } from "@labelflow/common-resolvers/src/utils/probe-image";
 import { client } from "../../apollo-client-schema";
 import { setupTestsWithLocalDatabase } from "../../../utils/setup-local-db-tests";
 
 setupTestsWithLocalDatabase();
 
-jest.mock("probe-image-size");
-const mockedProbeSync = mocked(probe.sync);
+jest.mock("@labelflow/common-resolvers/src/utils/probe-image");
+const mockedProbeSync = probeImage as jest.Mock;
 
 const createProject = async (name: string, projectId?: string | null) => {
   return client.mutate({
@@ -295,11 +293,6 @@ describe("Project resolver test suite", () => {
       width: 42,
       height: 36,
       mime: "image/jpeg",
-      length: 1000,
-      hUnits: "px",
-      wUnits: "px",
-      url: "https://example.com/image.jpeg",
-      type: "jpg",
     });
     const name = "My new project";
     const projectId = "some id";
@@ -491,11 +484,6 @@ describe("Project resolver test suite", () => {
       width: 42,
       height: 36,
       mime: "image/jpeg",
-      length: 1000,
-      hUnits: "px",
-      wUnits: "px",
-      url: "https://example.com/image.jpeg",
-      type: "jpg",
     });
 
     const getProjectData = async (projectId: string) => {
@@ -555,11 +543,6 @@ describe("Project resolver test suite", () => {
       width: 42,
       height: 36,
       mime: "image/jpeg",
-      length: 1000,
-      hUnits: "px",
-      wUnits: "px",
-      url: "https://example.com/image.jpeg",
-      type: "jpg",
     });
 
     const getProjectCount = async (projectId: string) => {

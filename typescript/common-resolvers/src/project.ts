@@ -8,11 +8,9 @@ import type {
   QueryProjectArgs,
   QueryProjectsArgs,
   QueryImagesArgs,
-} from "../../graphql-types.generated";
-import { DbProject } from "../database";
-import { Repository } from "../repository/types";
+} from "@labelflow/graphql-types";
 
-import { Context } from "./types";
+import { Context, DbProject, Repository } from "./types";
 import { throwIfResolvesToNil } from "./utils/throw-if-resolves-to-nil";
 
 export const projectTypename = "Project";
@@ -137,6 +135,7 @@ const createProject = async (
       updatedAt: date,
       name,
     });
+
     return await getProjectById(projectId, repository);
   } catch (e) {
     throw new Error("Could not create the project");

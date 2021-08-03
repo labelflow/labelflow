@@ -1,9 +1,36 @@
-import { DbImage, DbLabel, DbLabelClass, DbProject } from "../database";
 import type {
+  Scalars,
+  Example as GeneratedExample,
+  Image as GeneratedImage,
+  Label as GeneratedLabel,
+  LabelClass as GeneratedLabelClass,
+  Project as GeneratedProject,
   ImageWhereInput,
   LabelClassWhereInput,
   LabelWhereInput,
-} from "../../graphql-types.generated";
+  UploadTargetHttp,
+  UploadTarget,
+} from "@labelflow/graphql-types";
+
+export type DbImage = Omit<GeneratedImage, "labels">;
+
+export type DbLabel = Omit<GeneratedLabel, "labelClass"> & {
+  labelClassId: Scalars["ID"] | undefined | null;
+};
+
+export type DbLabelClass = Omit<GeneratedLabelClass, "labels">;
+
+export type DbExample = GeneratedExample;
+
+export type DbProject = Omit<
+  GeneratedProject,
+  | "images"
+  | "imagesAggregates"
+  | "labels"
+  | "labelsAggregates"
+  | "labelClasses"
+  | "labelClassesAggregates"
+>;
 
 type PartialWithNullAllowed<T> = { [P in keyof T]?: T[P] | undefined | null };
 
@@ -55,4 +82,12 @@ export type Repository = {
     list: List<DbProject, null>;
     update: Update<DbProject>;
   };
+  upload: {
+    getUploadTargetHttp: () => Promise<UploadTargetHttp> | UploadTargetHttp;
+    getUploadTarget: () => Promise<UploadTarget> | UploadTarget;
+    put: (url: string, file: Blob) => Promise<void>;
+    get: (url: string) => Promise<ArrayBuffer>;
+  };
 };
+
+export type Context = { repository: Repository };

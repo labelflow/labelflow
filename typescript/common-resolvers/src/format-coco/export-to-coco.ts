@@ -1,13 +1,14 @@
+import { QueryExportToCocoArgs } from "@labelflow/graphql-types";
 import { convertLabelflowDatasetToCocoDataset } from "./coco-core/converters";
 import { jsonToDataUri } from "./json-to-data-uri";
-import { QueryExportToCocoArgs } from "../../../graphql-types.generated";
-import { Repository } from "../../repository/types";
+import { Context } from "../types";
+
 import { addImageDimensionsToLabels } from "./add-image-dimensions-to-labels";
 
 export const exportToCoco = async (
   _: any,
   args: QueryExportToCocoArgs,
-  { repository }: { repository: Repository }
+  { repository }: Context
 ): Promise<string | undefined> => {
   const { projectId } = args.where;
   const imagesWithUrl = await repository.image.list({ projectId });

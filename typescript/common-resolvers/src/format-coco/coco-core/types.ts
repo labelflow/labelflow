@@ -1,4 +1,4 @@
-import { DbLabel } from "../../../database";
+import { DbLabel } from "../../types";
 
 export type CocoLicense = {
   name: string;

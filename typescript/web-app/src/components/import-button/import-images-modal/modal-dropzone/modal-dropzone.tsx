@@ -10,11 +10,11 @@ import {
 import { useApolloClient, gql } from "@apollo/client";
 import { useRouter } from "next/router";
 
+import { UploadTarget } from "@labelflow/graphql-types";
 import { Dropzone } from "./dropzone";
 import { FilesStatuses } from "./file-statuses";
 import { DroppedFile, UploadStatuses } from "../types";
 
-import { UploadTarget } from "../../../../graphql-types.generated";
 import { browser } from "../../../../utils/detect-scope";
 
 const createImageFromFileMutation = gql`

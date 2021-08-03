@@ -10,6 +10,7 @@ import {
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { RiArrowRightSLine } from "react-icons/ri";
+import type { Project as ProjectType } from "@labelflow/graphql-types";
 import { KeymapButton } from "../../../../components/keymap-button";
 import { ImportButton } from "../../../../components/import-button";
 import { ExportButton } from "../../../../components/export-button";

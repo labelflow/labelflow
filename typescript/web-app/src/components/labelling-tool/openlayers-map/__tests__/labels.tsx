@@ -9,10 +9,6 @@ import { render, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 import { Map as OlMap } from "ol";
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { mocked } from "ts-jest/utils";
-import probe from "probe-image-size";
-
 import VectorLayer from "ol/layer/Vector";
 import { mockNextRouter } from "../../../../utils/router-mocks";
 
@@ -21,13 +17,15 @@ mockNextRouter();
 import { useRouter } from "next/router";
 import { client } from "../../../../connectors/apollo-client-schema";
 import { Labels } from "../labels";
-import { LabelCreateInput } from "../../../../graphql-types.generated";
+import { LabelCreateInput } from "@labelflow/graphql-types";
 import { useLabellingStore } from "../../../../connectors/labelling-state";
 import { setupTestsWithLocalDatabase } from "../../../../utils/setup-local-db-tests";
+import { probeImage } from "@labelflow/common-resolvers/src/utils/probe-image";
 
 setupTestsWithLocalDatabase();
-jest.mock("probe-image-size");
-const mockedProbeSync = mocked(probe.sync);
+
+jest.mock("@labelflow/common-resolvers/src/utils/probe-image");
+const mockedProbeSync = probeImage as jest.Mock;
 
 const imageWidth = 500;
 const imageHeight = 900;
@@ -60,11 +58,6 @@ const createImage = async (name: String) => {
     width: 42,
     height: 36,
     mime: "image/jpeg",
-    length: 1000,
-    hUnits: "px",
-    wUnits: "px",
-    url: "https://example.com/image.jpeg",
-    type: "jpg",
   });
   const mutationResult = await client.mutate({
     mutation: gql`

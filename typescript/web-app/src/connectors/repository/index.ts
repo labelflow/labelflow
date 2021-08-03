@@ -1,10 +1,15 @@
+import { Repository } from "@labelflow/common-resolvers";
 import { db } from "../database";
 import { list } from "./utils/list";
 import { countLabels, listLabels } from "./label";
 import { deleteProject } from "./project";
-
-import { Repository } from "./types";
 import { deleteLabelClass } from "./label-class";
+import {
+  getUploadTarget,
+  getUploadTargetHttp,
+  getFromStorage,
+  putInStorage,
+} from "./upload";
 
 export const repository: Repository = {
   image: {
@@ -39,5 +44,11 @@ export const repository: Repository = {
     getByName: (name) => db.project.get({ name }),
     list: list(db.project),
     update: async (id, changes) => (await db.project.update(id, changes)) === 1,
+  },
+  upload: {
+    getUploadTarget,
+    getUploadTargetHttp,
+    put: putInStorage,
+    get: getFromStorage,
   },
 };

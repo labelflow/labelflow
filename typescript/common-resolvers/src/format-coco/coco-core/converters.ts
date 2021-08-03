@@ -1,4 +1,5 @@
-import { DbImage, DbLabelClass } from "../../../database";
+import { DbImage, DbLabelClass } from "../../types";
+
 import {
   CocoCategory,
   CocoAnnotation,
