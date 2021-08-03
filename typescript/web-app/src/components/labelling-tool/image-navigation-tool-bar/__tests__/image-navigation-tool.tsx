@@ -14,7 +14,7 @@ import { useRouter } from "next/router";
 import { gql, ApolloProvider } from "@apollo/client";
 
 import { ImageNavigationTool } from "../image-navigation-tool";
-import { client } from "../../../../connectors/apollo-client-schema";
+import { client } from "../../../../connectors/apollo-client/schema-client";
 import { setupTestsWithLocalDatabase } from "../../../../utils/setup-local-db-tests";
 
 setupTestsWithLocalDatabase();

@@ -3,7 +3,7 @@ import { ApolloProvider } from "@apollo/client";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom/extend-expect";
-import { client } from "../../../../connectors/apollo-client-schema";
+import { client } from "../../../../connectors/apollo-client/schema-client";
 import { mockNextRouter } from "../../../../utils/router-mocks";
 import { useLabellingStore } from "../../../../connectors/labelling-state";
 

@@ -1,6 +1,6 @@
 import { createUpdateLabelClassOfLabelEffect } from "../update-label-class-of-label";
 import { useUndoStore } from "../..";
-import { client } from "../../../apollo-client-schema";
+import { client } from "../../../apollo-client/schema-client";
 
 import { setupTestsWithLocalDatabase } from "../../../../utils/setup-local-db-tests";
 

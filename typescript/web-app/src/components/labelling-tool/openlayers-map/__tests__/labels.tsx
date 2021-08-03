@@ -15,7 +15,7 @@ import { mockNextRouter } from "../../../../utils/router-mocks";
 mockNextRouter();
 
 import { useRouter } from "next/router";
-import { client } from "../../../../connectors/apollo-client-schema";
+import { client } from "../../../../connectors/apollo-client/schema-client";
 import { Labels } from "../labels";
 import { LabelCreateInput } from "@labelflow/graphql-types";
 import { useLabellingStore } from "../../../../connectors/labelling-state";

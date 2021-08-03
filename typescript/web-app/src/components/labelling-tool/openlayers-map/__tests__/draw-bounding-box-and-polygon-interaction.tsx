@@ -13,7 +13,7 @@ import { mockNextRouter } from "../../../../utils/router-mocks";
 
 mockNextRouter({ query: { imageId: "mocked-image-id" } });
 
-import { client } from "../../../../connectors/apollo-client-schema";
+import { client } from "../../../../connectors/apollo-client/schema-client";
 import { useUndoStore } from "../../../../connectors/undo-store";
 import {
   useLabellingStore,

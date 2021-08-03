@@ -9,7 +9,7 @@ mockNextRouter({
   query: { imageId: "mocked-image-id", projectId: "test project id" },
 });
 
-import { client } from "../../../../connectors/apollo-client-schema";
+import { client } from "../../../../connectors/apollo-client/schema-client";
 import {
   useLabellingStore,
   Tools,

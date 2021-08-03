@@ -3,7 +3,7 @@ import { ApolloProvider, gql } from "@apollo/client";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
-import { client } from "../../../../connectors/apollo-client-schema";
+import { client } from "../../../../connectors/apollo-client/schema-client";
 import {
   useLabellingStore,
   Tools,
