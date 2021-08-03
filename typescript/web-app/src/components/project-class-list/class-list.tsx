@@ -52,8 +52,6 @@ export const ClassesList = ({ projectId }: { projectId: string }) => {
           <Text
             margin="2"
             fontWeight="bold"
-            alignSelf="center"
-            justifySelf="center"
           >{`${labelClassWithShortcut.length} Classes`}</Text>
           <Divider />
           {!loading &&
