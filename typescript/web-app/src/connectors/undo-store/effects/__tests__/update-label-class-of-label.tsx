@@ -6,8 +6,8 @@ import { setupTestsWithLocalDatabase } from "../../../../utils/setup-local-db-te
 
 setupTestsWithLocalDatabase();
 
-jest.mock("../../../apollo-client-schema", () => {
-  const original = jest.requireActual("../../../apollo-client-schema");
+jest.mock("../../../apollo-client/schema-client", () => {
+  const original = jest.requireActual("../../../apollo-client/schema-client");
   return {
     client: {
       ...original.client,
