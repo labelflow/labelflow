@@ -22,9 +22,9 @@ const testProjectId = "test project id";
 
 setupTestsWithLocalDatabase();
 
-jest.mock("../../../../connectors/apollo-client-schema", () => {
+jest.mock("../../../../connectors/apollo-client/schema-client", () => {
   const original = jest.requireActual(
-    "../../../../connectors/apollo-client-schema"
+    "../../../../connectors/apollo-client/schema-client"
   );
   return {
     client: {

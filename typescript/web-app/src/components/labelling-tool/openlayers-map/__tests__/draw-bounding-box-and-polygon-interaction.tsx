@@ -25,9 +25,9 @@ import { DrawBoundingBoxAndPolygonInteraction } from "../draw-bounding-box-and-p
 
 setupTestsWithLocalDatabase();
 
-jest.mock("../../../../connectors/apollo-client-schema", () => {
+jest.mock("../../../../connectors/apollo-client/schema-client", () => {
   const original = jest.requireActual(
-    "../../../../connectors/apollo-client-schema"
+    "../../../../connectors/apollo-client/schema-client"
   );
   return {
     client: {

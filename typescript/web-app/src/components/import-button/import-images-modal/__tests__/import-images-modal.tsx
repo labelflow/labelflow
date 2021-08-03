@@ -47,9 +47,9 @@ mockedProbeSync.mockReturnValue({
  * Mock the apollo client to avoid creating corrupted files that allows
  * us to identify a behaviour.
  */
-jest.mock("../../../../connectors/apollo-client-schema", () => {
+jest.mock("../../../../connectors/apollo-client/schema-client", () => {
   const original = jest.requireActual(
-    "../../../../connectors/apollo-client-schema"
+    "../../../../connectors/apollo-client/schema-client"
   );
 
   return {
