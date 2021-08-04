@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { gql, useApolloClient } from "@apollo/client";
 import {
   Kbd,
@@ -81,6 +81,14 @@ export const ClassItem = ({
 }: ClassItemProps) => {
   const [editName, setEditName] = useState<string | null>(null);
 
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (inputRef.current != null && edit) {
+      inputRef.current.focus();
+    }
+  }, [inputRef.current, edit]);
+
   const client = useApolloClient();
   useEffect(() => {
     if (edit) {
@@ -148,6 +156,7 @@ export const ClassItem = ({
 
       {edit && editName != null ? (
         <Input
+          ref={inputRef}
           aria-label="Class name input"
           variant="flushed"
           flexGrow={1}

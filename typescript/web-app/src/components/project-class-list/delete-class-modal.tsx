@@ -47,7 +47,11 @@ export const DeleteLabelClassModal = ({
     client.mutate({
       mutation: deleteLabelClassMutation,
       variables: { id: labelClassId },
-      refetchQueries: ["getProjectLabelClasses"],
+      refetchQueries: [
+        "getLabelClassesOfProject",
+        "getProjectLabelClasses",
+        "getImageLabels",
+      ],
     });
     onClose();
   }, [labelClassId, client, onClose]);

@@ -85,7 +85,7 @@ export const createCreateLabelClassAndUpdateLabelEffect = (
       mutation: createLabelClassQuery,
       variables: { data: { name, color, projectId } },
       refetchQueries: [
-        { query: labelClassesOfProjectQuery, variables: { projectId } },
+        "getLabelClassesOfProject",
         { query: getProjectsQuery },
         { query: projectLabelClassesQuery, variables: { projectId } },
       ],
@@ -138,7 +138,7 @@ export const createCreateLabelClassAndUpdateLabelEffect = (
         where: { id: labelClassId },
       },
       refetchQueries: [
-        { query: labelClassesOfProjectQuery, variables: { projectId } },
+        "getLabelClassesOfProject",
         { query: getProjectsQuery },
         { query: projectLabelClassesQuery, variables: { projectId } },
       ],
@@ -161,7 +161,7 @@ export const createCreateLabelClassAndUpdateLabelEffect = (
       mutation: createLabelClassQuery,
       variables: { data: { name, color, id: labelClassId, projectId } },
       refetchQueries: [
-        { query: labelClassesOfProjectQuery, variables: { projectId } },
+        "getLabelClassesOfProject",
         { query: getProjectsQuery },
         { query: projectLabelClassesQuery, variables: { projectId } },
       ],
