@@ -184,7 +184,7 @@ trns_refinement = transforms.Compose(
 )
 
 
-def process(data_url, x, y, width, height, id, *, cache: Cache):
+def inference(data_url, x, y, width, height, center_point, id, *, cache: Cache):
     image = convert_data_url_to_image(data_url)
     roi = [x, image.shape[0] - y - height, width, height]
     image = image.astype(np.float32)

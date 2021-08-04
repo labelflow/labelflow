@@ -9,7 +9,7 @@ import base64
 import numpy as np
 import cv2
 
-from inference_on_image import process, refine
+from inference_on_image import inference, refine, run_iog
 
 
 from ariadne import (
@@ -107,7 +107,7 @@ def resolve_iog_inference(*_, data):
     width = data["width"]
     height = data["height"]
 
-    return {"polygons": process(imageUrl, x, y, width, height, id, cache=cache)}
+    return {"polygons": inference(imageUrl, x, y, width, height, id, cache=cache)}
 
 
 @mutation.field("iogRefinement")
@@ -144,8 +144,8 @@ async def model_inference(request):
     height = inputs["height"]
     roi = [x, image.shape[0] - y - height, width, height]
     print(roi)
-    # process(image, roi)
-    return JSONResponse({"polygons": process(image, roi)})
+    # inference(image, roi)
+    return JSONResponse({"polygons": inference(image, roi)})
 
 
 routes = [Route("/", model_inference, methods=["POST"])]
