@@ -4,7 +4,9 @@ import { Draw as OlDraw } from "ol/interaction";
 import { createBox, DrawEvent } from "ol/interaction/Draw";
 import GeoJSON from "ol/format/GeoJSON";
 import { Fill, Stroke, Style } from "ol/style";
+import { Vector as OlSourceVector } from "ol/source";
 import GeometryType from "ol/geom/GeometryType";
+import Geometry from "ol/geom/Geometry";
 import { useApolloClient, useQuery, gql } from "@apollo/client";
 
 import { useToast } from "@chakra-ui/react";
@@ -54,6 +56,7 @@ const iogInferenceMutation = gql`
     $y: Float!
     $width: Float!
     $height: Float!
+    $centerPoint: [Float!]
   ) {
     iogInference(
       data: {
@@ -63,6 +66,7 @@ const iogInferenceMutation = gql`
         y: $y
         width: $width
         height: $height
+        centerPoint: $centerPoint
       }
     ) {
       polygons
@@ -88,6 +92,36 @@ const iogRefinementMutation = gql`
   }
 `;
 
+const runIogMutation = gql`
+  mutation runIog(
+    $id: ID!
+    $imageUrl: String
+    $x: Float
+    $y: Float
+    $width: Float
+    $height: Float
+    $pointsInside: [[Float!]]
+    $pointsOutside: [[Float!]]
+    $centerPoint: [Float!]
+  ) {
+    runIog(
+      data: {
+        id: $id
+        imageUrl: $imageUrl
+        x: $x
+        y: $y
+        width: $width
+        height: $height
+        pointsInside: $pointsInside
+        pointsOutside: $pointsOutside
+        centerPoint: $centerPoint
+      }
+    ) {
+      polygons
+    }
+  }
+`;
+
 const geometryFunction = createBox();
 
 export const DrawBoundingBoxAndPolygonInteraction = () => {
@@ -97,6 +131,8 @@ export const DrawBoundingBoxAndPolygonInteraction = () => {
 
   const [pointsInside, setPointsInside] = useState<Coordinate[]>([]);
   const [pointsOutside, setPointsOutside] = useState<Coordinate[]>([]);
+  const [centerPoint, setCenterPoint] = useState<Coordinate>([]);
+  const vectorSourceRef = useRef<OlSourceVector<Geometry>>(null);
 
   const selectedTool = useLabellingStore((state) => state.selectedTool);
 
@@ -305,6 +341,10 @@ export const DrawBoundingBoxAndPolygonInteraction = () => {
         });
       })();
       const [x, y, xMax, yMax] = openLayersGeometry.getExtent();
+      const boundingBoxCenterPoint = [
+        Math.floor((x + xMax) / 2),
+        Math.floor((y + yMax) / 2),
+      ];
       const { data } = await client.mutate({
         mutation: iogInferenceMutation,
         variables: {
@@ -314,9 +354,10 @@ export const DrawBoundingBoxAndPolygonInteraction = () => {
           height: yMax - y,
           width: xMax - x,
           imageUrl: dataUrl,
+          centerPoint: boundingBoxCenterPoint,
         },
       });
-
+      setCenterPoint(boundingBoxCenterPoint);
       return updateLabelEffect(
         {
           geometry: {
@@ -376,7 +417,7 @@ export const DrawBoundingBoxAndPolygonInteraction = () => {
       />
 
       <olLayerVector>
-        <olSourceVector>
+        <olSourceVector ref={vectorSourceRef}>
           {[
             ...pointsInside.map((coordinates) => {
               return (
@@ -422,6 +463,25 @@ export const DrawBoundingBoxAndPolygonInteraction = () => {
                 />
               );
             }),
+            <olFeature
+              key={centerPoint.join("-")}
+              id="centerPoint"
+              geometry={new Point(centerPoint)}
+              style={
+                new Style({
+                  image: new CircleStyle({
+                    radius: 8,
+                    fill: new Fill({
+                      color: "#0023ffff",
+                    }),
+                    stroke: new Stroke({
+                      color: "#ffffffff",
+                      width: 2,
+                    }),
+                  }),
+                })
+              }
+            />,
           ]}
         </olSourceVector>
       </olLayerVector>
