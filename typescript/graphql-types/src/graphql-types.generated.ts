@@ -112,6 +112,7 @@ export type IogInferenceInput = {
   height: Scalars['Float'];
   pointsInside?: Maybe<Array<Maybe<Array<Scalars['Float']>>>>;
   pointsOutside?: Maybe<Array<Maybe<Array<Scalars['Float']>>>>;
+  centerPoint?: Maybe<Array<Scalars['Float']>>;
 };
 
 export type IogInferenceResult = {
@@ -220,6 +221,7 @@ export type Mutation = {
   deleteProject?: Maybe<Project>;
   iogInference?: Maybe<IogInferenceResult>;
   iogRefinement?: Maybe<IogInferenceResult>;
+  runIog?: Maybe<IogInferenceResult>;
 };
 
 
@@ -282,6 +284,11 @@ export type MutationIogInferenceArgs = {
 
 export type MutationIogRefinementArgs = {
   data: IogRefinementInput;
+};
+
+
+export type MutationRunIogArgs = {
+  data: RunIogInput;
 };
 
 export type Project = {
@@ -405,6 +412,18 @@ export type QueryProjectsArgs = {
 
 export type QueryExportToCocoArgs = {
   where: ExportWhereUniqueInput;
+};
+
+export type RunIogInput = {
+  id: Scalars['ID'];
+  imageUrl?: Maybe<Scalars['String']>;
+  x?: Maybe<Scalars['Float']>;
+  y?: Maybe<Scalars['Float']>;
+  width?: Maybe<Scalars['Float']>;
+  height?: Maybe<Scalars['Float']>;
+  pointsInside?: Maybe<Array<Maybe<Array<Scalars['Float']>>>>;
+  pointsOutside?: Maybe<Array<Maybe<Array<Scalars['Float']>>>>;
+  centerPoint?: Maybe<Array<Scalars['Float']>>;
 };
 
 
@@ -541,6 +560,7 @@ export type ResolversTypes = {
   ProjectWhereIDInput: ProjectWhereIdInput;
   ProjectWhereUniqueInput: ProjectWhereUniqueInput;
   Query: ResolverTypeWrapper<{}>;
+  RunIogInput: RunIogInput;
   Upload: ResolverTypeWrapper<Scalars['Upload']>;
   UploadTarget: ResolversTypes['UploadTargetDirect'] | ResolversTypes['UploadTargetHttp'];
   UploadTargetDirect: ResolverTypeWrapper<UploadTargetDirect>;
@@ -590,6 +610,7 @@ export type ResolversParentTypes = {
   ProjectWhereIDInput: ProjectWhereIdInput;
   ProjectWhereUniqueInput: ProjectWhereUniqueInput;
   Query: {};
+  RunIogInput: RunIogInput;
   Upload: Scalars['Upload'];
   UploadTarget: ResolversParentTypes['UploadTargetDirect'] | ResolversParentTypes['UploadTargetHttp'];
   UploadTargetDirect: UploadTargetDirect;
@@ -699,6 +720,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   deleteProject?: Resolver<Maybe<ResolversTypes['Project']>, ParentType, ContextType, RequireFields<MutationDeleteProjectArgs, 'where'>>;
   iogInference?: Resolver<Maybe<ResolversTypes['IogInferenceResult']>, ParentType, ContextType, RequireFields<MutationIogInferenceArgs, 'data'>>;
   iogRefinement?: Resolver<Maybe<ResolversTypes['IogInferenceResult']>, ParentType, ContextType, RequireFields<MutationIogRefinementArgs, 'data'>>;
+  runIog?: Resolver<Maybe<ResolversTypes['IogInferenceResult']>, ParentType, ContextType, RequireFields<MutationRunIogArgs, 'data'>>;
 };
 
 export type ProjectResolvers<ContextType = any, ParentType extends ResolversParentTypes['Project'] = ResolversParentTypes['Project']> = {

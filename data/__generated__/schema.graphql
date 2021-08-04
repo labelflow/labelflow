@@ -91,6 +91,7 @@ input IogInferenceInput {
   height: Float!
   pointsInside: [[Float!]]
   pointsOutside: [[Float!]]
+  centerPoint: [Float!]
 }
 
 type IogInferenceResult {
@@ -194,6 +195,7 @@ type Mutation {
   deleteProject(where: ProjectWhereIDInput!): Project
   iogInference(data: IogInferenceInput!): IogInferenceResult
   iogRefinement(data: IogRefinementInput!): IogInferenceResult
+  runIog(data: RunIogInput!): IogInferenceResult
 }
 
 type Project {
@@ -244,6 +246,18 @@ type Query {
   projects(first: Int, skip: Int): [Project!]!
   exportToCoco(where: ExportWhereUniqueInput!): String!
   debug: JSON!
+}
+
+input RunIogInput {
+  id: ID!
+  imageUrl: String
+  x: Float
+  y: Float
+  width: Float
+  height: Float
+  pointsInside: [[Float!]]
+  pointsOutside: [[Float!]]
+  centerPoint: [Float!]
 }
 
 scalar Upload

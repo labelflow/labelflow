@@ -2,6 +2,7 @@ import { print, GraphQLResolveInfo } from "graphql";
 import {
   MutationIogInferenceArgs,
   MutationIogRefinementArgs,
+  MutationRunIogArgs,
 } from "@labelflow/graphql-types";
 
 const ENDPOINT = "http://0.0.0.0:5032/graphql";
@@ -51,9 +52,32 @@ const iogRefinement = async (
   );
 };
 
+const runIog = async (
+  _parent: any,
+  args: MutationRunIogArgs,
+  _context: any,
+  { operation }: GraphQLResolveInfo
+) => {
+  return fetch(ENDPOINT, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    },
+    body: JSON.stringify({
+      operationName: "runIog",
+      query: print(operation),
+      variables: args.data,
+    }),
+  }).then((res) =>
+    res.json().then((parsedResponse) => parsedResponse.data.runIog)
+  );
+};
+
 export default {
   Mutation: {
     iogInference,
     iogRefinement,
+    runIog,
   },
 };

@@ -47,6 +47,7 @@ type_defs = """
         height: Float!, 
         pointsInside: [[Float!]],
         pointsOutside: [[Float!]]
+        centerPoint: [Float!]
     }
 
     input IogRefinementInput {
@@ -55,7 +56,7 @@ type_defs = """
         pointsOutside: [[Float!]]
     }
 
-    input runIogInput {
+    input RunIogInput {
         id: ID!
         imageUrl: String, 
         x: Float, 
@@ -64,6 +65,7 @@ type_defs = """
         height: Float, 
         pointsInside: [[Float!]],
         pointsOutside: [[Float!]]
+        centerPoint:[Float]
     }
 
     type Query {
@@ -79,7 +81,7 @@ type_defs = """
             data: IogRefinementInput
         ): iogInferenceResult
         runIog(
-            data: runIogInput
+            data: RunIogInput
         ): iogInferenceResult
     }
     
@@ -121,7 +123,8 @@ def resolve_iog_inference(*_, data):
     y = data["y"]
     width = data["width"]
     height = data["height"]
-    center_point = [x + int(width * 0.5), y + int(height * 0.5)]
+    center_point = data["centerPoint"]
+
 
     return {
         "polygons": inference(
