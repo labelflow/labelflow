@@ -127,9 +127,13 @@ net.load_state_dict(pretrain_dict)
 net.eval()
 # Set gpu_id to -1 to run in CPU mode, otherwise set the id of the corresponding gpu
 gpu_id = 0
-device = torch.device("cuda:" + str(gpu_id) if torch.cuda.is_available() and not os.environ.get("RUN_ON_CPU",False) else "cpu")
+device = torch.device(
+    "cuda:" + str(gpu_id)
+    if torch.cuda.is_available() and not os.environ.get("RUN_ON_CPU", False)
+    else "cpu"
+)
 if torch.cuda.is_available():
-    if os.environ.get("RUN_ON_CPU",False):
+    if os.environ.get("RUN_ON_CPU", False):
         print("GPU available but will use CPU")
     else:
         print("GPU available, will use it")
@@ -203,7 +207,13 @@ def inference(data_url, x, y, width, height, center_point, id, *, cache: Cache):
 
     backbone_features = res[0]
     cache.write(
-        {"backbone_features": backbone_features, "roi": roi, "image": image}, id
+        {
+            "backbone_features": backbone_features,
+            "roi": roi,
+            "image": image,
+            "center_point": center_point,
+        },
+        id,
     )
 
     return convert_net_output_to_geojson_polygon(res[-1], tr_sample["gt"], image, roi)
@@ -211,7 +221,7 @@ def inference(data_url, x, y, width, height, center_point, id, *, cache: Cache):
 
 def refine(pointsInside, pointsOutside, id, *, cache: Cache):
     data = cache.read(id)
-    backbone_features =[value.to(device) for value in data["backbone_features"]]
+    backbone_features = [value.to(device) for value in data["backbone_features"]]
     roi = data["roi"]
     image = data["image"]
 
@@ -257,3 +267,42 @@ def refine(pointsInside, pointsOutside, id, *, cache: Cache):
     return convert_net_output_to_geojson_polygon(
         fine_net_output.to("cpu"), tr_sample["gt"], image, roi
     )
+
+
+def run_iog(data, cache: Cache):
+
+    if data.get("imageUrl"):
+        id = data.get("id")
+        image_url = data.get("imageUrl")
+        x = data.get("x")
+        y = data.get("y")
+        width = data.get("width")
+        height = data.get("height")
+        center_point = data.get("centerPoint")
+
+        return {
+            "polygons": inference(
+                image_url, x, y, width, height, center_point, id, cache=cache
+            )
+        }
+
+    id = data.get("id")
+    cachedData = cache.read(id)
+    image_url = cachedData.get("imageUrl")
+    x = cachedData.get("x")
+    y = cachedData.get("y")
+    width = cachedData.get("width")
+    height = cachedData.get("height")
+    cached_center_point = tuple(cachedData.get("center_point"))
+    center_point = tuple(data.get("centerPoint"))
+    points_inside = data.get("pointsInside", [])
+    points_outside = data.get("pointsOutside", [])
+
+    if cached_center_point != center_point:
+        if points_inside or points_outside:
+            inference(image_url, x, y, width, height, center_point, id, cache=cache)
+            return {"polygons": refine(points_inside, points_outside, id, cache=cache)}
+        else:
+            return {
+                "polygons": inference(image_url, x, y, width, height, id, cache=cache)
+            }

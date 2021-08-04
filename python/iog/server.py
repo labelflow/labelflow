@@ -121,6 +121,11 @@ def resolve_iog_refinement(*_, data):
     return {"polygons": refine(pointsInside, pointsOutside, id, cache=cache)}
 
 
+@mutation.field("runIog")
+def run_iog(*_, data):
+    return run_iog(data, cache=cache)
+
+
 # Create executable schema instance
 schema = make_executable_schema(type_defs, query, mutation, datetime_scalar)
 
