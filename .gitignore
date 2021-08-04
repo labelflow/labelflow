@@ -129,6 +129,7 @@ python/iog/data
 python/iog/outputs
 python/iog/results
 python/iog/inputs
+python/iog/cache
 .venv
 __pycache__
 

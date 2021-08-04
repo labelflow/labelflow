@@ -55,6 +55,17 @@ type_defs = """
         pointsOutside: [[Float!]]
     }
 
+    input runIogInput {
+        id: ID!
+        imageUrl: String, 
+        x: Float, 
+        y: Float, 
+        width: Float, 
+        height: Float, 
+        pointsInside: [[Float!]],
+        pointsOutside: [[Float!]]
+    }
+
     type Query {
         hello: String!
         projects(first: Int): [Project!]!
@@ -67,7 +78,11 @@ type_defs = """
         iogRefinement(
             data: IogRefinementInput
         ): iogInferenceResult
+        runIog(
+            data: runIogInput
+        ): iogInferenceResult
     }
+    
 
    type Project {
         id:        Int
@@ -106,8 +121,13 @@ def resolve_iog_inference(*_, data):
     y = data["y"]
     width = data["width"]
     height = data["height"]
+    center_point = [x + int(width * 0.5), y + int(height * 0.5)]
 
-    return {"polygons": inference(imageUrl, x, y, width, height, id, cache=cache)}
+    return {
+        "polygons": inference(
+            imageUrl, x, y, width, height, center_point, id, cache=cache
+        )
+    }
 
 
 @mutation.field("iogRefinement")

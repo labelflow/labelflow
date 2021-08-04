@@ -201,6 +201,14 @@ def inference(data_url, x, y, width, height, center_point, id, *, cache: Cache):
 
     inputs = tr_sample["concat"][None]
     IOG_points = tr_sample["IOG_points"].unsqueeze(0)
+    foreground_point_mask = np.zeros_like(image)
+    foreground_point_mask[
+        int(image.shape[0] - center_point[1]), int(center_point[0]), 0
+    ] = 1
+    sample = {"point_refinement_mask": foreground_point_mask, "gt": bbox}
+    IOG_points[0, 0:1, :, :] = trns_refinement(sample)["IOG_points"].unsqueeze(0)[
+        0, 0:1, :, :
+    ]
     # inputs = inputs.to(device)
     # res = net.inference(inputs, IOG_points)
     res = net.inference(inputs.to(device), IOG_points.to(device))
@@ -215,6 +223,19 @@ def inference(data_url, x, y, width, height, center_point, id, *, cache: Cache):
         },
         id,
     )
+
+    if os.environ.get("DEBUG", False):
+        now = datetime.now()
+        points_fg = IOG_points[0, 0:1, :, :]
+        points_bg = IOG_points[0, 1:2, :, :]
+        cv2.imwrite(
+            f"outputs/points_fg_inference-{now}.png",
+            np.transpose((points_fg * 1).numpy().astype(np.uint8), (1, 2, 0)),
+        )
+        cv2.imwrite(
+            f"outputs/points_bg_inference-{now}.png",
+            np.transpose((points_bg * 1).numpy().astype(np.uint8), (1, 2, 0)),
+        )
 
     return convert_net_output_to_geojson_polygon(res[-1], tr_sample["gt"], image, roi)
 
