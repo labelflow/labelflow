@@ -1,5 +1,5 @@
-import { Image } from "../../../../graphql-types.generated";
-import { DbLabelClass } from "../../../database";
+import { DbImage, DbLabelClass } from "../../types";
+
 import {
   CocoCategory,
   CocoAnnotation,
@@ -117,7 +117,7 @@ const convertLabelsOfImageToCocoAnnotations = (
 };
 
 const convertImageToCocoImage = (
-  { createdAt, height, width, name, externalUrl }: Image,
+  { createdAt, height, width, name, externalUrl }: DbImage,
   id: number
 ): CocoImage => {
   return {
@@ -132,7 +132,7 @@ const convertImageToCocoImage = (
   };
 };
 
-const convertImagesToCocoImages = (images: Image[]) => {
+const convertImagesToCocoImages = (images: DbImage[]) => {
   const imageIdsMap: Record<string, number> = {};
   const cocoImages = images.map((image, index) => {
     const cocoImageId = index + 1;
@@ -144,7 +144,7 @@ const convertImagesToCocoImages = (images: Image[]) => {
 };
 
 const convertLabelflowDatasetToCocoDataset = (
-  images: Image[],
+  images: DbImage[],
   labels: DbLabelWithImageDimensions[],
   labelClasses: DbLabelClass[]
 ): CocoDataset => {

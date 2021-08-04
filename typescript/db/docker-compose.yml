@@ -1,0 +1,16 @@
+version: "3.5"
+services:
+  db:
+    image: postgres:12.6
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: ${POSTGRES_ADMIN_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_ADMIN_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - db_home:/var/lib/postgresql/data
+
+volumes:
+  db_home:
+    external: false

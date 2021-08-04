@@ -3,7 +3,7 @@ import {
   MutationCreateExampleArgs,
   QueryExampleArgs,
   QueryExamplesArgs,
-} from "../../graphql-types.generated";
+} from "@labelflow/graphql-types";
 
 import { db } from "../database";
 

@@ -1,15 +1,13 @@
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { mocked } from "ts-jest/utils";
-import probe from "probe-image-size";
 import { gql } from "@apollo/client";
 import { incrementMockedDate } from "@labelflow/dev-utils/mockdate";
+import { probeImage } from "@labelflow/common-resolvers/src/utils/probe-image";
 import { client } from "../../apollo-client-schema";
 import { setupTestsWithLocalDatabase } from "../../../utils/setup-local-db-tests";
 
 setupTestsWithLocalDatabase();
 
-jest.mock("probe-image-size");
-const mockedProbeSync = mocked(probe.sync);
+jest.mock("@labelflow/common-resolvers/src/utils/probe-image");
+const mockedProbeSync = probeImage as jest.Mock;
 
 const createProject = async (name: string, projectId?: string | null) => {
   return client.mutate({
@@ -295,11 +293,6 @@ describe("Project resolver test suite", () => {
       width: 42,
       height: 36,
       mime: "image/jpeg",
-      length: 1000,
-      hUnits: "px",
-      wUnits: "px",
-      url: "https://example.com/image.jpeg",
-      type: "jpg",
     });
     const name = "My new project";
     const projectId = "some id";
@@ -373,43 +366,6 @@ describe("Project resolver test suite", () => {
     ).rejects.toEqual(new Error("No project with such id"));
   });
 
-  test("should delete a project by its name", async () => {
-    const name = "My new project";
-    const projectId = "some id";
-    await createProject(name, projectId);
-
-    const mutationResult = await client.mutate({
-      mutation: gql`
-        mutation deleteProject($name: String!) {
-          deleteProject(where: { name: $name }) {
-            id
-            name
-          }
-        }
-      `,
-      variables: {
-        name,
-      },
-    });
-
-    expect(mutationResult.data.deleteProject.name).toEqual(name);
-
-    return expect(
-      client.query({
-        query: gql`
-          query getProject($id: ID!) {
-            project(where: { id: $id }) {
-              id
-            }
-          }
-        `,
-        variables: {
-          id: projectId,
-        },
-      })
-    ).rejects.toEqual(new Error("No project with such id"));
-  });
-
   test("should throw an error if the project to delete does not exist", () => {
     return expect(
       client.mutate({
@@ -444,55 +400,6 @@ describe("Project resolver test suite", () => {
       `,
       variables: {
         id: projectId,
-        data: { name: "My new project new name" },
-      },
-    });
-
-    expect(mutationResult.data.updateProject).toEqual(
-      expect.objectContaining({
-        id: projectId,
-        name: "My new project new name",
-      })
-    );
-
-    const queryResult = await client.query({
-      query: gql`
-        query getProject($id: ID!) {
-          project(where: { id: $id }) {
-            id
-            name
-          }
-        }
-      `,
-      variables: {
-        id: projectId,
-      },
-    });
-
-    expect(queryResult.data.project).toEqual(
-      expect.objectContaining({
-        id: projectId,
-        name: "My new project new name",
-      })
-    );
-  });
-
-  test("Should update a project with a new name by its name", async () => {
-    const name = "My new project";
-    const projectId = "some id";
-    await createProject(name, projectId);
-
-    const mutationResult = await client.mutate({
-      mutation: gql`
-        mutation updateProject($name: String!, $data: ProjectUpdateInput!) {
-          updateProject(where: { name: $name }, data: $data) {
-            id
-            name
-          }
-        }
-      `,
-      variables: {
-        name,
         data: { name: "My new project new name" },
       },
     });
@@ -577,11 +484,6 @@ describe("Project resolver test suite", () => {
       width: 42,
       height: 36,
       mime: "image/jpeg",
-      length: 1000,
-      hUnits: "px",
-      wUnits: "px",
-      url: "https://example.com/image.jpeg",
-      type: "jpg",
     });
 
     const getProjectData = async (projectId: string) => {
@@ -641,11 +543,6 @@ describe("Project resolver test suite", () => {
       width: 42,
       height: 36,
       mime: "image/jpeg",
-      length: 1000,
-      hUnits: "px",
-      wUnits: "px",
-      url: "https://example.com/image.jpeg",
-      type: "jpg",
     });
 
     const getProjectCount = async (projectId: string) => {

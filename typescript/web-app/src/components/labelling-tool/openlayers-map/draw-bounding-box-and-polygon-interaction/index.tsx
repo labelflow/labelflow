@@ -5,15 +5,17 @@ import { createBox, DrawEvent } from "ol/interaction/Draw";
 import GeoJSON from "ol/format/GeoJSON";
 import { Fill, Stroke, Style } from "ol/style";
 import GeometryType from "ol/geom/GeometryType";
-import { useApolloClient, useQuery, gql, useMutation } from "@apollo/client";
+import { useApolloClient, useQuery, gql } from "@apollo/client";
 
 import { useToast } from "@chakra-ui/react";
 
 import { useHotkeys } from "react-hotkeys-hook";
-import { Feature, MapBrowserEvent } from "ol";
-import { Geometry, Point, Polygon } from "ol/geom";
+import { MapBrowserEvent } from "ol";
+import { Point } from "ol/geom";
 import { Coordinate } from "ol/coordinate";
 import CircleStyle from "ol/style/Circle";
+import { LabelType } from "@labelflow/graphql-types";
+
 import {
   useLabellingStore,
   Tools,
@@ -23,7 +25,6 @@ import { keymap } from "../../../../keymap";
 import { useUndoStore } from "../../../../connectors/undo-store";
 import { noneClassColor } from "../../../../utils/class-color-generator";
 import { createLabelEffect } from "./create-label-effect";
-import { LabelType } from "../../../../graphql-types.generated";
 import { updateLabelEffect } from "../select-and-modify-feature/update-label-effect";
 
 const labelClassQuery = gql`

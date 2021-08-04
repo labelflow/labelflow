@@ -9,6 +9,7 @@ import { useToast, UseToastOptions } from "@chakra-ui/react";
 import { ModifyEvent } from "ol/interaction/Modify";
 import { TranslateEvent } from "ol/interaction/Translate";
 import { useRouter } from "next/router";
+import { LabelType } from "@labelflow/graphql-types";
 import { SelectInteraction } from "./select-interaction";
 import {
   Tools,
@@ -20,7 +21,6 @@ import {
 } from "./resize-and-translate-box-interaction";
 import { Effect, useUndoStore } from "../../../../connectors/undo-store";
 import { updateLabelEffect } from "./update-label-effect";
-import { LabelType } from "../../../../graphql-types.generated";
 
 // Extend react-openlayers-catalogue to include resize and translate interaction
 extend({
