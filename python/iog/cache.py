@@ -32,7 +32,7 @@ class Cache:
             pickle.dump(object, file)
 
     def read(self, id: str):
-        path_file = os.path.join(self.cache_folder, id, ".pkl")
+        path_file = self.get_file_path(id)
         try:
             with open(self.get_file_path(id), "rb") as file:
                 object = pickle.load(file)
