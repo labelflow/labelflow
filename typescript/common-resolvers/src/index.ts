@@ -6,6 +6,7 @@ import labelClassResolvers from "./label-class";
 import projectResolvers from "./project";
 import scalarsResolvers from "./scalars";
 import uploadResolvers from "./upload";
+import iogResolvers from "./iog-inference";
 
 export const commonResolvers = mergeResolvers([
   formatCocoResolvers,
@@ -15,6 +16,7 @@ export const commonResolvers = mergeResolvers([
   projectResolvers,
   scalarsResolvers,
   uploadResolvers,
+  iogResolvers,
 ]);
 
 // We maybe should extract those functions in a dedicated package, feel free to discuss this

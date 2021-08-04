@@ -9,13 +9,14 @@ export const getBoundedGeometryFromImage = (
   geometry: GeometryInput
 ) => {
   const geometryPolygon = polygon(geometry.coordinates);
-  const imagePolygon = bboxPolygon([
-    0,
-    0,
-    imageDimensions.width,
-    imageDimensions.height,
-  ]);
-  const clippedGeometryObject = intersect(imagePolygon, geometryPolygon);
+  // const imagePolygon = bboxPolygon([
+  //   0,
+  //   0,
+  //   imageDimensions.width,
+  //   imageDimensions.height,
+  // ]);
+  const clippedGeometryObject = geometryPolygon; // TODO: put back the line below and fix iog inferences
+  // intersect(imagePolygon, geometryPolygon);
 
   if (clippedGeometryObject?.geometry == null) {
     throw new Error("Label out of image bounds");
