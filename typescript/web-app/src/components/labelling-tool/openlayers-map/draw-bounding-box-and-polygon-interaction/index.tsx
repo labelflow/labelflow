@@ -5,19 +5,16 @@ import { createBox, DrawEvent } from "ol/interaction/Draw";
 import GeoJSON from "ol/format/GeoJSON";
 import { Fill, Stroke, Style } from "ol/style";
 import { Vector as OlSourceVector } from "ol/source";
+import Collection from "ol/Collection";
 import GeometryType from "ol/geom/GeometryType";
-import Geometry from "ol/geom/Geometry";
+import { Feature, MapBrowserEvent } from "ol";
+import { Geometry, Polygon, Point } from "ol/geom";
 import { useApolloClient, useQuery, gql } from "@apollo/client";
-
 import { useToast } from "@chakra-ui/react";
-
 import { useHotkeys } from "react-hotkeys-hook";
-import { MapBrowserEvent } from "ol";
-import { Point } from "ol/geom";
 import { Coordinate } from "ol/coordinate";
 import CircleStyle from "ol/style/Circle";
 import { LabelType } from "@labelflow/graphql-types";
-
 import {
   useLabellingStore,
   Tools,
@@ -133,6 +130,23 @@ export const DrawBoundingBoxAndPolygonInteraction = () => {
   const [pointsOutside, setPointsOutside] = useState<Coordinate[]>([]);
   const [centerPoint, setCenterPoint] = useState<Coordinate>([]);
   const vectorSourceRef = useRef<OlSourceVector<Geometry>>(null);
+  const [centerPointFeature, setCenterPointFeature] =
+    useState<Feature<Polygon> | null>(null);
+
+  useEffect(() => {
+    if (vectorSourceRef.current != null) {
+      // TODO: add removal of listener
+      vectorSourceRef.current?.on("addfeature", () => {
+        const currentFeatures = vectorSourceRef.current.getFeatures();
+        const centerPointFeatureOl = currentFeatures.filter(
+          (feature) => feature.getProperties().id === "centerPoint"
+        )?.[0];
+        if (centerPointFeatureOl != null) {
+          setCenterPointFeature(centerPointFeatureOl as Feature<Polygon>);
+        }
+      });
+    }
+  }, [vectorSourceRef.current]);
 
   const selectedTool = useLabellingStore((state) => state.selectedTool);
 
@@ -415,6 +429,11 @@ export const DrawBoundingBoxAndPolygonInteraction = () => {
       <olInteractionPointer
         args={{ handleDownEvent: createPointInsideOrOutside }}
       />
+      {centerPointFeature != null && (
+        <olInteractionModify
+          args={{ features: new Collection([centerPointFeature]) }}
+        />
+      )}
 
       <olLayerVector>
         <olSourceVector ref={vectorSourceRef}>
