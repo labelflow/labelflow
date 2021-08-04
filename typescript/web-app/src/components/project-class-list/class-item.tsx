@@ -84,10 +84,10 @@ export const ClassItem = ({
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (inputRef.current != null && edit) {
+    if (inputRef.current && edit && editName !== null) {
       inputRef.current.focus();
     }
-  }, [inputRef.current, edit]);
+  }, [editName, edit]);
 
   const client = useApolloClient();
   useEffect(() => {
@@ -154,26 +154,28 @@ export const ClassItem = ({
         mr="2"
       />
 
-      {edit && editName != null ? (
-        <Input
-          ref={inputRef}
-          aria-label="Class name input"
-          variant="flushed"
-          flexGrow={1}
-          isTruncated
-          value={editName}
-          onChange={(e) => setEditName(e.target.value)}
-          onKeyPress={(e) => {
-            if (e.key === "Enter" && editName !== "") {
-              updateLabelClassNameWithOptimistic();
-            }
-          }}
-        />
-      ) : (
-        <Text flexGrow={1} isTruncated>
-          {name}
-        </Text>
-      )}
+      <Input
+        ref={inputRef}
+        display={edit && editName != null ? "block" : "none"}
+        aria-label="Class name input"
+        variant="flushed"
+        flexGrow={1}
+        isTruncated
+        value={editName || ""}
+        onChange={(e) => setEditName(e.target.value)}
+        onKeyPress={(e) => {
+          if (e.key === "Enter" && editName !== "") {
+            updateLabelClassNameWithOptimistic();
+          }
+        }}
+      />
+      <Text
+        display={!(edit && editName != null) ? "block" : "none"}
+        flexGrow={1}
+        isTruncated
+      >
+        {name}
+      </Text>
 
       {shortcut && (
         <Kbd flexShrink={0} flexGrow={0} justifyContent="center" mr="1">

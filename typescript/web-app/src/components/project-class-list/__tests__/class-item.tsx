@@ -79,6 +79,33 @@ describe("Project class list item tests", () => {
     expect(setEditClassId).toHaveBeenCalledWith("myClassId");
   });
 
+  it("Should focus class name input when user enter in edition mode", async () => {
+    const { rerender } = render(
+      <ClassItem
+        edit={false}
+        setEditClassId={setEditClassId}
+        projectId="myProjectId"
+        setDeleteClassId={setDeleteClassId}
+        {...classDefault}
+      />,
+      { wrapper }
+    );
+
+    rerender(
+      <ClassItem
+        edit
+        setEditClassId={setEditClassId}
+        projectId="myProjectId"
+        setDeleteClassId={setDeleteClassId}
+        {...classDefault}
+      />
+    );
+
+    await waitFor(() =>
+      expect(screen.getByLabelText("Class name input")).toHaveFocus()
+    );
+  });
+
   it("Should call function to open delete class modal when delete button is clicked", async () => {
     render(
       <ClassItem
