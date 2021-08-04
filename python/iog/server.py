@@ -100,7 +100,6 @@ cache = Cache()
 @mutation.field("iogInference")
 def resolve_iog_inference(*_, data):
     # json.dump(data, open("inputs/inputs_inference.json", "w"))
-    cache.clear()
     id = data["id"]
     imageUrl = data["imageUrl"]
     x = data["x"]
