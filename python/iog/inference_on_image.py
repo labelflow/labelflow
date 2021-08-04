@@ -100,6 +100,7 @@ def convert_net_output_to_geojson_polygon(fine_net_output, gt_input, image, roi)
         # im_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
         # cv2.drawContours(im_rgb, contours, -1, (0, 255, 0), 3)
         now = datetime.now()
+        os.makedirs("results", exist_ok=True)
         cv2.imwrite(f"results/result-{now}.jpg", blending)
         cv2.imwrite(f"results/mask-{now}.jpg", im_mask)
         cv2.imwrite(f"results/pred-{now}.jpg", pred * 255)
@@ -223,11 +224,11 @@ def inference(data_url, x, y, width, height, center_point, id, *, cache: Cache):
         },
         id,
     )
-
     if os.environ.get("DEBUG", False):
         now = datetime.now()
         points_fg = IOG_points[0, 0:1, :, :]
         points_bg = IOG_points[0, 1:2, :, :]
+        os.makedirs("outputs", exist_ok=True)
         cv2.imwrite(
             f"outputs/points_fg_inference-{now}.png",
             np.transpose((points_fg * 1).numpy().astype(np.uint8), (1, 2, 0)),
@@ -245,6 +246,7 @@ def refine(pointsInside, pointsOutside, id, *, cache: Cache):
     backbone_features = [value.to(device) for value in data["backbone_features"]]
     roi = data["roi"]
     image = data["image"]
+    center_point = data["center_point"]
 
     bbox = np.zeros_like(image[..., 0])
     bbox[int(roi[1]) : int(roi[1] + roi[3]), int(roi[0]) : int(roi[0] + roi[2])] = 1
@@ -253,6 +255,14 @@ def refine(pointsInside, pointsOutside, id, *, cache: Cache):
 
     tr_sample = trns(sample)
     IOG_points = tr_sample["IOG_points"].unsqueeze(0)
+    foreground_point_mask = np.zeros_like(image)
+    foreground_point_mask[
+        int(image.shape[0] - center_point[1]), int(center_point[0]), 0
+    ] = 1
+    sample = {"point_refinement_mask": foreground_point_mask, "gt": bbox}
+    IOG_points[0, 0:1, :, :] = trns_refinement(sample)["IOG_points"].unsqueeze(0)[
+        0, 0:1, :, :
+    ]
 
     for point in pointsInside:
         refinement_point_mask = np.zeros_like(image)
@@ -274,6 +284,7 @@ def refine(pointsInside, pointsOutside, id, *, cache: Cache):
         now = datetime.now()
         points_fg = IOG_points[0, 0:1, :, :]
         points_bg = IOG_points[0, 1:2, :, :]
+        os.makedirs("outputs", exist_ok=True)
         cv2.imwrite(
             f"outputs/points_fg-{now}.png",
             np.transpose((points_fg * 1).numpy().astype(np.uint8), (1, 2, 0)),

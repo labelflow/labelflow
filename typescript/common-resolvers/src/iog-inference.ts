@@ -4,7 +4,7 @@ import {
   MutationIogRefinementArgs,
 } from "@labelflow/graphql-types";
 
-const ENDPOINT = "http://0.0.0.0:5000/graphql";
+const ENDPOINT = "http://0.0.0.0:5032/graphql";
 // const ENDPOINT = "http://sterblue.ngrok.io/graphql";
 
 const iogInference = async (

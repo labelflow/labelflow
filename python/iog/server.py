@@ -197,4 +197,4 @@ app.mount("/graphql", GraphQL(schema, debug=True))
 # http://www.uvicorn.org/#running-programmatically
 
 if __name__ == "__main__":
-    uvicorn.run("server:app", host="0.0.0.0", port=5000, log_level="info")
+    uvicorn.run("server:app", host="0.0.0.0", port=5032, log_level="info")
