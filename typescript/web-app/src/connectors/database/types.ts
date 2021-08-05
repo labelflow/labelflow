@@ -5,7 +5,7 @@ import type {
   Label as GeneratedLabel,
   LabelClass as GeneratedLabelClass,
   Project as GeneratedProject,
-} from "../../graphql-types.generated";
+} from "@labelflow/graphql-types";
 
 export type DbImage =
   | (Omit<GeneratedImage, "url" | "labels"> & {
