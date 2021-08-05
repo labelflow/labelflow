@@ -52,60 +52,10 @@ async function createImage(url: string, projectId: string) {
   return image;
 }
 
-const createLabel = (data: LabelCreateInput) => {
-  return client.mutate({
-    mutation: gql`
-      mutation createLabel($data: LabelCreateInput!) {
-        createLabel(data: $data) {
-          id
-        }
-      }
-    `,
-    variables: {
-      data,
-    },
-  });
-};
-
-const createLabelClass = async (
-  name: String,
-  color = "#ffffff",
-  projectId: string
-) => {
-  const {
-    data: {
-      createLabelClass: { id },
-    },
-  } = await client.mutate({
-    mutation: gql`
-      mutation createLabelClass(
-        $name: String!
-        $color: String!
-        $projectId: ID!
-      ) {
-        createLabelClass(
-          data: { name: $name, color: $color, projectId: $projectId }
-        ) {
-          id
-          name
-          color
-        }
-      }
-    `,
-    variables: {
-      name,
-      color,
-      projectId,
-    },
-  });
-
-  return id;
-};
-
 describe("Index page redirection", () => {
   beforeEach(() =>
     cy.window().then(async () => {
-      const projectId = await createProject("cypress demo project");
+      const projectId = await createProject("Demo project");
 
       await createImage(
         "https://images.unsplash.com/photo-1579513141590-c597876aefbc?auto=format&fit=crop&w=882&q=80",
@@ -114,16 +64,17 @@ describe("Index page redirection", () => {
     })
   );
   it("Redirects to labelling tool on first user visit", () => {
-    localStorage.removeItem("isFirstVisit");
-    cy.visit(`/`);
+    cy.clearLocalStorage();
+    cy.visit(`/?modal-welcome=closed&modal-update-service-worker=update`);
     cy.get('[aria-label="loading indicator"]').should("not.exist");
     cy.get('[aria-label="Selection tool"]').should("exist");
   });
 
   it("Redirects to projects page when it's not the first visit", () => {
     localStorage.setItem("isFirstVisit", "false");
-    cy.visit(`/`);
+    cy.visit(`/?modal-welcome=closed&modal-update-service-worker=update`);
     cy.get('[aria-label="loading indicator"]').should("not.exist");
     cy.get('[aria-label="Selection tool"]').should("not.exist");
+    cy.get('[aria-label="Create new project"]').should("exist");
   });
 });
