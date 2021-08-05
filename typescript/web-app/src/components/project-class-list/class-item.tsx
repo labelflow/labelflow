@@ -41,9 +41,9 @@ type ClassItemProps = {
   color: string;
   shortcut: string | null;
   edit: boolean;
-  setEditClassId: (classId: string | null) => void;
+  onClickEdit: (classId: string | null) => void;
   projectId: string;
-  setDeleteClassId: (classId: string | null) => void;
+  onClickDelete: (classId: string | null) => void;
 };
 
 export const projectLabelClassesQuery = gql`
@@ -75,9 +75,9 @@ export const ClassItem = ({
   color,
   shortcut,
   edit,
-  setEditClassId,
+  onClickEdit,
   projectId,
-  setDeleteClassId,
+  onClickDelete,
 }: ClassItemProps) => {
   const [editName, setEditName] = useState<string | null>(null);
 
@@ -99,7 +99,7 @@ export const ClassItem = ({
   }, [edit]);
 
   const updateLabelClassNameWithOptimistic = useCallback(() => {
-    setEditClassId(null);
+    onClickEdit(null);
     client.mutate({
       mutation: updateLabelClassNameMutation,
       variables: { id, name: editName },
@@ -141,7 +141,7 @@ export const ClassItem = ({
         }
       },
     });
-  }, [editName, id, projectId, setEditClassId]);
+  }, [editName, id, projectId, onClickEdit]);
 
   return (
     <Flex alignItems="center" height="10">
@@ -198,7 +198,7 @@ export const ClassItem = ({
               h="8"
               w="8"
               minWidth="8"
-              onClick={() => setEditClassId(null)}
+              onClick={() => onClickEdit(null)}
             />
           </Tooltip>
           <Tooltip
@@ -235,7 +235,7 @@ export const ClassItem = ({
               h="8"
               w="8"
               minWidth="8"
-              onClick={() => setEditClassId(id)}
+              onClick={() => onClickEdit(id)}
             />
           </Tooltip>
           <Tooltip
@@ -252,7 +252,7 @@ export const ClassItem = ({
               w="8"
               mr="2"
               minWidth="8"
-              onClick={() => setDeleteClassId(id)}
+              onClick={() => onClickDelete(id)}
             />
           </Tooltip>
         </>

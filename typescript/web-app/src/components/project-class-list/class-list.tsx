@@ -63,9 +63,9 @@ export const ClassesList = ({ projectId }: { projectId: string }) => {
                 color={color}
                 shortcut={shortcut}
                 edit={editClassId === id}
-                setEditClassId={setEditClassId}
                 projectId={projectId}
-                setDeleteClassId={setDeleteClassId}
+                onClickEdit={setEditClassId}
+                onClickDelete={setDeleteClassId}
               />
             ))}
         </>

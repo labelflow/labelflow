@@ -32,8 +32,8 @@ const wrapper = ({ children }: PropsWithChildren<{}>) => (
   </ApolloProvider>
 );
 
-const setEditClassId = jest.fn();
-const setDeleteClassId = jest.fn();
+const onClickEdit = jest.fn();
+const onClickDelete = jest.fn();
 
 describe("Project class list item tests", () => {
   beforeEach(() => {
@@ -44,9 +44,9 @@ describe("Project class list item tests", () => {
     render(
       <ClassItem
         edit={false}
-        setEditClassId={setEditClassId}
+        onClickEdit={onClickEdit}
         projectId="myProjectId"
-        setDeleteClassId={setDeleteClassId}
+        onClickDelete={onClickDelete}
         {...classDefault}
       />,
       { wrapper }
@@ -65,9 +65,9 @@ describe("Project class list item tests", () => {
     render(
       <ClassItem
         edit={false}
-        setEditClassId={setEditClassId}
+        onClickEdit={onClickEdit}
         projectId="myProjectId"
-        setDeleteClassId={setDeleteClassId}
+        onClickDelete={onClickDelete}
         {...classDefault}
       />,
       { wrapper }
@@ -76,16 +76,16 @@ describe("Project class list item tests", () => {
     fireEvent.click(
       screen.getByRole("button", { name: "Edit class someClass name" })
     );
-    expect(setEditClassId).toHaveBeenCalledWith("myClassId");
+    expect(onClickEdit).toHaveBeenCalledWith("myClassId");
   });
 
   it("Should focus class name input when user enter in edition mode", async () => {
     const { rerender } = render(
       <ClassItem
         edit={false}
-        setEditClassId={setEditClassId}
+        onClickEdit={onClickEdit}
         projectId="myProjectId"
-        setDeleteClassId={setDeleteClassId}
+        onClickDelete={onClickDelete}
         {...classDefault}
       />,
       { wrapper }
@@ -94,9 +94,9 @@ describe("Project class list item tests", () => {
     rerender(
       <ClassItem
         edit
-        setEditClassId={setEditClassId}
+        onClickEdit={onClickEdit}
         projectId="myProjectId"
-        setDeleteClassId={setDeleteClassId}
+        onClickDelete={onClickDelete}
         {...classDefault}
       />
     );
@@ -110,9 +110,9 @@ describe("Project class list item tests", () => {
     render(
       <ClassItem
         edit={false}
-        setEditClassId={setEditClassId}
+        onClickEdit={onClickEdit}
         projectId="myProjectId"
-        setDeleteClassId={setDeleteClassId}
+        onClickDelete={onClickDelete}
         {...classDefault}
       />,
       { wrapper }
@@ -121,16 +121,16 @@ describe("Project class list item tests", () => {
     fireEvent.click(
       screen.getByRole("button", { name: "Delete class someClass" })
     );
-    expect(setDeleteClassId).toHaveBeenCalledWith("myClassId");
+    expect(onClickDelete).toHaveBeenCalledWith("myClassId");
   });
 
   it("Should display clear and save options in edit mode", async () => {
     render(
       <ClassItem
         edit
-        setEditClassId={setEditClassId}
+        onClickEdit={onClickEdit}
         projectId="myProjectId"
-        setDeleteClassId={setDeleteClassId}
+        onClickDelete={onClickDelete}
         {...classDefault}
       />,
       { wrapper }
@@ -147,9 +147,9 @@ describe("Project class list item tests", () => {
     render(
       <ClassItem
         edit
-        setEditClassId={setEditClassId}
+        onClickEdit={onClickEdit}
         projectId="myProjectId"
-        setDeleteClassId={setDeleteClassId}
+        onClickDelete={onClickDelete}
         {...classDefault}
       />,
       { wrapper }
@@ -172,9 +172,9 @@ describe("Project class list item tests", () => {
     render(
       <ClassItem
         edit
-        setEditClassId={setEditClassId}
+        onClickEdit={onClickEdit}
         projectId="myProjectId"
-        setDeleteClassId={setDeleteClassId}
+        onClickDelete={onClickDelete}
         {...classDefault}
       />,
       { wrapper }
