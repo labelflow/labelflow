@@ -1,4 +1,10 @@
-import { gql, useQuery, useApolloClient } from "@apollo/client";
+import {
+  gql,
+  useQuery,
+  useApolloClient,
+  makeReference,
+  Reference,
+} from "@apollo/client";
 import { useRef, useCallback } from "react";
 import {
   AlertDialog,
@@ -47,11 +53,20 @@ export const DeleteLabelClassModal = ({
     client.mutate({
       mutation: deleteLabelClassMutation,
       variables: { id: labelClassId },
-      refetchQueries: [
-        "getLabelClassesOfProject",
-        "getProjectLabelClasses",
-        "getImageLabels",
-      ],
+      refetchQueries: ["getProjectLabelClasses", "getImageLabels"],
+      update(cache) {
+        cache.modify({
+          id: cache.identify(makeReference("ROOT_QUERY")),
+          fields: {
+            labelClasses: (existingLabelClassesRefs, { readField }) => {
+              return existingLabelClassesRefs.filter(
+                (labelClassRef: Reference) =>
+                  labelClassId !== readField("id", labelClassRef)
+              );
+            },
+          },
+        });
+      },
     });
     onClose();
   }, [labelClassId, client, onClose]);
