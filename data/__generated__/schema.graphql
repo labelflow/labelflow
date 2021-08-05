@@ -161,7 +161,7 @@ type LabelsAggregates {
 
 type Mutation {
   createExample(data: ExampleCreateInput!): Example
-  getUploadTarget: UploadTarget!
+  getUploadTarget(data: UploadTargetInput!): UploadTarget!
   createImage(data: ImageCreateInput!): Image
   createLabel(data: LabelCreateInput!): Label
   updateLabel(where: LabelWhereUniqueInput!, data: LabelUpdateInput!): Label
@@ -234,4 +234,8 @@ type UploadTargetDirect {
 type UploadTargetHttp {
   uploadUrl: String!
   downloadUrl: String!
+}
+
+input UploadTargetInput {
+  key: String!
 }

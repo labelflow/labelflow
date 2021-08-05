@@ -7,6 +7,7 @@ import type {
   QueryImagesArgs,
 } from "@labelflow/graphql-types";
 
+import mime from "mime-types";
 import { projectTypename } from "./project";
 import { probeImage } from "./utils/probe-image";
 
@@ -37,6 +38,12 @@ const images = async (
 };
 
 // Mutations
+const getImageFileKey = (
+  imageId: string,
+  projectId: string,
+  mimetype: string
+) => `${projectId}/${imageId}.${mime.extension(mimetype)}`;
+
 const createImage = async (
   _: any,
   args: MutationCreateImageArgs,
@@ -98,11 +105,14 @@ const createImage = async (
 
     if (fetchResult.status !== 200) {
       throw new Error(
-        `Could not fetch image at url ${url} properly, code ${fetchResult.status}`
+        `Could not fetch image at url ${externalUrl} properly, code ${fetchResult.status}`
       );
     }
 
-    const uploadTarget = await repository.upload.getUploadTargetHttp();
+    const blob = await fetchResult.blob();
+    const uploadTarget = await repository.upload.getUploadTargetHttp(
+      getImageFileKey(imageId, projectId, blob.type)
+    );
 
     // eslint-disable-next-line no-underscore-dangle
     if (uploadTarget.__typename !== "UploadTargetHttp") {
@@ -112,15 +122,15 @@ const createImage = async (
     }
 
     finalUrl = uploadTarget.downloadUrl;
-
-    const blob = await fetchResult.blob();
-    await repository.upload.put(finalUrl, blob);
+    await repository.upload.put(uploadTarget.uploadUrl, blob);
   }
 
   if (file && !externalUrl && !url) {
     // File Content based upload
 
-    const uploadTarget = await repository.upload.getUploadTargetHttp();
+    const uploadTarget = await repository.upload.getUploadTargetHttp(
+      getImageFileKey(imageId, projectId, file.type)
+    );
 
     // eslint-disable-next-line no-underscore-dangle
     if (uploadTarget.__typename !== "UploadTargetHttp") {
@@ -130,7 +140,7 @@ const createImage = async (
     }
     finalUrl = uploadTarget.downloadUrl;
 
-    await repository.upload.put(finalUrl, file);
+    await repository.upload.put(uploadTarget.uploadUrl, file);
   }
 
   // Probe the file to get its dimensions and mimetype if not provided

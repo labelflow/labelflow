@@ -1,30 +1,40 @@
 import { v4 as uuidv4 } from "uuid";
 import fetch from "node-fetch";
+import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+
 import { Repository } from "../../../common-resolvers/src";
 import { UploadTargetHttp } from "../../../graphql-types/src/graphql-types.generated";
 
-const location = "http://localhost:5000/";
-const uploadsRoute = "upload";
+const bucket = "labelflow-images";
+const region = "eu-west-1";
+const location = `https://${bucket}.s3.${region}.amazonaws.com`;
+const s3Client = new S3Client({
+  region,
+  credentials: {
+    accessKeyId: process.env?.LABELFLOW_AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env?.LABELFLOW_AWS_SECRET_ACCESS_KEY,
+  },
+});
 
-export const getUploadTargetHttp = (): UploadTargetHttp => {
-  const fileId = uuidv4();
+export const getUploadTargetHttp = async (
+  key: string
+): Promise<UploadTargetHttp> => {
+  const command = new PutObjectCommand({
+    Bucket: bucket,
+    Key: key,
+  });
+  const signedUrl = await getSignedUrl(s3Client, command, {
+    expiresIn: 3600,
+  });
   return {
     __typename: "UploadTargetHttp",
-    uploadUrl: `{${location}${uploadsRoute}}/${fileId}`,
-    downloadUrl: `{${location}${uploadsRoute}}/${fileId}`,
+    uploadUrl: signedUrl,
+    downloadUrl: `${location}/${key}`,
   };
 };
 
-const dirtyInMemoryStorage = new Map<string, Blob>();
-
-// @ts-ignore
 export const getFromStorage: Repository["upload"]["get"] = async (url) => {
-  const file = dirtyInMemoryStorage.get(url);
-
-  if (file) {
-    return file.arrayBuffer();
-  }
-
   const fetchResult = await fetch(url, {
     method: "GET",
     headers: {
@@ -42,5 +52,9 @@ export const getFromStorage: Repository["upload"]["get"] = async (url) => {
 };
 
 export const putInStorage: Repository["upload"]["put"] = async (url, blob) => {
-  dirtyInMemoryStorage.set(url, blob);
+  console.log("Called PUT with URL = ", url);
+  await fetch(url, {
+    method: "PUT",
+    body: await blob.arrayBuffer(),
+  });
 };

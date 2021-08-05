@@ -9,6 +9,8 @@ import {
 } from "@chakra-ui/react";
 import { useApolloClient, gql } from "@apollo/client";
 import { useRouter } from "next/router";
+import { v4 as uuidv4 } from "uuid";
+import mime from "mime-types";
 
 import { UploadTarget } from "@labelflow/graphql-types";
 import { Dropzone } from "./dropzone";
@@ -16,6 +18,7 @@ import { FilesStatuses } from "./file-statuses";
 import { DroppedFile, UploadStatuses } from "../types";
 
 import { browser } from "../../../../utils/detect-scope";
+import project from "../../../../../../common-resolvers/src/project";
 
 const createImageFromFileMutation = gql`
   mutation createImageMutation(
@@ -52,8 +55,8 @@ const createImageFromUrlMutation = gql`
 `;
 
 const getImageUploadTargetMutation = gql`
-  mutation getUploadTarget {
-    getUploadTarget {
+  mutation getUploadTarget($key: String!) {
+    getUploadTarget(data: { key: $key }) {
       ... on UploadTargetDirect {
         direct
       }
@@ -76,6 +79,12 @@ const encodeFileToDataUrl = (file: File): Promise<string> => {
     reader.readAsDataURL(file);
   });
 };
+
+const getImageStoreKey = (
+  projectId: string,
+  fileId: string,
+  mimetype: string
+) => `${projectId}/${fileId}.${mime.extension(mimetype)}`;
 
 export const ImportImagesModalDropzone = ({
   setMode,
@@ -118,6 +127,13 @@ export const ImportImagesModalDropzone = ({
               // Ask server how to upload image
               const { data } = await apolloClient.mutate({
                 mutation: getImageUploadTargetMutation,
+                variables: {
+                  key: getImageStoreKey(
+                    projectId as string,
+                    uuidv4(),
+                    acceptedFile.file.type
+                  ),
+                },
               });
 
               const target: UploadTarget = data.getUploadTarget;

@@ -82,8 +82,10 @@ export type Repository = {
     update: Update<DbProject>;
   };
   upload: {
-    getUploadTargetHttp: () => Promise<UploadTargetHttp> | UploadTargetHttp;
-    getUploadTarget: () => Promise<UploadTarget> | UploadTarget;
+    getUploadTargetHttp: (
+      key: string
+    ) => Promise<UploadTargetHttp> | UploadTargetHttp;
+    getUploadTarget: (key: string) => Promise<UploadTarget> | UploadTarget;
     put: (url: string, file: Blob) => Promise<void>;
     get: (url: string) => Promise<ArrayBuffer>;
   };
