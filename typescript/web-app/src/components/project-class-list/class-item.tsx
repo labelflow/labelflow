@@ -83,11 +83,13 @@ export const ClassItem = ({
 
   const inputRef = useRef<HTMLInputElement>(null);
 
+  const isEditing = edit && editName !== null;
+
   useEffect(() => {
-    if (inputRef.current && edit && editName !== null) {
+    if (inputRef.current && isEditing) {
       inputRef.current.focus();
     }
-  }, [editName, edit]);
+  }, [isEditing]);
 
   const client = useApolloClient();
   useEffect(() => {
@@ -156,7 +158,7 @@ export const ClassItem = ({
 
       <Input
         ref={inputRef}
-        display={edit && editName != null ? "block" : "none"}
+        display={isEditing ? "block" : "none"}
         aria-label="Class name input"
         variant="flushed"
         flexGrow={1}
@@ -169,11 +171,7 @@ export const ClassItem = ({
           }
         }}
       />
-      <Text
-        display={!(edit && editName != null) ? "block" : "none"}
-        flexGrow={1}
-        isTruncated
-      >
+      <Text display={!isEditing ? "block" : "none"} flexGrow={1} isTruncated>
         {name}
       </Text>
 
@@ -183,7 +181,7 @@ export const ClassItem = ({
         </Kbd>
       )}
 
-      {edit && editName != null ? (
+      {isEditing ? (
         <>
           <Tooltip
             placement="bottom"
