@@ -100,7 +100,7 @@ export const DeleteLabelClassModal = ({
             <Button
               colorScheme="red"
               onClick={deleteLabelClass}
-              aria-label="Delete label class"
+              aria-label="Confirm deleting class"
               ml={3}
             >
               Delete

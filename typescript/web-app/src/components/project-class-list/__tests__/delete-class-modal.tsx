@@ -37,7 +37,7 @@ describe("Class delete modal tests", () => {
     const onClose = jest.fn();
     renderModal({ onClose, labelClassId: "Toto" });
 
-    fireEvent.click(screen.getByLabelText(/Delete label class/i));
+    fireEvent.click(screen.getByLabelText(/Confirm deleting class/i));
 
     expect(onClose).toHaveBeenCalled();
     expect(client.mutate).toHaveBeenCalledWith(

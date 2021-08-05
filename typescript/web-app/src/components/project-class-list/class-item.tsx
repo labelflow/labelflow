@@ -224,7 +224,6 @@ export const ClassItem = ({
             placement="bottom"
             openDelay={300}
             label={`Edit name of class ${name}`}
-            aria-label={`Edit name of class ${name}`}
           >
             <IconButton
               variant="ghost"
@@ -240,11 +239,10 @@ export const ClassItem = ({
             placement="bottom"
             openDelay={300}
             label={`Delete class ${name}`}
-            aria-label={`Delete class ${name}`}
           >
             <IconButton
               variant="ghost"
-              aria-label={`Delete class ${name}`}
+              aria-label="Delete class"
               icon={<DeleteIcon flexShrink={0} flexGrow={0} color="gray.600" />}
               h="8"
               w="8"

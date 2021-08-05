@@ -108,7 +108,7 @@ describe("Project class list tests", () => {
     render(<ClassesList projectId={projectId} />, { wrapper });
 
     await waitFor(() =>
-      fireEvent.click(screen.getByLabelText(/Delete class MyFirstClass/i))
+      fireEvent.click(screen.getByLabelText(/Delete class/i))
     );
     await waitFor(() =>
       expect(screen.getByText("Delete Class MyFirstClass")).toBeDefined()

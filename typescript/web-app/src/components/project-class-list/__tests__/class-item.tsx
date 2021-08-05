@@ -55,9 +55,7 @@ describe("Project class list item tests", () => {
     expect(
       screen.getByRole("button", { name: "Edit class someClass name" })
     ).toBeDefined();
-    expect(
-      screen.getByRole("button", { name: "Delete class someClass" })
-    ).toBeDefined();
+    expect(screen.getByRole("button", { name: "Delete class" })).toBeDefined();
     expect(screen.getByText(/myShortcut/i)).toBeDefined();
   });
 
@@ -118,9 +116,7 @@ describe("Project class list item tests", () => {
       { wrapper }
     );
 
-    fireEvent.click(
-      screen.getByRole("button", { name: "Delete class someClass" })
-    );
+    fireEvent.click(screen.getByRole("button", { name: "Delete class" }));
     expect(onClickDelete).toHaveBeenCalledWith("myClassId");
   });
 
