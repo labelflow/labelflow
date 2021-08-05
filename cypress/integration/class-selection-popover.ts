@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 
-import { LabelCreateInput } from "@labelflow/graphql-types";
+import { LabelCreateInput } from "../../typescript/graphql-types";
 import { client } from "../../typescript/web-app/src/connectors/apollo-client-schema";
 
 const createProject = async (name: string) => {
