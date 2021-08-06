@@ -69,9 +69,11 @@ export const resetDatabase = () => {
               url,
             },
             {
-              getUploadTargetHttp,
-              getImage: getFromStorage,
-              putImage: putInStorage,
+              upload: {
+                getUploadTargetHttp,
+                get: getFromStorage,
+                put: putInStorage,
+              },
             }
           );
           db.image.add(imageEntity);
