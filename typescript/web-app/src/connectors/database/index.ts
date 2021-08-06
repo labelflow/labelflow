@@ -15,6 +15,7 @@ import {
   getFromStorage,
   putInStorage,
   getUploadTargetHttp,
+  getUploadTarget,
 } from "../repository/upload";
 
 export interface Database extends Dexie {
@@ -71,6 +72,7 @@ export const resetDatabase = () => {
             {
               upload: {
                 getUploadTargetHttp,
+                getUploadTarget,
                 get: getFromStorage,
                 put: putInStorage,
               },
