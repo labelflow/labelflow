@@ -324,7 +324,7 @@ describe("Class selection popover", () => {
     });
   });
 
-  it("should update the label classes list when a label class is deleted", () => {
+  it.only("should update the label classes list when a label class is deleted", () => {
     cy.visit(
       `/projects/${projectId}/images/${imageId}?modal-welcome=closed&modal-update-service-worker=update`
     );
@@ -346,6 +346,6 @@ describe("Class selection popover", () => {
     cy.get("main").rightclick(500, 150);
     cy.get('[aria-label="Class selection popover"]')
       .contains("A new class")
-      .should("not.be.visible");
+      .should("not.exist");
   });
 });
