@@ -324,7 +324,7 @@ describe("Class selection popover", () => {
     });
   });
 
-  it.only("should update the label classes list when a label class is deleted", () => {
+  it("should update the label classes list when a label class is deleted", () => {
     cy.visit(
       `/projects/${projectId}/images/${imageId}?modal-welcome=closed&modal-update-service-worker=update`
     );
