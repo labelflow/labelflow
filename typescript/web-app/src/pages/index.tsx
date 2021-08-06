@@ -19,17 +19,26 @@ const projectsQuery = gql`
 const IndexPage = () => {
   const router = useRouter();
 
-  const { data: projectsData } =
+  const { data: projectsData, loading } =
     useQuery<{
       projects: { id: string; name: string; images: { id: string }[] }[];
     }>(projectsQuery);
 
   useEffect(() => {
     const isFirstVisit = localStorage.getItem("isFirstVisit") !== "false";
-    if (!isFirstVisit) {
+
+    if (
+      !isFirstVisit ||
+      (isFirstVisit &&
+        projectsData?.projects?.length != null &&
+        projectsData.projects.length < 1 &&
+        loading === false)
+    ) {
+      // The user already accessed the app or it is the user's first visit but the Demo project was not created, redirect to projects page for the user to be able to create a new project manually
       router.replace({ pathname: "/projects", query: router.query });
     }
-    if (isFirstVisit && projectsData != null && projectsData.projects != null) {
+
+    if (isFirstVisit && projectsData?.projects != null) {
       // This is the first visit of the user and the projects query returned, redirect to demo project
       const demoProject =
         projectsData.projects.filter(
