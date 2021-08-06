@@ -2,6 +2,7 @@ import { v4 as uuidv4 } from "uuid";
 import type {
   LabelClass,
   MutationCreateLabelClassArgs,
+  MutationUpdateLabelClassArgs,
   MutationDeleteLabelClassArgs,
   QueryLabelClassArgs,
   QueryLabelClassesArgs,
@@ -72,21 +73,38 @@ const createLabelClass = async (
   )(newLabelClassEntity.id);
 };
 
+const updateLabelClass = async (
+  _: any,
+  args: MutationUpdateLabelClassArgs,
+  { repository }: Context
+) => {
+  const labelClassId = args.where.id;
+
+  const labelClassToUpdate = await throwIfResolvesToNil(
+    "No labelClass with such id",
+    repository.labelClass.getById
+  )(labelClassId);
+
+  await repository.labelClass.update(labelClassId, {
+    ...labelClassToUpdate,
+    ...args.data,
+  });
+
+  return repository.labelClass.getById(labelClassId);
+};
+
 const deleteLabelClass = async (
   _: any,
   args: MutationDeleteLabelClassArgs,
   { repository }: Context
 ) => {
-  const labelClassId = args.where.id;
-
-  const labelClassToDelete = await throwIfResolvesToNil(
+  const labelToDelete = await throwIfResolvesToNil(
     "No labelClass with such id",
     repository.labelClass.getById
-  )(labelClassId);
+  )(args.where.id);
 
-  await repository.labelClass.delete(labelClassId);
-
-  return labelClassToDelete;
+  await repository.labelClass.delete(labelToDelete.id);
+  return labelToDelete;
 };
 
 const labelClassesAggregates = (parent: any) => {
@@ -116,6 +134,7 @@ export default {
 
   Mutation: {
     createLabelClass,
+    updateLabelClass,
     deleteLabelClass,
   },
 
