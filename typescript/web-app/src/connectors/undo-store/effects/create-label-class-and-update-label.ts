@@ -8,16 +8,7 @@ import {
 } from "../../../utils/class-color-generator";
 import { Effect } from "..";
 import { getProjectsQuery } from "../../../pages/projects";
-
-const labelClassesOfProjectQuery = gql`
-  query getLabelClassesOfProject($projectId: ID!) {
-    labelClasses(where: { projectId: $projectId }) {
-      id
-      name
-      color
-    }
-  }
-`;
+import { projectLabelClassesQuery } from "../../../components/project-class-list/class-item";
 
 const labelQuery = gql`
   query getLabel($id: ID!) {
@@ -84,8 +75,9 @@ export const createCreateLabelClassAndUpdateLabelEffect = (
       mutation: createLabelClassQuery,
       variables: { data: { name, color, projectId } },
       refetchQueries: [
-        { query: labelClassesOfProjectQuery, variables: { projectId } },
+        "getLabelClassesOfProject",
         { query: getProjectsQuery },
+        { query: projectLabelClassesQuery, variables: { projectId } },
       ],
     });
 
@@ -136,8 +128,9 @@ export const createCreateLabelClassAndUpdateLabelEffect = (
         where: { id: labelClassId },
       },
       refetchQueries: [
-        { query: labelClassesOfProjectQuery, variables: { projectId } },
+        "getLabelClassesOfProject",
         { query: getProjectsQuery },
+        { query: projectLabelClassesQuery, variables: { projectId } },
       ],
     });
 
@@ -158,8 +151,9 @@ export const createCreateLabelClassAndUpdateLabelEffect = (
       mutation: createLabelClassQuery,
       variables: { data: { name, color, id: labelClassId, projectId } },
       refetchQueries: [
-        { query: labelClassesOfProjectQuery, variables: { projectId } },
+        "getLabelClassesOfProject",
         { query: getProjectsQuery },
+        { query: projectLabelClassesQuery, variables: { projectId } },
       ],
     });
 
