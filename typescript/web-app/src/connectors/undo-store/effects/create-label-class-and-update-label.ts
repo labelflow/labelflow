@@ -10,16 +10,6 @@ import { Effect } from "..";
 import { getProjectsQuery } from "../../../pages/projects";
 import { projectLabelClassesQuery } from "../../../components/project-class-list/class-item";
 
-const labelClassesOfProjectQuery = gql`
-  query getLabelClassesOfProject($projectId: ID!) {
-    labelClasses(where: { projectId: $projectId }) {
-      id
-      name
-      color
-    }
-  }
-`;
-
 const labelQuery = gql`
   query getLabel($id: ID!) {
     label(where: { id: $id }) {

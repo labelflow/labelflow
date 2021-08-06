@@ -345,7 +345,7 @@ describe("Class selection popover", () => {
 
     cy.get("main").rightclick(500, 150);
     cy.get('[aria-label="Class selection popover"]')
-      .contains("My new class")
+      .contains("A new class")
       .should("not.be.visible");
   });
 });
