@@ -1,4 +1,5 @@
 import { gql } from "@apollo/client";
+import Dexie from "dexie";
 import { client } from "../../typescript/web-app/src/connectors/apollo-client-schema";
 
 const createProject = async (name: string) => {
@@ -49,6 +50,36 @@ async function createImage(url: string, projectId: string) {
 
   return image;
 }
+
+describe("Demo project creation", () => {
+  beforeEach(async () => {
+    if (window.navigator && navigator.serviceWorker) {
+      console.log("Will unregiter seriver worker");
+
+      const registrations = await navigator.serviceWorker.getRegistrations();
+      await Promise.all(
+        registrations.map((registration) => registration.unregister())
+      );
+    }
+    // await Promise.all(db.tables.map((table) => table.clear()));
+    console.log("Will Delete db");
+    await Dexie.delete("labelflow_local");
+    console.log("Will clear storage");
+    cy.clearLocalStorage();
+    console.log("Will reload");
+    cy.window().reload();
+    console.log("Done");
+  });
+
+  it.only("Creates a demo project when the user connects to the app for the first time", () => {
+    cy.visit(`/?modal-welcome=closed&modal-update-service-worker=update`);
+    cy.url().should(
+      "match",
+      /.\/projects\/([a-zA-Z0-9_-]*)\/images\/([a-zA-Z0-9_-]*)/
+    );
+    cy.contains("Demo project").should("exist");
+  });
+});
 
 describe("Index page redirection", () => {
   beforeEach(() =>
