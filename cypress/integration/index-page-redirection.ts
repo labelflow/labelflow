@@ -64,15 +64,15 @@ describe("Index page redirection", () => {
   it("Redirects to labelling tool on first user visit", () => {
     cy.clearLocalStorage();
     cy.visit(`/?modal-welcome=closed&modal-update-service-worker=update`);
-    cy.get('[aria-label="loading indicator"]').should("not.exist");
-    cy.get('[aria-label="Selection tool"]').should("exist");
+    cy.url().should(
+      "match",
+      /.\/projects\/([a-zA-Z0-9_-]*)\/images\/([a-zA-Z0-9_-]*)/
+    );
   });
 
   it("Redirects to projects page when it's not the first visit", () => {
     localStorage.setItem("isFirstVisit", "false");
     cy.visit(`/?modal-welcome=closed&modal-update-service-worker=update`);
-    cy.get('[aria-label="loading indicator"]').should("not.exist");
-    cy.get('[aria-label="Selection tool"]').should("not.exist");
-    cy.get('[aria-label="Create new project"]').should("exist");
+    cy.url().should("match", /.\/projects/);
   });
 });
