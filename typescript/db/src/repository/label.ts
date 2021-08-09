@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, Prisma } from "@prisma/client";
 import { Repository, DbLabel } from "@labelflow/common-resolvers";
 
 import { castObjectNullsToUndefined } from "./utils";
@@ -29,19 +29,19 @@ export const listLabels: Repository["label"]["list"] = async (
     return prisma.label.findMany(
       castObjectNullsToUndefined({
         where: { image: { projectId: where.projectId ?? undefined } },
-        orderBy: { createdAt: "asc" },
+        orderBy: { createdAt: Prisma.SortOrder.asc },
         skip,
         take: first,
-      }) as { [key: string]: never }
+      })
     ) as unknown as Promise<DbLabel[]>;
   }
 
   return prisma.label.findMany(
     castObjectNullsToUndefined({
       where: castObjectNullsToUndefined(where),
-      orderBy: { createdAt: "asc" },
+      orderBy: { createdAt: Prisma.SortOrder.asc },
       skip,
       take: first,
-    }) as { [key: string]: never }
+    })
   ) as unknown as Promise<DbLabel[]>;
 };
