@@ -3,7 +3,7 @@ import { ApolloProvider, gql } from "@apollo/client";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
-import { client } from "../../../../connectors/apollo-client-schema";
+import { client } from "../../../../connectors/apollo-client/schema-client";
 import {
   useLabellingStore,
   Tools,
@@ -22,9 +22,9 @@ jest.mock("next/router", () => ({
   })),
 }));
 
-jest.mock("../../../../connectors/apollo-client-schema", () => {
+jest.mock("../../../../connectors/apollo-client/schema-client", () => {
   const original = jest.requireActual(
-    "../../../../connectors/apollo-client-schema"
+    "../../../../connectors/apollo-client/schema-client"
   );
   return {
     client: {

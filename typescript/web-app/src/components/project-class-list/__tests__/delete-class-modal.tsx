@@ -2,13 +2,13 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import { ApolloProvider } from "@apollo/client";
 import { PropsWithChildren } from "react";
 
-import { client } from "../../../connectors/apollo-client-schema";
+import { client } from "../../../connectors/apollo-client/schema-client";
 import { setupTestsWithLocalDatabase } from "../../../utils/setup-local-db-tests";
 import { DeleteLabelClassModal } from "../delete-class-modal";
 
-jest.mock("../../../connectors/apollo-client-schema", () => {
+jest.mock("../../../connectors/apollo-client/schema-client", () => {
   const original = jest.requireActual(
-    "../../../connectors/apollo-client-schema"
+    "../../../connectors/apollo-client/schema-client"
   );
 
   return {

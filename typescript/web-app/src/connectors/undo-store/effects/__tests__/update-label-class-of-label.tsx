@@ -1,13 +1,13 @@
 import { createUpdateLabelClassOfLabelEffect } from "../update-label-class-of-label";
 import { useUndoStore } from "../..";
-import { client } from "../../../apollo-client-schema";
+import { client } from "../../../apollo-client/schema-client";
 
 import { setupTestsWithLocalDatabase } from "../../../../utils/setup-local-db-tests";
 
 setupTestsWithLocalDatabase();
 
-jest.mock("../../../apollo-client-schema", () => {
-  const original = jest.requireActual("../../../apollo-client-schema");
+jest.mock("../../../apollo-client/schema-client", () => {
+  const original = jest.requireActual("../../../apollo-client/schema-client");
   return {
     client: {
       ...original.client,

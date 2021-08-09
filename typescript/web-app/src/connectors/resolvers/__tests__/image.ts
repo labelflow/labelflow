@@ -1,7 +1,7 @@
 import { incrementMockedDate } from "@labelflow/dev-utils/mockdate";
 import { gql } from "@apollo/client";
 import { probeImage } from "@labelflow/common-resolvers/src/utils/probe-image";
-import { client } from "../../apollo-client-schema";
+import { client } from "../../apollo-client/schema-client";
 import { setupTestsWithLocalDatabase } from "../../../utils/setup-local-db-tests";
 
 setupTestsWithLocalDatabase();
