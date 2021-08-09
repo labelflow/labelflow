@@ -1,4 +1,4 @@
-import { Prisma, PrismaClient } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 
 import { DbLabel, Repository } from "@labelflow/common-resolvers";
 import { Image } from "@labelflow/graphql-types";
@@ -73,7 +73,7 @@ export const repository: Repository = {
     },
     count: async (where) =>
       prisma.labelClass.count({
-        where: where as Prisma.LabelClassWhereInput | undefined,
+        where: castObjectNullsToUndefined(where),
       }),
     update: async (id, labelClass) => {
       try {
