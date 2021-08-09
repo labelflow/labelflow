@@ -78,9 +78,11 @@ export const WelcomeModal = ({
       window.workbox !== undefined
     ) {
       const wb = window.workbox;
-      wb.addEventListener("controlling", (/* event: any */) => {
-        window.location.reload();
-      });
+      // // This next 3 lines were removed because they caused a reload of the page
+      // // when the user clicked "Start Labelling"
+      // wb.addEventListener("controlling", (/* event: any */) => {
+      //   window.location.reload();
+      // });
       // Send a message to the waiting service worker, instructing it to activate.
       wb.messageSkipWaiting();
     }

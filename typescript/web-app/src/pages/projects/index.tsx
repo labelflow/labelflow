@@ -1,8 +1,17 @@
-import { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect } from "react";
 import { gql, useQuery } from "@apollo/client";
 import { useRouter } from "next/router";
 import { GetServerSideProps } from "next";
-import { Flex, Breadcrumb, BreadcrumbItem, Text } from "@chakra-ui/react";
+import {
+  Flex,
+  Breadcrumb,
+  BreadcrumbItem,
+  Text,
+  Box,
+  Center,
+  Button,
+  Heading,
+} from "@chakra-ui/react";
 import { RiArrowRightSLine } from "react-icons/ri";
 import { useQueryParam } from "use-query-params";
 import { useCookie } from "next-cookie";
@@ -16,6 +25,8 @@ import { NewProjectCard, ProjectCard } from "../../components/projects";
 import { UpsertProjectModal } from "../../components/projects/upsert-project-modal";
 import { DeleteProjectModal } from "../../components/projects/delete-project-modal";
 import { AppLifecycleManager } from "../../components/app-lifecycle-manager";
+
+import { EmptyStateCaughtUp } from "../../components/empty-state";
 
 export const getProjectsQuery = gql`
   query getProjects {
@@ -90,10 +101,10 @@ const ProjectPage = ({
 
   const parsedCookie = useCookie(cookie);
 
-  useEffect(() => {
-    const didVisitDemoProject = parsedCookie.get("didVisitDemoProject");
-    const hasUserTriedApp = parsedCookie.get("hasUserTriedApp");
+  const didVisitDemoProject = parsedCookie.get("didVisitDemoProject");
+  const hasUserTriedApp = parsedCookie.get("hasUserTriedApp");
 
+  useEffect(() => {
     if (!hasUserTriedApp) {
       parsedCookie.set("hasUserTriedApp", true);
     }
@@ -118,7 +129,13 @@ const ProjectPage = ({
 
       parsedCookie.set("didVisitDemoProject", true);
     }
-  }, [projectsResult, parsedCookie, loading]);
+  }, [
+    projectsResult,
+    parsedCookie,
+    loading,
+    didVisitDemoProject,
+    hasUserTriedApp,
+  ]);
 
   return (
     <>
@@ -150,40 +167,74 @@ const ProjectPage = ({
           projectId={deleteProjectId}
         />
 
-        <Flex direction="row" wrap="wrap" p={4}>
-          <NewProjectCard
-            addProject={() => {
-              setIsCreatingProject(true, "replaceIn");
-            }}
-          />
+        {!didVisitDemoProject && (
+          <Center h="full">
+            <Box as="section">
+              <Box
+                maxW="2xl"
+                mx="auto"
+                px={{ base: "6", lg: "8" }}
+                py={{ base: "16", sm: "20" }}
+                textAlign="center"
+              >
+                <EmptyStateCaughtUp w="full" />
+                <Heading as="h2">Creating a demo project</Heading>
+                <Text mt="4" fontSize="lg">
+                  It should only take a few seconds, but if you don&apos;t want
+                  to wait, you can create an empty project.
+                </Text>
 
-          {projectsResult?.projects?.map(
-            ({
-              id,
-              images,
-              name,
-              imagesAggregates,
-              labelsAggregates,
-              labelClassesAggregates,
-            }) => (
-              <ProjectCard
-                key={id}
-                url={`/projects/${id}`}
-                imageUrl={images[0]?.url}
-                projectName={name}
-                imagesCount={imagesAggregates.totalCount}
-                labelClassesCount={labelClassesAggregates.totalCount}
-                labelsCount={labelsAggregates.totalCount}
-                editProject={() => {
-                  setEditProjectId(id, "replaceIn");
-                }}
-                deleteProject={() => {
-                  setDeleteProjectId(id, "replaceIn");
-                }}
-              />
-            )
-          )}
-        </Flex>
+                <Button
+                  colorScheme="brand"
+                  variant="outline"
+                  mt="8"
+                  onClick={() => {
+                    setIsCreatingProject(true, "replaceIn");
+                  }}
+                >
+                  Create an Empty Project
+                </Button>
+              </Box>
+            </Box>
+          </Center>
+        )}
+
+        {didVisitDemoProject && (
+          <Flex direction="row" wrap="wrap" p={4}>
+            <NewProjectCard
+              addProject={() => {
+                setIsCreatingProject(true, "replaceIn");
+              }}
+            />
+
+            {projectsResult?.projects?.map(
+              ({
+                id,
+                images,
+                name,
+                imagesAggregates,
+                labelsAggregates,
+                labelClassesAggregates,
+              }) => (
+                <ProjectCard
+                  key={id}
+                  url={`/projects/${id}`}
+                  imageUrl={images[0]?.url}
+                  projectName={name}
+                  imagesCount={imagesAggregates.totalCount}
+                  labelClassesCount={labelClassesAggregates.totalCount}
+                  labelsCount={labelsAggregates.totalCount}
+                  editProject={() => {
+                    setEditProjectId(id, "replaceIn");
+                  }}
+                  deleteProject={() => {
+                    setDeleteProjectId(id, "replaceIn");
+                  }}
+                />
+              )
+            )}
+          </Flex>
+        )}
       </Layout>
     </>
   );
