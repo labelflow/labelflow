@@ -60,6 +60,17 @@ export const repository: Repository = {
       return createdLabelClass.id;
     },
     count: async (where) => prisma.labelClass.count({ where }),
+    update: async (id, labelClass) => {
+      try {
+        await prisma.labelClass.update({
+          where: { id },
+          data: labelClass,
+        });
+        return true;
+      } catch (e) {
+        return false;
+      }
+    },
     delete: async (id) => {
       await prisma.labelClass.delete({ where: { id } });
     },
