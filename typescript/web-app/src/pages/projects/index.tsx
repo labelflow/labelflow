@@ -1,9 +1,11 @@
 import { useCallback, useEffect } from "react";
 import { gql, useQuery } from "@apollo/client";
 import { useRouter } from "next/router";
+import { GetServerSideProps } from "next";
 import { Flex, Breadcrumb, BreadcrumbItem, Text } from "@chakra-ui/react";
 import { RiArrowRightSLine } from "react-icons/ri";
 import { useQueryParam } from "use-query-params";
+import { useCookie } from "next-cookie";
 
 import type { Project as ProjectType } from "@labelflow/graphql-types";
 import { Meta } from "../../components/meta";
@@ -36,7 +38,7 @@ export const getProjectsQuery = gql`
   }
 `;
 
-const ProjectPage = () => {
+const ProjectPage = ({ cookie }: { cookie: string }) => {
   const router = useRouter();
 
   const { data: projectsResult, loading } =
@@ -79,9 +81,10 @@ const ProjectPage = () => {
     }
   }, [editProjectId, isCreatingProject, deleteProjectId]);
 
+  const parsedCookie = useCookie(cookie);
+
   useEffect(() => {
-    const didVisitDemoProject =
-      localStorage.getItem("didVisitDemoProject") === "true";
+    const didVisitDemoProject = parsedCookie.get("didVisitDemoProject");
 
     if (
       !didVisitDemoProject &&
@@ -101,9 +104,9 @@ const ProjectPage = () => {
         router.replace({ pathname: route, query: router.query });
       }
 
-      localStorage.setItem("didVisitDemoProject", "true");
+      parsedCookie.set("didVisitDemoProject", true);
     }
-  }, [projectsResult, loading]);
+  }, [projectsResult, parsedCookie, loading]);
 
   return (
     <>
@@ -169,6 +172,14 @@ const ProjectPage = () => {
       </Layout>
     </>
   );
+};
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  return {
+    props: {
+      cookie: context.req.headers.cookie || "",
+    },
+  };
 };
 
 export default ProjectPage;
