@@ -7,7 +7,7 @@ import { Footer } from "../components/website/Footer/Footer";
 import { PricingTable } from "../components/website/Pricing/PricingTable";
 import { Meta } from "../components/website/Meta";
 
-export default function Home() {
+export default function Pricing() {
   return (
     <Box minH="640px">
       <Meta title="Labelflow - Pricing" />

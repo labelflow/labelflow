@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { ErrorBoundary, FallbackProps } from "react-error-boundary";
 
 import { AppProps, AppContext } from "next/app";
@@ -41,24 +42,26 @@ const App = (props: AppProps & InitialProps) => {
   } = props;
 
   const parsedCookie = useCookie(cookie);
-  const assumeServiceWorkerActiveFromClient = parsedCookie?.get<boolean>(
-    "assumeServiceWorkerActive"
-  );
 
-  if (!assumeServiceWorkerActiveFromServer) {
-    if (!assumeServiceWorkerActiveFromClient && isInWindowScope) {
-      console.warn(
-        "Set the cookie client side in browser because it was not set with server http response. This should not happen"
-      );
-      parsedCookie?.set("assumeServiceWorkerActive", true, {
-        path: "/",
-        httpOnly: false,
-        maxAge: 315569260000, // 10years
-        expires: new Date(Date.now() + 315569260000),
-        sameSite: "strict",
-      });
+  useEffect(() => {
+    const assumeServiceWorkerActiveFromClient = parsedCookie?.get<boolean>(
+      "assumeServiceWorkerActive"
+    );
+    if (!assumeServiceWorkerActiveFromServer) {
+      if (!assumeServiceWorkerActiveFromClient && isInWindowScope) {
+        console.warn(
+          "Set the cookie client side in browser because it was not set with server http response. This should not happen"
+        );
+        parsedCookie?.set("assumeServiceWorkerActive", true, {
+          path: "/",
+          httpOnly: false,
+          maxAge: 315569260000, // 10years
+          expires: new Date(Date.now() + 315569260000),
+          sameSite: "strict",
+        });
+      }
     }
-  }
+  }, [parsedCookie, assumeServiceWorkerActiveFromServer]);
 
   return (
     <ErrorBoundary FallbackComponent={ErrorFallback}>

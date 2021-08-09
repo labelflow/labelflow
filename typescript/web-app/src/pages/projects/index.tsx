@@ -1,9 +1,9 @@
+import { useCallback, useEffect } from "react";
 import { gql, useQuery } from "@apollo/client";
-
+import { useRouter } from "next/router";
 import { Flex, Breadcrumb, BreadcrumbItem, Text } from "@chakra-ui/react";
 import { RiArrowRightSLine } from "react-icons/ri";
 import { useQueryParam } from "use-query-params";
-import { useCallback } from "react";
 
 import type { Project as ProjectType } from "@labelflow/graphql-types";
 import { Meta } from "../../components/meta";
@@ -37,7 +37,9 @@ export const getProjectsQuery = gql`
 `;
 
 const ProjectPage = () => {
-  const { data: projectsResult } =
+  const router = useRouter();
+
+  const { data: projectsResult, loading } =
     useQuery<{
       projects: Pick<
         ProjectType,
@@ -76,6 +78,32 @@ const ProjectPage = () => {
       setDeleteProjectId(null, "replaceIn");
     }
   }, [editProjectId, isCreatingProject, deleteProjectId]);
+
+  useEffect(() => {
+    const didVisitDemoProject =
+      localStorage.getItem("didVisitDemoProject") === "true";
+
+    if (
+      !didVisitDemoProject &&
+      projectsResult?.projects != null &&
+      loading === false
+    ) {
+      // This is the first visit of the user and the projects query returned, redirect to demo project
+      const demoProject =
+        projectsResult.projects.filter(
+          (project) => project.name === "Demo project"
+        )?.[0] ?? undefined;
+      const demoProjectId = demoProject?.id ?? "";
+      const firstImageId = demoProject?.images?.[0]?.id;
+
+      if (firstImageId != null) {
+        const route = `/projects/${demoProjectId}/images/${firstImageId}`;
+        router.replace({ pathname: route, query: router.query });
+      }
+
+      localStorage.setItem("didVisitDemoProject", "true");
+    }
+  }, [projectsResult, loading]);
 
   return (
     <>
