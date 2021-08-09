@@ -37,7 +37,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   if (parsedCookie.get("hasUserTriedApp")) {
     return {
       redirect: {
-        destination: "/projects",
+        // Keep query params after redirect
+        destination: `/projects?${context.resolvedUrl.split("?")[1]}`,
         permanent: false,
       },
     };
