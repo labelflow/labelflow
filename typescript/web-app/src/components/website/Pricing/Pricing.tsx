@@ -53,9 +53,9 @@ export const Pricing = () => (
         }}
         icon={GiCityCar}
         button={
-          <NextLink href="/request-access">
+          <NextLink href="/projects">
             <ActionButton variant="outline" borderWidth="2px">
-              Request Access
+              Try it now
             </ActionButton>
           </NextLink>
         }

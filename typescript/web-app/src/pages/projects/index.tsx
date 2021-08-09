@@ -85,6 +85,11 @@ const ProjectPage = ({ cookie }: { cookie: string }) => {
 
   useEffect(() => {
     const didVisitDemoProject = parsedCookie.get("didVisitDemoProject");
+    const hasUserTriedApp = parsedCookie.get("hasUserTriedApp");
+
+    if (!hasUserTriedApp) {
+      parsedCookie.set("hasUserTriedApp", true);
+    }
 
     if (
       !didVisitDemoProject &&

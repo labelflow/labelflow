@@ -11,7 +11,7 @@ import { Footer } from "../components/website/Footer/Footer";
 import { Pricing } from "../components/website/Pricing/Pricing";
 import { Meta } from "../components/website/Meta";
 
-export default function Home() {
+export default function Website() {
   return (
     <Box minH="640px">
       <Meta />
