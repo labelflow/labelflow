@@ -9,7 +9,7 @@ import { useCookie } from "next-cookie";
 import { ChakraProvider } from "@chakra-ui/react";
 
 import { theme } from "../theme";
-import { client } from "../connectors/apollo-client-service-worker";
+import { client } from "../connectors/apollo-client/client";
 import { QueryParamProvider } from "../utils/query-params-provider";
 import { AppLifecycleManager } from "../components/app-lifecycle-manager";
 import { isInWindowScope } from "../utils/detect-scope";

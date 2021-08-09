@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client";
 
 import { LabelCreateInput } from "../../typescript/graphql-types";
-import { client } from "../../typescript/web-app/src/connectors/apollo-client-schema";
+import { client } from "../../typescript/web-app/src/connectors/apollo-client/schema-client";
 
 const createProject = async (name: string) => {
   const mutationResult = await client.mutate({

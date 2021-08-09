@@ -1,10 +1,15 @@
 import { ApolloClient, InMemoryCache, HttpLink, concat } from "@apollo/client";
 import { awaitServiceWorkerLink } from "./await-service-worker-link";
 
-const httpLink = new HttpLink({ uri: "/api/worker/graphql" });
-
 export const client = new ApolloClient({
-  link: concat(awaitServiceWorkerLink, httpLink),
+  link: process.env.NEXT_PUBLIC_ENDPOINT
+    ? // Remote endpoint set: use this remote endpoint
+      new HttpLink({ uri: process.env.NEXT_PUBLIC_ENDPOINT })
+    : // No remote endpoint set: use local service worker
+      concat(
+        awaitServiceWorkerLink,
+        new HttpLink({ uri: "/api/worker/graphql" })
+      ),
   cache: new InMemoryCache({
     typePolicies: {
       Label: {

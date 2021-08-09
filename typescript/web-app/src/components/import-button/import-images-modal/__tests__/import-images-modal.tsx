@@ -5,7 +5,7 @@ import { ApolloProvider, gql } from "@apollo/client";
 import { PropsWithChildren } from "react";
 import "@testing-library/jest-dom/extend-expect";
 import { probeImage } from "@labelflow/common-resolvers/src/utils/probe-image";
-import { client } from "../../../../connectors/apollo-client-schema";
+import { client } from "../../../../connectors/apollo-client/schema-client";
 import { setupTestsWithLocalDatabase } from "../../../../utils/setup-local-db-tests";
 import {
   mockUseQueryParams,
@@ -47,9 +47,9 @@ mockedProbeSync.mockReturnValue({
  * Mock the apollo client to avoid creating corrupted files that allows
  * us to identify a behaviour.
  */
-jest.mock("../../../../connectors/apollo-client-schema", () => {
+jest.mock("../../../../connectors/apollo-client/schema-client", () => {
   const original = jest.requireActual(
-    "../../../../connectors/apollo-client-schema"
+    "../../../../connectors/apollo-client/schema-client"
   );
 
   return {
