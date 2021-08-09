@@ -17,6 +17,7 @@ import { useRouter } from "next/router";
 import { RiArrowRightSLine } from "react-icons/ri";
 import NextLink from "next/link";
 import type { Image } from "@labelflow/graphql-types";
+import { AppLifecycleManager } from "../../../../components/app-lifecycle-manager";
 import { KeymapButton } from "../../../../components/keymap-button";
 import { ImportButton } from "../../../../components/import-button";
 import { ExportButton } from "../../../../components/export-button";
@@ -66,7 +67,11 @@ type ImageQueryResponse = {
   image: Pick<Image, "id" | "name">;
 };
 
-const ImagePage = () => {
+const ImagePage = ({
+  assumeServiceWorkerActive,
+}: {
+  assumeServiceWorkerActive: boolean;
+}) => {
   const router = useRouter();
   const { projectId, imageId } = router?.query;
 
@@ -96,6 +101,9 @@ const ImagePage = () => {
 
   return (
     <>
+      <AppLifecycleManager
+        assumeServiceWorkerActive={assumeServiceWorkerActive}
+      />
       <Meta title={`Labelflow | Image ${imageName ?? ""}`} />
       <Layout
         topBarLeftContent={

@@ -11,7 +11,6 @@ import { ChakraProvider } from "@chakra-ui/react";
 import { theme } from "../theme";
 import { client } from "../connectors/apollo-client/client";
 import { QueryParamProvider } from "../utils/query-params-provider";
-import { AppLifecycleManager } from "../components/app-lifecycle-manager";
 import { isInWindowScope } from "../utils/detect-scope";
 import { Meta } from "../components/meta";
 import ErrorPage from "./_error";
@@ -69,10 +68,11 @@ const App = (props: AppProps & InitialProps) => {
         <QueryParamProvider>
           <ApolloProvider client={client}>
             <Meta />
-            <AppLifecycleManager
+            <Component
+              {...pageProps}
+              cookie={cookie}
               assumeServiceWorkerActive={assumeServiceWorkerActiveFromServer}
             />
-            <Component {...pageProps} />
           </ApolloProvider>
         </QueryParamProvider>
       </ChakraProvider>

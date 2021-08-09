@@ -15,6 +15,7 @@ import { NewProjectCard, ProjectCard } from "../../components/projects";
 
 import { UpsertProjectModal } from "../../components/projects/upsert-project-modal";
 import { DeleteProjectModal } from "../../components/projects/delete-project-modal";
+import { AppLifecycleManager } from "../../components/app-lifecycle-manager";
 
 export const getProjectsQuery = gql`
   query getProjects {
@@ -38,7 +39,13 @@ export const getProjectsQuery = gql`
   }
 `;
 
-const ProjectPage = ({ cookie }: { cookie: string }) => {
+const ProjectPage = ({
+  cookie,
+  assumeServiceWorkerActive,
+}: {
+  cookie: string;
+  assumeServiceWorkerActive: boolean;
+}) => {
   const router = useRouter();
 
   const { data: projectsResult, loading } =
@@ -115,6 +122,9 @@ const ProjectPage = ({ cookie }: { cookie: string }) => {
 
   return (
     <>
+      <AppLifecycleManager
+        assumeServiceWorkerActive={assumeServiceWorkerActive}
+      />
       <Meta title="Labelflow | Projects" />
       <Layout
         topBarLeftContent={

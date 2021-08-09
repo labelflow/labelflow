@@ -52,11 +52,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     };
   }
 
-  return {
-    props: {
-      cookie: context.req.headers.cookie || "",
-    },
-  };
+  return { props: {} };
 };
 
 export default IndexPage;
