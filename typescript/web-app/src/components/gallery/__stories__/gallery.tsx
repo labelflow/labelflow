@@ -5,7 +5,7 @@ import { withNextRouter } from "storybook-addon-next-router";
 import { gql } from "@apollo/client";
 import Bluebird from "bluebird";
 
-import { client } from "../../../connectors/apollo-client-schema";
+import { client } from "../../../connectors/apollo-client/schema-client";
 import { chakraDecorator } from "../../../utils/chakra-decorator";
 import { apolloDecorator } from "../../../utils/apollo-decorator";
 import { db } from "../../../connectors/database";

@@ -3,7 +3,7 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { ChakraProvider } from "@chakra-ui/react";
 import { ApolloProvider } from "@apollo/client";
 import { ClassItem } from "../class-item";
-import { client } from "../../../connectors/apollo-client-schema";
+import { client } from "../../../connectors/apollo-client/schema-client";
 import { theme } from "../../../theme";
 
 const classDefault = {
@@ -14,9 +14,9 @@ const classDefault = {
 };
 
 // Mock apollo client to be able to test if the mutate function is called during the tests
-jest.mock("../../../connectors/apollo-client-schema", () => {
+jest.mock("../../../connectors/apollo-client/schema-client", () => {
   const original = jest.requireActual(
-    "../../../connectors/apollo-client-schema"
+    "../../../connectors/apollo-client/schema-client"
   );
 
   return {

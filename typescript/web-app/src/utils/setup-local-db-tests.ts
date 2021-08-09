@@ -2,7 +2,7 @@
 import { initMockedDate } from "@labelflow/dev-utils/mockdate";
 
 import { db } from "../connectors/database";
-import { client } from "../connectors/apollo-client-schema";
+import { client } from "../connectors/apollo-client/schema-client";
 
 export function setupTestsWithLocalDatabase() {
   beforeAll(() => {
