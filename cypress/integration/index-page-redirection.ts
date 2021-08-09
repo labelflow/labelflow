@@ -62,7 +62,8 @@ describe("Index page redirection", () => {
     })
   );
   it("Redirects to labelling tool on first user visit", () => {
-    cy.clearLocalStorage();
+    cy.clearCookies();
+    cy.setCookie("hasUserTriedApp", "true");
     cy.visit(`/?modal-welcome=closed&modal-update-service-worker=update`);
     cy.url().should(
       "match",
@@ -71,7 +72,8 @@ describe("Index page redirection", () => {
   });
 
   it("Redirects to projects page when it's not the first visit", () => {
-    localStorage.setItem("isFirstVisit", "false");
+    cy.setCookie("didVisitDemoProject", "true");
+    cy.setCookie("hasUserTriedApp", "true");
     cy.visit(`/?modal-welcome=closed&modal-update-service-worker=update`);
     cy.url().should("match", /.\/projects/);
   });
