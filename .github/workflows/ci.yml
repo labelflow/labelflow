@@ -248,52 +248,6 @@ jobs:
           deployment_id: ${{ steps.deployment.outputs.deployment_id }}
           env_url: ${{steps.vercel.outputs.preview-url}}
 
-  deploy-website-pr:
-    name: Deploy website PR branch
-    if: "! contains( github.ref, 'main')"
-    runs-on: ubuntu-20.04
-    needs: install-typescript
-    steps:
-      - name: start deployment
-        uses: bobheadxi/deployments@v0.4.3
-        id: deployment
-        with:
-          step: start
-          token: ${{ secrets.GITHUB_TOKEN }}
-          env: "Preview – labelflow-site"
-          ref: ${{ github.head_ref }}
-          no_override: false
-      - name: Check out repository code
-        uses: actions/checkout@v2
-      - name: Deploy website on Vercel
-        uses: amondnet/vercel-action@v20
-        id: vercel
-        with:
-          scope: ${{ secrets.VERCEL_ORG_ID}}
-          vercel-token: ${{ secrets.VERCEL_TOKEN }} # Required
-          github-token: ${{ secrets.GITHUB_TOKEN }} #Optional
-          vercel-args: "" #Optional
-          vercel-org-id: ${{ secrets.VERCEL_ORG_ID}} #Required
-          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID_WEBSITE}} #Required
-          vercel-project-name: "labelflow-site"
-          # working-directory: ./typescript/web-site
-          working-directory: .
-          # alias-domains: | #Optional
-          #   www.labelflow.ai
-          #   pr-{{PR_NUMBER}}.www.labelflow.ai
-          alias-domains: | #Optional
-            pr-{{PR_NUMBER}}.www.labelflow.ai
-      - run: npx vercel logs ${{steps.vercel.outputs.preview-url}} --token ${{ secrets.VERCEL_TOKEN }}
-      - name: update deployment status
-        uses: bobheadxi/deployments@v0.4.3
-        if: always()
-        with:
-          step: finish
-          token: ${{ secrets.GITHUB_TOKEN }}
-          status: ${{ job.status }}
-          deployment_id: ${{ steps.deployment.outputs.deployment_id }}
-          env_url: ${{steps.vercel.outputs.preview-url}}
-
   deploy-webapp-main:
     name: Deploy webapp to production
     if: contains( github.ref, 'main')
@@ -329,52 +283,6 @@ jobs:
           #   pr-{{PR_NUMBER}}.app.labelflow.ai
           alias-domains: | #Optional
             app.labelflow.ai
-      - run: npx vercel logs ${{steps.vercel.outputs.preview-url}} --token ${{ secrets.VERCEL_TOKEN }}
-      - name: update deployment status
-        uses: bobheadxi/deployments@v0.4.3
-        if: always()
-        with:
-          step: finish
-          token: ${{ secrets.GITHUB_TOKEN }}
-          status: ${{ job.status }}
-          deployment_id: ${{ steps.deployment.outputs.deployment_id }}
-          env_url: ${{steps.vercel.outputs.preview-url}}
-
-  deploy-website-main:
-    name: Deploy website to production
-    if: contains( github.ref, 'main')
-    runs-on: ubuntu-20.04
-    needs: install-typescript
-    steps:
-      - name: start deployment
-        uses: bobheadxi/deployments@v0.4.3
-        id: deployment
-        with:
-          step: start
-          token: ${{ secrets.GITHUB_TOKEN }}
-          env: "Production – labelflow-site"
-          ref: ${{ github.head_ref }}
-          no_override: true
-      - name: Check out repository code
-        uses: actions/checkout@v2
-      - name: Deploy website on Vercel
-        uses: amondnet/vercel-action@v20
-        id: vercel
-        with:
-          scope: ${{ secrets.VERCEL_ORG_ID}}
-          vercel-token: ${{ secrets.VERCEL_TOKEN }} # Required
-          github-token: ${{ secrets.GITHUB_TOKEN }} #Optional
-          vercel-args: "--prod" #Optional
-          vercel-org-id: ${{ secrets.VERCEL_ORG_ID}} #Required
-          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID_WEBSITE}} #Required
-          vercel-project-name: "labelflow-site"
-          # working-directory: ./typescript/web-site
-          working-directory: .
-          # alias-domains: | #Optional
-          #   www.labelflow.ai
-          #   pr-{{PR_NUMBER}}.www.labelflow.ai
-          alias-domains: | #Optional
-            www.labelflow.ai
       - run: npx vercel logs ${{steps.vercel.outputs.preview-url}} --token ${{ secrets.VERCEL_TOKEN }}
       - name: update deployment status
         uses: bobheadxi/deployments@v0.4.3
