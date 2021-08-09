@@ -1,16 +1,20 @@
 import { Box, useColorModeValue as mode } from "@chakra-ui/react";
 import * as React from "react";
 
-import { NavContent } from "../components/Navbar/NavContent";
+import { NavContent } from "../components/website/Navbar/NavContent";
+import { Hero } from "../components/website/Hero/Hero";
+import { Features } from "../components/website/Features/Features";
+import { LogoGrid } from "../components/website/Logos/LogoGrid";
 
-import { Footer } from "../components/Footer/Footer";
-import { PricingTable } from "../components/Pricing/PricingTable";
-import { Meta } from "../components/Meta";
+import { Why } from "../components/website/Why/Why";
+import { Footer } from "../components/website/Footer/Footer";
+import { Pricing } from "../components/website/Pricing/Pricing";
+import { Meta } from "../components/website/Meta";
 
 export default function Home() {
   return (
     <Box minH="640px">
-      <Meta title="Labelflow - Pricing" />
+      <Meta />
 
       <Box
         as="header"
@@ -29,8 +33,12 @@ export default function Home() {
           <NavContent.Desktop display={{ base: "none", lg: "flex" }} />
         </Box>
       </Box>
-      {/* <Hero /> */}
-      <PricingTable />
+      <Hero />
+      <Features />
+      <Why />
+      {/* <Testimonials /> */}
+      <LogoGrid />
+      <Pricing />
       <Footer />
     </Box>
   );

@@ -40,7 +40,7 @@ export const Why = () => {
             lg: "4xl",
           }}
           mx="auto"
-          src="/img/home-diagram.png"
+          src="/static/img/home-diagram.png"
         />
         {/* <Image
           // mt="24"
@@ -53,7 +53,7 @@ export const Why = () => {
           // objectFit="contain"
           // maxW={{ base: "calc( 100vw - 48px )", md: "xl" }}
           // mx="auto"
-          src="/img/home-diagram.png"
+          src="/static/img/home-diagram.png"
         /> */}
       </Box>
     </Box>

@@ -549,7 +549,7 @@ export const Apollo = (props: HTMLChakraProps<"svg">) => (
 );
 
 export const NextAuth = (props: HTMLChakraProps<"img">) => (
-  <Image {...props} src="/img/next-auth-logo-xs.png" />
+  <Image {...props} src="/static/img/next-auth-logo-xs.png" />
 );
 
 export const Stripe = (props: HTMLChakraProps<"svg">) => (

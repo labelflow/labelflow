@@ -119,25 +119,11 @@ export function Hero() {
               backgroundSize="contain"
               backgroundRepeat="no-repeat"
               backgroundPosition="center"
-              // src={{
-              //   base: "/img/home-screenshot2.jpg",
-              //   md: "/img/home-screenshot3.jpg",
-              //   xl: "/img/home-screenshot4.jpg",
-              // }}
-              //
-              src="/img/home-screenshot2.jpg"
-              srcSet="/img/home-screenshot1.jpg 424w, /img/home-screenshot2.jpg 847w, /img/home-screenshot3.jpg 1270w, /img/home-screenshot3.jpg 1693w"
+              src="/static/img/home-screenshot2.jpg"
+              srcSet="/static/img/home-screenshot1.jpg 424w, /static/img/home-screenshot2.jpg 847w, /static/img/home-screenshot3.jpg 1270w, /static/img/home-screenshot4.jpg 1693w"
               sizes="(max-width: 600px) 424px, (max-width: 900px) 847px, (max-width: 1200px) 1270px, 1693px"
               alt="Screening talent"
             />
-            {/* <Box
-              pos="absolute"
-              w="100%"
-              h="100%"
-              top="-4"
-              left="-4"
-              bg={mode("gray.200", "gray.700")}
-            /> */}
           </Box>
         </Stack>
       </Box>

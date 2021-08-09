@@ -1,16 +1,16 @@
 import { Box, useColorModeValue as mode } from "@chakra-ui/react";
 import * as React from "react";
 
-import { NavContent } from "../components/Navbar/NavContent";
+import { NavContent } from "../components/website/Navbar/NavContent";
 
-import { Footer } from "../components/Footer/Footer";
-import { RequestAccess } from "../components/RequestAccess/RequestAccess";
-import { Meta } from "../components/Meta";
+import { Survey } from "../components/website/Survey/Survey";
+import { Footer } from "../components/website/Footer/Footer";
+import { Meta } from "../components/website/Meta";
 
-export default function RequestAccessPage() {
+export default function ThankYou() {
   return (
     <Box minH="640px">
-      <Meta title="Labelflow - Request Access" />
+      <Meta title="Labelflow - Thank you" />
 
       <Box
         as="header"
@@ -29,7 +29,7 @@ export default function RequestAccessPage() {
           <NavContent.Desktop display={{ base: "none", lg: "flex" }} />
         </Box>
       </Box>
-      <RequestAccess />
+      <Survey />
       <Footer />
     </Box>
   );
