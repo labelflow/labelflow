@@ -32,6 +32,17 @@ const IndexPage = ({ cookie }: { cookie: string }) => {
 };
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
+  const parsedCookie = useCookie(context);
+
+  if (parsedCookie.get("hasUserTriedApp")) {
+    return {
+      redirect: {
+        destination: "/projects",
+        permanent: false,
+      },
+    };
+  }
+
   return {
     props: {
       cookie: context.req.headers.cookie || "",
