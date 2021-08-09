@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, Prisma } from "@prisma/client";
 
 import { DbLabel, Repository } from "@labelflow/common-resolvers";
 import { Image } from "@labelflow/graphql-types";
@@ -27,10 +27,10 @@ export const repository: Repository = {
       return prisma.image.findMany(
         castObjectNullsToUndefined({
           where: castObjectNullsToUndefined(where),
-          orderBy: { createdAt: "asc" },
+          orderBy: { createdAt: Prisma.SortOrder.asc },
           skip,
           take: first,
-        }) as { [key: string]: never }
+        })
       );
     },
   },
@@ -97,10 +97,10 @@ export const repository: Repository = {
       prisma.labelClass.findMany(
         castObjectNullsToUndefined({
           where: castObjectNullsToUndefined(where),
-          orderBy: { createdAt: "asc" },
+          orderBy: { createdAt: Prisma.SortOrder.asc },
           skip,
           take: first,
-        }) as { [key: string]: never }
+        })
       ),
   },
   project: {
@@ -131,10 +131,10 @@ export const repository: Repository = {
     list: (_where, skip = undefined, first = undefined) =>
       prisma.project.findMany(
         castObjectNullsToUndefined({
-          orderBy: { createdAt: "asc" },
+          orderBy: { createdAt: Prisma.SortOrder.asc },
           skip,
           take: first,
-        }) as { [key: string]: never }
+        })
       ),
   },
   upload: {
