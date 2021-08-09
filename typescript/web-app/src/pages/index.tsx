@@ -3,6 +3,7 @@ import { GetServerSideProps } from "next";
 import { useCookie } from "next-cookie";
 import { Spinner, Center } from "@chakra-ui/react";
 import { useRouter } from "next/router";
+import { join, map, toPairs, isEmpty } from "lodash/fp";
 import { Layout } from "../components/layout";
 import Website from "./website";
 
@@ -38,7 +39,14 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     return {
       redirect: {
         // Keep query params after redirect
-        destination: `/projects?${context.resolvedUrl.split("?")[1]}`,
+        destination: `/projects${
+          isEmpty(context.query)
+            ? ""
+            : `?${join(
+                "&",
+                map(([key, value]) => `${key}=${value}`, toPairs(context.query))
+              )}`
+        }`,
         permanent: false,
       },
     };
