@@ -19,7 +19,7 @@ const getProjectByIdQuery = gql`
 `;
 
 const deleteProjectByIdMutation = gql`
-  mutation deleteProjectById($id: ID) {
+  mutation deleteProjectById($id: ID!) {
     deleteProject(where: { id: $id }) {
       id
     }

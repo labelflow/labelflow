@@ -1,5 +1,4 @@
 import probe from "probe-image-size";
-import { Repository } from "../types";
 
 /**
  * Given a partial image, return a completed version of the image, probing it if necessary
@@ -16,7 +15,7 @@ export const probeImage = async (
     mimetype: string | null | undefined;
     url: string;
   },
-  repository: Repository
+  getImage: (url: string) => Promise<ArrayBuffer>
 ): Promise<{
   width: number;
   height: number;
@@ -26,7 +25,7 @@ export const probeImage = async (
     return { width, height, mimetype };
   }
 
-  const probeInput = new Uint8Array(await repository.upload.get(url));
+  const probeInput = new Uint8Array(await getImage(url));
 
   // TODO: It would be nice to import "probe-image-size" asynchronously to reduce initial bundle size of sw, but webpack config todo.
   // const probe = await import(/* webpackPrefetch: true */ "probe-image-size");
