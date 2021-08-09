@@ -39,10 +39,12 @@ export const WelcomeModal = ({
     StringParam
   );
   const [hasUserClickedStart, setHasUserClickedStart] = useState(false);
-  const [isOpen, setIsOpen] = useState(
+
+  const isOpen =
     (!isServiceWorkerActive && !(paramModalWelcome === "closed")) ||
-      paramModalWelcome === "open"
-  );
+    paramModalWelcome === "open";
+  const setIsOpen = (value: boolean) =>
+    setParamModalWelcome(value ? "open" : "closed", "replaceIn");
 
   const startLabellingButtonRef = useRef<HTMLButtonElement>(null);
 
