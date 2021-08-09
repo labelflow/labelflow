@@ -26,6 +26,7 @@ export const NewProjectCard = (props: { addProject: () => void }) => {
         justify="space-evenly"
         onClick={addProject}
         cursor="pointer"
+        aria-label="Create new project"
       >
         <PlusIcon color="gray.400" h="60px" w="60" />
         <Text fontSize="16px" fontWeight="semibold" color="gray.500">
