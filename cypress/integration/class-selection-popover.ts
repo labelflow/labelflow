@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client";
 
-import { client } from "../../typescript/web-app/src/connectors/apollo-client/schema-client";
-import { LabelCreateInput } from "../../typescript/web-app/src/graphql-types.generated";
+import { LabelCreateInput } from "../../typescript/graphql-types";
+import { client } from "../../typescript/web-app/src/connectors/apollo-client-schema";
 
 const createProject = async (name: string) => {
   const mutationResult = await client.mutate({
@@ -322,5 +322,30 @@ describe("Class selection popover", () => {
     cy.get('[aria-label="Class selection menu popover"]').within(() => {
       cy.get('[name="class-selection-search"]').should("be.focused");
     });
+  });
+
+  it("should update the label classes list when a label class is deleted", () => {
+    cy.visit(
+      `/projects/${projectId}/images/${imageId}?modal-welcome=closed&modal-update-service-worker=update`
+    );
+
+    cy.contains("cypress test project").click();
+
+    cy.contains("classes").click();
+    cy.url().should("contain", `/projects/${projectId}/classes`);
+
+    cy.get('[aria-label="Delete class"]').click();
+
+    cy.get('[aria-label="Confirm deleting class"]').click();
+    cy.contains(/^images$/).click();
+    cy.get("main").contains("photo-1579513141590-c597876aefbc").click();
+
+    cy.get('[aria-label="loading indicator"]').should("not.exist");
+    cy.get('[aria-label="Selection tool"]').click();
+
+    cy.get("main").rightclick(500, 150);
+    cy.get('[aria-label="Class selection popover"]')
+      .contains("A new class")
+      .should("not.exist");
   });
 });
