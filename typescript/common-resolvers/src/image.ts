@@ -2,6 +2,7 @@ import { v4 as uuidv4 } from "uuid";
 import "isomorphic-fetch";
 
 import type {
+  ImageCreateInput,
   MutationCreateImageArgs,
   QueryImageArgs,
   QueryImagesArgs,
@@ -10,31 +11,8 @@ import type {
 import { projectTypename } from "./project";
 import { probeImage } from "./utils/probe-image";
 
-import { Context, DbImage } from "./types";
+import { Context, DbImage, Repository } from "./types";
 import { throwIfResolvesToNil } from "./utils/throw-if-resolves-to-nil";
-
-// Queries
-const labelsResolver = async (
-  { id }: DbImage,
-  _args: any,
-  { repository }: Context
-) => {
-  return repository.label.list({ imageId: id });
-};
-
-const image = async (_: any, args: QueryImageArgs, { repository }: Context) =>
-  throwIfResolvesToNil(
-    "No image with such id",
-    repository.image.getById
-  )(args?.where?.id);
-
-const images = async (
-  _: any,
-  args: QueryImagesArgs,
-  { repository }: Context
-) => {
-  return repository.image.list(args?.where, args?.skip, args?.first);
-};
 
 // Mutations
 const getImageName = ({
@@ -56,11 +34,10 @@ const getImageName = ({
   return nameBase.replace(/\.[^/.]+$/, "");
 };
 
-const createImage = async (
-  _: any,
-  args: MutationCreateImageArgs,
-  { repository }: Context
-): Promise<DbImage> => {
+export const getImageEntityFromMutationArgs = async (
+  data: ImageCreateInput,
+  repository: Pick<Repository, "upload">
+) => {
   const {
     file,
     id,
@@ -72,32 +49,10 @@ const createImage = async (
     url,
     externalUrl,
     projectId,
-  } = args.data;
-
-  // Since we don't have any constraint checks with Dexie
-  // we need to ensure that the projectId matches some
-  // entity before being able to continue.
-  await throwIfResolvesToNil(
-    `The project id ${projectId} doesn't exist.`,
-    repository.project.getById
-  )(projectId);
-
-  const now = args?.data?.createdAt ?? new Date().toISOString();
+  } = data;
+  const now = data?.createdAt ?? new Date().toISOString();
   const imageId = id ?? uuidv4();
   let finalUrl: string | undefined;
-
-  if (
-    !(
-      (!file && !externalUrl && url) ||
-      (!file && externalUrl && !url) ||
-      (file && !externalUrl && !url)
-    )
-  ) {
-    throw new Error(
-      "Image creation upload must include either a `file` field of type `Upload`, or a `url` field of type `String`, or a `externalUrl` field of type `String`"
-    );
-  }
-
   if (!file && !externalUrl && url) {
     // No File Upload
     finalUrl = url;
@@ -160,7 +115,7 @@ const createImage = async (
       mimetype,
       url: finalUrl!,
     },
-    repository
+    repository.upload.get
   );
 
   const newImageEntity: DbImage = {
@@ -174,6 +129,64 @@ const createImage = async (
     name: getImageName({ externalUrl, finalUrl, name }),
     ...imageMetaData,
   };
+  return newImageEntity;
+};
+
+// Queries
+const labelsResolver = async (
+  { id }: DbImage,
+  _args: any,
+  { repository }: Context
+) => {
+  return repository.label.list({ imageId: id });
+};
+
+const image = async (_: any, args: QueryImageArgs, { repository }: Context) =>
+  throwIfResolvesToNil(
+    "No image with such id",
+    repository.image.getById
+  )(args?.where?.id);
+
+const images = async (
+  _: any,
+  args: QueryImagesArgs,
+  { repository }: Context
+) => {
+  return repository.image.list(args?.where, args?.skip, args?.first);
+};
+
+// Mutations
+const createImage = async (
+  _: any,
+  args: MutationCreateImageArgs,
+  { repository }: Context
+): Promise<DbImage> => {
+  const { file, url, externalUrl, projectId } = args.data;
+
+  // Since we don't have any constraint checks with Dexie
+  // we need to ensure that the projectId matches some
+  // entity before being able to continue.
+  await throwIfResolvesToNil(
+    `The project id ${projectId} doesn't exist.`,
+    repository.project.getById
+  )(projectId);
+
+  if (
+    !(
+      (!file && !externalUrl && url) ||
+      (!file && externalUrl && !url) ||
+      (file && !externalUrl && !url)
+    )
+  ) {
+    throw new Error(
+      "Image creation upload must include either a `file` field of type `Upload`, or a `url` field of type `String`, or a `externalUrl` field of type `String`"
+    );
+  }
+
+  const newImageEntity = await getImageEntityFromMutationArgs(
+    args.data,
+    repository
+  );
 
   await repository.image.add(newImageEntity);
 

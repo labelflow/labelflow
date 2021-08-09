@@ -23,6 +23,7 @@ export { throwIfResolvesToNil } from "./utils/throw-if-resolves-to-nil";
 
 export { initialCocoDataset } from "./format-coco/coco-core/converters";
 export { jsonToDataUri, dataUriToJson } from "./format-coco/json-to-data-uri";
+export { getImageEntityFromMutationArgs } from "./image";
 
 export * from "./types";
 export * from "./format-coco/coco-core/types";

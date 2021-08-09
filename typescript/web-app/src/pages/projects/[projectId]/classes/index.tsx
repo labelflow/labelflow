@@ -1,4 +1,4 @@
-import { gql, useQuery } from "@apollo/client";
+import { useQuery, gql } from "@apollo/client";
 import NextLink from "next/link";
 import {
   Text,
@@ -6,40 +6,36 @@ import {
   BreadcrumbItem,
   BreadcrumbLink,
   chakra,
+  Center,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { RiArrowRightSLine } from "react-icons/ri";
-import type { Project as ProjectType } from "@labelflow/graphql-types";
 import { KeymapButton } from "../../../../components/keymap-button";
 import { ImportButton } from "../../../../components/import-button";
 import { ExportButton } from "../../../../components/export-button";
 import { Meta } from "../../../../components/meta";
 import { Layout } from "../../../../components/layout";
 import { ProjectTabBar } from "../../../../components/layout/tab-bar/project-tab-bar";
+import { ClassesList } from "../../../../components/project-class-list";
 
 const ArrowRightIcon = chakra(RiArrowRightSLine);
 
-export const projectDataQuery = gql`
-  query getProjectData($projectId: ID!) {
+const projectNameQuery = gql`
+  query getProjectName($projectId: ID!) {
     project(where: { id: $projectId }) {
       id
       name
-      images {
-        id
-        name
-        url
-      }
     }
   }
 `;
 
-const ClassesPage = () => {
+const ProjectClassesPage = () => {
   const router = useRouter();
   const projectId = router?.query?.projectId as string;
 
   const { data: projectResult } = useQuery<{
-    project: ProjectType;
-  }>(projectDataQuery, {
+    project: { id: string; name: string };
+  }>(projectNameQuery, {
     variables: {
       projectId,
     },
@@ -66,8 +62,14 @@ const ClassesPage = () => {
               </NextLink>
             </BreadcrumbItem>
 
+            <BreadcrumbItem>
+              <NextLink href={`/projects/${projectId}`}>
+                <BreadcrumbLink>{projectName}</BreadcrumbLink>
+              </NextLink>
+            </BreadcrumbItem>
+
             <BreadcrumbItem isCurrentPage>
-              <Text>{projectName}</Text>
+              <Text>Classes</Text>
             </BreadcrumbItem>
           </Breadcrumb>
         }
@@ -80,10 +82,11 @@ const ClassesPage = () => {
         }
         tabBar={<ProjectTabBar currentTab="classes" projectId={projectId} />}
       >
-        <></>
+        <Center>
+          <ClassesList projectId={projectId} />
+        </Center>
       </Layout>
     </>
   );
 };
-
-export default ClassesPage;
+export default ProjectClassesPage;
