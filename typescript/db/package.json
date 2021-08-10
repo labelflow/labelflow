@@ -3,7 +3,8 @@
   "version": "0.0.1",
   "main": "src/index.ts",
   "scripts": {
-    "dev": "nodemon src/index.ts"
+    "dev": "nodemon src/index.ts",
+    "generate": "prisma generate"
   },
   "devDependencies": {
     "@types/node": "16.4.1",
