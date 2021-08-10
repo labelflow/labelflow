@@ -1,8 +1,9 @@
 import { Client } from "pg";
 
 import { createHash, randomBytes } from "crypto";
-import { Adapter } from "next-auth/adapters";
 import { Profile, Session, User } from "next-auth";
+import { Adapter } from "next-auth/adapters";
+import { EmailConfig } from "next-auth/providers";
 
 import {
   getUserById,
@@ -11,9 +12,12 @@ import {
   createUser,
   deleteUser,
   updateUser,
-  linkAccountUsers,
-  linkAccountRefreshTokens,
+  linkAccountUpdateUser,
+  linkAccountCreateRefreshToken,
+  unlinkAccountUpdateUser,
+  unlinkAccountDeleteRefreshToken,
   ICreateUserResult,
+  ILinkAccountCreateRefreshTokenResult,
 } from "./queries";
 
 export type SupabaseVerificationRequest = {
@@ -23,12 +27,13 @@ export type SupabaseVerificationRequest = {
   expires: Date;
 };
 
+export type SupabaseUser = User & { id: string };
+
 export type SupabaseSession = Session & {
   id: string;
   expires: Date;
+  user: SupabaseUser;
 };
-
-export type SupabaseUser = User & { id: string };
 
 export type SupabaseUserMetadata = {
   name: string | null;
@@ -53,14 +58,13 @@ const convertUserResultsToUser = (
 };
 
 const convertRefreshTokensResultsToRefreshToken = (
-  refreshTokens: ICreateUserResult[]
-): null | SupabaseUser => {
+  refreshTokens: ILinkAccountCreateRefreshTokenResult[]
+): null | ILinkAccountCreateRefreshTokenResult => {
   if (refreshTokens.length !== 1) return null;
-  const userResult = refreshTokens[0];
-  return userResult;
+  const refreshToken = refreshTokens[0];
+  return refreshToken;
 };
 
-// @ts-expect-error
 export const SupabaseAdapter: Adapter<
   Client,
   never,
@@ -85,17 +89,17 @@ export const SupabaseAdapter: Adapter<
     // await pgClient.connect();
     return {
       displayName: "Supabase",
-      async createUser(profile) {
+      async createUser(profile: SupabaseProfile): Promise<SupabaseUser> {
         const userResults = await createUser.run(
           {
             email: profile.email,
             aud: "authenticated",
             role: "authenticated",
-            email_confirmed_at: profile.emailVerified ?? null,
-            raw_app_meta_data: {
+            emailConfirmedAt: profile.emailVerified ?? null,
+            rawAppMetaData: {
               provider: "email",
             },
-            raw_user_meta_data: {
+            rawUserMetaData: {
               name: profile.name ?? null,
               image: profile.image ?? null,
               sub: profile.sub ?? null,
@@ -103,245 +107,238 @@ export const SupabaseAdapter: Adapter<
           },
           pgClient
         );
-        return convertUserResultsToUser(userResults);
+        return convertUserResultsToUser(userResults) as SupabaseUser;
       },
 
-      async getUser(id) {
+      async getUser(id: string): Promise<SupabaseUser | null> {
         if (!id) return null;
         const userResults = await getUserById.run({ id }, pgClient);
         return convertUserResultsToUser(userResults);
       },
 
-      async getUserByEmail(email) {
+      async getUserByEmail(email: string | null): Promise<SupabaseUser | null> {
         if (!email) return null;
         const userResults = await getUserByEmail.run({ email }, pgClient);
         return convertUserResultsToUser(userResults);
       },
 
-      async getUserByProviderAccountId(providerId, providerAccountId) {
-        if (!providerId || !providerAccountId) return null;
+      async getUserByProviderAccountId(
+        providerId: string,
+        providerAccountId: string
+      ): Promise<SupabaseUser | null> {
         const userResults = await getUserByProviderAccountId.run(
-          // FIXME
-          { provider_id: providerId, provider_account_id: providerAccountId },
+          { providerId, providerAccountId },
           pgClient
         );
         return convertUserResultsToUser(userResults);
       },
 
-      async updateUser(user) {
-        if (!user) return null;
+      async updateUser(user: SupabaseUser): Promise<SupabaseUser> {
         const userResults = await updateUser.run(
           {
             id: user.id,
             email: user.email,
-            raw_user_meta_data: {
+            rawUserMetaData: {
               name: user.name ?? null,
               image: user.image ?? null,
             },
           },
           pgClient
         );
-        return convertUserResultsToUser(userResults);
+        return convertUserResultsToUser(userResults) as SupabaseUser;
       },
 
-      async deleteUser(id) {
-        if (!id) return null;
-        const userResults = await deleteUser.run({ id }, pgClient);
-        return convertUserResultsToUser(userResults);
+      async deleteUser(id: string): Promise<void> {
+        await deleteUser.run({ id }, pgClient);
       },
 
       async linkAccount(
-        userId,
-        providerId,
-        providerType,
-        providerAccountId,
-        refreshToken,
-        accessToken,
-        accessTokenExpires
-      ) {
-        if (
-          !userId ||
-          !providerId ||
-          !providerType ||
-          !providerAccountId ||
-          !refreshToken ||
-          !accessToken ||
-          !accessTokenExpires
-        )
-          return null;
-        const userResults = await linkAccountUsers.run(
-          // FIXME
+        userId: string,
+        providerId: string,
+        providerType: string,
+        providerAccountId: string,
+        refreshToken?: string | undefined,
+        accessToken?: string | undefined,
+        accessTokenExpires?: null | undefined
+      ): Promise<void> {
+        await linkAccountUpdateUser.run(
           {
             userId,
-            raw_app_meta_data: {
+            rawAppMetaData: {
               provider: providerId,
-              providerType,
+              id: providerAccountId,
             },
-            raw_user_meta_data: {
-              name: profile.name ?? null,
-              image: profile.image ?? null,
-              sub: profile.sub ?? null,
-            },
-            providerAccountId,
-
-            access_token: accessToken,
-            access_token_expires: accessTokenExpires,
           },
           pgClient
         );
 
-        const refreshTokensResults = await linkAccountRefreshTokens.run(
-          { userId, revoked: false, token: refreshToken },
+        await linkAccountCreateRefreshToken.run(
+          { userId, token: refreshToken },
           pgClient
         );
-        return {
-          refreshTokensResults,
-          user: convertUserResultsToUser(userResults),
-        };
       },
 
-      async unlinkAccount(userId, providerId, providerAccountId) {
-        const snapshot = await client
-          .collection("accounts")
-          .where("userId", "==", userId)
-          .where("providerId", "==", providerId)
-          .where("providerAccountId", "==", providerAccountId)
-          .limit(1)
-          .get();
+      async unlinkAccount(
+        userId: string,
+        providerId: string,
+        providerAccountId: string
+      ): Promise<void> {
+        await unlinkAccountUpdateUser.run(
+          {
+            userId,
+            rawAppMetaData: {
+              provider: providerId,
+              id: providerAccountId,
+            },
+          },
+          pgClient
+        );
 
-        const accountId = snapshot.docs[0].id;
-
-        await client.collection("accounts").doc(accountId).delete();
+        await unlinkAccountDeleteRefreshToken.run({ userId }, pgClient);
       },
 
-      async createSession(user) {
-        const sessionRef = await client.collection("sessions").add({
-          userId: user.id,
-          expires: new Date(Date.now() + sessionMaxAge),
-          sessionToken: randomBytes(32).toString("hex"),
-          accessToken: randomBytes(32).toString("hex"),
-        });
-        const snapshot = await sessionRef.get();
-        const session = docSnapshotToObject(snapshot);
-        return session;
+      async createSession(user: SupabaseUser): Promise<SupabaseSession> {
+        // const sessionRef = await client.collection("sessions").add({
+        //   userId: user.id,
+        //   expires: new Date(Date.now() + sessionMaxAge),
+        //   sessionToken: randomBytes(32).toString("hex"),
+        //   accessToken: randomBytes(32).toString("hex"),
+        // });
+        // const snapshot = await sessionRef.get();
+        // const session = docSnapshotToObject(snapshot);
+        // return session;
       },
 
-      async getSession(sessionToken) {
-        const snapshot = await client
-          .collection("sessions")
-          .where("sessionToken", "==", sessionToken)
-          .limit(1)
-          .get();
+      async getSession(sessionToken: string): Promise<SupabaseSession | null> {
+        // const snapshot = await client
+        //   .collection("sessions")
+        //   .where("sessionToken", "==", sessionToken)
+        //   .limit(1)
+        //   .get();
+        // const session = querySnapshotToObject<SupabaseSession>(snapshot);
+        // if (!session) return null;
+        // // if the session has expired
+        // if (session.expires < new Date()) {
+        //   // delete the session
+        //   await client.collection("sessions").doc(session.id).delete();
+        //   return null;
+        // }
+        // // return already existing session
+        // return session;
+      },
 
-        const session = querySnapshotToObject<SupabaseSession>(snapshot);
-        if (!session) return null;
+      async updateSession(
+        session: SupabaseSession,
+        force?: boolean | undefined
+      ): Promise<SupabaseSession | null> {
+        // if (
+        //   !force &&
+        //   Number(session.expires) - sessionMaxAge + sessionUpdateAge >
+        //     Date.now()
+        // ) {
+        //   return null;
+        // }
+        // // Update the item in the database
+        // await client
+        //   .collection("sessions")
+        //   .doc(session.id)
+        //   .update({
+        //     expires: new Date(Date.now() + sessionMaxAge),
+        //   });
+        // return session;
+      },
 
-        // if the session has expired
-        if (session.expires < new Date()) {
-          // delete the session
-          await client.collection("sessions").doc(session.id).delete();
-          return null;
+      async deleteSession(sessionToken: string): Promise<void> {
+        // const snapshot = await client
+        //   .collection("sessions")
+        //   .where("sessionToken", "==", sessionToken)
+        //   .limit(1)
+        //   .get();
+        // const session = querySnapshotToObject<SupabaseSession>(snapshot);
+        // if (!session) return;
+        // await client.collection("sessions").doc(session.id).delete();
+      },
+
+      async createVerificationRequest(
+        identifier: string,
+        url: string,
+        token: string,
+        secret: string,
+        provider: EmailConfig & {
+          maxAge: number;
+          from: string;
         }
-        // return already existing session
-        return session;
+      ): Promise<void> {
+        // const verificationRequestRef = await client
+        //   .collection("verificationRequests")
+        //   .add({
+        //     identifier,
+        //     token: hashToken(token),
+        //     expires: new Date(Date.now() + provider.maxAge * 1000),
+        //   });
+        // // With the verificationCallback on a provider, you can send an email, or queue
+        // // an email to be sent, or perform some other action (e.g. send a text message)
+        // await provider.sendVerificationRequest({
+        //   identifier,
+        //   url,
+        //   token,
+        //   baseUrl: appOptions.baseUrl,
+        //   provider,
+        // });
+        // const snapshot = await verificationRequestRef.get();
+        // return docSnapshotToObject<SupabaseVerificationRequest>(snapshot);
       },
 
-      async updateSession(session, force) {
-        if (
-          !force &&
-          Number(session.expires) - sessionMaxAge + sessionUpdateAge >
-            Date.now()
-        ) {
-          return null;
-        }
-
-        // Update the item in the database
-        await client
-          .collection("sessions")
-          .doc(session.id)
-          .update({
-            expires: new Date(Date.now() + sessionMaxAge),
-          });
-
-        return session;
+      async getVerificationRequest(
+        identifier: string,
+        verificationToken: string,
+        secret: string,
+        provider: Required<EmailConfig>
+      ): Promise<{
+        id: string;
+        identifier: string;
+        token: string;
+        expires: Date;
+      } | null> {
+        // const snapshot = await client
+        //   .collection("verificationRequests")
+        //   .where("token", "==", hashToken(token))
+        //   .where("identifier", "==", identifier)
+        //   .limit(1)
+        //   .get();
+        // const verificationRequest =
+        //   querySnapshotToObject<SupabaseVerificationRequest>(snapshot);
+        // if (!verificationRequest) return null;
+        // if (verificationRequest.expires < new Date()) {
+        //   // Delete verification entry so it cannot be used again
+        //   await client
+        //     .collection("verificationRequests")
+        //     .doc(verificationRequest.id)
+        //     .delete();
+        //   return null;
+        // }
+        // return verificationRequest;
       },
 
-      async deleteSession(sessionToken) {
-        const snapshot = await client
-          .collection("sessions")
-          .where("sessionToken", "==", sessionToken)
-          .limit(1)
-          .get();
-
-        const session = querySnapshotToObject<SupabaseSession>(snapshot);
-        if (!session) return;
-
-        await client.collection("sessions").doc(session.id).delete();
-      },
-
-      async createVerificationRequest(identifier, url, token, _, provider) {
-        const verificationRequestRef = await client
-          .collection("verificationRequests")
-          .add({
-            identifier,
-            token: hashToken(token),
-            expires: new Date(Date.now() + provider.maxAge * 1000),
-          });
-
-        // With the verificationCallback on a provider, you can send an email, or queue
-        // an email to be sent, or perform some other action (e.g. send a text message)
-        await provider.sendVerificationRequest({
-          identifier,
-          url,
-          token,
-          baseUrl: appOptions.baseUrl,
-          provider,
-        });
-
-        const snapshot = await verificationRequestRef.get();
-        return docSnapshotToObject<SupabaseVerificationRequest>(snapshot);
-      },
-
-      async getVerificationRequest(identifier, token) {
-        const snapshot = await client
-          .collection("verificationRequests")
-          .where("token", "==", hashToken(token))
-          .where("identifier", "==", identifier)
-          .limit(1)
-          .get();
-
-        const verificationRequest =
-          querySnapshotToObject<SupabaseVerificationRequest>(snapshot);
-        if (!verificationRequest) return null;
-
-        if (verificationRequest.expires < new Date()) {
-          // Delete verification entry so it cannot be used again
-          await client
-            .collection("verificationRequests")
-            .doc(verificationRequest.id)
-            .delete();
-          return null;
-        }
-        return verificationRequest;
-      },
-
-      async deleteVerificationRequest(identifier, token) {
-        const snapshot = await client
-          .collection("verificationRequests")
-          .where("token", "==", hashToken(token))
-          .where("identifier", "==", identifier)
-          .limit(1)
-          .get();
-
-        const verificationRequest =
-          querySnapshotToObject<SupabaseVerificationRequest>(snapshot);
-
-        if (!verificationRequest) return null;
-
-        await client
-          .collection("verificationRequests")
-          .doc(verificationRequest.id)
-          .delete();
+      async deleteVerificationRequest(
+        identifier: string,
+        verificationToken: string,
+        secret: string,
+        provider: Required<EmailConfig>
+      ): Promise<void> {
+        // const snapshot = await client
+        //   .collection("verificationRequests")
+        //   .where("token", "==", hashToken(token))
+        //   .where("identifier", "==", identifier)
+        //   .limit(1)
+        //   .get();
+        // const verificationRequest =
+        //   querySnapshotToObject<SupabaseVerificationRequest>(snapshot);
+        // if (!verificationRequest) return null;
+        // await client
+        //   .collection("verificationRequests")
+        //   .doc(verificationRequest.id)
+        //   .delete();
       },
     };
   },

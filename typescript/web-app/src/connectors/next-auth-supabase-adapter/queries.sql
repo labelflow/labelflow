@@ -27,7 +27,10 @@ INSERT INTO auth.users (
     role,
     email_confirmed_at,
     raw_app_meta_data,
-    raw_user_meta_data
+    raw_user_meta_data,
+    created_at,
+    updated_at,
+    is_super_admin
   )
 VALUES (
     '00000000-0000-0000-0000-000000000000'::uuid,
@@ -37,7 +40,10 @@ VALUES (
     :role,
     :emailConfirmedAt,
     :rawAppMetaData,
-    :rawUserMetaData
+    :rawUserMetaData,
+    NOW(),
+    NOW(),
+    FALSE
   )
 RETURNING *;
 /* --------------------------------------------------------------------- */
@@ -45,8 +51,8 @@ RETURNING *;
 UPDATE auth.users
 SET email = COALESCE(:email, email),
   raw_user_meta_data = COALESCE(
-    raw_user_meta_data || :rawAppMetaData,
-    :rawAppMetaData,
+    raw_user_meta_data || :rawUserMetaData,
+    :rawUserMetaData,
     raw_user_meta_data
   )
 WHERE id = :id
@@ -57,13 +63,17 @@ DELETE FROM auth.users
 WHERE id = :id
 RETURNING *;
 /* --------------------------------------------------------------------- */
-/* @name LinkAccountUsers */
+/* @name LinkAccountUpdateUser */
 UPDATE auth.users
-SET email = :email
+SET raw_app_meta_data = COALESCE(
+    raw_app_meta_data || :rawAppMetaData,
+    :rawAppMetaData,
+    raw_app_meta_data
+  )
 WHERE id = :userId
 RETURNING *;
 /* --------------------------------------------------------------------- */
-/* @name LinkAccountRefreshTokens */
+/* @name LinkAccountCreateRefreshToken */
 INSERT INTO auth.refresh_tokens (
     instance_id,
     token,
@@ -76,8 +86,23 @@ VALUES (
     '00000000-0000-0000-0000-000000000000'::uuid,
     :token,
     :userId,
-    :revoked,
+    FALSE,
     NOW(),
     NOW()
   )
+RETURNING *;
+/* --------------------------------------------------------------------- */
+/* @name UnlinkAccountUpdateUser */
+UPDATE auth.users
+SET raw_app_meta_data = COALESCE(
+    raw_app_meta_data || :rawAppMetaData,
+    :rawAppMetaData,
+    raw_app_meta_data
+  )
+WHERE id = :userId
+RETURNING *;
+/* --------------------------------------------------------------------- */
+/* @name UnlinkAccountDeleteRefreshToken */
+DELETE FROM auth.refresh_tokens
+WHERE user_id = :userId
 RETURNING *;

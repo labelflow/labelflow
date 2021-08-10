@@ -2,7 +2,7 @@
   "transforms": [
     {
       "mode": "sql",
-      "include": "**/*.sql",
+      "include": "**/queries.sql",
       "emitTemplate": "{{dir}}/{{name}}.ts"
     }
   ],
