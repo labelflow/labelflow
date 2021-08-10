@@ -200,6 +200,7 @@ export type Mutation = {
   updateLabelClass?: Maybe<LabelClass>;
   deleteLabelClass?: Maybe<LabelClass>;
   createProject?: Maybe<Project>;
+  createDemoProject?: Maybe<Project>;
   updateProject?: Maybe<Project>;
   deleteProject?: Maybe<Project>;
 };
@@ -665,6 +666,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   updateLabelClass?: Resolver<Maybe<ResolversTypes['LabelClass']>, ParentType, ContextType, RequireFields<MutationUpdateLabelClassArgs, 'where' | 'data'>>;
   deleteLabelClass?: Resolver<Maybe<ResolversTypes['LabelClass']>, ParentType, ContextType, RequireFields<MutationDeleteLabelClassArgs, 'where'>>;
   createProject?: Resolver<Maybe<ResolversTypes['Project']>, ParentType, ContextType, RequireFields<MutationCreateProjectArgs, 'data'>>;
+  createDemoProject?: Resolver<Maybe<ResolversTypes['Project']>, ParentType, ContextType>;
   updateProject?: Resolver<Maybe<ResolversTypes['Project']>, ParentType, ContextType, RequireFields<MutationUpdateProjectArgs, 'where' | 'data'>>;
   deleteProject?: Resolver<Maybe<ResolversTypes['Project']>, ParentType, ContextType, RequireFields<MutationDeleteProjectArgs, 'where'>>;
 };

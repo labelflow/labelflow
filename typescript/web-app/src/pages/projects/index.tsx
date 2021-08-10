@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect } from "react";
-import { gql, useQuery } from "@apollo/client";
+import { gql, useMutation, useQuery } from "@apollo/client";
 import { useRouter } from "next/router";
 import { GetServerSideProps } from "next";
 import {
@@ -31,6 +31,28 @@ import { EmptyStateCaughtUp } from "../../components/empty-state";
 export const getProjectsQuery = gql`
   query getProjects {
     projects {
+      id
+      name
+      images(first: 1) {
+        id
+        url
+      }
+      imagesAggregates {
+        totalCount
+      }
+      labelsAggregates {
+        totalCount
+      }
+      labelClassesAggregates {
+        totalCount
+      }
+    }
+  }
+`;
+
+const createDemoProjectQuery = gql`
+  mutation createDemoProject {
+    createDemoProject {
       id
       name
       images(first: 1) {
@@ -104,6 +126,39 @@ const ProjectPage = ({
   const didVisitDemoProject = parsedCookie.get("didVisitDemoProject");
   const hasUserTriedApp = parsedCookie.get("hasUserTriedApp");
 
+  const [createDemoProjectMutation] = useMutation(createDemoProjectQuery, {
+    update: (cache, { data: { createDemoProject } }) => {
+      cache.writeQuery({
+        query: getProjectsQuery,
+        data: {
+          projects: [...(projectsResult?.projects ?? []), createDemoProject],
+        },
+      });
+    },
+  });
+
+  const demoProject =
+    projectsResult?.projects == null
+      ? undefined
+      : projectsResult?.projects.filter(
+          (project) => project.name === "Demo project"
+        )?.[0] ?? undefined;
+
+  useEffect(() => {
+    const createDemoProjectASync = async () => {
+      if (!didVisitDemoProject && demoProject == null && loading === false) {
+        try {
+          await createDemoProjectMutation();
+        } catch (e) {
+          console.error("Problem creating demo project:", e);
+          parsedCookie.set("didVisitDemoProject", true);
+          router.reload();
+        }
+      }
+    };
+    createDemoProjectASync();
+  }, [demoProject, loading, didVisitDemoProject, parsedCookie, router]);
+
   useEffect(() => {
     if (!hasUserTriedApp) {
       parsedCookie.set("hasUserTriedApp", true);
@@ -115,19 +170,13 @@ const ProjectPage = ({
       loading === false
     ) {
       // This is the first visit of the user and the projects query returned, redirect to demo project
-      const demoProject =
-        projectsResult.projects.filter(
-          (project) => project.name === "Demo project"
-        )?.[0] ?? undefined;
       const demoProjectId = demoProject?.id ?? "";
       const firstImageId = demoProject?.images?.[0]?.id;
-
       if (firstImageId != null) {
         const route = `/projects/${demoProjectId}/images/${firstImageId}`;
+        parsedCookie.set("didVisitDemoProject", true);
         router.replace({ pathname: route, query: router.query });
       }
-
-      parsedCookie.set("didVisitDemoProject", true);
     }
   }, [
     router,
@@ -137,7 +186,11 @@ const ProjectPage = ({
     loading,
     didVisitDemoProject,
     hasUserTriedApp,
+    demoProject,
   ]);
+
+  const shouldDisplayEmptyState =
+    !didVisitDemoProject && demoProject == null && loading === false;
 
   return (
     <>
@@ -169,7 +222,7 @@ const ProjectPage = ({
           projectId={deleteProjectId}
         />
 
-        {!didVisitDemoProject && (
+        {shouldDisplayEmptyState && (
           <Center h="full">
             <Box as="section">
               <Box
@@ -201,7 +254,7 @@ const ProjectPage = ({
           </Center>
         )}
 
-        {didVisitDemoProject && (
+        {!shouldDisplayEmptyState && (
           <Flex direction="row" wrap="wrap" p={4}>
             <NewProjectCard
               addProject={() => {

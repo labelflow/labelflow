@@ -8,8 +8,6 @@ import type {
   QueryLabelClassesArgs,
 } from "@labelflow/graphql-types";
 
-import { projectTypename } from "./project";
-
 import { Context, DbLabelClass } from "./types";
 import { throwIfResolvesToNil } from "./utils/throw-if-resolves-to-nil";
 
@@ -116,7 +114,7 @@ const totalCount = (parent: any, _args: any, { repository }: Context) => {
   // eslint-disable-next-line no-underscore-dangle
   const typename = parent?.__typename;
 
-  if (typename === projectTypename) {
+  if (typename === "Project") {
     return repository.labelClass.count({
       projectId: parent.id,
     });

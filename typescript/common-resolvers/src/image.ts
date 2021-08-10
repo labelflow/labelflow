@@ -7,8 +7,6 @@ import type {
   QueryImageArgs,
   QueryImagesArgs,
 } from "@labelflow/graphql-types";
-
-import { projectTypename } from "./project";
 import { probeImage } from "./utils/probe-image";
 
 import { Context, DbImage, Repository } from "./types";
@@ -191,7 +189,7 @@ const totalCount = (parent: any, _args: any, { repository }: Context) => {
   // eslint-disable-next-line no-underscore-dangle
   const typename = parent?.__typename;
 
-  if (typename === projectTypename) {
+  if (typename === "Project") {
     return repository.image.count({
       projectId: parent.id,
     });
