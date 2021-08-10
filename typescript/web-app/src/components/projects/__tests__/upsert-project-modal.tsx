@@ -11,7 +11,7 @@ import { ApolloProvider, gql } from "@apollo/client";
 import { PropsWithChildren } from "react";
 import "@testing-library/jest-dom/extend-expect";
 
-import { client } from "../../../connectors/apollo-client-schema";
+import { client } from "../../../connectors/apollo-client/schema-client";
 import { setupTestsWithLocalDatabase } from "../../../utils/setup-local-db-tests";
 import { mockUseQueryParams } from "../../../utils/router-mocks";
 

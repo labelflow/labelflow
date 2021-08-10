@@ -6,7 +6,7 @@ import { Box } from "@chakra-ui/react";
 import { withNextRouter } from "storybook-addon-next-router";
 import Bluebird from "bluebird";
 
-import { client } from "../../../connectors/apollo-client-schema";
+import { client } from "../../../connectors/apollo-client/schema-client";
 import { chakraDecorator } from "../../../utils/chakra-decorator";
 import { queryParamsDecorator } from "../../../utils/query-params-decorator";
 import { apolloDecorator } from "../../../utils/apollo-decorator";

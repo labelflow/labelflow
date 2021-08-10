@@ -3,7 +3,7 @@ import { render, screen, waitFor, fireEvent } from "@testing-library/react";
 import { ChakraProvider } from "@chakra-ui/react";
 import { ApolloProvider, gql } from "@apollo/client";
 import { ClassesList } from "../class-list";
-import { client } from "../../../connectors/apollo-client-schema";
+import { client } from "../../../connectors/apollo-client/schema-client";
 import { theme } from "../../../theme";
 import { setupTestsWithLocalDatabase } from "../../../utils/setup-local-db-tests";
 

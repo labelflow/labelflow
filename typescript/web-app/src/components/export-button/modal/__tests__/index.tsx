@@ -15,7 +15,7 @@ mockNextRouter({ query: { projectId: "mocked-project-id" } });
 
 import { ExportModal } from "..";
 import { theme } from "../../../../theme";
-import { client } from "../../../../connectors/apollo-client-schema";
+import { client } from "../../../../connectors/apollo-client/schema-client";
 import { setupTestsWithLocalDatabase } from "../../../../utils/setup-local-db-tests";
 
 setupTestsWithLocalDatabase();

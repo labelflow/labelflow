@@ -13,7 +13,7 @@ import { mockNextRouter } from "../../../../utils/router-mocks";
 
 mockNextRouter({ query: { imageId: "mocked-image-id" } });
 
-import { client } from "../../../../connectors/apollo-client-schema";
+import { client } from "../../../../connectors/apollo-client/schema-client";
 import { useUndoStore } from "../../../../connectors/undo-store";
 import {
   useLabellingStore,
@@ -25,9 +25,9 @@ import { DrawBoundingBoxAndPolygonInteraction } from "../draw-bounding-box-and-p
 
 setupTestsWithLocalDatabase();
 
-jest.mock("../../../../connectors/apollo-client-schema", () => {
+jest.mock("../../../../connectors/apollo-client/schema-client", () => {
   const original = jest.requireActual(
-    "../../../../connectors/apollo-client-schema"
+    "../../../../connectors/apollo-client/schema-client"
   );
   return {
     client: {

@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 import { probeImage } from "@labelflow/common-resolvers/src/utils/probe-image";
 import { setupTestsWithLocalDatabase } from "../../utils/setup-local-db-tests";
 import { useImagesNavigation } from "../use-images-navigation";
-import { client } from "../../connectors/apollo-client-schema";
+import { client } from "../../connectors/apollo-client/schema-client";
 import { incrementMockedDate } from "../../../../dev-utils/mockdate";
 
 setupTestsWithLocalDatabase();
