@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "scripts": {
     "dev": "next",
-    "build": "next build",
+    "build": "cd ../db && yarn generate && cd ../web-app && next build",
     "start": "next start",
     "type-check": "tsc",
     "bundlewatch": "bundlewatch --config ./bundlewatch.config.js"
@@ -17,6 +17,7 @@
     "@graphql-tools/merge": "^6.2.14",
     "@graphql-tools/schema": "7.1.5",
     "@labelflow/common-resolvers": "workspace:typescript/common-resolvers",
+    "@labelflow/db": "workspace:typescript/db",
     "@labelflow/graphql-types": "workspace:typescript/graphql-types",
     "@labelflow/react-openlayers-fiber": "workspace:typescript/react-openlayers-fiber",
     "@supabase/supabase-js": "1.21.0",
@@ -26,6 +27,7 @@
     "@turf/intersect": "^6.5.0",
     "apollo-server-core": "^2.25.0",
     "apollo-server-env": "^3.1.0",
+    "apollo-server-micro": "3.1.2",
     "autoprefixer": "^10.2.6",
     "detect-browser": "^5.2.0",
     "dexie": "^3.0.3",
@@ -38,6 +40,7 @@
     "graphql-type-json": "^0.3.2",
     "lodash": "^4.17.21",
     "mem": "^8.1.1",
+    "micro": "9.3.4",
     "next": "10.x",
     "next-cookie": "^2.6.2",
     "next-pwa": "patch:next-pwa@5.2.21#./next-pwa.patch",
