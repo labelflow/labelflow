@@ -44,13 +44,17 @@ export const WelcomeModal = ({
     (!isServiceWorkerActive && !(paramModalWelcome === "closed")) ||
     paramModalWelcome === "open";
   const setIsOpen = (value: boolean) =>
-    setParamModalWelcome(value ? "open" : "closed", "replaceIn");
+    setParamModalWelcome(value ? "open" : undefined, "replaceIn");
 
   const startLabellingButtonRef = useRef<HTMLButtonElement>(null);
 
   // This modal should open when isServiceWorkerActive becomes false
   // But close only when the use hasUserClickedStart becomes true
   useEffect(() => {
+    if (isServiceWorkerActive && hasUserClickedStart) {
+      setIsOpen(false);
+      return;
+    }
     if (
       (!isServiceWorkerActive &&
         !hasUserClickedStart &&
@@ -58,17 +62,12 @@ export const WelcomeModal = ({
       paramModalWelcome === "open"
     ) {
       setIsOpen(true);
-      return;
-    }
-    if (isServiceWorkerActive && hasUserClickedStart) {
-      setIsOpen(false);
     }
     // In the 2 other cases, we do nothing, this is an hysteresis
     // To "latch" the modal to open once it opened once
   }, [isServiceWorkerActive, hasUserClickedStart, paramModalWelcome]);
 
   const handleClickStartLabelling = useCallback(() => {
-    setParamModalWelcome(undefined, "replaceIn");
     setHasUserClickedStart(true);
     // This is needed to fix a rare bug in which the welcome modal is stuck
     // in the "loading app" state when a new service worker is waiting AND
