@@ -1,36 +1,24 @@
-import { v4 as uuidv4 } from "uuid";
 import fetch from "node-fetch";
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { createClient } from "@supabase/supabase-js";
 
 import { Repository } from "../../../common-resolvers/src";
 import { UploadTargetHttp } from "../../../graphql-types/src/graphql-types.generated";
 
+const client = createClient(
+  process?.env?.SUPABASE_API_URL as string,
+  process?.env?.SUPABASE_API_KEY as string
+);
 const bucket = "labelflow-images";
-const region = "eu-west-1";
-const location = `https://${bucket}.s3.${region}.amazonaws.com`;
-const s3Client = new S3Client({
-  region,
-  credentials: {
-    accessKeyId: process.env?.LABELFLOW_AWS_ACCESS_KEY_ID,
-    secretAccessKey: process.env?.LABELFLOW_AWS_SECRET_ACCESS_KEY,
-  },
-});
+export const uploadsCacheName = "uploads";
+export const uploadsRoute = "/api/uploads";
 
 export const getUploadTargetHttp = async (
   key: string
 ): Promise<UploadTargetHttp> => {
-  const command = new PutObjectCommand({
-    Bucket: bucket,
-    Key: key,
-  });
-  const signedUrl = await getSignedUrl(s3Client, command, {
-    expiresIn: 3600,
-  });
   return {
     __typename: "UploadTargetHttp",
-    uploadUrl: signedUrl,
-    downloadUrl: `${location}/${key}`,
+    uploadUrl: `${uploadsRoute}/${key}`,
+    downloadUrl: `${process?.env?.SUPABASE_API_URL}/storage/v1/object/public/${bucket}/${key}`,
   };
 };
 
@@ -52,7 +40,6 @@ export const getFromStorage: Repository["upload"]["get"] = async (url) => {
 };
 
 export const putInStorage: Repository["upload"]["put"] = async (url, blob) => {
-  console.log("Called PUT with URL = ", url);
   await fetch(url, {
     method: "PUT",
     body: await blob.arrayBuffer(),
