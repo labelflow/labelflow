@@ -69,7 +69,7 @@ export const Meta = ({
       <meta name="theme-color" content="#03C3BF" />
       <script
         async
-        src="https://www.googletagmanager.com/gtag/js?id=G-2MPS7JPG8D"
+        src="https://www.googletagmanager.com/gtag/js?id=G-ZZZ9CZW2M6"
       />
       <script
         // eslint-disable-next-line react/no-danger
@@ -79,7 +79,7 @@ export const Meta = ({
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
           
-            gtag('config', 'G-2MPS7JPG8D');`,
+            gtag('config', 'G-ZZZ9CZW2M6');`,
         }}
       />
 
