@@ -16,9 +16,8 @@ import {
   ModalHeader,
   useColorModeValue as mode,
 } from "@chakra-ui/react";
-import { omit } from "lodash/fp";
-import { useRouter } from "next/router";
 import { RiGithubFill } from "react-icons/ri";
+import { StringParam, useQueryParam } from "use-query-params";
 
 import { Logo } from "../../logo";
 
@@ -35,22 +34,18 @@ export const WelcomeModal = ({
   //   - "open": Force the welcome modal to open even if not needed
   //   - "closed": Don't ever open the welcome modal
 
-  const router = useRouter();
-  const paramModalWelcome = router.query?.["modal-welcome"];
-  const setParamModalWelcome = (param: string | undefined) => {
-    const newQuery =
-      param != null
-        ? { ...router.query, "modal-welcome": param }
-        : omit(["modal-welcome"], router.query);
-    router.push({ query: newQuery });
-  };
+  const [paramModalWelcome, setParamModalWelcome] = useQueryParam(
+    "modal-welcome",
+    StringParam
+  );
+
   const [hasUserClickedStart, setHasUserClickedStart] = useState(false);
 
   const isOpen =
     (!isServiceWorkerActive && !(paramModalWelcome === "closed")) ||
     paramModalWelcome === "open";
   const setIsOpen = (value: boolean) =>
-    setParamModalWelcome(value ? "open" : undefined);
+    setParamModalWelcome(value ? "open" : undefined, "replaceIn");
 
   const startLabellingButtonRef = useRef<HTMLButtonElement>(null);
 
