@@ -120,7 +120,7 @@ const createImage = async (name: String) => {
   return id;
 };
 
-test("File should be downloaded when user clicks on Export to COCO", async () => {
+test("File should be downloaded when user clicks on Export to COCO and Export", async () => {
   await createProject();
   render(<ExportModal isOpen />, { wrapper });
   const anchorMocked = {
@@ -136,6 +136,8 @@ test("File should be downloaded when user clicks on Export to COCO", async () =>
   });
 
   userEvent.click(screen.getByText("Export to COCO"));
+  await waitFor(() => expect(screen.getByText("Export Options")).toBeDefined());
+  userEvent.click(screen.getByRole("button", { name: "Export" }));
 
   await waitFor(() => expect(anchorMocked.click).toHaveBeenCalledTimes(1));
 });
