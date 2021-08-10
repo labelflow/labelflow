@@ -157,8 +157,6 @@ jobs:
         with:
           path: "**/node_modules"
           key: ${{ runner.os }}-modules-${{secrets.ACTIONS_CACHE_VERSION}}-${{ hashFiles('yarn.lock') }}
-      - name: generate prisma
-        run: cd typescript/db && yarn generate
       - name: Fetch/Save cypress cache
         uses: actions/cache@v2
         id: cypress-cache
@@ -223,8 +221,6 @@ jobs:
           no_override: false
       - name: Check out repository code
         uses: actions/checkout@v2
-      - name: generate prisma
-        run: cd typescript/db && yarn generate
       - name: Deploy webapp on Vercel
         uses: amondnet/vercel-action@v20
         id: vercel
@@ -316,9 +312,7 @@ jobs:
           ref: ${{ github.head_ref }}
           no_override: true
       - name: Check out repository code
-        uses: actions/checkout@v2
-      - name: generate prisma
-        run: cd typescript/db && yarn generate        
+        uses: actions/checkout@v2      
       - name: Deploy webapp on Vercel
         uses: amondnet/vercel-action@v20
         id: vercel
