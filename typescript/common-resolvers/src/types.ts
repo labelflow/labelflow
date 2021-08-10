@@ -39,8 +39,10 @@ type ID = string;
 type Add<EntityType> = (entity: EntityType) => Promise<ID>;
 type Count<Where> = (where?: Where) => Promise<Number>;
 type Delete = (id: ID) => Promise<void>;
-type GetById<EntityType> = (id: ID) => Promise<EntityType | undefined>;
-type GetByName<EntityType> = (name: string) => Promise<EntityType | undefined>;
+type GetById<EntityType> = (id: ID) => Promise<EntityType | undefined | null>;
+type GetByName<EntityType> = (
+  name: string
+) => Promise<EntityType | undefined | null>;
 type List<Entity = unknown, Where extends Record<string, any> | null = null> = (
   where?: Where | null,
   skip?: number | null,
