@@ -22,7 +22,7 @@ export const ExportButton = ({ ...props }: Props) => {
         aria-label="Export"
         leftIcon={<DownloadIcon fontSize="xl" />}
         onClick={() => {
-          trackEvent("export-button-click", {});
+          trackEvent({ action: "export_button_click", params: {} });
           setIsOpen(true, "replaceIn");
         }}
         variant="ghost"
