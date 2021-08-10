@@ -14,6 +14,26 @@ import { probeImage } from "./utils/probe-image";
 import { Context, DbImage, Repository } from "./types";
 import { throwIfResolvesToNil } from "./utils/throw-if-resolves-to-nil";
 
+// Mutations
+const getImageName = ({
+  externalUrl,
+  finalUrl,
+  name,
+}: {
+  externalUrl?: string | null;
+  finalUrl?: string | null;
+  name?: string | null;
+}): string => {
+  const nameBase =
+    name ??
+    externalUrl?.substring(
+      externalUrl?.lastIndexOf("/") + 1,
+      externalUrl?.indexOf("?")
+    ) ??
+    finalUrl!.substring(finalUrl!.lastIndexOf("/") + 1, finalUrl!.indexOf("?"));
+  return nameBase.replace(/\.[^/.]+$/, "");
+};
+
 export const getImageEntityFromMutationArgs = async (
   data: ImageCreateInput,
   repository: Pick<Repository, "upload">
@@ -106,16 +126,7 @@ export const getImageEntityFromMutationArgs = async (
     url: finalUrl!,
     externalUrl,
     path: path ?? externalUrl ?? finalUrl!,
-    name:
-      name ??
-      externalUrl?.substring(
-        externalUrl?.lastIndexOf("/") + 1,
-        externalUrl?.indexOf("?")
-      ) ??
-      finalUrl!.substring(
-        finalUrl!.lastIndexOf("/") + 1,
-        finalUrl!.indexOf("?")
-      ),
+    name: getImageName({ externalUrl, finalUrl, name }),
     ...imageMetaData,
   };
   return newImageEntity;
