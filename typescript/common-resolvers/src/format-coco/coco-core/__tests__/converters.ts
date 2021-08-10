@@ -63,7 +63,7 @@ describe("Coco converters", () => {
 
   const createImage = (name: string, height: number, width: number): Image => ({
     id: `id-${name}`,
-    name: `${name}.ext`,
+    name,
     createdAt: date,
     updatedAt: date,
     height,
@@ -71,7 +71,7 @@ describe("Coco converters", () => {
     url: "",
     externalUrl: `https://${name}`,
     path: "/path",
-    mimetype: "file/ext",
+    mimetype: "image/png",
     labels: [],
     projectId: testProjectId,
   });
@@ -208,7 +208,7 @@ describe("Coco converters", () => {
       height: 1,
       width: 2,
       coco_url: "https://an-image",
-      file_name: "an-image.ext",
+      file_name: "an-image_id-an-image.png",
       flickr_url: "",
       license: 0,
     };
