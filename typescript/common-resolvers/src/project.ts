@@ -14,6 +14,7 @@ import { Context, DbProject, Repository } from "./types";
 import { throwIfResolvesToNil } from "./utils/throw-if-resolves-to-nil";
 import { getImageEntityFromMutationArgs } from "./image";
 
+// The demo project images
 const demoImageUrls = [
   "https://images.unsplash.com/photo-1579513141590-c597876aefbc?auto=format&fit=crop&w=882&q=80",
   "https://images.unsplash.com/photo-1504710685809-7bb702595f8f?auto=format&fit=crop&w=934&q=80",
