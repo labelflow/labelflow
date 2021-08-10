@@ -7,7 +7,11 @@ import { resolvers } from "./resolvers";
 
 export { repository } from "./repository";
 
-const filePath = join(__dirname, "../../../data/__generated__/schema.graphql");
+const filePath = join(
+  __dirname,
+  // The path below actually works in the next.js context (that's much deeper)
+  "../../../../../../data/__generated__/schema.graphql"
+);
 
 export const schema = loadSchemaSync(filePath, {
   loaders: [new GraphQLFileLoader()],
