@@ -5,7 +5,6 @@ import type {
 
 import { Context } from "./types";
 
-export const uploadsCacheName = "uploads";
 export const uploadsRoute = "/api/worker/uploads";
 
 /**

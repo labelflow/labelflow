@@ -9,7 +9,6 @@ const client = createClient(
   process?.env?.SUPABASE_API_KEY as string
 );
 const bucket = "labelflow-images";
-export const uploadsCacheName = "uploads";
 export const uploadsRoute = "/api/uploads";
 
 export const getUploadTargetHttp = async (
