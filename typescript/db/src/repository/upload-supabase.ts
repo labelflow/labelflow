@@ -40,8 +40,12 @@ export const getFromStorage: Repository["upload"]["get"] = async (url) => {
 };
 
 export const putInStorage: Repository["upload"]["put"] = async (url, blob) => {
-  await fetch(url, {
-    method: "PUT",
-    body: await blob.arrayBuffer(),
-  });
+  const query = `${bucket}/`;
+  await client.storage
+    .from(bucket)
+    .upload(url.substring(url.lastIndexOf(query) + query.length), blob, {
+      contentType: blob.type,
+      upsert: false,
+      cacheControl: "public, max-age=31536000, immutable",
+    });
 };

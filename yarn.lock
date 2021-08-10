@@ -6128,6 +6128,7 @@ __metadata:
     "@labelflow/common-resolvers": "workspace:typescript/common-resolvers"
     "@labelflow/graphql-types": "workspace:typescript/graphql-types"
     "@prisma/client": 2.28.0
+    "@supabase/supabase-js": 1.21.0
     "@types/node": 16.4.1
     apollo-server: 3.0.2
     graphql: 15.5.1
