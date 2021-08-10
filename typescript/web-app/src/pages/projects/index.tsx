@@ -124,12 +124,6 @@ const ProjectPage = ({
 
       if (firstImageId != null) {
         const route = `/projects/${demoProjectId}/images/${firstImageId}`;
-        console.log("router");
-        console.log(router);
-        console.log("router.query");
-        console.log(router.query);
-        console.log("router.query['modal-welcome']");
-        console.log(router.query["modal-welcome"]);
         router.replace({ pathname: route, query: router.query });
       }
 
