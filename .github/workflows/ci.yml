@@ -223,6 +223,8 @@ jobs:
           no_override: false
       - name: Check out repository code
         uses: actions/checkout@v2
+      - name: generate prisma
+        run: cd typescript/db && yarn generate
       - name: Deploy webapp on Vercel
         uses: amondnet/vercel-action@v20
         id: vercel
@@ -315,6 +317,8 @@ jobs:
           no_override: true
       - name: Check out repository code
         uses: actions/checkout@v2
+      - name: generate prisma
+        run: cd typescript/db && yarn generate        
       - name: Deploy webapp on Vercel
         uses: amondnet/vercel-action@v20
         id: vercel
