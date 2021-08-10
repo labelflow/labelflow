@@ -5,6 +5,6 @@ describe("Example tests", () => {
       "http://localhost:3000/projects?modal-welcome=closed&modal-update-service-worker=update"
     );
 
-    cy.contains("Create new project...");
+    cy.contains(/Create an empty project/i);
   });
 });
