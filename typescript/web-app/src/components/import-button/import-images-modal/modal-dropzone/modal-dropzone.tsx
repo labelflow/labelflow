@@ -18,7 +18,6 @@ import { FilesStatuses } from "./file-statuses";
 import { DroppedFile, UploadStatuses } from "../types";
 
 import { browser } from "../../../../utils/detect-scope";
-import project from "../../../../../../common-resolvers/src/project";
 
 const createImageFromFileMutation = gql`
   mutation createImageMutation(
@@ -186,10 +185,15 @@ export const ImportImagesModalDropzone = ({
                     };
                   });
                 }
-
+                // await fetch(target.uploadUrl, {
+                //   method: "PUT",
+                //   body: acceptedFile.file,
+                // });
+                const form = new FormData();
+                form.append("image", acceptedFile.file);
                 await fetch(target.uploadUrl, {
                   method: "PUT",
-                  body: acceptedFile.file,
+                  body: form,
                 });
 
                 const createdAt = new Date();

@@ -6245,7 +6245,9 @@ __metadata:
     lodash: ^4.17.21
     mem: ^8.1.1
     micro: 9.3.4
+    multer: 1.4.3
     next: 10.x
+    next-connect: 0.10.2
     next-cookie: ^2.6.2
     next-pwa: "patch:next-pwa@5.2.21#./next-pwa.patch"
     next-seo: ^4.26.0
@@ -12626,6 +12628,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"append-field@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "append-field@npm:1.0.0"
+  checksum: 1900b7b03c09ff5cb27f6b7d3db94e4d23c26fe5d8e230172d14b3ad3afb7adab90e7691233a39a2a4aa38557c6f6f0e5f8ff1b707887e0136a3b386d94577ef
+  languageName: node
+  linkType: hard
+
 "aproba@npm:^1.0.3, aproba@npm:^1.1.1":
   version: 1.2.0
   resolution: "aproba@npm:1.2.0"
@@ -13880,6 +13889,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"busboy@npm:^0.2.11":
+  version: 0.2.14
+  resolution: "busboy@npm:0.2.14"
+  dependencies:
+    dicer: 0.2.5
+    readable-stream: 1.1.x
+  checksum: f5d3867dda9d61cb4d384cdc30a13038d2b889f9f6285c7faaf2c1f9682654b03cdb53d6e8c5b7b6c3f13883f45b94c3373f45ba15ab3aae5ae672407a26e14b
+  languageName: node
+  linkType: hard
+
 "busboy@npm:^0.3.1":
   version: 0.3.1
   resolution: "busboy@npm:0.3.1"
@@ -14831,7 +14850,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"concat-stream@npm:^1.5.0, concat-stream@npm:^1.6.2":
+"concat-stream@npm:^1.5.0, concat-stream@npm:^1.5.2, concat-stream@npm:^1.6.2":
   version: 1.6.2
   resolution: "concat-stream@npm:1.6.2"
   dependencies:
@@ -15945,6 +15964,16 @@ __metadata:
   version: 3.0.3
   resolution: "dexie@npm:3.0.3"
   checksum: f2fcb5df163e221121e5e37f1cc25465261de28e1a18dcfba5da7e2870d0791d8f8b693b57f99e5377c29fdc25e358b4eb8cd97320d34b3c6c3715c9acb3607c
+  languageName: node
+  linkType: hard
+
+"dicer@npm:0.2.5":
+  version: 0.2.5
+  resolution: "dicer@npm:0.2.5"
+  dependencies:
+    readable-stream: 1.1.x
+    streamsearch: 0.1.2
+  checksum: 403b6668a0fd0fcc5bb1401cc40706b81adc090845f3629d08b0cc7d5df20f3d31ce0cd742b17068f870e63a70d21c7708ff4d827a37a04e2c6f00850d63cf1e
   languageName: node
   linkType: hard
 
@@ -20288,6 +20317,13 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
+"isarray@npm:0.0.1":
+  version: 0.0.1
+  resolution: "isarray@npm:0.0.1"
+  checksum: daeda3c23646200b0b464b7a9030d10008d7701fc6b7a1b45cafe42b4f4d2dde20835b56f19a49e04bb218245b7f7a2bcc6d0f696cff3711e4eddaa2031c611f
+  languageName: node
+  linkType: hard
+
 "isarray@npm:1.0.0, isarray@npm:^1.0.0, isarray@npm:~1.0.0":
   version: 1.0.0
   resolution: "isarray@npm:1.0.0"
@@ -22678,6 +22714,22 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
+"multer@npm:1.4.3":
+  version: 1.4.3
+  resolution: "multer@npm:1.4.3"
+  dependencies:
+    append-field: ^1.0.0
+    busboy: ^0.2.11
+    concat-stream: ^1.5.2
+    mkdirp: ^0.5.4
+    object-assign: ^4.1.1
+    on-finished: ^2.3.0
+    type-is: ^1.6.4
+    xtend: ^4.0.0
+  checksum: 8b2ebbf090e3d1e1039f02775a01cf741bcee1a23d14a3770c72d617b6e7eb08e5bfdee96f0f62da903fbc3d5e9187b9f01f56c3bbaaf319e91f8de8e2164624
+  languageName: node
+  linkType: hard
+
 "mute-stream@npm:0.0.8":
   version: 0.0.8
   resolution: "mute-stream@npm:0.0.8"
@@ -22797,6 +22849,15 @@ fsevents@^1.2.7:
   version: 2.1.0
   resolution: "nested-error-stacks@npm:2.1.0"
   checksum: f3f930722ef2b02e6dd5d91662d3b39820d3fc1440e50174ee354f2744243587cabebdd659887b577a593684aa0caec428d0706a587455e3320e164a1ad5290d
+  languageName: node
+  linkType: hard
+
+"next-connect@npm:0.10.2":
+  version: 0.10.2
+  resolution: "next-connect@npm:0.10.2"
+  dependencies:
+    trouter: ^3.1.0
+  checksum: da8c44fc5e8dc3301a21d4e9fcaf6c7213c929012fb8c331d9cfb57da1bc20f2f4300d369caff19ae7098c35ba0adf47d32461f97943a9ab9a487c25d2d94848
   languageName: node
   linkType: hard
 
@@ -23496,7 +23557,7 @@ next-pwa@5.2.21:
   languageName: node
   linkType: hard
 
-"on-finished@npm:~2.3.0":
+"on-finished@npm:^2.3.0, on-finished@npm:~2.3.0":
   version: 2.3.0
   resolution: "on-finished@npm:2.3.0"
   dependencies:
@@ -25625,6 +25686,18 @@ next-pwa@5.2.21:
   languageName: node
   linkType: hard
 
+"readable-stream@npm:1.1.x":
+  version: 1.1.14
+  resolution: "readable-stream@npm:1.1.14"
+  dependencies:
+    core-util-is: ~1.0.0
+    inherits: ~2.0.1
+    isarray: 0.0.1
+    string_decoder: ~0.10.x
+  checksum: e4c30b6b8495c11fc83e1b5fcb03b378127d93c953413973a25500991d0bf2b2e158e329d0f56d294e24a61c7751b874570158f24f97ebacb8a5f2fdcc05a0ec
+  languageName: node
+  linkType: hard
+
 "readable-stream@npm:^3.1.1, readable-stream@npm:^3.5.0, readable-stream@npm:^3.6.0":
   version: 3.6.0
   resolution: "readable-stream@npm:3.6.0"
@@ -25772,6 +25845,13 @@ next-pwa@5.2.21:
     call-bind: ^1.0.2
     define-properties: ^1.1.3
   checksum: 967e462a83cdfd6f226aa9337bda6f739e3fba72a49f3d3f4ed16b60d5a811ba576ef22f01e37b9230022ba715c6207c082ca117160b304b6503e4a6557628f5
+  languageName: node
+  linkType: hard
+
+"regexparam@npm:^1.3.0":
+  version: 1.3.0
+  resolution: "regexparam@npm:1.3.0"
+  checksum: 3be8055bc697d720647e2b2a781e8a784013e80d51724dce833524c8f1a9fbfa7efd3dac90572ce64191b82e908c8e70c6ff40b8da3ff0b3fb4199af73d4a8b5
   languageName: node
   linkType: hard
 
@@ -27584,6 +27664,13 @@ service-worker-mock@2.0.5:
   languageName: node
   linkType: hard
 
+"string_decoder@npm:~0.10.x":
+  version: 0.10.31
+  resolution: "string_decoder@npm:0.10.31"
+  checksum: ae53bca3796913fe686c6b519299a3631d04f0d388f35e7412914e3d351024f711d783d0415babfec276f5f533e84fae687e77220829d872fadb5bb9f7190890
+  languageName: node
+  linkType: hard
+
 "string_decoder@npm:~1.1.1":
   version: 1.1.1
   resolution: "string_decoder@npm:1.1.1"
@@ -28496,6 +28583,15 @@ service-worker-mock@2.0.5:
   languageName: node
   linkType: hard
 
+"trouter@npm:^3.1.0":
+  version: 3.2.0
+  resolution: "trouter@npm:3.2.0"
+  dependencies:
+    regexparam: ^1.3.0
+  checksum: c65eb0b64a4e283a2524adb75cc09169b2be515e6df6254bbdf00934299270c1788ce09b05c9a3e36bd73315105478ef92bea95304df9c750f5098a82455ecad
+  languageName: node
+  linkType: hard
+
 "ts-dedent@npm:^1.0.0":
   version: 1.2.0
   resolution: "ts-dedent@npm:1.2.0"
@@ -28853,7 +28949,7 @@ service-worker-mock@2.0.5:
   languageName: node
   linkType: hard
 
-"type-is@npm:^1.6.18, type-is@npm:~1.6.17, type-is@npm:~1.6.18":
+"type-is@npm:^1.6.18, type-is@npm:^1.6.4, type-is@npm:~1.6.17, type-is@npm:~1.6.18":
   version: 1.6.18
   resolution: "type-is@npm:1.6.18"
   dependencies:
