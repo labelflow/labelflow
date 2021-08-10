@@ -137,6 +137,11 @@ export type LabelClassCreateInput = {
   projectId: Scalars['ID'];
 };
 
+export type LabelClassUpdateInput = {
+  name?: Maybe<Scalars['String']>;
+  color?: Maybe<Scalars['ColorHex']>;
+};
+
 export type LabelClassWhereInput = {
   projectId?: Maybe<Scalars['ID']>;
 };
@@ -192,6 +197,7 @@ export type Mutation = {
   updateLabel?: Maybe<Label>;
   deleteLabel?: Maybe<Label>;
   createLabelClass?: Maybe<LabelClass>;
+  updateLabelClass?: Maybe<LabelClass>;
   deleteLabelClass?: Maybe<LabelClass>;
   createProject?: Maybe<Project>;
   updateProject?: Maybe<Project>;
@@ -232,6 +238,12 @@ export type MutationDeleteLabelArgs = {
 
 export type MutationCreateLabelClassArgs = {
   data: LabelClassCreateInput;
+};
+
+
+export type MutationUpdateLabelClassArgs = {
+  where: LabelClassWhereUniqueInput;
+  data: LabelClassUpdateInput;
 };
 
 
@@ -497,6 +509,7 @@ export type ResolversTypes = {
   Float: ResolverTypeWrapper<Scalars['Float']>;
   LabelClass: ResolverTypeWrapper<LabelClass>;
   LabelClassCreateInput: LabelClassCreateInput;
+  LabelClassUpdateInput: LabelClassUpdateInput;
   LabelClassWhereInput: LabelClassWhereInput;
   LabelClassWhereUniqueInput: LabelClassWhereUniqueInput;
   LabelClassesAggregates: ResolverTypeWrapper<LabelClassesAggregates>;
@@ -545,6 +558,7 @@ export type ResolversParentTypes = {
   Float: Scalars['Float'];
   LabelClass: LabelClass;
   LabelClassCreateInput: LabelClassCreateInput;
+  LabelClassUpdateInput: LabelClassUpdateInput;
   LabelClassWhereInput: LabelClassWhereInput;
   LabelClassWhereUniqueInput: LabelClassWhereUniqueInput;
   LabelClassesAggregates: LabelClassesAggregates;
@@ -659,6 +673,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   updateLabel?: Resolver<Maybe<ResolversTypes['Label']>, ParentType, ContextType, RequireFields<MutationUpdateLabelArgs, 'where' | 'data'>>;
   deleteLabel?: Resolver<Maybe<ResolversTypes['Label']>, ParentType, ContextType, RequireFields<MutationDeleteLabelArgs, 'where'>>;
   createLabelClass?: Resolver<Maybe<ResolversTypes['LabelClass']>, ParentType, ContextType, RequireFields<MutationCreateLabelClassArgs, 'data'>>;
+  updateLabelClass?: Resolver<Maybe<ResolversTypes['LabelClass']>, ParentType, ContextType, RequireFields<MutationUpdateLabelClassArgs, 'where' | 'data'>>;
   deleteLabelClass?: Resolver<Maybe<ResolversTypes['LabelClass']>, ParentType, ContextType, RequireFields<MutationDeleteLabelClassArgs, 'where'>>;
   createProject?: Resolver<Maybe<ResolversTypes['Project']>, ParentType, ContextType, RequireFields<MutationCreateProjectArgs, 'data'>>;
   updateProject?: Resolver<Maybe<ResolversTypes['Project']>, ParentType, ContextType, RequireFields<MutationUpdateProjectArgs, 'where' | 'data'>>;

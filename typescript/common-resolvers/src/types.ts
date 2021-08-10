@@ -72,6 +72,7 @@ export type Repository = {
     delete: Delete;
     getById: GetById<DbLabelClass>;
     list: List<DbLabelClass, LabelClassWhereInput>;
+    update: Update<DbLabelClass>;
   };
   project: {
     add: Add<DbProject>;

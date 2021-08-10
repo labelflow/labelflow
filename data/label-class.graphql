@@ -5,6 +5,11 @@ input LabelClassCreateInput {
   projectId: ID!
 }
 
+input LabelClassUpdateInput {
+  name: String
+  color: ColorHex
+}
+
 input LabelClassWhereInput {
   projectId: ID
 }
