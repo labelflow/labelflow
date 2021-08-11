@@ -88,6 +88,11 @@ export const DrawIogInteraction = ({ imageId }: { imageId: string }) => {
 
   useEffect(() => {
     if (vectorSourceRef.current != null) {
+      const centerPointFeatureFromSource =
+        vectorSourceRef.current.getFeatureById("centerPoint");
+      if (centerPoint != null)
+        setCenterPointFeature(centerPointFeatureFromSource as Feature<Polygon>);
+
       const listener = ({ feature }: { feature: Feature<Geometry> }) => {
         if (feature.getProperties().id === "centerPoint") {
           setCenterPointFeature(feature as Feature<Polygon>);
