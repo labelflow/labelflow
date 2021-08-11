@@ -67,22 +67,6 @@ export const Meta = ({
       <link rel="manifest" href="/static/site.webmanifest" />
       <meta name="msapplication-TileColor" content="#03C3BF" />
       <meta name="theme-color" content="#03C3BF" />
-      <script
-        async
-        src="https://www.googletagmanager.com/gtag/js?id=G-ZZZ9CZW2M6"
-      />
-      <script
-        // eslint-disable-next-line react/no-danger
-        dangerouslySetInnerHTML={{
-          __html: `
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-          
-            gtag('config', 'G-ZZZ9CZW2M6');`,
-        }}
-      />
-
       {canonical && <link rel="canonical" href={`${canonical}`} />}
     </Head>
   </>
