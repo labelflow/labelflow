@@ -11,7 +11,7 @@ type Props = {
 export const Meta = ({
   title = "Labelflow: The open standard platform for image labeling.",
   desc = "The fastest and simplest image labelling tool on the Internet, and it's open source!",
-  canonical = "https://app.labelflow.ai/",
+  canonical = "https://labelflow.ai/",
 }: Props) => (
   <>
     <NextSeo
@@ -26,13 +26,13 @@ export const Meta = ({
         locale: "en_US",
         images: [
           {
-            url: "https://app.labelflow.ai/static/img/seo-img.png",
+            url: "https://labelflow.ai/static/img/seo-img.png",
             width: 1200,
             height: 630,
             alt: "Labelflow",
           },
           {
-            url: "https://app.labelflow.ai/static/img/seo-img@5.png",
+            url: "https://labelflow.ai/static/img/seo-img@5.png",
             width: 600,
             height: 315,
             alt: "Labelflow",
