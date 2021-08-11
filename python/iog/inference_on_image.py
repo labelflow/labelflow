@@ -2,7 +2,6 @@ from datetime import datetime
 import numpy as np
 import base64
 
-
 # PyTorch includes
 import torch
 from torchvision import transforms
@@ -308,9 +307,9 @@ def refine(pointsInside, pointsOutside, id, *, cache: Cache):
 
 def run_iog(data, cache: Cache):
 
-    if data.get("image_url"):
+    if data.get("imageUrl"):
         id = data.get("id")
-        image_url = data.get("image_url")
+        image_url = data.get("imageUrl")
         x = data.get("x")
         y = data.get("y")
         width = data.get("width")
@@ -330,10 +329,14 @@ def run_iog(data, cache: Cache):
     y = cachedData.get("y")
     width = cachedData.get("width")
     height = cachedData.get("height")
-    cached_center_point = tuple(cachedData.get("center_point"))
-    center_point = tuple(data.get("centerPoint"))
     points_inside = data.get("pointsInside", [])
     points_outside = data.get("pointsOutside", [])
+
+    if data.get("centerPoint") is None:
+        return {"polygons": refine(points_inside, points_outside, id, cache=cache)}
+
+    cached_center_point = tuple(cachedData.get("center_point"))
+    center_point = tuple(data.get("centerPoint"))
 
     if cached_center_point != center_point:
         if points_inside or points_outside:

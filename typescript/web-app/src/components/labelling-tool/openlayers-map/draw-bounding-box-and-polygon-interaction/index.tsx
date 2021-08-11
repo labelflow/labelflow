@@ -15,6 +15,7 @@ import { useHotkeys } from "react-hotkeys-hook";
 import { Coordinate } from "ol/coordinate";
 import CircleStyle from "ol/style/Circle";
 import { LabelType } from "@labelflow/graphql-types";
+import { ModifyEvent } from "ol/interaction/Modify";
 import {
   useLabellingStore,
   Tools,
@@ -25,7 +26,6 @@ import { useUndoStore } from "../../../../connectors/undo-store";
 import { noneClassColor } from "../../../../utils/class-color-generator";
 import { createLabelEffect } from "./create-label-effect";
 import { updateLabelEffect } from "../select-and-modify-feature/update-label-effect";
-import { ModifyEvent } from "ol/interaction/Modify";
 
 const labelClassQuery = gql`
   query getLabelClass($id: ID!) {
@@ -42,50 +42,6 @@ const imageQuery = gql`
     image(where: { id: $id }) {
       id
       url
-    }
-  }
-`;
-
-const iogInferenceMutation = gql`
-  mutation iogInference(
-    $id: ID!
-    $imageUrl: String!
-    $x: Float!
-    $y: Float!
-    $width: Float!
-    $height: Float!
-    $centerPoint: [Float!]
-  ) {
-    iogInference(
-      data: {
-        id: $id
-        imageUrl: $imageUrl
-        x: $x
-        y: $y
-        width: $width
-        height: $height
-        centerPoint: $centerPoint
-      }
-    ) {
-      polygons
-    }
-  }
-`;
-
-const iogRefinementMutation = gql`
-  mutation iogRefinement(
-    $id: ID!
-    $pointsInside: [[Float!]]
-    $pointsOutside: [[Float!]]
-  ) {
-    iogRefinement(
-      data: {
-        id: $id
-        pointsInside: $pointsInside
-        pointsOutside: $pointsOutside
-      }
-    ) {
-      polygons
     }
   }
 `;
@@ -190,53 +146,38 @@ export const DrawBoundingBoxAndPolygonInteraction = () => {
       ? "Error creating polygon"
       : "Error creating bounding box";
 
-  const performIOGRefinement = async () => {
-    if (dataImage?.image != null && selectedLabelId != null) {
-      const inferencePromise = (async () => {
-        const { data } = await client.mutate({
-          mutation: iogRefinementMutation,
-          variables: {
-            id: selectedLabelId,
-            pointsInside,
-            pointsOutside,
-          },
-        });
-
-        return updateLabelEffect(
-          {
-            geometry: {
-              type: "Polygon",
-              coordinates: data?.iogRefinement?.polygons,
-            },
-            labelId: selectedLabelId,
-            imageId: dataImage?.image?.id,
-          },
-          { client }
-        ).do();
-      })();
-
-      try {
-        await inferencePromise;
-      } catch (error) {
-        toast({
-          title: errorMessage,
-          description: error?.message,
-          isClosable: true,
-          status: "error",
-          position: "bottom-right",
-          duration: 10000,
-        });
-      }
-    }
-  };
-
-  const runIog = async () => {
-    if (dataImage?.image != null && selectedLabelId != null) {
+  const runIog = async ({
+    id,
+    imageUrl,
+    x,
+    y,
+    width,
+    height,
+    pointsInside,
+    pointsOutside,
+    centerPoint,
+  }: {
+    id: string | null;
+    imageUrl?: string;
+    x?: number;
+    y?: number;
+    width?: number;
+    height?: number;
+    pointsInside?: Coordinate[];
+    pointsOutside?: Coordinate[];
+    centerPoint?: Coordinate;
+  }) => {
+    if (dataImage?.image != null && id != null) {
       const inferencePromise = (async () => {
         const { data } = await client.mutate({
           mutation: runIogMutation,
           variables: {
-            id: selectedLabelId,
+            id,
+            imageUrl,
+            x,
+            y,
+            width,
+            height,
             centerPoint,
             pointsInside,
             pointsOutside,
@@ -249,7 +190,7 @@ export const DrawBoundingBoxAndPolygonInteraction = () => {
               type: "Polygon",
               coordinates: data?.runIog?.polygons,
             },
-            labelId: selectedLabelId,
+            labelId: id,
             imageId: dataImage?.image?.id,
           },
           { client }
@@ -259,6 +200,8 @@ export const DrawBoundingBoxAndPolygonInteraction = () => {
       try {
         await inferencePromise;
       } catch (error) {
+        console.log("In run IOG");
+        console.log(error);
         toast({
           title: errorMessage,
           description: error?.message,
@@ -272,12 +215,9 @@ export const DrawBoundingBoxAndPolygonInteraction = () => {
   };
 
   useEffect(() => {
-    performIOGRefinement();
-  }, [pointsInside, pointsOutside]);
-
-  useEffect(() => {
-    runIog();
-  }, [centerPoint]);
+    if (pointsInside.length > 0 || pointsOutside.length > 0)
+      runIog({ id: selectedLabelId, pointsInside, pointsOutside });
+  }, [pointsInside, pointsOutside, selectedLabelId]);
 
   const style = useMemo(() => {
     const color = selectedLabelClass?.color ?? noneClassColor;
@@ -360,6 +300,8 @@ export const DrawBoundingBoxAndPolygonInteraction = () => {
     try {
       await createLabelPromise;
     } catch (error) {
+      console.log("createLabelFromDrawEvent");
+      console.log(error);
       toast({
         title: errorMessage,
         description: error?.message,
@@ -391,9 +333,9 @@ export const DrawBoundingBoxAndPolygonInteraction = () => {
     const inferencePromise = (async () => {
       const dataUrl = await (async function () {
         const blob = await fetch(dataImage?.image?.url).then((r) => r.blob());
-        return new Promise((resolve) => {
+        return new Promise<string>((resolve) => {
           const reader = new FileReader();
-          reader.onload = () => resolve(reader.result);
+          reader.onload = () => resolve(reader.result as string);
           reader.readAsDataURL(blob);
         });
       })();
@@ -402,36 +344,25 @@ export const DrawBoundingBoxAndPolygonInteraction = () => {
         Math.floor((x + xMax) / 2),
         Math.floor((y + yMax) / 2),
       ];
-      const { data } = await client.mutate({
-        mutation: iogInferenceMutation,
-        variables: {
-          id: await labelIdPromise,
-          x,
-          y,
-          height: yMax - y,
-          width: xMax - x,
-          imageUrl: dataUrl,
-          centerPoint: boundingBoxCenterPoint,
-        },
-      });
+
       setCenterPoint(boundingBoxCenterPoint);
-      return updateLabelEffect(
-        {
-          geometry: {
-            type: "Polygon",
-            coordinates: data?.iogInference?.polygons,
-          },
-          labelId: await labelIdPromise,
-          imageId,
-        },
-        { client }
-      ).do();
+
+      return runIog({
+        id: await labelIdPromise,
+        x,
+        y,
+        height: yMax - y,
+        width: xMax - x,
+        imageUrl: dataUrl,
+        centerPoint: boundingBoxCenterPoint,
+      });
     })();
 
     setDrawingToolState(DrawingToolState.IDLE);
     try {
       await inferencePromise;
     } catch (error) {
+      console.log(error);
       toast({
         title: errorMessage,
         description: error?.message,
@@ -446,6 +377,12 @@ export const DrawBoundingBoxAndPolygonInteraction = () => {
   const performIogFromModifyEvent = async (modifyEvent: ModifyEvent) => {
     const newCoordinates = modifyEvent.mapBrowserEvent.coordinate;
     setCenterPoint(newCoordinates);
+    runIog({
+      id: selectedLabelId,
+      centerPoint: newCoordinates,
+      pointsInside,
+      pointsOutside,
+    });
   };
 
   return selectedTool !== Tools.IOG ||
