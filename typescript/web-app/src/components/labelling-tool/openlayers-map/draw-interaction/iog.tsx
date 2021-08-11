@@ -102,7 +102,7 @@ export const DrawIogInteraction = ({ imageId }: { imageId: string }) => {
     (state) => state.setDrawingToolState
   );
   const setSelectedLabelId = useLabellingStore(
-    (state) => state.setSelectedLabelId
+    useCallback((state) => state.setSelectedLabelId, [])
   );
   const selectedLabelClassId = useLabellingStore(
     (state) => state.selectedLabelClassId
@@ -120,11 +120,18 @@ export const DrawIogInteraction = ({ imageId }: { imageId: string }) => {
 
   const selectedLabelId = useLabellingStore((state) => state.selectedLabelId);
 
-  useEffect(() => {
+  const clearIogFeatures = useCallback(() => {
     setPointsInside([]);
     setPointsOutside([]);
     setCenterPoint([]);
-  }, [imageId]);
+    setSelectedLabelId(null);
+  }, [setPointsInside, setPointsOutside, setCenterPoint, setSelectedLabelId]);
+  useHotkeys(keymap.validateIogLabel.key, clearIogFeatures, {}, [
+    clearIogFeatures,
+  ]);
+  useEffect(() => {
+    clearIogFeatures();
+  }, [imageId, clearIogFeatures]);
 
   useHotkeys(
     keymap.cancelAction.key,
@@ -174,8 +181,6 @@ export const DrawIogInteraction = ({ imageId }: { imageId: string }) => {
             pointsOutside,
           },
         });
-
-        console.log("Dat", data);
 
         return updateLabelEffect(
           {

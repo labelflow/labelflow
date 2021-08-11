@@ -68,4 +68,9 @@ export const keymap: Keymap = {
     description: "Inside outside guidance tool",
     category: "Tools",
   },
+  validateIogLabel: {
+    key: "enter",
+    description: "Validate the edition of an IOG label",
+    category: "Tools",
+  },
 };
