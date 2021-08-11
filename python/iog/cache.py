@@ -42,3 +42,4 @@ class Cache:
                 return object
         except Exception as e:
             print(f"Couldn't read cache in {path_file}. \nReceived error {e}.")
+            return {}

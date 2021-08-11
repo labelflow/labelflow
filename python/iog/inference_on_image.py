@@ -188,9 +188,23 @@ trns_refinement = transforms.Compose(
 )
 
 
-def inference(data_url, x, y, width, height, center_point, id, *, cache: Cache):
+def hydrate_cache(data_url, x, y, width, height, center_point, id, *, cache: Cache):
     image = convert_data_url_to_image(data_url)
     roi = [x, image.shape[0] - y - height, width, height]
+    image = image.astype(np.float32)
+    cached_data = {
+        "roi": roi,
+        "image": image,
+        "center_point": center_point,
+    }
+    cache.write(
+        cached_data,
+        id,
+    )
+    return cached_data
+
+
+def inference(image, roi, center_point):
     image = image.astype(np.float32)
     bbox = np.zeros_like(image[..., 0])
     bbox[int(roi[1]) : int(roi[1] + roi[3]), int(roi[0]) : int(roi[0] + roi[2])] = 1
@@ -214,20 +228,6 @@ def inference(data_url, x, y, width, height, center_point, id, *, cache: Cache):
     res = net.inference(inputs.to(device), IOG_points.to(device))
 
     backbone_features = res[0]
-    cache.write(
-        {
-            "backbone_features": backbone_features,
-            "roi": roi,
-            "image": image,
-            "center_point": center_point,
-            "data_url": data_url,
-            "x": x,
-            "y": y,
-            "width": width,
-            "height": height,
-        },
-        id,
-    )
     if os.environ.get("DEBUG", False):
         now = datetime.now()
         points_fg = IOG_points[0, 0:1, :, :]
@@ -242,16 +242,20 @@ def inference(data_url, x, y, width, height, center_point, id, *, cache: Cache):
             np.transpose((points_bg * 1).numpy().astype(np.uint8), (1, 2, 0)),
         )
 
-    return convert_net_output_to_geojson_polygon(res[-1], tr_sample["gt"], image, roi)
+    return (
+        convert_net_output_to_geojson_polygon(res[-1], tr_sample["gt"], image, roi),
+        backbone_features,
+    )
 
 
-def refine(pointsInside, pointsOutside, id, *, cache: Cache):
-    data = cache.read(id)
-    backbone_features = [value.to(device) for value in data["backbone_features"]]
-    roi = data["roi"]
-    image = data["image"]
-    center_point = data["center_point"]
-
+def refine(
+    image,
+    roi,
+    center_point,
+    backbone_features,
+    pointsInside,
+    pointsOutside,
+):
     bbox = np.zeros_like(image[..., 0])
     bbox[int(roi[1]) : int(roi[1] + roi[3]), int(roi[0]) : int(roi[0] + roi[2])] = 1
     void_pixels = 1 - bbox
@@ -307,47 +311,49 @@ def refine(pointsInside, pointsOutside, id, *, cache: Cache):
 
 def run_iog(data, cache: Cache):
 
-    if data.get("imageUrl"):
-        id = data.get("id")
+    id = data.get("id")
+
+    if not type(cache.read(id).get("image")) == np.ndarray:  # First call
+        if not data.get("imageUrl"):
+            raise Exception(
+                "Couldn't load image from either cache or imageUrl argument."
+            )
         image_url = data.get("imageUrl")
         x = data.get("x")
         y = data.get("y")
         width = data.get("width")
         height = data.get("height")
         center_point = data.get("centerPoint")
+        hydrate_cache(image_url, x, y, width, height, center_point, id, cache=cache)
 
-        return {
-            "polygons": inference(
-                image_url, x, y, width, height, center_point, id, cache=cache
-            )
-        }
-
-    id = data.get("id")
-    cachedData = cache.read(id)
-    image_url = cachedData.get("data_url")
-    x = cachedData.get("x")
-    y = cachedData.get("y")
-    width = cachedData.get("width")
-    height = cachedData.get("height")
+    cached_data = cache.read(id)
+    image = cached_data.get("image")
+    roi = cached_data.get("roi")
+    cached_center_point = tuple(cached_data.get("center_point"))
+    backbone_features = cached_data.get("backbone_features")
     points_inside = data.get("pointsInside", [])
     points_outside = data.get("pointsOutside", [])
+    center_point = tuple(data.get("centerPoint", cached_center_point))
 
-    if data.get("centerPoint") is None:
-        return {"polygons": refine(points_inside, points_outside, id, cache=cache)}
+    should_perform_inference = (
+        cached_center_point != center_point or not backbone_features
+    )
+    should_perform_refinement = points_inside or points_outside
 
-    cached_center_point = tuple(cachedData.get("center_point"))
-    center_point = tuple(data.get("centerPoint"))
-
-    if cached_center_point != center_point:
-        if points_inside or points_outside:
-            inference(image_url, x, y, width, height, center_point, id, cache=cache)
-            return {"polygons": refine(points_inside, points_outside, id, cache=cache)}
-        else:
-            return {
-                "polygons": inference(
-                    image_url, x, y, width, height, center_point, id, cache=cache
-                )
-            }
-    else:
-        if points_inside or points_outside:
-            return {"polygons": refine(points_inside, points_outside, id, cache=cache)}
+    if should_perform_inference:
+        polygons, backbone_features = inference(
+            image,
+            roi,
+            center_point,
+        )
+        cache.write({**cached_data, "backbone_features": backbone_features}, id)
+    if should_perform_refinement:
+        polygons = refine(
+            image,
+            roi,
+            cached_center_point,
+            backbone_features,
+            points_inside,
+            points_outside,
+        )
+    return {"polygons": polygons}
