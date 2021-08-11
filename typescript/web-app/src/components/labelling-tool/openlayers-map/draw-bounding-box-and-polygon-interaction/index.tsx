@@ -25,6 +25,7 @@ import { useUndoStore } from "../../../../connectors/undo-store";
 import { noneClassColor } from "../../../../utils/class-color-generator";
 import { createLabelEffect } from "./create-label-effect";
 import { updateLabelEffect } from "../select-and-modify-feature/update-label-effect";
+import { ModifyEvent } from "ol/interaction/Modify";
 
 const labelClassQuery = gql`
   query getLabelClass($id: ID!) {
@@ -135,16 +136,13 @@ export const DrawBoundingBoxAndPolygonInteraction = () => {
 
   useEffect(() => {
     if (vectorSourceRef.current != null) {
-      // TODO: add removal of listener
-      vectorSourceRef.current?.on("addfeature", () => {
-        const currentFeatures = vectorSourceRef.current.getFeatures();
-        const centerPointFeatureOl = currentFeatures.filter(
-          (feature) => feature.getProperties().id === "centerPoint"
-        )?.[0];
-        if (centerPointFeatureOl != null) {
-          setCenterPointFeature(centerPointFeatureOl as Feature<Polygon>);
+      const listener = ({ feature }: { feature: Feature<Geometry> }) => {
+        if (feature.getProperties().id === "centerPoint") {
+          setCenterPointFeature(feature as Feature<Polygon>);
         }
-      });
+      };
+      vectorSourceRef.current?.on("addfeature", listener);
+      return () => vectorSourceRef.current?.un("addfeature", listener);
     }
   }, [vectorSourceRef.current]);
 
@@ -232,9 +230,54 @@ export const DrawBoundingBoxAndPolygonInteraction = () => {
     }
   };
 
+  const runIog = async () => {
+    if (dataImage?.image != null && selectedLabelId != null) {
+      const inferencePromise = (async () => {
+        const { data } = await client.mutate({
+          mutation: runIogMutation,
+          variables: {
+            id: selectedLabelId,
+            centerPoint,
+            pointsInside,
+            pointsOutside,
+          },
+        });
+
+        return updateLabelEffect(
+          {
+            geometry: {
+              type: "Polygon",
+              coordinates: data?.runIog?.polygons,
+            },
+            labelId: selectedLabelId,
+            imageId: dataImage?.image?.id,
+          },
+          { client }
+        ).do();
+      })();
+
+      try {
+        await inferencePromise;
+      } catch (error) {
+        toast({
+          title: errorMessage,
+          description: error?.message,
+          isClosable: true,
+          status: "error",
+          position: "bottom-right",
+          duration: 10000,
+        });
+      }
+    }
+  };
+
   useEffect(() => {
     performIOGRefinement();
   }, [pointsInside, pointsOutside]);
+
+  useEffect(() => {
+    runIog();
+  }, [centerPoint]);
 
   const style = useMemo(() => {
     const color = selectedLabelClass?.color ?? noneClassColor;
@@ -400,6 +443,11 @@ export const DrawBoundingBoxAndPolygonInteraction = () => {
     }
   };
 
+  const performIogFromModifyEvent = async (modifyEvent: ModifyEvent) => {
+    const newCoordinates = modifyEvent.mapBrowserEvent.coordinate;
+    setCenterPoint(newCoordinates);
+  };
+
   return selectedTool !== Tools.IOG ||
     (selectedTool === Tools.IOG && selectedLabelId == null) ? (
     <olInteractionDraw
@@ -432,6 +480,7 @@ export const DrawBoundingBoxAndPolygonInteraction = () => {
       {centerPointFeature != null && (
         <olInteractionModify
           args={{ features: new Collection([centerPointFeature]) }}
+          onModifyend={performIogFromModifyEvent}
         />
       )}
 

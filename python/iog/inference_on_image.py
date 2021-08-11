@@ -221,6 +221,11 @@ def inference(data_url, x, y, width, height, center_point, id, *, cache: Cache):
             "roi": roi,
             "image": image,
             "center_point": center_point,
+            "data_url": data_url,
+            "x": x,
+            "y": y,
+            "width": width,
+            "height": height,
         },
         id,
     )
@@ -303,9 +308,9 @@ def refine(pointsInside, pointsOutside, id, *, cache: Cache):
 
 def run_iog(data, cache: Cache):
 
-    if data.get("imageUrl"):
+    if data.get("image_url"):
         id = data.get("id")
-        image_url = data.get("imageUrl")
+        image_url = data.get("image_url")
         x = data.get("x")
         y = data.get("y")
         width = data.get("width")
@@ -320,7 +325,7 @@ def run_iog(data, cache: Cache):
 
     id = data.get("id")
     cachedData = cache.read(id)
-    image_url = cachedData.get("imageUrl")
+    image_url = cachedData.get("data_url")
     x = cachedData.get("x")
     y = cachedData.get("y")
     width = cachedData.get("width")
@@ -336,5 +341,10 @@ def run_iog(data, cache: Cache):
             return {"polygons": refine(points_inside, points_outside, id, cache=cache)}
         else:
             return {
-                "polygons": inference(image_url, x, y, width, height, id, cache=cache)
+                "polygons": inference(
+                    image_url, x, y, width, height, center_point, id, cache=cache
+                )
             }
+    else:
+        if points_inside or points_outside:
+            return {"polygons": refine(points_inside, points_outside, id, cache=cache)}

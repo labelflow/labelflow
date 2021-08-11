@@ -125,7 +125,6 @@ def resolve_iog_inference(*_, data):
     height = data["height"]
     center_point = data["centerPoint"]
 
-
     return {
         "polygons": inference(
             imageUrl, x, y, width, height, center_point, id, cache=cache
@@ -145,8 +144,8 @@ def resolve_iog_refinement(*_, data):
 
 
 @mutation.field("runIog")
-def run_iog(*_, data):
-    return run_iog(data, cache=cache)
+def run_iog_function(*_, data):
+    return run_iog(data, cache)
 
 
 # Create executable schema instance
