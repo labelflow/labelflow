@@ -4,12 +4,6 @@ declare global {
   }
 }
 
-export const trackEvent = ({
-  action,
-  params,
-}: {
-  action: string;
-  params: any;
-}) => {
+export const trackEvent = (action: string, params: any) => {
   window.gtag?.("event", action, params);
 };
