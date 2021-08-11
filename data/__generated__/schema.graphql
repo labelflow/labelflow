@@ -82,26 +82,8 @@ type ImagesAggregates {
   totalCount: Int!
 }
 
-input IogInferenceInput {
-  id: ID!
-  imageUrl: String!
-  x: Float!
-  y: Float!
-  width: Float!
-  height: Float!
-  pointsInside: [[Float!]]
-  pointsOutside: [[Float!]]
-  centerPoint: [Float!]
-}
-
 type IogInferenceResult {
   polygons: [[[Float!]]]!
-}
-
-input IogRefinementInput {
-  id: ID!
-  pointsInside: [[Float!]]
-  pointsOutside: [[Float!]]
 }
 
 scalar JSON
@@ -193,8 +175,6 @@ type Mutation {
   createProject(data: ProjectCreateInput!): Project
   updateProject(where: ProjectWhereIDInput!, data: ProjectUpdateInput!): Project
   deleteProject(where: ProjectWhereIDInput!): Project
-  iogInference(data: IogInferenceInput!): IogInferenceResult
-  iogRefinement(data: IogRefinementInput!): IogInferenceResult
   runIog(data: RunIogInput!): IogInferenceResult
 }
 

@@ -15,7 +15,5 @@ type Mutation {
   updateProject(where: ProjectWhereIDInput!, data: ProjectUpdateInput!): Project
   deleteProject(where: ProjectWhereIDInput!): Project
 
-  iogInference(data: IogInferenceInput!): IogInferenceResult
-  iogRefinement(data: IogRefinementInput!): IogInferenceResult
   runIog(data: RunIogInput!): IogInferenceResult
 }

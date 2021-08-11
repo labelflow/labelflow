@@ -200,8 +200,6 @@ export const DrawBoundingBoxAndPolygonInteraction = () => {
       try {
         await inferencePromise;
       } catch (error) {
-        console.log("In run IOG");
-        console.log(error);
         toast({
           title: errorMessage,
           description: error?.message,
@@ -300,8 +298,6 @@ export const DrawBoundingBoxAndPolygonInteraction = () => {
     try {
       await createLabelPromise;
     } catch (error) {
-      console.log("createLabelFromDrawEvent");
-      console.log(error);
       toast({
         title: errorMessage,
         description: error?.message,
@@ -362,7 +358,6 @@ export const DrawBoundingBoxAndPolygonInteraction = () => {
     try {
       await inferencePromise;
     } catch (error) {
-      console.log(error);
       toast({
         title: errorMessage,
         description: error?.message,

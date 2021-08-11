@@ -103,27 +103,9 @@ export type ImagesAggregates = {
   totalCount: Scalars['Int'];
 };
 
-export type IogInferenceInput = {
-  id: Scalars['ID'];
-  imageUrl: Scalars['String'];
-  x: Scalars['Float'];
-  y: Scalars['Float'];
-  width: Scalars['Float'];
-  height: Scalars['Float'];
-  pointsInside?: Maybe<Array<Maybe<Array<Scalars['Float']>>>>;
-  pointsOutside?: Maybe<Array<Maybe<Array<Scalars['Float']>>>>;
-  centerPoint?: Maybe<Array<Scalars['Float']>>;
-};
-
 export type IogInferenceResult = {
   __typename?: 'IogInferenceResult';
   polygons: Array<Maybe<Array<Maybe<Array<Scalars['Float']>>>>>;
-};
-
-export type IogRefinementInput = {
-  id: Scalars['ID'];
-  pointsInside?: Maybe<Array<Maybe<Array<Scalars['Float']>>>>;
-  pointsOutside?: Maybe<Array<Maybe<Array<Scalars['Float']>>>>;
 };
 
 
@@ -219,8 +201,6 @@ export type Mutation = {
   createProject?: Maybe<Project>;
   updateProject?: Maybe<Project>;
   deleteProject?: Maybe<Project>;
-  iogInference?: Maybe<IogInferenceResult>;
-  iogRefinement?: Maybe<IogInferenceResult>;
   runIog?: Maybe<IogInferenceResult>;
 };
 
@@ -274,16 +254,6 @@ export type MutationUpdateProjectArgs = {
 
 export type MutationDeleteProjectArgs = {
   where: ProjectWhereIdInput;
-};
-
-
-export type MutationIogInferenceArgs = {
-  data: IogInferenceInput;
-};
-
-
-export type MutationIogRefinementArgs = {
-  data: IogRefinementInput;
 };
 
 
@@ -536,10 +506,8 @@ export type ResolversTypes = {
   ImageWhereInput: ImageWhereInput;
   ImageWhereUniqueInput: ImageWhereUniqueInput;
   ImagesAggregates: ResolverTypeWrapper<ImagesAggregates>;
-  IogInferenceInput: IogInferenceInput;
-  Float: ResolverTypeWrapper<Scalars['Float']>;
   IogInferenceResult: ResolverTypeWrapper<IogInferenceResult>;
-  IogRefinementInput: IogRefinementInput;
+  Float: ResolverTypeWrapper<Scalars['Float']>;
   JSON: ResolverTypeWrapper<Scalars['JSON']>;
   Label: ResolverTypeWrapper<Label>;
   LabelClass: ResolverTypeWrapper<LabelClass>;
@@ -587,10 +555,8 @@ export type ResolversParentTypes = {
   ImageWhereInput: ImageWhereInput;
   ImageWhereUniqueInput: ImageWhereUniqueInput;
   ImagesAggregates: ImagesAggregates;
-  IogInferenceInput: IogInferenceInput;
-  Float: Scalars['Float'];
   IogInferenceResult: IogInferenceResult;
-  IogRefinementInput: IogRefinementInput;
+  Float: Scalars['Float'];
   JSON: Scalars['JSON'];
   Label: Label;
   LabelClass: LabelClass;
@@ -718,8 +684,6 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   createProject?: Resolver<Maybe<ResolversTypes['Project']>, ParentType, ContextType, RequireFields<MutationCreateProjectArgs, 'data'>>;
   updateProject?: Resolver<Maybe<ResolversTypes['Project']>, ParentType, ContextType, RequireFields<MutationUpdateProjectArgs, 'where' | 'data'>>;
   deleteProject?: Resolver<Maybe<ResolversTypes['Project']>, ParentType, ContextType, RequireFields<MutationDeleteProjectArgs, 'where'>>;
-  iogInference?: Resolver<Maybe<ResolversTypes['IogInferenceResult']>, ParentType, ContextType, RequireFields<MutationIogInferenceArgs, 'data'>>;
-  iogRefinement?: Resolver<Maybe<ResolversTypes['IogInferenceResult']>, ParentType, ContextType, RequireFields<MutationIogRefinementArgs, 'data'>>;
   runIog?: Resolver<Maybe<ResolversTypes['IogInferenceResult']>, ParentType, ContextType, RequireFields<MutationRunIogArgs, 'data'>>;
 };
 
