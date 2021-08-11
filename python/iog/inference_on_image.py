@@ -346,12 +346,19 @@ def run_iog(data, cache: Cache):
             roi,
             center_point,
         )
-        cache.write({**cached_data, "backbone_features": backbone_features}, id)
+        cache.write(
+            {
+                **cached_data,
+                "center_point": center_point,
+                "backbone_features": backbone_features,
+            },
+            id,
+        )
     if should_perform_refinement:
         polygons = refine(
             image,
             roi,
-            cached_center_point,
+            center_point,
             backbone_features,
             points_inside,
             points_outside,
