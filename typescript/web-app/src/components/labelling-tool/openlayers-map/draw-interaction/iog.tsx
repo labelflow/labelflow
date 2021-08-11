@@ -1,5 +1,4 @@
 import { useMemo, useRef, useCallback, useState, useEffect } from "react";
-import { useRouter } from "next/router";
 import { Draw as OlDraw } from "ol/interaction";
 import { createBox, DrawEvent } from "ol/interaction/Draw";
 import GeoJSON from "ol/format/GeoJSON";
@@ -18,11 +17,9 @@ import { LabelType } from "@labelflow/graphql-types";
 import { ModifyEvent } from "ol/interaction/Modify";
 import {
   useLabellingStore,
-  Tools,
   DrawingToolState,
 } from "../../../../connectors/labelling-state";
 import { keymap } from "../../../../keymap";
-import { useUndoStore } from "../../../../connectors/undo-store";
 import { noneClassColor } from "../../../../utils/class-color-generator";
 import { createLabelEffect } from "./create-label-effect";
 import { updateLabelEffect } from "../select-and-modify-feature/update-label-effect";
@@ -78,10 +75,9 @@ const runIogMutation = gql`
 
 const geometryFunction = createBox();
 
-export const DrawBoundingBoxAndPolygonInteraction = () => {
+export const DrawIogInteraction = ({ imageId }: { imageId: string }) => {
   const drawRef = useRef<OlDraw>(null);
   const client = useApolloClient();
-  const { imageId } = useRouter()?.query;
 
   const [pointsInside, setPointsInside] = useState<Coordinate[]>([]);
   const [pointsOutside, setPointsOutside] = useState<Coordinate[]>([]);
@@ -102,8 +98,6 @@ export const DrawBoundingBoxAndPolygonInteraction = () => {
     }
   }, [vectorSourceRef.current]);
 
-  const selectedTool = useLabellingStore((state) => state.selectedTool);
-
   const setDrawingToolState = useLabellingStore(
     (state) => state.setDrawingToolState
   );
@@ -121,7 +115,6 @@ export const DrawBoundingBoxAndPolygonInteraction = () => {
     variables: { id: imageId },
     skip: imageId == null,
   });
-  const { perform } = useUndoStore();
 
   const selectedLabelClass = dataLabelClass?.labelClass;
 
@@ -130,6 +123,7 @@ export const DrawBoundingBoxAndPolygonInteraction = () => {
   useEffect(() => {
     setPointsInside([]);
     setPointsOutside([]);
+    setCenterPoint([]);
   }, [imageId]);
 
   useHotkeys(
@@ -141,10 +135,7 @@ export const DrawBoundingBoxAndPolygonInteraction = () => {
 
   const toast = useToast();
 
-  const errorMessage =
-    selectedTool === Tools.POLYGON
-      ? "Error creating polygon"
-      : "Error creating bounding box";
+  const errorMessage = "Error executing IOG";
 
   const runIog = async ({
     id,
@@ -183,6 +174,8 @@ export const DrawBoundingBoxAndPolygonInteraction = () => {
             pointsOutside,
           },
         });
+
+        console.log("Dat", data);
 
         return updateLabelEffect(
           {
@@ -257,58 +250,6 @@ export const DrawBoundingBoxAndPolygonInteraction = () => {
     [selectedLabelId]
   );
 
-  if (![Tools.BOX, Tools.POLYGON, Tools.IOG].includes(selectedTool)) {
-    return null;
-  }
-  if (typeof imageId !== "string") {
-    return null;
-  }
-  const interactionDrawArguments =
-    selectedTool === Tools.POLYGON
-      ? {
-          type: GeometryType.POLYGON,
-          style, // Needed here to trigger the rerender of the component when the selected class changes
-        }
-      : {
-          type: GeometryType.CIRCLE,
-          geometryFunction,
-          style, // Needed here to trigger the rerender of the component when the selected class changes
-        };
-
-  const createLabelFromDrawEvent = async (drawEvent: DrawEvent) => {
-    const geometry = new GeoJSON().writeGeometryObject(
-      drawEvent.feature.getGeometry()
-    ) as GeoJSON.Polygon;
-    const createLabelPromise = perform(
-      createLabelEffect(
-        {
-          imageId,
-          selectedLabelClassId,
-          geometry,
-          labelType:
-            selectedTool === Tools.POLYGON ? LabelType.Polygon : LabelType.Box,
-        },
-        {
-          setSelectedLabelId,
-          client,
-        }
-      )
-    );
-    setDrawingToolState(DrawingToolState.IDLE);
-    try {
-      await createLabelPromise;
-    } catch (error) {
-      toast({
-        title: errorMessage,
-        description: error?.message,
-        isClosable: true,
-        status: "error",
-        position: "bottom-right",
-        duration: 10000,
-      });
-    }
-  };
-
   const performIOGFromDrawEvent = async (drawEvent: DrawEvent) => {
     const openLayersGeometry = drawEvent.feature.getGeometry();
     const geometry = new GeoJSON().writeGeometryObject(
@@ -380,11 +321,18 @@ export const DrawBoundingBoxAndPolygonInteraction = () => {
     });
   };
 
-  return selectedTool !== Tools.IOG ||
-    (selectedTool === Tools.IOG && selectedLabelId == null) ? (
+  if (typeof imageId !== "string") {
+    return null;
+  }
+
+  return selectedLabelId == null ? (
     <olInteractionDraw
       ref={drawRef}
-      args={interactionDrawArguments}
+      args={{
+        type: GeometryType.CIRCLE,
+        geometryFunction,
+        style, // Needed here to trigger the rerender of the component when the selected class changes
+      }}
       condition={(e) => {
         // 0 is the main mouse button. See: https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/button
         // @ts-ignore
@@ -398,11 +346,7 @@ export const DrawBoundingBoxAndPolygonInteraction = () => {
         setDrawingToolState(DrawingToolState.DRAWING);
         return true;
       }}
-      onDrawend={
-        selectedTool === Tools.IOG
-          ? performIOGFromDrawEvent
-          : createLabelFromDrawEvent
-      }
+      onDrawend={performIOGFromDrawEvent}
     />
   ) : (
     <>
