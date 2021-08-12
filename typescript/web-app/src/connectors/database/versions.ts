@@ -11,7 +11,7 @@ export default [
       label:
         "id,createdAt,updatedAt,imageId,x,y,height,width,labelClassId,geometry",
       labelClass: "id,createdAt,updatedAt,name,color,projectId",
-      project: "id,createdAt,updatedAt,&name",
+      project: "id,createdAt,updatedAt,&name,&slug",
     },
   },
 ];

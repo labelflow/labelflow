@@ -1,5 +1,6 @@
 import { trim } from "lodash/fp";
 import { v4 as uuidv4 } from "uuid";
+import slugify from "slugify";
 import type {
   MutationCreateProjectArgs,
   MutationDeleteProjectArgs,
@@ -134,6 +135,7 @@ const createProject = async (
       createdAt: date,
       updatedAt: date,
       name,
+      slug: slugify(name, { lower: true }),
     });
 
     return await getProjectById(projectId, repository);
@@ -152,11 +154,19 @@ const updateProject = async (
     repository.project.getById
   )(args.where.id);
 
-  const updateResult = await repository.project.update(
-    projectToUpdate.id,
-    args.data
-  );
-  if (!updateResult) {
+  const newData =
+    "name" in args.data
+      ? { ...args.data, slug: slugify(args.data.name) }
+      : args.data;
+  try {
+    const updateResult = await repository.project.update(
+      projectToUpdate.id,
+      newData
+    );
+    if (!updateResult) {
+      throw new Error("Could not update the project");
+    }
+  } catch (e) {
     throw new Error("Could not update the project");
   }
 

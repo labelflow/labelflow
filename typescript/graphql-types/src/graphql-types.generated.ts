@@ -268,6 +268,7 @@ export type Project = {
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
   name: Scalars['String'];
+  slug: Scalars['String'];
   images: Array<Image>;
   labels: Array<Label>;
   labelClasses: Array<LabelClass>;
@@ -674,6 +675,7 @@ export type ProjectResolvers<ContextType = any, ParentType extends ResolversPare
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   images?: Resolver<Array<ResolversTypes['Image']>, ParentType, ContextType, RequireFields<ProjectImagesArgs, never>>;
   labels?: Resolver<Array<ResolversTypes['Label']>, ParentType, ContextType>;
   labelClasses?: Resolver<Array<ResolversTypes['LabelClass']>, ParentType, ContextType>;

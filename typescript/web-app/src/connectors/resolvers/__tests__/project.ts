@@ -115,7 +115,15 @@ describe("Project resolver test suite", () => {
   test("Creating a project should fail if the project name already exists", async () => {
     await createProject("my project", "an-id");
 
-    return expect(createProject("my project", "an-id")).rejects.toEqual(
+    return expect(createProject("my project", "an-other-id")).rejects.toEqual(
+      new Error("Could not create the project")
+    );
+  });
+
+  test("Creating a project should fail if the project slug already exists", async () => {
+    await createProject("my project", "an-id");
+
+    return expect(createProject("My Project", "an-other-id")).rejects.toEqual(
       new Error("Could not create the project")
     );
   });
@@ -430,6 +438,64 @@ describe("Project resolver test suite", () => {
         id: projectId,
         name: "My new project new name",
       })
+    );
+  });
+
+  test("Should throw when updating a project with an existing name", async () => {
+    const name1 = "My new project";
+    const name2 = "My other project";
+    const projectId1 = "id1";
+    const projectId2 = "id2";
+    await createProject(name1, projectId1);
+    await createProject(name2, projectId2);
+
+    const updateProjectName = () =>
+      client.mutate({
+        mutation: gql`
+          mutation updateProject($id: ID!, $data: ProjectUpdateInput!) {
+            updateProject(where: { id: $id }, data: $data) {
+              id
+              name
+            }
+          }
+        `,
+        variables: {
+          id: projectId2,
+          data: { name: name1 },
+        },
+      });
+
+    return expect(updateProjectName).rejects.toEqual(
+      new Error("Could not update the project")
+    );
+  });
+
+  test("Should throw when updating a project with an existing slug", async () => {
+    const name1 = "My New Project";
+    const name2 = "My other project";
+    const projectId1 = "id1";
+    const projectId2 = "id2";
+    await createProject(name1, projectId1);
+    await createProject(name2, projectId2);
+
+    const updateProjectName = () =>
+      client.mutate({
+        mutation: gql`
+          mutation updateProject($id: ID!, $data: ProjectUpdateInput!) {
+            updateProject(where: { id: $id }, data: $data) {
+              id
+              name
+            }
+          }
+        `,
+        variables: {
+          id: projectId2,
+          data: { name: "my new project" },
+        },
+      });
+
+    return expect(updateProjectName).rejects.toEqual(
+      new Error("Could not update the project")
     );
   });
 
