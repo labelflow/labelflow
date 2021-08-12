@@ -1,4 +1,4 @@
-describe("Example tests", () => {
+describe.skip("Example tests", () => {
   it('finds the content "Hello world"', () => {
     // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
     cy.visit(
