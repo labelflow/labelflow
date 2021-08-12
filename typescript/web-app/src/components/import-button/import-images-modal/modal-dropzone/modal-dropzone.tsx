@@ -21,10 +21,10 @@ const createImageFromFileMutation = gql`
   mutation createImageMutation(
     $file: Upload!
     $createdAt: DateTime
-    $projectId: ID!
+    $datasetId: ID!
   ) {
     createImage(
-      data: { file: $file, createdAt: $createdAt, projectId: $projectId }
+      data: { file: $file, createdAt: $createdAt, datasetId: $datasetId }
     ) {
       id
     }
@@ -36,14 +36,14 @@ const createImageFromUrlMutation = gql`
     $url: String!
     $createdAt: DateTime
     $name: String!
-    $projectId: ID!
+    $datasetId: ID!
   ) {
     createImage(
       data: {
         url: $url
         createdAt: $createdAt
         name: $name
-        projectId: $projectId
+        datasetId: $datasetId
       }
     ) {
       id
@@ -89,7 +89,7 @@ export const ImportImagesModalDropzone = ({
   const apolloClient = useApolloClient();
 
   const router = useRouter();
-  const { projectId } = router?.query;
+  const { datasetId } = router?.query;
 
   /*
    * We need a state with the accepted and reject files to be able to reset the list
@@ -104,8 +104,8 @@ export const ImportImagesModalDropzone = ({
   useEffect(() => {
     if (isEmpty(files)) return;
 
-    if (!projectId) {
-      throw new Error(`No project id`);
+    if (!datasetId) {
+      throw new Error(`No dataset id`);
     }
 
     const createImages = async () => {
@@ -132,7 +132,7 @@ export const ImportImagesModalDropzone = ({
                   variables: {
                     file: acceptedFile.file,
                     createdAt: createdAt.toISOString(),
-                    projectId,
+                    datasetId,
                   },
                 });
 
@@ -159,7 +159,7 @@ export const ImportImagesModalDropzone = ({
                     variables: {
                       url,
                       name: acceptedFile.file.name,
-                      projectId,
+                      datasetId,
                     },
                   });
 
@@ -184,7 +184,7 @@ export const ImportImagesModalDropzone = ({
                     url: target.downloadUrl,
                     createdAt: createdAt.toISOString(),
                     name: acceptedFile.file.name,
-                    projectId,
+                    datasetId,
                   },
                 });
 

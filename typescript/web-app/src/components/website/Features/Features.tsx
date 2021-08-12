@@ -63,7 +63,7 @@ export const Features = () => (
           bringing your AI in the loop to identify potential issues and help
           curate your datasets.
           {/* Powerful data exploration Streamlined collaboration and quality
-          management Curate a dataset of your project’s images and review the
+          management Curate a dataset of your dataset’s images and review the
           quality of your annotations to create top-performing training models.
           Find and correct errors in your ground truth data with Labelflow's
           manual and AI-powered Error Finder features. Hasty's Error Finder
@@ -77,7 +77,7 @@ export const Features = () => (
           and processes.
           {/* No-code automation Seamless pipeline integration. Work smarter, not
           harder. Integrate your computer vision pipeline using Python SDKs to
-          streamline and automate your data, user, and project management tasks.
+          streamline and automate your data, user, and dataset management tasks.
           You can also import images by linking them from external storages. The
           linked images are displayed in SuperAnnotate, but they are not stored
           on our local servers. */}

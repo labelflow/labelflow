@@ -1,18 +1,18 @@
 describe("Index page redirection when user has tried app", () => {
-  it("Redirects to image page when user tries App and did not see demo project", () => {
+  it("Redirects to image page when user tries App and did not see demo dataset", () => {
     cy.setCookie("hasUserTriedApp", "true");
     cy.visit(`/?modal-welcome=closed&modal-update-service-worker=update`);
     cy.url().should(
       "match",
-      /.\/projects\/([a-zA-Z0-9_-]*)\/images\/([a-zA-Z0-9_-]*)/
+      /.\/datasets\/([a-zA-Z0-9_-]*)\/images\/([a-zA-Z0-9_-]*)/
     );
   });
 
-  it("Redirects to projects page when user tries App and did already see demo project", () => {
-    cy.setCookie("didVisitDemoProject", "true");
+  it("Redirects to datasets page when user tries App and did already see demo dataset", () => {
+    cy.setCookie("didVisitDemoDataset", "true");
     cy.setCookie("hasUserTriedApp", "true");
     cy.visit(`/?modal-welcome=closed&modal-update-service-worker=update`);
-    cy.url().should("match", /.\/projects/);
+    cy.url().should("match", /.\/datasets/);
   });
 });
 

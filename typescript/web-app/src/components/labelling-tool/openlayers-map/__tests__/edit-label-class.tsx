@@ -13,12 +13,12 @@ import { setupTestsWithLocalDatabase } from "../../../../utils/setup-local-db-te
 import { EditLabelClass } from "../edit-label-class";
 
 setupTestsWithLocalDatabase();
-const testProjectId = "test project id";
+const testDatasetId = "test dataset id";
 
 // FIXME: mockNextRouter wasn't working here so we had to re-implement the mock
 jest.mock("next/router", () => ({
   useRouter: jest.fn(() => ({
-    query: { projectId: testProjectId },
+    query: { datasetId: testDatasetId },
   })),
 }));
 
@@ -56,15 +56,15 @@ jest.mock("../../../../connectors/apollo-client/schema-client", () => {
   };
 });
 
-const createProject = async (
+const createDataset = async (
   name: string,
-  projectId: string = testProjectId
+  datasetId: string = testDatasetId
 ) => {
   // @ts-ignore
   return client.mutateOriginal({
     mutation: gql`
-      mutation createProject($projectId: String, $name: String!) {
-        createProject(data: { id: $projectId, name: $name }) {
+      mutation createDataset($datasetId: String, $name: String!) {
+        createDataset(data: { id: $datasetId, name: $name }) {
           id
           name
         }
@@ -72,7 +72,7 @@ const createProject = async (
     `,
     variables: {
       name,
-      projectId,
+      datasetId,
     },
     fetchPolicy: "no-cache",
   });
@@ -94,7 +94,7 @@ beforeEach(async () => {
     selectedTool: Tools.SELECTION,
   });
 
-  await createProject("Test project");
+  await createDataset("Test dataset");
 
   // @ts-ignore
   await client.mutateOriginal({
@@ -110,7 +110,7 @@ beforeEach(async () => {
         id: "existing label class id",
         name: "existing label class",
         color: "0xaa45f7",
-        projectId: testProjectId,
+        datasetId: testDatasetId,
       },
     },
     fetchPolicy: "no-cache",

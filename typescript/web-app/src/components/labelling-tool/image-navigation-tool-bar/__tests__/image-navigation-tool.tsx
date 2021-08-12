@@ -23,7 +23,7 @@ import { probeImage } from "@labelflow/common-resolvers/src/utils/probe-image";
 
 jest.mock("@labelflow/common-resolvers/src/utils/probe-image");
 const mockedProbeSync = probeImage as jest.Mock;
-const testProjectId = "mocked-project-id";
+const testDatasetId = "mocked-dataset-id";
 
 const createImage = async (name: String) => {
   mockedProbeSync.mockReturnValue({
@@ -33,14 +33,14 @@ const createImage = async (name: String) => {
   });
   const mutationResult = await client.mutate({
     mutation: gql`
-      mutation createImage($file: Upload!, $name: String!, $projectId: ID!) {
-        createImage(data: { name: $name, file: $file, projectId: $projectId }) {
+      mutation createImage($file: Upload!, $name: String!, $datasetId: ID!) {
+        createImage(data: { name: $name, file: $file, datasetId: $datasetId }) {
           id
         }
       }
     `,
     variables: {
-      projectId: testProjectId,
+      datasetId: testDatasetId,
       file: new Blob(),
       name,
     },
@@ -65,14 +65,14 @@ const renderImageNavigationTool = () =>
 beforeEach(async () => {
   await client.mutate({
     mutation: gql`
-      mutation createProject($projectId: ID!) {
-        createProject(data: { name: "test project", id: $projectId }) {
+      mutation createDataset($datasetId: ID!) {
+        createDataset(data: { name: "test dataset", id: $datasetId }) {
           id
         }
       }
     `,
     variables: {
-      projectId: testProjectId,
+      datasetId: testDatasetId,
     },
   });
 });
@@ -90,7 +90,7 @@ test("should display a dash and a zero when the image id isn't present/when the 
 test("should display one when only one image in list", async () => {
   const imageId = await createImage("testImage");
   (useRouter as jest.Mock).mockImplementation(() => ({
-    query: { imageId, projectId: testProjectId },
+    query: { imageId, datasetId: testDatasetId },
   }));
 
   renderImageNavigationTool();
@@ -110,7 +110,7 @@ test("should select previous image when the left arrow is pressed", async () => 
 
   await createImage("testImageC");
   (useRouter as jest.Mock).mockImplementation(() => ({
-    query: { imageId, projectId: testProjectId },
+    query: { imageId, datasetId: testDatasetId },
     push: mockedPush,
   }));
 
@@ -126,7 +126,7 @@ test("should select previous image when the left arrow is pressed", async () => 
   userEvent.type(container, "{arrowleft}");
 
   expect(mockedPush).toHaveBeenCalledWith(
-    `/projects/${testProjectId}/images/${oldestImageId}`
+    `/datasets/${testDatasetId}/images/${oldestImageId}`
   );
 });
 
@@ -139,7 +139,7 @@ test("should select next image when the right arrow is pressed", async () => {
   const newestImageId = await createImage("testImageC");
 
   (useRouter as jest.Mock).mockImplementation(() => ({
-    query: { imageId, projectId: testProjectId },
+    query: { imageId, datasetId: testDatasetId },
     push: mockedPush,
   }));
   const { container } = renderImageNavigationTool();
@@ -152,6 +152,6 @@ test("should select next image when the right arrow is pressed", async () => {
   userEvent.type(container, "{arrowright}");
 
   expect(mockedPush).toHaveBeenCalledWith(
-    `/projects/${testProjectId}/images/${newestImageId}`
+    `/datasets/${testDatasetId}/images/${newestImageId}`
   );
 });

@@ -11,7 +11,7 @@ export const GalleryItem = memo(
     start,
     url,
     imageId,
-    projectId,
+    datasetId,
     isSelected,
     index,
   }: {
@@ -19,7 +19,7 @@ export const GalleryItem = memo(
     start: number;
     url?: string;
     imageId?: string;
-    projectId?: string;
+    datasetId?: string;
     isSelected: boolean;
     index: number;
   }) => {
@@ -35,7 +35,7 @@ export const GalleryItem = memo(
         pr="7.5px"
       >
         {imageId ? (
-          <Link href={`/projects/${projectId}/images/${imageId}`} passHref>
+          <Link href={`/datasets/${datasetId}/images/${imageId}`} passHref>
             <a aria-current={isSelected ? "page" : undefined}>
               <Badge
                 pointerEvents="none"

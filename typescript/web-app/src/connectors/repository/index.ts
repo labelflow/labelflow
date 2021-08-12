@@ -2,7 +2,7 @@ import { Repository } from "@labelflow/common-resolvers";
 import { db } from "../database";
 import { list } from "./utils/list";
 import { countLabels, listLabels } from "./label";
-import { deleteProject } from "./project";
+import { deleteDataset } from "./dataset";
 import { deleteLabelClass } from "./label-class";
 import {
   getUploadTarget,
@@ -37,14 +37,14 @@ export const repository: Repository = {
     update: async (id, changes) =>
       (await db.labelClass.update(id, changes)) === 1,
   },
-  project: {
-    add: (project) => db.project.add(project),
-    delete: deleteProject,
-    getById: (id) => db.project.get(id),
-    getByName: (name) => db.project.get({ name }),
-    getBySlug: (slug) => db.project.get({ slug }),
-    list: list(db.project),
-    update: async (id, changes) => (await db.project.update(id, changes)) === 1,
+  dataset: {
+    add: (dataset) => db.dataset.add(dataset),
+    delete: deleteDataset,
+    getById: (id) => db.dataset.get(id),
+    getByName: (name) => db.dataset.get({ name }),
+    getBySlug: (slug) => db.dataset.get({ slug }),
+    list: list(db.dataset),
+    update: async (id, changes) => (await db.dataset.update(id, changes)) === 1,
   },
   upload: {
     getUploadTarget,

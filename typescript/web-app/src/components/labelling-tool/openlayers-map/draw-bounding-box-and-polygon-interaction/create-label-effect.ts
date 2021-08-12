@@ -3,7 +3,7 @@ import { getBoundedGeometryFromImage } from "@labelflow/common-resolvers";
 
 import { GeometryInput, LabelType } from "@labelflow/graphql-types";
 import { Effect } from "../../../../connectors/undo-store";
-import { getProjectsQuery } from "../../../../pages/projects";
+import { getDatasetsQuery } from "../../../../pages/datasets";
 
 type CreateLabelInputs = {
   imageId: string;
@@ -171,7 +171,7 @@ export const createLabelEffect = (
     const { data } = await client.mutate({
       mutation: createLabelMutation,
       variables: createLabelInputs,
-      refetchQueries: ["countLabels", { query: getProjectsQuery }],
+      refetchQueries: ["countLabels", { query: getDatasetsQuery }],
       optimisticResponse: {
         createLabel: { id: `temp-${Date.now()}`, __typename: "Label" },
       },
@@ -196,7 +196,7 @@ export const createLabelEffect = (
     await client.mutate({
       mutation: deleteLabelMutation,
       variables: { id },
-      refetchQueries: ["countLabels", { query: getProjectsQuery }],
+      refetchQueries: ["countLabels", { query: getDatasetsQuery }],
       optimisticResponse: { deleteLabel: { id, __typename: "Label" } },
       update(cache) {
         removeLabelFromImageCache(cache, { imageId, id });
@@ -217,7 +217,7 @@ export const createLabelEffect = (
     const { data } = await client.mutate({
       mutation: createLabelMutation,
       variables: createLabelInputs,
-      refetchQueries: ["countLabels", { query: getProjectsQuery }],
+      refetchQueries: ["countLabels", { query: getDatasetsQuery }],
       optimisticResponse: {
         createLabel: { id: `temp-${Date.now()}`, __typename: "Label" },
       },

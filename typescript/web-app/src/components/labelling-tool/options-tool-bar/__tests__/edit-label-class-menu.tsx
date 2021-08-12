@@ -6,7 +6,7 @@ import userEvent from "@testing-library/user-event";
 import { mockNextRouter } from "../../../../utils/router-mocks";
 
 mockNextRouter({
-  query: { imageId: "mocked-image-id", projectId: "test project id" },
+  query: { imageId: "mocked-image-id", datasetId: "test dataset id" },
 });
 
 import { client } from "../../../../connectors/apollo-client/schema-client";
@@ -18,7 +18,7 @@ import { setupTestsWithLocalDatabase } from "../../../../utils/setup-local-db-te
 
 import { EditLabelClassMenu } from "../edit-label-class-menu";
 
-const testProjectId = "test project id";
+const testDatasetId = "test dataset id";
 
 setupTestsWithLocalDatabase();
 
@@ -56,15 +56,15 @@ jest.mock("../../../../connectors/apollo-client/schema-client", () => {
   };
 });
 
-const createProject = async (
+const createDataset = async (
   name: string,
-  projectId: string = testProjectId
+  datasetId: string = testDatasetId
 ) => {
   // @ts-ignore
   return client.mutateOriginal({
     mutation: gql`
-      mutation createProject($projectId: String, $name: String!) {
-        createProject(data: { id: $projectId, name: $name }) {
+      mutation createDataset($datasetId: String, $name: String!) {
+        createDataset(data: { id: $datasetId, name: $name }) {
           id
           name
         }
@@ -72,7 +72,7 @@ const createProject = async (
     `,
     variables: {
       name,
-      projectId,
+      datasetId,
     },
     fetchPolicy: "no-cache",
   });
@@ -92,7 +92,7 @@ beforeEach(async () => {
     selectedTool: Tools.SELECTION,
   });
 
-  await createProject("Test project");
+  await createDataset("Test dataset");
 
   // @ts-ignore
   await client.mutateOriginal({
@@ -108,7 +108,7 @@ beforeEach(async () => {
         id: "existing label class id",
         name: "existing label class",
         color: "0xaa45f7",
-        projectId: testProjectId,
+        datasetId: testDatasetId,
       },
     },
   });
