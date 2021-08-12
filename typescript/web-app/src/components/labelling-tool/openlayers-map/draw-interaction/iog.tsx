@@ -15,6 +15,7 @@ import { Coordinate } from "ol/coordinate";
 import CircleStyle from "ol/style/Circle";
 import { LabelType } from "@labelflow/graphql-types";
 import { ModifyEvent } from "ol/interaction/Modify";
+import { useMap } from "@labelflow/react-openlayers-fiber";
 import {
   useLabellingStore,
   DrawingToolState,
@@ -76,6 +77,7 @@ const runIogMutation = gql`
 const geometryFunction = createBox();
 
 export const DrawIogInteraction = ({ imageId }: { imageId: string }) => {
+  const map = useMap();
   const drawRef = useRef<OlDraw>(null);
   const client = useApolloClient();
 
@@ -88,6 +90,11 @@ export const DrawIogInteraction = ({ imageId }: { imageId: string }) => {
 
   useEffect(() => {
     if (vectorSourceRef.current != null) {
+      const centerPointFeatureFromSource =
+        vectorSourceRef.current.getFeatureById("centerPoint");
+      if (centerPoint != null)
+        setCenterPointFeature(centerPointFeatureFromSource as Feature<Polygon>);
+
       const listener = ({ feature }: { feature: Feature<Geometry> }) => {
         if (feature.getProperties().id === "centerPoint") {
           setCenterPointFeature(feature as Feature<Polygon>);
@@ -255,6 +262,13 @@ export const DrawIogInteraction = ({ imageId }: { imageId: string }) => {
     [selectedLabelId]
   );
 
+  useEffect(() => {
+    if (selectedLabelId != null) {
+      map?.on("click", createPointInsideOrOutside);
+      return () => map?.un("click", createPointInsideOrOutside);
+    }
+  }, [map, selectedLabelId, createPointInsideOrOutside]);
+
   const performIOGFromDrawEvent = async (drawEvent: DrawEvent) => {
     const openLayersGeometry = drawEvent.feature.getGeometry();
     const geometry = new GeoJSON().writeGeometryObject(
@@ -355,9 +369,6 @@ export const DrawIogInteraction = ({ imageId }: { imageId: string }) => {
     />
   ) : (
     <>
-      <olInteractionPointer
-        args={{ handleDownEvent: createPointInsideOrOutside }}
-      />
       {centerPointFeature != null && (
         <olInteractionModify
           args={{ features: new Collection([centerPointFeature]) }}
