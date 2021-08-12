@@ -24,6 +24,7 @@ import { ExportButton } from "../../../../components/export-button";
 import { Meta } from "../../../../components/meta";
 import { Layout } from "../../../../components/layout";
 import { Gallery } from "../../../../components/gallery";
+import Error404Page from "../../../404";
 
 const ArrowRightIcon = chakra(RiArrowRightSLine);
 
@@ -90,14 +91,9 @@ const ImagePage = ({
   const imageName = imageResult?.image.name;
   const projectName = projectResult?.project.name;
 
-  useEffect(() => {
-    if (error) {
-      router.replace({
-        pathname: `/projects/${projectId}/images`,
-        query: router.query,
-      });
-    }
-  }, [error]);
+  if (error) {
+    return <Error404Page />;
+  }
 
   return (
     <>

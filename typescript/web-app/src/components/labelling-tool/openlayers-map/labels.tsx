@@ -196,9 +196,6 @@ export const Labels = ({
   const { data } = useQuery(getImageLabelsQuery, {
     skip: typeof imageId !== "string",
     variables: { imageId: imageId as string },
-    onError: (e) => {
-      throw e;
-    },
   });
 
   useHotkeys(

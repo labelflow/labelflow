@@ -18,6 +18,7 @@ import { Meta } from "../../../../components/meta";
 import { Layout } from "../../../../components/layout";
 import { ProjectTabBar } from "../../../../components/layout/tab-bar/project-tab-bar";
 import { ClassesList } from "../../../../components/project-class-list";
+import Error404Page from "../../../404";
 
 const ArrowRightIcon = chakra(RiArrowRightSLine);
 
@@ -38,7 +39,7 @@ const ProjectClassesPage = ({
   const router = useRouter();
   const projectId = router?.query?.projectId as string;
 
-  const { data: projectResult } = useQuery<{
+  const { data: projectResult, error } = useQuery<{
     project: { id: string; name: string };
   }>(projectNameQuery, {
     variables: {
@@ -47,6 +48,10 @@ const ProjectClassesPage = ({
   });
 
   const projectName = projectResult?.project.name;
+
+  if (error) {
+    return <Error404Page />;
+  }
 
   return (
     <>

@@ -27,6 +27,7 @@ import { Meta } from "../../../../components/meta";
 import { Layout } from "../../../../components/layout";
 import { EmptyStateImage } from "../../../../components/empty-state";
 import { ProjectTabBar } from "../../../../components/layout/tab-bar/project-tab-bar";
+import Error404Page from "../../../404";
 
 const ArrowRightIcon = chakra(RiArrowRightSLine);
 
@@ -52,7 +53,7 @@ const ImagesPage = ({
   const router = useRouter();
   const projectId = router?.query?.projectId as string;
 
-  const { data: projectResult } = useQuery<{
+  const { data: projectResult, error } = useQuery<{
     project: ProjectType;
   }>(projectDataQuery, {
     variables: {
@@ -61,6 +62,10 @@ const ImagesPage = ({
   });
 
   const projectName = projectResult?.project.name;
+
+  if (error) {
+    return <Error404Page />;
+  }
 
   return (
     <>
