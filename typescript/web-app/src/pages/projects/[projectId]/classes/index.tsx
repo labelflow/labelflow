@@ -10,6 +10,7 @@ import {
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { RiArrowRightSLine } from "react-icons/ri";
+import { AppLifecycleManager } from "../../../../components/app-lifecycle-manager";
 import { KeymapButton } from "../../../../components/keymap-button";
 import { ImportButton } from "../../../../components/import-button";
 import { ExportButton } from "../../../../components/export-button";
@@ -29,7 +30,11 @@ const projectNameQuery = gql`
   }
 `;
 
-const ProjectClassesPage = () => {
+const ProjectClassesPage = ({
+  assumeServiceWorkerActive,
+}: {
+  assumeServiceWorkerActive: boolean;
+}) => {
   const router = useRouter();
   const projectId = router?.query?.projectId as string;
 
@@ -45,6 +50,9 @@ const ProjectClassesPage = () => {
 
   return (
     <>
+      <AppLifecycleManager
+        assumeServiceWorkerActive={assumeServiceWorkerActive}
+      />
       <Meta title="Labelflow | Classes" />
       <Layout
         topBarLeftContent={

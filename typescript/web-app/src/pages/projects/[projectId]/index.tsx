@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { Spinner, Center } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { useQuery, gql } from "@apollo/client";
+import { AppLifecycleManager } from "../../../components/app-lifecycle-manager";
 import { Layout } from "../../../components/layout";
 
 const getProject = gql`
@@ -12,7 +13,11 @@ const getProject = gql`
   }
 `;
 
-const ProjectIndexPage = () => {
+const ProjectIndexPage = ({
+  assumeServiceWorkerActive,
+}: {
+  assumeServiceWorkerActive: boolean;
+}) => {
   const router = useRouter();
   const { projectId } = router?.query;
 
@@ -34,11 +39,16 @@ const ProjectIndexPage = () => {
   }, [error]);
 
   return (
-    <Layout>
-      <Center h="full">
-        <Spinner size="xl" />
-      </Center>
-    </Layout>
+    <>
+      <AppLifecycleManager
+        assumeServiceWorkerActive={assumeServiceWorkerActive}
+      />
+      <Layout>
+        <Center h="full">
+          <Spinner size="xl" />
+        </Center>
+      </Layout>
+    </>
   );
 };
 

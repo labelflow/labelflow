@@ -11,6 +11,7 @@ import {
 import { RiArrowRightSLine } from "react-icons/ri";
 import { Meta } from "../components/meta";
 import { Layout } from "../components/layout";
+import { AppLifecycleManager } from "../components/app-lifecycle-manager";
 
 const GraphiQL = dynamic(() => import("../components/graphiql"), {
   ssr: false,
@@ -24,9 +25,16 @@ const GraphiQL = dynamic(() => import("../components/graphiql"), {
   },
 });
 
-const GraphqlPlayground = () => {
+const GraphqlPlayground = ({
+  assumeServiceWorkerActive,
+}: {
+  assumeServiceWorkerActive: boolean;
+}) => {
   return (
     <>
+      <AppLifecycleManager
+        assumeServiceWorkerActive={assumeServiceWorkerActive}
+      />
       <Meta title="Labelflow | GraphiQL" />
       <Layout
         topBarLeftContent={

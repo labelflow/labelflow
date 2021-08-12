@@ -1,22 +1,13 @@
 import Dexie from "dexie";
-import { v4 as uuidv4 } from "uuid";
 import {
   DbExample,
   DbImage,
   DbLabel,
   DbLabelClass,
   DbProject,
-  getImageEntityFromMutationArgs,
 } from "@labelflow/common-resolvers";
-import sampleImages from "../../utils/image-sample-collection";
 
 import versions from "./versions";
-import {
-  getFromStorage,
-  putInStorage,
-  getUploadTargetHttp,
-  getUploadTarget,
-} from "../repository/upload";
 
 export interface Database extends Dexie {
   example: Dexie.Table<DbExample, string>;
@@ -28,9 +19,6 @@ export interface Database extends Dexie {
 
 // eslint-disable-next-line import/no-mutable-exports
 export let db: Database;
-let shouldPopulateDb = false;
-
-const demoImageUrls = sampleImages.slice(0, 5);
 
 export const resetDatabase = () => {
   console.log("Initializing database");
@@ -43,47 +31,6 @@ export const resetDatabase = () => {
   }
   db = new Dexie("labelflow_local") as Database;
   versions.map(({ version, stores }) => db.version(version).stores(stores));
-  const currentDate = new Date().toISOString();
-
-  // Create Demo project with sample images if this is the first time the user visits labelflow
-  db.on("populate", () => {
-    // Get if we are running tests with Jest, in this case we do not want to populate the DB to avoid breaking the tests https://stackoverflow.com/a/52231746/10266299
-    const isRunningJestTests = process.env.JEST_WORKER_ID != null;
-    if (!isRunningJestTests) {
-      shouldPopulateDb = true;
-    }
-  });
-  db.on("ready", async () => {
-    if (shouldPopulateDb) {
-      const projectId = uuidv4();
-      db.project.add({
-        name: "Demo project",
-        slug: "demo-project",
-        id: projectId,
-        createdAt: currentDate,
-        updatedAt: currentDate,
-      });
-      await Promise.all(
-        demoImageUrls.map(async (url) => {
-          const imageEntity = await getImageEntityFromMutationArgs(
-            {
-              projectId,
-              url,
-            },
-            {
-              upload: {
-                getUploadTargetHttp,
-                getUploadTarget,
-                get: getFromStorage,
-                put: putInStorage,
-              },
-            }
-          );
-          db.image.add(imageEntity);
-        })
-      );
-    }
-  });
 };
 
 resetDatabase();

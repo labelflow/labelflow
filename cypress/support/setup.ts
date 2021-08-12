@@ -4,6 +4,7 @@ import { db } from "../../typescript/web-app/src/connectors/database";
 beforeEach(() =>
   cy.window().then(async () => {
     console.log("Clear database");
+    cy.clearCookies();
     await Promise.all(db.tables.map((table) => table.clear()));
   })
 );
@@ -11,6 +12,7 @@ beforeEach(() =>
 // From https://github.com/cypress-io/cypress/issues/702#issuecomment-435873135
 after(() =>
   cy.window().then(async (window) => {
+    cy.clearCookies();
     console.log("Clear caches");
     const cacheNames = await window.caches.keys();
     await Promise.all(

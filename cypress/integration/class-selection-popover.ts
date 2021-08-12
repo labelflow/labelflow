@@ -329,6 +329,7 @@ describe("Class selection popover", () => {
       `/projects/${projectId}/images/${imageId}?modal-welcome=closed&modal-update-service-worker=update`
     );
 
+    cy.get('[aria-label="loading indicator"]').should("not.exist");
     cy.contains("cypress test project").click();
 
     cy.contains("classes").click();

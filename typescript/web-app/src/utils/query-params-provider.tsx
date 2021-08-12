@@ -13,31 +13,35 @@ export const QueryParamProviderComponent = (props: {
   const match = router.asPath.match(/[^?]+/);
   const pathname = match ? match[0] : router.asPath;
 
-  const location = useMemo(() => {
-    return {
-      search: router.asPath.replace(/[^?]+/u, ""),
-    } as Location;
-  }, [router.asPath]);
+  const location = useMemo(
+    () =>
+      typeof window !== "undefined"
+        ? window.location
+        : ({
+            search: router.asPath.replace(/[^?]+/u, ""),
+          } as Location),
+    [router.asPath]
+  );
 
   const history = useMemo(
     () => ({
       push: ({ search }: Location) => {
         router.push(
-          { pathname: router.pathname, query: router.query },
+          { pathname, search },
           { search, pathname },
           { shallow: true, scroll: false }
         );
       },
       replace: ({ search }: Location) => {
         router.replace(
-          { pathname: router.pathname, query: router.query },
+          { pathname, search },
           { search, pathname },
           { shallow: true, scroll: false }
         );
       },
       location,
     }),
-    [pathname, location, router] // See https://github.com/pbeshai/use-query-params/issues/13#issuecomment-839697642
+    [pathname, router.pathname, router.query, location.pathname] // See https://github.com/pbeshai/use-query-params/issues/13#issuecomment-839697642
   );
 
   return (

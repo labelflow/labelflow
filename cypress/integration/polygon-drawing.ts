@@ -99,7 +99,7 @@ describe("Polygon drawing", () => {
       );
       imageId = id;
 
-      await createLabelClass("This is not a rocket", "#f4bedc", projectId);
+      await createLabelClass("Rocket", "#f4bedc", projectId);
     })
   );
 
@@ -147,13 +147,13 @@ describe("Polygon drawing", () => {
     cy.get("main").rightclick(475, 100);
 
     cy.get('[aria-label="Class selection popover"]')
-      .contains("This is not a rocket")
+      .contains("Rocket")
       .closest('[role="option"]')
       .should("have.attr", "aria-current", "false")
       .click();
     cy.get("main").rightclick(475, 100);
     cy.get('[aria-label="Class selection popover"]')
-      .contains("This is not a rocket")
+      .contains("Rocket")
       .closest('[role="option"]')
       .should("have.attr", "aria-current", "true");
   });

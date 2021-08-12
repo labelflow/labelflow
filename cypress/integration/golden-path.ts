@@ -7,6 +7,14 @@ describe("Golden path", () => {
       "/projects?modal-welcome=closed&modal-update-service-worker=update"
     );
 
+    cy.url().should(
+      "match",
+      /.\/projects\/([a-zA-Z0-9_-]*)\/images\/([a-zA-Z0-9_-]*)/
+    );
+
+    cy.get('[aria-label="loading indicator"]').should("not.exist");
+    cy.get("a").contains("Projects").click();
+
     cy.contains("Create new project...").click();
     cy.get("input").type("cypress test project");
     cy.contains("Start Labelling").click();

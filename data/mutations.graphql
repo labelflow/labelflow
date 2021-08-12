@@ -16,9 +16,7 @@ type Mutation {
   deleteLabelClass(where: LabelClassWhereUniqueInput!): LabelClass
 
   createProject(data: ProjectCreateInput!): Project
-  updateProject(
-    where: ProjectWhereIDInput!
-    data: ProjectUpdateInput!
-  ): Project
+  createDemoProject: Project
+  updateProject(where: ProjectWhereIDInput!, data: ProjectUpdateInput!): Project
   deleteProject(where: ProjectWhereIDInput!): Project
 }
