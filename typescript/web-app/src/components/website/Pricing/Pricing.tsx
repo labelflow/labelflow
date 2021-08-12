@@ -47,13 +47,13 @@ export const Pricing = () => (
           features: [
             "Sleek labeling interface",
             "Dataset import/export",
-            "Project management",
+            "Dataset management",
             "Up to 5 users, 100 images/month",
           ],
         }}
         icon={GiCityCar}
         button={
-          <NextLink href="/projects">
+          <NextLink href="/datasets">
             <ActionButton variant="outline" borderWidth="2px">
               Try it now
             </ActionButton>

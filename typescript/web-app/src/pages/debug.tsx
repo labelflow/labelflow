@@ -78,7 +78,7 @@ const DebugPage = ({
                 </ListItem>
 
                 <ListItem>
-                  <Link href="https://app.supabase.io/project/zokyprbhquvvrleedkkk/editor/table">
+                  <Link href="https://app.supabase.io/dataset/zokyprbhquvvrleedkkk/editor/table">
                     Link to Database admin
                   </Link>
                 </ListItem>

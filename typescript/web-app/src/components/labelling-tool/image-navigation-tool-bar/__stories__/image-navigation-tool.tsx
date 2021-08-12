@@ -103,11 +103,11 @@ BasicWrongImage.parameters = {
 /*   Helpers   */
 /* ----------- */
 
-async function createProject(name: string) {
+async function createDataset(name: string) {
   const mutationResult = await client.mutate({
     mutation: gql`
-      mutation createProject($name: String!) {
-        createProject(data: { name: $name }) {
+      mutation createDataset($name: String!) {
+        createDataset(data: { name: $name }) {
           id
         }
       }
@@ -117,18 +117,18 @@ async function createProject(name: string) {
 
   const {
     data: {
-      createProject: { id },
+      createDataset: { id },
     },
   } = mutationResult;
 
   return id;
 }
 
-async function createImage(name: String, file: Blob, projectId: string) {
+async function createImage(name: String, file: Blob, datasetId: string) {
   const mutationResult = await client.mutate({
     mutation: gql`
-      mutation createImage($file: Upload!, $name: String!, $projectId: ID!) {
-        createImage(data: { name: $name, file: $file, projectId: $projectId }) {
+      mutation createImage($file: Upload!, $name: String!, $datasetId: ID!) {
+        createImage(data: { name: $name, file: $file, datasetId: $datasetId }) {
           id
           name
           width
@@ -140,7 +140,7 @@ async function createImage(name: String, file: Blob, projectId: string) {
     variables: {
       file,
       name,
-      projectId,
+      datasetId,
     },
   });
 
@@ -162,8 +162,8 @@ async function mockImagesLoader({
 
   const imageArray = parameters?.mockImages?.images;
 
-  // Because of race conditions we have to randomize the project name
-  const projectId = await createProject(`storybook project ${Date.now()}`);
+  // Because of race conditions we have to randomize the dataset name
+  const datasetId = await createDataset(`storybook dataset ${Date.now()}`);
 
   if (imageArray == null) {
     return { images: [] };
@@ -173,10 +173,10 @@ async function mockImagesLoader({
   const loadedImages = await Bluebird.mapSeries(imageArray, ({ url, name }) =>
     fetch(url)
       .then((res) => res.blob())
-      .then((blob) => createImage(name, blob, projectId))
+      .then((blob) => createImage(name, blob, datasetId))
   );
 
-  return { images: loadedImages, projectId };
+  return { images: loadedImages, datasetId };
 }
 
 function withIdInQueryStringRouterDecorator(
@@ -187,7 +187,7 @@ function withIdInQueryStringRouterDecorator(
 
   if (typeof imageId === "string") {
     return withNextRouter({
-      query: { imageId, projectId: context.loaded.projectId },
+      query: { imageId, datasetId: context.loaded.datasetId },
     })(storyFn, context);
   }
 
@@ -198,12 +198,12 @@ function withIdInQueryStringRouterDecorator(
     return withNextRouter({
       query: {
         imageId: getFromLoaded(context.loaded),
-        projectId: context.loaded.projectId,
+        datasetId: context.loaded.datasetId,
       },
     })(storyFn, context);
   }
 
-  return withNextRouter({ projectId: context.loaded.projectId })(
+  return withNextRouter({ datasetId: context.loaded.datasetId })(
     storyFn,
     context
   );

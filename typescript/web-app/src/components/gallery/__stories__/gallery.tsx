@@ -42,11 +42,11 @@ Images.parameters = {
 /*   Helpers   */
 /* ----------- */
 
-async function createProject(name: string) {
+async function createDataset(name: string) {
   const mutationResult = await client.mutate({
     mutation: gql`
-      mutation createProject($name: String!) {
-        createProject(data: { name: $name }) {
+      mutation createDataset($name: String!) {
+        createDataset(data: { name: $name }) {
           id
         }
       }
@@ -55,18 +55,18 @@ async function createProject(name: string) {
   });
   const {
     data: {
-      createProject: { id },
+      createDataset: { id },
     },
   } = mutationResult;
 
   return id;
 }
 
-async function createImage(url: string, projectId: string) {
+async function createImage(url: string, datasetId: string) {
   const mutationResult = await client.mutate({
     mutation: gql`
-      mutation createImage($url: String!, $projectId: ID!) {
-        createImage(data: { url: $url, projectId: $projectId }) {
+      mutation createImage($url: String!, $datasetId: ID!) {
+        createImage(data: { url: $url, datasetId: $datasetId }) {
           id
           name
           width
@@ -77,7 +77,7 @@ async function createImage(url: string, projectId: string) {
     `,
     variables: {
       url,
-      projectId,
+      datasetId,
     },
   });
 
@@ -91,7 +91,7 @@ async function createImage(url: string, projectId: string) {
 async function mockImagesLoader({
   parameters,
 }: {
-  parameters: { mockImages?: { images?: string[] }; mockProjectId?: string };
+  parameters: { mockImages?: { images?: string[] }; mockDatasetId?: string };
 }) {
   // first, clean the database and the apollo client
   await Promise.all(db.tables.map((table) => table.clear()));
@@ -99,19 +99,19 @@ async function mockImagesLoader({
 
   const imageArray = parameters?.mockImages?.images;
 
-  // Because of race conditions we have to randomize the project name
-  const projectId = await createProject(`storybook project ${Date.now()}`);
+  // Because of race conditions we have to randomize the dataset name
+  const datasetId = await createDataset(`storybook dataset ${Date.now()}`);
 
-  if (imageArray == null || projectId == null) {
+  if (imageArray == null || datasetId == null) {
     return { images: [] };
   }
 
   // We use mapSeries to ensure images are created in the same order
   const loadedImages = await Bluebird.mapSeries(imageArray, (url) =>
-    createImage(url, projectId)
+    createImage(url, datasetId)
   );
 
-  return { projectId, images: loadedImages };
+  return { datasetId, images: loadedImages };
 }
 
 function withIdsInQueryStringRouterDecorator(
@@ -121,7 +121,7 @@ function withIdsInQueryStringRouterDecorator(
   return withNextRouter({
     query: {
       imageId: context.loaded.images[0].id,
-      projectId: context.loaded.projectId,
+      datasetId: context.loaded.datasetId,
     },
   })(storyFn, context);
 }

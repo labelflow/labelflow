@@ -2,19 +2,19 @@ import { TabBar } from "./tab-bar";
 
 export type Props = {
   currentTab: "images" | "classes";
-  projectId: string;
+  datasetId: string;
 };
 
-export const ProjectTabBar = ({ currentTab, projectId }: Props) => {
+export const DatasetTabBar = ({ currentTab, datasetId }: Props) => {
   const tabs = [
     {
       name: "images",
-      url: `/projects/${projectId}/images`,
+      url: `/datasets/${datasetId}/images`,
       isActive: currentTab === "images",
     },
     {
       name: "classes",
-      url: `/projects/${projectId}/classes`,
+      url: `/datasets/${datasetId}/classes`,
       isActive: currentTab === "classes",
     },
   ];
