@@ -123,9 +123,7 @@ const ProjectPage = ({
 
   const parsedCookie = useCookie(cookie);
 
-  const didVisitDemoProject =
-    parsedCookie.get("didVisitDemoProject") ||
-    (projectsResult?.projects?.length ?? 0) > 0;
+  const didVisitDemoProject = parsedCookie.get("didVisitDemoProject");
   const hasUserTriedApp = parsedCookie.get("hasUserTriedApp");
   const hasProjects =
     projectsResult?.projects == null
