@@ -10,7 +10,7 @@ export const deleteProject: Repository["project"]["delete"] = async (id) => {
   const projectToDelete = await throwIfResolvesToNil<
     [string],
     DbProject | undefined
-  >("Cannot find project to delete", (idToGet) =>
+  >(`Cannot find project with id "${id}" to delete`, (idToGet) =>
     getDatabase().project.get(idToGet)
   )(id);
 
