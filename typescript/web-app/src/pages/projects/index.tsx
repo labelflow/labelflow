@@ -125,6 +125,10 @@ const ProjectPage = ({
 
   const didVisitDemoProject = parsedCookie.get("didVisitDemoProject");
   const hasUserTriedApp = parsedCookie.get("hasUserTriedApp");
+  const hasProjects =
+    projectsResult?.projects == null
+      ? false
+      : projectsResult?.projects?.length > 0;
 
   const [createDemoProjectMutation] = useMutation(createDemoProjectQuery, {
     update: (cache, { data: { createDemoProject } }) => {
@@ -146,7 +150,8 @@ const ProjectPage = ({
 
   useEffect(() => {
     const createDemoProjectASync = async () => {
-      if (!didVisitDemoProject && demoProject == null && loading === false) {
+      if (loading === true || hasProjects) return;
+      if (!didVisitDemoProject && demoProject == null) {
         try {
           await createDemoProjectMutation();
         } catch (e) {
@@ -157,7 +162,14 @@ const ProjectPage = ({
       }
     };
     createDemoProjectASync();
-  }, [demoProject, loading, didVisitDemoProject, parsedCookie, router]);
+  }, [
+    demoProject,
+    loading,
+    didVisitDemoProject,
+    parsedCookie,
+    router,
+    hasProjects,
+  ]);
 
   useEffect(() => {
     if (!hasUserTriedApp) {
@@ -222,7 +234,7 @@ const ProjectPage = ({
           projectId={deleteProjectId}
         />
 
-        {shouldDisplayEmptyState && (
+        {shouldDisplayEmptyState ? (
           <Center h="full">
             <Box as="section">
               <Box
@@ -252,9 +264,7 @@ const ProjectPage = ({
               </Box>
             </Box>
           </Center>
-        )}
-
-        {!shouldDisplayEmptyState && (
+        ) : (
           <Flex direction="row" wrap="wrap" p={4}>
             <NewProjectCard
               addProject={() => {
