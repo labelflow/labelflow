@@ -4,7 +4,6 @@ import type { Workbox } from "workbox-window";
 import { useQueryParam, StringParam } from "use-query-params";
 import { UpdateServiceWorkerModal } from "./update-service-worker-modal/update-service-worker-modal";
 import { WelcomeModal } from "./welcome-modal";
-import { timeout, sleep } from "../../utils/timeout";
 import {
   checkServiceWorkerReady,
   messageNoWindow,
