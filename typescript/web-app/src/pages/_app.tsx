@@ -4,13 +4,12 @@ import { ErrorBoundary, FallbackProps } from "react-error-boundary";
 import { AppProps, AppContext } from "next/app";
 import { useRouter } from "next/router";
 
-import { pageView } from "../utils/google-analytics";
-
 import { ApolloProvider } from "@apollo/client";
 import { useCookie } from "next-cookie";
 
 import { ChakraProvider } from "@chakra-ui/react";
 
+import { pageView } from "../utils/google-analytics";
 import { theme } from "../theme";
 import { client } from "../connectors/apollo-client/client";
 import { QueryParamProvider } from "../utils/query-params-provider";
