@@ -7,7 +7,7 @@ import { Map as OlMap, View as OlView, MapBrowserEvent } from "ol";
 import { Vector as OlSourceVector } from "ol/source";
 import { Size } from "ol/size";
 import memoize from "mem";
-import Datasetion from "ol/proj/Datasetion";
+import Projection from "ol/proj/Projection";
 import useMeasure from "react-use-measure";
 import { ApolloProvider, useApolloClient, useQuery, gql } from "@apollo/client";
 
@@ -37,10 +37,10 @@ const empty: any[] = [];
 const viewPadding = [72, 72, 72, 72];
 
 /*
- * Standard datasetion, the same for all images, with arbitrary extent
+ * Standard projection, the same for all images, with arbitrary extent
  */
-const standardDatasetion = new Datasetion({
-  code: "standardImageStaticDatasetion",
+const standardProjection = new Projection({
+  code: "standardImageStaticProjection",
   units: "pixels",
 });
 
@@ -57,17 +57,17 @@ const getMemoizedProperties = memoize(
     const size: Size = [width, height];
     const extent: Extent = [0, 0, width, height];
     const center = getCenter(extent);
-    const datasetion = standardDatasetion;
-    // We could also use an image-specific datasetion, as in openlayers examples:
-    // It seems that we don't need it for now, but we might find that having a single global datasetion
+    const projection = standardProjection;
+    // We could also use an image-specific projection, as in openlayers examples:
+    // It seems that we don't need it for now, but we might find that having a single global projection
     /// creates problem later on. So for now let's keep this option commented
-    //     const datasetion = new Datasetion({
+    //     const projection = new Projection({
     //       code: imageId,
     //       units: "pixels",
     //       extent,
     //     });
 
-    return { url, width, height, size, extent, center, datasetion };
+    return { url, width, height, size, extent, center, projection };
   }
 );
 
@@ -139,7 +139,7 @@ export const OpenlayersMap = () => {
     [selectedTool]
   );
 
-  const { url, size, extent, center, datasetion, width, height } =
+  const { url, size, extent, center, projection, width, height } =
     getMemoizedProperties(image?.id, image);
 
   const resolution =
@@ -201,7 +201,7 @@ export const OpenlayersMap = () => {
                       minResolution: 1.0 / 16.0,
                     }}
                     center={center}
-                    initialDatasetion={datasetion}
+                    initialProjection={projection}
                     resolution={resolution}
                     constrainOnlyCenter
                     showFullExtent
@@ -219,7 +219,7 @@ export const OpenlayersMap = () => {
                       url,
                       imageExtent: extent,
                       imageSize: size,
-                      datasetion,
+                      projection,
                       crossOrigin: "anonymous",
                     }}
                     onImageloadstart={() => {
