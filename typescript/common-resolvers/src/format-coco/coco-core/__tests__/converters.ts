@@ -20,7 +20,7 @@ import {
 
 describe("Coco converters", () => {
   const date = new Date("1995-12-17T03:24:00").toISOString();
-  const testProjectId = "test-project-id";
+  const testDatasetId = "test-dataset-id";
 
   const createLabelClass = (name: string): DbLabelClass => ({
     id: `id-${name}`,
@@ -28,7 +28,7 @@ describe("Coco converters", () => {
     updatedAt: date,
     name,
     color: "#000000",
-    projectId: testProjectId,
+    datasetId: testDatasetId,
   });
 
   const createLabelWithImageDimensions = (
@@ -73,7 +73,7 @@ describe("Coco converters", () => {
     path: "/path",
     mimetype: "image/png",
     labels: [],
-    projectId: testProjectId,
+    datasetId: testDatasetId,
   });
 
   test("Should convert a label class to a coco category", () => {
