@@ -154,9 +154,8 @@ const ProjectPage = ({
           parsedCookie.set("didVisitDemoProject", true);
 
           // eslint-disable-next-line no-restricted-globals
-          confirm("error demo proj");
-          console.log();
-          // router.reload();
+          confirm("Error when creating demo project");
+          router.reload();
         }
       }
     };

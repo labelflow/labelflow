@@ -63,8 +63,8 @@ export const AppLifecycleManager = ({ assumeServiceWorkerActive }: Props) => {
 
       wb.addEventListener("controlling", (/* event: any */) => {
         // eslint-disable-next-line no-restricted-globals
-        confirm("Wow controlling");
-        // window.location.reload();
+        confirm("Service worker is controlling, will reload");
+        window.location.reload();
       });
 
       // Send a message to the waiting service worker, instructing it to activate.
@@ -107,8 +107,8 @@ export const AppLifecycleManager = ({ assumeServiceWorkerActive }: Props) => {
             error
           );
           // eslint-disable-next-line no-restricted-globals
-          confirm("Reload. You sure?");
-          // window.location.reload();
+          confirm("Service worker is unresponsive, will reload");
+          window.location.reload();
         }
       };
 
@@ -118,8 +118,8 @@ export const AppLifecycleManager = ({ assumeServiceWorkerActive }: Props) => {
       // https://developers.google.com/web/tools/workbox/reference-docs/latest/module-workbox-window.Workbox#events
       wb.addEventListener("redundant", () => {
         // eslint-disable-next-line no-restricted-globals
-        confirm("Wow redundant");
-        // window.location.reload();
+        confirm("Service worker is redundant, will reload");
+        window.location.reload();
       });
 
       // A common UX pattern for progressive web apps is to show a banner when a service worker has updated and waiting to install.
