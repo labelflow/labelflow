@@ -18,8 +18,6 @@ describe("Index page redirection when user has tried app", () => {
 
 describe("Index page when user has not tried app", () => {
   it("Displays website on first user visit", () => {
-    cy.clearCookies();
-
     cy.visit(`/?modal-welcome=closed&modal-update-service-worker=update`);
 
     cy.get("body").contains("Labelflow, All rights reserved").should("exist");
