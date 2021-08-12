@@ -185,10 +185,7 @@ export const ImportImagesModalDropzone = ({
                     };
                   });
                 }
-                // await fetch(target.uploadUrl, {
-                //   method: "PUT",
-                //   body: acceptedFile.file,
-                // });
+
                 const form = new FormData();
                 form.append("image", acceptedFile.file);
                 await fetch(target.uploadUrl, {

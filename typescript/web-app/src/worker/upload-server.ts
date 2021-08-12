@@ -9,7 +9,16 @@ export class UploadServer implements RouteHandlerObject {
   }
 
   async handle({ request }: RouteHandlerCallbackOptions): Promise<Response> {
-    const blob = await request.blob();
+    const formData = await request.formData();
+    const blob = formData.get("image") as Blob;
+
+    if (!blob) {
+      return new Response("", {
+        status: 400,
+        statusText:
+          "Could not retrieve image blob from form data. It needs to be stored under the 'image' key",
+      });
+    }
 
     const responseOfGet = new Response(blob, {
       status: 200,
@@ -17,11 +26,11 @@ export class UploadServer implements RouteHandlerObject {
       headers: new Headers({
         "Content-Type":
           request.headers?.get?.("Content-Type") ??
-          blob.type ??
+          blob?.type ??
           "application/octet-stream",
         "Content-Length":
           request.headers?.get?.("Content-Length") ??
-          blob.size.toString() ??
+          blob?.size.toString() ??
           "0",
       }),
     });
