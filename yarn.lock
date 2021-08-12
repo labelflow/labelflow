@@ -6222,6 +6222,7 @@ __metadata:
     "@turf/intersect": ^6.5.0
     "@types/bluebird": ^3.5.35
     "@types/mime-types": 2.1.0
+    "@types/multer": 1.4.7
     "@types/node": 12.12.21
     "@types/react": 17.0.3
     "@types/react-dom": 17.0.1
@@ -10878,6 +10879,15 @@ __metadata:
   version: 1.2.1
   resolution: "@types/minimist@npm:1.2.1"
   checksum: 3a6f5fe35f1656b34a4ccd5a5db1c38509d8d5b59625865b8c2b997994fcb0cfde0d9af7c5507b95dc5a0a32a22886c189e505cd2e52a7ef36d3c9982f07ed5a
+  languageName: node
+  linkType: hard
+
+"@types/multer@npm:1.4.7":
+  version: 1.4.7
+  resolution: "@types/multer@npm:1.4.7"
+  dependencies:
+    "@types/express": "*"
+  checksum: f20bc141e3f8fee16e8cf36a213dca7285f4af0ac5960ca8b17076f26f2dfd77d6518da3908de32482cc8d799cd8ae82af17cbe85c4f9829b70918e6420dd330
   languageName: node
   linkType: hard
 
