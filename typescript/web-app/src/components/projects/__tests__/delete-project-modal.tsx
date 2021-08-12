@@ -57,7 +57,7 @@ test("should delete a project when the button is clicked", async () => {
       variables: { id: mutateResult.data.createProject.id },
       fetchPolicy: "no-cache",
     })
-  ).rejects.toEqual(new Error("No project with such id"));
+  ).rejects.toThrow(/No project with id/);
 });
 
 test("shouldn't delete a project when the cancel is clicked", async () => {
