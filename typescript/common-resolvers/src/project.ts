@@ -57,7 +57,7 @@ const getProjectBySlug = async (
     repository.project.getBySlug
   )(slug);
 
-  return { ...project, __typename: projectTypename };
+  return { ...project, __typename: "Project" };
 };
 
 const getProjectFromWhereUniqueInput = async (
@@ -176,6 +176,7 @@ const createDemoProject = async (
   try {
     await repository.project.add({
       name: "Demo project",
+      slug: "demo-project",
       id: projectId,
       createdAt: currentDate,
       updatedAt: currentDate,
