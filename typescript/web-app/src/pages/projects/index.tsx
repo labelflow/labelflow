@@ -145,7 +145,7 @@ const ProjectPage = ({
         )?.[0] ?? undefined;
 
   useEffect(() => {
-    const createDemoProjectASync = async () => {
+    const createDemoProject = async () => {
       if (!didVisitDemoProject && demoProject == null && loading === false) {
         try {
           await createDemoProjectMutation();
@@ -160,7 +160,7 @@ const ProjectPage = ({
         }
       }
     };
-    createDemoProjectASync();
+    createDemoProject();
   }, [demoProject, loading, didVisitDemoProject, parsedCookie, router]);
 
   useEffect(() => {
