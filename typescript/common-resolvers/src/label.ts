@@ -168,8 +168,8 @@ const totalCount = async (parent: any, _args: any, { repository }: Context) => {
   // eslint-disable-next-line no-underscore-dangle
   const typename = parent?.__typename;
 
-  if (typename === "Project") {
-    return repository.label.count({ projectId: parent.id });
+  if (typename === "Dataset") {
+    return repository.label.count({ datasetId: parent.id });
   }
 
   return repository.label.count();
@@ -189,5 +189,5 @@ export default {
     labelClass,
   },
   LabelsAggregates: { totalCount },
-  Project: { labelsAggregates },
+  Dataset: { labelsAggregates },
 };

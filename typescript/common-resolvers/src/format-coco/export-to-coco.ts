@@ -10,10 +10,10 @@ export const exportToCoco = async (
   args: QueryExportToCocoArgs,
   { repository }: Context
 ): Promise<string | undefined> => {
-  const { projectId } = args.where;
-  const imagesWithUrl = await repository.image.list({ projectId });
-  const labelClasses = await repository.labelClass.list({ projectId });
-  const labels = await repository.label.list({ projectId });
+  const { datasetId } = args.where;
+  const imagesWithUrl = await repository.image.list({ datasetId });
+  const labelClasses = await repository.labelClass.list({ datasetId });
+  const labels = await repository.label.list({ datasetId });
 
   const labelsWithImageDimensions = await addImageDimensionsToLabels(
     labels,

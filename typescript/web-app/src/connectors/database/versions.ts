@@ -7,11 +7,11 @@ export default [
     stores: {
       example: "id,createdAt,updatedAt,name",
       image:
-        "id,createdAt,updatedAt,url,externalUrl,name,path,mimetype,width,height,projectId",
+        "id,createdAt,updatedAt,url,externalUrl,name,path,mimetype,width,height,datasetId",
       label:
         "id,createdAt,updatedAt,imageId,x,y,height,width,labelClassId,geometry",
-      labelClass: "id,createdAt,updatedAt,name,color,projectId",
-      project: "id,createdAt,updatedAt,&name",
+      labelClass: "id,createdAt,updatedAt,name,color,datasetId",
+      dataset: "id,createdAt,updatedAt,&name",
     },
   },
 ];

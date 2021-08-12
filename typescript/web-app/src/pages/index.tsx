@@ -15,7 +15,7 @@ const IndexPage = ({ cookie }: { cookie: string }) => {
 
   useEffect(() => {
     if (hasUserTriedApp) {
-      router.replace({ pathname: "/projects", query: router.query });
+      router.replace({ pathname: "/datasets", query: router.query });
     }
   }, [hasUserTriedApp]);
 
@@ -39,7 +39,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     return {
       redirect: {
         // Keep query params after redirect
-        destination: `/projects${
+        destination: `/datasets${
           isEmpty(context.query)
             ? ""
             : `?${join(
