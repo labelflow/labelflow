@@ -10,8 +10,14 @@ import { Why } from "../components/website/Why/Why";
 import { Footer } from "../components/website/Footer/Footer";
 import { Pricing } from "../components/website/Pricing/Pricing";
 import { Meta } from "../components/website/Meta";
+import { BlogPreview } from "../components/website/Blog/BlogPreview";
+import { getPreviewArticlesForHome, Article } from "../connectors/strapi";
 
-export default function Website() {
+export default function Website({
+  previewArticles,
+}: {
+  previewArticles: Omit<Article, "content">[];
+}) {
   return (
     <Box minH="640px">
       <Meta />
@@ -39,7 +45,17 @@ export default function Website() {
       {/* <Testimonials /> */}
       <LogoGrid />
       <Pricing />
+      <BlogPreview previewArticles={previewArticles} />
       <Footer />
     </Box>
   );
+}
+
+export async function getStaticProps(): Promise<{
+  props: { previewArticles: Omit<Article, "content">[] };
+}> {
+  const previewArticles = (await getPreviewArticlesForHome()) || [];
+  return {
+    props: { previewArticles },
+  };
 }

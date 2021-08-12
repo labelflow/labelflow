@@ -1,4 +1,30 @@
-async function fetchAPI(query, { variables } = {}) {
+export type Article = {
+  id: string;
+  title: string;
+  slug: string;
+  created_at: string;
+  published_at: string;
+  description: string;
+  content: string;
+  category: {
+    id: string;
+    name: string;
+  };
+  image: {
+    url: string;
+  };
+  author: {
+    name: string;
+    picture: {
+      url: string;
+    };
+  };
+};
+
+async function fetchAPI(
+  query: string,
+  { variables }: { variables?: { [key: string]: any } } = {}
+) {
   const res = await fetch(`https://strapi.labelflow.ai/graphql`, {
     method: "POST",
     headers: {
@@ -20,7 +46,7 @@ async function fetchAPI(query, { variables } = {}) {
 }
 
 export async function getPreviewArticleBySlug(slug: string): Promise<{
-  articles: { slug: string }[];
+  articles: Pick<Article, "slug">[];
 }> {
   const data = await fetchAPI(
     `
@@ -42,7 +68,7 @@ export async function getPreviewArticleBySlug(slug: string): Promise<{
 }
 
 export async function getAllArticlesWithSlug(): Promise<{
-  articles: { slug: string }[];
+  articles: Pick<Article, "slug">[];
 }> {
   const data = await fetchAPI(`
       {
@@ -54,32 +80,12 @@ export async function getAllArticlesWithSlug(): Promise<{
   return data?.allArticles;
 }
 
-export async function getAllArticlesForHome(): Promise<
-  {
-    id: string;
-    title: string;
-    slug: string;
-    created_at: string;
-    published_at: string;
-    description: string;
-    category: {
-      id: string;
-      name: string;
-    };
-    image: {
-      url: string;
-    };
-    author: {
-      name: string;
-      picture: {
-        url: string;
-      };
-    };
-  }[]
+export async function getPreviewArticlesForHome(): Promise<
+  Omit<Article, "content">[]
 > {
   const data = await fetchAPI(
     `
-    query Articles($where:JSON) {
+    query Articles {
         articles(sort: "created_at:desc", limit: 3, publicationState:LIVE) {
           id
           title
@@ -107,7 +113,9 @@ export async function getAllArticlesForHome(): Promise<
   return data?.articles;
 }
 
-export async function getArticle(slug: string) {
+export async function getArticle(
+  slug: string
+): Promise<{ articles: Article; moreArticles: Omit<Article, "content">[] }> {
   const data = await fetchAPI(
     `
     query ArticleBySlug($where: JSON, $where_ne: JSON) {
@@ -117,6 +125,7 @@ export async function getArticle(slug: string) {
           slug
           created_at
           published_at
+          content
           description
           category {
             id
