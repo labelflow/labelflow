@@ -51,16 +51,6 @@ async function createImage(url: string, projectId: string) {
 }
 
 describe("Index page redirection when user has tried app", () => {
-  beforeEach(() =>
-    cy.window().then(async () => {
-      const projectId = await createProject("Demo project");
-
-      await createImage(
-        "https://images.unsplash.com/photo-1579513141590-c597876aefbc?auto=format&fit=crop&w=882&q=80",
-        projectId
-      );
-    })
-  );
   it("Redirects to image page when user tries App and did not see demo project", () => {
     cy.clearCookies();
     cy.setCookie("hasUserTriedApp", "true");
