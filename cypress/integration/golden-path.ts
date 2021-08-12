@@ -12,6 +12,7 @@ describe("Golden path", () => {
       /.\/projects\/([a-zA-Z0-9_-]*)\/images\/([a-zA-Z0-9_-]*)/
     );
 
+    cy.get('[aria-label="loading indicator"]').should("not.exist");
     cy.get("a").contains("Projects").click();
 
     cy.contains("Create new project...").click();
