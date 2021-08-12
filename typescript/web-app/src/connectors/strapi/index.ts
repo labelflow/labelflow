@@ -67,9 +67,9 @@ export async function getPreviewArticleBySlug(slug: string): Promise<{
   return data?.articles[0];
 }
 
-export async function getAllArticlesWithSlug(): Promise<{
-  articles: Pick<Article, "slug">[];
-}> {
+export async function getAllArticlesWithSlug(): Promise<
+  Pick<Article, "slug">[]
+> {
   const data = await fetchAPI(`
       {
         articles {
@@ -77,7 +77,7 @@ export async function getAllArticlesWithSlug(): Promise<{
         }
       }
     `);
-  return data?.allArticles;
+  return data?.articles;
 }
 
 export async function getAllArticles({
@@ -118,52 +118,50 @@ export async function getAllArticles({
 
 export async function getArticle(
   slug: string
-): Promise<{ articles: Article; moreArticles: Omit<Article, "content">[] }> {
+): Promise<{ article: Article; moreArticles: Omit<Article, "content">[] }> {
   const data = await fetchAPI(
     `
     query ArticleBySlug($where: JSON, $where_ne: JSON) {
-      articles(where: $where, publicationState:LIVE) {
+      articles(where: $where, publicationState: LIVE) {
+        id
+        title
+        slug
+        created_at
+        published_at
+        content
+        description
+        category {
           id
-          title
-          slug
-          created_at
-          published_at
-          content
-          description
-          category {
-            id
-            name
-          }
-          image {
+          name
+        }
+        image {
+          url
+        }
+        author {
+          name
+          picture {
             url
-          }
-          author {
-            name
-            picture {
-              url
-            }
           }
         }
       }
-      moreArticles: articles(sort: "created_at:desc", limit: 3, where: $where_ne, publicationState:LIVE) {
+      moreArticles: articles(sort: "created_at:desc", limit: 3, where: $where_ne, publicationState: LIVE) {
+        id
+        title
+        slug
+        created_at
+        published_at
+        description
+        category {
           id
-          title
-          slug
-          created_at
-          published_at
-          description
-          category {
-            id
-            name
-          }
-          image {
+          name
+        }
+        image {
+          url
+        }
+        author {
+          name
+          picture {
             url
-          }
-          author {
-            name
-            picture {
-              url
-            }
           }
         }
       }
@@ -180,5 +178,8 @@ export async function getArticle(
       },
     }
   );
-  return data;
+  return {
+    article: data?.articles?.[0],
+    moreArticles: data?.moreArticles,
+  };
 }
