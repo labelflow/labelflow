@@ -4,7 +4,7 @@ import {
   checkServiceWorkerRedundant,
   messageNoWindow,
 } from "../../utils/check-service-worker";
-import { Deferred } from "../../utils/Deferred";
+import { Deferred } from "../../utils/deferred";
 
 // Deferred value to know if server is ready
 const isServerReady = new Deferred<boolean>();
