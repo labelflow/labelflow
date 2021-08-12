@@ -30,7 +30,7 @@ export const data = [
       <Stack>
         <Heading>Starter</Heading>
         <Text fontWeight="normal">
-          Ideal for self-service mid-size datasets with limited workforce
+          Ideal for self-service mid-size projects with limited workforce
         </Text>
       </Stack>
     ),
@@ -38,7 +38,7 @@ export const data = [
       <Stack>
         <Heading>Pro</Heading>
         <Text fontWeight="normal">
-          Ideal for large volume datasets with no set cycle and one-time ML
+          Ideal for large volume projects with no set cycle and one-time ML
           tasks
         </Text>
       </Stack>
@@ -47,7 +47,7 @@ export const data = [
       <Stack>
         <Heading>Enterprise</Heading>
         <Text fontWeight="normal">
-          Best for well-established, strategically defined datasets with
+          Best for well-established, strategically defined projects with
           recurring high-volume tasks
         </Text>
       </Stack>
@@ -318,13 +318,13 @@ export const data = [
   {
     description: (
       <>
-        <Text>Dataset management</Text>
+        <Text>Projects management</Text>
         <Text fontSize="xs" lineHeight="1" color="gray.500">
-          Organize in datasets, folders and files
+          Organize in projects, folders and files
         </Text>
       </>
     ),
-    // description: "Dataset management",
+    // description: "Project management",
     free: true,
     starter: true,
     pro: true,
@@ -710,7 +710,7 @@ export const data = [
       <Stack>
         <Heading>Starter</Heading>
         {/* <Text fontWeight="normal">
-          Ideal for self-service mid-size datasets with limited workforce
+          Ideal for self-service mid-size projects with limited workforce
         </Text> */}
       </Stack>
     ),
@@ -718,7 +718,7 @@ export const data = [
       <Stack>
         <Heading>Pro</Heading>
         {/* <Text fontWeight="normal">
-          Ideal for large volume datasets with no set cycle and one-time ML
+          Ideal for large volume projects with no set cycle and one-time ML
           tasks
         </Text> */}
       </Stack>
@@ -727,7 +727,7 @@ export const data = [
       <Stack>
         <Heading>Enterprise</Heading>
         {/* <Text fontWeight="normal">
-          Best for well-established, strategically defined datasets with
+          Best for well-established, strategically defined projects with
           recurring high-volume tasks
         </Text> */}
       </Stack>
