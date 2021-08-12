@@ -80,13 +80,15 @@ export async function getAllArticlesWithSlug(): Promise<{
   return data?.allArticles;
 }
 
-export async function getPreviewArticlesForHome(): Promise<
-  Omit<Article, "content">[]
-> {
+export async function getAllArticles({
+  limit,
+}: {
+  limit?: number;
+}): Promise<Omit<Article, "content">[]> {
   const data = await fetchAPI(
     `
-    query Articles {
-        articles(sort: "created_at:desc", limit: 3, publicationState:LIVE) {
+    query Articles ($limit:Int){
+        articles(sort: "created_at:desc", limit: $limit, publicationState:LIVE) {
           id
           title
           slug
@@ -108,7 +110,8 @@ export async function getPreviewArticlesForHome(): Promise<
           }
         }
       }
-      `
+      `,
+    { variables: { limit } }
   );
   return data?.articles;
 }
