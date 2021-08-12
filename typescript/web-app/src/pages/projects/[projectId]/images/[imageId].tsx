@@ -76,7 +76,7 @@ const ImagePage = ({
   const router = useRouter();
   const { projectId, imageId } = router?.query;
 
-  const { data: imageResult, error } = useQuery<ImageQueryResponse>(
+  const { data: imageResult, error: errorImage } = useQuery<ImageQueryResponse>(
     imageQuery,
     {
       variables: { id: imageId },
@@ -84,14 +84,17 @@ const ImagePage = ({
     }
   );
 
-  const { data: projectResult } = useQuery(getProjectQuery, {
-    variables: { id: projectId },
-  });
+  const { data: projectResult, error: errorProject } = useQuery(
+    getProjectQuery,
+    {
+      variables: { id: projectId },
+    }
+  );
 
   const imageName = imageResult?.image.name;
   const projectName = projectResult?.project.name;
 
-  if (error) {
+  if (errorImage || errorProject) {
     return <Error404Page />;
   }
 
