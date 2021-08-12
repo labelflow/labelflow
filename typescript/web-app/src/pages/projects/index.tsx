@@ -226,7 +226,7 @@ const ProjectPage = ({
           projectId={deleteProjectId}
         />
 
-        {shouldDisplayEmptyState && (
+        {shouldDisplayEmptyState ? (
           <Center h="full">
             <Box as="section">
               <Box
@@ -256,9 +256,7 @@ const ProjectPage = ({
               </Box>
             </Box>
           </Center>
-        )}
-
-        {!shouldDisplayEmptyState && (
+        ) : (
           <Flex direction="row" wrap="wrap" p={4}>
             <NewProjectCard
               addProject={() => {
