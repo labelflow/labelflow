@@ -5,15 +5,17 @@ import {
   QueryExamplesArgs,
 } from "@labelflow/graphql-types";
 
-import { db } from "../database";
+import { getDatabase } from "../database";
 
 // Queries
 export const example = async (_: any, args: QueryExampleArgs) => {
-  return db.example.get(args?.where?.id);
+  return getDatabase().example.get(args?.where?.id);
 };
 
 export const examples = async (_: any, args: QueryExamplesArgs) => {
-  const query = await db.example.orderBy("createdAt").offset(args.skip ?? 0);
+  const query = await getDatabase()
+    .example.orderBy("createdAt")
+    .offset(args.skip ?? 0);
 
   if (args.first) {
     return query.limit(args.first).toArray();
@@ -37,7 +39,7 @@ export const createExample = async (
     name: args?.data?.name,
   };
 
-  await db.example.add(newExampleEntity);
+  await getDatabase().example.add(newExampleEntity);
 
   return newExampleEntity;
 };

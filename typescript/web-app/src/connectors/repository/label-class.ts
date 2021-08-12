@@ -1,11 +1,11 @@
-import { db } from "../database";
+import { getDatabase } from "../database";
 
 export const deleteLabelClass = async (id: string) => {
-  await db.label
-    .filter((label) => label.labelClassId === id)
+  await getDatabase()
+    .label.filter((label) => label.labelClassId === id)
     .modify({
       labelClassId: null,
     });
 
-  await db.labelClass.delete(id);
+  await getDatabase().labelClass.delete(id);
 };

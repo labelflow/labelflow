@@ -230,7 +230,7 @@ describe("Project resolver test suite", () => {
     expect(queryResults.data.projects[1].name).toEqual("project 2");
   });
 
-  test("Should return no projects when db is empty", async () => {
+  test("Should return no projects when database is empty", async () => {
     const queryResults = await client.query({
       query: gql`
         query getProjects {

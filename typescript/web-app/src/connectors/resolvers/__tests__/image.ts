@@ -95,7 +95,7 @@ describe("Image resolver test suite", () => {
     });
   };
 
-  it("should query images when db is empty", async () => {
+  it("should query images when database is empty", async () => {
     const queryResult = await client.query({
       query: gql`
         query {

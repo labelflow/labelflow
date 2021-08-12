@@ -1,5 +1,5 @@
 import { Repository } from "@labelflow/common-resolvers";
-import { db } from "../database";
+import { getDatabase } from "../database";
 import { list } from "./utils/list";
 import { countLabels, listLabels } from "./label";
 import { deleteProject } from "./project";
@@ -13,37 +13,43 @@ import {
 
 export const repository: Repository = {
   image: {
-    add: (image) => db.image.add(image),
+    add: (image) => getDatabase().image.add(image),
     count: (where) =>
-      where ? db.image.where(where).count() : db.image.count(),
-    getById: (id) => db.image.get(id),
-    list: list(db.image),
+      where
+        ? getDatabase().image.where(where).count()
+        : getDatabase().image.count(),
+    getById: (id) => getDatabase().image.get(id),
+    list: list(getDatabase().image),
   },
   label: {
-    add: (label) => db.label.add(label),
+    add: (label) => getDatabase().label.add(label),
     count: countLabels,
-    delete: (id) => db.label.delete(id),
-    getById: (id) => db.label.get(id),
+    delete: (id) => getDatabase().label.delete(id),
+    getById: (id) => getDatabase().label.get(id),
     list: listLabels,
-    update: async (id, changes) => (await db.label.update(id, changes)) === 1,
+    update: async (id, changes) =>
+      (await getDatabase().label.update(id, changes)) === 1,
   },
   labelClass: {
-    add: (labelClass) => db.labelClass.add(labelClass),
+    add: (labelClass) => getDatabase().labelClass.add(labelClass),
     count: (where?) =>
-      where ? db.labelClass.where(where).count() : db.labelClass.count(),
+      where
+        ? getDatabase().labelClass.where(where).count()
+        : getDatabase().labelClass.count(),
     delete: deleteLabelClass,
-    getById: (id) => db.labelClass.get(id),
-    list: list(db.labelClass),
+    getById: (id) => getDatabase().labelClass.get(id),
+    list: list(getDatabase().labelClass),
     update: async (id, changes) =>
-      (await db.labelClass.update(id, changes)) === 1,
+      (await getDatabase().labelClass.update(id, changes)) === 1,
   },
   project: {
-    add: (project) => db.project.add(project),
+    add: (project) => getDatabase().project.add(project),
     delete: deleteProject,
-    getById: (id) => db.project.get(id),
-    getByName: (name) => db.project.get({ name }),
-    list: list(db.project),
-    update: async (id, changes) => (await db.project.update(id, changes)) === 1,
+    getById: (id) => getDatabase().project.get(id),
+    getByName: (name) => getDatabase().project.get({ name }),
+    list: list(getDatabase().project),
+    update: async (id, changes) =>
+      (await getDatabase().project.update(id, changes)) === 1,
   },
   upload: {
     getUploadTarget,

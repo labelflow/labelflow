@@ -17,24 +17,29 @@ export interface Database extends Dexie {
   project: Dexie.Table<DbProject, string>;
 }
 
-// eslint-disable-next-line import/no-mutable-exports
-export let db: Database;
+declare module globalThis {
+  let database: Database;
+}
 
-export const resetDatabase = () => {
+export const resetDatabase = (): Database => {
   console.log("Initializing database");
-  // if (db) {
-  //   try {
-  //     db.close();
-  //   } catch (error) {
-  //     console.log("Could not close existing database", error);
-  //   }
-  // }
-  db = new Dexie("labelflow_local") as Database;
-  versions.map(({ version, stores }) => db.version(version).stores(stores));
+  if (globalThis.database) {
+    try {
+      globalThis.database.close();
+    } catch (error) {
+      console.log("Could not close existing database", error);
+    }
+  }
+  globalThis.database = new Dexie("labelflow_local") as Database;
+  versions.map(({ version, stores }) =>
+    globalThis.database.version(version).stores(stores)
+  );
+  return globalThis.database;
 };
 
-// @ts-ignore
-if (!db) {
-  console.log("Need to init database");
-  resetDatabase();
-}
+export const getDatabase = (): Database => {
+  if (globalThis.database) {
+    return globalThis.database;
+  }
+  return resetDatabase();
+};

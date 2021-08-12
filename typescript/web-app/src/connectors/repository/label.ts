@@ -1,6 +1,6 @@
 import { DbLabel } from "@labelflow/common-resolvers";
 import type { LabelWhereInput } from "@labelflow/graphql-types";
-import { db } from "../database";
+import { getDatabase } from "../database";
 import { list } from "./utils/list";
 
 /* `count` and `list` need to handle a specific logic when you want it to be filtered by project
@@ -9,23 +9,23 @@ import { list } from "./utils/list";
 export const countLabels = async (where?: LabelWhereInput) => {
   if (where) {
     if ("projectId" in where) {
-      const imagesOfProject = await db.image
-        .where({
+      const imagesOfProject = await getDatabase()
+        .image.where({
           projectId: where.projectId,
         })
         .toArray();
 
-      return db.label
-        .filter((currentLabel) =>
+      return getDatabase()
+        .label.filter((currentLabel) =>
           imagesOfProject.some((image) => currentLabel.imageId === image.id)
         )
         .count();
     }
 
-    return db.label.where(where).count();
+    return getDatabase().label.where(where).count();
   }
 
-  return db.label.count();
+  return getDatabase().label.count();
 };
 
 export const listLabels = async (
@@ -34,14 +34,14 @@ export const listLabels = async (
   first?: number | null
 ) => {
   if (where && "projectId" in where) {
-    const imagesOfProject = await db.image
-      .where({
+    const imagesOfProject = await getDatabase()
+      .image.where({
         projectId: where.projectId,
       })
       .toArray();
 
-    const query = db.label
-      .orderBy("createdAt")
+    const query = getDatabase()
+      .label.orderBy("createdAt")
       .filter((currentLabel) =>
         imagesOfProject.some((image) => currentLabel.imageId === image.id)
       );
@@ -53,12 +53,16 @@ export const listLabels = async (
       query.limit(first);
     }
 
-    return db.label
-      .filter((currentLabel) =>
+    return getDatabase()
+      .label.filter((currentLabel) =>
         imagesOfProject.some((image) => currentLabel.imageId === image.id)
       )
       .sortBy("createdAt");
   }
 
-  return list<DbLabel, LabelWhereInput>(db.label)(where, skip, first);
+  return list<DbLabel, LabelWhereInput>(getDatabase().label)(
+    where,
+    skip,
+    first
+  );
 };
