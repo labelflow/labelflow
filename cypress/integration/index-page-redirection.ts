@@ -1,6 +1,5 @@
 describe("Index page redirection when user has tried app", () => {
   it("Redirects to image page when user tries App and did not see demo project", () => {
-    cy.clearCookies();
     cy.setCookie("hasUserTriedApp", "true");
     cy.visit(`/?modal-welcome=closed&modal-update-service-worker=update`);
     cy.url().should(
