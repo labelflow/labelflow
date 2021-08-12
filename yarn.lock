@@ -3900,6 +3900,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@chakra-ui/utils@npm:1.8.2":
+  version: 1.8.2
+  resolution: "@chakra-ui/utils@npm:1.8.2"
+  dependencies:
+    "@types/lodash.mergewith": 4.6.6
+    css-box-model: 1.2.1
+    framesync: 5.3.0
+    lodash.mergewith: 4.6.2
+  checksum: b48a55448ed71d6af09fb79bd8def4f148bbf5a6a6adb1124c92ba1469ef4c8e07eed792874a18b2c534bc57b51a00a943c77d2eda53d18b48bf25614afa130c
+  languageName: node
+  linkType: hard
+
 "@chakra-ui/visually-hidden@npm:1.0.12":
   version: 1.0.12
   resolution: "@chakra-ui/visually-hidden@npm:1.0.12"
@@ -5195,6 +5207,7 @@ __metadata:
     "@apollo/client": ^3.3.18
     "@babel/core": 7.14.3
     "@chakra-ui/react": 1.6.1
+    "@chakra-ui/utils": 1.8.2
     "@emotion/react": ^11
     "@emotion/styled": ^11
     "@graphiql/toolkit": ^0.2.2
@@ -5274,27 +5287,6 @@ __metadata:
     workbox-window: 6.1.5
     zustand: ^3.5.1
     zustand-store-addons: ^0.1.11
-  languageName: unknown
-  linkType: soft
-
-"@labelflow/web-site@workspace:typescript/web-site":
-  version: 0.0.0-use.local
-  resolution: "@labelflow/web-site@workspace:typescript/web-site"
-  dependencies:
-    "@chakra-ui/react": 1.6.1
-    "@chakra-ui/utils": 1.8.0
-    "@emotion/react": ^11
-    "@emotion/styled": ^11
-    "@types/node": 12.12.21
-    "@types/react": 17.0.3
-    "@types/react-dom": 17.0.1
-    framer-motion: ^4
-    next: 10.x
-    next-seo: 4.24.0
-    react: 17.x
-    react-dom: 17.x
-    react-icons: 4.2.0
-    typescript: 4.3.5
   languageName: unknown
   linkType: soft
 
@@ -21607,17 +21599,6 @@ next-pwa@5.2.21:
   languageName: node
   linkType: hard
 
-"next-seo@npm:4.24.0":
-  version: 4.24.0
-  resolution: "next-seo@npm:4.24.0"
-  peerDependencies:
-    next: ^8.1.1-canary.54 || ^9.0.0 || ^10.0.0
-    react: ^16.0.0 || ^17.0.0
-    react-dom: ^16.0.0 || ^17.0.0
-  checksum: 5e4edc43703df3898667a757bcbdfd3fa6de5d5cb86b19fb8190cd1d1c1ca776adf33d09827a8511005f1a245818f630f6864ab25d1d77b7469b70d902097e61
-  languageName: node
-  linkType: hard
-
 "next-seo@npm:^4.26.0":
   version: 4.26.0
   resolution: "next-seo@npm:4.26.0"
@@ -23999,7 +23980,7 @@ next-pwa@5.2.21:
   languageName: node
   linkType: hard
 
-"react-icons@npm:4.2.0, react-icons@npm:^4.2.0":
+"react-icons@npm:^4.2.0":
   version: 4.2.0
   resolution: "react-icons@npm:4.2.0"
   peerDependencies:

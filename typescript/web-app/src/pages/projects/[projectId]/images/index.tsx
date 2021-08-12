@@ -19,6 +19,7 @@ import { useRouter } from "next/router";
 import { isEmpty } from "lodash/fp";
 import { RiArrowRightSLine } from "react-icons/ri";
 import type { Project as ProjectType } from "@labelflow/graphql-types";
+import { AppLifecycleManager } from "../../../../components/app-lifecycle-manager";
 import { KeymapButton } from "../../../../components/keymap-button";
 import { ImportButton } from "../../../../components/import-button";
 import { ExportButton } from "../../../../components/export-button";
@@ -43,7 +44,11 @@ export const projectDataQuery = gql`
   }
 `;
 
-const ImagesPage = () => {
+const ImagesPage = ({
+  assumeServiceWorkerActive,
+}: {
+  assumeServiceWorkerActive: boolean;
+}) => {
   const router = useRouter();
   const projectId = router?.query?.projectId as string;
 
@@ -59,6 +64,9 @@ const ImagesPage = () => {
 
   return (
     <>
+      <AppLifecycleManager
+        assumeServiceWorkerActive={assumeServiceWorkerActive}
+      />
       <Meta title="Labelflow | Images" />
       <Layout
         topBarLeftContent={

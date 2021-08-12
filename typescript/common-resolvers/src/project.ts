@@ -12,8 +12,16 @@ import type {
 
 import { Context, DbProject, Repository } from "./types";
 import { throwIfResolvesToNil } from "./utils/throw-if-resolves-to-nil";
+import { getImageEntityFromMutationArgs } from "./image";
 
-export const projectTypename = "Project";
+// The demo project images
+const demoImageUrls = [
+  "https://images.unsplash.com/photo-1579513141590-c597876aefbc?auto=format&fit=crop&w=882&q=80",
+  "https://images.unsplash.com/photo-1504710685809-7bb702595f8f?auto=format&fit=crop&w=934&q=80",
+  "https://images.unsplash.com/photo-1569579933032-9e16447c50e3?auto=format&fit=crop&w=2100&q=80",
+  "https://images.unsplash.com/photo-1595687453172-253f44ed3975?auto=format&fit=crop&w=2100&q=80",
+  "https://images.unsplash.com/photo-1574082595167-86d59cefcc3a?auto=format&fit=crop&w=2100&q=80",
+];
 
 const getProjectById = async (
   id: string,
@@ -24,7 +32,7 @@ const getProjectById = async (
     repository.project.getById
   )(id);
 
-  return { ...project, __typename: projectTypename };
+  return { ...project, __typename: "Project" };
 };
 
 const getProjectByName = async (
@@ -36,7 +44,7 @@ const getProjectByName = async (
     repository.project.getByName
   )(name);
 
-  return { ...project, __typename: projectTypename };
+  return { ...project, __typename: "Project" };
 };
 
 const getProjectFromWhereUniqueInput = async (
@@ -109,7 +117,7 @@ const projects = async (
 
   return queryResult.map((projectWithoutTypename) => ({
     ...projectWithoutTypename,
-    __typename: projectTypename,
+    __typename: "Project",
   }));
 };
 
@@ -140,6 +148,45 @@ const createProject = async (
   } catch (e) {
     throw new Error("Could not create the project");
   }
+};
+
+const createDemoProject = async (
+  _: any,
+  args: {},
+  { repository }: Context
+): Promise<DbProject> => {
+  const projectId = uuidv4();
+  const currentDate = new Date().toISOString();
+  try {
+    await repository.project.add({
+      name: "Demo project",
+      id: projectId,
+      createdAt: currentDate,
+      updatedAt: currentDate,
+    });
+  } catch (error) {
+    if (error.name === "ConstraintError") {
+      // The demo project already exists, just return it
+      return getProjectByName("Demo project", repository);
+    }
+    throw error;
+  }
+  await Promise.all(
+    demoImageUrls.map(async (url) => {
+      const imageEntity = await getImageEntityFromMutationArgs(
+        {
+          projectId,
+          url,
+        },
+        {
+          upload: repository.upload,
+        }
+      );
+      return repository.image.add(imageEntity);
+    })
+  );
+
+  return getProjectById(projectId, repository);
 };
 
 const updateProject = async (
@@ -184,6 +231,7 @@ export default {
 
   Mutation: {
     createProject,
+    createDemoProject,
     updateProject,
     deleteProject,
   },

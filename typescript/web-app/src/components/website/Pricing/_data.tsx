@@ -737,8 +737,8 @@ export const data = [
     type: "header",
     description: <Box minW="12em" />,
     free: (
-      <NextLink href="/request-access">
-        <Button colorScheme="brand">Request Access</Button>
+      <NextLink href="/projects">
+        <Button colorScheme="brand">Try it now</Button>
       </NextLink>
     ),
     starter: (

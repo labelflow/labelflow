@@ -35,8 +35,10 @@ export const AppLifecycleManager = ({ assumeServiceWorkerActive }: Props) => {
 
   const handleError = useErrorHandler();
 
-  const [isUpdateServiceWorkerModalOpen, setIsUpdateServiceWorkerModalOpen] =
-    useState(paramModalUpdateServiceWorker === "open");
+  const isUpdateServiceWorkerModalOpen =
+    paramModalUpdateServiceWorker === "open";
+  const setIsUpdateServiceWorkerModalOpen = (value: boolean) =>
+    setParamModalUpdateServiceWorker(value ? "open" : undefined, "replaceIn");
 
   const closeUpdateServiceWorkerModal = useCallback(() => {
     setParamModalUpdateServiceWorker(undefined, "replaceIn");

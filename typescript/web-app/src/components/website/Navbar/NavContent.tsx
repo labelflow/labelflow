@@ -36,9 +36,9 @@ const MobileNavContext = (props: FlexProps) => {
           </Box>
         </NextLink>
         <Box visibility={{ base: "hidden", sm: "visible" }}>
-          <NextLink href="/request-access">
+          <NextLink href="/projects">
             <Button as="a" colorScheme="brand" variant="outline">
-              Request Access
+              Try it now
             </Button>
           </NextLink>
         </Box>
@@ -53,9 +53,9 @@ const MobileNavContext = (props: FlexProps) => {
             </NavLink.Mobile>
           )
         )}
-        <NextLink href="/request-access">
+        <NextLink href="/projects">
           <Button colorScheme="brand" w="full" size="lg" mt="5">
-            Request Access
+            Try it now
           </Button>
         </NextLink>
       </NavMenu>
@@ -108,7 +108,7 @@ const DesktopNavContent = (props: FlexProps) => {
         >
           Sign In
         </Box> */}
-        <NextLink href="/request-access">
+        <NextLink href="/projects">
           <Button
             as="a"
             href="#"
@@ -116,7 +116,7 @@ const DesktopNavContent = (props: FlexProps) => {
             fontWeight="bold"
             variant="outline"
           >
-            Request Access
+            Try it now
           </Button>
         </NextLink>
       </HStack>

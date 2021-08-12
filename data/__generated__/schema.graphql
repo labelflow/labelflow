@@ -175,6 +175,7 @@ type Mutation {
   updateLabelClass(where: LabelClassWhereUniqueInput!, data: LabelClassUpdateInput!): LabelClass
   deleteLabelClass(where: LabelClassWhereUniqueInput!): LabelClass
   createProject(data: ProjectCreateInput!): Project
+  createDemoProject: Project
   updateProject(where: ProjectWhereIDInput!, data: ProjectUpdateInput!): Project
   deleteProject(where: ProjectWhereIDInput!): Project
 }

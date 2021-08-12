@@ -1,17 +1,17 @@
 import { Box, useColorModeValue as mode } from "@chakra-ui/react";
 import * as React from "react";
 
-import { NavContent } from "../components/Navbar/NavContent";
-import { Hero } from "../components/Hero/Hero";
-import { Features } from "../components/Features/Features";
-import { LogoGrid } from "../components/Logos/LogoGrid";
+import { NavContent } from "../components/website/Navbar/NavContent";
+import { Hero } from "../components/website/Hero/Hero";
+import { Features } from "../components/website/Features/Features";
+import { LogoGrid } from "../components/website/Logos/LogoGrid";
 
-import { Why } from "../components/Why/Why";
-import { Footer } from "../components/Footer/Footer";
-import { Pricing } from "../components/Pricing/Pricing";
-import { Meta } from "../components/Meta";
+import { Why } from "../components/website/Why/Why";
+import { Footer } from "../components/website/Footer/Footer";
+import { Pricing } from "../components/website/Pricing/Pricing";
+import { Meta } from "../components/website/Meta";
 
-export default function Home() {
+export default function Website() {
   return (
     <Box minH="640px">
       <Meta />
