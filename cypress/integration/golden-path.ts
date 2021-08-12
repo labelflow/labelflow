@@ -12,6 +12,7 @@ describe("Golden path", () => {
       /.\/datasets\/([a-zA-Z0-9_-]*)\/images\/([a-zA-Z0-9_-]*)/
     );
 
+    cy.get('[aria-label="loading indicator"]').should("not.exist");
     cy.get("a").contains("Datasets").click();
 
     cy.contains("Create new dataset...").click();

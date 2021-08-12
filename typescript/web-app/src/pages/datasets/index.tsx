@@ -125,6 +125,10 @@ const DatasetPage = ({
 
   const didVisitDemoDataset = parsedCookie.get("didVisitDemoDataset");
   const hasUserTriedApp = parsedCookie.get("hasUserTriedApp");
+  const hasDatasets =
+    datasetsResult?.datasets == null
+      ? false
+      : datasetsResult?.datasets?.length > 0;
 
   const [createDemoDatasetMutation] = useMutation(createDemoDatasetQuery, {
     update: (cache, { data: { createDemoDataset } }) => {
@@ -146,7 +150,8 @@ const DatasetPage = ({
 
   useEffect(() => {
     const createDemoDatasetASync = async () => {
-      if (!didVisitDemoDataset && demoDataset == null && loading === false) {
+      if (loading === true || hasDatasets) return;
+      if (!didVisitDemoDataset && demoDataset == null) {
         try {
           await createDemoDatasetMutation();
         } catch (e) {
@@ -157,7 +162,14 @@ const DatasetPage = ({
       }
     };
     createDemoDatasetASync();
-  }, [demoDataset, loading, didVisitDemoDataset, parsedCookie, router]);
+  }, [
+    demoDataset,
+    loading,
+    didVisitDemoDataset,
+    parsedCookie,
+    router,
+    hasDatasets,
+  ]);
 
   useEffect(() => {
     if (!hasUserTriedApp) {
