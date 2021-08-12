@@ -46,4 +46,5 @@ export const links: Link[] = [
   //   ],
   // },
   { label: "Pricing", href: "/pricing" },
+  { label: "Blog", href: "/posts" },
 ];
