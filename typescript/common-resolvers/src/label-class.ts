@@ -42,15 +42,15 @@ const createLabelClass = async (
   args: MutationCreateLabelClassArgs,
   { repository }: Context
 ): Promise<DbLabelClass> => {
-  const { color, name, id, projectId } = args.data;
+  const { color, name, id, datasetId } = args.data;
 
   // Since we don't have any constraint checks with Dexie
-  // we need to ensure that the projectId matches some
+  // we need to ensure that the datasetId matches some
   // entity before being able to continue.
   await throwIfResolvesToNil(
-    `The project id ${projectId} doesn't exist.`,
-    repository.project.getById
-  )(projectId);
+    `The dataset id ${datasetId} doesn't exist.`,
+    repository.dataset.getById
+  )(datasetId);
 
   const labelClassId = id ?? uuidv4();
   const now = new Date();
@@ -61,7 +61,7 @@ const createLabelClass = async (
     updatedAt: now.toISOString(),
     name,
     color,
-    projectId,
+    datasetId,
   };
   await repository.labelClass.add(newLabelClassEntity);
 
@@ -114,9 +114,9 @@ const totalCount = (parent: any, _args: any, { repository }: Context) => {
   // eslint-disable-next-line no-underscore-dangle
   const typename = parent?.__typename;
 
-  if (typename === "Project") {
+  if (typename === "Dataset") {
     return repository.labelClass.count({
-      projectId: parent.id,
+      datasetId: parent.id,
     });
   }
 
@@ -142,7 +142,7 @@ export default {
 
   LabelClassesAggregates: { totalCount },
 
-  Project: {
+  Dataset: {
     labelClassesAggregates,
   },
 };

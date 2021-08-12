@@ -8,12 +8,12 @@ setupTestsWithLocalDatabase();
 
 jest.mock("@labelflow/common-resolvers/src/utils/probe-image");
 const mockedProbeSync = probeImage as jest.Mock;
-const testProjectId = "test project id";
+const testDatasetId = "test dataset id";
 
 const createLabelClass = async (data: {
   name: string;
   color: string;
-  projectId: string;
+  datasetId: string;
   id?: string;
 }) => {
   const mutationResult = await client.mutate({
@@ -41,7 +41,7 @@ const createLabelClass = async (data: {
 const createLabel = async (
   labelClassId: string,
   x: number,
-  projectId: string = testProjectId,
+  datasetId: string = testDatasetId,
   labelId: string = "myLabelId"
 ) => {
   mockedProbeSync.mockReturnValue({
@@ -56,8 +56,8 @@ const createLabel = async (
     },
   } = await client.mutate({
     mutation: gql`
-      mutation createImage($file: Upload!, $name: String!, $projectId: ID!) {
-        createImage(data: { name: $name, file: $file, projectId: $projectId }) {
+      mutation createImage($file: Upload!, $name: String!, $datasetId: ID!) {
+        createImage(data: { name: $name, file: $file, datasetId: $datasetId }) {
           id
         }
       }
@@ -65,7 +65,7 @@ const createLabel = async (
     variables: {
       file: new Blob(),
       name: "someImageName",
-      projectId,
+      datasetId,
     },
   });
   return client.mutate({
@@ -98,14 +98,14 @@ const createLabel = async (
   });
 };
 
-const createProject = async (
+const createDataset = async (
   name: string,
-  projectId: string = testProjectId
+  datasetId: string = testDatasetId
 ) => {
   return client.mutate({
     mutation: gql`
-      mutation createProject($projectId: String, $name: String!) {
-        createProject(data: { id: $projectId, name: $name }) {
+      mutation createDataset($datasetId: String, $name: String!) {
+        createDataset(data: { id: $datasetId, name: $name }) {
           id
           name
         }
@@ -113,7 +113,7 @@ const createProject = async (
     `,
     variables: {
       name,
-      projectId,
+      datasetId,
     },
     fetchPolicy: "no-cache",
   });
@@ -151,24 +151,24 @@ describe("LabelClass resolver test suite", () => {
     ).rejects.toThrow("No labelClass with such id");
   });
 
-  it("should fail labelClass creation when there is a no project with the given id", async () => {
+  it("should fail labelClass creation when there is a no dataset with the given id", async () => {
     expect.assertions(1);
     await expect(
       createLabelClass({
         name: "toto",
         color: "#ff0000",
-        projectId: testProjectId,
+        datasetId: testDatasetId,
       })
-    ).rejects.toThrow("The project id test project id doesn't exist.");
+    ).rejects.toThrow("The dataset id test dataset id doesn't exist.");
   });
 
-  it("should create labelClass when there is a project", async () => {
-    await createProject("Test project");
+  it("should create labelClass when there is a dataset", async () => {
+    await createDataset("Test dataset");
 
     const id = await createLabelClass({
       name: "toto",
       color: "#ff0000",
-      projectId: testProjectId,
+      datasetId: testDatasetId,
     });
 
     const queryResult = await client.query({
@@ -178,7 +178,7 @@ describe("LabelClass resolver test suite", () => {
             id
             name
             color
-            projectId
+            datasetId
           }
         }
       `,
@@ -193,20 +193,20 @@ describe("LabelClass resolver test suite", () => {
         id,
         name: "toto",
         color: "#ff0000",
-        projectId: testProjectId,
+        datasetId: testDatasetId,
       })
     );
   });
 
   it("should create labelClass with an ID", async () => {
-    await createProject("Test project");
+    await createDataset("Test dataset");
 
     const labelClassId = "a custom id";
     const id = await createLabelClass({
       id: labelClassId,
       name: "toto",
       color: "#ff0000",
-      projectId: testProjectId,
+      datasetId: testDatasetId,
     });
 
     const queryResult = await client.query({
@@ -226,12 +226,12 @@ describe("LabelClass resolver test suite", () => {
   });
 
   it("should update a label class", async () => {
-    await createProject("Test project");
+    await createDataset("Test dataset");
 
     const labelId = await createLabelClass({
       name: "toto",
       color: "#ff0000",
-      projectId: testProjectId,
+      datasetId: testDatasetId,
     });
 
     await client.mutate({
@@ -287,14 +287,14 @@ describe("LabelClass resolver test suite", () => {
   });
 
   it("should delete a label class", async () => {
-    await createProject("Test project");
+    await createDataset("Test dataset");
 
     const labelClassId = await createLabelClass({
       name: "toto",
       color: "#ff0000",
-      projectId: testProjectId,
+      datasetId: testDatasetId,
     });
-    await createLabel(labelClassId, 2, testProjectId);
+    await createLabel(labelClassId, 2, testDatasetId);
     await client.mutate({
       mutation: gql`
         mutation deleteLabelClass($id: ID!) {
@@ -322,14 +322,14 @@ describe("LabelClass resolver test suite", () => {
     return expect(queryResult).rejects.toThrow("No labelClass with such id");
   });
   it("should set all the labels linked to label class to labelClassId none when the class is deleted", async () => {
-    await createProject("Test project");
+    await createDataset("Test dataset");
 
     const labelClassId = await createLabelClass({
       name: "toto",
       color: "#ff0000",
-      projectId: testProjectId,
+      datasetId: testDatasetId,
     });
-    await createLabel(labelClassId, 2, testProjectId);
+    await createLabel(labelClassId, 2, testDatasetId);
     const labelQueryResultBeforeDelete = await client.query({
       query: gql`
         query getLabelData($id: ID!) {
@@ -396,26 +396,26 @@ describe("LabelClass resolver test suite", () => {
     ).rejects.toThrow("No labelClass with such id");
   });
 
-  it("should query labelClasses ignoring linked projects", async () => {
-    await createProject("Test project 1", "project 1");
-    await createProject("Test project 2", "project 2");
+  it("should query labelClasses ignoring linked datasets", async () => {
+    await createDataset("Test dataset 1", "dataset 1");
+    await createDataset("Test dataset 2", "dataset 2");
 
     const id1 = await createLabelClass({
       name: "labelClass1",
       color: "#ff0000",
-      projectId: "project 1",
+      datasetId: "dataset 1",
     });
     incrementMockedDate(1);
     const id0 = await createLabelClass({
       name: "labelClass0",
       color: "#ff0000",
-      projectId: "project 2",
+      datasetId: "dataset 2",
     });
     incrementMockedDate(1);
     const id2 = await createLabelClass({
       name: "labelClass2",
       color: "#ff0000",
-      projectId: "project 1",
+      datasetId: "dataset 1",
     });
 
     const queryResult = await client.query({
@@ -436,32 +436,32 @@ describe("LabelClass resolver test suite", () => {
     ).toEqual([id1, id0, id2]);
   });
 
-  it("should query paginated labelClasses ignoring linked projects", async () => {
-    await createProject("Test project 1", "project 1");
-    await createProject("Test project 2", "project 2");
+  it("should query paginated labelClasses ignoring linked datasets", async () => {
+    await createDataset("Test dataset 1", "dataset 1");
+    await createDataset("Test dataset 2", "dataset 2");
 
     await createLabelClass({
       name: "labelClass1",
       color: "#ff0000",
-      projectId: "project 2",
+      datasetId: "dataset 2",
     });
     incrementMockedDate(1);
     const id0 = await createLabelClass({
       name: "labelClass0",
       color: "#ff0000",
-      projectId: "project 1",
+      datasetId: "dataset 1",
     });
     incrementMockedDate(1);
     const id2 = await createLabelClass({
       name: "labelClass2",
       color: "#ff0000",
-      projectId: "project 2",
+      datasetId: "dataset 2",
     });
     incrementMockedDate(1);
     await createLabelClass({
       name: "labelClass3",
       color: "#ff0000",
-      projectId: "project 1",
+      datasetId: "dataset 1",
     });
 
     const queryResult = await client.query({
@@ -483,17 +483,17 @@ describe("LabelClass resolver test suite", () => {
   });
 
   it("should query a labelClass with labels", async () => {
-    await createProject("Test project", "a project id");
+    await createDataset("Test dataset", "a dataset id");
 
     const labelClassId = await createLabelClass({
       name: "some labelClass",
       color: "#ff0000",
-      projectId: "a project id",
+      datasetId: "a dataset id",
     });
 
-    await createLabel(labelClassId, 2, "a project id", "myLabelId1");
+    await createLabel(labelClassId, 2, "a dataset id", "myLabelId1");
     incrementMockedDate(1);
-    await createLabel(labelClassId, 1, "a project id", "myLabelId2");
+    await createLabel(labelClassId, 1, "a dataset id", "myLabelId2");
 
     const queryResult = await client.query({
       query: gql`
@@ -517,32 +517,32 @@ describe("LabelClass resolver test suite", () => {
     ).toEqual([2, 1]);
   });
 
-  it("should query label classes linked to a project", async () => {
-    await createProject("Test project 1", "project 1");
-    await createProject("Test project 2", "project 2");
+  it("should query label classes linked to a dataset", async () => {
+    await createDataset("Test dataset 1", "dataset 1");
+    await createDataset("Test dataset 2", "dataset 2");
 
     const labelClassId2 = await createLabelClass({
       name: "second labelClass",
       color: "#ff0000",
-      projectId: "project 1",
+      datasetId: "dataset 1",
     });
     incrementMockedDate(1);
     const labelClassId1 = await createLabelClass({
       name: "first labelClass",
       color: "#ff0000",
-      projectId: "project 1",
+      datasetId: "dataset 1",
     });
     incrementMockedDate(1);
     await createLabelClass({
       name: "other first labelClass",
       color: "#ff0000",
-      projectId: "project 2",
+      datasetId: "dataset 2",
     });
 
     const queryResult = await client.query({
       query: gql`
         query {
-          labelClasses(where: { projectId: "project 1" }) {
+          labelClasses(where: { datasetId: "dataset 1" }) {
             id
           }
         }
@@ -558,24 +558,24 @@ describe("LabelClass resolver test suite", () => {
   });
 
   it("should returns the correct count of labelClasses", async () => {
-    await createProject("Test project 1", "project 1");
-    await createProject("Test project 2", "project 2");
+    await createDataset("Test dataset 1", "dataset 1");
+    await createDataset("Test dataset 2", "dataset 2");
 
     await Promise.all([
       createLabelClass({
         name: "first labelClass",
         color: "#ff0000",
-        projectId: "project 1",
+        datasetId: "dataset 1",
       }),
       createLabelClass({
         name: "second labelClass",
         color: "#ff0000",
-        projectId: "project 2",
+        datasetId: "dataset 2",
       }),
       createLabelClass({
         name: "third labelClass",
         color: "#ff0000",
-        projectId: "project 2",
+        datasetId: "dataset 2",
       }),
     ]);
 

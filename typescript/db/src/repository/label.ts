@@ -4,9 +4,9 @@ import { Repository, DbLabel } from "@labelflow/common-resolvers";
 const prisma = new PrismaClient();
 
 export const countLabels: Repository["label"]["count"] = (where) => {
-  if ("projectId" in where) {
+  if ("datasetId" in where) {
     return prisma.label.count({
-      where: { image: { projectId: where.projectId } },
+      where: { image: { datasetId: where.datasetId } },
     });
   }
   return prisma.label.count({ where });
@@ -17,9 +17,9 @@ export const listLabels: Repository["label"]["list"] = (
   skip = undefined,
   first = undefined
 ) => {
-  if ("projectId" in where) {
+  if ("datasetId" in where) {
     return prisma.label.findMany({
-      where: { image: { projectId: where.projectId } },
+      where: { image: { datasetId: where.datasetId } },
       orderBy: { createdAt: "asc" },
       skip,
       take: first,

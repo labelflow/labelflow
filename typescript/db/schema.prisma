@@ -19,8 +19,8 @@ model Image {
   width       Float
   height      Float
   labels      Label[]
-  project     Project  @relation(fields: [projectId], references: [id])
-  projectId   String   @db.Uuid
+  dataset     Dataset  @relation(fields: [datasetId], references: [id])
+  datasetId   String   @db.Uuid
 }
 
 enum LabelType {
@@ -51,11 +51,11 @@ model LabelClass {
   name      String
   color     String
   labels    Label[]
-  project   Project  @relation(fields: [projectId], references: [id])
-  projectId String   @db.Uuid
+  dataset   Dataset  @relation(fields: [datasetId], references: [id])
+  datasetId String   @db.Uuid
 }
 
-model Project {
+model Dataset {
   id           String       @id @default(uuid()) @db.Uuid
   createdAt    DateTime     @default(now())
   updatedAt    DateTime     @updatedAt

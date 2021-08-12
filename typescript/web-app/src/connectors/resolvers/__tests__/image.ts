@@ -10,16 +10,16 @@ jest.mock("@labelflow/common-resolvers/src/utils/probe-image");
 const mockedProbeSync = probeImage as jest.Mock;
 
 describe("Image resolver test suite", () => {
-  const testProjectId = "test project id";
+  const testDatasetId = "test dataset id";
 
-  const createProject = async (
+  const createDataset = async (
     name: string,
-    projectId: string = testProjectId
+    datasetId: string = testDatasetId
   ) => {
     return client.mutate({
       mutation: gql`
-        mutation createProject($projectId: String, $name: String!) {
-          createProject(data: { id: $projectId, name: $name }) {
+        mutation createDataset($datasetId: String, $name: String!) {
+          createDataset(data: { id: $datasetId, name: $name }) {
             id
             name
           }
@@ -27,13 +27,13 @@ describe("Image resolver test suite", () => {
       `,
       variables: {
         name,
-        projectId,
+        datasetId,
       },
       fetchPolicy: "no-cache",
     });
   };
 
-  const createImage = async (name: String, projectId = testProjectId) => {
+  const createImage = async (name: String, datasetId = testDatasetId) => {
     mockedProbeSync.mockReturnValue({
       width: 42,
       height: 36,
@@ -42,16 +42,16 @@ describe("Image resolver test suite", () => {
 
     const mutationResult = await client.mutate({
       mutation: gql`
-        mutation createImage($file: Upload!, $name: String!, $projectId: ID!) {
+        mutation createImage($file: Upload!, $name: String!, $datasetId: ID!) {
           createImage(
-            data: { name: $name, file: $file, projectId: $projectId }
+            data: { name: $name, file: $file, datasetId: $datasetId }
           ) {
             id
           }
         }
       `,
       variables: {
-        projectId,
+        datasetId,
         file: new Blob(),
         name,
       },
@@ -126,15 +126,15 @@ describe("Image resolver test suite", () => {
     ).rejects.toThrow("No image with such id");
   });
 
-  it("should fail when we want to create an image when there is no project created", async () => {
+  it("should fail when we want to create an image when there is no dataset created", async () => {
     expect.assertions(1);
     await expect(createImage("New test image")).rejects.toThrow(
-      "The project id test project id doesn't exist."
+      "The dataset id test dataset id doesn't exist."
     );
   });
 
-  it("should create an image with the correct name when we want to create an image with Blob when there is a project", async () => {
-    await createProject("Test project");
+  it("should create an image with the correct name when we want to create an image with Blob when there is a dataset", async () => {
+    await createDataset("Test dataset");
 
     const id = await createImage("New test image");
 
@@ -163,8 +163,8 @@ describe("Image resolver test suite", () => {
     );
   });
 
-  it("should create an image with the correct name when we want to create an image with url when there is a project", async () => {
-    await createProject("Test project");
+  it("should create an image with the correct name when we want to create an image with url when there is a dataset", async () => {
+    await createDataset("Test dataset");
 
     // @ts-ignore
     fetch.mockResponseOnce(new Blob());
@@ -175,14 +175,14 @@ describe("Image resolver test suite", () => {
       },
     } = await client.mutate({
       mutation: gql`
-        mutation createImage($url: String!, $projectId: ID!) {
-          createImage(data: { url: $url, projectId: $projectId }) {
+        mutation createImage($url: String!, $datasetId: ID!) {
+          createImage(data: { url: $url, datasetId: $datasetId }) {
             id
           }
         }
       `,
       variables: {
-        projectId: testProjectId,
+        datasetId: testDatasetId,
         url: "https://images.unsplash.com/photo-1579513141590-c597876aefbc?auto=format&fit=crop&w=882&q=80",
       },
     });
@@ -213,7 +213,7 @@ describe("Image resolver test suite", () => {
   });
 
   it("should create an image with a custom id", async () => {
-    await createProject("Test project");
+    await createDataset("Test dataset");
 
     const name = "an image";
     const imageId = "a custom id";
@@ -224,10 +224,10 @@ describe("Image resolver test suite", () => {
           $id: ID
           $file: Upload!
           $name: String!
-          $projectId: ID!
+          $datasetId: ID!
         ) {
           createImage(
-            data: { id: $id, name: $name, file: $file, projectId: $projectId }
+            data: { id: $id, name: $name, file: $file, datasetId: $datasetId }
           ) {
             id
           }
@@ -235,7 +235,7 @@ describe("Image resolver test suite", () => {
       `,
       variables: {
         id: imageId,
-        projectId: testProjectId,
+        datasetId: testDatasetId,
         file: new Blob(),
         name,
       },
@@ -245,16 +245,16 @@ describe("Image resolver test suite", () => {
   });
 
   it("should create an image with the given createdAt value", async () => {
-    await createProject("Test project");
+    await createDataset("Test dataset");
 
     const mutationResult = await client.mutate({
       mutation: gql`
-        mutation createImage($file: Upload!, $projectId: ID!) {
+        mutation createImage($file: Upload!, $datasetId: ID!) {
           createImage(
             data: {
               file: $file
               createdAt: "some custom date string"
-              projectId: $projectId
+              datasetId: $datasetId
             }
           ) {
             createdAt
@@ -262,7 +262,7 @@ describe("Image resolver test suite", () => {
         }
       `,
       variables: {
-        projectId: testProjectId,
+        datasetId: testDatasetId,
         file: new Blob(),
       },
     });
@@ -272,20 +272,20 @@ describe("Image resolver test suite", () => {
     );
   });
 
-  it("should query images linked to a project", async () => {
-    await createProject("Test project 1", "project 1");
-    await createProject("Test project 2", "project 2");
+  it("should query images linked to a dataset", async () => {
+    await createDataset("Test dataset 1", "dataset 1");
+    await createDataset("Test dataset 2", "dataset 2");
 
-    const imageId1 = await createImage("Image 1", "project 1");
+    const imageId1 = await createImage("Image 1", "dataset 1");
     incrementMockedDate(1);
-    const imageId2 = await createImage("Image 2", "project 1");
+    const imageId2 = await createImage("Image 2", "dataset 1");
     incrementMockedDate(1);
-    await createImage("Image 3", "project 2");
+    await createImage("Image 3", "dataset 2");
 
     const queryResult = await client.query({
       query: gql`
         query {
-          images(where: { projectId: "project 1" }) {
+          images(where: { datasetId: "dataset 1" }) {
             id
           }
         }
@@ -298,15 +298,15 @@ describe("Image resolver test suite", () => {
     ).toEqual([imageId1, imageId2]);
   });
 
-  it("should query all the images ignoring with which projects there are linked", async () => {
-    await createProject("Test project 1", "project 1");
-    await createProject("Test project 2", "project 2");
+  it("should query all the images ignoring with which datasets there are linked", async () => {
+    await createDataset("Test dataset 1", "dataset 1");
+    await createDataset("Test dataset 2", "dataset 2");
 
-    const imageId2 = await createImage("image 2", "project 1");
+    const imageId2 = await createImage("image 2", "dataset 1");
     incrementMockedDate(1);
-    const imageId1 = await createImage("image 1", "project 1");
+    const imageId1 = await createImage("image 1", "dataset 1");
     incrementMockedDate(1);
-    const imageId3 = await createImage("image 3", "project 2");
+    const imageId3 = await createImage("image 3", "dataset 2");
 
     const queryResult = await client.query({
       query: gql`
@@ -325,16 +325,16 @@ describe("Image resolver test suite", () => {
   });
 
   it("should query paginated images", async () => {
-    await createProject("Test project 1", "project 1");
-    await createProject("Test project 2", "project 2");
+    await createDataset("Test dataset 1", "dataset 1");
+    await createDataset("Test dataset 2", "dataset 2");
 
-    await createImage("image 2", "project 1");
+    await createImage("image 2", "dataset 1");
     incrementMockedDate(1);
-    const imageId1 = await createImage("image 1", "project 1");
+    const imageId1 = await createImage("image 1", "dataset 1");
     incrementMockedDate(1);
-    const imageId3 = await createImage("image 3", "project 2");
+    const imageId3 = await createImage("image 3", "dataset 2");
     incrementMockedDate(1);
-    await createImage("image 4", "project 2");
+    await createImage("image 4", "dataset 2");
 
     const queryResult = await client.query({
       query: gql`
@@ -353,7 +353,7 @@ describe("Image resolver test suite", () => {
   });
 
   it("should query an image with his labels", async () => {
-    await createProject("Test project");
+    await createDataset("Test dataset");
 
     const imageId = await createImage("an image");
 
@@ -384,7 +384,7 @@ describe("Image resolver test suite", () => {
   });
 
   it("should count the images", async () => {
-    await createProject("Test project");
+    await createDataset("Test dataset");
 
     await Promise.all([
       createImage("Image 1"),

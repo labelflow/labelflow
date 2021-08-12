@@ -47,16 +47,16 @@ const labelData = {
 const imageWidth = 500;
 const imageHeight = 900;
 
-const testProjectId = "test project id";
+const testDatasetId = "test dataset id";
 
-const createProject = async (
+const createDataset = async (
   name: string,
-  projectId: string = testProjectId
+  datasetId: string = testDatasetId
 ) => {
   return client.mutate({
     mutation: gql`
-      mutation createProject($projectId: String, $name: String!) {
-        createProject(data: { id: $projectId, name: $name }) {
+      mutation createDataset($datasetId: String, $name: String!) {
+        createDataset(data: { id: $datasetId, name: $name }) {
           id
           name
         }
@@ -64,7 +64,7 @@ const createProject = async (
     `,
     variables: {
       name,
-      projectId,
+      datasetId,
     },
     fetchPolicy: "no-cache",
   });
@@ -94,7 +94,7 @@ const createImage = async (name: String) => {
   const mutationResult = await client.mutate({
     mutation: gql`
       mutation createImage(
-        $projectId: ID!
+        $datasetId: ID!
         $file: Upload!
         $name: String!
         $width: Int
@@ -102,7 +102,7 @@ const createImage = async (name: String) => {
       ) {
         createImage(
           data: {
-            projectId: $projectId
+            datasetId: $datasetId
             name: $name
             file: $file
             width: $width
@@ -114,7 +114,7 @@ const createImage = async (name: String) => {
       }
     `,
     variables: {
-      projectId: testProjectId,
+      datasetId: testDatasetId,
       file: new Blob(),
       name,
       width: imageWidth,
@@ -138,9 +138,9 @@ const createLabelClass = async (name: String) => {
     },
   } = await client.mutate({
     mutation: gql`
-      mutation createLabelClass($projectId: ID!, $name: String!) {
+      mutation createLabelClass($datasetId: ID!, $name: String!) {
         createLabelClass(
-          data: { projectId: $projectId, name: $name, color: "#ffffff" }
+          data: { datasetId: $datasetId, name: $name, color: "#ffffff" }
         ) {
           id
           name
@@ -149,7 +149,7 @@ const createLabelClass = async (name: String) => {
       }
     `,
     variables: {
-      projectId: testProjectId,
+      datasetId: testDatasetId,
       name,
     },
   });
@@ -158,8 +158,8 @@ const createLabelClass = async (name: String) => {
 };
 
 beforeEach(async () => {
-  // Images and label classes are always liked to a project
-  await createProject("Test project");
+  // Images and label classes are always liked to a dataset
+  await createDataset("Test dataset");
 });
 
 describe("Label resolver test suite", () => {

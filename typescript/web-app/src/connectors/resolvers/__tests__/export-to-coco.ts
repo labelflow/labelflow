@@ -19,16 +19,16 @@ setupTestsWithLocalDatabase();
 
 const omitUrl = omit("images.0.coco_url");
 
-const testProjectId = "test project id";
+const testDatasetId = "test dataset id";
 
-const createProject = async (
+const createDataset = async (
   name: string,
-  projectId: string = testProjectId
+  datasetId: string = testDatasetId
 ) => {
   return client.mutate({
     mutation: gql`
-      mutation createProject($projectId: String, $name: String!) {
-        createProject(data: { id: $projectId, name: $name }) {
+      mutation createDataset($datasetId: String, $name: String!) {
+        createDataset(data: { id: $datasetId, name: $name }) {
           id
           name
         }
@@ -36,7 +36,7 @@ const createProject = async (
     `,
     variables: {
       name,
-      projectId,
+      datasetId,
     },
     fetchPolicy: "no-cache",
   });
@@ -45,12 +45,12 @@ const createProject = async (
 const createImage = async (name: String): Promise<string> => {
   const mutationResult = await client.mutate({
     mutation: gql`
-      mutation createImage($file: Upload!, $name: String!, $projectId: ID!) {
+      mutation createImage($file: Upload!, $name: String!, $datasetId: ID!) {
         createImage(
           data: {
             name: $name
             file: $file
-            projectId: $projectId
+            datasetId: $datasetId
             width: 100
             height: 200
             mimetype: "image/jpeg"
@@ -63,7 +63,7 @@ const createImage = async (name: String): Promise<string> => {
     variables: {
       file: new Blob(),
       name,
-      projectId: testProjectId,
+      datasetId: testDatasetId,
     },
   });
 
@@ -90,7 +90,7 @@ const createLabelClass = async (data: {
       }
     `,
     variables: {
-      data: { ...data, projectId: testProjectId },
+      data: { ...data, datasetId: testDatasetId },
     },
   });
 
@@ -135,8 +135,8 @@ const createLabelWithLabelClass = (imageId: string, labelClassId: string) => {
 
 describe("Exporting a dataset to coco format", () => {
   beforeEach(async () => {
-    // Images and label classes are always liked to a project
-    await createProject("Test project");
+    // Images and label classes are always liked to a dataset
+    await createDataset("Test dataset");
   });
 
   test("The exportToCoco graphql endpoint returns an empty dataset when no label class and no image exist", async () => {
@@ -144,12 +144,12 @@ describe("Exporting a dataset to coco format", () => {
       (
         await client.query({
           query: gql`
-            query exportToCoco($projectId: ID!) {
-              exportToCoco(where: { projectId: $projectId })
+            query exportToCoco($datasetId: ID!) {
+              exportToCoco(where: { datasetId: $datasetId })
             }
           `,
           variables: {
-            projectId: testProjectId,
+            datasetId: testDatasetId,
           },
         })
       ).data.exportToCoco
@@ -178,12 +178,12 @@ describe("Exporting a dataset to coco format", () => {
       (
         await client.query({
           query: gql`
-            query exportToCoco($projectId: ID!) {
-              exportToCoco(where: { projectId: $projectId })
+            query exportToCoco($datasetId: ID!) {
+              exportToCoco(where: { datasetId: $datasetId })
             }
           `,
           variables: {
-            projectId: testProjectId,
+            datasetId: testDatasetId,
           },
         })
       ).data.exportToCoco
@@ -246,12 +246,12 @@ describe("Exporting a dataset to coco format", () => {
             (
               await client.query({
                 query: gql`
-                  query exportToCoco($projectId: ID!) {
-                    exportToCoco(where: { projectId: $projectId })
+                  query exportToCoco($datasetId: ID!) {
+                    exportToCoco(where: { datasetId: $datasetId })
                   }
                 `,
                 variables: {
-                  projectId: testProjectId,
+                  datasetId: testDatasetId,
                 },
               })
             ).data.exportToCoco
