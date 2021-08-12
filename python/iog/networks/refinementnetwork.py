@@ -303,6 +303,7 @@ class SegmentationNetwork(nn.Module):
         ]
         coarse_fms, coarse_outs = self.Coarse_net(res_out)
         fine_out = self.Fine_net(coarse_fms)
+        fine_out = self.upsample(fine_out)
         return fine_out
 
     def freeze_bn(self):
