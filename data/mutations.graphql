@@ -1,7 +1,7 @@
 type Mutation {
   createExample(data: ExampleCreateInput!): Example
 
-  getUploadTarget: UploadTarget!
+  getUploadTarget(data: UploadTargetInput!): UploadTarget!
   createImage(data: ImageCreateInput!): Image
 
   createLabel(data: LabelCreateInput!): Label

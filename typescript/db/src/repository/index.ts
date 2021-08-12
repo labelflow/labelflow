@@ -2,7 +2,11 @@ import { PrismaClient, Prisma } from "@prisma/client";
 
 import { DbLabel, Repository } from "@labelflow/common-resolvers";
 import { Image } from "@labelflow/graphql-types";
-import { getUploadTargetHttp, getFromStorage, putInStorage } from "./upload";
+import {
+  getUploadTargetHttp,
+  getFromStorage,
+  putInStorage,
+} from "./upload-supabase";
 import { countLabels, listLabels } from "./label";
 import { castObjectNullsToUndefined } from "./utils";
 

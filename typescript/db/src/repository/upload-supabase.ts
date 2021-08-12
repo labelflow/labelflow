@@ -1,30 +1,27 @@
-import { v4 as uuidv4 } from "uuid";
 import fetch from "node-fetch";
+import { createClient } from "@supabase/supabase-js";
+
 import { Repository } from "../../../common-resolvers/src";
 import { UploadTargetHttp } from "../../../graphql-types/src/graphql-types.generated";
 
-const location = "http://localhost:5000/";
-const uploadsRoute = "upload";
+const client = createClient(
+  process?.env?.SUPABASE_API_URL as string,
+  process?.env?.SUPABASE_API_KEY as string
+);
+const bucket = "labelflow-images";
+export const uploadsRoute = "/api/uploads";
 
-export const getUploadTargetHttp = (): UploadTargetHttp => {
-  const fileId = uuidv4();
+export const getUploadTargetHttp = async (
+  key: string
+): Promise<UploadTargetHttp> => {
   return {
     __typename: "UploadTargetHttp",
-    uploadUrl: `{${location}${uploadsRoute}}/${fileId}`,
-    downloadUrl: `{${location}${uploadsRoute}}/${fileId}`,
+    uploadUrl: `${uploadsRoute}/${key}`,
+    downloadUrl: `${process?.env?.SUPABASE_API_URL}/storage/v1/object/public/${bucket}/${key}`,
   };
 };
 
-const dirtyInMemoryStorage = new Map<string, Blob>();
-
-// @ts-ignore
 export const getFromStorage: Repository["upload"]["get"] = async (url) => {
-  const file = dirtyInMemoryStorage.get(url);
-
-  if (file) {
-    return file.arrayBuffer();
-  }
-
   const fetchResult = await fetch(url, {
     method: "GET",
     headers: {
@@ -42,5 +39,12 @@ export const getFromStorage: Repository["upload"]["get"] = async (url) => {
 };
 
 export const putInStorage: Repository["upload"]["put"] = async (url, blob) => {
-  dirtyInMemoryStorage.set(url, blob);
+  const query = `${bucket}/`;
+  await client.storage
+    .from(bucket)
+    .upload(url.substring(url.lastIndexOf(query) + query.length), blob, {
+      contentType: blob.type,
+      upsert: false,
+      cacheControl: "public, max-age=31536000, immutable",
+    });
 };

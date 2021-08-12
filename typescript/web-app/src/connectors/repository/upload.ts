@@ -1,4 +1,3 @@
-import { v4 as uuidv4 } from "uuid";
 import type { UploadTarget, UploadTargetHttp } from "@labelflow/graphql-types";
 import { isInWindowScope } from "../../utils/detect-scope";
 
@@ -7,13 +6,14 @@ export const uploadsRoute = "/api/worker/uploads";
 
 declare let self: ServiceWorkerGlobalScope;
 
-export const getUploadTargetHttp = (): UploadTargetHttp => {
-  const fileId = uuidv4();
+export const getUploadTargetHttp = async (
+  key: string
+): Promise<UploadTargetHttp> => {
   return {
     __typename: "UploadTargetHttp",
     // Upload and download URL do not have to be the same. But in our implementation it is:
-    uploadUrl: `${self.location.protocol}//${self.location.host}${uploadsRoute}/${fileId}`,
-    downloadUrl: `${self.location.protocol}//${self.location.host}${uploadsRoute}/${fileId}`,
+    uploadUrl: `${self.location.protocol}//${self.location.host}${uploadsRoute}/${key}`,
+    downloadUrl: `${self.location.protocol}//${self.location.host}${uploadsRoute}/${key}`,
   };
 };
 
@@ -21,14 +21,14 @@ export const getUploadTargetHttp = (): UploadTargetHttp => {
  * A way for the server to tell how it wants to accept file uploads
  * @returns a presigned URL for the client to upload files to, or `null` if the server wants to accept direct graphql uploads
  */
-export const getUploadTarget = async (): Promise<UploadTarget> => {
+export const getUploadTarget = async (key: string): Promise<UploadTarget> => {
   if (isInWindowScope) {
     // We run in the window scope
     return { __typename: "UploadTargetDirect", direct: true };
   }
 
   // We run in the worker scope or nodejs
-  return getUploadTargetHttp();
+  return getUploadTargetHttp(key);
 };
 
 export const putInStorage = async (url: string, file: Blob) => {

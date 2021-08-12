@@ -210,6 +210,11 @@ export type MutationCreateExampleArgs = {
 };
 
 
+export type MutationGetUploadTargetArgs = {
+  data: UploadTargetInput;
+};
+
+
 export type MutationCreateImageArgs = {
   data: ImageCreateInput;
 };
@@ -399,6 +404,10 @@ export type UploadTargetHttp = {
   downloadUrl: Scalars['String'];
 };
 
+export type UploadTargetInput = {
+  key: Scalars['String'];
+};
+
 
 
 export type ResolverTypeWrapper<T> = Promise<T> | T;
@@ -522,6 +531,7 @@ export type ResolversTypes = {
   UploadTargetDirect: ResolverTypeWrapper<UploadTargetDirect>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   UploadTargetHttp: ResolverTypeWrapper<UploadTargetHttp>;
+  UploadTargetInput: UploadTargetInput;
 };
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -569,6 +579,7 @@ export type ResolversParentTypes = {
   UploadTargetDirect: UploadTargetDirect;
   Boolean: Scalars['Boolean'];
   UploadTargetHttp: UploadTargetHttp;
+  UploadTargetInput: UploadTargetInput;
 };
 
 export interface ColorHexScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['ColorHex'], any> {
@@ -656,7 +667,7 @@ export type LabelsAggregatesResolvers<ContextType = any, ParentType extends Reso
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   createExample?: Resolver<Maybe<ResolversTypes['Example']>, ParentType, ContextType, RequireFields<MutationCreateExampleArgs, 'data'>>;
-  getUploadTarget?: Resolver<ResolversTypes['UploadTarget'], ParentType, ContextType>;
+  getUploadTarget?: Resolver<ResolversTypes['UploadTarget'], ParentType, ContextType, RequireFields<MutationGetUploadTargetArgs, 'data'>>;
   createImage?: Resolver<Maybe<ResolversTypes['Image']>, ParentType, ContextType, RequireFields<MutationCreateImageArgs, 'data'>>;
   createLabel?: Resolver<Maybe<ResolversTypes['Label']>, ParentType, ContextType, RequireFields<MutationCreateLabelArgs, 'data'>>;
   updateLabel?: Resolver<Maybe<ResolversTypes['Label']>, ParentType, ContextType, RequireFields<MutationUpdateLabelArgs, 'where' | 'data'>>;
