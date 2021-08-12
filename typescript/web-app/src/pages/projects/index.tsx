@@ -149,10 +149,14 @@ const ProjectPage = ({
       if (!didVisitDemoProject && demoProject == null && loading === false) {
         try {
           await createDemoProjectMutation();
-        } catch (e) {
-          console.error("Problem creating demo project:", e);
+        } catch (error) {
+          console.error("Problem creating demo project:", error);
           parsedCookie.set("didVisitDemoProject", true);
-          router.reload();
+
+          // eslint-disable-next-line no-restricted-globals
+          confirm("error demo proj");
+          console.log();
+          // router.reload();
         }
       }
     };

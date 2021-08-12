@@ -22,15 +22,19 @@ export let db: Database;
 
 export const resetDatabase = () => {
   console.log("Initializing database");
-  if (db) {
-    try {
-      db.close();
-    } catch (e) {
-      console.log("Could not close existing database");
-    }
-  }
+  // if (db) {
+  //   try {
+  //     db.close();
+  //   } catch (error) {
+  //     console.log("Could not close existing database", error);
+  //   }
+  // }
   db = new Dexie("labelflow_local") as Database;
   versions.map(({ version, stores }) => db.version(version).stores(stores));
 };
 
-resetDatabase();
+// @ts-ignore
+if (!db) {
+  console.log("Need to init database");
+  resetDatabase();
+}

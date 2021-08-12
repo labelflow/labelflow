@@ -4,6 +4,11 @@ import type { Workbox } from "workbox-window";
 import { useQueryParam, StringParam } from "use-query-params";
 import { UpdateServiceWorkerModal } from "./update-service-worker-modal/update-service-worker-modal";
 import { WelcomeModal } from "./welcome-modal";
+import { timeout, sleep } from "../../utils/timeout";
+import {
+  checkServiceWorkerReady,
+  messageNoWindow,
+} from "../../utils/check-service-worker";
 
 declare global {
   interface Window {
@@ -12,10 +17,6 @@ declare global {
 }
 
 type Props = { assumeServiceWorkerActive: boolean };
-
-// See https://advancedweb.hu/how-to-add-timeout-to-a-promise-in-javascript/
-const timeout = <X,>(prom: Promise<X>, time: number): Promise<X> =>
-  Promise.race([prom, new Promise<X>((_r, rej) => setTimeout(rej, time))]);
 
 export const AppLifecycleManager = ({ assumeServiceWorkerActive }: Props) => {
   // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
@@ -61,7 +62,9 @@ export const AppLifecycleManager = ({ assumeServiceWorkerActive }: Props) => {
       }
 
       wb.addEventListener("controlling", (/* event: any */) => {
-        window.location.reload();
+        // eslint-disable-next-line no-restricted-globals
+        confirm("Wow controlling");
+        // window.location.reload();
       });
 
       // Send a message to the waiting service worker, instructing it to activate.
@@ -90,55 +93,22 @@ export const AppLifecycleManager = ({ assumeServiceWorkerActive }: Props) => {
         );
       }
 
-      const setServiceWorkerIsActive = () => {
-        wb.removeEventListener("activated", setServiceWorkerIsActive);
-        wb.removeEventListener("controlling", setServiceWorkerIsActive);
-        setIsServiceWorkerActive(true);
-      };
-
       const checkServiceWorkerStatus = async (): Promise<void> => {
         try {
-          if (!wb) {
-            throw new Error(
-              "Workbox is unavailable, are you on firefox in incognito mode?"
-            );
-          }
-
-          const sw = await timeout(wb.getSW(), 10000);
-
-          // Special case for potential rare case where the service worker
-          // stays stuck in the "activating" state. (Seen on Safari sometimes)
-          if (sw.state === "activating") {
-            await new Promise((_r, rej) => setTimeout(rej, 500));
-            if (sw.state === "activating") {
-              console.error(
-                "Forcing reload because service worker is stuck in activating state"
-              );
-              window.location.reload();
-            }
-          }
-
-          if (
-            !(
-              (
-                sw.state === "activated" || // Nominal case, service worker already installed and running, no new service worker waiting
-                sw.state === "installed"
-              )
-              // Service worker already installed and running, but there is a new service worker waiting
-            )
-          ) {
-            setIsServiceWorkerActive(false);
-            wb.addEventListener("activated", setServiceWorkerIsActive);
-            wb.addEventListener("controlling", setServiceWorkerIsActive);
-            return;
-          }
+          await checkServiceWorkerReady();
 
           setIsServiceWorkerActive(true);
-        } catch (e) {
+        } catch (error) {
+          if (error.message === messageNoWindow) {
+            return;
+          }
           console.error(
-            "Forcing reload because service worker is unresponsive"
+            "Forcing reload because service worker is unresponsive",
+            error
           );
-          window.location.reload();
+          // eslint-disable-next-line no-restricted-globals
+          confirm("Reload. You sure?");
+          // window.location.reload();
         }
       };
 
@@ -147,7 +117,9 @@ export const AppLifecycleManager = ({ assumeServiceWorkerActive }: Props) => {
       // add event listeners to handle any of PWA lifecycle event
       // https://developers.google.com/web/tools/workbox/reference-docs/latest/module-workbox-window.Workbox#events
       wb.addEventListener("redundant", () => {
-        window.location.reload();
+        // eslint-disable-next-line no-restricted-globals
+        confirm("Wow redundant");
+        // window.location.reload();
       });
 
       // A common UX pattern for progressive web apps is to show a banner when a service worker has updated and waiting to install.
@@ -178,11 +150,11 @@ export const AppLifecycleManager = ({ assumeServiceWorkerActive }: Props) => {
       // eslint-disable-next-line consistent-return
       return () => {
         wb.removeEventListener("waiting", promptNewVersionAvailable);
-        wb.removeEventListener("activated", setServiceWorkerIsActive);
-        wb.removeEventListener("controlling", setServiceWorkerIsActive);
+        // wb.removeEventListener("activated", setServiceWorkerIsActive);
+        // wb.removeEventListener("controlling", setServiceWorkerIsActive);
       };
-    } catch (e) {
-      handleError(e);
+    } catch (error) {
+      handleError(error);
     }
   }, []);
 

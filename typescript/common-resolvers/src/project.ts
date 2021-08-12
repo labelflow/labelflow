@@ -28,7 +28,7 @@ const getProjectById = async (
   repository: Repository
 ): Promise<DbProject> => {
   const project = await throwIfResolvesToNil(
-    "No project with such id",
+    `No project with id "${id}"`,
     repository.project.getById
   )(id);
 
@@ -57,7 +57,9 @@ const getProjectFromWhereUniqueInput = async (
 
   if (name != null) return getProjectByName(name, repository);
 
-  throw new Error("Invalid where unique input for project entity");
+  throw new Error(
+    `Invalid where unique input for project entity: ${JSON.stringify(where)}`
+  );
 };
 
 const getLabelClassesByProjectId = (
@@ -136,17 +138,20 @@ const createProject = async (
     throw new Error("Could not create the project with an empty name");
   }
 
+  const dbProject: DbProject = {
+    id: projectId,
+    createdAt: date,
+    updatedAt: date,
+    name,
+  };
   try {
-    await repository.project.add({
-      id: projectId,
-      createdAt: date,
-      updatedAt: date,
-      name,
-    });
+    await repository.project.add(dbProject);
 
     return await getProjectById(projectId, repository);
   } catch (e) {
-    throw new Error("Could not create the project");
+    throw new Error(
+      `Could not create the project ${JSON.stringify(dbProject)}`
+    );
   }
 };
 
@@ -195,7 +200,7 @@ const updateProject = async (
   { repository }: Context
 ): Promise<DbProject> => {
   const projectToUpdate = await throwIfResolvesToNil(
-    "No project with such id",
+    `No project with id "${args.where.id}" to update`,
     repository.project.getById
   )(args.where.id);
 
@@ -216,7 +221,7 @@ const deleteProject = async (
   { repository }: Context
 ): Promise<DbProject> => {
   const projectToDelete = await throwIfResolvesToNil(
-    "No project with such id",
+    `No project with id "${args.where.id}"`,
     repository.project.getById
   )(args.where.id);
   await repository.project.delete(projectToDelete.id);
