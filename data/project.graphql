@@ -6,6 +6,7 @@ input ProjectCreateInput {
 input ProjectWhereUniqueInput {
   id: ID
   name: String
+  slug: String
 }
 
 input ProjectWhereIDInput {

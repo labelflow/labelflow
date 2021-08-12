@@ -209,6 +209,7 @@ input ProjectWhereIDInput {
 input ProjectWhereUniqueInput {
   id: ID
   name: String
+  slug: String
 }
 
 type Query {

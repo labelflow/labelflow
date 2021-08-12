@@ -58,6 +58,7 @@ export const resetDatabase = () => {
       const projectId = uuidv4();
       db.project.add({
         name: "Demo project",
+        slug: "demo-project",
         id: projectId,
         createdAt: currentDate,
         updatedAt: currentDate,

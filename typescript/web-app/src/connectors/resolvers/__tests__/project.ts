@@ -545,6 +545,33 @@ describe("Project resolver test suite", () => {
     );
   });
 
+  test("Find project by slug", async () => {
+    const name = "My new project";
+    const projectId = "some id";
+    await createProject(name, projectId);
+
+    const queryResult = await client.query({
+      query: gql`
+        query getProject($slug: String!) {
+          project(where: { slug: $slug }) {
+            id
+            name
+          }
+        }
+      `,
+      variables: {
+        slug: "my-new-project",
+      },
+    });
+
+    expect(queryResult.data.project).toEqual(
+      expect.objectContaining({
+        id: projectId,
+        name,
+      })
+    );
+  });
+
   it("should list a project images, label classes and labels", async () => {
     mockedProbeSync.mockReturnValue({
       width: 42,

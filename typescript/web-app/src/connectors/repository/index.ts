@@ -42,6 +42,7 @@ export const repository: Repository = {
     delete: deleteProject,
     getById: (id) => db.project.get(id),
     getByName: (name) => db.project.get({ name }),
+    getBySlug: (slug) => db.project.get({ slug }),
     list: list(db.project),
     update: async (id, changes) => (await db.project.update(id, changes)) === 1,
   },

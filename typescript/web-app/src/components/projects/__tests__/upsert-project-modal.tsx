@@ -106,6 +106,8 @@ test("should display an error message if project name already exists", async () 
       mutation createProject($name: String) {
         createProject(data: { name: $name }) {
           id
+          name
+          slug
         }
       }
     `,

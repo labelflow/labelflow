@@ -40,15 +40,29 @@ const getProjectByName = async (
   return { ...project, __typename: projectTypename };
 };
 
+const getProjectBySlug = async (
+  slug: string,
+  repository: Repository
+): Promise<DbProject> => {
+  const project = await throwIfResolvesToNil(
+    `No project with name "${slug}"`,
+    repository.project.getBySlug
+  )(slug);
+
+  return { ...project, __typename: projectTypename };
+};
+
 const getProjectFromWhereUniqueInput = async (
   where: ProjectWhereUniqueInput,
   repository: Repository
 ): Promise<DbProject> => {
-  const { id, name } = where;
+  const { id, name, slug } = where;
 
   if (id != null) return getProjectById(id, repository);
 
   if (name != null) return getProjectByName(name, repository);
+
+  if (slug != null) return getProjectBySlug(slug, repository);
 
   throw new Error("Invalid where unique input for project entity");
 };

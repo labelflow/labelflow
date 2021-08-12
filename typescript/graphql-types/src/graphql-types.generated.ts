@@ -299,6 +299,7 @@ export type ProjectWhereIdInput = {
 export type ProjectWhereUniqueInput = {
   id?: Maybe<Scalars['ID']>;
   name?: Maybe<Scalars['String']>;
+  slug?: Maybe<Scalars['String']>;
 };
 
 export type Query = {

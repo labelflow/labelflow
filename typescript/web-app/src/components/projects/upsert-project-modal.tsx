@@ -1,5 +1,5 @@
 import { gql, useMutation, useLazyQuery, useQuery } from "@apollo/client";
-
+import slugify from "slugify";
 import { useEffect, useState, useCallback, useRef } from "react";
 import debounce from "lodash/fp/debounce";
 
@@ -37,11 +37,11 @@ const updateProjectMutation = gql`
   }
 `;
 
-const getProjectByNameQuery = gql`
-  query getProjectByName($name: String) {
-    project(where: { name: $name }) {
+const getProjectBySlugQuery = gql`
+  query getProjectBySlug($slug: String) {
+    project(where: { slug: $slug }) {
       id
-      name
+      slug
     }
   }
 `;
@@ -89,7 +89,7 @@ export const UpsertProjectModal = ({
       loading: loadingExistingProjects,
       variables: variablesExistingProjects,
     },
-  ] = useLazyQuery(getProjectByNameQuery, { fetchPolicy: "network-only" });
+  ] = useLazyQuery(getProjectBySlugQuery, { fetchPolicy: "network-only" });
 
   const [createProjectMutate] = useMutation(createProjectMutation, {
     variables: {
@@ -115,7 +115,7 @@ export const UpsertProjectModal = ({
   const debouncedQuery = useRef(
     debounce(debounceTime, (nextName: string) => {
       queryExistingProjects({
-        variables: { name: nextName },
+        variables: { slug: slugify(nextName, { lower: true }) },
       });
     })
   ).current;
@@ -131,7 +131,7 @@ export const UpsertProjectModal = ({
       existingProject != null &&
       !loadingExistingProjects &&
       existingProject?.project?.id !== projectId &&
-      variablesExistingProjects?.name === projectName
+      variablesExistingProjects?.slug === slugify(projectName, { lower: true })
     ) {
       setErrorMessage("This name is already taken");
     } else {
