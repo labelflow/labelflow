@@ -57,7 +57,7 @@ test("should delete a dataset when the button is clicked", async () => {
       variables: { id: mutateResult.data.createDataset.id },
       fetchPolicy: "no-cache",
     })
-  ).rejects.toEqual(new Error("No dataset with such id"));
+  ).rejects.toThrow(/No dataset with id/);
 });
 
 test("shouldn't delete a dataset when the cancel is clicked", async () => {

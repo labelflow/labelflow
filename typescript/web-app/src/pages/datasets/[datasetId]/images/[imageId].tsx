@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useQuery, gql } from "@apollo/client";
 import {
   Text,
@@ -17,6 +17,7 @@ import { useRouter } from "next/router";
 import { RiArrowRightSLine } from "react-icons/ri";
 import NextLink from "next/link";
 import type { Image } from "@labelflow/graphql-types";
+import { useErrorHandler } from "react-error-boundary";
 import { AppLifecycleManager } from "../../../../components/app-lifecycle-manager";
 import { KeymapButton } from "../../../../components/keymap-button";
 import { ImportButton } from "../../../../components/import-button";
@@ -24,6 +25,7 @@ import { ExportButton } from "../../../../components/export-button";
 import { Meta } from "../../../../components/meta";
 import { Layout } from "../../../../components/layout";
 import { Gallery } from "../../../../components/gallery";
+import Error404Page from "../../../404";
 
 const ArrowRightIcon = chakra(RiArrowRightSLine);
 
@@ -75,7 +77,7 @@ const ImagePage = ({
   const router = useRouter();
   const { datasetId, imageId } = router?.query;
 
-  const { data: imageResult, error } = useQuery<ImageQueryResponse>(
+  const { data: imageResult, error: errorImage } = useQuery<ImageQueryResponse>(
     imageQuery,
     {
       variables: { id: imageId },
@@ -83,21 +85,26 @@ const ImagePage = ({
     }
   );
 
-  const { data: datasetResult } = useQuery(getDatasetQuery, {
-    variables: { id: datasetId },
-  });
+  const { data: datasetResult, error: errorDataset } = useQuery(
+    getDatasetQuery,
+    {
+      variables: { id: datasetId },
+    }
+  );
 
   const imageName = imageResult?.image.name;
   const datasetName = datasetResult?.dataset.name;
 
-  useEffect(() => {
-    if (error) {
-      router.replace({
-        pathname: `/datasets/${datasetId}/images`,
-        query: router.query,
-      });
+  const handleError = useErrorHandler();
+  if (errorDataset || errorImage) {
+    if (errorDataset && !errorDataset.message.match(/No dataset with id/)) {
+      handleError(errorDataset);
     }
-  }, [error]);
+    if (errorImage && !errorImage.message.match(/No image with id/)) {
+      handleError(errorImage);
+    }
+    return <Error404Page />;
+  }
 
   return (
     <>

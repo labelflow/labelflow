@@ -141,7 +141,7 @@ const labelsResolver = async (
 
 const image = async (_: any, args: QueryImageArgs, { repository }: Context) =>
   throwIfResolvesToNil(
-    "No image with such id",
+    `No image with id "${args?.where?.id}"`,
     repository.image.getById
   )(args?.where?.id);
 

@@ -6,8 +6,8 @@
   "scripts": {
     "lint": "eslint '{cypress,typescript}/**/*.{ts,tsx}'",
     "lint:all": "eslint '{cypress,typescript}/**/*.{ts,tsx}'",
-    "test": "jest",
-    "test:all": "jest",
+    "test": "jest --runInBand",
+    "test:all": "jest --runInBand",
     "cypress:open": "cypress open",
     "cypress:run": "cypress run",
     "dev:web-app": "cd ./typescript/web-app && yarn dev",

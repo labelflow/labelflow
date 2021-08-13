@@ -4,26 +4,30 @@ import {
   DbDataset,
 } from "@labelflow/common-resolvers";
 
-import { db } from "../database";
+import { getDatabase } from "../database";
 
 export const deleteDataset: Repository["dataset"]["delete"] = async (id) => {
   const datasetToDelete = await throwIfResolvesToNil<
     [string],
     DbDataset | undefined
-  >("Cannot find dataset to delete", (idToGet) => db.dataset.get(idToGet))(id);
+  >(`Cannot find dataset with id "${id}" to delete`, (idToGet) =>
+    getDatabase().dataset.get(idToGet)
+  )(id);
 
-  const imagesToDelete = await db.image
-    .where({
+  const imagesToDelete = await getDatabase()
+    .image.where({
       datasetId: datasetToDelete.id,
     })
     .primaryKeys();
 
-  const labelsToDeleteIds = await db.label
-    .filter((label) => imagesToDelete.includes(label.imageId))
+  const labelsToDeleteIds = await getDatabase()
+    .label.filter((label) => imagesToDelete.includes(label.imageId))
     .primaryKeys();
 
-  await db.label.bulkDelete(labelsToDeleteIds);
-  await db.labelClass.where({ datasetId: datasetToDelete.id }).delete();
-  await db.image.where({ datasetId: datasetToDelete.id }).delete();
-  await db.dataset.delete(datasetToDelete.id);
+  await getDatabase().label.bulkDelete(labelsToDeleteIds);
+  await getDatabase()
+    .labelClass.where({ datasetId: datasetToDelete.id })
+    .delete();
+  await getDatabase().image.where({ datasetId: datasetToDelete.id }).delete();
+  await getDatabase().dataset.delete(datasetToDelete.id);
 };

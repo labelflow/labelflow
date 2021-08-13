@@ -1,25 +1,32 @@
 import Dexie from "dexie";
 
-import { Database } from "./types";
-
 import versions from "./versions";
 
-// eslint-disable-next-line import/no-mutable-exports
-export let db: Database;
+import { Database } from "./types";
 
-export const resetDatabase = () => {
+declare module globalThis {
+  let database: Database;
+}
+
+export const resetDatabase = (): Database => {
   console.log("Initializing database");
-  if (db) {
+  if (globalThis.database) {
     try {
-      db.close();
-    } catch (e) {
-      console.log("Could not close existing database");
+      globalThis.database.close();
+    } catch (error) {
+      console.log("Could not close existing database", error);
     }
   }
-  db = new Dexie("labelflow_local") as Database;
+  globalThis.database = new Dexie("labelflow_local") as Database;
   versions.map(({ version, stores, upgrade = () => {} }) =>
-    db.version(version).stores(stores).upgrade(upgrade)
+    globalThis.database.version(version).stores(stores).upgrade(upgrade)
   );
+  return globalThis.database;
 };
 
-resetDatabase();
+export const getDatabase = (): Database => {
+  if (globalThis.database) {
+    return globalThis.database;
+  }
+  return resetDatabase();
+};

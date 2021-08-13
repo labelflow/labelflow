@@ -29,7 +29,7 @@ const getDatasetById = async (
   repository: Repository
 ): Promise<DbDataset> => {
   const dataset = await throwIfResolvesToNil(
-    "No dataset with such id",
+    `No dataset with id "${id}"`,
     repository.dataset.getById
   )(id);
 
@@ -72,7 +72,9 @@ const getDatasetFromWhereUniqueInput = async (
 
   if (slug != null) return getDatasetBySlug(slug, repository);
 
-  throw new Error("Invalid where unique input for dataset entity");
+  throw new Error(
+    `Invalid where unique input for dataset entity: ${JSON.stringify(where)}`
+  );
 };
 
 const getLabelClassesByDatasetId = (
@@ -151,18 +153,21 @@ const createDataset = async (
     throw new Error("Could not create the dataset with an empty name");
   }
 
+  const dbDataset: DbDataset = {
+    id: datasetId,
+    createdAt: date,
+    updatedAt: date,
+    name,
+    slug: slugify(name, { lower: true }),
+  };
   try {
-    await repository.dataset.add({
-      id: datasetId,
-      createdAt: date,
-      updatedAt: date,
-      name,
-      slug: slugify(name, { lower: true }),
-    });
+    await repository.dataset.add(dbDataset);
 
     return await getDatasetById(datasetId, repository);
   } catch (e) {
-    throw new Error("Could not create the dataset");
+    throw new Error(
+      `Could not create the dataset ${JSON.stringify(dbDataset)}`
+    );
   }
 };
 
@@ -212,7 +217,7 @@ const updateDataset = async (
   { repository }: Context
 ): Promise<DbDataset> => {
   const datasetToUpdate = await throwIfResolvesToNil(
-    "No dataset with such id",
+    `No dataset with id "${args.where.id}" to update`,
     repository.dataset.getById
   )(args.where.id);
 
@@ -242,7 +247,7 @@ const deleteDataset = async (
   { repository }: Context
 ): Promise<DbDataset> => {
   const datasetToDelete = await throwIfResolvesToNil(
-    "No dataset with such id",
+    `No dataset with id "${args.where.id}"`,
     repository.dataset.getById
   )(args.where.id);
   await repository.dataset.delete(datasetToDelete.id);

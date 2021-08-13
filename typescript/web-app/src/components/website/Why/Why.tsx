@@ -42,19 +42,6 @@ export const Why = () => {
           mx="auto"
           src="/static/img/home-diagram.png"
         />
-        {/* <Image
-          // mt="24"
-          // height="xl"
-          width={720}
-          height={280}
-          // w="auto"
-          // h="auto"
-          layout="intrinsic"
-          // objectFit="contain"
-          // maxW={{ base: "calc( 100vw - 48px )", md: "xl" }}
-          // mx="auto"
-          src="/static/img/home-diagram.png"
-        /> */}
       </Box>
     </Box>
   );

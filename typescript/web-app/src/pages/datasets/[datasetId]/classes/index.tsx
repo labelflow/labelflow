@@ -10,6 +10,7 @@ import {
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { RiArrowRightSLine } from "react-icons/ri";
+import { useErrorHandler } from "react-error-boundary";
 import { AppLifecycleManager } from "../../../../components/app-lifecycle-manager";
 import { KeymapButton } from "../../../../components/keymap-button";
 import { ImportButton } from "../../../../components/import-button";
@@ -18,6 +19,7 @@ import { Meta } from "../../../../components/meta";
 import { Layout } from "../../../../components/layout";
 import { DatasetTabBar } from "../../../../components/layout/tab-bar/dataset-tab-bar";
 import { ClassesList } from "../../../../components/dataset-class-list";
+import Error404Page from "../../../404";
 
 const ArrowRightIcon = chakra(RiArrowRightSLine);
 
@@ -38,7 +40,7 @@ const DatasetClassesPage = ({
   const router = useRouter();
   const datasetId = router?.query?.datasetId as string;
 
-  const { data: datasetResult } = useQuery<{
+  const { data: datasetResult, error } = useQuery<{
     dataset: { id: string; name: string };
   }>(datasetNameQuery, {
     variables: {
@@ -47,6 +49,14 @@ const DatasetClassesPage = ({
   });
 
   const datasetName = datasetResult?.dataset.name;
+
+  const handleError = useErrorHandler();
+  if (error) {
+    if (!error.message.match(/No dataset with id/)) {
+      handleError(error);
+    }
+    return <Error404Page />;
+  }
 
   return (
     <>

@@ -140,7 +140,7 @@ test("File should be downloaded when user clicks on Export to COCO and Export", 
   userEvent.click(screen.getByRole("button", { name: "Export" }));
 
   await waitFor(() => expect(anchorMocked.click).toHaveBeenCalledTimes(1));
-});
+}, 20000);
 
 test("Export Modal should display the number of labels", async () => {
   await createDataset();

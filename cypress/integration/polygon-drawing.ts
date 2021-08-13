@@ -99,7 +99,7 @@ describe("Polygon drawing", () => {
       );
       imageId = id;
 
-      await createLabelClass("Rocket", "#f4bedc", datasetId);
+      await createLabelClass("Rocket", "#00ff00", datasetId);
     })
   );
 

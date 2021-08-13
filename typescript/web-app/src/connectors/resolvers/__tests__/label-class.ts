@@ -120,7 +120,7 @@ const createDataset = async (
 };
 
 describe("LabelClass resolver test suite", () => {
-  test("Query labelClass when db is empty", async () => {
+  test("Query labelClass when database is empty", async () => {
     const queryResult = await client.query({
       query: gql`
         query {

@@ -8,7 +8,7 @@ import Bluebird from "bluebird";
 import { client } from "../../../connectors/apollo-client/schema-client";
 import { chakraDecorator } from "../../../utils/chakra-decorator";
 import { apolloDecorator } from "../../../utils/apollo-decorator";
-import { db } from "../../../connectors/database";
+import { getDatabase } from "../../../connectors/database";
 
 import { Gallery } from "../gallery";
 
@@ -94,7 +94,7 @@ async function mockImagesLoader({
   parameters: { mockImages?: { images?: string[] }; mockDatasetId?: string };
 }) {
   // first, clean the database and the apollo client
-  await Promise.all(db.tables.map((table) => table.clear()));
+  await Promise.all(getDatabase().tables.map((table) => table.clear()));
   await client.clearStore();
 
   const imageArray = parameters?.mockImages?.images;

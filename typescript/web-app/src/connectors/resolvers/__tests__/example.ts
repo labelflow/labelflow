@@ -1,11 +1,11 @@
 import { createExample, example, examples } from "../example";
-import { db } from "../../database";
+import { getDatabase } from "../../database";
 import { setupTestsWithLocalDatabase } from "../../../utils/setup-local-db-tests";
 
 setupTestsWithLocalDatabase();
 
 describe("Example resolver test suite", () => {
-  test("Query example when db is empty", async () => {
+  test("Query example when database is empty", async () => {
     const queryResult = await examples(undefined, {});
     expect(queryResult.length).toBe(0);
   });
@@ -17,7 +17,7 @@ describe("Example resolver test suite", () => {
 
     expect(createResult?.name).toBe("test");
 
-    const queryResult = await db.example.get(createResult.id);
+    const queryResult = await getDatabase().example.get(createResult.id);
     expect(createResult).toEqual(queryResult);
   });
 
@@ -29,7 +29,7 @@ describe("Example resolver test suite", () => {
       name: "test",
     };
 
-    await db.example.add(testExample);
+    await getDatabase().example.add(testExample);
 
     const queryResult = await example(undefined, {
       where: { id: "1234567" },
@@ -61,7 +61,7 @@ describe("Example resolver test suite", () => {
     ];
 
     await Promise.all(
-      testExamples.map((testExample) => db.example.add(testExample))
+      testExamples.map((testExample) => getDatabase().example.add(testExample))
     );
 
     const queryResult = await examples(undefined, {});
@@ -100,7 +100,7 @@ describe("Example resolver test suite", () => {
     ];
 
     await Promise.all(
-      testExamples.map((testExample) => db.example.add(testExample))
+      testExamples.map((testExample) => getDatabase().example.add(testExample))
     );
 
     const queryResult = await examples(undefined, { skip: 1, first: 2 });

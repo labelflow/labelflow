@@ -115,16 +115,16 @@ describe("Dataset resolver test suite", () => {
   test("Creating a dataset should fail if the dataset name already exists", async () => {
     await createDataset("my dataset", "an-id");
 
-    return expect(createDataset("my dataset", "an-other-id")).rejects.toEqual(
-      new Error("Could not create the dataset")
+    return expect(createDataset("my dataset", "an-other-id")).rejects.toThrow(
+      /Could not create the dataset/
     );
   });
 
   test("Creating a dataset should fail if the dataset slug already exists", async () => {
     await createDataset("my dataset", "an-id");
 
-    return expect(createDataset("My Dataset", "an-other-id")).rejects.toEqual(
-      new Error("Could not create the dataset")
+    return expect(createDataset("My Dataset", "an-other-id")).rejects.toThrow(
+      /Could not create the dataset/
     );
   });
 
@@ -199,7 +199,7 @@ describe("Dataset resolver test suite", () => {
           id: "a id that doesn't exist",
         },
       })
-    ).rejects.toEqual(new Error("No dataset with such id"));
+    ).rejects.toThrow(/No dataset with id/);
   });
 
   test("Read multiple datasets", async () => {
@@ -238,7 +238,7 @@ describe("Dataset resolver test suite", () => {
     expect(queryResults.data.datasets[1].name).toEqual("dataset 2");
   });
 
-  test("Should return no datasets when db is empty", async () => {
+  test("Should return no datasets when database is empty", async () => {
     const queryResults = await client.query({
       query: gql`
         query getDatasets {
@@ -371,7 +371,7 @@ describe("Dataset resolver test suite", () => {
           id: datasetId,
         },
       })
-    ).rejects.toEqual(new Error("No dataset with such id"));
+    ).rejects.toThrow(/No dataset with id/);
   });
 
   test("should throw an error if the dataset to delete does not exist", () => {
@@ -389,7 +389,7 @@ describe("Dataset resolver test suite", () => {
           id: "not existing dataset id",
         },
       })
-    ).rejects.toEqual(new Error("No dataset with such id"));
+    ).rejects.toThrow(/No dataset with id/);
   });
 
   test("Should update a dataset with a new name", async () => {
@@ -515,7 +515,7 @@ describe("Dataset resolver test suite", () => {
           data: { name: "My new dataset new name" },
         },
       })
-    ).rejects.toEqual(new Error("No dataset with such id"));
+    ).rejects.toThrow(/No dataset with id/);
   });
 
   test("Find dataset by name", async () => {

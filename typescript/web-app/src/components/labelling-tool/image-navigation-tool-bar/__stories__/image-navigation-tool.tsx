@@ -9,7 +9,7 @@ import Bluebird from "bluebird";
 import { get } from "lodash/fp";
 import { chakraDecorator } from "../../../../utils/chakra-decorator";
 import { client } from "../../../../connectors/apollo-client/schema-client";
-import { db } from "../../../../connectors/database";
+import { getDatabase } from "../../../../connectors/database";
 
 import { ImageNavigationTool } from "../image-navigation-tool";
 import { apolloDecorator } from "../../../../utils/apollo-decorator";
@@ -157,7 +157,7 @@ async function mockImagesLoader({
   parameters: { mockImages?: { images?: { name: string; url: string }[] } };
 }) {
   // first, clean the database and the apollo client
-  await Promise.all(db.tables.map((table) => table.clear()));
+  await Promise.all(getDatabase().tables.map((table) => table.clear()));
   await client.clearStore();
 
   const imageArray = parameters?.mockImages?.images;
