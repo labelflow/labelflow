@@ -22,7 +22,7 @@ export const Footer = () => (
         spacing={{ base: "10", lg: "28" }}
       >
         <Box as="a" flex="1">
-          <NextLink href="/">
+          <NextLink href="/website">
             <Logo h="24px" iconColor="brand.400" cursor="pointer" />
           </NextLink>
         </Box>
