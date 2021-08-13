@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { Spinner, Center } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { useQuery, gql } from "@apollo/client";
+import { useErrorHandler } from "react-error-boundary";
 import { AppLifecycleManager } from "../../../components/app-lifecycle-manager";
 import { Layout } from "../../../components/layout";
 import Error404Page from "../../404";
@@ -35,7 +36,11 @@ const DatasetIndexPage = ({
     }
   }, [error, loading]);
 
+  const handleError = useErrorHandler();
   if (error) {
+    if (!error.message.match(/No dataset with id/)) {
+      handleError(error);
+    }
     return <Error404Page />;
   }
 

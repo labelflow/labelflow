@@ -17,6 +17,7 @@ import { useRouter } from "next/router";
 import { RiArrowRightSLine } from "react-icons/ri";
 import NextLink from "next/link";
 import type { Image } from "@labelflow/graphql-types";
+import { useErrorHandler } from "react-error-boundary";
 import { AppLifecycleManager } from "../../../../components/app-lifecycle-manager";
 import { KeymapButton } from "../../../../components/keymap-button";
 import { ImportButton } from "../../../../components/import-button";
@@ -94,7 +95,14 @@ const ImagePage = ({
   const imageName = imageResult?.image.name;
   const datasetName = datasetResult?.dataset.name;
 
-  if (errorImage || errorDataset) {
+  const handleError = useErrorHandler();
+  if (errorDataset || errorImage) {
+    if (errorDataset && !errorDataset.message.match(/No dataset with id/)) {
+      handleError(errorDataset);
+    }
+    if (errorImage && !errorImage.message.match(/No image with id/)) {
+      handleError(errorImage);
+    }
     return <Error404Page />;
   }
 

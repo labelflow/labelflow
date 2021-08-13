@@ -18,6 +18,7 @@ import {
 import { useRouter } from "next/router";
 import { isEmpty } from "lodash/fp";
 import { RiArrowRightSLine } from "react-icons/ri";
+import { useErrorHandler } from "react-error-boundary";
 import type { Dataset as DatasetType } from "@labelflow/graphql-types";
 import { AppLifecycleManager } from "../../../../components/app-lifecycle-manager";
 import { KeymapButton } from "../../../../components/keymap-button";
@@ -63,7 +64,11 @@ const ImagesPage = ({
 
   const datasetName = datasetResult?.dataset.name;
 
+  const handleError = useErrorHandler();
   if (error) {
+    if (!error.message.match(/No dataset with id/)) {
+      handleError(error);
+    }
     return <Error404Page />;
   }
 

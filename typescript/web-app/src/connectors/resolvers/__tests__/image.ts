@@ -123,7 +123,7 @@ describe("Image resolver test suite", () => {
           id: "some-id",
         },
       })
-    ).rejects.toThrow("No image with such id");
+    ).rejects.toThrow(/No image with id/);
   });
 
   it("should fail when we want to create an image when there is no dataset created", async () => {
