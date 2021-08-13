@@ -5246,6 +5246,7 @@ __metadata:
     downshift: ^6.1.3
     fake-indexeddb: ^3.1.2
     framer-motion: ^4
+    github-markdown-css: ^4.0.0
     graphiql: ^1.4.2
     graphql: 15.5.1
     graphql-subscriptions: ^1.2.1
@@ -17064,6 +17065,13 @@ fsevents@^1.2.7:
   dependencies:
     assert-plus: ^1.0.0
   checksum: 2650725bc6939616da8432e5351ca87d8b29421bb8dc19c21bad2c37cd337d2a50d36fcc398ce0c16a075f6079afe114131780dca7e2f4b96063e53e7d28fd7a
+  languageName: node
+  linkType: hard
+
+"github-markdown-css@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "github-markdown-css@npm:4.0.0"
+  checksum: 7b4b5f41986b38bb3d2b66fca649b1cc09c67185bf0f71ab1b5be54e7359a158a0d3de42e58f1eae59f024068f3dc10cb6de8f200f97a49c1d7b635f0d8584bc
   languageName: node
   linkType: hard
 

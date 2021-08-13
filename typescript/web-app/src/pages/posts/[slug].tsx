@@ -13,6 +13,7 @@ import { Footer } from "../../components/website/Footer/Footer";
 import { Meta } from "../../components/website/Meta";
 import { ArticlesList } from "../../components/website/Blog/articles-list";
 import { PostTitle } from "../../components/website/Blog/PostTitle";
+import "github-markdown-css";
 
 const ChakraReactMarkdown = chakra(ReactMarkdown);
 
@@ -57,22 +58,15 @@ export default function Posts({
             maxW={{ base: "xl", md: "7xl" }}
             mx="auto"
             px={{ base: "6", md: "8" }}
+            className="markdown-body"
           >
             <ChakraReactMarkdown
-              //   rehypePlugins={[rehypeRaw]}
+              rehypePlugins={[rehypeRaw]}
               remarkPlugins={[gfm]}
               sx={{
                 "& a": {
                   color: "brand.600",
                   ":hover": { textDecoration: "underline" },
-                },
-                "& p": {
-                  paddingTop: 4,
-                },
-                textAlign: "justify",
-                "& h1": {
-                  fontSize: "2em",
-                  fontWeight: "800",
                 },
               }}
             >
