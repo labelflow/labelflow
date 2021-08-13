@@ -109,14 +109,17 @@ App.getInitialProps = async (context: AppContext): Promise<InitialProps> => {
     "assumeServiceWorkerActive"
   );
 
-  // Set the cookie via http response
-  parsedCookie?.set("assumeServiceWorkerActive", true, {
-    path: "/",
-    httpOnly: false,
-    maxAge: 315569260000, // 10years
-    expires: new Date(Date.now() + 315569260000),
-    sameSite: "strict",
-  });
+  // The following would throw an error when used serve-side
+  if (typeof window !== "undefined") {
+    // Set the cookie via http response
+    parsedCookie?.set("assumeServiceWorkerActive", true, {
+      path: "/",
+      httpOnly: false,
+      maxAge: 315569260000, // 10years
+      expires: new Date(Date.now() + 315569260000),
+      sameSite: "strict",
+    });
+  }
 
   return {
     assumeServiceWorkerActive: assumeServiceWorkerActive ?? false,
