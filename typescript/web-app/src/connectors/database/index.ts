@@ -1,21 +1,8 @@
 import Dexie from "dexie";
-import {
-  DbExample,
-  DbImage,
-  DbLabel,
-  DbLabelClass,
-  DbDataset,
-} from "@labelflow/common-resolvers";
+
+import { Database } from "./types";
 
 import versions from "./versions";
-
-export interface Database extends Dexie {
-  example: Dexie.Table<DbExample, string>;
-  image: Dexie.Table<DbImage, string>;
-  label: Dexie.Table<DbLabel, string>;
-  labelClass: Dexie.Table<DbLabelClass, string>;
-  dataset: Dexie.Table<DbDataset, string>;
-}
 
 // eslint-disable-next-line import/no-mutable-exports
 export let db: Database;
@@ -30,7 +17,9 @@ export const resetDatabase = () => {
     }
   }
   db = new Dexie("labelflow_local") as Database;
-  versions.map(({ version, stores }) => db.version(version).stores(stores));
+  versions.map(({ version, stores, upgrade = () => {} }) =>
+    db.version(version).stores(stores).upgrade(upgrade)
+  );
 };
 
 resetDatabase();

@@ -1,3 +1,4 @@
+import Dexie from "dexie";
 import type {
   Scalars,
   Example as GeneratedExample,
@@ -30,3 +31,11 @@ export type DbDataset = Omit<
   | "labelClasses"
   | "labelClassesAggregates"
 >;
+
+export interface Database extends Dexie {
+  example: Dexie.Table<DbExample, string>;
+  image: Dexie.Table<DbImage, string>;
+  label: Dexie.Table<DbLabel, string>;
+  labelClass: Dexie.Table<DbLabelClass, string>;
+  dataset: Dexie.Table<DbDataset, string>;
+}
