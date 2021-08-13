@@ -59,8 +59,8 @@ export default function Posts({
             px={{ base: "6", md: "8" }}
           >
             <ChakraReactMarkdown
-            //   rehypePlugins={[rehypeRaw]}
-            //   remarkPlugins={[gfm]}
+              //   rehypePlugins={[rehypeRaw]}
+              remarkPlugins={[gfm]}
               sx={{
                 "& a": {
                   color: "brand.600",
