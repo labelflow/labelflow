@@ -2,80 +2,15 @@ const withPWA = require("next-pwa");
 const { BundleAnalyzerPlugin } = require("webpack-bundle-analyzer");
 const path = require("path");
 
-const withTM = require("next-transpile-modules")([
-  "bail",
-  "ccount",
-  "character-entities",
-  "character-entities-legacy",
-  "character-reference-invalid",
-  "comma-separated-tokens",
-  "debug",
-  "escape-string-regexp",
-  "extend",
-  "hast-to-hyperscript",
-  "hast-util-from-parse5",
-  "hast-util-parse-selector",
-  "hast-util-raw",
-  "hast-util-to-parse5",
-  "hastscript",
-  "html-void-elements",
-  "inline-style-parser",
-  "is-alphabetical",
-  "is-alphanumerical",
-  "is-buffer",
-  "is-decimal",
-  "is-hexadecimal",
-  "is-plain-obj",
-  "longest-streak",
-  "markdown-table",
-  "mdast-util-find-and-replace",
-  "mdast-util-gfm",
-  "mdast-util-gfm-autolink-literal",
-  "mdast-util-gfm-strikethrough",
-  "mdast-util-gfm-table",
-  "mdast-util-gfm-task-list-item",
-  "mdast-util-to-markdown",
-  "mdast-util-to-string",
-  "micromark",
-  "micromark-extension-gfm",
-  "micromark-extension-gfm-autolink-literal",
-  "micromark-extension-gfm-strikethrough",
-  "micromark-extension-gfm-table",
-  "micromark-extension-gfm-tagfilter",
-  "micromark-extension-gfm-task-list-item",
-  "ms",
-  "parse-entities",
-  "parse5",
-  "property-information",
-  "rehype-raw",
-  "remark-gfm",
-  "repeat-string",
-  "space-separated-tokens",
-  "style-to-object",
-  "trough",
-  "unified",
-  "unist-util-is",
-  "unist-util-position",
-  "unist-util-stringify-position",
-  "unist-util-visit",
-  "unist-util-visit-parents",
-  "vfile",
-  "vfile-location",
-  "vfile-message",
-  "web-namespaces",
-  "zwitch",
-]);
-
-module.exports = withTM(
+module.exports =
   withPWA({
     images: {
       deviceSizes: [
         320, 480, 640, 750, 828, 960, 1080, 1200, 1440, 1920, 2048, 2560, 3840,
       ],
     },
-    future: {
-      webpack5: true,
-    },
+    experimental: { esmExternals: "loose" },
+    webpack5: true,
     webpack: (
       config,
       { defaultLoaders, dev, isServer, config: nextConfig, ...others }
@@ -83,7 +18,7 @@ module.exports = withTM(
       // Note: we provide webpack above so you should not `require` it
       // Perform customizations to webpack config
 
-      const isWebpack5 = nextConfig.future.webpack5;
+      const isWebpack5 = nextConfig.webpack5;
 
       // Add graphql import
       // See https://www.npmjs.com/package/graphql-tag#webpack-loading-and-preprocessing
@@ -256,4 +191,4 @@ module.exports = withTM(
       // exclude: ["/api/worker/"]
     },
   })
-);
+  ;

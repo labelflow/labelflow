@@ -1,7 +1,7 @@
 import { useRef, useCallback } from "react";
 import { Spinner, Center, ThemeProvider } from "@chakra-ui/react";
 import { useRouter } from "next/router";
-import { RouterContext } from "next/dist/next-server/lib/router-context";
+import { RouterContext } from "next/dist/shared/lib/router-context";
 import { Extent, getCenter } from "ol/extent";
 import { Map as OlMap, View as OlView, MapBrowserEvent } from "ol";
 import { Vector as OlSourceVector } from "ol/source";
