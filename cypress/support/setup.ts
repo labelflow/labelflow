@@ -52,7 +52,23 @@ afterEach(() =>
           return window.caches.delete(cacheName);
         })
       );
+    } catch (error) {
+      console.error(error);
+    } finally {
+      console.log(
+        "Finish resetting everything after each test ==========================================================================="
+      );
+    }
+  })
+);
 
+// From https://github.com/cypress-io/cypress/issues/702#issuecomment-435873135
+after(() =>
+  cy.window().then(async (window) => {
+    try {
+      console.log(
+        "Start resetting everything after all tests ============================================================================"
+      );
       console.log("Unregister service workers");
       const registrations =
         await window.navigator.serviceWorker.getRegistrations();
@@ -69,7 +85,7 @@ afterEach(() =>
       console.error(error);
     } finally {
       console.log(
-        "Finish resetting everything after each test ==========================================================================="
+        "Finish resetting everything after all tests ==========================================================================="
       );
     }
   })
