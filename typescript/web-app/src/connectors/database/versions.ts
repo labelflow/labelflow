@@ -29,7 +29,8 @@ export default [
       labelClass: "id,createdAt,updatedAt,name,color,datasetId",
       dataset: "id,createdAt,updatedAt,&name,&slug",
     },
-    upgrade: ({ db }: { db: Database }) => {
+    upgrade: (transaction: Dexie.Transaction) => {
+      const db = transaction.db as Database;
       return db.dataset.toCollection().modify((dataset) => {
         if (dataset.slug == null) {
           // eslint-disable-next-line no-param-reassign
