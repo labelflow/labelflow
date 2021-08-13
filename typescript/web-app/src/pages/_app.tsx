@@ -111,11 +111,7 @@ App.getInitialProps = async (context: AppContext): Promise<InitialProps> => {
 
   // parsedCookie?.set(...) would throw an error when used in SSG context
   // The following condition checks that we are not doing SSG
-  if (
-    ctx?.res?.getHeader?.("Set-Cookie") == null ||
-    typeof (ctx?.res?.getHeader?.("Set-Cookie") as string[])?.push ===
-      "function"
-  ) {
+  if (ctx?.res?.getHeader?.("Set-Cookie") == null) {
     // Set the cookie via http response
     parsedCookie?.set("assumeServiceWorkerActive", true, {
       path: "/",
