@@ -5,9 +5,16 @@ import { Spinner, Center } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { join, map, toPairs, isEmpty } from "lodash/fp";
 import { Layout } from "../components/layout";
+import { Article, getAllArticles } from "../connectors/strapi";
 import Website from "./website";
 
-const IndexPage = ({ cookie }: { cookie: string }) => {
+const IndexPage = ({
+  cookie,
+  previewArticles,
+}: {
+  cookie: string;
+  previewArticles: Omit<Article, "content">[];
+}) => {
   const router = useRouter();
 
   const parsedCookie = useCookie(cookie);
@@ -20,7 +27,7 @@ const IndexPage = ({ cookie }: { cookie: string }) => {
   }, [hasUserTriedApp]);
 
   if (!hasUserTriedApp) {
-    return <Website />;
+    return <Website previewArticles={previewArticles} />;
   }
 
   return (
@@ -32,11 +39,18 @@ const IndexPage = ({ cookie }: { cookie: string }) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
+export const getServerSideProps: GetServerSideProps = async (
+  context
+): Promise<{
+  [key: string]: any;
+  props: { previewArticles: Omit<Article, "content">[] };
+}> => {
+  const previewArticles = (await getAllArticles({ limit: 3 })) || [];
   const parsedCookie = useCookie(context);
 
   if (parsedCookie.get("hasUserTriedApp")) {
     return {
+      props: { previewArticles },
       redirect: {
         // Keep query params after redirect
         destination: `/datasets${
@@ -52,7 +66,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     };
   }
 
-  return { props: {} };
+  return { props: { previewArticles } };
 };
 
 export default IndexPage;
