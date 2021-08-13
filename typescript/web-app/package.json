@@ -61,6 +61,7 @@
     "react-virtual": "^2.7.1",
     "rehype-raw": "6.0.0",
     "remark-gfm": "1.0.0",
+    "slugify": "^1.6.0",
     "use-query-params": "^1.2.2",
     "uuid": "^8.3.2",
     "valid-url": "^1.0.9",

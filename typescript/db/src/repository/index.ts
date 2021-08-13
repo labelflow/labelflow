@@ -74,6 +74,14 @@ export const repository: Repository = {
         skip,
         take: first,
       }),
+    update: async (id, labelClass) => {
+      try {
+        await prisma.labelClass.update({ where: { id }, data: labelClass });
+        return true;
+      } catch (e) {
+        return false;
+      }
+    },
   },
   dataset: {
     add: async (dataset) => {
@@ -88,6 +96,9 @@ export const repository: Repository = {
     },
     getByName: (name) => {
       return prisma.dataset.findUnique({ where: { name } });
+    },
+    getBySlug: (slug) => {
+      return prisma.dataset.findUnique({ where: { slug } });
     },
     update: async (id, dataset) => {
       try {
