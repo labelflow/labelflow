@@ -47,7 +47,7 @@ export const repository: Repository = {
     delete: deleteDataset,
     getById: (id) => getDatabase().dataset.get(id),
     getByName: (name) => getDatabase().dataset.get({ name }),
-    getBySlug: (slug) => db.dataset.get({ slug }),
+    getBySlug: (slug) => getDatabase().dataset.get({ slug }),
     list: list(getDatabase().dataset),
     update: async (id, changes) =>
       (await getDatabase().dataset.update(id, changes)) === 1,
