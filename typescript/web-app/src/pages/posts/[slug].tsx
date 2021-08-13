@@ -61,7 +61,9 @@ export default function Posts({
             className="markdown-body"
           >
             <ChakraReactMarkdown
+              // @ts-ignore
               rehypePlugins={[rehypeRaw]}
+              // @ts-ignore
               remarkPlugins={[gfm]}
               sx={{
                 "& a": {
