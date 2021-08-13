@@ -1,5 +1,6 @@
 import { trim } from "lodash/fp";
 import { v4 as uuidv4 } from "uuid";
+import slugify from "slugify";
 import type {
   MutationCreateDatasetArgs,
   MutationDeleteDatasetArgs,
@@ -47,15 +48,29 @@ const getDatasetByName = async (
   return { ...dataset, __typename: "Dataset" };
 };
 
+const getDatasetBySlug = async (
+  slug: string,
+  repository: Repository
+): Promise<DbDataset> => {
+  const dataset = await throwIfResolvesToNil(
+    `No dataset with slug "${slug}"`,
+    repository.dataset.getBySlug
+  )(slug);
+
+  return { ...dataset, __typename: "Dataset" };
+};
+
 const getDatasetFromWhereUniqueInput = async (
   where: DatasetWhereUniqueInput,
   repository: Repository
 ): Promise<DbDataset> => {
-  const { id, name } = where;
+  const { id, name, slug } = where;
 
   if (id != null) return getDatasetById(id, repository);
 
   if (name != null) return getDatasetByName(name, repository);
+
+  if (slug != null) return getDatasetBySlug(slug, repository);
 
   throw new Error(
     `Invalid where unique input for dataset entity: ${JSON.stringify(where)}`
@@ -143,6 +158,7 @@ const createDataset = async (
     createdAt: date,
     updatedAt: date,
     name,
+    slug: slugify(name, { lower: true }),
   };
   try {
     await repository.dataset.add(dbDataset);
@@ -165,6 +181,7 @@ const createDemoDataset = async (
   try {
     await repository.dataset.add({
       name: "Demo dataset",
+      slug: "demo-dataset",
       id: datasetId,
       createdAt: currentDate,
       updatedAt: currentDate,
@@ -204,11 +221,20 @@ const updateDataset = async (
     repository.dataset.getById
   )(args.where.id);
 
-  const updateResult = await repository.dataset.update(
-    datasetToUpdate.id,
-    args.data
-  );
-  if (!updateResult) {
+  const newData =
+    "name" in args.data
+      ? { ...args.data, slug: slugify(args.data.name, { lower: true }) }
+      : args.data;
+
+  try {
+    const updateResult = await repository.dataset.update(
+      datasetToUpdate.id,
+      newData
+    );
+    if (!updateResult) {
+      throw new Error("Could not update the dataset");
+    }
+  } catch (e) {
     throw new Error("Could not update the dataset");
   }
 

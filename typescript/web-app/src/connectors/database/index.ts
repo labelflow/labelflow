@@ -1,11 +1,6 @@
 import Dexie from "dexie";
-import {
-  DbExample,
-  DbImage,
-  DbLabel,
-  DbLabelClass,
-  DbDataset,
-} from "@labelflow/common-resolvers";
+
+import { Database } from "./types";
 
 import versions from "./versions";
 
@@ -31,8 +26,8 @@ export const resetDatabase = (): Database => {
     }
   }
   globalThis.database = new Dexie("labelflow_local") as Database;
-  versions.map(({ version, stores }) =>
-    globalThis.database.version(version).stores(stores)
+  versions.map(({ version, stores, upgrade = () => {} }) =>
+    globalThis.database.version(version).stores(stores).upgrade(upgrade)
   );
   return globalThis.database;
 };

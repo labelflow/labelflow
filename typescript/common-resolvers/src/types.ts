@@ -41,6 +41,7 @@ type Count<Where> = (where?: Where) => Promise<Number>;
 type Delete = (id: ID) => Promise<void>;
 type GetById<EntityType> = (id: ID) => Promise<EntityType | undefined>;
 type GetByName<EntityType> = (name: string) => Promise<EntityType | undefined>;
+type GetBySlug<EntityType> = (slug: string) => Promise<EntityType | undefined>;
 type List<Entity = unknown, Where extends Record<string, any> | null = null> = (
   where?: Where | null,
   skip?: number | null,
@@ -79,6 +80,7 @@ export type Repository = {
     delete: Delete;
     getById: GetById<DbDataset>;
     getByName: GetByName<DbDataset>;
+    getBySlug: GetBySlug<DbDataset>;
     list: List<DbDataset, null>;
     update: Update<DbDataset>;
   };

@@ -60,6 +60,7 @@ type Dataset {
   createdAt: DateTime!
   updatedAt: DateTime!
   name: String!
+  slug: String!
   images(first: Int, skip: Int): [Image!]!
   labels: [Label!]!
   labelClasses: [LabelClass!]!

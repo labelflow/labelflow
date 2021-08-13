@@ -106,6 +106,8 @@ test("should display an error message if dataset name already exists", async () 
       mutation createDataset($name: String) {
         createDataset(data: { name: $name }) {
           id
+          name
+          slug
         }
       }
     `,

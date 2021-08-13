@@ -60,6 +60,7 @@ model Dataset {
   createdAt    DateTime     @default(now())
   updatedAt    DateTime     @updatedAt
   name         String       @unique
+  slug         String       @unique
   labelClasses LabelClass[]
   images       Image[]
 }

@@ -115,7 +115,15 @@ describe("Dataset resolver test suite", () => {
   test("Creating a dataset should fail if the dataset name already exists", async () => {
     await createDataset("my dataset", "an-id");
 
-    return expect(createDataset("my dataset", "an-id")).rejects.toThrow(
+    return expect(createDataset("my dataset", "an-other-id")).rejects.toThrow(
+      new Error("Could not create the dataset")
+    );
+  });
+
+  test("Creating a dataset should fail if the dataset slug already exists", async () => {
+    await createDataset("my dataset", "an-id");
+
+    return expect(createDataset("My Dataset", "an-other-id")).rejects.toEqual(
       /Could not create the dataset/
     );
   });
@@ -433,6 +441,64 @@ describe("Dataset resolver test suite", () => {
     );
   });
 
+  test("Should throw when updating a dataset with an existing name", async () => {
+    const name1 = "My new dataset";
+    const name2 = "My other dataset";
+    const datasetId1 = "id1";
+    const datasetId2 = "id2";
+    await createDataset(name1, datasetId1);
+    await createDataset(name2, datasetId2);
+
+    const updateDatasetName = () =>
+      client.mutate({
+        mutation: gql`
+          mutation updateDataset($id: ID!, $data: DatasetUpdateInput!) {
+            updateDataset(where: { id: $id }, data: $data) {
+              id
+              name
+            }
+          }
+        `,
+        variables: {
+          id: datasetId2,
+          data: { name: name1 },
+        },
+      });
+
+    return expect(updateDatasetName).rejects.toEqual(
+      new Error("Could not update the dataset")
+    );
+  });
+
+  test("Should throw when updating a dataset with an existing slug", async () => {
+    const name1 = "My New Dataset";
+    const name2 = "My other dataset";
+    const datasetId1 = "id1";
+    const datasetId2 = "id2";
+    await createDataset(name1, datasetId1);
+    await createDataset(name2, datasetId2);
+
+    const updateDatasetName = () =>
+      client.mutate({
+        mutation: gql`
+          mutation updateDataset($id: ID!, $data: DatasetUpdateInput!) {
+            updateDataset(where: { id: $id }, data: $data) {
+              id
+              name
+            }
+          }
+        `,
+        variables: {
+          id: datasetId2,
+          data: { name: "my new dataset" },
+        },
+      });
+
+    return expect(updateDatasetName).rejects.toEqual(
+      new Error("Could not update the dataset")
+    );
+  });
+
   test("Should throw when trying to update a dataset that doesn't exist", () => {
     return expect(
       client.mutate({
@@ -468,6 +534,33 @@ describe("Dataset resolver test suite", () => {
       `,
       variables: {
         name,
+      },
+    });
+
+    expect(queryResult.data.dataset).toEqual(
+      expect.objectContaining({
+        id: datasetId,
+        name,
+      })
+    );
+  });
+
+  test("Find dataset by slug", async () => {
+    const name = "My new dataset";
+    const datasetId = "some id";
+    await createDataset(name, datasetId);
+
+    const queryResult = await client.query({
+      query: gql`
+        query getDataset($slug: String!) {
+          dataset(where: { slug: $slug }) {
+            id
+            name
+          }
+        }
+      `,
+      variables: {
+        slug: "my-new-dataset",
       },
     });
 
