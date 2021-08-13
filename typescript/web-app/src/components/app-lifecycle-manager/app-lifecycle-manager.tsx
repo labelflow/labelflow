@@ -61,8 +61,6 @@ export const AppLifecycleManager = ({ assumeServiceWorkerActive }: Props) => {
       }
 
       wb.addEventListener("controlling", (/* event: any */) => {
-        // eslint-disable-next-line no-restricted-globals
-        confirm("Service worker is controlling, will reload");
         window.location.reload();
       });
 
@@ -71,8 +69,8 @@ export const AppLifecycleManager = ({ assumeServiceWorkerActive }: Props) => {
 
       setParamModalUpdateServiceWorker(undefined, "replaceIn");
       setIsUpdateServiceWorkerModalOpen(false);
-    } catch (e) {
-      handleError(e);
+    } catch (error) {
+      handleError(error);
     }
   }, [setIsUpdateServiceWorkerModalOpen, setParamModalUpdateServiceWorker]);
 
@@ -95,31 +93,16 @@ export const AppLifecycleManager = ({ assumeServiceWorkerActive }: Props) => {
       const checkServiceWorkerStatus = async (): Promise<void> => {
         try {
           await checkServiceWorkerReady();
-
           setIsServiceWorkerActive(true);
         } catch (error) {
           if (error.message === messageNoWindow) {
             return;
           }
-          console.error(
-            "Forcing reload because service worker is unresponsive",
-            error
-          );
-          // eslint-disable-next-line no-restricted-globals
-          confirm("Service worker is unresponsive, will reload");
-          window.location.reload();
+          handleError(error);
         }
       };
 
       checkServiceWorkerStatus();
-
-      // add event listeners to handle any of PWA lifecycle event
-      // https://developers.google.com/web/tools/workbox/reference-docs/latest/module-workbox-window.Workbox#events
-      wb.addEventListener("redundant", () => {
-        // eslint-disable-next-line no-restricted-globals
-        confirm("Service worker is redundant, will reload");
-        window.location.reload();
-      });
 
       // A common UX pattern for progressive web apps is to show a banner when a service worker has updated and waiting to install.
       // NOTE: MUST set skipWaiting to false in next.config.js pwa object
@@ -149,8 +132,6 @@ export const AppLifecycleManager = ({ assumeServiceWorkerActive }: Props) => {
       // eslint-disable-next-line consistent-return
       return () => {
         wb.removeEventListener("waiting", promptNewVersionAvailable);
-        // wb.removeEventListener("activated", setServiceWorkerIsActive);
-        // wb.removeEventListener("controlling", setServiceWorkerIsActive);
       };
     } catch (error) {
       handleError(error);

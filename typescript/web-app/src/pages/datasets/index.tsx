@@ -15,6 +15,7 @@ import {
 import { RiArrowRightSLine } from "react-icons/ri";
 import { useQueryParam } from "use-query-params";
 import { useCookie } from "next-cookie";
+import { useErrorHandler } from "react-error-boundary";
 
 import type { Dataset as DatasetType } from "@labelflow/graphql-types";
 import { Meta } from "../../components/meta";
@@ -148,6 +149,8 @@ const DatasetPage = ({
           (dataset) => dataset.name === "Demo dataset"
         )?.[0] ?? undefined;
 
+  const handleError = useErrorHandler();
+
   useEffect(() => {
     const createDemoDataset = async () => {
       if (loading === true || hasDatasets) return;
@@ -155,12 +158,8 @@ const DatasetPage = ({
         try {
           await createDemoDatasetMutation();
         } catch (error) {
-          console.error("Problem creating demo dataset:", error);
           parsedCookie.set("didVisitDemoDataset", true);
-
-          // eslint-disable-next-line no-restricted-globals
-          confirm("Error when creating demo dataset");
-          router.reload();
+          handleError(error);
         }
       }
     };
