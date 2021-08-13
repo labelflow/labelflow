@@ -96,7 +96,7 @@ jobs:
           path: "**/node_modules"
           key: ${{ runner.os }}-modules-${{secrets.ACTIONS_CACHE_VERSION}}-${{ hashFiles('yarn.lock') }}
       - name: check node_modules
-        run: ls typescript/web-app/node_modules
+        run: ls typescript/web/node_modules
       - name: run tests
         run: yarn test
 
@@ -165,8 +165,8 @@ jobs:
         uses: cypress-io/github-action@v2
         with:
           install: false
-          build: yarn bundlewatch:web-app
-          start: yarn start:web-app
+          build: yarn bundlewatch:web
+          start: yarn start:web
           wait-on: "http://localhost:3000"
           wait-on-timeout: 300
           browser: chrome
@@ -214,7 +214,7 @@ jobs:
         with:
           step: start
           token: ${{ secrets.GITHUB_TOKEN }}
-          env: "Preview – labelflow-app"
+          env: "Preview – labelflow"
           ref: ${{ github.head_ref }}
           no_override: false
       - name: Check out repository code
@@ -229,14 +229,14 @@ jobs:
           vercel-args: "" #Optional
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID}} #Required
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID_WEBAPP}} #Required
-          vercel-project-name: "labelflow-app"
-          # working-directory: ./typescript/web-app
+          vercel-project-name: "labelflow"
+          # working-directory: ./typescript/web
           working-directory: .
           # alias-domains: | #Optional
           #   app.labelflow.ai
-          #   pr-{{PR_NUMBER}}.app.labelflow.ai
+          #   pr{{PR_NUMBER}}.beta.labelflow.ai
           alias-domains: | #Optional
-            pr-{{PR_NUMBER}}.app.labelflow.ai
+            pr{{PR_NUMBER}}.beta.labelflow.ai
       - run: npx vercel logs ${{steps.vercel.outputs.preview-url}} --token ${{ secrets.VERCEL_TOKEN }}
       - name: update deployment status
         uses: bobheadxi/deployments@v0.4.3
@@ -260,7 +260,7 @@ jobs:
         with:
           step: start
           token: ${{ secrets.GITHUB_TOKEN }}
-          env: "Production – labelflow-app"
+          env: "Production – labelflow"
           ref: ${{ github.head_ref }}
           no_override: true
       - name: Check out repository code
@@ -275,14 +275,14 @@ jobs:
           vercel-args: "--prod" #Optional
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID}} #Required
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID_WEBAPP}} #Required
-          vercel-project-name: "labelflow-app"
-          # working-directory: ./typescript/web-app
+          vercel-project-name: "labelflow"
+          # working-directory: ./typescript/web
           working-directory: .
           # alias-domains: | #Optional
           #   app.labelflow.ai
-          #   pr-{{PR_NUMBER}}.app.labelflow.ai
+          #   pr{{PR_NUMBER}}.beta.labelflow.ai
           alias-domains: | #Optional
-            app.labelflow.ai
+            labelflow.ai
       - run: npx vercel logs ${{steps.vercel.outputs.preview-url}} --token ${{ secrets.VERCEL_TOKEN }}
       - name: update deployment status
         uses: bobheadxi/deployments@v0.4.3

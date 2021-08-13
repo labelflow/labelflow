@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 
-import { client } from "../../typescript/web-app/src/connectors/apollo-client/schema-client";
+import { client } from "../../typescript/web/src/connectors/apollo-client/schema-client";
 
 const createDataset = async (name: string) => {
   const mutationResult = await client.mutate({

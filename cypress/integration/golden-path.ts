@@ -1,4 +1,4 @@
-import imageSampleCollection from "../../typescript/web-app/src/utils/image-sample-collection";
+import imageSampleCollection from "../../typescript/web/src/utils/image-sample-collection";
 
 describe("Golden path", () => {
   it("Should execute the golden path without errors", () => {

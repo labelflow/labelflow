@@ -1,4 +1,4 @@
-import { getDatabase } from "../../typescript/web-app/src/connectors/database";
+import { getDatabase } from "../../typescript/web/src/connectors/database";
 
 // From https://github.com/cypress-io/cypress/issues/702#issuecomment-435873135
 beforeEach(() =>
