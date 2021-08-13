@@ -30,7 +30,7 @@ const MobileNavContext = (props: FlexProps) => {
         <Box flexBasis="6rem">
           <ToggleButton isOpen={isOpen} onClick={onToggle} />
         </Box>
-        <NextLink href="/">
+        <NextLink href="/website">
           <Box as="a" rel="home" mx="auto" cursor="pointer">
             <Logo h="24px" iconColor="brand.400" />
           </Box>
@@ -71,9 +71,9 @@ const DesktopNavContent = (props: FlexProps) => {
       justify="space-between"
       {...props}
     >
-      <NextLink href="/">
+      <NextLink href="/website">
         <Box as="a" rel="home" cursor="pointer">
-          <VisuallyHidden>OkPharma</VisuallyHidden>
+          <VisuallyHidden>LabelFlow</VisuallyHidden>
           <Logo h="6" iconColor="brand.500" />
         </Box>
       </NextLink>
