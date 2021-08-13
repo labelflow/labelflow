@@ -15,7 +15,7 @@ import {
   precacheAndRoute,
   cleanupOutdatedCaches,
 } from "workbox-precaching";
-import { initialize as initializeGoogleAnalytics } from "workbox-google-analytics";
+// import { initialize as initializeGoogleAnalytics } from "workbox-google-analytics";
 
 import { trimCharsEnd } from "lodash/fp";
 import typeDefs from "../../../../data/__generated__/schema.graphql";
@@ -61,7 +61,8 @@ precacheAndRoute(WB_MANIFEST);
 // @ts-ignore
 self.WB_MANIFEST = WB_MANIFEST;
 
-initializeGoogleAnalytics({});
+// // Initialize workbox Google analytics. For some reason this is broken right now, so we commented it.
+// initializeGoogleAnalytics();
 
 cleanupOutdatedCaches();
 
