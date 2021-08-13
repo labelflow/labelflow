@@ -218,7 +218,7 @@ const updateDataset = async (
 
   const newData =
     "name" in args.data
-      ? { ...args.data, slug: slugify(args.data.name) }
+      ? { ...args.data, slug: slugify(args.data.name, { lower: true }) }
       : args.data;
 
   try {
