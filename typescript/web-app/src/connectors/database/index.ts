@@ -1,16 +1,8 @@
 import Dexie from "dexie";
 
-import { Database } from "./types";
-
 import versions from "./versions";
 
-export interface Database extends Dexie {
-  example: Dexie.Table<DbExample, string>;
-  image: Dexie.Table<DbImage, string>;
-  label: Dexie.Table<DbLabel, string>;
-  labelClass: Dexie.Table<DbLabelClass, string>;
-  dataset: Dexie.Table<DbDataset, string>;
-}
+import { Database } from "./types";
 
 declare module globalThis {
   let database: Database;
