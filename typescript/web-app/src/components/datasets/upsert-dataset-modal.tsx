@@ -1,5 +1,5 @@
 import { gql, useMutation, useLazyQuery, useQuery } from "@apollo/client";
-
+import slugify from "slugify";
 import { useEffect, useState, useCallback, useRef } from "react";
 import debounce from "lodash/fp/debounce";
 
@@ -37,11 +37,11 @@ const updateDatasetMutation = gql`
   }
 `;
 
-const getDatasetByNameQuery = gql`
-  query getDatasetByName($name: String) {
-    dataset(where: { name: $name }) {
+const getDatasetBySlugQuery = gql`
+  query getDatasetBySlug($slug: String) {
+    dataset(where: { slug: $slug }) {
       id
-      name
+      slug
     }
   }
 `;
@@ -89,7 +89,7 @@ export const UpsertDatasetModal = ({
       loading: loadingExistingDatasets,
       variables: variablesExistingDatasets,
     },
-  ] = useLazyQuery(getDatasetByNameQuery, { fetchPolicy: "network-only" });
+  ] = useLazyQuery(getDatasetBySlugQuery, { fetchPolicy: "network-only" });
 
   const [createDatasetMutate] = useMutation(createDatasetMutation, {
     variables: {
@@ -115,7 +115,7 @@ export const UpsertDatasetModal = ({
   const debouncedQuery = useRef(
     debounce(debounceTime, (nextName: string) => {
       queryExistingDatasets({
-        variables: { name: nextName },
+        variables: { slug: slugify(nextName, { lower: true }) },
       });
     })
   ).current;
@@ -131,7 +131,7 @@ export const UpsertDatasetModal = ({
       existingDataset != null &&
       !loadingExistingDatasets &&
       existingDataset?.dataset?.id !== datasetId &&
-      variablesExistingDatasets?.name === datasetName
+      variablesExistingDatasets?.slug === slugify(datasetName, { lower: true })
     ) {
       setErrorMessage("This name is already taken");
     } else {

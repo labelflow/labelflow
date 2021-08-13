@@ -5,6 +5,7 @@ type Dataset {
   createdAt: DateTime!
   updatedAt: DateTime!
   name: String!
+  slug: String!
   images(first: Int, skip: Int): [Image!]!
   labels: [Label!]!
   labelClasses: [LabelClass!]!
@@ -29,6 +30,7 @@ input DatasetWhereIDInput {
 input DatasetWhereUniqueInput {
   id: ID
   name: String
+  slug: String
 }
 
 scalar DateTime

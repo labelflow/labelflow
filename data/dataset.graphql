@@ -6,6 +6,7 @@ input DatasetCreateInput {
 input DatasetWhereUniqueInput {
   id: ID
   name: String
+  slug: String
 }
 
 input DatasetWhereIDInput {

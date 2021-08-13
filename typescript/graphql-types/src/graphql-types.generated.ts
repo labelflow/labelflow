@@ -24,6 +24,7 @@ export type Dataset = {
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
   name: Scalars['String'];
+  slug: Scalars['String'];
   images: Array<Image>;
   labels: Array<Label>;
   labelClasses: Array<LabelClass>;
@@ -54,6 +55,7 @@ export type DatasetWhereIdInput = {
 export type DatasetWhereUniqueInput = {
   id?: Maybe<Scalars['ID']>;
   name?: Maybe<Scalars['String']>;
+  slug?: Maybe<Scalars['String']>;
 };
 
 
@@ -581,6 +583,7 @@ export type DatasetResolvers<ContextType = any, ParentType extends ResolversPare
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   images?: Resolver<Array<ResolversTypes['Image']>, ParentType, ContextType, RequireFields<DatasetImagesArgs, never>>;
   labels?: Resolver<Array<ResolversTypes['Label']>, ParentType, ContextType>;
   labelClasses?: Resolver<Array<ResolversTypes['LabelClass']>, ParentType, ContextType>;
