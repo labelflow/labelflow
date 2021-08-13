@@ -25,8 +25,8 @@ type Query {
   label(where: LabelWhereUniqueInput!): Label!
   labels(where: LabelWhereInput, first: Int, skip: Int): [Label!]!
 
-  project(where: ProjectWhereUniqueInput!): Project!
-  projects(first: Int, skip: Int): [Project!]!
+  dataset(where: DatasetWhereUniqueInput!): Dataset!
+  datasets(first: Int, skip: Int): [Dataset!]!
 
   exportToCoco(where: ExportWhereUniqueInput!): String!
 

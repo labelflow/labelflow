@@ -47,7 +47,7 @@ beforeEach(async () => {
       {
         name: "new label class",
         color: "0xaa45f8",
-        projectId: "a project id",
+        datasetId: "a dataset id",
         selectedLabelClassIdPrevious: "previous label class id",
       },
       { client }
@@ -63,7 +63,7 @@ it("should create the label class and update the labelling store", async () => {
         data: {
           name: "new label class",
           color: "0xaa45f8",
-          projectId: "a project id",
+          datasetId: "a dataset id",
         },
       },
     })
@@ -100,7 +100,7 @@ it("should redo the update of the label class of a label and the update of the l
         data: {
           name: "new label class",
           color: "0xaa45f8",
-          projectId: "a project id",
+          datasetId: "a dataset id",
           id: "label class id",
         },
       },

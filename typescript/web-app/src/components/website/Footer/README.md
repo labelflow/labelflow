@@ -25,16 +25,16 @@ yarn add @chakra-ui/react @emotion/react @emotion/styled framer-motion react-ico
 For Chakra UI to work correctly, you need to setup the ChakraProvider at the root of your application.
 
 ```tsx
-import * as React from 'react'
-import { ChakraProvider } from '@chakra-ui/react'
+import * as React from "react";
+import { ChakraProvider } from "@chakra-ui/react";
 
 export const App = () => {
   return (
     <ChakraProvider>
       <App />
     </ChakraProvider>
-  )
-}
+  );
+};
 ```
 
 ## Chakra UI Docs

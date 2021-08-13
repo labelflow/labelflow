@@ -20,7 +20,7 @@ export const client = new ApolloClient({
           },
         },
       },
-      Project: {
+      Dataset: {
         fields: {
           labelClasses: {
             // Short for keeping only the incoming data, see https://www.apollographql.com/docs/react/caching/cache-field-behavior/#merging-non-normalized-objects

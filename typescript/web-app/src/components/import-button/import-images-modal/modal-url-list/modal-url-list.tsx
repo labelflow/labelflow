@@ -18,13 +18,13 @@ const createImageFromUrlMutation = gql`
   mutation createImageMutation(
     $externalUrl: String!
     $createdAt: DateTime
-    $projectId: ID!
+    $datasetId: ID!
   ) {
     createImage(
       data: {
         externalUrl: $externalUrl
         createdAt: $createdAt
-        projectId: $projectId
+        datasetId: $datasetId
       }
     ) {
       id
@@ -44,7 +44,7 @@ export const ImportImagesModalUrlList = ({
   const apolloClient = useApolloClient();
 
   const router = useRouter();
-  const { projectId } = router?.query;
+  const { datasetId } = router?.query;
 
   /*
    * We need a state with the accepted and reject urls to be able to reset the list
@@ -57,8 +57,8 @@ export const ImportImagesModalUrlList = ({
   useEffect(() => {
     if (isEmpty(urls)) return;
 
-    if (!projectId) {
-      throw new Error(`No project id`);
+    if (!datasetId) {
+      throw new Error(`No dataset id`);
     }
 
     const createImages = async () => {
@@ -75,7 +75,7 @@ export const ImportImagesModalUrlList = ({
                 variables: {
                   externalUrl: acceptedUrl.url,
                   createdAt: createdAt.toISOString(),
-                  projectId,
+                  datasetId,
                 },
               });
 

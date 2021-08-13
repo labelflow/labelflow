@@ -13,7 +13,7 @@ import {
 } from "../../../../utils/router-mocks";
 
 mockUseQueryParams();
-mockNextRouter({ query: { projectId: "mocked-project-id" } });
+mockNextRouter({ query: { datasetId: "mocked-dataset-id" } });
 
 import { ImportImagesModal } from "../import-images-modal";
 
@@ -82,7 +82,7 @@ beforeEach(async () => {
   await client.mutate({
     mutation: gql`
       mutation {
-        createProject(data: { name: "test project", id: "mocked-project-id" }) {
+        createDataset(data: { name: "test dataset", id: "mocked-dataset-id" }) {
           id
         }
       }

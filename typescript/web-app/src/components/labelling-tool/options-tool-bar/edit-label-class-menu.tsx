@@ -12,9 +12,9 @@ import { createNewLabelClassCurry } from "../../../connectors/undo-store/effects
 import { createUpdateLabelClassEffect } from "../../../connectors/undo-store/effects/update-label-class";
 import { keymap } from "../../../keymap";
 
-const labelClassesOfProjectQuery = gql`
-  query getLabelClassesOfProject($projectId: ID!) {
-    labelClasses(where: { projectId: $projectId }) {
+const labelClassesOfDatasetQuery = gql`
+  query getLabelClassesOfDataset($datasetId: ID!) {
+    labelClasses(where: { datasetId: $datasetId }) {
       id
       name
       color
@@ -47,11 +47,11 @@ const labelQuery = gql`
 
 export const EditLabelClassMenu = () => {
   const router = useRouter();
-  const projectId = router?.query.projectId as string;
+  const datasetId = router?.query.datasetId as string;
   const client = useApolloClient();
   const [isOpen, setIsOpen] = useState(false);
-  const { data } = useQuery(labelClassesOfProjectQuery, {
-    variables: { projectId },
+  const { data } = useQuery(labelClassesOfDatasetQuery, {
+    variables: { datasetId },
   });
   const { perform } = useUndoStore();
   const labelClasses = data?.labelClasses ?? [];
@@ -74,7 +74,7 @@ export const EditLabelClassMenu = () => {
 
   useEffect(() => {
     setSelectedLabelClassId(null);
-  }, [projectId]);
+  }, [datasetId]);
 
   const { data: dataLabelClass } = useQuery(labelClassQuery, {
     variables: { id: selectedLabelClassId },
@@ -88,7 +88,7 @@ export const EditLabelClassMenu = () => {
     () =>
       createNewLabelClassCurry({
         labelClasses,
-        projectId,
+        datasetId,
         perform,
         client,
       }),
@@ -98,7 +98,7 @@ export const EditLabelClassMenu = () => {
     () =>
       createNewLabelClassAndUpdateLabelCurry({
         labelClasses,
-        projectId,
+        datasetId,
         perform,
         client,
       }),
