@@ -116,7 +116,7 @@ describe("Dataset resolver test suite", () => {
     await createDataset("my dataset", "an-id");
 
     return expect(createDataset("my dataset", "an-other-id")).rejects.toThrow(
-      new Error("Could not create the dataset")
+      /Could not create the dataset/
     );
   });
 
