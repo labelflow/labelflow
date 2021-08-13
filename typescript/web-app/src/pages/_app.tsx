@@ -109,8 +109,12 @@ App.getInitialProps = async (context: AppContext): Promise<InitialProps> => {
     "assumeServiceWorkerActive"
   );
 
-  // The following would throw an error when used serve-side
-  if (typeof window !== "undefined") {
+  // parsedCookie?.set(...) would throw an error when used in SSG context
+  // The following condition checks that we are not doing SSG
+  if (
+    typeof (ctx?.res?.getHeader?.("Set-Cookie") as string[])?.push ===
+    "function"
+  ) {
     // Set the cookie via http response
     parsedCookie?.set("assumeServiceWorkerActive", true, {
       path: "/",
