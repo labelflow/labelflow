@@ -50,7 +50,7 @@ export const ArticlesList = ({
           mb="10"
           mt={!preview ? "14" : undefined}
         >
-          {previewArticles.map((article) => (
+          {previewArticles?.map((article) => (
             <BlogCard
               key={article?.slug}
               category={article?.category?.name}
