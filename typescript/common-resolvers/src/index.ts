@@ -3,7 +3,7 @@ import formatCocoResolvers from "./format-coco";
 import imageResolvers from "./image";
 import labelResolvers from "./label";
 import labelClassResolvers from "./label-class";
-import projectResolvers from "./project";
+import datasetResolvers from "./dataset";
 import scalarsResolvers from "./scalars";
 import uploadResolvers from "./upload";
 
@@ -12,7 +12,7 @@ export const commonResolvers = mergeResolvers([
   imageResolvers,
   labelResolvers,
   labelClassResolvers,
-  projectResolvers,
+  datasetResolvers,
   scalarsResolvers,
   uploadResolvers,
 ]);

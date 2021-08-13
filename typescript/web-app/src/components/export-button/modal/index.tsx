@@ -30,14 +30,14 @@ const getImagesQuery = gql`
 `;
 
 const exportToCocoQuery = gql`
-  query exportToCoco($projectId: ID!) {
-    exportToCoco(where: { projectId: $projectId })
+  query exportToCoco($datasetId: ID!) {
+    exportToCoco(where: { datasetId: $datasetId })
   }
 `;
 
-const countLabelsOfProjectQuery = gql`
-  query countLabelsOfProject($projectId: ID!) {
-    project(where: { id: $projectId }) {
+const countLabelsOfDatasetQuery = gql`
+  query countLabelsOfDataset($datasetId: ID!) {
+    dataset(where: { id: $datasetId }) {
       id
       imagesAggregates {
         totalCount
@@ -50,12 +50,12 @@ const countLabelsOfProjectQuery = gql`
 `;
 
 export const exportCocoDataset = async ({
-  projectId,
+  datasetId,
   setIsExportRunning,
   client,
   options,
 }: {
-  projectId: string;
+  datasetId: string;
   setIsExportRunning: Dispatch<SetStateAction<boolean>>;
   client: ApolloClient<Object>;
   options: ExportOptions;
@@ -65,7 +65,7 @@ export const exportCocoDataset = async ({
     data: { exportToCoco },
   } = await client.query({
     query: exportToCocoQuery,
-    variables: { projectId },
+    variables: { datasetId },
   });
   if (typeof exportToCoco !== "string") {
     throw new Error("");
@@ -78,14 +78,14 @@ export const exportCocoDataset = async ({
     .join("-")}T${String(dateObject.getHours()).padStart(2, "0")}${String(
     dateObject.getMinutes()
   ).padStart(2, "0")}${String(dateObject.getSeconds()).padStart(2, "0")}`;
-  const projectName = `project-${date}-Coco`;
+  const datasetName = `dataset-${date}-Coco`;
   if (options.exportImages) {
     const {
       data: { images },
     } = await client.query({ query: getImagesQuery });
     const zip = new JSZip();
     zip.file(
-      `${projectName}/annotations.json`,
+      `${datasetName}/annotations.json`,
       exportToCoco.substr(exportToCoco.indexOf(",") + 1),
       {
         base64: true,
@@ -113,7 +113,7 @@ export const exportCocoDataset = async ({
             });
           })();
           zip.file(
-            `${projectName}/images/${name}_${id}.${mime.extension(mimetype)}`,
+            `${datasetName}/images/${name}_${id}.${mime.extension(mimetype)}`,
             dataUrl.substr(dataUrl.indexOf(",") + 1),
             {
               base64: true,
@@ -126,13 +126,13 @@ export const exportCocoDataset = async ({
     const url = window.URL.createObjectURL(blobZip);
     const element = document.createElement("a");
     element.href = url;
-    element.download = `${projectName}.zip`;
+    element.download = `${datasetName}.zip`;
     setIsExportRunning(false);
     element.click();
   } else {
     const element = document.createElement("a");
     element.href = exportToCoco;
-    element.download = `${projectName}.json`;
+    element.download = `${datasetName}.json`;
     setIsExportRunning(false);
     element.click();
   }
@@ -147,9 +147,9 @@ export const ExportModal = ({
 }) => {
   const router = useRouter();
   const client = useApolloClient();
-  const { projectId } = router?.query as { projectId: string };
-  const { data } = useQuery(countLabelsOfProjectQuery, {
-    variables: { projectId },
+  const { datasetId } = router?.query as { datasetId: string };
+  const { data } = useQuery(countLabelsOfDatasetQuery, {
+    variables: { datasetId },
   });
   const [isExportRunning, setIsExportRunning] = useState(false);
   const [isOptionsModalOpen, setIsOptionsModalOpen] = useState(false);
@@ -179,13 +179,13 @@ export const ExportModal = ({
               w="fit-content"
               m="auto"
               isLoaded={
-                data?.project?.labelsAggregates?.totalCount !== undefined
+                data?.dataset?.labelsAggregates?.totalCount !== undefined
               }
             >
               <Text fontSize="lg" fontWeight="medium" color="gray.800">
-                Your project contains{" "}
-                {data?.project?.imagesAggregates?.totalCount} images and{" "}
-                {data?.project?.labelsAggregates?.totalCount} labels.
+                Your dataset contains{" "}
+                {data?.dataset?.imagesAggregates?.totalCount} images and{" "}
+                {data?.dataset?.labelsAggregates?.totalCount} labels.
               </Text>
             </Skeleton>
           </ModalHeader>
@@ -213,7 +213,7 @@ export const ExportModal = ({
                   setExportFunction(
                     () => (options: ExportOptions) =>
                       exportCocoDataset({
-                        projectId,
+                        datasetId,
                         setIsExportRunning,
                         client,
                         options,

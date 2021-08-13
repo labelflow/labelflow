@@ -12,8 +12,8 @@ import { useQueryParam, StringParam, withDefault } from "use-query-params";
 import { useApolloClient } from "@apollo/client";
 import { ImportImagesModalDropzone } from "./modal-dropzone/modal-dropzone";
 import { ImportImagesModalUrlList } from "./modal-url-list/modal-url-list";
-import { projectDataQuery } from "../../../pages/projects/[projectId]/images";
-import { getProjectsQuery } from "../../../pages/projects";
+import { datasetDataQuery } from "../../../pages/datasets/[datasetId]/images";
+import { getDatasetsQuery } from "../../../pages/datasets";
 
 export const ImportImagesModal = ({
   isOpen = false,
@@ -24,7 +24,7 @@ export const ImportImagesModal = ({
 }) => {
   const client = useApolloClient();
   const router = useRouter();
-  const { projectId } = router?.query;
+  const { datasetId } = router?.query;
 
   const [isCloseable, setCloseable] = useState(true);
   const [hasUploaded, setHasUploaded] = useState(false);
@@ -43,13 +43,13 @@ export const ImportImagesModal = ({
     // Manually refetch
     if (hasUploaded) {
       client.query({
-        query: projectDataQuery,
+        query: datasetDataQuery,
         variables: {
-          projectId,
+          datasetId,
         },
         fetchPolicy: "network-only",
       });
-      client.query({ query: getProjectsQuery, fetchPolicy: "network-only" });
+      client.query({ query: getDatasetsQuery, fetchPolicy: "network-only" });
     }
   }, [hasUploaded]);
 

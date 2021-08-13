@@ -2,11 +2,11 @@ import { gql } from "@apollo/client";
 
 import { client } from "../../typescript/web-app/src/connectors/apollo-client/schema-client";
 
-const createProject = async (name: string) => {
+const createDataset = async (name: string) => {
   const mutationResult = await client.mutate({
     mutation: gql`
-      mutation createProject($name: String) {
-        createProject(data: { name: $name }) {
+      mutation createDataset($name: String) {
+        createDataset(data: { name: $name }) {
           id
         }
       }
@@ -18,7 +18,7 @@ const createProject = async (name: string) => {
 
   const {
     data: {
-      createProject: { id },
+      createDataset: { id },
     },
   } = mutationResult;
 
@@ -26,17 +26,17 @@ const createProject = async (name: string) => {
 };
 
 describe("Image Navigation", () => {
-  let projectId: string;
+  let datasetId: string;
   beforeEach(() =>
     cy.window().then(async () => {
-      projectId = await createProject("cypress test project");
+      datasetId = await createDataset("cypress test dataset");
     })
   );
 
   it("Should let the user navigate within the image gallery", () => {
     // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
     cy.visit(
-      `http://localhost:3000/projects/${projectId}/images?modal-welcome=closed&modal-update-service-worker=update`
+      `http://localhost:3000/datasets/${datasetId}/images?modal-welcome=closed&modal-update-service-worker=update`
     );
     cy.contains("You don't have any images.").should("be.visible");
     cy.get("header").within(() => {

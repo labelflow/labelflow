@@ -11,7 +11,7 @@ import { LabelCreateInput } from "@labelflow/graphql-types";
 import { probeImage } from "@labelflow/common-resolvers/src/utils/probe-image";
 import { mockNextRouter } from "../../../../utils/router-mocks";
 
-mockNextRouter({ query: { projectId: "mocked-project-id" } });
+mockNextRouter({ query: { datasetId: "mocked-dataset-id" } });
 
 import { ExportModal } from "..";
 import { theme } from "../../../../theme";
@@ -31,19 +31,19 @@ const wrapper = ({ children }: PropsWithChildren<{}>) => (
   </ApolloProvider>
 );
 
-const createProject = async (
-  projectId = "mocked-project-id",
-  name = "test project"
+const createDataset = async (
+  datasetId = "mocked-dataset-id",
+  name = "test dataset"
 ) =>
   client.mutate({
     mutation: gql`
-      mutation createProject($name: String!, $projectId: ID) {
-        createProject(data: { name: $name, id: $projectId }) {
+      mutation createDataset($name: String!, $datasetId: ID) {
+        createDataset(data: { name: $name, id: $datasetId }) {
           id
         }
       }
     `,
-    variables: { projectId, name },
+    variables: { datasetId, name },
   });
 
 const labelData = {
@@ -87,7 +87,7 @@ const createImage = async (name: String) => {
         $name: String!
         $width: Int
         $height: Int
-        $projectId: ID!
+        $datasetId: ID!
       ) {
         createImage(
           data: {
@@ -95,7 +95,7 @@ const createImage = async (name: String) => {
             file: $file
             width: $width
             height: $height
-            projectId: $projectId
+            datasetId: $datasetId
           }
         ) {
           id
@@ -107,7 +107,7 @@ const createImage = async (name: String) => {
       name,
       width: imageWidth,
       height: imageHeight,
-      projectId: "mocked-project-id",
+      datasetId: "mocked-dataset-id",
     },
   });
 
@@ -121,7 +121,7 @@ const createImage = async (name: String) => {
 };
 
 test("File should be downloaded when user clicks on Export to COCO and Export", async () => {
-  await createProject();
+  await createDataset();
   render(<ExportModal isOpen />, { wrapper });
   const anchorMocked = {
     href: "",
@@ -143,8 +143,8 @@ test("File should be downloaded when user clicks on Export to COCO and Export", 
 }, 20000);
 
 test("Export Modal should display the number of labels", async () => {
-  await createProject();
-  await createProject("second-project-id", "second-test-project");
+  await createDataset();
+  await createDataset("second-dataset-id", "second-test-dataset");
   mockedProbeSync.mockReturnValue({
     width: 42,
     height: 36,

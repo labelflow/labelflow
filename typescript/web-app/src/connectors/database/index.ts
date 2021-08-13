@@ -4,7 +4,7 @@ import {
   DbImage,
   DbLabel,
   DbLabelClass,
-  DbProject,
+  DbDataset,
 } from "@labelflow/common-resolvers";
 
 import versions from "./versions";
@@ -14,7 +14,7 @@ export interface Database extends Dexie {
   image: Dexie.Table<DbImage, string>;
   label: Dexie.Table<DbLabel, string>;
   labelClass: Dexie.Table<DbLabelClass, string>;
-  project: Dexie.Table<DbProject, string>;
+  dataset: Dexie.Table<DbDataset, string>;
 }
 
 declare module globalThis {

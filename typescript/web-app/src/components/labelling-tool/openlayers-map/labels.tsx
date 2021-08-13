@@ -19,7 +19,7 @@ import {
   addLabelToImageInCache,
   removeLabelFromImageCache,
 } from "./draw-bounding-box-and-polygon-interaction/create-label-effect";
-import { getProjectsQuery } from "../../../pages/projects";
+import { getDatasetsQuery } from "../../../pages/datasets";
 
 const getImageLabelsQuery = gql`
   query getImageLabels($imageId: ID!) {
@@ -100,7 +100,7 @@ const createDeleteLabelEffect = (
     }>({
       mutation: deleteLabelMutation,
       variables: { id },
-      refetchQueries: ["countLabels", { query: getProjectsQuery }],
+      refetchQueries: ["countLabels", { query: getDatasetsQuery }],
       /* Note that there is no optimistic response here, only a cache update.
        * We could add it but it feels like premature optimization */
       update(cache, { data: updateData }) {
@@ -144,7 +144,7 @@ const createDeleteLabelEffect = (
     const { data } = await client.mutate({
       mutation: createLabelWithIdMutation,
       variables: createLabelInputs,
-      refetchQueries: ["countLabels", { query: getProjectsQuery }],
+      refetchQueries: ["countLabels", { query: getDatasetsQuery }],
       optimisticResponse: { createLabel: { id: labelId, __typename: "Label" } },
       update(cache) {
         addLabelToImageInCache(cache, createLabelInputs);
@@ -162,7 +162,7 @@ const createDeleteLabelEffect = (
     const { data } = await client.mutate({
       mutation: deleteLabelMutation,
       variables: { id: labelId },
-      refetchQueries: ["countLabels", { query: getProjectsQuery }],
+      refetchQueries: ["countLabels", { query: getDatasetsQuery }],
       /* Note that there is no optimistic response here, only a cache update.
        * We could add it but it feels like premature optimization */
       update(cache, { data: updateData }) {

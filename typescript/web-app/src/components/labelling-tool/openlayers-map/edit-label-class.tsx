@@ -11,9 +11,9 @@ import { createNewLabelClassAndUpdateLabelCurry } from "../../../connectors/undo
 import { createUpdateLabelClassOfLabelEffect } from "../../../connectors/undo-store/effects/update-label-class-of-label";
 import { keymap } from "../../../keymap";
 
-const labelClassesOfProjectQuery = gql`
-  query getLabelClassesOfProject($projectId: ID!) {
-    labelClasses(where: { projectId: $projectId }) {
+const labelClassesOfDatasetQuery = gql`
+  query getLabelClassesOfDataset($datasetId: ID!) {
+    labelClasses(where: { datasetId: $datasetId }) {
       id
       name
       color
@@ -40,11 +40,11 @@ export const EditLabelClass = forwardRef<
   }
 >(({ isOpen, onClose }, ref) => {
   const router = useRouter();
-  const projectId = router?.query.projectId as string;
+  const datasetId = router?.query.datasetId as string;
 
   const client = useApolloClient();
-  const { data } = useQuery(labelClassesOfProjectQuery, {
-    variables: { projectId },
+  const { data } = useQuery(labelClassesOfDatasetQuery, {
+    variables: { datasetId },
   });
   const { perform } = useUndoStore();
   const labelClasses = data?.labelClasses ?? [];
@@ -61,7 +61,7 @@ export const EditLabelClass = forwardRef<
     () =>
       createNewLabelClassAndUpdateLabelCurry({
         labelClasses,
-        projectId,
+        datasetId,
         perform,
         onClose,
         client,

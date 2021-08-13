@@ -318,7 +318,7 @@ export const data = [
   {
     description: (
       <>
-        <Text>Project management</Text>
+        <Text>Projects management</Text>
         <Text fontSize="xs" lineHeight="1" color="gray.500">
           Organize in projects, folders and files
         </Text>
@@ -737,7 +737,7 @@ export const data = [
     type: "header",
     description: <Box minW="12em" />,
     free: (
-      <NextLink href="/projects">
+      <NextLink href="/datasets">
         <Button colorScheme="brand">Try it now</Button>
       </NextLink>
     ),

@@ -4,7 +4,7 @@ import type {
   Image as GeneratedImage,
   Label as GeneratedLabel,
   LabelClass as GeneratedLabelClass,
-  Project as GeneratedProject,
+  Dataset as GeneratedDataset,
 } from "@labelflow/graphql-types";
 
 export type DbImage =
@@ -21,8 +21,8 @@ export type DbLabelClass = Omit<GeneratedLabelClass, "labels">;
 
 export type DbExample = GeneratedExample;
 
-export type DbProject = Omit<
-  GeneratedProject,
+export type DbDataset = Omit<
+  GeneratedDataset,
   | "images"
   | "imagesAggregates"
   | "labels"

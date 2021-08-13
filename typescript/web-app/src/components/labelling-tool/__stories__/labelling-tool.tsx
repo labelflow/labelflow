@@ -52,11 +52,11 @@ export const ThreeImages: Story = () => {
 };
 ThreeImages.parameters = { mockImages: { images } };
 
-async function createProject(name: string) {
+async function createDataset(name: string) {
   const mutationResult = await client.mutate({
     mutation: gql`
-      mutation createProject($name: String!) {
-        createProject(data: { name: $name }) {
+      mutation createDataset($name: String!) {
+        createDataset(data: { name: $name }) {
           id
         }
       }
@@ -66,18 +66,18 @@ async function createProject(name: string) {
 
   const {
     data: {
-      createProject: { id },
+      createDataset: { id },
     },
   } = mutationResult;
 
   return id;
 }
 
-async function createImage(name: String, url: String, projectId: string) {
+async function createImage(name: String, url: String, datasetId: string) {
   const mutationResult = await client.mutate({
     mutation: gql`
-      mutation createImage($url: String!, $name: String!, $projectId: ID!) {
-        createImage(data: { name: $name, url: $url, projectId: $projectId }) {
+      mutation createImage($url: String!, $name: String!, $datasetId: ID!) {
+        createImage(data: { name: $name, url: $url, datasetId: $datasetId }) {
           id
           name
           width
@@ -89,7 +89,7 @@ async function createImage(name: String, url: String, projectId: string) {
     variables: {
       url,
       name,
-      projectId,
+      datasetId,
     },
   });
 
@@ -111,8 +111,8 @@ async function mockImagesLoader({
 
   const imageArray = parameters?.mockImages?.images;
 
-  // Because of race conditions we have to randomize the project name
-  const projectId = await createProject(`storybook project ${Date.now()}`);
+  // Because of race conditions we have to randomize the dataset name
+  const datasetId = await createDataset(`storybook dataset ${Date.now()}`);
 
   if (imageArray == null) {
     return { images: [] };
@@ -120,10 +120,10 @@ async function mockImagesLoader({
 
   // We use mapSeries to ensure images are created in the same order
   const loadedImages = await Bluebird.mapSeries(imageArray, ({ url, name }) =>
-    createImage(name, url, projectId)
+    createImage(name, url, datasetId)
   );
 
-  return { images: loadedImages, projectId };
+  return { images: loadedImages, datasetId };
 }
 
 function withImageIdInQueryStringRouterDecorator(
@@ -137,7 +137,7 @@ function withImageIdInQueryStringRouterDecorator(
   return withNextRouter({
     query: {
       imageId: context.loaded.images[0].id,
-      projectId: context.loaded.projectId,
+      datasetId: context.loaded.datasetId,
     },
   })(storyFn, context);
 }
