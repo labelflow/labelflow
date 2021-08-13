@@ -71,7 +71,7 @@ export const BlogCard = (props: BlogProps) => {
                 {author.name}
               </Box>
             </Text>
-            <Link href="#">
+            <Link href={href}>
               <Box
                 as={BsClockFill}
                 display="inline-block"

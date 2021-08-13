@@ -10,7 +10,7 @@ import {
 } from "../../connectors/strapi";
 import { NavContent } from "../../components/website/Navbar/NavContent";
 import { Footer } from "../../components/website/Footer/Footer";
-import { Meta } from "../../components/website/Meta";
+import { Meta } from "../../components/meta";
 import { ArticlesList } from "../../components/website/Blog/articles-list";
 import { PostTitle } from "../../components/website/Blog/PostTitle";
 import "github-markdown-css";
