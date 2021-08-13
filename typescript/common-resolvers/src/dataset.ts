@@ -53,7 +53,7 @@ const getDatasetBySlug = async (
   repository: Repository
 ): Promise<DbDataset> => {
   const dataset = await throwIfResolvesToNil(
-    `No dataset with name "${slug}"`,
+    `No dataset with slug "${slug}"`,
     repository.dataset.getBySlug
   )(slug);
 
