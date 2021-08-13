@@ -123,7 +123,7 @@ describe("Dataset resolver test suite", () => {
   test("Creating a dataset should fail if the dataset slug already exists", async () => {
     await createDataset("my dataset", "an-id");
 
-    return expect(createDataset("My Dataset", "an-other-id")).rejects.toEqual(
+    return expect(createDataset("My Dataset", "an-other-id")).rejects.toThrow(
       /Could not create the dataset/
     );
   });
