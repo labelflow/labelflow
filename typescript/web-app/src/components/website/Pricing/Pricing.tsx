@@ -47,7 +47,7 @@ export const Pricing = () => (
           features: [
             "Sleek labeling interface",
             "Dataset import/export",
-            "Dataset management",
+            "Project management",
             "Up to 5 users, 100 images/month",
           ],
         }}

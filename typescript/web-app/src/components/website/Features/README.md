@@ -6,7 +6,7 @@ All of the components in Chakra UI are designed for Chakra UI v1.0+<br>
 
 ## Installation
 
-Inside your React dataset directory, install Chakra UI by running either of the following:
+Inside your React project directory, install Chakra UI by running either of the following:
 
 ```sh
 # npm

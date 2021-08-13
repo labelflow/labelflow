@@ -5,7 +5,7 @@ import { NavContent } from "../components/website/Navbar/NavContent";
 
 import { Survey } from "../components/website/Survey/Survey";
 import { Footer } from "../components/website/Footer/Footer";
-import { Meta } from "../components/website/Meta";
+import { Meta } from "../components/meta";
 
 export default function ThankYou() {
   return (

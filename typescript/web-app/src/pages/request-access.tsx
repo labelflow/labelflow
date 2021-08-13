@@ -5,7 +5,7 @@ import { NavContent } from "../components/website/Navbar/NavContent";
 
 import { Footer } from "../components/website/Footer/Footer";
 import { RequestAccess } from "../components/website/RequestAccess/RequestAccess";
-import { Meta } from "../components/website/Meta";
+import { Meta } from "../components/meta";
 
 export default function RequestAccessPage() {
   return (

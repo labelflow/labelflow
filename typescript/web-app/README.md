@@ -1,4 +1,4 @@
-# Labelflow web app
+# Labelflow web
 
 ## Installation
 

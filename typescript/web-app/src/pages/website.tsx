@@ -9,7 +9,7 @@ import { LogoGrid } from "../components/website/Logos/LogoGrid";
 import { Why } from "../components/website/Why/Why";
 import { Footer } from "../components/website/Footer/Footer";
 import { Pricing } from "../components/website/Pricing/Pricing";
-import { Meta } from "../components/website/Meta";
+import { Meta } from "../components/meta";
 
 export default function Website() {
   return (

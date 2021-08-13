@@ -1,9 +1,9 @@
 import { Button, ButtonProps, chakra } from "@chakra-ui/react";
 import { useQueryParam } from "use-query-params";
 import { RiDownloadCloud2Line } from "react-icons/ri";
-
-import { ExportModal } from "./modal";
+import { trackEvent } from "../../utils/google-analytics";
 import { BoolParam } from "../../utils/query-param-bool";
+import { ExportModal } from "./modal";
 
 const DownloadIcon = chakra(RiDownloadCloud2Line);
 
@@ -21,7 +21,10 @@ export const ExportButton = ({ ...props }: Props) => {
       <Button
         aria-label="Export"
         leftIcon={<DownloadIcon fontSize="xl" />}
-        onClick={() => setIsOpen(true, "replaceIn")}
+        onClick={() => {
+          trackEvent("export_button_click", {});
+          setIsOpen(true, "replaceIn");
+        }}
         variant="ghost"
         {...props}
       >
