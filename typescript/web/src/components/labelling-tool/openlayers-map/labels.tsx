@@ -136,7 +136,7 @@ const createDeleteLabelEffect = (
       id: labelId,
       imageId,
       labelClassId,
-      geometry,
+      geometry: { type: geometry?.type, coordinates: geometry?.coordinates },
     };
 
     /* It is important to use the same id for the re-creation when the label
