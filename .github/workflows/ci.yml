@@ -99,6 +99,8 @@ jobs:
           key: ${{ runner.os }}-modules-${{secrets.ACTIONS_CACHE_VERSION}}-${{ hashFiles('yarn.lock') }}
       - name: check node_modules
         run: ls typescript/web/node_modules
+      - name: generate prisma
+        run: cd typescript/db && yarn generate
       - name: run tests
         run: yarn test
 
