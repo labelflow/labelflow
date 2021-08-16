@@ -16,9 +16,9 @@ import { throwIfResolvesToNil } from "./utils/throw-if-resolves-to-nil";
 // Mutations
 const getImageFileKey = (
   imageId: string,
-  projectId: string,
+  datasetId: string,
   mimetype: string
-) => `${projectId}/${imageId}.${mime.extension(mimetype)}`;
+) => `${datasetId}/${imageId}.${mime.extension(mimetype)}`;
 
 const getImageName = ({
   externalUrl,

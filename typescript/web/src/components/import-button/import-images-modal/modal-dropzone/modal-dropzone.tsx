@@ -80,10 +80,10 @@ const encodeFileToDataUrl = (file: File): Promise<string> => {
 };
 
 const getImageStoreKey = (
-  projectId: string,
+  datasetId: string,
   fileId: string,
   mimetype: string
-) => `${projectId}/${fileId}.${mime.extension(mimetype)}`;
+) => `${datasetId}/${fileId}.${mime.extension(mimetype)}`;
 
 export const ImportImagesModalDropzone = ({
   setMode,
@@ -128,7 +128,7 @@ export const ImportImagesModalDropzone = ({
                 mutation: getImageUploadTargetMutation,
                 variables: {
                   key: getImageStoreKey(
-                    projectId as string,
+                    datasetId as string,
                     uuidv4(),
                     acceptedFile.file.type
                   ),
