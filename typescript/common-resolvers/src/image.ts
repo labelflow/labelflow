@@ -7,6 +7,7 @@ import type {
   QueryImageArgs,
   QueryImagesArgs,
 } from "@labelflow/graphql-types";
+import mime from "mime-types";
 import { probeImage } from "./utils/probe-image";
 
 import { Context, DbImage, Repository } from "./types";
