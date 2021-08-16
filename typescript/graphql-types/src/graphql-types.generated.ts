@@ -18,6 +18,46 @@ export type Scalars = {
 };
 
 
+export type Dataset = {
+  __typename?: 'Dataset';
+  id: Scalars['ID'];
+  createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
+  name: Scalars['String'];
+  slug: Scalars['String'];
+  images: Array<Image>;
+  labels: Array<Label>;
+  labelClasses: Array<LabelClass>;
+  imagesAggregates: ImagesAggregates;
+  labelsAggregates: LabelsAggregates;
+  labelClassesAggregates: LabelClassesAggregates;
+};
+
+
+export type DatasetImagesArgs = {
+  first?: Maybe<Scalars['Int']>;
+  skip?: Maybe<Scalars['Int']>;
+};
+
+export type DatasetCreateInput = {
+  id?: Maybe<Scalars['ID']>;
+  name: Scalars['String'];
+};
+
+export type DatasetUpdateInput = {
+  name: Scalars['String'];
+};
+
+export type DatasetWhereIdInput = {
+  id: Scalars['ID'];
+};
+
+export type DatasetWhereUniqueInput = {
+  id?: Maybe<Scalars['ID']>;
+  name?: Maybe<Scalars['String']>;
+  slug?: Maybe<Scalars['String']>;
+};
+
 
 export type Example = {
   __typename?: 'Example';
@@ -46,7 +86,7 @@ export type ExampleWhereUniqueInput = {
 };
 
 export type ExportWhereUniqueInput = {
-  projectId: Scalars['ID'];
+  datasetId: Scalars['ID'];
 };
 
 export type Geometry = {
@@ -73,12 +113,12 @@ export type Image = {
   height: Scalars['Int'];
   width: Scalars['Int'];
   labels: Array<Label>;
-  projectId: Scalars['ID'];
+  datasetId: Scalars['ID'];
 };
 
 export type ImageCreateInput = {
   id?: Maybe<Scalars['ID']>;
-  projectId: Scalars['ID'];
+  datasetId: Scalars['ID'];
   createdAt?: Maybe<Scalars['DateTime']>;
   name?: Maybe<Scalars['String']>;
   path?: Maybe<Scalars['String']>;
@@ -91,7 +131,7 @@ export type ImageCreateInput = {
 };
 
 export type ImageWhereInput = {
-  projectId?: Maybe<Scalars['ID']>;
+  datasetId?: Maybe<Scalars['ID']>;
 };
 
 export type ImageWhereUniqueInput = {
@@ -127,14 +167,14 @@ export type LabelClass = {
   name: Scalars['String'];
   color: Scalars['ColorHex'];
   labels: Array<Label>;
-  projectId: Scalars['ID'];
+  datasetId: Scalars['ID'];
 };
 
 export type LabelClassCreateInput = {
   id?: Maybe<Scalars['ID']>;
   name: Scalars['String'];
   color: Scalars['ColorHex'];
-  projectId: Scalars['ID'];
+  datasetId: Scalars['ID'];
 };
 
 export type LabelClassUpdateInput = {
@@ -143,7 +183,7 @@ export type LabelClassUpdateInput = {
 };
 
 export type LabelClassWhereInput = {
-  projectId?: Maybe<Scalars['ID']>;
+  datasetId?: Maybe<Scalars['ID']>;
 };
 
 export type LabelClassWhereUniqueInput = {
@@ -176,7 +216,7 @@ export type LabelUpdateInput = {
 export type LabelWhereInput = {
   imageId?: Maybe<Scalars['ID']>;
   labelClassId?: Maybe<Scalars['ID']>;
-  projectId?: Maybe<Scalars['ID']>;
+  datasetId?: Maybe<Scalars['ID']>;
 };
 
 export type LabelWhereUniqueInput = {
@@ -199,9 +239,10 @@ export type Mutation = {
   createLabelClass?: Maybe<LabelClass>;
   updateLabelClass?: Maybe<LabelClass>;
   deleteLabelClass?: Maybe<LabelClass>;
-  createProject?: Maybe<Project>;
-  updateProject?: Maybe<Project>;
-  deleteProject?: Maybe<Project>;
+  createDataset?: Maybe<Dataset>;
+  createDemoDataset?: Maybe<Dataset>;
+  updateDataset?: Maybe<Dataset>;
+  deleteDataset?: Maybe<Dataset>;
 };
 
 
@@ -252,57 +293,19 @@ export type MutationDeleteLabelClassArgs = {
 };
 
 
-export type MutationCreateProjectArgs = {
-  data: ProjectCreateInput;
+export type MutationCreateDatasetArgs = {
+  data: DatasetCreateInput;
 };
 
 
-export type MutationUpdateProjectArgs = {
-  where: ProjectWhereIdInput;
-  data: ProjectUpdateInput;
+export type MutationUpdateDatasetArgs = {
+  where: DatasetWhereIdInput;
+  data: DatasetUpdateInput;
 };
 
 
-export type MutationDeleteProjectArgs = {
-  where: ProjectWhereIdInput;
-};
-
-export type Project = {
-  __typename?: 'Project';
-  id: Scalars['ID'];
-  createdAt: Scalars['DateTime'];
-  updatedAt: Scalars['DateTime'];
-  name: Scalars['String'];
-  images: Array<Image>;
-  labels: Array<Label>;
-  labelClasses: Array<LabelClass>;
-  imagesAggregates: ImagesAggregates;
-  labelsAggregates: LabelsAggregates;
-  labelClassesAggregates: LabelClassesAggregates;
-};
-
-
-export type ProjectImagesArgs = {
-  first?: Maybe<Scalars['Int']>;
-  skip?: Maybe<Scalars['Int']>;
-};
-
-export type ProjectCreateInput = {
-  id?: Maybe<Scalars['ID']>;
-  name: Scalars['String'];
-};
-
-export type ProjectUpdateInput = {
-  name: Scalars['String'];
-};
-
-export type ProjectWhereIdInput = {
-  id: Scalars['ID'];
-};
-
-export type ProjectWhereUniqueInput = {
-  id?: Maybe<Scalars['ID']>;
-  name?: Maybe<Scalars['String']>;
+export type MutationDeleteDatasetArgs = {
+  where: DatasetWhereIdInput;
 };
 
 export type Query = {
@@ -319,8 +322,8 @@ export type Query = {
   labelsAggregates: LabelsAggregates;
   label: Label;
   labels: Array<Label>;
-  project: Project;
-  projects: Array<Project>;
+  dataset: Dataset;
+  datasets: Array<Dataset>;
   exportToCoco: Scalars['String'];
   debug: Scalars['JSON'];
 };
@@ -375,12 +378,12 @@ export type QueryLabelsArgs = {
 };
 
 
-export type QueryProjectArgs = {
-  where: ProjectWhereUniqueInput;
+export type QueryDatasetArgs = {
+  where: DatasetWhereUniqueInput;
 };
 
 
-export type QueryProjectsArgs = {
+export type QueryDatasetsArgs = {
   first?: Maybe<Scalars['Int']>;
   skip?: Maybe<Scalars['Int']>;
 };
@@ -487,9 +490,15 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
   ColorHex: ResolverTypeWrapper<Scalars['ColorHex']>;
+  Dataset: ResolverTypeWrapper<Dataset>;
+  String: ResolverTypeWrapper<Scalars['String']>;
+  Int: ResolverTypeWrapper<Scalars['Int']>;
+  DatasetCreateInput: DatasetCreateInput;
+  DatasetUpdateInput: DatasetUpdateInput;
+  DatasetWhereIDInput: DatasetWhereIdInput;
+  DatasetWhereUniqueInput: DatasetWhereUniqueInput;
   DateTime: ResolverTypeWrapper<Scalars['DateTime']>;
   Example: ResolverTypeWrapper<Example>;
-  String: ResolverTypeWrapper<Scalars['String']>;
   ExampleCreateInput: ExampleCreateInput;
   ExampleOrderByInput: ExampleOrderByInput;
   ExampleWhereInput: ExampleWhereInput;
@@ -499,7 +508,6 @@ export type ResolversTypes = {
   GeometryInput: GeometryInput;
   ID: ResolverTypeWrapper<Scalars['ID']>;
   Image: ResolverTypeWrapper<Image>;
-  Int: ResolverTypeWrapper<Scalars['Int']>;
   ImageCreateInput: ImageCreateInput;
   ImageWhereInput: ImageWhereInput;
   ImageWhereUniqueInput: ImageWhereUniqueInput;
@@ -520,11 +528,6 @@ export type ResolversTypes = {
   LabelWhereUniqueInput: LabelWhereUniqueInput;
   LabelsAggregates: ResolverTypeWrapper<LabelsAggregates>;
   Mutation: ResolverTypeWrapper<{}>;
-  Project: ResolverTypeWrapper<Project>;
-  ProjectCreateInput: ProjectCreateInput;
-  ProjectUpdateInput: ProjectUpdateInput;
-  ProjectWhereIDInput: ProjectWhereIdInput;
-  ProjectWhereUniqueInput: ProjectWhereUniqueInput;
   Query: ResolverTypeWrapper<{}>;
   Upload: ResolverTypeWrapper<Scalars['Upload']>;
   UploadTarget: ResolversTypes['UploadTargetDirect'] | ResolversTypes['UploadTargetHttp'];
@@ -537,9 +540,15 @@ export type ResolversTypes = {
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
   ColorHex: Scalars['ColorHex'];
+  Dataset: Dataset;
+  String: Scalars['String'];
+  Int: Scalars['Int'];
+  DatasetCreateInput: DatasetCreateInput;
+  DatasetUpdateInput: DatasetUpdateInput;
+  DatasetWhereIDInput: DatasetWhereIdInput;
+  DatasetWhereUniqueInput: DatasetWhereUniqueInput;
   DateTime: Scalars['DateTime'];
   Example: Example;
-  String: Scalars['String'];
   ExampleCreateInput: ExampleCreateInput;
   ExampleWhereInput: ExampleWhereInput;
   ExampleWhereUniqueInput: ExampleWhereUniqueInput;
@@ -548,7 +557,6 @@ export type ResolversParentTypes = {
   GeometryInput: GeometryInput;
   ID: Scalars['ID'];
   Image: Image;
-  Int: Scalars['Int'];
   ImageCreateInput: ImageCreateInput;
   ImageWhereInput: ImageWhereInput;
   ImageWhereUniqueInput: ImageWhereUniqueInput;
@@ -568,11 +576,6 @@ export type ResolversParentTypes = {
   LabelWhereUniqueInput: LabelWhereUniqueInput;
   LabelsAggregates: LabelsAggregates;
   Mutation: {};
-  Project: Project;
-  ProjectCreateInput: ProjectCreateInput;
-  ProjectUpdateInput: ProjectUpdateInput;
-  ProjectWhereIDInput: ProjectWhereIdInput;
-  ProjectWhereUniqueInput: ProjectWhereUniqueInput;
   Query: {};
   Upload: Scalars['Upload'];
   UploadTarget: ResolversParentTypes['UploadTargetDirect'] | ResolversParentTypes['UploadTargetHttp'];
@@ -585,6 +588,21 @@ export type ResolversParentTypes = {
 export interface ColorHexScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['ColorHex'], any> {
   name: 'ColorHex';
 }
+
+export type DatasetResolvers<ContextType = any, ParentType extends ResolversParentTypes['Dataset'] = ResolversParentTypes['Dataset']> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  images?: Resolver<Array<ResolversTypes['Image']>, ParentType, ContextType, RequireFields<DatasetImagesArgs, never>>;
+  labels?: Resolver<Array<ResolversTypes['Label']>, ParentType, ContextType>;
+  labelClasses?: Resolver<Array<ResolversTypes['LabelClass']>, ParentType, ContextType>;
+  imagesAggregates?: Resolver<ResolversTypes['ImagesAggregates'], ParentType, ContextType>;
+  labelsAggregates?: Resolver<ResolversTypes['LabelsAggregates'], ParentType, ContextType>;
+  labelClassesAggregates?: Resolver<ResolversTypes['LabelClassesAggregates'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
 
 export interface DateTimeScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['DateTime'], any> {
   name: 'DateTime';
@@ -616,7 +634,7 @@ export type ImageResolvers<ContextType = any, ParentType extends ResolversParent
   height?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   width?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   labels?: Resolver<Array<ResolversTypes['Label']>, ParentType, ContextType>;
-  projectId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  datasetId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -651,7 +669,7 @@ export type LabelClassResolvers<ContextType = any, ParentType extends ResolversP
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   color?: Resolver<ResolversTypes['ColorHex'], ParentType, ContextType>;
   labels?: Resolver<Array<ResolversTypes['Label']>, ParentType, ContextType>;
-  projectId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  datasetId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -675,23 +693,10 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   createLabelClass?: Resolver<Maybe<ResolversTypes['LabelClass']>, ParentType, ContextType, RequireFields<MutationCreateLabelClassArgs, 'data'>>;
   updateLabelClass?: Resolver<Maybe<ResolversTypes['LabelClass']>, ParentType, ContextType, RequireFields<MutationUpdateLabelClassArgs, 'where' | 'data'>>;
   deleteLabelClass?: Resolver<Maybe<ResolversTypes['LabelClass']>, ParentType, ContextType, RequireFields<MutationDeleteLabelClassArgs, 'where'>>;
-  createProject?: Resolver<Maybe<ResolversTypes['Project']>, ParentType, ContextType, RequireFields<MutationCreateProjectArgs, 'data'>>;
-  updateProject?: Resolver<Maybe<ResolversTypes['Project']>, ParentType, ContextType, RequireFields<MutationUpdateProjectArgs, 'where' | 'data'>>;
-  deleteProject?: Resolver<Maybe<ResolversTypes['Project']>, ParentType, ContextType, RequireFields<MutationDeleteProjectArgs, 'where'>>;
-};
-
-export type ProjectResolvers<ContextType = any, ParentType extends ResolversParentTypes['Project'] = ResolversParentTypes['Project']> = {
-  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
-  updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
-  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  images?: Resolver<Array<ResolversTypes['Image']>, ParentType, ContextType, RequireFields<ProjectImagesArgs, never>>;
-  labels?: Resolver<Array<ResolversTypes['Label']>, ParentType, ContextType>;
-  labelClasses?: Resolver<Array<ResolversTypes['LabelClass']>, ParentType, ContextType>;
-  imagesAggregates?: Resolver<ResolversTypes['ImagesAggregates'], ParentType, ContextType>;
-  labelsAggregates?: Resolver<ResolversTypes['LabelsAggregates'], ParentType, ContextType>;
-  labelClassesAggregates?: Resolver<ResolversTypes['LabelClassesAggregates'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+  createDataset?: Resolver<Maybe<ResolversTypes['Dataset']>, ParentType, ContextType, RequireFields<MutationCreateDatasetArgs, 'data'>>;
+  createDemoDataset?: Resolver<Maybe<ResolversTypes['Dataset']>, ParentType, ContextType>;
+  updateDataset?: Resolver<Maybe<ResolversTypes['Dataset']>, ParentType, ContextType, RequireFields<MutationUpdateDatasetArgs, 'where' | 'data'>>;
+  deleteDataset?: Resolver<Maybe<ResolversTypes['Dataset']>, ParentType, ContextType, RequireFields<MutationDeleteDatasetArgs, 'where'>>;
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
@@ -707,8 +712,8 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   labelsAggregates?: Resolver<ResolversTypes['LabelsAggregates'], ParentType, ContextType>;
   label?: Resolver<ResolversTypes['Label'], ParentType, ContextType, RequireFields<QueryLabelArgs, 'where'>>;
   labels?: Resolver<Array<ResolversTypes['Label']>, ParentType, ContextType, RequireFields<QueryLabelsArgs, never>>;
-  project?: Resolver<ResolversTypes['Project'], ParentType, ContextType, RequireFields<QueryProjectArgs, 'where'>>;
-  projects?: Resolver<Array<ResolversTypes['Project']>, ParentType, ContextType, RequireFields<QueryProjectsArgs, never>>;
+  dataset?: Resolver<ResolversTypes['Dataset'], ParentType, ContextType, RequireFields<QueryDatasetArgs, 'where'>>;
+  datasets?: Resolver<Array<ResolversTypes['Dataset']>, ParentType, ContextType, RequireFields<QueryDatasetsArgs, never>>;
   exportToCoco?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<QueryExportToCocoArgs, 'where'>>;
   debug?: Resolver<ResolversTypes['JSON'], ParentType, ContextType>;
 };
@@ -734,6 +739,7 @@ export type UploadTargetHttpResolvers<ContextType = any, ParentType extends Reso
 
 export type Resolvers<ContextType = any> = {
   ColorHex?: GraphQLScalarType;
+  Dataset?: DatasetResolvers<ContextType>;
   DateTime?: GraphQLScalarType;
   Example?: ExampleResolvers<ContextType>;
   Geometry?: GeometryResolvers<ContextType>;
@@ -745,7 +751,6 @@ export type Resolvers<ContextType = any> = {
   LabelClassesAggregates?: LabelClassesAggregatesResolvers<ContextType>;
   LabelsAggregates?: LabelsAggregatesResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
-  Project?: ProjectResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   Upload?: GraphQLScalarType;
   UploadTarget?: UploadTargetResolvers<ContextType>;

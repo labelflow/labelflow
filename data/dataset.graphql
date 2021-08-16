@@ -1,0 +1,18 @@
+input DatasetCreateInput {
+  id: ID
+  name: String!
+}
+
+input DatasetWhereUniqueInput {
+  id: ID
+  name: String
+  slug: String
+}
+
+input DatasetWhereIDInput {
+  id: ID!
+}
+
+input DatasetUpdateInput {
+  name: String!
+}

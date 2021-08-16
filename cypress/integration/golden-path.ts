@@ -1,17 +1,25 @@
-import imageSampleCollection from "../../typescript/web-app/src/utils/image-sample-collection";
+import imageSampleCollection from "../../typescript/web/src/utils/image-sample-collection";
 
 describe("Golden path", () => {
   it("Should execute the golden path without errors", () => {
     // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
     cy.visit(
-      "/projects?modal-welcome=closed&modal-update-service-worker=update"
+      "/datasets?modal-welcome=closed&modal-update-service-worker=update"
     );
 
-    cy.contains("Create new project...").click();
-    cy.get("input").type("cypress test project");
+    cy.url().should(
+      "match",
+      /.\/datasets\/([a-zA-Z0-9_-]*)\/images\/([a-zA-Z0-9_-]*)/
+    );
+
+    cy.get('[aria-label="loading indicator"]').should("not.exist");
+    cy.get("a").contains("Datasets").click();
+
+    cy.contains("Create new dataset...").click();
+    cy.get("input").type("cypress test dataset");
     cy.contains("Start Labelling").click();
 
-    cy.contains("cypress test project").click();
+    cy.contains("cypress test dataset").click();
 
     cy.contains("You don't have any images.").should("be.visible");
 
@@ -104,9 +112,10 @@ describe("Golden path", () => {
     ).should("exist");
 
     cy.get('[aria-label="Export"]').click();
-
-    cy.contains("Your project contains 8 images and 1 labels").should(
+    cy.contains("Your dataset contains 8 images and 1 labels").should(
       "be.visible"
     );
+    cy.contains("Export to COCO").should("exist").click();
+    cy.contains("Export Options").should("be.visible");
   });
 });

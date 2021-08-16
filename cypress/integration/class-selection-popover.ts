@@ -1,13 +1,13 @@
 import { gql } from "@apollo/client";
 
 import { LabelCreateInput } from "../../typescript/graphql-types";
-import { client } from "../../typescript/web-app/src/connectors/apollo-client-schema";
+import { client } from "../../typescript/web/src/connectors/apollo-client/schema-client";
 
-const createProject = async (name: string) => {
+const createDataset = async (name: string) => {
   const mutationResult = await client.mutate({
     mutation: gql`
-      mutation createProject($name: String) {
-        createProject(data: { name: $name }) {
+      mutation createDataset($name: String) {
+        createDataset(data: { name: $name }) {
           id
         }
       }
@@ -19,18 +19,18 @@ const createProject = async (name: string) => {
 
   const {
     data: {
-      createProject: { id },
+      createDataset: { id },
     },
   } = mutationResult;
 
   return id;
 };
 
-async function createImage(url: string, projectId: string) {
+async function createImage(url: string, datasetId: string) {
   const mutationResult = await client.mutate({
     mutation: gql`
-      mutation createImage($url: String, $projectId: ID!) {
-        createImage(data: { url: $url, projectId: $projectId }) {
+      mutation createImage($url: String, $datasetId: ID!) {
+        createImage(data: { url: $url, datasetId: $datasetId }) {
           id
           name
           width
@@ -40,7 +40,7 @@ async function createImage(url: string, projectId: string) {
       }
     `,
     variables: {
-      projectId,
+      datasetId,
       url,
     },
   });
@@ -70,7 +70,7 @@ const createLabel = (data: LabelCreateInput) => {
 const createLabelClass = async (
   name: String,
   color = "#ffffff",
-  projectId: string
+  datasetId: string
 ) => {
   const {
     data: {
@@ -81,10 +81,10 @@ const createLabelClass = async (
       mutation createLabelClass(
         $name: String!
         $color: String!
-        $projectId: ID!
+        $datasetId: ID!
       ) {
         createLabelClass(
-          data: { name: $name, color: $color, projectId: $projectId }
+          data: { name: $name, color: $color, datasetId: $datasetId }
         ) {
           id
           name
@@ -95,7 +95,7 @@ const createLabelClass = async (
     variables: {
       name,
       color,
-      projectId,
+      datasetId,
     },
   });
 
@@ -103,22 +103,22 @@ const createLabelClass = async (
 };
 
 describe("Class selection popover", () => {
-  let projectId: string;
+  let datasetId: string;
   let imageId: string;
   beforeEach(() =>
     cy.window().then(async () => {
-      projectId = await createProject("cypress test project");
+      datasetId = await createDataset("cypress test dataset");
 
       const { id } = await createImage(
         "https://images.unsplash.com/photo-1579513141590-c597876aefbc?auto=format&fit=crop&w=882&q=80",
-        projectId
+        datasetId
       );
       imageId = id;
 
       const labelClassId = await createLabelClass(
         "A new class",
         "#F87171",
-        projectId
+        datasetId
       );
       await createLabel({
         imageId,
@@ -142,7 +142,7 @@ describe("Class selection popover", () => {
   it("right clicks on a label to change its class", () => {
     // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
     cy.visit(
-      `/projects/${projectId}/images/${imageId}?modal-welcome=closed&modal-update-service-worker=update`
+      `/datasets/${datasetId}/images/${imageId}?modal-welcome=closed&modal-update-service-worker=update`
     );
     cy.get('[aria-label="loading indicator"]').should("not.exist");
     cy.get('[aria-label="Selection tool"]').click();
@@ -188,11 +188,11 @@ describe("Class selection popover", () => {
   });
 
   it("uses the class selection menu to change the class of created labels", () => {
-    cy.wrap(createLabelClass("My new class", "#65A30D", projectId));
+    cy.wrap(createLabelClass("My new class", "#65A30D", datasetId));
 
     // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
     cy.visit(
-      `/projects/${projectId}/images/${imageId}?modal-welcome=closed&modal-update-service-worker=update`
+      `/datasets/${datasetId}/images/${imageId}?modal-welcome=closed&modal-update-service-worker=update`
     );
     cy.get('[aria-label="loading indicator"]').should("not.exist");
     cy.get('[aria-label="Selection tool"]').click();
@@ -263,10 +263,10 @@ describe("Class selection popover", () => {
   });
 
   it("uses shortcuts to change classes", () => {
-    cy.wrap(createLabelClass("My new class", "#65A30D", projectId));
+    cy.wrap(createLabelClass("My new class", "#65A30D", datasetId));
     // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
     cy.visit(
-      `/projects/${projectId}/images/${imageId}?modal-welcome=closed&modal-update-service-worker=update`
+      `/datasets/${datasetId}/images/${imageId}?modal-welcome=closed&modal-update-service-worker=update`
     );
     cy.get('[aria-label="loading indicator"]').should("not.exist");
     cy.get('[aria-label="Selection tool"]').click();
@@ -326,13 +326,14 @@ describe("Class selection popover", () => {
 
   it("should update the label classes list when a label class is deleted", () => {
     cy.visit(
-      `/projects/${projectId}/images/${imageId}?modal-welcome=closed&modal-update-service-worker=update`
+      `/datasets/${datasetId}/images/${imageId}?modal-welcome=closed&modal-update-service-worker=update`
     );
 
-    cy.contains("cypress test project").click();
+    cy.get('[aria-label="loading indicator"]').should("not.exist");
+    cy.contains("cypress test dataset").click();
 
     cy.contains("classes").click();
-    cy.url().should("contain", `/projects/${projectId}/classes`);
+    cy.url().should("contain", `/datasets/${datasetId}/classes`);
 
     cy.get('[aria-label="Delete class"]').click();
 

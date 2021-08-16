@@ -20,7 +20,7 @@ import {
 
 describe("Coco converters", () => {
   const date = new Date("1995-12-17T03:24:00").toISOString();
-  const testProjectId = "test-project-id";
+  const testDatasetId = "test-dataset-id";
 
   const createLabelClass = (name: string): DbLabelClass => ({
     id: `id-${name}`,
@@ -28,7 +28,7 @@ describe("Coco converters", () => {
     updatedAt: date,
     name,
     color: "#000000",
-    projectId: testProjectId,
+    datasetId: testDatasetId,
   });
 
   const createLabelWithImageDimensions = (
@@ -63,7 +63,7 @@ describe("Coco converters", () => {
 
   const createImage = (name: string, height: number, width: number): Image => ({
     id: `id-${name}`,
-    name: `${name}.ext`,
+    name,
     createdAt: date,
     updatedAt: date,
     height,
@@ -71,9 +71,9 @@ describe("Coco converters", () => {
     url: "",
     externalUrl: `https://${name}`,
     path: "/path",
-    mimetype: "file/ext",
+    mimetype: "image/png",
     labels: [],
-    projectId: testProjectId,
+    datasetId: testDatasetId,
   });
 
   test("Should convert a label class to a coco category", () => {
@@ -208,7 +208,7 @@ describe("Coco converters", () => {
       height: 1,
       width: 2,
       coco_url: "https://an-image",
-      file_name: "an-image.ext",
+      file_name: "an-image_id-an-image.png",
       flickr_url: "",
       license: 0,
     };

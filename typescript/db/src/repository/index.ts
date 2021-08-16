@@ -107,25 +107,28 @@ export const repository: Repository = {
         })
       ),
   },
-  project: {
-    add: async (project) => {
-      const createdProject = await prisma.project.create({ data: project });
-      return createdProject.id;
+  dataset: {
+    add: async (dataset) => {
+      const createdDataset = await prisma.dataset.create({ data: dataset });
+      return createdDataset.id;
     },
     delete: async (id) => {
-      await prisma.project.delete({ where: { id } });
+      await prisma.dataset.delete({ where: { id } });
     },
     getById: (id) => {
-      return prisma.project.findUnique({ where: { id } });
+      return prisma.dataset.findUnique({ where: { id } });
     },
     getByName: (name) => {
-      return prisma.project.findUnique({ where: { name } });
+      return prisma.dataset.findUnique({ where: { name } });
     },
-    update: async (id, project) => {
+    getBySlug: (slug) => {
+      return prisma.dataset.findUnique({ where: { slug } });
+    },
+    update: async (id, dataset) => {
       try {
-        await prisma.project.update({
+        await prisma.dataset.update({
           where: { id },
-          data: castObjectNullsToUndefined(project),
+          data: castObjectNullsToUndefined(dataset),
         });
         return true;
       } catch (e) {
@@ -133,7 +136,7 @@ export const repository: Repository = {
       }
     },
     list: (_where, skip = undefined, first = undefined) =>
-      prisma.project.findMany(
+      prisma.dataset.findMany({
         castObjectNullsToUndefined({
           orderBy: { createdAt: Prisma.SortOrder.asc },
           skip,

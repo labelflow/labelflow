@@ -8,7 +8,6 @@ import type {
   QueryLabelArgs,
 } from "@labelflow/graphql-types";
 import { LabelType } from "@labelflow/graphql-types";
-import { projectTypename } from "./project";
 
 import { DbLabel, Context, Repository } from "./types";
 
@@ -169,8 +168,8 @@ const totalCount = async (parent: any, _args: any, { repository }: Context) => {
   // eslint-disable-next-line no-underscore-dangle
   const typename = parent?.__typename;
 
-  if (typename === projectTypename) {
-    return repository.label.count({ projectId: parent.id });
+  if (typename === "Dataset") {
+    return repository.label.count({ datasetId: parent.id });
   }
 
   return repository.label.count();
@@ -190,5 +189,5 @@ export default {
     labelClass,
   },
   LabelsAggregates: { totalCount },
-  Project: { labelsAggregates },
+  Dataset: { labelsAggregates },
 };

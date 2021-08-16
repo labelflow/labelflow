@@ -9,7 +9,7 @@ CREATE TABLE "Image" (
     "mimetype" TEXT NOT NULL,
     "width" DOUBLE PRECISION NOT NULL,
     "height" DOUBLE PRECISION NOT NULL,
-    "projectId" UUID NOT NULL,
+    "datasetId" UUID NOT NULL,
 
     PRIMARY KEY ("id")
 );
@@ -37,13 +37,13 @@ CREATE TABLE "LabelClass" (
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "name" TEXT NOT NULL,
     "color" TEXT NOT NULL,
-    "projectId" UUID NOT NULL,
+    "datasetId" UUID NOT NULL,
 
     PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "Project" (
+CREATE TABLE "Dataset" (
     "id" UUID NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
@@ -53,10 +53,10 @@ CREATE TABLE "Project" (
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Project.name_unique" ON "Project"("name");
+CREATE UNIQUE INDEX "Dataset.name_unique" ON "Dataset"("name");
 
 -- AddForeignKey
-ALTER TABLE "Image" ADD FOREIGN KEY ("projectId") REFERENCES "Project"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "Image" ADD FOREIGN KEY ("datasetId") REFERENCES "Dataset"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Label" ADD FOREIGN KEY ("imageId") REFERENCES "Image"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -65,4 +65,4 @@ ALTER TABLE "Label" ADD FOREIGN KEY ("imageId") REFERENCES "Image"("id") ON DELE
 ALTER TABLE "Label" ADD FOREIGN KEY ("labelClassId") REFERENCES "LabelClass"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "LabelClass" ADD FOREIGN KEY ("projectId") REFERENCES "Project"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "LabelClass" ADD FOREIGN KEY ("datasetId") REFERENCES "Dataset"("id") ON DELETE CASCADE ON UPDATE CASCADE;

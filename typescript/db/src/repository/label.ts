@@ -9,9 +9,9 @@ export const countLabels: Repository["label"]["count"] = async (where) => {
   if (!where) {
     return 0;
   }
-  if ("projectId" in where) {
+  if ("datasetId" in where) {
     return prisma.label.count({
-      where: { image: { projectId: where.projectId ?? undefined } },
+      where: { image: { datasetId: where.datasetId ?? undefined } },
     });
   }
   return prisma.label.count({ where: castObjectNullsToUndefined(where) });
@@ -25,15 +25,15 @@ export const listLabels: Repository["label"]["list"] = async (
   if (!where) {
     return [];
   }
-  if ("projectId" in where) {
+  if ("datasetId" in where) {
     return prisma.label.findMany(
       castObjectNullsToUndefined({
-        where: { image: { projectId: where.projectId ?? undefined } },
-        orderBy: { createdAt: Prisma.SortOrder.asc },
+        where: { image: { datasetId: where.datasetId } },
+        orderBy: { createdAt: "asc" },
         skip,
         take: first,
-      })
-    ) as unknown as Promise<DbLabel[]>;
+      }) as unknown as Promise<DbLabel[]>
+    );
   }
 
   return prisma.label.findMany(

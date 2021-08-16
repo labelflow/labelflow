@@ -4,7 +4,7 @@ import type {
   Image as GeneratedImage,
   Label as GeneratedLabel,
   LabelClass as GeneratedLabelClass,
-  Project as GeneratedProject,
+  Dataset as GeneratedDataset,
   ImageWhereInput,
   LabelClassWhereInput,
   LabelWhereInput,
@@ -22,8 +22,8 @@ export type DbLabelClass = Omit<GeneratedLabelClass, "labels">;
 
 export type DbExample = GeneratedExample;
 
-export type DbProject = Omit<
-  GeneratedProject,
+export type DbDataset = Omit<
+  GeneratedDataset,
   | "images"
   | "imagesAggregates"
   | "labels"
@@ -43,6 +43,7 @@ type GetById<EntityType> = (id: ID) => Promise<EntityType | undefined | null>;
 type GetByName<EntityType> = (
   name: string
 ) => Promise<EntityType | undefined | null>;
+type GetBySlug<EntityType> = (slug: string) => Promise<EntityType | undefined>;
 type List<Entity = unknown, Where extends Record<string, any> | null = null> = (
   where?: Where | null,
   skip?: number | null,
@@ -76,13 +77,14 @@ export type Repository = {
     list: List<DbLabelClass, LabelClassWhereInput>;
     update: Update<DbLabelClass>;
   };
-  project: {
-    add: Add<DbProject>;
+  dataset: {
+    add: Add<DbDataset>;
     delete: Delete;
-    getById: GetById<DbProject>;
-    getByName: GetByName<DbProject>;
-    list: List<DbProject, null>;
-    update: Update<DbProject>;
+    getById: GetById<DbDataset>;
+    getByName: GetByName<DbDataset>;
+    getBySlug: GetBySlug<DbDataset>;
+    list: List<DbDataset, null>;
+    update: Update<DbDataset>;
   };
   upload: {
     getUploadTargetHttp: (
