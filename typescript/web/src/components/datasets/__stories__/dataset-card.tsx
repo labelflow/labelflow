@@ -1,4 +1,3 @@
-import { withNextRouter } from "storybook-addon-next-router";
 import { omit } from "lodash/fp";
 
 import { Box } from "@chakra-ui/react";
@@ -10,12 +9,7 @@ import { DatasetCard } from "..";
 
 export default {
   title: "web/Dataset Card",
-  decorators: [
-    chakraDecorator,
-    apolloDecorator,
-    queryParamsDecorator,
-    withNextRouter,
-  ],
+  decorators: [chakraDecorator, apolloDecorator, queryParamsDecorator],
 };
 
 const property = {

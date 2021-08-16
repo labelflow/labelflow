@@ -1,7 +1,6 @@
 import React, { useState, useRef } from "react";
 
 import { Popover, PopoverBody, PopoverContent, VStack } from "@chakra-ui/react";
-import { withNextRouter } from "storybook-addon-next-router";
 
 import { chakraDecorator } from "../../../../utils/chakra-decorator";
 import { queryParamsDecorator } from "../../../../utils/query-params-decorator";
@@ -21,7 +20,7 @@ export default {
       },
     },
   },
-  decorators: [chakraDecorator, queryParamsDecorator, withNextRouter],
+  decorators: [chakraDecorator, queryParamsDecorator],
 };
 
 // @ts-ignore

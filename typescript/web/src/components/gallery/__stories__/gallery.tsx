@@ -1,30 +1,42 @@
-/* eslint-disable @typescript-eslint/no-use-before-define */
 import { HStack } from "@chakra-ui/react";
-import { Story, DecoratorFn } from "@storybook/react";
-import { withNextRouter } from "storybook-addon-next-router";
-import { gql } from "@apollo/client";
-import Bluebird from "bluebird";
+import { Story } from "@storybook/react";
 
-import { client } from "../../../connectors/apollo-client/schema-client";
+import { mockImagesLoader } from "../../../utils/mock-image-loader";
+
 import { chakraDecorator } from "../../../utils/chakra-decorator";
 import { apolloDecorator } from "../../../utils/apollo-decorator";
-import { getDatabase } from "../../../connectors/database";
 
 import { Gallery } from "../gallery";
 
-import imageSampleCollection from "../../../utils/image-sample-collection";
+// import imageSampleCollection from "../../../utils/image-sample-collection";
 
-const images = imageSampleCollection.slice(0, 15);
+const datasetId = "233e2ff4-7be3-4371-a6de-1ebbe71c90b9";
+
+const images = [
+  {
+    id: "5ec44f0f-11ec-454d-a198-607eddbc801c",
+    name: "Hello puffin 1",
+    url: "https://images.unsplash.com/photo-1612564148954-59545876eaa0?auto=format&fit=crop&w=600&q=80",
+  },
+  {
+    id: "a63d2bb6-5ad1-46f1-8a3d-a9bed96067d7",
+    name: "Hello puffin 2",
+    url: "https://images.unsplash.com/photo-1580629905303-faaa03202631?auto=format&fit=crop&w=600&q=80",
+  },
+  {
+    id: "cb340d03-be7a-4b2e-b0db-bf2f521998c0",
+    name: "Hello puffin 3",
+    url: "https://images.unsplash.com/photo-1490718720478-364a07a997cd?auto=format&fit=crop&w=600&q=80",
+  },
+];
+
+// const images = imageSampleCollection.slice(0, 15);
 
 export default {
   title: "web/Gallery",
   component: Gallery,
   loaders: [mockImagesLoader],
-  decorators: [
-    chakraDecorator,
-    apolloDecorator,
-    withIdsInQueryStringRouterDecorator,
-  ],
+  decorators: [chakraDecorator, apolloDecorator],
 };
 
 const Template: Story = () => (
@@ -36,92 +48,10 @@ const Template: Story = () => (
 export const Images = Template.bind({});
 Images.parameters = {
   mockImages: { images },
-};
-
-/* ----------- */
-/*   Helpers   */
-/* ----------- */
-
-async function createDataset(name: string) {
-  const mutationResult = await client.mutate({
-    mutation: gql`
-      mutation createDataset($name: String!) {
-        createDataset(data: { name: $name }) {
-          id
-        }
-      }
-    `,
-    variables: { name },
-  });
-  const {
-    data: {
-      createDataset: { id },
-    },
-  } = mutationResult;
-
-  return id;
-}
-
-async function createImage(url: string, datasetId: string) {
-  const mutationResult = await client.mutate({
-    mutation: gql`
-      mutation createImage($url: String!, $datasetId: ID!) {
-        createImage(data: { url: $url, datasetId: $datasetId }) {
-          id
-          name
-          width
-          height
-          url
-        }
-      }
-    `,
-    variables: {
-      url,
+  nextRouter: {
+    query: {
+      imageId: images[0].id,
       datasetId,
     },
-  });
-
-  const {
-    data: { createImage: image },
-  } = mutationResult;
-
-  return image;
-}
-
-async function mockImagesLoader({
-  parameters,
-}: {
-  parameters: { mockImages?: { images?: string[] }; mockDatasetId?: string };
-}) {
-  // first, clean the database and the apollo client
-  await Promise.all(getDatabase().tables.map((table) => table.clear()));
-  await client.clearStore();
-
-  const imageArray = parameters?.mockImages?.images;
-
-  // Because of race conditions we have to randomize the dataset name
-  const datasetId = await createDataset(`storybook dataset ${Date.now()}`);
-
-  if (imageArray == null || datasetId == null) {
-    return { images: [] };
-  }
-
-  // We use mapSeries to ensure images are created in the same order
-  const loadedImages = await Bluebird.mapSeries(imageArray, (url) =>
-    createImage(url, datasetId)
-  );
-
-  return { datasetId, images: loadedImages };
-}
-
-function withIdsInQueryStringRouterDecorator(
-  storyFn: Parameters<DecoratorFn>[0],
-  context: Parameters<DecoratorFn>[1]
-): ReturnType<DecoratorFn> {
-  return withNextRouter({
-    query: {
-      imageId: context.loaded.images[0].id,
-      datasetId: context.loaded.datasetId,
-    },
-  })(storyFn, context);
-}
+  },
+};
