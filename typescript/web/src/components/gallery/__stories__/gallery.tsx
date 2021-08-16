@@ -1,30 +1,34 @@
-/* eslint-disable @typescript-eslint/no-use-before-define */
 import { HStack } from "@chakra-ui/react";
-import { Story, DecoratorFn } from "@storybook/react";
-import { withNextRouter } from "storybook-addon-next-router";
-import { gql } from "@apollo/client";
-import Bluebird from "bluebird";
+import { Story } from "@storybook/react";
 
-import { client } from "../../../connectors/apollo-client/schema-client";
+import { mockImagesLoader } from "../../../utils/mock-image-loader";
+
 import { chakraDecorator } from "../../../utils/chakra-decorator";
 import { apolloDecorator } from "../../../utils/apollo-decorator";
-import { getDatabase } from "../../../connectors/database";
 
 import { Gallery } from "../gallery";
 
 import imageSampleCollection from "../../../utils/image-sample-collection";
 
-const images = imageSampleCollection.slice(0, 15);
+const datasetId = "233e2e14-7be3-4371-a6de-1ebbe71c90b9";
+
+function pad(num: number, size: number) {
+  return `000000000${num}`.substr(-size);
+}
+
+const images = imageSampleCollection
+  .slice(0, 15)
+  .map((url: string, index: number) => ({
+    id: `5ec44f0f-11ec-454d-a198-607eddbc${pad(index, 4)}`,
+    name: `Hello ${index}`,
+    url,
+  }));
 
 export default {
   title: "web/Gallery",
   component: Gallery,
   loaders: [mockImagesLoader],
-  decorators: [
-    chakraDecorator,
-    apolloDecorator,
-    withIdsInQueryStringRouterDecorator,
-  ],
+  decorators: [chakraDecorator, apolloDecorator],
 };
 
 const Template: Story = () => (
@@ -35,93 +39,11 @@ const Template: Story = () => (
 
 export const Images = Template.bind({});
 Images.parameters = {
-  mockImages: { images },
-};
-
-/* ----------- */
-/*   Helpers   */
-/* ----------- */
-
-async function createDataset(name: string) {
-  const mutationResult = await client.mutate({
-    mutation: gql`
-      mutation createDataset($name: String!) {
-        createDataset(data: { name: $name }) {
-          id
-        }
-      }
-    `,
-    variables: { name },
-  });
-  const {
-    data: {
-      createDataset: { id },
-    },
-  } = mutationResult;
-
-  return id;
-}
-
-async function createImage(url: string, datasetId: string) {
-  const mutationResult = await client.mutate({
-    mutation: gql`
-      mutation createImage($url: String!, $datasetId: ID!) {
-        createImage(data: { url: $url, datasetId: $datasetId }) {
-          id
-          name
-          width
-          height
-          url
-        }
-      }
-    `,
-    variables: {
-      url,
+  mockImages: { datasetId, images },
+  nextRouter: {
+    query: {
+      imageId: images[0].id,
       datasetId,
     },
-  });
-
-  const {
-    data: { createImage: image },
-  } = mutationResult;
-
-  return image;
-}
-
-async function mockImagesLoader({
-  parameters,
-}: {
-  parameters: { mockImages?: { images?: string[] }; mockDatasetId?: string };
-}) {
-  // first, clean the database and the apollo client
-  await Promise.all(getDatabase().tables.map((table) => table.clear()));
-  await client.clearStore();
-
-  const imageArray = parameters?.mockImages?.images;
-
-  // Because of race conditions we have to randomize the dataset name
-  const datasetId = await createDataset(`storybook dataset ${Date.now()}`);
-
-  if (imageArray == null || datasetId == null) {
-    return { images: [] };
-  }
-
-  // We use mapSeries to ensure images are created in the same order
-  const loadedImages = await Bluebird.mapSeries(imageArray, (url) =>
-    createImage(url, datasetId)
-  );
-
-  return { datasetId, images: loadedImages };
-}
-
-function withIdsInQueryStringRouterDecorator(
-  storyFn: Parameters<DecoratorFn>[0],
-  context: Parameters<DecoratorFn>[1]
-): ReturnType<DecoratorFn> {
-  return withNextRouter({
-    query: {
-      imageId: context.loaded.images[0].id,
-      datasetId: context.loaded.datasetId,
-    },
-  })(storyFn, context);
-}
+  },
+};

@@ -1,5 +1,4 @@
 import { Button, useDisclosure } from "@chakra-ui/react";
-import { withNextRouter } from "storybook-addon-next-router";
 
 import { DeleteDatasetModal } from "../delete-dataset-modal";
 import { chakraDecorator } from "../../../utils/chakra-decorator";
@@ -8,12 +7,7 @@ import { queryParamsDecorator } from "../../../utils/query-params-decorator";
 
 export default {
   title: "web/Delete dataset dialog",
-  decorators: [
-    chakraDecorator,
-    apolloDecorator,
-    queryParamsDecorator,
-    withNextRouter,
-  ],
+  decorators: [chakraDecorator, apolloDecorator, queryParamsDecorator],
 };
 
 export const Default = () => {

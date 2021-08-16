@@ -11,6 +11,7 @@ import { useHotkeys } from "react-hotkeys-hook";
 import CircleStyle from "ol/style/Circle";
 import { Feature } from "ol";
 import { Label } from "@labelflow/graphql-types";
+import { omit } from "lodash/fp";
 import { keymap } from "../../../keymap";
 import { useLabellingStore } from "../../../connectors/labelling-state";
 import { useUndoStore, Effect } from "../../../connectors/undo-store";
@@ -136,7 +137,7 @@ const createDeleteLabelEffect = (
       id: labelId,
       imageId,
       labelClassId,
-      geometry,
+      geometry: omit(["__typename"], geometry),
     };
 
     /* It is important to use the same id for the re-creation when the label
