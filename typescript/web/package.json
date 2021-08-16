@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "scripts": {
     "dev": "next",
-    "build": "cd ../db && yarn generate && cd ../web-app && next build",
+    "build": "cd ../db && yarn generate && cd ../web && next build",
     "start": "next start",
     "type-check": "tsc",
     "bundlewatch": "bundlewatch --config ./bundlewatch.config.js"

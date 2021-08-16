@@ -166,7 +166,7 @@ module.exports =
         );
       }
 
-      // Enable top level await for apollo-server-micro in `typescript/web-app/src/pages/api/graphql.ts`
+      // Enable top level await for apollo-server-micro in `typescript/web/src/pages/api/graphql.ts`
       // See https://stackoverflow.com/questions/68339243/how-can-i-use-top-level-await-in-typescript-next-js
       config.experiments = {
         ...config.experiments,
