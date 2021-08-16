@@ -26,14 +26,14 @@ export const listLabels: Repository["label"]["list"] = async (
     return [];
   }
   if ("datasetId" in where) {
-    return prisma.label.findMany(
-      castObjectNullsToUndefined({
-        where: { image: { datasetId: where.datasetId } },
-        orderBy: { createdAt: "asc" },
-        skip,
-        take: first,
-      }) as unknown as Promise<DbLabel[]>
-    );
+    return prisma.label.findMany({
+      where: {
+        image: { datasetId: where.datasetId ?? undefined },
+      },
+      orderBy: { createdAt: Prisma.SortOrder.asc },
+      skip: skip ?? undefined,
+      take: first ?? undefined,
+    }) as unknown as DbLabel[];
   }
 
   return prisma.label.findMany(
@@ -43,5 +43,5 @@ export const listLabels: Repository["label"]["list"] = async (
       skip,
       take: first,
     })
-  ) as unknown as Promise<DbLabel[]>;
+  ) as unknown as DbLabel[];
 };

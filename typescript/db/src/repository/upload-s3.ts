@@ -11,8 +11,8 @@ const location = `https://${bucket}.s3.${region}.amazonaws.com`;
 const s3Client = new S3Client({
   region,
   credentials: {
-    accessKeyId: process.env?.LABELFLOW_AWS_ACCESS_KEY_ID,
-    secretAccessKey: process.env?.LABELFLOW_AWS_SECRET_ACCESS_KEY,
+    accessKeyId: process.env?.LABELFLOW_AWS_ACCESS_KEY_ID!,
+    secretAccessKey: process.env?.LABELFLOW_AWS_SECRET_ACCESS_KEY!,
   },
 });
 
