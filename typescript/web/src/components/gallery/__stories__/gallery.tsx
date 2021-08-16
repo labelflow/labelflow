@@ -10,7 +10,7 @@ import { Gallery } from "../gallery";
 
 import imageSampleCollection from "../../../utils/image-sample-collection";
 
-const datasetId = "233e2ff4-7be3-4371-a6de-1ebbe71c90b9";
+const datasetId = "233e2e14-7be3-4371-a6de-1ebbe71c90b9";
 
 function pad(num: number, size: number) {
   return `000000000${num}`.substr(-size);
@@ -39,7 +39,7 @@ const Template: Story = () => (
 
 export const Images = Template.bind({});
 Images.parameters = {
-  mockImages: { images },
+  mockImages: { datasetId, images },
   nextRouter: {
     query: {
       imageId: images[0].id,

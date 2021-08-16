@@ -8,7 +8,7 @@ import { apolloDecorator } from "../../../utils/apollo-decorator";
 import { mockImagesLoader } from "../../../utils/mock-image-loader";
 import { LabellingTool } from "../labelling-tool";
 
-const datasetId = "233e2ff4-7be3-4371-a6de-1ebbe71c90b9";
+const datasetId = "233e8af4-7be3-4371-a6de-1ebbe71c90b9";
 
 const images = [
   {
@@ -54,7 +54,7 @@ export const OneImage: Story = () => {
   return <LabellingTool />;
 };
 OneImage.parameters = {
-  mockImages: { images: images.slice(0, 1) },
+  mockImages: { datasetId, images: images.slice(0, 1) },
   nextRouter: {
     query: {
       imageId: images[0].id,
@@ -67,7 +67,7 @@ export const ThreeImages: Story = () => {
   return <LabellingTool />;
 };
 ThreeImages.parameters = {
-  mockImages: { images },
+  mockImages: { datasetId, images },
   nextRouter: {
     query: {
       imageId: images[0].id,
