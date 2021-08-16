@@ -251,6 +251,12 @@ const deleteDataset = async (
     `No dataset with id "${args.where.id}"`,
     repository.dataset.getById
   )(args.where.id);
+  const imagesOfDataset = await repository.image.list({
+    datasetId: args.where.id,
+  });
+  await Promise.all(
+    imagesOfDataset.map(async (image) => repository.upload.delete(image.url))
+  );
   await repository.dataset.delete(datasetToDelete.id);
   return datasetToDelete;
 };
