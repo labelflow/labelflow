@@ -7,8 +7,6 @@ import type {
   QueryImageArgs,
   QueryImagesArgs,
 } from "@labelflow/graphql-types";
-
-import { projectTypename } from "./project";
 import { probeImage } from "./utils/probe-image";
 
 import { Context, DbImage, Repository } from "./types";
@@ -48,7 +46,7 @@ export const getImageEntityFromMutationArgs = async (
     path,
     url,
     externalUrl,
-    projectId,
+    datasetId,
   } = data;
   const now = data?.createdAt ?? new Date().toISOString();
   const imageId = id ?? uuidv4();
@@ -119,7 +117,7 @@ export const getImageEntityFromMutationArgs = async (
   );
 
   const newImageEntity: DbImage = {
-    projectId,
+    datasetId,
     createdAt: now,
     updatedAt: now,
     id: imageId,
@@ -143,7 +141,7 @@ const labelsResolver = async (
 
 const image = async (_: any, args: QueryImageArgs, { repository }: Context) =>
   throwIfResolvesToNil(
-    "No image with such id",
+    `No image with id "${args?.where?.id}"`,
     repository.image.getById
   )(args?.where?.id);
 
@@ -161,15 +159,15 @@ const createImage = async (
   args: MutationCreateImageArgs,
   { repository }: Context
 ): Promise<DbImage> => {
-  const { file, url, externalUrl, projectId } = args.data;
+  const { file, url, externalUrl, datasetId } = args.data;
 
   // Since we don't have any constraint checks with Dexie
-  // we need to ensure that the projectId matches some
+  // we need to ensure that the datasetId matches some
   // entity before being able to continue.
   await throwIfResolvesToNil(
-    `The project id ${projectId} doesn't exist.`,
-    repository.project.getById
-  )(projectId);
+    `The dataset id ${datasetId} doesn't exist.`,
+    repository.dataset.getById
+  )(datasetId);
 
   if (
     !(
@@ -202,9 +200,9 @@ const totalCount = (parent: any, _args: any, { repository }: Context) => {
   // eslint-disable-next-line no-underscore-dangle
   const typename = parent?.__typename;
 
-  if (typename === projectTypename) {
+  if (typename === "Dataset") {
     return repository.image.count({
-      projectId: parent.id,
+      datasetId: parent.id,
     });
   }
 
@@ -228,7 +226,7 @@ export default {
 
   ImagesAggregates: { totalCount },
 
-  Project: {
+  Dataset: {
     imagesAggregates,
   },
 };

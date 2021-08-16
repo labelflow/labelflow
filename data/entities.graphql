@@ -18,10 +18,10 @@ type Image {
   height: Int!
   width: Int!
   labels: [Label!]!
-  projectId: ID!
+  datasetId: ID!
 }
 
-enum LabelType{
+enum LabelType {
   Polygon
   Box
 }
@@ -52,14 +52,15 @@ type LabelClass {
   name: String!
   color: ColorHex!
   labels: [Label!]!
-  projectId: ID!
+  datasetId: ID!
 }
 
-type Project {
+type Dataset {
   id: ID!
   createdAt: DateTime!
   updatedAt: DateTime!
   name: String!
+  slug: String!
   images(first: Int, skip: Int): [Image!]!
   labels: [Label!]!
   labelClasses: [LabelClass!]!

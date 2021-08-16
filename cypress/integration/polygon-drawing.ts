@@ -1,12 +1,12 @@
 import { gql } from "@apollo/client";
 
-import { client } from "../../typescript/web-app/src/connectors/apollo-client/schema-client";
+import { client } from "../../typescript/web/src/connectors/apollo-client/schema-client";
 
-const createProject = async (name: string) => {
+const createDataset = async (name: string) => {
   const mutationResult = await client.mutate({
     mutation: gql`
-      mutation createProject($name: String) {
-        createProject(data: { name: $name }) {
+      mutation createDataset($name: String) {
+        createDataset(data: { name: $name }) {
           id
         }
       }
@@ -18,18 +18,18 @@ const createProject = async (name: string) => {
 
   const {
     data: {
-      createProject: { id },
+      createDataset: { id },
     },
   } = mutationResult;
 
   return id;
 };
 
-async function createImage(url: string, projectId: string) {
+async function createImage(url: string, datasetId: string) {
   const mutationResult = await client.mutate({
     mutation: gql`
-      mutation createImage($url: String, $projectId: ID!) {
-        createImage(data: { url: $url, projectId: $projectId }) {
+      mutation createImage($url: String, $datasetId: ID!) {
+        createImage(data: { url: $url, datasetId: $datasetId }) {
           id
           name
           width
@@ -39,7 +39,7 @@ async function createImage(url: string, projectId: string) {
       }
     `,
     variables: {
-      projectId,
+      datasetId,
       url,
     },
   });
@@ -54,7 +54,7 @@ async function createImage(url: string, projectId: string) {
 const createLabelClass = async (
   name: String,
   color = "#ffffff",
-  projectId: string
+  datasetId: string
 ) => {
   const {
     data: {
@@ -65,10 +65,10 @@ const createLabelClass = async (
       mutation createLabelClass(
         $name: String!
         $color: String!
-        $projectId: ID!
+        $datasetId: ID!
       ) {
         createLabelClass(
-          data: { name: $name, color: $color, projectId: $projectId }
+          data: { name: $name, color: $color, datasetId: $datasetId }
         ) {
           id
           name
@@ -79,7 +79,7 @@ const createLabelClass = async (
     variables: {
       name,
       color,
-      projectId,
+      datasetId,
     },
   });
 
@@ -87,26 +87,26 @@ const createLabelClass = async (
 };
 
 describe("Polygon drawing", () => {
-  let projectId: string;
+  let datasetId: string;
   let imageId: string;
   beforeEach(() =>
     cy.window().then(async () => {
-      projectId = await createProject("cypress test project");
+      datasetId = await createDataset("cypress test dataset");
 
       const { id } = await createImage(
         "https://images.unsplash.com/photo-1579513141590-c597876aefbc?auto=format&fit=crop&w=882&q=80",
-        projectId
+        datasetId
       );
       imageId = id;
 
-      await createLabelClass("This is not a rocket", "#f4bedc", projectId);
+      await createLabelClass("Rocket", "#00ff00", datasetId);
     })
   );
 
   it("switches between drawing tools", () => {
     // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
     cy.visit(
-      `/projects/${projectId}/images/${imageId}?modal-welcome=closed&modal-update-service-worker=update`
+      `/datasets/${datasetId}/images/${imageId}?modal-welcome=closed&modal-update-service-worker=update`
     );
     cy.get('[aria-label="loading indicator"]').should("not.exist");
     cy.get('[aria-label="Drawing polygon tool"]').should("not.exist");
@@ -128,7 +128,7 @@ describe("Polygon drawing", () => {
   it("draws a polygon", () => {
     // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
     cy.visit(
-      `/projects/${projectId}/images/${imageId}?modal-welcome=closed&modal-update-service-worker=update`
+      `/datasets/${datasetId}/images/${imageId}?modal-welcome=closed&modal-update-service-worker=update`
     );
     cy.get('[aria-label="loading indicator"]').should("not.exist");
     cy.get('[aria-label="Change Drawing tool"]').should("exist").click();
@@ -147,13 +147,13 @@ describe("Polygon drawing", () => {
     cy.get("main").rightclick(475, 100);
 
     cy.get('[aria-label="Class selection popover"]')
-      .contains("This is not a rocket")
+      .contains("Rocket")
       .closest('[role="option"]')
       .should("have.attr", "aria-current", "false")
       .click();
     cy.get("main").rightclick(475, 100);
     cy.get('[aria-label="Class selection popover"]')
-      .contains("This is not a rocket")
+      .contains("Rocket")
       .closest('[role="option"]')
       .should("have.attr", "aria-current", "true");
   });

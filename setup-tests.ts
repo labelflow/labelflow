@@ -15,7 +15,7 @@ fetchMock.enableMocks();
 
 /**
  * We bypass the structured clone algorithm as its current js implementation
- * as its current js implementation doesn't support blobs.
+ * doesn't support blobs.
  * It might make our tests a bit different from what would actually happen
  * in a browser.
  */

@@ -1,6 +1,6 @@
 input ImageCreateInput {
   id: ID
-  projectId: ID!
+  datasetId: ID!
   createdAt: DateTime
   name: String
   path: String
@@ -13,7 +13,7 @@ input ImageCreateInput {
 }
 
 input ImageWhereInput {
-  projectId: ID
+  datasetId: ID
 }
 
 input ImageWhereUniqueInput {

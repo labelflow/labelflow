@@ -1,5 +1,38 @@
 scalar ColorHex
 
+type Dataset {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  name: String!
+  slug: String!
+  images(first: Int, skip: Int): [Image!]!
+  labels: [Label!]!
+  labelClasses: [LabelClass!]!
+  imagesAggregates: ImagesAggregates!
+  labelsAggregates: LabelsAggregates!
+  labelClassesAggregates: LabelClassesAggregates!
+}
+
+input DatasetCreateInput {
+  id: ID
+  name: String!
+}
+
+input DatasetUpdateInput {
+  name: String!
+}
+
+input DatasetWhereIDInput {
+  id: ID!
+}
+
+input DatasetWhereUniqueInput {
+  id: ID
+  name: String
+  slug: String
+}
+
 scalar DateTime
 
 type Example {
@@ -28,7 +61,7 @@ input ExampleWhereUniqueInput {
 }
 
 input ExportWhereUniqueInput {
-  projectId: ID!
+  datasetId: ID!
 }
 
 type Geometry {
@@ -53,12 +86,12 @@ type Image {
   height: Int!
   width: Int!
   labels: [Label!]!
-  projectId: ID!
+  datasetId: ID!
 }
 
 input ImageCreateInput {
   id: ID
-  projectId: ID!
+  datasetId: ID!
   createdAt: DateTime
   name: String
   path: String
@@ -71,7 +104,7 @@ input ImageCreateInput {
 }
 
 input ImageWhereInput {
-  projectId: ID
+  datasetId: ID
 }
 
 input ImageWhereUniqueInput {
@@ -105,14 +138,14 @@ type LabelClass {
   name: String!
   color: ColorHex!
   labels: [Label!]!
-  projectId: ID!
+  datasetId: ID!
 }
 
 input LabelClassCreateInput {
   id: ID
   name: String!
   color: ColorHex!
-  projectId: ID!
+  datasetId: ID!
 }
 
 input LabelClassUpdateInput {
@@ -121,7 +154,7 @@ input LabelClassUpdateInput {
 }
 
 input LabelClassWhereInput {
-  projectId: ID
+  datasetId: ID
 }
 
 input LabelClassWhereUniqueInput {
@@ -153,7 +186,7 @@ input LabelUpdateInput {
 input LabelWhereInput {
   imageId: ID
   labelClassId: ID
-  projectId: ID
+  datasetId: ID
 }
 
 input LabelWhereUniqueInput {
@@ -174,40 +207,10 @@ type Mutation {
   createLabelClass(data: LabelClassCreateInput!): LabelClass
   updateLabelClass(where: LabelClassWhereUniqueInput!, data: LabelClassUpdateInput!): LabelClass
   deleteLabelClass(where: LabelClassWhereUniqueInput!): LabelClass
-  createProject(data: ProjectCreateInput!): Project
-  updateProject(where: ProjectWhereIDInput!, data: ProjectUpdateInput!): Project
-  deleteProject(where: ProjectWhereIDInput!): Project
-}
-
-type Project {
-  id: ID!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  name: String!
-  images(first: Int, skip: Int): [Image!]!
-  labels: [Label!]!
-  labelClasses: [LabelClass!]!
-  imagesAggregates: ImagesAggregates!
-  labelsAggregates: LabelsAggregates!
-  labelClassesAggregates: LabelClassesAggregates!
-}
-
-input ProjectCreateInput {
-  id: ID
-  name: String!
-}
-
-input ProjectUpdateInput {
-  name: String!
-}
-
-input ProjectWhereIDInput {
-  id: ID!
-}
-
-input ProjectWhereUniqueInput {
-  id: ID
-  name: String
+  createDataset(data: DatasetCreateInput!): Dataset
+  createDemoDataset: Dataset
+  updateDataset(where: DatasetWhereIDInput!, data: DatasetUpdateInput!): Dataset
+  deleteDataset(where: DatasetWhereIDInput!): Dataset
 }
 
 type Query {
@@ -223,8 +226,8 @@ type Query {
   labelsAggregates: LabelsAggregates!
   label(where: LabelWhereUniqueInput!): Label!
   labels(where: LabelWhereInput, first: Int, skip: Int): [Label!]!
-  project(where: ProjectWhereUniqueInput!): Project!
-  projects(first: Int, skip: Int): [Project!]!
+  dataset(where: DatasetWhereUniqueInput!): Dataset!
+  datasets(first: Int, skip: Int): [Dataset!]!
   exportToCoco(where: ExportWhereUniqueInput!): String!
   debug: JSON!
 }
