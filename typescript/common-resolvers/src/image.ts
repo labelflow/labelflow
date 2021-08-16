@@ -83,7 +83,7 @@ export const getImageEntityFromMutationArgs = async (
 
     const blob = await fetchResult.blob();
     const uploadTarget = await repository.upload.getUploadTargetHttp(
-      getImageFileKey(imageId, projectId, blob.type)
+      getImageFileKey(imageId, datasetId, blob.type)
     );
 
     // eslint-disable-next-line no-underscore-dangle
@@ -101,7 +101,7 @@ export const getImageEntityFromMutationArgs = async (
     // File Content based upload
 
     const uploadTarget = await repository.upload.getUploadTargetHttp(
-      getImageFileKey(imageId, projectId, file.type)
+      getImageFileKey(imageId, datasetId, file.type)
     );
 
     // eslint-disable-next-line no-underscore-dangle
