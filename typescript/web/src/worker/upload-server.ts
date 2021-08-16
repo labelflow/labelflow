@@ -13,7 +13,6 @@ export class UploadServer implements RouteHandlerObject {
     switch (request.method) {
       // Handles upload
       case "PUT": {
-        console.log("PUT");
         const blob = await request.blob();
 
         const responseOfGet = new Response(blob, {
