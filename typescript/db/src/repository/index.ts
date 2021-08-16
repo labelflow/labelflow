@@ -136,7 +136,7 @@ export const repository: Repository = {
       }
     },
     list: (_where, skip = undefined, first = undefined) =>
-      prisma.dataset.findMany({
+      prisma.dataset.findMany(
         castObjectNullsToUndefined({
           orderBy: { createdAt: Prisma.SortOrder.asc },
           skip,

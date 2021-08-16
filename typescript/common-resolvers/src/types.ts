@@ -43,7 +43,9 @@ type GetById<EntityType> = (id: ID) => Promise<EntityType | undefined | null>;
 type GetByName<EntityType> = (
   name: string
 ) => Promise<EntityType | undefined | null>;
-type GetBySlug<EntityType> = (slug: string) => Promise<EntityType | undefined>;
+type GetBySlug<EntityType> = (
+  slug: string
+) => Promise<EntityType | undefined | null>;
 type List<Entity = unknown, Where extends Record<string, any> | null = null> = (
   where?: Where | null,
   skip?: number | null,
