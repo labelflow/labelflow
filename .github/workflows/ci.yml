@@ -266,7 +266,7 @@ jobs:
           ref: ${{ github.head_ref }}
           no_override: true
       - name: Check out repository code
-        uses: actions/checkout@v2      
+        uses: actions/checkout@v2
       - name: Deploy webapp on Vercel
         uses: amondnet/vercel-action@v20
         id: vercel
