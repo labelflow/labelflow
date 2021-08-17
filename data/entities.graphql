@@ -67,6 +67,7 @@ type Dataset {
   imagesAggregates: ImagesAggregates!
   labelsAggregates: LabelsAggregates!
   labelClassesAggregates: LabelClassesAggregates!
+  workspaceId: ID!
 }
 
 enum WorkspaceType {

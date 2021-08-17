@@ -31,6 +31,7 @@ export type Dataset = {
   imagesAggregates: ImagesAggregates;
   labelsAggregates: LabelsAggregates;
   labelClassesAggregates: LabelClassesAggregates;
+  workspaceId: Scalars['ID'];
 };
 
 
@@ -42,6 +43,7 @@ export type DatasetImagesArgs = {
 export type DatasetCreateInput = {
   id?: Maybe<Scalars['ID']>;
   name: Scalars['String'];
+  workspaceId: Scalars['ID'];
 };
 
 export type DatasetUpdateInput = {
@@ -666,6 +668,7 @@ export type DatasetResolvers<ContextType = any, ParentType extends ResolversPare
   imagesAggregates?: Resolver<ResolversTypes['ImagesAggregates'], ParentType, ContextType>;
   labelsAggregates?: Resolver<ResolversTypes['LabelsAggregates'], ParentType, ContextType>;
   labelClassesAggregates?: Resolver<ResolversTypes['LabelClassesAggregates'], ParentType, ContextType>;
+  workspaceId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 

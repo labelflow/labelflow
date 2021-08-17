@@ -12,11 +12,13 @@ type Dataset {
   imagesAggregates: ImagesAggregates!
   labelsAggregates: LabelsAggregates!
   labelClassesAggregates: LabelClassesAggregates!
+  workspaceId: ID!
 }
 
 input DatasetCreateInput {
   id: ID
   name: String!
+  workspaceId: ID!
 }
 
 input DatasetUpdateInput {

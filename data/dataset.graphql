@@ -1,6 +1,7 @@
 input DatasetCreateInput {
   id: ID
   name: String!
+  workspaceId: ID!
 }
 
 input DatasetWhereUniqueInput {
