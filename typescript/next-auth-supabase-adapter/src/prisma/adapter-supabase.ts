@@ -1,11 +1,15 @@
-import type {
+import {
   PrismaClient,
   User as SupabaseUser,
-  RefreshToken as SupabaseRefreshToken,
+  // RefreshToken as SupabaseRefreshToken,
 } from "@prisma/client";
 import type { Adapter } from "next-auth/adapters";
 import { v4 as uuidv4 } from "uuid";
-import { NextAuthAccount, NextAuthUser } from "./next-auth-types";
+import {
+  NextAuthAccount,
+  NextAuthUser,
+  // NextAuthVerificationToken,
+} from "./next-auth-types";
 
 const convertSupabaseUserToNextAuthUser = (
   user: SupabaseUser,
@@ -42,9 +46,6 @@ const convertNextAuthUserToSupabaseUser = (
     id: user.id,
     email: user.email as string,
     emailConfirmedAt: user.emailVerified as Date,
-    rawAppMetaData: {
-      provider: "email",
-    },
     rawUserMetaData: {
       avatar_url: (user.name as string) ?? undefined,
       full_name: (user.image as string) ?? undefined,
@@ -102,7 +103,25 @@ const convertNextAuthAccountToSupabaseUser = (
   };
 };
 
-export function PrismaAdapter(p: PrismaClient): Adapter {
+export function SupabaseAdapter({
+  prismaClient,
+  databaseUrl,
+}: {
+  prismaClient: PrismaClient;
+  databaseUrl: string;
+}): Adapter {
+  let p;
+
+  if (prismaClient) {
+    p = prismaClient;
+  } else if (databaseUrl) {
+    p = new PrismaClient({ datasources: { db: { url: databaseUrl } } });
+  } else {
+    throw new Error(
+      "NextAuthSupabaseAdapter must be constructed with either prismaClient or databaseUrl parameters."
+    );
+  }
+
   return {
     createUser: async (data) => {
       const now = new Date();
@@ -189,14 +208,19 @@ export function PrismaAdapter(p: PrismaClient): Adapter {
       const userBefore = await p.user.findUnique({
         where: { id: data.userId },
       });
-      // const accountBefore = convertSupabaseUserToNextAuthAccount(userBefore);
+      const accountBefore = convertSupabaseUserToNextAuthAccount(userBefore);
       const accountAfter: Omit<NextAuthAccount, "id"> = {
-        // ...accountBefore,
         ...data,
       };
+      if (
+        accountBefore.provider &&
+        accountBefore.provider !== accountAfter.provider
+      ) {
+        console.warn(
+          `Supabase only supports a single account per user. The user with id "${data.userId}" will be unlinked from provider "${accountBefore.provider}" and linked to provider "${accountAfter.provider}". See https://next-auth.js.org/adapters/models#account`
+        );
+      }
       const userAfter = convertNextAuthAccountToSupabaseUser(accountAfter);
-
-      // const user =
       await p.user.update({
         where: { id: data.userId },
         data: {
@@ -208,8 +232,6 @@ export function PrismaAdapter(p: PrismaClient): Adapter {
           updatedAt: now,
         },
       });
-
-      // return convertSupabaseUserToNextAuthAccount(user) as NextAuthAccount;
     },
     unlinkAccount: async (provider_providerAccountId) => {
       const now = new Date();
@@ -244,39 +266,38 @@ export function PrismaAdapter(p: PrismaClient): Adapter {
           updatedAt: now,
         },
       });
-
-      // (await p.account.delete({
-      //   where: { provider_providerAccountId },
-      // })) as any;
     },
-    getSessionAndUser: async (sessionToken) => {
-      const userAndSession = await p.session.findUnique({
-        where: { sessionToken },
-        include: { user: true },
-      });
-      if (!userAndSession) return null;
-      const { user, ...session } = userAndSession;
-      return { user, session };
+    getSessionAndUser: async () => {
+      throw new Error(
+        "Supabase only supports JWT sessions, not database sessions, set `jwt: true` in Next-Auth configuration. See https://next-auth.js.org/configuration/options#session and https://next-auth.js.org/adapters/models#session"
+      );
     },
-    createSession: async (data) => {
-      return await p.session.create({ data });
+    createSession: async () => {
+      throw new Error(
+        "Supabase only supports JWT sessions, not database sessions, set `jwt: true` in Next-Auth configuration. See https://next-auth.js.org/configuration/options#session and https://next-auth.js.org/adapters/models#session"
+      );
     },
-    updateSession: (data) =>
-      p.session.update({ data, where: { sessionToken: data.sessionToken } }),
-    deleteSession: (sessionToken) =>
-      p.session.delete({ where: { sessionToken } }),
-    createVerificationToken: (data) => p.verificationToken.create({ data }),
+    updateSession: async () => {
+      throw new Error(
+        "Supabase only supports JWT sessions, not database sessions, set `jwt: true` in Next-Auth configuration. See https://next-auth.js.org/configuration/options#session and https://next-auth.js.org/adapters/models#session"
+      );
+    },
+    deleteSession: async () => {
+      throw new Error(
+        "Supabase only supports JWT sessions, not database sessions, set `jwt: true` in Next-Auth configuration. See https://next-auth.js.org/configuration/options#session and https://next-auth.js.org/adapters/models#session"
+      );
+    },
+    createVerificationToken: async (data) => {
+      console.log("createVerificationToken", data);
+      throw new Error(
+        "Supabase adapter does not support email verification, remove the email provider in Next-Auth configuration. See https://next-auth.js.org/providers/email"
+      );
+    },
     useVerificationToken: async (identifier_token) => {
-      try {
-        return await p.verificationToken.delete({
-          where: { identifier_token },
-        });
-      } catch (error) {
-        // If token already used/deleted, just return null
-        // https://www.prisma.io/docs/reference/api-reference/error-reference#p2025
-        if (error.code === "P2025") return null;
-        throw error;
-      }
+      console.log("useVerificationToken", identifier_token);
+      throw new Error(
+        "Supabase adapter does not support email verification, remove the email provider in Next-Auth configuration. See https://next-auth.js.org/providers/email"
+      );
     },
   };
 }
