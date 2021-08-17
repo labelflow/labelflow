@@ -1,0 +1,57 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("POSTGRES_AUTH_URL")
+}
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["referentialActions", "filterJson"]
+}
+
+model User {
+  instanceId         String?   @map("instance_id") @db.Uuid
+  id                 String    @id @map("id") @db.Uuid
+  aud                String?   @map("aud") @db.VarChar(255)
+  role               String?   @map("role") @db.VarChar(255)
+  email              String?   @unique @map("email") @db.VarChar(255)
+  encryptedPassword  String?   @map("encrypted_password") @db.VarChar(255)
+  emailConfirmedAt   DateTime? @map("email_confirmed_at") @db.Timestamptz
+  invitedAt          DateTime? @map("invited_at") @db.Timestamptz
+  confirmationToken  String?   @map("confirmation_token") @db.VarChar(255)
+  confirmationSentAt DateTime? @map("confirmation_sent_at") @db.Timestamptz
+  recoveryToken      String?   @map("recovery_token") @db.VarChar(255)
+  recoverySentAt     DateTime? @map("recovery_sent_at") @db.Timestamptz
+  emailChangeToken   String?   @map("email_change_token") @db.VarChar(255)
+  emailChange        String?   @map("email_change") @db.VarChar(255)
+  emailChangeSentAt  DateTime? @map("email_change_sent_at") @db.Timestamptz
+  lastSignInAt       DateTime? @map("last_sign_in_at") @db.Timestamptz
+  rawAppMetaData     Json?     @map("raw_app_meta_data") @db.JsonB
+  rawUserMetaData    Json?     @map("raw_user_meta_data") @db.JsonB
+  isSuperAdmin       Boolean?  @map("is_super_admin") @db.Boolean
+  createdAt          DateTime? @map("created_at") @db.Timestamptz
+  updatedAt          DateTime? @map("updated_at") @db.Timestamptz
+  phone              String?   @unique @map("phone") @db.VarChar(15) // DEFAULT NULL::character varying
+  phoneConfirmedAt   DateTime? @map("phone_confirmed_at") @db.Timestamptz
+  phoneChange        String?   @default("") @map("phone_change") @db.VarChar(15)
+  phoneChangeToken   String?   @default("") @map("phone_change_token") @db.VarChar(255)
+  phoneChangeSentAt  DateTime? @map("phone_change_sent_at") @db.Timestamptz
+  confirmedAt        DateTime? @map("confirmed_at") @db.Timestamptz // GENERATED ALWAYS AS (LEAST(email_confirmed_at, phone_confirmed_at)) STORED 
+
+  refreshTokens RefreshToken[] @relation
+
+  @@map(name: "users")
+}
+
+model RefreshToken {
+  instanceId String?   @map("instance_id") @db.Uuid
+  id         BigInt    @id @map("id") @db.BigInt // DEFAULT nextval('auth.refresh_tokens_id_seq'::regclass) 
+  token      String?   @map("token") @db.VarChar(255)
+  userId     String    @map("user_id") @db.Uuid // In the DB Schema it is @db.VarChar(255), but to be able to join in prisma we need types to agree
+  revoked    Boolean?  @map("revoked") @db.Boolean
+  createdAt  DateTime? @map("created_at") @db.Timestamptz
+  updatedAt  DateTime? @map("updated_at") @db.Timestamptz
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map(name: "refresh_tokens")
+}

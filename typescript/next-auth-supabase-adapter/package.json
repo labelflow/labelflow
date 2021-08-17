@@ -1,12 +1,18 @@
 {
-  "name": "@labelflow/db",
+  "name": "@labelflow/next-auth-supabase-adapter",
   "version": "0.0.1",
   "scripts": {
-    "dev": "nodemon src/index.ts"
+    "dev": "nodemon src/index.ts",
+    "pgtyped": "pgtyped -w -c pgtyped.config.json"
   },
   "devDependencies": {
+    "@pgtyped/cli": "0.11.0",
+    "@pgtyped/query": "0.11.0",
+    "@prisma/client": "2.29.1",
     "@types/node": "16.4.1",
+    "@types/pg": "8.6.1",
     "nodemon": "2.0.12",
+    "pg": "8.7.1",
     "prisma": "2.29.1",
     "ts-node": "10.1.0",
     "typescript": "4.3.5"
@@ -21,8 +27,7 @@
     "apollo-server": "3.0.2",
     "graphql": "15.5.1",
     "node-fetch": "2.6.1",
-    "pg": "^8.7.1",
     "probe-image-size": "7.2.1",
-    "uuid": "8.3.2"
+    "uuid": "^8.3.2"
   }
 }
