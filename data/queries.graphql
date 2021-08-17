@@ -28,6 +28,9 @@ type Query {
   dataset(where: DatasetWhereUniqueInput!): Dataset!
   datasets(first: Int, skip: Int): [Dataset!]!
 
+  workspace(where: WorkspaceWhereUniqueInput!): Workspace!
+  workspaces(first: Int, skip: Int): [Workspace!]!
+
   exportToCoco(where: ExportWhereUniqueInput!): String!
 
   debug: JSON!

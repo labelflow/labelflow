@@ -68,3 +68,25 @@ type Dataset {
   labelsAggregates: LabelsAggregates!
   labelClassesAggregates: LabelClassesAggregates!
 }
+
+enum WorkspaceType {
+  local
+  online
+}
+
+enum WorkspacePlan {
+  community
+  bronze
+  silver
+  gold
+}
+
+type Workspace {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  name: String!
+  type: WorkspaceType!
+  plan: WorkspacePlan!
+  datasets: [Dataset!]
+}

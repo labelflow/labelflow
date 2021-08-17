@@ -19,4 +19,10 @@ type Mutation {
   createDemoDataset: Dataset
   updateDataset(where: DatasetWhereIDInput!, data: DatasetUpdateInput!): Dataset
   deleteDataset(where: DatasetWhereIDInput!): Dataset
+
+  createWorkspace(data: WorkspaceCreateInput!): Workspace
+  updateWorkspace(
+    where: WorkspaceWhereUniqueInput!
+    data: WorkspaceUpdateInput!
+  ): Workspace
 }

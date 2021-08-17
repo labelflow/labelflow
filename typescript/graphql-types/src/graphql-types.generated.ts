@@ -243,6 +243,8 @@ export type Mutation = {
   createDemoDataset?: Maybe<Dataset>;
   updateDataset?: Maybe<Dataset>;
   deleteDataset?: Maybe<Dataset>;
+  createWorkspace?: Maybe<Workspace>;
+  updateWorkspace?: Maybe<Workspace>;
 };
 
 
@@ -303,6 +305,17 @@ export type MutationDeleteDatasetArgs = {
   where: DatasetWhereIdInput;
 };
 
+
+export type MutationCreateWorkspaceArgs = {
+  data: WorkspaceCreateInput;
+};
+
+
+export type MutationUpdateWorkspaceArgs = {
+  where: WorkspaceWhereUniqueInput;
+  data: WorkspaceUpdateInput;
+};
+
 export type Query = {
   __typename?: 'Query';
   hello?: Maybe<Scalars['String']>;
@@ -319,6 +332,8 @@ export type Query = {
   labels: Array<Label>;
   dataset: Dataset;
   datasets: Array<Dataset>;
+  workspace: Workspace;
+  workspaces: Array<Workspace>;
   exportToCoco: Scalars['String'];
   debug: Scalars['JSON'];
 };
@@ -384,6 +399,17 @@ export type QueryDatasetsArgs = {
 };
 
 
+export type QueryWorkspaceArgs = {
+  where: WorkspaceWhereUniqueInput;
+};
+
+
+export type QueryWorkspacesArgs = {
+  first?: Maybe<Scalars['Int']>;
+  skip?: Maybe<Scalars['Int']>;
+};
+
+
 export type QueryExportToCocoArgs = {
   where: ExportWhereUniqueInput;
 };
@@ -400,6 +426,46 @@ export type UploadTargetHttp = {
   __typename?: 'UploadTargetHttp';
   uploadUrl: Scalars['String'];
   downloadUrl: Scalars['String'];
+};
+
+export type Workspace = {
+  __typename?: 'Workspace';
+  id: Scalars['ID'];
+  createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
+  name: Scalars['String'];
+  type: WorkspaceType;
+  plan: WorkspacePlan;
+  datasets?: Maybe<Array<Dataset>>;
+};
+
+export type WorkspaceCreateInput = {
+  id?: Maybe<Scalars['ID']>;
+  name: Scalars['String'];
+  type: WorkspaceType;
+  plan: WorkspacePlan;
+};
+
+export enum WorkspacePlan {
+  Community = 'community',
+  Bronze = 'bronze',
+  Silver = 'silver',
+  Gold = 'gold'
+}
+
+export enum WorkspaceType {
+  Local = 'local',
+  Online = 'online'
+}
+
+export type WorkspaceUpdateInput = {
+  name?: Maybe<Scalars['String']>;
+  type?: Maybe<WorkspaceType>;
+  plan?: Maybe<WorkspacePlan>;
+};
+
+export type WorkspaceWhereUniqueInput = {
+  id: Scalars['ID'];
 };
 
 
@@ -525,6 +591,12 @@ export type ResolversTypes = {
   UploadTargetDirect: ResolverTypeWrapper<UploadTargetDirect>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   UploadTargetHttp: ResolverTypeWrapper<UploadTargetHttp>;
+  Workspace: ResolverTypeWrapper<Workspace>;
+  WorkspaceCreateInput: WorkspaceCreateInput;
+  WorkspacePlan: WorkspacePlan;
+  WorkspaceType: WorkspaceType;
+  WorkspaceUpdateInput: WorkspaceUpdateInput;
+  WorkspaceWhereUniqueInput: WorkspaceWhereUniqueInput;
 };
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -572,6 +644,10 @@ export type ResolversParentTypes = {
   UploadTargetDirect: UploadTargetDirect;
   Boolean: Scalars['Boolean'];
   UploadTargetHttp: UploadTargetHttp;
+  Workspace: Workspace;
+  WorkspaceCreateInput: WorkspaceCreateInput;
+  WorkspaceUpdateInput: WorkspaceUpdateInput;
+  WorkspaceWhereUniqueInput: WorkspaceWhereUniqueInput;
 };
 
 export interface ColorHexScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['ColorHex'], any> {
@@ -686,6 +762,8 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   createDemoDataset?: Resolver<Maybe<ResolversTypes['Dataset']>, ParentType, ContextType>;
   updateDataset?: Resolver<Maybe<ResolversTypes['Dataset']>, ParentType, ContextType, RequireFields<MutationUpdateDatasetArgs, 'where' | 'data'>>;
   deleteDataset?: Resolver<Maybe<ResolversTypes['Dataset']>, ParentType, ContextType, RequireFields<MutationDeleteDatasetArgs, 'where'>>;
+  createWorkspace?: Resolver<Maybe<ResolversTypes['Workspace']>, ParentType, ContextType, RequireFields<MutationCreateWorkspaceArgs, 'data'>>;
+  updateWorkspace?: Resolver<Maybe<ResolversTypes['Workspace']>, ParentType, ContextType, RequireFields<MutationUpdateWorkspaceArgs, 'where' | 'data'>>;
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
@@ -703,6 +781,8 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   labels?: Resolver<Array<ResolversTypes['Label']>, ParentType, ContextType, RequireFields<QueryLabelsArgs, never>>;
   dataset?: Resolver<ResolversTypes['Dataset'], ParentType, ContextType, RequireFields<QueryDatasetArgs, 'where'>>;
   datasets?: Resolver<Array<ResolversTypes['Dataset']>, ParentType, ContextType, RequireFields<QueryDatasetsArgs, never>>;
+  workspace?: Resolver<ResolversTypes['Workspace'], ParentType, ContextType, RequireFields<QueryWorkspaceArgs, 'where'>>;
+  workspaces?: Resolver<Array<ResolversTypes['Workspace']>, ParentType, ContextType, RequireFields<QueryWorkspacesArgs, never>>;
   exportToCoco?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<QueryExportToCocoArgs, 'where'>>;
   debug?: Resolver<ResolversTypes['JSON'], ParentType, ContextType>;
 };
@@ -726,6 +806,17 @@ export type UploadTargetHttpResolvers<ContextType = any, ParentType extends Reso
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type WorkspaceResolvers<ContextType = any, ParentType extends ResolversParentTypes['Workspace'] = ResolversParentTypes['Workspace']> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  type?: Resolver<ResolversTypes['WorkspaceType'], ParentType, ContextType>;
+  plan?: Resolver<ResolversTypes['WorkspacePlan'], ParentType, ContextType>;
+  datasets?: Resolver<Maybe<Array<ResolversTypes['Dataset']>>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type Resolvers<ContextType = any> = {
   ColorHex?: GraphQLScalarType;
   Dataset?: DatasetResolvers<ContextType>;
@@ -745,6 +836,7 @@ export type Resolvers<ContextType = any> = {
   UploadTarget?: UploadTargetResolvers<ContextType>;
   UploadTargetDirect?: UploadTargetDirectResolvers<ContextType>;
   UploadTargetHttp?: UploadTargetHttpResolvers<ContextType>;
+  Workspace?: WorkspaceResolvers<ContextType>;
 };
 
 
