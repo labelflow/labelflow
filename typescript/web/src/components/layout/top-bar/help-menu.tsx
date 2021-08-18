@@ -2,7 +2,7 @@ import React from "react";
 import NextLink from "next/link";
 import {
   chakra,
-  Button,
+  IconButton,
   Menu,
   MenuButton,
   MenuList,
@@ -45,13 +45,11 @@ export const HelpMenu = () => {
 
       <Menu>
         <MenuButton
-          as={Button}
+          as={IconButton}
           aria-label="Help"
-          rightIcon={<HelpMenuIcon fontSize="xl" />}
+          icon={<HelpMenuIcon fontSize="xl" />}
           variant="ghost"
-        >
-          Help
-        </MenuButton>
+        />
         <MenuList>
           <MenuGroup title="Support">
             <a
