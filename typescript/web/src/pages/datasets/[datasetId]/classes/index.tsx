@@ -5,6 +5,7 @@ import {
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbLink,
+  Skeleton,
   chakra,
   Center,
 } from "@chakra-ui/react";
@@ -82,7 +83,9 @@ const DatasetClassesPage = ({
 
             <BreadcrumbItem>
               <NextLink href={`/datasets/${datasetId}`}>
-                <BreadcrumbLink>{datasetName}</BreadcrumbLink>
+                <BreadcrumbLink>
+                  {datasetName ?? <Skeleton>Dataset Name</Skeleton>}
+                </BreadcrumbLink>
               </NextLink>
             </BreadcrumbItem>
 

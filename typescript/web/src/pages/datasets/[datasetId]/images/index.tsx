@@ -5,6 +5,7 @@ import {
   Box,
   Image,
   Center,
+  Skeleton,
   Spinner,
   Text,
   Breadcrumb,
@@ -94,8 +95,16 @@ const ImagesPage = ({
               </NextLink>
             </BreadcrumbItem>
 
+            <BreadcrumbItem>
+              <NextLink href={`/datasets/${datasetId}`}>
+                <BreadcrumbLink>
+                  {datasetName ?? <Skeleton>Dataset Name</Skeleton>}
+                </BreadcrumbLink>
+              </NextLink>
+            </BreadcrumbItem>
+
             <BreadcrumbItem isCurrentPage>
-              <Text>{datasetName}</Text>
+              <Text>Images</Text>
             </BreadcrumbItem>
           </Breadcrumb>
         }
