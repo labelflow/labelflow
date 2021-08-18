@@ -1,7 +1,8 @@
 {
   "version": 2,
   "public": false,
+  "trailingSlash": false,
   "github": {
-    "enabled": false
+    "enabled": true
   }
 }
