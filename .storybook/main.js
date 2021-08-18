@@ -4,7 +4,10 @@ module.exports = {
   stories: ["../typescript/**/__stories__/*.tsx"],
   core: {
     builder: "webpack5",
-  },  
+  },
+  addons: [
+    "storybook-addon-next-router",
+  ],
   typescript: { reactDocgen: "react-docgen" },
   webpackFinal: async (config) => {
     return {

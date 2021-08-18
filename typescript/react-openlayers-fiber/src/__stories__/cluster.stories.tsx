@@ -73,3 +73,9 @@ export const Cluster = () => {
     </div>
   );
 };
+
+Cluster.parameters = {
+  // disables Chromatic's snapshotting on a story level
+  // See https://www.chromatic.com/docs/ignoring-elements
+  chromatic: { disableSnapshot: true },
+};

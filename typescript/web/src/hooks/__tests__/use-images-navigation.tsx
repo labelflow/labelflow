@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-use-before-define */
 import { renderHook } from "@testing-library/react-hooks";
 import { ApolloProvider, gql } from "@apollo/client";
 

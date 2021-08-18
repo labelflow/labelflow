@@ -165,6 +165,7 @@ const createDataset = async (
 
     return await getDatasetById(datasetId, repository);
   } catch (e) {
+    console.error(e);
     throw new Error(
       `Could not create the dataset ${JSON.stringify(dbDataset)}`
     );
