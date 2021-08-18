@@ -197,9 +197,6 @@ trns = transforms.Compose(
                 "crop_void_pixels": cv2.INTER_LINEAR,
             },
         ),
-        # tr.IOGPoints(
-        #     sigma=SIGMA_IOG_POINT_PIXEL, elem="crop_gt", pad_pixel=PADDING_PIXEL
-        # ),
         tr.IOGPointsInference(
             sigma=SIGMA_IOG_POINT_PIXEL,
             pad_pixel=PADDING_PIXEL,
@@ -212,30 +209,6 @@ trns = transforms.Compose(
         tr.ToTensor(),
     ]
 )
-
-
-# trns_refinement = transforms.Compose(
-#     [
-#         tr.CropFromMask(
-#             crop_elems=("point_refinement_mask",), relax=RELAX_PIXEL, zero_pad=True
-#         ),
-#         tr.FixedResize(
-#             resolutions={
-#                 "crop_point_refinement_mask": SHAPE_IMAGE_MODEL,
-#             },
-#             flagvals={
-#                 "crop_point_refinement_mask": cv2.INTER_LINEAR,
-#             },
-#         ),
-#         tr.IOGPointRefinement(
-#             sigma=SIGMA_IOG_POINT_PIXEL,
-#             elem="crop_point_refinement_mask",
-#             pad_pixel=PADDING_PIXEL,
-#         ),
-#         tr.ToImage(norm_elem="IOG_points"),
-#         tr.ToTensor(),
-#     ]
-# )
 
 
 def hydrate_cache(data_url, x, y, width, height, center_point, id, *, cache: Cache):
@@ -275,14 +248,6 @@ def inference(image, roi, center_point):
 
     inputs = tr_sample["concat"][None]
     IOG_points = tr_sample["IOG_points"].unsqueeze(0)
-    # foreground_point_mask = np.zeros_like(image)
-    # foreground_point_mask[
-    #     int(image.shape[0] - center_point[1]), int(center_point[0]), 0
-    # ] = 1
-    # sample = {"point_refinement_mask": foreground_point_mask, "gt": bbox}
-    # IOG_points[0, 0:1, :, :] = trns_refinement(sample)["IOG_points"].unsqueeze(0)[
-    #     0, 0:1, :, :
-    # ]
     if os.environ.get("DEBUG", False):
         now = datetime.now()
         points_fg = IOG_points[0, 0:1, :, :]
@@ -344,31 +309,6 @@ def refine(
 
     tr_sample = trns(sample)
     IOG_points = tr_sample["IOG_points"].unsqueeze(0)
-    # foreground_point_mask = np.zeros_like(image)
-    # foreground_point_mask[
-    #     int(image.shape[0] - center_point[1]), int(center_point[0]), 0
-    # ] = 1
-    # sample = {"point_refinement_mask": foreground_point_mask, "gt": bbox}
-    # IOG_points[0, 0:1, :, :] = trns_refinement(sample)["IOG_points"].unsqueeze(0)[
-    #     0, 0:1, :, :
-    # ]
-
-    # for point in pointsInside:
-    #     refinement_point_mask = np.zeros_like(image)
-    #     refinement_point_mask[int(image.shape[0] - point[1]), int(point[0]), 0] = 1
-    #     sample = {"point_refinement_mask": refinement_point_mask, "gt": bbox}
-    #     IOG_points = torch.maximum(
-    #         trns_refinement(sample)["IOG_points"].unsqueeze(0), IOG_points
-    #     )
-
-    # for point in pointsOutside:
-    #     refinement_point_mask = np.zeros_like(image)
-    #     refinement_point_mask[int(image.shape[0] - point[1]), int(point[0]), 1] = 1
-    #     sample = {"point_refinement_mask": refinement_point_mask, "gt": bbox}
-    #     IOG_points = torch.maximum(
-    #         trns_refinement(sample)["IOG_points"].unsqueeze(0), IOG_points
-    #     )
-
     if os.environ.get("DEBUG", False):
         now = datetime.now()
         points_fg = IOG_points[0, 0:1, :, :]
