@@ -3,6 +3,7 @@ import {
   chakra,
   Spinner,
   Skeleton,
+  Text,
   Center,
   Breadcrumb,
   BreadcrumbItem,
@@ -88,9 +89,7 @@ const DatasetIndexPage = ({
             </BreadcrumbItem>
 
             <BreadcrumbItem isCurrentPage>
-              <BreadcrumbLink>
-                {datasetName ?? <Skeleton>Dataset Name</Skeleton>}
-              </BreadcrumbLink>
+              <Text>{datasetName ?? <Skeleton>Dataset Name</Skeleton>}</Text>
             </BreadcrumbItem>
           </Breadcrumb>
         }
