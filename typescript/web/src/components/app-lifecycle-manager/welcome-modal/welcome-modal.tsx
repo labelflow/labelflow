@@ -6,7 +6,6 @@ import {
   ModalOverlay,
   ModalContent,
   ModalFooter,
-  Box,
   VStack,
   HStack,
   Button,
