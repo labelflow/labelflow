@@ -21,7 +21,27 @@ RELAX_PIXEL = 30
 SIGMA_IOG_POINT_PIXEL = 10
 SHAPE_IMAGE_MODEL = (512, 512)
 MAX_PIXEL_INTENSITY = 255
-THRESHOLD_PIXEL_INTENSITY = 100
+THRESHOLD_PIXEL_INTENSITY = 127
+
+
+def convert_openlayers_point_to_numpy_image_point(
+    point: tuple, image_height: int
+) -> tuple:
+    return (int(point[0]), int(image_height - point[1]))
+
+
+def convert_openlayers_roi_to_numpy_image_roi(roi: list, image_height: int) -> list:
+    """In both openlayers and numpy, the same roi format applies
+
+    Args:
+        roi (list): roi in format [x, y, width, height]
+        image_height (int): height of the original image from which the roi is cropped
+
+    Returns:
+        list: [description]
+    """
+    [x, y, width, height] = roi
+    return [x, image_height - y - height, width, height]
 
 
 def transform_contour_to_geojson_polygon(
@@ -90,9 +110,10 @@ def convert_net_output_to_geojson_polygon(fine_net_output, gt_input, image, roi)
     _, thresh = cv2.threshold(
         im_mask, THRESHOLD_PIXEL_INTENSITY, MAX_PIXEL_INTENSITY, 0
     )
-    kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (1, 1))
-    opening = cv2.morphologyEx(thresh, cv2.MORPH_CLOSE, kernel, iterations=1)
-    contours, _ = cv2.findContours(opening, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    # kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (1, 1))
+    # opening = cv2.morphologyEx(thresh, cv2.MORPH_CLOSE, kernel, iterations=1)
+    # contours, _ = cv2.findContours(opening, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    contours, _ = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
     if os.environ.get("DEBUG", False):
         light = np.zeros_like(image)
@@ -129,6 +150,7 @@ net = Network(
 
 # load pretrain_dict
 pretrain_dict = torch.load("data/IOG_PASCAL_SBD_REFINEMENT.pth")
+# pretrain_dict = torch.load("data/IOG_PASCAL_SBD.pth")
 net.load_state_dict(pretrain_dict)
 net.eval()
 
@@ -156,19 +178,34 @@ trns = transforms.Compose(
         tr.FixedResize(
             resolutions={
                 "gt": None,
+                "roi": None,
+                "point_center": None,
+                "points_foreground_refinement": None,
+                "points_background_refinement": None,
                 "crop_image": SHAPE_IMAGE_MODEL,
                 "crop_gt": SHAPE_IMAGE_MODEL,
                 "crop_void_pixels": SHAPE_IMAGE_MODEL,
             },
             flagvals={
-                "gt": cv2.INTER_LINEAR,
+                "gt": None,
+                "roi": None,
+                "point_center": None,
+                "points_foreground_refinement": None,
+                "points_background_refinement": None,
                 "crop_image": cv2.INTER_LINEAR,
                 "crop_gt": cv2.INTER_LINEAR,
                 "crop_void_pixels": cv2.INTER_LINEAR,
             },
         ),
-        tr.IOGPoints(
-            sigma=SIGMA_IOG_POINT_PIXEL, elem="crop_gt", pad_pixel=PADDING_PIXEL
+        # tr.IOGPoints(
+        #     sigma=SIGMA_IOG_POINT_PIXEL, elem="crop_gt", pad_pixel=PADDING_PIXEL
+        # ),
+        tr.IOGPointsInference(
+            sigma=SIGMA_IOG_POINT_PIXEL,
+            pad_pixel=PADDING_PIXEL,
+            relax_pixel=RELAX_PIXEL,
+            resolution=SHAPE_IMAGE_MODEL,
+            zero_pad=True,
         ),
         tr.ToImage(norm_elem="IOG_points"),
         tr.ConcatInputs(elems=("crop_image", "IOG_points")),
@@ -177,33 +214,35 @@ trns = transforms.Compose(
 )
 
 
-trns_refinement = transforms.Compose(
-    [
-        tr.CropFromMask(
-            crop_elems=("point_refinement_mask",), relax=RELAX_PIXEL, zero_pad=True
-        ),
-        tr.FixedResize(
-            resolutions={
-                "crop_point_refinement_mask": SHAPE_IMAGE_MODEL,
-            },
-            flagvals={
-                "crop_point_refinement_mask": cv2.INTER_LINEAR,
-            },
-        ),
-        tr.IOGPointRefinement(
-            sigma=SIGMA_IOG_POINT_PIXEL,
-            elem="crop_point_refinement_mask",
-            pad_pixel=PADDING_PIXEL,
-        ),
-        tr.ToImage(norm_elem="IOG_points"),
-        tr.ToTensor(),
-    ]
-)
+# trns_refinement = transforms.Compose(
+#     [
+#         tr.CropFromMask(
+#             crop_elems=("point_refinement_mask",), relax=RELAX_PIXEL, zero_pad=True
+#         ),
+#         tr.FixedResize(
+#             resolutions={
+#                 "crop_point_refinement_mask": SHAPE_IMAGE_MODEL,
+#             },
+#             flagvals={
+#                 "crop_point_refinement_mask": cv2.INTER_LINEAR,
+#             },
+#         ),
+#         tr.IOGPointRefinement(
+#             sigma=SIGMA_IOG_POINT_PIXEL,
+#             elem="crop_point_refinement_mask",
+#             pad_pixel=PADDING_PIXEL,
+#         ),
+#         tr.ToImage(norm_elem="IOG_points"),
+#         tr.ToTensor(),
+#     ]
+# )
 
 
 def hydrate_cache(data_url, x, y, width, height, center_point, id, *, cache: Cache):
     image = convert_data_url_to_image(data_url)
-    roi = [x, image.shape[0] - y - height, width, height]
+    roi = convert_openlayers_roi_to_numpy_image_roi(
+        [x, y, width, height], image.shape[0]
+    )
     image = image.astype(np.float32)
     cached_data = {
         "roi": roi,
@@ -222,23 +261,28 @@ def inference(image, roi, center_point):
     bbox = np.zeros_like(image[..., 0])
     bbox[int(roi[1]) : int(roi[1] + roi[3]), int(roi[0]) : int(roi[0] + roi[2])] = 1
     void_pixels = 1 - bbox
-    sample = {"image": image, "gt": bbox, "void_pixels": void_pixels}
+    sample = {
+        "image": image,
+        "gt": bbox,
+        "void_pixels": void_pixels,
+        "roi": roi,
+        "point_center": convert_openlayers_point_to_numpy_image_point(
+            center_point, image.shape[0]
+        ),
+    }
 
     tr_sample = trns(sample)
 
     inputs = tr_sample["concat"][None]
     IOG_points = tr_sample["IOG_points"].unsqueeze(0)
-    foreground_point_mask = np.zeros_like(image)
-    foreground_point_mask[
-        int(image.shape[0] - center_point[1]), int(center_point[0]), 0
-    ] = 1
-    sample = {"point_refinement_mask": foreground_point_mask, "gt": bbox}
-    IOG_points[0, 0:1, :, :] = trns_refinement(sample)["IOG_points"].unsqueeze(0)[
-        0, 0:1, :, :
-    ]
-    res = net.inference(inputs.to(device), IOG_points.to(device))
-
-    backbone_features = res[0]
+    # foreground_point_mask = np.zeros_like(image)
+    # foreground_point_mask[
+    #     int(image.shape[0] - center_point[1]), int(center_point[0]), 0
+    # ] = 1
+    # sample = {"point_refinement_mask": foreground_point_mask, "gt": bbox}
+    # IOG_points[0, 0:1, :, :] = trns_refinement(sample)["IOG_points"].unsqueeze(0)[
+    #     0, 0:1, :, :
+    # ]
     if os.environ.get("DEBUG", False):
         now = datetime.now()
         points_fg = IOG_points[0, 0:1, :, :]
@@ -252,6 +296,8 @@ def inference(image, roi, center_point):
             f"outputs/points_bg_inference-{now}.png",
             np.transpose((points_bg * 1).numpy().astype(np.uint8), (1, 2, 0)),
         )
+    res = net.inference(inputs.to(device), IOG_points.to(device))
+    backbone_features = res[0]
 
     return (
         convert_net_output_to_geojson_polygon(res[-1], tr_sample["gt"], image, roi),
@@ -270,34 +316,58 @@ def refine(
     bbox = np.zeros_like(image[..., 0])
     bbox[int(roi[1]) : int(roi[1] + roi[3]), int(roi[0]) : int(roi[0] + roi[2])] = 1
     void_pixels = 1 - bbox
-    sample = {"image": image, "gt": bbox, "void_pixels": void_pixels}
+    sample = {
+        "image": image,
+        "gt": bbox,
+        "void_pixels": void_pixels,
+        "roi": roi,
+        "point_center": convert_openlayers_point_to_numpy_image_point(
+            center_point, image.shape[0]
+        ),
+        "points_foreground_refinement": list(
+            map(
+                lambda point: convert_openlayers_point_to_numpy_image_point(
+                    point, image.shape[0]
+                ),
+                pointsInside,
+            )
+        ),
+        "points_background_refinement": list(
+            map(
+                lambda point: convert_openlayers_point_to_numpy_image_point(
+                    point, image.shape[0]
+                ),
+                pointsOutside,
+            )
+        ),
+    }
 
     tr_sample = trns(sample)
     IOG_points = tr_sample["IOG_points"].unsqueeze(0)
-    foreground_point_mask = np.zeros_like(image)
-    foreground_point_mask[
-        int(image.shape[0] - center_point[1]), int(center_point[0]), 0
-    ] = 1
-    sample = {"point_refinement_mask": foreground_point_mask, "gt": bbox}
-    IOG_points[0, 0:1, :, :] = trns_refinement(sample)["IOG_points"].unsqueeze(0)[
-        0, 0:1, :, :
-    ]
+    # foreground_point_mask = np.zeros_like(image)
+    # foreground_point_mask[
+    #     int(image.shape[0] - center_point[1]), int(center_point[0]), 0
+    # ] = 1
+    # sample = {"point_refinement_mask": foreground_point_mask, "gt": bbox}
+    # IOG_points[0, 0:1, :, :] = trns_refinement(sample)["IOG_points"].unsqueeze(0)[
+    #     0, 0:1, :, :
+    # ]
 
-    for point in pointsInside:
-        refinement_point_mask = np.zeros_like(image)
-        refinement_point_mask[int(image.shape[0] - point[1]), int(point[0]), 0] = 1
-        sample = {"point_refinement_mask": refinement_point_mask, "gt": bbox}
-        IOG_points = torch.maximum(
-            trns_refinement(sample)["IOG_points"].unsqueeze(0), IOG_points
-        )
+    # for point in pointsInside:
+    #     refinement_point_mask = np.zeros_like(image)
+    #     refinement_point_mask[int(image.shape[0] - point[1]), int(point[0]), 0] = 1
+    #     sample = {"point_refinement_mask": refinement_point_mask, "gt": bbox}
+    #     IOG_points = torch.maximum(
+    #         trns_refinement(sample)["IOG_points"].unsqueeze(0), IOG_points
+    #     )
 
-    for point in pointsOutside:
-        refinement_point_mask = np.zeros_like(image)
-        refinement_point_mask[int(image.shape[0] - point[1]), int(point[0]), 1] = 1
-        sample = {"point_refinement_mask": refinement_point_mask, "gt": bbox}
-        IOG_points = torch.maximum(
-            trns_refinement(sample)["IOG_points"].unsqueeze(0), IOG_points
-        )
+    # for point in pointsOutside:
+    #     refinement_point_mask = np.zeros_like(image)
+    #     refinement_point_mask[int(image.shape[0] - point[1]), int(point[0]), 1] = 1
+    #     sample = {"point_refinement_mask": refinement_point_mask, "gt": bbox}
+    #     IOG_points = torch.maximum(
+    #         trns_refinement(sample)["IOG_points"].unsqueeze(0), IOG_points
+    #     )
 
     if os.environ.get("DEBUG", False):
         now = datetime.now()

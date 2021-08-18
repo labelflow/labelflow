@@ -260,6 +260,153 @@ class IOGPointRefinement(object):
         )
 
 
+class IOGPointsInference(object):
+    """
+    IOG for inference, from lists of points in image's referential
+    """
+
+    def __init__(
+        self,
+        sigma=10,
+        pad_pixel=10,
+        relax_pixel=30,
+        resolution=(512, 512),
+        zero_pad=True,
+    ):
+        self.sigma = sigma
+        self.pad_pixel = pad_pixel
+        self.relax_pixel = relax_pixel
+        self.resolution = resolution
+        self.zero_pad = zero_pad
+
+    def get_point_in_cropped_referential(self, point, roi):
+        """Gives the position of a point in the final iog map
+        roi format is [x, y, w, h]
+        """
+        [x, y, w, h] = roi
+        if self.zero_pad:
+            x_min_bound = -np.inf
+            y_min_bound = -np.inf
+            x_max_bound = np.inf
+            y_max_bound = np.inf
+        else:
+            x_min_bound = 0
+            y_min_bound = 0
+            x_max_bound = x + w - 1
+            y_max_bound = y + h - 1
+
+        x_min = max(x - self.relax_pixel, x_min_bound)
+        y_min = max(y - self.relax_pixel, y_min_bound)
+        x_max = min(x + w + self.relax_pixel, x_max_bound)
+        y_max = min(y + h + self.relax_pixel, y_max_bound)
+        roi_relaxed = [
+            x_min,
+            y_min,
+            x_max - x_min,
+            y_max - y_min,
+        ]
+        [x, y, w, h] = roi_relaxed
+        [point_x, point_y] = point
+        point_in_relaxed_roi = [point_x - x, point_y - y]
+        [point_x, point_y] = point_in_relaxed_roi
+        [resolution_x, resolution_y] = self.resolution
+        return [int(point_x * resolution_x / w), int(point_y * resolution_y / h)]
+
+    def get_points_in_cropped_referential(self, points, roi):
+        return list(
+            map(
+                lambda point: self.get_point_in_cropped_referential(point, roi),
+                points,
+            )
+        )
+
+    def __call__(self, sample):
+        assert "point_center" in sample, "sample needs a point_center key"
+        assert "roi" in sample, "sample needs a roi key"
+        # assert (
+        #     "points_foreground_refinement" in sample
+        # ), "sample needs a points_foreground_refinement key (can be [] if no refinement has been done yet)"
+        # assert (
+        #     "points_background_refinement" in sample
+        # ), "sample needs a points_background_refinement key (can be [] if no refinement has been done yet)"
+        point_center = sample["point_center"]
+        roi = sample["roi"]
+        points_foreground_refinement = sample.get("points_foreground_refinement", [])
+        points_background_refinement = sample.get("points_background_refinement", [])
+        [x, y, w, h] = roi
+        points_extreme = [
+            [x, y],
+            [x + w - 1, y + h - 1],
+        ]
+        points_extreme_in_cropped_referential = self.get_points_in_cropped_referential(
+            points_extreme, roi
+        )
+        [x_min, y_min] = points_extreme_in_cropped_referential[0]
+        [x_min_padded, y_min_padded] = [
+            max(x_min - self.pad_pixel, 0),
+            max(y_min - self.pad_pixel, 0),
+        ]
+        [x_max, y_max] = points_extreme_in_cropped_referential[1]
+        [x_max_padded, y_max_padded] = [
+            min(x_max + self.pad_pixel, self.resolution[0] - 1),
+            min(y_max + self.pad_pixel, self.resolution[1] - 1),
+        ]
+
+        points_foreground_refinement_in_cropped_referential = (
+            self.get_points_in_cropped_referential(
+                [point_center, *points_foreground_refinement], roi
+            )
+        )
+        points_background_refinement_in_cropped_referential = (
+            self.get_points_in_cropped_referential(points_background_refinement, roi)
+        )
+        points_background_in_cropped_referential = [
+            [x_min_padded, y_min_padded],
+            [x_max_padded, y_min_padded],
+            [x_max_padded, y_max_padded],
+            [x_min_padded, y_max_padded],
+            *points_background_refinement_in_cropped_referential,
+        ]
+        points_in_cropped_referential = [
+            points_foreground_refinement_in_cropped_referential,
+            points_background_in_cropped_referential,
+        ]
+
+        sample["IOG_points"] = np.zeros(
+            [self.resolution[0], self.resolution[1], 2], dtype=sample["gt"].dtype
+        )
+        for i in range(2):  # fg and bg
+            for point in points_in_cropped_referential[i]:
+                current_gaussian_point = helpers.make_gaussian(
+                    self.resolution,
+                    center=point,
+                    sigma=self.sigma,
+                )
+                sample["IOG_points"][:, :, i] = np.maximum(
+                    sample["IOG_points"][:, :, i],
+                    current_gaussian_point,
+                )
+        del sample["point_center"]
+        del sample["roi"]
+        if "points_foreground_refinement" in sample:
+            del sample["points_foreground_refinement"]
+        if "points_background_refinement" in sample:
+            del sample["points_background_refinement"]
+
+        return sample
+
+    def __str__(self):
+        return (
+            "IOGPoints:(sigma="
+            + str(self.sigma)
+            + ", pad_pixel="
+            + str(self.pad_pixel)
+            + ", elem="
+            + str(self.elem)
+            + ")"
+        )
+
+
 class ConcatInputs(object):
     def __init__(self, elems=("image", "point")):
         self.elems = elems
