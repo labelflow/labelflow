@@ -8,8 +8,6 @@ import {
   ModalContent,
   ModalHeader,
   ModalOverlay,
-  Center,
-  Spinner,
   Text,
   Skeleton,
 } from "@chakra-ui/react";
@@ -176,11 +174,7 @@ export const ExportModal = ({
   );
 
   if (loading) {
-    return (
-      <Center h="full">
-        <Spinner aria-label="loading indicator" size="xl" />
-      </Center>
-    );
+    return null;
   }
 
   return (
