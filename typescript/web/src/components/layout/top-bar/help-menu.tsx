@@ -8,6 +8,7 @@ import {
   MenuList,
   MenuDivider,
   MenuItem,
+  Tooltip,
   MenuGroup,
 } from "@chakra-ui/react";
 import { useQueryParam } from "use-query-params";
@@ -44,12 +45,14 @@ export const HelpMenu = () => {
       />
 
       <Menu>
-        <MenuButton
-          as={IconButton}
-          aria-label="Help"
-          icon={<HelpMenuIcon fontSize="xl" />}
-          variant="ghost"
-        />
+        <Tooltip label="Help" openDelay={300}>
+          <MenuButton
+            as={IconButton}
+            aria-label="Help"
+            icon={<HelpMenuIcon fontSize="xl" />}
+            variant="ghost"
+          />
+        </Tooltip>
         <MenuList>
           <MenuGroup title="Support">
             <a

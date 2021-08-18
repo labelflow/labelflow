@@ -11,7 +11,7 @@ export const KeymapButton = ({ ...props }: Props) => {
   const [, setIsOpen] = useQueryParam("modal-keymap", BoolParam);
 
   return (
-    <Tooltip label="Keyboard shortcuts">
+    <Tooltip label="Keyboard shortcuts" openDelay={300}>
       <IconButton
         aria-label="Keyboard shortcuts"
         icon={<KeymapIcon fontSize="xl" />}
