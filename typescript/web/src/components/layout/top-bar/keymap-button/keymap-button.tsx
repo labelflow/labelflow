@@ -5,7 +5,7 @@ import { BoolParam } from "../../../../utils/query-param-bool";
 
 const KeymapIcon = chakra(FaRegKeyboard);
 
-type Props = ButtonProps & {};
+type Props = ButtonProps;
 
 export const KeymapButton = ({ ...props }: Props) => {
   const [, setIsOpen] = useQueryParam("modal-keymap", BoolParam);
