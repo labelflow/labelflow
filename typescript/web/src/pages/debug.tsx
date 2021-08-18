@@ -1,5 +1,6 @@
 import React from "react";
 import { gql, useQuery } from "@apollo/client";
+import NextLink from "next/link";
 import {
   Heading,
   Link,
@@ -55,6 +56,8 @@ const DebugPage = ({
               <UnorderedList fontSize="lg" pl="8">
                 <ListItem>
                   <Link
+                    target="_blank"
+                    rel="noreferrer"
                     href={`https://github.com/${process.env.NEXT_PUBLIC_VERCEL_GIT_REPO_OWNER}/${process.env.NEXT_PUBLIC_VERCEL_GIT_REPO_SLUG}/issues/new/choose`}
                   >
                     Link to Github issue tracker
@@ -62,35 +65,55 @@ const DebugPage = ({
                 </ListItem>
 
                 <ListItem>
-                  <Link href="/_next/static/bundle-analyzer/client.html">
+                  <Link
+                    target="_blank"
+                    rel="noreferrer"
+                    href="/_next/static/bundle-analyzer/client.html"
+                  >
                     Link to client bundle analysis
                   </Link>
                 </ListItem>
 
                 <ListItem>
-                  <Link href="/_next/static/bundle-analyzer/server.html">
+                  <Link
+                    target="_blank"
+                    rel="noreferrer"
+                    href="/_next/static/bundle-analyzer/server.html"
+                  >
                     Link to server bundle analysis
                   </Link>
                 </ListItem>
 
                 <ListItem>
-                  <Link href="/graphiql">Link to Graphiql</Link>
+                  <NextLink href="/graphiql">
+                    <Link href="/graphiql">Link to Graphiql</Link>
+                  </NextLink>
                 </ListItem>
 
                 <ListItem>
-                  <Link href="https://app.supabase.io/dataset/zokyprbhquvvrleedkkk/editor/table">
+                  <Link
+                    target="_blank"
+                    rel="noreferrer"
+                    href="https://app.supabase.io/dataset/zokyprbhquvvrleedkkk/editor/table"
+                  >
                     Link to Database admin
                   </Link>
                 </ListItem>
 
                 <ListItem>
-                  <Link href="https://strapi.labelflow.ai/admin">
+                  <Link
+                    target="_blank"
+                    rel="noreferrer"
+                    href="https://strapi.labelflow.ai/admin"
+                  >
                     Link to CMS admin
                   </Link>
                 </ListItem>
 
                 <ListItem>
                   <Link
+                    target="_blank"
+                    rel="noreferrer"
                     href={`https://github.com/${process.env.NEXT_PUBLIC_VERCEL_GIT_REPO_OWNER}/${process.env.NEXT_PUBLIC_VERCEL_GIT_REPO_SLUG}/tree/${process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_REF}`}
                   >
                     Link to Github branch
@@ -99,6 +122,8 @@ const DebugPage = ({
 
                 <ListItem>
                   <Link
+                    target="_blank"
+                    rel="noreferrer"
                     href={`https://github.com/${process.env.NEXT_PUBLIC_VERCEL_GIT_REPO_OWNER}/${process.env.NEXT_PUBLIC_VERCEL_GIT_REPO_SLUG}/commit/${process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA}`}
                   >
                     Link to Github commit
@@ -106,19 +131,31 @@ const DebugPage = ({
                 </ListItem>
 
                 <ListItem>
-                  <Link href={`https://${process.env.NEXT_PUBLIC_VERCEL_URL}`}>
+                  <Link
+                    target="_blank"
+                    rel="noreferrer"
+                    href={`https://${process.env.NEXT_PUBLIC_VERCEL_URL}`}
+                  >
                     Link to Vercel deployment
                   </Link>
                 </ListItem>
 
                 <ListItem>
-                  <Link href="https://dashboard.heroku.com/apps/labelflow-strapi">
+                  <Link
+                    target="_blank"
+                    rel="noreferrer"
+                    href="https://dashboard.heroku.com/apps/labelflow-strapi"
+                  >
                     Link to CMS deployment on Heroku
                   </Link>
                 </ListItem>
 
                 <ListItem>
-                  <Link href="https://app.sendgrid.com/">
+                  <Link
+                    target="_blank"
+                    rel="noreferrer"
+                    href="https://app.sendgrid.com/"
+                  >
                     Link to mailer provider
                   </Link>
                 </ListItem>

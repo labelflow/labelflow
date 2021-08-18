@@ -1,5 +1,5 @@
 import { Button, useDisclosure } from "@chakra-ui/react";
-import { chakraDecorator } from "../../../../utils/chakra-decorator";
+import { chakraDecorator } from "../../../../../../utils/chakra-decorator";
 import { KeymapModal } from "../keymap-modal";
 
 export default {
