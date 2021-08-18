@@ -18,7 +18,7 @@ import { Layout } from "../../../components/layout";
 import Error404Page from "../../404";
 import { ExportButton } from "../../../components/export-button";
 import { ImportButton } from "../../../components/import-button";
-import { KeymapButton } from "../../../components/keymap-button";
+import { KeymapButton } from "../../../components/layout/top-bar/keymap-button";
 
 const getDataset = gql`
   query getDataset($id: ID!) {

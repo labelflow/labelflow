@@ -22,7 +22,7 @@ import { FaRegKeyboard, FaDiscord } from "react-icons/fa";
 import { GrGraphQl } from "react-icons/gr";
 
 import { BoolParam } from "../../../utils/query-param-bool";
-import { KeymapModal } from "../../keymap-button/keymap-modal";
+import { KeymapModal } from "./keymap-button/keymap-modal";
 
 const HelpMenuIcon = chakra(RiQuestionLine);
 const WebsiteIcon = chakra(RiGlobalLine);
