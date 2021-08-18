@@ -74,31 +74,42 @@ export const repository: Repository = {
         skip,
         take: first,
       }),
+    update: async (id, labelClass) => {
+      try {
+        await prisma.labelClass.update({ where: { id }, data: labelClass });
+        return true;
+      } catch (e) {
+        return false;
+      }
+    },
   },
-  project: {
-    add: async (project) => {
-      const createdProject = await prisma.project.create({ data: project });
-      return createdProject.id;
+  dataset: {
+    add: async (dataset) => {
+      const createdDataset = await prisma.dataset.create({ data: dataset });
+      return createdDataset.id;
     },
     delete: async (id) => {
-      await prisma.project.delete({ where: { id } });
+      await prisma.dataset.delete({ where: { id } });
     },
     getById: (id) => {
-      return prisma.project.findUnique({ where: { id } });
+      return prisma.dataset.findUnique({ where: { id } });
     },
     getByName: (name) => {
-      return prisma.project.findUnique({ where: { name } });
+      return prisma.dataset.findUnique({ where: { name } });
     },
-    update: async (id, project) => {
+    getBySlug: (slug) => {
+      return prisma.dataset.findUnique({ where: { slug } });
+    },
+    update: async (id, dataset) => {
       try {
-        await prisma.project.update({ where: { id }, data: project });
+        await prisma.dataset.update({ where: { id }, data: dataset });
         return true;
       } catch (e) {
         return false;
       }
     },
     list: (_where, skip = undefined, first = undefined) =>
-      prisma.project.findMany({
+      prisma.dataset.findMany({
         orderBy: { createdAt: "asc" },
         skip,
         take: first,

@@ -2,11 +2,16 @@ input LabelClassCreateInput {
   id: ID
   name: String!
   color: ColorHex!
-  projectId: ID!
+  datasetId: ID!
+}
+
+input LabelClassUpdateInput {
+  name: String
+  color: ColorHex
 }
 
 input LabelClassWhereInput {
-  projectId: ID
+  datasetId: ID
 }
 
 input LabelClassWhereUniqueInput {

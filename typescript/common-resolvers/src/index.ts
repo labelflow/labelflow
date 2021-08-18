@@ -3,7 +3,7 @@ import formatCocoResolvers from "./format-coco";
 import imageResolvers from "./image";
 import labelResolvers from "./label";
 import labelClassResolvers from "./label-class";
-import projectResolvers from "./project";
+import datasetResolvers from "./dataset";
 import scalarsResolvers from "./scalars";
 import uploadResolvers from "./upload";
 import iogResolvers from "./iog-inference";
@@ -13,7 +13,7 @@ export const commonResolvers = mergeResolvers([
   imageResolvers,
   labelResolvers,
   labelClassResolvers,
-  projectResolvers,
+  datasetResolvers,
   scalarsResolvers,
   uploadResolvers,
   iogResolvers,
@@ -25,6 +25,7 @@ export { throwIfResolvesToNil } from "./utils/throw-if-resolves-to-nil";
 
 export { initialCocoDataset } from "./format-coco/coco-core/converters";
 export { jsonToDataUri, dataUriToJson } from "./format-coco/json-to-data-uri";
+export { getImageEntityFromMutationArgs } from "./image";
 
 export * from "./types";
 export * from "./format-coco/coco-core/types";

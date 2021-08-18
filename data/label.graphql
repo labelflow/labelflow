@@ -9,7 +9,7 @@ input LabelCreateInput {
 input LabelWhereInput {
   imageId: ID
   labelClassId: ID
-  projectId: ID
+  datasetId: ID
 }
 
 input LabelWhereUniqueInput {

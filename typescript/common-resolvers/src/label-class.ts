@@ -2,12 +2,11 @@ import { v4 as uuidv4 } from "uuid";
 import type {
   LabelClass,
   MutationCreateLabelClassArgs,
+  MutationUpdateLabelClassArgs,
   MutationDeleteLabelClassArgs,
   QueryLabelClassArgs,
   QueryLabelClassesArgs,
 } from "@labelflow/graphql-types";
-
-import { projectTypename } from "./project";
 
 import { Context, DbLabelClass } from "./types";
 import { throwIfResolvesToNil } from "./utils/throw-if-resolves-to-nil";
@@ -43,15 +42,15 @@ const createLabelClass = async (
   args: MutationCreateLabelClassArgs,
   { repository }: Context
 ): Promise<DbLabelClass> => {
-  const { color, name, id, projectId } = args.data;
+  const { color, name, id, datasetId } = args.data;
 
   // Since we don't have any constraint checks with Dexie
-  // we need to ensure that the projectId matches some
+  // we need to ensure that the datasetId matches some
   // entity before being able to continue.
   await throwIfResolvesToNil(
-    `The project id ${projectId} doesn't exist.`,
-    repository.project.getById
-  )(projectId);
+    `The dataset id ${datasetId} doesn't exist.`,
+    repository.dataset.getById
+  )(datasetId);
 
   const labelClassId = id ?? uuidv4();
   const now = new Date();
@@ -62,7 +61,7 @@ const createLabelClass = async (
     updatedAt: now.toISOString(),
     name,
     color,
-    projectId,
+    datasetId,
   };
   await repository.labelClass.add(newLabelClassEntity);
 
@@ -72,21 +71,38 @@ const createLabelClass = async (
   )(newLabelClassEntity.id);
 };
 
+const updateLabelClass = async (
+  _: any,
+  args: MutationUpdateLabelClassArgs,
+  { repository }: Context
+) => {
+  const labelClassId = args.where.id;
+
+  const labelClassToUpdate = await throwIfResolvesToNil(
+    "No labelClass with such id",
+    repository.labelClass.getById
+  )(labelClassId);
+
+  await repository.labelClass.update(labelClassId, {
+    ...labelClassToUpdate,
+    ...args.data,
+  });
+
+  return repository.labelClass.getById(labelClassId);
+};
+
 const deleteLabelClass = async (
   _: any,
   args: MutationDeleteLabelClassArgs,
   { repository }: Context
 ) => {
-  const labelClassId = args.where.id;
-
-  const labelClassToDelete = await throwIfResolvesToNil(
+  const labelToDelete = await throwIfResolvesToNil(
     "No labelClass with such id",
     repository.labelClass.getById
-  )(labelClassId);
+  )(args.where.id);
 
-  await repository.labelClass.delete(labelClassId);
-
-  return labelClassToDelete;
+  await repository.labelClass.delete(labelToDelete.id);
+  return labelToDelete;
 };
 
 const labelClassesAggregates = (parent: any) => {
@@ -98,9 +114,9 @@ const totalCount = (parent: any, _args: any, { repository }: Context) => {
   // eslint-disable-next-line no-underscore-dangle
   const typename = parent?.__typename;
 
-  if (typename === projectTypename) {
+  if (typename === "Dataset") {
     return repository.labelClass.count({
-      projectId: parent.id,
+      datasetId: parent.id,
     });
   }
 
@@ -116,6 +132,7 @@ export default {
 
   Mutation: {
     createLabelClass,
+    updateLabelClass,
     deleteLabelClass,
   },
 
@@ -125,7 +142,7 @@ export default {
 
   LabelClassesAggregates: { totalCount },
 
-  Project: {
+  Dataset: {
     labelClassesAggregates,
   },
 };
