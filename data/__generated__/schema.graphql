@@ -29,6 +29,10 @@ input DatasetWhereIDInput {
   id: ID!
 }
 
+input DatasetWhereInput {
+  workspaceId: ID
+}
+
 input DatasetWhereUniqueInput {
   id: ID
   name: String
@@ -231,7 +235,7 @@ type Query {
   label(where: LabelWhereUniqueInput!): Label!
   labels(where: LabelWhereInput, first: Int, skip: Int): [Label!]!
   dataset(where: DatasetWhereUniqueInput!): Dataset!
-  datasets(first: Int, skip: Int): [Dataset!]!
+  datasets(where: DatasetWhereInput, first: Int, skip: Int): [Dataset!]!
   workspace(where: WorkspaceWhereUniqueInput!): Workspace!
   workspaces(first: Int, skip: Int): [Workspace!]!
   exportToCoco(where: ExportWhereUniqueInput!): String!

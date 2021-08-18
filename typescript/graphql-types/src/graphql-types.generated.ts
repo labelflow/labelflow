@@ -54,6 +54,10 @@ export type DatasetWhereIdInput = {
   id: Scalars['ID'];
 };
 
+export type DatasetWhereInput = {
+  workspaceId?: Maybe<Scalars['ID']>;
+};
+
 export type DatasetWhereUniqueInput = {
   id?: Maybe<Scalars['ID']>;
   name?: Maybe<Scalars['String']>;
@@ -396,6 +400,7 @@ export type QueryDatasetArgs = {
 
 
 export type QueryDatasetsArgs = {
+  where?: Maybe<DatasetWhereInput>;
   first?: Maybe<Scalars['Int']>;
   skip?: Maybe<Scalars['Int']>;
 };
@@ -555,6 +560,7 @@ export type ResolversTypes = {
   DatasetCreateInput: DatasetCreateInput;
   DatasetUpdateInput: DatasetUpdateInput;
   DatasetWhereIDInput: DatasetWhereIdInput;
+  DatasetWhereInput: DatasetWhereInput;
   DatasetWhereUniqueInput: DatasetWhereUniqueInput;
   DateTime: ResolverTypeWrapper<Scalars['DateTime']>;
   Example: ResolverTypeWrapper<Example>;
@@ -610,6 +616,7 @@ export type ResolversParentTypes = {
   DatasetCreateInput: DatasetCreateInput;
   DatasetUpdateInput: DatasetUpdateInput;
   DatasetWhereIDInput: DatasetWhereIdInput;
+  DatasetWhereInput: DatasetWhereInput;
   DatasetWhereUniqueInput: DatasetWhereUniqueInput;
   DateTime: Scalars['DateTime'];
   Example: Example;

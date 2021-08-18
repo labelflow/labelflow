@@ -10,6 +10,10 @@ input DatasetWhereUniqueInput {
   slug: String
 }
 
+input DatasetWhereInput {
+  workspaceId: ID
+}
+
 input DatasetWhereIDInput {
   id: ID!
 }

@@ -26,7 +26,7 @@ type Query {
   labels(where: LabelWhereInput, first: Int, skip: Int): [Label!]!
 
   dataset(where: DatasetWhereUniqueInput!): Dataset!
-  datasets(first: Int, skip: Int): [Dataset!]!
+  datasets(where: DatasetWhereInput, first: Int, skip: Int): [Dataset!]!
 
   workspace(where: WorkspaceWhereUniqueInput!): Workspace!
   workspaces(first: Int, skip: Int): [Workspace!]!
