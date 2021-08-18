@@ -23,7 +23,7 @@ export const KeymapButton = ({ showModal = true, ...props }: Props) => {
       )}
       <Tooltip label="Keyboard shortcuts">
         <IconButton
-          aria-label="Add images"
+          aria-label="Open keyboard shortcuts"
           icon={<KeymapIcon fontSize="xl" />}
           onClick={() => setIsOpen(true, "replaceIn")}
           variant="ghost"
