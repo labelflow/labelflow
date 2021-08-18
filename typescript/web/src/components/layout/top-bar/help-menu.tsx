@@ -19,7 +19,7 @@ import {
   RiBookOpenLine,
 } from "react-icons/ri";
 import { VscDebug } from "react-icons/vsc";
-import { FaRegKeyboard, FaDiscord } from "react-icons/fa";
+import { FaRegKeyboard, FaDiscord, FaGithub } from "react-icons/fa";
 import { GrGraphQl } from "react-icons/gr";
 
 import { BoolParam } from "../../../utils/query-param-bool";
@@ -31,6 +31,7 @@ const DocumentationIcon = chakra(RiBookOpenLine);
 const WhatsNewIcon = chakra(RiGiftLine);
 const KeymapIcon = chakra(FaRegKeyboard);
 const DiscordIcon = chakra(FaDiscord);
+const GithubIcon = chakra(FaGithub);
 const GraphQLIcon = chakra(GrGraphQl);
 const DebugIcon = chakra(VscDebug);
 
@@ -96,6 +97,15 @@ export const HelpMenu = () => {
           </MenuGroup>
           <MenuDivider />
           <MenuGroup title="Technical">
+            <a
+              href="https://github.com/labelflow/labelflow"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <MenuItem icon={<GithubIcon fontSize="lg" />}>
+                View source code
+              </MenuItem>
+            </a>
             <NextLink href="/graphiql">
               <MenuItem icon={<GraphQLIcon fontSize="lg" />}>
                 GraphQL API
