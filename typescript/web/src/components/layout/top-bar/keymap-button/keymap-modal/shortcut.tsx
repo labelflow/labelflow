@@ -1,3 +1,4 @@
+/* eslint-disable react/destructuring-assignment */
 import { Fragment } from "react";
 import { Kbd, Tooltip } from "@chakra-ui/react";
 
@@ -36,32 +37,41 @@ export const displayKey = (key: string) =>
     // .replace(/del/g, "⌧")
     .replace(/delete/g, "⌧");
 
+const makeKeyComboElement =
+  (separator = "  or  ") =>
+  (keyCombo: string[], keyComboIndex: number): JSX.Element =>
+    (
+      <Fragment key={keyCombo.join("+")}>
+        {keyComboIndex === 0 ? null : separator}
+        <Tooltip label={keyCombo.join(" + ")} aria-label={keyCombo.join(" + ")}>
+          <span>
+            {keyCombo.map((key, keyIndex) => (
+              <Fragment key={key}>
+                {keyIndex === 0 ? null : " "}
+                <Kbd>{displayKey(key)}</Kbd>
+              </Fragment>
+            ))}
+          </span>
+        </Tooltip>
+      </Fragment>
+    );
 export const Shortcut = ({ keys }: { keys: string }) => {
   const keyCombos = keys
     .replace(/\s/g, "") // Remove spaces
     .split(",") // Split into several key combos
     .map((keyCombo) => keyCombo.split("+")); // Split each combo into individual keys
 
-  return (
-    <>
-      {keyCombos.map((keyCombo, keyComboIndex) => (
-        <Fragment key={keyCombo.join("+")}>
-          {keyComboIndex === 0 ? null : "  or  "}
-          <Tooltip
-            label={keyCombo.join(" + ")}
-            aria-label={keyCombo.join(" + ")}
-          >
-            <span>
-              {keyCombo.map((key, keyIndex) => (
-                <Fragment key={key}>
-                  {keyIndex === 0 ? null : " "}
-                  <Kbd>{displayKey(key)}</Kbd>
-                </Fragment>
-              ))}
-            </span>
-          </Tooltip>
-        </Fragment>
-      ))}
-    </>
-  );
+  if (keyCombos.length > 4) {
+    // If too many key combos for this shortcut, then we only show the 3 first, and the last one.
+    return (
+      <>
+        {keyCombos.slice(0, 3).map(makeKeyComboElement(" ,  "))}
+        <span> ... </span>
+        {keyCombos
+          .slice(keyCombos.length - 1, keyCombos.length)
+          .map(makeKeyComboElement(" ,  "))}
+      </>
+    );
+  }
+  return <>{keyCombos.map(makeKeyComboElement("  or  "))}</>;
 };
