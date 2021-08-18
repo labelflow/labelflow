@@ -18,7 +18,7 @@ const testDatasetId = "mocked-dataset-id";
 
 jest.mock("next/router", () => ({
   useRouter: jest.fn(() => ({
-    query: { datasetId: testDatasetId },
+    query: { datasetSlug: "test-dataset" },
   })),
 }));
 
@@ -84,7 +84,7 @@ test("The currentImageIndex is null if it can't be found in the images", async (
   await createImage("image2");
   await createImage("image3");
   (useRouter as jest.Mock).mockImplementation(() => ({
-    query: { imageId: "fake-id", datasetId: testDatasetId },
+    query: { imageId: "fake-id", datasetSlug: "test-dataset" },
   }));
   const { result, waitForValueToChange } = renderHook(
     () => useImagesNavigation(),
@@ -117,7 +117,7 @@ test("It returns the index of the selected image when loaded", async () => {
   incrementMockedDate(1);
   await createImage("image3");
   (useRouter as jest.Mock).mockImplementation(() => ({
-    query: { imageId: id2, datasetId: testDatasetId },
+    query: { imageId: id2, datasetSlug: "test-dataset" },
   }));
   const { result, waitForValueToChange } = renderHook(
     () => useImagesNavigation(),
@@ -158,7 +158,7 @@ describe("Previous and Next ids", () => {
     await createImage("image2");
     await createImage("image3");
     (useRouter as jest.Mock).mockImplementation(() => ({
-      query: { imageId: "fake-id", datasetId: testDatasetId },
+      query: { imageId: "fake-id", datasetSlug: "test-dataset" },
     }));
     const { result, waitForValueToChange } = renderHook(
       () => useImagesNavigation(),
@@ -180,7 +180,7 @@ describe("Previous and Next ids", () => {
     incrementMockedDate(1);
     await createImage("image3");
     (useRouter as jest.Mock).mockImplementation(() => ({
-      query: { imageId: id1, datasetId: testDatasetId },
+      query: { imageId: id1, datasetSlug: "test-dataset" },
     }));
     const { result, waitForValueToChange } = renderHook(
       () => useImagesNavigation(),
@@ -201,7 +201,7 @@ describe("Previous and Next ids", () => {
     incrementMockedDate(1);
     const id3 = await createImage("image3");
     (useRouter as jest.Mock).mockImplementation(() => ({
-      query: { imageId: id3, datasetId: testDatasetId },
+      query: { imageId: id3, datasetSlug: "test-dataset" },
     }));
     const { result, waitForValueToChange } = renderHook(
       () => useImagesNavigation(),
@@ -222,7 +222,7 @@ describe("Previous and Next ids", () => {
     incrementMockedDate(1);
     await createImage("image3");
     (useRouter as jest.Mock).mockImplementation(() => ({
-      query: { imageId: id2, datasetId: testDatasetId },
+      query: { imageId: id2, datasetSlug: "test-dataset" },
     }));
     const { result, waitForValueToChange } = renderHook(
       () => useImagesNavigation(),
@@ -243,7 +243,7 @@ describe("Previous and Next ids", () => {
     incrementMockedDate(1);
     const id3 = await createImage("image3");
     (useRouter as jest.Mock).mockImplementation(() => ({
-      query: { imageId: id2, datasetId: testDatasetId },
+      query: { imageId: id2, datasetSlug: "test-dataset" },
     }));
     const { result, waitForValueToChange } = renderHook(
       () => useImagesNavigation(),

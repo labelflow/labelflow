@@ -8,8 +8,8 @@ import { Layout } from "../../../components/layout";
 import Error404Page from "../../404";
 
 const getDataset = gql`
-  query getDataset($id: ID!) {
-    dataset(where: { id: $id }) {
+  query getDataset($slug: String!) {
+    dataset(where: { slug: $slug }) {
       id
     }
   }
@@ -21,17 +21,17 @@ const DatasetIndexPage = ({
   assumeServiceWorkerActive: boolean;
 }) => {
   const router = useRouter();
-  const { datasetId } = router?.query;
+  const { datasetSlug } = router?.query;
 
   const { error, loading } = useQuery(getDataset, {
-    variables: { id: datasetId },
-    skip: typeof datasetId !== "string",
+    variables: { slug: datasetSlug },
+    skip: typeof datasetSlug !== "string",
   });
 
   useEffect(() => {
     if (!error && !loading) {
       router.replace({
-        pathname: `/datasets/${datasetId}/images`,
+        pathname: `/datasets/${datasetSlug}/images`,
       });
     }
   }, [error, loading]);

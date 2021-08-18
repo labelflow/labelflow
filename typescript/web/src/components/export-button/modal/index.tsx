@@ -1,3 +1,4 @@
+import { Dispatch, SetStateAction, useState, useCallback } from "react";
 import {
   HStack,
   Heading,
@@ -7,13 +8,14 @@ import {
   ModalContent,
   ModalHeader,
   ModalOverlay,
+  Center,
+  Spinner,
   Text,
   Skeleton,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { useQuery, gql, useApolloClient, ApolloClient } from "@apollo/client";
 import JSZip from "jszip";
-import { Dispatch, SetStateAction, useState } from "react";
 import mime from "mime-types";
 import { ExportFormatCard } from "./export-format-card";
 import { ExportOptionsModal, ExportOptions } from "./export-options-modal";
@@ -36,8 +38,8 @@ const exportToCocoQuery = gql`
 `;
 
 const countLabelsOfDatasetQuery = gql`
-  query countLabelsOfDataset($datasetId: ID!) {
-    dataset(where: { id: $datasetId }) {
+  query countLabelsOfDataset($slug: String!) {
+    dataset(where: { slug: $slug }) {
       id
       imagesAggregates {
         totalCount
@@ -147,10 +149,12 @@ export const ExportModal = ({
 }) => {
   const router = useRouter();
   const client = useApolloClient();
-  const { datasetId } = router?.query as { datasetId: string };
-  const { data } = useQuery(countLabelsOfDatasetQuery, {
-    variables: { datasetId },
+  const { datasetSlug } = router?.query as { datasetSlug: string };
+  const { data, loading } = useQuery(countLabelsOfDatasetQuery, {
+    variables: { slug: datasetSlug },
   });
+  const datasetId = data?.dataset.id;
+
   const [isExportRunning, setIsExportRunning] = useState(false);
   const [isOptionsModalOpen, setIsOptionsModalOpen] = useState(false);
   // const [options, setOptions] = useState<ExportOptions>({
@@ -159,6 +163,25 @@ export const ExportModal = ({
   const [exportFunction, setExportFunction] = useState<
     (options: ExportOptions) => void
   >(() => {});
+
+  const handleExportFunction = useCallback(
+    () => (options: ExportOptions) =>
+      exportCocoDataset({
+        datasetId,
+        setIsExportRunning,
+        client,
+        options,
+      }),
+    [datasetId]
+  );
+
+  if (loading) {
+    return (
+      <Center h="full">
+        <Spinner aria-label="loading indicator" size="xl" />
+      </Center>
+    );
+  }
 
   return (
     <>
@@ -210,15 +233,7 @@ export const ExportModal = ({
               <ExportFormatCard
                 loading={isExportRunning}
                 onClick={() => {
-                  setExportFunction(
-                    () => (options: ExportOptions) =>
-                      exportCocoDataset({
-                        datasetId,
-                        setIsExportRunning,
-                        client,
-                        options,
-                      })
-                  );
+                  setExportFunction(handleExportFunction);
                   setIsOptionsModalOpen(true);
                 }}
                 colorScheme="brand"

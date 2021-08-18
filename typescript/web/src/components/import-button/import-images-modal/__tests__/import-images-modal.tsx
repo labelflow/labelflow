@@ -13,7 +13,7 @@ import {
 } from "../../../../utils/router-mocks";
 
 mockUseQueryParams();
-mockNextRouter({ query: { datasetId: "mocked-dataset-id" } });
+mockNextRouter({ query: { datasetSlug: "test-dataset" } });
 
 import { ImportImagesModal } from "../import-images-modal";
 

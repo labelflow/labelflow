@@ -57,8 +57,8 @@ const imageQuery = gql`
 `;
 
 const getDatasetQuery = gql`
-  query getDataset($id: ID!) {
-    dataset(where: { id: $id }) {
+  query getDataset($slug: String!) {
+    dataset(where: { slug: $slug }) {
       id
       name
     }
@@ -75,7 +75,7 @@ const ImagePage = ({
   assumeServiceWorkerActive: boolean;
 }) => {
   const router = useRouter();
-  const { datasetId, imageId } = router?.query;
+  const { datasetSlug, imageId } = router?.query;
 
   const { data: imageResult, error: errorImage } = useQuery<ImageQueryResponse>(
     imageQuery,
@@ -88,7 +88,7 @@ const ImagePage = ({
   const { data: datasetResult, error: errorDataset } = useQuery(
     getDatasetQuery,
     {
-      variables: { id: datasetId },
+      variables: { slug: datasetSlug },
     }
   );
 
@@ -129,13 +129,13 @@ const ImagePage = ({
             </BreadcrumbItem>
 
             <BreadcrumbItem isCurrentPage>
-              <NextLink href={`/datasets/${datasetId}/images`}>
+              <NextLink href={`/datasets/${datasetSlug}/images`}>
                 <BreadcrumbLink>{datasetName}</BreadcrumbLink>
               </NextLink>
             </BreadcrumbItem>
 
             <BreadcrumbItem>
-              <NextLink href={`/datasets/${datasetId}/images`}>
+              <NextLink href={`/datasets/${datasetSlug}/images`}>
                 <BreadcrumbLink>Images</BreadcrumbLink>
               </NextLink>
             </BreadcrumbItem>
