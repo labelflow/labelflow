@@ -1,19 +1,42 @@
-import { db } from "../../typescript/web-app/src/connectors/database";
+import { gql } from "@apollo/client";
+
+import { client } from "../../typescript/web/src/connectors/apollo-client/schema-client";
+
+const createDataset = async (name: string) => {
+  const mutationResult = await client.mutate({
+    mutation: gql`
+      mutation createDataset($name: String) {
+        createDataset(data: { name: $name }) {
+          id
+        }
+      }
+    `,
+    variables: {
+      name,
+    },
+  });
+
+  const {
+    data: {
+      createDataset: { id },
+    },
+  } = mutationResult;
+
+  return id;
+};
 
 describe("Image Navigation", () => {
-  beforeEach(() => {
-    return Promise.all([
-      db.image.clear(),
-      db.label.clear(),
-      db.labelClass.clear(),
-      db.file.clear(),
-    ]);
-  });
+  let datasetId: string;
+  beforeEach(() =>
+    cy.window().then(async () => {
+      datasetId = await createDataset("cypress test dataset");
+    })
+  );
 
   it("Should let the user navigate within the image gallery", () => {
     // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
     cy.visit(
-      "http://localhost:3000/images?modal-welcome=closed&modal-update-service-worker=update"
+      `http://localhost:3000/datasets/${datasetId}/images?modal-welcome=closed&modal-update-service-worker=update`
     );
     cy.contains("You don't have any images.").should("be.visible");
     cy.get("header").within(() => {

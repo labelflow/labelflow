@@ -2,8 +2,22 @@ input LabelClassCreateInput {
   id: ID
   name: String!
   color: ColorHex!
+  datasetId: ID!
+}
+
+input LabelClassUpdateInput {
+  name: String
+  color: ColorHex
+}
+
+input LabelClassWhereInput {
+  datasetId: ID
 }
 
 input LabelClassWhereUniqueInput {
   id: ID!
+}
+
+type LabelClassesAggregates {
+  totalCount: Int!
 }

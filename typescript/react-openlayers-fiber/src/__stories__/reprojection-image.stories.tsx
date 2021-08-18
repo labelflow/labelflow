@@ -59,3 +59,9 @@ export const ReprojectionImage = () => {
     </>
   );
 };
+
+ReprojectionImage.parameters = {
+  // disables Chromatic's snapshotting on a story level
+  // See https://www.chromatic.com/docs/ignoring-elements
+  chromatic: { disableSnapshot: true },
+};

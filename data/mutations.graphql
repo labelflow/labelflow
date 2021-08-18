@@ -9,12 +9,14 @@ type Mutation {
   deleteLabel(where: LabelWhereUniqueInput!): Label
 
   createLabelClass(data: LabelClassCreateInput!): LabelClass
+  updateLabelClass(
+    where: LabelClassWhereUniqueInput!
+    data: LabelClassUpdateInput!
+  ): LabelClass
   deleteLabelClass(where: LabelClassWhereUniqueInput!): LabelClass
 
-  createProject(data: ProjectCreateInput!): Project
-  updateProject(
-    where: ProjectWhereUniqueInput!
-    data: ProjectUpdateInput!
-  ): Project
-  deleteProject(where: ProjectWhereUniqueInput!): Project
+  createDataset(data: DatasetCreateInput!): Dataset
+  createDemoDataset: Dataset
+  updateDataset(where: DatasetWhereIDInput!, data: DatasetUpdateInput!): Dataset
+  deleteDataset(where: DatasetWhereIDInput!): Dataset
 }

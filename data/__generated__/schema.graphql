@@ -1,5 +1,38 @@
 scalar ColorHex
 
+type Dataset {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  name: String!
+  slug: String!
+  images(first: Int, skip: Int): [Image!]!
+  labels: [Label!]!
+  labelClasses: [LabelClass!]!
+  imagesAggregates: ImagesAggregates!
+  labelsAggregates: LabelsAggregates!
+  labelClassesAggregates: LabelClassesAggregates!
+}
+
+input DatasetCreateInput {
+  id: ID
+  name: String!
+}
+
+input DatasetUpdateInput {
+  name: String!
+}
+
+input DatasetWhereIDInput {
+  id: ID!
+}
+
+input DatasetWhereUniqueInput {
+  id: ID
+  name: String
+  slug: String
+}
+
 scalar DateTime
 
 type Example {
@@ -27,22 +60,38 @@ input ExampleWhereUniqueInput {
   id: ID!
 }
 
+input ExportWhereUniqueInput {
+  datasetId: ID!
+}
+
+type Geometry {
+  type: String!
+  coordinates: JSON!
+}
+
+input GeometryInput {
+  type: String!
+  coordinates: JSON!
+}
+
 type Image {
   id: ID!
   createdAt: DateTime!
   updatedAt: DateTime!
   url: String!
+  externalUrl: String
   name: String!
   path: String!
   mimetype: String!
   height: Int!
   width: Int!
   labels: [Label!]!
-  projectId: ID
+  datasetId: ID!
 }
 
 input ImageCreateInput {
   id: ID
+  datasetId: ID!
   createdAt: DateTime
   name: String
   path: String
@@ -51,10 +100,11 @@ input ImageCreateInput {
   width: Int
   file: Upload
   url: String
+  externalUrl: String
 }
 
 input ImageWhereInput {
-  id: ID
+  datasetId: ID
 }
 
 input ImageWhereUniqueInput {
@@ -65,11 +115,15 @@ type ImagesAggregates {
   totalCount: Int!
 }
 
+scalar JSON
+
 type Label {
   id: ID!
+  type: LabelType!
   createdAt: DateTime!
   updatedAt: DateTime!
   imageId: ID!
+  geometry: Geometry!
   labelClass: LabelClass
   x: Float!
   y: Float!
@@ -84,35 +138,55 @@ type LabelClass {
   name: String!
   color: ColorHex!
   labels: [Label!]!
-  projectId: ID
+  datasetId: ID!
 }
 
 input LabelClassCreateInput {
   id: ID
   name: String!
   color: ColorHex!
+  datasetId: ID!
+}
+
+input LabelClassUpdateInput {
+  name: String
+  color: ColorHex
+}
+
+input LabelClassWhereInput {
+  datasetId: ID
 }
 
 input LabelClassWhereUniqueInput {
   id: ID!
 }
 
+type LabelClassesAggregates {
+  totalCount: Int!
+}
+
 input LabelCreateInput {
   id: ID
+  type: LabelType
   imageId: ID!
   labelClassId: ID
-  x: Float!
-  y: Float!
-  width: Float!
-  height: Float!
+  geometry: GeometryInput!
+}
+
+enum LabelType {
+  Polygon
+  Box
 }
 
 input LabelUpdateInput {
   labelClassId: ID
-  x: Float
-  y: Float
-  width: Float
-  height: Float
+  geometry: GeometryInput
+}
+
+input LabelWhereInput {
+  imageId: ID
+  labelClassId: ID
+  datasetId: ID
 }
 
 input LabelWhereUniqueInput {
@@ -131,32 +205,12 @@ type Mutation {
   updateLabel(where: LabelWhereUniqueInput!, data: LabelUpdateInput!): Label
   deleteLabel(where: LabelWhereUniqueInput!): Label
   createLabelClass(data: LabelClassCreateInput!): LabelClass
+  updateLabelClass(where: LabelClassWhereUniqueInput!, data: LabelClassUpdateInput!): LabelClass
   deleteLabelClass(where: LabelClassWhereUniqueInput!): LabelClass
-  createProject(data: ProjectCreateInput!): Project
-  updateProject(where: ProjectWhereUniqueInput!, data: ProjectUpdateInput!): Project
-  deleteProject(where: ProjectWhereUniqueInput!): Project
-}
-
-type Project {
-  id: ID!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  name: String!
-  images: [Image!]
-  labelClasses: [LabelClass!]
-}
-
-input ProjectCreateInput {
-  id: ID
-  name: String!
-}
-
-input ProjectUpdateInput {
-  name: String!
-}
-
-input ProjectWhereUniqueInput {
-  id: ID!
+  createDataset(data: DatasetCreateInput!): Dataset
+  createDemoDataset: Dataset
+  updateDataset(where: DatasetWhereIDInput!, data: DatasetUpdateInput!): Dataset
+  deleteDataset(where: DatasetWhereIDInput!): Dataset
 }
 
 type Query {
@@ -167,12 +221,15 @@ type Query {
   images(where: ImageWhereInput, first: Int, skip: Int): [Image!]!
   imagesAggregates: ImagesAggregates!
   labelClass(where: LabelClassWhereUniqueInput!): LabelClass!
-  labelClasses(first: Int, skip: Int): [LabelClass!]!
+  labelClasses(where: LabelClassWhereInput, first: Int, skip: Int): [LabelClass!]!
+  labelClassesAggregates: LabelClassesAggregates!
   labelsAggregates: LabelsAggregates!
   label(where: LabelWhereUniqueInput!): Label!
-  project(where: ProjectWhereUniqueInput!): Project!
-  projects(first: Int, skip: Int): [Project!]!
-  exportToCoco: String!
+  labels(where: LabelWhereInput, first: Int, skip: Int): [Label!]!
+  dataset(where: DatasetWhereUniqueInput!): Dataset!
+  datasets(first: Int, skip: Int): [Dataset!]!
+  exportToCoco(where: ExportWhereUniqueInput!): String!
+  debug: JSON!
 }
 
 scalar Upload
