@@ -1,5 +1,41 @@
 import probe from "probe-image-size";
 
+const defaultMaxImageSizePixel = 60e6;
+const maxImageSizePixel = {
+  "image/jpeg": 100e6,
+  "image/png": 60e6,
+};
+
+const validateImageSize = ({
+  width,
+  height,
+  mimetype,
+}: {
+  width: number;
+  height: number;
+  mimetype: string;
+}): {
+  width: number;
+  height: number;
+  mimetype: string;
+} => {
+  const imageSize = width * height;
+  const maxImageSize =
+    maxImageSizePixel?.[mimetype] ?? defaultMaxImageSizePixel;
+  if (imageSize > maxImageSize) {
+    throw new Error(`
+    Image is too big! Size is ${width} x ${height} = ${Math.round(
+      imageSize * 1e-6
+    )}Mpx while limit is ${Math.round(maxImageSize * 1e-6)}Mpx
+    `);
+  }
+  return {
+    width,
+    height,
+    mimetype,
+  };
+};
+
 /**
  * Given a partial image, return a completed version of the image, probing it if necessary
  */
@@ -37,9 +73,9 @@ export const probeImage = async (
     );
   }
 
-  return {
+  return validateImageSize({
     width: width ?? probeResult.width,
     height: height ?? probeResult.height,
     mimetype: mimetype ?? probeResult.mime,
-  };
+  });
 };
