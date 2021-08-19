@@ -47,7 +47,6 @@ export const LabellingTool = () => {
         top={0}
         right={0}
         pointerEvents="none"
-        zIndex={1}
       >
         <ZoomToolbar />
       </VStack>

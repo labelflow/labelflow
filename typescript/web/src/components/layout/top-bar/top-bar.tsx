@@ -2,6 +2,7 @@ import { ReactNode } from "react";
 import { HStack, Spacer, Box, VisuallyHidden } from "@chakra-ui/react";
 import NextLink from "next/link";
 import { Logo } from "../../logo";
+import { HelpMenu } from "./help-menu";
 
 export type Props = {
   leftContent?: ReactNode;
@@ -28,6 +29,7 @@ export const TopBar = ({ leftContent, rightContent }: Props) => {
       {leftContent}
       <Spacer />
       {rightContent}
+      <HelpMenu />
     </HStack>
   );
 };
