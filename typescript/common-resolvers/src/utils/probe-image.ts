@@ -1,7 +1,7 @@
 import probe from "probe-image-size";
 
-const defaultMaxImageSizePixel = 60e6;
-const maxImageSizePixel = {
+const defaultMaxImageSizePixel: number = 60e6;
+const maxImageSizePixel: { [mimetype: string]: number } = {
   "image/jpeg": 100e6,
   "image/png": 60e6,
 };
@@ -20,7 +20,7 @@ const validateImageSize = ({
   mimetype: string;
 } => {
   const imageSize = width * height;
-  const maxImageSize =
+  const maxImageSize: number =
     maxImageSizePixel?.[mimetype] ?? defaultMaxImageSizePixel;
   if (imageSize > maxImageSize) {
     throw new Error(`
