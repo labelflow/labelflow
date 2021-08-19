@@ -24,7 +24,7 @@ const validateImageSize = ({
     maxImageSizePixel?.[mimetype] ?? defaultMaxImageSizePixel;
   if (imageSize > maxImageSize) {
     throw new Error(`
-    Image is too big! Size is ${width} x ${height} = ${Math.round(
+    Image is too big! Dimensions are ${width} x ${height} = ${Math.round(
       imageSize * 1e-6
     )}Mpx while limit is ${Math.round(maxImageSize * 1e-6)}Mpx
     `);
