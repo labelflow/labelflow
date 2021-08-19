@@ -5,6 +5,7 @@ import {
   Box,
   Image,
   Center,
+  Skeleton,
   Spinner,
   Text,
   Breadcrumb,
@@ -21,7 +22,7 @@ import { RiArrowRightSLine } from "react-icons/ri";
 import { useErrorHandler } from "react-error-boundary";
 import type { Dataset as DatasetType } from "@labelflow/graphql-types";
 import { AppLifecycleManager } from "../../../../components/app-lifecycle-manager";
-import { KeymapButton } from "../../../../components/keymap-button";
+import { KeymapButton } from "../../../../components/layout/top-bar/keymap-button";
 import { ImportButton } from "../../../../components/import-button";
 import { ExportButton } from "../../../../components/export-button";
 import { Meta } from "../../../../components/meta";
@@ -94,8 +95,16 @@ const ImagesPage = ({
               </NextLink>
             </BreadcrumbItem>
 
+            <BreadcrumbItem>
+              <NextLink href={`/datasets/${datasetId}`}>
+                <BreadcrumbLink>
+                  {datasetName ?? <Skeleton>Dataset Name</Skeleton>}
+                </BreadcrumbLink>
+              </NextLink>
+            </BreadcrumbItem>
+
             <BreadcrumbItem isCurrentPage>
-              <Text>{datasetName}</Text>
+              <Text>Images</Text>
             </BreadcrumbItem>
           </Breadcrumb>
         }
