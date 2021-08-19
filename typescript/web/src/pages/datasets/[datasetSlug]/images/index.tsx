@@ -96,7 +96,7 @@ const ImagesPage = ({
             </BreadcrumbItem>
 
             <BreadcrumbItem>
-              <NextLink href={`/datasets/${datasetId}`}>
+              <NextLink href={`/datasets/${datasetSlug}`}>
                 <BreadcrumbLink>
                   {datasetName ?? <Skeleton>Dataset Name</Skeleton>}
                 </BreadcrumbLink>
