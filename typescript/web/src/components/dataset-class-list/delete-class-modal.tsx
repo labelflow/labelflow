@@ -67,17 +67,22 @@ export const DeleteLabelClassModal = ({
               };
             },
             images: (existingImageRefs, { readField }) => {
-              existingImageRefs.forEach((imageRef) => {
-                const labels = readField("labels", imageRef) || [];
+              existingImageRefs.forEach((imageRef: Reference) => {
+                const labels = readField(
+                  "labels",
+                  imageRef
+                ) as unknown as Reference[];
+                if (!labels) return;
                 labels.forEach((labelRef) => {
-                  const labelClassRef = readField("labelClass", labelRef);
+                  const labelClassRef: Reference | undefined = readField(
+                    "labelClass",
+                    labelRef
+                  );
                   if (labelClassId === readField("id", labelClassRef)) {
                     cache.modify({
+                      /* eslint-disable-next-line no-underscore-dangle */
                       id: labelRef.__ref,
                       fields: {
-                        labelClassId: () => {
-                          return null;
-                        },
                         labelClass: () => {
                           return null;
                         },
