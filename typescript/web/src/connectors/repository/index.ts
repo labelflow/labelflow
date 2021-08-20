@@ -9,6 +9,7 @@ import {
   getUploadTargetHttp,
   getFromStorage,
   putInStorage,
+  deleteFromStorage,
 } from "./upload";
 
 export const repository: Repository = {
@@ -57,5 +58,6 @@ export const repository: Repository = {
     getUploadTargetHttp,
     put: putInStorage,
     get: getFromStorage,
+    delete: deleteFromStorage,
   },
 };
