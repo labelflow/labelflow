@@ -39,8 +39,7 @@ export const ArticlesList = ({
               Welcome to the blog of Labelflow
             </Heading>
             <Text mt="4" fontSize="lg" color={mode("gray.600", "gray.400")}>
-              Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ipsa
-              libero labore natus atque, ducimus sed.
+              Discover the latest news and tech from our team and community
             </Text>
           </Box>
         )}
