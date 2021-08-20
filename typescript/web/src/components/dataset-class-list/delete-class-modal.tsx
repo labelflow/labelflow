@@ -37,10 +37,12 @@ export const DeleteLabelClassModal = ({
   isOpen = false,
   onClose = () => {},
   labelClassId,
+  datasetId,
 }: {
   isOpen?: boolean;
   onClose?: () => void;
   labelClassId?: string | null;
+  datasetId: string | undefined;
 }) => {
   const cancelRef = useRef<HTMLButtonElement>(null);
   const { data } = useQuery(getLabelClassByIdQuery, {
@@ -55,6 +57,39 @@ export const DeleteLabelClassModal = ({
       variables: { id: labelClassId },
       refetchQueries: ["getDatasetLabelClasses", "getImageLabels"],
       update(cache) {
+        cache.modify({
+          id: cache.identify({ id: datasetId, __typename: "Dataset" }),
+          fields: {
+            labelClassesAggregates: (existingAggregates) => {
+              return {
+                ...existingAggregates,
+                totalCount: existingAggregates.totalCount - 1,
+              };
+            },
+            images: (existingImageRefs, { readField }) => {
+              existingImageRefs.forEach((imageRef) => {
+                const labels = readField("labels", imageRef) || [];
+                labels.forEach((labelRef) => {
+                  const labelClassRef = readField("labelClass", labelRef);
+                  if (labelClassId === readField("id", labelClassRef)) {
+                    cache.modify({
+                      id: labelRef.__ref,
+                      fields: {
+                        labelClassId: () => {
+                          return null;
+                        },
+                        labelClass: () => {
+                          return null;
+                        },
+                      },
+                    });
+                  }
+                });
+              });
+              return existingImageRefs;
+            },
+          },
+        });
         cache.modify({
           id: cache.identify(makeReference("ROOT_QUERY")),
           fields: {

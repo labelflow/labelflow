@@ -21,6 +21,7 @@ export const ClassesList = ({ datasetSlug }: { datasetSlug: string }) => {
     }
   );
   const labelClasses = datasetResult?.dataset.labelClasses ?? [];
+  const datasetId = datasetResult?.dataset.id;
 
   const labelClassWithShortcut = useMemo(
     () =>
@@ -35,6 +36,7 @@ export const ClassesList = ({ datasetSlug }: { datasetSlug: string }) => {
     <>
       <DeleteLabelClassModal
         isOpen={deleteClassId != null}
+        datasetId={datasetId}
         labelClassId={deleteClassId}
         onClose={() => setDeleteClassId(null)}
       />
