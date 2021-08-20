@@ -38,7 +38,7 @@ export const repository: Repository = {
         : getDatabase().labelClass.count(),
     delete: deleteLabelClass,
     getById: (id) => getDatabase().labelClass.get(id),
-    list: list(getDatabase().labelClass),
+    list: list(getDatabase().labelClass, "index"),
     update: async (id, changes) =>
       (await getDatabase().labelClass.update(id, changes)) === 1,
   },

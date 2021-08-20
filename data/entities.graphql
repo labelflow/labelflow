@@ -47,6 +47,7 @@ type Geometry {
 
 type LabelClass {
   id: ID!
+  index: Int!
   createdAt: DateTime!
   updatedAt: DateTime!
   name: String!

@@ -12,7 +12,8 @@
  */
 export const list =
   <Entity = unknown, Where extends Record<string, any> | null = null>(
-    table: Dexie.Table<Entity>
+    table: Dexie.Table<Entity>,
+    criterion = "createdAt"
   ) =>
   /**
    * A function which filters and list entities.
@@ -37,10 +38,10 @@ export const list =
         query.limit(first);
       }
 
-      return query.sortBy("createdAt");
+      return query.sortBy(criterion);
     }
 
-    const query = table.orderBy("createdAt");
+    const query = table.orderBy(criterion);
     if (skip) {
       query.offset(skip);
     }
