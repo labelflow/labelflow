@@ -89,7 +89,7 @@ export const DrawBoundingBoxAndPolygonInteraction = () => {
   const interactionDrawArguments =
     selectedTool === Tools.POLYGON
       ? {
-          type: GeometryType.POLYGON,
+          type: GeometryType.MULTI_POLYGON,
           style, // Needed here to trigger the rerender of the component when the selected class changes
         }
       : {

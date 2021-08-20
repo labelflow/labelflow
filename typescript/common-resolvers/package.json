@@ -13,16 +13,12 @@
     "typescript": "4.3.5"
   },
   "dependencies": {
-    "@turf/union":"6.5.0",
     "@graphql-tools/merge": "6.2.14",
     "@labelflow/graphql-types": "workspace:typescript/graphql-types",
     "@turf/bbox": "6.5.0",
     "@turf/bbox-polygon": "6.5.0",
-    "@turf/buffer": "6.5.0",
     "@turf/helpers": "6.5.0",
     "@turf/intersect": "6.5.0",
-    "@turf/unkink-polygon": "6.5.0",
-    "geojson-validation": "1.0.2",
     "graphql": "15.5.1",
     "graphql-type-json": "0.3.2",
     "isomorphic-fetch": "3.0.0",
