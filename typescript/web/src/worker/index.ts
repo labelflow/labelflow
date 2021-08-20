@@ -84,12 +84,10 @@ registerRoute(
 
 const trimmedUploadsRoute = trimCharsEnd("/", uploadsRoute);
 const uploadsRouteRegex = new RegExp(`${trimmedUploadsRoute}/(?<fileId>.*)`);
+const uploadServer = new UploadServer({ cacheName: uploadsCacheName });
 
-registerRoute(
-  uploadsRouteRegex,
-  new UploadServer({ cacheName: uploadsCacheName }),
-  "PUT"
-);
+registerRoute(uploadsRouteRegex, uploadServer, "PUT");
+registerRoute(uploadsRouteRegex, uploadServer, "DELETE");
 registerRoute(
   uploadsRouteRegex,
   new CacheOnly({
