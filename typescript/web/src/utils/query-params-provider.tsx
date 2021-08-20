@@ -15,11 +15,10 @@ export const QueryParamProviderComponent = (props: {
 
   const location = useMemo(
     () =>
-      typeof window !== "undefined"
-        ? window.location
-        : ({
-            search: router.asPath.replace(/[^?]+/u, ""),
-          } as Location),
+      // Do not use window.location here because it breaks storybook next router addon and query param decorator
+      ({
+        search: router.asPath.replace(/[^?]+/u, ""),
+      } as Location),
     [router.asPath]
   );
 
