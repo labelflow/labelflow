@@ -89,6 +89,7 @@ export type Repository = {
     getUploadTarget: () => Promise<UploadTarget> | UploadTarget;
     put: (url: string, file: Blob) => Promise<void>;
     get: (url: string) => Promise<ArrayBuffer>;
+    delete: (url: string) => Promise<void>;
   };
 };
 
