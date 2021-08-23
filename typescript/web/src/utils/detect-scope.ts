@@ -42,7 +42,7 @@ const detectScope = () => {
 
   if (isInServiceWorkerScope === null) {
     try {
-      if (self) {
+      if (self && typeof window === "undefined") {
         isInServiceWorkerScope = true;
       } else {
         isInServiceWorkerScope = false;

@@ -1,29 +1,56 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useRef, useEffect, useCallback, useState } from "react";
+import { gql, useMutation, useQuery } from "@apollo/client";
+import { useCookie } from "next-cookie";
+import { Modal, ModalOverlay } from "@chakra-ui/react";
+import { useErrorHandler } from "react-error-boundary";
+import { QueryParamConfig, StringParam, useQueryParam } from "use-query-params";
+import type { Dataset as DatasetType } from "@labelflow/graphql-types";
+import { useRouter } from "next/router";
+import { browser } from "../../../utils/detect-scope";
+import { WrongBrowser } from "./steps/wrong-browser";
+import { Welcome } from "./steps/welcome";
+import { LoadingWorker } from "./steps/loading-worker";
+import { LoadingDemo } from "./steps/loading-demo";
 
-import {
-  chakra,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalFooter,
-  VStack,
-  HStack,
-  Button,
-  Center,
-  Text,
-  Heading,
-  ModalBody,
-  ModalHeader,
-  useColorModeValue as mode,
-} from "@chakra-ui/react";
-import { RiGithubFill } from "react-icons/ri";
-import { StringParam, useQueryParam } from "use-query-params";
+type WelcomeModalState =
+  | undefined // Default: Stays close if user already onboarded, else open asap
+  | "open" // Force it to open asap
+  | "closed" // Force it to be closed and never open
+  | "wrong-browser" // Open but show the wrong browser message
+  | "welcome" // Open and nominal welcome page
+  | "loading-worker" // Open and still loading worker after user clicks "start"
+  | "loading-demo"; // Open and still loading demo data after user clicks "start"
 
-import { Logo } from "../../logo";
+export const getDatasetsQuery = gql`
+  query getDatasets {
+    datasets {
+      id
+      name
+    }
+  }
+`;
 
-import { ArtworkLaunching } from "./artwork-launching";
-
-const GithubIcon = chakra(RiGithubFill);
+export const createDemoDatasetQuery = gql`
+  mutation createDemoDataset {
+    createDemoDataset {
+      id
+      name
+      images(first: 1) {
+        id
+        url
+      }
+      imagesAggregates {
+        totalCount
+      }
+      labelsAggregates {
+        totalCount
+      }
+      labelClassesAggregates {
+        totalCount
+      }
+    }
+  }
+`;
 
 export const WelcomeModal = ({
   isServiceWorkerActive,
@@ -32,48 +59,73 @@ export const WelcomeModal = ({
   isServiceWorkerActive: boolean;
   initiallyHasUserClickedStart?: boolean;
 }) => {
+  const router = useRouter();
+
   // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
   // This param can have several values:
   //   - undefined: Normal behavior, only show the welcome modal when needed
   //   - "open": Force the welcome modal to open even if not needed
   //   - "closed": Don't ever open the welcome modal
 
-  const [paramModalWelcome, setParamModalWelcome] = useQueryParam(
-    "modal-welcome",
-    StringParam
-  );
-  const [hasUserClickedStart, setHasUserClickedStart] = useState(
-    initiallyHasUserClickedStart
-  );
-  const isOpen =
-    (!isServiceWorkerActive && !(paramModalWelcome === "closed")) ||
-    paramModalWelcome === "open";
-  const setIsOpen = (value: boolean) =>
-    setParamModalWelcome(value ? "open" : undefined, "replaceIn");
+  const [paramModalWelcome, setParamModalWelcome] =
+    useQueryParam<WelcomeModalState>(
+      "modal-welcome",
+      StringParam as QueryParamConfig<WelcomeModalState, WelcomeModalState>
+    );
+
+  console.log("paramModalWelcome in WelcomeModal ", paramModalWelcome);
 
   const startLabellingButtonRef = useRef<HTMLButtonElement>(null);
 
-  // This modal should open when isServiceWorkerActive becomes false
-  // But close only when the use hasUserClickedStart becomes true
-  useEffect(() => {
-    if (isServiceWorkerActive && hasUserClickedStart) {
-      setIsOpen(false);
-      return;
-    }
-    if (
-      (!isServiceWorkerActive &&
-        !hasUserClickedStart &&
-        !(paramModalWelcome === "closed")) ||
-      paramModalWelcome === "open"
-    ) {
-      setIsOpen(true);
-    }
-    // In the 2 other cases, we do nothing, this is an hysteresis
-    // To "latch" the modal to open once it opened once
-  }, [isServiceWorkerActive, hasUserClickedStart, paramModalWelcome]);
+  const [hasUserClickedStart, setHasUserClickedStart] = useState(
+    initiallyHasUserClickedStart
+  );
 
+  // Transition open => welcome
+  useEffect(() => {
+    if (paramModalWelcome === "open") {
+      setParamModalWelcome("wrong-browser", "replaceIn");
+    }
+  }, [paramModalWelcome === "open"]);
+
+  // Transition undefined => welcome
+  useEffect(() => {
+    if (!isServiceWorkerActive && paramModalWelcome == null) {
+      setParamModalWelcome("welcome", "replaceIn");
+    }
+  }, [paramModalWelcome == null, isServiceWorkerActive]);
+
+  // Transition undefined => wrong-browser
+  useEffect(() => {
+    const name = browser?.name;
+    const os = browser?.os;
+    const versionNumber = parseInt(browser?.version ?? "0", 10);
+
+    if (paramModalWelcome == null) {
+      if (
+        !(
+          (name === "firefox" && versionNumber >= 44) ||
+          (name === "edge-chromium" && versionNumber >= 44) ||
+          (name === "chrome" && versionNumber >= 45) ||
+          (name === "safari" && versionNumber >= 14)
+        ) ||
+        os === "BlackBerry OS" ||
+        os === "Windows Mobile" ||
+        os === "Windows 3.11" ||
+        os === "Windows 95" ||
+        os === "Windows 98" ||
+        os === "Windows 2000" ||
+        os === "Windows ME"
+      ) {
+        setParamModalWelcome("wrong-browser", "replaceIn");
+      }
+    }
+  }, [paramModalWelcome == null]);
+
+  // Transition welcome => loading-worker
   const handleClickStartLabelling = useCallback(() => {
     setHasUserClickedStart(true);
+
     // This is needed to fix a rare bug in which the welcome modal is stuck
     // in the "loading app" state when a new service worker is waiting AND
     // the welcome modal is open.
@@ -92,11 +144,92 @@ export const WelcomeModal = ({
       // Send a message to the waiting service worker, instructing it to activate.
       wb.messageSkipWaiting();
     }
-  }, [setHasUserClickedStart, setParamModalWelcome]);
+    setParamModalWelcome("loading-worker", "replaceIn");
+  }, [setHasUserClickedStart]);
+
+  // Transition loading-worker => loading-demo
+  useEffect(() => {
+    if (paramModalWelcome === "loading-worker") {
+      if (isServiceWorkerActive) {
+        setParamModalWelcome("loading-demo", "replaceIn");
+      }
+    }
+  }, [paramModalWelcome === "loading-worker", isServiceWorkerActive]);
+
+  const { data: datasetsResult, loading } =
+    useQuery<{
+      datasets: Pick<
+        DatasetType,
+        | "id"
+        | "name"
+        | "images"
+        | "imagesAggregates"
+        | "labelClassesAggregates"
+        | "labelsAggregates"
+      >[];
+    }>(getDatasetsQuery);
+  const parsedCookie = useCookie(/*cookie*/);
+  const didVisitDemoDataset = parsedCookie.get("didVisitDemoDataset");
+  const hasUserTriedApp = parsedCookie.get("hasUserTriedApp");
+  const hasDatasets =
+    datasetsResult?.datasets == null
+      ? false
+      : datasetsResult?.datasets?.length > 0;
+
+  const [createDemoDatasetMutation] = useMutation(createDemoDatasetQuery, {
+    update: (cache, { data: { createDemoDataset } }) => {
+      cache.writeQuery({
+        query: getDatasetsQuery,
+        data: {
+          datasets: [...(datasetsResult?.datasets ?? []), createDemoDataset],
+        },
+      });
+    },
+  });
+
+  const demoDataset =
+    datasetsResult?.datasets == null
+      ? undefined
+      : datasetsResult?.datasets.filter(
+          (dataset) => dataset.name === "Demo dataset"
+        )?.[0] ?? undefined;
+
+  const handleError = useErrorHandler();
+
+  useEffect(() => {
+    const createDemoDataset = async () => {
+      if (loading === true || hasDatasets) return;
+      if (!didVisitDemoDataset && demoDataset == null) {
+        try {
+          await createDemoDatasetMutation();
+        } catch (error) {
+          parsedCookie.set("didVisitDemoDataset", true);
+          handleError(error);
+        }
+      }
+    };
+    createDemoDataset();
+  }, [
+    demoDataset,
+    loading,
+    didVisitDemoDataset,
+    parsedCookie,
+    router,
+    hasDatasets,
+  ]);
+
+  // Transition loading-demo => undefined
+  useEffect(() => {
+    if (paramModalWelcome === "loading-demo") {
+      if (isServiceWorkerActive) {
+        setParamModalWelcome("loading-demo", "replaceIn");
+      }
+    }
+  }, [paramModalWelcome === "loading-demo", isServiceWorkerActive]);
 
   return (
     <Modal
-      isOpen={isOpen}
+      isOpen={(paramModalWelcome && paramModalWelcome !== "closed") ?? false}
       onClose={() => {}}
       size="3xl"
       scrollBehavior="inside"
@@ -104,131 +237,22 @@ export const WelcomeModal = ({
       initialFocusRef={startLabellingButtonRef}
     >
       <ModalOverlay />
-      <ModalContent margin="3.75rem">
-        <ModalHeader textAlign="center" padding="6">
-          <Center>
-            <Logo maxW="lg" mt="8" mb="8" h="min-content" />
-          </Center>
-        </ModalHeader>
-
-        {hasUserClickedStart && !isServiceWorkerActive ? (
-          <ModalBody>
-            {/* <VStack
-              maxW="2xl"
-              mx="auto"
-              mt="0"
-              mb="8"
-              textAlign="center"
-              spacing={4}
-            >
-              <Heading as="h2" maxW="lg">
-                Please wait while the application finishes loading.
-              </Heading>
-              <Text mt="4" fontSize="lg" maxW="lg">
-                This application runs completely offline, This allows you to
-                have a lightning fast labelling tool even with no internet
-                connection, and guarantees we don&apos;t use your data.
-              </Text>
-              <ArtworkLaunching width={200} height={200} />
-            </VStack> */}
-            <VStack
-              justifyContent="space-evenly"
-              spacing="8"
-              h="full"
-              mt="0"
-              mb="8"
-            >
-              <Text
-                color={mode("gray.600", "gray.400")}
-                maxW="lg"
-                fontSize="lg"
-                fontWeight="medium"
-                textAlign="justify"
-              >
-                Please wait while the application finishes loading. Labelflow
-                runs completely offline, this allows you to have a lightning
-                fast labelling tool even with no internet connection, and
-                guarantees we don&apos;t use your data.
-              </Text>
-              <ArtworkLaunching />
-            </VStack>
-          </ModalBody>
-        ) : (
-          <ModalBody>
-            <VStack
-              justifyContent="space-evenly"
-              spacing="8"
-              h="full"
-              mt="0"
-              mb="8"
-            >
-              <Heading
-                as="h1"
-                size="2xl"
-                maxW="lg"
-                color={mode("gray.600", "gray.300")}
-                fontWeight="extrabold"
-                textAlign="center"
-              >
-                The open standard{" "}
-                <Text color="brand.500" display="inline">
-                  image labeling tool
-                </Text>
-              </Heading>
-
-              <Text
-                color={mode("gray.600", "gray.400")}
-                mt="16"
-                maxW="lg"
-                fontSize="lg"
-                fontWeight="medium"
-                textAlign="justify"
-              >
-                Stay in control of your data, label your images without them
-                leaving your computer. Focus on building the next big thing.
-              </Text>
-            </VStack>
-          </ModalBody>
-        )}
-
-        <ModalFooter>
-          <HStack
-            direction={{ base: "column", md: "row" }}
-            justifyContent="center"
-            width="full"
-            spacing="4"
-            mb="10"
-          >
-            <Button
-              as="a"
-              leftIcon={<GithubIcon fontSize="xl" />}
-              href="https://github.com/Labelflow/labelflow"
-              target="blank"
-              size="lg"
-              minW="210px"
-              variant="link"
-              height="14"
-              px="8"
-            >
-              See code on Github
-            </Button>
-
-            <Button
-              ref={startLabellingButtonRef}
-              size="lg"
-              minW="210px"
-              colorScheme="brand"
-              height="14"
-              px="8"
-              isLoading={hasUserClickedStart && !isServiceWorkerActive}
-              onClick={handleClickStartLabelling}
-              loadingText="Loading the application"
-            >
-              Start Labelling!
-            </Button>
-          </HStack>
-        </ModalFooter>
-      </ModalContent>
+      {paramModalWelcome === "wrong-browser" && (
+        <WrongBrowser startLabellingButtonRef={startLabellingButtonRef} />
+      )}
+      {paramModalWelcome === "welcome" && (
+        <Welcome
+          startLabellingButtonRef={startLabellingButtonRef}
+          hasUserClickedStart={hasUserClickedStart}
+          handleClickStartLabelling={handleClickStartLabelling}
+        />
+      )}
+      {paramModalWelcome === "loading-worker" && (
+        <LoadingWorker startLabellingButtonRef={startLabellingButtonRef} />
+      )}
+      {paramModalWelcome === "loading-demo" && (
+        <LoadingDemo startLabellingButtonRef={startLabellingButtonRef} />
+      )}
     </Modal>
   );
 };
