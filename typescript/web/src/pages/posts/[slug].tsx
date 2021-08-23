@@ -55,10 +55,11 @@ export default function Posts({
           py={{ base: "10", sm: "24" }}
         >
           <Box
-            maxW={{ base: "xl", md: "7xl" }}
+            maxW={{ base: "xl", md: "3xl" }}
             mx="auto"
             px={{ base: "6", md: "8" }}
             className="markdown-body"
+            boxSizing="border-box"
           >
             <ChakraReactMarkdown
               // @ts-ignore
@@ -69,6 +70,19 @@ export default function Posts({
                 "& a": {
                   color: "brand.600",
                   ":hover": { textDecoration: "underline" },
+                },
+                // See https://developers.google.com/youtube/player_parameters for Youtube player parameters
+                "& iframe": {
+                  maxWidth: "100%",
+                  margin: "auto",
+                  marginBottom: "2em",
+                  marginTop: "2em",
+                },
+                "& img": {
+                  maxWidth: "100%",
+                  margin: "auto",
+                  marginBottom: "2em",
+                  marginTop: "2em",
                 },
               }}
             >
