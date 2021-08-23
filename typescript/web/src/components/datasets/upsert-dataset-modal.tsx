@@ -30,7 +30,7 @@ const createDatasetMutation = gql`
 `;
 
 const updateDatasetMutation = gql`
-  mutation updateDataset($id: ID, $name: String!) {
+  mutation updateDataset($id: ID!, $name: String!) {
     updateDataset(where: { id: $id }, data: { name: $name }) {
       id
     }
