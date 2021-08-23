@@ -18,6 +18,7 @@ export {
   convertImageToCocoImage,
   convertImagesToCocoImages,
   convertLabelflowDatasetToCocoDataset,
+  convertGeometryToSegmentation,
 };
 
 const initialCocoDataset: CocoDataset = {
@@ -67,6 +68,35 @@ const convertLabelClassesToCocoCategories = (labelClasses: DbLabelClass[]) => {
   };
 };
 
+const convertGeometryToSegmentation = (
+  { type, coordinates }: { type: string; coordinates: any[] },
+  imageHeight: number
+): number[][] => {
+  const polygonToSegmentation = (polygon: [number, number][]): number[] =>
+    polygon?.reduce(
+      (polygonCoordinates: number[], [x, y]: [number, number]) => [
+        ...polygonCoordinates,
+        x,
+        imageHeight - y,
+      ],
+      []
+    );
+
+  if (type === "Polygon") {
+    return coordinates.map((polygon: [number, number][]): number[] =>
+      polygonToSegmentation(polygon)
+    );
+  }
+
+  return coordinates?.reduce(
+    (segmentations: number[][], polygon) => [
+      ...segmentations,
+      ...polygon.map(polygonToSegmentation),
+    ],
+    []
+  );
+};
+
 const convertLabelToCocoAnnotation = (
   {
     x,
@@ -84,16 +114,9 @@ const convertLabelToCocoAnnotation = (
     id,
     image_id: imageId,
     category_id: categoryId,
-    segmentation: geometry.coordinates.map(
-      (polygon: [number, number][]): number[] =>
-        polygon?.reduce(
-          (polygonCoordinates: number[], coordinates) => [
-            ...polygonCoordinates,
-            coordinates[0],
-            imageDimensions.height - coordinates[1],
-          ],
-          []
-        )
+    segmentation: convertGeometryToSegmentation(
+      geometry,
+      imageDimensions.height
     ),
     area: width * height,
     bbox: [x, imageDimensions.height - y - height, width, height],

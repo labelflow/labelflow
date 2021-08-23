@@ -10,6 +10,7 @@ import {
   initialCocoDataset,
   convertLabelflowDatasetToCocoDataset,
   convertImagesToCocoImages,
+  convertGeometryToSegmentation,
 } from "../converters";
 import {
   CocoCategory,
@@ -318,5 +319,68 @@ describe("Coco converters", () => {
         [labelClass1, labelClass2]
       )
     ).toMatchObject(expectedCocoDataset);
+  });
+
+  test("should convert polygon geometry into segmentation", () => {
+    const polygonGeometry = {
+      type: "Polygon",
+      coordinates: [
+        [
+          [1, 2],
+          [1, 6],
+          [4, 6],
+          [4, 2],
+          [1, 2],
+        ],
+      ],
+    };
+
+    const imageDimensions = { width: 600, height: 200 };
+
+    const expectedSegmentation = [[1, 198, 1, 194, 4, 194, 4, 198, 1, 198]];
+
+    expect(
+      convertGeometryToSegmentation(polygonGeometry, imageDimensions.height)
+    ).toEqual(expectedSegmentation);
+  });
+
+  test("should convert multipolygon geometry into segmentation", () => {
+    const multiPolygonGeometry = {
+      type: "MultiPolygon",
+      coordinates: [
+        [
+          [
+            [1, 2],
+            [1, 6],
+            [4, 6],
+            [4, 2],
+            [1, 2],
+          ],
+        ],
+        [
+          [
+            [1, 2],
+            [1, 6],
+            [4, 6],
+            [4, 2],
+            [1, 2],
+          ],
+        ],
+      ],
+    };
+
+    const imageDimensions = { width: 600, height: 200 };
+
+    const expectedSegmentation = [
+      [1, 198, 1, 194, 4, 194, 4, 198, 1, 198],
+      [1, 198, 1, 194, 4, 194, 4, 198, 1, 198],
+    ];
+
+    expect(
+      convertGeometryToSegmentation(
+        multiPolygonGeometry,
+        imageDimensions.height
+      )
+    ).toEqual(expectedSegmentation);
   });
 });
