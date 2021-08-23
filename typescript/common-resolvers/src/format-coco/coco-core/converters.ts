@@ -79,7 +79,7 @@ const convertGeometryToSegmentation = (
         x,
         imageHeight - y,
       ],
-      []
+      [] as number[]
     );
 
   if (type === "Polygon") {
