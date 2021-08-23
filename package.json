@@ -19,7 +19,9 @@
     "storybook": "start-storybook -s ./typescript/web/public -p 6006",
     "storybook:all": "start-storybook -s ./typescript/web/public -p 6006",
     "build-storybook": "build-storybook",
-    "chromatic": "npx chromatic"
+    "chromatic": "npx chromatic",
+    "update:changelog": "auto-changelog -p --template changelog-template.hbs",
+    "update:license": "cd ./typescript/update-license && yarn update:license"
   },
   "workspaces": [
     "typescript/*"
@@ -41,6 +43,7 @@
     "@testing-library/jest-dom": "^5.14.1",
     "@typescript-eslint/eslint-plugin": "4.23.0",
     "@typescript-eslint/parser": "4.23.0",
+    "auto-changelog": "^2.3.0",
     "babel-loader": "^8.2.2",
     "chromatic": "^5.8.2",
     "cypress": "7.3.0",
@@ -64,6 +67,7 @@
     "prettier": "2.3.0",
     "react": "17.0.2",
     "react-dom": "17.0.2",
+    "release-it": "^14.11.5",
     "service-worker-mock": "patch:service-worker-mock@2.0.5#./service-worker-mock.patch",
     "ts-jest": "26.5.6",
     "ts-loader": "^9.2.3",
