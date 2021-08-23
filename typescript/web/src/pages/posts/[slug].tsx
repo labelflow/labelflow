@@ -71,7 +71,9 @@ export default function Posts({
                   color: "brand.600",
                   ":hover": { textDecoration: "underline" },
                 },
-                // See https://developers.google.com/youtube/player_parameters for Youtube player parameters
+                // Youtube player enhancements
+                // For parameters
+                // See https://developers.google.com/youtube/player_parameters
                 "& iframe": {
                   maxWidth: "100%",
                   margin: "auto",
