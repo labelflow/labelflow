@@ -8,7 +8,7 @@ import {
 } from "./class-item";
 import { DeleteLabelClassModal } from "./delete-class-modal";
 
-export const ClassesList = ({ datasetId }: { datasetId: string }) => {
+export const ClassesList = ({ datasetSlug }: { datasetSlug: string }) => {
   const [editClassId, setEditClassId] = useState<string | null>(null);
   const [deleteClassId, setDeleteClassId] = useState<string | null>(null);
 
@@ -16,11 +16,12 @@ export const ClassesList = ({ datasetId }: { datasetId: string }) => {
     datasetLabelClassesQuery,
     {
       variables: {
-        datasetId,
+        slug: datasetSlug,
       },
     }
   );
   const labelClasses = datasetResult?.dataset.labelClasses ?? [];
+  const datasetId = datasetResult?.dataset.id;
 
   const labelClassWithShortcut = useMemo(
     () =>
@@ -35,6 +36,7 @@ export const ClassesList = ({ datasetId }: { datasetId: string }) => {
     <>
       <DeleteLabelClassModal
         isOpen={deleteClassId != null}
+        datasetId={datasetId}
         labelClassId={deleteClassId}
         onClose={() => setDeleteClassId(null)}
       />
@@ -63,7 +65,7 @@ export const ClassesList = ({ datasetId }: { datasetId: string }) => {
                 color={color}
                 shortcut={shortcut}
                 edit={editClassId === id}
-                datasetId={datasetId}
+                datasetSlug={datasetSlug}
                 onClickEdit={setEditClassId}
                 onClickDelete={setDeleteClassId}
               />

@@ -53,11 +53,13 @@ export const createCreateLabelClassAndUpdateLabelEffect = (
     name,
     color,
     datasetId,
+    datasetSlug,
     selectedLabelId,
   }: {
     name: string;
     color: string;
     datasetId: string;
+    datasetSlug: string;
     selectedLabelId: string | null;
   },
   {
@@ -77,7 +79,7 @@ export const createCreateLabelClassAndUpdateLabelEffect = (
       refetchQueries: [
         "getLabelClassesOfDataset",
         { query: getDatasetsQuery },
-        { query: datasetLabelClassesQuery, variables: { datasetId } },
+        { query: datasetLabelClassesQuery, variables: { slug: datasetSlug } },
       ],
     });
 
@@ -130,7 +132,7 @@ export const createCreateLabelClassAndUpdateLabelEffect = (
       refetchQueries: [
         "getLabelClassesOfDataset",
         { query: getDatasetsQuery },
-        { query: datasetLabelClassesQuery, variables: { datasetId } },
+        { query: datasetLabelClassesQuery, variables: { slug: datasetSlug } },
       ],
     });
 
@@ -153,7 +155,7 @@ export const createCreateLabelClassAndUpdateLabelEffect = (
       refetchQueries: [
         "getLabelClassesOfDataset",
         { query: getDatasetsQuery },
-        { query: datasetLabelClassesQuery, variables: { datasetId } },
+        { query: datasetLabelClassesQuery, variables: { slug: datasetSlug } },
       ],
     });
 
@@ -178,12 +180,14 @@ export const createNewLabelClassAndUpdateLabelCurry =
   ({
     labelClasses,
     datasetId,
+    datasetSlug,
     perform,
     onClose = () => {},
     client,
   }: {
     labelClasses: LabelClass[];
     datasetId: string;
+    datasetSlug: string;
     perform: any;
     onClose?: () => void;
     client: ApolloClient<object>;
@@ -195,7 +199,7 @@ export const createNewLabelClassAndUpdateLabelCurry =
         : getNextClassColor(labelClasses[labelClasses.length - 1].color);
     perform(
       createCreateLabelClassAndUpdateLabelEffect(
-        { name, color: newClassColor, selectedLabelId, datasetId },
+        { name, color: newClassColor, selectedLabelId, datasetId, datasetSlug },
         { client }
       )
     );
