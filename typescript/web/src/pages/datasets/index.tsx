@@ -1,21 +1,10 @@
-import React, { useCallback, useEffect } from "react";
-import { gql, useMutation, useQuery } from "@apollo/client";
-import { useRouter } from "next/router";
+import React, { useCallback } from "react";
+import { gql, useQuery } from "@apollo/client";
+
 import { GetServerSideProps } from "next";
-import {
-  Flex,
-  Breadcrumb,
-  BreadcrumbItem,
-  Text,
-  Box,
-  Center,
-  Button,
-  Heading,
-} from "@chakra-ui/react";
+import { Flex, Breadcrumb, BreadcrumbItem, Text } from "@chakra-ui/react";
 import { RiArrowRightSLine } from "react-icons/ri";
 import { useQueryParam } from "use-query-params";
-import { useCookie } from "next-cookie";
-import { useErrorHandler } from "react-error-boundary";
 
 import type { Dataset as DatasetType } from "@labelflow/graphql-types";
 import { Meta } from "../../components/meta";
@@ -26,8 +15,6 @@ import { NewDatasetCard, DatasetCard } from "../../components/datasets";
 import { UpsertDatasetModal } from "../../components/datasets/upsert-dataset-modal";
 import { DeleteDatasetModal } from "../../components/datasets/delete-dataset-modal";
 import { AppLifecycleManager } from "../../components/app-lifecycle-manager";
-
-import { EmptyStateCaughtUp } from "../../components/empty-state";
 
 export const getDatasetsQuery = gql`
   query getDatasets {
@@ -52,38 +39,12 @@ export const getDatasetsQuery = gql`
   }
 `;
 
-const createDemoDatasetQuery = gql`
-  mutation createDemoDataset {
-    createDemoDataset {
-      id
-      name
-      images(first: 1) {
-        id
-        url
-      }
-      imagesAggregates {
-        totalCount
-      }
-      labelsAggregates {
-        totalCount
-      }
-      labelClassesAggregates {
-        totalCount
-      }
-    }
-  }
-`;
-
 const DatasetPage = ({
-  cookie,
   assumeServiceWorkerActive,
 }: {
-  cookie: string;
   assumeServiceWorkerActive: boolean;
 }) => {
-  const router = useRouter();
-
-  const { data: datasetsResult, loading } =
+  const { data: datasetsResult } =
     useQuery<{
       datasets: Pick<
         DatasetType,
@@ -124,90 +85,6 @@ const DatasetPage = ({
     }
   }, [editDatasetId, isCreatingDataset, deleteDatasetId]);
 
-  const parsedCookie = useCookie(cookie);
-
-  const didVisitDemoDataset = parsedCookie.get("didVisitDemoDataset");
-  const hasUserTriedApp = parsedCookie.get("hasUserTriedApp");
-  const hasDatasets =
-    datasetsResult?.datasets == null
-      ? false
-      : datasetsResult?.datasets?.length > 0;
-
-  const [createDemoDatasetMutation] = useMutation(createDemoDatasetQuery, {
-    update: (cache, { data: { createDemoDataset } }) => {
-      cache.writeQuery({
-        query: getDatasetsQuery,
-        data: {
-          datasets: [...(datasetsResult?.datasets ?? []), createDemoDataset],
-        },
-      });
-    },
-  });
-
-  const demoDataset =
-    datasetsResult?.datasets == null
-      ? undefined
-      : datasetsResult?.datasets.filter(
-          (dataset) => dataset.name === "Demo dataset"
-        )?.[0] ?? undefined;
-
-  const handleError = useErrorHandler();
-
-  useEffect(() => {
-    const createDemoDataset = async () => {
-      if (loading === true || hasDatasets) return;
-      if (!didVisitDemoDataset && demoDataset == null) {
-        try {
-          await createDemoDatasetMutation();
-        } catch (error) {
-          parsedCookie.set("didVisitDemoDataset", true);
-          handleError(error);
-        }
-      }
-    };
-    createDemoDataset();
-  }, [
-    demoDataset,
-    loading,
-    didVisitDemoDataset,
-    parsedCookie,
-    router,
-    hasDatasets,
-  ]);
-
-  useEffect(() => {
-    if (!hasUserTriedApp) {
-      parsedCookie.set("hasUserTriedApp", true);
-    }
-
-    if (
-      !didVisitDemoDataset &&
-      datasetsResult?.datasets != null &&
-      loading === false
-    ) {
-      // This is the first visit of the user and the datasets query returned, redirect to demo dataset
-      const demoDatasetSlug = demoDataset?.slug ?? "";
-      const firstImageId = demoDataset?.images?.[0]?.id;
-      if (firstImageId != null) {
-        const route = `/datasets/${demoDatasetSlug}/images/${firstImageId}`;
-        parsedCookie.set("didVisitDemoDataset", true);
-        router.replace({ pathname: route, query: router.query });
-      }
-    }
-  }, [
-    router,
-    router.query,
-    datasetsResult,
-    parsedCookie,
-    loading,
-    didVisitDemoDataset,
-    hasUserTriedApp,
-    demoDataset,
-  ]);
-
-  const shouldDisplayEmptyState =
-    !didVisitDemoDataset && demoDataset == null && loading === false;
-
   return (
     <>
       <AppLifecycleManager
@@ -238,73 +115,41 @@ const DatasetPage = ({
           datasetId={deleteDatasetId}
         />
 
-        {shouldDisplayEmptyState ? (
-          <Center h="full">
-            <Box as="section">
-              <Box
-                maxW="2xl"
-                mx="auto"
-                px={{ base: "6", lg: "8" }}
-                py={{ base: "16", sm: "20" }}
-                textAlign="center"
-              >
-                <EmptyStateCaughtUp w="full" />
-                <Heading as="h2">Creating a demo dataset</Heading>
-                <Text mt="4" fontSize="lg">
-                  It should only take a few seconds, but if you don&apos;t want
-                  to wait, you can create an empty dataset.
-                </Text>
+        <Flex direction="row" wrap="wrap" p={4}>
+          <NewDatasetCard
+            addDataset={() => {
+              setIsCreatingDataset(true, "replaceIn");
+            }}
+          />
 
-                <Button
-                  colorScheme="brand"
-                  variant="outline"
-                  mt="8"
-                  onClick={() => {
-                    setIsCreatingDataset(true, "replaceIn");
-                  }}
-                >
-                  Create an Empty Dataset
-                </Button>
-              </Box>
-            </Box>
-          </Center>
-        ) : (
-          <Flex direction="row" wrap="wrap" p={4}>
-            <NewDatasetCard
-              addDataset={() => {
-                setIsCreatingDataset(true, "replaceIn");
-              }}
-            />
-
-            {datasetsResult?.datasets?.map(
-              ({
-                id,
-                slug,
-                images,
-                name,
-                imagesAggregates,
-                labelsAggregates,
-                labelClassesAggregates,
-              }) => (
-                <DatasetCard
-                  key={id}
-                  url={`/datasets/${slug}`}
-                  imageUrl={images[0]?.url}
-                  datasetName={name}
-                  imagesCount={imagesAggregates.totalCount}
-                  labelClassesCount={labelClassesAggregates.totalCount}
-                  labelsCount={labelsAggregates.totalCount}
-                  editDataset={() => {
-                    setEditDatasetId(id, "replaceIn");
-                  }}
-                  deleteDataset={() => {
-                    setDeleteDatasetId(id, "replaceIn");
-                  }}
-                />
-              )
-            )}
-          </Flex>
-        )}
+          {datasetsResult?.datasets?.map(
+            ({
+              id,
+              slug,
+              images,
+              name,
+              imagesAggregates,
+              labelsAggregates,
+              labelClassesAggregates,
+            }) => (
+              <DatasetCard
+                key={id}
+                url={`/datasets/${slug}`}
+                imageUrl={images[0]?.url}
+                datasetName={name}
+                imagesCount={imagesAggregates.totalCount}
+                labelClassesCount={labelClassesAggregates.totalCount}
+                labelsCount={labelsAggregates.totalCount}
+                editDataset={() => {
+                  setEditDatasetId(id, "replaceIn");
+                }}
+                deleteDataset={() => {
+                  setDeleteDatasetId(id, "replaceIn");
+                }}
+              />
+            )
+          )}
+        </Flex>
       </Layout>
     </>
   );
