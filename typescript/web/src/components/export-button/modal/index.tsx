@@ -19,8 +19,8 @@ import { ExportFormatCard } from "./export-format-card";
 import { ExportOptionsModal, ExportOptions } from "./export-options-modal";
 
 const getImagesQuery = gql`
-  query getImages {
-    images {
+  query getImages($datasetId: ID!) {
+    images(where: { datasetId: $datasetId }) {
       id
       name
       url
@@ -82,7 +82,7 @@ export const exportCocoDataset = async ({
   if (options.exportImages) {
     const {
       data: { images },
-    } = await client.query({ query: getImagesQuery });
+    } = await client.query({ query: getImagesQuery, variables: { datasetId } });
     const zip = new JSZip();
     zip.file(
       `${datasetName}/annotations.json`,
