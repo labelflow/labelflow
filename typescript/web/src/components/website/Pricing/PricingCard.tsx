@@ -69,7 +69,7 @@ export const PricingCard = (props: PricingCardProps) => {
         ))}
       </List>
       <VStack spacing={6}>
-        <NextLink href="/pricing">
+        {/* <NextLink href="/pricing">
           <Button
             variant="unstyled"
             colorScheme="brand"
@@ -79,7 +79,7 @@ export const PricingCard = (props: PricingCardProps) => {
           >
             See all features
           </Button>
-        </NextLink>
+        </NextLink> */}
         {button}
       </VStack>
     </Card>

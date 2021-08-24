@@ -11,6 +11,7 @@ import { Footer } from "../components/website/Footer/Footer";
 import { Pricing } from "../components/website/Pricing/Pricing";
 import { ArticlesList } from "../components/website/Blog/articles-list";
 import { getAllArticles, Article } from "../connectors/strapi";
+import { Roadmap } from "../components/website/roadmap/roadmap";
 import { Meta } from "../components/meta";
 
 export default function Website({
@@ -42,6 +43,7 @@ export default function Website({
       <Hero />
       <Features />
       <Why />
+      <Roadmap />
       {/* <Testimonials /> */}
       <LogoGrid />
       <Pricing />
