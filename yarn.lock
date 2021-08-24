@@ -5235,8 +5235,10 @@ __metadata:
     "@testing-library/user-event": ^13.1.9
     "@turf/bbox": ^6.5.0
     "@turf/bbox-polygon": ^6.5.0
+    "@turf/flatten": ^6.5.0
     "@turf/helpers": ^6.5.0
     "@turf/intersect": ^6.5.0
+    "@turf/meta": ^6.5.0
     "@types/bluebird": ^3.5.35
     "@types/mime-types": 2.1.0
     "@types/node": 12.12.21
@@ -8548,6 +8550,16 @@ __metadata:
     "@turf/helpers": ^6.3.0
     "@turf/meta": ^6.3.0
   checksum: a4cb4ce9a6be5b6b7d91d1e54e6fee9e38298afafe6cd9d5c19147ca045d5badc47975185d1d7e88c604de3640fb60936928f74f539f46799a3b1787e65218af
+  languageName: node
+  linkType: hard
+
+"@turf/flatten@npm:^6.5.0":
+  version: 6.5.0
+  resolution: "@turf/flatten@npm:6.5.0"
+  dependencies:
+    "@turf/helpers": ^6.5.0
+    "@turf/meta": ^6.5.0
+  checksum: c29d6501bfb27729f781a70166085b1d5e4f8fac1df09170ae5664046fb91e602e0fb5412c8b3c27a83c692b4dfd86a99f0f29563353e6590b6ca5e50d865b32
   languageName: node
   linkType: hard
 

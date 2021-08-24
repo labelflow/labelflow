@@ -1,4 +1,6 @@
 import mime from "mime-types";
+import flatten from "@turf/flatten";
+import { geomReduce, coordReduce } from "@turf/meta";
 import { DbImage, DbLabelClass } from "../../types";
 
 import {
@@ -69,29 +71,33 @@ const convertLabelClassesToCocoCategories = (labelClasses: DbLabelClass[]) => {
 };
 
 const convertGeometryToSegmentation = (
-  { type, coordinates }: { type: string; coordinates: any[] },
+  geometry: { type: string; coordinates: any[] },
   imageHeight: number
 ): number[][] => {
-  const polygonToSegmentation = (polygon: [number, number][]): number[] =>
-    polygon?.reduce(
-      (polygonCoordinates: number[], [x, y]: [number, number]) => [
-        ...polygonCoordinates,
-        x,
-        imageHeight - y,
-      ],
-      [] as number[]
+  const geometryToSegmentation = (currentGeometry) =>
+    coordReduce(
+      currentGeometry,
+      (
+        segmentation: number[],
+        [x, y]: [number, number],
+        _coordIndex,
+        _featureIndex,
+        _multiFeatureIndex,
+        geometryIndex
+      ) => {
+        if (geometryIndex > 0) {
+          return [...segmentation];
+        }
+        return [...segmentation, x, imageHeight - y];
+      },
+      []
     );
 
-  if (type === "Polygon") {
-    return coordinates.map((polygon: [number, number][]): number[] =>
-      polygonToSegmentation(polygon)
-    );
-  }
-
-  return coordinates?.reduce(
-    (segmentations: number[][], polygon) => [
+  return geomReduce(
+    flatten(geometry),
+    (segmentations: number[][], currentGeometry) => [
       ...segmentations,
-      ...polygon.map(polygonToSegmentation),
+      geometryToSegmentation(currentGeometry),
     ],
     []
   );
