@@ -5248,9 +5248,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@labelflow/update-license@workspace:typescript/update-license":
+"@labelflow/update-license@workspace:typescript/release":
   version: 0.0.0-use.local
-  resolution: "@labelflow/update-license@workspace:typescript/update-license"
+  resolution: "@labelflow/update-license@workspace:typescript/release"
   dependencies:
     "@types/node": 16.4.1
     nodemon: 2.0.12

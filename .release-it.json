@@ -8,7 +8,7 @@
         "publish": false
     },
     "hooks": {
-        "after:bump": "yarn update:changelog; yarn update:license; git add CHANGELOG.md LICENSE;"
+        "after:bump": "yarn release:update; git add CHANGELOG.md LICENSE typescript/*/package.json;"
     },
     "github": {
         "release": true

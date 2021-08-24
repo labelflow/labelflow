@@ -20,8 +20,11 @@
     "storybook:all": "start-storybook -s ./typescript/web/public -p 6006",
     "build-storybook": "build-storybook",
     "chromatic": "npx chromatic",
-    "update:changelog": "auto-changelog -p --template changelog-template.hbs",
-    "update:license": "cd ./typescript/update-license && yarn update:license"
+    "release": "release-it",
+    "release:update": "yarn release:update:changelog; yarn release:update:license; yarn release:update:packages-version",
+    "release:update:changelog": "auto-changelog -p --template changelog-template.hbs",
+    "release:update:license": "cd ./typescript/release && yarn update:license",
+    "release:update:packages-version": "cd ./typescript/release && yarn update:packages-version"
   },
   "workspaces": [
     "typescript/*"
