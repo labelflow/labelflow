@@ -5,12 +5,12 @@ import {
   List,
   ListIcon,
   ListItem,
-  Button,
+  // Button,
   Text,
   useColorModeValue,
   VStack,
 } from "@chakra-ui/react";
-import NextLink from "next/link";
+// import NextLink from "next/link";
 import * as React from "react";
 import { HiCheckCircle } from "react-icons/hi";
 import { Card, CardProps } from "./Card";
