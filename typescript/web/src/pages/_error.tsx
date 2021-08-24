@@ -9,6 +9,7 @@ import {
 } from "@chakra-ui/react";
 import { FallbackProps } from "react-error-boundary";
 import { NextPageContext } from "next";
+
 import { Meta } from "../components/meta";
 import { Layout } from "../components/layout";
 import { EmptyStateOops } from "../components/empty-state";
@@ -84,7 +85,7 @@ const ErrorPage = ({ statusCode, error, resetErrorBoundary }: Props) => {
   );
 };
 
-ErrorPage.getInitialProps = ({ res, err }: NextPageContext) => {
+export const getInitialProps = ({ res, err }: NextPageContext) => {
   // See https://nextjs.org/docs/advanced-features/custom-error-page#more-advanced-error-page-customizing
   // eslint-disable-next-line no-nested-ternary
   const statusCode = res ? res.statusCode : err ? err.statusCode : 404;

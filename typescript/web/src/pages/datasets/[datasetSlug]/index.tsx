@@ -69,9 +69,7 @@ const DatasetIndexPage = ({
 
   return (
     <>
-      <AppLifecycleManager
-        assumeServiceWorkerActive={assumeServiceWorkerActive}
-      />
+      <AppLifecycleManager />
       <Layout
         topBarLeftContent={
           <Breadcrumb

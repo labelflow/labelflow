@@ -109,9 +109,7 @@ const ImagePage = ({
 
   return (
     <>
-      <AppLifecycleManager
-        assumeServiceWorkerActive={assumeServiceWorkerActive}
-      />
+      <AppLifecycleManager />
       <Meta title={`Labelflow | Image ${imageName ?? ""}`} />
       <Layout
         topBarLeftContent={

@@ -1,12 +1,6 @@
 import { useRef, useEffect, useCallback, useState } from "react";
-import {
-  ApolloCache,
-  ApolloClient,
-  gql,
-  useMutation,
-  useQuery,
-} from "@apollo/client";
-import { useCookie } from "next-cookie";
+import { ApolloCache, ApolloClient, gql } from "@apollo/client";
+
 import { Modal, ModalOverlay } from "@chakra-ui/react";
 import { useErrorHandler } from "react-error-boundary";
 import { QueryParamConfig, StringParam, useQueryParam } from "use-query-params";
@@ -65,47 +59,25 @@ export const createDemoDatasetQuery = gql`
 
 const performWelcomeWorkflow = async ({
   router,
-  setParamModalWelcome,
   client,
   handleError,
 }: {
   router: Router;
-  setParamModalWelcome: () => void;
+  setIsWrongBrowser: (state: boolean) => void;
+  setWelcomeModalState: (state: WelcomeModalState) => void;
   client: ApolloClient<ApolloCache<any>>;
   handleError: (error: Error) => void;
 }) => {
-  const name = browser?.name;
-  const os = browser?.os;
-  const versionNumber = parseInt(browser?.version ?? "0", 10);
-  if (
-    !(
-      (name === "firefox" && versionNumber >= 44) ||
-      (name === "edge-chromium" && versionNumber >= 44) ||
-      (name === "chrome" && versionNumber >= 45) ||
-      (name === "safari" && versionNumber >= 14)
-    ) ||
-    os === "BlackBerry OS" ||
-    os === "Windows Mobile" ||
-    os === "Windows 3.11" ||
-    os === "Windows 95" ||
-    os === "Windows 98" ||
-    os === "Windows 2000" ||
-    os === "Windows ME"
-  ) {
-    setParamModalWelcome("wrong-browser", "replaceIn");
-    return;
-  }
-
-  setParamModalWelcome("loading-worker", "replaceIn");
+  setWelcomeModalState("loading-worker");
 
   try {
     await checkServiceWorkerReady();
   } catch (e) {
-    setParamModalWelcome("wrong-browser", "replaceIn");
+    setIsWrongBrowser(true);
     return;
   }
 
-  setParamModalWelcome("loading-demo", "replaceIn");
+  setWelcomeModalState("loading-demo", "replaceIn");
 
   const { data: getDatasetsResult } = await client.query({
     query: getDatasetsQuery,
@@ -124,14 +96,14 @@ const performWelcomeWorkflow = async ({
     });
   }
 
-  setParamModalWelcome("loading-finished", "replaceIn");
+  setWelcomeModalState("loading-finished", "replaceIn");
 };
 
 export const WelcomeModal = ({
   isServiceWorkerActive,
   initiallyHasUserClickedStart = false,
   initialIsWrongBrowser = false,
-  initialWelcomeModalState = "welcome",
+  initialWelcomeModalState = undefined,
 }: {
   isServiceWorkerActive: boolean;
   initiallyHasUserClickedStart?: boolean;
@@ -139,6 +111,7 @@ export const WelcomeModal = ({
   initialWelcomeModalState?: WelcomeModalState;
 }) => {
   const router = useRouter();
+  const handleError = useErrorHandler();
 
   // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
   // This param can have several values:
@@ -156,20 +129,48 @@ export const WelcomeModal = ({
     initiallyHasUserClickedStart
   );
 
-  const [isWelcomeModalState, setIsWelcomeModalState] =
-    useState<WelcomeModalState>(initialWelcomeModalState);
+  const [welcomeModalState, setWelcomeModalState] = useState<WelcomeModalState>(
+    isServiceWorkerActive ? initialWelcomeModalState : "welcome"
+  );
 
   const [isWrongBrowser, setIsWrongBrowser] = useState(initialIsWrongBrowser);
-
-  console.log("paramModalWelcome in WelcomeModal ", paramModalWelcome);
 
   const startLabellingButtonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     if (!isServiceWorkerActive) {
-      performWelcomeWorkflow();
+      const name = browser?.name;
+      const os = browser?.os;
+      const versionNumber = parseInt(browser?.version ?? "0", 10);
+      if (
+        !(
+          (name === "firefox" && versionNumber >= 44) ||
+          (name === "edge-chromium" && versionNumber >= 44) ||
+          (name === "chrome" && versionNumber >= 45) ||
+          (name === "safari" && versionNumber >= 14)
+        ) ||
+        os === "BlackBerry OS" ||
+        os === "Windows Mobile" ||
+        os === "Windows 3.11" ||
+        os === "Windows 95" ||
+        os === "Windows 98" ||
+        os === "Windows 2000" ||
+        os === "Windows ME"
+      ) {
+        setIsWrongBrowser(true);
+      }
     }
   }, []);
+
+  useEffect(() => {
+    if (!isWrongBrowser && !isServiceWorkerActive) {
+      performWelcomeWorkflow({
+        setWelcomeModalState,
+        setIsWrongBrowser,
+        handleError,
+      });
+    }
+  }, [isWrongBrowser]);
 
   // // Transition open => welcome
   // useEffect(() => {
@@ -245,8 +246,6 @@ export const WelcomeModal = ({
   // //         (dataset) => dataset.name === "Demo dataset"
   // //       )?.[0] ?? undefined;
 
-  // // const handleError = useErrorHandler();
-
   // // useEffect(() => {
   // //   const createDemoDataset = async () => {
   // //     if (loading === true || hasDatasets) return;
@@ -289,23 +288,36 @@ export const WelcomeModal = ({
     >
       <ModalOverlay />
       {isWrongBrowser ? (
-        <WrongBrowser startLabellingButtonRef={startLabellingButtonRef} />
+        <WrongBrowser
+          startLabellingButtonRef={startLabellingButtonRef}
+          onClickNext={() => {
+            setIsWrongBrowser(false);
+          }}
+        />
       ) : (
-        (isWelcomeModalState === "welcome" && (
+        (welcomeModalState === "welcome" && (
           <Welcome
             startLabellingButtonRef={startLabellingButtonRef}
             hasUserClickedStart={hasUserClickedStart}
             onClickNext={() => setHasUserClickedStart(true)}
           />
         )) ||
-        (isWelcomeModalState === "loading-worker" && (
+        (welcomeModalState === "loading-worker" && (
           <LoadingWorker startLabellingButtonRef={startLabellingButtonRef} />
         )) ||
-        (isWelcomeModalState === "loading-demo" && (
+        (welcomeModalState === "loading-demo" && (
           <LoadingDemo startLabellingButtonRef={startLabellingButtonRef} />
         )) ||
-        (isWelcomeModalState === "loading-finished" && (
-          <LoadingFinished startLabellingButtonRef={startLabellingButtonRef} />
+        (welcomeModalState === "loading-finished" && (
+          <LoadingFinished
+            startLabellingButtonRef={startLabellingButtonRef}
+            onClickSkip={() => {
+              router.push("/datasets");
+            }}
+            onClickNext={() => {
+              router.push("/datasets");
+            }}
+          />
         ))
       )}
     </Modal>

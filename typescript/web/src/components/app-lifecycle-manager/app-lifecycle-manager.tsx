@@ -15,9 +15,9 @@ declare global {
   }
 }
 
-type Props = { assumeServiceWorkerActive: boolean };
+type Props = {};
 
-export const AppLifecycleManager = ({ assumeServiceWorkerActive }: Props) => {
+export const AppLifecycleManager = (props: Props) => {
   // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
   // This param can have several values:
   //   - undefined: Normal behavior, only show the update modal when needed
@@ -29,9 +29,7 @@ export const AppLifecycleManager = ({ assumeServiceWorkerActive }: Props) => {
 
   // By default (including during SSR) we consider the service worker to be ready
   // since this is the nominal case that happen all the time except during the very first visit
-  const [isServiceWorkerActive, setIsServiceWorkerActive] = useState(
-    assumeServiceWorkerActive
-  );
+  const [isServiceWorkerActive, setIsServiceWorkerActive] = useState(false);
 
   const handleError = useErrorHandler();
 

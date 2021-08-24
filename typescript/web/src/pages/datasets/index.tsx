@@ -1,7 +1,6 @@
 import React, { useCallback } from "react";
 import { gql, useQuery } from "@apollo/client";
 
-import { GetServerSideProps } from "next";
 import { Flex, Breadcrumb, BreadcrumbItem, Text } from "@chakra-ui/react";
 import { RiArrowRightSLine } from "react-icons/ri";
 import { useQueryParam } from "use-query-params";
@@ -39,11 +38,7 @@ export const getDatasetsQuery = gql`
   }
 `;
 
-const DatasetPage = ({
-  assumeServiceWorkerActive,
-}: {
-  assumeServiceWorkerActive: boolean;
-}) => {
+const DatasetPage = () => {
   const { data: datasetsResult } =
     useQuery<{
       datasets: Pick<
@@ -87,9 +82,7 @@ const DatasetPage = ({
 
   return (
     <>
-      <AppLifecycleManager
-        assumeServiceWorkerActive={assumeServiceWorkerActive}
-      />
+      <AppLifecycleManager />
       <Meta title="Labelflow | Datasets" />
       <Layout
         topBarLeftContent={
@@ -153,14 +146,6 @@ const DatasetPage = ({
       </Layout>
     </>
   );
-};
-
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  return {
-    props: {
-      cookie: context.req.headers.cookie || "",
-    },
-  };
 };
 
 export default DatasetPage;

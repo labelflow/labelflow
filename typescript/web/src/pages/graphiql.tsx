@@ -32,9 +32,7 @@ const GraphqlPlayground = ({
 }) => {
   return (
     <>
-      <AppLifecycleManager
-        assumeServiceWorkerActive={assumeServiceWorkerActive}
-      />
+      <AppLifecycleManager />
       <Meta title="Labelflow | GraphiQL" />
       <Layout
         topBarLeftContent={

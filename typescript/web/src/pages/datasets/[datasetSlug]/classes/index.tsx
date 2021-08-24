@@ -61,9 +61,7 @@ const DatasetClassesPage = ({
 
   return (
     <>
-      <AppLifecycleManager
-        assumeServiceWorkerActive={assumeServiceWorkerActive}
-      />
+      <AppLifecycleManager />
       <Meta title="Labelflow | Classes" />
       <Layout
         topBarLeftContent={

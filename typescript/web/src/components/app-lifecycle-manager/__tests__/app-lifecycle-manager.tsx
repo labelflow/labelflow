@@ -26,7 +26,7 @@ describe("App lifecyle manager", () => {
       removeEventListener: jest.fn(() => {}),
       register: jest.fn(() => {}),
     } as unknown as Workbox;
-    render(<AppLifecycleManager assumeServiceWorkerActive={false} />);
+    render(<AppLifecycleManager />);
     await waitFor(() => {
       expect(screen.queryByText("image labeling tool")).toBeDefined();
     });
@@ -46,7 +46,7 @@ describe("App lifecyle manager", () => {
       removeEventListener: jest.fn(() => {}),
       register: jest.fn(() => {}),
     } as unknown as Workbox;
-    render(<AppLifecycleManager assumeServiceWorkerActive />);
+    render(<AppLifecycleManager />);
     await waitFor(() => {
       expect(screen.queryByText("image labeling tool")).not.toBeInTheDocument();
     });
@@ -75,7 +75,7 @@ describe("App lifecyle manager", () => {
       }),
       register: jest.fn(() => {}),
     } as unknown as Workbox;
-    render(<AppLifecycleManager assumeServiceWorkerActive />);
+    render(<AppLifecycleManager />);
     await waitFor(() => {
       expect(screen.queryByText("image labeling tool")).not.toBeInTheDocument();
     });

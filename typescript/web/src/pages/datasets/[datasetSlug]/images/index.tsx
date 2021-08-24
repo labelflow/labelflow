@@ -75,9 +75,7 @@ const ImagesPage = ({
 
   return (
     <>
-      <AppLifecycleManager
-        assumeServiceWorkerActive={assumeServiceWorkerActive}
-      />
+      <AppLifecycleManager />
       <Meta title="Labelflow | Images" />
       <Layout
         topBarLeftContent={

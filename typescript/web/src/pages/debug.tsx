@@ -32,9 +32,7 @@ const DebugPage = ({
 
   return (
     <>
-      <AppLifecycleManager
-        assumeServiceWorkerActive={assumeServiceWorkerActive}
-      />
+      <AppLifecycleManager />
       <Layout>
         <Center h="full">
           <Box as="section">

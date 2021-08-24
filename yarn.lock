@@ -5265,7 +5265,6 @@ __metadata:
     mem: ^8.1.1
     mime-types: 2.1.31
     next: 11.1.0
-    next-cookie: 2.6.2
     next-pwa: "patch:next-pwa@5.2.21#./next-pwa.patch"
     next-seo: ^4.26.0
     next-transpile-modules: 8.0.0
@@ -5274,6 +5273,7 @@ __metadata:
     postcss: ^8.3.5
     query-string: ^7.0.0
     react: 17.x
+    react-cookie: 4.1.1
     react-countdown-hook: ^1.1.0
     react-dom: 17.x
     react-dropzone: ^11.3.2
@@ -9741,6 +9741,16 @@ __metadata:
   dependencies:
     "@types/unist": "*"
   checksum: 8aff367be477854d6cd3e5cf03d7154cd163a67bc3266777c2f4b1c32d07a335420ba58a8a799965dbc3190f1ed9989880008afb1392043290acc384a155a7a3
+  languageName: node
+  linkType: hard
+
+"@types/hoist-non-react-statics@npm:^3.0.1":
+  version: 3.3.1
+  resolution: "@types/hoist-non-react-statics@npm:3.3.1"
+  dependencies:
+    "@types/react": "*"
+    hoist-non-react-statics: ^3.3.0
+  checksum: 16ab4c45d4920fa378c8be76554b10061247fc04d2c8af11bdb7d520b3967e9c06d7ad5efd9b0f1657fbc4d095f62c6e1325f03b9141eb1ef2c8095b96fd42f8
   languageName: node
   linkType: hard
 
@@ -18096,7 +18106,7 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"hoist-non-react-statics@npm:^3.3.0, hoist-non-react-statics@npm:^3.3.1, hoist-non-react-statics@npm:^3.3.2":
+"hoist-non-react-statics@npm:^3.0.0, hoist-non-react-statics@npm:^3.3.0, hoist-non-react-statics@npm:^3.3.1, hoist-non-react-statics@npm:^3.3.2":
   version: 3.3.2
   resolution: "hoist-non-react-statics@npm:3.3.2"
   dependencies:
@@ -20364,13 +20374,6 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"kind-of@npm:>=6.0.3, kind-of@npm:^6.0.0, kind-of@npm:^6.0.2, kind-of@npm:^6.0.3":
-  version: 6.0.3
-  resolution: "kind-of@npm:6.0.3"
-  checksum: 5de5d6577796af87a983199d6350ed41c670abec4a306cc43ca887c1afdbd6b89af9ab00016e3ca17eb7ad89ebfd9bb817d33baa89f855c6c95398a8b8abbf08
-  languageName: node
-  linkType: hard
-
 "kind-of@npm:^3.0.2, kind-of@npm:^3.0.3, kind-of@npm:^3.2.0":
   version: 3.2.2
   resolution: "kind-of@npm:3.2.2"
@@ -20393,6 +20396,13 @@ fsevents@^1.2.7:
   version: 5.1.0
   resolution: "kind-of@npm:5.1.0"
   checksum: c98cfe70c805a7a3a10ec4399fac2884fb4b277494baffea0712a5e8de49a0bbdc36d9cfedf7879f47567fa4d7f4d92fd5b69582bc8666100b3560e03bd88844
+  languageName: node
+  linkType: hard
+
+"kind-of@npm:^6.0.0, kind-of@npm:^6.0.2, kind-of@npm:^6.0.3":
+  version: 6.0.3
+  resolution: "kind-of@npm:6.0.3"
+  checksum: 5de5d6577796af87a983199d6350ed41c670abec4a306cc43ca887c1afdbd6b89af9ab00016e3ca17eb7ad89ebfd9bb817d33baa89f855c6c95398a8b8abbf08
   languageName: node
   linkType: hard
 
@@ -21765,7 +21775,7 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"minimist@npm:>=1.2.5, minimist@npm:^1.1.1, minimist@npm:^1.2.0, minimist@npm:^1.2.5":
+"minimist@npm:^1.1.1, minimist@npm:^1.2.0, minimist@npm:^1.2.5":
   version: 1.2.5
   resolution: "minimist@npm:1.2.5"
   checksum: b77b8590147a4e217ff34266236bc39de23b52e6e33054076991ff674c7397a1380a7bde11111916f16f003a94aaa7e4f3d92595a32189644ff607fabc65a5b6
@@ -22074,19 +22084,6 @@ fsevents@^1.2.7:
   version: 2.1.0
   resolution: "nested-error-stacks@npm:2.1.0"
   checksum: f3f930722ef2b02e6dd5d91662d3b39820d3fc1440e50174ee354f2744243587cabebdd659887b577a593684aa0caec428d0706a587455e3320e164a1ad5290d
-  languageName: node
-  linkType: hard
-
-"next-cookie@npm:2.6.2":
-  version: 2.6.2
-  resolution: "next-cookie@npm:2.6.2"
-  dependencies:
-    kind-of: ">=6.0.3"
-    minimist: ">=1.2.5"
-    universal-cookie: ~4.0.4
-  peerDependencies:
-    next: ">9.5.0"
-  checksum: 2aeb014d9164cd33b2d3d212c4c76e5476d6f57635d838d71d1220daeb5c87fb1781b25994c873af015cae07236416e34c3daf4164fd6dfc1cccaffc9a3634c6
   languageName: node
   linkType: hard
 
@@ -24336,6 +24333,19 @@ next-pwa@5.2.21:
     react: ">=16.8.0"
     react-dom: ">=16.8.0"
   checksum: 5e02f92eda933f1945407a290cc83ef2b640b46c7b637ae25c34a56ccc9c8b59fff08484462db292a2beeebe5a612682fe1d79cf29b44a49a2524db43db31dfb
+  languageName: node
+  linkType: hard
+
+"react-cookie@npm:4.1.1":
+  version: 4.1.1
+  resolution: "react-cookie@npm:4.1.1"
+  dependencies:
+    "@types/hoist-non-react-statics": ^3.0.1
+    hoist-non-react-statics: ^3.0.0
+    universal-cookie: ^4.0.0
+  peerDependencies:
+    react: ">= 16.3.0"
+  checksum: 0a011b7cbe8d72e5d3482708abe9a00616c18b2c6c6f4f911373d76f1307d6c3b2a5a096e855181009b3d6461ae587f27483820d511fdaaf2821d9daf54b1103
   languageName: node
   linkType: hard
 
@@ -28568,7 +28578,7 @@ typescript@4.3.5:
   languageName: node
   linkType: hard
 
-"universal-cookie@npm:~4.0.4":
+"universal-cookie@npm:^4.0.0":
   version: 4.0.4
   resolution: "universal-cookie@npm:4.0.4"
   dependencies:
