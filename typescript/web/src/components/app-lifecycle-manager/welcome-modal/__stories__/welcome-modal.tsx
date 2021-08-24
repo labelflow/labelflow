@@ -22,7 +22,7 @@ Default.parameters = {
 };
 
 export const WrongBrowser = () => {
-  return <WelcomeModal isServiceWorkerActive={false} />;
+  return <WelcomeModal isServiceWorkerActive={false} initialIsWrongBrowser />;
 };
 
 WrongBrowser.parameters = {
@@ -36,7 +36,12 @@ WrongBrowser.parameters = {
 };
 
 export const Welcome = () => {
-  return <WelcomeModal isServiceWorkerActive={false} />;
+  return (
+    <WelcomeModal
+      isServiceWorkerActive={false}
+      initialWelcomeModalState="welcome"
+    />
+  );
 };
 
 Welcome.parameters = {
@@ -50,7 +55,12 @@ Welcome.parameters = {
 };
 
 export const LoadingWorker = () => {
-  return <WelcomeModal isServiceWorkerActive={false} />;
+  return (
+    <WelcomeModal
+      isServiceWorkerActive={false}
+      initialWelcomeModalState="loading-worker"
+    />
+  );
 };
 
 LoadingWorker.parameters = {
@@ -64,7 +74,12 @@ LoadingWorker.parameters = {
 };
 
 export const LoadingDemo = () => {
-  return <WelcomeModal isServiceWorkerActive={false} />;
+  return (
+    <WelcomeModal
+      isServiceWorkerActive={false}
+      initialWelcomeModalState="loading-demo"
+    />
+  );
 };
 
 LoadingDemo.parameters = {
@@ -73,6 +88,25 @@ LoadingDemo.parameters = {
     asPath: "/datasets?modal-welcome=loading-demo",
     query: {
       "modal-welcome": "loading-demo",
+    },
+  },
+};
+
+export const LoadingFinished = () => {
+  return (
+    <WelcomeModal
+      isServiceWorkerActive={false}
+      initialWelcomeModalState="loading-finished"
+    />
+  );
+};
+
+LoadingFinished.parameters = {
+  nextRouter: {
+    path: "/datasets?modal-welcome=loading-finished",
+    asPath: "/datasets?modal-welcome=loading-finished",
+    query: {
+      "modal-welcome": "loading-finished",
     },
   },
 };

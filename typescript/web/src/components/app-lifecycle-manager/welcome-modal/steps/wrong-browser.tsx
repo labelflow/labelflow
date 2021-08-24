@@ -14,21 +14,27 @@ import {
   ModalHeader,
   useColorModeValue as mode,
 } from "@chakra-ui/react";
-import { RiGithubFill } from "react-icons/ri";
-
-import { Logo } from "../../../logo";
+import NextLink from "next/link";
+import { RiArrowGoBackLine, RiPlayFill } from "react-icons/ri";
 
 import browserAlert from "../../../../../public/static/graphics/browser-alert.svg";
 
-const GithubIcon = chakra(RiGithubFill);
-type Props = { startLabellingButtonRef: React.Ref<HTMLButtonElement> };
+const BackIcon = chakra(RiArrowGoBackLine);
+const PlayIcon = chakra(RiPlayFill);
+type Props = {
+  startLabellingButtonRef: React.Ref<HTMLButtonElement>;
+  onClickNext?: () => void;
+};
 
-export const WrongBrowser = ({ startLabellingButtonRef }: Props) => {
+export const WrongBrowser = ({
+  startLabellingButtonRef,
+  onClickNext,
+}: Props) => {
   return (
     <ModalContent margin="3.75rem">
-      <ModalHeader textAlign="center" padding="6">
+      <ModalHeader textAlign="center" padding="8">
         <Center>
-          <Logo maxW="lg" mt="8" mb="8" h="min-content" />
+          <Image src={browserAlert} mt="12" mb="8" width="40" height="40" />
         </Center>
       </ModalHeader>
 
@@ -40,7 +46,6 @@ export const WrongBrowser = ({ startLabellingButtonRef }: Props) => {
           mt="0"
           mb="8"
         >
-          <Image src={browserAlert} p={10} width="16em" height="16em" />
           <Heading
             as="h1"
             size="2xl"
@@ -60,23 +65,43 @@ export const WrongBrowser = ({ startLabellingButtonRef }: Props) => {
           >
             It seems like you are using an unsupported browser. For technical
             reasons, Labelflow recommends to use the latest version of{" "}
-            <Link href="https://www.mozilla.org/firefox/new" isExternal>
+            <Link
+              href="https://www.mozilla.org/firefox/new"
+              color="brand.600"
+              isExternal
+            >
               Firefox
             </Link>
             ,{" "}
-            <Link href="https://brave.com/download/" isExternal>
+            <Link
+              href="https://brave.com/download/"
+              color="brand.600"
+              isExternal
+            >
               Brave
             </Link>
             ,{" "}
-            <Link href="https://www.microsoft.com/edge" isExternal>
+            <Link
+              href="https://www.microsoft.com/edge"
+              color="brand.600"
+              isExternal
+            >
               Edge
             </Link>
             ,{" "}
-            <Link href="https://www.google.com/chrome/" isExternal>
+            <Link
+              href="https://www.google.com/chrome/"
+              color="brand.600"
+              isExternal
+            >
               Chrome
             </Link>{" "}
             or{" "}
-            <Link href="https://www.apple.com/safari/" isExternal>
+            <Link
+              href="https://www.apple.com/safari/"
+              color="brand.600"
+              isExternal
+            >
               Safari
             </Link>
             , not in incognito mode, not on a mobile terminal, and with any ad
@@ -93,29 +118,31 @@ export const WrongBrowser = ({ startLabellingButtonRef }: Props) => {
           spacing="4"
           mb="10"
         >
-          <Button
-            as="a"
-            leftIcon={<GithubIcon fontSize="xl" />}
-            href="https://github.com/Labelflow/labelflow"
-            target="blank"
-            size="lg"
-            minW="210px"
-            variant="link"
-            height="14"
-            px="8"
-          >
-            See code on Github
-          </Button>
+          <NextLink href="/">
+            <Button
+              as="a"
+              leftIcon={<BackIcon fontSize="xl" />}
+              href="/"
+              size="lg"
+              minW="210px"
+              variant="link"
+              height="14"
+              px="8"
+            >
+              Back to Website
+            </Button>
+          </NextLink>
 
           <Button
             ref={startLabellingButtonRef}
+            leftIcon={<PlayIcon fontSize="xl" />}
             size="lg"
             minW="210px"
             colorScheme="red"
             height="14"
             px="8"
             isLoading={false}
-            onClick={undefined}
+            onClick={onClickNext}
             variant="link"
             loadingText="Loading the app"
           >

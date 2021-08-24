@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import {
   chakra,
   ModalContent,
@@ -13,20 +14,39 @@ import {
   ModalHeader,
   useColorModeValue as mode,
 } from "@chakra-ui/react";
-import { RiGithubFill } from "react-icons/ri";
+
+import useCountDown from "react-countdown-hook";
+import { RiPlayFill, RiSpeedMiniFill } from "react-icons/ri";
 
 import gift from "../../../../../public/static/graphics/gift.svg";
 
-const GithubIcon = chakra(RiGithubFill);
+const PlayIcon = chakra(RiPlayFill);
+const SpeedIcon = chakra(RiSpeedMiniFill);
+
 type Props = {
   startLabellingButtonRef: React.Ref<HTMLButtonElement>;
   onClickNext?: () => void;
+  onClickSkip?: () => void;
 };
 
-export const LoadingDemo = ({
+export const LoadingFinished = ({
   startLabellingButtonRef,
   onClickNext,
+  onClickSkip,
 }: Props) => {
+  const [timeLeft, { start }] = useCountDown(10 * 1000, 1000);
+
+  // Start the timer during the first render
+  useEffect(() => {
+    start();
+  }, []);
+
+  useEffect(() => {
+    if (timeLeft < 1000 && onClickNext) {
+      onClickNext();
+    }
+  }, [timeLeft]);
+
   return (
     <ModalContent margin="3.75rem">
       <ModalHeader textAlign="center" padding="8">
@@ -51,7 +71,7 @@ export const LoadingDemo = ({
             fontWeight="extrabold"
             textAlign="center"
           >
-            Preparing the demo...
+            We&apos;re all set!
           </Heading>
           <Text
             color={mode("gray.600", "gray.400")}
@@ -60,9 +80,9 @@ export const LoadingDemo = ({
             fontWeight="medium"
             textAlign="justify"
           >
-            The demo dataset contains example data and a quick tutorial, helping
-            you get you started easily with the tool. This should last a few
-            seconds.
+            The tutorial will start automatically in {timeLeft / 1000} seconds.
+            It contains example data, helping you get you started easily with
+            Labelflow. You can skip it if you prefer.
           </Text>
         </VStack>
       </ModalBody>
@@ -76,31 +96,28 @@ export const LoadingDemo = ({
           mb="10"
         >
           <Button
-            as="a"
-            leftIcon={<GithubIcon fontSize="xl" />}
-            href="https://github.com/Labelflow/labelflow"
-            target="blank"
             size="lg"
+            leftIcon={<SpeedIcon fontSize="xl" />}
             minW="210px"
             variant="link"
             height="14"
             px="8"
+            onClick={onClickSkip}
           >
-            See code on Github
+            Skip the tutorial
           </Button>
 
           <Button
             ref={startLabellingButtonRef}
+            leftIcon={<PlayIcon fontSize="xl" />}
             size="lg"
             minW="210px"
             colorScheme="brand"
             height="14"
             px="8"
-            isLoading
             onClick={onClickNext}
-            loadingText="Loading the demo"
           >
-            Start Labelling!
+            Get started!
           </Button>
         </HStack>
       </ModalFooter>

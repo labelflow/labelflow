@@ -52,6 +52,7 @@
     "postcss": "^8.3.5",
     "query-string": "^7.0.0",
     "react": "17.x",
+    "react-countdown-hook": "^1.1.0",
     "react-dom": "17.x",
     "react-dropzone": "^11.3.2",
     "react-error-boundary": "^3.1.3",

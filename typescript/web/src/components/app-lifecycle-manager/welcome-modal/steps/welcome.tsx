@@ -12,26 +12,27 @@ import {
   ModalHeader,
   useColorModeValue as mode,
 } from "@chakra-ui/react";
-import { RiGithubFill } from "react-icons/ri";
+import { RiGithubFill, RiPlayFill } from "react-icons/ri";
 
 import { Logo } from "../../../logo";
 
 const GithubIcon = chakra(RiGithubFill);
+const PlayIcon = chakra(RiPlayFill);
 type Props = {
   startLabellingButtonRef: React.Ref<HTMLButtonElement>;
   hasUserClickedStart: boolean;
-  handleClickStartLabelling: () => void;
+  onClickNext: () => void;
 };
 
 export const Welcome = ({
   startLabellingButtonRef,
   hasUserClickedStart,
-  handleClickStartLabelling,
+  onClickNext,
 }: Props) => {
   return (
     <ModalContent margin="3.75rem">
-      <ModalHeader textAlign="center" padding="6">
-        <Center>
+      <ModalHeader textAlign="center" padding="8">
+        <Center flexDirection="column">
           <Logo maxW="lg" mt="8" mb="8" h="min-content" />
         </Center>
       </ModalHeader>
@@ -57,7 +58,6 @@ export const Welcome = ({
               image labeling tool
             </Text>
           </Heading>
-
           <Text
             color={mode("gray.600", "gray.400")}
             mt="16"
@@ -66,8 +66,9 @@ export const Welcome = ({
             fontWeight="medium"
             textAlign="justify"
           >
-            Stay in control of your data, label your images without them leaving
-            your computer. Focus on building the next big thing.
+            Stay in control of your data, label your images fast, without them
+            leaving your computer. Focus on building the next big thing while we
+            ensure privacy and performance.
           </Text>
         </VStack>
       </ModalBody>
@@ -96,13 +97,14 @@ export const Welcome = ({
 
           <Button
             ref={startLabellingButtonRef}
+            leftIcon={<PlayIcon fontSize="xl" />}
             size="lg"
             minW="210px"
             colorScheme="brand"
             height="14"
             px="8"
             isLoading={hasUserClickedStart}
-            onClick={handleClickStartLabelling}
+            onClick={onClickNext}
             loadingText="Loading the app"
           >
             Start Labelling!

@@ -15,19 +15,23 @@ import {
 } from "@chakra-ui/react";
 import { RiGithubFill } from "react-icons/ri";
 
-import { Logo } from "../../../logo";
-
 import rocket from "../../../../../public/static/graphics/rocket.svg";
 
 const GithubIcon = chakra(RiGithubFill);
-type Props = { startLabellingButtonRef: React.Ref<HTMLButtonElement> };
+type Props = {
+  startLabellingButtonRef: React.Ref<HTMLButtonElement>;
+  onClickNext?: () => void;
+};
 
-export const LoadingWorker = ({ startLabellingButtonRef }: Props) => {
+export const LoadingWorker = ({
+  startLabellingButtonRef,
+  onClickNext,
+}: Props) => {
   return (
     <ModalContent margin="3.75rem">
-      <ModalHeader textAlign="center" padding="6">
+      <ModalHeader textAlign="center" padding="8">
         <Center>
-          <Logo maxW="lg" mt="8" mb="8" h="min-content" />
+          <Image src={rocket} mt="12" mb="8" width="40" height="40" />
         </Center>
       </ModalHeader>
 
@@ -39,7 +43,6 @@ export const LoadingWorker = ({ startLabellingButtonRef }: Props) => {
           mt="0"
           mb="8"
         >
-          <Image src={rocket} p={10} width="16em" height="16em" />
           <Heading
             as="h1"
             size="2xl"
@@ -58,10 +61,9 @@ export const LoadingWorker = ({ startLabellingButtonRef }: Props) => {
             fontWeight="medium"
             textAlign="justify"
           >
-            The application finishes loading to allow offline use. Labelflow
-            runs completely offline, this allows you to have a lightning fast
-            labelling tool even with no internet connection, and guarantees we
-            don&apos;t use your data.
+            Labelflow runs completely offline, allowing you to have a lightning
+            fast labelling tool even without internet connection, and
+            guaranteeing we don&apos;t use your data.
           </Text>
         </VStack>
       </ModalBody>
@@ -95,7 +97,7 @@ export const LoadingWorker = ({ startLabellingButtonRef }: Props) => {
             height="14"
             px="8"
             isLoading
-            onClick={undefined}
+            onClick={onClickNext}
             loadingText="Loading the app"
           >
             Start Labelling!
