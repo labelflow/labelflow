@@ -9,5 +9,8 @@
     },
     "hooks": {
         "after:bump": "yarn update:changelog; yarn update:license; git add CHANGELOG.md LICENSE;"
+    },
+    "github": {
+        "release": true
     }
 }
