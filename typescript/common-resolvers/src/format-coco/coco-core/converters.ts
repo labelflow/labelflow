@@ -74,7 +74,7 @@ const convertGeometryToSegmentation = (
   geometry: { type: string; coordinates: any[] },
   imageHeight: number
 ): number[][] => {
-  const geometryToSegmentation = (currentGeometry) =>
+  const geometryToSegmentation = (currentGeometry: any) =>
     coordReduce(
       currentGeometry,
       (
