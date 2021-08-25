@@ -77,11 +77,11 @@ const convertGeometryToSegmentation = (
 ): number[][] => {
   const coordToSegmentationReducer = (
     segmentation: number[],
-    [x, y]: [number, number],
-    _coordIndex,
-    _featureIndex,
-    _multiFeatureIndex,
-    geometryIndex
+    [x, y]: number[],
+    _coordIndex: number,
+    _featureIndex: number,
+    _multiFeatureIndex: number,
+    geometryIndex: number
   ) => {
     // Only take the outer ring of the geometry
     if (geometryIndex > 0) {
