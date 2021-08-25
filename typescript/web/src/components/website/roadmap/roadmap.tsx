@@ -53,8 +53,8 @@ export const Roadmap = () => {
           </Box>
           <Img
             htmlWidth="500px"
-            htmlHeight="320px"
-            height={{ md: "320px" }}
+            htmlHeight="340px"
+            height={{ md: "340px" }}
             objectFit="cover"
             src="/static/img/roadmap.svg"
             alt="state of the art speaker"
