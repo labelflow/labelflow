@@ -1,7 +1,7 @@
 {
     "git": {
-        "changelog": "yarn auto-changelog --stdout --commit-limit false -u --template https://raw.githubusercontent.com/release-it/release-it/master/templates/changelog-compact.hbs",
-        "commitMessage": "Release ${version}\n\n${changelog}",
+        "changelog": "yarn auto-changelog --stdout --commit-limit false -u --template typescript/release/changelog-template-compact.hbs",
+        "commitMessage": "Release ${version}\n\n${changelog}\n\n[skip ci]",
         "tagAnnotation": "Release ${version}\n\n${changelog}"
     },
     "npm": {
