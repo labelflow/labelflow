@@ -5253,7 +5253,7 @@ __metadata:
   resolution: "@labelflow/update-license@workspace:typescript/release"
   dependencies:
     "@types/node": 16.4.1
-    nodemon: 2.0.12
+    auto-changelog: ^2.3.0
     ts-node: 10.1.0
     typescript: 4.3.5
   languageName: unknown
