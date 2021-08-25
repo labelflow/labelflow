@@ -1,6 +1,6 @@
 # labelflow
 
-Labelflow is an open-source labelling tool.
+Labelflow is an open-source image labelling tool.
 
 If you want to try the deployed version, you can visit [labeflow.ai](https://labelflow.ai).
 
