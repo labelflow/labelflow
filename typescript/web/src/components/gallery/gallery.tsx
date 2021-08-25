@@ -22,7 +22,7 @@ export const Gallery = () => {
   const listRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
   const imageId = router?.query?.imageId as string;
-  const datasetId = router?.query?.datasetId as string;
+  const datasetSlug = router?.query?.datasetSlug as string;
 
   const { images, currentImageIndex } = useImagesNavigation();
 
@@ -54,7 +54,7 @@ export const Gallery = () => {
             key={item.index}
             size={item.size}
             imageId={images?.[item.index]?.id}
-            datasetId={datasetId}
+            datasetSlug={datasetSlug}
             url={images?.[item.index]?.url}
             isSelected={imageId === images?.[item.index]?.id}
             start={item.start}

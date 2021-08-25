@@ -19,7 +19,7 @@ import {
   RiBookOpenLine,
 } from "react-icons/ri";
 import { VscDebug } from "react-icons/vsc";
-import { FaRegKeyboard, FaDiscord, FaGithub } from "react-icons/fa";
+import { FaRegKeyboard, FaDiscord, FaGithub, FaVoteYea } from "react-icons/fa";
 import { GrGraphQl } from "react-icons/gr";
 
 import { BoolParam } from "../../../utils/query-param-bool";
@@ -31,6 +31,7 @@ const DocumentationIcon = chakra(RiBookOpenLine);
 const WhatsNewIcon = chakra(RiGiftLine);
 const KeymapIcon = chakra(FaRegKeyboard);
 const DiscordIcon = chakra(FaDiscord);
+const VoteIcon = chakra(FaVoteYea);
 const GithubIcon = chakra(FaGithub);
 const GraphQLIcon = chakra(GrGraphQl);
 const DebugIcon = chakra(VscDebug);
@@ -75,6 +76,15 @@ export const HelpMenu = () => {
                 Ask the community
               </MenuItem>
             </a>
+            <a
+              href="https://labelflow.canny.io/"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <MenuItem icon={<VoteIcon fontSize="lg" />}>
+                Request features
+              </MenuItem>
+            </a>
           </MenuGroup>
           <MenuDivider />
           <MenuGroup title="Education">
@@ -89,6 +99,7 @@ export const HelpMenu = () => {
                 What&apos;s new
               </MenuItem>
             </NextLink>
+
             <NextLink href="/website">
               <MenuItem icon={<WebsiteIcon fontSize="lg" />}>
                 Visit website

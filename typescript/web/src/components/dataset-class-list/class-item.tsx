@@ -42,13 +42,13 @@ type ClassItemProps = {
   shortcut: string | null;
   edit: boolean;
   onClickEdit: (classId: string | null) => void;
-  datasetId: string;
+  datasetSlug: string;
   onClickDelete: (classId: string | null) => void;
 };
 
 export const datasetLabelClassesQuery = gql`
-  query getDatasetLabelClasses($datasetId: ID!) {
-    dataset(where: { id: $datasetId }) {
+  query getDatasetLabelClasses($slug: String!) {
+    dataset(where: { slug: $slug }) {
       id
       name
       labelClasses {
@@ -76,7 +76,7 @@ export const ClassItem = ({
   shortcut,
   edit,
   onClickEdit,
-  datasetId,
+  datasetSlug,
   onClickDelete,
 }: ClassItemProps) => {
   const [editName, setEditName] = useState<string | null>(null);
@@ -119,11 +119,11 @@ export const ClassItem = ({
           const datasetCacheResult = cache.readQuery<DatasetClassesQueryResult>(
             {
               query: datasetLabelClassesQuery,
-              variables: { datasetId },
+              variables: { slug: datasetSlug },
             }
           );
           if (datasetCacheResult?.dataset == null) {
-            throw new Error(`Missing dataset with id ${datasetId}`);
+            throw new Error(`Missing dataset with slug ${datasetSlug}`);
           }
           const { dataset } = datasetCacheResult;
           const updatedDataset = {
@@ -134,6 +134,7 @@ export const ClassItem = ({
           };
           cache.writeQuery({
             query: datasetLabelClassesQuery,
+            variables: { slug: datasetSlug },
             data: { dataset: updatedDataset },
           });
         } else {
@@ -143,7 +144,7 @@ export const ClassItem = ({
         }
       },
     });
-  }, [editName, id, datasetId, onClickEdit]);
+  }, [editName, id, datasetSlug, onClickEdit]);
 
   return (
     <Flex alignItems="center" height="10">
