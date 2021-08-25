@@ -11,15 +11,15 @@ import {
 import { useRouter } from "next/router";
 import { RiArrowRightSLine } from "react-icons/ri";
 import { useErrorHandler } from "react-error-boundary";
-import { AppLifecycleManager } from "../../../../components/app-lifecycle-manager";
-import { KeymapButton } from "../../../../components/keymap-button";
-import { ImportButton } from "../../../../components/import-button";
-import { ExportButton } from "../../../../components/export-button";
-import { Meta } from "../../../../components/meta";
-import { Layout } from "../../../../components/layout";
-import { DatasetTabBar } from "../../../../components/layout/tab-bar/dataset-tab-bar";
-import { ClassesList } from "../../../../components/dataset-class-list";
-import Error404Page from "../../../404";
+import { AppLifecycleManager } from "../../../../../components/app-lifecycle-manager";
+import { KeymapButton } from "../../../../../components/keymap-button";
+import { ImportButton } from "../../../../../components/import-button";
+import { ExportButton } from "../../../../../components/export-button";
+import { Meta } from "../../../../../components/meta";
+import { Layout } from "../../../../../components/layout";
+import { DatasetTabBar } from "../../../../../components/layout/tab-bar/dataset-tab-bar";
+import { ClassesList } from "../../../../../components/dataset-class-list";
+import Error404Page from "../../../../404";
 
 const ArrowRightIcon = chakra(RiArrowRightSLine);
 
@@ -75,13 +75,13 @@ const DatasetClassesPage = ({
             separator={<ArrowRightIcon color="gray.500" />}
           >
             <BreadcrumbItem>
-              <NextLink href="/datasets">
+              <NextLink href="/local/datasets">
                 <BreadcrumbLink>Datasets</BreadcrumbLink>
               </NextLink>
             </BreadcrumbItem>
 
             <BreadcrumbItem>
-              <NextLink href={`/datasets/${datasetId}`}>
+              <NextLink href={`/local/datasets/${datasetId}`}>
                 <BreadcrumbLink>{datasetName}</BreadcrumbLink>
               </NextLink>
             </BreadcrumbItem>

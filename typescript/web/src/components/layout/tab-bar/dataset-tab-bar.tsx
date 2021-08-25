@@ -9,12 +9,12 @@ export const DatasetTabBar = ({ currentTab, datasetId }: Props) => {
   const tabs = [
     {
       name: "images",
-      url: `/datasets/${datasetId}/images`,
+      url: `/local/datasets/${datasetId}/images`,
       isActive: currentTab === "images",
     },
     {
       name: "classes",
-      url: `/datasets/${datasetId}/classes`,
+      url: `/local/datasets/${datasetId}/classes`,
       isActive: currentTab === "classes",
     },
   ];

@@ -3,9 +3,9 @@ import { Spinner, Center } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { useQuery, gql } from "@apollo/client";
 import { useErrorHandler } from "react-error-boundary";
-import { AppLifecycleManager } from "../../../components/app-lifecycle-manager";
-import { Layout } from "../../../components/layout";
-import Error404Page from "../../404";
+import { AppLifecycleManager } from "../../../../components/app-lifecycle-manager";
+import { Layout } from "../../../../components/layout";
+import Error404Page from "../../../404";
 
 const getDataset = gql`
   query getDataset($id: ID!) {
@@ -31,7 +31,7 @@ const DatasetIndexPage = ({
   useEffect(() => {
     if (!error && !loading) {
       router.replace({
-        pathname: `/datasets/${datasetId}/images`,
+        pathname: `/local/datasets/${datasetId}/images`,
       });
     }
   }, [error, loading]);

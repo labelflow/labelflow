@@ -18,17 +18,18 @@ import { useCookie } from "next-cookie";
 import { useErrorHandler } from "react-error-boundary";
 
 import type { Dataset as DatasetType } from "@labelflow/graphql-types";
-import { Meta } from "../../components/meta";
-import { Layout } from "../../components/layout";
-import { IdParam, BoolParam } from "../../utils/query-param-bool";
-import { NewDatasetCard, DatasetCard } from "../../components/datasets";
+import { Meta } from "../../../components/meta";
+import { Layout } from "../../../components/layout";
+import { IdParam, BoolParam } from "../../../utils/query-param-bool";
+import { NewDatasetCard, DatasetCard } from "../../../components/datasets";
 
-import { UpsertDatasetModal } from "../../components/datasets/upsert-dataset-modal";
-import { DeleteDatasetModal } from "../../components/datasets/delete-dataset-modal";
-import { AppLifecycleManager } from "../../components/app-lifecycle-manager";
+import { UpsertDatasetModal } from "../../../components/datasets/upsert-dataset-modal";
+import { DeleteDatasetModal } from "../../../components/datasets/delete-dataset-modal";
+import { AppLifecycleManager } from "../../../components/app-lifecycle-manager";
 
-import { EmptyStateCaughtUp } from "../../components/empty-state";
+import { EmptyStateCaughtUp } from "../../../components/empty-state";
 
+// TODO: update the resolvers once the workspaces have been implemented
 export const getDatasetsQuery = gql`
   query getDatasets {
     datasets {
@@ -187,7 +188,7 @@ const DatasetPage = ({
       const demoDatasetId = demoDataset?.id ?? "";
       const firstImageId = demoDataset?.images?.[0]?.id;
       if (firstImageId != null) {
-        const route = `/datasets/${demoDatasetId}/images/${firstImageId}`;
+        const route = `/local/datasets/${demoDatasetId}/images/${firstImageId}`;
         parsedCookie.set("didVisitDemoDataset", true);
         router.replace({ pathname: route, query: router.query });
       }
@@ -285,7 +286,7 @@ const DatasetPage = ({
               }) => (
                 <DatasetCard
                   key={id}
-                  url={`/datasets/${id}`}
+                  url={`/local/datasets/${id}`}
                   imageUrl={images[0]?.url}
                   datasetName={name}
                   imagesCount={imagesAggregates.totalCount}
