@@ -23,9 +23,12 @@ const Wrapper = ({ children }: PropsWithChildren<{}>) => (
 setupTestsWithLocalDatabase();
 
 const renderModal = (props = {}) => {
-  return render(<DeleteLabelClassModal isOpen {...props} />, {
-    wrapper: Wrapper,
-  });
+  return render(
+    <DeleteLabelClassModal datasetId="some id" isOpen {...props} />,
+    {
+      wrapper: Wrapper,
+    }
+  );
 };
 
 describe("Class delete modal tests", () => {

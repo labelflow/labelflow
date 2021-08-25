@@ -5,6 +5,7 @@ import {
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbLink,
+  Skeleton,
   chakra,
   Center,
 } from "@chakra-ui/react";
@@ -12,7 +13,7 @@ import { useRouter } from "next/router";
 import { RiArrowRightSLine } from "react-icons/ri";
 import { useErrorHandler } from "react-error-boundary";
 import { AppLifecycleManager } from "../../../../../components/app-lifecycle-manager";
-import { KeymapButton } from "../../../../../components/keymap-button";
+import { KeymapButton } from "../../../../../components/layout/top-bar/keymap-button";
 import { ImportButton } from "../../../../../components/import-button";
 import { ExportButton } from "../../../../../components/export-button";
 import { Meta } from "../../../../../components/meta";
@@ -24,8 +25,8 @@ import Error404Page from "../../../../404";
 const ArrowRightIcon = chakra(RiArrowRightSLine);
 
 const datasetNameQuery = gql`
-  query getDatasetName($datasetId: ID!) {
-    dataset(where: { id: $datasetId }) {
+  query getDatasetName($slug: String!) {
+    dataset(where: { slug: $slug }) {
       id
       name
     }
@@ -38,13 +39,13 @@ const DatasetClassesPage = ({
   assumeServiceWorkerActive: boolean;
 }) => {
   const router = useRouter();
-  const datasetId = router?.query?.datasetId as string;
+  const datasetSlug = router?.query?.datasetSlug as string;
 
   const { data: datasetResult, error } = useQuery<{
     dataset: { id: string; name: string };
   }>(datasetNameQuery, {
     variables: {
-      datasetId,
+      slug: datasetSlug,
     },
   });
 
@@ -81,8 +82,10 @@ const DatasetClassesPage = ({
             </BreadcrumbItem>
 
             <BreadcrumbItem>
-              <NextLink href={`/local/datasets/${datasetId}`}>
-                <BreadcrumbLink>{datasetName}</BreadcrumbLink>
+              <NextLink href={`/local/datasets/${datasetSlug}`}>
+                <BreadcrumbLink>
+                  {datasetName ?? <Skeleton>Dataset Name</Skeleton>}
+                </BreadcrumbLink>
               </NextLink>
             </BreadcrumbItem>
 
@@ -98,10 +101,12 @@ const DatasetClassesPage = ({
             <ExportButton />
           </>
         }
-        tabBar={<DatasetTabBar currentTab="classes" datasetId={datasetId} />}
+        tabBar={
+          <DatasetTabBar currentTab="classes" datasetSlug={datasetSlug} />
+        }
       >
         <Center>
-          <ClassesList datasetId={datasetId} />
+          <ClassesList datasetSlug={datasetSlug} />
         </Center>
       </Layout>
     </>

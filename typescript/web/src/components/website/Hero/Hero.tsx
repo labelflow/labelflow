@@ -71,7 +71,7 @@ export function Hero() {
               big thing.
             </Text>
             <Stack direction={{ base: "column", md: "row" }} spacing="4" mt="8">
-              <NextLink href="/datasets">
+              <NextLink href="/local/datasets">
                 <Button
                   size="lg"
                   minW="210px"

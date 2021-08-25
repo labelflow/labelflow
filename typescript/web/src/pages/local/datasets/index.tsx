@@ -35,6 +35,7 @@ export const getDatasetsQuery = gql`
     datasets {
       id
       name
+      slug
       images(first: 1) {
         id
         url
@@ -74,7 +75,7 @@ const createDemoDatasetQuery = gql`
   }
 `;
 
-const DatasetPage = ({
+const DatasetsIndexPage = ({
   cookie,
   assumeServiceWorkerActive,
 }: {
@@ -89,6 +90,7 @@ const DatasetPage = ({
         DatasetType,
         | "id"
         | "name"
+        | "slug"
         | "images"
         | "imagesAggregates"
         | "labelClassesAggregates"
@@ -185,10 +187,10 @@ const DatasetPage = ({
       loading === false
     ) {
       // This is the first visit of the user and the datasets query returned, redirect to demo dataset
-      const demoDatasetId = demoDataset?.id ?? "";
+      const demoDatasetSlug = demoDataset?.slug ?? "";
       const firstImageId = demoDataset?.images?.[0]?.id;
       if (firstImageId != null) {
-        const route = `/local/datasets/${demoDatasetId}/images/${firstImageId}`;
+        const route = `/local/datasets/${demoDatasetSlug}/images/${firstImageId}`;
         parsedCookie.set("didVisitDemoDataset", true);
         router.replace({ pathname: route, query: router.query });
       }
@@ -278,6 +280,7 @@ const DatasetPage = ({
             {datasetsResult?.datasets?.map(
               ({
                 id,
+                slug,
                 images,
                 name,
                 imagesAggregates,
@@ -286,7 +289,7 @@ const DatasetPage = ({
               }) => (
                 <DatasetCard
                   key={id}
-                  url={`/local/datasets/${id}`}
+                  url={`/local/datasets/${slug}`}
                   imageUrl={images[0]?.url}
                   datasetName={name}
                   imagesCount={imagesAggregates.totalCount}
@@ -316,4 +319,4 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   };
 };
 
-export default DatasetPage;
+export default DatasetsIndexPage;

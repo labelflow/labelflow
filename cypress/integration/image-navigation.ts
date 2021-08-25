@@ -8,6 +8,7 @@ const createDataset = async (name: string) => {
       mutation createDataset($name: String) {
         createDataset(data: { name: $name }) {
           id
+          slug
         }
       }
     `,
@@ -18,25 +19,26 @@ const createDataset = async (name: string) => {
 
   const {
     data: {
-      createDataset: { id },
+      createDataset: { slug },
     },
   } = mutationResult;
 
-  return id;
+  return slug;
 };
 
 describe("Image Navigation", () => {
-  let datasetId: string;
+  let datasetSlug: string;
   beforeEach(() =>
     cy.window().then(async () => {
-      datasetId = await createDataset("cypress test dataset");
+      const slug = await createDataset("cypress test dataset");
+      datasetSlug = slug;
     })
   );
 
   it("Should let the user navigate within the image gallery", () => {
     // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
     cy.visit(
-      `http://localhost:3000/local/datasets/${datasetId}/images?modal-welcome=closed&modal-update-service-worker=update`
+      `http://localhost:3000/local/datasets/${datasetSlug}/images?modal-welcome=closed&modal-update-service-worker=update`
     );
     cy.contains("You don't have any images.").should("be.visible");
     cy.get("header").within(() => {
