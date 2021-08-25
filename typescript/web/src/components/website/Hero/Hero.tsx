@@ -10,7 +10,7 @@ import {
 } from "@chakra-ui/react";
 import NextLink from "next/link";
 import * as React from "react";
-// import { HiPlay } from "react-icons/hi";
+import { BsArrowRight } from "react-icons/bs";
 
 export function Hero() {
   return (
@@ -78,6 +78,7 @@ export function Hero() {
                   colorScheme="brand"
                   height="14"
                   px="8"
+                  rightIcon={<BsArrowRight />}
                 >
                   Try it now
                 </Button>

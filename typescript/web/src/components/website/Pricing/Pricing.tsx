@@ -1,12 +1,7 @@
-import {
-  Box,
-  SimpleGrid,
-  useColorModeValue,
-  Heading,
-  Text,
-} from "@chakra-ui/react";
+import { Box, SimpleGrid, useColorModeValue, Heading } from "@chakra-ui/react";
 import * as React from "react";
-import { GiCommercialAirplane, GiCityCar } from "react-icons/gi";
+import { GiCommercialAirplane } from "react-icons/gi";
+import { BsPeopleFill } from "react-icons/bs";
 
 import { IoRocketSharp } from "react-icons/io5";
 import NextLink from "next/link";
@@ -24,12 +19,12 @@ export const Pricing = () => (
     <Heading align="center" fontWeight="extrabold" maxW="lg" mx="auto">
       Multiply the progress speed of your AI
     </Heading>
-    <Text align="center" textAlign="center" maxW="lg" mx="auto" mt="12">
+    {/* <Text align="center" textAlign="center" maxW="lg" mx="auto" mt="12">
       Dataset quality is the number one limiting factor for computer vision
       tasks. For the <strong>price of a cup of coffee a day</strong>, get the
       tools you need to make your machine learning models the best in their
       class.
-    </Text>
+    </Text> */}
     <SimpleGrid
       mt="24"
       columns={{ base: 1, lg: 3 }}
@@ -43,55 +38,58 @@ export const Pricing = () => (
         data={{
           price: "$0",
           pricePost: "for ever",
-          name: "Free",
+          name: "Community",
           features: [
             "Sleek labeling interface",
             "Dataset import/export",
-            "Project management",
-            "Up to 5 users, 100 images/month",
+            "Unlimited datasets",
+            "Unlimited local images",
+            "1 user",
           ],
         }}
-        icon={GiCityCar}
+        icon={BsPeopleFill}
         button={
           <NextLink href="/local/datasets">
-            <ActionButton variant="outline" borderWidth="2px">
-              Try it now
-            </ActionButton>
+            <ActionButton>Try it now</ActionButton>
           </NextLink>
         }
       />
       <PricingCard
         zIndex={1}
-        isPopular
+        // isPopular
         transform={{ lg: "scale(1.05)" }}
         data={{
-          price: "$59",
-          pricePost: "/mo/user",
+          price: "$19",
+          pricePost: "/mo",
           name: "Starter",
           features: [
-            "AI labeling assistant",
-            "Custom workflows",
-            "3rd party storage integration",
-            "25 users, 10,000 images/month",
+            "Smart labelling",
+            "Workflow management",
+            "Unlimited datasets",
+            "5,000 hosted images",
+            "5 users collaboration",
           ],
         }}
         icon={GiCommercialAirplane}
         button={
           <NextLink href="/request-access">
-            <ActionButton>Request Access</ActionButton>
+            <ActionButton variant="outline" borderWidth="2px">
+              Request Access
+            </ActionButton>
           </NextLink>
         }
       />
       <PricingCard
         data={{
-          price: "Ask us",
-          pricePost: "",
-          name: "Pro & Enterprise",
+          price: "$199",
+          pricePost: "/mo",
+          name: "Pro",
           features: [
-            "White label integrations",
-            "On-prem airgapped deployment",
-            "Enterprise features & support",
-            "Unlimited users & images",
+            "All features in Starter",
+            "Premium support",
+            "Unlimited datasets",
+            "50,000 hosted images",
+            "25 users collaboration",
           ],
         }}
         icon={IoRocketSharp}

@@ -5,12 +5,12 @@ import {
   List,
   ListIcon,
   ListItem,
-  Button,
+  // Button,
   Text,
   useColorModeValue,
   VStack,
 } from "@chakra-ui/react";
-import NextLink from "next/link";
+// import NextLink from "next/link";
 import * as React from "react";
 import { HiCheckCircle } from "react-icons/hi";
 import { Card, CardProps } from "./Card";
@@ -69,7 +69,7 @@ export const PricingCard = (props: PricingCardProps) => {
         ))}
       </List>
       <VStack spacing={6}>
-        <NextLink href="/pricing">
+        {/* <NextLink href="/pricing">
           <Button
             variant="unstyled"
             colorScheme="brand"
@@ -79,7 +79,7 @@ export const PricingCard = (props: PricingCardProps) => {
           >
             See all features
           </Button>
-        </NextLink>
+        </NextLink> */}
         {button}
       </VStack>
     </Card>
