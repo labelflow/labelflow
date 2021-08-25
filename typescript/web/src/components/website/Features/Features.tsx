@@ -31,7 +31,7 @@ export const Features = () => {
             htmlHeight="320px"
             height={{ md: "320px" }}
             objectFit="cover"
-            src="/static/img/Shot-Elec 1.png"
+            src="/static/img/shot-elec-1.png"
             alt="state of the art speaker"
           />
           <Box>
@@ -75,7 +75,7 @@ export const Features = () => {
           </Feature>
           <Feature icon={BsHeartFill} title="Open community and standard">
             Labelflow is building a community around
-            an open source labeling tool to set the standard aroune visual data management. 
+            an open source labeling tool to set the standard around visual data management. 
             Dataset curation 
             should not require any &ldquo;secret sauce&rdquo;.
           </Feature>
