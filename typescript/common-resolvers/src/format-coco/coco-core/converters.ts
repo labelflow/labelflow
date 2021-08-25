@@ -1,5 +1,6 @@
 import mime from "mime-types";
 import flatten from "@turf/flatten";
+import { Geometry } from "@turf/helpers";
 import { geomReduce, coordReduce } from "@turf/meta";
 import { DbImage, DbLabelClass } from "../../types";
 
@@ -71,33 +72,30 @@ const convertLabelClassesToCocoCategories = (labelClasses: DbLabelClass[]) => {
 };
 
 const convertGeometryToSegmentation = (
-  geometry: { type: string; coordinates: any[] },
+  geometry: Geometry,
   imageHeight: number
 ): number[][] => {
-  const geometryToSegmentation = (currentGeometry: any) =>
-    coordReduce(
-      currentGeometry,
-      (
-        segmentation: number[],
-        [x, y]: [number, number],
-        _coordIndex,
-        _featureIndex,
-        _multiFeatureIndex,
-        geometryIndex
-      ) => {
-        if (geometryIndex > 0) {
-          return [...segmentation];
-        }
-        return [...segmentation, x, imageHeight - y];
-      },
-      []
-    );
+  const coordToSegmentationReducer = (
+    segmentation: number[],
+    [x, y]: [number, number],
+    _coordIndex,
+    _featureIndex,
+    _multiFeatureIndex,
+    geometryIndex
+  ) => {
+    // Only take the outer ring of the geometry
+    if (geometryIndex > 0) {
+      return [...segmentation];
+    }
+
+    return [...segmentation, x, imageHeight - y];
+  };
 
   return geomReduce(
     flatten(geometry),
     (segmentations: number[][], currentGeometry) => [
       ...segmentations,
-      geometryToSegmentation(currentGeometry),
+      coordReduce(currentGeometry, coordToSegmentationReducer, []),
     ],
     []
   );
