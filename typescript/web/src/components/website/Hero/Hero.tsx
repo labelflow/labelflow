@@ -50,14 +50,14 @@ export function Hero() {
               fontWeight="extrabold"
               letterSpacing="tight"
             >
-              The open standard{" "}
+              The open standard platform{" "}
               <Text
                 color="brand.500"
                 // bgGradient="linear(to-l, brand.500,brand.400)"
                 // bgClip="text"
                 display="inline"
               >
-                image labeling tool
+                for image labeling
               </Text>
             </Heading>
             <Text
@@ -120,9 +120,7 @@ export function Hero() {
               backgroundSize="contain"
               backgroundRepeat="no-repeat"
               backgroundPosition="center"
-              src="/static/img/home-screenshot2.jpg"
-              srcSet="/static/img/home-screenshot1.jpg 424w, /static/img/home-screenshot2.jpg 847w, /static/img/home-screenshot3.jpg 1270w, /static/img/home-screenshot4.jpg 1693w"
-              sizes="(max-width: 600px) 424px, (max-width: 900px) 847px, (max-width: 1200px) 1270px, 1693px"
+              src="/static/img/home-screenshot5.png"
               alt="Screening talent"
             />
           </Box>

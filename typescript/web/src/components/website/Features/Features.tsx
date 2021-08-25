@@ -31,7 +31,7 @@ export const Features = () => {
             htmlHeight="320px"
             height={{ md: "320px" }}
             objectFit="cover"
-            src="/static/img/shot-elec.jpg"
+            src="/static/img/Shot-Elec 1.png"
             alt="state of the art speaker"
           />
           <Box>
@@ -72,13 +72,12 @@ export const Features = () => {
             Labelflow does not try to own your data or algorithms, but
             integrates with them seamlessly. No duplicate source of truth and
             complicated scripts to synchronize your data between various tools.
-            Your database is the source of truth for Labelflow.
           </Feature>
           <Feature icon={BsHeartFill} title="Open community and standard">
-            Our mission is to generalize standard good practices around visual
-            data management. Dataset curation should not require any
-            &ldquo;secret sauce&rdquo;. Labelflow is building a community around
-            an open source labeling tool to set the standard.
+            Labelflow is building a community around
+            an open source labeling tool to set the standard aroune visual data management. 
+            Dataset curation 
+            should not require any &ldquo;secret sauce&rdquo;.
           </Feature>
         </SimpleGrid>
       </Box>
