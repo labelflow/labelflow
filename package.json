@@ -21,10 +21,7 @@
     "build-storybook": "build-storybook",
     "chromatic": "npx chromatic",
     "release": "release-it",
-    "release:update": "yarn release:update:changelog; yarn release:update:license; yarn release:update:packages-version",
-    "release:update:changelog": "auto-changelog -p --template changelog-template.hbs",
-    "release:update:license": "cd ./typescript/release && yarn update:license",
-    "release:update:packages-version": "cd ./typescript/release && yarn update:packages-version"
+    "release:update": "cd ./typescript/release && yarn update"
   },
   "workspaces": [
     "typescript/*"
