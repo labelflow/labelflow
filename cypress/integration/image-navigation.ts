@@ -36,7 +36,7 @@ describe("Image Navigation", () => {
   it("Should let the user navigate within the image gallery", () => {
     // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
     cy.visit(
-      `http://localhost:3000/datasets/${datasetId}/images?modal-welcome=closed&modal-update-service-worker=update`
+      `http://localhost:3000/local/datasets/${datasetId}/images?modal-welcome=closed&modal-update-service-worker=update`
     );
     cy.contains("You don't have any images.").should("be.visible");
     cy.get("header").within(() => {
