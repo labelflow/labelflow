@@ -1,6 +1,6 @@
 {
   "name": "@labelflow/react-openlayers-fiber",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "private": true,
   "sideEffects": false,
   "description": "openlayers react fiber binding",

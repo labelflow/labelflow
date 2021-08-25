@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "labelflow",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "repository": "git@github.com:Labelflow/labelflow.git",
   "scripts": {
     "lint": "eslint '{cypress,typescript}/**/*.{ts,tsx}'",

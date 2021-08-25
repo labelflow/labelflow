@@ -1,6 +1,6 @@
 {
   "name": "@labelflow/update-license",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "scripts": {
     "update": "yarn update:changelog; yarn update:license; yarn update:packages-version",
     "update:changelog": "auto-changelog --package --template changelog-template.hbs --output ../../CHANGELOG.md",
