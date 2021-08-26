@@ -5250,6 +5250,7 @@ __metadata:
     "@types/mime-types": 2.1.0
     "@types/node": 12.12.21
     "@types/react": 17.0.3
+    "@types/react-beautiful-dnd": 10.1.4
     "@types/react-dom": 17.0.1
     "@types/uuid": ^8.3.0
     "@types/valid-url": ^1.0.3
@@ -10183,6 +10184,15 @@ __metadata:
   dependencies:
     "@types/react": "*"
   checksum: a17679f85c6f39a94cacbac62fff7b976adadd660ee9a8e2c5ab58036520869d4875b2707f7dd097f9eb14756b2041462d3615dfbb1efa61b37327f377866c61
+  languageName: node
+  linkType: hard
+
+"@types/react-beautiful-dnd@npm:10.1.4":
+  version: 10.1.4
+  resolution: "@types/react-beautiful-dnd@npm:10.1.4"
+  dependencies:
+    "@types/react": "*"
+  checksum: 259e35fe6263f626fd8731ae2f2405053683e8c5e25f0b277b8340c82ea71d92a4f2c88e5b5c8854dbde83d679b2e2c2e3a52123612ccc18db334ad5e7df3705
   languageName: node
   linkType: hard
 

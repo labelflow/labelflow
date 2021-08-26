@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useCallback } from "react";
 import { useQuery, gql, useApolloClient } from "@apollo/client";
 import { Box, Text, Divider } from "@chakra-ui/react";
 
@@ -21,7 +21,6 @@ const reorder = (list, startIndex, endIndex) => {
   const result = Array.from(list);
   const [removed] = result.splice(startIndex, 1);
   result.splice(endIndex, 0, removed);
-
   return result;
 };
 
@@ -52,33 +51,36 @@ export const ClassesList = ({ datasetId }: { datasetId: string }) => {
     () => addShortcutsToLabelClasses(labelClasses),
     [labelClasses]
   );
-  const onDragEnd = async (result) => {
-    // dropped outside the list
-    if (!result.destination) {
-      return;
-    }
-    updateQuery((prev) => {
-      const labelClassesPrevious = prev?.dataset?.labelClasses;
-      return {
-        ...prev,
-        dataset: {
-          ...prev?.dataset,
-          labelClasses: addShortcutsToLabelClasses(
-            reorder(
-              labelClassesPrevious,
-              result.source.index,
-              result.destination.index
-            )
-          ),
-        },
-      };
-    });
-    await client.mutate({
-      mutation: reorderLabelClasseMutation,
-      variables: { id: result.draggableId, index: result.destination.index },
-    });
-    refetch();
-  };
+  const onDragEnd = useCallback(
+    async (result) => {
+      // dropped outside the list
+      if (!result.destination) {
+        return;
+      }
+      updateQuery((prev) => {
+        const labelClassesPrevious = prev?.dataset?.labelClasses;
+        return {
+          ...prev,
+          dataset: {
+            ...prev?.dataset,
+            labelClasses: addShortcutsToLabelClasses(
+              reorder(
+                labelClassesPrevious,
+                result.source.index,
+                result.destination.index
+              )
+            ),
+          },
+        };
+      });
+      await client.mutate({
+        mutation: reorderLabelClasseMutation,
+        variables: { id: result.draggableId, index: result.destination.index },
+      });
+      refetch();
+    },
+    [updateQuery]
+  );
 
   return (
     <>
