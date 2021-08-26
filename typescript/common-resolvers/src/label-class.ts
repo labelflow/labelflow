@@ -156,6 +156,19 @@ const deleteLabelClass = async (
   )(args.where.id);
 
   await repository.labelClass.delete(labelToDelete.id);
+  const labelClassesOfDataset = await repository.labelClass.list({
+    datasetId: labelToDelete?.datasetId,
+  });
+  await Promise.all(
+    labelClassesOfDataset.map(async (labelClassOfDataset) => {
+      if (labelClassOfDataset.index > labelToDelete.index) {
+        await repository.labelClass.update(labelClassOfDataset.id, {
+          ...labelClassOfDataset,
+          index: labelClassOfDataset.index - 1,
+        });
+      }
+    })
+  );
   return labelToDelete;
 };
 
