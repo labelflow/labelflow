@@ -16,12 +16,14 @@ import {
   RiCloseFill,
   RiDeleteBin5Fill,
 } from "react-icons/ri";
+import { GrDrag } from "react-icons/gr";
 
 const CircleIcon = chakra(RiCheckboxBlankCircleFill);
 const PenIcon = chakra(RiPencilFill);
 const CheckIcon = chakra(RiCheckFill);
 const CloseIcon = chakra(RiCloseFill);
 const DeleteIcon = chakra(RiDeleteBin5Fill);
+const DragIcon = chakra(GrDrag);
 
 export type DatasetClassesQueryResult = {
   dataset: {
@@ -147,6 +149,24 @@ export const ClassItem = ({
 
   return (
     <Flex alignItems="center" height="10">
+      <Tooltip
+        placement="bottom"
+        openDelay={300}
+        label={`Reorder class ${name}`}
+        aria-label={`Reorder class ${name}`}
+      >
+        <IconButton
+          variant="ghost"
+          aria-label="Drag"
+          alignItems="center"
+          justifyContent="center"
+          icon={<DragIcon h="5" flexShrink={0} flexGrow={0} color="gray.600" />}
+          h="8"
+          w="8"
+          minWidth="8"
+          onClick={() => onClickEdit(null)}
+        />
+      </Tooltip>
       <CircleIcon
         flexShrink={0}
         flexGrow={0}
