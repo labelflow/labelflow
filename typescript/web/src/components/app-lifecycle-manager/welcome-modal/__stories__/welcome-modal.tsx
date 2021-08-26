@@ -15,8 +15,8 @@ export const Default = () => {
 
 Default.parameters = {
   nextRouter: {
-    path: "/datasets",
-    asPath: "/datasets",
+    path: "/local/datasets",
+    asPath: "/local/datasets",
     query: {},
   },
 };
@@ -27,8 +27,8 @@ export const WrongBrowser = () => {
 
 WrongBrowser.parameters = {
   nextRouter: {
-    path: "/datasets?modal-welcome=wrong-browser",
-    asPath: "/datasets?modal-welcome=wrong-browser",
+    path: "/local/datasets?modal-welcome=wrong-browser",
+    asPath: "/local/datasets?modal-welcome=wrong-browser",
     query: {
       "modal-welcome": "wrong-browser",
     },
@@ -46,8 +46,8 @@ export const Welcome = () => {
 
 Welcome.parameters = {
   nextRouter: {
-    path: "/datasets?modal-welcome=welcome",
-    asPath: "/datasets?modal-welcome=welcome",
+    path: "/local/datasets?modal-welcome=welcome",
+    asPath: "/local/datasets?modal-welcome=welcome",
     query: {
       "modal-welcome": "welcome",
     },
@@ -65,8 +65,8 @@ export const LoadingWorker = () => {
 
 LoadingWorker.parameters = {
   nextRouter: {
-    path: "/datasets?modal-welcome=loading-worker",
-    asPath: "/datasets?modal-welcome=loading-worker",
+    path: "/local/datasets?modal-welcome=loading-worker",
+    asPath: "/local/datasets?modal-welcome=loading-worker",
     query: {
       "modal-welcome": "loading-worker",
     },
@@ -84,8 +84,8 @@ export const LoadingDemo = () => {
 
 LoadingDemo.parameters = {
   nextRouter: {
-    path: "/datasets?modal-welcome=loading-demo",
-    asPath: "/datasets?modal-welcome=loading-demo",
+    path: "/local/datasets?modal-welcome=loading-demo",
+    asPath: "/local/datasets?modal-welcome=loading-demo",
     query: {
       "modal-welcome": "loading-demo",
     },
@@ -103,8 +103,8 @@ export const LoadingFinished = () => {
 
 LoadingFinished.parameters = {
   nextRouter: {
-    path: "/datasets?modal-welcome=loading-finished",
-    asPath: "/datasets?modal-welcome=loading-finished",
+    path: "/local/datasets?modal-welcome=loading-finished",
+    asPath: "/local/datasets?modal-welcome=loading-finished",
     query: {
       "modal-welcome": "loading-finished",
     },

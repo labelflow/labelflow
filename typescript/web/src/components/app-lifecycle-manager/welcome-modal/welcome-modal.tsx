@@ -247,8 +247,9 @@ export const WelcomeModal = ({
   return (
     <Modal
       isOpen={
-        (paramModalWelcome && paramModalWelcome !== "closed") ||
-        hasUserTriedApp !== "true"
+        paramModalWelcome === "open" ||
+        hasUserTriedApp !== "true" ||
+        welcomeWorkflowState != null
       }
       onClose={() => {}}
       size="3xl"

@@ -44,7 +44,7 @@ export const Why = () => {
           src="/static/img/home-diagram.png"
         />
         <Center>
-          <NextLink href="/datasets">
+          <NextLink href="/local/datasets">
             <Button
               size="lg"
               minW="210px"
