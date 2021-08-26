@@ -89,20 +89,16 @@ const convertGeometryToSegmentation = (
         return segmentation;
       }
 
-      const updatedSegmentation = segmentation;
-
-      const currentSegment = updatedSegmentation[multiFeatureIndex]
-        ? updatedSegmentation[multiFeatureIndex]
+      const currentSegment = segmentation[multiFeatureIndex]
+        ? segmentation[multiFeatureIndex]
         : [];
 
       const coordToAdd = [x, imageHeight - y];
 
-      updatedSegmentation[multiFeatureIndex] = [
-        ...currentSegment,
-        ...coordToAdd,
-      ];
+      // eslint-disable-next-line no-param-reassign
+      segmentation[multiFeatureIndex] = [...currentSegment, ...coordToAdd];
 
-      return updatedSegmentation;
+      return segmentation;
     },
     []
   );
