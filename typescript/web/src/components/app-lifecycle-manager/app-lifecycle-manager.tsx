@@ -27,10 +27,6 @@ export const AppLifecycleManager = (props: Props) => {
   const [paramModalUpdateServiceWorker, setParamModalUpdateServiceWorker] =
     useQueryParam("modal-update-service-worker", StringParam);
 
-  // By default (including during SSR) we consider the service worker to be ready
-  // since this is the nominal case that happen all the time except during the very first visit
-  const [isServiceWorkerActive, setIsServiceWorkerActive] = useState(false);
-
   const handleError = useErrorHandler();
 
   const isUpdateServiceWorkerModalOpen =
@@ -88,20 +84,6 @@ export const AppLifecycleManager = (props: Props) => {
         );
       }
 
-      const checkServiceWorkerStatus = async (): Promise<void> => {
-        try {
-          await checkServiceWorkerReady();
-          setIsServiceWorkerActive(true);
-        } catch (error) {
-          if (error.message === messageNoWindow) {
-            return;
-          }
-          handleError(error);
-        }
-      };
-
-      checkServiceWorkerStatus();
-
       // A common UX pattern for progressive web apps is to show a banner when a service worker has updated and waiting to install.
       // NOTE: MUST set skipWaiting to false in next.config.js pwa object
       // https://developers.google.com/web/tools/workbox/guides/advanced-recipes#offer_a_page_reload_for_users
@@ -138,7 +120,7 @@ export const AppLifecycleManager = (props: Props) => {
 
   return (
     <>
-      <WelcomeModal isServiceWorkerActive={isServiceWorkerActive} />
+      <WelcomeModal />
       <UpdateServiceWorkerModal
         isOpen={isUpdateServiceWorkerModalOpen}
         onClose={closeUpdateServiceWorkerModal}
