@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { getDatabase } from "../../typescript/web/src/connectors/database";
 
 // From https://github.com/cypress-io/cypress/issues/702#issuecomment-435873135

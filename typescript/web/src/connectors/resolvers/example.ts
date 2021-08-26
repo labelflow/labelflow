@@ -9,7 +9,7 @@ import { getDatabase } from "../database";
 
 // Queries
 export const example = async (_: any, args: QueryExampleArgs) => {
-  return getDatabase().example.get(args?.where?.id);
+  return await getDatabase().example.get(args?.where?.id);
 };
 
 export const examples = async (_: any, args: QueryExamplesArgs) => {
@@ -18,10 +18,10 @@ export const examples = async (_: any, args: QueryExamplesArgs) => {
     .offset(args.skip ?? 0);
 
   if (args.first) {
-    return query.limit(args.first).toArray();
+    return await query.limit(args.first).toArray();
   }
 
-  return query.toArray();
+  return await query.toArray();
 };
 
 // Mutations

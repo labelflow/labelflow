@@ -260,7 +260,7 @@ export const ClassSelectionPopover = ({
                         "type" in item && item.type === "CreateClassItem"
                       }
                       index={index}
-                      key={`${item.name}${index}`}
+                      key={item.name}
                     />
                   );
                 }
