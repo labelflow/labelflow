@@ -47,11 +47,7 @@ export const datasetDataQuery = gql`
   }
 `;
 
-const ImagesPage = ({
-  assumeServiceWorkerActive,
-}: {
-  assumeServiceWorkerActive: boolean;
-}) => {
+const ImagesPage = () => {
   const router = useRouter();
   const datasetSlug = router?.query?.datasetSlug as string;
 

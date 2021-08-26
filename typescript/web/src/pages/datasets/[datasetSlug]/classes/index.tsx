@@ -33,11 +33,7 @@ const datasetNameQuery = gql`
   }
 `;
 
-const DatasetClassesPage = ({
-  assumeServiceWorkerActive,
-}: {
-  assumeServiceWorkerActive: boolean;
-}) => {
+const DatasetClassesPage = () => {
   const router = useRouter();
   const datasetSlug = router?.query?.datasetSlug as string;
 

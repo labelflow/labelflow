@@ -23,11 +23,7 @@ export const debugQuery = gql`
   }
 `;
 
-const DebugPage = ({
-  assumeServiceWorkerActive,
-}: {
-  assumeServiceWorkerActive: boolean;
-}) => {
+const DebugPage = () => {
   const { data: debugResult } = useQuery<{ debug: any }>(debugQuery);
 
   return (

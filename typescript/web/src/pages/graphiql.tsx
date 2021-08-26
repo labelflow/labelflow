@@ -25,11 +25,7 @@ const GraphiQL = dynamic(() => import("../components/graphiql"), {
   },
 });
 
-const GraphqlPlayground = ({
-  assumeServiceWorkerActive,
-}: {
-  assumeServiceWorkerActive: boolean;
-}) => {
+const GraphqlPlayground = () => {
   return (
     <>
       <AppLifecycleManager />

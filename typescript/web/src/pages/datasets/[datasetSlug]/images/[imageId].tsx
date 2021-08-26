@@ -70,11 +70,7 @@ type ImageQueryResponse = {
   image: Pick<Image, "id" | "name">;
 };
 
-const ImagePage = ({
-  assumeServiceWorkerActive,
-}: {
-  assumeServiceWorkerActive: boolean;
-}) => {
+const ImagePage = () => {
   const router = useRouter();
   const { datasetSlug, imageId } = router?.query;
 

@@ -32,11 +32,7 @@ const getDataset = gql`
 
 const ArrowRightIcon = chakra(RiArrowRightSLine);
 
-const DatasetIndexPage = ({
-  assumeServiceWorkerActive,
-}: {
-  assumeServiceWorkerActive: boolean;
-}) => {
+const DatasetIndexPage = () => {
   const router = useRouter();
   const { datasetSlug } = router?.query;
 
