@@ -19,14 +19,14 @@ import { RiArrowRightSLine } from "react-icons/ri";
 import NextLink from "next/link";
 import type { Image } from "@labelflow/graphql-types";
 import { useErrorHandler } from "react-error-boundary";
-import { AppLifecycleManager } from "../../../../components/app-lifecycle-manager";
-import { KeymapButton } from "../../../../components/layout/top-bar/keymap-button";
-import { ImportButton } from "../../../../components/import-button";
-import { ExportButton } from "../../../../components/export-button";
-import { Meta } from "../../../../components/meta";
-import { Layout } from "../../../../components/layout";
-import { Gallery } from "../../../../components/gallery";
-import Error404Page from "../../../404";
+import { AppLifecycleManager } from "../../../../../components/app-lifecycle-manager";
+import { KeymapButton } from "../../../../../components/layout/top-bar/keymap-button";
+import { ImportButton } from "../../../../../components/import-button";
+import { ExportButton } from "../../../../../components/export-button";
+import { Meta } from "../../../../../components/meta";
+import { Layout } from "../../../../../components/layout";
+import { Gallery } from "../../../../../components/gallery";
+import Error404Page from "../../../../404";
 
 const ArrowRightIcon = chakra(RiArrowRightSLine);
 
@@ -34,7 +34,7 @@ const ArrowRightIcon = chakra(RiArrowRightSLine);
 // in NodeJS, like `Blob`, so it crashes when rendering in NextJS server side.
 // And anyway, it would not make sense to render canvas server side, it would just be a loss.
 const LabellingTool = dynamic(
-  () => import("../../../../components/labelling-tool"),
+  () => import("../../../../../components/labelling-tool"),
   {
     ssr: false,
     loading: ({ error }) => {
@@ -58,8 +58,8 @@ const imageQuery = gql`
 `;
 
 const getDatasetQuery = gql`
-  query getDataset($id: ID!) {
-    dataset(where: { id: $id }) {
+  query getDataset($slug: String!) {
+    dataset(where: { slug: $slug }) {
       id
       name
     }
@@ -76,7 +76,7 @@ const ImagePage = ({
   assumeServiceWorkerActive: boolean;
 }) => {
   const router = useRouter();
-  const { datasetId, imageId } = router?.query;
+  const { datasetSlug, imageId } = router?.query;
 
   const { data: imageResult, error: errorImage } = useQuery<ImageQueryResponse>(
     imageQuery,
@@ -89,7 +89,7 @@ const ImagePage = ({
   const { data: datasetResult, error: errorDataset } = useQuery(
     getDatasetQuery,
     {
-      variables: { id: datasetId },
+      variables: { slug: datasetSlug },
     }
   );
 
@@ -124,13 +124,13 @@ const ImagePage = ({
             separator={<ArrowRightIcon color="gray.500" />}
           >
             <BreadcrumbItem>
-              <NextLink href="/datasets">
+              <NextLink href="/local/datasets">
                 <BreadcrumbLink>Datasets</BreadcrumbLink>
               </NextLink>
             </BreadcrumbItem>
 
             <BreadcrumbItem isCurrentPage>
-              <NextLink href={`/datasets/${datasetId}/images`}>
+              <NextLink href={`/local/datasets/${datasetSlug}/images`}>
                 <BreadcrumbLink>
                   {datasetName ?? <Skeleton>Dataset Name</Skeleton>}
                 </BreadcrumbLink>
@@ -138,7 +138,7 @@ const ImagePage = ({
             </BreadcrumbItem>
 
             <BreadcrumbItem>
-              <NextLink href={`/datasets/${datasetId}/images`}>
+              <NextLink href={`/local/datasets/${datasetSlug}/images`}>
                 <BreadcrumbLink>Images</BreadcrumbLink>
               </NextLink>
             </BreadcrumbItem>

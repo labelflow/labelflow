@@ -10,7 +10,7 @@ import {
 } from "@chakra-ui/react";
 import NextLink from "next/link";
 import * as React from "react";
-// import { HiPlay } from "react-icons/hi";
+import { BsArrowRight } from "react-icons/bs";
 
 export function Hero() {
   return (
@@ -71,13 +71,14 @@ export function Hero() {
               big thing.
             </Text>
             <Stack direction={{ base: "column", md: "row" }} spacing="4" mt="8">
-              <NextLink href="/datasets">
+              <NextLink href="/local/datasets">
                 <Button
                   size="lg"
                   minW="210px"
                   colorScheme="brand"
                   height="14"
                   px="8"
+                  rightIcon={<BsArrowRight />}
                 >
                   Try it now
                 </Button>

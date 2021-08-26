@@ -38,7 +38,7 @@ export const list =
         query.limit(first);
       }
 
-      return query.sortBy(criterion);
+      return await query.sortBy(criterion);
     }
 
     const query = table.orderBy(criterion);
@@ -49,5 +49,5 @@ export const list =
       query.limit(first);
     }
 
-    return query.toArray();
+    return await query.toArray();
   };

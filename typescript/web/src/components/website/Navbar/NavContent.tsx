@@ -36,7 +36,7 @@ const MobileNavContext = (props: FlexProps) => {
           </Box>
         </NextLink>
         <Box visibility={{ base: "hidden", sm: "visible" }}>
-          <NextLink href="/datasets">
+          <NextLink href="/local/datasets">
             <Button as="a" colorScheme="brand" variant="outline">
               Try it now
             </Button>
@@ -53,7 +53,7 @@ const MobileNavContext = (props: FlexProps) => {
             </NavLink.Mobile>
           )
         )}
-        <NextLink href="/datasets">
+        <NextLink href="/local/datasets">
           <Button colorScheme="brand" w="full" size="lg" mt="5">
             Try it now
           </Button>
@@ -108,7 +108,7 @@ const DesktopNavContent = (props: FlexProps) => {
         >
           Sign In
         </Box> */}
-        <NextLink href="/datasets">
+        <NextLink href="/local/datasets">
           <Button
             as="a"
             href="#"

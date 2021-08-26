@@ -18,24 +18,27 @@ const labels = async (
   _args: any,
   { repository }: Context
 ) => {
-  return repository.label.list({ labelClassId: labelClass.id });
+  return await repository.label.list({ labelClassId: labelClass.id });
 };
 
 const labelClass = async (
   _: any,
   args: QueryLabelClassArgs,
   { repository }: Context
-) =>
-  throwIfResolvesToNil(
+) => {
+  return await throwIfResolvesToNil(
     "No labelClass with such id",
     repository.labelClass.getById
   )(args?.where?.id);
+};
 
 const labelClasses = async (
   _: any,
   args: QueryLabelClassesArgs,
   { repository }: Context
-) => repository.labelClass.list(args?.where, args?.skip, args?.first);
+) => {
+  return await repository.labelClass.list(args?.where, args?.skip, args?.first);
+};
 
 // Mutations
 const createLabelClass = async (
@@ -70,7 +73,7 @@ const createLabelClass = async (
   };
   await repository.labelClass.add(newLabelClassEntity);
 
-  return throwIfResolvesToNil(
+  return await throwIfResolvesToNil(
     "No labelClass with such id",
     repository.labelClass.getById
   )(newLabelClassEntity.id);
@@ -142,7 +145,7 @@ const updateLabelClass = async (
     ...args.data,
   });
 
-  return repository.labelClass.getById(labelClassId);
+  return await repository.labelClass.getById(labelClassId);
 };
 
 const deleteLabelClass = async (
@@ -177,17 +180,17 @@ const labelClassesAggregates = (parent: any) => {
   return parent ?? {};
 };
 
-const totalCount = (parent: any, _args: any, { repository }: Context) => {
+const totalCount = async (parent: any, _args: any, { repository }: Context) => {
   // eslint-disable-next-line no-underscore-dangle
   const typename = parent?.__typename;
 
   if (typename === "Dataset") {
-    return repository.labelClass.count({
+    return await repository.labelClass.count({
       datasetId: parent.id,
     });
   }
 
-  return repository.labelClass.count();
+  return await repository.labelClass.count();
 };
 
 export default {

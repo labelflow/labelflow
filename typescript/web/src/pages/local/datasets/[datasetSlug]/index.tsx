@@ -14,16 +14,16 @@ import { useQuery, gql } from "@apollo/client";
 import { useErrorHandler } from "react-error-boundary";
 import { RiArrowRightSLine } from "react-icons/ri";
 import NextLink from "next/link";
-import { AppLifecycleManager } from "../../../components/app-lifecycle-manager";
-import { Layout } from "../../../components/layout";
-import Error404Page from "../../404";
-import { ExportButton } from "../../../components/export-button";
-import { ImportButton } from "../../../components/import-button";
-import { KeymapButton } from "../../../components/layout/top-bar/keymap-button";
+import { AppLifecycleManager } from "../../../../components/app-lifecycle-manager";
+import { Layout } from "../../../../components/layout";
+import Error404Page from "../../../404";
+import { ExportButton } from "../../../../components/export-button";
+import { ImportButton } from "../../../../components/import-button";
+import { KeymapButton } from "../../../../components/layout/top-bar/keymap-button";
 
 const getDataset = gql`
-  query getDataset($id: ID!) {
-    dataset(where: { id: $id }) {
+  query getDataset($slug: String!) {
+    dataset(where: { slug: $slug }) {
       id
       name
     }
@@ -38,15 +38,15 @@ const DatasetIndexPage = ({
   assumeServiceWorkerActive: boolean;
 }) => {
   const router = useRouter();
-  const { datasetId } = router?.query;
+  const { datasetSlug } = router?.query;
 
   const {
     data: datasetResult,
     error,
     loading,
   } = useQuery(getDataset, {
-    variables: { id: datasetId },
-    skip: typeof datasetId !== "string",
+    variables: { slug: datasetSlug },
+    skip: typeof datasetSlug !== "string",
   });
 
   const datasetName = datasetResult?.dataset.name;
@@ -54,7 +54,7 @@ const DatasetIndexPage = ({
   useEffect(() => {
     if (!error && !loading) {
       router.replace({
-        pathname: `/datasets/${datasetId}/images`,
+        pathname: `/local/datasets/${datasetSlug}/images`,
       });
     }
   }, [error, loading]);
@@ -83,7 +83,7 @@ const DatasetIndexPage = ({
             separator={<ArrowRightIcon color="gray.500" />}
           >
             <BreadcrumbItem>
-              <NextLink href="/datasets">
+              <NextLink href="/local/datasets">
                 <BreadcrumbLink>Datasets</BreadcrumbLink>
               </NextLink>
             </BreadcrumbItem>

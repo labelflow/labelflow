@@ -12,21 +12,21 @@ import {
 import { useRouter } from "next/router";
 import { RiArrowRightSLine } from "react-icons/ri";
 import { useErrorHandler } from "react-error-boundary";
-import { AppLifecycleManager } from "../../../../components/app-lifecycle-manager";
-import { KeymapButton } from "../../../../components/layout/top-bar/keymap-button";
-import { ImportButton } from "../../../../components/import-button";
-import { ExportButton } from "../../../../components/export-button";
-import { Meta } from "../../../../components/meta";
-import { Layout } from "../../../../components/layout";
-import { DatasetTabBar } from "../../../../components/layout/tab-bar/dataset-tab-bar";
-import { ClassesList } from "../../../../components/dataset-class-list";
-import Error404Page from "../../../404";
+import { AppLifecycleManager } from "../../../../../components/app-lifecycle-manager";
+import { KeymapButton } from "../../../../../components/layout/top-bar/keymap-button";
+import { ImportButton } from "../../../../../components/import-button";
+import { ExportButton } from "../../../../../components/export-button";
+import { Meta } from "../../../../../components/meta";
+import { Layout } from "../../../../../components/layout";
+import { DatasetTabBar } from "../../../../../components/layout/tab-bar/dataset-tab-bar";
+import { ClassesList } from "../../../../../components/dataset-class-list";
+import Error404Page from "../../../../404";
 
 const ArrowRightIcon = chakra(RiArrowRightSLine);
 
 const datasetNameQuery = gql`
-  query getDatasetName($datasetId: ID!) {
-    dataset(where: { id: $datasetId }) {
+  query getDatasetName($slug: String!) {
+    dataset(where: { slug: $slug }) {
       id
       name
     }
@@ -39,13 +39,13 @@ const DatasetClassesPage = ({
   assumeServiceWorkerActive: boolean;
 }) => {
   const router = useRouter();
-  const datasetId = router?.query?.datasetId as string;
+  const datasetSlug = router?.query?.datasetSlug as string;
 
   const { data: datasetResult, error } = useQuery<{
     dataset: { id: string; name: string };
   }>(datasetNameQuery, {
     variables: {
-      datasetId,
+      slug: datasetSlug,
     },
   });
 
@@ -76,13 +76,13 @@ const DatasetClassesPage = ({
             separator={<ArrowRightIcon color="gray.500" />}
           >
             <BreadcrumbItem>
-              <NextLink href="/datasets">
+              <NextLink href="/local/datasets">
                 <BreadcrumbLink>Datasets</BreadcrumbLink>
               </NextLink>
             </BreadcrumbItem>
 
             <BreadcrumbItem>
-              <NextLink href={`/datasets/${datasetId}`}>
+              <NextLink href={`/local/datasets/${datasetSlug}`}>
                 <BreadcrumbLink>
                   {datasetName ?? <Skeleton>Dataset Name</Skeleton>}
                 </BreadcrumbLink>
@@ -101,10 +101,12 @@ const DatasetClassesPage = ({
             <ExportButton />
           </>
         }
-        tabBar={<DatasetTabBar currentTab="classes" datasetId={datasetId} />}
+        tabBar={
+          <DatasetTabBar currentTab="classes" datasetSlug={datasetSlug} />
+        }
       >
         <Center>
-          <ClassesList datasetId={datasetId} />
+          <ClassesList datasetSlug={datasetSlug} />
         </Center>
       </Layout>
     </>

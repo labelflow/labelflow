@@ -11,7 +11,7 @@ import { LabelCreateInput } from "@labelflow/graphql-types";
 import { probeImage } from "@labelflow/common-resolvers/src/utils/probe-image";
 import { mockNextRouter } from "../../../../utils/router-mocks";
 
-mockNextRouter({ query: { datasetId: "mocked-dataset-id" } });
+mockNextRouter({ query: { datasetSlug: "test-dataset" } });
 
 import { ExportModal } from "..";
 import { theme } from "../../../../theme";
@@ -34,8 +34,8 @@ const wrapper = ({ children }: PropsWithChildren<{}>) => (
 const createDataset = async (
   datasetId = "mocked-dataset-id",
   name = "test dataset"
-) =>
-  client.mutate({
+) => {
+  return await client.mutate({
     mutation: gql`
       mutation createDataset($name: String!, $datasetId: ID) {
         createDataset(data: { name: $name, id: $datasetId }) {
@@ -45,6 +45,7 @@ const createDataset = async (
     `,
     variables: { datasetId, name },
   });
+};
 
 const labelData = {
   geometry: {
@@ -135,8 +136,10 @@ test("File should be downloaded when user clicks on Export to COCO and Export", 
     return createElementOriginal(name, options);
   });
 
-  userEvent.click(screen.getByText("Export to COCO"));
-  await waitFor(() => expect(screen.getByText("Export Options")).toBeDefined());
+  await waitFor(() => {
+    userEvent.click(screen.getByText("Export to COCO"));
+    expect(screen.getByText("Export Options")).toBeDefined();
+  });
   userEvent.click(screen.getByRole("button", { name: "Export" }));
 
   await waitFor(() => expect(anchorMocked.click).toHaveBeenCalledTimes(1));

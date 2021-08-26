@@ -45,7 +45,7 @@ describe("Dataset class list item tests", () => {
       <ClassItem
         edit={false}
         onClickEdit={onClickEdit}
-        datasetId="myDatasetId"
+        datasetSlug="my-dataset-slug"
         onClickDelete={onClickDelete}
         {...classDefault}
       />,
@@ -64,7 +64,7 @@ describe("Dataset class list item tests", () => {
       <ClassItem
         edit={false}
         onClickEdit={onClickEdit}
-        datasetId="myDatasetId"
+        datasetSlug="my-dataset-slug"
         onClickDelete={onClickDelete}
         {...classDefault}
       />,
@@ -82,7 +82,7 @@ describe("Dataset class list item tests", () => {
       <ClassItem
         edit={false}
         onClickEdit={onClickEdit}
-        datasetId="myDatasetId"
+        datasetSlug="my-dataset-slug"
         onClickDelete={onClickDelete}
         {...classDefault}
       />,
@@ -93,7 +93,7 @@ describe("Dataset class list item tests", () => {
       <ClassItem
         edit
         onClickEdit={onClickEdit}
-        datasetId="myDatasetId"
+        datasetSlug="my-dataset-slug"
         onClickDelete={onClickDelete}
         {...classDefault}
       />
@@ -109,7 +109,7 @@ describe("Dataset class list item tests", () => {
       <ClassItem
         edit={false}
         onClickEdit={onClickEdit}
-        datasetId="myDatasetId"
+        datasetSlug="my-dataset-slug"
         onClickDelete={onClickDelete}
         {...classDefault}
       />,
@@ -125,7 +125,7 @@ describe("Dataset class list item tests", () => {
       <ClassItem
         edit
         onClickEdit={onClickEdit}
-        datasetId="myDatasetId"
+        datasetSlug="my-dataset-slug"
         onClickDelete={onClickDelete}
         {...classDefault}
       />,
@@ -144,7 +144,7 @@ describe("Dataset class list item tests", () => {
       <ClassItem
         edit
         onClickEdit={onClickEdit}
-        datasetId="myDatasetId"
+        datasetSlug="my-dataset-slug"
         onClickDelete={onClickDelete}
         {...classDefault}
       />,
@@ -169,7 +169,7 @@ describe("Dataset class list item tests", () => {
       <ClassItem
         edit
         onClickEdit={onClickEdit}
-        datasetId="myDatasetId"
+        datasetSlug="my-dataset-slug"
         onClickDelete={onClickDelete}
         {...classDefault}
       />,

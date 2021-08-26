@@ -21,21 +21,21 @@ import { isEmpty } from "lodash/fp";
 import { RiArrowRightSLine } from "react-icons/ri";
 import { useErrorHandler } from "react-error-boundary";
 import type { Dataset as DatasetType } from "@labelflow/graphql-types";
-import { AppLifecycleManager } from "../../../../components/app-lifecycle-manager";
-import { KeymapButton } from "../../../../components/layout/top-bar/keymap-button";
-import { ImportButton } from "../../../../components/import-button";
-import { ExportButton } from "../../../../components/export-button";
-import { Meta } from "../../../../components/meta";
-import { Layout } from "../../../../components/layout";
-import { EmptyStateImage } from "../../../../components/empty-state";
-import { DatasetTabBar } from "../../../../components/layout/tab-bar/dataset-tab-bar";
-import Error404Page from "../../../404";
+import { AppLifecycleManager } from "../../../../../components/app-lifecycle-manager";
+import { KeymapButton } from "../../../../../components/layout/top-bar/keymap-button";
+import { ImportButton } from "../../../../../components/import-button";
+import { ExportButton } from "../../../../../components/export-button";
+import { Meta } from "../../../../../components/meta";
+import { Layout } from "../../../../../components/layout";
+import { EmptyStateImage } from "../../../../../components/empty-state";
+import { DatasetTabBar } from "../../../../../components/layout/tab-bar/dataset-tab-bar";
+import Error404Page from "../../../../404";
 
 const ArrowRightIcon = chakra(RiArrowRightSLine);
 
 export const datasetDataQuery = gql`
-  query getDatasetData($datasetId: ID!) {
-    dataset(where: { id: $datasetId }) {
+  query getDatasetData($slug: String!) {
+    dataset(where: { slug: $slug }) {
       id
       name
       images {
@@ -53,13 +53,13 @@ const ImagesPage = ({
   assumeServiceWorkerActive: boolean;
 }) => {
   const router = useRouter();
-  const datasetId = router?.query?.datasetId as string;
+  const datasetSlug = router?.query?.datasetSlug as string;
 
   const { data: datasetResult, error } = useQuery<{
     dataset: DatasetType;
   }>(datasetDataQuery, {
     variables: {
-      datasetId,
+      slug: datasetSlug,
     },
   });
 
@@ -90,13 +90,13 @@ const ImagesPage = ({
             separator={<ArrowRightIcon color="gray.500" />}
           >
             <BreadcrumbItem>
-              <NextLink href="/datasets">
+              <NextLink href="/local/datasets">
                 <BreadcrumbLink>Datasets</BreadcrumbLink>
               </NextLink>
             </BreadcrumbItem>
 
             <BreadcrumbItem>
-              <NextLink href={`/datasets/${datasetId}`}>
+              <NextLink href={`/local/datasets/${datasetSlug}`}>
                 <BreadcrumbLink>
                   {datasetName ?? <Skeleton>Dataset Name</Skeleton>}
                 </BreadcrumbLink>
@@ -115,7 +115,7 @@ const ImagesPage = ({
             <ExportButton />
           </>
         }
-        tabBar={<DatasetTabBar currentTab="images" datasetId={datasetId} />}
+        tabBar={<DatasetTabBar currentTab="images" datasetSlug={datasetSlug} />}
       >
         {!datasetResult && (
           <Center h="full">
@@ -152,7 +152,10 @@ const ImagesPage = ({
         {datasetResult && !isEmpty(datasetResult?.dataset?.images) && (
           <Wrap h="full" spacing={8} padding={8} justify="space-evenly">
             {datasetResult?.dataset?.images?.map(({ id, name, url }) => (
-              <NextLink href={`/datasets/${datasetId}/images/${id}`} key={id}>
+              <NextLink
+                href={`/local/datasets/${datasetSlug}/images/${id}`}
+                key={id}
+              >
                 {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
                 <a>
                   <WrapItem p={4} background="white" rounded={8}>

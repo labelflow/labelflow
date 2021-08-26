@@ -64,5 +64,12 @@ export const getFromStorage = async (url: string): Promise<ArrayBuffer> => {
       `Could not fetch image at url ${url} properly, code ${fetchResult.status}`
     );
   }
-  return fetchResult.arrayBuffer();
+  return await fetchResult.arrayBuffer();
+};
+
+export const deleteFromStorage = async (url: string): Promise<void> => {
+  const cache = await caches.open(uploadsCacheName);
+  if (await cache.match(url)) {
+    await cache.delete(url);
+  }
 };

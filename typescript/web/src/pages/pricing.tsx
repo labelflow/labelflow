@@ -1,10 +1,11 @@
 import { Box, useColorModeValue as mode } from "@chakra-ui/react";
 import * as React from "react";
+import { GetStaticProps } from "next";
 
 import { NavContent } from "../components/website/Navbar/NavContent";
 
 import { Footer } from "../components/website/Footer/Footer";
-import { PricingTable } from "../components/website/Pricing/PricingTable";
+// import { PricingTable } from "../components/website/Pricing/PricingTable";
 import { Meta } from "../components/meta";
 
 export default function Pricing() {
@@ -30,8 +31,17 @@ export default function Pricing() {
         </Box>
       </Box>
       {/* <Hero /> */}
-      <PricingTable />
+      {/* <PricingTable /> */}
       <Footer />
     </Box>
   );
 }
+
+export const getServerSideProps: GetStaticProps = async () => {
+  return {
+    redirect: {
+      permanent: false,
+      destination: "/website#pricing",
+    },
+  };
+};
