@@ -28,7 +28,7 @@ export let browser:
 const detectScope = () => {
   if (isInWindowScope === null) {
     try {
-      if (window) {
+      if (window && window instanceof Window) {
         isInWindowScope = true;
 
         browser = detect();
@@ -42,7 +42,8 @@ const detectScope = () => {
 
   if (isInServiceWorkerScope === null) {
     try {
-      if (self && typeof window === "undefined") {
+      // @ts-ignore
+      if (self && self instanceof ServiceWorkerGlobalScope) {
         isInServiceWorkerScope = true;
       } else {
         isInServiceWorkerScope = false;
