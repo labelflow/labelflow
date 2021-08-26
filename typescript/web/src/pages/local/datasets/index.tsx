@@ -127,7 +127,7 @@ const DatasetPage = () => {
             }) => (
               <DatasetCard
                 key={id}
-                url={`/datasets/${slug}`}
+                url={`/local/datasets/${slug}`}
                 imageUrl={images[0]?.url}
                 datasetName={name}
                 imagesCount={imagesAggregates.totalCount}

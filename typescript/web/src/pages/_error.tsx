@@ -75,7 +75,7 @@ const ErrorPage = ({ statusCode, error, resetErrorBoundary }: Props) => {
                   as="a"
                   target="_blank"
                   rel="noreferrer"
-                  href="https://github.com/Labelflow/labelflow/issues"
+                  href="https://github.com/Labelflow/labelflow/issues/new?assignees=&labels=bug&template=bug_report.md&title="
                 >
                   Report this issue
                 </Button>

@@ -1,5 +1,10 @@
 import { useRef, useEffect, useCallback, useState } from "react";
-import { ApolloCache, ApolloClient, gql } from "@apollo/client";
+import {
+  ApolloCache,
+  ApolloClient,
+  gql,
+  useApolloClient,
+} from "@apollo/client";
 
 import { Modal, ModalOverlay } from "@chakra-ui/react";
 import { useErrorHandler } from "react-error-boundary";
@@ -19,12 +24,11 @@ type WelcomeModalParam =
   | "open" // Force it to open asap
   | "closed"; // Force it to be closed and never open
 
-type WelcomeModalState =
+type WelcomeWorkflowState =
   | undefined
-  | "welcome" // Open and nominal welcome page
-  | "loading-worker" // Open and still loading worker after user clicks "start"
-  | "loading-demo" // Open and still loading demo data after user clicks "start"
-  | "loading-finished"; // Open and finished loading everything
+  | "loading-worker" // Loading worker
+  | "loading-demo" // Loading demo data
+  | "loading-finished"; // Finished loading everything
 
 export const getDatasetsQuery = gql`
   query getDatasets {
@@ -58,67 +62,71 @@ export const createDemoDatasetQuery = gql`
 `;
 
 const performWelcomeWorkflow = async ({
-  router,
   client,
+  setParamModalWelcome,
+  setWelcomeWorkflowState,
+  setIsWrongBrowser,
   handleError,
 }: {
-  router: Router;
+  setParamModalWelcome: (state: WelcomeModalParam) => void;
+  setWelcomeWorkflowState: (state: WelcomeWorkflowState) => void;
   setIsWrongBrowser: (state: boolean) => void;
-  setWelcomeModalState: (state: WelcomeModalState) => void;
-  client: ApolloClient<ApolloCache<any>>;
+  client: ApolloClient<{}>;
   handleError: (error: Error) => void;
 }) => {
-  setWelcomeModalState("loading-worker");
-
   try {
+    setWelcomeWorkflowState("loading-worker");
+
     await checkServiceWorkerReady();
-  } catch (e) {
-    setIsWrongBrowser(true);
-    return;
-  }
 
-  setWelcomeModalState("loading-demo", "replaceIn");
+    setWelcomeWorkflowState("loading-demo");
 
-  const { data: getDatasetsResult } = await client.query({
-    query: getDatasetsQuery,
-  });
-
-  const demoDataset =
-    getDatasetsResult?.datasets == null
-      ? undefined
-      : getDatasetsResult?.datasets.filter(
-          (dataset: DatasetType) => dataset.name === "Demo dataset"
-        )?.[0] ?? undefined;
-
-  if (!demoDataset) {
-    const { data: createDemoDatasetResult } = await client.mutate({
-      mutation: createDemoDatasetQuery,
+    const { data: getDatasetsResult } = await client.query({
+      query: getDatasetsQuery,
     });
-  }
 
-  setWelcomeModalState("loading-finished", "replaceIn");
+    const demoDataset =
+      getDatasetsResult?.datasets == null
+        ? undefined
+        : getDatasetsResult?.datasets.filter(
+            (dataset: DatasetType) => dataset.name === "Demo dataset"
+          )?.[0] ?? undefined;
+
+    if (!demoDataset) {
+      const { data: createDemoDatasetResult } = await client.mutate({
+        mutation: createDemoDatasetQuery,
+      });
+    }
+
+    setWelcomeWorkflowState("loading-finished");
+  } catch (error) {
+    handleError(error);
+  }
 };
 
 export const WelcomeModal = ({
   isServiceWorkerActive,
-  initiallyHasUserClickedStart = false,
+  initialHasUserClickedStart = false,
   initialIsWrongBrowser = false,
-  initialWelcomeModalState = undefined,
+  initialWelcomeWorkflowState = undefined,
 }: {
   isServiceWorkerActive: boolean;
-  initiallyHasUserClickedStart?: boolean;
+  initialHasUserClickedStart?: boolean;
   initialIsWrongBrowser?: boolean;
-  initialWelcomeModalState?: WelcomeModalState;
+  initialWelcomeWorkflowState?: WelcomeWorkflowState;
 }) => {
   const router = useRouter();
   const handleError = useErrorHandler();
+  const client = useApolloClient();
+  const startLabellingButtonRef = useRef<HTMLButtonElement>(null);
+
+  // State variables
 
   // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
   // This param can have several values:
   //   - undefined: Normal behavior, only show the welcome modal when needed
   //   - "open": Force the welcome modal to open even if not needed
   //   - "closed": Don't ever open the welcome modal
-
   const [paramModalWelcome, setParamModalWelcome] =
     useQueryParam<WelcomeModalParam>(
       "modal-welcome",
@@ -126,46 +134,56 @@ export const WelcomeModal = ({
     );
 
   const [hasUserClickedStart, setHasUserClickedStart] = useState(
-    initiallyHasUserClickedStart
+    initialHasUserClickedStart
   );
 
-  const [welcomeModalState, setWelcomeModalState] = useState<WelcomeModalState>(
-    isServiceWorkerActive ? initialWelcomeModalState : "welcome"
-  );
+  const [welcomeWorkflowState, setWelcomeWorkflowState] =
+    useState<WelcomeWorkflowState>(initialWelcomeWorkflowState);
 
-  const [isWrongBrowser, setIsWrongBrowser] = useState(initialIsWrongBrowser);
-
-  const startLabellingButtonRef = useRef<HTMLButtonElement>(null);
-
-  useEffect(() => {
-    if (!isServiceWorkerActive) {
-      const name = browser?.name;
-      const os = browser?.os;
-      const versionNumber = parseInt(browser?.version ?? "0", 10);
-      if (
-        !(
-          (name === "firefox" && versionNumber >= 44) ||
-          (name === "edge-chromium" && versionNumber >= 44) ||
-          (name === "chrome" && versionNumber >= 45) ||
-          (name === "safari" && versionNumber >= 14)
-        ) ||
-        os === "BlackBerry OS" ||
-        os === "Windows Mobile" ||
-        os === "Windows 3.11" ||
-        os === "Windows 95" ||
-        os === "Windows 98" ||
-        os === "Windows 2000" ||
-        os === "Windows ME"
-      ) {
-        setIsWrongBrowser(true);
-      }
+  const [isWrongBrowser, setIsWrongBrowser] = useState(() => {
+    const name = browser?.name;
+    const os = browser?.os;
+    const versionNumber = parseInt(browser?.version ?? "0", 10);
+    if (
+      initialIsWrongBrowser ||
+      !(
+        (name === "firefox" && versionNumber >= 44) ||
+        (name === "edge-chromium" && versionNumber >= 44) ||
+        (name === "chrome" && versionNumber >= 45) ||
+        (name === "safari" && versionNumber >= 14)
+      ) ||
+      os === "BlackBerry OS" ||
+      os === "Windows Mobile" ||
+      os === "Windows 3.11" ||
+      os === "Windows 95" ||
+      os === "Windows 98" ||
+      os === "Windows 2000" ||
+      os === "Windows ME"
+    ) {
+      return true;
     }
+    return false;
+  });
+
+  // Transitions
+
+  // wrong-browser => undefined
+  const pretendIsCompatibleBrowser = useCallback(() => {
+    setIsWrongBrowser(false);
   }, []);
 
+  // undefined => welcome
   useEffect(() => {
-    if (!isWrongBrowser && !isServiceWorkerActive) {
+    if (
+      (!isWrongBrowser &&
+        !isServiceWorkerActive &&
+        paramModalWelcome !== "closed") ||
+      paramModalWelcome === "open"
+    ) {
       performWelcomeWorkflow({
-        setWelcomeModalState,
+        client,
+        setParamModalWelcome,
+        setWelcomeWorkflowState,
         setIsWrongBrowser,
         handleError,
       });
@@ -287,39 +305,48 @@ export const WelcomeModal = ({
       initialFocusRef={startLabellingButtonRef}
     >
       <ModalOverlay />
-      {isWrongBrowser ? (
-        <WrongBrowser
-          startLabellingButtonRef={startLabellingButtonRef}
-          onClickNext={() => {
-            setIsWrongBrowser(false);
-          }}
-        />
-      ) : (
-        (welcomeModalState === "welcome" && (
-          <Welcome
-            startLabellingButtonRef={startLabellingButtonRef}
-            hasUserClickedStart={hasUserClickedStart}
-            onClickNext={() => setHasUserClickedStart(true)}
-          />
-        )) ||
-        (welcomeModalState === "loading-worker" && (
-          <LoadingWorker startLabellingButtonRef={startLabellingButtonRef} />
-        )) ||
-        (welcomeModalState === "loading-demo" && (
-          <LoadingDemo startLabellingButtonRef={startLabellingButtonRef} />
-        )) ||
-        (welcomeModalState === "loading-finished" && (
-          <LoadingFinished
-            startLabellingButtonRef={startLabellingButtonRef}
-            onClickSkip={() => {
-              router.push("/datasets");
-            }}
-            onClickNext={() => {
-              router.push("/datasets");
-            }}
-          />
-        ))
-      )}
+      {(() => {
+        if (isWrongBrowser) {
+          return (
+            <WrongBrowser
+              startLabellingButtonRef={startLabellingButtonRef}
+              onClickNext={pretendIsCompatibleBrowser}
+            />
+          );
+        }
+        if (!hasUserClickedStart) {
+          return (
+            <Welcome
+              startLabellingButtonRef={startLabellingButtonRef}
+              hasUserClickedStart={hasUserClickedStart}
+              onClickNext={() => setHasUserClickedStart(true)}
+            />
+          );
+        }
+        if (welcomeWorkflowState === "loading-worker") {
+          return (
+            <LoadingWorker startLabellingButtonRef={startLabellingButtonRef} />
+          );
+        }
+        if (welcomeWorkflowState === "loading-demo") {
+          return (
+            <LoadingDemo startLabellingButtonRef={startLabellingButtonRef} />
+          );
+        }
+        if (welcomeWorkflowState === "loading-finished") {
+          return (
+            <LoadingFinished
+              startLabellingButtonRef={startLabellingButtonRef}
+              onClickSkip={() => {
+                router.push("/local/datasets");
+              }}
+              onClickNext={() => {
+                router.push("/local/datasets/demo-dataset");
+              }}
+            />
+          );
+        }
+      })()}
     </Modal>
   );
 };

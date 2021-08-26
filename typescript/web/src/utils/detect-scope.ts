@@ -15,6 +15,8 @@ export let isInWindowScope: boolean | null = null;
 // eslint-disable-next-line import/no-mutable-exports
 export let isInServiceWorkerScope: boolean | null = null;
 
+export const isDevelopmentEnvironment = process.env.NODE_ENV === "development";
+
 // eslint-disable-next-line import/no-mutable-exports
 export let browser:
   | BrowserInfo
