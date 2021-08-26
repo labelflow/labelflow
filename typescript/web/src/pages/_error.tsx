@@ -9,6 +9,7 @@ import {
 } from "@chakra-ui/react";
 import { FallbackProps } from "react-error-boundary";
 import { NextPageContext } from "next";
+import NextLink from "next/link";
 
 import { Meta } from "../components/meta";
 import { Layout } from "../components/layout";
@@ -62,9 +63,11 @@ const ErrorPage = ({ statusCode, error, resetErrorBoundary }: Props) => {
                   <Button onClick={resetErrorBoundary}>Retry</Button>
                 )}
 
-                <Button as="a" target="_blank" rel="noreferrer" href="/debug">
-                  See debug info
-                </Button>
+                <NextLink href="/debug">
+                  <Button as="a" href="/debug">
+                    See debug info
+                  </Button>
+                </NextLink>
 
                 <Button
                   colorScheme="brand"
