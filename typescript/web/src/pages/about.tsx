@@ -101,8 +101,8 @@ export default function Pricing() {
               you save 23% of your time increasing false negative rate by 14%”
               <br />
               <br />
-              With <Link color="brand.500" href="https://labelflow.ai/website">Labelflow</Link>, we now want to support every AI-applied company in
-              the world building the next big thing. We start small with our
+              With <b><Link color="brand.500" href="https://labelflow.ai/website">Labelflow</Link>, we now want to support every AI-applied company in
+              the world building the next big thing</b>. We start small with our
               labelling tool, with a strong focus on user experience.
               That’s just the beginning.
               <br />
