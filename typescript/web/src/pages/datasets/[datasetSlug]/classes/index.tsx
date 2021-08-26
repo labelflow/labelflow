@@ -25,8 +25,8 @@ import Error404Page from "../../../404";
 const ArrowRightIcon = chakra(RiArrowRightSLine);
 
 const datasetNameQuery = gql`
-  query getDatasetName($datasetId: ID!) {
-    dataset(where: { id: $datasetId }) {
+  query getDatasetName($slug: String!) {
+    dataset(where: { slug: $slug }) {
       id
       name
     }
@@ -39,13 +39,13 @@ const DatasetClassesPage = ({
   assumeServiceWorkerActive: boolean;
 }) => {
   const router = useRouter();
-  const datasetId = router?.query?.datasetId as string;
+  const datasetSlug = router?.query?.datasetSlug as string;
 
   const { data: datasetResult, error } = useQuery<{
     dataset: { id: string; name: string };
   }>(datasetNameQuery, {
     variables: {
-      datasetId,
+      slug: datasetSlug,
     },
   });
 
@@ -82,7 +82,7 @@ const DatasetClassesPage = ({
             </BreadcrumbItem>
 
             <BreadcrumbItem>
-              <NextLink href={`/datasets/${datasetId}`}>
+              <NextLink href={`/datasets/${datasetSlug}`}>
                 <BreadcrumbLink>
                   {datasetName ?? <Skeleton>Dataset Name</Skeleton>}
                 </BreadcrumbLink>
@@ -101,10 +101,12 @@ const DatasetClassesPage = ({
             <ExportButton />
           </>
         }
-        tabBar={<DatasetTabBar currentTab="classes" datasetId={datasetId} />}
+        tabBar={
+          <DatasetTabBar currentTab="classes" datasetSlug={datasetSlug} />
+        }
       >
         <Center>
-          <ClassesList datasetId={datasetId} />
+          <ClassesList datasetSlug={datasetSlug} />
         </Center>
       </Layout>
     </>

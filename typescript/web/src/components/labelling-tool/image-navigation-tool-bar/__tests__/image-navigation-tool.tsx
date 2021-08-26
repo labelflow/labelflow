@@ -90,7 +90,7 @@ test("should display a dash and a zero when the image id isn't present/when the 
 test("should display one when only one image in list", async () => {
   const imageId = await createImage("testImage");
   (useRouter as jest.Mock).mockImplementation(() => ({
-    query: { imageId, datasetId: testDatasetId },
+    query: { imageId, datasetSlug: "test-dataset" },
   }));
 
   renderImageNavigationTool();
@@ -110,7 +110,7 @@ test("should select previous image when the left arrow is pressed", async () => 
 
   await createImage("testImageC");
   (useRouter as jest.Mock).mockImplementation(() => ({
-    query: { imageId, datasetId: testDatasetId },
+    query: { imageId, datasetSlug: "test-dataset" },
     push: mockedPush,
   }));
 
@@ -126,7 +126,7 @@ test("should select previous image when the left arrow is pressed", async () => 
   userEvent.type(container, "{arrowleft}");
 
   expect(mockedPush).toHaveBeenCalledWith(
-    `/datasets/${testDatasetId}/images/${oldestImageId}`
+    `/datasets/test-dataset/images/${oldestImageId}`
   );
 });
 
@@ -139,7 +139,7 @@ test("should select next image when the right arrow is pressed", async () => {
   const newestImageId = await createImage("testImageC");
 
   (useRouter as jest.Mock).mockImplementation(() => ({
-    query: { imageId, datasetId: testDatasetId },
+    query: { imageId, datasetSlug: "test-dataset" },
     push: mockedPush,
   }));
   const { container } = renderImageNavigationTool();
@@ -152,6 +152,6 @@ test("should select next image when the right arrow is pressed", async () => {
   userEvent.type(container, "{arrowright}");
 
   expect(mockedPush).toHaveBeenCalledWith(
-    `/datasets/${testDatasetId}/images/${newestImageId}`
+    `/datasets/test-dataset/images/${newestImageId}`
   );
 });

@@ -39,11 +39,11 @@ const Template: Story = () => (
 
 export const Images = Template.bind({});
 Images.parameters = {
-  mockImages: { datasetId, images },
+  mockImages: { datasetId, datasetName: "dataset gallery", images },
   nextRouter: {
     query: {
       imageId: images[0].id,
-      datasetId,
+      datasetSlug: "dataset-gallery",
     },
   },
 };

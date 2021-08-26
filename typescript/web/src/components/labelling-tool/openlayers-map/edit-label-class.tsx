@@ -12,11 +12,14 @@ import { createUpdateLabelClassOfLabelEffect } from "../../../connectors/undo-st
 import { keymap } from "../../../keymap";
 
 const labelClassesOfDatasetQuery = gql`
-  query getLabelClassesOfDataset($datasetId: ID!) {
-    labelClasses(where: { datasetId: $datasetId }) {
+  query getLabelClassesOfDataset($slug: String!) {
+    dataset(where: { slug: $slug }) {
       id
-      name
-      color
+      labelClasses {
+        id
+        name
+        color
+      }
     }
   }
 `;
@@ -40,14 +43,15 @@ export const EditLabelClass = forwardRef<
   }
 >(({ isOpen, onClose }, ref) => {
   const router = useRouter();
-  const datasetId = router?.query.datasetId as string;
+  const datasetSlug = router?.query.datasetSlug as string;
 
   const client = useApolloClient();
   const { data } = useQuery(labelClassesOfDatasetQuery, {
-    variables: { datasetId },
+    variables: { slug: datasetSlug },
   });
+  const datasetId = data?.dataset.id;
   const { perform } = useUndoStore();
-  const labelClasses = data?.labelClasses ?? [];
+  const labelClasses = data?.dataset.labelClasses ?? [];
   const selectedLabelId = useLabellingStore((state) => state.selectedLabelId);
   const isContextMenuOpen = useLabellingStore(
     (state) => state.isContextMenuOpen
@@ -62,11 +66,12 @@ export const EditLabelClass = forwardRef<
       createNewLabelClassAndUpdateLabelCurry({
         labelClasses,
         datasetId,
+        datasetSlug,
         perform,
         onClose,
         client,
       }),
-    [labelClasses]
+    [labelClasses, datasetId]
   );
   useHotkeys(
     keymap.changeClass.key,

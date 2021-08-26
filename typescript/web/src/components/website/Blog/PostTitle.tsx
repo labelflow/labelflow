@@ -32,7 +32,8 @@ export const PostTitle = ({
       }}
     >
       <Box
-        maxW={{ base: "xl", md: "7xl" }}
+        maxW={{ base: "xl", md: "3xl" }}
+        boxSizing="border-box"
         mx="auto"
         px={{ base: "6", md: "8" }}
         h="full"

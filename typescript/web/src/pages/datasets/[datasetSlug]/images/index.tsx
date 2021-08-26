@@ -34,8 +34,8 @@ import Error404Page from "../../../404";
 const ArrowRightIcon = chakra(RiArrowRightSLine);
 
 export const datasetDataQuery = gql`
-  query getDatasetData($datasetId: ID!) {
-    dataset(where: { id: $datasetId }) {
+  query getDatasetData($slug: String!) {
+    dataset(where: { slug: $slug }) {
       id
       name
       images {
@@ -53,13 +53,13 @@ const ImagesPage = ({
   assumeServiceWorkerActive: boolean;
 }) => {
   const router = useRouter();
-  const datasetId = router?.query?.datasetId as string;
+  const datasetSlug = router?.query?.datasetSlug as string;
 
   const { data: datasetResult, error } = useQuery<{
     dataset: DatasetType;
   }>(datasetDataQuery, {
     variables: {
-      datasetId,
+      slug: datasetSlug,
     },
   });
 
@@ -96,7 +96,7 @@ const ImagesPage = ({
             </BreadcrumbItem>
 
             <BreadcrumbItem>
-              <NextLink href={`/datasets/${datasetId}`}>
+              <NextLink href={`/datasets/${datasetSlug}`}>
                 <BreadcrumbLink>
                   {datasetName ?? <Skeleton>Dataset Name</Skeleton>}
                 </BreadcrumbLink>
@@ -115,7 +115,7 @@ const ImagesPage = ({
             <ExportButton />
           </>
         }
-        tabBar={<DatasetTabBar currentTab="images" datasetId={datasetId} />}
+        tabBar={<DatasetTabBar currentTab="images" datasetSlug={datasetSlug} />}
       >
         {!datasetResult && (
           <Center h="full">
@@ -152,7 +152,7 @@ const ImagesPage = ({
         {datasetResult && !isEmpty(datasetResult?.dataset?.images) && (
           <Wrap h="full" spacing={8} padding={8} justify="space-evenly">
             {datasetResult?.dataset?.images?.map(({ id, name, url }) => (
-              <NextLink href={`/datasets/${datasetId}/images/${id}`} key={id}>
+              <NextLink href={`/datasets/${datasetSlug}/images/${id}`} key={id}>
                 {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
                 <a>
                   <WrapItem p={4} background="white" rounded={8}>

@@ -7,7 +7,7 @@ import {
   Button,
   Text,
 } from "@chakra-ui/react";
-import { useApolloClient, gql } from "@apollo/client";
+import { useApolloClient, useQuery, gql } from "@apollo/client";
 import { useRouter } from "next/router";
 
 import { UploadTarget } from "@labelflow/graphql-types";
@@ -65,6 +65,14 @@ const getImageUploadTargetMutation = gql`
   }
 `;
 
+const getDataset = gql`
+  query getDataset($slug: String!) {
+    dataset(where: { slug: $slug }) {
+      id
+    }
+  }
+`;
+
 const encodeFileToDataUrl = (file: File): Promise<string> => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -89,7 +97,7 @@ export const ImportImagesModalDropzone = ({
   const apolloClient = useApolloClient();
 
   const router = useRouter();
-  const { datasetId } = router?.query;
+  const { datasetSlug } = router?.query;
 
   /*
    * We need a state with the accepted and reject files to be able to reset the list
@@ -101,12 +109,16 @@ export const ImportImagesModalDropzone = ({
     {}
   );
 
+  const { data: datasetResult } = useQuery(getDataset, {
+    variables: { slug: datasetSlug },
+    skip: typeof datasetSlug !== "string",
+  });
+
+  const datasetId = datasetResult?.dataset.id;
+
   useEffect(() => {
     if (isEmpty(files)) return;
-
-    if (!datasetId) {
-      throw new Error(`No dataset id`);
-    }
+    if (!datasetId) return;
 
     const createImages = async () => {
       const now = new Date();
@@ -216,7 +228,7 @@ export const ImportImagesModalDropzone = ({
 
     onUploadStart();
     createImages();
-  }, [files]);
+  }, [files, datasetId]);
 
   return (
     <>

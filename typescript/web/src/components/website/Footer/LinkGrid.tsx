@@ -10,7 +10,7 @@ import NextLink from "next/link";
 import { FooterHeading } from "./FooterHeading";
 
 export const LinkGrid = (props: SimpleGridProps) => (
-  <SimpleGrid columns={1} {...props}>
+  <SimpleGrid columns={2} {...props}>
     <Box minW="130px">
       <FooterHeading mb="4">Product</FooterHeading>
       <Stack>
@@ -22,16 +22,16 @@ export const LinkGrid = (props: SimpleGridProps) => (
         </NextLink>
       </Stack>
     </Box>
-    {/* <Box minW="130px">
-      <FooterHeading mb="4">Legal</FooterHeading>
+    <Box minW="130px">
+      <FooterHeading mb="4">Learn</FooterHeading>
       <Stack>
-        <NextLink href="/">
-          <Link>Terms</Link>
+        <NextLink href="/about">
+          <Link href="/about">About</Link>
         </NextLink>
-        <NextLink href="/">
-          <Link>License</Link>
+        <NextLink href="/posts">
+          <Link href="/posts">Blog</Link>
         </NextLink>
       </Stack>
-    </Box> */}
+    </Box>
   </SimpleGrid>
 );
