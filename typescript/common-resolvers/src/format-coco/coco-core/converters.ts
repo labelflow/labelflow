@@ -1,7 +1,6 @@
 import mime from "mime-types";
-import flatten from "@turf/flatten";
 import { Geometry } from "@turf/helpers";
-import { geomReduce, coordReduce } from "@turf/meta";
+import { coordReduce } from "@turf/meta";
 import { DbImage, DbLabelClass } from "../../types";
 
 import {
@@ -75,28 +74,36 @@ const convertGeometryToSegmentation = (
   geometry: Geometry,
   imageHeight: number
 ): number[][] => {
-  const coordToSegmentationReducer = (
-    segmentation: number[],
-    [x, y]: number[],
-    _coordIndex: number,
-    _featureIndex: number,
-    _multiFeatureIndex: number,
-    geometryIndex: number
-  ) => {
-    // Only take the outer ring of the geometry
-    if (geometryIndex > 0) {
-      return [...segmentation];
-    }
+  return coordReduce(
+    geometry,
+    (
+      segmentation: number[][],
+      [x, y]: number[],
+      _coordIndex: number,
+      _featureIndex: number,
+      multiFeatureIndex: number,
+      geometryIndex: number
+    ) => {
+      // Only take the outer ring of the geometry
+      if (geometryIndex > 0) {
+        return segmentation;
+      }
 
-    return [...segmentation, x, imageHeight - y];
-  };
+      const updatedSegmentation = segmentation;
 
-  return geomReduce(
-    flatten(geometry),
-    (segmentations: number[][], currentGeometry) => [
-      ...segmentations,
-      coordReduce(currentGeometry, coordToSegmentationReducer, []),
-    ],
+      const currentSegment = updatedSegmentation[multiFeatureIndex]
+        ? updatedSegmentation[multiFeatureIndex]
+        : [];
+
+      const coordToAdd = [x, imageHeight - y];
+
+      updatedSegmentation[multiFeatureIndex] = [
+        ...currentSegment,
+        ...coordToAdd,
+      ];
+
+      return updatedSegmentation;
+    },
     []
   );
 };
