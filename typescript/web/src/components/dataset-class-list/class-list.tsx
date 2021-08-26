@@ -45,7 +45,7 @@ export const ClassesList = ({ datasetId }: { datasetId: string }) => {
         bg="white"
         m="10"
         borderRadius="lg"
-        maxWidth="2xl"
+        maxWidth="5xl"
         flexGrow={1}
       >
         <>
