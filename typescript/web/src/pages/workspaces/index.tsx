@@ -4,11 +4,7 @@ import { useEffect } from "react";
 import { AppLifecycleManager } from "../../components/app-lifecycle-manager";
 import { Layout } from "../../components/layout";
 
-const WorkspacesRedirectPage = ({
-  assumeServiceWorkerActive,
-}: {
-  assumeServiceWorkerActive: boolean;
-}) => {
+const WorkspacesRedirectPage = () => {
   const router = useRouter();
 
   useEffect(() => {
@@ -17,9 +13,7 @@ const WorkspacesRedirectPage = ({
 
   return (
     <>
-      <AppLifecycleManager
-        assumeServiceWorkerActive={assumeServiceWorkerActive}
-      />
+      <AppLifecycleManager />
       <Layout>
         <Center h="full">
           <Spinner size="xl" />
