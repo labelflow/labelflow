@@ -15,17 +15,17 @@ export const countLabels = async (where?: LabelWhereInput) => {
         })
         .toArray();
 
-      return getDatabase()
+      return await getDatabase()
         .label.filter((currentLabel) =>
           imagesOfDataset.some((image) => currentLabel.imageId === image.id)
         )
         .count();
     }
 
-    return getDatabase().label.where(where).count();
+    return await getDatabase().label.where(where).count();
   }
 
-  return getDatabase().label.count();
+  return await getDatabase().label.count();
 };
 
 export const listLabels = async (
@@ -40,27 +40,14 @@ export const listLabels = async (
       })
       .toArray();
 
-    const query = getDatabase()
-      .label.orderBy("createdAt")
-      .filter((currentLabel) =>
-        imagesOfDataset.some((image) => currentLabel.imageId === image.id)
-      );
-
-    if (skip) {
-      query.offset(skip);
-    }
-    if (first) {
-      query.limit(first);
-    }
-
-    return getDatabase()
+    return await getDatabase()
       .label.filter((currentLabel) =>
         imagesOfDataset.some((image) => currentLabel.imageId === image.id)
       )
       .sortBy("createdAt");
   }
 
-  return list<DbLabel, LabelWhereInput>(getDatabase().label)(
+  return await list<DbLabel, LabelWhereInput>(getDatabase().label)(
     where,
     skip,
     first

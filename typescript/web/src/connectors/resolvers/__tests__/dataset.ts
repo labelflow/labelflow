@@ -10,7 +10,7 @@ jest.mock("@labelflow/common-resolvers/src/utils/probe-image");
 const mockedProbeSync = probeImage as jest.Mock;
 
 const createDataset = async (name: string, datasetId?: string | null) => {
-  return client.mutate({
+  return await client.mutate({
     mutation: gql`
       mutation createDataset($datasetId: String, $name: String!) {
         createDataset(data: { id: $datasetId, name: $name }) {
@@ -580,7 +580,7 @@ describe("Dataset resolver test suite", () => {
     });
 
     const getDatasetData = async (datasetId: string) => {
-      return client.query({
+      return await client.query({
         query: gql`
           query getDatasetData($id: ID!) {
             dataset(where: { id: $id }) {
@@ -639,7 +639,7 @@ describe("Dataset resolver test suite", () => {
     });
 
     const getDatasetCount = async (datasetId: string) => {
-      return client.query({
+      return await client.query({
         query: gql`
           query getDatasetCounts($id: ID!) {
             dataset(where: { id: $id }) {
