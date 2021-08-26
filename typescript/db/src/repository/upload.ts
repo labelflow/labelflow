@@ -22,7 +22,7 @@ export const getFromStorage: Repository["upload"]["get"] = async (url) => {
   const file = dirtyInMemoryStorage.get(url);
 
   if (file) {
-    return file.arrayBuffer();
+    return await file.arrayBuffer();
   }
 
   const fetchResult = await fetch(url, {
@@ -38,7 +38,7 @@ export const getFromStorage: Repository["upload"]["get"] = async (url) => {
       `Could not fetch image at url ${url} properly, code ${fetchResult.status}`
     );
   }
-  return fetchResult.arrayBuffer();
+  return await fetchResult.arrayBuffer();
 };
 
 export const putInStorage: Repository["upload"]["put"] = async (url, blob) => {

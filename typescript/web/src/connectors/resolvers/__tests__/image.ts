@@ -16,7 +16,7 @@ describe("Image resolver test suite", () => {
     name: string,
     datasetId: string = testDatasetId
   ) => {
-    return client.mutate({
+    return await client.mutate({
       mutation: gql`
         mutation createDataset($datasetId: String, $name: String!) {
           createDataset(data: { id: $datasetId, name: $name }) {
@@ -66,8 +66,8 @@ describe("Image resolver test suite", () => {
     return id;
   };
 
-  const createLabel = (imageId: number, x: number) => {
-    return client.mutate({
+  const createLabel = async (imageId: number, x: number) => {
+    return await client.mutate({
       mutation: gql`
         mutation createLabel($data: LabelCreateInput!) {
           createLabel(data: $data) {

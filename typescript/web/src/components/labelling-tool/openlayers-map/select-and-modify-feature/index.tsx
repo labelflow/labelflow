@@ -142,9 +142,9 @@ export const SelectAndModifyFeature = (props: {
           /* @ts-ignore - We need to add this because resizeAndTranslateBox is not included in the react-openalyers-fiber original catalogue */
           <resizeAndTranslateBox
             args={{ selectedFeature }}
-            onInteractionEnd={async (e: ResizeAndTranslateEvent | null) =>
-              interactionEnd(e, perform, client, imageId, toast)
-            }
+            onInteractionEnd={async (e: ResizeAndTranslateEvent | null) => {
+              return await interactionEnd(e, perform, client, imageId, toast);
+            }}
           />
         )}
       {selectedTool === Tools.SELECTION &&
@@ -153,15 +153,15 @@ export const SelectAndModifyFeature = (props: {
           <>
             <olInteractionTranslate
               args={{ features: new Collection([selectedFeature]) }}
-              onTranslateend={async (e: TranslateEvent | null) =>
-                interactionEnd(e, perform, client, imageId, toast)
-              }
+              onTranslateend={async (e: TranslateEvent | null) => {
+                return await interactionEnd(e, perform, client, imageId, toast);
+              }}
             />
             <olInteractionModify
               args={{ features: new Collection([selectedFeature]) }}
-              onModifyend={async (e: ModifyEvent | null) =>
-                interactionEnd(e, perform, client, imageId, toast)
-              }
+              onModifyend={async (e: ModifyEvent | null) => {
+                return await interactionEnd(e, perform, client, imageId, toast);
+              }}
             />
             <olInteractionPointer
               args={{
