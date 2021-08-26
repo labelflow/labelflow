@@ -46,8 +46,8 @@ export const Features = () => {
               color={mode("gray.600", "gray.400")}
             >You now have the tool to unleash the potential of all your AI
             project. Our team has 5 years of experience implementing AI at scale for energy
-              companies with <Link color="brand.500" href="https://www.sterblue.com/">Sterblue</Link>, labeling 1.5 million images,
-              involving tens of labelers and experts around the platform. We got your pain.
+              companies with <Link color="brand.500" href="https://labelflow.ai/about">Sterblue</Link>, labeling 1.5 million images
+               and involving tens of labelers and experts around the platform. We got your pains.
             </Text>
             {/* <Button
               size="lg"
