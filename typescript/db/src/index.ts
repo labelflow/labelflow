@@ -26,6 +26,7 @@ const server = new ApolloServer({
 });
 
 server.listen({ port: 5000 }).then(async ({ url }) => {
+  // eslint-disable-next-line no-console
   console.log(`\
   🚀 Server ready at: ${url}
   ⭐️ See sample queries: http://pris.ly/e/ts/graphql#using-the-graphql-api
