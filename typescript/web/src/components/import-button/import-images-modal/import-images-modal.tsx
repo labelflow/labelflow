@@ -12,8 +12,8 @@ import { useQueryParam, StringParam, withDefault } from "use-query-params";
 import { useApolloClient } from "@apollo/client";
 import { ImportImagesModalDropzone } from "./modal-dropzone/modal-dropzone";
 import { ImportImagesModalUrlList } from "./modal-url-list/modal-url-list";
-import { datasetDataQuery } from "../../../pages/datasets/[datasetSlug]/images";
-import { getDatasetsQuery } from "../../../pages/datasets";
+import { datasetDataQuery } from "../../../pages/local/datasets/[datasetSlug]/images";
+import { getDatasetsQuery } from "../../../pages/local/datasets";
 
 export const ImportImagesModal = ({
   isOpen = false,
