@@ -37,7 +37,7 @@ export const list =
         query.limit(first);
       }
 
-      return query.sortBy("createdAt");
+      return await query.sortBy("createdAt");
     }
 
     const query = table.orderBy("createdAt");
@@ -48,5 +48,5 @@ export const list =
       query.limit(first);
     }
 
-    return query.toArray();
+    return await query.toArray();
   };
