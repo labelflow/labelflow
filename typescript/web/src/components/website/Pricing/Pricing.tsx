@@ -49,7 +49,7 @@ export const Pricing = () => (
         }}
         icon={BsPeopleFill}
         button={
-          <NextLink href="/datasets">
+          <NextLink href="/local/datasets">
             <ActionButton>Try it now</ActionButton>
           </NextLink>
         }
