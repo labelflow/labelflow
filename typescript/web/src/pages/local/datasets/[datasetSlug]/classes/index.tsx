@@ -76,11 +76,20 @@ const DatasetClassesPage = () => {
             </BreadcrumbItem>
 
             <BreadcrumbItem>
-              <NextLink href={`/local/datasets/${datasetSlug}`}>
-                <BreadcrumbLink>
-                  {datasetName ?? <Skeleton>Dataset Name</Skeleton>}
-                </BreadcrumbLink>
-              </NextLink>
+              {
+                // We need this to avoid https://nextjs.org/docs/messages/href-interpolation-failed
+                datasetSlug ? (
+                  <NextLink href={`/local/datasets/${datasetSlug}`}>
+                    <BreadcrumbLink>
+                      {datasetName ?? <Skeleton>Dataset Name</Skeleton>}
+                    </BreadcrumbLink>
+                  </NextLink>
+                ) : (
+                  <BreadcrumbLink>
+                    {datasetName ?? <Skeleton>Dataset Name</Skeleton>}
+                  </BreadcrumbLink>
+                )
+              }
             </BreadcrumbItem>
 
             <BreadcrumbItem isCurrentPage>

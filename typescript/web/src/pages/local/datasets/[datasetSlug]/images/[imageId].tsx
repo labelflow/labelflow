@@ -124,17 +124,33 @@ const ImagePage = () => {
             </BreadcrumbItem>
 
             <BreadcrumbItem isCurrentPage>
-              <NextLink href={`/local/datasets/${datasetSlug}/images`}>
-                <BreadcrumbLink>
-                  {datasetName ?? <Skeleton>Dataset Name</Skeleton>}
-                </BreadcrumbLink>
-              </NextLink>
+              {
+                // We need this to avoid https://nextjs.org/docs/messages/href-interpolation-failed
+                datasetSlug ? (
+                  <NextLink href={`/local/datasets/${datasetSlug}`}>
+                    <BreadcrumbLink>
+                      {datasetName ?? <Skeleton>Dataset Name</Skeleton>}
+                    </BreadcrumbLink>
+                  </NextLink>
+                ) : (
+                  <BreadcrumbLink>
+                    {datasetName ?? <Skeleton>Dataset Name</Skeleton>}
+                  </BreadcrumbLink>
+                )
+              }
             </BreadcrumbItem>
 
             <BreadcrumbItem>
-              <NextLink href={`/local/datasets/${datasetSlug}/images`}>
-                <BreadcrumbLink>Images</BreadcrumbLink>
-              </NextLink>
+              {
+                // We need this to avoid https://nextjs.org/docs/messages/href-interpolation-failed
+                datasetSlug ? (
+                  <NextLink href={`/local/datasets/${datasetSlug}/images`}>
+                    <BreadcrumbLink>Images</BreadcrumbLink>
+                  </NextLink>
+                ) : (
+                  <BreadcrumbLink>Images</BreadcrumbLink>
+                )
+              }
             </BreadcrumbItem>
 
             <BreadcrumbItem isCurrentPage>
