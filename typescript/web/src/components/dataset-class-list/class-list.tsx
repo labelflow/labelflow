@@ -1,8 +1,8 @@
 import { useMemo, useState } from "react";
-import { useQuery, useMutation, gql, useApolloClient } from "@apollo/client";
+import { useQuery, gql, useApolloClient } from "@apollo/client";
 import { Box, Text, Divider } from "@chakra-ui/react";
 
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import { DragDropContext, Droppable } from "react-beautiful-dnd";
 import {
   ClassItem,
   datasetLabelClassesQuery,
@@ -25,6 +25,12 @@ const reorder = (list, startIndex, endIndex) => {
   return result;
 };
 
+const addShortcutsToLabelClasses = (labelClasses: any[]) =>
+  labelClasses.map((labelClass, index) => ({
+    ...labelClass,
+    shortcut: index > 9 ? null : `${(index + 1) % 10}`,
+  }));
+
 export const ClassesList = ({ datasetId }: { datasetId: string }) => {
   const client = useApolloClient();
   const [editClassId, setEditClassId] = useState<string | null>(null);
@@ -43,11 +49,7 @@ export const ClassesList = ({ datasetId }: { datasetId: string }) => {
   const labelClasses = datasetResult?.dataset.labelClasses ?? [];
 
   const labelClassWithShortcut = useMemo(
-    () =>
-      labelClasses.map((labelClass, index) => ({
-        ...labelClass,
-        shortcut: index > 9 ? null : `${(index + 1) % 10}`,
-      })),
+    () => addShortcutsToLabelClasses(labelClasses),
     [labelClasses]
   );
   const onDragEnd = async (result) => {
@@ -61,10 +63,12 @@ export const ClassesList = ({ datasetId }: { datasetId: string }) => {
         ...prev,
         dataset: {
           ...prev?.dataset,
-          labelClasses: reorder(
-            labelClassesPrevious,
-            result.source.index,
-            result.destination.index
+          labelClasses: addShortcutsToLabelClasses(
+            reorder(
+              labelClassesPrevious,
+              result.source.index,
+              result.destination.index
+            )
           ),
         },
       };
