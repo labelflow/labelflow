@@ -10,7 +10,7 @@ export default {
 };
 
 export const Default = () => {
-  return <WelcomeModal isServiceWorkerActive={false} />;
+  return <WelcomeModal />;
 };
 
 Default.parameters = {
@@ -22,7 +22,7 @@ Default.parameters = {
 };
 
 export const WrongBrowser = () => {
-  return <WelcomeModal isServiceWorkerActive={false} initialIsWrongBrowser />;
+  return <WelcomeModal initialIsWrongBrowser />;
 };
 
 WrongBrowser.parameters = {
@@ -36,12 +36,7 @@ WrongBrowser.parameters = {
 };
 
 export const Welcome = () => {
-  return (
-    <WelcomeModal
-      isServiceWorkerActive={false}
-      initialWelcomeModalState="welcome"
-    />
-  );
+  return <WelcomeModal initialWelcomeModalState="welcome" />;
 };
 
 Welcome.parameters = {
@@ -55,12 +50,7 @@ Welcome.parameters = {
 };
 
 export const LoadingWorker = () => {
-  return (
-    <WelcomeModal
-      isServiceWorkerActive={false}
-      initialWelcomeModalState="loading-worker"
-    />
-  );
+  return <WelcomeModal initialWelcomeModalState="loading-worker" />;
 };
 
 LoadingWorker.parameters = {
@@ -74,12 +64,7 @@ LoadingWorker.parameters = {
 };
 
 export const LoadingDemo = () => {
-  return (
-    <WelcomeModal
-      isServiceWorkerActive={false}
-      initialWelcomeModalState="loading-demo"
-    />
-  );
+  return <WelcomeModal initialWelcomeModalState="loading-demo" />;
 };
 
 LoadingDemo.parameters = {
@@ -93,12 +78,7 @@ LoadingDemo.parameters = {
 };
 
 export const LoadingFinished = () => {
-  return (
-    <WelcomeModal
-      isServiceWorkerActive={false}
-      initialWelcomeModalState="loading-finished"
-    />
-  );
+  return <WelcomeModal initialWelcomeModalState="loading-finished" />;
 };
 
 LoadingFinished.parameters = {
