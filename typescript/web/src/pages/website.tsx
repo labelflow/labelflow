@@ -2,11 +2,10 @@ import { Box, useColorModeValue as mode } from "@chakra-ui/react";
 import * as React from "react";
 
 import { NavContent } from "../components/website/Navbar/NavContent";
+import {Why} from "../components/website/Why/Why";
 import { Hero } from "../components/website/Hero/Hero";
 import { Features } from "../components/website/Features/Features";
 import { LogoGrid } from "../components/website/Logos/LogoGrid";
-
-import { Why } from "../components/website/Why/Why";
 import { Footer } from "../components/website/Footer/Footer";
 import { Pricing } from "../components/website/Pricing/Pricing";
 import { ArticlesList } from "../components/website/Blog/articles-list";

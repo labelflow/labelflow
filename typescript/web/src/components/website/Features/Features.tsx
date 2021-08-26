@@ -5,6 +5,7 @@ import {
   Img,
   SimpleGrid,
   Text,
+  Link,
   useColorModeValue as mode,
 } from "@chakra-ui/react";
 import * as React from "react";
@@ -43,14 +44,16 @@ export const Features = () => {
               mb="6"
               maxW="md"
               color={mode("gray.600", "gray.400")}
-            >
-              You now have the tool to unleash the potential of all your AI
-              projects
+            >You now have the tool to unleash the potential of all your AI
+            project. Our team has 5 years of experience implementing AI at scale for energy
+              companies with <Link color="brand.500" href="https://www.sterblue.com/">Sterblue</Link>, labeling 1.5 million images,
+              involving tens of labelers and experts around the platform. We got your pain.
             </Text>
             {/* <Button
               size="lg"
               colorScheme="brand"
               rightIcon={<BsArrowRight />}
+            
               fontWeight="bold"
               fontSize="md"
               w={{ base: "full", sm: "auto" }}
@@ -75,9 +78,8 @@ export const Features = () => {
           </Feature>
           <Feature icon={BsHeartFill} title="Open community and standard">
             Labelflow is building a community around
-            an open source labeling tool to set the standard aroune visual data management. 
-            Dataset curation 
-            should not require any &ldquo;secret sauce&rdquo;.
+            an open source labeling tool to set the standard around visual data management. 
+            Dataset curation should not require any &ldquo;secret sauce&rdquo;.
           </Feature>
         </SimpleGrid>
       </Box>
