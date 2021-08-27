@@ -41,6 +41,12 @@ export const getFromStorage: Repository["upload"]["get"] = async (url) => {
   return await fetchResult.arrayBuffer();
 };
 
+export const deleteFromStorage: Repository["upload"]["delete"] = async (
+  url
+) => {
+  dirtyInMemoryStorage.delete(url);
+};
+
 export const putInStorage: Repository["upload"]["put"] = async (url, blob) => {
   dirtyInMemoryStorage.set(url, blob);
 };
