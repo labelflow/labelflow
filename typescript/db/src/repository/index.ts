@@ -12,9 +12,9 @@ export const repository: Repository = {
       const createdImage = await prisma.image.create({ data: image });
       return createdImage.id;
     },
-    count: async (where) => await prisma.image.count({ where }),
-    getById: async (id) =>
-      await prisma.image.findUnique({
+    count: (where) => prisma.image.count({ where }),
+    getById: (id) =>
+      prisma.image.findUnique({
         where: { id },
       }),
 
@@ -59,7 +59,7 @@ export const repository: Repository = {
       });
       return createdLabelClass.id;
     },
-    count: async (where) => await prisma.labelClass.count({ where }),
+    count: (where) => prisma.labelClass.count({ where }),
     delete: async (id) => {
       await prisma.labelClass.delete({ where: { id } });
     },
