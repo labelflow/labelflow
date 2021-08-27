@@ -149,8 +149,8 @@ const DatasetsIndexPage = ({
     datasetsResult?.datasets == null
       ? undefined
       : datasetsResult?.datasets.filter(
-        (dataset) => dataset.name === "Tutorial dataset"
-      )?.[0] ?? undefined;
+          (dataset) => dataset.name === "Tutorial dataset"
+        )?.[0] ?? undefined;
 
   const handleError = useErrorHandler();
 
