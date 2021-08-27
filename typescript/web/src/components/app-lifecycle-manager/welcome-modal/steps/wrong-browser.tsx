@@ -6,7 +6,6 @@ import {
   HStack,
   Button,
   Heading,
-  Image,
   Link,
   Center,
   Text,
@@ -17,7 +16,9 @@ import {
 import NextLink from "next/link";
 import { RiArrowGoBackLine, RiPlayFill } from "react-icons/ri";
 
-import browserAlert from "../../../../../public/static/graphics/browser-alert.svg";
+import BrowserAlert from "../../../graphics/browser-alert";
+
+const ChakraBrowserAlert = chakra(BrowserAlert);
 
 const BackIcon = chakra(RiArrowGoBackLine);
 const PlayIcon = chakra(RiPlayFill);
@@ -34,7 +35,7 @@ export const WrongBrowser = ({
     <ModalContent margin="3.75rem">
       <ModalHeader textAlign="center" padding="8">
         <Center>
-          <Image src={browserAlert} mt="12" mb="8" width="40" height="40" />
+          <ChakraBrowserAlert mt="12" mb="8" width="40" height="40" />
         </Center>
       </ModalHeader>
 

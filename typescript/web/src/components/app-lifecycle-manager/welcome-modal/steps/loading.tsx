@@ -15,7 +15,9 @@ import {
 } from "@chakra-ui/react";
 import { RiGithubFill } from "react-icons/ri";
 
-import rocket from "../../../../../public/static/graphics/rocket.svg";
+import Rocket from "../../../graphics/rocket";
+
+const ChakraRocket = chakra(Rocket);
 
 const GithubIcon = chakra(RiGithubFill);
 
@@ -28,7 +30,8 @@ export const Loading = ({
     <ModalContent margin="3.75rem">
       <ModalHeader textAlign="center" padding="8">
         <Center>
-          <Image src={rocket} mt="12" mb="8" width="40" height="40" />
+          <ChakraRocket mt="12" mb="8" width="40" height="40" />
+          {/* <Image src={rocket} mt="12" mb="8" width="40" height="40" /> */}
         </Center>
       </ModalHeader>
 

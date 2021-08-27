@@ -13,11 +13,7 @@ import {
   ModalHeader,
   useColorModeValue as mode,
 } from "@chakra-ui/react";
-import {
-  // RiGithubFill,
-  RiPlayFill,
-  RiSpeedMiniFill,
-} from "react-icons/ri";
+import { RiPlayFill, RiSpeedMiniFill } from "react-icons/ri";
 
 import useCountDown from "react-countdown-hook";
 
@@ -25,7 +21,6 @@ import { Logo } from "../../../logo";
 
 const PlayIcon = chakra(RiPlayFill);
 const SpeedIcon = chakra(RiSpeedMiniFill);
-// const GithubIcon = chakra(RiGithubFill);
 
 type Props = {
   startLabellingButtonRef: React.Ref<HTMLButtonElement>;
@@ -103,33 +98,6 @@ export const Welcome = ({
           spacing="4"
           mb="10"
         >
-          {/* <Button
-            as="a"
-            leftIcon={<GithubIcon fontSize="xl" />}
-            href="https://github.com/Labelflow/labelflow"
-            target="blank"
-            size="lg"
-            minW="210px"
-            variant="link"
-            height="14"
-            px="8"
-          >
-            See code on Github
-          </Button> */}
-          {/* <Button
-            ref={startLabellingButtonRef}
-            leftIcon={<PlayIcon fontSize="xl" />}
-            size="lg"
-            minW="210px"
-            colorScheme="brand"
-            height="14"
-            px="8"
-            isLoading={hasUserClickedStart}
-            onClick={onClickNext}
-            loadingText="Loading the app"
-          >
-            Start Labelling!
-          </Button> */}
           <Button
             size="lg"
             leftIcon={<SpeedIcon fontSize="xl" />}

@@ -1,12 +1,17 @@
 import { chakraDecorator } from "../../../../utils/chakra-decorator";
 import { queryParamsDecorator } from "../../../../utils/query-params-decorator";
 import { apolloDecorator } from "../../../../utils/apollo-decorator";
-
+import { cookieDecorator } from "../../../../utils/cookie-decorator";
 import { WelcomeModal } from "..";
 
 export default {
   title: "web/app lifecycle/welcome modal",
-  decorators: [chakraDecorator, apolloDecorator, queryParamsDecorator],
+  decorators: [
+    chakraDecorator,
+    apolloDecorator,
+    queryParamsDecorator,
+    cookieDecorator,
+  ],
 };
 
 export const Default = () => {
@@ -30,13 +35,17 @@ WrongBrowser.parameters = {
     path: "/local/datasets?modal-welcome=open",
     asPath: "/local/datasets?modal-welcome=open",
     query: {
-      "modal-welcome": "wrong-browser",
+      "modal-welcome": "open",
     },
+  },
+  cookie: {
+    hasUserTriedApp: "false",
+    tryDespiteWrongBrowser: "false",
   },
 };
 
 export const Loading = () => {
-  return <WelcomeModal initialHasUserClickedStart />;
+  return <WelcomeModal initialIsLoadingWorkerAndDemo />;
 };
 
 Loading.parameters = {
@@ -44,8 +53,12 @@ Loading.parameters = {
     path: "/local/datasets?modal-welcome=open",
     asPath: "/local/datasets?modal-welcome=open",
     query: {
-      "modal-welcome": "loading-worker",
+      "modal-welcome": "open",
     },
+  },
+  cookie: {
+    hasUserTriedApp: "false",
+    tryDespiteWrongBrowser: "false",
   },
 };
 
@@ -58,7 +71,11 @@ Welcome.parameters = {
     path: "/local/datasets?modal-welcome=open",
     asPath: "/local/datasets?modal-welcome=open",
     query: {
-      "modal-welcome": "welcome",
+      "modal-welcome": "open",
     },
+  },
+  cookie: {
+    hasUserTriedApp: "false",
+    tryDespiteWrongBrowser: "false",
   },
 };

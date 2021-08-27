@@ -246,6 +246,15 @@ export const WelcomeModal = ({
   const shouldShowWelcomeModal =
     hasUserTriedApp !== "true" && !isLoadingWorkerAndDemo;
 
+  console.log({
+    isWrongBrowser,
+    tryDespiteWrongBrowser,
+    hasUserTriedApp,
+    shouldShowWrongBrowserModal,
+    shouldShowLoadingModal,
+    shouldShowWelcomeModal,
+  });
+
   return (
     <Modal
       isOpen={
@@ -286,7 +295,7 @@ export const WelcomeModal = ({
           );
         }
 
-        throw new Error("Welcome modal is in unknown state");
+        return null;
       })()}
     </Modal>
   );
