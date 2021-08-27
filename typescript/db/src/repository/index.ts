@@ -17,20 +17,19 @@ export const repository: Repository = {
       const createdImage = await prisma.image.create({ data: image });
       return createdImage.id;
     },
-    count: async (where) => await prisma.image.count({ where }),
+    count: (where) => prisma.image.count({ where }),
     getById: (id) =>
       prisma.image.findUnique({
         where: { id },
       }),
 
-    list: (where, skip = undefined, first = undefined) => {
-      return prisma.image.findMany({
+    list: (where, skip = undefined, first = undefined) =>
+      prisma.image.findMany({
         where,
         orderBy: { createdAt: "asc" },
         skip,
         take: first,
-      });
-    },
+      }),
   },
   label: {
     add: async (label) => {
@@ -64,7 +63,7 @@ export const repository: Repository = {
       });
       return createdLabelClass.id;
     },
-    count: async (where) => await prisma.labelClass.count({ where }),
+    count: (where) => prisma.labelClass.count({ where }),
     delete: async (id) => {
       await prisma.labelClass.delete({ where: { id } });
     },
