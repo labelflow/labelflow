@@ -1,7 +1,8 @@
 import { trim } from "lodash/fp";
 import { v4 as uuidv4 } from "uuid";
 import slugify from "slugify";
-import type {
+import { add } from "date-fns";
+import {
   MutationCreateDatasetArgs,
   MutationDeleteDatasetArgs,
   MutationUpdateDatasetArgs,
@@ -9,6 +10,7 @@ import type {
   QueryDatasetArgs,
   QueryDatasetsArgs,
   QueryImagesArgs,
+  LabelType,
 } from "@labelflow/graphql-types";
 
 import { Context, DbDataset, Repository } from "./types";
@@ -27,6 +29,8 @@ const tutorialImageUrls = [
   `${origin}/static/img/tutorial-image-3.jpg`,
   `${origin}/static/img/tutorial-image-4.jpg`,
 ];
+
+const tutorialLabelClassId = uuidv4();
 
 const getDatasetById = async (
   id: string,
@@ -188,7 +192,8 @@ const createDemoDataset = async (
   { repository }: Context
 ): Promise<DbDataset> => {
   const datasetId = uuidv4();
-  const currentDate = new Date().toISOString();
+  const now = new Date();
+  const currentDate = now.toISOString();
   try {
     await repository.dataset.add({
       name: "Tutorial dataset",
@@ -204,12 +209,13 @@ const createDemoDataset = async (
     }
     throw error;
   }
-  await Promise.all(
-    tutorialImageUrls.map(async (url) => {
+  const tutorialDatasetImages = await Promise.all(
+    tutorialImageUrls.map(async (url, index) => {
       const imageEntity = await getImageEntityFromMutationArgs(
         {
           datasetId,
           url,
+          createdAt: add(now, { seconds: index }).toISOString(),
         },
         {
           upload: repository.upload,
@@ -219,9 +225,8 @@ const createDemoDataset = async (
     })
   );
 
-  const labelClassId = uuidv4();
-  repository.labelClass.add({
-    id: labelClassId,
+  await repository.labelClass.add({
+    id: tutorialLabelClassId,
     name: "Horse",
     color: "#F87171",
     createdAt: currentDate,
