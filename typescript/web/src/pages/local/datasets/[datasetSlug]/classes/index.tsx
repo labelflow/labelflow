@@ -49,7 +49,7 @@ const DatasetClassesPage = () => {
 
   const handleError = useErrorHandler();
   if (error) {
-    if (!error.message.match(/No dataset with id/)) {
+    if (!error.message.match(/No dataset with slug/)) {
       handleError(error);
     }
     return <Error404Page />;

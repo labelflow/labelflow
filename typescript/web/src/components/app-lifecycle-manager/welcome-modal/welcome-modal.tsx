@@ -57,6 +57,7 @@ const performWelcomeWorkflow = async ({
   client,
   setParamModalWelcome,
   setIsLoadingWorkerAndDemo,
+  setIsWrongBrowser,
   setHasUserTriedApp,
   handleError,
 }: {
@@ -66,6 +67,7 @@ const performWelcomeWorkflow = async ({
     state: WelcomeModalParam,
     updateType: "replaceIn"
   ) => void;
+  setIsWrongBrowser: (state: boolean) => void;
   setIsLoadingWorkerAndDemo: (state: boolean) => void;
   client: ApolloClient<{}>;
   setHasUserTriedApp: any;
@@ -111,13 +113,10 @@ const performWelcomeWorkflow = async ({
       }
     }
 
-    setHasUserTriedApp("hasUserTriedApp", "true", {
-      path: "/",
-      httpOnly: false,
-    });
     setIsLoadingWorkerAndDemo(false);
   } catch (error) {
-    handleError(error);
+    setIsWrongBrowser(true);
+    // handleError(error);
   }
 };
 
@@ -140,7 +139,7 @@ export const WelcomeModal = ({
   const [{ tryDespiteWrongBrowser }, setTryDespiteWrongBrowser] = useCookies([
     "tryDespiteWrongBrowser",
   ]);
-  const [isWrongBrowser] = useState(() => {
+  const [isWrongBrowser, setIsWrongBrowser] = useState(() => {
     const name = browser?.name;
     const os = browser?.os;
     const versionNumber = parseInt(browser?.version ?? "0", 10);
@@ -208,6 +207,7 @@ export const WelcomeModal = ({
         paramModalWelcome === "open")
     ) {
       performWelcomeWorkflow({
+        setIsWrongBrowser,
         isServiceWorkerActive,
         setIsServiceWorkerActive,
         client,
@@ -221,6 +221,10 @@ export const WelcomeModal = ({
 
   // welcome => undefined
   const handleGetStarted = useCallback(() => {
+    setHasUserTriedApp("hasUserTriedApp", "true", {
+      path: "/",
+      httpOnly: false,
+    });
     console.log("handleGetStarted1");
     setParamModalWelcome(undefined, "replaceIn");
     console.log("handleGetStarted2");
@@ -229,6 +233,10 @@ export const WelcomeModal = ({
 
   // welcome => undefined
   const handleSkip = useCallback(() => {
+    setHasUserTriedApp("hasUserTriedApp", "true", {
+      path: "/",
+      httpOnly: false,
+    });
     console.log("handleSkip1");
     setParamModalWelcome(undefined, "replaceIn");
     console.log("handleSkip2");

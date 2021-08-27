@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
   chakra,
   ModalContent,
@@ -33,18 +33,20 @@ export const Welcome = ({
   onClickSkip,
   onClickNext,
 }: Props) => {
+  const [isCountDownStarted, setIsCountDownStarted] = useState(false);
   const [timeLeft, { start }] = useCountDown(10 * 1000, 1000);
 
   // Start the timer during the first render
   useEffect(() => {
+    setIsCountDownStarted(true);
     start();
   }, []);
 
   useEffect(() => {
-    if (timeLeft < 1000 && onClickNext) {
+    if (isCountDownStarted && timeLeft < 1000 && onClickNext) {
       onClickNext();
     }
-  }, [timeLeft]);
+  }, [isCountDownStarted, timeLeft]);
 
   return (
     <ModalContent margin="3.75rem">

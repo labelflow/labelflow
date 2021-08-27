@@ -1,6 +1,7 @@
 import { Heading, Text, Center, Box, Button, HStack } from "@chakra-ui/react";
 import NextLink from "next/link";
 import { Meta } from "../components/meta";
+import { AppLifecycleManager } from "../components/app-lifecycle-manager";
 import { Layout } from "../components/layout";
 import { EmptyStateResult } from "../components/empty-state";
 
@@ -8,6 +9,8 @@ const Error404Page = () => {
   return (
     <>
       <Meta title="Labelflow | Page not found" />
+      <AppLifecycleManager />
+
       <Layout>
         <Center h="full">
           <Box as="section">

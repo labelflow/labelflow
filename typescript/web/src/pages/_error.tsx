@@ -10,6 +10,8 @@ import {
 import { FallbackProps } from "react-error-boundary";
 import { NextPageContext } from "next";
 import NextLink from "next/link";
+import { useRouter } from "next/router";
+import { AppLifecycleManager } from "../components/app-lifecycle-manager";
 
 import { Meta } from "../components/meta";
 import { Layout } from "../components/layout";
@@ -22,9 +24,11 @@ type Props = FallbackProps & {
 };
 
 const ErrorPage = ({ statusCode, error, resetErrorBoundary }: Props) => {
+  const router = useRouter();
   return (
     <>
       <Meta title="Labelflow | Error" />
+
       <Layout>
         <Center h="full">
           <Box as="section">
@@ -63,11 +67,16 @@ const ErrorPage = ({ statusCode, error, resetErrorBoundary }: Props) => {
                   <Button onClick={resetErrorBoundary}>Retry</Button>
                 )}
 
-                <NextLink href="/debug">
-                  <Button as="a" href="/debug">
-                    See debug info
-                  </Button>
-                </NextLink>
+                {/* <NextLink href="/debug"> */}
+                <Button
+                  onClick={() => {
+                    router.push("/debug");
+                    resetErrorBoundary();
+                  }}
+                >
+                  See debug info
+                </Button>
+                {/* </NextLink> */}
 
                 <Button
                   colorScheme="brand"

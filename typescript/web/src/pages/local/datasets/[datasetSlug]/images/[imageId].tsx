@@ -94,7 +94,7 @@ const ImagePage = () => {
 
   const handleError = useErrorHandler();
   if (errorDataset || errorImage) {
-    if (errorDataset && !errorDataset.message.match(/No dataset with id/)) {
+    if (errorDataset && !errorDataset.message.match(/No dataset with slug/)) {
       handleError(errorDataset);
     }
     if (errorImage && !errorImage.message.match(/No image with id/)) {

@@ -38,7 +38,7 @@ const DebugPage = () => {
 
   return (
     <>
-      <AppLifecycleManager />
+      {/* <AppLifecycleManager /> */}
       <Meta title="Labelflow | Debug" />
       <Layout
         topBarLeftContent={
