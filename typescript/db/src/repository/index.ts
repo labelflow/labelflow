@@ -1,7 +1,12 @@
 import { PrismaClient } from "@prisma/client";
 
 import { DbLabel, Repository } from "@labelflow/common-resolvers";
-import { getUploadTargetHttp, getFromStorage, putInStorage } from "./upload";
+import {
+  getUploadTargetHttp,
+  getFromStorage,
+  putInStorage,
+  deleteFromStorage,
+} from "./upload";
 import { countLabels, listLabels } from "./label";
 
 const prisma = new PrismaClient();
@@ -116,6 +121,7 @@ export const repository: Repository = {
       }),
   },
   upload: {
+    delete: deleteFromStorage,
     get: getFromStorage,
     getUploadTarget: getUploadTargetHttp,
     getUploadTargetHttp,
