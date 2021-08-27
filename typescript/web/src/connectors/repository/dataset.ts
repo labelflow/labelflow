@@ -10,9 +10,9 @@ export const deleteDataset: Repository["dataset"]["delete"] = async (id) => {
   const datasetToDelete = await throwIfResolvesToNil<
     [string],
     DbDataset | undefined
-  >(`Cannot find dataset with id "${id}" to delete`, (idToGet) =>
-    getDatabase().dataset.get(idToGet)
-  )(id);
+  >(`Cannot find dataset with id "${id}" to delete`, async (idToGet) => {
+    return await getDatabase().dataset.get(idToGet);
+  })(id);
 
   const imagesToDelete = await getDatabase()
     .image.where({

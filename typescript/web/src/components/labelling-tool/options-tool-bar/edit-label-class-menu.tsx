@@ -162,11 +162,11 @@ export const EditLabelClassMenu = () => {
           setIsOpen={setIsOpen}
           selectedLabelClass={selectedLabelClass}
           labelClasses={labelClasses}
-          createNewClass={async (name) =>
-            isInDrawingMode
-              ? createNewClass(name, selectedLabelClassId)
-              : createNewClassAndUpdateLabel(name, selectedLabelId)
-          }
+          createNewClass={async (name) => {
+            return isInDrawingMode
+              ? await createNewClass(name, selectedLabelClassId)
+              : await createNewClassAndUpdateLabel(name, selectedLabelId);
+          }}
           onSelectedClassChange={(item) => {
             onSelectedClassChange(item);
           }}

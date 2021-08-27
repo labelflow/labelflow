@@ -92,7 +92,7 @@ export const checkServiceWorkerReady = async (
     //   error
     // );
     if (retries < maxTries) {
-      return checkServiceWorkerReady(maxTries, retries + 1);
+      return await checkServiceWorkerReady(maxTries, retries + 1);
     }
     throw error;
   }

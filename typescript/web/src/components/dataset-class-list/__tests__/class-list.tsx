@@ -10,7 +10,7 @@ import { setupTestsWithLocalDatabase } from "../../../utils/setup-local-db-tests
 setupTestsWithLocalDatabase();
 
 const createDataset = async (name: string, datasetId?: string | null) => {
-  return client.mutate({
+  return await client.mutate({
     mutation: gql`
       mutation createDataset($datasetId: String, $name: String!) {
         createDataset(data: { id: $datasetId, name: $name }) {

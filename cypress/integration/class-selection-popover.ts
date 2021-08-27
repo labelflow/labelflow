@@ -146,7 +146,7 @@ describe("Class selection popover", () => {
   it("right clicks on a label to change its class", () => {
     // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
     cy.visit(
-      `/datasets/${datasetSlug}/images/${imageId}?modal-welcome=closed&modal-update-service-worker=update`
+      `/local/datasets/${datasetSlug}/images/${imageId}?modal-welcome=closed&modal-update-service-worker=update`
     );
     cy.get('[aria-label="loading indicator"]').should("not.exist");
     cy.get('[aria-label="Selection tool"]').click();
@@ -196,7 +196,7 @@ describe("Class selection popover", () => {
 
     // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
     cy.visit(
-      `/datasets/${datasetSlug}/images/${imageId}?modal-welcome=closed&modal-update-service-worker=update`
+      `/local/datasets/${datasetSlug}/images/${imageId}?modal-welcome=closed&modal-update-service-worker=update`
     );
     cy.get('[aria-label="loading indicator"]').should("not.exist");
     cy.get('[aria-label="Selection tool"]').click();
@@ -270,7 +270,7 @@ describe("Class selection popover", () => {
     cy.wrap(createLabelClass("My new class", "#65A30D", datasetId));
     // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
     cy.visit(
-      `/datasets/${datasetSlug}/images/${imageId}?modal-welcome=closed&modal-update-service-worker=update`
+      `/local/datasets/${datasetSlug}/images/${imageId}?modal-welcome=closed&modal-update-service-worker=update`
     );
     cy.get('[aria-label="loading indicator"]').should("not.exist");
     cy.get('[aria-label="Selection tool"]').click();
@@ -330,14 +330,14 @@ describe("Class selection popover", () => {
 
   it("should update the label classes list when a label class is deleted", () => {
     cy.visit(
-      `/datasets/${datasetSlug}/images/${imageId}?modal-welcome=closed&modal-update-service-worker=update`
+      `/local/datasets/${datasetSlug}/images/${imageId}?modal-welcome=closed&modal-update-service-worker=update`
     );
 
     cy.get('[aria-label="loading indicator"]').should("not.exist");
     cy.contains("cypress test dataset").click();
 
     cy.contains("classes").click();
-    cy.url().should("contain", `/datasets/${datasetSlug}/classes`);
+    cy.url().should("contain", `/local/datasets/${datasetSlug}/classes`);
 
     cy.get('[aria-label="Delete class"]').click();
 

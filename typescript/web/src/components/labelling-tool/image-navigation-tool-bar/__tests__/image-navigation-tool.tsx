@@ -126,7 +126,7 @@ test("should select previous image when the left arrow is pressed", async () => 
   userEvent.type(container, "{arrowleft}");
 
   expect(mockedPush).toHaveBeenCalledWith(
-    `/datasets/test-dataset/images/${oldestImageId}`
+    `/local/datasets/test-dataset/images/${oldestImageId}`
   );
 });
 
@@ -152,6 +152,6 @@ test("should select next image when the right arrow is pressed", async () => {
   userEvent.type(container, "{arrowright}");
 
   expect(mockedPush).toHaveBeenCalledWith(
-    `/datasets/test-dataset/images/${newestImageId}`
+    `/local/datasets/test-dataset/images/${newestImageId}`
   );
 });
