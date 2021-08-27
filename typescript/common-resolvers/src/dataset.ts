@@ -1,7 +1,8 @@
 import { trim } from "lodash/fp";
 import { v4 as uuidv4 } from "uuid";
 import slugify from "slugify";
-import type {
+import { add } from "date-fns";
+import {
   MutationCreateDatasetArgs,
   MutationDeleteDatasetArgs,
   MutationUpdateDatasetArgs,
@@ -14,15 +15,11 @@ import type {
 import { Context, DbDataset, Repository } from "./types";
 import { throwIfResolvesToNil } from "./utils/throw-if-resolves-to-nil";
 import { getImageEntityFromMutationArgs } from "./image";
-
-// The demo dataset images
-const demoImageUrls = [
-  "https://images.unsplash.com/photo-1579513141590-c597876aefbc?auto=format&fit=crop&w=882&q=80",
-  "https://images.unsplash.com/photo-1504710685809-7bb702595f8f?auto=format&fit=crop&w=934&q=80",
-  "https://images.unsplash.com/photo-1569579933032-9e16447c50e3?auto=format&fit=crop&w=2100&q=80",
-  "https://images.unsplash.com/photo-1595687453172-253f44ed3975?auto=format&fit=crop&w=2100&q=80",
-  "https://images.unsplash.com/photo-1574082595167-86d59cefcc3a?auto=format&fit=crop&w=2100&q=80",
-];
+import {
+  tutorialImageUrls,
+  tutorialLabelClassId,
+  tutorialLabels,
+} from "./data/dataset-tutorial";
 
 const getDatasetById = async (
   id: string,
@@ -184,34 +181,58 @@ const createDemoDataset = async (
   { repository }: Context
 ): Promise<DbDataset> => {
   const datasetId = uuidv4();
-  const currentDate = new Date().toISOString();
+  const now = new Date();
+  const currentDate = now.toISOString();
   try {
     await repository.dataset.add({
-      name: "Demo dataset",
-      slug: "demo-dataset",
+      name: "Tutorial dataset",
+      slug: "tutorial-dataset",
       id: datasetId,
       createdAt: currentDate,
       updatedAt: currentDate,
     });
   } catch (error) {
     if (error.name === "ConstraintError") {
-      // The demo dataset already exists, just return it
-      return await getDatasetByName("Demo dataset", repository);
+      // The tutorial dataset already exists, just return it
+      return await getDatasetByName("Tutorial dataset", repository);
     }
     throw error;
   }
-  await Promise.all(
-    demoImageUrls.map(async (url) => {
+  const tutorialDatasetImages = await Promise.all(
+    tutorialImageUrls.map(async (url, index) => {
       const imageEntity = await getImageEntityFromMutationArgs(
         {
           datasetId,
           url,
+          createdAt: add(now, { seconds: index }).toISOString(),
+          name: url.match(/\/static\/img\/(.*?)$/)?.[1],
         },
         {
           upload: repository.upload,
         }
       );
       return await repository.image.add(imageEntity);
+    })
+  );
+
+  await repository.labelClass.add({
+    id: tutorialLabelClassId,
+    name: "Horse",
+    color: "#F87171",
+    createdAt: currentDate,
+    updatedAt: currentDate,
+    datasetId,
+  });
+
+  await Promise.all(
+    tutorialLabels.map(async (label) => {
+      return await repository.label.add({
+        ...label,
+        id: uuidv4(),
+        createdAt: currentDate,
+        updatedAt: currentDate,
+        imageId: tutorialDatasetImages[2],
+      });
     })
   );
 

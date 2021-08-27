@@ -763,3 +763,83 @@ describe("Dataset resolver test suite", () => {
     );
   });
 });
+
+describe("Demo dataset mutation", () => {
+  test("Should create a demo dataset named 'Tutorial dataset'", async () => {
+    const demoDataset = await client.mutate({
+      mutation: gql`
+        mutation createDemoDataset {
+          createDemoDataset {
+            id
+            name
+          }
+        }
+      `,
+    });
+    expect(demoDataset?.data?.createDemoDataset?.name).toEqual(
+      "Tutorial dataset"
+    );
+  });
+  test("Should create a demo dataset with 4 images", async () => {
+    const demoDataset = await client.mutate({
+      mutation: gql`
+        mutation createDemoDataset {
+          createDemoDataset {
+            id
+            imagesAggregates {
+              totalCount
+            }
+          }
+        }
+      `,
+    });
+    expect(
+      demoDataset?.data?.createDemoDataset?.imagesAggregates?.totalCount
+    ).toEqual(4);
+  });
+  test("Should create a demo dataset where the 3rd images already has labels", async () => {
+    const demoDataset = await client.mutate({
+      mutation: gql`
+        mutation {
+          createDemoDataset {
+            id
+            images {
+              id
+              labels {
+                id
+              }
+            }
+          }
+        }
+      `,
+    });
+    expect(
+      demoDataset?.data?.createDemoDataset?.images?.[2]?.labels?.length
+    ).toEqual(10);
+  });
+  test("Created images should have a correct name", async () => {
+    const demoDataset = await client.mutate({
+      mutation: gql`
+        mutation {
+          createDemoDataset {
+            id
+            images {
+              id
+              name
+            }
+          }
+        }
+      `,
+    });
+    expect(
+      demoDataset?.data?.createDemoDataset?.images?.map(
+        (image: { name: string }) => image.name
+      )
+    ).toEqual([
+      "tutorial-image-1",
+      "tutorial-image-2",
+      "tutorial-image-3",
+      "tutorial-image-4",
+    ]);
+  });
+});
