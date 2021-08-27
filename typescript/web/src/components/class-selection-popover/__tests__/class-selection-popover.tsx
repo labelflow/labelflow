@@ -9,6 +9,7 @@ import {
 const labelClasses = [
   {
     id: "coaisndoiasndi",
+    index: 0,
     createdAt: "today",
     updatedAt: "today",
     labels: [],
@@ -18,6 +19,7 @@ const labelClasses = [
   },
   {
     id: "coaisndoiasndia",
+    index: 1,
     createdAt: "today",
     updatedAt: "today",
     labels: [],
@@ -89,6 +91,7 @@ describe("Class selection popover tests", () => {
 
     expect(onSelectedClassChange).toHaveBeenCalledWith({
       id: "coaisndoiasndi",
+      index: 0,
       createdAt: "today",
       updatedAt: "today",
       labels: [],
