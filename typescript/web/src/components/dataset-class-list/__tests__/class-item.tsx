@@ -56,7 +56,7 @@ describe("Dataset class list item tests", () => {
     jest.resetAllMocks();
   });
 
-  it("Should display a class with the possibility to edit and delete it", () => {
+  it("Should display a class with the possibility to reorder, edit and delete it", () => {
     render(
       <ClassItem
         edit={false}
@@ -68,6 +68,7 @@ describe("Dataset class list item tests", () => {
       { wrapper }
     );
     expect(screen.getByText(/someClass/i)).toBeDefined();
+    expect(screen.getByRole("button", { name: "Drag" })).toBeDefined();
     expect(
       screen.getByRole("button", { name: "Edit class someClass name" })
     ).toBeDefined();
