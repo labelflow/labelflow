@@ -3,7 +3,7 @@ import { getBoundedGeometryFromImage } from "@labelflow/common-resolvers";
 
 import { GeometryInput, LabelType } from "@labelflow/graphql-types";
 import { Effect } from "../../../../connectors/undo-store";
-import { getDatasetsQuery } from "../../../../pages/datasets";
+import { getDatasetsQuery } from "../../../../pages/local/datasets";
 
 type CreateLabelInputs = {
   imageId: string;

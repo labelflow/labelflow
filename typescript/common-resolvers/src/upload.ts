@@ -14,7 +14,7 @@ const getUploadTarget = async (
   _args: null,
   { repository }: Context
 ): Promise<UploadTarget> => {
-  return repository.upload.getUploadTarget();
+  return await repository.upload.getUploadTarget();
 };
 
 export default {

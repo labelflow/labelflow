@@ -7,7 +7,7 @@ import {
   hexColorSequence,
 } from "../../../utils/class-color-generator";
 import { Effect } from "..";
-import { getDatasetsQuery } from "../../../pages/datasets";
+import { getDatasetsQuery } from "../../../pages/local/datasets";
 import { datasetLabelClassesQuery } from "../../../components/dataset-class-list/class-item";
 
 const labelQuery = gql`

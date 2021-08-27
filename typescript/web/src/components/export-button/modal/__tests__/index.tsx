@@ -34,8 +34,8 @@ const wrapper = ({ children }: PropsWithChildren<{}>) => (
 const createDataset = async (
   datasetId = "mocked-dataset-id",
   name = "test dataset"
-) =>
-  client.mutate({
+) => {
+  return await client.mutate({
     mutation: gql`
       mutation createDataset($name: String!, $datasetId: ID) {
         createDataset(data: { name: $name, id: $datasetId }) {
@@ -45,6 +45,7 @@ const createDataset = async (
     `,
     variables: { datasetId, name },
   });
+};
 
 const labelData = {
   geometry: {

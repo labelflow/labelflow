@@ -107,7 +107,9 @@ export const EditLabelClass = forwardRef<
         trigger={<div style={{ width: 0, height: 0 }} />} // Needed to have the popover displayed preventing overflow
         labelClasses={labelClasses}
         selectedLabelClassId={selectedLabelClassId}
-        createNewClass={async (name) => createNewClass(name, selectedLabelId)}
+        createNewClass={async (name) => {
+          return await createNewClass(name, selectedLabelId);
+        }}
         onSelectedClassChange={(item) => {
           perform(
             createUpdateLabelClassOfLabelEffect(

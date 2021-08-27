@@ -66,31 +66,37 @@ const getDatasetFromWhereUniqueInput = async (
 ): Promise<DbDataset> => {
   const { id, name, slug } = where;
 
-  if (id != null) return getDatasetById(id, repository);
+  if (id != null) {
+    return await getDatasetById(id, repository);
+  }
 
-  if (name != null) return getDatasetByName(name, repository);
+  if (name != null) {
+    return await getDatasetByName(name, repository);
+  }
 
-  if (slug != null) return getDatasetBySlug(slug, repository);
+  if (slug != null) {
+    return await getDatasetBySlug(slug, repository);
+  }
 
   throw new Error(
     `Invalid where unique input for dataset entity: ${JSON.stringify(where)}`
   );
 };
 
-const getLabelClassesByDatasetId = (
+const getLabelClassesByDatasetId = async (
   datasetId: string,
   repository: Repository
 ) => {
-  return repository.labelClass.list({ datasetId });
+  return await repository.labelClass.list({ datasetId });
 };
 
 // Queries
-const images = (
+const images = async (
   dataset: DbDataset,
   args: QueryImagesArgs,
   { repository }: Context
 ) => {
-  return repository.image.list(
+  return await repository.image.list(
     { datasetId: dataset.id },
     args?.skip,
     args?.first
@@ -102,7 +108,7 @@ const labels = async (
   _args: any,
   { repository }: Context
 ) => {
-  return repository.label.list({ datasetId: dataset.id });
+  return await repository.label.list({ datasetId: dataset.id });
 };
 
 const labelClasses = async (
@@ -110,7 +116,7 @@ const labelClasses = async (
   _args: any,
   { repository }: Context
 ) => {
-  return getLabelClassesByDatasetId(dataset.id, repository);
+  return await getLabelClassesByDatasetId(dataset.id, repository);
 };
 
 const dataset = async (
@@ -118,7 +124,7 @@ const dataset = async (
   args: QueryDatasetArgs,
   { repository }: Context
 ): Promise<DbDataset> => {
-  return getDatasetFromWhereUniqueInput(args.where, repository);
+  return await getDatasetFromWhereUniqueInput(args.where, repository);
 };
 
 const datasets = async (
@@ -190,7 +196,7 @@ const createDemoDataset = async (
   } catch (error) {
     if (error.name === "ConstraintError") {
       // The demo dataset already exists, just return it
-      return getDatasetByName("Demo dataset", repository);
+      return await getDatasetByName("Demo dataset", repository);
     }
     throw error;
   }
@@ -205,11 +211,11 @@ const createDemoDataset = async (
           upload: repository.upload,
         }
       );
-      return repository.image.add(imageEntity);
+      return await repository.image.add(imageEntity);
     })
   );
 
-  return getDatasetById(datasetId, repository);
+  return await getDatasetById(datasetId, repository);
 };
 
 const updateDataset = async (
@@ -239,7 +245,7 @@ const updateDataset = async (
     throw new Error("Could not update the dataset");
   }
 
-  return getDatasetById(datasetToUpdate.id, repository);
+  return await getDatasetById(datasetToUpdate.id, repository);
 };
 
 const deleteDataset = async (
@@ -255,7 +261,9 @@ const deleteDataset = async (
     datasetId: args.where.id,
   });
   await Promise.all(
-    imagesOfDataset.map(async (image) => repository.upload.delete(image.url))
+    imagesOfDataset.map(
+      async (image) => await repository.upload.delete(image.url)
+    )
   );
   await repository.dataset.delete(datasetToDelete.id);
   return datasetToDelete;

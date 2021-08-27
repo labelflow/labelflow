@@ -14,12 +14,12 @@ import { useQuery, gql } from "@apollo/client";
 import { useErrorHandler } from "react-error-boundary";
 import { RiArrowRightSLine } from "react-icons/ri";
 import NextLink from "next/link";
-import { AppLifecycleManager } from "../../../components/app-lifecycle-manager";
-import { Layout } from "../../../components/layout";
-import Error404Page from "../../404";
-import { ExportButton } from "../../../components/export-button";
-import { ImportButton } from "../../../components/import-button";
-import { KeymapButton } from "../../../components/layout/top-bar/keymap-button";
+import { AppLifecycleManager } from "../../../../components/app-lifecycle-manager";
+import { Layout } from "../../../../components/layout";
+import Error404Page from "../../../404";
+import { ExportButton } from "../../../../components/export-button";
+import { ImportButton } from "../../../../components/import-button";
+import { KeymapButton } from "../../../../components/layout/top-bar/keymap-button";
 
 const getDataset = gql`
   query getDataset($slug: String!) {
@@ -54,7 +54,7 @@ const DatasetIndexPage = ({
   useEffect(() => {
     if (!error && !loading) {
       router.replace({
-        pathname: `/datasets/${datasetSlug}/images`,
+        pathname: `/local/datasets/${datasetSlug}/images`,
       });
     }
   }, [error, loading]);
@@ -83,7 +83,7 @@ const DatasetIndexPage = ({
             separator={<ArrowRightIcon color="gray.500" />}
           >
             <BreadcrumbItem>
-              <NextLink href="/datasets">
+              <NextLink href="/local/datasets">
                 <BreadcrumbLink>Datasets</BreadcrumbLink>
               </NextLink>
             </BreadcrumbItem>

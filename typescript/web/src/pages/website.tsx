@@ -2,7 +2,7 @@ import { Box, useColorModeValue as mode } from "@chakra-ui/react";
 import * as React from "react";
 
 import { NavContent } from "../components/website/Navbar/NavContent";
-import {Why} from "../components/website/Why/Why";
+import { Why } from "../components/website/Why/Why";
 import { Hero } from "../components/website/Hero/Hero";
 import { Features } from "../components/website/Features/Features";
 import { LogoGrid } from "../components/website/Logos/LogoGrid";

@@ -35,7 +35,10 @@ export const GalleryItem = memo(
         pr="7.5px"
       >
         {imageId ? (
-          <Link href={`/datasets/${datasetSlug}/images/${imageId}`} passHref>
+          <Link
+            href={`/local/datasets/${datasetSlug}/images/${imageId}`}
+            passHref
+          >
             <a aria-current={isSelected ? "page" : undefined}>
               <Badge
                 pointerEvents="none"

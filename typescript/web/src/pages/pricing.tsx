@@ -37,7 +37,7 @@ export default function Pricing() {
   );
 }
 
-export const getStaticProps: GetStaticProps = async () => {
+export const getServerSideProps: GetStaticProps = async () => {
   return {
     redirect: {
       permanent: false,

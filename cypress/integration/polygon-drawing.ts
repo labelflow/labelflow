@@ -110,7 +110,7 @@ describe("Polygon drawing", () => {
   it("switches between drawing tools", () => {
     // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
     cy.visit(
-      `/datasets/${datasetSlug}/images/${imageId}?modal-welcome=closed&modal-update-service-worker=update`
+      `/local/datasets/${datasetSlug}/images/${imageId}?modal-welcome=closed&modal-update-service-worker=update`
     );
     cy.get('[aria-label="loading indicator"]').should("not.exist");
     cy.get('[aria-label="Drawing polygon tool"]').should("not.exist");
@@ -132,7 +132,7 @@ describe("Polygon drawing", () => {
   it("draws a polygon", () => {
     // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
     cy.visit(
-      `/datasets/${datasetSlug}/images/${imageId}?modal-welcome=closed&modal-update-service-worker=update`
+      `/local/datasets/${datasetSlug}/images/${imageId}?modal-welcome=closed&modal-update-service-worker=update`
     );
     cy.get('[aria-label="loading indicator"]').should("not.exist");
     cy.get('[aria-label="Change Drawing tool"]').should("exist").click();

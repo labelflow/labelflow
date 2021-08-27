@@ -1,4 +1,6 @@
 import mime from "mime-types";
+import { Geometry } from "@turf/helpers";
+import { coordReduce } from "@turf/meta";
 import { DbImage, DbLabelClass } from "../../types";
 
 import {
@@ -18,6 +20,7 @@ export {
   convertImageToCocoImage,
   convertImagesToCocoImages,
   convertLabelflowDatasetToCocoDataset,
+  convertGeometryToSegmentation,
 };
 
 const initialCocoDataset: CocoDataset = {
@@ -67,6 +70,40 @@ const convertLabelClassesToCocoCategories = (labelClasses: DbLabelClass[]) => {
   };
 };
 
+const convertGeometryToSegmentation = (
+  geometry: Geometry,
+  imageHeight: number
+): number[][] => {
+  return coordReduce(
+    geometry,
+    (
+      segmentation: number[][],
+      [x, y]: number[],
+      _coordIndex: number,
+      _featureIndex: number,
+      multiFeatureIndex: number,
+      geometryIndex: number
+    ) => {
+      // Only take the outer ring of the geometry
+      if (geometryIndex > 0) {
+        return segmentation;
+      }
+
+      const currentSegment = segmentation[multiFeatureIndex]
+        ? segmentation[multiFeatureIndex]
+        : [];
+
+      const coordToAdd = [x, imageHeight - y];
+
+      // eslint-disable-next-line no-param-reassign
+      segmentation[multiFeatureIndex] = [...currentSegment, ...coordToAdd];
+
+      return segmentation;
+    },
+    []
+  );
+};
+
 const convertLabelToCocoAnnotation = (
   {
     x,
@@ -84,16 +121,9 @@ const convertLabelToCocoAnnotation = (
     id,
     image_id: imageId,
     category_id: categoryId,
-    segmentation: geometry.coordinates.map(
-      (polygon: [number, number][]): number[] =>
-        polygon?.reduce(
-          (polygonCoordinates: number[], coordinates) => [
-            ...polygonCoordinates,
-            coordinates[0],
-            imageDimensions.height - coordinates[1],
-          ],
-          []
-        )
+    segmentation: convertGeometryToSegmentation(
+      geometry,
+      imageDimensions.height
     ),
     area: width * height,
     bbox: [x, imageDimensions.height - y - height, width, height],

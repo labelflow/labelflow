@@ -3,7 +3,6 @@ import {
   Heading,
   Link,
   Center,
-  Image,
   Text,
   useColorModeValue as mode,
 } from "@chakra-ui/react";
@@ -80,7 +79,10 @@ export default function Pricing() {
               <br />
               <br />
               <Center>
-              <img src="static/img/about-screenshot1.png" alt="Sterblue Platform" />
+                <img
+                  src="static/img/about-screenshot1.png"
+                  alt="Sterblue Platform"
+                />
               </Center>
               <br />
               <br />
@@ -101,10 +103,16 @@ export default function Pricing() {
               you save 23% of your time increasing false negative rate by 14%”
               <br />
               <br />
-              With <b><Link color="brand.500" href="https://labelflow.ai/website">Labelflow</Link>, we now want to support every AI-applied company in
-              the world building the next big thing</b>. We start small with our
-              labelling tool, with a strong focus on user experience.
-              That’s just the beginning.
+              With{" "}
+              <b>
+                <Link color="brand.500" href="https://labelflow.ai/website">
+                  Labelflow
+                </Link>
+                , we now want to support every AI-applied company in the world
+                building the next big thing
+              </b>
+              . We start small with our labelling tool, with a strong focus on
+              user experience. That’s just the beginning.
               <br />
               <br />
               We are a team of enthusiastic developers and data scientists. We
