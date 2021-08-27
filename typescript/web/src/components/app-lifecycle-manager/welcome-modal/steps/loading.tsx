@@ -5,33 +5,30 @@ import {
   VStack,
   HStack,
   Button,
+  Heading,
   Image,
   Center,
   Text,
-  Heading,
   ModalBody,
   ModalHeader,
   useColorModeValue as mode,
 } from "@chakra-ui/react";
 import { RiGithubFill } from "react-icons/ri";
 
-import gift from "../../../../../public/static/graphics/gift.svg";
+import rocket from "../../../../../public/static/graphics/rocket.svg";
 
 const GithubIcon = chakra(RiGithubFill);
-type Props = {
-  startLabellingButtonRef: React.Ref<HTMLButtonElement>;
-  onClickNext?: () => void;
-};
 
-export const LoadingDemo = ({
+export const Loading = ({
   startLabellingButtonRef,
-  onClickNext,
-}: Props) => {
+}: {
+  startLabellingButtonRef: React.Ref<HTMLButtonElement>;
+}) => {
   return (
     <ModalContent margin="3.75rem">
       <ModalHeader textAlign="center" padding="8">
         <Center>
-          <Image src={gift} mt="12" mb="8" width="40" height="40" />
+          <Image src={rocket} mt="12" mb="8" width="40" height="40" />
         </Center>
       </ModalHeader>
 
@@ -51,8 +48,9 @@ export const LoadingDemo = ({
             fontWeight="extrabold"
             textAlign="center"
           >
-            Preparing the demo...
+            Getting ready...
           </Heading>
+
           <Text
             color={mode("gray.600", "gray.400")}
             maxW="lg"
@@ -60,13 +58,12 @@ export const LoadingDemo = ({
             fontWeight="medium"
             textAlign="justify"
           >
-            The demo dataset contains example data and a quick tutorial, helping
-            you get you started easily with the tool. This should last a few
-            seconds.
+            Labelflow runs completely offline, allowing you to have a lightning
+            fast labelling tool even without internet connection, and
+            guaranteeing we don&apos;t use your data.
           </Text>
         </VStack>
       </ModalBody>
-
       <ModalFooter>
         <HStack
           direction={{ base: "column", md: "row" }}
@@ -97,8 +94,7 @@ export const LoadingDemo = ({
             height="14"
             px="8"
             isLoading
-            onClick={onClickNext}
-            loadingText="Loading the demo"
+            loadingText="Loading the app"
           >
             Start Labelling!
           </Button>

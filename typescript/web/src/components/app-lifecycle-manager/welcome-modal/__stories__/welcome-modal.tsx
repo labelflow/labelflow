@@ -35,6 +35,20 @@ WrongBrowser.parameters = {
   },
 };
 
+export const Loading = () => {
+  return <WelcomeModal initialHasUserClickedStart />;
+};
+
+Loading.parameters = {
+  nextRouter: {
+    path: "/local/datasets?modal-welcome=open",
+    asPath: "/local/datasets?modal-welcome=open",
+    query: {
+      "modal-welcome": "loading-worker",
+    },
+  },
+};
+
 export const Welcome = () => {
   return <WelcomeModal />;
 };
@@ -45,63 +59,6 @@ Welcome.parameters = {
     asPath: "/local/datasets?modal-welcome=open",
     query: {
       "modal-welcome": "welcome",
-    },
-  },
-};
-
-export const LoadingWorker = () => {
-  return (
-    <WelcomeModal
-      initialWelcomeWorkflowState="loading-worker"
-      initialHasUserClickedStart
-    />
-  );
-};
-
-LoadingWorker.parameters = {
-  nextRouter: {
-    path: "/local/datasets?modal-welcome=open",
-    asPath: "/local/datasets?modal-welcome=open",
-    query: {
-      "modal-welcome": "loading-worker",
-    },
-  },
-};
-
-export const LoadingDemo = () => {
-  return (
-    <WelcomeModal
-      initialWelcomeWorkflowState="loading-demo"
-      initialHasUserClickedStart
-    />
-  );
-};
-
-LoadingDemo.parameters = {
-  nextRouter: {
-    path: "/local/datasets?modal-welcome=open",
-    asPath: "/local/datasets?modal-welcome=open",
-    query: {
-      "modal-welcome": "loading-demo",
-    },
-  },
-};
-
-export const LoadingFinished = () => {
-  return (
-    <WelcomeModal
-      initialWelcomeWorkflowState="loading-finished"
-      initialHasUserClickedStart
-    />
-  );
-};
-
-LoadingFinished.parameters = {
-  nextRouter: {
-    path: "/local/datasets?modal-welcome=open",
-    asPath: "/local/datasets?modal-welcome=open",
-    query: {
-      "modal-welcome": "loading-finished",
     },
   },
 };

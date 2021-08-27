@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import {
   chakra,
   ModalContent,
@@ -12,23 +13,44 @@ import {
   ModalHeader,
   useColorModeValue as mode,
 } from "@chakra-ui/react";
-import { RiGithubFill, RiPlayFill } from "react-icons/ri";
+import {
+  // RiGithubFill,
+  RiPlayFill,
+  RiSpeedMiniFill,
+} from "react-icons/ri";
+
+import useCountDown from "react-countdown-hook";
 
 import { Logo } from "../../../logo";
 
-const GithubIcon = chakra(RiGithubFill);
 const PlayIcon = chakra(RiPlayFill);
+const SpeedIcon = chakra(RiSpeedMiniFill);
+// const GithubIcon = chakra(RiGithubFill);
+
 type Props = {
   startLabellingButtonRef: React.Ref<HTMLButtonElement>;
-  hasUserClickedStart: boolean;
   onClickNext: () => void;
+  onClickSkip?: () => void;
 };
 
 export const Welcome = ({
   startLabellingButtonRef,
-  hasUserClickedStart,
+  onClickSkip,
   onClickNext,
 }: Props) => {
+  const [timeLeft, { start }] = useCountDown(10 * 1000, 1000);
+
+  // Start the timer during the first render
+  useEffect(() => {
+    start();
+  }, []);
+
+  useEffect(() => {
+    if (timeLeft < 1000 && onClickNext) {
+      onClickNext();
+    }
+  }, [timeLeft]);
+
   return (
     <ModalContent margin="3.75rem">
       <ModalHeader textAlign="center" padding="8">
@@ -81,7 +103,7 @@ export const Welcome = ({
           spacing="4"
           mb="10"
         >
-          <Button
+          {/* <Button
             as="a"
             leftIcon={<GithubIcon fontSize="xl" />}
             href="https://github.com/Labelflow/labelflow"
@@ -93,9 +115,8 @@ export const Welcome = ({
             px="8"
           >
             See code on Github
-          </Button>
-
-          <Button
+          </Button> */}
+          {/* <Button
             ref={startLabellingButtonRef}
             leftIcon={<PlayIcon fontSize="xl" />}
             size="lg"
@@ -108,6 +129,32 @@ export const Welcome = ({
             loadingText="Loading the app"
           >
             Start Labelling!
+          </Button> */}
+          <Button
+            size="lg"
+            leftIcon={<SpeedIcon fontSize="xl" />}
+            minW="210px"
+            variant="link"
+            height="14"
+            px="8"
+            loadingText="Skip the tutorial"
+            onClick={onClickSkip}
+          >
+            Skip the tutorial
+          </Button>
+
+          <Button
+            ref={startLabellingButtonRef}
+            leftIcon={<PlayIcon fontSize="xl" />}
+            size="lg"
+            minW="210px"
+            colorScheme="brand"
+            height="14"
+            px="8"
+            loadingText="Get started!"
+            onClick={onClickNext}
+          >
+            Get started!
           </Button>
         </HStack>
       </ModalFooter>

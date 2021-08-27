@@ -23,12 +23,12 @@ const BackIcon = chakra(RiArrowGoBackLine);
 const PlayIcon = chakra(RiPlayFill);
 type Props = {
   startLabellingButtonRef: React.Ref<HTMLButtonElement>;
-  onClickNext?: () => void;
+  onClickTryAnyway?: () => void;
 };
 
 export const WrongBrowser = ({
   startLabellingButtonRef,
-  onClickNext,
+  onClickTryAnyway,
 }: Props) => {
   return (
     <ModalContent margin="3.75rem">
@@ -142,7 +142,7 @@ export const WrongBrowser = ({
             height="14"
             px="8"
             isLoading={false}
-            onClick={onClickNext}
+            onClick={onClickTryAnyway}
             variant="link"
             loadingText="Loading the app"
           >

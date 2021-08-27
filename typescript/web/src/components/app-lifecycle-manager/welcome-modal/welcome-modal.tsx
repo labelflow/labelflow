@@ -8,10 +8,8 @@ import type { Dataset as DatasetType } from "@labelflow/graphql-types";
 import { useRouter } from "next/router";
 import { browser } from "../../../utils/detect-scope";
 import { WrongBrowser } from "./steps/wrong-browser";
-import { LoadingFinished } from "./steps/loading-finished";
 import { Welcome } from "./steps/welcome";
-import { LoadingWorker } from "./steps/loading-worker";
-import { LoadingDemo } from "./steps/loading-demo";
+import { Loading } from "./steps/loading";
 import {
   checkServiceWorkerReady,
   messageNoWindow,
@@ -21,12 +19,6 @@ type WelcomeModalParam =
   | undefined // Default: Stays close if user already onboarded, else open asap
   | "open" // Force it to open asap
   | "closed"; // Force it to be closed and never open
-
-type WelcomeWorkflowState =
-  | undefined
-  | "loading-worker" // Loading worker
-  | "loading-demo" // Loading demo data
-  | "loading-finished"; // Finished loading everything
 
 export const getDatasetsQuery = gql`
   query getDatasets {
@@ -59,33 +51,44 @@ export const createDemoDatasetQuery = gql`
   }
 `;
 
-// type HasUserTriedApp = "hasUserTriedApp";
-
 const performWelcomeWorkflow = async ({
+  isServiceWorkerActive,
+  setIsServiceWorkerActive,
   client,
   setParamModalWelcome,
-  setWelcomeWorkflowState,
-  setCookie,
+  setIsLoadingWorkerAndDemo,
+  setHasUserTriedApp,
   handleError,
 }: {
+  isServiceWorkerActive: boolean;
+  setIsServiceWorkerActive: (state: boolean) => void;
   setParamModalWelcome: (
     state: WelcomeModalParam,
     updateType: "replaceIn"
   ) => void;
-  setWelcomeWorkflowState: (state: WelcomeWorkflowState) => void;
-
+  setIsLoadingWorkerAndDemo: (state: boolean) => void;
   client: ApolloClient<{}>;
-  setCookie: any;
+  setHasUserTriedApp: any;
   handleError: (error: Error) => void;
 }) => {
   try {
+    if (isServiceWorkerActive) {
+      return;
+    }
     console.log("setParamModalWelcome(undefined, replaceIn);", 1);
     setParamModalWelcome(undefined, "replaceIn");
-    setWelcomeWorkflowState("loading-worker");
 
-    await checkServiceWorkerReady();
+    setIsLoadingWorkerAndDemo(true);
 
-    setWelcomeWorkflowState("loading-demo");
+    try {
+      await checkServiceWorkerReady();
+    } catch (e) {
+      if (e.message === messageNoWindow) {
+        return;
+      }
+      throw e;
+    }
+    setIsServiceWorkerActive(true);
 
     const { data: getDatasetsResult } = await client.query({
       query: getDatasetsQuery,
@@ -108,8 +111,11 @@ const performWelcomeWorkflow = async ({
       }
     }
 
-    setCookie("hasUserTriedApp", "true", { path: "/", httpOnly: false });
-    setWelcomeWorkflowState("loading-finished");
+    setHasUserTriedApp("hasUserTriedApp", "true", {
+      path: "/",
+      httpOnly: false,
+    });
+    setIsLoadingWorkerAndDemo(false);
   } catch (error) {
     handleError(error);
   }
@@ -117,48 +123,24 @@ const performWelcomeWorkflow = async ({
 
 export const WelcomeModal = ({
   initialIsServiceWorkerActive = false,
-  initialHasUserClickedStart = false,
   initialIsWrongBrowser = false,
-  initialWelcomeWorkflowState = undefined,
+  initialIsLoadingWorkerAndDemo = false,
 }: {
   initialIsServiceWorkerActive?: boolean;
-  initialHasUserClickedStart?: boolean;
   initialIsWrongBrowser?: boolean;
-  initialWelcomeWorkflowState?: WelcomeWorkflowState;
+  initialIsLoadingWorkerAndDemo?: boolean;
 }) => {
   const router = useRouter();
   const handleError = useErrorHandler();
   const client = useApolloClient();
   const startLabellingButtonRef = useRef<HTMLButtonElement>(null);
-  const [{ hasUserTriedApp }, setCookie] = useCookies(["hasUserTriedApp"]);
-
-  // State variables
-
-  // By default (including during SSR) we consider the service worker to be ready
-  // since this is the nominal case that happen all the time except during the very first visit
-  const [isServiceWorkerActive, setIsServiceWorkerActive] = useState(
-    initialIsServiceWorkerActive || hasUserTriedApp === "true"
-  );
-
-  // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
-  // This param can have several values:
-  //   - undefined: Normal behavior, only show the welcome modal when needed
-  //   - "open": Force the welcome modal to open even if not needed
-  //   - "closed": Don't ever open the welcome modal
-  const [paramModalWelcome, setParamModalWelcome] =
-    useQueryParam<WelcomeModalParam>(
-      "modal-welcome",
-      StringParam as QueryParamConfig<WelcomeModalParam, WelcomeModalParam>
-    );
-
-  const [hasUserClickedStart, setHasUserClickedStart] = useState(
-    initialHasUserClickedStart
-  );
-
-  const [welcomeWorkflowState, setWelcomeWorkflowState] =
-    useState<WelcomeWorkflowState>(initialWelcomeWorkflowState);
-
-  const [isWrongBrowser, setIsWrongBrowser] = useState(() => {
+  const [{ hasUserTriedApp }, setHasUserTriedApp] = useCookies([
+    "hasUserTriedApp",
+  ]);
+  const [{ tryDespiteWrongBrowser }, setTryDespiteWrongBrowser] = useCookies([
+    "tryDespiteWrongBrowser",
+  ]);
+  const [isWrongBrowser] = useState(() => {
     const name = browser?.name;
     const os = browser?.os;
     const versionNumber = parseInt(browser?.version ?? "0", 10);
@@ -183,57 +165,61 @@ export const WelcomeModal = ({
     return false;
   });
 
-  // State Transitions
+  // State variables
 
-  // This hook only run once in browser after the component is rendered for the first time.
-  // It has same effect as the old componentDidMount lifecycle callback.
-  // See https://github.com/shadowwalker/next-pwa/blob/master/examples/lifecycle/pages/index.js
-  // useEffect(() => {
-  //   const checkServiceWorkerStatus = async (): Promise<void> => {
-  //     try {
-  //       await checkServiceWorkerReady();
-  //       setIsServiceWorkerActive(true);
-  //     } catch (error) {
-  //       if (error.message === messageNoWindow) {
-  //         return;
-  //       }
-  //       setIsServiceWorkerActive(false);
-  //       handleError(error);
-  //     }
-  //   };
-  //   checkServiceWorkerStatus();
-  // }, []);
+  // By default (including during SSR) we consider the service worker to be ready
+  // since this is the nominal case that happen all the time except during the very first visit
+  const [isServiceWorkerActive, setIsServiceWorkerActive] = useState(
+    initialIsServiceWorkerActive || hasUserTriedApp === "true"
+  );
+
+  // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
+  // This param can have several values:
+  //   - undefined: Normal behavior, only show the welcome modal when needed
+  //   - "open": Force the welcome modal to open even if not needed
+  //   - "closed": Don't ever open the welcome modal
+  const [paramModalWelcome, setParamModalWelcome] =
+    useQueryParam<WelcomeModalParam>(
+      "modal-welcome",
+      StringParam as QueryParamConfig<WelcomeModalParam, WelcomeModalParam>
+    );
+
+  const [isLoadingWorkerAndDemo, setIsLoadingWorkerAndDemo] = useState(
+    initialIsLoadingWorkerAndDemo
+  );
+
+  // State Transitions
 
   // wrong-browser => undefined
   const pretendIsCompatibleBrowser = useCallback(() => {
-    setIsWrongBrowser(false);
+    setTryDespiteWrongBrowser("tryDespiteWrongBrowser", "true", {
+      path: "/",
+      httpOnly: false,
+    });
   }, []);
 
-  // undefined => welcome
-  // useEffect(() => {
-  //   if (
-  //     router.isReady &&
-  //     ((!isWrongBrowser &&
-  //       !isServiceWorkerActive &&
-  //       paramModalWelcome !== "closed") ||
-  //       paramModalWelcome === "open")
-  //   ) {
-  //     performWelcomeWorkflow({
-  //       client,
-  //       setParamModalWelcome,
-  //       setWelcomeWorkflowState,
-  //       setCookie,
-  //       handleError,
-  //     });
-  //   }
-  // }, [isWrongBrowser, router.isReady]);
+  // undefined => loading => welcome
+  useEffect(() => {
+    if (
+      router.isReady &&
+      ((!(isWrongBrowser && tryDespiteWrongBrowser !== "true") &&
+        !isServiceWorkerActive &&
+        paramModalWelcome !== "closed") ||
+        paramModalWelcome === "open")
+    ) {
+      performWelcomeWorkflow({
+        isServiceWorkerActive,
+        setIsServiceWorkerActive,
+        client,
+        setParamModalWelcome,
+        setIsLoadingWorkerAndDemo,
+        setHasUserTriedApp,
+        handleError,
+      });
+    }
+  }, [tryDespiteWrongBrowser, router.isReady]);
 
-  // welcome => loading-worker
-  const handleClickStart = useCallback(() => {
-    setHasUserClickedStart(true);
-  }, []);
-
-  // loading-finished => undefined
+  // welcome => undefined
   const handleGetStarted = useCallback(() => {
     console.log("handleGetStarted1");
     setParamModalWelcome(undefined, "replaceIn");
@@ -241,7 +227,7 @@ export const WelcomeModal = ({
     router.push("/local/datasets/demo-dataset");
   }, []);
 
-  // loading-finished => undefined
+  // welcome => undefined
   const handleSkip = useCallback(() => {
     console.log("handleSkip1");
     setParamModalWelcome(undefined, "replaceIn");
@@ -249,12 +235,25 @@ export const WelcomeModal = ({
     router.push("/local/datasets");
   }, []);
 
+  const shouldShowWrongBrowserModal =
+    isWrongBrowser &&
+    tryDespiteWrongBrowser !== "true" &&
+    hasUserTriedApp !== "true";
+
+  const shouldShowLoadingModal =
+    hasUserTriedApp !== "true" && isLoadingWorkerAndDemo;
+
+  const shouldShowWelcomeModal =
+    hasUserTriedApp !== "true" && !isLoadingWorkerAndDemo;
+
   return (
     <Modal
       isOpen={
-        paramModalWelcome === "open" ||
-        hasUserTriedApp !== "true" ||
-        welcomeWorkflowState != null
+        shouldShowWrongBrowserModal ||
+        (!shouldShowWrongBrowserModal && shouldShowLoadingModal) ||
+        (!shouldShowWrongBrowserModal &&
+          !shouldShowLoadingModal &&
+          shouldShowWelcomeModal)
       }
       onClose={() => {}}
       size="3xl"
@@ -264,42 +263,29 @@ export const WelcomeModal = ({
     >
       <ModalOverlay />
       {(() => {
-        if (isWrongBrowser) {
+        if (shouldShowWrongBrowserModal) {
           return (
             <WrongBrowser
               startLabellingButtonRef={startLabellingButtonRef}
-              onClickNext={pretendIsCompatibleBrowser}
+              onClickTryAnyway={pretendIsCompatibleBrowser}
             />
           );
         }
-        if (!hasUserClickedStart) {
+
+        if (shouldShowLoadingModal) {
+          return <Loading startLabellingButtonRef={startLabellingButtonRef} />;
+        }
+
+        if (shouldShowWelcomeModal) {
           return (
             <Welcome
-              startLabellingButtonRef={startLabellingButtonRef}
-              hasUserClickedStart={hasUserClickedStart}
-              onClickNext={handleClickStart}
-            />
-          );
-        }
-        if (welcomeWorkflowState === "loading-worker") {
-          return (
-            <LoadingWorker startLabellingButtonRef={startLabellingButtonRef} />
-          );
-        }
-        if (welcomeWorkflowState === "loading-demo") {
-          return (
-            <LoadingDemo startLabellingButtonRef={startLabellingButtonRef} />
-          );
-        }
-        if (welcomeWorkflowState === "loading-finished") {
-          return (
-            <LoadingFinished
               startLabellingButtonRef={startLabellingButtonRef}
               onClickSkip={handleSkip}
               onClickNext={handleGetStarted}
             />
           );
         }
+
         throw new Error("Welcome modal is in unknown state");
       })()}
     </Modal>
