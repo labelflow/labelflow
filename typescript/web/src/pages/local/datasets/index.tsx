@@ -149,7 +149,7 @@ const DatasetsIndexPage = ({
     datasetsResult?.datasets == null
       ? undefined
       : datasetsResult?.datasets.filter(
-          (dataset) => dataset.name === "Demo dataset"
+          (dataset) => dataset.name === "Tutorial dataset"
         )?.[0] ?? undefined;
 
   const handleError = useErrorHandler();
@@ -186,7 +186,7 @@ const DatasetsIndexPage = ({
       datasetsResult?.datasets != null &&
       loading === false
     ) {
-      // This is the first visit of the user and the datasets query returned, redirect to demo dataset
+      // This is the first visit of the user and the datasets query returned, redirect to tutorial dataset
       const demoDatasetSlug = demoDataset?.slug ?? "";
       const firstImageId = demoDataset?.images?.[0]?.id;
       if (firstImageId != null) {
@@ -250,7 +250,7 @@ const DatasetsIndexPage = ({
                 textAlign="center"
               >
                 <EmptyStateCaughtUp w="full" />
-                <Heading as="h2">Creating a demo dataset</Heading>
+                <Heading as="h2">Creating a tutorial dataset</Heading>
                 <Text mt="4" fontSize="lg">
                   It should only take a few seconds, but if you don&apos;t want
                   to wait, you can create an empty dataset.
