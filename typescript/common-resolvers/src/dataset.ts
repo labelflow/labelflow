@@ -205,6 +205,7 @@ const createDemoDataset = async (
           datasetId,
           url,
           createdAt: add(now, { seconds: index }).toISOString(),
+          name: url.match(/\/static\/img\/(.*?)$/)[1],
         },
         {
           upload: repository.upload,

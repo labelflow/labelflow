@@ -817,4 +817,29 @@ describe("Demo dataset mutation", () => {
       demoDataset?.data?.createDemoDataset?.images?.[2]?.labels?.length
     ).toEqual(10);
   });
+  test("Created images should have a correct name", async () => {
+    const demoDataset = await client.mutate({
+      mutation: gql`
+        mutation {
+          createDemoDataset {
+            id
+            images {
+              id
+              name
+            }
+          }
+        }
+      `,
+    });
+    expect(
+      demoDataset?.data?.createDemoDataset?.images?.map(
+        (image: { name: string }) => image.name
+      )
+    ).toEqual([
+      "tutorial-image-1",
+      "tutorial-image-2",
+      "tutorial-image-3",
+      "tutorial-image-4",
+    ]);
+  });
 });
