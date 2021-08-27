@@ -31,14 +31,11 @@ export const list =
   ): Promise<Entity[]> => {
     if (where) {
       const query = table.where(where);
-      if (skip) {
-        query.offset(skip);
-      }
-      if (first) {
-        query.limit(first);
-      }
+      const listElements = await query.sortBy(criterion);
+      const beginSlice = skip ?? 0;
+      const endSlice = first ? beginSlice + first : listElements.length;
 
-      return await query.sortBy(criterion);
+      return listElements.slice(beginSlice, endSlice);
     }
 
     const query = table.orderBy(criterion);

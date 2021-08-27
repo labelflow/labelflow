@@ -439,18 +439,18 @@ describe("LabelClass resolver test suite", () => {
     await createDataset("Test dataset 1", "dataset 1");
 
     await createLabelClass({
-      name: "labelClass1",
-      color: "#ff0000",
-      datasetId: "dataset 1",
-    });
-    incrementMockedDate(1);
-    const id0 = await createLabelClass({
       name: "labelClass0",
       color: "#ff0000",
       datasetId: "dataset 1",
     });
     incrementMockedDate(1);
-    const id2 = await createLabelClass({
+    const id0 = await createLabelClass({
+      name: "labelClass1",
+      color: "#ff0000",
+      datasetId: "dataset 1",
+    });
+    incrementMockedDate(1);
+    const id1 = await createLabelClass({
       name: "labelClass2",
       color: "#ff0000",
       datasetId: "dataset 1",
@@ -467,6 +467,8 @@ describe("LabelClass resolver test suite", () => {
         query {
           labelClasses(first: 2, skip: 1, where: { datasetId: "dataset 1" }) {
             id
+            name
+            index
           }
         }
       `,
@@ -477,7 +479,7 @@ describe("LabelClass resolver test suite", () => {
       queryResult.data.labelClasses.map(
         (labelClass: { id: string }) => labelClass.id
       )
-    ).toEqual([id0, id2]);
+    ).toEqual([id0, id1]);
   });
 
   it("should query a labelClass with labels", async () => {
