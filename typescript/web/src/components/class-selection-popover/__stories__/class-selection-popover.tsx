@@ -10,6 +10,7 @@ export default {
 const labelClasses = [
   {
     id: "coaisndoiasndi0",
+    index: 0,
     createdAt: "today",
     updatedAt: "today",
     name: "Person",
@@ -19,6 +20,7 @@ const labelClasses = [
   },
   {
     id: "coaisndoiasndi1",
+    index: 0,
     createdAt: "today",
     updatedAt: "today",
     name: "Dog",
@@ -28,6 +30,7 @@ const labelClasses = [
   },
   {
     id: "coaisndoiasndi2",
+    index: 2,
     createdAt: "today",
     updatedAt: "today",
     name: "Car",
@@ -37,6 +40,7 @@ const labelClasses = [
   },
   {
     id: "coaisndoiasndi3",
+    index: 3,
     createdAt: "today",
     updatedAt: "today",
     name: "Cycle",
@@ -46,6 +50,7 @@ const labelClasses = [
   },
   {
     id: "coaisndoiasndi4",
+    index: 4,
     createdAt: "today",
     updatedAt: "today",
     name: "Plane",

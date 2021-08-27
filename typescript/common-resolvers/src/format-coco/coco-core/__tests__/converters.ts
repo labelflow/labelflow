@@ -25,6 +25,7 @@ describe("Coco converters", () => {
 
   const createLabelClass = (name: string): DbLabelClass => ({
     id: `id-${name}`,
+    index: 0,
     createdAt: date,
     updatedAt: date,
     name,
