@@ -198,6 +198,78 @@ describe("LabelClass resolver test suite", () => {
     );
   });
 
+  it("should increment labelClass index chronologically", async () => {
+    await createDataset("Test dataset");
+
+    const id0 = await createLabelClass({
+      name: "toto",
+      color: "#ff0000",
+      datasetId: testDatasetId,
+    });
+    incrementMockedDate(1);
+    const id1 = await createLabelClass({
+      name: "tata",
+      color: "#00ff00",
+      datasetId: testDatasetId,
+    });
+
+    const queryResult0 = await client.query({
+      query: gql`
+        query getLabelClass($id: ID!) {
+          labelClass(where: { id: $id }) {
+            id
+            index
+            name
+            color
+            datasetId
+          }
+        }
+      `,
+      variables: {
+        id: id0,
+      },
+      fetchPolicy: "no-cache",
+    });
+
+    expect(queryResult0.data.labelClass).toEqual(
+      expect.objectContaining({
+        id: id0,
+        index: 0,
+        name: "toto",
+        color: "#ff0000",
+        datasetId: testDatasetId,
+      })
+    );
+
+    const queryResult1 = await client.query({
+      query: gql`
+        query getLabelClass($id: ID!) {
+          labelClass(where: { id: $id }) {
+            id
+            index
+            name
+            color
+            datasetId
+          }
+        }
+      `,
+      variables: {
+        id: id1,
+      },
+      fetchPolicy: "no-cache",
+    });
+
+    expect(queryResult1.data.labelClass).toEqual(
+      expect.objectContaining({
+        id: id1,
+        index: 1,
+        name: "tata",
+        color: "#00ff00",
+        datasetId: testDatasetId,
+      })
+    );
+  });
+
   it("should create labelClass with an ID", async () => {
     await createDataset("Test dataset");
 
@@ -286,11 +358,84 @@ describe("LabelClass resolver test suite", () => {
     ).rejects.toThrow("No labelClass with such id");
   });
 
-  it("should delete a label class", async () => {
+  it("should reorder labelClasses indices", async () => {
+    await createDataset("Test dataset");
+
+    const id0 = await createLabelClass({
+      name: "toto",
+      color: "#ff0000",
+      datasetId: testDatasetId,
+    });
+    incrementMockedDate(1);
+    const id1 = await createLabelClass({
+      name: "tata",
+      color: "#00ff00",
+      datasetId: testDatasetId,
+    });
+    incrementMockedDate(1);
+    const id2 = await createLabelClass({
+      name: "tutu",
+      color: "#0000ff",
+      datasetId: testDatasetId,
+    });
+
+    const getLabelClassIndex = async (id: string) =>
+      (
+        await client.query({
+          query: gql`
+            query getLabelClass($id: ID!) {
+              labelClass(where: { id: $id }) {
+                id
+                index
+                name
+                color
+                datasetId
+              }
+            }
+          `,
+          variables: {
+            id,
+          },
+          fetchPolicy: "no-cache",
+        })
+      ).data.labelClass.index;
+
+    // Nominal/default configuration
+    expect(await getLabelClassIndex(id0)).toEqual(0);
+    expect(await getLabelClassIndex(id1)).toEqual(1);
+    expect(await getLabelClassIndex(id2)).toEqual(2);
+
+    await client.mutate({
+      mutation: gql`
+        mutation reorderLabelClasses($id: ID!, $index: Int!) {
+          reorderLabelClass(where: { id: $id }, data: { index: $index }) {
+            id
+          }
+        }
+      `,
+      variables: {
+        id: id2,
+        index: 0,
+      },
+    });
+    // Now the third labelClass is at position 0, and so on
+    expect(await getLabelClassIndex(id0)).toEqual(1);
+    expect(await getLabelClassIndex(id1)).toEqual(2);
+    expect(await getLabelClassIndex(id2)).toEqual(0);
+  });
+
+  it("should delete a label class and update index", async () => {
     await createDataset("Test dataset");
 
     const labelClassId = await createLabelClass({
       name: "toto",
+      color: "#ff0000",
+      datasetId: testDatasetId,
+    });
+    incrementMockedDate(1);
+    // The following labelClass will have index 1
+    const labelClassId1 = await createLabelClass({
+      name: "tata",
       color: "#ff0000",
       datasetId: testDatasetId,
     });
@@ -307,6 +452,22 @@ describe("LabelClass resolver test suite", () => {
         id: labelClassId,
       },
     });
+    const queryResultLabelClass = await client.query({
+      query: gql`
+        query getLabelClass($id: ID!) {
+          labelClass(where: { id: $id }) {
+            index
+            datasetId
+          }
+        }
+      `,
+      variables: {
+        id: labelClassId1,
+      },
+      fetchPolicy: "no-cache",
+    });
+    // Check that this labelClass now have index 0
+    expect(queryResultLabelClass.data?.labelClass?.index).toEqual(0);
     const queryResult = client.query({
       query: gql`
         query getLabelClass($id: ID!) {
