@@ -125,7 +125,7 @@ const reorderLabelClass = async (
     index: args.data.index,
   });
 
-  return repository.labelClass.getById(labelClassId);
+  return await repository.labelClass.getById(labelClassId);
 };
 
 const updateLabelClass = async (
