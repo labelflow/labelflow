@@ -65,7 +65,6 @@ const performWelcomeWorkflow = async ({
   client,
   setParamModalWelcome,
   setWelcomeWorkflowState,
-
   setCookie,
   handleError,
 }: {
@@ -80,6 +79,7 @@ const performWelcomeWorkflow = async ({
   handleError: (error: Error) => void;
 }) => {
   try {
+    console.log("setParamModalWelcome(undefined, replaceIn);", 1);
     setParamModalWelcome(undefined, "replaceIn");
     setWelcomeWorkflowState("loading-worker");
 
@@ -188,21 +188,21 @@ export const WelcomeModal = ({
   // This hook only run once in browser after the component is rendered for the first time.
   // It has same effect as the old componentDidMount lifecycle callback.
   // See https://github.com/shadowwalker/next-pwa/blob/master/examples/lifecycle/pages/index.js
-  useEffect(() => {
-    const checkServiceWorkerStatus = async (): Promise<void> => {
-      try {
-        await checkServiceWorkerReady();
-        setIsServiceWorkerActive(true);
-      } catch (error) {
-        if (error.message === messageNoWindow) {
-          return;
-        }
-        setIsServiceWorkerActive(false);
-        handleError(error);
-      }
-    };
-    checkServiceWorkerStatus();
-  }, []);
+  // useEffect(() => {
+  //   const checkServiceWorkerStatus = async (): Promise<void> => {
+  //     try {
+  //       await checkServiceWorkerReady();
+  //       setIsServiceWorkerActive(true);
+  //     } catch (error) {
+  //       if (error.message === messageNoWindow) {
+  //         return;
+  //       }
+  //       setIsServiceWorkerActive(false);
+  //       handleError(error);
+  //     }
+  //   };
+  //   checkServiceWorkerStatus();
+  // }, []);
 
   // wrong-browser => undefined
   const pretendIsCompatibleBrowser = useCallback(() => {
@@ -210,22 +210,23 @@ export const WelcomeModal = ({
   }, []);
 
   // undefined => welcome
-  useEffect(() => {
-    if (
-      (!isWrongBrowser &&
-        !isServiceWorkerActive &&
-        paramModalWelcome !== "closed") ||
-      paramModalWelcome === "open"
-    ) {
-      performWelcomeWorkflow({
-        client,
-        setParamModalWelcome,
-        setWelcomeWorkflowState,
-        setCookie,
-        handleError,
-      });
-    }
-  }, [isWrongBrowser]);
+  // useEffect(() => {
+  //   if (
+  //     router.isReady &&
+  //     ((!isWrongBrowser &&
+  //       !isServiceWorkerActive &&
+  //       paramModalWelcome !== "closed") ||
+  //       paramModalWelcome === "open")
+  //   ) {
+  //     performWelcomeWorkflow({
+  //       client,
+  //       setParamModalWelcome,
+  //       setWelcomeWorkflowState,
+  //       setCookie,
+  //       handleError,
+  //     });
+  //   }
+  // }, [isWrongBrowser, router.isReady]);
 
   // welcome => loading-worker
   const handleClickStart = useCallback(() => {
@@ -234,13 +235,17 @@ export const WelcomeModal = ({
 
   // loading-finished => undefined
   const handleGetStarted = useCallback(() => {
+    console.log("handleGetStarted1");
     setParamModalWelcome(undefined, "replaceIn");
+    console.log("handleGetStarted2");
     router.push("/local/datasets/demo-dataset");
   }, []);
 
   // loading-finished => undefined
   const handleSkip = useCallback(() => {
+    console.log("handleSkip1");
     setParamModalWelcome(undefined, "replaceIn");
+    console.log("handleSkip2");
     router.push("/local/datasets");
   }, []);
 

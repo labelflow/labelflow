@@ -104,8 +104,8 @@ export const WrongBrowser = ({
             >
               Safari
             </Link>
-            , not in incognito mode, not on a mobile terminal, and with any ad
-            blocker disabled.
+            , not in incognito mode, not on a mobile terminal.
+            {/* , and with any ad blocker disabled. */}
           </Text>
         </VStack>
       </ModalBody>
