@@ -57,6 +57,7 @@ const ImagesPage = () => {
     variables: {
       slug: datasetSlug,
     },
+    skip: !datasetSlug,
   });
 
   const datasetName = datasetResult?.dataset.name;
