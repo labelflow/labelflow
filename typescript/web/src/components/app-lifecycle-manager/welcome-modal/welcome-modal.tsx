@@ -132,13 +132,14 @@ export const WelcomeModal = ({
   const router = useRouter();
   const handleError = useErrorHandler();
   const client = useApolloClient();
-  const startLabellingButtonRef = useRef<HTMLButtonElement>(null);
+
   const [{ hasUserTriedApp }, setHasUserTriedApp] = useCookies([
     "hasUserTriedApp",
   ]);
   const [{ tryDespiteWrongBrowser }, setTryDespiteWrongBrowser] = useCookies([
     "tryDespiteWrongBrowser",
   ]);
+
   const [isWrongBrowser, setIsWrongBrowser] = useState(() => {
     const name = browser?.name;
     const os = browser?.os;
@@ -225,9 +226,9 @@ export const WelcomeModal = ({
       path: "/",
       httpOnly: false,
     });
-    console.log("handleGetStarted1");
+
     setParamModalWelcome(undefined, "replaceIn");
-    console.log("handleGetStarted2");
+
     router.push("/local/datasets/demo-dataset");
   }, []);
 
@@ -237,9 +238,9 @@ export const WelcomeModal = ({
       path: "/",
       httpOnly: false,
     });
-    console.log("handleSkip1");
+
     setParamModalWelcome(undefined, "replaceIn");
-    console.log("handleSkip2");
+
     router.push("/local/datasets");
   }, []);
 
@@ -254,14 +255,14 @@ export const WelcomeModal = ({
   const shouldShowWelcomeModal =
     hasUserTriedApp !== "true" && !isLoadingWorkerAndDemo;
 
-  console.log({
-    isWrongBrowser,
-    tryDespiteWrongBrowser,
-    hasUserTriedApp,
-    shouldShowWrongBrowserModal,
-    shouldShowLoadingModal,
-    shouldShowWelcomeModal,
-  });
+  // console.log({
+  //   isWrongBrowser,
+  //   tryDespiteWrongBrowser,
+  //   hasUserTriedApp,
+  //   shouldShowWrongBrowserModal,
+  //   shouldShowLoadingModal,
+  //   shouldShowWelcomeModal,
+  // });
 
   return (
     <Modal
@@ -276,30 +277,20 @@ export const WelcomeModal = ({
       size="3xl"
       scrollBehavior="inside"
       isCentered
-      initialFocusRef={startLabellingButtonRef}
     >
       <ModalOverlay />
       {(() => {
         if (shouldShowWrongBrowserModal) {
-          return (
-            <WrongBrowser
-              startLabellingButtonRef={startLabellingButtonRef}
-              onClickTryAnyway={pretendIsCompatibleBrowser}
-            />
-          );
+          return <WrongBrowser onClickTryAnyway={pretendIsCompatibleBrowser} />;
         }
 
         if (shouldShowLoadingModal) {
-          return <Loading startLabellingButtonRef={startLabellingButtonRef} />;
+          return <Loading />;
         }
 
         if (shouldShowWelcomeModal) {
           return (
-            <Welcome
-              startLabellingButtonRef={startLabellingButtonRef}
-              onClickSkip={handleSkip}
-              onClickNext={handleGetStarted}
-            />
+            <Welcome onClickSkip={handleSkip} onClickNext={handleGetStarted} />
           );
         }
 

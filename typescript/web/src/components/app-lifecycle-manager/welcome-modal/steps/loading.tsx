@@ -1,3 +1,4 @@
+import { useRef, useEffect } from "react";
 import {
   chakra,
   ModalContent,
@@ -6,7 +7,6 @@ import {
   HStack,
   Button,
   Heading,
-  Image,
   Center,
   Text,
   ModalBody,
@@ -21,11 +21,12 @@ const ChakraRocket = chakra(Rocket);
 
 const GithubIcon = chakra(RiGithubFill);
 
-export const Loading = ({
-  startLabellingButtonRef,
-}: {
-  startLabellingButtonRef: React.Ref<HTMLButtonElement>;
-}) => {
+export const Loading = () => {
+  const startLabellingButtonRef = useRef<HTMLButtonElement>(null);
+  // Start the timer during the first render
+  useEffect(() => {
+    startLabellingButtonRef.current?.focus();
+  }, []);
   return (
     <ModalContent margin="3.75rem">
       <ModalHeader textAlign="center" padding="8">
@@ -76,6 +77,7 @@ export const Loading = ({
           mb="10"
         >
           <Button
+            ref={startLabellingButtonRef}
             as="a"
             leftIcon={<GithubIcon fontSize="xl" />}
             href="https://github.com/Labelflow/labelflow"
@@ -90,7 +92,6 @@ export const Loading = ({
           </Button>
 
           <Button
-            ref={startLabellingButtonRef}
             size="lg"
             minW="210px"
             colorScheme="brand"

@@ -9,8 +9,7 @@ import {
 } from "@chakra-ui/react";
 import { FallbackProps } from "react-error-boundary";
 import { NextPageContext } from "next";
-import NextLink from "next/link";
-import { useRouter } from "next/router";
+
 import { AppLifecycleManager } from "../components/app-lifecycle-manager";
 
 import { Meta } from "../components/meta";
@@ -24,7 +23,6 @@ type Props = FallbackProps & {
 };
 
 const ErrorPage = ({ statusCode, error, resetErrorBoundary }: Props) => {
-  const router = useRouter();
   return (
     <>
       <Meta title="Labelflow | Error" />
@@ -67,16 +65,10 @@ const ErrorPage = ({ statusCode, error, resetErrorBoundary }: Props) => {
                   <Button onClick={resetErrorBoundary}>Retry</Button>
                 )}
 
-                {/* <NextLink href="/debug"> */}
-                <Button
-                  onClick={() => {
-                    router.push("/debug");
-                    resetErrorBoundary();
-                  }}
-                >
+                {/* Not using next/link here in order to resetErrorBoundary and clear the error reliably  */}
+                <Button as="a" href="debug">
                   See debug info
                 </Button>
-                {/* </NextLink> */}
 
                 <Button
                   colorScheme="brand"

@@ -1,3 +1,4 @@
+import { useRef, useEffect } from "react";
 import {
   chakra,
   ModalContent,
@@ -23,14 +24,15 @@ const ChakraBrowserAlert = chakra(BrowserAlert);
 const BackIcon = chakra(RiArrowGoBackLine);
 const PlayIcon = chakra(RiPlayFill);
 type Props = {
-  startLabellingButtonRef: React.Ref<HTMLButtonElement>;
   onClickTryAnyway?: () => void;
 };
 
-export const WrongBrowser = ({
-  startLabellingButtonRef,
-  onClickTryAnyway,
-}: Props) => {
+export const WrongBrowser = ({ onClickTryAnyway }: Props) => {
+  const startLabellingButtonRef = useRef<HTMLButtonElement>(null);
+  // Start the timer during the first render
+  useEffect(() => {
+    startLabellingButtonRef.current?.focus();
+  }, []);
   return (
     <ModalContent margin="3.75rem">
       <ModalHeader textAlign="center" padding="8">

@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import {
   chakra,
   ModalContent,
   ModalFooter,
   VStack,
+  Box,
   HStack,
   Button,
   Heading,
@@ -23,27 +24,25 @@ const PlayIcon = chakra(RiPlayFill);
 const SpeedIcon = chakra(RiSpeedMiniFill);
 
 type Props = {
-  startLabellingButtonRef: React.Ref<HTMLButtonElement>;
   onClickNext: () => void;
   onClickSkip?: () => void;
 };
 
-export const Welcome = ({
-  startLabellingButtonRef,
-  onClickSkip,
-  onClickNext,
-}: Props) => {
-  const [isCountDownStarted, setIsCountDownStarted] = useState(false);
-  const [timeLeft, { start }] = useCountDown(10 * 1000, 1000);
+const delayMilliSeconds = 10 * 1000;
 
+export const Welcome = ({ onClickSkip, onClickNext }: Props) => {
+  const [isCountDownStarted, setIsCountDownStarted] = useState(false);
+  const [timeLeft, { start }] = useCountDown(delayMilliSeconds, 1000 / 30);
+  const startLabellingButtonRef = useRef<HTMLButtonElement>(null);
   // Start the timer during the first render
   useEffect(() => {
     setIsCountDownStarted(true);
     start();
+    startLabellingButtonRef.current?.focus();
   }, []);
 
   useEffect(() => {
-    if (isCountDownStarted && timeLeft < 1000 && onClickNext) {
+    if (isCountDownStarted && timeLeft <= 50 && onClickNext) {
       onClickNext();
     }
   }, [isCountDownStarted, timeLeft]);
@@ -88,6 +87,10 @@ export const Welcome = ({
             Stay in control of your data, label your images fast, without them
             leaving your computer. Focus on building the next big thing while we
             ensure privacy and performance.
+            <br />
+            <br />
+            The tutorial will start automatically in{" "}
+            {Math.round(timeLeft / 1000)} seconds.
           </Text>
         </VStack>
       </ModalBody>
@@ -123,8 +126,18 @@ export const Welcome = ({
             px="8"
             loadingText="Get started!"
             onClick={onClickNext}
+            position="relative"
           >
             Get started!
+            <Box
+              position="absolute"
+              bottom="0"
+              left="0"
+              height="2"
+              borderBottomLeftRadius={4}
+              width={`${(100 * timeLeft) / delayMilliSeconds}%`}
+              background="#ffffff88"
+            />
           </Button>
         </HStack>
       </ModalFooter>
