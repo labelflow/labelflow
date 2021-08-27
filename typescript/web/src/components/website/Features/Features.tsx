@@ -1,6 +1,5 @@
 import {
   Box,
-  // Button,
   Heading,
   Img,
   SimpleGrid,
@@ -13,7 +12,6 @@ import {
   BsFillLightningFill,
   BsFillShieldLockFill,
   BsHeartFill,
-  // BsArrowRight,
 } from "react-icons/bs";
 import { Feature } from "./Feature";
 
@@ -44,22 +42,16 @@ export const Features = () => {
               mb="6"
               maxW="md"
               color={mode("gray.600", "gray.400")}
-            >You now have the tool to unleash the potential of all your AI
-            project. Our team has 5 years of experience implementing AI at scale for energy
-              companies with <Link color="brand.500" href="https://labelflow.ai/about">Sterblue</Link>, labeling 1.5 million images
-               and involving tens of labelers and experts around the platform. We got your pains.
-            </Text>
-            {/* <Button
-              size="lg"
-              colorScheme="brand"
-              rightIcon={<BsArrowRight />}
-            
-              fontWeight="bold"
-              fontSize="md"
-              w={{ base: "full", sm: "auto" }}
             >
-              Learn more
-            </Button> */}
+              You now have the tool to unleash the potential of all your AI
+              project. Our team has 5 years of experience implementing AI at
+              scale for energy companies with{" "}
+              <Link color="brand.500" href="https://labelflow.ai/about">
+                Sterblue
+              </Link>
+              , labeling 1.5 million images and involving tens of labelers and
+              experts around the platform. We got your pains.
+            </Text>
           </Box>
         </SimpleGrid>
         <SimpleGrid columns={{ base: 1, md: 3 }} mt="16" spacing="8">
@@ -77,9 +69,9 @@ export const Features = () => {
             complicated scripts to synchronize your data between various tools.
           </Feature>
           <Feature icon={BsHeartFill} title="Open community and standard">
-            Labelflow is building a community around
-            an open source labeling tool to set the standard around visual data management. 
-            Dataset curation should not require any &ldquo;secret sauce&rdquo;.
+            Labelflow is building a community around an open source labeling
+            tool to set the standard around visual data management. Dataset
+            curation should not require any &ldquo;secret sauce&rdquo;.
           </Feature>
         </SimpleGrid>
       </Box>
