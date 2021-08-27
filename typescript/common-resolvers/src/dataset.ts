@@ -10,27 +10,16 @@ import {
   QueryDatasetArgs,
   QueryDatasetsArgs,
   QueryImagesArgs,
-  LabelType,
 } from "@labelflow/graphql-types";
 
 import { Context, DbDataset, Repository } from "./types";
 import { throwIfResolvesToNil } from "./utils/throw-if-resolves-to-nil";
 import { getImageEntityFromMutationArgs } from "./image";
-
-const origin =
-  "location" in globalThis && typeof globalThis.location?.origin === "string"
-    ? globalThis.location?.origin
-    : "https://labelflow.ai";
-
-// The tutorial dataset images
-const tutorialImageUrls = [
-  `${origin}/static/img/tutorial-image-1.jpg`,
-  `${origin}/static/img/tutorial-image-2.jpg`,
-  `${origin}/static/img/tutorial-image-3.jpg`,
-  `${origin}/static/img/tutorial-image-4.jpg`,
-];
-
-const tutorialLabelClassId = uuidv4();
+import {
+  tutorialImageUrls,
+  tutorialLabelClassId,
+  tutorialLabels,
+} from "./data/dataset-tutorial";
 
 const getDatasetById = async (
   id: string,
@@ -233,6 +222,18 @@ const createDemoDataset = async (
     updatedAt: currentDate,
     datasetId,
   });
+
+  await Promise.all(
+    tutorialLabels.map(async (label) => {
+      return await repository.label.add({
+        ...label,
+        id: uuidv4(),
+        createdAt: currentDate,
+        updatedAt: currentDate,
+        imageId: tutorialDatasetImages[2],
+      });
+    })
+  );
 
   return await getDatasetById(datasetId, repository);
 };
