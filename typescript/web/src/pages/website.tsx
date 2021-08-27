@@ -12,6 +12,7 @@ import { ArticlesList } from "../components/website/Blog/articles-list";
 import { getAllArticles, Article } from "../connectors/strapi";
 import { Roadmap } from "../components/website/roadmap/roadmap";
 import { Meta } from "../components/meta";
+import { Banner } from "../components/website/banner";
 
 export default function Website({
   previewArticles,
@@ -40,6 +41,7 @@ export default function Website({
         </Box>
       </Box>
       <Hero />
+      <Banner/>
       <Features />
       <Why />
       <Roadmap />
