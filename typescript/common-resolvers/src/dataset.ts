@@ -15,13 +15,17 @@ import { Context, DbDataset, Repository } from "./types";
 import { throwIfResolvesToNil } from "./utils/throw-if-resolves-to-nil";
 import { getImageEntityFromMutationArgs } from "./image";
 
-// The demo dataset images
-const demoImageUrls = [
-  "https://images.unsplash.com/photo-1579513141590-c597876aefbc?auto=format&fit=crop&w=882&q=80",
-  "https://images.unsplash.com/photo-1504710685809-7bb702595f8f?auto=format&fit=crop&w=934&q=80",
-  "https://images.unsplash.com/photo-1569579933032-9e16447c50e3?auto=format&fit=crop&w=2100&q=80",
-  "https://images.unsplash.com/photo-1595687453172-253f44ed3975?auto=format&fit=crop&w=2100&q=80",
-  "https://images.unsplash.com/photo-1574082595167-86d59cefcc3a?auto=format&fit=crop&w=2100&q=80",
+const origin =
+  "location" in globalThis && typeof globalThis.location?.origin === "string"
+    ? globalThis.location?.origin
+    : "https://labelflow.ai";
+
+// The tutorial dataset images
+const tutorialImageUrls = [
+  `${origin}/static/img/tutorial-image-1.jpg`,
+  `${origin}/static/img/tutorial-image-2.jpg`,
+  `${origin}/static/img/tutorial-image-3.jpg`,
+  `${origin}/static/img/tutorial-image-4.jpg`,
 ];
 
 const getDatasetById = async (
@@ -187,21 +191,21 @@ const createDemoDataset = async (
   const currentDate = new Date().toISOString();
   try {
     await repository.dataset.add({
-      name: "Demo dataset",
-      slug: "demo-dataset",
+      name: "Tutorial dataset",
+      slug: "tutorial-dataset",
       id: datasetId,
       createdAt: currentDate,
       updatedAt: currentDate,
     });
   } catch (error) {
     if (error.name === "ConstraintError") {
-      // The demo dataset already exists, just return it
-      return await getDatasetByName("Demo dataset", repository);
+      // The tutorial dataset already exists, just return it
+      return await getDatasetByName("Tutorial dataset", repository);
     }
     throw error;
   }
   await Promise.all(
-    demoImageUrls.map(async (url) => {
+    tutorialImageUrls.map(async (url) => {
       const imageEntity = await getImageEntityFromMutationArgs(
         {
           datasetId,
@@ -214,6 +218,16 @@ const createDemoDataset = async (
       return await repository.image.add(imageEntity);
     })
   );
+
+  const labelClassId = uuidv4();
+  repository.labelClass.add({
+    id: labelClassId,
+    name: "Horse",
+    color: "#F87171",
+    createdAt: currentDate,
+    updatedAt: currentDate,
+    datasetId,
+  });
 
   return await getDatasetById(datasetId, repository);
 };
