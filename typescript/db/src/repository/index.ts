@@ -1,7 +1,12 @@
 import { PrismaClient } from "@prisma/client";
 
 import { DbLabel, Repository } from "@labelflow/common-resolvers";
-import { getUploadTargetHttp, getFromStorage, putInStorage } from "./upload";
+import {
+  getUploadTargetHttp,
+  getFromStorage,
+  putInStorage,
+  deleteFromStorage,
+} from "./upload";
 import { countLabels, listLabels } from "./label";
 
 const prisma = new PrismaClient();
@@ -12,20 +17,19 @@ export const repository: Repository = {
       const createdImage = await prisma.image.create({ data: image });
       return createdImage.id;
     },
-    count: async (where) => prisma.image.count({ where }),
+    count: (where) => prisma.image.count({ where }),
     getById: (id) =>
       prisma.image.findUnique({
         where: { id },
       }),
 
-    list: (where, skip = undefined, first = undefined) => {
-      return prisma.image.findMany({
+    list: (where, skip = undefined, first = undefined) =>
+      prisma.image.findMany({
         where,
         orderBy: { createdAt: "asc" },
         skip,
         take: first,
-      });
-    },
+      }),
   },
   label: {
     add: async (label) => {
@@ -59,7 +63,7 @@ export const repository: Repository = {
       });
       return createdLabelClass.id;
     },
-    count: async (where) => prisma.labelClass.count({ where }),
+    count: (where) => prisma.labelClass.count({ where }),
     delete: async (id) => {
       await prisma.labelClass.delete({ where: { id } });
     },
@@ -116,6 +120,7 @@ export const repository: Repository = {
       }),
   },
   upload: {
+    delete: deleteFromStorage,
     get: getFromStorage,
     getUploadTarget: getUploadTargetHttp,
     getUploadTargetHttp,
