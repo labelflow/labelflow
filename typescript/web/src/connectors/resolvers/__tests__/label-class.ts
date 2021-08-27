@@ -398,7 +398,6 @@ describe("LabelClass resolver test suite", () => {
 
   it("should query labelClasses ignoring linked datasets", async () => {
     await createDataset("Test dataset 1", "dataset 1");
-    await createDataset("Test dataset 2", "dataset 2");
 
     const id1 = await createLabelClass({
       name: "labelClass1",
@@ -409,7 +408,7 @@ describe("LabelClass resolver test suite", () => {
     const id0 = await createLabelClass({
       name: "labelClass0",
       color: "#ff0000",
-      datasetId: "dataset 2",
+      datasetId: "dataset 1",
     });
     incrementMockedDate(1);
     const id2 = await createLabelClass({
@@ -421,7 +420,7 @@ describe("LabelClass resolver test suite", () => {
     const queryResult = await client.query({
       query: gql`
         query {
-          labelClasses {
+          labelClasses(where: { datasetId: "dataset 1" }) {
             id
           }
         }
@@ -438,12 +437,11 @@ describe("LabelClass resolver test suite", () => {
 
   it("should query paginated labelClasses ignoring linked datasets", async () => {
     await createDataset("Test dataset 1", "dataset 1");
-    await createDataset("Test dataset 2", "dataset 2");
 
     await createLabelClass({
       name: "labelClass1",
       color: "#ff0000",
-      datasetId: "dataset 2",
+      datasetId: "dataset 1",
     });
     incrementMockedDate(1);
     const id0 = await createLabelClass({
@@ -455,7 +453,7 @@ describe("LabelClass resolver test suite", () => {
     const id2 = await createLabelClass({
       name: "labelClass2",
       color: "#ff0000",
-      datasetId: "dataset 2",
+      datasetId: "dataset 1",
     });
     incrementMockedDate(1);
     await createLabelClass({
@@ -467,7 +465,7 @@ describe("LabelClass resolver test suite", () => {
     const queryResult = await client.query({
       query: gql`
         query {
-          labelClasses(first: 2, skip: 1) {
+          labelClasses(first: 2, skip: 1, where: { datasetId: "dataset 1" }) {
             id
           }
         }
