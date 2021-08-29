@@ -89,7 +89,7 @@ const DatasetIndexPage = ({
             </BreadcrumbItem>
 
             <BreadcrumbItem isCurrentPage>
-              <Text>{datasetName ?? <Skeleton>Dataset Name</Skeleton>}</Text>
+              {<Text>{datasetName}</Text> ?? <Skeleton>Dataset Name</Skeleton>}
             </BreadcrumbItem>
           </Breadcrumb>
         }
