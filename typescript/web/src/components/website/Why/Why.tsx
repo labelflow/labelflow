@@ -21,6 +21,7 @@ export const Why = () => {
         <Heading align="center" fontWeight="extrabold" maxW="lg" mx="auto">
           Integrate LabelFlow into your own tech stack
         </Heading>
+        <NextLink href="/datasets">
         <Text align="center" textAlign="center" maxW="lg" mx="auto" mt="12">
           <strong>You can get started on Labelflow in a few seconds</strong>, by
           uploading your data in the app.
@@ -32,6 +33,7 @@ export const Why = () => {
           stack. No duplicate source of truth and complicated scripts to
           synchronize your data between various tools.
         </Text>
+        </NextLink>
         <Image
           mt="12"
           objectFit="cover"
@@ -43,21 +45,7 @@ export const Why = () => {
           mx="auto"
           src="/static/img/home-diagram.png"
         />
-        <Center>
-          <NextLink href="/datasets">
-            <Button
-              size="lg"
-              minW="210px"
-              colorScheme="brand"
-              height="14"
-              px="8"
-              mt="12"
-              rightIcon={<BsArrowRight />}
-            >
-              Try it now
-            </Button>
-          </NextLink>
-        </Center>
+        
       </Box>
     </Box>
   );
