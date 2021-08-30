@@ -17,7 +17,7 @@ function SvgNoConnection(
       <defs>
         <style>
           {
-            ".no-connection_svg__cls-1{fill:#6a6e86}.no-connection_svg__cls-2{fill:#8288a1}.no-connection_svg__cls-3{fill:#969cb2}.no-connection_svg__cls-5{fill:#797c92}.no-connection_svg__cls-6{fill:#f6b756}.no-connection_svg__cls-7{fill:#aeb4c6}.no-connection_svg__cls-8{fill:#c6ccda}.no-connection_svg__cls-9{fill:#39426a}"
+            ".no-connection_svg__cls-1{fill:#6a6e86}.no-connection_svg__cls-2{fill:#8288a1}.no-connection_svg__cls-3{fill:#969cb2}.no-connection_svg__cls-5{fill:#797c92}.no-connection_svg__cls-6{fill:#e47980}.no-connection_svg__cls-7{fill:#aeb4c6}.no-connection_svg__cls-8{fill:#c6ccda}.no-connection_svg__cls-9{fill:#39426a}"
           }
         </style>
       </defs>
@@ -84,6 +84,17 @@ function SvgNoConnection(
         d="M32.44 28.86a1 1 0 001.42 0 20 20 0 0128.28 0 1 1 0 001.42 0l4.24-4.24a1 1 0 000-1.42 28 28 0 00-39.6 0 1 1 0 000 1.42zm33.22-4.94l-2.83 2.83a22 22 0 00-29.66 0l-2.83-2.83a26 26 0 0135.32 0zM13 70a7 7 0 107 7 7 7 0 00-7-7zm0 12a5 5 0 115-5 5 5 0 01-5 5zM83 70a7 7 0 107 7 7 7 0 00-7-7zm0 12a5 5 0 115-5 5 5 0 01-5 5zM30 73a4 4 0 104 4 4 4 0 00-4-4zm0 6a2 2 0 112-2 2 2 0 01-2 2zM42 73a4 4 0 104 4 4 4 0 00-4-4zm0 6a2 2 0 112-2 2 2 0 01-2 2zM54 73a4 4 0 104 4 4 4 0 00-4-4zm0 6a2 2 0 112-2 2 2 0 01-2 2zM66 73a4 4 0 104 4 4 4 0 00-4-4zm0 6a2 2 0 112-2 2 2 0 01-2 2z"
       />
       <circle className="no-connection_svg__cls-7" cx={18} cy={69} r={2} />
+
+      <path
+        transform="translate(30, 10)"
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M2.19258 39.9241C1.53393 39.4216 1.38021 38.5159 1.84923 37.9011L29.1518 2.11316C29.6208 1.49838 30.535 1.40734 31.1936 1.90982C31.8523 2.4123 32.006 3.31801 31.537 3.93279L4.23438 39.7207C3.76536 40.3355 2.85122 40.4265 2.19258 39.9241Z"
+        fill="#969CB2"
+        stroke="#39426A"
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
     </chakra.svg>
   );
 }
