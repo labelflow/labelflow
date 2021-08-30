@@ -1,25 +1,26 @@
 describe("Index page redirection when user has tried app", () => {
-  it("Redirects to image page when user tries App and did not see demo dataset", () => {
+  it("Redirects to datasets page when user visits app and has tried app", () => {
     cy.setCookie("hasUserTriedApp", "true");
-    cy.visit(`/?modal-welcome=closed&modal-update-service-worker=update`);
-    cy.url().should(
-      "match",
-      /.\/datasets\/([a-zA-Z0-9_-]*)\/images\/([a-zA-Z0-9_-]*)/
-    );
-  });
-
-  it("Redirects to datasets page when user tries App and did already see demo dataset", () => {
-    cy.setCookie("didVisitDemoDataset", "true");
-    cy.setCookie("hasUserTriedApp", "true");
-    cy.visit(`/?modal-welcome=closed&modal-update-service-worker=update`);
-    cy.url().should("match", /.\/datasets/);
+    cy.visit(`/?modal-update-service-worker=update`);
+    cy.url().should("match", /\/local\/datasets/);
   });
 });
 
 describe("Index page when user has not tried app", () => {
+  it("Redirects to tutorial dataset first image page when user visits app and has not tried App", () => {
+    cy.setCookie("hasUserTriedApp", "false");
+    cy.visit(`/local/datasets?modal-update-service-worker=update`);
+    cy.contains("Get started").click();
+    cy.url().should(
+      "match",
+      /\/local\/datasets\/tutorial-dataset\/images\/2bbbf664-5810-4760-a10f-841de2f35510/
+    );
+    cy.setCookie("hasUserTriedApp", "false");
+  });
   it("Displays website on first user visit", () => {
-    cy.visit(`/?modal-welcome=closed&modal-update-service-worker=update`);
-
+    cy.setCookie("hasUserTriedApp", "false");
+    cy.visit(`/?modal-update-service-worker=update`);
+    cy.url().should("match", /\/website/);
     cy.get("body").contains("Labelflow, All rights reserved").should("exist");
   });
 });

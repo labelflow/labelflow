@@ -11,7 +11,7 @@ const IndexPage = () => {
   const router = useRouter();
 
   const [cookies] = useCookies(["hasUserTriedApp"]);
-  const hasUserTriedApp = cookies.hasUserTriedApp ?? false;
+  const hasUserTriedApp = cookies.hasUserTriedApp === "true";
 
   useEffect(() => {
     if (hasUserTriedApp) {
