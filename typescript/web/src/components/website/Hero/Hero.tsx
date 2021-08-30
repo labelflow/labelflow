@@ -11,6 +11,7 @@ import {
 import NextLink from "next/link";
 import * as React from "react";
 import { BsArrowRight } from "react-icons/bs";
+import { GithubButton } from "../Navbar/NavContent";
 
 export function Hero() {
   return (
@@ -70,7 +71,12 @@ export function Hero() {
               place. Stay in control of your data, focus on building the next
               big thing.
             </Text>
-            <Stack direction={{ base: "column", md: "row" }} spacing="4" mt="8">
+            <Stack
+              direction={{ base: "column", md: "row" }}
+              justifyContent="space-between"
+              mt="8"
+            >
+              <GithubButton />
               <NextLink href="/local/datasets">
                 <Button
                   size="lg"

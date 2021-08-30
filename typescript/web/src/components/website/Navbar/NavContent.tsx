@@ -1,4 +1,5 @@
 import {
+  chakra,
   Box,
   Button,
   Flex,
@@ -8,6 +9,7 @@ import {
   VisuallyHidden,
   // useColorModeValue as mode,
 } from "@chakra-ui/react";
+import { RiGithubFill } from "react-icons/ri";
 import * as React from "react";
 import NextLink from "next/link";
 import { Logo } from "../Logo";
@@ -16,6 +18,23 @@ import { NavMenu } from "./NavMenu";
 import { Submenu } from "./Submenu";
 import { ToggleButton } from "./ToggleButton";
 import { links } from "./_data";
+
+const GithubIcon = chakra(RiGithubFill);
+export const GithubButton = () => (
+  <Button
+    as="a"
+    leftIcon={<GithubIcon fontSize="xl" />}
+    href="https://github.com/Labelflow/labelflow"
+    target="blank"
+    size="lg"
+    minW="210px"
+    variant="link"
+    height="14"
+    px="8"
+  >
+    See code on Github
+  </Button>
+);
 
 const MobileNavContext = (props: FlexProps) => {
   const { isOpen, onToggle } = useDisclosure();
@@ -108,6 +127,7 @@ const DesktopNavContent = (props: FlexProps) => {
         >
           Sign In
         </Box> */}
+        <GithubButton />
         <NextLink href="/local/datasets">
           <Button
             as="a"
