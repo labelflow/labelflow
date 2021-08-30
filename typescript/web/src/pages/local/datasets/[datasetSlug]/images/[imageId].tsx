@@ -78,7 +78,7 @@ const ImagePage = () => {
     imageQuery,
     {
       variables: { id: imageId },
-      skip: typeof imageId !== "string",
+      skip: !imageId,
     }
   );
 
@@ -86,6 +86,7 @@ const ImagePage = () => {
     getDatasetQuery,
     {
       variables: { slug: datasetSlug },
+      skip: !datasetSlug,
     }
   );
 

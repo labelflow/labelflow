@@ -10,7 +10,7 @@ import { Modal, ModalOverlay } from "@chakra-ui/react";
 
 import { QueryParamConfig, StringParam, useQueryParam } from "use-query-params";
 import type { Dataset as DatasetType } from "@labelflow/graphql-types";
-import { useRouter } from "next/router";
+import { useRouter, NextRouter } from "next/router";
 import { useErrorHandler } from "react-error-boundary";
 import { browser } from "../../../utils/detect-scope";
 import { BrowserWarning } from "./steps/browser-warning";
@@ -21,6 +21,9 @@ import {
   checkServiceWorkerReady,
   messageNoWindow,
 } from "../../../utils/check-service-worker";
+
+const tutorialDatasetFirstImageUrl =
+  "/local/datasets/tutorial-dataset/images/2bbbf664-5810-4760-a10f-841de2f35510";
 
 type WelcomeModalParam =
   | undefined // Default: Stays close if user already onboarded, else open asap
@@ -59,15 +62,15 @@ export const createDemoDatasetQuery = gql`
 `;
 
 const performWelcomeWorkflow = async ({
+  router,
   isServiceWorkerActive,
   setIsServiceWorkerActive,
   client,
   setParamModalWelcome,
   setIsLoadingWorkerAndDemo,
   setBrowserError,
-}: // setHasUserTriedApp,
-// handleError,
-{
+}: {
+  router: NextRouter;
   isServiceWorkerActive: boolean;
   setIsServiceWorkerActive: (state: boolean) => void;
   setParamModalWelcome: (
@@ -77,8 +80,6 @@ const performWelcomeWorkflow = async ({
   setBrowserError: (state: Error) => void;
   setIsLoadingWorkerAndDemo: (state: boolean) => void;
   client: ApolloClient<{}>;
-  // setHasUserTriedApp: any;
-  // handleError: (error: Error) => void;
 }) => {
   try {
     if (isServiceWorkerActive) {
@@ -115,12 +116,23 @@ const performWelcomeWorkflow = async ({
       const { data: createDemoDatasetResult, errors: createDemoDatasetErrors } =
         await client.mutate({
           mutation: createDemoDatasetQuery,
-          refetchQueries: ["getDatasets"],
+          refetchQueries: [
+            "getDatasets",
+            "getDatasetById",
+            "getAllImagesOfADataset",
+            "getDataset",
+            "countLabelsOfDataset",
+            "getLabelClassesOfDataset",
+            "image",
+            "getImageLabels",
+          ],
         });
       if (createDemoDatasetErrors) {
         throw createDemoDatasetErrors[0];
       }
     }
+
+    await router.prefetch(tutorialDatasetFirstImageUrl);
 
     setIsLoadingWorkerAndDemo(false);
   } catch (error) {
@@ -219,14 +231,13 @@ export const WelcomeModal = ({
         paramModalWelcome === "open")
     ) {
       performWelcomeWorkflow({
+        router,
         setBrowserError,
         isServiceWorkerActive,
         setIsServiceWorkerActive,
         client,
         setParamModalWelcome,
         setIsLoadingWorkerAndDemo,
-        // setHasUserTriedApp,
-        // handleError,
       });
     }
   }, [tryDespiteBrowserWarning, router?.isReady]);
@@ -241,9 +252,7 @@ export const WelcomeModal = ({
     setParamModalWelcome(undefined, "replaceIn");
 
     // First image of tutorial dataset
-    router.push(
-      "/local/datasets/tutorial-dataset/images/2bbbf664-5810-4760-a10f-841de2f35510"
-    );
+    router.push(tutorialDatasetFirstImageUrl);
   }, []);
 
   // welcome => undefined
