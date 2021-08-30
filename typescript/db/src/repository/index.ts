@@ -74,7 +74,7 @@ export const repository: Repository = {
     list: (where, skip = undefined, first = undefined) =>
       prisma.labelClass.findMany({
         where,
-        orderBy: { createdAt: "asc" },
+        orderBy: { index: "asc" },
         skip,
         take: first,
       }),

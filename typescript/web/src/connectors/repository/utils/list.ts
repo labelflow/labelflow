@@ -12,7 +12,8 @@
  */
 export const list =
   <Entity = unknown, Where extends Record<string, any> | null = null>(
-    table: Dexie.Table<Entity>
+    table: Dexie.Table<Entity>,
+    criterion = "createdAt"
   ) =>
   /**
    * A function which filters and list entities.
@@ -30,17 +31,14 @@ export const list =
   ): Promise<Entity[]> => {
     if (where) {
       const query = table.where(where);
-      if (skip) {
-        query.offset(skip);
-      }
-      if (first) {
-        query.limit(first);
-      }
+      const listElements = await query.sortBy(criterion);
+      const beginSlice = skip ?? 0;
+      const endSlice = first ? beginSlice + first : listElements.length;
 
-      return await query.sortBy("createdAt");
+      return listElements.slice(beginSlice, endSlice);
     }
 
-    const query = table.orderBy("createdAt");
+    const query = table.orderBy(criterion);
     if (skip) {
       query.offset(skip);
     }
