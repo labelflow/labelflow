@@ -24,13 +24,21 @@ Default.parameters = {
     asPath: "/local/datasets",
     query: {},
   },
+  cookie: {
+    hasUserTriedApp: "true",
+  },
 };
 
-export const WrongBrowser = () => {
-  return <WelcomeModal initialIsWrongBrowser />;
+export const BrowserError = () => {
+  return (
+    <WelcomeModal
+      initialBrowserError={new Error("Wow")}
+      initialBrowserWarning
+    />
+  );
 };
 
-WrongBrowser.parameters = {
+BrowserError.parameters = {
   nextRouter: {
     path: "/local/datasets?modal-welcome=open",
     asPath: "/local/datasets?modal-welcome=open",
@@ -40,7 +48,24 @@ WrongBrowser.parameters = {
   },
   cookie: {
     hasUserTriedApp: "false",
-    tryDespiteWrongBrowser: "false",
+  },
+};
+
+export const BrowserWarning = () => {
+  return <WelcomeModal initialBrowserWarning />;
+};
+
+BrowserWarning.parameters = {
+  nextRouter: {
+    path: "/local/datasets?modal-welcome=open",
+    asPath: "/local/datasets?modal-welcome=open",
+    query: {
+      "modal-welcome": "open",
+    },
+  },
+  cookie: {
+    hasUserTriedApp: "false",
+    tryDespiteBrowserWarning: "false",
   },
 };
 
@@ -58,7 +83,7 @@ Loading.parameters = {
   },
   cookie: {
     hasUserTriedApp: "false",
-    tryDespiteWrongBrowser: "false",
+    tryDespiteBrowserWarning: "false",
   },
 };
 
@@ -76,6 +101,6 @@ Welcome.parameters = {
   },
   cookie: {
     hasUserTriedApp: "false",
-    tryDespiteWrongBrowser: "false",
+    tryDespiteBrowserWarning: "false",
   },
 };

@@ -15,20 +15,23 @@ import {
   useColorModeValue as mode,
 } from "@chakra-ui/react";
 import NextLink from "next/link";
+import { useErrorHandler } from "react-error-boundary";
 import { RiArrowGoBackLine, RiPlayFill } from "react-icons/ri";
 
-import BrowserAlert from "../../../graphics/browser-alert";
+import BrowserCancel from "../../../graphics/browser-cancel";
 
-const ChakraBrowserAlert = chakra(BrowserAlert);
+const ChakraBrowserCancel = chakra(BrowserCancel);
 
 const BackIcon = chakra(RiArrowGoBackLine);
 const PlayIcon = chakra(RiPlayFill);
 type Props = {
-  onClickTryAnyway?: () => void;
+  error?: Error;
 };
 
-export const WrongBrowser = ({ onClickTryAnyway }: Props) => {
+export const BrowserError = ({ error }: Props) => {
   const startLabellingButtonRef = useRef<HTMLButtonElement>(null);
+  const handleError = useErrorHandler();
+
   // Start the timer during the first render
   useEffect(() => {
     startLabellingButtonRef.current?.focus();
@@ -37,7 +40,7 @@ export const WrongBrowser = ({ onClickTryAnyway }: Props) => {
     <ModalContent margin="3.75rem">
       <ModalHeader textAlign="center" padding="8">
         <Center>
-          <ChakraBrowserAlert mt="12" mb="8" width="40" height="40" />
+          <ChakraBrowserCancel mt="12" mb="8" width="40" height="40" />
         </Center>
       </ModalHeader>
 
@@ -57,7 +60,7 @@ export const WrongBrowser = ({ onClickTryAnyway }: Props) => {
             fontWeight="extrabold"
             textAlign="center"
           >
-            Unsupported browser
+            Incompatible browser
           </Heading>
           <Text
             color={mode("gray.600", "gray.400")}
@@ -66,8 +69,8 @@ export const WrongBrowser = ({ onClickTryAnyway }: Props) => {
             fontWeight="medium"
             textAlign="justify"
           >
-            It seems like you are using an unsupported browser. For technical
-            reasons, Labelflow recommends to use the latest version of{" "}
+            Your browser threw an Error while initializing Labelflow. For
+            technical reasons, Labelflow requires to use the latest version of{" "}
             <Link
               href="https://www.mozilla.org/firefox/new"
               color="brand.600"
@@ -135,7 +138,6 @@ export const WrongBrowser = ({ onClickTryAnyway }: Props) => {
               Back to Website
             </Button>
           </NextLink>
-
           <Button
             ref={startLabellingButtonRef}
             leftIcon={<PlayIcon fontSize="xl" />}
@@ -145,11 +147,13 @@ export const WrongBrowser = ({ onClickTryAnyway }: Props) => {
             height="14"
             px="8"
             isLoading={false}
-            onClick={onClickTryAnyway}
+            onClick={() => {
+              handleError(error);
+            }}
             variant="link"
             loadingText="Loading the app"
           >
-            Try anyway...
+            See Error...
           </Button>
         </HStack>
       </ModalFooter>
