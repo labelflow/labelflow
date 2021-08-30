@@ -12,7 +12,7 @@ import {
 import type { Request as ApolloRequest } from "apollo-server-env";
 import { RouteHandlerCallbackOptions, RouteHandlerObject } from "workbox-core";
 
-// import { resetDatabase } from "../connectors/database";
+import { resetDatabase } from "../connectors/database";
 
 const maxRetries = 1;
 
@@ -51,7 +51,7 @@ async function graphQLServiceWorker(
     console.error("Error while running graphql query", error);
     if (retries < maxRetries) {
       // Resetting database is cheap and can solve many known unknown problems
-      // await resetDatabase();
+      await resetDatabase();
       return graphQLServiceWorker(request, requestJson, options, retries + 1);
     }
 
