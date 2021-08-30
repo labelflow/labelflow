@@ -22,7 +22,7 @@ const ChakraRocket = chakra(Rocket);
 const GithubIcon = chakra(RiGithubFill);
 
 export const Loading = () => {
-  const startLabellingButtonRef = useRef<HTMLButtonElement>(null);
+  const startLabellingButtonRef = useRef<HTMLAnchorElement>(null);
   // Start the timer during the first render
   useEffect(() => {
     startLabellingButtonRef.current?.focus();
@@ -77,7 +77,7 @@ export const Loading = () => {
           mb="10"
         >
           <Button
-            ref={startLabellingButtonRef}
+            ref={startLabellingButtonRef as any}
             as="a"
             leftIcon={<GithubIcon fontSize="xl" />}
             href="https://github.com/Labelflow/labelflow"
