@@ -1,4 +1,3 @@
-import { v4 as uuidv4 } from "uuid";
 import { LabelType } from "@labelflow/graphql-types";
 
 const origin =
@@ -6,17 +5,30 @@ const origin =
     ? globalThis.location?.origin
     : "https://labelflow.ai";
 
-export const tutorialImageUrls = [
-  `${origin}/static/img/tutorial-image-1.jpg`,
-  `${origin}/static/img/tutorial-image-2.jpg`,
-  `${origin}/static/img/tutorial-image-3.jpg`,
-  `${origin}/static/img/tutorial-image-4.jpg`,
+export const tutorialImages = [
+  {
+    id: "2bbbf664-5810-4760-a10f-841de2f35510",
+    url: `${origin}/static/img/tutorial-image-1.jpg`,
+  },
+  {
+    id: "506b263f-61a9-45ba-8f75-515534fae97c",
+    url: `${origin}/static/img/tutorial-image-2.jpg`,
+  },
+  {
+    id: "73b89fd9-0be8-4c76-bc4f-fee943b0d9d1",
+    url: `${origin}/static/img/tutorial-image-3.jpg`,
+  },
+  {
+    id: "04f999da-780c-461c-8e8e-c3189ae560fb",
+    url: `${origin}/static/img/tutorial-image-4.jpg`,
+  },
 ];
 
-export const tutorialLabelClassId = uuidv4();
+export const tutorialLabelClassId = "2b4f7ed2-4257-48f8-b546-81af73f3c904";
 
 export const tutorialLabels = [
   {
+    id: "75dff3c4-fdc8-42a0-945a-339effc2bb01",
     geometry: {
       coordinates: [
         [
@@ -37,6 +49,7 @@ export const tutorialLabels = [
     y: 504.8289671232293,
   },
   {
+    id: "75dff3c4-fdc8-42a0-945a-339effc2bb02",
     geometry: {
       coordinates: [
         [
@@ -57,6 +70,7 @@ export const tutorialLabels = [
     y: 445.23232807236434,
   },
   {
+    id: "75dff3c4-fdc8-42a0-945a-339effc2bb03",
     geometry: {
       coordinates: [
         [
@@ -77,6 +91,7 @@ export const tutorialLabels = [
     y: 975.5920751292459,
   },
   {
+    id: "75dff3c4-fdc8-42a0-945a-339effc2bb04",
     geometry: {
       coordinates: [
         [
@@ -97,6 +112,7 @@ export const tutorialLabels = [
     y: 452.1198695674241,
   },
   {
+    id: "75dff3c4-fdc8-42a0-945a-339effc2bb05",
     geometry: {
       coordinates: [
         [
@@ -117,6 +133,7 @@ export const tutorialLabels = [
     y: 1627.8166205359464,
   },
   {
+    id: "75dff3c4-fdc8-42a0-945a-339effc2bb06",
     geometry: {
       coordinates: [
         [
@@ -138,6 +155,7 @@ export const tutorialLabels = [
     y: 547.4740682949563,
   },
   {
+    id: "75dff3c4-fdc8-42a0-945a-339effc2bb07",
     geometry: {
       coordinates: [
         [
@@ -159,6 +177,7 @@ export const tutorialLabels = [
     y: 1223.3872135056408,
   },
   {
+    id: "75dff3c4-fdc8-42a0-945a-339effc2bb08",
     geometry: {
       coordinates: [
         [
@@ -179,6 +198,7 @@ export const tutorialLabels = [
     y: 648.5804390031997,
   },
   {
+    id: "75dff3c4-fdc8-42a0-945a-339effc2bb09",
     geometry: {
       coordinates: [
         [
@@ -270,6 +290,7 @@ export const tutorialLabels = [
     y: 302.08726200176955,
   },
   {
+    id: "75dff3c4-fdc8-42a0-945a-339effc2bb10",
     geometry: {
       coordinates: [
         [

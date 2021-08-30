@@ -242,7 +242,9 @@ export const WelcomeModal = ({
 
     setParamModalWelcome(undefined, "replaceIn");
 
-    router.push("/local/datasets/tutorial-dataset");
+    router.push(
+      "/local/datasets/tutorial-dataset/images/2bbbf664-5810-4760-a10f-841de2f35510"
+    );
   }, []);
 
   // welcome => undefined
