@@ -10,8 +10,6 @@ import {
 import { FallbackProps } from "react-error-boundary";
 import { NextPageContext } from "next";
 
-import { AppLifecycleManager } from "../components/app-lifecycle-manager";
-
 import { Meta } from "../components/meta";
 import { Layout } from "../components/layout";
 import { EmptyStateOops } from "../components/empty-state";

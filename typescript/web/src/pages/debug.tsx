@@ -18,7 +18,6 @@ import { detect } from "detect-browser";
 import { RiArrowRightSLine } from "react-icons/ri";
 import { Meta } from "../components/meta";
 
-import { AppLifecycleManager } from "../components/app-lifecycle-manager";
 import {
   isInWindowScope,
   isInServiceWorkerScope,
@@ -38,7 +37,6 @@ const DebugPage = () => {
 
   return (
     <>
-      {/* <AppLifecycleManager /> */}
       <Meta title="Labelflow | Debug" />
       <Layout
         topBarLeftContent={
