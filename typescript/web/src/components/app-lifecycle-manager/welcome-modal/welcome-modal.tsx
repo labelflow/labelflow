@@ -212,7 +212,7 @@ export const WelcomeModal = ({
   // undefined => loading => welcome
   useEffect(() => {
     if (
-      router.isReady &&
+      router?.isReady &&
       ((!(browserWarning && tryDespiteBrowserWarning !== "true") &&
         !isServiceWorkerActive &&
         paramModalWelcome !== "closed") ||
@@ -229,7 +229,7 @@ export const WelcomeModal = ({
         // handleError,
       });
     }
-  }, [tryDespiteBrowserWarning, router.isReady]);
+  }, [tryDespiteBrowserWarning, router?.isReady]);
 
   // welcome => undefined
   const handleGetStarted = useCallback(() => {

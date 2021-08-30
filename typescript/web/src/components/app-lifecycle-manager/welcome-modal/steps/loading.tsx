@@ -32,7 +32,6 @@ export const Loading = () => {
       <ModalHeader textAlign="center" padding="8">
         <Center>
           <ChakraRocket mt="12" mb="8" width="40" height="40" />
-          {/* <Image src={rocket} mt="12" mb="8" width="40" height="40" /> */}
         </Center>
       </ModalHeader>
 
