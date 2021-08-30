@@ -1,9 +1,10 @@
 import { gql, useQuery } from "@apollo/client";
 import NextLink from "next/link";
 import {
-  Flex,
+  Wrap,
   Box,
-  SimpleGrid,
+  WrapItem,
+  VStack,
   Image,
   Center,
   Skeleton,
@@ -144,7 +145,7 @@ const ImagesPage = () => {
         )}
 
         {datasetResult && !isEmpty(datasetResult?.dataset?.images) && (
-          <SimpleGrid minChildWidth="120px" spacing={8} padding={8}>
+          <Wrap h="full" spacing={8} padding={8} justify="space-evenly">
             {datasetResult?.dataset?.images?.map(({ id, name, url }) => (
               <NextLink
                 href={`/local/datasets/${datasetSlug}/images/${id}`}
@@ -152,44 +153,33 @@ const ImagesPage = () => {
               >
                 {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
                 <a>
-                  <Flex
-                    maxWidth="240px"
-                    h="189px"
-                    p={4}
-                    direction="column"
-                    background="white"
-                    rounded={8}
-                    justify="stretch"
-                  >
-                    <Heading
-                      as="h3"
-                      size="sm"
-                      overflow="hidden"
-                      textOverflow="ellipsis"
-                      whiteSpace="nowrap"
-                      flexGrow={0}
-                      flexShrink={0}
-                      w="full"
-                      pb={2}
-                    >
-                      {name}
-                    </Heading>
-                    <Image
-                      background="gray.100"
-                      alt={name}
-                      src={url}
-                      ignoreFallback
-                      objectFit="contain"
-                      flexGrow={1}
-                      flexShrink={1}
-                      w="auto"
-                      h="auto"
-                    />
-                  </Flex>
+                  <WrapItem p={4} background="white" rounded={8}>
+                    <VStack w="80" h="80" justify="space-between">
+                      <Heading
+                        as="h3"
+                        size="sm"
+                        overflow="hidden"
+                        textOverflow="ellipsis"
+                        whiteSpace="nowrap"
+                        w="full"
+                      >
+                        {name}
+                      </Heading>
+                      <Image
+                        background="gray.100"
+                        alt={name}
+                        src={url}
+                        ignoreFallback
+                        objectFit="contain"
+                        h="72"
+                        w="full"
+                      />
+                    </VStack>
+                  </WrapItem>
                 </a>
               </NextLink>
             ))}
-          </SimpleGrid>
+          </Wrap>
         )}
       </Layout>
     </>
