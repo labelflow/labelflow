@@ -1,6 +1,6 @@
-export { EmptyStateCaughtUp } from "./caught-up";
-export { EmptyStateCreditCard } from "./credit-card";
-export { EmptyStateImage } from "./image";
-export { EmptyStateInternetConnection } from "./internet-connection";
-export { EmptyStateOops } from "./oops";
-export { EmptyStateResult } from "./result";
+export { EmptyStateError } from "./error";
+export { EmptyStateNoConnection } from "./no-connection";
+export { EmptyStateNoCreditCard } from "./no-credit-card";
+export { EmptyStateNoImages } from "./no-images";
+export { EmptyStateNoSearchResult } from "./no-search-result";
+export { EmptyStateNoTasks } from "./no-tasks";

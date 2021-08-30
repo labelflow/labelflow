@@ -2,7 +2,7 @@
 import { chakra, useToken, HTMLChakraProps } from "@chakra-ui/react";
 import * as React from "react";
 
-export const EmptyStateOops = React.forwardRef<
+export const EmptyStateError = React.forwardRef<
   SVGSVGElement,
   HTMLChakraProps<"svg"> & { colorScheme?: string }
 >(({ colorScheme, ...rest }: { colorScheme?: string }, ref) => {

@@ -1,7 +1,7 @@
 import { Heading, Text, Center, Box, Button } from "@chakra-ui/react";
 import { Meta } from "../components/meta";
 import { Layout } from "../components/layout";
-import { EmptyStateInternetConnection } from "../components/empty-state";
+import { EmptyStateNoConnection } from "../components/empty-state";
 
 const OfflinePage = () => {
   return (
@@ -17,7 +17,7 @@ const OfflinePage = () => {
               py={{ base: "16", sm: "20" }}
               textAlign="center"
             >
-              <EmptyStateInternetConnection w="full" />
+              <EmptyStateNoConnection w="full" />
               <Heading as="h2">You are currently offline.</Heading>
               <Text mt="4" fontSize="lg">
                 Labelflow should be usable online, but it looks like it

@@ -1,11 +1,11 @@
 import { chakraDecorator } from "../../../utils/chakra-decorator";
 import {
-  EmptyStateCaughtUp,
-  EmptyStateCreditCard,
-  EmptyStateImage,
-  EmptyStateInternetConnection,
-  EmptyStateOops,
-  EmptyStateResult,
+  EmptyStateNoTasks,
+  EmptyStateNoCreditCard,
+  EmptyStateNoImages,
+  EmptyStateNoConnection,
+  EmptyStateError,
+  EmptyStateNoSearchResult,
 } from "..";
 
 export default {
@@ -13,11 +13,9 @@ export default {
   decorators: [chakraDecorator],
 };
 
-export const CaughtUp = (args: {}) => <EmptyStateCaughtUp {...args} />;
-export const CreditCard = (args: {}) => <EmptyStateCreditCard {...args} />;
-export const Image = (args: {}) => <EmptyStateImage {...args} />;
-export const InternetConnection = (args: {}) => (
-  <EmptyStateInternetConnection {...args} />
-);
-export const Oops = (args: {}) => <EmptyStateOops {...args} />;
-export const Result = (args: {}) => <EmptyStateResult {...args} />;
+export const Error = () => <EmptyStateError />;
+export const NoConnection = () => <EmptyStateNoConnection />;
+export const NoCreditCard = () => <EmptyStateNoCreditCard />;
+export const NoImage = () => <EmptyStateNoImages />;
+export const NoSearchResult = () => <EmptyStateNoSearchResult />;
+export const NoTasks = () => <EmptyStateNoTasks />;
