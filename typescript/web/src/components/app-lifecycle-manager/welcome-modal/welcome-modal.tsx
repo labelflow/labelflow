@@ -115,6 +115,7 @@ const performWelcomeWorkflow = async ({
       const { data: createDemoDatasetResult, errors: createDemoDatasetErrors } =
         await client.mutate({
           mutation: createDemoDatasetQuery,
+          refetchQueries: ["getDatasets"],
         });
       if (createDemoDatasetErrors) {
         throw createDemoDatasetErrors[0];
