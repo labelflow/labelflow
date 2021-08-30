@@ -41,7 +41,7 @@ export default function Website({
         </Box>
       </Box>
       <Hero />
-      <Banner/>
+      <Banner />
       <Features />
       <Why />
       <Roadmap />
