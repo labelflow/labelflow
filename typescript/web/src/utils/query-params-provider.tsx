@@ -10,44 +10,36 @@ export const QueryParamProviderComponent = (props: {
 }) => {
   const { children, ...rest } = props;
   const router = useRouter();
-
-  const { pathname, asPath } = router;
+  const match = router.asPath.match(/[^?]+/);
+  const pathname = match ? match[0] : router.asPath;
 
   const location = useMemo(
     () =>
-      // Do not use window.location here because it breaks storybook next router addon and query param decorator
       ({
-        search: asPath.replace(/[^?]+/u, ""),
+        search: router.asPath.replace(/[^?]+/u, ""),
       } as Location),
-    [asPath]
+    [router.asPath]
   );
 
   const history = useMemo(
     () => ({
       push: ({ search }: Location) => {
-        router.push({ path: router.asPath, search }, undefined, {
-          shallow: true,
-          scroll: false,
-        });
+        router.push(
+          { pathname, search },
+          { search, pathname },
+          { shallow: true, scroll: false }
+        );
       },
       replace: ({ search }: Location) => {
-        console.log("REPLACE", {
-          pathname: router.pathname,
-          search,
-          query: router.query,
-        });
         router.replace(
-          { path: router.asPath, search, query: router.query },
-          undefined,
-          {
-            shallow: true,
-            scroll: false,
-          }
+          { pathname, search },
+          { search, pathname },
+          { shallow: true, scroll: false }
         );
       },
       location,
     }),
-    [pathname, router.pathname, router.query] // See https://github.com/pbeshai/use-query-params/issues/13#issuecomment-839697642
+    [pathname, router.pathname, router.query, location.pathname] // See https://github.com/pbeshai/use-query-params/issues/13#issuecomment-839697642
   );
 
   return (
