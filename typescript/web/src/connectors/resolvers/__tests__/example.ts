@@ -63,8 +63,9 @@ describe("Example resolver test suite", () => {
     ];
 
     await Promise.all(
-      testExamples.map((testExample) =>
-        (await getDatabase()).example.add(testExample)
+      testExamples.map(
+        async (testExample) =>
+          await (await getDatabase()).example.add(testExample)
       )
     );
 
@@ -104,8 +105,9 @@ describe("Example resolver test suite", () => {
     ];
 
     await Promise.all(
-      testExamples.map((testExample) =>
-        (await getDatabase()).example.add(testExample)
+      testExamples.map(
+        async (testExample) =>
+          await (await getDatabase()).example.add(testExample)
       )
     );
 
