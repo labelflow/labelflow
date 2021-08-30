@@ -55,7 +55,7 @@ const MobileNavContext = (props: FlexProps) => {
         )}
         <NextLink href="/local/datasets">
           <Button colorScheme="brand" w="full" size="lg" mt="5">
-            Try it now
+            Try it! No login required
           </Button>
         </NextLink>
       </NavMenu>
@@ -116,7 +116,7 @@ const DesktopNavContent = (props: FlexProps) => {
             fontWeight="bold"
             variant="outline"
           >
-            Try it now
+            Try it! No login required
           </Button>
         </NextLink>
       </HStack>

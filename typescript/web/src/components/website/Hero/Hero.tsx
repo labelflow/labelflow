@@ -80,7 +80,7 @@ export function Hero() {
                   px="8"
                   rightIcon={<BsArrowRight />}
                 >
-                  Try it now
+                  Try it! No login required
                 </Button>
               </NextLink>
               {/* <Button

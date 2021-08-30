@@ -27,7 +27,7 @@ export const Banner = () => {
             fontWeight="extrabold"
             letterSpacing="tight"
           >
-            Webinar - Get an AI ready in no time
+            Webinar - Get an AI model ready in no time
           </Heading>
           <Text mt="4" fontSize="lg">
             From image labelling to automatic inference, discover how to build a

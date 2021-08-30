@@ -19,11 +19,12 @@ export const Why = () => {
             by uploading your data in the app.
             <br />
             <br />
-            But Labelflow can also connect to your own data stack to stay 100%
-            in control of your data and algorithms. Labelflow backend is
-            open-source and you can customize it to integrate all your tools
-            around your data stack. No duplicate source of truth and complicated
-            scripts to synchronize your data between various tools.
+            But Labelflow can also connect to your own data stack allowing you
+            to stay <b> 100% in control of your data and algorithms </b>.
+            Labelflow backend is open-source and you can customize it to
+            integrate all your tools around your data stack. No duplicate source
+            of truth and complicated scripts to synchronize your data between
+            various tools.
           </Text>
         </NextLink>
         <Image
