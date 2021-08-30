@@ -37,7 +37,8 @@ const IndexPage = () => {
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const parsedCookie = new Cookies(context.req.headers.cookie);
 
-  if (parsedCookie.get("hasUserTriedApp")) {
+  if (parsedCookie.get("hasUserTriedApp") === "true") {
+    console.log("REDIRECTT");
     return {
       props: {},
       redirect: {
