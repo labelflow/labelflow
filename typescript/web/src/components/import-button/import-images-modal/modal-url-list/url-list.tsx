@@ -5,6 +5,7 @@ import { isWebUri } from "valid-url";
 import { isEmpty, uniq } from "lodash/fp";
 import { DroppedUrl } from "../types";
 import imageSampleCollection from "../../../../utils/image-sample-collection";
+import { isDevelopmentEnvironment } from "../../../../utils/detect-scope";
 
 const DevIcon = chakra(FaDev);
 
@@ -22,14 +23,16 @@ export const UrlList = ({
 
   return (
     <VStack spacing={4} flex="1" alignItems="stretch">
-      <Button
-        mt={2}
-        onClick={() => setValue(imageSampleCollection.join("\n"))}
-        background="pink.200"
-      >
-        <DevIcon size="1.5rem" mr="1" />
-        Insert example images
-      </Button>
+      {isDevelopmentEnvironment && (
+        <Button
+          mt={2}
+          onClick={() => setValue(imageSampleCollection.join("\n"))}
+          background="pink.200"
+        >
+          <DevIcon size="1.5rem" mr="1" />
+          Insert example images
+        </Button>
+      )}
       <Stack
         as="form"
         border="1px dashed"
