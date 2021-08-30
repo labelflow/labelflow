@@ -217,6 +217,7 @@ const createDemoDataset = async (
 
   await repository.labelClass.add({
     id: tutorialLabelClassId,
+    index: 0,
     name: "Horse",
     color: "#F87171",
     createdAt: currentDate,

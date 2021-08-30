@@ -56,7 +56,7 @@ export const repository: Repository = {
     getById: async (id) => {
       return await getDatabase().labelClass.get(id);
     },
-    list: list(getDatabase().labelClass),
+    list: list(getDatabase().labelClass, "index"),
     update: async (id, changes) => {
       return (await getDatabase().labelClass.update(id, changes)) === 1;
     },

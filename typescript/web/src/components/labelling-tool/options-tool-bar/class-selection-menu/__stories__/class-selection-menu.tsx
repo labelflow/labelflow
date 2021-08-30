@@ -22,6 +22,7 @@ const Template = (args: any) => (
 const labelClasses: LabelClassItem[] = [
   {
     id: "coaisndoiasndi0",
+    index: 0,
     createdAt: "today",
     updatedAt: "today",
     name: "SuperUltraLongNameOIANSOINASOINAOSINASOINAOINS",
@@ -30,6 +31,7 @@ const labelClasses: LabelClassItem[] = [
   },
   {
     id: "coaisndoiasndi1",
+    index: 1,
     createdAt: "today",
     updatedAt: "today",
     name: "Dog",
@@ -38,6 +40,7 @@ const labelClasses: LabelClassItem[] = [
   },
   {
     id: "coaisndoiasndi2",
+    index: 2,
     createdAt: "today",
     updatedAt: "today",
     name: "Car",
@@ -46,6 +49,7 @@ const labelClasses: LabelClassItem[] = [
   },
   {
     id: "coaisndoiasndi3",
+    index: 3,
     createdAt: "today",
     updatedAt: "today",
     name: "Cycle",
@@ -54,6 +58,7 @@ const labelClasses: LabelClassItem[] = [
   },
   {
     id: "coaisndoiasndi4",
+    index: 4,
     createdAt: "today",
     updatedAt: "today",
     name: "Plane",

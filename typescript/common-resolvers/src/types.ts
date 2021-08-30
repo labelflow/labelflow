@@ -37,7 +37,7 @@ type PartialWithNullAllowed<T> = { [P in keyof T]?: T[P] | undefined | null };
 type ID = string;
 
 type Add<EntityType> = (entity: EntityType) => Promise<ID>;
-type Count<Where> = (where?: Where) => Promise<Number>;
+type Count<Where> = (where?: Where) => Promise<number>;
 type Delete = (id: ID) => Promise<void>;
 type GetById<EntityType> = (id: ID) => Promise<EntityType | undefined>;
 type GetByName<EntityType> = (name: string) => Promise<EntityType | undefined>;

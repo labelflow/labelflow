@@ -339,9 +339,11 @@ describe("Class selection popover", () => {
     cy.contains("classes").click();
     cy.url().should("contain", `/local/datasets/${datasetSlug}/classes`);
 
+    cy.contains("A new class");
     cy.get('[aria-label="Delete class"]').click();
 
     cy.get('[aria-label="Confirm deleting class"]').click();
+    cy.contains("A new class").should("not.exist");
     cy.contains(/^images$/).click();
     cy.get("main").contains("photo-1579513141590-c597876aefbc").click();
 
