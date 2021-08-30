@@ -85,4 +85,3 @@ function SvgError(
 
 const ForwardRef = forwardRef(SvgError);
 export const EmptyStateError = memo(ForwardRef);
-

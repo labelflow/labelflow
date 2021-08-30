@@ -56,4 +56,3 @@ function SvgNoTasks(
 
 const ForwardRef = forwardRef(SvgNoTasks);
 export const EmptyStateNoTasks = memo(ForwardRef);
-
