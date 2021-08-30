@@ -284,7 +284,7 @@ export const tutorialLabels = [
     },
     height: 432.3047746913836,
     labelClassId: null,
-    type: LabelType.Box,
+    type: LabelType.Polygon,
     width: 321.30471370374835,
     x: 2386.656145950753,
     y: 302.08726200176955,
