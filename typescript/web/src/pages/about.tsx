@@ -2,6 +2,7 @@ import {
   Box,
   Heading,
   Link,
+  Center,
   Text,
   useColorModeValue as mode,
 } from "@chakra-ui/react";
@@ -65,7 +66,7 @@ export default function Pricing() {
               >
                 Sterblue
               </Link>
-              , an AI-powered cloud platform to support energy companies
+              , <b>an AI-powered cloud platform to support energy companies </b>
               managing their critical assets: wind turbines, transmission &
               distribution grids, cooling towers. Machine learning was sweating
               all along our product.
@@ -77,9 +78,17 @@ export default function Pricing() {
               many other applications.
               <br />
               <br />
+              <Center>
+                <img
+                  src="static/img/about-screenshot1.png"
+                  alt="Sterblue Platform"
+                />
+              </Center>
+              <br />
+              <br />
               5 years ago, showing bounding boxes on an image on a Linkedin or
               blog post was the big marketing trend. We took the hard way, the
-              one that targetted AI at scale.
+              one that targetted to bring AI at scale.
               <br />
               <br />
               We labeled millions of images dealing with multiple labelling
@@ -94,10 +103,16 @@ export default function Pricing() {
               you save 23% of your time increasing false negative rate by 14%”
               <br />
               <br />
-              With Labelflow, we now want to support every AI-applied company in
-              the world building the next big thing. We start small with our
-              labelling tool, with a strong focus on user experience (here).
-              That’s just the beginning.
+              With{" "}
+              <b>
+                <Link color="brand.500" href="https://labelflow.ai/website">
+                  Labelflow
+                </Link>
+                , we now want to support every AI-applied company in the world
+                building the next big thing
+              </b>
+              . We start small with our labelling tool, with a strong focus on
+              user experience. That’s just the beginning.
               <br />
               <br />
               We are a team of enthusiastic developers and data scientists. We

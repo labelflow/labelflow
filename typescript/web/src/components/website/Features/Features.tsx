@@ -1,10 +1,10 @@
 import {
   Box,
-  // Button,
   Heading,
   Img,
   SimpleGrid,
   Text,
+  Link,
   useColorModeValue as mode,
 } from "@chakra-ui/react";
 import * as React from "react";
@@ -12,7 +12,6 @@ import {
   BsFillLightningFill,
   BsFillShieldLockFill,
   BsHeartFill,
-  // BsArrowRight,
 } from "react-icons/bs";
 import { Feature } from "./Feature";
 
@@ -31,7 +30,7 @@ export const Features = () => {
             htmlHeight="320px"
             height={{ md: "320px" }}
             objectFit="cover"
-            src="/static/img/shot-elec.jpg"
+            src="/static/img/shot-elec-1.png"
             alt="state of the art speaker"
           />
           <Box>
@@ -45,18 +44,14 @@ export const Features = () => {
               color={mode("gray.600", "gray.400")}
             >
               You now have the tool to unleash the potential of all your AI
-              projects
+              projects. We come from 5 years of experience implementing AI at
+              scale for energy companies with{" "}
+              <Link color="brand.500" href="https://labelflow.ai/about">
+                Sterblue
+              </Link>
+              , labeling 1.5 million images and involving tens of labelers and
+              experts around the platform. We got your pains.
             </Text>
-            {/* <Button
-              size="lg"
-              colorScheme="brand"
-              rightIcon={<BsArrowRight />}
-              fontWeight="bold"
-              fontSize="md"
-              w={{ base: "full", sm: "auto" }}
-            >
-              Learn more
-            </Button> */}
           </Box>
         </SimpleGrid>
         <SimpleGrid columns={{ base: 1, md: 3 }} mt="16" spacing="8">
@@ -72,13 +67,11 @@ export const Features = () => {
             Labelflow does not try to own your data or algorithms, but
             integrates with them seamlessly. No duplicate source of truth and
             complicated scripts to synchronize your data between various tools.
-            Your database is the source of truth for Labelflow.
           </Feature>
           <Feature icon={BsHeartFill} title="Open community and standard">
-            Our mission is to generalize standard good practices around visual
-            data management. Dataset curation should not require any
-            &ldquo;secret sauce&rdquo;. Labelflow is building a community around
-            an open source labeling tool to set the standard.
+            Labelflow is building a community around an open source labeling
+            tool to set the standard around visual data management. Dataset
+            curation should not require any &ldquo;secret sauce&rdquo;.
           </Feature>
         </SimpleGrid>
       </Box>

@@ -38,7 +38,7 @@ const MobileNavContext = (props: FlexProps) => {
         <Box visibility={{ base: "hidden", sm: "visible" }}>
           <NextLink href="/local/datasets">
             <Button as="a" colorScheme="brand" variant="outline">
-              Try it now
+              Try for free
             </Button>
           </NextLink>
         </Box>
