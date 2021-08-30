@@ -1,12 +1,6 @@
-export { EmptyStateBag } from "./bag";
 export { EmptyStateCaughtUp } from "./caught-up";
 export { EmptyStateCreditCard } from "./credit-card";
-export { EmptyStateDocument } from "./document";
-export { EmptyStateDone } from "./done";
-export { EmptyStateGpsConnection } from "./gps-connection";
 export { EmptyStateImage } from "./image";
-export { EmptyStateInbox } from "./inbox";
 export { EmptyStateInternetConnection } from "./internet-connection";
-export { EmptyStateMessage } from "./message";
 export { EmptyStateOops } from "./oops";
 export { EmptyStateResult } from "./result";
