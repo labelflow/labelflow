@@ -14,20 +14,24 @@ export const deleteDataset: Repository["dataset"]["delete"] = async (id) => {
     return await (await getDatabase()).dataset.get(idToGet);
   })(id);
 
-  const imagesToDelete = await (await getDatabase())
-    .image.where({
+  const imagesToDelete = await (
+    await getDatabase()
+  ).image
+    .where({
       datasetId: datasetToDelete.id,
     })
     .primaryKeys();
 
-  const labelsToDeleteIds = await (await getDatabase())
-    .label.filter((label) => imagesToDelete.includes(label.imageId))
+  const labelsToDeleteIds = await (await getDatabase()).label
+    .filter((label) => imagesToDelete.includes(label.imageId))
     .primaryKeys();
 
   await (await getDatabase()).label.bulkDelete(labelsToDeleteIds);
-  await (await getDatabase())
-    .labelClass.where({ datasetId: datasetToDelete.id })
+  await (await getDatabase()).labelClass
+    .where({ datasetId: datasetToDelete.id })
     .delete();
-  await (await getDatabase()).image.where({ datasetId: datasetToDelete.id }).delete();
+  await (await getDatabase()).image
+    .where({ datasetId: datasetToDelete.id })
+    .delete();
   await (await getDatabase()).dataset.delete(datasetToDelete.id);
 };

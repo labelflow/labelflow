@@ -18,7 +18,9 @@ export function setupTestsWithLocalDatabase() {
   beforeEach(async () => {
     // Warning! The order matters for those 2 lines.
     // Otherwise, there is a failing race condition.
-    await Promise.all((await getDatabase()).tables.map((table) => table.clear()));
+    await Promise.all(
+      (await getDatabase()).tables.map((table) => table.clear())
+    );
 
     // TODO: Figure out why in images import modal clearStore is undefined
     if (client.clearStore) {

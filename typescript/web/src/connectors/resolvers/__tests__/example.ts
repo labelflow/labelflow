@@ -17,7 +17,9 @@ describe("Example resolver test suite", () => {
 
     expect(createResult?.name).toBe("test");
 
-    const queryResult = await (await getDatabase()).example.get(createResult.id);
+    const queryResult = await (
+      await getDatabase()
+    ).example.get(createResult.id);
     expect(createResult).toEqual(queryResult);
   });
 
@@ -61,7 +63,9 @@ describe("Example resolver test suite", () => {
     ];
 
     await Promise.all(
-      testExamples.map((testExample) => (await getDatabase()).example.add(testExample))
+      testExamples.map((testExample) =>
+        (await getDatabase()).example.add(testExample)
+      )
     );
 
     const queryResult = await examples(undefined, {});
@@ -100,7 +104,9 @@ describe("Example resolver test suite", () => {
     ];
 
     await Promise.all(
-      testExamples.map((testExample) => (await getDatabase()).example.add(testExample))
+      testExamples.map((testExample) =>
+        (await getDatabase()).example.add(testExample)
+      )
     );
 
     const queryResult = await examples(undefined, { skip: 1, first: 2 });

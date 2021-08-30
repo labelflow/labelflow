@@ -13,8 +13,8 @@ export const example = async (_: any, args: QueryExampleArgs) => {
 };
 
 export const examples = async (_: any, args: QueryExamplesArgs) => {
-  const query = await (await getDatabase())
-    .example.orderBy("createdAt")
+  const query = await (await getDatabase()).example
+    .orderBy("createdAt")
     .offset(args.skip ?? 0);
 
   if (args.first) {
