@@ -94,6 +94,11 @@ const performWelcomeWorkflow = async ({
       await checkServiceWorkerReady();
     } catch (e) {
       if (e.message === messageNoWindow) {
+        // In Next JS SSR, the window is not available.
+        return;
+      }
+      if (process.env.STORYBOOK) {
+        // In Storybook, the Service Worker is not available.
         return;
       }
       throw e;
@@ -152,6 +157,7 @@ export const WelcomeModal = ({
   initialBrowserError?: Error;
 }) => {
   const router = useRouter();
+
   const handleError = useErrorHandler();
   const client = useApolloClient();
 
@@ -224,6 +230,7 @@ export const WelcomeModal = ({
   // undefined => loading => welcome
   useEffect(() => {
     if (
+      !process.env.STORYBOOK &&
       router?.isReady &&
       ((!(browserWarning && tryDespiteBrowserWarning !== "true") &&
         !isServiceWorkerActive &&
