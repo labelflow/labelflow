@@ -240,6 +240,7 @@ export const WelcomeModal = ({
 
     setParamModalWelcome(undefined, "replaceIn");
 
+    // First image of tutorial dataset
     router.push(
       "/local/datasets/tutorial-dataset/images/2bbbf664-5810-4760-a10f-841de2f35510"
     );
@@ -253,23 +254,26 @@ export const WelcomeModal = ({
     });
 
     setParamModalWelcome(undefined, "replaceIn");
-
-    router.push("/local/datasets");
   }, []);
 
   const shouldShowBrowserErrorModal = browserWarning && browserError != null;
 
   const shouldShowBrowserWarningModal =
+    router?.isReady &&
     browserError == null &&
     browserWarning &&
     tryDespiteBrowserWarning !== "true" &&
     hasUserTriedApp !== "true";
 
   const shouldShowLoadingModal =
-    hasUserTriedApp !== "true" && isLoadingWorkerAndDemo;
+    router?.isReady && hasUserTriedApp !== "true" && isLoadingWorkerAndDemo;
 
   const shouldShowWelcomeModal =
-    hasUserTriedApp !== "true" && !isLoadingWorkerAndDemo;
+    router?.isReady &&
+    (paramModalWelcome === "open" ||
+      (paramModalWelcome !== "closed" &&
+        hasUserTriedApp !== "true" &&
+        !isLoadingWorkerAndDemo));
 
   return (
     <Modal
