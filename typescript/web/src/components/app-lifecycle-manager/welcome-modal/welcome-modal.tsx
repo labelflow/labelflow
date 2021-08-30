@@ -211,6 +211,16 @@ export const WelcomeModal = ({
       StringParam as QueryParamConfig<WelcomeModalParam, WelcomeModalParam>
     );
 
+  // set cookie based on query param
+  useEffect(() => {
+    if (paramModalWelcome === "open" && hasUserTriedApp === "true") {
+      setHasUserTriedApp("hasUserTriedApp", "false");
+    }
+    if (paramModalWelcome === "closed" && hasUserTriedApp !== "true") {
+      setHasUserTriedApp("hasUserTriedApp", "true");
+    }
+  }, [paramModalWelcome, hasUserTriedApp]);
+
   const [isLoadingWorkerAndDemo, setIsLoadingWorkerAndDemo] = useState(
     initialIsLoadingWorkerAndDemo
   );
