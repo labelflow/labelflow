@@ -84,7 +84,7 @@ const performWelcomeWorkflow = async ({
     if (isServiceWorkerActive) {
       return;
     }
-    console.log("setParamModalWelcome(undefined, replaceIn);", 1);
+
     setParamModalWelcome(undefined, "replaceIn");
 
     setIsLoadingWorkerAndDemo(true);
@@ -124,10 +124,7 @@ const performWelcomeWorkflow = async ({
 
     setIsLoadingWorkerAndDemo(false);
   } catch (error) {
-    console.log("error in setup");
-    console.error(error);
     setBrowserError(error);
-    // handleError(error);
   }
 };
 
@@ -299,7 +296,7 @@ export const WelcomeModal = ({
           return <BrowserError error={browserError} />;
         }
 
-        // If there was an error, we show it instead of the modal
+        // If there was an error, we handle it the normal way, showing the normal error screen
         if (browserError) {
           handleError(browserError);
         }
