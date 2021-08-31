@@ -1,6 +1,62 @@
-export { EmptyStateError } from "./error";
-export { EmptyStateNoConnection } from "./no-connection";
-export { EmptyStateNoCreditCard } from "./no-credit-card";
-export { EmptyStateNoImages } from "./no-images";
-export { EmptyStateNoSearchResult } from "./no-search-result";
-export { EmptyStateNoTasks } from "./no-tasks";
+import { chakra } from "@chakra-ui/react";
+import Error404 from "../graphics/error-404";
+import Connection from "../graphics/connection";
+import CreditCard from "../graphics/credit-card";
+import Image from "../graphics/image";
+import Search from "../graphics/search";
+import Coffee from "../graphics/coffee";
+
+export const EmptyStateError = chakra(Error404, {
+  baseStyle: {
+    width: 250,
+    height: 250,
+    padding: 6,
+    opacity: 1,
+    boxSizing: "border-box",
+  },
+});
+export const EmptyStateNoConnection = chakra(Connection, {
+  baseStyle: {
+    width: 250,
+    height: 250,
+    padding: 6,
+    opacity: 1,
+    boxSizing: "border-box",
+  },
+});
+export const EmptyStateNoCreditCard = chakra(CreditCard, {
+  baseStyle: {
+    width: 250,
+    height: 250,
+    padding: 6,
+    opacity: 1,
+    boxSizing: "border-box",
+  },
+});
+export const EmptyStateNoImages = chakra(Image, {
+  baseStyle: {
+    width: 250,
+    height: 250,
+    padding: 6,
+    opacity: 0.7,
+    boxSizing: "border-box",
+  },
+});
+export const EmptyStateNoSearchResult = chakra(Search, {
+  baseStyle: {
+    width: 250,
+    height: 250,
+    padding: 6,
+    opacity: 0.7,
+    boxSizing: "border-box",
+  },
+});
+export const EmptyStateNoTasks = chakra(Coffee, {
+  baseStyle: {
+    width: 250,
+    height: 250,
+    padding: 6,
+    opacity: 1,
+    boxSizing: "border-box",
+  },
+});
