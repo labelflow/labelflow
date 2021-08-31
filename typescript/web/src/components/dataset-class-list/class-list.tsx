@@ -44,6 +44,7 @@ export const ClassesList = ({ datasetSlug }: { datasetSlug: string }) => {
     variables: {
       slug: datasetSlug,
     },
+    skip: !datasetSlug,
   });
   const labelClasses = datasetResult?.dataset.labelClasses ?? [];
   const datasetId = datasetResult?.dataset.id;
