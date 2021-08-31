@@ -21,21 +21,6 @@ import { ToggleButton } from "./ToggleButton";
 import { links } from "./_data";
 
 const GithubIcon = chakra(RiGithubFill);
-export const GithubButton = () => (
-  <Button
-    as="a"
-    leftIcon={<GithubIcon fontSize="xl" />}
-    href="https://github.com/Labelflow/labelflow"
-    target="blank"
-    size="lg"
-    minW="210px"
-    variant="link"
-    height="14"
-    px="8"
-  >
-    See code on Github
-  </Button>
-);
 
 const MobileNavContext = (props: FlexProps) => {
   const { isOpen, onToggle } = useDisclosure();
@@ -62,7 +47,7 @@ const MobileNavContext = (props: FlexProps) => {
           target="blank"
           variant="link"
           mr="3"
-          icon={<GithubIcon fontSize="3xl" />}
+          icon={<GithubIcon fontSize="2xl" />}
         />
         <Box visibility={{ base: "hidden", sm: "visible" }}>
           <NextLink href="/local/datasets">
@@ -143,8 +128,8 @@ const DesktopNavContent = (props: FlexProps) => {
           as="a"
           target="blank"
           variant="link"
-          mr="3"
-          icon={<GithubIcon fontSize="3xl" />}
+          mr="-2"
+          icon={<GithubIcon fontSize="2xl" />}
         />
         <NextLink href="/local/datasets">
           <Button
