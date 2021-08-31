@@ -10,11 +10,7 @@ import {
   StaleWhileRevalidate,
 } from "workbox-strategies";
 import { registerRoute, setCatchHandler } from "workbox-routing";
-import {
-  matchPrecache,
-  precacheAndRoute,
-  cleanupOutdatedCaches,
-} from "workbox-precaching";
+import { matchPrecache, cleanupOutdatedCaches } from "workbox-precaching";
 // import { initialize as initializeGoogleAnalytics } from "workbox-google-analytics";
 
 import { trimCharsEnd } from "lodash/fp";
@@ -52,14 +48,10 @@ self.addEventListener("message", (event) => {
 });
 
 clientsClaim();
-// Inject the manifest
+
 // See https://github.com/GoogleChrome/workbox/issues/2519#issuecomment-634164566
-// eslint-disable-next-line @typescript-eslint/no-use-before-define
-// eslint-disable-next-line no-underscore-dangle
-const WB_MANIFEST = self.__WB_MANIFEST;
-precacheAndRoute(WB_MANIFEST);
-// @ts-ignore
-self.WB_MANIFEST = WB_MANIFEST;
+// eslint-disable-next-line no-underscore-dangle, @typescript-eslint/no-unused-expressions
+self.__WB_MANIFEST;
 
 // // Initialize workbox Google analytics. For some reason this is broken right now, so we commented it.
 // initializeGoogleAnalytics();
