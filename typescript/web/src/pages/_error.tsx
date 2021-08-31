@@ -64,7 +64,7 @@ const ErrorPage = ({ statusCode, error, resetErrorBoundary }: Props) => {
                 )}
 
                 {/* Not using next/link here in order to resetErrorBoundary and clear the error reliably  */}
-                <Button as="a" href="debug">
+                <Button as="a" href="/debug">
                   See debug info
                 </Button>
 
