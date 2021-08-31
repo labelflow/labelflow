@@ -190,7 +190,7 @@ export const ExportModal = ({
         <ModalOverlay />
         <ModalContent height="auto">
           <ModalHeader textAlign="center" padding="6">
-            <Heading as="h2" size="lg" pb="2" color="gray.800">
+            <Heading as="h2" size="lg" pb="2">
               Export Labels
             </Heading>
             <Skeleton
@@ -200,7 +200,7 @@ export const ExportModal = ({
                 data?.dataset?.labelsAggregates?.totalCount !== undefined
               }
             >
-              <Text fontSize="lg" fontWeight="medium" color="gray.800">
+              <Text fontSize="lg" fontWeight="medium">
                 Your dataset contains{" "}
                 {data?.dataset?.imagesAggregates?.totalCount} images and{" "}
                 {data?.dataset?.labelsAggregates?.totalCount} labels.
