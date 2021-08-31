@@ -26,10 +26,10 @@ export const UrlList = ({
       {isDevelopmentEnvironment && (
         <Button
           mt={2}
+          leftIcon={<DevIcon size="1.5rem" />}
           onClick={() => setValue(imageSampleCollection.join("\n"))}
           background="pink.200"
         >
-          <DevIcon size="1.5rem" mr="1" />
           Insert example images
         </Button>
       )}
