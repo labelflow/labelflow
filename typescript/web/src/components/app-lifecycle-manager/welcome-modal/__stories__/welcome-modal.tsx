@@ -14,11 +14,11 @@ export default {
   ],
 };
 
-export const Default = () => {
+export const Closed = () => {
   return <WelcomeModal />;
 };
 
-Default.parameters = {
+Closed.parameters = {
   nextRouter: {
     path: "/local/datasets",
     asPath: "/local/datasets",
