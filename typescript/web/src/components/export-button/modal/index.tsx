@@ -150,6 +150,7 @@ export const ExportModal = ({
   const { datasetSlug } = router?.query as { datasetSlug: string };
   const { data, loading } = useQuery(countLabelsOfDatasetQuery, {
     variables: { slug: datasetSlug },
+    skip: !datasetSlug,
   });
   const datasetId = data?.dataset.id;
 

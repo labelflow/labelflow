@@ -16,7 +16,7 @@ import { Context, DbDataset, Repository } from "./types";
 import { throwIfResolvesToNil } from "./utils/throw-if-resolves-to-nil";
 import { getImageEntityFromMutationArgs } from "./image";
 import {
-  tutorialImageUrls,
+  tutorialImages,
   tutorialLabelClassId,
   tutorialLabels,
 } from "./data/dataset-tutorial";
@@ -180,7 +180,7 @@ const createDemoDataset = async (
   args: {},
   { repository }: Context
 ): Promise<DbDataset> => {
-  const datasetId = uuidv4();
+  const datasetId = "049fe9f0-9a19-43cd-be65-35d222d54b4d";
   const now = new Date();
   const currentDate = now.toISOString();
   try {
@@ -199,13 +199,13 @@ const createDemoDataset = async (
     throw error;
   }
   const tutorialDatasetImages = await Promise.all(
-    tutorialImageUrls.map(async (url, index) => {
+    tutorialImages.map(async (image, index) => {
       const imageEntity = await getImageEntityFromMutationArgs(
         {
+          ...image,
           datasetId,
-          url,
           createdAt: add(now, { seconds: index }).toISOString(),
-          name: url.match(/\/static\/img\/(.*?)$/)?.[1],
+          name: image.url.match(/\/static\/img\/(.*?)$/)?.[1],
         },
         {
           upload: repository.upload,
@@ -229,7 +229,6 @@ const createDemoDataset = async (
     tutorialLabels.map(async (label) => {
       return await repository.label.add({
         ...label,
-        id: uuidv4(),
         createdAt: currentDate,
         updatedAt: currentDate,
         imageId: tutorialDatasetImages[2],

@@ -70,11 +70,7 @@ type ImageQueryResponse = {
   image: Pick<Image, "id" | "name">;
 };
 
-const ImagePage = ({
-  assumeServiceWorkerActive,
-}: {
-  assumeServiceWorkerActive: boolean;
-}) => {
+const ImagePage = () => {
   const router = useRouter();
   const { datasetSlug, imageId } = router?.query;
 
@@ -82,7 +78,7 @@ const ImagePage = ({
     imageQuery,
     {
       variables: { id: imageId },
-      skip: typeof imageId !== "string",
+      skip: !imageId,
     }
   );
 
@@ -90,6 +86,7 @@ const ImagePage = ({
     getDatasetQuery,
     {
       variables: { slug: datasetSlug },
+      skip: !datasetSlug,
     }
   );
 
@@ -98,7 +95,7 @@ const ImagePage = ({
 
   const handleError = useErrorHandler();
   if (errorDataset || errorImage) {
-    if (errorDataset && !errorDataset.message.match(/No dataset with id/)) {
+    if (errorDataset && !errorDataset.message.match(/No dataset with slug/)) {
       handleError(errorDataset);
     }
     if (errorImage && !errorImage.message.match(/No image with id/)) {
@@ -109,9 +106,7 @@ const ImagePage = ({
 
   return (
     <>
-      <AppLifecycleManager
-        assumeServiceWorkerActive={assumeServiceWorkerActive}
-      />
+      <AppLifecycleManager />
       <Meta title={`Labelflow | Image ${imageName ?? ""}`} />
       <Layout
         topBarLeftContent={
