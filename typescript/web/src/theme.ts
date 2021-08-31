@@ -3,7 +3,7 @@ import { mode } from "@chakra-ui/theme-tools";
 
 export const theme = extendTheme({
   styles: {
-    global: (props) => ({
+    global: (props: any) => ({
       body: {
         color: mode("gray.800", "gray.200")(props),
       },
