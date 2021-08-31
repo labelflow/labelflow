@@ -70,14 +70,14 @@ export function Hero() {
               fontWeight="extrabold"
               letterSpacing="tight"
             >
-              The open standard platform{" "}
+              The open{" "}
               <Text
                 color="brand.500"
                 // bgGradient="linear(to-l, brand.500,brand.400)"
                 // bgClip="text"
                 display="inline"
               >
-                for image labeling
+                platform for image labeling
               </Text>
             </Heading>
             <Text
