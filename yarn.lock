@@ -3840,6 +3840,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@chakra-ui/theme-tools@npm:^1.2.0":
+  version: 1.2.0
+  resolution: "@chakra-ui/theme-tools@npm:1.2.0"
+  dependencies:
+    "@chakra-ui/utils": 1.8.2
+    "@types/tinycolor2": 1.4.2
+    tinycolor2: 1.4.2
+  peerDependencies:
+    "@chakra-ui/system": ">=1.0.0"
+  checksum: a2bdc7a825b1b501a0c5e9f516dcd3a2916ea4b6df474118b7158a997df52a7b74f102f8bfbd1ab11155f03c467d10cd4a94aa1a84dea2359ee7b2e984f3d43f
+  languageName: node
+  linkType: hard
+
 "@chakra-ui/theme@npm:1.8.5":
   version: 1.8.5
   resolution: "@chakra-ui/theme@npm:1.8.5"
@@ -5226,6 +5239,7 @@ __metadata:
     "@apollo/client": ^3.3.18
     "@babel/core": 7.14.3
     "@chakra-ui/react": 1.6.1
+    "@chakra-ui/theme-tools": ^1.2.0
     "@chakra-ui/utils": 1.8.2
     "@emotion/react": ^11
     "@emotion/styled": ^11
