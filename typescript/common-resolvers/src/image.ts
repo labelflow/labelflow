@@ -146,21 +146,22 @@ const labelsResolver = async (
   _args: any,
   { repository }: Context
 ) => {
-  return repository.label.list({ imageId: id });
+  return await repository.label.list({ imageId: id });
 };
 
-const image = async (_: any, args: QueryImageArgs, { repository }: Context) =>
-  throwIfResolvesToNil(
+const image = async (_: any, args: QueryImageArgs, { repository }: Context) => {
+  return await throwIfResolvesToNil(
     `No image with id "${args?.where?.id}"`,
     repository.image.getById
   )(args?.where?.id);
+};
 
 const images = async (
   _: any,
   args: QueryImagesArgs,
   { repository }: Context
 ) => {
-  return repository.image.list(args?.where, args?.skip, args?.first);
+  return await repository.image.list(args?.where, args?.skip, args?.first);
 };
 
 // Mutations
@@ -206,17 +207,17 @@ const imagesAggregates = (parent: any) => {
   return parent ?? {};
 };
 
-const totalCount = (parent: any, _args: any, { repository }: Context) => {
+const totalCount = async (parent: any, _args: any, { repository }: Context) => {
   // eslint-disable-next-line no-underscore-dangle
   const typename = parent?.__typename;
 
   if (typename === "Dataset") {
-    return repository.image.count({
+    return await repository.image.count({
       datasetId: parent.id,
     });
   }
 
-  return repository.image.count();
+  return await repository.image.count();
 };
 
 export default {

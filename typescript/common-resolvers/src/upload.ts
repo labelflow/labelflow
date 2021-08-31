@@ -16,7 +16,7 @@ const getUploadTarget = async (
   args: MutationGetUploadTargetArgs,
   { repository }: Context
 ): Promise<UploadTarget> => {
-  return repository.upload.getUploadTarget(args?.data?.key);
+  return await repository.upload.getUploadTarget(args?.data?.key);
 };
 
 export default {

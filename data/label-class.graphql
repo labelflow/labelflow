@@ -10,6 +10,10 @@ input LabelClassUpdateInput {
   color: ColorHex
 }
 
+input LabelClassReorderInput {
+  index: Int!
+}
+
 input LabelClassWhereInput {
   datasetId: ID
 }

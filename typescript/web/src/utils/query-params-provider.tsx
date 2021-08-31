@@ -15,11 +15,9 @@ export const QueryParamProviderComponent = (props: {
 
   const location = useMemo(
     () =>
-      typeof window !== "undefined"
-        ? window.location
-        : ({
-            search: router.asPath.replace(/[^?]+/u, ""),
-          } as Location),
+      ({
+        search: router.asPath.replace(/[^?]+/u, ""),
+      } as Location),
     [router.asPath]
   );
 

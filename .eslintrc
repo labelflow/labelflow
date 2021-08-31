@@ -6,6 +6,8 @@
     "react/jsx-props-no-spreading": "off",
     "react/require-default-props": "off",
     "react/no-array-index-key": "warn",
+    "no-return-await": "off",
+    "@typescript-eslint/return-await": ["error", "always"],
     "import/prefer-default-export": "off",
     "import/no-extraneous-dependencies": [
       "error",

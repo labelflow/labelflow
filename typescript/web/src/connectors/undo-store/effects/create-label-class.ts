@@ -7,7 +7,7 @@ import {
   hexColorSequence,
 } from "../../../utils/class-color-generator";
 import { Effect } from "..";
-import { getDatasetsQuery } from "../../../pages/datasets";
+import { getDatasetsQuery } from "../../../pages/local/datasets";
 import { datasetLabelClassesQuery } from "../../../components/dataset-class-list/class-item";
 
 const createLabelClassQuery = gql`
@@ -31,11 +31,13 @@ export const createCreateLabelClassEffect = (
     name,
     color,
     datasetId,
+    datasetSlug,
     selectedLabelClassIdPrevious,
   }: {
     name: string;
     color: string;
     datasetId: string;
+    datasetSlug: string;
     selectedLabelClassIdPrevious: string | null;
   },
   {
@@ -55,7 +57,7 @@ export const createCreateLabelClassEffect = (
       refetchQueries: [
         "getLabelClassesOfDataset",
         { query: getDatasetsQuery },
-        { query: datasetLabelClassesQuery, variables: { datasetId } },
+        { query: datasetLabelClassesQuery, variables: { slug: datasetSlug } },
       ],
     });
 
@@ -72,7 +74,7 @@ export const createCreateLabelClassEffect = (
       refetchQueries: [
         "getLabelClassesOfDataset",
         { query: getDatasetsQuery },
-        { query: datasetLabelClassesQuery, variables: { datasetId } },
+        { query: datasetLabelClassesQuery, variables: { slug: datasetSlug } },
       ],
     });
 
@@ -89,7 +91,7 @@ export const createCreateLabelClassEffect = (
       refetchQueries: [
         "getLabelClassesOfDataset",
         { query: getDatasetsQuery },
-        { query: datasetLabelClassesQuery, variables: { datasetId } },
+        { query: datasetLabelClassesQuery, variables: { slug: datasetSlug } },
       ],
     });
 
@@ -103,11 +105,13 @@ export const createNewLabelClassCurry =
   ({
     labelClasses,
     datasetId,
+    datasetSlug,
     perform,
     client,
   }: {
     labelClasses: LabelClass[];
     datasetId: string;
+    datasetSlug: string;
     perform: any;
     client: ApolloClient<object>;
   }) =>
@@ -118,7 +122,13 @@ export const createNewLabelClassCurry =
         : getNextClassColor(labelClasses[labelClasses.length - 1].color);
     perform(
       createCreateLabelClassEffect(
-        { name, color: newClassColor, selectedLabelClassIdPrevious, datasetId },
+        {
+          name,
+          color: newClassColor,
+          selectedLabelClassIdPrevious,
+          datasetId,
+          datasetSlug,
+        },
         { client }
       )
     );

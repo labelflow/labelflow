@@ -3,6 +3,7 @@ import { RouterContext } from "next/dist/shared/lib/router-context"; // next 11.
 export const parameters = {
   nextRouter: {
     Provider: RouterContext.Provider,
+    isReady: true,
     path: '/', // defaults to `/`
     asPath: '/', // defaults to `/`
     query: {}, // defaults to `{}`

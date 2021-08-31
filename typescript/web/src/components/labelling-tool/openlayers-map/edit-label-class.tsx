@@ -11,12 +11,15 @@ import { createNewLabelClassAndUpdateLabelCurry } from "../../../connectors/undo
 import { createUpdateLabelClassOfLabelEffect } from "../../../connectors/undo-store/effects/update-label-class-of-label";
 import { keymap } from "../../../keymap";
 
-const labelClassesOfDatasetQuery = gql`
-  query getLabelClassesOfDataset($datasetId: ID!) {
-    labelClasses(where: { datasetId: $datasetId }) {
+const getLabelClassesOfDatasetQuery = gql`
+  query getLabelClassesOfDataset($slug: String!) {
+    dataset(where: { slug: $slug }) {
       id
-      name
-      color
+      labelClasses {
+        id
+        name
+        color
+      }
     }
   }
 `;
@@ -40,14 +43,16 @@ export const EditLabelClass = forwardRef<
   }
 >(({ isOpen, onClose }, ref) => {
   const router = useRouter();
-  const datasetId = router?.query.datasetId as string;
+  const datasetSlug = router?.query.datasetSlug as string;
 
   const client = useApolloClient();
-  const { data } = useQuery(labelClassesOfDatasetQuery, {
-    variables: { datasetId },
+  const { data } = useQuery(getLabelClassesOfDatasetQuery, {
+    variables: { slug: datasetSlug },
+    skip: !datasetSlug,
   });
+  const datasetId = data?.dataset.id;
   const { perform } = useUndoStore();
-  const labelClasses = data?.labelClasses ?? [];
+  const labelClasses = data?.dataset.labelClasses ?? [];
   const selectedLabelId = useLabellingStore((state) => state.selectedLabelId);
   const isContextMenuOpen = useLabellingStore(
     (state) => state.isContextMenuOpen
@@ -62,11 +67,12 @@ export const EditLabelClass = forwardRef<
       createNewLabelClassAndUpdateLabelCurry({
         labelClasses,
         datasetId,
+        datasetSlug,
         perform,
         onClose,
         client,
       }),
-    [labelClasses]
+    [labelClasses, datasetId]
   );
   useHotkeys(
     keymap.changeClass.key,
@@ -102,7 +108,9 @@ export const EditLabelClass = forwardRef<
         trigger={<div style={{ width: 0, height: 0 }} />} // Needed to have the popover displayed preventing overflow
         labelClasses={labelClasses}
         selectedLabelClassId={selectedLabelClassId}
-        createNewClass={async (name) => createNewClass(name, selectedLabelId)}
+        createNewClass={async (name) => {
+          return await createNewClass(name, selectedLabelId);
+        }}
         onSelectedClassChange={(item) => {
           perform(
             createUpdateLabelClassOfLabelEffect(

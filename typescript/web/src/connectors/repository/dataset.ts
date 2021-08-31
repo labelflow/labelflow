@@ -10,24 +10,28 @@ export const deleteDataset: Repository["dataset"]["delete"] = async (id) => {
   const datasetToDelete = await throwIfResolvesToNil<
     [string],
     DbDataset | undefined
-  >(`Cannot find dataset with id "${id}" to delete`, (idToGet) =>
-    getDatabase().dataset.get(idToGet)
-  )(id);
+  >(`Cannot find dataset with id "${id}" to delete`, async (idToGet) => {
+    return await (await getDatabase()).dataset.get(idToGet);
+  })(id);
 
-  const imagesToDelete = await getDatabase()
-    .image.where({
+  const imagesToDelete = await (
+    await getDatabase()
+  ).image
+    .where({
       datasetId: datasetToDelete.id,
     })
     .primaryKeys();
 
-  const labelsToDeleteIds = await getDatabase()
-    .label.filter((label) => imagesToDelete.includes(label.imageId))
+  const labelsToDeleteIds = await (await getDatabase()).label
+    .filter((label) => imagesToDelete.includes(label.imageId))
     .primaryKeys();
 
-  await getDatabase().label.bulkDelete(labelsToDeleteIds);
-  await getDatabase()
-    .labelClass.where({ datasetId: datasetToDelete.id })
+  await (await getDatabase()).label.bulkDelete(labelsToDeleteIds);
+  await (await getDatabase()).labelClass
+    .where({ datasetId: datasetToDelete.id })
     .delete();
-  await getDatabase().image.where({ datasetId: datasetToDelete.id }).delete();
-  await getDatabase().dataset.delete(datasetToDelete.id);
+  await (await getDatabase()).image
+    .where({ datasetId: datasetToDelete.id })
+    .delete();
+  await (await getDatabase()).dataset.delete(datasetToDelete.id);
 };

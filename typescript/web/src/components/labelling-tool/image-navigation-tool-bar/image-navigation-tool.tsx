@@ -27,7 +27,7 @@ const format = (x: number | undefined | null): string =>
 export const ImageNavigationTool = () => {
   const router = useRouter();
 
-  const { datasetId } = router?.query;
+  const { datasetSlug } = router?.query;
 
   const {
     images,
@@ -47,7 +47,9 @@ export const ImageNavigationTool = () => {
 
     if (newIndex == null || isNaN(newIndex)) return;
     if (newIndex >= 0 && newIndex <= imagesCount - 1) {
-      router.push(`/datasets/${datasetId}/images/${images[newIndex]?.id}`);
+      router.push(
+        `/local/datasets/${datasetSlug}/images/${images[newIndex]?.id}`
+      );
     }
   };
 
@@ -110,7 +112,7 @@ export const ImageNavigationTool = () => {
     >
       {previousImageId != null ? (
         <NextLink
-          href={`/datasets/${datasetId}/images/${previousImageId}`}
+          href={`/local/datasets/${datasetSlug}/images/${previousImageId}`}
           passHref
         >
           <a>
@@ -176,7 +178,7 @@ export const ImageNavigationTool = () => {
       >{`${imagesCount ?? "-"}`}</Text>
 
       {nextImageId != null ? (
-        <NextLink href={`/datasets/${datasetId}/images/${nextImageId}`}>
+        <NextLink href={`/local/datasets/${datasetSlug}/images/${nextImageId}`}>
           <a>
             <Tooltip
               label={`Next image [${keymap.goToNextImage.key}]`}
