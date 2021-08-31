@@ -19,7 +19,7 @@ import { RiCloseCircleFill } from "react-icons/ri";
 import { useCombobox, UseComboboxStateChange } from "downshift";
 import { useHotkeys } from "react-hotkeys-hook";
 import { LabelClass } from "@labelflow/graphql-types";
-import { ClassListItem } from "../class-list-item";
+import { ClassListItem } from "./class-list-item";
 import { noneClassColor } from "../../utils/class-color-generator";
 import { keymap } from "../../keymap";
 
