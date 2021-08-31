@@ -13,6 +13,7 @@ import { getAllArticles, Article } from "../connectors/strapi";
 import { Roadmap } from "../components/website/roadmap/roadmap";
 import { Meta } from "../components/meta";
 import { Banner } from "../components/website/banner";
+import { Proof } from "../components/website/proof";
 
 export default function Website({
   previewArticles,
@@ -43,10 +44,11 @@ export default function Website({
       <Hero />
       <Banner />
       <Features />
+      <Proof />
       <Why />
+      <LogoGrid />
       <Roadmap />
       {/* <Testimonials /> */}
-      <LogoGrid />
       <Pricing />
       <ArticlesList preview previewArticles={previewArticles} />
       <Footer />
