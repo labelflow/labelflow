@@ -3,6 +3,7 @@ import type {
   LabelClass,
   MutationCreateLabelClassArgs,
   MutationUpdateLabelClassArgs,
+  MutationReorderLabelClassArgs,
   MutationDeleteLabelClassArgs,
   QueryLabelClassArgs,
   QueryLabelClassesArgs,
@@ -17,24 +18,27 @@ const labels = async (
   _args: any,
   { repository }: Context
 ) => {
-  return repository.label.list({ labelClassId: labelClass.id });
+  return await repository.label.list({ labelClassId: labelClass.id });
 };
 
 const labelClass = async (
   _: any,
   args: QueryLabelClassArgs,
   { repository }: Context
-) =>
-  throwIfResolvesToNil(
+) => {
+  return await throwIfResolvesToNil(
     "No labelClass with such id",
     repository.labelClass.getById
   )(args?.where?.id);
+};
 
 const labelClasses = async (
   _: any,
   args: QueryLabelClassesArgs,
   { repository }: Context
-) => repository.labelClass.list(args?.where, args?.skip, args?.first);
+) => {
+  return await repository.labelClass.list(args?.where, args?.skip, args?.first);
+};
 
 // Mutations
 const createLabelClass = async (
@@ -43,6 +47,9 @@ const createLabelClass = async (
   { repository }: Context
 ): Promise<DbLabelClass> => {
   const { color, name, id, datasetId } = args.data;
+  const numberLabelClasses = await repository.labelClass.count({
+    datasetId,
+  });
 
   // Since we don't have any constraint checks with Dexie
   // we need to ensure that the datasetId matches some
@@ -57,6 +64,7 @@ const createLabelClass = async (
 
   const newLabelClassEntity = {
     id: labelClassId,
+    index: numberLabelClasses,
     createdAt: now.toISOString(),
     updatedAt: now.toISOString(),
     name,
@@ -65,10 +73,59 @@ const createLabelClass = async (
   };
   await repository.labelClass.add(newLabelClassEntity);
 
-  return throwIfResolvesToNil(
+  return await throwIfResolvesToNil(
     "No labelClass with such id",
     repository.labelClass.getById
   )(newLabelClassEntity.id);
+};
+
+const reorderLabelClass = async (
+  _: any,
+  args: MutationReorderLabelClassArgs,
+  { repository }: Context
+) => {
+  const labelClassId = args.where.id;
+
+  const labelClassToUpdate = await throwIfResolvesToNil(
+    "No labelClass with such id",
+    repository.labelClass.getById
+  )(labelClassId);
+  const oldIndex = labelClassToUpdate.index;
+  const newIndex = args.data.index;
+  if (oldIndex === newIndex) {
+    return labelClassToUpdate;
+  }
+  const labelClassesOfDataset = await repository.labelClass.list({
+    datasetId: labelClassToUpdate?.datasetId,
+  });
+  if (newIndex < 0 || newIndex > labelClassesOfDataset.length - 1) {
+    throw new Error(`Can't reorder a labelClass with an index that is negative or more than the number of labelClasses.
+    Received newIndex = ${newIndex} | maximum possible index is ${
+      labelClassesOfDataset.length - 1
+    }`);
+  }
+
+  const indexUpdate = newIndex < oldIndex ? 1 : -1;
+  await Promise.all(
+    labelClassesOfDataset.map(async (labelClassOfDataset) => {
+      if (
+        labelClassOfDataset.index === newIndex ||
+        (labelClassOfDataset.index > Math.min(oldIndex, newIndex) &&
+          labelClassOfDataset.index < Math.max(oldIndex, newIndex))
+      ) {
+        await repository.labelClass.update(labelClassOfDataset.id, {
+          ...labelClassOfDataset,
+          index: labelClassOfDataset.index + indexUpdate,
+        });
+      }
+    })
+  );
+  await repository.labelClass.update(labelClassId, {
+    ...labelClassToUpdate,
+    index: args.data.index,
+  });
+
+  return await repository.labelClass.getById(labelClassId);
 };
 
 const updateLabelClass = async (
@@ -88,7 +145,7 @@ const updateLabelClass = async (
     ...args.data,
   });
 
-  return repository.labelClass.getById(labelClassId);
+  return await repository.labelClass.getById(labelClassId);
 };
 
 const deleteLabelClass = async (
@@ -102,6 +159,19 @@ const deleteLabelClass = async (
   )(args.where.id);
 
   await repository.labelClass.delete(labelToDelete.id);
+  const labelClassesOfDataset = await repository.labelClass.list({
+    datasetId: labelToDelete?.datasetId,
+  });
+  await Promise.all(
+    labelClassesOfDataset.map(async (labelClassOfDataset) => {
+      if (labelClassOfDataset.index > labelToDelete.index) {
+        await repository.labelClass.update(labelClassOfDataset.id, {
+          ...labelClassOfDataset,
+          index: labelClassOfDataset.index - 1,
+        });
+      }
+    })
+  );
   return labelToDelete;
 };
 
@@ -110,17 +180,17 @@ const labelClassesAggregates = (parent: any) => {
   return parent ?? {};
 };
 
-const totalCount = (parent: any, _args: any, { repository }: Context) => {
+const totalCount = async (parent: any, _args: any, { repository }: Context) => {
   // eslint-disable-next-line no-underscore-dangle
   const typename = parent?.__typename;
 
   if (typename === "Dataset") {
-    return repository.labelClass.count({
+    return await repository.labelClass.count({
       datasetId: parent.id,
     });
   }
 
-  return repository.labelClass.count();
+  return await repository.labelClass.count();
 };
 
 export default {
@@ -134,6 +204,7 @@ export default {
     createLabelClass,
     updateLabelClass,
     deleteLabelClass,
+    reorderLabelClass,
   },
 
   LabelClass: {

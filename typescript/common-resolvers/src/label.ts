@@ -17,8 +17,12 @@ import { getBoundedGeometryFromImage } from "./utils/get-bounded-geometry-from-i
 const getLabelById = async (
   id: string,
   repository: Repository
-): Promise<DbLabel> =>
-  throwIfResolvesToNil("No label with such id", repository.label.getById)(id);
+): Promise<DbLabel> => {
+  return await throwIfResolvesToNil(
+    "No label with such id",
+    repository.label.getById
+  )(id);
+};
 
 // Queries
 const labelClass = async (
@@ -30,11 +34,11 @@ const labelClass = async (
     return null;
   }
 
-  return repository.labelClass.getById(label.labelClassId) ?? null;
+  return (await repository.labelClass.getById(label.labelClassId)) ?? null;
 };
 
 const label = async (_: any, args: QueryLabelArgs, { repository }: Context) => {
-  return getLabelById(args?.where?.id, repository);
+  return await getLabelById(args?.where?.id, repository);
 };
 
 // Mutations
@@ -86,7 +90,7 @@ const createLabel = async (
   };
 
   await repository.label.add(newLabelEntity);
-  return throwIfResolvesToNil(
+  return await throwIfResolvesToNil(
     "Could not create the label entity",
     await repository.label.getById
   )(labelId);
@@ -126,7 +130,7 @@ const updateLabel = async (
   if (!args?.data?.geometry) {
     await repository.label.update(labelId, args.data);
 
-    return getLabelById(labelId, repository);
+    return await getLabelById(labelId, repository);
   }
 
   const { imageId } = await getLabelById(labelId, repository);
@@ -156,7 +160,7 @@ const updateLabel = async (
 
   await repository.label.update(labelId, newLabelEntity);
 
-  return getLabelById(labelId, repository);
+  return await getLabelById(labelId, repository);
 };
 
 const labelsAggregates = (parent: any) => {
@@ -169,10 +173,10 @@ const totalCount = async (parent: any, _args: any, { repository }: Context) => {
   const typename = parent?.__typename;
 
   if (typename === "Dataset") {
-    return repository.label.count({ datasetId: parent.id });
+    return await repository.label.count({ datasetId: parent.id });
   }
 
-  return repository.label.count();
+  return await repository.label.count();
 };
 
 export default {

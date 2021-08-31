@@ -1,13 +1,16 @@
-import { PropsWithChildren } from "react";
+import { PropsWithChildren, ReactElement, JSXElementConstructor } from "react";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { ChakraProvider } from "@chakra-ui/react";
 import { ApolloProvider } from "@apollo/client";
+
+import { DragDropContext, Droppable } from "react-beautiful-dnd";
 import { ClassItem } from "../class-item";
 import { client } from "../../../connectors/apollo-client/schema-client";
 import { theme } from "../../../theme";
 
 const classDefault = {
   color: "#F59E0B",
+  index: 0,
   name: "someClass",
   shortcut: "myShortcut",
   id: "myClassId",
@@ -27,7 +30,20 @@ jest.mock("../../../connectors/apollo-client/schema-client", () => {
 const wrapper = ({ children }: PropsWithChildren<{}>) => (
   <ApolloProvider client={client}>
     <ChakraProvider theme={theme} resetCSS>
-      {children}
+      <DragDropContext onDragEnd={() => {}}>
+        <Droppable droppableId="droppable">
+          {(provided) => (
+            <div {...provided.droppableProps} ref={provided.innerRef}>
+              {
+                children as ReactElement<
+                  HTMLElement,
+                  string | JSXElementConstructor<any>
+                >
+              }
+            </div>
+          )}
+        </Droppable>
+      </DragDropContext>
     </ChakraProvider>
   </ApolloProvider>
 );
@@ -40,18 +56,19 @@ describe("Dataset class list item tests", () => {
     jest.resetAllMocks();
   });
 
-  it("Should display a class with the possibility to edit and delete it", () => {
+  it("Should display a class with the possibility to reorder, edit and delete it", () => {
     render(
       <ClassItem
         edit={false}
         onClickEdit={onClickEdit}
-        datasetId="myDatasetId"
+        datasetSlug="my-dataset-slug"
         onClickDelete={onClickDelete}
         {...classDefault}
       />,
       { wrapper }
     );
     expect(screen.getByText(/someClass/i)).toBeDefined();
+    expect(screen.getByRole("button", { name: "Drag" })).toBeDefined();
     expect(
       screen.getByRole("button", { name: "Edit class someClass name" })
     ).toBeDefined();
@@ -64,7 +81,7 @@ describe("Dataset class list item tests", () => {
       <ClassItem
         edit={false}
         onClickEdit={onClickEdit}
-        datasetId="myDatasetId"
+        datasetSlug="my-dataset-slug"
         onClickDelete={onClickDelete}
         {...classDefault}
       />,
@@ -82,7 +99,7 @@ describe("Dataset class list item tests", () => {
       <ClassItem
         edit={false}
         onClickEdit={onClickEdit}
-        datasetId="myDatasetId"
+        datasetSlug="my-dataset-slug"
         onClickDelete={onClickDelete}
         {...classDefault}
       />,
@@ -93,7 +110,7 @@ describe("Dataset class list item tests", () => {
       <ClassItem
         edit
         onClickEdit={onClickEdit}
-        datasetId="myDatasetId"
+        datasetSlug="my-dataset-slug"
         onClickDelete={onClickDelete}
         {...classDefault}
       />
@@ -109,7 +126,7 @@ describe("Dataset class list item tests", () => {
       <ClassItem
         edit={false}
         onClickEdit={onClickEdit}
-        datasetId="myDatasetId"
+        datasetSlug="my-dataset-slug"
         onClickDelete={onClickDelete}
         {...classDefault}
       />,
@@ -125,7 +142,7 @@ describe("Dataset class list item tests", () => {
       <ClassItem
         edit
         onClickEdit={onClickEdit}
-        datasetId="myDatasetId"
+        datasetSlug="my-dataset-slug"
         onClickDelete={onClickDelete}
         {...classDefault}
       />,
@@ -144,7 +161,7 @@ describe("Dataset class list item tests", () => {
       <ClassItem
         edit
         onClickEdit={onClickEdit}
-        datasetId="myDatasetId"
+        datasetSlug="my-dataset-slug"
         onClickDelete={onClickDelete}
         {...classDefault}
       />,
@@ -169,7 +186,7 @@ describe("Dataset class list item tests", () => {
       <ClassItem
         edit
         onClickEdit={onClickEdit}
-        datasetId="myDatasetId"
+        datasetSlug="my-dataset-slug"
         onClickDelete={onClickDelete}
         {...classDefault}
       />,

@@ -13,6 +13,10 @@ type Mutation {
     where: LabelClassWhereUniqueInput!
     data: LabelClassUpdateInput!
   ): LabelClass
+  reorderLabelClass(
+    where: LabelClassWhereUniqueInput!
+    data: LabelClassReorderInput!
+  ): LabelClass
   deleteLabelClass(where: LabelClassWhereUniqueInput!): LabelClass
 
   createDataset(data: DatasetCreateInput!): Dataset

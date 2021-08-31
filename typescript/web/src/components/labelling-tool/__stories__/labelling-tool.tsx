@@ -54,11 +54,15 @@ export const OneImage: Story = () => {
   return <LabellingTool />;
 };
 OneImage.parameters = {
-  mockImages: { datasetId, images: images.slice(0, 1) },
+  mockImages: {
+    datasetId,
+    datasetName: "dataset labelling one image",
+    images: images.slice(0, 1),
+  },
   nextRouter: {
     query: {
       imageId: images[0].id,
-      datasetId,
+      datasetSlug: "dataset-labelling-one-image",
     },
   },
 };
@@ -67,11 +71,15 @@ export const ThreeImages: Story = () => {
   return <LabellingTool />;
 };
 ThreeImages.parameters = {
-  mockImages: { datasetId, images },
+  mockImages: {
+    datasetId,
+    datasetName: "dataset labelling three image",
+    images,
+  },
   nextRouter: {
     query: {
       imageId: images[0].id,
-      datasetId,
+      datasetSlug: "dataset-labelling-three-image",
     },
   },
 };

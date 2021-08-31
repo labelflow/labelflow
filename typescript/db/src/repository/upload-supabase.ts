@@ -35,7 +35,17 @@ export const getFromStorage: Repository["upload"]["get"] = async (url) => {
       `Could not fetch image at url ${url} properly, code ${fetchResult.status}`
     );
   }
-  return fetchResult.arrayBuffer();
+  return await fetchResult.arrayBuffer();
+};
+
+export const deleteFromStorage: Repository["upload"]["delete"] = async (
+  url
+) => {
+  console.warn(`
+  deleteFromStorage called on supabase uploader with url ${url}.
+  Won't make anything
+  `);
+  // dirtyInMemoryStorage.delete(url);
 };
 
 export const putInStorage: Repository["upload"]["put"] = async (url, blob) => {

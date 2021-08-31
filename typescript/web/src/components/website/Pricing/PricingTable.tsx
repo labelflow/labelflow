@@ -22,7 +22,6 @@ export const PricingTable = () => {
   // console.log(headerBg);
   return (
     <Box
-      id="pricing"
       as="section"
       // bg={useColorModeValue("gray.50", "gray.800")}
       py="48"

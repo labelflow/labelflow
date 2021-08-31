@@ -6,6 +6,7 @@ import {
   getUploadTargetHttp,
   getFromStorage,
   putInStorage,
+  deleteFromStorage,
 } from "./upload-supabase";
 import { countLabels, listLabels } from "./label";
 import { castObjectNullsToUndefined } from "./utils";
@@ -18,25 +19,24 @@ export const repository: Repository = {
       const createdImage = await prisma.image.create({ data: image });
       return createdImage.id;
     },
-    count: async (where) =>
+    count: (where) =>
       prisma.image.count({
         where: castObjectNullsToUndefined(where),
       }),
     getById: async (id) =>
-      prisma.image.findUnique({
+      (await prisma.image.findUnique({
         where: { id },
-      }) as unknown as Image,
+      })) as unknown as Image,
 
-    list: (where, skip = undefined, first = undefined) => {
-      return prisma.image.findMany(
+    list: (where, skip = undefined, first = undefined) =>
+      prisma.image.findMany(
         castObjectNullsToUndefined({
           where: castObjectNullsToUndefined(where),
           orderBy: { createdAt: Prisma.SortOrder.asc },
           skip,
           take: first,
         })
-      );
-    },
+      ),
   },
   label: {
     add: async (label) => {
@@ -76,20 +76,9 @@ export const repository: Repository = {
       return createdLabelClass.id;
     },
     count: async (where) =>
-      prisma.labelClass.count({
+      await prisma.labelClass.count({
         where: castObjectNullsToUndefined(where),
       }),
-    update: async (id, labelClass) => {
-      try {
-        await prisma.labelClass.update({
-          where: { id },
-          data: castObjectNullsToUndefined(labelClass),
-        });
-        return true;
-      } catch (e) {
-        return false;
-      }
-    },
     delete: async (id) => {
       await prisma.labelClass.delete({ where: { id } });
     },
@@ -101,11 +90,22 @@ export const repository: Repository = {
       prisma.labelClass.findMany(
         castObjectNullsToUndefined({
           where: castObjectNullsToUndefined(where),
-          orderBy: { createdAt: Prisma.SortOrder.asc },
+          orderBy: { index: Prisma.SortOrder.asc },
           skip,
           take: first,
         })
       ),
+    update: async (id, labelClass) => {
+      try {
+        await prisma.labelClass.update({
+          where: { id },
+          data: castObjectNullsToUndefined(labelClass),
+        });
+        return true;
+      } catch (e) {
+        return false;
+      }
+    },
   },
   dataset: {
     add: async (dataset) => {
@@ -145,6 +145,7 @@ export const repository: Repository = {
       ),
   },
   upload: {
+    delete: deleteFromStorage,
     get: getFromStorage,
     getUploadTarget: getUploadTargetHttp,
     getUploadTargetHttp,

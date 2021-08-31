@@ -37,7 +37,7 @@ type PartialWithNullAllowed<T> = { [P in keyof T]?: T[P] | undefined | null };
 type ID = string;
 
 type Add<EntityType> = (entity: EntityType) => Promise<ID>;
-type Count<Where> = (where?: Where) => Promise<Number>;
+type Count<Where> = (where?: Where) => Promise<number>;
 type Delete = (id: ID) => Promise<void>;
 type GetById<EntityType> = (id: ID) => Promise<EntityType | undefined | null>;
 type GetByName<EntityType> = (
@@ -95,6 +95,7 @@ export type Repository = {
     getUploadTarget: (key: string) => Promise<UploadTarget> | UploadTarget;
     put: (url: string, file: Blob) => Promise<void>;
     get: (url: string) => Promise<ArrayBuffer>;
+    delete: (url: string) => Promise<void>;
   };
 };
 

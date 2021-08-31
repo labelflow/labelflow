@@ -2,14 +2,15 @@ import imageSampleCollection from "../../typescript/web/src/utils/image-sample-c
 
 describe("Golden path", () => {
   it("Should execute the golden path without errors", () => {
+    cy.setCookie("hasUserTriedApp", "false");
     // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
-    cy.visit(
-      "/datasets?modal-welcome=closed&modal-update-service-worker=update"
-    );
-
+    // cy.visit("/");
+    // cy.contains("Try it now").click();
+    cy.visit("/local/datasets?modal-update-service-worker=update");
+    cy.contains("Get started").click();
     cy.url().should(
       "match",
-      /.\/datasets\/([a-zA-Z0-9_-]*)\/images\/([a-zA-Z0-9_-]*)/
+      /\/local\/datasets\/tutorial-dataset\/images\/2bbbf664-5810-4760-a10f-841de2f35510/
     );
 
     cy.get('[aria-label="loading indicator"]').should("not.exist");

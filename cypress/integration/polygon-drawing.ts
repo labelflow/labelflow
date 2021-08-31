@@ -8,6 +8,7 @@ const createDataset = async (name: string) => {
       mutation createDataset($name: String) {
         createDataset(data: { name: $name }) {
           id
+          slug
         }
       }
     `,
@@ -18,11 +19,11 @@ const createDataset = async (name: string) => {
 
   const {
     data: {
-      createDataset: { id },
+      createDataset: { id, slug },
     },
   } = mutationResult;
 
-  return id;
+  return { id, slug };
 };
 
 async function createImage(url: string, datasetId: string) {
@@ -88,10 +89,13 @@ const createLabelClass = async (
 
 describe("Polygon drawing", () => {
   let datasetId: string;
+  let datasetSlug: string;
   let imageId: string;
   beforeEach(() =>
     cy.window().then(async () => {
-      datasetId = await createDataset("cypress test dataset");
+      const createResult = await createDataset("cypress test dataset");
+      datasetId = createResult.id;
+      datasetSlug = createResult.slug;
 
       const { id } = await createImage(
         "https://images.unsplash.com/photo-1579513141590-c597876aefbc?auto=format&fit=crop&w=882&q=80",
@@ -106,7 +110,7 @@ describe("Polygon drawing", () => {
   it("switches between drawing tools", () => {
     // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
     cy.visit(
-      `/datasets/${datasetId}/images/${imageId}?modal-welcome=closed&modal-update-service-worker=update`
+      `/local/datasets/${datasetSlug}/images/${imageId}?modal-welcome=closed&modal-update-service-worker=update`
     );
     cy.get('[aria-label="loading indicator"]').should("not.exist");
     cy.get('[aria-label="Drawing polygon tool"]').should("not.exist");
@@ -128,7 +132,7 @@ describe("Polygon drawing", () => {
   it("draws a polygon", () => {
     // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
     cy.visit(
-      `/datasets/${datasetId}/images/${imageId}?modal-welcome=closed&modal-update-service-worker=update`
+      `/local/datasets/${datasetSlug}/images/${imageId}?modal-welcome=closed&modal-update-service-worker=update`
     );
     cy.get('[aria-label="loading indicator"]').should("not.exist");
     cy.get('[aria-label="Change Drawing tool"]').should("exist").click();

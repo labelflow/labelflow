@@ -5,7 +5,7 @@ export const addImageDimensionsToLabels = async (
   labels: DbLabel[],
   repository: Repository
 ): Promise<DbLabelWithImageDimensions[]> => {
-  return Promise.all(
+  return await Promise.all(
     labels.map(async (label) => {
       const { imageId } = label;
       const image = await repository.image.getById(imageId);

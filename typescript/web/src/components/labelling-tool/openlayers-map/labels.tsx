@@ -20,7 +20,7 @@ import {
   addLabelToImageInCache,
   removeLabelFromImageCache,
 } from "./draw-bounding-box-and-polygon-interaction/create-label-effect";
-import { getDatasetsQuery } from "../../../pages/datasets";
+import { getDatasetsQuery } from "../../../pages/local/datasets";
 
 const getImageLabelsQuery = gql`
   query getImageLabels($imageId: ID!) {
@@ -195,7 +195,7 @@ export const Labels = ({
   const { perform } = useUndoStore();
   const { imageId } = useRouter()?.query;
   const { data } = useQuery(getImageLabelsQuery, {
-    skip: typeof imageId !== "string",
+    skip: !imageId,
     variables: { imageId: imageId as string },
   });
 

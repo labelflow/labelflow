@@ -25,16 +25,10 @@ const GraphiQL = dynamic(() => import("../components/graphiql"), {
   },
 });
 
-const GraphqlPlayground = ({
-  assumeServiceWorkerActive,
-}: {
-  assumeServiceWorkerActive: boolean;
-}) => {
+const GraphqlPlayground = () => {
   return (
     <>
-      <AppLifecycleManager
-        assumeServiceWorkerActive={assumeServiceWorkerActive}
-      />
+      <AppLifecycleManager />
       <Meta title="Labelflow | GraphiQL" />
       <Layout
         topBarLeftContent={

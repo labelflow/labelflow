@@ -12,12 +12,15 @@ import { createNewLabelClassCurry } from "../../../connectors/undo-store/effects
 import { createUpdateLabelClassEffect } from "../../../connectors/undo-store/effects/update-label-class";
 import { keymap } from "../../../keymap";
 
-const labelClassesOfDatasetQuery = gql`
-  query getLabelClassesOfDataset($datasetId: ID!) {
-    labelClasses(where: { datasetId: $datasetId }) {
+const getLabelClassesOfDatasetQuery = gql`
+  query getLabelClassesOfDataset($slug: String!) {
+    dataset(where: { slug: $slug }) {
       id
-      name
-      color
+      labelClasses {
+        id
+        name
+        color
+      }
     }
   }
 `;
@@ -47,14 +50,15 @@ const labelQuery = gql`
 
 export const EditLabelClassMenu = () => {
   const router = useRouter();
-  const datasetId = router?.query.datasetId as string;
+  const datasetSlug = router?.query.datasetSlug as string;
   const client = useApolloClient();
   const [isOpen, setIsOpen] = useState(false);
-  const { data } = useQuery(labelClassesOfDatasetQuery, {
-    variables: { datasetId },
+  const { data } = useQuery(getLabelClassesOfDatasetQuery, {
+    variables: { slug: datasetSlug },
   });
+  const datasetId = data?.dataset.id;
   const { perform } = useUndoStore();
-  const labelClasses = data?.labelClasses ?? [];
+  const labelClasses = data?.dataset.labelClasses ?? [];
   const isContextMenuOpen = useLabellingStore(
     (state) => state.isContextMenuOpen
   );
@@ -74,7 +78,7 @@ export const EditLabelClassMenu = () => {
 
   useEffect(() => {
     setSelectedLabelClassId(null);
-  }, [datasetId]);
+  }, [datasetSlug]);
 
   const { data: dataLabelClass } = useQuery(labelClassQuery, {
     variables: { id: selectedLabelClassId },
@@ -89,20 +93,22 @@ export const EditLabelClassMenu = () => {
       createNewLabelClassCurry({
         labelClasses,
         datasetId,
+        datasetSlug,
         perform,
         client,
       }),
-    [labelClasses, selectedTool]
+    [labelClasses, datasetId, selectedTool]
   );
   const createNewClassAndUpdateLabel = useMemo(
     () =>
       createNewLabelClassAndUpdateLabelCurry({
         labelClasses,
         datasetId,
+        datasetSlug,
         perform,
         client,
       }),
-    [labelClasses]
+    [labelClasses, datasetId]
   );
   const onSelectedClassChange = useMemo(
     () =>
@@ -156,11 +162,11 @@ export const EditLabelClassMenu = () => {
           setIsOpen={setIsOpen}
           selectedLabelClass={selectedLabelClass}
           labelClasses={labelClasses}
-          createNewClass={async (name) =>
-            isInDrawingMode
-              ? createNewClass(name, selectedLabelClassId)
-              : createNewClassAndUpdateLabel(name, selectedLabelId)
-          }
+          createNewClass={async (name) => {
+            return isInDrawingMode
+              ? await createNewClass(name, selectedLabelClassId)
+              : await createNewClassAndUpdateLabel(name, selectedLabelId);
+          }}
           onSelectedClassChange={(item) => {
             onSelectedClassChange(item);
           }}

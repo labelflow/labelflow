@@ -6,6 +6,7 @@ import { ClassSelectionMenu, LabelClassItem } from "../class-selection-menu";
 const labelClasses = [
   {
     id: "coaisndoiasndi0",
+    index: 0,
     createdAt: "today",
     updatedAt: "today",
     name: "Person",
@@ -15,6 +16,7 @@ const labelClasses = [
   },
   {
     id: "coaisndoiasndi1",
+    index: 1,
     createdAt: "today",
     updatedAt: "today",
     name: "Dog",

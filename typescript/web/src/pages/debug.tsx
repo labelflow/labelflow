@@ -1,5 +1,6 @@
 import React from "react";
 import { gql, useQuery } from "@apollo/client";
+import NextLink from "next/link";
 import {
   Heading,
   Link,
@@ -9,10 +10,19 @@ import {
   Code,
   Center,
   Box,
+  Breadcrumb,
+  BreadcrumbItem,
+  Text,
 } from "@chakra-ui/react";
 import { detect } from "detect-browser";
-import { AppLifecycleManager } from "../components/app-lifecycle-manager";
-import { isInWindowScope, isInServiceWorkerScope } from "../utils/detect-scope";
+import { RiArrowRightSLine } from "react-icons/ri";
+import { Meta } from "../components/meta";
+
+import {
+  isInWindowScope,
+  isInServiceWorkerScope,
+  isDevelopmentEnvironment,
+} from "../utils/detect-scope";
 
 import { Layout } from "../components/layout";
 
@@ -22,19 +32,24 @@ export const debugQuery = gql`
   }
 `;
 
-const DebugPage = ({
-  assumeServiceWorkerActive,
-}: {
-  assumeServiceWorkerActive: boolean;
-}) => {
+const DebugPage = () => {
   const { data: debugResult } = useQuery<{ debug: any }>(debugQuery);
 
   return (
     <>
-      <AppLifecycleManager
-        assumeServiceWorkerActive={assumeServiceWorkerActive}
-      />
-      <Layout>
+      <Meta title="Labelflow | Debug" />
+      <Layout
+        topBarLeftContent={
+          <Breadcrumb
+            spacing="8px"
+            separator={<RiArrowRightSLine color="gray.500" />}
+          >
+            <BreadcrumbItem>
+              <Text>Debug</Text>
+            </BreadcrumbItem>
+          </Breadcrumb>
+        }
+      >
         <Center h="full">
           <Box as="section">
             <VStack
@@ -55,6 +70,8 @@ const DebugPage = ({
               <UnorderedList fontSize="lg" pl="8">
                 <ListItem>
                   <Link
+                    target="_blank"
+                    rel="noreferrer"
                     href={`https://github.com/${process.env.NEXT_PUBLIC_VERCEL_GIT_REPO_OWNER}/${process.env.NEXT_PUBLIC_VERCEL_GIT_REPO_SLUG}/issues/new/choose`}
                   >
                     Link to Github issue tracker
@@ -62,35 +79,55 @@ const DebugPage = ({
                 </ListItem>
 
                 <ListItem>
-                  <Link href="/_next/static/bundle-analyzer/client.html">
+                  <Link
+                    target="_blank"
+                    rel="noreferrer"
+                    href="/_next/static/bundle-analyzer/client.html"
+                  >
                     Link to client bundle analysis
                   </Link>
                 </ListItem>
 
                 <ListItem>
-                  <Link href="/_next/static/bundle-analyzer/server.html">
+                  <Link
+                    target="_blank"
+                    rel="noreferrer"
+                    href="/_next/static/bundle-analyzer/server.html"
+                  >
                     Link to server bundle analysis
                   </Link>
                 </ListItem>
 
                 <ListItem>
-                  <Link href="/graphiql">Link to Graphiql</Link>
+                  <NextLink href="/graphiql">
+                    <Link href="/graphiql">Link to Graphiql</Link>
+                  </NextLink>
                 </ListItem>
 
                 <ListItem>
-                  <Link href="https://app.supabase.io/dataset/zokyprbhquvvrleedkkk/editor/table">
+                  <Link
+                    target="_blank"
+                    rel="noreferrer"
+                    href="https://app.supabase.io/dataset/zokyprbhquvvrleedkkk/editor/table"
+                  >
                     Link to Database admin
                   </Link>
                 </ListItem>
 
                 <ListItem>
-                  <Link href="https://strapi.labelflow.ai/admin">
+                  <Link
+                    target="_blank"
+                    rel="noreferrer"
+                    href="https://strapi.labelflow.ai/admin"
+                  >
                     Link to CMS admin
                   </Link>
                 </ListItem>
 
                 <ListItem>
                   <Link
+                    target="_blank"
+                    rel="noreferrer"
                     href={`https://github.com/${process.env.NEXT_PUBLIC_VERCEL_GIT_REPO_OWNER}/${process.env.NEXT_PUBLIC_VERCEL_GIT_REPO_SLUG}/tree/${process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_REF}`}
                   >
                     Link to Github branch
@@ -99,6 +136,8 @@ const DebugPage = ({
 
                 <ListItem>
                   <Link
+                    target="_blank"
+                    rel="noreferrer"
                     href={`https://github.com/${process.env.NEXT_PUBLIC_VERCEL_GIT_REPO_OWNER}/${process.env.NEXT_PUBLIC_VERCEL_GIT_REPO_SLUG}/commit/${process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA}`}
                   >
                     Link to Github commit
@@ -106,19 +145,31 @@ const DebugPage = ({
                 </ListItem>
 
                 <ListItem>
-                  <Link href={`https://${process.env.NEXT_PUBLIC_VERCEL_URL}`}>
+                  <Link
+                    target="_blank"
+                    rel="noreferrer"
+                    href={`https://${process.env.NEXT_PUBLIC_VERCEL_URL}`}
+                  >
                     Link to Vercel deployment
                   </Link>
                 </ListItem>
 
                 <ListItem>
-                  <Link href="https://dashboard.heroku.com/apps/labelflow-strapi">
+                  <Link
+                    target="_blank"
+                    rel="noreferrer"
+                    href="https://dashboard.heroku.com/apps/labelflow-strapi"
+                  >
                     Link to CMS deployment on Heroku
                   </Link>
                 </ListItem>
 
                 <ListItem>
-                  <Link href="https://app.sendgrid.com/">
+                  <Link
+                    target="_blank"
+                    rel="noreferrer"
+                    href="https://app.sendgrid.com/"
+                  >
                     Link to mailer provider
                   </Link>
                 </ListItem>
@@ -131,31 +182,39 @@ const DebugPage = ({
               <Code as="p" whiteSpace="pre-wrap">
                 {JSON.stringify(
                   {
+                    serverType: "Standard Labelflow Client App",
                     isInWindowScope,
                     isInServiceWorkerScope,
-                    ...process.env,
-                    ...detect(),
-                    // We have to explicitly write `process.env.XXX`, we can't map over `process.env`
-                    NEXT_PUBLIC_VERCEL_ENV: process.env.NEXT_PUBLIC_VERCEL_ENV,
-                    NEXT_PUBLIC_VERCEL_URL: process.env.NEXT_PUBLIC_VERCEL_URL,
-                    NEXT_PUBLIC_VERCEL_GIT_PROVIDER:
-                      process.env.NEXT_PUBLIC_VERCEL_GIT_PROVIDER,
-                    NEXT_PUBLIC_VERCEL_GIT_REPO_SLUG:
-                      process.env.NEXT_PUBLIC_VERCEL_GIT_REPO_SLUG,
-                    NEXT_PUBLIC_VERCEL_GIT_REPO_OWNER:
-                      process.env.NEXT_PUBLIC_VERCEL_GIT_REPO_OWNER,
-                    NEXT_PUBLIC_VERCEL_GIT_REPO_ID:
-                      process.env.NEXT_PUBLIC_VERCEL_GIT_REPO_ID,
-                    NEXT_PUBLIC_VERCEL_GIT_COMMIT_REF:
-                      process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_REF,
-                    NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA:
-                      process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA,
-                    NEXT_PUBLIC_VERCEL_GIT_COMMIT_MESSAGE:
-                      process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_MESSAGE,
-                    NEXT_PUBLIC_VERCEL_GIT_COMMIT_AUTHOR_LOGIN:
-                      process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_AUTHOR_LOGIN,
-                    NEXT_PUBLIC_VERCEL_GIT_COMMIT_AUTHOR_NAME:
-                      process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_AUTHOR_NAME,
+                    isDevelopmentEnvironment,
+                    browser: { ...detect() },
+                    env: {
+                      ...process.env,
+                      // We have to explicitly write `process.env.XXX`, we can't map over `process.env`
+                      NODE_ENV: process.env.NODE_ENV,
+                      NEXT_PUBLIC_NODE_ENV: process.env.NEXT_PUBLIC_NODE_ENV,
+                      NEXT_PUBLIC_VERCEL_ENV:
+                        process.env.NEXT_PUBLIC_VERCEL_ENV,
+                      NEXT_PUBLIC_VERCEL_URL:
+                        process.env.NEXT_PUBLIC_VERCEL_URL,
+                      NEXT_PUBLIC_VERCEL_GIT_PROVIDER:
+                        process.env.NEXT_PUBLIC_VERCEL_GIT_PROVIDER,
+                      NEXT_PUBLIC_VERCEL_GIT_REPO_SLUG:
+                        process.env.NEXT_PUBLIC_VERCEL_GIT_REPO_SLUG,
+                      NEXT_PUBLIC_VERCEL_GIT_REPO_OWNER:
+                        process.env.NEXT_PUBLIC_VERCEL_GIT_REPO_OWNER,
+                      NEXT_PUBLIC_VERCEL_GIT_REPO_ID:
+                        process.env.NEXT_PUBLIC_VERCEL_GIT_REPO_ID,
+                      NEXT_PUBLIC_VERCEL_GIT_COMMIT_REF:
+                        process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_REF,
+                      NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA:
+                        process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA,
+                      NEXT_PUBLIC_VERCEL_GIT_COMMIT_MESSAGE:
+                        process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_MESSAGE,
+                      NEXT_PUBLIC_VERCEL_GIT_COMMIT_AUTHOR_LOGIN:
+                        process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_AUTHOR_LOGIN,
+                      NEXT_PUBLIC_VERCEL_GIT_COMMIT_AUTHOR_NAME:
+                        process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_AUTHOR_NAME,
+                    },
                   },
                   null,
                   2
