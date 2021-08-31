@@ -41,7 +41,8 @@ export const Banner = () => {
           <Button
             mt="8"
             as="a"
-            href="https://app.livestorm.co/labelflow/get-an-ai-ready-in-1-day"
+            href="https://app.livestorm.co/labelflow/get-an-ai-model-ready-in-no-time
+            "
             target="blank"
             size="lg"
             colorScheme="brand"

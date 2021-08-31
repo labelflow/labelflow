@@ -18,7 +18,7 @@ export const LogoGrid = () => {
         px={{ base: "6", md: "8" }}
       >
         <Heading align="center" fontWeight="extrabold" maxW="lg" mx="auto">
-          And connect seamlessly with the best data tools
+          Connect seamlessly with the best data tools
         </Heading>
         <Text align="center" textAlign="center" maxW="lg" mx="auto" mt="12">
           An added benefit of being <strong>open source</strong> is that
