@@ -1,10 +1,10 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
 datasource db {
   provider = "postgresql"
   url      = env("POSTGRES_EXTERNAL_URL")
-}
-
-generator client {
-  provider = "prisma-client-js"
 }
 
 model Image {
@@ -12,48 +12,43 @@ model Image {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   url         String
-  externalUrl String?
   name        String
   path        String
   mimetype    String
   width       Float
   height      Float
-  labels      Label[]
-  dataset     Dataset  @relation(fields: [datasetId], references: [id])
   datasetId   String   @db.Uuid
-}
-
-enum LabelType {
-  Polygon
-  Box
+  externalUrl String?
+  dataset     Dataset  @relation(fields: [datasetId], references: [id])
+  labels      Label[]
 }
 
 model Label {
   id           String      @id @default(uuid()) @db.Uuid
   createdAt    DateTime    @default(now())
   updatedAt    DateTime    @updatedAt
-  type         LabelType
   x            Float
   y            Float
   height       Float
   width        Float
   geometry     Json
-  image        Image       @relation(fields: [imageId], references: [id])
-  labelClass   LabelClass? @relation(fields: [labelClassId], references: [id])
   imageId      String      @db.Uuid
   labelClassId String?     @db.Uuid
+  type         LabelType
+  image        Image       @relation(fields: [imageId], references: [id])
+  labelClass   LabelClass? @relation(fields: [labelClassId], references: [id])
 }
 
 model LabelClass {
   id        String   @id @default(uuid()) @db.Uuid
-  index     Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   name      String
   color     String
-  labels    Label[]
-  dataset   Dataset  @relation(fields: [datasetId], references: [id])
   datasetId String   @db.Uuid
+  index     Int
+  dataset   Dataset  @relation(fields: [datasetId], references: [id])
+  labels    Label[]
 }
 
 model Dataset {
@@ -62,6 +57,346 @@ model Dataset {
   updatedAt    DateTime     @updatedAt
   name         String       @unique
   slug         String       @unique
-  labelClasses LabelClass[]
   images       Image[]
+  labelClasses LabelClass[]
+}
+
+model Account {
+  id                 String    @id @default(cuid())
+  userId             String
+  providerType       String
+  providerId         String
+  providerAccountId  String
+  refreshToken       String?
+  accessToken        String?
+  accessTokenExpires DateTime?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+  user               User      @relation(fields: [userId], references: [id])
+
+  @@unique([providerId, providerAccountId], name: "providerId_providerAccountId")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  userId       String
+  expires      DateTime
+  sessionToken String   @unique
+  accessToken  String   @unique
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  user         User     @relation(fields: [userId], references: [id])
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  accounts      Account[]
+  sessions      Session[]
+}
+
+model VerificationRequest {
+  id         String   @id @default(cuid())
+  identifier String
+  token      String   @unique
+  expires    DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([identifier, token], name: "identifier_token")
+}
+
+model Article {
+  id           Int       @id @default(autoincrement())
+  title        String?   @db.VarChar(255)
+  description  String?
+  content      String?
+  slug         String?   @unique @db.VarChar(255)
+  category     Int?
+  author       Int?
+  published_at DateTime? @db.Timestamptz(6)
+  created_by   Int?
+  updated_by   Int?
+  created_at   DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at   DateTime? @default(now()) @db.Timestamptz(6)
+
+  @@map("articles")
+  @@ignore
+}
+
+model Category {
+  id         Int       @id @default(autoincrement())
+  name       String    @db.VarChar(255)
+  slug       String    @unique @db.VarChar(255)
+  created_by Int?
+  updated_by Int?
+  created_at DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at DateTime? @default(now()) @db.Timestamptz(6)
+
+  @@map("categories")
+  @@ignore
+}
+
+model ComponentsDecorationHero {
+  id    Int     @id @default(autoincrement())
+  title String? @db.VarChar(255)
+
+  @@map("components_decoration_heroes")
+  @@ignore
+}
+
+model ComponentsSharedSeo {
+  id              Int     @id @default(autoincrement())
+  metaTitle       String? @db.VarChar(255)
+  metaDescription String?
+
+  @@map("components_shared_seos")
+  @@ignore
+}
+
+model CoreStore {
+  id          Int     @id @default(autoincrement())
+  key         String? @db.VarChar(255)
+  value       String?
+  type        String? @db.VarChar(255)
+  environment String? @db.VarChar(255)
+  tag         String? @db.VarChar(255)
+
+  @@map("core_store")
+  @@ignore
+}
+
+model Global {
+  id                 Int               @id @default(autoincrement())
+  siteName           String            @db.VarChar(255)
+  created_by         Int?
+  updated_by         Int?
+  created_at         DateTime?         @default(now()) @db.Timestamptz(6)
+  updated_at         DateTime?         @default(now()) @db.Timestamptz(6)
+  globals_components GlobalComponent[] @relation("globalsToglobals_components")
+
+  @@map("globals")
+  @@ignore
+}
+
+model GlobalComponent {
+  id             Int    @id @default(autoincrement())
+  field          String @db.VarChar(255)
+  order          Int
+  component_type String @db.VarChar(255)
+  component_id   Int
+  global_id      Int
+  globals        Global @relation("globalsToglobals_components", fields: [global_id], references: [id])
+
+  @@map("globals_components")
+  @@ignore
+}
+
+model Homepage {
+  id                   Int                 @id @default(autoincrement())
+  created_by           Int?
+  updated_by           Int?
+  created_at           DateTime?           @default(now()) @db.Timestamptz(6)
+  updated_at           DateTime?           @default(now()) @db.Timestamptz(6)
+  homepages_components HomepageComponent[] @relation("homepagesTohomepages_components")
+
+  @@map("homepages")
+  @@ignore
+}
+
+model HomepageComponent {
+  id             Int      @id @default(autoincrement())
+  field          String   @db.VarChar(255)
+  order          Int
+  component_type String   @db.VarChar(255)
+  component_id   Int
+  homepage_id    Int
+  homepages      Homepage @relation("homepagesTohomepages_components", fields: [homepage_id], references: [id])
+
+  @@map("homepages_components")
+  @@ignore
+}
+
+model I18nLocale {
+  id         Int       @id @default(autoincrement())
+  name       String?   @db.VarChar(255)
+  code       String?   @unique @db.VarChar(255)
+  created_by Int?
+  updated_by Int?
+  created_at DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at DateTime? @default(now()) @db.Timestamptz(6)
+
+  @@map("i18n_locales")
+  @@ignore
+}
+
+model StrapiAdministrator {
+  id                 Int      @id @default(autoincrement())
+  firstname          String?  @db.VarChar(255)
+  lastname           String?  @db.VarChar(255)
+  username           String?  @db.VarChar(255)
+  email              String   @unique @db.VarChar(255)
+  password           String?  @db.VarChar(255)
+  resetPasswordToken String?  @db.VarChar(255)
+  registrationToken  String?  @db.VarChar(255)
+  isActive           Boolean?
+  blocked            Boolean?
+  preferedLanguage   String?  @db.VarChar(255)
+
+  @@map("strapi_administrator")
+  @@ignore
+}
+
+model StrapiPermission {
+  id         Int       @id @default(autoincrement())
+  action     String    @db.VarChar(255)
+  subject    String?   @db.VarChar(255)
+  properties Json?
+  conditions Json?
+  role       Int?
+  created_at DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at DateTime? @default(now()) @db.Timestamptz(6)
+
+  @@map("strapi_permission")
+  @@ignore
+}
+
+model StrapiRole {
+  id          Int       @id @default(autoincrement())
+  name        String    @unique @db.VarChar(255)
+  code        String    @unique @db.VarChar(255)
+  description String?   @db.VarChar(255)
+  created_at  DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at  DateTime? @default(now()) @db.Timestamptz(6)
+
+  @@map("strapi_role")
+  @@ignore
+}
+
+model StrapiUserRole {
+  id      Int  @id @default(autoincrement())
+  user_id Int?
+  role_id Int?
+
+  @@map("strapi_users_roles")
+  @@ignore
+}
+
+model StrapiWebhook {
+  id      Int      @id @default(autoincrement())
+  name    String?  @db.VarChar(255)
+  url     String?
+  headers Json?
+  events  Json?
+  enabled Boolean?
+
+  @@map("strapi_webhooks")
+  @@ignore
+}
+
+model UploadFile {
+  id                Int       @id @default(autoincrement())
+  name              String    @db.VarChar(255)
+  alternativeText   String?   @db.VarChar(255)
+  caption           String?   @db.VarChar(255)
+  width             Int?
+  height            Int?
+  formats           Json?
+  hash              String    @db.VarChar(255)
+  ext               String?   @db.VarChar(255)
+  mime              String    @db.VarChar(255)
+  size              Decimal   @db.Decimal(10, 2)
+  url               String    @db.VarChar(255)
+  previewUrl        String?   @db.VarChar(255)
+  provider          String    @db.VarChar(255)
+  provider_metadata Json?
+  created_by        Int?
+  updated_by        Int?
+  created_at        DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at        DateTime? @default(now()) @db.Timestamptz(6)
+
+  @@map("upload_file")
+  @@ignore
+}
+
+model UploadFileMorph {
+  id             Int     @id @default(autoincrement())
+  upload_file_id Int?
+  related_id     Int?
+  related_type   String?
+  field          String?
+  order          Int?
+
+  @@map("upload_file_morph")
+  @@ignore
+}
+
+model UserPermissionPermission {
+  id         Int     @id @default(autoincrement())
+  type       String  @db.VarChar(255)
+  controller String  @db.VarChar(255)
+  action     String  @db.VarChar(255)
+  enabled    Boolean
+  policy     String? @db.VarChar(255)
+  role       Int?
+  created_by Int?
+  updated_by Int?
+
+  @@map("users-permissions_permission")
+  @@ignore
+}
+
+model UserPermissionRole {
+  id          Int     @id @default(autoincrement())
+  name        String  @db.VarChar(255)
+  description String? @db.VarChar(255)
+  type        String? @unique @db.VarChar(255)
+  created_by  Int?
+  updated_by  Int?
+
+  @@map("users-permissions_role")
+  @@ignore
+}
+
+model UserPermissionUser {
+  id                 Int       @id @default(autoincrement())
+  username           String    @unique @db.VarChar(255)
+  email              String    @db.VarChar(255)
+  provider           String?   @db.VarChar(255)
+  password           String?   @db.VarChar(255)
+  resetPasswordToken String?   @db.VarChar(255)
+  confirmationToken  String?   @db.VarChar(255)
+  confirmed          Boolean?
+  blocked            Boolean?
+  role               Int?
+  created_by         Int?
+  updated_by         Int?
+  created_at         DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at         DateTime? @default(now()) @db.Timestamptz(6)
+
+  @@map("users-permissions_user")
+  @@ignore
+}
+
+model Writer {
+  id         Int       @id @default(autoincrement())
+  name       String?   @db.VarChar(255)
+  email      String?   @db.VarChar(255)
+  created_by Int?
+  updated_by Int?
+  created_at DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at DateTime? @default(now()) @db.Timestamptz(6)
+
+  @@map("writers")
+  @@ignore
+}
+
+enum LabelType {
+  Polygon
+  Box
 }

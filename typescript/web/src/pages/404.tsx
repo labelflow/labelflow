@@ -3,7 +3,7 @@ import NextLink from "next/link";
 import { Meta } from "../components/meta";
 
 import { Layout } from "../components/layout";
-import { EmptyStateResult } from "../components/empty-state";
+import { EmptyStateNoSearchResult } from "../components/empty-state";
 
 const Error404Page = () => {
   return (
@@ -20,7 +20,7 @@ const Error404Page = () => {
               py={{ base: "16", sm: "20" }}
               textAlign="center"
             >
-              <EmptyStateResult w="full" />
+              <EmptyStateNoSearchResult w="full" />
               <Heading as="h2">Page not found</Heading>
 
               <Text mt="4" fontSize="lg">

@@ -10,11 +10,11 @@ export const countLabels: Repository["label"]["count"] = async (where) => {
     return 0;
   }
   if ("datasetId" in where) {
-    return prisma.label.count({
+    return await prisma.label.count({
       where: { image: { datasetId: where.datasetId ?? undefined } },
     });
   }
-  return prisma.label.count({ where: castObjectNullsToUndefined(where) });
+  return await prisma.label.count({ where: castObjectNullsToUndefined(where) });
 };
 
 export const listLabels: Repository["label"]["list"] = async (

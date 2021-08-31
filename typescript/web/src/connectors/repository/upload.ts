@@ -28,7 +28,7 @@ export const getUploadTarget = async (key: string): Promise<UploadTarget> => {
   }
 
   // We run in the worker scope or nodejs
-  return getUploadTargetHttp(key);
+  return await getUploadTargetHttp(key);
 };
 
 export const putInStorage = async (url: string, file: Blob) => {

@@ -38,7 +38,7 @@ export const Roadmap = () => {
 
             <Button
               as="a"
-              href="https://labelflow.canny.io/"
+              href="https://labelflow.canny.io/feature-requests"
               target="blank"
               rel="noopener"
               size="lg"

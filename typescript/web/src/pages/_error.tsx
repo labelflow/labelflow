@@ -12,7 +12,7 @@ import { NextPageContext } from "next";
 
 import { Meta } from "../components/meta";
 import { Layout } from "../components/layout";
-import { EmptyStateOops } from "../components/empty-state";
+import { EmptyStateError } from "../components/empty-state";
 
 type Props = FallbackProps & {
   statusCode?: number;
@@ -35,7 +35,7 @@ const ErrorPage = ({ statusCode, error, resetErrorBoundary }: Props) => {
               py={{ base: "16", sm: "20" }}
               textAlign="center"
             >
-              <EmptyStateOops w="full" />
+              <EmptyStateError w="full" />
               <Heading as="h2">
                 {statusCode
                   ? `An error ${statusCode} occurred on server`

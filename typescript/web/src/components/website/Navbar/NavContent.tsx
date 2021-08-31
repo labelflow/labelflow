@@ -1,4 +1,5 @@
 import {
+  chakra,
   Box,
   Button,
   Flex,
@@ -6,8 +7,10 @@ import {
   HStack,
   useDisclosure,
   VisuallyHidden,
+  IconButton,
   // useColorModeValue as mode,
 } from "@chakra-ui/react";
+import { RiGithubFill } from "react-icons/ri";
 import * as React from "react";
 import NextLink from "next/link";
 import { Logo } from "../Logo";
@@ -16,6 +19,8 @@ import { NavMenu } from "./NavMenu";
 import { Submenu } from "./Submenu";
 import { ToggleButton } from "./ToggleButton";
 import { links } from "./_data";
+
+const GithubIcon = chakra(RiGithubFill);
 
 const MobileNavContext = (props: FlexProps) => {
   const { isOpen, onToggle } = useDisclosure();
@@ -35,10 +40,19 @@ const MobileNavContext = (props: FlexProps) => {
             <Logo h="24px" iconColor="brand.400" />
           </Box>
         </NextLink>
+        <IconButton
+          aria-label="See code on github"
+          href="https://github.com/Labelflow/labelflow"
+          as="a"
+          target="blank"
+          variant="link"
+          mr="3"
+          icon={<GithubIcon fontSize="2xl" />}
+        />
         <Box visibility={{ base: "hidden", sm: "visible" }}>
           <NextLink href="/local/datasets">
             <Button as="a" colorScheme="brand" variant="outline">
-              Try for free
+              Try it now
             </Button>
           </NextLink>
         </Box>
@@ -108,6 +122,15 @@ const DesktopNavContent = (props: FlexProps) => {
         >
           Sign In
         </Box> */}
+        <IconButton
+          aria-label="See code on github"
+          href="https://github.com/Labelflow/labelflow"
+          as="a"
+          target="blank"
+          variant="link"
+          mr="-2"
+          icon={<GithubIcon fontSize="2xl" />}
+        />
         <NextLink href="/local/datasets">
           <Button
             as="a"

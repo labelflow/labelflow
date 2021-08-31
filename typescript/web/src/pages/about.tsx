@@ -68,39 +68,40 @@ export default function Pricing() {
               </Link>
               , <b>an AI-powered cloud platform to support energy companies </b>
               managing their critical assets: wind turbines, transmission &
-              distribution grids, cooling towers. Machine learning was sweating
-              all along our product.
+              distribution grids, cooling towers. Machine learning was a huge
+              part of our product.
               <br />
               <br />
-              Millions of images have been through the platform. We have used AI
-              to detect discrepancies (corrosion, cracks, vegetation, etc.), to
-              locate asset in space, to navigate automatically using drones, and
-              many other applications.
+              Millions of images have been processed on the platform. We have
+              used AI to detect discrepancies (corrosion, cracks, vegetation,
+              etc.), to locate assets in space, to generate automatic flight
+              paths for drones, and many other applications.
               <br />
               <br />
               <Center>
                 <img
-                  src="static/img/about-screenshot1.png"
+                  src="static/img/about-screenshot1.jpg"
                   alt="Sterblue Platform"
                 />
               </Center>
               <br />
               <br />
               5 years ago, showing bounding boxes on an image on a Linkedin or
-              blog post was the big marketing trend. We took the hard way, the
-              one that targetted to bring AI at scale.
+              blog post was the big marketing trend. We chose to do it the hard
+              way, by scaling up with AI.
               <br />
               <br />
-              We labeled millions of images dealing with multiple labelling
-              companies, we dealt with tens of different taxonomies for the same
-              physical problem, we faced labelling quality challenges, we build
-              AI training pipeline using tens of open source frameworks and
-              ecosystem partners, we integrated real users in the loop and ...
-              we showed some results.
+              We labeled millions of images worked with multiple labelling
+              companies. We also dealt with tens of different taxonomies for the
+              same physical problem, we faced labelling quality challenges, we
+              built AI training pipeline using tens of open source frameworks
+              and ecosystem partners, we integrated real users in the loop and
+              ... we showed some results.
               <br />
               <br />
-              The type of results that says to a customer “for your use case A,
-              you save 23% of your time increasing false negative rate by 14%”
+              The type of results that tell to a customer “for your use case A,
+              you save 23% of your time whilst reducing your false negative rate
+              by 14%”
               <br />
               <br />
               With{" "}
@@ -109,7 +110,7 @@ export default function Pricing() {
                   Labelflow
                 </Link>
                 , we now want to support every AI-applied company in the world
-                building the next big thing
+                to build the next big thing
               </b>
               . We start small with our labelling tool, with a strong focus on
               user experience. That’s just the beginning.
