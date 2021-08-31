@@ -6146,14 +6146,14 @@ __metadata:
     "@graphql-tools/schema": 7.1.5
     "@labelflow/common-resolvers": "workspace:typescript/common-resolvers"
     "@labelflow/graphql-types": "workspace:typescript/graphql-types"
-    "@prisma/client": 2.28.0
+    "@prisma/client": ^2.28.0
     "@supabase/supabase-js": 1.21.0
     "@types/node": 16.4.1
     apollo-server: 3.0.2
     graphql: 15.5.1
     node-fetch: 2.6.1
     nodemon: 2.0.12
-    prisma: 2.28.0
+    prisma: ^2.28.0
     probe-image-size: 7.2.1
     ts-node: 10.1.0
     typescript: 4.3.5
@@ -6748,21 +6748,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@prisma/client@npm:2.28.0":
-  version: 2.28.0
-  resolution: "@prisma/client@npm:2.28.0"
-  dependencies:
-    "@prisma/engines-version": 2.28.0-17.89facabd0366f63911d089156a7a70125bfbcd27
-  peerDependencies:
-    prisma: "*"
-  peerDependenciesMeta:
-    prisma:
-      optional: true
-  checksum: 601163b6b48abdd47a8349a4fb54c9afb908a5d6b0d066c23821093afb9748e7a261c22cb4cf02dae40f12751de68df701fa5de71b960dec115d7453929ee46a
-  languageName: node
-  linkType: hard
-
-"@prisma/client@npm:^2.30.2":
+"@prisma/client@npm:^2.28.0, @prisma/client@npm:^2.30.2":
   version: 2.30.2
   resolution: "@prisma/client@npm:2.30.2"
   dependencies:
@@ -6776,13 +6762,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@prisma/engines-version@npm:2.28.0-17.89facabd0366f63911d089156a7a70125bfbcd27":
-  version: 2.28.0-17.89facabd0366f63911d089156a7a70125bfbcd27
-  resolution: "@prisma/engines-version@npm:2.28.0-17.89facabd0366f63911d089156a7a70125bfbcd27"
-  checksum: 3358865630c64cfd00bdd94b85492ec57dd0b3ab5e333a1dcf546a6d3eaab7fe0f0286ef6ca96d83ac0aa6b91041af52812b1733ca18c2d9eb7c016944f933dd
-  languageName: node
-  linkType: hard
-
 "@prisma/engines-version@npm:2.30.1-2.b8c35d44de987a9691890b3ddf3e2e7effb9bf20":
   version: 2.30.1-2.b8c35d44de987a9691890b3ddf3e2e7effb9bf20
   resolution: "@prisma/engines-version@npm:2.30.1-2.b8c35d44de987a9691890b3ddf3e2e7effb9bf20"
@@ -6790,10 +6769,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@prisma/engines@npm:2.28.0-17.89facabd0366f63911d089156a7a70125bfbcd27":
-  version: 2.28.0-17.89facabd0366f63911d089156a7a70125bfbcd27
-  resolution: "@prisma/engines@npm:2.28.0-17.89facabd0366f63911d089156a7a70125bfbcd27"
-  checksum: ddc754c6c2c60f976c070a75e9d74a72ff5053ff57abc118dad3cb0175a643ca86249e72dccce99e4d0b17c6fac2e2af5f0f8dcfd756d8c0f9e1d049e47e4211
+"@prisma/engines@npm:2.30.1-2.b8c35d44de987a9691890b3ddf3e2e7effb9bf20":
+  version: 2.30.1-2.b8c35d44de987a9691890b3ddf3e2e7effb9bf20
+  resolution: "@prisma/engines@npm:2.30.1-2.b8c35d44de987a9691890b3ddf3e2e7effb9bf20"
+  checksum: 41a283012f391640c0a57761b3cd86cd641c116c619f0b815337aa0c61befa62f104b06a7b1f96baa352ec7a7b27ff04b81c8e553ce25d006bf5afac369e55f1
   languageName: node
   linkType: hard
 
@@ -25426,15 +25405,15 @@ next-pwa@5.2.21:
   languageName: node
   linkType: hard
 
-"prisma@npm:2.28.0":
-  version: 2.28.0
-  resolution: "prisma@npm:2.28.0"
+"prisma@npm:^2.28.0":
+  version: 2.30.2
+  resolution: "prisma@npm:2.30.2"
   dependencies:
-    "@prisma/engines": 2.28.0-17.89facabd0366f63911d089156a7a70125bfbcd27
+    "@prisma/engines": 2.30.1-2.b8c35d44de987a9691890b3ddf3e2e7effb9bf20
   bin:
     prisma: build/index.js
     prisma2: build/index.js
-  checksum: f4683599bb9c3bd53eb8e4de94d980cbcd43ec2ae630b1271f73b2775a1f808c64ffdd7d7e3e21c40f9cde4d8cdc7abef4277a2934f1c73db08e6f2581840df1
+  checksum: 490dc68f07348f2f028833e8eab9879da7b45e57696e9977963c5ba7f692cc32d87809a243e67ae36b3d72095ca2f01cbf0bb5b93c0e931e77445a9677d84fb7
   languageName: node
   linkType: hard
 
