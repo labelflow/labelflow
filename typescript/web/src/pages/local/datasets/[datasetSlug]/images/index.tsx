@@ -5,6 +5,7 @@ import {
   Box,
   WrapItem,
   VStack,
+  useColorModeValue as mode,
   Image,
   Center,
   Skeleton,
@@ -153,7 +154,11 @@ const ImagesPage = () => {
               >
                 {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
                 <a>
-                  <WrapItem p={4} background="white" rounded={8}>
+                  <WrapItem
+                    p={4}
+                    background={mode("white", "gray.700")}
+                    rounded={8}
+                  >
                     <VStack w="80" h="80" justify="space-between">
                       <Heading
                         as="h3"
@@ -166,7 +171,7 @@ const ImagesPage = () => {
                         {name}
                       </Heading>
                       <Image
-                        background="gray.100"
+                        background={mode("gray.100", "gray.800")}
                         alt={name}
                         src={url}
                         ignoreFallback
