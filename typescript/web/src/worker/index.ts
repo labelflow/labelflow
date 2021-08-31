@@ -47,19 +47,24 @@ self.addEventListener("message", (event) => {
     return;
   }
 
+  // TODO Send this message from client side when user wants to load app to work online
+  if (event?.data?.type === "PRECACHE_ALL") {
+    // Inject the manifest
+    // See https://github.com/GoogleChrome/workbox/issues/2519#issuecomment-634164566
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
+    // eslint-disable-next-line no-underscore-dangle
+    const WB_MANIFEST = self.__WB_MANIFEST;
+    precacheAndRoute(WB_MANIFEST);
+    // @ts-ignore
+    self.WB_MANIFEST = WB_MANIFEST;
+    return;
+  }
+
   console.warn("Received unsupported message from window:");
   console.warn(event?.data);
 });
 
 clientsClaim();
-// Inject the manifest
-// See https://github.com/GoogleChrome/workbox/issues/2519#issuecomment-634164566
-// eslint-disable-next-line @typescript-eslint/no-use-before-define
-// eslint-disable-next-line no-underscore-dangle
-const WB_MANIFEST = self.__WB_MANIFEST;
-precacheAndRoute(WB_MANIFEST);
-// @ts-ignore
-self.WB_MANIFEST = WB_MANIFEST;
 
 // // Initialize workbox Google analytics. For some reason this is broken right now, so we commented it.
 // initializeGoogleAnalytics();
