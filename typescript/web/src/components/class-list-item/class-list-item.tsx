@@ -1,4 +1,12 @@
-import { Box, Text, Kbd, Flex, chakra, Tooltip } from "@chakra-ui/react";
+import {
+  Box,
+  Text,
+  Kbd,
+  Flex,
+  chakra,
+  Tooltip,
+  useColorModeValue as mode,
+} from "@chakra-ui/react";
 import { RiCheckboxBlankCircleFill } from "react-icons/ri";
 
 const CircleIcon = chakra(RiCheckboxBlankCircleFill);
@@ -26,10 +34,10 @@ export const ClassListItem = (props: {
   // arrow function instead of nested ternaries to avoid eslint error
   const bgColor = (() => {
     if (selected && !isCreateClassItem) {
-      return "gray.300";
+      return mode("gray.300", "gray.500");
     }
     if (highlight) {
-      return "gray.100";
+      return mode("gray.100", "gray.600");
     }
     return "transparent";
   })();

@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef, useMemo } from "react";
 import {
   Box,
   Popover,
+  useColorModeValue as mode,
   PopoverContent,
   PopoverBody,
   PopoverTrigger,
@@ -186,7 +187,7 @@ export const ClassSelectionPopover = ({
     >
       <PopoverTrigger>{trigger}</PopoverTrigger>
       <PopoverContent
-        borderColor="gray.200"
+        borderColor={mode("gray.200", "gray.600")}
         cursor="default"
         pointerEvents="initial"
         aria-label={ariaLabel}
@@ -229,7 +230,8 @@ export const ClassSelectionPopover = ({
                       <CloseCircleIcon
                         fontSize="2xl"
                         onClick={reset}
-                        color="gray.300"
+                        cursor="pointer"
+                        color={mode("gray.300", "gray.500")}
                       />
                       <Kbd fontSize="md">↩</Kbd>
                     </>
