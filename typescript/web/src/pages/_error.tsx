@@ -9,9 +9,10 @@ import {
 } from "@chakra-ui/react";
 import { FallbackProps } from "react-error-boundary";
 import { NextPageContext } from "next";
+
 import { Meta } from "../components/meta";
 import { Layout } from "../components/layout";
-import { EmptyStateOops } from "../components/empty-state";
+import { EmptyStateError } from "../components/empty-state";
 
 type Props = FallbackProps & {
   statusCode?: number;
@@ -23,6 +24,7 @@ const ErrorPage = ({ statusCode, error, resetErrorBoundary }: Props) => {
   return (
     <>
       <Meta title="Labelflow | Error" />
+
       <Layout>
         <Center h="full">
           <Box as="section">
@@ -33,7 +35,7 @@ const ErrorPage = ({ statusCode, error, resetErrorBoundary }: Props) => {
               py={{ base: "16", sm: "20" }}
               textAlign="center"
             >
-              <EmptyStateOops w="full" />
+              <EmptyStateError w="full" />
               <Heading as="h2">
                 {statusCode
                   ? `An error ${statusCode} occurred on server`
@@ -61,7 +63,8 @@ const ErrorPage = ({ statusCode, error, resetErrorBoundary }: Props) => {
                   <Button onClick={resetErrorBoundary}>Retry</Button>
                 )}
 
-                <Button as="a" target="_blank" rel="noreferrer" href="/debug">
+                {/* Not using next/link here in order to resetErrorBoundary and clear the error reliably  */}
+                <Button as="a" href="/debug">
                   See debug info
                 </Button>
 
@@ -71,7 +74,7 @@ const ErrorPage = ({ statusCode, error, resetErrorBoundary }: Props) => {
                   as="a"
                   target="_blank"
                   rel="noreferrer"
-                  href="https://github.com/Labelflow/labelflow/issues"
+                  href="https://github.com/Labelflow/labelflow/issues/new?assignees=&labels=bug&template=bug_report.md&title="
                 >
                   Report this issue
                 </Button>
@@ -84,7 +87,7 @@ const ErrorPage = ({ statusCode, error, resetErrorBoundary }: Props) => {
   );
 };
 
-ErrorPage.getInitialProps = ({ res, err }: NextPageContext) => {
+export const getInitialProps = ({ res, err }: NextPageContext) => {
   // See https://nextjs.org/docs/advanced-features/custom-error-page#more-advanced-error-page-customizing
   // eslint-disable-next-line no-nested-ternary
   const statusCode = res ? res.statusCode : err ? err.statusCode : 404;

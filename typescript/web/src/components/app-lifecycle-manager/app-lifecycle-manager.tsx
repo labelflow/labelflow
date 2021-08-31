@@ -1,13 +1,9 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useCallback } from "react";
 import { useErrorHandler } from "react-error-boundary";
 import type { Workbox } from "workbox-window";
 import { useQueryParam, StringParam } from "use-query-params";
 import { UpdateServiceWorkerModal } from "./update-service-worker-modal/update-service-worker-modal";
 import { WelcomeModal } from "./welcome-modal";
-import {
-  checkServiceWorkerReady,
-  messageNoWindow,
-} from "../../utils/check-service-worker";
 
 declare global {
   interface Window {
@@ -15,9 +11,7 @@ declare global {
   }
 }
 
-type Props = { assumeServiceWorkerActive: boolean };
-
-export const AppLifecycleManager = ({ assumeServiceWorkerActive }: Props) => {
+export const AppLifecycleManager = () => {
   // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
   // This param can have several values:
   //   - undefined: Normal behavior, only show the update modal when needed
@@ -26,12 +20,6 @@ export const AppLifecycleManager = ({ assumeServiceWorkerActive }: Props) => {
   //   - "update": Do update the service worker when needed, Don't ever open the update modal
   const [paramModalUpdateServiceWorker, setParamModalUpdateServiceWorker] =
     useQueryParam("modal-update-service-worker", StringParam);
-
-  // By default (including during SSR) we consider the service worker to be ready
-  // since this is the nominal case that happen all the time except during the very first visit
-  const [isServiceWorkerActive, setIsServiceWorkerActive] = useState(
-    assumeServiceWorkerActive
-  );
 
   const handleError = useErrorHandler();
 
@@ -90,20 +78,6 @@ export const AppLifecycleManager = ({ assumeServiceWorkerActive }: Props) => {
         );
       }
 
-      const checkServiceWorkerStatus = async (): Promise<void> => {
-        try {
-          await checkServiceWorkerReady();
-          setIsServiceWorkerActive(true);
-        } catch (error) {
-          if (error.message === messageNoWindow) {
-            return;
-          }
-          handleError(error);
-        }
-      };
-
-      checkServiceWorkerStatus();
-
       // A common UX pattern for progressive web apps is to show a banner when a service worker has updated and waiting to install.
       // NOTE: MUST set skipWaiting to false in next.config.js pwa object
       // https://developers.google.com/web/tools/workbox/guides/advanced-recipes#offer_a_page_reload_for_users
@@ -140,7 +114,7 @@ export const AppLifecycleManager = ({ assumeServiceWorkerActive }: Props) => {
 
   return (
     <>
-      <WelcomeModal isServiceWorkerActive={isServiceWorkerActive} />
+      <WelcomeModal />
       <UpdateServiceWorkerModal
         isOpen={isUpdateServiceWorkerModalOpen}
         onClose={closeUpdateServiceWorkerModal}

@@ -4,11 +4,7 @@ import { useEffect } from "react";
 import { AppLifecycleManager } from "../../components/app-lifecycle-manager";
 import { Layout } from "../../components/layout";
 
-const LocalDatasetsIndexPage = ({
-  assumeServiceWorkerActive,
-}: {
-  assumeServiceWorkerActive: boolean;
-}) => {
+const LocalDatasetsIndexPage = () => {
   const router = useRouter();
 
   useEffect(() => {
@@ -17,9 +13,7 @@ const LocalDatasetsIndexPage = ({
 
   return (
     <>
-      <AppLifecycleManager
-        assumeServiceWorkerActive={assumeServiceWorkerActive}
-      />
+      <AppLifecycleManager />
       <Layout>
         <Center h="full">
           <Spinner size="xl" />

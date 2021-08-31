@@ -124,7 +124,7 @@ export const HelpMenu = () => {
             </NextLink>
             <NextLink href="/debug">
               <MenuItem icon={<DebugIcon fontSize="lg" />}>
-                Version information
+                Debug information
               </MenuItem>
             </NextLink>
           </MenuGroup>

@@ -1,12 +1,62 @@
-export { EmptyStateBag } from "./bag";
-export { EmptyStateCaughtUp } from "./caught-up";
-export { EmptyStateCreditCard } from "./credit-card";
-export { EmptyStateDocument } from "./document";
-export { EmptyStateDone } from "./done";
-export { EmptyStateGpsConnection } from "./gps-connection";
-export { EmptyStateImage } from "./image";
-export { EmptyStateInbox } from "./inbox";
-export { EmptyStateInternetConnection } from "./internet-connection";
-export { EmptyStateMessage } from "./message";
-export { EmptyStateOops } from "./oops";
-export { EmptyStateResult } from "./result";
+import { chakra } from "@chakra-ui/react";
+import Error404 from "../graphics/error-404";
+import Connection from "../graphics/connection";
+import CreditCard from "../graphics/credit-card";
+import Image from "../graphics/image";
+import Search from "../graphics/search";
+import Coffee from "../graphics/coffee";
+
+export const EmptyStateError = chakra(Error404, {
+  baseStyle: {
+    width: 250,
+    height: 250,
+    padding: 6,
+    opacity: 1,
+    boxSizing: "border-box",
+  },
+});
+export const EmptyStateNoConnection = chakra(Connection, {
+  baseStyle: {
+    width: 250,
+    height: 250,
+    padding: 6,
+    opacity: 1,
+    boxSizing: "border-box",
+  },
+});
+export const EmptyStateNoCreditCard = chakra(CreditCard, {
+  baseStyle: {
+    width: 250,
+    height: 250,
+    padding: 6,
+    opacity: 1,
+    boxSizing: "border-box",
+  },
+});
+export const EmptyStateNoImages = chakra(Image, {
+  baseStyle: {
+    width: 250,
+    height: 250,
+    padding: 6,
+    opacity: 0.7,
+    boxSizing: "border-box",
+  },
+});
+export const EmptyStateNoSearchResult = chakra(Search, {
+  baseStyle: {
+    width: 250,
+    height: 250,
+    padding: 6,
+    opacity: 0.7,
+    boxSizing: "border-box",
+  },
+});
+export const EmptyStateNoTasks = chakra(Coffee, {
+  baseStyle: {
+    width: 250,
+    height: 250,
+    padding: 6,
+    opacity: 1,
+    boxSizing: "border-box",
+  },
+});
