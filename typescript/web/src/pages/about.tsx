@@ -69,7 +69,7 @@ export default function Pricing() {
               , <b>an AI-powered cloud platform to support energy companies </b>
               managing their critical assets: wind turbines, transmission &
               distribution grids, cooling towers. Machine learning was a huge
-              part of our product
+              part of our product.
               <br />
               <br />
               Millions of images have been processed on the platform. We have
@@ -80,7 +80,7 @@ export default function Pricing() {
               <br />
               <Center>
                 <img
-                  src="static/img/about-screenshot1.png"
+                  src="static/img/about-screenshot1.jpg"
                   alt="Sterblue Platform"
                 />
               </Center>
