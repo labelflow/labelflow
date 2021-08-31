@@ -47,7 +47,7 @@ export const getFromStorage: Repository["upload"]["get"] = async (url) => {
       `Could not fetch image at url ${url} properly, code ${fetchResult.status}`
     );
   }
-  return fetchResult.arrayBuffer();
+  return await fetchResult.arrayBuffer();
 };
 
 export const putInStorage: Repository["upload"]["put"] = async (url, blob) => {
