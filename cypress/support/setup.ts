@@ -13,7 +13,9 @@ beforeEach(() =>
       cy.clearCookies();
 
       console.log("Clear database");
-      await Promise.all(getDatabase().tables.map((table) => table.clear()));
+      await Promise.all(
+        (await getDatabase()).tables.map((table) => table.clear())
+      );
 
       console.log("Clear caches");
       const cacheNames = await window.caches.keys();
@@ -44,7 +46,9 @@ afterEach(() =>
       cy.clearCookies();
 
       console.log("Clear database");
-      await Promise.all(getDatabase().tables.map((table) => table.clear()));
+      await Promise.all(
+        (await getDatabase()).tables.map((table) => table.clear())
+      );
 
       console.log("Clear caches");
       const cacheNames = await window.caches.keys();

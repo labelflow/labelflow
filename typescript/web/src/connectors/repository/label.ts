@@ -9,23 +9,25 @@ import { list } from "./utils/list";
 export const countLabels = async (where?: LabelWhereInput) => {
   if (where) {
     if ("datasetId" in where) {
-      const imagesOfDataset = await getDatabase()
-        .image.where({
+      const imagesOfDataset = await (
+        await getDatabase()
+      ).image
+        .where({
           datasetId: where.datasetId,
         })
         .toArray();
 
-      return await getDatabase()
-        .label.filter((currentLabel) =>
+      return await (await getDatabase()).label
+        .filter((currentLabel) =>
           imagesOfDataset.some((image) => currentLabel.imageId === image.id)
         )
         .count();
     }
 
-    return await getDatabase().label.where(where).count();
+    return await (await getDatabase()).label.where(where).count();
   }
 
-  return await getDatabase().label.count();
+  return await (await getDatabase()).label.count();
 };
 
 export const listLabels = async (
@@ -34,22 +36,22 @@ export const listLabels = async (
   first?: number | null
 ) => {
   if (where && "datasetId" in where) {
-    const imagesOfDataset = await getDatabase()
-      .image.where({
+    const imagesOfDataset = await (
+      await getDatabase()
+    ).image
+      .where({
         datasetId: where.datasetId,
       })
       .toArray();
 
-    return await getDatabase()
-      .label.filter((currentLabel) =>
+    return await (await getDatabase()).label
+      .filter((currentLabel) =>
         imagesOfDataset.some((image) => currentLabel.imageId === image.id)
       )
       .sortBy("createdAt");
   }
 
-  return await list<DbLabel, LabelWhereInput>(getDatabase().label)(
-    where,
-    skip,
-    first
-  );
+  return await list<DbLabel, LabelWhereInput>(
+    async () => (await getDatabase()).label
+  )(where, skip, first);
 };

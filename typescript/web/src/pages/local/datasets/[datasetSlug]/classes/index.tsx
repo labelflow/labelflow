@@ -33,11 +33,7 @@ const datasetNameQuery = gql`
   }
 `;
 
-const DatasetClassesPage = ({
-  assumeServiceWorkerActive,
-}: {
-  assumeServiceWorkerActive: boolean;
-}) => {
+const DatasetClassesPage = () => {
   const router = useRouter();
   const datasetSlug = router?.query?.datasetSlug as string;
 
@@ -53,7 +49,7 @@ const DatasetClassesPage = ({
 
   const handleError = useErrorHandler();
   if (error) {
-    if (!error.message.match(/No dataset with id/)) {
+    if (!error.message.match(/No dataset with slug/)) {
       handleError(error);
     }
     return <Error404Page />;
@@ -61,9 +57,7 @@ const DatasetClassesPage = ({
 
   return (
     <>
-      <AppLifecycleManager
-        assumeServiceWorkerActive={assumeServiceWorkerActive}
-      />
+      <AppLifecycleManager />
       <Meta title="Labelflow | Classes" />
       <Layout
         topBarLeftContent={

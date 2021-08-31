@@ -10,10 +10,19 @@ import {
   Code,
   Center,
   Box,
+  Breadcrumb,
+  BreadcrumbItem,
+  Text,
 } from "@chakra-ui/react";
 import { detect } from "detect-browser";
-import { AppLifecycleManager } from "../components/app-lifecycle-manager";
-import { isInWindowScope, isInServiceWorkerScope } from "../utils/detect-scope";
+import { RiArrowRightSLine } from "react-icons/ri";
+import { Meta } from "../components/meta";
+
+import {
+  isInWindowScope,
+  isInServiceWorkerScope,
+  isDevelopmentEnvironment,
+} from "../utils/detect-scope";
 
 import { Layout } from "../components/layout";
 
@@ -23,19 +32,24 @@ export const debugQuery = gql`
   }
 `;
 
-const DebugPage = ({
-  assumeServiceWorkerActive,
-}: {
-  assumeServiceWorkerActive: boolean;
-}) => {
+const DebugPage = () => {
   const { data: debugResult } = useQuery<{ debug: any }>(debugQuery);
 
   return (
     <>
-      <AppLifecycleManager
-        assumeServiceWorkerActive={assumeServiceWorkerActive}
-      />
-      <Layout>
+      <Meta title="Labelflow | Debug" />
+      <Layout
+        topBarLeftContent={
+          <Breadcrumb
+            spacing="8px"
+            separator={<RiArrowRightSLine color="gray.500" />}
+          >
+            <BreadcrumbItem>
+              <Text>Debug</Text>
+            </BreadcrumbItem>
+          </Breadcrumb>
+        }
+      >
         <Center h="full">
           <Box as="section">
             <VStack
@@ -168,31 +182,39 @@ const DebugPage = ({
               <Code as="p" whiteSpace="pre-wrap">
                 {JSON.stringify(
                   {
+                    serverType: "Standard Labelflow Client App",
                     isInWindowScope,
                     isInServiceWorkerScope,
-                    ...process.env,
-                    ...detect(),
-                    // We have to explicitly write `process.env.XXX`, we can't map over `process.env`
-                    NEXT_PUBLIC_VERCEL_ENV: process.env.NEXT_PUBLIC_VERCEL_ENV,
-                    NEXT_PUBLIC_VERCEL_URL: process.env.NEXT_PUBLIC_VERCEL_URL,
-                    NEXT_PUBLIC_VERCEL_GIT_PROVIDER:
-                      process.env.NEXT_PUBLIC_VERCEL_GIT_PROVIDER,
-                    NEXT_PUBLIC_VERCEL_GIT_REPO_SLUG:
-                      process.env.NEXT_PUBLIC_VERCEL_GIT_REPO_SLUG,
-                    NEXT_PUBLIC_VERCEL_GIT_REPO_OWNER:
-                      process.env.NEXT_PUBLIC_VERCEL_GIT_REPO_OWNER,
-                    NEXT_PUBLIC_VERCEL_GIT_REPO_ID:
-                      process.env.NEXT_PUBLIC_VERCEL_GIT_REPO_ID,
-                    NEXT_PUBLIC_VERCEL_GIT_COMMIT_REF:
-                      process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_REF,
-                    NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA:
-                      process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA,
-                    NEXT_PUBLIC_VERCEL_GIT_COMMIT_MESSAGE:
-                      process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_MESSAGE,
-                    NEXT_PUBLIC_VERCEL_GIT_COMMIT_AUTHOR_LOGIN:
-                      process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_AUTHOR_LOGIN,
-                    NEXT_PUBLIC_VERCEL_GIT_COMMIT_AUTHOR_NAME:
-                      process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_AUTHOR_NAME,
+                    isDevelopmentEnvironment,
+                    browser: { ...detect() },
+                    env: {
+                      ...process.env,
+                      // We have to explicitly write `process.env.XXX`, we can't map over `process.env`
+                      NODE_ENV: process.env.NODE_ENV,
+                      NEXT_PUBLIC_NODE_ENV: process.env.NEXT_PUBLIC_NODE_ENV,
+                      NEXT_PUBLIC_VERCEL_ENV:
+                        process.env.NEXT_PUBLIC_VERCEL_ENV,
+                      NEXT_PUBLIC_VERCEL_URL:
+                        process.env.NEXT_PUBLIC_VERCEL_URL,
+                      NEXT_PUBLIC_VERCEL_GIT_PROVIDER:
+                        process.env.NEXT_PUBLIC_VERCEL_GIT_PROVIDER,
+                      NEXT_PUBLIC_VERCEL_GIT_REPO_SLUG:
+                        process.env.NEXT_PUBLIC_VERCEL_GIT_REPO_SLUG,
+                      NEXT_PUBLIC_VERCEL_GIT_REPO_OWNER:
+                        process.env.NEXT_PUBLIC_VERCEL_GIT_REPO_OWNER,
+                      NEXT_PUBLIC_VERCEL_GIT_REPO_ID:
+                        process.env.NEXT_PUBLIC_VERCEL_GIT_REPO_ID,
+                      NEXT_PUBLIC_VERCEL_GIT_COMMIT_REF:
+                        process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_REF,
+                      NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA:
+                        process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA,
+                      NEXT_PUBLIC_VERCEL_GIT_COMMIT_MESSAGE:
+                        process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_MESSAGE,
+                      NEXT_PUBLIC_VERCEL_GIT_COMMIT_AUTHOR_LOGIN:
+                        process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_AUTHOR_LOGIN,
+                      NEXT_PUBLIC_VERCEL_GIT_COMMIT_AUTHOR_NAME:
+                        process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_AUTHOR_NAME,
+                    },
                   },
                   null,
                   2

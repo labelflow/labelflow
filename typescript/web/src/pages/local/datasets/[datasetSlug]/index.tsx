@@ -32,11 +32,7 @@ const getDataset = gql`
 
 const ArrowRightIcon = chakra(RiArrowRightSLine);
 
-const DatasetIndexPage = ({
-  assumeServiceWorkerActive,
-}: {
-  assumeServiceWorkerActive: boolean;
-}) => {
+const DatasetIndexPage = () => {
   const router = useRouter();
   const { datasetSlug } = router?.query;
 
@@ -61,7 +57,7 @@ const DatasetIndexPage = ({
 
   const handleError = useErrorHandler();
   if (error) {
-    if (!error.message.match(/No dataset with id/)) {
+    if (!error.message.match(/No dataset with slug/)) {
       handleError(error);
     }
     return <Error404Page />;
@@ -69,9 +65,7 @@ const DatasetIndexPage = ({
 
   return (
     <>
-      <AppLifecycleManager
-        assumeServiceWorkerActive={assumeServiceWorkerActive}
-      />
+      <AppLifecycleManager />
       <Layout
         topBarLeftContent={
           <Breadcrumb

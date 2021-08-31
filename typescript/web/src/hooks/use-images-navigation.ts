@@ -33,7 +33,10 @@ export const useImagesNavigation = () => {
   // Refetch images ?
   const { data } = useQuery<{
     dataset: Pick<Dataset, "id" | "images">;
-  }>(getAllImagesOfADatasetQuery, { variables: { slug: datasetSlug } });
+  }>(getAllImagesOfADatasetQuery, {
+    variables: { slug: datasetSlug },
+    skip: !datasetSlug,
+  });
 
   // TODO: Investigate why you have to specify undefined states
   const images = data?.dataset?.images;

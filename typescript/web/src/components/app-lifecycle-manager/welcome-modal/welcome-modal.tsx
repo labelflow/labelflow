@@ -1,185 +1,357 @@
-import { useState, useEffect, useCallback, useRef } from "react";
-
 import {
-  chakra,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalFooter,
-  VStack,
-  HStack,
-  Button,
-  Center,
-  Text,
-  Heading,
-  ModalBody,
-  ModalHeader,
-  useColorModeValue as mode,
-} from "@chakra-ui/react";
-import { RiGithubFill } from "react-icons/ri";
-import { StringParam, useQueryParam } from "use-query-params";
+  // useRef,
+  useEffect,
+  useCallback,
+  useState,
+} from "react";
+import { ApolloClient, gql, useApolloClient } from "@apollo/client";
+import { useCookies } from "react-cookie";
+import { Modal, ModalOverlay } from "@chakra-ui/react";
 
-import { Logo } from "../../logo";
+import { QueryParamConfig, StringParam, useQueryParam } from "use-query-params";
+import type { Dataset as DatasetType } from "@labelflow/graphql-types";
+import { useRouter, NextRouter } from "next/router";
+import { useErrorHandler } from "react-error-boundary";
+import { browser } from "../../../utils/detect-scope";
+import { BrowserWarning } from "./steps/browser-warning";
+import { BrowserError } from "./steps/browser-error";
+import { Welcome } from "./steps/welcome";
+import { Loading } from "./steps/loading";
+import {
+  checkServiceWorkerReady,
+  messageNoWindow,
+} from "../../../utils/check-service-worker";
 
-const GithubIcon = chakra(RiGithubFill);
+const tutorialDatasetFirstImageUrl =
+  "/local/datasets/tutorial-dataset/images/2bbbf664-5810-4760-a10f-841de2f35510";
+
+type WelcomeModalParam =
+  | undefined // Default: Stays close if user already onboarded, else open asap
+  | "open" // Force it to open asap
+  | "closed"; // Force it to be closed and never open
+
+export const getDatasetsQuery = gql`
+  query getDatasets {
+    datasets {
+      id
+      name
+    }
+  }
+`;
+
+export const createDemoDatasetQuery = gql`
+  mutation createDemoDataset {
+    createDemoDataset {
+      id
+      name
+      images(first: 1) {
+        id
+        url
+      }
+      imagesAggregates {
+        totalCount
+      }
+      labelsAggregates {
+        totalCount
+      }
+      labelClassesAggregates {
+        totalCount
+      }
+    }
+  }
+`;
+
+const performWelcomeWorkflow = async ({
+  router,
+  isServiceWorkerActive,
+  setIsServiceWorkerActive,
+  client,
+  setParamModalWelcome,
+  setIsLoadingWorkerAndDemo,
+  setBrowserError,
+}: {
+  router: NextRouter;
+  isServiceWorkerActive: boolean;
+  setIsServiceWorkerActive: (state: boolean) => void;
+  setParamModalWelcome: (
+    state: WelcomeModalParam,
+    updateType: "replaceIn"
+  ) => void;
+  setBrowserError: (state: Error) => void;
+  setIsLoadingWorkerAndDemo: (state: boolean) => void;
+  client: ApolloClient<{}>;
+}) => {
+  try {
+    if (isServiceWorkerActive) {
+      return;
+    }
+
+    setParamModalWelcome(undefined, "replaceIn");
+
+    setIsLoadingWorkerAndDemo(true);
+
+    try {
+      await checkServiceWorkerReady();
+    } catch (e) {
+      if (e.message === messageNoWindow) {
+        // In Next JS SSR, the window is not available.
+        return;
+      }
+      if (process.env.STORYBOOK) {
+        // In Storybook, the Service Worker is not available.
+        return;
+      }
+      throw e;
+    }
+    setIsServiceWorkerActive(true);
+
+    const { data: getDatasetsResult } = await client.query({
+      query: getDatasetsQuery,
+    });
+
+    const demoDataset =
+      getDatasetsResult?.datasets == null
+        ? undefined
+        : getDatasetsResult?.datasets.filter(
+            (dataset: DatasetType) => dataset.name === "Demo dataset"
+          )?.[0] ?? undefined;
+
+    if (!demoDataset) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { data: createDemoDatasetResult, errors: createDemoDatasetErrors } =
+        await client.mutate({
+          mutation: createDemoDatasetQuery,
+          refetchQueries: [
+            "getDatasets",
+            "getDatasetById",
+            "getAllImagesOfADataset",
+            "getDataset",
+            "countLabelsOfDataset",
+            "getLabelClassesOfDataset",
+            "image",
+            "getImageLabels",
+          ],
+        });
+      if (createDemoDatasetErrors) {
+        throw createDemoDatasetErrors[0];
+      }
+    }
+
+    await router.prefetch(tutorialDatasetFirstImageUrl);
+
+    setIsLoadingWorkerAndDemo(false);
+  } catch (error) {
+    setBrowserError(error);
+  }
+};
 
 export const WelcomeModal = ({
-  isServiceWorkerActive,
+  initialIsServiceWorkerActive = false,
+  initialBrowserWarning = false,
+  initialIsLoadingWorkerAndDemo = false,
+  initialBrowserError = undefined,
 }: {
-  isServiceWorkerActive: boolean;
+  initialIsServiceWorkerActive?: boolean;
+  initialBrowserWarning?: boolean;
+  initialIsLoadingWorkerAndDemo?: boolean;
+  initialBrowserError?: Error;
 }) => {
+  const router = useRouter();
+
+  const handleError = useErrorHandler();
+  const client = useApolloClient();
+
+  const [{ hasUserTriedApp }, setHasUserTriedApp] = useCookies([
+    "hasUserTriedApp",
+  ]);
+  const [{ tryDespiteBrowserWarning }, setTryDespiteBrowserWarning] =
+    useCookies(["tryDespiteBrowserWarning"]);
+
+  const [browserWarning] = useState(() => {
+    const name = browser?.name;
+    const os = browser?.os;
+    const versionNumber = parseInt(browser?.version ?? "0", 10);
+    if (
+      initialBrowserWarning ||
+      !(
+        (name === "firefox" && versionNumber >= 44) ||
+        (name === "edge-chromium" && versionNumber >= 44) ||
+        (name === "chrome" && versionNumber >= 45) ||
+        (name === "safari" && versionNumber >= 14)
+      ) ||
+      os === "BlackBerry OS" ||
+      os === "Windows Mobile" ||
+      os === "Windows 3.11" ||
+      os === "Windows 95" ||
+      os === "Windows 98" ||
+      os === "Windows 2000" ||
+      os === "Windows ME"
+    ) {
+      return true;
+    }
+    return false;
+  });
+
+  // State variables
+
+  // By default (including during SSR) we consider the service worker to be ready
+  // since this is the nominal case that happen all the time except during the very first visit
+  const [isServiceWorkerActive, setIsServiceWorkerActive] = useState(
+    initialIsServiceWorkerActive || hasUserTriedApp === "true"
+  );
+
   // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
   // This param can have several values:
   //   - undefined: Normal behavior, only show the welcome modal when needed
   //   - "open": Force the welcome modal to open even if not needed
   //   - "closed": Don't ever open the welcome modal
+  const [paramModalWelcome, setParamModalWelcome] =
+    useQueryParam<WelcomeModalParam>(
+      "modal-welcome",
+      StringParam as QueryParamConfig<WelcomeModalParam, WelcomeModalParam>
+    );
 
-  const [paramModalWelcome, setParamModalWelcome] = useQueryParam(
-    "modal-welcome",
-    StringParam
+  // set cookie based on query param
+  useEffect(() => {
+    if (paramModalWelcome === "open" && hasUserTriedApp === "true") {
+      setHasUserTriedApp("hasUserTriedApp", "false");
+    }
+    if (paramModalWelcome === "closed" && hasUserTriedApp !== "true") {
+      setHasUserTriedApp("hasUserTriedApp", "true");
+    }
+  }, [paramModalWelcome, hasUserTriedApp]);
+
+  const [isLoadingWorkerAndDemo, setIsLoadingWorkerAndDemo] = useState(
+    initialIsLoadingWorkerAndDemo
   );
 
-  const [hasUserClickedStart, setHasUserClickedStart] = useState(false);
+  const [browserError, setBrowserError] = useState(initialBrowserError);
 
-  const isOpen =
-    (!isServiceWorkerActive && !(paramModalWelcome === "closed")) ||
-    paramModalWelcome === "open";
-  const setIsOpen = (value: boolean) =>
-    setParamModalWelcome(value ? "open" : undefined, "replaceIn");
+  // State Transitions
 
-  const startLabellingButtonRef = useRef<HTMLButtonElement>(null);
+  // wrong-browser => undefined
+  const pretendIsCompatibleBrowser = useCallback(() => {
+    setTryDespiteBrowserWarning("tryDespiteBrowserWarning", "true", {
+      path: "/",
+      httpOnly: false,
+    });
+  }, []);
 
-  // This modal should open when isServiceWorkerActive becomes false
-  // But close only when the use hasUserClickedStart becomes true
+  // undefined => loading => welcome
   useEffect(() => {
-    if (isServiceWorkerActive && hasUserClickedStart) {
-      setIsOpen(false);
-      return;
-    }
     if (
-      (!isServiceWorkerActive &&
-        !hasUserClickedStart &&
-        !(paramModalWelcome === "closed")) ||
-      paramModalWelcome === "open"
+      !process.env.STORYBOOK &&
+      router?.isReady &&
+      ((!(browserWarning && tryDespiteBrowserWarning !== "true") &&
+        !isServiceWorkerActive &&
+        paramModalWelcome !== "closed") ||
+        paramModalWelcome === "open")
     ) {
-      setIsOpen(true);
+      performWelcomeWorkflow({
+        router,
+        setBrowserError,
+        isServiceWorkerActive,
+        setIsServiceWorkerActive,
+        client,
+        setParamModalWelcome,
+        setIsLoadingWorkerAndDemo,
+      });
     }
-    // In the 2 other cases, we do nothing, this is an hysteresis
-    // To "latch" the modal to open once it opened once
-  }, [isServiceWorkerActive, hasUserClickedStart, paramModalWelcome]);
+  }, [tryDespiteBrowserWarning, router?.isReady]);
 
-  const handleClickStartLabelling = useCallback(() => {
-    setHasUserClickedStart(true);
-    // This is needed to fix a rare bug in which the welcome modal is stuck
-    // in the "loading app" state when a new service worker is waiting AND
-    // the welcome modal is open.
-    // This never happens except in nominal user flows, but still
-    if (
-      typeof window !== "undefined" &&
-      "serviceWorker" in navigator &&
-      window.workbox !== undefined
-    ) {
-      const wb = window.workbox;
-      // // This next 3 lines were removed because they caused a reload of the page
-      // // when the user clicked "Start Labelling"
-      // wb.addEventListener("controlling", (/* event: any */) => {
-      //   window.location.reload();
-      // });
-      // Send a message to the waiting service worker, instructing it to activate.
-      wb.messageSkipWaiting();
-    }
-  }, [setHasUserClickedStart, setParamModalWelcome]);
+  // welcome => undefined
+  const handleGetStarted = useCallback(() => {
+    setHasUserTriedApp("hasUserTriedApp", "true", {
+      path: "/",
+      httpOnly: false,
+    });
+
+    setParamModalWelcome(undefined, "replaceIn");
+
+    // First image of tutorial dataset
+    router.push(tutorialDatasetFirstImageUrl);
+  }, []);
+
+  // welcome => undefined
+  const handleSkip = useCallback(() => {
+    setHasUserTriedApp("hasUserTriedApp", "true", {
+      path: "/",
+      httpOnly: false,
+    });
+
+    setParamModalWelcome(undefined, "replaceIn");
+  }, []);
+
+  const shouldShowBrowserErrorModal = browserWarning && browserError != null;
+
+  const shouldShowBrowserWarningModal =
+    router?.isReady &&
+    browserError == null &&
+    browserWarning &&
+    tryDespiteBrowserWarning !== "true" &&
+    hasUserTriedApp !== "true";
+
+  const shouldShowLoadingModal =
+    router?.isReady && hasUserTriedApp !== "true" && isLoadingWorkerAndDemo;
+
+  const shouldShowWelcomeModal =
+    router?.isReady &&
+    (paramModalWelcome === "open" ||
+      (paramModalWelcome !== "closed" &&
+        hasUserTriedApp !== "true" &&
+        !isLoadingWorkerAndDemo));
 
   return (
     <Modal
-      isOpen={isOpen}
+      isOpen={
+        shouldShowBrowserErrorModal ||
+        (!shouldShowBrowserErrorModal && shouldShowBrowserWarningModal) ||
+        (!shouldShowBrowserErrorModal &&
+          !shouldShowBrowserWarningModal &&
+          shouldShowLoadingModal) ||
+        (!shouldShowBrowserErrorModal &&
+          !shouldShowBrowserWarningModal &&
+          !shouldShowLoadingModal &&
+          shouldShowWelcomeModal)
+      }
       onClose={() => {}}
       size="3xl"
       scrollBehavior="inside"
       isCentered
-      initialFocusRef={startLabellingButtonRef}
     >
       <ModalOverlay />
-      <ModalContent margin="3.75rem">
-        <ModalHeader textAlign="center" padding="6">
-          <Center>
-            <Logo maxW="lg" mt="8" mb="8" h="min-content" />
-          </Center>
-        </ModalHeader>
+      {(() => {
+        // If there was an error AND the browser is wrong, we show the browser error modal
+        if (shouldShowBrowserErrorModal) {
+          return <BrowserError error={browserError} />;
+        }
 
-        <ModalBody>
-          <VStack
-            justifyContent="space-evenly"
-            spacing="8"
-            h="full"
-            mt="0"
-            pb="8"
-          >
-            <Heading
-              as="h1"
-              size="2xl"
-              maxW="lg"
-              color={mode("gray.600", "gray.300")}
-              fontWeight="extrabold"
-              textAlign="center"
-            >
-              The open standard{" "}
-              <Text color="brand.500" display="inline">
-                image labeling tool
-              </Text>
-            </Heading>
+        // If there was an error, we handle it the normal way, showing the normal error screen
+        if (browserError) {
+          handleError(browserError);
+        }
 
-            <Text
-              color={mode("gray.600", "gray.400")}
-              mt="16"
-              maxW="lg"
-              fontSize="lg"
-              fontWeight="medium"
-              textAlign="justify"
-            >
-              Stay in control of your data, label your images without them
-              leaving your computer. Focus on building the next big thing.
-            </Text>
-          </VStack>
-        </ModalBody>
-        <ModalFooter>
-          <HStack
-            direction={{ base: "column", md: "row" }}
-            justifyContent="center"
-            width="full"
-            spacing="4"
-            mb="10"
-          >
-            <Button
-              as="a"
-              leftIcon={<GithubIcon fontSize="xl" />}
-              href="https://github.com/Labelflow/labelflow"
-              target="blank"
-              size="lg"
-              minW="210px"
-              variant="link"
-              height="14"
-              px="8"
-            >
-              See code on Github
-            </Button>
+        // If there was no error AND the browser is wrong, we still show the browser warning modal
+        if (shouldShowBrowserWarningModal) {
+          return (
+            <BrowserWarning onClickTryAnyway={pretendIsCompatibleBrowser} />
+          );
+        }
 
-            <Button
-              ref={startLabellingButtonRef}
-              size="lg"
-              minW="210px"
-              colorScheme="brand"
-              height="14"
-              px="8"
-              isLoading={hasUserClickedStart && !isServiceWorkerActive}
-              onClick={handleClickStartLabelling}
-              loadingText="Loading the application"
-            >
-              Start Labelling!
-            </Button>
-          </HStack>
-        </ModalFooter>
-      </ModalContent>
+        // Nominal loading on first visit
+        if (shouldShowLoadingModal) {
+          return <Loading />;
+        }
+
+        // Nominal welcome modal on first vist after loading
+        if (shouldShowWelcomeModal) {
+          return (
+            <Welcome onClickSkip={handleSkip} onClickNext={handleGetStarted} />
+          );
+        }
+
+        return null;
+      })()}
     </Modal>
   );
 };

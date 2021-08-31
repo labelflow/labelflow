@@ -97,7 +97,7 @@ export const mockImagesLoader = async ({
     return {};
   }
   // first, clean the database and the apollo client
-  await Promise.all(getDatabase().tables.map((table) => table.clear()));
+  await Promise.all((await getDatabase()).tables.map((table) => table.clear()));
   await client.clearStore();
 
   const imageArray = parameters?.mockImages?.images;

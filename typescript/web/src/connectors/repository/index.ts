@@ -15,69 +15,69 @@ import {
 export const repository: Repository = {
   image: {
     add: async (image) => {
-      return await getDatabase().image.add(image);
+      return await (await getDatabase()).image.add(image);
     },
     count: async (where) => {
       return where
-        ? await getDatabase().image.where(where).count()
-        : await getDatabase().image.count();
+        ? await (await getDatabase()).image.where(where).count()
+        : await (await getDatabase()).image.count();
     },
     getById: async (id) => {
-      return await getDatabase().image.get(id);
+      return await (await getDatabase()).image.get(id);
     },
-    list: list(getDatabase().image),
+    list: list(async () => (await getDatabase()).image),
   },
   label: {
     add: async (label) => {
-      return await getDatabase().label.add(label);
+      return await (await getDatabase()).label.add(label);
     },
     count: countLabels,
     delete: async (id) => {
-      return await getDatabase().label.delete(id);
+      return await (await getDatabase()).label.delete(id);
     },
     getById: async (id) => {
-      return await getDatabase().label.get(id);
+      return await (await getDatabase()).label.get(id);
     },
     list: listLabels,
     update: async (id, changes) => {
-      return (await getDatabase().label.update(id, changes)) === 1;
+      return (await (await getDatabase()).label.update(id, changes)) === 1;
     },
   },
   labelClass: {
     add: async (labelClass) => {
-      return await getDatabase().labelClass.add(labelClass);
+      return await (await getDatabase()).labelClass.add(labelClass);
     },
     count: async (where?) => {
       return where
-        ? await getDatabase().labelClass.where(where).count()
-        : await getDatabase().labelClass.count();
+        ? await (await getDatabase()).labelClass.where(where).count()
+        : await (await getDatabase()).labelClass.count();
     },
     delete: deleteLabelClass,
     getById: async (id) => {
-      return await getDatabase().labelClass.get(id);
+      return await (await getDatabase()).labelClass.get(id);
     },
-    list: list(getDatabase().labelClass, "index"),
+    list: list(async () => (await getDatabase()).labelClass, "index"),
     update: async (id, changes) => {
-      return (await getDatabase().labelClass.update(id, changes)) === 1;
+      return (await (await getDatabase()).labelClass.update(id, changes)) === 1;
     },
   },
   dataset: {
     add: async (dataset) => {
-      return await getDatabase().dataset.add(dataset);
+      return await (await getDatabase()).dataset.add(dataset);
     },
     delete: deleteDataset,
     getById: async (id) => {
-      return await getDatabase().dataset.get(id);
+      return await (await getDatabase()).dataset.get(id);
     },
     getByName: async (name) => {
-      return await getDatabase().dataset.get({ name });
+      return await (await getDatabase()).dataset.get({ name });
     },
     getBySlug: async (slug) => {
-      return await getDatabase().dataset.get({ slug });
+      return await (await getDatabase()).dataset.get({ slug });
     },
-    list: list(getDatabase().dataset),
+    list: list(async () => (await getDatabase()).dataset),
     update: async (id, changes) => {
-      return (await getDatabase().dataset.update(id, changes)) === 1;
+      return (await (await getDatabase()).dataset.update(id, changes)) === 1;
     },
   },
   upload: {
