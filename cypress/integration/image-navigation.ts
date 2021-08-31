@@ -56,20 +56,20 @@ describe("Image Navigation", () => {
     // Check that we can reach the end of the list
     cy.get("main nav").scrollTo("right");
     cy.get("main nav").within(() => {
-      cy.contains("100").closest("a").click();
+      cy.contains("8").closest("a").click();
     });
-    cy.get('input[name="current-image"]').should("have.value", "100");
+    cy.get('input[name="current-image"]').should("have.value", "8");
 
     // Check that we can navigate to the middle of the list
-    cy.get('input[name="current-image"]').type("50{enter}");
+    cy.get('input[name="current-image"]').type("4{enter}");
     cy.get('[aria-current="page"]').should(($a) => {
-      expect($a).to.contain("50");
+      expect($a).to.contain("4");
     });
 
     // check that the gallery is centered on the correct image after a reload
     cy.reload();
     cy.get('[aria-current="page"]').should(($a) => {
-      expect($a).to.contain("50");
+      expect($a).to.contain("4");
     });
   });
 });
