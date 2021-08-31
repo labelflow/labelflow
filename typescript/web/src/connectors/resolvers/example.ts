@@ -9,12 +9,12 @@ import { getDatabase } from "../database";
 
 // Queries
 export const example = async (_: any, args: QueryExampleArgs) => {
-  return await getDatabase().example.get(args?.where?.id);
+  return await (await getDatabase()).example.get(args?.where?.id);
 };
 
 export const examples = async (_: any, args: QueryExamplesArgs) => {
-  const query = await getDatabase()
-    .example.orderBy("createdAt")
+  const query = await (await getDatabase()).example
+    .orderBy("createdAt")
     .offset(args.skip ?? 0);
 
   if (args.first) {
@@ -39,7 +39,7 @@ export const createExample = async (
     name: args?.data?.name,
   };
 
-  await getDatabase().example.add(newExampleEntity);
+  await (await getDatabase()).example.add(newExampleEntity);
 
   return newExampleEntity;
 };

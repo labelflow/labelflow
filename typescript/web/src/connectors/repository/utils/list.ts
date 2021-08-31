@@ -12,7 +12,7 @@
  */
 export const list =
   <Entity = unknown, Where extends Record<string, any> | null = null>(
-    table: Dexie.Table<Entity>,
+    getTable: () => Promise<Dexie.Table<Entity>>,
     criterion = "createdAt"
   ) =>
   /**
@@ -29,6 +29,7 @@ export const list =
     skip?: number | null,
     first?: number | null
   ): Promise<Entity[]> => {
+    const table = await getTable();
     if (where) {
       const query = table.where(where);
       const listElements = await query.sortBy(criterion);

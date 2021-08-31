@@ -112,7 +112,7 @@ export const OpenlayersMap = () => {
     image: Pick<Image, "id" | "url" | "width" | "height">;
   }>(imageQuery, {
     variables: { id: imageId },
-    skip: typeof imageId !== "string",
+    skip: !imageId,
   }).data?.image;
 
   const client = useApolloClient();

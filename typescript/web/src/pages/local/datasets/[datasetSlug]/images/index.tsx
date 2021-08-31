@@ -1,8 +1,10 @@
 import { gql, useQuery } from "@apollo/client";
 import NextLink from "next/link";
 import {
-  VStack,
+  Wrap,
   Box,
+  WrapItem,
+  VStack,
   Image,
   Center,
   Skeleton,
@@ -11,8 +13,6 @@ import {
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbLink,
-  Wrap,
-  WrapItem,
   Heading,
   chakra,
 } from "@chakra-ui/react";
@@ -47,11 +47,7 @@ export const datasetDataQuery = gql`
   }
 `;
 
-const ImagesPage = ({
-  assumeServiceWorkerActive,
-}: {
-  assumeServiceWorkerActive: boolean;
-}) => {
+const ImagesPage = () => {
   const router = useRouter();
   const datasetSlug = router?.query?.datasetSlug as string;
 
@@ -61,13 +57,14 @@ const ImagesPage = ({
     variables: {
       slug: datasetSlug,
     },
+    skip: !datasetSlug,
   });
 
   const datasetName = datasetResult?.dataset.name;
 
   const handleError = useErrorHandler();
   if (error) {
-    if (!error.message.match(/No dataset with id/)) {
+    if (!error.message.match(/No dataset with slug/)) {
       handleError(error);
     }
     return <Error404Page />;
@@ -75,9 +72,7 @@ const ImagesPage = ({
 
   return (
     <>
-      <AppLifecycleManager
-        assumeServiceWorkerActive={assumeServiceWorkerActive}
-      />
+      <AppLifecycleManager />
       <Meta title="Labelflow | Images" />
       <Layout
         topBarLeftContent={

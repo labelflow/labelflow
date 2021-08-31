@@ -1,14 +1,35 @@
 /* eslint-disable import/first */
+
 import { render, screen, waitFor } from "@testing-library/react";
+import { PropsWithChildren } from "react";
+import { ApolloProvider } from "@apollo/client";
+import { ChakraProvider } from "@chakra-ui/react";
 
 import "@testing-library/jest-dom/extend-expect";
 import type { Workbox } from "workbox-window";
 
-import { mockUseQueryParams } from "../../../utils/router-mocks";
+import {
+  mockUseQueryParams,
+  mockNextRouter,
+} from "../../../utils/router-mocks";
 
 mockUseQueryParams();
+mockNextRouter({ query: {} });
 
 import { AppLifecycleManager } from "../app-lifecycle-manager";
+import { theme } from "../../../theme";
+import { client } from "../../../connectors/apollo-client/schema-client";
+import { setupTestsWithLocalDatabase } from "../../../utils/setup-local-db-tests";
+
+setupTestsWithLocalDatabase();
+
+const wrapper = ({ children }: PropsWithChildren<{}>) => (
+  <ApolloProvider client={client}>
+    <ChakraProvider theme={theme} resetCSS>
+      {children}
+    </ChakraProvider>
+  </ApolloProvider>
+);
 
 describe("App lifecyle manager", () => {
   beforeEach(() => {
@@ -26,7 +47,7 @@ describe("App lifecyle manager", () => {
       removeEventListener: jest.fn(() => {}),
       register: jest.fn(() => {}),
     } as unknown as Workbox;
-    render(<AppLifecycleManager assumeServiceWorkerActive={false} />);
+    render(<AppLifecycleManager />, { wrapper });
     await waitFor(() => {
       expect(screen.queryByText("image labeling tool")).toBeDefined();
     });
@@ -46,7 +67,7 @@ describe("App lifecyle manager", () => {
       removeEventListener: jest.fn(() => {}),
       register: jest.fn(() => {}),
     } as unknown as Workbox;
-    render(<AppLifecycleManager assumeServiceWorkerActive />);
+    render(<AppLifecycleManager />, { wrapper });
     await waitFor(() => {
       expect(screen.queryByText("image labeling tool")).not.toBeInTheDocument();
     });
@@ -75,7 +96,7 @@ describe("App lifecyle manager", () => {
       }),
       register: jest.fn(() => {}),
     } as unknown as Workbox;
-    render(<AppLifecycleManager assumeServiceWorkerActive />);
+    render(<AppLifecycleManager />, { wrapper });
     await waitFor(() => {
       expect(screen.queryByText("image labeling tool")).not.toBeInTheDocument();
     });
