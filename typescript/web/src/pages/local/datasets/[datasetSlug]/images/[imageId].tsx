@@ -102,7 +102,12 @@ const ImagePage = () => {
     if (errorImage && !errorImage.message.match(/No image with id/)) {
       handleError(errorImage);
     }
-    return <Error404Page />;
+    return (
+      <>
+        <AppLifecycleManager />
+        <Error404Page />
+      </>
+    );
   }
 
   return (
