@@ -46,6 +46,7 @@ model Label {
 
 model LabelClass {
   id        String   @id @default(uuid()) @db.Uuid
+  index     Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   name      String
@@ -65,6 +66,7 @@ model Dataset {
   images       Image[]
 }
 
+// NextAuth requirements https://next-auth.js.org/adapters/prisma
 model Account {
   id                 String    @id @default(cuid())
   userId             String
@@ -81,7 +83,6 @@ model Account {
   @@unique([providerId, providerAccountId])
 }
 
-// NextAuth requirements https://next-auth.js.org/adapters/prisma
 model Session {
   id           String   @id @default(cuid())
   userId       String

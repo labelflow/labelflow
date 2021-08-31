@@ -3922,7 +3922,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/runtime@npm:^7.14.0":
+"@babel/runtime@npm:^7.12.1, @babel/runtime@npm:^7.14.0":
   version: 7.15.3
   resolution: "@babel/runtime@npm:7.15.3"
   dependencies:
@@ -6118,10 +6118,13 @@ __metadata:
     "@labelflow/graphql-types": "workspace:typescript/graphql-types"
     "@turf/bbox": 6.5.0
     "@turf/bbox-polygon": 6.5.0
+    "@turf/flatten": ^6.5.0
     "@turf/helpers": 6.5.0
     "@turf/intersect": 6.5.0
+    "@turf/meta": ^6.5.0
     "@types/mime-types": 2.1.0
     "@types/probe-image-size": 7.0.1
+    date-fns: ^2.23.0
     graphql: 15.5.1
     graphql-type-json: 0.3.2
     isomorphic-fetch: 3.0.0
@@ -6146,14 +6149,14 @@ __metadata:
     "@graphql-tools/schema": 7.1.5
     "@labelflow/common-resolvers": "workspace:typescript/common-resolvers"
     "@labelflow/graphql-types": "workspace:typescript/graphql-types"
-    "@prisma/client": ^2.28.0
+    "@prisma/client": 2.30.2
     "@supabase/supabase-js": 1.21.0
     "@types/node": 16.4.1
     apollo-server: 3.0.2
     graphql: 15.5.1
     node-fetch: 2.6.1
     nodemon: 2.0.12
-    prisma: ^2.28.0
+    prisma: ^2.30.2
     probe-image-size: 7.2.1
     ts-node: 10.1.0
     typescript: 4.3.5
@@ -6228,7 +6231,7 @@ __metadata:
     "@labelflow/graphql-types": "workspace:typescript/graphql-types"
     "@labelflow/react-openlayers-fiber": "workspace:typescript/react-openlayers-fiber"
     "@next-auth/prisma-adapter": ^0.5.4
-    "@prisma/client": ^2.30.2
+    "@prisma/client": 2.30.2
     "@storybook/addon-actions": 6.3.0
     "@storybook/addons": 6.3.0
     "@storybook/client-api": ^6.3.7
@@ -6248,6 +6251,7 @@ __metadata:
     "@types/multer": 1.4.7
     "@types/node": 12.12.21
     "@types/react": 17.0.3
+    "@types/react-beautiful-dnd": 10.1.4
     "@types/react-dom": 17.0.1
     "@types/uuid": ^8.3.0
     "@types/valid-url": ^1.0.3
@@ -6286,6 +6290,9 @@ __metadata:
     postcss: ^8.3.5
     query-string: ^7.0.0
     react: 17.x
+    react-beautiful-dnd: 13.1.0
+    react-cookie: 4.1.1
+    react-countdown-hook: ^1.1.0
     react-dom: 17.x
     react-dropzone: ^11.3.2
     react-error-boundary: ^3.1.3
@@ -6748,7 +6755,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@prisma/client@npm:^2.28.0, @prisma/client@npm:^2.30.2":
+"@prisma/client@npm:2.30.2":
   version: 2.30.2
   resolution: "@prisma/client@npm:2.30.2"
   dependencies:
@@ -9674,6 +9681,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@turf/flatten@npm:^6.5.0":
+  version: 6.5.0
+  resolution: "@turf/flatten@npm:6.5.0"
+  dependencies:
+    "@turf/helpers": ^6.5.0
+    "@turf/meta": ^6.5.0
+  checksum: c29d6501bfb27729f781a70166085b1d5e4f8fac1df09170ae5664046fb91e602e0fb5412c8b3c27a83c692b4dfd86a99f0f29563353e6590b6ca5e50d865b32
+  languageName: node
+  linkType: hard
+
 "@turf/flip@npm:^6.3.0":
   version: 6.3.0
   resolution: "@turf/flip@npm:6.3.0"
@@ -10866,6 +10883,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/hoist-non-react-statics@npm:^3.0.1, @types/hoist-non-react-statics@npm:^3.3.0":
+  version: 3.3.1
+  resolution: "@types/hoist-non-react-statics@npm:3.3.1"
+  dependencies:
+    "@types/react": "*"
+    hoist-non-react-statics: ^3.3.0
+  checksum: 16ab4c45d4920fa378c8be76554b10061247fc04d2c8af11bdb7d520b3967e9c06d7ad5efd9b0f1657fbc4d095f62c6e1325f03b9141eb1ef2c8095b96fd42f8
+  languageName: node
+  linkType: hard
+
 "@types/html-minifier-terser@npm:^5.0.0":
   version: 5.1.1
   resolution: "@types/html-minifier-terser@npm:5.1.1"
@@ -11298,6 +11325,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/react-beautiful-dnd@npm:10.1.4":
+  version: 10.1.4
+  resolution: "@types/react-beautiful-dnd@npm:10.1.4"
+  dependencies:
+    "@types/react": "*"
+  checksum: 259e35fe6263f626fd8731ae2f2405053683e8c5e25f0b277b8340c82ea71d92a4f2c88e5b5c8854dbde83d679b2e2c2e3a52123612ccc18db334ad5e7df3705
+  languageName: node
+  linkType: hard
+
 "@types/react-dom@npm:17.0.0":
   version: 17.0.0
   resolution: "@types/react-dom@npm:17.0.0"
@@ -11331,6 +11367,18 @@ __metadata:
   dependencies:
     "@types/react": "*"
   checksum: 2a67e25a754231fb174c6baf09e1c4a2f03b0ddd2b6f8856cafa03dab591fde4a299bea246a57bb7d5b2a69fd8aa432eb2914607f1295faef1f483a665e9a0b0
+  languageName: node
+  linkType: hard
+
+"@types/react-redux@npm:^7.1.16":
+  version: 7.1.18
+  resolution: "@types/react-redux@npm:7.1.18"
+  dependencies:
+    "@types/hoist-non-react-statics": ^3.3.0
+    "@types/react": "*"
+    hoist-non-react-statics: ^3.3.0
+    redux: ^4.0.0
+  checksum: b247ff7ce31cede226f4606571bf975aeec91fe911e65e72cecaaac7234d4d694a7be0791419bb4259c7012b662a96267f694daaacbc18f3157fc7f955af55c9
   languageName: node
   linkType: hard
 
@@ -15575,7 +15623,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"css-box-model@npm:1.2.1":
+"css-box-model@npm:1.2.1, css-box-model@npm:^1.2.0":
   version: 1.2.1
   resolution: "css-box-model@npm:1.2.1"
   dependencies:
@@ -15910,6 +15958,13 @@ __metadata:
   version: 1.30.1
   resolution: "date-fns@npm:1.30.1"
   checksum: 351fc19b04d79de77823a90213b87039392528fdd44a42e3e87f28333e76a48f99e4fbb37c9823b6284f7eb0ef88368fafe61749d6eff173241170977751fa47
+  languageName: node
+  linkType: hard
+
+"date-fns@npm:^2.23.0":
+  version: 2.23.0
+  resolution: "date-fns@npm:2.23.0"
+  checksum: 5b23cf7f08a27d0c1633e81304c95ac2bacb1160d86a25d36c40c84853796e442e597a4d75acec3f0920a71f3a65dd55b37565d356fa3fb4c2345225df42d930
   languageName: node
   linkType: hard
 
@@ -19493,7 +19548,7 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"hoist-non-react-statics@npm:^3.3.0, hoist-non-react-statics@npm:^3.3.1, hoist-non-react-statics@npm:^3.3.2":
+"hoist-non-react-statics@npm:^3.0.0, hoist-non-react-statics@npm:^3.3.0, hoist-non-react-statics@npm:^3.3.1, hoist-non-react-statics@npm:^3.3.2":
   version: 3.3.2
   resolution: "hoist-non-react-statics@npm:3.3.2"
   dependencies:
@@ -21866,6 +21921,7 @@ fsevents@^1.2.7:
     "@graphql-codegen/schema-ast": ^1.18.2
     "@graphql-codegen/typescript": ^1.22.0
     "@graphql-codegen/typescript-resolvers": ^1.19.1
+    "@prisma/client": 2.30.2
     "@storybook/addon-actions": 6.3.0
     "@storybook/addons": 6.3.0
     "@storybook/builder-webpack5": next
@@ -22834,7 +22890,7 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"memoize-one@npm:^5.0.0":
+"memoize-one@npm:^5.0.0, memoize-one@npm:^5.1.1":
   version: 5.2.1
   resolution: "memoize-one@npm:5.2.1"
   checksum: 6b7dab7d8d9dca696d500dbc7f6b1445cbc4168d8208ee2746dd1a7f75378445d9bc6a2def7868afee81c87e630294456310f33f3f1eb738f69d748c797d87d5
@@ -25405,7 +25461,7 @@ next-pwa@5.2.21:
   languageName: node
   linkType: hard
 
-"prisma@npm:^2.28.0":
+"prisma@npm:^2.30.2":
   version: 2.30.2
   resolution: "prisma@npm:2.30.2"
   dependencies:
@@ -25792,6 +25848,13 @@ next-pwa@5.2.21:
   languageName: node
   linkType: hard
 
+"raf-schd@npm:^4.0.2":
+  version: 4.0.3
+  resolution: "raf-schd@npm:4.0.3"
+  checksum: b5e28f9ee7f7803ccb067f75f8e93b78d995c16b0b606468e2bd46631e37cea6d8daa6dcede7640dd068413f8a3b85578ec393b59037a98548ba9c73e732624d
+  languageName: node
+  linkType: hard
+
 "ramda@npm:^0.21.0":
   version: 0.21.0
   resolution: "ramda@npm:0.21.0"
@@ -25912,6 +25975,24 @@ next-pwa@5.2.21:
   languageName: node
   linkType: hard
 
+"react-beautiful-dnd@npm:13.1.0":
+  version: 13.1.0
+  resolution: "react-beautiful-dnd@npm:13.1.0"
+  dependencies:
+    "@babel/runtime": ^7.9.2
+    css-box-model: ^1.2.0
+    memoize-one: ^5.1.1
+    raf-schd: ^4.0.2
+    react-redux: ^7.2.0
+    redux: ^4.0.4
+    use-memo-one: ^1.1.1
+  peerDependencies:
+    react: ^16.8.5 || ^17.0.0
+    react-dom: ^16.8.5 || ^17.0.0
+  checksum: d380b698278000fe39e48f1a257ada3afa4b039ed93a52fa9a476d46a0b5f2ad833b7fee4e5914360172ae45899ca084ef37a1a012fcfb467a7920217cc8a994
+  languageName: node
+  linkType: hard
+
 "react-clientside-effect@npm:^1.2.2":
   version: 1.2.5
   resolution: "react-clientside-effect@npm:1.2.5"
@@ -25940,6 +26021,28 @@ next-pwa@5.2.21:
     react: ">=16.8.0"
     react-dom: ">=16.8.0"
   checksum: 5e02f92eda933f1945407a290cc83ef2b640b46c7b637ae25c34a56ccc9c8b59fff08484462db292a2beeebe5a612682fe1d79cf29b44a49a2524db43db31dfb
+  languageName: node
+  linkType: hard
+
+"react-cookie@npm:4.1.1":
+  version: 4.1.1
+  resolution: "react-cookie@npm:4.1.1"
+  dependencies:
+    "@types/hoist-non-react-statics": ^3.0.1
+    hoist-non-react-statics: ^3.0.0
+    universal-cookie: ^4.0.0
+  peerDependencies:
+    react: ">= 16.3.0"
+  checksum: 0a011b7cbe8d72e5d3482708abe9a00616c18b2c6c6f4f911373d76f1307d6c3b2a5a096e855181009b3d6461ae587f27483820d511fdaaf2821d9daf54b1103
+  languageName: node
+  linkType: hard
+
+"react-countdown-hook@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "react-countdown-hook@npm:1.1.0"
+  peerDependencies:
+    react: ^16.8.0 || ^17.0.0
+  checksum: 3b7d87a37f890e981e493266874e0dea83a89745792dc68578d1cd2bd5b0c753df04922f2061556e564b399a79b1a887d8df5e16ddcaa41bd6b86df85f5bd0dd
   languageName: node
   linkType: hard
 
@@ -26173,7 +26276,7 @@ next-pwa@5.2.21:
   languageName: node
   linkType: hard
 
-"react-is@npm:^16.7.0, react-is@npm:^16.8.1":
+"react-is@npm:^16.13.1, react-is@npm:^16.7.0, react-is@npm:^16.8.1":
   version: 16.13.1
   resolution: "react-is@npm:16.13.1"
   checksum: 11bcf1267a314a522615f626f3ce3727a3a24cdbf61c4d452add3550a7875326669631326cfb1ba3e92b6f72244c32ffecf93ad21c0cad8455d3e169d0e3f060
@@ -26249,6 +26352,27 @@ next-pwa@5.2.21:
   peerDependencies:
     react: ^16.13.1
   checksum: bafe272a890eb0ae1cd3ac67097bf72cde21a6381ad0a63a2bece96803619a8367739bc0085f5b604b2b44832d49ff73378708798a06627d19f623736b2f5b07
+  languageName: node
+  linkType: hard
+
+"react-redux@npm:^7.2.0":
+  version: 7.2.4
+  resolution: "react-redux@npm:7.2.4"
+  dependencies:
+    "@babel/runtime": ^7.12.1
+    "@types/react-redux": ^7.1.16
+    hoist-non-react-statics: ^3.3.2
+    loose-envify: ^1.4.0
+    prop-types: ^15.7.2
+    react-is: ^16.13.1
+  peerDependencies:
+    react: ^16.8.3 || ^17
+  peerDependenciesMeta:
+    react-dom:
+      optional: true
+    react-native:
+      optional: true
+  checksum: 24c4dd26dc55c498d0dcec2e2ef1678aa8cb3f2e1c31704363d072b045460c1f60f5b89b508d3984ae680779cba00ee65f1344a4c4c02768a6bec132e33ee815
   languageName: node
   linkType: hard
 
@@ -26604,6 +26728,15 @@ next-pwa@5.2.21:
     indent-string: ^4.0.0
     strip-indent: ^3.0.0
   checksum: 78c8aa0a1076f47e0e198bfc8a9aa7d4ae3163c6951bd5de1015e47661bba62ea36573337bbeb4b309b48cc71954edbe43ae4aa3163db1996a781b757c5c47d7
+  languageName: node
+  linkType: hard
+
+"redux@npm:^4.0.0, redux@npm:^4.0.4":
+  version: 4.1.1
+  resolution: "redux@npm:4.1.1"
+  dependencies:
+    "@babel/runtime": ^7.9.2
+  checksum: 063e1d52588d62d438bb392975e57c0091c79f9abdbb8594c44c1680a73415280f6133c3d9cb3b116fe1ceb7e1aefb44775d6136b8bb6b9eb6a2c1a23e32a840
   languageName: node
   linkType: hard
 
@@ -30342,7 +30475,7 @@ typescript@4.3.5:
   languageName: node
   linkType: hard
 
-"universal-cookie@npm:~4.0.4":
+"universal-cookie@npm:^4.0.0, universal-cookie@npm:~4.0.4":
   version: 4.0.4
   resolution: "universal-cookie@npm:4.0.4"
   dependencies:
@@ -30572,6 +30705,15 @@ typescript@4.3.5:
     "@types/react":
       optional: true
   checksum: 4d0e0543f16cb64cf0f01c3db22f2fdb67beca1bdd2a14d255300f4f106e9bf960d9b7605641ee7ad5faf5fc64bce721f8686fbb7d6ecf413999ed2b6a17aea5
+  languageName: node
+  linkType: hard
+
+"use-memo-one@npm:^1.1.1":
+  version: 1.1.2
+  resolution: "use-memo-one@npm:1.1.2"
+  peerDependencies:
+    react: ^16.8.0 || ^17.0.0
+  checksum: 3796487ae7a76828c467c5cdb54eff0bb16dd2135da17ee610870646779ce0f75cb70300b8ff27adf603395cab16b6edcb1236c6287ee3051e7fe2cbdbc11743
   languageName: node
   linkType: hard
 
