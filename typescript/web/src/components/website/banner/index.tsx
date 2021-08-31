@@ -27,7 +27,7 @@ export const Banner = () => {
             fontWeight="extrabold"
             letterSpacing="tight"
           >
-            Webinar - Get an AI ready in no time
+            Webinar - Get an AI model ready in no time
           </Heading>
           <Text mt="4" fontSize="lg">
             From image labelling to automatic inference, discover how to build a
@@ -41,7 +41,8 @@ export const Banner = () => {
           <Button
             mt="8"
             as="a"
-            href="https://app.livestorm.co/labelflow/get-an-ai-ready-in-1-day"
+            href="https://app.livestorm.co/labelflow/get-an-ai-model-ready-in-no-time
+            "
             target="blank"
             size="lg"
             colorScheme="brand"
