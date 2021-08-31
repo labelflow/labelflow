@@ -216,7 +216,7 @@ export const ClassSelectionPopover = ({
                 <Input
                   {...getInputProps({ ref: searchInputRef })}
                   name="class-selection-search"
-                  placeholder="Search..."
+                  placeholder="Search or Add..."
                   pr="4rem"
                 />
                 <InputRightElement
