@@ -214,10 +214,16 @@ export const WelcomeModal = ({
   // set cookie based on query param
   useEffect(() => {
     if (paramModalWelcome === "open" && hasUserTriedApp === "true") {
-      setHasUserTriedApp("hasUserTriedApp", "false");
+      setHasUserTriedApp("hasUserTriedApp", "false", {
+        path: "/",
+        httpOnly: false,
+      });
     }
     if (paramModalWelcome === "closed" && hasUserTriedApp !== "true") {
-      setHasUserTriedApp("hasUserTriedApp", "true");
+      setHasUserTriedApp("hasUserTriedApp", "true", {
+        path: "/",
+        httpOnly: false,
+      });
     }
   }, [paramModalWelcome, hasUserTriedApp]);
 
