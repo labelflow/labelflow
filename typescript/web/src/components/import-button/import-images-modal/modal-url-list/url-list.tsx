@@ -1,9 +1,13 @@
 import { ChangeEvent, useState } from "react";
-import { Stack, VStack, Button, Textarea } from "@chakra-ui/react";
+import { FaDev } from "react-icons/fa";
+import { Stack, VStack, Button, Textarea, chakra } from "@chakra-ui/react";
 import { isWebUri } from "valid-url";
 import { isEmpty, uniq } from "lodash/fp";
 import { DroppedUrl } from "../types";
 import imageSampleCollection from "../../../../utils/image-sample-collection";
+import { isDevelopmentEnvironment } from "../../../../utils/detect-scope";
+
+const DevIcon = chakra(FaDev);
 
 export const UrlList = ({
   onDropEnd,
@@ -19,9 +23,16 @@ export const UrlList = ({
 
   return (
     <VStack spacing={4} flex="1" alignItems="stretch">
-      <Button mt={2} onClick={() => setValue(imageSampleCollection.join("\n"))}>
-        Insert example images
-      </Button>
+      {isDevelopmentEnvironment && (
+        <Button
+          mt={2}
+          leftIcon={<DevIcon size="1.5rem" />}
+          onClick={() => setValue(imageSampleCollection.join("\n"))}
+          background="pink.200"
+        >
+          Insert example images
+        </Button>
+      )}
       <Stack
         as="form"
         border="1px dashed"

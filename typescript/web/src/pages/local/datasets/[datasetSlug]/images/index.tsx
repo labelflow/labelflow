@@ -27,7 +27,7 @@ import { ImportButton } from "../../../../../components/import-button";
 import { ExportButton } from "../../../../../components/export-button";
 import { Meta } from "../../../../../components/meta";
 import { Layout } from "../../../../../components/layout";
-import { EmptyStateImage } from "../../../../../components/empty-state";
+import { EmptyStateNoImages } from "../../../../../components/empty-state";
 import { DatasetTabBar } from "../../../../../components/layout/tab-bar/dataset-tab-bar";
 import Error404Page from "../../../../404";
 
@@ -127,7 +127,7 @@ const ImagesPage = () => {
                 py={{ base: "16", sm: "20" }}
                 textAlign="center"
               >
-                <EmptyStateImage w="full" />
+                <EmptyStateNoImages w="full" />
                 <Heading as="h2">You don&apos;t have any images.</Heading>
                 <Text mt="4" fontSize="lg">
                   Fortunately, it’s very easy to add some.
