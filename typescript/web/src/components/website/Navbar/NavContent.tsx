@@ -7,6 +7,7 @@ import {
   HStack,
   useDisclosure,
   VisuallyHidden,
+  IconButton,
   // useColorModeValue as mode,
 } from "@chakra-ui/react";
 import { RiGithubFill } from "react-icons/ri";
@@ -54,6 +55,15 @@ const MobileNavContext = (props: FlexProps) => {
             <Logo h="24px" iconColor="brand.400" />
           </Box>
         </NextLink>
+        <IconButton
+          aria-label="See code on github"
+          href="https://github.com/Labelflow/labelflow"
+          as="a"
+          target="blank"
+          variant="link"
+          mr="3"
+          icon={<GithubIcon fontSize="3xl" />}
+        />
         <Box visibility={{ base: "hidden", sm: "visible" }}>
           <NextLink href="/local/datasets">
             <Button as="a" colorScheme="brand" variant="outline">
@@ -127,7 +137,15 @@ const DesktopNavContent = (props: FlexProps) => {
         >
           Sign In
         </Box> */}
-        <GithubButton />
+        <IconButton
+          aria-label="See code on github"
+          href="https://github.com/Labelflow/labelflow"
+          as="a"
+          target="blank"
+          variant="link"
+          mr="3"
+          icon={<GithubIcon fontSize="3xl" />}
+        />
         <NextLink href="/local/datasets">
           <Button
             as="a"

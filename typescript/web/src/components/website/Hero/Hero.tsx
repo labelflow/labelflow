@@ -1,4 +1,5 @@
 import {
+  chakra,
   Box,
   Button,
   Heading,
@@ -10,8 +11,26 @@ import {
 } from "@chakra-ui/react";
 import NextLink from "next/link";
 import * as React from "react";
+import { RiGithubFill } from "react-icons/ri";
 import { BsArrowRight } from "react-icons/bs";
-import { GithubButton } from "../Navbar/NavContent";
+// import { GithubButton } from "../Navbar/NavContent";
+
+const GithubIcon = chakra(RiGithubFill);
+export const GithubButton = () => (
+  <Button
+    as="a"
+    leftIcon={<GithubIcon fontSize="2xl" />}
+    href="https://github.com/Labelflow/labelflow"
+    target="blank"
+    size="lg"
+    minW="210px"
+    variant="link"
+    height="14"
+    px="8"
+  >
+    See on Github
+  </Button>
+);
 
 export function Hero() {
   return (
@@ -73,7 +92,7 @@ export function Hero() {
             </Text>
             <Stack
               direction={{ base: "column", md: "row" }}
-              justifyContent="space-between"
+              justifyContent="space-around"
               mt="8"
             >
               <GithubButton />
