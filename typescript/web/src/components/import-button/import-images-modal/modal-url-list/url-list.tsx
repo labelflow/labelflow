@@ -1,6 +1,13 @@
 import { ChangeEvent, useState } from "react";
 import { FaDev } from "react-icons/fa";
-import { Stack, VStack, Button, Textarea, chakra } from "@chakra-ui/react";
+import {
+  Stack,
+  VStack,
+  Button,
+  Textarea,
+  chakra,
+  useColorModeValue as mode,
+} from "@chakra-ui/react";
 import { isWebUri } from "valid-url";
 import { isEmpty, uniq } from "lodash/fp";
 import { DroppedUrl } from "../types";
@@ -28,7 +35,7 @@ export const UrlList = ({
           mt={2}
           leftIcon={<DevIcon size="1.5rem" />}
           onClick={() => setValue(imageSampleCollection.join("\n"))}
-          background="pink.200"
+          background={mode("pink.200", "pink.700")}
         >
           Insert example images
         </Button>
@@ -36,9 +43,9 @@ export const UrlList = ({
       <Stack
         as="form"
         border="1px dashed"
-        borderColor="gray.700"
+        borderColor={mode("gray.700", "gray.400")}
         borderRadius="md"
-        bg="gray.50"
+        bg={mode("gray.50", "gray.800")}
         flex="1"
       >
         <Textarea

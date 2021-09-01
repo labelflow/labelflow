@@ -60,7 +60,12 @@ const DatasetIndexPage = () => {
     if (!error.message.match(/No dataset with slug/)) {
       handleError(error);
     }
-    return <Error404Page />;
+    return (
+      <>
+        <AppLifecycleManager />
+        <Error404Page />
+      </>
+    );
   }
 
   return (
