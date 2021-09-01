@@ -25,7 +25,8 @@ const BackIcon = chakra(RiArrowGoBackLine);
 
 export const TopBar = ({ leftContent, rightContent }: Props) => {
   const router = useRouter();
-  const viewBox = useBreakpointValue({ base: "0 0 84 84", md: "0 0 393 84" });
+  const viewBox =
+    useBreakpointValue({ base: "0 0 84 84", md: "0 0 393 84" }) ?? "0 0 84 84";
 
   return (
     <HStack
