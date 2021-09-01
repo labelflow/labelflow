@@ -76,6 +76,8 @@ const ImagesPage = () => {
     );
   }
 
+  const cardBackground = mode("white", "gray.700");
+  const imageBackground = mode("gray.100", "gray.800");
   return (
     <>
       <AppLifecycleManager />
@@ -151,7 +153,13 @@ const ImagesPage = () => {
         )}
 
         {datasetResult && !isEmpty(datasetResult?.dataset?.images) && (
-          <Wrap h="full" spacing={8} padding={8} justify="space-evenly">
+          <Wrap
+            h="full"
+            spacing={8}
+            padding={8}
+            justify="space-evenly"
+            boxSizing="border-box"
+          >
             {datasetResult?.dataset?.images?.map(({ id, name, url }) => (
               <NextLink
                 href={`/local/datasets/${datasetSlug}/images/${id}`}
@@ -159,11 +167,7 @@ const ImagesPage = () => {
               >
                 {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
                 <a>
-                  <WrapItem
-                    p={4}
-                    background={mode("white", "gray.700")}
-                    rounded={8}
-                  >
+                  <WrapItem p={4} background={cardBackground} rounded={8}>
                     <VStack w="80" h="80" justify="space-between">
                       <Heading
                         as="h3"
@@ -176,7 +180,7 @@ const ImagesPage = () => {
                         {name}
                       </Heading>
                       <Image
-                        background={mode("gray.100", "gray.800")}
+                        background={imageBackground}
                         alt={name}
                         src={url}
                         ignoreFallback
