@@ -72,7 +72,7 @@ const DatasetIndexPage = () => {
   return (
     <>
       <AppLifecycleManager />
-      <Meta title={`LabelFlow | ${datasetName}`} />
+      <Meta title={`LabelFlow | ${datasetName ?? "Dataset"}`} />
       <Layout
         topBarLeftContent={
           <Breadcrumb
