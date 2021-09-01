@@ -1,9 +1,7 @@
 import { gql, useQuery } from "@apollo/client";
 import NextLink from "next/link";
 import {
-  Wrap,
   Box,
-  WrapItem,
   VStack,
   useColorModeValue as mode,
   Image,
