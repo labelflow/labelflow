@@ -15,12 +15,7 @@ export default function Posts({
     <Box minH="640px">
       <Meta />
 
-      <Box
-        as="header"
-        bg={mode("white", "gray.800")}
-        position="relative"
-        zIndex="10"
-      >
+      <Box as="header" bg={mode("white", "gray.800")} position="relative">
         <Box
           as="nav"
           aria-label="Main navigation"
