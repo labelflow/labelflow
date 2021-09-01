@@ -1,5 +1,12 @@
 import React from "react";
-import { Tooltip, Text, Flex, Button, chakra } from "@chakra-ui/react";
+import {
+  Tooltip,
+  Text,
+  Flex,
+  Button,
+  chakra,
+  useColorModeValue as mode,
+} from "@chakra-ui/react";
 import { HiSelector } from "react-icons/hi";
 import { RiCheckboxBlankCircleFill } from "react-icons/ri";
 import { LabelClass } from "@labelflow/graphql-types";
@@ -25,7 +32,7 @@ const ClassSelectionButton = React.forwardRef<
       justifyContent="space-between"
       ref={ref}
       onClick={toggle}
-      bg="white"
+      bg={mode("white", "gray.800")}
       pointerEvents="initial"
       aria-label="Open class selection popover"
     >

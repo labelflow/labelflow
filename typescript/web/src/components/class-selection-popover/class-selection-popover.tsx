@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef, useMemo } from "react";
 import {
   Box,
   Popover,
+  useColorModeValue as mode,
   PopoverContent,
   PopoverBody,
   PopoverTrigger,
@@ -18,7 +19,7 @@ import { RiCloseCircleFill } from "react-icons/ri";
 import { useCombobox, UseComboboxStateChange } from "downshift";
 import { useHotkeys } from "react-hotkeys-hook";
 import { LabelClass } from "@labelflow/graphql-types";
-import { ClassListItem } from "../class-list-item";
+import { ClassListItem } from "./class-list-item";
 import { noneClassColor } from "../../utils/class-color-generator";
 import { keymap } from "../../keymap";
 
@@ -186,7 +187,7 @@ export const ClassSelectionPopover = ({
     >
       <PopoverTrigger>{trigger}</PopoverTrigger>
       <PopoverContent
-        borderColor="gray.200"
+        borderColor={mode("gray.200", "gray.600")}
         cursor="default"
         pointerEvents="initial"
         aria-label={ariaLabel}
@@ -229,7 +230,8 @@ export const ClassSelectionPopover = ({
                       <CloseCircleIcon
                         fontSize="2xl"
                         onClick={reset}
-                        color="gray.300"
+                        cursor="pointer"
+                        color={mode("gray.300", "gray.500")}
                       />
                       <Kbd fontSize="md">↩</Kbd>
                     </>

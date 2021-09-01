@@ -72,7 +72,7 @@ export const ExportOptionsModal = ({
       <ModalOverlay />
       <ModalContent height="auto">
         <ModalHeader textAlign="center" padding="6">
-          <Heading as="h2" size="lg" pb="2" color="gray.800">
+          <Heading as="h2" size="lg" pb="2">
             Export Options
           </Heading>
         </ModalHeader>
