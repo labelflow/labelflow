@@ -16,6 +16,7 @@ import {
   BreadcrumbLink,
   Heading,
   chakra,
+  SimpleGrid,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { isEmpty } from "lodash/fp";
@@ -153,47 +154,52 @@ const ImagesPage = () => {
         )}
 
         {datasetResult && !isEmpty(datasetResult?.dataset?.images) && (
-          <Wrap
-            h="full"
-            spacing={8}
-            padding={8}
-            justify="space-evenly"
-            boxSizing="border-box"
+          <SimpleGrid
+            minChildWidth="240px"
+            spacing={{ base: "2", md: "8" }}
+            padding={{ base: "2", md: "8" }}
           >
             {datasetResult?.dataset?.images?.map(({ id, name, url }) => (
               <NextLink
                 href={`/local/datasets/${datasetSlug}/images/${id}`}
                 key={id}
               >
-                {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-                <a>
-                  <WrapItem p={4} background={cardBackground} rounded={8}>
-                    <VStack w="80" h="80" justify="space-between">
-                      <Heading
-                        as="h3"
-                        size="sm"
-                        overflow="hidden"
-                        textOverflow="ellipsis"
-                        whiteSpace="nowrap"
-                        w="full"
-                      >
-                        {name}
-                      </Heading>
-                      <Image
-                        background={imageBackground}
-                        alt={name}
-                        src={url}
-                        ignoreFallback
-                        objectFit="contain"
-                        h="72"
-                        w="full"
-                      />
-                    </VStack>
-                  </WrapItem>
+                <a href={`/local/datasets/${datasetSlug}/images/${id}`}>
+                  <VStack
+                    p={4}
+                    background={cardBackground}
+                    rounded={8}
+                    height="250px"
+                    justifyContent="space-between"
+                  >
+                    <Heading
+                      as="h3"
+                      size="sm"
+                      overflow="hidden"
+                      textOverflow="ellipsis"
+                      whiteSpace="nowrap"
+                      w="full"
+                      flexGrow={0}
+                      flexShrink={0}
+                    >
+                      {name}
+                    </Heading>
+                    <Image
+                      background={imageBackground}
+                      alt={name}
+                      src={url}
+                      ignoreFallback
+                      objectFit="contain"
+                      h="188px"
+                      w="full"
+                      flexGrow={0}
+                      flexShrink={0}
+                    />
+                  </VStack>
                 </a>
               </NextLink>
             ))}
-          </Wrap>
+          </SimpleGrid>
         )}
       </Layout>
     </>

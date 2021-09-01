@@ -103,7 +103,7 @@ export const ClassesList = ({ datasetSlug }: { datasetSlug: string }) => {
         d="flex"
         flexDirection="column"
         bg={mode("white", "gray.800")}
-        m={{ base: "2", md: "10" }}
+        m={{ base: "2", md: "8" }}
         borderRadius="lg"
         maxWidth="5xl"
         flexGrow={1}
