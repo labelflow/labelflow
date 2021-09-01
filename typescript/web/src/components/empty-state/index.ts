@@ -1,12 +1,12 @@
 import { chakra } from "@chakra-ui/react";
-import Error404 from "../graphics/error-404";
-import Connection from "../graphics/connection";
+import Error from "../graphics/error";
+import ConnectionOff from "../graphics/connection-off";
 import CreditCard from "../graphics/credit-card";
 import Image from "../graphics/image";
 import Search from "../graphics/search";
 import Coffee from "../graphics/coffee";
 
-export const EmptyStateError = chakra(Error404, {
+export const EmptyStateError = chakra(Error, {
   baseStyle: {
     width: 250,
     height: 250,
@@ -15,7 +15,7 @@ export const EmptyStateError = chakra(Error404, {
     boxSizing: "border-box",
   },
 });
-export const EmptyStateNoConnection = chakra(Connection, {
+export const EmptyStateNoConnection = chakra(ConnectionOff, {
   baseStyle: {
     width: 250,
     height: 250,
