@@ -6,14 +6,18 @@ import { NavBar } from "../components/website/Navbar/NavBar";
 import { Footer } from "../components/website/Footer/Footer";
 import { RequestAccess } from "../components/website/RequestAccess/RequestAccess";
 import { Meta } from "../components/meta";
+import { AppLifecycleManager } from "../components/app-lifecycle-manager";
 
 export default function RequestAccessPage() {
   return (
-    <Box minH="640px">
+    <>
+      <AppLifecycleManager noModals />
       <Meta title="LabelFlow | Request Access" />
-      <NavBar />
-      <RequestAccess />
-      <Footer />
-    </Box>
+      <Box minH="640px">
+        <NavBar />
+        <RequestAccess />
+        <Footer />
+      </Box>
+    </>
   );
 }

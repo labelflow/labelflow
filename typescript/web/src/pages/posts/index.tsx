@@ -5,6 +5,7 @@ import { NavBar } from "../../components/website/Navbar/NavBar";
 import { Footer } from "../../components/website/Footer/Footer";
 import { Meta } from "../../components/meta";
 import { ArticlesList } from "../../components/website/Blog/articles-list";
+import { AppLifecycleManager } from "../../components/app-lifecycle-manager";
 
 export default function Posts({
   previewArticles,
@@ -12,12 +13,15 @@ export default function Posts({
   previewArticles: Omit<Article, "content">[];
 }) {
   return (
-    <Box minH="640px">
+    <>
+      <AppLifecycleManager noModals />
       <Meta title="LabelFlow | Blog" />
-      <NavBar />
-      <ArticlesList previewArticles={previewArticles} />
-      <Footer />
-    </Box>
+      <Box minH="640px">
+        <NavBar />
+        <ArticlesList previewArticles={previewArticles} />
+        <Footer />
+      </Box>
+    </>
   );
 }
 

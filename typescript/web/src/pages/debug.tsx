@@ -25,6 +25,7 @@ import {
 } from "../utils/detect-scope";
 
 import { Layout } from "../components/layout";
+import { AppLifecycleManager } from "../components/app-lifecycle-manager";
 
 export const debugQuery = gql`
   query getDebug {
@@ -37,6 +38,7 @@ const DebugPage = () => {
 
   return (
     <>
+      <AppLifecycleManager noModals />
       <Meta title="LabelFlow | Debug" />
       <Layout
         topBarLeftContent={
