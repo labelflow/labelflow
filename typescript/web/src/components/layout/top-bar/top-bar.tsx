@@ -39,7 +39,7 @@ export const TopBar = ({ leftContent, rightContent }: Props) => {
     >
       <NextLink href="/">
         <Box as="a" rel="home" cursor="pointer">
-          <VisuallyHidden>Labelflow</VisuallyHidden>
+          <VisuallyHidden>LabelFlow</VisuallyHidden>
           <Logo h="6" iconColor="brand.500" viewBox={viewBox} />
         </Box>
       </NextLink>

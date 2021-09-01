@@ -40,7 +40,7 @@ export const Pricing = () => (
           pricePost: "for ever",
           name: "Community",
           features: [
-            "Sleek labeling interface",
+            "Sleek labelling interface",
             "Dataset import/export",
             "Unlimited datasets",
             "Unlimited local images",

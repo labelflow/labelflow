@@ -9,7 +9,7 @@ type Props = {
 };
 
 export const Meta = ({
-  title = "Labelflow: The open standard platform for image labeling.",
+  title = "LabelFlow: The open standard platform for image labelling.",
   desc = "The fastest and simplest image labelling tool on the Internet!",
   canonical = "https://labelflow.ai/",
 }: Props) => (
@@ -29,13 +29,13 @@ export const Meta = ({
             url: "https://labelflow.ai/static/img/seo-img.png",
             width: 1200,
             height: 630,
-            alt: "Labelflow",
+            alt: "LabelFlow",
           },
           {
             url: "https://labelflow.ai/static/img/seo-img@5.png",
             width: 600,
             height: 315,
-            alt: "Labelflow",
+            alt: "LabelFlow",
           },
         ],
       }}

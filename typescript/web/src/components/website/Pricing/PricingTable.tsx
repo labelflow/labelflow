@@ -29,7 +29,7 @@ export const PricingTable = () => {
       overflowX="scroll"
     >
       <Heading align="center" fontWeight="extrabold" maxW="lg" mx="auto">
-        Labelflow pricing fits your business
+        LabelFlow pricing fits your business
       </Heading>
 
       <Table

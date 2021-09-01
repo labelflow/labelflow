@@ -15,13 +15,13 @@ export const Why = () => {
         </Heading>
         <NextLink href="/datasets">
           <Text align="center" textAlign="center" maxW="lg" mx="auto" mt="12">
-            <strong> You can get started on Labelflow in a few seconds</strong>,
+            <strong> You can get started on LabelFlow in a few seconds</strong>,
             by uploading your data in the app.
             <br />
             <br />
-            But Labelflow can also connect to your own data stack allowing you
+            But LabelFlow can also connect to your own data stack allowing you
             to stay <b> 100% in control of your data and algorithms </b>.
-            Labelflow backend is open-source and you can customize it to
+            LabelFlow backend is open-source and you can customize it to
             integrate all your tools around your data stack. No duplicate source
             of truth and complicated scripts to synchronize your data between
             various tools.

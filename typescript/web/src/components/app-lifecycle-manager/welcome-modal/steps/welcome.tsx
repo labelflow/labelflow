@@ -73,7 +73,7 @@ export const Welcome = ({ onClickSkip, onClickNext }: Props) => {
           >
             The open standard{" "}
             <Text color="brand.500" display="inline">
-              image labeling tool
+              image labelling tool
             </Text>
           </Heading>
           <Text

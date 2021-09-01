@@ -1,7 +1,7 @@
 {
-  "name": "Labelflow",
-  "short_name": "Labelflow",
-  "description": "The open platform for image labeling",
+  "name": "LabelFlow",
+  "short_name": "LabelFlow",
+  "description": "The open platform for image labelling",
   "icons": [
     {
       "src": "/static/icon-192x192.png",

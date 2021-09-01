@@ -73,8 +73,8 @@ export const BrowserError = ({ error }: Props) => {
             fontWeight="medium"
             textAlign="justify"
           >
-            Your browser threw an Error while initializing Labelflow. For
-            technical reasons, Labelflow requires to use the latest version of{" "}
+            Your browser threw an Error while initializing LabelFlow. For
+            technical reasons, LabelFlow requires to use the latest version of{" "}
             <Link
               href="https://www.mozilla.org/firefox/new"
               color="brand.600"

@@ -37,7 +37,7 @@ const DebugPage = () => {
 
   return (
     <>
-      <Meta title="Labelflow | Debug" />
+      <Meta title="LabelFlow | Debug" />
       <Layout
         topBarLeftContent={
           <Breadcrumb
@@ -182,7 +182,7 @@ const DebugPage = () => {
               <Code as="p" whiteSpace="pre-wrap" width="full">
                 {JSON.stringify(
                   {
-                    serverType: "Standard Labelflow Client App",
+                    serverType: "Standard LabelFlow Client App",
                     isInWindowScope,
                     isInServiceWorkerScope,
                     isDevelopmentEnvironment,
