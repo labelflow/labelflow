@@ -58,7 +58,11 @@ export const ToolSelectionPopoverItem = (props: {
           ? mode("gray.300", "gray.500")
           : mode("gray.100", "gray.600"),
       }}
-      bgColor={selected ? mode("gray.300", "gray.500") : "transparent"}
+      bgColor={
+        selected
+          ? mode("gray.300", "gray.500")
+          : mode("transparent", "transparent")
+      }
       onClick={() => {
         onClick();
       }}
