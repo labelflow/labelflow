@@ -121,13 +121,15 @@ export const ImportImagesModalUrlList = ({
           Import
         </Heading>
         <Text fontSize="lg" fontWeight="medium">
-          Import images by listing file URLs, one per line. Stay in control of
-          your data. Images are not uploaded on LabelFlow servers.
+          Import images by listing file URLs, one per line.
           <Button
             colorScheme="brand"
+            display="inline"
             variant="link"
             fontSize="lg"
             fontWeight="medium"
+            whiteSpace="normal"
+            wordWrap="break-word"
             onClick={() => setMode("dropzone", "replaceIn")}
           >
             Import by dropping your files instead

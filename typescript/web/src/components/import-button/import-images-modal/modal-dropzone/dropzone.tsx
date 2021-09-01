@@ -62,14 +62,18 @@ export const Dropzone = ({
         htmlFor="file-uploader"
         color={mode("gray.700", "gray.400")}
         fontWeight="700"
-        fontSize="lg"
+        fontSize={{ base: "md", md: "lg" }}
         display="flex"
         flexDirection="column"
         alignItems="center"
-        justifyContent="Center"
+        textAlign="center"
+        justifyContent="center"
         flex="1"
       >
-        <UploadIcon fontSize="9xl" color={mode("gray.700", "gray.400")} />
+        <UploadIcon
+          fontSize={{ base: "5xl", md: "9xl" }}
+          color={mode("gray.600", "gray.400")}
+        />
         Drop folders or images, or click to browse your files
         <input {...getInputProps()} id="file-uploader" />
       </chakra.label>
