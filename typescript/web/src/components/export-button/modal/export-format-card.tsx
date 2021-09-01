@@ -5,6 +5,7 @@ import {
   Text,
   Box,
   Spinner,
+  useColorModeValue as mode,
   useTheme,
 } from "@chakra-ui/react";
 
@@ -39,7 +40,7 @@ export const ExportFormatCard = ({
       _hover={
         loading || disabled
           ? undefined
-          : { backgroundColor: `${colorScheme}.50` }
+          : { backgroundColor: mode(`${colorScheme}.50`, `${colorScheme}.800`) }
       }
       cursor={disabled ? "not-allowed" : "pointer"}
       position="relative"
@@ -54,7 +55,7 @@ export const ExportFormatCard = ({
           bottom="0"
           left="0"
           right="0"
-          backgroundColor={`${theme.colors[colorScheme][50]}99`}
+          backgroundColor={`${theme.colors[colorScheme][mode(50, 800)]}99`}
           display="flex"
           justifyContent="center"
           alignItems="center"
@@ -72,7 +73,11 @@ export const ExportFormatCard = ({
         >
           <Text
             as="h3"
-            color={disabled ? `gray.400` : "gray.800"}
+            color={
+              disabled
+                ? mode("gray.400", "gray.500")
+                : mode("gray.800", "gray.200")
+            }
             fontWeight="semibold"
             lineHeight="short"
             whiteSpace="nowrap"
@@ -84,7 +89,11 @@ export const ExportFormatCard = ({
             fontSize="smaller"
             lineHeight="short"
             letterSpacing="tight"
-            color={disabled ? `gray.300` : "gray.600"}
+            color={
+              disabled
+                ? mode("gray.300", "gray.600")
+                : mode("gray.600", "gray.400")
+            }
           >
             {subtext}
           </Text>

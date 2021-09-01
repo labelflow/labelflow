@@ -1,6 +1,11 @@
 import { useMemo, useState, useCallback } from "react";
 import { useQuery, gql, useApolloClient } from "@apollo/client";
-import { Box, Text, Divider } from "@chakra-ui/react";
+import {
+  Box,
+  Text,
+  Divider,
+  useColorModeValue as mode,
+} from "@chakra-ui/react";
 
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
 import {
@@ -44,6 +49,7 @@ export const ClassesList = ({ datasetSlug }: { datasetSlug: string }) => {
     variables: {
       slug: datasetSlug,
     },
+    skip: !datasetSlug,
   });
   const labelClasses = datasetResult?.dataset.labelClasses ?? [];
   const datasetId = datasetResult?.dataset.id;
@@ -52,6 +58,7 @@ export const ClassesList = ({ datasetSlug }: { datasetSlug: string }) => {
     () => addShortcutsToLabelClasses(labelClasses),
     [labelClasses]
   );
+
   const onDragEnd = useCallback(
     async (result) => {
       // dropped outside the list
@@ -95,7 +102,7 @@ export const ClassesList = ({ datasetSlug }: { datasetSlug: string }) => {
       <Box
         d="flex"
         flexDirection="column"
-        bg="white"
+        bg={mode("white", "gray.800")}
         m="10"
         borderRadius="lg"
         maxWidth="5xl"

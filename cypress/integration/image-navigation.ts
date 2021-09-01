@@ -1,6 +1,7 @@
 import { gql } from "@apollo/client";
 
 import { client } from "../../typescript/web/src/connectors/apollo-client/schema-client";
+import imageSampleCollection from "../../typescript/web/src/utils/image-sample-collection";
 
 const createDataset = async (name: string) => {
   const mutationResult = await client.mutate({
@@ -45,7 +46,9 @@ describe("Image Navigation", () => {
       cy.contains("Add images").click();
     });
     cy.contains("Import from a list of URLs instead").click();
-    cy.contains("Insert example images").click();
+    cy.get("textarea").type(imageSampleCollection.slice(0, 8).join("\n"), {
+      delay: 0,
+    });
     cy.contains("Start Import").click();
     cy.get(`[aria-label="Close"]`).click();
     cy.get("main").contains("photo").click();
@@ -53,20 +56,20 @@ describe("Image Navigation", () => {
     // Check that we can reach the end of the list
     cy.get("main nav").scrollTo("right");
     cy.get("main nav").within(() => {
-      cy.contains("100").closest("a").click();
+      cy.contains("8").closest("a").click();
     });
-    cy.get('input[name="current-image"]').should("have.value", "100");
+    cy.get('input[name="current-image"]').should("have.value", "8");
 
     // Check that we can navigate to the middle of the list
-    cy.get('input[name="current-image"]').type("50{enter}");
+    cy.get('input[name="current-image"]').type("4{enter}");
     cy.get('[aria-current="page"]').should(($a) => {
-      expect($a).to.contain("50");
+      expect($a).to.contain("4");
     });
 
     // check that the gallery is centered on the correct image after a reload
     cy.reload();
     cy.get('[aria-current="page"]').should(($a) => {
-      expect($a).to.contain("50");
+      expect($a).to.contain("4");
     });
   });
 });

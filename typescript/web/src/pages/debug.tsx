@@ -179,7 +179,7 @@ const DebugPage = () => {
                 Client environment:
               </Heading>
 
-              <Code as="p" whiteSpace="pre-wrap">
+              <Code as="p" whiteSpace="pre-wrap" width="full">
                 {JSON.stringify(
                   {
                     serverType: "Standard Labelflow Client App",
@@ -225,7 +225,7 @@ const DebugPage = () => {
                 Server environment:
               </Heading>
 
-              <Code as="p" whiteSpace="pre-wrap">
+              <Code as="p" whiteSpace="pre-wrap" width="full">
                 {JSON.stringify(debugResult?.debug, null, 2)}
               </Code>
             </VStack>

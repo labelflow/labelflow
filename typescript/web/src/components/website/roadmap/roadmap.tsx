@@ -12,7 +12,7 @@ import * as React from "react";
 
 export const Roadmap = () => {
   return (
-    <Box as="section" py={{ md: "12" }} bg={mode("white", "black")}>
+    <Box as="section" py={{ md: "12" }} bg={mode("white", "gray.900")}>
       <Box
         maxW={{ base: "xl", md: "7xl" }}
         mx="auto"

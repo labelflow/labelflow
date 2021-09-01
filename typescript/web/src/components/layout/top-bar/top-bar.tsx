@@ -3,6 +3,7 @@ import { HStack, Spacer, Box, VisuallyHidden } from "@chakra-ui/react";
 import NextLink from "next/link";
 import { Logo } from "../../logo";
 import { HelpMenu } from "./help-menu";
+import { UserMenu } from "./user-menu";
 
 export type Props = {
   leftContent?: ReactNode;
@@ -14,7 +15,6 @@ export const TopBar = ({ leftContent, rightContent }: Props) => {
     <HStack
       as="header"
       alignItems="center"
-      bg="white"
       padding={4}
       spacing={4}
       h="64px"
@@ -30,6 +30,7 @@ export const TopBar = ({ leftContent, rightContent }: Props) => {
       <Spacer />
       {rightContent}
       <HelpMenu />
+      <UserMenu />
     </HStack>
   );
 };

@@ -1,4 +1,8 @@
-import { IconButton, chakra } from "@chakra-ui/react";
+import {
+  IconButton,
+  chakra,
+  useColorModeValue as mode,
+} from "@chakra-ui/react";
 import { RiZoomInLine, RiZoomOutLine } from "react-icons/ri";
 
 import { useLabellingStore } from "../../../connectors/labelling-state";
@@ -16,7 +20,7 @@ export const ZoomToolbar = () => {
     <>
       <IconButton
         icon={<ZoomInIcon fontSize="lg" />}
-        backgroundColor="white"
+        backgroundColor={mode("white", "gray.800")}
         aria-label="Zoom in"
         pointerEvents="initial"
         isDisabled={!canZoomIn}
@@ -26,7 +30,7 @@ export const ZoomToolbar = () => {
       />
       <IconButton
         icon={<ZoomOutIcon fontSize="lg" />}
-        backgroundColor="white"
+        backgroundColor={mode("white", "gray.800")}
         aria-label="Zoom out"
         pointerEvents="initial"
         isDisabled={!canZoomOut}

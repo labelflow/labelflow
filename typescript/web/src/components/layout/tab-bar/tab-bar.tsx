@@ -1,4 +1,4 @@
-import { chakra, Flex } from "@chakra-ui/react";
+import { chakra, Flex, useColorModeValue as mode } from "@chakra-ui/react";
 import NextLink from "next/link";
 
 export type TabBarItem = {
@@ -23,7 +23,7 @@ export const TabBar = ({ tabs }: Props) => {
       height="64px"
       flex={0}
       borderTop="1px solid"
-      borderColor="gray.100"
+      borderColor={mode("gray.100", "gray.700")}
       role="tablist"
     >
       {tabs.map(({ name, url, isActive }) => (
