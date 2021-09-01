@@ -1,7 +1,7 @@
 {
   "name": "Labelflow",
   "short_name": "Labelflow",
-  "description": "The open source image labelling and dataset cleaning platform.",
+  "description": "The open platform for image labeling",
   "icons": [
     {
       "src": "/static/icon-192x192.png",

@@ -32,7 +32,7 @@ export const ExportFormatCard = ({
   return (
     <Box
       alignItems="flex-start"
-      w="xs"
+      w={{ base: "2xs", md: "xs" }}
       borderRadius="lg"
       overflow="hidden"
       p="2"
@@ -45,6 +45,7 @@ export const ExportFormatCard = ({
       cursor={disabled ? "not-allowed" : "pointer"}
       position="relative"
       onClick={disabled || loading ? undefined : onClick}
+      boxSizing="border-box"
     >
       {loading && (
         <Box
@@ -63,13 +64,20 @@ export const ExportFormatCard = ({
           <Spinner size="xl" color="brand.500" aria-label="loading" />
         </Box>
       )}
-      <HStack justifyContent="flex-start" alignItems="flex-end" spacing={4}>
-        <Image src={logoSrc} w="16" h="16" />
+      <HStack
+        justifyContent="flex-start"
+        alignItems="flex-end"
+        spacing={4}
+        boxSizing="border-box"
+      >
+        <Image src={logoSrc} w="16" h="16" flexGrow={0} flexShrink={0} />
         <VStack
           alignItems="flex-start"
           spacing="1"
-          justifyContent="flex-end"
-          height="100%"
+          justifyContent="flex-start"
+          boxSizing="border-box"
+          flexGrow={1}
+          flexShrink={1}
         >
           <Text
             as="h3"
@@ -80,7 +88,6 @@ export const ExportFormatCard = ({
             }
             fontWeight="semibold"
             lineHeight="short"
-            whiteSpace="nowrap"
           >
             {title}
           </Text>

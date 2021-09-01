@@ -4,7 +4,7 @@ import {
   ModalContent,
   ModalFooter,
   VStack,
-  HStack,
+  Stack,
   Button,
   Heading,
   Link,
@@ -34,10 +34,14 @@ export const BrowserWarning = ({ onClickTryAnyway }: Props) => {
     startLabellingButtonRef.current?.focus();
   }, []);
   return (
-    <ModalContent margin="3.75rem">
-      <ModalHeader textAlign="center" padding="8">
+    <ModalContent margin={{ base: "4", md: "3.75rem" }}>
+      <ModalHeader textAlign="center" padding={{ base: "4", md: "8" }}>
         <Center>
-          <ChakraBrowserAlert mt="12" mb="8" width="40" height="40" />
+          <ChakraBrowserAlert
+            my={{ base: "4", md: "10" }}
+            width="40"
+            height={{ base: "16", md: "40" }}
+          />
         </Center>
       </ModalHeader>
 
@@ -47,7 +51,7 @@ export const BrowserWarning = ({ onClickTryAnyway }: Props) => {
           spacing="8"
           h="full"
           mt="0"
-          mb="8"
+          mb={{ base: "4", md: "8" }}
         >
           <Heading
             as="h1"
@@ -114,12 +118,12 @@ export const BrowserWarning = ({ onClickTryAnyway }: Props) => {
       </ModalBody>
 
       <ModalFooter>
-        <HStack
+        <Stack
           direction={{ base: "column", md: "row" }}
           justifyContent="center"
           width="full"
           spacing="4"
-          mb="10"
+          mb={{ base: "0", md: "10" }}
         >
           <NextLink href="/">
             <Button
@@ -151,7 +155,7 @@ export const BrowserWarning = ({ onClickTryAnyway }: Props) => {
           >
             Try anyway...
           </Button>
-        </HStack>
+        </Stack>
       </ModalFooter>
     </ModalContent>
   );

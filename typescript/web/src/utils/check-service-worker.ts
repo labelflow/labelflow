@@ -56,7 +56,7 @@ export const checkServiceWorkerReady = async (
     // Get the service worker from workbox
     const sw = await timeout(
       wb.getSW(),
-      10000,
+      20000,
       new Error(messageTimeoutGettingSw)
     );
 

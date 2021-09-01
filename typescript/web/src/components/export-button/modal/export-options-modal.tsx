@@ -79,10 +79,7 @@ export const ExportOptionsModal = ({
 
         <ModalBody
           display="flex"
-          pt="0"
-          pb="6"
-          pr="6"
-          pl="6"
+          p={{ base: "2", md: "6" }}
           flexDirection="column"
         >
           <OptionLine

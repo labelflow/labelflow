@@ -7,6 +7,7 @@ import {
   HStack,
   useDisclosure,
   VisuallyHidden,
+  Spacer,
   IconButton,
   // useColorModeValue as mode,
 } from "@chakra-ui/react";
@@ -26,13 +27,8 @@ const MobileNavContext = (props: FlexProps) => {
   const { isOpen, onToggle } = useDisclosure();
   return (
     <>
-      <Flex
-        align="center"
-        justify="space-between"
-        className="nav-content__mobile"
-        {...props}
-      >
-        <Box flexBasis="6rem">
+      <Flex align="center" className="nav-content__mobile" {...props}>
+        <Box>
           <ToggleButton isOpen={isOpen} onClick={onToggle} />
         </Box>
         <NextLink href="/website">
@@ -40,18 +36,18 @@ const MobileNavContext = (props: FlexProps) => {
             <Logo h="24px" iconColor="brand.400" />
           </Box>
         </NextLink>
+        <Spacer />
         <IconButton
           aria-label="See code on github"
           href="https://github.com/Labelflow/labelflow"
           as="a"
           target="blank"
           variant="link"
-          mr="3"
           icon={<GithubIcon fontSize="2xl" />}
         />
-        <Box visibility={{ base: "hidden", sm: "visible" }}>
+        <Box display={{ base: "none", sm: "block" }}>
           <NextLink href="/local/datasets">
-            <Button as="a" colorScheme="brand" variant="outline">
+            <Button as="a" colorScheme="brand" variant="outline" ml="3">
               Try it now
             </Button>
           </NextLink>

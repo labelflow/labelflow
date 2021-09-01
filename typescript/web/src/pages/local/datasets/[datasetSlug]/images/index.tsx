@@ -1,9 +1,7 @@
 import { gql, useQuery } from "@apollo/client";
 import NextLink from "next/link";
 import {
-  Wrap,
   Box,
-  WrapItem,
   VStack,
   useColorModeValue as mode,
   Image,
@@ -16,6 +14,7 @@ import {
   BreadcrumbLink,
   Heading,
   chakra,
+  SimpleGrid,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { isEmpty } from "lodash/fp";
@@ -76,6 +75,8 @@ const ImagesPage = () => {
     );
   }
 
+  const cardBackground = mode("white", "gray.700");
+  const imageBackground = mode("gray.100", "gray.800");
   return (
     <>
       <AppLifecycleManager />
@@ -151,45 +152,52 @@ const ImagesPage = () => {
         )}
 
         {datasetResult && !isEmpty(datasetResult?.dataset?.images) && (
-          <Wrap h="full" spacing={8} padding={8} justify="space-evenly">
+          <SimpleGrid
+            minChildWidth="240px"
+            spacing={{ base: "2", md: "8" }}
+            padding={{ base: "2", md: "8" }}
+          >
             {datasetResult?.dataset?.images?.map(({ id, name, url }) => (
               <NextLink
                 href={`/local/datasets/${datasetSlug}/images/${id}`}
                 key={id}
               >
-                {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-                <a>
-                  <WrapItem
+                <a href={`/local/datasets/${datasetSlug}/images/${id}`}>
+                  <VStack
                     p={4}
-                    background={mode("white", "gray.700")}
+                    background={cardBackground}
                     rounded={8}
+                    height="250px"
+                    justifyContent="space-between"
                   >
-                    <VStack w="80" h="80" justify="space-between">
-                      <Heading
-                        as="h3"
-                        size="sm"
-                        overflow="hidden"
-                        textOverflow="ellipsis"
-                        whiteSpace="nowrap"
-                        w="full"
-                      >
-                        {name}
-                      </Heading>
-                      <Image
-                        background={mode("gray.100", "gray.800")}
-                        alt={name}
-                        src={url}
-                        ignoreFallback
-                        objectFit="contain"
-                        h="72"
-                        w="full"
-                      />
-                    </VStack>
-                  </WrapItem>
+                    <Heading
+                      as="h3"
+                      size="sm"
+                      overflow="hidden"
+                      textOverflow="ellipsis"
+                      whiteSpace="nowrap"
+                      w="full"
+                      flexGrow={0}
+                      flexShrink={0}
+                    >
+                      {name}
+                    </Heading>
+                    <Image
+                      background={imageBackground}
+                      alt={name}
+                      src={url}
+                      ignoreFallback
+                      objectFit="contain"
+                      h="188px"
+                      w="full"
+                      flexGrow={0}
+                      flexShrink={0}
+                    />
+                  </VStack>
                 </a>
               </NextLink>
             ))}
-          </Wrap>
+          </SimpleGrid>
         )}
       </Layout>
     </>
