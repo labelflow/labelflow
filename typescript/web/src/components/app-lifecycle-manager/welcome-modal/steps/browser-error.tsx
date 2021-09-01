@@ -4,7 +4,7 @@ import {
   ModalContent,
   ModalFooter,
   VStack,
-  FaStackOverflow,
+  Stack,
   Button,
   Heading,
   Link,
@@ -121,7 +121,7 @@ export const BrowserError = ({ error }: Props) => {
       </ModalBody>
 
       <ModalFooter>
-        <FaStackOverflow
+        <Stack
           direction={{ base: "column", md: "row" }}
           justifyContent="center"
           width="full"
@@ -159,7 +159,7 @@ export const BrowserError = ({ error }: Props) => {
           >
             See Error...
           </Button>
-        </FaStackOverflow>
+        </Stack>
       </ModalFooter>
     </ModalContent>
   );
