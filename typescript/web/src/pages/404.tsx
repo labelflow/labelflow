@@ -9,7 +9,6 @@ const Error404Page = () => {
   return (
     <>
       <Meta title="LabelFlow | Page not found" />
-
       <Layout>
         <Center h="full">
           <Box as="section">

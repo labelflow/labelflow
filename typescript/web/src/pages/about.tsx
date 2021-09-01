@@ -1,14 +1,7 @@
-import {
-  Box,
-  Heading,
-  Link,
-  Center,
-  Text,
-  useColorModeValue as mode,
-} from "@chakra-ui/react";
+import { Box, Heading, Link, Center, Text } from "@chakra-ui/react";
 import * as React from "react";
 
-import { NavContent } from "../components/website/Navbar/NavContent";
+import { NavBar } from "../components/website/Navbar/NavBar";
 
 import { Footer } from "../components/website/Footer/Footer";
 
@@ -17,30 +10,9 @@ import { Meta } from "../components/meta";
 export default function About() {
   return (
     <Box minH="640px">
-      <Meta />
-
-      <Box
-        as="header"
-        bg={mode("white", "gray.800")}
-        position="relative"
-        zIndex="10"
-      >
-        <Box
-          as="nav"
-          aria-label="Main navigation"
-          maxW="7xl"
-          mx="auto"
-          px={{ base: "6", md: "8" }}
-        >
-          <NavContent.Mobile display={{ base: "flex", lg: "none" }} />
-          <NavContent.Desktop display={{ base: "none", lg: "flex" }} />
-        </Box>
-      </Box>
-      <Box
-        as="section"
-        //   bg={mode("gray.50", "gray.800")}
-        py={{ base: "10", sm: "24" }}
-      >
+      <Meta title="LabelFlow | About" />
+      <NavBar />
+      <Box as="section" py={{ base: "10", sm: "24" }}>
         <Box
           maxW={{ base: "xl", md: "3xl" }}
           mx="auto"
@@ -63,7 +35,7 @@ export default function About() {
               Sterblue
             </Link>
             , <b>an AI-powered cloud platform to support energy companies </b>
-            managing their critical assets: wind turbines, transmission &
+            managing their critical assets: wind turbines, transmission &amp;
             distribution grids and cooling towers. Machine learning was a huge
             part of our product.
             <br />

@@ -14,6 +14,7 @@ import { useQuery, gql } from "@apollo/client";
 import { useErrorHandler } from "react-error-boundary";
 import { RiArrowRightSLine } from "react-icons/ri";
 import NextLink from "next/link";
+import { Meta } from "../../../../components/meta";
 import { AppLifecycleManager } from "../../../../components/app-lifecycle-manager";
 import { Layout } from "../../../../components/layout";
 import Error404Page from "../../../404";
@@ -71,6 +72,7 @@ const DatasetIndexPage = () => {
   return (
     <>
       <AppLifecycleManager />
+      <Meta title={`LabelFlow | ${datasetName}`} />
       <Layout
         topBarLeftContent={
           <Breadcrumb
