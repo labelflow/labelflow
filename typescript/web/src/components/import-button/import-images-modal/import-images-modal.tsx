@@ -101,7 +101,7 @@ export const ImportImagesModal = ({
               setHasUploaded(false);
             }}
           >
-            Start labeling
+            Start labelling
           </Button>
         </ModalFooter>
       </ModalContent>

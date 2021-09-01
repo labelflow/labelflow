@@ -23,6 +23,6 @@ describe("Displays website on first user visit", () => {
     cy.setCookie("hasUserTriedApp", "false");
     cy.visit(`/?modal-update-service-worker=update`);
     cy.url().should("match", /\/website/);
-    cy.get("body").contains("Labelflow, All rights reserved").should("exist");
+    cy.get("body").contains("LabelFlow, All rights reserved").should("exist");
   });
 });

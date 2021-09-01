@@ -39,7 +39,7 @@ const MobileNavContext = (props: FlexProps) => {
         <Spacer />
         <IconButton
           aria-label="See code on github"
-          href="https://github.com/Labelflow/labelflow"
+          href="https://github.com/labelflow/labelflow"
           as="a"
           target="blank"
           variant="link"
@@ -120,7 +120,7 @@ const DesktopNavContent = (props: FlexProps) => {
         </Box> */}
         <IconButton
           aria-label="See code on github"
-          href="https://github.com/Labelflow/labelflow"
+          href="https://github.com/labelflow/labelflow"
           as="a"
           target="blank"
           variant="link"

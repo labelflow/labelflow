@@ -6,7 +6,7 @@ import { EmptyStateNoConnection } from "../components/empty-state";
 const OfflinePage = () => {
   return (
     <>
-      <Meta title="Labelflow | Offline" />
+      <Meta title="LabelFlow | Offline" />
       <Layout>
         <Center h="full">
           <Box as="section">
@@ -20,7 +20,7 @@ const OfflinePage = () => {
               <EmptyStateNoConnection w="full" />
               <Heading as="h2">You are currently offline.</Heading>
               <Text mt="4" fontSize="lg">
-                Labelflow should be usable online, but it looks like it
+                LabelFlow should be usable online, but it looks like it
                 isn&apos;t!
               </Text>
               <Button
@@ -30,7 +30,7 @@ const OfflinePage = () => {
                 as="a"
                 target="_blank"
                 rel="noreferrer"
-                href="https://github.com/Labelflow/labelflow/issues"
+                href="https://github.com/labelflow/labelflow/issues"
               >
                 Report this issue
               </Button>

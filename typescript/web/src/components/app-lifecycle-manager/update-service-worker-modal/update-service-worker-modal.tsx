@@ -35,7 +35,7 @@ export const UpdateServiceWorkerModal = ({
           </AlertDialogHeader>
 
           <AlertDialogBody>
-            A newer version of Labelflow is available, would you like to update
+            A newer version of LabelFlow is available, would you like to update
             and reload the page?
           </AlertDialogBody>
 

@@ -83,7 +83,7 @@ const DatasetPage = () => {
   return (
     <>
       <AppLifecycleManager />
-      <Meta title="Labelflow | Datasets" />
+      <Meta title="LabelFlow | Datasets" />
       <Layout
         topBarLeftContent={
           <Breadcrumb

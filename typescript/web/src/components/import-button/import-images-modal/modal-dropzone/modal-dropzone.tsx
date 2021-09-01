@@ -162,7 +162,7 @@ export const ImportImagesModalDropzone = ({
 
                 if (browser?.name === "safari") {
                   // This special case is needed for Safari
-                  // See https://github.com/Labelflow/labelflow/issues/228
+                  // See https://github.com/labelflow/labelflow/issues/228
                   // See https://stackoverflow.com/questions/63144979/fetch-event-listener-not-triggering-in-service-worker-for-file-upload-via-mult
                   const url = await encodeFileToDataUrl(acceptedFile.file);
 

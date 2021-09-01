@@ -1,4 +1,4 @@
-# Labelflow web
+# LabelFlow web
 
 ## Installation
 
