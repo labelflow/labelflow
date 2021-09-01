@@ -5,7 +5,7 @@ import { theme } from "../theme";
 class MyDocument extends Document {
   render() {
     return (
-      <Html>
+      <Html lang="en">
         <Head>
           <meta name="application-name" content="LabelFlow" />
           <meta name="apple-mobile-web-app-capable" content="yes" />
