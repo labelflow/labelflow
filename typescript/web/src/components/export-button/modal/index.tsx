@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction, useState, useCallback } from "react";
 import {
-  HStack,
+  Stack,
   Heading,
   Modal,
   ModalBody,
@@ -189,7 +189,7 @@ export const ExportModal = ({
       >
         <ModalOverlay />
         <ModalContent height="auto">
-          <ModalHeader textAlign="center" padding="6">
+          <ModalHeader textAlign="center" p={{ base: "4", md: "6" }}>
             <Heading as="h2" size="lg" pb="2">
               Export Labels
             </Heading>
@@ -210,19 +210,14 @@ export const ExportModal = ({
 
           <ModalBody
             display="flex"
-            pt="0"
-            pb="6"
-            pr="6"
-            pl="6"
+            p={{ base: "4", md: "6" }}
             flexDirection="column"
           >
-            <HStack
+            <Stack
+              direction={{ base: "column", md: "row" }}
               spacing="4"
               justifyContent="center"
-              pt="14"
-              pb="10"
-              pl="8"
-              pr="8"
+              p={{ base: "2", md: "8" }}
               flexWrap="wrap"
             >
               <ExportFormatCard
@@ -243,7 +238,7 @@ export const ExportModal = ({
                 title="Export to TensorFlow (soon)"
                 subtext="TF Object Detection file in its human readable format"
               />
-            </HStack>
+            </Stack>
           </ModalBody>
           <ModalCloseButton />
         </ModalContent>
