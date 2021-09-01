@@ -88,7 +88,6 @@ export const ExportFormatCard = ({
             }
             fontWeight="semibold"
             lineHeight="short"
-            // whiteSpace="nowrap"
           >
             {title}
           </Text>
