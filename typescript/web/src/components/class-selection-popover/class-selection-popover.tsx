@@ -178,6 +178,7 @@ export const ClassSelectionPopover = ({
     {},
     [activateShortcuts]
   );
+  const closeCircleIconColor = mode("gray.300", "gray.500");
   return (
     <Popover
       isOpen={isOpen}
@@ -231,7 +232,7 @@ export const ClassSelectionPopover = ({
                         fontSize="2xl"
                         onClick={reset}
                         cursor="pointer"
-                        color={mode("gray.300", "gray.500")}
+                        color={closeCircleIconColor}
                       />
                       <Kbd fontSize="md">↩</Kbd>
                     </>
