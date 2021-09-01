@@ -49,8 +49,11 @@ export const ExportButton = ({ ...props }: Props) => {
     </Tooltip>
   );
 
-  const button =
-    useBreakpointValue({ base: smallButton, lg: largeButton }) ?? largeButton;
+  const button = useBreakpointValue({
+    base: null,
+    md: smallButton,
+    lg: largeButton,
+  });
 
   return (
     <>

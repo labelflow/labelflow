@@ -16,7 +16,7 @@ export const App = () => {
           aria-label="Main navigation"
           maxW="7xl"
           mx="auto"
-          px={{ base: "6", md: "8" }}
+          px={{ base: "4", md: "8" }}
         >
           <NavContent.Mobile display={{ base: "flex", lg: "none" }} />
           <NavContent.Desktop display={{ base: "none", lg: "flex" }} />
