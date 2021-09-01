@@ -33,7 +33,7 @@ export const Meta = ({
           },
           {
             url: "https://labelflow.ai/static/img/seo-img@5.png",
-            width: 601,
+            width: 600,
             height: 315,
             alt: "Labelflow",
           },
