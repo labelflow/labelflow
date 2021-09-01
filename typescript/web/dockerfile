@@ -1,0 +1,52 @@
+# #############################################################################
+# Install
+FROM node:14.15.4 as dependencies
+WORKDIR /app
+COPY package.json yarn.lock .yarnrc.yml *.patch ./
+COPY .yarn/releases ./.yarn/releases
+COPY .yarn/plugins ./.yarn/plugins
+COPY typescript/common-resolvers/package.json typescript/common-resolvers/*.patch ./typescript/common-resolvers/
+COPY typescript/db/package.json typescript/db/*.patch ./typescript/db/
+COPY typescript/dev-utils/package.json typescript/dev-utils/*.patch ./typescript/dev-utils/
+COPY typescript/graphql-types/package.json typescript/graphql-types/*.patch ./typescript/graphql-types/
+COPY typescript/react-openlayers-fiber/package.json typescript/react-openlayers-fiber/*.patch ./typescript/react-openlayers-fiber/
+COPY typescript/web/package.json typescript/web/*.patch ./typescript/web/
+RUN yarn install --immutable
+
+# #############################################################################
+# Build
+FROM node:14.15.4 as builder
+WORKDIR /app
+COPY . .
+COPY --from=dependencies /app/node_modules ./node_modules
+COPY --from=dependencies /app/typescript/common-resolvers/node_modules ./typescript/common-resolvers/node_modules
+COPY --from=dependencies /app/typescript/db/node_modules ./typescript/db/node_modules
+# COPY --from=dependencies /app/typescript/dev-utils/node_modules ./typescript/dev-utils/node_modules
+# COPY --from=dependencies /app/typescript/graphql-types/node_modules ./typescript/graphql-types/node_modules
+COPY --from=dependencies /app/typescript/react-openlayers-fiber/node_modules ./typescript/react-openlayers-fiber/node_modules
+COPY --from=dependencies /app/typescript/web/node_modules ./typescript/web/node_modules
+WORKDIR /app/typescript/web
+ENV NODE_OPTIONS=--max_old_space_size=4096
+RUN yarn build
+
+# #############################################################################
+# Run
+FROM node:14.15.4 as runner
+WORKDIR /app
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/typescript/common-resolvers/node_modules ./typescript/common-resolvers/node_modules
+COPY --from=builder /app/typescript/db/node_modules ./typescript/db/node_modules
+# # COPY --from=builder /app/typescript/dev-utils/node_modules ./typescript/dev-utils/node_modules
+# # COPY --from=builder /app/typescript/graphql-types/node_modules ./typescript/graphql-types/node_modules
+COPY --from=builder /app/typescript/react-openlayers-fiber/node_modules ./typescript/react-openlayers-fiber/node_modules
+COPY --from=builder /app/typescript/web/node_modules ./typescript/web/node_modules
+
+WORKDIR /app/typescript/web
+
+COPY --from=builder /app/typescript/web/next.config.js ./
+COPY --from=builder /app/typescript/web/public ./public
+COPY --from=builder /app/typescript/web/.next ./.next
+
+ENV NODE_ENV production
+EXPOSE 3000
+CMD ["yarn", "start"]

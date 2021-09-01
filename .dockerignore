@@ -1,0 +1,10 @@
+.git
+.venv
+.yarn/cache
+.yarn/build-state.yml
+.yarn/install-state.gz
+node_modules
+**/node_modules
+strapi/.cache
+storybook-static
+**/.next
