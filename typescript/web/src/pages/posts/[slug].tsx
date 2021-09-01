@@ -8,7 +8,7 @@ import {
   getAllArticlesWithSlug,
   getArticle,
 } from "../../connectors/strapi";
-import { NavContent } from "../../components/website/Navbar/NavContent";
+import { NavBar } from "../../components/website/Navbar/NavBar";
 import { Footer } from "../../components/website/Footer/Footer";
 import { Meta } from "../../components/meta";
 import { ArticlesList } from "../../components/website/Blog/articles-list";
@@ -26,75 +26,55 @@ export default function Posts({
 }) {
   return (
     <Box minH="640px">
-      <Meta />
-
-      <Box
-        as="header"
-        bg={mode("white", "gray.800")}
-        position="relative"
-        zIndex="10"
-      >
+      <Meta title={`LabelFlow | ${article?.title}`} />
+      <NavBar />
+      <PostTitle
+        image={article?.image}
+        title={article?.title}
+        description={article?.description}
+      />
+      <Box as="section" py={{ base: "10", sm: "24" }}>
         <Box
-          as="nav"
-          aria-label="Main navigation"
-          maxW="7xl"
+          maxW={{ base: "xl", md: "3xl" }}
           mx="auto"
           px={{ base: "6", md: "8" }}
+          className="markdown-body"
+          boxSizing="border-box"
         >
-          <NavContent.Mobile display={{ base: "flex", lg: "none" }} />
-          <NavContent.Desktop display={{ base: "none", lg: "flex" }} />
-        </Box>
-        <PostTitle
-          image={article?.image}
-          title={article?.title}
-          description={article?.description}
-        />
-        <Box
-          as="section"
-          //   bg={mode("gray.50", "gray.800")}
-          py={{ base: "10", sm: "24" }}
-        >
-          <Box
-            maxW={{ base: "xl", md: "3xl" }}
-            mx="auto"
-            px={{ base: "6", md: "8" }}
-            className="markdown-body"
-            boxSizing="border-box"
+          <ChakraReactMarkdown
+            // @ts-ignore
+            rehypePlugins={[rehypeRaw]}
+            // @ts-ignore
+            remarkPlugins={[gfm]}
+            sx={{
+              "& a": {
+                color: "brand.600",
+                ":hover": { textDecoration: "underline" },
+              },
+              color: mode("gray.800", "gray.200"),
+              // Youtube player enhancements
+              // For parameters
+              // See https://developers.google.com/youtube/player_parameters
+              "& iframe": {
+                maxWidth: "100%",
+                margin: "auto",
+                marginBottom: "2em",
+                marginTop: "2em",
+              },
+              "& img": {
+                maxWidth: "100%",
+                margin: "auto",
+                marginBottom: "2em",
+                marginTop: "2em",
+              },
+            }}
           >
-            <ChakraReactMarkdown
-              // @ts-ignore
-              rehypePlugins={[rehypeRaw]}
-              // @ts-ignore
-              remarkPlugins={[gfm]}
-              sx={{
-                "& a": {
-                  color: "brand.600",
-                  ":hover": { textDecoration: "underline" },
-                },
-                color: mode("gray.800", "gray.200"),
-                // Youtube player enhancements
-                // For parameters
-                // See https://developers.google.com/youtube/player_parameters
-                "& iframe": {
-                  maxWidth: "100%",
-                  margin: "auto",
-                  marginBottom: "2em",
-                  marginTop: "2em",
-                },
-                "& img": {
-                  maxWidth: "100%",
-                  margin: "auto",
-                  marginBottom: "2em",
-                  marginTop: "2em",
-                },
-              }}
-            >
-              {article?.content}
-            </ChakraReactMarkdown>
-          </Box>
+            {article?.content}
+          </ChakraReactMarkdown>
         </Box>
-        <ArticlesList previewArticles={moreArticles} preview />
       </Box>
+      <ArticlesList previewArticles={moreArticles} preview />
+
       <Footer />
     </Box>
   );
