@@ -6,14 +6,18 @@ import { NavBar } from "../components/website/Navbar/NavBar";
 import { Survey } from "../components/website/Survey/Survey";
 import { Footer } from "../components/website/Footer/Footer";
 import { Meta } from "../components/meta";
+import { AppLifecycleManager } from "../components/app-lifecycle-manager";
 
 export default function ThankYou() {
   return (
-    <Box minH="640px">
+    <>
+      <AppLifecycleManager noModals />
       <Meta title="LabelFlow | Thank you" />
-      <NavBar />
-      <Survey />
-      <Footer />
-    </Box>
+      <Box minH="640px">
+        <NavBar />
+        <Survey />
+        <Footer />
+      </Box>
+    </>
   );
 }

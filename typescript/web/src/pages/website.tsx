@@ -14,6 +14,7 @@ import { Roadmap } from "../components/website/roadmap/roadmap";
 import { Meta } from "../components/meta";
 import { Banner } from "../components/website/banner";
 import { Proof } from "../components/website/proof";
+import { AppLifecycleManager } from "../components/app-lifecycle-manager";
 
 export default function Website({
   previewArticles,
@@ -21,21 +22,24 @@ export default function Website({
   previewArticles: Omit<Article, "content">[];
 }) {
   return (
-    <Box minH="640px">
+    <>
+      <AppLifecycleManager noModals />
       <Meta title="LabelFlow: The open standard platform for image labelling." />
-      <NavBar />
-      <Hero />
-      <Banner />
-      <Features />
-      <Proof />
-      <Why />
-      <LogoGrid />
-      <Roadmap />
-      {/* <Testimonials /> */}
-      <Pricing />
-      <ArticlesList preview previewArticles={previewArticles} />
-      <Footer />
-    </Box>
+      <Box minH="640px">
+        <NavBar />
+        <Hero />
+        <Banner />
+        <Features />
+        <Proof />
+        <Why />
+        <LogoGrid />
+        <Roadmap />
+        {/* <Testimonials /> */}
+        <Pricing />
+        <ArticlesList preview previewArticles={previewArticles} />
+        <Footer />
+      </Box>
+    </>
   );
 }
 

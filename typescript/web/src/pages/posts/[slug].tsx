@@ -14,6 +14,7 @@ import { Meta } from "../../components/meta";
 import { ArticlesList } from "../../components/website/Blog/articles-list";
 import { PostTitle } from "../../components/website/Blog/PostTitle";
 import "github-markdown-css";
+import { AppLifecycleManager } from "../../components/app-lifecycle-manager";
 
 const ChakraReactMarkdown = chakra(ReactMarkdown);
 
@@ -25,58 +26,61 @@ export default function Posts({
   moreArticles: Omit<Article, "content">[];
 }) {
   return (
-    <Box minH="640px">
+    <>
+      <AppLifecycleManager noModals />
       <Meta title={`LabelFlow | ${article?.title}`} />
-      <NavBar />
-      <PostTitle
-        image={article?.image}
-        title={article?.title}
-        description={article?.description}
-      />
-      <Box as="section" py={{ base: "10", sm: "24" }}>
-        <Box
-          maxW={{ base: "xl", md: "3xl" }}
-          mx="auto"
-          px={{ base: "6", md: "8" }}
-          className="markdown-body"
-          boxSizing="border-box"
-        >
-          <ChakraReactMarkdown
-            // @ts-ignore
-            rehypePlugins={[rehypeRaw]}
-            // @ts-ignore
-            remarkPlugins={[gfm]}
-            sx={{
-              "& a": {
-                color: "brand.600",
-                ":hover": { textDecoration: "underline" },
-              },
-              color: mode("gray.800", "gray.200"),
-              // Youtube player enhancements
-              // For parameters
-              // See https://developers.google.com/youtube/player_parameters
-              "& iframe": {
-                maxWidth: "100%",
-                margin: "auto",
-                marginBottom: "2em",
-                marginTop: "2em",
-              },
-              "& img": {
-                maxWidth: "100%",
-                margin: "auto",
-                marginBottom: "2em",
-                marginTop: "2em",
-              },
-            }}
+      <Box minH="640px">
+        <NavBar />
+        <PostTitle
+          image={article?.image}
+          title={article?.title}
+          description={article?.description}
+        />
+        <Box as="section" py={{ base: "10", sm: "24" }}>
+          <Box
+            maxW={{ base: "xl", md: "3xl" }}
+            mx="auto"
+            px={{ base: "6", md: "8" }}
+            className="markdown-body"
+            boxSizing="border-box"
           >
-            {article?.content}
-          </ChakraReactMarkdown>
+            <ChakraReactMarkdown
+              // @ts-ignore
+              rehypePlugins={[rehypeRaw]}
+              // @ts-ignore
+              remarkPlugins={[gfm]}
+              sx={{
+                "& a": {
+                  color: "brand.600",
+                  ":hover": { textDecoration: "underline" },
+                },
+                color: mode("gray.800", "gray.200"),
+                // Youtube player enhancements
+                // For parameters
+                // See https://developers.google.com/youtube/player_parameters
+                "& iframe": {
+                  maxWidth: "100%",
+                  margin: "auto",
+                  marginBottom: "2em",
+                  marginTop: "2em",
+                },
+                "& img": {
+                  maxWidth: "100%",
+                  margin: "auto",
+                  marginBottom: "2em",
+                  marginTop: "2em",
+                },
+              }}
+            >
+              {article?.content}
+            </ChakraReactMarkdown>
+          </Box>
         </Box>
-      </Box>
-      <ArticlesList previewArticles={moreArticles} preview />
+        <ArticlesList previewArticles={moreArticles} preview />
 
-      <Footer />
-    </Box>
+        <Footer />
+      </Box>
+    </>
   );
 }
 

@@ -7,16 +7,20 @@ import { NavBar } from "../components/website/Navbar/NavBar";
 import { Footer } from "../components/website/Footer/Footer";
 // import { PricingTable } from "../components/website/Pricing/PricingTable";
 import { Meta } from "../components/meta";
+import { AppLifecycleManager } from "../components/app-lifecycle-manager";
 
 export default function Pricing() {
   return (
-    <Box minH="640px">
+    <>
+      <AppLifecycleManager noModals />
       <Meta title="LabelFlow | Pricing" />
-      <NavBar />
-      {/* <Hero /> */}
-      {/* <PricingTable /> */}
-      <Footer />
-    </Box>
+      <Box minH="640px">
+        <NavBar />
+        {/* <Hero /> */}
+        {/* <PricingTable /> */}
+        <Footer />
+      </Box>
+    </>
   );
 }
 

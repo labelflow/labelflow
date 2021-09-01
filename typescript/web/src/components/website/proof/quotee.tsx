@@ -13,6 +13,7 @@ export const Quotee = (props: Props) => {
     <Box {...boxProps}>
       <Img
         src={imageSrc}
+        alt={name}
         mx="auto"
         objectFit="cover"
         w="16"

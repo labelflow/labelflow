@@ -67,7 +67,6 @@ export const Meta = ({
       <link rel="manifest" href="/static/site.webmanifest" />
       <meta name="msapplication-TileColor" content="#03C3BF" />
       <meta name="theme-color" content="#03C3BF" />
-      {canonical && <link rel="canonical" href={`${canonical}`} />}
     </Head>
   </>
 );

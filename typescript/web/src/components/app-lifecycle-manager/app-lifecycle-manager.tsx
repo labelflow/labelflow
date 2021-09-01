@@ -11,7 +11,11 @@ declare global {
   }
 }
 
-export const AppLifecycleManager = () => {
+export const AppLifecycleManager = ({
+  noModals = false,
+}: {
+  noModals?: boolean; // Should be true for website and pages where you dont want service worker related modals to appear
+}) => {
   // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
   // This param can have several values:
   //   - undefined: Normal behavior, only show the update modal when needed
@@ -69,6 +73,34 @@ export const AppLifecycleManager = () => {
     if (typeof window === "undefined") {
       return;
     }
+
+    if (noModals) {
+      // Don't show any modals but register and update service worker automatically
+      // Good for website pages
+      try {
+        const wb = window.workbox;
+
+        const updateServiceWorkerWhenWaiting = () => {
+          updateServiceWorker();
+          wb.removeEventListener("waiting", updateServiceWorkerWhenWaiting);
+        };
+
+        wb.addEventListener("waiting", updateServiceWorkerWhenWaiting);
+
+        // never forget to call register as auto register is turned off in next.config.js
+        wb.register();
+
+        // eslint-disable-next-line consistent-return
+        return () => {
+          wb.removeEventListener("waiting", updateServiceWorkerWhenWaiting);
+        };
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.warn("This browser does not support service worker");
+      }
+    }
+
+    // If !noModals then we show the full service worker modals
     try {
       const wb = window.workbox;
 
@@ -110,8 +142,11 @@ export const AppLifecycleManager = () => {
     } catch (error) {
       handleError(error);
     }
-  }, []);
+  }, [noModals]);
 
+  if (noModals) {
+    return null;
+  }
   return (
     <>
       <WelcomeModal />
