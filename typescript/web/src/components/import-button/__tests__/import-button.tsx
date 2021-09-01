@@ -11,6 +11,9 @@ import {
   mockUseQueryParams,
   mockNextRouter,
 } from "../../../utils/router-mocks";
+import { mockMatchMedia } from "../../../utils/mock-window";
+
+mockMatchMedia(jest);
 
 mockUseQueryParams();
 mockNextRouter({ query: { datasetSlug: "mocked-dataset" } });

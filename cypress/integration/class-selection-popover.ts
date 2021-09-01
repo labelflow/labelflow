@@ -182,7 +182,7 @@ describe("Class selection popover", () => {
       .closest('[role="option"]')
       .should("have.attr", "aria-current", "true");
 
-    cy.get("main").click(350, 50);
+    cy.get("main").click(350, 100);
     cy.get('[aria-label="Redo tool"]').click();
     cy.get("main").rightclick(500, 150);
     cy.get('[aria-label="Class selection popover"]')

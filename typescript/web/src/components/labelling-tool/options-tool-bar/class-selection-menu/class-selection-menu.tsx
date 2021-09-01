@@ -4,7 +4,9 @@ import {
   Text,
   Flex,
   Button,
+  IconButton,
   chakra,
+  useBreakpointValue,
   useColorModeValue as mode,
 } from "@chakra-ui/react";
 import { HiSelector } from "react-icons/hi";
@@ -25,7 +27,7 @@ const ClassSelectionButton = React.forwardRef<
     toggle: () => void;
   }
 >(({ selectedLabelClass, toggle }, ref) => {
-  return (
+  const largeButton = (
     <Button
       rightIcon={<SelectorIcon fontSize="md" />}
       minW="60"
@@ -47,11 +49,36 @@ const ClassSelectionButton = React.forwardRef<
             fontSize="2xl"
             mr="2"
           />
-          <Text>{selectedLabelClass?.name ?? "None"}</Text>
+          <Text display={{ base: "none", md: "block" }}>
+            {selectedLabelClass?.name ?? "None"}
+          </Text>
         </Flex>
       </Tooltip>
     </Button>
   );
+
+  const smallButton = (
+    <IconButton
+      icon={
+        <CircleIcon
+          color={selectedLabelClass?.color ?? "gray.300"}
+          fontSize="2xl"
+        />
+      }
+      ref={ref}
+      onClick={toggle}
+      bg={mode("white", "gray.800")}
+      pointerEvents="initial"
+      aria-label="Open class selection popover"
+    />
+  );
+
+  const result =
+    useBreakpointValue({
+      base: smallButton,
+      md: largeButton,
+    }) ?? largeButton;
+  return result;
 });
 
 export const ClassSelectionMenu = ({

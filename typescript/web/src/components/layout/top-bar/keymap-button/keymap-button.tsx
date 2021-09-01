@@ -13,6 +13,7 @@ export const KeymapButton = ({ ...props }: Props) => {
   return (
     <Tooltip label="Keyboard shortcuts" openDelay={300}>
       <IconButton
+        display={{ base: "none", lg: "flex" }}
         aria-label="Keyboard shortcuts"
         icon={<KeymapIcon fontSize="xl" />}
         onClick={() => setIsOpen(true, "replaceIn")}
