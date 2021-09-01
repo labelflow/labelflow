@@ -1,6 +1,11 @@
+/* eslint-disable import/first */
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom/extend-expect";
+import { mockMatchMedia } from "../../../../../utils/mock-window";
+
+mockMatchMedia(jest);
+
 import { ClassSelectionMenu, LabelClassItem } from "../class-selection-menu";
 
 const labelClasses = [
