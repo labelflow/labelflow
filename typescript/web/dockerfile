@@ -1,4 +1,11 @@
 # #############################################################################
+# This docker file should be built from the monorepo root directory.
+# Your docker machine must have at least 4GB RAM. 
+# The default on Mac is 2GB so this needs to be increased in docker settings.
+#
+#   docker build --file=typescript/web/dockerfile .
+#
+# #############################################################################
 # Install
 FROM node:14.15.4 as dependencies
 WORKDIR /app
@@ -12,7 +19,7 @@ COPY typescript/graphql-types/package.json typescript/graphql-types/*.patch ./ty
 COPY typescript/react-openlayers-fiber/package.json typescript/react-openlayers-fiber/*.patch ./typescript/react-openlayers-fiber/
 COPY typescript/web/package.json typescript/web/*.patch ./typescript/web/
 RUN yarn install --immutable
-
+#
 # #############################################################################
 # Build
 FROM node:14.15.4 as builder
@@ -28,7 +35,7 @@ COPY --from=dependencies /app/typescript/web/node_modules ./typescript/web/node_
 WORKDIR /app/typescript/web
 ENV NODE_OPTIONS=--max_old_space_size=4096
 RUN yarn build
-
+#
 # #############################################################################
 # Run
 FROM node:14.15.4 as runner
@@ -40,13 +47,10 @@ COPY --from=builder /app/typescript/db/node_modules ./typescript/db/node_modules
 # # COPY --from=builder /app/typescript/graphql-types/node_modules ./typescript/graphql-types/node_modules
 COPY --from=builder /app/typescript/react-openlayers-fiber/node_modules ./typescript/react-openlayers-fiber/node_modules
 COPY --from=builder /app/typescript/web/node_modules ./typescript/web/node_modules
-
 WORKDIR /app/typescript/web
-
 COPY --from=builder /app/typescript/web/next.config.js ./
 COPY --from=builder /app/typescript/web/public ./public
 COPY --from=builder /app/typescript/web/.next ./.next
-
 ENV NODE_ENV production
 EXPOSE 3000
 CMD ["yarn", "start"]
