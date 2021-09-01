@@ -5,7 +5,7 @@ import {
   ModalFooter,
   VStack,
   Box,
-  HStack,
+  Stack,
   Button,
   Heading,
   Center,
@@ -48,10 +48,10 @@ export const Welcome = ({ onClickSkip, onClickNext }: Props) => {
   }, [isCountDownStarted, timeLeft]);
 
   return (
-    <ModalContent margin="3.75rem">
-      <ModalHeader textAlign="center" padding="8">
+    <ModalContent margin={{ base: "4", md: "3.75rem" }}>
+      <ModalHeader textAlign="center" padding={{ base: "4", md: "8" }}>
         <Center flexDirection="column">
-          <Logo maxW="lg" mt="8" mb="8" h="min-content" />
+          <Logo maxW="lg" my={{ base: "2", md: "8" }} h="min-content" />
         </Center>
       </ModalHeader>
 
@@ -61,7 +61,7 @@ export const Welcome = ({ onClickSkip, onClickNext }: Props) => {
           spacing="8"
           h="full"
           mt="0"
-          mb="8"
+          mb={{ base: "4", md: "8" }}
         >
           <Heading
             as="h1"
@@ -96,12 +96,12 @@ export const Welcome = ({ onClickSkip, onClickNext }: Props) => {
       </ModalBody>
 
       <ModalFooter>
-        <HStack
+        <Stack
           direction={{ base: "column", md: "row" }}
           justifyContent="center"
           width="full"
           spacing="4"
-          mb="10"
+          mb={{ base: "0", md: "10" }}
         >
           <Button
             size="lg"
@@ -139,7 +139,7 @@ export const Welcome = ({ onClickSkip, onClickNext }: Props) => {
               background="#ffffff88"
             />
           </Button>
-        </HStack>
+        </Stack>
       </ModalFooter>
     </ModalContent>
   );
