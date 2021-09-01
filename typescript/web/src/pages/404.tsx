@@ -8,7 +8,7 @@ import { EmptyStateNoSearchResult } from "../components/empty-state";
 const Error404Page = () => {
   return (
     <>
-      <Meta title="Labelflow | Page not found" />
+      <Meta title="LabelFlow | Page not found" />
 
       <Layout>
         <Center h="full">
@@ -44,7 +44,7 @@ const Error404Page = () => {
                     as="a"
                     cursor="pointer"
                   >
-                    Go back to Labelflow home page
+                    Go back to LabelFlow home page
                   </Button>
                 </NextLink>
               </HStack>

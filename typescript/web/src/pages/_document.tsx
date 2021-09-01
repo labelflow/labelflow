@@ -7,16 +7,16 @@ class MyDocument extends Document {
     return (
       <Html>
         <Head>
-          <meta name="application-name" content="Labelflow" />
+          <meta name="application-name" content="LabelFlow" />
           <meta name="apple-mobile-web-app-capable" content="yes" />
           <meta
             name="apple-mobile-web-app-status-bar-style"
             content="default"
           />
-          <meta name="apple-mobile-web-app-title" content="Labelflow" />
+          <meta name="apple-mobile-web-app-title" content="LabelFlow" />
           <meta
             name="description"
-            content="The open platform for image labeling."
+            content="The open platform for image labelling."
           />
           <meta name="format-detection" content="telephone=no" />
           <meta name="mobile-web-app-capable" content="yes" />

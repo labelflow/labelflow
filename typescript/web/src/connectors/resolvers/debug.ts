@@ -14,7 +14,7 @@ const debug = async (): Promise<any> => {
   const { WB_MANIFEST } = self ?? {};
 
   return {
-    serverType: "Standard Labelflow Service Worker Server",
+    serverType: "Standard LabelFlow Service Worker Server",
     isInWindowScope,
     isInServiceWorkerScope,
     isDevelopmentEnvironment,

@@ -49,7 +49,7 @@ export const Features = () => {
         </SimpleGrid>
         <SimpleGrid columns={{ base: 1, md: 3 }} mt="16" spacing="8">
           <Feature icon={BsFillLightningFill} title="Blazing Fast">
-            Labelflow is designed for optimum productivity. Keyboard shortcuts,
+            LabelFlow is designed for optimum productivity. Keyboard shortcuts,
             interface layout, collaboration, everything is designed with users,
             for users.
           </Feature>
@@ -57,12 +57,12 @@ export const Features = () => {
             icon={BsFillShieldLockFill}
             title="Own your data and algorithms"
           >
-            Labelflow does not try to own your data or algorithms, but
+            LabelFlow does not try to own your data or algorithms, but
             integrates with them seamlessly. No duplicate source of truth and
             complicated scripts to synchronize your data between various tools.
           </Feature>
           <Feature icon={BsHeartFill} title="Open community and standard">
-            Labelflow is building a community around an open labeling tool
+            LabelFlow is building a community around an open labelling tool
             (under Business Source Licence) to set the standard around visual
             data management. Dataset curation should not require any
             &ldquo;secret sauce&rdquo;.

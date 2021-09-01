@@ -65,7 +65,7 @@ export const Loading = () => {
             fontWeight="medium"
             textAlign="justify"
           >
-            Labelflow runs completely offline, allowing you to have a lightning
+            LabelFlow runs completely offline, allowing you to have a lightning
             fast labelling tool even without internet connection, and
             guaranteeing we don&apos;t use your data.
           </Text>
@@ -83,7 +83,7 @@ export const Loading = () => {
             ref={startLabellingButtonRef as any}
             as="a"
             leftIcon={<GithubIcon fontSize="xl" />}
-            href="https://github.com/Labelflow/labelflow"
+            href="https://github.com/labelflow/labelflow"
             target="blank"
             size="lg"
             minW="210px"

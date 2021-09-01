@@ -113,7 +113,7 @@ const ImagePage = () => {
   return (
     <>
       <AppLifecycleManager />
-      <Meta title={`Labelflow | Image ${imageName ?? ""}`} />
+      <Meta title={`LabelFlow | Image ${imageName ?? ""}`} />
       <Layout
         topBarLeftContent={
           <Breadcrumb

@@ -211,7 +211,7 @@ export const DeleteLabelButton = () => {
 
   return (
     <Tooltip
-      label={`Selection tool [${keymap.deleteLabel.key}]`}
+      label={`Delete selected label [${keymap.deleteLabel.key}]`}
       placement="bottom"
       openDelay={300}
     >

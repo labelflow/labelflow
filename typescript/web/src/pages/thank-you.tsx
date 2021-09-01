@@ -10,7 +10,7 @@ import { Meta } from "../components/meta";
 export default function ThankYou() {
   return (
     <Box minH="640px">
-      <Meta title="Labelflow - Thank you" />
+      <Meta title="LabelFlow - Thank you" />
 
       <Box
         as="header"

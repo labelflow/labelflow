@@ -68,7 +68,7 @@ export default function Pricing() {
               </Link>
               , <b>an AI-powered cloud platform to support energy companies </b>
               managing their critical assets: wind turbines, transmission &
-              distribution grids, cooling towers. Machine learning was a huge
+              distribution grids and cooling towers. Machine learning was a huge
               part of our product.
               <br />
               <br />
@@ -107,7 +107,7 @@ export default function Pricing() {
               With{" "}
               <b>
                 <Link color="brand.500" href="https://labelflow.ai/website">
-                  Labelflow
+                  LabelFlow
                 </Link>
                 , we now want to support every AI-applied company in the world
                 to build the next big thing
@@ -126,7 +126,7 @@ export default function Pricing() {
     </Box>
 
     // <Box minH="640px">
-    //   <Meta title="Labelflow - Pricing" />
+    //   <Meta title="LabelFlow - Pricing" />
 
     //   <Box
     //     as="header"

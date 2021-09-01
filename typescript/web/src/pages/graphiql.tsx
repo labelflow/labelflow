@@ -29,7 +29,7 @@ const GraphqlPlayground = () => {
   return (
     <>
       <AppLifecycleManager />
-      <Meta title="Labelflow | GraphiQL" />
+      <Meta title="LabelFlow | GraphiQL" />
       <Layout
         topBarLeftContent={
           <Breadcrumb
