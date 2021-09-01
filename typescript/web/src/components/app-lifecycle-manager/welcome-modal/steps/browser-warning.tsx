@@ -71,7 +71,7 @@ export const BrowserWarning = ({ onClickTryAnyway }: Props) => {
             textAlign="justify"
           >
             It seems like you are using an unsupported browser. For technical
-            reasons, Labelflow recommends to use the latest version of{" "}
+            reasons, LabelFlow recommends to use the latest version of{" "}
             <Link
               href="https://www.mozilla.org/firefox/new"
               color="brand.600"

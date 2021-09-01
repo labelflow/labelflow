@@ -12,7 +12,7 @@ export const Proof = () => (
           fontSize={{ base: "3xl", md: "6xl" }}
         />
         <Text fontSize={{ base: "xl", md: "2xl" }} fontWeight="medium" mt="6">
-          &ldquo; Labelflow works at scale! Its technology was used by Sterblue
+          &ldquo; LabelFlow works at scale! Its technology was used by Sterblue
           to label 1.5 million images for hundreds of customers accross the
           energy industry. &rdquo;
         </Text>

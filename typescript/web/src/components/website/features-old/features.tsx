@@ -32,7 +32,7 @@ export const Features = () => (
         letterSpacing="tight"
         fontWeight="extrabold"
       >
-        The fastest labeling interface on the internet
+        The fastest labelling interface on the internet
       </Heading>
       <Text align="center" textAlign="center" maxW="lg" mx="auto" mt="12">
         No cruft, no time lost, only fun. We focus on performance and user
@@ -48,24 +48,24 @@ export const Features = () => (
         spacingY={{ base: "8", md: "14" }}
       >
         <Feature title="Productive" icon={<FcPositiveDynamic />}>
-          Labelflow is designed for optimum productivity. Keyboard shortcuts,
+          LabelFlow is designed for optimum productivity. Keyboard shortcuts,
           interface layout, collaborative workflows, everything is designed with
           users, for users.
         </Feature>
         <Feature title="Blazing fast" icon={<FcFlashOn />}>
-          You can&apos;t be productive with a slow tool. This is why Labelflow
+          You can&apos;t be productive with a slow tool. This is why LabelFlow
           has been built with performance in mind from the beginning. The
           interface is fast and you can see it.
         </Feature>
         <Feature title="Collaborative precision" icon={<FcGraduationCap />}>
-          Labelflow brings your dataset quality to new levels, thanks to
+          LabelFlow brings your dataset quality to new levels, thanks to
           collaborative quality check workflows, data exploration tools, and
           bringing your AI in the loop to identify potential issues and help
           curate your datasets.
           {/* Powerful data exploration Streamlined collaboration and quality
           management Curate a dataset of your dataset’s images and review the
           quality of your annotations to create top-performing training models.
-          Find and correct errors in your ground truth data with Labelflow's
+          Find and correct errors in your ground truth data with LabelFlow's
           manual and AI-powered Error Finder features. Hasty's Error Finder
           takes you to the most likely issues in your training data, eliminating
           the hours needed to color match annotations or search for artifacts. */}
@@ -73,7 +73,7 @@ export const Features = () => (
         <Feature title="Easy workflow management" icon={<FcFlowChart />}>
           With easy-to-use workflow management tools and insightful data
           dashboards to help you manage your data pipeline and your teams,
-          Labelflow ensures you always have a clear and simple view of your data
+          LabelFlow ensures you always have a clear and simple view of your data
           and processes.
           {/* No-code automation Seamless pipeline integration. Work smarter, not
           harder. Integrate your computer vision pipeline using Python SDKs to
@@ -85,14 +85,14 @@ export const Features = () => (
         <Feature title="Open community and standard" icon={<FcLike />}>
           Our mission is to generalize standard good practices around visual
           data management. Dataset curation should not require any &quot;secret
-          sauce&quot;. Labelflow is building a community around an open source
-          labeling tool to set the standard.
+          sauce&quot;. LabelFlow is building a community around an open source
+          labelling tool to set the standard.
         </Feature>
         <Feature title="Own your data and algorithms" icon={<FcKey />}>
-          Labelflow does not try to own your data or algorithms, but integrates
+          LabelFlow does not try to own your data or algorithms, but integrates
           with them seamlessly. No duplicate source of truth and complicated
           scripts to synchronize your data between various tools. Your database
-          is the source of truth for Labelflow.
+          is the source of truth for LabelFlow.
         </Feature>
 
         {/* <Feature title="Built by the ecosystem" icon={<FcGlobe />}>

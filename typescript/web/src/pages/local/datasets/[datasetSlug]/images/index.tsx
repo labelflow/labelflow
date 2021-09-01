@@ -80,7 +80,7 @@ const ImagesPage = () => {
   return (
     <>
       <AppLifecycleManager />
-      <Meta title="Labelflow | Images" />
+      <Meta title="LabelFlow | Images" />
       <Layout
         topBarLeftContent={
           <Breadcrumb

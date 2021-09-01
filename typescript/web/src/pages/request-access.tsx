@@ -10,7 +10,7 @@ import { Meta } from "../components/meta";
 export default function RequestAccessPage() {
   return (
     <Box minH="640px">
-      <Meta title="Labelflow - Request Access" />
+      <Meta title="LabelFlow - Request Access" />
 
       <Box
         as="header"

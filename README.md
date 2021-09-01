@@ -1,14 +1,14 @@
-# labelflow
+# LabelFlow
 
-Labelflow is an open-source image labelling tool.
+LabelFlow is an open-source image labelling tool.
 
 If you want to try the deployed version, you can visit [labeflow.ai](https://labelflow.ai).
 
 You can also build the web application from its source, and serve it from your machine.
 
-## Serving your own Labelflow
+## Serving your own LabelFlow
 
-This guide walks you through the steps needed to run a production-ready version of labelflow locally.
+This guide walks you through the steps needed to run a production-ready version of LabelFlow locally.
 
 Before continuing, please have a look at our <a href="./LICENSE">License</a> ⬅️.
 
@@ -17,7 +17,7 @@ Before continuing, please have a look at our <a href="./LICENSE">License</a> ⬅
 1. Clone the repository on your machine using  
 
    ```shell
-   git clone https://github.com/Labelflow/labelflow.git
+   git clone https://github.com/labelflow/labelflow.git
    ```
 
 2. Go into the labelflow folder

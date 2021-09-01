@@ -11,7 +11,7 @@ import { Meta } from "../components/meta";
 export default function Pricing() {
   return (
     <Box minH="640px">
-      <Meta title="Labelflow - Pricing" />
+      <Meta title="LabelFlow - Pricing" />
 
       <Box
         as="header"
