@@ -16,7 +16,7 @@ class MyDocument extends Document {
           <meta name="apple-mobile-web-app-title" content="Labelflow" />
           <meta
             name="description"
-            content="The open source image labelling and dataset cleaning platform."
+            content="The open platform for image labeling."
           />
           <meta name="format-detection" content="telephone=no" />
           <meta name="mobile-web-app-capable" content="yes" />
