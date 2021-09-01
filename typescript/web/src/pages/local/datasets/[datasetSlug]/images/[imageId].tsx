@@ -5,6 +5,7 @@ import {
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbLink,
+  useColorModeValue as mode,
   Skeleton,
   Center,
   Spinner,
@@ -101,7 +102,12 @@ const ImagePage = () => {
     if (errorImage && !errorImage.message.match(/No image with id/)) {
       handleError(errorImage);
     }
-    return <Error404Page />;
+    return (
+      <>
+        <AppLifecycleManager />
+        <Error404Page />
+      </>
+    );
   }
 
   return (
@@ -155,7 +161,7 @@ const ImagePage = () => {
           <Box flex="1">
             <LabellingTool />
           </Box>
-          <Box bg="white" overflow="hidden">
+          <Box bg={mode("white", "gray.800")} overflow="hidden">
             <Gallery />
           </Box>
         </Flex>

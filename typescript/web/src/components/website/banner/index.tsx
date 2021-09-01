@@ -1,4 +1,11 @@
-import { Box, Button, Heading, Text, useTheme } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Heading,
+  LightMode,
+  Text,
+  useTheme,
+} from "@chakra-ui/react";
 import * as React from "react";
 
 export const Banner = () => {
@@ -26,10 +33,12 @@ export const Banner = () => {
             size="3xl"
             fontWeight="extrabold"
             letterSpacing="tight"
+            color="gray.800"
           >
             Webinar - Get an AI model ready in no time
           </Heading>
-          <Text mt="4" fontSize="lg">
+
+          <Text mt="4" fontSize="lg" color="gray.800">
             From image labelling to automatic inference, discover how to build a
             proof of concept model for your custom use case in no time. We will
             go through a real life use case: equipment inventory on the
@@ -38,18 +47,21 @@ export const Banner = () => {
             <br />
             <b> Sept 28th - 4.30pm CET Time - Duration: 45min</b>
           </Text>
-          <Button
-            mt="8"
-            as="a"
-            href="https://app.livestorm.co/labelflow/get-an-ai-model-ready-in-no-time
+
+          <LightMode>
+            <Button
+              mt="8"
+              as="a"
+              href="https://app.livestorm.co/labelflow/get-an-ai-model-ready-in-no-time
             "
-            target="blank"
-            size="lg"
-            colorScheme="brand"
-            fontWeight="bold"
-          >
-            Register now
-          </Button>
+              target="blank"
+              size="lg"
+              colorScheme="brand"
+              fontWeight="bold"
+            >
+              Register now
+            </Button>
+          </LightMode>
         </Box>
       </Box>
     </Box>

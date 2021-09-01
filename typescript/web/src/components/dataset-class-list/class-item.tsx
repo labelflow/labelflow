@@ -4,6 +4,7 @@ import {
   Kbd,
   Text,
   IconButton,
+  useColorModeValue as mode,
   Flex,
   chakra,
   Input,
@@ -11,20 +12,20 @@ import {
 } from "@chakra-ui/react";
 import {
   RiCheckboxBlankCircleFill,
-  RiPencilFill,
+  RiPencilLine,
   RiCheckFill,
   RiCloseFill,
-  RiDeleteBin5Fill,
+  RiDeleteBin5Line,
 } from "react-icons/ri";
 import { Draggable } from "react-beautiful-dnd";
-import { GrDrag } from "react-icons/gr";
+import { VscGripper } from "react-icons/vsc";
 
 const CircleIcon = chakra(RiCheckboxBlankCircleFill);
-const PenIcon = chakra(RiPencilFill);
+const PenIcon = chakra(RiPencilLine);
 const CheckIcon = chakra(RiCheckFill);
 const CloseIcon = chakra(RiCloseFill);
-const DeleteIcon = chakra(RiDeleteBin5Fill);
-const DragIcon = chakra(GrDrag);
+const DeleteIcon = chakra(RiDeleteBin5Line);
+const DragIcon = chakra(VscGripper);
 
 export type DatasetClassesQueryResult = {
   dataset: {
@@ -155,9 +156,15 @@ export const ClassItem = ({
 
   return (
     <Draggable key={id} draggableId={id} index={index}>
-      {(provided) => (
+      {(provided, snapshot) => (
         <div ref={provided.innerRef} {...provided.draggableProps}>
-          <Flex alignItems="center" height="10">
+          <Flex
+            alignItems="center"
+            height="10"
+            bg={mode("white", "gray.800")}
+            borderRadius="lg"
+            boxShadow={snapshot.isDragging ? "lg" : undefined}
+          >
             <div {...provided.dragHandleProps}>
               <Tooltip
                 placement="bottom"
@@ -170,12 +177,13 @@ export const ClassItem = ({
                   aria-label="Drag"
                   alignItems="center"
                   justifyContent="center"
+                  ml="1"
                   icon={
                     <DragIcon
+                      color={mode("gray.600", "gray.400")}
                       h="5"
                       flexShrink={0}
                       flexGrow={0}
-                      color="gray.600"
                     />
                   }
                   h="8"
@@ -234,10 +242,15 @@ export const ClassItem = ({
                     variant="ghost"
                     aria-label="Cancel"
                     icon={
-                      <CloseIcon flexShrink={0} flexGrow={0} color="gray.600" />
+                      <CloseIcon
+                        flexShrink={0}
+                        flexGrow={0}
+                        color={mode("gray.600", "gray.400")}
+                      />
                     }
                     h="8"
                     w="8"
+                    mr="1"
                     minWidth="8"
                     onClick={() => onClickEdit(null)}
                   />
@@ -252,11 +265,15 @@ export const ClassItem = ({
                     variant="ghost"
                     aria-label="Save"
                     icon={
-                      <CheckIcon flexShrink={0} flexGrow={0} color="gray.600" />
+                      <CheckIcon
+                        flexShrink={0}
+                        flexGrow={0}
+                        color={mode("gray.600", "gray.400")}
+                      />
                     }
                     h="8"
                     w="8"
-                    mr="2"
+                    mr="1"
                     minWidth="8"
                     onClick={updateLabelClassNameWithOptimistic}
                     disabled={editName === ""}
@@ -274,10 +291,15 @@ export const ClassItem = ({
                     variant="ghost"
                     aria-label={`Edit class ${name} name`}
                     icon={
-                      <PenIcon flexShrink={0} flexGrow={0} color="gray.600" />
+                      <PenIcon
+                        flexShrink={0}
+                        flexGrow={0}
+                        color={mode("gray.600", "gray.400")}
+                      />
                     }
                     h="8"
                     w="8"
+                    mr="1"
                     minWidth="8"
                     onClick={() => onClickEdit(id)}
                   />
@@ -294,12 +316,12 @@ export const ClassItem = ({
                       <DeleteIcon
                         flexShrink={0}
                         flexGrow={0}
-                        color="gray.600"
+                        color={mode("gray.600", "gray.400")}
                       />
                     }
                     h="8"
                     w="8"
-                    mr="2"
+                    mr="1"
                     minWidth="8"
                     onClick={() => onClickDelete(id)}
                   />

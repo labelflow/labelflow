@@ -71,6 +71,7 @@ export default function Posts({
                   color: "brand.600",
                   ":hover": { textDecoration: "underline" },
                 },
+                color: mode("gray.800", "gray.200"),
                 // Youtube player enhancements
                 // For parameters
                 // See https://developers.google.com/youtube/player_parameters
