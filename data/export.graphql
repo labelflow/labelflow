@@ -3,15 +3,6 @@ enum ExportFormat{
   COCO
 }
 
-# The following doesn't work with apollo client
-# input ExportOptionsCoco {
-#     exportImages: Boolean
-# }
-# input ExportOptionsYolo {
-#     exportImages: Boolean
-# }
-# union ExportOptions = ExportOptions | ExportOptionsYolo
-
 input ExportOptions {
     name: String
     exportImages: Boolean
