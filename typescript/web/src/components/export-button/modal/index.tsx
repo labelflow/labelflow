@@ -11,27 +11,23 @@ import {
   Text,
   Skeleton,
 } from "@chakra-ui/react";
+import { ExportFormat } from "@labelflow/graphql-types";
 import { useRouter } from "next/router";
 import { useQuery, gql, useApolloClient, ApolloClient } from "@apollo/client";
-import JSZip from "jszip";
-import mime from "mime-types";
 import { ExportFormatCard } from "./export-format-card";
 import { ExportOptionsModal, ExportOptions } from "./export-options-modal";
 
-const getImagesQuery = gql`
-  query getImages($datasetId: ID!) {
-    images(where: { datasetId: $datasetId }) {
-      id
-      name
-      url
-      mimetype
-    }
-  }
-`;
-
-const exportToCocoQuery = gql`
-  query exportToCoco($datasetId: ID!) {
-    exportToCoco(where: { datasetId: $datasetId })
+const exportQuery = gql`
+  query exportDatasetUrl(
+    $datasetId: ID!
+    $format: ExportFormat!
+    $options: ExportOptions
+  ) {
+    exportDataset(
+      where: { datasetId: $datasetId }
+      format: $format
+      options: $options
+    )
   }
 `;
 
@@ -49,27 +45,20 @@ const countLabelsOfDatasetQuery = gql`
   }
 `;
 
-export const exportCocoDataset = async ({
+const exportDataset = async ({
   datasetId,
   setIsExportRunning,
   client,
+  format,
   options,
 }: {
   datasetId: string;
   setIsExportRunning: Dispatch<SetStateAction<boolean>>;
   client: ApolloClient<Object>;
+  format: string;
   options: ExportOptions;
 }) => {
   setIsExportRunning(true);
-  const {
-    data: { exportToCoco },
-  } = await client.query({
-    query: exportToCocoQuery,
-    variables: { datasetId },
-  });
-  if (typeof exportToCoco !== "string") {
-    throw new Error("");
-  }
   const dateObject = new Date();
   const date = `${dateObject
     .toLocaleDateString()
@@ -78,64 +67,24 @@ export const exportCocoDataset = async ({
     .join("-")}T${String(dateObject.getHours()).padStart(2, "0")}${String(
     dateObject.getMinutes()
   ).padStart(2, "0")}${String(dateObject.getSeconds()).padStart(2, "0")}`;
-  const datasetName = `dataset-${date}-Coco`;
-  if (options.exportImages) {
-    const {
-      data: { images },
-    } = await client.query({ query: getImagesQuery, variables: { datasetId } });
-    const zip = new JSZip();
-    zip.file(
-      `${datasetName}/annotations.json`,
-      exportToCoco.substr(exportToCoco.indexOf(",") + 1),
-      {
-        base64: true,
-      }
-    );
-    await Promise.all(
-      images.map(
-        async ({
-          id,
-          name,
-          url,
-          mimetype,
-        }: {
-          id: string;
-          name: string;
-          url: string;
-          mimetype: string;
-        }) => {
-          const dataUrl = await (async (): Promise<string> => {
-            const blob = await fetch(url).then((r) => r.blob());
-            return new Promise((resolve) => {
-              const reader = new FileReader();
-              reader.onload = () => resolve(reader.result as string);
-              reader.readAsDataURL(blob);
-            });
-          })();
-          zip.file(
-            `${datasetName}/images/${name}_${id}.${mime.extension(mimetype)}`,
-            dataUrl.substr(dataUrl.indexOf(",") + 1),
-            {
-              base64: true,
-            }
-          );
-        }
-      )
-    );
-    const blobZip = await zip.generateAsync({ type: "blob" });
-    const url = window.URL.createObjectURL(blobZip);
-    const element = document.createElement("a");
-    element.href = url;
-    element.download = `${datasetName}.zip`;
-    setIsExportRunning(false);
-    element.click();
-  } else {
-    const element = document.createElement("a");
-    element.href = exportToCoco;
-    element.download = `${datasetName}.json`;
-    setIsExportRunning(false);
-    element.click();
-  }
+  const datasetName = `dataset-${date}-coco`;
+  const {
+    data: { exportDataset: exportDatasetUrl },
+  } = await client.query({
+    query: exportQuery,
+    variables: {
+      datasetId,
+      format,
+      options: { ...options, name: datasetName },
+    },
+  });
+  const blobDataset = await (await fetch(exportDatasetUrl)).blob();
+  const url = window.URL.createObjectURL(blobDataset);
+  const element = document.createElement("a");
+  element.href = url;
+  element.download = datasetName;
+  setIsExportRunning(false);
+  element.click();
 };
 
 export const ExportModal = ({
@@ -156,22 +105,17 @@ export const ExportModal = ({
 
   const [isExportRunning, setIsExportRunning] = useState(false);
   const [isOptionsModalOpen, setIsOptionsModalOpen] = useState(false);
-  // const [options, setOptions] = useState<ExportOptions>({
-  //   exportImages: false,
-  // });
-  const [exportFunction, setExportFunction] = useState<
-    (options: ExportOptions) => void
-  >(() => {});
-
-  const handleExportFunction = useCallback(
-    () => (options: ExportOptions) =>
-      exportCocoDataset({
+  const [exportFormat, setExportFormat] = useState("");
+  const exportFunctionGenerator = useCallback(
+    async (options: ExportOptions) =>
+      await exportDataset({
         datasetId,
         setIsExportRunning,
         client,
+        format: exportFormat,
         options,
       }),
-    [datasetId]
+    [datasetId, exportFormat]
   );
 
   if (loading) {
@@ -223,7 +167,7 @@ export const ExportModal = ({
               <ExportFormatCard
                 loading={isExportRunning}
                 onClick={() => {
-                  setExportFunction(handleExportFunction);
+                  setExportFormat(ExportFormat.Coco);
                   setIsOptionsModalOpen(true);
                 }}
                 colorScheme="brand"
@@ -245,10 +189,8 @@ export const ExportModal = ({
       </Modal>
       <ExportOptionsModal
         isOpen={isOptionsModalOpen}
-        exportFunction={exportFunction}
+        exportFunction={exportFunctionGenerator}
         onClose={() => setIsOptionsModalOpen(false)}
-        // options={options}
-        // setOptions={setOptions}
       />
     </>
   );

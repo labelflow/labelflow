@@ -5168,6 +5168,7 @@ __metadata:
     graphql: 15.5.1
     graphql-type-json: 0.3.2
     isomorphic-fetch: 3.0.0
+    jszip: 3.7.1
     lodash: 4.17.21
     mime-types: 2.1.32
     probe-image-size: 7.2.1
@@ -20405,6 +20406,18 @@ fsevents@^1.2.7:
     readable-stream: ~2.3.6
     set-immediate-shim: ~1.0.1
   checksum: 11e40657f5801bffaa5b52ea74ebe177d9ff2afb2af93bf3c28a7abf0a20fdd1c7175719be310d9d5266eb735bfb98b16d2065dffd0533de0d8871f3efad09c6
+  languageName: node
+  linkType: hard
+
+"jszip@npm:3.7.1":
+  version: 3.7.1
+  resolution: "jszip@npm:3.7.1"
+  dependencies:
+    lie: ~3.3.0
+    pako: ~1.0.2
+    readable-stream: ~2.3.6
+    set-immediate-shim: ~1.0.1
+  checksum: e5b3a57ef295ac198fbc4b2021906abdeb0192e07ebf05edad9b4941a31dfa6d4f9e994f354f1c8a4cdf4ed13bfdb28293009355f38acd84c258e374412367b6
   languageName: node
   linkType: hard
 

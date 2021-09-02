@@ -1,7 +1,7 @@
 import mime from "mime-types";
 import { Geometry } from "@turf/helpers";
 import { coordReduce } from "@turf/meta";
-import { DbImage, DbLabelClass } from "../../types";
+import { DbImage, DbLabelClass } from "../../../types";
 
 import {
   CocoCategory,
