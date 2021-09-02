@@ -3,6 +3,10 @@
   "name": "labelflow",
   "version": "0.0.1",
   "repository": "git@github.com:LabelFlow/labelflow.git",
+  "engines": {
+    "node": ">=14.0.0",
+    "yarn": ">=1.0.0"
+  },
   "scripts": {
     "lint": "eslint '{cypress,typescript}/**/*.{ts,tsx}'",
     "lint:all": "eslint '{cypress,typescript}/**/*.{ts,tsx}'",
