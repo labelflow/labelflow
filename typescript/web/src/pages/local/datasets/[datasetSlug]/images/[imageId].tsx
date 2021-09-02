@@ -145,7 +145,11 @@ const ImagePage = () => {
             </BreadcrumbItem>
 
             <BreadcrumbItem isCurrentPage>
-              {<Text>{imageName}</Text> ?? <Skeleton>Image Name</Skeleton>}
+              {imageName ? (
+                <Text>{imageName}</Text>
+              ) : (
+                <Skeleton>Image Name</Skeleton>
+              )}
             </BreadcrumbItem>
           </Breadcrumb>
         }
