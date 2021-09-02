@@ -4,6 +4,9 @@ on:
     branches:
       - main
       - "feature/**"
+  push:
+    branches:
+      - "main"
 jobs:
   install-typescript:
     name: Install Typescript packages
@@ -116,29 +119,6 @@ jobs:
         if: ${{ failure() }}
         run: echo "::error::Codegen diff detected, please commit your schema changes." && exit 1
 
-  chromatic-deployment:
-    name: Storybook deployment
-    runs-on: ubuntu-20.04
-    needs: install-typescript
-    # Job steps
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0 # 👈 Required to retrieve git history
-      - name: Fetch node_modules from cache
-        uses: actions/cache@v2
-        id: node-modules-cache
-        with:
-          path: "**/node_modules"
-          key: ${{ runner.os }}-modules-${{secrets.ACTIONS_CACHE_VERSION}}-${{ hashFiles('yarn.lock') }}
-      - name: Publish to Chromatic
-        uses: chromaui/action@v1
-        # Chromatic GitHub Action options
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          # 👇 Chromatic projectToken, refer to the manage page to obtain it.
-          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
-
   e2e-analysis:
     name: E2E Tests and bundle analysis
     runs-on: ubuntu-20.04
@@ -181,6 +161,30 @@ jobs:
           CI_COMMIT_SHA: ${{ github.event.pull_request.head.sha }}
           CI_BRANCH: ${{ github.ref	}}
           CI_BRANCH_BASE: refs/heads/main
+
+  deployment-chromatic-pr:
+    name: Deploy Storybook PR
+    if: "! contains( github.ref, 'main')"
+    runs-on: ubuntu-20.04
+    needs: install-typescript
+    # Job steps
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0 # 👈 Required to retrieve git history
+      - name: Fetch node_modules from cache
+        uses: actions/cache@v2
+        id: node-modules-cache
+        with:
+          path: "**/node_modules"
+          key: ${{ runner.os }}-modules-${{secrets.ACTIONS_CACHE_VERSION}}-${{ hashFiles('yarn.lock') }}
+      - name: Publish to Chromatic
+        uses: chromaui/action@v1
+        # Chromatic GitHub Action options
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          # 👇 Chromatic projectToken, refer to the manage page to obtain it.
+          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
 
   deploy-webapp-pr:
     name: Deploy webapp PR branch
@@ -228,4 +232,123 @@ jobs:
           deployment_id: ${{ steps.deployment.outputs.deployment_id }}
           env_url: ${{steps.vercel.outputs.preview-url}}
 
- 
+  bump-version:
+    name: "Bump version (only on main)"
+    if: contains( github.ref, 'main')
+    runs-on: ubuntu-20.04
+    needs: [lint-typescript, lint-python, test-typescript, check-codegen-diff, e2e-analysis]
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Fetch node_modules from cache
+        uses: actions/cache@v2
+        id: node-modules-cache
+        with:
+          path: "**/node_modules"
+          key: ${{ runner.os }}-modules-${{secrets.ACTIONS_CACHE_VERSION}}-${{ hashFiles('yarn.lock') }}
+      - name: Configure Git
+        run: |
+          git config user.name "Hugo Raynal"
+          git config user.email "hugo.raynal@labelflow.ai"
+      - name: Bump version
+        run: yarn release minor
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  
+  deploy-chromatic-main:
+    name: Deploy Storybook production
+    if: contains( github.ref, 'main')
+    runs-on: ubuntu-20.04
+    needs: bump-version
+    # Job steps
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          # Needed to make sure it doesn't checkout the commit which triggered the workflow but the release one.
+          ref: main
+          fetch-depth: 0 # 👈 Required to retrieve git history
+      - name: Fetch node_modules from cache
+        uses: actions/cache@v2
+        id: node-modules-cache
+        with:
+          path: "**/node_modules"
+          key: ${{ runner.os }}-modules-${{secrets.ACTIONS_CACHE_VERSION}}-${{ hashFiles('yarn.lock') }}
+      - name: Publish to Chromatic
+        uses: chromaui/action@v1
+        # Chromatic GitHub Action options
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          # 👇 Chromatic projectToken, refer to the manage page to obtain it.
+          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+
+  deploy-strapi-main:
+    name: Deploy Strapi on Heroku production
+    if: contains( github.ref, 'main')
+    runs-on: ubuntu-20.04
+    needs: bump-version
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
+        with:
+          # Needed to make sure it doesn't checkout the commit which triggered the workflow but the release one.
+          ref: main
+      - name: Deploy to Heroku
+        # See https://github.com/marketplace/actions/deploy-to-heroku#deploy-subdirectory
+        uses: akhileshns/heroku-deploy@v3.12.12 
+        with:
+          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+          heroku_app_name: "labelflow-strapi"
+          heroku_email: "vincent.lecrubier@labelflow.ai"
+          team: "labelflow"
+          appdir: "strapi"
+
+  deploy-webapp-main:
+    name: Deploy webapp to production
+    if: contains( github.ref, 'main')
+    runs-on: ubuntu-20.04
+    needs: bump-version
+    steps:
+      - name: start deployment
+        uses: bobheadxi/deployments@v0.4.3
+        id: deployment
+        with:
+          step: start
+          token: ${{ secrets.GITHUB_TOKEN }}
+          env: "Production – labelflow"
+          ref: ${{ github.head_ref }}
+          no_override: true
+      - name: Check out repository code
+        uses: actions/checkout@v2
+        with:
+          # Needed to make sure it doesn't checkout the commit which triggered the workflow but the release one.
+          ref: main
+      - name: Deploy webapp on Vercel
+        uses: amondnet/vercel-action@v20
+        id: vercel
+        with:
+          scope: ${{ secrets.VERCEL_ORG_ID}}
+          vercel-token: ${{ secrets.VERCEL_TOKEN }} # Required
+          github-token: ${{ secrets.GITHUB_TOKEN }} #Optional
+          vercel-args: "--prod" #Optional
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID}} #Required
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID_WEBAPP}} #Required
+          vercel-project-name: "labelflow"
+          # working-directory: ./typescript/web
+          working-directory: .
+          # alias-domains: | #Optional
+          #   app.labelflow.ai
+          #   pr{{PR_NUMBER}}.beta.labelflow.ai
+          alias-domains: | #Optional
+            labelflow.ai
+      - run: npx vercel logs ${{steps.vercel.outputs.preview-url}} --token ${{ secrets.VERCEL_TOKEN }}
+      - name: update deployment status
+        uses: bobheadxi/deployments@v0.4.3
+        if: always()
+        with:
+          step: finish
+          token: ${{ secrets.GITHUB_TOKEN }}
+          status: ${{ job.status }}
+          deployment_id: ${{ steps.deployment.outputs.deployment_id }}
+          env_url: ${{steps.vercel.outputs.preview-url}}
