@@ -52,20 +52,12 @@ export const exportToCoco: ExportFunction = async (
           url: string;
           mimetype: string;
         }) => {
-          const dataUrl = await (async (): Promise<string> => {
-            const blob = await fetch(url).then((r) => r.blob());
-            return new Promise((resolve) => {
-              const reader = new FileReader();
-              reader.onload = () => resolve(reader.result as string);
-              reader.readAsDataURL(blob);
-            });
-          })();
+          const blob = new Blob([await repository.upload.get(url)], {
+            type: mimetype,
+          });
           zip.file(
             `${datasetName}/images/${name}_${id}.${mime.extension(mimetype)}`,
-            dataUrl.substr(dataUrl.indexOf(",") + 1),
-            {
-              base64: true,
-            }
+            blob
           );
         }
       )
