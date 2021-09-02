@@ -12,7 +12,16 @@ This guide walks you through the steps needed to run a production-ready version 
 
 Before continuing, please have a look at our <a href="./LICENSE">License</a> ⬅️.
 
-**Prerequisites**: You need to have Git, Node (v15.5.0 or above) and Yarn (v1.22.4 or above) installed on your machine.
+**Prerequisites**: 
+
+You need to have below listed softwares installed on your machine to run labelflow.
+     
+   - ✔️ Git 📦
+   - ✔️ Node (v15.5.0 or above) 📦
+   - ✔️ Yarn (v1.22.4 or above) 📦
+
+
+ 💻 **Running the Labelflow on your machine**:
 
 1. Clone the repository on your machine using  
 
