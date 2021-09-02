@@ -20,8 +20,7 @@
     "storybook:all": "start-storybook -s ./typescript/web/public -p 6006",
     "build-storybook": "build-storybook",
     "chromatic": "npx chromatic",
-    "release": "release-it",
-    "release:update": "cd ./typescript/release && yarn update"
+    "release": "cd ./typescript/web && yarn release"
   },
   "workspaces": [
     "typescript/*"

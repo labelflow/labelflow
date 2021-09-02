@@ -2,10 +2,9 @@
   "name": "@labelflow/update-license",
   "version": "0.0.1",
   "scripts": {
-    "update": "yarn update:changelog; yarn update:license; yarn update:packages-version",
+    "update": "yarn update:changelog; yarn update:license;",
     "update:changelog": "auto-changelog --package --template changelog-template.hbs --output ../../CHANGELOG.md",
-    "update:license": "ts-node src/update-license.ts",
-    "update:packages-version": "ts-node src/update-packages-version.ts"
+    "update:license": "ts-node src/update-license.ts"
   },
   "devDependencies": {
     "@types/node": "16.4.1",

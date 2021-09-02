@@ -5302,6 +5302,7 @@ __metadata:
     "@types/valid-url": ^1.0.3
     apollo-server-core: ^2.25.0
     apollo-server-env: ^3.1.0
+    auto-changelog: ^2.3.0
     autoprefixer: ^10.2.6
     bluebird: ^3.7.2
     bundlewatch: ^0.3.2
@@ -5341,6 +5342,7 @@ __metadata:
     react-use-measure: ^2.0.4
     react-virtual: ^2.7.1
     rehype-raw: 6.0.0
+    release-it: ^14.11.5
     remark-gfm: 1.0.0
     slugify: ^1.6.0
     storybook-addon-next-router: 3.0.7
