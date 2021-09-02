@@ -45,8 +45,9 @@ export const ImageNavigationTool = () => {
   const goToIndex = (newIndex: number | undefined) => {
     if (!images) return;
     if (imagesCount == null) return;
-
     if (newIndex == null || isNaN(newIndex)) return;
+    if (typeof currentImageIndex === "number" && currentImageIndex === newIndex)
+      return;
     if (newIndex >= 0 && newIndex <= imagesCount - 1) {
       router.push(
         `/local/datasets/${datasetSlug}/images/${images[newIndex]?.id}`
