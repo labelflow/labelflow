@@ -17,10 +17,10 @@ describe("Golden path", () => {
     cy.get("a").contains("Datasets").click();
 
     cy.contains("Create new dataset...").click();
-    cy.get("input").type("cypress test dataset");
+    cy.get("input").type("cypress dataset");
     cy.contains("Start Labelling").click();
 
-    cy.contains("cypress test dataset").click();
+    cy.contains("cypress dataset").click();
 
     cy.contains("You don't have any images.").should("be.visible");
 
