@@ -4,12 +4,13 @@ import { Meta } from "../components/meta";
 
 import { Layout } from "../components/layout";
 import { EmptyStateNoSearchResult } from "../components/empty-state";
+import { AppLifecycleManager } from "../components/app-lifecycle-manager";
 
 const Error404Page = () => {
   return (
     <>
+      <AppLifecycleManager noModals />
       <Meta title="LabelFlow | Page not found" />
-
       <Layout>
         <Center h="full">
           <Box as="section">

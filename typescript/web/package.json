@@ -6,7 +6,9 @@
     "build": "cd ../db && yarn generate && cd ../web && next build",
     "start": "next start",
     "type-check": "tsc",
-    "bundlewatch": "bundlewatch --config ./bundlewatch.config.js"
+    "bundlewatch": "bundlewatch --config ./bundlewatch.config.js",
+    "release": "release-it",
+    "release:update": "cd ../release && yarn update"
   },
   "dependencies": {
     "@apollo/client": "^3.3.18",
@@ -111,9 +113,11 @@
     "@types/react-dom": "17.0.1",
     "@types/uuid": "^8.3.0",
     "@types/valid-url": "^1.0.3",
+    "auto-changelog": "^2.3.0",
     "bluebird": "^3.7.2",
     "bundlewatch": "^0.3.2",
     "fake-indexeddb": "^3.1.2",
+    "release-it": "^14.11.5",
     "storybook-addon-next-router": "3.0.7",
     "typescript": "4.3.5",
     "webpack": "5.38.1",

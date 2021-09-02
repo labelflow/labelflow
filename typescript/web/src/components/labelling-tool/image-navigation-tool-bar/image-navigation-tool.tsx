@@ -45,8 +45,9 @@ export const ImageNavigationTool = () => {
   const goToIndex = (newIndex: number | undefined) => {
     if (!images) return;
     if (imagesCount == null) return;
-
     if (newIndex == null || isNaN(newIndex)) return;
+    if (typeof currentImageIndex === "number" && currentImageIndex === newIndex)
+      return;
     if (newIndex >= 0 && newIndex <= imagesCount - 1) {
       router.push(
         `/local/datasets/${datasetSlug}/images/${images[newIndex]?.id}`
@@ -67,15 +68,22 @@ export const ImageNavigationTool = () => {
     if (event.key === "Enter") {
       goTo(event.target.value);
     }
+
+    // Pressing escape cancels the current change
+    if (event.key === "Escape" || event.key === "Esc") {
+      event.preventDefault();
+      reset();
+    }
   };
 
   const handleBlur = () => {
-    // On blur we could go to the value input by the user:
-    // goTo(value);
-    //
-    // But that would prevent the user from ever cancelling their input
-    // So instead, we reset the number:
-    reset();
+    // On blur we apply the change
+    // (This is needed because on mobile you don't have the key "Enter" on digit keyboard)
+    goTo(value);
+
+    // Before, we used to do this, but it made the component unusable on mobile
+    // So instead, we allow to reset if user presses escape
+    // reset();
   };
 
   const selectText: React.MouseEventHandler<HTMLInputElement> = (event) => {

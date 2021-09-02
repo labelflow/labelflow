@@ -141,7 +141,7 @@ export const SelectAndModifyFeature = (props: {
         labelData?.label?.type === LabelType.Box && (
           /* @ts-ignore - We need to add this because resizeAndTranslateBox is not included in the react-openalyers-fiber original catalogue */
           <resizeAndTranslateBox
-            args={{ selectedFeature }}
+            args={{ selectedFeature, pixelTolerance: 20 }}
             onInteractionEnd={async (e: ResizeAndTranslateEvent | null) => {
               return await interactionEnd(e, perform, client, imageId, toast);
             }}
@@ -158,7 +158,10 @@ export const SelectAndModifyFeature = (props: {
               }}
             />
             <olInteractionModify
-              args={{ features: new Collection([selectedFeature]) }}
+              args={{
+                features: new Collection([selectedFeature]),
+                pixelTolerance: 20,
+              }}
               onModifyend={async (e: ModifyEvent | null) => {
                 return await interactionEnd(e, perform, client, imageId, toast);
               }}

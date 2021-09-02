@@ -38,12 +38,14 @@ export const TopBar = ({ leftContent, rightContent }: Props) => {
       flex={0}
     >
       <NextLink href="/">
-        <Box as="a" rel="home" cursor="pointer">
+        <Box as="a" rel="home" cursor="pointer" mr={{ base: "0", lg: "4" }}>
           <VisuallyHidden>LabelFlow</VisuallyHidden>
           <Logo h="6" iconColor="brand.500" viewBox={viewBox} />
         </Box>
       </NextLink>
-      <Box display={{ base: "none", lg: "initial" }}>{leftContent}</Box>
+      <Box flex={1} width="auto" display={{ base: "none", lg: "contents" }}>
+        {leftContent}
+      </Box>
       <Tooltip label="Go Back" openDelay={300}>
         <NextLink
           href={{

@@ -28,6 +28,7 @@ export const Why = () => {
           </Text>
         </NextLink>
         <Image
+          alt="LabelFlow infrastructure diagram"
           mt="12"
           objectFit="cover"
           maxW={{

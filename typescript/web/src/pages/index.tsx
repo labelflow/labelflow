@@ -1,11 +1,13 @@
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import { GetServerSideProps } from "next";
 import { Cookies, useCookies } from "react-cookie";
 import { Spinner, Center } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { join, map, toPairs, isEmpty } from "lodash/fp";
+import { Meta } from "../components/meta";
 import { Layout } from "../components/layout";
 import Website from "./website";
+import { AppLifecycleManager } from "../components/app-lifecycle-manager";
 
 const IndexPage = () => {
   const router = useRouter();
@@ -26,11 +28,15 @@ const IndexPage = () => {
   }
 
   return (
-    <Layout>
-      <Center h="full">
-        <Spinner size="xl" />
-      </Center>
-    </Layout>
+    <>
+      <AppLifecycleManager noModals />
+      <Meta title="LabelFlow: The open standard platform for image labelling." />
+      <Layout>
+        <Center h="full">
+          <Spinner size="xl" />
+        </Center>
+      </Layout>
+    </>
   );
 };
 
