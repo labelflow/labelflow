@@ -4,7 +4,9 @@ import { createGraphiQLFetcher } from "@graphiql/toolkit";
 
 export const GraphiQL = () => {
   const fetcher = createGraphiQLFetcher({
-    url: `${window.location.origin}/api/worker/graphql`,
+    url:
+      process.env.NEXT_PUBLIC_ENDPOINT ??
+      `${window.location.origin}/api/worker/graphql`,
   });
 
   return (
