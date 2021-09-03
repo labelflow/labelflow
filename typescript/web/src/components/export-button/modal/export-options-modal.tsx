@@ -12,11 +12,9 @@ import {
   Text,
   Switch,
 } from "@chakra-ui/react";
-import { useState } from "react";
-
-export type ExportOptions = {
-  exportImages: boolean;
-};
+import { useMemo, useState } from "react";
+import { ExportFormat, ExportOptions } from "@labelflow/graphql-types";
+import { defaultOptions, formatsOptionsInformation, Format } from "./formats";
 
 const OptionLine = ({
   header,
@@ -47,20 +45,27 @@ const OptionLine = ({
 
 export const ExportOptionsModal = ({
   isOpen = false,
+  exportFormat,
   exportFunction = () => {},
   onClose = () => {},
-}: //   options = { exportImages: false },
-//   setOptions = () => {},
-{
+}: {
   isOpen?: boolean;
+  exportFormat: ExportFormat;
   exportFunction?: (options: ExportOptions) => void;
   onClose?: () => void;
-  //   options: ExportOptions;
-  //   setOptions?: Dispatch<SetStateAction<ExportOptions>>;
 }) => {
-  const [options, setOptions] = useState<ExportOptions>({
-    exportImages: false,
-  });
+  const [exportOptions, setExportOptions] =
+    useState<ExportOptions>(defaultOptions);
+  const exportFormatLowerCase = exportFormat.toLowerCase() as Format;
+  const formatOptionsInformation =
+    formatsOptionsInformation[exportFormatLowerCase];
+  const optionsOfFormat = exportOptions[exportFormatLowerCase];
+  // const optionsOfFormat = exportOptions[exportFormatLowerCase];
+  // console.log(`
+  // exportOptions = ${JSON.stringify(exportOptions, null, 1)}
+  // exportOptions[exportFormatLowerCase] = ${JSON.stringify(exportOptions[exportFormatLowerCase], null, 1)}
+  // optionsOfFormat = ${JSON.stringify(optionsOfFormat, null, 1)}
+  // `);
   return (
     <Modal
       scrollBehavior="inside"
@@ -82,23 +87,41 @@ export const ExportOptionsModal = ({
           p={{ base: "2", md: "6" }}
           flexDirection="column"
         >
-          <OptionLine
-            header="Export image files"
-            description="Zip images together with the annotation file"
-            isChecked={options.exportImages}
-            onChange={() => {
-              setOptions((previousOptions) => ({
-                ...previousOptions,
-                exportImages: !previousOptions.exportImages,
-              }));
-            }}
-          />
+          {Object.keys(formatOptionsInformation ?? {}).map((optionName) => {
+            const information = (
+              formatOptionsInformation as Required<
+                typeof formatOptionsInformation
+              >
+            )[optionName as keyof typeof formatOptionsInformation];
+            return (
+              <OptionLine
+                key={optionName}
+                header={information.title}
+                description={information.description}
+                isChecked={
+                  optionsOfFormat[
+                    optionName as keyof typeof optionsOfFormat
+                  ] as boolean
+                }
+                onChange={() => {
+                  setExportOptions((previousOptions) => ({
+                    ...previousOptions,
+                    [exportFormatLowerCase]: {
+                      ...previousOptions[exportFormatLowerCase],
+                      [optionName]:
+                        !previousOptions[exportFormatLowerCase][optionName as keyof typeof previousOptions[exportFormatLowerCase]],
+                    },
+                  }));
+                }}
+              />
+            );
+          })}
           <Button
             colorScheme="brand"
             size="md"
             alignSelf="flex-end"
             onClick={() => {
-              exportFunction(options);
+              exportFunction(exportOptions);
               onClose();
             }}
           >

@@ -11,11 +11,12 @@ import {
   Text,
   Skeleton,
 } from "@chakra-ui/react";
-import { ExportFormat } from "@labelflow/graphql-types";
+import { ExportFormat, ExportOptions } from "@labelflow/graphql-types";
 import { useRouter } from "next/router";
 import { useQuery, gql, useApolloClient, ApolloClient } from "@apollo/client";
 import { ExportFormatCard } from "./export-format-card";
-import { ExportOptionsModal, ExportOptions } from "./export-options-modal";
+import { ExportOptionsModal } from "./export-options-modal";
+import { formatMainInformation, Format } from "./formats";
 
 const exportQuery = gql`
   query exportDatasetUrl(
@@ -55,7 +56,7 @@ const exportDataset = async ({
   datasetId: string;
   setIsExportRunning: Dispatch<SetStateAction<boolean>>;
   client: ApolloClient<Object>;
-  format: string;
+  format: ExportFormat;
   options: ExportOptions;
 }) => {
   setIsExportRunning(true);
@@ -67,7 +68,7 @@ const exportDataset = async ({
     .join("-")}T${String(dateObject.getHours()).padStart(2, "0")}${String(
     dateObject.getMinutes()
   ).padStart(2, "0")}${String(dateObject.getSeconds()).padStart(2, "0")}`;
-  const datasetName = `dataset-${date}-coco`;
+  const datasetName = `dataset-${date}-${format.toLowerCase()}`;
   const {
     data: { exportDataset: exportDatasetUrl },
   } = await client.query({
@@ -75,7 +76,10 @@ const exportDataset = async ({
     variables: {
       datasetId,
       format,
-      options: { ...options, name: datasetName },
+      options: {
+        coco: { ...options.coco, name: datasetName },
+        yolo: { ...options.yolo, name: datasetName },
+      },
     },
   });
   const blobDataset = await (await fetch(exportDatasetUrl)).blob();
@@ -105,7 +109,7 @@ export const ExportModal = ({
 
   const [isExportRunning, setIsExportRunning] = useState(false);
   const [isOptionsModalOpen, setIsOptionsModalOpen] = useState(false);
-  const [exportFormat, setExportFormat] = useState("");
+  const [exportFormat, setExportFormat] = useState(ExportFormat.Coco);
   const exportFunctionGenerator = useCallback(
     async (options: ExportOptions) =>
       await exportDataset({
@@ -164,24 +168,27 @@ export const ExportModal = ({
               p={{ base: "2", md: "8" }}
               flexWrap="wrap"
             >
-              <ExportFormatCard
-                loading={isExportRunning}
-                onClick={() => {
-                  setExportFormat(ExportFormat.Coco);
-                  setIsOptionsModalOpen(true);
-                }}
-                colorScheme="brand"
-                logoSrc="/static/export-formats/coco.png"
-                title="Export to COCO"
-                subtext="Annotation file used with Pytorch and Detectron 2"
-              />
-              <ExportFormatCard
-                disabled
-                colorScheme="gray"
-                logoSrc="/static/export-formats/tensorflow-grey.png"
-                title="Export to TensorFlow (soon)"
-                subtext="TF Object Detection file in its human readable format"
-              />
+              {Object.keys(formatMainInformation).map((formatKey) => {
+                const formatInformation =
+                  formatMainInformation[formatKey as Format];
+                return (
+                  <ExportFormatCard
+                    key={formatKey}
+                    loading={
+                      isExportRunning &&
+                      formatKey === exportFormat.toLowerCase()
+                    }
+                    onClick={() => {
+                      setExportFormat(formatInformation.format);
+                      setIsOptionsModalOpen(true);
+                    }}
+                    colorScheme="brand"
+                    logoSrc={formatInformation.logoSrc}
+                    title={formatInformation.title}
+                    subtext={formatInformation.description}
+                  />
+                );
+              })}
             </Stack>
           </ModalBody>
           <ModalCloseButton />
@@ -189,6 +196,7 @@ export const ExportModal = ({
       </Modal>
       <ExportOptionsModal
         isOpen={isOptionsModalOpen}
+        exportFormat={exportFormat}
         exportFunction={exportFunctionGenerator}
         onClose={() => setIsOptionsModalOpen(false)}
       />

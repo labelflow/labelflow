@@ -66,8 +66,8 @@ enum ExportFormat {
 }
 
 input ExportOptions {
-  coco: ExportOptionsCoco
-  yolo: ExportOptionsYolo
+  coco: ExportOptionsCoco!
+  yolo: ExportOptionsYolo!
 }
 
 input ExportOptionsCoco {
