@@ -1,5 +1,5 @@
-import React, { useCallback, useState } from "react";
-import { useApolloClient, useQuery } from "@apollo/client";
+import React, { useCallback, useState, ReactNode } from "react";
+
 import {
   Heading,
   Stack,
@@ -15,19 +15,22 @@ import {
   Box,
   Button,
   Flex,
+  FormControl,
+  Input,
   SimpleGrid,
   useColorModeValue as mode,
 } from "@chakra-ui/react";
 
-import { FaFacebook, FaGoogle } from "react-icons/fa";
+import { RiMailSendLine } from "react-icons/ri";
+
+import { signIn } from "next-auth/client";
+
+import { FaGithub, FaGoogle } from "react-icons/fa";
 
 import { DividerWithText } from "./divider-with-text";
 import { Logo } from "../../logo";
-import { SigupForm } from "./signin-form";
 
-import { useRouter } from "next/router";
-
-const Feature = (props: StackProps) => {
+const Feature = (props: { title: string; children: ReactNode }) => {
   const { title, children } = props;
   return (
     <Stack>
@@ -40,13 +43,12 @@ const Feature = (props: StackProps) => {
 export const SigninModal = ({
   isOpen = false,
   onClose = () => {},
+  error,
 }: {
   isOpen?: boolean;
   onClose?: () => void;
+  error?: string;
 }) => {
-  const router = useRouter();
-  const client = useApolloClient();
-
   return (
     <Modal
       scrollBehavior="inside"
@@ -124,35 +126,78 @@ export const SigninModal = ({
               <Stack spacing="4">
                 <Button
                   variant="outline"
+                  onClick={() => signIn("google")}
                   leftIcon={<Box as={FaGoogle} color="red.500" />}
                 >
                   Sign up with Google
                 </Button>
                 <Button
                   variant="outline"
+                  onClick={() => signIn("github")}
                   leftIcon={
                     <Box
-                      as={FaFacebook}
-                      color={mode("facebook.500", "facebook.300")}
+                      as={FaGithub}
+                      color={mode("github.500", "github.300")}
                     />
                   }
                 >
-                  Sign up with Facebook
+                  Sign up with Github
                 </Button>
               </Stack>
 
-              <DividerWithText>or</DividerWithText>
-              <SigupForm />
-              <Text
-                mb="8"
-                textAlign={{ base: "center", lg: "start" }}
-                mt="12"
-                fontSize="xs"
-                color={useColorModeValue("gray.600", "gray.400")}
+              <DividerWithText>Or</DividerWithText>
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  const email = (
+                    (e.target as HTMLFormElement).elements.namedItem(
+                      "email"
+                    ) as HTMLInputElement
+                  ).value;
+                  signIn("email", { email });
+                  // your submit logic here
+                }}
               >
-                By continuing, you agree to LabelFlow Terms of Service and
-                Privacy Policy
-              </Text>
+                <Stack spacing="4">
+                  <FormControl id="email">
+                    {/* <FormLabel mb={1}>Email</FormLabel> */}
+                    <Input
+                      type="email"
+                      autoComplete="email"
+                      placeholder="you@company.com"
+                    />
+                  </FormControl>
+                  <Button
+                    type="submit"
+                    variant="outline"
+                    leftIcon={<Box as={RiMailSendLine} color="brand.500" />}
+                  >
+                    Sign in with Email
+                  </Button>
+                </Stack>
+              </form>
+              {error ? (
+                <Text
+                  mb="8"
+                  textAlign={{ base: "center", lg: "start" }}
+                  mt="12"
+                  fontSize="xs"
+                  color={useColorModeValue("red.600", "red.400")}
+                >
+                  {error}
+                </Text>
+              ) : (
+                <Text
+                  mb="8"
+                  textAlign={{ base: "center", lg: "start" }}
+                  mt="12"
+                  fontSize="xs"
+                  color={useColorModeValue("gray.600", "gray.400")}
+                >
+                  By continuing, you agree to LabelFlow Terms of Service and
+                  Privacy Policy
+                </Text>
+              )}
             </Box>
           </SimpleGrid>
         </ModalBody>
