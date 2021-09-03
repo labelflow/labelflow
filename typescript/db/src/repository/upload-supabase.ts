@@ -51,7 +51,6 @@ export const deleteFromStorage: Repository["upload"]["delete"] = async (
   deleteFromStorage called on supabase uploader with url ${url}.
   Won't make anything
   `);
-  // dirtyInMemoryStorage.delete(url);
 };
 
 export const putInStorage: Repository["upload"]["put"] = async (url, blob) => {
