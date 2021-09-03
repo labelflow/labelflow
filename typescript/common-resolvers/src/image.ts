@@ -42,7 +42,7 @@ const getImageName = ({
 export const getImageEntityFromMutationArgs = async (
   data: ImageCreateInput,
   repository: Pick<Repository, "upload">,
-  req: Request
+  req?: Request
 ) => {
   const {
     file,
