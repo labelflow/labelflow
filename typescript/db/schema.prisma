@@ -77,7 +77,7 @@ model Account {
   accessTokenExpires DateTime?
   createdAt          DateTime  @default(now())
   updatedAt          DateTime  @updatedAt
-  user               User      @relation(fields: [userId], references: [id])
+  user               User      @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@unique([providerId, providerAccountId], name: "providerId_providerAccountId")
 }
@@ -90,7 +90,7 @@ model Session {
   accessToken  String   @unique
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
-  user         User     @relation(fields: [userId], references: [id])
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 model User {
@@ -200,7 +200,7 @@ model GlobalComponent {
   component_type String @db.VarChar(255)
   component_id   Int
   global_id      Int
-  globals        Global @relation("globalsToglobals_components", fields: [global_id], references: [id])
+  globals        Global @relation("globalsToglobals_components", fields: [global_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
   @@map("globals_components")
   @@ignore
@@ -225,7 +225,7 @@ model HomepageComponent {
   component_type String   @db.VarChar(255)
   component_id   Int
   homepage_id    Int
-  homepages      Homepage @relation("homepagesTohomepages_components", fields: [homepage_id], references: [id])
+  homepages      Homepage @relation("homepagesTohomepages_components", fields: [homepage_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
   @@map("homepages_components")
   @@ignore
