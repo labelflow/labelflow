@@ -1,0 +1,20 @@
+# Changelog
+
+{{#each releases}}
+  {{#if href}}
+    ## [{{title}}]({{href}}){{#if tag}} - {{isoDate}}{{/if}}
+  {{else}}
+    ## {{title}}{{#if tag}} - {{isoDate}}{{/if}}
+  {{/if}}
+
+  {{#if merges}}
+    {{#each merges}}
+        - {{message}} {{#if href}}[`#{{id}}`]({{href}}){{/if}}
+    {{/each}}
+  {{/if}}
+{{/each}}
+
+{{#unless options.hideCredit}}
+
+  This Changelog is generated using [`auto-changelog`](https://github.com/CookPete/auto-changelog).
+{{/unless}}
