@@ -4,7 +4,7 @@ import { useQueryParam, StringParam } from "use-query-params";
 import { Meta } from "../../components/meta";
 import { AppLifecycleManager } from "../../components/app-lifecycle-manager";
 import { Layout } from "../../components/layout";
-import { SigninModal } from "../../components/signin";
+import { SigninModal } from "../../components/auth-manager/signin";
 
 const LocalDatasetsIndexPage = () => {
   const router = useRouter();

@@ -45,7 +45,7 @@ export const SigninModal = ({
 }: {
   isOpen?: boolean;
   onClose?: () => void;
-  error?: string;
+  error?: string | null;
 }) => {
   return (
     <Modal

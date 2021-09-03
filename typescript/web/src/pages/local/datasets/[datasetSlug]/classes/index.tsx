@@ -21,6 +21,7 @@ import { Layout } from "../../../../../components/layout";
 import { DatasetTabBar } from "../../../../../components/layout/tab-bar/dataset-tab-bar";
 import { ClassesList } from "../../../../../components/dataset-class-list";
 import Error404Page from "../../../../404";
+import { AuthManager } from "../../../../../components/auth-manager";
 
 const ArrowRightIcon = chakra(RiArrowRightSLine);
 
@@ -63,6 +64,7 @@ const DatasetClassesPage = () => {
   return (
     <>
       <AppLifecycleManager />
+      <AuthManager />
       <Meta title="LabelFlow | Classes" />
       <Layout
         topBarLeftContent={

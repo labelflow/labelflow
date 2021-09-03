@@ -11,6 +11,12 @@ const prisma = new PrismaClient({
   datasources: { db: { url: process.env.POSTGRES_EXTERNAL_URL } },
 });
 
+(async () => {
+  const users = await prisma.user.findMany();
+
+  console.log("users", users);
+})();
+
 export default NextAuth({
   providers: [
     Providers.Email({
@@ -50,7 +56,7 @@ export default NextAuth({
   //   verifyRequest: "/auth/verify-request", // (used for check email message)
   //   newUser: "/auth/new-user", // New users will be directed here on first sign in (leave the property out if not of interest)
   // },
-  // debug: true,
+  debug: true,
   callbacks: {
     session: (session, user: NextAuthUserWithStringId) => {
       if (session?.user && user?.id) {

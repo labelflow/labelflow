@@ -28,6 +28,7 @@ import { Meta } from "../../../../../components/meta";
 import { Layout } from "../../../../../components/layout";
 import { Gallery } from "../../../../../components/gallery";
 import Error404Page from "../../../../404";
+import { AuthManager } from "../../../../../components/auth-manager";
 
 const ArrowRightIcon = chakra(RiArrowRightSLine);
 
@@ -113,6 +114,7 @@ const ImagePage = () => {
   return (
     <>
       <AppLifecycleManager />
+      <AuthManager />
       <Meta title={`LabelFlow | Image ${imageName ?? ""}`} />
       <Layout
         topBarLeftContent={
