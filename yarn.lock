@@ -6192,7 +6192,7 @@ __metadata:
     graphql: 15.5.1
     isomorphic-fetch: 3.0.0
     nodemon: 2.0.12
-    prisma: ^2.30.2
+    prisma: 2.30.2
     probe-image-size: 7.2.1
     ts-node: 10.1.0
     typescript: 4.3.5
@@ -26092,15 +26092,15 @@ next-pwa@5.2.21:
   languageName: node
   linkType: hard
 
-"prisma@npm:^2.30.2":
-  version: 2.30.3
-  resolution: "prisma@npm:2.30.3"
+"prisma@npm:2.30.2":
+  version: 2.30.2
+  resolution: "prisma@npm:2.30.2"
   dependencies:
     "@prisma/engines": 2.30.1-2.b8c35d44de987a9691890b3ddf3e2e7effb9bf20
   bin:
     prisma: build/index.js
     prisma2: build/index.js
-  checksum: 42e9c6ef4eaea3618116c6105e5ab6550aff3d481bc03e0ef4a28f6e37dd55f84b53ccb5706fcba7bbef3c22b0eacda59db629c31ff9c8391c78b0801d748c83
+  checksum: 65f4b99d773beefbf9dce9433b54dbcd0bf5a68100e240a15f83de71c4af29f5e063eaecb28a64c9ca240fb07dfaf430a8593e736ed09194247819a33a2a6e8a
   languageName: node
   linkType: hard
 
