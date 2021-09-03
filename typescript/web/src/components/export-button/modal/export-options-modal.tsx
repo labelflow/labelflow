@@ -12,7 +12,7 @@ import {
   Text,
   Switch,
 } from "@chakra-ui/react";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { ExportFormat, ExportOptions } from "@labelflow/graphql-types";
 import { defaultOptions, formatsOptionsInformation, Format } from "./formats";
 
@@ -109,7 +109,9 @@ export const ExportOptionsModal = ({
                     [exportFormatLowerCase]: {
                       ...previousOptions[exportFormatLowerCase],
                       [optionName]:
-                        !previousOptions[exportFormatLowerCase][optionName as keyof typeof previousOptions[exportFormatLowerCase]],
+                        !previousOptions[exportFormatLowerCase][
+                          optionName as keyof typeof previousOptions[exportFormatLowerCase]
+                        ],
                     },
                   }));
                 }}

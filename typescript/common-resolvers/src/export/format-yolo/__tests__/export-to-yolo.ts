@@ -11,9 +11,9 @@ describe("Yolo converters", () => {
   const date = new Date("1995-12-17T03:24:00").toISOString();
   const testDatasetId = "test-dataset-id";
 
-  const createLabelClass = (name: string): DbLabelClass => ({
+  const createLabelClass = (name: string, index: number = 0): DbLabelClass => ({
     id: `id-${name}`,
-    index: 0,
+    index,
     createdAt: date,
     updatedAt: date,
     name,
@@ -21,15 +21,15 @@ describe("Yolo converters", () => {
     datasetId: testDatasetId,
   });
 
-  const createLabelWithImageDimensions = (
-    id: string,
+  const createLabel = (
     imageId: string,
-    labelClassId?: string
+    labelClassId?: string,
+    type: LabelType = LabelType.Box
   ): DbLabel => ({
-    id,
+    id: "id",
     createdAt: date,
     updatedAt: date,
-    type: LabelType.Polygon,
+    type,
     imageId,
     x: 1,
     y: 2,
@@ -52,8 +52,8 @@ describe("Yolo converters", () => {
 
   const createImage = (
     name: string,
-    height: number,
-    width: number
+    height: number = 10,
+    width: number = 10
   ): DbImage => ({
     id: `id-${name}`,
     name,
@@ -74,5 +74,68 @@ describe("Yolo converters", () => {
       `titi
 toto`
     );
+  });
+
+  test("Should generate the obj.data file string content", () => {
+    expect(generateDataFile(3, "my-dataset-name")).toEqual(
+      `classes = 3
+train = my-dataset-name/train.txt
+data = my-dataset-name/obj.names`
+    );
+  });
+
+  test("Should generate the train.txt file string content with each image information", () => {
+    expect(
+      generateImagesListFile(
+        [createImage("titi"), createImage("toto")],
+        "my-dataset-name"
+      )
+    ).toEqual(
+      `my-dataset-name/obj_train_data/titi.png
+my-dataset-name/obj_train_data/toto.png`
+    );
+  });
+
+  test("Should generate the file string content of one image labels information and dismiss polygons", () => {
+    expect(
+      generateLabelsOfImageFile(
+        [
+          createLabel("id-image-titi", "id-labelclass-titi"),
+          createLabel("id-image-titi", "id-labelclass-toto"),
+          createLabel("id-image-titi", "id-labelclass-toto", LabelType.Polygon),
+        ],
+        createImage("image-titi"),
+        [
+          createLabelClass("labelclass-titi", 2),
+          createLabelClass("labelclass-toto", 5),
+        ],
+        {
+          includePolygons: false,
+        }
+      )
+    ).toEqual(`2 0.1 0.2 0.3 0.4
+5 0.1 0.2 0.3 0.4`);
+  });
+
+  test("Should generate the file string content of one image labels information and include polygons", () => {
+    expect(
+      generateLabelsOfImageFile(
+        [
+          createLabel("id-image-titi", "id-labelclass-titi"),
+          createLabel("id-image-titi", "id-labelclass-toto"),
+          createLabel("id-image-titi", "id-labelclass-titi", LabelType.Polygon),
+        ],
+        createImage("image-titi"),
+        [
+          createLabelClass("labelclass-titi", 2),
+          createLabelClass("labelclass-toto", 5),
+        ],
+        {
+          includePolygons: true,
+        }
+      )
+    ).toEqual(`2 0.1 0.2 0.3 0.4
+5 0.1 0.2 0.3 0.4
+2 0.1 0.2 0.3 0.4`);
   });
 });
