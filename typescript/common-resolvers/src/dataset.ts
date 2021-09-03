@@ -178,7 +178,7 @@ const createDataset = async (
 const createDemoDataset = async (
   _: any,
   args: {},
-  { repository }: Context
+  { repository, req }: Context
 ): Promise<DbDataset> => {
   const datasetId = "049fe9f0-9a19-43cd-be65-35d222d54b4d";
   const now = new Date();
@@ -209,7 +209,8 @@ const createDemoDataset = async (
         },
         {
           upload: repository.upload,
-        }
+        },
+        req
       );
       return await repository.image.add(imageEntity);
     })

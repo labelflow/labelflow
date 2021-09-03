@@ -9,6 +9,8 @@ import {
 } from "@chakra-ui/react";
 import { useApolloClient, useQuery, gql } from "@apollo/client";
 import { useRouter } from "next/router";
+import { v4 as uuidv4 } from "uuid";
+import mime from "mime-types";
 
 import { UploadTarget } from "@labelflow/graphql-types";
 import { Dropzone } from "./dropzone";
@@ -52,8 +54,8 @@ const createImageFromUrlMutation = gql`
 `;
 
 const getImageUploadTargetMutation = gql`
-  mutation getUploadTarget {
-    getUploadTarget {
+  mutation getUploadTarget($key: String!) {
+    getUploadTarget(data: { key: $key }) {
       ... on UploadTargetDirect {
         direct
       }
@@ -84,6 +86,12 @@ const encodeFileToDataUrl = (file: File): Promise<string> => {
     reader.readAsDataURL(file);
   });
 };
+
+const getImageStoreKey = (
+  datasetId: string,
+  fileId: string,
+  mimetype: string
+) => `${datasetId}/${fileId}.${mime.extension(mimetype)}`;
 
 export const ImportImagesModalDropzone = ({
   setMode,
@@ -130,6 +138,13 @@ export const ImportImagesModalDropzone = ({
               // Ask server how to upload image
               const { data } = await apolloClient.mutate({
                 mutation: getImageUploadTargetMutation,
+                variables: {
+                  key: getImageStoreKey(
+                    datasetId as string,
+                    uuidv4(),
+                    acceptedFile.file.type
+                  ),
+                },
               });
 
               const target: UploadTarget = data.getUploadTarget;
@@ -183,9 +198,11 @@ export const ImportImagesModalDropzone = ({
                   });
                 }
 
+                const form = new FormData();
+                form.append("image", acceptedFile.file);
                 await fetch(target.uploadUrl, {
                   method: "PUT",
-                  body: acceptedFile.file,
+                  body: form,
                 });
 
                 const createdAt = new Date();
