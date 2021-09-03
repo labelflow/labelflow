@@ -28,7 +28,7 @@ const deleteDatasetByIdMutation = gql`
 
 export const DeleteDatasetModal = ({
   isOpen = false,
-  onClose = () => {},
+  onClose = () => { },
   datasetId = undefined,
 }: {
   isOpen?: boolean;
@@ -40,10 +40,13 @@ export const DeleteDatasetModal = ({
     variables: { id: datasetId },
   });
 
-  const [deleteDatasetMutate] = useMutation(deleteDatasetByIdMutation, {
-    variables: { id: datasetId },
-    refetchQueries: ["getDatasets"],
-  });
+  const [deleteDatasetMutate, { loading }] = useMutation(
+    deleteDatasetByIdMutation,
+    {
+      variables: { id: datasetId },
+      refetchQueries: ["getDatasets"],
+    }
+  );
 
   const deleteDataset = async () => {
     await deleteDatasetMutate();
@@ -78,6 +81,8 @@ export const DeleteDatasetModal = ({
             </Button>
             <Button
               colorScheme="red"
+              isLoading={loading}
+              loadingText="Deleting..."
               onClick={deleteDataset}
               aria-label="Dataset delete"
               ml={3}
