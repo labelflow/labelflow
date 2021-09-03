@@ -1,4 +1,4 @@
-import { ExportOptions } from "@labelflow/graphql-types";
+import { ExportOptionsCoco } from "@labelflow/graphql-types";
 import JSZip from "jszip";
 import mime from "mime-types";
 
@@ -10,7 +10,7 @@ import { addImageDimensionsToLabels } from "./add-image-dimensions-to-labels";
 
 export const exportToCoco: ExportFunction = async (
   datasetId,
-  options: ExportOptions = {},
+  options: ExportOptionsCoco = {},
   { repository }
 ) => {
   const images = await repository.image.list({ datasetId });

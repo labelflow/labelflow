@@ -66,8 +66,19 @@ enum ExportFormat {
 }
 
 input ExportOptions {
+  coco: ExportOptionsCoco
+  yolo: ExportOptionsYolo
+}
+
+input ExportOptionsCoco {
   name: String
   exportImages: Boolean
+}
+
+input ExportOptionsYolo {
+  name: String
+  exportImages: Boolean
+  includePolygons: Boolean
 }
 
 input ExportWhereUniqueInput {

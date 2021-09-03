@@ -91,8 +91,19 @@ export enum ExportFormat {
 }
 
 export type ExportOptions = {
+  coco?: Maybe<ExportOptionsCoco>;
+  yolo?: Maybe<ExportOptionsYolo>;
+};
+
+export type ExportOptionsCoco = {
   name?: Maybe<Scalars['String']>;
   exportImages?: Maybe<Scalars['Boolean']>;
+};
+
+export type ExportOptionsYolo = {
+  name?: Maybe<Scalars['String']>;
+  exportImages?: Maybe<Scalars['Boolean']>;
+  includePolygons?: Maybe<Scalars['Boolean']>;
 };
 
 export type ExportWhereUniqueInput = {
@@ -520,7 +531,9 @@ export type ResolversTypes = {
   ExampleWhereUniqueInput: ExampleWhereUniqueInput;
   ExportFormat: ExportFormat;
   ExportOptions: ExportOptions;
+  ExportOptionsCoco: ExportOptionsCoco;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
+  ExportOptionsYolo: ExportOptionsYolo;
   ExportWhereUniqueInput: ExportWhereUniqueInput;
   Geometry: ResolverTypeWrapper<Geometry>;
   GeometryInput: GeometryInput;
@@ -570,7 +583,9 @@ export type ResolversParentTypes = {
   ExampleWhereInput: ExampleWhereInput;
   ExampleWhereUniqueInput: ExampleWhereUniqueInput;
   ExportOptions: ExportOptions;
+  ExportOptionsCoco: ExportOptionsCoco;
   Boolean: Scalars['Boolean'];
+  ExportOptionsYolo: ExportOptionsYolo;
   ExportWhereUniqueInput: ExportWhereUniqueInput;
   Geometry: Geometry;
   GeometryInput: GeometryInput;

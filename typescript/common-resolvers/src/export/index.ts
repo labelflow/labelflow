@@ -1,6 +1,7 @@
 import { QueryExportDatasetArgs, ExportFormat } from "@labelflow/graphql-types";
 
 import { exportToCoco } from "./format-coco/index";
+import { exportToYolo } from "./format-yolo/index";
 import { Context } from "../types";
 
 const generateExportFile = async (
@@ -9,14 +10,14 @@ const generateExportFile = async (
 ): Promise<Blob> => {
   switch (args.format) {
     case ExportFormat.Yolo: {
-      throw new Error("Not implemented yet!");
-      break;
-    }
-    case ExportFormat.Coco: {
-      return await exportToCoco(args.where.datasetId, args?.options, {
+      return await exportToYolo(args.where.datasetId, args?.options?.yolo, {
         repository,
       });
-      break;
+    }
+    case ExportFormat.Coco: {
+      return await exportToCoco(args.where.datasetId, args?.options?.coco, {
+        repository,
+      });
     }
     default: {
       throw new Error("Unsupported format");
