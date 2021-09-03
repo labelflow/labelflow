@@ -1,5 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["referentialActions"]
 }
 
 datasource db {
@@ -19,7 +20,7 @@ model Image {
   height      Float
   datasetId   String   @db.Uuid
   externalUrl String?
-  dataset     Dataset  @relation(fields: [datasetId], references: [id])
+  dataset     Dataset  @relation(fields: [datasetId], references: [id], onDelete: Cascade)
   labels      Label[]
 }
 
@@ -35,7 +36,7 @@ model Label {
   imageId      String      @db.Uuid
   labelClassId String?     @db.Uuid
   type         LabelType
-  image        Image       @relation(fields: [imageId], references: [id])
+  image        Image       @relation(fields: [imageId], references: [id], onDelete: Cascade)
   labelClass   LabelClass? @relation(fields: [labelClassId], references: [id])
 }
 
@@ -47,7 +48,7 @@ model LabelClass {
   color     String
   datasetId String   @db.Uuid
   index     Int
-  dataset   Dataset  @relation(fields: [datasetId], references: [id])
+  dataset   Dataset  @relation(fields: [datasetId], references: [id], onDelete: Cascade)
   labels    Label[]
 }
 
