@@ -23,14 +23,17 @@ export const getUploadTargetHttp = async (
 };
 
 export const getFromStorage: Repository["upload"]["get"] = async (url, req) => {
-  console.log("req?.headers", req?.headers);
-  const headers = new Headers(req?.headers);
+  const headers = new Headers();
   headers.set("Accept", "image/tiff,image/jpeg,image/png,image/*,*/*;q=0.8");
   headers.set("Sec-Fetch-Dest", "image");
+  if ((req?.headers as any)?.cookie) {
+    headers.set("Cookie", (req?.headers as any)?.cookie);
+  }
 
   const fetchResult = await fetch(url, {
     method: "GET",
     headers,
+    credentials: "include",
   });
 
   if (fetchResult.status !== 200) {
