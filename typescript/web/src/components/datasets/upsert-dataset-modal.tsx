@@ -57,7 +57,7 @@ const getDatasetByIdQuery = gql`
 
 export const UpsertDatasetModal = ({
   isOpen = false,
-  onClose = () => { },
+  onClose = () => {},
   datasetId = undefined,
 }: {
   isOpen?: boolean;
