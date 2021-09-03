@@ -1,6 +1,6 @@
-import fetch from "node-fetch";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import "isomorphic-fetch";
 
 import { Repository } from "../../../common-resolvers/src";
 import { UploadTargetHttp } from "../../../graphql-types/src/graphql-types.generated";
@@ -33,18 +33,19 @@ export const getUploadTargetHttp = async (
   };
 };
 
-export const getFromStorage: Repository["upload"]["get"] = async (url) => {
+export const getFromStorage: Repository["upload"]["get"] = async (url, req) => {
+  const headers = new Headers(req?.headers);
+  headers.set("Accept", "image/tiff,image/jpeg,image/png,image/*,*/*;q=0.8");
+  headers.set("Sec-Fetch-Dest", "image");
+
   const fetchResult = await fetch(url, {
     method: "GET",
-    headers: {
-      Accept: "image/tiff,image/jpeg,image/png,image/*,*/*;q=0.8",
-      "Sec-Fetch-Dest": "image",
-    },
+    headers,
   });
 
   if (fetchResult.status !== 200) {
     throw new Error(
-      `Could not fetch image at url ${url} properly, code ${fetchResult.status}`
+      `Getting from S3 storage, could not fetch image at url ${url} properly, code ${fetchResult.status}`
     );
   }
   return await fetchResult.arrayBuffer();

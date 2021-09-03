@@ -14,9 +14,12 @@ export const uploadsRoute = "/api/worker/uploads";
 const getUploadTarget = async (
   _parent: any,
   args: MutationGetUploadTargetArgs,
-  { repository }: Context
+  { repository, req }: Context
 ): Promise<UploadTarget> => {
-  return await repository.upload.getUploadTarget(args?.data?.key);
+  return await repository.upload.getUploadTarget(
+    args?.data?.key,
+    (req?.headers as any)?.origin ?? ""
+  );
 };
 
 export default {

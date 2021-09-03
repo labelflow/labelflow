@@ -6189,7 +6189,7 @@ __metadata:
     "@types/node": 16.4.1
     apollo-server: 3.0.2
     graphql: 15.5.1
-    node-fetch: 2.6.1
+    isomorphic-fetch: 3.0.0
     nodemon: 2.0.12
     prisma: ^2.30.2
     probe-image-size: 7.2.1

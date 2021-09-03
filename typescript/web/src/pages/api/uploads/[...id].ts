@@ -28,17 +28,56 @@ apiRoute.put(async (req, res) => {
   const session = await getSession({ req });
   // Block all queries by unauthenticated users
   if (typeof session?.user.id !== "string") {
-    throw new Error("User must be signed in to upload files.");
+    return res.status(401).json({
+      error: {
+        name: "Unauthorized",
+        message: "User must be signed in to upload files.",
+      },
+    });
   }
   const key = (req.query.id as string[]).join("/");
   // @ts-ignore
   const { file } = req;
-  await client.storage.from(bucket).upload(key, file.buffer, {
+  const { error } = await client.storage.from(bucket).upload(key, file.buffer, {
     contentType: file.mimetype,
     upsert: false,
     cacheControl: "public, max-age=31536000, immutable",
   });
-  res.status(200).json({ data: "success" });
+  if (error) {
+    return res
+      .status(404)
+      .json({ error: { name: error.name, message: error.message } });
+  }
+  return res.status(200).json({ data: "success" });
+});
+
+apiRoute.get(async (req, res) => {
+  const session = await getSession({ req });
+  // Block all queries by unauthenticated users
+  if (typeof session?.user.id !== "string") {
+    return res.status(401).json({
+      error: {
+        name: "Unauthorized",
+        message: "User must be signed in to download files.",
+      },
+    });
+  }
+  const key = (req.query.id as string[]).join("/");
+
+  const { signedURL, error } = await client.storage
+    .from(bucket)
+    .createSignedUrl(key, 3600);
+
+  if (error) {
+    return res
+      .status(404)
+      .json({ error: { name: error.name, message: error.message } });
+  }
+  if (signedURL) {
+    return res.redirect(301, signedURL);
+  }
+
+  return res.status(404).json({ error: { name: "Unknown error" } });
 });
 
 export default apiRoute;

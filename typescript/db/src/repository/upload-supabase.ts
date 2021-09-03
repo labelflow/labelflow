@@ -1,5 +1,5 @@
-import fetch from "node-fetch";
 import { createClient } from "@supabase/supabase-js";
+import "isomorphic-fetch";
 
 import { Repository } from "../../../common-resolvers/src";
 import { UploadTargetHttp } from "../../../graphql-types/src/graphql-types.generated";
@@ -12,27 +12,30 @@ const bucket = "labelflow-images";
 export const uploadsRoute = "/api/uploads";
 
 export const getUploadTargetHttp = async (
-  key: string
+  key: string,
+  origin?: string
 ): Promise<UploadTargetHttp> => {
   return {
     __typename: "UploadTargetHttp",
-    uploadUrl: `${uploadsRoute}/${key}`,
-    downloadUrl: `${process?.env?.SUPABASE_API_URL}/storage/v1/object/public/${bucket}/${key}`,
+    uploadUrl: `${origin}${uploadsRoute}/${key}`,
+    downloadUrl: `${origin}${uploadsRoute}/${key}`,
   };
 };
 
-export const getFromStorage: Repository["upload"]["get"] = async (url) => {
+export const getFromStorage: Repository["upload"]["get"] = async (url, req) => {
+  console.log("req?.headers", req?.headers);
+  const headers = new Headers(req?.headers);
+  headers.set("Accept", "image/tiff,image/jpeg,image/png,image/*,*/*;q=0.8");
+  headers.set("Sec-Fetch-Dest", "image");
+
   const fetchResult = await fetch(url, {
     method: "GET",
-    headers: {
-      Accept: "image/tiff,image/jpeg,image/png,image/*,*/*;q=0.8",
-      "Sec-Fetch-Dest": "image",
-    },
+    headers,
   });
 
   if (fetchResult.status !== 200) {
     throw new Error(
-      `Could not fetch image at url ${url} properly, code ${fetchResult.status}`
+      `Getting from Supabase storage, could not fetch image at url ${url} properly, code ${fetchResult.status}`
     );
   }
   return await fetchResult.arrayBuffer();

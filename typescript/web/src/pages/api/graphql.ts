@@ -13,7 +13,7 @@ const apolloServer = new ApolloServer({
         "User must be signed in to perform GraphQL queries."
       );
     }
-    return { repository, session, user: session?.user };
+    return { repository, session, user: session?.user, req };
   },
   introspection: true,
 });

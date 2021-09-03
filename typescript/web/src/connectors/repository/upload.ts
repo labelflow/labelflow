@@ -53,6 +53,7 @@ export const getFromStorage = async (url: string): Promise<ArrayBuffer> => {
       method: "GET",
       mode: "cors",
       headers: new Headers({
+        // No need to add specific headers here, they are already added by the fetch call
         Accept: "image/tiff,image/jpeg,image/png,image/*,*/*;q=0.8",
         "Sec-Fetch-Dest": "image",
       }),
@@ -61,7 +62,7 @@ export const getFromStorage = async (url: string): Promise<ArrayBuffer> => {
 
   if (fetchResult.status !== 200) {
     throw new Error(
-      `Could not fetch image at url ${url} properly, code ${fetchResult.status}`
+      `From client, could not fetch image at url ${url} properly, code ${fetchResult.status}`
     );
   }
   return await fetchResult.arrayBuffer();

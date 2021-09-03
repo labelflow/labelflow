@@ -41,7 +41,8 @@ const getImageName = ({
 
 export const getImageEntityFromMutationArgs = async (
   data: ImageCreateInput,
-  repository: Pick<Repository, "upload">
+  repository: Pick<Repository, "upload">,
+  req: Request
 ) => {
   const {
     file,
@@ -65,19 +66,21 @@ export const getImageEntityFromMutationArgs = async (
 
   if (!file && externalUrl && !url) {
     // External file based upload
+
+    const headers = new Headers(req?.headers);
+    headers.set("Accept", "image/tiff,image/jpeg,image/png,image/*,*/*;q=0.8");
+    headers.set("Sec-Fetch-Dest", "image");
+
     const fetchResult = await fetch(externalUrl, {
       method: "GET",
       mode: "cors",
-      headers: {
-        Accept: "image/tiff,image/jpeg,image/png,image/*,*/*;q=0.8",
-        "Sec-Fetch-Dest": "image",
-      },
+      headers,
       credentials: "omit",
     });
 
     if (fetchResult.status !== 200) {
       throw new Error(
-        `Could not fetch image at url ${externalUrl} properly, code ${fetchResult.status}`
+        `While transfering image could not fetch image at url ${externalUrl} properly, code ${fetchResult.status}`
       );
     }
 
@@ -123,7 +126,7 @@ export const getImageEntityFromMutationArgs = async (
       mimetype,
       url: finalUrl!,
     },
-    repository.upload.get
+    (urlToProbe: string) => repository.upload.get(urlToProbe, req)
   );
 
   const newImageEntity: DbImage = {
@@ -168,7 +171,7 @@ const images = async (
 const createImage = async (
   _: any,
   args: MutationCreateImageArgs,
-  { repository }: Context
+  { repository, req }: Context
 ): Promise<DbImage> => {
   const { file, url, externalUrl, datasetId } = args.data;
 
@@ -194,7 +197,8 @@ const createImage = async (
 
   const newImageEntity = await getImageEntityFromMutationArgs(
     args.data,
-    repository
+    repository,
+    req
   );
 
   await repository.image.add(newImageEntity);
