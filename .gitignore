@@ -141,3 +141,4 @@ storybook-static
 **/public/sw.js.*
 **/public/worker-*.js.*
 **/public/*.chunk.*.js.*
+./.env
