@@ -82,7 +82,7 @@ export const SigninModal = ({
               </Box>
               <SimpleGrid
                 rounded="lg"
-                mt="10"
+                mt="8"
                 p={{ base: "10", lg: "0" }}
                 columns={1}
                 spacing="6"
