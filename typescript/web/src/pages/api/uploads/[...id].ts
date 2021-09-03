@@ -1,6 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 import nextConnect from "next-connect";
 import multer from "multer";
+import { getSession } from "next-auth/client";
 import { NextApiResponse, NextApiRequest } from "next";
 
 const client = createClient(
@@ -24,6 +25,11 @@ const apiRoute = nextConnect({
 apiRoute.use(upload.single("image"));
 
 apiRoute.put(async (req, res) => {
+  const session = await getSession({ req });
+  // Block all queries by unauthenticated users
+  if (typeof session?.user.id !== "string") {
+    throw new Error("User must be signed in to upload files.");
+  }
   const key = (req.query.id as string[]).join("/");
   // @ts-ignore
   const { file } = req;

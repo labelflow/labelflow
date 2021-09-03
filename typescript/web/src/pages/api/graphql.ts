@@ -9,7 +9,9 @@ const apolloServer = new ApolloServer({
     // Block all queries by unauthenticated users
     // This will need to be removed once we want to have public datasets
     if (typeof session?.user.id !== "string") {
-      throw new AuthenticationError("User must be signed in.");
+      throw new AuthenticationError(
+        "User must be signed in to perform GraphQL queries."
+      );
     }
     return { repository, session, user: session?.user };
   },
