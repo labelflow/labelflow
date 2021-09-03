@@ -28,7 +28,7 @@ const deleteDatasetByIdMutation = gql`
 
 export const DeleteDatasetModal = ({
   isOpen = false,
-  onClose = () => { },
+  onClose = () => {},
   datasetId = undefined,
 }: {
   isOpen?: boolean;
