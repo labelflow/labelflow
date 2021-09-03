@@ -16,7 +16,7 @@ describe("migrations", () => {
     // @ts-ignore
     await db.dataset.add({
       id: datasetId,
-      name: "Test Project",
+      name: "Test Dataset",
       createdAt: Date.now(),
       updatedAt: Date.now(),
     });
@@ -29,6 +29,6 @@ describe("migrations", () => {
 
     const dataset = await db.dataset.get(datasetId);
 
-    expect(dataset?.slug).toEqual("test-project");
+    expect(dataset?.slug).toEqual("test-dataset");
   });
 });

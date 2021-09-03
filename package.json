@@ -38,6 +38,7 @@
     "@graphql-codegen/schema-ast": "^1.18.2",
     "@graphql-codegen/typescript": "^1.22.0",
     "@graphql-codegen/typescript-resolvers": "^1.19.1",
+    "@prisma/client": "2.30.2",
     "@storybook/addon-actions": "6.3.0",
     "@storybook/addons": "6.3.0",
     "@storybook/builder-webpack5": "next",

@@ -164,10 +164,11 @@ const ImagesPage = () => {
               >
                 <a href={`/local/datasets/${datasetSlug}/images/${id}`}>
                   <VStack
+                    maxW="486px"
                     p={4}
                     background={cardBackground}
                     rounded={8}
-                    height="250px"
+                    height="270px"
                     justifyContent="space-between"
                   >
                     <Heading
@@ -188,7 +189,7 @@ const ImagesPage = () => {
                       src={url}
                       ignoreFallback
                       objectFit="contain"
-                      h="188px"
+                      h="208px"
                       w="full"
                       flexGrow={0}
                       flexShrink={0}

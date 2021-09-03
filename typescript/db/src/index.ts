@@ -1,34 +1,23 @@
-import { ApolloServer } from "apollo-server";
 import { join } from "path";
 import { loadSchemaSync } from "@graphql-tools/load";
 import { GraphQLFileLoader } from "@graphql-tools/graphql-file-loader";
 import { addResolversToSchema } from "@graphql-tools/schema";
 
 import { resolvers } from "./resolvers";
-import { repository } from "./repository";
 
-const schema = loadSchemaSync(
-  join(__dirname, "../../../data/__generated__/schema.graphql"),
-  {
-    loaders: [new GraphQLFileLoader()],
-  }
+export { repository } from "./repository";
+
+const filePath = join(
+  __dirname,
+  // The path below actually works in the next.js context (that's much deeper)
+  "../../../../../../data/__generated__/schema.graphql"
 );
 
-const schemaWithResolvers = addResolversToSchema({
+export const schema = loadSchemaSync(filePath, {
+  loaders: [new GraphQLFileLoader()],
+});
+
+export const schemaWithResolvers = addResolversToSchema({
   schema,
   resolvers,
-});
-
-const server = new ApolloServer({
-  introspection: true,
-  context: { repository },
-  schema: schemaWithResolvers,
-});
-
-server.listen({ port: 5000 }).then(async ({ url }) => {
-  // eslint-disable-next-line no-console
-  console.log(`\
-  🚀 Server ready at: ${url}
-  ⭐️ See sample queries: http://pris.ly/e/ts/graphql#using-the-graphql-api
-    `);
 });
