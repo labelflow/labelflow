@@ -5,20 +5,20 @@ import { DbImage, DbLabel, DbLabelClass } from "../../types";
 
 import { ExportFunction } from "../types";
 
-const generateNamesFile = (labelClasses: DbLabelClass[]): string => {
+export const generateNamesFile = (labelClasses: DbLabelClass[]): string => {
   return labelClasses
     .reduce((namesFile, labelClass) => `${namesFile}${labelClass.name}\n`, "")
     .trim();
 };
 
-const generateDataFile = (
+export const generateDataFile = (
   numberLabelClasses: number,
   datasetName: string
 ): string => {
   return `classes = ${numberLabelClasses}\ntrain = ${datasetName}/train.txt\ndata = ${datasetName}/obj.names`;
 };
 
-const generateImagesListFile = (
+export const generateImagesListFile = (
   images: DbImage[],
   datasetName: string
 ): string => {
@@ -33,7 +33,7 @@ const generateImagesListFile = (
     .trim();
 };
 
-const generateLabelsOfImageFile = (
+export const generateLabelsOfImageFile = (
   labelsOfImage: DbLabel[],
   image: DbImage,
   labelClasses: DbLabelClass[],
@@ -46,7 +46,7 @@ const generateLabelsOfImageFile = (
       }
       const labelClassIndex = labelClasses.find(
         (labelClass) => labelClass.id === label.labelClassId
-      ).index;
+      )?.index;
       return `${labelsOfImageFile}${labelClassIndex} ${label.x / image.width} ${
         label.y / image.height
       } ${label.width / image.width} ${label.height / image.width}\n`;
