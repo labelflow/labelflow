@@ -1,6 +1,7 @@
 import mime from "mime-types";
 import { Geometry } from "@turf/helpers";
 import { coordReduce } from "@turf/meta";
+import { ExportOptionsCoco } from "@labelflow/graphql-types";
 import { DbImage, DbLabelClass } from "../../../types";
 
 import {
@@ -10,6 +11,7 @@ import {
   CocoDataset,
   DbLabelWithImageDimensions,
 } from "./types";
+import { getImageName } from "../../common";
 
 export {
   initialCocoDataset,
@@ -148,20 +150,17 @@ const convertLabelsOfImageToCocoAnnotations = (
 };
 
 const convertImageToCocoImage = (
-  {
-    createdAt,
-    height,
-    width,
-    name,
-    externalUrl,
-    id: idImage,
-    mimetype,
-  }: DbImage,
-  id: number
+  image: DbImage,
+  id: number,
+  options: ExportOptionsCoco
 ): CocoImage => {
+  const { createdAt, height, width, externalUrl, mimetype } = image;
   return {
     id,
-    file_name: `${name}_${idImage}.${mime.extension(mimetype)}`,
+    file_name: `${getImageName(
+      image,
+      options?.avoidImageNameCollisions ?? false
+    )}.${mime.extension(mimetype)}`,
     coco_url: externalUrl ?? "",
     date_captured: createdAt,
     flickr_url: "",
@@ -171,12 +170,15 @@ const convertImageToCocoImage = (
   };
 };
 
-const convertImagesToCocoImages = (images: DbImage[]) => {
+const convertImagesToCocoImages = (
+  images: DbImage[],
+  options: ExportOptionsCoco
+) => {
   const imageIdsMap: Record<string, number> = {};
   const cocoImages = images.map((image, index) => {
     const cocoImageId = index + 1;
     imageIdsMap[image.id] = cocoImageId;
-    return convertImageToCocoImage(image, cocoImageId);
+    return convertImageToCocoImage(image, cocoImageId, options);
   });
 
   return { cocoImages, imageIdsMap };
@@ -185,9 +187,13 @@ const convertImagesToCocoImages = (images: DbImage[]) => {
 const convertLabelflowDatasetToCocoDataset = (
   images: DbImage[],
   labels: DbLabelWithImageDimensions[],
-  labelClasses: DbLabelClass[]
+  labelClasses: DbLabelClass[],
+  options: ExportOptionsCoco
 ): CocoDataset => {
-  const { cocoImages, imageIdsMap } = convertImagesToCocoImages(images);
+  const { cocoImages, imageIdsMap } = convertImagesToCocoImages(
+    images,
+    options
+  );
 
   const { cocoCategories, labelClassIdsMap } =
     convertLabelClassesToCocoCategories(labelClasses);

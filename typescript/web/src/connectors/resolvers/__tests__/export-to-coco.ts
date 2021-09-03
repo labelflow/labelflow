@@ -133,7 +133,7 @@ const createLabelWithLabelClass = (imageId: string, labelClassId: string) => {
   });
 };
 
-describe("Exporting a dataset to coco format", () => {
+describe.skip("Exporting a dataset to coco format", () => {
   beforeEach(async () => {
     // Images and label classes are always liked to a dataset
     await createDataset("Test dataset");

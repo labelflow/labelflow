@@ -1,4 +1,5 @@
 import { QueryExportDatasetArgs, ExportFormat } from "@labelflow/graphql-types";
+import { v4 as uuidv4 } from "uuid";
 
 import { exportToCoco } from "./format-coco/index";
 import { exportToYolo } from "./format-yolo/index";
@@ -10,14 +11,22 @@ const generateExportFile = async (
 ): Promise<Blob> => {
   switch (args.format) {
     case ExportFormat.Yolo: {
-      return await exportToYolo(args.where.datasetId, args?.options?.yolo, {
-        repository,
-      });
+      return await exportToYolo(
+        args.where.datasetId,
+        args?.options?.yolo ?? {},
+        {
+          repository,
+        }
+      );
     }
     case ExportFormat.Coco: {
-      return await exportToCoco(args.where.datasetId, args?.options?.coco, {
-        repository,
-      });
+      return await exportToCoco(
+        args.where.datasetId,
+        args?.options?.coco ?? {},
+        {
+          repository,
+        }
+      );
     }
     default: {
       throw new Error("Unsupported format");
@@ -31,7 +40,8 @@ const exportDataset = async (
   { repository }: Context
 ) => {
   const fileExport = await generateExportFile(args, { repository });
-  const outUrl = (await repository.upload.getUploadTargetHttp())?.uploadUrl;
+  const outUrl = (await repository.upload.getUploadTargetHttp(uuidv4()))
+    ?.uploadUrl;
   await repository.upload.put(outUrl, fileExport);
   return outUrl;
 };

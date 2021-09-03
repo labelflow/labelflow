@@ -88,11 +88,22 @@ data = my-dataset-name/obj.names`
     expect(
       generateImagesListFile(
         [createImage("titi"), createImage("toto")],
-        "my-dataset-name"
+        "my-dataset-name",
+        { avoidImageNameCollisions: false }
       )
     ).toEqual(
       `my-dataset-name/obj_train_data/titi.png
 my-dataset-name/obj_train_data/toto.png`
+    );
+    expect(
+      generateImagesListFile(
+        [createImage("titi"), createImage("toto")],
+        "my-dataset-name",
+        { avoidImageNameCollisions: true }
+      )
+    ).toEqual(
+      `my-dataset-name/obj_train_data/titi_id-titi.png
+my-dataset-name/obj_train_data/toto_id-toto.png`
     );
   });
 

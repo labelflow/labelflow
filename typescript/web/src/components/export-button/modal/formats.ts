@@ -47,11 +47,21 @@ export const formatsOptionsInformation: {
       title: "Export image files",
       description: "Zip images together with the annotation file",
     },
+    avoidImageNameCollisions: {
+      title: "Avoid image names collision",
+      description:
+        "A unique identifier will be added to the image's name. Recommended when exporting the images",
+    },
   },
   yolo: {
     exportImages: {
       title: "Export image files",
       description: "Zip images together with the annotation directory",
+    },
+    avoidImageNameCollisions: {
+      title: "Avoid image names collision",
+      description:
+        "A unique identifier will be added to the image's name. Recommended when exporting the images",
     },
     includePolygons: {
       title: "Include polygons",

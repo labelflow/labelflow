@@ -109,7 +109,9 @@ export const ExportOptionsModal = ({
                     [exportFormatLowerCase]: {
                       ...previousOptions[exportFormatLowerCase],
                       [optionName]:
+                      // @ts-ignore
                         !previousOptions[exportFormatLowerCase][
+                          // @ts-ignore
                           optionName as keyof typeof previousOptions[exportFormatLowerCase]
                         ],
                     },

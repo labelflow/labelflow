@@ -98,12 +98,14 @@ export type ExportOptions = {
 export type ExportOptionsCoco = {
   name?: Maybe<Scalars['String']>;
   exportImages?: Maybe<Scalars['Boolean']>;
+  avoidImageNameCollisions?: Maybe<Scalars['Boolean']>;
 };
 
 export type ExportOptionsYolo = {
   name?: Maybe<Scalars['String']>;
   exportImages?: Maybe<Scalars['Boolean']>;
   includePolygons?: Maybe<Scalars['Boolean']>;
+  avoidImageNameCollisions?: Maybe<Scalars['Boolean']>;
 };
 
 export type ExportWhereUniqueInput = {

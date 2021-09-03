@@ -5,6 +5,7 @@ import mime from "mime-types";
 import { convertLabelflowDatasetToCocoDataset } from "./coco-core/converters";
 import { jsonToDataUri } from "./json-to-data-uri";
 import { ExportFunction } from "../types";
+import { getImageName } from "../common";
 
 import { addImageDimensionsToLabels } from "./add-image-dimensions-to-labels";
 
@@ -25,7 +26,8 @@ export const exportToCoco: ExportFunction = async (
     convertLabelflowDatasetToCocoDataset(
       images,
       labelsWithImageDimensions,
-      labelClasses
+      labelClasses,
+      options
     )
   );
   const annotationsFileDataUri = jsonToDataUri(annotationsFileJson);
@@ -40,27 +42,18 @@ export const exportToCoco: ExportFunction = async (
       }
     );
     await Promise.all(
-      images.map(
-        async ({
-          id,
-          name,
-          url,
-          mimetype,
-        }: {
-          id: string;
-          name: string;
-          url: string;
-          mimetype: string;
-        }) => {
-          const blob = new Blob([await repository.upload.get(url)], {
-            type: mimetype,
-          });
-          zip.file(
-            `${datasetName}/images/${name}_${id}.${mime.extension(mimetype)}`,
-            blob
-          );
-        }
-      )
+      images.map(async (image) => {
+        const blob = new Blob([await repository.upload.get(image.url)], {
+          type: image.mimetype,
+        });
+        zip.file(
+          `${datasetName}/images/${getImageName(
+            image,
+            options?.avoidImageNameCollisions ?? false
+          )}.${mime.extension(image.mimetype)}`,
+          blob
+        );
+      })
     );
     const blobZip = await zip.generateAsync({ type: "blob" });
     return blobZip;

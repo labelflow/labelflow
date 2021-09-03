@@ -6,12 +6,14 @@ enum ExportFormat{
 input ExportOptionsCoco {
     name: String
     exportImages: Boolean
+    avoidImageNameCollisions: Boolean
 }
 
 input ExportOptionsYolo {
     name: String
     exportImages: Boolean
     includePolygons: Boolean
+    avoidImageNameCollisions: Boolean
 }
 
 input ExportOptions {

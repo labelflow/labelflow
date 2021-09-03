@@ -2,6 +2,7 @@ import { ExportOptionsYolo, LabelType } from "@labelflow/graphql-types";
 import JSZip from "jszip";
 import mime from "mime-types";
 import { DbImage, DbLabel, DbLabelClass } from "../../types";
+import { getImageName } from "../common";
 
 import { ExportFunction } from "../types";
 
@@ -20,14 +21,16 @@ export const generateDataFile = (
 
 export const generateImagesListFile = (
   images: DbImage[],
-  datasetName: string
+  datasetName: string,
+  options: ExportOptionsYolo
 ): string => {
   return images
     .reduce(
       (imagesList, image) =>
-        `${imagesList}${datasetName}/obj_train_data/${
-          image.name
-        }.${mime.extension(image.mimetype)}\n`,
+        `${imagesList}${datasetName}/obj_train_data/${getImageName(
+          image,
+          options?.avoidImageNameCollisions ?? false
+        )}.${mime.extension(image.mimetype)}\n`,
       ""
     )
     .trim();
@@ -70,7 +73,7 @@ export const exportToYolo: ExportFunction = async (
   zip.file(`${datasetName}/obj.names`, generateNamesFile(labelClasses));
   zip.file(
     `${datasetName}/train.txt`,
-    generateImagesListFile(images, datasetName)
+    generateImagesListFile(images, datasetName, options)
   );
   await Promise.all(
     images.map(async (image) => {
