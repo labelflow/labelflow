@@ -51,4 +51,13 @@ export default NextAuth({
   //   newUser: "/auth/new-user", // New users will be directed here on first sign in (leave the property out if not of interest)
   // },
   // debug: true,
+  callbacks: {
+    session: (session, user: NextAuthUserWithStringId) => {
+      if (session?.user && user?.id) {
+        // eslint-disable-next-line no-param-reassign
+        session.user.id = user?.id;
+      }
+      return session;
+    },
+  },
 });

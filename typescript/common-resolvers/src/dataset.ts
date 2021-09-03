@@ -119,8 +119,9 @@ const labelClasses = async (
 const dataset = async (
   _: any,
   args: QueryDatasetArgs,
-  { repository }: Context
+  { repository, user }: Context & { user: any }
 ): Promise<DbDataset> => {
+  console.log("user from resolver", user);
   return await getDatasetFromWhereUniqueInput(args.where, repository);
 };
 

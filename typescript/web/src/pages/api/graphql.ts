@@ -1,9 +1,13 @@
 import { ApolloServer } from "apollo-server-micro";
 import { schemaWithResolvers, repository } from "@labelflow/db";
+import { getSession } from "next-auth/client";
 
 const apolloServer = new ApolloServer({
   schema: schemaWithResolvers,
-  context: { repository },
+  context: async ({ req }) => {
+    const session = await getSession({ req });
+    return { repository, session, user: session?.user };
+  },
   introspection: true,
 });
 
