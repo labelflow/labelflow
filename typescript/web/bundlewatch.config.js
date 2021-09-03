@@ -22,11 +22,11 @@ const bundlewatchConfig = {
     // Service worker files
     {
       path: './public/sw.js',
-      maxSize: '900kb',
+      maxSize: '950kb',
     },
     {
       path: './public/worker-*.js',
-      maxSize: '900kb',
+      maxSize: '950kb',
     },
     {
       path: './public/fallback-*.js',
