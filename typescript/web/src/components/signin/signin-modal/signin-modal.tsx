@@ -1,4 +1,4 @@
-import React, { useCallback, useState, ReactNode } from "react";
+import React, { ReactNode } from "react";
 
 import {
   Heading,
@@ -6,9 +6,7 @@ import {
   Modal,
   ModalOverlay,
   ModalContent,
-  ModalHeader,
   Text,
-  Skeleton,
   ModalBody,
   useColorModeValue,
   ModalCloseButton,
