@@ -1,4 +1,4 @@
-import React, { ReactNode } from "react";
+import React, { ReactNode, useCallback } from "react";
 
 import {
   Heading,
@@ -24,9 +24,26 @@ import { RiMailSendLine } from "react-icons/ri";
 import { signIn } from "next-auth/react";
 
 import { FaGithub, FaGoogle } from "react-icons/fa";
+import { useQueryParam, StringParam } from "use-query-params";
 
 import { DividerWithText } from "./divider-with-text";
 import { Logo } from "../../logo";
+import { BoolParam } from "../../../utils/query-param-bool";
+
+const errors = {
+  Signin: "Try signing in with a different account.",
+  OAuthSignin: "Try signing in with a different account.",
+  OAuthCallback: "Try signing in with a different account.",
+  OAuthCreateAccount: "Try signing in with a different account.",
+  EmailCreateAccount: "Try signing in with a different account.",
+  Callback: "Try signing in with a different account.",
+  OAuthAccountNotLinked:
+    "To confirm your identity, sign in with the same account you used originally.",
+  EmailSignin: "Check your email inbox.",
+  CredentialsSignin:
+    "Sign in failed. Check the details you provided are correct.",
+  default: "Unable to sign in.",
+};
 
 const Feature = (props: { title: string; children: ReactNode }) => {
   const { title, children } = props;
@@ -47,6 +64,25 @@ export const SigninModal = ({
   onClose?: () => void;
   error?: string | null;
 }) => {
+  const [, setIsOpen] = useQueryParam("modal-signin", BoolParam);
+  const [, setError] = useQueryParam("error", StringParam);
+  const performSignIn = useCallback(
+    async (method, options = {}) => {
+      const signInResult = await signIn<"email" | "credentials">(method, {
+        redirect: false,
+        callbackUrl: window.location.toString().replace("modal-signin", ""),
+        ...options,
+      });
+      if (signInResult?.error) {
+        setError(signInResult.error);
+        return;
+      }
+      if (signInResult?.ok) {
+        setIsOpen(false);
+      }
+    },
+    [setIsOpen, setError]
+  );
   return (
     <Modal
       scrollBehavior="inside"
@@ -124,14 +160,14 @@ export const SigninModal = ({
               <Stack spacing="4">
                 <Button
                   variant="outline"
-                  onClick={() => signIn("google")}
+                  onClick={() => performSignIn("google")}
                   leftIcon={<Box as={FaGoogle} color="red.500" />}
                 >
                   Sign up with Google
                 </Button>
                 <Button
                   variant="outline"
-                  onClick={() => signIn("github")}
+                  onClick={() => performSignIn("github")}
                   leftIcon={
                     <Box
                       as={FaGithub}
@@ -152,8 +188,9 @@ export const SigninModal = ({
                       "email"
                     ) as HTMLInputElement
                   ).value;
-                  signIn("email", { email });
-                  // your submit logic here
+                  performSignIn("email", {
+                    email,
+                  });
                 }}
               >
                 <Stack spacing="4">
@@ -182,7 +219,9 @@ export const SigninModal = ({
                   fontSize="xs"
                   color={useColorModeValue("red.600", "red.400")}
                 >
-                  {error}
+                  {error in errors
+                    ? errors[error as keyof typeof errors]
+                    : errors.default}
                 </Text>
               ) : (
                 <Text
