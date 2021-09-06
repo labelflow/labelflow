@@ -199,10 +199,16 @@ const applyProps = (
       if (key.substr(0, 2) === "on") {
         const eventType = lowerFirst(key.substr(2).replace("_", ":"));
         if (isFunction(oldProps[key])) {
-          olObject.un(eventType, oldProps[key]);
+          olObject.un(
+            eventType as any, // Not enough typing in ol to be precise enough here
+            oldProps[key]
+          );
         }
         if (isFunction(newProps[key])) {
-          olObject.on(eventType, newProps[key]);
+          olObject.on(
+            eventType as any, // Not enough typing in ol to be precise enough here
+            newProps[key]
+          );
         }
       } else {
         const olKey = startsWith("_", key) ? key.substring(1) : key;
@@ -691,8 +697,14 @@ const commitUpdate = (
   const olObject = instance;
 
   // This is a data object, let's extract critical information about it
-  const { args: argsNew = [], onUpdate, children, ...restNew } = newProps;
-  const { args: argsOld = [], ...restOld } = oldProps;
+  const {
+    args: argsNew = [],
+    onUpdate,
+    children,
+    ...restNew
+  } = newProps as any; // Had to add the "as any" after moving to ol 6.6.0, which uses its own type definitions
+
+  const { args: argsOld = [], ...restOld } = oldProps as any; // Had to add the "as any" after moving to ol 6.6.0, which uses its own type definitions;
   // If it has new props or arguments, then it needs to be re-instanciated
 
   let hasNewArgs = false;
