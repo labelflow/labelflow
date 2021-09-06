@@ -133,6 +133,7 @@ export const UserMenu = () => {
           {colorMode === "light" ? (
             <MenuItem
               icon={<DarkModeIcon fontSize="lg" />}
+              closeOnSelect={false}
               onClick={toggleColorMode}
             >
               Switch to dark mode
@@ -140,6 +141,7 @@ export const UserMenu = () => {
           ) : (
             <MenuItem
               icon={<LightModeIcon fontSize="lg" />}
+              closeOnSelect={false}
               onClick={toggleColorMode}
             >
               Switch to light mode
