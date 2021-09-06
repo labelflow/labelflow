@@ -110,7 +110,7 @@ model User {
   sessions      Session[]
 }
 
-model VerificationRequest {
+model VerificationToken {
   identifier String
   token      String   @unique
   expires    DateTime
