@@ -1,10 +1,11 @@
-import NextAuth, { User as NextAuthUser } from "next-auth";
+import NextAuth, { Profile } from "next-auth";
 
 import EmailProvider from "next-auth/providers/email";
 import GoogleProvider from "next-auth/providers/google";
 import GitHubProvider from "next-auth/providers/github";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { PrismaClient } from "@prisma/client";
+import { OAuthConfig } from "next-auth/providers";
 
 // interface NextAuthUserWithStringId extends NextAuthUser {
 //   id: string;
@@ -21,9 +22,9 @@ export default NextAuth({
       from: process.env.EMAIL_FROM,
     }),
     GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    }),
+      clientId: process.env.GOOGLE_CLIENT_ID as string,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+    }) as OAuthConfig<Profile>,
     GitHubProvider({
       clientId: process.env.GITHUB_CLIENT_ID,
       clientSecret: process.env.GITHUB_CLIENT_SECRET,
