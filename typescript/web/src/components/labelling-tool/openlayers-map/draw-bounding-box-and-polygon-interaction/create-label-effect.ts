@@ -2,6 +2,7 @@ import { ApolloCache, ApolloClient, Reference, gql } from "@apollo/client";
 import { getBoundedGeometryFromImage } from "@labelflow/common-resolvers";
 
 import { GeometryInput, LabelType } from "@labelflow/graphql-types";
+import { GeoJSONPolygon } from "ol/format/GeoJSON";
 import { Effect } from "../../../../connectors/undo-store";
 import { getDatasetsQuery } from "../../../../pages/local/datasets";
 
@@ -149,7 +150,7 @@ export const createLabelEffect = (
   }: {
     imageId: string;
     selectedLabelClassId: string | null;
-    geometry: GeoJSON.Polygon;
+    geometry: GeoJSONPolygon;
     labelType: LabelType;
   },
   {
