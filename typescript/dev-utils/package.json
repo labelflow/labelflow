@@ -2,7 +2,7 @@
   "private": true,
   "name": "@labelflow/dev-utils",
   "version": "0.0.1",
-  "repository": "git@github.com:Labelflow/labelflow.git",
+  "repository": "git@github.com:labelflow/labelflow.git",
   "scripts": {},
   "dependencies": {
     "mockdate": "^3.0.5"

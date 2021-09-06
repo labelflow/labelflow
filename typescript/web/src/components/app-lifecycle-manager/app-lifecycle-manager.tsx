@@ -1,13 +1,9 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useCallback } from "react";
 import { useErrorHandler } from "react-error-boundary";
 import type { Workbox } from "workbox-window";
 import { useQueryParam, StringParam } from "use-query-params";
 import { UpdateServiceWorkerModal } from "./update-service-worker-modal/update-service-worker-modal";
 import { WelcomeModal } from "./welcome-modal";
-import {
-  checkServiceWorkerReady,
-  messageNoWindow,
-} from "../../utils/check-service-worker";
 
 declare global {
   interface Window {
@@ -15,9 +11,11 @@ declare global {
   }
 }
 
-type Props = { assumeServiceWorkerActive: boolean };
-
-export const AppLifecycleManager = ({ assumeServiceWorkerActive }: Props) => {
+export const AppLifecycleManager = ({
+  noModals = false,
+}: {
+  noModals?: boolean; // Should be true for website and pages where you dont want service worker related modals to appear
+}) => {
   // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
   // This param can have several values:
   //   - undefined: Normal behavior, only show the update modal when needed
@@ -26,12 +24,6 @@ export const AppLifecycleManager = ({ assumeServiceWorkerActive }: Props) => {
   //   - "update": Do update the service worker when needed, Don't ever open the update modal
   const [paramModalUpdateServiceWorker, setParamModalUpdateServiceWorker] =
     useQueryParam("modal-update-service-worker", StringParam);
-
-  // By default (including during SSR) we consider the service worker to be ready
-  // since this is the nominal case that happen all the time except during the very first visit
-  const [isServiceWorkerActive, setIsServiceWorkerActive] = useState(
-    assumeServiceWorkerActive
-  );
 
   const handleError = useErrorHandler();
 
@@ -81,6 +73,34 @@ export const AppLifecycleManager = ({ assumeServiceWorkerActive }: Props) => {
     if (typeof window === "undefined") {
       return;
     }
+
+    if (noModals) {
+      // Don't show any modals but register and update service worker automatically
+      // Good for website pages
+      try {
+        const wb = window.workbox;
+
+        const updateServiceWorkerWhenWaiting = () => {
+          updateServiceWorker();
+          wb.removeEventListener("waiting", updateServiceWorkerWhenWaiting);
+        };
+
+        wb.addEventListener("waiting", updateServiceWorkerWhenWaiting);
+
+        // never forget to call register as auto register is turned off in next.config.js
+        wb.register();
+
+        // eslint-disable-next-line consistent-return
+        return () => {
+          wb.removeEventListener("waiting", updateServiceWorkerWhenWaiting);
+        };
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.warn("This browser does not support service worker");
+      }
+    }
+
+    // If !noModals then we show the full service worker modals
     try {
       const wb = window.workbox;
 
@@ -89,20 +109,6 @@ export const AppLifecycleManager = ({ assumeServiceWorkerActive }: Props) => {
           "Workbox is unavailable, are you on firefox in incognito mode?"
         );
       }
-
-      const checkServiceWorkerStatus = async (): Promise<void> => {
-        try {
-          await checkServiceWorkerReady();
-          setIsServiceWorkerActive(true);
-        } catch (error) {
-          if (error.message === messageNoWindow) {
-            return;
-          }
-          handleError(error);
-        }
-      };
-
-      checkServiceWorkerStatus();
 
       // A common UX pattern for progressive web apps is to show a banner when a service worker has updated and waiting to install.
       // NOTE: MUST set skipWaiting to false in next.config.js pwa object
@@ -136,11 +142,14 @@ export const AppLifecycleManager = ({ assumeServiceWorkerActive }: Props) => {
     } catch (error) {
       handleError(error);
     }
-  }, []);
+  }, [noModals]);
 
+  if (noModals) {
+    return null;
+  }
   return (
     <>
-      <WelcomeModal isServiceWorkerActive={isServiceWorkerActive} />
+      <WelcomeModal />
       <UpdateServiceWorkerModal
         isOpen={isUpdateServiceWorkerModalOpen}
         onClose={closeUpdateServiceWorkerModal}

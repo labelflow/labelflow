@@ -66,10 +66,7 @@ export const BlogCard = (props: BlogProps) => {
             color={mode("gray.600", "gray.400")}
           >
             <Text>
-              By{" "}
-              <Box as="a" textDecor="underline">
-                {author.name}
-              </Box>
+              By <Box textDecor="underline">{author.name}</Box>
             </Text>
             <Link href={href}>
               <Box

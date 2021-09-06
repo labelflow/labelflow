@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { chakra, Stack } from "@chakra-ui/react";
+import { chakra, Stack, useColorModeValue as mode } from "@chakra-ui/react";
 import { RiUploadCloud2Line } from "react-icons/ri";
 import { useDropzone, FileWithPath, FileRejection } from "react-dropzone";
 import { isEmpty } from "lodash/fp";
@@ -51,25 +51,29 @@ export const Dropzone = ({
       as="form"
       {...rootProps}
       border="1px dashed"
-      borderColor="gray.700"
+      borderColor={mode("gray.700", "gray.400")}
       borderRadius="md"
-      bg="gray.50"
+      bg={mode("gray.50", "gray.800")}
       flex="1"
     >
       {/* We make the label taking all the available place in the Stack in order to make
               the whole surface clickable since we prevent the onClick on the dropzone parent (see the comment above) */}
       <chakra.label
         htmlFor="file-uploader"
-        color="gray.700"
+        color={mode("gray.700", "gray.400")}
         fontWeight="700"
-        fontSize="lg"
+        fontSize={{ base: "md", md: "lg" }}
         display="flex"
         flexDirection="column"
         alignItems="center"
-        justifyContent="Center"
+        textAlign="center"
+        justifyContent="center"
         flex="1"
       >
-        <UploadIcon fontSize="9xl" color="gray.700" />
+        <UploadIcon
+          fontSize={{ base: "5xl", md: "9xl" }}
+          color={mode("gray.600", "gray.400")}
+        />
         Drop folders or images, or click to browse your files
         <input {...getInputProps()} id="file-uploader" />
       </chakra.label>

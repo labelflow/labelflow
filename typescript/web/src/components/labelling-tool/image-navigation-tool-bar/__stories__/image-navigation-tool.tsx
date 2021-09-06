@@ -71,62 +71,76 @@ NoImageNoId.parameters = {
 
 export const OneImage = Template.bind({});
 OneImage.parameters = {
-  mockImages: { datasetId, images: images.slice(0, 1) },
-
+  mockImages: {
+    datasetId,
+    datasetName: "dataset navigation one image",
+    images: images.slice(0, 1),
+  },
   nextRouter: {
     query: {
       imageId: images[0].id,
-      datasetId,
+      datasetSlug: "dataset-navigation-one-image",
     },
   },
 };
 
 export const OneWrongImage = Template.bind({});
 OneWrongImage.parameters = {
-  mockImages: { datasetId, images: images.slice(1, 2) },
+  mockImages: {
+    datasetId,
+    datasetName: "dataset navigation wrong image",
+    images: images.slice(1, 2),
+  },
   nextRouter: {
-    query: { imageId: "a", datasetId },
+    query: { imageId: "a", datasetSlug: "dataset-navigation-wrong-image" },
   },
 };
 
 export const Basic1 = Template.bind({});
 Basic1.parameters = {
-  mockImages: { datasetId, images },
+  mockImages: { datasetId, datasetName: "dataset navigation basic1", images },
   nextRouter: {
     query: {
       imageId: images[0].id,
-      datasetId,
+      datasetSlug: "dataset-navigation-basic1",
     },
   },
 };
 
 export const Basic2 = Template.bind({});
 Basic2.parameters = {
-  mockImages: { datasetId, images },
+  mockImages: { datasetId, datasetName: "dataset navigation basic2", images },
   nextRouter: {
     query: {
       imageId: images[1].id,
-      datasetId,
+      datasetSlug: "dataset-navigation-basic2",
     },
   },
 };
 
 export const Basic3 = Template.bind({});
 Basic3.parameters = {
-  mockImages: { datasetId, images },
+  mockImages: { datasetId, datasetName: "dataset navigation basic3", images },
   nextRouter: {
     query: {
       imageId: images[2].id,
-      datasetId,
+      datasetSlug: "dataset-navigation-basic3",
     },
   },
 };
 
 export const BasicWrongImage = Template.bind({});
 BasicWrongImage.parameters = {
-  mockImages: { datasetId, images },
+  mockImages: {
+    datasetId,
+    datasetName: "dataset navigation wrong basic",
+    images,
+  },
   withImageIdInQueryStringRouter: { id: "d" },
   nextRouter: {
-    query: { imageId: "wrong-id", datasetId },
+    query: {
+      imageId: "wrong-id",
+      datasetSlug: "dataset-navigation-wrong-basic",
+    },
   },
 };

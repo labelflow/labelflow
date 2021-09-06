@@ -22,7 +22,6 @@ export const PricingTable = () => {
   // console.log(headerBg);
   return (
     <Box
-      id="pricing"
       as="section"
       // bg={useColorModeValue("gray.50", "gray.800")}
       py="48"
@@ -30,7 +29,7 @@ export const PricingTable = () => {
       overflowX="scroll"
     >
       <Heading align="center" fontWeight="extrabold" maxW="lg" mx="auto">
-        Labelflow pricing fits your business
+        LabelFlow pricing fits your business
       </Heading>
 
       <Table

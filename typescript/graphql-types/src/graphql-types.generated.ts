@@ -168,6 +168,7 @@ export type Label = {
 export type LabelClass = {
   __typename?: 'LabelClass';
   id: Scalars['ID'];
+  index: Scalars['Int'];
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
   name: Scalars['String'];
@@ -181,6 +182,10 @@ export type LabelClassCreateInput = {
   name: Scalars['String'];
   color: Scalars['ColorHex'];
   datasetId: Scalars['ID'];
+};
+
+export type LabelClassReorderInput = {
+  index: Scalars['Int'];
 };
 
 export type LabelClassUpdateInput = {
@@ -244,6 +249,7 @@ export type Mutation = {
   deleteLabel?: Maybe<Label>;
   createLabelClass?: Maybe<LabelClass>;
   updateLabelClass?: Maybe<LabelClass>;
+  reorderLabelClass?: Maybe<LabelClass>;
   deleteLabelClass?: Maybe<LabelClass>;
   createDataset?: Maybe<Dataset>;
   createDemoDataset?: Maybe<Dataset>;
@@ -256,6 +262,11 @@ export type Mutation = {
 
 export type MutationCreateExampleArgs = {
   data: ExampleCreateInput;
+};
+
+
+export type MutationGetUploadTargetArgs = {
+  data: UploadTargetInput;
 };
 
 
@@ -288,6 +299,12 @@ export type MutationCreateLabelClassArgs = {
 export type MutationUpdateLabelClassArgs = {
   where: LabelClassWhereUniqueInput;
   data: LabelClassUpdateInput;
+};
+
+
+export type MutationReorderLabelClassArgs = {
+  where: LabelClassWhereUniqueInput;
+  data: LabelClassReorderInput;
 };
 
 
@@ -433,6 +450,10 @@ export type UploadTargetHttp = {
   __typename?: 'UploadTargetHttp';
   uploadUrl: Scalars['String'];
   downloadUrl: Scalars['String'];
+};
+
+export type UploadTargetInput = {
+  key: Scalars['String'];
 };
 
 export type Workspace = {
@@ -582,6 +603,7 @@ export type ResolversTypes = {
   Float: ResolverTypeWrapper<Scalars['Float']>;
   LabelClass: ResolverTypeWrapper<LabelClass>;
   LabelClassCreateInput: LabelClassCreateInput;
+  LabelClassReorderInput: LabelClassReorderInput;
   LabelClassUpdateInput: LabelClassUpdateInput;
   LabelClassWhereInput: LabelClassWhereInput;
   LabelClassWhereUniqueInput: LabelClassWhereUniqueInput;
@@ -599,6 +621,7 @@ export type ResolversTypes = {
   UploadTargetDirect: ResolverTypeWrapper<UploadTargetDirect>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   UploadTargetHttp: ResolverTypeWrapper<UploadTargetHttp>;
+  UploadTargetInput: UploadTargetInput;
   Workspace: ResolverTypeWrapper<Workspace>;
   WorkspaceCreateInput: WorkspaceCreateInput;
   WorkspacePlan: WorkspacePlan;
@@ -637,6 +660,7 @@ export type ResolversParentTypes = {
   Float: Scalars['Float'];
   LabelClass: LabelClass;
   LabelClassCreateInput: LabelClassCreateInput;
+  LabelClassReorderInput: LabelClassReorderInput;
   LabelClassUpdateInput: LabelClassUpdateInput;
   LabelClassWhereInput: LabelClassWhereInput;
   LabelClassWhereUniqueInput: LabelClassWhereUniqueInput;
@@ -653,6 +677,7 @@ export type ResolversParentTypes = {
   UploadTargetDirect: UploadTargetDirect;
   Boolean: Scalars['Boolean'];
   UploadTargetHttp: UploadTargetHttp;
+  UploadTargetInput: UploadTargetInput;
   Workspace: Workspace;
   WorkspaceCreateInput: WorkspaceCreateInput;
   WorkspaceUpdateInput: WorkspaceUpdateInput;
@@ -739,6 +764,7 @@ export type LabelResolvers<ContextType = any, ParentType extends ResolversParent
 
 export type LabelClassResolvers<ContextType = any, ParentType extends ResolversParentTypes['LabelClass'] = ResolversParentTypes['LabelClass']> = {
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  index?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -760,13 +786,14 @@ export type LabelsAggregatesResolvers<ContextType = any, ParentType extends Reso
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   createExample?: Resolver<Maybe<ResolversTypes['Example']>, ParentType, ContextType, RequireFields<MutationCreateExampleArgs, 'data'>>;
-  getUploadTarget?: Resolver<ResolversTypes['UploadTarget'], ParentType, ContextType>;
+  getUploadTarget?: Resolver<ResolversTypes['UploadTarget'], ParentType, ContextType, RequireFields<MutationGetUploadTargetArgs, 'data'>>;
   createImage?: Resolver<Maybe<ResolversTypes['Image']>, ParentType, ContextType, RequireFields<MutationCreateImageArgs, 'data'>>;
   createLabel?: Resolver<Maybe<ResolversTypes['Label']>, ParentType, ContextType, RequireFields<MutationCreateLabelArgs, 'data'>>;
   updateLabel?: Resolver<Maybe<ResolversTypes['Label']>, ParentType, ContextType, RequireFields<MutationUpdateLabelArgs, 'where' | 'data'>>;
   deleteLabel?: Resolver<Maybe<ResolversTypes['Label']>, ParentType, ContextType, RequireFields<MutationDeleteLabelArgs, 'where'>>;
   createLabelClass?: Resolver<Maybe<ResolversTypes['LabelClass']>, ParentType, ContextType, RequireFields<MutationCreateLabelClassArgs, 'data'>>;
   updateLabelClass?: Resolver<Maybe<ResolversTypes['LabelClass']>, ParentType, ContextType, RequireFields<MutationUpdateLabelClassArgs, 'where' | 'data'>>;
+  reorderLabelClass?: Resolver<Maybe<ResolversTypes['LabelClass']>, ParentType, ContextType, RequireFields<MutationReorderLabelClassArgs, 'where' | 'data'>>;
   deleteLabelClass?: Resolver<Maybe<ResolversTypes['LabelClass']>, ParentType, ContextType, RequireFields<MutationDeleteLabelClassArgs, 'where'>>;
   createDataset?: Resolver<Maybe<ResolversTypes['Dataset']>, ParentType, ContextType, RequireFields<MutationCreateDatasetArgs, 'data'>>;
   createDemoDataset?: Resolver<Maybe<ResolversTypes['Dataset']>, ParentType, ContextType>;

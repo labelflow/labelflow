@@ -1,4 +1,11 @@
-import { Button, ButtonProps, chakra } from "@chakra-ui/react";
+import {
+  Button,
+  IconButton,
+  ButtonProps,
+  chakra,
+  Tooltip,
+  useBreakpointValue,
+} from "@chakra-ui/react";
 import { useQueryParam } from "use-query-params";
 
 import { RiUploadCloud2Line } from "react-icons/ri";
@@ -14,6 +21,36 @@ type Props = ButtonProps & {
 export const ImportButton = ({ showModal = true, ...props }: Props) => {
   const [isOpen, setIsOpen] = useQueryParam("modal-import", BoolParam);
 
+  const largeButton = (
+    <Button
+      aria-label="Add images"
+      leftIcon={<UploadIcon fontSize="xl" />}
+      onClick={() => setIsOpen(true, "replaceIn")}
+      variant="ghost"
+      {...props}
+    >
+      Add images
+    </Button>
+  );
+
+  const smallButton = (
+    <Tooltip label="Add images" openDelay={300}>
+      <IconButton
+        aria-label="Add images"
+        icon={<UploadIcon fontSize="xl" />}
+        onClick={() => setIsOpen(true, "replaceIn")}
+        variant="ghost"
+        {...props}
+      />
+    </Tooltip>
+  );
+
+  const button = useBreakpointValue({
+    base: null,
+    md: smallButton,
+    lg: largeButton,
+  });
+
   return (
     <>
       {showModal && (
@@ -22,15 +59,7 @@ export const ImportButton = ({ showModal = true, ...props }: Props) => {
           onClose={() => setIsOpen(false, "replaceIn")}
         />
       )}
-      <Button
-        aria-label="Add images"
-        leftIcon={<UploadIcon fontSize="xl" />}
-        onClick={() => setIsOpen(true, "replaceIn")}
-        variant="ghost"
-        {...props}
-      >
-        Add images
-      </Button>
+      {button}
     </>
   );
 };

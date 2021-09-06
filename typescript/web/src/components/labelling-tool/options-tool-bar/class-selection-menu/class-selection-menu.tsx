@@ -1,5 +1,14 @@
 import React from "react";
-import { Tooltip, Text, Flex, Button, chakra } from "@chakra-ui/react";
+import {
+  Tooltip,
+  Text,
+  Flex,
+  Button,
+  IconButton,
+  chakra,
+  useBreakpointValue,
+  useColorModeValue as mode,
+} from "@chakra-ui/react";
 import { HiSelector } from "react-icons/hi";
 import { RiCheckboxBlankCircleFill } from "react-icons/ri";
 import { LabelClass } from "@labelflow/graphql-types";
@@ -18,14 +27,14 @@ const ClassSelectionButton = React.forwardRef<
     toggle: () => void;
   }
 >(({ selectedLabelClass, toggle }, ref) => {
-  return (
+  const largeButton = (
     <Button
       rightIcon={<SelectorIcon fontSize="md" />}
       minW="60"
       justifyContent="space-between"
       ref={ref}
       onClick={toggle}
-      bg="white"
+      bg={mode("white", "gray.800")}
       pointerEvents="initial"
       aria-label="Open class selection popover"
     >
@@ -40,11 +49,36 @@ const ClassSelectionButton = React.forwardRef<
             fontSize="2xl"
             mr="2"
           />
-          <Text>{selectedLabelClass?.name ?? "None"}</Text>
+          <Text display={{ base: "none", md: "block" }}>
+            {selectedLabelClass?.name ?? "None"}
+          </Text>
         </Flex>
       </Tooltip>
     </Button>
   );
+
+  const smallButton = (
+    <IconButton
+      icon={
+        <CircleIcon
+          color={selectedLabelClass?.color ?? "gray.300"}
+          fontSize="2xl"
+        />
+      }
+      ref={ref}
+      onClick={toggle}
+      bg={mode("white", "gray.800")}
+      pointerEvents="initial"
+      aria-label="Open class selection popover"
+    />
+  );
+
+  const result =
+    useBreakpointValue({
+      base: smallButton,
+      md: largeButton,
+    }) ?? largeButton;
+  return result;
 });
 
 export const ClassSelectionMenu = ({

@@ -7,8 +7,10 @@ import {
   Button,
   Text,
 } from "@chakra-ui/react";
-import { useApolloClient, gql } from "@apollo/client";
+import { useApolloClient, useQuery, gql } from "@apollo/client";
 import { useRouter } from "next/router";
+import { v4 as uuidv4 } from "uuid";
+import mime from "mime-types";
 
 import { UploadTarget } from "@labelflow/graphql-types";
 import { Dropzone } from "./dropzone";
@@ -52,8 +54,8 @@ const createImageFromUrlMutation = gql`
 `;
 
 const getImageUploadTargetMutation = gql`
-  mutation getUploadTarget {
-    getUploadTarget {
+  mutation getUploadTarget($key: String!) {
+    getUploadTarget(data: { key: $key }) {
       ... on UploadTargetDirect {
         direct
       }
@@ -61,6 +63,14 @@ const getImageUploadTargetMutation = gql`
         uploadUrl
         downloadUrl
       }
+    }
+  }
+`;
+
+const getDataset = gql`
+  query getDataset($slug: String!) {
+    dataset(where: { slug: $slug }) {
+      id
     }
   }
 `;
@@ -77,6 +87,12 @@ const encodeFileToDataUrl = (file: File): Promise<string> => {
   });
 };
 
+const getImageStoreKey = (
+  datasetId: string,
+  fileId: string,
+  mimetype: string
+) => `${datasetId}/${fileId}.${mime.extension(mimetype)}`;
+
 export const ImportImagesModalDropzone = ({
   setMode,
   onUploadStart = () => {},
@@ -89,7 +105,7 @@ export const ImportImagesModalDropzone = ({
   const apolloClient = useApolloClient();
 
   const router = useRouter();
-  const { datasetId } = router?.query;
+  const { datasetSlug } = router?.query;
 
   /*
    * We need a state with the accepted and reject files to be able to reset the list
@@ -101,12 +117,16 @@ export const ImportImagesModalDropzone = ({
     {}
   );
 
+  const { data: datasetResult } = useQuery(getDataset, {
+    variables: { slug: datasetSlug },
+    skip: typeof datasetSlug !== "string",
+  });
+
+  const datasetId = datasetResult?.dataset.id;
+
   useEffect(() => {
     if (isEmpty(files)) return;
-
-    if (!datasetId) {
-      throw new Error(`No dataset id`);
-    }
+    if (!datasetId) return;
 
     const createImages = async () => {
       const now = new Date();
@@ -118,6 +138,13 @@ export const ImportImagesModalDropzone = ({
               // Ask server how to upload image
               const { data } = await apolloClient.mutate({
                 mutation: getImageUploadTargetMutation,
+                variables: {
+                  key: getImageStoreKey(
+                    datasetId as string,
+                    uuidv4(),
+                    acceptedFile.file.type
+                  ),
+                },
               });
 
               const target: UploadTarget = data.getUploadTarget;
@@ -150,7 +177,7 @@ export const ImportImagesModalDropzone = ({
 
                 if (browser?.name === "safari") {
                   // This special case is needed for Safari
-                  // See https://github.com/Labelflow/labelflow/issues/228
+                  // See https://github.com/labelflow/labelflow/issues/228
                   // See https://stackoverflow.com/questions/63144979/fetch-event-listener-not-triggering-in-service-worker-for-file-upload-via-mult
                   const url = await encodeFileToDataUrl(acceptedFile.file);
 
@@ -171,9 +198,11 @@ export const ImportImagesModalDropzone = ({
                   });
                 }
 
+                const form = new FormData();
+                form.append("image", acceptedFile.file);
                 await fetch(target.uploadUrl, {
                   method: "PUT",
-                  body: acceptedFile.file,
+                  body: form,
                 });
 
                 const createdAt = new Date();
@@ -216,7 +245,7 @@ export const ImportImagesModalDropzone = ({
 
     onUploadStart();
     createImages();
-  }, [files]);
+  }, [files, datasetId]);
 
   return (
     <>

@@ -1,4 +1,8 @@
-import { IconButton, Tooltip } from "@chakra-ui/react";
+import {
+  IconButton,
+  Tooltip,
+  useColorModeValue as mode,
+} from "@chakra-ui/react";
 import { BiPointer } from "react-icons/bi";
 import { useHotkeys } from "react-hotkeys-hook";
 
@@ -31,7 +35,7 @@ export const SelectionTool = () => {
         role="checkbox"
         aria-checked={selectedTool === Tools.SELECTION}
         onClick={() => setSelectedTool(Tools.SELECTION)}
-        backgroundColor="white"
+        backgroundColor={mode("white", "gray.800")}
         aria-label="Selection tool"
         pointerEvents="initial"
         isActive={selectedTool === Tools.SELECTION}

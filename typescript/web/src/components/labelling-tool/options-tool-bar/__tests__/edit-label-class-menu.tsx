@@ -3,10 +3,14 @@ import { ApolloProvider, gql } from "@apollo/client";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
+import { mockMatchMedia } from "../../../../utils/mock-window";
+
+mockMatchMedia(jest);
+
 import { mockNextRouter } from "../../../../utils/router-mocks";
 
 mockNextRouter({
-  query: { imageId: "mocked-image-id", datasetId: "test dataset id" },
+  query: { imageId: "mocked-image-id", datasetSlug: "test-dataset" },
 });
 
 import { client } from "../../../../connectors/apollo-client/schema-client";

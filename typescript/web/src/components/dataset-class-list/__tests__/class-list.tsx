@@ -10,7 +10,7 @@ import { setupTestsWithLocalDatabase } from "../../../utils/setup-local-db-tests
 setupTestsWithLocalDatabase();
 
 const createDataset = async (name: string, datasetId?: string | null) => {
-  return client.mutate({
+  return await client.mutate({
     mutation: gql`
       mutation createDataset($datasetId: String, $name: String!) {
         createDataset(data: { id: $datasetId, name: $name }) {
@@ -65,7 +65,7 @@ describe("Dataset class list tests", () => {
   it("Renders if the dataset has no classes", async () => {
     const datasetId = "myDatasetId";
     await createDataset("myDataset", datasetId);
-    render(<ClassesList datasetId={datasetId} />, { wrapper });
+    render(<ClassesList datasetSlug="mydataset" />, { wrapper });
     expect(screen.getByText("0 Classes")).toBeDefined();
   });
 
@@ -87,7 +87,7 @@ describe("Dataset class list tests", () => {
       name: "MyThirdClass",
       color: "red",
     });
-    render(<ClassesList datasetId={datasetId} />, { wrapper });
+    render(<ClassesList datasetSlug="mydataset" />, { wrapper });
 
     await waitFor(() => {
       expect(screen.getByText("3 Classes")).toBeDefined();
@@ -105,7 +105,7 @@ describe("Dataset class list tests", () => {
       name: "MyFirstClass",
       color: "blue",
     });
-    render(<ClassesList datasetId={datasetId} />, { wrapper });
+    render(<ClassesList datasetSlug="mydataset" />, { wrapper });
 
     await waitFor(() =>
       fireEvent.click(screen.getByLabelText(/Delete class/i))

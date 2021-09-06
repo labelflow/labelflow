@@ -10,6 +10,7 @@ import {
   initialCocoDataset,
   convertLabelflowDatasetToCocoDataset,
   convertImagesToCocoImages,
+  convertGeometryToSegmentation,
 } from "../converters";
 import {
   CocoCategory,
@@ -24,6 +25,7 @@ describe("Coco converters", () => {
 
   const createLabelClass = (name: string): DbLabelClass => ({
     id: `id-${name}`,
+    index: 0,
     createdAt: date,
     updatedAt: date,
     name,
@@ -318,5 +320,101 @@ describe("Coco converters", () => {
         [labelClass1, labelClass2]
       )
     ).toMatchObject(expectedCocoDataset);
+  });
+
+  test("should convert polygon geometry into segmentation", () => {
+    const polygonGeometry = {
+      type: "Polygon",
+      coordinates: [
+        [
+          [1, 2],
+          [1, 6],
+          [4, 6],
+          [4, 2],
+          [1, 2],
+        ],
+      ],
+    };
+
+    const imageDimensions = { width: 600, height: 200 };
+
+    const expectedSegmentation = [[1, 198, 1, 194, 4, 194, 4, 198, 1, 198]];
+
+    expect(
+      convertGeometryToSegmentation(polygonGeometry, imageDimensions.height)
+    ).toEqual(expectedSegmentation);
+  });
+
+  test("should convert multipolygon geometry into segmentation", () => {
+    const multiPolygonGeometry = {
+      type: "MultiPolygon",
+      coordinates: [
+        [
+          [
+            [0, 0],
+            [3, 0],
+            [1.5, 1.5],
+            [0, 0],
+          ],
+        ],
+        [
+          [
+            [0, 3],
+            [3, 3],
+            [1.5, 1.5],
+            [0, 3],
+          ],
+        ],
+      ],
+    };
+
+    const imageDimensions = { width: 600, height: 200 };
+
+    const expectedSegmentation = [
+      [0, 200, 3, 200, 1.5, 198.5, 0, 200],
+      [0, 197, 3, 197, 1.5, 198.5, 0, 197],
+    ];
+
+    expect(
+      convertGeometryToSegmentation(
+        multiPolygonGeometry,
+        imageDimensions.height
+      )
+    ).toEqual(expectedSegmentation);
+  });
+
+  test("should convert multipolygon geometry with hole into segmentation without hole", () => {
+    const multiPolygonGeometry = {
+      type: "MultiPolygon",
+      coordinates: [
+        [
+          [
+            [0, 0],
+            [3, 0],
+            [3, 3],
+            [0, 3],
+            [0, 0],
+          ],
+          [
+            [1, 1],
+            [2, 1],
+            [2, 2],
+            [1, 2],
+            [1, 1],
+          ],
+        ],
+      ],
+    };
+
+    const imageDimensions = { width: 600, height: 200 };
+
+    const expectedSegmentation = [[0, 200, 3, 200, 3, 197, 0, 197, 0, 200]];
+
+    expect(
+      convertGeometryToSegmentation(
+        multiPolygonGeometry,
+        imageDimensions.height
+      )
+    ).toEqual(expectedSegmentation);
   });
 });

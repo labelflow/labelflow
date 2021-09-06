@@ -1,7 +1,7 @@
 type Mutation {
   createExample(data: ExampleCreateInput!): Example
 
-  getUploadTarget: UploadTarget!
+  getUploadTarget(data: UploadTargetInput!): UploadTarget!
   createImage(data: ImageCreateInput!): Image
 
   createLabel(data: LabelCreateInput!): Label
@@ -12,6 +12,10 @@ type Mutation {
   updateLabelClass(
     where: LabelClassWhereUniqueInput!
     data: LabelClassUpdateInput!
+  ): LabelClass
+  reorderLabelClass(
+    where: LabelClassWhereUniqueInput!
+    data: LabelClassReorderInput!
   ): LabelClass
   deleteLabelClass(where: LabelClassWhereUniqueInput!): LabelClass
 

@@ -112,7 +112,7 @@ export const OpenlayersMap = () => {
     image: Pick<Image, "id" | "url" | "width" | "height">;
   }>(imageQuery, {
     variables: { id: imageId },
-    skip: typeof imageId !== "string",
+    skip: !imageId,
   }).data?.image;
 
   const client = useApolloClient();
@@ -161,7 +161,13 @@ export const OpenlayersMap = () => {
       <Map
         ref={mapRef}
         args={{ controls: empty }}
-        style={{ height: "100%", width: "100%" }}
+        style={{
+          height: "100%",
+          width: "100%",
+          // Touch action none fixes a bug with shitty touch experience in openlayers
+          // See https://github.com/openlayers/openlayers/issues/10757
+          touchAction: "none",
+        }}
         onPointermove={onPointermove}
         containerRef={containerRef}
       >

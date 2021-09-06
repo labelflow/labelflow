@@ -9,6 +9,7 @@ const createDataset = async (name: string) => {
       mutation createDataset($name: String) {
         createDataset(data: { name: $name }) {
           id
+          slug
         }
       }
     `,
@@ -19,11 +20,11 @@ const createDataset = async (name: string) => {
 
   const {
     data: {
-      createDataset: { id },
+      createDataset: { id, slug },
     },
   } = mutationResult;
 
-  return id;
+  return { id, slug };
 };
 
 async function createImage(url: string, datasetId: string) {
@@ -104,10 +105,13 @@ const createLabelClass = async (
 
 describe("Class selection popover", () => {
   let datasetId: string;
+  let datasetSlug: string;
   let imageId: string;
   beforeEach(() =>
     cy.window().then(async () => {
-      datasetId = await createDataset("cypress test dataset");
+      const createResult = await createDataset("cypress test dataset");
+      datasetId = createResult.id;
+      datasetSlug = createResult.slug;
 
       const { id } = await createImage(
         "https://images.unsplash.com/photo-1579513141590-c597876aefbc?auto=format&fit=crop&w=882&q=80",
@@ -142,7 +146,7 @@ describe("Class selection popover", () => {
   it("right clicks on a label to change its class", () => {
     // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
     cy.visit(
-      `/datasets/${datasetId}/images/${imageId}?modal-welcome=closed&modal-update-service-worker=update`
+      `/local/datasets/${datasetSlug}/images/${imageId}?modal-welcome=closed&modal-update-service-worker=update`
     );
     cy.get('[aria-label="loading indicator"]').should("not.exist");
     cy.get('[aria-label="Selection tool"]').click();
@@ -178,7 +182,7 @@ describe("Class selection popover", () => {
       .closest('[role="option"]')
       .should("have.attr", "aria-current", "true");
 
-    cy.get("main").click(350, 50);
+    cy.get("main").click(350, 100);
     cy.get('[aria-label="Redo tool"]').click();
     cy.get("main").rightclick(500, 150);
     cy.get('[aria-label="Class selection popover"]')
@@ -192,7 +196,7 @@ describe("Class selection popover", () => {
 
     // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
     cy.visit(
-      `/datasets/${datasetId}/images/${imageId}?modal-welcome=closed&modal-update-service-worker=update`
+      `/local/datasets/${datasetSlug}/images/${imageId}?modal-welcome=closed&modal-update-service-worker=update`
     );
     cy.get('[aria-label="loading indicator"]').should("not.exist");
     cy.get('[aria-label="Selection tool"]').click();
@@ -266,7 +270,7 @@ describe("Class selection popover", () => {
     cy.wrap(createLabelClass("My new class", "#65A30D", datasetId));
     // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
     cy.visit(
-      `/datasets/${datasetId}/images/${imageId}?modal-welcome=closed&modal-update-service-worker=update`
+      `/local/datasets/${datasetSlug}/images/${imageId}?modal-welcome=closed&modal-update-service-worker=update`
     );
     cy.get('[aria-label="loading indicator"]').should("not.exist");
     cy.get('[aria-label="Selection tool"]').click();
@@ -326,18 +330,20 @@ describe("Class selection popover", () => {
 
   it("should update the label classes list when a label class is deleted", () => {
     cy.visit(
-      `/datasets/${datasetId}/images/${imageId}?modal-welcome=closed&modal-update-service-worker=update`
+      `/local/datasets/${datasetSlug}/images/${imageId}?modal-welcome=closed&modal-update-service-worker=update`
     );
 
     cy.get('[aria-label="loading indicator"]').should("not.exist");
     cy.contains("cypress test dataset").click();
 
     cy.contains("classes").click();
-    cy.url().should("contain", `/datasets/${datasetId}/classes`);
+    cy.url().should("contain", `/local/datasets/${datasetSlug}/classes`);
 
+    cy.contains("A new class");
     cy.get('[aria-label="Delete class"]').click();
 
     cy.get('[aria-label="Confirm deleting class"]').click();
+    cy.contains("A new class").should("not.exist");
     cy.contains(/^images$/).click();
     cy.get("main").contains("photo-1579513141590-c597876aefbc").click();
 

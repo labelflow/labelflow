@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { getDatabase } from "../../typescript/web/src/connectors/database";
 
 // From https://github.com/cypress-io/cypress/issues/702#issuecomment-435873135
@@ -12,7 +13,9 @@ beforeEach(() =>
       cy.clearCookies();
 
       console.log("Clear database");
-      await Promise.all(getDatabase().tables.map((table) => table.clear()));
+      await Promise.all(
+        (await getDatabase()).tables.map((table) => table.clear())
+      );
 
       console.log("Clear caches");
       const cacheNames = await window.caches.keys();
@@ -43,7 +46,9 @@ afterEach(() =>
       cy.clearCookies();
 
       console.log("Clear database");
-      await Promise.all(getDatabase().tables.map((table) => table.clear()));
+      await Promise.all(
+        (await getDatabase()).tables.map((table) => table.clear())
+      );
 
       console.log("Clear caches");
       const cacheNames = await window.caches.keys();

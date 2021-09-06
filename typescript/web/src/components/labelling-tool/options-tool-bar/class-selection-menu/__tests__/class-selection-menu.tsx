@@ -1,11 +1,17 @@
+/* eslint-disable import/first */
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom/extend-expect";
+import { mockMatchMedia } from "../../../../../utils/mock-window";
+
+mockMatchMedia(jest);
+
 import { ClassSelectionMenu, LabelClassItem } from "../class-selection-menu";
 
 const labelClasses = [
   {
     id: "coaisndoiasndi0",
+    index: 0,
     createdAt: "today",
     updatedAt: "today",
     name: "Person",
@@ -15,6 +21,7 @@ const labelClasses = [
   },
   {
     id: "coaisndoiasndi1",
+    index: 1,
     createdAt: "today",
     updatedAt: "today",
     name: "Dog",

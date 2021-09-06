@@ -1,6 +1,1 @@
-{
-    "compilerOptions": {
-        "esModuleInterop": true,
-        "allowSyntheticDefaultImports": true
-    }
-}
+./../../tsconfig.json

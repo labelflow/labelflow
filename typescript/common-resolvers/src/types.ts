@@ -37,11 +37,15 @@ type PartialWithNullAllowed<T> = { [P in keyof T]?: T[P] | undefined | null };
 type ID = string;
 
 type Add<EntityType> = (entity: EntityType) => Promise<ID>;
-type Count<Where> = (where?: Where) => Promise<Number>;
+type Count<Where> = (where?: Where) => Promise<number>;
 type Delete = (id: ID) => Promise<void>;
-type GetById<EntityType> = (id: ID) => Promise<EntityType | undefined>;
-type GetByName<EntityType> = (name: string) => Promise<EntityType | undefined>;
-type GetBySlug<EntityType> = (slug: string) => Promise<EntityType | undefined>;
+type GetById<EntityType> = (id: ID) => Promise<EntityType | undefined | null>;
+type GetByName<EntityType> = (
+  name: string
+) => Promise<EntityType | undefined | null>;
+type GetBySlug<EntityType> = (
+  slug: string
+) => Promise<EntityType | undefined | null>;
 type List<Entity = unknown, Where extends Record<string, any> | null = null> = (
   where?: Where | null,
   skip?: number | null,
@@ -85,11 +89,23 @@ export type Repository = {
     update: Update<DbDataset>;
   };
   upload: {
-    getUploadTargetHttp: () => Promise<UploadTargetHttp> | UploadTargetHttp;
-    getUploadTarget: () => Promise<UploadTarget> | UploadTarget;
+    getUploadTargetHttp: (
+      key: string,
+      origin?: string
+    ) => Promise<UploadTargetHttp> | UploadTargetHttp;
+    getUploadTarget: (
+      key: string,
+      origin?: string
+    ) => Promise<UploadTarget> | UploadTarget;
     put: (url: string, file: Blob) => Promise<void>;
-    get: (url: string) => Promise<ArrayBuffer>;
+    get: (url: string, req?: Request) => Promise<ArrayBuffer>;
+    delete: (url: string) => Promise<void>;
   };
 };
 
-export type Context = { repository: Repository };
+export type Context = {
+  repository: Repository;
+  user?: { id: string };
+  session?: any;
+  req?: Request;
+};

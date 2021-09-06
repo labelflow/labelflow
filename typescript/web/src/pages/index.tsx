@@ -1,59 +1,54 @@
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import { GetServerSideProps } from "next";
-import { useCookie } from "next-cookie";
+import { Cookies, useCookies } from "react-cookie";
 import { Spinner, Center } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { join, map, toPairs, isEmpty } from "lodash/fp";
+import { Meta } from "../components/meta";
 import { Layout } from "../components/layout";
-import { Article, getAllArticles } from "../connectors/strapi";
 import Website from "./website";
+import { AppLifecycleManager } from "../components/app-lifecycle-manager";
 
-const IndexPage = ({
-  cookie,
-  previewArticles,
-}: {
-  cookie: string;
-  previewArticles: Omit<Article, "content">[];
-}) => {
+const IndexPage = () => {
   const router = useRouter();
 
-  const parsedCookie = useCookie(cookie);
-  const hasUserTriedApp = parsedCookie.get("hasUserTriedApp");
+  const [cookies] = useCookies(["hasUserTriedApp"]);
+  const hasUserTriedApp = cookies.hasUserTriedApp === "true";
 
   useEffect(() => {
     if (hasUserTriedApp) {
-      router.replace({ pathname: "/datasets", query: router.query });
+      router.replace({ pathname: "/local/datasets", query: router.query });
+    } else {
+      router.replace({ pathname: "/website", query: router.query });
     }
   }, [hasUserTriedApp]);
 
   if (!hasUserTriedApp) {
-    return <Website previewArticles={previewArticles} />;
+    return <Website previewArticles={[]} />;
   }
 
   return (
-    <Layout>
-      <Center h="full">
-        <Spinner size="xl" />
-      </Center>
-    </Layout>
+    <>
+      <AppLifecycleManager noModals />
+      <Meta title="LabelFlow: The open standard platform for image labelling." />
+      <Layout>
+        <Center h="full">
+          <Spinner size="xl" />
+        </Center>
+      </Layout>
+    </>
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async (
-  context
-): Promise<{
-  [key: string]: any;
-  props: { previewArticles: Omit<Article, "content">[] };
-}> => {
-  const previewArticles = (await getAllArticles({ limit: 3 })) || [];
-  const parsedCookie = useCookie(context);
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const parsedCookie = new Cookies(context.req.headers.cookie);
 
-  if (parsedCookie.get("hasUserTriedApp")) {
+  if (parsedCookie.get("hasUserTriedApp") === "true") {
     return {
-      props: { previewArticles },
+      props: {},
       redirect: {
         // Keep query params after redirect
-        destination: `/datasets${
+        destination: `/local/datasets${
           isEmpty(context.query)
             ? ""
             : `?${join(
@@ -66,7 +61,21 @@ export const getServerSideProps: GetServerSideProps = async (
     };
   }
 
-  return { props: { previewArticles } };
+  return {
+    props: {},
+    redirect: {
+      // Keep query params after redirect
+      destination: `/website${
+        isEmpty(context.query)
+          ? ""
+          : `?${join(
+              "&",
+              map(([key, value]) => `${key}=${value}`, toPairs(context.query))
+            )}`
+      }`,
+      permanent: false,
+    },
+  };
 };
 
 export default IndexPage;

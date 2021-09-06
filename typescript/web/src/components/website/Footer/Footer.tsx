@@ -1,4 +1,4 @@
-import { Box, Stack, StackDivider } from "@chakra-ui/react";
+import { Box, Stack, StackDivider, VisuallyHidden } from "@chakra-ui/react";
 import * as React from "react";
 import NextLink from "next/link";
 import { Copyright } from "./Copyright";
@@ -21,11 +21,12 @@ export const Footer = () => (
         direction={{ base: "column", lg: "row" }}
         spacing={{ base: "10", lg: "28" }}
       >
-        <Box as="a" flex="1">
-          <NextLink href="/website">
+        <NextLink href="/website">
+          <Box as="a" href="/website" flex="1">
+            <VisuallyHidden>LabelFlow</VisuallyHidden>
             <Logo h="24px" iconColor="brand.400" cursor="pointer" />
-          </NextLink>
-        </Box>
+          </Box>
+        </NextLink>
 
         <Stack
           direction={{ base: "column", md: "row" }}

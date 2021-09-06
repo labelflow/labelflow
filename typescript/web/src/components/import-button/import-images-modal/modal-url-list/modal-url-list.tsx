@@ -7,7 +7,7 @@ import {
   Button,
   Text,
 } from "@chakra-ui/react";
-import { useApolloClient, gql } from "@apollo/client";
+import { useApolloClient, useQuery, gql } from "@apollo/client";
 import { useRouter } from "next/router";
 
 import { UrlList } from "./url-list";
@@ -32,6 +32,14 @@ const createImageFromUrlMutation = gql`
   }
 `;
 
+const getDataset = gql`
+  query getDataset($slug: String!) {
+    dataset(where: { slug: $slug }) {
+      id
+    }
+  }
+`;
+
 export const ImportImagesModalUrlList = ({
   setMode = () => {},
   onUploadStart = () => {},
@@ -44,7 +52,7 @@ export const ImportImagesModalUrlList = ({
   const apolloClient = useApolloClient();
 
   const router = useRouter();
-  const { datasetId } = router?.query;
+  const { datasetSlug } = router?.query;
 
   /*
    * We need a state with the accepted and reject urls to be able to reset the list
@@ -54,12 +62,16 @@ export const ImportImagesModalUrlList = ({
   const [urls, setUrls] = useState<Array<DroppedUrl>>([]);
   const [uploadStatuses, setUploadStatuses] = useState<UploadStatuses>({});
 
+  const { data: datasetResult } = useQuery(getDataset, {
+    variables: { slug: datasetSlug },
+    skip: typeof datasetSlug !== "string",
+  });
+
+  const datasetId = datasetResult?.dataset.id;
+
   useEffect(() => {
     if (isEmpty(urls)) return;
-
-    if (!datasetId) {
-      throw new Error(`No dataset id`);
-    }
+    if (!datasetId) return;
 
     const createImages = async () => {
       const now = new Date();
@@ -100,7 +112,7 @@ export const ImportImagesModalUrlList = ({
 
     onUploadStart();
     createImages();
-  }, [urls]);
+  }, [urls, datasetId]);
 
   return (
     <>
@@ -109,13 +121,15 @@ export const ImportImagesModalUrlList = ({
           Import
         </Heading>
         <Text fontSize="lg" fontWeight="medium">
-          Import images by listing file URLs, one per line. Stay in control of
-          your data. Images are not uploaded on LabelFlow servers.
+          Import images by listing file URLs, one per line.
           <Button
             colorScheme="brand"
+            display="inline"
             variant="link"
             fontSize="lg"
             fontWeight="medium"
+            whiteSpace="normal"
+            wordWrap="break-word"
             onClick={() => setMode("dropzone", "replaceIn")}
           >
             Import by dropping your files instead

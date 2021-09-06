@@ -1,3 +1,4 @@
+import React from "react";
 import dynamic from "next/dynamic";
 import {
   Box,
@@ -12,6 +13,7 @@ import { RiArrowRightSLine } from "react-icons/ri";
 import { Meta } from "../components/meta";
 import { Layout } from "../components/layout";
 import { AppLifecycleManager } from "../components/app-lifecycle-manager";
+import { AuthManager } from "../components/auth-manager";
 
 const GraphiQL = dynamic(() => import("../components/graphiql"), {
   ssr: false,
@@ -25,17 +27,12 @@ const GraphiQL = dynamic(() => import("../components/graphiql"), {
   },
 });
 
-const GraphqlPlayground = ({
-  assumeServiceWorkerActive,
-}: {
-  assumeServiceWorkerActive: boolean;
-}) => {
+const GraphqlPlayground = () => {
   return (
     <>
-      <AppLifecycleManager
-        assumeServiceWorkerActive={assumeServiceWorkerActive}
-      />
-      <Meta title="Labelflow | GraphiQL" />
+      <AppLifecycleManager />
+      <Meta title="LabelFlow | GraphiQL" />
+      <AuthManager />
       <Layout
         topBarLeftContent={
           <Breadcrumb

@@ -1,31 +1,56 @@
-# labelflow
+# LabelFlow
 
-The open standard image labeling tool
+LabelFlow is an open-source image labelling tool.
 
-## How to start the docker compose
+If you want to try the deployed version, you can visit [labeflow.ai](https://labelflow.ai).
 
-_The workflow needs to be improved_
+You can also build the web application from its source, and serve it from your machine.
 
-1. Make sure you have docker installed and started
+## Serving your own LabelFlow
 
-2. Run the docker compose in detached mode
+This guide walks you through the steps needed to run a production-ready version of LabelFlow locally.
 
-```bash
-docker compose up -d
-```
+Before continuing, please have a look at our <a href="./LICENSE">License</a> ⬅️.
 
-3. Apply the database migrations
+**Prerequisites**: 
 
-```bash
-cd typescript/db
-yarn install
-yarn push
-```
+You need to have below listed softwares installed on your machine to run labelflow.
+     
+   - ✔️ Git 📦
+   - ✔️ Node (v15.5.0 or above) 📦
+   - ✔️ Yarn (v1.22.4 or above) 📦
 
-4. Restart the api container
 
-```bash
-docker restart labelflow_api_1
-```
+ 💻 **Running the Labelflow on your machine**:
 
-You should now be able to visit [http://localhost:5001/graphql/](http://localhost:5001/graphql/)
+1. Clone the repository on your machine using  
+
+   ```shell
+   git clone https://github.com/labelflow/labelflow.git
+   ```
+
+2. Go into the labelflow folder
+
+    ```shell
+    cd labelflow
+    ```
+
+3. Install dependencies using yarn
+
+    ```shell
+    yarn install
+    ```
+
+4. Build the web app
+
+    ```shell
+    yarn build:web
+    ```
+
+5. Start the web server
+
+    ```shell
+    yarn start:web
+    ```
+
+6. Open your browser and visit [http://localhost:3000](http://localhost:3000).

@@ -18,7 +18,7 @@ const testDatasetId = "test dataset id";
 // FIXME: mockNextRouter wasn't working here so we had to re-implement the mock
 jest.mock("next/router", () => ({
   useRouter: jest.fn(() => ({
-    query: { datasetId: testDatasetId },
+    query: { datasetSlug: "test-dataset" },
   })),
 }));
 

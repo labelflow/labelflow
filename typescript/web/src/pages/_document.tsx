@@ -1,31 +1,22 @@
-import Document, {
-  Html,
-  Head,
-  Main,
-  NextScript,
-  DocumentContext,
-} from "next/document";
+import { ColorModeScript } from "@chakra-ui/react";
+import Document, { Html, Head, Main, NextScript } from "next/document";
+import { theme } from "../theme";
 
 class MyDocument extends Document {
-  static async getInitialProps(ctx: DocumentContext) {
-    const initialProps = await Document.getInitialProps(ctx);
-    return { ...initialProps };
-  }
-
   render() {
     return (
-      <Html>
+      <Html lang="en">
         <Head>
-          <meta name="application-name" content="Labelflow" />
+          <meta name="application-name" content="LabelFlow" />
           <meta name="apple-mobile-web-app-capable" content="yes" />
           <meta
             name="apple-mobile-web-app-status-bar-style"
             content="default"
           />
-          <meta name="apple-mobile-web-app-title" content="Labelflow" />
+          <meta name="apple-mobile-web-app-title" content="LabelFlow" />
           <meta
             name="description"
-            content="The open source image labelling and dataset cleaning platform."
+            content="The open platform for image labelling."
           />
           <meta name="format-detection" content="telephone=no" />
           <meta name="mobile-web-app-capable" content="yes" />
@@ -95,6 +86,7 @@ class MyDocument extends Document {
           />
         </Head>
         <body>
+          <ColorModeScript initialColorMode={theme.config.initialColorMode} />
           <Main />
           <NextScript />
         </body>

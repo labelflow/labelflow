@@ -139,6 +139,7 @@ type Label {
 
 type LabelClass {
   id: ID!
+  index: Int!
   createdAt: DateTime!
   updatedAt: DateTime!
   name: String!
@@ -152,6 +153,10 @@ input LabelClassCreateInput {
   name: String!
   color: ColorHex!
   datasetId: ID!
+}
+
+input LabelClassReorderInput {
+  index: Int!
 }
 
 input LabelClassUpdateInput {
@@ -205,13 +210,14 @@ type LabelsAggregates {
 
 type Mutation {
   createExample(data: ExampleCreateInput!): Example
-  getUploadTarget: UploadTarget!
+  getUploadTarget(data: UploadTargetInput!): UploadTarget!
   createImage(data: ImageCreateInput!): Image
   createLabel(data: LabelCreateInput!): Label
   updateLabel(where: LabelWhereUniqueInput!, data: LabelUpdateInput!): Label
   deleteLabel(where: LabelWhereUniqueInput!): Label
   createLabelClass(data: LabelClassCreateInput!): LabelClass
   updateLabelClass(where: LabelClassWhereUniqueInput!, data: LabelClassUpdateInput!): LabelClass
+  reorderLabelClass(where: LabelClassWhereUniqueInput!, data: LabelClassReorderInput!): LabelClass
   deleteLabelClass(where: LabelClassWhereUniqueInput!): LabelClass
   createDataset(data: DatasetCreateInput!): Dataset
   createDemoDataset: Dataset
@@ -253,6 +259,10 @@ type UploadTargetDirect {
 type UploadTargetHttp {
   uploadUrl: String!
   downloadUrl: String!
+}
+
+input UploadTargetInput {
+  key: String!
 }
 
 type Workspace {

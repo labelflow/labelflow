@@ -6,7 +6,6 @@ global.URL.createObjectURL = jest.fn(() => "mockedUrl");
 import { ApolloProvider, gql } from "@apollo/client";
 import { Map } from "@labelflow/react-openlayers-fiber";
 import { render, waitFor } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
 
 import { Map as OlMap } from "ol";
 import VectorLayer from "ol/layer/Vector";
@@ -36,7 +35,7 @@ const createDataset = async (
   name: string,
   datasetId: string = testDatasetId
 ) => {
-  return client.mutate({
+  return await client.mutate({
     mutation: gql`
       mutation createDataset($datasetId: String, $name: String!) {
         createDataset(data: { id: $datasetId, name: $name }) {
@@ -233,85 +232,5 @@ it("should change style of selected label", async () => {
 
     /* When the label is selected it contains two styles, one for the label, another for the vertices style */
     expect(feature.getStyle()).toHaveLength(2);
-  });
-});
-
-it("should delete selected label on delete key pressed", async () => {
-  const mapRef: { current: OlMap | null } = { current: null };
-  const labelId = await createLabel({
-    imageId,
-  });
-
-  useLabellingStore.setState({ selectedLabelId: labelId });
-
-  const { container } = render(<Labels />, {
-    wrapper: ({ children }) => (
-      <Map
-        ref={(map) => {
-          mapRef.current = map;
-        }}
-      >
-        <ApolloProvider client={client}>{children}</ApolloProvider>
-      </Map>
-    ),
-  });
-
-  await waitFor(() => {
-    expect(
-      (mapRef.current?.getLayers().getArray()[0] as VectorLayer)
-        .getSource()
-        .getFeatures()
-    ).toHaveLength(1);
-  });
-
-  userEvent.type(container, "{delete}");
-
-  await waitFor(() => {
-    expect(
-      (mapRef.current?.getLayers().getArray()[0] as VectorLayer)
-        .getSource()
-        .getFeatures()
-    ).toHaveLength(0);
-
-    expect(useLabellingStore.getState()).toMatchObject({
-      selectedLabelId: null,
-    });
-  });
-});
-
-it("should not delete a label when none was selected", async () => {
-  const mapRef: { current: OlMap | null } = { current: null };
-  await createLabel({
-    imageId,
-  });
-
-  const { container } = render(<Labels />, {
-    wrapper: ({ children }) => (
-      <Map
-        ref={(map) => {
-          mapRef.current = map;
-        }}
-      >
-        <ApolloProvider client={client}>{children}</ApolloProvider>
-      </Map>
-    ),
-  });
-
-  await waitFor(() => {
-    expect(
-      (mapRef.current?.getLayers().getArray()[0] as VectorLayer)
-        .getSource()
-        .getFeatures()
-    ).toHaveLength(1);
-  });
-
-  userEvent.type(container, "{delete}");
-
-  await waitFor(() => {
-    expect(
-      (mapRef.current?.getLayers().getArray()[0] as VectorLayer)
-        .getSource()
-        .getFeatures()
-    ).toHaveLength(1);
   });
 });

@@ -30,7 +30,7 @@ const createDatasetMutation = gql`
 `;
 
 const updateDatasetMutation = gql`
-  mutation updateDataset($id: ID, $name: String!) {
+  mutation updateDataset($id: ID!, $name: String!) {
     updateDataset(where: { id: $id }, data: { name: $name }) {
       id
     }
@@ -91,22 +91,28 @@ export const UpsertDatasetModal = ({
     },
   ] = useLazyQuery(getDatasetBySlugQuery, { fetchPolicy: "network-only" });
 
-  const [createDatasetMutate] = useMutation(createDatasetMutation, {
-    variables: {
-      name: datasetName,
-    },
-    refetchQueries: ["getDatasets"],
-    awaitRefetchQueries: true,
-  });
+  const [createDatasetMutate, { loading: createMutationLoading }] = useMutation(
+    createDatasetMutation,
+    {
+      variables: {
+        name: datasetName,
+      },
+      refetchQueries: ["getDatasets"],
+      awaitRefetchQueries: true,
+    }
+  );
 
-  const [updateDatasetMutate] = useMutation(updateDatasetMutation, {
-    variables: {
-      id: datasetId,
-      name: datasetName,
-    },
-    refetchQueries: ["getDatasets"],
-    awaitRefetchQueries: true,
-  });
+  const [updateDatasetMutate, { loading: updateMutationLoading }] = useMutation(
+    updateDatasetMutation,
+    {
+      variables: {
+        id: datasetId,
+        name: datasetName,
+      },
+      refetchQueries: ["getDatasets"],
+      awaitRefetchQueries: true,
+    }
+  );
 
   const handleInputValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setDatasetNameInputValue(e.target.value);
@@ -210,10 +216,12 @@ export const UpsertDatasetModal = ({
           <Button
             type="submit"
             colorScheme="brand"
+            isLoading={createMutationLoading || updateMutationLoading}
+            loadingText={datasetId ? "Updating..." : "Creating..."}
             disabled={!canCreateDataset()}
-            aria-label={datasetId ? "Update dataset" : "Create Dataset"}
+            aria-label={datasetId ? "Update Dataset" : "Create Dataset"}
           >
-            {datasetId ? "Update dataset" : "Start Labelling"}
+            {datasetId ? "Update Dataset" : "Start Labelling"}
           </Button>
         </ModalFooter>
       </ModalContent>

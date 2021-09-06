@@ -36,11 +36,10 @@ export const ArticlesList = ({
         ) : (
           <Box textAlign="center" maxW="md" mx="auto">
             <Heading size="2xl" fontWeight="extrabold" letterSpacing="tight">
-              Welcome to the blog of Labelflow
+              LabelFlow Blog
             </Heading>
             <Text mt="4" fontSize="lg" color={mode("gray.600", "gray.400")}>
-              Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ipsa
-              libero labore natus atque, ducimus sed.
+              Discover the latest news and tech from our team and community
             </Text>
           </Box>
         )}

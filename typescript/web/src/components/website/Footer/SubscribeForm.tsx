@@ -42,10 +42,8 @@ export const SubscribeForm = (props: HTMLChakraProps<"form">) => {
       encType="multipart/form-data"
     >
       <Stack spacing="4">
-        <FooterHeading>Request Access</FooterHeading>
-        <Text>
-          Get early access and up to 50% off on Labelflow by registering now
-        </Text>
+        <FooterHeading>Newsletter</FooterHeading>
+        <Text>Get news about our product and releases</Text>
         <Stack spacing="4" direction={{ base: "column", md: "row" }}>
           <Input
             bg={useColorModeValue("white", "inherit")}
@@ -66,7 +64,7 @@ export const SubscribeForm = (props: HTMLChakraProps<"form">) => {
             flexShrink={0}
             width={{ base: "full", md: "auto" }}
           >
-            Request Access
+            Subscribe
           </Button>
         </Stack>
       </Stack>

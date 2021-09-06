@@ -41,7 +41,7 @@ export const RequestAccess = () => {
             {/* 6,000+ PEOPLE ALREADY JOINED ❤️️ */}
           </Text>
           <Heading mt="4" fontWeight="extrabold">
-            Get early access and up to 50% off on Labelflow by joining now
+            Get early access and up to 50% off on LabelFlow by joining now
           </Heading>
           <Box mt="6">
             <form

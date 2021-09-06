@@ -87,6 +87,7 @@ export const mockImagesLoader = async ({
   parameters: {
     mockImages?: {
       datasetId: string;
+      datasetName: string;
       images?: { id: string; name: string; url: string }[];
     };
   };
@@ -96,16 +97,17 @@ export const mockImagesLoader = async ({
     return {};
   }
   // first, clean the database and the apollo client
-  await Promise.all(getDatabase().tables.map((table) => table.clear()));
+  await Promise.all((await getDatabase()).tables.map((table) => table.clear()));
   await client.clearStore();
 
   const imageArray = parameters?.mockImages?.images;
   const datasetId = parameters?.mockImages?.datasetId;
+  const datasetName = parameters?.mockImages?.datasetName;
 
   // Because of race conditions we have to randomize the dataset name
   const parentDatasetId = await createDataset(
     datasetId,
-    `storybook dataset ${Date.now()}`
+    datasetName ?? `storybook dataset ${Date.now()}`
   );
 
   if (imageArray == null) {
