@@ -5,7 +5,6 @@ import {
   IconButton,
   Menu,
   MenuButton,
-  Image,
   Text,
   MenuDivider,
   MenuList,
@@ -103,14 +102,24 @@ export const UserMenu = () => {
           </>
         )}
         <MenuGroup title="User">
-          {session ? (
+          {status === "loading" && (
+            <MenuItem
+              cursor="default"
+              disabled
+              icon={<SignoutIcon fontSize="lg" />}
+            >
+              Sign out
+            </MenuItem>
+          )}
+          {status === "authenticated" && (
             <MenuItem
               icon={<SignoutIcon fontSize="lg" />}
               onClick={() => signOut()}
             >
               Sign out
             </MenuItem>
-          ) : (
+          )}
+          {status === "unauthenticated" && (
             <MenuItem
               icon={<SigninIcon fontSize="lg" />}
               onClick={() => setIsSigninOpen(true, "replaceIn")}
@@ -119,6 +128,7 @@ export const UserMenu = () => {
             </MenuItem>
           )}
         </MenuGroup>
+        <MenuDivider />
         <MenuGroup title="Preferences">
           {colorMode === "light" ? (
             <MenuItem

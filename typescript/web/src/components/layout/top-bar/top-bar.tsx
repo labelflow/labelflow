@@ -5,14 +5,13 @@ import {
   chakra,
   Box,
   VisuallyHidden,
-  Text,
   Tooltip,
   IconButton,
   useBreakpointValue,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import NextLink from "next/link";
-import { Session } from "next-auth";
+
 import { RiArrowGoBackLine } from "react-icons/ri";
 import { useSession } from "next-auth/react";
 import { Logo } from "../../logo";
@@ -28,7 +27,7 @@ export type Props = {
 const BackIcon = chakra(RiArrowGoBackLine);
 
 export const TopBar = ({ leftContent, rightContent }: Props) => {
-  const { data: session, status } = useSession({ required: false });
+  const { status } = useSession({ required: false });
 
   const router = useRouter();
   const viewBox =
@@ -72,9 +71,7 @@ export const TopBar = ({ leftContent, rightContent }: Props) => {
       <Spacer />
       {rightContent}
       <HelpMenu />
-      {status === "loading" && <SigninButton isLoading />}
       {status === "unauthenticated" && <SigninButton />}
-
       <UserMenu />
     </HStack>
   );
