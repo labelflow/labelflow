@@ -6191,7 +6191,7 @@ __metadata:
     graphql: 15.5.1
     isomorphic-fetch: 3.0.0
     nodemon: 2.0.12
-    prisma: ^2.30.2
+    prisma: 2.30.2
     probe-image-size: 7.2.1
     ts-node: 10.1.0
     typescript: 4.3.5
@@ -6224,14 +6224,13 @@ __metadata:
     "@turf/turf": 6.3.0
     "@types/jest": 24.0.13
     "@types/lodash": 4.14.154
-    "@types/ol": 6.4.1
     "@types/proj4": ^2.5.0
     "@types/react": 17.0.0
     "@types/react-dom": 17.0.0
     "@types/react-reconciler": ^0.26.1
     "@types/storybook__react": 4.0.1
     lodash: ^4.17.21
-    ol: 6.4.3
+    ol: 6.6.1
     ol-mapbox-style: 6.1.4
     proj4: 2.6.3
     react: 17.x
@@ -6241,7 +6240,7 @@ __metadata:
     scheduler: 0.20.1
     typescript: 4.3.5
   peerDependencies:
-    ol: 6.5.0
+    ol: 6.6.1
     react: 17.x
     react-dom: 17.x
   languageName: unknown
@@ -6336,7 +6335,7 @@ __metadata:
     next-seo: ^4.26.0
     next-transpile-modules: 8.0.0
     node-polyfill-webpack-plugin: ^1.1.2
-    ol: 6.5.0
+    ol: 6.6.1
     postcss: ^8.3.5
     query-string: ^7.0.0
     react: 17.x
@@ -6400,6 +6399,27 @@ __metadata:
     gl-style-migrate: bin/gl-style-migrate
     gl-style-validate: bin/gl-style-validate
   checksum: d7b8e42babd22f3132b889afc80d93fcc37fb252ea52316bb74927d1364dc4921497ca362213d92d284065a2d8be870e00b001c3a67569e124722312939fc160
+  languageName: node
+  linkType: hard
+
+"@mapbox/mapbox-gl-style-spec@npm:^13.20.1":
+  version: 13.21.0
+  resolution: "@mapbox/mapbox-gl-style-spec@npm:13.21.0"
+  dependencies:
+    "@mapbox/jsonlint-lines-primitives": ~2.0.2
+    "@mapbox/point-geometry": ^0.1.0
+    "@mapbox/unitbezier": ^0.0.0
+    csscolorparser: ~1.0.2
+    json-stringify-pretty-compact: ^2.0.0
+    minimist: ^1.2.5
+    rw: ^1.3.3
+    sort-object: ^0.3.2
+  bin:
+    gl-style-composite: bin/gl-style-composite
+    gl-style-format: bin/gl-style-format
+    gl-style-migrate: bin/gl-style-migrate
+    gl-style-validate: bin/gl-style-validate
+  checksum: 8ba9562d504a14e8d201d641b681a4fcc1b3a1203d54023b0daaaa8b2596cbbe9a4970dadad0f4cf40c33a190bc07d0e44f12133abf801fe26ae05f2d7df58d8
   languageName: node
   linkType: hard
 
@@ -10765,13 +10785,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/arcgis-rest-api@npm:*":
-  version: 10.4.4
-  resolution: "@types/arcgis-rest-api@npm:10.4.4"
-  checksum: d2991099d1f1d9496a5619fc90d72d48eca218e82f1145fef5efd07c1670c56e6dd4d83d7e464d29364cd61b7b7c2bb131925c6c8abbaac56ef0e8452ce68bff
-  languageName: node
-  linkType: hard
-
 "@types/aria-query@npm:^4.2.0":
   version: 4.2.1
   resolution: "@types/aria-query@npm:4.2.1"
@@ -11017,13 +11030,6 @@ __metadata:
   dependencies:
     "@types/node": "*"
   checksum: 367079834ddb8984e9b740d4219d01cfa9683e8552b1dfda473817e7f2b33d750453adda148d1b99cb67bd6e990fad8bd31e4034b5e9311dfb9803e6f1fbb0dc
-  languageName: node
-  linkType: hard
-
-"@types/geojson@npm:*":
-  version: 7946.0.7
-  resolution: "@types/geojson@npm:7946.0.7"
-  checksum: 18e705c22496a4c8cf4f56f972d7e2c5621adcf8c741ef6169bcad4a3dbabd0d622a5377d9b23d0f3c19388a592fa818d591df3971df3ee95b8df70bc6c2510d
   languageName: node
   linkType: hard
 
@@ -11421,17 +11427,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/ol@npm:6.4.1":
-  version: 6.4.1
-  resolution: "@types/ol@npm:6.4.1"
-  dependencies:
-    "@types/arcgis-rest-api": "*"
-    "@types/geojson": "*"
-    "@types/topojson-specification": "*"
-  checksum: f2753386c98455403836e81cd196ad0190705228257e552a309861648c70d8cbf0ac9bf1a75303dc354fbf13d5a1d90af97c9b04069ebaefd82e1bd6174e73d1
-  languageName: node
-  linkType: hard
-
 "@types/overlayscrollbars@npm:^1.12.0":
   version: 1.12.0
   resolution: "@types/overlayscrollbars@npm:1.12.0"
@@ -11731,15 +11726,6 @@ __metadata:
   version: 1.4.2
   resolution: "@types/tinycolor2@npm:1.4.2"
   checksum: 4687c4c7081d08e8758f8238daf48d5fb19bb0ad15a14354dd742ad1d61ff6b66fcbd8f4cd6388ecb9e6b155bfec104883c550495ec0e0ff5333b6e5bcc56795
-  languageName: node
-  linkType: hard
-
-"@types/topojson-specification@npm:*":
-  version: 1.0.1
-  resolution: "@types/topojson-specification@npm:1.0.1"
-  dependencies:
-    "@types/geojson": "*"
-  checksum: f04b4c8f64811e58328addb1dbc696746c62c5789ee242616bb21898ae4fad33dda1e58028256202eaf1199ee86f5a7a35a5666398e93a94eaad641c1be7940d
   languageName: node
   linkType: hard
 
@@ -24863,38 +24849,27 @@ next-pwa@5.2.21:
   languageName: node
   linkType: hard
 
-"ol-mapbox-style@npm:^6.1.1":
-  version: 6.3.2
-  resolution: "ol-mapbox-style@npm:6.3.2"
+"ol-mapbox-style@npm:^6.4.1":
+  version: 6.4.1
+  resolution: "ol-mapbox-style@npm:6.4.1"
   dependencies:
-    "@mapbox/mapbox-gl-style-spec": ^13.14.0
+    "@mapbox/mapbox-gl-style-spec": ^13.20.1
     mapbox-to-css-font: ^2.4.0
     webfont-matcher: ^1.1.0
   peerDependencies:
-    ol: ^6.1.0
-  checksum: 7102eaff435055e78d7200d99183148e4f7871dfbe388ed581a9ea80b339391cf8fb565e7144895e36aa97feb0a52db04b130678f64592f0bcd33d62a0c77b89
+    ol: ">= 6.1.0 < 7"
+  checksum: 3ded47ee4e64b77d547233087f9cfb85447874e7624ed49fd8dc6ec0a8d693ad8b138fb1fc1cea3bb433b99fd3d63fcaf367b98d33862072b6189184be365c6e
   languageName: node
   linkType: hard
 
-"ol@npm:6.4.3":
-  version: 6.4.3
-  resolution: "ol@npm:6.4.3"
+"ol@npm:6.6.1":
+  version: 6.6.1
+  resolution: "ol@npm:6.6.1"
   dependencies:
-    ol-mapbox-style: ^6.1.1
+    ol-mapbox-style: ^6.4.1
     pbf: 3.2.1
     rbush: ^3.0.1
-  checksum: 0c03ed3759371b095cf8d3c3d58306842f783cc7b351016e06ce52ee2c984165140ec100a3904582496c06fb8d9aeead184c47c4debd9dc9c022ddc6f718cc7a
-  languageName: node
-  linkType: hard
-
-"ol@npm:6.5.0":
-  version: 6.5.0
-  resolution: "ol@npm:6.5.0"
-  dependencies:
-    ol-mapbox-style: ^6.1.1
-    pbf: 3.2.1
-    rbush: ^3.0.1
-  checksum: 550c85570bc910f9d325ed3d86e9b455df8c2532cda6e2e7919b78329715599fa4eb52899a4d714cb3b7422a335db27d28de96ea68e66beb09092a4f954cd038
+  checksum: f5b49e30d10d7432f9a4a2460c6a2b96c56dbf26712b3f914a7c75b6f38ec0a578c2136d1d2cdc5861d732f136f267edef2cde1da372f509069ff8ac2d12300f
   languageName: node
   linkType: hard
 
@@ -26079,15 +26054,15 @@ next-pwa@5.2.21:
   languageName: node
   linkType: hard
 
-"prisma@npm:^2.30.2":
-  version: 2.30.3
-  resolution: "prisma@npm:2.30.3"
+"prisma@npm:2.30.2":
+  version: 2.30.2
+  resolution: "prisma@npm:2.30.2"
   dependencies:
     "@prisma/engines": 2.30.1-2.b8c35d44de987a9691890b3ddf3e2e7effb9bf20
   bin:
     prisma: build/index.js
     prisma2: build/index.js
-  checksum: 42e9c6ef4eaea3618116c6105e5ab6550aff3d481bc03e0ef4a28f6e37dd55f84b53ccb5706fcba7bbef3c22b0eacda59db629c31ff9c8391c78b0801d748c83
+  checksum: 65f4b99d773beefbf9dce9433b54dbcd0bf5a68100e240a15f83de71c4af29f5e063eaecb28a64c9ca240fb07dfaf430a8593e736ed09194247819a33a2a6e8a
   languageName: node
   linkType: hard
 
