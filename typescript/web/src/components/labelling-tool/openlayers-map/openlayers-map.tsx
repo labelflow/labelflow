@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import { RouterContext } from "next/dist/shared/lib/router-context";
 import { Extent, getCenter } from "ol/extent";
 import { Map as OlMap, View as OlView, MapBrowserEvent } from "ol";
+import { Geometry } from "ol/geom";
 import { Vector as OlSourceVector } from "ol/source";
 import { Size } from "ol/size";
 import memoize from "mem";
@@ -86,7 +87,7 @@ export const OpenlayersMap = () => {
   const editClassOverlayRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<OlMap>(null);
   const viewRef = useRef<OlView | null>(null);
-  const sourceVectorBoxesRef = useRef<OlSourceVector | null>(null);
+  const sourceVectorBoxesRef = useRef<OlSourceVector<Geometry> | null>(null);
   const router = useRouter();
   const { imageId } = router?.query;
   const isContextMenuOpen = useLabellingStore(
@@ -120,7 +121,7 @@ export const OpenlayersMap = () => {
 
   const isBoundsValid = bounds.width > 0 || bounds.height > 0;
   const onPointermove = useCallback(
-    (e: MapBrowserEvent) => {
+    (e: MapBrowserEvent<UIEvent>) => {
       const mapTargetViewport = e.map.getViewport();
       if (!mapTargetViewport) return;
       if (e.dragging) {
