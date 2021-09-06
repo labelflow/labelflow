@@ -20,7 +20,7 @@
     "scheduler": "0.20.1"
   },
   "peerDependencies": {
-    "ol": "6.6.1",
+    "ol": "6.5.0",
     "react": "17.x",
     "react-dom": "17.x"
   },
@@ -30,12 +30,13 @@
     "@turf/turf": "6.3.0",
     "@types/jest": "24.0.13",
     "@types/lodash": "4.14.154",
+    "@types/ol": "6.4.1",
     "@types/proj4": "^2.5.0",
     "@types/react": "17.0.0",
     "@types/react-dom": "17.0.0",
     "@types/react-reconciler": "^0.26.1",
     "@types/storybook__react": "4.0.1",
-    "ol": "6.6.1",
+    "ol": "6.4.3",
     "ol-mapbox-style": "6.1.4",
     "proj4": "2.6.3",
     "react": "17.x",
