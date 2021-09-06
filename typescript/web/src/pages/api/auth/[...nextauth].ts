@@ -6,9 +6,9 @@ import GitHubProvider from "next-auth/providers/github";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { PrismaClient } from "@prisma/client";
 
-interface NextAuthUserWithStringId extends NextAuthUser {
-  id: string;
-}
+// interface NextAuthUserWithStringId extends NextAuthUser {
+//   id: string;
+// }
 
 const prisma = new PrismaClient({
   datasources: { db: { url: process.env.POSTGRES_EXTERNAL_URL } },
@@ -40,18 +40,17 @@ export default NextAuth({
   },
   // debug: true,
   callbacks: {
-    session: ({
-      session,
-      user,
-    }: {
-      session: Session;
-      user: NextAuthUserWithStringId;
-    }) => {
-      if (session?.user && user?.id) {
-        // eslint-disable-next-line no-param-reassign
-        session.user.id = user?.id;
-      }
-      return session;
-    },
+    session: ({ session, user }) =>
+      // : {
+      //   session: Session;
+      //   user: NextAuthUserWithStringId;
+      // }
+      {
+        if (session?.user && user?.id) {
+          // eslint-disable-next-line no-param-reassign
+          session.user.id = user?.id;
+        }
+        return session;
+      },
   },
 });
