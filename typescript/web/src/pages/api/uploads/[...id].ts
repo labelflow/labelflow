@@ -1,7 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 import nextConnect from "next-connect";
 import multer from "multer";
-import { getSession } from "next-auth/client";
+import { getSession } from "next-auth/react";
 import { NextApiResponse, NextApiRequest } from "next";
 
 const client = createClient(

@@ -21,7 +21,7 @@ import {
 
 import { RiMailSendLine } from "react-icons/ri";
 
-import { signIn } from "next-auth/client";
+import { signIn } from "next-auth/react";
 
 import { FaGithub, FaGoogle } from "react-icons/fa";
 

@@ -3,7 +3,9 @@
   "version": "0.0.1",
   "main": "src/index.ts",
   "scripts": {
-    "dev": "nodemon src/index.ts",
+    "dev": "prisma migrate dev",
+    "deploy": "prisma migrate deploy",
+    "dev:push": "prisma db push",
     "generate": "prisma generate"
   },
   "devDependencies": {

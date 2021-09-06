@@ -19,7 +19,7 @@ import {
   RiLoginCircleLine,
   RiLogoutCircleRLine,
 } from "react-icons/ri";
-import { signOut, useSession, getSession } from "next-auth/client";
+import { signOut, useSession } from "next-auth/react";
 import { useQueryParam } from "use-query-params";
 import { BoolParam } from "../../../utils/query-param-bool";
 
@@ -33,7 +33,7 @@ const SignoutIcon = chakra(RiLogoutCircleRLine);
 
 export const UserMenu = () => {
   const { colorMode, toggleColorMode } = useColorMode();
-  const [session] = useSession();
+  const { data: session, status } = useSession({ required: false });
 
   const [isSigninOpen, setIsSigninOpen] = useQueryParam(
     "modal-signin",
@@ -52,21 +52,21 @@ export const UserMenu = () => {
       </Tooltip>
       <MenuList>
         <MenuGroup title="User">
-          {/* {session ? ( */}
-          <MenuItem
-            icon={<SignoutIcon fontSize="lg" />}
-            onClick={() => signOut()}
-          >
-            Sign out
-          </MenuItem>
-          {/* ) : ( */}
-          <MenuItem
-            icon={<SigninIcon fontSize="lg" />}
-            onClick={() => setIsSigninOpen(true, "")}
-          >
-            Sign in
-          </MenuItem>
-          {/* )} */}
+          {session ? (
+            <MenuItem
+              icon={<SignoutIcon fontSize="lg" />}
+              onClick={() => signOut()}
+            >
+              Sign out
+            </MenuItem>
+          ) : (
+            <MenuItem
+              icon={<SigninIcon fontSize="lg" />}
+              onClick={() => setIsSigninOpen(true, "")}
+            >
+              Sign in
+            </MenuItem>
+          )}
         </MenuGroup>
         <MenuGroup title="Preferences">
           {colorMode === "light" ? (

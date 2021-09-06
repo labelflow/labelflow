@@ -52,6 +52,7 @@ export const SigninButton = ({ ...props }: Props) => {
         }}
         colorScheme="brand"
         variant="solid"
+        loadingText="Loading"
         {...props}
       >
         Sign in

@@ -4,7 +4,7 @@ import { useQueryParam, StringParam } from "use-query-params";
 import { Meta } from "../../components/meta";
 import { AppLifecycleManager } from "../../components/app-lifecycle-manager";
 import { Layout } from "../../components/layout";
-import { SigninModal } from "../../components/auth-manager/signin";
+import { SigninModal } from "../../components/auth-manager/signin-modal";
 
 const LocalDatasetsIndexPage = () => {
   const router = useRouter();
@@ -14,7 +14,7 @@ const LocalDatasetsIndexPage = () => {
   }, []);
   return (
     <>
-      <AppLifecycleManager />
+      <AppLifecycleManager noModals />
       <Meta title="LabelFlow | Sign in" />
       <Layout>
         <SigninModal isOpen onClose={exitSignin} error={error} />
