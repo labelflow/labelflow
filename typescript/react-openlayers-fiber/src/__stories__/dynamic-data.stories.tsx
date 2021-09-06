@@ -40,7 +40,7 @@ export const DynamicData = () => {
   const onPostrender = (event: RenderEvent) => {
     const vectorContext = getVectorContext(event);
     const { frameState } = event;
-    const theta = (2 * Math.PI * (frameState?.time ?? 0)) / omegaTheta;
+    const theta = (2 * Math.PI * frameState.time) / omegaTheta;
     const coordinates = [];
     let i;
     for (i = 0; i < n; i += 1) {
