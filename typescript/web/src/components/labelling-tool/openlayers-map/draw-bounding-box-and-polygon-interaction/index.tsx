@@ -2,7 +2,7 @@ import { useMemo, useRef } from "react";
 import { useRouter } from "next/router";
 import { Draw as OlDraw } from "ol/interaction";
 import { createBox, DrawEvent } from "ol/interaction/Draw";
-import GeoJSON, { GeoJSONPolygon } from "ol/format/GeoJSON";
+import GeoJSON from "ol/format/GeoJSON";
 import { Fill, Stroke, Style } from "ol/style";
 import GeometryType from "ol/geom/GeometryType";
 import { useApolloClient, useQuery, gql } from "@apollo/client";
@@ -122,7 +122,7 @@ export const DrawBoundingBoxAndPolygonInteraction = () => {
       onDrawend={async (drawEvent: DrawEvent) => {
         const geometry = new GeoJSON().writeGeometryObject(
           drawEvent.feature.getGeometry()
-        ) as GeoJSONPolygon;
+        ) as GeoJSON.Polygon;
         const createLabelPromise = perform(
           createLabelEffect(
             {
