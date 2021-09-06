@@ -14,6 +14,7 @@ import {
   Button,
   Flex,
   FormControl,
+  chakra,
   Input,
   SimpleGrid,
   useColorModeValue as mode,
@@ -23,12 +24,14 @@ import { RiMailSendLine } from "react-icons/ri";
 
 import { signIn } from "next-auth/react";
 
-import { FaGithub, FaGoogle } from "react-icons/fa";
+import { FaGithub, FaGoogle, FaCheck } from "react-icons/fa";
 import { useQueryParam, StringParam } from "use-query-params";
 
 import { DividerWithText } from "./divider-with-text";
 import { Logo } from "../../logo";
 import { BoolParam } from "../../../utils/query-param-bool";
+
+const ChakraCheck = chakra(FaCheck);
 
 const errors = {
   Signin: "Try signing in with a different account.",
@@ -49,7 +52,10 @@ const Feature = (props: { title: string; children: ReactNode }) => {
   const { title, children } = props;
   return (
     <Stack>
-      <Text fontWeight="bold">{title}</Text>
+      <Text fontWeight="bold" display="inline-block">
+        <ChakraCheck display="inline" color="brand.500" mr="2" />
+        {title}
+      </Text>
       <Text>{children}</Text>
     </Stack>
   );
@@ -75,9 +81,7 @@ export const SigninModal = ({
       });
       if (signInResult?.error) {
         setError(signInResult.error);
-        return;
-      }
-      if (signInResult?.ok) {
+      } else if (signInResult?.ok) {
         setIsOpen(false);
       }
     },
@@ -128,13 +132,13 @@ export const SigninModal = ({
                   Invite your teammates to work together on datasets and share
                   your results.
                 </Feature>
-                <Feature title="Label Faster (soon)">
-                  Use smart tools based on AI to label your data faster and more
-                  precisely.
-                </Feature>
                 <Feature title="Secure your Data">
                   Your data is stored securely on our servers, no worry about
                   your data integrity.
+                </Feature>
+                <Feature title="Label Faster (soon)">
+                  Use smart tools based on AI to label your data faster and more
+                  precisely.
                 </Feature>
               </SimpleGrid>
             </Flex>

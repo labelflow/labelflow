@@ -5,13 +5,17 @@ import { SigninModal } from "./signin-modal";
 
 export const AuthManager = () => {
   const [isOpen, setIsOpen] = useQueryParam("modal-signin", BoolParam);
-  const [error] = useQueryParam("error", StringParam);
+  const [error, setError] = useQueryParam("error", StringParam);
 
   return (
     <SigninModal
       isOpen={isOpen}
       error={error}
-      onClose={() => setIsOpen(false, "replaceIn")}
+      onClose={() => {
+        setIsOpen(false, "replaceIn");
+        // Necessary to solve https://github.com/pbeshai/use-query-params/issues/53
+        setTimeout(() => setError(undefined, "replaceIn"), 1);
+      }}
     />
   );
 };
