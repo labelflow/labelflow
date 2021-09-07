@@ -11,3 +11,7 @@ export default {
 export const Opened = () => {
   return <SigninModal isOpen />;
 };
+
+export const LinkSent = () => {
+  return <SigninModal isOpen linkSent="example@company.com" />;
+};

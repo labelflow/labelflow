@@ -64,14 +64,20 @@ const Feature = (props: { title: string; children: ReactNode }) => {
 export const SigninModal = ({
   isOpen = false,
   onClose = () => {},
+  setIsOpen,
   error,
+  setError,
+  linkSent,
+  setLinkSent,
 }: {
   isOpen?: boolean;
   onClose?: () => void;
+  setIsOpen: (isOpen: boolean) => void;
   error?: string | null;
+  setError: (error: string) => void;
+  linkSent?: string | null;
+  setLinkSent: (email: string) => void;
 }) => {
-  const [, setIsOpen] = useQueryParam("modal-signin", BoolParam);
-  const [, setError] = useQueryParam("error", StringParam);
   const performSignIn = useCallback(
     async (method, options = {}) => {
       const signInResult = await signIn<"email" | "credentials">(method, {
@@ -82,11 +88,16 @@ export const SigninModal = ({
       if (signInResult?.error) {
         setError(signInResult.error);
       } else if (signInResult?.ok) {
-        setIsOpen(false);
+        if (method === "email") {
+          setLinkSent(options?.email);
+        } else {
+          setIsOpen(false);
+        }
       }
     },
-    [setIsOpen, setError]
+    [setIsOpen, setError, setLinkSent]
   );
+
   return (
     <Modal
       scrollBehavior="inside"
@@ -183,7 +194,7 @@ export const SigninModal = ({
                 </Button>
               </Stack>
 
-              <DividerWithText>Or</DividerWithText>
+              <DividerWithText>or sign in with email</DividerWithText>
               <form
                 onSubmit={(e) => {
                   e.preventDefault();
@@ -197,22 +208,31 @@ export const SigninModal = ({
                   });
                 }}
               >
-                <Stack spacing="4">
-                  <FormControl id="email">
-                    {/* <FormLabel mb={1}>Email</FormLabel> */}
-                    <Input
-                      type="email"
-                      autoComplete="email"
-                      placeholder="you@company.com"
-                    />
-                  </FormControl>
-                  <Button
-                    type="submit"
-                    variant="outline"
-                    leftIcon={<Box as={RiMailSendLine} color="brand.500" />}
-                  >
-                    Sign in with Email
-                  </Button>
+                <Stack spacing="4" h="24">
+                  {linkSent ? (
+                    <>
+                      <Text fontWeight="bold">Awaiting Confirmation</Text>
+                      <Text fontSize="sm">{`We just sent an email to ${linkSent} with password-less sign-in link`}</Text>
+                    </>
+                  ) : (
+                    <>
+                      <FormControl id="email">
+                        {/* <FormLabel mb={1}>Email</FormLabel> */}
+                        <Input
+                          type="email"
+                          autoComplete="email"
+                          placeholder="you@company.com"
+                        />
+                      </FormControl>
+                      <Button
+                        type="submit"
+                        variant="outline"
+                        leftIcon={<Box as={RiMailSendLine} color="brand.500" />}
+                      >
+                        Sign in with Email
+                      </Button>
+                    </>
+                  )}
                 </Stack>
               </form>
               {error ? (
