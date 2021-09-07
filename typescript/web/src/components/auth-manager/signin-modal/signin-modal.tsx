@@ -194,7 +194,7 @@ export const SigninModal = ({
                 </Button>
               </Stack>
 
-              <DividerWithText>Or</DividerWithText>
+              <DividerWithText>or sign in with email</DividerWithText>
               <form
                 onSubmit={(e) => {
                   e.preventDefault();

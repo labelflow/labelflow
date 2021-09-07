@@ -15,6 +15,7 @@ export const DividerWithText = (props: StackProps) => (
       fontSize="sm"
       fontWeight="semibold"
       color={mode("gray.600", "gray.200")}
+      minW="fit-content"
     >
       {
         // eslint-disable-next-line react/destructuring-assignment
