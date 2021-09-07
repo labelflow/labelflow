@@ -7,7 +7,7 @@ import { join, map, toPairs, isEmpty } from "lodash/fp";
 import { Meta } from "../components/meta";
 import { Layout } from "../components/layout";
 import Website from "./website";
-import { AppLifecycleManager } from "../components/app-lifecycle-manager";
+import { ServiceWorkerManagerBackground } from "../components/service-worker-manager";
 
 const IndexPage = () => {
   const router = useRouter();
@@ -29,7 +29,7 @@ const IndexPage = () => {
 
   return (
     <>
-      <AppLifecycleManager noModals />
+      <ServiceWorkerManagerBackground />
       <Meta title="LabelFlow: The open standard platform for image labelling." />
       <Layout>
         <Center h="full">

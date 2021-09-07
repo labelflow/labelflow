@@ -1,7 +1,7 @@
-import { chakraDecorator } from "../../../../utils/chakra-decorator";
-import { queryParamsDecorator } from "../../../../utils/query-params-decorator";
-import { apolloDecorator } from "../../../../utils/apollo-decorator";
-import { cookieDecorator } from "../../../../utils/cookie-decorator";
+import { chakraDecorator } from "../../../utils/chakra-decorator";
+import { queryParamsDecorator } from "../../../utils/query-params-decorator";
+import { apolloDecorator } from "../../../utils/apollo-decorator";
+import { cookieDecorator } from "../../../utils/cookie-decorator";
 import { WelcomeModal } from "..";
 
 export default {

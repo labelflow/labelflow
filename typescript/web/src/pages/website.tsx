@@ -14,7 +14,7 @@ import { Roadmap } from "../components/website/roadmap/roadmap";
 import { Meta } from "../components/meta";
 import { Banner } from "../components/website/banner";
 import { Proof } from "../components/website/proof";
-import { AppLifecycleManager } from "../components/app-lifecycle-manager";
+import { ServiceWorkerManagerBackground } from "../components/service-worker-manager";
 
 export default function Website({
   previewArticles,
@@ -23,7 +23,7 @@ export default function Website({
 }) {
   return (
     <>
-      <AppLifecycleManager noModals />
+      <ServiceWorkerManagerBackground />
       <Meta title="LabelFlow: The open standard platform for image labelling." />
       <Box minH="640px">
         <NavBar />

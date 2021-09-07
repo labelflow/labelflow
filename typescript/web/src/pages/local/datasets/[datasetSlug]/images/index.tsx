@@ -21,7 +21,7 @@ import { isEmpty } from "lodash/fp";
 import { RiArrowRightSLine } from "react-icons/ri";
 import { useErrorHandler } from "react-error-boundary";
 import type { Dataset as DatasetType } from "@labelflow/graphql-types";
-import { AppLifecycleManager } from "../../../../../components/app-lifecycle-manager";
+import { ServiceWorkerManagerModal } from "../../../../../components/service-worker-manager";
 import { KeymapButton } from "../../../../../components/layout/top-bar/keymap-button";
 import { ImportButton } from "../../../../../components/import-button";
 import { ExportButton } from "../../../../../components/export-button";
@@ -31,6 +31,8 @@ import { EmptyStateNoImages } from "../../../../../components/empty-state";
 import { DatasetTabBar } from "../../../../../components/layout/tab-bar/dataset-tab-bar";
 import Error404Page from "../../../../404";
 import { AuthManager } from "../../../../../components/auth-manager";
+import React from "react";
+import { WelcomeManager } from "../../../../../components/welcome-manager";
 
 const ArrowRightIcon = chakra(RiArrowRightSLine);
 
@@ -70,7 +72,7 @@ const ImagesPage = () => {
     }
     return (
       <>
-        <AppLifecycleManager />
+        <ServiceWorkerManagerModal />
         <Error404Page />
       </>
     );
@@ -80,7 +82,8 @@ const ImagesPage = () => {
   const imageBackground = mode("gray.100", "gray.800");
   return (
     <>
-      <AppLifecycleManager />
+      <ServiceWorkerManagerModal />
+      <WelcomeManager />
       <AuthManager />
       <Meta title="LabelFlow | Images" />
       <Layout

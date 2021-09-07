@@ -20,7 +20,7 @@ import { RiArrowRightSLine } from "react-icons/ri";
 import NextLink from "next/link";
 import type { Image } from "@labelflow/graphql-types";
 import { useErrorHandler } from "react-error-boundary";
-import { AppLifecycleManager } from "../../../../../components/app-lifecycle-manager";
+import { ServiceWorkerManagerModal } from "../../../../../components/service-worker-manager";
 import { KeymapButton } from "../../../../../components/layout/top-bar/keymap-button";
 import { ImportButton } from "../../../../../components/import-button";
 import { ExportButton } from "../../../../../components/export-button";
@@ -29,6 +29,7 @@ import { Layout } from "../../../../../components/layout";
 import { Gallery } from "../../../../../components/gallery";
 import Error404Page from "../../../../404";
 import { AuthManager } from "../../../../../components/auth-manager";
+import { WelcomeManager } from "../../../../../components/welcome-manager";
 
 const ArrowRightIcon = chakra(RiArrowRightSLine);
 
@@ -105,7 +106,7 @@ const ImagePage = () => {
     }
     return (
       <>
-        <AppLifecycleManager />
+        <ServiceWorkerManagerModal />
         <Error404Page />
       </>
     );
@@ -113,7 +114,8 @@ const ImagePage = () => {
 
   return (
     <>
-      <AppLifecycleManager />
+      <ServiceWorkerManagerModal />
+      <WelcomeManager />
       <AuthManager />
       <Meta title={`LabelFlow | Image ${imageName ?? ""}`} />
       <Layout

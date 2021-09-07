@@ -15,7 +15,7 @@ import {
 } from "@chakra-ui/react";
 import { RiGithubFill } from "react-icons/ri";
 
-import Rocket from "../../../graphics/rocket";
+import Rocket from "../../graphics/rocket";
 
 const ChakraRocket = chakra(Rocket);
 

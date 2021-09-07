@@ -12,7 +12,7 @@ import {
 import { useRouter } from "next/router";
 import { RiArrowRightSLine } from "react-icons/ri";
 import { useErrorHandler } from "react-error-boundary";
-import { AppLifecycleManager } from "../../../../../components/app-lifecycle-manager";
+import { ServiceWorkerManagerModal } from "../../../../../components/service-worker-manager";
 import { KeymapButton } from "../../../../../components/layout/top-bar/keymap-button";
 import { ImportButton } from "../../../../../components/import-button";
 import { ExportButton } from "../../../../../components/export-button";
@@ -22,6 +22,8 @@ import { DatasetTabBar } from "../../../../../components/layout/tab-bar/dataset-
 import { ClassesList } from "../../../../../components/dataset-class-list";
 import Error404Page from "../../../../404";
 import { AuthManager } from "../../../../../components/auth-manager";
+import React from "react";
+import { WelcomeManager } from "../../../../../components/welcome-manager";
 
 const ArrowRightIcon = chakra(RiArrowRightSLine);
 
@@ -55,7 +57,7 @@ const DatasetClassesPage = () => {
     }
     return (
       <>
-        <AppLifecycleManager />
+        <ServiceWorkerManagerModal />
         <Error404Page />
       </>
     );
@@ -63,7 +65,8 @@ const DatasetClassesPage = () => {
 
   return (
     <>
-      <AppLifecycleManager />
+      <ServiceWorkerManagerModal />
+      <WelcomeManager />
       <AuthManager />
       <Meta title="LabelFlow | Classes" />
       <Layout
