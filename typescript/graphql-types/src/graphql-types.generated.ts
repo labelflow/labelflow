@@ -476,9 +476,9 @@ export type WorkspaceCreateInput = {
 
 export enum WorkspacePlan {
   Community = 'community',
-  Bronze = 'bronze',
-  Silver = 'silver',
-  Gold = 'gold'
+  Starter = 'starter',
+  Pro = 'pro',
+  Enterprise = 'enterprise'
 }
 
 export enum WorkspaceType {

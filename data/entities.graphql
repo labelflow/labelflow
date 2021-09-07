@@ -78,9 +78,9 @@ enum WorkspaceType {
 
 enum WorkspacePlan {
   community
-  bronze
-  silver
-  gold
+  starter
+  pro
+  enterprise
 }
 
 type Workspace {

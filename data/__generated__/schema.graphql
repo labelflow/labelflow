@@ -284,9 +284,9 @@ input WorkspaceCreateInput {
 
 enum WorkspacePlan {
   community
-  bronze
-  silver
-  gold
+  starter
+  pro
+  enterprise
 }
 
 enum WorkspaceType {
