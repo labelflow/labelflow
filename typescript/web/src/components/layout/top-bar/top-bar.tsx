@@ -71,7 +71,8 @@ export const TopBar = ({ leftContent, rightContent }: Props) => {
       <Spacer />
       {rightContent}
       <HelpMenu />
-      {status === "unauthenticated" && <SigninButton />}
+      {process.env.NEXT_PUBLIC_FEATURE_SIGNIN === "true" &&
+        status === "unauthenticated" && <SigninButton />}
       <UserMenu />
     </HStack>
   );

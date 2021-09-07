@@ -101,34 +101,38 @@ export const UserMenu = () => {
             <MenuDivider />
           </>
         )}
-        <MenuGroup title="User">
-          {status === "loading" && (
-            <MenuItem
-              cursor="default"
-              disabled
-              icon={<SignoutIcon fontSize="lg" />}
-            >
-              Sign out
-            </MenuItem>
-          )}
-          {status === "authenticated" && (
-            <MenuItem
-              icon={<SignoutIcon fontSize="lg" />}
-              onClick={() => signOut()}
-            >
-              Sign out
-            </MenuItem>
-          )}
-          {status === "unauthenticated" && (
-            <MenuItem
-              icon={<SigninIcon fontSize="lg" />}
-              onClick={() => setIsSigninOpen(true, "replaceIn")}
-            >
-              Sign in
-            </MenuItem>
-          )}
-        </MenuGroup>
-        <MenuDivider />
+        {process.env.NEXT_PUBLIC_FEATURE_SIGNIN === "true" && (
+          <>
+            <MenuGroup title="User">
+              {status === "loading" && (
+                <MenuItem
+                  cursor="default"
+                  disabled
+                  icon={<SignoutIcon fontSize="lg" />}
+                >
+                  Sign out
+                </MenuItem>
+              )}
+              {status === "authenticated" && (
+                <MenuItem
+                  icon={<SignoutIcon fontSize="lg" />}
+                  onClick={() => signOut()}
+                >
+                  Sign out
+                </MenuItem>
+              )}
+              {status === "unauthenticated" && (
+                <MenuItem
+                  icon={<SigninIcon fontSize="lg" />}
+                  onClick={() => setIsSigninOpen(true, "replaceIn")}
+                >
+                  Sign in
+                </MenuItem>
+              )}
+            </MenuGroup>
+            <MenuDivider />
+          </>
+        )}
         <MenuGroup title="Preferences">
           {colorMode === "light" ? (
             <MenuItem
