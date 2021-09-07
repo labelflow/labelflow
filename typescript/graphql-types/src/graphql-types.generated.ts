@@ -470,8 +470,6 @@ export type Workspace = {
 export type WorkspaceCreateInput = {
   id?: Maybe<Scalars['ID']>;
   name: Scalars['String'];
-  type: WorkspaceType;
-  plan: WorkspacePlan;
 };
 
 export enum WorkspacePlan {
@@ -488,8 +486,6 @@ export enum WorkspaceType {
 
 export type WorkspaceUpdateInput = {
   name?: Maybe<Scalars['String']>;
-  type?: Maybe<WorkspaceType>;
-  plan?: Maybe<WorkspacePlan>;
 };
 
 export type WorkspaceWhereUniqueInput = {

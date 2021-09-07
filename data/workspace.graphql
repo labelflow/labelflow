@@ -1,8 +1,6 @@
 input WorkspaceCreateInput {
   id: ID
   name: String!
-  type: WorkspaceType!
-  plan: WorkspacePlan!
 }
 
 input WorkspaceWhereUniqueInput {
@@ -11,6 +9,4 @@ input WorkspaceWhereUniqueInput {
 
 input WorkspaceUpdateInput {
   name: String
-  type: WorkspaceType
-  plan: WorkspacePlan
 }
