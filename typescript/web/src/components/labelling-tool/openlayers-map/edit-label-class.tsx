@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import { useHotkeys } from "react-hotkeys-hook";
 
 import { ClassSelectionPopover } from "../../class-selection-popover";
-import { useLabellingStore } from "../../../connectors/labelling-state";
+import { useLabellingStore } from "../../../connectors/labeling-state";
 import { useUndoStore } from "../../../connectors/undo-store";
 import { createNewLabelClassAndUpdateLabelCurry } from "../../../connectors/undo-store/effects/create-label-class-and-update-label";
 import { createUpdateLabelClassOfLabelEffect } from "../../../connectors/undo-store/effects/update-label-class-of-label";

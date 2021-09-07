@@ -18,7 +18,7 @@ import { useUndoStore } from "../../../../connectors/undo-store";
 import {
   useLabellingStore,
   Tools,
-} from "../../../../connectors/labelling-state";
+} from "../../../../connectors/labeling-state";
 import { setupTestsWithLocalDatabase } from "../../../../utils/setup-local-db-tests";
 
 import { DrawBoundingBoxAndPolygonInteraction } from "../draw-bounding-box-and-polygon-interaction";
@@ -44,7 +44,7 @@ beforeEach(() => {
   useLabellingStore.setState({ selectedTool: Tools.BOX });
 });
 
-it("create a label when the user has finished to draw a bounding box on the labelling interface", async () => {
+it("create a label when the user has finished to draw a bounding box on the labeling interface", async () => {
   const mapRef: { current: OlMap | null } = { current: null };
   render(<DrawBoundingBoxAndPolygonInteraction />, {
     wrapper: ({ children }) => (
@@ -314,7 +314,7 @@ it("handles cases where the label creation throws an error", async () => {
   });
 });
 
-it("create a label when the user has finished to draw a polygon on the labelling interface", async () => {
+it("create a label when the user has finished to draw a polygon on the labeling interface", async () => {
   const mapRef: { current: OlMap | null } = { current: null };
   render(<DrawBoundingBoxAndPolygonInteraction />, {
     wrapper: ({ children }) => (

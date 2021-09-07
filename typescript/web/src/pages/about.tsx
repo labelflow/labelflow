@@ -91,9 +91,9 @@ export default function Pricing() {
               way, by scaling up with AI.
               <br />
               <br />
-              We labeled millions of images worked with multiple labelling
+              We labeled millions of images worked with multiple labeling
               companies. We also dealt with tens of different taxonomies for the
-              same physical problem, we faced labelling quality challenges, we
+              same physical problem, we faced labeling quality challenges, we
               built AI training pipeline using tens of open source frameworks
               and ecosystem partners, we integrated real users in the loop and
               ... we showed some results.
@@ -112,7 +112,7 @@ export default function Pricing() {
                 , we now want to support every AI-applied company in the world
                 to build the next big thing
               </b>
-              . We start small with our labelling tool, with a strong focus on
+              . We start small with our labeling tool, with a strong focus on
               user experience. That’s just the beginning.
               <br />
               <br />

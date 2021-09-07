@@ -12,7 +12,7 @@ import { keymap } from "../../../keymap";
 import {
   useLabellingStore,
   DrawingToolState,
-} from "../../../connectors/labelling-state";
+} from "../../../connectors/labeling-state";
 
 export type Props = {};
 

@@ -1,4 +1,4 @@
-import { useLabellingStore } from "../../labelling-state";
+import { useLabellingStore } from "../../labeling-state";
 import { Effect } from "..";
 
 export const createUpdateLabelClassEffect = ({

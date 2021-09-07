@@ -13,7 +13,7 @@ import { Feature } from "ol";
 import { Label } from "@labelflow/graphql-types";
 import { omit } from "lodash/fp";
 import { keymap } from "../../../keymap";
-import { useLabellingStore } from "../../../connectors/labelling-state";
+import { useLabellingStore } from "../../../connectors/labeling-state";
 import { useUndoStore, Effect } from "../../../connectors/undo-store";
 import { noneClassColor } from "../../../utils/class-color-generator";
 import {

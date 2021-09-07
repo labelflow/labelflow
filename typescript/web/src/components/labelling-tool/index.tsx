@@ -1,4 +1,4 @@
-import { LabellingTool } from "./labelling-tool";
+import { LabellingTool } from "./labeling-tool";
 
 export { LabellingTool };
 export default LabellingTool;

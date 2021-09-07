@@ -18,7 +18,7 @@ describe("Golden path", () => {
 
     cy.contains("Create new dataset...").click();
     cy.get("input").type("cypress test dataset");
-    cy.contains("Start Labelling").click();
+    cy.contains("Start Labeling").click();
 
     cy.contains("cypress test dataset").click();
 

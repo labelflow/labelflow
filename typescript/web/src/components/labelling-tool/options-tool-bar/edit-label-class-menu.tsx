@@ -4,7 +4,7 @@ import { gql, useQuery, useApolloClient } from "@apollo/client";
 import { useHotkeys } from "react-hotkeys-hook";
 import { useRouter } from "next/router";
 import { ClassSelectionMenu, LabelClassItem } from "./class-selection-menu";
-import { Tools, useLabellingStore } from "../../../connectors/labelling-state";
+import { Tools, useLabellingStore } from "../../../connectors/labeling-state";
 import { useUndoStore } from "../../../connectors/undo-store";
 import { createNewLabelClassAndUpdateLabelCurry } from "../../../connectors/undo-store/effects/create-label-class-and-update-label";
 import { createUpdateLabelClassOfLabelEffect } from "../../../connectors/undo-store/effects/update-label-class-of-label";

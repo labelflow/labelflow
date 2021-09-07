@@ -9,8 +9,8 @@ type Props = {
 };
 
 export const Meta = ({
-  title = "Labelflow: The open standard platform for image labeling.",
-  desc = "The fastest and simplest image labelling tool on the Internet!",
+  title = "Labelflow: The open platform for image labeling.",
+  desc = "The fastest and simplest image labeling tool on the Internet!",
   canonical = "https://labelflow.ai/",
 }: Props) => (
   <>

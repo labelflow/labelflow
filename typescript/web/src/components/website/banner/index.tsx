@@ -39,7 +39,7 @@ export const Banner = () => {
           </Heading>
 
           <Text mt="4" fontSize="lg" color="gray.800">
-            From image labelling to automatic inference, discover how to build a
+            From image labeling to automatic inference, discover how to build a
             proof of concept model for your custom use case in no time. We will
             go through a real life use case: equipment inventory on the
             distribution electrical system.

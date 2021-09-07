@@ -10,7 +10,7 @@ import OverlayPositioning from "ol/OverlayPositioning";
 import {
   useLabellingStore,
   Tools,
-} from "../../../../connectors/labelling-state";
+} from "../../../../connectors/labeling-state";
 
 import { keymap } from "../../../../keymap";
 

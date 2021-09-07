@@ -4,7 +4,7 @@ import userEvent from "@testing-library/user-event";
 import {
   Tools,
   useLabellingStore,
-} from "../../../../connectors/labelling-state";
+} from "../../../../connectors/labeling-state";
 import { mockNextRouter } from "../../../../utils/router-mocks";
 
 mockNextRouter();

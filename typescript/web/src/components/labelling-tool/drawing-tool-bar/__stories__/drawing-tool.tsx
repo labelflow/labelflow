@@ -6,7 +6,7 @@ import { chakraDecorator } from "../../../../utils/chakra-decorator";
 import { queryParamsDecorator } from "../../../../utils/query-params-decorator";
 
 import { DrawingToolIcon } from "../drawing-tool";
-import { Tools } from "../../../../connectors/labelling-state";
+import { Tools } from "../../../../connectors/labeling-state";
 
 export default {
   title: "web/Drawing Toolbar/Drawing Tool",

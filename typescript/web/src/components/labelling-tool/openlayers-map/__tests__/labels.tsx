@@ -18,7 +18,7 @@ import { useRouter } from "next/router";
 import { client } from "../../../../connectors/apollo-client/schema-client";
 import { Labels } from "../labels";
 import { LabelCreateInput } from "@labelflow/graphql-types";
-import { useLabellingStore } from "../../../../connectors/labelling-state";
+import { useLabellingStore } from "../../../../connectors/labeling-state";
 import { setupTestsWithLocalDatabase } from "../../../../utils/setup-local-db-tests";
 import { probeImage } from "@labelflow/common-resolvers/src/utils/probe-image";
 

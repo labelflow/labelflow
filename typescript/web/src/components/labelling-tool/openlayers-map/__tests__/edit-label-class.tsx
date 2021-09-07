@@ -7,7 +7,7 @@ import { client } from "../../../../connectors/apollo-client/schema-client";
 import {
   useLabellingStore,
   Tools,
-} from "../../../../connectors/labelling-state";
+} from "../../../../connectors/labeling-state";
 import { setupTestsWithLocalDatabase } from "../../../../utils/setup-local-db-tests";
 
 import { EditLabelClass } from "../edit-label-class";

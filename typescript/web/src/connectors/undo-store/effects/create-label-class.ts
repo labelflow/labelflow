@@ -1,7 +1,7 @@
 import { gql, ApolloClient } from "@apollo/client";
 
 import { LabelClass } from "@labelflow/graphql-types";
-import { useLabellingStore } from "../../labelling-state";
+import { useLabellingStore } from "../../labeling-state";
 import {
   getNextClassColor,
   hexColorSequence,

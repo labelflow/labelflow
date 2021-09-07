@@ -15,7 +15,7 @@ import {
   useLabellingStore,
   Tools,
   DrawingToolState,
-} from "../../../../connectors/labelling-state";
+} from "../../../../connectors/labeling-state";
 import { keymap } from "../../../../keymap";
 import { useUndoStore } from "../../../../connectors/undo-store";
 import { noneClassColor } from "../../../../utils/class-color-generator";

@@ -2,7 +2,7 @@ import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 import { ZoomToolbar } from "../zoom-tool-bar";
-import { useLabellingStore } from "../../../../connectors/labelling-state";
+import { useLabellingStore } from "../../../../connectors/labeling-state";
 
 beforeEach(() => {
   jest.clearAllMocks();

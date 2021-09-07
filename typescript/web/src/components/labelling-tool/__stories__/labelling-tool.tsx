@@ -6,7 +6,7 @@ import { queryParamsDecorator } from "../../../utils/query-params-decorator";
 import { apolloDecorator } from "../../../utils/apollo-decorator";
 
 import { mockImagesLoader } from "../../../utils/mock-image-loader";
-import { LabellingTool } from "../labelling-tool";
+import { LabellingTool } from "../labeling-tool";
 
 const datasetId = "233e8af4-7be3-4371-a6de-1ebbe71c90b9";
 
@@ -39,7 +39,7 @@ function inGreyBoxDecorator(
 }
 
 export default {
-  title: "web/Labelling Tool",
+  title: "web/Labeling Tool",
   component: LabellingTool,
   loaders: [mockImagesLoader],
   decorators: [
@@ -56,13 +56,13 @@ export const OneImage: Story = () => {
 OneImage.parameters = {
   mockImages: {
     datasetId,
-    datasetName: "dataset labelling one image",
+    datasetName: "dataset labeling one image",
     images: images.slice(0, 1),
   },
   nextRouter: {
     query: {
       imageId: images[0].id,
-      datasetSlug: "dataset-labelling-one-image",
+      datasetSlug: "dataset-labeling-one-image",
     },
   },
 };
@@ -73,13 +73,13 @@ export const ThreeImages: Story = () => {
 ThreeImages.parameters = {
   mockImages: {
     datasetId,
-    datasetName: "dataset labelling three image",
+    datasetName: "dataset labeling three image",
     images,
   },
   nextRouter: {
     query: {
       imageId: images[0].id,
-      datasetSlug: "dataset-labelling-three-image",
+      datasetSlug: "dataset-labeling-three-image",
     },
   },
 };

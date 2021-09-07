@@ -6,7 +6,7 @@ import {
 import { BiPointer } from "react-icons/bi";
 import { useHotkeys } from "react-hotkeys-hook";
 
-import { useLabellingStore, Tools } from "../../../connectors/labelling-state";
+import { useLabellingStore, Tools } from "../../../connectors/labeling-state";
 
 import { keymap } from "../../../keymap";
 

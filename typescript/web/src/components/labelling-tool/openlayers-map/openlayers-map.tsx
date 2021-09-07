@@ -24,7 +24,7 @@ import {
   useLabellingStore,
   Tools,
   DrawingToolState,
-} from "../../../connectors/labelling-state";
+} from "../../../connectors/labeling-state";
 import { theme } from "../../../theme";
 
 const empty: any[] = [];

@@ -1,6 +1,6 @@
 import { gql, ApolloClient } from "@apollo/client";
 
-import { useLabellingStore } from "../../labelling-state";
+import { useLabellingStore } from "../../labeling-state";
 import { Effect } from "..";
 
 const labelQuery = gql`

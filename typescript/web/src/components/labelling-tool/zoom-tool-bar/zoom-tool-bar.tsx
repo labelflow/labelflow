@@ -5,7 +5,7 @@ import {
 } from "@chakra-ui/react";
 import { RiZoomInLine, RiZoomOutLine } from "react-icons/ri";
 
-import { useLabellingStore } from "../../../connectors/labelling-state";
+import { useLabellingStore } from "../../../connectors/labeling-state";
 
 const ZoomOutIcon = chakra(RiZoomOutLine);
 const ZoomInIcon = chakra(RiZoomInLine);

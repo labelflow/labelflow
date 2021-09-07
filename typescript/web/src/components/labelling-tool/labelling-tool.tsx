@@ -8,7 +8,7 @@ import { ZoomToolbar } from "./zoom-tool-bar";
 import { OptionsToolBar } from "./options-tool-bar";
 import { ImageNavigationToolbar } from "./image-navigation-tool-bar";
 import { useUndoStore } from "../../connectors/undo-store";
-import { useLabellingStore } from "../../connectors/labelling-state";
+import { useLabellingStore } from "../../connectors/labeling-state";
 
 export const LabellingTool = () => {
   const { clear } = useUndoStore();

@@ -63,7 +63,7 @@ export const Pricing = () => (
           pricePost: "/mo",
           name: "Starter",
           features: [
-            "Smart labelling",
+            "Smart labeling",
             "Workflow management",
             "Unlimited datasets",
             "5,000 hosted images",

@@ -14,7 +14,7 @@ import { SelectInteraction } from "./select-interaction";
 import {
   Tools,
   useLabellingStore,
-} from "../../../../connectors/labelling-state";
+} from "../../../../connectors/labeling-state";
 import {
   ResizeAndTranslateBox,
   ResizeAndTranslateEvent,

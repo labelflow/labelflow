@@ -1,6 +1,6 @@
 import { createCreateLabelClassEffect } from "../create-label-class";
 import { useUndoStore } from "../..";
-import { useLabellingStore } from "../../../labelling-state";
+import { useLabellingStore } from "../../../labeling-state";
 import { client } from "../../../apollo-client/schema-client";
 
 import { setupTestsWithLocalDatabase } from "../../../../utils/setup-local-db-tests";
@@ -56,7 +56,7 @@ beforeEach(async () => {
   );
 });
 
-it("should create the label class and update the labelling store", async () => {
+it("should create the label class and update the labeling store", async () => {
   expect(client.mutate).toHaveBeenNthCalledWith(
     1,
     expect.objectContaining({
@@ -74,7 +74,7 @@ it("should create the label class and update the labelling store", async () => {
   });
 });
 
-it("should undo the label class creation the update of the labelling store", async () => {
+it("should undo the label class creation the update of the labeling store", async () => {
   await useUndoStore.getState().undo();
 
   expect(client.mutate).toHaveBeenNthCalledWith(
@@ -90,7 +90,7 @@ it("should undo the label class creation the update of the labelling store", asy
   });
 });
 
-it("should redo the update of the label class of a label and the update of the labelling store", async () => {
+it("should redo the update of the label class of a label and the update of the labeling store", async () => {
   await useUndoStore.getState().undo();
   await useUndoStore.getState().redo();
 

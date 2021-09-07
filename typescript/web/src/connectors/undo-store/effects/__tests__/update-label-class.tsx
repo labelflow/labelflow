@@ -1,4 +1,4 @@
-import { useLabellingStore } from "../../../labelling-state";
+import { useLabellingStore } from "../../../labeling-state";
 import { useUndoStore } from "../..";
 import { createUpdateLabelClassEffect } from "../update-label-class";
 
