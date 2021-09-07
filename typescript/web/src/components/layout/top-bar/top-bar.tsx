@@ -51,13 +51,14 @@ export const TopBar = ({ leftContent, rightContent }: Props) => {
       <Box flex={1} width="auto" display={{ base: "none", lg: "contents" }}>
         {leftContent}
       </Box>
-      <Tooltip label="Go Back" openDelay={300}>
-        <NextLink
-          href={{
-            pathname: router.pathname.replace(/\/[^/]+$/, ""),
-            query: router.query,
-          }}
-        >
+
+      <NextLink
+        href={{
+          pathname: router.pathname.replace(/\/[^/]+$/, ""),
+          query: router.query,
+        }}
+      >
+        <Tooltip label="Go Back" openDelay={300}>
           <IconButton
             as="a"
             href=".."
@@ -66,8 +67,9 @@ export const TopBar = ({ leftContent, rightContent }: Props) => {
             icon={<BackIcon fontSize="xl" />}
             variant="ghost"
           />
-        </NextLink>
-      </Tooltip>
+        </Tooltip>
+      </NextLink>
+
       <Spacer />
       {rightContent}
       <HelpMenu />
