@@ -17,7 +17,7 @@ export default {
   transformIgnorePatterns: [
     // "node_modules",
     // This one works but is extremely slow
-    "<rootDir>/node_modules/(?!(ol/)|(@mapbox/mapbox-gl-style-spec))",
+    "<rootDir>/node_modules/(?!(ol/|@mapbox/mapbox-gl-style-spec/))",
     //
     // "/node_modules/(?!(ol/|@mapbox/map))",
     // "<rootDir>/node_modules/.+(?!(\\.es\\..+))",

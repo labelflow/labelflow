@@ -6231,7 +6231,7 @@ __metadata:
     "@types/storybook__react": 4.0.1
     lodash: ^4.17.21
     ol: 6.6.1
-    ol-mapbox-style: 6.1.4
+    ol-mapbox-style: 6.4.1
     proj4: 2.6.3
     react: 17.x
     react-dom: 17.x
@@ -6378,27 +6378,6 @@ __metadata:
   version: 2.0.2
   resolution: "@mapbox/jsonlint-lines-primitives@npm:2.0.2"
   checksum: 4eb31edd3ccff530f7b687ddc6d813d6e24fc66e9a563460882e7861b49f9331c5ded6fd7e927b37affbbd98f83bff1f7b916119044f1931df03c6ffedba2cfb
-  languageName: node
-  linkType: hard
-
-"@mapbox/mapbox-gl-style-spec@npm:^13.14.0":
-  version: 13.19.2
-  resolution: "@mapbox/mapbox-gl-style-spec@npm:13.19.2"
-  dependencies:
-    "@mapbox/jsonlint-lines-primitives": ~2.0.2
-    "@mapbox/point-geometry": ^0.1.0
-    "@mapbox/unitbezier": ^0.0.0
-    csscolorparser: ~1.0.2
-    json-stringify-pretty-compact: ^2.0.0
-    minimist: ^1.2.5
-    rw: ^1.3.3
-    sort-object: ^0.3.2
-  bin:
-    gl-style-composite: bin/gl-style-composite
-    gl-style-format: bin/gl-style-format
-    gl-style-migrate: bin/gl-style-migrate
-    gl-style-validate: bin/gl-style-validate
-  checksum: d7b8e42babd22f3132b889afc80d93fcc37fb252ea52316bb74927d1364dc4921497ca362213d92d284065a2d8be870e00b001c3a67569e124722312939fc160
   languageName: node
   linkType: hard
 
@@ -24836,20 +24815,7 @@ next-pwa@5.2.21:
   languageName: node
   linkType: hard
 
-"ol-mapbox-style@npm:6.1.4":
-  version: 6.1.4
-  resolution: "ol-mapbox-style@npm:6.1.4"
-  dependencies:
-    "@mapbox/mapbox-gl-style-spec": ^13.14.0
-    mapbox-to-css-font: ^2.4.0
-    webfont-matcher: ^1.1.0
-  peerDependencies:
-    ol: ^6.1.0
-  checksum: 08b780c140e4995a98fdcea6d8d2dfc7fe520f0e9718b7bc7ecc02004be3d681fbb5b84e533f7a1ea29fc2be92f1dec56e27f421989230cd39e5cd128f279926
-  languageName: node
-  linkType: hard
-
-"ol-mapbox-style@npm:^6.4.1":
+"ol-mapbox-style@npm:6.4.1, ol-mapbox-style@npm:^6.4.1":
   version: 6.4.1
   resolution: "ol-mapbox-style@npm:6.4.1"
   dependencies:
