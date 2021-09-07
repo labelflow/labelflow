@@ -56,12 +56,14 @@ model Dataset {
   id           String       @id @default(uuid()) @db.Uuid
   createdAt    DateTime     @default(now())
   updatedAt    DateTime     @updatedAt
-  name         String       @unique
-  slug         String       @unique
+  name         String
+  slug         String
   images       Image[]
   labelClasses LabelClass[]
   workspaceId  String       @db.Uuid
   workspace    Workspace    @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@unique([workspaceId, slug])
 }
 
 model Workspace {
