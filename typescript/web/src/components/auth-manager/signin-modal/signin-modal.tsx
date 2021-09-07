@@ -119,7 +119,6 @@ export const SigninModal = ({
                 mb={{ base: "16", lg: "10" }}
                 iconColor="brand.600"
                 mx={{ base: "auto", lg: "unset" }}
-                visibility="hidden"
               />
               <Box mb="8" textAlign={{ base: "center", lg: "start" }}>
                 <Heading size="md" mb="2" fontWeight="extrabold">
@@ -162,6 +161,7 @@ export const SigninModal = ({
                 mb={{ base: "16", lg: "10" }}
                 iconColor="brand.600"
                 mx={{ base: "auto", lg: "unset" }}
+                visibility="hidden"
               />
               <Box mb="8" textAlign={{ base: "center", lg: "start" }}>
                 <Heading size="lg" mb="2" fontWeight="extrabold">
@@ -181,7 +181,7 @@ export const SigninModal = ({
                   onClick={() => performSignIn("google")}
                   leftIcon={<Box as={FaGoogle} color="red.500" />}
                 >
-                  Sign up with Google
+                  Sign in with Google
                 </Button>
                 <Button
                   variant="outline"
@@ -193,7 +193,7 @@ export const SigninModal = ({
                     />
                   }
                 >
-                  Sign up with Github
+                  Sign in with GitHub
                 </Button>
               </Stack>
 
