@@ -64,14 +64,16 @@ const Feature = (props: { title: string; children: ReactNode }) => {
 export const SigninModal = ({
   isOpen = false,
   onClose = () => {},
+  setIsOpen,
   error,
+  setError,
 }: {
   isOpen?: boolean;
   onClose?: () => void;
+  setIsOpen: (isOpen: boolean) => void;
   error?: string | null;
+  setError: (error: string) => void;
 }) => {
-  const [, setIsOpen] = useQueryParam("modal-signin", BoolParam);
-  const [, setError] = useQueryParam("error", StringParam);
   const performSignIn = useCallback(
     async (method, options = {}) => {
       const signInResult = await signIn<"email" | "credentials">(method, {

@@ -10,7 +10,9 @@ export const AuthManager = () => {
   return (
     <SigninModal
       isOpen={isOpen}
+      setIsOpen={setIsOpen}
       error={error}
+      setError={setError}
       onClose={() => {
         setIsOpen(false, "replaceIn");
         // Necessary to solve https://github.com/pbeshai/use-query-params/issues/53
