@@ -62,7 +62,7 @@
     "next-seo": "^4.26.0",
     "next-transpile-modules": "8.0.0",
     "node-polyfill-webpack-plugin": "^1.1.2",
-    "ol": "6.5.0",
+    "ol": "6.6.1",
     "postcss": "^8.3.5",
     "query-string": "^7.0.0",
     "react": "17.x",

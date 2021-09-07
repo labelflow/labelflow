@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { ErrorBoundary, FallbackProps } from "react-error-boundary";
-
+import Head from "next/head";
 import { AppProps } from "next/app";
 import { useRouter } from "next/router";
 
@@ -64,6 +64,14 @@ const App = (props: AppProps & InitialProps) => {
           <QueryParamProvider>
             <ApolloProvider client={client}>
               <Meta />
+              <Head>
+                {/* Prevent unwanted scroll of app on mobile */}
+                {/* See https://stackoverflow.com/questions/10592411/disable-scrolling-in-all-mobile-devices */}
+                <meta
+                  name="viewport"
+                  content="width=device-width, initial-scale=1.0"
+                />
+              </Head>
               <Component {...pageProps} />
             </ApolloProvider>
           </QueryParamProvider>
