@@ -74,7 +74,7 @@ const createWorkspace = async (
       name: args.data.name,
       slug: slugify(args.data.name, { lower: true }),
       plan: WorkspacePlan.Community,
-      userRelations: { create: { userId: user?.id, role: "Admin" } },
+      memberships: { create: { userId: user?.id, role: "Admin" } },
     },
   });
 

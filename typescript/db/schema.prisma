@@ -67,17 +67,17 @@ model Dataset {
 }
 
 model Workspace {
-  id            String            @id @default(uuid()) @db.Uuid
-  createdAt     DateTime          @default(now())
-  updatedAt     DateTime          @updatedAt
-  name          String            @unique
-  slug          String            @unique
-  plan          WorkspacePlan
-  datasets      Dataset[]
-  userRelations WorkspacesUsers[]
+  id          String        @id @default(uuid()) @db.Uuid
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  name        String        @unique
+  slug        String        @unique
+  plan        WorkspacePlan
+  datasets    Dataset[]
+  memberships Membership[]
 }
 
-model WorkspacesUsers {
+model Membership {
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   role        UserRole
@@ -126,16 +126,16 @@ model Session {
 }
 
 model User {
-  id                 String            @id @default(cuid())
-  name               String?
-  email              String?           @unique
-  emailVerified      DateTime?
-  image              String?
-  createdAt          DateTime          @default(now())
-  updatedAt          DateTime          @updatedAt
-  accounts           Account[]
-  sessions           Session[]
-  workspaceRelations WorkspacesUsers[]
+  id            String       @id @default(cuid())
+  name          String?
+  email         String?      @unique
+  emailVerified DateTime?
+  image         String?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  accounts      Account[]
+  sessions      Session[]
+  memberships   Membership[]
 }
 
 model VerificationToken {
