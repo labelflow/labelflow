@@ -17,6 +17,7 @@ import {
   Input,
   SimpleGrid,
   useColorModeValue as mode,
+  Flex,
 } from "@chakra-ui/react";
 import { RiMailSendLine } from "react-icons/ri";
 import { signIn } from "next-auth/react";
@@ -110,7 +111,11 @@ export const SigninModal = ({
           flexDirection="column"
         >
           <SimpleGrid columns={{ base: 1, lg: 2 }} spacing="14">
-            <Box w="full">
+            <Flex
+              direction="column"
+              display={{ base: "none", lg: "flex" }}
+              alignItems="start"
+            >
               <Logo
                 h="6"
                 mb={{ base: "16", lg: "10" }}
@@ -127,7 +132,7 @@ export const SigninModal = ({
                 mt="18"
                 p={{ base: "10", lg: "0" }}
                 columns={1}
-                spacing="6"
+                spacing="10"
                 bg={{ base: mode("gray.200", "gray.700"), lg: "unset" }}
               >
                 <Feature title="Collaborate Easily">
@@ -143,14 +148,14 @@ export const SigninModal = ({
                   precisely.
                 </Feature>
               </SimpleGrid>
-            </Box>
+            </Flex>
             <Box w="full">
               <Logo
                 h="6"
                 mb={{ base: "16", lg: "10" }}
                 iconColor="brand.600"
                 mx={{ base: "auto", lg: "unset" }}
-                visibility="hidden"
+                visibility={{ base: "visible", lg: "hidden" }}
               />
               <Box mb="8" textAlign={{ base: "center", lg: "start" }}>
                 <Heading size="lg" mb="2" fontWeight="extrabold">
