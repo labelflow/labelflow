@@ -17,7 +17,7 @@ import {
 import NextLink from "next/link";
 import { RiArrowGoBackLine, RiPlayFill } from "react-icons/ri";
 
-import BrowserAlert from "../../../graphics/browser-alert";
+import BrowserAlert from "../../graphics/browser-alert";
 
 const ChakraBrowserAlert = chakra(BrowserAlert);
 

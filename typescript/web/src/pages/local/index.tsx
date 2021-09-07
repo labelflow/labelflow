@@ -1,10 +1,11 @@
 import { Spinner, Center } from "@chakra-ui/react";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import { Meta } from "../../components/meta";
-import { AppLifecycleManager } from "../../components/app-lifecycle-manager";
+import { ServiceWorkerManagerModal } from "../../components/service-worker-manager";
 import { AuthManager } from "../../components/auth-manager";
 import { Layout } from "../../components/layout";
+import { WelcomeManager } from "../../components/welcome-manager";
 
 const LocalDatasetsIndexPage = () => {
   const router = useRouter();
@@ -15,7 +16,8 @@ const LocalDatasetsIndexPage = () => {
 
   return (
     <>
-      <AppLifecycleManager />
+      <ServiceWorkerManagerModal />
+      <WelcomeManager />
       <AuthManager />
       <Meta title="LabelFlow | Local Workspace" />
       <Layout>

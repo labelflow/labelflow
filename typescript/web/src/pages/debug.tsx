@@ -25,7 +25,7 @@ import {
 } from "../utils/detect-scope";
 
 import { Layout } from "../components/layout";
-import { AppLifecycleManager } from "../components/app-lifecycle-manager";
+import { ServiceWorkerManagerBackground } from "../components/service-worker-manager";
 import { AuthManager } from "../components/auth-manager";
 
 export const debugQuery = gql`
@@ -39,7 +39,7 @@ const DebugPage = () => {
 
   return (
     <>
-      <AppLifecycleManager noModals />
+      <ServiceWorkerManagerBackground />
       <AuthManager />
       <Meta title="LabelFlow | Debug" />
       <Layout
