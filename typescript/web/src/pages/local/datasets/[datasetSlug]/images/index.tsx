@@ -1,3 +1,4 @@
+import React from "react";
 import { gql, useQuery } from "@apollo/client";
 import NextLink from "next/link";
 import {
@@ -31,7 +32,7 @@ import { EmptyStateNoImages } from "../../../../../components/empty-state";
 import { DatasetTabBar } from "../../../../../components/layout/tab-bar/dataset-tab-bar";
 import Error404Page from "../../../../404";
 import { AuthManager } from "../../../../../components/auth-manager";
-import React from "react";
+
 import { WelcomeManager } from "../../../../../components/welcome-manager";
 
 const ArrowRightIcon = chakra(RiArrowRightSLine);

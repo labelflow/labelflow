@@ -1,3 +1,4 @@
+import React from "react";
 import { useQuery, gql } from "@apollo/client";
 import NextLink from "next/link";
 import {
@@ -22,7 +23,7 @@ import { DatasetTabBar } from "../../../../../components/layout/tab-bar/dataset-
 import { ClassesList } from "../../../../../components/dataset-class-list";
 import Error404Page from "../../../../404";
 import { AuthManager } from "../../../../../components/auth-manager";
-import React from "react";
+
 import { WelcomeManager } from "../../../../../components/welcome-manager";
 
 const ArrowRightIcon = chakra(RiArrowRightSLine);
