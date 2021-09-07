@@ -43,6 +43,7 @@ const Error404Page = () => {
                     colorScheme="brand"
                     variant="solid"
                     as="a"
+                    href="/"
                     cursor="pointer"
                   >
                     Go back to LabelFlow home page

@@ -26,6 +26,7 @@ import {
 
 import { Layout } from "../components/layout";
 import { AppLifecycleManager } from "../components/app-lifecycle-manager";
+import { AuthManager } from "../components/auth-manager";
 
 export const debugQuery = gql`
   query getDebug {
@@ -39,6 +40,7 @@ const DebugPage = () => {
   return (
     <>
       <AppLifecycleManager noModals />
+      <AuthManager />
       <Meta title="LabelFlow | Debug" />
       <Layout
         topBarLeftContent={

@@ -21,6 +21,7 @@ import Error404Page from "../../../404";
 import { ExportButton } from "../../../../components/export-button";
 import { ImportButton } from "../../../../components/import-button";
 import { KeymapButton } from "../../../../components/layout/top-bar/keymap-button";
+import { AuthManager } from "../../../../components/auth-manager";
 
 const getDataset = gql`
   query getDataset($slug: String!) {
@@ -72,6 +73,7 @@ const DatasetIndexPage = () => {
   return (
     <>
       <AppLifecycleManager />
+      <AuthManager />
       <Meta title={`LabelFlow | ${datasetName ?? "Dataset"}`} />
       <Layout
         topBarLeftContent={
