@@ -30,6 +30,7 @@ import { Layout } from "../../../../../components/layout";
 import { EmptyStateNoImages } from "../../../../../components/empty-state";
 import { DatasetTabBar } from "../../../../../components/layout/tab-bar/dataset-tab-bar";
 import Error404Page from "../../../../404";
+import { AuthManager } from "../../../../../components/auth-manager";
 
 const ArrowRightIcon = chakra(RiArrowRightSLine);
 
@@ -80,6 +81,7 @@ const ImagesPage = () => {
   return (
     <>
       <AppLifecycleManager />
+      <AuthManager />
       <Meta title="LabelFlow | Images" />
       <Layout
         topBarLeftContent={

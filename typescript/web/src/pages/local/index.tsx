@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { Meta } from "../../components/meta";
 import { AppLifecycleManager } from "../../components/app-lifecycle-manager";
+import { AuthManager } from "../../components/auth-manager";
 import { Layout } from "../../components/layout";
 
 const LocalDatasetsIndexPage = () => {
@@ -15,6 +16,7 @@ const LocalDatasetsIndexPage = () => {
   return (
     <>
       <AppLifecycleManager />
+      <AuthManager />
       <Meta title="LabelFlow | Local Workspace" />
       <Layout>
         <Center h="full">

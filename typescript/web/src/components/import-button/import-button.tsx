@@ -32,6 +32,18 @@ export const ImportButton = ({ showModal = true, ...props }: Props) => {
       Add images
     </Button>
   );
+  const hiddenButton = (
+    <Button
+      aria-label="Add images"
+      leftIcon={<UploadIcon fontSize="xl" />}
+      onClick={() => setIsOpen(true, "replaceIn")}
+      variant="ghost"
+      display="none"
+      {...props}
+    >
+      Add images
+    </Button>
+  );
 
   const smallButton = (
     <Tooltip label="Add images" openDelay={300}>
@@ -46,7 +58,11 @@ export const ImportButton = ({ showModal = true, ...props }: Props) => {
   );
 
   const button =
-    useBreakpointValue({ base: smallButton, lg: largeButton }) ?? largeButton;
+    useBreakpointValue({
+      base: hiddenButton,
+      md: smallButton,
+      lg: largeButton,
+    }) ?? hiddenButton; // We need to give here a default value like this for tests to pass, otherwise the button is undefined and it's not findable in the tests
 
   return (
     <>

@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { ErrorBoundary, FallbackProps } from "react-error-boundary";
+import { SessionProvider } from "next-auth/react";
 import Head from "next/head";
 import { AppProps } from "next/app";
 import { useRouter } from "next/router";
@@ -38,6 +39,7 @@ const ErrorFallback = (props: FallbackProps) => {
 
 const App = (props: AppProps & InitialProps) => {
   const { Component, pageProps } = props;
+  const { session } = pageProps;
 
   // Google analytics
   // See https://mariestarck.com/add-google-analytics-to-your-next-js-application-in-5-easy-steps/
@@ -59,24 +61,25 @@ const App = (props: AppProps & InitialProps) => {
 
   return (
     <ErrorBoundary FallbackComponent={ErrorFallback}>
-      <CookiesProvider cookies={new Cookies("")}>
-        <ChakraProvider theme={theme} resetCSS>
-          <QueryParamProvider>
-            <ApolloProvider client={client}>
-              <Meta />
-              <Head>
-                {/* Prevent unwanted scroll of app on mobile */}
-                {/* See https://stackoverflow.com/questions/10592411/disable-scrolling-in-all-mobile-devices */}
-                <meta
-                  name="viewport"
-                  content="width=device-width, initial-scale=1.0"
-                />
-              </Head>
-              <Component {...pageProps} />
-            </ApolloProvider>
-          </QueryParamProvider>
-        </ChakraProvider>
-      </CookiesProvider>
+      <SessionProvider session={session}>
+        <CookiesProvider cookies={new Cookies("")}>
+          <ChakraProvider theme={theme} resetCSS>
+            <QueryParamProvider>
+              <ApolloProvider client={client}>
+                <Meta />
+                <Head>
+                  {/* Set proper initial appearance of content for mobile */}
+                  <meta
+                    name="viewport"
+                    content="width=device-width, initial-scale=1.0"
+                  />
+                </Head>
+                <Component {...pageProps} />
+              </ApolloProvider>
+            </QueryParamProvider>
+          </ChakraProvider>
+        </CookiesProvider>
+      </SessionProvider>
     </ErrorBoundary>
   );
 };

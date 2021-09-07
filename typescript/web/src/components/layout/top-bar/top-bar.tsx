@@ -11,10 +11,13 @@ import {
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import NextLink from "next/link";
+
 import { RiArrowGoBackLine } from "react-icons/ri";
+import { useSession } from "next-auth/react";
 import { Logo } from "../../logo";
 import { HelpMenu } from "./help-menu";
 import { UserMenu } from "./user-menu";
+import { SigninButton } from "../../auth-manager/signin-button";
 
 export type Props = {
   leftContent?: ReactNode;
@@ -24,6 +27,8 @@ export type Props = {
 const BackIcon = chakra(RiArrowGoBackLine);
 
 export const TopBar = ({ leftContent, rightContent }: Props) => {
+  const { status } = useSession({ required: false });
+
   const router = useRouter();
   const viewBox =
     useBreakpointValue({ base: "0 0 84 84", md: "0 0 393 84" }) ?? "0 0 84 84";
@@ -66,6 +71,7 @@ export const TopBar = ({ leftContent, rightContent }: Props) => {
       <Spacer />
       {rightContent}
       <HelpMenu />
+      {status === "unauthenticated" && <SigninButton />}
       <UserMenu />
     </HStack>
   );
