@@ -8,6 +8,7 @@ import { Map } from "@labelflow/react-openlayers-fiber";
 import { render, waitFor } from "@testing-library/react";
 
 import { Map as OlMap } from "ol";
+import { Geometry } from "ol/geom";
 import VectorLayer from "ol/layer/Vector";
 import { mockNextRouter } from "../../../../utils/router-mocks";
 
@@ -20,6 +21,7 @@ import { LabelCreateInput } from "@labelflow/graphql-types";
 import { useLabellingStore } from "../../../../connectors/labelling-state";
 import { setupTestsWithLocalDatabase } from "../../../../utils/setup-local-db-tests";
 import { probeImage } from "@labelflow/common-resolvers/src/utils/probe-image";
+import VectorSource from "ol/source/Vector";
 
 setupTestsWithLocalDatabase();
 
@@ -167,7 +169,11 @@ it("displays a single label", async () => {
 
   await waitFor(() => {
     expect(
-      (mapRef.current?.getLayers().getArray()[0] as VectorLayer)
+      (
+        mapRef.current?.getLayers().getArray()[0] as VectorLayer<
+          VectorSource<Geometry>
+        >
+      )
         .getSource()
         .getFeatures()
     ).toHaveLength(1);
@@ -198,7 +204,11 @@ it("displays created labels", async () => {
 
   await waitFor(() => {
     expect(
-      (mapRef.current?.getLayers().getArray()[0] as VectorLayer)
+      (
+        mapRef.current?.getLayers().getArray()[0] as VectorLayer<
+          VectorSource<Geometry>
+        >
+      )
         .getSource()
         .getFeatures()
     ).toHaveLength(2);
@@ -226,7 +236,11 @@ it("should change style of selected label", async () => {
   });
 
   await waitFor(() => {
-    const [feature] = (mapRef.current?.getLayers().getArray()[0] as VectorLayer)
+    const [feature] = (
+      mapRef.current?.getLayers().getArray()[0] as VectorLayer<
+        VectorSource<Geometry>
+      >
+    )
       .getSource()
       .getFeatures();
 
