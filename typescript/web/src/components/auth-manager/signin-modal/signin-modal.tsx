@@ -19,17 +19,11 @@ import {
   SimpleGrid,
   useColorModeValue as mode,
 } from "@chakra-ui/react";
-
 import { RiMailSendLine } from "react-icons/ri";
-
 import { signIn } from "next-auth/react";
-
 import { FaGithub, FaGoogle, FaCheck } from "react-icons/fa";
-import { useQueryParam, StringParam } from "use-query-params";
-
 import { DividerWithText } from "./divider-with-text";
 import { Logo } from "../../logo";
-import { BoolParam } from "../../../utils/query-param-bool";
 
 const ChakraCheck = chakra(FaCheck);
 
@@ -114,14 +108,22 @@ export const SigninModal = ({
           flexDirection="column"
         >
           <SimpleGrid columns={{ base: 1, lg: 2 }} spacing="14">
-            <Flex
+            {/* <Flex
               direction="column"
               pt="18"
               display={{ base: "none", lg: "flex" }}
-            >
+            > */}
+            <Box w="full">
+              <Logo
+                h="6"
+                mb={{ base: "16", lg: "10" }}
+                iconColor="brand.600"
+                mx={{ base: "auto", lg: "unset" }}
+                visibility="hidden"
+              />
               <Box mb="8" textAlign={{ base: "center", lg: "start" }}>
-                <Heading size="lg" mb="2" fontWeight="extrabold">
-                  Build the future of AI
+                <Heading size="md" mb="2" fontWeight="extrabold">
+                  Join thousands of people building the future of AI
                 </Heading>
                 {/* <Text
                   fontSize="lg"
@@ -133,7 +135,7 @@ export const SigninModal = ({
               </Box>
               <SimpleGrid
                 rounded="lg"
-                mt="8"
+                mt="18"
                 p={{ base: "10", lg: "0" }}
                 columns={1}
                 spacing="6"
@@ -152,7 +154,8 @@ export const SigninModal = ({
                   precisely.
                 </Feature>
               </SimpleGrid>
-            </Flex>
+            </Box>
+            {/* </Flex> */}
             <Box w="full">
               <Logo
                 h="6"
