@@ -5,7 +5,7 @@ import { debounce } from "lodash/fp";
 
 import GeometryType from "ol/geom/GeometryType";
 import VectorSource from "ol/source/Vector";
-import { Geometry } from "ol/geom";
+
 import { Map } from "../map";
 
 const bingstyles = [
@@ -44,7 +44,7 @@ export const KitchenSink = () => {
   const [currentStyle, setCurrentStyle] = useState(bingstyles[0]);
   const [center, setCenter] = useState([0, 0]);
 
-  const [vectorSource, setVectorSource] = useState<VectorSource<Geometry>>();
+  const [vectorSource, setVectorSource] = useState<VectorSource>();
   const [drawInteraction, setDrawInteraction] = useState<Draw>();
 
   useEffect(() => {

@@ -51,7 +51,7 @@ export const Icon = () => {
           <olOverlay
             ref={setOverlay}
             offset={[0, -50]}
-            positioning={OverlayPositioning.BOTTOM_CENTER}
+            positioning={"bottom-center" as OverlayPositioning}
             element={popup}
             args={{
               stopEvent: false,
@@ -75,8 +75,8 @@ export const Icon = () => {
                   attach="image"
                   args={{
                     anchor: [0.5, 46],
-                    anchorXUnits: IconAnchorUnits.FRACTION,
-                    anchorYUnits: IconAnchorUnits.PIXELS,
+                    anchorXUnits: "fraction" as IconAnchorUnits,
+                    anchorYUnits: "pixels" as IconAnchorUnits,
                     src: icon,
                   }}
                 />

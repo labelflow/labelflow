@@ -8,7 +8,8 @@ import { SigninModal } from "../../components/auth-manager/signin-modal";
 
 const LocalDatasetsIndexPage = () => {
   const router = useRouter();
-  const [error] = useQueryParam("error", StringParam);
+  const [error, setError] = useQueryParam("error", StringParam);
+  const [linkSent, setLinkSent] = useQueryParam("link-sent", StringParam);
   const exitSignin = useCallback(() => {
     router.replace({ pathname: `/local/datasets`, query: router.query });
   }, []);
@@ -17,7 +18,15 @@ const LocalDatasetsIndexPage = () => {
       <AppLifecycleManager noModals />
       <Meta title="LabelFlow | Sign in" />
       <Layout>
-        <SigninModal isOpen onClose={exitSignin} error={error} />
+        <SigninModal
+          isOpen
+          onClose={exitSignin}
+          error={error}
+          setError={setError}
+          setIsOpen={() => {}}
+          linkSent={linkSent}
+          setLinkSent={setLinkSent}
+        />
       </Layout>
     </>
   );

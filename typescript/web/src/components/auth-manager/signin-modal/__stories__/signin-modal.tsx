@@ -9,9 +9,24 @@ export default {
 };
 
 export const Opened = () => {
-  return <SigninModal isOpen />;
+  return (
+    <SigninModal
+      isOpen
+      setIsOpen={() => {}}
+      setError={() => {}}
+      setLinkSent={() => {}}
+    />
+  );
 };
 
 export const LinkSent = () => {
-  return <SigninModal isOpen linkSent="example@company.com" />;
+  return (
+    <SigninModal
+      isOpen
+      linkSent="example@company.com"
+      setIsOpen={() => {}}
+      setError={() => {}}
+      setLinkSent={() => {}}
+    />
+  );
 };

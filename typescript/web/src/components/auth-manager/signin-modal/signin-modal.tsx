@@ -1,4 +1,4 @@
-import React, { ReactNode, useCallback } from "react";
+import React, { ReactNode, useCallback, useState } from "react";
 
 import {
   Heading,
@@ -12,24 +12,18 @@ import {
   ModalCloseButton,
   Box,
   Button,
-  Flex,
   FormControl,
   chakra,
   Input,
   SimpleGrid,
   useColorModeValue as mode,
+  Flex,
 } from "@chakra-ui/react";
-
 import { RiMailSendLine } from "react-icons/ri";
-
 import { signIn } from "next-auth/react";
-
 import { FaGithub, FaGoogle, FaCheck } from "react-icons/fa";
-import { useQueryParam, StringParam } from "use-query-params";
-
 import { DividerWithText } from "./divider-with-text";
 import { Logo } from "../../logo";
-import { BoolParam } from "../../../utils/query-param-bool";
 
 const ChakraCheck = chakra(FaCheck);
 
@@ -78,6 +72,8 @@ export const SigninModal = ({
   linkSent?: string | null;
   setLinkSent: (email: string) => void;
 }) => {
+  const [sendingLink, setSendingLink] = useState(false);
+
   const performSignIn = useCallback(
     async (method, options = {}) => {
       const signInResult = await signIn<"email" | "credentials">(method, {
@@ -90,12 +86,13 @@ export const SigninModal = ({
       } else if (signInResult?.ok) {
         if (method === "email") {
           setLinkSent(options?.email);
+          setSendingLink(false);
         } else {
           setIsOpen(false);
         }
       }
     },
-    [setIsOpen, setError, setLinkSent]
+    [setIsOpen, setError, setLinkSent, setSendingLink]
   );
 
   return (
@@ -116,27 +113,26 @@ export const SigninModal = ({
           <SimpleGrid columns={{ base: 1, lg: 2 }} spacing="14">
             <Flex
               direction="column"
-              pt="18"
               display={{ base: "none", lg: "flex" }}
+              alignItems="start"
             >
+              <Logo
+                h="6"
+                mb={{ base: "16", lg: "10" }}
+                iconColor="brand.600"
+                mx={{ base: "auto", lg: "unset" }}
+              />
               <Box mb="8" textAlign={{ base: "center", lg: "start" }}>
-                <Heading size="lg" mb="2" fontWeight="extrabold">
-                  Build the future of AI
+                <Heading size="md" mb="2" fontWeight="extrabold">
+                  Join thousands of people building the future of AI
                 </Heading>
-                {/* <Text
-                  fontSize="lg"
-                  color={mode("gray.600", "gray.400")}
-                  fontWeight="medium"
-                >
-                  with your team.
-                </Text> */}
               </Box>
               <SimpleGrid
                 rounded="lg"
-                mt="8"
+                mt="18"
                 p={{ base: "10", lg: "0" }}
                 columns={1}
-                spacing="6"
+                spacing="10"
                 bg={{ base: mode("gray.200", "gray.700"), lg: "unset" }}
               >
                 <Feature title="Collaborate Easily">
@@ -159,6 +155,7 @@ export const SigninModal = ({
                 mb={{ base: "16", lg: "10" }}
                 iconColor="brand.600"
                 mx={{ base: "auto", lg: "unset" }}
+                visibility={{ base: "visible", lg: "hidden" }}
               />
               <Box mb="8" textAlign={{ base: "center", lg: "start" }}>
                 <Heading size="lg" mb="2" fontWeight="extrabold">
@@ -178,7 +175,7 @@ export const SigninModal = ({
                   onClick={() => performSignIn("google")}
                   leftIcon={<Box as={FaGoogle} color="red.500" />}
                 >
-                  Sign up with Google
+                  Sign in with Google
                 </Button>
                 <Button
                   variant="outline"
@@ -190,7 +187,7 @@ export const SigninModal = ({
                     />
                   }
                 >
-                  Sign up with Github
+                  Sign in with GitHub
                 </Button>
               </Stack>
 
@@ -206,6 +203,7 @@ export const SigninModal = ({
                   performSignIn("email", {
                     email,
                   });
+                  setSendingLink(true);
                 }}
               >
                 <Stack spacing="4" h="24">
@@ -217,7 +215,6 @@ export const SigninModal = ({
                   ) : (
                     <>
                       <FormControl id="email">
-                        {/* <FormLabel mb={1}>Email</FormLabel> */}
                         <Input
                           type="email"
                           autoComplete="email"
@@ -228,6 +225,8 @@ export const SigninModal = ({
                         type="submit"
                         variant="outline"
                         leftIcon={<Box as={RiMailSendLine} color="brand.500" />}
+                        isLoading={sendingLink}
+                        loadingText="Submitting"
                       >
                         Sign in with Email
                       </Button>

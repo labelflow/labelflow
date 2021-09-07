@@ -2,8 +2,6 @@ import React, { useState } from "react";
 import GeoJSON from "ol/format/GeoJSON";
 import { click, pointerMove, altKeyOnly } from "ol/events/condition";
 import { SelectEvent } from "ol/interaction/Select";
-import VectorSource from "ol/source/Vector";
-import { Geometry } from "ol/geom";
 import { MapBrowserEvent } from "ol";
 import { Map } from "../map";
 
@@ -18,7 +16,7 @@ export const SelectFeatures = () => {
       case "pointerMove":
         return pointerMove;
       case "altClick":
-        return (mapBrowserEvent: MapBrowserEvent<UIEvent>) => {
+        return (mapBrowserEvent: MapBrowserEvent) => {
           return click(mapBrowserEvent) && altKeyOnly(mapBrowserEvent);
         };
       default:
@@ -42,8 +40,8 @@ export const SelectFeatures = () => {
           args={{ condition: getSelectCondition() }}
           onSelect={(e: SelectEvent) => {
             setDisplayText(
-              ` ${(e.target as VectorSource<Geometry>)
-                .getFeaturesCollection()
+              ` ${e.target
+                .getFeatures()
                 .getLength()} selected features (last operation selected ${
                 e.selected.length
               } and deselected  ${e.deselected.length} features)`
