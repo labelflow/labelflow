@@ -20,6 +20,7 @@ export const AuthManager = () => {
         setIsOpen(false, "replaceIn");
         // Necessary to solve https://github.com/pbeshai/use-query-params/issues/53
         setTimeout(() => setError(undefined, "replaceIn"), 1);
+        setTimeout(() => setLinkSent(undefined, "replaceIn"), 2);
       }}
     />
   );
