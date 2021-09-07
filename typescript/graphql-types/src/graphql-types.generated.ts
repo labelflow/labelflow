@@ -462,6 +462,7 @@ export type Workspace = {
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
   name: Scalars['String'];
+  slug: Scalars['String'];
   type: WorkspaceType;
   plan: WorkspacePlan;
   datasets?: Maybe<Array<Dataset>>;
@@ -844,6 +845,7 @@ export type WorkspaceResolvers<ContextType = any, ParentType extends ResolversPa
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   type?: Resolver<ResolversTypes['WorkspaceType'], ParentType, ContextType>;
   plan?: Resolver<ResolversTypes['WorkspacePlan'], ParentType, ContextType>;
   datasets?: Resolver<Maybe<Array<ResolversTypes['Dataset']>>, ParentType, ContextType>;

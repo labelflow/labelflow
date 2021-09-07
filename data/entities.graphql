@@ -88,6 +88,7 @@ type Workspace {
   createdAt: DateTime!
   updatedAt: DateTime!
   name: String!
+  slug: String!
   type: WorkspaceType!
   plan: WorkspacePlan!
   datasets: [Dataset!]

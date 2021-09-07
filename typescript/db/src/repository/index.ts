@@ -11,7 +11,7 @@ import {
 import { countLabels, listLabels } from "./label";
 import { castObjectNullsToUndefined } from "./utils";
 
-const prisma = new PrismaClient();
+export const prisma = new PrismaClient();
 
 export const repository: Repository = {
   image: {
