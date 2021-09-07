@@ -46,8 +46,8 @@ model LabelClass {
   updatedAt DateTime @updatedAt
   name      String
   color     String
-  datasetId String   @db.Uuid
   index     Int
+  datasetId String   @db.Uuid
   dataset   Dataset  @relation(fields: [datasetId], references: [id], onDelete: Cascade)
   labels    Label[]
 }
@@ -60,6 +60,31 @@ model Dataset {
   slug         String       @unique
   images       Image[]
   labelClasses LabelClass[]
+  workspaceId  String       @db.Uuid
+  workspace    Workspace    @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+}
+
+model Workspace {
+  id              String            @id @default(uuid()) @db.Uuid
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  name            String            @unique
+  slug            String            @unique
+  plan            WorkspacePlan
+  datasets        Dataset[]
+  WorkspacesUsers WorkspacesUsers[]
+}
+
+model WorkspacesUsers {
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  role        UserRole
+  workspaceId String    @db.Uuid
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
+  userId      String //TODO: Should we update user Id type to @db.Uuid?
+  user        User      @relation(fields: [userId], references: [id])
+
+  @@id([workspaceId, userId])
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -99,15 +124,16 @@ model Session {
 }
 
 model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime?
-  image         String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  accounts      Account[]
-  sessions      Session[]
+  id              String            @id @default(cuid())
+  name            String?
+  email           String?           @unique
+  emailVerified   DateTime?
+  image           String?
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  accounts        Account[]
+  sessions        Session[]
+  WorkspacesUsers WorkspacesUsers[]
 }
 
 model VerificationToken {
@@ -416,4 +442,16 @@ model Writer {
 enum LabelType {
   Polygon
   Box
+}
+
+enum UserRole {
+  Admin
+  Member
+}
+
+enum WorkspacePlan {
+  community
+  starter
+  pro
+  enterprise
 }
