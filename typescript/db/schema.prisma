@@ -65,14 +65,14 @@ model Dataset {
 }
 
 model Workspace {
-  id              String            @id @default(uuid()) @db.Uuid
-  createdAt       DateTime          @default(now())
-  updatedAt       DateTime          @updatedAt
-  name            String            @unique
-  slug            String            @unique
-  plan            WorkspacePlan
-  datasets        Dataset[]
-  WorkspacesUsers WorkspacesUsers[]
+  id            String            @id @default(uuid()) @db.Uuid
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+  name          String            @unique
+  slug          String            @unique
+  plan          WorkspacePlan
+  datasets      Dataset[]
+  userRelations WorkspacesUsers[]
 }
 
 model WorkspacesUsers {
@@ -124,16 +124,16 @@ model Session {
 }
 
 model User {
-  id              String            @id @default(cuid())
-  name            String?
-  email           String?           @unique
-  emailVerified   DateTime?
-  image           String?
-  createdAt       DateTime          @default(now())
-  updatedAt       DateTime          @updatedAt
-  accounts        Account[]
-  sessions        Session[]
-  WorkspacesUsers WorkspacesUsers[]
+  id                 String            @id @default(cuid())
+  name               String?
+  email              String?           @unique
+  emailVerified      DateTime?
+  image              String?
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+  accounts           Account[]
+  sessions           Session[]
+  workspaceRelations WorkspacesUsers[]
 }
 
 model VerificationToken {
