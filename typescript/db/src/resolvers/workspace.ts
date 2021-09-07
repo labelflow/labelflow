@@ -11,6 +11,7 @@ import {
   MutationUpdateWorkspaceArgs,
 } from "@labelflow/graphql-types";
 
+import { Context } from "@labelflow/common-resolvers";
 import { prisma } from "../repository";
 
 type DbWorkspace = NonNullable<
@@ -53,14 +54,27 @@ const workspaces = async (
 
 const createWorkspace = async (
   _: any,
-  args: MutationCreateWorkspaceArgs
+  args: MutationCreateWorkspaceArgs,
+  { user }: Context
 ): Promise<DbWorkspace> => {
+  if (typeof user?.id !== "string") {
+    throw new Error("Couldn't create workspace: No user id");
+  }
+  const userInDb = await prisma.user.findUnique({ where: { id: user.id } });
+
+  if (userInDb == null) {
+    throw new Error(
+      `Couldn't create workspace: User with ${user.id} doesn't exist in the database`
+    );
+  }
+
   const createdWorkspace = await prisma.workspace.create({
     data: {
       id: args.data.id ?? undefined,
       name: args.data.name,
       slug: slugify(args.data.name, { lower: true }),
       plan: WorkspacePlan.Community,
+      userRelations: { create: { userId: user?.id, role: "Admin" } },
     },
   });
 
