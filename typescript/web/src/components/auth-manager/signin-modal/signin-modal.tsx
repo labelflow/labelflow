@@ -1,4 +1,4 @@
-import React, { ReactNode, useCallback } from "react";
+import React, { ReactNode, useCallback, useState } from "react";
 
 import {
   Heading,
@@ -71,6 +71,8 @@ export const SigninModal = ({
   linkSent?: string | null;
   setLinkSent: (email: string) => void;
 }) => {
+  const [sendingLink, setSendingLink] = useState(false);
+
   const performSignIn = useCallback(
     async (method, options = {}) => {
       const signInResult = await signIn<"email" | "credentials">(method, {
@@ -83,12 +85,13 @@ export const SigninModal = ({
       } else if (signInResult?.ok) {
         if (method === "email") {
           setLinkSent(options?.email);
+          setSendingLink(false);
         } else {
           setIsOpen(false);
         }
       }
     },
-    [setIsOpen, setError, setLinkSent]
+    [setIsOpen, setError, setLinkSent, setSendingLink]
   );
 
   return (
@@ -195,6 +198,7 @@ export const SigninModal = ({
                   performSignIn("email", {
                     email,
                   });
+                  setSendingLink(true);
                 }}
               >
                 <Stack spacing="4" h="24">
@@ -216,6 +220,8 @@ export const SigninModal = ({
                         type="submit"
                         variant="outline"
                         leftIcon={<Box as={RiMailSendLine} color="brand.500" />}
+                        isLoading={sendingLink}
+                        loadingText="Submitting"
                       >
                         Sign in with Email
                       </Button>
