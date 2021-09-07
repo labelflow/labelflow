@@ -14,7 +14,7 @@ import { Meta } from "../../components/meta";
 import { ArticlesList } from "../../components/website/Blog/articles-list";
 import { PostTitle } from "../../components/website/Blog/PostTitle";
 import "github-markdown-css";
-import { AppLifecycleManager } from "../../components/app-lifecycle-manager";
+import { ServiceWorkerManagerBackground } from "../../components/service-worker-manager";
 
 const ChakraReactMarkdown = chakra(ReactMarkdown);
 
@@ -27,7 +27,7 @@ export default function Posts({
 }) {
   return (
     <>
-      <AppLifecycleManager noModals />
+      <ServiceWorkerManagerBackground />
       <Meta title={`LabelFlow | ${article?.title}`} />
       <Box minH="640px">
         <NavBar />

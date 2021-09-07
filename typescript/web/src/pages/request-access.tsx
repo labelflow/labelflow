@@ -6,12 +6,12 @@ import { NavBar } from "../components/website/Navbar/NavBar";
 import { Footer } from "../components/website/Footer/Footer";
 import { RequestAccess } from "../components/website/RequestAccess/RequestAccess";
 import { Meta } from "../components/meta";
-import { AppLifecycleManager } from "../components/app-lifecycle-manager";
+import { ServiceWorkerManagerBackground } from "../components/service-worker-manager";
 
 export default function RequestAccessPage() {
   return (
     <>
-      <AppLifecycleManager noModals />
+      <ServiceWorkerManagerBackground />
       <Meta title="LabelFlow | Request Access" />
       <Box minH="640px">
         <NavBar />

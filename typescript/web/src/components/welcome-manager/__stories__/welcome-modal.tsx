@@ -1,8 +1,8 @@
-import { chakraDecorator } from "../../../../utils/chakra-decorator";
-import { queryParamsDecorator } from "../../../../utils/query-params-decorator";
-import { apolloDecorator } from "../../../../utils/apollo-decorator";
-import { cookieDecorator } from "../../../../utils/cookie-decorator";
-import { WelcomeModal } from "..";
+import { chakraDecorator } from "../../../utils/chakra-decorator";
+import { queryParamsDecorator } from "../../../utils/query-params-decorator";
+import { apolloDecorator } from "../../../utils/apollo-decorator";
+import { cookieDecorator } from "../../../utils/cookie-decorator";
+import { WelcomeManager } from "..";
 
 export default {
   title: "web/app lifecycle/welcome modal",
@@ -15,7 +15,7 @@ export default {
 };
 
 export const Closed = () => {
-  return <WelcomeModal />;
+  return <WelcomeManager />;
 };
 
 Closed.parameters = {
@@ -31,7 +31,7 @@ Closed.parameters = {
 
 export const BrowserError = () => {
   return (
-    <WelcomeModal
+    <WelcomeManager
       initialBrowserError={new Error("Wow")}
       initialBrowserWarning
     />
@@ -52,7 +52,7 @@ BrowserError.parameters = {
 };
 
 export const BrowserWarning = () => {
-  return <WelcomeModal initialBrowserWarning />;
+  return <WelcomeManager initialBrowserWarning />;
 };
 
 BrowserWarning.parameters = {
@@ -70,7 +70,7 @@ BrowserWarning.parameters = {
 };
 
 export const Loading = () => {
-  return <WelcomeModal initialIsLoadingWorkerAndDemo />;
+  return <WelcomeManager initialIsLoadingWorkerAndDemo />;
 };
 
 Loading.parameters = {
@@ -88,7 +88,7 @@ Loading.parameters = {
 };
 
 export const Welcome = () => {
-  return <WelcomeModal />;
+  return <WelcomeManager />;
 };
 
 Welcome.parameters = {
