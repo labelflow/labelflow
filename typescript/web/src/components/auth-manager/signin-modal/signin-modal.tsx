@@ -12,7 +12,6 @@ import {
   ModalCloseButton,
   Box,
   Button,
-  Flex,
   FormControl,
   chakra,
   Input,
@@ -108,11 +107,6 @@ export const SigninModal = ({
           flexDirection="column"
         >
           <SimpleGrid columns={{ base: 1, lg: 2 }} spacing="14">
-            {/* <Flex
-              direction="column"
-              pt="18"
-              display={{ base: "none", lg: "flex" }}
-            > */}
             <Box w="full">
               <Logo
                 h="6"
@@ -124,13 +118,6 @@ export const SigninModal = ({
                 <Heading size="md" mb="2" fontWeight="extrabold">
                   Join thousands of people building the future of AI
                 </Heading>
-                {/* <Text
-                  fontSize="lg"
-                  color={mode("gray.600", "gray.400")}
-                  fontWeight="medium"
-                >
-                  with your team.
-                </Text> */}
               </Box>
               <SimpleGrid
                 rounded="lg"
@@ -154,7 +141,6 @@ export const SigninModal = ({
                 </Feature>
               </SimpleGrid>
             </Box>
-            {/* </Flex> */}
             <Box w="full">
               <Logo
                 h="6"
@@ -220,7 +206,6 @@ export const SigninModal = ({
                   ) : (
                     <>
                       <FormControl id="email">
-                        {/* <FormLabel mb={1}>Email</FormLabel> */}
                         <Input
                           type="email"
                           autoComplete="email"
