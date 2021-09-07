@@ -122,6 +122,8 @@ const performWelcomeWorkflow = async ({
         await client.mutate({
           mutation: createDemoDatasetQuery,
           refetchQueries: [
+            "getDatasetData",
+            "getDatasetName",
             "getDatasets",
             "getDatasetById",
             "getAllImagesOfADataset",

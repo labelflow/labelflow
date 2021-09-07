@@ -17,7 +17,7 @@ import NextLink from "next/link";
 import { Meta } from "../../../../components/meta";
 import { ServiceWorkerManagerModal } from "../../../../components/service-worker-manager";
 import { Layout } from "../../../../components/layout";
-import Error404Page from "../../../404";
+import { Error404Content } from "../../../404";
 import { ExportButton } from "../../../../components/export-button";
 import { ImportButton } from "../../../../components/import-button";
 import { KeymapButton } from "../../../../components/layout/top-bar/keymap-button";
@@ -59,14 +59,17 @@ const DatasetIndexPage = () => {
   }, [error, loading]);
 
   const handleError = useErrorHandler();
-  if (error) {
+  if (error && !loading) {
     if (!error.message.match(/No dataset with slug/)) {
       handleError(error);
     }
     return (
       <>
         <ServiceWorkerManagerModal />
-        <Error404Page />
+        <WelcomeManager />
+        <AuthManager />
+        <Meta title="LabelFlow | Dataset not found" />
+        <Error404Content />
       </>
     );
   }

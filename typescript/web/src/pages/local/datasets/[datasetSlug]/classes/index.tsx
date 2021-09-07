@@ -21,7 +21,7 @@ import { Meta } from "../../../../../components/meta";
 import { Layout } from "../../../../../components/layout";
 import { DatasetTabBar } from "../../../../../components/layout/tab-bar/dataset-tab-bar";
 import { ClassesList } from "../../../../../components/dataset-class-list";
-import Error404Page from "../../../../404";
+import { Error404Content } from "../../../../404";
 import { AuthManager } from "../../../../../components/auth-manager";
 
 import { WelcomeManager } from "../../../../../components/welcome-manager";
@@ -41,7 +41,11 @@ const DatasetClassesPage = () => {
   const router = useRouter();
   const datasetSlug = router?.query?.datasetSlug as string;
 
-  const { data: datasetResult, error } = useQuery<{
+  const {
+    data: datasetResult,
+    error,
+    loading,
+  } = useQuery<{
     dataset: { id: string; name: string };
   }>(datasetNameQuery, {
     variables: {
@@ -52,14 +56,17 @@ const DatasetClassesPage = () => {
   const datasetName = datasetResult?.dataset.name;
 
   const handleError = useErrorHandler();
-  if (error) {
+  if (error && !loading) {
     if (!error.message.match(/No dataset with slug/)) {
       handleError(error);
     }
     return (
       <>
         <ServiceWorkerManagerModal />
-        <Error404Page />
+        <WelcomeManager />
+        <AuthManager />
+        <Meta title="LabelFlow | Dataset not found" />
+        <Error404Content />
       </>
     );
   }
