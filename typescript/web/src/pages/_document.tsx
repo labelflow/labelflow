@@ -98,7 +98,6 @@ class MyDocument extends Document {
           `,
             }}
           />
-          __
         </Head>
         <body>
           <ColorModeScript initialColorMode={theme.config.initialColorMode} />
