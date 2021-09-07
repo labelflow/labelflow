@@ -67,12 +67,16 @@ export const SigninModal = ({
   setIsOpen,
   error,
   setError,
+  linkSent,
+  setLinkSent,
 }: {
   isOpen?: boolean;
   onClose?: () => void;
   setIsOpen: (isOpen: boolean) => void;
   error?: string | null;
   setError: (error: string) => void;
+  linkSent?: string | null;
+  setLinkSent: (email: string) => void;
 }) => {
   const performSignIn = useCallback(
     async (method, options = {}) => {
@@ -84,11 +88,16 @@ export const SigninModal = ({
       if (signInResult?.error) {
         setError(signInResult.error);
       } else if (signInResult?.ok) {
-        setIsOpen(false);
+        if (method === "email") {
+          setLinkSent(options?.email);
+        } else {
+          setIsOpen(false);
+        }
       }
     },
-    [setIsOpen, setError]
+    [setIsOpen, setError, setLinkSent]
   );
+
   return (
     <Modal
       scrollBehavior="inside"
