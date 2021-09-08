@@ -2,6 +2,7 @@ import { Button, HStack, Link, Text } from "@chakra-ui/react";
 import NextLink from "next/link";
 import * as React from "react";
 import { useCookies } from "react-cookie";
+import { isInWindowScope } from "../../utils/detect-scope";
 
 export const CookieBanner = () => {
   const [{ consentedCookies }, setConsentedCookies] = useCookies([
@@ -10,7 +11,9 @@ export const CookieBanner = () => {
 
   return (
     <HStack
-      display={consentedCookies === "true" ? "none" : "block"}
+      display={
+        consentedCookies === "true" || !isInWindowScope ? "none" : "flex"
+      }
       justify="center"
       spacing="4"
       p="4"
