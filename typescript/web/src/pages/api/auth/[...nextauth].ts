@@ -6,6 +6,7 @@ import GitHubProvider from "next-auth/providers/github";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { PrismaClient } from "@prisma/client";
 import { OAuthConfig } from "next-auth/providers";
+import { captureException } from "@sentry/nextjs";
 
 // interface NextAuthUserWithStringId extends NextAuthUser {
 //   id: string;
@@ -53,5 +54,17 @@ export default NextAuth({
         }
         return session;
       },
+  },
+  logger: {
+    error(code, metadata) {
+      console.error(code, metadata);
+      captureException(metadata);
+    },
+    warn(code) {
+      console.warn(code);
+    },
+    debug(code, metadata) {
+      console.debug(code, metadata);
+    },
   },
 });
