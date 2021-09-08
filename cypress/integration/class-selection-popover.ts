@@ -107,7 +107,8 @@ describe("Class selection popover", () => {
   let datasetId: string;
   let datasetSlug: string;
   let imageId: string;
-  beforeEach(() =>
+  beforeEach(() => {
+    cy.setCookie("consentedCookies", "true");
     cy.window().then(async () => {
       const createResult = await createDataset("cypress test dataset");
       datasetId = createResult.id;
@@ -140,8 +141,8 @@ describe("Class selection popover", () => {
           ],
         },
       });
-    })
-  );
+    });
+  });
 
   it("right clicks on a label to change its class", () => {
     // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard

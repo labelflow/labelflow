@@ -5,6 +5,8 @@ import { ServiceWorkerManagerModal } from "../../components/service-worker-manag
 import { AuthManager } from "../../components/auth-manager";
 import { Layout } from "../../components/layout";
 import { WelcomeManager } from "../../components/welcome-manager";
+import { CookieBanner } from "../../components/cookie-banner";
+import { Meta } from "../../components/meta";
 
 const WorkspacesRedirectPage = () => {
   const router = useRouter();
@@ -18,6 +20,8 @@ const WorkspacesRedirectPage = () => {
       <ServiceWorkerManagerModal />
       <WelcomeManager />
       <AuthManager />
+      <Meta title="LabelFlow | Workspaces" />
+      <CookieBanner />
       <Layout>
         <Center h="full">
           <Spinner size="xl" />

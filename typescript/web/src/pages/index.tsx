@@ -8,6 +8,7 @@ import { Meta } from "../components/meta";
 import { Layout } from "../components/layout";
 import Website from "./website";
 import { ServiceWorkerManagerBackground } from "../components/service-worker-manager";
+import { CookieBanner } from "../components/cookie-banner";
 
 const IndexPage = () => {
   const router = useRouter();
@@ -31,6 +32,7 @@ const IndexPage = () => {
     <>
       <ServiceWorkerManagerBackground />
       <Meta title="LabelFlow: The open standard platform for image labelling." />
+      <CookieBanner />
       <Layout>
         <Center h="full">
           <Spinner size="xl" />

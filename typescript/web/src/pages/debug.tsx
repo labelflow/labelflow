@@ -27,6 +27,7 @@ import {
 import { Layout } from "../components/layout";
 import { ServiceWorkerManagerBackground } from "../components/service-worker-manager";
 import { AuthManager } from "../components/auth-manager";
+import { CookieBanner } from "../components/cookie-banner";
 
 export const debugQuery = gql`
   query getDebug {
@@ -42,6 +43,7 @@ const DebugPage = () => {
       <ServiceWorkerManagerBackground />
       <AuthManager />
       <Meta title="LabelFlow | Debug" />
+      <CookieBanner />
       <Layout
         topBarLeftContent={
           <Breadcrumb

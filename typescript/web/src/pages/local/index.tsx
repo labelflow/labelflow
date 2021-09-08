@@ -6,6 +6,7 @@ import { ServiceWorkerManagerModal } from "../../components/service-worker-manag
 import { AuthManager } from "../../components/auth-manager";
 import { Layout } from "../../components/layout";
 import { WelcomeManager } from "../../components/welcome-manager";
+import { CookieBanner } from "../../components/cookie-banner";
 
 const LocalDatasetsIndexPage = () => {
   const router = useRouter();
@@ -20,6 +21,7 @@ const LocalDatasetsIndexPage = () => {
       <WelcomeManager />
       <AuthManager />
       <Meta title="LabelFlow | Local Workspace" />
+      <CookieBanner />
       <Layout>
         <Center h="full">
           <Spinner size="xl" />

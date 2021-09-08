@@ -15,6 +15,7 @@ import { Layout } from "../components/layout";
 import { ServiceWorkerManagerModal } from "../components/service-worker-manager";
 import { WelcomeManager } from "../components/welcome-manager";
 import { AuthManager } from "../components/auth-manager";
+import { CookieBanner } from "../components/cookie-banner";
 
 const GraphiQL = dynamic(() => import("../components/graphiql"), {
   ssr: false,
@@ -33,8 +34,9 @@ const GraphqlPlayground = () => {
     <>
       <ServiceWorkerManagerModal />
       <WelcomeManager />
-      <Meta title="LabelFlow | GraphiQL" />
       <AuthManager />
+      <Meta title="LabelFlow | GraphiQL" />
+      <CookieBanner />
       <Layout
         topBarLeftContent={
           <Breadcrumb

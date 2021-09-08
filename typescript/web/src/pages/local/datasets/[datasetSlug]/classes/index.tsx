@@ -25,6 +25,7 @@ import { Error404Content } from "../../../../404";
 import { AuthManager } from "../../../../../components/auth-manager";
 
 import { WelcomeManager } from "../../../../../components/welcome-manager";
+import { CookieBanner } from "../../../../../components/cookie-banner";
 
 const ArrowRightIcon = chakra(RiArrowRightSLine);
 
@@ -66,6 +67,7 @@ const DatasetClassesPage = () => {
         <WelcomeManager />
         <AuthManager />
         <Meta title="LabelFlow | Dataset not found" />
+        <CookieBanner />
         <Error404Content />
       </>
     );
@@ -77,6 +79,7 @@ const DatasetClassesPage = () => {
       <WelcomeManager />
       <AuthManager />
       <Meta title="LabelFlow | Classes" />
+      <CookieBanner />
       <Layout
         topBarLeftContent={
           <Breadcrumb

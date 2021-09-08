@@ -15,6 +15,7 @@ import { Meta } from "../components/meta";
 import { Banner } from "../components/website/banner";
 import { Proof } from "../components/website/proof";
 import { ServiceWorkerManagerBackground } from "../components/service-worker-manager";
+import { CookieBanner } from "../components/cookie-banner";
 
 export default function Website({
   previewArticles,
@@ -25,6 +26,7 @@ export default function Website({
     <>
       <ServiceWorkerManagerBackground />
       <Meta title="LabelFlow: The open standard platform for image labelling." />
+      <CookieBanner />
       <Box minH="640px">
         <NavBar />
         <Hero />

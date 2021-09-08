@@ -6,6 +6,7 @@ import { Footer } from "../../components/website/Footer/Footer";
 import { Meta } from "../../components/meta";
 import { ArticlesList } from "../../components/website/Blog/articles-list";
 import { ServiceWorkerManagerBackground } from "../../components/service-worker-manager";
+import { CookieBanner } from "../../components/cookie-banner";
 
 export default function Posts({
   previewArticles,
@@ -16,6 +17,7 @@ export default function Posts({
     <>
       <ServiceWorkerManagerBackground />
       <Meta title="LabelFlow | Blog" />
+      <CookieBanner />
       <Box minH="640px">
         <NavBar />
         <ArticlesList previewArticles={previewArticles} />
