@@ -25,7 +25,8 @@ export const CookieBanner = () => {
     >
       <Text color="white" fontSize={{ base: "sm", md: "md" }}>
         Like every organization on earth we use cookies. We use cookies to
-        analyze our product usage. We don't use cookies for commercial purposes.{" "}
+        analyze our product usage. We don&apos;t use cookies for commercial
+        purposes.{" "}
         <NextLink href="/">
           <Link href="/" textDecoration="underline">
             Learn More
