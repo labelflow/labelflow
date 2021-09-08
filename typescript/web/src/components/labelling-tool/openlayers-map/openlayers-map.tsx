@@ -7,6 +7,7 @@ import { Map as OlMap, View as OlView, MapBrowserEvent } from "ol";
 import { Geometry } from "ol/geom";
 import { Vector as OlSourceVector } from "ol/source";
 import { Size } from "ol/size";
+import * as Sentry from "@sentry/nextjs";
 import memoize from "mem";
 import Projection from "ol/proj/Projection";
 import useMeasure from "react-use-measure";
@@ -228,6 +229,18 @@ export const OpenlayersMap = () => {
                       imageSize: size,
                       projection,
                       crossOrigin: "anonymous",
+                    }}
+                    onImageloaderror={() => {
+                      Sentry.captureException(
+                        new Error(
+                          "Image load error in openlayers. See https://github.com/labelflow/labelflow/issues/431"
+                        ),
+                        { extra: { url } }
+                      );
+                      // To solve a rare bug where image does not load
+                      // See https://github.com/labelflow/labelflow/issues/431
+                      window?.location?.reload?.();
+                      return true;
                     }}
                     onImageloadstart={() => {
                       setIsImageLoading(true);
