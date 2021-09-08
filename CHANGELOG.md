@@ -1,6 +1,9 @@
 # Changelog
 
-## [0.0.1](https://github.com/labelflow/labelflow/compare/1.0.0...0.0.1)
+## [0.0.1](https://github.com/labelflow/labelflow/compare/1.1.0...0.0.1)
+
+- Add clarity tracking code [`#428`](https://github.com/labelflow/labelflow/pull/428)
+## [1.1.0](https://github.com/labelflow/labelflow/compare/1.0.0...1.1.0) - 2021-09-08
 
 - Fix bump-version job in the CI [`#434`](https://github.com/labelflow/labelflow/pull/434)
 - Add Sentry to capture exceptions in client, server and service worker [`#432`](https://github.com/labelflow/labelflow/pull/432)
