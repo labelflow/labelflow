@@ -7,12 +7,10 @@ export const CookieBanner = () => {
   const [{ consentedCookies }, setConsentedCookies] = useCookies([
     "consentedCookies",
   ]);
-  if (consentedCookies === "true") {
-    return null;
-  }
 
   return (
     <HStack
+      display={consentedCookies === "true" ? "none" : "block"}
       justify="center"
       spacing="4"
       p="4"
