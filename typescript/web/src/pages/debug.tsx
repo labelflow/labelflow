@@ -88,6 +88,26 @@ const DebugPage = () => {
                   <Link
                     target="_blank"
                     rel="noreferrer"
+                    href="https://sentry.io/organizations/labelflow/projects/labelflow/"
+                  >
+                    Link to Sentry error tracker
+                  </Link>
+                </ListItem>
+
+                <ListItem>
+                  <Link
+                    target="_blank"
+                    rel="noreferrer"
+                    href={`https://clarity.microsoft.com/projects/view/${process.env.NEXT_PUBLIC_CLARITY}/dashboard`}
+                  >
+                    Link to Clarity usage analytics
+                  </Link>
+                </ListItem>
+
+                <ListItem>
+                  <Link
+                    target="_blank"
+                    rel="noreferrer"
                     href="/_next/static/bundle-analyzer/client.html"
                   >
                     Link to client bundle analysis
