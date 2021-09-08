@@ -14,21 +14,28 @@ import {
 import { Context } from "@labelflow/common-resolvers";
 import { prisma } from "../repository";
 
-type DbWorkspace = NonNullable<
+type DbWorkspacePlan = NonNullable<
   Prisma.PromiseReturnType<typeof prisma.workspace.findUnique>
->;
+>["plan"];
 
-const addTypeToWorkspace = (workspaceWithoutType: DbWorkspace): Workspace => ({
+type DbWorkspace = Omit<
+  Workspace,
+  "__typename" | "type" | "datasets" | "memberships" | "plan"
+> & { plan: DbWorkspacePlan };
+
+type DbWorkspaceWithType = DbWorkspace & { type: WorkspaceType };
+
+const addTypeToWorkspace = (
+  workspaceWithoutType: Omit<DbWorkspace, "type">
+): DbWorkspaceWithType => ({
   ...workspaceWithoutType,
   type: WorkspaceType.Online,
-  // Also cast Plan to match graphql Enum
-  plan: workspaceWithoutType.plan as WorkspacePlan,
 });
 
 const workspace = async (
   _: any,
   args: QueryWorkspaceArgs
-): Promise<Workspace> => {
+): Promise<DbWorkspaceWithType> => {
   const workspaceFromDb = await prisma.workspace.findUnique({
     where: args.where,
   });
@@ -42,7 +49,8 @@ const workspace = async (
 const workspaces = async (
   _: any,
   args: QueryWorkspacesArgs
-): Promise<Workspace[]> => {
+): Promise<DbWorkspaceWithType[]> => {
+  console.log("hello");
   const workspacesFromDb = await prisma.workspace.findMany({
     skip: args.skip ?? undefined,
     take: args.first ?? undefined,
@@ -56,7 +64,7 @@ const createWorkspace = async (
   _: any,
   args: MutationCreateWorkspaceArgs,
   { user }: Context
-): Promise<DbWorkspace> => {
+): Promise<DbWorkspaceWithType> => {
   if (typeof user?.id !== "string") {
     throw new Error("Couldn't create workspace: No user id");
   }
@@ -64,7 +72,7 @@ const createWorkspace = async (
 
   if (userInDb == null) {
     throw new Error(
-      `Couldn't create workspace: User with ${user.id} doesn't exist in the database`
+      `Couldn't create workspace: User with id "${user.id}"" doesn't exist in the database`
     );
   }
 
@@ -84,7 +92,7 @@ const createWorkspace = async (
 const updateWorkspace = async (
   _: any,
   args: MutationUpdateWorkspaceArgs
-): Promise<DbWorkspace> => {
+): Promise<DbWorkspaceWithType> => {
   const dataWithSlug =
     typeof args.data.name === "string"
       ? {

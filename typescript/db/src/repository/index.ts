@@ -119,9 +119,11 @@ export const repository: Repository = {
       return prisma.dataset.findUnique({ where: { id } });
     },
     getByName: (name) => {
+      // @ts-ignore
       return prisma.dataset.findUnique({ where: { name } });
     },
     getBySlug: (slug) => {
+      // @ts-ignore
       return prisma.dataset.findUnique({ where: { slug } });
     },
     update: async (id, dataset) => {
