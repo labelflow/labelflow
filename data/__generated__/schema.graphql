@@ -208,6 +208,36 @@ type LabelsAggregates {
   totalCount: Int!
 }
 
+type Membership {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  role: MembershipRole!
+  user: User!
+  workspace: Workspace!
+}
+
+input MembershipCreateInput {
+  id: ID
+  role: MembershipRole!
+  userId: ID!
+  workspaceId: ID!
+}
+
+enum MembershipRole {
+  Admin
+  Member
+}
+
+input MembershipUpdateInput {
+  name: String
+  role: MembershipRole
+}
+
+input MembershipWhereUniqueInput {
+  id: ID!
+}
+
 type Mutation {
   createExample(data: ExampleCreateInput!): Example
   getUploadTarget(data: UploadTargetInput!): UploadTarget!
@@ -225,6 +255,10 @@ type Mutation {
   deleteDataset(where: DatasetWhereIDInput!): Dataset
   createWorkspace(data: WorkspaceCreateInput!): Workspace
   updateWorkspace(where: WorkspaceWhereUniqueInput!, data: WorkspaceUpdateInput!): Workspace
+  createMembership(data: MembershipCreateInput!): Membership
+  updateMembership(where: MembershipWhereUniqueInput!, data: MembershipUpdateInput!): Membership
+  deleteMembership(where: MembershipWhereUniqueInput!): Membership
+  updateUser(where: UserWhereUniqueInput!, data: UserUpdateInput!): User
 }
 
 type Query {
@@ -244,6 +278,10 @@ type Query {
   datasets(where: DatasetWhereInput, first: Int, skip: Int): [Dataset!]!
   workspace(where: WorkspaceWhereUniqueInput!): Workspace!
   workspaces(first: Int, skip: Int): [Workspace!]!
+  membership(where: MembershipWhereUniqueInput!): Membership!
+  memberships(first: Int, skip: Int): [Membership!]!
+  user(where: UserWhereUniqueInput!): User!
+  users(first: Int, skip: Int): [User!]!
   exportToCoco(where: ExportWhereUniqueInput!): String!
   debug: JSON!
 }
@@ -265,6 +303,25 @@ input UploadTargetInput {
   key: String!
 }
 
+type User {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  name: String!
+  email: String!
+  image: String
+  memberships: [Membership!]!
+}
+
+input UserUpdateInput {
+  name: String
+  image: String
+}
+
+input UserWhereUniqueInput {
+  id: ID!
+}
+
 type Workspace {
   id: ID!
   createdAt: DateTime!
@@ -273,7 +330,8 @@ type Workspace {
   slug: String!
   type: WorkspaceType!
   plan: WorkspacePlan!
-  datasets: [Dataset!]
+  datasets: [Dataset!]!
+  memberships: [Membership!]!
 }
 
 input WorkspaceCreateInput {
