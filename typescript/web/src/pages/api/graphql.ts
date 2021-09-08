@@ -1,6 +1,6 @@
 import { ApolloServer, AuthenticationError } from "apollo-server-micro";
 import { schemaWithResolvers, repository } from "@labelflow/db";
-import { getSession } from "next-auth/client";
+import { getSession } from "next-auth/react";
 
 const apolloServer = new ApolloServer({
   schema: schemaWithResolvers,

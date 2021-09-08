@@ -13,7 +13,9 @@ import { NewDatasetCard, DatasetCard } from "../../../components/datasets";
 
 import { UpsertDatasetModal } from "../../../components/datasets/upsert-dataset-modal";
 import { DeleteDatasetModal } from "../../../components/datasets/delete-dataset-modal";
-import { AppLifecycleManager } from "../../../components/app-lifecycle-manager";
+import { ServiceWorkerManagerModal } from "../../../components/service-worker-manager";
+import { AuthManager } from "../../../components/auth-manager";
+import { WelcomeManager } from "../../../components/welcome-manager";
 
 export const getDatasetsQuery = gql`
   query getDatasets {
@@ -82,7 +84,9 @@ const DatasetPage = () => {
 
   return (
     <>
-      <AppLifecycleManager />
+      <ServiceWorkerManagerModal />
+      <WelcomeManager />
+      <AuthManager />
       <Meta title="LabelFlow | Datasets" />
       <Layout
         topBarLeftContent={

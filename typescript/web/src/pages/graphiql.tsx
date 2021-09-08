@@ -1,3 +1,4 @@
+import React from "react";
 import dynamic from "next/dynamic";
 import {
   Box,
@@ -11,7 +12,9 @@ import {
 import { RiArrowRightSLine } from "react-icons/ri";
 import { Meta } from "../components/meta";
 import { Layout } from "../components/layout";
-import { AppLifecycleManager } from "../components/app-lifecycle-manager";
+import { ServiceWorkerManagerModal } from "../components/service-worker-manager";
+import { WelcomeManager } from "../components/welcome-manager";
+import { AuthManager } from "../components/auth-manager";
 
 const GraphiQL = dynamic(() => import("../components/graphiql"), {
   ssr: false,
@@ -28,8 +31,10 @@ const GraphiQL = dynamic(() => import("../components/graphiql"), {
 const GraphqlPlayground = () => {
   return (
     <>
-      <AppLifecycleManager />
+      <ServiceWorkerManagerModal />
+      <WelcomeManager />
       <Meta title="LabelFlow | GraphiQL" />
+      <AuthManager />
       <Layout
         topBarLeftContent={
           <Breadcrumb

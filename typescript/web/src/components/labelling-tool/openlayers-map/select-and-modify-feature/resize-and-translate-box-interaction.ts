@@ -246,7 +246,7 @@ export class ResizeAndTranslateBox extends PointerInteraction {
     };
   };
 
-  handleDownEvent(e: MapBrowserEvent) {
+  handleDownEvent(e: MapBrowserEvent<UIEvent>) {
     const { insideTolerance, element } = this.getClosestElement(e.coordinate);
     if (insideTolerance) {
       this.selectedElement = element;
@@ -279,7 +279,7 @@ export class ResizeAndTranslateBox extends PointerInteraction {
     return false;
   }
 
-  handleDragEvent(e: MapBrowserEvent) {
+  handleDragEvent(e: MapBrowserEvent<UIEvent>) {
     if (this.selectedElement != null && this.feature != null) {
       const extent = this.feature.getGeometry().getExtent();
       const newGeometry = this.getNewFeatureGeometryFromDragEvent({
@@ -297,7 +297,7 @@ export class ResizeAndTranslateBox extends PointerInteraction {
     }
   }
 
-  handleMoveEvent(e: MapBrowserEvent) {
+  handleMoveEvent(e: MapBrowserEvent<UIEvent>) {
     const mapTargetViewport = e.map.getViewport();
     if (mapTargetViewport != null) {
       const { insideTolerance, element } = this.getClosestElement(e.coordinate);

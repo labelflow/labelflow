@@ -16,7 +16,7 @@ import {
 mockUseQueryParams();
 mockNextRouter({ query: {} });
 
-import { AppLifecycleManager } from "../app-lifecycle-manager";
+import { ServiceWorkerManagerModal } from "../service-worker-manager-modal";
 import { theme } from "../../../theme";
 import { client } from "../../../connectors/apollo-client/schema-client";
 import { setupTestsWithLocalDatabase } from "../../../utils/setup-local-db-tests";
@@ -47,7 +47,7 @@ describe("App lifecyle manager", () => {
       removeEventListener: jest.fn(() => {}),
       register: jest.fn(() => {}),
     } as unknown as Workbox;
-    render(<AppLifecycleManager />, { wrapper });
+    render(<ServiceWorkerManagerModal />, { wrapper });
     await waitFor(() => {
       expect(screen.queryByText("image labelling tool")).toBeDefined();
     });
@@ -67,7 +67,7 @@ describe("App lifecyle manager", () => {
       removeEventListener: jest.fn(() => {}),
       register: jest.fn(() => {}),
     } as unknown as Workbox;
-    render(<AppLifecycleManager />, { wrapper });
+    render(<ServiceWorkerManagerModal />, { wrapper });
     await waitFor(() => {
       expect(
         screen.queryByText("image labelling tool")
@@ -98,7 +98,7 @@ describe("App lifecyle manager", () => {
       }),
       register: jest.fn(() => {}),
     } as unknown as Workbox;
-    render(<AppLifecycleManager />, { wrapper });
+    render(<ServiceWorkerManagerModal />, { wrapper });
     await waitFor(() => {
       expect(
         screen.queryByText("image labelling tool")

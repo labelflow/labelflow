@@ -8,7 +8,7 @@ import {
 import OlSourceVector from "ol/source/Vector";
 import Polygon from "ol/geom/Polygon";
 import GeometryType from "ol/geom/GeometryType";
-
+import { Geometry } from "ol/geom";
 import { Map } from "../map";
 
 type ShapeType = "None" | "Circle" | "Square" | "Box" | "Star";
@@ -54,7 +54,7 @@ function useGeometryFunction(
 export const DrawShapes = () => {
   const [shapeType, setShapeType] = useState<ShapeType>("Circle");
   const geometryFunction = useGeometryFunction(shapeType);
-  const [vectorSource, setVectorSource] = useState<OlSourceVector>();
+  const [vectorSource, setVectorSource] = useState<OlSourceVector<Geometry>>();
 
   return (
     <>
@@ -87,7 +87,7 @@ export const DrawShapes = () => {
           <olInteractionDraw
             args={{
               source: vectorSource,
-              type: "Circle" as GeometryType,
+              type: GeometryType.CIRCLE,
               geometryFunction,
             }}
           />

@@ -3,13 +3,15 @@
   "version": "0.0.1",
   "main": "src/index.ts",
   "scripts": {
-    "dev": "nodemon src/index.ts",
+    "dev": "prisma migrate dev",
+    "deploy": "prisma migrate deploy",
+    "dev:push": "prisma db push",
     "generate": "prisma generate"
   },
   "devDependencies": {
     "@types/node": "16.4.1",
     "nodemon": "2.0.12",
-    "prisma": "2.30.2",
+    "prisma": "2.30.3",
     "ts-node": "10.1.0",
     "typescript": "4.3.5"
   },
@@ -22,7 +24,7 @@
     "@graphql-tools/schema": "7.1.5",
     "@labelflow/common-resolvers": "workspace:typescript/common-resolvers",
     "@labelflow/graphql-types": "workspace:typescript/graphql-types",
-    "@prisma/client": "2.30.2",
+    "@prisma/client": "2.30.3",
     "@supabase/supabase-js": "1.21.0",
     "apollo-server": "3.0.2",
     "graphql": "15.5.1",

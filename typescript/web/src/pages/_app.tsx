@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { ErrorBoundary, FallbackProps } from "react-error-boundary";
-
+import { SessionProvider } from "next-auth/react";
+import Head from "next/head";
 import { AppProps } from "next/app";
 import { useRouter } from "next/router";
 
@@ -24,20 +25,23 @@ interface InitialProps {
 
 const ErrorFallback = (props: FallbackProps) => {
   return (
-    <ChakraProvider theme={theme} resetCSS>
-      <CookiesProvider>
-        <QueryParamProvider>
-          <ApolloProvider client={client}>
-            <ErrorPage {...props} />
-          </ApolloProvider>
-        </QueryParamProvider>
+    <SessionProvider session={undefined}>
+      <CookiesProvider cookies={new Cookies("")}>
+        <ApolloProvider client={client}>
+          <QueryParamProvider>
+            <ChakraProvider theme={theme} resetCSS>
+              <ErrorPage {...props} />
+            </ChakraProvider>
+          </QueryParamProvider>
+        </ApolloProvider>
       </CookiesProvider>
-    </ChakraProvider>
+    </SessionProvider>
   );
 };
 
 const App = (props: AppProps & InitialProps) => {
   const { Component, pageProps } = props;
+  const { session } = pageProps;
 
   // Google analytics
   // See https://mariestarck.com/add-google-analytics-to-your-next-js-application-in-5-easy-steps/
@@ -59,16 +63,25 @@ const App = (props: AppProps & InitialProps) => {
 
   return (
     <ErrorBoundary FallbackComponent={ErrorFallback}>
-      <CookiesProvider cookies={new Cookies("")}>
-        <ChakraProvider theme={theme} resetCSS>
-          <QueryParamProvider>
-            <ApolloProvider client={client}>
-              <Meta />
-              <Component {...pageProps} />
-            </ApolloProvider>
-          </QueryParamProvider>
-        </ChakraProvider>
-      </CookiesProvider>
+      <SessionProvider session={session}>
+        <CookiesProvider cookies={new Cookies("")}>
+          <ApolloProvider client={client}>
+            <QueryParamProvider>
+              <ChakraProvider theme={theme} resetCSS>
+                <Meta />
+                <Head>
+                  {/* Set proper initial appearance of content for mobile */}
+                  <meta
+                    name="viewport"
+                    content="width=device-width, initial-scale=1.0"
+                  />
+                </Head>
+                <Component {...pageProps} />
+              </ChakraProvider>
+            </QueryParamProvider>
+          </ApolloProvider>
+        </CookiesProvider>
+      </SessionProvider>
     </ErrorBoundary>
   );
 };
