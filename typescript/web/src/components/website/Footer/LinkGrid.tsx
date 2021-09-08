@@ -31,6 +31,11 @@ export const LinkGrid = (props: SimpleGridProps) => (
         <NextLink href="/posts">
           <Link href="/posts">Blog</Link>
         </NextLink>
+        <NextLink href="https://labelflow.gitbook.io/labelflow/">
+          <Link href="https://labelflow.gitbook.io/labelflow/">
+            Documentation
+          </Link>
+        </NextLink>
       </Stack>
     </Box>
   </SimpleGrid>
