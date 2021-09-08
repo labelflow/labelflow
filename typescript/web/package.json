@@ -27,6 +27,7 @@
     "@labelflow/react-openlayers-fiber": "workspace:typescript/react-openlayers-fiber",
     "@next-auth/prisma-adapter": "next",
     "@prisma/client": "2.30.3",
+    "@sentry/nextjs": "^6.12.0",
     "@storybook/client-api": "^6.3.7",
     "@supabase/supabase-js": "1.21.0",
     "@turf/bbox": "^6.5.0",
