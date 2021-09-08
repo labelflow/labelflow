@@ -158,7 +158,7 @@ jobs:
           # determine the unique run id necessary to re-run the checks
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-          NEXT_PUBLIC_SENTRY_DSN: fake-token-to-not-flood-sentry-with-test-errors
+          NEXT_PUBLIC_SENTRY_DSN: ${{ secrets.NEXT_PUBLIC_SENTRY_DSN }}
           # Bundlewatch
           # See https://bundlewatch.io/#/getting-started/using-bundlewatch?id=setup-ci-auth-variables-needed-by-bundlewatch
           BUNDLEWATCH_GITHUB_TOKEN: ${{ secrets.BUNDLEWATCH_GITHUB_TOKEN }}
