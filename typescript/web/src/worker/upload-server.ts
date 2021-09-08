@@ -29,14 +29,8 @@ export class UploadServer implements RouteHandlerObject {
             status: 200,
             statusText: "OK",
             headers: new Headers({
-              "Content-Type":
-                request.headers?.get?.("Content-Type") ??
-                blob.type ??
-                "application/octet-stream",
-              "Content-Length":
-                request.headers?.get?.("Content-Length") ??
-                blob.size.toString() ??
-                "0",
+              "Content-Type": blob.type ?? "application/octet-stream",
+              "Content-Length": blob.size.toString() ?? "0",
             }),
           });
 
