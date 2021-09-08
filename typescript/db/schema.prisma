@@ -83,7 +83,7 @@ model Membership {
   role        UserRole
   workspaceId String    @db.Uuid
   workspace   Workspace @relation(fields: [workspaceId], references: [id])
-  userId      String //TODO: Should we update user Id type to @db.Uuid?
+  userId      String    @db.Uuid
   user        User      @relation(fields: [userId], references: [id])
 
   @@id([workspaceId, userId])
@@ -94,8 +94,8 @@ model Membership {
 /////////////////////////////////////////////////////////////////////////////
 
 model Account {
-  id                 String   @id @default(cuid())
-  userId             String
+  id                 String   @id @default(uuid()) @db.Uuid
+  userId             String   @db.Uuid
   type               String
   provider           String
   providerAccountId  String
@@ -116,9 +116,9 @@ model Account {
 }
 
 model Session {
-  id           String   @id @default(cuid())
+  id           String   @id @default(uuid()) @db.Uuid
   sessionToken String   @unique
-  userId       String
+  userId       String   @db.Uuid
   expires      DateTime
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
@@ -126,7 +126,7 @@ model Session {
 }
 
 model User {
-  id            String       @id @default(cuid())
+  id            String       @id @default(uuid()) @db.Uuid
   name          String?
   email         String?      @unique
   emailVerified DateTime?
