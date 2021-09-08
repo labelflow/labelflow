@@ -8,6 +8,7 @@ import { EmptyStateNoSearchResult } from "../components/empty-state";
 import { ServiceWorkerManagerModal } from "../components/service-worker-manager";
 import { WelcomeManager } from "../components/welcome-manager";
 import { AuthManager } from "../components/auth-manager";
+import { CookieBanner } from "../components/cookie-banner";
 
 export const Error404Content = () => (
   <Layout>
@@ -61,7 +62,8 @@ const Error404Page = () => {
       <ServiceWorkerManagerModal />
       <WelcomeManager />
       <AuthManager />
-      <Meta title="LabelFlow | Page not found" />
+      <Meta title="LabelFlow | Not found" />
+      <CookieBanner />
       <Error404Content />
     </>
   );

@@ -15,6 +15,7 @@ import { ArticlesList } from "../../components/website/Blog/articles-list";
 import { PostTitle } from "../../components/website/Blog/PostTitle";
 import "github-markdown-css";
 import { ServiceWorkerManagerBackground } from "../../components/service-worker-manager";
+import { CookieBanner } from "../../components/cookie-banner";
 
 const ChakraReactMarkdown = chakra(ReactMarkdown);
 
@@ -29,6 +30,7 @@ export default function Posts({
     <>
       <ServiceWorkerManagerBackground />
       <Meta title={`LabelFlow | ${article?.title}`} />
+      <CookieBanner />
       <Box minH="640px">
         <NavBar />
         <PostTitle

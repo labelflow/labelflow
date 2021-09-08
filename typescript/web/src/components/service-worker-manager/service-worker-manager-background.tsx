@@ -1,13 +1,5 @@
 import { useEffect } from "react";
 
-import type { Workbox } from "workbox-window";
-
-declare global {
-  interface Window {
-    workbox: Workbox;
-  }
-}
-
 export const ServiceWorkerManagerBackground = () => {
   // This hook only run once in browser after the component is rendered for the first time.
   // It registers the service worker and reload the page if the service worker is updated.

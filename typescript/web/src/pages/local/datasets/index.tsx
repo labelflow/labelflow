@@ -16,6 +16,7 @@ import { DeleteDatasetModal } from "../../../components/datasets/delete-dataset-
 import { ServiceWorkerManagerModal } from "../../../components/service-worker-manager";
 import { AuthManager } from "../../../components/auth-manager";
 import { WelcomeManager } from "../../../components/welcome-manager";
+import { CookieBanner } from "../../../components/cookie-banner";
 
 export const getDatasetsQuery = gql`
   query getDatasets {
@@ -88,6 +89,7 @@ const DatasetPage = () => {
       <WelcomeManager />
       <AuthManager />
       <Meta title="LabelFlow | Datasets" />
+      <CookieBanner />
       <Layout
         topBarLeftContent={
           <Breadcrumb

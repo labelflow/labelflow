@@ -1,14 +1,8 @@
 import React, { useEffect, useCallback } from "react";
 import { useErrorHandler } from "react-error-boundary";
-import type { Workbox } from "workbox-window";
+
 import { useQueryParam, StringParam } from "use-query-params";
 import { UpdateServiceWorkerModal } from "./update-service-worker-modal/update-service-worker-modal";
-
-declare global {
-  interface Window {
-    workbox: Workbox;
-  }
-}
 
 export const ServiceWorkerManagerModal = () => {
   // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard

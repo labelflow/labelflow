@@ -5,6 +5,7 @@ import { Meta } from "../../components/meta";
 import { ServiceWorkerManagerBackground } from "../../components/service-worker-manager";
 import { Layout } from "../../components/layout";
 import { SigninModal } from "../../components/auth-manager/signin-modal";
+import { CookieBanner } from "../../components/cookie-banner";
 
 const LocalDatasetsIndexPage = () => {
   const router = useRouter();
@@ -17,6 +18,7 @@ const LocalDatasetsIndexPage = () => {
     <>
       <ServiceWorkerManagerBackground />
       <Meta title="LabelFlow | Sign in" />
+      <CookieBanner />
       <Layout>
         <SigninModal
           isOpen

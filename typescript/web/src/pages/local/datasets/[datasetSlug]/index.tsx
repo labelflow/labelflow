@@ -23,6 +23,7 @@ import { ImportButton } from "../../../../components/import-button";
 import { KeymapButton } from "../../../../components/layout/top-bar/keymap-button";
 import { AuthManager } from "../../../../components/auth-manager";
 import { WelcomeManager } from "../../../../components/welcome-manager";
+import { CookieBanner } from "../../../../components/cookie-banner";
 
 const getDataset = gql`
   query getDataset($slug: String!) {
@@ -69,6 +70,7 @@ const DatasetIndexPage = () => {
         <WelcomeManager />
         <AuthManager />
         <Meta title="LabelFlow | Dataset not found" />
+        <CookieBanner />
         <Error404Content />
       </>
     );
@@ -80,6 +82,7 @@ const DatasetIndexPage = () => {
       <WelcomeManager />
       <AuthManager />
       <Meta title={`LabelFlow | ${datasetName ?? "Dataset"}`} />
+      <CookieBanner />
       <Layout
         topBarLeftContent={
           <Breadcrumb

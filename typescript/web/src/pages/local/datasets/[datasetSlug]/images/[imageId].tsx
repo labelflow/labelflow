@@ -30,6 +30,7 @@ import { Gallery } from "../../../../../components/gallery";
 import { Error404Content } from "../../../../404";
 import { AuthManager } from "../../../../../components/auth-manager";
 import { WelcomeManager } from "../../../../../components/welcome-manager";
+import { CookieBanner } from "../../../../../components/cookie-banner";
 
 const ArrowRightIcon = chakra(RiArrowRightSLine);
 
@@ -110,6 +111,7 @@ const ImagePage = () => {
           <WelcomeManager />
           <AuthManager />
           <Meta title="LabelFlow | Dataset not found" />
+          <CookieBanner />
           <Error404Content />
         </>
       );
@@ -124,6 +126,7 @@ const ImagePage = () => {
           <WelcomeManager />
           <AuthManager />
           <Meta title="LabelFlow | Image not found" />
+          <CookieBanner />
           <Error404Content />
         </>
       );
@@ -136,6 +139,7 @@ const ImagePage = () => {
       <WelcomeManager />
       <AuthManager />
       <Meta title={`LabelFlow | Image ${imageName ?? ""}`} />
+      <CookieBanner />
       <Layout
         topBarLeftContent={
           <Breadcrumb
