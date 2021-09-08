@@ -1,6 +1,8 @@
 # Changelog
 
-## [0.0.1](https://github.com/labelflow/labelflow/compare/1.1.0...0.0.1)
+## [0.0.1](https://github.com/labelflow/labelflow/compare/1.2.0...0.0.1)
+
+## [1.2.0](https://github.com/labelflow/labelflow/compare/1.1.0...1.2.0) - 2021-09-08
 
 - Add clarity tracking code [`#428`](https://github.com/labelflow/labelflow/pull/428)
 ## [1.1.0](https://github.com/labelflow/labelflow/compare/1.0.0...1.1.0) - 2021-09-08
