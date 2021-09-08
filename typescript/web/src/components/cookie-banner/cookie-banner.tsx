@@ -7,7 +7,7 @@ export const CookieBanner = () => (
     justify="center"
     spacing="4"
     p="4"
-    bg="gray.700"
+    bg="brand.600"
     position="fixed"
     bottom="0"
     left="0"
@@ -15,10 +15,11 @@ export const CookieBanner = () => (
     zIndex="100"
   >
     <Text color="white" fontSize={{ base: "sm", md: "md" }}>
-      By using our website, you agree to the use of cookies as described in our{" "}
+      Like every organization on earth we use cookies. We use cookies to analyze
+      our product usage. We don't use cookies for commercial purposes.{" "}
       <NextLink href="/">
         <Link href="/" textDecoration="underline">
-          cookie policy
+          Learn More
         </Link>
       </NextLink>
     </Text>
