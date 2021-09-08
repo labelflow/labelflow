@@ -103,15 +103,15 @@ type User {
 }
 
 enum WorkspaceType {
-  local
-  online
+  Local
+  Online
 }
 
 enum WorkspacePlan {
-  community
-  starter
-  pro
-  enterprise
+  Community
+  Starter
+  Pro
+  Enterprise
 }
 
 enum MembershipRole {

@@ -340,15 +340,15 @@ input WorkspaceCreateInput {
 }
 
 enum WorkspacePlan {
-  community
-  starter
-  pro
-  enterprise
+  Community
+  Starter
+  Pro
+  Enterprise
 }
 
 enum WorkspaceType {
-  local
-  online
+  Local
+  Online
 }
 
 input WorkspaceUpdateInput {

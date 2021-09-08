@@ -578,15 +578,15 @@ export type WorkspaceCreateInput = {
 };
 
 export enum WorkspacePlan {
-  Community = 'community',
-  Starter = 'starter',
-  Pro = 'pro',
-  Enterprise = 'enterprise'
+  Community = 'Community',
+  Starter = 'Starter',
+  Pro = 'Pro',
+  Enterprise = 'Enterprise'
 }
 
 export enum WorkspaceType {
-  Local = 'local',
-  Online = 'online'
+  Local = 'Local',
+  Online = 'Online'
 }
 
 export type WorkspaceUpdateInput = {
