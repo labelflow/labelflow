@@ -267,7 +267,7 @@ jobs:
           git config user.name "Hugo Raynal"
           git config user.email "hugo.raynal@labelflow.ai"
       - name: Bump version
-        run: yarn release minor
+        run: yarn release patch
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
