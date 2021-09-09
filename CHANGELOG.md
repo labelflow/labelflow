@@ -1,6 +1,24 @@
 # Changelog
 
-## 0.0.1
+## [1.0.1](https://github.com/Labelflow/labelflow/compare/1.0.0...1.0.1)
+
+- Bug/heavy images dont load without reload [`#435`](https://github.com/Labelflow/labelflow/pull/435)
+- Add clarity tracking code [`#428`](https://github.com/Labelflow/labelflow/pull/428)
+- Fix bump-version job in the CI [`#434`](https://github.com/Labelflow/labelflow/pull/434)
+- Add Sentry to capture exceptions in client, server and service worker [`#432`](https://github.com/Labelflow/labelflow/pull/432)
+- Add link to documentation in website [`#433`](https://github.com/Labelflow/labelflow/pull/433)
+- Feature/robustify app more [`#429`](https://github.com/Labelflow/labelflow/pull/429)
+- Feature/signin modal buttons [`#423`](https://github.com/Labelflow/labelflow/pull/423)
+- Fix Bug weird touch move on android on openlayers [`#425`](https://github.com/Labelflow/labelflow/pull/425)
+- Feature/remote server [`#349`](https://github.com/Labelflow/labelflow/pull/349)
+- Updated README.md for better view [`#414`](https://github.com/Labelflow/labelflow/pull/414)
+- Add versioning and GitHub releases [`#375`](https://github.com/Labelflow/labelflow/pull/375)
+- Feature/fix ci e2e [`#416`](https://github.com/Labelflow/labelflow/pull/416)
+- Feature/#315 nextauth [`#396`](https://github.com/Labelflow/labelflow/pull/396)
+- #314 file upload resolver for online storage [`#326`](https://github.com/Labelflow/labelflow/pull/326)
+- Implement the api/graphql server [`#330`](https://github.com/Labelflow/labelflow/pull/330)
+- Implement basic upload route [`#329`](https://github.com/Labelflow/labelflow/pull/329)
+## 1.0.0 - 2021-09-02
 
 - Enhancement/lighthouse fixes [`#411`](https://github.com/Labelflow/labelflow/pull/411)
 - Fix z index problems & cleanup navbar [`#410`](https://github.com/Labelflow/labelflow/pull/410)
