@@ -1,6 +1,7 @@
 import { gql } from "@apollo/client";
 import { v4 as uuidV4 } from "uuid";
 import {
+  MembershipRole,
   MutationCreateWorkspaceArgs,
   Workspace,
   WorkspaceType,
@@ -113,6 +114,33 @@ describe("createWorkspace mutation", () => {
     const { data } = await createWorkspace();
 
     expect(data?.createWorkspace.type).toEqual(WorkspaceType.Online);
+  });
+
+  it("sets the user who created the workspace as admin", async () => {
+    const { data } = await client.mutate<{
+      createWorkspace: Pick<Workspace, "id" | "memberships">;
+    }>({
+      mutation: gql`
+        mutation createWorkspace($data: WorkspaceCreateInput!) {
+          createWorkspace(data: $data) {
+            id
+            memberships {
+              id
+              role
+              user {
+                id
+              }
+            }
+          }
+        }
+      `,
+      variables: { data: { name: "test" } },
+    });
+
+    expect(data?.createWorkspace.memberships[0]?.user.id).toEqual(user.id);
+    expect(data?.createWorkspace.memberships[0]?.role).toEqual(
+      MembershipRole.Admin
+    );
   });
 });
 

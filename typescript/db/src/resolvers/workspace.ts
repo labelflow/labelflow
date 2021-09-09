@@ -7,6 +7,7 @@ import {
   WorkspaceType,
   WorkspacePlan,
   Workspace,
+  Membership,
   MutationCreateWorkspaceArgs,
   MutationUpdateWorkspaceArgs,
 } from "@labelflow/graphql-types";
@@ -109,10 +110,29 @@ const updateWorkspace = async (
   return addTypeToWorkspace(updatedWorkspace);
 };
 
+const memberships = async (parent: Workspace) => {
+  return (await prisma.membership.findMany({
+    where: { workspaceId: parent.id },
+    // needs to be casted to avoid conflicts between enums
+  })) as Omit<Membership, "user" | "workspace">[];
+};
+
+const user = async (
+  parent: NonNullable<
+    Prisma.PromiseReturnType<typeof prisma.membership.findUnique>
+  >
+) => {
+  return await prisma.user.findUnique({
+    where: { id: parent.userId },
+  });
+};
+
 export default {
   Query: {
     workspace,
     workspaces,
   },
   Mutation: { createWorkspace, updateWorkspace },
+  Workspace: { memberships },
+  Membership: { user },
 };
