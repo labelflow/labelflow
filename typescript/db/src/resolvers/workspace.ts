@@ -41,7 +41,7 @@ const workspace = async (
   });
 
   if (workspaceFromDb == null) {
-    throw new Error(`Couldn't find a workspace with id: ${args.where.id}`);
+    throw new Error(`Couldn't find a workspace with id: "${args.where.id}"`);
   }
   return addTypeToWorkspace(workspaceFromDb);
 };
@@ -50,7 +50,6 @@ const workspaces = async (
   _: any,
   args: QueryWorkspacesArgs
 ): Promise<DbWorkspaceWithType[]> => {
-  console.log("hello");
   const workspacesFromDb = await prisma.workspace.findMany({
     skip: args.skip ?? undefined,
     take: args.first ?? undefined,
@@ -72,7 +71,7 @@ const createWorkspace = async (
 
   if (userInDb == null) {
     throw new Error(
-      `Couldn't create workspace: User with id "${user.id}"" doesn't exist in the database`
+      `Couldn't create workspace: User with id "${user.id}" doesn't exist in the database`
     );
   }
 
@@ -93,18 +92,18 @@ const updateWorkspace = async (
   _: any,
   args: MutationUpdateWorkspaceArgs
 ): Promise<DbWorkspaceWithType> => {
-  const dataWithSlug =
+  const newNameAndSlugs =
     typeof args.data.name === "string"
       ? {
-          ...args.data,
-          name: args.data.name ?? undefined,
+          name: args.data.name,
           slug: slugify(args.data.name, { lower: true }),
         }
-      : { ...args.data, name: args.data.name ?? undefined };
+      : // needed to make prisma happy with the types
+        { name: undefined };
 
   const updatedWorkspace = await prisma.workspace.update({
     where: args.where,
-    data: dataWithSlug,
+    data: { ...args.data, ...newNameAndSlugs },
   });
 
   return addTypeToWorkspace(updatedWorkspace);
