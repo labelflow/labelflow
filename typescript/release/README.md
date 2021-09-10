@@ -4,7 +4,7 @@ We use it [release-it](https://github.com/release-it/release-it) to handle our r
 
 It is automatically ran on the CI when a PR is merged into `main`.
 
-You can run it manually at the root of the repository using `yarn release [ major | minor | patch ]` (by default, the CI only creates minor releases).
+You can run it manually at the root of the repository using `yarn release [ major | minor | patch ]` (by default, the CI only creates patch releases).
 
 1. It update `@labelflow/web` version according to the kind of release you chose
 2. It generates a changelog using [auto-changelog](https://github.com/cookpete/auto-changelog)

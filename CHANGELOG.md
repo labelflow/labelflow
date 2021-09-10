@@ -1,15 +1,12 @@
 # Changelog
 
-## [0.0.1](https://github.com/labelflow/labelflow/compare/1.3.0...0.0.1)
+## [1.0.2](https://github.com/labelflow/labelflow/compare/1.0.1...1.0.2)
+
+- Enhancement/release patches instead of minors [`#437`](https://github.com/labelflow/labelflow/pull/437)
+## [1.0.1](https://github.com/labelflow/labelflow/compare/1.0.0...1.0.1) - 2021-09-09
 
 - Bug/heavy images dont load without reload [`#435`](https://github.com/labelflow/labelflow/pull/435)
-## [1.3.0](https://github.com/labelflow/labelflow/compare/1.2.0...1.3.0) - 2021-09-08
-
-## [1.2.0](https://github.com/labelflow/labelflow/compare/1.1.0...1.2.0) - 2021-09-08
-
 - Add clarity tracking code [`#428`](https://github.com/labelflow/labelflow/pull/428)
-## [1.1.0](https://github.com/labelflow/labelflow/compare/1.0.0...1.1.0) - 2021-09-08
-
 - Fix bump-version job in the CI [`#434`](https://github.com/labelflow/labelflow/pull/434)
 - Add Sentry to capture exceptions in client, server and service worker [`#432`](https://github.com/labelflow/labelflow/pull/432)
 - Add link to documentation in website [`#433`](https://github.com/labelflow/labelflow/pull/433)

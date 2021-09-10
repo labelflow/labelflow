@@ -1,6 +1,6 @@
 {
     "git": {
-        "changelog": "yarn auto-changelog --stdout --commit-limit false -u --template ../release/changelog-template-compact.hbs",
+        "changelog": "yarn auto-changelog --stdout --commit-limit false --unreleased-only --template ../release/changelog-template-compact.hbs",
         "commitMessage": "Release ${version}\n\n[skip ci]",
         "tagAnnotation": "Release ${version}\n\n${changelog}"
     },
