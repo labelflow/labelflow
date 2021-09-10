@@ -138,9 +138,12 @@ export const EditLabelClassMenu = () => {
     (selectedTool === Tools.SELECTION && selectedLabelId != null);
 
   useHotkeys(
-    keymap.changeClass.key,
+    "*", // We have to manually check if the input corresponds to a change class key because otherwise on AZERTY keyboards we can't change classes when pressing numbers
     (keyboardEvent) => {
-      if (!isContextMenuOpen) {
+      if (
+        keymap.changeClass.key.split(",").includes(keyboardEvent.key) &&
+        !isContextMenuOpen
+      ) {
         // We do not want to interfere with the right click popover shortcuts if it is opened
         const digit = Number(keyboardEvent.code[5]);
         const indexOfLabelClass = (digit + 9) % 10;
