@@ -10,6 +10,5 @@ input MembershipCreateInput {
 }
 
 input MembershipUpdateInput {
-  name: String
   role: MembershipRole
 }

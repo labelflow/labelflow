@@ -117,16 +117,6 @@ const memberships = async (parent: Workspace) => {
   })) as Omit<Membership, "user" | "workspace">[];
 };
 
-const user = async (
-  parent: NonNullable<
-    Prisma.PromiseReturnType<typeof prisma.membership.findUnique>
-  >
-) => {
-  return await prisma.user.findUnique({
-    where: { id: parent.userId },
-  });
-};
-
 export default {
   Query: {
     workspace,
@@ -134,5 +124,4 @@ export default {
   },
   Mutation: { createWorkspace, updateWorkspace },
   Workspace: { memberships },
-  Membership: { user },
 };
