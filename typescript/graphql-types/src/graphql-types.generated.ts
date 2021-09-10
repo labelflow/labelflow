@@ -60,8 +60,7 @@ export type DatasetWhereInput = {
 
 export type DatasetWhereUniqueInput = {
   id?: Maybe<Scalars['ID']>;
-  name?: Maybe<Scalars['String']>;
-  slug?: Maybe<Scalars['String']>;
+  slugs?: Maybe<WorkspaceAndDatasetSlugs>;
 };
 
 
@@ -572,6 +571,11 @@ export type Workspace = {
   memberships: Array<Membership>;
 };
 
+export type WorkspaceAndDatasetSlugs = {
+  datasetSlug: Scalars['String'];
+  workspaceSlug: Scalars['String'];
+};
+
 export type WorkspaceCreateInput = {
   id?: Maybe<Scalars['ID']>;
   name: Scalars['String'];
@@ -732,6 +736,7 @@ export type ResolversTypes = {
   UserUpdateInput: UserUpdateInput;
   UserWhereUniqueInput: UserWhereUniqueInput;
   Workspace: ResolverTypeWrapper<Workspace>;
+  WorkspaceAndDatasetSlugs: WorkspaceAndDatasetSlugs;
   WorkspaceCreateInput: WorkspaceCreateInput;
   WorkspacePlan: WorkspacePlan;
   WorkspaceType: WorkspaceType;
@@ -795,6 +800,7 @@ export type ResolversParentTypes = {
   UserUpdateInput: UserUpdateInput;
   UserWhereUniqueInput: UserWhereUniqueInput;
   Workspace: Workspace;
+  WorkspaceAndDatasetSlugs: WorkspaceAndDatasetSlugs;
   WorkspaceCreateInput: WorkspaceCreateInput;
   WorkspaceUpdateInput: WorkspaceUpdateInput;
   WorkspaceWhereUniqueInput: WorkspaceWhereUniqueInput;

@@ -35,8 +35,7 @@ input DatasetWhereInput {
 
 input DatasetWhereUniqueInput {
   id: ID
-  name: String
-  slug: String
+  slugs: WorkspaceAndDatasetSlugs
 }
 
 scalar DateTime
@@ -332,6 +331,11 @@ type Workspace {
   plan: WorkspacePlan!
   datasets: [Dataset!]!
   memberships: [Membership!]!
+}
+
+input WorkspaceAndDatasetSlugs {
+  datasetSlug: String!
+  workspaceSlug: String!
 }
 
 input WorkspaceCreateInput {
