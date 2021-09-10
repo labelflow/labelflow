@@ -53,17 +53,17 @@ model LabelClass {
 }
 
 model Dataset {
-  id           String       @id @default(uuid()) @db.Uuid
-  createdAt    DateTime     @default(now())
-  updatedAt    DateTime     @updatedAt
-  name         String
-  slug         String
-  images       Image[]
-  labelClasses LabelClass[]
-  workspaceId  String       @db.Uuid
-  workspace    Workspace    @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  id            String       @id @default(uuid()) @db.Uuid
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  name          String
+  slug          String
+  images        Image[]
+  labelClasses  LabelClass[]
+  workspaceSlug String
+  workspace     Workspace    @relation(fields: [workspaceSlug], references: [slug], onDelete: Cascade)
 
-  @@unique([workspaceId, slug])
+  @@unique(fields: [workspaceSlug, slug], name: "slugs")
 }
 
 model Workspace {
