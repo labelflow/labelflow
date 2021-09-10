@@ -28,6 +28,7 @@ import {
   DrawingToolState,
 } from "../../../connectors/labelling-state";
 import { theme } from "../../../theme";
+import { useImagePrefecthing } from "../../../hooks/use-image-prefetching";
 
 const empty: any[] = [];
 
@@ -116,6 +117,8 @@ export const OpenlayersMap = () => {
     variables: { id: imageId },
     skip: !imageId,
   }).data?.image;
+
+  useImagePrefecthing();
 
   const client = useApolloClient();
   const [containerRef, bounds] = useMeasure();

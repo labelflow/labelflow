@@ -113,7 +113,7 @@ const performWelcomeWorkflow = async ({
       getDatasetsResult?.datasets == null
         ? undefined
         : getDatasetsResult?.datasets.filter(
-            (dataset: DatasetType) => dataset.name === "Demo dataset"
+            (dataset: DatasetType) => dataset.name === "Tutorial dataset"
           )?.[0] ?? undefined;
 
     if (!demoDataset) {
