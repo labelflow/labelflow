@@ -151,7 +151,7 @@ export const EditLabelClassMenu = () => {
       }
     },
     {},
-    [labelClasses, onSelectedClassChange]
+    [labelClasses, onSelectedClassChange, isContextMenuOpen, setIsOpen]
   );
 
   return (
