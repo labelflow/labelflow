@@ -1,8 +1,10 @@
 import { gql } from "@apollo/client";
 import { v4 as uuidV4 } from "uuid";
 import {
+  Membership,
   MembershipRole,
   MutationCreateWorkspaceArgs,
+  MutationCreateMembershipArgs,
   Workspace,
   WorkspaceType,
 } from "@labelflow/graphql-types";
@@ -411,5 +413,80 @@ describe("updatedWorkspace mutation", () => {
     });
 
     expect(data?.updateWorkspace.slug).toEqual("new-name");
+  });
+});
+
+describe("nested resolvers", () => {
+  const createMembership = async (
+    data?: MutationCreateMembershipArgs["data"]
+  ) => {
+    return await client.mutate<{
+      createMembership: Membership;
+    }>({
+      mutation: gql`
+        mutation createMembership($data: MembershipCreateInput!) {
+          createMembership(data: $data) {
+            id
+            role
+          }
+        }
+      `,
+      variables: { data },
+    });
+  };
+
+  it("can query memberships", async () => {
+    const id = (await createWorkspace()).data?.createWorkspace.id as string;
+
+    const membershipId = (
+      await createMembership({
+        userId: testUser2Id,
+        workspaceId: id,
+        role: MembershipRole.Admin,
+      })
+    ).data?.createMembership.id as string;
+
+    const { data } = await client.query<{
+      workspace: Pick<Workspace, "id" | "memberships">;
+    }>({
+      query: gql`
+        query workspace($id: ID!) {
+          workspace(where: { id: $id }) {
+            id
+            memberships {
+              id
+            }
+          }
+        }
+      `,
+      variables: { id },
+      fetchPolicy: "no-cache",
+    });
+
+    // memberships[0] is generated when the workspace is created
+    expect(data.workspace.memberships[1].id).toEqual(membershipId);
+  });
+
+  it("can query datasets", async () => {
+    const id = (await createWorkspace()).data?.createWorkspace.id as string;
+
+    const { data } = await client.query<{
+      workspace: Pick<Workspace, "id" | "datasets">;
+    }>({
+      query: gql`
+        query workspace($id: ID!) {
+          workspace(where: { id: $id }) {
+            id
+            datasets {
+              id
+            }
+          }
+        }
+      `,
+      variables: { id },
+      fetchPolicy: "no-cache",
+    });
+
+    expect(data.workspace.datasets).toEqual([]);
   });
 });

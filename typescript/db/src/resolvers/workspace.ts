@@ -113,8 +113,16 @@ const updateWorkspace = async (
 const memberships = async (parent: Workspace) => {
   return (await prisma.membership.findMany({
     where: { workspaceId: parent.id },
+    orderBy: { createdAt: Prisma.SortOrder.asc },
     // needs to be casted to avoid conflicts between enums
   })) as Omit<Membership, "user" | "workspace">[];
+};
+
+const datasets = async (parent: Workspace) => {
+  return await prisma.dataset.findMany({
+    where: { workspaceSlug: parent.slug },
+    orderBy: { createdAt: Prisma.SortOrder.asc },
+  });
 };
 
 export default {
@@ -123,5 +131,5 @@ export default {
     workspaces,
   },
   Mutation: { createWorkspace, updateWorkspace },
-  Workspace: { memberships },
+  Workspace: { memberships, datasets },
 };
