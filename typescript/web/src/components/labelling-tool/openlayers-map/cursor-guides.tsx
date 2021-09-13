@@ -15,7 +15,7 @@ export const CursorGuides = ({ map }: { map: OlMap | null }) => {
   useEffect(() => {
     let previousPosition: Array<number> = [];
     if (!map) return;
-    const onPointerMove = (e: MapBrowserEvent) => {
+    const onPointerMove = (e: MapBrowserEvent<UIEvent>) => {
       if (!horizontalBarRef.current || !verticalBarRef.current) return;
       if (
         previousPosition[0] === e.pixel[0] &&

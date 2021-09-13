@@ -1,4 +1,5 @@
 import { RouteHandlerObject, RouteHandlerCallbackOptions } from "workbox-core";
+import { captureException } from "@sentry/nextjs";
 
 export class UploadServer implements RouteHandlerObject {
   private cacheName: string;
@@ -9,52 +10,51 @@ export class UploadServer implements RouteHandlerObject {
   }
 
   async handle({ request }: RouteHandlerCallbackOptions): Promise<Response> {
-    const cache = await caches.open(this.cacheName);
-    switch (request.method) {
-      // Handles upload
-      case "PUT": {
-        const formData = await request.formData();
-        const blob = formData.get("image") as Blob;
+    try {
+      const cache = await caches.open(this.cacheName);
+      switch (request.method) {
+        // Handles upload
+        case "PUT": {
+          const formData = await request.formData();
+          const blob = formData.get("image") as Blob;
 
-        if (!blob) {
-          return new Response("", {
-            status: 400,
-            statusText:
-              "Could not retrieve image blob from form data. It needs to be stored under the 'image' key",
+          if (!blob) {
+            return new Response("", {
+              status: 400,
+              statusText:
+                "Could not retrieve image blob from form data. It needs to be stored under the 'image' key",
+            });
+          }
+          const responseOfGet = new Response(blob, {
+            status: 200,
+            statusText: "OK",
+            headers: new Headers({
+              "Content-Type": blob.type ?? "application/octet-stream",
+              "Content-Length": blob.size.toString() ?? "0",
+            }),
           });
+
+          await cache.put(request.url, responseOfGet);
+          break;
         }
-        const responseOfGet = new Response(blob, {
-          status: 200,
-          statusText: "OK",
-          headers: new Headers({
-            "Content-Type":
-              request.headers?.get?.("Content-Type") ??
-              blob.type ??
-              "application/octet-stream",
-            "Content-Length":
-              request.headers?.get?.("Content-Length") ??
-              blob.size.toString() ??
-              "0",
-          }),
-        });
+        // Handles "unupload" when the given asset is deleted
+        case "DELETE": {
+          await cache.delete(request.url);
+          break;
+        }
+        default:
+          throw new Error(`Method ${request.method} not allowed`);
+      }
 
-        await cache.put(request.url, responseOfGet);
-        break;
-      }
-      // Handles "unupload" when the given asset is deleted
-      case "DELETE": {
-        await cache.delete(request.url);
-        break;
-      }
-      default:
-        throw new Error(`Method ${request.method} not allowed`);
+      const response = new Response("", {
+        status: 200,
+        statusText: "OK",
+      });
+
+      return response;
+    } catch (error) {
+      captureException(error);
+      throw error;
     }
-
-    const response = new Response("", {
-      status: 200,
-      statusText: "OK",
-    });
-
-    return response;
   }
 }

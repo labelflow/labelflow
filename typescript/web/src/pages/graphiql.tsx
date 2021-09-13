@@ -12,8 +12,10 @@ import {
 import { RiArrowRightSLine } from "react-icons/ri";
 import { Meta } from "../components/meta";
 import { Layout } from "../components/layout";
-import { AppLifecycleManager } from "../components/app-lifecycle-manager";
+import { ServiceWorkerManagerModal } from "../components/service-worker-manager";
+import { WelcomeManager } from "../components/welcome-manager";
 import { AuthManager } from "../components/auth-manager";
+import { CookieBanner } from "../components/cookie-banner";
 
 const GraphiQL = dynamic(() => import("../components/graphiql"), {
   ssr: false,
@@ -30,9 +32,11 @@ const GraphiQL = dynamic(() => import("../components/graphiql"), {
 const GraphqlPlayground = () => {
   return (
     <>
-      <AppLifecycleManager />
-      <Meta title="LabelFlow | GraphiQL" />
+      <ServiceWorkerManagerModal />
+      <WelcomeManager />
       <AuthManager />
+      <Meta title="LabelFlow | GraphiQL" />
+      <CookieBanner />
       <Layout
         topBarLeftContent={
           <Breadcrumb

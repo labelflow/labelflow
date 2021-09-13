@@ -7,13 +7,15 @@ import { NavBar } from "../components/website/Navbar/NavBar";
 import { Footer } from "../components/website/Footer/Footer";
 // import { PricingTable } from "../components/website/Pricing/PricingTable";
 import { Meta } from "../components/meta";
-import { AppLifecycleManager } from "../components/app-lifecycle-manager";
+import { ServiceWorkerManagerBackground } from "../components/service-worker-manager";
+import { CookieBanner } from "../components/cookie-banner";
 
 export default function Pricing() {
   return (
     <>
-      <AppLifecycleManager noModals />
+      <ServiceWorkerManagerBackground />
       <Meta title="LabelFlow | Pricing" />
+      <CookieBanner />
       <Box minH="640px">
         <NavBar />
         {/* <Hero /> */}

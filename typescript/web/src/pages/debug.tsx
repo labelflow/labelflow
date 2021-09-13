@@ -25,8 +25,9 @@ import {
 } from "../utils/detect-scope";
 
 import { Layout } from "../components/layout";
-import { AppLifecycleManager } from "../components/app-lifecycle-manager";
+import { ServiceWorkerManagerBackground } from "../components/service-worker-manager";
 import { AuthManager } from "../components/auth-manager";
+import { CookieBanner } from "../components/cookie-banner";
 
 export const debugQuery = gql`
   query getDebug {
@@ -39,9 +40,10 @@ const DebugPage = () => {
 
   return (
     <>
-      <AppLifecycleManager noModals />
+      <ServiceWorkerManagerBackground />
       <AuthManager />
       <Meta title="LabelFlow | Debug" />
+      <CookieBanner />
       <Layout
         topBarLeftContent={
           <Breadcrumb
@@ -79,6 +81,26 @@ const DebugPage = () => {
                     href={`https://github.com/${process.env.NEXT_PUBLIC_VERCEL_GIT_REPO_OWNER}/${process.env.NEXT_PUBLIC_VERCEL_GIT_REPO_SLUG}/issues/new/choose`}
                   >
                     Link to Github issue tracker
+                  </Link>
+                </ListItem>
+
+                <ListItem>
+                  <Link
+                    target="_blank"
+                    rel="noreferrer"
+                    href="https://sentry.io/organizations/labelflow/projects/labelflow/"
+                  >
+                    Link to Sentry error tracker
+                  </Link>
+                </ListItem>
+
+                <ListItem>
+                  <Link
+                    target="_blank"
+                    rel="noreferrer"
+                    href={`https://clarity.microsoft.com/projects/view/${process.env.NEXT_PUBLIC_CLARITY}/dashboard`}
+                  >
+                    Link to Clarity usage analytics
                   </Link>
                 </ListItem>
 

@@ -91,7 +91,8 @@ describe("Polygon drawing", () => {
   let datasetId: string;
   let datasetSlug: string;
   let imageId: string;
-  beforeEach(() =>
+  beforeEach(() => {
+    cy.setCookie("consentedCookies", "true");
     cy.window().then(async () => {
       const createResult = await createDataset("cypress test dataset");
       datasetId = createResult.id;
@@ -104,8 +105,8 @@ describe("Polygon drawing", () => {
       imageId = id;
 
       await createLabelClass("Rocket", "#00ff00", datasetId);
-    })
-  );
+    });
+  });
 
   it("switches between drawing tools", () => {
     // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard

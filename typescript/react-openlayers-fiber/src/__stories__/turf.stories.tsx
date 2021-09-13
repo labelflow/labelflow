@@ -3,12 +3,13 @@ import React, { useEffect, useState } from "react";
 import { Vector } from "ol/source";
 import { fromLonLat } from "ol/proj";
 import GeoJSON from "ol/format/GeoJSON";
+import { Geometry } from "ol/geom";
 import { Feature, LineString, lineDistance, along } from "@turf/turf";
 
 import { Map } from "../map";
 
 export const Turf = () => {
-  const [vectorSource, setVectorSource] = useState<Vector>();
+  const [vectorSource, setVectorSource] = useState<Vector<Geometry>>();
 
   useEffect(() => {
     if (!vectorSource) return;

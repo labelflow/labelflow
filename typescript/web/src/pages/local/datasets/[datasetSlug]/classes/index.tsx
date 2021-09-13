@@ -1,3 +1,4 @@
+import React from "react";
 import { useQuery, gql } from "@apollo/client";
 import NextLink from "next/link";
 import {
@@ -12,7 +13,7 @@ import {
 import { useRouter } from "next/router";
 import { RiArrowRightSLine } from "react-icons/ri";
 import { useErrorHandler } from "react-error-boundary";
-import { AppLifecycleManager } from "../../../../../components/app-lifecycle-manager";
+import { ServiceWorkerManagerModal } from "../../../../../components/service-worker-manager";
 import { KeymapButton } from "../../../../../components/layout/top-bar/keymap-button";
 import { ImportButton } from "../../../../../components/import-button";
 import { ExportButton } from "../../../../../components/export-button";
@@ -20,8 +21,11 @@ import { Meta } from "../../../../../components/meta";
 import { Layout } from "../../../../../components/layout";
 import { DatasetTabBar } from "../../../../../components/layout/tab-bar/dataset-tab-bar";
 import { ClassesList } from "../../../../../components/dataset-class-list";
-import Error404Page from "../../../../404";
+import { Error404Content } from "../../../../404";
 import { AuthManager } from "../../../../../components/auth-manager";
+
+import { WelcomeManager } from "../../../../../components/welcome-manager";
+import { CookieBanner } from "../../../../../components/cookie-banner";
 
 const ArrowRightIcon = chakra(RiArrowRightSLine);
 
@@ -38,7 +42,11 @@ const DatasetClassesPage = () => {
   const router = useRouter();
   const datasetSlug = router?.query?.datasetSlug as string;
 
-  const { data: datasetResult, error } = useQuery<{
+  const {
+    data: datasetResult,
+    error,
+    loading,
+  } = useQuery<{
     dataset: { id: string; name: string };
   }>(datasetNameQuery, {
     variables: {
@@ -49,23 +57,29 @@ const DatasetClassesPage = () => {
   const datasetName = datasetResult?.dataset.name;
 
   const handleError = useErrorHandler();
-  if (error) {
+  if (error && !loading) {
     if (!error.message.match(/No dataset with slug/)) {
       handleError(error);
     }
     return (
       <>
-        <AppLifecycleManager />
-        <Error404Page />
+        <ServiceWorkerManagerModal />
+        <WelcomeManager />
+        <AuthManager />
+        <Meta title="LabelFlow | Dataset not found" />
+        <CookieBanner />
+        <Error404Content />
       </>
     );
   }
 
   return (
     <>
-      <AppLifecycleManager />
+      <ServiceWorkerManagerModal />
+      <WelcomeManager />
       <AuthManager />
       <Meta title="LabelFlow | Classes" />
+      <CookieBanner />
       <Layout
         topBarLeftContent={
           <Breadcrumb

@@ -12,7 +12,7 @@ import { QueryParamConfig, StringParam, useQueryParam } from "use-query-params";
 import type { Dataset as DatasetType } from "@labelflow/graphql-types";
 import { useRouter, NextRouter } from "next/router";
 import { useErrorHandler } from "react-error-boundary";
-import { browser } from "../../../utils/detect-scope";
+import { browser } from "../../utils/detect-scope";
 import { BrowserWarning } from "./steps/browser-warning";
 import { BrowserError } from "./steps/browser-error";
 import { Welcome } from "./steps/welcome";
@@ -20,7 +20,7 @@ import { Loading } from "./steps/loading";
 import {
   checkServiceWorkerReady,
   messageNoWindow,
-} from "../../../utils/check-service-worker";
+} from "../../utils/check-service-worker";
 
 const tutorialDatasetFirstImageUrl =
   "/local/datasets/tutorial-dataset/images/2bbbf664-5810-4760-a10f-841de2f35510";
@@ -113,7 +113,7 @@ const performWelcomeWorkflow = async ({
       getDatasetsResult?.datasets == null
         ? undefined
         : getDatasetsResult?.datasets.filter(
-            (dataset: DatasetType) => dataset.name === "Demo dataset"
+            (dataset: DatasetType) => dataset.name === "Tutorial dataset"
           )?.[0] ?? undefined;
 
     if (!demoDataset) {
@@ -122,6 +122,8 @@ const performWelcomeWorkflow = async ({
         await client.mutate({
           mutation: createDemoDatasetQuery,
           refetchQueries: [
+            "getDatasetData",
+            "getDatasetName",
             "getDatasets",
             "getDatasetById",
             "getAllImagesOfADataset",

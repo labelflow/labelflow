@@ -2,9 +2,10 @@ import React, { useCallback } from "react";
 import { useRouter } from "next/router";
 import { useQueryParam, StringParam } from "use-query-params";
 import { Meta } from "../../components/meta";
-import { AppLifecycleManager } from "../../components/app-lifecycle-manager";
+import { ServiceWorkerManagerBackground } from "../../components/service-worker-manager";
 import { Layout } from "../../components/layout";
 import { SigninModal } from "../../components/auth-manager/signin-modal";
+import { CookieBanner } from "../../components/cookie-banner";
 
 const LocalDatasetsIndexPage = () => {
   const router = useRouter();
@@ -15,8 +16,9 @@ const LocalDatasetsIndexPage = () => {
   }, []);
   return (
     <>
-      <AppLifecycleManager noModals />
+      <ServiceWorkerManagerBackground />
       <Meta title="LabelFlow | Sign in" />
+      <CookieBanner />
       <Layout>
         <SigninModal
           isOpen

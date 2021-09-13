@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "scripts": {
     "update": "yarn update:changelog; yarn update:license;",
-    "update:changelog": "auto-changelog --package --template changelog-template.hbs --output ../../CHANGELOG.md",
+    "update:changelog": "auto-changelog --package ../web/package.json --template changelog-template.hbs --output ../../CHANGELOG.md",
     "update:license": "ts-node src/update-license.ts"
   },
   "devDependencies": {

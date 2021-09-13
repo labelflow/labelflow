@@ -3,6 +3,7 @@ import imageSampleCollection from "../../typescript/web/src/utils/image-sample-c
 describe("Golden path", () => {
   it("Should execute the golden path without errors", () => {
     cy.setCookie("hasUserTriedApp", "false");
+    cy.setCookie("consentedCookies", "true");
     // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
     // cy.visit("/");
     // cy.contains("Try it now").click();

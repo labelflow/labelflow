@@ -6264,15 +6264,14 @@ __metadata:
     "@turf/turf": 6.3.0
     "@types/jest": 24.0.13
     "@types/lodash": 4.14.154
-    "@types/ol": 6.4.1
     "@types/proj4": ^2.5.0
     "@types/react": 17.0.0
     "@types/react-dom": 17.0.0
     "@types/react-reconciler": ^0.26.1
     "@types/storybook__react": 4.0.1
     lodash: ^4.17.21
-    ol: 6.4.3
-    ol-mapbox-style: 6.1.4
+    ol: 6.6.1
+    ol-mapbox-style: 6.4.1
     proj4: 2.6.3
     react: 17.x
     react-dom: 17.x
@@ -6281,7 +6280,7 @@ __metadata:
     scheduler: 0.20.1
     typescript: 4.3.5
   peerDependencies:
-    ol: 6.5.0
+    ol: 6.6.1
     react: 17.x
     react-dom: 17.x
   languageName: unknown
@@ -6321,6 +6320,7 @@ __metadata:
     "@labelflow/react-openlayers-fiber": "workspace:typescript/react-openlayers-fiber"
     "@next-auth/prisma-adapter": next
     "@prisma/client": 2.30.3
+    "@sentry/nextjs": ^6.12.0
     "@storybook/addon-actions": 6.3.0
     "@storybook/addons": 6.3.0
     "@storybook/client-api": ^6.3.7
@@ -6377,7 +6377,7 @@ __metadata:
     next-transpile-modules: 8.0.0
     node-polyfill-webpack-plugin: ^1.1.2
     nodemailer: ^6.6.3
-    ol: 6.5.0
+    ol: 6.6.1
     postcss: ^8.3.5
     query-string: ^7.0.0
     react: 17.x
@@ -6423,9 +6423,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@mapbox/mapbox-gl-style-spec@npm:^13.14.0":
-  version: 13.19.2
-  resolution: "@mapbox/mapbox-gl-style-spec@npm:13.19.2"
+"@mapbox/mapbox-gl-style-spec@npm:^13.20.1":
+  version: 13.21.0
+  resolution: "@mapbox/mapbox-gl-style-spec@npm:13.21.0"
   dependencies:
     "@mapbox/jsonlint-lines-primitives": ~2.0.2
     "@mapbox/point-geometry": ^0.1.0
@@ -6440,7 +6440,7 @@ __metadata:
     gl-style-format: bin/gl-style-format
     gl-style-migrate: bin/gl-style-migrate
     gl-style-validate: bin/gl-style-validate
-  checksum: d7b8e42babd22f3132b889afc80d93fcc37fb252ea52316bb74927d1364dc4921497ca362213d92d284065a2d8be870e00b001c3a67569e124722312939fc160
+  checksum: 8ba9562d504a14e8d201d641b681a4fcc1b3a1203d54023b0daaaa8b2596cbbe9a4970dadad0f4cf40c33a190bc07d0e44f12133abf801fe26ae05f2d7df58d8
   languageName: node
   linkType: hard
 
@@ -7143,6 +7143,172 @@ __metadata:
     zen-observable:
       optional: true
   checksum: 8ec6d43370f419975295f306699f87989dd64a099a29cf62ddacbbbe32df634f87451504d340e15321e74b0a3ca8a9b447736472f792102e234faa207395e6c9
+  languageName: node
+  linkType: hard
+
+"@sentry/browser@npm:6.12.0":
+  version: 6.12.0
+  resolution: "@sentry/browser@npm:6.12.0"
+  dependencies:
+    "@sentry/core": 6.12.0
+    "@sentry/types": 6.12.0
+    "@sentry/utils": 6.12.0
+    tslib: ^1.9.3
+  checksum: 929cbd78b4aa163d64df841124c350e35a49e611dbe3ff49479555bfa236d11eff2e5ae3370b776e80f6f402cb74c49a0ca2b1e594e9c6f97ed4b4b15955fba4
+  languageName: node
+  linkType: hard
+
+"@sentry/cli@npm:^1.68.0":
+  version: 1.68.0
+  resolution: "@sentry/cli@npm:1.68.0"
+  dependencies:
+    https-proxy-agent: ^5.0.0
+    mkdirp: ^0.5.5
+    node-fetch: ^2.6.0
+    npmlog: ^4.1.2
+    progress: ^2.0.3
+    proxy-from-env: ^1.1.0
+  bin:
+    sentry-cli: bin/sentry-cli
+  checksum: 7329a46403c5a78d55cb0b8cc8d72eb972ee0a10f7642caee4e7ecfd8332f67b4db9ee4ce7f00d8bedd3877ca8ca2afda201e0f0f0d708a141e75a32267f742d
+  languageName: node
+  linkType: hard
+
+"@sentry/core@npm:6.12.0":
+  version: 6.12.0
+  resolution: "@sentry/core@npm:6.12.0"
+  dependencies:
+    "@sentry/hub": 6.12.0
+    "@sentry/minimal": 6.12.0
+    "@sentry/types": 6.12.0
+    "@sentry/utils": 6.12.0
+    tslib: ^1.9.3
+  checksum: 3e0a2d433dcb9a9620030a1799aec8cb74e110b962b8aa1ec62ac0d6a8613d9443a94e6d70c7d2864ff6cc8d2b79d623e6456e14c572ac7776a18d8a1a1b97b9
+  languageName: node
+  linkType: hard
+
+"@sentry/hub@npm:6.12.0":
+  version: 6.12.0
+  resolution: "@sentry/hub@npm:6.12.0"
+  dependencies:
+    "@sentry/types": 6.12.0
+    "@sentry/utils": 6.12.0
+    tslib: ^1.9.3
+  checksum: 4de66e939a15237c4e1061c3532a1791da32a7d6f53f967849f7dc25e185c8794bea97f6a4a54adce13165127c8e0f718e24409db21861d56b8705f348a80320
+  languageName: node
+  linkType: hard
+
+"@sentry/integrations@npm:6.12.0":
+  version: 6.12.0
+  resolution: "@sentry/integrations@npm:6.12.0"
+  dependencies:
+    "@sentry/types": 6.12.0
+    "@sentry/utils": 6.12.0
+    localforage: ^1.8.1
+    tslib: ^1.9.3
+  checksum: 529c6ff345d6cc356537923167efb7c56b8908e481fb74ea7a8d57639faadfff8307ce14292cfc2bd065428a763cf14834c8a1db7dcb856e64d73bd4c34a14cb
+  languageName: node
+  linkType: hard
+
+"@sentry/minimal@npm:6.12.0":
+  version: 6.12.0
+  resolution: "@sentry/minimal@npm:6.12.0"
+  dependencies:
+    "@sentry/hub": 6.12.0
+    "@sentry/types": 6.12.0
+    tslib: ^1.9.3
+  checksum: 896895320cd54a5f8097dc4be32738e67dfa237abd0508d4c71b65db31afe932bfc8115cfdf93bca01313e288ff69143d95f95cd7675183775dd354f77230ef7
+  languageName: node
+  linkType: hard
+
+"@sentry/nextjs@npm:^6.12.0":
+  version: 6.12.0
+  resolution: "@sentry/nextjs@npm:6.12.0"
+  dependencies:
+    "@sentry/core": 6.12.0
+    "@sentry/integrations": 6.12.0
+    "@sentry/node": 6.12.0
+    "@sentry/react": 6.12.0
+    "@sentry/tracing": 6.12.0
+    "@sentry/utils": 6.12.0
+    "@sentry/webpack-plugin": 1.17.1
+    tslib: ^1.9.3
+  peerDependencies:
+    next: ^10.0.8 || ^11.0
+    react: 15.x || 16.x || 17.x
+  checksum: cecdc7e6c7e1f6ba82e6d6f76eb983bd4ebd81f74aca0b2b97fbfcc1ebd031c7c96ed4b01b83c069f45fa72db94936e261aeabfa1c1f6a31e269a6f428768bca
+  languageName: node
+  linkType: hard
+
+"@sentry/node@npm:6.12.0":
+  version: 6.12.0
+  resolution: "@sentry/node@npm:6.12.0"
+  dependencies:
+    "@sentry/core": 6.12.0
+    "@sentry/hub": 6.12.0
+    "@sentry/tracing": 6.12.0
+    "@sentry/types": 6.12.0
+    "@sentry/utils": 6.12.0
+    cookie: ^0.4.1
+    https-proxy-agent: ^5.0.0
+    lru_map: ^0.3.3
+    tslib: ^1.9.3
+  checksum: 13668f69d7f1304992e19832c355f854151c8bc4ab83a5450a51d16bab80c0bd85045cf7a8120306c88960ea0b9a6ccab40db3ed95256f35ca793ef1d2e0502f
+  languageName: node
+  linkType: hard
+
+"@sentry/react@npm:6.12.0":
+  version: 6.12.0
+  resolution: "@sentry/react@npm:6.12.0"
+  dependencies:
+    "@sentry/browser": 6.12.0
+    "@sentry/minimal": 6.12.0
+    "@sentry/types": 6.12.0
+    "@sentry/utils": 6.12.0
+    hoist-non-react-statics: ^3.3.2
+    tslib: ^1.9.3
+  peerDependencies:
+    react: 15.x || 16.x || 17.x
+  checksum: b484a87160abb52eaf4f53a0e17b60507cd44c125be24e77b98cdcbe76cc8b6ca990110515c59253f7df9d38929a651ee51a93e9d3e69273417cfdefd30247b2
+  languageName: node
+  linkType: hard
+
+"@sentry/tracing@npm:6.12.0":
+  version: 6.12.0
+  resolution: "@sentry/tracing@npm:6.12.0"
+  dependencies:
+    "@sentry/hub": 6.12.0
+    "@sentry/minimal": 6.12.0
+    "@sentry/types": 6.12.0
+    "@sentry/utils": 6.12.0
+    tslib: ^1.9.3
+  checksum: 9b4b7c8f13932dd6c9e522ba952d068b06d37db4ce8e94f2c644c29499712a82091bf062a2e9ffa002d92cc07942ebd500cf8c7545d3fc4d31018bdcce4c6f6a
+  languageName: node
+  linkType: hard
+
+"@sentry/types@npm:6.12.0":
+  version: 6.12.0
+  resolution: "@sentry/types@npm:6.12.0"
+  checksum: f70b5d0507a9ee13b22ace5548f2cb1fb2b5defacbbfe12225ac66fed456d59843fa9ef4e72f9f9c21d5f94240d167e0ef0a0ad98f5c39055ab5e354843e179d
+  languageName: node
+  linkType: hard
+
+"@sentry/utils@npm:6.12.0":
+  version: 6.12.0
+  resolution: "@sentry/utils@npm:6.12.0"
+  dependencies:
+    "@sentry/types": 6.12.0
+    tslib: ^1.9.3
+  checksum: 7573fa4e774c8a1e72434f9805b7751d2ffe6688aff925e0cce0a8d93b921d84ebeff41c71da3c7a92f97b210c383b35a1d2cb023a70c25447c0fde7ff5a80bd
+  languageName: node
+  linkType: hard
+
+"@sentry/webpack-plugin@npm:1.17.1":
+  version: 1.17.1
+  resolution: "@sentry/webpack-plugin@npm:1.17.1"
+  dependencies:
+    "@sentry/cli": ^1.68.0
+  checksum: 1916e1bb5c43a4a440c237a8739280c62974a248daa95c5b9b9c264a4a5a8fe887a7cdc79ffa484fef43b393361bb329cd41468d59ed13cfdbbed8b6818b5544
   languageName: node
   linkType: hard
 
@@ -10761,13 +10927,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/arcgis-rest-api@npm:*":
-  version: 10.4.4
-  resolution: "@types/arcgis-rest-api@npm:10.4.4"
-  checksum: d2991099d1f1d9496a5619fc90d72d48eca218e82f1145fef5efd07c1670c56e6dd4d83d7e464d29364cd61b7b7c2bb131925c6c8abbaac56ef0e8452ce68bff
-  languageName: node
-  linkType: hard
-
 "@types/aria-query@npm:^4.2.0":
   version: 4.2.1
   resolution: "@types/aria-query@npm:4.2.1"
@@ -11013,13 +11172,6 @@ __metadata:
   dependencies:
     "@types/node": "*"
   checksum: 367079834ddb8984e9b740d4219d01cfa9683e8552b1dfda473817e7f2b33d750453adda148d1b99cb67bd6e990fad8bd31e4034b5e9311dfb9803e6f1fbb0dc
-  languageName: node
-  linkType: hard
-
-"@types/geojson@npm:*":
-  version: 7946.0.7
-  resolution: "@types/geojson@npm:7946.0.7"
-  checksum: 18e705c22496a4c8cf4f56f972d7e2c5621adcf8c741ef6169bcad4a3dbabd0d622a5377d9b23d0f3c19388a592fa818d591df3971df3ee95b8df70bc6c2510d
   languageName: node
   linkType: hard
 
@@ -11417,17 +11569,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/ol@npm:6.4.1":
-  version: 6.4.1
-  resolution: "@types/ol@npm:6.4.1"
-  dependencies:
-    "@types/arcgis-rest-api": "*"
-    "@types/geojson": "*"
-    "@types/topojson-specification": "*"
-  checksum: f2753386c98455403836e81cd196ad0190705228257e552a309861648c70d8cbf0ac9bf1a75303dc354fbf13d5a1d90af97c9b04069ebaefd82e1bd6174e73d1
-  languageName: node
-  linkType: hard
-
 "@types/overlayscrollbars@npm:^1.12.0":
   version: 1.12.0
   resolution: "@types/overlayscrollbars@npm:1.12.0"
@@ -11727,15 +11868,6 @@ __metadata:
   version: 1.4.2
   resolution: "@types/tinycolor2@npm:1.4.2"
   checksum: 4687c4c7081d08e8758f8238daf48d5fb19bb0ad15a14354dd742ad1d61ff6b66fcbd8f4cd6388ecb9e6b155bfec104883c550495ec0e0ff5333b6e5bcc56795
-  languageName: node
-  linkType: hard
-
-"@types/topojson-specification@npm:*":
-  version: 1.0.1
-  resolution: "@types/topojson-specification@npm:1.0.1"
-  dependencies:
-    "@types/geojson": "*"
-  checksum: f04b4c8f64811e58328addb1dbc696746c62c5789ee242616bb21898ae4fad33dda1e58028256202eaf1199ee86f5a7a35a5666398e93a94eaad641c1be7940d
   languageName: node
   linkType: hard
 
@@ -15592,7 +15724,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cookie@npm:^0.4.0":
+"cookie@npm:^0.4.0, cookie@npm:^0.4.1":
   version: 0.4.1
   resolution: "cookie@npm:0.4.1"
   checksum: bd7c47f5d94ab70ccdfe8210cde7d725880d2fcda06d8e375afbdd82de0c8d3b73541996e9ce57d35f67f672c4ee6d60208adec06b3c5fc94cebb85196084cf8
@@ -22527,6 +22659,15 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
+"lie@npm:3.1.1":
+  version: 3.1.1
+  resolution: "lie@npm:3.1.1"
+  dependencies:
+    immediate: ~3.0.5
+  checksum: 6da9f2121d2dbd15f1eca44c0c7e211e66a99c7b326ec8312645f3648935bc3a658cf0e9fa7b5f10144d9e2641500b4f55bd32754607c3de945b5f443e50ddd1
+  languageName: node
+  linkType: hard
+
 "lie@npm:~3.3.0":
   version: 3.3.0
   resolution: "lie@npm:3.3.0"
@@ -22662,6 +22803,15 @@ fsevents@^1.2.7:
     emojis-list: ^3.0.0
     json5: ^1.0.1
   checksum: d150b15e7a42ac47d935c8b484b79e44ff6ab4c75df7cc4cb9093350cf014ec0b17bdb60c5d6f91a37b8b218bd63b973e263c65944f58ca2573e402b9a27e717
+  languageName: node
+  linkType: hard
+
+"localforage@npm:^1.8.1":
+  version: 1.10.0
+  resolution: "localforage@npm:1.10.0"
+  dependencies:
+    lie: 3.1.1
+  checksum: f2978b434dafff9bcb0d9498de57d97eba165402419939c944412e179cab1854782830b5ec196212560b22712d1dd03918939f59cf1d4fc1d756fca7950086cf
   languageName: node
   linkType: hard
 
@@ -22983,6 +23133,13 @@ fsevents@^1.2.7:
   dependencies:
     yallist: ^4.0.0
   checksum: f97f499f898f23e4585742138a22f22526254fdba6d75d41a1c2526b3b6cc5747ef59c5612ba7375f42aca4f8461950e925ba08c991ead0651b4918b7c978297
+  languageName: node
+  linkType: hard
+
+"lru_map@npm:^0.3.3":
+  version: 0.3.3
+  resolution: "lru_map@npm:0.3.3"
+  checksum: ca9dd43c65ed7a4f117c548028101c5b6855e10923ea9d1f635af53ad20c5868ff428c364d454a7b57fe391b89c704982275410c3c5099cca5aeee00d76e169a
   languageName: node
   linkType: hard
 
@@ -23888,7 +24045,7 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"mkdirp@npm:^0.5.1, mkdirp@npm:^0.5.3, mkdirp@npm:^0.5.4":
+"mkdirp@npm:^0.5.1, mkdirp@npm:^0.5.3, mkdirp@npm:^0.5.4, mkdirp@npm:^0.5.5":
   version: 0.5.5
   resolution: "mkdirp@npm:0.5.5"
   dependencies:
@@ -24824,51 +24981,27 @@ next-pwa@5.2.21:
   languageName: node
   linkType: hard
 
-"ol-mapbox-style@npm:6.1.4":
-  version: 6.1.4
-  resolution: "ol-mapbox-style@npm:6.1.4"
+"ol-mapbox-style@npm:6.4.1, ol-mapbox-style@npm:^6.4.1":
+  version: 6.4.1
+  resolution: "ol-mapbox-style@npm:6.4.1"
   dependencies:
-    "@mapbox/mapbox-gl-style-spec": ^13.14.0
+    "@mapbox/mapbox-gl-style-spec": ^13.20.1
     mapbox-to-css-font: ^2.4.0
     webfont-matcher: ^1.1.0
   peerDependencies:
-    ol: ^6.1.0
-  checksum: 08b780c140e4995a98fdcea6d8d2dfc7fe520f0e9718b7bc7ecc02004be3d681fbb5b84e533f7a1ea29fc2be92f1dec56e27f421989230cd39e5cd128f279926
+    ol: ">= 6.1.0 < 7"
+  checksum: 3ded47ee4e64b77d547233087f9cfb85447874e7624ed49fd8dc6ec0a8d693ad8b138fb1fc1cea3bb433b99fd3d63fcaf367b98d33862072b6189184be365c6e
   languageName: node
   linkType: hard
 
-"ol-mapbox-style@npm:^6.1.1":
-  version: 6.3.2
-  resolution: "ol-mapbox-style@npm:6.3.2"
+"ol@npm:6.6.1":
+  version: 6.6.1
+  resolution: "ol@npm:6.6.1"
   dependencies:
-    "@mapbox/mapbox-gl-style-spec": ^13.14.0
-    mapbox-to-css-font: ^2.4.0
-    webfont-matcher: ^1.1.0
-  peerDependencies:
-    ol: ^6.1.0
-  checksum: 7102eaff435055e78d7200d99183148e4f7871dfbe388ed581a9ea80b339391cf8fb565e7144895e36aa97feb0a52db04b130678f64592f0bcd33d62a0c77b89
-  languageName: node
-  linkType: hard
-
-"ol@npm:6.4.3":
-  version: 6.4.3
-  resolution: "ol@npm:6.4.3"
-  dependencies:
-    ol-mapbox-style: ^6.1.1
+    ol-mapbox-style: ^6.4.1
     pbf: 3.2.1
     rbush: ^3.0.1
-  checksum: 0c03ed3759371b095cf8d3c3d58306842f783cc7b351016e06ce52ee2c984165140ec100a3904582496c06fb8d9aeead184c47c4debd9dc9c022ddc6f718cc7a
-  languageName: node
-  linkType: hard
-
-"ol@npm:6.5.0":
-  version: 6.5.0
-  resolution: "ol@npm:6.5.0"
-  dependencies:
-    ol-mapbox-style: ^6.1.1
-    pbf: 3.2.1
-    rbush: ^3.0.1
-  checksum: 550c85570bc910f9d325ed3d86e9b455df8c2532cda6e2e7919b78329715599fa4eb52899a4d714cb3b7422a335db27d28de96ea68e66beb09092a4f954cd038
+  checksum: f5b49e30d10d7432f9a4a2460c6a2b96c56dbf26712b3f914a7c75b6f38ec0a578c2136d1d2cdc5861d732f136f267edef2cde1da372f509069ff8ac2d12300f
   languageName: node
   linkType: hard
 
@@ -26097,7 +26230,7 @@ next-pwa@5.2.21:
   languageName: node
   linkType: hard
 
-"progress@npm:^2.0.0":
+"progress@npm:^2.0.0, progress@npm:^2.0.3":
   version: 2.0.3
   resolution: "progress@npm:2.0.3"
   checksum: f67403fe7b34912148d9252cb7481266a354bd99ce82c835f79070643bb3c6583d10dbcfda4d41e04bbc1d8437e9af0fb1e1f2135727878f5308682a579429b7
@@ -26240,6 +26373,13 @@ next-pwa@5.2.21:
     forwarded: ~0.1.2
     ipaddr.js: 1.9.1
   checksum: 2bad9b7a56b847faf606a19328aaaf5fca3e561ebb4e933969a580d94a20f77e74fb21196028a6e417851b3d9d95a0c704732a3362e3ef515d45d96859ac7eb9
+  languageName: node
+  linkType: hard
+
+"proxy-from-env@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "proxy-from-env@npm:1.1.0"
+  checksum: ed7fcc2ba0a33404958e34d95d18638249a68c430e30fcb6c478497d72739ba64ce9810a24f53a7d921d0c065e5b78e3822759800698167256b04659366ca4d4
   languageName: node
   linkType: hard
 

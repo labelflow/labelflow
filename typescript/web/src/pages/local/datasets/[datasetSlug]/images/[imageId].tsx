@@ -20,15 +20,17 @@ import { RiArrowRightSLine } from "react-icons/ri";
 import NextLink from "next/link";
 import type { Image } from "@labelflow/graphql-types";
 import { useErrorHandler } from "react-error-boundary";
-import { AppLifecycleManager } from "../../../../../components/app-lifecycle-manager";
+import { ServiceWorkerManagerModal } from "../../../../../components/service-worker-manager";
 import { KeymapButton } from "../../../../../components/layout/top-bar/keymap-button";
 import { ImportButton } from "../../../../../components/import-button";
 import { ExportButton } from "../../../../../components/export-button";
 import { Meta } from "../../../../../components/meta";
 import { Layout } from "../../../../../components/layout";
 import { Gallery } from "../../../../../components/gallery";
-import Error404Page from "../../../../404";
+import { Error404Content } from "../../../../404";
 import { AuthManager } from "../../../../../components/auth-manager";
+import { WelcomeManager } from "../../../../../components/welcome-manager";
+import { CookieBanner } from "../../../../../components/cookie-banner";
 
 const ArrowRightIcon = chakra(RiArrowRightSLine);
 
@@ -76,46 +78,68 @@ const ImagePage = () => {
   const router = useRouter();
   const { datasetSlug, imageId } = router?.query;
 
-  const { data: imageResult, error: errorImage } = useQuery<ImageQueryResponse>(
-    imageQuery,
-    {
-      variables: { id: imageId },
-      skip: !imageId,
-    }
-  );
+  const {
+    data: imageResult,
+    error: errorImage,
+    loading: loadingImage,
+  } = useQuery<ImageQueryResponse>(imageQuery, {
+    variables: { id: imageId },
+    skip: !imageId,
+  });
 
-  const { data: datasetResult, error: errorDataset } = useQuery(
-    getDatasetQuery,
-    {
-      variables: { slug: datasetSlug },
-      skip: !datasetSlug,
-    }
-  );
+  const {
+    data: datasetResult,
+    error: errorDataset,
+    loading: loadingDataset,
+  } = useQuery(getDatasetQuery, {
+    variables: { slug: datasetSlug },
+    skip: !datasetSlug,
+  });
 
   const imageName = imageResult?.image.name;
   const datasetName = datasetResult?.dataset.name;
 
   const handleError = useErrorHandler();
-  if (errorDataset || errorImage) {
-    if (errorDataset && !errorDataset.message.match(/No dataset with slug/)) {
-      handleError(errorDataset);
+  if ((errorDataset && !loadingDataset) || (errorImage && !loadingImage)) {
+    if (errorDataset && !loadingDataset) {
+      if (!errorDataset.message.match(/No dataset with slug/)) {
+        handleError(errorDataset);
+      }
+      return (
+        <>
+          <ServiceWorkerManagerModal />
+          <WelcomeManager />
+          <AuthManager />
+          <Meta title="LabelFlow | Dataset not found" />
+          <CookieBanner />
+          <Error404Content />
+        </>
+      );
     }
-    if (errorImage && !errorImage.message.match(/No image with id/)) {
-      handleError(errorImage);
+    if (errorImage && !loadingImage) {
+      if (!errorImage.message.match(/No image with id/)) {
+        handleError(errorImage);
+      }
+      return (
+        <>
+          <ServiceWorkerManagerModal />
+          <WelcomeManager />
+          <AuthManager />
+          <Meta title="LabelFlow | Image not found" />
+          <CookieBanner />
+          <Error404Content />
+        </>
+      );
     }
-    return (
-      <>
-        <AppLifecycleManager />
-        <Error404Page />
-      </>
-    );
   }
 
   return (
     <>
-      <AppLifecycleManager />
+      <ServiceWorkerManagerModal />
+      <WelcomeManager />
       <AuthManager />
       <Meta title={`LabelFlow | Image ${imageName ?? ""}`} />
+      <CookieBanner />
       <Layout
         topBarLeftContent={
           <Breadcrumb

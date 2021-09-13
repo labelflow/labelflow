@@ -18,6 +18,7 @@ import {
 // import { initialize as initializeGoogleAnalytics } from "workbox-google-analytics";
 
 import { trimCharsEnd } from "lodash/fp";
+import * as Sentry from "@sentry/nextjs";
 import typeDefs from "../../../../data/__generated__/schema.graphql";
 import { resolvers } from "../connectors/resolvers";
 import {
@@ -27,6 +28,19 @@ import {
 import { ApolloServerServiceWorker } from "./apollo-server-service-worker";
 import { UploadServer } from "./upload-server";
 import { repository } from "../connectors/repository";
+
+// Configure and initialize Sentry in the service worker
+const SENTRY_DSN = process.env.SENTRY_DSN || process.env.NEXT_PUBLIC_SENTRY_DSN;
+Sentry.init({
+  dsn: SENTRY_DSN,
+  environment: process.env.NEXT_PUBLIC_SENTRY_ENVIRONMENT ?? "development",
+  // Adjust this value in production, or use tracesSampler for greater control
+  tracesSampleRate: 1.0,
+  // ...
+  // Note: if you want to override the automatic release value, do not set a
+  // `release` value here - use the environment variable `SENTRY_RELEASE`, so
+  //  that it will also get attached to your source maps
+});
 
 declare let self: ServiceWorkerGlobalScope;
 
@@ -83,6 +97,10 @@ registerRoute(
       return { req, res, repository };
     },
     introspection: true,
+    formatError: (error) => {
+      Sentry.captureException(error);
+      return error;
+    },
   }),
   "POST"
 );

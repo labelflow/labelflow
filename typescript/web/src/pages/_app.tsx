@@ -25,15 +25,17 @@ interface InitialProps {
 
 const ErrorFallback = (props: FallbackProps) => {
   return (
-    <ChakraProvider theme={theme} resetCSS>
-      <CookiesProvider>
-        <QueryParamProvider>
-          <ApolloProvider client={client}>
-            <ErrorPage {...props} />
-          </ApolloProvider>
-        </QueryParamProvider>
+    <SessionProvider session={undefined}>
+      <CookiesProvider cookies={new Cookies("")}>
+        <ApolloProvider client={client}>
+          <QueryParamProvider>
+            <ChakraProvider theme={theme} resetCSS>
+              <ErrorPage {...props} />
+            </ChakraProvider>
+          </QueryParamProvider>
+        </ApolloProvider>
       </CookiesProvider>
-    </ChakraProvider>
+    </SessionProvider>
   );
 };
 
@@ -63,9 +65,9 @@ const App = (props: AppProps & InitialProps) => {
     <ErrorBoundary FallbackComponent={ErrorFallback}>
       <SessionProvider session={session}>
         <CookiesProvider cookies={new Cookies("")}>
-          <ChakraProvider theme={theme} resetCSS>
+          <ApolloProvider client={client}>
             <QueryParamProvider>
-              <ApolloProvider client={client}>
+              <ChakraProvider theme={theme} resetCSS>
                 <Meta />
                 <Head>
                   {/* Set proper initial appearance of content for mobile */}
@@ -75,9 +77,9 @@ const App = (props: AppProps & InitialProps) => {
                   />
                 </Head>
                 <Component {...pageProps} />
-              </ApolloProvider>
+              </ChakraProvider>
             </QueryParamProvider>
-          </ChakraProvider>
+          </ApolloProvider>
         </CookiesProvider>
       </SessionProvider>
     </ErrorBoundary>

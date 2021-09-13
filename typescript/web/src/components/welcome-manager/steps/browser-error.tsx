@@ -18,7 +18,7 @@ import NextLink from "next/link";
 import { useErrorHandler } from "react-error-boundary";
 import { RiArrowGoBackLine, RiPlayFill } from "react-icons/ri";
 
-import BrowserCancel from "../../../graphics/browser-cancel";
+import BrowserCancel from "../../graphics/browser-cancel";
 
 const ChakraBrowserCancel = chakra(BrowserCancel);
 
