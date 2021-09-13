@@ -10,7 +10,6 @@
       "dom",
       "es2020"
     ],
-    // "module": "es2020",
     "moduleResolution": "node",
     "noEmit": true,
     "noFallthroughCasesInSwitch": true,
