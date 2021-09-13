@@ -1,6 +1,6 @@
-import { Button, HStack, Link, Text } from "@chakra-ui/react";
+import React, { useCallback } from "react";
+import { Button, HStack, Link, Text, Stack } from "@chakra-ui/react";
 import NextLink from "next/link";
-import * as React from "react";
 import { useCookies } from "react-cookie";
 import { isInWindowScope } from "../../utils/detect-scope";
 
@@ -9,15 +9,36 @@ export const CookieBanner = () => {
     "consentedCookies",
   ]);
 
+  const handleAccept = useCallback(() => {
+    window?.clarity?.("consent");
+    setConsentedCookies("consentedCookies", "true", {
+      path: "/",
+      httpOnly: false,
+    });
+  }, [setConsentedCookies]);
+
+  const handleReject = useCallback(() => {
+    window?.clarity?.("consent");
+    setConsentedCookies("consentedCookies", "false", {
+      path: "/",
+      httpOnly: false,
+    });
+  }, [setConsentedCookies]);
+
   return (
     <HStack
       display={
-        consentedCookies === "true" || !isInWindowScope ? "none" : "flex"
+        consentedCookies === "true" ||
+        consentedCookies === "false" ||
+        !isInWindowScope
+          ? "none"
+          : "flex"
       }
       justify="center"
       spacing="4"
       p="4"
       bg="brand.600"
+      bgGradient="linear(to-r, brand.700, brand.600)"
       position="fixed"
       bottom="0"
       left="0"
@@ -34,22 +55,28 @@ export const CookieBanner = () => {
           </Link>
         </NextLink>
       </Text>
-      <Button
-        bg="white"
-        color="black"
-        _hover={{ bg: "gray.100" }}
-        size="sm"
-        flexShrink={0}
-        onClick={() => {
-          window?.clarity?.("consent");
-          setConsentedCookies("consentedCookies", "true", {
-            path: "/",
-            httpOnly: false,
-          });
-        }}
-      >
-        Accept
-      </Button>
+      <Stack direction={{ base: "column", md: "row" }} spacing={4}>
+        <Button
+          color="white"
+          colorScheme="whiteAlpha"
+          size="sm"
+          flexShrink={0}
+          onClick={handleReject}
+          variant="outline"
+        >
+          Reject
+        </Button>
+        <Button
+          bg="white"
+          color="brand.800"
+          _hover={{ bg: "gray.100" }}
+          size="sm"
+          flexShrink={0}
+          onClick={handleAccept}
+        >
+          Accept
+        </Button>
+      </Stack>
     </HStack>
   );
 };
