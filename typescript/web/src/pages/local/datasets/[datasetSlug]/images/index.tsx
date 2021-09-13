@@ -10,16 +10,13 @@ import {
   Skeleton,
   Spinner,
   Text,
-  Breadcrumb,
-  BreadcrumbItem,
   BreadcrumbLink,
   Heading,
-  chakra,
   SimpleGrid,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { isEmpty } from "lodash/fp";
-import { RiArrowRightSLine } from "react-icons/ri";
+
 import { useErrorHandler } from "react-error-boundary";
 import type { Dataset as DatasetType } from "@labelflow/graphql-types";
 import { ServiceWorkerManagerModal } from "../../../../../components/service-worker-manager";
@@ -35,8 +32,6 @@ import { AuthManager } from "../../../../../components/auth-manager";
 
 import { WelcomeManager } from "../../../../../components/welcome-manager";
 import { CookieBanner } from "../../../../../components/cookie-banner";
-
-const ArrowRightIcon = chakra(RiArrowRightSLine);
 
 export const datasetDataQuery = gql`
   query getDatasetData($slug: String!) {

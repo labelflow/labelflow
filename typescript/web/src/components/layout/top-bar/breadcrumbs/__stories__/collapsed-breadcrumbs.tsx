@@ -1,12 +1,5 @@
 import React from "react";
-import {
-  BreadcrumbItem,
-  Breadcrumb,
-  BreadcrumbLink,
-  Skeleton,
-  Text,
-  chakra,
-} from "@chakra-ui/react";
+import { BreadcrumbLink, Skeleton, Text } from "@chakra-ui/react";
 import NextLink from "next/link";
 import { chakraDecorator } from "../../../../../utils/chakra-decorator";
 

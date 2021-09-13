@@ -2,11 +2,8 @@ import { ReactNode } from "react";
 import {
   HStack,
   Spacer,
-  chakra,
   Box,
   VisuallyHidden,
-  Tooltip,
-  IconButton,
   useBreakpointValue,
 } from "@chakra-ui/react";
 
