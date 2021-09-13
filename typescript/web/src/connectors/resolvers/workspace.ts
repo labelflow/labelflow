@@ -1,5 +1,6 @@
-import { WorkspaceType } from "@labelflow/graphql-types";
-import { WorkspacePlan } from "@prisma/client";
+import { WorkspaceType, WorkspacePlan } from "@labelflow/graphql-types";
+import { Context } from "@labelflow/common-resolvers";
+import { notImplementedInLocalWorkspaceResolver } from "./utils";
 
 export const localWorkspace = {
   id: "2df392a2-7234-4767-82f3-85daff3d94dc",
@@ -22,6 +23,9 @@ export default {
     workspaces,
   },
 
-  Mutation: {},
-  Workspace: { datasets },
+  Mutation: {
+    createWorkspace: notImplementedInLocalWorkspaceResolver,
+    updateWorkspace: notImplementedInLocalWorkspaceResolver,
+  },
+  Workspace: { datasets, memberships: notImplementedInLocalWorkspaceResolver },
 };
