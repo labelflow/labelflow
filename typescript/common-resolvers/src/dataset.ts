@@ -147,13 +147,13 @@ const createDataset = async (
     throw new Error("Could not create the dataset with an empty name");
   }
 
-  const dbDataset: DbDataset = {
+  const dbDataset = {
     id: datasetId,
     createdAt: date,
     updatedAt: date,
     name,
     slug: slugify(name, { lower: true }),
-    workspaceId: args.data.workspaceId,
+    workspaceSlug: args.data.workspaceSlug,
   };
   try {
     await repository.dataset.add(dbDataset);
@@ -182,15 +182,19 @@ const createDemoDataset = async (
       id: datasetId,
       createdAt: currentDate,
       updatedAt: currentDate,
-      workspaceId: "local", // FIXME: Implement proper id here
+      workspaceSlug: "local", // FIXME: Implement proper id here
     });
   } catch (error) {
     if (error.name === "ConstraintError") {
       // The tutorial dataset already exists, just return it
-      return await getDatasetByName("Tutorial dataset", repository);
+      return await getDatasetByWorkspaceSlugAndDatasetSlug(
+        { datasetSlug: "tutorial-dataset", workspaceSlug: "local" },
+        repository
+      );
     }
     throw error;
   }
+
   const tutorialDatasetImages = await Promise.all(
     tutorialImages.map(async (image, index) => {
       const imageEntity = await getImageEntityFromMutationArgs(

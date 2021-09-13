@@ -1,6 +1,6 @@
 import { PrismaClient, Prisma } from "@prisma/client";
 
-import { DbDataset, DbLabel, Repository } from "@labelflow/common-resolvers";
+import { DbLabel, Repository } from "@labelflow/common-resolvers";
 import { Image } from "@labelflow/graphql-types";
 import slugify from "slugify";
 import {

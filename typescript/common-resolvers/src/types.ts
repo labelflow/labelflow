@@ -10,19 +10,26 @@ import type {
   LabelWhereInput,
   UploadTargetHttp,
   UploadTarget,
-  MutationCreateDatasetArgs,
   DatasetCreateInput,
   LabelClassCreateInput,
   ImageCreateInput,
 } from "@labelflow/graphql-types";
 
 export type DbImage = Omit<GeneratedImage, "labels" | "dataset">;
+export type DbImageCreateInput = WithCreatedAtAndUpdatedAt<
+  Required<Omit<ImageCreateInput, "file" | "externalUrl">> &
+    Pick<ImageCreateInput, "externalUrl">
+>;
 
 export type DbLabel = Omit<GeneratedLabel, "labelClass"> & {
   labelClassId: Scalars["ID"] | undefined | null;
 };
+export type DbLabelCreateInput = WithCreatedAtAndUpdatedAt<DbLabel>;
 
 export type DbLabelClass = Omit<GeneratedLabelClass, "labels" | "dataset">;
+export type DbLabelClassCreateInput = WithCreatedAtAndUpdatedAt<
+  LabelClassCreateInput & { index: number }
+>;
 
 export type DbExample = GeneratedExample;
 
@@ -36,8 +43,16 @@ export type DbDataset = Omit<
   | "labelClassesAggregates"
   | "workspace"
 >;
+export type DbDatasetCreateInput = WithCreatedAtAndUpdatedAt<
+  DatasetCreateInput & { slug: string }
+>;
 
 type PartialWithNullAllowed<T> = { [P in keyof T]?: T[P] | undefined | null };
+
+type WithCreatedAtAndUpdatedAt<T extends {}> = T & {
+  createdAt: string;
+  updatedAt: string;
+};
 
 type ID = string;
 
@@ -45,9 +60,6 @@ type Add<EntityType> = (entity: EntityType) => Promise<ID>;
 type Count<Where> = (where?: Where) => Promise<number>;
 type Delete = (id: ID) => Promise<void>;
 type GetById<EntityType> = (id: ID) => Promise<EntityType | undefined | null>;
-type GetBySlug<EntityType> = (
-  slug: string
-) => Promise<EntityType | undefined | null>;
 type List<Entity = unknown, Where extends Record<string, any> | null = null> = (
   where?: Where | null,
   skip?: number | null,
@@ -60,13 +72,13 @@ type Update<Entity> = (
 
 export type Repository = {
   image: {
-    add: Add<Required<ImageCreateInput>>;
+    add: Add<DbImageCreateInput>;
     count: Count<ImageWhereInput>;
     getById: GetById<DbImage>;
     list: List<DbImage, ImageWhereInput>;
   };
   label: {
-    add: Add<DbLabel>;
+    add: Add<DbLabelCreateInput>;
     count: Count<LabelWhereInput>;
     delete: Delete;
     getById: GetById<DbLabel>;
@@ -74,7 +86,7 @@ export type Repository = {
     update: Update<DbLabel>;
   };
   labelClass: {
-    add: Add<LabelClassCreateInput & { index: number }>;
+    add: Add<DbLabelClassCreateInput>;
     count: Count<LabelClassWhereInput>;
     delete: Delete;
     getById: GetById<DbLabelClass>;
@@ -82,7 +94,7 @@ export type Repository = {
     update: Update<DbLabelClass>;
   };
   dataset: {
-    add: Add<DatasetCreateInput>;
+    add: Add<DbDatasetCreateInput>;
     delete: Delete;
     getById: GetById<DbDataset>;
     getByWorkspaceSlugAndDatasetSlug: ({

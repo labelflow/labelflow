@@ -10,7 +10,7 @@ import type {
 import mime from "mime-types";
 import { probeImage } from "./utils/probe-image";
 
-import { Context, DbImage, Repository } from "./types";
+import { Context, DbImage, Repository, DbImageCreateInput } from "./types";
 import { throwIfResolvesToNil } from "./utils/throw-if-resolves-to-nil";
 
 // Mutations
@@ -132,7 +132,7 @@ export const getImageEntityFromMutationArgs = async (
     (urlToProbe: string) => repository.upload.get(urlToProbe, req)
   );
 
-  const newImageEntity: DbImage = {
+  const newImageEntity: DbImageCreateInput = {
     datasetId,
     createdAt: now,
     updatedAt: now,
@@ -204,9 +204,12 @@ const createImage = async (
     req
   );
 
-  await repository.image.add(newImageEntity);
-
-  return newImageEntity;
+  const newImageId = await repository.image.add(newImageEntity);
+  const createdImage = await repository.image.getById(newImageId);
+  if (createdImage == null) {
+    throw new Error("An error has occurred during image creation");
+  }
+  return createdImage;
 };
 
 const imagesAggregates = (parent: any) => {
