@@ -100,7 +100,13 @@ export const CollapsibleBreadcrumbs = ({
               </BreadcrumbItem>
             )),
           <BreadcrumbItem key="middle" overflow="visible">
-            <CollapsedBreadcrumbs variant="ghost" {...collapsedProps}>
+            <CollapsedBreadcrumbs
+              variant="ghost"
+              containsLastElement={
+                numberOfLastBreadcrumbsDisplayedWhenSplit <= 0
+              }
+              {...collapsedProps}
+            >
               {childrenArray.slice(
                 numberOfFirstBreadcrumbsDisplayedWhenSplit,
                 childrenCount - numberOfLastBreadcrumbsDisplayedWhenSplit
