@@ -4,14 +4,14 @@ input DatasetCreateInput {
   workspaceId: ID!
 }
 
-input WorkspaceAndDatasetSlugs {
+input WorkspaceSlugAndDatasetSlug {
   datasetSlug: String!
   workspaceSlug: String!
 }
 
 input DatasetWhereUniqueInput {
   id: ID
-  slugs: WorkspaceAndDatasetSlugs
+  slugs: WorkspaceSlugAndDatasetSlug
 }
 
 input DatasetWhereInput {

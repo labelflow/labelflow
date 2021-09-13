@@ -18,7 +18,7 @@ type Image {
   height: Int!
   width: Int!
   labels: [Label!]!
-  datasetId: ID!
+  dataset: Dataset!
 }
 
 enum LabelType {
@@ -53,7 +53,7 @@ type LabelClass {
   name: String!
   color: ColorHex!
   labels: [Label!]!
-  datasetId: ID!
+  dataset: Dataset!
 }
 
 type Dataset {
@@ -68,7 +68,7 @@ type Dataset {
   imagesAggregates: ImagesAggregates!
   labelsAggregates: LabelsAggregates!
   labelClassesAggregates: LabelClassesAggregates!
-  workspaceId: ID!
+  workspace: Workspace!
 }
 
 type Workspace {

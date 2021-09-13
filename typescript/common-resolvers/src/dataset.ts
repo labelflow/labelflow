@@ -33,18 +33,6 @@ const getDatasetById = async (
   return { ...dataset, __typename: "Dataset" };
 };
 
-const getDatasetByName = async (
-  name: string,
-  repository: Repository
-): Promise<DbDataset> => {
-  const dataset = await throwIfResolvesToNil(
-    `No dataset with name "${name}"`,
-    repository.dataset.getByName
-  )(name);
-
-  return { ...dataset, __typename: "Dataset" };
-};
-
 const getDatasetBySlug = async (
   slug: string,
   repository: Repository

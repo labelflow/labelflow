@@ -31,7 +31,7 @@ export type Dataset = {
   imagesAggregates: ImagesAggregates;
   labelsAggregates: LabelsAggregates;
   labelClassesAggregates: LabelClassesAggregates;
-  workspaceId: Scalars['ID'];
+  workspace: Workspace;
 };
 
 
@@ -60,7 +60,7 @@ export type DatasetWhereInput = {
 
 export type DatasetWhereUniqueInput = {
   id?: Maybe<Scalars['ID']>;
-  slugs?: Maybe<WorkspaceAndDatasetSlugs>;
+  slugs?: Maybe<WorkspaceSlugAndDatasetSlug>;
 };
 
 
@@ -118,7 +118,7 @@ export type Image = {
   height: Scalars['Int'];
   width: Scalars['Int'];
   labels: Array<Label>;
-  datasetId: Scalars['ID'];
+  dataset: Dataset;
 };
 
 export type ImageCreateInput = {
@@ -173,7 +173,7 @@ export type LabelClass = {
   name: Scalars['String'];
   color: Scalars['ColorHex'];
   labels: Array<Label>;
-  datasetId: Scalars['ID'];
+  dataset: Dataset;
 };
 
 export type LabelClassCreateInput = {
@@ -261,7 +261,6 @@ export enum MembershipRole {
 }
 
 export type MembershipUpdateInput = {
-  name?: Maybe<Scalars['String']>;
   role?: Maybe<MembershipRole>;
 };
 
@@ -571,11 +570,6 @@ export type Workspace = {
   memberships: Array<Membership>;
 };
 
-export type WorkspaceAndDatasetSlugs = {
-  datasetSlug: Scalars['String'];
-  workspaceSlug: Scalars['String'];
-};
-
 export type WorkspaceCreateInput = {
   id?: Maybe<Scalars['ID']>;
   name: Scalars['String'];
@@ -587,6 +581,11 @@ export enum WorkspacePlan {
   Pro = 'Pro',
   Enterprise = 'Enterprise'
 }
+
+export type WorkspaceSlugAndDatasetSlug = {
+  datasetSlug: Scalars['String'];
+  workspaceSlug: Scalars['String'];
+};
 
 export enum WorkspaceType {
   Local = 'Local',
@@ -736,9 +735,9 @@ export type ResolversTypes = {
   UserUpdateInput: UserUpdateInput;
   UserWhereUniqueInput: UserWhereUniqueInput;
   Workspace: ResolverTypeWrapper<Workspace>;
-  WorkspaceAndDatasetSlugs: WorkspaceAndDatasetSlugs;
   WorkspaceCreateInput: WorkspaceCreateInput;
   WorkspacePlan: WorkspacePlan;
+  WorkspaceSlugAndDatasetSlug: WorkspaceSlugAndDatasetSlug;
   WorkspaceType: WorkspaceType;
   WorkspaceUpdateInput: WorkspaceUpdateInput;
   WorkspaceWhereUniqueInput: WorkspaceWhereUniqueInput;
@@ -800,8 +799,8 @@ export type ResolversParentTypes = {
   UserUpdateInput: UserUpdateInput;
   UserWhereUniqueInput: UserWhereUniqueInput;
   Workspace: Workspace;
-  WorkspaceAndDatasetSlugs: WorkspaceAndDatasetSlugs;
   WorkspaceCreateInput: WorkspaceCreateInput;
+  WorkspaceSlugAndDatasetSlug: WorkspaceSlugAndDatasetSlug;
   WorkspaceUpdateInput: WorkspaceUpdateInput;
   WorkspaceWhereUniqueInput: WorkspaceWhereUniqueInput;
 };
@@ -822,7 +821,7 @@ export type DatasetResolvers<ContextType = any, ParentType extends ResolversPare
   imagesAggregates?: Resolver<ResolversTypes['ImagesAggregates'], ParentType, ContextType>;
   labelsAggregates?: Resolver<ResolversTypes['LabelsAggregates'], ParentType, ContextType>;
   labelClassesAggregates?: Resolver<ResolversTypes['LabelClassesAggregates'], ParentType, ContextType>;
-  workspaceId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  workspace?: Resolver<ResolversTypes['Workspace'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -856,7 +855,7 @@ export type ImageResolvers<ContextType = any, ParentType extends ResolversParent
   height?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   width?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   labels?: Resolver<Array<ResolversTypes['Label']>, ParentType, ContextType>;
-  datasetId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  dataset?: Resolver<ResolversTypes['Dataset'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -892,7 +891,7 @@ export type LabelClassResolvers<ContextType = any, ParentType extends ResolversP
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   color?: Resolver<ResolversTypes['ColorHex'], ParentType, ContextType>;
   labels?: Resolver<Array<ResolversTypes['Label']>, ParentType, ContextType>;
-  datasetId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  dataset?: Resolver<ResolversTypes['Dataset'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 

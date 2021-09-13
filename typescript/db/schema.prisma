@@ -63,7 +63,8 @@ model Dataset {
   workspaceSlug String
   workspace     Workspace    @relation(fields: [workspaceSlug], references: [slug], onDelete: Cascade)
 
-  @@unique(fields: [workspaceSlug, slug], name: "slugs")
+  @@unique(fields: [workspaceSlug, slug], name: "workspaceSlugAndDatasetSlug")
+  @@unique(fields: [workspaceSlug, name], name: "workspaceSlugAndDatasetName")
 }
 
 model Workspace {

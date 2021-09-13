@@ -1,6 +1,6 @@
 import { PrismaClient, Prisma } from "@prisma/client";
 
-import { DbLabel, Repository } from "@labelflow/common-resolvers";
+import { DbDataset, DbLabel, Repository } from "@labelflow/common-resolvers";
 import { Image } from "@labelflow/graphql-types";
 import {
   getUploadTargetHttp,
@@ -115,16 +115,17 @@ export const repository: Repository = {
     delete: async (id) => {
       await prisma.dataset.delete({ where: { id } });
     },
-    getById: (id) => {
-      return prisma.dataset.findUnique({ where: { id } });
+    getByWorkspaceSlugAndDatasetSlug: ({ datasetSlug, workspaceSlug }) => {
+      return prisma.dataset.findUnique({
+        where: {
+          workspaceSlugAndDatasetSlug: { slug: datasetSlug, workspaceSlug },
+        },
+      });
     },
-    getByName: (name) => {
-      // @ts-ignore
-      return prisma.dataset.findUnique({ where: { name } });
-    },
-    getBySlug: (slug) => {
-      // @ts-ignore
-      return prisma.dataset.findUnique({ where: { slug } });
+    getById: async (id) => {
+      return await prisma.dataset.findUnique({
+        where: { id },
+      });
     },
     update: async (id, dataset) => {
       try {

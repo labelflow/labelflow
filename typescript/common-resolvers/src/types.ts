@@ -12,13 +12,13 @@ import type {
   UploadTarget,
 } from "@labelflow/graphql-types";
 
-export type DbImage = Omit<GeneratedImage, "labels">;
+export type DbImage = Omit<GeneratedImage, "labels" | "dataset">;
 
 export type DbLabel = Omit<GeneratedLabel, "labelClass"> & {
   labelClassId: Scalars["ID"] | undefined | null;
 };
 
-export type DbLabelClass = Omit<GeneratedLabelClass, "labels">;
+export type DbLabelClass = Omit<GeneratedLabelClass, "labels" | "dataset">;
 
 export type DbExample = GeneratedExample;
 
@@ -30,6 +30,7 @@ export type DbDataset = Omit<
   | "labelsAggregates"
   | "labelClasses"
   | "labelClassesAggregates"
+  | "workspace"
 >;
 
 type PartialWithNullAllowed<T> = { [P in keyof T]?: T[P] | undefined | null };
@@ -40,9 +41,6 @@ type Add<EntityType> = (entity: EntityType) => Promise<ID>;
 type Count<Where> = (where?: Where) => Promise<number>;
 type Delete = (id: ID) => Promise<void>;
 type GetById<EntityType> = (id: ID) => Promise<EntityType | undefined | null>;
-type GetByName<EntityType> = (
-  name: string
-) => Promise<EntityType | undefined | null>;
 type GetBySlug<EntityType> = (
   slug: string
 ) => Promise<EntityType | undefined | null>;
@@ -83,8 +81,13 @@ export type Repository = {
     add: Add<DbDataset>;
     delete: Delete;
     getById: GetById<DbDataset>;
-    getByName: GetByName<DbDataset>;
-    getBySlug: GetBySlug<DbDataset>;
+    getByWorkspaceSlugAndDatasetSlug: ({
+      workspaceSlug,
+      datasetSlug,
+    }: {
+      workspaceSlug: string;
+      datasetSlug: string;
+    }) => Promise<DbDataset | undefined | null>;
     list: List<DbDataset, null>;
     update: Update<DbDataset>;
   };

@@ -12,7 +12,7 @@ type Dataset {
   imagesAggregates: ImagesAggregates!
   labelsAggregates: LabelsAggregates!
   labelClassesAggregates: LabelClassesAggregates!
-  workspaceId: ID!
+  workspace: Workspace!
 }
 
 input DatasetCreateInput {
@@ -35,7 +35,7 @@ input DatasetWhereInput {
 
 input DatasetWhereUniqueInput {
   id: ID
-  slugs: WorkspaceAndDatasetSlugs
+  slugs: WorkspaceSlugAndDatasetSlug
 }
 
 scalar DateTime
@@ -91,7 +91,7 @@ type Image {
   height: Int!
   width: Int!
   labels: [Label!]!
-  datasetId: ID!
+  dataset: Dataset!
 }
 
 input ImageCreateInput {
@@ -144,7 +144,7 @@ type LabelClass {
   name: String!
   color: ColorHex!
   labels: [Label!]!
-  datasetId: ID!
+  dataset: Dataset!
 }
 
 input LabelClassCreateInput {
@@ -229,7 +229,6 @@ enum MembershipRole {
 }
 
 input MembershipUpdateInput {
-  name: String
   role: MembershipRole
 }
 
@@ -333,11 +332,6 @@ type Workspace {
   memberships: [Membership!]!
 }
 
-input WorkspaceAndDatasetSlugs {
-  datasetSlug: String!
-  workspaceSlug: String!
-}
-
 input WorkspaceCreateInput {
   id: ID
   name: String!
@@ -348,6 +342,11 @@ enum WorkspacePlan {
   Starter
   Pro
   Enterprise
+}
+
+input WorkspaceSlugAndDatasetSlug {
+  datasetSlug: String!
+  workspaceSlug: String!
 }
 
 enum WorkspaceType {
