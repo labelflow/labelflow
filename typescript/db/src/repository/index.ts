@@ -2,6 +2,7 @@ import { PrismaClient, Prisma } from "@prisma/client";
 
 import { DbDataset, DbLabel, Repository } from "@labelflow/common-resolvers";
 import { Image } from "@labelflow/graphql-types";
+import slugify from "slugify";
 import {
   getUploadTargetHttp,
   getFromStorage,
@@ -16,7 +17,9 @@ export const prisma = new PrismaClient();
 export const repository: Repository = {
   image: {
     add: async (image) => {
-      const createdImage = await prisma.image.create({ data: image });
+      const createdImage = await prisma.image.create({
+        data: castObjectNullsToUndefined(image),
+      });
       return createdImage.id;
     },
     count: (where) =>
@@ -71,7 +74,7 @@ export const repository: Repository = {
   labelClass: {
     add: async (labelClass) => {
       const createdLabelClass = await prisma.labelClass.create({
-        data: labelClass,
+        data: castObjectNullsToUndefined(labelClass),
       });
       return createdLabelClass.id;
     },
@@ -108,8 +111,17 @@ export const repository: Repository = {
     },
   },
   dataset: {
-    add: async (dataset) => {
-      const createdDataset = await prisma.dataset.create({ data: dataset });
+    add: async ({ workspaceSlug, ...dataset }) => {
+      const slug = slugify(dataset.name, { lower: true });
+      const createdDataset = await prisma.dataset.create({
+        data: castObjectNullsToUndefined({
+          ...dataset,
+          slug,
+          workspace: {
+            connect: { slug: workspaceSlug },
+          },
+        }),
+      });
       return createdDataset.id;
     },
     delete: async (id) => {

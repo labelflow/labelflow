@@ -10,6 +10,10 @@ import type {
   LabelWhereInput,
   UploadTargetHttp,
   UploadTarget,
+  MutationCreateDatasetArgs,
+  DatasetCreateInput,
+  LabelClassCreateInput,
+  ImageCreateInput,
 } from "@labelflow/graphql-types";
 
 export type DbImage = Omit<GeneratedImage, "labels" | "dataset">;
@@ -56,7 +60,7 @@ type Update<Entity> = (
 
 export type Repository = {
   image: {
-    add: Add<DbImage>;
+    add: Add<Required<ImageCreateInput>>;
     count: Count<ImageWhereInput>;
     getById: GetById<DbImage>;
     list: List<DbImage, ImageWhereInput>;
@@ -70,7 +74,7 @@ export type Repository = {
     update: Update<DbLabel>;
   };
   labelClass: {
-    add: Add<DbLabelClass>;
+    add: Add<LabelClassCreateInput & { index: number }>;
     count: Count<LabelClassWhereInput>;
     delete: Delete;
     getById: GetById<DbLabelClass>;
@@ -78,7 +82,7 @@ export type Repository = {
     update: Update<DbLabelClass>;
   };
   dataset: {
-    add: Add<DbDataset>;
+    add: Add<DatasetCreateInput>;
     delete: Delete;
     getById: GetById<DbDataset>;
     getByWorkspaceSlugAndDatasetSlug: ({
