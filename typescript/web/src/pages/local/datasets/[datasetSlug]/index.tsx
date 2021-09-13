@@ -1,19 +1,16 @@
 import React, { useEffect } from "react";
 import {
-  chakra,
   Spinner,
   Skeleton,
   Text,
   Center,
-  Breadcrumb,
-  BreadcrumbItem,
   BreadcrumbLink,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { useQuery, gql } from "@apollo/client";
 import { useErrorHandler } from "react-error-boundary";
-import { RiArrowRightSLine } from "react-icons/ri";
 import NextLink from "next/link";
+
 import { Meta } from "../../../../components/meta";
 import { ServiceWorkerManagerModal } from "../../../../components/service-worker-manager";
 import { Layout } from "../../../../components/layout";
@@ -33,8 +30,6 @@ const getDataset = gql`
     }
   }
 `;
-
-const ArrowRightIcon = chakra(RiArrowRightSLine);
 
 const DatasetIndexPage = () => {
   const router = useRouter();
@@ -84,26 +79,12 @@ const DatasetIndexPage = () => {
       <Meta title={`LabelFlow | ${datasetName ?? "Dataset"}`} />
       <CookieBanner />
       <Layout
-        topBarLeftContent={
-          <Breadcrumb
-            overflow="hidden"
-            textOverflow="ellipsis"
-            whiteSpace="nowrap"
-            spacing="8px"
-            sx={{ "*": { display: "inline !important" } }}
-            separator={<ArrowRightIcon color="gray.500" />}
-          >
-            <BreadcrumbItem>
-              <NextLink href="/local/datasets">
-                <BreadcrumbLink>Datasets</BreadcrumbLink>
-              </NextLink>
-            </BreadcrumbItem>
-
-            <BreadcrumbItem isCurrentPage>
-              {<Text>{datasetName}</Text> ?? <Skeleton>Dataset Name</Skeleton>}
-            </BreadcrumbItem>
-          </Breadcrumb>
-        }
+        topBarLeftContent={[
+          <NextLink href="/local/datasets">
+            <BreadcrumbLink>Datasets</BreadcrumbLink>
+          </NextLink>,
+          <Text>{datasetName}</Text> ?? <Skeleton>Dataset Name</Skeleton>,
+        ]}
         topBarRightContent={
           <>
             <KeymapButton />

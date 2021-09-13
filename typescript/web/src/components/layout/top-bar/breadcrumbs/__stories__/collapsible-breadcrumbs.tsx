@@ -1,33 +1,22 @@
 import React from "react";
-import {
-  BreadcrumbItem,
-  Breadcrumb,
-  BreadcrumbLink,
-  Skeleton,
-  Text,
-  chakra,
-} from "@chakra-ui/react";
+import { BreadcrumbLink, Skeleton, Text } from "@chakra-ui/react";
 import NextLink from "next/link";
 import { chakraDecorator } from "../../../../../utils/chakra-decorator";
 
-import { Breadcrumbs } from "..";
-
-import { RiArrowRightSLine } from "react-icons/ri";
-
-const ArrowRightIcon = chakra(RiArrowRightSLine);
+import { CollapsibleBreadcrumbs } from "../collapsible-breadcrumbs";
 
 export default {
-  title: "web/Breadcrumbs",
+  title: "web/Breadcrumbs/Collapsible",
   decorators: [chakraDecorator],
 };
 
 export const Empty = () => {
-  return <Breadcrumbs />;
+  return <CollapsibleBreadcrumbs />;
 };
 
 export const Loading = () => {
   return (
-    <Breadcrumbs>
+    <CollapsibleBreadcrumbs>
       <NextLink href="/local/datasets">
         <BreadcrumbLink>Datasets</BreadcrumbLink>
       </NextLink>
@@ -41,13 +30,13 @@ export const Loading = () => {
       </NextLink>
 
       <Skeleton>Image Name</Skeleton>
-    </Breadcrumbs>
+    </CollapsibleBreadcrumbs>
   );
 };
 
 export const Normal = () => {
   return (
-    <Breadcrumbs>
+    <CollapsibleBreadcrumbs>
       <NextLink href="/local/datasets">
         <BreadcrumbLink>Datasets</BreadcrumbLink>
       </NextLink>
@@ -61,25 +50,25 @@ export const Normal = () => {
       </NextLink>
 
       <Text>World</Text>
-    </Breadcrumbs>
+    </CollapsibleBreadcrumbs>
   );
 };
 
 export const LongNames1Element = () => {
   return (
-    <Breadcrumbs>
+    <CollapsibleBreadcrumbs>
       <NextLink href="/local/datasets/xxx/images">
         <BreadcrumbLink>
           Hello this is a very long dataset name is it not ?
         </BreadcrumbLink>
       </NextLink>
-    </Breadcrumbs>
+    </CollapsibleBreadcrumbs>
   );
 };
 
 export const LongNames2Element = () => {
   return (
-    <Breadcrumbs>
+    <CollapsibleBreadcrumbs>
       <NextLink href="/local/datasets/xxx/images">
         <BreadcrumbLink>
           Hello this is a very long dataset name is it not ?
@@ -87,13 +76,13 @@ export const LongNames2Element = () => {
       </NextLink>
 
       <Text>Wow such a looooooooooong image name bro ! What the hell</Text>
-    </Breadcrumbs>
+    </CollapsibleBreadcrumbs>
   );
 };
 
 export const LongNames3Element = () => {
   return (
-    <Breadcrumbs>
+    <CollapsibleBreadcrumbs>
       <NextLink href="/local/datasets">
         <BreadcrumbLink>Datasets</BreadcrumbLink>
       </NextLink>
@@ -105,13 +94,13 @@ export const LongNames3Element = () => {
       </NextLink>
 
       <Text>Wow such a looooooooooong image name bro ! What the hell</Text>
-    </Breadcrumbs>
+    </CollapsibleBreadcrumbs>
   );
 };
 
 export const LongNames4Element = () => {
   return (
-    <Breadcrumbs>
+    <CollapsibleBreadcrumbs>
       <NextLink href="/local/datasets">
         <BreadcrumbLink>Datasets</BreadcrumbLink>
       </NextLink>
@@ -127,13 +116,13 @@ export const LongNames4Element = () => {
       </NextLink>
 
       <Text>Wow such a looooooooooong image name bro ! What the hell</Text>
-    </Breadcrumbs>
+    </CollapsibleBreadcrumbs>
   );
 };
 
 export const LongNames5Element = () => {
   return (
-    <Breadcrumbs>
+    <CollapsibleBreadcrumbs>
       <NextLink href="/local/datasets">
         <BreadcrumbLink>Datasets</BreadcrumbLink>
       </NextLink>
@@ -156,13 +145,13 @@ export const LongNames5Element = () => {
       </NextLink>
 
       <Text>Wow such a looooooooooong image name bro ! What the hell</Text>
-    </Breadcrumbs>
+    </CollapsibleBreadcrumbs>
   );
 };
 
 export const LongNames6Element = () => {
   return (
-    <Breadcrumbs>
+    <CollapsibleBreadcrumbs>
       <NextLink href="/local/datasets">
         <BreadcrumbLink>Datasets</BreadcrumbLink>
       </NextLink>
@@ -191,13 +180,13 @@ export const LongNames6Element = () => {
       </NextLink>
 
       <Text>Longer again dayuuuummmmmmm bro whaaaaaaaaaat sooooo lonnnggg</Text>
-    </Breadcrumbs>
+    </CollapsibleBreadcrumbs>
   );
 };
 
 export const DifferentSettings1 = () => {
   return (
-    <Breadcrumbs
+    <CollapsibleBreadcrumbs
       maxNumberOfBreadcrumbsBeforeSplit={4}
       numberOfFirstBreadcrumbsDisplayedWhenSplit={1}
       numberOfLastBreadcrumbsDisplayedWhenSplit={2}
@@ -230,13 +219,13 @@ export const DifferentSettings1 = () => {
       </NextLink>
 
       <Text>Longer again dayuuuummmmmmm bro whaaaaaaaaaat sooooo lonnnggg</Text>
-    </Breadcrumbs>
+    </CollapsibleBreadcrumbs>
   );
 };
 
 export const DifferentSettings2 = () => {
   return (
-    <Breadcrumbs
+    <CollapsibleBreadcrumbs
       maxNumberOfBreadcrumbsBeforeSplit={3}
       numberOfFirstBreadcrumbsDisplayedWhenSplit={0}
       numberOfLastBreadcrumbsDisplayedWhenSplit={2}
@@ -269,42 +258,6 @@ export const DifferentSettings2 = () => {
       </NextLink>
 
       <Text>Longer again dayuuuummmmmmm bro whaaaaaaaaaat sooooo lonnnggg</Text>
-    </Breadcrumbs>
-  );
-};
-
-export const Manual = () => {
-  return (
-    <Breadcrumb
-      overflow="hidden"
-      textOverflow="ellipsis"
-      whiteSpace="nowrap"
-      spacing="8px"
-      separator={<ArrowRightIcon color="gray.500" />}
-    >
-      {[
-        <BreadcrumbItem>
-          <NextLink href="/local/datasets">
-            <BreadcrumbLink>Datasets</BreadcrumbLink>
-          </NextLink>
-        </BreadcrumbItem>,
-
-        <BreadcrumbItem isCurrentPage>
-          <NextLink href="Ok">
-            <BreadcrumbLink>Yo</BreadcrumbLink>
-          </NextLink>
-        </BreadcrumbItem>,
-
-        <BreadcrumbItem>
-          <NextLink href="Ok">
-            <BreadcrumbLink>Images</BreadcrumbLink>
-          </NextLink>
-        </BreadcrumbItem>,
-
-        <BreadcrumbItem isCurrentPage>
-          <Text>Ok</Text>
-        </BreadcrumbItem>,
-      ]}
-    </Breadcrumb>
+    </CollapsibleBreadcrumbs>
   );
 };

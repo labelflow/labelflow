@@ -1,1 +1,1 @@
-export { Breadcrumbs } from "./breadcrumbs";
+export { ResponsiveBreadcrumbs } from "./responsive-breadcrumbs";

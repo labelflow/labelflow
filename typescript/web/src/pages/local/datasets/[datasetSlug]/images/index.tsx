@@ -98,34 +98,17 @@ const ImagesPage = () => {
       <Meta title="LabelFlow | Images" />
       <CookieBanner />
       <Layout
-        topBarLeftContent={
-          <Breadcrumb
-            overflow="hidden"
-            textOverflow="ellipsis"
-            whiteSpace="nowrap"
-            spacing="8px"
-            sx={{ "*": { display: "inline !important" } }}
-            separator={<ArrowRightIcon color="gray.500" />}
-          >
-            <BreadcrumbItem>
-              <NextLink href="/local/datasets">
-                <BreadcrumbLink>Datasets</BreadcrumbLink>
-              </NextLink>
-            </BreadcrumbItem>
-
-            <BreadcrumbItem>
-              <NextLink href={`/local/datasets/${datasetSlug}`}>
-                <BreadcrumbLink>
-                  {datasetName ?? <Skeleton>Dataset Name</Skeleton>}
-                </BreadcrumbLink>
-              </NextLink>
-            </BreadcrumbItem>
-
-            <BreadcrumbItem isCurrentPage>
-              <Text>Images</Text>
-            </BreadcrumbItem>
-          </Breadcrumb>
-        }
+        topBarLeftContent={[
+          <NextLink href="/local/datasets">
+            <BreadcrumbLink>Datasets</BreadcrumbLink>
+          </NextLink>,
+          <NextLink href={`/local/datasets/${datasetSlug}`}>
+            <BreadcrumbLink>
+              {datasetName ?? <Skeleton>Dataset Name</Skeleton>}
+            </BreadcrumbLink>
+          </NextLink>,
+          <Text>Images</Text>,
+        ]}
         topBarRightContent={
           <>
             <KeymapButton />

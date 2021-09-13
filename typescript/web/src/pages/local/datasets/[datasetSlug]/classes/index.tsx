@@ -1,18 +1,10 @@
 import React from "react";
 import { useQuery, gql } from "@apollo/client";
 import NextLink from "next/link";
-import {
-  Text,
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  Skeleton,
-  chakra,
-  Center,
-} from "@chakra-ui/react";
+import { Text, BreadcrumbLink, Skeleton, Center } from "@chakra-ui/react";
 import { useRouter } from "next/router";
-import { RiArrowRightSLine } from "react-icons/ri";
 import { useErrorHandler } from "react-error-boundary";
+
 import { ServiceWorkerManagerModal } from "../../../../../components/service-worker-manager";
 import { KeymapButton } from "../../../../../components/layout/top-bar/keymap-button";
 import { ImportButton } from "../../../../../components/import-button";
@@ -23,11 +15,8 @@ import { DatasetTabBar } from "../../../../../components/layout/tab-bar/dataset-
 import { ClassesList } from "../../../../../components/dataset-class-list";
 import { Error404Content } from "../../../../404";
 import { AuthManager } from "../../../../../components/auth-manager";
-
 import { WelcomeManager } from "../../../../../components/welcome-manager";
 import { CookieBanner } from "../../../../../components/cookie-banner";
-
-const ArrowRightIcon = chakra(RiArrowRightSLine);
 
 const datasetNameQuery = gql`
   query getDatasetName($slug: String!) {
@@ -81,34 +70,17 @@ const DatasetClassesPage = () => {
       <Meta title="LabelFlow | Classes" />
       <CookieBanner />
       <Layout
-        topBarLeftContent={
-          <Breadcrumb
-            overflow="hidden"
-            textOverflow="ellipsis"
-            whiteSpace="nowrap"
-            spacing="8px"
-            sx={{ "*": { display: "inline !important" } }}
-            separator={<ArrowRightIcon color="gray.500" />}
-          >
-            <BreadcrumbItem>
-              <NextLink href="/local/datasets">
-                <BreadcrumbLink>Datasets</BreadcrumbLink>
-              </NextLink>
-            </BreadcrumbItem>
-
-            <BreadcrumbItem>
-              <NextLink href={`/local/datasets/${datasetSlug}`}>
-                <BreadcrumbLink>
-                  {datasetName ?? <Skeleton>Dataset Name</Skeleton>}
-                </BreadcrumbLink>
-              </NextLink>
-            </BreadcrumbItem>
-
-            <BreadcrumbItem isCurrentPage>
-              <Text>Classes</Text>
-            </BreadcrumbItem>
-          </Breadcrumb>
-        }
+        topBarLeftContent={[
+          <NextLink href="/local/datasets">
+            <BreadcrumbLink>Datasets</BreadcrumbLink>
+          </NextLink>,
+          <NextLink href={`/local/datasets/${datasetSlug}`}>
+            <BreadcrumbLink>
+              {datasetName ?? <Skeleton>Dataset Name</Skeleton>}
+            </BreadcrumbLink>
+          </NextLink>,
+          <Text>Classes</Text>,
+        ]}
         topBarRightContent={
           <>
             <KeymapButton />
