@@ -56,8 +56,13 @@ export const CollapsibleBreadcrumbs = ({
       textOverflow="ellipsis"
       whiteSpace="nowrap"
       spacing="8px"
+      // Next two lines allows to not hide the focus outline
+      // of the collapsed breadcrumb button
+      // Without this, the focus outline is hidden
+      m={-2}
+      p={2}
       sx={{
-        display: "inline !important",
+        display: "inline",
         "& ol": {
           display: "flex",
         },

@@ -31,6 +31,7 @@ export const ExportButton = ({ ...props }: Props) => {
       leftIcon={<DownloadIcon fontSize="xl" />}
       onClick={handleOpen}
       variant="ghost"
+      flexShrink={0}
       {...props}
     >
       Export

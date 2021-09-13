@@ -34,6 +34,7 @@ export const ImportButton = ({ showModal = true, ...props }: Props) => {
       leftIcon={<UploadIcon fontSize="xl" />}
       onClick={handleOpen}
       variant="ghost"
+      flexShrink={0}
       {...props}
     >
       Add images
@@ -45,6 +46,7 @@ export const ImportButton = ({ showModal = true, ...props }: Props) => {
       leftIcon={<UploadIcon fontSize="xl" />}
       onClick={handleOpen}
       variant="ghost"
+      flexShrink={0}
       display="none"
       {...props}
     >
