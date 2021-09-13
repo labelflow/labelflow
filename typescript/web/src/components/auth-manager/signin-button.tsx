@@ -1,3 +1,4 @@
+import React, { useCallback } from "react";
 import { Button, ButtonProps, useBreakpointValue } from "@chakra-ui/react";
 import { useQueryParam } from "use-query-params";
 import { trackEvent } from "../../utils/google-analytics";
@@ -7,6 +8,11 @@ type Props = ButtonProps;
 
 export const SigninButton = ({ ...props }: Props) => {
   const [, setIsOpen] = useQueryParam("modal-signin", BoolParam);
+
+  const handleOpen = useCallback(() => {
+    setIsOpen(true, "replaceIn");
+    trackEvent("signin_button_click", {});
+  }, [setIsOpen]);
 
   const buttonType = useBreakpointValue({
     base: "smallButton",
@@ -19,10 +25,7 @@ export const SigninButton = ({ ...props }: Props) => {
     return (
       <Button
         aria-label="Sign in"
-        onClick={() => {
-          trackEvent("signin_button_click", {});
-          setIsOpen(true, "replaceIn");
-        }}
+        onClick={handleOpen}
         colorScheme="brand"
         variant="solid"
         loadingText="Loading"
