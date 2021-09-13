@@ -1,4 +1,4 @@
-import { Repository } from "@labelflow/common-resolvers";
+import { DbImageCreateInput, Repository } from "@labelflow/common-resolvers";
 import { getDatabase } from "../database";
 import { list } from "./utils/list";
 import { countLabels, listLabels } from "./label";
@@ -11,11 +11,12 @@ import {
   putInStorage,
   deleteFromStorage,
 } from "./upload";
+import { addIdIfNil } from "./utils/add-id-if-nil";
 
 export const repository: Repository = {
   image: {
-    add: async (image) => {
-      return await (await getDatabase()).image.add(image);
+    add: async (image: DbImageCreateInput) => {
+      return await (await getDatabase()).image.add(addIdIfNil(image));
     },
     count: async (where) => {
       return where
@@ -29,7 +30,7 @@ export const repository: Repository = {
   },
   label: {
     add: async (label) => {
-      return await (await getDatabase()).label.add(label);
+      return await (await getDatabase()).label.add(addIdIfNil(label));
     },
     count: countLabels,
     delete: async (id) => {
@@ -45,7 +46,7 @@ export const repository: Repository = {
   },
   labelClass: {
     add: async (labelClass) => {
-      return await (await getDatabase()).labelClass.add(labelClass);
+      return await (await getDatabase()).labelClass.add(addIdIfNil(labelClass));
     },
     count: async (where?) => {
       return where
@@ -63,17 +64,14 @@ export const repository: Repository = {
   },
   dataset: {
     add: async (dataset) => {
-      return await (await getDatabase()).dataset.add(dataset);
+      return await (await getDatabase()).dataset.add(addIdIfNil(dataset));
     },
     delete: deleteDataset,
     getById: async (id) => {
       return await (await getDatabase()).dataset.get(id);
     },
-    getByName: async (name) => {
-      return await (await getDatabase()).dataset.get({ name });
-    },
-    getBySlug: async (slug) => {
-      return await (await getDatabase()).dataset.get({ slug });
+    getByWorkspaceSlugAndDatasetSlug: async ({ datasetSlug }) => {
+      return await (await getDatabase()).dataset.get({ slug: datasetSlug });
     },
     list: list(async () => (await getDatabase()).dataset),
     update: async (id, changes) => {

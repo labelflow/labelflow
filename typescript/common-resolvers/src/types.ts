@@ -16,9 +16,11 @@ import type {
   User,
 } from "@labelflow/graphql-types";
 
+type NoUndefinedField<T> = { [P in keyof T]: NonNullable<T[P]> };
+
 export type DbImage = Omit<GeneratedImage, "labels" | "dataset">;
 export type DbImageCreateInput = WithCreatedAtAndUpdatedAt<
-  Required<Omit<ImageCreateInput, "file" | "externalUrl">> &
+  Required<NoUndefinedField<Omit<ImageCreateInput, "file" | "externalUrl">>> &
     Pick<ImageCreateInput, "externalUrl">
 >;
 
