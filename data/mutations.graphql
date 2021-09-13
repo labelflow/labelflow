@@ -21,8 +21,11 @@ type Mutation {
 
   createDataset(data: DatasetCreateInput!): Dataset
   createDemoDataset: Dataset
-  updateDataset(where: DatasetWhereIDInput!, data: DatasetUpdateInput!): Dataset
-  deleteDataset(where: DatasetWhereIDInput!): Dataset
+  updateDataset(
+    where: DatasetWhereUniqueInput!
+    data: DatasetUpdateInput!
+  ): Dataset
+  deleteDataset(where: DatasetWhereUniqueInput!): Dataset
 
   createWorkspace(data: WorkspaceCreateInput!): Workspace
   updateWorkspace(
@@ -37,8 +40,5 @@ type Mutation {
   ): Membership
   deleteMembership(where: MembershipWhereUniqueInput!): Membership
 
-  updateUser(
-    where: UserWhereUniqueInput!
-    data: UserUpdateInput!
-  ): User
+  updateUser(where: UserWhereUniqueInput!, data: UserUpdateInput!): User
 }

@@ -1,7 +1,7 @@
 input DatasetCreateInput {
   id: ID
   name: String!
-  workspaceId: ID!
+  workspaceSlug: String!
 }
 
 input WorkspaceSlugAndDatasetSlug {
@@ -15,11 +15,7 @@ input DatasetWhereUniqueInput {
 }
 
 input DatasetWhereInput {
-  workspaceId: ID
-}
-
-input DatasetWhereIDInput {
-  id: ID!
+  workspaceSlug: String!
 }
 
 input DatasetUpdateInput {

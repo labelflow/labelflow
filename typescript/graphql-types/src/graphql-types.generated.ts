@@ -43,19 +43,15 @@ export type DatasetImagesArgs = {
 export type DatasetCreateInput = {
   id?: Maybe<Scalars['ID']>;
   name: Scalars['String'];
-  workspaceId: Scalars['ID'];
+  workspaceSlug: Scalars['String'];
 };
 
 export type DatasetUpdateInput = {
   name: Scalars['String'];
 };
 
-export type DatasetWhereIdInput = {
-  id: Scalars['ID'];
-};
-
 export type DatasetWhereInput = {
-  workspaceId?: Maybe<Scalars['ID']>;
+  workspaceSlug: Scalars['String'];
 };
 
 export type DatasetWhereUniqueInput = {
@@ -352,13 +348,13 @@ export type MutationCreateDatasetArgs = {
 
 
 export type MutationUpdateDatasetArgs = {
-  where: DatasetWhereIdInput;
+  where: DatasetWhereUniqueInput;
   data: DatasetUpdateInput;
 };
 
 
 export type MutationDeleteDatasetArgs = {
-  where: DatasetWhereIdInput;
+  where: DatasetWhereUniqueInput;
 };
 
 
@@ -684,7 +680,6 @@ export type ResolversTypes = {
   Int: ResolverTypeWrapper<Scalars['Int']>;
   DatasetCreateInput: DatasetCreateInput;
   DatasetUpdateInput: DatasetUpdateInput;
-  DatasetWhereIDInput: DatasetWhereIdInput;
   DatasetWhereInput: DatasetWhereInput;
   DatasetWhereUniqueInput: DatasetWhereUniqueInput;
   DateTime: ResolverTypeWrapper<Scalars['DateTime']>;
@@ -751,7 +746,6 @@ export type ResolversParentTypes = {
   Int: Scalars['Int'];
   DatasetCreateInput: DatasetCreateInput;
   DatasetUpdateInput: DatasetUpdateInput;
-  DatasetWhereIDInput: DatasetWhereIdInput;
   DatasetWhereInput: DatasetWhereInput;
   DatasetWhereUniqueInput: DatasetWhereUniqueInput;
   DateTime: Scalars['DateTime'];

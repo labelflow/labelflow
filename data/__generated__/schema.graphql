@@ -18,19 +18,15 @@ type Dataset {
 input DatasetCreateInput {
   id: ID
   name: String!
-  workspaceId: ID!
+  workspaceSlug: String!
 }
 
 input DatasetUpdateInput {
   name: String!
 }
 
-input DatasetWhereIDInput {
-  id: ID!
-}
-
 input DatasetWhereInput {
-  workspaceId: ID
+  workspaceSlug: String!
 }
 
 input DatasetWhereUniqueInput {
@@ -249,8 +245,8 @@ type Mutation {
   deleteLabelClass(where: LabelClassWhereUniqueInput!): LabelClass
   createDataset(data: DatasetCreateInput!): Dataset
   createDemoDataset: Dataset
-  updateDataset(where: DatasetWhereIDInput!, data: DatasetUpdateInput!): Dataset
-  deleteDataset(where: DatasetWhereIDInput!): Dataset
+  updateDataset(where: DatasetWhereUniqueInput!, data: DatasetUpdateInput!): Dataset
+  deleteDataset(where: DatasetWhereUniqueInput!): Dataset
   createWorkspace(data: WorkspaceCreateInput!): Workspace
   updateWorkspace(where: WorkspaceWhereUniqueInput!, data: WorkspaceUpdateInput!): Workspace
   createMembership(data: MembershipCreateInput!): Membership

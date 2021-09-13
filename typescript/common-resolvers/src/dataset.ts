@@ -33,14 +33,17 @@ const getDatasetById = async (
   return { ...dataset, __typename: "Dataset" };
 };
 
-const getDatasetBySlug = async (
-  slug: string,
+const getDatasetByWorkspaceSlugAndDatasetSlug = async (
+  {
+    workspaceSlug,
+    datasetSlug,
+  }: { workspaceSlug: string; datasetSlug: string },
   repository: Repository
 ): Promise<DbDataset> => {
   const dataset = await throwIfResolvesToNil(
-    `No dataset with slug "${slug}"`,
-    repository.dataset.getBySlug
-  )(slug);
+    `No dataset with workspace slug "${workspaceSlug}" and dataset slug "${datasetSlug}"`,
+    repository.dataset.getByWorkspaceSlugAndDatasetSlug
+  )({ workspaceSlug, datasetSlug });
 
   return { ...dataset, __typename: "Dataset" };
 };
@@ -49,18 +52,18 @@ const getDatasetFromWhereUniqueInput = async (
   where: DatasetWhereUniqueInput,
   repository: Repository
 ): Promise<DbDataset> => {
-  const { id, name, slug } = where;
+  const { id, slugs } = where;
 
   if (id != null) {
     return await getDatasetById(id, repository);
   }
 
-  if (name != null) {
-    return await getDatasetByName(name, repository);
-  }
-
-  if (slug != null) {
-    return await getDatasetBySlug(slug, repository);
+  if (slugs != null) {
+    const { workspaceSlug, datasetSlug } = slugs;
+    return await getDatasetByWorkspaceSlugAndDatasetSlug(
+      { workspaceSlug, datasetSlug },
+      repository
+    );
   }
 
   throw new Error(
