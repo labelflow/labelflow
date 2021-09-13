@@ -195,6 +195,84 @@ export const LongNames6Element = () => {
   );
 };
 
+export const DifferentSettings1 = () => {
+  return (
+    <Breadcrumbs
+      maxNumberOfBreadcrumbsBeforeSplit={4}
+      numberOfFirstBreadcrumbsDisplayedWhenSplit={1}
+      numberOfLastBreadcrumbsDisplayedWhenSplit={2}
+    >
+      <NextLink href="/local/datasets">
+        <BreadcrumbLink>Datasets</BreadcrumbLink>
+      </NextLink>
+
+      <NextLink href="/local/datasets/xxx/images">
+        <BreadcrumbLink>
+          Hello this is a very long dataset name is it not ?
+        </BreadcrumbLink>
+      </NextLink>
+
+      <NextLink href="/local/datasets/xxx/images">
+        <BreadcrumbLink>Images</BreadcrumbLink>
+      </NextLink>
+
+      <NextLink href="/local/datasets/xxx/images">
+        <BreadcrumbLink>
+          Even longer wowowowowo whats going on yoooooo way too long to be
+          honest
+        </BreadcrumbLink>
+      </NextLink>
+
+      <NextLink href="/local/datasets/xxx/images">
+        <BreadcrumbLink>
+          Wow such a looooooooooong image name bro ! What the hell
+        </BreadcrumbLink>
+      </NextLink>
+
+      <Text>Longer again dayuuuummmmmmm bro whaaaaaaaaaat sooooo lonnnggg</Text>
+    </Breadcrumbs>
+  );
+};
+
+export const DifferentSettings2 = () => {
+  return (
+    <Breadcrumbs
+      maxNumberOfBreadcrumbsBeforeSplit={3}
+      numberOfFirstBreadcrumbsDisplayedWhenSplit={0}
+      numberOfLastBreadcrumbsDisplayedWhenSplit={2}
+    >
+      <NextLink href="/local/datasets">
+        <BreadcrumbLink>Datasets</BreadcrumbLink>
+      </NextLink>
+
+      <NextLink href="/local/datasets/xxx/images">
+        <BreadcrumbLink>
+          Hello this is a very long dataset name is it not ?
+        </BreadcrumbLink>
+      </NextLink>
+
+      <NextLink href="/local/datasets/xxx/images">
+        <BreadcrumbLink>Images</BreadcrumbLink>
+      </NextLink>
+
+      <NextLink href="/local/datasets/xxx/images">
+        <BreadcrumbLink>
+          Even longer wowowowowo whats going on yoooooo way too long to be
+          honest
+        </BreadcrumbLink>
+      </NextLink>
+
+      <NextLink href="/local/datasets/xxx/images">
+        <BreadcrumbLink>
+          Wow such a looooooooooong image name bro ! What the hell
+        </BreadcrumbLink>
+      </NextLink>
+
+      <Text>Longer again dayuuuummmmmmm bro whaaaaaaaaaat sooooo lonnnggg</Text>
+    </Breadcrumbs>
+  );
+};
+
 export const Manual = () => {
   return (
     <Breadcrumb

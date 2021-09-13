@@ -68,7 +68,7 @@ export const CollapsedBreadcrumbs = ({
                   ":focus": { background: "none" },
                 }}
               >
-                <BreadcrumbItem sx={breadcrumbItemSx} isCurrentPage disabled>
+                <BreadcrumbItem sx={breadcrumbItemSx} isCurrentPage>
                   {childrenArray[childrenCount - 1]}
                 </BreadcrumbItem>{" "}
               </MenuItem>,
