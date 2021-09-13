@@ -1,6 +1,12 @@
 # Changelog
 
-## [1.0.2](https://github.com/labelflow/labelflow/compare/1.0.1...1.0.2)
+## [1.0.3](https://github.com/labelflow/labelflow/compare/1.0.2...1.0.3)
+
+- Track more actions in GA [`#443`](https://github.com/labelflow/labelflow/pull/443)
+- Enhance cookie banner [`#442`](https://github.com/labelflow/labelflow/pull/442)
+- Prefetch previous and next images [`#439`](https://github.com/labelflow/labelflow/pull/439)
+- Fix bug in change class shortcut on azerty keyboards [`#440`](https://github.com/labelflow/labelflow/pull/440)
+## [1.0.2](https://github.com/labelflow/labelflow/compare/1.0.1...1.0.2) - 2021-09-09
 
 - Enhancement/release patches instead of minors [`#437`](https://github.com/labelflow/labelflow/pull/437)
 ## [1.0.1](https://github.com/labelflow/labelflow/compare/1.0.0...1.0.1) - 2021-09-09
