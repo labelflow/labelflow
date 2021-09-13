@@ -1,30 +1,13 @@
 import { gql } from "@apollo/client";
-import { v4 as uuidV4 } from "uuid";
 import { Workspace, WorkspaceType } from "@labelflow/graphql-types";
 
 import { client } from "../../apollo-client/schema-client";
 import { setupTestsWithLocalDatabase } from "../../../utils/setup-local-db-tests";
+import { localWorkspace } from "../workspace";
 
 setupTestsWithLocalDatabase();
 
-const localWorkspace = { id: "test", name: "test", type: WorkspaceType.Local };
-
 describe("workspaces query", () => {
-  it("returns an empty array when there aren't any", async () => {
-    const { data } = await client.query({
-      query: gql`
-        {
-          workspaces {
-            id
-          }
-        }
-      `,
-      fetchPolicy: "no-cache",
-    });
-
-    expect(data.workspaces).toEqual([]);
-  });
-
   it("returns the already created workspaces", async () => {
     const { data } = await client.query<{
       workspaces: Pick<Workspace, "id" | "name">[];
@@ -41,7 +24,7 @@ describe("workspaces query", () => {
     });
 
     expect(data.workspaces.map((workspace) => workspace.name)).toEqual([
-      localWorkspace,
+      localWorkspace.name,
     ]);
   });
 
@@ -85,40 +68,19 @@ describe("workspace query", () => {
     ).rejects.toThrow();
   });
 
-  it("fails if no workspace match the given id", async () => {
-    const idCorrespondingToNoWorkspace = uuidV4();
-
-    await expect(() =>
-      client.query({
-        query: gql`
-          query workspace($id: ID!) {
-            workspace(where: { id: $id }) {
-              id
-              name
-            }
-          }
-        `,
-        variables: { id: idCorrespondingToNoWorkspace },
-        fetchPolicy: "no-cache",
-      })
-    ).rejects.toThrow(
-      `Couldn't find a workspace with id: "${idCorrespondingToNoWorkspace}"`
-    );
-  });
-
   it("returns the workspace corresponding to the id", async () => {
     const { data } = await client.query<{
       workspace: Pick<Workspace, "id" | "name">;
     }>({
       query: gql`
-        query workspace {
-          workspace {
+        query workspace($id: ID!) {
+          workspace(where: { id: $id }) {
             id
             name
           }
         }
       `,
-
+      variables: { id: "this-is-not-needed" },
       fetchPolicy: "no-cache",
     });
 
@@ -130,13 +92,14 @@ describe("workspace query", () => {
       workspace: Pick<Workspace, "id" | "type">;
     }>({
       query: gql`
-        query workspace {
-          workspace {
+        query workspace($id: ID!) {
+          workspace(where: { id: $id }) {
             id
             type
           }
         }
       `,
+      variables: { id: "this-is-not-needed" },
       fetchPolicy: "no-cache",
     });
 
@@ -151,7 +114,7 @@ describe("nested resolvers", () => {
     }>({
       query: gql`
         query workspace($id: ID!) {
-          workspace {
+          workspace(where: { id: $id }) {
             id
             datasets {
               id
@@ -159,6 +122,7 @@ describe("nested resolvers", () => {
           }
         }
       `,
+      variables: { id: "this-is-not-needed" },
       fetchPolicy: "no-cache",
     });
 
