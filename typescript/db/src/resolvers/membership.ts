@@ -63,7 +63,7 @@ const workspace = async (
   >
 ) => {
   return await prisma.workspace.findUnique({
-    where: { id: parent.workspaceId },
+    where: { slug: parent.workspaceSlug },
   });
 };
 

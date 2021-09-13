@@ -54,6 +54,12 @@ const getDatasetFromWhereUniqueInput = async (
 ): Promise<DbDataset> => {
   const { id, slugs } = where;
 
+  if ((id == null && slugs == null) || (id != null && slugs != null)) {
+    throw new Error(
+      "You should either specify the id or the slugs when looking for a the dataset"
+    );
+  }
+
   if (id != null) {
     return await getDatasetById(id, repository);
   }
@@ -242,10 +248,10 @@ const updateDataset = async (
   args: MutationUpdateDatasetArgs,
   { repository }: Context
 ): Promise<DbDataset> => {
-  const datasetToUpdate = await throwIfResolvesToNil(
-    `No dataset with id "${args.where.id}" to update`,
-    repository.dataset.getById
-  )(args.where.id);
+  const datasetToUpdate = await getDatasetFromWhereUniqueInput(
+    args.where,
+    repository
+  );
 
   const newData =
     "name" in args.data
@@ -272,10 +278,11 @@ const deleteDataset = async (
   args: MutationDeleteDatasetArgs,
   { repository }: Context
 ): Promise<DbDataset> => {
-  const datasetToDelete = await throwIfResolvesToNil(
-    `No dataset with id "${args.where.id}"`,
-    repository.dataset.getById
-  )(args.where.id);
+  const datasetToDelete = await getDatasetFromWhereUniqueInput(
+    args.where,
+    repository
+  );
+
   const imagesOfDataset = await repository.image.list({
     datasetId: args.where.id,
   });

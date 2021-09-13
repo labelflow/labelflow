@@ -5,6 +5,7 @@ import {
   QueryUserArgs,
   QueryUsersArgs,
 } from "@labelflow/graphql-types";
+import { DbUser } from "@labelflow/common-resolvers";
 
 import { prisma } from "../repository";
 
@@ -35,7 +36,7 @@ const updateUser = async (_: any, args: MutationUpdateUserArgs) => {
   });
 };
 
-const memberships = async (parent: User) => {
+const memberships = async (parent: DbUser) => {
   return await prisma.membership.findMany({
     where: { userId: parent.id },
     orderBy: { createdAt: Prisma.SortOrder.asc },

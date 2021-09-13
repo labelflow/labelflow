@@ -112,7 +112,7 @@ const updateWorkspace = async (
 
 const memberships = async (parent: Workspace) => {
   return (await prisma.membership.findMany({
-    where: { workspaceId: parent.id },
+    where: { workspaceSlug: parent.slug },
     orderBy: { createdAt: Prisma.SortOrder.asc },
     // needs to be casted to avoid conflicts between enums
   })) as Omit<Membership, "user" | "workspace">[];

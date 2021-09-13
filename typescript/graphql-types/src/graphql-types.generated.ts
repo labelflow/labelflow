@@ -248,7 +248,7 @@ export type MembershipCreateInput = {
   id?: Maybe<Scalars['ID']>;
   role: MembershipRole;
   userId: Scalars['ID'];
-  workspaceId: Scalars['ID'];
+  workspaceSlug: Scalars['String'];
 };
 
 export enum MembershipRole {

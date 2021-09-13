@@ -216,7 +216,7 @@ input MembershipCreateInput {
   id: ID
   role: MembershipRole!
   userId: ID!
-  workspaceId: ID!
+  workspaceSlug: String!
 }
 
 enum MembershipRole {

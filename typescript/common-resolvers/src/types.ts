@@ -13,6 +13,7 @@ import type {
   DatasetCreateInput,
   LabelClassCreateInput,
   ImageCreateInput,
+  User,
 } from "@labelflow/graphql-types";
 
 export type DbImage = Omit<GeneratedImage, "labels" | "dataset">;
@@ -26,7 +27,9 @@ export type DbLabel = Omit<GeneratedLabel, "labelClass"> & {
 };
 export type DbLabelCreateInput = WithCreatedAtAndUpdatedAt<DbLabel>;
 
-export type DbLabelClass = Omit<GeneratedLabelClass, "labels" | "dataset">;
+export type DbLabelClass = Omit<GeneratedLabelClass, "labels" | "dataset"> & {
+  datasetId: string;
+};
 export type DbLabelClassCreateInput = WithCreatedAtAndUpdatedAt<
   LabelClassCreateInput & { index: number }
 >;
@@ -46,6 +49,8 @@ export type DbDataset = Omit<
 export type DbDatasetCreateInput = WithCreatedAtAndUpdatedAt<
   DatasetCreateInput & { slug: string }
 >;
+
+export type DbUser = Omit<User, "memberships">;
 
 type PartialWithNullAllowed<T> = { [P in keyof T]?: T[P] | undefined | null };
 
