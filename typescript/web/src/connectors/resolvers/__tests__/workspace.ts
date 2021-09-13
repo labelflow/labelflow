@@ -109,6 +109,19 @@ describe("workspace query", () => {
 
 describe("nested resolvers", () => {
   it("can query datasets", async () => {
+    await client.mutate({
+      mutation: gql`
+        mutation createDataset($name: String!) {
+          createDataset(data: { name: $name, workspaceSlug: "local" }) {
+            id
+            name
+          }
+        }
+      `,
+      variables: {
+        name: "test-dataset",
+      },
+    });
     const { data } = await client.query<{
       workspace: Pick<Workspace, "id" | "datasets">;
     }>({
@@ -117,7 +130,7 @@ describe("nested resolvers", () => {
           workspace(where: { id: $id }) {
             id
             datasets {
-              id
+              slug
             }
           }
         }
@@ -126,6 +139,8 @@ describe("nested resolvers", () => {
       fetchPolicy: "no-cache",
     });
 
-    expect(data.workspace.datasets).toEqual([]);
+    expect(data.workspace.datasets.map((dataset) => dataset.slug)).toEqual([
+      "test-dataset",
+    ]);
   });
 });

@@ -15,7 +15,9 @@ export const localWorkspace = {
 const workspace = () => localWorkspace;
 const workspaces = () => [localWorkspace];
 
-const datasets = () => [];
+const datasets = (_parent, _args, { repository }: Context) => {
+  return repository.dataset.list();
+};
 
 export default {
   Query: {
