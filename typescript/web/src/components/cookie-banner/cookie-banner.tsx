@@ -3,6 +3,7 @@ import { Button, HStack, Link, Text, Stack } from "@chakra-ui/react";
 import NextLink from "next/link";
 import { useCookies } from "react-cookie";
 import { isInWindowScope } from "../../utils/detect-scope";
+import { trackEvent } from "../../utils/google-analytics";
 
 export const CookieBanner = () => {
   const [{ consentedCookies }, setConsentedCookies] = useCookies([
@@ -15,14 +16,15 @@ export const CookieBanner = () => {
       path: "/",
       httpOnly: false,
     });
+    trackEvent("accept_cookies", {});
   }, [setConsentedCookies]);
 
   const handleReject = useCallback(() => {
-    window?.clarity?.("consent");
     setConsentedCookies("consentedCookies", "false", {
       path: "/",
       httpOnly: false,
     });
+    trackEvent("reject_cookies", {});
   }, [setConsentedCookies]);
 
   return (
