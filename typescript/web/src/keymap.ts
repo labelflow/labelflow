@@ -26,12 +26,12 @@ export const keymap: Keymap = {
   openLabelClassSelectionPopover: {
     key: "c",
     description: "Change class of currently selected label",
-    category: "Tools",
+    category: "Actions",
   },
   deleteLabel: {
     key: "del,delete,backspace",
     description: "Delete selected label",
-    category: "Tools",
+    category: "Actions",
   },
   goToPreviousImage: {
     key: "left",
@@ -61,11 +61,11 @@ export const keymap: Keymap = {
   changeClass: {
     key: "0,1,2,3,4,5,6,7,8,9", // TODO: display is messy on the shortcut modal with such an amount of shortcut, how to tackle that?
     description: "Select class corresponding to shortcut",
-    category: "Tools", // TODO: change that category?
+    category: "Actions", // TODO: change that category?
   },
   focusLabelClassSearch: {
     key: "/,f", // TODO: We changed the key "/" to "s" because the slash key was not detected by useHotKeys
     description: "Focus on search input in label class selection",
-    category: "Tools", // TODO: change that category?
+    category: "Actions", // TODO: change that category?
   },
 };
