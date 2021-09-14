@@ -93,7 +93,7 @@ const ImagesPage = () => {
       <Meta title="LabelFlow | Images" />
       <CookieBanner />
       <Layout
-        topBarLeftContent={[
+        breadcrumbs={[
           <NextLink href="/local/datasets">
             <BreadcrumbLink>Datasets</BreadcrumbLink>
           </NextLink>,

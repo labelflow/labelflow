@@ -79,7 +79,7 @@ const DatasetIndexPage = () => {
       <Meta title={`LabelFlow | ${datasetName ?? "Dataset"}`} />
       <CookieBanner />
       <Layout
-        topBarLeftContent={[
+        breadcrumbs={[
           <NextLink href="/local/datasets">
             <BreadcrumbLink>Datasets</BreadcrumbLink>
           </NextLink>,

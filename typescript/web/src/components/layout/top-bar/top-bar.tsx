@@ -19,11 +19,11 @@ import { UserMenu } from "./user-menu";
 import { ResponsiveBreadcrumbs } from "./breadcrumbs";
 
 export type Props = {
-  leftContent?: ReactNode;
+  breadcrumbs?: ReactNode;
   rightContent?: ReactNode;
 };
 
-export const TopBar = ({ leftContent, rightContent }: Props) => {
+export const TopBar = ({ breadcrumbs, rightContent }: Props) => {
   const { status } = useSession({ required: false });
 
   const viewBox =
@@ -44,7 +44,7 @@ export const TopBar = ({ leftContent, rightContent }: Props) => {
           <Logo h="6" iconColor="brand.500" viewBox={viewBox} />
         </Box>
       </NextLink>
-      <ResponsiveBreadcrumbs>{leftContent}</ResponsiveBreadcrumbs>
+      <ResponsiveBreadcrumbs>{breadcrumbs}</ResponsiveBreadcrumbs>
       <Spacer minWidth="6" />
       {rightContent}
       <HelpMenu />

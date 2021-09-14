@@ -29,7 +29,7 @@ const GraphqlPlayground = () => {
       <AuthManager />
       <Meta title="LabelFlow | GraphiQL" />
       <CookieBanner />
-      <Layout topBarLeftContent={[<Text>Graphiql</Text>]}>
+      <Layout breadcrumbs={[<Text>Graphiql</Text>]}>
         <Box
           h="100%"
           w="100%"

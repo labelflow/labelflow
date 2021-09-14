@@ -70,7 +70,7 @@ const DatasetClassesPage = () => {
       <Meta title="LabelFlow | Classes" />
       <CookieBanner />
       <Layout
-        topBarLeftContent={[
+        breadcrumbs={[
           <NextLink href="/local/datasets">
             <BreadcrumbLink>Datasets</BreadcrumbLink>
           </NextLink>,

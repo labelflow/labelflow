@@ -42,7 +42,7 @@ const DebugPage = () => {
       <AuthManager />
       <Meta title="LabelFlow | Debug" />
       <CookieBanner />
-      <Layout topBarLeftContent={[<Text>Debug</Text>]}>
+      <Layout breadcrumbs={[<Text>Debug</Text>]}>
         <Center h="full">
           <Box as="section">
             <VStack
