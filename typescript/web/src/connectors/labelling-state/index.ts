@@ -11,6 +11,7 @@ import {
 
 export enum Tools {
   SELECTION = "select",
+  CLASSIFICATION = "classification",
   BOX = "box",
   POLYGON = "polygon",
 }
