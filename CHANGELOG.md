@@ -1,6 +1,9 @@
 # Changelog
 
-## [1.0.3](https://github.com/labelflow/labelflow/compare/1.0.2...1.0.3)
+## [1.0.4](https://github.com/labelflow/labelflow/compare/1.0.3...1.0.4)
+
+- Feature/responsive breadcrumbs [`#445`](https://github.com/labelflow/labelflow/pull/445)
+## [1.0.3](https://github.com/labelflow/labelflow/compare/1.0.2...1.0.3) - 2021-09-13
 
 - Track more actions in GA [`#443`](https://github.com/labelflow/labelflow/pull/443)
 - Enhance cookie banner [`#442`](https://github.com/labelflow/labelflow/pull/442)
