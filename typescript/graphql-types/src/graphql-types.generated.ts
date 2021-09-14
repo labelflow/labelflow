@@ -209,6 +209,7 @@ export type LabelCreateInput = {
 };
 
 export enum LabelType {
+  Classification = 'Classification',
   Polygon = 'Polygon',
   Box = 'Box'
 }
