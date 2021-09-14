@@ -10,16 +10,13 @@ import {
   Skeleton,
   Spinner,
   Text,
-  Breadcrumb,
-  BreadcrumbItem,
   BreadcrumbLink,
   Heading,
-  chakra,
   SimpleGrid,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { isEmpty } from "lodash/fp";
-import { RiArrowRightSLine } from "react-icons/ri";
+
 import { useErrorHandler } from "react-error-boundary";
 import type { Dataset as DatasetType } from "@labelflow/graphql-types";
 import { ServiceWorkerManagerModal } from "../../../../../components/service-worker-manager";
@@ -35,8 +32,6 @@ import { AuthManager } from "../../../../../components/auth-manager";
 
 import { WelcomeManager } from "../../../../../components/welcome-manager";
 import { CookieBanner } from "../../../../../components/cookie-banner";
-
-const ArrowRightIcon = chakra(RiArrowRightSLine);
 
 export const datasetDataQuery = gql`
   query getDatasetData($slug: String!) {
@@ -98,34 +93,17 @@ const ImagesPage = () => {
       <Meta title="LabelFlow | Images" />
       <CookieBanner />
       <Layout
-        topBarLeftContent={
-          <Breadcrumb
-            overflow="hidden"
-            textOverflow="ellipsis"
-            whiteSpace="nowrap"
-            spacing="8px"
-            sx={{ "*": { display: "inline !important" } }}
-            separator={<ArrowRightIcon color="gray.500" />}
-          >
-            <BreadcrumbItem>
-              <NextLink href="/local/datasets">
-                <BreadcrumbLink>Datasets</BreadcrumbLink>
-              </NextLink>
-            </BreadcrumbItem>
-
-            <BreadcrumbItem>
-              <NextLink href={`/local/datasets/${datasetSlug}`}>
-                <BreadcrumbLink>
-                  {datasetName ?? <Skeleton>Dataset Name</Skeleton>}
-                </BreadcrumbLink>
-              </NextLink>
-            </BreadcrumbItem>
-
-            <BreadcrumbItem isCurrentPage>
-              <Text>Images</Text>
-            </BreadcrumbItem>
-          </Breadcrumb>
-        }
+        breadcrumbs={[
+          <NextLink href="/local/datasets">
+            <BreadcrumbLink>Datasets</BreadcrumbLink>
+          </NextLink>,
+          <NextLink href={`/local/datasets/${datasetSlug}`}>
+            <BreadcrumbLink>
+              {datasetName ?? <Skeleton>Dataset Name</Skeleton>}
+            </BreadcrumbLink>
+          </NextLink>,
+          <Text>Images</Text>,
+        ]}
         topBarRightContent={
           <>
             <KeymapButton />

@@ -2,8 +2,6 @@ import React from "react";
 import { useQuery, gql } from "@apollo/client";
 import {
   Text,
-  Breadcrumb,
-  BreadcrumbItem,
   BreadcrumbLink,
   useColorModeValue as mode,
   Skeleton,
@@ -11,15 +9,13 @@ import {
   Spinner,
   Box,
   Flex,
-  chakra,
 } from "@chakra-ui/react";
-
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
-import { RiArrowRightSLine } from "react-icons/ri";
 import NextLink from "next/link";
 import type { Image } from "@labelflow/graphql-types";
 import { useErrorHandler } from "react-error-boundary";
+
 import { ServiceWorkerManagerModal } from "../../../../../components/service-worker-manager";
 import { KeymapButton } from "../../../../../components/layout/top-bar/keymap-button";
 import { ImportButton } from "../../../../../components/import-button";
@@ -31,8 +27,6 @@ import { Error404Content } from "../../../../404";
 import { AuthManager } from "../../../../../components/auth-manager";
 import { WelcomeManager } from "../../../../../components/welcome-manager";
 import { CookieBanner } from "../../../../../components/cookie-banner";
-
-const ArrowRightIcon = chakra(RiArrowRightSLine);
 
 // The dynamic import is needed because openlayers use web apis that are not available
 // in NodeJS, like `Blob`, so it crashes when rendering in NextJS server side.
@@ -141,44 +135,24 @@ const ImagePage = () => {
       <Meta title={`LabelFlow | Image ${imageName ?? ""}`} />
       <CookieBanner />
       <Layout
-        topBarLeftContent={
-          <Breadcrumb
-            overflow="hidden"
-            textOverflow="ellipsis"
-            whiteSpace="nowrap"
-            spacing="8px"
-            sx={{ "*": { display: "inline !important" } }}
-            separator={<ArrowRightIcon color="gray.500" />}
-          >
-            <BreadcrumbItem>
-              <NextLink href="/local/datasets">
-                <BreadcrumbLink>Datasets</BreadcrumbLink>
-              </NextLink>
-            </BreadcrumbItem>
-
-            <BreadcrumbItem isCurrentPage>
-              <NextLink href={`/local/datasets/${datasetSlug}/images`}>
-                <BreadcrumbLink>
-                  {datasetName ?? <Skeleton>Dataset Name</Skeleton>}
-                </BreadcrumbLink>
-              </NextLink>
-            </BreadcrumbItem>
-
-            <BreadcrumbItem>
-              <NextLink href={`/local/datasets/${datasetSlug}/images`}>
-                <BreadcrumbLink>Images</BreadcrumbLink>
-              </NextLink>
-            </BreadcrumbItem>
-
-            <BreadcrumbItem isCurrentPage>
-              {imageName ? (
-                <Text>{imageName}</Text>
-              ) : (
-                <Skeleton>Image Name</Skeleton>
-              )}
-            </BreadcrumbItem>
-          </Breadcrumb>
-        }
+        breadcrumbs={[
+          <NextLink href="/local/datasets">
+            <BreadcrumbLink>Datasets</BreadcrumbLink>
+          </NextLink>,
+          <NextLink href={`/local/datasets/${datasetSlug}/images`}>
+            <BreadcrumbLink>
+              {datasetName ?? <Skeleton>Dataset Name</Skeleton>}
+            </BreadcrumbLink>
+          </NextLink>,
+          <NextLink href={`/local/datasets/${datasetSlug}/images`}>
+            <BreadcrumbLink>Images</BreadcrumbLink>
+          </NextLink>,
+          imageName ? (
+            <Text>{imageName}</Text>
+          ) : (
+            <Skeleton>Image Name</Skeleton>
+          ),
+        ]}
         topBarRightContent={
           <>
             <KeymapButton />
