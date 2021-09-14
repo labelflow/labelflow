@@ -19,6 +19,7 @@ import "ol/ol.css";
 
 import { DrawBoundingBoxAndPolygonInteraction } from "./draw-bounding-box-and-polygon-interaction";
 import { SelectAndModifyFeature } from "./select-and-modify-feature";
+import { ClassificationContent, ClassificationOverlay } from "./classification";
 import { Labels } from "./labels";
 import { EditLabelClass } from "./edit-label-class";
 import { CursorGuides } from "./cursor-guides";
@@ -87,6 +88,7 @@ const imageQuery = gql`
 
 export const OpenlayersMap = () => {
   const editClassOverlayRef = useRef<HTMLDivElement | null>(null);
+  const classificationOverlayRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<OlMap>(null);
   const viewRef = useRef<OlView | null>(null);
   const sourceVectorBoxesRef = useRef<OlSourceVector<Geometry> | null>(null);
@@ -144,8 +146,10 @@ export const OpenlayersMap = () => {
     [selectedTool]
   );
 
+  const memoizedImage = getMemoizedProperties(image?.id, image);
+
   const { url, size, extent, center, projection, width, height } =
-    getMemoizedProperties(image?.id, image);
+    memoizedImage;
 
   const resolution =
     width && height
@@ -258,6 +262,10 @@ export const OpenlayersMap = () => {
               </olLayerImage>
 
               <Labels sourceVectorLabelsRef={sourceVectorBoxesRef} />
+              <ClassificationOverlay
+                image={memoizedImage}
+                classificationOverlayRef={classificationOverlayRef}
+              />
               <DrawBoundingBoxAndPolygonInteraction />
               <SelectAndModifyFeature
                 editClassOverlayRef={editClassOverlayRef}
@@ -265,6 +273,7 @@ export const OpenlayersMap = () => {
                 setIsContextMenuOpen={setIsContextMenuOpen}
                 map={mapRef.current}
               />
+
               {sourceVectorBoxesRef.current && (
                 <olInteractionSnap source={sourceVectorBoxesRef.current} />
               )}
@@ -293,7 +302,7 @@ export const OpenlayersMap = () => {
       </div>
 
       <EditLabelClass
-        key="hey"
+        key="EditLabelClass"
         ref={(e) => {
           if (e && editClassOverlayRef.current !== e) {
             editClassOverlayRef.current = e;
@@ -301,6 +310,14 @@ export const OpenlayersMap = () => {
         }}
         isOpen={isContextMenuOpen}
         onClose={() => setIsContextMenuOpen(false)}
+      />
+      <ClassificationContent
+        key="ClassificationContent"
+        ref={(e) => {
+          if (e && classificationOverlayRef.current !== e) {
+            classificationOverlayRef.current = e;
+          }
+        }}
       />
     </div>
   );
