@@ -15,6 +15,7 @@ const getImageLabelsQuery = gql`
     image(where: { id: $imageId }) {
       id
       labels {
+        type
         id
         x
         y
@@ -52,7 +53,8 @@ export const ClassificationContent = forwardRef<HTMLDivElement>(
         <HStack ref={ref} spacing={2} padding={2} pl={0}>
           {labels
             .filter(
-              ({ type }: Label) => true || type === LabelType.Classification
+              ({ type }: Label) =>
+                type === LabelType.Polygon || type === LabelType.Classification
             )
             .map(({ id, labelClass }: Label) => {
               return (
@@ -62,10 +64,11 @@ export const ClassificationContent = forwardRef<HTMLDivElement>(
                   variant="solid"
                   background={labelClass?.color ?? noneClassColor}
                   borderColor={labelClass?.color ?? noneClassColor}
+                  color={labelClass ? "white" : "black"}
                   borderWidth={id === selectedLabelId ? 2 : 0}
                   onClick={() => setSelectedLabelId(id)}
                 >
-                  <TagLabel>{labelClass?.name}</TagLabel>
+                  <TagLabel>{labelClass?.name ?? "None"}</TagLabel>
                   <TagCloseButton />
                 </Tag>
               );

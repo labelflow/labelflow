@@ -21,6 +21,7 @@ const getImageLabelsQuery = gql`
     image(where: { id: $imageId }) {
       id
       labels {
+        type
         id
         x
         y
