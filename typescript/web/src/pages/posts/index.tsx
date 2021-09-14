@@ -5,7 +5,8 @@ import { NavBar } from "../../components/website/Navbar/NavBar";
 import { Footer } from "../../components/website/Footer/Footer";
 import { Meta } from "../../components/meta";
 import { ArticlesList } from "../../components/website/Blog/articles-list";
-import { AppLifecycleManager } from "../../components/app-lifecycle-manager";
+import { ServiceWorkerManagerBackground } from "../../components/service-worker-manager";
+import { CookieBanner } from "../../components/cookie-banner";
 
 export default function Posts({
   previewArticles,
@@ -14,8 +15,9 @@ export default function Posts({
 }) {
   return (
     <>
-      <AppLifecycleManager noModals />
+      <ServiceWorkerManagerBackground />
       <Meta title="LabelFlow | Blog" />
+      <CookieBanner />
       <Box minH="640px">
         <NavBar />
         <ArticlesList previewArticles={previewArticles} />

@@ -29,12 +29,13 @@ const createDataset = async (name: string) => {
 
 describe("Image Navigation", () => {
   let datasetSlug: string;
-  beforeEach(() =>
+  beforeEach(() => {
+    cy.setCookie("consentedCookies", "true");
     cy.window().then(async () => {
       const slug = await createDataset("cypress test dataset");
       datasetSlug = slug;
-    })
-  );
+    });
+  });
 
   it("Should let the user navigate within the image gallery", () => {
     // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard

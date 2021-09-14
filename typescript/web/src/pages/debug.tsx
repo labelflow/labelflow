@@ -10,12 +10,10 @@ import {
   Code,
   Center,
   Box,
-  Breadcrumb,
-  BreadcrumbItem,
   Text,
 } from "@chakra-ui/react";
 import { detect } from "detect-browser";
-import { RiArrowRightSLine } from "react-icons/ri";
+
 import { Meta } from "../components/meta";
 
 import {
@@ -25,7 +23,9 @@ import {
 } from "../utils/detect-scope";
 
 import { Layout } from "../components/layout";
-import { AppLifecycleManager } from "../components/app-lifecycle-manager";
+import { ServiceWorkerManagerBackground } from "../components/service-worker-manager";
+import { AuthManager } from "../components/auth-manager";
+import { CookieBanner } from "../components/cookie-banner";
 
 export const debugQuery = gql`
   query getDebug {
@@ -38,20 +38,11 @@ const DebugPage = () => {
 
   return (
     <>
-      <AppLifecycleManager noModals />
+      <ServiceWorkerManagerBackground />
+      <AuthManager />
       <Meta title="LabelFlow | Debug" />
-      <Layout
-        topBarLeftContent={
-          <Breadcrumb
-            spacing="8px"
-            separator={<RiArrowRightSLine color="gray.500" />}
-          >
-            <BreadcrumbItem>
-              <Text>Debug</Text>
-            </BreadcrumbItem>
-          </Breadcrumb>
-        }
-      >
+      <CookieBanner />
+      <Layout breadcrumbs={[<Text>Debug</Text>]}>
         <Center h="full">
           <Box as="section">
             <VStack
@@ -77,6 +68,26 @@ const DebugPage = () => {
                     href={`https://github.com/${process.env.NEXT_PUBLIC_VERCEL_GIT_REPO_OWNER}/${process.env.NEXT_PUBLIC_VERCEL_GIT_REPO_SLUG}/issues/new/choose`}
                   >
                     Link to Github issue tracker
+                  </Link>
+                </ListItem>
+
+                <ListItem>
+                  <Link
+                    target="_blank"
+                    rel="noreferrer"
+                    href="https://sentry.io/organizations/labelflow/projects/labelflow/"
+                  >
+                    Link to Sentry error tracker
+                  </Link>
+                </ListItem>
+
+                <ListItem>
+                  <Link
+                    target="_blank"
+                    rel="noreferrer"
+                    href={`https://clarity.microsoft.com/projects/view/${process.env.NEXT_PUBLIC_CLARITY}/dashboard`}
+                  >
+                    Link to Clarity usage analytics
                   </Link>
                 </ListItem>
 

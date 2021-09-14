@@ -48,4 +48,5 @@ export const links: Link[] = [
   { label: "Pricing", href: "/pricing" },
   { label: "About", href: "/about" },
   { label: "Blog", href: "/posts" },
+  { label: "Documentation", href: "https://labelflow.gitbook.io/labelflow/" },
 ];

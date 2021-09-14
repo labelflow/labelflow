@@ -24,7 +24,6 @@ const ErrorPage = ({ statusCode, error, resetErrorBoundary }: Props) => {
   return (
     <>
       <Meta title="LabelFlow | Error" />
-
       <Layout>
         <Center h="full">
           <Box as="section">

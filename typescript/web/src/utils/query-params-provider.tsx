@@ -49,4 +49,6 @@ export const QueryParamProviderComponent = (props: {
   );
 };
 
-export const QueryParamProvider = memo(QueryParamProviderComponent);
+export const QueryParamProvider = memo(QueryParamProviderComponent) as (props: {
+  children: React.ReactNode;
+}) => JSX.Element;

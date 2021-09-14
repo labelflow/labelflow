@@ -157,6 +157,8 @@ jobs:
           # Recommended: pass the GitHub token lets this action correctly
           # determine the unique run id necessary to re-run the checks
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          NEXT_PUBLIC_SENTRY_DSN: ${{ secrets.NEXT_PUBLIC_SENTRY_DSN }}
           # Bundlewatch
           # See https://bundlewatch.io/#/getting-started/using-bundlewatch?id=setup-ci-auth-variables-needed-by-bundlewatch
           BUNDLEWATCH_GITHUB_TOKEN: ${{ secrets.BUNDLEWATCH_GITHUB_TOKEN }}
@@ -240,12 +242,20 @@ jobs:
     name: "Bump version (only on main)"
     if: contains( github.ref, 'main')
     runs-on: ubuntu-20.04
-    needs: [lint-typescript, lint-python, test-typescript, check-codegen-diff, e2e-analysis]
+    needs:
+      [
+        lint-typescript,
+        lint-python,
+        test-typescript,
+        check-codegen-diff,
+        e2e-analysis,
+      ]
     steps:
       - name: Check out repository code
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
+          token: ${{ secrets.SUPER_GITHUB_TOKEN }}
       - name: Fetch node_modules from cache
         uses: actions/cache@v2
         id: node-modules-cache
@@ -257,10 +267,10 @@ jobs:
           git config user.name "Hugo Raynal"
           git config user.email "hugo.raynal@labelflow.ai"
       - name: Bump version
-        run: yarn release minor
+        run: yarn release patch
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  
+
   deploy-chromatic-main:
     name: Deploy Storybook production
     if: contains( github.ref, 'main')
@@ -300,7 +310,7 @@ jobs:
           ref: main
       - name: Deploy to Heroku
         # See https://github.com/marketplace/actions/deploy-to-heroku#deploy-subdirectory
-        uses: akhileshns/heroku-deploy@v3.12.12 
+        uses: akhileshns/heroku-deploy@v3.12.12
         with:
           heroku_api_key: ${{secrets.HEROKU_API_KEY}}
           heroku_app_name: "labelflow-strapi"

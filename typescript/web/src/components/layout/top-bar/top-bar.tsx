@@ -2,29 +2,30 @@ import { ReactNode } from "react";
 import {
   HStack,
   Spacer,
-  chakra,
   Box,
   VisuallyHidden,
-  Tooltip,
-  IconButton,
   useBreakpointValue,
 } from "@chakra-ui/react";
-import { useRouter } from "next/router";
+
 import NextLink from "next/link";
-import { RiArrowGoBackLine } from "react-icons/ri";
+
+import { useSession } from "next-auth/react";
+
 import { Logo } from "../../logo";
+import { SigninButton } from "../../auth-manager/signin-button";
+
 import { HelpMenu } from "./help-menu";
 import { UserMenu } from "./user-menu";
+import { ResponsiveBreadcrumbs } from "./breadcrumbs";
 
 export type Props = {
-  leftContent?: ReactNode;
+  breadcrumbs?: ReactNode;
   rightContent?: ReactNode;
 };
 
-const BackIcon = chakra(RiArrowGoBackLine);
+export const TopBar = ({ breadcrumbs, rightContent }: Props) => {
+  const { status } = useSession({ required: false });
 
-export const TopBar = ({ leftContent, rightContent }: Props) => {
-  const router = useRouter();
   const viewBox =
     useBreakpointValue({ base: "0 0 84 84", md: "0 0 393 84" }) ?? "0 0 84 84";
 
@@ -43,29 +44,12 @@ export const TopBar = ({ leftContent, rightContent }: Props) => {
           <Logo h="6" iconColor="brand.500" viewBox={viewBox} />
         </Box>
       </NextLink>
-      <Box flex={1} width="auto" display={{ base: "none", lg: "contents" }}>
-        {leftContent}
-      </Box>
-      <Tooltip label="Go Back" openDelay={300}>
-        <NextLink
-          href={{
-            pathname: router.pathname.replace(/\/[^/]+$/, ""),
-            query: router.query,
-          }}
-        >
-          <IconButton
-            as="a"
-            href=".."
-            display={{ base: "flex", lg: "none" }}
-            aria-label="Go Back"
-            icon={<BackIcon fontSize="xl" />}
-            variant="ghost"
-          />
-        </NextLink>
-      </Tooltip>
-      <Spacer />
+      <ResponsiveBreadcrumbs>{breadcrumbs}</ResponsiveBreadcrumbs>
+      <Spacer minWidth="6" />
       {rightContent}
       <HelpMenu />
+      {process.env.NEXT_PUBLIC_FEATURE_SIGNIN === "true" &&
+        status === "unauthenticated" && <SigninButton />}
       <UserMenu />
     </HStack>
   );

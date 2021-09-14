@@ -6,13 +6,15 @@ import { NavBar } from "../components/website/Navbar/NavBar";
 import { Footer } from "../components/website/Footer/Footer";
 
 import { Meta } from "../components/meta";
-import { AppLifecycleManager } from "../components/app-lifecycle-manager";
+import { ServiceWorkerManagerBackground } from "../components/service-worker-manager";
+import { CookieBanner } from "../components/cookie-banner";
 
 export default function About() {
   return (
     <>
-      <AppLifecycleManager noModals />
+      <ServiceWorkerManagerBackground />
       <Meta title="LabelFlow | About" />
+      <CookieBanner />
       <Box minH="640px">
         <NavBar />
         <Box as="section" py={{ base: "10", sm: "24" }}>

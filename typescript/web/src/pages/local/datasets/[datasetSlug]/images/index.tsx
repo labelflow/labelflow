@@ -1,3 +1,4 @@
+import React from "react";
 import { gql, useQuery } from "@apollo/client";
 import NextLink from "next/link";
 import {
@@ -9,19 +10,16 @@ import {
   Skeleton,
   Spinner,
   Text,
-  Breadcrumb,
-  BreadcrumbItem,
   BreadcrumbLink,
   Heading,
-  chakra,
   SimpleGrid,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { isEmpty } from "lodash/fp";
-import { RiArrowRightSLine } from "react-icons/ri";
+
 import { useErrorHandler } from "react-error-boundary";
 import type { Dataset as DatasetType } from "@labelflow/graphql-types";
-import { AppLifecycleManager } from "../../../../../components/app-lifecycle-manager";
+import { ServiceWorkerManagerModal } from "../../../../../components/service-worker-manager";
 import { KeymapButton } from "../../../../../components/layout/top-bar/keymap-button";
 import { ImportButton } from "../../../../../components/import-button";
 import { ExportButton } from "../../../../../components/export-button";
@@ -29,9 +27,11 @@ import { Meta } from "../../../../../components/meta";
 import { Layout } from "../../../../../components/layout";
 import { EmptyStateNoImages } from "../../../../../components/empty-state";
 import { DatasetTabBar } from "../../../../../components/layout/tab-bar/dataset-tab-bar";
-import Error404Page from "../../../../404";
+import { Error404Content } from "../../../../404";
+import { AuthManager } from "../../../../../components/auth-manager";
 
-const ArrowRightIcon = chakra(RiArrowRightSLine);
+import { WelcomeManager } from "../../../../../components/welcome-manager";
+import { CookieBanner } from "../../../../../components/cookie-banner";
 
 export const datasetDataQuery = gql`
   query getDatasetData($slug: String!) {
@@ -51,7 +51,11 @@ const ImagesPage = () => {
   const router = useRouter();
   const datasetSlug = router?.query?.datasetSlug as string;
 
-  const { data: datasetResult, error } = useQuery<{
+  const {
+    data: datasetResult,
+    error,
+    loading,
+  } = useQuery<{
     dataset: DatasetType;
   }>(datasetDataQuery, {
     variables: {
@@ -63,14 +67,18 @@ const ImagesPage = () => {
   const datasetName = datasetResult?.dataset.name;
 
   const handleError = useErrorHandler();
-  if (error) {
+  if (error && !loading) {
     if (!error.message.match(/No dataset with slug/)) {
       handleError(error);
     }
     return (
       <>
-        <AppLifecycleManager />
-        <Error404Page />
+        <ServiceWorkerManagerModal />
+        <WelcomeManager />
+        <AuthManager />
+        <Meta title="LabelFlow | Dataset not found" />
+        <CookieBanner />
+        <Error404Content />
       </>
     );
   }
@@ -79,37 +87,23 @@ const ImagesPage = () => {
   const imageBackground = mode("gray.100", "gray.800");
   return (
     <>
-      <AppLifecycleManager />
+      <ServiceWorkerManagerModal />
+      <WelcomeManager />
+      <AuthManager />
       <Meta title="LabelFlow | Images" />
+      <CookieBanner />
       <Layout
-        topBarLeftContent={
-          <Breadcrumb
-            overflow="hidden"
-            textOverflow="ellipsis"
-            whiteSpace="nowrap"
-            spacing="8px"
-            sx={{ "*": { display: "inline !important" } }}
-            separator={<ArrowRightIcon color="gray.500" />}
-          >
-            <BreadcrumbItem>
-              <NextLink href="/local/datasets">
-                <BreadcrumbLink>Datasets</BreadcrumbLink>
-              </NextLink>
-            </BreadcrumbItem>
-
-            <BreadcrumbItem>
-              <NextLink href={`/local/datasets/${datasetSlug}`}>
-                <BreadcrumbLink>
-                  {datasetName ?? <Skeleton>Dataset Name</Skeleton>}
-                </BreadcrumbLink>
-              </NextLink>
-            </BreadcrumbItem>
-
-            <BreadcrumbItem isCurrentPage>
-              <Text>Images</Text>
-            </BreadcrumbItem>
-          </Breadcrumb>
-        }
+        breadcrumbs={[
+          <NextLink href="/local/datasets">
+            <BreadcrumbLink>Datasets</BreadcrumbLink>
+          </NextLink>,
+          <NextLink href={`/local/datasets/${datasetSlug}`}>
+            <BreadcrumbLink>
+              {datasetName ?? <Skeleton>Dataset Name</Skeleton>}
+            </BreadcrumbLink>
+          </NextLink>,
+          <Text>Images</Text>,
+        ]}
         topBarRightContent={
           <>
             <KeymapButton />

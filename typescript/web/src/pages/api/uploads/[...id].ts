@@ -1,8 +1,9 @@
 import { createClient } from "@supabase/supabase-js";
 import nextConnect from "next-connect";
 import multer from "multer";
-import { getSession } from "next-auth/client";
+import { getSession } from "next-auth/react";
 import { NextApiResponse, NextApiRequest } from "next";
+import { captureException } from "@sentry/nextjs";
 
 const client = createClient(
   process?.env?.SUPABASE_API_URL as string,
@@ -16,9 +17,11 @@ const apiRoute = nextConnect({
     res
       .status(501)
       .json({ error: `Sorry something Happened! ${error.message}` });
+    captureException(error);
   },
   onNoMatch(req: NextApiRequest, res: NextApiResponse) {
     res.status(405).json({ error: `Method '${req.method}' Not Allowed` });
+    captureException(new Error(`Method '${req.method}' Not Allowed`));
   },
 });
 

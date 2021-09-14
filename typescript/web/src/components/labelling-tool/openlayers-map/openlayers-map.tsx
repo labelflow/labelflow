@@ -4,8 +4,10 @@ import { useRouter } from "next/router";
 import { RouterContext } from "next/dist/shared/lib/router-context";
 import { Extent, getCenter } from "ol/extent";
 import { Map as OlMap, View as OlView, MapBrowserEvent } from "ol";
+import { Geometry } from "ol/geom";
 import { Vector as OlSourceVector } from "ol/source";
 import { Size } from "ol/size";
+import * as Sentry from "@sentry/nextjs";
 import memoize from "mem";
 import Projection from "ol/proj/Projection";
 import useMeasure from "react-use-measure";
@@ -26,6 +28,7 @@ import {
   DrawingToolState,
 } from "../../../connectors/labelling-state";
 import { theme } from "../../../theme";
+import { useImagePrefecthing } from "../../../hooks/use-image-prefetching";
 
 const empty: any[] = [];
 
@@ -86,7 +89,7 @@ export const OpenlayersMap = () => {
   const editClassOverlayRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<OlMap>(null);
   const viewRef = useRef<OlView | null>(null);
-  const sourceVectorBoxesRef = useRef<OlSourceVector | null>(null);
+  const sourceVectorBoxesRef = useRef<OlSourceVector<Geometry> | null>(null);
   const router = useRouter();
   const { imageId } = router?.query;
   const isContextMenuOpen = useLabellingStore(
@@ -115,12 +118,14 @@ export const OpenlayersMap = () => {
     skip: !imageId,
   }).data?.image;
 
+  useImagePrefecthing();
+
   const client = useApolloClient();
   const [containerRef, bounds] = useMeasure();
 
   const isBoundsValid = bounds.width > 0 || bounds.height > 0;
   const onPointermove = useCallback(
-    (e: MapBrowserEvent) => {
+    (e: MapBrowserEvent<UIEvent>) => {
       const mapTargetViewport = e.map.getViewport();
       if (!mapTargetViewport) return;
       if (e.dragging) {
@@ -161,7 +166,13 @@ export const OpenlayersMap = () => {
       <Map
         ref={mapRef}
         args={{ controls: empty }}
-        style={{ height: "100%", width: "100%" }}
+        style={{
+          height: "100%",
+          width: "100%",
+          // Touch action none fixes a bug with shitty touch experience in openlayers
+          // See https://github.com/openlayers/openlayers/issues/10757
+          touchAction: "none",
+        }}
         onPointermove={onPointermove}
         containerRef={containerRef}
       >
@@ -221,6 +232,18 @@ export const OpenlayersMap = () => {
                       imageSize: size,
                       projection,
                       crossOrigin: "anonymous",
+                    }}
+                    onImageloaderror={() => {
+                      Sentry.captureException(
+                        new Error(
+                          "Image load error in openlayers. See https://github.com/labelflow/labelflow/issues/431"
+                        ),
+                        { extra: { url } }
+                      );
+                      // To solve a rare bug where image does not load
+                      // See https://github.com/labelflow/labelflow/issues/431
+                      window?.location?.reload?.();
+                      return true;
                     }}
                     onImageloadstart={() => {
                       setIsImageLoading(true);

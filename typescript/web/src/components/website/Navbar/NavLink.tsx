@@ -33,6 +33,7 @@ const DesktopNavLink = React.forwardRef<HTMLAnchorElement, NavLinkProps>(
             color: "brand.600",
             fontWeight: "bold",
           }}
+          href={href}
         />
       </NextLink>
     );
@@ -53,6 +54,7 @@ export const MobileNavLink = (props: NavLinkProps) => {
         height="14"
         fontWeight="semibold"
         borderBottomWidth="1px"
+        href={href}
         {...rest}
       />
     </NextLink>

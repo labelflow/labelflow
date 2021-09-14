@@ -1,11 +1,13 @@
 describe("Index page redirections", () => {
   it("Redirects to datasets page when user visits app and has tried app", () => {
+    cy.setCookie("consentedCookies", "true");
     cy.setCookie("hasUserTriedApp", "true");
     cy.visit(`/?modal-update-service-worker=update`);
     cy.url().should("match", /\/local\/datasets/);
   });
 
   it("Redirects to tutorial dataset first image page when user visits app and has not tried App", () => {
+    cy.setCookie("consentedCookies", "true");
     cy.setCookie("hasUserTriedApp", "false");
     cy.visit(`/local/datasets?modal-update-service-worker=update`);
     cy.contains("Get started").click();
@@ -17,6 +19,7 @@ describe("Index page redirections", () => {
   });
 
   it("Displays website on first user visit", () => {
+    cy.setCookie("consentedCookies", "true");
     cy.setCookie("hasUserTriedApp", "false");
     cy.visit(`/?modal-update-service-worker=update`);
     cy.url().should("match", /\/website/);

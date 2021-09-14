@@ -1,6 +1,7 @@
 import { ApolloServer, AuthenticationError } from "apollo-server-micro";
 import { schemaWithResolvers, repository } from "@labelflow/db";
-import { getSession } from "next-auth/client";
+import { getSession } from "next-auth/react";
+import { captureException } from "@sentry/nextjs";
 
 const apolloServer = new ApolloServer({
   schema: schemaWithResolvers,
@@ -16,6 +17,10 @@ const apolloServer = new ApolloServer({
     return { repository, session, user: session?.user, req };
   },
   introspection: true,
+  formatError: (error) => {
+    captureException(error);
+    return error;
+  },
 });
 
 export const config = {

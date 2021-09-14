@@ -18,7 +18,7 @@ import { RiPlayFill, RiSpeedMiniFill } from "react-icons/ri";
 
 import useCountDown from "react-countdown-hook";
 
-import { Logo } from "../../../logo";
+import { Logo } from "../../logo";
 
 const PlayIcon = chakra(RiPlayFill);
 const SpeedIcon = chakra(RiSpeedMiniFill);
