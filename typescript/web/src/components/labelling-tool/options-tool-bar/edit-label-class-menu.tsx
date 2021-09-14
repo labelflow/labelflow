@@ -84,7 +84,11 @@ export const EditLabelClassMenu = () => {
     variables: { id: selectedLabelClassId },
     skip: selectedLabelClassId == null,
   });
-  const isInDrawingMode = [Tools.BOX, Tools.POLYGON].includes(selectedTool);
+  const isInDrawingMode = [
+    Tools.CLASSIFICATION,
+    Tools.BOX,
+    Tools.POLYGON,
+  ].includes(selectedTool);
   const selectedLabelClass = isInDrawingMode
     ? dataLabelClass?.labelClass
     : selectedLabelData?.label?.labelClass;
