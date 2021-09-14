@@ -60,12 +60,7 @@ export const ExportOptionsModal = ({
   const formatOptionsInformation =
     formatsOptionsInformation[exportFormatLowerCase];
   const optionsOfFormat = exportOptions[exportFormatLowerCase];
-  // const optionsOfFormat = exportOptions[exportFormatLowerCase];
-  // console.log(`
-  // exportOptions = ${JSON.stringify(exportOptions, null, 1)}
-  // exportOptions[exportFormatLowerCase] = ${JSON.stringify(exportOptions[exportFormatLowerCase], null, 1)}
-  // optionsOfFormat = ${JSON.stringify(optionsOfFormat, null, 1)}
-  // `);
+  
   return (
     <Modal
       scrollBehavior="inside"
