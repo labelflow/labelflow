@@ -67,7 +67,8 @@ export const formatsOptionsInformation: {
     },
     includePolygons: {
       title: "Include polygons",
-      description: "Replace polygons by their bounding box when exporting",
+      description:
+        "Include polygon labels, replacing them by their bounding box when exporting",
     },
   },
 };
