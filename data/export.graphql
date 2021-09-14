@@ -17,8 +17,8 @@ input ExportOptionsYolo {
 }
 
 input ExportOptions {
-    coco: ExportOptionsCoco!
-    yolo: ExportOptionsYolo!
+    coco: ExportOptionsCoco
+    yolo: ExportOptionsYolo
 }
 
 input ExportWhereUniqueInput {

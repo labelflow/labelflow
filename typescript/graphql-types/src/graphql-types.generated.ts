@@ -91,8 +91,8 @@ export enum ExportFormat {
 }
 
 export type ExportOptions = {
-  coco: ExportOptionsCoco;
-  yolo: ExportOptionsYolo;
+  coco?: Maybe<ExportOptionsCoco>;
+  yolo?: Maybe<ExportOptionsYolo>;
 };
 
 export type ExportOptionsCoco = {

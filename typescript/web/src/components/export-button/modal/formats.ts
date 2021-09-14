@@ -35,8 +35,8 @@ export const formatMainInformation: {
 };
 
 export const formatsOptionsInformation: {
-  [formatKey in keyof ExportOptions]: {
-    [optionKey in keyof ExportOptions[formatKey]]: {
+  [formatKey in keyof Required<ExportOptions>]: {
+    [optionKey in keyof Required<ExportOptions>[formatKey]]: {
       title: string;
       description: string;
     };
