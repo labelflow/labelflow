@@ -45,7 +45,8 @@ export const formatsOptionsInformation: {
   coco: {
     exportImages: {
       title: "Export image files",
-      description: "Zip images together with the annotation file",
+      description:
+        "Zip images together with the annotation file. This will take longer to export.",
     },
     avoidImageNameCollisions: {
       title: "Avoid image names collision",
@@ -56,7 +57,8 @@ export const formatsOptionsInformation: {
   yolo: {
     exportImages: {
       title: "Export image files",
-      description: "Zip images together with the annotation directory",
+      description:
+        "Zip images together with the annotation directory. This will take longer to export.",
     },
     avoidImageNameCollisions: {
       title: "Avoid image names collision",
