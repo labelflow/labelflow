@@ -21,7 +21,7 @@ const itemSx: ChakraProps["sx"] = {
   overflow: "hidden",
   textOverflow: "ellipsis",
   whiteSpace: "nowrap",
-  maxWidth: "20em",
+  maxWidth: "30em",
   "& p, a, span": {
     overflow: "hidden",
     textOverflow: "ellipsis",

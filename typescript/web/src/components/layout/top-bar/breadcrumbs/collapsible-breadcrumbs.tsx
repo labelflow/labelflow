@@ -21,7 +21,7 @@ const breadcrumbItemSx: ChakraProps["sx"] = {
   overflow: "hidden",
   textOverflow: "ellipsis",
   whiteSpace: "nowrap",
-  maxWidth: "30em",
+  maxWidth: "90em",
   minWidth: "3em",
   "& p, a, span": {
     overflow: "hidden",
