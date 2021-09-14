@@ -43,20 +43,27 @@ export const ClassificationContent = forwardRef<HTMLDivElement>(
     });
     const selectedLabelId = useLabellingStore((state) => state.selectedLabelId);
     const labels = data?.image?.labels ?? [];
+    const setSelectedLabelId = useLabellingStore(
+      (state) => state.setSelectedLabelId
+    );
 
     return (
       <Box overflow="visible" w="0" h="0" m="0" p="0" display="inline">
         <HStack ref={ref} spacing={2} padding={2} pl={0}>
           {labels
-            .filter(({ type }: Label) => type === LabelType.Classification)
+            .filter(
+              ({ type }: Label) => true || type === LabelType.Classification
+            )
             .map(({ id, labelClass }: Label) => {
               return (
                 <Tag
+                  key={id}
                   size="md"
                   variant="solid"
                   background={labelClass?.color ?? noneClassColor}
                   borderColor={labelClass?.color ?? noneClassColor}
                   borderWidth={id === selectedLabelId ? 2 : 0}
+                  onClick={() => setSelectedLabelId(id)}
                 >
                   <TagLabel>{labelClass?.name}</TagLabel>
                   <TagCloseButton />
