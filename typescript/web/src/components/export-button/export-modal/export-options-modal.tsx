@@ -60,7 +60,7 @@ export const ExportOptionsModal = ({
   const formatOptionsInformation =
     formatsOptionsInformation[exportFormatLowerCase];
   const optionsOfFormat = exportOptions[exportFormatLowerCase];
-  
+
   return (
     <Modal
       scrollBehavior="inside"
