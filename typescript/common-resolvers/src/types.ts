@@ -14,6 +14,9 @@ import type {
   LabelClassCreateInput,
   ImageCreateInput,
   User,
+  LabelWhereUniqueInput,
+  LabelClassWhereUniqueInput,
+  DatasetWhereUniqueInput,
 } from "@labelflow/graphql-types";
 
 type NoUndefinedField<T> = { [P in keyof T]: NonNullable<T[P]> };
@@ -77,7 +80,9 @@ type ID = string;
 
 type Add<EntityType> = (entity: EntityType) => Promise<ID>;
 type Count<Where> = (where?: Where) => Promise<number>;
-type Delete = (id: ID) => Promise<void>;
+type Delete<EntityWhereUniqueInput> = (
+  input: EntityWhereUniqueInput
+) => Promise<void>;
 type GetById<EntityType> = (id: ID) => Promise<EntityType | undefined | null>;
 type List<Entity = unknown, Where extends Record<string, any> | null = null> = (
   where?: Where | null,
@@ -99,7 +104,7 @@ export type Repository = {
   label: {
     add: Add<DbLabelCreateInput>;
     count: Count<LabelWhereInput>;
-    delete: Delete;
+    delete: Delete<LabelWhereUniqueInput>;
     getById: GetById<DbLabel>;
     list: List<DbLabel, LabelWhereInput>;
     update: Update<DbLabel>;
@@ -107,14 +112,14 @@ export type Repository = {
   labelClass: {
     add: Add<DbLabelClassCreateInput>;
     count: Count<LabelClassWhereInput>;
-    delete: Delete;
+    delete: Delete<LabelClassWhereUniqueInput>;
     getById: GetById<DbLabelClass>;
     list: List<DbLabelClass, LabelClassWhereInput>;
     update: Update<DbLabelClass>;
   };
   dataset: {
     add: Add<DbDatasetCreateInput>;
-    delete: Delete;
+    delete: Delete<DatasetWhereUniqueInput>;
     getById: GetById<DbDataset>;
     getByWorkspaceSlugAndDatasetSlug: ({
       workspaceSlug,

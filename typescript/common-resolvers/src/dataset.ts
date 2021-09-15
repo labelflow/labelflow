@@ -291,7 +291,7 @@ const deleteDataset = async (
       async (image) => await repository.upload.delete(image.url)
     )
   );
-  await repository.dataset.delete(datasetToDelete.id);
+  await repository.dataset.delete({ id: datasetToDelete.id });
   return datasetToDelete;
 };
 

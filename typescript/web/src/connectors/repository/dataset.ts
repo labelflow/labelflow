@@ -6,7 +6,9 @@ import {
 
 import { getDatabase } from "../database";
 
-export const deleteDataset: Repository["dataset"]["delete"] = async (id) => {
+export const deleteDataset: Repository["dataset"]["delete"] = async ({
+  id,
+}) => {
   const datasetToDelete = await throwIfResolvesToNil<
     [string],
     DbDataset | undefined

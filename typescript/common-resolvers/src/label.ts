@@ -108,7 +108,7 @@ const deleteLabel = async (
     repository.label.getById
   )(labelId);
 
-  await repository.label.delete(labelId);
+  await repository.label.delete({ id: labelId });
 
   return labelToDelete;
 };

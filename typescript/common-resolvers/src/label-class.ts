@@ -158,7 +158,7 @@ const deleteLabelClass = async (
     repository.labelClass.getById
   )(args.where.id);
 
-  await repository.labelClass.delete(labelToDelete.id);
+  await repository.labelClass.delete({ id: labelToDelete.id });
   const labelClassesOfDataset = await repository.labelClass.list({
     datasetId: labelToDelete?.datasetId,
   });

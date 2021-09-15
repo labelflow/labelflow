@@ -47,7 +47,7 @@ export const repository: Repository = {
       return createdLabel.id;
     },
     count: countLabels,
-    delete: async (id) => {
+    delete: async ({ id }) => {
       await prisma.label.delete({ where: { id } });
     },
     /* Needs to be casted as Prisma doesn't let us specify
@@ -82,7 +82,7 @@ export const repository: Repository = {
       await prisma.labelClass.count({
         where: castObjectNullsToUndefined(where),
       }),
-    delete: async (id) => {
+    delete: async ({ id }) => {
       await prisma.labelClass.delete({ where: { id } });
     },
     getById: (id) =>
@@ -124,8 +124,10 @@ export const repository: Repository = {
       });
       return createdDataset.id;
     },
-    delete: async (id) => {
-      await prisma.dataset.delete({ where: { id } });
+    delete: async ({ id }) => {
+      await prisma.dataset.delete({
+        where: castObjectNullsToUndefined({ id }),
+      });
     },
     getByWorkspaceSlugAndDatasetSlug: ({ datasetSlug, workspaceSlug }) => {
       return prisma.dataset.findUnique({

@@ -33,7 +33,7 @@ export const repository: Repository = {
       return await (await getDatabase()).label.add(addIdIfNil(label));
     },
     count: countLabels,
-    delete: async (id) => {
+    delete: async ({ id }) => {
       return await (await getDatabase()).label.delete(id);
     },
     getById: async (id) => {
