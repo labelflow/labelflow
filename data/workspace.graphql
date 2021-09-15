@@ -4,7 +4,8 @@ input WorkspaceCreateInput {
 }
 
 input WorkspaceWhereUniqueInput {
-  id: ID!
+  id: ID
+  slug: String
 }
 
 input WorkspaceUpdateInput {

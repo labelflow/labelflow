@@ -355,5 +355,6 @@ input WorkspaceUpdateInput {
 }
 
 input WorkspaceWhereUniqueInput {
-  id: ID!
+  id: ID
+  slug: String
 }

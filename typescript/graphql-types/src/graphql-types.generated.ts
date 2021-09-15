@@ -593,7 +593,8 @@ export type WorkspaceUpdateInput = {
 };
 
 export type WorkspaceWhereUniqueInput = {
-  id: Scalars['ID'];
+  id?: Maybe<Scalars['ID']>;
+  slug?: Maybe<Scalars['String']>;
 };
 
 
