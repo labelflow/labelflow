@@ -94,7 +94,7 @@ export const ExportOptionsModal = ({
                 header={information.title}
                 description={information.description}
                 isChecked={
-                  optionsOfFormat[
+                  optionsOfFormat?.[
                     optionName as keyof typeof optionsOfFormat
                   ] as boolean
                 }

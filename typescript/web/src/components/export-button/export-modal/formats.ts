@@ -1,8 +1,9 @@
 import { ExportOptions, ExportFormat } from "@labelflow/graphql-types";
 
 export type Format = keyof ExportOptions;
+type RequiredExportOptions = Required<ExportOptions>;
 
-export const defaultOptions: ExportOptions = {
+export const defaultOptions: RequiredExportOptions = {
   coco: {
     exportImages: false,
   },
@@ -13,7 +14,7 @@ export const defaultOptions: ExportOptions = {
 };
 
 export const formatMainInformation: {
-  [format in keyof ExportOptions]: {
+  [format in keyof RequiredExportOptions]: {
     format: ExportFormat;
     logoSrc: string;
     title: string;
@@ -35,8 +36,8 @@ export const formatMainInformation: {
 };
 
 export const formatsOptionsInformation: {
-  [formatKey in keyof Required<ExportOptions>]: {
-    [optionKey in keyof Required<ExportOptions>[formatKey]]: {
+  [formatKey in keyof RequiredExportOptions]: {
+    [optionKey in keyof Exclude<RequiredExportOptions[formatKey], null>]: {
       title: string;
       description: string;
     };
