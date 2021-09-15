@@ -60,6 +60,29 @@ input ExampleWhereUniqueInput {
   id: ID!
 }
 
+enum ExportFormat {
+  YOLO
+  COCO
+}
+
+input ExportOptions {
+  coco: ExportOptionsCoco
+  yolo: ExportOptionsYolo
+}
+
+input ExportOptionsCoco {
+  name: String
+  exportImages: Boolean
+  avoidImageNameCollisions: Boolean
+}
+
+input ExportOptionsYolo {
+  name: String
+  exportImages: Boolean
+  includePolygons: Boolean
+  avoidImageNameCollisions: Boolean
+}
+
 input ExportWhereUniqueInput {
   datasetId: ID!
 }
@@ -234,7 +257,7 @@ type Query {
   labels(where: LabelWhereInput, first: Int, skip: Int): [Label!]!
   dataset(where: DatasetWhereUniqueInput!): Dataset!
   datasets(first: Int, skip: Int): [Dataset!]!
-  exportToCoco(where: ExportWhereUniqueInput!): String!
+  exportDataset(where: ExportWhereUniqueInput!, format: ExportFormat!, options: ExportOptions): String!
   debug: JSON!
 }
 

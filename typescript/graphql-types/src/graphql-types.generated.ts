@@ -85,6 +85,29 @@ export type ExampleWhereUniqueInput = {
   id: Scalars['ID'];
 };
 
+export enum ExportFormat {
+  Yolo = 'YOLO',
+  Coco = 'COCO'
+}
+
+export type ExportOptions = {
+  coco?: Maybe<ExportOptionsCoco>;
+  yolo?: Maybe<ExportOptionsYolo>;
+};
+
+export type ExportOptionsCoco = {
+  name?: Maybe<Scalars['String']>;
+  exportImages?: Maybe<Scalars['Boolean']>;
+  avoidImageNameCollisions?: Maybe<Scalars['Boolean']>;
+};
+
+export type ExportOptionsYolo = {
+  name?: Maybe<Scalars['String']>;
+  exportImages?: Maybe<Scalars['Boolean']>;
+  includePolygons?: Maybe<Scalars['Boolean']>;
+  avoidImageNameCollisions?: Maybe<Scalars['Boolean']>;
+};
+
 export type ExportWhereUniqueInput = {
   datasetId: Scalars['ID'];
 };
@@ -336,7 +359,7 @@ export type Query = {
   labels: Array<Label>;
   dataset: Dataset;
   datasets: Array<Dataset>;
-  exportToCoco: Scalars['String'];
+  exportDataset: Scalars['String'];
   debug: Scalars['JSON'];
 };
 
@@ -401,8 +424,10 @@ export type QueryDatasetsArgs = {
 };
 
 
-export type QueryExportToCocoArgs = {
+export type QueryExportDatasetArgs = {
   where: ExportWhereUniqueInput;
+  format: ExportFormat;
+  options?: Maybe<ExportOptions>;
 };
 
 
@@ -515,6 +540,11 @@ export type ResolversTypes = {
   ExampleOrderByInput: ExampleOrderByInput;
   ExampleWhereInput: ExampleWhereInput;
   ExampleWhereUniqueInput: ExampleWhereUniqueInput;
+  ExportFormat: ExportFormat;
+  ExportOptions: ExportOptions;
+  ExportOptionsCoco: ExportOptionsCoco;
+  Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
+  ExportOptionsYolo: ExportOptionsYolo;
   ExportWhereUniqueInput: ExportWhereUniqueInput;
   Geometry: ResolverTypeWrapper<Geometry>;
   GeometryInput: GeometryInput;
@@ -545,7 +575,6 @@ export type ResolversTypes = {
   Upload: ResolverTypeWrapper<Scalars['Upload']>;
   UploadTarget: ResolversTypes['UploadTargetDirect'] | ResolversTypes['UploadTargetHttp'];
   UploadTargetDirect: ResolverTypeWrapper<UploadTargetDirect>;
-  Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   UploadTargetHttp: ResolverTypeWrapper<UploadTargetHttp>;
   UploadTargetInput: UploadTargetInput;
 };
@@ -565,6 +594,10 @@ export type ResolversParentTypes = {
   ExampleCreateInput: ExampleCreateInput;
   ExampleWhereInput: ExampleWhereInput;
   ExampleWhereUniqueInput: ExampleWhereUniqueInput;
+  ExportOptions: ExportOptions;
+  ExportOptionsCoco: ExportOptionsCoco;
+  Boolean: Scalars['Boolean'];
+  ExportOptionsYolo: ExportOptionsYolo;
   ExportWhereUniqueInput: ExportWhereUniqueInput;
   Geometry: Geometry;
   GeometryInput: GeometryInput;
@@ -594,7 +627,6 @@ export type ResolversParentTypes = {
   Upload: Scalars['Upload'];
   UploadTarget: ResolversParentTypes['UploadTargetDirect'] | ResolversParentTypes['UploadTargetHttp'];
   UploadTargetDirect: UploadTargetDirect;
-  Boolean: Scalars['Boolean'];
   UploadTargetHttp: UploadTargetHttp;
   UploadTargetInput: UploadTargetInput;
 };
@@ -730,7 +762,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   labels?: Resolver<Array<ResolversTypes['Label']>, ParentType, ContextType, RequireFields<QueryLabelsArgs, never>>;
   dataset?: Resolver<ResolversTypes['Dataset'], ParentType, ContextType, RequireFields<QueryDatasetArgs, 'where'>>;
   datasets?: Resolver<Array<ResolversTypes['Dataset']>, ParentType, ContextType, RequireFields<QueryDatasetsArgs, never>>;
-  exportToCoco?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<QueryExportToCocoArgs, 'where'>>;
+  exportDataset?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<QueryExportDatasetArgs, 'where' | 'format'>>;
   debug?: Resolver<ResolversTypes['JSON'], ParentType, ContextType>;
 };
 

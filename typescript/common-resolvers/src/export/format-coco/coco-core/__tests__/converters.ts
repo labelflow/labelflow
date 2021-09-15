@@ -1,5 +1,5 @@
 import { Image, LabelType } from "@labelflow/graphql-types";
-import { DbLabelClass } from "../../../types";
+import { DbLabelClass } from "../../../../types";
 
 import {
   convertLabelClassToCocoCategory,
@@ -15,7 +15,6 @@ import {
 import {
   CocoCategory,
   CocoAnnotation,
-  CocoImage,
   DbLabelWithImageDimensions,
 } from "../types";
 
@@ -202,9 +201,11 @@ describe("Coco converters", () => {
   test("Should convert an image to coco json image", () => {
     const image = createImage("an-image", 1, 2);
 
-    const cocoImage = convertImageToCocoImage(image, 1);
-
-    const expectedCocoImage: CocoImage = {
+    expect(
+      convertImageToCocoImage(image, 1, {
+        avoidImageNameCollisions: true,
+      })
+    ).toEqual({
       id: 1,
       date_captured: date,
       height: 1,
@@ -213,9 +214,22 @@ describe("Coco converters", () => {
       file_name: "an-image_id-an-image.png",
       flickr_url: "",
       license: 0,
-    };
+    });
 
-    expect(cocoImage).toEqual(expectedCocoImage);
+    expect(
+      convertImageToCocoImage(image, 1, {
+        avoidImageNameCollisions: false,
+      })
+    ).toEqual({
+      id: 1,
+      date_captured: date,
+      height: 1,
+      width: 2,
+      coco_url: "https://an-image",
+      file_name: "an-image.png",
+      flickr_url: "",
+      license: 0,
+    });
   });
 
   test("Should convert a list of images to coco images", () => {
@@ -224,7 +238,9 @@ describe("Coco converters", () => {
       createImage("another-image", 3, 4),
     ];
 
-    const { cocoImages, imageIdsMap } = convertImagesToCocoImages(images);
+    const { cocoImages, imageIdsMap } = convertImagesToCocoImages(images, {
+      avoidImageNameCollisions: false,
+    });
 
     const expectedCocoImage = [
       {
@@ -317,7 +333,10 @@ describe("Coco converters", () => {
       convertLabelflowDatasetToCocoDataset(
         [image1, image2],
         [label1, label2, label3],
-        [labelClass1, labelClass2]
+        [labelClass1, labelClass2],
+        {
+          avoidImageNameCollisions: false,
+        }
       )
     ).toMatchObject(expectedCocoDataset);
   });
