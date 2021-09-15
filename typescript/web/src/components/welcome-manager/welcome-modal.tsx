@@ -31,8 +31,8 @@ type WelcomeModalParam =
   | "closed"; // Force it to be closed and never open
 
 export const getDatasetsQuery = gql`
-  query getDatasets {
-    datasets {
+  query getDatasets($where: DatasetWhereInput) {
+    datasets(where: $where) {
       id
       name
     }
@@ -107,6 +107,7 @@ const performWelcomeWorkflow = async ({
 
     const { data: getDatasetsResult } = await client.query({
       query: getDatasetsQuery,
+      variables: { where: { workspaceSlug: "local" } },
     });
 
     const demoDataset =

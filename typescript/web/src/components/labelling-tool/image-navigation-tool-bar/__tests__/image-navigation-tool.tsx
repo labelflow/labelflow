@@ -66,7 +66,9 @@ beforeEach(async () => {
   await client.mutate({
     mutation: gql`
       mutation createDataset($datasetId: ID!) {
-        createDataset(data: { name: "test dataset", id: $datasetId }) {
+        createDataset(
+          data: { name: "test dataset", id: $datasetId, workspaceSlug: "local" }
+        ) {
           id
         }
       }

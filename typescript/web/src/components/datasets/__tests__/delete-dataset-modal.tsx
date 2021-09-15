@@ -28,7 +28,7 @@ test("should delete a dataset when the button is clicked", async () => {
   const mutateResult = await client.mutate({
     mutation: gql`
       mutation {
-        createDataset(data: { name: "Toto" }) {
+        createDataset(data: { name: "Toto", workspaceSlug: "local" }) {
           id
         }
       }
@@ -64,7 +64,7 @@ test("shouldn't delete a dataset when the cancel is clicked", async () => {
   const mutateResult = await client.mutate({
     mutation: gql`
       mutation {
-        createDataset(data: { name: "Toto" }) {
+        createDataset(data: { name: "Toto", workspaceSlug: "local" }) {
           id
         }
       }

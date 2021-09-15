@@ -13,7 +13,9 @@ const createDataset = async (name: string, datasetId?: string | null) => {
   return await client.mutate({
     mutation: gql`
       mutation createDataset($datasetId: String, $name: String!) {
-        createDataset(data: { id: $datasetId, name: $name }) {
+        createDataset(
+          data: { id: $datasetId, name: $name, workspaceSlug: "local" }
+        ) {
           id
           name
         }
@@ -97,7 +99,7 @@ describe("Dataset resolver test suite", () => {
     const mutationResult = await client.mutate({
       mutation: gql`
         mutation createDataset($name: String!) {
-          createDataset(data: { name: $name }) {
+          createDataset(data: { name: $name, workspaceSlug: "local" }) {
             id
             name
           }
@@ -141,7 +143,9 @@ describe("Dataset resolver test suite", () => {
     const mutationResult = await client.mutate({
       mutation: gql`
         mutation createDataset($datasetId: String, $name: String!) {
-          createDataset(data: { id: $datasetId, name: $name }) {
+          createDataset(
+            data: { id: $datasetId, name: $name, workspaceSlug: "local" }
+          ) {
             id
             name
           }
@@ -215,6 +219,7 @@ describe("Dataset resolver test suite", () => {
           }
         }
       `,
+      variables: { where: { workspaceSlug: "local" } },
     });
     expect(queryResults.data.datasets).toHaveLength(2);
   });
@@ -226,13 +231,14 @@ describe("Dataset resolver test suite", () => {
 
     const queryResults = await client.query({
       query: gql`
-        query getDatasets {
-          datasets {
+        query getDatasets($where: DatasetWhereInput) {
+          datasets(where: $where) {
             id
             name
           }
         }
       `,
+      variables: { where: { workspaceSlug: "local" } },
     });
     expect(queryResults.data.datasets[0].name).toEqual("dataset 1");
     expect(queryResults.data.datasets[1].name).toEqual("dataset 2");
@@ -241,13 +247,14 @@ describe("Dataset resolver test suite", () => {
   test("Should return no datasets when database is empty", async () => {
     const queryResults = await client.query({
       query: gql`
-        query getDatasets {
-          datasets {
+        query getDatasets($where: DatasetWhereInput) {
+          datasets(where: $where) {
             id
             name
           }
         }
       `,
+      variables: { where: { workspaceSlug: "local" } },
     });
     expect(queryResults.data.datasets).toHaveLength(0);
   });
@@ -519,21 +526,23 @@ describe("Dataset resolver test suite", () => {
   });
 
   test("Find dataset by name", async () => {
-    const name = "My new dataset";
+    const name = "my-new-dataset";
     const datasetId = "some id";
     await createDataset(name, datasetId);
 
     const queryResult = await client.query({
       query: gql`
-        query getDataset($name: String!) {
-          dataset(where: { name: $name }) {
+        query getDataset($slug: String!) {
+          dataset(
+            where: { slugs: { datasetSlug: $slug, workspaceSlug: "local" } }
+          ) {
             id
             name
           }
         }
       `,
       variables: {
-        name,
+        slug: name,
       },
     });
 
@@ -697,22 +706,24 @@ describe("Dataset resolver test suite", () => {
   });
 
   test("Find dataset by name shortly after renaming it (bug that we noticed)", async () => {
-    const name = "My old dataset";
-    const newName = "My new dataset";
+    const name = "my-old-dataset";
+    const newName = "my-new-dataset";
     const datasetId = "some id";
     await createDataset(name, datasetId);
 
     const queryResult1 = await client.query({
       query: gql`
-        query getDataset($name: String!) {
-          dataset(where: { name: $name }) {
+        query getDataset($slug: String!) {
+          dataset(
+            where: { slugs: { datasetSlug: $slug, workspaceSlug: "local" } }
+          ) {
             id
             name
           }
         }
       `,
       variables: {
-        name,
+        slug: name,
       },
       fetchPolicy: "no-cache",
     });
@@ -742,15 +753,17 @@ describe("Dataset resolver test suite", () => {
 
     const queryResult2 = await client.query({
       query: gql`
-        query getDataset($name: String!) {
-          dataset(where: { name: $name }) {
+        query getDataset($slug: String!) {
+          dataset(
+            where: { slugs: { datasetSlug: $slug, workspaceSlug: "local" } }
+          ) {
             id
             name
           }
         }
       `,
       variables: {
-        name: newName,
+        slug: newName,
       },
       fetchPolicy: "no-cache",
     });

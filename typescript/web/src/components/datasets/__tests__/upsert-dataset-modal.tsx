@@ -66,14 +66,14 @@ test("should create a dataset when the form is submitted", async () => {
   const onClose = jest.fn();
   renderModal({ onClose });
 
-  const datasetName = "Good Day";
+  const datasetSlug = "good-day";
 
   const input = screen.getByLabelText(
     /dataset name input/i
   ) as HTMLInputElement;
   const button = screen.getByLabelText(/create dataset/i);
 
-  fireEvent.change(input, { target: { value: datasetName } });
+  fireEvent.change(input, { target: { value: datasetSlug } });
   fireEvent.click(button);
 
   await waitFor(() => {
@@ -82,20 +82,22 @@ test("should create a dataset when the form is submitted", async () => {
 
   const {
     data: {
-      dataset: { name },
+      dataset: { slug },
     },
   } = await client.query({
     query: gql`
       query getDatasetByName($name: String) {
-        dataset(where: { name: $name }) {
-          name
+        dataset(
+          where: { slugs: { datasetSlug: $slug, workspaceSlug: "local" } }
+        ) {
+          slug
         }
       }
     `,
-    variables: { name: datasetName },
+    variables: { name: datasetSlug },
   });
 
-  expect(name).toEqual(datasetName);
+  expect(slug).toEqual(datasetSlug);
 });
 
 test("should display an error message if dataset name already exists", async () => {
@@ -104,7 +106,7 @@ test("should display an error message if dataset name already exists", async () 
   await client.mutate({
     mutation: gql`
       mutation createDataset($name: String) {
-        createDataset(data: { name: $name }) {
+        createDataset(data: { name: $name, workspaceSlug: "local" }) {
           id
           name
           slug
@@ -149,7 +151,7 @@ test("update dataset: should have dataset name pre-filled when renaming existing
   } = await client.mutate({
     mutation: gql`
       mutation createDataset($name: String) {
-        createDataset(data: { name: $name }) {
+        createDataset(data: { name: $name, workspaceSlug: "local" }) {
           id
         }
       }
@@ -185,7 +187,7 @@ test("update dataset: should update a dataset when the form is submitted", async
   } = await client.mutate({
     mutation: gql`
       mutation createDataset($name: String) {
-        createDataset(data: { name: $name }) {
+        createDataset(data: { name: $name, workspaceSlug: "local" }) {
           id
         }
       }

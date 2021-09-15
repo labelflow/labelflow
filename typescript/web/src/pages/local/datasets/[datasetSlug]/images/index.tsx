@@ -40,7 +40,7 @@ const ArrowRightIcon = chakra(RiArrowRightSLine);
 
 export const datasetDataQuery = gql`
   query getDatasetData($slug: String!) {
-    dataset(where: { slug: $slug }) {
+    dataset(where: { slugs: { datasetSlug: $slug, workspaceSlug: "local" } }) {
       id
       name
       images {

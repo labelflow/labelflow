@@ -19,8 +19,8 @@ import { WelcomeManager } from "../../../components/welcome-manager";
 import { CookieBanner } from "../../../components/cookie-banner";
 
 export const getDatasetsQuery = gql`
-  query getDatasets {
-    datasets {
+  query getDatasets($where: DatasetWhereInput) {
+    datasets(where: $where) {
       id
       name
       slug
@@ -42,19 +42,18 @@ export const getDatasetsQuery = gql`
 `;
 
 const DatasetPage = () => {
-  const { data: datasetsResult } =
-    useQuery<{
-      datasets: Pick<
-        DatasetType,
-        | "id"
-        | "name"
-        | "slug"
-        | "images"
-        | "imagesAggregates"
-        | "labelClassesAggregates"
-        | "labelsAggregates"
-      >[];
-    }>(getDatasetsQuery);
+  const { data: datasetsResult } = useQuery<{
+    datasets: Pick<
+      DatasetType,
+      | "id"
+      | "name"
+      | "slug"
+      | "images"
+      | "imagesAggregates"
+      | "labelClassesAggregates"
+      | "labelsAggregates"
+    >[];
+  }>(getDatasetsQuery, { variables: { where: { workspaceSlug: "local" } } });
 
   const [isCreatingDataset, setIsCreatingDataset] = useQueryParam(
     "modal-create-dataset",

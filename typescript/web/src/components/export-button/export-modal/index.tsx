@@ -37,7 +37,7 @@ const exportToCocoQuery = gql`
 
 const countLabelsOfDatasetQuery = gql`
   query countLabelsOfDataset($slug: String!) {
-    dataset(where: { slug: $slug }) {
+    dataset(where: { slugs: { datasetSlug: $slug, workspaceSlug: "local" } }) {
       id
       imagesAggregates {
         totalCount
