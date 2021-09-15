@@ -113,17 +113,23 @@ const reorderLabelClass = async (
         (labelClassOfDataset.index > Math.min(oldIndex, newIndex) &&
           labelClassOfDataset.index < Math.max(oldIndex, newIndex))
       ) {
-        await repository.labelClass.update(labelClassOfDataset.id, {
-          ...labelClassOfDataset,
-          index: labelClassOfDataset.index + indexUpdate,
-        });
+        await repository.labelClass.update(
+          { id: labelClassOfDataset.id },
+          {
+            ...labelClassOfDataset,
+            index: labelClassOfDataset.index + indexUpdate,
+          }
+        );
       }
     })
   );
-  await repository.labelClass.update(labelClassId, {
-    ...labelClassToUpdate,
-    index: args.data.index,
-  });
+  await repository.labelClass.update(
+    { id: labelClassId },
+    {
+      ...labelClassToUpdate,
+      index: args.data.index,
+    }
+  );
 
   return await repository.labelClass.getById(labelClassId);
 };
@@ -140,10 +146,13 @@ const updateLabelClass = async (
     repository.labelClass.getById
   )(labelClassId);
 
-  await repository.labelClass.update(labelClassId, {
-    ...labelClassToUpdate,
-    ...args.data,
-  });
+  await repository.labelClass.update(
+    { id: labelClassId },
+    {
+      ...labelClassToUpdate,
+      ...args.data,
+    }
+  );
 
   return await repository.labelClass.getById(labelClassId);
 };
@@ -165,10 +174,13 @@ const deleteLabelClass = async (
   await Promise.all(
     labelClassesOfDataset.map(async (labelClassOfDataset) => {
       if (labelClassOfDataset.index > labelToDelete.index) {
-        await repository.labelClass.update(labelClassOfDataset.id, {
-          ...labelClassOfDataset,
-          index: labelClassOfDataset.index - 1,
-        });
+        await repository.labelClass.update(
+          { id: labelClassOfDataset.id },
+          {
+            ...labelClassOfDataset,
+            index: labelClassOfDataset.index - 1,
+          }
+        );
       }
     })
   );

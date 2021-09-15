@@ -128,7 +128,7 @@ const updateLabel = async (
   }
 
   if (!args?.data?.geometry) {
-    await repository.label.update(labelId, args.data);
+    await repository.label.update({ id: labelId }, args.data);
 
     return await getLabelById(labelId, repository);
   }
@@ -158,7 +158,7 @@ const updateLabel = async (
     width,
   };
 
-  await repository.label.update(labelId, newLabelEntity);
+  await repository.label.update({ id: labelId }, newLabelEntity);
 
   return await getLabelById(labelId, repository);
 };

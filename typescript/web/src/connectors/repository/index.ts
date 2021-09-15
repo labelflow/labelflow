@@ -40,7 +40,7 @@ export const repository: Repository = {
       return await (await getDatabase()).label.get(id);
     },
     list: listLabels,
-    update: async (id, changes) => {
+    update: async ({ id }, changes) => {
       return (await (await getDatabase()).label.update(id, changes)) === 1;
     },
   },
@@ -58,7 +58,7 @@ export const repository: Repository = {
       return await (await getDatabase()).labelClass.get(id);
     },
     list: list(async () => (await getDatabase()).labelClass, "index"),
-    update: async (id, changes) => {
+    update: async ({ id }, changes) => {
       return (await (await getDatabase()).labelClass.update(id, changes)) === 1;
     },
   },
@@ -74,7 +74,7 @@ export const repository: Repository = {
       return await (await getDatabase()).dataset.get({ slug: datasetSlug });
     },
     list: list(async () => (await getDatabase()).dataset),
-    update: async (id, changes) => {
+    update: async ({ id }, changes) => {
       return (await (await getDatabase()).dataset.update(id, changes)) === 1;
     },
   },

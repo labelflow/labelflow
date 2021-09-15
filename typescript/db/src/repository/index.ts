@@ -56,7 +56,7 @@ export const repository: Repository = {
       prisma.label.findUnique({
         where: { id },
       }) as unknown as Promise<DbLabel>,
-    update: async (id, label) => {
+    update: async ({ id }, label) => {
       try {
         if (label) {
           await prisma.label.update({
@@ -98,7 +98,7 @@ export const repository: Repository = {
           take: first,
         })
       ),
-    update: async (id, labelClass) => {
+    update: async ({ id }, labelClass) => {
       try {
         await prisma.labelClass.update({
           where: { id },
@@ -141,10 +141,10 @@ export const repository: Repository = {
         where: { id },
       });
     },
-    update: async (id, dataset) => {
+    update: async ({ id }, dataset) => {
       try {
         await prisma.dataset.update({
-          where: { id },
+          where: castObjectNullsToUndefined({ id }),
           data: castObjectNullsToUndefined(dataset),
         });
         return true;

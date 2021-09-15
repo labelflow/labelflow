@@ -67,16 +67,9 @@ type WithCreatedAtAndUpdatedAt<T extends {}> = T & {
 type ID = string;
 
 // Desired type
-// type Delete<EntityWhereUniqueInput> = (
-//   input: EntityWhereUniqueInput
-// ) => Promise<void>;
 // type Get<EntityType, EntityWhereUniqueInput> = (
 //   input: EntityWhereUniqueInput
 // ) => Promise<EntityType | undefined | null>;
-// type Update<Entity, EntityWhereUniqueInput> = (
-//   input: EntityWhereUniqueInput,
-//   data: PartialWithNullAllowed<Entity>
-// ) => Promise<boolean>;
 
 type Add<EntityType> = (entity: EntityType) => Promise<ID>;
 type Count<Where> = (where?: Where) => Promise<number>;
@@ -84,13 +77,14 @@ type Delete<EntityWhereUniqueInput> = (
   input: EntityWhereUniqueInput
 ) => Promise<void>;
 type GetById<EntityType> = (id: ID) => Promise<EntityType | undefined | null>;
+
 type List<Entity = unknown, Where extends Record<string, any> | null = null> = (
   where?: Where | null,
   skip?: number | null,
   first?: number | null
 ) => Promise<Entity[]>;
-type Update<Entity> = (
-  id: ID,
+type Update<Entity, EntityWhereUniqueInput> = (
+  input: EntityWhereUniqueInput,
   data: PartialWithNullAllowed<Entity>
 ) => Promise<boolean>;
 
@@ -107,7 +101,7 @@ export type Repository = {
     delete: Delete<LabelWhereUniqueInput>;
     getById: GetById<DbLabel>;
     list: List<DbLabel, LabelWhereInput>;
-    update: Update<DbLabel>;
+    update: Update<DbLabel, LabelWhereUniqueInput>;
   };
   labelClass: {
     add: Add<DbLabelClassCreateInput>;
@@ -115,7 +109,7 @@ export type Repository = {
     delete: Delete<LabelClassWhereUniqueInput>;
     getById: GetById<DbLabelClass>;
     list: List<DbLabelClass, LabelClassWhereInput>;
-    update: Update<DbLabelClass>;
+    update: Update<DbLabelClass, LabelClassWhereUniqueInput>;
   };
   dataset: {
     add: Add<DbDatasetCreateInput>;
@@ -129,7 +123,7 @@ export type Repository = {
       datasetSlug: string;
     }) => Promise<DbDataset | undefined | null>;
     list: List<DbDataset, null>;
-    update: Update<DbDataset>;
+    update: Update<DbDataset, DatasetWhereUniqueInput>;
   };
   upload: {
     getUploadTargetHttp: (

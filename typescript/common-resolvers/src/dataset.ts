@@ -260,7 +260,7 @@ const updateDataset = async (
 
   try {
     const updateResult = await repository.dataset.update(
-      datasetToUpdate.id,
+      { id: datasetToUpdate.id },
       newData
     );
     if (!updateResult) {
