@@ -158,8 +158,8 @@ const labelsResolver = async (
 const image = async (_: any, args: QueryImageArgs, { repository }: Context) => {
   return await throwIfResolvesToNil(
     `No image with id "${args?.where?.id}"`,
-    repository.image.getById
-  )(args?.where?.id);
+    repository.image.get
+  )(args?.where);
 };
 
 const images = async (
@@ -183,8 +183,8 @@ const createImage = async (
   // entity before being able to continue.
   await throwIfResolvesToNil(
     `The dataset id ${datasetId} doesn't exist.`,
-    repository.dataset.getById
-  )(datasetId);
+    repository.dataset.get
+  )({ id: datasetId });
 
   if (
     !(
@@ -205,7 +205,7 @@ const createImage = async (
   );
 
   const newImageId = await repository.image.add(newImageEntity);
-  const createdImage = await repository.image.getById(newImageId);
+  const createdImage = await repository.image.get({ id: newImageId });
   if (createdImage == null) {
     throw new Error("An error has occurred during image creation");
   }

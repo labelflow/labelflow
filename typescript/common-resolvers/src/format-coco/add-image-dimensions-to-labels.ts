@@ -8,7 +8,7 @@ export const addImageDimensionsToLabels = async (
   return await Promise.all(
     labels.map(async (label) => {
       const { imageId } = label;
-      const image = await repository.image.getById(imageId);
+      const image = await repository.image.get({ id: imageId });
       if (image == null) {
         throw new Error(`Missing image with id ${imageId}`);
       }

@@ -6,76 +6,17 @@ import {
   MutationCreateDatasetArgs,
   MutationDeleteDatasetArgs,
   MutationUpdateDatasetArgs,
-  DatasetWhereUniqueInput,
   QueryDatasetArgs,
   QueryDatasetsArgs,
   QueryImagesArgs,
 } from "@labelflow/graphql-types";
-
 import { Context, DbDataset, Repository } from "./types";
-import { throwIfResolvesToNil } from "./utils/throw-if-resolves-to-nil";
 import { getImageEntityFromMutationArgs } from "./image";
 import {
   tutorialImages,
   tutorialLabelClassId,
   tutorialLabels,
 } from "./data/dataset-tutorial";
-
-const getDatasetById = async (
-  id: string,
-  repository: Repository
-): Promise<DbDataset> => {
-  const dataset = await throwIfResolvesToNil(
-    `No dataset with id "${id}"`,
-    repository.dataset.getById
-  )(id);
-
-  return { ...dataset, __typename: "Dataset" };
-};
-
-const getDatasetByWorkspaceSlugAndDatasetSlug = async (
-  {
-    workspaceSlug,
-    datasetSlug,
-  }: { workspaceSlug: string; datasetSlug: string },
-  repository: Repository
-): Promise<DbDataset> => {
-  const dataset = await throwIfResolvesToNil(
-    `No dataset with workspace slug "${workspaceSlug}" and dataset slug "${datasetSlug}"`,
-    repository.dataset.getByWorkspaceSlugAndDatasetSlug
-  )({ workspaceSlug, datasetSlug });
-
-  return { ...dataset, __typename: "Dataset" };
-};
-
-const getDatasetFromWhereUniqueInput = async (
-  where: DatasetWhereUniqueInput,
-  repository: Repository
-): Promise<DbDataset> => {
-  const { id, slugs } = where;
-
-  if ((id == null && slugs == null) || (id != null && slugs != null)) {
-    throw new Error(
-      "You should either specify the id or the slugs when looking for a the dataset"
-    );
-  }
-
-  if (id != null) {
-    return await getDatasetById(id, repository);
-  }
-
-  if (slugs != null) {
-    const { workspaceSlug, datasetSlug } = slugs;
-    return await getDatasetByWorkspaceSlugAndDatasetSlug(
-      { workspaceSlug, datasetSlug },
-      repository
-    );
-  }
-
-  throw new Error(
-    `Invalid where unique input for dataset entity: ${JSON.stringify(where)}`
-  );
-};
 
 const getLabelClassesByDatasetId = async (
   datasetId: string,
@@ -118,7 +59,7 @@ const dataset = async (
   args: QueryDatasetArgs,
   { repository }: Context
 ): Promise<DbDataset> => {
-  return await getDatasetFromWhereUniqueInput(args.where, repository);
+  return await repository.dataset.get(args.where);
 };
 
 const datasets = async (
@@ -164,7 +105,7 @@ const createDataset = async (
   try {
     await repository.dataset.add(dbDataset);
 
-    return await getDatasetById(datasetId, repository);
+    return await repository.dataset.get({ id: datasetId });
   } catch (e) {
     console.error(e);
     throw new Error(
@@ -193,10 +134,12 @@ const createDemoDataset = async (
   } catch (error) {
     if (error.name === "ConstraintError") {
       // The tutorial dataset already exists, just return it
-      return await getDatasetByWorkspaceSlugAndDatasetSlug(
-        { datasetSlug: "tutorial-dataset", workspaceSlug: "local" },
-        repository
-      );
+      return await repository.dataset.get({
+        slugs: {
+          datasetSlug: "tutorial-dataset",
+          workspaceSlug: "local",
+        },
+      });
     }
     throw error;
   }
@@ -240,7 +183,7 @@ const createDemoDataset = async (
     })
   );
 
-  return await getDatasetById(datasetId, repository);
+  return await repository.dataset.get({ id: datasetId });
 };
 
 const updateDataset = async (
@@ -248,10 +191,7 @@ const updateDataset = async (
   args: MutationUpdateDatasetArgs,
   { repository }: Context
 ): Promise<DbDataset> => {
-  const datasetToUpdate = await getDatasetFromWhereUniqueInput(
-    args.where,
-    repository
-  );
+  const datasetToUpdate = await repository.dataset.get(args.where);
 
   const newData =
     "name" in args.data
@@ -270,7 +210,7 @@ const updateDataset = async (
     throw new Error("Could not update the dataset");
   }
 
-  return await getDatasetById(datasetToUpdate.id, repository);
+  return await repository.dataset.get({ id: datasetToUpdate.id });
 };
 
 const deleteDataset = async (
@@ -278,10 +218,7 @@ const deleteDataset = async (
   args: MutationDeleteDatasetArgs,
   { repository }: Context
 ): Promise<DbDataset> => {
-  const datasetToDelete = await getDatasetFromWhereUniqueInput(
-    args.where,
-    repository
-  );
+  const datasetToDelete = await repository.dataset.get(args.where);
 
   const imagesOfDataset = await repository.image.list({
     datasetId: args.where.id,

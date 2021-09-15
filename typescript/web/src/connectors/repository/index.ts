@@ -23,7 +23,7 @@ export const repository: Repository = {
         ? await (await getDatabase()).image.where(where).count()
         : await (await getDatabase()).image.count();
     },
-    getById: async (id) => {
+    get: async ({ id }) => {
       return await (await getDatabase()).image.get(id);
     },
     list: list(async () => (await getDatabase()).image),
@@ -36,7 +36,7 @@ export const repository: Repository = {
     delete: async ({ id }) => {
       return await (await getDatabase()).label.delete(id);
     },
-    getById: async (id) => {
+    get: async ({ id }) => {
       return await (await getDatabase()).label.get(id);
     },
     list: listLabels,
@@ -54,7 +54,7 @@ export const repository: Repository = {
         : await (await getDatabase()).labelClass.count();
     },
     delete: deleteLabelClass,
-    getById: async (id) => {
+    get: async ({ id }) => {
       return await (await getDatabase()).labelClass.get(id);
     },
     list: list(async () => (await getDatabase()).labelClass, "index"),
@@ -67,11 +67,21 @@ export const repository: Repository = {
       return await (await getDatabase()).dataset.add(addIdIfNil(dataset));
     },
     delete: deleteDataset,
-    getById: async (id) => {
-      return await (await getDatabase()).dataset.get(id);
-    },
-    getByWorkspaceSlugAndDatasetSlug: async ({ datasetSlug }) => {
-      return await (await getDatabase()).dataset.get({ slug: datasetSlug });
+    get: async (where) => {
+      if (
+        (where.id == null && where.slugs == null) ||
+        (where.id != null && where.slugs != null)
+      ) {
+        throw new Error(
+          "You should either specify the id or the slugs when looking for a dataset"
+        );
+      }
+      if (where.id != null) {
+        return await (await getDatabase()).dataset.get(where.id);
+      }
+      return await (
+        await getDatabase()
+      ).dataset.get({ slug: where.slugs?.datasetSlug });
     },
     list: list(async () => (await getDatabase()).dataset),
     update: async ({ id }, changes) => {

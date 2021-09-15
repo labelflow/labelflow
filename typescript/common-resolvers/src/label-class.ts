@@ -28,8 +28,8 @@ const labelClass = async (
 ) => {
   return await throwIfResolvesToNil(
     "No labelClass with such id",
-    repository.labelClass.getById
-  )(args?.where?.id);
+    repository.labelClass.get
+  )({ id: args?.where?.id });
 };
 
 const labelClasses = async (
@@ -56,8 +56,8 @@ const createLabelClass = async (
   // entity before being able to continue.
   await throwIfResolvesToNil(
     `The dataset id ${datasetId} doesn't exist.`,
-    repository.dataset.getById
-  )(datasetId);
+    repository.dataset.get
+  )({ id: datasetId });
 
   const labelClassId = id ?? uuidv4();
   const now = new Date();
@@ -75,8 +75,8 @@ const createLabelClass = async (
 
   return await throwIfResolvesToNil(
     "No labelClass with such id",
-    repository.labelClass.getById
-  )(newLabelClassEntity.id);
+    repository.labelClass.get
+  )({ id: newLabelClassEntity.id });
 };
 
 const reorderLabelClass = async (
@@ -88,8 +88,8 @@ const reorderLabelClass = async (
 
   const labelClassToUpdate = await throwIfResolvesToNil(
     "No labelClass with such id",
-    repository.labelClass.getById
-  )(labelClassId);
+    repository.labelClass.get
+  )({ id: labelClassId });
   const oldIndex = labelClassToUpdate.index;
   const newIndex = args.data.index;
   if (oldIndex === newIndex) {
@@ -131,7 +131,7 @@ const reorderLabelClass = async (
     }
   );
 
-  return await repository.labelClass.getById(labelClassId);
+  return await repository.labelClass.get({ id: labelClassId });
 };
 
 const updateLabelClass = async (
@@ -143,8 +143,8 @@ const updateLabelClass = async (
 
   const labelClassToUpdate = await throwIfResolvesToNil(
     "No labelClass with such id",
-    repository.labelClass.getById
-  )(labelClassId);
+    repository.labelClass.get
+  )({ id: labelClassId });
 
   await repository.labelClass.update(
     { id: labelClassId },
@@ -154,7 +154,7 @@ const updateLabelClass = async (
     }
   );
 
-  return await repository.labelClass.getById(labelClassId);
+  return await repository.labelClass.get({ id: labelClassId });
 };
 
 const deleteLabelClass = async (
@@ -164,8 +164,8 @@ const deleteLabelClass = async (
 ) => {
   const labelToDelete = await throwIfResolvesToNil(
     "No labelClass with such id",
-    repository.labelClass.getById
-  )(args.where.id);
+    repository.labelClass.get
+  )({ id: args.where.id });
 
   await repository.labelClass.delete({ id: labelToDelete.id });
   const labelClassesOfDataset = await repository.labelClass.list({

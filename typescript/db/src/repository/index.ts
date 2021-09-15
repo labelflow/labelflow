@@ -26,9 +26,9 @@ export const repository: Repository = {
       prisma.image.count({
         where: castObjectNullsToUndefined(where),
       }),
-    getById: async (id) =>
+    get: async (where) =>
       (await prisma.image.findUnique({
-        where: { id },
+        where,
       })) as unknown as Image,
 
     list: (where, skip = undefined, first = undefined) =>
@@ -52,15 +52,15 @@ export const repository: Repository = {
     },
     /* Needs to be casted as Prisma doesn't let us specify
      * the type for geometry */
-    getById: (id) =>
+    get: (where) =>
       prisma.label.findUnique({
-        where: { id },
+        where,
       }) as unknown as Promise<DbLabel>,
-    update: async ({ id }, label) => {
+    update: async (where, label) => {
       try {
         if (label) {
           await prisma.label.update({
-            where: { id },
+            where,
             data: castObjectNullsToUndefined(label),
           });
         }
@@ -85,9 +85,9 @@ export const repository: Repository = {
     delete: async ({ id }) => {
       await prisma.labelClass.delete({ where: { id } });
     },
-    getById: (id) =>
+    get: (where) =>
       prisma.labelClass.findUnique({
-        where: { id },
+        where,
       }),
     list: (where, skip = undefined, first = undefined) =>
       prisma.labelClass.findMany(
@@ -129,16 +129,17 @@ export const repository: Repository = {
         where: castObjectNullsToUndefined({ id }),
       });
     },
-    getByWorkspaceSlugAndDatasetSlug: ({ datasetSlug, workspaceSlug }) => {
-      return prisma.dataset.findUnique({
-        where: {
-          workspaceSlugAndDatasetSlug: { slug: datasetSlug, workspaceSlug },
-        },
-      });
-    },
-    getById: async (id) => {
+    get: async (where) => {
+      if (
+        (where.id == null && where.slugs == null) ||
+        (where.id != null && where.slugs != null)
+      ) {
+        throw new Error(
+          "You should either specify the id or the slugs when looking for a dataset"
+        );
+      }
       return await prisma.dataset.findUnique({
-        where: { id },
+        where: castObjectNullsToUndefined(where),
       });
     },
     update: async ({ id }, dataset) => {

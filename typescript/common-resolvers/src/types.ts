@@ -17,6 +17,7 @@ import type {
   LabelWhereUniqueInput,
   LabelClassWhereUniqueInput,
   DatasetWhereUniqueInput,
+  ImageWhereUniqueInput,
 } from "@labelflow/graphql-types";
 
 type NoUndefinedField<T> = { [P in keyof T]: NonNullable<T[P]> };
@@ -66,17 +67,14 @@ type WithCreatedAtAndUpdatedAt<T extends {}> = T & {
 
 type ID = string;
 
-// Desired type
-// type Get<EntityType, EntityWhereUniqueInput> = (
-//   input: EntityWhereUniqueInput
-// ) => Promise<EntityType | undefined | null>;
-
 type Add<EntityType> = (entity: EntityType) => Promise<ID>;
 type Count<Where> = (where?: Where) => Promise<number>;
 type Delete<EntityWhereUniqueInput> = (
   input: EntityWhereUniqueInput
 ) => Promise<void>;
-type GetById<EntityType> = (id: ID) => Promise<EntityType | undefined | null>;
+type Get<EntityType, EntityWhereUniqueInput> = (
+  input: EntityWhereUniqueInput
+) => Promise<EntityType | undefined | null>;
 
 type List<Entity = unknown, Where extends Record<string, any> | null = null> = (
   where?: Where | null,
@@ -92,14 +90,14 @@ export type Repository = {
   image: {
     add: Add<DbImageCreateInput>;
     count: Count<ImageWhereInput>;
-    getById: GetById<DbImage>;
+    get: Get<DbImage, ImageWhereUniqueInput>;
     list: List<DbImage, ImageWhereInput>;
   };
   label: {
     add: Add<DbLabelCreateInput>;
     count: Count<LabelWhereInput>;
     delete: Delete<LabelWhereUniqueInput>;
-    getById: GetById<DbLabel>;
+    get: Get<DbLabel, LabelWhereUniqueInput>;
     list: List<DbLabel, LabelWhereInput>;
     update: Update<DbLabel, LabelWhereUniqueInput>;
   };
@@ -107,21 +105,14 @@ export type Repository = {
     add: Add<DbLabelClassCreateInput>;
     count: Count<LabelClassWhereInput>;
     delete: Delete<LabelClassWhereUniqueInput>;
-    getById: GetById<DbLabelClass>;
+    get: Get<DbLabelClass, LabelClassWhereUniqueInput>;
     list: List<DbLabelClass, LabelClassWhereInput>;
     update: Update<DbLabelClass, LabelClassWhereUniqueInput>;
   };
   dataset: {
     add: Add<DbDatasetCreateInput>;
     delete: Delete<DatasetWhereUniqueInput>;
-    getById: GetById<DbDataset>;
-    getByWorkspaceSlugAndDatasetSlug: ({
-      workspaceSlug,
-      datasetSlug,
-    }: {
-      workspaceSlug: string;
-      datasetSlug: string;
-    }) => Promise<DbDataset | undefined | null>;
+    get: Get<DbDataset, DatasetWhereUniqueInput>;
     list: List<DbDataset, null>;
     update: Update<DbDataset, DatasetWhereUniqueInput>;
   };
