@@ -203,7 +203,7 @@ describe("Dataset resolver test suite", () => {
           id: "a id that doesn't exist",
         },
       })
-    ).rejects.toThrow(/No dataset with id/);
+    ).rejects.toThrow(/Couldn't find this dataset corresponding to/);
   });
 
   test("Read multiple datasets", async () => {
@@ -378,7 +378,7 @@ describe("Dataset resolver test suite", () => {
           id: datasetId,
         },
       })
-    ).rejects.toThrow(/No dataset with id/);
+    ).rejects.toThrow(/Couldn't find this dataset corresponding to/);
   });
 
   test("should throw an error if the dataset to delete does not exist", () => {
@@ -396,7 +396,7 @@ describe("Dataset resolver test suite", () => {
           id: "not existing dataset id",
         },
       })
-    ).rejects.toThrow(/No dataset with id/);
+    ).rejects.toThrow(/Couldn't find this dataset corresponding to/);
   });
 
   test("Should update a dataset with a new name", async () => {
@@ -522,7 +522,7 @@ describe("Dataset resolver test suite", () => {
           data: { name: "My new dataset new name" },
         },
       })
-    ).rejects.toThrow(/No dataset with id/);
+    ).rejects.toThrow(/Couldn't find this dataset corresponding to/);
   });
 
   test("Find dataset by name", async () => {
@@ -554,7 +554,7 @@ describe("Dataset resolver test suite", () => {
     );
   });
 
-  test("Find dataset by slug", async () => {
+  test("Find dataset by slugs", async () => {
     const name = "My new dataset";
     const datasetId = "some id";
     await createDataset(name, datasetId);
@@ -562,7 +562,9 @@ describe("Dataset resolver test suite", () => {
     const queryResult = await client.query({
       query: gql`
         query getDataset($slug: String!) {
-          dataset(where: { slug: $slug }) {
+          dataset(
+            where: { slugs: { datasetSlug: $slug, workspaceSlug: "local" } }
+          ) {
             id
             name
           }
@@ -693,6 +695,9 @@ describe("Dataset resolver test suite", () => {
     const initialCountQuery = await getDatasetCount(datasetId);
     const otherInitialCountQuery = await getDatasetCount(otherId);
 
+    console.log(JSON.stringify(initialCountQuery, null, 2));
+    console.log(JSON.stringify(otherInitialCountQuery, null, 2));
+
     expectedResults(initialCountQuery, 0);
     expectedResults(otherInitialCountQuery, 0);
 
@@ -700,6 +705,9 @@ describe("Dataset resolver test suite", () => {
 
     const updateCountQuery = await getDatasetCount(datasetId);
     const otherUpdateCountQuery = await getDatasetCount(otherId);
+
+    console.log(JSON.stringify(updateCountQuery, null, 2));
+    console.log(JSON.stringify(otherUpdateCountQuery, null, 2));
 
     expectedResults(updateCountQuery, 1);
     expectedResults(otherUpdateCountQuery, 0);

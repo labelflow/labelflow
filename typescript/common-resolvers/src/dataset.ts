@@ -29,14 +29,14 @@ const getLabelClassesByDatasetId = async (
 const getDataset = async (
   where: DatasetWhereUniqueInput,
   repository: Repository
-) => {
+): Promise<DbDataset & { __typename: "Dataset" }> => {
   const datasetFromRepository = await repository.dataset.get(where);
   if (datasetFromRepository == null) {
     throw new Error(
       `Couldn't find this dataset corresponding to ${JSON.stringify(where)}`
     );
   }
-  return datasetFromRepository;
+  return { ...datasetFromRepository, __typename: "Dataset" };
 };
 
 // Queries
@@ -72,7 +72,8 @@ const dataset = async (
   _: any,
   args: QueryDatasetArgs,
   { repository }: Context
-): Promise<DbDataset> => await getDataset(args.where, repository);
+): Promise<DbDataset & { __typename: string }> =>
+  await getDataset(args.where, repository);
 
 const datasets = async (
   _: any,
@@ -96,7 +97,7 @@ const createDataset = async (
   _: any,
   args: MutationCreateDatasetArgs,
   { repository }: Context
-): Promise<DbDataset> => {
+): Promise<DbDataset & { __typename: string }> => {
   const date = new Date().toISOString();
 
   const datasetId = args?.data?.id ?? uuidv4();

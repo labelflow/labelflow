@@ -205,6 +205,14 @@ const totalCount = async (parent: any, _args: any, { repository }: Context) => {
   return await repository.labelClass.count();
 };
 
+const dataset = async (
+  parent: DbLabelClass,
+  _args: any,
+  { repository }: Context
+) => {
+  return await repository.dataset.get({ id: parent.datasetId });
+};
+
 export default {
   Query: {
     labelClass,
@@ -221,6 +229,7 @@ export default {
 
   LabelClass: {
     labels,
+    dataset,
   },
 
   LabelClassesAggregates: { totalCount },

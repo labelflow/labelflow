@@ -86,7 +86,7 @@ test("should create a dataset when the form is submitted", async () => {
     },
   } = await client.query({
     query: gql`
-      query getDatasetByName($name: String) {
+      query getDatasetByName($slug: String) {
         dataset(
           where: { slugs: { datasetSlug: $slug, workspaceSlug: "local" } }
         ) {
@@ -94,7 +94,7 @@ test("should create a dataset when the form is submitted", async () => {
         }
       }
     `,
-    variables: { name: datasetSlug },
+    variables: { slug: datasetSlug },
   });
 
   expect(slug).toEqual(datasetSlug);

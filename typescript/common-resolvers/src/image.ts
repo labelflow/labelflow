@@ -221,6 +221,7 @@ const totalCount = async (parent: any, _args: any, { repository }: Context) => {
   // eslint-disable-next-line no-underscore-dangle
   const typename = parent?.__typename;
 
+  console.log("parent.id", typename, parent.id);
   if (typename === "Dataset") {
     return await repository.image.count({
       datasetId: parent.id,
