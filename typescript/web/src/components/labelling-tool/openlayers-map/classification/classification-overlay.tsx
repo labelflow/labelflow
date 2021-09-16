@@ -15,7 +15,7 @@ export const ClassificationOverlay = ({
     <olOverlay
       element={classificationOverlayRef.current}
       position={[0, image?.height]}
-      positioning={OverlayPositioning.BOTTOM_LEFT}
+      positioning={OverlayPositioning.TOP_LEFT}
     />
   );
 };

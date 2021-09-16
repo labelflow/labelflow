@@ -49,8 +49,21 @@ export const ClassificationContent = forwardRef<HTMLDivElement>(
     );
 
     return (
-      <Box overflow="visible" w="0" h="0" m="0" p="0" display="inline">
-        <HStack ref={ref} spacing={2} padding={2} pl={0}>
+      <Box
+        overflow="visible"
+        w="0"
+        h="0"
+        m="0"
+        p="0"
+        display="inline"
+        cursor="pointer"
+      >
+        <HStack
+          ref={ref}
+          spacing={2}
+          padding={2}
+          // pl={0}
+        >
           {labels
             .filter(
               ({ type }: Label) =>
@@ -62,11 +75,18 @@ export const ClassificationContent = forwardRef<HTMLDivElement>(
                   key={id}
                   size="md"
                   variant="solid"
-                  background={labelClass?.color ?? noneClassColor}
-                  borderColor={labelClass?.color ?? noneClassColor}
+                  background={`${labelClass?.color ?? noneClassColor}AA`}
+                  borderColor={
+                    id === selectedLabelId
+                      ? labelClass?.color ?? noneClassColor
+                      : "transparent"
+                  }
                   color={labelClass ? "white" : "black"}
-                  borderWidth={id === selectedLabelId ? 2 : 0}
+                  borderStyle="solid"
+                  borderWidth={4}
                   onClick={() => setSelectedLabelId(id)}
+                  cursor="pointer"
+                  boxSizing="content-box"
                 >
                   <TagLabel>{labelClass?.name ?? "None"}</TagLabel>
                   <TagCloseButton />

@@ -114,28 +114,33 @@ export const EditLabelClassMenu = () => {
       }),
     [labelClasses, datasetId]
   );
-  const onSelectedClassChange = useMemo(
-    () =>
-      isInDrawingMode
-        ? (item: LabelClassItem | null) =>
-            perform(
-              createUpdateLabelClassEffect({
-                selectedLabelClassId: item?.id ?? null,
-                selectedLabelClassIdPrevious: selectedLabelClassId,
-              })
-            )
-        : (item: LabelClassItem | null) =>
-            perform(
-              createUpdateLabelClassOfLabelEffect(
-                {
-                  selectedLabelClassId: item?.id ?? null,
-                  selectedLabelId,
-                },
-                { client }
-              )
-            ),
-    [selectedLabelId, selectedLabelClassId, selectedTool]
-  );
+  const onSelectedClassChange = useMemo(() => {
+    if (!isInDrawingMode) {
+      return (item: LabelClassItem | null) =>
+        perform(
+          createUpdateLabelClassOfLabelEffect(
+            {
+              selectedLabelClassId: item?.id ?? null,
+              selectedLabelId,
+            },
+            { client }
+          )
+        );
+    }
+    if (selectedTool === Tools.CLASSIFICATION) {
+      return () => {
+        alert("create label");
+        console.log("create label");
+      };
+    }
+    return (item: LabelClassItem | null) =>
+      perform(
+        createUpdateLabelClassEffect({
+          selectedLabelClassId: item?.id ?? null,
+          selectedLabelClassIdPrevious: selectedLabelClassId,
+        })
+      );
+  }, [selectedLabelId, selectedLabelClassId, selectedTool]);
 
   const displayClassSelectionMenu =
     isInDrawingMode ||
