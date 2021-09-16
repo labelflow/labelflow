@@ -13,7 +13,9 @@ import {
 } from "@labelflow/graphql-types";
 
 import { Context } from "@labelflow/common-resolvers";
+import { useMemo } from "react";
 import { prisma } from "../repository";
+import { castObjectNullsToUndefined } from "../repository/utils";
 
 type DbWorkspacePlan = NonNullable<
   Prisma.PromiseReturnType<typeof prisma.workspace.findUnique>
@@ -38,7 +40,7 @@ const workspace = async (
   args: QueryWorkspaceArgs
 ): Promise<DbWorkspaceWithType> => {
   const workspaceFromDb = await prisma.workspace.findUnique({
-    where: args.where,
+    where: castObjectNullsToUndefined(args.where),
   });
 
   if (workspaceFromDb == null) {
@@ -103,7 +105,7 @@ const updateWorkspace = async (
         { name: undefined };
 
   const updatedWorkspace = await prisma.workspace.update({
-    where: args.where,
+    where: castObjectNullsToUndefined(args.where),
     data: { ...args.data, ...newNameAndSlugs },
   });
 

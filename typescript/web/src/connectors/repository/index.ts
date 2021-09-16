@@ -2,7 +2,13 @@ import { DbImageCreateInput, Repository } from "@labelflow/common-resolvers";
 import { getDatabase } from "../database";
 import { list } from "./utils/list";
 import { countLabels, listLabels } from "./label";
-import { deleteDataset } from "./dataset";
+import {
+  addDataset,
+  deleteDataset,
+  getDataset,
+  listDataset,
+  updateDataset,
+} from "./dataset";
 import { deleteLabelClass } from "./label-class";
 import {
   getUploadTarget,
@@ -63,30 +69,11 @@ export const repository: Repository = {
     },
   },
   dataset: {
-    add: async (dataset) => {
-      return await (await getDatabase()).dataset.add(addIdIfNil(dataset));
-    },
+    add: addDataset,
     delete: deleteDataset,
-    get: async (where) => {
-      if (
-        (where.id == null && where.slugs == null) ||
-        (where.id != null && where.slugs != null)
-      ) {
-        throw new Error(
-          "You should either specify the id or the slugs when looking for a dataset"
-        );
-      }
-      if (where.id != null) {
-        return await (await getDatabase()).dataset.get(where.id);
-      }
-      return await (
-        await getDatabase()
-      ).dataset.get({ slug: where.slugs?.datasetSlug });
-    },
-    list: list(async () => (await getDatabase()).dataset),
-    update: async ({ id }, changes) => {
-      return (await (await getDatabase()).dataset.update(id, changes)) === 1;
-    },
+    get: getDataset,
+    list: listDataset,
+    update: updateDataset,
   },
   upload: {
     getUploadTarget,

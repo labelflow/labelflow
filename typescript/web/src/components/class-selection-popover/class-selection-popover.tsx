@@ -26,7 +26,7 @@ import { keymap } from "../../keymap";
 type CreateClassInput = { name: string; type: string };
 type NoneClass = { name: string; color: string; type: string };
 // The popover doesn't need all the attributes of the label class
-export type LabelClassItem = Omit<LabelClass, "datasetId">;
+export type LabelClassItem = Omit<LabelClass, "dataset">;
 
 const noneClass = {
   name: "None",
@@ -47,10 +47,10 @@ const filterLabelClasses = ({
   const labelClassesWithNoneClass = [...labelClasses, noneClass];
   const createClassItem =
     inputValueCombobox &&
-    labelClassesWithNoneClass.filter(
-      (labelClass: LabelClassItem | NoneClass) =>
-        labelClass.name === inputValueCombobox
-    ).length === 0
+      labelClassesWithNoneClass.filter(
+        (labelClass: LabelClassItem | NoneClass) =>
+          labelClass.name === inputValueCombobox
+      ).length === 0
       ? [{ name: inputValueCombobox, type: "CreateClassItem" }]
       : [];
 
@@ -67,7 +67,7 @@ const filterLabelClasses = ({
 
 export const ClassSelectionPopover = ({
   isOpen,
-  onClose = () => {},
+  onClose = () => { },
   onSelectedClassChange,
   createNewClass,
   labelClasses,

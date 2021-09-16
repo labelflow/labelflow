@@ -124,9 +124,18 @@ export const repository: Repository = {
       });
       return createdDataset.id;
     },
-    delete: async ({ id }) => {
+    delete: async (where) => {
+      if (
+        (where.id == null && where.slugs == null) ||
+        (where.id != null && where.slugs != null)
+      ) {
+        throw new Error(
+          "You should either specify the id or the slugs when deleting a dataset"
+        );
+      }
+
       await prisma.dataset.delete({
-        where: castObjectNullsToUndefined({ id }),
+        where: castObjectNullsToUndefined(where),
       });
     },
     get: async (where) => {
@@ -142,10 +151,18 @@ export const repository: Repository = {
         where: castObjectNullsToUndefined(where),
       });
     },
-    update: async ({ id }, dataset) => {
+    update: async (where, dataset) => {
+      if (
+        (where.id == null && where.slugs == null) ||
+        (where.id != null && where.slugs != null)
+      ) {
+        throw new Error(
+          "You should either specify the id or the slugs when updating a dataset"
+        );
+      }
       try {
         await prisma.dataset.update({
-          where: castObjectNullsToUndefined({ id }),
+          where: castObjectNullsToUndefined(where),
           data: castObjectNullsToUndefined(dataset),
         });
         return true;
