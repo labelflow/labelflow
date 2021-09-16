@@ -1,3 +1,4 @@
+import React, { useCallback } from "react";
 import {
   Button,
   ButtonProps,
@@ -19,15 +20,18 @@ type Props = ButtonProps;
 export const ExportButton = ({ ...props }: Props) => {
   const [isOpen, setIsOpen] = useQueryParam("modal-export", BoolParam);
 
+  const handleOpen = useCallback(() => {
+    setIsOpen(true, "replaceIn");
+    trackEvent("export_button_click", {});
+  }, [setIsOpen]);
+
   const largeButton = (
     <Button
       aria-label="Export"
       leftIcon={<DownloadIcon fontSize="xl" />}
-      onClick={() => {
-        trackEvent("export_button_click", {});
-        setIsOpen(true, "replaceIn");
-      }}
+      onClick={handleOpen}
       variant="ghost"
+      flexShrink={0}
       {...props}
     >
       Export
@@ -39,10 +43,7 @@ export const ExportButton = ({ ...props }: Props) => {
       <IconButton
         aria-label="Export"
         icon={<DownloadIcon fontSize="xl" />}
-        onClick={() => {
-          trackEvent("export_button_click", {});
-          setIsOpen(true, "replaceIn");
-        }}
+        onClick={handleOpen}
         variant="ghost"
         {...props}
       />

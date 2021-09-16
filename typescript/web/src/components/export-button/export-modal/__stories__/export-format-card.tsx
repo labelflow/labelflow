@@ -45,18 +45,6 @@ export const Disabled = () => {
   );
 };
 
-export const TensorFlow = () => {
-  return (
-    <ExportFormatCard
-      colorScheme="gray"
-      logoSrc="/static/export-formats/tensorflow-grey.png"
-      title="Export to TensorFlow (soon)"
-      subtext="TF Object Detection file in its human readable format"
-    />
-  );
-};
-TensorFlow.storyName = "TensorFlow";
-
 export const SideBySide = () => {
   return (
     <HStack spacing="4">

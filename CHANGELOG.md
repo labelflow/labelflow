@@ -1,6 +1,18 @@
 # Changelog
 
-## [1.0.2](https://github.com/labelflow/labelflow/compare/1.0.1...1.0.2)
+## [1.0.5](https://github.com/labelflow/labelflow/compare/1.0.4...1.0.5)
+
+- Make a more generic version of the coco exporter [`#417`](https://github.com/labelflow/labelflow/pull/417)
+## [1.0.4](https://github.com/labelflow/labelflow/compare/1.0.3...1.0.4) - 2021-09-14
+
+- Feature/responsive breadcrumbs [`#445`](https://github.com/labelflow/labelflow/pull/445)
+## [1.0.3](https://github.com/labelflow/labelflow/compare/1.0.2...1.0.3) - 2021-09-13
+
+- Track more actions in GA [`#443`](https://github.com/labelflow/labelflow/pull/443)
+- Enhance cookie banner [`#442`](https://github.com/labelflow/labelflow/pull/442)
+- Prefetch previous and next images [`#439`](https://github.com/labelflow/labelflow/pull/439)
+- Fix bug in change class shortcut on azerty keyboards [`#440`](https://github.com/labelflow/labelflow/pull/440)
+## [1.0.2](https://github.com/labelflow/labelflow/compare/1.0.1...1.0.2) - 2021-09-09
 
 - Enhancement/release patches instead of minors [`#437`](https://github.com/labelflow/labelflow/pull/437)
 ## [1.0.1](https://github.com/labelflow/labelflow/compare/1.0.0...1.0.1) - 2021-09-09
@@ -21,7 +33,7 @@
 - #314 file upload resolver for online storage [`#326`](https://github.com/labelflow/labelflow/pull/326)
 - Implement the api/graphql server [`#330`](https://github.com/labelflow/labelflow/pull/330)
 - Implement basic upload route [`#329`](https://github.com/labelflow/labelflow/pull/329)
-## 1.0.0 - 2021-09-02
+## [1.0.0](https://github.com/labelflow/labelflow/compare/0.1.0...1.0.0) - 2021-09-02
 
 - Enhancement/lighthouse fixes [`#411`](https://github.com/labelflow/labelflow/pull/411)
 - Fix z index problems & cleanup navbar [`#410`](https://github.com/labelflow/labelflow/pull/410)
@@ -48,6 +60,8 @@
 - Fix dexie await promise bug [`#381`](https://github.com/labelflow/labelflow/pull/381)
 - Feature/#352 update url with local [`#376`](https://github.com/labelflow/labelflow/pull/376)
 - Bug/#360 cant modify invalid geometry [`#369`](https://github.com/labelflow/labelflow/pull/369)
+## 0.1.0 - 2021-08-25
+
 - Feature/add license and update readme [`#373`](https://github.com/labelflow/labelflow/pull/373)
 - Website changes [`#374`](https://github.com/labelflow/labelflow/pull/374)
 - Feature/#341 update dataset urls with their slugs [`#356`](https://github.com/labelflow/labelflow/pull/356)

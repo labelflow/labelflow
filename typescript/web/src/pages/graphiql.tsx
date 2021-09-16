@@ -1,15 +1,7 @@
 import React from "react";
 import dynamic from "next/dynamic";
-import {
-  Box,
-  Breadcrumb,
-  BreadcrumbItem,
-  Center,
-  Spinner,
-  Text,
-} from "@chakra-ui/react";
+import { Box, Center, Spinner, Text } from "@chakra-ui/react";
 
-import { RiArrowRightSLine } from "react-icons/ri";
 import { Meta } from "../components/meta";
 import { Layout } from "../components/layout";
 import { ServiceWorkerManagerModal } from "../components/service-worker-manager";
@@ -37,18 +29,7 @@ const GraphqlPlayground = () => {
       <AuthManager />
       <Meta title="LabelFlow | GraphiQL" />
       <CookieBanner />
-      <Layout
-        topBarLeftContent={
-          <Breadcrumb
-            spacing="8px"
-            separator={<RiArrowRightSLine color="gray.500" />}
-          >
-            <BreadcrumbItem>
-              <Text>Graphiql</Text>
-            </BreadcrumbItem>
-          </Breadcrumb>
-        }
-      >
+      <Layout breadcrumbs={[<Text>Graphiql</Text>]}>
         <Box
           h="100%"
           w="100%"

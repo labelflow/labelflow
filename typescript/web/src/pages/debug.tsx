@@ -10,12 +10,10 @@ import {
   Code,
   Center,
   Box,
-  Breadcrumb,
-  BreadcrumbItem,
   Text,
 } from "@chakra-ui/react";
 import { detect } from "detect-browser";
-import { RiArrowRightSLine } from "react-icons/ri";
+
 import { Meta } from "../components/meta";
 
 import {
@@ -44,18 +42,7 @@ const DebugPage = () => {
       <AuthManager />
       <Meta title="LabelFlow | Debug" />
       <CookieBanner />
-      <Layout
-        topBarLeftContent={
-          <Breadcrumb
-            spacing="8px"
-            separator={<RiArrowRightSLine color="gray.500" />}
-          >
-            <BreadcrumbItem>
-              <Text>Debug</Text>
-            </BreadcrumbItem>
-          </Breadcrumb>
-        }
-      >
+      <Layout breadcrumbs={[<Text>Debug</Text>]}>
         <Center h="full">
           <Box as="section">
             <VStack

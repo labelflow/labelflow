@@ -1,8 +1,8 @@
 import React, { useCallback } from "react";
 import { gql, useQuery } from "@apollo/client";
 
-import { Flex, Breadcrumb, BreadcrumbItem, Text } from "@chakra-ui/react";
-import { RiArrowRightSLine } from "react-icons/ri";
+import { Flex, Text } from "@chakra-ui/react";
+
 import { useQueryParam } from "use-query-params";
 
 import type { Dataset as DatasetType } from "@labelflow/graphql-types";
@@ -89,18 +89,7 @@ const DatasetPage = () => {
       <AuthManager />
       <Meta title="LabelFlow | Datasets" />
       <CookieBanner />
-      <Layout
-        topBarLeftContent={
-          <Breadcrumb
-            spacing="8px"
-            separator={<RiArrowRightSLine color="gray.500" />}
-          >
-            <BreadcrumbItem>
-              <Text>Datasets</Text>
-            </BreadcrumbItem>
-          </Breadcrumb>
-        }
-      >
+      <Layout breadcrumbs={[<Text>Datasets</Text>]}>
         <UpsertDatasetModal
           isOpen={isCreatingDataset || editDatasetId != null}
           onClose={onClose}

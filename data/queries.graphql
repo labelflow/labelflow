@@ -37,7 +37,10 @@ type Query {
   user(where: UserWhereUniqueInput!): User!
   users(first: Int, skip: Int): [User!]!
 
-  exportToCoco(where: ExportWhereUniqueInput!): String!
+  exportDataset(where: ExportWhereUniqueInput!, 
+                format: ExportFormat!, 
+                options: ExportOptions
+                ): String!
 
   debug: JSON!
 }
