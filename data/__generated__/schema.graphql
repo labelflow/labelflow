@@ -263,32 +263,17 @@ type Mutation {
   updateLabel(where: LabelWhereUniqueInput!, data: LabelUpdateInput!): Label
   deleteLabel(where: LabelWhereUniqueInput!): Label
   createLabelClass(data: LabelClassCreateInput!): LabelClass
-  updateLabelClass(
-    where: LabelClassWhereUniqueInput!
-    data: LabelClassUpdateInput!
-  ): LabelClass
-  reorderLabelClass(
-    where: LabelClassWhereUniqueInput!
-    data: LabelClassReorderInput!
-  ): LabelClass
+  updateLabelClass(where: LabelClassWhereUniqueInput!, data: LabelClassUpdateInput!): LabelClass
+  reorderLabelClass(where: LabelClassWhereUniqueInput!, data: LabelClassReorderInput!): LabelClass
   deleteLabelClass(where: LabelClassWhereUniqueInput!): LabelClass
   createDataset(data: DatasetCreateInput!): Dataset
   createDemoDataset: Dataset
-  updateDataset(
-    where: DatasetWhereUniqueInput!
-    data: DatasetUpdateInput!
-  ): Dataset
+  updateDataset(where: DatasetWhereUniqueInput!, data: DatasetUpdateInput!): Dataset
   deleteDataset(where: DatasetWhereUniqueInput!): Dataset
   createWorkspace(data: WorkspaceCreateInput!): Workspace
-  updateWorkspace(
-    where: WorkspaceWhereUniqueInput!
-    data: WorkspaceUpdateInput!
-  ): Workspace
+  updateWorkspace(where: WorkspaceWhereUniqueInput!, data: WorkspaceUpdateInput!): Workspace
   createMembership(data: MembershipCreateInput!): Membership
-  updateMembership(
-    where: MembershipWhereUniqueInput!
-    data: MembershipUpdateInput!
-  ): Membership
+  updateMembership(where: MembershipWhereUniqueInput!, data: MembershipUpdateInput!): Membership
   deleteMembership(where: MembershipWhereUniqueInput!): Membership
   updateUser(where: UserWhereUniqueInput!, data: UserUpdateInput!): User
 }
@@ -296,21 +281,12 @@ type Mutation {
 type Query {
   hello: String
   example(where: ExampleWhereUniqueInput!): Example!
-  examples(
-    where: ExampleWhereInput
-    first: Int
-    skip: Int
-    orderBy: ExampleOrderByInput
-  ): [Example!]!
+  examples(where: ExampleWhereInput, first: Int, skip: Int, orderBy: ExampleOrderByInput): [Example!]!
   image(where: ImageWhereUniqueInput!): Image!
   images(where: ImageWhereInput, first: Int, skip: Int): [Image!]!
   imagesAggregates: ImagesAggregates!
   labelClass(where: LabelClassWhereUniqueInput!): LabelClass!
-  labelClasses(
-    where: LabelClassWhereInput
-    first: Int
-    skip: Int
-  ): [LabelClass!]!
+  labelClasses(where: LabelClassWhereInput, first: Int, skip: Int): [LabelClass!]!
   labelClassesAggregates: LabelClassesAggregates!
   labelsAggregates: LabelsAggregates!
   label(where: LabelWhereUniqueInput!): Label!
@@ -323,11 +299,7 @@ type Query {
   memberships(first: Int, skip: Int): [Membership!]!
   user(where: UserWhereUniqueInput!): User!
   users(first: Int, skip: Int): [User!]!
-  exportDataset(
-    where: ExportWhereUniqueInput!
-    format: ExportFormat!
-    options: ExportOptions
-  ): String!
+  exportDataset(where: ExportWhereUniqueInput!, format: ExportFormat!, options: ExportOptions): String!
   debug: JSON!
 }
 
