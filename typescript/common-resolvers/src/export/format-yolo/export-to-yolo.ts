@@ -44,8 +44,11 @@ export const generateLabelsOfImageFile = (
 ): string => {
   return labelsOfImage
     .reduce((labelsOfImageFile, label) => {
-      if (!options?.includePolygons && label.type === LabelType.Polygon) {
-        return `${labelsOfImageFile}`;
+      if (
+        (!options?.includePolygons && label.type === LabelType.Polygon) ||
+        !label.labelClassId
+      ) {
+        return labelsOfImageFile;
       }
       const labelClassIndex = labelClasses.find(
         (labelClass) => labelClass.id === label.labelClassId
