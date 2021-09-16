@@ -225,20 +225,20 @@ describe("memberships query", () => {
 
   it("can skip results", async () => {
     // both this workspaces are linked to testUser1Id by default
-    const workspace1Id = (await createWorkspace({ name: "test1" }))?.data
-      ?.createWorkspace.id as string;
-    const workspace2Id = (await createWorkspace({ name: "test2" }))?.data
-      ?.createWorkspace.id as string;
+    const workspace1Slug = (await createWorkspace({ name: "test1" }))?.data
+      ?.createWorkspace.slug as string;
+    const workspace2Slug = (await createWorkspace({ name: "test2" }))?.data
+      ?.createWorkspace.slug as string;
 
     await createMembership({
       userId: testUser2Id,
-      workspaceSlug: workspace1Id,
+      workspaceSlug: workspace1Slug,
       role: MembershipRole.Member,
     });
 
     await createMembership({
       userId: testUser2Id,
-      workspaceSlug: workspace2Id,
+      workspaceSlug: workspace2Slug,
       role: MembershipRole.Member,
     });
 
@@ -265,20 +265,20 @@ describe("memberships query", () => {
 
   it("can limit the number of results", async () => {
     // both this workspaces are linked to testUser1Id by default
-    const workspace1Id = (await createWorkspace({ name: "test1" }))?.data
-      ?.createWorkspace.id as string;
-    const workspace2Id = (await createWorkspace({ name: "test2" }))?.data
-      ?.createWorkspace.id as string;
+    const workspace1Slug = (await createWorkspace({ name: "test1" }))?.data
+      ?.createWorkspace.slug as string;
+    const workspace2Slug = (await createWorkspace({ name: "test2" }))?.data
+      ?.createWorkspace.slug as string;
 
     await createMembership({
       userId: testUser2Id,
-      workspaceSlug: workspace1Id,
+      workspaceSlug: workspace1Slug,
       role: MembershipRole.Member,
     });
 
     await createMembership({
       userId: testUser2Id,
-      workspaceSlug: workspace2Id,
+      workspaceSlug: workspace2Slug,
       role: MembershipRole.Member,
     });
 
@@ -412,7 +412,7 @@ describe("updateMembership mutation", () => {
 
   it("can change the membership role", async () => {
     const workspaceSlug = (await createWorkspace())?.data?.createWorkspace
-      .id as string;
+      .slug as string;
 
     const membershipId = (
       await createMembership({
@@ -461,7 +461,7 @@ describe("deleteMembership mutation", () => {
 
   it("returns the deleted membership", async () => {
     const workspaceSlug = (await createWorkspace())?.data?.createWorkspace
-      .id as string;
+      .slug as string;
 
     const membershipId = (
       await createMembership({
@@ -478,7 +478,7 @@ describe("deleteMembership mutation", () => {
 
   it("deletes the membership", async () => {
     const workspaceSlug = (await createWorkspace())?.data?.createWorkspace
-      .id as string;
+      .slug as string;
     const membershipId = (
       await createMembership({
         userId: testUser2Id,
@@ -567,6 +567,7 @@ describe("nested resolvers", () => {
             id
             workspace {
               id
+              slug
             }
           }
         }
@@ -575,6 +576,6 @@ describe("nested resolvers", () => {
       fetchPolicy: "no-cache",
     });
 
-    expect(data.membership.workspace.id).toEqual(workspaceSlug);
+    expect(data.membership.workspace.slug).toEqual(workspaceSlug);
   });
 });

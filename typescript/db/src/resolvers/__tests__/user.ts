@@ -1,6 +1,10 @@
 import { gql } from "@apollo/client";
 import { v4 as uuidV4 } from "uuid";
-import { User } from "@labelflow/graphql-types";
+import {
+  MutationCreateWorkspaceArgs,
+  User,
+  Workspace,
+} from "@labelflow/graphql-types";
 import { prisma } from "../../repository";
 import { client, user as loggedInUser } from "../../dev/apollo-client";
 

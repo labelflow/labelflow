@@ -436,12 +436,12 @@ describe("nested resolvers", () => {
   };
 
   it("can query memberships", async () => {
-    const id = (await createWorkspace()).data?.createWorkspace.id as string;
+    const slug = (await createWorkspace()).data?.createWorkspace.slug as string;
 
     const membershipId = (
       await createMembership({
         userId: testUser2Id,
-        workspaceId: id,
+        workspaceSlug: slug,
         role: MembershipRole.Admin,
       })
     ).data?.createMembership.id as string;
@@ -450,8 +450,8 @@ describe("nested resolvers", () => {
       workspace: Pick<Workspace, "id" | "memberships">;
     }>({
       query: gql`
-        query workspace($id: ID!) {
-          workspace(where: { id: $id }) {
+        query workspace($slug: String!) {
+          workspace(where: { slug: $slug }) {
             id
             memberships {
               id
@@ -459,7 +459,7 @@ describe("nested resolvers", () => {
           }
         }
       `,
-      variables: { id },
+      variables: { slug },
       fetchPolicy: "no-cache",
     });
 
