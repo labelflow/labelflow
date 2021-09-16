@@ -1,4 +1,10 @@
-import { Dispatch, SetStateAction, useState, useCallback } from "react";
+import {
+  Dispatch,
+  SetStateAction,
+  useState,
+  useCallback,
+  useMemo,
+} from "react";
 import {
   Stack,
   Heading,
@@ -10,8 +16,12 @@ import {
   ModalOverlay,
   Text,
   Skeleton,
+  Alert,
+  AlertIcon,
+  AlertDescription,
+  AlertTitle,
 } from "@chakra-ui/react";
-import { ExportFormat, ExportOptions } from "@labelflow/graphql-types";
+import { ExportFormat, ExportOptions, Label } from "@labelflow/graphql-types";
 import { useRouter } from "next/router";
 import { useQuery, gql, useApolloClient, ApolloClient } from "@apollo/client";
 import { ExportFormatCard } from "./export-format-card";
@@ -32,7 +42,7 @@ const exportQuery = gql`
   }
 `;
 
-const countLabelsOfDatasetQuery = gql`
+export const countLabelsOfDatasetQuery = gql`
   query countLabelsOfDataset($slug: String!) {
     dataset(where: { slug: $slug }) {
       id
@@ -41,6 +51,11 @@ const countLabelsOfDatasetQuery = gql`
       }
       labelsAggregates {
         totalCount
+      }
+      labels {
+        labelClass {
+          id
+        }
       }
     }
   }
@@ -106,6 +121,17 @@ export const ExportModal = ({
     skip: !datasetSlug,
   });
   const datasetId = data?.dataset.id;
+  const datasetHasUndefinedLabels = useMemo(() => {
+    if (loading === false) {
+      return data?.dataset?.labels?.reduce(
+        (hasUndefinedLabels: boolean, label: Label) => {
+          return hasUndefinedLabels || !label?.labelClass;
+        },
+        false
+      );
+    }
+    return false;
+  }, [data, loading]);
 
   const [isExportRunning, setIsExportRunning] = useState(false);
   const [isOptionsModalOpen, setIsOptionsModalOpen] = useState(false);
@@ -141,7 +167,7 @@ export const ExportModal = ({
             <Heading as="h2" size="lg" pb="2">
               Export Labels
             </Heading>
-            <Skeleton
+            {/* <Skeleton
               w="fit-content"
               m="auto"
               isLoaded={
@@ -153,7 +179,24 @@ export const ExportModal = ({
                 {data?.dataset?.imagesAggregates?.totalCount} images and{" "}
                 {data?.dataset?.labelsAggregates?.totalCount} labels.
               </Text>
-            </Skeleton>
+            </Skeleton> */}
+            <Alert status="info" mt={2}>
+              <AlertIcon />
+              <AlertDescription fontSize="lg" fontWeight="medium">
+                Your dataset contains{" "}
+                {data?.dataset?.imagesAggregates?.totalCount} images and{" "}
+                {data?.dataset?.labelsAggregates?.totalCount} labels.
+              </AlertDescription>
+            </Alert>
+            {datasetHasUndefinedLabels && (
+              <Alert status="warning" mt={2}>
+                <AlertIcon />
+                <AlertDescription fontSize="lg" fontWeight="medium">
+                  It seems like your dataset contains some labels that don't
+                  have any class
+                </AlertDescription>
+              </Alert>
+            )}
           </ModalHeader>
 
           <ModalBody
