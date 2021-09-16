@@ -2,18 +2,22 @@ import React, { forwardRef } from "react";
 import { HStack, Box, Tag, TagLabel, TagCloseButton } from "@chakra-ui/react";
 
 import { useRouter } from "next/router";
-import { useQuery, gql } from "@apollo/client";
+import { useQuery, gql, useApolloClient } from "@apollo/client";
 
 import { Label, LabelType } from "@labelflow/graphql-types";
 
 import { useLabellingStore } from "../../../../connectors/labelling-state";
 
 import { noneClassColor } from "../../../../utils/class-color-generator";
+import { createDeleteLabelEffect } from "../../../../connectors/undo-store/effects/delete-label";
+import { useUndoStore } from "../../../../connectors/undo-store";
 
 const getImageLabelsQuery = gql`
   query getImageLabels($imageId: ID!) {
     image(where: { id: $imageId }) {
       id
+      width
+      height
       labels {
         type
         id
@@ -42,6 +46,8 @@ export const ClassificationContent = forwardRef<HTMLDivElement>(
       skip: !imageId,
       variables: { imageId: imageId as string },
     });
+    const { perform } = useUndoStore();
+    const client = useApolloClient();
     const selectedLabelId = useLabellingStore((state) => state.selectedLabelId);
     const labels = data?.image?.labels ?? [];
     const setSelectedLabelId = useLabellingStore(
@@ -65,10 +71,7 @@ export const ClassificationContent = forwardRef<HTMLDivElement>(
           // pl={0}
         >
           {labels
-            .filter(
-              ({ type }: Label) =>
-                type === LabelType.Polygon || type === LabelType.Classification
-            )
+            .filter(({ type }: Label) => type === LabelType.Classification)
             .map(({ id, labelClass }: Label) => {
               return (
                 <Tag
@@ -89,7 +92,16 @@ export const ClassificationContent = forwardRef<HTMLDivElement>(
                   boxSizing="content-box"
                 >
                   <TagLabel>{labelClass?.name ?? "None"}</TagLabel>
-                  <TagCloseButton />
+                  <TagCloseButton
+                    onClick={() => {
+                      return perform(
+                        createDeleteLabelEffect(
+                          { id },
+                          { setSelectedLabelId, client }
+                        )
+                      );
+                    }}
+                  />
                 </Tag>
               );
             })}

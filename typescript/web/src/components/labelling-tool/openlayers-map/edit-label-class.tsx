@@ -1,4 +1,4 @@
-import { forwardRef, useMemo } from "react";
+import { forwardRef, useCallback } from "react";
 import { useQuery, useApolloClient, gql } from "@apollo/client";
 import { useRouter } from "next/router";
 
@@ -7,9 +7,13 @@ import { useHotkeys } from "react-hotkeys-hook";
 import { ClassSelectionPopover } from "../../class-selection-popover";
 import { useLabellingStore } from "../../../connectors/labelling-state";
 import { useUndoStore } from "../../../connectors/undo-store";
-import { createNewLabelClassAndUpdateLabelCurry } from "../../../connectors/undo-store/effects/create-label-class-and-update-label";
+import { createCreateLabelClassAndUpdateLabelEffect } from "../../../connectors/undo-store/effects/create-label-class-and-update-label";
 import { createUpdateLabelClassOfLabelEffect } from "../../../connectors/undo-store/effects/update-label-class-of-label";
 import { keymap } from "../../../keymap";
+import {
+  getNextClassColor,
+  hexColorSequence,
+} from "../../../utils/class-color-generator";
 
 const getLabelClassesOfDatasetQuery = gql`
   query getLabelClassesOfDataset($slug: String!) {
@@ -62,18 +66,32 @@ export const EditLabelClass = forwardRef<
     skip: selectedLabelId == null,
   });
   const selectedLabelClassId = labelQueryData?.label?.labelClass?.id ?? null;
-  const createNewClass = useMemo(
-    () =>
-      createNewLabelClassAndUpdateLabelCurry({
-        labelClasses,
-        datasetId,
-        datasetSlug,
-        perform,
-        onClose,
-        client,
-      }),
-    [labelClasses, datasetId]
+
+  const handleCreateNewClass = useCallback(
+    async (name) => {
+      const newClassColor =
+        labelClasses.length < 1
+          ? hexColorSequence[0]
+          : getNextClassColor(labelClasses[labelClasses.length - 1].color);
+
+      const result = await perform(
+        createCreateLabelClassAndUpdateLabelEffect(
+          {
+            name,
+            color: newClassColor,
+            selectedLabelId,
+            datasetId,
+            datasetSlug,
+          },
+          { client }
+        )
+      );
+      onClose();
+      return result;
+    },
+    [labelClasses, datasetId, selectedLabelId]
   );
+
   useHotkeys(
     "*", // We have to manually check if the input corresponds to a change class key because otherwise on AZERTY keyboards we can't change classes when pressing numbers
     (keyboardEvent) => {
@@ -111,9 +129,7 @@ export const EditLabelClass = forwardRef<
         trigger={<div style={{ width: 0, height: 0 }} />} // Needed to have the popover displayed preventing overflow
         labelClasses={labelClasses}
         selectedLabelClassId={selectedLabelClassId}
-        createNewClass={async (name) => {
-          return await createNewClass(name, selectedLabelId);
-        }}
+        createNewClass={handleCreateNewClass}
         onSelectedClassChange={(item) => {
           perform(
             createUpdateLabelClassOfLabelEffect(

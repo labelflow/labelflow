@@ -175,33 +175,3 @@ export const createCreateLabelClassAndUpdateLabelEffect = (
     };
   },
 });
-
-export const createNewLabelClassAndUpdateLabelCurry =
-  ({
-    labelClasses,
-    datasetId,
-    datasetSlug,
-    perform,
-    onClose = () => {},
-    client,
-  }: {
-    labelClasses: LabelClass[];
-    datasetId: string;
-    datasetSlug: string;
-    perform: any;
-    onClose?: () => void;
-    client: ApolloClient<object>;
-  }) =>
-  async (name: string, selectedLabelId: string | null) => {
-    const newClassColor =
-      labelClasses.length < 1
-        ? hexColorSequence[0]
-        : getNextClassColor(labelClasses[labelClasses.length - 1].color);
-    perform(
-      createCreateLabelClassAndUpdateLabelEffect(
-        { name, color: newClassColor, selectedLabelId, datasetId, datasetSlug },
-        { client }
-      )
-    );
-    onClose();
-  };
