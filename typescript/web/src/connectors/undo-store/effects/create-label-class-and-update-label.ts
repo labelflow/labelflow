@@ -1,11 +1,7 @@
 import { gql, ApolloClient } from "@apollo/client";
 
-import { LabelClass } from "@labelflow/graphql-types";
 import { useLabellingStore } from "../../labelling-state";
-import {
-  getNextClassColor,
-  hexColorSequence,
-} from "../../../utils/class-color-generator";
+
 import { Effect } from "..";
 import { getDatasetsQuery } from "../../../pages/local/datasets";
 import { datasetLabelClassesQuery } from "../../../components/dataset-class-list/class-item";

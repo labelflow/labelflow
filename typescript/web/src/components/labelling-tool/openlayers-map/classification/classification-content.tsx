@@ -93,7 +93,8 @@ export const ClassificationContent = forwardRef<HTMLDivElement>(
                 >
                   <TagLabel>{labelClass?.name ?? "None"}</TagLabel>
                   <TagCloseButton
-                    onClick={() => {
+                    onClick={(e) => {
+                      e.stopPropagation();
                       return perform(
                         createDeleteLabelEffect(
                           { id },

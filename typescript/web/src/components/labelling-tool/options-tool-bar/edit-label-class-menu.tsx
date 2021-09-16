@@ -1,5 +1,8 @@
 import { useState, useEffect, useCallback } from "react";
 import { gql, useQuery, useApolloClient } from "@apollo/client";
+import { Label, LabelType } from "@labelflow/graphql-types";
+import GeoJSON, { GeoJSONPolygon } from "ol/format/GeoJSON";
+import { Polygon } from "ol/geom";
 
 import { useHotkeys } from "react-hotkeys-hook";
 import { useRouter } from "next/router";
@@ -15,10 +18,9 @@ import {
 } from "../../../utils/class-color-generator";
 import { createUpdateLabelClassEffect } from "../../../connectors/undo-store/effects/update-label-class";
 import { keymap } from "../../../keymap";
-import { Label, LabelType } from "@labelflow/graphql-types";
-import GeoJSON, { GeoJSONPolygon } from "ol/format/GeoJSON";
+
 import { createCreateLabelEffect } from "../../../connectors/undo-store/effects/create-label";
-import { Polygon } from "ol/geom";
+
 import { createDeleteLabelEffect } from "../../../connectors/undo-store/effects/delete-label";
 
 const getLabelClassesOfDatasetQuery = gql`
@@ -91,11 +93,6 @@ export const EditLabelClassMenu = () => {
   const client = useApolloClient();
   const [isOpen, setIsOpen] = useState(false);
 
-  const { data: imageLabelsData } = useQuery(getImageLabelsQuery, {
-    skip: !imageId,
-    variables: { imageId: imageId as string },
-  });
-
   const { data } = useQuery(getLabelClassesOfDatasetQuery, {
     variables: { slug: datasetSlug },
   });
@@ -145,13 +142,13 @@ export const EditLabelClassMenu = () => {
         labelClasses.length < 1
           ? hexColorSequence[0]
           : getNextClassColor(labelClasses[labelClasses.length - 1].color);
-      if (isInDrawingMode) {
+      if (!isInDrawingMode) {
         return await perform(
-          createCreateLabelClassEffect(
+          createCreateLabelClassAndUpdateLabelEffect(
             {
               name,
               color: newClassColor,
-              selectedLabelClassIdPrevious: selectedLabelClassId,
+              selectedLabelId,
               datasetId,
               datasetSlug,
             },
@@ -160,11 +157,11 @@ export const EditLabelClassMenu = () => {
         );
       }
       return await perform(
-        createCreateLabelClassAndUpdateLabelEffect(
+        createCreateLabelClassEffect(
           {
             name,
             color: newClassColor,
-            selectedLabelId,
+            selectedLabelClassIdPrevious: selectedLabelClassId,
             datasetId,
             datasetSlug,
           },
@@ -176,9 +173,9 @@ export const EditLabelClassMenu = () => {
   );
 
   const handleSelectedClassChange = useCallback(
-    (item: LabelClassItem | null) => {
+    async (item: LabelClassItem | null) => {
       if (!isInDrawingMode) {
-        return perform(
+        return await perform(
           createUpdateLabelClassOfLabelEffect(
             {
               selectedLabelClassId: item?.id ?? null,
@@ -188,22 +185,26 @@ export const EditLabelClassMenu = () => {
           )
         );
       }
-      if (selectedTool === Tools.CLASSIFICATION) {
-        const classificationsOfThisClass =
-          imageLabelsData?.image?.labels?.filter(
-            (label: Label) =>
-              label.labelClass?.id === item?.id &&
-              label.type === LabelType.Classification
-          );
+      if (selectedTool === Tools.CLASSIFICATION && imageId) {
+        const { data: imageLabelsData } = await client.query({
+          query: getImageLabelsQuery,
+          variables: { imageId },
+        });
+
+        const classificationsOfThisClass = imageLabelsData.image.labels.filter(
+          (label: Label) =>
+            label.labelClass?.id === item?.id &&
+            label.type === LabelType.Classification
+        );
         if (classificationsOfThisClass.length > 0) {
-          return perform(
+          return await perform(
             createDeleteLabelEffect(
               { id: classificationsOfThisClass[0].id },
               { setSelectedLabelId, client }
             )
           );
         }
-        console.log("imageLabelsData", imageLabelsData);
+
         const geometry = new GeoJSON().writeGeometryObject(
           new Polygon([
             [
@@ -215,9 +216,8 @@ export const EditLabelClassMenu = () => {
             ],
           ])
         ) as GeoJSONPolygon;
-        console.log("geometry", geometry);
-        console.log("item?.id ?? null", item?.id ?? null);
-        return perform(
+
+        return await perform(
           createCreateLabelEffect(
             {
               imageId,
@@ -232,14 +232,14 @@ export const EditLabelClassMenu = () => {
           )
         );
       }
-      return perform(
+      return await perform(
         createUpdateLabelClassEffect({
           selectedLabelClassId: item?.id ?? null,
           selectedLabelClassIdPrevious: selectedLabelClassId,
         })
       );
     },
-    [selectedLabelId, selectedLabelClassId, selectedTool, imageLabelsData]
+    [selectedLabelId, selectedLabelClassId, selectedTool]
   );
 
   const displayClassSelectionMenu =
