@@ -3,8 +3,8 @@ import { getBoundedGeometryFromImage } from "@labelflow/common-resolvers";
 
 import { GeometryInput, LabelType } from "@labelflow/graphql-types";
 import { GeoJSONPolygon } from "ol/format/GeoJSON";
-import { Effect } from "../../../../connectors/undo-store";
-import { getDatasetsQuery } from "../../../../pages/local/datasets";
+import { Effect } from "..";
+import { getDatasetsQuery } from "../../../pages/local/datasets";
 
 type CreateLabelInputs = {
   imageId: string;
@@ -141,7 +141,7 @@ export function removeLabelFromImageCache(
   });
 }
 
-export const createLabelEffect = (
+export const createCreateLabelEffect = (
   {
     imageId,
     selectedLabelClassId,

@@ -15,7 +15,7 @@ import { useUndoStore } from "../../../connectors/undo-store";
 import { useLabellingStore } from "../../../connectors/labelling-state";
 
 import { keymap } from "../../../keymap";
-import { createDeleteLabelEffect } from "./create-delete-label-effect";
+import { createDeleteLabelEffect } from "../../../connectors/undo-store/effects/delete-label";
 
 const DeleteIcon = chakra(RiDeleteBinLine);
 

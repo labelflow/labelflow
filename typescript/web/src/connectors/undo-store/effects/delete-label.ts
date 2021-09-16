@@ -2,11 +2,11 @@ import { gql, ApolloClient } from "@apollo/client";
 import { omit } from "lodash/fp";
 
 import { Label } from "@labelflow/graphql-types";
-import { Effect } from "../../../connectors/undo-store";
+import { Effect } from "..";
 import {
   addLabelToImageInCache,
   removeLabelFromImageCache,
-} from "../openlayers-map/draw-bounding-box-and-polygon-interaction/create-label-effect";
+} from "./create-label";
 import { getDatasetsQuery } from "../../../pages/local/datasets";
 
 const deleteLabelMutation = gql`

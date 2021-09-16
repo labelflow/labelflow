@@ -20,7 +20,7 @@ import {
   ResizeAndTranslateEvent,
 } from "./resize-and-translate-box-interaction";
 import { Effect, useUndoStore } from "../../../../connectors/undo-store";
-import { updateLabelEffect } from "./update-label-effect";
+import { createUpdateLabelEffect } from "../../../../connectors/undo-store/effects/update-label";
 
 // Extend react-openlayers-catalogue to include resize and translate interaction
 extend({
@@ -58,7 +58,7 @@ export const interactionEnd = async (
     const { id: labelId } = feature.getProperties();
     try {
       await perform(
-        updateLabelEffect(
+        createUpdateLabelEffect(
           {
             labelId,
             geometry,
