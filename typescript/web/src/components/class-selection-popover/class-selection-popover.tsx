@@ -47,10 +47,10 @@ const filterLabelClasses = ({
   const labelClassesWithNoneClass = [...labelClasses, noneClass];
   const createClassItem =
     inputValueCombobox &&
-      labelClassesWithNoneClass.filter(
-        (labelClass: LabelClassItem | NoneClass) =>
-          labelClass.name === inputValueCombobox
-      ).length === 0
+    labelClassesWithNoneClass.filter(
+      (labelClass: LabelClassItem | NoneClass) =>
+        labelClass.name === inputValueCombobox
+    ).length === 0
       ? [{ name: inputValueCombobox, type: "CreateClassItem" }]
       : [];
 
@@ -67,7 +67,7 @@ const filterLabelClasses = ({
 
 export const ClassSelectionPopover = ({
   isOpen,
-  onClose = () => { },
+  onClose = () => {},
   onSelectedClassChange,
   createNewClass,
   labelClasses,

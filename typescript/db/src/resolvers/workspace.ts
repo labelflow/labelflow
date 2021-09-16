@@ -13,7 +13,6 @@ import {
 } from "@labelflow/graphql-types";
 
 import { Context } from "@labelflow/common-resolvers";
-import { useMemo } from "react";
 import { prisma } from "../repository";
 import { castObjectNullsToUndefined } from "../repository/utils";
 

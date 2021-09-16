@@ -68,39 +68,39 @@ const createWorkspace = async (
 
 describe("createMembership mutation", () => {
   it("throws an error if the user doesn't exist", async () => {
-    const workspaceId = (await createWorkspace()).data?.createWorkspace
-      .id as string;
+    const workspaceSlug = (await createWorkspace()).data?.createWorkspace
+      .slug as string;
     const idOfAnUserThaDoesNotExist = uuidV4();
 
     await expect(() =>
       createMembership({
         userId: idOfAnUserThaDoesNotExist,
-        workspaceId,
+        workspaceSlug,
         role: MembershipRole.Admin,
       })
     ).rejects.toThrow();
   });
 
   it("throws an error if the workspace doesn't exist", async () => {
-    const idOfAWorkspaceThatDoesNotExist = uuidV4();
+    const idOfAWorkspaceThatDoesNotExist = "i-dont-exist";
 
     await expect(() =>
       createMembership({
         userId: testUser2Id,
-        workspaceId: idOfAWorkspaceThatDoesNotExist,
+        workspaceSlug: idOfAWorkspaceThatDoesNotExist,
         role: MembershipRole.Admin,
       })
     ).rejects.toThrow();
   });
 
   it("throws an error if the role isn't specified", async () => {
-    const workspaceId = (await createWorkspace()).data?.createWorkspace
-      .id as string;
+    const workspaceSlug = (await createWorkspace()).data?.createWorkspace
+      .slug as string;
 
     await expect(() =>
       createMembership({
         userId: testUser2Id,
-        workspaceId,
+        workspaceSlug,
         // @ts-ignore
         role: null,
       })
@@ -108,8 +108,8 @@ describe("createMembership mutation", () => {
   });
 
   it("throws an error if the user is already linked to this workspace", async () => {
-    const workspaceId = (await createWorkspace()).data?.createWorkspace
-      .id as string;
+    const workspaceSlug = (await createWorkspace()).data?.createWorkspace
+      .slug as string;
 
     /* testUser1Id is already linked to this workspace as createWorkspace makes 
     testUser1Id the default owner of this workspace  */
@@ -117,19 +117,19 @@ describe("createMembership mutation", () => {
     await expect(() =>
       createMembership({
         userId: testUser1Id,
-        workspaceId,
+        workspaceSlug,
         role: MembershipRole.Admin,
       })
     ).rejects.toThrow();
   });
 
   it("creates a membership with the admin role", async () => {
-    const workspaceId = (await createWorkspace()).data?.createWorkspace
-      .id as string;
+    const workspaceSlug = (await createWorkspace()).data?.createWorkspace
+      .slug as string;
 
     const { data } = await createMembership({
       userId: testUser2Id,
-      workspaceId,
+      workspaceSlug,
       role: MembershipRole.Admin,
     });
 
@@ -137,12 +137,12 @@ describe("createMembership mutation", () => {
   });
 
   it("creates a membership with the member role", async () => {
-    const workspaceId = (await createWorkspace()).data?.createWorkspace
-      .id as string;
+    const workspaceSlug = (await createWorkspace()).data?.createWorkspace
+      .slug as string;
 
     const { data } = await createMembership({
       userId: testUser2Id,
-      workspaceId,
+      workspaceSlug,
       role: MembershipRole.Member,
     });
 
@@ -150,14 +150,14 @@ describe("createMembership mutation", () => {
   });
 
   it("accepts an id as input", async () => {
-    const workspaceId = (await createWorkspace()).data?.createWorkspace
-      .id as string;
+    const workspaceSlug = (await createWorkspace()).data?.createWorkspace
+      .slug as string;
 
     const membershipId = uuidV4();
 
     const { data } = await createMembership({
       userId: testUser2Id,
-      workspaceId,
+      workspaceSlug,
       role: MembershipRole.Member,
       id: membershipId,
     });
@@ -184,20 +184,20 @@ describe("memberships query", () => {
 
   it("returns the already created memberships", async () => {
     // both this workspaces are linked to testUser1Id by default
-    const workspace1Id = (await createWorkspace({ name: "test1" }))?.data
-      ?.createWorkspace.id as string;
-    const workspace2Id = (await createWorkspace({ name: "test2" }))?.data
-      ?.createWorkspace.id as string;
+    const workspace1Slug = (await createWorkspace({ name: "test1" }))?.data
+      ?.createWorkspace.slug as string;
+    const workspace2Slug = (await createWorkspace({ name: "test2" }))?.data
+      ?.createWorkspace.slug as string;
 
     await createMembership({
       userId: testUser2Id,
-      workspaceId: workspace1Id,
+      workspaceSlug: workspace1Slug,
       role: MembershipRole.Member,
     });
 
     await createMembership({
       userId: testUser2Id,
-      workspaceId: workspace2Id,
+      workspaceSlug: workspace2Slug,
       role: MembershipRole.Member,
     });
 
@@ -232,13 +232,13 @@ describe("memberships query", () => {
 
     await createMembership({
       userId: testUser2Id,
-      workspaceId: workspace1Id,
+      workspaceSlug: workspace1Id,
       role: MembershipRole.Member,
     });
 
     await createMembership({
       userId: testUser2Id,
-      workspaceId: workspace2Id,
+      workspaceSlug: workspace2Id,
       role: MembershipRole.Member,
     });
 
@@ -272,13 +272,13 @@ describe("memberships query", () => {
 
     await createMembership({
       userId: testUser2Id,
-      workspaceId: workspace1Id,
+      workspaceSlug: workspace1Id,
       role: MembershipRole.Member,
     });
 
     await createMembership({
       userId: testUser2Id,
-      workspaceId: workspace2Id,
+      workspaceSlug: workspace2Id,
       role: MembershipRole.Member,
     });
 
@@ -305,20 +305,20 @@ describe("memberships query", () => {
 
   it("can limit the number of results and also skip some", async () => {
     // both this workspaces are linked to testUser1Id by default
-    const workspace1Id = (await createWorkspace({ name: "test1" }))?.data
-      ?.createWorkspace.id as string;
-    const workspace2Id = (await createWorkspace({ name: "test2" }))?.data
-      ?.createWorkspace.id as string;
+    const workspace1Slug = (await createWorkspace({ name: "test1" }))?.data
+      ?.createWorkspace.slug as string;
+    const workspace2Slug = (await createWorkspace({ name: "test2" }))?.data
+      ?.createWorkspace.slug as string;
 
     await createMembership({
       userId: testUser2Id,
-      workspaceId: workspace1Id,
+      workspaceSlug: workspace1Slug,
       role: MembershipRole.Member,
     });
 
     await createMembership({
       userId: testUser2Id,
-      workspaceId: workspace2Id,
+      workspaceSlug: workspace2Slug,
       role: MembershipRole.Member,
     });
 
@@ -360,13 +360,13 @@ describe("membership query", () => {
     });
 
   it("returns the membership corresponding to the id", async () => {
-    const workspaceId = (await createWorkspace()).data?.createWorkspace
-      .id as string;
+    const workspaceSlug = (await createWorkspace()).data?.createWorkspace
+      .slug as string;
 
     const membershipId = (
       await createMembership({
         userId: testUser2Id,
-        workspaceId,
+        workspaceSlug,
         role: MembershipRole.Member,
       })
     )?.data?.createMembership.id as string;
@@ -411,14 +411,14 @@ describe("updateMembership mutation", () => {
     });
 
   it("can change the membership role", async () => {
-    const workspaceId = (await createWorkspace())?.data?.createWorkspace
+    const workspaceSlug = (await createWorkspace())?.data?.createWorkspace
       .id as string;
 
     const membershipId = (
       await createMembership({
         userId: testUser2Id,
         role: MembershipRole.Admin,
-        workspaceId,
+        workspaceSlug,
       })
     ).data?.createMembership.id as string;
 
@@ -460,14 +460,14 @@ describe("deleteMembership mutation", () => {
   };
 
   it("returns the deleted membership", async () => {
-    const workspaceId = (await createWorkspace())?.data?.createWorkspace
+    const workspaceSlug = (await createWorkspace())?.data?.createWorkspace
       .id as string;
 
     const membershipId = (
       await createMembership({
         userId: testUser2Id,
         role: MembershipRole.Admin,
-        workspaceId,
+        workspaceSlug,
       })
     ).data?.createMembership.id as string;
 
@@ -477,13 +477,13 @@ describe("deleteMembership mutation", () => {
   });
 
   it("deletes the membership", async () => {
-    const workspaceId = (await createWorkspace())?.data?.createWorkspace
+    const workspaceSlug = (await createWorkspace())?.data?.createWorkspace
       .id as string;
     const membershipId = (
       await createMembership({
         userId: testUser2Id,
         role: MembershipRole.Admin,
-        workspaceId,
+        workspaceSlug,
       })
     ).data?.createMembership.id as string;
 
@@ -515,13 +515,13 @@ describe("deleteMembership mutation", () => {
 
 describe("nested resolvers", () => {
   it("can return the user of the membership ", async () => {
-    const workspaceId = (await createWorkspace({ name: "test" })).data
-      ?.createWorkspace.id as string;
+    const workspaceSlug = (await createWorkspace({ name: "test" })).data
+      ?.createWorkspace.slug as string;
 
     const membershipId = (
       await createMembership({
         userId: testUser2Id,
-        workspaceId,
+        workspaceSlug,
         role: MembershipRole.Admin,
       })
     ).data?.createMembership.id as string;
@@ -547,13 +547,13 @@ describe("nested resolvers", () => {
   });
 
   it("can return the workspace of the membership ", async () => {
-    const workspaceId = (await createWorkspace({ name: "test" })).data
-      ?.createWorkspace.id as string;
+    const workspaceSlug = (await createWorkspace({ name: "test" })).data
+      ?.createWorkspace.slug as string;
 
     const membershipId = (
       await createMembership({
         userId: testUser2Id,
-        workspaceId,
+        workspaceSlug,
         role: MembershipRole.Admin,
       })
     ).data?.createMembership.id as string;
@@ -575,6 +575,6 @@ describe("nested resolvers", () => {
       fetchPolicy: "no-cache",
     });
 
-    expect(data.membership.workspace.id).toEqual(workspaceId);
+    expect(data.membership.workspace.id).toEqual(workspaceSlug);
   });
 });
