@@ -22,7 +22,7 @@ beforeEach(async () => {
   return await prisma.user.deleteMany({});
 });
 
-describe("users query", () => {
+describe.skip("users query", () => {
   it("returns an empty array when there aren't any", async () => {
     const { data } = await client.query({
       query: gql`
@@ -179,7 +179,7 @@ describe("users query", () => {
   });
 });
 
-describe("user query", () => {
+describe.skip("user query", () => {
   const queryUser = async (id: string) =>
     await client.query<{
       user: Pick<User, "id" | "name">;
@@ -215,7 +215,7 @@ describe("user query", () => {
   });
 });
 
-describe("updateUser mutation", () => {
+describe.skip("updateUser mutation", () => {
   const updateUser = async ({
     id,
     name,
@@ -279,7 +279,7 @@ describe("updateUser mutation", () => {
   });
 });
 
-describe("nested resolvers", () => {
+describe.skip("nested resolvers", () => {
   const createWorkspace = async (
     data?: Partial<MutationCreateWorkspaceArgs["data"]>
   ) => {

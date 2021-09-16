@@ -66,7 +66,7 @@ const createWorkspace = async (
   });
 };
 
-describe("createMembership mutation", () => {
+describe.skip("createMembership mutation", () => {
   it("throws an error if the user doesn't exist", async () => {
     const workspaceSlug = (await createWorkspace()).data?.createWorkspace
       .slug as string;
@@ -166,7 +166,7 @@ describe("createMembership mutation", () => {
   });
 });
 
-describe("memberships query", () => {
+describe.skip("memberships query", () => {
   it("returns an empty array when there aren't any", async () => {
     const { data } = await client.query({
       query: gql`
@@ -343,7 +343,7 @@ describe("memberships query", () => {
   });
 });
 
-describe("membership query", () => {
+describe.skip("membership query", () => {
   const queryMembership = async (id: string) =>
     await client.query<{
       membership: Pick<Membership, "id">;
@@ -387,7 +387,7 @@ describe("membership query", () => {
   });
 });
 
-describe("updateMembership mutation", () => {
+describe.skip("updateMembership mutation", () => {
   const updateMembership = async ({
     id,
     role,
@@ -442,7 +442,7 @@ describe("updateMembership mutation", () => {
   });
 });
 
-describe("deleteMembership mutation", () => {
+describe.skip("deleteMembership mutation", () => {
   const deleteMembership = async (membershipId: string) => {
     return await client.mutate<{
       deleteMembership: Pick<Membership, "id">;
@@ -513,7 +513,7 @@ describe("deleteMembership mutation", () => {
   });
 });
 
-describe("nested resolvers", () => {
+describe.skip("nested resolvers", () => {
   it("can return the user of the membership ", async () => {
     const workspaceSlug = (await createWorkspace({ name: "test" })).data
       ?.createWorkspace.slug as string;
