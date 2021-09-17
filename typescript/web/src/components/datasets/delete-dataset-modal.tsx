@@ -38,6 +38,7 @@ export const DeleteDatasetModal = ({
   const cancelRef = useRef<HTMLButtonElement>(null);
   const { data } = useQuery(getDatasetByIdQuery, {
     variables: { id: datasetId },
+    skip: datasetId == null,
   });
 
   const [deleteDatasetMutate, { loading }] = useMutation(

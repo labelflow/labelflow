@@ -39,6 +39,17 @@ const getDataset = async (
   return { ...datasetFromRepository, __typename: "Dataset" };
 };
 
+const searchDataset = async (
+  _: any,
+  args: QueryDatasetArgs,
+  { repository }: Context
+): Promise<(DbDataset & { __typename: string }) | undefined> => {
+  const datasetFromRepository = await repository.dataset.get(args.where);
+  return datasetFromRepository != null
+    ? { ...datasetFromRepository, __typename: "Dataset" }
+    : undefined;
+};
+
 // Queries
 const images = async (
   dataset: DbDataset,
@@ -252,6 +263,7 @@ export default {
   Query: {
     dataset,
     datasets,
+    searchDataset,
   },
 
   Mutation: {
