@@ -88,12 +88,14 @@ export const repository: Repository = {
       };
     },
     list: async () => {
-      const repos = await octokit.paginate(octokit.rest.repos.listForUser, {
-        username: "crubier",
-        type: "all",
+      const repos = await octokit.rest.search.repos({
+        q: "labelflow-dataset-",
+        sort: "stars",
+        order: "desc",
+        per_page: 100,
       });
 
-      const results = repos
+      const results = repos.data.items
         .filter((repo) => repo.name.startsWith("labelflow-dataset-"))
         .map(
           (repo): DbDataset => ({
