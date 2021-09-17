@@ -695,9 +695,6 @@ describe("Dataset resolver test suite", () => {
     const initialCountQuery = await getDatasetCount(datasetId);
     const otherInitialCountQuery = await getDatasetCount(otherId);
 
-    console.log(JSON.stringify(initialCountQuery, null, 2));
-    console.log(JSON.stringify(otherInitialCountQuery, null, 2));
-
     expectedResults(initialCountQuery, 0);
     expectedResults(otherInitialCountQuery, 0);
 
@@ -705,9 +702,6 @@ describe("Dataset resolver test suite", () => {
 
     const updateCountQuery = await getDatasetCount(datasetId);
     const otherUpdateCountQuery = await getDatasetCount(otherId);
-
-    console.log(JSON.stringify(updateCountQuery, null, 2));
-    console.log(JSON.stringify(otherUpdateCountQuery, null, 2));
 
     expectedResults(updateCountQuery, 1);
     expectedResults(otherUpdateCountQuery, 0);
