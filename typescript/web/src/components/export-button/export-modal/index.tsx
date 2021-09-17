@@ -6,6 +6,7 @@ import {
   useMemo,
 } from "react";
 import {
+  Box,
   Stack,
   Heading,
   Modal,
@@ -161,7 +162,7 @@ export const ExportModal = ({
         <ModalOverlay />
         <ModalContent height="auto">
           <ModalHeader textAlign="center" p={{ base: "4", md: "6" }}>
-            <Heading as="h2" size="lg" pb="2">
+            <Heading as="h2" size="lg" pb="2" mb={5}>
               Export Labels
             </Heading>
             {/* <Skeleton
@@ -177,23 +178,25 @@ export const ExportModal = ({
                 {data?.dataset?.labelsAggregates?.totalCount} labels.
               </Text>
             </Skeleton> */}
-            <Alert status="info" mt={2}>
-              <AlertIcon />
-              <AlertDescription fontSize="lg" fontWeight="medium">
-                Your dataset contains{" "}
-                {data?.dataset?.imagesAggregates?.totalCount} images and{" "}
-                {data?.dataset?.labelsAggregates?.totalCount} labels.
-              </AlertDescription>
-            </Alert>
-            {datasetHasUndefinedLabels && (
-              <Alert status="warning" mt={2}>
+            <Box display="inline-block" width="100%" pl={6} pr={6} pt={2}>
+              <Alert status="info" borderRadius={5} maxHeight={10}>
                 <AlertIcon />
-                <AlertDescription fontSize="lg" fontWeight="medium">
-                  It seems like your dataset contains some labels that don&#39t
-                  have any class
+                <AlertDescription fontSize="md" fontWeight="medium">
+                  Your dataset contains{" "}
+                  {data?.dataset?.imagesAggregates?.totalCount} images and{" "}
+                  {data?.dataset?.labelsAggregates?.totalCount} labels.
                 </AlertDescription>
               </Alert>
-            )}
+              {datasetHasUndefinedLabels && (
+                <Alert status="warning" mt={2} borderRadius={5} maxHeight={10}>
+                  <AlertIcon />
+                  <AlertDescription fontSize="md" fontWeight="medium">
+                    It seems like your dataset contains some labels that
+                    don&#39;t have any class
+                  </AlertDescription>
+                </Alert>
+              )}
+            </Box>
           </ModalHeader>
 
           <ModalBody
