@@ -1,6 +1,12 @@
 # Changelog
 
-## [1.0.6](https://github.com/labelflow/labelflow/compare/1.0.5...1.0.6)
+## [1.0.8](https://github.com/labelflow/labelflow/compare/1.0.7...1.0.8)
+
+- Fix bug of errors being thrown in service worker from create dataset modal [`#450`](https://github.com/labelflow/labelflow/pull/450)
+## [1.0.7](https://github.com/labelflow/labelflow/compare/1.0.6...1.0.7) - 2021-09-17
+
+- Fix bug of error being thrown when clearing site data and reloading page [`#451`](https://github.com/labelflow/labelflow/pull/451)
+## [1.0.6](https://github.com/labelflow/labelflow/compare/1.0.5...1.0.6) - 2021-09-17
 
 - Feature/#317 cru workspaces [`#354`](https://github.com/labelflow/labelflow/pull/354)
 ## [1.0.5](https://github.com/labelflow/labelflow/compare/1.0.4...1.0.5) - 2021-09-15

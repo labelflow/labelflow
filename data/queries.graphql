@@ -27,6 +27,7 @@ type Query {
 
   dataset(where: DatasetWhereUniqueInput!): Dataset!
   datasets(where: DatasetWhereInput, first: Int, skip: Int): [Dataset!]!
+  searchDataset(where: DatasetWhereUniqueInput!): Dataset
 
   workspace(where: WorkspaceWhereUniqueInput!): Workspace!
   workspaces(first: Int, skip: Int): [Workspace!]!
@@ -37,10 +38,11 @@ type Query {
   user(where: UserWhereUniqueInput!): User!
   users(first: Int, skip: Int): [User!]!
 
-  exportDataset(where: ExportWhereUniqueInput!, 
-                format: ExportFormat!, 
-                options: ExportOptions
-                ): String!
+  exportDataset(
+    where: ExportWhereUniqueInput!
+    format: ExportFormat!
+    options: ExportOptions
+  ): String!
 
   debug: JSON!
 }

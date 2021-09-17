@@ -33,10 +33,21 @@ const getDataset = async (
   const datasetFromRepository = await repository.dataset.get(where);
   if (datasetFromRepository == null) {
     throw new Error(
-      `Couldn't find this dataset corresponding to ${JSON.stringify(where)}`
+      `Couldn't find dataset corresponding to ${JSON.stringify(where)}`
     );
   }
   return { ...datasetFromRepository, __typename: "Dataset" };
+};
+
+const searchDataset = async (
+  _: any,
+  args: QueryDatasetArgs,
+  { repository }: Context
+): Promise<(DbDataset & { __typename: string }) | undefined> => {
+  const datasetFromRepository = await repository.dataset.get(args.where);
+  return datasetFromRepository != null
+    ? { ...datasetFromRepository, __typename: "Dataset" }
+    : undefined;
 };
 
 // Queries
@@ -252,6 +263,7 @@ export default {
   Query: {
     dataset,
     datasets,
+    searchDataset,
   },
 
   Mutation: {
