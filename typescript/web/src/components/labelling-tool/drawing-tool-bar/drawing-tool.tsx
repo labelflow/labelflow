@@ -22,7 +22,7 @@ import {
 } from "@chakra-ui/react";
 import { RiArrowDownSLine } from "react-icons/ri";
 import { BiShapeSquare, BiShapePolygon } from "react-icons/bi";
-import { MdLabelOutline } from "react-icons/md";
+import { BsTag } from "react-icons/bs";
 import { useHotkeys } from "react-hotkeys-hook";
 
 import { useLabellingStore, Tools } from "../../../connectors/labelling-state";
@@ -31,7 +31,7 @@ import { keymap } from "../../../keymap";
 
 export type Props = {};
 
-const ChakraBiLabel = chakra(MdLabelOutline);
+const ChakraBiLabel = chakra(BsTag);
 const ChakraBiShapeSquare = chakra(BiShapeSquare);
 const ChakraBiShapePolygon = chakra(BiShapePolygon);
 const ChakraRiArrowDownSLine = chakra(RiArrowDownSLine);
