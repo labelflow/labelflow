@@ -6,7 +6,10 @@ import { useQuery, gql, useApolloClient } from "@apollo/client";
 
 import { Label, LabelType } from "@labelflow/graphql-types";
 
-import { useLabellingStore } from "../../../../connectors/labelling-state";
+import {
+  Tools,
+  useLabellingStore,
+} from "../../../../connectors/labelling-state";
 
 import { noneClassColor } from "../../../../utils/class-color-generator";
 import { createDeleteLabelEffect } from "../../../../connectors/undo-store/effects/delete-label";
@@ -46,6 +49,9 @@ export const ClassificationContent = forwardRef<HTMLDivElement>(
       skip: !imageId,
       variables: { imageId: imageId as string },
     });
+    const selectedTool = useLabellingStore((state) => state.selectedTool);
+
+    const isInDrawingMode = [Tools.BOX, Tools.POLYGON].includes(selectedTool);
     const { perform } = useUndoStore();
     const client = useApolloClient();
     const selectedLabelId = useLabellingStore((state) => state.selectedLabelId);
@@ -63,12 +69,13 @@ export const ClassificationContent = forwardRef<HTMLDivElement>(
         p="0"
         display="inline"
         cursor="pointer"
+        pointerEvents="none"
       >
         <HStack
           ref={ref}
           spacing={2}
           padding={2}
-          // pl={0}
+          pointerEvents={isInDrawingMode ? "none" : "initial"}
         >
           {labels
             .filter(({ type }: Label) => type === LabelType.Classification)

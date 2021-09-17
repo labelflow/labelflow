@@ -16,6 +16,7 @@ export const ClassificationOverlay = ({
       element={classificationOverlayRef.current}
       position={[0, image?.height]}
       positioning={OverlayPositioning.TOP_LEFT}
+      className="pointereventsnone"
     />
   );
 };

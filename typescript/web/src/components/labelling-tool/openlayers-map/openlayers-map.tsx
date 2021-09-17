@@ -1,5 +1,5 @@
 import { useRef, useCallback } from "react";
-import { Spinner, Center, ThemeProvider } from "@chakra-ui/react";
+import { Spinner, Center, ThemeProvider, Box } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { RouterContext } from "next/dist/shared/lib/router-context";
 import { Extent, getCenter } from "ol/extent";
@@ -160,8 +160,17 @@ export const OpenlayersMap = () => {
       : 1;
 
   return (
-    <div
-      style={{ display: "flex", width: "100%", height: "100%" }}
+    <Box
+      sx={{
+        display: "flex",
+        width: "100%",
+        height: "100%",
+        "& .pointereventsnone": {
+          // This !importsant is needed to take over the "pointer-events: auto" put by openlayers
+          // overlays, for example on the classifications tags
+          pointerEvents: "none !important",
+        },
+      }}
       onContextMenu={(e) => {
         e.preventDefault();
         return false;
@@ -286,9 +295,9 @@ export const OpenlayersMap = () => {
         boxDrawingToolState !== DrawingToolState.DRAWING &&
         !isContextMenuOpen && <CursorGuides map={mapRef.current} />}
       {/* This div is needed to prevent a weird error that seems related to the EditLabelClass component */}
-      <div
+      <Box
         key="toto"
-        style={{
+        sx={{
           position: "absolute",
           pointerEvents: "none",
           height: "100%",
@@ -300,7 +309,7 @@ export const OpenlayersMap = () => {
             <Spinner aria-label="loading indicator" size="xl" />
           </Center>
         )}
-      </div>
+      </Box>
 
       <EditLabelClass
         key="EditLabelClass"
@@ -320,6 +329,6 @@ export const OpenlayersMap = () => {
           }
         }}
       />
-    </div>
+    </Box>
   );
 };
