@@ -1,0 +1,8 @@
+input UserWhereUniqueInput {
+  id: ID!
+}
+
+input UserUpdateInput {
+  name: String
+  image: String
+}

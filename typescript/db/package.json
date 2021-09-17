@@ -3,12 +3,14 @@
   "version": "0.0.1",
   "main": "src/index.ts",
   "scripts": {
+    "dev:server": "nodemon src/dev/apollo-server.ts",
     "dev": "prisma migrate dev",
     "deploy": "prisma migrate deploy",
     "dev:push": "prisma db push",
     "generate": "prisma generate"
   },
   "devDependencies": {
+    "@apollo/client": "^3.4.10",
     "@types/node": "16.4.1",
     "nodemon": "2.0.12",
     "prisma": "2.30.3",
@@ -30,6 +32,7 @@
     "graphql": "15.5.1",
     "isomorphic-fetch": "3.0.0",
     "probe-image-size": "7.2.1",
+    "slugify": "^1.6.0",
     "uuid": "8.3.2"
   }
 }

@@ -38,7 +38,9 @@ const createDataset = async (
   return await client.mutate({
     mutation: gql`
       mutation createDataset($name: String!, $datasetId: ID) {
-        createDataset(data: { name: $name, id: $datasetId }) {
+        createDataset(
+          data: { name: $name, id: $datasetId, workspaceSlug: "local" }
+        ) {
           id
         }
       }

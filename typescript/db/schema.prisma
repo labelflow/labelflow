@@ -46,20 +46,51 @@ model LabelClass {
   updatedAt DateTime @updatedAt
   name      String
   color     String
-  datasetId String   @db.Uuid
   index     Int
+  datasetId String   @db.Uuid
   dataset   Dataset  @relation(fields: [datasetId], references: [id], onDelete: Cascade)
   labels    Label[]
 }
 
 model Dataset {
-  id           String       @id @default(uuid()) @db.Uuid
-  createdAt    DateTime     @default(now())
-  updatedAt    DateTime     @updatedAt
-  name         String       @unique
-  slug         String       @unique
-  images       Image[]
-  labelClasses LabelClass[]
+  id            String       @id @default(uuid()) @db.Uuid
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  name          String
+  slug          String
+  images        Image[]
+  labelClasses  LabelClass[]
+  workspaceSlug String
+  workspace     Workspace    @relation(fields: [workspaceSlug], references: [slug], onDelete: Cascade)
+
+  @@unique(fields: [workspaceSlug, slug], name: "workspaceSlugAndDatasetSlug")
+  @@unique(fields: [workspaceSlug, name], name: "workspaceSlugAndDatasetName")
+}
+
+model Workspace {
+  // Id exists for regularity reasons.
+  // It's more appropriate to query Workspaces using the slug
+  id          String        @id @default(uuid()) @db.Uuid
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  name        String        @unique
+  slug        String        @unique
+  plan        WorkspacePlan
+  datasets    Dataset[]
+  memberships Membership[]
+}
+
+model Membership {
+  id            String    @id @default(uuid()) @db.Uuid
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  role          UserRole
+  workspaceSlug String
+  workspace     Workspace @relation(fields: [workspaceSlug], references: [slug])
+  userId        String    @db.Uuid
+  user          User      @relation(fields: [userId], references: [id])
+
+  @@unique([workspaceSlug, userId])
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -67,8 +98,8 @@ model Dataset {
 /////////////////////////////////////////////////////////////////////////////
 
 model Account {
-  id                 String   @id @default(cuid())
-  userId             String
+  id                 String   @id @default(uuid()) @db.Uuid
+  userId             String   @db.Uuid
   type               String
   provider           String
   providerAccountId  String
@@ -89,9 +120,9 @@ model Account {
 }
 
 model Session {
-  id           String   @id @default(cuid())
+  id           String   @id @default(uuid()) @db.Uuid
   sessionToken String   @unique
-  userId       String
+  userId       String   @db.Uuid
   expires      DateTime
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
@@ -99,15 +130,16 @@ model Session {
 }
 
 model User {
-  id            String    @id @default(cuid())
+  id            String       @id @default(uuid()) @db.Uuid
   name          String?
-  email         String?   @unique
+  email         String?      @unique
   emailVerified DateTime?
   image         String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
   accounts      Account[]
   sessions      Session[]
+  memberships   Membership[]
 }
 
 model VerificationToken {
@@ -417,4 +449,16 @@ enum LabelType {
   Classification
   Polygon
   Box
+}
+
+enum UserRole {
+  Admin
+  Member
+}
+
+enum WorkspacePlan {
+  Community
+  Starter
+  Pro
+  Enterprise
 }

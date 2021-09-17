@@ -25,7 +25,7 @@ import { createDeleteLabelEffect } from "../../../connectors/undo-store/effects/
 
 const getLabelClassesOfDatasetQuery = gql`
   query getLabelClassesOfDataset($slug: String!) {
-    dataset(where: { slug: $slug }) {
+    dataset(where: { slugs: { datasetSlug: $slug, workspaceSlug: "local" } }) {
       id
       labelClasses {
         id

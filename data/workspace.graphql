@@ -1,0 +1,13 @@
+input WorkspaceCreateInput {
+  id: ID
+  name: String!
+}
+
+input WorkspaceWhereUniqueInput {
+  id: ID
+  slug: String
+}
+
+input WorkspaceUpdateInput {
+  name: String
+}

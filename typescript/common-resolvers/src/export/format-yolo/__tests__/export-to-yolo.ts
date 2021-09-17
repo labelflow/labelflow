@@ -1,5 +1,5 @@
 import { LabelType } from "@labelflow/graphql-types";
-import { DbLabelClass, DbLabel, DbImage } from "../../../types";
+import { DbLabelClass, DbLabel, DbImageCreateInput } from "../../../types";
 import {
   generateNamesFile,
   generateDataFile,
@@ -54,7 +54,7 @@ describe("Yolo converters", () => {
     name: string,
     height: number = 10,
     width: number = 10
-  ): DbImage => ({
+  ): DbImageCreateInput => ({
     id: `id-${name}`,
     name,
     createdAt: date,
