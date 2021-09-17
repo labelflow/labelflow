@@ -1,11 +1,13 @@
 import { forwardRef, useCallback } from "react";
 import { useQuery, useApolloClient, gql } from "@apollo/client";
 import { useRouter } from "next/router";
-
 import { useHotkeys } from "react-hotkeys-hook";
+import GeoJSON, { GeoJSONPolygon } from "ol/format/GeoJSON";
+import { Polygon } from "ol/geom";
+import { Label, LabelType } from "@labelflow/graphql-types";
 
 import { ClassSelectionPopover } from "../../class-selection-popover";
-import { useLabellingStore } from "../../../connectors/labelling-state";
+import { Tools, useLabellingStore } from "../../../connectors/labelling-state";
 import { useUndoStore } from "../../../connectors/undo-store";
 import { createCreateLabelClassAndUpdateLabelEffect } from "../../../connectors/undo-store/effects/create-label-class-and-update-label";
 import { createUpdateLabelClassOfLabelEffect } from "../../../connectors/undo-store/effects/update-label-class-of-label";
@@ -14,6 +16,9 @@ import {
   getNextClassColor,
   hexColorSequence,
 } from "../../../utils/class-color-generator";
+import { LabelClassItem } from "../../class-selection-popover/class-selection-popover";
+import { createCreateLabelEffect } from "../../../connectors/undo-store/effects/create-label";
+import { createDeleteLabelEffect } from "../../../connectors/undo-store/effects/delete-label";
 
 const getLabelClassesOfDatasetQuery = gql`
   query getLabelClassesOfDataset($slug: String!) {
@@ -39,6 +44,33 @@ const labelQuery = gql`
   }
 `;
 
+const getImageLabelsQuery = gql`
+  query getImageLabels($imageId: ID!) {
+    image(where: { id: $imageId }) {
+      id
+      width
+      height
+      labels {
+        type
+        id
+        x
+        y
+        width
+        height
+        labelClass {
+          id
+          name
+          color
+        }
+        geometry {
+          type
+          coordinates
+        }
+      }
+    }
+  }
+`;
+
 export const EditLabelClass = forwardRef<
   HTMLDivElement | null,
   {
@@ -47,6 +79,7 @@ export const EditLabelClass = forwardRef<
   }
 >(({ isOpen, onClose }, ref) => {
   const router = useRouter();
+  const imageId = router?.query.imageId as string;
   const datasetSlug = router?.query.datasetSlug as string;
 
   const client = useApolloClient();
@@ -58,9 +91,13 @@ export const EditLabelClass = forwardRef<
   const { perform } = useUndoStore();
   const labelClasses = data?.dataset.labelClasses ?? [];
   const selectedLabelId = useLabellingStore((state) => state.selectedLabelId);
+  const setSelectedLabelId = useLabellingStore(
+    (state) => state.setSelectedLabelId
+  );
   const isContextMenuOpen = useLabellingStore(
     (state) => state.isContextMenuOpen
   );
+  const selectedTool = useLabellingStore((state) => state.selectedTool);
   const { data: labelQueryData } = useQuery(labelQuery, {
     variables: { id: selectedLabelId },
     skip: selectedLabelId == null,
@@ -73,8 +110,8 @@ export const EditLabelClass = forwardRef<
         labelClasses.length < 1
           ? hexColorSequence[0]
           : getNextClassColor(labelClasses[labelClasses.length - 1].color);
-
-      const result = await perform(
+      onClose();
+      return await perform(
         createCreateLabelClassAndUpdateLabelEffect(
           {
             name,
@@ -86,10 +123,74 @@ export const EditLabelClass = forwardRef<
           { client }
         )
       );
-      onClose();
-      return result;
     },
     [labelClasses, datasetId, selectedLabelId]
+  );
+
+  const handleSelectedClassChange = useCallback(
+    async (item: LabelClassItem | null) => {
+      if (selectedLabelId != null) {
+        perform(
+          createUpdateLabelClassOfLabelEffect(
+            {
+              selectedLabelClassId: item?.id ?? null,
+              selectedLabelId,
+            },
+            { client }
+          )
+        );
+        onClose();
+      }
+      if (selectedTool === Tools.CLASSIFICATION && imageId) {
+        const { data: imageLabelsData } = await client.query({
+          query: getImageLabelsQuery,
+          variables: { imageId },
+        });
+
+        const classificationsOfThisClass = imageLabelsData.image.labels.filter(
+          (label: Label) =>
+            label.labelClass?.id === item?.id &&
+            label.type === LabelType.Classification
+        );
+        if (classificationsOfThisClass.length > 0) {
+          onClose();
+          return await perform(
+            createDeleteLabelEffect(
+              { id: classificationsOfThisClass[0].id },
+              { setSelectedLabelId, client }
+            )
+          );
+        }
+
+        const geometry = new GeoJSON().writeGeometryObject(
+          new Polygon([
+            [
+              [0, 0],
+              [0, imageLabelsData.image.height],
+              [imageLabelsData.image.width, imageLabelsData.image.height],
+              [imageLabelsData.image.width, 0],
+              [0, 0],
+            ],
+          ])
+        ) as GeoJSONPolygon;
+        onClose();
+        return await perform(
+          createCreateLabelEffect(
+            {
+              imageId,
+              selectedLabelClassId: item?.id ?? null,
+              geometry,
+              labelType: LabelType.Classification,
+            },
+            {
+              setSelectedLabelId,
+              client,
+            }
+          )
+        );
+      }
+    },
+    [selectedLabelId, selectedLabelClassId, selectedTool, imageId]
   );
 
   useHotkeys(
@@ -130,18 +231,7 @@ export const EditLabelClass = forwardRef<
         labelClasses={labelClasses}
         selectedLabelClassId={selectedLabelClassId}
         createNewClass={handleCreateNewClass}
-        onSelectedClassChange={(item) => {
-          perform(
-            createUpdateLabelClassOfLabelEffect(
-              {
-                selectedLabelId,
-                selectedLabelClassId: item?.id ?? null,
-              },
-              { client }
-            )
-          );
-          onClose();
-        }}
+        onSelectedClassChange={handleSelectedClassChange}
       />
     </div>
   );

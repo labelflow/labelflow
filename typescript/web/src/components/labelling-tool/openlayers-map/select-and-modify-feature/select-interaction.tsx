@@ -18,7 +18,9 @@ export const SelectInteraction = ({
   setIsContextMenuOpen = () => {},
   editClassOverlayRef,
   sourceVectorLabelsRef,
+  image,
 }: {
+  image: { width: number; height: number };
   setIsContextMenuOpen?: (state: boolean) => void;
   editClassOverlayRef?: MutableRefObject<HTMLDivElement | null>;
   sourceVectorLabelsRef: MutableRefObject<OlSourceVector<Geometry> | null>;
@@ -30,10 +32,19 @@ export const SelectInteraction = ({
   const setSelectedLabelId = useLabellingStore(
     (state) => state.setSelectedLabelId
   );
+  const isContextMenuOpen = useLabellingStore(
+    (state) => state.isContextMenuOpen
+  );
 
   useHotkeys(
     keymap.openLabelClassSelectionPopover.key,
     () => {
+      if (selectedTool === Tools.CLASSIFICATION) {
+        setIsContextMenuOpen(true);
+        setEditMenuLocation([image.width / 2, image.height / 2]);
+        return;
+      }
+
       if (sourceVectorLabelsRef.current == null) return;
 
       const selectedFeatures = sourceVectorLabelsRef.current
@@ -52,7 +63,7 @@ export const SelectInteraction = ({
       }
     },
     {},
-    [sourceVectorLabelsRef, setIsContextMenuOpen, setEditMenuLocation]
+    [sourceVectorLabelsRef, setIsContextMenuOpen, setEditMenuLocation, image]
   );
 
   const getClosestFeature = (e: MapBrowserEvent<UIEvent>) => {
@@ -73,6 +84,16 @@ export const SelectInteraction = ({
   };
 
   const contextMenuHandler = (e: MapBrowserEvent<UIEvent>) => {
+    if (selectedTool === Tools.CLASSIFICATION) {
+      setIsContextMenuOpen(true);
+
+      setEditMenuLocation([
+        e.coordinate?.[0] ?? image.width / 2,
+        e.coordinate?.[1] ?? image.height / 2,
+      ]);
+      return true;
+    }
+
     const { map } = e;
     const feature = getClosestFeature(e);
     const selectedLabelIdFromFeature = feature?.getProperties().id ?? null;
@@ -104,12 +125,23 @@ export const SelectInteraction = ({
           }}
         />
       )}
-      {[Tools.BOX, Tools.POLYGON].includes(selectedTool) && (
+      {[Tools.CLASSIFICATION, Tools.BOX, Tools.POLYGON].includes(
+        selectedTool
+      ) && (
         <olInteractionPointer
           style={null}
           handleEvent={(e) => {
             const eventType = e?.type ?? null;
             switch (eventType) {
+              case "click":
+                if (selectedTool === Tools.CLASSIFICATION) {
+                  if (isContextMenuOpen) {
+                    setIsContextMenuOpen(false);
+                    return false;
+                  }
+                  contextMenuHandler(e);
+                }
+                return true;
               case "contextmenu": {
                 contextMenuHandler(e);
                 return true;

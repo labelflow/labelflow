@@ -241,7 +241,7 @@ export const EditLabelClassMenu = () => {
         );
       }
     },
-    [selectedLabelId, selectedLabelClassId, selectedTool]
+    [selectedLabelId, selectedLabelClassId, selectedTool, imageId]
   );
 
   const displayClassSelectionMenu =

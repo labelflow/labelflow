@@ -271,6 +271,7 @@ export const OpenlayersMap = () => {
                 editClassOverlayRef={editClassOverlayRef}
                 sourceVectorLabelsRef={sourceVectorBoxesRef}
                 setIsContextMenuOpen={setIsContextMenuOpen}
+                image={memoizedImage}
                 map={mapRef.current}
               />
 
