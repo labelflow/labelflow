@@ -80,10 +80,12 @@ const DatasetIndexPage = () => {
       <CookieBanner />
       <Layout
         breadcrumbs={[
-          <NextLink href="/local/datasets">
+          <NextLink key={0} href="/local/datasets">
             <BreadcrumbLink>Datasets</BreadcrumbLink>
           </NextLink>,
-          <Text>{datasetName}</Text> ?? <Skeleton>Dataset Name</Skeleton>,
+          <Text key={1}>{datasetName}</Text> ?? (
+            <Skeleton key={1}>Dataset Name</Skeleton>
+          ),
         ]}
         topBarRightContent={
           <>
