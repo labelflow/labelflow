@@ -23,7 +23,7 @@ const debounceTime = 200;
 
 const createDatasetMutation = gql`
   mutation createDataset($name: String!) {
-    createDataset(data: { name: $name }) {
+    createDataset(data: { name: $name, workspaceSlug: "local" }) {
       id
     }
   }
@@ -38,8 +38,8 @@ const updateDatasetMutation = gql`
 `;
 
 const getDatasetBySlugQuery = gql`
-  query getDatasetBySlug($slug: String) {
-    dataset(where: { slug: $slug }) {
+  query getDatasetBySlug($slug: String!) {
+    dataset(where: { slugs: { datasetSlug: $slug, workspaceSlug: "local" } }) {
       id
       slug
     }

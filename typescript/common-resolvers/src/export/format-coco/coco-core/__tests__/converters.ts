@@ -1,5 +1,5 @@
-import { Image, LabelType } from "@labelflow/graphql-types";
-import { DbLabelClass } from "../../../../types";
+import { LabelType } from "@labelflow/graphql-types";
+import { DbImageCreateInput, DbLabelClass } from "../../../../types";
 
 import {
   convertLabelClassToCocoCategory,
@@ -62,7 +62,11 @@ describe("Coco converters", () => {
     imageDimensions: { width: 600, height: 200 },
   });
 
-  const createImage = (name: string, height: number, width: number): Image => ({
+  const createImage = (
+    name: string,
+    height: number,
+    width: number
+  ): DbImageCreateInput => ({
     id: `id-${name}`,
     name,
     createdAt: date,
@@ -73,7 +77,7 @@ describe("Coco converters", () => {
     externalUrl: `https://${name}`,
     path: "/path",
     mimetype: "image/png",
-    labels: [],
+    // labels: [],
     datasetId: testDatasetId,
   });
 

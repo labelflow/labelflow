@@ -31,6 +31,7 @@ export type Dataset = {
   imagesAggregates: ImagesAggregates;
   labelsAggregates: LabelsAggregates;
   labelClassesAggregates: LabelClassesAggregates;
+  workspace: Workspace;
 };
 
 
@@ -42,20 +43,20 @@ export type DatasetImagesArgs = {
 export type DatasetCreateInput = {
   id?: Maybe<Scalars['ID']>;
   name: Scalars['String'];
+  workspaceSlug: Scalars['String'];
 };
 
 export type DatasetUpdateInput = {
   name: Scalars['String'];
 };
 
-export type DatasetWhereIdInput = {
-  id: Scalars['ID'];
+export type DatasetWhereInput = {
+  workspaceSlug: Scalars['String'];
 };
 
 export type DatasetWhereUniqueInput = {
   id?: Maybe<Scalars['ID']>;
-  name?: Maybe<Scalars['String']>;
-  slug?: Maybe<Scalars['String']>;
+  slugs?: Maybe<WorkspaceSlugAndDatasetSlug>;
 };
 
 
@@ -136,7 +137,7 @@ export type Image = {
   height: Scalars['Int'];
   width: Scalars['Int'];
   labels: Array<Label>;
-  datasetId: Scalars['ID'];
+  dataset: Dataset;
 };
 
 export type ImageCreateInput = {
@@ -191,7 +192,7 @@ export type LabelClass = {
   name: Scalars['String'];
   color: Scalars['ColorHex'];
   labels: Array<Label>;
-  datasetId: Scalars['ID'];
+  dataset: Dataset;
 };
 
 export type LabelClassCreateInput = {
@@ -256,6 +257,36 @@ export type LabelsAggregates = {
   totalCount: Scalars['Int'];
 };
 
+export type Membership = {
+  __typename?: 'Membership';
+  id: Scalars['ID'];
+  createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
+  role: MembershipRole;
+  user: User;
+  workspace: Workspace;
+};
+
+export type MembershipCreateInput = {
+  id?: Maybe<Scalars['ID']>;
+  role: MembershipRole;
+  userId: Scalars['ID'];
+  workspaceSlug: Scalars['String'];
+};
+
+export enum MembershipRole {
+  Admin = 'Admin',
+  Member = 'Member'
+}
+
+export type MembershipUpdateInput = {
+  role?: Maybe<MembershipRole>;
+};
+
+export type MembershipWhereUniqueInput = {
+  id: Scalars['ID'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   createExample?: Maybe<Example>;
@@ -272,6 +303,12 @@ export type Mutation = {
   createDemoDataset?: Maybe<Dataset>;
   updateDataset?: Maybe<Dataset>;
   deleteDataset?: Maybe<Dataset>;
+  createWorkspace?: Maybe<Workspace>;
+  updateWorkspace?: Maybe<Workspace>;
+  createMembership?: Maybe<Membership>;
+  updateMembership?: Maybe<Membership>;
+  deleteMembership?: Maybe<Membership>;
+  updateUser?: Maybe<User>;
 };
 
 
@@ -334,13 +371,46 @@ export type MutationCreateDatasetArgs = {
 
 
 export type MutationUpdateDatasetArgs = {
-  where: DatasetWhereIdInput;
+  where: DatasetWhereUniqueInput;
   data: DatasetUpdateInput;
 };
 
 
 export type MutationDeleteDatasetArgs = {
-  where: DatasetWhereIdInput;
+  where: DatasetWhereUniqueInput;
+};
+
+
+export type MutationCreateWorkspaceArgs = {
+  data: WorkspaceCreateInput;
+};
+
+
+export type MutationUpdateWorkspaceArgs = {
+  where: WorkspaceWhereUniqueInput;
+  data: WorkspaceUpdateInput;
+};
+
+
+export type MutationCreateMembershipArgs = {
+  data: MembershipCreateInput;
+};
+
+
+export type MutationUpdateMembershipArgs = {
+  where: MembershipWhereUniqueInput;
+  data: MembershipUpdateInput;
+};
+
+
+export type MutationDeleteMembershipArgs = {
+  where: MembershipWhereUniqueInput;
+};
+
+
+export type MutationUpdateUserArgs = {
+  where: UserWhereUniqueInput;
+  data: UserUpdateInput;
 };
 
 export type Query = {
@@ -359,6 +429,12 @@ export type Query = {
   labels: Array<Label>;
   dataset: Dataset;
   datasets: Array<Dataset>;
+  workspace: Workspace;
+  workspaces: Array<Workspace>;
+  membership: Membership;
+  memberships: Array<Membership>;
+  user: User;
+  users: Array<User>;
   exportDataset: Scalars['String'];
   debug: Scalars['JSON'];
 };
@@ -419,6 +495,40 @@ export type QueryDatasetArgs = {
 
 
 export type QueryDatasetsArgs = {
+  where?: Maybe<DatasetWhereInput>;
+  first?: Maybe<Scalars['Int']>;
+  skip?: Maybe<Scalars['Int']>;
+};
+
+
+export type QueryWorkspaceArgs = {
+  where: WorkspaceWhereUniqueInput;
+};
+
+
+export type QueryWorkspacesArgs = {
+  first?: Maybe<Scalars['Int']>;
+  skip?: Maybe<Scalars['Int']>;
+};
+
+
+export type QueryMembershipArgs = {
+  where: MembershipWhereUniqueInput;
+};
+
+
+export type QueryMembershipsArgs = {
+  first?: Maybe<Scalars['Int']>;
+  skip?: Maybe<Scalars['Int']>;
+};
+
+
+export type QueryUserArgs = {
+  where: UserWhereUniqueInput;
+};
+
+
+export type QueryUsersArgs = {
   first?: Maybe<Scalars['Int']>;
   skip?: Maybe<Scalars['Int']>;
 };
@@ -446,6 +556,70 @@ export type UploadTargetHttp = {
 
 export type UploadTargetInput = {
   key: Scalars['String'];
+};
+
+export type User = {
+  __typename?: 'User';
+  id: Scalars['ID'];
+  createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
+  name: Scalars['String'];
+  email: Scalars['String'];
+  image?: Maybe<Scalars['String']>;
+  memberships: Array<Membership>;
+};
+
+export type UserUpdateInput = {
+  name?: Maybe<Scalars['String']>;
+  image?: Maybe<Scalars['String']>;
+};
+
+export type UserWhereUniqueInput = {
+  id: Scalars['ID'];
+};
+
+export type Workspace = {
+  __typename?: 'Workspace';
+  id: Scalars['ID'];
+  createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
+  name: Scalars['String'];
+  slug: Scalars['String'];
+  type: WorkspaceType;
+  plan: WorkspacePlan;
+  datasets: Array<Dataset>;
+  memberships: Array<Membership>;
+};
+
+export type WorkspaceCreateInput = {
+  id?: Maybe<Scalars['ID']>;
+  name: Scalars['String'];
+};
+
+export enum WorkspacePlan {
+  Community = 'Community',
+  Starter = 'Starter',
+  Pro = 'Pro',
+  Enterprise = 'Enterprise'
+}
+
+export type WorkspaceSlugAndDatasetSlug = {
+  datasetSlug: Scalars['String'];
+  workspaceSlug: Scalars['String'];
+};
+
+export enum WorkspaceType {
+  Local = 'Local',
+  Online = 'Online'
+}
+
+export type WorkspaceUpdateInput = {
+  name?: Maybe<Scalars['String']>;
+};
+
+export type WorkspaceWhereUniqueInput = {
+  id?: Maybe<Scalars['ID']>;
+  slug?: Maybe<Scalars['String']>;
 };
 
 
@@ -532,7 +706,7 @@ export type ResolversTypes = {
   Int: ResolverTypeWrapper<Scalars['Int']>;
   DatasetCreateInput: DatasetCreateInput;
   DatasetUpdateInput: DatasetUpdateInput;
-  DatasetWhereIDInput: DatasetWhereIdInput;
+  DatasetWhereInput: DatasetWhereInput;
   DatasetWhereUniqueInput: DatasetWhereUniqueInput;
   DateTime: ResolverTypeWrapper<Scalars['DateTime']>;
   Example: ResolverTypeWrapper<Example>;
@@ -570,6 +744,11 @@ export type ResolversTypes = {
   LabelWhereInput: LabelWhereInput;
   LabelWhereUniqueInput: LabelWhereUniqueInput;
   LabelsAggregates: ResolverTypeWrapper<LabelsAggregates>;
+  Membership: ResolverTypeWrapper<Membership>;
+  MembershipCreateInput: MembershipCreateInput;
+  MembershipRole: MembershipRole;
+  MembershipUpdateInput: MembershipUpdateInput;
+  MembershipWhereUniqueInput: MembershipWhereUniqueInput;
   Mutation: ResolverTypeWrapper<{}>;
   Query: ResolverTypeWrapper<{}>;
   Upload: ResolverTypeWrapper<Scalars['Upload']>;
@@ -577,6 +756,16 @@ export type ResolversTypes = {
   UploadTargetDirect: ResolverTypeWrapper<UploadTargetDirect>;
   UploadTargetHttp: ResolverTypeWrapper<UploadTargetHttp>;
   UploadTargetInput: UploadTargetInput;
+  User: ResolverTypeWrapper<User>;
+  UserUpdateInput: UserUpdateInput;
+  UserWhereUniqueInput: UserWhereUniqueInput;
+  Workspace: ResolverTypeWrapper<Workspace>;
+  WorkspaceCreateInput: WorkspaceCreateInput;
+  WorkspacePlan: WorkspacePlan;
+  WorkspaceSlugAndDatasetSlug: WorkspaceSlugAndDatasetSlug;
+  WorkspaceType: WorkspaceType;
+  WorkspaceUpdateInput: WorkspaceUpdateInput;
+  WorkspaceWhereUniqueInput: WorkspaceWhereUniqueInput;
 };
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -587,7 +776,7 @@ export type ResolversParentTypes = {
   Int: Scalars['Int'];
   DatasetCreateInput: DatasetCreateInput;
   DatasetUpdateInput: DatasetUpdateInput;
-  DatasetWhereIDInput: DatasetWhereIdInput;
+  DatasetWhereInput: DatasetWhereInput;
   DatasetWhereUniqueInput: DatasetWhereUniqueInput;
   DateTime: Scalars['DateTime'];
   Example: Example;
@@ -622,6 +811,10 @@ export type ResolversParentTypes = {
   LabelWhereInput: LabelWhereInput;
   LabelWhereUniqueInput: LabelWhereUniqueInput;
   LabelsAggregates: LabelsAggregates;
+  Membership: Membership;
+  MembershipCreateInput: MembershipCreateInput;
+  MembershipUpdateInput: MembershipUpdateInput;
+  MembershipWhereUniqueInput: MembershipWhereUniqueInput;
   Mutation: {};
   Query: {};
   Upload: Scalars['Upload'];
@@ -629,6 +822,14 @@ export type ResolversParentTypes = {
   UploadTargetDirect: UploadTargetDirect;
   UploadTargetHttp: UploadTargetHttp;
   UploadTargetInput: UploadTargetInput;
+  User: User;
+  UserUpdateInput: UserUpdateInput;
+  UserWhereUniqueInput: UserWhereUniqueInput;
+  Workspace: Workspace;
+  WorkspaceCreateInput: WorkspaceCreateInput;
+  WorkspaceSlugAndDatasetSlug: WorkspaceSlugAndDatasetSlug;
+  WorkspaceUpdateInput: WorkspaceUpdateInput;
+  WorkspaceWhereUniqueInput: WorkspaceWhereUniqueInput;
 };
 
 export interface ColorHexScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['ColorHex'], any> {
@@ -647,6 +848,7 @@ export type DatasetResolvers<ContextType = any, ParentType extends ResolversPare
   imagesAggregates?: Resolver<ResolversTypes['ImagesAggregates'], ParentType, ContextType>;
   labelsAggregates?: Resolver<ResolversTypes['LabelsAggregates'], ParentType, ContextType>;
   labelClassesAggregates?: Resolver<ResolversTypes['LabelClassesAggregates'], ParentType, ContextType>;
+  workspace?: Resolver<ResolversTypes['Workspace'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -680,7 +882,7 @@ export type ImageResolvers<ContextType = any, ParentType extends ResolversParent
   height?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   width?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   labels?: Resolver<Array<ResolversTypes['Label']>, ParentType, ContextType>;
-  datasetId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  dataset?: Resolver<ResolversTypes['Dataset'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -716,7 +918,7 @@ export type LabelClassResolvers<ContextType = any, ParentType extends ResolversP
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   color?: Resolver<ResolversTypes['ColorHex'], ParentType, ContextType>;
   labels?: Resolver<Array<ResolversTypes['Label']>, ParentType, ContextType>;
-  datasetId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  dataset?: Resolver<ResolversTypes['Dataset'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -727,6 +929,16 @@ export type LabelClassesAggregatesResolvers<ContextType = any, ParentType extend
 
 export type LabelsAggregatesResolvers<ContextType = any, ParentType extends ResolversParentTypes['LabelsAggregates'] = ResolversParentTypes['LabelsAggregates']> = {
   totalCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type MembershipResolvers<ContextType = any, ParentType extends ResolversParentTypes['Membership'] = ResolversParentTypes['Membership']> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  role?: Resolver<ResolversTypes['MembershipRole'], ParentType, ContextType>;
+  user?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
+  workspace?: Resolver<ResolversTypes['Workspace'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -745,6 +957,12 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   createDemoDataset?: Resolver<Maybe<ResolversTypes['Dataset']>, ParentType, ContextType>;
   updateDataset?: Resolver<Maybe<ResolversTypes['Dataset']>, ParentType, ContextType, RequireFields<MutationUpdateDatasetArgs, 'where' | 'data'>>;
   deleteDataset?: Resolver<Maybe<ResolversTypes['Dataset']>, ParentType, ContextType, RequireFields<MutationDeleteDatasetArgs, 'where'>>;
+  createWorkspace?: Resolver<Maybe<ResolversTypes['Workspace']>, ParentType, ContextType, RequireFields<MutationCreateWorkspaceArgs, 'data'>>;
+  updateWorkspace?: Resolver<Maybe<ResolversTypes['Workspace']>, ParentType, ContextType, RequireFields<MutationUpdateWorkspaceArgs, 'where' | 'data'>>;
+  createMembership?: Resolver<Maybe<ResolversTypes['Membership']>, ParentType, ContextType, RequireFields<MutationCreateMembershipArgs, 'data'>>;
+  updateMembership?: Resolver<Maybe<ResolversTypes['Membership']>, ParentType, ContextType, RequireFields<MutationUpdateMembershipArgs, 'where' | 'data'>>;
+  deleteMembership?: Resolver<Maybe<ResolversTypes['Membership']>, ParentType, ContextType, RequireFields<MutationDeleteMembershipArgs, 'where'>>;
+  updateUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationUpdateUserArgs, 'where' | 'data'>>;
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
@@ -762,6 +980,12 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   labels?: Resolver<Array<ResolversTypes['Label']>, ParentType, ContextType, RequireFields<QueryLabelsArgs, never>>;
   dataset?: Resolver<ResolversTypes['Dataset'], ParentType, ContextType, RequireFields<QueryDatasetArgs, 'where'>>;
   datasets?: Resolver<Array<ResolversTypes['Dataset']>, ParentType, ContextType, RequireFields<QueryDatasetsArgs, never>>;
+  workspace?: Resolver<ResolversTypes['Workspace'], ParentType, ContextType, RequireFields<QueryWorkspaceArgs, 'where'>>;
+  workspaces?: Resolver<Array<ResolversTypes['Workspace']>, ParentType, ContextType, RequireFields<QueryWorkspacesArgs, never>>;
+  membership?: Resolver<ResolversTypes['Membership'], ParentType, ContextType, RequireFields<QueryMembershipArgs, 'where'>>;
+  memberships?: Resolver<Array<ResolversTypes['Membership']>, ParentType, ContextType, RequireFields<QueryMembershipsArgs, never>>;
+  user?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<QueryUserArgs, 'where'>>;
+  users?: Resolver<Array<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryUsersArgs, never>>;
   exportDataset?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<QueryExportDatasetArgs, 'where' | 'format'>>;
   debug?: Resolver<ResolversTypes['JSON'], ParentType, ContextType>;
 };
@@ -785,6 +1009,30 @@ export type UploadTargetHttpResolvers<ContextType = any, ParentType extends Reso
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  image?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  memberships?: Resolver<Array<ResolversTypes['Membership']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type WorkspaceResolvers<ContextType = any, ParentType extends ResolversParentTypes['Workspace'] = ResolversParentTypes['Workspace']> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  type?: Resolver<ResolversTypes['WorkspaceType'], ParentType, ContextType>;
+  plan?: Resolver<ResolversTypes['WorkspacePlan'], ParentType, ContextType>;
+  datasets?: Resolver<Array<ResolversTypes['Dataset']>, ParentType, ContextType>;
+  memberships?: Resolver<Array<ResolversTypes['Membership']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type Resolvers<ContextType = any> = {
   ColorHex?: GraphQLScalarType;
   Dataset?: DatasetResolvers<ContextType>;
@@ -798,12 +1046,15 @@ export type Resolvers<ContextType = any> = {
   LabelClass?: LabelClassResolvers<ContextType>;
   LabelClassesAggregates?: LabelClassesAggregatesResolvers<ContextType>;
   LabelsAggregates?: LabelsAggregatesResolvers<ContextType>;
+  Membership?: MembershipResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   Upload?: GraphQLScalarType;
   UploadTarget?: UploadTargetResolvers<ContextType>;
   UploadTargetDirect?: UploadTargetDirectResolvers<ContextType>;
   UploadTargetHttp?: UploadTargetHttpResolvers<ContextType>;
+  User?: UserResolvers<ContextType>;
+  Workspace?: WorkspaceResolvers<ContextType>;
 };
 
 

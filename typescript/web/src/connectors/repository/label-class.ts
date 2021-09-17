@@ -1,6 +1,9 @@
+import { Repository } from "@labelflow/common-resolvers";
 import { getDatabase } from "../database";
 
-export const deleteLabelClass = async (id: string) => {
+export const deleteLabelClass: Repository["labelClass"]["delete"] = async ({
+  id,
+}) => {
   await (
     await getDatabase()
   ).label
