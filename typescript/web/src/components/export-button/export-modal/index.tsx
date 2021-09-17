@@ -184,7 +184,7 @@ export const ExportModal = ({
               </Text>
             </Skeleton>
             <Box display="inline-block" width="100%" pl={8} pr={8} pt={4}>
-              {numberUndefinedLabelsOfDataset && (
+              {numberUndefinedLabelsOfDataset !== 0 && (
                 <Alert status="warning" borderRadius={5}>
                   <AlertIcon />
                   <AlertTitle mr={2} fontSize="md">
