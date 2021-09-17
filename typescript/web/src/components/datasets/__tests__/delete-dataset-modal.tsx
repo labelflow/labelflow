@@ -57,7 +57,7 @@ test("should delete a dataset when the button is clicked", async () => {
       variables: { id: mutateResult.data.createDataset.id },
       fetchPolicy: "no-cache",
     })
-  ).rejects.toThrow(/Couldn't find this dataset corresponding to/);
+  ).rejects.toThrow(/Couldn't find dataset corresponding to/);
 });
 
 test("shouldn't delete a dataset when the cancel is clicked", async () => {

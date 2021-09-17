@@ -1,6 +1,12 @@
 # Changelog
 
-## [1.0.5](https://github.com/labelflow/labelflow/compare/1.0.4...1.0.5)
+## [1.0.7](https://github.com/labelflow/labelflow/compare/1.0.6...1.0.7)
+
+- Fix bug of error being thrown when clearing site data and reloading page [`#451`](https://github.com/labelflow/labelflow/pull/451)
+## [1.0.6](https://github.com/labelflow/labelflow/compare/1.0.5...1.0.6) - 2021-09-17
+
+- Feature/#317 cru workspaces [`#354`](https://github.com/labelflow/labelflow/pull/354)
+## [1.0.5](https://github.com/labelflow/labelflow/compare/1.0.4...1.0.5) - 2021-09-15
 
 - Make a more generic version of the coco exporter [`#417`](https://github.com/labelflow/labelflow/pull/417)
 ## [1.0.4](https://github.com/labelflow/labelflow/compare/1.0.3...1.0.4) - 2021-09-14
