@@ -174,7 +174,7 @@ export const EditLabelClassMenu = () => {
 
   const handleSelectedClassChange = useCallback(
     async (item: LabelClassItem | null) => {
-      if (!isInDrawingMode) {
+      if (!isInDrawingMode && selectedLabelId != null) {
         return await perform(
           createUpdateLabelClassOfLabelEffect(
             {
@@ -232,12 +232,14 @@ export const EditLabelClassMenu = () => {
           )
         );
       }
-      return await perform(
-        createUpdateLabelClassEffect({
-          selectedLabelClassId: item?.id ?? null,
-          selectedLabelClassIdPrevious: selectedLabelClassId,
-        })
-      );
+      if (selectedLabelClassId != null) {
+        return await perform(
+          createUpdateLabelClassEffect({
+            selectedLabelClassId: item?.id ?? null,
+            selectedLabelClassIdPrevious: selectedLabelClassId,
+          })
+        );
+      }
     },
     [selectedLabelId, selectedLabelClassId, selectedTool]
   );

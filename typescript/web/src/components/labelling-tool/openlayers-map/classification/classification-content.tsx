@@ -42,14 +42,14 @@ const getImageLabelsQuery = gql`
 export const ClassificationContent = forwardRef<HTMLDivElement>(
   (props, ref) => {
     const { imageId } = useRouter()?.query;
-    const { data } = useQuery(getImageLabelsQuery, {
+    const { data, previousData } = useQuery(getImageLabelsQuery, {
       skip: !imageId,
       variables: { imageId: imageId as string },
     });
     const { perform } = useUndoStore();
     const client = useApolloClient();
     const selectedLabelId = useLabellingStore((state) => state.selectedLabelId);
-    const labels = data?.image?.labels ?? [];
+    const labels = data?.image?.labels ?? previousData?.image?.labels ?? [];
     const setSelectedLabelId = useLabellingStore(
       (state) => state.setSelectedLabelId
     );

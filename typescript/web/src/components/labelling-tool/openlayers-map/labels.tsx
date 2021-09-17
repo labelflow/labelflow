@@ -49,12 +49,12 @@ export const Labels = ({
   sourceVectorLabelsRef?: MutableRefObject<OlSourceVector<Geometry> | null>;
 }) => {
   const { imageId } = useRouter()?.query;
-  const { data } = useQuery(getImageLabelsQuery, {
+  const { data, previousData } = useQuery(getImageLabelsQuery, {
     skip: !imageId,
     variables: { imageId: imageId as string },
   });
   const selectedLabelId = useLabellingStore((state) => state.selectedLabelId);
-  const labels = data?.image?.labels ?? [];
+  const labels = data?.image?.labels ?? previousData?.image?.labels ?? [];
 
   return (
     <>
