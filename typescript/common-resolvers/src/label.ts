@@ -20,8 +20,8 @@ const getLabelById = async (
 ): Promise<DbLabel> => {
   return await throwIfResolvesToNil(
     "No label with such id",
-    repository.label.getById
-  )(id);
+    repository.label.get
+  )({ id });
 };
 
 // Queries
@@ -34,7 +34,7 @@ const labelClass = async (
     return null;
   }
 
-  return (await repository.labelClass.getById(label.labelClassId)) ?? null;
+  return (await repository.labelClass.get({ id: label.labelClassId })) ?? null;
 };
 
 const label = async (_: any, args: QueryLabelArgs, { repository }: Context) => {
@@ -54,14 +54,14 @@ const createLabel = async (
   // matches some entity before being able to continue.
   const image = await throwIfResolvesToNil(
     `The image id ${imageId} doesn't exist.`,
-    repository.image.getById
-  )(imageId);
+    repository.image.get
+  )({ id: imageId });
 
   if (labelClassId != null) {
     await throwIfResolvesToNil(
       `The labelClass id ${labelClassId} doesn't exist.`,
-      repository.labelClass.getById
-    )(labelClassId);
+      repository.labelClass.get
+    )({ id: labelClassId });
   }
 
   const labelId = id ?? uuidv4();
@@ -92,8 +92,8 @@ const createLabel = async (
   await repository.label.add(newLabelEntity);
   return await throwIfResolvesToNil(
     "Could not create the label entity",
-    await repository.label.getById
-  )(labelId);
+    await repository.label.get
+  )({ id: labelId });
 };
 
 const deleteLabel = async (
@@ -105,10 +105,10 @@ const deleteLabel = async (
 
   const labelToDelete = await throwIfResolvesToNil(
     "No label with such id",
-    repository.label.getById
-  )(labelId);
+    repository.label.get
+  )({ id: labelId });
 
-  await repository.label.delete(labelId);
+  await repository.label.delete({ id: labelId });
 
   return labelToDelete;
 };
@@ -123,12 +123,12 @@ const updateLabel = async (
   if ("labelClassId" in args.data && args.data.labelClassId != null) {
     await throwIfResolvesToNil(
       "No label class with such id",
-      repository.labelClass.getById
-    )(args.data.labelClassId);
+      repository.labelClass.get
+    )({ id: args.data.labelClassId });
   }
 
   if (!args?.data?.geometry) {
-    await repository.label.update(labelId, args.data);
+    await repository.label.update({ id: labelId }, args.data);
 
     return await getLabelById(labelId, repository);
   }
@@ -136,8 +136,8 @@ const updateLabel = async (
   const { imageId } = await getLabelById(labelId, repository);
   const image = await throwIfResolvesToNil(
     `The image id ${imageId} doesn't exist.`,
-    repository.image.getById
-  )(imageId);
+    repository.image.get
+  )({ id: imageId });
 
   const {
     geometry: clippedGeometry,
@@ -158,7 +158,7 @@ const updateLabel = async (
     width,
   };
 
-  await repository.label.update(labelId, newLabelEntity);
+  await repository.label.update({ id: labelId }, newLabelEntity);
 
   return await getLabelById(labelId, repository);
 };

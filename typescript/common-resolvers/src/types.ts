@@ -10,15 +10,35 @@ import type {
   LabelWhereInput,
   UploadTargetHttp,
   UploadTarget,
+  DatasetCreateInput,
+  LabelClassCreateInput,
+  ImageCreateInput,
+  User,
+  LabelWhereUniqueInput,
+  LabelClassWhereUniqueInput,
+  DatasetWhereUniqueInput,
+  ImageWhereUniqueInput,
 } from "@labelflow/graphql-types";
 
-export type DbImage = Omit<GeneratedImage, "labels">;
+type NoUndefinedField<T> = { [P in keyof T]: NonNullable<T[P]> };
+
+export type DbImage = Omit<GeneratedImage, "labels" | "dataset">;
+export type DbImageCreateInput = WithCreatedAtAndUpdatedAt<
+  Required<NoUndefinedField<Omit<ImageCreateInput, "file" | "externalUrl">>> &
+    Pick<ImageCreateInput, "externalUrl">
+>;
 
 export type DbLabel = Omit<GeneratedLabel, "labelClass"> & {
   labelClassId: Scalars["ID"] | undefined | null;
 };
+export type DbLabelCreateInput = WithCreatedAtAndUpdatedAt<DbLabel>;
 
-export type DbLabelClass = Omit<GeneratedLabelClass, "labels">;
+export type DbLabelClass = Omit<GeneratedLabelClass, "labels" | "dataset"> & {
+  datasetId: string;
+};
+export type DbLabelClassCreateInput = WithCreatedAtAndUpdatedAt<
+  LabelClassCreateInput & { index: number }
+>;
 
 export type DbExample = GeneratedExample;
 
@@ -30,63 +50,71 @@ export type DbDataset = Omit<
   | "labelsAggregates"
   | "labelClasses"
   | "labelClassesAggregates"
+  | "workspace"
+>;
+export type DbDatasetCreateInput = WithCreatedAtAndUpdatedAt<
+  DatasetCreateInput & { slug: string }
 >;
 
+export type DbUser = Omit<User, "memberships">;
+
 type PartialWithNullAllowed<T> = { [P in keyof T]?: T[P] | undefined | null };
+
+type WithCreatedAtAndUpdatedAt<T extends {}> = T & {
+  createdAt: string;
+  updatedAt: string;
+};
 
 type ID = string;
 
 type Add<EntityType> = (entity: EntityType) => Promise<ID>;
 type Count<Where> = (where?: Where) => Promise<number>;
-type Delete = (id: ID) => Promise<void>;
-type GetById<EntityType> = (id: ID) => Promise<EntityType | undefined | null>;
-type GetByName<EntityType> = (
-  name: string
+type Delete<EntityWhereUniqueInput> = (
+  input: EntityWhereUniqueInput
+) => Promise<void>;
+type Get<EntityType, EntityWhereUniqueInput> = (
+  input: EntityWhereUniqueInput
 ) => Promise<EntityType | undefined | null>;
-type GetBySlug<EntityType> = (
-  slug: string
-) => Promise<EntityType | undefined | null>;
+
 type List<Entity = unknown, Where extends Record<string, any> | null = null> = (
   where?: Where | null,
   skip?: number | null,
   first?: number | null
 ) => Promise<Entity[]>;
-type Update<Entity> = (
-  id: ID,
+type Update<Entity, EntityWhereUniqueInput> = (
+  input: EntityWhereUniqueInput,
   data: PartialWithNullAllowed<Entity>
 ) => Promise<boolean>;
 
 export type Repository = {
   image: {
-    add: Add<DbImage>;
+    add: Add<DbImageCreateInput>;
     count: Count<ImageWhereInput>;
-    getById: GetById<DbImage>;
+    get: Get<DbImage, ImageWhereUniqueInput>;
     list: List<DbImage, ImageWhereInput>;
   };
   label: {
-    add: Add<DbLabel>;
+    add: Add<DbLabelCreateInput>;
     count: Count<LabelWhereInput>;
-    delete: Delete;
-    getById: GetById<DbLabel>;
+    delete: Delete<LabelWhereUniqueInput>;
+    get: Get<DbLabel, LabelWhereUniqueInput>;
     list: List<DbLabel, LabelWhereInput>;
-    update: Update<DbLabel>;
+    update: Update<DbLabel, LabelWhereUniqueInput>;
   };
   labelClass: {
-    add: Add<DbLabelClass>;
+    add: Add<DbLabelClassCreateInput>;
     count: Count<LabelClassWhereInput>;
-    delete: Delete;
-    getById: GetById<DbLabelClass>;
+    delete: Delete<LabelClassWhereUniqueInput>;
+    get: Get<DbLabelClass, LabelClassWhereUniqueInput>;
     list: List<DbLabelClass, LabelClassWhereInput>;
-    update: Update<DbLabelClass>;
+    update: Update<DbLabelClass, LabelClassWhereUniqueInput>;
   };
   dataset: {
-    add: Add<DbDataset>;
-    delete: Delete;
-    getById: GetById<DbDataset>;
-    getByName: GetByName<DbDataset>;
-    getBySlug: GetBySlug<DbDataset>;
+    add: Add<DbDatasetCreateInput>;
+    delete: Delete<DatasetWhereUniqueInput>;
+    get: Get<DbDataset, DatasetWhereUniqueInput>;
     list: List<DbDataset, null>;
-    update: Update<DbDataset>;
+    update: Update<DbDataset, DatasetWhereUniqueInput>;
   };
   upload: {
     getUploadTargetHttp: (

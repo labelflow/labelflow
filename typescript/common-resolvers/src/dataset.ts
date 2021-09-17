@@ -3,17 +3,15 @@ import { v4 as uuidv4 } from "uuid";
 import slugify from "slugify";
 import { add } from "date-fns";
 import {
+  DatasetWhereUniqueInput,
   MutationCreateDatasetArgs,
   MutationDeleteDatasetArgs,
   MutationUpdateDatasetArgs,
-  DatasetWhereUniqueInput,
   QueryDatasetArgs,
   QueryDatasetsArgs,
   QueryImagesArgs,
 } from "@labelflow/graphql-types";
-
 import { Context, DbDataset, Repository } from "./types";
-import { throwIfResolvesToNil } from "./utils/throw-if-resolves-to-nil";
 import { getImageEntityFromMutationArgs } from "./image";
 import {
   tutorialImages,
@@ -21,70 +19,24 @@ import {
   tutorialLabels,
 } from "./data/dataset-tutorial";
 
-const getDatasetById = async (
-  id: string,
-  repository: Repository
-): Promise<DbDataset> => {
-  const dataset = await throwIfResolvesToNil(
-    `No dataset with id "${id}"`,
-    repository.dataset.getById
-  )(id);
-
-  return { ...dataset, __typename: "Dataset" };
-};
-
-const getDatasetByName = async (
-  name: string,
-  repository: Repository
-): Promise<DbDataset> => {
-  const dataset = await throwIfResolvesToNil(
-    `No dataset with name "${name}"`,
-    repository.dataset.getByName
-  )(name);
-
-  return { ...dataset, __typename: "Dataset" };
-};
-
-const getDatasetBySlug = async (
-  slug: string,
-  repository: Repository
-): Promise<DbDataset> => {
-  const dataset = await throwIfResolvesToNil(
-    `No dataset with slug "${slug}"`,
-    repository.dataset.getBySlug
-  )(slug);
-
-  return { ...dataset, __typename: "Dataset" };
-};
-
-const getDatasetFromWhereUniqueInput = async (
-  where: DatasetWhereUniqueInput,
-  repository: Repository
-): Promise<DbDataset> => {
-  const { id, name, slug } = where;
-
-  if (id != null) {
-    return await getDatasetById(id, repository);
-  }
-
-  if (name != null) {
-    return await getDatasetByName(name, repository);
-  }
-
-  if (slug != null) {
-    return await getDatasetBySlug(slug, repository);
-  }
-
-  throw new Error(
-    `Invalid where unique input for dataset entity: ${JSON.stringify(where)}`
-  );
-};
-
 const getLabelClassesByDatasetId = async (
   datasetId: string,
   repository: Repository
 ) => {
   return await repository.labelClass.list({ datasetId });
+};
+
+const getDataset = async (
+  where: DatasetWhereUniqueInput,
+  repository: Repository
+): Promise<DbDataset & { __typename: "Dataset" }> => {
+  const datasetFromRepository = await repository.dataset.get(where);
+  if (datasetFromRepository == null) {
+    throw new Error(
+      `Couldn't find this dataset corresponding to ${JSON.stringify(where)}`
+    );
+  }
+  return { ...datasetFromRepository, __typename: "Dataset" };
 };
 
 // Queries
@@ -120,9 +72,8 @@ const dataset = async (
   _: any,
   args: QueryDatasetArgs,
   { repository }: Context
-): Promise<DbDataset> => {
-  return await getDatasetFromWhereUniqueInput(args.where, repository);
-};
+): Promise<DbDataset & { __typename: string }> =>
+  await getDataset(args.where, repository);
 
 const datasets = async (
   _: any,
@@ -146,7 +97,7 @@ const createDataset = async (
   _: any,
   args: MutationCreateDatasetArgs,
   { repository }: Context
-): Promise<DbDataset> => {
+): Promise<DbDataset & { __typename: string }> => {
   const date = new Date().toISOString();
 
   const datasetId = args?.data?.id ?? uuidv4();
@@ -156,17 +107,18 @@ const createDataset = async (
     throw new Error("Could not create the dataset with an empty name");
   }
 
-  const dbDataset: DbDataset = {
+  const dbDataset = {
     id: datasetId,
     createdAt: date,
     updatedAt: date,
     name,
     slug: slugify(name, { lower: true }),
+    workspaceSlug: args.data.workspaceSlug,
   };
   try {
     await repository.dataset.add(dbDataset);
 
-    return await getDatasetById(datasetId, repository);
+    return await getDataset({ id: datasetId }, repository);
   } catch (e) {
     console.error(e);
     throw new Error(
@@ -190,14 +142,24 @@ const createDemoDataset = async (
       id: datasetId,
       createdAt: currentDate,
       updatedAt: currentDate,
+      workspaceSlug: "local", // FIXME: Implement proper id here
     });
   } catch (error) {
     if (error.name === "ConstraintError") {
       // The tutorial dataset already exists, just return it
-      return await getDatasetByName("Tutorial dataset", repository);
+      return await getDataset(
+        {
+          slugs: {
+            datasetSlug: "tutorial-dataset",
+            workspaceSlug: "local",
+          },
+        },
+        repository
+      );
     }
     throw error;
   }
+
   const tutorialDatasetImages = await Promise.all(
     tutorialImages.map(async (image, index) => {
       const imageEntity = await getImageEntityFromMutationArgs(
@@ -237,7 +199,7 @@ const createDemoDataset = async (
     })
   );
 
-  return await getDatasetById(datasetId, repository);
+  return await getDataset({ id: datasetId }, repository);
 };
 
 const updateDataset = async (
@@ -245,10 +207,7 @@ const updateDataset = async (
   args: MutationUpdateDatasetArgs,
   { repository }: Context
 ): Promise<DbDataset> => {
-  const datasetToUpdate = await throwIfResolvesToNil(
-    `No dataset with id "${args.where.id}" to update`,
-    repository.dataset.getById
-  )(args.where.id);
+  const datasetToUpdate = await getDataset(args.where, repository);
 
   const newData =
     "name" in args.data
@@ -257,7 +216,7 @@ const updateDataset = async (
 
   try {
     const updateResult = await repository.dataset.update(
-      datasetToUpdate.id,
+      { id: datasetToUpdate.id },
       newData
     );
     if (!updateResult) {
@@ -267,7 +226,7 @@ const updateDataset = async (
     throw new Error("Could not update the dataset");
   }
 
-  return await getDatasetById(datasetToUpdate.id, repository);
+  return await getDataset({ id: datasetToUpdate.id }, repository);
 };
 
 const deleteDataset = async (
@@ -275,10 +234,8 @@ const deleteDataset = async (
   args: MutationDeleteDatasetArgs,
   { repository }: Context
 ): Promise<DbDataset> => {
-  const datasetToDelete = await throwIfResolvesToNil(
-    `No dataset with id "${args.where.id}"`,
-    repository.dataset.getById
-  )(args.where.id);
+  const datasetToDelete = await getDataset(args.where, repository);
+
   const imagesOfDataset = await repository.image.list({
     datasetId: args.where.id,
   });
@@ -287,7 +244,7 @@ const deleteDataset = async (
       async (image) => await repository.upload.delete(image.url)
     )
   );
-  await repository.dataset.delete(datasetToDelete.id);
+  await repository.dataset.delete({ id: datasetToDelete.id });
   return datasetToDelete;
 };
 

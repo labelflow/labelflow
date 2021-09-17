@@ -10,7 +10,7 @@ import type {
 import mime from "mime-types";
 import { probeImage } from "./utils/probe-image";
 
-import { Context, DbImage, Repository } from "./types";
+import { Context, DbImage, Repository, DbImageCreateInput } from "./types";
 import { throwIfResolvesToNil } from "./utils/throw-if-resolves-to-nil";
 
 // Mutations
@@ -132,7 +132,7 @@ export const getImageEntityFromMutationArgs = async (
     (urlToProbe: string) => repository.upload.get(urlToProbe, req)
   );
 
-  const newImageEntity: DbImage = {
+  const newImageEntity: DbImageCreateInput = {
     datasetId,
     createdAt: now,
     updatedAt: now,
@@ -158,8 +158,8 @@ const labelsResolver = async (
 const image = async (_: any, args: QueryImageArgs, { repository }: Context) => {
   return await throwIfResolvesToNil(
     `No image with id "${args?.where?.id}"`,
-    repository.image.getById
-  )(args?.where?.id);
+    repository.image.get
+  )(args?.where);
 };
 
 const images = async (
@@ -183,8 +183,8 @@ const createImage = async (
   // entity before being able to continue.
   await throwIfResolvesToNil(
     `The dataset id ${datasetId} doesn't exist.`,
-    repository.dataset.getById
-  )(datasetId);
+    repository.dataset.get
+  )({ id: datasetId });
 
   if (
     !(
@@ -204,9 +204,12 @@ const createImage = async (
     req
   );
 
-  await repository.image.add(newImageEntity);
-
-  return newImageEntity;
+  const newImageId = await repository.image.add(newImageEntity);
+  const createdImage = await repository.image.get({ id: newImageId });
+  if (createdImage == null) {
+    throw new Error("An error has occurred during image creation");
+  }
+  return createdImage;
 };
 
 const imagesAggregates = (parent: any) => {

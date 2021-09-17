@@ -15,7 +15,7 @@ import { LabelClass } from "@labelflow/graphql-types";
 import { ClassSelectionPopover } from "../../../class-selection-popover";
 
 // The class selection menu doesn't need all the attributes of the label class
-export type LabelClassItem = Omit<LabelClass, "datasetId">;
+export type LabelClassItem = Omit<LabelClass, "dataset">;
 
 const CircleIcon = chakra(RiCheckboxBlankCircleFill);
 const SelectorIcon = chakra(HiSelector);

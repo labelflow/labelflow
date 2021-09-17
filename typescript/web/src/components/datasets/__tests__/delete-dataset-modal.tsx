@@ -28,7 +28,7 @@ test("should delete a dataset when the button is clicked", async () => {
   const mutateResult = await client.mutate({
     mutation: gql`
       mutation {
-        createDataset(data: { name: "Toto" }) {
+        createDataset(data: { name: "Toto", workspaceSlug: "local" }) {
           id
         }
       }
@@ -57,14 +57,14 @@ test("should delete a dataset when the button is clicked", async () => {
       variables: { id: mutateResult.data.createDataset.id },
       fetchPolicy: "no-cache",
     })
-  ).rejects.toThrow(/No dataset with id/);
+  ).rejects.toThrow(/Couldn't find this dataset corresponding to/);
 });
 
 test("shouldn't delete a dataset when the cancel is clicked", async () => {
   const mutateResult = await client.mutate({
     mutation: gql`
       mutation {
-        createDataset(data: { name: "Toto" }) {
+        createDataset(data: { name: "Toto", workspaceSlug: "local" }) {
           id
         }
       }

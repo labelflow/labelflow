@@ -14,7 +14,7 @@ import { keymap } from "../../../keymap";
 
 const getLabelClassesOfDatasetQuery = gql`
   query getLabelClassesOfDataset($slug: String!) {
-    dataset(where: { slug: $slug }) {
+    dataset(where: { slugs: { datasetSlug: $slug, workspaceSlug: "local" } }) {
       id
       labelClasses {
         id
