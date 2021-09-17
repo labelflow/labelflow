@@ -14,12 +14,9 @@ import {
   ModalContent,
   ModalHeader,
   ModalOverlay,
-  Text,
-  Skeleton,
   Alert,
   AlertIcon,
   AlertDescription,
-  AlertTitle,
 } from "@chakra-ui/react";
 import { ExportFormat, ExportOptions, Label } from "@labelflow/graphql-types";
 import { useRouter } from "next/router";
@@ -192,7 +189,7 @@ export const ExportModal = ({
               <Alert status="warning" mt={2}>
                 <AlertIcon />
                 <AlertDescription fontSize="lg" fontWeight="medium">
-                  It seems like your dataset contains some labels that don't
+                  It seems like your dataset contains some labels that don&#39t
                   have any class
                 </AlertDescription>
               </Alert>

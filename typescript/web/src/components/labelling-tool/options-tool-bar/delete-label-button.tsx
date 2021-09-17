@@ -81,11 +81,7 @@ const createDeleteLabelEffect = (
     }>({
       mutation: deleteLabelMutation,
       variables: { id },
-      refetchQueries: [
-        "countLabels",
-        "getDatasets",
-        "countLabelsOfDataset",
-      ],
+      refetchQueries: ["countLabels", "getDatasets", "countLabelsOfDataset"],
       /* Note that there is no optimistic response here, only a cache update.
        * We could add it but it feels like premature optimization */
       update(cache, { data: updateData }) {
@@ -129,11 +125,7 @@ const createDeleteLabelEffect = (
     const { data } = await client.mutate({
       mutation: createLabelWithIdMutation,
       variables: createLabelInputs,
-      refetchQueries: [
-        "countLabels",
-        "getDatasets",
-        "countLabelsOfDataset",
-      ],
+      refetchQueries: ["countLabels", "getDatasets", "countLabelsOfDataset"],
       optimisticResponse: { createLabel: { id: labelId, __typename: "Label" } },
       update(cache) {
         addLabelToImageInCache(cache, createLabelInputs);
@@ -151,11 +143,7 @@ const createDeleteLabelEffect = (
     const { data } = await client.mutate({
       mutation: deleteLabelMutation,
       variables: { id: labelId },
-      refetchQueries: [
-        "countLabels",
-        "getDatasets",
-        "countLabelsOfDataset",
-      ],
+      refetchQueries: ["countLabels", "getDatasets", "countLabelsOfDataset"],
       /* Note that there is no optimistic response here, only a cache update.
        * We could add it but it feels like premature optimization */
       update(cache, { data: updateData }) {
