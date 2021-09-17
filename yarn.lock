@@ -33,67 +33,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@apollo/client@npm:^3.3.18":
-  version: 3.3.18
-  resolution: "@apollo/client@npm:3.3.18"
-  dependencies:
-    "@graphql-typed-document-node/core": ^3.0.0
-    "@types/zen-observable": ^0.8.0
-    "@wry/context": ^0.6.0
-    "@wry/equality": ^0.4.0
-    fast-json-stable-stringify: ^2.0.0
-    graphql-tag: ^2.12.0
-    hoist-non-react-statics: ^3.3.2
-    optimism: ^0.16.0
-    prop-types: ^15.7.2
-    symbol-observable: ^2.0.0
-    ts-invariant: ^0.7.0
-    tslib: ^1.10.0
-    zen-observable: ^0.8.14
-  peerDependencies:
-    graphql: ^14.0.0 || ^15.0.0
-    react: ^16.8.0 || ^17.0.0
-    subscriptions-transport-ws: ^0.9.0
-  peerDependenciesMeta:
-    react:
-      optional: true
-    subscriptions-transport-ws:
-      optional: true
-  checksum: be1b94abd81151e9000e7f607e3acee25c06506ca152c9482dafec71e14b0dcba69bf3b746bc8e4df6bca570593b33c0f4a92a3a4bbd381167e35ccb90fc22e5
-  languageName: node
-  linkType: hard
-
-"@apollo/client@npm:^3.3.21":
-  version: 3.3.21
-  resolution: "@apollo/client@npm:3.3.21"
-  dependencies:
-    "@graphql-typed-document-node/core": ^3.0.0
-    "@types/zen-observable": ^0.8.0
-    "@wry/context": ^0.6.0
-    "@wry/equality": ^0.5.0
-    fast-json-stable-stringify: ^2.0.0
-    graphql-tag: ^2.12.0
-    hoist-non-react-statics: ^3.3.2
-    optimism: ^0.16.0
-    prop-types: ^15.7.2
-    symbol-observable: ^4.0.0
-    ts-invariant: ^0.8.0
-    tslib: ^1.10.0
-    zen-observable: ^0.8.14
-  peerDependencies:
-    graphql: ^14.0.0 || ^15.0.0
-    react: ^16.8.0 || ^17.0.0
-    subscriptions-transport-ws: ^0.9.0
-  peerDependenciesMeta:
-    react:
-      optional: true
-    subscriptions-transport-ws:
-      optional: true
-  checksum: cdb501045ce8154fadd2cc38d10e92b90c789f58c1960797244f114fd2ac39f535895228545521407ef6b3e7cea64dc8e7050980ca47df7f54d36cb4ecef35df
-  languageName: node
-  linkType: hard
-
-"@apollo/client@npm:^3.4.10":
+"@apollo/client@npm:3.4.10":
   version: 3.4.10
   resolution: "@apollo/client@npm:3.4.10"
   dependencies:
@@ -1259,7 +1199,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/core@npm:7.14.3, @babel/core@npm:^7.0.0, @babel/core@npm:^7.11.1, @babel/core@npm:^7.12.10, @babel/core@npm:^7.14.3":
+"@babel/core@npm:7.14.3, @babel/core@npm:^7.0.0, @babel/core@npm:^7.11.1, @babel/core@npm:^7.12.10":
   version: 7.14.3
   resolution: "@babel/core@npm:7.14.3"
   dependencies:
@@ -3609,6 +3549,89 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@babel/preset-env@npm:7.14.7":
+  version: 7.14.7
+  resolution: "@babel/preset-env@npm:7.14.7"
+  dependencies:
+    "@babel/compat-data": ^7.14.7
+    "@babel/helper-compilation-targets": ^7.14.5
+    "@babel/helper-plugin-utils": ^7.14.5
+    "@babel/helper-validator-option": ^7.14.5
+    "@babel/plugin-bugfix-v8-spread-parameters-in-optional-chaining": ^7.14.5
+    "@babel/plugin-proposal-async-generator-functions": ^7.14.7
+    "@babel/plugin-proposal-class-properties": ^7.14.5
+    "@babel/plugin-proposal-class-static-block": ^7.14.5
+    "@babel/plugin-proposal-dynamic-import": ^7.14.5
+    "@babel/plugin-proposal-export-namespace-from": ^7.14.5
+    "@babel/plugin-proposal-json-strings": ^7.14.5
+    "@babel/plugin-proposal-logical-assignment-operators": ^7.14.5
+    "@babel/plugin-proposal-nullish-coalescing-operator": ^7.14.5
+    "@babel/plugin-proposal-numeric-separator": ^7.14.5
+    "@babel/plugin-proposal-object-rest-spread": ^7.14.7
+    "@babel/plugin-proposal-optional-catch-binding": ^7.14.5
+    "@babel/plugin-proposal-optional-chaining": ^7.14.5
+    "@babel/plugin-proposal-private-methods": ^7.14.5
+    "@babel/plugin-proposal-private-property-in-object": ^7.14.5
+    "@babel/plugin-proposal-unicode-property-regex": ^7.14.5
+    "@babel/plugin-syntax-async-generators": ^7.8.4
+    "@babel/plugin-syntax-class-properties": ^7.12.13
+    "@babel/plugin-syntax-class-static-block": ^7.14.5
+    "@babel/plugin-syntax-dynamic-import": ^7.8.3
+    "@babel/plugin-syntax-export-namespace-from": ^7.8.3
+    "@babel/plugin-syntax-json-strings": ^7.8.3
+    "@babel/plugin-syntax-logical-assignment-operators": ^7.10.4
+    "@babel/plugin-syntax-nullish-coalescing-operator": ^7.8.3
+    "@babel/plugin-syntax-numeric-separator": ^7.10.4
+    "@babel/plugin-syntax-object-rest-spread": ^7.8.3
+    "@babel/plugin-syntax-optional-catch-binding": ^7.8.3
+    "@babel/plugin-syntax-optional-chaining": ^7.8.3
+    "@babel/plugin-syntax-private-property-in-object": ^7.14.5
+    "@babel/plugin-syntax-top-level-await": ^7.14.5
+    "@babel/plugin-transform-arrow-functions": ^7.14.5
+    "@babel/plugin-transform-async-to-generator": ^7.14.5
+    "@babel/plugin-transform-block-scoped-functions": ^7.14.5
+    "@babel/plugin-transform-block-scoping": ^7.14.5
+    "@babel/plugin-transform-classes": ^7.14.5
+    "@babel/plugin-transform-computed-properties": ^7.14.5
+    "@babel/plugin-transform-destructuring": ^7.14.7
+    "@babel/plugin-transform-dotall-regex": ^7.14.5
+    "@babel/plugin-transform-duplicate-keys": ^7.14.5
+    "@babel/plugin-transform-exponentiation-operator": ^7.14.5
+    "@babel/plugin-transform-for-of": ^7.14.5
+    "@babel/plugin-transform-function-name": ^7.14.5
+    "@babel/plugin-transform-literals": ^7.14.5
+    "@babel/plugin-transform-member-expression-literals": ^7.14.5
+    "@babel/plugin-transform-modules-amd": ^7.14.5
+    "@babel/plugin-transform-modules-commonjs": ^7.14.5
+    "@babel/plugin-transform-modules-systemjs": ^7.14.5
+    "@babel/plugin-transform-modules-umd": ^7.14.5
+    "@babel/plugin-transform-named-capturing-groups-regex": ^7.14.7
+    "@babel/plugin-transform-new-target": ^7.14.5
+    "@babel/plugin-transform-object-super": ^7.14.5
+    "@babel/plugin-transform-parameters": ^7.14.5
+    "@babel/plugin-transform-property-literals": ^7.14.5
+    "@babel/plugin-transform-regenerator": ^7.14.5
+    "@babel/plugin-transform-reserved-words": ^7.14.5
+    "@babel/plugin-transform-shorthand-properties": ^7.14.5
+    "@babel/plugin-transform-spread": ^7.14.6
+    "@babel/plugin-transform-sticky-regex": ^7.14.5
+    "@babel/plugin-transform-template-literals": ^7.14.5
+    "@babel/plugin-transform-typeof-symbol": ^7.14.5
+    "@babel/plugin-transform-unicode-escapes": ^7.14.5
+    "@babel/plugin-transform-unicode-regex": ^7.14.5
+    "@babel/preset-modules": ^0.1.4
+    "@babel/types": ^7.14.5
+    babel-plugin-polyfill-corejs2: ^0.2.2
+    babel-plugin-polyfill-corejs3: ^0.2.2
+    babel-plugin-polyfill-regenerator: ^0.2.2
+    core-js-compat: ^3.15.0
+    semver: ^6.3.0
+  peerDependencies:
+    "@babel/core": ^7.0.0-0
+  checksum: ebebc20ada68c92b67375926021d576af3636a279aee7625c1e234880355c8669188483aecfff2d478c1caa9fcf18b569ea329060b479236b04baed2bdf796d5
+  languageName: node
+  linkType: hard
+
 "@babel/preset-env@npm:^7.11.0":
   version: 7.14.4
   resolution: "@babel/preset-env@npm:7.14.4"
@@ -3772,89 +3795,6 @@ __metadata:
   peerDependencies:
     "@babel/core": ^7.0.0-0
   checksum: fd6333a1658057fb81f526e5c8e2d74fef330922d89bec5db57da934a31cf52a8852c1dfc5e2994aa063f1a09083b30831e014d86b0bc287719afc8df348b2d2
-  languageName: node
-  linkType: hard
-
-"@babel/preset-env@npm:^7.14.7":
-  version: 7.14.7
-  resolution: "@babel/preset-env@npm:7.14.7"
-  dependencies:
-    "@babel/compat-data": ^7.14.7
-    "@babel/helper-compilation-targets": ^7.14.5
-    "@babel/helper-plugin-utils": ^7.14.5
-    "@babel/helper-validator-option": ^7.14.5
-    "@babel/plugin-bugfix-v8-spread-parameters-in-optional-chaining": ^7.14.5
-    "@babel/plugin-proposal-async-generator-functions": ^7.14.7
-    "@babel/plugin-proposal-class-properties": ^7.14.5
-    "@babel/plugin-proposal-class-static-block": ^7.14.5
-    "@babel/plugin-proposal-dynamic-import": ^7.14.5
-    "@babel/plugin-proposal-export-namespace-from": ^7.14.5
-    "@babel/plugin-proposal-json-strings": ^7.14.5
-    "@babel/plugin-proposal-logical-assignment-operators": ^7.14.5
-    "@babel/plugin-proposal-nullish-coalescing-operator": ^7.14.5
-    "@babel/plugin-proposal-numeric-separator": ^7.14.5
-    "@babel/plugin-proposal-object-rest-spread": ^7.14.7
-    "@babel/plugin-proposal-optional-catch-binding": ^7.14.5
-    "@babel/plugin-proposal-optional-chaining": ^7.14.5
-    "@babel/plugin-proposal-private-methods": ^7.14.5
-    "@babel/plugin-proposal-private-property-in-object": ^7.14.5
-    "@babel/plugin-proposal-unicode-property-regex": ^7.14.5
-    "@babel/plugin-syntax-async-generators": ^7.8.4
-    "@babel/plugin-syntax-class-properties": ^7.12.13
-    "@babel/plugin-syntax-class-static-block": ^7.14.5
-    "@babel/plugin-syntax-dynamic-import": ^7.8.3
-    "@babel/plugin-syntax-export-namespace-from": ^7.8.3
-    "@babel/plugin-syntax-json-strings": ^7.8.3
-    "@babel/plugin-syntax-logical-assignment-operators": ^7.10.4
-    "@babel/plugin-syntax-nullish-coalescing-operator": ^7.8.3
-    "@babel/plugin-syntax-numeric-separator": ^7.10.4
-    "@babel/plugin-syntax-object-rest-spread": ^7.8.3
-    "@babel/plugin-syntax-optional-catch-binding": ^7.8.3
-    "@babel/plugin-syntax-optional-chaining": ^7.8.3
-    "@babel/plugin-syntax-private-property-in-object": ^7.14.5
-    "@babel/plugin-syntax-top-level-await": ^7.14.5
-    "@babel/plugin-transform-arrow-functions": ^7.14.5
-    "@babel/plugin-transform-async-to-generator": ^7.14.5
-    "@babel/plugin-transform-block-scoped-functions": ^7.14.5
-    "@babel/plugin-transform-block-scoping": ^7.14.5
-    "@babel/plugin-transform-classes": ^7.14.5
-    "@babel/plugin-transform-computed-properties": ^7.14.5
-    "@babel/plugin-transform-destructuring": ^7.14.7
-    "@babel/plugin-transform-dotall-regex": ^7.14.5
-    "@babel/plugin-transform-duplicate-keys": ^7.14.5
-    "@babel/plugin-transform-exponentiation-operator": ^7.14.5
-    "@babel/plugin-transform-for-of": ^7.14.5
-    "@babel/plugin-transform-function-name": ^7.14.5
-    "@babel/plugin-transform-literals": ^7.14.5
-    "@babel/plugin-transform-member-expression-literals": ^7.14.5
-    "@babel/plugin-transform-modules-amd": ^7.14.5
-    "@babel/plugin-transform-modules-commonjs": ^7.14.5
-    "@babel/plugin-transform-modules-systemjs": ^7.14.5
-    "@babel/plugin-transform-modules-umd": ^7.14.5
-    "@babel/plugin-transform-named-capturing-groups-regex": ^7.14.7
-    "@babel/plugin-transform-new-target": ^7.14.5
-    "@babel/plugin-transform-object-super": ^7.14.5
-    "@babel/plugin-transform-parameters": ^7.14.5
-    "@babel/plugin-transform-property-literals": ^7.14.5
-    "@babel/plugin-transform-regenerator": ^7.14.5
-    "@babel/plugin-transform-reserved-words": ^7.14.5
-    "@babel/plugin-transform-shorthand-properties": ^7.14.5
-    "@babel/plugin-transform-spread": ^7.14.6
-    "@babel/plugin-transform-sticky-regex": ^7.14.5
-    "@babel/plugin-transform-template-literals": ^7.14.5
-    "@babel/plugin-transform-typeof-symbol": ^7.14.5
-    "@babel/plugin-transform-unicode-escapes": ^7.14.5
-    "@babel/plugin-transform-unicode-regex": ^7.14.5
-    "@babel/preset-modules": ^0.1.4
-    "@babel/types": ^7.14.5
-    babel-plugin-polyfill-corejs2: ^0.2.2
-    babel-plugin-polyfill-corejs3: ^0.2.2
-    babel-plugin-polyfill-regenerator: ^0.2.2
-    core-js-compat: ^3.15.0
-    semver: ^6.3.0
-  peerDependencies:
-    "@babel/core": ^7.0.0-0
-  checksum: ebebc20ada68c92b67375926021d576af3636a279aee7625c1e234880355c8669188483aecfff2d478c1caa9fcf18b569ea329060b479236b04baed2bdf796d5
   languageName: node
   linkType: hard
 
@@ -5030,7 +4970,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cypress/webpack-preprocessor@npm:^5.9.1":
+"@cypress/webpack-preprocessor@npm:5.9.1":
   version: 5.9.1
   resolution: "@cypress/webpack-preprocessor@npm:5.9.1"
   dependencies:
@@ -5365,7 +5305,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-codegen/cli@npm:^1.21.4":
+"@graphql-codegen/cli@npm:1.21.4":
   version: 1.21.4
   resolution: "@graphql-codegen/cli@npm:1.21.4"
   dependencies:
@@ -5448,7 +5388,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-codegen/schema-ast@npm:^1.18.2":
+"@graphql-codegen/schema-ast@npm:1.18.2":
   version: 1.18.2
   resolution: "@graphql-codegen/schema-ast@npm:1.18.2"
   dependencies:
@@ -5461,7 +5401,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-codegen/typescript-resolvers@npm:^1.19.1":
+"@graphql-codegen/typescript-resolvers@npm:1.19.1":
   version: 1.19.1
   resolution: "@graphql-codegen/typescript-resolvers@npm:1.19.1"
   dependencies:
@@ -5477,7 +5417,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-codegen/typescript@npm:^1.22.0":
+"@graphql-codegen/typescript@npm:1.22.0, @graphql-codegen/typescript@npm:^1.22.0":
   version: 1.22.0
   resolution: "@graphql-codegen/typescript@npm:1.22.0"
   dependencies:
@@ -6215,7 +6155,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@labelflow/db@workspace:typescript/db"
   dependencies:
-    "@apollo/client": ^3.4.10
+    "@apollo/client": 3.4.10
     "@aws-sdk/client-s3": 3.24.0
     "@aws-sdk/s3-request-presigner": 3.24.0
     "@graphql-tools/graphql-file-loader": 6.2.7
@@ -6303,7 +6243,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@labelflow/web@workspace:typescript/web"
   dependencies:
-    "@apollo/client": ^3.3.18
+    "@apollo/client": 3.4.10
     "@babel/core": 7.14.3
     "@chakra-ui/react": 1.6.7
     "@chakra-ui/system": ^1.7.3
@@ -6361,7 +6301,7 @@ __metadata:
     graphiql: ^1.4.2
     graphql: 15.5.1
     graphql-subscriptions: ^1.2.1
-    graphql-tag: ^2.12.4
+    graphql-tag: 2.12.4
     graphql-type-json: ^0.3.2
     jszip: 3.7.0
     lodash: 4.17.21
@@ -9375,23 +9315,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@testing-library/jest-dom@npm:^5.12.0":
-  version: 5.12.0
-  resolution: "@testing-library/jest-dom@npm:5.12.0"
-  dependencies:
-    "@babel/runtime": ^7.9.2
-    "@types/testing-library__jest-dom": ^5.9.1
-    aria-query: ^4.2.2
-    chalk: ^3.0.0
-    css: ^3.0.0
-    css.escape: ^1.5.1
-    lodash: ^4.17.15
-    redent: ^3.0.0
-  checksum: d6af8912a7d121dba15b9defcddb33288a637e433478e8327a9d90b95077e5142eec41b1bbc91e3fd33b0c85478e94936b09021500f2602d9c3202c5d71475f2
-  languageName: node
-  linkType: hard
-
-"@testing-library/jest-dom@npm:^5.14.1":
+"@testing-library/jest-dom@npm:5.14.1":
   version: 5.14.1
   resolution: "@testing-library/jest-dom@npm:5.14.1"
   dependencies:
@@ -9405,6 +9329,22 @@ __metadata:
     lodash: ^4.17.15
     redent: ^3.0.0
   checksum: eeba37ba10be550bd9ab7dd0dda77d9011a96d9a4f75c70ed57d7bf120fe4126b251ccfb1444da1746c19773bbe4efbd96a0408f970d98c9cd1d399b2455d2c1
+  languageName: node
+  linkType: hard
+
+"@testing-library/jest-dom@npm:^5.12.0":
+  version: 5.12.0
+  resolution: "@testing-library/jest-dom@npm:5.12.0"
+  dependencies:
+    "@babel/runtime": ^7.9.2
+    "@types/testing-library__jest-dom": ^5.9.1
+    aria-query: ^4.2.2
+    chalk: ^3.0.0
+    css: ^3.0.0
+    css.escape: ^1.5.1
+    lodash: ^4.17.15
+    redent: ^3.0.0
+  checksum: d6af8912a7d121dba15b9defcddb33288a637e433478e8327a9d90b95077e5142eec41b1bbc91e3fd33b0c85478e94936b09021500f2602d9c3202c5d71475f2
   languageName: node
   linkType: hard
 
@@ -11998,13 +11938,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/zen-observable@npm:^0.8.0":
-  version: 0.8.2
-  resolution: "@types/zen-observable@npm:0.8.2"
-  checksum: 558959fc0482d329cedbd9eabb591849a3dab9574880d3b0781e6916d57cd87fc2268f85d5fe236b58eab8c4063e4aaebd4e9c302b9e56af372d15732c26bb99
-  languageName: node
-  linkType: hard
-
 "@typescript-eslint/eslint-plugin@npm:4.23.0":
   version: 4.23.0
   resolution: "@typescript-eslint/eslint-plugin@npm:4.23.0"
@@ -12452,15 +12385,6 @@ __metadata:
   dependencies:
     tslib: ^1.9.3
   checksum: 1a26a0fd11e3e3a6a197d9a54a5bec523caf693daa24ad2709f496e43dd3cd12290a0d17df81f8a783437795f6c64a1ca2717cdac6e79022bde4450c11e705c9
-  languageName: node
-  linkType: hard
-
-"@wry/equality@npm:^0.4.0":
-  version: 0.4.0
-  resolution: "@wry/equality@npm:0.4.0"
-  dependencies:
-    tslib: ^2.1.0
-  checksum: f8e5f47724cd068a0e4e848c59f9980989d89042b9b388b355e095dedf1109d0e83f4eec8a03225c44fafd10fd490e7eff6adc75b2ccfb78e84b15a6766838e1
   languageName: node
   linkType: hard
 
@@ -13655,7 +13579,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"auto-changelog@npm:^2.3.0":
+"auto-changelog@npm:2.3.0, auto-changelog@npm:^2.3.0":
   version: 2.3.0
   resolution: "auto-changelog@npm:2.3.0"
   dependencies:
@@ -13769,7 +13693,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"babel-loader@npm:^8.2.2":
+"babel-loader@npm:8.2.2, babel-loader@npm:^8.2.2":
   version: 8.2.2
   resolution: "babel-loader@npm:8.2.2"
   dependencies:
@@ -15102,9 +15026,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chromatic@npm:^5.8.2":
-  version: 5.8.3
-  resolution: "chromatic@npm:5.8.3"
+"chromatic@npm:5.8.2":
+  version: 5.8.2
+  resolution: "chromatic@npm:5.8.2"
   dependencies:
     "@actions/core": ^1.2.4
     "@actions/github": ^4.0.0
@@ -15146,7 +15070,7 @@ __metadata:
     chroma: bin/register.js
     chromatic: bin/register.js
     chromatic-cli: bin/register.js
-  checksum: de8ac4f753cbb991efc03effd7912016cf5b4147b5651ca327a2f2f2631abf5185b4014aa205edaeb9ddc25adf58be7e5aba35ad8400abef63656596b80f326b
+  checksum: 531c2e65e0b5829878526beaac55dc6735fd50f589fe80fdd8e0015515a83798c85d2bdfd371bec98d94c26c96a7c51794169ad6b488b3ef39a68e3e95e48304
   languageName: node
   linkType: hard
 
@@ -16757,7 +16681,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dexie@npm:^3.0.3":
+"dexie@npm:3.0.3, dexie@npm:^3.0.3":
   version: 3.0.3
   resolution: "dexie@npm:3.0.3"
   checksum: 5419ad5cb81d5a45926886645c30dc77e16e994cc1c67ff626f89ffd70f39253b79b696c79abaae3b891c369f61989ccf95909f2d04877d12fc6855fe97a2256
@@ -18233,7 +18157,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fake-indexeddb@npm:^3.1.2":
+"fake-indexeddb@npm:3.1.2, fake-indexeddb@npm:^3.1.2":
   version: 3.1.2
   resolution: "fake-indexeddb@npm:3.1.2"
   dependencies:
@@ -19590,7 +19514,7 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"graphql-tag@npm:2.12.4, graphql-tag@npm:^2.11.0, graphql-tag@npm:^2.12.0, graphql-tag@npm:^2.12.4":
+"graphql-tag@npm:2.12.4, graphql-tag@npm:^2.11.0":
   version: 2.12.4
   resolution: "graphql-tag@npm:2.12.4"
   dependencies:
@@ -21591,7 +21515,7 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"jest-canvas-mock@npm:^2.3.1":
+"jest-canvas-mock@npm:2.3.1":
   version: 2.3.1
   resolution: "jest-canvas-mock@npm:2.3.1"
   dependencies:
@@ -21729,7 +21653,7 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"jest-fetch-mock@npm:^3.0.3":
+"jest-fetch-mock@npm:3.0.3":
   version: 3.0.3
   resolution: "jest-fetch-mock@npm:3.0.3"
   dependencies:
@@ -21991,7 +21915,7 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"jest-transform-graphql@npm:^2.1.0":
+"jest-transform-graphql@npm:2.1.0":
   version: 2.1.0
   resolution: "jest-transform-graphql@npm:2.1.0"
   peerDependencies:
@@ -22537,28 +22461,28 @@ fsevents@^1.2.7:
   version: 0.0.0-use.local
   resolution: "labelflow@workspace:."
   dependencies:
-    "@apollo/client": ^3.3.21
-    "@babel/core": ^7.14.3
-    "@babel/preset-env": ^7.14.7
-    "@cypress/webpack-preprocessor": ^5.9.1
-    "@graphql-codegen/cli": ^1.21.4
-    "@graphql-codegen/schema-ast": ^1.18.2
-    "@graphql-codegen/typescript": ^1.22.0
-    "@graphql-codegen/typescript-resolvers": ^1.19.1
+    "@apollo/client": 3.4.10
+    "@babel/core": 7.14.3
+    "@babel/preset-env": 7.14.7
+    "@cypress/webpack-preprocessor": 5.9.1
+    "@graphql-codegen/cli": 1.21.4
+    "@graphql-codegen/schema-ast": 1.18.2
+    "@graphql-codegen/typescript": 1.22.0
+    "@graphql-codegen/typescript-resolvers": 1.19.1
     "@prisma/client": 2.30.3
     "@storybook/addon-actions": 6.3.0
     "@storybook/addons": 6.3.0
     "@storybook/builder-webpack5": next
     "@storybook/manager-webpack5": next
     "@storybook/react": 6.3.0
-    "@testing-library/jest-dom": ^5.14.1
+    "@testing-library/jest-dom": 5.14.1
     "@typescript-eslint/eslint-plugin": 4.23.0
     "@typescript-eslint/parser": 4.23.0
-    auto-changelog: ^2.3.0
-    babel-loader: ^8.2.2
-    chromatic: ^5.8.2
+    auto-changelog: 2.3.0
+    babel-loader: 8.2.2
+    chromatic: 5.8.2
     cypress: 7.3.0
-    dexie: ^3.0.3
+    dexie: 3.0.3
     eslint: 7.26.0
     eslint-config-airbnb-typescript: 12.3.1
     eslint-config-prettier: 8.3.0
@@ -22567,21 +22491,21 @@ fsevents@^1.2.7:
     eslint-plugin-prettier: 3.4.0
     eslint-plugin-react: 7.23.2
     eslint-plugin-react-hooks: 4.2.0
-    fake-indexeddb: ^3.1.2
+    fake-indexeddb: 3.1.2
     graphql: 15.5.1
     graphql-tag: 2.12.4
     jest: 26.6.3
-    jest-canvas-mock: ^2.3.1
-    jest-fetch-mock: ^3.0.3
-    jest-transform-graphql: ^2.1.0
-    node-polyfill-webpack-plugin: ^1.1.2
+    jest-canvas-mock: 2.3.1
+    jest-fetch-mock: 3.0.3
+    jest-transform-graphql: 2.1.0
+    node-polyfill-webpack-plugin: 1.1.2
     prettier: 2.3.0
     react: 17.0.2
     react-dom: 17.0.2
-    release-it: ^14.11.5
+    release-it: 14.11.5
     service-worker-mock: "patch:service-worker-mock@2.0.5#./service-worker-mock.patch"
     ts-jest: 26.5.6
-    ts-loader: ^9.2.3
+    ts-loader: 9.2.3
     ts-node: 9.1.1
     typescript: 4.3.5
     webpack: 5.38.1
@@ -24596,7 +24520,7 @@ next-pwa@5.2.21:
   languageName: node
   linkType: hard
 
-"node-polyfill-webpack-plugin@npm:^1.1.2":
+"node-polyfill-webpack-plugin@npm:1.1.2, node-polyfill-webpack-plugin@npm:^1.1.2":
   version: 1.1.2
   resolution: "node-polyfill-webpack-plugin@npm:1.1.2"
   dependencies:
@@ -25097,7 +25021,7 @@ next-pwa@5.2.21:
   languageName: node
   linkType: hard
 
-"optimism@npm:^0.16.0, optimism@npm:^0.16.1":
+"optimism@npm:^0.16.1":
   version: 0.16.1
   resolution: "optimism@npm:0.16.1"
   dependencies:
@@ -27683,7 +27607,7 @@ next-pwa@5.2.21:
   languageName: node
   linkType: hard
 
-"release-it@npm:^14.11.5":
+"release-it@npm:14.11.5, release-it@npm:^14.11.5":
   version: 14.11.5
   resolution: "release-it@npm:14.11.5"
   dependencies:
@@ -29806,13 +29730,6 @@ service-worker-mock@2.0.5:
   languageName: node
   linkType: hard
 
-"symbol-observable@npm:^2.0.0":
-  version: 2.0.3
-  resolution: "symbol-observable@npm:2.0.3"
-  checksum: 533dcf7a7925bada60dbaa06d678e7c4966dbf0959ccba7f60c22b0494ba5d9160d6a66f2951d45a80bf20e655a89f8b91c5f0458dd12faef28716b54f91f49c
-  languageName: node
-  linkType: hard
-
 "symbol-observable@npm:^4.0.0":
   version: 4.0.0
   resolution: "symbol-observable@npm:4.0.0"
@@ -30489,24 +30406,6 @@ service-worker-mock@2.0.5:
   languageName: node
   linkType: hard
 
-"ts-invariant@npm:^0.7.0":
-  version: 0.7.3
-  resolution: "ts-invariant@npm:0.7.3"
-  dependencies:
-    tslib: ^2.1.0
-  checksum: 27599f6d0de5bee65dfa8c0c70a63ca78c1f3b3428f1422821fc97dbdeea8171e1ff979656ce6e7626f65974d633d1a01971d289c796059b66c8ec1a15e74af2
-  languageName: node
-  linkType: hard
-
-"ts-invariant@npm:^0.8.0":
-  version: 0.8.2
-  resolution: "ts-invariant@npm:0.8.2"
-  dependencies:
-    tslib: ^2.1.0
-  checksum: 783ec7a6aff6cc7c39712f0aa40c63e4a6f1cb3d217a15a639b477251ad019dd945e740e7d769e12ada8ef8df27b2b180f04cd301aeb8df4ab66102b08bd9c87
-  languageName: node
-  linkType: hard
-
 "ts-invariant@npm:^0.9.0":
   version: 0.9.1
   resolution: "ts-invariant@npm:0.9.1"
@@ -30548,7 +30447,7 @@ service-worker-mock@2.0.5:
   languageName: node
   linkType: hard
 
-"ts-loader@npm:^9.2.3":
+"ts-loader@npm:9.2.3":
   version: 9.2.3
   resolution: "ts-loader@npm:9.2.3"
   dependencies:
@@ -32881,7 +32780,7 @@ typescript@4.3.5:
   languageName: node
   linkType: hard
 
-"zen-observable@npm:0.8.15, zen-observable@npm:^0.8.0, zen-observable@npm:^0.8.14":
+"zen-observable@npm:0.8.15, zen-observable@npm:^0.8.0":
   version: 0.8.15
   resolution: "zen-observable@npm:0.8.15"
   checksum: b7289084bc1fc74a559b7259faa23d3214b14b538a8843d2b001a35e27147833f4107590b1b44bf5bc7f6dfe6f488660d3a3725f268e09b3925b3476153b7821
