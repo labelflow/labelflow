@@ -175,7 +175,7 @@ export const EditLabelClassMenu = () => {
   const handleSelectedClassChange = useCallback(
     async (item: LabelClassItem | null) => {
       if (!isInDrawingMode && selectedLabelId != null) {
-        return await perform(
+        await perform(
           createUpdateLabelClassOfLabelEffect(
             {
               selectedLabelClassId: item?.id ?? null,
@@ -184,6 +184,7 @@ export const EditLabelClassMenu = () => {
             { client }
           )
         );
+        return;
       }
       if (selectedTool === Tools.CLASSIFICATION && imageId) {
         const { data: imageLabelsData } = await client.query({
@@ -197,12 +198,13 @@ export const EditLabelClassMenu = () => {
             label.type === LabelType.Classification
         );
         if (classificationsOfThisClass.length > 0) {
-          return await perform(
+          await perform(
             createDeleteLabelEffect(
               { id: classificationsOfThisClass[0].id },
               { setSelectedLabelId, client }
             )
           );
+          return;
         }
 
         const geometry = new GeoJSON().writeGeometryObject(
@@ -217,7 +219,7 @@ export const EditLabelClassMenu = () => {
           ])
         ) as GeoJSONPolygon;
 
-        return await perform(
+        await perform(
           createCreateLabelEffect(
             {
               imageId,
@@ -231,9 +233,10 @@ export const EditLabelClassMenu = () => {
             }
           )
         );
+        return;
       }
       if (selectedLabelClassId != null) {
-        return await perform(
+        await perform(
           createUpdateLabelClassEffect({
             selectedLabelClassId: item?.id ?? null,
             selectedLabelClassIdPrevious: selectedLabelClassId,

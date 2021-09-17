@@ -140,6 +140,7 @@ export const EditLabelClass = forwardRef<
           )
         );
         onClose();
+        return;
       }
       if (selectedTool === Tools.CLASSIFICATION && imageId) {
         const { data: imageLabelsData } = await client.query({
@@ -154,12 +155,13 @@ export const EditLabelClass = forwardRef<
         );
         if (classificationsOfThisClass.length > 0) {
           onClose();
-          return await perform(
+          await perform(
             createDeleteLabelEffect(
               { id: classificationsOfThisClass[0].id },
               { setSelectedLabelId, client }
             )
           );
+          return;
         }
 
         const geometry = new GeoJSON().writeGeometryObject(
@@ -174,7 +176,7 @@ export const EditLabelClass = forwardRef<
           ])
         ) as GeoJSONPolygon;
         onClose();
-        return await perform(
+        await perform(
           createCreateLabelEffect(
             {
               imageId,
