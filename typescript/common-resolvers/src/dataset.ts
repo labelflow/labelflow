@@ -33,7 +33,7 @@ const getDataset = async (
   const datasetFromRepository = await repository.dataset.get(where);
   if (datasetFromRepository == null) {
     throw new Error(
-      `Couldn't find this dataset corresponding to ${JSON.stringify(where)}`
+      `Couldn't find dataset corresponding to ${JSON.stringify(where)}`
     );
   }
   return { ...datasetFromRepository, __typename: "Dataset" };
