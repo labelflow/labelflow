@@ -18,6 +18,9 @@ import {
   Alert,
   AlertIcon,
   AlertDescription,
+  Text,
+  Skeleton,
+  AlertTitle,
 } from "@chakra-ui/react";
 import { ExportFormat, ExportOptions, Label } from "@labelflow/graphql-types";
 import { useRouter } from "next/router";
@@ -119,13 +122,15 @@ export const ExportModal = ({
     skip: !datasetSlug,
   });
   const datasetId = data?.dataset.id;
-  const datasetHasUndefinedLabels = useMemo(() => {
+  const numberUndefinedLabelsOfDataset = useMemo(() => {
     if (loading === false) {
       return data?.dataset?.labels?.reduce(
-        (hasUndefinedLabels: boolean, label: Label) => {
-          return hasUndefinedLabels || !label?.labelClass;
+        (numberUndefinedLabels: number, label: Label) => {
+          return !label?.labelClass
+            ? numberUndefinedLabels + 1
+            : numberUndefinedLabels;
         },
-        false
+        0
       );
     }
     return false;
@@ -161,11 +166,11 @@ export const ExportModal = ({
       >
         <ModalOverlay />
         <ModalContent height="auto">
-          <ModalHeader textAlign="center" p={{ base: "4", md: "6" }}>
-            <Heading as="h2" size="lg" pb="2" mb={5}>
+          <ModalHeader textAlign="center" pt={6} pl={6} pr={6} pb={0}>
+            <Heading as="h2" size="lg" mb={3}>
               Export Labels
             </Heading>
-            {/* <Skeleton
+            <Skeleton
               w="fit-content"
               m="auto"
               isLoaded={
@@ -177,22 +182,21 @@ export const ExportModal = ({
                 {data?.dataset?.imagesAggregates?.totalCount} images and{" "}
                 {data?.dataset?.labelsAggregates?.totalCount} labels.
               </Text>
-            </Skeleton> */}
-            <Box display="inline-block" width="100%" pl={6} pr={6} pt={2}>
-              <Alert status="info" borderRadius={5} maxHeight={10}>
-                <AlertIcon />
-                <AlertDescription fontSize="md" fontWeight="medium">
-                  Your dataset contains{" "}
-                  {data?.dataset?.imagesAggregates?.totalCount} images and{" "}
-                  {data?.dataset?.labelsAggregates?.totalCount} labels.
-                </AlertDescription>
-              </Alert>
-              {datasetHasUndefinedLabels && (
-                <Alert status="warning" mt={2} borderRadius={5} maxHeight={10}>
+            </Skeleton>
+            <Box display="inline-block" width="100%" pl={8} pr={8} pt={4}>
+              {numberUndefinedLabelsOfDataset && (
+                <Alert status="warning" borderRadius={5}>
                   <AlertIcon />
-                  <AlertDescription fontSize="md" fontWeight="medium">
-                    It seems like your dataset contains some labels that
-                    don&#39;t have any class
+                  <AlertTitle mr={2} fontSize="md">
+                    None Class
+                  </AlertTitle>
+                  <AlertDescription fontSize="sm" fontWeight="medium">
+                    {`${numberUndefinedLabelsOfDataset} ${
+                      numberUndefinedLabelsOfDataset === 1 ? "label" : "labels"
+                    } ${
+                      numberUndefinedLabelsOfDataset === 1 ? "has" : "have"
+                    } no class assigned. Only labels with a class
+                    are exported.`}
                   </AlertDescription>
                 </Alert>
               )}
@@ -201,14 +205,20 @@ export const ExportModal = ({
 
           <ModalBody
             display="flex"
-            p={{ base: "4", md: "6" }}
+            pt={0}
+            pl={6}
+            pr={6}
+            pb={6}
             flexDirection="column"
           >
             <Stack
               direction={{ base: "column", md: "row" }}
               spacing="4"
               justifyContent="center"
-              p={{ base: "2", md: "8" }}
+              pt={6}
+              pl={8}
+              pr={8}
+              pb={8}
               flexWrap="wrap"
             >
               {Object.keys(formatMainInformation).map((formatKey) => {
