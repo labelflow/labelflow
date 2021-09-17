@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { gql } from "@apollo/client";
 import { v4 as uuidV4 } from "uuid";
 import {
@@ -50,7 +51,7 @@ const createWorkspace = async (
   });
 };
 
-describe.skip("createWorkspace mutation", () => {
+describe("createWorkspace mutation", () => {
   it("fails if the user isn't logged in", async () => {
     user.id = undefined;
 
@@ -146,7 +147,7 @@ describe.skip("createWorkspace mutation", () => {
   });
 });
 
-describe.skip("workspaces query", () => {
+describe("workspaces query", () => {
   it("returns an empty array when there aren't any", async () => {
     const { data } = await client.query({
       query: gql`
@@ -291,7 +292,7 @@ describe.skip("workspaces query", () => {
   });
 });
 
-describe.skip("workspace query", () => {
+describe("workspace query", () => {
   it("fails if not provided an id", async () => {
     await expect(() =>
       client.query({
@@ -372,7 +373,7 @@ describe.skip("workspace query", () => {
   });
 });
 
-describe.skip("updatedWorkspace mutation", () => {
+describe("updatedWorkspace mutation", () => {
   it("can change the name of a workspace", async () => {
     const id = (await createWorkspace())?.data?.createWorkspace.id;
 
@@ -416,7 +417,7 @@ describe.skip("updatedWorkspace mutation", () => {
   });
 });
 
-describe.skip("nested resolvers", () => {
+describe("nested resolvers", () => {
   const createMembership = async (
     data?: MutationCreateMembershipArgs["data"]
   ) => {
