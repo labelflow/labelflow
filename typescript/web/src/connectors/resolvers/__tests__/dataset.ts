@@ -203,7 +203,7 @@ describe("Dataset resolver test suite", () => {
           id: "a id that doesn't exist",
         },
       })
-    ).rejects.toThrow(/Couldn't find this dataset corresponding to/);
+    ).rejects.toThrow(/Couldn't find dataset corresponding to/);
   });
 
   test("Read multiple datasets", async () => {
@@ -378,7 +378,7 @@ describe("Dataset resolver test suite", () => {
           id: datasetId,
         },
       })
-    ).rejects.toThrow(/Couldn't find this dataset corresponding to/);
+    ).rejects.toThrow(/Couldn't find dataset corresponding to/);
   });
 
   test("should throw an error if the dataset to delete does not exist", () => {
@@ -396,7 +396,7 @@ describe("Dataset resolver test suite", () => {
           id: "not existing dataset id",
         },
       })
-    ).rejects.toThrow(/Couldn't find this dataset corresponding to/);
+    ).rejects.toThrow(/Couldn't find dataset corresponding to/);
   });
 
   test("Should update a dataset with a new name", async () => {
@@ -522,7 +522,7 @@ describe("Dataset resolver test suite", () => {
           data: { name: "My new dataset new name" },
         },
       })
-    ).rejects.toThrow(/Couldn't find this dataset corresponding to/);
+    ).rejects.toThrow(/Couldn't find dataset corresponding to/);
   });
 
   test("Find dataset by name", async () => {
