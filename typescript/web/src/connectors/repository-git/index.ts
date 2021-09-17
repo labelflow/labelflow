@@ -1,5 +1,10 @@
 import { DbDataset, Repository } from "@labelflow/common-resolvers";
 import { Octokit } from "@octokit/rest";
+import path from "path";
+import git from "isomorphic-git";
+import http from "isomorphic-git/http/node";
+import fs from "fs";
+import fsPromises from "fs/promises";
 
 const octokit = new Octokit({
   auth: process.env.GITHUB_ACCESS_TOKEN,
@@ -12,7 +17,22 @@ export const repository: Repository = {
       throw new Error("Not implemented");
     },
     count: async (where) => {
-      throw new Error("Not implemented");
+      const dir = path.join(process.cwd(), "test-clone");
+      // await fsPromises.mkdir(dir, { recursive: true });
+      await git.clone({
+        fs,
+        http,
+        dir,
+        // @ts-ignore
+        token: process.env.GITHUB_ACCESS_TOKEN,
+        url: `https://github.com/crubier/labelflow-dataset-${
+          where?.datasetId ?? "example"
+        }`,
+      });
+
+      const files = await fsPromises.readdir(path.join(dir, "image"));
+
+      return files.length;
     },
     getById: async (id) => {
       throw new Error("Not implemented");
