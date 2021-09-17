@@ -20,7 +20,7 @@ export const SelectInteraction = ({
   sourceVectorLabelsRef,
   image,
 }: {
-  image: { width: number; height: number };
+  image: { width?: number; height?: number };
   setIsContextMenuOpen?: (state: boolean) => void;
   editClassOverlayRef?: MutableRefObject<HTMLDivElement | null>;
   sourceVectorLabelsRef: MutableRefObject<OlSourceVector<Geometry> | null>;
@@ -41,7 +41,10 @@ export const SelectInteraction = ({
     () => {
       if (selectedTool === Tools.CLASSIFICATION) {
         setIsContextMenuOpen(true);
-        setEditMenuLocation([image.width / 2, image.height / 2]);
+        setEditMenuLocation([
+          (image?.width ?? 0) / 2,
+          (image?.height ?? 0) / 2,
+        ]);
         return;
       }
 
@@ -88,8 +91,8 @@ export const SelectInteraction = ({
       setIsContextMenuOpen(true);
 
       setEditMenuLocation([
-        e.coordinate?.[0] ?? image.width / 2,
-        e.coordinate?.[1] ?? image.height / 2,
+        e.coordinate?.[0] ?? (image?.width ?? 0) / 2,
+        e.coordinate?.[1] ?? (image?.height ?? 0) / 2,
       ]);
       return true;
     }
