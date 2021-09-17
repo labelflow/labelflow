@@ -3,10 +3,7 @@ export default {
   testEnvironment: "jsdom",
   collectCoverage: true,
   testMatch: ["<rootDir>/typescript/**/__tests__/**/*.{ts,tsx}"],
-  testPathIgnorePatterns: [
-    "node_modules",
-    "<rootDir>/typescript/db/src/resolvers/__tests__/*.ts",
-  ],
+  testPathIgnorePatterns: ["node_modules"],
   setupFilesAfterEnv: ["<rootDir>/setup-tests.ts"],
   globals: {
     "ts-jest": {

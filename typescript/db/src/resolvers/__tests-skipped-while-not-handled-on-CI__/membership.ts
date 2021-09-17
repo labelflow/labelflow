@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { gql } from "@apollo/client";
 import { v4 as uuidV4 } from "uuid";
 import {
@@ -66,7 +67,7 @@ const createWorkspace = async (
   });
 };
 
-describe.skip("createMembership mutation", () => {
+describe("createMembership mutation", () => {
   it("throws an error if the user doesn't exist", async () => {
     const workspaceSlug = (await createWorkspace()).data?.createWorkspace
       .slug as string;
@@ -111,7 +112,7 @@ describe.skip("createMembership mutation", () => {
     const workspaceSlug = (await createWorkspace()).data?.createWorkspace
       .slug as string;
 
-    /* testUser1Id is already linked to this workspace as createWorkspace makes 
+    /* testUser1Id is already linked to this workspace as createWorkspace makes
     testUser1Id the default owner of this workspace  */
 
     await expect(() =>
@@ -166,7 +167,7 @@ describe.skip("createMembership mutation", () => {
   });
 });
 
-describe.skip("memberships query", () => {
+describe("memberships query", () => {
   it("returns an empty array when there aren't any", async () => {
     const { data } = await client.query({
       query: gql`
@@ -343,7 +344,7 @@ describe.skip("memberships query", () => {
   });
 });
 
-describe.skip("membership query", () => {
+describe("membership query", () => {
   const queryMembership = async (id: string) =>
     await client.query<{
       membership: Pick<Membership, "id">;
@@ -387,7 +388,7 @@ describe.skip("membership query", () => {
   });
 });
 
-describe.skip("updateMembership mutation", () => {
+describe("updateMembership mutation", () => {
   const updateMembership = async ({
     id,
     role,
@@ -442,7 +443,7 @@ describe.skip("updateMembership mutation", () => {
   });
 });
 
-describe.skip("deleteMembership mutation", () => {
+describe("deleteMembership mutation", () => {
   const deleteMembership = async (membershipId: string) => {
     return await client.mutate<{
       deleteMembership: Pick<Membership, "id">;
@@ -513,7 +514,7 @@ describe.skip("deleteMembership mutation", () => {
   });
 });
 
-describe.skip("nested resolvers", () => {
+describe("nested resolvers", () => {
   it("can return the user of the membership ", async () => {
     const workspaceSlug = (await createWorkspace({ name: "test" })).data
       ?.createWorkspace.slug as string;

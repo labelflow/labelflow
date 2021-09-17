@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { gql } from "@apollo/client";
 import { v4 as uuidV4 } from "uuid";
 import {
@@ -22,7 +23,7 @@ beforeEach(async () => {
   return await prisma.user.deleteMany({});
 });
 
-describe.skip("users query", () => {
+describe("users query", () => {
   it("returns an empty array when there aren't any", async () => {
     const { data } = await client.query({
       query: gql`
@@ -179,7 +180,7 @@ describe.skip("users query", () => {
   });
 });
 
-describe.skip("user query", () => {
+describe("user query", () => {
   const queryUser = async (id: string) =>
     await client.query<{
       user: Pick<User, "id" | "name">;
@@ -215,7 +216,7 @@ describe.skip("user query", () => {
   });
 });
 
-describe.skip("updateUser mutation", () => {
+describe("updateUser mutation", () => {
   const updateUser = async ({
     id,
     name,
@@ -279,7 +280,7 @@ describe.skip("updateUser mutation", () => {
   });
 });
 
-describe.skip("nested resolvers", () => {
+describe("nested resolvers", () => {
   const createWorkspace = async (
     data?: Partial<MutationCreateWorkspaceArgs["data"]>
   ) => {
