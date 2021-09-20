@@ -190,10 +190,10 @@ export const ExportModal = ({
                   numberUndefinedLabelsOfDataset !== 0 && (
                     <Alert status="warning" borderRadius={5}>
                       <AlertIcon />
-                      <AlertTitle mr={2} fontSize="md">
+                      <AlertTitle mr={2} fontSize={15} whiteSpace="nowrap">
                         Missing Class
                       </AlertTitle>
-                      <AlertDescription fontSize="sm" fontWeight="medium">
+                      <AlertDescription fontSize={13} fontWeight="medium">
                         {`${numberUndefinedLabelsOfDataset} ${
                           numberUndefinedLabelsOfDataset === 1
                             ? "label"
