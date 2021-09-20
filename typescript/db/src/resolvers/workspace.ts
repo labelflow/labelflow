@@ -34,28 +34,42 @@ const addTypeToWorkspace = (
   type: WorkspaceType.Online,
 });
 
+const getWorkspace = async (
+  where: WorkspaceWhereUniqueInput,
+  user: { id: string } | undefined
+): Promise<DbWorkspace> => {
+  const workspacesFromDb = await prisma.workspace.findMany({
+    where: castObjectNullsToUndefined({
+      ...where,
+      memberships: { some: { userId: user?.id } },
+    }),
+  });
+  const workspaceFromDb = workspacesFromDb?.[0] ?? null;
+  if (workspaceFromDb == null) {
+    throw new Error(`Couldn't find a workspace with id: "${where.id}"`);
+  }
+  return workspaceFromDb;
+};
+
 const workspace = async (
   _: any,
-  args: QueryWorkspaceArgs
+  args: QueryWorkspaceArgs,
+  { user }: Context
 ): Promise<DbWorkspaceWithType> => {
-  const workspaceFromDb = await prisma.workspace.findUnique({
-    where: castObjectNullsToUndefined(args.where),
-  });
-
-  if (workspaceFromDb == null) {
-    throw new Error(`Couldn't find a workspace with id: "${args.where.id}"`);
-  }
+  const workspaceFromDb = await getWorkspace(args.where, user);
   return addTypeToWorkspace(workspaceFromDb);
 };
 
 const workspaces = async (
   _: any,
-  args: QueryWorkspacesArgs
+  args: QueryWorkspacesArgs,
+  { user }: Context
 ): Promise<DbWorkspaceWithType[]> => {
   const workspacesFromDb = await prisma.workspace.findMany({
     skip: args.skip ?? undefined,
     take: args.first ?? undefined,
     orderBy: { createdAt: Prisma.SortOrder.asc },
+    where: { memberships: { some: { userId: user?.id } } },
   });
 
   return workspacesFromDb.map(addTypeToWorkspace);
