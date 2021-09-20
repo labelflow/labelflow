@@ -1,4 +1,4 @@
-import { trim } from "lodash/fp";
+import { trim, where } from "lodash/fp";
 import { v4 as uuidv4 } from "uuid";
 import slugify from "slugify";
 import { add } from "date-fns";
@@ -89,10 +89,10 @@ const dataset = async (
 const datasets = async (
   _: any,
   args: QueryDatasetsArgs,
-  { repository }: Context
+  { repository, user }: Context
 ): Promise<DbDataset[]> => {
   const queryResult = await repository.dataset.list(
-    null,
+    { user },
     args.skip,
     args.first
   );

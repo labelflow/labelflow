@@ -170,12 +170,14 @@ export const repository: Repository = {
         return false;
       }
     },
-    list: (_where, skip = undefined, first = undefined) =>
+    list: (where, skip = undefined, first = undefined) =>
       prisma.dataset.findMany(
         castObjectNullsToUndefined({
           orderBy: { createdAt: Prisma.SortOrder.asc },
           skip,
-          take: first,
+          where: {
+            workspace: { memberships: { some: { userId: where?.user?.id } } },
+          },
         })
       ),
   },

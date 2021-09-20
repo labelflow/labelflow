@@ -113,7 +113,7 @@ export type Repository = {
     add: Add<DbDatasetCreateInput>;
     delete: Delete<DatasetWhereUniqueInput>;
     get: Get<DbDataset, DatasetWhereUniqueInput>;
-    list: List<DbDataset, null>;
+    list: List<DbDataset, { user?: { id: string } }>;
     update: Update<DbDataset, DatasetWhereUniqueInput>;
   };
   upload: {
