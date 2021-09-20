@@ -533,9 +533,7 @@ describe("Dataset resolver test suite", () => {
     const queryResult = await client.query({
       query: gql`
         query getDataset($slug: String!) {
-          dataset(
-            where: { slugs: { datasetSlug: $slug, workspaceSlug: "local" } }
-          ) {
+          dataset(where: { slugs: { slug: $slug, workspaceSlug: "local" } }) {
             id
             name
           }
@@ -562,9 +560,7 @@ describe("Dataset resolver test suite", () => {
     const queryResult = await client.query({
       query: gql`
         query getDataset($slug: String!) {
-          dataset(
-            where: { slugs: { datasetSlug: $slug, workspaceSlug: "local" } }
-          ) {
+          dataset(where: { slugs: { slug: $slug, workspaceSlug: "local" } }) {
             id
             name
           }
@@ -716,9 +712,7 @@ describe("Dataset resolver test suite", () => {
     const queryResult1 = await client.query({
       query: gql`
         query getDataset($slug: String!) {
-          dataset(
-            where: { slugs: { datasetSlug: $slug, workspaceSlug: "local" } }
-          ) {
+          dataset(where: { slugs: { slug: $slug, workspaceSlug: "local" } }) {
             id
             name
           }
@@ -756,9 +750,7 @@ describe("Dataset resolver test suite", () => {
     const queryResult2 = await client.query({
       query: gql`
         query getDataset($slug: String!) {
-          dataset(
-            where: { slugs: { datasetSlug: $slug, workspaceSlug: "local" } }
-          ) {
+          dataset(where: { slugs: { slug: $slug, workspaceSlug: "local" } }) {
             id
             name
           }
