@@ -39,7 +39,9 @@ const updateDatasetMutation = gql`
 
 const getDatasetBySlugQuery = gql`
   query getDatasetBySlug($slug: String!) {
-    dataset(where: { slugs: { datasetSlug: $slug, workspaceSlug: "local" } }) {
+    searchDataset(
+      where: { slugs: { datasetSlug: $slug, workspaceSlug: "local" } }
+    ) {
       id
       slug
     }
@@ -136,7 +138,7 @@ export const UpsertDatasetModal = ({
     if (
       existingDataset != null &&
       !loadingExistingDatasets &&
-      existingDataset?.dataset?.id !== datasetId &&
+      existingDataset?.searchDataset?.id !== datasetId &&
       variablesExistingDatasets?.slug === slugify(datasetName, { lower: true })
     ) {
       setErrorMessage("This name is already taken");

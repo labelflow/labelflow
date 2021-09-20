@@ -96,7 +96,9 @@ const ImagePage = () => {
   const handleError = useErrorHandler();
   if ((errorDataset && !loadingDataset) || (errorImage && !loadingImage)) {
     if (errorDataset && !loadingDataset) {
-      if (!errorDataset.message.match(/No dataset with slug/)) {
+      if (
+        !errorDataset.message.match(/Couldn't find dataset corresponding to/)
+      ) {
         handleError(errorDataset);
       }
       return (
