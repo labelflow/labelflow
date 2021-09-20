@@ -10,6 +10,7 @@ import {
   Membership,
   MutationCreateWorkspaceArgs,
   MutationUpdateWorkspaceArgs,
+  WorkspaceWhereUniqueInput,
 } from "@labelflow/graphql-types";
 
 import { Context } from "@labelflow/common-resolvers";
@@ -34,7 +35,7 @@ const addTypeToWorkspace = (
   type: WorkspaceType.Online,
 });
 
-const getWorkspace = async (
+export const getWorkspace = async (
   where: WorkspaceWhereUniqueInput,
   user: { id: string } | undefined
 ): Promise<DbWorkspace> => {
@@ -45,7 +46,7 @@ const getWorkspace = async (
     }),
   });
   const workspaceFromDb = workspacesFromDb?.[0] ?? null;
-  if (workspaceFromDb == null) {
+  if (workspaceFromDb == null || user == null) {
     throw new Error(`Couldn't find a workspace with id: "${where.id}"`);
   }
   return workspaceFromDb;
