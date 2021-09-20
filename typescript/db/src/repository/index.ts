@@ -138,7 +138,7 @@ export const repository: Repository = {
         where: castObjectNullsToUndefined(where),
       });
     },
-    get: async (where) => {
+    get: async (where, user) => {
       if (
         (where.id == null && where.slugs == null) ||
         (where.id != null && where.slugs != null)

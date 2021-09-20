@@ -73,7 +73,8 @@ type Delete<EntityWhereUniqueInput> = (
   input: EntityWhereUniqueInput
 ) => Promise<void>;
 type Get<EntityType, EntityWhereUniqueInput> = (
-  input: EntityWhereUniqueInput
+  input: EntityWhereUniqueInput,
+  user?: { id: string }
 ) => Promise<EntityType | undefined | null>;
 
 type List<Entity = unknown, Where extends Record<string, any> | null = null> = (

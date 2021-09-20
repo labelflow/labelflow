@@ -1,4 +1,4 @@
-import { trim, where } from "lodash/fp";
+import { trim } from "lodash/fp";
 import { v4 as uuidv4 } from "uuid";
 import slugify from "slugify";
 import { add } from "date-fns";
@@ -28,9 +28,10 @@ const getLabelClassesByDatasetId = async (
 
 const getDataset = async (
   where: DatasetWhereUniqueInput,
-  repository: Repository
+  repository: Repository,
+  user?: { id: string }
 ): Promise<DbDataset & { __typename: "Dataset" }> => {
-  const datasetFromRepository = await repository.dataset.get(where);
+  const datasetFromRepository = await repository.dataset.get(where, user);
   if (datasetFromRepository == null) {
     throw new Error(
       `Couldn't find dataset corresponding to ${JSON.stringify(where)}`
@@ -82,9 +83,9 @@ const labelClasses = async (
 const dataset = async (
   _: any,
   args: QueryDatasetArgs,
-  { repository }: Context
+  { repository, user }: Context
 ): Promise<DbDataset & { __typename: string }> =>
-  await getDataset(args.where, repository);
+  await getDataset(args.where, repository, user);
 
 const datasets = async (
   _: any,
@@ -107,7 +108,7 @@ const datasets = async (
 const createDataset = async (
   _: any,
   args: MutationCreateDatasetArgs,
-  { repository }: Context
+  { repository, user }: Context
 ): Promise<DbDataset & { __typename: string }> => {
   const date = new Date().toISOString();
 
@@ -129,7 +130,7 @@ const createDataset = async (
   try {
     await repository.dataset.add(dbDataset);
 
-    return await getDataset({ id: datasetId }, repository);
+    return await getDataset({ id: datasetId }, repository, user);
   } catch (e) {
     console.error(e);
     throw new Error(
@@ -141,7 +142,7 @@ const createDataset = async (
 const createDemoDataset = async (
   _: any,
   args: {},
-  { repository, req }: Context
+  { repository, req, user }: Context
 ): Promise<DbDataset> => {
   const datasetId = "049fe9f0-9a19-43cd-be65-35d222d54b4d";
   const now = new Date();
@@ -161,11 +162,12 @@ const createDemoDataset = async (
       return await getDataset(
         {
           slugs: {
-            datasetSlug: "tutorial-dataset",
+            slug: "tutorial-dataset",
             workspaceSlug: "local",
           },
         },
-        repository
+        repository,
+        user
       );
     }
     throw error;
@@ -210,15 +212,15 @@ const createDemoDataset = async (
     })
   );
 
-  return await getDataset({ id: datasetId }, repository);
+  return await getDataset({ id: datasetId }, repository, user);
 };
 
 const updateDataset = async (
   _: any,
   args: MutationUpdateDatasetArgs,
-  { repository }: Context
+  { repository, user }: Context
 ): Promise<DbDataset> => {
-  const datasetToUpdate = await getDataset(args.where, repository);
+  const datasetToUpdate = await getDataset(args.where, repository, user);
 
   const newData =
     "name" in args.data
@@ -237,15 +239,15 @@ const updateDataset = async (
     throw new Error("Could not update the dataset");
   }
 
-  return await getDataset({ id: datasetToUpdate.id }, repository);
+  return await getDataset({ id: datasetToUpdate.id }, repository, user);
 };
 
 const deleteDataset = async (
   _: any,
   args: MutationDeleteDatasetArgs,
-  { repository }: Context
+  { repository, user }: Context
 ): Promise<DbDataset> => {
-  const datasetToDelete = await getDataset(args.where, repository);
+  const datasetToDelete = await getDataset(args.where, repository, user);
 
   const imagesOfDataset = await repository.image.list({
     datasetId: args.where.id,
