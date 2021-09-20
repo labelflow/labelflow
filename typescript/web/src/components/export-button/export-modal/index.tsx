@@ -184,22 +184,28 @@ export const ExportModal = ({
               </Text>
             </Skeleton>
             <Box display="inline-block" width="100%" pl={8} pr={8} pt={4}>
-              {numberUndefinedLabelsOfDataset !== 0 && (
-                <Alert status="warning" borderRadius={5}>
-                  <AlertIcon />
-                  <AlertTitle mr={2} fontSize="md">
-                    None Class
-                  </AlertTitle>
-                  <AlertDescription fontSize="sm" fontWeight="medium">
-                    {`${numberUndefinedLabelsOfDataset} ${
-                      numberUndefinedLabelsOfDataset === 1 ? "label" : "labels"
-                    } ${
-                      numberUndefinedLabelsOfDataset === 1 ? "has" : "have"
-                    } no class assigned. Only labels with a class
+              {
+                // eslint-disable-next-line eqeqeq
+                numberUndefinedLabelsOfDataset != null &&
+                  numberUndefinedLabelsOfDataset !== 0 && (
+                    <Alert status="warning" borderRadius={5}>
+                      <AlertIcon />
+                      <AlertTitle mr={2} fontSize="md">
+                        Missing Class
+                      </AlertTitle>
+                      <AlertDescription fontSize="sm" fontWeight="medium">
+                        {`${numberUndefinedLabelsOfDataset} ${
+                          numberUndefinedLabelsOfDataset === 1
+                            ? "label"
+                            : "labels"
+                        } ${
+                          numberUndefinedLabelsOfDataset === 1 ? "has" : "have"
+                        } no class assigned. Only labels with a class
                     are exported.`}
-                  </AlertDescription>
-                </Alert>
-              )}
+                      </AlertDescription>
+                    </Alert>
+                  )
+              }
             </Box>
           </ModalHeader>
 
