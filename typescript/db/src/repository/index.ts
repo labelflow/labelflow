@@ -11,6 +11,7 @@ import {
 } from "./upload-supabase";
 import { countLabels, listLabels } from "./label";
 import { castObjectNullsToUndefined } from "./utils";
+import { getWorkspace } from "../resolvers/workspace";
 
 export const prisma = new PrismaClient();
 
@@ -147,9 +148,12 @@ export const repository: Repository = {
           "You should either specify the id or the slugs when looking for a dataset"
         );
       }
-      return await prisma.dataset.findUnique({
+
+      const dataset = await prisma.dataset.findUnique({
         where: castObjectNullsToUndefined(where),
       });
+      const result = await getWorkspace({ slug: dataset?.workspaceSlug }, user);
+      return dataset;
     },
     update: async (where, dataset) => {
       if (

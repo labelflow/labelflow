@@ -51,7 +51,7 @@ export type DbDataset = Omit<
   | "labelClasses"
   | "labelClassesAggregates"
   | "workspace"
->;
+> & { workspaceSlug: string };
 export type DbDatasetCreateInput = WithCreatedAtAndUpdatedAt<
   DatasetCreateInput & { slug: string }
 >;
