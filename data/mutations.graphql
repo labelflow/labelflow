@@ -27,6 +27,11 @@ type Mutation {
   ): Dataset
   deleteDataset(where: DatasetWhereUniqueInput!): Dataset
 
+  importDataset(
+    url: String!
+    format: ExportFormat!
+  ): ImportStatus
+
   createWorkspace(data: WorkspaceCreateInput!): Workspace
   updateWorkspace(
     where: WorkspaceWhereUniqueInput!

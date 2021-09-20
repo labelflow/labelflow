@@ -139,6 +139,10 @@ type ImagesAggregates {
   totalCount: Int!
 }
 
+type ImportStatus {
+  error: String
+}
+
 scalar JSON
 
 type Label {
@@ -270,6 +274,7 @@ type Mutation {
   createDemoDataset: Dataset
   updateDataset(where: DatasetWhereUniqueInput!, data: DatasetUpdateInput!): Dataset
   deleteDataset(where: DatasetWhereUniqueInput!): Dataset
+  importDataset(url: String!, format: ExportFormat!): ImportStatus
   createWorkspace(data: WorkspaceCreateInput!): Workspace
   updateWorkspace(where: WorkspaceWhereUniqueInput!, data: WorkspaceUpdateInput!): Workspace
   createMembership(data: MembershipCreateInput!): Membership

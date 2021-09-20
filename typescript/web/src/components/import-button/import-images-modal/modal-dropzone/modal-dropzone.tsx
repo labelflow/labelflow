@@ -12,7 +12,11 @@ import { useRouter } from "next/router";
 import { v4 as uuidv4 } from "uuid";
 import mime from "mime-types";
 
-import { UploadTarget } from "@labelflow/graphql-types";
+import {
+  ExportFormat,
+  UploadTarget,
+  // ImportStatus,
+} from "@labelflow/graphql-types";
 import { Dropzone } from "./dropzone";
 import { FilesStatuses } from "./file-statuses";
 import { DroppedFile, UploadStatuses } from "../types";
@@ -71,6 +75,14 @@ const getDataset = gql`
   query getDataset($slug: String!) {
     dataset(where: { slugs: { datasetSlug: $slug, workspaceSlug: "local" } }) {
       id
+    }
+  }
+`;
+
+const importDataset = gql`
+  mutation importDataset($url: String!, $format: ExportFormat!) {
+    importDataset(url: $url, format: $format) {
+      error
     }
   }
 `;
@@ -204,18 +216,35 @@ export const ImportImagesModalDropzone = ({
                   method: "PUT",
                   body: form,
                 });
-
-                const createdAt = new Date();
-                createdAt.setTime(now.getTime() + index);
-                await apolloClient.mutate({
-                  mutation: createImageFromUrlMutation,
-                  variables: {
-                    url: target.downloadUrl,
-                    createdAt: createdAt.toISOString(),
-                    name: acceptedFile.file.name,
-                    datasetId,
-                  },
-                });
+                if (acceptedFile.file.type.startsWith("image")) {
+                  const createdAt = new Date();
+                  createdAt.setTime(now.getTime() + index);
+                  await apolloClient.mutate({
+                    mutation: createImageFromUrlMutation,
+                    variables: {
+                      url: target.downloadUrl,
+                      createdAt: createdAt.toISOString(),
+                      name: acceptedFile.file.name,
+                      datasetId,
+                    },
+                  });
+                } else {
+                  // It's a zip archive
+                  const dataImportDataset = await apolloClient.mutate({
+                    mutation: importDataset,
+                    variables: {
+                      url: target.downloadUrl,
+                      format: ExportFormat.Coco,
+                    },
+                  });
+                  console.log(
+                    `dataImportDataset = ${JSON.stringify(
+                      dataImportDataset,
+                      null,
+                      2
+                    )}`
+                  );
+                }
 
                 return setFileUploadStatuses((previousFileUploadStatuses) => {
                   return {

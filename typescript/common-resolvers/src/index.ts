@@ -1,5 +1,6 @@
 import { mergeResolvers } from "@graphql-tools/merge";
 import exportResolvers from "./export";
+import importResolvers from "./import";
 import imageResolvers from "./image";
 import labelResolvers from "./label";
 import labelClassResolvers from "./label-class";
@@ -9,6 +10,7 @@ import uploadResolvers from "./upload";
 
 export const commonResolvers = mergeResolvers([
   exportResolvers,
+  importResolvers,
   imageResolvers,
   labelResolvers,
   labelClassResolvers,
