@@ -458,6 +458,28 @@ describe("updatedWorkspace mutation", () => {
     expect(data?.updateWorkspace.name).toEqual("new name");
   });
 
+  it("fails if the user does not have access to the workspace", async () => {
+    const id = (await createWorkspace())?.data?.createWorkspace.id;
+    user.id = testUser2Id;
+
+    await expect(
+      client.mutate<{
+        updateWorkspace: Pick<Workspace, "id" | "name">;
+      }>({
+        mutation: gql`
+          mutation updateWorkspace($id: ID!, $data: WorkspaceUpdateInput!) {
+            updateWorkspace(where: { id: $id }, data: $data) {
+              id
+              name
+            }
+          }
+        `,
+        variables: { id, data: { name: "new name" } },
+        fetchPolicy: "no-cache",
+      })
+    ).rejects.toThrow("User not authorized to access workspace");
+  });
+
   it("changes the slug is the name of the workspace is changed", async () => {
     const id = (await createWorkspace())?.data?.createWorkspace.id;
 
