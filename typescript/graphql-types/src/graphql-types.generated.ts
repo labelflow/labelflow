@@ -46,6 +46,11 @@ export type DatasetCreateInput = {
   workspaceSlug: Scalars['String'];
 };
 
+export type DatasetImportInput = {
+  url: Scalars['String'];
+  format: ExportFormat;
+};
+
 export type DatasetUpdateInput = {
   name: Scalars['String'];
 };
@@ -388,8 +393,8 @@ export type MutationDeleteDatasetArgs = {
 
 
 export type MutationImportDatasetArgs = {
-  url: Scalars['String'];
-  format: ExportFormat;
+  where: DatasetWhereUniqueInput;
+  data: DatasetImportInput;
 };
 
 
@@ -723,6 +728,7 @@ export type ResolversTypes = {
   String: ResolverTypeWrapper<Scalars['String']>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
   DatasetCreateInput: DatasetCreateInput;
+  DatasetImportInput: DatasetImportInput;
   DatasetUpdateInput: DatasetUpdateInput;
   DatasetWhereInput: DatasetWhereInput;
   DatasetWhereUniqueInput: DatasetWhereUniqueInput;
@@ -794,6 +800,7 @@ export type ResolversParentTypes = {
   String: Scalars['String'];
   Int: Scalars['Int'];
   DatasetCreateInput: DatasetCreateInput;
+  DatasetImportInput: DatasetImportInput;
   DatasetUpdateInput: DatasetUpdateInput;
   DatasetWhereInput: DatasetWhereInput;
   DatasetWhereUniqueInput: DatasetWhereUniqueInput;
@@ -982,7 +989,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   createDemoDataset?: Resolver<Maybe<ResolversTypes['Dataset']>, ParentType, ContextType>;
   updateDataset?: Resolver<Maybe<ResolversTypes['Dataset']>, ParentType, ContextType, RequireFields<MutationUpdateDatasetArgs, 'where' | 'data'>>;
   deleteDataset?: Resolver<Maybe<ResolversTypes['Dataset']>, ParentType, ContextType, RequireFields<MutationDeleteDatasetArgs, 'where'>>;
-  importDataset?: Resolver<Maybe<ResolversTypes['ImportStatus']>, ParentType, ContextType, RequireFields<MutationImportDatasetArgs, 'url' | 'format'>>;
+  importDataset?: Resolver<Maybe<ResolversTypes['ImportStatus']>, ParentType, ContextType, RequireFields<MutationImportDatasetArgs, 'where' | 'data'>>;
   createWorkspace?: Resolver<Maybe<ResolversTypes['Workspace']>, ParentType, ContextType, RequireFields<MutationCreateWorkspaceArgs, 'data'>>;
   updateWorkspace?: Resolver<Maybe<ResolversTypes['Workspace']>, ParentType, ContextType, RequireFields<MutationUpdateWorkspaceArgs, 'where' | 'data'>>;
   createMembership?: Resolver<Maybe<ResolversTypes['Membership']>, ParentType, ContextType, RequireFields<MutationCreateMembershipArgs, 'data'>>;

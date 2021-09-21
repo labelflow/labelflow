@@ -1,3 +1,8 @@
 type ImportStatus{
     error: String
 }
+
+input DatasetImportInput{
+    url: String!
+    format: ExportFormat!
+}

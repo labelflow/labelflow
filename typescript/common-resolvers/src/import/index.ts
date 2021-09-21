@@ -10,14 +10,15 @@ import { Context } from "../types";
 const makeImport = async (
   args: MutationImportDatasetArgs,
   { repository }: Context
-): Promise<Blob> => {
-  const zipBlob: Blob = new Blob([await repository.upload.get(args.url)]);
-  switch (args.format) {
+): Promise<void> => {
+  const zipBlob: Blob = new Blob([await repository.upload.get(args.data.url)]);
+  // TODO: handle when args.where.slugs is used over args.where.id
+  switch (args.data.format) {
     case ExportFormat.Yolo: {
       throw new Error("YOLO format not supported, but will be soon!");
     }
     case ExportFormat.Coco: {
-      return importCoco(zipBlob, {
+      return importCoco(zipBlob, args.where.id, {
         repository,
       });
     }

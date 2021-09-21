@@ -28,8 +28,8 @@ type Mutation {
   deleteDataset(where: DatasetWhereUniqueInput!): Dataset
 
   importDataset(
-    url: String!
-    format: ExportFormat!
+    where: DatasetWhereUniqueInput!
+    data: DatasetImportInput!
   ): ImportStatus
 
   createWorkspace(data: WorkspaceCreateInput!): Workspace

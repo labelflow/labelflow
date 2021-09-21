@@ -80,8 +80,11 @@ const getDataset = gql`
 `;
 
 const importDataset = gql`
-  mutation importDataset($url: String!, $format: ExportFormat!) {
-    importDataset(url: $url, format: $format) {
+  mutation importDataset(
+    $where: DatasetWhereUniqueInput!
+    $data: DatasetImportInput!
+  ) {
+    importDataset(where: $where, data: $data) {
       error
     }
   }
@@ -233,9 +236,13 @@ export const ImportImagesModalDropzone = ({
                   const dataImportDataset = await apolloClient.mutate({
                     mutation: importDataset,
                     variables: {
-                      url: target.downloadUrl,
-                      format: ExportFormat.Coco,
+                      where: { id: datasetId },
+                      data: {
+                        url: target.downloadUrl,
+                        format: ExportFormat.Coco,
+                      },
                     },
+                    refetchQueries: ["getDatasetData"],
                   });
                   console.log(
                     `dataImportDataset = ${JSON.stringify(
