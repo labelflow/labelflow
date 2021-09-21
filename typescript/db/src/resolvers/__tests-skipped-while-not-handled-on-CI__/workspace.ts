@@ -326,7 +326,7 @@ describe("workspace query", () => {
         fetchPolicy: "no-cache",
       })
     ).rejects.toThrow(
-      `Couldn't find a workspace with id: "${idCorrespondingToNoWorkspace}"`
+      `Couldn't find workspace from input "{"id":"${idCorrespondingToNoWorkspace}"}"`
     );
   });
 

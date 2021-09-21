@@ -44,7 +44,9 @@ const workspace = async (
     where: castObjectNullsToUndefined(args.where),
   });
   if (workspaceFromDb == null) {
-    throw new Error(`Couldn't find workspace from input "${args.where}"`);
+    throw new Error(
+      `Couldn't find workspace from input "${JSON.stringify(args.where)}"`
+    );
   }
   await checkUserAccessToWorkspace({
     user,
