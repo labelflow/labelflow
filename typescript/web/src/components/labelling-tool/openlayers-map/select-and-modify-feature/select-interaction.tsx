@@ -136,15 +136,6 @@ export const SelectInteraction = ({
           handleEvent={(e) => {
             const eventType = e?.type ?? null;
             switch (eventType) {
-              case "click":
-                if (selectedTool === Tools.CLASSIFICATION) {
-                  if (isContextMenuOpen) {
-                    setIsContextMenuOpen(false);
-                    return false;
-                  }
-                  contextMenuHandler(e);
-                }
-                return true;
               case "contextmenu": {
                 contextMenuHandler(e);
                 return true;
