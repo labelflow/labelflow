@@ -26,7 +26,7 @@ const ClassAdditionButton = React.forwardRef<
     selectedLabelClass?: LabelClassItem | null;
     toggle: () => void;
   }
->(({ selectedLabelClass, toggle }, ref) => {
+>(({ toggle }, ref) => {
   const largeButton = (
     <Button
       rightIcon={<SelectorIcon fontSize="md" />}
