@@ -242,15 +242,18 @@ export const ImportImagesModalDropzone = ({
                         format: ExportFormat.Coco,
                       },
                     },
-                    refetchQueries: ["getDatasetData"],
+                    refetchQueries: [
+                      "getDatasetData",
+                      "getImageLabels",
+                      "getLabel",
+                      "countLabelsOfDataset",
+                    ],
                   });
-                  console.log(
-                    `dataImportDataset = ${JSON.stringify(
-                      dataImportDataset,
-                      null,
-                      2
-                    )}`
-                  );
+                  if (dataImportDataset?.data?.importDataset?.error) {
+                    throw new Error(
+                      dataImportDataset?.data?.importDataset?.error
+                    );
+                  }
                 }
 
                 return setFileUploadStatuses((previousFileUploadStatuses) => {
