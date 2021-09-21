@@ -21,8 +21,12 @@ import {
   chakra,
 } from "@chakra-ui/react";
 import { RiArrowDownSLine } from "react-icons/ri";
-import { BiShapeSquare, BiShapePolygon } from "react-icons/bi";
-import { BsTag } from "react-icons/bs";
+import {
+  BiShapeSquare,
+  BiPurchaseTagAlt,
+  BiShapePolygon,
+} from "react-icons/bi";
+
 import { useHotkeys } from "react-hotkeys-hook";
 
 import { useLabellingStore, Tools } from "../../../connectors/labelling-state";
@@ -31,7 +35,7 @@ import { keymap } from "../../../keymap";
 
 export type Props = {};
 
-const ChakraBiLabel = chakra(BsTag);
+const ChakraBiLabel = chakra(BiPurchaseTagAlt);
 const ChakraBiShapeSquare = chakra(BiShapeSquare);
 const ChakraBiShapePolygon = chakra(BiShapePolygon);
 const ChakraRiArrowDownSLine = chakra(RiArrowDownSLine);
