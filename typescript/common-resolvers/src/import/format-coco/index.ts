@@ -80,63 +80,84 @@ const convertCocoSegmentationToLabel = (
 });
 
 export const importCoco: ImportFunction = async (
-  zipBlob,
+  blob,
   datasetId,
+  options,
   { repository }
 ) => {
-  const zip = await JSZip.loadAsync(zipBlob);
-  const annotationsFilesJSZip = zip.filter(
-    (relativePath) => path.extname(relativePath) === ".json"
-  );
-  if (annotationsFilesJSZip.length === 0) {
-    throw new Error("No COCO annotation file was found in the zip file.");
-  }
-  if (annotationsFilesJSZip.length > 1) {
-    throw new Error(
-      "More than one COCO annotation file was found in the zip file."
+  let annotationBlob = blob;
+  if (!options?.annotationsOnly) {
+    const zip = await JSZip.loadAsync(blob);
+    const annotationsFilesJSZip = zip.filter(
+      (relativePath) => path.extname(relativePath) === ".json"
     );
-  }
-  const annotationFile: CocoDataset = JSON.parse(
-    await annotationsFilesJSZip[0].async("string", () => {})
-  );
-  const imageFiles = zip.filter((relativePath) =>
-    path.dirname(relativePath).endsWith("images")
-  );
-  const imageNameToFile = imageFiles.reduce(
-    (imageNameToFileCurrent, imageFile) => {
-      imageNameToFileCurrent.set(path.basename(imageFile.name), imageFile);
-      return imageNameToFileCurrent;
-    },
-    new Map()
-  );
-  // Manage coco images => labelflow images
-  const cocoImageIdToLabelFlowImageId = new Map<number, string>();
-  const images = await repository.image.list({ datasetId });
-  const imagesCoco = annotationFile.images.filter((imageCoco) => {
-    const labelFlowImage = images.find(
-      (image) =>
-        image.name ===
-        imageCoco.file_name.replace(path.extname(imageCoco.file_name), "")
-    );
-    if (labelFlowImage) {
-      cocoImageIdToLabelFlowImageId.set(imageCoco.id, labelFlowImage.id);
-      return false;
+    if (annotationsFilesJSZip.length === 0) {
+      throw new Error("No COCO annotation file was found in the zip file.");
     }
-    return true;
-  });
-  // eslint-disable-next-line no-restricted-syntax
-  for (const imageCoco of imagesCoco) {
-    const imageFile = imageNameToFile.get(imageCoco.file_name);
-    // eslint-disable-next-line no-await-in-loop
-    const {
-      id: labelFlowImageId,
-      // eslint-disable-next-line no-await-in-loop
-    } = await uploadImage(imageFile, imageCoco.file_name, datasetId, {
-      repository,
+    if (annotationsFilesJSZip.length > 1) {
+      throw new Error(
+        "More than one COCO annotation file was found in the zip file."
+      );
+    }
+    const annotationFile: CocoDataset = JSON.parse(
+      await annotationsFilesJSZip[0].async("string", () => {})
+    );
+    annotationBlob = await annotationsFilesJSZip[0].async("blob", () => {});
+    const imageFiles = zip.filter((relativePath) =>
+      path.dirname(relativePath).endsWith("images")
+    );
+    const imageNameToFile = imageFiles.reduce(
+      (imageNameToFileCurrent, imageFile) => {
+        imageNameToFileCurrent.set(path.basename(imageFile.name), imageFile);
+        return imageNameToFileCurrent;
+      },
+      new Map()
+    );
+    // Manage coco images => labelflow images
+    const images = await repository.image.list({ datasetId });
+    const imagesCoco = annotationFile.images.filter((imageCoco) => {
+      const labelFlowImage = images.find(
+        (image) =>
+          image.name ===
+          imageCoco.file_name.replace(path.extname(imageCoco.file_name), "")
+      );
+      if (labelFlowImage) {
+        // cocoImageIdToLabelFlowImageId.set(imageCoco.id, labelFlowImage.id);
+        return false;
+      }
+      return true;
     });
-    cocoImageIdToLabelFlowImageId.set(imageCoco.id, labelFlowImageId);
-    console.log(`Created image ${imageCoco.file_name}`);
+    // eslint-disable-next-line no-restricted-syntax
+    for (const imageCoco of imagesCoco) {
+      const imageFile = imageNameToFile.get(imageCoco.file_name);
+      // eslint-disable-next-line no-await-in-loop
+      const {
+        id: labelFlowImageId,
+        // eslint-disable-next-line no-await-in-loop
+      } = await uploadImage(imageFile, imageCoco.file_name, datasetId, {
+        repository,
+      });
+      // cocoImageIdToLabelFlowImageId.set(imageCoco.id, labelFlowImageId);
+      console.log(`Created image ${imageCoco.file_name}`);
+    }
   }
+  const annotationFile: CocoDataset = JSON.parse(await annotationBlob.text());
+  console.log(`annotationFile = ${JSON.stringify(annotationFile, null, 1)}`);
+  const images = await repository.image.list({ datasetId });
+  const cocoImageIdToLabelFlowImageId = annotationFile.images.reduce(
+    (currentMap, imageCoco) => {
+      const labelFlowImage = images.find(
+        (image) =>
+          image.name ===
+          imageCoco.file_name.replace(path.extname(imageCoco.file_name), "")
+      );
+      if (labelFlowImage) {
+        currentMap.set(imageCoco.id, labelFlowImage.id);
+      }
+      return currentMap;
+    },
+    new Map<number, string>()
+  );
   // Manage coco categories => labelflow labelclasses
   const cocoCategoryIdToLabelFlowLabelClassId = new Map<number, string>();
   const labelClasses = await repository.labelClass.list({ datasetId });

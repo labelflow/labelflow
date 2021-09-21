@@ -232,7 +232,7 @@ export const ImportImagesModalDropzone = ({
                     },
                   });
                 } else {
-                  // It's a zip archive
+                  // It's a dataset / annotations that we want to import
                   const dataImportDataset = await apolloClient.mutate({
                     mutation: importDataset,
                     variables: {
@@ -240,6 +240,12 @@ export const ImportImagesModalDropzone = ({
                       data: {
                         url: target.downloadUrl,
                         format: ExportFormat.Coco,
+                        options: {
+                          coco: {
+                            annotationsOnly:
+                              acceptedFile.file.type === "application/json",
+                          },
+                        },
                       },
                     },
                     refetchQueries: [

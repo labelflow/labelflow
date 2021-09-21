@@ -18,7 +18,7 @@ const makeImport = async (
       throw new Error("YOLO format not supported, but will be soon!");
     }
     case ExportFormat.Coco: {
-      return importCoco(zipBlob, args.where.id, {
+      return importCoco(zipBlob, args.where.id, args.data?.options?.coco, {
         repository,
       });
     }
@@ -38,7 +38,7 @@ const importDataset = async (
     return {};
   } catch (e) {
     return {
-      error: e.message,
+      error: `${e.message}\n${e.stack}`,
     };
   }
 };

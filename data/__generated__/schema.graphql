@@ -24,6 +24,7 @@ input DatasetCreateInput {
 input DatasetImportInput {
   url: String!
   format: ExportFormat!
+  options: ImportOptions
 }
 
 input DatasetUpdateInput {
@@ -142,6 +143,14 @@ input ImageWhereUniqueInput {
 
 type ImagesAggregates {
   totalCount: Int!
+}
+
+input ImportOptions {
+  coco: ImportOptionsCoco
+}
+
+input ImportOptionsCoco {
+  annotationsOnly: Boolean
 }
 
 type ImportStatus {

@@ -49,6 +49,7 @@ export type DatasetCreateInput = {
 export type DatasetImportInput = {
   url: Scalars['String'];
   format: ExportFormat;
+  options?: Maybe<ImportOptions>;
 };
 
 export type DatasetUpdateInput = {
@@ -170,6 +171,14 @@ export type ImageWhereUniqueInput = {
 export type ImagesAggregates = {
   __typename?: 'ImagesAggregates';
   totalCount: Scalars['Int'];
+};
+
+export type ImportOptions = {
+  coco?: Maybe<ImportOptionsCoco>;
+};
+
+export type ImportOptionsCoco = {
+  annotationsOnly?: Maybe<Scalars['Boolean']>;
 };
 
 export type ImportStatus = {
@@ -752,6 +761,8 @@ export type ResolversTypes = {
   ImageWhereInput: ImageWhereInput;
   ImageWhereUniqueInput: ImageWhereUniqueInput;
   ImagesAggregates: ResolverTypeWrapper<ImagesAggregates>;
+  ImportOptions: ImportOptions;
+  ImportOptionsCoco: ImportOptionsCoco;
   ImportStatus: ResolverTypeWrapper<ImportStatus>;
   JSON: ResolverTypeWrapper<Scalars['JSON']>;
   Label: ResolverTypeWrapper<Label>;
@@ -822,6 +833,8 @@ export type ResolversParentTypes = {
   ImageWhereInput: ImageWhereInput;
   ImageWhereUniqueInput: ImageWhereUniqueInput;
   ImagesAggregates: ImagesAggregates;
+  ImportOptions: ImportOptions;
+  ImportOptionsCoco: ImportOptionsCoco;
   ImportStatus: ImportStatus;
   JSON: Scalars['JSON'];
   Label: Label;
