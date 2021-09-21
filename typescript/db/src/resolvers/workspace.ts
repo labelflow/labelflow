@@ -10,11 +10,10 @@ import {
   Membership,
   MutationCreateWorkspaceArgs,
   MutationUpdateWorkspaceArgs,
-  WorkspaceWhereUniqueInput,
 } from "@labelflow/graphql-types";
 
 import { Context } from "@labelflow/common-resolvers";
-import { prisma } from "../repository";
+import { prisma, checkUserAccessToWorkspace } from "../repository";
 import { castObjectNullsToUndefined } from "../repository/utils";
 
 type DbWorkspacePlan = NonNullable<
@@ -35,29 +34,21 @@ const addTypeToWorkspace = (
   type: WorkspaceType.Online,
 });
 
-export const getWorkspace = async (
-  where: WorkspaceWhereUniqueInput,
-  user: { id: string } | undefined
-): Promise<DbWorkspace> => {
-  const workspacesFromDb = await prisma.workspace.findMany({
-    where: castObjectNullsToUndefined({
-      ...where,
-      memberships: { some: { userId: user?.id } },
-    }),
-  });
-  const workspaceFromDb = workspacesFromDb?.[0] ?? null;
-  if (workspaceFromDb == null || user == null) {
-    throw new Error(`Couldn't find a workspace with id: "${where.id}"`);
-  }
-  return workspaceFromDb;
-};
-
 const workspace = async (
   _: any,
   args: QueryWorkspaceArgs,
   { user }: Context
 ): Promise<DbWorkspaceWithType> => {
-  const workspaceFromDb = await getWorkspace(args.where, user);
+  const workspaceFromDb = await prisma.workspace.findUnique({
+    where: castObjectNullsToUndefined(args.where),
+  });
+  if (workspaceFromDb == null) {
+    throw new Error(`Couldn't find workspace from input "${args.where}"`);
+  }
+  await checkUserAccessToWorkspace({
+    user,
+    where: args.where,
+  });
   return addTypeToWorkspace(workspaceFromDb);
 };
 

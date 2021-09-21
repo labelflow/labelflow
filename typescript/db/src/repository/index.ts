@@ -1,7 +1,7 @@
 import { PrismaClient, Prisma } from "@prisma/client";
 
 import { DbLabel, Repository } from "@labelflow/common-resolvers";
-import { Image } from "@labelflow/graphql-types";
+import { Image, WorkspaceWhereUniqueInput } from "@labelflow/graphql-types";
 import slugify from "slugify";
 import {
   getUploadTargetHttp,
@@ -11,9 +11,30 @@ import {
 } from "./upload-supabase";
 import { countLabels, listLabels } from "./label";
 import { castObjectNullsToUndefined } from "./utils";
-import { getWorkspace } from "../resolvers/workspace";
 
 export const prisma = new PrismaClient();
+
+export const checkUserAccessToWorkspace = async ({
+  where,
+  user,
+}: {
+  where?: WorkspaceWhereUniqueInput;
+  user?: { id: string };
+}): Promise<boolean> => {
+  if (user?.id == null) {
+    throw new Error("User not authenticated");
+  }
+  const membership = await prisma.membership.findFirst({
+    where: {
+      userId: user.id,
+      workspace: { id: where?.id ?? undefined, slug: where?.slug ?? undefined },
+    },
+  });
+  if (membership == null) {
+    throw new Error("User not authorized to access resource");
+  }
+  return membership != null;
+};
 
 export const repository: Repository = {
   image: {
@@ -152,7 +173,10 @@ export const repository: Repository = {
       const dataset = await prisma.dataset.findUnique({
         where: castObjectNullsToUndefined(where),
       });
-      const result = await getWorkspace({ slug: dataset?.workspaceSlug }, user);
+      await checkUserAccessToWorkspace({
+        user,
+        where: { slug: dataset?.workspaceSlug },
+      });
       return dataset;
     },
     update: async (where, dataset) => {
@@ -179,6 +203,7 @@ export const repository: Repository = {
         castObjectNullsToUndefined({
           orderBy: { createdAt: Prisma.SortOrder.asc },
           skip,
+          take: first,
           where: {
             workspace: { memberships: { some: { userId: where?.user?.id } } },
           },
