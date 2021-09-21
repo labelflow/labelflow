@@ -179,7 +179,7 @@ export const repository: Repository = {
       });
       return dataset;
     },
-    update: async (where, dataset) => {
+    update: async (where, dataset, user) => {
       if (
         (where.id == null && where.slugs == null) ||
         (where.id != null && where.slugs != null)
@@ -187,6 +187,21 @@ export const repository: Repository = {
         throw new Error(
           "You should either specify the id or the slugs when updating a dataset"
         );
+      }
+      if (user?.id == null) {
+        throw new Error("User not authenticated");
+      }
+      const datasetCondition =
+        where.id != null ? { id: where.id } : { slug: where?.slugs?.slug };
+      const hasAccessToDataset =
+        (await prisma.membership.findFirst({
+          where: {
+            userId: user?.id,
+            workspace: { datasets: { some: datasetCondition } },
+          },
+        })) != null;
+      if (!hasAccessToDataset) {
+        throw new Error("User not authorized to access resource");
       }
       try {
         await prisma.dataset.update({

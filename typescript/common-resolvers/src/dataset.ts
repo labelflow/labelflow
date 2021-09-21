@@ -230,7 +230,8 @@ const updateDataset = async (
   try {
     const updateResult = await repository.dataset.update(
       { id: datasetToUpdate.id },
-      newData
+      newData,
+      user
     );
     if (!updateResult) {
       throw new Error("Could not update the dataset");

@@ -84,7 +84,8 @@ type List<Entity = unknown, Where extends Record<string, any> | null = null> = (
 ) => Promise<Entity[]>;
 type Update<Entity, EntityWhereUniqueInput> = (
   input: EntityWhereUniqueInput,
-  data: PartialWithNullAllowed<Entity>
+  data: PartialWithNullAllowed<Entity>,
+  user?: { id: string }
 ) => Promise<boolean>;
 
 export type Repository = {
