@@ -32,9 +32,6 @@ export const SelectInteraction = ({
   const setSelectedLabelId = useLabellingStore(
     (state) => state.setSelectedLabelId
   );
-  const isContextMenuOpen = useLabellingStore(
-    (state) => state.isContextMenuOpen
-  );
 
   useHotkeys(
     keymap.openLabelClassSelectionPopover.key,
