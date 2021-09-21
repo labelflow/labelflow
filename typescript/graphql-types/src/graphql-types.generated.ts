@@ -208,7 +208,7 @@ export type LabelClass = {
 export type LabelClassCreateInput = {
   id?: Maybe<Scalars['ID']>;
   name: Scalars['String'];
-  color: Scalars['ColorHex'];
+  color?: Maybe<Scalars['ColorHex']>;
   datasetId: Scalars['ID'];
 };
 

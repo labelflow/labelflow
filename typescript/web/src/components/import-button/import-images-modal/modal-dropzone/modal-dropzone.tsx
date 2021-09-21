@@ -247,6 +247,7 @@ export const ImportImagesModalDropzone = ({
                       "getImageLabels",
                       "getLabel",
                       "countLabelsOfDataset",
+                      "getDatasetLabelClasses",
                     ],
                   });
                   if (dataImportDataset?.data?.importDataset?.error) {

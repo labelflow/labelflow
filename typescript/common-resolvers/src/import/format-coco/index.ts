@@ -160,7 +160,7 @@ export const importCoco: ImportFunction = async (
       await labelClassResolvers.Mutation.createLabelClass(
         null,
         {
-          data: { name: categoryCoco.name, datasetId, color: 0xbbbbbb }, // TODO: manage labelClass colors
+          data: { name: categoryCoco.name, datasetId },
         },
         { repository }
       );
