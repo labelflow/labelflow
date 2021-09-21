@@ -7,6 +7,7 @@ import { Polygon } from "ol/geom";
 import { useHotkeys } from "react-hotkeys-hook";
 import { useRouter } from "next/router";
 import { ClassSelectionMenu, LabelClassItem } from "./class-selection-menu";
+import { ClassAdditionMenu } from "./class-addition-menu";
 import { Tools, useLabellingStore } from "../../../connectors/labelling-state";
 import { useUndoStore } from "../../../connectors/undo-store";
 import { createCreateLabelClassAndUpdateLabelEffect } from "../../../connectors/undo-store/effects/create-label-class-and-update-label";
@@ -273,8 +274,19 @@ export const EditLabelClassMenu = () => {
 
   return (
     <>
-      {displayClassSelectionMenu && (
+      {displayClassSelectionMenu && selectedTool !== Tools.CLASSIFICATION && (
         <ClassSelectionMenu
+          isOpen={isOpen}
+          setIsOpen={setIsOpen}
+          selectedLabelClass={selectedLabelClass}
+          labelClasses={labelClasses}
+          createNewClass={handleCreateNewClass}
+          onSelectedClassChange={handleSelectedClassChange}
+          isContextMenuOpen={isContextMenuOpen}
+        />
+      )}
+      {displayClassSelectionMenu && selectedTool === Tools.CLASSIFICATION && (
+        <ClassAdditionMenu
           isOpen={isOpen}
           setIsOpen={setIsOpen}
           selectedLabelClass={selectedLabelClass}
