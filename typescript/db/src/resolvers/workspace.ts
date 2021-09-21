@@ -98,7 +98,8 @@ const createWorkspace = async (
 
 const updateWorkspace = async (
   _: any,
-  args: MutationUpdateWorkspaceArgs
+  args: MutationUpdateWorkspaceArgs,
+  { user }: Context
 ): Promise<DbWorkspaceWithType> => {
   const newNameAndSlugs =
     typeof args.data.name === "string"
@@ -108,7 +109,9 @@ const updateWorkspace = async (
         }
       : // needed to make prisma happy with the types
         { name: undefined };
-
+  // Check if user has access to workspace, this will throw it it does not
+  await checkUserAccessToWorkspace({ user, where: args.where });
+  // Update workspace
   const updatedWorkspace = await prisma.workspace.update({
     where: castObjectNullsToUndefined(args.where),
     data: { ...args.data, ...newNameAndSlugs },
