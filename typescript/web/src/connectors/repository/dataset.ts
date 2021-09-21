@@ -15,9 +15,7 @@ export const getDataset: Repository["dataset"]["get"] = async (where) => {
   if (where.id != null) {
     return await (await getDatabase()).dataset.get(where.id);
   }
-  return await (
-    await getDatabase()
-  ).dataset.get({ slug: where.slugs?.datasetSlug });
+  return await (await getDatabase()).dataset.get({ slug: where.slugs?.slug });
 };
 
 export const deleteDataset: Repository["dataset"]["delete"] = async (where) => {
