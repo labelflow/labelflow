@@ -115,26 +115,19 @@ export const importCoco: ImportFunction = async (
     );
     // Manage coco images => labelflow images
     const images = await repository.image.list({ datasetId });
-    const imagesCoco = annotationFile.images.filter((imageCoco) => {
-      const labelFlowImage = images.find(
-        (image) =>
-          image.name ===
-          imageCoco.file_name.replace(path.extname(imageCoco.file_name), "")
-      );
-      if (labelFlowImage) {
-        // cocoImageIdToLabelFlowImageId.set(imageCoco.id, labelFlowImage.id);
-        return false;
-      }
-      return true;
-    });
+    const imagesCoco = annotationFile.images.filter(
+      (imageCoco) =>
+        !images.find(
+          (image) =>
+            image.name ===
+            imageCoco.file_name.replace(path.extname(imageCoco.file_name), "")
+        )
+    );
     // eslint-disable-next-line no-restricted-syntax
     for (const imageCoco of imagesCoco) {
       const imageFile = imageNameToFile.get(imageCoco.file_name);
       // eslint-disable-next-line no-await-in-loop
-      const {
-        id: labelFlowImageId,
-        // eslint-disable-next-line no-await-in-loop
-      } = await uploadImage(imageFile, imageCoco.file_name, datasetId, {
+      await uploadImage(imageFile, imageCoco.file_name, datasetId, {
         repository,
       });
       // cocoImageIdToLabelFlowImageId.set(imageCoco.id, labelFlowImageId);
