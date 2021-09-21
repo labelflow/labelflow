@@ -6,7 +6,7 @@ import {
   QueryMembershipsArgs,
 } from "@labelflow/graphql-types";
 import { Prisma } from "@prisma/client";
-import { prisma } from "../repository";
+import { prisma } from "../repository/prisma-client";
 
 const membership = async (_: any, args: QueryMembershipArgs) => {
   const membershipFromDb = await prisma.membership.findUnique({

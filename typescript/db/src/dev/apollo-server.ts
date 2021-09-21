@@ -4,7 +4,8 @@ import { loadSchemaSync } from "@graphql-tools/load";
 import { GraphQLFileLoader } from "@graphql-tools/graphql-file-loader";
 import { addResolversToSchema } from "@graphql-tools/schema";
 import { resolvers } from "../resolvers";
-import { repository, prisma } from "../repository";
+import { repository } from "../repository";
+import { prisma } from "../repository/prisma-client";
 
 const schema = loadSchemaSync(
   join(__dirname, "../../../../data/__generated__/schema.graphql"),

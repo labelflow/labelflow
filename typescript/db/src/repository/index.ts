@@ -1,8 +1,8 @@
-import { PrismaClient, Prisma } from "@prisma/client";
-
+import { Prisma } from "@prisma/client";
 import { DbLabel, Repository } from "@labelflow/common-resolvers";
 import { Image, WorkspaceWhereUniqueInput } from "@labelflow/graphql-types";
 import slugify from "slugify";
+import { prisma } from "./prisma-client";
 import {
   getUploadTargetHttp,
   getFromStorage,
@@ -11,8 +11,6 @@ import {
 } from "./upload-supabase";
 import { countLabels, listLabels } from "./label";
 import { castObjectNullsToUndefined } from "./utils";
-
-export const prisma = new PrismaClient();
 
 export const checkUserAccessToWorkspace = async ({
   where,

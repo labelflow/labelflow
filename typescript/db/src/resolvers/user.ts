@@ -7,7 +7,7 @@ import {
 } from "@labelflow/graphql-types";
 import { DbUser } from "@labelflow/common-resolvers";
 
-import { prisma } from "../repository";
+import { prisma } from "../repository/prisma-client";
 
 const users = async (_: any, args: QueryUsersArgs) => {
   return await prisma.user.findMany({

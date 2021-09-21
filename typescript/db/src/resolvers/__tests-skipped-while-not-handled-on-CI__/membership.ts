@@ -8,7 +8,7 @@ import {
   MutationCreateWorkspaceArgs,
   Workspace,
 } from "@labelflow/graphql-types";
-import { prisma } from "../../repository";
+import { prisma } from "../../repository/prisma-client";
 import { client, user } from "../../dev/apollo-client";
 
 // @ts-ignore

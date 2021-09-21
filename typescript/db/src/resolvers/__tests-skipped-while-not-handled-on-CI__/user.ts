@@ -6,7 +6,7 @@ import {
   User,
   Workspace,
 } from "@labelflow/graphql-types";
-import { prisma } from "../../repository";
+import { prisma } from "../../repository/prisma-client";
 import { client, user as loggedInUser } from "../../dev/apollo-client";
 
 // @ts-ignore

@@ -13,7 +13,8 @@ import {
 } from "@labelflow/graphql-types";
 
 import { Context } from "@labelflow/common-resolvers";
-import { prisma, checkUserAccessToWorkspace } from "../repository";
+import { checkUserAccessToWorkspace } from "../repository";
+import { prisma } from "../repository/prisma-client";
 import { castObjectNullsToUndefined } from "../repository/utils";
 
 type DbWorkspacePlan = NonNullable<
