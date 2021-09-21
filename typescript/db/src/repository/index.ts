@@ -186,7 +186,10 @@ export const repository: Repository = {
           skip,
           take: first,
           where: {
-            workspace: { memberships: { some: { userId: where?.user?.id } } },
+            workspace: {
+              slug: where?.workspaceSlug,
+              memberships: { some: { userId: where?.user?.id } },
+            },
           },
         })
       ),

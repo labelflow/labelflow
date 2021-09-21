@@ -93,7 +93,7 @@ const datasets = async (
   { repository, user }: Context
 ): Promise<DbDataset[]> => {
   const queryResult = await repository.dataset.list(
-    { user },
+    { user, ...args.where },
     args.skip,
     args.first
   );

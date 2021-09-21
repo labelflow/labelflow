@@ -18,6 +18,8 @@ import type {
   LabelClassWhereUniqueInput,
   DatasetWhereUniqueInput,
   ImageWhereUniqueInput,
+  WorkspaceWhereUniqueInput,
+  DatasetWhereInput,
 } from "@labelflow/graphql-types";
 
 type NoUndefinedField<T> = { [P in keyof T]: NonNullable<T[P]> };
@@ -119,7 +121,7 @@ export type Repository = {
     add: Add<DbDatasetCreateInput>;
     delete: Delete<DatasetWhereUniqueInput>;
     get: Get<DbDataset, DatasetWhereUniqueInput>;
-    list: List<DbDataset, { user?: { id: string } }>;
+    list: List<DbDataset, DatasetWhereInput & { user?: { id: string } }>;
     update: Update<DbDataset, DatasetWhereUniqueInput>;
   };
   upload: {
