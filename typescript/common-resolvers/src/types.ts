@@ -121,7 +121,7 @@ export type Repository = {
     add: Add<DbDatasetCreateInput>;
     delete: Delete<DatasetWhereUniqueInput>;
     get: Get<DbDataset, DatasetWhereUniqueInput>;
-    list: List<DbDataset, DatasetWhereInput & { user?: { id: string } }>;
+    list: List<DbDataset, { workspaceSlug?: string; user?: { id: string } }>;
     update: Update<DbDataset, DatasetWhereUniqueInput>;
   };
   upload: {
