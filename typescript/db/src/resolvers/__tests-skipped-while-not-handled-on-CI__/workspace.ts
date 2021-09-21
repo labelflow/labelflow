@@ -190,6 +190,29 @@ describe("workspaces query", () => {
     ]);
   });
 
+  it("returns an empty array if the user does not have any workspace", async () => {
+    await createWorkspace({ name: "test1" });
+    await createWorkspace({ name: "test2" });
+    await createWorkspace({ name: "test3" });
+    await createWorkspace({ name: "test4" });
+    user.id = testUser2Id;
+    const { data } = await client.query<{
+      workspaces: Pick<Workspace, "id" | "name">[];
+    }>({
+      query: gql`
+        {
+          workspaces {
+            id
+            name
+          }
+        }
+      `,
+      fetchPolicy: "no-cache",
+    });
+
+    expect(data.workspaces.map((workspace) => workspace.name)).toEqual([]);
+  });
+
   it("returns workspaces with the Online type", async () => {
     await createWorkspace({ name: "test1" });
     await createWorkspace({ name: "test2" });
@@ -328,6 +351,46 @@ describe("workspace query", () => {
     ).rejects.toThrow(
       `Couldn't find workspace from input "{"id":"${idCorrespondingToNoWorkspace}"}"`
     );
+  });
+
+  it("fails if user is not logged in", async () => {
+    const id = (await createWorkspace()).data?.createWorkspace.id;
+    user.id = undefined;
+
+    await expect(() =>
+      client.query({
+        query: gql`
+          query workspace($id: ID!) {
+            workspace(where: { id: $id }) {
+              id
+              name
+            }
+          }
+        `,
+        variables: { id },
+        fetchPolicy: "no-cache",
+      })
+    ).rejects.toThrow(`User not authenticated`);
+  });
+
+  it("fails if user does not have access to workspace", async () => {
+    const id = (await createWorkspace()).data?.createWorkspace.id;
+    user.id = testUser2Id;
+
+    await expect(() =>
+      client.query({
+        query: gql`
+          query workspace($id: ID!) {
+            workspace(where: { id: $id }) {
+              id
+              name
+            }
+          }
+        `,
+        variables: { id },
+        fetchPolicy: "no-cache",
+      })
+    ).rejects.toThrow(`User not authorized to access workspace`);
   });
 
   it("returns the workspace corresponding to the id", async () => {
