@@ -128,13 +128,15 @@ const createDataset = async (
     workspaceSlug: args.data.workspaceSlug,
   };
   try {
-    await repository.dataset.add(dbDataset);
+    await repository.dataset.add(dbDataset, user);
 
     return await getDataset({ id: datasetId }, repository, user);
   } catch (e) {
     console.error(e);
     throw new Error(
-      `Could not create the dataset ${JSON.stringify(dbDataset)}`
+      `Could not create the dataset ${JSON.stringify(
+        dbDataset
+      )} due to error "${e?.message ?? e}"`
     );
   }
 };
@@ -148,14 +150,17 @@ const createDemoDataset = async (
   const now = new Date();
   const currentDate = now.toISOString();
   try {
-    await repository.dataset.add({
-      name: "Tutorial dataset",
-      slug: "tutorial-dataset",
-      id: datasetId,
-      createdAt: currentDate,
-      updatedAt: currentDate,
-      workspaceSlug: "local", // FIXME: Implement proper id here
-    });
+    await repository.dataset.add(
+      {
+        name: "Tutorial dataset",
+        slug: "tutorial-dataset",
+        id: datasetId,
+        createdAt: currentDate,
+        updatedAt: currentDate,
+        workspaceSlug: "local", // FIXME: Implement proper id here
+      },
+      user
+    );
   } catch (error) {
     if (error.name === "ConstraintError") {
       // The tutorial dataset already exists, just return it
@@ -258,7 +263,7 @@ const deleteDataset = async (
       async (image) => await repository.upload.delete(image.url)
     )
   );
-  await repository.dataset.delete({ id: datasetToDelete.id });
+  await repository.dataset.delete({ id: datasetToDelete.id }, user);
   return datasetToDelete;
 };
 

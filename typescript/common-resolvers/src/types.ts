@@ -67,10 +67,14 @@ type WithCreatedAtAndUpdatedAt<T extends {}> = T & {
 
 type ID = string;
 
-type Add<EntityType> = (entity: EntityType) => Promise<ID>;
+type Add<EntityType> = (
+  entity: EntityType,
+  user?: { id: string }
+) => Promise<ID>;
 type Count<Where> = (where?: Where) => Promise<number>;
 type Delete<EntityWhereUniqueInput> = (
-  input: EntityWhereUniqueInput
+  input: EntityWhereUniqueInput,
+  user?: { id: string }
 ) => Promise<void>;
 type Get<EntityType, EntityWhereUniqueInput> = (
   input: EntityWhereUniqueInput,

@@ -1,6 +1,6 @@
 import { Prisma } from "@prisma/client";
 import { DbLabel, Repository } from "@labelflow/common-resolvers";
-import { Image, WorkspaceWhereUniqueInput } from "@labelflow/graphql-types";
+import { Image } from "@labelflow/graphql-types";
 import slugify from "slugify";
 import { prisma } from "./prisma-client";
 import {
@@ -11,28 +11,10 @@ import {
 } from "./upload-supabase";
 import { countLabels, listLabels } from "./label";
 import { castObjectNullsToUndefined } from "./utils";
-
-export const checkUserAccessToWorkspace = async ({
-  where,
-  user,
-}: {
-  where?: WorkspaceWhereUniqueInput;
-  user?: { id: string };
-}): Promise<boolean> => {
-  if (user?.id == null) {
-    throw new Error("User not authenticated");
-  }
-  const membership = await prisma.membership.findFirst({
-    where: {
-      userId: user.id,
-      workspace: { id: where?.id ?? undefined, slug: where?.slug ?? undefined },
-    },
-  });
-  if (membership == null) {
-    throw new Error("User not authorized to access resource");
-  }
-  return membership != null;
-};
+import {
+  checkUserAccessToDataset,
+  checkUserAccessToWorkspace,
+} from "./access-control";
 
 export const repository: Repository = {
   image: {
@@ -131,7 +113,11 @@ export const repository: Repository = {
     },
   },
   dataset: {
-    add: async ({ workspaceSlug, ...dataset }) => {
+    add: async ({ workspaceSlug, ...dataset }, user) => {
+      await checkUserAccessToWorkspace({
+        where: { slug: workspaceSlug },
+        user,
+      });
       const slug = slugify(dataset.name, { lower: true });
       const createdDataset = await prisma.dataset.create({
         data: castObjectNullsToUndefined({
@@ -144,7 +130,7 @@ export const repository: Repository = {
       });
       return createdDataset.id;
     },
-    delete: async (where) => {
+    delete: async (where, user) => {
       if (
         (where.id == null && where.slugs == null) ||
         (where.id != null && where.slugs != null)
@@ -153,7 +139,7 @@ export const repository: Repository = {
           "You should either specify the id or the slugs when deleting a dataset"
         );
       }
-
+      await checkUserAccessToDataset({ where, user });
       await prisma.dataset.delete({
         where: castObjectNullsToUndefined(where),
       });
@@ -167,13 +153,9 @@ export const repository: Repository = {
           "You should either specify the id or the slugs when looking for a dataset"
         );
       }
-
+      await checkUserAccessToDataset({ where, user });
       const dataset = await prisma.dataset.findUnique({
         where: castObjectNullsToUndefined(where),
-      });
-      await checkUserAccessToWorkspace({
-        user,
-        where: { slug: dataset?.workspaceSlug },
       });
       return dataset;
     },
@@ -186,21 +168,7 @@ export const repository: Repository = {
           "You should either specify the id or the slugs when updating a dataset"
         );
       }
-      if (user?.id == null) {
-        throw new Error("User not authenticated");
-      }
-      const datasetCondition =
-        where.id != null ? { id: where.id } : { slug: where?.slugs?.slug };
-      const hasAccessToDataset =
-        (await prisma.membership.findFirst({
-          where: {
-            userId: user?.id,
-            workspace: { datasets: { some: datasetCondition } },
-          },
-        })) != null;
-      if (!hasAccessToDataset) {
-        throw new Error("User not authorized to access resource");
-      }
+      await checkUserAccessToDataset({ where, user });
       try {
         await prisma.dataset.update({
           where: castObjectNullsToUndefined(where),

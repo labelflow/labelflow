@@ -13,7 +13,7 @@ import {
 } from "@labelflow/graphql-types";
 
 import { Context } from "@labelflow/common-resolvers";
-import { checkUserAccessToWorkspace } from "../repository";
+import { checkUserAccessToWorkspace } from "../repository/access-control";
 import { prisma } from "../repository/prisma-client";
 import { castObjectNullsToUndefined } from "../repository/utils";
 
