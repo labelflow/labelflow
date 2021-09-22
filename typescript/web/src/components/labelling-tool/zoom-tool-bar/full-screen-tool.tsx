@@ -116,11 +116,11 @@ export const FullScreenTool = ({
     );
   }
   return (
-    <Tooltip label="Full Screen" placement="left" openDelay={300}>
+    <Tooltip label="Enter Full Screen" placement="left" openDelay={300}>
       <IconButton
         icon={<FullscreenIcon fontSize="lg" />}
         backgroundColor={mode("white", "gray.800")}
-        aria-label="Full Screen"
+        aria-label="Enter Full Screen"
         pointerEvents="initial"
         isDisabled={containerRef.current == null}
         onClick={handleFullScreen}
