@@ -15,8 +15,14 @@ import imageResolvers from "../../image";
 import labelClassResolvers from "../../label-class";
 import labelResolvers from "../../label";
 import { CocoDataset } from "../../export/format-coco/coco-core/types";
+import { Context } from "../../types";
 
-const uploadImage = async (file, name, datasetId, { repository }) => {
+const uploadImage = async (
+  file: JSZip.JSZipObject,
+  name: string,
+  datasetId: string,
+  { repository }: Context
+) => {
   const fileBlob = await file.async("blob", () => {});
   const uploadTarget = await repository.upload.getUploadTarget(uuidv4());
   if (!(uploadTarget as UploadTargetHttp)?.downloadUrl) {
@@ -82,8 +88,8 @@ const convertCocoSegmentationToLabel = (
 export const importCoco: ImportFunction = async (
   blob,
   datasetId,
-  options,
-  { repository }
+  { repository },
+  options
 ) => {
   let annotationBlob = blob;
   if (!options?.annotationsOnly) {
@@ -186,11 +192,18 @@ export const importCoco: ImportFunction = async (
   }
   // Manage coco annotations => labelflow labels
   await annotationFile.annotations.map(async (annotation) => {
+    if (!cocoImageIdToLabelFlowImageId.has(annotation.image_id)) {
+      throw new Error(
+        `Image ${annotation.image_id} referenced in annotation does not exist.`
+      );
+    }
     await labelResolvers.Mutation.createLabel(
       null,
       {
         data: {
-          imageId: cocoImageIdToLabelFlowImageId.get(annotation.image_id),
+          imageId: cocoImageIdToLabelFlowImageId.get(
+            annotation.image_id
+          ) as string,
           labelClassId: cocoCategoryIdToLabelFlowLabelClassId.get(
             annotation.category_id
           ),

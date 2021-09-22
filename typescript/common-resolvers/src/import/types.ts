@@ -4,6 +4,6 @@ import { Context } from "../types";
 export type ImportFunction = (
   zipBlob: Blob,
   datasetId: string,
-  options: ImportOptionsCoco,
-  context: Context
+  context: Context,
+  options?: ImportOptionsCoco
 ) => void;

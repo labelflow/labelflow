@@ -13,14 +13,24 @@ const makeImport = async (
 ): Promise<void> => {
   const zipBlob: Blob = new Blob([await repository.upload.get(args.data.url)]);
   // TODO: handle when args.where.slugs is used over args.where.id
+  if (!args.where.id) {
+    throw new Error(
+      "Expecting args.where.id to be defined. Can't import from dataset slug."
+    );
+  }
   switch (args.data.format) {
     case ExportFormat.Yolo: {
       throw new Error("YOLO format not supported, but will be soon!");
     }
     case ExportFormat.Coco: {
-      return importCoco(zipBlob, args.where.id, args.data?.options?.coco, {
-        repository,
-      });
+      return importCoco(
+        zipBlob,
+        args.where?.id,
+        {
+          repository,
+        },
+        args.data?.options?.coco ?? undefined
+      );
     }
     default: {
       throw new Error("Unsupported format");
