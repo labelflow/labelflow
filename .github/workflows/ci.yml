@@ -115,6 +115,8 @@ jobs:
         run: ls typescript/web/node_modules
       - name: generate prisma
         run: cd typescript/db && yarn deploy && yarn generate
+        env:
+          POSTGRES_EXTERNAL_URL: ${{secrets.POSTGRES_EXTERNAL_URL}}
       - name: run tests
         run: yarn test
         env:
