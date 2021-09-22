@@ -145,30 +145,32 @@ export const importCoco: ImportFunction = async (
     console.log(`Created category ${categoryCoco.name}`);
   }
   // Manage coco annotations => labelflow labels
-  await annotationFile.annotations.map(async (annotation) => {
-    if (!cocoImageIdToLabelFlowImageId.has(annotation.image_id)) {
-      throw new Error(
-        `Image ${annotation.image_id} referenced in annotation does not exist.`
-      );
-    }
-    await labelResolvers.Mutation.createLabel(
-      null,
-      {
-        data: {
-          imageId: cocoImageIdToLabelFlowImageId.get(
-            annotation.image_id
-          ) as string,
-          labelClassId: cocoCategoryIdToLabelFlowLabelClassId.get(
-            annotation.category_id
-          ),
-          ...convertCocoSegmentationToLabel(
-            annotation.segmentation,
-            annotationFile.images[annotation.image_id - 1].height
-          ),
+  await Promise.all(
+    annotationFile.annotations.map(async (annotation) => {
+      if (!cocoImageIdToLabelFlowImageId.has(annotation.image_id)) {
+        throw new Error(
+          `Image ${annotation.image_id} referenced in annotation does not exist.`
+        );
+      }
+      await labelResolvers.Mutation.createLabel(
+        null,
+        {
+          data: {
+            imageId: cocoImageIdToLabelFlowImageId.get(
+              annotation.image_id
+            ) as string,
+            labelClassId: cocoCategoryIdToLabelFlowLabelClassId.get(
+              annotation.category_id
+            ),
+            ...convertCocoSegmentationToLabel(
+              annotation.segmentation,
+              annotationFile.images[annotation.image_id - 1].height
+            ),
+          },
         },
-      },
-      { repository }
-    );
-    console.log(`Created annotation ${annotation.id}`);
-  });
+        { repository }
+      );
+      console.log(`Created annotation ${annotation.id}`);
+    })
+  );
 };
