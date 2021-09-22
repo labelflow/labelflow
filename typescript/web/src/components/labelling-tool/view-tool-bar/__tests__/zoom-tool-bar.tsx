@@ -1,7 +1,7 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
-import { ZoomToolbar } from "../zoom-tool-bar";
+import { ViewToolbar } from "../view-tool-bar";
 import { useLabellingStore } from "../../../../connectors/labelling-state";
 
 beforeEach(() => {
@@ -9,20 +9,20 @@ beforeEach(() => {
 });
 
 it("should display zoom in and out buttons", () => {
-  render(<ZoomToolbar />);
+  render(<ViewToolbar containerRef={{ current: null }} />);
 
   expect(screen.getByRole("button", { name: "Zoom out" })).toBeDefined();
   expect(screen.getByRole("button", { name: "Zoom in" })).toBeDefined();
 });
 
 it("should disable zoom out by default", () => {
-  render(<ZoomToolbar />);
+  render(<ViewToolbar containerRef={{ current: null }} />);
 
   expect(screen.getByRole("button", { name: "Zoom out" })).toBeDisabled();
 });
 
 it("should disable zoom in if image is at minimal resolution", async () => {
-  render(<ZoomToolbar />);
+  render(<ViewToolbar containerRef={{ current: null }} />);
 
   await waitFor(() => {
     useLabellingStore.setState({ canZoomIn: false });
@@ -33,7 +33,7 @@ it("should disable zoom in if image is at minimal resolution", async () => {
 
 it("should disable zoom out if image is at maximum resolution", async () => {
   useLabellingStore.setState({ canZoomOut: true });
-  render(<ZoomToolbar />);
+  render(<ViewToolbar containerRef={{ current: null }} />);
 
   await waitFor(() => {
     useLabellingStore.setState({ canZoomOut: false });
@@ -50,7 +50,7 @@ useLabellingStore.setState({
 
 it("should zoom out by a zoom factor", async () => {
   useLabellingStore.setState({ canZoomOut: true });
-  render(<ZoomToolbar />);
+  render(<ViewToolbar containerRef={{ current: null }} />);
 
   userEvent.click(screen.getByRole("button", { name: "Zoom out" }));
 
@@ -60,7 +60,7 @@ it("should zoom out by a zoom factor", async () => {
 
 it("should zoom in by a zoom factor", async () => {
   useLabellingStore.setState({ canZoomIn: true });
-  render(<ZoomToolbar />);
+  render(<ViewToolbar containerRef={{ current: null }} />);
 
   userEvent.click(screen.getByRole("button", { name: "Zoom in" }));
 

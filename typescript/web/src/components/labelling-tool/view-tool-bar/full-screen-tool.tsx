@@ -98,9 +98,6 @@ export const FullScreenTool = ({
     exitFullScreen();
   };
 
-  if (!isFullScreenSupported()) {
-    return null;
-  }
   if (isFullScreenState) {
     return (
       <Tooltip label="Exit Full Screen" placement="left" openDelay={300}>
@@ -122,7 +119,7 @@ export const FullScreenTool = ({
         backgroundColor={mode("white", "gray.800")}
         aria-label="Enter Full Screen"
         pointerEvents="initial"
-        isDisabled={containerRef.current == null}
+        isDisabled={containerRef.current == null || !isFullScreenSupported()}
         onClick={handleFullScreen}
       />
     </Tooltip>

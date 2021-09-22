@@ -9,7 +9,7 @@ import { useRouter } from "next/router";
 
 import { OpenlayersMap } from "./openlayers-map";
 import { DrawingToolbar } from "./drawing-tool-bar";
-import { ZoomToolbar } from "./zoom-tool-bar";
+import { ViewToolbar } from "./view-tool-bar";
 import { OptionsToolBar } from "./options-tool-bar";
 import { ImageNavigationToolbar } from "./image-navigation-tool-bar";
 import { useUndoStore } from "../../connectors/undo-store";
@@ -64,7 +64,7 @@ export const LabellingTool = () => {
         right={0}
         pointerEvents="none"
       >
-        <ZoomToolbar containerRef={containerRef} />
+        <ViewToolbar containerRef={containerRef} />
       </VStack>
       <HStack
         padding={4}

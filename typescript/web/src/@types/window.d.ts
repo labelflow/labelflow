@@ -15,7 +15,7 @@ declare global {
     msExitFullscreen?: () => void;
     webkitExitFullscreen?: () => void;
   }
-  interface HTMLElement {
+  interface Element {
     webkitRequestFullscreen?: () => void;
     msRequestFullscreen?: () => void;
     requestFullscreen?: () => void;
