@@ -92,9 +92,9 @@ jobs:
       db:
         image: postgres:12.6
         env:
-          POSTGRES_USER: ${POSTGRES_ADMIN_USER}
-          POSTGRES_PASSWORD: ${POSTGRES_ADMIN_PASSWORD}
-          POSTGRES_DB: ${POSTGRES_DB}
+          POSTGRES_USER: ${{secrets.POSTGRES_ADMIN_USER}}
+          POSTGRES_PASSWORD: ${{secrets.POSTGRES_ADMIN_PASSWORD}}
+          POSTGRES_DB: ${{secrets.POSTGRES_DB}}
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -117,6 +117,8 @@ jobs:
         run: cd typescript/db && yarn migrate && yarn generate
       - name: run tests
         run: yarn test
+        env:
+          POSTGRES_EXTERNAL_URL: ${{secrets.POSTGRES_EXTERNAL_URL}}
 
   check-codegen-diff:
     name: Check diff after codegen
