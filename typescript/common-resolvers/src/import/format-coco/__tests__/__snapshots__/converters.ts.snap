@@ -33,7 +33,7 @@ Object {
 }
 `;
 
-exports[`convertCocoSegmentationToLabel Should convert a polygon into a box 1`] = `
+exports[`convertCocoSegmentationToLabel Should convert a polygon into a polygon 1`] = `
 Object {
   "geometry": Object {
     "coordinates": Array [
