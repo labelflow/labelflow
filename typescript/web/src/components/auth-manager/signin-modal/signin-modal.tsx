@@ -198,7 +198,7 @@ export const SigninModal = ({
                   const email = (
                     (e.target as HTMLFormElement).elements.namedItem(
                       "email"
-                    ) as unknown as HTMLInputElement
+                    ) as HTMLInputElement
                   ).value;
                   performSignIn("email", {
                     email,
