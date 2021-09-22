@@ -117,7 +117,7 @@ const convertLabelToCocoAnnotation = (
   }: DbLabelWithImageDimensions,
   id: number,
   imageId: number,
-  categoryId: number | null = null
+  categoryId: number
 ): CocoAnnotation => {
   return {
     id,
@@ -144,7 +144,7 @@ const convertLabelsOfImageToCocoAnnotations = (
       label,
       cocoAnnotationId,
       imageIdsMap[label.imageId],
-      label.labelClassId ? labelClassIdsMap[label.labelClassId] : null
+      labelClassIdsMap[label.labelClassId],
     );
   });
 };

@@ -53,6 +53,6 @@ export type CocoDataset = {
 
 export type CacheLabelClassIdToCocoCategoryId = Map<string, number>;
 
-export type DbLabelWithImageDimensions = DbLabel & {
+export type DbLabelWithImageDimensions = Omit<DbLabel, "labelClassId"> & {labelClassId: string;} & {
   imageDimensions: { width: number; height: number };
 };
