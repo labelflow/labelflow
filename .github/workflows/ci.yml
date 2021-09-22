@@ -114,7 +114,7 @@ jobs:
       - name: check node_modules
         run: ls typescript/web/node_modules
       - name: generate prisma
-        run: cd typescript/db && yarn migrate && yarn generate
+        run: cd typescript/db && yarn deploy && yarn generate
       - name: run tests
         run: yarn test
         env:
