@@ -2,20 +2,15 @@ import JSZip from "jszip";
 import path from "path";
 import { v4 as uuidv4 } from "uuid";
 
-import type {
-  UploadTargetHttp,
-  GeometryInput,
-  LabelType,
-} from "@labelflow/graphql-types";
-import { LabelType as LabelTypeOptions } from "@labelflow/graphql-types";
+import type { UploadTargetHttp } from "@labelflow/graphql-types";
 
-import { range } from "lodash/fp";
 import { ImportFunction } from "../types";
 import imageResolvers from "../../image";
 import labelClassResolvers from "../../label-class";
 import labelResolvers from "../../label";
 import { CocoDataset } from "../../export/format-coco/coco-core/types";
 import { Context } from "../../types";
+import { convertCocoSegmentationToLabel } from "./converters";
 
 const uploadImage = async (
   file: JSZip.JSZipObject,
@@ -44,46 +39,6 @@ const uploadImage = async (
     { repository }
   );
 };
-
-const isCocoSegmentationBox = (cocoSegmentation: number[][]): boolean => {
-  if (cocoSegmentation.length === 0) {
-    throw new Error("received segmentation without any items inside.");
-  }
-  if (cocoSegmentation.length > 1 || cocoSegmentation[0].length !== 10) {
-    return false;
-  }
-  const maybeBox = cocoSegmentation[0].map(Math.floor);
-  const { x: xValues, y: yValues } = maybeBox.reduce(
-    ({ x, y }, value, index) => {
-      if (index % 2 === 0) {
-        x.add(value);
-      } else {
-        y.add(value);
-      }
-      return { x, y };
-    },
-    { x: new Set(), y: new Set() }
-  );
-  return xValues.size === 2 && yValues.size === 2;
-};
-
-const convertCocoSegmentationToLabel = (
-  cocoSegmentation: number[][],
-  imageHeight: number
-): { geometry: GeometryInput; type: LabelType } => ({
-  type: isCocoSegmentationBox(cocoSegmentation)
-    ? LabelTypeOptions.Box
-    : LabelTypeOptions.Polygon,
-  geometry: {
-    type: "Polygon",
-    coordinates: cocoSegmentation.map((cocoPolygon) =>
-      range(0, cocoPolygon.length / 2).map((index) => [
-        cocoPolygon[2 * index],
-        imageHeight - cocoPolygon[2 * index + 1],
-      ])
-    ),
-  },
-});
 
 export const importCoco: ImportFunction = async (
   blob,
@@ -141,7 +96,6 @@ export const importCoco: ImportFunction = async (
     }
   }
   const annotationFile: CocoDataset = JSON.parse(await annotationBlob.text());
-  console.log(`annotationFile = ${JSON.stringify(annotationFile, null, 1)}`);
   const images = await repository.image.list({ datasetId });
   const cocoImageIdToLabelFlowImageId = annotationFile.images.reduce(
     (currentMap, imageCoco) => {
