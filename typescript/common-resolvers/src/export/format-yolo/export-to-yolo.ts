@@ -44,8 +44,11 @@ export const generateLabelsOfImageFile = (
 ): string => {
   return labelsOfImage
     .reduce((labelsOfImageFile, label) => {
-      if (!options?.includePolygons && label.type === LabelType.Polygon) {
-        return `${labelsOfImageFile}`;
+      if (
+        (!options?.includePolygons && label.type === LabelType.Polygon) ||
+        !label.labelClassId
+      ) {
+        return labelsOfImageFile;
       }
       const labelClassIndex = labelClasses.find(
         (labelClass) => labelClass.id === label.labelClassId
@@ -77,12 +80,16 @@ export const exportToYolo: ExportFunction = async (
   );
   await Promise.all(
     images.map(async (image) => {
+      const imageName = getImageName(
+        image,
+        options?.avoidImageNameCollisions ?? false
+      );
       if (options?.exportImages) {
         const blob = new Blob([await repository.upload.get(image.url)], {
           type: image.mimetype,
         });
         zip.file(
-          `${datasetName}/obj_train_data/${image.name}.${mime.extension(
+          `${datasetName}/obj_train_data/${imageName}.${mime.extension(
             image.mimetype
           )}`,
           blob
@@ -90,7 +97,7 @@ export const exportToYolo: ExportFunction = async (
       }
       const labelsOfImage = await repository.label.list({ imageId: image.id });
       zip.file(
-        `${datasetName}/obj_train_data/${image.name}.txt`,
+        `${datasetName}/obj_train_data/${imageName}.txt`,
         generateLabelsOfImageFile(labelsOfImage, image, labelClasses, options)
       );
     })
