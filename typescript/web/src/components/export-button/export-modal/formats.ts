@@ -52,7 +52,7 @@ export const formatsOptionsInformation: {
     avoidImageNameCollisions: {
       title: "Avoid image names collision",
       description:
-        "A unique identifier will be added to the image's name. Recommended when exporting the images",
+        "A unique identifier will be added to the image's name. Recommended when exporting the images.",
     },
   },
   yolo: {
@@ -64,12 +64,12 @@ export const formatsOptionsInformation: {
     avoidImageNameCollisions: {
       title: "Avoid image names collision",
       description:
-        "A unique identifier will be added to the image's name. Recommended when exporting the images",
+        "A unique identifier will be added to the image's name. Recommended when exporting the images.",
     },
     includePolygons: {
       title: "Include polygons",
       description:
-        "Include polygon labels, replacing them by their bounding box when exporting",
+        "Include polygon labels, replacing them by their bounding box when exporting.",
     },
   },
 };
