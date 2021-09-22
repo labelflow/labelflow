@@ -1,5 +1,10 @@
-import { useEffect } from "react";
-import { Box, HStack, VStack } from "@chakra-ui/react";
+import { useEffect, useRef } from "react";
+import {
+  Box,
+  HStack,
+  VStack,
+  useColorModeValue as mode,
+} from "@chakra-ui/react";
 import { useRouter } from "next/router";
 
 import { OpenlayersMap } from "./openlayers-map";
@@ -17,6 +22,11 @@ export const LabellingTool = () => {
   );
   const router = useRouter();
   const { imageId } = router?.query;
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const containerSx = {
+    backgroundColor: mode("gray.100", "gray.900"),
+  };
 
   useEffect(() => {
     clear();
@@ -24,7 +34,13 @@ export const LabellingTool = () => {
   }, [imageId]);
 
   return (
-    <Box height="100%" position="relative" overflow="hidden">
+    <Box
+      height="100%"
+      position="relative"
+      overflow="hidden"
+      ref={containerRef}
+      sx={containerSx}
+    >
       <OpenlayersMap />
       <HStack
         position="absolute"
@@ -48,7 +64,7 @@ export const LabellingTool = () => {
         right={0}
         pointerEvents="none"
       >
-        <ZoomToolbar />
+        <ZoomToolbar containerRef={containerRef} />
       </VStack>
       <HStack
         padding={4}

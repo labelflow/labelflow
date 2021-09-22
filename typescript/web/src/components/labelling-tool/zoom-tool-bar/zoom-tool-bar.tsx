@@ -1,17 +1,24 @@
+import React, { RefObject } from "react";
 import {
   IconButton,
   chakra,
   Tooltip,
   useColorModeValue as mode,
 } from "@chakra-ui/react";
+
 import { RiZoomInLine, RiZoomOutLine } from "react-icons/ri";
 
 import { useLabellingStore } from "../../../connectors/labelling-state";
+import { FullScreenTool } from "./full-screen-tool";
 
 const ZoomOutIcon = chakra(RiZoomOutLine);
 const ZoomInIcon = chakra(RiZoomInLine);
 
-export const ZoomToolbar = () => {
+export const ZoomToolbar = ({
+  containerRef,
+}: {
+  containerRef: RefObject<HTMLDivElement>;
+}) => {
   const canZoomIn = useLabellingStore((state) => state.canZoomIn);
   const canZoomOut = useLabellingStore((state) => state.canZoomOut);
   const zoomByDelta = useLabellingStore((state) => state.zoomByDelta);
@@ -19,6 +26,7 @@ export const ZoomToolbar = () => {
 
   return (
     <>
+      <FullScreenTool containerRef={containerRef} />
       <Tooltip label="Zoom In" placement="left" openDelay={300}>
         <IconButton
           icon={<ZoomInIcon fontSize="lg" />}
