@@ -195,7 +195,7 @@ const DebugPage = () => {
               <Code as="p" whiteSpace="pre-wrap" width="full">
                 {JSON.stringify(
                   {
-                    serverType: "Standard LabelFlow Client App",
+                    clientType: "Standard LabelFlow Client App",
                     isInWindowScope,
                     isInServiceWorkerScope,
                     isDevelopmentEnvironment,
