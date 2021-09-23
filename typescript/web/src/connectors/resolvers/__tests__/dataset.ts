@@ -579,7 +579,7 @@ describe("Dataset resolver test suite", () => {
     );
   });
 
-  it("should list a dataset images, label classes and labels", async () => {
+  it("should list a dataset images, label classes, labels and workspace", async () => {
     mockedProbeSync.mockReturnValue({
       width: 42,
       height: 36,
@@ -601,6 +601,11 @@ describe("Dataset resolver test suite", () => {
               labelClasses {
                 id
               }
+              workspace {
+                id
+                name
+                slug
+              }
             }
           }
         `,
@@ -615,6 +620,7 @@ describe("Dataset resolver test suite", () => {
       expect(queryResult.data.dataset.images.length).toEqual(count);
       expect(queryResult.data.dataset.labels.length).toEqual(count);
       expect(queryResult.data.dataset.labelClasses.length).toEqual(count);
+      expect(queryResult.data.dataset.workspace.slug).toEqual("local");
     };
 
     const datasetId = "some id";

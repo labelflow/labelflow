@@ -80,6 +80,14 @@ const labelClasses = async (
   return await getLabelClassesByDatasetId(dataset.id, repository);
 };
 
+const workspace = async (
+  dataset: DbDataset,
+  _args: any,
+  { repository, user }: Context
+) => {
+  return await repository.workspace.get({ slug: dataset.workspaceSlug }, user);
+};
+
 const dataset = async (
   _: any,
   args: QueryDatasetArgs,
@@ -285,5 +293,6 @@ export default {
     images,
     labels,
     labelClasses,
+    workspace,
   },
 };
