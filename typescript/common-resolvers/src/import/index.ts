@@ -11,7 +11,10 @@ const makeImport = async (
   args: MutationImportDatasetArgs,
   { repository }: Context
 ): Promise<void> => {
-  const zipBlob: Blob = new Blob([await repository.upload.get(args.data.url)]);
+  const datasetBlob: Blob = new Blob([
+    await repository.upload.get(args.data.url),
+  ]);
+  await repository.upload.delete(args.data.url); // Remove blob from cache immediately
   // TODO: handle when args.where.slugs is used over args.where.id
   if (!args.where.id) {
     throw new Error(
@@ -24,7 +27,7 @@ const makeImport = async (
     }
     case ExportFormat.Coco: {
       return importCoco(
-        zipBlob,
+        datasetBlob,
         args.where?.id,
         {
           repository,
