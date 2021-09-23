@@ -9,6 +9,12 @@ import {
   putInStorage,
   deleteFromStorage,
 } from "./upload-supabase";
+import {
+  addWorkspace,
+  getWorkspace,
+  listWorkspace,
+  updateWorkspace,
+} from "./workspace";
 import { countLabels, listLabels } from "./label";
 import { castObjectNullsToUndefined } from "./utils";
 import {
@@ -193,6 +199,12 @@ export const repository: Repository = {
           },
         })
       ),
+  },
+  workspace: {
+    add: addWorkspace,
+    get: getWorkspace,
+    list: listWorkspace,
+    update: updateWorkspace,
   },
   upload: {
     delete: deleteFromStorage,

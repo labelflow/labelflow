@@ -5,6 +5,7 @@ import type {
   Label as GeneratedLabel,
   LabelClass as GeneratedLabelClass,
   Dataset as GeneratedDataset,
+  Workspace as GeneratedWorkspace,
   ImageWhereInput,
   LabelClassWhereInput,
   LabelWhereInput,
@@ -18,7 +19,11 @@ import type {
   LabelClassWhereUniqueInput,
   DatasetWhereUniqueInput,
   ImageWhereUniqueInput,
+  WorkspaceCreateInput,
+  WorkspaceWhereUniqueInput,
+  WorkspaceType,
 } from "@labelflow/graphql-types";
+import { WorkspacePlan } from "@prisma/client";
 
 type NoUndefinedField<T> = { [P in keyof T]: NonNullable<T[P]> };
 
@@ -52,6 +57,14 @@ export type DbDataset = Omit<
   | "labelClassesAggregates"
   | "workspace"
 > & { workspaceSlug: string };
+
+export type DbWorkspace = Omit<
+  GeneratedWorkspace,
+  "__export typename" | "type" | "datasets" | "memberships" | "plan"
+> & { plan: WorkspacePlan };
+
+export type DbWorkspaceWithType = DbWorkspace & { type: WorkspaceType };
+
 export type DbDatasetCreateInput = WithCreatedAtAndUpdatedAt<
   DatasetCreateInput & { slug: string }
 >;
@@ -121,6 +134,12 @@ export type Repository = {
     get: Get<DbDataset, DatasetWhereUniqueInput>;
     list: List<DbDataset, { workspaceSlug?: string; user?: { id: string } }>;
     update: Update<DbDataset, DatasetWhereUniqueInput>;
+  };
+  workspace: {
+    add: Add<WorkspaceCreateInput>;
+    get: Get<DbWorkspaceWithType, WorkspaceWhereUniqueInput>;
+    list: List<DbWorkspaceWithType, { user?: { id: string } }>;
+    update: Update<DbWorkspaceWithType, WorkspaceWhereUniqueInput>;
   };
   upload: {
     getUploadTargetHttp: (

@@ -1,79 +1,55 @@
-import slugify from "slugify";
 import { Prisma } from "@prisma/client";
 
 import {
   QueryWorkspaceArgs,
   QueryWorkspacesArgs,
-  WorkspaceType,
-  WorkspacePlan,
   Workspace,
   Membership,
   MutationCreateWorkspaceArgs,
   MutationUpdateWorkspaceArgs,
+  WorkspaceWhereUniqueInput,
 } from "@labelflow/graphql-types";
 
-import { Context } from "@labelflow/common-resolvers";
-import { checkUserAccessToWorkspace } from "../repository/access-control";
+import {
+  Context,
+  DbWorkspaceWithType,
+  Repository,
+} from "@labelflow/common-resolvers";
 import { prisma } from "../repository/prisma-client";
 import { castObjectNullsToUndefined } from "../repository/utils";
 
-type DbWorkspacePlan = NonNullable<
-  Prisma.PromiseReturnType<typeof prisma.workspace.findUnique>
->["plan"];
-
-type DbWorkspace = Omit<
-  Workspace,
-  "__typename" | "type" | "datasets" | "memberships" | "plan"
-> & { plan: DbWorkspacePlan };
-
-type DbWorkspaceWithType = DbWorkspace & { type: WorkspaceType };
-
-const addTypeToWorkspace = (
-  workspaceWithoutType: Omit<DbWorkspace, "type">
-): DbWorkspaceWithType => ({
-  ...workspaceWithoutType,
-  type: WorkspaceType.Online,
-});
+const getWorkspace = async (
+  where: WorkspaceWhereUniqueInput,
+  repository: Repository,
+  user?: { id: string }
+): Promise<DbWorkspaceWithType & { __typename: "Workspace" }> => {
+  const workspaceFromDb = await repository.workspace.get(where, user);
+  if (workspaceFromDb == null) {
+    throw new Error(
+      `Couldn't find workspace from input "${JSON.stringify(where)}"`
+    );
+  }
+  return { ...workspaceFromDb, __typename: "Workspace" };
+};
 
 const workspace = async (
   _: any,
   args: QueryWorkspaceArgs,
-  { user }: Context
-): Promise<DbWorkspaceWithType> => {
-  const workspaceFromDb = await prisma.workspace.findUnique({
-    where: castObjectNullsToUndefined(args.where),
-  });
-  if (workspaceFromDb == null) {
-    throw new Error(
-      `Couldn't find workspace from input "${JSON.stringify(args.where)}"`
-    );
-  }
-  await checkUserAccessToWorkspace({
-    user,
-    where: args.where,
-  });
-  return addTypeToWorkspace(workspaceFromDb);
-};
+  { repository, user }: Context
+): Promise<DbWorkspaceWithType> =>
+  await getWorkspace(args.where, repository, user);
 
 const workspaces = async (
   _: any,
   args: QueryWorkspacesArgs,
-  { user }: Context
-): Promise<DbWorkspaceWithType[]> => {
-  const workspacesFromDb = await prisma.workspace.findMany({
-    skip: args.skip ?? undefined,
-    take: args.first ?? undefined,
-    orderBy: { createdAt: Prisma.SortOrder.asc },
-    where: { memberships: { some: { userId: user?.id } } },
-  });
-
-  return workspacesFromDb.map(addTypeToWorkspace);
-};
+  { repository, user }: Context
+): Promise<DbWorkspaceWithType[]> =>
+  await repository.workspace.list({ user }, args.skip, args.first);
 
 const createWorkspace = async (
   _: any,
   args: MutationCreateWorkspaceArgs,
-  { user }: Context
+  { repository, user }: Context
 ): Promise<DbWorkspaceWithType> => {
   if (typeof user?.id !== "string") {
     throw new Error("Couldn't create workspace: No user id");
@@ -86,41 +62,30 @@ const createWorkspace = async (
     );
   }
 
-  const createdWorkspace = await prisma.workspace.create({
-    data: {
+  const createdWorkspaceId = await repository.workspace.add(
+    {
       id: args.data.id ?? undefined,
       name: args.data.name,
-      slug: slugify(args.data.name, { lower: true }),
-      plan: WorkspacePlan.Community,
-      memberships: { create: { userId: user?.id, role: "Admin" } },
     },
-  });
+    user
+  );
 
-  return addTypeToWorkspace(createdWorkspace);
+  return await getWorkspace({ id: createdWorkspaceId }, repository, user);
 };
 
 const updateWorkspace = async (
   _: any,
   args: MutationUpdateWorkspaceArgs,
-  { user }: Context
+  { repository, user }: Context
 ): Promise<DbWorkspaceWithType> => {
-  const newNameAndSlugs =
-    typeof args.data.name === "string"
-      ? {
-          name: args.data.name,
-          slug: slugify(args.data.name, { lower: true }),
-        }
-      : // needed to make prisma happy with the types
-        { name: undefined };
-  // Check if user has access to workspace, this will throw it it does not
-  await checkUserAccessToWorkspace({ user, where: args.where });
   // Update workspace
-  const updatedWorkspace = await prisma.workspace.update({
-    where: castObjectNullsToUndefined(args.where),
-    data: { ...args.data, ...newNameAndSlugs },
-  });
+  await repository.workspace.update(
+    castObjectNullsToUndefined(args.where),
+    { ...args.data },
+    user
+  );
 
-  return addTypeToWorkspace(updatedWorkspace);
+  return await getWorkspace(args.where, repository, user);
 };
 
 const memberships = async (parent: Workspace) => {
