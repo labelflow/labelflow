@@ -25,7 +25,7 @@ type Polygon = number[];
 export type CocoAnnotation = {
   id: number;
   image_id: number;
-  category_id: number | null;
+  category_id: number;
   segmentation: Polygon[];
   area: number;
   bbox: [x: number, y: number, width: number, height: number];
@@ -51,8 +51,15 @@ export type CocoDataset = {
   annotations: CocoAnnotation[];
 };
 
-export type CacheLabelClassIdToCocoCategoryId = Map<string | undefined, number>;
+export type CacheLabelClassIdToCocoCategoryId = Map<string, number>;
 
 export type DbLabelWithImageDimensions = DbLabel & {
   imageDimensions: { width: number; height: number };
+};
+
+export type DbLabelWithImageDimensionsAndLabelClass = Omit<
+  DbLabelWithImageDimensions,
+  "labelClassId"
+> & {
+  labelClassId: string;
 };

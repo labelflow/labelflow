@@ -35,7 +35,7 @@ describe("Coco converters", () => {
   const createLabelWithImageDimensions = (
     id: string,
     imageId: string,
-    labelClassId?: string
+    labelClassId: string = "someLabelClassId"
   ): DbLabelWithImageDimensions => ({
     id,
     createdAt: date,
