@@ -18,6 +18,12 @@ import {
   deleteFromStorage,
 } from "./upload";
 import { addIdIfNil } from "./utils/add-id-if-nil";
+import {
+  addWorkspace,
+  getWorkspace,
+  listWorkspaces,
+  updateWorkspace,
+} from "./workspace";
 
 export const repository: Repository = {
   image: {
@@ -74,6 +80,12 @@ export const repository: Repository = {
     get: getDataset,
     list: listDataset,
     update: updateDataset,
+  },
+  workspace: {
+    add: addWorkspace,
+    get: getWorkspace,
+    list: listWorkspaces,
+    update: updateWorkspace,
   },
   upload: {
     getUploadTarget,
