@@ -18,8 +18,6 @@ import type {
   LabelClassWhereUniqueInput,
   DatasetWhereUniqueInput,
   ImageWhereUniqueInput,
-  WorkspaceWhereUniqueInput,
-  DatasetWhereInput,
 } from "@labelflow/graphql-types";
 
 type NoUndefinedField<T> = { [P in keyof T]: NonNullable<T[P]> };
