@@ -1,4 +1,8 @@
-import { throwIfResolvesToNil, Repository } from "@labelflow/common-resolvers";
+import {
+  throwIfResolvesToNil,
+  Repository,
+  DbDataset,
+} from "@labelflow/common-resolvers";
 import { getDatabase } from "../database";
 import { addIdIfNil } from "./utils/add-id-if-nil";
 import { list } from "./utils/list";
@@ -66,6 +70,5 @@ export const addDataset: Repository["dataset"]["add"] = async (dataset) => {
   return await (await getDatabase()).dataset.add(addIdIfNil(dataset));
 };
 
-export const listDataset: Repository["dataset"]["list"] = list(
-  async () => (await getDatabase()).dataset
-);
+export const listDataset: Repository["dataset"]["list"] = (_, skip, first) =>
+  list<DbDataset>(async () => (await getDatabase()).dataset)(null, skip, first);
