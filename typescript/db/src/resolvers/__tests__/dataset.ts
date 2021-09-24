@@ -25,6 +25,11 @@ beforeEach(async () => {
   return await prisma.workspace.deleteMany({});
 });
 
+afterAll(async () => {
+  // Needed to avoid having the test process running indefinitely after the test suite has been run
+  await prisma.$disconnect();
+});
+
 const createWorkspace = async (
   data?: Partial<MutationCreateWorkspaceArgs["data"]>
 ) => {
@@ -74,10 +79,6 @@ const createDataset = async (
     fetchPolicy: "no-cache",
   });
 };
-
-afterAll(async () => {
-  await prisma.$disconnect();
-});
 
 describe("Access control for dataset", () => {
   it("allows to create a dataset to a user that has access to the workspace", async () => {
@@ -216,5 +217,28 @@ describe("Access control for dataset", () => {
         fetchPolicy: "no-cache",
       })
     ).rejects.toThrow(`User not authorized to access dataset`);
+  });
+});
+
+describe("Workflow nested resolver", () => {
+  it("allows to query the workspace from the dataset", async () => {
+    await createWorkspace({ name: "My workspace" });
+    const createdDataset = await createDataset("My dataset", "my-workspace");
+    const { data } = await client.query({
+      query: gql`
+        query dataset($id: ID!) {
+          dataset(where: { id: $id }) {
+            id
+            workspace {
+              id
+              slug
+            }
+          }
+        }
+      `,
+      variables: { id: createdDataset.data.createDataset.id },
+      fetchPolicy: "no-cache",
+    });
+    expect(data.dataset.workspace.slug).toEqual("my-workspace");
   });
 });
