@@ -21,7 +21,6 @@ import {
   removeLabelFromImageCache,
 } from "../openlayers-map/draw-bounding-box-and-polygon-interaction/create-label-effect";
 
-import { getDatasetsQuery } from "../../../pages/local/datasets";
 import { keymap } from "../../../keymap";
 
 const DeleteIcon = chakra(RiDeleteBinLine);
@@ -82,7 +81,7 @@ const createDeleteLabelEffect = (
     }>({
       mutation: deleteLabelMutation,
       variables: { id },
-      refetchQueries: ["countLabels", { query: getDatasetsQuery }],
+      refetchQueries: ["countLabels", "getDatasets", "countLabelsOfDataset"],
       /* Note that there is no optimistic response here, only a cache update.
        * We could add it but it feels like premature optimization */
       update(cache, { data: updateData }) {
@@ -126,7 +125,7 @@ const createDeleteLabelEffect = (
     const { data } = await client.mutate({
       mutation: createLabelWithIdMutation,
       variables: createLabelInputs,
-      refetchQueries: ["countLabels", { query: getDatasetsQuery }],
+      refetchQueries: ["countLabels", "getDatasets", "countLabelsOfDataset"],
       optimisticResponse: { createLabel: { id: labelId, __typename: "Label" } },
       update(cache) {
         addLabelToImageInCache(cache, createLabelInputs);
@@ -144,7 +143,7 @@ const createDeleteLabelEffect = (
     const { data } = await client.mutate({
       mutation: deleteLabelMutation,
       variables: { id: labelId },
-      refetchQueries: ["countLabels", { query: getDatasetsQuery }],
+      refetchQueries: ["countLabels", "getDatasets", "countLabelsOfDataset"],
       /* Note that there is no optimistic response here, only a cache update.
        * We could add it but it feels like premature optimization */
       update(cache, { data: updateData }) {

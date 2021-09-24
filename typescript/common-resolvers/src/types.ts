@@ -41,8 +41,10 @@ export type DbLabelCreateInput = WithCreatedAtAndUpdatedAt<DbLabel>;
 export type DbLabelClass = Omit<GeneratedLabelClass, "labels" | "dataset"> & {
   datasetId: string;
 };
-export type DbLabelClassCreateInput = WithCreatedAtAndUpdatedAt<
-  LabelClassCreateInput & { index: number }
+export type DbLabelClassCreateInput = Required<
+  NoUndefinedField<
+    WithCreatedAtAndUpdatedAt<LabelClassCreateInput & { index: number }>
+  >
 >;
 
 export type DbExample = GeneratedExample;

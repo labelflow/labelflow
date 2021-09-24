@@ -1,6 +1,12 @@
 # Changelog
 
-## [1.0.8](https://github.com/labelflow/labelflow/compare/1.0.7...1.0.8)
+## [1.0.10](https://github.com/labelflow/labelflow/compare/1.0.9...1.0.10)
+
+- Feature/#227 import coco [`#455`](https://github.com/labelflow/labelflow/pull/455)
+## [1.0.9](https://github.com/labelflow/labelflow/compare/1.0.8...1.0.9) - 2021-09-22
+
+- Updates on export feature [`#448`](https://github.com/labelflow/labelflow/pull/448)
+## [1.0.8](https://github.com/labelflow/labelflow/compare/1.0.7...1.0.8) - 2021-09-17
 
 - Fix bug of errors being thrown in service worker from create dataset modal [`#450`](https://github.com/labelflow/labelflow/pull/450)
 ## [1.0.7](https://github.com/labelflow/labelflow/compare/1.0.6...1.0.7) - 2021-09-17

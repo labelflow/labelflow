@@ -12,7 +12,11 @@ import { useRouter } from "next/router";
 import { v4 as uuidv4 } from "uuid";
 import mime from "mime-types";
 
-import { UploadTarget } from "@labelflow/graphql-types";
+import {
+  ExportFormat,
+  UploadTarget,
+  // ImportStatus,
+} from "@labelflow/graphql-types";
 import { Dropzone } from "./dropzone";
 import { FilesStatuses } from "./file-statuses";
 import { DroppedFile, UploadStatuses } from "../types";
@@ -71,6 +75,17 @@ const getDataset = gql`
   query getDataset($slug: String!) {
     dataset(where: { slugs: { slug: $slug, workspaceSlug: "local" } }) {
       id
+    }
+  }
+`;
+
+const importDataset = gql`
+  mutation importDataset(
+    $where: DatasetWhereUniqueInput!
+    $data: DatasetImportInput!
+  ) {
+    importDataset(where: $where, data: $data) {
+      error
     }
   }
 `;
@@ -204,18 +219,49 @@ export const ImportImagesModalDropzone = ({
                   method: "PUT",
                   body: form,
                 });
-
-                const createdAt = new Date();
-                createdAt.setTime(now.getTime() + index);
-                await apolloClient.mutate({
-                  mutation: createImageFromUrlMutation,
-                  variables: {
-                    url: target.downloadUrl,
-                    createdAt: createdAt.toISOString(),
-                    name: acceptedFile.file.name,
-                    datasetId,
-                  },
-                });
+                if (acceptedFile.file.type.startsWith("image")) {
+                  const createdAt = new Date();
+                  createdAt.setTime(now.getTime() + index);
+                  await apolloClient.mutate({
+                    mutation: createImageFromUrlMutation,
+                    variables: {
+                      url: target.downloadUrl,
+                      createdAt: createdAt.toISOString(),
+                      name: acceptedFile.file.name,
+                      datasetId,
+                    },
+                  });
+                } else {
+                  // It's a dataset / annotations that we want to import
+                  const dataImportDataset = await apolloClient.mutate({
+                    mutation: importDataset,
+                    variables: {
+                      where: { id: datasetId },
+                      data: {
+                        url: target.downloadUrl,
+                        format: ExportFormat.Coco,
+                        options: {
+                          coco: {
+                            annotationsOnly:
+                              acceptedFile.file.type === "application/json",
+                          },
+                        },
+                      },
+                    },
+                    refetchQueries: [
+                      "getDatasetData",
+                      "getImageLabels",
+                      "getLabel",
+                      "countLabelsOfDataset",
+                      "getDatasetLabelClasses",
+                    ],
+                  });
+                  if (dataImportDataset?.data?.importDataset?.error) {
+                    throw new Error(
+                      dataImportDataset?.data?.importDataset?.error
+                    );
+                  }
+                }
 
                 return setFileUploadStatuses((previousFileUploadStatuses) => {
                   return {

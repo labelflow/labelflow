@@ -35,7 +35,7 @@ describe("Coco converters", () => {
   const createLabelWithImageDimensions = (
     id: string,
     imageId: string,
-    labelClassId?: string
+    labelClassId: string = "someLabelClassId"
   ): DbLabelWithImageDimensions => ({
     id,
     createdAt: date,
@@ -124,15 +124,15 @@ describe("Coco converters", () => {
     expect(labelClassIdsMap).toMatchObject(expectedLabelClassIdsMap);
   });
 
-  test("Should convert a label to a coco annotation without category", () => {
+  test("Should convert a label to a coco annotation with a category", () => {
     const label = createLabelWithImageDimensions("a-label-id", "an-image-id");
 
-    const cocoAnnotation = convertLabelToCocoAnnotation(label, 1, 42, null);
+    const cocoAnnotation = convertLabelToCocoAnnotation(label, 1, 42, 3);
 
     const expectedAnnotation: CocoAnnotation = {
       id: 1,
       image_id: 42,
-      category_id: null,
+      category_id: 3,
       segmentation: [[1, 198, 1, 194, 4, 194, 4, 198, 1, 198]],
       area: 12,
       bbox: [1, 194, 3, 4],

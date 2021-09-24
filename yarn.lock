@@ -6231,6 +6231,7 @@ __metadata:
     apollo-server: 3.0.2
     graphql: 15.5.1
     isomorphic-fetch: 3.0.0
+    memoize-one: ^5.2.1
     nodemon: 2.0.12
     prisma: 2.30.3
     probe-image-size: 7.2.1
@@ -6380,6 +6381,7 @@ __metadata:
     node-polyfill-webpack-plugin: ^1.1.2
     nodemailer: ^6.6.3
     ol: 6.6.1
+    path-browserify: 1.0.1
     postcss: ^8.3.5
     query-string: ^7.0.0
     react: 17.x
@@ -23549,7 +23551,7 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"memoize-one@npm:^5.0.0, memoize-one@npm:^5.1.1":
+"memoize-one@npm:^5.0.0, memoize-one@npm:^5.1.1, memoize-one@npm:^5.2.1":
   version: 5.2.1
   resolution: "memoize-one@npm:5.2.1"
   checksum: a3cba7b824ebcf24cdfcd234aa7f86f3ad6394b8d9be4c96ff756dafb8b51c7f71320785fbc2304f1af48a0467cbbd2a409efc9333025700ed523f254cb52e3d
