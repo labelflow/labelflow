@@ -30,6 +30,11 @@ beforeEach(async () => {
   return await prisma.workspace.deleteMany({});
 });
 
+afterAll(async () => {
+  // Needed to avoid having the test process running indefinitely after the test suite has been run
+  await prisma.$disconnect();
+});
+
 const createWorkspace = async (
   data?: Partial<MutationCreateWorkspaceArgs["data"]>
 ) => {
