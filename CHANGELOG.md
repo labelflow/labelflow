@@ -1,6 +1,9 @@
 # Changelog
 
-## [1.0.10](https://github.com/labelflow/labelflow/compare/1.0.9...1.0.10)
+## [1.0.11](https://github.com/labelflow/labelflow/compare/1.0.10...1.0.11)
+
+- Add backend resolver tests to CI [`#457`](https://github.com/labelflow/labelflow/pull/457)
+## [1.0.10](https://github.com/labelflow/labelflow/compare/1.0.9...1.0.10) - 2021-09-23
 
 - Feature/#227 import coco [`#455`](https://github.com/labelflow/labelflow/pull/455)
 ## [1.0.9](https://github.com/labelflow/labelflow/compare/1.0.8...1.0.9) - 2021-09-22
