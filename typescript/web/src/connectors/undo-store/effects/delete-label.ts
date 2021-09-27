@@ -7,7 +7,6 @@ import {
   addLabelToImageInCache,
   removeLabelFromImageCache,
 } from "./create-label";
-import { getDatasetsQuery } from "../../../pages/local/datasets";
 
 const deleteLabelMutation = gql`
   mutation deleteLabel($id: ID!) {
