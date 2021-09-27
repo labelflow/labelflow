@@ -218,6 +218,57 @@ describe("Access control for dataset", () => {
       })
     ).rejects.toThrow(`User not authorized to access dataset`);
   });
+  it("allows to delete a dataset to a user that has access to it", async () => {
+    await createWorkspace({ name: "My workspace" });
+    const createdDataset = await createDataset("My dataset", "my-workspace");
+    await client.query({
+      query: gql`
+        mutation deleteDataset($id: ID!) {
+          deleteDataset(where: { id: $id }) {
+            id
+          }
+        }
+      `,
+      variables: {
+        id: createdDataset.data.createDataset.id,
+      },
+      fetchPolicy: "no-cache",
+    });
+    const { data } = await client.query({
+      query: gql`
+        query datasets($workspaceSlug: String!) {
+          datasets(where: { workspaceSlug: $workspaceSlug }) {
+            id
+            name
+          }
+        }
+      `,
+      variables: { workspaceSlug: "my-workspace" },
+      fetchPolicy: "no-cache",
+    });
+    expect(data.datasets.length).toEqual(0);
+  });
+  it("fails to delete a dataset to a user that has access to it", async () => {
+    await createWorkspace({ name: "My workspace" });
+    const createdDataset = await createDataset("My dataset", "my-workspace");
+    user.id = testUser2Id;
+
+    await expect(() =>
+      client.query({
+        query: gql`
+          mutation deleteDataset($id: ID!) {
+            deleteDataset(where: { id: $id }) {
+              id
+            }
+          }
+        `,
+        variables: {
+          id: createdDataset.data.createDataset.id,
+        },
+        fetchPolicy: "no-cache",
+      })
+    ).rejects.toThrow(`User not authorized to access dataset`);
+  });
 });
 
 describe("Workflow nested resolver", () => {
