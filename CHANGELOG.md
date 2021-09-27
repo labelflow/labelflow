@@ -1,6 +1,18 @@
 # Changelog
 
-## [1.0.9](https://github.com/labelflow/labelflow/compare/1.0.8...1.0.9)
+## [1.0.13](https://github.com/labelflow/labelflow/compare/1.0.12...1.0.13)
+
+- Disambiguate dataset name at export [`#465`](https://github.com/labelflow/labelflow/pull/465)
+## [1.0.12](https://github.com/labelflow/labelflow/compare/1.0.11...1.0.12) - 2021-09-24
+
+- Fix bug at build time when user does not have a Sentry token [`#466`](https://github.com/labelflow/labelflow/pull/466)
+## [1.0.11](https://github.com/labelflow/labelflow/compare/1.0.10...1.0.11) - 2021-09-24
+
+- Add backend resolver tests to CI [`#457`](https://github.com/labelflow/labelflow/pull/457)
+## [1.0.10](https://github.com/labelflow/labelflow/compare/1.0.9...1.0.10) - 2021-09-23
+
+- Feature/#227 import coco [`#455`](https://github.com/labelflow/labelflow/pull/455)
+## [1.0.9](https://github.com/labelflow/labelflow/compare/1.0.8...1.0.9) - 2021-09-22
 
 - Updates on export feature [`#448`](https://github.com/labelflow/labelflow/pull/448)
 ## [1.0.8](https://github.com/labelflow/labelflow/compare/1.0.7...1.0.8) - 2021-09-17

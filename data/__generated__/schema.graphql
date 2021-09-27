@@ -21,6 +21,12 @@ input DatasetCreateInput {
   workspaceSlug: String!
 }
 
+input DatasetImportInput {
+  url: String!
+  format: ExportFormat!
+  options: ImportOptions
+}
+
 input DatasetUpdateInput {
   name: String!
 }
@@ -139,6 +145,18 @@ type ImagesAggregates {
   totalCount: Int!
 }
 
+input ImportOptions {
+  coco: ImportOptionsCoco
+}
+
+input ImportOptionsCoco {
+  annotationsOnly: Boolean
+}
+
+type ImportStatus {
+  error: String
+}
+
 scalar JSON
 
 type Label {
@@ -169,7 +187,7 @@ type LabelClass {
 input LabelClassCreateInput {
   id: ID
   name: String!
-  color: ColorHex!
+  color: ColorHex
   datasetId: ID!
 }
 
@@ -271,6 +289,7 @@ type Mutation {
   createDemoDataset: Dataset
   updateDataset(where: DatasetWhereUniqueInput!, data: DatasetUpdateInput!): Dataset
   deleteDataset(where: DatasetWhereUniqueInput!): Dataset
+  importDataset(where: DatasetWhereUniqueInput!, data: DatasetImportInput!): ImportStatus
   createWorkspace(data: WorkspaceCreateInput!): Workspace
   updateWorkspace(where: WorkspaceWhereUniqueInput!, data: WorkspaceUpdateInput!): Workspace
   createMembership(data: MembershipCreateInput!): Membership

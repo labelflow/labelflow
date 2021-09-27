@@ -46,6 +46,12 @@ export type DatasetCreateInput = {
   workspaceSlug: Scalars['String'];
 };
 
+export type DatasetImportInput = {
+  url: Scalars['String'];
+  format: ExportFormat;
+  options?: Maybe<ImportOptions>;
+};
+
 export type DatasetUpdateInput = {
   name: Scalars['String'];
 };
@@ -167,6 +173,19 @@ export type ImagesAggregates = {
   totalCount: Scalars['Int'];
 };
 
+export type ImportOptions = {
+  coco?: Maybe<ImportOptionsCoco>;
+};
+
+export type ImportOptionsCoco = {
+  annotationsOnly?: Maybe<Scalars['Boolean']>;
+};
+
+export type ImportStatus = {
+  __typename?: 'ImportStatus';
+  error?: Maybe<Scalars['String']>;
+};
+
 
 export type Label = {
   __typename?: 'Label';
@@ -198,7 +217,7 @@ export type LabelClass = {
 export type LabelClassCreateInput = {
   id?: Maybe<Scalars['ID']>;
   name: Scalars['String'];
-  color: Scalars['ColorHex'];
+  color?: Maybe<Scalars['ColorHex']>;
   datasetId: Scalars['ID'];
 };
 
@@ -304,6 +323,7 @@ export type Mutation = {
   createDemoDataset?: Maybe<Dataset>;
   updateDataset?: Maybe<Dataset>;
   deleteDataset?: Maybe<Dataset>;
+  importDataset?: Maybe<ImportStatus>;
   createWorkspace?: Maybe<Workspace>;
   updateWorkspace?: Maybe<Workspace>;
   createMembership?: Maybe<Membership>;
@@ -379,6 +399,12 @@ export type MutationUpdateDatasetArgs = {
 
 export type MutationDeleteDatasetArgs = {
   where: DatasetWhereUniqueInput;
+};
+
+
+export type MutationImportDatasetArgs = {
+  where: DatasetWhereUniqueInput;
+  data: DatasetImportInput;
 };
 
 
@@ -712,6 +738,7 @@ export type ResolversTypes = {
   String: ResolverTypeWrapper<Scalars['String']>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
   DatasetCreateInput: DatasetCreateInput;
+  DatasetImportInput: DatasetImportInput;
   DatasetUpdateInput: DatasetUpdateInput;
   DatasetWhereInput: DatasetWhereInput;
   DatasetWhereUniqueInput: DatasetWhereUniqueInput;
@@ -735,6 +762,9 @@ export type ResolversTypes = {
   ImageWhereInput: ImageWhereInput;
   ImageWhereUniqueInput: ImageWhereUniqueInput;
   ImagesAggregates: ResolverTypeWrapper<ImagesAggregates>;
+  ImportOptions: ImportOptions;
+  ImportOptionsCoco: ImportOptionsCoco;
+  ImportStatus: ResolverTypeWrapper<ImportStatus>;
   JSON: ResolverTypeWrapper<Scalars['JSON']>;
   Label: ResolverTypeWrapper<Label>;
   Float: ResolverTypeWrapper<Scalars['Float']>;
@@ -782,6 +812,7 @@ export type ResolversParentTypes = {
   String: Scalars['String'];
   Int: Scalars['Int'];
   DatasetCreateInput: DatasetCreateInput;
+  DatasetImportInput: DatasetImportInput;
   DatasetUpdateInput: DatasetUpdateInput;
   DatasetWhereInput: DatasetWhereInput;
   DatasetWhereUniqueInput: DatasetWhereUniqueInput;
@@ -803,6 +834,9 @@ export type ResolversParentTypes = {
   ImageWhereInput: ImageWhereInput;
   ImageWhereUniqueInput: ImageWhereUniqueInput;
   ImagesAggregates: ImagesAggregates;
+  ImportOptions: ImportOptions;
+  ImportOptionsCoco: ImportOptionsCoco;
+  ImportStatus: ImportStatus;
   JSON: Scalars['JSON'];
   Label: Label;
   Float: Scalars['Float'];
@@ -898,6 +932,11 @@ export type ImagesAggregatesResolvers<ContextType = any, ParentType extends Reso
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type ImportStatusResolvers<ContextType = any, ParentType extends ResolversParentTypes['ImportStatus'] = ResolversParentTypes['ImportStatus']> = {
+  error?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export interface JsonScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['JSON'], any> {
   name: 'JSON';
 }
@@ -964,6 +1003,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   createDemoDataset?: Resolver<Maybe<ResolversTypes['Dataset']>, ParentType, ContextType>;
   updateDataset?: Resolver<Maybe<ResolversTypes['Dataset']>, ParentType, ContextType, RequireFields<MutationUpdateDatasetArgs, 'where' | 'data'>>;
   deleteDataset?: Resolver<Maybe<ResolversTypes['Dataset']>, ParentType, ContextType, RequireFields<MutationDeleteDatasetArgs, 'where'>>;
+  importDataset?: Resolver<Maybe<ResolversTypes['ImportStatus']>, ParentType, ContextType, RequireFields<MutationImportDatasetArgs, 'where' | 'data'>>;
   createWorkspace?: Resolver<Maybe<ResolversTypes['Workspace']>, ParentType, ContextType, RequireFields<MutationCreateWorkspaceArgs, 'data'>>;
   updateWorkspace?: Resolver<Maybe<ResolversTypes['Workspace']>, ParentType, ContextType, RequireFields<MutationUpdateWorkspaceArgs, 'where' | 'data'>>;
   createMembership?: Resolver<Maybe<ResolversTypes['Membership']>, ParentType, ContextType, RequireFields<MutationCreateMembershipArgs, 'data'>>;
@@ -1049,6 +1089,7 @@ export type Resolvers<ContextType = any> = {
   Geometry?: GeometryResolvers<ContextType>;
   Image?: ImageResolvers<ContextType>;
   ImagesAggregates?: ImagesAggregatesResolvers<ContextType>;
+  ImportStatus?: ImportStatusResolvers<ContextType>;
   JSON?: GraphQLScalarType;
   Label?: LabelResolvers<ContextType>;
   LabelClass?: LabelClassResolvers<ContextType>;

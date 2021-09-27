@@ -11,6 +11,7 @@ import type {
 
 import { Context, DbLabelClass } from "./types";
 import { throwIfResolvesToNil } from "./utils/throw-if-resolves-to-nil";
+import { hexColorSequence } from "./utils/class-color-generator";
 
 // Queries
 const labels = async (
@@ -68,7 +69,8 @@ const createLabelClass = async (
     createdAt: now.toISOString(),
     updatedAt: now.toISOString(),
     name,
-    color,
+    color:
+      color ?? hexColorSequence[numberLabelClasses % hexColorSequence.length],
     datasetId,
   };
   await repository.labelClass.add(newLabelClassEntity);
