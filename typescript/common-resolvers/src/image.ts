@@ -174,7 +174,7 @@ const images = async (
 const createImage = async (
   _: any,
   args: MutationCreateImageArgs,
-  { repository, req }: Context
+  { repository, req, user }: Context
 ): Promise<DbImage> => {
   const { file, url, externalUrl, datasetId } = args.data;
 
@@ -184,7 +184,7 @@ const createImage = async (
   await throwIfResolvesToNil(
     `The dataset id ${datasetId} doesn't exist.`,
     repository.dataset.get
-  )({ id: datasetId });
+  )({ id: datasetId }, user);
 
   if (
     !(

@@ -19,6 +19,8 @@ import { countLabels, listLabels } from "./label";
 import { castObjectNullsToUndefined } from "./utils";
 import {
   checkUserAccessToDataset,
+  checkUserAccessToImage,
+  checkUserAccessToLabel,
   checkUserAccessToWorkspace,
 } from "./access-control";
 
@@ -50,21 +52,26 @@ export const repository: Repository = {
       ),
   },
   label: {
-    add: async (label) => {
+    add: async (label, user) => {
+      await checkUserAccessToImage({ where: { id: label.imageId }, user });
       const createdLabel = await prisma.label.create({ data: label });
       return createdLabel.id;
     },
     count: countLabels,
-    delete: async ({ id }) => {
+    delete: async ({ id }, user) => {
+      await checkUserAccessToLabel({ where: { id }, user });
       await prisma.label.delete({ where: { id } });
     },
     /* Needs to be casted as Prisma doesn't let us specify
      * the type for geometry */
-    get: (where) =>
-      prisma.label.findUnique({
+    get: async (where, user) => {
+      await checkUserAccessToLabel({ where, user });
+      return (await prisma.label.findUnique({
         where,
-      }) as unknown as Promise<DbLabel>,
-    update: async (where, label) => {
+      })) as unknown as DbLabel;
+    },
+    update: async (where, label, user) => {
+      await checkUserAccessToLabel({ where, user });
       try {
         if (label) {
           await prisma.label.update({
