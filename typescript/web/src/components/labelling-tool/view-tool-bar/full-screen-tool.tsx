@@ -20,13 +20,14 @@ const noOp = () => {};
 
 // See https://raobotics.com/blog/react-fullscreen
 export function useFullscreen(fullscreenRef: RefObject<HTMLDivElement>) {
-  if (!isInWindowScope)
+  if (!isInWindowScope) {
     return {
       fullscreenEnabled: true,
       fullscreenActive: false,
       enterFullscreen: noOp,
       exitFullscreen: noOp,
     };
+  }
   const [active, setActive] = useState(false);
   useLayoutEffect(() => {
     const handleChange = () => {
