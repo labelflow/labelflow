@@ -1,9 +1,11 @@
+import React from "react";
 import {
   IconButton,
   chakra,
   Tooltip,
   useColorModeValue as mode,
 } from "@chakra-ui/react";
+
 import { RiZoomInLine, RiZoomOutLine } from "react-icons/ri";
 
 import { useLabellingStore } from "../../../connectors/labelling-state";
@@ -11,7 +13,7 @@ import { useLabellingStore } from "../../../connectors/labelling-state";
 const ZoomOutIcon = chakra(RiZoomOutLine);
 const ZoomInIcon = chakra(RiZoomInLine);
 
-export const ZoomToolbar = () => {
+export const ZoomTool = () => {
   const canZoomIn = useLabellingStore((state) => state.canZoomIn);
   const canZoomOut = useLabellingStore((state) => state.canZoomOut);
   const zoomByDelta = useLabellingStore((state) => state.zoomByDelta);

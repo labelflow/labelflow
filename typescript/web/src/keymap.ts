@@ -64,8 +64,13 @@ export const keymap: Keymap = {
     category: "Actions", // TODO: change that category?
   },
   focusLabelClassSearch: {
-    key: "/,f", // TODO: We changed the key "/" to "s" because the slash key was not detected by useHotKeys
-    description: "Focus on search input in label class selection",
+    key: "/,s", // TODO: We changed the key "/" to "s" because the slash key was not detected by useHotKeys
+    description: "Search class by name input in class selection",
     category: "Actions", // TODO: change that category?
+  },
+  enterFullScreen: {
+    key: "f",
+    description: "Enter Full Screen",
+    category: "Actions",
   },
 };
