@@ -1,6 +1,6 @@
-import { MutableRefObject, useState } from "react";
+import { MutableRefObject } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
-import { Coordinate } from "ol/coordinate";
+
 import { MapBrowserEvent } from "ol";
 import { Vector as OlSourceVector } from "ol/source";
 import { Geometry } from "ol/geom";
@@ -25,8 +25,12 @@ export const SelectInteraction = ({
   editClassOverlayRef?: MutableRefObject<HTMLDivElement | null>;
   sourceVectorLabelsRef: MutableRefObject<OlSourceVector<Geometry> | null>;
 }) => {
-  const [editMenuLocation, setEditMenuLocation] =
-    useState<Coordinate | undefined>(undefined);
+  const contextMenuLocation = useLabellingStore(
+    (state) => state.contextMenuLocation
+  );
+  const setContextMenuLocation = useLabellingStore(
+    (state) => state.setContextMenuLocation
+  );
 
   const selectedTool = useLabellingStore((state) => state.selectedTool);
   const setSelectedLabelId = useLabellingStore(
@@ -38,7 +42,7 @@ export const SelectInteraction = ({
     () => {
       if (selectedTool === Tools.CLASSIFICATION) {
         setIsContextMenuOpen(true);
-        setEditMenuLocation([
+        setContextMenuLocation([
           (image?.width ?? 0) / 2,
           (image?.height ?? 0) / 2,
         ]);
@@ -59,11 +63,11 @@ export const SelectInteraction = ({
 
         const center = getCenter(extent);
         setIsContextMenuOpen(true);
-        setEditMenuLocation(center);
+        setContextMenuLocation(center);
       }
     },
     {},
-    [sourceVectorLabelsRef, setIsContextMenuOpen, setEditMenuLocation, image]
+    [sourceVectorLabelsRef, setIsContextMenuOpen, setContextMenuLocation, image]
   );
 
   const getClosestFeature = (e: MapBrowserEvent<UIEvent>) => {
@@ -92,13 +96,13 @@ export const SelectInteraction = ({
     if (selectedLabelIdFromFeature) {
       const center = map.getCoordinateFromPixel(e.pixel);
       setIsContextMenuOpen(true);
-      setEditMenuLocation(center);
+      setContextMenuLocation(center);
       return true;
     }
 
     if (selectedTool === Tools.CLASSIFICATION) {
       setIsContextMenuOpen(true);
-      setEditMenuLocation([
+      setContextMenuLocation([
         e.coordinate?.[0] ?? (image?.width ?? 0) / 2,
         e.coordinate?.[1] ?? (image?.height ?? 0) / 2,
       ]);
@@ -112,6 +116,7 @@ export const SelectInteraction = ({
     <>
       {selectedTool === Tools.SELECTION && (
         <olInteractionPointer
+          key={selectedTool}
           style={null}
           handleEvent={(e) => {
             const eventType = e?.type ?? null;
@@ -126,29 +131,45 @@ export const SelectInteraction = ({
           }}
         />
       )}
-      {[Tools.CLASSIFICATION, Tools.BOX, Tools.POLYGON].includes(
-        selectedTool
-      ) && (
+      {selectedTool === Tools.CLASSIFICATION && (
         <olInteractionPointer
           key={selectedTool}
           style={null}
           handleEvent={(e) => {
             const eventType = e?.type ?? null;
             switch (eventType) {
-              case "contextmenu": {
-                contextMenuHandler(e);
+              case "click": {
+                setSelectedLabelId(null);
                 return true;
               }
+              case "contextmenu":
+                return contextMenuHandler(e);
               default:
                 return true;
             }
           }}
         />
       )}
+      {(selectedTool === Tools.POLYGON || selectedTool === Tools.BOX) && (
+        <olInteractionPointer
+          key={selectedTool}
+          style={null}
+          handleEvent={(e) => {
+            const eventType = e?.type ?? null;
+            switch (eventType) {
+              case "contextmenu":
+                return contextMenuHandler(e);
+              default:
+                return true;
+            }
+          }}
+        />
+      )}
+
       {editClassOverlayRef?.current && (
         <olOverlay
           element={editClassOverlayRef.current}
-          position={editMenuLocation}
+          position={contextMenuLocation}
           positioning={OverlayPositioning.CENTER_CENTER}
         />
       )}
