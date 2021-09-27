@@ -23,6 +23,11 @@ beforeEach(async () => {
   return await prisma.user.deleteMany({});
 });
 
+afterAll(async () => {
+  // Needed to avoid having the test process running indefinitely after the test suite has been run
+  await prisma.$disconnect();
+});
+
 describe("users query", () => {
   it("returns an empty array when there aren't any", async () => {
     const { data } = await client.query({

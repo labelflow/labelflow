@@ -23,7 +23,8 @@ export const Dropzone = ({
     getRootProps: () => object;
     getInputProps: () => object;
   } = useDropzone({
-    accept: "image/jpeg, image/png, image/bmp",
+    accept:
+      "image/jpeg, image/png, image/bmp, application/zip, application/json",
   });
 
   useEffect(() => {

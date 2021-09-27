@@ -88,6 +88,20 @@ jobs:
     name: Unit Tests Typescript code
     runs-on: ubuntu-20.04
     needs: install-typescript
+    services:
+      db:
+        image: postgres:12.6
+        env:
+          POSTGRES_USER: ${{secrets.POSTGRES_ADMIN_USER}}
+          POSTGRES_PASSWORD: ${{secrets.POSTGRES_ADMIN_PASSWORD}}
+          POSTGRES_DB: ${{secrets.POSTGRES_DB}}
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5433:5432
     steps:
       - name: Check out repository code
         uses: actions/checkout@v2
@@ -100,9 +114,13 @@ jobs:
       - name: check node_modules
         run: ls typescript/web/node_modules
       - name: generate prisma
-        run: cd typescript/db && yarn generate
+        run: cd typescript/db && yarn deploy && yarn generate
+        env:
+          POSTGRES_EXTERNAL_URL: ${{secrets.POSTGRES_EXTERNAL_URL}}
       - name: run tests
         run: yarn test
+        env:
+          POSTGRES_EXTERNAL_URL: ${{secrets.POSTGRES_EXTERNAL_URL}}
 
   check-codegen-diff:
     name: Check diff after codegen

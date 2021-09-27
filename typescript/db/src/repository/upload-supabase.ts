@@ -1,12 +1,15 @@
 import { createClient } from "@supabase/supabase-js";
 import "isomorphic-fetch";
+import memoizeOne from "memoize-one";
 
 import { Repository } from "../../../common-resolvers/src";
 import { UploadTargetHttp } from "../../../graphql-types/src/graphql-types.generated";
 
-const client = createClient(
-  process?.env?.SUPABASE_API_URL as string,
-  process?.env?.SUPABASE_API_KEY as string
+const getClient = memoizeOne(() =>
+  createClient(
+    process?.env?.SUPABASE_API_URL as string,
+    process?.env?.SUPABASE_API_KEY as string
+  )
 );
 const bucket = "labelflow-images";
 export const uploadsRoute = "/api/uploads";
@@ -55,6 +58,7 @@ export const deleteFromStorage: Repository["upload"]["delete"] = async (
 
 export const putInStorage: Repository["upload"]["put"] = async (url, blob) => {
   const query = `${bucket}/`;
+  const client = getClient();
   await client.storage
     .from(bucket)
     .upload(url.substring(url.lastIndexOf(query) + query.length), blob, {
