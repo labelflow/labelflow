@@ -59,6 +59,18 @@ export const ClassificationContent = forwardRef<HTMLDivElement>(
     const setSelectedLabelId = useLabellingStore(
       (state) => state.setSelectedLabelId
     );
+    const setIsContextMenuOpen = useLabellingStore(
+      (state) => state.setIsContextMenuOpen
+    );
+
+    const contextMenuHandler = (
+      e: React.MouseEvent<HTMLSpanElement, MouseEvent>
+    ): void => {
+      if (selectedTool === Tools.CLASSIFICATION) {
+        console.log(e);
+        setIsContextMenuOpen(true);
+      }
+    };
 
     return (
       <Box
@@ -94,7 +106,10 @@ export const ClassificationContent = forwardRef<HTMLDivElement>(
                   color={labelClass ? "white" : "black"}
                   borderStyle="solid"
                   borderWidth={4}
-                  onClick={() => setSelectedLabelId(id)}
+                  onClick={(e) => {
+                    setSelectedLabelId(id);
+                    // contextMenuHandler(e);
+                  }}
                   cursor="pointer"
                   boxSizing="content-box"
                 >

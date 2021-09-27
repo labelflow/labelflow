@@ -51,6 +51,7 @@ const labelQuery = gql`
   query getLabel($id: ID!) {
     label(where: { id: $id }) {
       id
+      type
       labelClass {
         id
         name
@@ -175,7 +176,7 @@ export const EditLabelClassMenu = () => {
 
   const handleSelectedClassChange = useCallback(
     async (item: LabelClassItem | null) => {
-      if (!isInDrawingMode && selectedLabelId != null) {
+      if (!isInDrawingMode) {
         await perform(
           createUpdateLabelClassOfLabelEffect(
             {
@@ -236,14 +237,13 @@ export const EditLabelClassMenu = () => {
         );
         return;
       }
-      if (selectedLabelClassId != null) {
-        await perform(
-          createUpdateLabelClassEffect({
-            selectedLabelClassId: item?.id ?? null,
-            selectedLabelClassIdPrevious: selectedLabelClassId,
-          })
-        );
-      }
+
+      await perform(
+        createUpdateLabelClassEffect({
+          selectedLabelClassId: item?.id ?? null,
+          selectedLabelClassIdPrevious: selectedLabelClassId,
+        })
+      );
     },
     [selectedLabelId, selectedLabelClassId, selectedTool, imageId]
   );
@@ -282,6 +282,9 @@ export const EditLabelClassMenu = () => {
           labelClasses={labelClasses}
           createNewClass={handleCreateNewClass}
           onSelectedClassChange={handleSelectedClassChange}
+          includeNoneClass={
+            selectedLabelData?.label?.type !== LabelType.Classification
+          }
           isContextMenuOpen={isContextMenuOpen}
         />
       )}

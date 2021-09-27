@@ -92,6 +92,7 @@ export const ClassAdditionMenu = ({
       isOpen={isOpen}
       onClose={close}
       labelClasses={labelClasses}
+      includeNoneClass={false}
       onSelectedClassChange={(labelClass: LabelClassItem | null) => {
         onSelectedClassChange(labelClass);
         close();

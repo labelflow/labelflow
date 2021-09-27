@@ -84,9 +84,20 @@ export const SelectInteraction = ({
   };
 
   const contextMenuHandler = (e: MapBrowserEvent<UIEvent>) => {
+    const { map } = e;
+    const feature = getClosestFeature(e);
+    const selectedLabelIdFromFeature = feature?.getProperties().id ?? null;
+    setSelectedLabelId(selectedLabelIdFromFeature);
+
+    if (selectedLabelIdFromFeature) {
+      const center = map.getCoordinateFromPixel(e.pixel);
+      setIsContextMenuOpen(true);
+      setEditMenuLocation(center);
+      return true;
+    }
+
     if (selectedTool === Tools.CLASSIFICATION) {
       setIsContextMenuOpen(true);
-
       setEditMenuLocation([
         e.coordinate?.[0] ?? (image?.width ?? 0) / 2,
         e.coordinate?.[1] ?? (image?.height ?? 0) / 2,
@@ -94,16 +105,6 @@ export const SelectInteraction = ({
       return true;
     }
 
-    const { map } = e;
-    const feature = getClosestFeature(e);
-    const selectedLabelIdFromFeature = feature?.getProperties().id ?? null;
-    setSelectedLabelId(selectedLabelIdFromFeature);
-    if (selectedLabelIdFromFeature) {
-      const center = map.getCoordinateFromPixel(e.pixel);
-
-      setIsContextMenuOpen(true);
-      setEditMenuLocation(center);
-    }
     return true;
   };
 
@@ -129,6 +130,7 @@ export const SelectInteraction = ({
         selectedTool
       ) && (
         <olInteractionPointer
+          key={selectedTool}
           style={null}
           handleEvent={(e) => {
             const eventType = e?.type ?? null;

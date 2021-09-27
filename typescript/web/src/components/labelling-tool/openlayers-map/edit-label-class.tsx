@@ -37,6 +37,7 @@ const labelQuery = gql`
   query getLabel($id: ID!) {
     label(where: { id: $id }) {
       id
+      type
       labelClass {
         id
       }
@@ -228,6 +229,15 @@ export const EditLabelClass = forwardRef<
       <ClassSelectionPopover
         isOpen={isOpen}
         onClose={onClose}
+        includeNoneClass={
+          // No None Class when editing Classification Labels
+          !(labelQueryData?.label?.type === LabelType.Classification) &&
+          // No None Class when adding Classification Labels
+          !(
+            selectedTool === Tools.CLASSIFICATION &&
+            labelQueryData?.label == null
+          )
+        }
         activateShortcuts={isContextMenuOpen}
         trigger={<div style={{ width: 0, height: 0 }} />} // Needed to have the popover displayed preventing overflow
         labelClasses={labelClasses}
