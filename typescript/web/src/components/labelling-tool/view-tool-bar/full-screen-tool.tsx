@@ -1,4 +1,6 @@
-import { RefObject, useState } from "react";
+import { RefObject, useState, useLayoutEffect, useCallback } from "react";
+
+import fscreen from "fscreen";
 import {
   IconButton,
   chakra,
@@ -6,79 +8,52 @@ import {
   useColorModeValue as mode,
 } from "@chakra-ui/react";
 import { RiFullscreenLine, RiFullscreenExitLine } from "react-icons/ri";
+import { useHotkeys } from "react-hotkeys-hook";
 
 import { isInWindowScope } from "../../../utils/detect-scope";
+import { keymap } from "../../../keymap";
 
 const FullscreenIcon = chakra(RiFullscreenLine);
 const FullscreenExitIcon = chakra(RiFullscreenExitLine);
 
-// For Full screen related stuff,
-// See https://github.com/openlayers/openlayers/blob/v6.7.0/src/ol/control/FullScreen.js
+const noOp = () => {};
 
-/**
- * @return {boolean} Fullscreen is supported by the current platform.
- */
-function isFullScreenSupported() {
-  if (!isInWindowScope) {
-    // Assume it is supported for most users.
-    return true;
-  }
-  const { body } = document;
-  return !!(
-    body.webkitRequestFullscreen ||
-    (body.msRequestFullscreen && document.msFullscreenEnabled) ||
-    (body.requestFullscreen && document.fullscreenEnabled)
-  );
-}
-
-// /**
-//  * @return {boolean} Element is currently in fullscreen.
-//  */
-// function isFullScreen() {
-//   return !!(
-//     document.webkitIsFullScreen ||
-//     document.msFullscreenElement ||
-//     document.fullscreenElement
-//   );
-// }
-
-/**
- * Request to fullscreen an element.
- * @param {HTMLElement} element Element to request fullscreen
- */
-function requestFullScreen(element: HTMLElement) {
-  if (element.requestFullscreen) {
-    element.requestFullscreen();
-  } else if (element.msRequestFullscreen) {
-    element.msRequestFullscreen();
-  } else if (element.webkitRequestFullscreen) {
-    element.webkitRequestFullscreen();
-  }
-}
-
-/**
- * Request to fullscreen an element with keyboard input.
- * @param {HTMLElement} element Element to request fullscreen
- */
-function requestFullScreenWithKeys(element: HTMLElement) {
-  if (element.webkitRequestFullscreen) {
-    element.webkitRequestFullscreen();
-  } else {
-    requestFullScreen(element);
-  }
-}
-
-/**
- * Exit fullscreen.
- */
-function exitFullScreen() {
-  if (document.exitFullscreen) {
-    document.exitFullscreen();
-  } else if (document.msExitFullscreen) {
-    document.msExitFullscreen();
-  } else if (document.webkitExitFullscreen) {
-    document.webkitExitFullscreen();
-  }
+// See https://raobotics.com/blog/react-fullscreen
+export function useFullscreen(fullscreenRef: RefObject<HTMLDivElement>) {
+  if (!isInWindowScope)
+    return {
+      fullscreenEnabled: true,
+      fullscreenActive: false,
+      enterFullscreen: noOp,
+      exitFullscreen: noOp,
+    };
+  const [active, setActive] = useState(false);
+  useLayoutEffect(() => {
+    const handleChange = () => {
+      setActive(fscreen.fullscreenElement === fullscreenRef.current);
+    };
+    fscreen.addEventListener("fullscreenchange", handleChange);
+    return () => fscreen.removeEventListener("fullscreenchange", handleChange);
+  }, []);
+  const enterFullscreen = useCallback(async () => {
+    if (fscreen.fullscreenElement) {
+      await fscreen.exitFullscreen();
+    }
+    if (fullscreenRef.current) {
+      fscreen.requestFullscreen(fullscreenRef.current);
+    }
+  }, []);
+  const exitFullscreen = useCallback(async () => {
+    if (fscreen.fullscreenElement === fullscreenRef.current) {
+      fscreen.exitFullscreen();
+    }
+  }, []);
+  return {
+    fullscreenEnabled: fscreen.fullscreenEnabled,
+    fullscreenActive: active,
+    enterFullscreen,
+    exitFullscreen,
+  };
 }
 
 export const FullScreenTool = ({
@@ -86,41 +61,57 @@ export const FullScreenTool = ({
 }: {
   containerRef: RefObject<HTMLDivElement>;
 }) => {
-  const [isFullScreenState, setIsFullScreenState] = useState(false);
-  const handleFullScreen = () => {
-    if (containerRef.current) {
-      setIsFullScreenState(true);
-      requestFullScreenWithKeys(containerRef.current);
-    }
-  };
-  const handleFullScreenExit = () => {
-    setIsFullScreenState(false);
-    exitFullScreen();
-  };
+  const {
+    fullscreenActive,
+    fullscreenEnabled,
+    enterFullscreen,
+    exitFullscreen,
+  } = useFullscreen(containerRef);
 
-  if (isFullScreenState) {
+  useHotkeys(
+    keymap.enterFullScreen.key,
+    () => {
+      if (fullscreenActive) {
+        exitFullscreen();
+        return;
+      }
+      enterFullscreen();
+    },
+    {},
+    [enterFullscreen, exitFullscreen, fullscreenActive]
+  );
+
+  if (fullscreenActive) {
     return (
-      <Tooltip label="Exit Full Screen" placement="left" openDelay={300}>
+      <Tooltip
+        label={`Exit Full Screen [${keymap.enterFullScreen.key}]`}
+        placement="left"
+        openDelay={300}
+      >
         <IconButton
           icon={<FullscreenExitIcon fontSize="lg" />}
           backgroundColor={mode("white", "gray.800")}
           aria-label="Exit Full Screen"
           pointerEvents="initial"
           isDisabled={false}
-          onClick={handleFullScreenExit}
+          onClick={exitFullscreen}
         />
       </Tooltip>
     );
   }
   return (
-    <Tooltip label="Enter Full Screen" placement="left" openDelay={300}>
+    <Tooltip
+      label={`Enter Full Screen [${keymap.enterFullScreen.key}]`}
+      placement="left"
+      openDelay={300}
+    >
       <IconButton
         icon={<FullscreenIcon fontSize="lg" />}
         backgroundColor={mode("white", "gray.800")}
         aria-label="Enter Full Screen"
         pointerEvents="initial"
-        isDisabled={containerRef.current == null || !isFullScreenSupported()}
-        onClick={handleFullScreen}
+        isDisabled={containerRef.current == null || !fullscreenEnabled}
+        onClick={enterFullscreen}
       />
     </Tooltip>
   );

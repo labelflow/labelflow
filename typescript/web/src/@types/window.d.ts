@@ -5,19 +5,4 @@ declare global {
     clarity?: (event: string) => void;
     workbox: Workbox;
   }
-
-  interface Document {
-    msFullscreenEnabled?: boolean;
-    fullscreenEnabled?: boolean;
-    webkitIsFullScreen?: boolean;
-    msFullscreenElement?: HTMLElement;
-    exitFullscreen?: () => void;
-    msExitFullscreen?: () => void;
-    webkitExitFullscreen?: () => void;
-  }
-  interface Element {
-    webkitRequestFullscreen?: () => void;
-    msRequestFullscreen?: () => void;
-    requestFullscreen?: () => void;
-  }
 }
