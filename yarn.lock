@@ -6338,6 +6338,7 @@ __metadata:
     "@turf/helpers": ^6.5.0
     "@turf/intersect": ^6.5.0
     "@types/bluebird": ^3.5.35
+    "@types/fscreen": ^1.0.1
     "@types/mime-types": 2.1.0
     "@types/multer": 1.4.7
     "@types/node": 12.12.21
@@ -6358,6 +6359,7 @@ __metadata:
     downshift: ^6.1.3
     fake-indexeddb: ^3.1.2
     framer-motion: ^4
+    fscreen: ^1.2.0
     github-markdown-css: ^4.0.0
     graphiql: ^1.4.2
     graphql: 15.5.1
@@ -11175,6 +11177,13 @@ __metadata:
   dependencies:
     "@types/node": "*"
   checksum: 367079834ddb8984e9b740d4219d01cfa9683e8552b1dfda473817e7f2b33d750453adda148d1b99cb67bd6e990fad8bd31e4034b5e9311dfb9803e6f1fbb0dc
+  languageName: node
+  linkType: hard
+
+"@types/fscreen@npm:^1.0.1":
+  version: 1.0.1
+  resolution: "@types/fscreen@npm:1.0.1"
+  checksum: 06ef89c263409081639bd618ca170a66bf6c8e332ae01ed453fdf3d5e6cf41d1abd5c58a0747c1d300b64fa7cdea93abf7a92d5cb5f62602c002308011d2e1c4
   languageName: node
   linkType: hard
 
@@ -18907,6 +18916,13 @@ __metadata:
   version: 1.0.0
   resolution: "fs.realpath@npm:1.0.0"
   checksum: 99ddea01a7e75aa276c250a04eedeffe5662bce66c65c07164ad6264f9de18fb21be9433ead460e54cff20e31721c811f4fb5d70591799df5f85dce6d6746fd0
+  languageName: node
+  linkType: hard
+
+"fscreen@npm:^1.2.0":
+  version: 1.2.0
+  resolution: "fscreen@npm:1.2.0"
+  checksum: ac50f9ac52a157b8fe6aaecdf9efa7c1cfa90b42a76c3bc6b85372fab05c5a9cd72c1b7f4c2e273eba1a0e630e381fd72ae135fcc57acd05a0943d5d0c21b451
   languageName: node
   linkType: hard
 
