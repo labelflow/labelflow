@@ -284,7 +284,6 @@ describe("Access control for label", () => {
         mutation updateLabel($id: ID!, $data: LabelUpdateInput!) {
           updateLabel(where: { id: $id }, data: $data) {
             id
-            name
           }
         }
       `,
@@ -325,7 +324,6 @@ describe("Access control for label", () => {
           mutation updateLabel($id: ID!, $data: LabelUpdateInput!) {
             updateLabel(where: { id: $id }, data: $data) {
               id
-              name
             }
           }
         `,
@@ -334,6 +332,54 @@ describe("Access control for label", () => {
           data: {
             geometry: getGeometryFromExtent({ ...labelDataExtent, x: 0, y: 0 }),
           },
+        },
+        fetchPolicy: "no-cache",
+      })
+    ).rejects.toThrow(`User not authorized to access label`);
+  });
+  it("allows to delete a label to a user that has access to it", async () => {
+    const createdLabel = await createLabel(labelData);
+    await client.query({
+      query: gql`
+        mutation deleteLabel($id: ID!) {
+          deleteLabel(where: { id: $id }) {
+            id
+          }
+        }
+      `,
+      variables: {
+        id: createdLabel.data.createLabel.id,
+      },
+      fetchPolicy: "no-cache",
+    });
+    const { data } = await client.query({
+      query: gql`
+        query labels {
+          labelsAggregates {
+            totalCount
+          }
+        }
+      `,
+      variables: { imageId: testImageId },
+      fetchPolicy: "no-cache",
+    });
+    expect(data.labelsAggregates.totalCount).toEqual(0);
+  });
+  it("fails to delete a label to a user that has access to it", async () => {
+    const createdLabel = await createLabel(labelData);
+    user.id = testUser2Id;
+
+    await expect(() =>
+      client.query({
+        query: gql`
+          mutation deleteLabel($id: ID!) {
+            deleteLabel(where: { id: $id }) {
+              id
+            }
+          }
+        `,
+        variables: {
+          id: createdLabel.data.createLabel.id,
         },
         fetchPolicy: "no-cache",
       })
