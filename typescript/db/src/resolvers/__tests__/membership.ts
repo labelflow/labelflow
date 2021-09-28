@@ -170,6 +170,20 @@ describe("createMembership mutation", () => {
 
     expect(data?.createMembership.id).toEqual(membershipId);
   });
+
+  it("throws an error if the user can't access the workspace", async () => {
+    const workspaceSlug = (await createWorkspace()).data?.createWorkspace
+      .slug as string;
+    user.id = testUser2Id;
+
+    await expect(() =>
+      createMembership({
+        userId: testUser2Id,
+        workspaceSlug,
+        role: MembershipRole.Admin,
+      })
+    ).rejects.toThrow("User not authorized to access workspace");
+  });
 });
 
 describe("memberships query", () => {
@@ -220,34 +234,68 @@ describe("memberships query", () => {
       `,
       fetchPolicy: "no-cache",
     });
+    expect(data.memberships.map((workspace) => workspace.role)).toEqual([
+      MembershipRole.Admin,
+      MembershipRole.Admin,
+    ]);
+  });
+
+  it("lists only the memberships assigned to the user", async () => {
+    // both this workspaces are linked to testUser1Id by default
+    (await createWorkspace({ name: "test1" }))?.data?.createWorkspace
+      .slug as string;
+    (await createWorkspace({ name: "test2" }))?.data?.createWorkspace
+      .slug as string;
+    user.id = testUser2Id;
+    (await createWorkspace({ name: "test3" }))?.data?.createWorkspace
+      .slug as string;
+    (await createWorkspace({ name: "test4" }))?.data?.createWorkspace
+      .slug as string;
+
+    const { data } = await client.query<{
+      memberships: Pick<Membership, "id" | "role">[];
+    }>({
+      query: gql`
+        {
+          memberships {
+            id
+            role
+          }
+        }
+      `,
+      fetchPolicy: "no-cache",
+    });
 
     expect(data.memberships.map((workspace) => workspace.role)).toEqual([
       MembershipRole.Admin,
       MembershipRole.Admin,
-      MembershipRole.Member,
-      MembershipRole.Member,
     ]);
   });
 
   it("can skip results", async () => {
     // both this workspaces are linked to testUser1Id by default
-    const workspace1Slug = (await createWorkspace({ name: "test1" }))?.data
+    (await createWorkspace({ name: "test1" }))?.data?.createWorkspace
+      .slug as string;
+    (await createWorkspace({ name: "test2" }))?.data?.createWorkspace
+      .slug as string;
+    user.id = testUser2Id;
+    const workspace3Slug = (await createWorkspace({ name: "test3" }))?.data
       ?.createWorkspace.slug as string;
-    const workspace2Slug = (await createWorkspace({ name: "test2" }))?.data
+    const workspace4Slug = (await createWorkspace({ name: "test4" }))?.data
       ?.createWorkspace.slug as string;
 
     await createMembership({
-      userId: testUser2Id,
-      workspaceSlug: workspace1Slug,
+      userId: testUser1Id,
+      workspaceSlug: workspace3Slug,
       role: MembershipRole.Member,
     });
 
     await createMembership({
-      userId: testUser2Id,
-      workspaceSlug: workspace2Slug,
+      userId: testUser1Id,
+      workspaceSlug: workspace4Slug,
       role: MembershipRole.Member,
     });
-
+    user.id = testUser1Id;
     const { data } = await client.query<{
       memberships: Pick<Membership, "id" | "role">[];
     }>({
@@ -271,22 +319,28 @@ describe("memberships query", () => {
 
   it("can limit the number of results", async () => {
     // both this workspaces are linked to testUser1Id by default
-    const workspace1Slug = (await createWorkspace({ name: "test1" }))?.data
+    (await createWorkspace({ name: "test1" }))?.data?.createWorkspace
+      .slug as string;
+    (await createWorkspace({ name: "test2" }))?.data?.createWorkspace
+      .slug as string;
+    user.id = testUser2Id;
+    const workspace3Slug = (await createWorkspace({ name: "test3" }))?.data
       ?.createWorkspace.slug as string;
-    const workspace2Slug = (await createWorkspace({ name: "test2" }))?.data
+    const workspace4Slug = (await createWorkspace({ name: "test4" }))?.data
       ?.createWorkspace.slug as string;
 
     await createMembership({
-      userId: testUser2Id,
-      workspaceSlug: workspace1Slug,
+      userId: testUser1Id,
+      workspaceSlug: workspace3Slug,
       role: MembershipRole.Member,
     });
 
     await createMembership({
-      userId: testUser2Id,
-      workspaceSlug: workspace2Slug,
+      userId: testUser1Id,
+      workspaceSlug: workspace4Slug,
       role: MembershipRole.Member,
     });
+    user.id = testUser1Id;
 
     const { data } = await client.query<{
       memberships: Pick<Membership, "id" | "role">[];
@@ -311,22 +365,28 @@ describe("memberships query", () => {
 
   it("can limit the number of results and also skip some", async () => {
     // both this workspaces are linked to testUser1Id by default
-    const workspace1Slug = (await createWorkspace({ name: "test1" }))?.data
+    (await createWorkspace({ name: "test1" }))?.data?.createWorkspace
+      .slug as string;
+    (await createWorkspace({ name: "test2" }))?.data?.createWorkspace
+      .slug as string;
+    user.id = testUser2Id;
+    const workspace3Slug = (await createWorkspace({ name: "test3" }))?.data
       ?.createWorkspace.slug as string;
-    const workspace2Slug = (await createWorkspace({ name: "test2" }))?.data
+    const workspace4Slug = (await createWorkspace({ name: "test4" }))?.data
       ?.createWorkspace.slug as string;
 
     await createMembership({
-      userId: testUser2Id,
-      workspaceSlug: workspace1Slug,
+      userId: testUser1Id,
+      workspaceSlug: workspace3Slug,
       role: MembershipRole.Member,
     });
 
     await createMembership({
-      userId: testUser2Id,
-      workspaceSlug: workspace2Slug,
+      userId: testUser1Id,
+      workspaceSlug: workspace4Slug,
       role: MembershipRole.Member,
     });
+    user.id = testUser1Id;
 
     const { data } = await client.query<{
       memberships: Pick<Membership, "id" | "role">[];
@@ -377,9 +437,28 @@ describe("membership query", () => {
       })
     )?.data?.createMembership.id as string;
 
+    user.id = testUser2Id;
+
     const { data } = await queryMembership(membershipId);
 
     expect(data.membership.id).toEqual(membershipId);
+  });
+
+  it("throws if the user can't access membership", async () => {
+    const workspaceSlug = (await createWorkspace()).data?.createWorkspace
+      .slug as string;
+
+    const membershipId = (
+      await createMembership({
+        userId: testUser2Id,
+        workspaceSlug,
+        role: MembershipRole.Member,
+      })
+    )?.data?.createMembership.id as string;
+    user.id = uuidV4();
+    await expect(() => queryMembership(membershipId)).rejects.toThrow(
+      `User not authorized to access membership`
+    );
   });
 
   it("throws if the provided id doesn't match any membership", async () => {
@@ -387,9 +466,7 @@ describe("membership query", () => {
 
     await expect(() =>
       queryMembership(idOfAMembershipThaDoesNotExist)
-    ).rejects.toThrow(
-      `Couldn't find a membership with id: "${idOfAMembershipThaDoesNotExist}"`
-    );
+    ).rejects.toThrow(`User not authorized to access membership`);
   });
 });
 
@@ -427,13 +504,32 @@ describe("updateMembership mutation", () => {
         workspaceSlug,
       })
     ).data?.createMembership.id as string;
-
+    user.id = testUser2Id;
     const { data } = await updateMembership({
       id: membershipId,
       role: MembershipRole.Member,
     });
 
     expect(data?.updateMembership.role).toEqual(MembershipRole.Member);
+  });
+
+  it("throws if the user does not have access to the membership", async () => {
+    const workspaceSlug = (await createWorkspace())?.data?.createWorkspace
+      .slug as string;
+
+    const membershipId = (
+      await createMembership({
+        userId: testUser2Id,
+        role: MembershipRole.Admin,
+        workspaceSlug,
+      })
+    ).data?.createMembership.id as string;
+    await expect(
+      updateMembership({
+        id: membershipId,
+        role: MembershipRole.Member,
+      })
+    ).rejects.toThrow("User not authorized to access membership");
   });
 
   it("throws if the membership to update doesn't exist", async () => {
@@ -476,7 +572,7 @@ describe("deleteMembership mutation", () => {
         workspaceSlug,
       })
     ).data?.createMembership.id as string;
-
+    user.id = testUser2Id;
     const { data } = await deleteMembership(membershipId);
 
     expect(data?.deleteMembership.id).toEqual(membershipId);
@@ -492,22 +588,40 @@ describe("deleteMembership mutation", () => {
         workspaceSlug,
       })
     ).data?.createMembership.id as string;
-
+    user.id = testUser2Id;
     await deleteMembership(membershipId);
 
-    await expect(() =>
-      client.query({
-        query: gql`
-          query membership($id: ID!) {
-            membership(where: { id: $id }) {
-              id
+    expect(
+      (
+        await client.query({
+          query: gql`
+            query memberships {
+              memberships {
+                id
+              }
             }
-          }
-        `,
-        variables: { id: membershipId },
-        fetchPolicy: "no-cache",
+          `,
+          fetchPolicy: "no-cache",
+        })
+      ).data.memberships.length
+    ).toEqual(0);
+  });
+
+  it("throws if the user does not have access to the membership", async () => {
+    const workspaceSlug = (await createWorkspace())?.data?.createWorkspace
+      .slug as string;
+
+    const membershipId = (
+      await createMembership({
+        userId: testUser2Id,
+        role: MembershipRole.Admin,
+        workspaceSlug,
       })
-    ).rejects.toThrow(`Couldn't find a membership with id: "${membershipId}"`);
+    ).data?.createMembership.id as string;
+
+    await expect(() => deleteMembership(membershipId)).rejects.toThrow(
+      "User not authorized to access membership"
+    );
   });
 
   it("throws if the membership to update doesn't exist", async () => {
@@ -531,7 +645,7 @@ describe("nested resolvers", () => {
         role: MembershipRole.Admin,
       })
     ).data?.createMembership.id as string;
-
+    user.id = testUser2Id;
     const { data } = await client.query<{
       membership: Pick<Membership, "id" | "user">;
     }>({
@@ -563,7 +677,7 @@ describe("nested resolvers", () => {
         role: MembershipRole.Admin,
       })
     ).data?.createMembership.id as string;
-
+    user.id = testUser2Id;
     const { data } = await client.query<{
       membership: Pick<Membership, "id" | "workspace">;
     }>({

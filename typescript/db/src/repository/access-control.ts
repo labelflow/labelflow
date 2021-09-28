@@ -4,6 +4,8 @@ import {
   LabelWhereUniqueInput,
   ImageWhereUniqueInput,
   LabelClassWhereUniqueInput,
+  MembershipWhereUniqueInput,
+  UserWhereUniqueInput,
 } from "@labelflow/graphql-types";
 import { prisma } from "./prisma-client";
 
@@ -133,4 +135,52 @@ export const checkUserAccessToLabelClass = async ({
     throw new Error("User not authorized to access label class");
   }
   return hasAccessToLabelClass;
+};
+
+export const checkUserAccessToMembership = async ({
+  where,
+  user,
+}: {
+  where: MembershipWhereUniqueInput;
+  user?: { id: string };
+}): Promise<boolean> => {
+  if (user?.id == null) {
+    throw new Error("User not authenticated");
+  }
+  const hasAccessToMembership =
+    (await prisma.membership.findFirst({
+      where: {
+        id: where.id,
+        userId: user?.id,
+      },
+    })) != null;
+  if (!hasAccessToMembership) {
+    throw new Error("User not authorized to access membership");
+  }
+  return hasAccessToMembership;
+};
+
+export const checkUserAccessToUser = async ({
+  where,
+  user,
+}: {
+  where: UserWhereUniqueInput;
+  user?: { id: string };
+}): Promise<boolean> => {
+  if (user?.id == null) {
+    throw new Error("User not authenticated");
+  }
+  const hasAccessToUser =
+    (await prisma.workspace.findFirst({
+      where: {
+        AND: [
+          { memberships: { some: { userId: where.id } } },
+          { memberships: { some: { userId: user.id } } },
+        ],
+      },
+    })) != null;
+  if (!hasAccessToUser) {
+    throw new Error("User not authorized to access user");
+  }
+  return hasAccessToUser;
 };
