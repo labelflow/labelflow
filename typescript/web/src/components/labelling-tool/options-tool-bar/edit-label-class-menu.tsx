@@ -146,6 +146,7 @@ export const EditLabelClassMenu = () => {
           ? hexColorSequence[0]
           : getNextClassColor(labelClasses[labelClasses.length - 1].color);
       if (!isInDrawingMode) {
+        // Update class of an existing label with a new class
         await perform(
           createCreateLabelClassAndUpdateLabelEffect(
             {
@@ -162,6 +163,7 @@ export const EditLabelClassMenu = () => {
       }
 
       if (selectedTool === Tools.CLASSIFICATION && imageId) {
+        // Create a new classification label of a new class
         const { data: imageLabelsData } = await client.query({
           query: getImageLabelsQuery,
           variables: { imageId },
@@ -199,6 +201,7 @@ export const EditLabelClassMenu = () => {
         return;
       }
 
+      // Change currently select class in the menu to an existing class, don't apply the class to any label
       await perform(
         createCreateLabelClassEffect(
           {
@@ -218,18 +221,48 @@ export const EditLabelClassMenu = () => {
   const handleSelectedClassChange = useCallback(
     async (item: LabelClassItem | null) => {
       if (!isInDrawingMode) {
-        await perform(
-          createUpdateLabelClassOfLabelEffect(
-            {
-              selectedLabelClassId: item?.id ?? null,
-              selectedLabelId,
-            },
-            { client }
-          )
-        );
+        if (selectedLabelId != null) {
+          if (selectedLabelData?.label?.type === LabelType.Classification) {
+            // Change the class of an existing classification label to an existing class
+            const { data: imageLabelsData } = await client.query({
+              query: getImageLabelsQuery,
+              variables: { imageId },
+            });
+
+            const classificationsOfThisClass =
+              imageLabelsData.image.labels.filter(
+                (label: Label) =>
+                  label.labelClass?.id === item?.id &&
+                  label.type === LabelType.Classification
+              );
+            if (classificationsOfThisClass.length > 0) {
+              // If there is already a classification of the same class, delete the current one (to merge them)
+              await perform(
+                createDeleteLabelEffect(
+                  { id: selectedLabelId },
+                  { setSelectedLabelId, client }
+                )
+              );
+              return;
+            }
+          }
+
+          // Change the class of an existing label to an existing class
+          await perform(
+            createUpdateLabelClassOfLabelEffect(
+              {
+                selectedLabelClassId: item?.id ?? null,
+                selectedLabelId,
+              },
+              { client }
+            )
+          );
+          return;
+        }
         return;
       }
       if (selectedTool === Tools.CLASSIFICATION && imageId) {
+        // Add a classification label of an existing class
         const { data: imageLabelsData } = await client.query({
           query: getImageLabelsQuery,
           variables: { imageId },
@@ -241,6 +274,7 @@ export const EditLabelClassMenu = () => {
             label.type === LabelType.Classification
         );
         if (classificationsOfThisClass.length > 0) {
+          // If there is already a classification of the same class, delete it (to toggle the classification label on/off)
           await perform(
             createDeleteLabelEffect(
               { id: classificationsOfThisClass[0].id },
@@ -278,7 +312,7 @@ export const EditLabelClassMenu = () => {
         );
         return;
       }
-
+      // Change currently select class in the menu to an existing class, don't apply the class to any label
       await perform(
         createUpdateLabelClassEffect({
           selectedLabelClassId: item?.id ?? null,

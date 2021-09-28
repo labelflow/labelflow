@@ -100,11 +100,11 @@ export const EditLabelClass = forwardRef<
     (state) => state.isContextMenuOpen
   );
   const selectedTool = useLabellingStore((state) => state.selectedTool);
-  const { data: labelQueryData } = useQuery(labelQuery, {
+  const { data: selectedLabelData } = useQuery(labelQuery, {
     variables: { id: selectedLabelId },
     skip: selectedLabelId == null,
   });
-  const selectedLabelClassId = labelQueryData?.label?.labelClass?.id ?? null;
+  const selectedLabelClassId = selectedLabelData?.label?.labelClass?.id ?? null;
 
   const handleCreateNewClass = useCallback(
     async (name) => {
@@ -113,6 +113,7 @@ export const EditLabelClass = forwardRef<
           ? hexColorSequence[0]
           : getNextClassColor(labelClasses[labelClasses.length - 1].color);
       if (selectedLabelId != null) {
+        // Update class of an existing label with a new class
         onClose();
         await perform(
           createCreateLabelClassAndUpdateLabelEffect(
@@ -130,6 +131,7 @@ export const EditLabelClass = forwardRef<
       }
 
       if (selectedTool === Tools.CLASSIFICATION && imageId) {
+        // Create a new classification label of a new class
         const { data: imageLabelsData } = await client.query({
           query: getImageLabelsQuery,
           variables: { imageId },
@@ -172,7 +174,34 @@ export const EditLabelClass = forwardRef<
   const handleSelectedClassChange = useCallback(
     async (item: LabelClassItem | null) => {
       if (selectedLabelId != null) {
-        perform(
+        if (selectedLabelData?.label?.type === LabelType.Classification) {
+          // Change the class of an existing classification label to an existing class
+          const { data: imageLabelsData } = await client.query({
+            query: getImageLabelsQuery,
+            variables: { imageId },
+          });
+
+          const classificationsOfThisClass =
+            imageLabelsData.image.labels.filter(
+              (label: Label) =>
+                label.labelClass?.id === item?.id &&
+                label.type === LabelType.Classification
+            );
+          if (classificationsOfThisClass.length > 0) {
+            // If there is already a classification of the same class, delete the current one (to merge them)
+            await perform(
+              createDeleteLabelEffect(
+                { id: selectedLabelId },
+                { setSelectedLabelId, client }
+              )
+            );
+            return;
+          }
+        }
+
+        // Change the class of an existing label to an existing class
+        onClose();
+        await perform(
           createUpdateLabelClassOfLabelEffect(
             {
               selectedLabelClassId: item?.id ?? null,
@@ -181,10 +210,12 @@ export const EditLabelClass = forwardRef<
             { client }
           )
         );
-        onClose();
+
         return;
       }
+
       if (selectedTool === Tools.CLASSIFICATION && imageId) {
+        // Add a classification label of an existing class
         const { data: imageLabelsData } = await client.query({
           query: getImageLabelsQuery,
           variables: { imageId },
@@ -196,6 +227,7 @@ export const EditLabelClass = forwardRef<
             label.type === LabelType.Classification
         );
         if (classificationsOfThisClass.length > 0) {
+          // If there is already a classification of the same class, delete it (to toggle the classification label on/off)
           onClose();
           await perform(
             createDeleteLabelEffect(
@@ -272,11 +304,11 @@ export const EditLabelClass = forwardRef<
         onClose={onClose}
         includeNoneClass={
           // No None Class when editing Classification Labels
-          !(labelQueryData?.label?.type === LabelType.Classification) &&
+          !(selectedLabelData?.label?.type === LabelType.Classification) &&
           // No None Class when adding Classification Labels
           !(
             selectedTool === Tools.CLASSIFICATION &&
-            labelQueryData?.label == null
+            selectedLabelData?.label == null
           )
         }
         activateShortcuts={isContextMenuOpen}

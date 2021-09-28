@@ -19,6 +19,7 @@ import {
 } from "../../../../utils/class-color-generator";
 import { createCreateLabelClassAndUpdateLabelEffect } from "../../../../connectors/undo-store/effects/create-label-class-and-update-label";
 import { createUpdateLabelClassOfLabelEffect } from "../../../../connectors/undo-store/effects/update-label-class-of-label";
+import { createDeleteLabelEffect } from "../../../../connectors/undo-store/effects/delete-label";
 
 const getLabelClassesOfDatasetQuery = gql`
   query getLabelClassesOfDataset($slug: String!) {
@@ -65,7 +66,7 @@ export const ClassificationContent = forwardRef<HTMLDivElement>(
     const router = useRouter();
     const datasetSlug = router?.query.datasetSlug as string;
     const imageId = router?.query.imageId as string;
-    const { data: imageLabelsData, previousData: previousImageLabelsData } =
+    const { data: getImageLabelsData, previousData: previousImageLabelsData } =
       useQuery(getImageLabelsQuery, {
         skip: !imageId,
         variables: { imageId: imageId as string },
@@ -82,7 +83,7 @@ export const ClassificationContent = forwardRef<HTMLDivElement>(
     const client = useApolloClient();
     const selectedLabelId = useLabellingStore((state) => state.selectedLabelId);
     const labels =
-      imageLabelsData?.image?.labels ??
+      getImageLabelsData?.image?.labels ??
       previousImageLabelsData?.image?.labels ??
       [];
     const setSelectedLabelId = useLabellingStore(
@@ -91,38 +92,66 @@ export const ClassificationContent = forwardRef<HTMLDivElement>(
 
     const handleCreateNewClass = useCallback(
       async (name) => {
-        const newClassColor =
-          labelClasses.length < 1
-            ? hexColorSequence[0]
-            : getNextClassColor(labelClasses[labelClasses.length - 1].color);
+        if (selectedLabelId != null) {
+          // Update class of an existing label with a new class
+          const newClassColor =
+            labelClasses.length < 1
+              ? hexColorSequence[0]
+              : getNextClassColor(labelClasses[labelClasses.length - 1].color);
 
-        return await perform(
-          createCreateLabelClassAndUpdateLabelEffect(
-            {
-              name,
-              color: newClassColor,
-              selectedLabelId,
-              datasetId,
-              datasetSlug,
-            },
-            { client }
-          )
-        );
+          return await perform(
+            createCreateLabelClassAndUpdateLabelEffect(
+              {
+                name,
+                color: newClassColor,
+                selectedLabelId,
+                datasetId,
+                datasetSlug,
+              },
+              { client }
+            )
+          );
+        }
       },
       [labelClasses, datasetId, selectedLabelId]
     );
 
     const handleSelectedClassChange = useCallback(
       async (item: LabelClassItem | null) => {
-        await perform(
-          createUpdateLabelClassOfLabelEffect(
-            {
-              selectedLabelClassId: item?.id ?? null,
-              selectedLabelId,
-            },
-            { client }
-          )
-        );
+        if (selectedLabelId != null) {
+          // Change the class of an existing classification label to an existing class
+          const { data: imageLabelsData } = await client.query({
+            query: getImageLabelsQuery,
+            variables: { imageId },
+          });
+
+          const classificationsOfThisClass =
+            imageLabelsData.image.labels.filter(
+              (label: Label) =>
+                label.labelClass?.id === item?.id &&
+                label.type === LabelType.Classification
+            );
+          if (classificationsOfThisClass.length > 0) {
+            // If there is already a classification of the same class, delete the current one (to merge them)
+            await perform(
+              createDeleteLabelEffect(
+                { id: selectedLabelId },
+                { setSelectedLabelId, client }
+              )
+            );
+            return;
+          }
+
+          await perform(
+            createUpdateLabelClassOfLabelEffect(
+              {
+                selectedLabelClassId: item?.id ?? null,
+                selectedLabelId,
+              },
+              { client }
+            )
+          );
+        }
       },
       [selectedLabelId, selectedTool, imageId]
     );
