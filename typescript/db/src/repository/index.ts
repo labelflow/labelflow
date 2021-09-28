@@ -148,7 +148,15 @@ export const repository: Repository = {
         );
       }
       return await prisma.dataset.findUnique({
-        where: castObjectNullsToUndefined(where),
+        where: {
+          id: where.id ?? undefined,
+          workspaceSlugAndDatasetSlug:
+            (where.slugs && {
+              slug: where.slugs?.datasetSlug!,
+              workspaceSlug: where.slugs?.workspaceSlug!,
+            }) ??
+            undefined,
+        },
       });
     },
     update: async (where, dataset) => {
