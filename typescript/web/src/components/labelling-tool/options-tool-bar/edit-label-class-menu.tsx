@@ -13,8 +13,10 @@ import { createUpdateLabelClassEffect } from "../../../connectors/undo-store/eff
 import { keymap } from "../../../keymap";
 
 const getLabelClassesOfDatasetQuery = gql`
-  query getLabelClassesOfDataset($slug: String!) {
-    dataset(where: { slugs: { datasetSlug: $slug, workspaceSlug: "local" } }) {
+  query getLabelClassesOfDataset($slug: String!, $workspaceSlug: String!) {
+    dataset(
+      where: { slugs: { datasetSlug: $slug, workspaceSlug: $workspaceSlug } }
+    ) {
       id
       labelClasses {
         id
@@ -51,10 +53,11 @@ const labelQuery = gql`
 export const EditLabelClassMenu = () => {
   const router = useRouter();
   const datasetSlug = router?.query.datasetSlug as string;
+  const workspaceSlug = router?.query.workspaceSlug as string;
   const client = useApolloClient();
   const [isOpen, setIsOpen] = useState(false);
   const { data } = useQuery(getLabelClassesOfDatasetQuery, {
-    variables: { slug: datasetSlug },
+    variables: { slug: datasetSlug, workspaceSlug },
   });
   const datasetId = data?.dataset.id;
   const { perform } = useUndoStore();
@@ -94,10 +97,11 @@ export const EditLabelClassMenu = () => {
         labelClasses,
         datasetId,
         datasetSlug,
+        workspaceSlug,
         perform,
         client,
       }),
-    [labelClasses, datasetId, selectedTool]
+    [labelClasses, datasetId, selectedTool, datasetSlug, workspaceSlug]
   );
   const createNewClassAndUpdateLabel = useMemo(
     () =>
@@ -105,10 +109,11 @@ export const EditLabelClassMenu = () => {
         labelClasses,
         datasetId,
         datasetSlug,
+        workspaceSlug,
         perform,
         client,
       }),
-    [labelClasses, datasetId]
+    [labelClasses, datasetId, datasetSlug, workspaceSlug]
   );
   const onSelectedClassChange = useMemo(
     () =>

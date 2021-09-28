@@ -12,8 +12,10 @@ import { createUpdateLabelClassOfLabelEffect } from "../../../connectors/undo-st
 import { keymap } from "../../../keymap";
 
 const getLabelClassesOfDatasetQuery = gql`
-  query getLabelClassesOfDataset($slug: String!) {
-    dataset(where: { slugs: { datasetSlug: $slug, workspaceSlug: "local" } }) {
+  query getLabelClassesOfDataset($slug: String!, $workspaceSlug: String!) {
+    dataset(
+      where: { slugs: { datasetSlug: $slug, workspaceSlug: $workspaceSlug } }
+    ) {
       id
       labelClasses {
         id
@@ -44,11 +46,12 @@ export const EditLabelClass = forwardRef<
 >(({ isOpen, onClose }, ref) => {
   const router = useRouter();
   const datasetSlug = router?.query.datasetSlug as string;
+  const workspaceSlug = router?.query.workspaceSlug as string;
 
   const client = useApolloClient();
   const { data } = useQuery(getLabelClassesOfDatasetQuery, {
-    variables: { slug: datasetSlug },
-    skip: !datasetSlug,
+    variables: { slug: datasetSlug, workspaceSlug },
+    skip: !datasetSlug || !workspaceSlug,
   });
   const datasetId = data?.dataset.id;
   const { perform } = useUndoStore();
@@ -68,11 +71,12 @@ export const EditLabelClass = forwardRef<
         labelClasses,
         datasetId,
         datasetSlug,
+        workspaceSlug,
         perform,
         onClose,
         client,
       }),
-    [labelClasses, datasetId]
+    [labelClasses, datasetId, datasetSlug, workspaceSlug]
   );
   useHotkeys(
     "*", // We have to manually check if the input corresponds to a change class key because otherwise on AZERTY keyboards we can't change classes when pressing numbers

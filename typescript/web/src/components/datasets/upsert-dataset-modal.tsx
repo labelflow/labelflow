@@ -18,12 +18,13 @@ import {
   FormErrorMessage,
   FormLabel,
 } from "@chakra-ui/react";
+import { useRouter } from "next/router";
 
 const debounceTime = 200;
 
 const createDatasetMutation = gql`
-  mutation createDataset($name: String!) {
-    createDataset(data: { name: $name, workspaceSlug: "local" }) {
+  mutation createDataset($name: String!, $workspaceSlug: String!) {
+    createDataset(data: { name: $name, workspaceSlug: $workspaceSlug }) {
       id
     }
   }
@@ -38,9 +39,9 @@ const updateDatasetMutation = gql`
 `;
 
 const getDatasetBySlugQuery = gql`
-  query getDatasetBySlug($slug: String!) {
+  query getDatasetBySlug($slug: String!, $workspaceSlug: String!) {
     searchDataset(
-      where: { slugs: { datasetSlug: $slug, workspaceSlug: "local" } }
+      where: { slugs: { datasetSlug: $slug, workspaceSlug: $workspaceSlug } }
     ) {
       id
       slug
@@ -66,6 +67,9 @@ export const UpsertDatasetModal = ({
   onClose?: () => void;
   datasetId?: string;
 }) => {
+  const workspaceSlug = useRouter().query?.workspaceSlug as string | undefined;
+  // console.log(workspaceSlug);
+
   const [datasetNameInputValue, setDatasetNameInputValue] =
     useState<string>("");
   const [errorMessage, setErrorMessage] = useState<string>("");
@@ -93,11 +97,14 @@ export const UpsertDatasetModal = ({
     },
   ] = useLazyQuery(getDatasetBySlugQuery, { fetchPolicy: "network-only" });
 
+  console.log(existingDataset);
+
   const [createDatasetMutate, { loading: createMutationLoading }] = useMutation(
     createDatasetMutation,
     {
       variables: {
         name: datasetName,
+        workspaceSlug,
       },
       refetchQueries: ["getDatasets"],
       awaitRefetchQueries: true,
@@ -121,18 +128,20 @@ export const UpsertDatasetModal = ({
   };
 
   const debouncedQuery = useRef(
-    debounce(debounceTime, (nextName: string) => {
-      queryExistingDatasets({
-        variables: { slug: slugify(nextName, { lower: true }) },
+    // eslint-disable-next-line @typescript-eslint/no-shadow
+    debounce(debounceTime, (nextName: string, workspaceSlug: string) => {
+      return queryExistingDatasets({
+        variables: { slug: slugify(nextName, { lower: true }), workspaceSlug },
       });
     })
   ).current;
 
   useEffect(() => {
-    if (datasetName === "") return;
+    if (datasetName === "" || workspaceSlug == null) return;
 
-    debouncedQuery(datasetName);
-  }, [datasetName]);
+    console.log("Query", datasetName, workspaceSlug);
+    debouncedQuery(datasetName, workspaceSlug);
+  }, [datasetName, workspaceSlug]);
 
   useEffect(() => {
     if (
