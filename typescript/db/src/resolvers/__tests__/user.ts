@@ -115,7 +115,9 @@ describe("users query", () => {
       fetchPolicy: "no-cache",
     });
 
-    expect(data.users.map((user) => user.name)).toEqual(["test-user-1"]);
+    expect(data.users.map((userData) => userData.name)).toEqual([
+      "test-user-1",
+    ]);
   });
 
   it("returns only the users linked to the current user through a workspace", async () => {
@@ -158,7 +160,7 @@ describe("users query", () => {
       fetchPolicy: "no-cache",
     });
 
-    expect(data.users.map((user) => user.name)).toEqual([
+    expect(data.users.map((userData) => userData.name)).toEqual([
       "test-user-1",
       "test-user-2",
       "test-user-3",
@@ -206,7 +208,7 @@ describe("users query", () => {
       fetchPolicy: "no-cache",
     });
 
-    expect(data.users.map((user) => user.name)).toEqual([
+    expect(data.users.map((userData) => userData.name)).toEqual([
       "test-user-2",
       "test-user-3",
     ]);
@@ -253,7 +255,7 @@ describe("users query", () => {
       fetchPolicy: "no-cache",
     });
 
-    expect(data.users.map((user) => user.name)).toEqual([
+    expect(data.users.map((userData) => userData.name)).toEqual([
       "test-user-1",
       "test-user-2",
     ]);
@@ -300,7 +302,9 @@ describe("users query", () => {
       fetchPolicy: "no-cache",
     });
 
-    expect(data.users.map((user) => user.name)).toEqual(["test-user-2"]);
+    expect(data.users.map((userData) => userData.name)).toEqual([
+      "test-user-2",
+    ]);
   });
 });
 
