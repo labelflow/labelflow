@@ -1,4 +1,13 @@
-import { DbImageCreateInput, Repository } from "@labelflow/common-resolvers";
+import {
+  DbImage,
+  DbImageCreateInput,
+  DbLabelClass,
+  Repository,
+} from "@labelflow/common-resolvers";
+import {
+  ImageWhereInput,
+  LabelClassWhereInput,
+} from "@labelflow/graphql-types";
 import { getDatabase } from "../database";
 import { list } from "./utils/list";
 import { countLabels, listLabels } from "./label";
@@ -30,7 +39,10 @@ export const repository: Repository = {
     add: async (image: DbImageCreateInput) => {
       return await (await getDatabase()).image.add(addIdIfNil(image));
     },
-    count: async (where) => {
+    count: async (whereWithUser) => {
+      const { user, ...wherePossiblyEmpty } = whereWithUser ?? {};
+      const where =
+        Object.keys(wherePossiblyEmpty).length < 1 ? null : wherePossiblyEmpty;
       return where
         ? await (await getDatabase()).image.where(where).count()
         : await (await getDatabase()).image.count();
@@ -38,7 +50,14 @@ export const repository: Repository = {
     get: async ({ id }) => {
       return await (await getDatabase()).image.get(id);
     },
-    list: list(async () => (await getDatabase()).image),
+    list: (whereWithUser, skip, first) => {
+      const { user, ...wherePossiblyEmpty } = whereWithUser ?? {};
+      const where =
+        Object.keys(wherePossiblyEmpty).length < 1 ? null : wherePossiblyEmpty;
+      return list<DbImage, ImageWhereInput>(
+        async () => (await getDatabase()).image
+      )(where, skip, first);
+    },
   },
   label: {
     add: async (label) => {
@@ -60,7 +79,10 @@ export const repository: Repository = {
     add: async (labelClass) => {
       return await (await getDatabase()).labelClass.add(addIdIfNil(labelClass));
     },
-    count: async (where?) => {
+    count: async (whereWithUser?) => {
+      const { user, ...wherePossiblyEmpty } = whereWithUser ?? {};
+      const where =
+        Object.keys(wherePossiblyEmpty).length < 1 ? null : wherePossiblyEmpty;
       return where
         ? await (await getDatabase()).labelClass.where(where).count()
         : await (await getDatabase()).labelClass.count();
@@ -69,7 +91,15 @@ export const repository: Repository = {
     get: async ({ id }) => {
       return await (await getDatabase()).labelClass.get(id);
     },
-    list: list(async () => (await getDatabase()).labelClass, "index"),
+    list: (whereWithUser, skip, first) => {
+      const { user, ...wherePossiblyEmpty } = whereWithUser ?? {};
+      const where =
+        Object.keys(wherePossiblyEmpty).length < 1 ? null : wherePossiblyEmpty;
+      return list<DbLabelClass, LabelClassWhereInput>(
+        async () => (await getDatabase()).labelClass,
+        "index"
+      )(where, skip, first);
+    },
     update: async ({ id }, changes) => {
       return (await (await getDatabase()).labelClass.update(id, changes)) === 1;
     },
