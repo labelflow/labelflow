@@ -8,7 +8,6 @@ import type {
   QueryImagesArgs,
 } from "@labelflow/graphql-types";
 import mime from "mime-types";
-import { where } from "lodash/fp";
 import { probeImage } from "./utils/probe-image";
 
 import { Context, DbImage, Repository, DbImageCreateInput } from "./types";

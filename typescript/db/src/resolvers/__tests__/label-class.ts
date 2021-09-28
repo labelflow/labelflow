@@ -2,14 +2,11 @@
 import { gql } from "@apollo/client";
 import { v4 as uuidV4 } from "uuid";
 import {
-  LabelCreateInput,
   MutationCreateWorkspaceArgs,
   Workspace,
 } from "@labelflow/graphql-types";
-import { probeImage } from "@labelflow/common-resolvers/src/utils/probe-image";
 import { prisma } from "../../repository/prisma-client";
 import { client, user } from "../../dev/apollo-client";
-import { LabelType } from ".prisma/client";
 
 // @ts-ignore
 fetch.disableFetchMocks();
