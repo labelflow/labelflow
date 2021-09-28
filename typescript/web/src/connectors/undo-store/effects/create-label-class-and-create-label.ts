@@ -12,17 +12,6 @@ import {
   removeLabelFromImageCache,
 } from "./create-label";
 
-const labelQuery = gql`
-  query getLabel($id: ID!) {
-    label(where: { id: $id }) {
-      id
-      labelClass {
-        id
-      }
-    }
-  }
-`;
-
 const createLabelClassQuery = gql`
   mutation createLabelClass($data: LabelClassCreateInput!) {
     createLabelClass(data: $data) {
@@ -75,9 +64,8 @@ export const createCreateLabelClassAndCreateLabelEffect = (
     color,
     datasetId,
     datasetSlug,
-    selectedLabelId,
     imageId,
-    selectedLabelClassId,
+    previouslySelectedLabelClassId,
     geometry,
     labelType,
   }: {
@@ -85,9 +73,8 @@ export const createCreateLabelClassAndCreateLabelEffect = (
     color: string;
     datasetId: string;
     datasetSlug: string;
-    selectedLabelId: string | null;
     imageId: string;
-    selectedLabelClassId: string | null;
+    previouslySelectedLabelClassId: string | null;
     geometry: GeoJSONPolygon;
     labelType: LabelType;
   },
@@ -114,20 +101,9 @@ export const createCreateLabelClassAndCreateLabelEffect = (
       ],
     });
 
-    const {
-      data: {
-        label: { labelClass },
-      },
-    } = await client.query({
-      query: labelQuery,
-      variables: { id: selectedLabelId },
-    });
-
-    const labelClassIdPrevious = labelClass?.id ?? null;
-
     const createLabelInputs = {
       imageId,
-      labelClassId: selectedLabelClassId,
+      labelClassId,
       geometry,
       labelType,
     };
@@ -157,7 +133,7 @@ export const createCreateLabelClassAndCreateLabelEffect = (
     return {
       id: data.createLabel.id,
       labelClassId,
-      labelClassIdPrevious,
+      labelClassIdPrevious: previouslySelectedLabelClassId,
     };
   },
   undo: async ({
@@ -222,7 +198,7 @@ export const createCreateLabelClassAndCreateLabelEffect = (
     const createLabelInputs = {
       id,
       imageId,
-      labelClassId: selectedLabelClassId,
+      labelClassId,
       geometry,
       labelType,
     };
