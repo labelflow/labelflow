@@ -23,6 +23,7 @@ import { keymap } from "../../../keymap";
 import { createCreateLabelEffect } from "../../../connectors/undo-store/effects/create-label";
 
 import { createDeleteLabelEffect } from "../../../connectors/undo-store/effects/delete-label";
+import { createCreateLabelClassAndCreateLabelEffect } from "../../../connectors/undo-store/effects/create-label-class-and-create-label";
 
 const getLabelClassesOfDatasetQuery = gql`
   query getLabelClassesOfDataset($slug: String!) {
@@ -145,7 +146,7 @@ export const EditLabelClassMenu = () => {
           ? hexColorSequence[0]
           : getNextClassColor(labelClasses[labelClasses.length - 1].color);
       if (!isInDrawingMode) {
-        return await perform(
+        await perform(
           createCreateLabelClassAndUpdateLabelEffect(
             {
               name,
@@ -157,8 +158,48 @@ export const EditLabelClassMenu = () => {
             { client }
           )
         );
+        return;
       }
-      return await perform(
+
+      if (selectedTool === Tools.CLASSIFICATION && imageId) {
+        const { data: imageLabelsData } = await client.query({
+          query: getImageLabelsQuery,
+          variables: { imageId },
+        });
+        const geometry = new GeoJSON().writeGeometryObject(
+          new Polygon([
+            [
+              [0, 0],
+              [0, imageLabelsData.image.height],
+              [imageLabelsData.image.width, imageLabelsData.image.height],
+              [imageLabelsData.image.width, 0],
+              [0, 0],
+            ],
+          ])
+        ) as GeoJSONPolygon;
+
+        await perform(
+          createCreateLabelClassAndCreateLabelEffect(
+            {
+              name,
+              color: newClassColor,
+              datasetId,
+              datasetSlug,
+              imageId,
+              previouslySelectedLabelClassId: selectedLabelClassId,
+              geometry,
+              labelType: LabelType.Classification,
+            },
+            {
+              setSelectedLabelId,
+              client,
+            }
+          )
+        );
+        return;
+      }
+
+      await perform(
         createCreateLabelClassEffect(
           {
             name,
