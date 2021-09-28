@@ -110,9 +110,9 @@ type Update<Entity, EntityWhereUniqueInput> = (
 export type Repository = {
   image: {
     add: Add<DbImageCreateInput>;
-    count: Count<ImageWhereInput>;
+    count: Count<ImageWhereInput & { user?: { id: string } }>;
     get: Get<DbImage, ImageWhereUniqueInput>;
-    list: List<DbImage, ImageWhereInput>;
+    list: List<DbImage, ImageWhereInput & { user?: { id: string } }>;
   };
   label: {
     add: Add<DbLabelCreateInput>;

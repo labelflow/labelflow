@@ -8,6 +8,7 @@ import type {
   QueryImagesArgs,
 } from "@labelflow/graphql-types";
 import mime from "mime-types";
+import { where } from "lodash/fp";
 import { probeImage } from "./utils/probe-image";
 
 import { Context, DbImage, Repository, DbImageCreateInput } from "./types";
@@ -150,24 +151,32 @@ export const getImageEntityFromMutationArgs = async (
 const labelsResolver = async (
   { id }: DbImage,
   _args: any,
-  { repository }: Context
+  { repository, user }: Context
 ) => {
-  return await repository.label.list({ imageId: id });
+  return await repository.label.list({ imageId: id, user });
 };
 
-const image = async (_: any, args: QueryImageArgs, { repository }: Context) => {
+const image = async (
+  _: any,
+  args: QueryImageArgs,
+  { repository, user }: Context
+) => {
   return await throwIfResolvesToNil(
     `No image with id "${args?.where?.id}"`,
     repository.image.get
-  )(args?.where);
+  )(args?.where, user);
 };
 
 const images = async (
   _: any,
   args: QueryImagesArgs,
-  { repository }: Context
+  { repository, user }: Context
 ) => {
-  return await repository.image.list(args?.where, args?.skip, args?.first);
+  return await repository.image.list(
+    { ...args?.where, user },
+    args?.skip,
+    args?.first
+  );
 };
 
 // Mutations
@@ -204,8 +213,8 @@ const createImage = async (
     req
   );
 
-  const newImageId = await repository.image.add(newImageEntity);
-  const createdImage = await repository.image.get({ id: newImageId });
+  const newImageId = await repository.image.add(newImageEntity, user);
+  const createdImage = await repository.image.get({ id: newImageId }, user);
   if (createdImage == null) {
     throw new Error("An error has occurred during image creation");
   }
@@ -217,16 +226,21 @@ const imagesAggregates = (parent: any) => {
   return parent ?? {};
 };
 
-const totalCount = async (parent: any, _args: any, { repository }: Context) => {
+const totalCount = async (
+  parent: any,
+  _args: any,
+  { repository, user }: Context
+) => {
   // eslint-disable-next-line no-underscore-dangle
   const typename = parent?.__typename;
   if (typename === "Dataset") {
     return await repository.image.count({
       datasetId: parent.id,
+      user,
     });
   }
 
-  return await repository.image.count();
+  return await repository.image.count({ user });
 };
 
 export default {

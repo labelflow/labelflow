@@ -27,30 +27,47 @@ import {
 
 export const repository: Repository = {
   image: {
-    add: async (image) => {
+    add: async (image, user) => {
+      await checkUserAccessToDataset({ where: { id: image.datasetId }, user });
       const createdImage = await prisma.image.create({
         data: castObjectNullsToUndefined(image),
       });
       return createdImage.id;
     },
-    count: (where) =>
-      prisma.image.count({
-        where: castObjectNullsToUndefined(where),
-      }),
-    get: async (where) =>
-      (await prisma.image.findUnique({
+    count: async (whereWithUser) => {
+      const { user, ...where } = whereWithUser ?? { user: undefined };
+      return await prisma.image.count({
+        where: castObjectNullsToUndefined({
+          ...where,
+          dataset: {
+            workspace: { memberships: { some: { userId: user?.id } } },
+          },
+        }),
+      });
+    },
+    get: async (where, user) => {
+      await checkUserAccessToImage({ where, user });
+      return (await prisma.image.findUnique({
         where,
-      })) as unknown as Image,
+      })) as unknown as Image;
+    },
 
-    list: (where, skip = undefined, first = undefined) =>
-      prisma.image.findMany(
+    list: async (whereWithUser, skip = undefined, first = undefined) => {
+      const { user, ...where } = whereWithUser ?? { user: undefined };
+      return await prisma.image.findMany(
         castObjectNullsToUndefined({
-          where: castObjectNullsToUndefined(where),
+          where: castObjectNullsToUndefined({
+            ...where,
+            dataset: {
+              workspace: { memberships: { some: { userId: user?.id } } },
+            },
+          }),
           orderBy: { createdAt: Prisma.SortOrder.asc },
           skip,
           take: first,
         })
-      ),
+      );
+    },
   },
   label: {
     add: async (label, user) => {
