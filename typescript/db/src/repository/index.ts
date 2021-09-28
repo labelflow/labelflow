@@ -21,6 +21,7 @@ import {
   checkUserAccessToDataset,
   checkUserAccessToImage,
   checkUserAccessToLabel,
+  checkUserAccessToLabelClass,
   checkUserAccessToWorkspace,
 } from "./access-control";
 
@@ -87,34 +88,56 @@ export const repository: Repository = {
     list: listLabels,
   },
   labelClass: {
-    add: async (labelClass) => {
+    add: async (labelClass, user) => {
+      await checkUserAccessToDataset({
+        where: { id: labelClass.datasetId },
+        user,
+      });
       const createdLabelClass = await prisma.labelClass.create({
         data: castObjectNullsToUndefined(labelClass),
       });
       return createdLabelClass.id;
     },
-    count: async (where) =>
-      await prisma.labelClass.count({
-        where: castObjectNullsToUndefined(where),
-      }),
-    delete: async ({ id }) => {
+    count: async (whereWithUser) => {
+      const { user, ...where } = whereWithUser ?? { user: undefined };
+      return await prisma.labelClass.count({
+        where: castObjectNullsToUndefined({
+          ...where,
+          dataset: {
+            workspace: { memberships: { some: { userId: user?.id } } },
+          },
+        }),
+      });
+    },
+    delete: async ({ id }, user) => {
+      await checkUserAccessToLabelClass({ where: { id }, user });
       await prisma.labelClass.delete({ where: { id } });
     },
-    get: (where) =>
-      prisma.labelClass.findUnique({
+    get: async (where, user) => {
+      await checkUserAccessToLabelClass({ where, user });
+      return await prisma.labelClass.findUnique({
         where,
-      }),
-    list: (where, skip = undefined, first = undefined) =>
-      prisma.labelClass.findMany(
+      });
+    },
+    list: async (whereWithUser, skip = undefined, first = undefined) => {
+      const { user, ...where } = whereWithUser ?? { user: undefined };
+      return await prisma.labelClass.findMany(
         castObjectNullsToUndefined({
-          where: castObjectNullsToUndefined(where),
+          where: castObjectNullsToUndefined({
+            ...where,
+            dataset: {
+              workspace: { memberships: { some: { userId: user?.id } } },
+            },
+          }),
           orderBy: { index: Prisma.SortOrder.asc },
           skip,
           take: first,
         })
-      ),
-    update: async ({ id }, labelClass) => {
+      );
+    },
+    update: async ({ id }, labelClass, user) => {
       try {
+        await checkUserAccessToLabelClass({ where: { id }, user });
         await prisma.labelClass.update({
           where: { id },
           data: castObjectNullsToUndefined(labelClass),

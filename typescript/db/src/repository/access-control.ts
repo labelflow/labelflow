@@ -3,6 +3,7 @@ import {
   DatasetWhereUniqueInput,
   LabelWhereUniqueInput,
   ImageWhereUniqueInput,
+  LabelClassWhereUniqueInput,
 } from "@labelflow/graphql-types";
 import { prisma } from "./prisma-client";
 
@@ -105,4 +106,31 @@ export const checkUserAccessToImage = async ({
     throw new Error("User not authorized to access image");
   }
   return hasAccessToImage;
+};
+
+export const checkUserAccessToLabelClass = async ({
+  where,
+  user,
+}: {
+  where: LabelClassWhereUniqueInput;
+  user?: { id: string };
+}): Promise<boolean> => {
+  if (user?.id == null) {
+    throw new Error("User not authenticated");
+  }
+  const hasAccessToLabelClass =
+    (await prisma.membership.findFirst({
+      where: {
+        userId: user?.id,
+        workspace: {
+          datasets: {
+            some: { labelClasses: { some: { id: where.id } } },
+          },
+        },
+      },
+    })) != null;
+  if (!hasAccessToLabelClass) {
+    throw new Error("User not authorized to access label class");
+  }
+  return hasAccessToLabelClass;
 };

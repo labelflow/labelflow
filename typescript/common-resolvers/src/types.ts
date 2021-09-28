@@ -124,10 +124,10 @@ export type Repository = {
   };
   labelClass: {
     add: Add<DbLabelClassCreateInput>;
-    count: Count<LabelClassWhereInput>;
+    count: Count<LabelClassWhereInput & { user?: { id: string } }>;
     delete: Delete<LabelClassWhereUniqueInput>;
     get: Get<DbLabelClass, LabelClassWhereUniqueInput>;
-    list: List<DbLabelClass, LabelClassWhereInput>;
+    list: List<DbLabelClass, LabelClassWhereInput & { user?: { id: string } }>;
     update: Update<DbLabelClass, LabelClassWhereUniqueInput>;
   };
   dataset: {
