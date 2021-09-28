@@ -11,9 +11,13 @@ import { CookiesProvider, Cookies } from "react-cookie";
 
 import { ChakraProvider } from "@chakra-ui/react";
 
+import { startsWith } from "lodash";
 import { pageView } from "../utils/google-analytics";
 import { theme } from "../theme";
-import { client } from "../connectors/apollo-client/client";
+import {
+  serviceWorkerClient,
+  distantDatabaseClient,
+} from "../connectors/apollo-client/client";
 import { QueryParamProvider } from "../utils/query-params-provider";
 
 import { Meta } from "../components/meta";
@@ -26,15 +30,11 @@ interface InitialProps {
 const ErrorFallback = (props: FallbackProps) => {
   return (
     <SessionProvider session={undefined}>
-      <CookiesProvider cookies={new Cookies("")}>
-        <ApolloProvider client={client}>
-          <QueryParamProvider>
-            <ChakraProvider theme={theme} resetCSS>
-              <ErrorPage {...props} />
-            </ChakraProvider>
-          </QueryParamProvider>
-        </ApolloProvider>
-      </CookiesProvider>
+      <QueryParamProvider>
+        <ChakraProvider theme={theme} resetCSS>
+          <ErrorPage {...props} />
+        </ChakraProvider>
+      </QueryParamProvider>
     </SessionProvider>
   );
 };
@@ -46,6 +46,11 @@ const App = (props: AppProps & InitialProps) => {
   // Google analytics
   // See https://mariestarck.com/add-google-analytics-to-your-next-js-application-in-5-easy-steps/
   const router = useRouter();
+
+  const client = globalThis?.location?.pathname?.startsWith("/local")
+    ? serviceWorkerClient
+    : distantDatabaseClient;
+
   useEffect(() => {
     const handleRouteChange = (url: string) => {
       pageView(url);
