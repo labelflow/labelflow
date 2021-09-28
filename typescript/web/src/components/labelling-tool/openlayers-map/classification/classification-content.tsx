@@ -99,7 +99,7 @@ export const ClassificationContent = forwardRef<HTMLDivElement>(
               ? hexColorSequence[0]
               : getNextClassColor(labelClasses[labelClasses.length - 1].color);
 
-          return await perform(
+          await perform(
             createCreateLabelClassAndUpdateLabelEffect(
               {
                 name,
