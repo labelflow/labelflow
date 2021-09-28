@@ -23,8 +23,10 @@ import { WelcomeManager } from "../../../../components/welcome-manager";
 import { CookieBanner } from "../../../../components/cookie-banner";
 
 const getDataset = gql`
-  query getDataset($slug: String!) {
-    dataset(where: { slugs: { datasetSlug: $slug, workspaceSlug: "local" } }) {
+  query getDataset($slug: String!, $workspaceSlug: String!) {
+    dataset(
+      where: { slugs: { datasetSlug: $slug, workspaceSlug: $workspaceSlug } }
+    ) {
       id
       name
     }
@@ -33,15 +35,15 @@ const getDataset = gql`
 
 const DatasetIndexPage = () => {
   const router = useRouter();
-  const { datasetSlug } = router?.query;
+  const { datasetSlug, workspaceSlug } = router?.query;
 
   const {
     data: datasetResult,
     error,
     loading,
   } = useQuery(getDataset, {
-    variables: { slug: datasetSlug },
-    skip: typeof datasetSlug !== "string",
+    variables: { slug: datasetSlug, workspaceSlug },
+    skip: typeof datasetSlug !== "string" || typeof workspaceSlug !== "string",
   });
 
   const datasetName = datasetResult?.dataset.name;
@@ -49,7 +51,7 @@ const DatasetIndexPage = () => {
   useEffect(() => {
     if (!error && !loading) {
       router.replace({
-        pathname: `/local/datasets/${datasetSlug}/images`,
+        pathname: `/${workspaceSlug}/datasets/${datasetSlug}/images`,
       });
     }
   }, [error, loading]);
@@ -80,7 +82,7 @@ const DatasetIndexPage = () => {
       <CookieBanner />
       <Layout
         breadcrumbs={[
-          <NextLink href="/local/datasets">
+          <NextLink href={`/${workspaceSlug}/datasets`}>
             <BreadcrumbLink>Datasets</BreadcrumbLink>
           </NextLink>,
           <Text>{datasetName}</Text> ?? <Skeleton>Dataset Name</Skeleton>,
