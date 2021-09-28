@@ -122,7 +122,10 @@ export const ExportOptionsModal = ({
             alignSelf="flex-end"
             onClick={() => {
               exportFunction(exportOptions);
-              trackEvent(`export_${exportFormat}_button_click`, {});
+              trackEvent(
+                `export_button_click_${exportFormat.toLocaleLowerCase()}`,
+                {}
+              );
               onClose();
             }}
           >
