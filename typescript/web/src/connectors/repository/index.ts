@@ -33,6 +33,7 @@ import {
   listWorkspaces,
   updateWorkspace,
 } from "./workspace";
+import { removeUserFromWhere } from "./utils/remove-user-from-where";
 
 export const repository: Repository = {
   image: {
@@ -40,9 +41,7 @@ export const repository: Repository = {
       return await (await getDatabase()).image.add(addIdIfNil(image));
     },
     count: async (whereWithUser) => {
-      const { user, ...wherePossiblyEmpty } = whereWithUser ?? {};
-      const where =
-        Object.keys(wherePossiblyEmpty).length < 1 ? null : wherePossiblyEmpty;
+      const where = removeUserFromWhere(whereWithUser);
       return where
         ? await (await getDatabase()).image.where(where).count()
         : await (await getDatabase()).image.count();
@@ -51,12 +50,9 @@ export const repository: Repository = {
       return await (await getDatabase()).image.get(id);
     },
     list: (whereWithUser, skip, first) => {
-      const { user, ...wherePossiblyEmpty } = whereWithUser ?? {};
-      const where =
-        Object.keys(wherePossiblyEmpty).length < 1 ? null : wherePossiblyEmpty;
       return list<DbImage, ImageWhereInput>(
         async () => (await getDatabase()).image
-      )(where, skip, first);
+      )(removeUserFromWhere(whereWithUser), skip, first);
     },
   },
   label: {
@@ -79,10 +75,8 @@ export const repository: Repository = {
     add: async (labelClass) => {
       return await (await getDatabase()).labelClass.add(addIdIfNil(labelClass));
     },
-    count: async (whereWithUser?) => {
-      const { user, ...wherePossiblyEmpty } = whereWithUser ?? {};
-      const where =
-        Object.keys(wherePossiblyEmpty).length < 1 ? null : wherePossiblyEmpty;
+    count: async (whereWithUser) => {
+      const where = removeUserFromWhere(whereWithUser);
       return where
         ? await (await getDatabase()).labelClass.where(where).count()
         : await (await getDatabase()).labelClass.count();
@@ -92,13 +86,10 @@ export const repository: Repository = {
       return await (await getDatabase()).labelClass.get(id);
     },
     list: (whereWithUser, skip, first) => {
-      const { user, ...wherePossiblyEmpty } = whereWithUser ?? {};
-      const where =
-        Object.keys(wherePossiblyEmpty).length < 1 ? null : wherePossiblyEmpty;
       return list<DbLabelClass, LabelClassWhereInput>(
         async () => (await getDatabase()).labelClass,
         "index"
-      )(where, skip, first);
+      )(removeUserFromWhere(whereWithUser), skip, first);
     },
     update: async ({ id }, changes) => {
       return (await (await getDatabase()).labelClass.update(id, changes)) === 1;
