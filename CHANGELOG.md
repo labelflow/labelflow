@@ -1,6 +1,15 @@
 # Changelog
 
-## [1.0.11](https://github.com/labelflow/labelflow/compare/1.0.10...1.0.11)
+## [1.0.14](https://github.com/labelflow/labelflow/compare/1.0.13...1.0.14)
+
+- Add full screen mode [`#456`](https://github.com/labelflow/labelflow/pull/456)
+## [1.0.13](https://github.com/labelflow/labelflow/compare/1.0.12...1.0.13) - 2021-09-24
+
+- Disambiguate dataset name at export [`#465`](https://github.com/labelflow/labelflow/pull/465)
+## [1.0.12](https://github.com/labelflow/labelflow/compare/1.0.11...1.0.12) - 2021-09-24
+
+- Fix bug at build time when user does not have a Sentry token [`#466`](https://github.com/labelflow/labelflow/pull/466)
+## [1.0.11](https://github.com/labelflow/labelflow/compare/1.0.10...1.0.11) - 2021-09-24
 
 - Add backend resolver tests to CI [`#457`](https://github.com/labelflow/labelflow/pull/457)
 ## [1.0.10](https://github.com/labelflow/labelflow/compare/1.0.9...1.0.10) - 2021-09-23
