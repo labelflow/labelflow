@@ -150,8 +150,9 @@ export const serviceName = service.metadata.apply((m) => m.name);
 //   (s) => s.loadBalancer.ingress[0].ip
 // );
 
-// const ipAddress = new gcp.compute.Address("static-ip-adress", {});
-// export const staticIpAddress = ipAddress.address;
+const ipAddress = new gcp.compute.Address("static-ip-adress", {});
+export const staticIpAddress = ipAddress.address;
+export const staticIpName = ipAddress.name;
 
 // const key = new tls.PrivateKey("my-private-key", {
 //   algorithm: "ECDSA",
@@ -179,7 +180,7 @@ export const ingress = new k8s.networking.v1.Ingress(
     metadata: {
       namespace: namespaceName,
       annotations: {
-        // "kubernetes.io/ingress.global-static-ip-name": staticIpAddress,
+        "kubernetes.io/ingress.global-static-ip-name": staticIpName,
         //   "kubernetes.io/ingress.allow-http": "false",
         // "networking.gke.io/managed-certificates": managedSslCertificate.name,
         "kubernetes.io/ingress.class": "gce",
@@ -209,17 +210,17 @@ export const ingress = new k8s.networking.v1.Ingress(
   { provider: clusterProvider }
 );
 
-// if (!process.env?.CLOUDFLARE_LABELFLOWNET_ZONE_ID) {
-//   throw new Error(
-//     `Cannot create cloudfare record: env var CLOUDFLARE_LABELFLOWNET_ZONE_ID not set`
-//   );
-// }
+if (!process.env?.CLOUDFLARE_LABELFLOWNET_ZONE_ID) {
+  throw new Error(
+    `Cannot create cloudfare record: env var CLOUDFLARE_LABELFLOWNET_ZONE_ID not set`
+  );
+}
 
-// export const record = new cloudflare.Record("iog-record", {
-//   name: "iog",
-//   zoneId: process.env?.CLOUDFLARE_LABELFLOWNET_ZONE_ID,
-//   type: "A",
-//   // value: staticIpAddress,
-//   value: ingress.status.loadBalancer.ingress[0].ip,
-//   ttl: 3600,
-// });
+export const record = new cloudflare.Record("iog-record", {
+  name: "iog",
+  zoneId: process.env?.CLOUDFLARE_LABELFLOWNET_ZONE_ID,
+  type: "A",
+  value: staticIpAddress,
+  // value: ingress.status.loadBalancer.ingress[0].ip,
+  ttl: 3600,
+});
