@@ -1,16 +1,17 @@
+/* eslint-disable no-await-in-loop */
 import * as k8s from "@pulumi/kubernetes";
 import * as pulumi from "@pulumi/pulumi";
 import * as gcp from "@pulumi/gcp";
 import * as cloudflare from "@pulumi/cloudflare";
-import * as tls from "@pulumi/tls";
+import * as k8sOfficial from "@kubernetes/client-node";
 
-const name = "test-iog-cluster";
+// import * as tls from "@pulumi/tls";
 
 // Create a GKE cluster
 const engineVersion = gcp.container
   .getEngineVersions()
   .then((v) => v.latestMasterVersion);
-const cluster = new gcp.container.Cluster(name, {
+const cluster = new gcp.container.Cluster("test-iog-cluster", {
   initialNodeCount: 2,
   minMasterVersion: engineVersion,
   nodeVersion: engineVersion,
@@ -26,7 +27,7 @@ const cluster = new gcp.container.Cluster(name, {
 });
 
 // Export the Cluster name
-export const clusterName = cluster.name;
+export const clusterName = cluster.name.apply((name) => `${name}`);
 
 // Manufacture a GKE-style kubeconfig. Note that this is slightly "different"
 // because of the way GKE requires gcloud to be in the picture for cluster
@@ -63,20 +64,24 @@ users:
   });
 
 // Create a Kubernetes provider instance that uses our cluster from above.
-const clusterProvider = new k8s.Provider(name, {
+const clusterProvider = new k8s.Provider("test-iog-provider", {
   kubeconfig,
 });
 
 // Create a Kubernetes Namespace
-const ns = new k8s.core.v1.Namespace(name, {}, { provider: clusterProvider });
+const ns = new k8s.core.v1.Namespace(
+  "test-iog-namespace",
+  {},
+  { provider: clusterProvider }
+);
 
 // Export the Namespace name
 export const namespaceName = ns.metadata.apply((m) => m.name);
 
-// Create a NGINX Deployment
-const appLabels = { appClass: name };
+// Create a Deployment
+const appLabels = { appClass: clusterName };
 const deployment = new k8s.apps.v1.Deployment(
-  name,
+  "test-iog-deployment",
   {
     metadata: {
       namespace: namespaceName,
@@ -92,7 +97,7 @@ const deployment = new k8s.apps.v1.Deployment(
         spec: {
           containers: [
             {
-              name,
+              name: "test-iog-container",
               image:
                 "us-central1-docker.pkg.dev/labelflow-321909/labelflow/iog:1",
               ports: [{ containerPort: 5000 }],
@@ -124,7 +129,7 @@ export const deploymentName = deployment.metadata.apply((m) => m.name);
 
 // Create a LoadBalancer Service for the NGINX Deployment
 const service = new k8s.core.v1.Service(
-  name,
+  "test-iog-service",
   {
     metadata: {
       //   annotations: {
@@ -150,7 +155,7 @@ export const serviceName = service.metadata.apply((m) => m.name);
 //   (s) => s.loadBalancer.ingress[0].ip
 // );
 
-const ipAddress = new gcp.compute.Address("static-ip-adress", {});
+const ipAddress = new gcp.compute.Address("test-iog-address", {});
 export const staticIpAddress = ipAddress.address;
 export const staticIpName = ipAddress.name;
 
@@ -165,25 +170,25 @@ export const staticIpName = ipAddress.name;
 
 // const certRequest = new tls.CertRequest("request", {})
 
-// const managedSslCertificate = new gcp.compute.ManagedSslCertificate(
-//   "default-managed-ssl-certificate",
-//   {
-//     managed: {
-//       domains: ["iog.labelflow.net."],
-//     },
-//   }
-// );
+const managedSslCertificate = new gcp.compute.ManagedSslCertificate(
+  "test-iog-managed-ssl-certificate",
+  {
+    managed: {
+      domains: ["iog.labelflow.net."],
+    },
+  }
+);
 
 export const ingress = new k8s.networking.v1.Ingress(
-  "main-ingress",
+  "test-iog-ingress",
   {
     metadata: {
       namespace: namespaceName,
       annotations: {
-        "kubernetes.io/ingress.global-static-ip-name": staticIpName,
-        //   "kubernetes.io/ingress.allow-http": "false",
-        // "networking.gke.io/managed-certificates": managedSslCertificate.name,
-        "kubernetes.io/ingress.class": "gce",
+        // "kubernetes.io/ingress.global-static-ip-name": staticIpName,
+        // "kubernetes.io/ingress.allow-http": "false",
+        "networking.gke.io/managed-certificates": managedSslCertificate.name,
+        // "kubernetes.io/ingress.class": "gce",
       },
     },
     spec: {
@@ -216,11 +221,56 @@ if (!process.env?.CLOUDFLARE_LABELFLOWNET_ZONE_ID) {
   );
 }
 
-export const record = new cloudflare.Record("iog-record", {
+export const ingressIpAddress = pulumi
+  .all([ingress.status, ingress.metadata, kubeconfig])
+  .apply(async ([status, metadata, kubeconfigResult]) => {
+    if (pulumi.runtime.isDryRun()) {
+      return "";
+    }
+    if (status?.loadBalancer?.ingress?.[0]?.ip) {
+      return status?.loadBalancer?.ingress?.[0]?.ip;
+    }
+
+    // Connect directly in kubernetes to listen to the status of the ingress
+    // until it has the required information...
+
+    const kc = new k8sOfficial.KubeConfig();
+    kc.loadFromString(kubeconfigResult);
+    const k8sApi = kc.makeApiClient(k8sOfficial.NetworkingV1Api);
+
+    const maxRetries = 60;
+
+    let ingressResult = null;
+    for (let retry = 0; retry <= maxRetries; retry += 1) {
+      try {
+        ingressResult = (
+          await k8sApi.readNamespacedIngressStatus(
+            metadata.name,
+            metadata.namespace
+          )
+        ).body;
+
+        pulumi.log.info(JSON.stringify(ingressResult));
+
+        const { ip } = ingressResult!.status!.loadBalancer!.ingress![0]!;
+        return ip!;
+      } catch (e) {
+        pulumi.log.info(
+          `retry ${retry}: ${JSON.stringify(ingressResult?.status)}`
+        );
+
+        await new Promise((resolve) => setTimeout(resolve, 10000));
+      }
+    }
+    throw new Error(`Failed to get ingress IP address`);
+  });
+
+export const record = new cloudflare.Record("test-iog-record", {
   name: "iog",
   zoneId: process.env?.CLOUDFLARE_LABELFLOWNET_ZONE_ID,
   type: "A",
-  value: staticIpAddress,
-  // value: ingress.status.loadBalancer.ingress[0].ip,
+  // value: staticIpAddress,
+  value: ingressIpAddress,
+  // value: "34.117.17.101", // FIXME Hardcoded for now....
   ttl: 3600,
 });
