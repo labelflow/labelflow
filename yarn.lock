@@ -7067,7 +7067,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@pulumi/pulumi@npm:^3.0.0, @pulumi/pulumi@npm:^3.13.2":
+"@pulumi/pulumi@npm:^3.0.0, @pulumi/pulumi@npm:^3.0.0-alpha.0, @pulumi/pulumi@npm:^3.13.2":
   version: 3.13.2
   resolution: "@pulumi/pulumi@npm:3.13.2"
   dependencies:
@@ -7094,6 +7094,15 @@ __metadata:
   version: 0.3.0
   resolution: "@pulumi/query@npm:0.3.0"
   checksum: 4e579c56937313a4e60211510dd0dcb71bb3014707f727015f5458d5f1e227a83b3a15bfd97c5b44500d022ee15f81917d45de0f6c2b11d47e6fba333b3b6195
+  languageName: node
+  linkType: hard
+
+"@pulumi/tls@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "@pulumi/tls@npm:4.0.0"
+  dependencies:
+    "@pulumi/pulumi": ^3.0.0-alpha.0
+  checksum: 83dec6c494806fc926d09cd989a1fb79c524fd929cd8231419dfad487dcaab9643ff92117105fe9ea330340f55bd3d8aed7d1f46172c9c9da7430918ec1c20f9
   languageName: node
   linkType: hard
 
@@ -20729,6 +20738,7 @@ fsevents@^1.2.7:
     "@pulumi/gcp": ^5.21.0
     "@pulumi/kubernetes": ^3.7.2
     "@pulumi/pulumi": ^3.13.2
+    "@pulumi/tls": ^4.0.0
     "@types/node": ^10.0.0
   languageName: unknown
   linkType: soft

@@ -2,6 +2,7 @@ import * as k8s from "@pulumi/kubernetes";
 import * as pulumi from "@pulumi/pulumi";
 import * as gcp from "@pulumi/gcp";
 import * as cloudflare from "@pulumi/cloudflare";
+import * as tls from "@pulumi/tls";
 
 const name = "test-iog-cluster";
 
@@ -114,11 +115,14 @@ const service = new k8s.core.v1.Service(
   name,
   {
     metadata: {
+      //   annotations: {
+      //     "cloud.google.com/app-protocols": '{"": }',
+      //   },
       labels: appLabels,
       namespace: namespaceName,
     },
     spec: {
-      type: "LoadBalancer",
+      type: "NodePort",
       ports: [{ port: 80, targetPort: 5000 }],
       selector: appLabels,
     },
@@ -134,6 +138,59 @@ export const servicePublicIP = service.status.apply(
   (s) => s.loadBalancer.ingress[0].ip
 );
 
+const ipAddress = new gcp.compute.Address("static-ip-adress", {});
+export const staticIpAddress = ipAddress.address;
+
+// const key = new tls.PrivateKey("my-private-key", {
+//   algorithm: "ECDSA",
+//   ecdsaCurve: "P384",
+// });
+
+// const secret = new k8s.core.v1.Secret("tls_credentials", {
+//   type: "kubernetes.io/tls",
+// });
+
+// const certRequest = new tls.CertRequest("request", {})
+
+const managedSslCertificated = new gcp.compute.ManagedSslCertificate(
+  "default-managed-ssl-certificate",
+  {
+    managed: {
+      domains: ["iog.labelflow.net."],
+    },
+  }
+);
+
+const ingress = new k8s.networking.v1.Ingress("main-ingress", {
+  metadata: {
+    annotations: {
+      "kubernetes.io/ingress.global-static-ip-name": staticIpAddress,
+      //   "kubernetes.io/ingress.allow-http": "false",
+      "networking.gke.io/managed-certificates": managedSslCertificated.name,
+      //   "kubernetes.io/ingress.class": "gce",
+    },
+  },
+  spec: {
+    ingressClassName: "gce",
+    // tls: [{ secretName: secret.metadata.name }],
+    rules: [
+      {
+        http: {
+          paths: [
+            {
+              path: "/*",
+              pathType: "ImplementationSpecific",
+              backend: {
+                service: { name: serviceName, port: { number: 80 } },
+              },
+            },
+          ],
+        },
+      },
+    ],
+  },
+});
+
 if (!process.env?.CLOUDFLARE_LABELFLOWNET_ZONE_ID) {
   throw new Error(
     `Cannot create cloudfare record: env var CLOUDFLARE_LABELFLOWNET_ZONE_ID not set`
@@ -144,6 +201,6 @@ export const record = new cloudflare.Record("iog-record", {
   name: "iog",
   zoneId: process.env?.CLOUDFLARE_LABELFLOWNET_ZONE_ID,
   type: "A",
-  value: servicePublicIP,
+  value: staticIpAddress,
   ttl: 3600,
 });
