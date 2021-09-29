@@ -134,12 +134,12 @@ const service = new k8s.core.v1.Service(
 
 // Export the Service name and public LoadBalancer endpoint
 export const serviceName = service.metadata.apply((m) => m.name);
-export const servicePublicIP = service.status.apply(
-  (s) => s.loadBalancer.ingress[0].ip
-);
+// export const servicePublicIP = service.status.apply(
+//   (s) => s.loadBalancer.ingress[0].ip
+// );
 
-const ipAddress = new gcp.compute.Address("static-ip-adress", {});
-export const staticIpAddress = ipAddress.address;
+// const ipAddress = new gcp.compute.Address("static-ip-adress", {});
+// export const staticIpAddress = ipAddress.address;
 
 // const key = new tls.PrivateKey("my-private-key", {
 //   algorithm: "ECDSA",
@@ -152,44 +152,48 @@ export const staticIpAddress = ipAddress.address;
 
 // const certRequest = new tls.CertRequest("request", {})
 
-const managedSslCertificated = new gcp.compute.ManagedSslCertificate(
-  "default-managed-ssl-certificate",
-  {
-    managed: {
-      domains: ["iog.labelflow.net."],
-    },
-  }
-);
+// const managedSslCertificate = new gcp.compute.ManagedSslCertificate(
+//   "default-managed-ssl-certificate",
+//   {
+//     managed: {
+//       domains: ["iog.labelflow.net."],
+//     },
+//   }
+// );
 
-const ingress = new k8s.networking.v1.Ingress("main-ingress", {
-  metadata: {
-    annotations: {
-      "kubernetes.io/ingress.global-static-ip-name": staticIpAddress,
-      //   "kubernetes.io/ingress.allow-http": "false",
-      "networking.gke.io/managed-certificates": managedSslCertificated.name,
-      //   "kubernetes.io/ingress.class": "gce",
+export const ingress = new k8s.networking.v1.Ingress(
+  "main-ingress",
+  {
+    metadata: {
+      annotations: {
+        // "kubernetes.io/ingress.global-static-ip-name": staticIpAddress,
+        //   "kubernetes.io/ingress.allow-http": "false",
+        // "networking.gke.io/managed-certificates": managedSslCertificate.name,
+        "kubernetes.io/ingress.class": "gce",
+      },
+    },
+    spec: {
+      // ingressClassName: "gce",
+      // tls: [{ secretName: secret.metadata.name }],
+      rules: [
+        {
+          http: {
+            paths: [
+              {
+                path: "/*",
+                pathType: "ImplementationSpecific",
+                backend: {
+                  service: { name: serviceName, port: { number: 80 } },
+                },
+              },
+            ],
+          },
+        },
+      ],
     },
   },
-  spec: {
-    ingressClassName: "gce",
-    // tls: [{ secretName: secret.metadata.name }],
-    rules: [
-      {
-        http: {
-          paths: [
-            {
-              path: "/*",
-              pathType: "ImplementationSpecific",
-              backend: {
-                service: { name: serviceName, port: { number: 80 } },
-              },
-            },
-          ],
-        },
-      },
-    ],
-  },
-});
+  { provider: clusterProvider }
+);
 
 if (!process.env?.CLOUDFLARE_LABELFLOWNET_ZONE_ID) {
   throw new Error(
@@ -197,10 +201,11 @@ if (!process.env?.CLOUDFLARE_LABELFLOWNET_ZONE_ID) {
   );
 }
 
-export const record = new cloudflare.Record("iog-record", {
-  name: "iog",
-  zoneId: process.env?.CLOUDFLARE_LABELFLOWNET_ZONE_ID,
-  type: "A",
-  value: staticIpAddress,
-  ttl: 3600,
-});
+// export const record = new cloudflare.Record("iog-record", {
+//   name: "iog",
+//   zoneId: process.env?.CLOUDFLARE_LABELFLOWNET_ZONE_ID,
+//   type: "A",
+//   // value: staticIpAddress,
+//   value: ingress.status.loadBalancer.ingress[0].ip,
+//   ttl: 3600,
+// });
