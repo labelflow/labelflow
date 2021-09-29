@@ -60,13 +60,13 @@ const createLabel = async (
   const image = await throwIfResolvesToNil(
     `The image id ${imageId} doesn't exist.`,
     repository.image.get
-  )({ id: imageId });
+  )({ id: imageId }, user);
 
   if (labelClassId != null) {
     await throwIfResolvesToNil(
       `The labelClass id ${labelClassId} doesn't exist.`,
       repository.labelClass.get
-    )({ id: labelClassId });
+    )({ id: labelClassId }, user);
   }
 
   const labelId = id ?? uuidv4();
@@ -129,7 +129,7 @@ const updateLabel = async (
     await throwIfResolvesToNil(
       "No label class with such id",
       repository.labelClass.get
-    )({ id: args.data.labelClassId });
+    )({ id: args.data.labelClassId }, user);
   }
 
   if (!args?.data?.geometry) {
@@ -142,7 +142,7 @@ const updateLabel = async (
   const image = await throwIfResolvesToNil(
     `The image id ${imageId} doesn't exist.`,
     repository.image.get
-  )({ id: imageId });
+  )({ id: imageId }, user);
 
   const {
     geometry: clippedGeometry,

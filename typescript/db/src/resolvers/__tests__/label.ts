@@ -7,12 +7,17 @@ import {
   Workspace,
 } from "@labelflow/graphql-types";
 import { probeImage } from "@labelflow/common-resolvers/src/utils/probe-image";
+import { createClient } from "@supabase/supabase-js";
 import { prisma } from "../../repository/prisma-client";
 import { client, user } from "../../dev/apollo-client";
 import { LabelType } from ".prisma/client";
 
 jest.mock("@labelflow/common-resolvers/src/utils/probe-image");
 const mockedProbeSync = probeImage as jest.Mock;
+
+jest.mock("@supabase/supabase-js");
+const mockedSupabaseCreateClient = createClient as jest.Mock;
+
 const getGeometryFromExtent = ({
   x,
   y,
@@ -134,6 +139,9 @@ const createImage = async (
     width: imageWidth,
     height: imageHeight,
     mimetype: "image/jpeg",
+  });
+  mockedSupabaseCreateClient.mockReturnValue({
+    storage: { from: () => ({ upload: () => {} }) },
   });
   const mutationResult = await client.mutate({
     mutation: gql`
