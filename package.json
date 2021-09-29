@@ -50,7 +50,7 @@
     "auto-changelog": "2.3.0",
     "babel-loader": "8.2.2",
     "chromatic": "5.8.2",
-    "cypress": "7.3.0",
+    "cypress": "8.5.0",
     "dexie": "3.0.3",
     "eslint": "7.26.0",
     "eslint-config-airbnb-typescript": "12.3.1",
