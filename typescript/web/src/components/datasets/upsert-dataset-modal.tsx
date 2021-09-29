@@ -136,7 +136,7 @@ export const UpsertDatasetModal = ({
 
   useEffect(() => {
     if (
-      existingDataset != null &&
+      existingDataset?.searchDataset != null &&
       !loadingExistingDatasets &&
       existingDataset?.searchDataset?.id !== datasetId &&
       variablesExistingDatasets?.slug === slugify(datasetName, { lower: true })
