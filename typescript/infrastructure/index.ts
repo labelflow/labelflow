@@ -1,6 +1,7 @@
 import * as k8s from "@pulumi/kubernetes";
 import * as pulumi from "@pulumi/pulumi";
 import * as gcp from "@pulumi/gcp";
+import * as cloudflare from "@pulumi/cloudflare";
 
 const name = "test-iog-cluster";
 
@@ -93,7 +94,7 @@ const deployment = new k8s.apps.v1.Deployment(
               name,
               image:
                 "us-central1-docker.pkg.dev/labelflow-321909/labelflow/iog:1",
-              ports: [{ name: "http", containerPort: 5000 }],
+              ports: [{ containerPort: 5000 }],
             },
           ],
         },
@@ -118,7 +119,7 @@ const service = new k8s.core.v1.Service(
     },
     spec: {
       type: "LoadBalancer",
-      ports: [{ port: 5000, targetPort: "http" }],
+      ports: [{ port: 80, targetPort: 5000 }],
       selector: appLabels,
     },
   },
@@ -132,3 +133,17 @@ export const serviceName = service.metadata.apply((m) => m.name);
 export const servicePublicIP = service.status.apply(
   (s) => s.loadBalancer.ingress[0].ip
 );
+
+if (!process.env?.CLOUDFLARE_LABELFLOWNET_ZONE_ID) {
+  throw new Error(
+    `Cannot create cloudfare record: env var CLOUDFLARE_LABELFLOWNET_ZONE_ID not set`
+  );
+}
+
+export const record = new cloudflare.Record("iog-record", {
+  name: "iog",
+  zoneId: process.env?.CLOUDFLARE_LABELFLOWNET_ZONE_ID,
+  type: "A",
+  value: servicePublicIP,
+  ttl: 3600,
+});
