@@ -91,8 +91,9 @@ const deployment = new k8s.apps.v1.Deployment(
           containers: [
             {
               name,
-              image: "nginx:latest",
-              ports: [{ name: "http", containerPort: 80 }],
+              image:
+                "us-central1-docker.pkg.dev/labelflow-321909/labelflow/iog:1",
+              ports: [{ name: "http", containerPort: 5000 }],
             },
           ],
         },
@@ -117,7 +118,7 @@ const service = new k8s.core.v1.Service(
     },
     spec: {
       type: "LoadBalancer",
-      ports: [{ port: 80, targetPort: "http" }],
+      ports: [{ port: 5000, targetPort: "http" }],
       selector: appLabels,
     },
   },
