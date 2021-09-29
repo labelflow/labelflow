@@ -1,4 +1,5 @@
 import {
+  chakra,
   Box,
   Button,
   Flex,
@@ -6,8 +7,11 @@ import {
   HStack,
   useDisclosure,
   VisuallyHidden,
+  Spacer,
+  IconButton,
   // useColorModeValue as mode,
 } from "@chakra-ui/react";
+import { RiGithubFill } from "react-icons/ri";
 import * as React from "react";
 import NextLink from "next/link";
 import { Logo } from "../Logo";
@@ -17,17 +21,14 @@ import { Submenu } from "./Submenu";
 import { ToggleButton } from "./ToggleButton";
 import { links } from "./_data";
 
+const GithubIcon = chakra(RiGithubFill);
+
 const MobileNavContext = (props: FlexProps) => {
   const { isOpen, onToggle } = useDisclosure();
   return (
     <>
-      <Flex
-        align="center"
-        justify="space-between"
-        className="nav-content__mobile"
-        {...props}
-      >
-        <Box flexBasis="6rem">
+      <Flex align="center" className="nav-content__mobile" {...props}>
+        <Box>
           <ToggleButton isOpen={isOpen} onClick={onToggle} />
         </Box>
         <NextLink href="/website">
@@ -35,9 +36,18 @@ const MobileNavContext = (props: FlexProps) => {
             <Logo h="24px" iconColor="brand.400" />
           </Box>
         </NextLink>
-        <Box visibility={{ base: "hidden", sm: "visible" }}>
-          <NextLink href="/datasets">
-            <Button as="a" colorScheme="brand" variant="outline">
+        <Spacer />
+        <IconButton
+          aria-label="See code on github"
+          href="https://github.com/labelflow/labelflow"
+          as="a"
+          target="blank"
+          variant="link"
+          icon={<GithubIcon fontSize="2xl" />}
+        />
+        <Box display={{ base: "none", sm: "block" }}>
+          <NextLink href="/local/datasets">
+            <Button as="a" colorScheme="brand" variant="outline" ml="3">
               Try it now
             </Button>
           </NextLink>
@@ -53,7 +63,7 @@ const MobileNavContext = (props: FlexProps) => {
             </NavLink.Mobile>
           )
         )}
-        <NextLink href="/datasets">
+        <NextLink href="/local/datasets">
           <Button colorScheme="brand" w="full" size="lg" mt="5">
             Try it now
           </Button>
@@ -108,7 +118,16 @@ const DesktopNavContent = (props: FlexProps) => {
         >
           Sign In
         </Box> */}
-        <NextLink href="/datasets">
+        <IconButton
+          aria-label="See code on github"
+          href="https://github.com/labelflow/labelflow"
+          as="a"
+          target="blank"
+          variant="link"
+          mr="-2"
+          icon={<GithubIcon fontSize="2xl" />}
+        />
+        <NextLink href="/local/datasets">
           <Button
             as="a"
             href="#"

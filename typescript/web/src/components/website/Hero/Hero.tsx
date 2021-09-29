@@ -1,4 +1,5 @@
 import {
+  chakra,
   Box,
   Button,
   Heading,
@@ -10,7 +11,26 @@ import {
 } from "@chakra-ui/react";
 import NextLink from "next/link";
 import * as React from "react";
-// import { HiPlay } from "react-icons/hi";
+import { RiGithubFill } from "react-icons/ri";
+import { BsArrowRight } from "react-icons/bs";
+// import { GithubButton } from "../Navbar/NavContent";
+
+const GithubIcon = chakra(RiGithubFill);
+export const GithubButton = () => (
+  <Button
+    as="a"
+    leftIcon={<GithubIcon fontSize="2xl" />}
+    href="https://github.com/labelflow/labelflow"
+    target="blank"
+    size="lg"
+    minW="210px"
+    variant="link"
+    height="14"
+    px="8"
+  >
+    See on Github
+  </Button>
+);
 
 export function Hero() {
   return (
@@ -50,14 +70,14 @@ export function Hero() {
               fontWeight="extrabold"
               letterSpacing="tight"
             >
-              The open standard{" "}
+              The open{" "}
               <Text
                 color="brand.500"
                 // bgGradient="linear(to-l, brand.500,brand.400)"
                 // bgClip="text"
                 display="inline"
               >
-                image labeling tool
+                platform for image labelling
               </Text>
             </Heading>
             <Text
@@ -70,14 +90,20 @@ export function Hero() {
               place. Stay in control of your data, focus on building the next
               big thing.
             </Text>
-            <Stack direction={{ base: "column", md: "row" }} spacing="4" mt="8">
-              <NextLink href="/datasets">
+            <Stack
+              direction={{ base: "column", md: "row" }}
+              justifyContent="space-around"
+              mt="8"
+            >
+              <GithubButton />
+              <NextLink href="/local/datasets">
                 <Button
                   size="lg"
                   minW="210px"
                   colorScheme="brand"
                   height="14"
                   px="8"
+                  rightIcon={<BsArrowRight />}
                 >
                   Try it now
                 </Button>
@@ -115,14 +141,12 @@ export function Hero() {
               rounded={8}
               h={{ lg: "100%" }}
               objectFit="contain"
-              bg="url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACMAAAAUCAYAAAAHpoRMAAAACXBIWXMAAAAnAAAAJwEqCZFPAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAP5SURBVHgB7ZVNbxNnFIWfGdvj8ef4I8QOISSBEkBCKq2EWqkLqNoFqoTU/oHSZbf9B60q9T+UXReVKrrtgl0pK4SgUFVQ2oTEIbZjHH+Mx+OZ8Yw905t07RKRFRJ3YVnvnblz7nnPuRfexGsQyqxE33a/6HV6lw0jh+f56GmdIAgOcgPTJB6LkS8UGA4sjh+voidis0rRMy2zXDS+4iURn5X48MatK70fvrmuxBTmKjm6bYdIjQt6haQAqx7Lc3q1yKW1CsfKGbJ6nPHEJ53UmE6n/L3RwhtHrJxcJWcs1qTkq4O58dFZLn/XIKHrENi8dWqOioAqL65xYklnIatjjUaYvefsdiLeOb9EOpVkHDi4vsviCSmtKMSiBiOrzmFiJpgHD37j8+vvMT+Xppwv0xuYFAydLdumGaj0Rz5NZ8LxeCRsJLCmHnu7XZxxSEwFexhgGBpD20dNhBwJzP0/bx5Q3hkM6Fi2dOvT6EuzWoy3K8vU5azS7/JPo8Ha8gJP+i1OLxqoakR/4BBEPp3nPbxJiO9NOEyosxJDb8rzF0P2Nbtf3J2qcqZhmQHbtW2OZYp0bYtCNoXvj0WkQ9zQ51m9xdD1GFo+2XSBQi5L/H/EfShmYsK1JVdxciEuQtRQ9QLePOTLJ2nuPuFMVUevKThyHdMwiaZp1OoDRraLI9+OoeGHJmEozEyPyEw6mUdLqtT2BvScPTa3HqO88EmZNmEwIZ8rkvTEW0sX2LZlQijy+USWUqYK0ZTdVptuX54VRkP1UFhmg3na2CElTjJ7LtNIkaIRD+/co73+kNPl84ReiKWKu5QEgTalP1HpVs9iiss0sb5WilPf7Qsz8KLlcpiYeU26nsAcufjSpbVj0qrbXPpgHtOxePz4Nsuig0unVnHVFBk9xp0/7nNup8VmZ5OSOhFyVPRMkp09EbHtcSQwuUKMemOE50bUty3OnDEIlYhIWp0T0eazedY3Nthab+PPT/jk3SsoukKz+RBf+E6J5cuFFN2eRd7IcCQwk7DKaiXBX+0mJxZEK0WFbmcoDpFu2yJUy6LVcVjf3CI/0fll/SalaplSMcXWVkdWRZK5UoZnOz5GuciRwHz75dc4jsP93+/x46/f02l7TP3pwUQ2tKqIO0kwHGPI1N3XiBuMMft9cZ6wVkyzs2GSz2co5QwarSFHAjOyHXGHwkQPGAw8yqUk1UqVZxtd0UCNfucC+/qPyxBUxC56WnZSEOKOAsaOZBLQbPS49vF1VpbW+Ozna7wsZm7tgoRX0Avvf7qCZ8qB/FwsXOSn27e4evUcy/J/3JKEKQtRZk6tVUPWp7z4n1gfPW1x8dyKOMHk0V2T2t1ajTfxivEveWrQNXmu5GgAAAAASUVORK5CYII=')"
               backgroundSize="contain"
               backgroundRepeat="no-repeat"
               backgroundPosition="center"
-              src="/static/img/home-screenshot2.jpg"
-              srcSet="/static/img/home-screenshot1.jpg 424w, /static/img/home-screenshot2.jpg 847w, /static/img/home-screenshot3.jpg 1270w, /static/img/home-screenshot4.jpg 1693w"
-              sizes="(max-width: 600px) 424px, (max-width: 900px) 847px, (max-width: 1200px) 1270px, 1693px"
-              alt="Screening talent"
+              backgroundImage="url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAMCAYAAABiDJ37AAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAhGVYSWZNTQAqAAAACAAFARIAAwAAAAEAAQAAARoABQAAAAEAAABKARsABQAAAAEAAABSASgAAwAAAAEAAgAAh2kABAAAAAEAAABaAAAAAAAAAEgAAAABAAAASAAAAAEAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAFKADAAQAAAABAAAADAAAAAARd0G9AAAACXBIWXMAAAsTAAALEwEAmpwYAAABWWlUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iWE1QIENvcmUgNi4wLjAiPgogICA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPgogICAgICA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIgogICAgICAgICAgICB4bWxuczp0aWZmPSJodHRwOi8vbnMuYWRvYmUuY29tL3RpZmYvMS4wLyI+CiAgICAgICAgIDx0aWZmOk9yaWVudGF0aW9uPjE8L3RpZmY6T3JpZW50YXRpb24+CiAgICAgIDwvcmRmOkRlc2NyaXB0aW9uPgogICA8L3JkZjpSREY+CjwveDp4bXBtZXRhPgoZXuEHAAAC/0lEQVQoFT2T228bRRSHv5mdvTi72cbBdkSahKaXtJGCQCBEpbYSqnjhGSHxhMQ7/0zFE38DUl/7UAkkriKoagUvIY2TJhG1Q5rN2mvHa3tmh0momNHcjmbmnPmdbwSvSzfLPvel93Wg1JFSvi+w/1ULlWtSiIudla3+n8O5zeJJz0hPzmpttlS3KFoLSTHI+97aXJo2ynHZCEKF1prtvQ7jqeZsWFDpMYmaMOifEPgh0vOJ4jn2dw8xImB3+wU3128IcdrvP7Na3DTWn/bPTFyMRGWFENaFZaspwh20laEyxkXmInWdMdo5tKSJZLHhsfP8L/1k80l449bGtsjy/LA3vbT0+E/Ni1P4rWNZiiY0R22uTHfYmr3PoU5J5dRFJVES6jXItODusuWzD2Em8o0ze5OKtlKeN+pk8GvPTt+eHfqfhl2SMEP2dohetUkWmzTMu2hCYjkhDKRrHquiYmm+choqfvjue/vs8UPufPwJygqlli5N+GJ5V6bBK0bViCpKKbw6utfgWmvMitim721gvNglACLOmFEhrdhdKCRx6PPOSkooLSIfjtv50f7VzV8emdn6vGeF00wFlN1D5Ms9vOvvMzBjRu7ZxaSFLAtW0yNe9mOaK2t8dG+dpBZoX3mqnJi28pzI+UDz7WbB1ZbEjgdUYc15OuaWOeZ5v03g9LusOtSMYH+0RhkXPD0O+SBZuEBoUE5treZRTqaVstZiHEuH+CyHMaX1GTvuLgeKhnvWXDykV6Vk8jZZuMDBoKJrCs4WU+J09oJV151jizZaKuEFxAF82fwdTIPT04zVuu+kOYZhjz/yu3zjMp9HA0p9wpsMWGs22TvLuP9WdKGh48pl4hx+KZUZ5k7ckOtX1pFJg+i9OU46f5OPFbVajTfMAl+VFVYbB3aFcaMjg85UMT+f6Lk4VP1i9OCgc/qgHvmp6m49ZVCO6M9scOf2PeJ6i59+/pG1ZIbQZU/mgth3qDjIbRCinMahGJOphMitj/8p8JQ8uLY4f3D+N/8FfMZadBxcaqEAAAAASUVORK5CYII=')"
+              src="/static/img/home-screenshot5.png"
+              alt="LabelFlow"
             />
           </Box>
         </Stack>

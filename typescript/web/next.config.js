@@ -2,8 +2,33 @@ const withPWA = require("next-pwa");
 const { BundleAnalyzerPlugin } = require("webpack-bundle-analyzer");
 const path = require("path");
 
-module.exports =
+// This file sets a custom webpack configuration to use your Next.js app
+// with Sentry.
+// https://nextjs.org/docs/api-reference/next.config.js/introduction
+// https://docs.sentry.io/platforms/javascript/guides/nextjs/
+
+const { withSentryConfig } = require("@sentry/nextjs");
+
+const SentryWebpackPluginOptions = {
+  // Additional config options for the Sentry Webpack plugin. Keep in mind that
+  // the following options are set automatically, and overriding them is not
+  // recommended:
+  //   release, url, org, project, authToken, configFile, stripPrefix,
+  //   urlPrefix, include, ignore
+
+  silent: true, // Suppresses all logs
+  // For all available options, see:
+  // https://github.com/getsentry/sentry-webpack-plugin#options.
+};
+
+module.exports = withSentryConfig(
   withPWA({
+    sentry: {
+      disableServerWebpackPlugin:
+        process.env.SENTRY_AUTH_TOKEN != null ? false : true,
+      disableClientWebpackPlugin:
+        process.env.SENTRY_AUTH_TOKEN != null ? false : true,
+    },
     images: {
       deviceSizes: [
         320, 480, 640, 750, 828, 960, 1080, 1200, 1440, 1920, 2048, 2560, 3840,
@@ -166,6 +191,13 @@ module.exports =
         );
       }
 
+      // Enable top level await for apollo-server-micro in `typescript/web/src/pages/api/graphql.ts`
+      // See https://stackoverflow.com/questions/68339243/how-can-i-use-top-level-await-in-typescript-next-js
+      config.experiments = {
+        ...config.experiments,
+        topLevelAwait: true,
+      };
+
       // Important: return the modified config
       return config;
     },
@@ -190,5 +222,6 @@ module.exports =
       webpackCompilationPlugins: [],
       // exclude: ["/api/worker/"]
     },
-  })
-  ;
+  }),
+  SentryWebpackPluginOptions
+);

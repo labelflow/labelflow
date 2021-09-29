@@ -1,6 +1,6 @@
 import { RiImageLine, RiFile3Line } from "react-icons/ri";
 import { isEmpty } from "lodash/fp";
-import { Box, Text, Flex } from "@chakra-ui/react";
+import { Box, Text, Flex, useColorModeValue as mode } from "@chakra-ui/react";
 
 import { DroppedUrl, UploadStatuses } from "../types";
 import { ImportProgress } from "../import-progress";
@@ -14,7 +14,7 @@ export const UrlStatuses = ({
   uploadStatuses: UploadStatuses;
 }) => (
   <Flex direction="column" height="100%">
-    <Box p="2" bg="gray.200" borderTopRadius="md" w="100%">
+    <Box p="2" bg={mode("gray.200", "gray.600")} borderTopRadius="md" w="100%">
       <Text>
         Completed{" "}
         {
@@ -31,7 +31,7 @@ export const UrlStatuses = ({
           w="100%"
           alignItems="center"
           p="2"
-          bg={index % 2 === 0 ? "gray.50" : "inherit"}
+          bg={index % 2 === 0 ? mode("gray.50", "gray.700") : "inherit"}
         >
           <Box flex={0} pr="2">
             {isEmpty(errors) ? <RiImageLine /> : <RiFile3Line />}
@@ -49,7 +49,7 @@ export const UrlStatuses = ({
           <Box
             whiteSpace="nowrap"
             flex={0}
-            color="gray.400"
+            color={mode("gray.400", "gray.600")}
             fontSize="md"
             textAlign="right"
           >

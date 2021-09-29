@@ -18,6 +18,7 @@ import {
 // import { initialize as initializeGoogleAnalytics } from "workbox-google-analytics";
 
 import { trimCharsEnd } from "lodash/fp";
+import * as Sentry from "@sentry/nextjs";
 import typeDefs from "../../../../data/__generated__/schema.graphql";
 import { resolvers } from "../connectors/resolvers";
 import {
@@ -27,6 +28,19 @@ import {
 import { ApolloServerServiceWorker } from "./apollo-server-service-worker";
 import { UploadServer } from "./upload-server";
 import { repository } from "../connectors/repository";
+
+// Configure and initialize Sentry in the service worker
+const SENTRY_DSN = process.env.SENTRY_DSN || process.env.NEXT_PUBLIC_SENTRY_DSN;
+Sentry.init({
+  dsn: SENTRY_DSN,
+  environment: process.env.NEXT_PUBLIC_SENTRY_ENVIRONMENT ?? "development",
+  // Adjust this value in production, or use tracesSampler for greater control
+  tracesSampleRate: 1.0,
+  // ...
+  // Note: if you want to override the automatic release value, do not set a
+  // `release` value here - use the environment variable `SENTRY_RELEASE`, so
+  //  that it will also get attached to your source maps
+});
 
 declare let self: ServiceWorkerGlobalScope;
 
@@ -47,19 +61,24 @@ self.addEventListener("message", (event) => {
     return;
   }
 
+  // TODO Send this message from client side when user wants to load app to work online
+  if (event?.data?.type === "PRECACHE_ALL") {
+    // Inject the manifest
+    // See https://github.com/GoogleChrome/workbox/issues/2519#issuecomment-634164566
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
+    // eslint-disable-next-line no-underscore-dangle
+    const WB_MANIFEST = self.__WB_MANIFEST;
+    precacheAndRoute(WB_MANIFEST);
+    // @ts-ignore
+    self.WB_MANIFEST = WB_MANIFEST;
+    return;
+  }
+
   console.warn("Received unsupported message from window:");
   console.warn(event?.data);
 });
 
 clientsClaim();
-// Inject the manifest
-// See https://github.com/GoogleChrome/workbox/issues/2519#issuecomment-634164566
-// eslint-disable-next-line @typescript-eslint/no-use-before-define
-// eslint-disable-next-line no-underscore-dangle
-const WB_MANIFEST = self.__WB_MANIFEST;
-precacheAndRoute(WB_MANIFEST);
-// @ts-ignore
-self.WB_MANIFEST = WB_MANIFEST;
 
 // // Initialize workbox Google analytics. For some reason this is broken right now, so we commented it.
 // initializeGoogleAnalytics();
@@ -78,18 +97,20 @@ registerRoute(
       return { req, res, repository };
     },
     introspection: true,
+    formatError: (error) => {
+      Sentry.captureException(error);
+      return error;
+    },
   }),
   "POST"
 );
 
 const trimmedUploadsRoute = trimCharsEnd("/", uploadsRoute);
 const uploadsRouteRegex = new RegExp(`${trimmedUploadsRoute}/(?<fileId>.*)`);
+const uploadServer = new UploadServer({ cacheName: uploadsCacheName });
 
-registerRoute(
-  uploadsRouteRegex,
-  new UploadServer({ cacheName: uploadsCacheName }),
-  "PUT"
-);
+registerRoute(uploadsRouteRegex, uploadServer, "PUT");
+registerRoute(uploadsRouteRegex, uploadServer, "DELETE");
 registerRoute(
   uploadsRouteRegex,
   new CacheOnly({

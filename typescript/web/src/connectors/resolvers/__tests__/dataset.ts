@@ -10,10 +10,12 @@ jest.mock("@labelflow/common-resolvers/src/utils/probe-image");
 const mockedProbeSync = probeImage as jest.Mock;
 
 const createDataset = async (name: string, datasetId?: string | null) => {
-  return client.mutate({
+  return await client.mutate({
     mutation: gql`
       mutation createDataset($datasetId: String, $name: String!) {
-        createDataset(data: { id: $datasetId, name: $name }) {
+        createDataset(
+          data: { id: $datasetId, name: $name, workspaceSlug: "local" }
+        ) {
           id
           name
         }
@@ -97,7 +99,7 @@ describe("Dataset resolver test suite", () => {
     const mutationResult = await client.mutate({
       mutation: gql`
         mutation createDataset($name: String!) {
-          createDataset(data: { name: $name }) {
+          createDataset(data: { name: $name, workspaceSlug: "local" }) {
             id
             name
           }
@@ -141,7 +143,9 @@ describe("Dataset resolver test suite", () => {
     const mutationResult = await client.mutate({
       mutation: gql`
         mutation createDataset($datasetId: String, $name: String!) {
-          createDataset(data: { id: $datasetId, name: $name }) {
+          createDataset(
+            data: { id: $datasetId, name: $name, workspaceSlug: "local" }
+          ) {
             id
             name
           }
@@ -199,7 +203,7 @@ describe("Dataset resolver test suite", () => {
           id: "a id that doesn't exist",
         },
       })
-    ).rejects.toThrow(/No dataset with id/);
+    ).rejects.toThrow(/Couldn't find dataset corresponding to/);
   });
 
   test("Read multiple datasets", async () => {
@@ -215,6 +219,7 @@ describe("Dataset resolver test suite", () => {
           }
         }
       `,
+      variables: { where: { workspaceSlug: "local" } },
     });
     expect(queryResults.data.datasets).toHaveLength(2);
   });
@@ -226,13 +231,14 @@ describe("Dataset resolver test suite", () => {
 
     const queryResults = await client.query({
       query: gql`
-        query getDatasets {
-          datasets {
+        query getDatasets($where: DatasetWhereInput) {
+          datasets(where: $where) {
             id
             name
           }
         }
       `,
+      variables: { where: { workspaceSlug: "local" } },
     });
     expect(queryResults.data.datasets[0].name).toEqual("dataset 1");
     expect(queryResults.data.datasets[1].name).toEqual("dataset 2");
@@ -241,13 +247,14 @@ describe("Dataset resolver test suite", () => {
   test("Should return no datasets when database is empty", async () => {
     const queryResults = await client.query({
       query: gql`
-        query getDatasets {
-          datasets {
+        query getDatasets($where: DatasetWhereInput) {
+          datasets(where: $where) {
             id
             name
           }
         }
       `,
+      variables: { where: { workspaceSlug: "local" } },
     });
     expect(queryResults.data.datasets).toHaveLength(0);
   });
@@ -371,7 +378,7 @@ describe("Dataset resolver test suite", () => {
           id: datasetId,
         },
       })
-    ).rejects.toThrow(/No dataset with id/);
+    ).rejects.toThrow(/Couldn't find dataset corresponding to/);
   });
 
   test("should throw an error if the dataset to delete does not exist", () => {
@@ -389,7 +396,7 @@ describe("Dataset resolver test suite", () => {
           id: "not existing dataset id",
         },
       })
-    ).rejects.toThrow(/No dataset with id/);
+    ).rejects.toThrow(/Couldn't find dataset corresponding to/);
   });
 
   test("Should update a dataset with a new name", async () => {
@@ -515,25 +522,27 @@ describe("Dataset resolver test suite", () => {
           data: { name: "My new dataset new name" },
         },
       })
-    ).rejects.toThrow(/No dataset with id/);
+    ).rejects.toThrow(/Couldn't find dataset corresponding to/);
   });
 
   test("Find dataset by name", async () => {
-    const name = "My new dataset";
+    const name = "my-new-dataset";
     const datasetId = "some id";
     await createDataset(name, datasetId);
 
     const queryResult = await client.query({
       query: gql`
-        query getDataset($name: String!) {
-          dataset(where: { name: $name }) {
+        query getDataset($slug: String!) {
+          dataset(
+            where: { slugs: { datasetSlug: $slug, workspaceSlug: "local" } }
+          ) {
             id
             name
           }
         }
       `,
       variables: {
-        name,
+        slug: name,
       },
     });
 
@@ -545,7 +554,7 @@ describe("Dataset resolver test suite", () => {
     );
   });
 
-  test("Find dataset by slug", async () => {
+  test("Find dataset by slugs", async () => {
     const name = "My new dataset";
     const datasetId = "some id";
     await createDataset(name, datasetId);
@@ -553,7 +562,9 @@ describe("Dataset resolver test suite", () => {
     const queryResult = await client.query({
       query: gql`
         query getDataset($slug: String!) {
-          dataset(where: { slug: $slug }) {
+          dataset(
+            where: { slugs: { datasetSlug: $slug, workspaceSlug: "local" } }
+          ) {
             id
             name
           }
@@ -580,7 +591,7 @@ describe("Dataset resolver test suite", () => {
     });
 
     const getDatasetData = async (datasetId: string) => {
-      return client.query({
+      return await client.query({
         query: gql`
           query getDatasetData($id: ID!) {
             dataset(where: { id: $id }) {
@@ -639,7 +650,7 @@ describe("Dataset resolver test suite", () => {
     });
 
     const getDatasetCount = async (datasetId: string) => {
-      return client.query({
+      return await client.query({
         query: gql`
           query getDatasetCounts($id: ID!) {
             dataset(where: { id: $id }) {
@@ -697,22 +708,24 @@ describe("Dataset resolver test suite", () => {
   });
 
   test("Find dataset by name shortly after renaming it (bug that we noticed)", async () => {
-    const name = "My old dataset";
-    const newName = "My new dataset";
+    const name = "my-old-dataset";
+    const newName = "my-new-dataset";
     const datasetId = "some id";
     await createDataset(name, datasetId);
 
     const queryResult1 = await client.query({
       query: gql`
-        query getDataset($name: String!) {
-          dataset(where: { name: $name }) {
+        query getDataset($slug: String!) {
+          dataset(
+            where: { slugs: { datasetSlug: $slug, workspaceSlug: "local" } }
+          ) {
             id
             name
           }
         }
       `,
       variables: {
-        name,
+        slug: name,
       },
       fetchPolicy: "no-cache",
     });
@@ -742,15 +755,17 @@ describe("Dataset resolver test suite", () => {
 
     const queryResult2 = await client.query({
       query: gql`
-        query getDataset($name: String!) {
-          dataset(where: { name: $name }) {
+        query getDataset($slug: String!) {
+          dataset(
+            where: { slugs: { datasetSlug: $slug, workspaceSlug: "local" } }
+          ) {
             id
             name
           }
         }
       `,
       variables: {
-        name: newName,
+        slug: newName,
       },
       fetchPolicy: "no-cache",
     });
@@ -761,5 +776,85 @@ describe("Dataset resolver test suite", () => {
         name: newName,
       })
     );
+  });
+});
+
+describe("Demo dataset mutation", () => {
+  test("Should create a demo dataset named 'Tutorial dataset'", async () => {
+    const demoDataset = await client.mutate({
+      mutation: gql`
+        mutation createDemoDataset {
+          createDemoDataset {
+            id
+            name
+          }
+        }
+      `,
+    });
+    expect(demoDataset?.data?.createDemoDataset?.name).toEqual(
+      "Tutorial dataset"
+    );
+  });
+  test("Should create a demo dataset with 4 images", async () => {
+    const demoDataset = await client.mutate({
+      mutation: gql`
+        mutation createDemoDataset {
+          createDemoDataset {
+            id
+            imagesAggregates {
+              totalCount
+            }
+          }
+        }
+      `,
+    });
+    expect(
+      demoDataset?.data?.createDemoDataset?.imagesAggregates?.totalCount
+    ).toEqual(4);
+  });
+  test("Should create a demo dataset where the 3rd images already has labels", async () => {
+    const demoDataset = await client.mutate({
+      mutation: gql`
+        mutation {
+          createDemoDataset {
+            id
+            images {
+              id
+              labels {
+                id
+              }
+            }
+          }
+        }
+      `,
+    });
+    expect(
+      demoDataset?.data?.createDemoDataset?.images?.[2]?.labels?.length
+    ).toEqual(10);
+  });
+  test("Created images should have a correct name", async () => {
+    const demoDataset = await client.mutate({
+      mutation: gql`
+        mutation {
+          createDemoDataset {
+            id
+            images {
+              id
+              name
+            }
+          }
+        }
+      `,
+    });
+    expect(
+      demoDataset?.data?.createDemoDataset?.images?.map(
+        (image: { name: string }) => image.name
+      )
+    ).toEqual([
+      "tutorial-image-1",
+      "tutorial-image-2",
+      "tutorial-image-3",
+      "tutorial-image-4",
+    ]);
   });
 });

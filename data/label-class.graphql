@@ -1,13 +1,17 @@
 input LabelClassCreateInput {
   id: ID
   name: String!
-  color: ColorHex!
+  color: ColorHex
   datasetId: ID!
 }
 
 input LabelClassUpdateInput {
   name: String
   color: ColorHex
+}
+
+input LabelClassReorderInput {
+  index: Int!
 }
 
 input LabelClassWhereInput {

@@ -1,7 +1,7 @@
 type Mutation {
   createExample(data: ExampleCreateInput!): Example
 
-  getUploadTarget: UploadTarget!
+  getUploadTarget(data: UploadTargetInput!): UploadTarget!
   createImage(data: ImageCreateInput!): Image
 
   createLabel(data: LabelCreateInput!): Label
@@ -13,10 +13,37 @@ type Mutation {
     where: LabelClassWhereUniqueInput!
     data: LabelClassUpdateInput!
   ): LabelClass
+  reorderLabelClass(
+    where: LabelClassWhereUniqueInput!
+    data: LabelClassReorderInput!
+  ): LabelClass
   deleteLabelClass(where: LabelClassWhereUniqueInput!): LabelClass
   createDataset(data: DatasetCreateInput!): Dataset
   createDemoDataset: Dataset
-  updateDataset(where: DatasetWhereIDInput!, data: DatasetUpdateInput!): Dataset
-  deleteDataset(where: DatasetWhereIDInput!): Dataset
   runIog(data: RunIogInput!): IogInferenceResult
+  updateDataset(
+    where: DatasetWhereUniqueInput!
+    data: DatasetUpdateInput!
+  ): Dataset
+  deleteDataset(where: DatasetWhereUniqueInput!): Dataset
+
+  importDataset(
+    where: DatasetWhereUniqueInput!
+    data: DatasetImportInput!
+  ): ImportStatus
+
+  createWorkspace(data: WorkspaceCreateInput!): Workspace
+  updateWorkspace(
+    where: WorkspaceWhereUniqueInput!
+    data: WorkspaceUpdateInput!
+  ): Workspace
+
+  createMembership(data: MembershipCreateInput!): Membership
+  updateMembership(
+    where: MembershipWhereUniqueInput!
+    data: MembershipUpdateInput!
+  ): Membership
+  deleteMembership(where: MembershipWhereUniqueInput!): Membership
+
+  updateUser(where: UserWhereUniqueInput!, data: UserUpdateInput!): User
 }

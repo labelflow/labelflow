@@ -12,12 +12,15 @@ import { createNewLabelClassCurry } from "../../../connectors/undo-store/effects
 import { createUpdateLabelClassEffect } from "../../../connectors/undo-store/effects/update-label-class";
 import { keymap } from "../../../keymap";
 
-const labelClassesOfDatasetQuery = gql`
-  query getLabelClassesOfDataset($datasetId: ID!) {
-    labelClasses(where: { datasetId: $datasetId }) {
+const getLabelClassesOfDatasetQuery = gql`
+  query getLabelClassesOfDataset($slug: String!) {
+    dataset(where: { slugs: { datasetSlug: $slug, workspaceSlug: "local" } }) {
       id
-      name
-      color
+      labelClasses {
+        id
+        name
+        color
+      }
     }
   }
 `;
@@ -47,14 +50,15 @@ const labelQuery = gql`
 
 export const EditLabelClassMenu = () => {
   const router = useRouter();
-  const datasetId = router?.query.datasetId as string;
+  const datasetSlug = router?.query.datasetSlug as string;
   const client = useApolloClient();
   const [isOpen, setIsOpen] = useState(false);
-  const { data } = useQuery(labelClassesOfDatasetQuery, {
-    variables: { datasetId },
+  const { data } = useQuery(getLabelClassesOfDatasetQuery, {
+    variables: { slug: datasetSlug },
   });
+  const datasetId = data?.dataset.id;
   const { perform } = useUndoStore();
-  const labelClasses = data?.labelClasses ?? [];
+  const labelClasses = data?.dataset.labelClasses ?? [];
   const isContextMenuOpen = useLabellingStore(
     (state) => state.isContextMenuOpen
   );
@@ -74,7 +78,7 @@ export const EditLabelClassMenu = () => {
 
   useEffect(() => {
     setSelectedLabelClassId(null);
-  }, [datasetId]);
+  }, [datasetSlug]);
 
   const { data: dataLabelClass } = useQuery(labelClassQuery, {
     variables: { id: selectedLabelClassId },
@@ -92,20 +96,22 @@ export const EditLabelClassMenu = () => {
       createNewLabelClassCurry({
         labelClasses,
         datasetId,
+        datasetSlug,
         perform,
         client,
       }),
-    [labelClasses, selectedTool]
+    [labelClasses, datasetId, selectedTool]
   );
   const createNewClassAndUpdateLabel = useMemo(
     () =>
       createNewLabelClassAndUpdateLabelCurry({
         labelClasses,
         datasetId,
+        datasetSlug,
         perform,
         client,
       }),
-    [labelClasses]
+    [labelClasses, datasetId]
   );
   const onSelectedClassChange = useMemo(
     () =>
@@ -135,9 +141,12 @@ export const EditLabelClassMenu = () => {
     (selectedTool === Tools.SELECTION && selectedLabelId != null);
 
   useHotkeys(
-    keymap.changeClass.key,
+    "*", // We have to manually check if the input corresponds to a change class key because otherwise on AZERTY keyboards we can't change classes when pressing numbers
     (keyboardEvent) => {
-      if (!isContextMenuOpen) {
+      if (
+        keymap.changeClass.key.split(",").includes(keyboardEvent.key) &&
+        !isContextMenuOpen
+      ) {
         // We do not want to interfere with the right click popover shortcuts if it is opened
         const digit = Number(keyboardEvent.code[5]);
         const indexOfLabelClass = (digit + 9) % 10;
@@ -148,7 +157,7 @@ export const EditLabelClassMenu = () => {
       }
     },
     {},
-    [labelClasses, onSelectedClassChange]
+    [labelClasses, onSelectedClassChange, isContextMenuOpen, setIsOpen]
   );
 
   return (
@@ -159,11 +168,11 @@ export const EditLabelClassMenu = () => {
           setIsOpen={setIsOpen}
           selectedLabelClass={selectedLabelClass}
           labelClasses={labelClasses}
-          createNewClass={async (name) =>
-            isInDrawingMode
-              ? createNewClass(name, selectedLabelClassId)
-              : createNewClassAndUpdateLabel(name, selectedLabelId)
-          }
+          createNewClass={async (name) => {
+            return isInDrawingMode
+              ? await createNewClass(name, selectedLabelClassId)
+              : await createNewClassAndUpdateLabel(name, selectedLabelId);
+          }}
           onSelectedClassChange={(item) => {
             onSelectedClassChange(item);
           }}

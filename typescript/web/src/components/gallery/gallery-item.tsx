@@ -5,24 +5,18 @@ import { Image, Box, Skeleton, Badge, AspectRatio } from "@chakra-ui/react";
 
 import { itemHeight } from "./constants";
 
+type Props = {
+  size: number;
+  start: number;
+  url?: string;
+  imageId?: string;
+  datasetSlug?: string;
+  isSelected: boolean;
+  index: number;
+};
+
 export const GalleryItem = memo(
-  ({
-    size,
-    start,
-    url,
-    imageId,
-    datasetId,
-    isSelected,
-    index,
-  }: {
-    size: number;
-    start: number;
-    url?: string;
-    imageId?: string;
-    datasetId?: string;
-    isSelected: boolean;
-    index: number;
-  }) => {
+  ({ size, start, url, imageId, datasetSlug, isSelected, index }: Props) => {
     return (
       <Box
         position="absolute"
@@ -35,7 +29,10 @@ export const GalleryItem = memo(
         pr="7.5px"
       >
         {imageId ? (
-          <Link href={`/datasets/${datasetId}/images/${imageId}`} passHref>
+          <Link
+            href={`/local/datasets/${datasetSlug}/images/${imageId}`}
+            passHref
+          >
             <a aria-current={isSelected ? "page" : undefined}>
               <Badge
                 pointerEvents="none"
@@ -72,4 +69,4 @@ export const GalleryItem = memo(
       </Box>
     );
   }
-);
+) as (props: Props) => JSX.Element;

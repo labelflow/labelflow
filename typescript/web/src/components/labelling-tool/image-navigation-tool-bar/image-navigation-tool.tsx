@@ -6,6 +6,7 @@ import {
   Text,
   HStack,
   NumberInput,
+  useColorModeValue as mode,
   NumberInputField,
 } from "@chakra-ui/react";
 import { RiArrowRightSLine, RiArrowLeftSLine } from "react-icons/ri";
@@ -27,7 +28,7 @@ const format = (x: number | undefined | null): string =>
 export const ImageNavigationTool = () => {
   const router = useRouter();
 
-  const { datasetId } = router?.query;
+  const { datasetSlug } = router?.query;
 
   const {
     images,
@@ -44,10 +45,13 @@ export const ImageNavigationTool = () => {
   const goToIndex = (newIndex: number | undefined) => {
     if (!images) return;
     if (imagesCount == null) return;
-
     if (newIndex == null || isNaN(newIndex)) return;
+    if (typeof currentImageIndex === "number" && currentImageIndex === newIndex)
+      return;
     if (newIndex >= 0 && newIndex <= imagesCount - 1) {
-      router.push(`/datasets/${datasetId}/images/${images[newIndex]?.id}`);
+      router.push(
+        `/local/datasets/${datasetSlug}/images/${images[newIndex]?.id}`
+      );
     }
   };
 
@@ -64,15 +68,22 @@ export const ImageNavigationTool = () => {
     if (event.key === "Enter") {
       goTo(event.target.value);
     }
+
+    // Pressing escape cancels the current change
+    if (event.key === "Escape" || event.key === "Esc") {
+      event.preventDefault();
+      reset();
+    }
   };
 
   const handleBlur = () => {
-    // On blur we could go to the value input by the user:
-    // goTo(value);
-    //
-    // But that would prevent the user from ever cancelling their input
-    // So instead, we reset the number:
-    reset();
+    // On blur we apply the change
+    // (This is needed because on mobile you don't have the key "Enter" on digit keyboard)
+    goTo(value);
+
+    // Before, we used to do this, but it made the component unusable on mobile
+    // So instead, we allow to reset if user presses escape
+    // reset();
   };
 
   const selectText: React.MouseEventHandler<HTMLInputElement> = (event) => {
@@ -104,13 +115,13 @@ export const ImageNavigationTool = () => {
       h={10}
       p={0}
       spacing={1}
-      background="white"
+      background={mode("white", "gray.800")}
       rounded={6}
       pointerEvents="initial"
     >
       {previousImageId != null ? (
         <NextLink
-          href={`/datasets/${datasetId}/images/${previousImageId}`}
+          href={`/local/datasets/${datasetSlug}/images/${previousImageId}`}
           passHref
         >
           <a>
@@ -121,7 +132,7 @@ export const ImageNavigationTool = () => {
             >
               <IconButton
                 aria-label="Previous image"
-                backgroundColor="white"
+                backgroundColor={mode("white", "gray.800")}
                 icon={<RiArrowLeftSLine size="1.5em" />}
               />
             </Tooltip>
@@ -130,7 +141,7 @@ export const ImageNavigationTool = () => {
       ) : (
         <IconButton
           disabled
-          backgroundColor="white"
+          backgroundColor={mode("white", "gray.800")}
           aria-label="No previous image"
           icon={<RiArrowLeftSLine size="1.5em" />}
         />
@@ -176,7 +187,7 @@ export const ImageNavigationTool = () => {
       >{`${imagesCount ?? "-"}`}</Text>
 
       {nextImageId != null ? (
-        <NextLink href={`/datasets/${datasetId}/images/${nextImageId}`}>
+        <NextLink href={`/local/datasets/${datasetSlug}/images/${nextImageId}`}>
           <a>
             <Tooltip
               label={`Next image [${keymap.goToNextImage.key}]`}
@@ -185,7 +196,7 @@ export const ImageNavigationTool = () => {
             >
               <IconButton
                 aria-label="Next image"
-                backgroundColor="white"
+                backgroundColor={mode("white", "gray.800")}
                 icon={<RiArrowRightSLine size="1.5em" />}
               />
             </Tooltip>
@@ -194,7 +205,7 @@ export const ImageNavigationTool = () => {
       ) : (
         <IconButton
           disabled
-          backgroundColor="white"
+          backgroundColor={mode("white", "gray.800")}
           aria-label="No next image"
           icon={<RiArrowRightSLine size="1.5em" />}
         />

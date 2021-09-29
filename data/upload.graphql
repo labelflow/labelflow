@@ -8,3 +8,7 @@ type UploadTargetHttp {
   uploadUrl: String!
   downloadUrl: String!
 }
+
+input UploadTargetInput{
+  key: String!
+}

@@ -13,6 +13,7 @@ import {
   Button,
   PopoverBody,
   PopoverTrigger,
+  useColorModeValue as mode,
   Box,
   Kbd,
   Flex,
@@ -54,9 +55,15 @@ export const ToolSelectionPopoverItem = (props: {
       aria-label={ariaLabel}
       aria-checked={selected}
       _hover={{
-        backgroundColor: selected ? "gray.300" : "gray.100",
+        backgroundColor: selected
+          ? mode("gray.300", "gray.500")
+          : mode("gray.100", "gray.600"),
       }}
-      bgColor={selected ? "gray.300" : "transparent"}
+      bgColor={
+        selected
+          ? mode("gray.300", "gray.500")
+          : mode("transparent", "transparent")
+      }
       onClick={() => {
         onClick();
       }}
@@ -97,12 +104,15 @@ export const DrawingToolIcon = (props: {
   }, [selectedTool]);
 
   const isActive = [Tools.BOX, Tools.POLYGON, Tools.IOG].includes(selectedTool);
-  const toolTipLabel =
-    lastTool === Tools.BOX
-      ? `Bounding Box tool [${keymap.toolBoundingBox.key}]`
-      : lastTool === Tools.POLYGON
-      ? `Polygon tool [${keymap.toolPolygon.key}]`
-      : `IOG tool [${keymap.toolIog.key}]`;
+  const toolTipLabel = (() => {
+    if (lastTool === Tools.BOX) {
+      return `Bounding Box tool [${keymap.toolBoundingBox.key}]`;
+    }
+    if (lastTool === Tools.POLYGON) {
+      return `Polygon tool [${keymap.toolPolygon.key}]`;
+    }
+    return `IOG tool [${keymap.toolIog.key}]`;
+  })();
 
   return (
     <Tooltip label={toolTipLabel} placement="right" openDelay={300}>
@@ -113,7 +123,7 @@ export const DrawingToolIcon = (props: {
         aria-checked={[Tools.BOX, Tools.POLYGON, Tools.IOG].includes(
           selectedTool
         )}
-        backgroundColor="white"
+        backgroundColor={mode("white", "gray.800")}
         aria-label={`Drawing ${lastTool} tool`}
         pointerEvents="initial"
         onClick={() => setSelectedTool(lastTool)}
@@ -144,7 +154,7 @@ export const DrawingToolIcon = (props: {
             isActive={isActive}
             padding="0"
             textAlign="right"
-            color="gray.800"
+            color={mode("gray.800", "gray.200")}
           >
             <ChakraRiArrowDownSLine
               position="relative"
@@ -206,7 +216,7 @@ export const DrawingTool = () => {
         setSelectedTool={setSelectedTool}
       />
       <PopoverContent
-        borderColor="gray.200"
+        borderColor={mode("gray.200", "gray.600")}
         cursor="default"
         pointerEvents="initial"
         aria-label="Change Drawing Tool"

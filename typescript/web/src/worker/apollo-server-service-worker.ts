@@ -51,7 +51,7 @@ async function graphQLServiceWorker(
     console.error("Error while running graphql query", error);
     if (retries < maxRetries) {
       // Resetting database is cheap and can solve many known unknown problems
-      resetDatabase();
+      await resetDatabase();
       return graphQLServiceWorker(request, requestJson, options, retries + 1);
     }
 

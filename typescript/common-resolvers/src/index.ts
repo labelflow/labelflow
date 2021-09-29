@@ -1,5 +1,6 @@
 import { mergeResolvers } from "@graphql-tools/merge";
-import formatCocoResolvers from "./format-coco";
+import exportResolvers from "./export";
+import importResolvers from "./import";
 import imageResolvers from "./image";
 import labelResolvers from "./label";
 import labelClassResolvers from "./label-class";
@@ -9,7 +10,8 @@ import uploadResolvers from "./upload";
 import iogResolvers from "./iog-inference";
 
 export const commonResolvers = mergeResolvers([
-  formatCocoResolvers,
+  exportResolvers,
+  importResolvers,
   imageResolvers,
   labelResolvers,
   labelClassResolvers,
@@ -23,9 +25,12 @@ export const commonResolvers = mergeResolvers([
 export { getBoundedGeometryFromImage } from "./utils/get-bounded-geometry-from-image";
 export { throwIfResolvesToNil } from "./utils/throw-if-resolves-to-nil";
 
-export { initialCocoDataset } from "./format-coco/coco-core/converters";
-export { jsonToDataUri, dataUriToJson } from "./format-coco/json-to-data-uri";
+export { initialCocoDataset } from "./export/format-coco/coco-core/converters";
+export {
+  jsonToDataUri,
+  dataUriToJson,
+} from "./export/format-coco/json-to-data-uri";
 export { getImageEntityFromMutationArgs } from "./image";
 
 export * from "./types";
-export * from "./format-coco/coco-core/types";
+export * from "./export/format-coco/coco-core/types";

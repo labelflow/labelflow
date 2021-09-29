@@ -2,8 +2,8 @@ import { ApolloCache, ApolloClient, Reference, gql } from "@apollo/client";
 import { getBoundedGeometryFromImage } from "@labelflow/common-resolvers";
 
 import { GeometryInput, LabelType } from "@labelflow/graphql-types";
+import { GeoJSONPolygon } from "ol/format/GeoJSON";
 import { Effect } from "../../../../connectors/undo-store";
-import { getDatasetsQuery } from "../../../../pages/datasets";
 
 type CreateLabelInputs = {
   imageId: string;
@@ -149,7 +149,7 @@ export const createLabelEffect = (
   }: {
     imageId: string;
     selectedLabelClassId: string | null;
-    geometry: GeoJSON.Polygon;
+    geometry: GeoJSONPolygon;
     labelType: LabelType;
   },
   {
@@ -167,11 +167,10 @@ export const createLabelEffect = (
       geometry,
       labelType,
     };
-
     const { data } = await client.mutate({
       mutation: createLabelMutation,
       variables: createLabelInputs,
-      refetchQueries: ["countLabels", { query: getDatasetsQuery }],
+      refetchQueries: ["countLabels", "getDatasets", "countLabelsOfDataset"],
       optimisticResponse: {
         createLabel: { id: `temp-${Date.now()}`, __typename: "Label" },
       },
@@ -196,7 +195,7 @@ export const createLabelEffect = (
     await client.mutate({
       mutation: deleteLabelMutation,
       variables: { id },
-      refetchQueries: ["countLabels", { query: getDatasetsQuery }],
+      refetchQueries: ["countLabels", "getDatasets", "countLabelsOfDataset"],
       optimisticResponse: { deleteLabel: { id, __typename: "Label" } },
       update(cache) {
         removeLabelFromImageCache(cache, { imageId, id });
@@ -217,7 +216,7 @@ export const createLabelEffect = (
     const { data } = await client.mutate({
       mutation: createLabelMutation,
       variables: createLabelInputs,
-      refetchQueries: ["countLabels", { query: getDatasetsQuery }],
+      refetchQueries: ["countLabels", "getDatasets", "countLabelsOfDataset"],
       optimisticResponse: {
         createLabel: { id: `temp-${Date.now()}`, __typename: "Label" },
       },

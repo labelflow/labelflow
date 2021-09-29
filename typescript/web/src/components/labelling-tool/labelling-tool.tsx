@@ -1,10 +1,15 @@
-import { useEffect } from "react";
-import { Box, HStack, VStack } from "@chakra-ui/react";
+import { useEffect, useRef } from "react";
+import {
+  Box,
+  HStack,
+  VStack,
+  useColorModeValue as mode,
+} from "@chakra-ui/react";
 import { useRouter } from "next/router";
 
 import { OpenlayersMap } from "./openlayers-map";
 import { DrawingToolbar } from "./drawing-tool-bar";
-import { ZoomToolbar } from "./zoom-tool-bar";
+import { ViewToolbar } from "./view-tool-bar";
 import { OptionsToolBar } from "./options-tool-bar";
 import { ImageNavigationToolbar } from "./image-navigation-tool-bar";
 import { useUndoStore } from "../../connectors/undo-store";
@@ -17,6 +22,11 @@ export const LabellingTool = () => {
   );
   const router = useRouter();
   const { imageId } = router?.query;
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const containerSx = {
+    backgroundColor: mode("gray.100", "gray.900"),
+  };
 
   useEffect(() => {
     clear();
@@ -24,7 +34,13 @@ export const LabellingTool = () => {
   }, [imageId]);
 
   return (
-    <Box height="100%" position="relative" overflow="hidden">
+    <Box
+      height="100%"
+      position="relative"
+      overflow="hidden"
+      ref={containerRef}
+      sx={containerSx}
+    >
       <OpenlayersMap />
       <HStack
         position="absolute"
@@ -47,9 +63,8 @@ export const LabellingTool = () => {
         top={0}
         right={0}
         pointerEvents="none"
-        zIndex={1}
       >
-        <ZoomToolbar />
+        <ViewToolbar containerRef={containerRef} />
       </VStack>
       <HStack
         padding={4}

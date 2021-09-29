@@ -1,33 +1,56 @@
 import { ReactNode } from "react";
-import { HStack, Spacer, Box, VisuallyHidden } from "@chakra-ui/react";
+import {
+  HStack,
+  Spacer,
+  Box,
+  VisuallyHidden,
+  useBreakpointValue,
+} from "@chakra-ui/react";
+
 import NextLink from "next/link";
+
+import { useSession } from "next-auth/react";
+
 import { Logo } from "../../logo";
+import { SigninButton } from "../../auth-manager/signin-button";
+
+import { HelpMenu } from "./help-menu";
+import { UserMenu } from "./user-menu";
+import { ResponsiveBreadcrumbs } from "./breadcrumbs";
 
 export type Props = {
-  leftContent?: ReactNode;
+  breadcrumbs?: ReactNode;
   rightContent?: ReactNode;
 };
 
-export const TopBar = ({ leftContent, rightContent }: Props) => {
+export const TopBar = ({ breadcrumbs, rightContent }: Props) => {
+  const { status } = useSession({ required: false });
+
+  const viewBox =
+    useBreakpointValue({ base: "0 0 84 84", md: "0 0 393 84" }) ?? "0 0 84 84";
+
   return (
     <HStack
       as="header"
       alignItems="center"
-      bg="white"
       padding={4}
       spacing={4}
       h="64px"
       flex={0}
     >
       <NextLink href="/">
-        <Box as="a" rel="home" cursor="pointer">
-          <VisuallyHidden>Labelflow</VisuallyHidden>
-          <Logo h="6" iconColor="brand.500" />
+        <Box as="a" rel="home" cursor="pointer" mr={{ base: "0", lg: "4" }}>
+          <VisuallyHidden>LabelFlow</VisuallyHidden>
+          <Logo h="6" iconColor="brand.500" viewBox={viewBox} />
         </Box>
       </NextLink>
-      {leftContent}
-      <Spacer />
+      <ResponsiveBreadcrumbs>{breadcrumbs}</ResponsiveBreadcrumbs>
+      <Spacer minWidth="6" />
       {rightContent}
+      <HelpMenu />
+      {process.env.NEXT_PUBLIC_FEATURE_SIGNIN === "true" &&
+        status === "unauthenticated" && <SigninButton />}
+      <UserMenu />
     </HStack>
   );
 };

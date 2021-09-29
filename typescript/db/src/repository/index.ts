@@ -1,31 +1,45 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, Prisma } from "@prisma/client";
 
 import { DbLabel, Repository } from "@labelflow/common-resolvers";
-import { getUploadTargetHttp, getFromStorage, putInStorage } from "./upload";
+import { Image } from "@labelflow/graphql-types";
+import slugify from "slugify";
+import {
+  getUploadTargetHttp,
+  getFromStorage,
+  putInStorage,
+  deleteFromStorage,
+} from "./upload-supabase";
 import { countLabels, listLabels } from "./label";
+import { castObjectNullsToUndefined } from "./utils";
 
-const prisma = new PrismaClient();
+export const prisma = new PrismaClient();
 
 export const repository: Repository = {
   image: {
     add: async (image) => {
-      const createdImage = await prisma.image.create({ data: image });
+      const createdImage = await prisma.image.create({
+        data: castObjectNullsToUndefined(image),
+      });
       return createdImage.id;
     },
-    count: async (where) => prisma.image.count({ where }),
-    getById: (id) =>
-      prisma.image.findUnique({
-        where: { id },
+    count: (where) =>
+      prisma.image.count({
+        where: castObjectNullsToUndefined(where),
       }),
-
-    list: (where, skip = undefined, first = undefined) => {
-      return prisma.image.findMany({
+    get: async (where) =>
+      (await prisma.image.findUnique({
         where,
-        orderBy: { createdAt: "asc" },
-        skip,
-        take: first,
-      });
-    },
+      })) as unknown as Image,
+
+    list: (where, skip = undefined, first = undefined) =>
+      prisma.image.findMany(
+        castObjectNullsToUndefined({
+          where: castObjectNullsToUndefined(where),
+          orderBy: { createdAt: Prisma.SortOrder.asc },
+          skip,
+          take: first,
+        })
+      ),
   },
   label: {
     add: async (label) => {
@@ -33,18 +47,23 @@ export const repository: Repository = {
       return createdLabel.id;
     },
     count: countLabels,
-    delete: async (id) => {
+    delete: async ({ id }) => {
       await prisma.label.delete({ where: { id } });
     },
     /* Needs to be casted as Prisma doesn't let us specify
      * the type for geometry */
-    getById: (id) =>
+    get: (where) =>
       prisma.label.findUnique({
-        where: { id },
+        where,
       }) as unknown as Promise<DbLabel>,
-    update: async (id, label) => {
+    update: async (where, label) => {
       try {
-        await prisma.label.update({ where: { id }, data: label });
+        if (label) {
+          await prisma.label.update({
+            where,
+            data: castObjectNullsToUndefined(label),
+          });
+        }
         return true;
       } catch (e) {
         return false;
@@ -55,28 +74,36 @@ export const repository: Repository = {
   labelClass: {
     add: async (labelClass) => {
       const createdLabelClass = await prisma.labelClass.create({
-        data: labelClass,
+        data: castObjectNullsToUndefined(labelClass),
       });
       return createdLabelClass.id;
     },
-    count: async (where) => prisma.labelClass.count({ where }),
-    delete: async (id) => {
+    count: async (where) =>
+      await prisma.labelClass.count({
+        where: castObjectNullsToUndefined(where),
+      }),
+    delete: async ({ id }) => {
       await prisma.labelClass.delete({ where: { id } });
     },
-    getById: (id) =>
+    get: (where) =>
       prisma.labelClass.findUnique({
-        where: { id },
+        where,
       }),
     list: (where, skip = undefined, first = undefined) =>
-      prisma.labelClass.findMany({
-        where,
-        orderBy: { createdAt: "asc" },
-        skip,
-        take: first,
-      }),
-    update: async (id, labelClass) => {
+      prisma.labelClass.findMany(
+        castObjectNullsToUndefined({
+          where: castObjectNullsToUndefined(where),
+          orderBy: { index: Prisma.SortOrder.asc },
+          skip,
+          take: first,
+        })
+      ),
+    update: async ({ id }, labelClass) => {
       try {
-        await prisma.labelClass.update({ where: { id }, data: labelClass });
+        await prisma.labelClass.update({
+          where: { id },
+          data: castObjectNullsToUndefined(labelClass),
+        });
         return true;
       } catch (e) {
         return false;
@@ -84,38 +111,76 @@ export const repository: Repository = {
     },
   },
   dataset: {
-    add: async (dataset) => {
-      const createdDataset = await prisma.dataset.create({ data: dataset });
+    add: async ({ workspaceSlug, ...dataset }) => {
+      const slug = slugify(dataset.name, { lower: true });
+      const createdDataset = await prisma.dataset.create({
+        data: castObjectNullsToUndefined({
+          ...dataset,
+          slug,
+          workspace: {
+            connect: { slug: workspaceSlug },
+          },
+        }),
+      });
       return createdDataset.id;
     },
-    delete: async (id) => {
-      await prisma.dataset.delete({ where: { id } });
+    delete: async (where) => {
+      if (
+        (where.id == null && where.slugs == null) ||
+        (where.id != null && where.slugs != null)
+      ) {
+        throw new Error(
+          "You should either specify the id or the slugs when deleting a dataset"
+        );
+      }
+
+      await prisma.dataset.delete({
+        where: castObjectNullsToUndefined(where),
+      });
     },
-    getById: (id) => {
-      return prisma.dataset.findUnique({ where: { id } });
+    get: async (where) => {
+      if (
+        (where.id == null && where.slugs == null) ||
+        (where.id != null && where.slugs != null)
+      ) {
+        throw new Error(
+          "You should either specify the id or the slugs when looking for a dataset"
+        );
+      }
+      return await prisma.dataset.findUnique({
+        where: castObjectNullsToUndefined(where),
+      });
     },
-    getByName: (name) => {
-      return prisma.dataset.findUnique({ where: { name } });
-    },
-    getBySlug: (slug) => {
-      return prisma.dataset.findUnique({ where: { slug } });
-    },
-    update: async (id, dataset) => {
+    update: async (where, dataset) => {
+      if (
+        (where.id == null && where.slugs == null) ||
+        (where.id != null && where.slugs != null)
+      ) {
+        throw new Error(
+          "You should either specify the id or the slugs when updating a dataset"
+        );
+      }
       try {
-        await prisma.dataset.update({ where: { id }, data: dataset });
+        await prisma.dataset.update({
+          where: castObjectNullsToUndefined(where),
+          data: castObjectNullsToUndefined(dataset),
+        });
         return true;
       } catch (e) {
         return false;
       }
     },
     list: (_where, skip = undefined, first = undefined) =>
-      prisma.dataset.findMany({
-        orderBy: { createdAt: "asc" },
-        skip,
-        take: first,
-      }),
+      prisma.dataset.findMany(
+        castObjectNullsToUndefined({
+          orderBy: { createdAt: Prisma.SortOrder.asc },
+          skip,
+          take: first,
+        })
+      ),
   },
   upload: {
+    delete: deleteFromStorage,
     get: getFromStorage,
     getUploadTarget: getUploadTargetHttp,
     getUploadTargetHttp,

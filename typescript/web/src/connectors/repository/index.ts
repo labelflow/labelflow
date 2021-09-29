@@ -1,61 +1,85 @@
-import { Repository } from "@labelflow/common-resolvers";
+import { DbImageCreateInput, Repository } from "@labelflow/common-resolvers";
 import { getDatabase } from "../database";
 import { list } from "./utils/list";
 import { countLabels, listLabels } from "./label";
-import { deleteDataset } from "./dataset";
+import {
+  addDataset,
+  deleteDataset,
+  getDataset,
+  listDataset,
+  updateDataset,
+} from "./dataset";
 import { deleteLabelClass } from "./label-class";
 import {
   getUploadTarget,
   getUploadTargetHttp,
   getFromStorage,
   putInStorage,
+  deleteFromStorage,
 } from "./upload";
+import { addIdIfNil } from "./utils/add-id-if-nil";
 
 export const repository: Repository = {
   image: {
-    add: (image) => getDatabase().image.add(image),
-    count: (where) =>
-      where
-        ? getDatabase().image.where(where).count()
-        : getDatabase().image.count(),
-    getById: (id) => getDatabase().image.get(id),
-    list: list(getDatabase().image),
+    add: async (image: DbImageCreateInput) => {
+      return await (await getDatabase()).image.add(addIdIfNil(image));
+    },
+    count: async (where) => {
+      return where
+        ? await (await getDatabase()).image.where(where).count()
+        : await (await getDatabase()).image.count();
+    },
+    get: async ({ id }) => {
+      return await (await getDatabase()).image.get(id);
+    },
+    list: list(async () => (await getDatabase()).image),
   },
   label: {
-    add: (label) => getDatabase().label.add(label),
+    add: async (label) => {
+      return await (await getDatabase()).label.add(addIdIfNil(label));
+    },
     count: countLabels,
-    delete: (id) => getDatabase().label.delete(id),
-    getById: (id) => getDatabase().label.get(id),
+    delete: async ({ id }) => {
+      return await (await getDatabase()).label.delete(id);
+    },
+    get: async ({ id }) => {
+      return await (await getDatabase()).label.get(id);
+    },
     list: listLabels,
-    update: async (id, changes) =>
-      (await getDatabase().label.update(id, changes)) === 1,
+    update: async ({ id }, changes) => {
+      return (await (await getDatabase()).label.update(id, changes)) === 1;
+    },
   },
   labelClass: {
-    add: (labelClass) => getDatabase().labelClass.add(labelClass),
-    count: (where?) =>
-      where
-        ? getDatabase().labelClass.where(where).count()
-        : getDatabase().labelClass.count(),
+    add: async (labelClass) => {
+      return await (await getDatabase()).labelClass.add(addIdIfNil(labelClass));
+    },
+    count: async (where?) => {
+      return where
+        ? await (await getDatabase()).labelClass.where(where).count()
+        : await (await getDatabase()).labelClass.count();
+    },
     delete: deleteLabelClass,
-    getById: (id) => getDatabase().labelClass.get(id),
-    list: list(getDatabase().labelClass),
-    update: async (id, changes) =>
-      (await getDatabase().labelClass.update(id, changes)) === 1,
+    get: async ({ id }) => {
+      return await (await getDatabase()).labelClass.get(id);
+    },
+    list: list(async () => (await getDatabase()).labelClass, "index"),
+    update: async ({ id }, changes) => {
+      return (await (await getDatabase()).labelClass.update(id, changes)) === 1;
+    },
   },
   dataset: {
-    add: (dataset) => getDatabase().dataset.add(dataset),
+    add: addDataset,
     delete: deleteDataset,
-    getById: (id) => getDatabase().dataset.get(id),
-    getByName: (name) => getDatabase().dataset.get({ name }),
-    getBySlug: (slug) => getDatabase().dataset.get({ slug }),
-    list: list(getDatabase().dataset),
-    update: async (id, changes) =>
-      (await getDatabase().dataset.update(id, changes)) === 1,
+    get: getDataset,
+    list: listDataset,
+    update: updateDataset,
   },
   upload: {
     getUploadTarget,
     getUploadTargetHttp,
     put: putInStorage,
     get: getFromStorage,
+    delete: deleteFromStorage,
   },
 };

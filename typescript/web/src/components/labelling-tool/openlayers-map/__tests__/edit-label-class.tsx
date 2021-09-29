@@ -18,7 +18,7 @@ const testDatasetId = "test dataset id";
 // FIXME: mockNextRouter wasn't working here so we had to re-implement the mock
 jest.mock("next/router", () => ({
   useRouter: jest.fn(() => ({
-    query: { datasetId: testDatasetId },
+    query: { datasetSlug: "test-dataset" },
   })),
 }));
 
@@ -64,7 +64,9 @@ const createDataset = async (
   return client.mutateOriginal({
     mutation: gql`
       mutation createDataset($datasetId: String, $name: String!) {
-        createDataset(data: { id: $datasetId, name: $name }) {
+        createDataset(
+          data: { id: $datasetId, name: $name, workspaceSlug: "local" }
+        ) {
           id
           name
         }

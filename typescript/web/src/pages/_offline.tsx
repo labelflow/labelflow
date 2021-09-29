@@ -1,12 +1,12 @@
 import { Heading, Text, Center, Box, Button } from "@chakra-ui/react";
 import { Meta } from "../components/meta";
 import { Layout } from "../components/layout";
-import { EmptyStateInternetConnection } from "../components/empty-state";
+import { EmptyStateNoConnection } from "../components/empty-state";
 
 const OfflinePage = () => {
   return (
     <>
-      <Meta title="Labelflow | Offline" />
+      <Meta title="LabelFlow | Offline" />
       <Layout>
         <Center h="full">
           <Box as="section">
@@ -17,10 +17,10 @@ const OfflinePage = () => {
               py={{ base: "16", sm: "20" }}
               textAlign="center"
             >
-              <EmptyStateInternetConnection w="full" />
+              <EmptyStateNoConnection w="full" />
               <Heading as="h2">You are currently offline.</Heading>
               <Text mt="4" fontSize="lg">
-                Labelflow should be usable online, but it looks like it
+                LabelFlow should be usable online, but it looks like it
                 isn&apos;t!
               </Text>
               <Button
@@ -30,7 +30,7 @@ const OfflinePage = () => {
                 as="a"
                 target="_blank"
                 rel="noreferrer"
-                href="https://github.com/Labelflow/labelflow/issues"
+                href="https://github.com/labelflow/labelflow/issues"
               >
                 Report this issue
               </Button>

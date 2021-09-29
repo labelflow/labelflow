@@ -122,8 +122,6 @@ cypress/videos
 !.yarn/sdks
 !.yarn/versions
 
-!.env
-
 # Python
 python/iog/data
 python/iog/outputs
@@ -145,3 +143,4 @@ storybook-static
 **/public/sw.js.*
 **/public/worker-*.js.*
 **/public/*.chunk.*.js.*
+.env

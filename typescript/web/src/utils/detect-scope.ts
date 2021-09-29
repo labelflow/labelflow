@@ -15,6 +15,8 @@ export let isInWindowScope: boolean | null = null;
 // eslint-disable-next-line import/no-mutable-exports
 export let isInServiceWorkerScope: boolean | null = null;
 
+export const isDevelopmentEnvironment = process.env.NODE_ENV === "development";
+
 // eslint-disable-next-line import/no-mutable-exports
 export let browser:
   | BrowserInfo
@@ -28,7 +30,7 @@ export let browser:
 const detectScope = () => {
   if (isInWindowScope === null) {
     try {
-      if (window) {
+      if (window && window instanceof Window) {
         isInWindowScope = true;
 
         browser = detect();
@@ -42,7 +44,8 @@ const detectScope = () => {
 
   if (isInServiceWorkerScope === null) {
     try {
-      if (self) {
+      // @ts-ignore
+      if (self && self instanceof ServiceWorkerGlobalScope) {
         isInServiceWorkerScope = true;
       } else {
         isInServiceWorkerScope = false;

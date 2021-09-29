@@ -1,0 +1,16 @@
+{
+    "git": {
+        "changelog": "yarn auto-changelog --stdout --commit-limit false --unreleased-only --template ../release/changelog-template-compact.hbs",
+        "commitMessage": "Release ${version}\n\n[skip ci]",
+        "tagAnnotation": "Release ${version}\n\n${changelog}"
+    },
+    "npm": {
+        "publish": false
+    },
+    "hooks": {
+        "after:bump": "yarn release:update; git add ../../CHANGELOG.md ../../LICENSE;"
+    },
+    "github": {
+        "release": true
+    }
+}

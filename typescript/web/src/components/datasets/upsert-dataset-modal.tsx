@@ -23,14 +23,14 @@ const debounceTime = 200;
 
 const createDatasetMutation = gql`
   mutation createDataset($name: String!) {
-    createDataset(data: { name: $name }) {
+    createDataset(data: { name: $name, workspaceSlug: "local" }) {
       id
     }
   }
 `;
 
 const updateDatasetMutation = gql`
-  mutation updateDataset($id: ID, $name: String!) {
+  mutation updateDataset($id: ID!, $name: String!) {
     updateDataset(where: { id: $id }, data: { name: $name }) {
       id
     }
@@ -38,8 +38,10 @@ const updateDatasetMutation = gql`
 `;
 
 const getDatasetBySlugQuery = gql`
-  query getDatasetBySlug($slug: String) {
-    dataset(where: { slug: $slug }) {
+  query getDatasetBySlug($slug: String!) {
+    searchDataset(
+      where: { slugs: { datasetSlug: $slug, workspaceSlug: "local" } }
+    ) {
       id
       slug
     }
@@ -91,22 +93,28 @@ export const UpsertDatasetModal = ({
     },
   ] = useLazyQuery(getDatasetBySlugQuery, { fetchPolicy: "network-only" });
 
-  const [createDatasetMutate] = useMutation(createDatasetMutation, {
-    variables: {
-      name: datasetName,
-    },
-    refetchQueries: ["getDatasets"],
-    awaitRefetchQueries: true,
-  });
+  const [createDatasetMutate, { loading: createMutationLoading }] = useMutation(
+    createDatasetMutation,
+    {
+      variables: {
+        name: datasetName,
+      },
+      refetchQueries: ["getDatasets"],
+      awaitRefetchQueries: true,
+    }
+  );
 
-  const [updateDatasetMutate] = useMutation(updateDatasetMutation, {
-    variables: {
-      id: datasetId,
-      name: datasetName,
-    },
-    refetchQueries: ["getDatasets"],
-    awaitRefetchQueries: true,
-  });
+  const [updateDatasetMutate, { loading: updateMutationLoading }] = useMutation(
+    updateDatasetMutation,
+    {
+      variables: {
+        id: datasetId,
+        name: datasetName,
+      },
+      refetchQueries: ["getDatasets"],
+      awaitRefetchQueries: true,
+    }
+  );
 
   const handleInputValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setDatasetNameInputValue(e.target.value);
@@ -130,7 +138,7 @@ export const UpsertDatasetModal = ({
     if (
       existingDataset != null &&
       !loadingExistingDatasets &&
-      existingDataset?.dataset?.id !== datasetId &&
+      existingDataset?.searchDataset?.id !== datasetId &&
       variablesExistingDatasets?.slug === slugify(datasetName, { lower: true })
     ) {
       setErrorMessage("This name is already taken");
@@ -210,10 +218,12 @@ export const UpsertDatasetModal = ({
           <Button
             type="submit"
             colorScheme="brand"
+            isLoading={createMutationLoading || updateMutationLoading}
+            loadingText={datasetId ? "Updating..." : "Creating..."}
             disabled={!canCreateDataset()}
-            aria-label={datasetId ? "Update dataset" : "Create Dataset"}
+            aria-label={datasetId ? "Update Dataset" : "Create Dataset"}
           >
-            {datasetId ? "Update dataset" : "Start Labelling"}
+            {datasetId ? "Update Dataset" : "Start Labelling"}
           </Button>
         </ModalFooter>
       </ModalContent>

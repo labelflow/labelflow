@@ -376,7 +376,7 @@ export const data = [
   },
   {
     type: "sectionHeader",
-    description: "Get smart help for your labeling tasks",
+    description: "Get smart help for your labelling tasks",
     free: "",
     starter: "",
     pro: "",
@@ -385,7 +385,7 @@ export const data = [
   {
     description: (
       <>
-        <Text>Smart labeling tools</Text>
+        <Text>Smart labelling tools</Text>
         <Text fontSize="xs" lineHeight="1" color="gray.500">
           Label faster thanks to advanced computer-vision-based tools
         </Text>
@@ -399,7 +399,7 @@ export const data = [
   {
     description: (
       <>
-        <Text>Pre labeling</Text>
+        <Text>Pre labelling</Text>
         <Text fontSize="xs" lineHeight="1" color="gray.500">
           Get your images pre-labelled by your AI or our AI
         </Text>
@@ -415,7 +415,7 @@ export const data = [
       <>
         <Text>Your AI in the loop</Text>
         <Text fontSize="xs" lineHeight="1" color="gray.500">
-          Have your AI assist your labeling and learn continuously
+          Have your AI assist your labelling and learn continuously
         </Text>
       </>
     ),
@@ -441,7 +441,7 @@ export const data = [
   {
     description: (
       <>
-        <Text>Humans labeling marketplace</Text>
+        <Text>Humans labelling marketplace</Text>
         <Text fontSize="xs" lineHeight="1" color="gray.500">
           Get real humans in the loop through our marketplace
         </Text>
@@ -480,7 +480,7 @@ export const data = [
       <>
         <Text>Task Analytics</Text>
         <Text fontSize="xs" lineHeight="1" color="gray.500">
-          Analyze your labeling tasks, identify hard ones and better plan
+          Analyze your labelling tasks, identify hard ones and better plan
           campaigns
         </Text>
       </>
@@ -535,7 +535,7 @@ export const data = [
         <Text>On-premise backend</Text>
         <Text fontSize="xs" lineHeight="1" color="gray.500">
           Fully on-premise and airgapped image store and database. No data goes
-          through Labelflow servers
+          through LabelFlow servers
         </Text>
       </>
     ),
@@ -549,7 +549,7 @@ export const data = [
       <>
         <Text>White label deployment</Text>
         <Text fontSize="xs" lineHeight="1" color="gray.500">
-          Deploy Labelflow as part of your solution. JS components and server.
+          Deploy LabelFlow as part of your solution. JS components and server.
         </Text>
       </>
     ),
@@ -654,7 +654,7 @@ export const data = [
   {
     description: (
       <>
-        <Text>Humans labeling marketplace</Text>
+        <Text>Humans labelling marketplace</Text>
         <Text fontSize="xs" lineHeight="1" color="gray.500">
           Get human workers to help label your data
         </Text>
@@ -737,7 +737,7 @@ export const data = [
     type: "header",
     description: <Box minW="12em" />,
     free: (
-      <NextLink href="/datasets">
+      <NextLink href="/local/datasets">
         <Button colorScheme="brand">Try it now</Button>
       </NextLink>
     ),

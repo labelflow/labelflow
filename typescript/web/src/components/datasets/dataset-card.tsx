@@ -3,6 +3,7 @@ import {
   Image,
   Text,
   VStack,
+  useColorModeValue as mode,
   HStack,
   Flex,
   Spacer,
@@ -12,7 +13,7 @@ import {
 } from "@chakra-ui/react";
 import NextLink from "next/link";
 import { HiTrash, HiPencilAlt } from "react-icons/hi";
-import { EmptyStateImage } from "../empty-state";
+import { EmptyStateNoImages } from "../empty-state";
 
 const EditIcon = chakra(HiPencilAlt);
 const TrashIcon = chakra(HiTrash);
@@ -56,7 +57,7 @@ export const DatasetCard = (props: {
           borderWidth="0px"
           borderRadius="16px"
           overflow="hidden"
-          bg="white"
+          bg={mode("white", "gray.700")}
           display="block"
           cursor="pointer"
         >
@@ -69,7 +70,7 @@ export const DatasetCard = (props: {
                 fit="cover"
               />
             ) : (
-              <EmptyStateImage />
+              <EmptyStateNoImages />
             )}
           </AspectRatio>
           <VStack pt="2" pl="5" pr="5" pb="5" align="left">

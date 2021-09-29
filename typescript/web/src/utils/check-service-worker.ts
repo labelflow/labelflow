@@ -56,7 +56,7 @@ export const checkServiceWorkerReady = async (
     // Get the service worker from workbox
     const sw = await timeout(
       wb.getSW(),
-      10000,
+      20000,
       new Error(messageTimeoutGettingSw)
     );
 
@@ -92,7 +92,7 @@ export const checkServiceWorkerReady = async (
     //   error
     // );
     if (retries < maxTries) {
-      return checkServiceWorkerReady(maxTries, retries + 1);
+      return await checkServiceWorkerReady(maxTries, retries + 1);
     }
     throw error;
   }

@@ -1,0 +1,9 @@
+{
+    "ignore": [
+        "__tests__/*"
+    ],
+    "watch": [
+        ".",
+        "../common-resolvers"
+    ]
+}

@@ -18,14 +18,14 @@ export const LogoGrid = () => {
         px={{ base: "6", md: "8" }}
       >
         <Heading align="center" fontWeight="extrabold" maxW="lg" mx="auto">
-          Integrate seamlessly with the best data tools
+          Connect seamlessly with the best data tools
         </Heading>
         <Text align="center" textAlign="center" maxW="lg" mx="auto" mt="12">
           An added benefit of being <strong>open source</strong> is that
-          Labelflow can integrate with a ton of tools in the ecosystem, thanks
+          LabelFlow can integrate with a ton of tools in the ecosystem, thanks
           to a clean <strong>API and SDKs</strong>. Image storage, databases,
           data warehouses, deployment tools and AI libraries all work seamlessly
-          with Labelflow.
+          with LabelFlow.
         </Text>
         <SimpleGrid
           columns={{ base: 1, sm: 2, md: 4 }}

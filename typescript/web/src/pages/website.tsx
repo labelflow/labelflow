@@ -1,17 +1,21 @@
-import { Box, useColorModeValue as mode } from "@chakra-ui/react";
+import { Box } from "@chakra-ui/react";
 import * as React from "react";
 
-import { NavContent } from "../components/website/Navbar/NavContent";
+import { NavBar } from "../components/website/Navbar/NavBar";
+import { Why } from "../components/website/Why/Why";
 import { Hero } from "../components/website/Hero/Hero";
 import { Features } from "../components/website/Features/Features";
 import { LogoGrid } from "../components/website/Logos/LogoGrid";
-
-import { Why } from "../components/website/Why/Why";
 import { Footer } from "../components/website/Footer/Footer";
 import { Pricing } from "../components/website/Pricing/Pricing";
 import { ArticlesList } from "../components/website/Blog/articles-list";
 import { getAllArticles, Article } from "../connectors/strapi";
+import { Roadmap } from "../components/website/roadmap/roadmap";
 import { Meta } from "../components/meta";
+import { Banner } from "../components/website/banner";
+import { Proof } from "../components/website/proof";
+import { ServiceWorkerManagerBackground } from "../components/service-worker-manager";
+import { CookieBanner } from "../components/cookie-banner";
 
 export default function Website({
   previewArticles,
@@ -19,35 +23,25 @@ export default function Website({
   previewArticles: Omit<Article, "content">[];
 }) {
   return (
-    <Box minH="640px">
-      <Meta />
-
-      <Box
-        as="header"
-        bg={mode("white", "gray.800")}
-        position="relative"
-        zIndex="10"
-      >
-        <Box
-          as="nav"
-          aria-label="Main navigation"
-          maxW="7xl"
-          mx="auto"
-          px={{ base: "6", md: "8" }}
-        >
-          <NavContent.Mobile display={{ base: "flex", lg: "none" }} />
-          <NavContent.Desktop display={{ base: "none", lg: "flex" }} />
-        </Box>
+    <>
+      <ServiceWorkerManagerBackground />
+      <Meta title="LabelFlow: The open standard platform for image labelling." />
+      <CookieBanner />
+      <Box minH="640px">
+        <NavBar />
+        <Hero />
+        <Banner />
+        <Features />
+        <Proof />
+        <Why />
+        <LogoGrid />
+        <Roadmap />
+        {/* <Testimonials /> */}
+        <Pricing />
+        <ArticlesList preview previewArticles={previewArticles} />
+        <Footer />
       </Box>
-      <Hero />
-      <Features />
-      <Why />
-      {/* <Testimonials /> */}
-      <LogoGrid />
-      <Pricing />
-      <ArticlesList preview previewArticles={previewArticles} />
-      <Footer />
-    </Box>
+    </>
   );
 }
 

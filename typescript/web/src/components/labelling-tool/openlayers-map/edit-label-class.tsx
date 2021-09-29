@@ -11,12 +11,15 @@ import { createNewLabelClassAndUpdateLabelCurry } from "../../../connectors/undo
 import { createUpdateLabelClassOfLabelEffect } from "../../../connectors/undo-store/effects/update-label-class-of-label";
 import { keymap } from "../../../keymap";
 
-const labelClassesOfDatasetQuery = gql`
-  query getLabelClassesOfDataset($datasetId: ID!) {
-    labelClasses(where: { datasetId: $datasetId }) {
+const getLabelClassesOfDatasetQuery = gql`
+  query getLabelClassesOfDataset($slug: String!) {
+    dataset(where: { slugs: { datasetSlug: $slug, workspaceSlug: "local" } }) {
       id
-      name
-      color
+      labelClasses {
+        id
+        name
+        color
+      }
     }
   }
 `;
@@ -40,14 +43,16 @@ export const EditLabelClass = forwardRef<
   }
 >(({ isOpen, onClose }, ref) => {
   const router = useRouter();
-  const datasetId = router?.query.datasetId as string;
+  const datasetSlug = router?.query.datasetSlug as string;
 
   const client = useApolloClient();
-  const { data } = useQuery(labelClassesOfDatasetQuery, {
-    variables: { datasetId },
+  const { data } = useQuery(getLabelClassesOfDatasetQuery, {
+    variables: { slug: datasetSlug },
+    skip: !datasetSlug,
   });
+  const datasetId = data?.dataset.id;
   const { perform } = useUndoStore();
-  const labelClasses = data?.labelClasses ?? [];
+  const labelClasses = data?.dataset.labelClasses ?? [];
   const selectedLabelId = useLabellingStore((state) => state.selectedLabelId);
   const isContextMenuOpen = useLabellingStore(
     (state) => state.isContextMenuOpen
@@ -62,16 +67,20 @@ export const EditLabelClass = forwardRef<
       createNewLabelClassAndUpdateLabelCurry({
         labelClasses,
         datasetId,
+        datasetSlug,
         perform,
         onClose,
         client,
       }),
-    [labelClasses]
+    [labelClasses, datasetId]
   );
   useHotkeys(
-    keymap.changeClass.key,
+    "*", // We have to manually check if the input corresponds to a change class key because otherwise on AZERTY keyboards we can't change classes when pressing numbers
     (keyboardEvent) => {
-      if (isOpen) {
+      if (
+        keymap.changeClass.key.split(",").includes(keyboardEvent.key) &&
+        isOpen
+      ) {
         // We do not want to interfere with the class menu shortcuts if this modal is closed
         const digit = Number(keyboardEvent.code[5]);
         const indexOfLabelClass = (digit + 9) % 10;
@@ -102,7 +111,9 @@ export const EditLabelClass = forwardRef<
         trigger={<div style={{ width: 0, height: 0 }} />} // Needed to have the popover displayed preventing overflow
         labelClasses={labelClasses}
         selectedLabelClassId={selectedLabelClassId}
-        createNewClass={async (name) => createNewClass(name, selectedLabelId)}
+        createNewClass={async (name) => {
+          return await createNewClass(name, selectedLabelId);
+        }}
         onSelectedClassChange={(item) => {
           perform(
             createUpdateLabelClassOfLabelEffect(

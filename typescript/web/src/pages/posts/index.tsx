@@ -1,10 +1,12 @@
-import { Box, useColorModeValue as mode } from "@chakra-ui/react";
+import { Box } from "@chakra-ui/react";
 import * as React from "react";
 import { getAllArticles, Article } from "../../connectors/strapi";
-import { NavContent } from "../../components/website/Navbar/NavContent";
+import { NavBar } from "../../components/website/Navbar/NavBar";
 import { Footer } from "../../components/website/Footer/Footer";
 import { Meta } from "../../components/meta";
 import { ArticlesList } from "../../components/website/Blog/articles-list";
+import { ServiceWorkerManagerBackground } from "../../components/service-worker-manager";
+import { CookieBanner } from "../../components/cookie-banner";
 
 export default function Posts({
   previewArticles,
@@ -12,29 +14,16 @@ export default function Posts({
   previewArticles: Omit<Article, "content">[];
 }) {
   return (
-    <Box minH="640px">
-      <Meta />
-
-      <Box
-        as="header"
-        bg={mode("white", "gray.800")}
-        position="relative"
-        zIndex="10"
-      >
-        <Box
-          as="nav"
-          aria-label="Main navigation"
-          maxW="7xl"
-          mx="auto"
-          px={{ base: "6", md: "8" }}
-        >
-          <NavContent.Mobile display={{ base: "flex", lg: "none" }} />
-          <NavContent.Desktop display={{ base: "none", lg: "flex" }} />
-        </Box>
+    <>
+      <ServiceWorkerManagerBackground />
+      <Meta title="LabelFlow | Blog" />
+      <CookieBanner />
+      <Box minH="640px">
+        <NavBar />
         <ArticlesList previewArticles={previewArticles} />
+        <Footer />
       </Box>
-      <Footer />
-    </Box>
+    </>
   );
 }
 

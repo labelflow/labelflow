@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef, useMemo } from "react";
 import {
   Box,
   Popover,
+  useColorModeValue as mode,
   PopoverContent,
   PopoverBody,
   PopoverTrigger,
@@ -18,14 +19,14 @@ import { RiCloseCircleFill } from "react-icons/ri";
 import { useCombobox, UseComboboxStateChange } from "downshift";
 import { useHotkeys } from "react-hotkeys-hook";
 import { LabelClass } from "@labelflow/graphql-types";
-import { ClassListItem } from "../class-list-item";
+import { ClassListItem } from "./class-list-item";
 import { noneClassColor } from "../../utils/class-color-generator";
 import { keymap } from "../../keymap";
 
 type CreateClassInput = { name: string; type: string };
 type NoneClass = { name: string; color: string; type: string };
 // The popover doesn't need all the attributes of the label class
-export type LabelClassItem = Omit<LabelClass, "datasetId">;
+export type LabelClassItem = Omit<LabelClass, "dataset">;
 
 const noneClass = {
   name: "None",
@@ -177,6 +178,7 @@ export const ClassSelectionPopover = ({
     {},
     [activateShortcuts]
   );
+  const closeCircleIconColor = mode("gray.300", "gray.500");
   return (
     <Popover
       isOpen={isOpen}
@@ -186,7 +188,7 @@ export const ClassSelectionPopover = ({
     >
       <PopoverTrigger>{trigger}</PopoverTrigger>
       <PopoverContent
-        borderColor="gray.200"
+        borderColor={mode("gray.200", "gray.600")}
         cursor="default"
         pointerEvents="initial"
         aria-label={ariaLabel}
@@ -216,7 +218,7 @@ export const ClassSelectionPopover = ({
                 <Input
                   {...getInputProps({ ref: searchInputRef })}
                   name="class-selection-search"
-                  placeholder="Search..."
+                  placeholder="Search or Add..."
                   pr="4rem"
                 />
                 <InputRightElement
@@ -229,7 +231,8 @@ export const ClassSelectionPopover = ({
                       <CloseCircleIcon
                         fontSize="2xl"
                         onClick={reset}
-                        color="gray.300"
+                        cursor="pointer"
+                        color={closeCircleIconColor}
                       />
                       <Kbd fontSize="md">↩</Kbd>
                     </>
@@ -260,7 +263,7 @@ export const ClassSelectionPopover = ({
                         "type" in item && item.type === "CreateClassItem"
                       }
                       index={index}
-                      key={`${item.name}${index}`}
+                      key={item.name}
                     />
                   );
                 }

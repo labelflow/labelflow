@@ -59,8 +59,8 @@ export const keymap: Keymap = {
     category: "Tools", // TODO: change that category?
   },
   focusLabelClassSearch: {
-    key: "/,f", // TODO: We changed the key "/" to "s" because the slash key was not detected by useHotKeys
-    description: "Focus on search input in label class selection",
+    key: "/,s", // TODO: We changed the key "/" to "s" because the slash key was not detected by useHotKeys
+    description: "Search class by name input in class selection",
     category: "Tools", // TODO: change that category?
   },
   toolIog: {
@@ -71,6 +71,11 @@ export const keymap: Keymap = {
   validateIogLabel: {
     key: "enter",
     description: "Validate the edition of an IOG label",
+    category: "Tools",
+  },
+  enterFullScreen: {
+    key: "f",
+    description: "Enter Full Screen",
     category: "Tools",
   },
 };
