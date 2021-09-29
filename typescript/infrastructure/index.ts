@@ -96,6 +96,18 @@ const deployment = new k8s.apps.v1.Deployment(
               image:
                 "us-central1-docker.pkg.dev/labelflow-321909/labelflow/iog:1",
               ports: [{ containerPort: 5000 }],
+              readinessProbe: {
+                httpGet: { path: "/graphql/", port: 5000 },
+                initialDelaySeconds: 10,
+                periodSeconds: 10,
+                timeoutSeconds: 5,
+              },
+              livenessProbe: {
+                httpGet: { path: "/graphql/", port: 5000 },
+                initialDelaySeconds: 10,
+                periodSeconds: 10,
+                timeoutSeconds: 5,
+              },
             },
           ],
         },
@@ -165,6 +177,7 @@ export const ingress = new k8s.networking.v1.Ingress(
   "main-ingress",
   {
     metadata: {
+      namespace: namespaceName,
       annotations: {
         // "kubernetes.io/ingress.global-static-ip-name": staticIpAddress,
         //   "kubernetes.io/ingress.allow-http": "false",
@@ -175,6 +188,7 @@ export const ingress = new k8s.networking.v1.Ingress(
     spec: {
       // ingressClassName: "gce",
       // tls: [{ secretName: secret.metadata.name }],
+      defaultBackend: { service: { name: serviceName, port: { number: 80 } } },
       rules: [
         {
           http: {
@@ -195,11 +209,11 @@ export const ingress = new k8s.networking.v1.Ingress(
   { provider: clusterProvider }
 );
 
-if (!process.env?.CLOUDFLARE_LABELFLOWNET_ZONE_ID) {
-  throw new Error(
-    `Cannot create cloudfare record: env var CLOUDFLARE_LABELFLOWNET_ZONE_ID not set`
-  );
-}
+// if (!process.env?.CLOUDFLARE_LABELFLOWNET_ZONE_ID) {
+//   throw new Error(
+//     `Cannot create cloudfare record: env var CLOUDFLARE_LABELFLOWNET_ZONE_ID not set`
+//   );
+// }
 
 // export const record = new cloudflare.Record("iog-record", {
 //   name: "iog",
