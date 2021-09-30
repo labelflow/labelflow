@@ -11,7 +11,6 @@ import { CookiesProvider, Cookies } from "react-cookie";
 
 import { ChakraProvider } from "@chakra-ui/react";
 
-import { startsWith } from "lodash";
 import { pageView } from "../utils/google-analytics";
 import { theme } from "../theme";
 import {
