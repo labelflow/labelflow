@@ -59,6 +59,7 @@ export const ClassificationTag = ({
       selectedLabelClassId={labelClass?.id ?? null}
       trigger={
         <Tag
+          aria-label={`Classification tag: ${labelClass?.name ?? "None"}`}
           key={id}
           size="md"
           variant="solid"

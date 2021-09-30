@@ -149,18 +149,67 @@ describe("Classification", () => {
       .should("have.attr", "aria-current", "false")
       .click();
 
-    // // Reopen the menu just to test
-    // cy.get("main").rightclick(475, 100);
-    // cy.get('[aria-label="Class selection popover"]')
-    //   .contains("Rocket")
-    //   .closest('[role="option"]')
-    //   .should("have.attr", "aria-current", "true");
-    // cy.get("main").click(475, 95);
-
     // Create a classification tag with the existing class "rocket"
     cy.get("main").rightclick(475, 100);
     cy.get('[aria-label="Class selection popover"]').within(() => {
       cy.get('[name="class-selection-search"]').type("My new class{enter}");
     });
+
+    // Remove label using dustbin button in option toolbar
+    cy.get('[aria-label="Classification tag: My new class"]').should(
+      "be.visible"
+    );
+    cy.get('[aria-label="Delete selected label"]').click();
+    cy.get('[aria-label="Classification tag: My new class"]').should(
+      "not.exist"
+    );
+
+    // Remove label by clicking close button of tag
+    cy.get('[aria-label="Classification tag: Rocket"]').should("be.visible");
+    cy.get('[aria-label="Classification tag: Rocket"]')
+      .get('[aria-label="close"]')
+      .click();
+    cy.get('[aria-label="Classification tag: Rocket"]').should("not.exist");
+
+    // Add a label with the add menu
+    cy.get('[aria-label="Classification tag: Rocket"]').should("not.exist");
+    cy.get('[aria-label="Add a label"]').click();
+    cy.get('[aria-label="Class addition menu popover"]')
+      .contains("Rocket")
+      .closest('[role="option"]')
+      .should("have.attr", "aria-current", "false")
+      .click();
+    cy.get('[aria-label="Classification tag: Rocket"]').should("be.visible");
+
+    // Add a label with key shortcut
+    cy.get('[aria-label="Classification tag: My new class"]').should(
+      "not.exist"
+    );
+    cy.get('[aria-label="Add a label"]').click();
+    cy.get("body").type("2");
+    cy.get('[aria-label="Classification tag: My new class"]').should(
+      "be.visible"
+    );
+
+    // Switch to selection mode
+    cy.get("body").type("v");
+
+    // Edit a label to another class of an existing label, should merge
+    cy.get('[aria-label="Classification tag: My new class"]').should(
+      "be.visible"
+    );
+    cy.get('[aria-label="Classification tag: My new class"]').rightclick();
+    cy.get("body").type("1");
+    cy.get('[aria-label="Classification tag: My new class"]').should(
+      "not.exist"
+    );
+
+    // Switch to classification mode
+    cy.get("body").type("k");
+
+    // Remove last label with keyboard shortcut of addition
+    cy.get('[aria-label="Classification tag: Rocket"]').should("be.visible");
+    cy.get("body").type("1");
+    cy.get('[aria-label="Classification tag: Rocket"]').should("not.exist");
   });
 });
