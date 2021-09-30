@@ -104,7 +104,7 @@ describe("Classification", () => {
       );
       imageId = id;
 
-      await createLabelClass("Rocket", "#00ff00", datasetId);
+      await createLabelClass("Rocket", "#F87171", datasetId);
     });
   });
 

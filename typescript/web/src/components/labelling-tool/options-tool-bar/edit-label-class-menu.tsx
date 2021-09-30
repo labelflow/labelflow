@@ -215,7 +215,7 @@ export const EditLabelClassMenu = () => {
         )
       );
     },
-    [labelClasses, datasetId, selectedTool]
+    [labelClasses, selectedLabelId, datasetId, selectedTool]
   );
 
   const handleSelectedClassChange = useCallback(

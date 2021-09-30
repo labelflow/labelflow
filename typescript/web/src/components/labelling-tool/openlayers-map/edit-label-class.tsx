@@ -168,7 +168,14 @@ export const EditLabelClass = forwardRef<
         );
       }
     },
-    [labelClasses, datasetId, selectedLabelId, selectedTool, imageId]
+    [
+      labelClasses,
+      datasetId,
+      selectedLabelId,
+      selectedTool,
+      imageId,
+      selectedLabelClassId,
+    ]
   );
 
   const handleSelectedClassChange = useCallback(
