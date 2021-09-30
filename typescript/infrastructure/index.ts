@@ -192,9 +192,10 @@ export const ingress = new k8s.networking.v1.Ingress(
     spec: {
       // ingressClassName: "gce",
       // tls: [{ secretName: secret.metadata.name }],
-      defaultBackend: { service: { name: serviceName, port: { number: 80 } } },
+      // defaultBackend: { service: { name: serviceName, port: { number: 80 } } },
       rules: [
         {
+          host: "iog.labelflow.net",
           http: {
             paths: [
               {
