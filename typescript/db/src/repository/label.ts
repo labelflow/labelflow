@@ -14,6 +14,7 @@ export const countLabels: Repository["label"]["count"] = async (
   }
   const { user, ...where } = whereWithUser;
   if ("datasetId" in where) {
+    checkUserAccessToDataset({ where: { id: where.datasetId }, user });
     return await prisma.label.count({
       where: { image: { datasetId: where.datasetId ?? undefined } },
     });
