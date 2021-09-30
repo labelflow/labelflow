@@ -62,7 +62,7 @@ export type DbDataset = Omit<
 
 export type DbWorkspace = Omit<
   GeneratedWorkspace,
-  "__export typename" | "type" | "datasets" | "memberships" | "plan"
+  "__typename" | "type" | "datasets" | "memberships" | "plan"
 > & { plan: WorkspacePlan };
 
 export type DbWorkspaceWithType = DbWorkspace & { type: WorkspaceType };
