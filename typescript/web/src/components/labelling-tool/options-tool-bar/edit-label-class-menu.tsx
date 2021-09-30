@@ -171,6 +171,7 @@ export const EditLabelClassMenu = () => {
         const geometry = new GeoJSON().writeGeometryObject(
           new Polygon([
             [
+              // ok
               [0, 0],
               [0, imageLabelsData.image.height],
               [imageLabelsData.image.width, imageLabelsData.image.height],
