@@ -91,20 +91,31 @@ export const ClassificationContent = forwardRef<HTMLDivElement>(
     );
 
     const handleCreateNewClass = useCallback(
-      async (name) => {
-        if (selectedLabelId != null) {
+      async (name, labelId) => {
+        if (labelId != null) {
+          const { data: updatedLabelClassesData } = await client.query({
+            query: getLabelClassesOfDatasetQuery,
+            fetchPolicy: "cache-first",
+            variables: { slug: datasetSlug },
+          });
+
+          const updatedLabelClasses =
+            updatedLabelClassesData?.dataset.labelClasses ?? [];
+
           // Update class of an existing label with a new class
           const newClassColor =
-            labelClasses.length < 1
+            updatedLabelClasses.length < 1
               ? hexColorSequence[0]
-              : getNextClassColor(labelClasses[labelClasses.length - 1].color);
+              : getNextClassColor(
+                  updatedLabelClasses[updatedLabelClasses.length - 1].color
+                );
 
           await perform(
             createCreateLabelClassAndUpdateLabelEffect(
               {
                 name,
                 color: newClassColor,
-                selectedLabelId,
+                selectedLabelId: labelId,
                 datasetId,
                 datasetSlug,
               },
@@ -113,15 +124,16 @@ export const ClassificationContent = forwardRef<HTMLDivElement>(
           );
         }
       },
-      [labelClasses, datasetId, selectedLabelId]
+      [datasetId]
     );
 
     const handleSelectedClassChange = useCallback(
-      async (item: LabelClassItem | null) => {
-        if (selectedLabelId != null) {
+      async (item: LabelClassItem | null, labelId) => {
+        if (labelId != null) {
           // Change the class of an existing classification label to an existing class
           const { data: imageLabelsData } = await client.query({
             query: getImageLabelsQuery,
+            fetchPolicy: "cache-first",
             variables: { imageId },
           });
 
@@ -135,7 +147,7 @@ export const ClassificationContent = forwardRef<HTMLDivElement>(
             // If there is already a classification of the same class, delete the current one (to merge them)
             await perform(
               createDeleteLabelEffect(
-                { id: selectedLabelId },
+                { id: labelId },
                 { setSelectedLabelId, client }
               )
             );
@@ -146,14 +158,14 @@ export const ClassificationContent = forwardRef<HTMLDivElement>(
             createUpdateLabelClassOfLabelEffect(
               {
                 selectedLabelClassId: item?.id ?? null,
-                selectedLabelId,
+                selectedLabelId: labelId,
               },
               { client }
             )
           );
         }
       },
-      [selectedLabelId, selectedTool, imageId]
+      [imageId]
     );
 
     return (
@@ -182,10 +194,14 @@ export const ClassificationContent = forwardRef<HTMLDivElement>(
                   label={label}
                   client={client}
                   setSelectedLabelId={setSelectedLabelId}
-                  createNewClass={handleCreateNewClass}
+                  createNewClass={(name) =>
+                    handleCreateNewClass(name, label.id)
+                  }
                   labelClasses={labelClasses}
                   selectedLabelId={selectedLabelId}
-                  onSelectedClassChange={handleSelectedClassChange}
+                  onSelectedClassChange={(item) =>
+                    handleSelectedClassChange(item, label.id)
+                  }
                 />
               );
             })}

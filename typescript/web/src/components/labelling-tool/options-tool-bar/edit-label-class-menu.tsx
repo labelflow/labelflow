@@ -141,18 +141,39 @@ export const EditLabelClassMenu = () => {
 
   const handleCreateNewClass = useCallback(
     async (name) => {
+      if (!datasetSlug) {
+        return;
+      }
+      const { data: getLabelClassesOfDatasetData } = await client.query({
+        query: getLabelClassesOfDatasetQuery,
+        fetchPolicy: "cache-first",
+        variables: { slug: datasetSlug },
+      });
+      const updatedLabelClasses =
+        getLabelClassesOfDatasetData?.dataset.labelClasses ?? [];
       const newClassColor =
-        labelClasses.length < 1
+        updatedLabelClasses.length < 1
           ? hexColorSequence[0]
-          : getNextClassColor(labelClasses[labelClasses.length - 1].color);
-      if (!isInDrawingMode) {
+          : getNextClassColor(
+              updatedLabelClasses[updatedLabelClasses.length - 1].color
+            );
+
+      const updatedSelectedTool = useLabellingStore.getState().selectedTool;
+      const updatedIsInDrawingMode = [
+        Tools.CLASSIFICATION,
+        Tools.BOX,
+        Tools.POLYGON,
+      ].includes(updatedSelectedTool);
+      if (!updatedIsInDrawingMode) {
         // Update class of an existing label with a new class
+        const updatedSelectedLabelId =
+          useLabellingStore.getState().selectedLabelId;
         await perform(
           createCreateLabelClassAndUpdateLabelEffect(
             {
               name,
               color: newClassColor,
-              selectedLabelId,
+              selectedLabelId: updatedSelectedLabelId,
               datasetId,
               datasetSlug,
             },
@@ -162,10 +183,13 @@ export const EditLabelClassMenu = () => {
         return;
       }
 
-      if (selectedTool === Tools.CLASSIFICATION && imageId) {
+      const updatedSelectedLabelClassId =
+        useLabellingStore.getState().selectedLabelClassId;
+      if (updatedSelectedTool === Tools.CLASSIFICATION && imageId) {
         // Create a new classification label of a new class
         const { data: imageLabelsData } = await client.query({
           query: getImageLabelsQuery,
+          fetchPolicy: "cache-first",
           variables: { imageId },
         });
         const geometry = new GeoJSON().writeGeometryObject(
@@ -188,7 +212,7 @@ export const EditLabelClassMenu = () => {
               datasetId,
               datasetSlug,
               imageId,
-              previouslySelectedLabelClassId: selectedLabelClassId,
+              previouslySelectedLabelClassId: updatedSelectedLabelClassId,
               geometry,
               labelType: LabelType.Classification,
             },
@@ -207,7 +231,7 @@ export const EditLabelClassMenu = () => {
           {
             name,
             color: newClassColor,
-            selectedLabelClassIdPrevious: selectedLabelClassId,
+            selectedLabelClassIdPrevious: updatedSelectedLabelClassId,
             datasetId,
             datasetSlug,
           },
@@ -215,17 +239,26 @@ export const EditLabelClassMenu = () => {
         )
       );
     },
-    [labelClasses, datasetId, selectedTool]
+    [datasetId, imageId]
   );
 
   const handleSelectedClassChange = useCallback(
     async (item: LabelClassItem | null) => {
-      if (!isInDrawingMode) {
-        if (selectedLabelId != null) {
+      const updatedSelectedTool = useLabellingStore.getState().selectedTool;
+      const updatedIsInDrawingMode = [
+        Tools.CLASSIFICATION,
+        Tools.BOX,
+        Tools.POLYGON,
+      ].includes(updatedSelectedTool);
+      if (!updatedIsInDrawingMode) {
+        const updatedSelectedLabelId =
+          useLabellingStore.getState().selectedLabelId;
+        if (updatedSelectedLabelId != null) {
           if (selectedLabelData?.label?.type === LabelType.Classification) {
             // Change the class of an existing classification label to an existing class
             const { data: imageLabelsData } = await client.query({
               query: getImageLabelsQuery,
+              fetchPolicy: "cache-first",
               variables: { imageId },
             });
 
@@ -239,7 +272,7 @@ export const EditLabelClassMenu = () => {
               // If there is already a classification of the same class, delete the current one (to merge them)
               await perform(
                 createDeleteLabelEffect(
-                  { id: selectedLabelId },
+                  { id: updatedSelectedLabelId },
                   { setSelectedLabelId, client }
                 )
               );
@@ -252,7 +285,7 @@ export const EditLabelClassMenu = () => {
             createUpdateLabelClassOfLabelEffect(
               {
                 selectedLabelClassId: item?.id ?? null,
-                selectedLabelId,
+                selectedLabelId: updatedSelectedLabelId,
               },
               { client }
             )
@@ -261,10 +294,11 @@ export const EditLabelClassMenu = () => {
         }
         return;
       }
-      if (selectedTool === Tools.CLASSIFICATION && imageId) {
+      if (updatedSelectedTool === Tools.CLASSIFICATION && imageId) {
         // Add a classification label of an existing class
         const { data: imageLabelsData } = await client.query({
           query: getImageLabelsQuery,
+          fetchPolicy: "cache-first",
           variables: { imageId },
         });
 
@@ -313,14 +347,16 @@ export const EditLabelClassMenu = () => {
         return;
       }
       // Change currently select class in the menu to an existing class, don't apply the class to any label
+      const updatedSelectedLabelClassId =
+        useLabellingStore.getState().selectedLabelClassId;
       await perform(
         createUpdateLabelClassEffect({
           selectedLabelClassId: item?.id ?? null,
-          selectedLabelClassIdPrevious: selectedLabelClassId,
+          selectedLabelClassIdPrevious: updatedSelectedLabelClassId,
         })
       );
     },
-    [selectedLabelId, selectedLabelClassId, selectedTool, imageId]
+    [imageId]
   );
 
   const displayClassSelectionMenu =
