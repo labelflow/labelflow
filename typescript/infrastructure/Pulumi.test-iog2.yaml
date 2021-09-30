@@ -1,3 +1,0 @@
-config:
-  gcp:project: labelflow-321909
-  gcp:zone: us-central1-a
