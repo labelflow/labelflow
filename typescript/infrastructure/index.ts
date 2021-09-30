@@ -4,8 +4,7 @@ import * as pulumi from "@pulumi/pulumi";
 import * as gcp from "@pulumi/gcp";
 import * as cloudflare from "@pulumi/cloudflare";
 import * as k8sOfficial from "@kubernetes/client-node";
-
-// import * as tls from "@pulumi/tls";
+// import { writeFileSync } from "fs";
 
 // Create a GKE cluster
 const engineVersion = gcp.container
@@ -36,7 +35,7 @@ export const kubeconfig = pulumi
   .all([cluster.name, cluster.endpoint, cluster.masterAuth])
   .apply(([name, endpoint, masterAuth]) => {
     const context = `${gcp.config.project}_${gcp.config.zone}_${name}`;
-    return `apiVersion: v1
+    const kubeconfigContent = `apiVersion: v1
 clusters:
 - cluster:
     certificate-authority-data: ${masterAuth.clusterCaCertificate}
@@ -61,6 +60,9 @@ users:
         token-key: '{.credential.access_token}'
       name: gcp
 `;
+    // // If you want to write the kubeconfig file for local experimentation
+    // writeFileSync("./kubeconfig", kubeconfigContent);
+    return kubeconfigContent;
   });
 
 // Create a Kubernetes provider instance that uses our cluster from above.
@@ -159,25 +161,20 @@ const ipAddress = new gcp.compute.Address("test-iog-address", {});
 export const staticIpAddress = ipAddress.address;
 export const staticIpName = ipAddress.name;
 
-// const key = new tls.PrivateKey("my-private-key", {
-//   algorithm: "ECDSA",
-//   ecdsaCurve: "P384",
-// });
-
-// const secret = new k8s.core.v1.Secret("tls_credentials", {
-//   type: "kubernetes.io/tls",
-// });
-
-// const certRequest = new tls.CertRequest("request", {})
-
-const managedSslCertificate = new gcp.compute.ManagedSslCertificate(
-  "test-iog-managed-ssl-certificate",
+export const managedCertificate = new k8s.apiextensions.CustomResource(
+  "test-iog-managed-certificate",
   {
-    managed: {
-      domains: ["iog.labelflow.net."],
+    apiVersion: "networking.gke.io/v1",
+    kind: "ManagedCertificate",
+    metadata: {
+      namespace: namespaceName,
     },
-  }
+    spec: { domains: ["iog.labelflow.net"] },
+  },
+  { provider: clusterProvider }
 );
+
+const managedCertificateName = managedCertificate.metadata.apply((m) => m.name);
 
 export const ingress = new k8s.networking.v1.Ingress(
   "test-iog-ingress",
@@ -187,7 +184,8 @@ export const ingress = new k8s.networking.v1.Ingress(
       annotations: {
         // "kubernetes.io/ingress.global-static-ip-name": staticIpName,
         // "kubernetes.io/ingress.allow-http": "false",
-        "networking.gke.io/managed-certificates": managedSslCertificate.name,
+        // "networking.gke.io/managed-certificates": managedSslCertificate.name,
+        "networking.gke.io/managed-certificates": managedCertificateName,
         // "kubernetes.io/ingress.class": "gce",
       },
     },
@@ -270,7 +268,7 @@ export const record = new cloudflare.Record("test-iog-record", {
   zoneId: process.env?.CLOUDFLARE_LABELFLOWNET_ZONE_ID,
   type: "A",
   // value: staticIpAddress,
-  value: ingressIpAddress,
   // value: "34.117.17.101", // FIXME Hardcoded for now....
+  value: ingressIpAddress,
   ttl: 3600,
 });
