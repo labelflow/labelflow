@@ -183,7 +183,7 @@ export const ingress = new k8s.networking.v1.Ingress(
       namespace: namespaceName,
       annotations: {
         // "kubernetes.io/ingress.global-static-ip-name": staticIpName,
-        // "kubernetes.io/ingress.allow-http": "false",
+        "kubernetes.io/ingress.allow-http": "false",
         // "networking.gke.io/managed-certificates": managedSslCertificate.name,
         "networking.gke.io/managed-certificates": managedCertificateName,
         // "kubernetes.io/ingress.class": "gce",
