@@ -6,6 +6,10 @@ import * as cloudflare from "@pulumi/cloudflare";
 import * as k8sOfficial from "@kubernetes/client-node";
 // import { writeFileSync } from "fs";
 
+const domain = "labelflow.net";
+const subdomain = "iog";
+const fullyQualifiedDomain = `${subdomain}.${domain}`;
+
 // Create a GKE cluster
 const engineVersion = gcp.container
   .getEngineVersions()
@@ -169,7 +173,7 @@ export const managedCertificate = new k8s.apiextensions.CustomResource(
     metadata: {
       namespace: namespaceName,
     },
-    spec: { domains: ["iog.labelflow.net"] },
+    spec: { domains: [fullyQualifiedDomain] },
   },
   { provider: clusterProvider }
 );
@@ -182,10 +186,16 @@ export const ingress = new k8s.networking.v1.Ingress(
     metadata: {
       namespace: namespaceName,
       annotations: {
+        // // Does not work yet so far...
         // "kubernetes.io/ingress.global-static-ip-name": staticIpName,
-        "kubernetes.io/ingress.allow-http": "false",
-        // "networking.gke.io/managed-certificates": managedSslCertificate.name,
+
+        // Enable https on the ingress
         "networking.gke.io/managed-certificates": managedCertificateName,
+
+        // // Warning you cannot use this annotation with the one above...
+        // // See https://github.com/kubernetes/ingress-gce/issues/764
+        // "kubernetes.io/ingress.allow-http": "false",
+
         // "kubernetes.io/ingress.class": "gce",
       },
     },
@@ -195,7 +205,7 @@ export const ingress = new k8s.networking.v1.Ingress(
       // defaultBackend: { service: { name: serviceName, port: { number: 80 } } },
       rules: [
         {
-          host: "iog.labelflow.net",
+          host: fullyQualifiedDomain,
           http: {
             paths: [
               {
@@ -265,7 +275,7 @@ export const ingressIpAddress = pulumi
   });
 
 export const record = new cloudflare.Record("test-iog-record", {
-  name: "iog",
+  name: subdomain,
   zoneId: process.env?.CLOUDFLARE_LABELFLOWNET_ZONE_ID,
   type: "A",
   // value: staticIpAddress,
