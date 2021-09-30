@@ -8,6 +8,7 @@ type Props = {
   desc?: string;
   canonical?: string;
   images?: OpenGraphImages[];
+  noImage?: boolean;
 };
 
 const defaultImages = [
@@ -30,6 +31,7 @@ export const Meta = ({
   desc = "The fastest and simplest image labelling tool on the Internet!",
   canonical = "https://labelflow.ai/",
   images = defaultImages,
+  noImage = false,
 }: Props) => (
   <>
     <NextSeo
@@ -42,7 +44,7 @@ export const Meta = ({
         title,
         description: desc,
         locale: "en_US",
-        images,
+        images: noImage ? undefined : images,
       }}
       twitter={{
         handle: "@VLecrubier",

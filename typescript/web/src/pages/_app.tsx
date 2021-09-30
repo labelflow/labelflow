@@ -68,7 +68,7 @@ const App = (props: AppProps & InitialProps) => {
           <ApolloProvider client={client}>
             <QueryParamProvider>
               <ChakraProvider theme={theme} resetCSS>
-                <Meta />
+                <Meta noImage />
                 <Head>
                   {/* Set proper initial appearance of content for mobile */}
                   <meta
