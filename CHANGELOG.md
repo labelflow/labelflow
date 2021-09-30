@@ -1,6 +1,9 @@
 # Changelog
 
-## [1.0.14](https://github.com/labelflow/labelflow/compare/1.0.13...1.0.14)
+## [1.0.15](https://github.com/labelflow/labelflow/compare/1.0.14...1.0.15)
+
+- Add tracking event to export button [`#464`](https://github.com/labelflow/labelflow/pull/464)
+## [1.0.14](https://github.com/labelflow/labelflow/compare/1.0.13...1.0.14) - 2021-09-27
 
 - Add full screen mode [`#456`](https://github.com/labelflow/labelflow/pull/456)
 ## [1.0.13](https://github.com/labelflow/labelflow/compare/1.0.12...1.0.13) - 2021-09-24
