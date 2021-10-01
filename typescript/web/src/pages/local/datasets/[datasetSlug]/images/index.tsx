@@ -94,15 +94,15 @@ const ImagesPage = () => {
       <CookieBanner />
       <Layout
         breadcrumbs={[
-          <NextLink href="/local/datasets">
+          <NextLink key={0} href="/local/datasets">
             <BreadcrumbLink>Datasets</BreadcrumbLink>
           </NextLink>,
-          <NextLink href={`/local/datasets/${datasetSlug}`}>
+          <NextLink key={1} href={`/local/datasets/${datasetSlug}`}>
             <BreadcrumbLink>
               {datasetName ?? <Skeleton>Dataset Name</Skeleton>}
             </BreadcrumbLink>
           </NextLink>,
-          <Text>Images</Text>,
+          <Text key={2}>Images</Text>,
         ]}
         topBarRightContent={
           <>

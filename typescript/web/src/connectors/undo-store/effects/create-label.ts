@@ -3,7 +3,7 @@ import { getBoundedGeometryFromImage } from "@labelflow/common-resolvers";
 
 import { GeometryInput, LabelType } from "@labelflow/graphql-types";
 import { GeoJSONPolygon } from "ol/format/GeoJSON";
-import { Effect } from "../../../../connectors/undo-store";
+import { Effect } from "..";
 
 type CreateLabelInputs = {
   imageId: string;
@@ -140,7 +140,7 @@ export function removeLabelFromImageCache(
   });
 }
 
-export const createLabelEffect = (
+export const createCreateLabelEffect = (
   {
     imageId,
     selectedLabelClassId,

@@ -10,23 +10,23 @@ import {
   useColorModeValue as mode,
 } from "@chakra-ui/react";
 import { HiSelector } from "react-icons/hi";
-import { RiCheckboxBlankCircleFill } from "react-icons/ri";
+import { IoMdAddCircleOutline } from "react-icons/io";
 import { LabelClass } from "@labelflow/graphql-types";
 import { ClassSelectionPopover } from "../../../class-selection-popover";
 
-// The class selection menu doesn't need all the attributes of the label class
+// The class addition menu doesn't need all the attributes of the label class
 export type LabelClassItem = Omit<LabelClass, "dataset">;
 
-const CircleIcon = chakra(RiCheckboxBlankCircleFill);
+const AddIcon = chakra(IoMdAddCircleOutline);
 const SelectorIcon = chakra(HiSelector);
 
-const ClassSelectionButton = React.forwardRef<
+const ClassAdditionButton = React.forwardRef<
   null,
   {
     selectedLabelClass?: LabelClassItem | null;
     toggle: () => void;
   }
->(({ selectedLabelClass, toggle }, ref) => {
+>(({ toggle }, ref) => {
   const largeButton = (
     <Button
       rightIcon={<SelectorIcon fontSize="md" />}
@@ -36,22 +36,12 @@ const ClassSelectionButton = React.forwardRef<
       onClick={toggle}
       bg={mode("white", "gray.800")}
       pointerEvents="initial"
-      aria-label="Open class selection popover"
+      aria-label="Add a label"
     >
-      <Tooltip
-        label={`Selected class (${selectedLabelClass?.name ?? "None"})`}
-        placement="bottom"
-        openDelay={1000}
-      >
+      <Tooltip label="Add a label" placement="bottom" openDelay={1000}>
         <Flex alignItems="center">
-          <CircleIcon
-            color={selectedLabelClass?.color ?? "gray.300"}
-            fontSize="2xl"
-            mr="2"
-          />
-          <Text display={{ base: "none", md: "block" }}>
-            {selectedLabelClass?.name ?? "None"}
-          </Text>
+          <AddIcon fontSize="xl" mr="2" />
+          <Text display={{ base: "none", md: "block" }}>Add a label</Text>
         </Flex>
       </Tooltip>
     </Button>
@@ -59,17 +49,12 @@ const ClassSelectionButton = React.forwardRef<
 
   const smallButton = (
     <IconButton
-      icon={
-        <CircleIcon
-          color={selectedLabelClass?.color ?? "gray.300"}
-          fontSize="2xl"
-        />
-      }
+      icon={<AddIcon fontSize="2xl" />}
       ref={ref}
       onClick={toggle}
       bg={mode("white", "gray.800")}
       pointerEvents="initial"
-      aria-label="Open class selection popover"
+      aria-label="Add a label"
     />
   );
 
@@ -81,7 +66,7 @@ const ClassSelectionButton = React.forwardRef<
   return result;
 });
 
-export const ClassSelectionMenu = ({
+export const ClassAdditionMenu = ({
   isOpen,
   setIsOpen,
   labelClasses,
@@ -89,7 +74,6 @@ export const ClassSelectionMenu = ({
   createNewClass,
   selectedLabelClass,
   isContextMenuOpen,
-  includeNoneClass,
 }: {
   isOpen: boolean;
   setIsOpen: (b: boolean) => void;
@@ -98,18 +82,17 @@ export const ClassSelectionMenu = ({
   createNewClass: (name: string) => void;
   selectedLabelClass?: LabelClassItem | null;
   isContextMenuOpen?: boolean;
-  includeNoneClass?: boolean;
 }) => {
   const toggle = () => setIsOpen(!isOpen);
   const close = () => setIsOpen(false);
 
   return (
     <ClassSelectionPopover
-      ariaLabel="Class selection menu popover"
+      ariaLabel="Class addition menu popover"
       isOpen={isOpen}
       onClose={close}
       labelClasses={labelClasses}
-      includeNoneClass={includeNoneClass}
+      includeNoneClass={false}
       onSelectedClassChange={(labelClass: LabelClassItem | null) => {
         onSelectedClassChange(labelClass);
         close();
@@ -120,7 +103,7 @@ export const ClassSelectionMenu = ({
       }}
       selectedLabelClassId={selectedLabelClass?.id ?? null}
       trigger={
-        <ClassSelectionButton
+        <ClassAdditionButton
           toggle={toggle}
           selectedLabelClass={selectedLabelClass}
         />

@@ -8,7 +8,6 @@ import { ApolloClient, useApolloClient, gql, useQuery } from "@apollo/client";
 import { useToast, UseToastOptions } from "@chakra-ui/react";
 import { ModifyEvent } from "ol/interaction/Modify";
 import { TranslateEvent } from "ol/interaction/Translate";
-import { useRouter } from "next/router";
 import { LabelType } from "@labelflow/graphql-types";
 import { SelectInteraction } from "./select-interaction";
 import {
@@ -20,7 +19,7 @@ import {
   ResizeAndTranslateEvent,
 } from "./resize-and-translate-box-interaction";
 import { Effect, useUndoStore } from "../../../../connectors/undo-store";
-import { updateLabelEffect } from "./update-label-effect";
+import { createUpdateLabelEffect } from "../../../../connectors/undo-store/effects/update-label";
 
 // Extend react-openlayers-catalogue to include resize and translate interaction
 extend({
@@ -58,7 +57,7 @@ export const interactionEnd = async (
     const { id: labelId } = feature.getProperties();
     try {
       await perform(
-        updateLabelEffect(
+        createUpdateLabelEffect(
           {
             labelId,
             geometry,
@@ -70,6 +69,7 @@ export const interactionEnd = async (
     } catch (error) {
       toast({
         title: "Error updating label",
+        // @ts-ignore
         description: error?.message,
         isClosable: true,
         status: "error",
@@ -84,12 +84,14 @@ export const interactionEnd = async (
 export const SelectAndModifyFeature = (props: {
   sourceVectorLabelsRef: MutableRefObject<OlSourceVector<Geometry> | null>;
   map: OlMap | null;
+  image: { id?: string; width?: number; height?: number };
   setIsContextMenuOpen?: (state: boolean) => void;
   editClassOverlayRef?: MutableRefObject<HTMLDivElement | null>;
 }) => {
-  const { sourceVectorLabelsRef } = props;
-  const router = useRouter();
-  const imageId = router?.query?.imageId as string;
+  const {
+    sourceVectorLabelsRef,
+    image: { id: imageId },
+  } = props;
 
   // We need to have this state in order to store the selected feature in the addfeature listener below
   const [selectedFeature, setSelectedFeature] =
@@ -135,7 +137,7 @@ export const SelectAndModifyFeature = (props: {
   const toast = useToast();
   return (
     <>
-      <SelectInteraction {...props} />
+      <SelectInteraction key="SelectInteraction" {...props} />
 
       {selectedTool === Tools.SELECTION &&
         labelData?.label?.type === LabelType.Box && (
@@ -143,7 +145,13 @@ export const SelectAndModifyFeature = (props: {
           <resizeAndTranslateBox
             args={{ selectedFeature, pixelTolerance: 20 }}
             onInteractionEnd={async (e: ResizeAndTranslateEvent | null) => {
-              return await interactionEnd(e, perform, client, imageId, toast);
+              return await interactionEnd(
+                e,
+                perform,
+                client,
+                imageId as string,
+                toast
+              );
             }}
           />
         )}
@@ -154,7 +162,13 @@ export const SelectAndModifyFeature = (props: {
             <olInteractionTranslate
               args={{ features: new Collection([selectedFeature]) }}
               onTranslateend={async (e: TranslateEvent | null) => {
-                return await interactionEnd(e, perform, client, imageId, toast);
+                return await interactionEnd(
+                  e,
+                  perform,
+                  client,
+                  imageId as string,
+                  toast
+                );
               }}
             />
             <olInteractionModify
@@ -163,7 +177,13 @@ export const SelectAndModifyFeature = (props: {
                 pixelTolerance: 20,
               }}
               onModifyend={async (e: ModifyEvent | null) => {
-                return await interactionEnd(e, perform, client, imageId, toast);
+                return await interactionEnd(
+                  e,
+                  perform,
+                  client,
+                  imageId as string,
+                  toast
+                );
               }}
             />
             <olInteractionPointer
