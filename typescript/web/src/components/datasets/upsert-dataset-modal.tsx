@@ -67,8 +67,7 @@ export const UpsertDatasetModal = ({
   onClose?: () => void;
   datasetId?: string;
 }) => {
-  const workspaceSlug = useRouter().query?.workspaceSlug as string | undefined;
-  // console.log(workspaceSlug);
+  const workspaceSlug = useRouter()?.query?.workspaceSlug as string | undefined;
 
   const [datasetNameInputValue, setDatasetNameInputValue] =
     useState<string>("");
@@ -96,8 +95,6 @@ export const UpsertDatasetModal = ({
       variables: variablesExistingDatasets,
     },
   ] = useLazyQuery(getDatasetBySlugQuery, { fetchPolicy: "network-only" });
-
-  console.log(existingDataset);
 
   const [createDatasetMutate, { loading: createMutationLoading }] = useMutation(
     createDatasetMutation,
@@ -138,8 +135,6 @@ export const UpsertDatasetModal = ({
 
   useEffect(() => {
     if (datasetName === "" || workspaceSlug == null) return;
-
-    console.log("Query", datasetName, workspaceSlug);
     debouncedQuery(datasetName, workspaceSlug);
   }, [datasetName, workspaceSlug]);
 

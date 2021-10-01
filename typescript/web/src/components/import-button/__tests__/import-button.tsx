@@ -16,7 +16,9 @@ import { mockMatchMedia } from "../../../utils/mock-window";
 mockMatchMedia(jest);
 
 mockUseQueryParams();
-mockNextRouter({ query: { datasetSlug: "mocked-dataset" } });
+mockNextRouter({
+  query: { datasetSlug: "mocked-dataset", workspaceSlug: "local" },
+});
 
 import { ImportButton } from "../import-button";
 
