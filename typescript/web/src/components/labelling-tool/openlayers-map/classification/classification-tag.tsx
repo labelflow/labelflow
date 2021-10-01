@@ -9,6 +9,7 @@ import { ClassSelectionPopover } from "../../../class-selection-popover";
 import { noneClassColor } from "../../../../utils/class-color-generator";
 import { useUndoStore } from "../../../../connectors/undo-store";
 import { keymap } from "../../../../keymap";
+import { useLabellingStore } from "../../../../connectors/labelling-state";
 
 // The class selection menu doesn't need all the attributes of the label class
 export type LabelClassItem = Omit<LabelClass, "dataset">;
@@ -36,6 +37,8 @@ export const ClassificationTag = ({
   const handleClick = (
     e: React.MouseEvent<HTMLSpanElement, MouseEvent>
   ): void => {
+    e.stopPropagation();
+    e.preventDefault();
     setSelectedLabelId(id);
     if (e.type === "contextmenu") {
       setIsOpen(!isOpen);
@@ -48,6 +51,20 @@ export const ClassificationTag = ({
     () => {
       if (id === selectedLabelId) {
         setIsOpen(true);
+      }
+    },
+    {},
+    [id, selectedLabelId, setIsOpen]
+  );
+
+  useHotkeys(
+    keymap.deselect.key,
+    () => {
+      if (id === selectedLabelId) {
+        console.log("deselect current classification tag");
+        setIsOpen(false);
+        useLabellingStore.getState().setIsContextMenuOpen(false);
+        useLabellingStore.getState().setSelectedLabelId(null);
       }
     },
     {},
