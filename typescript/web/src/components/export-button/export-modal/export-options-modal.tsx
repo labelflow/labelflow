@@ -120,6 +120,7 @@ export const ExportOptionsModal = ({
             colorScheme="brand"
             size="md"
             alignSelf="flex-end"
+            flexShrink={0}
             onClick={() => {
               exportFunction(exportOptions);
               trackEvent(
