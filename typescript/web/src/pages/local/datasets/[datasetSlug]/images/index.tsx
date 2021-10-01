@@ -4,6 +4,7 @@ import NextLink from "next/link";
 import {
   Box,
   VStack,
+  Flex,
   useColorModeValue as mode,
   Image,
   Center,
@@ -13,10 +14,12 @@ import {
   BreadcrumbLink,
   Heading,
   SimpleGrid,
+  IconButton,
+  chakra,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { isEmpty } from "lodash/fp";
-
+import { HiTrash } from "react-icons/hi";
 import { useErrorHandler } from "react-error-boundary";
 import type { Dataset as DatasetType } from "@labelflow/graphql-types";
 import { ServiceWorkerManagerModal } from "../../../../../components/service-worker-manager";
@@ -32,6 +35,8 @@ import { AuthManager } from "../../../../../components/auth-manager";
 
 import { WelcomeManager } from "../../../../../components/welcome-manager";
 import { CookieBanner } from "../../../../../components/cookie-banner";
+
+const TrashIcon = chakra(HiTrash);
 
 export const datasetDataQuery = gql`
   query getDatasetData($slug: String!) {
@@ -165,18 +170,33 @@ const ImagesPage = () => {
                     height="270px"
                     justifyContent="space-between"
                   >
-                    <Heading
-                      as="h3"
-                      size="sm"
-                      overflow="hidden"
-                      textOverflow="ellipsis"
-                      whiteSpace="nowrap"
-                      w="full"
-                      flexGrow={0}
-                      flexShrink={0}
+                    <Flex
+                      justifyContent="space-between"
+                      w="100%"
+                      alignItems="center"
                     >
-                      {name}
-                    </Heading>
+                      <Heading
+                        as="h3"
+                        size="sm"
+                        overflow="hidden"
+                        textOverflow="ellipsis"
+                        whiteSpace="nowrap"
+                        flexGrow={0}
+                        flexShrink={0}
+                      >
+                        {name}
+                      </Heading>
+                      <IconButton
+                        icon={<TrashIcon />}
+                        aria-label="delete image"
+                        isRound
+                        size="sm"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                        }}
+                      />
+                    </Flex>
                     <Image
                       background={imageBackground}
                       alt={name}
