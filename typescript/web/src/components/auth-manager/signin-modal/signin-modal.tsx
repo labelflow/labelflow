@@ -151,7 +151,7 @@ export const SigninModal = ({
             </Flex>
             <Box w="full">
               <Logo
-                h="6"
+                h="9"
                 mb={{ base: "16", lg: "10" }}
                 iconColor="brand.600"
                 mx={{ base: "auto", lg: "unset" }}
