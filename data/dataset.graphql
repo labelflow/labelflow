@@ -5,7 +5,7 @@ input DatasetCreateInput {
 }
 
 input WorkspaceSlugAndDatasetSlug {
-  datasetSlug: String!
+  slug: String!
   workspaceSlug: String!
 }
 

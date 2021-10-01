@@ -39,9 +39,7 @@ const updateDatasetMutation = gql`
 
 const getDatasetBySlugQuery = gql`
   query getDatasetBySlug($slug: String!) {
-    searchDataset(
-      where: { slugs: { datasetSlug: $slug, workspaceSlug: "local" } }
-    ) {
+    searchDataset(where: { slugs: { slug: $slug, workspaceSlug: "local" } }) {
       id
       slug
     }

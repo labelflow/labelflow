@@ -3,7 +3,7 @@ import { Workspace, WorkspaceType } from "@labelflow/graphql-types";
 
 import { client } from "../../apollo-client/schema-client";
 import { setupTestsWithLocalDatabase } from "../../../utils/setup-local-db-tests";
-import { localWorkspace } from "../workspace";
+import { localWorkspace } from "../../repository/workspace";
 
 setupTestsWithLocalDatabase();
 

@@ -1,10 +1,10 @@
-import { notImplementedInLocalWorkspaceResolver } from "./utils";
+import { notImplementedInLocalWorkspaceRepository } from "../repository/utils";
 
 export default {
   Query: {
-    users: notImplementedInLocalWorkspaceResolver,
-    user: notImplementedInLocalWorkspaceResolver,
+    users: notImplementedInLocalWorkspaceRepository,
+    user: notImplementedInLocalWorkspaceRepository,
   },
-  Mutation: { updateUser: notImplementedInLocalWorkspaceResolver },
-  User: { memberships: notImplementedInLocalWorkspaceResolver },
+  Mutation: { updateUser: notImplementedInLocalWorkspaceRepository },
+  User: { memberships: notImplementedInLocalWorkspaceRepository },
 };

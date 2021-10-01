@@ -8,7 +8,6 @@ import type {
   QueryLabelClassArgs,
   QueryLabelClassesArgs,
 } from "@labelflow/graphql-types";
-
 import { Context, DbLabelClass } from "./types";
 import { throwIfResolvesToNil } from "./utils/throw-if-resolves-to-nil";
 import { hexColorSequence } from "./utils/class-color-generator";
@@ -25,31 +24,36 @@ const labels = async (
 const labelClass = async (
   _: any,
   args: QueryLabelClassArgs,
-  { repository }: Context
+  { repository, user }: Context
 ) => {
   return await throwIfResolvesToNil(
     "No labelClass with such id",
     repository.labelClass.get
-  )({ id: args?.where?.id });
+  )({ id: args?.where?.id }, user);
 };
 
 const labelClasses = async (
   _: any,
   args: QueryLabelClassesArgs,
-  { repository }: Context
+  { repository, user }: Context
 ) => {
-  return await repository.labelClass.list(args?.where, args?.skip, args?.first);
+  return await repository.labelClass.list(
+    { ...args?.where, user },
+    args?.skip,
+    args?.first
+  );
 };
 
 // Mutations
 const createLabelClass = async (
   _: any,
   args: MutationCreateLabelClassArgs,
-  { repository }: Context
+  { repository, user }: Context
 ): Promise<DbLabelClass> => {
   const { color, name, id, datasetId } = args.data;
   const numberLabelClasses = await repository.labelClass.count({
     datasetId,
+    user,
   });
 
   // Since we don't have any constraint checks with Dexie
@@ -58,7 +62,7 @@ const createLabelClass = async (
   await throwIfResolvesToNil(
     `The dataset id ${datasetId} doesn't exist.`,
     repository.dataset.get
-  )({ id: datasetId });
+  )({ id: datasetId }, user);
 
   const labelClassId = id ?? uuidv4();
   const now = new Date();
@@ -73,25 +77,24 @@ const createLabelClass = async (
       color ?? hexColorSequence[numberLabelClasses % hexColorSequence.length],
     datasetId,
   };
-  await repository.labelClass.add(newLabelClassEntity);
-
+  await repository.labelClass.add(newLabelClassEntity, user);
   return await throwIfResolvesToNil(
     "No labelClass with such id",
     repository.labelClass.get
-  )({ id: newLabelClassEntity.id });
+  )({ id: newLabelClassEntity.id }, user);
 };
 
 const reorderLabelClass = async (
   _: any,
   args: MutationReorderLabelClassArgs,
-  { repository }: Context
+  { repository, user }: Context
 ) => {
   const labelClassId = args.where.id;
 
   const labelClassToUpdate = await throwIfResolvesToNil(
     "No labelClass with such id",
     repository.labelClass.get
-  )({ id: labelClassId });
+  )({ id: labelClassId }, user);
   const oldIndex = labelClassToUpdate.index;
   const newIndex = args.data.index;
   if (oldIndex === newIndex) {
@@ -99,6 +102,7 @@ const reorderLabelClass = async (
   }
   const labelClassesOfDataset = await repository.labelClass.list({
     datasetId: labelClassToUpdate?.datasetId,
+    user,
   });
   if (newIndex < 0 || newIndex > labelClassesOfDataset.length - 1) {
     throw new Error(`Can't reorder a labelClass with an index that is negative or more than the number of labelClasses.
@@ -120,7 +124,8 @@ const reorderLabelClass = async (
           {
             ...labelClassOfDataset,
             index: labelClassOfDataset.index + indexUpdate,
-          }
+          },
+          user
         );
       }
     })
@@ -130,48 +135,51 @@ const reorderLabelClass = async (
     {
       ...labelClassToUpdate,
       index: args.data.index,
-    }
+    },
+    user
   );
 
-  return await repository.labelClass.get({ id: labelClassId });
+  return await repository.labelClass.get({ id: labelClassId }, user);
 };
 
 const updateLabelClass = async (
   _: any,
   args: MutationUpdateLabelClassArgs,
-  { repository }: Context
+  { repository, user }: Context
 ) => {
   const labelClassId = args.where.id;
 
   const labelClassToUpdate = await throwIfResolvesToNil(
     "No labelClass with such id",
     repository.labelClass.get
-  )({ id: labelClassId });
+  )({ id: labelClassId }, user);
 
   await repository.labelClass.update(
     { id: labelClassId },
     {
       ...labelClassToUpdate,
       ...args.data,
-    }
+    },
+    user
   );
 
-  return await repository.labelClass.get({ id: labelClassId });
+  return await repository.labelClass.get({ id: labelClassId }, user);
 };
 
 const deleteLabelClass = async (
   _: any,
   args: MutationDeleteLabelClassArgs,
-  { repository }: Context
+  { repository, user }: Context
 ) => {
   const labelToDelete = await throwIfResolvesToNil(
     "No labelClass with such id",
     repository.labelClass.get
-  )({ id: args.where.id });
+  )({ id: args.where.id }, user);
 
-  await repository.labelClass.delete({ id: labelToDelete.id });
+  await repository.labelClass.delete({ id: labelToDelete.id }, user);
   const labelClassesOfDataset = await repository.labelClass.list({
     datasetId: labelToDelete?.datasetId,
+    user,
   });
   await Promise.all(
     labelClassesOfDataset.map(async (labelClassOfDataset) => {
@@ -181,7 +189,8 @@ const deleteLabelClass = async (
           {
             ...labelClassOfDataset,
             index: labelClassOfDataset.index - 1,
-          }
+          },
+          user
         );
       }
     })
@@ -194,25 +203,30 @@ const labelClassesAggregates = (parent: any) => {
   return parent ?? {};
 };
 
-const totalCount = async (parent: any, _args: any, { repository }: Context) => {
+const totalCount = async (
+  parent: any,
+  _args: any,
+  { repository, user }: Context
+) => {
   // eslint-disable-next-line no-underscore-dangle
   const typename = parent?.__typename;
 
   if (typename === "Dataset") {
     return await repository.labelClass.count({
       datasetId: parent.id,
+      user,
     });
   }
 
-  return await repository.labelClass.count();
+  return await repository.labelClass.count({ user });
 };
 
 const dataset = async (
   parent: DbLabelClass,
   _args: any,
-  { repository }: Context
+  { repository, user }: Context
 ) => {
-  return await repository.dataset.get({ id: parent.datasetId });
+  return await repository.dataset.get({ id: parent.datasetId }, user);
 };
 
 export default {
