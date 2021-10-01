@@ -1,6 +1,11 @@
 # Changelog
 
-## [1.0.15](https://github.com/labelflow/labelflow/compare/1.0.14...1.0.15)
+## [1.0.16](https://github.com/labelflow/labelflow/compare/1.0.15...1.0.16)
+
+- Bug/#469 cannot rename dataset [`#476`](https://github.com/labelflow/labelflow/pull/476)
+- Display blog post details in social media previews [`#478`](https://github.com/labelflow/labelflow/pull/478)
+- Avoid shrinking export button [`#474`](https://github.com/labelflow/labelflow/pull/474)
+## [1.0.15](https://github.com/labelflow/labelflow/compare/1.0.14...1.0.15) - 2021-09-30
 
 - Add tracking event to export button [`#464`](https://github.com/labelflow/labelflow/pull/464)
 ## [1.0.14](https://github.com/labelflow/labelflow/compare/1.0.13...1.0.14) - 2021-09-27
