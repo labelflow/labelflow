@@ -16,9 +16,9 @@ import { hexColorSequence } from "./utils/class-color-generator";
 const labels = async (
   labelClass: LabelClass,
   _args: any,
-  { repository }: Context
+  { repository, user }: Context
 ) => {
-  return await repository.label.list({ labelClassId: labelClass.id });
+  return await repository.label.list({ labelClassId: labelClass.id, user });
 };
 
 const labelClass = async (
