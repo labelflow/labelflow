@@ -1,4 +1,13 @@
-import { DbImageCreateInput, Repository } from "@labelflow/common-resolvers";
+import {
+  DbImage,
+  DbImageCreateInput,
+  DbLabelClass,
+  Repository,
+} from "@labelflow/common-resolvers";
+import {
+  ImageWhereInput,
+  LabelClassWhereInput,
+} from "@labelflow/graphql-types";
 import { getDatabase } from "../database";
 import { list } from "./utils/list";
 import { countLabels, listLabels } from "./label";
@@ -18,13 +27,21 @@ import {
   deleteFromStorage,
 } from "./upload";
 import { addIdIfNil } from "./utils/add-id-if-nil";
+import {
+  addWorkspace,
+  getWorkspace,
+  listWorkspaces,
+  updateWorkspace,
+} from "./workspace";
+import { removeUserFromWhere } from "./utils/remove-user-from-where";
 
 export const repository: Repository = {
   image: {
     add: async (image: DbImageCreateInput) => {
       return await (await getDatabase()).image.add(addIdIfNil(image));
     },
-    count: async (where) => {
+    count: async (whereWithUser) => {
+      const where = removeUserFromWhere(whereWithUser);
       return where
         ? await (await getDatabase()).image.where(where).count()
         : await (await getDatabase()).image.count();
@@ -32,7 +49,11 @@ export const repository: Repository = {
     get: async ({ id }) => {
       return await (await getDatabase()).image.get(id);
     },
-    list: list(async () => (await getDatabase()).image),
+    list: (whereWithUser, skip, first) => {
+      return list<DbImage, ImageWhereInput>(
+        async () => (await getDatabase()).image
+      )(removeUserFromWhere(whereWithUser), skip, first);
+    },
   },
   label: {
     add: async (label) => {
@@ -54,7 +75,8 @@ export const repository: Repository = {
     add: async (labelClass) => {
       return await (await getDatabase()).labelClass.add(addIdIfNil(labelClass));
     },
-    count: async (where?) => {
+    count: async (whereWithUser) => {
+      const where = removeUserFromWhere(whereWithUser);
       return where
         ? await (await getDatabase()).labelClass.where(where).count()
         : await (await getDatabase()).labelClass.count();
@@ -63,7 +85,12 @@ export const repository: Repository = {
     get: async ({ id }) => {
       return await (await getDatabase()).labelClass.get(id);
     },
-    list: list(async () => (await getDatabase()).labelClass, "index"),
+    list: (whereWithUser, skip, first) => {
+      return list<DbLabelClass, LabelClassWhereInput>(
+        async () => (await getDatabase()).labelClass,
+        "index"
+      )(removeUserFromWhere(whereWithUser), skip, first);
+    },
     update: async ({ id }, changes) => {
       return (await (await getDatabase()).labelClass.update(id, changes)) === 1;
     },
@@ -74,6 +101,12 @@ export const repository: Repository = {
     get: getDataset,
     list: listDataset,
     update: updateDataset,
+  },
+  workspace: {
+    add: addWorkspace,
+    get: getWorkspace,
+    list: listWorkspaces,
+    update: updateWorkspace,
   },
   upload: {
     getUploadTarget,

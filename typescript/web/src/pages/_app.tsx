@@ -18,8 +18,6 @@ import {
   distantDatabaseClient,
 } from "../connectors/apollo-client/client";
 import { QueryParamProvider } from "../utils/query-params-provider";
-
-import { Meta } from "../components/meta";
 import ErrorPage from "./_error";
 
 interface InitialProps {
@@ -72,7 +70,6 @@ const App = (props: AppProps & InitialProps) => {
           <ApolloProvider client={client}>
             <QueryParamProvider>
               <ChakraProvider theme={theme} resetCSS>
-                <Meta />
                 <Head>
                   {/* Set proper initial appearance of content for mobile */}
                   <meta

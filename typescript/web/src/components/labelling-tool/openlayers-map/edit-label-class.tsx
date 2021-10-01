@@ -12,10 +12,8 @@ import { createUpdateLabelClassOfLabelEffect } from "../../../connectors/undo-st
 import { keymap } from "../../../keymap";
 
 const getLabelClassesOfDatasetQuery = gql`
-  query getLabelClassesOfDataset($slug: String!, $workspaceSlug: String!) {
-    dataset(
-      where: { slugs: { datasetSlug: $slug, workspaceSlug: $workspaceSlug } }
-    ) {
+  query getLabelClassesOfDataset($slug: String!) {
+    dataset(where: { slugs: { slug: $slug, workspaceSlug: "local" } }) {
       id
       labelClasses {
         id

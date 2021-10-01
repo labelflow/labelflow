@@ -41,7 +41,7 @@ const updateDatasetMutation = gql`
 const getDatasetBySlugQuery = gql`
   query getDatasetBySlug($slug: String!, $workspaceSlug: String!) {
     searchDataset(
-      where: { slugs: { datasetSlug: $slug, workspaceSlug: $workspaceSlug } }
+      where: { slugs: { slug: $slug, workspaceSlug: $workspaceSlug } }
     ) {
       id
       slug
@@ -140,7 +140,7 @@ export const UpsertDatasetModal = ({
 
   useEffect(() => {
     if (
-      existingDataset != null &&
+      existingDataset?.searchDataset?.id != null &&
       !loadingExistingDatasets &&
       existingDataset?.searchDataset?.id !== datasetId &&
       variablesExistingDatasets?.slug === slugify(datasetName, { lower: true })

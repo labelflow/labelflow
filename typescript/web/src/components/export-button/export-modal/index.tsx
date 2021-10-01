@@ -45,9 +45,7 @@ const exportQuery = gql`
 
 export const countLabelsOfDatasetQuery = gql`
   query countLabelsOfDataset($slug: String!, $workspaceSlug: String!) {
-    dataset(
-      where: { slugs: { datasetSlug: $slug, workspaceSlug: $workspaceSlug } }
-    ) {
+    dataset(where: { slugs: { slug: $slug, workspaceSlug: $workspaceSlug } }) {
       id
       imagesAggregates {
         totalCount

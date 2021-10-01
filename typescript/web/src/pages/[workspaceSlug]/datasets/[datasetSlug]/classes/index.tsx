@@ -20,9 +20,7 @@ import { CookieBanner } from "../../../../../components/cookie-banner";
 
 const datasetNameQuery = gql`
   query getDatasetName($slug: String!, $workspaceSlug: String!) {
-    dataset(
-      where: { slugs: { datasetSlug: $slug, workspaceSlug: $workspaceSlug } }
-    ) {
+    dataset(where: { slugs: { slug: $slug, workspaceSlug: $workspaceSlug } }) {
       id
       name
     }

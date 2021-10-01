@@ -5,9 +5,7 @@ import { Dataset, Image } from "@labelflow/graphql-types";
 
 const getAllImagesOfADatasetQuery = gql`
   query getAllImagesOfADataset($slug: String!, $workspaceSlug: String!) {
-    dataset(
-      where: { slugs: { datasetSlug: $slug, workspaceSlug: $workspaceSlug } }
-    ) {
+    dataset(where: { slugs: { slug: $slug, workspaceSlug: $workspaceSlug } }) {
       id
       images {
         id

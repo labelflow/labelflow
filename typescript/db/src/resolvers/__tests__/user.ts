@@ -2,12 +2,15 @@
 import { gql } from "@apollo/client";
 import { v4 as uuidV4 } from "uuid";
 import {
+  Membership,
+  MembershipRole,
+  MutationCreateMembershipArgs,
   MutationCreateWorkspaceArgs,
   User,
   Workspace,
 } from "@labelflow/graphql-types";
-import { prisma } from "../../repository";
-import { client, user as loggedInUser } from "../../dev/apollo-client";
+import { prisma } from "../../repository/prisma-client";
+import { client, user as loggedInUser, user } from "../../dev/apollo-client";
 
 // @ts-ignore
 fetch.disableFetchMocks();
@@ -28,6 +31,45 @@ afterAll(async () => {
   await prisma.$disconnect();
 });
 
+const createMembership = async (
+  data?: MutationCreateMembershipArgs["data"]
+) => {
+  return await client.mutate<{
+    createMembership: Membership;
+  }>({
+    mutation: gql`
+      mutation createMembership($data: MembershipCreateInput!) {
+        createMembership(data: $data) {
+          id
+          role
+        }
+      }
+    `,
+    variables: { data },
+  });
+};
+
+const createWorkspace = async (
+  data?: Partial<MutationCreateWorkspaceArgs["data"]>
+) => {
+  return await client.mutate<{
+    createWorkspace: Pick<Workspace, "id" | "name" | "slug" | "plan" | "type">;
+  }>({
+    mutation: gql`
+      mutation createWorkspace($data: WorkspaceCreateInput!) {
+        createWorkspace(data: $data) {
+          id
+          name
+          slug
+          plan
+          type
+        }
+      }
+    `,
+    variables: { data: { ...data, name: data?.name ?? "test" } },
+  });
+};
+
 describe("users query", () => {
   it("returns an empty array when there aren't any", async () => {
     const { data } = await client.query({
@@ -44,7 +86,7 @@ describe("users query", () => {
     expect(data.users).toEqual([]);
   });
 
-  it("returns the already created users", async () => {
+  it("returns only the current user if he is not linked to any other user through a workspace", async () => {
     await prisma.user.create({
       data: { id: testUser1Id, name: "test-user-1" },
     });
@@ -57,7 +99,8 @@ describe("users query", () => {
     await prisma.user.create({
       data: { id: testUser4Id, name: "test-user-4" },
     });
-
+    loggedInUser.id = testUser1Id;
+    await createWorkspace();
     const { data } = await client.query<{
       users: Pick<User, "id" | "name">[];
     }>({
@@ -72,11 +115,55 @@ describe("users query", () => {
       fetchPolicy: "no-cache",
     });
 
-    expect(data.users.map((user) => user.name)).toEqual([
+    expect(data.users.map((userData) => userData.name)).toEqual([
+      "test-user-1",
+    ]);
+  });
+
+  it("returns only the users linked to the current user through a workspace", async () => {
+    await prisma.user.create({
+      data: { id: testUser1Id, name: "test-user-1" },
+    });
+    await prisma.user.create({
+      data: { id: testUser2Id, name: "test-user-2" },
+    });
+    await prisma.user.create({
+      data: { id: testUser3Id, name: "test-user-3" },
+    });
+    await prisma.user.create({
+      data: { id: testUser4Id, name: "test-user-4" },
+    });
+    loggedInUser.id = testUser1Id;
+    const workspaceSlug = (await createWorkspace()).data?.createWorkspace
+      .slug as string;
+    await createMembership({
+      userId: testUser2Id,
+      workspaceSlug,
+      role: MembershipRole.Admin,
+    });
+    await createMembership({
+      userId: testUser3Id,
+      workspaceSlug,
+      role: MembershipRole.Admin,
+    });
+    const { data } = await client.query<{
+      users: Pick<User, "id" | "name">[];
+    }>({
+      query: gql`
+        {
+          users {
+            id
+            name
+          }
+        }
+      `,
+      fetchPolicy: "no-cache",
+    });
+
+    expect(data.users.map((userData) => userData.name)).toEqual([
       "test-user-1",
       "test-user-2",
       "test-user-3",
-      "test-user-4",
     ]);
   });
 
@@ -93,6 +180,19 @@ describe("users query", () => {
     await prisma.user.create({
       data: { id: testUser4Id, name: "test-user-4" },
     });
+    loggedInUser.id = testUser1Id;
+    const workspaceSlug = (await createWorkspace()).data?.createWorkspace
+      .slug as string;
+    await createMembership({
+      userId: testUser2Id,
+      workspaceSlug,
+      role: MembershipRole.Admin,
+    });
+    await createMembership({
+      userId: testUser3Id,
+      workspaceSlug,
+      role: MembershipRole.Admin,
+    });
 
     const { data } = await client.query<{
       users: Pick<User, "id" | "name">[];
@@ -108,10 +208,9 @@ describe("users query", () => {
       fetchPolicy: "no-cache",
     });
 
-    expect(data.users.map((user) => user.name)).toEqual([
+    expect(data.users.map((userData) => userData.name)).toEqual([
       "test-user-2",
       "test-user-3",
-      "test-user-4",
     ]);
   });
 
@@ -128,13 +227,26 @@ describe("users query", () => {
     await prisma.user.create({
       data: { id: testUser4Id, name: "test-user-4" },
     });
+    loggedInUser.id = testUser1Id;
+    const workspaceSlug = (await createWorkspace()).data?.createWorkspace
+      .slug as string;
+    await createMembership({
+      userId: testUser2Id,
+      workspaceSlug,
+      role: MembershipRole.Admin,
+    });
+    await createMembership({
+      userId: testUser3Id,
+      workspaceSlug,
+      role: MembershipRole.Admin,
+    });
 
     const { data } = await client.query<{
       users: Pick<User, "id" | "name">[];
     }>({
       query: gql`
         {
-          users(first: 3) {
+          users(first: 2) {
             id
             name
           }
@@ -143,10 +255,9 @@ describe("users query", () => {
       fetchPolicy: "no-cache",
     });
 
-    expect(data.users.map((user) => user.name)).toEqual([
+    expect(data.users.map((userData) => userData.name)).toEqual([
       "test-user-1",
       "test-user-2",
-      "test-user-3",
     ]);
   });
 
@@ -163,13 +274,26 @@ describe("users query", () => {
     await prisma.user.create({
       data: { id: testUser4Id, name: "test-user-4" },
     });
+    loggedInUser.id = testUser1Id;
+    const workspaceSlug = (await createWorkspace()).data?.createWorkspace
+      .slug as string;
+    await createMembership({
+      userId: testUser2Id,
+      workspaceSlug,
+      role: MembershipRole.Admin,
+    });
+    await createMembership({
+      userId: testUser3Id,
+      workspaceSlug,
+      role: MembershipRole.Admin,
+    });
 
     const { data } = await client.query<{
       users: Pick<User, "id" | "name">[];
     }>({
       query: gql`
         {
-          users(skip: 1, first: 2) {
+          users(skip: 1, first: 1) {
             id
             name
           }
@@ -178,9 +302,8 @@ describe("users query", () => {
       fetchPolicy: "no-cache",
     });
 
-    expect(data.users.map((user) => user.name)).toEqual([
+    expect(data.users.map((userData) => userData.name)).toEqual([
       "test-user-2",
-      "test-user-3",
     ]);
   });
 });
@@ -206,17 +329,28 @@ describe("user query", () => {
     await prisma.user.create({
       data: { id: testUser1Id, name: "test-user-1" },
     });
-
+    loggedInUser.id = testUser1Id;
+    await createWorkspace();
     const { data } = await queryUser(testUser1Id);
 
     expect(data.user.name).toEqual("test-user-1");
+  });
+
+  it("throws if the user does not access to the user", async () => {
+    await prisma.user.create({
+      data: { id: testUser1Id, name: "test-user-1" },
+    });
+    loggedInUser.id = testUser1Id;
+    await expect(queryUser(testUser1Id)).rejects.toThrow(
+      "User not authorized to access user"
+    );
   });
 
   it("throws if the provided id doesn't match any user", async () => {
     const idOfAnUserThaDoesNotExist = uuidV4();
 
     await expect(() => queryUser(idOfAnUserThaDoesNotExist)).rejects.toThrow(
-      `Couldn't find an user with id: "${idOfAnUserThaDoesNotExist}"`
+      `User not authorized to access user`
     );
   });
 });
@@ -251,7 +385,7 @@ describe("updateUser mutation", () => {
     await prisma.user.create({
       data: { id: testUser1Id, name: "test-user-1" },
     });
-
+    user.id = testUser1Id;
     const { data } = await updateUser({
       id: testUser1Id,
       name: "New name",
@@ -264,13 +398,26 @@ describe("updateUser mutation", () => {
     await prisma.user.create({
       data: { id: testUser1Id, name: "test-user-1" },
     });
-
+    user.id = testUser1Id;
     const { data } = await updateUser({
       id: testUser1Id,
       name: "New image",
     });
 
     expect(data?.updateUser.name).toEqual("New image");
+  });
+
+  it("throws if a user tries to update another user", async () => {
+    await prisma.user.create({
+      data: { id: testUser1Id, name: "test-user-1" },
+    });
+    user.id = testUser2Id;
+    await expect(() =>
+      updateUser({
+        id: testUser1Id,
+        name: "New image",
+      })
+    ).rejects.toThrow("User not authorized to access user");
   });
 
   it("throws if the membership to update doesn't exist", async () => {
@@ -286,30 +433,6 @@ describe("updateUser mutation", () => {
 });
 
 describe("nested resolvers", () => {
-  const createWorkspace = async (
-    data?: Partial<MutationCreateWorkspaceArgs["data"]>
-  ) => {
-    return await client.mutate<{
-      createWorkspace: Pick<
-        Workspace,
-        "id" | "name" | "slug" | "plan" | "type"
-      >;
-    }>({
-      mutation: gql`
-        mutation createWorkspace($data: WorkspaceCreateInput!) {
-          createWorkspace(data: $data) {
-            id
-            name
-            slug
-            plan
-            type
-          }
-        }
-      `,
-      variables: { data: { ...data, name: data?.name ?? "test" } },
-    });
-  };
-
   it("can return user's memberships", async () => {
     await prisma.user.create({
       data: { id: testUser1Id, name: "test-user-1" },

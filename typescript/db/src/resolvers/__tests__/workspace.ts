@@ -9,7 +9,7 @@ import {
   Workspace,
   WorkspaceType,
 } from "@labelflow/graphql-types";
-import { prisma } from "../../repository";
+import { prisma } from "../../repository/prisma-client";
 import { client, user } from "../../dev/apollo-client";
 import { WorkspacePlan } from ".prisma/client";
 
@@ -195,6 +195,29 @@ describe("workspaces query", () => {
     ]);
   });
 
+  it("returns an empty array if the user does not have any workspace", async () => {
+    await createWorkspace({ name: "test1" });
+    await createWorkspace({ name: "test2" });
+    await createWorkspace({ name: "test3" });
+    await createWorkspace({ name: "test4" });
+    user.id = testUser2Id;
+    const { data } = await client.query<{
+      workspaces: Pick<Workspace, "id" | "name">[];
+    }>({
+      query: gql`
+        {
+          workspaces {
+            id
+            name
+          }
+        }
+      `,
+      fetchPolicy: "no-cache",
+    });
+
+    expect(data.workspaces.map((workspace) => workspace.name)).toEqual([]);
+  });
+
   it("returns workspaces with the Online type", async () => {
     await createWorkspace({ name: "test1" });
     await createWorkspace({ name: "test2" });
@@ -331,8 +354,48 @@ describe("workspace query", () => {
         fetchPolicy: "no-cache",
       })
     ).rejects.toThrow(
-      `Couldn't find a workspace with id: "${idCorrespondingToNoWorkspace}"`
+      `Couldn't find workspace from input "{"id":"${idCorrespondingToNoWorkspace}"}"`
     );
+  });
+
+  it("fails if user is not logged in", async () => {
+    const id = (await createWorkspace()).data?.createWorkspace.id;
+    user.id = undefined;
+
+    await expect(() =>
+      client.query({
+        query: gql`
+          query workspace($id: ID!) {
+            workspace(where: { id: $id }) {
+              id
+              name
+            }
+          }
+        `,
+        variables: { id },
+        fetchPolicy: "no-cache",
+      })
+    ).rejects.toThrow(`User not authenticated`);
+  });
+
+  it("fails if user does not have access to workspace", async () => {
+    const id = (await createWorkspace()).data?.createWorkspace.id;
+    user.id = testUser2Id;
+
+    await expect(() =>
+      client.query({
+        query: gql`
+          query workspace($id: ID!) {
+            workspace(where: { id: $id }) {
+              id
+              name
+            }
+          }
+        `,
+        variables: { id },
+        fetchPolicy: "no-cache",
+      })
+    ).rejects.toThrow(`User not authorized to access workspace`);
   });
 
   it("returns the workspace corresponding to the id", async () => {
@@ -398,6 +461,28 @@ describe("updatedWorkspace mutation", () => {
     });
 
     expect(data?.updateWorkspace.name).toEqual("new name");
+  });
+
+  it("fails if the user does not have access to the workspace", async () => {
+    const id = (await createWorkspace())?.data?.createWorkspace.id;
+    user.id = testUser2Id;
+
+    await expect(
+      client.mutate<{
+        updateWorkspace: Pick<Workspace, "id" | "name">;
+      }>({
+        mutation: gql`
+          mutation updateWorkspace($id: ID!, $data: WorkspaceUpdateInput!) {
+            updateWorkspace(where: { id: $id }, data: $data) {
+              id
+              name
+            }
+          }
+        `,
+        variables: { id, data: { name: "new name" } },
+        fetchPolicy: "no-cache",
+      })
+    ).rejects.toThrow("User not authorized to access workspace");
   });
 
   it("changes the slug is the name of the workspace is changed", async () => {
