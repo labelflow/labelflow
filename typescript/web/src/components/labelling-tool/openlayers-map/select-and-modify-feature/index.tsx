@@ -70,6 +70,7 @@ export const interactionEnd = async (
     } catch (error) {
       toast({
         title: "Error updating label",
+        // @ts-ignore
         description: error?.message,
         isClosable: true,
         status: "error",
