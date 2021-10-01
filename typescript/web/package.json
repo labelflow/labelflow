@@ -1,6 +1,6 @@
 {
   "name": "@labelflow/web",
-  "version": "1.0.16",
+  "version": "1.0.17",
   "scripts": {
     "dev": "next",
     "build": "cd ../db && yarn generate && cd ../web && next build",
