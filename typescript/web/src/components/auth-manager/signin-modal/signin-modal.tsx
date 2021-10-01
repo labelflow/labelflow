@@ -107,7 +107,7 @@ export const SigninModal = ({
       <ModalContent height="auto">
         <ModalBody
           display="flex"
-          p={{ base: "4", lg: "6" }}
+          p={{ base: "6", lg: "10" }}
           flexDirection="column"
         >
           <SimpleGrid columns={{ base: 1, lg: 2 }} spacing="14">
@@ -117,7 +117,7 @@ export const SigninModal = ({
               alignItems="start"
             >
               <Logo
-                h="6"
+                h="9"
                 mb={{ base: "16", lg: "10" }}
                 iconColor="brand.600"
                 mx={{ base: "auto", lg: "unset" }}
