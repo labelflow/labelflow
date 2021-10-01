@@ -51,7 +51,6 @@ export const repository: Repository = {
         where,
       })) as unknown as Image;
     },
-
     list: async (whereWithUser, skip = undefined, first = undefined) => {
       const { user, ...where } = whereWithUser ?? { user: undefined };
       return await prisma.image.findMany(
@@ -67,6 +66,10 @@ export const repository: Repository = {
           take: first,
         })
       );
+    },
+    delete: async (where, user) => {
+      await checkUserAccessToImage({ where, user });
+      await prisma.image.delete({ where });
     },
   },
   label: {
