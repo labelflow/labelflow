@@ -637,7 +637,7 @@ export enum WorkspacePlan {
 }
 
 export type WorkspaceSlugAndDatasetSlug = {
-  datasetSlug: Scalars['String'];
+  slug: Scalars['String'];
   workspaceSlug: Scalars['String'];
 };
 

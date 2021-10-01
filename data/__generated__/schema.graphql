@@ -385,7 +385,7 @@ enum WorkspacePlan {
 }
 
 input WorkspaceSlugAndDatasetSlug {
-  datasetSlug: String!
+  slug: String!
   workspaceSlug: String!
 }
 

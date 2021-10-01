@@ -23,7 +23,7 @@ import { createCreateLabelClassAndCreateLabelEffect } from "../../../connectors/
 
 const getLabelClassesOfDatasetQuery = gql`
   query getLabelClassesOfDataset($slug: String!) {
-    dataset(where: { slugs: { datasetSlug: $slug, workspaceSlug: "local" } }) {
+    dataset(where: { slugs: { slug: $slug, workspaceSlug: "local" } }) {
       id
       labelClasses {
         id

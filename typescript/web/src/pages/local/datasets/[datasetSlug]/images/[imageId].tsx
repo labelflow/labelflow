@@ -57,7 +57,7 @@ const imageQuery = gql`
 
 const getDatasetQuery = gql`
   query getDataset($slug: String!) {
-    dataset(where: { slugs: { datasetSlug: $slug, workspaceSlug: "local" } }) {
+    dataset(where: { slugs: { slug: $slug, workspaceSlug: "local" } }) {
       id
       name
     }

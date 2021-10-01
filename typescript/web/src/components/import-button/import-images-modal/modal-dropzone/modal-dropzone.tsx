@@ -73,7 +73,7 @@ const getImageUploadTargetMutation = gql`
 
 const getDataset = gql`
   query getDataset($slug: String!) {
-    dataset(where: { slugs: { datasetSlug: $slug, workspaceSlug: "local" } }) {
+    dataset(where: { slugs: { slug: $slug, workspaceSlug: "local" } }) {
       id
     }
   }

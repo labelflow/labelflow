@@ -54,7 +54,7 @@ type ClassItemProps = {
 
 export const datasetLabelClassesQuery = gql`
   query getDatasetLabelClasses($slug: String!) {
-    dataset(where: { slugs: { datasetSlug: $slug, workspaceSlug: "local" } }) {
+    dataset(where: { slugs: { slug: $slug, workspaceSlug: "local" } }) {
       id
       name
       labelClasses {
