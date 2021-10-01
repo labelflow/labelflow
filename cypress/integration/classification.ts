@@ -144,6 +144,7 @@ describe("Classification", () => {
     // Create a classification tag with the existing class "rocket"
     cy.wait(1000);
     cy.get("main").rightclick(475, 100);
+    cy.wait(1000);
     cy.get('[aria-label="Class selection popover"]')
       .contains("Rocket")
       .closest('[role="option"]')
@@ -153,6 +154,7 @@ describe("Classification", () => {
     // Create a classification tag with the existing class "rocket"
     cy.wait(1000);
     cy.get("main").rightclick(475, 100);
+    cy.wait(1000);
     cy.get('[aria-label="Class selection popover"]').within(() => {
       cy.get('[name="class-selection-search"]').type("My new class{enter}");
     });
@@ -207,6 +209,7 @@ describe("Classification", () => {
       "be.visible"
     );
     cy.get('[aria-label="Classification tag: My new class"]').rightclick();
+    cy.wait(1000);
     cy.get("body").type("1");
     cy.get('[aria-label="Classification tag: My new class"]').should(
       "not.exist"
