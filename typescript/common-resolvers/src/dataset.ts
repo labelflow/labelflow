@@ -270,12 +270,10 @@ const deleteDataset = async (
 ): Promise<DbDataset> => {
   const datasetToDelete = await getDataset(args.where, repository, user);
 
-  const imagesOfDataset = await repository.image.list(
-    {
-      datasetId: args.where.id,
-    },
-    user
-  );
+  const imagesOfDataset = await repository.image.list({
+    datasetId: args.where.id,
+    user,
+  });
   await Promise.all(
     imagesOfDataset.map(
       async (image) => await repository.upload.delete(image.url)
