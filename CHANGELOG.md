@@ -1,6 +1,13 @@
 # Changelog
 
-## [1.0.16](https://github.com/labelflow/labelflow/compare/1.0.15...1.0.16)
+## [1.0.18](https://github.com/labelflow/labelflow/compare/1.0.17...1.0.18)
+
+- Padding and logo size updated in sign-in modal [`#483`](https://github.com/labelflow/labelflow/pull/483)
+## [1.0.17](https://github.com/labelflow/labelflow/compare/1.0.16...1.0.17) - 2021-10-01
+
+- Add access control to dataset [`#454`](https://github.com/labelflow/labelflow/pull/454)
+- Enhancement/remove manual deploy of prs [`#479`](https://github.com/labelflow/labelflow/pull/479)
+## [1.0.16](https://github.com/labelflow/labelflow/compare/1.0.15...1.0.16) - 2021-10-01
 
 - Bug/#469 cannot rename dataset [`#476`](https://github.com/labelflow/labelflow/pull/476)
 - Display blog post details in social media previews [`#478`](https://github.com/labelflow/labelflow/pull/478)
