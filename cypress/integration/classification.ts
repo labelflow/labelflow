@@ -151,7 +151,7 @@ describe("Classification", () => {
       .should("have.attr", "aria-current", "false")
       .click();
 
-    // Create a classification tag with the existing class "rocket"
+    // Create a classification tag by creating a new class "My new class"
     cy.wait(1000);
     cy.get("main").rightclick(100, 100);
     cy.wait(1000);
