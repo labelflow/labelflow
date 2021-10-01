@@ -97,6 +97,47 @@ describe("Golden path", () => {
     cy.get("main").click(450, 160);
     cy.get("main").click(500, 260);
 
+    // Switch to classification tool
+    cy.get('[aria-label="loading indicator"]').should("not.exist");
+    cy.get('[aria-label="Change Drawing tool"]').should("exist").click();
+    cy.get('[aria-label="Classification tool"]').click();
+
+    // Create a classification tag by creating a new class "My new class"
+    cy.wait(420);
+    cy.get("main").rightclick(475, 100);
+    cy.wait(420);
+    cy.get('[aria-label="Class selection popover"]').within(() => {
+      cy.get('[name="class-selection-search"]').click();
+      cy.wait(420);
+      cy.get('[name="class-selection-search"]').type("My new class{enter}");
+    });
+
+    // Change bounding box class, while in classification tool, by partially typing the class name
+    cy.wait(420);
+    cy.get("main").rightclick(475, 210);
+    cy.get('[aria-label="Class selection popover"]').within(() => {
+      cy.get('[name="class-selection-search"]').click();
+      cy.wait(420);
+      cy.get('[name="class-selection-search"]').type("My new cl{enter}");
+    });
+
+    // Change bounding box class back, while in classification tool, by right clicking to open context menu
+    cy.wait(420);
+    cy.get("main").rightclick(475, 210);
+    cy.wait(420);
+    cy.get("main").type("1");
+
+    // Remove classification label using dustbin button in option toolbar
+    cy.wait(420);
+    cy.get('[aria-label="Classification tag: My new class"]')
+      .should("be.visible")
+      .click();
+    cy.get('[aria-label="Delete selected label"]').click();
+    cy.get('[aria-label="Classification tag: My new class"]').should(
+      "not.exist"
+    );
+
+    // Move to selection tool
     cy.wait(420);
     cy.get('[aria-label="Selection tool"]').click();
 
