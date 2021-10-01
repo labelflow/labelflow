@@ -29,7 +29,20 @@ export default function Posts({
   return (
     <>
       <ServiceWorkerManagerBackground />
-      <Meta title={`LabelFlow | ${article?.title}`} />
+      <Meta
+        title={`LabelFlow | ${article?.title}`}
+        desc={article?.description}
+        images={
+          article?.image?.url !== null
+            ? [
+                {
+                  url: article.image.url,
+                  alt: "LabelFlow",
+                },
+              ]
+            : undefined
+        }
+      />
       <CookieBanner />
       <Box minH="640px">
         <NavBar />
