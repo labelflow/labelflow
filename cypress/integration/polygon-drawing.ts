@@ -148,7 +148,7 @@ describe("Polygon drawing", () => {
     cy.get("main").click(525, 240);
     cy.get("main").click(500, 200);
     cy.get("main").dblclick(500, 100);
-
+    cy.wait(1000);
     cy.get("main").rightclick(475, 100);
 
     cy.get('[aria-label="Class selection popover"]')
@@ -156,6 +156,7 @@ describe("Polygon drawing", () => {
       .closest('[role="option"]')
       .should("have.attr", "aria-current", "false")
       .click();
+    cy.wait(1000);
     cy.get("main").rightclick(475, 100);
     cy.get('[aria-label="Class selection popover"]')
       .contains("Rocket")
