@@ -30,7 +30,7 @@ export const serviceWorkerClient = new ApolloClient({
 
 export const distantDatabaseClient = new ApolloClient({
   link: new HttpLink({
-    uri: process.env.NEXT_PUBLIC_ENDPOINT,
+    uri: "/api/graphql",
     credentials: "same-origin",
   }),
   cache: new InMemoryCache({
