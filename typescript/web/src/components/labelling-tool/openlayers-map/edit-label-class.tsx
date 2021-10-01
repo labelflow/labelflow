@@ -34,7 +34,7 @@ const getLabelClassesOfDatasetQuery = gql`
   }
 `;
 
-const labelQuery = gql`
+const getLabelQuery = gql`
   query getLabel($id: ID!) {
     label(where: { id: $id }) {
       id
@@ -100,7 +100,7 @@ export const EditLabelClass = forwardRef<
     (state) => state.isContextMenuOpen
   );
   const selectedTool = useLabellingStore((state) => state.selectedTool);
-  const { data: selectedLabelData } = useQuery(labelQuery, {
+  const { data: selectedLabelData } = useQuery(getLabelQuery, {
     variables: { id: selectedLabelId },
     skip: selectedLabelId == null,
   });

@@ -6,7 +6,7 @@ import { Effect } from "..";
 import { getDatasetsQuery } from "../../../pages/local/datasets";
 import { datasetLabelClassesQuery } from "../../../components/dataset-class-list/class-item";
 
-const labelQuery = gql`
+const getLabelQuery = gql`
   query getLabel($id: ID!) {
     label(where: { id: $id }) {
       id
@@ -84,7 +84,7 @@ export const createCreateLabelClassAndUpdateLabelEffect = (
         label: { labelClass },
       },
     } = await client.query({
-      query: labelQuery,
+      query: getLabelQuery,
       variables: { id: selectedLabelId },
     });
 

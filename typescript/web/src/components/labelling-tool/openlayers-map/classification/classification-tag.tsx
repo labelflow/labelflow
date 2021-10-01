@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Tag, TagLabel, TagCloseButton } from "@chakra-ui/react";
 import { Label, LabelClass } from "@labelflow/graphql-types";
 import { ApolloClient } from "@apollo/client";
@@ -70,6 +70,13 @@ export const ClassificationTag = ({
     {},
     [id, selectedLabelId, setIsOpen]
   );
+
+  useEffect(() => {
+    // Close context menu if the tag becomes deselected
+    if (selectedLabelId !== id) {
+      setIsOpen(false);
+    }
+  }, [selectedLabelId]);
 
   return (
     <ClassSelectionPopover

@@ -3,7 +3,7 @@ import { gql, ApolloClient } from "@apollo/client";
 import { useLabellingStore } from "../../labelling-state";
 import { Effect } from "..";
 
-const labelQuery = gql`
+const getLabelQuery = gql`
   query getLabel($id: ID!) {
     label(where: { id: $id }) {
       id
@@ -41,10 +41,12 @@ export const createUpdateLabelClassOfLabelEffect = (
       data: {
         label: { labelClass },
       },
-    } = await client.query({
-      query: labelQuery,
-      variables: { id: selectedLabelId },
-    });
+    } = selectedLabelId
+      ? await client.query({
+          query: getLabelQuery,
+          variables: { id: selectedLabelId },
+        })
+      : { data: { label: { labelClass: null } } };
 
     const labelClassIdPrevious = labelClass?.id ?? null;
 
