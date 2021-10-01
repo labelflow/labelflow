@@ -204,7 +204,10 @@ const ImagesPage = () => {
                         onClick={(e) => {
                           e.preventDefault();
                           e.stopPropagation();
-                          deleteImage({ variables: { id } });
+                          deleteImage({
+                            variables: { id },
+                            refetchQueries: ["getDatasetData"],
+                          });
                         }}
                       />
                     </Flex>

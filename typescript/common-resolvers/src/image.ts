@@ -226,11 +226,22 @@ const deleteImage = async (
   args: MutationDeleteImageArgs,
   { repository, user }: Context
 ): Promise<DbImage> => {
+  const imageId = args.where.id;
+  const imageToDelete = await throwIfResolvesToNil(
+    "No image with such id",
+    repository.image.get
+  )({ id: imageId }, user);
   const labelsToDelete = await repository.label.list({
-    imageId: args.where.id,
+    imageId,
     user,
   });
-  console.log("LABELS", labelsToDelete);
+  await Promise.all(
+    labelsToDelete.map((label) =>
+      repository.label.delete({ id: label.id }, user)
+    )
+  );
+  await repository.image.delete({ id: imageId }, user);
+  return imageToDelete;
 };
 
 const imagesAggregates = (parent: any) => {
