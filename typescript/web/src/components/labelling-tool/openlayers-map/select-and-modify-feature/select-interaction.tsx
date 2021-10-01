@@ -68,6 +68,14 @@ export const SelectInteraction = ({
     },
     {},
     [sourceVectorLabelsRef, setIsContextMenuOpen, setContextMenuLocation, image]
+  useHotkeys(
+    keymap.deselect.key,
+    () => {
+      useLabellingStore.getState().setIsContextMenuOpen(false);
+      useLabellingStore.getState().setSelectedLabelId(null);
+    },
+    {},
+    []
   );
 
   const getClosestFeature = (e: MapBrowserEvent<UIEvent>) => {

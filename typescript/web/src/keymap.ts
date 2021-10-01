@@ -28,6 +28,11 @@ export const keymap: Keymap = {
     description: "Change class of currently selected label",
     category: "Actions",
   },
+  deselect: {
+    key: "d",
+    description: "Clear selection",
+    category: "Actions",
+  },
   deleteLabel: {
     key: "del,delete,backspace",
     description: "Delete selected label",
@@ -71,6 +76,6 @@ export const keymap: Keymap = {
   enterFullScreen: {
     key: "f",
     description: "Enter Full Screen",
-    category: "Actions",
+    category: "View",
   },
 };
