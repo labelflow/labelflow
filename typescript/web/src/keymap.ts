@@ -78,4 +78,14 @@ export const keymap: Keymap = {
     description: "Enter Full Screen",
     category: "View",
   },
+  zoomIn: {
+    key: "+,=",
+    description: "Zoom in",
+    category: "View",
+  },
+  zoomOut: {
+    key: "-",
+    description: "Zoom out",
+    category: "View",
+  },
 };
