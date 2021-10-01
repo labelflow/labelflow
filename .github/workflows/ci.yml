@@ -209,7 +209,8 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           # 👇 Chromatic projectToken, refer to the manage page to obtain it.
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
-
+          
+  # # Code to deploy to vercel with a github action (instead of automatically using vercel github integration)
   # deploy-webapp-pr:
   #   name: Deploy webapp PR branch
   #   if: "! contains( github.ref, 'main')"
@@ -336,6 +337,7 @@ jobs:
           team: "labelflow"
           appdir: "strapi"
 
+  # # Code to deploy to vercel with a github action (instead of automatically using vercel github integration)
   # deploy-webapp-main:
   #   name: Deploy webapp to production
   #   if: contains( github.ref, 'main')
