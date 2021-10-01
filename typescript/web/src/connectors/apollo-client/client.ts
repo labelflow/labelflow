@@ -54,37 +54,3 @@ export const distantDatabaseClient = new ApolloClient({
     },
   }),
 });
-
-export const client = new ApolloClient({
-  link: process.env.NEXT_PUBLIC_ENDPOINT
-    ? // Remote endpoint set: use this remote endpoint
-      new HttpLink({
-        uri: process.env.NEXT_PUBLIC_ENDPOINT,
-        credentials: "same-origin",
-      })
-    : // No remote endpoint set: use local service worker
-      concat(
-        awaitServiceWorkerLink,
-        new HttpLink({ uri: "/api/worker/graphql", credentials: "same-origin" })
-      ),
-  cache: new InMemoryCache({
-    typePolicies: {
-      Label: {
-        fields: {
-          geometry: {
-            // Short for options.mergeObjects(existing, incoming), see https://www.apollographql.com/docs/react/caching/cache-field-behavior/#merging-non-normalized-objects
-            merge: true,
-          },
-        },
-      },
-      Dataset: {
-        fields: {
-          labelClasses: {
-            // Short for keeping only the incoming data, see https://www.apollographql.com/docs/react/caching/cache-field-behavior/#merging-non-normalized-objects
-            merge: false,
-          },
-        },
-      },
-    },
-  }),
-});
