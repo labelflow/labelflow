@@ -2,11 +2,13 @@ import React, { useState } from "react";
 import { Tag, TagLabel, TagCloseButton } from "@chakra-ui/react";
 import { Label, LabelClass } from "@labelflow/graphql-types";
 import { ApolloClient } from "@apollo/client";
+import { useHotkeys } from "react-hotkeys-hook";
 
 import { createDeleteLabelEffect } from "../../../../connectors/undo-store/effects/delete-label";
 import { ClassSelectionPopover } from "../../../class-selection-popover";
 import { noneClassColor } from "../../../../utils/class-color-generator";
 import { useUndoStore } from "../../../../connectors/undo-store";
+import { keymap } from "../../../../keymap";
 
 // The class selection menu doesn't need all the attributes of the label class
 export type LabelClassItem = Omit<LabelClass, "dataset">;
@@ -40,6 +42,17 @@ export const ClassificationTag = ({
     }
   };
   const close = () => setIsOpen(false);
+
+  useHotkeys(
+    keymap.openLabelClassSelectionPopover.key,
+    () => {
+      if (id === selectedLabelId) {
+        setIsOpen(true);
+      }
+    },
+    {},
+    [id, selectedLabelId, setIsOpen]
+  );
 
   return (
     <ClassSelectionPopover
