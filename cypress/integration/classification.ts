@@ -142,9 +142,9 @@ describe("Classification", () => {
     cy.get('[aria-label="Classification tool"]').click();
 
     // Create a classification tag with the existing class "rocket"
-    cy.wait(1000);
+    cy.wait(420);
     cy.get("main").rightclick(475, 100);
-    cy.wait(1000);
+    cy.wait(420);
     cy.get('[aria-label="Class selection popover"]')
       .contains("Rocket")
       .closest('[role="option"]')
@@ -152,17 +152,17 @@ describe("Classification", () => {
       .click();
 
     // Create a classification tag by creating a new class "My new class"
-    cy.wait(1000);
+    cy.wait(420);
     cy.get("main").rightclick(100, 100);
-    cy.wait(1000);
+    cy.wait(420);
     cy.get('[aria-label="Class selection popover"]').within(() => {
       cy.get('[name="class-selection-search"]').click();
-      cy.wait(1000);
+      cy.wait(420);
       cy.get('[name="class-selection-search"]').type("My new class{enter}");
     });
 
     // Remove label using dustbin button in option toolbar
-    cy.wait(1000);
+    cy.wait(420);
     cy.get('[aria-label="Classification tag: My new class"]').should(
       "be.visible"
     );
@@ -172,7 +172,7 @@ describe("Classification", () => {
     );
 
     // Remove label by clicking close button of tag
-    cy.wait(1000);
+    cy.wait(420);
     cy.get('[aria-label="Classification tag: Rocket"]').should("be.visible");
     cy.get('[aria-label="Classification tag: Rocket"]')
       .get('[aria-label="close"]')
@@ -180,7 +180,7 @@ describe("Classification", () => {
     cy.get('[aria-label="Classification tag: Rocket"]').should("not.exist");
 
     // Add a label with the add menu
-    cy.wait(1000);
+    cy.wait(420);
     cy.get('[aria-label="Classification tag: Rocket"]').should("not.exist");
     cy.get('[aria-label="Add a label"]').click();
     cy.get('[aria-label="Class addition menu popover"]')
@@ -191,7 +191,7 @@ describe("Classification", () => {
     cy.get('[aria-label="Classification tag: Rocket"]').should("be.visible");
 
     // Add a label with key shortcut
-    cy.wait(1000);
+    cy.wait(420);
     cy.get('[aria-label="Classification tag: My new class"]').should(
       "not.exist"
     );
@@ -202,29 +202,69 @@ describe("Classification", () => {
     );
 
     // Switch to selection mode
-    cy.wait(1000);
+    cy.wait(420);
     cy.get("body").type("v");
 
     // Edit a label to another class of an existing label, should merge
-    cy.wait(1000);
+    cy.wait(420);
     cy.get('[aria-label="Classification tag: My new class"]').should(
       "be.visible"
     );
     cy.get('[aria-label="Classification tag: My new class"]').rightclick();
-    cy.wait(1000);
+    cy.wait(420);
     cy.get("body").type("1");
     cy.get('[aria-label="Classification tag: My new class"]').should(
       "not.exist"
     );
 
     // Switch to classification mode
-    cy.wait(1000);
+    cy.wait(420);
     cy.get("body").type("k");
 
     // Remove last label with keyboard shortcut of addition
-    cy.wait(1000);
+    cy.wait(420);
     cy.get('[aria-label="Classification tag: Rocket"]').should("be.visible");
     cy.get("body").type("1");
     cy.get('[aria-label="Classification tag: Rocket"]').should("not.exist");
+
+    // Open the context menu with "C"
+    cy.wait(420);
+    cy.get("body").type("c");
+
+    // Apply class by partially typing in the context menu and pressing enter
+    cy.wait(420);
+    cy.get('[aria-label="Classification tag:  My new class"]').should(
+      "not.exist"
+    );
+    cy.get("body").type("c");
+    cy.get("body").type("/");
+    cy.get("body").type("My new{enter}");
+
+    // Press "D" to deselect
+    cy.wait(420);
+    cy.get("body").type("d");
+    cy.get('[aria-label="Classification tag:  My new class"]').should(
+      "be.visible"
+    );
+
+    // Open the context menu with "C"
+    cy.wait(420);
+    cy.get("body").type("c");
+
+    // Remove class by partially typing in the context menu and pressing enter
+    cy.wait(420);
+    cy.get('[aria-label="Classification tag:  My new class"]').should(
+      "be.visible"
+    );
+    cy.get("body").type("c");
+    cy.get("body").type("/");
+    cy.get("body").type("My new{enter}");
+
+    // Press "D" to deselect
+    cy.wait(420);
+    cy.get("body").type("d");
+    cy.get('[aria-label="Classification tag:  My new class"]').should(
+      "not.exist"
+    );
   });
 });

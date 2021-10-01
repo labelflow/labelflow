@@ -20,15 +20,15 @@ describe("Golden path", () => {
     cy.contains("Create new dataset...").click();
     cy.get("input").type("cypress dataset");
 
-    cy.wait(1000);
+    cy.wait(420);
     cy.contains("Start Labelling").click();
 
-    cy.wait(1000);
+    cy.wait(420);
     cy.contains("cypress dataset").click();
 
     cy.contains("You don't have any images.").should("be.visible");
 
-    cy.wait(1000);
+    cy.wait(420);
     cy.get("header").within(() => {
       cy.contains("Add images").click();
     });
@@ -37,11 +37,11 @@ describe("Golden path", () => {
       delay: 0,
     });
 
-    cy.wait(1000);
+    cy.wait(420);
     cy.contains("Start Import").click();
     cy.get(`[aria-label="Close"]`).click();
 
-    cy.wait(1000);
+    cy.wait(420);
     cy.get("main")
       .contains(
         imageSampleCollection[0]
@@ -60,17 +60,17 @@ describe("Golden path", () => {
     });
     cy.get('[aria-label="loading indicator"]').should("not.exist");
 
-    cy.wait(1000);
+    cy.wait(420);
     cy.get('[aria-label="Drawing box tool"]').click();
     cy.get("main").click(450, 100);
     cy.get("main").click(500, 150);
 
-    cy.wait(1000);
+    cy.wait(420);
     cy.url().should("include", "selected-label-id");
     cy.get("body").type("{del}");
     cy.url().should("not.include", "selected-label-id");
 
-    cy.wait(1000);
+    cy.wait(420);
     cy.get('[aria-label="Open class selection popover"]').click();
     cy.get('[aria-label="Class selection menu popover"]').within(() => {
       cy.get('[name="class-selection-search"]').click();
@@ -78,48 +78,48 @@ describe("Golden path", () => {
     });
     cy.focused().type("A new class{enter}");
 
-    cy.wait(1000);
+    cy.wait(420);
     cy.get('[aria-label="Open class selection popover"]').click();
     cy.get('[aria-label="Class selection menu popover"]')
       .contains("A new class")
       .closest('[role="option"]')
       .should("have.attr", "aria-current", "true");
 
-    cy.wait(1000);
+    cy.wait(420);
     cy.get("main").type("{esc}");
 
-    cy.wait(1000);
+    cy.wait(420);
     cy.get('[aria-label="Class selection menu popover"]').should(
       "not.be.visible"
     );
 
-    cy.wait(1000);
+    cy.wait(420);
     cy.get("main").click(450, 160);
     cy.get("main").click(500, 260);
 
-    cy.wait(1000);
+    cy.wait(420);
     cy.get('[aria-label="Selection tool"]').click();
 
-    cy.wait(1000);
+    cy.wait(420);
     cy.get("main").rightclick(475, 200);
     cy.get('[aria-label="Class selection popover"]').within(() => {
       cy.get('[name="class-selection-search"]').type("My new class{enter}");
     });
 
-    cy.wait(1000);
+    cy.wait(420);
     cy.get('[aria-label="Next image"]').click();
 
-    cy.wait(1000);
+    cy.wait(420);
     cy.get('[aria-label="Undo tool"]').should("be.disabled");
     cy.url().should("not.include", "selected-label-id");
 
-    cy.wait(1000);
+    cy.wait(420);
     cy.get("main nav").scrollTo("right");
     cy.get("main nav").within(() => {
       cy.contains("8").closest("a").click();
     });
 
-    cy.wait(1000);
+    cy.wait(420);
     cy.get('input[name="current-image"]').should("have.value", "8");
     cy.get('input[name="current-image"]').type("7{enter}");
 
@@ -132,13 +132,13 @@ describe("Golden path", () => {
         .split("https://images.unsplash.com/")[1]
     ).should("exist");
 
-    cy.wait(1000);
+    cy.wait(420);
     cy.get('[aria-label="Export"]').click();
     cy.contains("Your dataset contains 8 images and 1 labels").should(
       "be.visible"
     );
 
-    cy.wait(1000);
+    cy.wait(420);
     cy.contains("Export to COCO").should("exist").click();
     cy.contains("Export Options").should("be.visible");
   });

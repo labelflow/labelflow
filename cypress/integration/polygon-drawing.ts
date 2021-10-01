@@ -117,7 +117,7 @@ describe("Polygon drawing", () => {
     cy.get('[aria-label="Drawing polygon tool"]').should("not.exist");
     cy.get('[aria-label="Drawing box tool"]').should("exist").click();
 
-    cy.wait(1000);
+    cy.wait(420);
     cy.get('[aria-label="Change Drawing tool"]').click();
     cy.get('[aria-label="Bounding box tool"]').should(
       "have.attr",
@@ -125,7 +125,7 @@ describe("Polygon drawing", () => {
       "true"
     );
 
-    cy.wait(1000);
+    cy.wait(420);
     cy.get('[aria-label="Polygon tool"]')
       .should("have.attr", "aria-checked", "false")
       .click();
@@ -143,7 +143,7 @@ describe("Polygon drawing", () => {
     cy.get('[aria-label="Change Drawing tool"]').should("exist").click();
     cy.get('[aria-label="Polygon tool"]').click();
 
-    cy.wait(1000);
+    cy.wait(420);
     cy.get("main").click(475, 75);
     cy.get("main").click(450, 100);
     cy.get("main").click(450, 200);
@@ -155,7 +155,7 @@ describe("Polygon drawing", () => {
     cy.get("main").click(500, 200);
     cy.get("main").dblclick(500, 100);
 
-    cy.wait(1000);
+    cy.wait(420);
     cy.get("main").rightclick(475, 100);
     cy.get('[aria-label="Class selection popover"]')
       .contains("Rocket")
@@ -163,7 +163,7 @@ describe("Polygon drawing", () => {
       .should("have.attr", "aria-current", "false")
       .click();
 
-    cy.wait(1000);
+    cy.wait(420);
     cy.get("main").rightclick(475, 100);
     cy.get('[aria-label="Class selection popover"]')
       .contains("Rocket")
