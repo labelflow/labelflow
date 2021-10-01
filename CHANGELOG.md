@@ -1,6 +1,9 @@
 # Changelog
 
-## [1.0.18](https://github.com/labelflow/labelflow/compare/1.0.17...1.0.18)
+## [1.0.19](https://github.com/labelflow/labelflow/compare/1.0.18...1.0.19)
+
+- Add Image classification [`#447`](https://github.com/labelflow/labelflow/pull/447)
+## [1.0.18](https://github.com/labelflow/labelflow/compare/1.0.17...1.0.18) - 2021-10-01
 
 - Padding and logo size updated in sign-in modal [`#483`](https://github.com/labelflow/labelflow/pull/483)
 ## [1.0.17](https://github.com/labelflow/labelflow/compare/1.0.16...1.0.17) - 2021-10-01
