@@ -277,6 +277,7 @@ type Mutation {
   createExample(data: ExampleCreateInput!): Example
   getUploadTarget(data: UploadTargetInput!): UploadTarget!
   createImage(data: ImageCreateInput!): Image
+  deleteImage(where: ImageWhereUniqueInput!): Image
   createLabel(data: LabelCreateInput!): Label
   updateLabel(where: LabelWhereUniqueInput!, data: LabelUpdateInput!): Label
   deleteLabel(where: LabelWhereUniqueInput!): Label
