@@ -57,7 +57,7 @@ const getMemoizedProperties = memoize(
     image: Pick<Image, "id" | "url" | "width" | "height"> | null | undefined
   ) => {
     if (image == null) return {};
-    const { url, width, height } = image;
+    const { url, width, height, id } = image;
     const size: Size = [width, height];
     const extent: Extent = [0, 0, width, height];
     const center = getCenter(extent);
@@ -71,7 +71,7 @@ const getMemoizedProperties = memoize(
     //       extent,
     //     });
 
-    return { url, width, height, size, extent, center, projection };
+    return { id, url, width, height, size, extent, center, projection };
   }
 );
 
@@ -113,12 +113,14 @@ export const OpenlayersMap = () => {
   const setView = useLabellingStore((state) => state.setView);
   const zoomFactor = useLabellingStore((state) => state.zoomFactor);
 
-  const image = useQuery<{
+  const { data: imageData, previousData: imageDataPrevious } = useQuery<{
     image: Pick<Image, "id" | "url" | "width" | "height">;
   }>(imageQuery, {
     variables: { id: imageId },
     skip: !imageId,
-  }).data?.image;
+  });
+
+  const image = imageData?.image ?? imageDataPrevious?.image;
 
   useImagePrefecthing();
 

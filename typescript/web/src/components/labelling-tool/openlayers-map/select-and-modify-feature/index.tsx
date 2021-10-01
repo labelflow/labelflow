@@ -8,7 +8,6 @@ import { ApolloClient, useApolloClient, gql, useQuery } from "@apollo/client";
 import { useToast, UseToastOptions } from "@chakra-ui/react";
 import { ModifyEvent } from "ol/interaction/Modify";
 import { TranslateEvent } from "ol/interaction/Translate";
-import { useRouter } from "next/router";
 import { LabelType } from "@labelflow/graphql-types";
 import { SelectInteraction } from "./select-interaction";
 import {
@@ -85,13 +84,14 @@ export const interactionEnd = async (
 export const SelectAndModifyFeature = (props: {
   sourceVectorLabelsRef: MutableRefObject<OlSourceVector<Geometry> | null>;
   map: OlMap | null;
-  image: { width?: number; height?: number };
+  image: { id?: string; width?: number; height?: number };
   setIsContextMenuOpen?: (state: boolean) => void;
   editClassOverlayRef?: MutableRefObject<HTMLDivElement | null>;
 }) => {
-  const { sourceVectorLabelsRef } = props;
-  const router = useRouter();
-  const imageId = router?.query?.imageId as string;
+  const {
+    sourceVectorLabelsRef,
+    image: { id: imageId },
+  } = props;
 
   // We need to have this state in order to store the selected feature in the addfeature listener below
   const [selectedFeature, setSelectedFeature] =
@@ -145,7 +145,13 @@ export const SelectAndModifyFeature = (props: {
           <resizeAndTranslateBox
             args={{ selectedFeature, pixelTolerance: 20 }}
             onInteractionEnd={async (e: ResizeAndTranslateEvent | null) => {
-              return await interactionEnd(e, perform, client, imageId, toast);
+              return await interactionEnd(
+                e,
+                perform,
+                client,
+                imageId as string,
+                toast
+              );
             }}
           />
         )}
@@ -156,7 +162,13 @@ export const SelectAndModifyFeature = (props: {
             <olInteractionTranslate
               args={{ features: new Collection([selectedFeature]) }}
               onTranslateend={async (e: TranslateEvent | null) => {
-                return await interactionEnd(e, perform, client, imageId, toast);
+                return await interactionEnd(
+                  e,
+                  perform,
+                  client,
+                  imageId as string,
+                  toast
+                );
               }}
             />
             <olInteractionModify
@@ -165,7 +177,13 @@ export const SelectAndModifyFeature = (props: {
                 pixelTolerance: 20,
               }}
               onModifyend={async (e: ModifyEvent | null) => {
-                return await interactionEnd(e, perform, client, imageId, toast);
+                return await interactionEnd(
+                  e,
+                  perform,
+                  client,
+                  imageId as string,
+                  toast
+                );
               }}
             />
             <olInteractionPointer
