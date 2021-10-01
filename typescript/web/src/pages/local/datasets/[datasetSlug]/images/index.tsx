@@ -1,5 +1,5 @@
 import React from "react";
-import { gql, useQuery } from "@apollo/client";
+import { gql, useQuery, useMutation } from "@apollo/client";
 import NextLink from "next/link";
 import {
   Box,
@@ -52,6 +52,14 @@ export const datasetDataQuery = gql`
   }
 `;
 
+const deleteImageQuery = gql`
+  mutation deleteImage($id: ID!) {
+    deleteImage(where: { id: $id }) {
+      id
+    }
+  }
+`;
+
 const ImagesPage = () => {
   const router = useRouter();
   const datasetSlug = router?.query?.datasetSlug as string;
@@ -68,6 +76,8 @@ const ImagesPage = () => {
     },
     skip: !datasetSlug,
   });
+
+  const [deleteImage] = useMutation(deleteImageQuery);
 
   const datasetName = datasetResult?.dataset.name;
 
@@ -194,6 +204,7 @@ const ImagesPage = () => {
                         onClick={(e) => {
                           e.preventDefault();
                           e.stopPropagation();
+                          deleteImage({ variables: { id } });
                         }}
                       />
                     </Flex>

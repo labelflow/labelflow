@@ -6,6 +6,7 @@ import type {
   MutationCreateImageArgs,
   QueryImageArgs,
   QueryImagesArgs,
+  MutationDeleteImageArgs,
 } from "@labelflow/graphql-types";
 import mime from "mime-types";
 import { probeImage } from "./utils/probe-image";
@@ -220,6 +221,18 @@ const createImage = async (
   return createdImage;
 };
 
+const deleteImage = async (
+  _: any,
+  args: MutationDeleteImageArgs,
+  { repository, user }: Context
+): Promise<DbImage> => {
+  const labelsToDelete = await repository.label.list({
+    imageId: args.where.id,
+    user,
+  });
+  console.log("LABELS", labelsToDelete);
+};
+
 const imagesAggregates = (parent: any) => {
   // Forward `parent` to chained resolvers if it exists
   return parent ?? {};
@@ -251,6 +264,7 @@ export default {
 
   Mutation: {
     createImage,
+    deleteImage,
   },
 
   Image: {
