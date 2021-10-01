@@ -153,9 +153,11 @@ describe("Classification", () => {
 
     // Create a classification tag with the existing class "rocket"
     cy.wait(1000);
-    cy.get("main").rightclick(475, 100);
+    cy.get("main").rightclick(100, 100);
     cy.wait(1000);
     cy.get('[aria-label="Class selection popover"]').within(() => {
+      cy.get('[name="class-selection-search"]').click();
+      cy.wait(1000);
       cy.get('[name="class-selection-search"]').type("My new class{enter}");
     });
 
