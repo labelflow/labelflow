@@ -10,7 +10,7 @@ import NextLink from "next/link";
 import { FooterHeading } from "./FooterHeading";
 
 export const LinkGrid = (props: SimpleGridProps) => (
-  <SimpleGrid columns={2} {...props}>
+  <SimpleGrid columns={3} {...props} fontSize={14}>
     <Box minW="130px">
       <FooterHeading mb="4">Product</FooterHeading>
       <Stack>
@@ -35,6 +35,20 @@ export const LinkGrid = (props: SimpleGridProps) => (
           <Link href="https://labelflow.gitbook.io/labelflow/">
             Documentation
           </Link>
+        </NextLink>
+      </Stack>
+    </Box>
+    <Box minW="150px">
+      <FooterHeading mb="4">Legal</FooterHeading>
+      <Stack>
+        <NextLink href="/privacy-policy">
+          <Link href="/privacy-policy">Privacy policy</Link>
+        </NextLink>
+        <NextLink href="/cookie-policy">
+          <Link href="/cookie-policy">Cookie policy</Link>
+        </NextLink>
+        <NextLink href="/terms-and-conditions">
+          <Link href="/terms-and-conditions">Terms & Conditions</Link>
         </NextLink>
       </Stack>
     </Box>
