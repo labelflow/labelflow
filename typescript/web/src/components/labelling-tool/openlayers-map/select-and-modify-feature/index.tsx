@@ -137,7 +137,7 @@ export const SelectAndModifyFeature = (props: {
   const toast = useToast();
   return (
     <>
-      <SelectInteraction {...props} />
+      <SelectInteraction key="SelectInteraction" {...props} />
 
       {selectedTool === Tools.SELECTION &&
         labelData?.label?.type === LabelType.Box && (
