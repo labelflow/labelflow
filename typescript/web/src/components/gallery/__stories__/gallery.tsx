@@ -44,6 +44,7 @@ Images.parameters = {
     query: {
       imageId: images[0].id,
       datasetSlug: "dataset-gallery",
+      workspaceSlug: "local",
     },
   },
 };

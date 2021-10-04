@@ -63,6 +63,7 @@ OneImage.parameters = {
     query: {
       imageId: images[0].id,
       datasetSlug: "dataset-labelling-one-image",
+      workspaceSlug: "local",
     },
   },
 };
@@ -80,6 +81,7 @@ ThreeImages.parameters = {
     query: {
       imageId: images[0].id,
       datasetSlug: "dataset-labelling-three-image",
+      workspaceSlug: "local",
     },
   },
 };
