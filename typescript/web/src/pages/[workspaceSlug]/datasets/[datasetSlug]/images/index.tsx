@@ -48,6 +48,15 @@ export const datasetDataQuery = gql`
         name
         url
       }
+      imagesAggregates {
+        totalCount
+      }
+      labelsAggregates {
+        totalCount
+      }
+      labelClassesAggregates {
+        totalCount
+      }
     }
   }
 `;
