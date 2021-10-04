@@ -49,6 +49,23 @@ declare let self: ServiceWorkerGlobalScope;
 // eslint-disable-next-line no-underscore-dangle
 self.__WB_DISABLE_DEV_LOGS = true;
 
+// Declare expiration plugins for caches
+const nextJsArtifactsExpirationPlugin = new ExpirationPlugin({
+  maxEntries: 10000,
+  maxAgeSeconds: 86400 * 7,
+  purgeOnQuotaError: true,
+});
+const googleFontsExpirationPlugin = new ExpirationPlugin({
+  maxEntries: 10,
+  maxAgeSeconds: 86400 * 365,
+  purgeOnQuotaError: true,
+});
+const staticAssetsExpirationPlugin = new ExpirationPlugin({
+  maxEntries: 1000,
+  maxAgeSeconds: 86400 * 7,
+  purgeOnQuotaError: true,
+});
+
 self.addEventListener("message", (event) => {
   // TO TEST THIS? Run this in your browser console:
   //     window.navigator.serviceWorker.controller.postMessage({command: 'log', message: 'hello world'})
@@ -76,6 +93,23 @@ self.addEventListener("message", (event) => {
 
   console.warn("Received unsupported message from window:");
   console.warn(event?.data);
+});
+
+// Clear service worker cache when it becomes active
+self.addEventListener("activate", (event) => {
+  if (event == null) {
+    nextJsArtifactsExpirationPlugin.deleteCacheAndMetadata();
+    googleFontsExpirationPlugin.deleteCacheAndMetadata();
+    staticAssetsExpirationPlugin.deleteCacheAndMetadata();
+    return;
+  }
+  event.waitUntil(
+    Promise.all([
+      nextJsArtifactsExpirationPlugin.deleteCacheAndMetadata(),
+      googleFontsExpirationPlugin.deleteCacheAndMetadata(),
+      staticAssetsExpirationPlugin.deleteCacheAndMetadata(),
+    ])
+  );
 });
 
 clientsClaim();
@@ -131,13 +165,7 @@ registerRoute(
   /\/_next\/static\/.*$/i,
   new StaleWhileRevalidate({
     cacheName: "next-js-artifacts",
-    plugins: [
-      new ExpirationPlugin({
-        maxEntries: 10000,
-        maxAgeSeconds: 86400 * 7,
-        purgeOnQuotaError: true,
-      }),
-    ],
+    plugins: [nextJsArtifactsExpirationPlugin],
   }),
   "GET"
 );
@@ -145,13 +173,7 @@ registerRoute(
   /^https:\/\/fonts\.(?:googleapis|gstatic)\.com\/.*/i,
   new CacheFirst({
     cacheName: "google-fonts",
-    plugins: [
-      new ExpirationPlugin({
-        maxEntries: 10,
-        maxAgeSeconds: 86400 * 365,
-        purgeOnQuotaError: true,
-      }),
-    ],
+    plugins: [googleFontsExpirationPlugin],
   }),
   "GET"
 );
@@ -160,13 +182,7 @@ registerRoute(
   /\/static\/.*$/i,
   new StaleWhileRevalidate({
     cacheName: "static-assets",
-    plugins: [
-      new ExpirationPlugin({
-        maxEntries: 1000,
-        maxAgeSeconds: 86400 * 7,
-        purgeOnQuotaError: true,
-      }),
-    ],
+    plugins: [staticAssetsExpirationPlugin],
   }),
   "GET"
 );
