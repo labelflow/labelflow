@@ -1,6 +1,10 @@
 # Changelog
 
-## [1.0.19](https://github.com/labelflow/labelflow/compare/1.0.18...1.0.19)
+## [1.0.20](https://github.com/labelflow/labelflow/compare/1.0.19...1.0.20)
+
+- Feature/split local workspace urls [`#472`](https://github.com/labelflow/labelflow/pull/472)
+- Add legal pages in footer and cookie banner [`#486`](https://github.com/labelflow/labelflow/pull/486)
+## [1.0.19](https://github.com/labelflow/labelflow/compare/1.0.18...1.0.19) - 2021-10-01
 
 - Add Image classification [`#447`](https://github.com/labelflow/labelflow/pull/447)
 ## [1.0.18](https://github.com/labelflow/labelflow/compare/1.0.17...1.0.18) - 2021-10-01
