@@ -29,13 +29,15 @@ const getLabelById = async (
 const labelClass = async (
   label: DbLabel,
   _args: any,
-  { repository }: Context
+  { repository, user }: Context
 ) => {
   if (!label?.labelClassId) {
     return null;
   }
 
-  return (await repository.labelClass.get({ id: label.labelClassId })) ?? null;
+  return (
+    (await repository.labelClass.get({ id: label.labelClassId }, user)) ?? null
+  );
 };
 
 const label = async (

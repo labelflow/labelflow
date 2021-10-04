@@ -22,8 +22,8 @@ import { createDeleteLabelEffect } from "../../../connectors/undo-store/effects/
 import { createCreateLabelClassAndCreateLabelEffect } from "../../../connectors/undo-store/effects/create-label-class-and-create-label";
 
 const getLabelClassesOfDatasetQuery = gql`
-  query getLabelClassesOfDataset($slug: String!) {
-    dataset(where: { slugs: { slug: $slug, workspaceSlug: "local" } }) {
+  query getLabelClassesOfDataset($slug: String!, $workspaceSlug: String!) {
+    dataset(where: { slugs: { slug: $slug, workspaceSlug: $workspaceSlug } }) {
       id
       labelClasses {
         id
@@ -83,11 +83,12 @@ export const EditLabelClass = forwardRef<
   const router = useRouter();
   const imageId = router?.query.imageId as string;
   const datasetSlug = router?.query.datasetSlug as string;
+  const workspaceSlug = router?.query.workspaceSlug as string;
 
   const client = useApolloClient();
   const { data } = useQuery(getLabelClassesOfDatasetQuery, {
-    variables: { slug: datasetSlug },
-    skip: !datasetSlug,
+    variables: { slug: datasetSlug, workspaceSlug },
+    skip: !datasetSlug || !workspaceSlug,
   });
   const datasetId = data?.dataset.id;
   const { perform } = useUndoStore();
@@ -123,6 +124,7 @@ export const EditLabelClass = forwardRef<
               selectedLabelId,
               datasetId,
               datasetSlug,
+              workspaceSlug,
             },
             { client }
           )
@@ -155,6 +157,7 @@ export const EditLabelClass = forwardRef<
               color: newClassColor,
               datasetId,
               datasetSlug,
+              workspaceSlug,
               imageId,
               previouslySelectedLabelClassId: selectedLabelClassId,
               geometry,
@@ -175,6 +178,7 @@ export const EditLabelClass = forwardRef<
       selectedTool,
       imageId,
       selectedLabelClassId,
+      workspaceSlug,
     ]
   );
 

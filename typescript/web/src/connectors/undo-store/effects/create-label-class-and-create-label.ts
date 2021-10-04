@@ -5,7 +5,7 @@ import { LabelType } from "@labelflow/graphql-types";
 import { useLabellingStore } from "../../labelling-state";
 
 import { Effect } from "..";
-import { getDatasetsQuery } from "../../../pages/local/datasets";
+import { getDatasetsQuery } from "../../../pages/[workspaceSlug]/datasets";
 import { datasetLabelClassesQuery } from "../../../components/dataset-class-list/class-item";
 import {
   addLabelToImageInCache,
@@ -65,6 +65,7 @@ export const createCreateLabelClassAndCreateLabelEffect = (
     datasetId,
     datasetSlug,
     imageId,
+    workspaceSlug,
     previouslySelectedLabelClassId,
     geometry,
     labelType,
@@ -73,6 +74,7 @@ export const createCreateLabelClassAndCreateLabelEffect = (
     color: string;
     datasetId: string;
     datasetSlug: string;
+    workspaceSlug: string;
     imageId: string;
     previouslySelectedLabelClassId: string | null;
     geometry: GeoJSONPolygon;
@@ -97,7 +99,10 @@ export const createCreateLabelClassAndCreateLabelEffect = (
       refetchQueries: [
         "getLabelClassesOfDataset",
         { query: getDatasetsQuery },
-        { query: datasetLabelClassesQuery, variables: { slug: datasetSlug } },
+        {
+          query: datasetLabelClassesQuery,
+          variables: { slug: datasetSlug, workspaceSlug },
+        },
       ],
     });
 
@@ -165,7 +170,10 @@ export const createCreateLabelClassAndCreateLabelEffect = (
       refetchQueries: [
         "getLabelClassesOfDataset",
         { query: getDatasetsQuery },
-        { query: datasetLabelClassesQuery, variables: { slug: datasetSlug } },
+        {
+          query: datasetLabelClassesQuery,
+          variables: { slug: datasetSlug, workspaceSlug },
+        },
       ],
     });
 
@@ -191,7 +199,10 @@ export const createCreateLabelClassAndCreateLabelEffect = (
       refetchQueries: [
         "getLabelClassesOfDataset",
         { query: getDatasetsQuery },
-        { query: datasetLabelClassesQuery, variables: { slug: datasetSlug } },
+        {
+          query: datasetLabelClassesQuery,
+          variables: { slug: datasetSlug, workspaceSlug },
+        },
       ],
     });
 

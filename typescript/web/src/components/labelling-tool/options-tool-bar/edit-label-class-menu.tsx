@@ -26,8 +26,8 @@ import { createDeleteLabelEffect } from "../../../connectors/undo-store/effects/
 import { createCreateLabelClassAndCreateLabelEffect } from "../../../connectors/undo-store/effects/create-label-class-and-create-label";
 
 const getLabelClassesOfDatasetQuery = gql`
-  query getLabelClassesOfDataset($slug: String!) {
-    dataset(where: { slugs: { slug: $slug, workspaceSlug: "local" } }) {
+  query getLabelClassesOfDataset($slug: String!, $workspaceSlug: String!) {
+    dataset(where: { slugs: { slug: $slug, workspaceSlug: $workspaceSlug } }) {
       id
       labelClasses {
         id
@@ -92,12 +92,15 @@ const getImageLabelsQuery = gql`
 export const EditLabelClassMenu = () => {
   const router = useRouter();
   const datasetSlug = router?.query.datasetSlug as string;
+
+  const workspaceSlug = router?.query.workspaceSlug as string;
   const imageId = router?.query.imageId as string;
+
   const client = useApolloClient();
   const [isOpen, setIsOpen] = useState(false);
 
   const { data } = useQuery(getLabelClassesOfDatasetQuery, {
-    variables: { slug: datasetSlug },
+    variables: { slug: datasetSlug, workspaceSlug },
   });
   const datasetId = data?.dataset.id;
   const { perform } = useUndoStore();
@@ -155,6 +158,7 @@ export const EditLabelClassMenu = () => {
               selectedLabelId,
               datasetId,
               datasetSlug,
+              workspaceSlug,
             },
             { client }
           )
@@ -191,6 +195,7 @@ export const EditLabelClassMenu = () => {
               previouslySelectedLabelClassId: selectedLabelClassId,
               geometry,
               labelType: LabelType.Classification,
+              workspaceSlug,
             },
             {
               setSelectedLabelId,
@@ -210,12 +215,13 @@ export const EditLabelClassMenu = () => {
             selectedLabelClassIdPrevious: selectedLabelClassId,
             datasetId,
             datasetSlug,
+            workspaceSlug,
           },
           { client }
         )
       );
     },
-    [labelClasses, selectedLabelId, datasetId, selectedTool]
+    [labelClasses, selectedLabelId, datasetId, selectedTool, workspaceSlug]
   );
 
   const handleSelectedClassChange = useCallback(

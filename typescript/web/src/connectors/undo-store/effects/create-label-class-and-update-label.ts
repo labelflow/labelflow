@@ -3,7 +3,7 @@ import { gql, ApolloClient } from "@apollo/client";
 import { useLabellingStore } from "../../labelling-state";
 
 import { Effect } from "..";
-import { getDatasetsQuery } from "../../../pages/local/datasets";
+import { getDatasetsQuery } from "../../../pages/[workspaceSlug]/datasets";
 import { datasetLabelClassesQuery } from "../../../components/dataset-class-list/class-item";
 
 const getLabelQuery = gql`
@@ -50,12 +50,14 @@ export const createCreateLabelClassAndUpdateLabelEffect = (
     color,
     datasetId,
     datasetSlug,
+    workspaceSlug,
     selectedLabelId,
   }: {
     name: string;
     color: string;
     datasetId: string;
     datasetSlug: string;
+    workspaceSlug: string;
     selectedLabelId: string | null;
   },
   {
@@ -75,7 +77,10 @@ export const createCreateLabelClassAndUpdateLabelEffect = (
       refetchQueries: [
         "getLabelClassesOfDataset",
         { query: getDatasetsQuery },
-        { query: datasetLabelClassesQuery, variables: { slug: datasetSlug } },
+        {
+          query: datasetLabelClassesQuery,
+          variables: { slug: datasetSlug, workspaceSlug },
+        },
       ],
     });
 
@@ -128,7 +133,10 @@ export const createCreateLabelClassAndUpdateLabelEffect = (
       refetchQueries: [
         "getLabelClassesOfDataset",
         { query: getDatasetsQuery },
-        { query: datasetLabelClassesQuery, variables: { slug: datasetSlug } },
+        {
+          query: datasetLabelClassesQuery,
+          variables: { slug: datasetSlug, workspaceSlug },
+        },
       ],
     });
 
@@ -151,7 +159,10 @@ export const createCreateLabelClassAndUpdateLabelEffect = (
       refetchQueries: [
         "getLabelClassesOfDataset",
         { query: getDatasetsQuery },
-        { query: datasetLabelClassesQuery, variables: { slug: datasetSlug } },
+        {
+          query: datasetLabelClassesQuery,
+          variables: { slug: datasetSlug, workspaceSlug },
+        },
       ],
     });
 

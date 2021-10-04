@@ -19,8 +19,8 @@ import { WelcomeManager } from "../../../../../components/welcome-manager";
 import { CookieBanner } from "../../../../../components/cookie-banner";
 
 const datasetNameQuery = gql`
-  query getDatasetName($slug: String!) {
-    dataset(where: { slugs: { slug: $slug, workspaceSlug: "local" } }) {
+  query getDatasetName($slug: String!, $workspaceSlug: String!) {
+    dataset(where: { slugs: { slug: $slug, workspaceSlug: $workspaceSlug } }) {
       id
       name
     }
@@ -30,6 +30,7 @@ const datasetNameQuery = gql`
 const DatasetClassesPage = () => {
   const router = useRouter();
   const datasetSlug = router?.query?.datasetSlug as string;
+  const workspaceSlug = router?.query?.workspaceSlug as string;
 
   const {
     data: datasetResult,
@@ -40,7 +41,9 @@ const DatasetClassesPage = () => {
   }>(datasetNameQuery, {
     variables: {
       slug: datasetSlug,
+      workspaceSlug,
     },
+    skip: !datasetSlug || !workspaceSlug,
   });
 
   const datasetName = datasetResult?.dataset.name;
@@ -71,10 +74,10 @@ const DatasetClassesPage = () => {
       <CookieBanner />
       <Layout
         breadcrumbs={[
-          <NextLink key={0} href="/local/datasets">
+          <NextLink key={0} href={`/${workspaceSlug}/datasets`}>
             <BreadcrumbLink>Datasets</BreadcrumbLink>
           </NextLink>,
-          <NextLink key={1} href={`/local/datasets/${datasetSlug}`}>
+          <NextLink key={1} href={`/${workspaceSlug}/datasets/${datasetSlug}`}>
             <BreadcrumbLink>
               {datasetName ?? <Skeleton>Dataset Name</Skeleton>}
             </BreadcrumbLink>
@@ -89,11 +92,18 @@ const DatasetClassesPage = () => {
           </>
         }
         tabBar={
-          <DatasetTabBar currentTab="classes" datasetSlug={datasetSlug} />
+          <DatasetTabBar
+            currentTab="classes"
+            datasetSlug={datasetSlug}
+            workspaceSlug={workspaceSlug}
+          />
         }
       >
         <Center>
-          <ClassesList datasetSlug={datasetSlug} />
+          <ClassesList
+            datasetSlug={datasetSlug}
+            workspaceSlug={workspaceSlug}
+          />
         </Center>
       </Layout>
     </>

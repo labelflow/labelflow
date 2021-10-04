@@ -49,7 +49,7 @@ const Template: Story = () => (
 export const NoInput = Template.bind({});
 NoInput.parameters = {
   nextRouter: {
-    query: { datasetId },
+    query: { datasetId, workspaceSlug: "local" },
   },
 };
 
@@ -57,7 +57,7 @@ export const NoImage = Template.bind({});
 NoImage.parameters = {
   mockImages: { datasetId, images: [] },
   nextRouter: {
-    query: { imageId: "a", datasetId },
+    query: { imageId: "a", datasetId, workspaceSlug: "local" },
   },
 };
 
@@ -65,7 +65,7 @@ export const NoImageNoId = Template.bind({});
 NoImageNoId.parameters = {
   mockImages: { datasetId, images: [] },
   nextRouter: {
-    query: { datasetId },
+    query: { datasetId, workspaceSlug: "local" },
   },
 };
 
@@ -80,6 +80,7 @@ OneImage.parameters = {
     query: {
       imageId: images[0].id,
       datasetSlug: "dataset-navigation-one-image",
+      workspaceSlug: "local",
     },
   },
 };
@@ -92,7 +93,11 @@ OneWrongImage.parameters = {
     images: images.slice(1, 2),
   },
   nextRouter: {
-    query: { imageId: "a", datasetSlug: "dataset-navigation-wrong-image" },
+    query: {
+      imageId: "a",
+      datasetSlug: "dataset-navigation-wrong-image",
+      workspaceSlug: "local",
+    },
   },
 };
 
@@ -103,6 +108,7 @@ Basic1.parameters = {
     query: {
       imageId: images[0].id,
       datasetSlug: "dataset-navigation-basic1",
+      workspaceSlug: "local",
     },
   },
 };
@@ -114,6 +120,7 @@ Basic2.parameters = {
     query: {
       imageId: images[1].id,
       datasetSlug: "dataset-navigation-basic2",
+      workspaceSlug: "local",
     },
   },
 };
@@ -125,6 +132,7 @@ Basic3.parameters = {
     query: {
       imageId: images[2].id,
       datasetSlug: "dataset-navigation-basic3",
+      workspaceSlug: "local",
     },
   },
 };
@@ -141,6 +149,7 @@ BasicWrongImage.parameters = {
     query: {
       imageId: "wrong-id",
       datasetSlug: "dataset-navigation-wrong-basic",
+      workspaceSlug: "local",
     },
   },
 };

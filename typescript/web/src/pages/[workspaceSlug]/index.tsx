@@ -12,8 +12,13 @@ const LocalDatasetsIndexPage = () => {
   const router = useRouter();
 
   useEffect(() => {
-    router.replace({ pathname: `/local/datasets`, query: router.query });
-  }, []);
+    if (router.isReady) {
+      router.replace({
+        pathname: `/${router.query.workspaceSlug}/datasets`,
+        query: router.query,
+      });
+    }
+  }, [router.isReady]);
 
   return (
     <>

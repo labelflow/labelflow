@@ -22,9 +22,10 @@ import {
 
 const getLabelClassesByDatasetId = async (
   datasetId: string,
-  repository: Repository
+  repository: Repository,
+  user?: { id: string }
 ) => {
-  return await repository.labelClass.list({ datasetId });
+  return await repository.labelClass.list({ datasetId, user });
 };
 
 const getDataset = async (
@@ -44,9 +45,9 @@ const getDataset = async (
 const searchDataset = async (
   _: any,
   args: QueryDatasetArgs,
-  { repository }: Context
+  { repository, user }: Context
 ): Promise<(DbDataset & { __typename: string }) | undefined> => {
-  const datasetFromRepository = await repository.dataset.get(args.where);
+  const datasetFromRepository = await repository.dataset.get(args.where, user);
   return datasetFromRepository != null
     ? { ...datasetFromRepository, __typename: "Dataset" }
     : undefined;
@@ -56,10 +57,10 @@ const searchDataset = async (
 const images = async (
   dataset: DbDataset,
   args: QueryImagesArgs,
-  { repository }: Context
+  { repository, user }: Context
 ) => {
   return await repository.image.list(
-    { datasetId: dataset.id },
+    { datasetId: dataset.id, user },
     args?.skip,
     args?.first
   );
@@ -68,17 +69,17 @@ const images = async (
 const labels = async (
   dataset: DbDataset,
   _args: any,
-  { repository }: Context
+  { repository, user }: Context
 ) => {
-  return await repository.label.list({ datasetId: dataset.id });
+  return await repository.label.list({ datasetId: dataset.id, user });
 };
 
 const labelClasses = async (
   dataset: DbDataset,
   _args: any,
-  { repository }: Context
+  { repository, user }: Context
 ) => {
-  return await getLabelClassesByDatasetId(dataset.id, repository);
+  return await getLabelClassesByDatasetId(dataset.id, repository, user);
 };
 
 const workspace = async (
@@ -189,7 +190,6 @@ const createDemoDataset = async (
       const imageEntity = await getImageEntityFromMutationArgs(
         {
           ...image,
-
           createdAt: add(now, { seconds: index }).toISOString(),
           name: image.url.match(/\/static\/img\/(.*?)$/)?.[1],
         },
@@ -198,7 +198,7 @@ const createDemoDataset = async (
         },
         req
       );
-      return await repository.image.add(imageEntity);
+      return await repository.image.add(imageEntity, user);
     })
   );
 
@@ -262,6 +262,7 @@ const deleteDataset = async (
 
   const imagesOfDataset = await repository.image.list({
     datasetId: args.where.id,
+    user,
   });
   await Promise.all(
     imagesOfDataset.map(

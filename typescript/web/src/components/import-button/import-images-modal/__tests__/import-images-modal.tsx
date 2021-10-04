@@ -13,7 +13,9 @@ import {
 } from "../../../../utils/router-mocks";
 
 mockUseQueryParams();
-mockNextRouter({ query: { datasetSlug: "test-dataset" } });
+mockNextRouter({
+  query: { datasetSlug: "test-dataset", workspaceSlug: "local" },
+});
 
 import { ImportImagesModal } from "../import-images-modal";
 

@@ -65,6 +65,7 @@ export const ClassificationContent = forwardRef<HTMLDivElement>(
   (props, ref) => {
     const router = useRouter();
     const datasetSlug = router?.query.datasetSlug as string;
+    const workspaceSlug = router?.query.workspaceSlug as string;
     const imageId = router?.query.imageId as string;
     const { data: getImageLabelsData, previousData: previousImageLabelsData } =
       useQuery(getImageLabelsQuery, {
@@ -107,6 +108,7 @@ export const ClassificationContent = forwardRef<HTMLDivElement>(
                 selectedLabelId,
                 datasetId,
                 datasetSlug,
+                workspaceSlug,
               },
               { client }
             )

@@ -1,10 +1,8 @@
-import { PrismaClient, Prisma } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { Repository, DbLabel } from "@labelflow/common-resolvers";
-
+import { prisma } from "./prisma-client";
 import { castObjectNullsToUndefined } from "./utils";
 import { checkUserAccessToDataset } from "./access-control";
-
-const prisma = new PrismaClient();
 
 export const countLabels: Repository["label"]["count"] = async (
   whereWithUser

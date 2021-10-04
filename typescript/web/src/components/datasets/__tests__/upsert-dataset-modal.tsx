@@ -13,9 +13,13 @@ import "@testing-library/jest-dom/extend-expect";
 
 import { client } from "../../../connectors/apollo-client/schema-client";
 import { setupTestsWithLocalDatabase } from "../../../utils/setup-local-db-tests";
-import { mockUseQueryParams } from "../../../utils/router-mocks";
+import {
+  mockUseQueryParams,
+  mockNextRouter,
+} from "../../../utils/router-mocks";
 
 mockUseQueryParams();
+mockNextRouter({ query: { workspaceSlug: "local" } });
 
 import { UpsertDatasetModal } from "../upsert-dataset-modal";
 

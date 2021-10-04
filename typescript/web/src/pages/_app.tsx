@@ -13,7 +13,10 @@ import { ChakraProvider } from "@chakra-ui/react";
 
 import { pageView } from "../utils/google-analytics";
 import { theme } from "../theme";
-import { client } from "../connectors/apollo-client/client";
+import {
+  serviceWorkerClient,
+  distantDatabaseClient,
+} from "../connectors/apollo-client/client";
 import { QueryParamProvider } from "../utils/query-params-provider";
 import ErrorPage from "./_error";
 
@@ -50,7 +53,7 @@ const ErrorFallback = (props: FallbackProps) => {
     <ErrorBoundary FallbackComponent={ErrorFallbackErrorFallback}>
       <SessionProvider session={undefined}>
         <CookiesProvider cookies={new Cookies("")}>
-          <ApolloProvider client={client}>
+          <ApolloProvider client={distantDatabaseClient}>
             <QueryParamProvider>
               <ChakraProvider theme={theme} resetCSS>
                 <ErrorPage {...props} />
@@ -70,6 +73,11 @@ const App = (props: AppProps & InitialProps) => {
   // Google analytics
   // See https://mariestarck.com/add-google-analytics-to-your-next-js-application-in-5-easy-steps/
   const router = useRouter();
+
+  const client = globalThis?.location?.pathname?.startsWith("/local")
+    ? serviceWorkerClient
+    : distantDatabaseClient;
+
   useEffect(() => {
     const handleRouteChange = (url: string) => {
       pageView(url);

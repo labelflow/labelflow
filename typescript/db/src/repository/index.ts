@@ -15,7 +15,7 @@ import {
   listWorkspace,
   updateWorkspace,
 } from "./workspace";
-import { listLabels } from "./label";
+import { listLabels, countLabels } from "./label";
 import { castObjectNullsToUndefined } from "./utils";
 import {
   checkUserAccessToDataset,
@@ -75,28 +75,7 @@ export const repository: Repository = {
       const createdLabel = await prisma.label.create({ data: label });
       return createdLabel.id;
     },
-    count: async (whereWithUser) => {
-      if (!whereWithUser) {
-        return 0;
-      }
-      const { user, ...where } = whereWithUser;
-      if ("datasetId" in where) {
-        checkUserAccessToDataset({ where: { id: where.datasetId }, user });
-        return await prisma.label.count({
-          where: { image: { datasetId: where.datasetId ?? undefined } },
-        });
-      }
-      return await prisma.label.count({
-        where: castObjectNullsToUndefined({
-          ...where,
-          image: {
-            dataset: {
-              workspace: { memberships: { some: { userId: user?.id } } },
-            },
-          },
-        }),
-      });
-    },
+    count: countLabels,
     delete: async ({ id }, user) => {
       await checkUserAccessToLabel({ where: { id }, user });
       await prisma.label.delete({ where: { id } });
