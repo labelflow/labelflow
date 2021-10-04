@@ -269,7 +269,7 @@ describe("Access control for dataset", () => {
       })
     ).rejects.toThrow(`User not authorized to access dataset`);
   });
-  it("allows to get all information from nested resolvers", async () => {
+  it.only("allows to get all information from nested resolvers", async () => {
     await createWorkspace({ name: "My workspace" });
     const createdDataset = await createDataset("My dataset", "my-workspace");
 
