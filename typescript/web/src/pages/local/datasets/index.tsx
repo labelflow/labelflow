@@ -89,7 +89,7 @@ const DatasetPage = () => {
       <AuthManager />
       <Meta title="LabelFlow | Datasets" />
       <CookieBanner />
-      <Layout breadcrumbs={[<Text>Datasets</Text>]}>
+      <Layout breadcrumbs={[<Text key={0}>Datasets</Text>]}>
         <UpsertDatasetModal
           isOpen={isCreatingDataset || editDatasetId != null}
           onClose={onClose}

@@ -42,7 +42,7 @@ const DebugPage = () => {
       <AuthManager />
       <Meta title="LabelFlow | Debug" />
       <CookieBanner />
-      <Layout breadcrumbs={[<Text>Debug</Text>]}>
+      <Layout breadcrumbs={[<Text key={0}>Debug</Text>]}>
         <Center h="full">
           <Box as="section">
             <VStack
@@ -195,7 +195,7 @@ const DebugPage = () => {
               <Code as="p" whiteSpace="pre-wrap" width="full">
                 {JSON.stringify(
                   {
-                    serverType: "Standard LabelFlow Client App",
+                    clientType: "Standard LabelFlow Client App",
                     isInWindowScope,
                     isInServiceWorkerScope,
                     isDevelopmentEnvironment,
