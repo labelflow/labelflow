@@ -1,5 +1,5 @@
-import React from "react";
-import { gql, useQuery, useMutation } from "@apollo/client";
+import React, { useState } from "react";
+import { gql, useQuery } from "@apollo/client";
 import NextLink from "next/link";
 import {
   Box,
@@ -35,6 +35,7 @@ import { AuthManager } from "../../../../../components/auth-manager";
 
 import { WelcomeManager } from "../../../../../components/welcome-manager";
 import { CookieBanner } from "../../../../../components/cookie-banner";
+import { DeleteImageModal } from "./delete-image-modal";
 
 const TrashIcon = chakra(HiTrash);
 
@@ -61,14 +62,6 @@ export const datasetDataQuery = gql`
   }
 `;
 
-const deleteImageQuery = gql`
-  mutation deleteImage($id: ID!) {
-    deleteImage(where: { id: $id }) {
-      id
-    }
-  }
-`;
-
 const ImagesPage = () => {
   const router = useRouter();
   const datasetSlug = router?.query?.datasetSlug as string;
@@ -88,9 +81,9 @@ const ImagesPage = () => {
     skip: !datasetSlug || !workspaceSlug,
   });
 
-  const [deleteImage] = useMutation(deleteImageQuery);
-
   const datasetName = datasetResult?.dataset.name;
+
+  const [imageIdToDelete, setImageIdToDelete] = useState<string | null>(null);
 
   const handleError = useErrorHandler();
   if (error && !loading) {
@@ -178,74 +171,78 @@ const ImagesPage = () => {
         )}
 
         {datasetResult && !isEmpty(datasetResult?.dataset?.images) && (
-          <SimpleGrid
-            minChildWidth="240px"
-            spacing={{ base: "2", md: "8" }}
-            padding={{ base: "2", md: "8" }}
-          >
-            {datasetResult?.dataset?.images?.map(({ id, name, url }) => (
-              <NextLink
-                href={`/${workspaceSlug}/datasets/${datasetSlug}/images/${id}`}
-                key={id}
-              >
-                <a
+          <>
+            <DeleteImageModal
+              isOpen={imageIdToDelete != null}
+              onClose={() => setImageIdToDelete(null)}
+              imageId={imageIdToDelete}
+            />
+            <SimpleGrid
+              minChildWidth="240px"
+              spacing={{ base: "2", md: "8" }}
+              padding={{ base: "2", md: "8" }}
+            >
+              {datasetResult?.dataset?.images?.map(({ id, name, url }) => (
+                <NextLink
                   href={`/${workspaceSlug}/datasets/${datasetSlug}/images/${id}`}
+                  key={id}
                 >
-                  <VStack
-                    maxW="486px"
-                    p={4}
-                    background={cardBackground}
-                    rounded={8}
-                    height="270px"
-                    justifyContent="space-between"
+                  <a
+                    href={`/${workspaceSlug}/datasets/${datasetSlug}/images/${id}`}
                   >
-                    <Flex
+                    <VStack
+                      maxW="486px"
+                      p={4}
+                      background={cardBackground}
+                      rounded={8}
+                      height="270px"
                       justifyContent="space-between"
-                      w="100%"
-                      alignItems="center"
                     >
-                      <Heading
-                        as="h3"
-                        size="sm"
-                        overflow="hidden"
-                        textOverflow="ellipsis"
-                        whiteSpace="nowrap"
+                      <Flex
+                        justifyContent="space-between"
+                        w="100%"
+                        alignItems="center"
+                      >
+                        <Heading
+                          as="h3"
+                          size="sm"
+                          overflow="hidden"
+                          textOverflow="ellipsis"
+                          whiteSpace="nowrap"
+                          flexGrow={0}
+                          flexShrink={0}
+                        >
+                          {name}
+                        </Heading>
+                        <IconButton
+                          icon={<TrashIcon />}
+                          aria-label="delete image"
+                          isRound
+                          size="sm"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            setImageIdToDelete(id);
+                          }}
+                        />
+                      </Flex>
+                      <Image
+                        background={imageBackground}
+                        alt={name}
+                        src={url}
+                        ignoreFallback
+                        objectFit="contain"
+                        h="208px"
+                        w="full"
                         flexGrow={0}
                         flexShrink={0}
-                      >
-                        {name}
-                      </Heading>
-                      <IconButton
-                        icon={<TrashIcon />}
-                        aria-label="delete image"
-                        isRound
-                        size="sm"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          deleteImage({
-                            variables: { id },
-                            refetchQueries: ["getDatasetData"],
-                          });
-                        }}
                       />
-                    </Flex>
-                    <Image
-                      background={imageBackground}
-                      alt={name}
-                      src={url}
-                      ignoreFallback
-                      objectFit="contain"
-                      h="208px"
-                      w="full"
-                      flexGrow={0}
-                      flexShrink={0}
-                    />
-                  </VStack>
-                </a>
-              </NextLink>
-            ))}
-          </SimpleGrid>
+                    </VStack>
+                  </a>
+                </NextLink>
+              ))}
+            </SimpleGrid>
+          </>
         )}
       </Layout>
     </>
