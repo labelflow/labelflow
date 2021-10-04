@@ -41,14 +41,14 @@ export const LinkGrid = (props: SimpleGridProps) => (
     <Box minW="150px">
       <FooterHeading mb="4">Legal</FooterHeading>
       <Stack>
-        <NextLink href="/privacy-policy">
-          <Link href="/privacy-policy">Privacy policy</Link>
+        <NextLink href="/legal/privacy-policy">
+          <Link href="/legal/privacy-policy">Privacy policy</Link>
         </NextLink>
-        <NextLink href="/cookie-policy">
-          <Link href="/cookie-policy">Cookie policy</Link>
+        <NextLink href="/legal/cookie-policy">
+          <Link href="/legal/cookie-policy">Cookie policy</Link>
         </NextLink>
-        <NextLink href="/terms-and-conditions">
-          <Link href="/terms-and-conditions">Terms & Conditions</Link>
+        <NextLink href="/legal/terms-and-conditions">
+          <Link href="/legal/terms-and-conditions">Terms &amp; Conditions</Link>
         </NextLink>
       </Stack>
     </Box>
