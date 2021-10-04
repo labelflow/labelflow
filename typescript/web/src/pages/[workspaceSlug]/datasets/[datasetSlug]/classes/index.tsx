@@ -74,15 +74,15 @@ const DatasetClassesPage = () => {
       <CookieBanner />
       <Layout
         breadcrumbs={[
-          <NextLink href={`/${workspaceSlug}/datasets`}>
+          <NextLink key={0} href={`/${workspaceSlug}/datasets`}>
             <BreadcrumbLink>Datasets</BreadcrumbLink>
           </NextLink>,
-          <NextLink href={`/${workspaceSlug}/datasets/${datasetSlug}`}>
+          <NextLink key={1} href={`/${workspaceSlug}/datasets/${datasetSlug}`}>
             <BreadcrumbLink>
               {datasetName ?? <Skeleton>Dataset Name</Skeleton>}
             </BreadcrumbLink>
           </NextLink>,
-          <Text>Classes</Text>,
+          <Text key={2}>Classes</Text>,
         ]}
         topBarRightContent={
           <>

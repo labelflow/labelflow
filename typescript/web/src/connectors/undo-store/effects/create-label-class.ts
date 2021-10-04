@@ -1,11 +1,7 @@
 import { gql, ApolloClient } from "@apollo/client";
 
-import { LabelClass } from "@labelflow/graphql-types";
 import { useLabellingStore } from "../../labelling-state";
-import {
-  getNextClassColor,
-  hexColorSequence,
-} from "../../../utils/class-color-generator";
+
 import { Effect } from "..";
 import { getDatasetsQuery } from "../../../pages/[workspaceSlug]/datasets";
 import { datasetLabelClassesQuery } from "../../../components/dataset-class-list/class-item";
@@ -111,39 +107,3 @@ export const createCreateLabelClassEffect = (
     return labelClassId;
   },
 });
-
-export const createNewLabelClassCurry =
-  ({
-    labelClasses,
-    datasetId,
-    datasetSlug,
-    workspaceSlug,
-    perform,
-    client,
-  }: {
-    labelClasses: LabelClass[];
-    datasetId: string;
-    datasetSlug: string;
-    workspaceSlug: string;
-    perform: any;
-    client: ApolloClient<object>;
-  }) =>
-  async (name: string, selectedLabelClassIdPrevious: string | null) => {
-    const newClassColor =
-      labelClasses.length < 1
-        ? hexColorSequence[0]
-        : getNextClassColor(labelClasses[labelClasses.length - 1].color);
-    perform(
-      createCreateLabelClassEffect(
-        {
-          name,
-          color: newClassColor,
-          selectedLabelClassIdPrevious,
-          datasetId,
-          datasetSlug,
-          workspaceSlug,
-        },
-        { client }
-      )
-    );
-  };

@@ -14,8 +14,9 @@ import {
 import { Context, DbDataset, Repository } from "./types";
 import { getImageEntityFromMutationArgs } from "./image";
 import {
+  tutorialDatasets,
   tutorialImages,
-  tutorialLabelClassId,
+  tutorialLabelClasses,
   tutorialLabels,
 } from "./data/dataset-tutorial";
 
@@ -155,18 +156,15 @@ const createDemoDataset = async (
   args: {},
   { repository, req, user }: Context
 ): Promise<DbDataset> => {
-  const datasetId = "049fe9f0-9a19-43cd-be65-35d222d54b4d";
   const now = new Date();
   const currentDate = now.toISOString();
+
   try {
     await repository.dataset.add(
       {
-        name: "Tutorial dataset",
-        slug: "tutorial-dataset",
-        id: datasetId,
+        ...tutorialDatasets[0],
         createdAt: currentDate,
         updatedAt: currentDate,
-        workspaceSlug: "local", // FIXME: Implement proper id here
       },
       user
     );
@@ -187,12 +185,11 @@ const createDemoDataset = async (
     throw error;
   }
 
-  const tutorialDatasetImages = await Promise.all(
+  await Promise.all(
     tutorialImages.map(async (image, index) => {
       const imageEntity = await getImageEntityFromMutationArgs(
         {
           ...image,
-          datasetId,
           createdAt: add(now, { seconds: index }).toISOString(),
           name: image.url.match(/\/static\/img\/(.*?)$/)?.[1],
         },
@@ -205,34 +202,27 @@ const createDemoDataset = async (
     })
   );
 
-  await repository.labelClass.add(
-    {
-      id: tutorialLabelClassId,
-      index: 0,
-      name: "Horse",
-      color: "#F87171",
-      createdAt: currentDate,
-      updatedAt: currentDate,
-      datasetId,
-    },
-    user
+  await Promise.all(
+    tutorialLabelClasses.map(async (labelClass) => {
+      return await repository.labelClass.add({
+        ...labelClass,
+        createdAt: currentDate,
+        updatedAt: currentDate,
+      });
+    })
   );
 
   await Promise.all(
     tutorialLabels.map(async (label) => {
-      return await repository.label.add(
-        {
-          ...label,
-          createdAt: currentDate,
-          updatedAt: currentDate,
-          imageId: tutorialDatasetImages[2],
-        },
-        user
-      );
+      return await repository.label.add({
+        ...label,
+        createdAt: currentDate,
+        updatedAt: currentDate,
+      });
     })
   );
 
-  return await getDataset({ id: datasetId }, repository, user);
+  return await getDataset({ id: tutorialDatasets[0]?.id }, repository, user);
 };
 
 const updateDataset = async (

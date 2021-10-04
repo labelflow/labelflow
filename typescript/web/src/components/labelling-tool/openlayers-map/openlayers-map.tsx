@@ -1,5 +1,5 @@
 import { useRef, useCallback } from "react";
-import { Spinner, Center, ThemeProvider } from "@chakra-ui/react";
+import { Spinner, Center, ThemeProvider, Box } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { RouterContext } from "next/dist/shared/lib/router-context";
 import { Extent, getCenter } from "ol/extent";
@@ -19,6 +19,7 @@ import "ol/ol.css";
 
 import { DrawBoundingBoxAndPolygonInteraction } from "./draw-bounding-box-and-polygon-interaction";
 import { SelectAndModifyFeature } from "./select-and-modify-feature";
+import { ClassificationContent, ClassificationOverlay } from "./classification";
 import { Labels } from "./labels";
 import { EditLabelClass } from "./edit-label-class";
 import { CursorGuides } from "./cursor-guides";
@@ -56,7 +57,7 @@ const getMemoizedProperties = memoize(
     image: Pick<Image, "id" | "url" | "width" | "height"> | null | undefined
   ) => {
     if (image == null) return {};
-    const { url, width, height } = image;
+    const { url, width, height, id } = image;
     const size: Size = [width, height];
     const extent: Extent = [0, 0, width, height];
     const center = getCenter(extent);
@@ -70,7 +71,7 @@ const getMemoizedProperties = memoize(
     //       extent,
     //     });
 
-    return { url, width, height, size, extent, center, projection };
+    return { id, url, width, height, size, extent, center, projection };
   }
 );
 
@@ -87,6 +88,7 @@ const imageQuery = gql`
 
 export const OpenlayersMap = () => {
   const editClassOverlayRef = useRef<HTMLDivElement | null>(null);
+  const classificationOverlayRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<OlMap>(null);
   const viewRef = useRef<OlView | null>(null);
   const sourceVectorBoxesRef = useRef<OlSourceVector<Geometry> | null>(null);
@@ -111,12 +113,14 @@ export const OpenlayersMap = () => {
   const setView = useLabellingStore((state) => state.setView);
   const zoomFactor = useLabellingStore((state) => state.zoomFactor);
 
-  const image = useQuery<{
+  const { data: imageData, previousData: imageDataPrevious } = useQuery<{
     image: Pick<Image, "id" | "url" | "width" | "height">;
   }>(imageQuery, {
     variables: { id: imageId },
     skip: !imageId,
-  }).data?.image;
+  });
+
+  const image = imageData?.image ?? imageDataPrevious?.image;
 
   useImagePrefecthing();
 
@@ -144,8 +148,10 @@ export const OpenlayersMap = () => {
     [selectedTool]
   );
 
+  const memoizedImage = getMemoizedProperties(image?.id, image);
+
   const { url, size, extent, center, projection, width, height } =
-    getMemoizedProperties(image?.id, image);
+    memoizedImage;
 
   const resolution =
     width && height
@@ -156,8 +162,17 @@ export const OpenlayersMap = () => {
       : 1;
 
   return (
-    <div
-      style={{ display: "flex", width: "100%", height: "100%" }}
+    <Box
+      sx={{
+        display: "flex",
+        width: "100%",
+        height: "100%",
+        "& .pointereventsnone": {
+          // This !importsant is needed to take over the "pointer-events: auto" put by openlayers
+          // overlays, for example on the classifications tags
+          pointerEvents: "none !important",
+        },
+      }}
       onContextMenu={(e) => {
         e.preventDefault();
         return false;
@@ -258,13 +273,19 @@ export const OpenlayersMap = () => {
               </olLayerImage>
 
               <Labels sourceVectorLabelsRef={sourceVectorBoxesRef} />
+              <ClassificationOverlay
+                image={memoizedImage}
+                classificationOverlayRef={classificationOverlayRef}
+              />
               <DrawBoundingBoxAndPolygonInteraction />
               <SelectAndModifyFeature
                 editClassOverlayRef={editClassOverlayRef}
                 sourceVectorLabelsRef={sourceVectorBoxesRef}
                 setIsContextMenuOpen={setIsContextMenuOpen}
+                image={memoizedImage}
                 map={mapRef.current}
               />
+
               {sourceVectorBoxesRef.current && (
                 <olInteractionSnap source={sourceVectorBoxesRef.current} />
               )}
@@ -276,9 +297,9 @@ export const OpenlayersMap = () => {
         boxDrawingToolState !== DrawingToolState.DRAWING &&
         !isContextMenuOpen && <CursorGuides map={mapRef.current} />}
       {/* This div is needed to prevent a weird error that seems related to the EditLabelClass component */}
-      <div
+      <Box
         key="toto"
-        style={{
+        sx={{
           position: "absolute",
           pointerEvents: "none",
           height: "100%",
@@ -290,10 +311,10 @@ export const OpenlayersMap = () => {
             <Spinner aria-label="loading indicator" size="xl" />
           </Center>
         )}
-      </div>
+      </Box>
 
       <EditLabelClass
-        key="hey"
+        key="EditLabelClass"
         ref={(e) => {
           if (e && editClassOverlayRef.current !== e) {
             editClassOverlayRef.current = e;
@@ -302,6 +323,14 @@ export const OpenlayersMap = () => {
         isOpen={isContextMenuOpen}
         onClose={() => setIsContextMenuOpen(false)}
       />
-    </div>
+      <ClassificationContent
+        key="ClassificationContent"
+        ref={(e) => {
+          if (e && classificationOverlayRef.current !== e) {
+            classificationOverlayRef.current = e;
+          }
+        }}
+      />
+    </Box>
   );
 };

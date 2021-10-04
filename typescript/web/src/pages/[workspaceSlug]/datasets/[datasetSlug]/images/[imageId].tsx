@@ -138,21 +138,27 @@ const ImagePage = () => {
       <CookieBanner />
       <Layout
         breadcrumbs={[
-          <NextLink href={`/${workspaceSlug}/datasets`}>
+          <NextLink key={0} href={`/${workspaceSlug}/datasets`}>
             <BreadcrumbLink>Datasets</BreadcrumbLink>
           </NextLink>,
-          <NextLink href={`/${workspaceSlug}/datasets/${datasetSlug}/images`}>
+          <NextLink
+            key={1}
+            href={`/${workspaceSlug}/datasets/${datasetSlug}/images`}
+          >
             <BreadcrumbLink>
               {datasetName ?? <Skeleton>Dataset Name</Skeleton>}
             </BreadcrumbLink>
           </NextLink>,
-          <NextLink href={`/${workspaceSlug}/datasets/${datasetSlug}/images`}>
+          <NextLink
+            key={2}
+            href={`/${workspaceSlug}/datasets/${datasetSlug}/images`}
+          >
             <BreadcrumbLink>Images</BreadcrumbLink>
           </NextLink>,
           imageName ? (
-            <Text>{imageName}</Text>
+            <Text key={3}>{imageName}</Text>
           ) : (
-            <Skeleton>Image Name</Skeleton>
+            <Skeleton key={3}>Image Name</Skeleton>
           ),
         ]}
         topBarRightContent={

@@ -24,15 +24,45 @@ interface InitialProps {
   cookie: string;
 }
 
+/**
+ * Error Fallback page of the Error Fallback page , for rare cases (only happens in cypress on certain crashes) where even the styling or other context can't work
+ * @returns
+ */
+const ErrorFallbackErrorFallback = () => {
+  return (
+    <div>
+      An error occurred when displaying the error page, you can&apos;t really
+      get any worse than that. Please{" "}
+      <a
+        style={{ color: "blue", textDecoration: "underline" }}
+        href="https://github.com/labelflow/labelflow/issues/new?assignees=&labels=bug&template=bug_report.md&title="
+      >
+        report this issue
+      </a>
+      .
+    </div>
+  );
+};
+
+/**
+ * Error Fallback page
+ * @returns
+ */
 const ErrorFallback = (props: FallbackProps) => {
   return (
-    <SessionProvider session={undefined}>
-      <QueryParamProvider>
-        <ChakraProvider theme={theme} resetCSS>
-          <ErrorPage {...props} />
-        </ChakraProvider>
-      </QueryParamProvider>
-    </SessionProvider>
+    <ErrorBoundary FallbackComponent={ErrorFallbackErrorFallback}>
+      <SessionProvider session={undefined}>
+        <CookiesProvider cookies={new Cookies("")}>
+          <ApolloProvider client={distantDatabaseClient}>
+            <QueryParamProvider>
+              <ChakraProvider theme={theme} resetCSS>
+                <ErrorPage {...props} />
+              </ChakraProvider>
+            </QueryParamProvider>
+          </ApolloProvider>
+        </CookiesProvider>
+      </SessionProvider>
+    </ErrorBoundary>
   );
 };
 
