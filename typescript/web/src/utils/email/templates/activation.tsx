@@ -1,4 +1,23 @@
-<mjml owa="desktop" version="4.3.0">
+import mjml2html from "mjml";
+import { stringify } from "query-string";
+import { theme } from "../../../theme";
+
+// To view this email, go to this page:
+// http://localhost:3000/api/email/view?type=activation&url=http://google.com&origin=http://localhost:3000&email=test@labelflow.ai
+// Or worse
+// http://localhost:3000/api/email/view?email=test%40labelflow.ai&origin=http%3A%2F%2Flocalhost%3A3000&type=activation&url=http%3A%2F%2Flocalhost%3A3000%2Fapi%2Femail%2Fview%3Ftype%3Dactivation%26url%3Dhttp%3A%2F%2Fgoogle.com%26origin%3Dhttp%3A%2F%2Flocalhost%3A3000%26email%3Dtest%40labelflow.ai
+
+export const generateHtml = (props: {
+  url: string;
+  origin: string;
+  email: string;
+  type: string;
+}) => {
+  const { url, origin, email } = props;
+  const viewOnlineLink = `${origin}/api/email/view?${stringify(props)}`;
+  return mjml2html(
+    `
+    <mjml owa="desktop" version="4.3.0">
   <mj-head>
     <mj-font href="https://fonts.googleapis.com/css?family=Montserrat" name="Montserrat"></mj-font>
     <mj-font href="https://fonts.googleapis.com/css?family=Raleway" name="Raleway"></mj-font>
@@ -55,3 +74,7 @@
     </mj-section>
   </mj-body>
 </mjml>
+`,
+    {}
+  ).html;
+};
