@@ -224,6 +224,9 @@ describe("Access control for label", () => {
           label(where: { id: $id }) {
             id
             name
+            labelClass {
+              id
+            }
           }
         }
       `,
@@ -231,6 +234,7 @@ describe("Access control for label", () => {
       fetchPolicy: "no-cache",
     });
     expect(data.label.id).toEqual(testLabelId);
+    expect(data.labelClass).toEqual(undefined);
   });
   it("fails to get a label if the user does not have access to it", async () => {
     const createdLabel = await createLabel(labelData);

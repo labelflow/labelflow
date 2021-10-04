@@ -52,6 +52,7 @@ beforeEach(async () => {
         color: "0xaa45f8",
         datasetId: "a dataset id",
         datasetSlug: "a-dataset-slug",
+        workspaceSlug: "local",
         selectedLabelId: "my label id",
       },
       { client }

@@ -72,8 +72,8 @@ const getImageUploadTargetMutation = gql`
 `;
 
 const getDataset = gql`
-  query getDataset($slug: String!) {
-    dataset(where: { slugs: { slug: $slug, workspaceSlug: "local" } }) {
+  query getDataset($slug: String!, $workspaceSlug: String!) {
+    dataset(where: { slugs: { slug: $slug, workspaceSlug: $workspaceSlug } }) {
       id
     }
   }
@@ -120,7 +120,7 @@ export const ImportImagesModalDropzone = ({
   const apolloClient = useApolloClient();
 
   const router = useRouter();
-  const { datasetSlug } = router?.query;
+  const { datasetSlug, workspaceSlug } = router?.query;
 
   /*
    * We need a state with the accepted and reject files to be able to reset the list
@@ -133,8 +133,8 @@ export const ImportImagesModalDropzone = ({
   );
 
   const { data: datasetResult } = useQuery(getDataset, {
-    variables: { slug: datasetSlug },
-    skip: typeof datasetSlug !== "string",
+    variables: { slug: datasetSlug, workspaceSlug },
+    skip: typeof datasetSlug !== "string" || typeof workspaceSlug !== "string",
   });
 
   const datasetId = datasetResult?.dataset.id;

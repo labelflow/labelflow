@@ -269,6 +269,39 @@ describe("Access control for dataset", () => {
       })
     ).rejects.toThrow(`User not authorized to access dataset`);
   });
+  it.only("allows to get all information from nested resolvers", async () => {
+    await createWorkspace({ name: "My workspace" });
+    const createdDataset = await createDataset("My dataset", "my-workspace");
+
+    const { data } = await client.query({
+      query: gql`
+        query dataset($id: ID!) {
+          dataset(where: { id: $id }) {
+            id
+            images {
+              id
+            }
+            labels {
+              id
+            }
+            labelClasses {
+              id
+            }
+            workspace {
+              id
+              slug
+            }
+          }
+        }
+      `,
+      variables: { id: createdDataset.data.createDataset.id },
+      fetchPolicy: "no-cache",
+    });
+    expect(data.dataset.images.length).toEqual(0);
+    expect(data.dataset.labels.length).toEqual(0);
+    expect(data.dataset.labelClasses.length).toEqual(0);
+    expect(data.dataset.workspace.slug).toEqual("my-workspace");
+  });
 });
 
 describe("Workflow nested resolver", () => {

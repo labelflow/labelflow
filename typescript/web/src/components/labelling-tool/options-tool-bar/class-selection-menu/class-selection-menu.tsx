@@ -89,6 +89,7 @@ export const ClassSelectionMenu = ({
   createNewClass,
   selectedLabelClass,
   isContextMenuOpen,
+  includeNoneClass,
 }: {
   isOpen: boolean;
   setIsOpen: (b: boolean) => void;
@@ -97,6 +98,7 @@ export const ClassSelectionMenu = ({
   createNewClass: (name: string) => void;
   selectedLabelClass?: LabelClassItem | null;
   isContextMenuOpen?: boolean;
+  includeNoneClass?: boolean;
 }) => {
   const toggle = () => setIsOpen(!isOpen);
   const close = () => setIsOpen(false);
@@ -107,6 +109,7 @@ export const ClassSelectionMenu = ({
       isOpen={isOpen}
       onClose={close}
       labelClasses={labelClasses}
+      includeNoneClass={includeNoneClass}
       onSelectedClassChange={(labelClass: LabelClassItem | null) => {
         onSelectedClassChange(labelClass);
         close();

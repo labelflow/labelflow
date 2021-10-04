@@ -14,6 +14,7 @@ const classDefault = {
   name: "someClass",
   shortcut: "myShortcut",
   id: "myClassId",
+  workspaceSlug: "local",
 };
 
 // Mock apollo client to be able to test if the mutate function is called during the tests

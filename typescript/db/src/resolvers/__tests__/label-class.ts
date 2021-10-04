@@ -138,6 +138,12 @@ describe("Access control for label", () => {
           labelClass(where: { id: $id }) {
             id
             name
+            labels {
+              id
+            }
+            dataset {
+              id
+            }
           }
         }
       `,
@@ -145,6 +151,8 @@ describe("Access control for label", () => {
       fetchPolicy: "no-cache",
     });
     expect(data.labelClass.name).toEqual(labelClassData.name);
+    expect(data.labelClass.dataset.id).toEqual(testDatasetId);
+    expect(data.labelClass.labels.length).toEqual(0);
   });
   it("fails to get a label class if the user does not have access to it", async () => {
     const createdLabelClassId = await createLabelClass(labelClassData);

@@ -17,9 +17,7 @@ import { useLabellingStore } from "../../connectors/labelling-state";
 
 export const LabellingTool = () => {
   const { clear } = useUndoStore();
-  const setSelectedLabelId = useLabellingStore(
-    (state) => state.setSelectedLabelId
-  );
+
   const router = useRouter();
   const { imageId } = router?.query;
   const containerRef = useRef<HTMLDivElement>(null);
@@ -30,7 +28,10 @@ export const LabellingTool = () => {
 
   useEffect(() => {
     clear();
-    return () => setSelectedLabelId(null);
+    return () => {
+      useLabellingStore.getState().setSelectedLabelId(null);
+      useLabellingStore.getState().setIsContextMenuOpen(false);
+    };
   }, [imageId]);
 
   return (

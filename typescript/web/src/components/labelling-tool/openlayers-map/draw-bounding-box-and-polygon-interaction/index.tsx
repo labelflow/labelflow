@@ -19,7 +19,7 @@ import {
 import { keymap } from "../../../../keymap";
 import { useUndoStore } from "../../../../connectors/undo-store";
 import { noneClassColor } from "../../../../utils/class-color-generator";
-import { createLabelEffect } from "./create-label-effect";
+import { createCreateLabelEffect } from "../../../../connectors/undo-store/effects/create-label";
 
 const labelClassQuery = gql`
   query getLabelClass($id: ID!) {
@@ -124,7 +124,7 @@ export const DrawBoundingBoxAndPolygonInteraction = () => {
           drawEvent.feature.getGeometry()
         ) as GeoJSONPolygon;
         const createLabelPromise = perform(
-          createLabelEffect(
+          createCreateLabelEffect(
             {
               imageId,
               selectedLabelClassId,

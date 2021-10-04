@@ -1,13 +1,9 @@
 import { gql, ApolloClient } from "@apollo/client";
 
-import { LabelClass } from "@labelflow/graphql-types";
 import { useLabellingStore } from "../../labelling-state";
-import {
-  getNextClassColor,
-  hexColorSequence,
-} from "../../../utils/class-color-generator";
+
 import { Effect } from "..";
-import { getDatasetsQuery } from "../../../pages/local/datasets";
+import { getDatasetsQuery } from "../../../pages/[workspaceSlug]/datasets";
 import { datasetLabelClassesQuery } from "../../../components/dataset-class-list/class-item";
 
 const createLabelClassQuery = gql`
@@ -32,12 +28,14 @@ export const createCreateLabelClassEffect = (
     color,
     datasetId,
     datasetSlug,
+    workspaceSlug,
     selectedLabelClassIdPrevious,
   }: {
     name: string;
     color: string;
     datasetId: string;
     datasetSlug: string;
+    workspaceSlug: string;
     selectedLabelClassIdPrevious: string | null;
   },
   {
@@ -57,7 +55,10 @@ export const createCreateLabelClassEffect = (
       refetchQueries: [
         "getLabelClassesOfDataset",
         { query: getDatasetsQuery },
-        { query: datasetLabelClassesQuery, variables: { slug: datasetSlug } },
+        {
+          query: datasetLabelClassesQuery,
+          variables: { slug: datasetSlug, workspaceSlug },
+        },
       ],
     });
 
@@ -74,7 +75,10 @@ export const createCreateLabelClassEffect = (
       refetchQueries: [
         "getLabelClassesOfDataset",
         { query: getDatasetsQuery },
-        { query: datasetLabelClassesQuery, variables: { slug: datasetSlug } },
+        {
+          query: datasetLabelClassesQuery,
+          variables: { slug: datasetSlug, workspaceSlug },
+        },
       ],
     });
 
@@ -91,7 +95,10 @@ export const createCreateLabelClassEffect = (
       refetchQueries: [
         "getLabelClassesOfDataset",
         { query: getDatasetsQuery },
-        { query: datasetLabelClassesQuery, variables: { slug: datasetSlug } },
+        {
+          query: datasetLabelClassesQuery,
+          variables: { slug: datasetSlug, workspaceSlug },
+        },
       ],
     });
 
@@ -100,36 +107,3 @@ export const createCreateLabelClassEffect = (
     return labelClassId;
   },
 });
-
-export const createNewLabelClassCurry =
-  ({
-    labelClasses,
-    datasetId,
-    datasetSlug,
-    perform,
-    client,
-  }: {
-    labelClasses: LabelClass[];
-    datasetId: string;
-    datasetSlug: string;
-    perform: any;
-    client: ApolloClient<object>;
-  }) =>
-  async (name: string, selectedLabelClassIdPrevious: string | null) => {
-    const newClassColor =
-      labelClasses.length < 1
-        ? hexColorSequence[0]
-        : getNextClassColor(labelClasses[labelClasses.length - 1].color);
-    perform(
-      createCreateLabelClassEffect(
-        {
-          name,
-          color: newClassColor,
-          selectedLabelClassIdPrevious,
-          datasetId,
-          datasetSlug,
-        },
-        { client }
-      )
-    );
-  };

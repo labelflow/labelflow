@@ -44,8 +44,8 @@ const exportQuery = gql`
 `;
 
 export const countLabelsOfDatasetQuery = gql`
-  query countLabelsOfDataset($slug: String!) {
-    dataset(where: { slugs: { slug: $slug, workspaceSlug: "local" } }) {
+  query countLabelsOfDataset($slug: String!, $workspaceSlug: String!) {
+    dataset(where: { slugs: { slug: $slug, workspaceSlug: $workspaceSlug } }) {
       id
       imagesAggregates {
         totalCount
@@ -118,9 +118,12 @@ export const ExportModal = ({
 }) => {
   const router = useRouter();
   const client = useApolloClient();
-  const { datasetSlug } = router?.query as { datasetSlug: string };
+  const { datasetSlug, workspaceSlug } = router?.query as {
+    datasetSlug: string;
+    workspaceSlug: string;
+  };
   const { data, loading } = useQuery(countLabelsOfDatasetQuery, {
-    variables: { slug: datasetSlug },
+    variables: { slug: datasetSlug, workspaceSlug },
     skip: !datasetSlug,
   });
   const datasetId = data?.dataset.id;

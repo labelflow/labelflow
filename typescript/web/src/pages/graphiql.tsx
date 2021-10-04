@@ -29,7 +29,7 @@ const GraphqlPlayground = () => {
       <AuthManager />
       <Meta title="LabelFlow | GraphiQL" />
       <CookieBanner />
-      <Layout breadcrumbs={[<Text>Graphiql</Text>]}>
+      <Layout breadcrumbs={[<Text key={0}>Graphiql</Text>]}>
         <Box
           h="100%"
           w="100%"
@@ -37,7 +37,9 @@ const GraphqlPlayground = () => {
           borderColor="#d0d0d0"
           boxSizing="border-box"
         >
-          <GraphiQL />
+          {globalThis.location && (
+            <GraphiQL url={`${globalThis.location.origin}/api/graphql`} />
+          )}
         </Box>
       </Layout>
     </>

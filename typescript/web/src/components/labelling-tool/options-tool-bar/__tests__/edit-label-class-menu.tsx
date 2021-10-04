@@ -10,7 +10,11 @@ mockMatchMedia(jest);
 import { mockNextRouter } from "../../../../utils/router-mocks";
 
 mockNextRouter({
-  query: { imageId: "mocked-image-id", datasetSlug: "test-dataset" },
+  query: {
+    imageId: "mocked-image-id",
+    datasetSlug: "test-dataset",
+    workspaceSlug: "local",
+  },
 });
 
 import { client } from "../../../../connectors/apollo-client/schema-client";

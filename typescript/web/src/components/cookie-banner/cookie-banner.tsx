@@ -51,8 +51,8 @@ export const CookieBanner = () => {
         Like every organization on earth we use cookies. We use cookies to
         analyze our product usage. We don&apos;t use cookies for commercial
         purposes.{" "}
-        <NextLink href="/">
-          <Link href="/" textDecoration="underline">
+        <NextLink href="/legal/cookie-policy">
+          <Link href="/legal/cookie-policy" textDecoration="underline">
             Learn More
           </Link>
         </NextLink>

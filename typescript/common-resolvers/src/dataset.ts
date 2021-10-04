@@ -14,16 +14,18 @@ import {
 import { Context, DbDataset, Repository } from "./types";
 import { getImageEntityFromMutationArgs } from "./image";
 import {
+  tutorialDatasets,
   tutorialImages,
-  tutorialLabelClassId,
+  tutorialLabelClasses,
   tutorialLabels,
 } from "./data/dataset-tutorial";
 
 const getLabelClassesByDatasetId = async (
   datasetId: string,
-  repository: Repository
+  repository: Repository,
+  user?: { id: string }
 ) => {
-  return await repository.labelClass.list({ datasetId });
+  return await repository.labelClass.list({ datasetId, user });
 };
 
 const getDataset = async (
@@ -43,9 +45,9 @@ const getDataset = async (
 const searchDataset = async (
   _: any,
   args: QueryDatasetArgs,
-  { repository }: Context
+  { repository, user }: Context
 ): Promise<(DbDataset & { __typename: string }) | undefined> => {
-  const datasetFromRepository = await repository.dataset.get(args.where);
+  const datasetFromRepository = await repository.dataset.get(args.where, user);
   return datasetFromRepository != null
     ? { ...datasetFromRepository, __typename: "Dataset" }
     : undefined;
@@ -55,10 +57,10 @@ const searchDataset = async (
 const images = async (
   dataset: DbDataset,
   args: QueryImagesArgs,
-  { repository }: Context
+  { repository, user }: Context
 ) => {
   return await repository.image.list(
-    { datasetId: dataset.id },
+    { datasetId: dataset.id, user },
     args?.skip,
     args?.first
   );
@@ -67,17 +69,17 @@ const images = async (
 const labels = async (
   dataset: DbDataset,
   _args: any,
-  { repository }: Context
+  { repository, user }: Context
 ) => {
-  return await repository.label.list({ datasetId: dataset.id });
+  return await repository.label.list({ datasetId: dataset.id, user });
 };
 
 const labelClasses = async (
   dataset: DbDataset,
   _args: any,
-  { repository }: Context
+  { repository, user }: Context
 ) => {
-  return await getLabelClassesByDatasetId(dataset.id, repository);
+  return await getLabelClassesByDatasetId(dataset.id, repository, user);
 };
 
 const workspace = async (
@@ -154,18 +156,15 @@ const createDemoDataset = async (
   args: {},
   { repository, req, user }: Context
 ): Promise<DbDataset> => {
-  const datasetId = "049fe9f0-9a19-43cd-be65-35d222d54b4d";
   const now = new Date();
   const currentDate = now.toISOString();
+
   try {
     await repository.dataset.add(
       {
-        name: "Tutorial dataset",
-        slug: "tutorial-dataset",
-        id: datasetId,
+        ...tutorialDatasets[0],
         createdAt: currentDate,
         updatedAt: currentDate,
-        workspaceSlug: "local", // FIXME: Implement proper id here
       },
       user
     );
@@ -186,12 +185,11 @@ const createDemoDataset = async (
     throw error;
   }
 
-  const tutorialDatasetImages = await Promise.all(
+  await Promise.all(
     tutorialImages.map(async (image, index) => {
       const imageEntity = await getImageEntityFromMutationArgs(
         {
           ...image,
-          datasetId,
           createdAt: add(now, { seconds: index }).toISOString(),
           name: image.url.match(/\/static\/img\/(.*?)$/)?.[1],
         },
@@ -200,19 +198,19 @@ const createDemoDataset = async (
         },
         req
       );
-      return await repository.image.add(imageEntity);
+      return await repository.image.add(imageEntity, user);
     })
   );
 
-  await repository.labelClass.add({
-    id: tutorialLabelClassId,
-    index: 0,
-    name: "Horse",
-    color: "#F87171",
-    createdAt: currentDate,
-    updatedAt: currentDate,
-    datasetId,
-  });
+  await Promise.all(
+    tutorialLabelClasses.map(async (labelClass) => {
+      return await repository.labelClass.add({
+        ...labelClass,
+        createdAt: currentDate,
+        updatedAt: currentDate,
+      });
+    })
+  );
 
   await Promise.all(
     tutorialLabels.map(async (label) => {
@@ -220,12 +218,11 @@ const createDemoDataset = async (
         ...label,
         createdAt: currentDate,
         updatedAt: currentDate,
-        imageId: tutorialDatasetImages[2],
       });
     })
   );
 
-  return await getDataset({ id: datasetId }, repository, user);
+  return await getDataset({ id: tutorialDatasets[0]?.id }, repository, user);
 };
 
 const updateDataset = async (
@@ -265,6 +262,7 @@ const deleteDataset = async (
 
   const imagesOfDataset = await repository.image.list({
     datasetId: args.where.id,
+    user,
   });
   await Promise.all(
     imagesOfDataset.map(

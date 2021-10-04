@@ -49,12 +49,13 @@ type ClassItemProps = {
   edit: boolean;
   onClickEdit: (classId: string | null) => void;
   datasetSlug: string;
+  workspaceSlug: string;
   onClickDelete: (classId: string | null) => void;
 };
 
 export const datasetLabelClassesQuery = gql`
-  query getDatasetLabelClasses($slug: String!) {
-    dataset(where: { slugs: { slug: $slug, workspaceSlug: "local" } }) {
+  query getDatasetLabelClasses($slug: String!, $workspaceSlug: String!) {
+    dataset(where: { slugs: { slug: $slug, workspaceSlug: $workspaceSlug } }) {
       id
       name
       labelClasses {
@@ -85,6 +86,7 @@ export const ClassItem = ({
   edit,
   onClickEdit,
   datasetSlug,
+  workspaceSlug,
   onClickDelete,
 }: ClassItemProps) => {
   const [editName, setEditName] = useState<string | null>(null);
@@ -127,7 +129,7 @@ export const ClassItem = ({
           const datasetCacheResult = cache.readQuery<DatasetClassesQueryResult>(
             {
               query: datasetLabelClassesQuery,
-              variables: { slug: datasetSlug },
+              variables: { slug: datasetSlug, workspaceSlug },
             }
           );
           if (datasetCacheResult?.dataset == null) {
@@ -142,7 +144,7 @@ export const ClassItem = ({
           };
           cache.writeQuery({
             query: datasetLabelClassesQuery,
-            variables: { slug: datasetSlug },
+            variables: { slug: datasetSlug, workspaceSlug },
             data: { dataset: updatedDataset },
           });
         } else {
