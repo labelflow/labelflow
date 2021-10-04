@@ -35,7 +35,7 @@ export const generateHtml = (props: {
     <mj-section background-color="#ffffff" background-repeat="repeat" padding-bottom="0px" padding-left="0px" padding-right="0px" padding-top="0px" padding="20px 0" text-align="center" vertical-align="top">
       <mj-column>
         <mj-divider border-color="${theme.colors.brand["500"]}" border-style="solid" border-width="7px" padding-bottom="40px" padding-left="0px" padding-right="0px" padding-top="0px" padding="10px 25px" width="100%"></mj-divider>
-        <mj-image align="center" alt="" border="none" href="${origin}" type="Unit" padding-bottom="0px" padding-top="0px" padding="10px 25px" src="${origin}/static/icon-512x512.png" target="_blank" title="" height="auto" width="110px"></mj-image>
+        <mj-image align="center" alt="" border="none" href="${origin}" type="Unit" padding-bottom="0px" padding-top="0px" padding="10px 25px" src="${origin}/static/img/logo-email.png" target="_blank" title="" height="auto" width="300px"></mj-image>
       </mj-column>
     </mj-section>
     <mj-section background-color="#ffffff" background-repeat="repeat" background-size="auto" padding-bottom="0px" padding-top="0px" padding="20px 0" text-align="center" vertical-align="top">
@@ -49,7 +49,7 @@ export const generateHtml = (props: {
           <h1 style="text-align:center; color: ${theme.colors.gray["900"]}; line-height:32px">You&apos;re almost there!</h1>
         </mj-text>
         <mj-text align="left" color="${theme.colors.gray["800"]}" font-family="Open Sans, Helvetica, Arial, sans-serif" font-size="13px" line-height="22px" padding-bottom="0px" padding-left="50px" padding-right="50px" padding-top="0px" padding="0px 25px 0px 25px">
-          <p style="margin: 10px 0; text-align: center;">Hi, Thank you for signing up to LabelFlow with the email address ${email}.&nbsp;</p>
+          <p style="margin: 10px 0; text-align: center;">Hi, Thank you for signing up to LabelFlow with the email address:<br/>${email}&nbsp;</p>
           <p style="margin: 10px 0; text-align: center;">To confirm your account, simply click on the button below:</p>
         </mj-text>
         <mj-button align="center" background-color="${theme.colors.brand["500"]}" border-radius="100px" border="none" color="#ffffff" font-family="Open Sans, Helvetica, Arial, sans-serif" font-size="13px" font-weight="normal" href="${url}" inner-padding="15px 25px 15px 25px" padding-bottom="20px" padding-top="20px" padding="10px 25px" text-decoration="none" text-transform="none" vertical-align="middle"><b style="font-weight:700"><b style="font-weight:700">Activate My Account</b></b></mj-button>
