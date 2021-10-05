@@ -6,11 +6,6 @@ export default {
   decorators: [chakraDecorator],
 };
 
-const workspaceCreate = {
-  type: "CreateWorkspaceItem",
-  name: "nonExistingWorkspace",
-};
-
 export const Default = () => {
   return (
     <WorkspaceListItem
@@ -80,7 +75,13 @@ export const NoName = () => {
 
 export const NoImageNoName = () => {
   return (
-    <WorkspaceListItem highlight={false} index={0} item={{}} itemProps={{}} />
+    <WorkspaceListItem
+      highlight={false}
+      index={0}
+      // @ts-ignore
+      item={{}}
+      itemProps={{}}
+    />
   );
 };
 
@@ -88,7 +89,10 @@ export const NewWorkspace = () => {
   return (
     <WorkspaceListItem
       index={0}
-      item={workspaceCreate}
+      item={{
+        type: "CreateWorkspaceItem",
+        name: "nonExistingWorkspace",
+      }}
       itemProps={{}}
       isCreateWorkspaceItem
     />
@@ -100,7 +104,24 @@ export const NewWorkspaceHighlighted = () => {
     <WorkspaceListItem
       highlight
       index={0}
-      item={workspaceCreate}
+      item={{
+        type: "CreateWorkspaceItem",
+        name: "nonExistingWorkspace",
+      }}
+      itemProps={{}}
+      isCreateWorkspaceItem
+    />
+  );
+};
+
+export const NewWorkspaceNoName = () => {
+  return (
+    <WorkspaceListItem
+      index={0}
+      item={{
+        type: "CreateWorkspaceItem",
+        name: "",
+      }}
       itemProps={{}}
       isCreateWorkspaceItem
     />

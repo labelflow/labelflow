@@ -14,14 +14,16 @@ const AddIcon = chakra(RiAddFill);
 
 /**
  * Represent a LabelClass item with its color as
- * an icon on the left with its name and its shortcut
+ * an icon on the left with its name
  * on the right. Accounts for the "create new workspace"
  * specific items.
  * @param props
  * @returns
  */
 export const WorkspaceListItem = (props: {
-  item: { name: string; src?: string };
+  item:
+    | { name: string; src?: string }
+    | { type: "CreateWorkspaceItem"; name?: string };
   highlight?: boolean;
   selected?: boolean;
   index: number;
@@ -30,7 +32,12 @@ export const WorkspaceListItem = (props: {
 }) => {
   const { item, highlight, selected, index, itemProps, isCreateWorkspaceItem } =
     props;
-  const { name, src } = item;
+  const { name } = item;
+
+  // eslint-disable-next-line no-prototype-builtins
+  const src = item.hasOwnProperty("src")
+    ? (item as { name: string; src?: string }).src
+    : undefined;
 
   // arrow function instead of nested ternaries to avoid eslint error
   const bgColor = (() => {
@@ -40,8 +47,12 @@ export const WorkspaceListItem = (props: {
     if (highlight) {
       return mode("gray.100", "gray.600");
     }
-    return "transparent";
+    return mode("transparent", "transparent");
   })();
+
+  const avaterBorderColor = mode("gray.200", "gray.700");
+  const avatarBackground = mode("white", "gray.900");
+  const addButtonColor = mode("gray.600", "gray.400");
 
   return (
     <Box
@@ -64,20 +75,15 @@ export const WorkspaceListItem = (props: {
           <Flex justifyContent="space-between" alignItems="center">
             <Avatar
               borderWidth="1px"
-              borderColor={mode("gray.200", "gray.700")}
+              borderColor={avaterBorderColor}
               size="sm"
               rounded="lg"
               flexShrink={0}
               flexGrow={0}
               ml="2"
               mr="2"
-              bg={mode("white", "gray.900")}
-              icon={
-                <AddIcon
-                  color={mode("gray.600", "gray.400")}
-                  fontSize="1.5rem"
-                />
-              }
+              bg={avatarBackground}
+              icon={<AddIcon color={addButtonColor} fontSize="1.5rem" />}
             />
             <Text
               whiteSpace="nowrap"
@@ -86,16 +92,31 @@ export const WorkspaceListItem = (props: {
               flexShrink={0}
               fontStyle="italic"
             >
-              Create workspace&nbsp;
+              Create workspace
             </Text>
-            <Text
-              flexGrow={1}
-              whiteSpace="nowrap"
-              overflow="hidden"
-              textOverflow="ellipsis"
-              fontWeight="bold"
-              fontStyle="italic"
-            >{`"${name}"`}</Text>
+            {(name ?? "")?.length > 0 ? (
+              <Text
+                flexGrow={1}
+                whiteSpace="nowrap"
+                overflow="hidden"
+                textOverflow="ellipsis"
+                fontWeight="bold"
+                fontStyle="italic"
+              >
+                &nbsp;{`"${name}"`}
+              </Text>
+            ) : (
+              <Text
+                flexGrow={1}
+                whiteSpace="nowrap"
+                overflow="hidden"
+                textOverflow="ellipsis"
+                fontWeight="bold"
+                fontStyle="italic"
+              >
+                &nbsp;
+              </Text>
+            )}
           </Flex>
         </Tooltip>
       ) : (
@@ -108,16 +129,16 @@ export const WorkspaceListItem = (props: {
           <Flex justifyContent="space-between" alignItems="center">
             <Avatar
               borderWidth="1px"
-              borderColor={mode("gray.200", "gray.700")}
+              borderColor={avaterBorderColor}
               size="sm"
-              rounded="lg"
+              borderRadius="lg"
               flexShrink={0}
               flexGrow={0}
               name={name}
               src={src}
               ml="2"
               mr="2"
-              bg={src != null ? mode("white", "gray.900") : "gray.400"}
+              bg={src != null ? avatarBackground : "gray.400"}
               icon={<TeamIcon color="white" fontSize="1rem" />}
             />
             <Text
