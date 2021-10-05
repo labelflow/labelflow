@@ -11,6 +11,7 @@ import {
 } from "@chakra-ui/react";
 import * as React from "react";
 import { User } from "./user";
+import { RoleSelection } from "./role-selection";
 
 export type Membership = {
   id: string;
@@ -40,6 +41,9 @@ const columns = [
   {
     Header: "Role",
     accessor: "role",
+    Cell: function RoleSelectionCell(role: string) {
+      return <RoleSelection role={role} />;
+    },
   },
   {
     Header: "Status",
