@@ -1,9 +1,11 @@
 import { NextApiRequest, NextApiResponse } from "next";
 
 import { generateHtml as activation } from "../../../utils/email/templates/activation";
+import { generateHtml as signin } from "../../../utils/email/templates/sign-in";
 
 const emailTypes: { [key: string]: typeof activation } = {
   activation,
+  signin,
   default: activation,
 };
 
