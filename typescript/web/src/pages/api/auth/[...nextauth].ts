@@ -8,7 +8,7 @@ import { PrismaClient } from "@prisma/client";
 import { OAuthConfig } from "next-auth/providers";
 import { captureException } from "@sentry/nextjs";
 
-import { sendVerificationRequest } from "../../../utils/email/send-verification-request";
+import { sendVerificationRequestFromPrisma } from "../../../utils/email/send-verification-request";
 
 // interface NextAuthUserWithStringId extends NextAuthUser {
 //   id: string;
@@ -23,7 +23,7 @@ export default NextAuth({
     EmailProvider({
       server: process.env.EMAIL_SERVER,
       from: process.env.EMAIL_FROM,
-      sendVerificationRequest,
+      sendVerificationRequest: sendVerificationRequestFromPrisma(prisma),
     }),
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID as string,
