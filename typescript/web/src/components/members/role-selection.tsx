@@ -6,28 +6,101 @@ import {
   PopoverContent,
   PopoverHeader,
   PopoverBody,
-  PopoverFooter,
-  PopoverArrow,
-  PopoverCloseButton,
+  Box,
+  Text,
+  useColorModeValue as mode,
 } from "@chakra-ui/react";
+import { useSelect } from "downshift";
+
+import { MembershipRole } from "@labelflow/graphql-types";
 
 import { RiArrowDownSFill, RiArrowUpSFill } from "react-icons/ri";
 
-export const RoleSelection = ({ role }: { role: string }) => {
-  const [isOpen, setIsOpen] = useState(false);
+const roleDescriptions = {
+  [MembershipRole.Admin]: "manages datasets and users (coming soon)",
+  [MembershipRole.Member]: "cannot delete datasets or images (coming soon)",
+};
+
+const RoleListItem = ({ name, description, selected, itemProps }) => {
+  const bgColor = (() => {
+    if (selected) {
+      return mode("gray.300", "gray.500");
+    }
+    // if (highlight) {
+    //   return mode("gray.100", "gray.600");
+    // }
+    return "transparent";
+  })();
+  console.log("itme props", itemProps);
   return (
-    <Popover onOpen={() => setIsOpen(true)} onClose={() => setIsOpen(false)}>
+    <Box
+      flexGrow={1}
+      bgColor={bgColor}
+      key={`${name}`}
+      pl="3"
+      pr="3"
+      pt="1"
+      pb="1"
+      aria-current={selected}
+      {...itemProps}
+    >
+      <Text flexGrow={1} whiteSpace="nowrap" overflow="hidden">
+        {`${name} - ${description}`}
+      </Text>
+    </Box>
+  );
+};
+
+export const RoleSelection = ({
+  role: currentRole,
+  changeMembershipRole,
+}: {
+  role: string;
+  changeMembershipRole: () => {};
+}) => {
+  console.log(
+    "Hello",
+    Object.keys(MembershipRole).map((key) => MembershipRole[key])
+  );
+  console.log("Current", currentRole);
+  const {
+    isOpen,
+    selectedItem,
+    getToggleButtonProps,
+    getLabelProps,
+    getMenuProps,
+    highlightedIndex,
+    getItemProps,
+  } = useSelect({
+    items: Object.keys(MembershipRole).map((key) => MembershipRole[key]),
+    onSelectedItemChange: changeMembershipRole,
+    initialSelectedItem: currentRole,
+  });
+  return (
+    <Popover isOpen={isOpen}>
       <PopoverTrigger>
         <Button
+          {...getToggleButtonProps()}
           variant="ghost"
           rightIcon={isOpen ? <RiArrowUpSFill /> : <RiArrowDownSFill />}
         >
-          {role}
+          {currentRole}
         </Button>
       </PopoverTrigger>
-      <PopoverContent>
-        <PopoverBody>Owner</PopoverBody>
-        <PopoverBody>Admin</PopoverBody>
+      <PopoverContent flex={1} w="max-content">
+        <PopoverBody>
+          <Box {...getMenuProps()}>
+            {Object.keys(MembershipRole).map((role, index) => (
+              <RoleListItem
+                name={MembershipRole[role]}
+                description={roleDescriptions[MembershipRole[role]]}
+                selected={currentRole === role}
+                key={`${role}${index}`}
+                itemProps={getItemProps({ item: role, index })}
+              />
+            ))}
+          </Box>
+        </PopoverBody>
       </PopoverContent>
     </Popover>
   );
