@@ -45,6 +45,7 @@ const WorkspaceSelectionButton = React.forwardRef<
       minW="60"
       justifyContent="space-between"
       ref={ref}
+      pl="1"
       onClick={toggle}
       bg={mode("white", "gray.800")}
       pointerEvents="initial"

@@ -29,8 +29,8 @@ export const ResponsiveBreadcrumbs = ({
           ...sxBase,
           display: { base: "inline", md: "none", lg: "none" },
         }}
-        maxNumberOfBreadcrumbsBeforeSplit={0}
-        numberOfFirstBreadcrumbsDisplayedWhenSplit={0}
+        maxNumberOfBreadcrumbsBeforeSplit={1}
+        numberOfFirstBreadcrumbsDisplayedWhenSplit={1}
         numberOfLastBreadcrumbsDisplayedWhenSplit={0}
         collapsedProps={{
           variant: "ghost",
@@ -49,8 +49,8 @@ export const ResponsiveBreadcrumbs = ({
           ...sxBase,
           display: { base: "none", md: "inline", lg: "none" },
         }}
-        maxNumberOfBreadcrumbsBeforeSplit={3}
-        numberOfFirstBreadcrumbsDisplayedWhenSplit={0}
+        maxNumberOfBreadcrumbsBeforeSplit={4}
+        numberOfFirstBreadcrumbsDisplayedWhenSplit={1}
         numberOfLastBreadcrumbsDisplayedWhenSplit={2}
       >
         {children}
@@ -60,8 +60,8 @@ export const ResponsiveBreadcrumbs = ({
           ...sxBase,
           display: { base: "none", md: "none", lg: "inline" },
         }}
-        maxNumberOfBreadcrumbsBeforeSplit={4}
-        numberOfFirstBreadcrumbsDisplayedWhenSplit={1}
+        maxNumberOfBreadcrumbsBeforeSplit={5}
+        numberOfFirstBreadcrumbsDisplayedWhenSplit={2}
         numberOfLastBreadcrumbsDisplayedWhenSplit={2}
       >
         {children}
