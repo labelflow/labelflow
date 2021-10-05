@@ -3,9 +3,9 @@ import { stringify } from "query-string";
 import { theme } from "../../../theme";
 
 // To view this email, go to this page:
-// http://localhost:3000/api/email/view?type=signin&url=http://google.com&origin=http://localhost:3000&email=test@labelflow.ai
+// http://localhost:3000/api/email/view?type=signup&url=http://google.com&origin=http://localhost:3000&email=test@labelflow.ai
 // Or worse
-// http://localhost:3000/api/email/view?email=test%40labelflow.ai&origin=http%3A%2F%2Flocalhost%3A3000&type=signin&url=http%3A%2F%2Flocalhost%3A3000%2Fapi%2Femail%2Fview%3Ftype%3Dactivation%26url%3Dhttp%3A%2F%2Fgoogle.com%26origin%3Dhttp%3A%2F%2Flocalhost%3A3000%26email%3Dtest%40labelflow.ai
+// http://localhost:3000/api/email/view?email=test%40labelflow.ai&origin=http%3A%2F%2Flocalhost%3A3000&type=signup&url=http%3A%2F%2Flocalhost%3A3000%2Fapi%2Femail%2Fview%3Ftype%3Dactivation%26url%3Dhttp%3A%2F%2Fgoogle.com%26origin%3Dhttp%3A%2F%2Flocalhost%3A3000%26email%3Dtest%40labelflow.ai
 
 export const generateHtml = (props: {
   url: string;
@@ -27,31 +27,34 @@ export const generateHtml = (props: {
     <mj-section background-repeat="repeat" background-size="auto" padding-bottom="0px" padding-top="0px" padding="20px 0px 20px 0px" text-align="center" vertical-align="top">
       <mj-column>
         <mj-text align="left" color="${theme.colors.gray["800"]}" font-family="Inter" font-size="11px" line-height="22px" padding-bottom="0px" padding-top="0px" padding="0px 0px 0px 25px">
-          <p style="text-align: center; margin: 10px 0;">LabelFlow sign in&nbsp;| <a target="_blank" rel="noopener noreferrer" href="${viewOnlineLink}"><span style="color:${theme.colors.gray["800"]}; text-decoration: underline"> View online version</span></a></p>
+          <p style="text-align: center; margin: 10px 0;">LabelFlow sign up&nbsp;| <a target="_blank" rel="noopener noreferrer" href="${viewOnlineLink}"><span style="color:${theme.colors.gray["800"]}; text-decoration: underline"> View online version</span></a></p>
         </mj-text>
       </mj-column>
     </mj-section>
     <mj-section background-color="#ffffff" background-repeat="repeat" padding-bottom="0px" padding-left="0px" padding-right="0px" padding-top="0px" padding="20px 0" text-align="center" vertical-align="top">
       <mj-column>
         <mj-divider border-color="${theme.colors.brand["500"]}" border-style="solid" border-width="7px" padding-bottom="40px" padding-left="0px" padding-right="0px" padding-top="0px" padding="10px 25px" width="100%"></mj-divider>
-        <mj-image align="center" alt="" border="none" href="${origin}" type="Unit" padding-bottom="30px" padding-top="0px" padding="10px 25px" src="${origin}/static/img/logo-email.png" target="_blank" title="" height="auto" width="300px"></mj-image>
+        <mj-image align="center" alt="" border="none" href="${origin}" type="Unit" src="${origin}/static/icon-192x192.png" target="_blank" title="" height="auto" width="100" ></mj-image>
+        <mj-text align="left" color="${theme.colors.gray["800"]}" font-family="Inter" font-size="30px" line-height="0px" padding-bottom="0px" padding-left="50px" padding-right="50px" padding-top="0px">
+          <h1 style="text-align:center; color: ${theme.colors.gray["900"]}; line-height:70px; margin-top:0px; margin-bottom:20px" >Welcome to LabelFlow!</h1>
+        </mj-text>
+        <mj-text align="left" color="${theme.colors.gray["800"]}" font-family="Inter" font-size="15px" line-height="22px" padding-bottom="0px" padding-left="50px" padding-right="50px" padding-top="0px" padding="0px 25px 0px 25px">
+          <p style="margin: 10px 0; text-align: center;">You can now start collaborating to annotate your datasets.</br> Share the annotation work with your team and export your labels</br> to build the next big thing!<br/></p>
+        </mj-text>
       </mj-column>
     </mj-section>
     <mj-section background-color="#ffffff" background-repeat="repeat" background-size="auto" padding-bottom="0px" padding-top="0px" padding="20px 0" text-align="center" vertical-align="top">
       <mj-column>
-        <mj-image align="center" alt="" border="none" height="auto" type="Unit" padding-bottom="0px" padding-left="50px" padding-right="50px" padding-top="40px" padding="10px 25px" src="${origin}/static/graphics/png/sign-in.png" target="_blank" title="" width="200px"></mj-image>
+        <mj-image align="center" alt="" border="none" height="auto" type="Unit" padding-bottom="0px" padding-left="50px" padding-right="50px" padding-top="40px" padding="10px 25px" src="${origin}/static/graphics/png/sign-up.png" target="_blank" title="" width="200px"></mj-image>
       </mj-column>
     </mj-section>
     <mj-section background-color="#ffffff" background-repeat="repeat" background-size="auto" padding-bottom="70px" padding-top="30px" padding="20px 0px 20px 0px" text-align="center" vertical-align="top">
       <mj-column>
         <mj-text align="left" color="${theme.colors.gray["800"]}" font-family="Inter" font-size="15px" line-height="22px" padding-bottom="0px" padding-left="50px" padding-right="50px" padding-top="0px" padding="0px 25px 0px 25px">
-          <h1 style="text-align:center; color: ${theme.colors.gray["900"]}; line-height:32px">Use this link to sign in</h1>
+          <p style="margin: 10px 0; text-align: center;">Tap the button below to activate your account and get started on</br> the platform.<br/></p>
         </mj-text>
-        <mj-text align="left" color="${theme.colors.gray["800"]}" font-family="Inter" font-size="15px" line-height="22px" padding-bottom="0px" padding-left="50px" padding-right="50px" padding-top="0px" padding="0px 25px 0px 25px">
-          <p style="margin: 10px 0; text-align: center;">You requested a magic link to sign in on <a href="${origin}">labelflow.ai</a>, and here it is!</br> Note that this link expires in 24 hours and can only be used once.<br/></p>
-        </mj-text>
-        <mj-button align="center" background-color="${theme.colors.brand["500"]}" border-radius="100px" border="none" color="#ffffff" font-family="Inter" font-size="15px" font-weight="normal" href="${url}" inner-padding="15px 25px 15px 25px" padding-bottom="20px" padding-top="20px" padding="10px 25px" text-decoration="none" text-transform="none" vertical-align="middle"><b style="font-weight:700"><b style="font-weight:700">Sign in</b></b></mj-button>
-        <mj-text align="left" color="${theme.colors.gray["800"]}" font-family="Inter" font-size="15px" line-height="22px" padding-bottom="0px" padding-left="50px" padding-right="50px" padding-top="0px" padding="0px 25px 0px 25px">
+        <mj-button align="center" background-color="${theme.colors.brand["500"]}" border-radius="100px" border="none" color="#ffffff" font-family="Inter" font-size="15px" font-weight="normal" href="${url}" inner-padding="15px 25px 15px 25px" padding-bottom="20px" padding-top="20px" padding="10px 25px" text-decoration="none" text-transform="none" vertical-align="middle"><b style="font-weight:700"><b style="font-weight:700">Activate</b></b></mj-button>
+        <mj-text align="left" color="${theme.colors.gray["800"]}" font-family="Inter" font-size="13px" line-height="22px" padding-bottom="0px" padding-left="50px" padding-right="50px" padding-top="0px" padding="0px 25px 0px 25px">
           <p style="margin: 10px 0; text-align: center;">If the link doesn&rsquo;t work, copy this URL into your browser:</br> <a target="_blank" rel="noopener noreferrer" href="${url}" style="color:${theme.colors.brand["500"]}">${url}</a></p>
         </mj-text>
       </mj-column>
