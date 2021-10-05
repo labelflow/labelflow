@@ -75,7 +75,7 @@ export const WorkspaceSelectionPopover = ({
 }: {
   isOpen?: boolean;
   onClose?: () => void;
-  onSelectedWorkspaceChange: (item: WorkspaceItem | null) => void;
+  onSelectedWorkspaceChange: (item: WorkspaceItem) => void;
   workspaces: WorkspaceItem[];
   createNewWorkspace: (name: string) => void;
   selectedWorkspaceId?: string | null;
@@ -87,7 +87,7 @@ export const WorkspaceSelectionPopover = ({
   const filteredWorkspaces = useMemo(
     () =>
       filterWorkspaces({
-        workspaces: workspaces,
+        workspaces,
         inputValueCombobox,
       }),
     [workspaces, inputValueCombobox]
@@ -120,13 +120,13 @@ export const WorkspaceSelectionPopover = ({
       ) {
         return createNewWorkspace(selectedItem.name);
       }
-      if (
-        selectedItem != null &&
-        "type" in selectedItem &&
-        selectedItem?.type === "LocalWorkspace"
-      ) {
-        return onSelectedWorkspaceChange(null);
-      }
+      // if (
+      //   selectedItem != null &&
+      //   "type" in selectedItem &&
+      //   selectedItem?.type === "LocalWorkspace"
+      // ) {
+      //   return onSelectedWorkspaceChange(null);
+      // }
       if (selectedItem != null && "id" in selectedItem) {
         return onSelectedWorkspaceChange(selectedItem);
       }
