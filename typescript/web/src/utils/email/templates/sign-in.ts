@@ -33,7 +33,7 @@ export const generateHtml = (props: {
       </mj-section>
       <mj-section background-color="#ffffff" background-repeat="repeat" padding-bottom="0px" padding-left="0px" padding-right="0px" padding-top="0px" padding="20px 0" text-align="center" vertical-align="top">
         <mj-column>
-          <mj-divider border-color="${theme.colors.brand[" 500"]}" border-style="solid" border-width="7px" padding-bottom="40px" padding-left="0px" padding-right="0px" padding-top="0px" padding="10px 25px" width="100%"></mj-divider>
+          <mj-divider border-color="${theme.colors.brand["500"]}" border-style="solid" border-width="7px" padding-bottom="40px" padding-left="0px" padding-right="0px" padding-top="0px" padding="10px 25px" width="100%"></mj-divider>
           <mj-image align="center" alt="" border="none" href="${origin}" type="Unit" padding-bottom="30px" padding-top="0px" padding="10px 25px" src="${origin}/static/img/logo-email.png" target="_blank" title="" height="auto" width="300px"></mj-image>
         </mj-column>
       </mj-section>
@@ -50,18 +50,18 @@ export const generateHtml = (props: {
           <mj-text align="left" color="${theme.colors.gray["800"]}" font-familyInter,="Inter, Open Sans, Helvetica, Arial, sans-serif" font-size="15px" line-height="22px" padding-bottom="0px" padding-left="50px" padding-right="50px" padding-top="0px" padding="0px 25px 0px 25px">
             <p style="margin: 10px 0; text-align: center;">You requested a magic link to sign in on <a href="${origin}">labelflow.ai</a>, and here it is!</br> Note that this link expires in 24 hours and can only be used once.<br /></p>
           </mj-text>
-          <mj-button align="center" background-color="${theme.colors.brand[" 500"]}" border-radius="100px" border="none" color="#ffffff" font-familyInter,="Inter, Open Sans, Helvetica, Arial, sans-serif" font-size="15px" font-weight="normal" href="${url}" inner-padding="15px 25px 15px 25px" padding-bottom="20px" padding-top="20px" padding="10px 25px" text-decoration="none" text-transform="none" vertical-align="middle"><b style="font-weight:700"><b style="font-weight:700">Sign in</b></b></mj-button>
+          <mj-button align="center" background-color="${theme.colors.brand["500"]}" border-radius="100px" border="none" color="#ffffff" font-familyInter,="Inter, Open Sans, Helvetica, Arial, sans-serif" font-size="15px" font-weight="normal" href="${url}" inner-padding="15px 25px 15px 25px" padding-bottom="20px" padding-top="20px" padding="10px 25px" text-decoration="none" text-transform="none" vertical-align="middle"><b style="font-weight:700"><b style="font-weight:700">Sign in</b></b></mj-button>
           <mj-text align="left" color="${theme.colors.gray["800"]}" font-familyInter,="Inter, Open Sans, Helvetica, Arial, sans-serif" font-size="15px" line-height="22px" padding-bottom="0px" padding-left="50px" padding-right="50px" padding-top="0px" padding="0px 25px 0px 25px">
-            <p style="margin: 10px 0; text-align: center;">If the link doesn&rsquo;t work, copy this URL into your browser:</br> <a target="_blank" rel="noopener noreferrer" href="${url}" style="color:${theme.colors.brand[" 500"]}">${url}</a></p>
+            <p style="margin: 10px 0; text-align: center;">If the link doesn&rsquo;t work, copy this URL into your browser:</br> <a target="_blank" rel="noopener noreferrer" href="${url}" style="color:${theme.colors.brand["500"]}">${url}</a></p>
           </mj-text>
         </mj-column>
       </mj-section>
       <mj-section background-repeat="repeat" background-size="auto" padding-bottom="0px" padding-top="20px" padding="20px 0px 20px 0px" text-align="center" vertical-align="top">
         <mj-column>
           <mj-social align="center" border-radius="6px" font-family="Ubuntu, Helvetica, Arial, sans-serif" font-size="13px" icon-size="30" line-height="22px" mode="horizontal" padding-bottom="0px" padding="10px 25px" text-decoration="none" text-mode="true">
-            <mj-social-element background-color="${theme.colors.brand[" 500"]}" href="https://www.facebook.com/Labelflow" name="facebook-noshare" src="http://www.mailjet.com/saas-templates-creator/static/img/facebook_white.png"></mj-social-element>
-            <mj-social-element background-color="${theme.colors.brand[" 500"]}" href="https://twitter.com/LabelflowAI" name="twitter-noshare" src="http://www.mailjet.com/saas-templates-creator/static/img/twitter_white.png"></mj-social-element>
-            <mj-social-element background-color="${theme.colors.brand[" 500"]}" href="https://www.linkedin.com/company/labelflow/" name="linkedin-noshare" src="http://www.mailjet.com/saas-templates-creator/static/img/linkedin_white.png"></mj-social-element>
+            <mj-social-element background-color="${theme.colors.brand["500"]}" href="https://www.facebook.com/Labelflow" name="facebook-noshare" src="http://www.mailjet.com/saas-templates-creator/static/img/facebook_white.png"></mj-social-element>
+            <mj-social-element background-color="${theme.colors.brand["500"]}" href="https://twitter.com/LabelflowAI" name="twitter-noshare" src="http://www.mailjet.com/saas-templates-creator/static/img/twitter_white.png"></mj-social-element>
+            <mj-social-element background-color="${theme.colors.brand["500"]}" href="https://www.linkedin.com/company/labelflow/" name="linkedin-noshare" src="http://www.mailjet.com/saas-templates-creator/static/img/linkedin_white.png"></mj-social-element>
           </mj-social>
           <mj-text align="center" color="${theme.colors.gray["800"]}" font-familyInter,="Inter, Open Sans, Helvetica, Arial, sans-serif" font-size="11px" line-height="22px" padding-bottom="0px" padding-top="0px" padding="0px 20px 0px 20px">
             <!-- <p style="margin: 10px 0;"><a target="_blank" rel="noopener noreferrer" style="color:${theme.colors.brand["500"]}" href="#"><span style="color:${theme.colors.brand["500"]}">Page 1</span></a><span style="color:${theme.colors.gray["800"]}">&nbsp; &nbsp;|&nbsp; &nbsp;</span><a target="_blank" rel="noopener noreferrer" style="color:${theme.colors.brand["500"]}" href="#"><span style="color:${theme.colors.brand["500"]}">Page 2</span></a><span style="color:${theme.colors.gray["800"]}">&nbsp; &nbsp;|&nbsp; &nbsp;</span><a target="_blank" rel="noopener noreferrer" style="color:${theme.colors.brand["500"]}" href="#"><span style="color:${theme.colors.brand["500"]}">Page 3</span></a></p> -->
