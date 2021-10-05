@@ -3,11 +3,13 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { generateHtml as activation } from "../../../utils/email/templates/activation";
 import { generateHtml as signin } from "../../../utils/email/templates/sign-in";
 import { generateHtml as signup } from "../../../utils/email/templates/sign-up";
+import { generateHtml as invitation } from "../../../utils/email/templates/invitation";
 
 const emailTypes: { [key: string]: typeof activation } = {
   activation,
   signin,
   signup,
+  invitation,
   default: activation,
 };
 
