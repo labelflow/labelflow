@@ -10,7 +10,7 @@ import {
   Badge,
 } from "@chakra-ui/react";
 import * as React from "react";
-import { User } from "./User";
+import { User } from "./user";
 
 export type Membership = {
   id: string;
@@ -45,9 +45,10 @@ const columns = [
     Header: "Status",
     accessor: "status",
     Cell: function StatusCell(data: any) {
+      const status = data ?? "active";
       return (
-        <Badge fontSize="xs" colorScheme={badgeEnum[data]}>
-          {data}
+        <Badge fontSize="xs" colorScheme={badgeEnum[status]}>
+          {status}
         </Badge>
       );
     },

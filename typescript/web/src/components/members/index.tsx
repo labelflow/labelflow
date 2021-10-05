@@ -1,5 +1,5 @@
-import { TableActions } from "./TableActions";
-import { TableContent, Membership } from "./TableContent";
+import { TableActions } from "./table-actions";
+import { TableContent, Membership } from "./table-content";
 
 export const Members = ({ memberships }: { memberships: Membership[] }) => {
   return (
