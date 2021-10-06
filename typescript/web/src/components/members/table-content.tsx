@@ -42,7 +42,12 @@ const columns = [
     Header: "Role",
     accessor: "role",
     Cell: function RoleSelectionCell(role: string) {
-      return <RoleSelection role={role} />;
+      return (
+        <RoleSelection
+          role={role}
+          // changeMembershipRole={changeMembershipRole}
+        />
+      );
     },
   },
   {
@@ -61,8 +66,10 @@ const columns = [
 
 export const TableContent = ({
   memberships,
+  changeMembershipRole
 }: {
   memberships: Membership[];
+  changeMembershipRole:()=>{}
 }) => {
   return (
     <Table my="8" borderWidth="1px" fontSize="sm">
