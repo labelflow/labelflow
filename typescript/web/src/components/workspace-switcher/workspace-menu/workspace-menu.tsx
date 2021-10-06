@@ -6,6 +6,7 @@ import {
   Button,
   Avatar,
   IconButton,
+  BreadcrumbLink,
   chakra,
   useBreakpointValue,
   useColorModeValue as mode,
@@ -29,6 +30,35 @@ const WorkspaceSelectionButton = React.forwardRef<
     toggle: () => void;
   }
 >(({ selectedWorkspace, toggle }, ref) => {
+  return (
+    <Button
+      ref={ref}
+      size="md"
+      minW="8"
+      px="0"
+      onClick={toggle}
+      bg={mode("white", "gray.800")}
+      aria-label="Open workspace selection popover"
+    >
+      <Tooltip
+        label={`Change workspace (currently on ${
+          selectedWorkspace?.name ?? "Unnamed Workspace"
+        })`}
+        placement="bottom"
+        openDelay={1000}
+      >
+        <SelectorIcon fontSize="md" px="0" mx="0" />
+      </Tooltip>
+    </Button>
+  );
+});
+
+const WorkspaceBreadcrumb = React.forwardRef<
+  null,
+  {
+    selectedWorkspace: WorkspaceItem;
+  }
+>(({ selectedWorkspace }, ref) => {
   const avaterBorderColor = mode("gray.200", "gray.700");
   const avatarBackground = mode("white", "gray.900");
 
@@ -39,81 +69,78 @@ const WorkspaceSelectionButton = React.forwardRef<
     ? (selectedWorkspace as { name: string; src?: string }).src
     : undefined;
 
-  const largeButton = (
-    <Button
-      rightIcon={<SelectorIcon fontSize="md" />}
-      minW="60"
+  const largeBreadcrumb = (
+    <BreadcrumbLink
       justifyContent="space-between"
-      ref={ref}
-      pl="1"
-      onClick={toggle}
-      bg={mode("white", "gray.800")}
-      pointerEvents="initial"
-      aria-label="Open workspace selection popover"
+      alignItems="center"
+      flexDirection="row"
+      display="flex"
+      mr="2"
+    >
+      <Avatar
+        borderWidth="1px"
+        borderColor={avaterBorderColor}
+        size="md"
+        h="10"
+        w="10"
+        borderRadius="lg"
+        flexShrink={0}
+        flexGrow={0}
+        name={name}
+        src={src}
+        mr="2"
+        bg={src != null ? avatarBackground : "gray.400"}
+        icon={<TeamIcon color="white" fontSize="1rem" />}
+      />
+      <Text
+        flexGrow={1}
+        whiteSpace="nowrap"
+        overflow="hidden"
+        textOverflow="ellipsis"
+      >
+        {selectedWorkspace?.name ?? "Unnamed Workspace"}
+      </Text>
+    </BreadcrumbLink>
+  );
+
+  const smallBreadcrumb = (
+    <BreadcrumbLink
+      justifyContent="space-between"
+      alignItems="center"
+      flexDirection="row"
+      display="flex"
+      mr="2"
     >
       <Tooltip
-        label={`Selected workspace (${selectedWorkspace?.name ?? "None"})`}
+        label={`Change workspace (currently on ${
+          selectedWorkspace?.name ?? "Unnamed Workspace"
+        })`}
         placement="bottom"
         openDelay={1000}
       >
-        <Flex justifyContent="space-between" alignItems="center">
-          <Avatar
-            borderWidth="1px"
-            borderColor={avaterBorderColor}
-            size="sm"
-            borderRadius="lg"
-            flexShrink={0}
-            flexGrow={0}
-            name={name}
-            src={src}
-            mr="2"
-            bg={src != null ? avatarBackground : "gray.400"}
-            icon={<TeamIcon color="white" fontSize="1rem" />}
-          />
-          <Text
-            flexGrow={1}
-            whiteSpace="nowrap"
-            overflow="hidden"
-            textOverflow="ellipsis"
-          >
-            {selectedWorkspace?.name ?? "Unnamed Workspace"}
-          </Text>
-        </Flex>
-      </Tooltip>
-    </Button>
-  );
-
-  const smallButton = (
-    <IconButton
-      icon={
         <Avatar
           borderWidth="1px"
           borderColor={avaterBorderColor}
-          size="sm"
+          size="md"
+          h="10"
+          w="10"
           borderRadius="lg"
           flexShrink={0}
           flexGrow={0}
           name={name}
           src={src}
-          ml="2"
-          mr="2"
           bg={src != null ? avatarBackground : "gray.400"}
           icon={<TeamIcon color="white" fontSize="1rem" />}
         />
-      }
-      ref={ref}
-      onClick={toggle}
-      bg={mode("white", "gray.800")}
-      pointerEvents="initial"
-      aria-label="Open workspace selection popover"
-    />
+      </Tooltip>
+    </BreadcrumbLink>
   );
 
   const result =
     useBreakpointValue({
-      base: smallButton,
-      md: largeButton,
-    }) ?? largeButton;
+      base: smallBreadcrumb,
+      md: largeBreadcrumb,
+    }) ?? largeBreadcrumb;
   return result;
 });
 
@@ -136,26 +163,29 @@ export const WorkspaceMenu = ({
   const close = () => setIsOpen(false);
 
   return (
-    <WorkspaceSelectionPopover
-      ariaLabel="Workspace selection menu popover"
-      isOpen={isOpen}
-      onClose={close}
-      workspaces={workspaces}
-      onSelectedWorkspaceChange={(item: WorkspaceItem) => {
-        onSelectedWorkspaceChange(item);
-        close();
-      }}
-      createNewWorkspace={(name: string) => {
-        createNewWorkspace(name);
-        close();
-      }}
-      selectedWorkspaceId={selectedWorkspace?.id ?? null}
-      trigger={
-        <WorkspaceSelectionButton
-          toggle={toggle}
-          selectedWorkspace={selectedWorkspace}
-        />
-      }
-    />
+    <>
+      <WorkspaceBreadcrumb selectedWorkspace={selectedWorkspace} />
+      <WorkspaceSelectionPopover
+        ariaLabel="Workspace selection menu popover"
+        isOpen={isOpen}
+        onClose={close}
+        workspaces={workspaces}
+        onSelectedWorkspaceChange={(item: WorkspaceItem) => {
+          onSelectedWorkspaceChange(item);
+          close();
+        }}
+        createNewWorkspace={(name: string) => {
+          createNewWorkspace(name);
+          close();
+        }}
+        selectedWorkspaceId={selectedWorkspace?.id ?? null}
+        trigger={
+          <WorkspaceSelectionButton
+            toggle={toggle}
+            selectedWorkspace={selectedWorkspace}
+          />
+        }
+      />
+    </>
   );
 };

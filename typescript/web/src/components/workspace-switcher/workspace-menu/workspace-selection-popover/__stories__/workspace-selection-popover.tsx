@@ -3,7 +3,7 @@ import { WorkspaceSelectionPopover } from "../workspace-selection-popover";
 import { chakraDecorator } from "../../../../../utils/chakra-decorator";
 
 export default {
-  title: "web/Workspace selection popover",
+  title: "web/Workspace Switcher/Workspace selection popover",
   decorators: [chakraDecorator],
 };
 

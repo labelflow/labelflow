@@ -2,7 +2,7 @@ import { WorkspaceListItem } from "../workspace-list-item";
 import { chakraDecorator } from "../../../../../../utils/chakra-decorator";
 
 export default {
-  title: "web/Workspace list item",
+  title: "web/Workspace Switcher/Workspace list item",
   decorators: [chakraDecorator],
 };
 

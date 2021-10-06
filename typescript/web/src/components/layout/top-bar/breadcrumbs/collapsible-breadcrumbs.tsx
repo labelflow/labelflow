@@ -18,7 +18,11 @@ const ArrowRightIcon = chakra(RiArrowRightSLine);
 const breadcrumbItemSx: ChakraProps["sx"] = {
   height: "10",
   boxSizing: "border-box",
-  overflow: "hidden",
+  // // Ideally we'd want this, but there is a bug with ChakraUI
+  // overflowX: "hidden",
+  // overflowY: "visible",
+  // // This is a workaround for the bug and seems to not cause any problem
+  overflow: "visible",
   textOverflow: "ellipsis",
   whiteSpace: "nowrap",
   maxWidth: "90em",
