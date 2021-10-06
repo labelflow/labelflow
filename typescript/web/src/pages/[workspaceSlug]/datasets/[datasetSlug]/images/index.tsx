@@ -34,8 +34,8 @@ import { WelcomeManager } from "../../../../../components/welcome-manager";
 import { CookieBanner } from "../../../../../components/cookie-banner";
 
 export const datasetDataQuery = gql`
-  query getDatasetData($slug: String!) {
-    dataset(where: { slugs: { datasetSlug: $slug, workspaceSlug: "local" } }) {
+  query getDatasetData($slug: String!, $workspaceSlug: String!) {
+    dataset(where: { slugs: { slug: $slug, workspaceSlug: $workspaceSlug } }) {
       id
       name
       images {
@@ -50,6 +50,7 @@ export const datasetDataQuery = gql`
 const ImagesPage = () => {
   const router = useRouter();
   const datasetSlug = router?.query?.datasetSlug as string;
+  const workspaceSlug = router?.query?.workspaceSlug as string;
 
   const {
     data: datasetResult,
@@ -60,8 +61,9 @@ const ImagesPage = () => {
   }>(datasetDataQuery, {
     variables: {
       slug: datasetSlug,
+      workspaceSlug,
     },
-    skip: !datasetSlug,
+    skip: !datasetSlug || !workspaceSlug,
   });
 
   const datasetName = datasetResult?.dataset.name;
@@ -94,15 +96,15 @@ const ImagesPage = () => {
       <CookieBanner />
       <Layout
         breadcrumbs={[
-          <NextLink href="/local/datasets">
+          <NextLink key={0} href={`/${workspaceSlug}/datasets`}>
             <BreadcrumbLink>Datasets</BreadcrumbLink>
           </NextLink>,
-          <NextLink href={`/local/datasets/${datasetSlug}`}>
+          <NextLink key={1} href={`/${workspaceSlug}/datasets/${datasetSlug}`}>
             <BreadcrumbLink>
               {datasetName ?? <Skeleton>Dataset Name</Skeleton>}
             </BreadcrumbLink>
           </NextLink>,
-          <Text>Images</Text>,
+          <Text key={2}>Images</Text>,
         ]}
         topBarRightContent={
           <>
@@ -111,7 +113,13 @@ const ImagesPage = () => {
             <ExportButton />
           </>
         }
-        tabBar={<DatasetTabBar currentTab="images" datasetSlug={datasetSlug} />}
+        tabBar={
+          <DatasetTabBar
+            currentTab="images"
+            datasetSlug={datasetSlug}
+            workspaceSlug={workspaceSlug}
+          />
+        }
       >
         {!datasetResult && (
           <Center h="full">
@@ -153,10 +161,12 @@ const ImagesPage = () => {
           >
             {datasetResult?.dataset?.images?.map(({ id, name, url }) => (
               <NextLink
-                href={`/local/datasets/${datasetSlug}/images/${id}`}
+                href={`/${workspaceSlug}/datasets/${datasetSlug}/images/${id}`}
                 key={id}
               >
-                <a href={`/local/datasets/${datasetSlug}/images/${id}`}>
+                <a
+                  href={`/${workspaceSlug}/datasets/${datasetSlug}/images/${id}`}
+                >
                   <VStack
                     maxW="486px"
                     p={4}

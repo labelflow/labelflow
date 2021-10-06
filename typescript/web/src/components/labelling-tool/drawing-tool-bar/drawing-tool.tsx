@@ -21,7 +21,12 @@ import {
   chakra,
 } from "@chakra-ui/react";
 import { RiArrowDownSLine } from "react-icons/ri";
-import { BiShapePolygon, BiShapeSquare, BiArea } from "react-icons/bi";
+import {
+  BiShapeSquare,
+  BiPurchaseTagAlt,
+  BiShapePolygon,
+  BiArea,
+} from "react-icons/bi";
 import { useHotkeys } from "react-hotkeys-hook";
 
 import { useLabellingStore, Tools } from "../../../connectors/labelling-state";
@@ -30,6 +35,7 @@ import { keymap } from "../../../keymap";
 
 export type Props = {};
 
+const ChakraBiLabel = chakra(BiPurchaseTagAlt);
 const ChakraBiShapeSquare = chakra(BiShapeSquare);
 const ChakraBiShapePolygon = chakra(BiShapePolygon);
 const ChakraRiArrowDownSLine = chakra(RiArrowDownSLine);
@@ -98,21 +104,38 @@ export const DrawingToolIcon = (props: {
   } = props;
   const [lastTool, setLastTool] = useState(Tools.BOX);
   useEffect(() => {
-    if ([Tools.BOX, Tools.POLYGON, Tools.IOG].includes(selectedTool)) {
+    if (
+      [Tools.CLASSIFICATION, Tools.BOX, Tools.POLYGON, Tools.IOG].includes(
+        selectedTool
+      )
+    ) {
       setLastTool(selectedTool);
     }
   }, [selectedTool]);
+  const isActive = [
+    Tools.CLASSIFICATION,
+    Tools.BOX,
+    Tools.POLYGON,
+    Tools.IOG,
+  ].includes(selectedTool);
 
-  const isActive = [Tools.BOX, Tools.POLYGON, Tools.IOG].includes(selectedTool);
-  const toolTipLabel = (() => {
-    if (lastTool === Tools.BOX) {
-      return `Bounding Box tool [${keymap.toolBoundingBox.key}]`;
-    }
-    if (lastTool === Tools.POLYGON) {
-      return `Polygon tool [${keymap.toolPolygon.key}]`;
-    }
-    return `IOG tool [${keymap.toolIog.key}]`;
-  })();
+  let toolTipLabel;
+  switch (lastTool) {
+    case Tools.CLASSIFICATION:
+      toolTipLabel = `Classification tool [${keymap.toolClassification.key}]`;
+      break;
+    case Tools.BOX:
+      toolTipLabel = `Bounding Box tool [${keymap.toolBoundingBox.key}]`;
+      break;
+    case Tools.POLYGON:
+      toolTipLabel = `Polygon tool [${keymap.toolPolygon.key}]`;
+      break;
+    case Tools.IOG:
+      toolTipLabel = `IOG tool [${keymap.toolIog.key}]`;
+    default:
+      toolTipLabel = `Bounding Box tool [${keymap.toolBoundingBox.key}]`;
+      break;
+  }
 
   return (
     <Tooltip label={toolTipLabel} placement="right" openDelay={300}>
@@ -120,9 +143,12 @@ export const DrawingToolIcon = (props: {
         ref={buttonRef}
         isDisabled={isDisabled}
         role="checkbox"
-        aria-checked={[Tools.BOX, Tools.POLYGON, Tools.IOG].includes(
-          selectedTool
-        )}
+        aria-checked={[
+          Tools.CLASSIFICATION,
+          Tools.BOX,
+          Tools.POLYGON,
+          Tools.IOG,
+        ].includes(selectedTool)}
         backgroundColor={mode("white", "gray.800")}
         aria-label={`Drawing ${lastTool} tool`}
         pointerEvents="initial"
@@ -131,9 +157,20 @@ export const DrawingToolIcon = (props: {
         w="10"
         padding="0"
       >
-        {lastTool === Tools.BOX && <ChakraBiShapeSquare size="1.3em" />}
-        {lastTool === Tools.POLYGON && <ChakraBiShapePolygon size="1.3em" />}
-        {lastTool === Tools.IOG && <ChakraBiArea size="1.3em" />}
+        {(() => {
+          switch (lastTool) {
+            case Tools.CLASSIFICATION:
+              return <ChakraBiLabel size="1.3em" />;
+            case Tools.BOX:
+              return <ChakraBiShapeSquare size="1.3em" />;
+            case Tools.POLYGON:
+              return <ChakraBiShapePolygon size="1.3em" />;
+            case Tools.IOG:
+              return <ChakraBiArea size="1.3em" />;
+            default:
+              return <ChakraBiShapeSquare size="1.3em" />;
+          }
+        })()}
 
         <PopoverTrigger>
           <Button
@@ -182,6 +219,14 @@ export const DrawingTool = () => {
   }, []);
 
   useHotkeys(
+    keymap.toolClassification.key,
+    () => {
+      setSelectedTool(Tools.CLASSIFICATION);
+    },
+    {},
+    []
+  );
+  useHotkeys(
     keymap.toolBoundingBox.key,
     () => {
       setSelectedTool(Tools.BOX);
@@ -191,7 +236,9 @@ export const DrawingTool = () => {
   );
   useHotkeys(
     keymap.toolPolygon.key,
-    () => setSelectedTool(Tools.POLYGON),
+    () => {
+      setSelectedTool(Tools.POLYGON);
+    },
     {},
     []
   );
@@ -225,6 +272,20 @@ export const DrawingTool = () => {
         <PopoverBody pl="0" pr="0">
           <Box>
             <ToolSelectionPopoverItem
+              name="Classification"
+              shortcut={keymap.toolClassification.key}
+              selected={selectedTool === Tools.CLASSIFICATION}
+              onClick={() => {
+                setSelectedTool(Tools.CLASSIFICATION);
+                setIsPopoverOpened(false);
+              }}
+              ariaLabel="Classification tool"
+            >
+              <Box ml="2">
+                <ChakraBiLabel size="1.3em" />
+              </Box>
+            </ToolSelectionPopoverItem>
+            <ToolSelectionPopoverItem
               name="Bounding Box"
               shortcut={keymap.toolBoundingBox.key}
               selected={selectedTool === Tools.BOX}
@@ -232,10 +293,10 @@ export const DrawingTool = () => {
                 setSelectedTool(Tools.BOX);
                 setIsPopoverOpened(false);
               }}
-              ariaLabel="Select bounding box tool"
+              ariaLabel="Bounding box tool"
             >
               <Box ml="2">
-                <BiShapeSquare size="1.3em" />
+                <ChakraBiShapeSquare size="1.3em" />
               </Box>
             </ToolSelectionPopoverItem>
             <ToolSelectionPopoverItem
@@ -246,10 +307,10 @@ export const DrawingTool = () => {
                 setSelectedTool(Tools.POLYGON);
                 setIsPopoverOpened(false);
               }}
-              ariaLabel="Select polygon tool"
+              ariaLabel="Polygon tool"
             >
               <Box ml="2">
-                <BiShapePolygon size="1.3em" />
+                <ChakraBiShapePolygon size="1.3em" />
               </Box>
             </ToolSelectionPopoverItem>
             <ToolSelectionPopoverItem

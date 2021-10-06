@@ -6,6 +6,7 @@ import { Flex, Text } from "@chakra-ui/react";
 import { useQueryParam } from "use-query-params";
 
 import type { Dataset as DatasetType } from "@labelflow/graphql-types";
+import { useRouter } from "next/router";
 import { Meta } from "../../../components/meta";
 import { Layout } from "../../../components/layout";
 import { IdParam, BoolParam } from "../../../utils/query-param-bool";
@@ -42,6 +43,8 @@ export const getDatasetsQuery = gql`
 `;
 
 const DatasetPage = () => {
+  const workspaceSlug = useRouter().query?.workspaceSlug;
+
   const { data: datasetsResult } = useQuery<{
     datasets: Pick<
       DatasetType,
@@ -53,7 +56,10 @@ const DatasetPage = () => {
       | "labelClassesAggregates"
       | "labelsAggregates"
     >[];
-  }>(getDatasetsQuery, { variables: { where: { workspaceSlug: "local" } } });
+  }>(getDatasetsQuery, {
+    variables: { where: { workspaceSlug } },
+    skip: workspaceSlug == null,
+  });
 
   const [isCreatingDataset, setIsCreatingDataset] = useQueryParam(
     "modal-create-dataset",
@@ -89,7 +95,7 @@ const DatasetPage = () => {
       <AuthManager />
       <Meta title="LabelFlow | Datasets" />
       <CookieBanner />
-      <Layout breadcrumbs={[<Text>Datasets</Text>]}>
+      <Layout breadcrumbs={[<Text key={0}>Datasets</Text>]}>
         <UpsertDatasetModal
           isOpen={isCreatingDataset || editDatasetId != null}
           onClose={onClose}
@@ -121,7 +127,7 @@ const DatasetPage = () => {
             }) => (
               <DatasetCard
                 key={id}
-                url={`/local/datasets/${slug}`}
+                url={`/${workspaceSlug}/datasets/${slug}`}
                 imageUrl={images[0]?.url}
                 datasetName={name}
                 imagesCount={imagesAggregates.totalCount}

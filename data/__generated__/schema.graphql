@@ -225,6 +225,7 @@ input LabelCreateInput {
 }
 
 enum LabelType {
+  Classification
   Polygon
   Box
 }
@@ -401,7 +402,7 @@ enum WorkspacePlan {
 }
 
 input WorkspaceSlugAndDatasetSlug {
-  datasetSlug: String!
+  slug: String!
   workspaceSlug: String!
 }
 

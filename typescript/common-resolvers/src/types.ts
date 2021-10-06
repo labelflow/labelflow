@@ -5,6 +5,7 @@ import type {
   Label as GeneratedLabel,
   LabelClass as GeneratedLabelClass,
   Dataset as GeneratedDataset,
+  Workspace as GeneratedWorkspace,
   ImageWhereInput,
   LabelClassWhereInput,
   LabelWhereInput,
@@ -18,7 +19,11 @@ import type {
   LabelClassWhereUniqueInput,
   DatasetWhereUniqueInput,
   ImageWhereUniqueInput,
+  WorkspaceCreateInput,
+  WorkspaceWhereUniqueInput,
+  WorkspaceType,
 } from "@labelflow/graphql-types";
+import { WorkspacePlan } from "@prisma/client";
 
 type NoUndefinedField<T> = { [P in keyof T]: NonNullable<T[P]> };
 
@@ -53,7 +58,15 @@ export type DbDataset = Omit<
   | "labelClasses"
   | "labelClassesAggregates"
   | "workspace"
->;
+> & { workspaceSlug: string };
+
+export type DbWorkspace = Omit<
+  GeneratedWorkspace,
+  "__typename" | "type" | "datasets" | "memberships" | "plan"
+> & { plan: WorkspacePlan };
+
+export type DbWorkspaceWithType = DbWorkspace & { type: WorkspaceType };
+
 export type DbDatasetCreateInput = WithCreatedAtAndUpdatedAt<
   DatasetCreateInput & { slug: string }
 >;
@@ -69,13 +82,18 @@ type WithCreatedAtAndUpdatedAt<T extends {}> = T & {
 
 type ID = string;
 
-type Add<EntityType> = (entity: EntityType) => Promise<ID>;
+type Add<EntityType> = (
+  entity: EntityType,
+  user?: { id: string }
+) => Promise<ID>;
 type Count<Where> = (where?: Where) => Promise<number>;
 type Delete<EntityWhereUniqueInput> = (
-  input: EntityWhereUniqueInput
+  input: EntityWhereUniqueInput,
+  user?: { id: string }
 ) => Promise<void>;
 type Get<EntityType, EntityWhereUniqueInput> = (
-  input: EntityWhereUniqueInput
+  input: EntityWhereUniqueInput,
+  user?: { id: string }
 ) => Promise<EntityType | undefined | null>;
 
 type List<Entity = unknown, Where extends Record<string, any> | null = null> = (
@@ -85,38 +103,45 @@ type List<Entity = unknown, Where extends Record<string, any> | null = null> = (
 ) => Promise<Entity[]>;
 type Update<Entity, EntityWhereUniqueInput> = (
   input: EntityWhereUniqueInput,
-  data: PartialWithNullAllowed<Entity>
+  data: PartialWithNullAllowed<Entity>,
+  user?: { id: string }
 ) => Promise<boolean>;
 
 export type Repository = {
   image: {
     add: Add<DbImageCreateInput>;
-    count: Count<ImageWhereInput>;
+    count: Count<ImageWhereInput & { user?: { id: string } }>;
     get: Get<DbImage, ImageWhereUniqueInput>;
-    list: List<DbImage, ImageWhereInput>;
+    list: List<DbImage, ImageWhereInput & { user?: { id: string } }>;
   };
   label: {
     add: Add<DbLabelCreateInput>;
-    count: Count<LabelWhereInput>;
+    count: Count<LabelWhereInput & { user?: { id: string } }>;
     delete: Delete<LabelWhereUniqueInput>;
     get: Get<DbLabel, LabelWhereUniqueInput>;
-    list: List<DbLabel, LabelWhereInput>;
+    list: List<DbLabel, LabelWhereInput & { user?: { id: string } }>;
     update: Update<DbLabel, LabelWhereUniqueInput>;
   };
   labelClass: {
     add: Add<DbLabelClassCreateInput>;
-    count: Count<LabelClassWhereInput>;
+    count: Count<LabelClassWhereInput & { user?: { id: string } }>;
     delete: Delete<LabelClassWhereUniqueInput>;
     get: Get<DbLabelClass, LabelClassWhereUniqueInput>;
-    list: List<DbLabelClass, LabelClassWhereInput>;
+    list: List<DbLabelClass, LabelClassWhereInput & { user?: { id: string } }>;
     update: Update<DbLabelClass, LabelClassWhereUniqueInput>;
   };
   dataset: {
     add: Add<DbDatasetCreateInput>;
     delete: Delete<DatasetWhereUniqueInput>;
     get: Get<DbDataset, DatasetWhereUniqueInput>;
-    list: List<DbDataset, null>;
+    list: List<DbDataset, { workspaceSlug?: string; user?: { id: string } }>;
     update: Update<DbDataset, DatasetWhereUniqueInput>;
+  };
+  workspace: {
+    add: Add<WorkspaceCreateInput>;
+    get: Get<DbWorkspaceWithType, WorkspaceWhereUniqueInput>;
+    list: List<DbWorkspaceWithType, { user?: { id: string } }>;
+    update: Update<DbWorkspaceWithType, WorkspaceWhereUniqueInput>;
   };
   upload: {
     getUploadTargetHttp: (

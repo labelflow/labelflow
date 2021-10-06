@@ -56,8 +56,8 @@ const imageQuery = gql`
 `;
 
 const getDatasetQuery = gql`
-  query getDataset($slug: String!) {
-    dataset(where: { slugs: { datasetSlug: $slug, workspaceSlug: "local" } }) {
+  query getDataset($slug: String!, $workspaceSlug: String!) {
+    dataset(where: { slugs: { slug: $slug, workspaceSlug: $workspaceSlug } }) {
       id
       name
     }
@@ -70,7 +70,7 @@ type ImageQueryResponse = {
 
 const ImagePage = () => {
   const router = useRouter();
-  const { datasetSlug, imageId } = router?.query;
+  const { datasetSlug, imageId, workspaceSlug } = router?.query;
 
   const {
     data: imageResult,
@@ -86,8 +86,8 @@ const ImagePage = () => {
     error: errorDataset,
     loading: loadingDataset,
   } = useQuery(getDatasetQuery, {
-    variables: { slug: datasetSlug },
-    skip: !datasetSlug,
+    variables: { slug: datasetSlug, workspaceSlug },
+    skip: !datasetSlug || !workspaceSlug,
   });
 
   const imageName = imageResult?.image.name;
@@ -138,21 +138,27 @@ const ImagePage = () => {
       <CookieBanner />
       <Layout
         breadcrumbs={[
-          <NextLink href="/local/datasets">
+          <NextLink key={0} href={`/${workspaceSlug}/datasets`}>
             <BreadcrumbLink>Datasets</BreadcrumbLink>
           </NextLink>,
-          <NextLink href={`/local/datasets/${datasetSlug}/images`}>
+          <NextLink
+            key={1}
+            href={`/${workspaceSlug}/datasets/${datasetSlug}/images`}
+          >
             <BreadcrumbLink>
               {datasetName ?? <Skeleton>Dataset Name</Skeleton>}
             </BreadcrumbLink>
           </NextLink>,
-          <NextLink href={`/local/datasets/${datasetSlug}/images`}>
+          <NextLink
+            key={2}
+            href={`/${workspaceSlug}/datasets/${datasetSlug}/images`}
+          >
             <BreadcrumbLink>Images</BreadcrumbLink>
           </NextLink>,
           imageName ? (
-            <Text>{imageName}</Text>
+            <Text key={3}>{imageName}</Text>
           ) : (
-            <Skeleton>Image Name</Skeleton>
+            <Skeleton key={3}>Image Name</Skeleton>
           ),
         ]}
         topBarRightContent={

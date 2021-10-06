@@ -15,6 +15,7 @@ import {
 import { useState } from "react";
 import { ExportFormat, ExportOptions } from "@labelflow/graphql-types";
 import { defaultOptions, formatsOptionsInformation, Format } from "./formats";
+import { trackEvent } from "../../../utils/google-analytics";
 
 const OptionLine = ({
   header,
@@ -119,8 +120,13 @@ export const ExportOptionsModal = ({
             colorScheme="brand"
             size="md"
             alignSelf="flex-end"
+            flexShrink={0}
             onClick={() => {
               exportFunction(exportOptions);
+              trackEvent(
+                `export_button_click_${exportFormat.toLocaleLowerCase()}`,
+                {}
+              );
               onClose();
             }}
           >

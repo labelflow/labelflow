@@ -11,7 +11,9 @@ import { LabelCreateInput } from "@labelflow/graphql-types";
 import { probeImage } from "@labelflow/common-resolvers/src/utils/probe-image";
 import { mockNextRouter } from "../../../../utils/router-mocks";
 
-mockNextRouter({ query: { datasetSlug: "test-dataset" } });
+mockNextRouter({
+  query: { datasetSlug: "test-dataset", workspaceSlug: "local" },
+});
 
 import { ExportModal } from "..";
 import { theme } from "../../../../theme";

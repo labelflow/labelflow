@@ -1,7 +1,7 @@
 import { ApolloClient, gql } from "@apollo/client";
 import { GeometryInput, LabelType } from "@labelflow/graphql-types";
 import { getBoundedGeometryFromImage } from "@labelflow/common-resolvers";
-import { Effect } from "../../../../connectors/undo-store";
+import { Effect } from "..";
 
 const updateLabelMutation = gql`
   mutation updateLabel($id: ID!, $geometry: GeometryInput, $labelClassId: ID) {
@@ -53,7 +53,7 @@ const getLabelQuery = gql`
   }
 `;
 
-export const updateLabelEffect = (
+export const createUpdateLabelEffect = (
   {
     labelId,
     geometry,

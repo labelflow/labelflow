@@ -1,7 +1,7 @@
 import { useMemo, useRef, useCallback, useState, useEffect } from "react";
 import { Draw as OlDraw } from "ol/interaction";
 import { createBox, DrawEvent } from "ol/interaction/Draw";
-import GeoJSON from "ol/format/GeoJSON";
+import GeoJSON, { GeoJSONPolygon } from "ol/format/GeoJSON";
 import { Fill, Stroke, Style } from "ol/style";
 import { Vector as OlSourceVector } from "ol/source";
 import Collection from "ol/Collection";
@@ -16,14 +16,15 @@ import CircleStyle from "ol/style/Circle";
 import { LabelType } from "@labelflow/graphql-types";
 import { ModifyEvent } from "ol/interaction/Modify";
 import { useMap } from "@labelflow/react-openlayers-fiber";
+import BaseEvent from "ol/events/Event";
 import {
   useLabellingStore,
   DrawingToolState,
 } from "../../../../connectors/labelling-state";
 import { keymap } from "../../../../keymap";
 import { noneClassColor } from "../../../../utils/class-color-generator";
-import { createLabelEffect } from "./create-label-effect";
-import { updateLabelEffect } from "../select-and-modify-feature/update-label-effect";
+import { createCreateLabelEffect } from "../../../../connectors/undo-store/effects/create-label";
+import { createUpdateLabelEffect } from "../../../../connectors/undo-store/effects/update-label";
 
 const labelClassQuery = gql`
   query getLabelClass($id: ID!) {
@@ -95,14 +96,16 @@ export const DrawIogInteraction = ({ imageId }: { imageId: string }) => {
       if (centerPoint != null)
         setCenterPointFeature(centerPointFeatureFromSource as Feature<Polygon>);
 
-      const listener = ({ feature }: { feature: Feature<Geometry> }) => {
+      const listener = (event: BaseEvent) => {
+        const { feature } = event as unknown as { feature: Feature<Geometry> };
         if (feature.getProperties().id === "centerPoint") {
           setCenterPointFeature(feature as Feature<Polygon>);
         }
       };
-      vectorSourceRef.current?.on("addfeature", listener);
+      vectorSourceRef.current?.on(["addfeature"], listener);
       return () => vectorSourceRef.current?.un("addfeature", listener);
     }
+    return () => {};
   }, [vectorSourceRef.current]);
 
   const setDrawingToolState = useLabellingStore(
@@ -158,9 +161,9 @@ export const DrawIogInteraction = ({ imageId }: { imageId: string }) => {
     y,
     width,
     height,
-    pointsInside,
-    pointsOutside,
-    centerPoint,
+    pointsInside: pointsInsideIog,
+    pointsOutside: pointsOutsideIog,
+    centerPoint: centerPointIog,
   }: {
     id: string | null;
     imageUrl?: string;
@@ -183,13 +186,13 @@ export const DrawIogInteraction = ({ imageId }: { imageId: string }) => {
             y,
             width,
             height,
-            centerPoint,
-            pointsInside,
-            pointsOutside,
+            centerPoint: centerPointIog,
+            pointsInside: pointsInsideIog,
+            pointsOutside: pointsOutsideIog,
           },
         });
 
-        return updateLabelEffect(
+        return createUpdateLabelEffect(
           {
             geometry: {
               type: "Polygon",
@@ -238,9 +241,9 @@ export const DrawIogInteraction = ({ imageId }: { imageId: string }) => {
 
   const createPointInsideOrOutside = useCallback(
     (event: MapBrowserEvent<UIEvent>) => {
-      const { map } = event;
+      const { map: mapEvent } = event;
 
-      const idOfClickedFeature = map.forEachFeatureAtPixel(
+      const idOfClickedFeature = mapEvent.forEachFeatureAtPixel(
         event.pixel,
         (feature) => feature.getProperties().id
       );
@@ -267,14 +270,15 @@ export const DrawIogInteraction = ({ imageId }: { imageId: string }) => {
       map?.on("click", createPointInsideOrOutside);
       return () => map?.un("click", createPointInsideOrOutside);
     }
+    return () => {};
   }, [map, selectedLabelId, createPointInsideOrOutside]);
 
   const performIOGFromDrawEvent = async (drawEvent: DrawEvent) => {
     const openLayersGeometry = drawEvent.feature.getGeometry();
     const geometry = new GeoJSON().writeGeometryObject(
       openLayersGeometry
-    ) as GeoJSON.Polygon;
-    const labelIdPromise = createLabelEffect(
+    ) as GeoJSONPolygon;
+    const labelIdPromise = createCreateLabelEffect(
       {
         imageId,
         selectedLabelClassId,
@@ -329,15 +333,18 @@ export const DrawIogInteraction = ({ imageId }: { imageId: string }) => {
     }
   };
 
-  const performIogFromModifyEvent = async (modifyEvent: ModifyEvent) => {
+  const performIogFromModifyEvent = async (
+    modifyEvent: ModifyEvent
+  ): Promise<boolean> => {
     const newCoordinates = modifyEvent.mapBrowserEvent.coordinate;
     setCenterPoint(newCoordinates);
-    runIog({
+    await runIog({
       id: selectedLabelId,
       centerPoint: newCoordinates,
       pointsInside,
       pointsOutside,
     });
+    return true;
   };
 
   if (typeof imageId !== "string") {

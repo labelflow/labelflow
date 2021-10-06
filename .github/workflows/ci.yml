@@ -209,52 +209,53 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           # 👇 Chromatic projectToken, refer to the manage page to obtain it.
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
-
-  deploy-webapp-pr:
-    name: Deploy webapp PR branch
-    if: "! contains( github.ref, 'main')"
-    runs-on: ubuntu-20.04
-    needs: install-typescript
-    steps:
-      - name: start deployment
-        uses: bobheadxi/deployments@v0.4.3
-        id: deployment
-        with:
-          step: start
-          token: ${{ secrets.GITHUB_TOKEN }}
-          env: "Preview – labelflow"
-          ref: ${{ github.head_ref }}
-          no_override: false
-      - name: Check out repository code
-        uses: actions/checkout@v2
-      - name: Deploy webapp on Vercel
-        uses: amondnet/vercel-action@v20
-        id: vercel
-        with:
-          scope: ${{ secrets.VERCEL_ORG_ID}}
-          vercel-token: ${{ secrets.VERCEL_TOKEN }} # Required
-          github-token: ${{ secrets.GITHUB_TOKEN }} #Optional
-          vercel-args: "" #Optional
-          vercel-org-id: ${{ secrets.VERCEL_ORG_ID}} #Required
-          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID_WEBAPP}} #Required
-          vercel-project-name: "labelflow"
-          # working-directory: ./typescript/web
-          working-directory: .
-          # alias-domains: | #Optional
-          #   app.labelflow.ai
-          #   pr{{PR_NUMBER}}.beta.labelflow.ai
-          alias-domains: | #Optional
-            pr{{PR_NUMBER}}.beta.labelflow.ai
-      - run: npx vercel logs ${{steps.vercel.outputs.preview-url}} --token ${{ secrets.VERCEL_TOKEN }}
-      - name: update deployment status
-        uses: bobheadxi/deployments@v0.4.3
-        if: always()
-        with:
-          step: finish
-          token: ${{ secrets.GITHUB_TOKEN }}
-          status: ${{ job.status }}
-          deployment_id: ${{ steps.deployment.outputs.deployment_id }}
-          env_url: ${{steps.vercel.outputs.preview-url}}
+          
+  # # Code to deploy to vercel with a github action (instead of automatically using vercel github integration)
+  # deploy-webapp-pr:
+  #   name: Deploy webapp PR branch
+  #   if: "! contains( github.ref, 'main')"
+  #   runs-on: ubuntu-20.04
+  #   needs: install-typescript
+  #   steps:
+  #     - name: start deployment
+  #       uses: bobheadxi/deployments@v0.4.3
+  #       id: deployment
+  #       with:
+  #         step: start
+  #         token: ${{ secrets.GITHUB_TOKEN }}
+  #         env: "Preview – labelflow"
+  #         ref: ${{ github.head_ref }}
+  #         no_override: false
+  #     - name: Check out repository code
+  #       uses: actions/checkout@v2
+  #     - name: Deploy webapp on Vercel
+  #       uses: amondnet/vercel-action@v20
+  #       id: vercel
+  #       with:
+  #         scope: ${{ secrets.VERCEL_ORG_ID}}
+  #         vercel-token: ${{ secrets.VERCEL_TOKEN }} # Required
+  #         github-token: ${{ secrets.GITHUB_TOKEN }} #Optional
+  #         vercel-args: "" #Optional
+  #         vercel-org-id: ${{ secrets.VERCEL_ORG_ID}} #Required
+  #         vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID_WEBAPP}} #Required
+  #         vercel-project-name: "labelflow"
+  #         # working-directory: ./typescript/web
+  #         working-directory: .
+  #         # alias-domains: | #Optional
+  #         #   app.labelflow.ai
+  #         #   pr{{PR_NUMBER}}.beta.labelflow.ai
+  #         alias-domains: | #Optional
+  #           pr{{PR_NUMBER}}.beta.labelflow.ai
+  #     - run: npx vercel logs ${{steps.vercel.outputs.preview-url}} --token ${{ secrets.VERCEL_TOKEN }}
+  #     - name: update deployment status
+  #       uses: bobheadxi/deployments@v0.4.3
+  #       if: always()
+  #       with:
+  #         step: finish
+  #         token: ${{ secrets.GITHUB_TOKEN }}
+  #         status: ${{ job.status }}
+  #         deployment_id: ${{ steps.deployment.outputs.deployment_id }}
+  #         env_url: ${{steps.vercel.outputs.preview-url}}
 
   bump-version:
     name: "Bump version (only on main)"
@@ -336,51 +337,52 @@ jobs:
           team: "labelflow"
           appdir: "strapi"
 
-  deploy-webapp-main:
-    name: Deploy webapp to production
-    if: contains( github.ref, 'main')
-    runs-on: ubuntu-20.04
-    needs: bump-version
-    steps:
-      - name: start deployment
-        uses: bobheadxi/deployments@v0.4.3
-        id: deployment
-        with:
-          step: start
-          token: ${{ secrets.GITHUB_TOKEN }}
-          env: "Production – labelflow"
-          ref: ${{ github.head_ref }}
-          no_override: true
-      - name: Check out repository code
-        uses: actions/checkout@v2
-        with:
-          # Needed to make sure it doesn't checkout the commit which triggered the workflow but the release one.
-          ref: main
-      - name: Deploy webapp on Vercel
-        uses: amondnet/vercel-action@v20
-        id: vercel
-        with:
-          scope: ${{ secrets.VERCEL_ORG_ID}}
-          vercel-token: ${{ secrets.VERCEL_TOKEN }} # Required
-          github-token: ${{ secrets.GITHUB_TOKEN }} #Optional
-          vercel-args: "--prod" #Optional
-          vercel-org-id: ${{ secrets.VERCEL_ORG_ID}} #Required
-          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID_WEBAPP}} #Required
-          vercel-project-name: "labelflow"
-          # working-directory: ./typescript/web
-          working-directory: .
-          # alias-domains: | #Optional
-          #   app.labelflow.ai
-          #   pr{{PR_NUMBER}}.beta.labelflow.ai
-          alias-domains: | #Optional
-            labelflow.ai
-      - run: npx vercel logs ${{steps.vercel.outputs.preview-url}} --token ${{ secrets.VERCEL_TOKEN }}
-      - name: update deployment status
-        uses: bobheadxi/deployments@v0.4.3
-        if: always()
-        with:
-          step: finish
-          token: ${{ secrets.GITHUB_TOKEN }}
-          status: ${{ job.status }}
-          deployment_id: ${{ steps.deployment.outputs.deployment_id }}
-          env_url: ${{steps.vercel.outputs.preview-url}}
+  # # Code to deploy to vercel with a github action (instead of automatically using vercel github integration)
+  # deploy-webapp-main:
+  #   name: Deploy webapp to production
+  #   if: contains( github.ref, 'main')
+  #   runs-on: ubuntu-20.04
+  #   needs: bump-version
+  #   steps:
+  #     - name: start deployment
+  #       uses: bobheadxi/deployments@v0.4.3
+  #       id: deployment
+  #       with:
+  #         step: start
+  #         token: ${{ secrets.GITHUB_TOKEN }}
+  #         env: "Production – labelflow"
+  #         ref: ${{ github.head_ref }}
+  #         no_override: true
+  #     - name: Check out repository code
+  #       uses: actions/checkout@v2
+  #       with:
+  #         # Needed to make sure it doesn't checkout the commit which triggered the workflow but the release one.
+  #         ref: main
+  #     - name: Deploy webapp on Vercel
+  #       uses: amondnet/vercel-action@v20
+  #       id: vercel
+  #       with:
+  #         scope: ${{ secrets.VERCEL_ORG_ID}}
+  #         vercel-token: ${{ secrets.VERCEL_TOKEN }} # Required
+  #         github-token: ${{ secrets.GITHUB_TOKEN }} #Optional
+  #         vercel-args: "--prod" #Optional
+  #         vercel-org-id: ${{ secrets.VERCEL_ORG_ID}} #Required
+  #         vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID_WEBAPP}} #Required
+  #         vercel-project-name: "labelflow"
+  #         # working-directory: ./typescript/web
+  #         working-directory: .
+  #         # alias-domains: | #Optional
+  #         #   app.labelflow.ai
+  #         #   pr{{PR_NUMBER}}.beta.labelflow.ai
+  #         alias-domains: | #Optional
+  #           labelflow.ai
+  #     - run: npx vercel logs ${{steps.vercel.outputs.preview-url}} --token ${{ secrets.VERCEL_TOKEN }}
+  #     - name: update deployment status
+  #       uses: bobheadxi/deployments@v0.4.3
+  #       if: always()
+  #       with:
+  #         step: finish
+  #         token: ${{ secrets.GITHUB_TOKEN }}
+  #         status: ${{ job.status }}
+  #         deployment_id: ${{ steps.deployment.outputs.deployment_id }}
+  #         env_url: ${{steps.vercel.outputs.preview-url}}

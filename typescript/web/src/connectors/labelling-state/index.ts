@@ -3,6 +3,7 @@ import { zoomByDelta as olZoomByDelta } from "ol/interaction/Interaction";
 // Needed to correct https://github.com/Diablow/zustand-store-addons/issues/2
 import type { UseStore } from "zustand";
 import create from "zustand-store-addons";
+import { Coordinate } from "ol/coordinate";
 
 import {
   getRouterValue,
@@ -11,6 +12,7 @@ import {
 
 export enum Tools {
   SELECTION = "select",
+  CLASSIFICATION = "classification",
   BOX = "box",
   POLYGON = "polygon",
   IOG = "iog",
@@ -30,6 +32,8 @@ export type LabellingState = {
   isImageLoading: boolean;
   isContextMenuOpen: boolean;
   setIsContextMenuOpen: (isContextMenuOpen: boolean) => void;
+  contextMenuLocation: Coordinate | undefined;
+  setContextMenuLocation: (contextMenuLocation: Coordinate | undefined) => void;
   selectedTool: Tools;
   selectedLabelId: string | null;
   selectedLabelClassId: string | null;
@@ -55,6 +59,10 @@ export const useLabellingStore = create<LabellingState>(
     setIsContextMenuOpen: (isContextMenuOpen: boolean) =>
       // @ts-ignore See https://github.com/Diablow/zustand-store-addons/issues/2
       set({ isContextMenuOpen }),
+    contextMenuLocation: undefined,
+    setContextMenuLocation: (contextMenuLocation: Coordinate | undefined) =>
+      // @ts-ignore See https://github.com/Diablow/zustand-store-addons/issues/2
+      set({ contextMenuLocation }),
     selectedTool: getRouterValue("selectedTool") ?? Tools.SELECTION,
     selectedLabelId: getRouterValue("selectedLabelId") ?? null,
     selectedLabelClassId: getRouterValue("selectedLabelClassId") ?? null,

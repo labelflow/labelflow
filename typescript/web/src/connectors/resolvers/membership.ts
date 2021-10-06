@@ -1,17 +1,17 @@
-import { notImplementedInLocalWorkspaceResolver } from "./utils";
+import { notImplementedInLocalWorkspaceRepository } from "../repository/utils";
 
 export default {
   Query: {
-    membership: notImplementedInLocalWorkspaceResolver,
-    memberships: notImplementedInLocalWorkspaceResolver,
+    membership: notImplementedInLocalWorkspaceRepository,
+    memberships: notImplementedInLocalWorkspaceRepository,
   },
   Mutation: {
-    createMembership: notImplementedInLocalWorkspaceResolver,
-    updateMembership: notImplementedInLocalWorkspaceResolver,
-    deleteMembership: notImplementedInLocalWorkspaceResolver,
+    createMembership: notImplementedInLocalWorkspaceRepository,
+    updateMembership: notImplementedInLocalWorkspaceRepository,
+    deleteMembership: notImplementedInLocalWorkspaceRepository,
   },
   Membership: {
-    user: notImplementedInLocalWorkspaceResolver,
-    workspace: notImplementedInLocalWorkspaceResolver,
+    user: notImplementedInLocalWorkspaceRepository,
+    workspace: notImplementedInLocalWorkspaceRepository,
   },
 };
