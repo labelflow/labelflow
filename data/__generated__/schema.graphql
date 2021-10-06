@@ -262,6 +262,7 @@ input MembershipCreateInput {
 }
 
 enum MembershipRole {
+  Owner
   Admin
   Member
 }
