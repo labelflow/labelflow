@@ -2,10 +2,8 @@ import React from "react";
 import {
   Tooltip,
   Text,
-  Flex,
   Button,
   Avatar,
-  IconButton,
   BreadcrumbLink,
   chakra,
   useBreakpointValue,
@@ -31,34 +29,33 @@ const WorkspaceSelectionButton = React.forwardRef<
   }
 >(({ selectedWorkspace, toggle }, ref) => {
   return (
-    <Button
-      ref={ref}
-      size="md"
-      minW="8"
-      px="0"
-      onClick={toggle}
-      bg={mode("white", "gray.800")}
-      aria-label="Open workspace selection popover"
+    <Tooltip
+      label={`Change workspace (currently on ${
+        selectedWorkspace?.name ?? "Unnamed Workspace"
+      })`}
+      placement="bottom"
+      openDelay={1000}
     >
-      <Tooltip
-        label={`Change workspace (currently on ${
-          selectedWorkspace?.name ?? "Unnamed Workspace"
-        })`}
-        placement="bottom"
-        openDelay={1000}
+      <Button
+        ref={ref}
+        size="md"
+        minW="8"
+        px="0"
+        onClick={toggle}
+        bg={mode("white", "gray.800")}
+        aria-label="Open workspace selection popover"
       >
         <SelectorIcon fontSize="md" px="0" mx="0" />
-      </Tooltip>
-    </Button>
+      </Button>
+    </Tooltip>
   );
 });
 
-const WorkspaceBreadcrumb = React.forwardRef<
-  null,
-  {
-    selectedWorkspace: WorkspaceItem;
-  }
->(({ selectedWorkspace }, ref) => {
+const WorkspaceBreadcrumb = ({
+  selectedWorkspace,
+}: {
+  selectedWorkspace: WorkspaceItem;
+}) => {
   const avaterBorderColor = mode("gray.200", "gray.700");
   const avatarBackground = mode("white", "gray.900");
 
@@ -112,9 +109,9 @@ const WorkspaceBreadcrumb = React.forwardRef<
       mr="2"
     >
       <Tooltip
-        label={`Change workspace (currently on ${
+        label={`Navigate to ${
           selectedWorkspace?.name ?? "Unnamed Workspace"
-        })`}
+        } workspace`}
         placement="bottom"
         openDelay={1000}
       >
@@ -142,7 +139,7 @@ const WorkspaceBreadcrumb = React.forwardRef<
       md: largeBreadcrumb,
     }) ?? largeBreadcrumb;
   return result;
-});
+};
 
 export const WorkspaceMenu = ({
   isOpen,
