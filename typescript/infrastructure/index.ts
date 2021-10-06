@@ -10,24 +10,58 @@ const domain = "labelflow.net";
 const subdomain = "iog";
 const fullyQualifiedDomain = `${subdomain}.${domain}`;
 
+// https://console.cloud.google.com/iam-admin/quotas/details;servicem=compute.googleapis.com;metricm=compute.googleapis.com%2Fa2_cpus;limitIdm=1%2F%7Bproject%7D;allQuotasPageStatem=%28%22expandableQuotasTable%22:%28%22f%22:%22%255B%257B_22k_22_3A_22serviceName_22_2C_22t_22_3A10_2C_22v_22_3A_22_5C_22compute.googleapis.com_5C_22_22%257D_2C%257B_22k_22_3A_22_22_2C_22t_22_3A10_2C_22v_22_3A_22_5C_22A2_CPUS_5C_22_22%257D%255D%22%29%29?project=labelflow-321909
+// Add quotas
+// const myProject = gcp.organizations.Project("")
+// export const quotasCpus = new gcp.serviceusage.ConsumerQuotaOverride(
+//   "a2-cpus-quota",
+//   {
+//     service: "compute.googleapis.com",
+//     limit: "%2Fproject%2Fregion",
+//     overrideValue: "12",
+//     metric: "compute.googleapis.com%2Fa2_cpus",
+//   }
+// );
+
 // Create a GKE cluster
 const engineVersion = gcp.container
   .getEngineVersions()
   .then((v) => v.latestMasterVersion);
-const cluster = new gcp.container.Cluster("test-iog-cluster", {
-  initialNodeCount: 2,
-  minMasterVersion: engineVersion,
-  nodeVersion: engineVersion,
-  nodeConfig: {
-    machineType: "n1-standard-1",
-    oauthScopes: [
-      "https://www.googleapis.com/auth/compute",
-      "https://www.googleapis.com/auth/devstorage.read_only",
-      "https://www.googleapis.com/auth/logging.write",
-      "https://www.googleapis.com/auth/monitoring",
-    ],
-  },
-});
+const cluster = new gcp.container.Cluster(
+  "test-iog-cluster",
+  {
+    initialNodeCount: 1,
+    minMasterVersion: engineVersion,
+    nodeVersion: engineVersion,
+    nodeConfig: {
+      machineType: "n1-standard-4",
+      diskSizeGb: 100,
+      oauthScopes: [
+        "https://www.googleapis.com/auth/devstorage.read_only",
+        "https://www.googleapis.com/auth/logging.write",
+        "https://www.googleapis.com/auth/monitoring",
+        "https://www.googleapis.com/auth/servicecontrol",
+        "https://www.googleapis.com/auth/service.management.readonly",
+        "https://www.googleapis.com/auth/trace.append",
+      ],
+      metadata: {
+        "disable-legacy-endpoints": "true",
+      },
+      imageType: "COS_CONTAINERD",
+      guestAccelerators: [
+        {
+          count: 1,
+          type: "nvidia-tesla-t4",
+        },
+      ],
+      diskType: "pd-standard",
+      shieldedInstanceConfig: {
+        enableIntegrityMonitoring: true,
+      },
+    },
+  }
+  // { dependsOn: [quotasCpus] }
+);
 
 // Export the Cluster name
 export const clusterName = cluster.name.apply((name) => `${name}`);
@@ -74,6 +108,169 @@ const clusterProvider = new k8s.Provider("test-iog-provider", {
   kubeconfig,
 });
 
+// https://cloud.google.com/kubernetes-engine/docs/how-to/gpus?_ga=2.53663592.-1577952204.1632929004#installing_drivers
+export const nvidiaDriverInstaller = new k8s.apps.v1.DaemonSet(
+  "nvidia-driver-installer",
+  {
+    metadata: {
+      name: "nvidia-driver-installer",
+      namespace: "kube-system",
+      labels: {
+        "k8s-app": "nvidia-driver-installer",
+      },
+    },
+    spec: {
+      selector: {
+        matchLabels: {
+          "k8s-app": "nvidia-driver-installer",
+        },
+      },
+      updateStrategy: {
+        type: "RollingUpdate",
+      },
+      template: {
+        metadata: {
+          labels: {
+            name: "nvidia-driver-installer",
+            "k8s-app": "nvidia-driver-installer",
+          },
+        },
+        spec: {
+          affinity: {
+            nodeAffinity: {
+              requiredDuringSchedulingIgnoredDuringExecution: {
+                nodeSelectorTerms: [
+                  {
+                    matchExpressions: [
+                      {
+                        key: "cloud.google.com/gke-accelerator",
+                        operator: "Exists",
+                      },
+                    ],
+                  },
+                ],
+              },
+            },
+          },
+          tolerations: [
+            {
+              operator: "Exists",
+            },
+          ],
+          hostNetwork: true,
+          hostPID: true,
+          volumes: [
+            {
+              name: "dev",
+              hostPath: {
+                path: "/dev",
+              },
+            },
+            {
+              name: "vulkan-icd-mount",
+              hostPath: {
+                path: "/home/kubernetes/bin/nvidia/vulkan/icd.d",
+              },
+            },
+            {
+              name: "nvidia-install-dir-host",
+              hostPath: {
+                path: "/home/kubernetes/bin/nvidia",
+              },
+            },
+            {
+              name: "root-mount",
+              hostPath: {
+                path: "/",
+              },
+            },
+            {
+              name: "cos-tools",
+              hostPath: {
+                path: "/var/lib/cos-tools",
+              },
+            },
+          ],
+          initContainers: [
+            {
+              image: "cos-nvidia-installer:fixed",
+              imagePullPolicy: "Never",
+              name: "nvidia-driver-installer",
+              resources: {
+                requests: {
+                  cpu: "0.15",
+                },
+              },
+              securityContext: {
+                privileged: true,
+              },
+              env: [
+                {
+                  name: "NVIDIA_INSTALL_DIR_HOST",
+                  value: "/home/kubernetes/bin/nvidia",
+                },
+                {
+                  name: "NVIDIA_INSTALL_DIR_CONTAINER",
+                  value: "/usr/local/nvidia",
+                },
+                {
+                  name: "VULKAN_ICD_DIR_HOST",
+                  value: "/home/kubernetes/bin/nvidia/vulkan/icd.d",
+                },
+                {
+                  name: "VULKAN_ICD_DIR_CONTAINER",
+                  value: "/etc/vulkan/icd.d",
+                },
+                {
+                  name: "ROOT_MOUNT_DIR",
+                  value: "/root",
+                },
+                {
+                  name: "COS_TOOLS_DIR_HOST",
+                  value: "/var/lib/cos-tools",
+                },
+                {
+                  name: "COS_TOOLS_DIR_CONTAINER",
+                  value: "/build/cos-tools",
+                },
+              ],
+              volumeMounts: [
+                {
+                  name: "nvidia-install-dir-host",
+                  mountPath: "/usr/local/nvidia",
+                },
+                {
+                  name: "vulkan-icd-mount",
+                  mountPath: "/etc/vulkan/icd.d",
+                },
+                {
+                  name: "dev",
+                  mountPath: "/dev",
+                },
+                {
+                  name: "root-mount",
+                  mountPath: "/root",
+                },
+                {
+                  name: "cos-tools",
+                  mountPath: "/build/cos-tools",
+                },
+              ],
+            },
+          ],
+          containers: [
+            {
+              image: "gcr.io/google-containers/pause:2.0",
+              name: "pause",
+            },
+          ],
+        },
+      },
+    },
+  },
+  { provider: clusterProvider }
+);
+
 // Create a Kubernetes Namespace
 const ns = new k8s.core.v1.Namespace(
   "test-iog-namespace",
@@ -119,6 +316,12 @@ const deployment = new k8s.apps.v1.Deployment(
                 periodSeconds: 10,
                 timeoutSeconds: 5,
               },
+              resources: {
+                limits: {
+                  // https://cloud.google.com/kubernetes-engine/docs/how-to/gpus?_ga=2.53663592.-1577952204.1632929004#pods_gpus
+                  "nvidia.com/gpu": "1",
+                },
+              },
             },
           ],
         },
@@ -161,9 +364,9 @@ export const serviceName = service.metadata.apply((m) => m.name);
 //   (s) => s.loadBalancer.ingress[0].ip
 // );
 
-const ipAddress = new gcp.compute.Address("test-iog-address", {});
-export const staticIpAddress = ipAddress.address;
-export const staticIpName = ipAddress.name;
+// const ipAddress = new gcp.compute.Address("test-iog-address", {});
+// export const staticIpAddress = ipAddress.address;
+// export const staticIpName = ipAddress.name;
 
 export const managedCertificate = new k8s.apiextensions.CustomResource(
   "test-iog-managed-certificate",
