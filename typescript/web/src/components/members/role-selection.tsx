@@ -7,18 +7,23 @@ import {
   PopoverHeader,
   PopoverBody,
   Box,
+  Flex,
   Text,
   useColorModeValue as mode,
+  Heading,
+  chakra,
 } from "@chakra-ui/react";
+
 import { useSelect } from "downshift";
-
 import { MembershipRole } from "@labelflow/graphql-types";
-
 import { RiArrowDownSFill, RiArrowUpSFill } from "react-icons/ri";
+import { BiCheck } from "react-icons/bi";
+
+const CheckIcon = chakra(BiCheck);
 
 const roleDescriptions = {
-  [MembershipRole.Admin]: "manages datasets and users (coming soon)",
-  [MembershipRole.Member]: "cannot delete datasets or images (coming soon)",
+  [MembershipRole.Admin]: "Manages datasets and users (coming soon)",
+  [MembershipRole.Member]: "Cannot delete datasets or images (coming soon)",
 };
 
 const RoleListItem = ({
@@ -45,18 +50,41 @@ const RoleListItem = ({
       pl="3"
       pr="3"
       pt="1"
-      pb="1"
+      // pb="1"
       aria-current={selected}
       {...itemProps}
+      maxWidth="320"
     >
-      <Text
-        pointerEvents="none"
-        flexGrow={1}
-        whiteSpace="nowrap"
-        overflow="hidden"
-      >
-        {`${name} - ${description}`}
-      </Text>
+      <Flex flexDirection="row" alignItems="center">
+        <CheckIcon
+          visibility={selected ? "visible" : "hidden"}
+          pb="1"
+          fontSize="2xl"
+          minWidth="6"
+        />
+        <Heading as="h5" size="sm">
+          {name}
+        </Heading>
+      </Flex>
+      <Flex flexDirection="row" alignItems="center">
+        <CheckIcon
+          visibility="hidden"
+          pb="1"
+          fontSize="2xl"
+          minWidth="6"
+        />
+        <Text
+          mt="1"
+          pointerEvents="none"
+          flexGrow={1}
+          whiteSpace="normal"
+          overflow="hidden"
+          //noOfLines={2}
+          textOverflow="ellipsis"
+        >
+          {description}
+        </Text>
+      </Flex>
     </Box>
   );
 };
@@ -92,9 +120,9 @@ export const RoleSelection = ({
           {currentRole}
         </Button>
       </PopoverTrigger>
-      <PopoverContent flex={1} w="max-content">
-        <PopoverBody>
-          <Box {...getMenuProps()}>
+      <PopoverContent>
+      <PopoverBody pl="0" pr="0" pb="0" pt="0">
+          <Box {...getMenuProps()} pb="2" pt="2">
             {Object.keys(MembershipRole).map((role, index) => (
               <RoleListItem
                 name={MembershipRole[role]}
