@@ -27,7 +27,7 @@ from cache import Cache
 type_defs = """
     scalar DateTime
 
-    type iogInferenceResult {
+    type IogInferenceResult {
         polygons: [[[Float!]]]! 
     }
 
@@ -50,7 +50,7 @@ type_defs = """
     type Mutation {
         runIog(
             data: RunIogInput
-        ): iogInferenceResult
+        ): IogInferenceResult
     }
 """
 

@@ -1,7 +1,7 @@
 import { print, GraphQLResolveInfo } from "graphql";
 import { MutationRunIogArgs } from "@labelflow/graphql-types";
 
-const ENDPOINT = "http://0.0.0.0:5032/graphql";
+const ENDPOINT = "http://0.0.0.0:5000/graphql";
 // const ENDPOINT = "http://sterblue.ngrok.io/graphql";
 
 const runIog = async (
@@ -10,7 +10,7 @@ const runIog = async (
   _context: any,
   { operation }: GraphQLResolveInfo
 ) => {
-  return fetch(ENDPOINT, {
+  return await fetch(ENDPOINT, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
