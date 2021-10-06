@@ -7,13 +7,12 @@ import {
   Input,
   InputGroup,
   InputLeftElement,
-  Select,
   Stack,
   chakra,
 } from "@chakra-ui/react";
 import * as React from "react";
 import { IoSearch } from "react-icons/io5";
-import { RiAddFill, RiArrowRightUpLine } from "react-icons/ri";
+import { RiAddFill } from "react-icons/ri";
 
 const SearchIcon = chakra(IoSearch);
 
