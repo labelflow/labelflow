@@ -1,10 +1,8 @@
-import { useState } from "react";
 import {
   Button,
   Popover,
   PopoverTrigger,
   PopoverContent,
-  PopoverHeader,
   PopoverBody,
   Box,
   Flex,
@@ -22,8 +20,9 @@ import { BiCheck } from "react-icons/bi";
 const CheckIcon = chakra(BiCheck);
 
 const roleDescriptions = {
-  [MembershipRole.Admin]: "Manages datasets and users (coming soon)",
-  [MembershipRole.Member]: "Cannot delete datasets or images (coming soon)",
+  [MembershipRole.Owner]: "Manages datasets, users and billing",
+  [MembershipRole.Admin]: "Manages datasets and users",
+  [MembershipRole.Member]: "Cannot delete datasets or images",
 };
 
 const RoleListItem = ({
@@ -32,12 +31,18 @@ const RoleListItem = ({
   selected,
   itemProps,
   highlight,
+}: {
+  name: string;
+  description: string;
+  selected: boolean;
+  itemProps: any;
+  highlight: boolean;
 }) => {
   const bgColor = (() => {
     if (selected) {
       return mode("gray.300", "gray.500");
     }
-    if (highlight) {
+    if (highlight && name === "Owner") {
       return mode("gray.100", "gray.600");
     }
     return "transparent";
@@ -46,40 +51,35 @@ const RoleListItem = ({
     <Box
       flexGrow={1}
       bgColor={bgColor}
-      key={`${name}`}
+      key={name}
       pl="3"
       pr="3"
       pt="1"
-      // pb="1"
+      pb="1"
       aria-current={selected}
       {...itemProps}
       maxWidth="320"
+      opacity={name !== "Owner" ? "0.5" : undefined}
+      pointerEvents={name !== "Owner" ? "none" : undefined}
     >
       <Flex flexDirection="row" alignItems="center">
         <CheckIcon
           visibility={selected ? "visible" : "hidden"}
           pb="1"
-          fontSize="2xl"
+          fontSize="3xl"
           minWidth="6"
         />
         <Heading as="h5" size="sm">
-          {name}
+          {`${name}${name !== "Owner" ? " (Coming Soon)" : ""}`}
         </Heading>
       </Flex>
       <Flex flexDirection="row" alignItems="center">
-        <CheckIcon
-          visibility="hidden"
-          pb="1"
-          fontSize="2xl"
-          minWidth="6"
-        />
+        <CheckIcon visibility="hidden" pb="1" fontSize="3xl" minWidth="6" />
         <Text
-          mt="1"
           pointerEvents="none"
           flexGrow={1}
           whiteSpace="normal"
           overflow="hidden"
-          //noOfLines={2}
           textOverflow="ellipsis"
         >
           {description}
@@ -96,21 +96,28 @@ export const RoleSelection = ({
   role: string;
   changeMembershipRole: () => {};
 }) => {
+  const roleItems = Object.keys(MembershipRole) as Array<
+    keyof typeof MembershipRole
+  >;
   const {
     isOpen,
-    selectedItem,
     getToggleButtonProps,
-    getLabelProps,
     getMenuProps,
     highlightedIndex,
     getItemProps,
+    reset,
   } = useSelect({
-    items: Object.keys(MembershipRole).map((key) => MembershipRole[key]),
+    items: roleItems,
     onSelectedItemChange: changeMembershipRole,
     initialSelectedItem: currentRole,
   });
   return (
-    <Popover isOpen={isOpen}>
+    <Popover
+      isOpen={isOpen}
+      onClose={() => {
+        reset();
+      }}
+    >
       <PopoverTrigger>
         <Button
           {...getToggleButtonProps()}
@@ -121,14 +128,14 @@ export const RoleSelection = ({
         </Button>
       </PopoverTrigger>
       <PopoverContent>
-      <PopoverBody pl="0" pr="0" pb="0" pt="0">
+        <PopoverBody pl="0" pr="0" pb="0" pt="0">
           <Box {...getMenuProps()} pb="2" pt="2">
-            {Object.keys(MembershipRole).map((role, index) => (
+            {roleItems.map((role, index) => (
               <RoleListItem
                 name={MembershipRole[role]}
                 description={roleDescriptions[MembershipRole[role]]}
                 selected={currentRole === role}
-                key={`${role}${index}`}
+                key={role}
                 itemProps={getItemProps({ item: role, index })}
                 highlight={highlightedIndex === index}
               />
