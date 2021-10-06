@@ -83,6 +83,7 @@ export const CollapsibleBreadcrumbs = ({
         <chakra.svg
           viewBox="0 0 24 24"
           width="8"
+          mx="-3"
           height="8"
           stroke={separatorColor}
           strokeWidth="1"
@@ -91,6 +92,7 @@ export const CollapsibleBreadcrumbs = ({
           fill="none"
           shapeRendering="geometricPrecision"
           color={separatorColor}
+          overflow="visible"
         >
           <path d="M16.88 3.549L7.12 20.451" />
         </chakra.svg>

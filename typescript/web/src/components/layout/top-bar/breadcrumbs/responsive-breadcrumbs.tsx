@@ -31,7 +31,7 @@ export const ResponsiveBreadcrumbs = ({
       numberOfFirstBreadcrumbsDisplayedWhenSplit: 2,
       numberOfLastBreadcrumbsDisplayedWhenSplit: 2,
     },
-    lg: {
+    xl: {
       maxNumberOfBreadcrumbsBeforeSplit: 6,
       numberOfFirstBreadcrumbsDisplayedWhenSplit: 3,
       numberOfLastBreadcrumbsDisplayedWhenSplit: 2,
