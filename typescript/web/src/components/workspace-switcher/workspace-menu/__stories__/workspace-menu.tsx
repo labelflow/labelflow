@@ -32,7 +32,7 @@ const createNewWorkspace = (name: string): void => {
 
 export const Normal = () => {
   const [isOpen, setIsOpen] = useState(true);
-  const [selectedLabel, setSelectedWorkspace] = useState<WorkspaceItem>(
+  const [selectedWorkspace, setSelectedWorkspace] = useState<WorkspaceItem>(
     workspaces[0]
   );
   return (
@@ -45,7 +45,7 @@ export const Normal = () => {
           setSelectedWorkspace(workspace)
         }
         createNewWorkspace={createNewWorkspace}
-        selectedWorkspace={selectedLabel}
+        selectedWorkspace={selectedWorkspace}
       />
 
       <NextLink href="/local/datasets">

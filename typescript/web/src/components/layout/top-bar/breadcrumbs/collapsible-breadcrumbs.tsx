@@ -5,15 +5,16 @@ import {
   BreadcrumbItem,
   BreadcrumbProps,
   ChakraProps,
+  useColorModeValue,
 } from "@chakra-ui/react";
-import { RiArrowRightSLine } from "react-icons/ri";
+// import { RiArrowRightSLine } from "react-icons/ri";
 
 import {
   CollapsedBreadcrumbs,
   CollapsedBreadcrumbsProps,
 } from "./collapsed-breadcrumbs";
 
-const ArrowRightIcon = chakra(RiArrowRightSLine);
+// const ArrowRightIcon = chakra(RiArrowRightSLine);
 
 const breadcrumbItemSx: ChakraProps["sx"] = {
   height: "10",
@@ -53,6 +54,7 @@ export const CollapsibleBreadcrumbs = ({
   const childrenCount = React.Children.count(children);
   const childrenArray = React.Children.toArray(children);
 
+  const separatorColor = useColorModeValue("gray.300", "gray.600");
   return (
     <Breadcrumb
       overflowX="hidden"
@@ -65,6 +67,8 @@ export const CollapsibleBreadcrumbs = ({
       // Without this, the focus outline is hidden
       m={-2}
       p={2}
+      // Next line aligns the breadcrumbs correctly to the left
+      pl={0}
       sx={{
         display: "inline",
         "& ol": {
@@ -74,7 +78,23 @@ export const CollapsibleBreadcrumbs = ({
           flexShrink: 0,
         },
       }}
-      separator={<ArrowRightIcon color="gray.500" />}
+      // separator={<ArrowRightIcon color="gray.500" />}
+      separator={
+        <chakra.svg
+          viewBox="0 0 24 24"
+          width="8"
+          height="8"
+          stroke={separatorColor}
+          strokeWidth="1"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          fill="none"
+          shapeRendering="geometricPrecision"
+          color={separatorColor}
+        >
+          <path d="M16.88 3.549L7.12 20.451" />
+        </chakra.svg>
+      }
       {...props}
     >
       {(() => {

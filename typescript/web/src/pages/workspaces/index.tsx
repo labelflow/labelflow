@@ -7,6 +7,7 @@ import { Layout } from "../../components/layout";
 import { WelcomeManager } from "../../components/welcome-manager";
 import { CookieBanner } from "../../components/cookie-banner";
 import { Meta } from "../../components/meta";
+import { NavLogo } from "../../components/logo/nav-logo";
 
 const WorkspacesRedirectPage = () => {
   const router = useRouter();
@@ -22,7 +23,7 @@ const WorkspacesRedirectPage = () => {
       <AuthManager />
       <Meta title="LabelFlow | Workspaces" />
       <CookieBanner />
-      <Layout>
+      <Layout breadcrumbs={[<NavLogo key={0} />]}>
         <Center h="full">
           <Spinner size="xl" />
         </Center>

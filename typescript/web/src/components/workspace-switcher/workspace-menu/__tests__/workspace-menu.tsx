@@ -1,17 +1,14 @@
 /* eslint-disable import/order */
 /* eslint-disable import/first */
-import React, {
-  PropsWithChildren,
-  ReactElement,
-  JSXElementConstructor,
-} from "react";
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import React, { PropsWithChildren } from "react";
+import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom/extend-expect";
 import { ChakraProvider } from "@chakra-ui/react";
 import { ApolloProvider } from "@apollo/client";
 
 import { mockMatchMedia } from "../../../../utils/mock-window";
+
 mockMatchMedia(jest);
 
 import { client } from "../../../../connectors/apollo-client/schema-client";

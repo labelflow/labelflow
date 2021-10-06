@@ -51,7 +51,7 @@ export const WorkspaceListItem = (props: {
   })();
 
   const avaterBorderColor = mode("gray.200", "gray.700");
-  const avatarBackground = mode("white", "gray.900");
+  const avatarBackground = mode("white", "gray.600");
   const addButtonColor = mode("gray.600", "gray.400");
 
   return (

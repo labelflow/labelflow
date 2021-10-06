@@ -26,9 +26,6 @@ export type Props = {
 export const TopBar = ({ breadcrumbs, rightContent }: Props) => {
   const { status } = useSession({ required: false });
 
-  const viewBox =
-    useBreakpointValue({ base: "0 0 84 84", md: "0 0 393 84" }) ?? "0 0 84 84";
-
   return (
     <HStack
       as="header"
@@ -38,12 +35,12 @@ export const TopBar = ({ breadcrumbs, rightContent }: Props) => {
       h="64px"
       flex={0}
     >
-      <NextLink href="/">
-        <Box as="a" rel="home" cursor="pointer" mr={{ base: "0", lg: "4" }}>
+      {/* <NextLink href="/">
+        <Box as="a" rel="home" cursor="pointer" mr={{ base: "0", lg: "0" }}>
           <VisuallyHidden>LabelFlow</VisuallyHidden>
           <Logo h="6" iconColor="brand.500" viewBox={viewBox} />
         </Box>
-      </NextLink>
+      </NextLink> */}
       <ResponsiveBreadcrumbs>{breadcrumbs}</ResponsiveBreadcrumbs>
       <Spacer minWidth="6" />
       {rightContent}

@@ -9,6 +9,7 @@ import {
   useBreakpointValue,
   useColorModeValue as mode,
 } from "@chakra-ui/react";
+import NextLink from "next/link";
 import { HiSelector } from "react-icons/hi";
 import { RiGroupFill } from "react-icons/ri";
 
@@ -57,9 +58,9 @@ const WorkspaceBreadcrumb = ({
   selectedWorkspace: WorkspaceItem;
 }) => {
   const avaterBorderColor = mode("gray.200", "gray.700");
-  const avatarBackground = mode("white", "gray.900");
+  const avatarBackground = mode("white", "gray.700");
 
-  const { name } = selectedWorkspace;
+  const { name, slug } = selectedWorkspace;
 
   // eslint-disable-next-line no-prototype-builtins
   const src = selectedWorkspace.hasOwnProperty("src")
@@ -67,37 +68,39 @@ const WorkspaceBreadcrumb = ({
     : undefined;
 
   const largeBreadcrumb = (
-    <BreadcrumbLink
-      justifyContent="space-between"
-      alignItems="center"
-      flexDirection="row"
-      display="flex"
-      mr="2"
-    >
-      <Avatar
-        borderWidth="1px"
-        borderColor={avaterBorderColor}
-        size="md"
-        h="10"
-        w="10"
-        borderRadius="lg"
-        flexShrink={0}
-        flexGrow={0}
-        name={name}
-        src={src}
+    <NextLink href={`/${slug}`}>
+      <BreadcrumbLink
+        justifyContent="space-between"
+        alignItems="center"
+        flexDirection="row"
+        display="flex"
         mr="2"
-        bg={src != null ? avatarBackground : "gray.400"}
-        icon={<TeamIcon color="white" fontSize="1rem" />}
-      />
-      <Text
-        flexGrow={1}
-        whiteSpace="nowrap"
-        overflow="hidden"
-        textOverflow="ellipsis"
       >
-        {selectedWorkspace?.name ?? "Unnamed Workspace"}
-      </Text>
-    </BreadcrumbLink>
+        <Avatar
+          borderWidth="1px"
+          borderColor={avaterBorderColor}
+          size="md"
+          h="8"
+          w="8"
+          borderRadius="lg"
+          flexShrink={0}
+          flexGrow={0}
+          name={name}
+          src={src}
+          mr="2"
+          bg={src != null ? avatarBackground : "gray.400"}
+          icon={<TeamIcon color="white" fontSize="1rem" />}
+        />
+        <Text
+          flexGrow={1}
+          whiteSpace="nowrap"
+          overflow="hidden"
+          textOverflow="ellipsis"
+        >
+          {selectedWorkspace?.name ?? "Unnamed Workspace"}
+        </Text>
+      </BreadcrumbLink>
+    </NextLink>
   );
 
   const smallBreadcrumb = (
@@ -119,8 +122,8 @@ const WorkspaceBreadcrumb = ({
           borderWidth="1px"
           borderColor={avaterBorderColor}
           size="md"
-          h="10"
-          w="10"
+          h="8"
+          w="8"
           borderRadius="lg"
           flexShrink={0}
           flexGrow={0}
