@@ -12,17 +12,7 @@ import {
 import * as React from "react";
 import { User } from "./user";
 import { RoleSelection } from "./role-selection";
-
-export type Membership = {
-  id: string;
-  role: string;
-  user: {
-    id: string;
-    name?: string;
-    email?: string;
-    image?: string;
-  };
-};
+import { ChangeMembershipRole, RemoveMembership, Membership } from "./types";
 
 const badgeEnum: Record<string, string> = {
   active: "green",
@@ -41,11 +31,16 @@ const columns = [
   {
     Header: "Role",
     accessor: "role",
-    Cell: function RoleSelectionCell(role: string) {
+    Cell: function RoleSelectionCell(
+      role: any,
+      id: string,
+      changeMembershipRole: any
+    ) {
       return (
         <RoleSelection
           role={role}
-          // changeMembershipRole={changeMembershipRole}
+          changeMembershipRole={changeMembershipRole}
+          id={id}
         />
       );
     },
@@ -66,10 +61,12 @@ const columns = [
 
 export const TableContent = ({
   memberships,
-  changeMembershipRole
+  changeMembershipRole,
+  removeMembership,
 }: {
   memberships: Membership[];
-  changeMembershipRole:()=>{}
+  changeMembershipRole: ChangeMembershipRole;
+  removeMembership: RemoveMembership;
 }) => {
   return (
     <Table my="8" borderWidth="1px" fontSize="sm">
@@ -84,11 +81,12 @@ export const TableContent = ({
         </Tr>
       </Thead>
       <Tbody>
-        {memberships.map((row, index) => (
-          <Tr key={index}>
+        {memberships.map((row, membershipIndex) => (
+          <Tr key={membershipIndex}>
             {columns.map((column, index) => {
               const cell = row[column.accessor as keyof typeof row];
-              const element = column.Cell?.(cell) ?? cell;
+              const element =
+                column.Cell?.(cell, row.id, changeMembershipRole) ?? cell;
               return (
                 <Td whiteSpace="nowrap" key={index}>
                   {element}
@@ -96,7 +94,11 @@ export const TableContent = ({
               );
             })}
             <Td textAlign="right">
-              <Button variant="link" colorScheme="blue">
+              <Button
+                variant="link"
+                colorScheme="blue"
+                onClick={() => removeMembership(row.id)}
+              >
                 Remove
               </Button>
             </Td>
