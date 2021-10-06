@@ -21,17 +21,22 @@ const roleDescriptions = {
   [MembershipRole.Member]: "cannot delete datasets or images (coming soon)",
 };
 
-const RoleListItem = ({ name, description, selected, itemProps }) => {
+const RoleListItem = ({
+  name,
+  description,
+  selected,
+  itemProps,
+  highlight,
+}) => {
   const bgColor = (() => {
     if (selected) {
       return mode("gray.300", "gray.500");
     }
-    // if (highlight) {
-    //   return mode("gray.100", "gray.600");
-    // }
+    if (highlight) {
+      return mode("gray.100", "gray.600");
+    }
     return "transparent";
   })();
-  console.log("itme props", itemProps);
   return (
     <Box
       flexGrow={1}
@@ -44,7 +49,12 @@ const RoleListItem = ({ name, description, selected, itemProps }) => {
       aria-current={selected}
       {...itemProps}
     >
-      <Text flexGrow={1} whiteSpace="nowrap" overflow="hidden">
+      <Text
+        pointerEvents="none"
+        flexGrow={1}
+        whiteSpace="nowrap"
+        overflow="hidden"
+      >
         {`${name} - ${description}`}
       </Text>
     </Box>
@@ -58,11 +68,6 @@ export const RoleSelection = ({
   role: string;
   changeMembershipRole: () => {};
 }) => {
-  console.log(
-    "Hello",
-    Object.keys(MembershipRole).map((key) => MembershipRole[key])
-  );
-  console.log("Current", currentRole);
   const {
     isOpen,
     selectedItem,
@@ -97,6 +102,7 @@ export const RoleSelection = ({
                 selected={currentRole === role}
                 key={`${role}${index}`}
                 itemProps={getItemProps({ item: role, index })}
+                highlight={highlightedIndex === index}
               />
             ))}
           </Box>
