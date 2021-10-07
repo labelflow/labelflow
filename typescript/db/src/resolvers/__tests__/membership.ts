@@ -272,6 +272,45 @@ describe("memberships query", () => {
     ]);
   });
 
+  it("gets memberships by workspace slug", async () => {
+    // both this workspaces are linked to testUser1Id by default
+    const workspace1Slug = (await createWorkspace({ name: "test1" }))?.data
+      ?.createWorkspace.slug as string;
+    const workspace2Slug = (await createWorkspace({ name: "test2" }))?.data
+      ?.createWorkspace.slug as string;
+
+    await createMembership({
+      userId: testUser2Id,
+      workspaceSlug: workspace1Slug,
+      role: MembershipRole.Member,
+    });
+
+    await createMembership({
+      userId: testUser2Id,
+      workspaceSlug: workspace2Slug,
+      role: MembershipRole.Member,
+    });
+
+    const { data } = await client.query<{
+      memberships: Pick<Membership, "id" | "role">[];
+    }>({
+      query: gql`
+        query memberships($workspaceSlug: String) {
+          memberships(where: { workspaceSlug: $workspaceSlug }) {
+            id
+            role
+          }
+        }
+      `,
+      fetchPolicy: "no-cache",
+      variables: { workspaceSlug: workspace1Slug },
+    });
+    expect(data.memberships.map((workspace) => workspace.role)).toEqual([
+      MembershipRole.Admin,
+      MembershipRole.Member,
+    ]);
+  });
+
   it("can skip results", async () => {
     // both this workspaces are linked to testUser1Id by default
     (await createWorkspace({ name: "test1" }))?.data?.createWorkspace

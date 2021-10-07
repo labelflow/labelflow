@@ -304,6 +304,10 @@ export type MembershipUpdateInput = {
   role?: Maybe<MembershipRole>;
 };
 
+export type MembershipWhereInput = {
+  workspaceSlug?: Maybe<Scalars['String']>;
+};
+
 export type MembershipWhereUniqueInput = {
   id: Scalars['ID'];
 };
@@ -552,6 +556,7 @@ export type QueryMembershipArgs = {
 
 
 export type QueryMembershipsArgs = {
+  where?: Maybe<MembershipWhereInput>;
   first?: Maybe<Scalars['Int']>;
   skip?: Maybe<Scalars['Int']>;
 };
@@ -786,6 +791,7 @@ export type ResolversTypes = {
   MembershipCreateInput: MembershipCreateInput;
   MembershipRole: MembershipRole;
   MembershipUpdateInput: MembershipUpdateInput;
+  MembershipWhereInput: MembershipWhereInput;
   MembershipWhereUniqueInput: MembershipWhereUniqueInput;
   Mutation: ResolverTypeWrapper<{}>;
   Query: ResolverTypeWrapper<{}>;
@@ -856,6 +862,7 @@ export type ResolversParentTypes = {
   Membership: Membership;
   MembershipCreateInput: MembershipCreateInput;
   MembershipUpdateInput: MembershipUpdateInput;
+  MembershipWhereInput: MembershipWhereInput;
   MembershipWhereUniqueInput: MembershipWhereUniqueInput;
   Mutation: {};
   Query: {};
