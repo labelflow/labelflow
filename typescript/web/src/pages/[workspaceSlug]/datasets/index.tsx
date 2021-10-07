@@ -18,6 +18,7 @@ import { ServiceWorkerManagerModal } from "../../../components/service-worker-ma
 import { AuthManager } from "../../../components/auth-manager";
 import { WelcomeManager } from "../../../components/welcome-manager";
 import { CookieBanner } from "../../../components/cookie-banner";
+import { WorkspaceTabBar } from "../../../components/layout/tab-bar/workspace-tab-bar";
 
 export const getDatasetsQuery = gql`
   query getDatasets($where: DatasetWhereInput) {
@@ -43,7 +44,7 @@ export const getDatasetsQuery = gql`
 `;
 
 const DatasetPage = () => {
-  const workspaceSlug = useRouter().query?.workspaceSlug;
+  const workspaceSlug = useRouter().query?.workspaceSlug as string;
 
   const { data: datasetsResult } = useQuery<{
     datasets: Pick<
@@ -95,7 +96,15 @@ const DatasetPage = () => {
       <AuthManager />
       <Meta title="LabelFlow | Datasets" />
       <CookieBanner />
-      <Layout breadcrumbs={[<Text key={0}>Datasets</Text>]}>
+      <Layout
+        breadcrumbs={[<Text key={0}>Datasets</Text>]}
+        tabBar={
+          <WorkspaceTabBar
+            currentTab="datasets"
+            workspaceSlug={workspaceSlug}
+          />
+        }
+      >
         <UpsertDatasetModal
           isOpen={isCreatingDataset || editDatasetId != null}
           onClose={onClose}
