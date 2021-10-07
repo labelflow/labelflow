@@ -45,6 +45,7 @@ export const TableActions = () => {
           color="#ffffff"
           iconSpacing="1"
           leftIcon={<RiAddFill fontSize="1.25em" />}
+          disabled
         >
           New member
         </Button>
