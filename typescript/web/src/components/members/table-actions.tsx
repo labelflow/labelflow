@@ -30,7 +30,12 @@ export const TableActions = () => {
             <InputLeftElement pointerEvents="none" color="gray.400">
               <SearchIcon />
             </InputLeftElement>
-            <Input rounded="base" type="search" placeholder="Find a member" />
+            <Input
+              rounded="base"
+              type="search"
+              placeholder="Find a member"
+              bgColor="#FFFFFF"
+            />
           </InputGroup>
         </FormControl>
       </HStack>

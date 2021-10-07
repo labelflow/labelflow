@@ -80,7 +80,7 @@ export const TableContent = ({
           <Th />
         </Tr>
       </Thead>
-      <Tbody>
+      <Tbody bgColor="#FFFFFF">
         {memberships.map((row, membershipIndex) => (
           <Tr key={membershipIndex}>
             {columns.map((column, index) => {
