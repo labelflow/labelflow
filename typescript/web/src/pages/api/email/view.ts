@@ -1,14 +1,12 @@
 import { NextApiRequest, NextApiResponse } from "next";
 
-import { generateHtml as activation } from "../../../utils/email/templates/activation";
 import { generateHtml as signin } from "../../../utils/email/templates/sign-in";
 import { generateHtml as signup } from "../../../utils/email/templates/sign-up";
 
-const emailTypes: { [key: string]: typeof activation } = {
-  activation,
+const emailTypes: { [key: string]: typeof signin } = {
   signin,
   signup,
-  default: activation,
+  default: signin,
 };
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
