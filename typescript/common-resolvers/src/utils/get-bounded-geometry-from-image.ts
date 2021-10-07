@@ -9,16 +9,19 @@ export const getBoundedGeometryFromImage = (
   geometry: GeometryInput
 ) => {
   const geometryPolygon = multiPolygon(geometry.coordinates);
-  // const imagePolygon = bboxPolygon([
-  //   0,
-  //   0,
-  //   imageDimensions.width,
-  //   imageDimensions.height,
-  // ]);
-  const clippedGeometryObject = geometryPolygon; // TODO: put back the line below and fix iog inferences
-  // intersect(imagePolygon, geometryPolygon);
+  const imagePolygon = bboxPolygon([
+    0,
+    0,
+    imageDimensions.width,
+    imageDimensions.height,
+  ]);
+  // const clippedGeometryObject = geometryPolygon; // TODO: put back the line below and fix iog inferences
+  const clippedGeometryObject = intersect(
+    imagePolygon,
+    geometryPolygon.geometry
+  )?.geometry;
 
-  if (clippedGeometryObject?.geometry == null) {
+  if (clippedGeometryObject == null) {
     throw new Error("Label out of image bounds");
   }
   const [minX, minY, maxX, maxY] = bbox(clippedGeometryObject);
