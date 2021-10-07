@@ -22,7 +22,7 @@ import { Workspace } from "@labelflow/graphql-types";
 import { WorkspaceListItem } from "./workspace-list-item";
 
 type CreateWorkspaceInput = { name: string; type: string };
-type LocalWorkspace = { name: string; src: string; type: string };
+
 // The popover doesn't need all the attributes of the label workspace
 export type WorkspaceItem = Pick<Workspace, "slug" | "name" | "id">;
 
@@ -35,22 +35,19 @@ const filterWorkspaces = ({
 }: {
   workspaces: WorkspaceItem[];
   inputValueCombobox: string;
-}): (WorkspaceItem | CreateWorkspaceInput | LocalWorkspace)[] => {
+}): (WorkspaceItem | CreateWorkspaceInput)[] => {
   const createWorkspaceItem =
     workspaces.filter(
-      (workspace: WorkspaceItem | LocalWorkspace) =>
-        workspace.name === inputValueCombobox
+      (workspace: WorkspaceItem) => workspace.name === inputValueCombobox
     ).length === 0
       ? [{ name: inputValueCombobox, type: "CreateWorkspaceItem" }]
       : [];
 
-  const filteredWorkspaces = workspaces.filter(
-    (workspace: WorkspaceItem | LocalWorkspace) => {
-      return workspace.name
-        .toLowerCase()
-        .startsWith((inputValueCombobox ?? "").toLowerCase());
-    }
-  );
+  const filteredWorkspaces = workspaces.filter((workspace: WorkspaceItem) => {
+    return workspace.name
+      .toLowerCase()
+      .startsWith((inputValueCombobox ?? "").toLowerCase());
+  });
 
   return [...filteredWorkspaces, ...createWorkspaceItem];
 };
@@ -102,9 +99,7 @@ export const WorkspaceSelectionPopover = ({
     },
     onSelectedItemChange: ({
       selectedItem,
-    }: UseComboboxStateChange<
-      WorkspaceItem | CreateWorkspaceInput | LocalWorkspace
-    >): void => {
+    }: UseComboboxStateChange<WorkspaceItem | CreateWorkspaceInput>): void => {
       if (
         selectedItem != null &&
         "type" in selectedItem &&
@@ -112,13 +107,7 @@ export const WorkspaceSelectionPopover = ({
       ) {
         return createNewWorkspace(selectedItem.name);
       }
-      // if (
-      //   selectedItem != null &&
-      //   "type" in selectedItem &&
-      //   selectedItem?.type === "LocalWorkspace"
-      // ) {
-      //   return onSelectedWorkspaceChange(null);
-      // }
+
       if (selectedItem != null && "id" in selectedItem) {
         return onSelectedWorkspaceChange(selectedItem);
       }
@@ -210,21 +199,13 @@ export const WorkspaceSelectionPopover = ({
             </Box>
             <Box pt="1" {...getMenuProps()} overflowY="scroll" maxHeight="340">
               {filteredWorkspaces.map(
-                (
-                  item: WorkspaceItem | CreateWorkspaceInput | LocalWorkspace,
-                  index: number
-                ) => {
+                (item: WorkspaceItem | CreateWorkspaceInput, index: number) => {
                   return (
                     <WorkspaceListItem
                       itemProps={getItemProps({ item, index })}
                       item={item}
                       highlight={highlightedIndex === index}
-                      selected={
-                        ("id" in item && item.id === selectedWorkspaceId) ||
-                        (selectedWorkspaceId === null &&
-                          "type" in item &&
-                          item.type === "LocalWorkspace")
-                      }
+                      selected={"id" in item && item.id === selectedWorkspaceId}
                       isCreateWorkspaceItem={
                         "type" in item && item.type === "CreateWorkspaceItem"
                       }

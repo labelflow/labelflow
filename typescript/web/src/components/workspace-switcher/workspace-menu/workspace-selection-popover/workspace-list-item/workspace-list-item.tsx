@@ -80,9 +80,11 @@ export const WorkspaceListItem = (props: {
               rounded="md"
               flexShrink={0}
               flexGrow={0}
+              name={name}
+              src={src}
               ml="2"
               mr="2"
-              bg={avatarBackground}
+              bg={src != null && src.length > 0 ? avatarBackground : undefined}
               icon={<AddIcon color={addButtonColor} fontSize="1.5rem" />}
             />
             <Text
@@ -138,7 +140,7 @@ export const WorkspaceListItem = (props: {
               src={src}
               ml="2"
               mr="2"
-              bg={src != null ? avatarBackground : "gray.400"}
+              bg={src != null && src.length > 0 ? avatarBackground : undefined}
               icon={<TeamIcon color="white" fontSize="1rem" />}
             />
             <Text

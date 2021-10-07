@@ -13,7 +13,10 @@ const LocalWorkspacesRedirectPage = () => {
   const router = useRouter();
 
   useEffect(() => {
-    router.replace({ pathname: `/local/datasets`, query: router.query });
+    router.replace({
+      pathname: router.pathname.replace(/^\/workspaces/g, ""),
+      query: router.query,
+    });
   }, []);
 
   return (
@@ -21,7 +24,7 @@ const LocalWorkspacesRedirectPage = () => {
       <ServiceWorkerManagerModal />
       <WelcomeManager />
       <AuthManager />
-      <Meta title="LabelFlow | Local Workspace" />
+      <Meta title="LabelFlow | Workspace" />
       <CookieBanner />
       <Layout breadcrumbs={[<NavLogo key={0} />]}>
         <Center h="full">
