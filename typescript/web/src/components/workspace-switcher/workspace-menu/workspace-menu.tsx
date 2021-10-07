@@ -1,4 +1,4 @@
-import React from "react";
+import React, { forwardRef } from "react";
 import {
   Tooltip,
   Text,
@@ -22,41 +22,12 @@ const TeamIcon = chakra(RiGroupFill);
 
 const SelectorIcon = chakra(HiSelector);
 
-const WorkspaceSelectionButton = React.forwardRef<
+const WorkspaceBreadcrumb = forwardRef<
   null,
   {
     selectedWorkspace: WorkspaceItem;
-    toggle: () => void;
   }
->(({ selectedWorkspace, toggle }, ref) => {
-  return (
-    <Tooltip
-      label={`Change workspace (currently on ${
-        selectedWorkspace?.name ?? "Unnamed Workspace"
-      })`}
-      placement="bottom"
-      openDelay={1000}
-    >
-      <Button
-        ref={ref}
-        size="md"
-        minW="8"
-        px="0"
-        onClick={toggle}
-        bg={mode("white", "gray.800")}
-        aria-label="Open workspace selection popover"
-      >
-        <SelectorIcon fontSize="md" px="0" mx="0" />
-      </Button>
-    </Tooltip>
-  );
-});
-
-const WorkspaceBreadcrumb = ({
-  selectedWorkspace,
-}: {
-  selectedWorkspace: WorkspaceItem;
-}) => {
+>(({ selectedWorkspace }: { selectedWorkspace: WorkspaceItem }, ref) => {
   const avaterBorderColor = mode("gray.200", "gray.700");
   const avatarBackground = mode("white", "gray.700");
 
@@ -75,6 +46,7 @@ const WorkspaceBreadcrumb = ({
         flexDirection="row"
         display="flex"
         mr="2"
+        ref={ref}
       >
         <Avatar
           borderWidth="1px"
@@ -142,7 +114,37 @@ const WorkspaceBreadcrumb = ({
       md: largeBreadcrumb,
     }) ?? largeBreadcrumb;
   return result;
-};
+});
+
+const WorkspaceSelectionButton = forwardRef<
+  null,
+  {
+    selectedWorkspace: WorkspaceItem;
+    toggle: () => void;
+  }
+>(({ selectedWorkspace, toggle }, ref) => {
+  return (
+    <Tooltip
+      label={`Change workspace (currently on ${
+        selectedWorkspace?.name ?? "Unnamed Workspace"
+      })`}
+      placement="bottom"
+      openDelay={1000}
+    >
+      <Button
+        ref={ref}
+        size="sm"
+        minW="6"
+        px="0"
+        onClick={toggle}
+        bg={mode("white", "gray.800")}
+        aria-label="Open workspace selection popover"
+      >
+        <SelectorIcon fontSize="md" px="0" mx="0" />
+      </Button>
+    </Tooltip>
+  );
+});
 
 export const WorkspaceMenu = ({
   isOpen,
@@ -164,7 +166,6 @@ export const WorkspaceMenu = ({
 
   return (
     <>
-      <WorkspaceBreadcrumb selectedWorkspace={selectedWorkspace} />
       <WorkspaceSelectionPopover
         ariaLabel="Workspace selection menu popover"
         isOpen={isOpen}
@@ -179,12 +180,11 @@ export const WorkspaceMenu = ({
           close();
         }}
         selectedWorkspaceId={selectedWorkspace?.id ?? null}
-        trigger={
-          <WorkspaceSelectionButton
-            toggle={toggle}
-            selectedWorkspace={selectedWorkspace}
-          />
-        }
+        trigger={<WorkspaceBreadcrumb selectedWorkspace={selectedWorkspace} />}
+      />
+      <WorkspaceSelectionButton
+        toggle={toggle}
+        selectedWorkspace={selectedWorkspace}
       />
     </>
   );
