@@ -46,7 +46,7 @@ const WorkspaceBreadcrumb = forwardRef<
         alignItems="center"
         flexDirection="row"
         display="flex"
-        mr="2"
+        mr="1"
         ref={ref}
       >
         <Avatar
@@ -82,7 +82,7 @@ const WorkspaceBreadcrumb = forwardRef<
       alignItems="center"
       flexDirection="row"
       display="flex"
-      mr="2"
+      mr="1"
     >
       <Tooltip
         label={`Navigate to ${
@@ -137,6 +137,7 @@ const WorkspaceSelectionButton = forwardRef<
         size="sm"
         minW="6"
         px="0"
+        mr="-1"
         onClick={toggle}
         bg={mode("white", "gray.800")}
         aria-label="Open workspace selection popover"
