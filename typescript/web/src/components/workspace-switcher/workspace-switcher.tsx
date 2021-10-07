@@ -1,5 +1,6 @@
-import { gql, useQuery } from "@apollo/client";
+import { gql, useQuery, useApolloClient, ApolloError } from "@apollo/client";
 import { Workspace } from "@labelflow/graphql-types";
+import { useToast } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { useState, useCallback, useMemo } from "react";
 import { startCase } from "lodash/fp";
@@ -17,12 +18,22 @@ const getWorkspacesQuery = gql`
   }
 `;
 
+const createWorkspacesQuery = gql`
+  mutation createWorkspace($name: Strign!) {
+    createWorkspace(data: { name: $name }) {
+      id
+      name
+      slug
+    }
+  }
+`;
+
 export const WorkspaceSwitcher = () => {
   const router = useRouter();
 
   const workspaceSlug = router?.query.workspaceSlug as string;
 
-  // const client = useApolloClient();
+  const client = useApolloClient();
 
   const { data: getWorkspacesData, previousData: getWorkspacesPreviousData } =
     useQuery(getWorkspacesQuery, {
@@ -37,6 +48,8 @@ export const WorkspaceSwitcher = () => {
   ];
 
   const [isOpen, setIsOpen] = useState(false);
+
+  const toast = useToast();
 
   const selectedWorkspace = useMemo(() => {
     if (workspaceSlug == null) {
@@ -54,15 +67,59 @@ export const WorkspaceSwitcher = () => {
   }, [workspaceSlug, workspaces]);
 
   const setSelectedWorkspace = useCallback((workspace: WorkspaceItem) => {
-    console.log(`Switch to workspace ${workspace?.slug ?? "unknown"}`);
-    if (workspace.slug !== null) {
-      router.push(`/${workspace?.slug}`);
+    const slug = workspace?.slug;
+    console.log(`Switch to workspace ${slug ?? "unknown"}`);
+    if (slug !== null) {
+      router.push(`/${slug}`);
     }
   }, []);
 
-  const createNewWorkspace = useCallback(() => {
-    alert("Create workspace");
-  }, []);
+  const createNewWorkspace = useCallback(
+    async (name: string) => {
+      try {
+        const { data, errors } = await client.mutate({
+          mutation: createWorkspacesQuery,
+          variables: { name },
+        });
+        const slug = data?.createWorkspace?.slug;
+
+        if (slug !== null) {
+          router.push(`/${slug}`);
+        } else {
+          toast({
+            title: "Could not create workspace",
+            description: errors?.[0],
+            isClosable: true,
+            status: "error",
+            position: "bottom-right",
+            duration: 10000,
+          });
+        }
+      } catch (error: any) {
+        if (error instanceof ApolloError) {
+          toast({
+            title: "Needs to be signed in",
+            description:
+              "Only signed-in users can to create a new Workspace, please sign in.",
+            isClosable: true,
+            status: "error",
+            position: "bottom-right",
+            duration: 10000,
+          });
+        } else {
+          toast({
+            title: "Could not create workspace",
+            description: error?.message ?? error,
+            isClosable: true,
+            status: "error",
+            position: "bottom-right",
+            duration: 10000,
+          });
+        }
+      }
+    },
+    [client, toast]
+  );
 
   if (workspaces == null) {
     return null;
