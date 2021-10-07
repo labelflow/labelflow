@@ -10,7 +10,7 @@ export const NavLogo = () => {
       <BreadcrumbLink flexShrink={0} flexGrow={0}>
         <Box as="a" rel="home" cursor="pointer" mr="0" overflow="visible">
           <VisuallyHidden>LabelFlow</VisuallyHidden>
-          <Logo h="6" iconColor="brand.500" logoOnly />
+          <Logo h="8" iconColor="brand.500" logoOnly />
         </Box>
       </BreadcrumbLink>
     </NextLink>
