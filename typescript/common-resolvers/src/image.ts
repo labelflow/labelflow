@@ -10,7 +10,7 @@ import type {
 } from "@labelflow/graphql-types";
 import mime from "mime-types";
 import { probeImage } from "./utils/probe-image";
-
+import { tutorialImages } from "./data/dataset-tutorial";
 import { Context, DbImage, Repository, DbImageCreateInput } from "./types";
 import { throwIfResolvesToNil } from "./utils/throw-if-resolves-to-nil";
 
@@ -241,6 +241,12 @@ const deleteImage = async (
     )
   );
   await repository.image.delete({ id: imageId }, user);
+  if (
+    !tutorialImages.map((tutorialImage) => tutorialImage.id).includes(imageId)
+  ) {
+    await repository.upload.delete(imageToDelete.url);
+  }
+
   return imageToDelete;
 };
 
