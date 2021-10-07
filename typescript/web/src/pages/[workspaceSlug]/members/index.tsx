@@ -73,7 +73,7 @@ const MembersPage = () => {
           <WorkspaceTabBar currentTab="members" workspaceSlug={workspaceSlug} />
         }
       >
-        <Box p={4}>
+        <Box p={8}>
           <Members
             memberships={memberships}
             changeMembershipRole={({ id, role }) => {
