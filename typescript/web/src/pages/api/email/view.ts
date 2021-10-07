@@ -11,7 +11,7 @@ const emailTypes: { [key: string]: typeof signin } = {
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   const { query }: { query: { type?: keyof typeof emailTypes } } = req;
-  const generateHtml = emailTypes[query?.type ?? "activation"];
+  const generateHtml = emailTypes[query?.type ?? "signin"];
   const html = generateHtml(
     query as unknown as Parameters<typeof generateHtml>[0]
   );
