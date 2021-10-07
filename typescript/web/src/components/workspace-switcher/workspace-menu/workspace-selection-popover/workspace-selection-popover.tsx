@@ -26,12 +26,6 @@ type LocalWorkspace = { name: string; src: string; type: string };
 // The popover doesn't need all the attributes of the label workspace
 export type WorkspaceItem = Pick<Workspace, "slug" | "name" | "id">;
 
-const localWorkspace = {
-  name: "Your Local Workspace",
-  type: "LocalWorkspace",
-  src: "https://avatars.githubusercontent.com/u/2954572?v=4",
-};
-
 const MagnifierIcon = chakra(IoSearch);
 const CloseCircleIcon = chakra(RiCloseCircleFill);
 
@@ -42,17 +36,15 @@ const filterWorkspaces = ({
   workspaces: WorkspaceItem[];
   inputValueCombobox: string;
 }): (WorkspaceItem | CreateWorkspaceInput | LocalWorkspace)[] => {
-  const workspacesWithLocalWorkspace = [localWorkspace, ...workspaces];
-
   const createWorkspaceItem =
-    workspacesWithLocalWorkspace.filter(
+    workspaces.filter(
       (workspace: WorkspaceItem | LocalWorkspace) =>
         workspace.name === inputValueCombobox
     ).length === 0
       ? [{ name: inputValueCombobox, type: "CreateWorkspaceItem" }]
       : [];
 
-  const filteredWorkspaces = workspacesWithLocalWorkspace.filter(
+  const filteredWorkspaces = workspaces.filter(
     (workspace: WorkspaceItem | LocalWorkspace) => {
       return workspace.name
         .toLowerCase()

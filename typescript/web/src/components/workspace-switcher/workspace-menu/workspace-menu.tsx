@@ -120,31 +120,22 @@ const WorkspaceBreadcrumb = forwardRef<
 const WorkspaceSelectionButton = forwardRef<
   null,
   {
-    selectedWorkspace: WorkspaceItem;
     toggle: () => void;
   }
->(({ selectedWorkspace, toggle }, ref) => {
+>(({ toggle }, ref) => {
   return (
-    <Tooltip
-      label={`Change workspace (currently on ${
-        selectedWorkspace?.name ?? "Unnamed Workspace"
-      })`}
-      placement="bottom"
-      openDelay={1000}
+    <Button
+      ref={ref}
+      size="sm"
+      minW="6"
+      px="0"
+      mr="-1"
+      onClick={toggle}
+      bg={mode("white", "gray.800")}
+      aria-label="Open workspace selection popover"
     >
-      <Button
-        ref={ref}
-        size="sm"
-        minW="6"
-        px="0"
-        mr="-1"
-        onClick={toggle}
-        bg={mode("white", "gray.800")}
-        aria-label="Open workspace selection popover"
-      >
-        <SelectorIcon fontSize="md" px="0" mx="0" />
-      </Button>
-    </Tooltip>
+      <SelectorIcon fontSize="md" px="0" mx="0" />
+    </Button>
   );
 });
 
@@ -185,10 +176,7 @@ export const WorkspaceMenu = ({
         trigger={<Box width="0" height="8" />}
       />
       <WorkspaceBreadcrumb selectedWorkspace={selectedWorkspace} />
-      <WorkspaceSelectionButton
-        toggle={toggle}
-        selectedWorkspace={selectedWorkspace}
-      />
+      <WorkspaceSelectionButton toggle={toggle} />
     </>
   );
 };
