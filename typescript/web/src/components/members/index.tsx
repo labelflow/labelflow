@@ -1,3 +1,4 @@
+import { Heading } from "@chakra-ui/react";
 import { TableActions } from "./table-actions";
 import { TableContent } from "./table-content";
 import { RemoveMembership, ChangeMembershipRole, Membership } from "./types";
@@ -13,6 +14,7 @@ export const Members = ({
 }) => {
   return (
     <>
+      <Heading mb="5">{`Members (${memberships?.length ?? ""})`}</Heading>
       <TableActions />
       <TableContent
         memberships={memberships}
