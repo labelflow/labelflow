@@ -109,8 +109,6 @@ export const ImagesList = ({
                         overflow="hidden"
                         textOverflow="ellipsis"
                         whiteSpace="nowrap"
-                        flexGrow={0}
-                        flexShrink={0}
                       >
                         {name}
                       </Heading>
