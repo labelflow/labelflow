@@ -19,7 +19,7 @@ const getWorkspacesQuery = gql`
 `;
 
 const createWorkspacesQuery = gql`
-  mutation createWorkspace($name: Strign!) {
+  mutation createWorkspace($name: String!) {
     createWorkspace(data: { name: $name }) {
       id
       name
