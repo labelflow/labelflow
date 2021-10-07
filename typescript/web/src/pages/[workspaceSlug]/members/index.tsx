@@ -49,7 +49,7 @@ const MembersPage = () => {
       >
         <Box p={8}>
           <Members
-            memberships={membershipsData?.memberships}
+            memberships={membershipsData?.memberships ?? []}
             changeMembershipRole={({ id, role }) => {
               console.log(`Will change membership ${id} to ${role}`);
             }}
