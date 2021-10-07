@@ -2,6 +2,7 @@ import React, { forwardRef } from "react";
 import {
   Tooltip,
   Text,
+  Box,
   Button,
   Avatar,
   BreadcrumbLink,
@@ -180,8 +181,9 @@ export const WorkspaceMenu = ({
           close();
         }}
         selectedWorkspaceId={selectedWorkspace?.id ?? null}
-        trigger={<WorkspaceBreadcrumb selectedWorkspace={selectedWorkspace} />}
+        trigger={<Box width="0" height="8" />}
       />
+      <WorkspaceBreadcrumb selectedWorkspace={selectedWorkspace} />
       <WorkspaceSelectionButton
         toggle={toggle}
         selectedWorkspace={selectedWorkspace}
