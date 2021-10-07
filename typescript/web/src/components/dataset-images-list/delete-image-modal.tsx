@@ -79,7 +79,7 @@ export const DeleteImageModal = ({
                 });
                 onClose();
               }}
-              aria-label="Confirm deleting class"
+              aria-label="Confirm deleting image"
               ml={3}
             >
               Delete
