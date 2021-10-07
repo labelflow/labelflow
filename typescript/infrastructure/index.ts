@@ -302,7 +302,7 @@ const deployment = new k8s.apps.v1.Deployment(
             {
               name: "test-iog-container",
               image:
-                "us-central1-docker.pkg.dev/labelflow-321909/labelflow/iog:1",
+                "us-central1-docker.pkg.dev/labelflow-321909/labelflow/iog:07.10.21",
               ports: [{ containerPort: 5000 }],
               readinessProbe: {
                 httpGet: { path: "/graphql/", port: 5000 },
