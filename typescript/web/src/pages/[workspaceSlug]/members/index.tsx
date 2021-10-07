@@ -1,5 +1,5 @@
 import React from "react";
-import { Text } from "@chakra-ui/react";
+import { Text, Box } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { Meta } from "../../../components/meta";
 import { Layout } from "../../../components/layout";
@@ -73,15 +73,17 @@ const MembersPage = () => {
           <WorkspaceTabBar currentTab="members" workspaceSlug={workspaceSlug} />
         }
       >
-        <Members
-          memberships={memberships}
-          changeMembershipRole={({ id, role }) => {
-            console.log(`Will change membership ${id} to ${role}`);
-          }}
-          removeMembership={(id) => {
-            console.log(`Will remove membership with id ${id}`);
-          }}
-        />
+        <Box p={4}>
+          <Members
+            memberships={memberships}
+            changeMembershipRole={({ id, role }) => {
+              console.log(`Will change membership ${id} to ${role}`);
+            }}
+            removeMembership={(id) => {
+              console.log(`Will remove membership with id ${id}`);
+            }}
+          />
+        </Box>
       </Layout>
     </>
   );
