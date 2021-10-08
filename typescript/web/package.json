@@ -1,6 +1,6 @@
 {
   "name": "@labelflow/web",
-  "version": "1.0.20",
+  "version": "1.0.21",
   "scripts": {
     "dev": "next",
     "build": "cd ../db && yarn generate && cd ../web && next build",
@@ -35,6 +35,8 @@
     "@turf/helpers": "^6.5.0",
     "@turf/intersect": "^6.5.0",
     "@types/fscreen": "^1.0.1",
+    "@types/mjml": "4.7.0",
+    "@types/nodemailer": "6.4.4",
     "@types/react-beautiful-dnd": "10.1.4",
     "apollo-server-core": "^2.25.0",
     "apollo-server-env": "^3.1.0",
@@ -56,6 +58,7 @@
     "mem": "^8.1.1",
     "micro": "9.3.4",
     "mime-types": "2.1.32",
+    "mjml": "4.10.3",
     "multer": "1.4.3",
     "next": "11.1.0",
     "next-auth": "4.0.0-beta.1",
