@@ -24,6 +24,7 @@ export const DeleteMembershipErrorModal = ({
   if (membership == null) {
     return null;
   }
+  const displayName = getDisplayName(membership.user);
   return (
     <AlertDialog
       isOpen={isOpen}
@@ -34,14 +35,12 @@ export const DeleteMembershipErrorModal = ({
       <AlertDialogOverlay>
         <AlertDialogContent>
           <AlertDialogHeader>
-            {`Cannot remove owner ${getDisplayName(membership.user)} from ${
-              membership.workspace.name
-            }?`}
+            {`Cannot remove owner ${displayName} from ${membership.workspace.name}`}
           </AlertDialogHeader>
 
           <AlertDialogBody>
-            Set another member in the workspace with the role Owner before
-            removing Marion Watson.
+            {`Set another member in the workspace with the role Owner before
+            removing ${displayName}.`}
           </AlertDialogBody>
 
           <AlertDialogFooter>
