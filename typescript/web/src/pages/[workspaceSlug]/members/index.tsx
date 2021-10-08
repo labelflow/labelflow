@@ -12,7 +12,7 @@ import { WorkspaceTabBar } from "../../../components/layout/tab-bar/workspace-ta
 import { Members } from "../../../components/members";
 
 const membershipsQuery = gql`
-  query memberships($workspaceSlug: String) {
+  query getMembershipsMembers($workspaceSlug: String) {
     memberships(where: { workspaceSlug: $workspaceSlug }) {
       id
       role
@@ -46,7 +46,9 @@ const MembersPage = () => {
     skip: workspaceSlug == null,
   });
 
-  const [deleteMembership] = useMutation(deleteMembershipMutation);
+  const [deleteMembership] = useMutation(deleteMembershipMutation, {
+    refetchQueries: ["getMembershipsMembers"],
+  });
 
   return (
     <>
