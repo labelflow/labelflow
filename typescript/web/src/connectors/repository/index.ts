@@ -54,6 +54,9 @@ export const repository: Repository = {
         async () => (await getDatabase()).image
       )(removeUserFromWhere(whereWithUser), skip, first);
     },
+    delete: async ({ id }) => {
+      return await (await getDatabase()).image.delete(id);
+    },
   },
   label: {
     add: async (label) => {

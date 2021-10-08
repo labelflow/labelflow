@@ -1,6 +1,10 @@
 # Changelog
 
-## [1.0.20](https://github.com/labelflow/labelflow/compare/1.0.19...1.0.20)
+## [1.0.21](https://github.com/labelflow/labelflow/compare/1.0.20...1.0.21)
+
+- Delete images [`#488`](https://github.com/labelflow/labelflow/pull/488)
+- Feature/#462 mjml emails [`#489`](https://github.com/labelflow/labelflow/pull/489)
+## [1.0.20](https://github.com/labelflow/labelflow/compare/1.0.19...1.0.20) - 2021-10-04
 
 - Feature/split local workspace urls [`#472`](https://github.com/labelflow/labelflow/pull/472)
 - Add legal pages in footer and cookie banner [`#486`](https://github.com/labelflow/labelflow/pull/486)
