@@ -1,4 +1,4 @@
-import { Box, Img, Stack, Badge, Flex, Avatar } from "@chakra-ui/react";
+import { Box, Stack, Badge, Flex, Avatar } from "@chakra-ui/react";
 import { useSession } from "next-auth/react";
 import * as React from "react";
 
@@ -11,7 +11,7 @@ interface UserProps {
   };
 }
 
-const getDisplayName = ({
+export const getDisplayName = ({
   name,
   email,
   id,
@@ -33,8 +33,10 @@ const getDisplayName = ({
 };
 
 export const User = (props: UserProps) => {
-  const { id, image, name, email } = props.data;
-  const session = useSession();
+  const {
+    data: { id, image, name, email },
+  } = props;
+  const session = useSession({ required: false });
   const loggedInUser = session.data?.user;
   const isLoggedInUser = loggedInUser?.id === id;
   const displayName = getDisplayName({ name, email, id });
