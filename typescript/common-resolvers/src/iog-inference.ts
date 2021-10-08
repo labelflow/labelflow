@@ -1,17 +1,13 @@
 import { print, GraphQLResolveInfo } from "graphql";
 import { MutationRunIogArgs } from "@labelflow/graphql-types";
 
-// const ENDPOINT = "http://0.0.0.0:5000/graphql";
-const ENDPOINT = "http://iog.labelflow.net/graphql";
-// const ENDPOINT = "http://sterblue.ngrok.io/graphql";
-
 const runIog = async (
   _parent: any,
   args: MutationRunIogArgs,
   _context: any,
   { operation }: GraphQLResolveInfo
 ) => {
-  return await fetch(ENDPOINT, {
+  return await fetch(process.env.NEXT_PUBLIC_IOG_API_ENDPOINT, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
