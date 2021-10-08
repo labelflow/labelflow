@@ -14,6 +14,8 @@ import * as React from "react";
 import { User } from "./user";
 import { RoleSelection } from "./role-selection";
 import { ChangeMembershipRole, RemoveMembership, Membership } from "./types";
+import { DeleteMembershipModal } from "./delete-membership-modal";
+import { DeleteMembershipErrorModal } from "./delete-memebership-error-modal";
 
 const badgeEnum: Record<string, string> = {
   active: "green",
@@ -69,45 +71,58 @@ export const TableContent = ({
   changeMembershipRole: ChangeMembershipRole;
   removeMembership: RemoveMembership;
 }) => {
-  const [idOfMembershipToDelete, setIdOfMembershipToDelete] =
-    useState<null | string>(null);
+  const [membershipToDelete, setMembershipToDelete] =
+    useState<null | Membership>(null);
   return (
-    <Table my="8" borderWidth="1px" fontSize="sm">
-      <Thead bg={mode("gray.50", "gray.800")}>
-        <Tr>
-          {columns.map((column, index) => (
-            <Th whiteSpace="nowrap" scope="col" key={index}>
-              {column.Header}
-            </Th>
-          ))}
-          <Th />
-        </Tr>
-      </Thead>
-      <Tbody bgColor="#FFFFFF">
-        {memberships.map((row, membershipIndex) => (
-          <Tr key={membershipIndex}>
-            {columns.map((column, index) => {
-              const cell = row[column.accessor as keyof typeof row];
-              const element =
-                column.Cell?.(cell, row.id, changeMembershipRole) ?? cell;
-              return (
-                <Td whiteSpace="nowrap" key={index}>
-                  {element}
-                </Td>
-              );
-            })}
-            <Td textAlign="right">
-              <Button
-                variant="link"
-                colorScheme="blue"
-                onClick={() => setIdOfMembershipToDelete(row.id)}
-              >
-                Remove
-              </Button>
-            </Td>
+    <>
+      <DeleteMembershipModal
+        isOpen={membershipToDelete != null && memberships.length > 1}
+        membership={membershipToDelete}
+        onClose={() => setMembershipToDelete(null)}
+        deleteMembership={removeMembership}
+      />
+      <DeleteMembershipErrorModal
+        isOpen={membershipToDelete != null && memberships.length <= 1}
+        membership={membershipToDelete}
+        onClose={() => setMembershipToDelete(null)}
+      />
+      <Table my="8" borderWidth="1px" fontSize="sm">
+        <Thead bg={mode("gray.50", "gray.800")}>
+          <Tr>
+            {columns.map((column, index) => (
+              <Th whiteSpace="nowrap" scope="col" key={index}>
+                {column.Header}
+              </Th>
+            ))}
+            <Th />
           </Tr>
-        ))}
-      </Tbody>
-    </Table>
+        </Thead>
+        <Tbody bgColor="#FFFFFF">
+          {memberships.map((row, membershipIndex) => (
+            <Tr key={membershipIndex}>
+              {columns.map((column, index) => {
+                const cell = row[column.accessor as keyof typeof row];
+                const element =
+                  column.Cell?.(cell, row.id, changeMembershipRole) ?? cell;
+                return (
+                  <Td whiteSpace="nowrap" key={index}>
+                    {element}
+                  </Td>
+                );
+              })}
+              <Td textAlign="right">
+                <Button
+                  variant="link"
+                  colorScheme="blue"
+                  onClick={() => setMembershipToDelete(row)}
+                >
+                  Remove
+                </Button>
+              </Td>
+            </Tr>
+          ))}
+        </Tbody>
+      </Table>
+    </>
   );
 };
