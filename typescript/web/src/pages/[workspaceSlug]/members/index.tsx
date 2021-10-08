@@ -22,6 +22,10 @@ const membershipsQuery = gql`
         email
         image
       }
+      workspace {
+        id
+        name
+      }
     }
   }
 `;

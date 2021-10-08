@@ -18,4 +18,8 @@ export type Membership = {
     email?: string;
     image?: string;
   };
+  workspace: {
+    id: string;
+    name: string;
+  };
 };
