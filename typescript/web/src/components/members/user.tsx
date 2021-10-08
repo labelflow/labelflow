@@ -1,35 +1,55 @@
-
-import { Box, Img, Stack } from "@chakra-ui/react";
+import { Box, Img, Stack, Badge, Flex, Avatar } from "@chakra-ui/react";
+import { useSession } from "next-auth/react";
 import * as React from "react";
 
 interface UserProps {
   data: {
+    id: string;
     image: string;
     name: string;
     email: string;
   };
 }
 
+const getDisplayName = ({
+  name,
+  email,
+  id,
+}: {
+  name?: string;
+  email?: string;
+  id: string;
+}) => {
+  if (name) {
+    return name;
+  }
+  if (email) {
+    return email.split("@")[0];
+  }
+  if (id === "local-user") {
+    return "";
+  }
+  return `User - ${id.substr(id.length - 5, 4)}`;
+};
+
 export const User = (props: UserProps) => {
-  const { image, name, email } = props.data;
+  const { id, image, name, email } = props.data;
+  const session = useSession();
+  const loggedInUser = session.data?.user;
+  const isLoggedInUser = loggedInUser?.id === id;
+  const displayName = getDisplayName({ name, email, id });
   return (
     <Stack direction="row" spacing="4" align="center">
       <Box flexShrink={0} h="10" w="10">
-        <Img
-          objectFit="cover"
-          htmlWidth="160px"
-          htmlHeight="160px"
-          w="10"
-          h="10"
-          rounded="full"
-          src={image}
-          alt=""
-        />
+        <Avatar name={displayName} src={image} bg="brand.600" />
       </Box>
       <Box>
-        <Box fontSize="sm" fontWeight="medium">
-          {name}
-        </Box>
+        <Flex flexDirection="row">
+          <Box fontSize="sm" fontWeight="medium">
+            {displayName}
+          </Box>
+          {isLoggedInUser || (id === "local-user" && <Badge>You</Badge>)}
+        </Flex>
         <Box fontSize="sm" color="gray.500">
           {email}
         </Box>
