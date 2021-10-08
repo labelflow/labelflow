@@ -317,6 +317,7 @@ export type Mutation = {
   createExample?: Maybe<Example>;
   getUploadTarget: UploadTarget;
   createImage?: Maybe<Image>;
+  deleteImage?: Maybe<Image>;
   createLabel?: Maybe<Label>;
   updateLabel?: Maybe<Label>;
   deleteLabel?: Maybe<Label>;
@@ -350,6 +351,11 @@ export type MutationGetUploadTargetArgs = {
 
 export type MutationCreateImageArgs = {
   data: ImageCreateInput;
+};
+
+
+export type MutationDeleteImageArgs = {
+  where: ImageWhereUniqueInput;
 };
 
 
@@ -1000,6 +1006,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   createExample?: Resolver<Maybe<ResolversTypes['Example']>, ParentType, ContextType, RequireFields<MutationCreateExampleArgs, 'data'>>;
   getUploadTarget?: Resolver<ResolversTypes['UploadTarget'], ParentType, ContextType, RequireFields<MutationGetUploadTargetArgs, 'data'>>;
   createImage?: Resolver<Maybe<ResolversTypes['Image']>, ParentType, ContextType, RequireFields<MutationCreateImageArgs, 'data'>>;
+  deleteImage?: Resolver<Maybe<ResolversTypes['Image']>, ParentType, ContextType, RequireFields<MutationDeleteImageArgs, 'where'>>;
   createLabel?: Resolver<Maybe<ResolversTypes['Label']>, ParentType, ContextType, RequireFields<MutationCreateLabelArgs, 'data'>>;
   updateLabel?: Resolver<Maybe<ResolversTypes['Label']>, ParentType, ContextType, RequireFields<MutationUpdateLabelArgs, 'where' | 'data'>>;
   deleteLabel?: Resolver<Maybe<ResolversTypes['Label']>, ParentType, ContextType, RequireFields<MutationDeleteLabelArgs, 'where'>>;
