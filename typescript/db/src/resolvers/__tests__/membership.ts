@@ -16,10 +16,12 @@ fetch.disableFetchMocks();
 
 const testUser1Id = uuidV4();
 const testUser2Id = uuidV4();
+const testUser3Id = uuidV4();
 
 beforeAll(async () => {
   await prisma.user.create({ data: { id: testUser1Id, name: "test-user-1" } });
   await prisma.user.create({ data: { id: testUser2Id, name: "test-user-2" } });
+  await prisma.user.create({ data: { id: testUser3Id, name: "test-user-3" } });
 });
 
 beforeEach(async () => {
@@ -553,6 +555,7 @@ describe("updateMembership mutation", () => {
   });
 
   it("throws if the user does not have access to the membership", async () => {
+    user.id = testUser3Id;
     const workspaceSlug = (await createWorkspace())?.data?.createWorkspace
       .slug as string;
 
@@ -563,6 +566,7 @@ describe("updateMembership mutation", () => {
         workspaceSlug,
       })
     ).data?.createMembership.id as string;
+    user.id = testUser1Id;
     await expect(
       updateMembership({
         id: membershipId,
@@ -647,6 +651,7 @@ describe("deleteMembership mutation", () => {
   });
 
   it("throws if the user does not have access to the membership", async () => {
+    user.id = testUser3Id;
     const workspaceSlug = (await createWorkspace())?.data?.createWorkspace
       .slug as string;
 
@@ -657,7 +662,7 @@ describe("deleteMembership mutation", () => {
         workspaceSlug,
       })
     ).data?.createMembership.id as string;
-
+    user.id = testUser1Id;
     await expect(() => deleteMembership(membershipId)).rejects.toThrow(
       "User not authorized to access membership"
     );

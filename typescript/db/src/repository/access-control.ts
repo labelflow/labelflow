@@ -147,11 +147,14 @@ export const checkUserAccessToMembership = async ({
   if (user?.id == null) {
     throw new Error("User not authenticated");
   }
+  // Has access to membership if the user belongs to a workspace that is linked to the memberhsip
   const hasAccessToMembership =
-    (await prisma.membership.findFirst({
+    (await prisma.workspace.findFirst({
       where: {
-        id: where.id,
-        userId: user?.id,
+        AND: [
+          { memberships: { some: { id: where.id } } },
+          { memberships: { some: { userId: user.id } } },
+        ],
       },
     })) != null;
   if (!hasAccessToMembership) {
@@ -170,6 +173,7 @@ export const checkUserAccessToUser = async ({
   if (user?.id == null) {
     throw new Error("User not authenticated");
   }
+  // Has access to user if the current user shares a workspace with the user in the query
   const hasAccessToUser =
     (await prisma.workspace.findFirst({
       where: {
