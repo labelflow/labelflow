@@ -11,6 +11,8 @@ import { useQuery, gql } from "@apollo/client";
 import { useErrorHandler } from "react-error-boundary";
 import NextLink from "next/link";
 
+import { WorkspaceSwitcher } from "../../../../components/workspace-switcher";
+import { NavLogo } from "../../../../components/logo/nav-logo";
 import { Meta } from "../../../../components/meta";
 import { ServiceWorkerManagerModal } from "../../../../components/service-worker-manager";
 import { Layout } from "../../../../components/layout";
@@ -80,10 +82,12 @@ const DatasetIndexPage = () => {
       <CookieBanner />
       <Layout
         breadcrumbs={[
-          <NextLink key={0} href={`/${workspaceSlug}/datasets`}>
+          <NavLogo key={0} />,
+          <WorkspaceSwitcher key={1} />,
+          <NextLink key={2} href={`/${workspaceSlug}/datasets`}>
             <BreadcrumbLink>Datasets</BreadcrumbLink>
           </NextLink>,
-          <Text key={1}>{datasetName}</Text> ?? (
+          <Text key={3}>{datasetName}</Text> ?? (
             <Skeleton key={1}>Dataset Name</Skeleton>
           ),
         ]}

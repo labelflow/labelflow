@@ -274,6 +274,61 @@ describe("Image resolver test suite", () => {
     );
   });
 
+  it("should delete an image and the related labels", async () => {
+    const {
+      data: {
+        createDataset: { id: datasetId },
+      },
+    } = await createDataset("Test dataset");
+    const imageId1 = await createImage("Image 1", datasetId);
+    await createLabel(imageId1, 2);
+    await client.mutate({
+      mutation: gql`
+        mutation deleteImage($id: ID!) {
+          deleteImage(where: { id: $id }) {
+            id
+          }
+        }
+      `,
+      variables: {
+        id: imageId1,
+      },
+    });
+    await expect(() =>
+      client.query({
+        query: gql`
+          query getImage($id: ID!) {
+            image(where: { id: $id }) {
+              index
+              datasetId
+            }
+          }
+        `,
+        variables: {
+          id: imageId1,
+        },
+        fetchPolicy: "no-cache",
+      })
+    ).rejects.toThrow(`No image with id "${imageId1}"`);
+    // Check that the label was deleted
+    const queryLabelsResult = await client.query({
+      query: gql`
+        query dataset($id: ID!) {
+          dataset(where: { id: $id }) {
+            id
+            labels {
+              id
+            }
+          }
+        }
+      `,
+      variables: {
+        id: datasetId,
+      },
+    });
+    return expect(queryLabelsResult.data.dataset.labels.length).toEqual(0);
+  });
+
   it("should query images linked to a dataset", async () => {
     await createDataset("Test dataset 1", "dataset 1");
     await createDataset("Test dataset 2", "dataset 2");

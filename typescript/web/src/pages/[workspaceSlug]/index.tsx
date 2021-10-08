@@ -7,15 +7,20 @@ import { AuthManager } from "../../components/auth-manager";
 import { Layout } from "../../components/layout";
 import { WelcomeManager } from "../../components/welcome-manager";
 import { CookieBanner } from "../../components/cookie-banner";
+import { NavLogo } from "../../components/logo/nav-logo";
+import { WorkspaceSwitcher } from "../../components/workspace-switcher";
 
 const LocalDatasetsIndexPage = () => {
   const router = useRouter();
 
   useEffect(() => {
     if (router.isReady) {
+      const {
+        query: { workspaceSlug, ...queryRest },
+      } = router;
       router.replace({
-        pathname: `/${router.query.workspaceSlug}/datasets`,
-        query: router.query,
+        pathname: `/${workspaceSlug}/datasets`,
+        query: queryRest,
       });
     }
   }, [router.isReady]);
@@ -27,7 +32,9 @@ const LocalDatasetsIndexPage = () => {
       <AuthManager />
       <Meta title="LabelFlow | Local Workspace" />
       <CookieBanner />
-      <Layout>
+      <Layout
+        breadcrumbs={[<NavLogo key={0} />, <WorkspaceSwitcher key={1} />]}
+      >
         <Center h="full">
           <Spinner size="xl" />
         </Center>

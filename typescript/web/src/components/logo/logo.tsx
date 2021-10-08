@@ -3,14 +3,14 @@ import * as React from "react";
 
 export const Logo = React.forwardRef<
   SVGSVGElement,
-  HTMLChakraProps<"svg"> & { iconColor?: string }
->((props: { iconColor?: string }, ref) => {
+  HTMLChakraProps<"svg"> & { iconColor?: string; logoOnly?: boolean }
+>((props: { iconColor?: string; logoOnly?: boolean }, ref) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { iconColor = "brand", ...rest } = props;
+  const { iconColor = "brand", logoOnly, ...rest } = props;
   return (
     <chakra.svg
       aria-hidden
-      viewBox="0 0 393 84"
+      viewBox={logoOnly ? "0 0 84 84" : "0 0 393 84"}
       fill="none"
       {...rest}
       ref={ref}

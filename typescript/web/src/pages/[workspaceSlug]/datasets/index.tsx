@@ -11,13 +11,14 @@ import { Meta } from "../../../components/meta";
 import { Layout } from "../../../components/layout";
 import { IdParam, BoolParam } from "../../../utils/query-param-bool";
 import { NewDatasetCard, DatasetCard } from "../../../components/datasets";
-
 import { UpsertDatasetModal } from "../../../components/datasets/upsert-dataset-modal";
 import { DeleteDatasetModal } from "../../../components/datasets/delete-dataset-modal";
 import { ServiceWorkerManagerModal } from "../../../components/service-worker-manager";
 import { AuthManager } from "../../../components/auth-manager";
 import { WelcomeManager } from "../../../components/welcome-manager";
 import { CookieBanner } from "../../../components/cookie-banner";
+import { WorkspaceSwitcher } from "../../../components/workspace-switcher";
+import { NavLogo } from "../../../components/logo/nav-logo";
 
 export const getDatasetsQuery = gql`
   query getDatasets($where: DatasetWhereInput) {
@@ -95,7 +96,13 @@ const DatasetPage = () => {
       <AuthManager />
       <Meta title="LabelFlow | Datasets" />
       <CookieBanner />
-      <Layout breadcrumbs={[<Text key={0}>Datasets</Text>]}>
+      <Layout
+        breadcrumbs={[
+          <NavLogo key={0} />,
+          <WorkspaceSwitcher key={1} />,
+          <Text key={2}>Datasets</Text>,
+        ]}
+      >
         <UpsertDatasetModal
           isOpen={isCreatingDataset || editDatasetId != null}
           onClose={onClose}

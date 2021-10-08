@@ -44,6 +44,26 @@ describe("Golden path", () => {
     cy.wait(420);
     cy.get("main")
       .contains(
+        imageSampleCollection[1]
+          .split("?")[0]
+          .split("https://images.unsplash.com/")[1]
+      )
+      .find('[aria-label="delete image"]')
+      .click();
+
+    cy.get('[aria-label="Confirm deleting image"]').click();
+
+    cy.get("main")
+      .contains(
+        imageSampleCollection[1]
+          .split("?")[0]
+          .split("https://images.unsplash.com/")[1]
+      )
+      .should("not.exist");
+
+    cy.wait(420);
+    cy.get("main")
+      .contains(
         imageSampleCollection[0]
           .split("?")[0]
           .split("https://images.unsplash.com/")[1]
@@ -157,15 +177,15 @@ describe("Golden path", () => {
     cy.wait(420);
     cy.get("main nav").scrollTo("right");
     cy.get("main nav").within(() => {
-      cy.contains("8").closest("a").click();
+      cy.contains("7").closest("a").click();
     });
 
     cy.wait(420);
-    cy.get('input[name="current-image"]').should("have.value", "8");
-    cy.get('input[name="current-image"]').type("7{enter}");
+    cy.get('input[name="current-image"]').should("have.value", "7");
+    cy.get('input[name="current-image"]').type("6{enter}");
 
     cy.get('[aria-current="page"]').should(($a) => {
-      expect($a).to.contain("7");
+      expect($a).to.contain("6");
     });
     cy.contains(
       imageSampleCollection[6]
@@ -175,7 +195,7 @@ describe("Golden path", () => {
 
     cy.wait(420);
     cy.get('[aria-label="Export"]').click();
-    cy.contains("Your dataset contains 8 images and 1 labels").should(
+    cy.contains("Your dataset contains 7 images and 1 labels").should(
       "be.visible"
     );
 
