@@ -7,15 +7,15 @@ export const localMembership = {
   id: "local-membership",
   createdAt: "1970-01-01T00:00:00.000Z",
   updatedAt: "1970-01-01T00:00:00.000Z",
-  role: MembershipRole.Admin,
+  role: MembershipRole.Owner,
   workspaceSlug: "local",
   userId: "",
 };
 
 export default {
   Query: {
-    membership: () => localWorkspace,
-    memberships: () => [localWorkspace],
+    membership: () => localMembership,
+    memberships: () => [localMembership],
   },
   Mutation: {
     createMembership: notImplementedInLocalWorkspaceRepository,

@@ -235,8 +235,8 @@ describe("memberships query", () => {
       fetchPolicy: "no-cache",
     });
     expect(data.memberships.map((workspace) => workspace.role)).toEqual([
-      MembershipRole.Admin,
-      MembershipRole.Admin,
+      MembershipRole.Owner,
+      MembershipRole.Owner,
     ]);
   });
 
@@ -267,8 +267,8 @@ describe("memberships query", () => {
     });
 
     expect(data.memberships.map((workspace) => workspace.role)).toEqual([
-      MembershipRole.Admin,
-      MembershipRole.Admin,
+      MembershipRole.Owner,
+      MembershipRole.Owner,
     ]);
   });
 
@@ -306,7 +306,7 @@ describe("memberships query", () => {
       variables: { workspaceSlug: workspace1Slug },
     });
     expect(data.memberships.map((workspace) => workspace.role)).toEqual([
-      MembershipRole.Admin,
+      MembershipRole.Owner,
       MembershipRole.Member,
     ]);
   });
@@ -350,7 +350,7 @@ describe("memberships query", () => {
     });
 
     expect(data.memberships.map((workspace) => workspace.role)).toEqual([
-      MembershipRole.Admin,
+      MembershipRole.Owner,
       MembershipRole.Member,
       MembershipRole.Member,
     ]);
@@ -396,8 +396,8 @@ describe("memberships query", () => {
     });
 
     expect(data.memberships.map((workspace) => workspace.role)).toEqual([
-      MembershipRole.Admin,
-      MembershipRole.Admin,
+      MembershipRole.Owner,
+      MembershipRole.Owner,
       MembershipRole.Member,
     ]);
   });
@@ -442,7 +442,7 @@ describe("memberships query", () => {
     });
 
     expect(data.memberships.map((workspace) => workspace.role)).toEqual([
-      MembershipRole.Admin,
+      MembershipRole.Owner,
       MembershipRole.Member,
     ]);
   });
