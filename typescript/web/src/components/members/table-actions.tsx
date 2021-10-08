@@ -9,15 +9,22 @@ import {
   InputLeftElement,
   Stack,
   chakra,
+  Alert,
+  AlertIcon,
+  AlertTitle,
 } from "@chakra-ui/react";
 import * as React from "react";
 import { IoSearch } from "react-icons/io5";
 import { RiAddFill } from "react-icons/ri";
+import { useRouter } from "next/router";
 
 const SearchIcon = chakra(IoSearch);
 
 export const TableActions = () => {
-  return (
+  const router = useRouter();
+  const workspaceSlug = router?.query.workspaceSlug as string;
+
+  const tableActionsForOnlineWorkspace = (
     <Stack
       spacing="4"
       direction={{ base: "column", md: "row" }}
@@ -52,4 +59,17 @@ export const TableActions = () => {
       </ButtonGroup>
     </Stack>
   );
+
+  const tableActionsForLocalWorkspace = (
+    <Alert status="info" variant="subtle">
+      <AlertIcon />
+      <AlertTitle>This workspace is private to you only.</AlertTitle>
+      Its datasets are saved on your device only, not online. To collaborate and
+      invite people, switch to an online workspace.
+    </Alert>
+  );
+
+  return workspaceSlug === "local"
+    ? tableActionsForLocalWorkspace
+    : tableActionsForOnlineWorkspace;
 };
