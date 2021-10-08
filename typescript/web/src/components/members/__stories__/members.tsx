@@ -2,6 +2,7 @@ import { chakraDecorator } from "../../../utils/chakra-decorator";
 import { apolloDecorator } from "../../../utils/apollo-decorator";
 
 import { Members } from "..";
+import { SessionProvider } from "next-auth/react";
 
 export default {
   title: "web/Workspace members",
@@ -47,26 +48,26 @@ const memberships = [
     role: "Owner",
     id: "membership4",
     user: {
-      id: "user4",
+      id: "1234567890",
       image:
         "https://images.unsplash.com/photo-1533674689012-136b487b7736?ixid=MXwxMjA3fDB8MHxzZWFyY2h8Mjl8fGFmcmljYSUyMGxhZHklMjBmYWNlfGVufDB8fDB8&ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=60",
-      name: "Sade Akinlade",
-      email: "melyb@example.com",
     },
   },
 ];
 
 export const MembersList = () => {
   return (
-    <Members
-      memberships={memberships}
-      changeMembershipRole={({ id, role }) => {
-        console.log(`Will change membership ${id} to ${role}`);
-      }}
-      removeMembership={(id) => {
-        console.log(`Will remove membership with id ${id}`);
-      }}
-    />
+    <SessionProvider session={undefined}>
+      <Members
+        memberships={memberships}
+        changeMembershipRole={({ id, role }) => {
+          console.log(`Will change membership ${id} to ${role}`);
+        }}
+        removeMembership={(id) => {
+          console.log(`Will remove membership with id ${id}`);
+        }}
+      />
+    </SessionProvider>
   );
 };
 
