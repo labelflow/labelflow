@@ -19,7 +19,7 @@ const membershipsQuery = gql`
       user {
         id
         name
-        # email # TODO: add email as optional in the schema so that there are no errors when querying it and there is no email
+        email
         image
       }
     }
