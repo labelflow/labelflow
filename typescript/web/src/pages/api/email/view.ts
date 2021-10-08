@@ -5,7 +5,7 @@ import { generateHtml as signup } from "../../../utils/email/templates/sign-up";
 import { generateHtml as invitation } from "../../../utils/email/templates/invitation";
 
 type EmailTypes = {
-  signin: typeof signup;
+  signin: typeof signin;
   signup: typeof signup;
   invitation: typeof invitation;
   default: typeof signup;
