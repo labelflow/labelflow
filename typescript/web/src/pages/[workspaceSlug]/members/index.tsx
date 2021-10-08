@@ -1,7 +1,7 @@
 import React from "react";
 import { Text, Box } from "@chakra-ui/react";
 import { useRouter } from "next/router";
-import { useQuery, gql } from "@apollo/client";
+import { useQuery, gql, useMutation } from "@apollo/client";
 import { Meta } from "../../../components/meta";
 import { Layout } from "../../../components/layout";
 import { ServiceWorkerManagerModal } from "../../../components/service-worker-manager";
@@ -26,6 +26,14 @@ const membershipsQuery = gql`
   }
 `;
 
+const deleteMembershipMutation = gql`
+  mutation deleteMembership($id: ID!) {
+    deleteMembership(where: { id: $id }) {
+      id
+    }
+  }
+`;
+
 const MembersPage = () => {
   const workspaceSlug = useRouter().query?.workspaceSlug as string;
 
@@ -33,6 +41,8 @@ const MembersPage = () => {
     variables: { workspaceSlug },
     skip: workspaceSlug == null,
   });
+
+  const [deleteMembership] = useMutation(deleteMembershipMutation);
 
   return (
     <>
@@ -54,7 +64,7 @@ const MembersPage = () => {
               console.log(`Will change membership ${id} to ${role}`);
             }}
             removeMembership={(id) => {
-              console.log(`Will remove membership with id ${id}`);
+              deleteMembership({ variables: { id } });
             }}
           />
         </Box>

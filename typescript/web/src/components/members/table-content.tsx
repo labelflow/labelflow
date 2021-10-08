@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   Button,
   Table,
@@ -68,6 +69,8 @@ export const TableContent = ({
   changeMembershipRole: ChangeMembershipRole;
   removeMembership: RemoveMembership;
 }) => {
+  const [idOfMembershipToDelete, setIdOfMembershipToDelete] =
+    useState<null | string>(null);
   return (
     <Table my="8" borderWidth="1px" fontSize="sm">
       <Thead bg={mode("gray.50", "gray.800")}>
@@ -97,7 +100,7 @@ export const TableContent = ({
               <Button
                 variant="link"
                 colorScheme="blue"
-                onClick={() => removeMembership(row.id)}
+                onClick={() => setIdOfMembershipToDelete(row.id)}
               >
                 Remove
               </Button>
