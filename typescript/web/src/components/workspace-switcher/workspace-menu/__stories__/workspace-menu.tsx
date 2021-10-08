@@ -11,7 +11,7 @@ export default {
   decorators: [chakraDecorator],
 };
 
-const workspaces: WorkspaceItem[] = [
+const workspaces: (WorkspaceItem & { src: string })[] = [
   {
     id: "coaisndoiasndi1",
     slug: "labelflow",
