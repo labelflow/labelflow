@@ -97,8 +97,8 @@ type User {
   id: ID!
   createdAt: DateTime!
   updatedAt: DateTime!
-  name: String!
-  email: String!
+  name: String
+  email: String
   image: String
   memberships: [Membership!]!
 }
