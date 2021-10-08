@@ -140,7 +140,6 @@ export const WorkspaceSelectionPopover = ({
       onClose={onClose}
       placement="bottom-start"
       preventOverflow
-      isLazy
       initialFocusRef={searchInputRef}
     >
       <PopoverTrigger>{trigger}</PopoverTrigger>
