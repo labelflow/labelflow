@@ -7,7 +7,7 @@ const runIog = async (
   _context: any,
   { operation }: GraphQLResolveInfo
 ) => {
-  return await fetch(process.env.NEXT_PUBLIC_IOG_API_ENDPOINT, {
+  return await fetch(process.env.NEXT_PUBLIC_IOG_API_ENDPOINT ?? "", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
