@@ -8,6 +8,7 @@ import {
   useColorModeValue as mode,
 } from "@chakra-ui/react";
 import { RiGroupFill, RiAddFill } from "react-icons/ri";
+import { randomBackgroundGradient } from "../../../../../utils/random-background-gradient";
 
 const TeamIcon = chakra(RiGroupFill);
 const AddIcon = chakra(RiAddFill);
@@ -84,7 +85,12 @@ export const WorkspaceListItem = (props: {
               src={src}
               ml="2"
               mr="2"
-              bg={src != null && src.length > 0 ? avatarBackground : undefined}
+              color="white"
+              bg={
+                src != null && src.length > 0
+                  ? avatarBackground
+                  : randomBackgroundGradient(name)
+              }
               icon={<AddIcon color={addButtonColor} fontSize="1.5rem" />}
             />
             <Text
@@ -140,7 +146,12 @@ export const WorkspaceListItem = (props: {
               src={src}
               ml="2"
               mr="2"
-              bg={src != null && src.length > 0 ? avatarBackground : undefined}
+              color="white"
+              bg={
+                src != null && src.length > 0
+                  ? avatarBackground
+                  : randomBackgroundGradient(name)
+              }
               icon={<TeamIcon color="white" fontSize="1rem" />}
             />
             <Text

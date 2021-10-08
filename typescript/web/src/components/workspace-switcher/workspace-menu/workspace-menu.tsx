@@ -14,6 +14,8 @@ import NextLink from "next/link";
 import { HiSelector } from "react-icons/hi";
 import { RiGroupFill } from "react-icons/ri";
 
+import { randomBackgroundGradient } from "../../../utils/random-background-gradient";
+
 import {
   WorkspaceSelectionPopover,
   WorkspaceItem,
@@ -66,13 +68,18 @@ const WorkspaceBreadcrumb = forwardRef<
             size="md"
             h="8"
             w="8"
+            color="white"
             borderRadius="md"
             flexShrink={0}
             flexGrow={0}
             name={name}
             src={src}
             mr="2"
-            bg={src != null && src.length > 0 ? avatarBackground : undefined}
+            bg={
+              src != null && src.length > 0
+                ? avatarBackground
+                : randomBackgroundGradient(name)
+            }
             icon={<TeamIcon color="white" fontSize="1rem" />}
           />
           <Text
@@ -106,12 +113,17 @@ const WorkspaceBreadcrumb = forwardRef<
             size="md"
             h="8"
             w="8"
+            color="white"
             borderRadius="md"
             flexShrink={0}
             flexGrow={0}
             name={name}
             src={src}
-            bg={src != null && src.length > 0 ? avatarBackground : undefined}
+            bg={
+              src != null && src.length > 0
+                ? avatarBackground
+                : randomBackgroundGradient(name)
+            }
             icon={<TeamIcon color="white" fontSize="1rem" />}
           />
         </Tooltip>
