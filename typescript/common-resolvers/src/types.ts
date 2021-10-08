@@ -113,6 +113,7 @@ export type Repository = {
     count: Count<ImageWhereInput & { user?: { id: string } }>;
     get: Get<DbImage, ImageWhereUniqueInput>;
     list: List<DbImage, ImageWhereInput & { user?: { id: string } }>;
+    delete: Delete<ImageWhereUniqueInput>;
   };
   label: {
     add: Add<DbLabelCreateInput>;
