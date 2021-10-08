@@ -7,12 +7,16 @@ import { Layout } from "../../components/layout";
 import { WelcomeManager } from "../../components/welcome-manager";
 import { CookieBanner } from "../../components/cookie-banner";
 import { Meta } from "../../components/meta";
+import { NavLogo } from "../../components/logo/nav-logo";
 
-const WorkspacesRedirectPage = () => {
+const LocalWorkspacesRedirectPage = () => {
   const router = useRouter();
 
   useEffect(() => {
-    router.replace({ pathname: `/local/datasets`, query: router.query });
+    router.replace({
+      pathname: router.pathname.replace(/^\/workspaces/g, ""),
+      query: router.query,
+    });
   }, []);
 
   return (
@@ -20,9 +24,9 @@ const WorkspacesRedirectPage = () => {
       <ServiceWorkerManagerModal />
       <WelcomeManager />
       <AuthManager />
-      <Meta title="LabelFlow | Workspaces" />
+      <Meta title="LabelFlow | Workspace" />
       <CookieBanner />
-      <Layout>
+      <Layout breadcrumbs={[<NavLogo key={0} />]}>
         <Center h="full">
           <Spinner size="xl" />
         </Center>
@@ -31,4 +35,4 @@ const WorkspacesRedirectPage = () => {
   );
 };
 
-export default WorkspacesRedirectPage;
+export default LocalWorkspacesRedirectPage;

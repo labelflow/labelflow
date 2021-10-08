@@ -28,6 +28,7 @@ import {
 import { signOut, useSession } from "next-auth/react";
 import { useQueryParam } from "use-query-params";
 import { BoolParam } from "../../../utils/query-param-bool";
+import { randomBackgroundGradient } from "../../../utils/random-background-gradient";
 
 const UserMenuIcon = chakra(RiUserLine);
 
@@ -44,6 +45,7 @@ export const UserMenu = () => {
   const [, setIsSigninOpen] = useQueryParam("modal-signin", BoolParam);
 
   const fadeColor = useColorModeValue("gray.600", "gray.400");
+  const avatarBackground = useColorModeValue("white", "gray.700");
 
   return (
     <Menu>
@@ -56,6 +58,12 @@ export const UserMenu = () => {
             session ? (
               <Avatar
                 size="sm"
+                bg={
+                  session?.user?.image != null &&
+                  session?.user?.image.length > 0
+                    ? avatarBackground
+                    : randomBackgroundGradient(session?.user?.name)
+                }
                 name={session?.user?.name}
                 src={session?.user?.image}
                 icon={<UserMenuIcon fontSize="xl" />}
@@ -85,6 +93,12 @@ export const UserMenu = () => {
               <HStack spacing="4" flexShrink={0}>
                 <Avatar
                   size="sm"
+                  bg={
+                    session?.user?.image != null &&
+                    session?.user?.image.length > 0
+                      ? avatarBackground
+                      : randomBackgroundGradient(session?.user?.name)
+                  }
                   name={session?.user?.name}
                   src={session?.user?.image}
                 />

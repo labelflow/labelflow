@@ -6,6 +6,7 @@ import { ServiceWorkerManagerBackground } from "../../components/service-worker-
 import { Layout } from "../../components/layout";
 import { SigninModal } from "../../components/auth-manager/signin-modal";
 import { CookieBanner } from "../../components/cookie-banner";
+import { NavLogo } from "../../components/logo/nav-logo";
 
 const LocalDatasetsIndexPage = () => {
   const router = useRouter();
@@ -19,7 +20,7 @@ const LocalDatasetsIndexPage = () => {
       <ServiceWorkerManagerBackground />
       <Meta title="LabelFlow | Sign in" />
       <CookieBanner />
-      <Layout>
+      <Layout breadcrumbs={[<NavLogo key={0} />]}>
         <SigninModal
           isOpen
           onClose={exitSignin}

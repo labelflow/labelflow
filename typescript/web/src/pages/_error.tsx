@@ -13,6 +13,7 @@ import { NextPageContext } from "next";
 import { Meta } from "../components/meta";
 import { Layout } from "../components/layout";
 import { EmptyStateError } from "../components/empty-state";
+import { NavLogo } from "../components/logo/nav-logo";
 
 type Props = FallbackProps & {
   statusCode?: number;
@@ -24,7 +25,7 @@ const ErrorPage = ({ statusCode, error, resetErrorBoundary }: Props) => {
   return (
     <>
       <Meta title="LabelFlow | Error" />
-      <Layout>
+      <Layout breadcrumbs={[<NavLogo key={0} />]}>
         <Center h="full">
           <Box as="section">
             <Box
