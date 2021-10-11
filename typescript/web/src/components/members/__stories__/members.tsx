@@ -21,6 +21,10 @@ const memberships = [
       name: "Marion Watson",
       email: "codyfisher@example.com",
     },
+    workspace: {
+      id: "ws-1",
+      name: "My workspace",
+    },
   },
   {
     role: "Owner",
@@ -31,6 +35,10 @@ const memberships = [
         "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=4&w=256&h=256&q=60",
       name: "Louise Hopkins",
       email: "jane@example.com",
+    },
+    workspace: {
+      id: "ws-1",
+      name: "My workspace",
     },
   },
   {
@@ -43,6 +51,10 @@ const memberships = [
       name: "Susan Schwartz",
       email: "jenyzx@example.com",
     },
+    workspace: {
+      id: "ws-1",
+      name: "My workspace",
+    },
   },
   {
     role: "Owner",
@@ -51,6 +63,10 @@ const memberships = [
       id: "1234567890",
       image:
         "https://images.unsplash.com/photo-1533674689012-136b487b7736?ixid=MXwxMjA3fDB8MHxzZWFyY2h8Mjl8fGFmcmljYSUyMGxhZHklMjBmYWNlfGVufDB8fDB8&ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=60",
+    },
+    workspace: {
+      id: "ws-1",
+      name: "My workspace",
     },
   },
 ];

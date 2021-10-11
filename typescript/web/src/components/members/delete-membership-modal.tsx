@@ -11,9 +11,9 @@ import {
   UnorderedList,
 } from "@chakra-ui/react";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/router";
 import { Membership } from "./types";
 import { getDisplayName } from "./user";
-import { useRouter } from "next/router";
 
 export const DeleteMembershipModal = ({
   isOpen = false,
