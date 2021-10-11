@@ -5,6 +5,7 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
+python/iog/data
 
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
@@ -123,7 +124,10 @@ cypress/videos
 
 # Python
 python/iog/data
+python/iog/outputs
+python/iog/results
 python/iog/inputs
+python/iog/cache
 .venv
 __pycache__
 

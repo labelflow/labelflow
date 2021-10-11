@@ -133,10 +133,12 @@ export const EditLabelClassMenu = () => {
     variables: { id: selectedLabelClassId },
     skip: selectedLabelClassId == null,
   });
+
   const isInDrawingMode = [
-    Tools.CLASSIFICATION,
     Tools.BOX,
     Tools.POLYGON,
+    Tools.IOG,
+    Tools.CLASSIFICATION,
   ].includes(selectedTool);
   const selectedLabelClass = isInDrawingMode
     ? dataLabelClass?.labelClass

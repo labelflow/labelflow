@@ -17,7 +17,7 @@ import { Map } from "@labelflow/react-openlayers-fiber";
 import type { Image } from "@labelflow/graphql-types";
 import "ol/ol.css";
 
-import { DrawBoundingBoxAndPolygonInteraction } from "./draw-bounding-box-and-polygon-interaction";
+import { DrawInteraction } from "./draw-interaction";
 import { SelectAndModifyFeature } from "./select-and-modify-feature";
 import { ClassificationContent, ClassificationOverlay } from "./classification";
 import { Labels } from "./labels";
@@ -277,7 +277,7 @@ export const OpenlayersMap = () => {
                 image={memoizedImage}
                 classificationOverlayRef={classificationOverlayRef}
               />
-              <DrawBoundingBoxAndPolygonInteraction />
+              <DrawInteraction />
               <SelectAndModifyFeature
                 editClassOverlayRef={editClassOverlayRef}
                 sourceVectorLabelsRef={sourceVectorBoxesRef}
@@ -293,7 +293,7 @@ export const OpenlayersMap = () => {
           </ApolloProvider>
         </RouterContext.Provider>
       </Map>
-      {selectedTool === Tools.BOX &&
+      {[Tools.BOX, Tools.IOG].includes(selectedTool) &&
         boxDrawingToolState !== DrawingToolState.DRAWING &&
         !isContextMenuOpen && <CursorGuides map={mapRef.current} />}
       {/* This div is needed to prevent a weird error that seems related to the EditLabelClass component */}
