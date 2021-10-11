@@ -23,7 +23,7 @@ export enum DrawingToolState {
   DRAWING = "drawing",
 }
 
-export type LabellingState = {
+export type LabelingState = {
   zoomFactor: number;
   view: OlView | null;
   setView: (view: OlView) => void;
@@ -48,7 +48,7 @@ export type LabellingState = {
   zoomByDelta: (ratio: number) => void;
 };
 
-export const useLabellingStore = create<LabellingState>(
+export const useLabelingStore = create<LabelingState>(
   (set, get) => ({
     view: null,
     isImageLoading: true,
@@ -100,4 +100,4 @@ export const useLabellingStore = create<LabellingState>(
       selectedLabelClassId: setRouterValue("selectedLabelClassId"),
     },
   }
-) as UseStore<LabellingState>; // Needed to correct https://github.com/Diablow/zustand-store-addons/issues/2
+) as UseStore<LabelingState>; // Needed to correct https://github.com/Diablow/zustand-store-addons/issues/2

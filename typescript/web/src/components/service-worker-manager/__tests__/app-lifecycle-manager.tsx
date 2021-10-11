@@ -49,7 +49,7 @@ describe("App lifecyle manager", () => {
     } as unknown as Workbox;
     render(<ServiceWorkerManagerModal />, { wrapper });
     await waitFor(() => {
-      expect(screen.queryByText("image labelling tool")).toBeDefined();
+      expect(screen.queryByText("image labeling tool")).toBeDefined();
     });
     await waitFor(() => {
       expect(screen.queryByText("Update available")).not.toBeInTheDocument();
@@ -69,9 +69,7 @@ describe("App lifecyle manager", () => {
     } as unknown as Workbox;
     render(<ServiceWorkerManagerModal />, { wrapper });
     await waitFor(() => {
-      expect(
-        screen.queryByText("image labelling tool")
-      ).not.toBeInTheDocument();
+      expect(screen.queryByText("image labeling tool")).not.toBeInTheDocument();
     });
     await waitFor(() => {
       expect(screen.queryByText("Update available")).not.toBeInTheDocument();
@@ -100,9 +98,7 @@ describe("App lifecyle manager", () => {
     } as unknown as Workbox;
     render(<ServiceWorkerManagerModal />, { wrapper });
     await waitFor(() => {
-      expect(
-        screen.queryByText("image labelling tool")
-      ).not.toBeInTheDocument();
+      expect(screen.queryByText("image labeling tool")).not.toBeInTheDocument();
     });
     await waitFor(() => {
       expect(screen.queryByText("Update available")).toBeDefined();

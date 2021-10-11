@@ -15,7 +15,7 @@ export interface Link {
 
 export const links: Link[] = [
   { label: "Product", href: "/website" },
-  // { label: "For Labelling workers", href: "#" },
+  // { label: "For Labeling workers", href: "#" },
   // {
   //   label: "Resources",
   //   children: [
