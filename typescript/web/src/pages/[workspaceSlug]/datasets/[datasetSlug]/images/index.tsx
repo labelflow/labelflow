@@ -5,6 +5,9 @@ import { Skeleton, Text, BreadcrumbLink } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { useErrorHandler } from "react-error-boundary";
 import type { Dataset as DatasetType } from "@labelflow/graphql-types";
+
+import { WorkspaceSwitcher } from "../../../../../components/workspace-switcher";
+import { NavLogo } from "../../../../../components/logo/nav-logo";
 import { ServiceWorkerManagerModal } from "../../../../../components/service-worker-manager";
 import { KeymapButton } from "../../../../../components/layout/top-bar/keymap-button";
 import { ImportButton } from "../../../../../components/import-button";
@@ -88,15 +91,17 @@ const ImagesPage = () => {
       <CookieBanner />
       <Layout
         breadcrumbs={[
-          <NextLink key={0} href={`/${workspaceSlug}/datasets`}>
+          <NavLogo key={0} />,
+          <WorkspaceSwitcher key={1} />,
+          <NextLink key={2} href={`/${workspaceSlug}/datasets`}>
             <BreadcrumbLink>Datasets</BreadcrumbLink>
           </NextLink>,
-          <NextLink key={1} href={`/${workspaceSlug}/datasets/${datasetSlug}`}>
+          <NextLink key={3} href={`/${workspaceSlug}/datasets/${datasetSlug}`}>
             <BreadcrumbLink>
               {datasetName ?? <Skeleton>Dataset Name</Skeleton>}
             </BreadcrumbLink>
           </NextLink>,
-          <Text key={2}>Images</Text>,
+          <Text key={4}>Images</Text>,
         ]}
         topBarRightContent={
           <>
