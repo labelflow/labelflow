@@ -1,8 +1,8 @@
+import { SessionProvider } from "next-auth/react";
 import { chakraDecorator } from "../../../utils/chakra-decorator";
 import { apolloDecorator } from "../../../utils/apollo-decorator";
 
 import { Members } from "..";
-import { SessionProvider } from "next-auth/react";
 
 export default {
   title: "web/Workspace members",
