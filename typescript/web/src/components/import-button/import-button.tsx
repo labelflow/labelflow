@@ -1,4 +1,5 @@
 import React, { useCallback } from "react";
+import { useRouter } from "next/router";
 
 import {
   Button,
@@ -22,6 +23,7 @@ type Props = ButtonProps & {
 };
 
 export const ImportButton = ({ showModal = true, ...props }: Props) => {
+  const { isReady } = useRouter();
   const [isOpen, setIsOpen] = useQueryParam("modal-import", BoolParam);
   const handleOpen = useCallback(() => {
     setIsOpen(true, "replaceIn");
@@ -36,6 +38,7 @@ export const ImportButton = ({ showModal = true, ...props }: Props) => {
       variant="ghost"
       flexShrink={0}
       {...props}
+      disabled={!isReady || props.disabled === true}
     >
       Add images
     </Button>
@@ -49,6 +52,7 @@ export const ImportButton = ({ showModal = true, ...props }: Props) => {
       flexShrink={0}
       display="none"
       {...props}
+      disabled={!isReady || props.disabled === true}
     >
       Add images
     </Button>
@@ -62,6 +66,7 @@ export const ImportButton = ({ showModal = true, ...props }: Props) => {
         onClick={handleOpen}
         variant="ghost"
         {...props}
+        disabled={!isReady || props.disabled === true}
       />
     </Tooltip>
   );
