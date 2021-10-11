@@ -4,7 +4,10 @@ import { ApolloProvider } from "@apollo/client";
 import { useSession } from "next-auth/react";
 
 import { SigninButton } from "../../auth-manager/signin-button";
-import { distantDatabaseClient } from "../../../connectors/apollo-client/client";
+import {
+  serviceWorkerClient,
+  distantDatabaseClient,
+} from "../../../connectors/apollo-client/client";
 
 import { HelpMenu } from "./help-menu";
 import { UserMenu } from "./user-menu";
@@ -18,6 +21,10 @@ export type Props = {
 export const TopBar = ({ breadcrumbs, rightContent }: Props) => {
   const { status } = useSession({ required: false });
 
+  const client = globalThis?.location?.pathname?.startsWith("/local")
+    ? serviceWorkerClient
+    : distantDatabaseClient;
+
   return (
     <ApolloProvider client={distantDatabaseClient}>
       <HStack
@@ -30,7 +37,7 @@ export const TopBar = ({ breadcrumbs, rightContent }: Props) => {
       >
         <ResponsiveBreadcrumbs>{breadcrumbs}</ResponsiveBreadcrumbs>
         <Spacer minWidth="6" />
-        {rightContent}
+        <ApolloProvider client={client}>{rightContent}</ApolloProvider>
         <HelpMenu />
         {process.env.NEXT_PUBLIC_FEATURE_SIGNIN === "true" &&
           status === "unauthenticated" && <SigninButton />}
