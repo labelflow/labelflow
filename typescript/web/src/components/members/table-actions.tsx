@@ -20,7 +20,13 @@ import { useRouter } from "next/router";
 
 const SearchIcon = chakra(IoSearch);
 
-export const TableActions = () => {
+export const TableActions = ({
+  searchText,
+  setSearchText,
+}: {
+  searchText: string;
+  setSearchText: (text: string) => void;
+}) => {
   const router = useRouter();
   const workspaceSlug = router?.query.workspaceSlug as string;
 
@@ -42,6 +48,8 @@ export const TableActions = () => {
               type="search"
               placeholder="Find a member"
               bgColor="#FFFFFF"
+              value={searchText}
+              onChange={(e) => setSearchText(e.target.value)}
             />
           </InputGroup>
         </FormControl>
@@ -68,7 +76,6 @@ export const TableActions = () => {
       invite people, switch to an online workspace.
     </Alert>
   );
-
   return workspaceSlug === "local"
     ? tableActionsForLocalWorkspace
     : tableActionsForOnlineWorkspace;

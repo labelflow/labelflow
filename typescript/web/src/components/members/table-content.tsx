@@ -66,13 +66,24 @@ export const TableContent = ({
   memberships,
   changeMembershipRole,
   removeMembership,
+  searchText,
 }: {
   memberships: Membership[];
   changeMembershipRole: ChangeMembershipRole;
   removeMembership: RemoveMembership;
+  searchText: string;
 }) => {
   const [membershipToDelete, setMembershipToDelete] =
     useState<null | Membership>(null);
+
+  const filteredMemberships = memberships.filter(
+    (membership) =>
+      membership.user.email
+        ?.toLowerCase()
+        ?.includes(searchText.toLowerCase()) ||
+      membership.user.name?.toLowerCase()?.includes(searchText.toLowerCase()) ||
+      membership.user.id?.toLowerCase()?.includes(searchText.toLowerCase())
+  );
   return (
     <>
       <DeleteMembershipModal
@@ -98,7 +109,7 @@ export const TableContent = ({
           </Tr>
         </Thead>
         <Tbody bgColor="#FFFFFF">
-          {memberships.map((row, membershipIndex) => (
+          {filteredMemberships.map((row, membershipIndex) => (
             <Tr key={membershipIndex}>
               {columns.map((column, index) => {
                 const cell = row[column.accessor as keyof typeof row];
