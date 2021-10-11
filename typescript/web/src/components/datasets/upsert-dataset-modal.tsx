@@ -227,7 +227,7 @@ export const UpsertDatasetModal = ({
             disabled={!canCreateDataset()}
             aria-label={datasetId ? "Update Dataset" : "Create Dataset"}
           >
-            {datasetId ? "Update Dataset" : "Start Labelling"}
+            {datasetId ? "Update Dataset" : "Start Labeling"}
           </Button>
         </ModalFooter>
       </ModalContent>

@@ -1,6 +1,9 @@
 # Changelog
 
-## [1.0.21](https://github.com/labelflow/labelflow/compare/1.0.20...1.0.21)
+## [1.0.22](https://github.com/labelflow/labelflow/compare/1.0.21...1.0.22)
+
+- Feature/iog [`#180`](https://github.com/labelflow/labelflow/pull/180)
+## [1.0.21](https://github.com/labelflow/labelflow/compare/1.0.20...1.0.21) - 2021-10-08
 
 - Delete images [`#488`](https://github.com/labelflow/labelflow/pull/488)
 - Feature/#462 mjml emails [`#489`](https://github.com/labelflow/labelflow/pull/489)
@@ -125,7 +128,7 @@
 - Changing blog page text [`#363`](https://github.com/labelflow/labelflow/pull/363)
 - Feature/strapi updates [`#357`](https://github.com/labelflow/labelflow/pull/357)
 - Feature/support menu [`#355`](https://github.com/labelflow/labelflow/pull/355)
-- Clicking on "Product" redirects to the labelling interface [`#347`](https://github.com/labelflow/labelflow/pull/347)
+- Clicking on "Product" redirects to the labeling interface [`#347`](https://github.com/labelflow/labelflow/pull/347)
 - Upgrade to next js 11.1 [`#344`](https://github.com/labelflow/labelflow/pull/344)
 - Quality/robustify db service worker [`#334`](https://github.com/labelflow/labelflow/pull/334)
 - Add blog to website [`#340`](https://github.com/labelflow/labelflow/pull/340)
@@ -135,7 +138,7 @@
 - Merge app and website [`#332`](https://github.com/labelflow/labelflow/pull/332)
 - Export images along with labels [`#318`](https://github.com/labelflow/labelflow/pull/318)
 - feature/#312-custom-endpoint [`#324`](https://github.com/labelflow/labelflow/pull/324)
-- User arrives on labelling interface on first connection [`#322`](https://github.com/labelflow/labelflow/pull/322)
+- User arrives on labeling interface on first connection [`#322`](https://github.com/labelflow/labelflow/pull/322)
 - Edit label class name from projects page [`#319`](https://github.com/labelflow/labelflow/pull/319)
 - Node.js backend poc [`#321`](https://github.com/labelflow/labelflow/pull/321)
 - Research/repository [`#302`](https://github.com/labelflow/labelflow/pull/302)
@@ -145,7 +148,7 @@
 - Project delete [`#279`](https://github.com/labelflow/labelflow/pull/279)
 - Reset selectedLabelClassId when projectId changes [`#304`](https://github.com/labelflow/labelflow/pull/304)
 - Feature/#251 polygon labels [`#275`](https://github.com/labelflow/labelflow/pull/275)
-- Fix: cannot edit label after refreshing the labelling page [`#305`](https://github.com/labelflow/labelflow/pull/305)
+- Fix: cannot edit label after refreshing the labeling page [`#305`](https://github.com/labelflow/labelflow/pull/305)
 - Ignore strapi folder in lint job [`#303`](https://github.com/labelflow/labelflow/pull/303)
 - Feature/#281 create the classes page [`#289`](https://github.com/labelflow/labelflow/pull/289)
 - Fix lint issues in worker file [`#298`](https://github.com/labelflow/labelflow/pull/298)
@@ -216,7 +219,7 @@
 - Bug/disappearing labels [`#151`](https://github.com/labelflow/labelflow/pull/151)
 - Service Worker in webapp [`#113`](https://github.com/labelflow/labelflow/pull/113)
 - Implement undo and redo actions for bounding box creation [`#134`](https://github.com/labelflow/labelflow/pull/134)
-- Quality/#138 refactor labelling tool to fetch images [`#142`](https://github.com/labelflow/labelflow/pull/142)
+- Quality/#138 refactor labeling tool to fetch images [`#142`](https://github.com/labelflow/labelflow/pull/142)
 - Class selection menu [`#141`](https://github.com/labelflow/labelflow/pull/141)
 - Feature/upload as told by server [`#139`](https://github.com/labelflow/labelflow/pull/139)
 - Standard upload [`#123`](https://github.com/labelflow/labelflow/pull/123)
@@ -233,7 +236,7 @@
 - Update cron time of dependent issues script [`#118`](https://github.com/labelflow/labelflow/pull/118)
 - Feature/#51 class entity [`#86`](https://github.com/labelflow/labelflow/pull/86)
 - Zustand and undo middleware [`#90`](https://github.com/labelflow/labelflow/pull/90)
-- Feature/labelling component [`#111`](https://github.com/labelflow/labelflow/pull/111)
+- Feature/labeling component [`#111`](https://github.com/labelflow/labelflow/pull/111)
 - Feature/#31 crud label [`#84`](https://github.com/labelflow/labelflow/pull/84)
 - Add keymap to top bar [`#107`](https://github.com/labelflow/labelflow/pull/107)
 - Create drawing toolbar and factor nav toolbar [`#108`](https://github.com/labelflow/labelflow/pull/108)

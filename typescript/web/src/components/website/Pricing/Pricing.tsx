@@ -40,7 +40,7 @@ export const Pricing = () => (
           pricePost: "for ever",
           name: "Community",
           features: [
-            "Sleek labelling interface",
+            "Sleek labeling interface",
             "Dataset import/export",
             "Unlimited datasets",
             "Unlimited local images",
@@ -63,7 +63,7 @@ export const Pricing = () => (
           pricePost: "/mo",
           name: "Starter",
           features: [
-            "Smart labelling",
+            "Smart labeling",
             "Workflow management",
             "Unlimited datasets",
             "5,000 hosted images",

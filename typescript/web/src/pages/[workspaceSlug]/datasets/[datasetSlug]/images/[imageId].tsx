@@ -33,8 +33,8 @@ import { CookieBanner } from "../../../../../components/cookie-banner";
 // The dynamic import is needed because openlayers use web apis that are not available
 // in NodeJS, like `Blob`, so it crashes when rendering in NextJS server side.
 // And anyway, it would not make sense to render canvas server side, it would just be a loss.
-const LabellingTool = dynamic(
-  () => import("../../../../../components/labelling-tool"),
+const LabelingTool = dynamic(
+  () => import("../../../../../components/labeling-tool"),
   {
     ssr: false,
     loading: ({ error }) => {
@@ -175,7 +175,7 @@ const ImagePage = () => {
       >
         <Flex height="100%" flexDirection="column">
           <Box flex="1">
-            <LabellingTool />
+            <LabelingTool />
           </Box>
           <Box bg={mode("white", "gray.800")} overflow="hidden">
             <Gallery />

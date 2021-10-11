@@ -376,7 +376,7 @@ export const data = [
   },
   {
     type: "sectionHeader",
-    description: "Get smart help for your labelling tasks",
+    description: "Get smart help for your labeling tasks",
     free: "",
     starter: "",
     pro: "",
@@ -385,7 +385,7 @@ export const data = [
   {
     description: (
       <>
-        <Text>Smart labelling tools</Text>
+        <Text>Smart labeling tools</Text>
         <Text fontSize="xs" lineHeight="1" color="gray.500">
           Label faster thanks to advanced computer-vision-based tools
         </Text>
@@ -399,9 +399,9 @@ export const data = [
   {
     description: (
       <>
-        <Text>Pre labelling</Text>
+        <Text>Pre labeling</Text>
         <Text fontSize="xs" lineHeight="1" color="gray.500">
-          Get your images pre-labelled by your AI or our AI
+          Get your images pre-labeled by your AI or our AI
         </Text>
       </>
     ),
@@ -415,7 +415,7 @@ export const data = [
       <>
         <Text>Your AI in the loop</Text>
         <Text fontSize="xs" lineHeight="1" color="gray.500">
-          Have your AI assist your labelling and learn continuously
+          Have your AI assist your labeling and learn continuously
         </Text>
       </>
     ),
@@ -441,7 +441,7 @@ export const data = [
   {
     description: (
       <>
-        <Text>Humans labelling marketplace</Text>
+        <Text>Humans labeling marketplace</Text>
         <Text fontSize="xs" lineHeight="1" color="gray.500">
           Get real humans in the loop through our marketplace
         </Text>
@@ -480,7 +480,7 @@ export const data = [
       <>
         <Text>Task Analytics</Text>
         <Text fontSize="xs" lineHeight="1" color="gray.500">
-          Analyze your labelling tasks, identify hard ones and better plan
+          Analyze your labeling tasks, identify hard ones and better plan
           campaigns
         </Text>
       </>
@@ -654,7 +654,7 @@ export const data = [
   {
     description: (
       <>
-        <Text>Humans labelling marketplace</Text>
+        <Text>Humans labeling marketplace</Text>
         <Text fontSize="xs" lineHeight="1" color="gray.500">
           Get human workers to help label your data
         </Text>
