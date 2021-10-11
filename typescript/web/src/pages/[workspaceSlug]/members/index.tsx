@@ -40,6 +40,14 @@ const deleteMembershipMutation = gql`
   }
 `;
 
+const updateMembershipMutation = gql`
+  mutation updateMembership($id: ID!, $data: MembershipUpdateInput!) {
+    updateMembership(where: { id: $id }, data: $data) {
+      id
+    }
+  }
+`;
+
 const MembersPage = () => {
   const workspaceSlug = useRouter().query?.workspaceSlug as string;
 
@@ -49,6 +57,10 @@ const MembersPage = () => {
   });
 
   const [deleteMembership] = useMutation(deleteMembershipMutation, {
+    refetchQueries: ["getMembershipsMembers"],
+  });
+
+  const [updateMembership] = useMutation(updateMembershipMutation, {
     refetchQueries: ["getMembershipsMembers"],
   });
 
@@ -73,7 +85,7 @@ const MembersPage = () => {
           <Members
             memberships={membershipsData?.memberships ?? []}
             changeMembershipRole={({ id, role }) => {
-              console.log(`Will change membership ${id} to ${role}`);
+              updateMembership({ variables: { id, data: { role } } });
             }}
             removeMembership={(id) => {
               deleteMembership({ variables: { id } });
