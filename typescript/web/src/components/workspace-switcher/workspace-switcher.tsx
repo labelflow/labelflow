@@ -80,6 +80,9 @@ export const WorkspaceSwitcher = () => {
         const { data, errors } = await client.mutate({
           mutation: createWorkspacesQuery,
           variables: { name },
+          refetchQueries: [
+            { query: getWorkspacesQuery, variables: { workspaceSlug } },
+          ],
         });
         const slug = data?.createWorkspace?.slug;
 
@@ -118,7 +121,7 @@ export const WorkspaceSwitcher = () => {
         }
       }
     },
-    [client, toast]
+    [client, toast, workspaceSlug]
   );
 
   if (workspaces == null) {
@@ -140,6 +143,7 @@ export const WorkspaceSwitcher = () => {
     );
   }
 
+  console.log(workspaces);
   return (
     <WorkspaceMenu
       isOpen={isOpen}
