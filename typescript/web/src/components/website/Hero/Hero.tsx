@@ -77,7 +77,7 @@ export function Hero() {
                 // bgClip="text"
                 display="inline"
               >
-                platform for image labelling
+                platform for image labeling
               </Text>
             </Heading>
             <Text

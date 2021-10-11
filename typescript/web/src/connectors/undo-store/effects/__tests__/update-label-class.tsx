@@ -1,18 +1,18 @@
-import { useLabellingStore } from "../../../labelling-state";
+import { useLabelingStore } from "../../../labeling-state";
 import { useUndoStore } from "../..";
 import { createUpdateLabelClassEffect } from "../update-label-class";
 
 const { perform } = useUndoStore.getState();
 
 beforeEach(() => {
-  useLabellingStore.setState({
+  useLabelingStore.setState({
     selectedLabelClassId: "previous label class id",
   });
 });
 
 it("should update the selected label class", async () => {
   const { selectedLabelClassId: selectedLabelClassIdPrevious } =
-    useLabellingStore.getState();
+    useLabelingStore.getState();
   const selectedLabelClassId = "new label class id";
   await perform(
     createUpdateLabelClassEffect({
@@ -21,14 +21,14 @@ it("should update the selected label class", async () => {
     })
   );
 
-  expect(useLabellingStore.getState()).toMatchObject({
+  expect(useLabelingStore.getState()).toMatchObject({
     selectedLabelClassId: "new label class id",
   });
 });
 
 it("should undo the update of the selected label class", async () => {
   const { selectedLabelClassId: selectedLabelClassIdPrevious } =
-    useLabellingStore.getState();
+    useLabelingStore.getState();
   const selectedLabelClassId = "new label class id";
   await perform(
     createUpdateLabelClassEffect({
@@ -39,7 +39,7 @@ it("should undo the update of the selected label class", async () => {
 
   await useUndoStore.getState().undo();
 
-  expect(useLabellingStore.getState()).toMatchObject({
+  expect(useLabelingStore.getState()).toMatchObject({
     selectedLabelClassId: "previous label class id",
   });
 });

@@ -1,6 +1,6 @@
 import { gql, ApolloClient } from "@apollo/client";
 
-import { useLabellingStore } from "../../labelling-state";
+import { useLabelingStore } from "../../labeling-state";
 import { Effect } from "..";
 
 const getLabelQuery = gql`
@@ -58,7 +58,7 @@ export const createUpdateLabelClassOfLabelEffect = (
       },
       refetchQueries: ["getImageLabels"],
     });
-    useLabellingStore.setState({ selectedLabelClassId });
+    useLabelingStore.setState({ selectedLabelClassId });
 
     return labelClassIdPrevious;
   },
@@ -72,7 +72,7 @@ export const createUpdateLabelClassOfLabelEffect = (
       refetchQueries: ["getImageLabels"],
     });
 
-    useLabellingStore.setState({ selectedLabelClassId: labelClassIdPrevious });
+    useLabelingStore.setState({ selectedLabelClassId: labelClassIdPrevious });
     return labelClassIdPrevious;
   },
 });

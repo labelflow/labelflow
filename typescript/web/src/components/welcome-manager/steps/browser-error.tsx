@@ -29,12 +29,12 @@ type Props = {
 };
 
 export const BrowserError = ({ error }: Props) => {
-  const startLabellingButtonRef = useRef<HTMLButtonElement>(null);
+  const startLabelingButtonRef = useRef<HTMLButtonElement>(null);
   const handleError = useErrorHandler();
 
   // Start the timer during the first render
   useEffect(() => {
-    startLabellingButtonRef.current?.focus();
+    startLabelingButtonRef.current?.focus();
   }, []);
   return (
     <ModalContent margin={{ base: "4", md: "3.75rem" }}>
@@ -143,7 +143,7 @@ export const BrowserError = ({ error }: Props) => {
             </Button>
           </NextLink>
           <Button
-            ref={startLabellingButtonRef}
+            ref={startLabelingButtonRef}
             leftIcon={<PlayIcon fontSize="xl" />}
             size="lg"
             minW="210px"

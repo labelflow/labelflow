@@ -33,12 +33,12 @@ const delayMilliSeconds = 10 * 1000;
 export const Welcome = ({ onClickSkip, onClickNext }: Props) => {
   const [isCountDownStarted, setIsCountDownStarted] = useState(false);
   const [timeLeft, { start }] = useCountDown(delayMilliSeconds, 1000 / 30);
-  const startLabellingButtonRef = useRef<HTMLButtonElement>(null);
+  const startLabelingButtonRef = useRef<HTMLButtonElement>(null);
   // Start the timer during the first render
   useEffect(() => {
     setIsCountDownStarted(true);
     start();
-    startLabellingButtonRef.current?.focus();
+    startLabelingButtonRef.current?.focus();
   }, []);
 
   useEffect(() => {
@@ -73,7 +73,7 @@ export const Welcome = ({ onClickSkip, onClickNext }: Props) => {
           >
             The open standard{" "}
             <Text color="brand.500" display="inline">
-              image labelling tool
+              image labeling tool
             </Text>
           </Heading>
           <Text
@@ -117,7 +117,7 @@ export const Welcome = ({ onClickSkip, onClickNext }: Props) => {
           </Button>
 
           <Button
-            ref={startLabellingButtonRef}
+            ref={startLabelingButtonRef}
             leftIcon={<PlayIcon fontSize="xl" />}
             size="lg"
             minW="210px"

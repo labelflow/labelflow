@@ -22,10 +22,10 @@ const ChakraRocket = chakra(Rocket);
 const GithubIcon = chakra(RiGithubFill);
 
 export const Loading = () => {
-  const startLabellingButtonRef = useRef<HTMLAnchorElement>(null);
+  const startLabelingButtonRef = useRef<HTMLAnchorElement>(null);
   // Start the timer during the first render
   useEffect(() => {
-    startLabellingButtonRef.current?.focus();
+    startLabelingButtonRef.current?.focus();
   }, []);
   return (
     <ModalContent margin={{ base: "4", md: "3.75rem" }}>
@@ -66,7 +66,7 @@ export const Loading = () => {
             textAlign="justify"
           >
             LabelFlow runs completely offline, allowing you to have a lightning
-            fast labelling tool even without internet connection, and
+            fast labeling tool even without internet connection, and
             guaranteeing we don&apos;t use your data.
           </Text>
         </VStack>
@@ -80,7 +80,7 @@ export const Loading = () => {
           mb={{ base: "0", md: "10" }}
         >
           <Button
-            ref={startLabellingButtonRef as any}
+            ref={startLabelingButtonRef as any}
             as="a"
             leftIcon={<GithubIcon fontSize="xl" />}
             href="https://github.com/labelflow/labelflow"
@@ -103,7 +103,7 @@ export const Loading = () => {
             isLoading
             loadingText="Loading the app"
           >
-            Start Labelling!
+            Start Labeling!
           </Button>
         </Stack>
       </ModalFooter>
