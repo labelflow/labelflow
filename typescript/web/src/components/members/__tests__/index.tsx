@@ -10,12 +10,6 @@ jest.mock("next-auth/react", () => ({
   }),
 }));
 
-const [onClose, onSelectedClassChange, createNewClass] = [
-  jest.fn(),
-  jest.fn(),
-  jest.fn(),
-];
-
 const mockedChangeRole = jest.fn();
 const mockedRemoveMembership = jest.fn();
 
