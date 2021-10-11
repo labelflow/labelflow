@@ -44,7 +44,10 @@ export const getDatasetsQuery = gql`
 `;
 
 const DatasetPage = () => {
-  const workspaceSlug = useRouter().query?.workspaceSlug;
+  const {
+    query: { workspaceSlug },
+    isReady,
+  } = useRouter();
 
   const { data: datasetsResult } = useQuery<{
     datasets: Pick<
@@ -117,6 +120,7 @@ const DatasetPage = () => {
 
         <Flex direction="row" wrap="wrap" p={4}>
           <NewDatasetCard
+            disabled={!isReady}
             addDataset={() => {
               setIsCreatingDataset(true, "replaceIn");
             }}
