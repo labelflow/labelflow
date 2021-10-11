@@ -11,6 +11,9 @@ import { prisma } from "../repository/prisma-client";
 import { checkUserAccessToUser } from "../repository/access-control";
 
 const users = async (_: any, args: QueryUsersArgs, { user }: Context) => {
+  if (user?.id == null) {
+    return [];
+  }
   return await prisma.user.findMany({
     skip: args.skip ?? undefined,
     take: args.first ?? undefined,
@@ -59,6 +62,9 @@ const memberships = async (
   _: any,
   { user: userData }: Context
 ) => {
+  if (userData?.id == null) {
+    return [];
+  }
   return await prisma.membership.findMany({
     where: {
       userId: parent.id,

@@ -11,6 +11,9 @@ export const countLabels: Repository["label"]["count"] = async (
     return 0;
   }
   const { user, ...where } = whereWithUser;
+  if (user?.id == null) {
+    return 0;
+  }
   if ("datasetId" in where) {
     checkUserAccessToDataset({ where: { id: where.datasetId }, user });
     return await prisma.label.count({
@@ -38,6 +41,9 @@ export const listLabels: Repository["label"]["list"] = async (
     return [];
   }
   const { user = undefined, ...where } = whereWithUser;
+  if (user?.id == null) {
+    return [];
+  }
   if ("datasetId" in where) {
     await checkUserAccessToDataset({ where: { id: where.datasetId }, user });
     return prisma.label.findMany({

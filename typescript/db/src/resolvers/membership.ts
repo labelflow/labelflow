@@ -35,6 +35,9 @@ const memberships = async (
   args: QueryMembershipsArgs,
   { user }: Context
 ) => {
+  if (user?.id == null) {
+    return [];
+  }
   return await prisma.membership.findMany({
     where: { userId: user?.id },
     orderBy: { createdAt: Prisma.SortOrder.asc },

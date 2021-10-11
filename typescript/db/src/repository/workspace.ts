@@ -64,6 +64,9 @@ export const listWorkspace: Repository["workspace"]["list"] = async (
   skip = undefined,
   first = undefined
 ) => {
+  if (where?.user?.id == null) {
+    return [];
+  }
   const workspacesFromDb = await prisma.workspace.findMany(
     castObjectNullsToUndefined({
       skip: skip ?? undefined,
