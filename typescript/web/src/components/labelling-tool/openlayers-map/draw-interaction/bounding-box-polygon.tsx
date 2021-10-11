@@ -1,14 +1,11 @@
 import { useMemo, useRef } from "react";
-import { useRouter } from "next/router";
 import { Draw as OlDraw } from "ol/interaction";
 import { createBox, DrawEvent } from "ol/interaction/Draw";
 import GeoJSON, { GeoJSONPolygon } from "ol/format/GeoJSON";
 import { Fill, Stroke, Style } from "ol/style";
 import GeometryType from "ol/geom/GeometryType";
 import { useApolloClient, useQuery, gql } from "@apollo/client";
-
 import { useToast } from "@chakra-ui/react";
-
 import { useHotkeys } from "react-hotkeys-hook";
 import { LabelType } from "@labelflow/graphql-types";
 import {
@@ -33,10 +30,13 @@ const labelClassQuery = gql`
 
 const geometryFunction = createBox();
 
-export const DrawBoundingBoxAndPolygonInteraction = () => {
+export const DrawBoundingBoxAndPolygonInteraction = ({
+  imageId,
+}: {
+  imageId: string;
+}) => {
   const drawRef = useRef<OlDraw>(null);
   const client = useApolloClient();
-  const { imageId } = useRouter()?.query;
 
   const selectedTool = useLabellingStore((state) => state.selectedTool);
 
@@ -66,6 +66,11 @@ export const DrawBoundingBoxAndPolygonInteraction = () => {
 
   const toast = useToast();
 
+  const errorMessage =
+    selectedTool === Tools.POLYGON
+      ? "Error creating polygon"
+      : "Error creating bounding box";
+
   const style = useMemo(() => {
     const color = selectedLabelClass?.color ?? noneClassColor;
 
@@ -80,12 +85,6 @@ export const DrawBoundingBoxAndPolygonInteraction = () => {
     });
   }, [selectedLabelClass?.color]);
 
-  if (![Tools.BOX, Tools.POLYGON].includes(selectedTool)) {
-    return null;
-  }
-  if (typeof imageId !== "string") {
-    return null;
-  }
   const interactionDrawArguments =
     selectedTool === Tools.POLYGON
       ? {
@@ -98,10 +97,40 @@ export const DrawBoundingBoxAndPolygonInteraction = () => {
           style, // Needed here to trigger the rerender of the component when the selected class changes
         };
 
-  const errorMessage =
-    selectedTool === Tools.POLYGON
-      ? "Error creating polygon"
-      : "Error creating bounding box";
+  const createLabelFromDrawEvent = async (drawEvent: DrawEvent) => {
+    const geometry = new GeoJSON().writeGeometryObject(
+      drawEvent.feature.getGeometry()
+    ) as GeoJSONPolygon;
+    const createLabelPromise = perform(
+      createCreateLabelEffect(
+        {
+          imageId,
+          selectedLabelClassId,
+          geometry,
+          labelType:
+            selectedTool === Tools.POLYGON ? LabelType.Polygon : LabelType.Box,
+        },
+        {
+          setSelectedLabelId,
+          client,
+        }
+      )
+    );
+    setDrawingToolState(DrawingToolState.IDLE);
+    try {
+      await createLabelPromise;
+    } catch (error) {
+      toast({
+        title: errorMessage,
+        description: error?.message,
+        isClosable: true,
+        status: "error",
+        position: "bottom-right",
+        duration: 10000,
+      });
+    }
+  };
+
   return (
     <olInteractionDraw
       ref={drawRef}
@@ -119,41 +148,7 @@ export const DrawBoundingBoxAndPolygonInteraction = () => {
         setDrawingToolState(DrawingToolState.DRAWING);
         return true;
       }}
-      onDrawend={async (drawEvent: DrawEvent) => {
-        const geometry = new GeoJSON().writeGeometryObject(
-          drawEvent.feature.getGeometry()
-        ) as GeoJSONPolygon;
-        const createLabelPromise = perform(
-          createCreateLabelEffect(
-            {
-              imageId,
-              selectedLabelClassId,
-              geometry,
-              labelType:
-                selectedTool === Tools.POLYGON
-                  ? LabelType.Polygon
-                  : LabelType.Box,
-            },
-            {
-              setSelectedLabelId,
-              client,
-            }
-          )
-        );
-        setDrawingToolState(DrawingToolState.IDLE);
-        try {
-          await createLabelPromise;
-        } catch (error) {
-          toast({
-            title: errorMessage,
-            description: error?.message,
-            isClosable: true,
-            status: "error",
-            position: "bottom-right",
-            duration: 10000,
-          });
-        }
-      }}
+      onDrawend={createLabelFromDrawEvent}
     />
   );
 };

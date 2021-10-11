@@ -25,8 +25,8 @@ import {
   BiShapeSquare,
   BiPurchaseTagAlt,
   BiShapePolygon,
+  BiArea,
 } from "react-icons/bi";
-
 import { useHotkeys } from "react-hotkeys-hook";
 
 import { useLabellingStore, Tools } from "../../../connectors/labelling-state";
@@ -39,6 +39,7 @@ const ChakraBiLabel = chakra(BiPurchaseTagAlt);
 const ChakraBiShapeSquare = chakra(BiShapeSquare);
 const ChakraBiShapePolygon = chakra(BiShapePolygon);
 const ChakraRiArrowDownSLine = chakra(RiArrowDownSLine);
+const ChakraBiArea = chakra(BiArea);
 
 export const ToolSelectionPopoverItem = (props: {
   name: string;
@@ -104,14 +105,19 @@ export const DrawingToolIcon = (props: {
   const [lastTool, setLastTool] = useState(Tools.BOX);
   useEffect(() => {
     if (
-      [Tools.CLASSIFICATION, Tools.BOX, Tools.POLYGON].includes(selectedTool)
+      [Tools.CLASSIFICATION, Tools.BOX, Tools.POLYGON, Tools.IOG].includes(
+        selectedTool
+      )
     ) {
       setLastTool(selectedTool);
     }
   }, [selectedTool]);
-  const isActive = [Tools.CLASSIFICATION, Tools.BOX, Tools.POLYGON].includes(
-    selectedTool
-  );
+  const isActive = [
+    Tools.CLASSIFICATION,
+    Tools.BOX,
+    Tools.POLYGON,
+    Tools.IOG,
+  ].includes(selectedTool);
 
   let toolTipLabel;
   switch (lastTool) {
@@ -124,6 +130,9 @@ export const DrawingToolIcon = (props: {
     case Tools.POLYGON:
       toolTipLabel = `Polygon tool [${keymap.toolPolygon.key}]`;
       break;
+    case Tools.IOG:
+      toolTipLabel = `IOG tool [${keymap.toolIog.key}]`;
+      break;
     default:
       toolTipLabel = `Bounding Box tool [${keymap.toolBoundingBox.key}]`;
       break;
@@ -135,9 +144,12 @@ export const DrawingToolIcon = (props: {
         ref={buttonRef}
         isDisabled={isDisabled}
         role="checkbox"
-        aria-checked={[Tools.CLASSIFICATION, Tools.BOX, Tools.POLYGON].includes(
-          selectedTool
-        )}
+        aria-checked={[
+          Tools.CLASSIFICATION,
+          Tools.BOX,
+          Tools.POLYGON,
+          Tools.IOG,
+        ].includes(selectedTool)}
         backgroundColor={mode("white", "gray.800")}
         aria-label={`Drawing ${lastTool} tool`}
         pointerEvents="initial"
@@ -154,6 +166,8 @@ export const DrawingToolIcon = (props: {
               return <ChakraBiShapeSquare size="1.3em" />;
             case Tools.POLYGON:
               return <ChakraBiShapePolygon size="1.3em" />;
+            case Tools.IOG:
+              return <ChakraBiArea size="1.3em" />;
             default:
               return <ChakraBiShapeSquare size="1.3em" />;
           }
@@ -229,6 +243,16 @@ export const DrawingTool = () => {
     {},
     []
   );
+  useHotkeys(
+    keymap.toolIog.key,
+    () => {
+      if (process.env.NEXT_PUBLIC_IOG_API_ENDPOINT) {
+        setSelectedTool(Tools.IOG);
+      }
+    },
+    {},
+    []
+  );
   return (
     <Popover
       isOpen={isPopoverOpened}
@@ -299,6 +323,22 @@ export const DrawingTool = () => {
                 <ChakraBiShapePolygon size="1.3em" />
               </Box>
             </ToolSelectionPopoverItem>
+            {process.env.NEXT_PUBLIC_IOG_API_ENDPOINT && (
+              <ToolSelectionPopoverItem
+                name="IOG tool"
+                shortcut={keymap.toolIog.key}
+                selected={selectedTool === Tools.IOG}
+                onClick={() => {
+                  setSelectedTool(Tools.IOG);
+                  setIsPopoverOpened(false);
+                }}
+                ariaLabel="Select iog tool"
+              >
+                <Box ml="2">
+                  <ChakraBiArea size="1.3em" />
+                </Box>
+              </ToolSelectionPopoverItem>
+            )}
           </Box>
         </PopoverBody>
       </PopoverContent>
