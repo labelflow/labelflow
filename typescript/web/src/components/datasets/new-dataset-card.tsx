@@ -5,7 +5,7 @@ const PlusIcon = chakra(FaPlus);
 
 export const NewDatasetCard = (props: {
   addDataset: () => void;
-  disabled: boolean;
+  disabled?: boolean;
 }) => {
   const { addDataset, disabled } = props;
 
