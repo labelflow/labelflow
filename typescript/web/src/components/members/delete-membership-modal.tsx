@@ -10,8 +10,10 @@ import {
   ListItem,
   UnorderedList,
 } from "@chakra-ui/react";
+import { useSession } from "next-auth/react";
 import { Membership } from "./types";
 import { getDisplayName } from "./user";
+import { useRouter } from "next/router";
 
 export const DeleteMembershipModal = ({
   isOpen = false,
@@ -25,9 +27,12 @@ export const DeleteMembershipModal = ({
   deleteMembership: (id: string) => void;
 }) => {
   const cancelRef = useRef<HTMLButtonElement>(null);
+  const session = useSession({ required: false });
+  const router = useRouter();
   if (membership == null) {
     return null;
   }
+  const isRemovingCurrentUser = membership.user.id === session?.data?.user?.id;
   return (
     <AlertDialog
       isOpen={isOpen}
@@ -38,23 +43,40 @@ export const DeleteMembershipModal = ({
       <AlertDialogOverlay>
         <AlertDialogContent>
           <AlertDialogHeader>
-            {`Remove ${getDisplayName(membership.user)} from ${
-              membership.workspace.name
-            }?`}
+            {isRemovingCurrentUser
+              ? `Leave ${membership.workspace.name}?`
+              : `Remove ${getDisplayName(membership.user)} from ${
+                  membership.workspace.name
+                }?`}
           </AlertDialogHeader>
 
-          <AlertDialogBody>
-            What happens when a user is removed?
-            <UnorderedList>
-              <ListItem>
-                The member will no longer be able to access the workspace.
-              </ListItem>
-              <ListItem>
-                The member&apos;s labels and files will still be accessible in
-                LabelFlow.
-              </ListItem>
-            </UnorderedList>
-          </AlertDialogBody>
+          {isRemovingCurrentUser ? (
+            <AlertDialogBody>
+              What happens when you leave a workspace?
+              <UnorderedList>
+                <ListItem>
+                  You will no longer be able to access the workspace.
+                </ListItem>
+                <ListItem>
+                  Every dataset in the workspace will still be accessible to the
+                  other workspace members.
+                </ListItem>
+              </UnorderedList>
+            </AlertDialogBody>
+          ) : (
+            <AlertDialogBody>
+              What happens when a user is removed?
+              <UnorderedList>
+                <ListItem>
+                  The member will no longer be able to access the workspace.
+                </ListItem>
+                <ListItem>
+                  The member&apos;s labels and files will still be accessible in
+                  LabelFlow.
+                </ListItem>
+              </UnorderedList>
+            </AlertDialogBody>
+          )}
 
           <AlertDialogFooter>
             <Button
@@ -69,11 +91,14 @@ export const DeleteMembershipModal = ({
               onClick={() => {
                 deleteMembership(membership.id);
                 onClose();
+                if (isRemovingCurrentUser) {
+                  router.replace({ pathname: "/" });
+                }
               }}
               aria-label="Confirm removing user"
               ml={3}
             >
-              Deactivate
+              {isRemovingCurrentUser ? "Leave" : "Deactivate"}
             </Button>
           </AlertDialogFooter>
         </AlertDialogContent>
