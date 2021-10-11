@@ -7,6 +7,8 @@ import { startCase } from "lodash/fp";
 import { WorkspaceMenu } from "./workspace-menu";
 
 import { WorkspaceItem } from "./workspace-menu/workspace-selection-popover";
+import { BoolParam } from "../../utils/query-param-bool";
+import { useQueryParam } from "use-query-params";
 
 const getWorkspacesQuery = gql`
   query getWorkspaces {
@@ -30,6 +32,7 @@ const createWorkspacesQuery = gql`
 
 export const WorkspaceSwitcher = () => {
   const router = useRouter();
+  const [, setSigninModalOpen] = useQueryParam("modal-signin", BoolParam);
 
   const workspaceSlug = router?.query.workspaceSlug as string;
 
@@ -100,12 +103,13 @@ export const WorkspaceSwitcher = () => {
           toast({
             title: "Needs to be signed in",
             description:
-              "Only signed-in users can to create a new Workspace, please sign in.",
+              "Only signed-in users can to create and share Workspaces online, please sign in.",
             isClosable: true,
-            status: "error",
+            status: "info",
             position: "bottom-right",
             duration: 10000,
           });
+          setSigninModalOpen(true, "replaceIn");
         } else {
           toast({
             title: "Could not create workspace",

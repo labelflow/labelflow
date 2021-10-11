@@ -7,7 +7,7 @@ import {
   MembershipWhereUniqueInput,
   UserWhereUniqueInput,
 } from "@labelflow/graphql-types";
-import { prisma } from "./prisma-client";
+import { getPrismaClient } from "../prisma-client";
 
 export const checkUserAccessToWorkspace = async ({
   where,
@@ -19,7 +19,9 @@ export const checkUserAccessToWorkspace = async ({
   if (user?.id == null) {
     throw new Error("User not authenticated");
   }
-  const membership = await prisma.membership.findFirst({
+  const membership = await (
+    await getPrismaClient()
+  ).membership.findFirst({
     where: {
       userId: user.id,
       workspace: { id: where?.id ?? undefined, slug: where?.slug ?? undefined },
@@ -44,7 +46,9 @@ export const checkUserAccessToDataset = async ({
   const datasetCondition =
     where.id != null ? { id: where.id } : { slug: where.slugs?.slug };
   const hasAccessToDataset =
-    (await prisma.membership.findFirst({
+    (await (
+      await getPrismaClient()
+    ).membership.findFirst({
       where: {
         userId: user?.id,
         workspace: { datasets: { some: datasetCondition } },
@@ -67,7 +71,9 @@ export const checkUserAccessToLabel = async ({
     throw new Error("User not authenticated");
   }
   const hasAccessToLabel =
-    (await prisma.membership.findFirst({
+    (await (
+      await getPrismaClient()
+    ).membership.findFirst({
       where: {
         userId: user?.id,
         workspace: {
@@ -94,7 +100,9 @@ export const checkUserAccessToImage = async ({
     throw new Error("User not authenticated");
   }
   const hasAccessToImage =
-    (await prisma.membership.findFirst({
+    (await (
+      await getPrismaClient()
+    ).membership.findFirst({
       where: {
         userId: user?.id,
         workspace: {
@@ -121,7 +129,9 @@ export const checkUserAccessToLabelClass = async ({
     throw new Error("User not authenticated");
   }
   const hasAccessToLabelClass =
-    (await prisma.membership.findFirst({
+    (await (
+      await getPrismaClient()
+    ).membership.findFirst({
       where: {
         userId: user?.id,
         workspace: {
@@ -148,7 +158,9 @@ export const checkUserAccessToMembership = async ({
     throw new Error("User not authenticated");
   }
   const hasAccessToMembership =
-    (await prisma.membership.findFirst({
+    (await (
+      await getPrismaClient()
+    ).membership.findFirst({
       where: {
         id: where.id,
         userId: user?.id,
@@ -171,7 +183,9 @@ export const checkUserAccessToUser = async ({
     throw new Error("User not authenticated");
   }
   const hasAccessToUser =
-    (await prisma.workspace.findFirst({
+    (await (
+      await getPrismaClient()
+    ).workspace.findFirst({
       where: {
         AND: [
           { memberships: { some: { userId: where.id } } },

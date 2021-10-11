@@ -11,7 +11,7 @@ import {
   checkUserAccessToMembership,
   checkUserAccessToWorkspace,
 } from "../repository/access-control";
-import { prisma } from "../repository/prisma-client";
+import { getPrismaClient, PrismaClient } from "../prisma-client";
 
 const membership = async (
   _: any,
@@ -19,7 +19,9 @@ const membership = async (
   { user }: Context
 ) => {
   await checkUserAccessToMembership({ where: args.where, user });
-  const membershipFromDb = await prisma.membership.findUnique({
+  const membershipFromDb = await (
+    await getPrismaClient()
+  ).membership.findUnique({
     where: { id: args.where.id },
   });
 
@@ -38,7 +40,9 @@ const memberships = async (
   if (user?.id == null) {
     return [];
   }
-  return await prisma.membership.findMany({
+  return await (
+    await getPrismaClient()
+  ).membership.findMany({
     where: { userId: user?.id },
     orderBy: { createdAt: Prisma.SortOrder.asc },
     skip: args?.skip ?? undefined,
@@ -55,7 +59,9 @@ const createMembership = async (
     user,
     where: { slug: args.data.workspaceSlug },
   });
-  return await prisma.membership.create({
+  return await (
+    await getPrismaClient()
+  ).membership.create({
     data: { ...args.data, id: args.data?.id ?? undefined },
   });
 };
@@ -66,7 +72,9 @@ const updateMembership = async (
   { user }: Context
 ) => {
   await checkUserAccessToMembership({ where: args.where, user });
-  return await prisma.membership.update({
+  return await (
+    await getPrismaClient()
+  ).membership.update({
     where: args.where,
     data: { ...args.data, role: args.data?.role ?? undefined },
   });
@@ -78,27 +86,33 @@ const deleteMembership = async (
   { user }: Context
 ) => {
   await checkUserAccessToMembership({ where: args.where, user });
-  return await prisma.membership.delete({
+  return await (
+    await getPrismaClient()
+  ).membership.delete({
     where: args.where,
   });
 };
 
 const user = async (
   parent: NonNullable<
-    Prisma.PromiseReturnType<typeof prisma.membership.findUnique>
+    Prisma.PromiseReturnType<PrismaClient["membership"]["findUnique"]>
   >
 ) => {
-  return await prisma.user.findUnique({
+  return await (
+    await getPrismaClient()
+  ).user.findUnique({
     where: { id: parent.userId },
   });
 };
 
 const workspace = async (
   parent: NonNullable<
-    Prisma.PromiseReturnType<typeof prisma.membership.findUnique>
+    Prisma.PromiseReturnType<PrismaClient["membership"]["findUnique"]>
   >
 ) => {
-  return await prisma.workspace.findUnique({
+  return await (
+    await getPrismaClient()
+  ).workspace.findUnique({
     where: { slug: parent.workspaceSlug },
   });
 };
