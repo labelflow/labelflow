@@ -3,8 +3,11 @@ import { FaPlus } from "react-icons/fa";
 
 const PlusIcon = chakra(FaPlus);
 
-export const NewDatasetCard = (props: { addDataset: () => void }) => {
-  const { addDataset } = props;
+export const NewDatasetCard = (props: {
+  addDataset: () => void;
+  disabled: boolean;
+}) => {
+  const { addDataset, disabled } = props;
 
   // This card is flexible, so its width will depend on the width of its parent
   return (
@@ -26,7 +29,9 @@ export const NewDatasetCard = (props: { addDataset: () => void }) => {
         justify="space-evenly"
         onClick={addDataset}
         cursor="pointer"
-        aria-label="Create new dataset"
+        aria-label={
+          disabled ? "please wait before clicking" : "Create new dataset"
+        }
       >
         <PlusIcon color="gray.400" h="60px" w="60" />
         <Text fontSize="16px" fontWeight="semibold" color="gray.500">
