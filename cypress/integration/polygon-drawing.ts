@@ -6,7 +6,7 @@ const createDataset = async (name: string) => {
   const mutationResult = await client.mutate({
     mutation: gql`
       mutation createDataset($name: String) {
-        createDataset(data: { name: $name }) {
+        createDataset(data: { name: $name, workspaceSlug: "local" }) {
           id
           slug
         }
@@ -104,7 +104,7 @@ describe("Polygon drawing", () => {
       );
       imageId = id;
 
-      await createLabelClass("Rocket", "#00ff00", datasetId);
+      await createLabelClass("Rocket", "#F87171", datasetId);
     });
   });
 
@@ -116,13 +116,17 @@ describe("Polygon drawing", () => {
     cy.get('[aria-label="loading indicator"]').should("not.exist");
     cy.get('[aria-label="Drawing polygon tool"]').should("not.exist");
     cy.get('[aria-label="Drawing box tool"]').should("exist").click();
+
+    cy.wait(420);
     cy.get('[aria-label="Change Drawing tool"]').click();
-    cy.get('[aria-label="Select bounding box tool"]').should(
+    cy.get('[aria-label="Bounding box tool"]').should(
       "have.attr",
       "aria-checked",
       "true"
     );
-    cy.get('[aria-label="Select polygon tool"]')
+
+    cy.wait(420);
+    cy.get('[aria-label="Polygon tool"]')
       .should("have.attr", "aria-checked", "false")
       .click();
 
@@ -137,7 +141,9 @@ describe("Polygon drawing", () => {
     );
     cy.get('[aria-label="loading indicator"]').should("not.exist");
     cy.get('[aria-label="Change Drawing tool"]').should("exist").click();
-    cy.get('[aria-label="Select polygon tool"]').click();
+    cy.get('[aria-label="Polygon tool"]').click();
+
+    cy.wait(420);
     cy.get("main").click(475, 75);
     cy.get("main").click(450, 100);
     cy.get("main").click(450, 200);
@@ -149,13 +155,15 @@ describe("Polygon drawing", () => {
     cy.get("main").click(500, 200);
     cy.get("main").dblclick(500, 100);
 
+    cy.wait(420);
     cy.get("main").rightclick(475, 100);
-
     cy.get('[aria-label="Class selection popover"]')
       .contains("Rocket")
       .closest('[role="option"]')
       .should("have.attr", "aria-current", "false")
       .click();
+
+    cy.wait(420);
     cy.get("main").rightclick(475, 100);
     cy.get('[aria-label="Class selection popover"]')
       .contains("Rocket")

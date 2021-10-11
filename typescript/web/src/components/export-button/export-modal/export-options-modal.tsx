@@ -15,6 +15,7 @@ import {
 import { useState } from "react";
 import { ExportFormat, ExportOptions } from "@labelflow/graphql-types";
 import { defaultOptions, formatsOptionsInformation, Format } from "./formats";
+import { trackEvent } from "../../../utils/google-analytics";
 
 const OptionLine = ({
   header,
@@ -28,10 +29,10 @@ const OptionLine = ({
   onChange?: any;
 }) => (
   <Box pt="5" pb="5" pr="10" pl="10">
-    <HStack justifyContent="space-between">
-      <Box>
+    <HStack justifyContent="space-between" alignItems="flex-start">
+      <Box pr={10}>
         <Heading size="md">{header}</Heading>
-        <Text>{description}</Text>
+        <Text textAlign="justify">{description}</Text>
       </Box>
       <Switch
         isChecked={isChecked}
@@ -119,8 +120,13 @@ export const ExportOptionsModal = ({
             colorScheme="brand"
             size="md"
             alignSelf="flex-end"
+            flexShrink={0}
             onClick={() => {
               exportFunction(exportOptions);
+              trackEvent(
+                `export_button_click_${exportFormat.toLocaleLowerCase()}`,
+                {}
+              );
               onClose();
             }}
           >

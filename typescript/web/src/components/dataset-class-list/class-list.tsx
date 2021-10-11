@@ -15,7 +15,7 @@ import {
 } from "./class-item";
 import { DeleteLabelClassModal } from "./delete-class-modal";
 
-const reorderLabelClasseMutation = gql`
+const reorderLabelClassMutation = gql`
   mutation reorderLabelClass($id: ID!, $index: Int!) {
     reorderLabelClass(where: { id: $id }, data: { index: $index }) {
       id
@@ -35,7 +35,13 @@ const addShortcutsToLabelClasses = (labelClasses: any[]) =>
     shortcut: index > 9 ? null : `${(index + 1) % 10}`,
   }));
 
-export const ClassesList = ({ datasetSlug }: { datasetSlug: string }) => {
+export const ClassesList = ({
+  datasetSlug,
+  workspaceSlug,
+}: {
+  datasetSlug: string;
+  workspaceSlug: string;
+}) => {
   const client = useApolloClient();
   const [editClassId, setEditClassId] = useState<string | null>(null);
   const [deleteClassId, setDeleteClassId] = useState<string | null>(null);
@@ -48,6 +54,7 @@ export const ClassesList = ({ datasetSlug }: { datasetSlug: string }) => {
   } = useQuery<DatasetClassesQueryResult>(datasetLabelClassesQuery, {
     variables: {
       slug: datasetSlug,
+      workspaceSlug,
     },
     skip: !datasetSlug,
   });
@@ -82,7 +89,7 @@ export const ClassesList = ({ datasetSlug }: { datasetSlug: string }) => {
         };
       });
       await client.mutate({
-        mutation: reorderLabelClasseMutation,
+        mutation: reorderLabelClassMutation,
         variables: { id: result.draggableId, index: result.destination.index },
       });
       refetch();
@@ -134,6 +141,7 @@ export const ClassesList = ({ datasetSlug }: { datasetSlug: string }) => {
                           shortcut={shortcut}
                           edit={editClassId === id}
                           datasetSlug={datasetSlug}
+                          workspaceSlug={workspaceSlug}
                           onClickEdit={setEditClassId}
                           onClickDelete={setDeleteClassId}
                         />

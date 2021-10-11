@@ -13,7 +13,9 @@ import {
 } from "../../../../utils/router-mocks";
 
 mockUseQueryParams();
-mockNextRouter({ query: { datasetSlug: "test-dataset" } });
+mockNextRouter({
+  query: { datasetSlug: "test-dataset", workspaceSlug: "local" },
+});
 
 import { ImportImagesModal } from "../import-images-modal";
 
@@ -82,7 +84,13 @@ beforeEach(async () => {
   await client.mutate({
     mutation: gql`
       mutation {
-        createDataset(data: { name: "test dataset", id: "mocked-dataset-id" }) {
+        createDataset(
+          data: {
+            name: "test dataset"
+            id: "mocked-dataset-id"
+            workspaceSlug: "local"
+          }
+        ) {
           id
         }
       }

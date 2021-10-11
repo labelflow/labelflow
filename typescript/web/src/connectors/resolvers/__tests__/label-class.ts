@@ -105,7 +105,9 @@ const createDataset = async (
   return await client.mutate({
     mutation: gql`
       mutation createDataset($datasetId: String, $name: String!) {
-        createDataset(data: { id: $datasetId, name: $name }) {
+        createDataset(
+          data: { id: $datasetId, name: $name, workspaceSlug: "local" }
+        ) {
           id
           name
         }
@@ -178,7 +180,9 @@ describe("LabelClass resolver test suite", () => {
             id
             name
             color
-            datasetId
+            dataset {
+              id
+            }
           }
         }
       `,
@@ -193,7 +197,7 @@ describe("LabelClass resolver test suite", () => {
         id,
         name: "toto",
         color: "#ff0000",
-        datasetId: testDatasetId,
+        dataset: { __typename: "Dataset", id: testDatasetId },
       })
     );
   });
@@ -221,7 +225,9 @@ describe("LabelClass resolver test suite", () => {
             index
             name
             color
-            datasetId
+            dataset {
+              id
+            }
           }
         }
       `,
@@ -237,7 +243,7 @@ describe("LabelClass resolver test suite", () => {
         index: 0,
         name: "toto",
         color: "#ff0000",
-        datasetId: testDatasetId,
+        dataset: { __typename: "Dataset", id: testDatasetId },
       })
     );
 
@@ -249,7 +255,9 @@ describe("LabelClass resolver test suite", () => {
             index
             name
             color
-            datasetId
+            dataset {
+              id
+            }
           }
         }
       `,
@@ -265,7 +273,7 @@ describe("LabelClass resolver test suite", () => {
         index: 1,
         name: "tata",
         color: "#00ff00",
-        datasetId: testDatasetId,
+        dataset: { __typename: "Dataset", id: testDatasetId },
       })
     );
   });

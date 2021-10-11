@@ -1,5 +1,12 @@
-import { Dispatch, SetStateAction, useState, useCallback } from "react";
 import {
+  Dispatch,
+  SetStateAction,
+  useState,
+  useCallback,
+  useMemo,
+} from "react";
+import {
+  Box,
   Stack,
   Heading,
   Modal,
@@ -8,10 +15,14 @@ import {
   ModalContent,
   ModalHeader,
   ModalOverlay,
+  Alert,
+  AlertIcon,
+  AlertDescription,
   Text,
   Skeleton,
+  AlertTitle,
 } from "@chakra-ui/react";
-import { ExportFormat, ExportOptions } from "@labelflow/graphql-types";
+import { ExportFormat, ExportOptions, Label } from "@labelflow/graphql-types";
 import { useRouter } from "next/router";
 import { useQuery, gql, useApolloClient, ApolloClient } from "@apollo/client";
 import { ExportFormatCard } from "./export-format-card";
@@ -32,9 +43,9 @@ const exportQuery = gql`
   }
 `;
 
-const countLabelsOfDatasetQuery = gql`
-  query countLabelsOfDataset($slug: String!) {
-    dataset(where: { slug: $slug }) {
+export const countLabelsOfDatasetQuery = gql`
+  query countLabelsOfDataset($slug: String!, $workspaceSlug: String!) {
+    dataset(where: { slugs: { slug: $slug, workspaceSlug: $workspaceSlug } }) {
       id
       imagesAggregates {
         totalCount
@@ -42,18 +53,25 @@ const countLabelsOfDatasetQuery = gql`
       labelsAggregates {
         totalCount
       }
+      labels {
+        labelClass {
+          id
+        }
+      }
     }
   }
 `;
 
 const exportDataset = async ({
   datasetId,
+  datasetSlug,
   setIsExportRunning,
   client,
   format,
   options,
 }: {
   datasetId: string;
+  datasetSlug: string;
   setIsExportRunning: Dispatch<SetStateAction<boolean>>;
   client: ApolloClient<Object>;
   format: ExportFormat;
@@ -68,7 +86,7 @@ const exportDataset = async ({
     .join("-")}T${String(dateObject.getHours()).padStart(2, "0")}${String(
     dateObject.getMinutes()
   ).padStart(2, "0")}${String(dateObject.getSeconds()).padStart(2, "0")}`;
-  const datasetName = `dataset-${date}-${format.toLowerCase()}`;
+  const datasetName = `${datasetSlug}-${format.toLowerCase()}-${date}`;
   const {
     data: { exportDataset: exportDatasetUrl },
   } = await client.query({
@@ -100,12 +118,28 @@ export const ExportModal = ({
 }) => {
   const router = useRouter();
   const client = useApolloClient();
-  const { datasetSlug } = router?.query as { datasetSlug: string };
+  const { datasetSlug, workspaceSlug } = router?.query as {
+    datasetSlug: string;
+    workspaceSlug: string;
+  };
   const { data, loading } = useQuery(countLabelsOfDatasetQuery, {
-    variables: { slug: datasetSlug },
+    variables: { slug: datasetSlug, workspaceSlug },
     skip: !datasetSlug,
   });
   const datasetId = data?.dataset.id;
+  const numberUndefinedLabelsOfDataset = useMemo(() => {
+    if (loading === false) {
+      return data?.dataset?.labels?.reduce(
+        (numberUndefinedLabels: number, label: Label) => {
+          return !label?.labelClass
+            ? numberUndefinedLabels + 1
+            : numberUndefinedLabels;
+        },
+        0
+      );
+    }
+    return false;
+  }, [data, loading]);
 
   const [isExportRunning, setIsExportRunning] = useState(false);
   const [isOptionsModalOpen, setIsOptionsModalOpen] = useState(false);
@@ -114,6 +148,7 @@ export const ExportModal = ({
     async (options: ExportOptions) =>
       await exportDataset({
         datasetId,
+        datasetSlug,
         setIsExportRunning,
         client,
         format: exportFormat,
@@ -137,8 +172,8 @@ export const ExportModal = ({
       >
         <ModalOverlay />
         <ModalContent height="auto">
-          <ModalHeader textAlign="center" p={{ base: "4", md: "6" }}>
-            <Heading as="h2" size="lg" pb="2">
+          <ModalHeader textAlign="center" pt={6} pl={6} pr={6} pb={0}>
+            <Heading as="h2" size="lg" mb={3}>
               Export Labels
             </Heading>
             <Skeleton
@@ -154,18 +189,48 @@ export const ExportModal = ({
                 {data?.dataset?.labelsAggregates?.totalCount} labels.
               </Text>
             </Skeleton>
+            <Box display="inline-block" width="100%" pl={8} pr={8} pt={4}>
+              {
+                // eslint-disable-next-line eqeqeq
+                numberUndefinedLabelsOfDataset != null &&
+                  numberUndefinedLabelsOfDataset !== 0 && (
+                    <Alert status="warning" borderRadius={5}>
+                      <AlertIcon />
+                      <AlertTitle mr={2} fontSize={15} whiteSpace="nowrap">
+                        Missing Class
+                      </AlertTitle>
+                      <AlertDescription fontSize={13} fontWeight="medium">
+                        {`${numberUndefinedLabelsOfDataset} ${
+                          numberUndefinedLabelsOfDataset === 1
+                            ? "label"
+                            : "labels"
+                        } ${
+                          numberUndefinedLabelsOfDataset === 1 ? "has" : "have"
+                        } no class assigned. Only labels with a class
+                    are exported.`}
+                      </AlertDescription>
+                    </Alert>
+                  )
+              }
+            </Box>
           </ModalHeader>
 
           <ModalBody
             display="flex"
-            p={{ base: "4", md: "6" }}
+            pt={0}
+            pl={6}
+            pr={6}
+            pb={6}
             flexDirection="column"
           >
             <Stack
               direction={{ base: "column", md: "row" }}
               spacing="4"
               justifyContent="center"
-              p={{ base: "2", md: "8" }}
+              pt={6}
+              pl={8}
+              pr={8}
+              pb={8}
               flexWrap="wrap"
             >
               {Object.keys(formatMainInformation).map((formatKey) => {

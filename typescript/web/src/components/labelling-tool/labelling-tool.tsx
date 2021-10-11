@@ -1,10 +1,15 @@
-import { useEffect } from "react";
-import { Box, HStack, VStack } from "@chakra-ui/react";
+import { useEffect, useRef } from "react";
+import {
+  Box,
+  HStack,
+  VStack,
+  useColorModeValue as mode,
+} from "@chakra-ui/react";
 import { useRouter } from "next/router";
 
 import { OpenlayersMap } from "./openlayers-map";
 import { DrawingToolbar } from "./drawing-tool-bar";
-import { ZoomToolbar } from "./zoom-tool-bar";
+import { ViewToolbar } from "./view-tool-bar";
 import { OptionsToolBar } from "./options-tool-bar";
 import { ImageNavigationToolbar } from "./image-navigation-tool-bar";
 import { useUndoStore } from "../../connectors/undo-store";
@@ -12,19 +17,31 @@ import { useLabellingStore } from "../../connectors/labelling-state";
 
 export const LabellingTool = () => {
   const { clear } = useUndoStore();
-  const setSelectedLabelId = useLabellingStore(
-    (state) => state.setSelectedLabelId
-  );
+
   const router = useRouter();
   const { imageId } = router?.query;
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const containerSx = {
+    backgroundColor: mode("gray.100", "gray.900"),
+  };
 
   useEffect(() => {
     clear();
-    return () => setSelectedLabelId(null);
+    return () => {
+      useLabellingStore.getState().setSelectedLabelId(null);
+      useLabellingStore.getState().setIsContextMenuOpen(false);
+    };
   }, [imageId]);
 
   return (
-    <Box height="100%" position="relative" overflow="hidden">
+    <Box
+      height="100%"
+      position="relative"
+      overflow="hidden"
+      ref={containerRef}
+      sx={containerSx}
+    >
       <OpenlayersMap />
       <HStack
         position="absolute"
@@ -48,7 +65,7 @@ export const LabellingTool = () => {
         right={0}
         pointerEvents="none"
       >
-        <ZoomToolbar />
+        <ViewToolbar containerRef={containerRef} />
       </VStack>
       <HStack
         padding={4}

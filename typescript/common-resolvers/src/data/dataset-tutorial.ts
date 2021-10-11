@@ -5,29 +5,51 @@ const origin =
     ? globalThis.location?.origin
     : "https://labelflow.ai";
 
+export const tutorialDatasets = [
+  {
+    name: "Tutorial dataset",
+    slug: "tutorial-dataset",
+    id: "049fe9f0-9a19-43cd-be65-35d222d54b4d",
+    workspaceSlug: "local", // FIXME: Implement proper id here
+  },
+];
+
 export const tutorialImages = [
   {
+    datasetId: "049fe9f0-9a19-43cd-be65-35d222d54b4d",
     id: "2bbbf664-5810-4760-a10f-841de2f35510",
     url: `${origin}/static/img/tutorial-image-1.jpg`,
   },
   {
+    datasetId: "049fe9f0-9a19-43cd-be65-35d222d54b4d",
     id: "506b263f-61a9-45ba-8f75-515534fae97c",
     url: `${origin}/static/img/tutorial-image-2.jpg`,
   },
   {
+    datasetId: "049fe9f0-9a19-43cd-be65-35d222d54b4d",
     id: "73b89fd9-0be8-4c76-bc4f-fee943b0d9d1",
     url: `${origin}/static/img/tutorial-image-3.jpg`,
   },
   {
+    datasetId: "049fe9f0-9a19-43cd-be65-35d222d54b4d",
     id: "04f999da-780c-461c-8e8e-c3189ae560fb",
     url: `${origin}/static/img/tutorial-image-4.jpg`,
   },
 ];
 
-export const tutorialLabelClassId = "2b4f7ed2-4257-48f8-b546-81af73f3c904";
+export const tutorialLabelClasses = [
+  {
+    id: "2b4f7ed2-4257-48f8-b546-81af73f3c904",
+    index: 0,
+    name: "Horse",
+    color: "#F87171",
+    datasetId: "049fe9f0-9a19-43cd-be65-35d222d54b4d",
+  },
+];
 
 export const tutorialLabels = [
   {
+    imageId: "73b89fd9-0be8-4c76-bc4f-fee943b0d9d1",
     id: "75dff3c4-fdc8-42a0-945a-339effc2bb01",
     geometry: {
       coordinates: [
@@ -42,13 +64,14 @@ export const tutorialLabels = [
       type: "Polygon",
     },
     height: 270.533840551028,
-    labelClassId: tutorialLabelClassId,
+    labelClassId: "2b4f7ed2-4257-48f8-b546-81af73f3c904",
     type: LabelType.Box,
     width: 164.6748656275106,
     x: 643.7093781173277,
     y: 504.8289671232293,
   },
   {
+    imageId: "73b89fd9-0be8-4c76-bc4f-fee943b0d9d1",
     id: "75dff3c4-fdc8-42a0-945a-339effc2bb02",
     geometry: {
       coordinates: [
@@ -63,13 +86,14 @@ export const tutorialLabels = [
       type: "Polygon",
     },
     height: 153.5615505368187,
-    labelClassId: tutorialLabelClassId,
+    labelClassId: "2b4f7ed2-4257-48f8-b546-81af73f3c904",
     type: LabelType.Box,
     width: 174.8702716326667,
     x: 0,
     y: 445.23232807236434,
   },
   {
+    imageId: "73b89fd9-0be8-4c76-bc4f-fee943b0d9d1",
     id: "75dff3c4-fdc8-42a0-945a-339effc2bb03",
     geometry: {
       coordinates: [
@@ -84,13 +108,14 @@ export const tutorialLabels = [
       type: "Polygon",
     },
     height: 317.0037187978952,
-    labelClassId: tutorialLabelClassId,
+    labelClassId: "2b4f7ed2-4257-48f8-b546-81af73f3c904",
     type: LabelType.Box,
     width: 176.4757926394218,
     x: 2695.217271497899,
     y: 975.5920751292459,
   },
   {
+    imageId: "73b89fd9-0be8-4c76-bc4f-fee943b0d9d1",
     id: "75dff3c4-fdc8-42a0-945a-339effc2bb04",
     geometry: {
       coordinates: [
@@ -112,6 +137,7 @@ export const tutorialLabels = [
     y: 452.1198695674241,
   },
   {
+    imageId: "73b89fd9-0be8-4c76-bc4f-fee943b0d9d1",
     id: "75dff3c4-fdc8-42a0-945a-339effc2bb05",
     geometry: {
       coordinates: [
@@ -126,13 +152,14 @@ export const tutorialLabels = [
       type: "Polygon",
     },
     height: 63.33659072789783,
-    labelClassId: tutorialLabelClassId,
+    labelClassId: "2b4f7ed2-4257-48f8-b546-81af73f3c904",
     type: LabelType.Box,
     width: 209.90869096381948,
     x: 2433.6499651795793,
     y: 1627.8166205359464,
   },
   {
+    imageId: "73b89fd9-0be8-4c76-bc4f-fee943b0d9d1",
     id: "75dff3c4-fdc8-42a0-945a-339effc2bb06",
     geometry: {
       coordinates: [
@@ -155,6 +182,7 @@ export const tutorialLabels = [
     y: 547.4740682949563,
   },
   {
+    imageId: "73b89fd9-0be8-4c76-bc4f-fee943b0d9d1",
     id: "75dff3c4-fdc8-42a0-945a-339effc2bb07",
     geometry: {
       coordinates: [
@@ -170,13 +198,14 @@ export const tutorialLabels = [
       type: "Polygon",
     },
     height: 474.3933746924372,
-    labelClassId: tutorialLabelClassId,
+    labelClassId: "2b4f7ed2-4257-48f8-b546-81af73f3c904",
     type: LabelType.Box,
     width: 276.9459545615282,
     x: 1892.9264307590943,
     y: 1223.3872135056408,
   },
   {
+    imageId: "73b89fd9-0be8-4c76-bc4f-fee943b0d9d1",
     id: "75dff3c4-fdc8-42a0-945a-339effc2bb08",
     geometry: {
       coordinates: [
@@ -191,13 +220,14 @@ export const tutorialLabels = [
       type: "Polygon",
     },
     height: 152.8159055262439,
-    labelClassId: tutorialLabelClassId,
+    labelClassId: "2b4f7ed2-4257-48f8-b546-81af73f3c904",
     type: LabelType.Box,
     width: 305.6724306273459,
     x: 1276.7412811268928,
     y: 648.5804390031997,
   },
   {
+    imageId: "73b89fd9-0be8-4c76-bc4f-fee943b0d9d1",
     id: "75dff3c4-fdc8-42a0-945a-339effc2bb09",
     geometry: {
       coordinates: [
@@ -290,6 +320,7 @@ export const tutorialLabels = [
     y: 302.08726200176955,
   },
   {
+    imageId: "73b89fd9-0be8-4c76-bc4f-fee943b0d9d1",
     id: "75dff3c4-fdc8-42a0-945a-339effc2bb10",
     geometry: {
       coordinates: [
@@ -351,7 +382,7 @@ export const tutorialLabels = [
       type: "Polygon",
     },
     height: 354.6979912864855,
-    labelClassId: tutorialLabelClassId,
+    labelClassId: "2b4f7ed2-4257-48f8-b546-81af73f3c904",
     type: LabelType.Polygon,
     width: 435.39066180597047,
     x: 2110.4400503450806,

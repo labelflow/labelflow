@@ -40,7 +40,7 @@ describe("Drawing tool", () => {
     render(<DrawingTool />);
 
     userEvent.click(screen.getByLabelText("Change Drawing tool"));
-    userEvent.click(screen.getByLabelText("Select polygon tool"));
+    userEvent.click(screen.getByLabelText("Polygon tool"));
 
     expect(
       screen.getByRole("checkbox", {

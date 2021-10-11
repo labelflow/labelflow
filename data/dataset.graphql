@@ -1,16 +1,21 @@
 input DatasetCreateInput {
   id: ID
   name: String!
+  workspaceSlug: String!
+}
+
+input WorkspaceSlugAndDatasetSlug {
+  slug: String!
+  workspaceSlug: String!
 }
 
 input DatasetWhereUniqueInput {
   id: ID
-  name: String
-  slug: String
+  slugs: WorkspaceSlugAndDatasetSlug
 }
 
-input DatasetWhereIDInput {
-  id: ID!
+input DatasetWhereInput {
+  workspaceSlug: String!
 }
 
 input DatasetUpdateInput {

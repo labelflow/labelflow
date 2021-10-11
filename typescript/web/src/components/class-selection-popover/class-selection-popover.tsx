@@ -26,7 +26,7 @@ import { keymap } from "../../keymap";
 type CreateClassInput = { name: string; type: string };
 type NoneClass = { name: string; color: string; type: string };
 // The popover doesn't need all the attributes of the label class
-export type LabelClassItem = Omit<LabelClass, "datasetId">;
+export type LabelClassItem = Omit<LabelClass, "dataset">;
 
 const noneClass = {
   name: "None",
@@ -40,11 +40,15 @@ const CloseCircleIcon = chakra(RiCloseCircleFill);
 const filterLabelClasses = ({
   labelClasses,
   inputValueCombobox,
+  includeNoneClass,
 }: {
   labelClasses: LabelClassItem[];
   inputValueCombobox: string;
+  includeNoneClass: boolean;
 }): (LabelClassItem | CreateClassInput | NoneClass)[] => {
-  const labelClassesWithNoneClass = [...labelClasses, noneClass];
+  const labelClassesWithNoneClass = includeNoneClass
+    ? [...labelClasses, noneClass]
+    : labelClasses;
   const createClassItem =
     inputValueCombobox &&
     labelClassesWithNoneClass.filter(
@@ -74,6 +78,7 @@ export const ClassSelectionPopover = ({
   selectedLabelClassId,
   trigger,
   activateShortcuts,
+  includeNoneClass = true,
   ariaLabel = "Class selection popover",
 }: {
   isOpen?: boolean;
@@ -84,6 +89,7 @@ export const ClassSelectionPopover = ({
   selectedLabelClassId?: string | null;
   trigger?: React.ReactNode;
   activateShortcuts?: boolean;
+  includeNoneClass?: boolean;
   ariaLabel?: string;
 }) => {
   const [inputValueCombobox, setInputValueCombobox] = useState<string>("");
@@ -105,8 +111,9 @@ export const ClassSelectionPopover = ({
       filterLabelClasses({
         labelClasses: labelClassesWithShortcut,
         inputValueCombobox,
+        includeNoneClass,
       }),
-    [labelClasses, inputValueCombobox]
+    [labelClasses, inputValueCombobox, includeNoneClass]
   );
 
   const {

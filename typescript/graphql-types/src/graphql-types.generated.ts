@@ -31,6 +31,7 @@ export type Dataset = {
   imagesAggregates: ImagesAggregates;
   labelsAggregates: LabelsAggregates;
   labelClassesAggregates: LabelClassesAggregates;
+  workspace: Workspace;
 };
 
 
@@ -42,20 +43,26 @@ export type DatasetImagesArgs = {
 export type DatasetCreateInput = {
   id?: Maybe<Scalars['ID']>;
   name: Scalars['String'];
+  workspaceSlug: Scalars['String'];
+};
+
+export type DatasetImportInput = {
+  url: Scalars['String'];
+  format: ExportFormat;
+  options?: Maybe<ImportOptions>;
 };
 
 export type DatasetUpdateInput = {
   name: Scalars['String'];
 };
 
-export type DatasetWhereIdInput = {
-  id: Scalars['ID'];
+export type DatasetWhereInput = {
+  workspaceSlug: Scalars['String'];
 };
 
 export type DatasetWhereUniqueInput = {
   id?: Maybe<Scalars['ID']>;
-  name?: Maybe<Scalars['String']>;
-  slug?: Maybe<Scalars['String']>;
+  slugs?: Maybe<WorkspaceSlugAndDatasetSlug>;
 };
 
 
@@ -136,7 +143,7 @@ export type Image = {
   height: Scalars['Int'];
   width: Scalars['Int'];
   labels: Array<Label>;
-  datasetId: Scalars['ID'];
+  dataset: Dataset;
 };
 
 export type ImageCreateInput = {
@@ -166,6 +173,24 @@ export type ImagesAggregates = {
   totalCount: Scalars['Int'];
 };
 
+export type ImportOptions = {
+  coco?: Maybe<ImportOptionsCoco>;
+};
+
+export type ImportOptionsCoco = {
+  annotationsOnly?: Maybe<Scalars['Boolean']>;
+};
+
+export type ImportStatus = {
+  __typename?: 'ImportStatus';
+  error?: Maybe<Scalars['String']>;
+};
+
+export type IogInferenceResult = {
+  __typename?: 'IogInferenceResult';
+  polygons: Array<Maybe<Array<Maybe<Array<Scalars['Float']>>>>>;
+};
+
 
 export type Label = {
   __typename?: 'Label';
@@ -191,13 +216,13 @@ export type LabelClass = {
   name: Scalars['String'];
   color: Scalars['ColorHex'];
   labels: Array<Label>;
-  datasetId: Scalars['ID'];
+  dataset: Dataset;
 };
 
 export type LabelClassCreateInput = {
   id?: Maybe<Scalars['ID']>;
   name: Scalars['String'];
-  color: Scalars['ColorHex'];
+  color?: Maybe<Scalars['ColorHex']>;
   datasetId: Scalars['ID'];
 };
 
@@ -232,6 +257,7 @@ export type LabelCreateInput = {
 };
 
 export enum LabelType {
+  Classification = 'Classification',
   Polygon = 'Polygon',
   Box = 'Box'
 }
@@ -256,11 +282,42 @@ export type LabelsAggregates = {
   totalCount: Scalars['Int'];
 };
 
+export type Membership = {
+  __typename?: 'Membership';
+  id: Scalars['ID'];
+  createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
+  role: MembershipRole;
+  user: User;
+  workspace: Workspace;
+};
+
+export type MembershipCreateInput = {
+  id?: Maybe<Scalars['ID']>;
+  role: MembershipRole;
+  userId: Scalars['ID'];
+  workspaceSlug: Scalars['String'];
+};
+
+export enum MembershipRole {
+  Admin = 'Admin',
+  Member = 'Member'
+}
+
+export type MembershipUpdateInput = {
+  role?: Maybe<MembershipRole>;
+};
+
+export type MembershipWhereUniqueInput = {
+  id: Scalars['ID'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   createExample?: Maybe<Example>;
   getUploadTarget: UploadTarget;
   createImage?: Maybe<Image>;
+  deleteImage?: Maybe<Image>;
   createLabel?: Maybe<Label>;
   updateLabel?: Maybe<Label>;
   deleteLabel?: Maybe<Label>;
@@ -270,8 +327,16 @@ export type Mutation = {
   deleteLabelClass?: Maybe<LabelClass>;
   createDataset?: Maybe<Dataset>;
   createDemoDataset?: Maybe<Dataset>;
+  runIog?: Maybe<IogInferenceResult>;
   updateDataset?: Maybe<Dataset>;
   deleteDataset?: Maybe<Dataset>;
+  importDataset?: Maybe<ImportStatus>;
+  createWorkspace?: Maybe<Workspace>;
+  updateWorkspace?: Maybe<Workspace>;
+  createMembership?: Maybe<Membership>;
+  updateMembership?: Maybe<Membership>;
+  deleteMembership?: Maybe<Membership>;
+  updateUser?: Maybe<User>;
 };
 
 
@@ -287,6 +352,11 @@ export type MutationGetUploadTargetArgs = {
 
 export type MutationCreateImageArgs = {
   data: ImageCreateInput;
+};
+
+
+export type MutationDeleteImageArgs = {
+  where: ImageWhereUniqueInput;
 };
 
 
@@ -333,14 +403,58 @@ export type MutationCreateDatasetArgs = {
 };
 
 
+export type MutationRunIogArgs = {
+  data: RunIogInput;
+};
+
+
 export type MutationUpdateDatasetArgs = {
-  where: DatasetWhereIdInput;
+  where: DatasetWhereUniqueInput;
   data: DatasetUpdateInput;
 };
 
 
 export type MutationDeleteDatasetArgs = {
-  where: DatasetWhereIdInput;
+  where: DatasetWhereUniqueInput;
+};
+
+
+export type MutationImportDatasetArgs = {
+  where: DatasetWhereUniqueInput;
+  data: DatasetImportInput;
+};
+
+
+export type MutationCreateWorkspaceArgs = {
+  data: WorkspaceCreateInput;
+};
+
+
+export type MutationUpdateWorkspaceArgs = {
+  where: WorkspaceWhereUniqueInput;
+  data: WorkspaceUpdateInput;
+};
+
+
+export type MutationCreateMembershipArgs = {
+  data: MembershipCreateInput;
+};
+
+
+export type MutationUpdateMembershipArgs = {
+  where: MembershipWhereUniqueInput;
+  data: MembershipUpdateInput;
+};
+
+
+export type MutationDeleteMembershipArgs = {
+  where: MembershipWhereUniqueInput;
+};
+
+
+export type MutationUpdateUserArgs = {
+  where: UserWhereUniqueInput;
+  data: UserUpdateInput;
 };
 
 export type Query = {
@@ -359,6 +473,13 @@ export type Query = {
   labels: Array<Label>;
   dataset: Dataset;
   datasets: Array<Dataset>;
+  searchDataset?: Maybe<Dataset>;
+  workspace: Workspace;
+  workspaces: Array<Workspace>;
+  membership: Membership;
+  memberships: Array<Membership>;
+  user: User;
+  users: Array<User>;
   exportDataset: Scalars['String'];
   debug: Scalars['JSON'];
 };
@@ -419,6 +540,45 @@ export type QueryDatasetArgs = {
 
 
 export type QueryDatasetsArgs = {
+  where?: Maybe<DatasetWhereInput>;
+  first?: Maybe<Scalars['Int']>;
+  skip?: Maybe<Scalars['Int']>;
+};
+
+
+export type QuerySearchDatasetArgs = {
+  where: DatasetWhereUniqueInput;
+};
+
+
+export type QueryWorkspaceArgs = {
+  where: WorkspaceWhereUniqueInput;
+};
+
+
+export type QueryWorkspacesArgs = {
+  first?: Maybe<Scalars['Int']>;
+  skip?: Maybe<Scalars['Int']>;
+};
+
+
+export type QueryMembershipArgs = {
+  where: MembershipWhereUniqueInput;
+};
+
+
+export type QueryMembershipsArgs = {
+  first?: Maybe<Scalars['Int']>;
+  skip?: Maybe<Scalars['Int']>;
+};
+
+
+export type QueryUserArgs = {
+  where: UserWhereUniqueInput;
+};
+
+
+export type QueryUsersArgs = {
   first?: Maybe<Scalars['Int']>;
   skip?: Maybe<Scalars['Int']>;
 };
@@ -428,6 +588,18 @@ export type QueryExportDatasetArgs = {
   where: ExportWhereUniqueInput;
   format: ExportFormat;
   options?: Maybe<ExportOptions>;
+};
+
+export type RunIogInput = {
+  id: Scalars['ID'];
+  imageUrl?: Maybe<Scalars['String']>;
+  x?: Maybe<Scalars['Float']>;
+  y?: Maybe<Scalars['Float']>;
+  width?: Maybe<Scalars['Float']>;
+  height?: Maybe<Scalars['Float']>;
+  pointsInside?: Maybe<Array<Maybe<Array<Scalars['Float']>>>>;
+  pointsOutside?: Maybe<Array<Maybe<Array<Scalars['Float']>>>>;
+  centerPoint?: Maybe<Array<Scalars['Float']>>;
 };
 
 
@@ -446,6 +618,70 @@ export type UploadTargetHttp = {
 
 export type UploadTargetInput = {
   key: Scalars['String'];
+};
+
+export type User = {
+  __typename?: 'User';
+  id: Scalars['ID'];
+  createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
+  name: Scalars['String'];
+  email: Scalars['String'];
+  image?: Maybe<Scalars['String']>;
+  memberships: Array<Membership>;
+};
+
+export type UserUpdateInput = {
+  name?: Maybe<Scalars['String']>;
+  image?: Maybe<Scalars['String']>;
+};
+
+export type UserWhereUniqueInput = {
+  id: Scalars['ID'];
+};
+
+export type Workspace = {
+  __typename?: 'Workspace';
+  id: Scalars['ID'];
+  createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
+  name: Scalars['String'];
+  slug: Scalars['String'];
+  type: WorkspaceType;
+  plan: WorkspacePlan;
+  datasets: Array<Dataset>;
+  memberships: Array<Membership>;
+};
+
+export type WorkspaceCreateInput = {
+  id?: Maybe<Scalars['ID']>;
+  name: Scalars['String'];
+};
+
+export enum WorkspacePlan {
+  Community = 'Community',
+  Starter = 'Starter',
+  Pro = 'Pro',
+  Enterprise = 'Enterprise'
+}
+
+export type WorkspaceSlugAndDatasetSlug = {
+  slug: Scalars['String'];
+  workspaceSlug: Scalars['String'];
+};
+
+export enum WorkspaceType {
+  Local = 'Local',
+  Online = 'Online'
+}
+
+export type WorkspaceUpdateInput = {
+  name?: Maybe<Scalars['String']>;
+};
+
+export type WorkspaceWhereUniqueInput = {
+  id?: Maybe<Scalars['ID']>;
+  slug?: Maybe<Scalars['String']>;
 };
 
 
@@ -531,8 +767,9 @@ export type ResolversTypes = {
   String: ResolverTypeWrapper<Scalars['String']>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
   DatasetCreateInput: DatasetCreateInput;
+  DatasetImportInput: DatasetImportInput;
   DatasetUpdateInput: DatasetUpdateInput;
-  DatasetWhereIDInput: DatasetWhereIdInput;
+  DatasetWhereInput: DatasetWhereInput;
   DatasetWhereUniqueInput: DatasetWhereUniqueInput;
   DateTime: ResolverTypeWrapper<Scalars['DateTime']>;
   Example: ResolverTypeWrapper<Example>;
@@ -554,9 +791,13 @@ export type ResolversTypes = {
   ImageWhereInput: ImageWhereInput;
   ImageWhereUniqueInput: ImageWhereUniqueInput;
   ImagesAggregates: ResolverTypeWrapper<ImagesAggregates>;
+  ImportOptions: ImportOptions;
+  ImportOptionsCoco: ImportOptionsCoco;
+  ImportStatus: ResolverTypeWrapper<ImportStatus>;
+  IogInferenceResult: ResolverTypeWrapper<IogInferenceResult>;
+  Float: ResolverTypeWrapper<Scalars['Float']>;
   JSON: ResolverTypeWrapper<Scalars['JSON']>;
   Label: ResolverTypeWrapper<Label>;
-  Float: ResolverTypeWrapper<Scalars['Float']>;
   LabelClass: ResolverTypeWrapper<LabelClass>;
   LabelClassCreateInput: LabelClassCreateInput;
   LabelClassReorderInput: LabelClassReorderInput;
@@ -570,13 +811,29 @@ export type ResolversTypes = {
   LabelWhereInput: LabelWhereInput;
   LabelWhereUniqueInput: LabelWhereUniqueInput;
   LabelsAggregates: ResolverTypeWrapper<LabelsAggregates>;
+  Membership: ResolverTypeWrapper<Membership>;
+  MembershipCreateInput: MembershipCreateInput;
+  MembershipRole: MembershipRole;
+  MembershipUpdateInput: MembershipUpdateInput;
+  MembershipWhereUniqueInput: MembershipWhereUniqueInput;
   Mutation: ResolverTypeWrapper<{}>;
   Query: ResolverTypeWrapper<{}>;
+  RunIogInput: RunIogInput;
   Upload: ResolverTypeWrapper<Scalars['Upload']>;
   UploadTarget: ResolversTypes['UploadTargetDirect'] | ResolversTypes['UploadTargetHttp'];
   UploadTargetDirect: ResolverTypeWrapper<UploadTargetDirect>;
   UploadTargetHttp: ResolverTypeWrapper<UploadTargetHttp>;
   UploadTargetInput: UploadTargetInput;
+  User: ResolverTypeWrapper<User>;
+  UserUpdateInput: UserUpdateInput;
+  UserWhereUniqueInput: UserWhereUniqueInput;
+  Workspace: ResolverTypeWrapper<Workspace>;
+  WorkspaceCreateInput: WorkspaceCreateInput;
+  WorkspacePlan: WorkspacePlan;
+  WorkspaceSlugAndDatasetSlug: WorkspaceSlugAndDatasetSlug;
+  WorkspaceType: WorkspaceType;
+  WorkspaceUpdateInput: WorkspaceUpdateInput;
+  WorkspaceWhereUniqueInput: WorkspaceWhereUniqueInput;
 };
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -586,8 +843,9 @@ export type ResolversParentTypes = {
   String: Scalars['String'];
   Int: Scalars['Int'];
   DatasetCreateInput: DatasetCreateInput;
+  DatasetImportInput: DatasetImportInput;
   DatasetUpdateInput: DatasetUpdateInput;
-  DatasetWhereIDInput: DatasetWhereIdInput;
+  DatasetWhereInput: DatasetWhereInput;
   DatasetWhereUniqueInput: DatasetWhereUniqueInput;
   DateTime: Scalars['DateTime'];
   Example: Example;
@@ -607,9 +865,13 @@ export type ResolversParentTypes = {
   ImageWhereInput: ImageWhereInput;
   ImageWhereUniqueInput: ImageWhereUniqueInput;
   ImagesAggregates: ImagesAggregates;
+  ImportOptions: ImportOptions;
+  ImportOptionsCoco: ImportOptionsCoco;
+  ImportStatus: ImportStatus;
+  IogInferenceResult: IogInferenceResult;
+  Float: Scalars['Float'];
   JSON: Scalars['JSON'];
   Label: Label;
-  Float: Scalars['Float'];
   LabelClass: LabelClass;
   LabelClassCreateInput: LabelClassCreateInput;
   LabelClassReorderInput: LabelClassReorderInput;
@@ -622,13 +884,26 @@ export type ResolversParentTypes = {
   LabelWhereInput: LabelWhereInput;
   LabelWhereUniqueInput: LabelWhereUniqueInput;
   LabelsAggregates: LabelsAggregates;
+  Membership: Membership;
+  MembershipCreateInput: MembershipCreateInput;
+  MembershipUpdateInput: MembershipUpdateInput;
+  MembershipWhereUniqueInput: MembershipWhereUniqueInput;
   Mutation: {};
   Query: {};
+  RunIogInput: RunIogInput;
   Upload: Scalars['Upload'];
   UploadTarget: ResolversParentTypes['UploadTargetDirect'] | ResolversParentTypes['UploadTargetHttp'];
   UploadTargetDirect: UploadTargetDirect;
   UploadTargetHttp: UploadTargetHttp;
   UploadTargetInput: UploadTargetInput;
+  User: User;
+  UserUpdateInput: UserUpdateInput;
+  UserWhereUniqueInput: UserWhereUniqueInput;
+  Workspace: Workspace;
+  WorkspaceCreateInput: WorkspaceCreateInput;
+  WorkspaceSlugAndDatasetSlug: WorkspaceSlugAndDatasetSlug;
+  WorkspaceUpdateInput: WorkspaceUpdateInput;
+  WorkspaceWhereUniqueInput: WorkspaceWhereUniqueInput;
 };
 
 export interface ColorHexScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['ColorHex'], any> {
@@ -647,6 +922,7 @@ export type DatasetResolvers<ContextType = any, ParentType extends ResolversPare
   imagesAggregates?: Resolver<ResolversTypes['ImagesAggregates'], ParentType, ContextType>;
   labelsAggregates?: Resolver<ResolversTypes['LabelsAggregates'], ParentType, ContextType>;
   labelClassesAggregates?: Resolver<ResolversTypes['LabelClassesAggregates'], ParentType, ContextType>;
+  workspace?: Resolver<ResolversTypes['Workspace'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -680,12 +956,22 @@ export type ImageResolvers<ContextType = any, ParentType extends ResolversParent
   height?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   width?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   labels?: Resolver<Array<ResolversTypes['Label']>, ParentType, ContextType>;
-  datasetId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  dataset?: Resolver<ResolversTypes['Dataset'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type ImagesAggregatesResolvers<ContextType = any, ParentType extends ResolversParentTypes['ImagesAggregates'] = ResolversParentTypes['ImagesAggregates']> = {
   totalCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type ImportStatusResolvers<ContextType = any, ParentType extends ResolversParentTypes['ImportStatus'] = ResolversParentTypes['ImportStatus']> = {
+  error?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type IogInferenceResultResolvers<ContextType = any, ParentType extends ResolversParentTypes['IogInferenceResult'] = ResolversParentTypes['IogInferenceResult']> = {
+  polygons?: Resolver<Array<Maybe<Array<Maybe<Array<ResolversTypes['Float']>>>>>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -716,7 +1002,7 @@ export type LabelClassResolvers<ContextType = any, ParentType extends ResolversP
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   color?: Resolver<ResolversTypes['ColorHex'], ParentType, ContextType>;
   labels?: Resolver<Array<ResolversTypes['Label']>, ParentType, ContextType>;
-  datasetId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  dataset?: Resolver<ResolversTypes['Dataset'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -730,10 +1016,21 @@ export type LabelsAggregatesResolvers<ContextType = any, ParentType extends Reso
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type MembershipResolvers<ContextType = any, ParentType extends ResolversParentTypes['Membership'] = ResolversParentTypes['Membership']> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  role?: Resolver<ResolversTypes['MembershipRole'], ParentType, ContextType>;
+  user?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
+  workspace?: Resolver<ResolversTypes['Workspace'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   createExample?: Resolver<Maybe<ResolversTypes['Example']>, ParentType, ContextType, RequireFields<MutationCreateExampleArgs, 'data'>>;
   getUploadTarget?: Resolver<ResolversTypes['UploadTarget'], ParentType, ContextType, RequireFields<MutationGetUploadTargetArgs, 'data'>>;
   createImage?: Resolver<Maybe<ResolversTypes['Image']>, ParentType, ContextType, RequireFields<MutationCreateImageArgs, 'data'>>;
+  deleteImage?: Resolver<Maybe<ResolversTypes['Image']>, ParentType, ContextType, RequireFields<MutationDeleteImageArgs, 'where'>>;
   createLabel?: Resolver<Maybe<ResolversTypes['Label']>, ParentType, ContextType, RequireFields<MutationCreateLabelArgs, 'data'>>;
   updateLabel?: Resolver<Maybe<ResolversTypes['Label']>, ParentType, ContextType, RequireFields<MutationUpdateLabelArgs, 'where' | 'data'>>;
   deleteLabel?: Resolver<Maybe<ResolversTypes['Label']>, ParentType, ContextType, RequireFields<MutationDeleteLabelArgs, 'where'>>;
@@ -743,8 +1040,16 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   deleteLabelClass?: Resolver<Maybe<ResolversTypes['LabelClass']>, ParentType, ContextType, RequireFields<MutationDeleteLabelClassArgs, 'where'>>;
   createDataset?: Resolver<Maybe<ResolversTypes['Dataset']>, ParentType, ContextType, RequireFields<MutationCreateDatasetArgs, 'data'>>;
   createDemoDataset?: Resolver<Maybe<ResolversTypes['Dataset']>, ParentType, ContextType>;
+  runIog?: Resolver<Maybe<ResolversTypes['IogInferenceResult']>, ParentType, ContextType, RequireFields<MutationRunIogArgs, 'data'>>;
   updateDataset?: Resolver<Maybe<ResolversTypes['Dataset']>, ParentType, ContextType, RequireFields<MutationUpdateDatasetArgs, 'where' | 'data'>>;
   deleteDataset?: Resolver<Maybe<ResolversTypes['Dataset']>, ParentType, ContextType, RequireFields<MutationDeleteDatasetArgs, 'where'>>;
+  importDataset?: Resolver<Maybe<ResolversTypes['ImportStatus']>, ParentType, ContextType, RequireFields<MutationImportDatasetArgs, 'where' | 'data'>>;
+  createWorkspace?: Resolver<Maybe<ResolversTypes['Workspace']>, ParentType, ContextType, RequireFields<MutationCreateWorkspaceArgs, 'data'>>;
+  updateWorkspace?: Resolver<Maybe<ResolversTypes['Workspace']>, ParentType, ContextType, RequireFields<MutationUpdateWorkspaceArgs, 'where' | 'data'>>;
+  createMembership?: Resolver<Maybe<ResolversTypes['Membership']>, ParentType, ContextType, RequireFields<MutationCreateMembershipArgs, 'data'>>;
+  updateMembership?: Resolver<Maybe<ResolversTypes['Membership']>, ParentType, ContextType, RequireFields<MutationUpdateMembershipArgs, 'where' | 'data'>>;
+  deleteMembership?: Resolver<Maybe<ResolversTypes['Membership']>, ParentType, ContextType, RequireFields<MutationDeleteMembershipArgs, 'where'>>;
+  updateUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationUpdateUserArgs, 'where' | 'data'>>;
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
@@ -762,6 +1067,13 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   labels?: Resolver<Array<ResolversTypes['Label']>, ParentType, ContextType, RequireFields<QueryLabelsArgs, never>>;
   dataset?: Resolver<ResolversTypes['Dataset'], ParentType, ContextType, RequireFields<QueryDatasetArgs, 'where'>>;
   datasets?: Resolver<Array<ResolversTypes['Dataset']>, ParentType, ContextType, RequireFields<QueryDatasetsArgs, never>>;
+  searchDataset?: Resolver<Maybe<ResolversTypes['Dataset']>, ParentType, ContextType, RequireFields<QuerySearchDatasetArgs, 'where'>>;
+  workspace?: Resolver<ResolversTypes['Workspace'], ParentType, ContextType, RequireFields<QueryWorkspaceArgs, 'where'>>;
+  workspaces?: Resolver<Array<ResolversTypes['Workspace']>, ParentType, ContextType, RequireFields<QueryWorkspacesArgs, never>>;
+  membership?: Resolver<ResolversTypes['Membership'], ParentType, ContextType, RequireFields<QueryMembershipArgs, 'where'>>;
+  memberships?: Resolver<Array<ResolversTypes['Membership']>, ParentType, ContextType, RequireFields<QueryMembershipsArgs, never>>;
+  user?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<QueryUserArgs, 'where'>>;
+  users?: Resolver<Array<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryUsersArgs, never>>;
   exportDataset?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<QueryExportDatasetArgs, 'where' | 'format'>>;
   debug?: Resolver<ResolversTypes['JSON'], ParentType, ContextType>;
 };
@@ -785,6 +1097,30 @@ export type UploadTargetHttpResolvers<ContextType = any, ParentType extends Reso
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  image?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  memberships?: Resolver<Array<ResolversTypes['Membership']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type WorkspaceResolvers<ContextType = any, ParentType extends ResolversParentTypes['Workspace'] = ResolversParentTypes['Workspace']> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  type?: Resolver<ResolversTypes['WorkspaceType'], ParentType, ContextType>;
+  plan?: Resolver<ResolversTypes['WorkspacePlan'], ParentType, ContextType>;
+  datasets?: Resolver<Array<ResolversTypes['Dataset']>, ParentType, ContextType>;
+  memberships?: Resolver<Array<ResolversTypes['Membership']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type Resolvers<ContextType = any> = {
   ColorHex?: GraphQLScalarType;
   Dataset?: DatasetResolvers<ContextType>;
@@ -793,17 +1129,22 @@ export type Resolvers<ContextType = any> = {
   Geometry?: GeometryResolvers<ContextType>;
   Image?: ImageResolvers<ContextType>;
   ImagesAggregates?: ImagesAggregatesResolvers<ContextType>;
+  ImportStatus?: ImportStatusResolvers<ContextType>;
+  IogInferenceResult?: IogInferenceResultResolvers<ContextType>;
   JSON?: GraphQLScalarType;
   Label?: LabelResolvers<ContextType>;
   LabelClass?: LabelClassResolvers<ContextType>;
   LabelClassesAggregates?: LabelClassesAggregatesResolvers<ContextType>;
   LabelsAggregates?: LabelsAggregatesResolvers<ContextType>;
+  Membership?: MembershipResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   Upload?: GraphQLScalarType;
   UploadTarget?: UploadTargetResolvers<ContextType>;
   UploadTargetDirect?: UploadTargetDirectResolvers<ContextType>;
   UploadTargetHttp?: UploadTargetHttpResolvers<ContextType>;
+  User?: UserResolvers<ContextType>;
+  Workspace?: WorkspaceResolvers<ContextType>;
 };
 
 

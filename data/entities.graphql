@@ -18,10 +18,11 @@ type Image {
   height: Int!
   width: Int!
   labels: [Label!]!
-  datasetId: ID!
+  dataset: Dataset!
 }
 
 enum LabelType {
+  Classification
   Polygon
   Box
 }
@@ -53,7 +54,7 @@ type LabelClass {
   name: String!
   color: ColorHex!
   labels: [Label!]!
-  datasetId: ID!
+  dataset: Dataset!
 }
 
 type Dataset {
@@ -68,4 +69,53 @@ type Dataset {
   imagesAggregates: ImagesAggregates!
   labelsAggregates: LabelsAggregates!
   labelClassesAggregates: LabelClassesAggregates!
+  workspace: Workspace!
+}
+
+type Workspace {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  name: String!
+  slug: String!
+  type: WorkspaceType!
+  plan: WorkspacePlan!
+  datasets: [Dataset!]!
+  memberships: [Membership!]!
+}
+
+type Membership {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  role: MembershipRole!
+  user: User!
+  workspace: Workspace!
+}
+
+type User {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  name: String!
+  email: String!
+  image: String
+  memberships: [Membership!]!
+}
+
+enum WorkspaceType {
+  Local
+  Online
+}
+
+enum WorkspacePlan {
+  Community
+  Starter
+  Pro
+  Enterprise
+}
+
+enum MembershipRole {
+  Admin
+  Member
 }

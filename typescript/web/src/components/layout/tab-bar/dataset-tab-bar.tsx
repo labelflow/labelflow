@@ -3,18 +3,23 @@ import { TabBar } from "./tab-bar";
 export type Props = {
   currentTab: "images" | "classes";
   datasetSlug: string;
+  workspaceSlug: string;
 };
 
-export const DatasetTabBar = ({ currentTab, datasetSlug }: Props) => {
+export const DatasetTabBar = ({
+  currentTab,
+  datasetSlug,
+  workspaceSlug,
+}: Props) => {
   const tabs = [
     {
       name: "images",
-      url: `/local/datasets/${datasetSlug}/images`,
+      url: `/${workspaceSlug}/datasets/${datasetSlug}/images`,
       isActive: currentTab === "images",
     },
     {
       name: "classes",
-      url: `/local/datasets/${datasetSlug}/classes`,
+      url: `/${workspaceSlug}/datasets/${datasetSlug}/classes`,
       isActive: currentTab === "classes",
     },
   ];

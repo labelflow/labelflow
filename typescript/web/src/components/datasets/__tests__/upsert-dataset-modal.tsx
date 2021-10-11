@@ -13,9 +13,13 @@ import "@testing-library/jest-dom/extend-expect";
 
 import { client } from "../../../connectors/apollo-client/schema-client";
 import { setupTestsWithLocalDatabase } from "../../../utils/setup-local-db-tests";
-import { mockUseQueryParams } from "../../../utils/router-mocks";
+import {
+  mockUseQueryParams,
+  mockNextRouter,
+} from "../../../utils/router-mocks";
 
 mockUseQueryParams();
+mockNextRouter({ query: { workspaceSlug: "local" } });
 
 import { UpsertDatasetModal } from "../upsert-dataset-modal";
 
@@ -66,14 +70,14 @@ test("should create a dataset when the form is submitted", async () => {
   const onClose = jest.fn();
   renderModal({ onClose });
 
-  const datasetName = "Good Day";
+  const datasetSlug = "good-day";
 
   const input = screen.getByLabelText(
     /dataset name input/i
   ) as HTMLInputElement;
   const button = screen.getByLabelText(/create dataset/i);
 
-  fireEvent.change(input, { target: { value: datasetName } });
+  fireEvent.change(input, { target: { value: datasetSlug } });
   fireEvent.click(button);
 
   await waitFor(() => {
@@ -82,20 +86,20 @@ test("should create a dataset when the form is submitted", async () => {
 
   const {
     data: {
-      dataset: { name },
+      dataset: { slug },
     },
   } = await client.query({
     query: gql`
-      query getDatasetByName($name: String) {
-        dataset(where: { name: $name }) {
-          name
+      query getDatasetByName($slug: String) {
+        dataset(where: { slugs: { slug: $slug, workspaceSlug: "local" } }) {
+          slug
         }
       }
     `,
-    variables: { name: datasetName },
+    variables: { slug: datasetSlug },
   });
 
-  expect(name).toEqual(datasetName);
+  expect(slug).toEqual(datasetSlug);
 });
 
 test("should display an error message if dataset name already exists", async () => {
@@ -104,7 +108,7 @@ test("should display an error message if dataset name already exists", async () 
   await client.mutate({
     mutation: gql`
       mutation createDataset($name: String) {
-        createDataset(data: { name: $name }) {
+        createDataset(data: { name: $name, workspaceSlug: "local" }) {
           id
           name
           slug
@@ -149,7 +153,7 @@ test("update dataset: should have dataset name pre-filled when renaming existing
   } = await client.mutate({
     mutation: gql`
       mutation createDataset($name: String) {
-        createDataset(data: { name: $name }) {
+        createDataset(data: { name: $name, workspaceSlug: "local" }) {
           id
         }
       }
@@ -185,7 +189,7 @@ test("update dataset: should update a dataset when the form is submitted", async
   } = await client.mutate({
     mutation: gql`
       mutation createDataset($name: String) {
-        createDataset(data: { name: $name }) {
+        createDataset(data: { name: $name, workspaceSlug: "local" }) {
           id
         }
       }

@@ -1,0 +1,14 @@
+input MembershipWhereUniqueInput {
+  id: ID!
+}
+
+input MembershipCreateInput {
+  id: ID
+  role: MembershipRole!
+  userId: ID!
+  workspaceSlug: String!
+}
+
+input MembershipUpdateInput {
+  role: MembershipRole
+}

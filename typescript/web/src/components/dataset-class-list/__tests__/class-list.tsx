@@ -13,7 +13,9 @@ const createDataset = async (name: string, datasetId?: string | null) => {
   return await client.mutate({
     mutation: gql`
       mutation createDataset($datasetId: String, $name: String!) {
-        createDataset(data: { id: $datasetId, name: $name }) {
+        createDataset(
+          data: { id: $datasetId, name: $name, workspaceSlug: "local" }
+        ) {
           id
           name
         }
@@ -65,7 +67,9 @@ describe("Dataset class list tests", () => {
   it("Renders if the dataset has no classes", async () => {
     const datasetId = "myDatasetId";
     await createDataset("myDataset", datasetId);
-    render(<ClassesList datasetSlug="mydataset" />, { wrapper });
+    render(<ClassesList datasetSlug="mydataset" workspaceSlug="local" />, {
+      wrapper,
+    });
     expect(screen.getByText("0 Classes")).toBeDefined();
   });
 
@@ -87,7 +91,9 @@ describe("Dataset class list tests", () => {
       name: "MyThirdClass",
       color: "red",
     });
-    render(<ClassesList datasetSlug="mydataset" />, { wrapper });
+    render(<ClassesList datasetSlug="mydataset" workspaceSlug="local" />, {
+      wrapper,
+    });
 
     await waitFor(() => {
       expect(screen.getByText("3 Classes")).toBeDefined();
@@ -105,7 +111,9 @@ describe("Dataset class list tests", () => {
       name: "MyFirstClass",
       color: "blue",
     });
-    render(<ClassesList datasetSlug="mydataset" />, { wrapper });
+    render(<ClassesList datasetSlug="mydataset" workspaceSlug="local" />, {
+      wrapper,
+    });
 
     await waitFor(() =>
       fireEvent.click(screen.getByLabelText(/Delete class/i))

@@ -13,29 +13,56 @@ import { ChakraProvider } from "@chakra-ui/react";
 
 import { pageView } from "../utils/google-analytics";
 import { theme } from "../theme";
-import { client } from "../connectors/apollo-client/client";
+import {
+  serviceWorkerClient,
+  distantDatabaseClient,
+} from "../connectors/apollo-client/client";
 import { QueryParamProvider } from "../utils/query-params-provider";
-
-import { Meta } from "../components/meta";
 import ErrorPage from "./_error";
 
 interface InitialProps {
   cookie: string;
 }
 
+/**
+ * Error Fallback page of the Error Fallback page , for rare cases (only happens in cypress on certain crashes) where even the styling or other context can't work
+ * @returns
+ */
+const ErrorFallbackErrorFallback = () => {
+  return (
+    <div>
+      An error occurred when displaying the error page, you can&apos;t really
+      get any worse than that. Please{" "}
+      <a
+        style={{ color: "blue", textDecoration: "underline" }}
+        href="https://github.com/labelflow/labelflow/issues/new?assignees=&labels=bug&template=bug_report.md&title="
+      >
+        report this issue
+      </a>
+      .
+    </div>
+  );
+};
+
+/**
+ * Error Fallback page
+ * @returns
+ */
 const ErrorFallback = (props: FallbackProps) => {
   return (
-    <SessionProvider session={undefined}>
-      <CookiesProvider cookies={new Cookies("")}>
-        <ApolloProvider client={client}>
-          <QueryParamProvider>
-            <ChakraProvider theme={theme} resetCSS>
-              <ErrorPage {...props} />
-            </ChakraProvider>
-          </QueryParamProvider>
-        </ApolloProvider>
-      </CookiesProvider>
-    </SessionProvider>
+    <ErrorBoundary FallbackComponent={ErrorFallbackErrorFallback}>
+      <SessionProvider session={undefined}>
+        <CookiesProvider cookies={new Cookies("")}>
+          <ApolloProvider client={distantDatabaseClient}>
+            <QueryParamProvider>
+              <ChakraProvider theme={theme} resetCSS>
+                <ErrorPage {...props} />
+              </ChakraProvider>
+            </QueryParamProvider>
+          </ApolloProvider>
+        </CookiesProvider>
+      </SessionProvider>
+    </ErrorBoundary>
   );
 };
 
@@ -46,6 +73,11 @@ const App = (props: AppProps & InitialProps) => {
   // Google analytics
   // See https://mariestarck.com/add-google-analytics-to-your-next-js-application-in-5-easy-steps/
   const router = useRouter();
+
+  const client = globalThis?.location?.pathname?.startsWith("/local")
+    ? serviceWorkerClient
+    : distantDatabaseClient;
+
   useEffect(() => {
     const handleRouteChange = (url: string) => {
       pageView(url);
@@ -68,7 +100,6 @@ const App = (props: AppProps & InitialProps) => {
           <ApolloProvider client={client}>
             <QueryParamProvider>
               <ChakraProvider theme={theme} resetCSS>
-                <Meta />
                 <Head>
                   {/* Set proper initial appearance of content for mobile */}
                   <meta

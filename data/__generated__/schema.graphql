@@ -12,25 +12,32 @@ type Dataset {
   imagesAggregates: ImagesAggregates!
   labelsAggregates: LabelsAggregates!
   labelClassesAggregates: LabelClassesAggregates!
+  workspace: Workspace!
 }
 
 input DatasetCreateInput {
   id: ID
   name: String!
+  workspaceSlug: String!
+}
+
+input DatasetImportInput {
+  url: String!
+  format: ExportFormat!
+  options: ImportOptions
 }
 
 input DatasetUpdateInput {
   name: String!
 }
 
-input DatasetWhereIDInput {
-  id: ID!
+input DatasetWhereInput {
+  workspaceSlug: String!
 }
 
 input DatasetWhereUniqueInput {
   id: ID
-  name: String
-  slug: String
+  slugs: WorkspaceSlugAndDatasetSlug
 }
 
 scalar DateTime
@@ -109,7 +116,7 @@ type Image {
   height: Int!
   width: Int!
   labels: [Label!]!
-  datasetId: ID!
+  dataset: Dataset!
 }
 
 input ImageCreateInput {
@@ -138,6 +145,22 @@ type ImagesAggregates {
   totalCount: Int!
 }
 
+input ImportOptions {
+  coco: ImportOptionsCoco
+}
+
+input ImportOptionsCoco {
+  annotationsOnly: Boolean
+}
+
+type ImportStatus {
+  error: String
+}
+
+type IogInferenceResult {
+  polygons: [[[Float!]]]!
+}
+
 scalar JSON
 
 type Label {
@@ -162,13 +185,13 @@ type LabelClass {
   name: String!
   color: ColorHex!
   labels: [Label!]!
-  datasetId: ID!
+  dataset: Dataset!
 }
 
 input LabelClassCreateInput {
   id: ID
   name: String!
-  color: ColorHex!
+  color: ColorHex
   datasetId: ID!
 }
 
@@ -202,6 +225,7 @@ input LabelCreateInput {
 }
 
 enum LabelType {
+  Classification
   Polygon
   Box
 }
@@ -225,10 +249,40 @@ type LabelsAggregates {
   totalCount: Int!
 }
 
+type Membership {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  role: MembershipRole!
+  user: User!
+  workspace: Workspace!
+}
+
+input MembershipCreateInput {
+  id: ID
+  role: MembershipRole!
+  userId: ID!
+  workspaceSlug: String!
+}
+
+enum MembershipRole {
+  Admin
+  Member
+}
+
+input MembershipUpdateInput {
+  role: MembershipRole
+}
+
+input MembershipWhereUniqueInput {
+  id: ID!
+}
+
 type Mutation {
   createExample(data: ExampleCreateInput!): Example
   getUploadTarget(data: UploadTargetInput!): UploadTarget!
   createImage(data: ImageCreateInput!): Image
+  deleteImage(where: ImageWhereUniqueInput!): Image
   createLabel(data: LabelCreateInput!): Label
   updateLabel(where: LabelWhereUniqueInput!, data: LabelUpdateInput!): Label
   deleteLabel(where: LabelWhereUniqueInput!): Label
@@ -238,8 +292,16 @@ type Mutation {
   deleteLabelClass(where: LabelClassWhereUniqueInput!): LabelClass
   createDataset(data: DatasetCreateInput!): Dataset
   createDemoDataset: Dataset
-  updateDataset(where: DatasetWhereIDInput!, data: DatasetUpdateInput!): Dataset
-  deleteDataset(where: DatasetWhereIDInput!): Dataset
+  runIog(data: RunIogInput!): IogInferenceResult
+  updateDataset(where: DatasetWhereUniqueInput!, data: DatasetUpdateInput!): Dataset
+  deleteDataset(where: DatasetWhereUniqueInput!): Dataset
+  importDataset(where: DatasetWhereUniqueInput!, data: DatasetImportInput!): ImportStatus
+  createWorkspace(data: WorkspaceCreateInput!): Workspace
+  updateWorkspace(where: WorkspaceWhereUniqueInput!, data: WorkspaceUpdateInput!): Workspace
+  createMembership(data: MembershipCreateInput!): Membership
+  updateMembership(where: MembershipWhereUniqueInput!, data: MembershipUpdateInput!): Membership
+  deleteMembership(where: MembershipWhereUniqueInput!): Membership
+  updateUser(where: UserWhereUniqueInput!, data: UserUpdateInput!): User
 }
 
 type Query {
@@ -256,9 +318,28 @@ type Query {
   label(where: LabelWhereUniqueInput!): Label!
   labels(where: LabelWhereInput, first: Int, skip: Int): [Label!]!
   dataset(where: DatasetWhereUniqueInput!): Dataset!
-  datasets(first: Int, skip: Int): [Dataset!]!
+  datasets(where: DatasetWhereInput, first: Int, skip: Int): [Dataset!]!
+  searchDataset(where: DatasetWhereUniqueInput!): Dataset
+  workspace(where: WorkspaceWhereUniqueInput!): Workspace!
+  workspaces(first: Int, skip: Int): [Workspace!]!
+  membership(where: MembershipWhereUniqueInput!): Membership!
+  memberships(first: Int, skip: Int): [Membership!]!
+  user(where: UserWhereUniqueInput!): User!
+  users(first: Int, skip: Int): [User!]!
   exportDataset(where: ExportWhereUniqueInput!, format: ExportFormat!, options: ExportOptions): String!
   debug: JSON!
+}
+
+input RunIogInput {
+  id: ID!
+  imageUrl: String
+  x: Float
+  y: Float
+  width: Float
+  height: Float
+  pointsInside: [[Float!]]
+  pointsOutside: [[Float!]]
+  centerPoint: [Float!]
 }
 
 scalar Upload
@@ -276,4 +357,66 @@ type UploadTargetHttp {
 
 input UploadTargetInput {
   key: String!
+}
+
+type User {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  name: String!
+  email: String!
+  image: String
+  memberships: [Membership!]!
+}
+
+input UserUpdateInput {
+  name: String
+  image: String
+}
+
+input UserWhereUniqueInput {
+  id: ID!
+}
+
+type Workspace {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  name: String!
+  slug: String!
+  type: WorkspaceType!
+  plan: WorkspacePlan!
+  datasets: [Dataset!]!
+  memberships: [Membership!]!
+}
+
+input WorkspaceCreateInput {
+  id: ID
+  name: String!
+}
+
+enum WorkspacePlan {
+  Community
+  Starter
+  Pro
+  Enterprise
+}
+
+input WorkspaceSlugAndDatasetSlug {
+  slug: String!
+  workspaceSlug: String!
+}
+
+enum WorkspaceType {
+  Local
+  Online
+}
+
+input WorkspaceUpdateInput {
+  name: String
+}
+
+input WorkspaceWhereUniqueInput {
+  id: ID
+  slug: String
 }

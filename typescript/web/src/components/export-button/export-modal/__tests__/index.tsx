@@ -11,7 +11,9 @@ import { LabelCreateInput } from "@labelflow/graphql-types";
 import { probeImage } from "@labelflow/common-resolvers/src/utils/probe-image";
 import { mockNextRouter } from "../../../../utils/router-mocks";
 
-mockNextRouter({ query: { datasetSlug: "test-dataset" } });
+mockNextRouter({
+  query: { datasetSlug: "test-dataset", workspaceSlug: "local" },
+});
 
 import { ExportModal } from "..";
 import { theme } from "../../../../theme";
@@ -38,7 +40,9 @@ const createDataset = async (
   return await client.mutate({
     mutation: gql`
       mutation createDataset($name: String!, $datasetId: ID) {
-        createDataset(data: { name: $name, id: $datasetId }) {
+        createDataset(
+          data: { name: $name, id: $datasetId, workspaceSlug: "local" }
+        ) {
           id
         }
       }

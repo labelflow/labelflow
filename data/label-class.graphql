@@ -1,7 +1,7 @@
 input LabelClassCreateInput {
   id: ID
   name: String!
-  color: ColorHex!
+  color: ColorHex
   datasetId: ID!
 }
 

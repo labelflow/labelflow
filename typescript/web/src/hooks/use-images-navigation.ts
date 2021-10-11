@@ -4,8 +4,8 @@ import { useQuery, gql } from "@apollo/client";
 import { Dataset, Image } from "@labelflow/graphql-types";
 
 const getAllImagesOfADatasetQuery = gql`
-  query getAllImagesOfADataset($slug: String!) {
-    dataset(where: { slug: $slug }) {
+  query getAllImagesOfADataset($slug: String!, $workspaceSlug: String!) {
+    dataset(where: { slugs: { slug: $slug, workspaceSlug: $workspaceSlug } }) {
       id
       images {
         id
@@ -28,14 +28,14 @@ const getAllImagesOfADatasetQuery = gql`
  */
 export const useImagesNavigation = () => {
   const router = useRouter();
-  const { datasetSlug, imageId: currentImageId } = router?.query;
+  const { datasetSlug, imageId: currentImageId, workspaceSlug } = router?.query;
 
   // Refetch images ?
   const { data } = useQuery<{
     dataset: Pick<Dataset, "id" | "images">;
   }>(getAllImagesOfADatasetQuery, {
-    variables: { slug: datasetSlug },
-    skip: !datasetSlug,
+    variables: { slug: datasetSlug, workspaceSlug },
+    skip: !datasetSlug || !workspaceSlug,
   });
 
   // TODO: Investigate why you have to specify undefined states

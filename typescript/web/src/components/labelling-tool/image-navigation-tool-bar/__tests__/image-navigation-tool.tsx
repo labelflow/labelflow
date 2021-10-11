@@ -8,7 +8,7 @@ import "@testing-library/jest-dom/extend-expect";
 
 import { mockNextRouter } from "../../../../utils/router-mocks";
 
-mockNextRouter();
+mockNextRouter({ query: { workspaceSlug: "local" } });
 
 import { useRouter } from "next/router";
 import { gql, ApolloProvider } from "@apollo/client";
@@ -66,7 +66,9 @@ beforeEach(async () => {
   await client.mutate({
     mutation: gql`
       mutation createDataset($datasetId: ID!) {
-        createDataset(data: { name: "test dataset", id: $datasetId }) {
+        createDataset(
+          data: { name: "test dataset", id: $datasetId, workspaceSlug: "local" }
+        ) {
           id
         }
       }
@@ -90,7 +92,7 @@ test("should display a dash and a zero when the image id isn't present/when the 
 test("should display one when only one image in list", async () => {
   const imageId = await createImage("testImage");
   (useRouter as jest.Mock).mockImplementation(() => ({
-    query: { imageId, datasetSlug: "test-dataset" },
+    query: { imageId, datasetSlug: "test-dataset", workspaceSlug: "local" },
   }));
 
   renderImageNavigationTool();
@@ -110,7 +112,7 @@ test("should select previous image when the left arrow is pressed", async () => 
 
   await createImage("testImageC");
   (useRouter as jest.Mock).mockImplementation(() => ({
-    query: { imageId, datasetSlug: "test-dataset" },
+    query: { imageId, datasetSlug: "test-dataset", workspaceSlug: "local" },
     push: mockedPush,
   }));
 
@@ -139,7 +141,7 @@ test("should select next image when the right arrow is pressed", async () => {
   const newestImageId = await createImage("testImageC");
 
   (useRouter as jest.Mock).mockImplementation(() => ({
-    query: { imageId, datasetSlug: "test-dataset" },
+    query: { imageId, datasetSlug: "test-dataset", workspaceSlug: "local" },
     push: mockedPush,
   }));
   const { container } = renderImageNavigationTool();

@@ -6,11 +6,11 @@ import type {
   MutationCreateImageArgs,
   QueryImageArgs,
   QueryImagesArgs,
+  MutationDeleteImageArgs,
 } from "@labelflow/graphql-types";
 import mime from "mime-types";
 import { probeImage } from "./utils/probe-image";
-
-import { Context, DbImage, Repository } from "./types";
+import { Context, DbImage, Repository, DbImageCreateInput } from "./types";
 import { throwIfResolvesToNil } from "./utils/throw-if-resolves-to-nil";
 
 // Mutations
@@ -132,7 +132,7 @@ export const getImageEntityFromMutationArgs = async (
     (urlToProbe: string) => repository.upload.get(urlToProbe, req)
   );
 
-  const newImageEntity: DbImage = {
+  const newImageEntity: DbImageCreateInput = {
     datasetId,
     createdAt: now,
     updatedAt: now,
@@ -150,31 +150,39 @@ export const getImageEntityFromMutationArgs = async (
 const labelsResolver = async (
   { id }: DbImage,
   _args: any,
-  { repository }: Context
+  { repository, user }: Context
 ) => {
-  return await repository.label.list({ imageId: id });
+  return await repository.label.list({ imageId: id, user });
 };
 
-const image = async (_: any, args: QueryImageArgs, { repository }: Context) => {
+const image = async (
+  _: any,
+  args: QueryImageArgs,
+  { repository, user }: Context
+) => {
   return await throwIfResolvesToNil(
     `No image with id "${args?.where?.id}"`,
-    repository.image.getById
-  )(args?.where?.id);
+    repository.image.get
+  )(args?.where, user);
 };
 
 const images = async (
   _: any,
   args: QueryImagesArgs,
-  { repository }: Context
+  { repository, user }: Context
 ) => {
-  return await repository.image.list(args?.where, args?.skip, args?.first);
+  return await repository.image.list(
+    { ...args?.where, user },
+    args?.skip,
+    args?.first
+  );
 };
 
 // Mutations
 const createImage = async (
   _: any,
   args: MutationCreateImageArgs,
-  { repository, req }: Context
+  { repository, req, user }: Context
 ): Promise<DbImage> => {
   const { file, url, externalUrl, datasetId } = args.data;
 
@@ -183,8 +191,8 @@ const createImage = async (
   // entity before being able to continue.
   await throwIfResolvesToNil(
     `The dataset id ${datasetId} doesn't exist.`,
-    repository.dataset.getById
-  )(datasetId);
+    repository.dataset.get
+  )({ id: datasetId }, user);
 
   if (
     !(
@@ -204,9 +212,37 @@ const createImage = async (
     req
   );
 
-  await repository.image.add(newImageEntity);
+  const newImageId = await repository.image.add(newImageEntity, user);
+  const createdImage = await repository.image.get({ id: newImageId }, user);
+  if (createdImage == null) {
+    throw new Error("An error has occurred during image creation");
+  }
+  return createdImage;
+};
 
-  return newImageEntity;
+const deleteImage = async (
+  _: any,
+  args: MutationDeleteImageArgs,
+  { repository, user }: Context
+): Promise<DbImage> => {
+  const imageId = args.where.id;
+  const imageToDelete = await throwIfResolvesToNil(
+    "No image with such id",
+    repository.image.get
+  )({ id: imageId }, user);
+  const labelsToDelete = await repository.label.list({
+    imageId,
+    user,
+  });
+  await Promise.all(
+    labelsToDelete.map((label) =>
+      repository.label.delete({ id: label.id }, user)
+    )
+  );
+  await repository.image.delete({ id: imageId }, user);
+  await repository.upload.delete(imageToDelete.url);
+
+  return imageToDelete;
 };
 
 const imagesAggregates = (parent: any) => {
@@ -214,17 +250,21 @@ const imagesAggregates = (parent: any) => {
   return parent ?? {};
 };
 
-const totalCount = async (parent: any, _args: any, { repository }: Context) => {
+const totalCount = async (
+  parent: any,
+  _args: any,
+  { repository, user }: Context
+) => {
   // eslint-disable-next-line no-underscore-dangle
   const typename = parent?.__typename;
-
   if (typename === "Dataset") {
     return await repository.image.count({
       datasetId: parent.id,
+      user,
     });
   }
 
-  return await repository.image.count();
+  return await repository.image.count({ user });
 };
 
 export default {
@@ -236,6 +276,7 @@ export default {
 
   Mutation: {
     createImage,
+    deleteImage,
   },
 
   Image: {
