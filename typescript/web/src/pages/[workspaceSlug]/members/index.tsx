@@ -10,6 +10,8 @@ import { WelcomeManager } from "../../../components/welcome-manager";
 import { CookieBanner } from "../../../components/cookie-banner";
 import { WorkspaceTabBar } from "../../../components/layout/tab-bar/workspace-tab-bar";
 import { Members } from "../../../components/members";
+import { WorkspaceSwitcher } from "../../../components/workspace-switcher";
+import { NavLogo } from "../../../components/logo/nav-logo";
 
 const membershipsQuery = gql`
   query getMembershipsMembers($workspaceSlug: String) {
@@ -58,7 +60,11 @@ const MembersPage = () => {
       <Meta title="LabelFlow | Members" />
       <CookieBanner />
       <Layout
-        breadcrumbs={[<Text key={0}>Members</Text>]}
+        breadcrumbs={[
+          <NavLogo key={0} />,
+          <WorkspaceSwitcher key={1} />,
+          <Text key={2}>Members</Text>,
+        ]}
         tabBar={
           <WorkspaceTabBar currentTab="members" workspaceSlug={workspaceSlug} />
         }
