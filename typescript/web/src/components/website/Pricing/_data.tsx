@@ -401,7 +401,7 @@ export const data = [
       <>
         <Text>Pre labeling</Text>
         <Text fontSize="xs" lineHeight="1" color="gray.500">
-          Get your images pre-labelled by your AI or our AI
+          Get your images pre-labeled by your AI or our AI
         </Text>
       </>
     ),

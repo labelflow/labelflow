@@ -21,7 +21,7 @@ describe("Golden path", () => {
     cy.get("input").type("cypress dataset");
 
     cy.wait(420);
-    cy.contains("Start Labelling").click();
+    cy.contains("Start Labeling").click();
 
     cy.wait(420);
     cy.contains("cypress dataset").click();
