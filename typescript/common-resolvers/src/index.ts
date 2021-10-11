@@ -7,6 +7,7 @@ import labelClassResolvers from "./label-class";
 import datasetResolvers from "./dataset";
 import scalarsResolvers from "./scalars";
 import uploadResolvers from "./upload";
+import iogResolvers from "./iog-inference";
 
 export const commonResolvers = mergeResolvers([
   exportResolvers,
@@ -17,6 +18,7 @@ export const commonResolvers = mergeResolvers([
   datasetResolvers,
   scalarsResolvers,
   uploadResolvers,
+  iogResolvers,
 ]);
 
 // We maybe should extract those functions in a dedicated package, feel free to discuss this

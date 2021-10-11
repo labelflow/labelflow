@@ -186,6 +186,11 @@ export type ImportStatus = {
   error?: Maybe<Scalars['String']>;
 };
 
+export type IogInferenceResult = {
+  __typename?: 'IogInferenceResult';
+  polygons: Array<Maybe<Array<Maybe<Array<Scalars['Float']>>>>>;
+};
+
 
 export type Label = {
   __typename?: 'Label';
@@ -322,6 +327,7 @@ export type Mutation = {
   deleteLabelClass?: Maybe<LabelClass>;
   createDataset?: Maybe<Dataset>;
   createDemoDataset?: Maybe<Dataset>;
+  runIog?: Maybe<IogInferenceResult>;
   updateDataset?: Maybe<Dataset>;
   deleteDataset?: Maybe<Dataset>;
   importDataset?: Maybe<ImportStatus>;
@@ -394,6 +400,11 @@ export type MutationDeleteLabelClassArgs = {
 
 export type MutationCreateDatasetArgs = {
   data: DatasetCreateInput;
+};
+
+
+export type MutationRunIogArgs = {
+  data: RunIogInput;
 };
 
 
@@ -577,6 +588,18 @@ export type QueryExportDatasetArgs = {
   where: ExportWhereUniqueInput;
   format: ExportFormat;
   options?: Maybe<ExportOptions>;
+};
+
+export type RunIogInput = {
+  id: Scalars['ID'];
+  imageUrl?: Maybe<Scalars['String']>;
+  x?: Maybe<Scalars['Float']>;
+  y?: Maybe<Scalars['Float']>;
+  width?: Maybe<Scalars['Float']>;
+  height?: Maybe<Scalars['Float']>;
+  pointsInside?: Maybe<Array<Maybe<Array<Scalars['Float']>>>>;
+  pointsOutside?: Maybe<Array<Maybe<Array<Scalars['Float']>>>>;
+  centerPoint?: Maybe<Array<Scalars['Float']>>;
 };
 
 
@@ -771,9 +794,10 @@ export type ResolversTypes = {
   ImportOptions: ImportOptions;
   ImportOptionsCoco: ImportOptionsCoco;
   ImportStatus: ResolverTypeWrapper<ImportStatus>;
+  IogInferenceResult: ResolverTypeWrapper<IogInferenceResult>;
+  Float: ResolverTypeWrapper<Scalars['Float']>;
   JSON: ResolverTypeWrapper<Scalars['JSON']>;
   Label: ResolverTypeWrapper<Label>;
-  Float: ResolverTypeWrapper<Scalars['Float']>;
   LabelClass: ResolverTypeWrapper<LabelClass>;
   LabelClassCreateInput: LabelClassCreateInput;
   LabelClassReorderInput: LabelClassReorderInput;
@@ -794,6 +818,7 @@ export type ResolversTypes = {
   MembershipWhereUniqueInput: MembershipWhereUniqueInput;
   Mutation: ResolverTypeWrapper<{}>;
   Query: ResolverTypeWrapper<{}>;
+  RunIogInput: RunIogInput;
   Upload: ResolverTypeWrapper<Scalars['Upload']>;
   UploadTarget: ResolversTypes['UploadTargetDirect'] | ResolversTypes['UploadTargetHttp'];
   UploadTargetDirect: ResolverTypeWrapper<UploadTargetDirect>;
@@ -843,9 +868,10 @@ export type ResolversParentTypes = {
   ImportOptions: ImportOptions;
   ImportOptionsCoco: ImportOptionsCoco;
   ImportStatus: ImportStatus;
+  IogInferenceResult: IogInferenceResult;
+  Float: Scalars['Float'];
   JSON: Scalars['JSON'];
   Label: Label;
-  Float: Scalars['Float'];
   LabelClass: LabelClass;
   LabelClassCreateInput: LabelClassCreateInput;
   LabelClassReorderInput: LabelClassReorderInput;
@@ -864,6 +890,7 @@ export type ResolversParentTypes = {
   MembershipWhereUniqueInput: MembershipWhereUniqueInput;
   Mutation: {};
   Query: {};
+  RunIogInput: RunIogInput;
   Upload: Scalars['Upload'];
   UploadTarget: ResolversParentTypes['UploadTargetDirect'] | ResolversParentTypes['UploadTargetHttp'];
   UploadTargetDirect: UploadTargetDirect;
@@ -943,6 +970,11 @@ export type ImportStatusResolvers<ContextType = any, ParentType extends Resolver
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type IogInferenceResultResolvers<ContextType = any, ParentType extends ResolversParentTypes['IogInferenceResult'] = ResolversParentTypes['IogInferenceResult']> = {
+  polygons?: Resolver<Array<Maybe<Array<Maybe<Array<ResolversTypes['Float']>>>>>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export interface JsonScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['JSON'], any> {
   name: 'JSON';
 }
@@ -1008,6 +1040,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   deleteLabelClass?: Resolver<Maybe<ResolversTypes['LabelClass']>, ParentType, ContextType, RequireFields<MutationDeleteLabelClassArgs, 'where'>>;
   createDataset?: Resolver<Maybe<ResolversTypes['Dataset']>, ParentType, ContextType, RequireFields<MutationCreateDatasetArgs, 'data'>>;
   createDemoDataset?: Resolver<Maybe<ResolversTypes['Dataset']>, ParentType, ContextType>;
+  runIog?: Resolver<Maybe<ResolversTypes['IogInferenceResult']>, ParentType, ContextType, RequireFields<MutationRunIogArgs, 'data'>>;
   updateDataset?: Resolver<Maybe<ResolversTypes['Dataset']>, ParentType, ContextType, RequireFields<MutationUpdateDatasetArgs, 'where' | 'data'>>;
   deleteDataset?: Resolver<Maybe<ResolversTypes['Dataset']>, ParentType, ContextType, RequireFields<MutationDeleteDatasetArgs, 'where'>>;
   importDataset?: Resolver<Maybe<ResolversTypes['ImportStatus']>, ParentType, ContextType, RequireFields<MutationImportDatasetArgs, 'where' | 'data'>>;
@@ -1097,6 +1130,7 @@ export type Resolvers<ContextType = any> = {
   Image?: ImageResolvers<ContextType>;
   ImagesAggregates?: ImagesAggregatesResolvers<ContextType>;
   ImportStatus?: ImportStatusResolvers<ContextType>;
+  IogInferenceResult?: IogInferenceResultResolvers<ContextType>;
   JSON?: GraphQLScalarType;
   Label?: LabelResolvers<ContextType>;
   LabelClass?: LabelClassResolvers<ContextType>;
