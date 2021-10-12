@@ -2,6 +2,10 @@ input MembershipWhereUniqueInput {
   id: ID!
 }
 
+input MembershipWhereInput {
+  workspaceSlug: String
+}
+
 input MembershipCreateInput {
   id: ID
   role: MembershipRole!

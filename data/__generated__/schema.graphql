@@ -266,12 +266,17 @@ input MembershipCreateInput {
 }
 
 enum MembershipRole {
+  Owner
   Admin
   Member
 }
 
 input MembershipUpdateInput {
   role: MembershipRole
+}
+
+input MembershipWhereInput {
+  workspaceSlug: String
 }
 
 input MembershipWhereUniqueInput {
@@ -323,7 +328,7 @@ type Query {
   workspace(where: WorkspaceWhereUniqueInput!): Workspace!
   workspaces(first: Int, skip: Int): [Workspace!]!
   membership(where: MembershipWhereUniqueInput!): Membership!
-  memberships(first: Int, skip: Int): [Membership!]!
+  memberships(where: MembershipWhereInput, first: Int, skip: Int): [Membership!]!
   user(where: UserWhereUniqueInput!): User!
   users(first: Int, skip: Int): [User!]!
   exportDataset(where: ExportWhereUniqueInput!, format: ExportFormat!, options: ExportOptions): String!
@@ -363,8 +368,8 @@ type User {
   id: ID!
   createdAt: DateTime!
   updatedAt: DateTime!
-  name: String!
-  email: String!
+  name: String
+  email: String
   image: String
   memberships: [Membership!]!
 }

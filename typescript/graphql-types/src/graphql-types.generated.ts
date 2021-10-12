@@ -300,12 +300,17 @@ export type MembershipCreateInput = {
 };
 
 export enum MembershipRole {
+  Owner = 'Owner',
   Admin = 'Admin',
   Member = 'Member'
 }
 
 export type MembershipUpdateInput = {
   role?: Maybe<MembershipRole>;
+};
+
+export type MembershipWhereInput = {
+  workspaceSlug?: Maybe<Scalars['String']>;
 };
 
 export type MembershipWhereUniqueInput = {
@@ -568,6 +573,7 @@ export type QueryMembershipArgs = {
 
 
 export type QueryMembershipsArgs = {
+  where?: Maybe<MembershipWhereInput>;
   first?: Maybe<Scalars['Int']>;
   skip?: Maybe<Scalars['Int']>;
 };
@@ -625,8 +631,8 @@ export type User = {
   id: Scalars['ID'];
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
-  name: Scalars['String'];
-  email: Scalars['String'];
+  name?: Maybe<Scalars['String']>;
+  email?: Maybe<Scalars['String']>;
   image?: Maybe<Scalars['String']>;
   memberships: Array<Membership>;
 };
@@ -815,6 +821,7 @@ export type ResolversTypes = {
   MembershipCreateInput: MembershipCreateInput;
   MembershipRole: MembershipRole;
   MembershipUpdateInput: MembershipUpdateInput;
+  MembershipWhereInput: MembershipWhereInput;
   MembershipWhereUniqueInput: MembershipWhereUniqueInput;
   Mutation: ResolverTypeWrapper<{}>;
   Query: ResolverTypeWrapper<{}>;
@@ -887,6 +894,7 @@ export type ResolversParentTypes = {
   Membership: Membership;
   MembershipCreateInput: MembershipCreateInput;
   MembershipUpdateInput: MembershipUpdateInput;
+  MembershipWhereInput: MembershipWhereInput;
   MembershipWhereUniqueInput: MembershipWhereUniqueInput;
   Mutation: {};
   Query: {};
@@ -1101,8 +1109,8 @@ export type UserResolvers<ContextType = any, ParentType extends ResolversParentT
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
-  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  email?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   image?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   memberships?: Resolver<Array<ResolversTypes['Membership']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;

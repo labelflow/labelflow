@@ -38,6 +38,16 @@ const memberships = async (
   if (user?.id == null) {
     return [];
   }
+  const workspaceSlug = args?.where?.workspaceSlug;
+  if (workspaceSlug != null) {
+    await checkUserAccessToWorkspace({ where: { slug: workspaceSlug }, user });
+    return await prisma.membership.findMany({
+      where: { workspaceSlug },
+      orderBy: { createdAt: Prisma.SortOrder.asc },
+      skip: args?.skip ?? undefined,
+      take: args.first ?? undefined,
+    });
+  }
   return await prisma.membership.findMany({
     where: { userId: user?.id },
     orderBy: { createdAt: Prisma.SortOrder.asc },

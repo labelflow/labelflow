@@ -16,10 +16,12 @@ fetch.disableFetchMocks();
 
 const testUser1Id = uuidV4();
 const testUser2Id = uuidV4();
+const testUser3Id = uuidV4();
 
 beforeAll(async () => {
   await prisma.user.create({ data: { id: testUser1Id, name: "test-user-1" } });
   await prisma.user.create({ data: { id: testUser2Id, name: "test-user-2" } });
+  await prisma.user.create({ data: { id: testUser3Id, name: "test-user-3" } });
 });
 
 beforeEach(async () => {
@@ -235,8 +237,8 @@ describe("memberships query", () => {
       fetchPolicy: "no-cache",
     });
     expect(data.memberships.map((workspace) => workspace.role)).toEqual([
-      MembershipRole.Admin,
-      MembershipRole.Admin,
+      MembershipRole.Owner,
+      MembershipRole.Owner,
     ]);
   });
 
@@ -267,8 +269,47 @@ describe("memberships query", () => {
     });
 
     expect(data.memberships.map((workspace) => workspace.role)).toEqual([
-      MembershipRole.Admin,
-      MembershipRole.Admin,
+      MembershipRole.Owner,
+      MembershipRole.Owner,
+    ]);
+  });
+
+  it("gets memberships by workspace slug", async () => {
+    // both this workspaces are linked to testUser1Id by default
+    const workspace1Slug = (await createWorkspace({ name: "test1" }))?.data
+      ?.createWorkspace.slug as string;
+    const workspace2Slug = (await createWorkspace({ name: "test2" }))?.data
+      ?.createWorkspace.slug as string;
+
+    await createMembership({
+      userId: testUser2Id,
+      workspaceSlug: workspace1Slug,
+      role: MembershipRole.Member,
+    });
+
+    await createMembership({
+      userId: testUser2Id,
+      workspaceSlug: workspace2Slug,
+      role: MembershipRole.Member,
+    });
+
+    const { data } = await client.query<{
+      memberships: Pick<Membership, "id" | "role">[];
+    }>({
+      query: gql`
+        query memberships($workspaceSlug: String) {
+          memberships(where: { workspaceSlug: $workspaceSlug }) {
+            id
+            role
+          }
+        }
+      `,
+      fetchPolicy: "no-cache",
+      variables: { workspaceSlug: workspace1Slug },
+    });
+    expect(data.memberships.map((workspace) => workspace.role)).toEqual([
+      MembershipRole.Owner,
+      MembershipRole.Member,
     ]);
   });
 
@@ -311,7 +352,7 @@ describe("memberships query", () => {
     });
 
     expect(data.memberships.map((workspace) => workspace.role)).toEqual([
-      MembershipRole.Admin,
+      MembershipRole.Owner,
       MembershipRole.Member,
       MembershipRole.Member,
     ]);
@@ -357,8 +398,8 @@ describe("memberships query", () => {
     });
 
     expect(data.memberships.map((workspace) => workspace.role)).toEqual([
-      MembershipRole.Admin,
-      MembershipRole.Admin,
+      MembershipRole.Owner,
+      MembershipRole.Owner,
       MembershipRole.Member,
     ]);
   });
@@ -403,7 +444,7 @@ describe("memberships query", () => {
     });
 
     expect(data.memberships.map((workspace) => workspace.role)).toEqual([
-      MembershipRole.Admin,
+      MembershipRole.Owner,
       MembershipRole.Member,
     ]);
   });
@@ -514,6 +555,7 @@ describe("updateMembership mutation", () => {
   });
 
   it("throws if the user does not have access to the membership", async () => {
+    user.id = testUser3Id;
     const workspaceSlug = (await createWorkspace())?.data?.createWorkspace
       .slug as string;
 
@@ -524,6 +566,7 @@ describe("updateMembership mutation", () => {
         workspaceSlug,
       })
     ).data?.createMembership.id as string;
+    user.id = testUser1Id;
     await expect(
       updateMembership({
         id: membershipId,
@@ -608,6 +651,7 @@ describe("deleteMembership mutation", () => {
   });
 
   it("throws if the user does not have access to the membership", async () => {
+    user.id = testUser3Id;
     const workspaceSlug = (await createWorkspace())?.data?.createWorkspace
       .slug as string;
 
@@ -618,7 +662,7 @@ describe("deleteMembership mutation", () => {
         workspaceSlug,
       })
     ).data?.createMembership.id as string;
-
+    user.id = testUser1Id;
     await expect(() => deleteMembership(membershipId)).rejects.toThrow(
       "User not authorized to access membership"
     );

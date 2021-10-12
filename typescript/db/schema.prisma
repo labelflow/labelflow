@@ -452,6 +452,7 @@ enum LabelType {
 }
 
 enum UserRole {
+  Owner
   Admin
   Member
 }
