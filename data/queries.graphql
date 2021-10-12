@@ -33,7 +33,11 @@ type Query {
   workspaces(first: Int, skip: Int): [Workspace!]!
 
   membership(where: MembershipWhereUniqueInput!): Membership!
-  memberships(first: Int, skip: Int): [Membership!]!
+  memberships(
+    where: MembershipWhereInput
+    first: Int
+    skip: Int
+  ): [Membership!]!
 
   user(where: UserWhereUniqueInput!): User!
   users(first: Int, skip: Int): [User!]!

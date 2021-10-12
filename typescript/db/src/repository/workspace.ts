@@ -36,7 +36,7 @@ export const addWorkspace: Repository["workspace"]["add"] = async (
       memberships: {
         create: {
           userId: user?.id,
-          role: UserRole.Admin,
+          role: UserRole.Owner,
         },
       },
     }),
