@@ -1,18 +1,64 @@
-# LabelFlow
+<div id="top"></div>
 
-LabelFlow is an open-source image labeling tool.
+<br />
+<div align="center">
+   <a href="https://github.com/labelflow/labelflow/">
+    <img alt="babel" src="typescript/web/public/static/icon-512x512.png" width="160">
+  </a>
 
-If you want to try the deployed version, you can visit [labeflow.ai](https://labelflow.ai).
+  <h3 align="center">LabelFlow</h3>
 
-You can also build the web application from its source, and serve it from your machine.
+  <p align="center">
+    The open platform for image labeling
+    <br />
+    <a href="https://labelflow.ai/local"><strong>Try it now »</strong></a>
+    <br />
+    <br />
+    <a href="https://labelflow.gitbook.io/labelflow/">Explore docs</a>
+    ·
+    <a href="https://github.com/labelflow/labelflow/issues/new?assignees=&labels=bug&template=bug_report.md&title=">Report Bug</a>
+    ·
+    <a href="https://labelflow.canny.io/">Request Feature</a>
+    ·
+    <a href="https://discord.gg/sHtanUQA2V">Join the Community</a>
+  </p>
+</div>
+<br />
+<br />
 
-## Serving your own LabelFlow
+## About
+
+LabelFlow is an open platform for image labeling. Its source is entirely available on this Github repository.
+
+[Labelflow.ai](https://labelflow.ai) is the parent company developing LabelFlow, and commercializing a Hosted version. 
+
+You can also build LabelFlow from source, and serve it from your machine. Read how to [deploy it yourself](#running-labelflow-on-your-machine).
+
+### Built With
+
+* [TypeScript](https://www.typescriptlang.org/): Main programming language of the web app
+* [ReactJS](https://reactjs.org/): View library of the web app
+* [NextJS](https://nextjs.org/): Web framework of the web app
+* [GraphQL](https://graphql.org/): API, communication between client and server, and service worker
+* [NodeJS](https://nodejs.org/en/): Javascript runtime for development and production on docker 
+* [Python](https://www.python.org/) for the machine learning server
+* [PyTorch](https://pytorch.org/) for the machine learning server
+
+<p align="right">(<a href="#top">back to top</a>)</p>
+
+## Getting Started
+
+### LabelFlow.ai hosted version
+
+You can use our hsoted version now for free, at [labeflow.ai](https://labelflow.ai).
+
+### Serving your own LabelFlow
 
 This guide walks you through the steps needed to run a production-ready version of LabelFlow locally.
 
 Before continuing, please have a look at our <a href="./LICENSE">License</a> ⬅️.
 
-**Prerequisites**: 
+#### Prerequisites
 
 You need to have below listed softwares installed on your machine to run labelflow.
      
@@ -21,7 +67,7 @@ You need to have below listed softwares installed on your machine to run labelfl
    - ✔️ Yarn (v1.22.4 or above) 📦
 
 
- 💻 **Running the Labelflow on your machine**:
+#### Running LabelFlow on your machine
 
 1. Clone the repository on your machine using  
 
@@ -54,3 +100,31 @@ You need to have below listed softwares installed on your machine to run labelfl
     ```
 
 6. Open your browser and visit [http://localhost:3000](http://localhost:3000).
+
+<p align="right">(<a href="#top">back to top</a>)</p>
+
+
+## Roadmap
+
+* The short term road map is on Github https://github.com/labelflow/labelflow/projects/1
+* The longer term feature road map is on Canny https://labelflow.canny.io/
+
+<p align="right">(<a href="#top">back to top</a>)</p>
+
+## License
+
+LabelFlow sources is entirely available on Github, and LabelFlow is primarily distributed under the terms of both the Business Source License (BSL), which is the closest thing to open source that we can do without being threatened by external companies.
+
+See [LICENSE](https://github.com/labelflow/labelflow/blob/main/LICENSE) for details.
+
+<p align="right">(<a href="#top">back to top</a>)</p>
+
+## Contact
+
+* Discord Community https://discord.gg/sHtanUQA2V
+* Website https://labelflow.ai/website
+* Twitter https://twitter.com/labelflowai
+* LinkedIn https://www.linkedin.com/company/labelflow/
+* Facebook https://facebook.com/labelflow-102033695440701
+
+<p align="right">(<a href="#top">back to top</a>)</p>
