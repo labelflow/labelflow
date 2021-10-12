@@ -26,6 +26,13 @@ import { useApolloClient } from "@apollo/client";
 import { datasetDataQuery } from "../../../pages/[workspaceSlug]/datasets/[datasetSlug]/images";
 import { getDatasetsQuery } from "../../../pages/[workspaceSlug]/datasets";
 
+const validateEmail = (email: string): boolean => {
+  const re =
+    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  return re.test(String(email).toLowerCase());
+};
+const maxNumberOfEmails = 20;
+
 export const NewMemberModal = ({
   isOpen = false,
   onClose = () => {},
@@ -39,11 +46,12 @@ export const NewMemberModal = ({
 
   const [hasUploaded, setHasUploaded] = useState(false);
   const [value, setValue] = useState<string>("");
-
   const handleInputChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     const inputValue = e.target.value;
     setValue(inputValue);
   };
+  const emails = value.split("\n").filter((email) => email !== "");
+  const hasInvalidEmails = emails.some((email) => !validateEmail(email));
 
   useEffect(() => {
     // Manually refetch
@@ -115,8 +123,26 @@ export const NewMemberModal = ({
                 resize="none"
               />
             </Stack>
-            <Text fontSize="sm" fontWeight="medium">
-              {`${value.split("\n").length - 1} Invitees`}
+            <Text
+              fontSize="sm"
+              fontWeight="medium"
+              color={`${
+                emails.length > maxNumberOfEmails || hasInvalidEmails
+                  ? "red"
+                  : "black"
+              }`}
+            >
+              {`${emails.length} ${
+                emails.length <= 1 ? "Invitee." : "Invitees."
+              } ${
+                emails.length > maxNumberOfEmails
+                  ? ` You can invite a maximum of ${maxNumberOfEmails} members at a time.`
+                  : ""
+              } ${
+                hasInvalidEmails
+                  ? "\nInvalid emails found, please check them."
+                  : ""
+              }`}
             </Text>
             <Text fontSize="md" fontWeight="bold" paddingTop={2}>
               Invite as:
@@ -152,6 +178,7 @@ export const NewMemberModal = ({
             colorScheme="brand"
             size="md"
             alignSelf="flex-end"
+            disabled={emails.length > maxNumberOfEmails || hasInvalidEmails}
             flexShrink={0}
             onClick={() => {
               onClose();
