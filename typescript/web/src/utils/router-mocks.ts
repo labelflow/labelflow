@@ -18,6 +18,7 @@ export const mockUseQueryParams = (
 const nextRouterMock = ({
   query: initialQuery = {},
   pathname: initialPathname = "/",
+  isReady: initialIsReady = true,
 } = {}) => {
   // @ts-ignore
   const router = {
@@ -32,6 +33,7 @@ const nextRouterMock = ({
       router.pathname = pathname;
     },
     useRouter: jest.fn(() => router),
+    isReady: initialIsReady,
   };
   return router;
 };
