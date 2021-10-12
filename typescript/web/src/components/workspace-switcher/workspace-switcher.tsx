@@ -4,11 +4,11 @@ import { useToast } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { useState, useCallback, useMemo } from "react";
 import { startCase } from "lodash/fp";
-import { WorkspaceMenu } from "./workspace-menu";
+import { useQueryParam } from "use-query-params";
 
+import { WorkspaceMenu } from "./workspace-menu";
 import { WorkspaceItem } from "./workspace-menu/workspace-selection-popover";
 import { BoolParam } from "../../utils/query-param-bool";
-import { useQueryParam } from "use-query-params";
 
 const getWorkspacesQuery = gql`
   query getWorkspaces {
