@@ -17,7 +17,7 @@ mockNextRouter({
   query: { datasetSlug: "test-dataset", workspaceSlug: "local" },
 });
 
-import { ImportImagesModal } from "../import-images-modal";
+import { NewMemberModal } from "../new-member-modal";
 
 const files = [
   new File(["Hello"], "hello.png", { type: "image/png" }),
@@ -72,7 +72,7 @@ async function ensuresUploadsAreFinished(number = 2) {
 }
 
 function renderModalAndImport(filesToImport = files, props = {}) {
-  render(<ImportImagesModal isOpen onClose={() => {}} {...props} />, {
+  render(<NewMemberModal isOpen onClose={() => {}} {...props} />, {
     wrapper: Wrapper,
   });
 
@@ -188,7 +188,7 @@ test("should display the error description when a file could not be imported", a
 });
 
 test("should not display the modal by default", async () => {
-  render(<ImportImagesModal />, {
+  render(<NewMemberModal />, {
     wrapper: Wrapper,
   });
 

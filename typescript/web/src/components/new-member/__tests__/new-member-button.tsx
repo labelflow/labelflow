@@ -20,7 +20,7 @@ mockNextRouter({
   query: { datasetSlug: "mocked-dataset", workspaceSlug: "local" },
 });
 
-import { ImportButton } from "../import-button";
+import { NewMemberButton } from "../new-member-button";
 
 const files = [
   new File(["Hello"], "hello.png", { type: "image/png" }),
@@ -71,7 +71,7 @@ test("should clear the modal content when closed", async () => {
     height: 36,
     mime: "image/jpeg",
   });
-  render(<ImportButton />, {
+  render(<NewMemberButton />, {
     wrapper: Wrapper,
   });
 

@@ -1,6 +1,6 @@
 import { Button, useDisclosure } from "@chakra-ui/react";
 
-import { ImportImagesModal } from "../new-member-modal";
+import { NewMemberModal } from "../new-member-modal";
 import { chakraDecorator } from "../../../../utils/chakra-decorator";
 import { apolloDecorator } from "../../../../utils/apollo-decorator";
 import { queryParamsDecorator } from "../../../../utils/query-params-decorator";
@@ -25,7 +25,7 @@ export const Default = () => {
   return (
     <div>
       <Button onClick={onOpen}>Display</Button>
-      <ImportImagesModal isOpen={isOpen} onClose={onClose} />
+      <NewMemberModal isOpen={isOpen} onClose={onClose} />
     </div>
   );
 };
@@ -36,7 +36,7 @@ export const OpenedByDefault = () => {
   return (
     <div>
       <Button onClick={onOpen}>Display</Button>
-      <ImportImagesModal isOpen={isOpen} onClose={onClose} />
+      <NewMemberModal isOpen={isOpen} onClose={onClose} />
     </div>
   );
 };

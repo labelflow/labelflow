@@ -1,1 +1,1 @@
-export { ImportButton } from "./import-button";
+export { NewMemberButton } from "./new-member-button";

@@ -12,7 +12,7 @@ import { useQueryParam } from "use-query-params";
 
 import { RiUploadCloud2Line } from "react-icons/ri";
 import { BoolParam } from "../../utils/query-param-bool";
-import { ImportImagesModal } from "./new-member-modal";
+import { NewMemberModal } from "./new-member-modal";
 import { trackEvent } from "../../utils/google-analytics";
 
 const UploadIcon = chakra(RiUploadCloud2Line);
@@ -21,7 +21,7 @@ type Props = ButtonProps & {
   showModal?: boolean;
 };
 
-export const ImportButton = ({ showModal = true, ...props }: Props) => {
+export const NewMemberButton = ({ showModal = true, ...props }: Props) => {
   const [isOpen, setIsOpen] = useQueryParam("modal-import", BoolParam);
   const handleOpen = useCallback(() => {
     setIsOpen(true, "replaceIn");
@@ -76,7 +76,7 @@ export const ImportButton = ({ showModal = true, ...props }: Props) => {
   return (
     <>
       {showModal && (
-        <ImportImagesModal
+        <NewMemberModal
           isOpen={isOpen ?? false}
           onClose={() => setIsOpen(false, "replaceIn")}
         />

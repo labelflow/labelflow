@@ -1,1 +1,1 @@
-export { ImportImagesModal } from "./new-member-modal";
+export { NewMemberModal } from "./new-member-modal";
