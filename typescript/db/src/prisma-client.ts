@@ -8,12 +8,15 @@ declare module globalThis {
 export type PrismaClient = PrismaClientClass;
 
 export const resetPrismaClient = async (): Promise<PrismaClientClass> => {
-  console.log("Initializing prismaInstance");
+  console.log("[Prisma Client] Initializing prismaInstance");
   if (globalThis.prismaInstance) {
     try {
       globalThis.prismaInstance.$disconnect();
     } catch (error) {
-      console.log("Could not close existing prismaInstance", error);
+      console.warn(
+        "[Prisma Client] Could not close existing prismaInstance",
+        error
+      );
     }
   }
   globalThis.prismaInstance = new PrismaClientClass({
@@ -41,3 +44,21 @@ export const getPrismaClient = async (): Promise<PrismaClientClass> => {
 
   return await resetPrismaClient();
 };
+
+// export const resetPrismaClient = async (): Promise<PrismaClientClass> => {
+//   globalThis.prismaInstance = new PrismaClientClass({
+//     datasources: { db: { url: process.env.POSTGRES_EXTERNAL_URL } },
+//   });
+
+//   return globalThis.prismaInstance;
+// };
+
+// globalThis.prismaInstanceIsConnected = false;
+
+// export const getPrismaClient = async (): Promise<PrismaClientClass> => {
+//   if (globalThis.prismaInstance) {
+//     return globalThis.prismaInstance;
+//   }
+
+//   return await resetPrismaClient();
+// };
