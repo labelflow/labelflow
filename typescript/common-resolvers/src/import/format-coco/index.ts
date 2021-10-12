@@ -16,10 +16,14 @@ const uploadImage = async (
   file: JSZip.JSZipObject,
   name: string,
   datasetId: string,
-  { repository }: Context
+  { repository, req }: Context
 ) => {
   const fileBlob = await file.async("blob", () => {});
-  const uploadTarget = await repository.upload.getUploadTarget(uuidv4());
+  const origin = (req?.headers as any)?.origin ?? req?.headers?.get?.("origin");
+  const uploadTarget = await repository.upload.getUploadTarget(
+    uuidv4(),
+    origin
+  );
   if (!(uploadTarget as UploadTargetHttp)?.downloadUrl) {
     throw new Error("Can't direct upload this image.");
   }
