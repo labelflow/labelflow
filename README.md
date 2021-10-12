@@ -113,7 +113,7 @@ You need to have below listed softwares installed on your machine to run labelfl
 
 ## License
 
-LabelFlow sources is entirely available on Github, and LabelFlow is primarily distributed under the terms of both the Business Source License (BSL), which is the closest thing to open source that we can do without being threatened by external companies.
+LabelFlow sources is entirely available on Github, and LabelFlow is primarily distributed under the terms of the Business Source License (BSL), which is the closest thing to open source that we can do without being threatened by external companies.
 
 See [LICENSE](https://github.com/labelflow/labelflow/blob/main/LICENSE) for details.
 
