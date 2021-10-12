@@ -6,6 +6,7 @@ import {
   Ref,
   MouseEventHandler,
 } from "react";
+import { gql, useQuery } from "@apollo/client";
 import {
   Tooltip,
   Popover,
@@ -87,6 +88,15 @@ export const ToolSelectionPopoverItem = (props: {
     </Box>
   );
 };
+
+const getLabelTypeQuery = gql`
+  query getLabelType($id: ID!) {
+    label(where: { id: $id }) {
+      id
+      type
+    }
+  }
+`;
 
 export const DrawingToolIcon = (props: {
   isDisabled: boolean;
@@ -210,6 +220,10 @@ export const DrawingTool = () => {
   const isImageLoading = useLabelingStore((state) => state.isImageLoading);
   const selectedTool = useLabelingStore((state) => state.selectedTool);
   const setSelectedTool = useLabelingStore((state) => state.setSelectedTool);
+  const selectedLabelId = useLabelingStore((state) => state.selectedLabelId);
+  const setSelectedLabelId = useLabelingStore(
+    (state) => state.setSelectedLabelId
+  );
   const [isPopoverOpened, doSetIsPopoverOpened] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const setIsPopoverOpened = useCallback((newState) => {
@@ -218,40 +232,57 @@ export const DrawingTool = () => {
       buttonRef.current.focus();
     }
   }, []);
+  const { data } = useQuery(getLabelTypeQuery, {
+    variables: { id: selectedLabelId },
+    skip: selectedLabelId == null,
+  });
+  const selectedLabelType = data?.label?.type ?? undefined;
+  const changeTool = useCallback(
+    (currentLabelType: Tools | undefined, toolType: Tools) => {
+      if (
+        currentLabelType != null &&
+        currentLabelType.toLowerCase() !== toolType.toLowerCase()
+      ) {
+        setSelectedLabelId(null);
+      }
+      setSelectedTool(toolType);
+    },
+    [setSelectedTool, setSelectedLabelId]
+  );
 
   useHotkeys(
     keymap.toolClassification.key,
     () => {
-      setSelectedTool(Tools.CLASSIFICATION);
+      changeTool(selectedLabelType, Tools.CLASSIFICATION);
     },
     {},
-    []
+    [changeTool, selectedLabelType]
   );
   useHotkeys(
     keymap.toolBoundingBox.key,
     () => {
-      setSelectedTool(Tools.BOX);
+      changeTool(selectedLabelType, Tools.BOX);
     },
     {},
-    []
+    [changeTool, selectedLabelType]
   );
   useHotkeys(
     keymap.toolPolygon.key,
     () => {
-      setSelectedTool(Tools.POLYGON);
+      changeTool(selectedLabelType, Tools.POLYGON);
     },
     {},
-    []
+    [changeTool, selectedLabelType]
   );
   useHotkeys(
     keymap.toolIog.key,
     () => {
       if (process.env.NEXT_PUBLIC_IOG_API_ENDPOINT) {
-        setSelectedTool(Tools.IOG);
+        changeTool(selectedLabelType, Tools.IOG);
       }
     },
     {},
-    []
+    [changeTool, selectedLabelType]
   );
   return (
     <Popover
@@ -270,7 +301,7 @@ export const DrawingTool = () => {
           e.stopPropagation();
         }}
         selectedTool={selectedTool}
-        setSelectedTool={setSelectedTool}
+        setSelectedTool={(tool: Tools) => changeTool(selectedLabelType, tool)}
       />
       <PopoverContent
         borderColor={mode("gray.200", "gray.600")}
@@ -286,7 +317,7 @@ export const DrawingTool = () => {
               shortcut={keymap.toolClassification.key}
               selected={selectedTool === Tools.CLASSIFICATION}
               onClick={() => {
-                setSelectedTool(Tools.CLASSIFICATION);
+                changeTool(selectedLabelType, Tools.CLASSIFICATION);
                 setIsPopoverOpened(false);
               }}
               ariaLabel="Classification tool"
@@ -300,7 +331,7 @@ export const DrawingTool = () => {
               shortcut={keymap.toolBoundingBox.key}
               selected={selectedTool === Tools.BOX}
               onClick={() => {
-                setSelectedTool(Tools.BOX);
+                changeTool(selectedLabelType, Tools.BOX);
                 setIsPopoverOpened(false);
               }}
               ariaLabel="Bounding box tool"
@@ -314,7 +345,7 @@ export const DrawingTool = () => {
               shortcut={keymap.toolPolygon.key}
               selected={selectedTool === Tools.POLYGON}
               onClick={() => {
-                setSelectedTool(Tools.POLYGON);
+                changeTool(selectedLabelType, Tools.POLYGON);
                 setIsPopoverOpened(false);
               }}
               ariaLabel="Polygon tool"
@@ -329,7 +360,7 @@ export const DrawingTool = () => {
                 shortcut={keymap.toolIog.key}
                 selected={selectedTool === Tools.IOG}
                 onClick={() => {
-                  setSelectedTool(Tools.IOG);
+                  changeTool(selectedLabelType, Tools.IOG);
                   setIsPopoverOpened(false);
                 }}
                 ariaLabel="Select iog tool"
