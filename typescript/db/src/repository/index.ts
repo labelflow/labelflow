@@ -36,6 +36,9 @@ export const repository: Repository = {
     },
     count: async (whereWithUser) => {
       const { user, ...where } = whereWithUser ?? { user: undefined };
+      if (user?.id == null) {
+        return 0;
+      }
       return await prisma.image.count({
         where: castObjectNullsToUndefined({
           ...where,
@@ -53,6 +56,9 @@ export const repository: Repository = {
     },
     list: async (whereWithUser, skip = undefined, first = undefined) => {
       const { user, ...where } = whereWithUser ?? { user: undefined };
+      if (user?.id == null) {
+        return [];
+      }
       return await prisma.image.findMany(
         castObjectNullsToUndefined({
           where: castObjectNullsToUndefined({
@@ -120,6 +126,9 @@ export const repository: Repository = {
     },
     count: async (whereWithUser) => {
       const { user, ...where } = whereWithUser ?? { user: undefined };
+      if (user?.id == null) {
+        return 0;
+      }
       return await prisma.labelClass.count({
         where: castObjectNullsToUndefined({
           ...where,
@@ -141,6 +150,9 @@ export const repository: Repository = {
     },
     list: async (whereWithUser, skip = undefined, first = undefined) => {
       const { user, ...where } = whereWithUser ?? { user: undefined };
+      if (user?.id == null) {
+        return [];
+      }
       return await prisma.labelClass.findMany(
         castObjectNullsToUndefined({
           where: castObjectNullsToUndefined({
@@ -235,8 +247,11 @@ export const repository: Repository = {
         return false;
       }
     },
-    list: (where, skip = undefined, first = undefined) =>
-      prisma.dataset.findMany(
+    list: async (where, skip = undefined, first = undefined) => {
+      if (where?.user?.id == null) {
+        return [];
+      }
+      return await prisma.dataset.findMany(
         castObjectNullsToUndefined({
           orderBy: { createdAt: Prisma.SortOrder.asc },
           skip,
@@ -248,7 +263,8 @@ export const repository: Repository = {
             },
           },
         })
-      ),
+      );
+    },
   },
   workspace: {
     add: addWorkspace,

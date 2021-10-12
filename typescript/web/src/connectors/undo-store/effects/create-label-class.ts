@@ -1,6 +1,6 @@
 import { gql, ApolloClient } from "@apollo/client";
 
-import { useLabellingStore } from "../../labelling-state";
+import { useLabelingStore } from "../../labeling-state";
 
 import { Effect } from "..";
 import { getDatasetsQuery } from "../../../pages/[workspaceSlug]/datasets";
@@ -62,7 +62,7 @@ export const createCreateLabelClassEffect = (
       ],
     });
 
-    useLabellingStore.setState({ selectedLabelClassId: labelClassId });
+    useLabelingStore.setState({ selectedLabelClassId: labelClassId });
 
     return labelClassId;
   },
@@ -82,7 +82,7 @@ export const createCreateLabelClassEffect = (
       ],
     });
 
-    useLabellingStore.setState({
+    useLabelingStore.setState({
       selectedLabelClassId: selectedLabelClassIdPrevious,
     });
 
@@ -102,7 +102,7 @@ export const createCreateLabelClassEffect = (
       ],
     });
 
-    useLabellingStore.setState({ selectedLabelClassId: labelClassId });
+    useLabelingStore.setState({ selectedLabelClassId: labelClassId });
 
     return labelClassId;
   },

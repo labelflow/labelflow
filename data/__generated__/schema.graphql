@@ -157,6 +157,10 @@ type ImportStatus {
   error: String
 }
 
+type IogInferenceResult {
+  polygons: [[[Float!]]]!
+}
+
 scalar JSON
 
 type Label {
@@ -293,6 +297,7 @@ type Mutation {
   deleteLabelClass(where: LabelClassWhereUniqueInput!): LabelClass
   createDataset(data: DatasetCreateInput!): Dataset
   createDemoDataset: Dataset
+  runIog(data: RunIogInput!): IogInferenceResult
   updateDataset(where: DatasetWhereUniqueInput!, data: DatasetUpdateInput!): Dataset
   deleteDataset(where: DatasetWhereUniqueInput!): Dataset
   importDataset(where: DatasetWhereUniqueInput!, data: DatasetImportInput!): ImportStatus
@@ -328,6 +333,18 @@ type Query {
   users(first: Int, skip: Int): [User!]!
   exportDataset(where: ExportWhereUniqueInput!, format: ExportFormat!, options: ExportOptions): String!
   debug: JSON!
+}
+
+input RunIogInput {
+  id: ID!
+  imageUrl: String
+  x: Float
+  y: Float
+  width: Float
+  height: Float
+  pointsInside: [[Float!]]
+  pointsOutside: [[Float!]]
+  centerPoint: [Float!]
 }
 
 scalar Upload

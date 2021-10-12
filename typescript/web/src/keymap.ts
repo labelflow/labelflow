@@ -73,6 +73,16 @@ export const keymap: Keymap = {
     description: "Search class by name input in class selection",
     category: "Actions", // TODO: change that category?
   },
+  toolIog: {
+    key: "i",
+    description: "Inside outside guidance tool",
+    category: "Tools",
+  },
+  validateIogLabel: {
+    key: "enter",
+    description: "Validate the edition of an IOG label",
+    category: "Tools",
+  },
   enterFullScreen: {
     key: "f",
     description: "Enter Full Screen",

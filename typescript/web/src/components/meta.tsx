@@ -26,8 +26,8 @@ const defaultImages = [
 ];
 
 export const Meta = ({
-  title = "LabelFlow: The open standard platform for image labelling.",
-  desc = "The fastest and simplest image labelling tool on the Internet!",
+  title = "LabelFlow: The open standard platform for image labeling.",
+  desc = "The fastest and simplest image labeling tool on the Internet!",
   canonical = "https://labelflow.ai/",
   images = defaultImages,
 }: Props) => (

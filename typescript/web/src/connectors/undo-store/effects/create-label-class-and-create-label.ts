@@ -2,7 +2,7 @@ import { gql, ApolloClient } from "@apollo/client";
 
 import { GeoJSONPolygon } from "ol/format/GeoJSON";
 import { LabelType } from "@labelflow/graphql-types";
-import { useLabellingStore } from "../../labelling-state";
+import { useLabelingStore } from "../../labeling-state";
 
 import { Effect } from "..";
 import { getDatasetsQuery } from "../../../pages/[workspaceSlug]/datasets";
@@ -177,7 +177,7 @@ export const createCreateLabelClassAndCreateLabelEffect = (
       ],
     });
 
-    useLabellingStore.setState({ selectedLabelClassId: labelClassIdPrevious });
+    useLabelingStore.setState({ selectedLabelClassId: labelClassIdPrevious });
     return {
       id,
       labelClassId,

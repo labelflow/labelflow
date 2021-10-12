@@ -35,6 +35,9 @@ const memberships = async (
   args: QueryMembershipsArgs,
   { user }: Context
 ) => {
+  if (user?.id == null) {
+    return [];
+  }
   const workspaceSlug = args?.where?.workspaceSlug;
   if (workspaceSlug != null) {
     await checkUserAccessToWorkspace({ where: { slug: workspaceSlug }, user });

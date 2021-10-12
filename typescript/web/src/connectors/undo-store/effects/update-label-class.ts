@@ -1,4 +1,4 @@
-import { useLabellingStore } from "../../labelling-state";
+import { useLabelingStore } from "../../labeling-state";
 import { Effect } from "..";
 
 export const createUpdateLabelClassEffect = ({
@@ -9,10 +9,10 @@ export const createUpdateLabelClassEffect = ({
   selectedLabelClassIdPrevious: string | null;
 }): Effect => ({
   do: async () => {
-    useLabellingStore.setState({ selectedLabelClassId });
+    useLabelingStore.setState({ selectedLabelClassId });
   },
   undo: async () => {
-    useLabellingStore.setState({
+    useLabelingStore.setState({
       selectedLabelClassId: selectedLabelClassIdPrevious,
     });
   },

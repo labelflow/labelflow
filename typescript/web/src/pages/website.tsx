@@ -25,7 +25,7 @@ export default function Website({
   return (
     <>
       <ServiceWorkerManagerBackground />
-      <Meta title="LabelFlow: The open standard platform for image labelling." />
+      <Meta title="LabelFlow: The open standard platform for image labeling." />
       <CookieBanner />
       <Box minH="640px">
         <NavBar />

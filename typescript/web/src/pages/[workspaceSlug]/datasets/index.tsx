@@ -45,7 +45,10 @@ export const getDatasetsQuery = gql`
 `;
 
 const DatasetPage = () => {
-  const workspaceSlug = useRouter().query?.workspaceSlug as string;
+  const {
+    query: { workspaceSlug },
+    isReady,
+  } = useRouter();
 
   const { data: datasetsResult } = useQuery<{
     datasets: Pick<
@@ -101,7 +104,7 @@ const DatasetPage = () => {
         tabBar={
           <WorkspaceTabBar
             currentTab="datasets"
-            workspaceSlug={workspaceSlug}
+            workspaceSlug={workspaceSlug as string}
           />
         }
         breadcrumbs={[
@@ -124,6 +127,7 @@ const DatasetPage = () => {
 
         <Flex direction="row" wrap="wrap" p={4}>
           <NewDatasetCard
+            disabled={!isReady}
             addDataset={() => {
               setIsCreatingDataset(true, "replaceIn");
             }}

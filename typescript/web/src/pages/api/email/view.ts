@@ -2,16 +2,27 @@ import { NextApiRequest, NextApiResponse } from "next";
 
 import { generateHtml as signin } from "../../../utils/email/templates/sign-in";
 import { generateHtml as signup } from "../../../utils/email/templates/sign-up";
+import { generateHtml as invitation } from "../../../utils/email/templates/invitation";
 
-const emailTypes: { [key: string]: typeof signin } = {
+type EmailTypes = {
+  signin: typeof signin;
+  signup: typeof signup;
+  invitation: typeof invitation;
+  default: typeof signup;
+};
+
+const emailTypes: EmailTypes = {
   signin,
   signup,
-  default: signin,
+  invitation,
+  default: signup,
 };
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   const { query }: { query: { type?: keyof typeof emailTypes } } = req;
-  const generateHtml = emailTypes[query?.type ?? "signin"];
+  const generateHtml = emailTypes[
+    query?.type ?? "signup"
+  ] as EmailTypes["signin"];
   const html = generateHtml(
     query as unknown as Parameters<typeof generateHtml>[0]
   );
