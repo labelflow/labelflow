@@ -2,7 +2,7 @@ import { Prisma } from "@prisma/client";
 import { DbLabel, Repository } from "@labelflow/common-resolvers";
 import { Image } from "@labelflow/graphql-types";
 import slugify from "slugify";
-import { prisma } from "./prisma-client";
+import { getPrismaClient } from "../prisma-client";
 import {
   getUploadTargetHttp,
   getFromStorage,
@@ -29,7 +29,9 @@ export const repository: Repository = {
   image: {
     add: async (image, user) => {
       await checkUserAccessToDataset({ where: { id: image.datasetId }, user });
-      const createdImage = await prisma.image.create({
+      const createdImage = await (
+        await getPrismaClient()
+      ).image.create({
         data: castObjectNullsToUndefined(image),
       });
       return createdImage.id;
@@ -39,7 +41,9 @@ export const repository: Repository = {
       if (user?.id == null) {
         return 0;
       }
-      return await prisma.image.count({
+      return await (
+        await getPrismaClient()
+      ).image.count({
         where: castObjectNullsToUndefined({
           ...where,
           dataset: {
@@ -50,7 +54,9 @@ export const repository: Repository = {
     },
     get: async (where, user) => {
       await checkUserAccessToImage({ where, user });
-      return (await prisma.image.findUnique({
+      return (await (
+        await getPrismaClient()
+      ).image.findUnique({
         where,
       })) as unknown as Image;
     },
@@ -59,7 +65,9 @@ export const repository: Repository = {
       if (user?.id == null) {
         return [];
       }
-      return await prisma.image.findMany(
+      return await (
+        await getPrismaClient()
+      ).image.findMany(
         castObjectNullsToUndefined({
           where: castObjectNullsToUndefined({
             ...where,
@@ -75,25 +83,29 @@ export const repository: Repository = {
     },
     delete: async (where, user) => {
       await checkUserAccessToImage({ where, user });
-      await prisma.image.delete({ where });
+      await (await getPrismaClient()).image.delete({ where });
     },
   },
   label: {
     add: async (label, user) => {
       await checkUserAccessToImage({ where: { id: label.imageId }, user });
-      const createdLabel = await prisma.label.create({ data: label });
+      const createdLabel = await (
+        await getPrismaClient()
+      ).label.create({ data: label });
       return createdLabel.id;
     },
     count: countLabels,
     delete: async ({ id }, user) => {
       await checkUserAccessToLabel({ where: { id }, user });
-      await prisma.label.delete({ where: { id } });
+      await (await getPrismaClient()).label.delete({ where: { id } });
     },
     /* Needs to be casted as Prisma doesn't let us specify
      * the type for geometry */
     get: async (where, user) => {
       await checkUserAccessToLabel({ where, user });
-      return (await prisma.label.findUnique({
+      return (await (
+        await getPrismaClient()
+      ).label.findUnique({
         where,
       })) as unknown as DbLabel;
     },
@@ -101,7 +113,9 @@ export const repository: Repository = {
       await checkUserAccessToLabel({ where, user });
       try {
         if (label) {
-          await prisma.label.update({
+          await (
+            await getPrismaClient()
+          ).label.update({
             where,
             data: castObjectNullsToUndefined(label),
           });
@@ -119,7 +133,9 @@ export const repository: Repository = {
         where: { id: labelClass.datasetId },
         user,
       });
-      const createdLabelClass = await prisma.labelClass.create({
+      const createdLabelClass = await (
+        await getPrismaClient()
+      ).labelClass.create({
         data: castObjectNullsToUndefined(labelClass),
       });
       return createdLabelClass.id;
@@ -129,7 +145,9 @@ export const repository: Repository = {
       if (user?.id == null) {
         return 0;
       }
-      return await prisma.labelClass.count({
+      return await (
+        await getPrismaClient()
+      ).labelClass.count({
         where: castObjectNullsToUndefined({
           ...where,
           dataset: {
@@ -140,11 +158,13 @@ export const repository: Repository = {
     },
     delete: async ({ id }, user) => {
       await checkUserAccessToLabelClass({ where: { id }, user });
-      await prisma.labelClass.delete({ where: { id } });
+      await (await getPrismaClient()).labelClass.delete({ where: { id } });
     },
     get: async (where, user) => {
       await checkUserAccessToLabelClass({ where, user });
-      return await prisma.labelClass.findUnique({
+      return await (
+        await getPrismaClient()
+      ).labelClass.findUnique({
         where,
       });
     },
@@ -153,7 +173,9 @@ export const repository: Repository = {
       if (user?.id == null) {
         return [];
       }
-      return await prisma.labelClass.findMany(
+      return await (
+        await getPrismaClient()
+      ).labelClass.findMany(
         castObjectNullsToUndefined({
           where: castObjectNullsToUndefined({
             ...where,
@@ -170,7 +192,9 @@ export const repository: Repository = {
     update: async ({ id }, labelClass, user) => {
       try {
         await checkUserAccessToLabelClass({ where: { id }, user });
-        await prisma.labelClass.update({
+        await (
+          await getPrismaClient()
+        ).labelClass.update({
           where: { id },
           data: castObjectNullsToUndefined(labelClass),
         });
@@ -187,7 +211,9 @@ export const repository: Repository = {
         user,
       });
       const slug = slugify(dataset.name, { lower: true });
-      const createdDataset = await prisma.dataset.create({
+      const createdDataset = await (
+        await getPrismaClient()
+      ).dataset.create({
         data: castObjectNullsToUndefined({
           ...dataset,
           slug,
@@ -208,7 +234,9 @@ export const repository: Repository = {
         );
       }
       await checkUserAccessToDataset({ where, user });
-      await prisma.dataset.delete({
+      await (
+        await getPrismaClient()
+      ).dataset.delete({
         where: castObjectNullsToUndefined(where),
       });
     },
@@ -222,7 +250,9 @@ export const repository: Repository = {
         );
       }
       await checkUserAccessToDataset({ where, user });
-      const dataset = await prisma.dataset.findUnique({
+      const dataset = await (
+        await getPrismaClient()
+      ).dataset.findUnique({
         where: castObjectNullsToUndefined(where),
       });
       return dataset;
@@ -238,7 +268,9 @@ export const repository: Repository = {
       }
       await checkUserAccessToDataset({ where, user });
       try {
-        await prisma.dataset.update({
+        await (
+          await getPrismaClient()
+        ).dataset.update({
           where: castObjectNullsToUndefined(where),
           data: castObjectNullsToUndefined(dataset),
         });
@@ -251,7 +283,9 @@ export const repository: Repository = {
       if (where?.user?.id == null) {
         return [];
       }
-      return await prisma.dataset.findMany(
+      return await (
+        await getPrismaClient()
+      ).dataset.findMany(
         castObjectNullsToUndefined({
           orderBy: { createdAt: Prisma.SortOrder.asc },
           skip,

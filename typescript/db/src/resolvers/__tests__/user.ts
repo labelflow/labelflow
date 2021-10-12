@@ -9,7 +9,7 @@ import {
   User,
   Workspace,
 } from "@labelflow/graphql-types";
-import { prisma } from "../../repository/prisma-client";
+import { getPrismaClient } from "../../prisma-client";
 import { client, user as loggedInUser, user } from "../../dev/apollo-client";
 
 // @ts-ignore
@@ -21,14 +21,14 @@ const testUser3Id = uuidV4();
 const testUser4Id = uuidV4();
 
 beforeEach(async () => {
-  await prisma.membership.deleteMany({});
-  await prisma.workspace.deleteMany({});
-  return await prisma.user.deleteMany({});
+  await (await getPrismaClient()).membership.deleteMany({});
+  await (await getPrismaClient()).workspace.deleteMany({});
+  return await (await getPrismaClient()).user.deleteMany({});
 });
 
 afterAll(async () => {
   // Needed to avoid having the test process running indefinitely after the test suite has been run
-  await prisma.$disconnect();
+  await (await getPrismaClient()).$disconnect();
 });
 
 const createMembership = async (
@@ -87,16 +87,24 @@ describe("users query", () => {
   });
 
   it("returns only the current user if he is not linked to any other user through a workspace", async () => {
-    await prisma.user.create({
+    await (
+      await getPrismaClient()
+    ).user.create({
       data: { id: testUser1Id, name: "test-user-1" },
     });
-    await prisma.user.create({
+    await (
+      await getPrismaClient()
+    ).user.create({
       data: { id: testUser2Id, name: "test-user-2" },
     });
-    await prisma.user.create({
+    await (
+      await getPrismaClient()
+    ).user.create({
       data: { id: testUser3Id, name: "test-user-3" },
     });
-    await prisma.user.create({
+    await (
+      await getPrismaClient()
+    ).user.create({
       data: { id: testUser4Id, name: "test-user-4" },
     });
     loggedInUser.id = testUser1Id;
@@ -121,16 +129,24 @@ describe("users query", () => {
   });
 
   it("returns only the users linked to the current user through a workspace", async () => {
-    await prisma.user.create({
+    await (
+      await getPrismaClient()
+    ).user.create({
       data: { id: testUser1Id, name: "test-user-1" },
     });
-    await prisma.user.create({
+    await (
+      await getPrismaClient()
+    ).user.create({
       data: { id: testUser2Id, name: "test-user-2" },
     });
-    await prisma.user.create({
+    await (
+      await getPrismaClient()
+    ).user.create({
       data: { id: testUser3Id, name: "test-user-3" },
     });
-    await prisma.user.create({
+    await (
+      await getPrismaClient()
+    ).user.create({
       data: { id: testUser4Id, name: "test-user-4" },
     });
     loggedInUser.id = testUser1Id;
@@ -168,16 +184,24 @@ describe("users query", () => {
   });
 
   it("can skip results", async () => {
-    await prisma.user.create({
+    await (
+      await getPrismaClient()
+    ).user.create({
       data: { id: testUser1Id, name: "test-user-1" },
     });
-    await prisma.user.create({
+    await (
+      await getPrismaClient()
+    ).user.create({
       data: { id: testUser2Id, name: "test-user-2" },
     });
-    await prisma.user.create({
+    await (
+      await getPrismaClient()
+    ).user.create({
       data: { id: testUser3Id, name: "test-user-3" },
     });
-    await prisma.user.create({
+    await (
+      await getPrismaClient()
+    ).user.create({
       data: { id: testUser4Id, name: "test-user-4" },
     });
     loggedInUser.id = testUser1Id;
@@ -215,16 +239,24 @@ describe("users query", () => {
   });
 
   it("can limit the number of results", async () => {
-    await prisma.user.create({
+    await (
+      await getPrismaClient()
+    ).user.create({
       data: { id: testUser1Id, name: "test-user-1" },
     });
-    await prisma.user.create({
+    await (
+      await getPrismaClient()
+    ).user.create({
       data: { id: testUser2Id, name: "test-user-2" },
     });
-    await prisma.user.create({
+    await (
+      await getPrismaClient()
+    ).user.create({
       data: { id: testUser3Id, name: "test-user-3" },
     });
-    await prisma.user.create({
+    await (
+      await getPrismaClient()
+    ).user.create({
       data: { id: testUser4Id, name: "test-user-4" },
     });
     loggedInUser.id = testUser1Id;
@@ -262,16 +294,24 @@ describe("users query", () => {
   });
 
   it("can limit the number of results and skip some", async () => {
-    await prisma.user.create({
+    await (
+      await getPrismaClient()
+    ).user.create({
       data: { id: testUser1Id, name: "test-user-1" },
     });
-    await prisma.user.create({
+    await (
+      await getPrismaClient()
+    ).user.create({
       data: { id: testUser2Id, name: "test-user-2" },
     });
-    await prisma.user.create({
+    await (
+      await getPrismaClient()
+    ).user.create({
       data: { id: testUser3Id, name: "test-user-3" },
     });
-    await prisma.user.create({
+    await (
+      await getPrismaClient()
+    ).user.create({
       data: { id: testUser4Id, name: "test-user-4" },
     });
     loggedInUser.id = testUser1Id;
@@ -326,7 +366,9 @@ describe("user query", () => {
     });
 
   it("returns the user corresponding to the given id", async () => {
-    await prisma.user.create({
+    await (
+      await getPrismaClient()
+    ).user.create({
       data: { id: testUser1Id, name: "test-user-1" },
     });
     loggedInUser.id = testUser1Id;
@@ -337,7 +379,9 @@ describe("user query", () => {
   });
 
   it("throws if the user does not access to the user", async () => {
-    await prisma.user.create({
+    await (
+      await getPrismaClient()
+    ).user.create({
       data: { id: testUser1Id, name: "test-user-1" },
     });
     loggedInUser.id = testUser1Id;
@@ -382,7 +426,9 @@ describe("updateUser mutation", () => {
     });
 
   it("can change the user name", async () => {
-    await prisma.user.create({
+    await (
+      await getPrismaClient()
+    ).user.create({
       data: { id: testUser1Id, name: "test-user-1" },
     });
     user.id = testUser1Id;
@@ -395,7 +441,9 @@ describe("updateUser mutation", () => {
   });
 
   it("can change the user image", async () => {
-    await prisma.user.create({
+    await (
+      await getPrismaClient()
+    ).user.create({
       data: { id: testUser1Id, name: "test-user-1" },
     });
     user.id = testUser1Id;
@@ -408,7 +456,9 @@ describe("updateUser mutation", () => {
   });
 
   it("throws if a user tries to update another user", async () => {
-    await prisma.user.create({
+    await (
+      await getPrismaClient()
+    ).user.create({
       data: { id: testUser1Id, name: "test-user-1" },
     });
     user.id = testUser2Id;
@@ -434,7 +484,9 @@ describe("updateUser mutation", () => {
 
 describe("nested resolvers", () => {
   it("can return user's memberships", async () => {
-    await prisma.user.create({
+    await (
+      await getPrismaClient()
+    ).user.create({
       data: { id: testUser1Id, name: "test-user-1" },
     });
     loggedInUser.id = testUser1Id;

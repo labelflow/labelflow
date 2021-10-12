@@ -1,6 +1,6 @@
 import { Prisma } from "@prisma/client";
 import { Repository, DbLabel } from "@labelflow/common-resolvers";
-import { prisma } from "./prisma-client";
+import { getPrismaClient } from "../prisma-client";
 import { castObjectNullsToUndefined } from "./utils";
 import { checkUserAccessToDataset } from "./access-control";
 
@@ -16,11 +16,15 @@ export const countLabels: Repository["label"]["count"] = async (
   }
   if ("datasetId" in where) {
     checkUserAccessToDataset({ where: { id: where.datasetId }, user });
-    return await prisma.label.count({
+    return await (
+      await getPrismaClient()
+    ).label.count({
       where: { image: { datasetId: where.datasetId ?? undefined } },
     });
   }
-  return await prisma.label.count({
+  return await (
+    await getPrismaClient()
+  ).label.count({
     where: castObjectNullsToUndefined({
       ...where,
       image: {
@@ -46,7 +50,7 @@ export const listLabels: Repository["label"]["list"] = async (
   }
   if ("datasetId" in where) {
     await checkUserAccessToDataset({ where: { id: where.datasetId }, user });
-    return prisma.label.findMany({
+    return (await getPrismaClient()).label.findMany({
       where: {
         image: { datasetId: where.datasetId ?? undefined },
       },
@@ -55,7 +59,7 @@ export const listLabels: Repository["label"]["list"] = async (
       take: first ?? undefined,
     }) as unknown as DbLabel[];
   }
-  return prisma.label.findMany(
+  return (await getPrismaClient()).label.findMany(
     castObjectNullsToUndefined({
       where: castObjectNullsToUndefined({
         ...where,

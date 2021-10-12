@@ -8,7 +8,7 @@ import {
   MutationCreateWorkspaceArgs,
   Workspace,
 } from "@labelflow/graphql-types";
-import { prisma } from "../../repository/prisma-client";
+import { getPrismaClient } from "../../prisma-client";
 import { client, user } from "../../dev/apollo-client";
 
 // @ts-ignore
@@ -19,20 +19,26 @@ const testUser2Id = uuidV4();
 const testUser3Id = uuidV4();
 
 beforeAll(async () => {
-  await prisma.user.create({ data: { id: testUser1Id, name: "test-user-1" } });
-  await prisma.user.create({ data: { id: testUser2Id, name: "test-user-2" } });
-  await prisma.user.create({ data: { id: testUser3Id, name: "test-user-3" } });
+  await (
+    await getPrismaClient()
+  ).user.create({ data: { id: testUser1Id, name: "test-user-1" } });
+  await (
+    await getPrismaClient()
+  ).user.create({ data: { id: testUser2Id, name: "test-user-2" } });
+  await (
+    await getPrismaClient()
+  ).user.create({ data: { id: testUser3Id, name: "test-user-3" } });
 });
 
 beforeEach(async () => {
   user.id = testUser1Id;
-  await prisma.membership.deleteMany({});
-  return await prisma.workspace.deleteMany({});
+  await (await getPrismaClient()).membership.deleteMany({});
+  return await (await getPrismaClient()).workspace.deleteMany({});
 });
 
 afterAll(async () => {
   // Needed to avoid having the test process running indefinitely after the test suite has been run
-  await prisma.$disconnect();
+  await (await getPrismaClient()).$disconnect();
 });
 
 const createMembership = async (

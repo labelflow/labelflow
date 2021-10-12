@@ -4,7 +4,7 @@ import EmailProvider from "next-auth/providers/email";
 import GoogleProvider from "next-auth/providers/google";
 import GitHubProvider from "next-auth/providers/github";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient as PrismaClientClass } from "@prisma/client";
 import { OAuthConfig } from "next-auth/providers";
 import { captureException } from "@sentry/nextjs";
 
@@ -14,16 +14,27 @@ import { sendVerificationRequestFromPrisma } from "../../../utils/email/send-ver
 //   id: string;
 // }
 
-const prisma = new PrismaClient({
-  datasources: { db: { url: process.env.POSTGRES_EXTERNAL_URL } },
-});
+// Try to use the prisma singleton defined in typescript/db/src/prisma-client.ts
+declare module globalThis {
+  let prismaInstance: PrismaClientClass;
+  let prismaInstanceIsConnected: boolean;
+}
+if (!globalThis.prismaInstance) {
+  console.log("[Prisma Client] Initializing prismaInstance from next auth");
+  globalThis.prismaInstance = new PrismaClientClass({
+    datasources: { db: { url: process.env.POSTGRES_EXTERNAL_URL } },
+  });
+}
+globalThis.prismaInstanceIsConnected = true;
 
 export default NextAuth({
   providers: [
     EmailProvider({
       server: process.env.EMAIL_SERVER,
       from: process.env.EMAIL_FROM,
-      sendVerificationRequest: sendVerificationRequestFromPrisma(prisma),
+      sendVerificationRequest: sendVerificationRequestFromPrisma(
+        globalThis.prismaInstance
+      ),
     }),
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID as string,
@@ -34,7 +45,7 @@ export default NextAuth({
       clientSecret: process.env.GITHUB_CLIENT_SECRET,
     }),
   ],
-  adapter: PrismaAdapter(prisma),
+  adapter: PrismaAdapter(globalThis.prismaInstance),
   // Uncomment to implement your custom pages
   pages: {
     signIn: "/auth/signin",

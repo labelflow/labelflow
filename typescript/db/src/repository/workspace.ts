@@ -6,7 +6,7 @@ import {
 } from "@labelflow/common-resolvers";
 import { WorkspaceType } from "@labelflow/graphql-types";
 import slugify from "slugify";
-import { prisma } from "./prisma-client";
+import { getPrismaClient } from "../prisma-client";
 import { castObjectNullsToUndefined } from "./utils";
 import { checkUserAccessToWorkspace } from "./access-control";
 
@@ -26,7 +26,9 @@ export const addWorkspace: Repository["workspace"]["add"] = async (
   }
   const slug = slugify(workspace.name, { lower: true });
   const plan = WorkspacePlan.Community;
-  const createdWorkspace = await prisma.workspace.create({
+  const createdWorkspace = await (
+    await getPrismaClient()
+  ).workspace.create({
     data: castObjectNullsToUndefined({
       slug,
       plan,
@@ -46,7 +48,9 @@ export const getWorkspace: Repository["workspace"]["get"] = async (
   where,
   user
 ) => {
-  const workspaceFromDb = await prisma.workspace.findUnique({
+  const workspaceFromDb = await (
+    await getPrismaClient()
+  ).workspace.findUnique({
     where: castObjectNullsToUndefined(where),
   });
   if (workspaceFromDb != null) {
@@ -67,7 +71,9 @@ export const listWorkspace: Repository["workspace"]["list"] = async (
   if (where?.user?.id == null) {
     return [];
   }
-  const workspacesFromDb = await prisma.workspace.findMany(
+  const workspacesFromDb = await (
+    await getPrismaClient()
+  ).workspace.findMany(
     castObjectNullsToUndefined({
       skip: skip ?? undefined,
       take: first ?? undefined,
@@ -95,7 +101,9 @@ export const updateWorkspace: Repository["workspace"]["update"] = async (
       : // needed to make prisma happy with the types
         { name: undefined };
   try {
-    await prisma.workspace.update({
+    await (
+      await getPrismaClient()
+    ).workspace.update({
       where: castObjectNullsToUndefined(where),
       data: castObjectNullsToUndefined({
         ...workspace,
