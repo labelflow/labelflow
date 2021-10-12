@@ -147,11 +147,11 @@ export type Repository = {
   upload: {
     getUploadTargetHttp: (
       key: string,
-      origin?: string
+      origin: string
     ) => Promise<UploadTargetHttp> | UploadTargetHttp;
     getUploadTarget: (
       key: string,
-      origin?: string
+      origin: string
     ) => Promise<UploadTarget> | UploadTarget;
     put: (url: string, file: Blob) => Promise<void>;
     get: (url: string, req?: Request) => Promise<ArrayBuffer>;
