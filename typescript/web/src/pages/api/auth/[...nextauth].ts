@@ -20,6 +20,7 @@ declare module globalThis {
   let prismaInstanceIsConnected: boolean;
 }
 if (!globalThis.prismaInstance) {
+  console.log("[Prisma Client] Initializing prismaInstance from next auth");
   globalThis.prismaInstance = new PrismaClientClass({
     datasources: { db: { url: process.env.POSTGRES_EXTERNAL_URL } },
   });
