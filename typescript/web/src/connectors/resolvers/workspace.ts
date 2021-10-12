@@ -1,6 +1,7 @@
 import { QueryWorkspaceArgs } from "@labelflow/graphql-types";
 import { Context, DbWorkspaceWithType } from "@labelflow/common-resolvers";
 import { notImplementedInLocalWorkspaceRepository } from "../repository/utils";
+import { localWorkspace } from "../repository/workspace";
 
 const workspace = async (
   _: any,
@@ -31,6 +32,6 @@ export default {
   },
   Workspace: {
     datasets,
-    memberships: notImplementedInLocalWorkspaceRepository,
+    memberships: () => [localWorkspace],
   },
 };

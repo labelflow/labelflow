@@ -124,7 +124,7 @@ describe("createWorkspace mutation", () => {
     expect(data?.createWorkspace.type).toEqual(WorkspaceType.Online);
   });
 
-  it("sets the user who created the workspace as admin", async () => {
+  it("sets the user who created the workspace as owner", async () => {
     const { data } = await client.mutate<{
       createWorkspace: Pick<Workspace, "id" | "memberships">;
     }>({
@@ -147,7 +147,7 @@ describe("createWorkspace mutation", () => {
 
     expect(data?.createWorkspace.memberships[0]?.user.id).toEqual(user.id);
     expect(data?.createWorkspace.memberships[0]?.role).toEqual(
-      MembershipRole.Admin
+      MembershipRole.Owner
     );
   });
 });
