@@ -69,7 +69,10 @@ export const listWorkspace: Repository["workspace"]["list"] = async (
       skip: skip ?? undefined,
       take: first ?? undefined,
       orderBy: { createdAt: Prisma.SortOrder.asc },
-      where: { memberships: { some: { userId: where?.user?.id } } },
+      where: {
+        memberships: { some: { userId: where?.user?.id } },
+        slug: where?.slug ?? undefined,
+      },
     })
   );
   return workspacesFromDb.map(addTypeToWorkspace);

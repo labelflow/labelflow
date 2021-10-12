@@ -20,6 +20,7 @@ import type {
   DatasetWhereUniqueInput,
   ImageWhereUniqueInput,
   WorkspaceCreateInput,
+  WorkspaceWhereInput,
   WorkspaceWhereUniqueInput,
   WorkspaceType,
 } from "@labelflow/graphql-types";
@@ -141,7 +142,10 @@ export type Repository = {
   workspace: {
     add: Add<WorkspaceCreateInput>;
     get: Get<DbWorkspaceWithType, WorkspaceWhereUniqueInput>;
-    list: List<DbWorkspaceWithType, { user?: { id: string } }>;
+    list: List<
+      DbWorkspaceWithType,
+      WorkspaceWhereInput & { user?: { id: string } }
+    >;
     update: Update<DbWorkspaceWithType, WorkspaceWhereUniqueInput>;
   };
   upload: {
