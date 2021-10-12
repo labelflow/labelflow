@@ -113,7 +113,9 @@ You need to have below listed softwares installed on your machine to run labelfl
 
 ## License
 
-LabelFlow sources is entirely available on Github, and LabelFlow is primarily distributed under the terms of the Business Source License (BSL), like our friends at [MariaDB](https://mariadb.com/bsl11/), [Sentry](https://blog.sentry.io/2019/11/06/relicensing-sentry) and [CockroachDB](https://www.cockroachlabs.com/blog/oss-relicensing-cockroachdb/). As they explain very well, the BSL is the closest thing to open source that we can do without being threatened by external companies.
+LabelFlow sources is entirely available on Github, and LabelFlow is primarily distributed under the terms of the Business Source License (BSL), like our friends at [MariaDB](https://mariadb.com/bsl11/), [Sentry](https://blog.sentry.io/2019/11/06/relicensing-sentry) and [CockroachDB](https://www.cockroachlabs.com/blog/oss-relicensing-cockroachdb/).
+
+As they explain very well, the BSL is the closest thing to open source that we can do without being threatened by external companies. LabelFlow source is available on this repository, you can deploy LabelFlow entirely on premises, and you can contribute to LabelFlow here!
 
 See [LICENSE](https://github.com/labelflow/labelflow/blob/main/LICENSE) for details.
 
