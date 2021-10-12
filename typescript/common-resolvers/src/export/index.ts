@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from "uuid";
 import { exportToCoco } from "./format-coco/index";
 import { exportToYolo } from "./format-yolo/index";
 import { Context } from "../types";
+import { getOrigin } from "../utils/get-origin";
 
 const generateExportFile = async (
   args: QueryExportDatasetArgs,
@@ -40,7 +41,7 @@ const exportDataset = async (
   { repository, req }: Context
 ) => {
   const fileExport = await generateExportFile(args, { repository });
-  const origin = (req?.headers as any)?.origin ?? req?.headers?.get?.("origin");
+  const origin = getOrigin(req);
   const outUrl = (
     await repository.upload.getUploadTargetHttp(
       // FIXME make this Url disappear at some point...

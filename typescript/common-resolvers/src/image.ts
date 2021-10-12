@@ -12,6 +12,7 @@ import mime from "mime-types";
 import { probeImage } from "./utils/probe-image";
 import { Context, DbImage, Repository, DbImageCreateInput } from "./types";
 import { throwIfResolvesToNil } from "./utils/throw-if-resolves-to-nil";
+import { getOrigin } from "./utils/get-origin";
 
 // Mutations
 const getImageFileKey = (
@@ -88,8 +89,7 @@ export const getImageEntityFromMutationArgs = async (
       );
     }
 
-    const origin =
-      (req?.headers as any)?.origin ?? req?.headers?.get?.("origin");
+    const origin = getOrigin(req);
 
     const blob = await fetchResult.blob();
     const uploadTarget = await repository.upload.getUploadTargetHttp(

@@ -11,6 +11,7 @@ import labelResolvers from "../../label";
 import { CocoDataset } from "../../export/format-coco/coco-core/types";
 import { Context } from "../../types";
 import { convertCocoSegmentationToLabel } from "./converters";
+import { getOrigin } from "../../utils/get-origin";
 
 const uploadImage = async (
   file: JSZip.JSZipObject,
@@ -19,7 +20,7 @@ const uploadImage = async (
   { repository, req }: Context
 ) => {
   const fileBlob = await file.async("blob", () => {});
-  const origin = (req?.headers as any)?.origin ?? req?.headers?.get?.("origin");
+  const origin = getOrigin(req);
   const uploadTarget = await repository.upload.getUploadTarget(
     uuidv4(),
     origin
