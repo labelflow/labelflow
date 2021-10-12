@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 
-import { LabelCreateInput } from "../../typescript/graphql-types";
+import { LabelCreateInput, LabelType } from "../../typescript/graphql-types";
 import { client } from "../../typescript/web/src/connectors/apollo-client/schema-client";
 
 const createDataset = async (name: string) => {
@@ -128,8 +128,9 @@ describe("Class selection popover", () => {
       await createLabel({
         imageId,
         labelClassId,
+        type: LabelType.Box,
         geometry: {
-          type: "Polygon",
+          type: LabelType.Box,
           coordinates: [
             [
               [0, 900],
