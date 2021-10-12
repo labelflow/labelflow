@@ -42,8 +42,9 @@ const columns = [
       return (
         <RoleSelection
           role={role}
-          changeMembershipRole={changeMembershipRole}
-          id={id}
+          changeMembershipRole={(newRole) =>
+            changeMembershipRole({ role: newRole, id })
+          }
         />
       );
     },

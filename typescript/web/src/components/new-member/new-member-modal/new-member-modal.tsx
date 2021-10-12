@@ -25,6 +25,8 @@ import { useRouter } from "next/router";
 import { useApolloClient } from "@apollo/client";
 import { datasetDataQuery } from "../../../pages/[workspaceSlug]/datasets/[datasetSlug]/images";
 import { getDatasetsQuery } from "../../../pages/[workspaceSlug]/datasets";
+import { RoleSelection } from "../../members/role-selection";
+import { Role } from "../../members/types";
 
 const validateEmail = (email: string): boolean => {
   const re =
@@ -46,6 +48,7 @@ export const NewMemberModal = ({
 
   const [hasUploaded, setHasUploaded] = useState(false);
   const [value, setValue] = useState<string>("");
+  const [role, setRole] = useState<Role>("Owner");
   const handleInputChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     const inputValue = e.target.value;
     setValue(inputValue);
@@ -88,7 +91,7 @@ export const NewMemberModal = ({
           </Heading>
           <Text fontSize="lg" fontWeight="medium">
             Adding workspace members will give them access to{" "}
-            <b>every datasets</b> in the workspace.
+            <b>every dataset</b> in the workspace.
           </Text>
         </ModalHeader>
 
@@ -147,11 +150,12 @@ export const NewMemberModal = ({
             <Text fontSize="md" fontWeight="bold" paddingTop={2}>
               Invite as:
             </Text>
-            <Select>
+            <RoleSelection role={role} changeMembershipRole={setRole} />
+            {/* <Select>
               <option value="owner">
                 Owner - manage datasets, members and billing
               </option>
-            </Select>
+            </Select> */}
             <Alert status="info" borderRadius={5}>
               <AlertIcon />
               {/* <AlertTitle mr={2} fontSize={15} whiteSpace="nowrap">
@@ -161,7 +165,7 @@ export const NewMemberModal = ({
                 <b>Tip</b>: Until January 2022 the number of members in a Shared
                 Workspace is not limited, the time for us to collect your{" "}
                 <Link
-                  href="google.com"
+                  href="https://discord.com/channels/877517176498692166/877517176498692169"
                   color="blue.600"
                   textDecoration="underline"
                 >
@@ -178,7 +182,11 @@ export const NewMemberModal = ({
             colorScheme="brand"
             size="md"
             alignSelf="flex-end"
-            disabled={emails.length > maxNumberOfEmails || hasInvalidEmails}
+            disabled={
+              emails.length === 0 ||
+              emails.length > maxNumberOfEmails ||
+              hasInvalidEmails
+            }
             flexShrink={0}
             onClick={() => {
               onClose();
