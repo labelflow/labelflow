@@ -266,5 +266,19 @@ describe("Classification", () => {
     cy.get('[aria-label="Classification tag:  My new class"]').should(
       "not.exist"
     );
+
+    // Open the context menu with "C" and set a class by using shortcut
+    cy.wait(420);
+    cy.get('[aria-label="Classification tag: Rocket"]').should("not.exist");
+    cy.get("body").type("c");
+    cy.focused().type("1");
+    cy.get('[aria-label="Classification tag: Rocket"]').should("be.visible");
+
+    // Open the context menu with "C" and remove a class by using shortcut
+    cy.wait(420);
+    cy.get('[aria-label="Classification tag: Rocket"]').should("be.visible");
+    cy.get("body").type("c");
+    cy.focused().type("1");
+    cy.get('[aria-label="Classification tag: Rocket"]').should("not.exist");
   });
 });
