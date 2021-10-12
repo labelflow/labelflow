@@ -52,7 +52,7 @@ describe("Image Navigation", () => {
     });
     cy.contains("Start Import").click();
     cy.get(`[aria-label="Close"]`).click();
-    cy.get("main").contains("photo").click();
+    cy.get("main").contains("photo").click({ force: true });
 
     // Check that we can reach the end of the list
     cy.get("main nav").scrollTo("right");
