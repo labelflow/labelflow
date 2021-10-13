@@ -1,9 +1,9 @@
-declare let self: ServiceWorkerGlobalScope;
+declare let globalThis: ServiceWorkerGlobalScope;
 
 export const getOrigin = (req?: Request) => {
   return (
     // In window or service worker
-    self?.location?.origin ??
+    globalThis?.location?.origin ??
     // In next JS server
     (req?.headers as any)?.origin ??
     // In next JS server
