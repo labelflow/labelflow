@@ -143,7 +143,6 @@ export const WorkspaceSwitcher = () => {
     );
   }
 
-  console.log(workspaces);
   return (
     <WorkspaceMenu
       isOpen={isOpen}
