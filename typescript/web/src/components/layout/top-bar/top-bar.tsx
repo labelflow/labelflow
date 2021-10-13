@@ -5,7 +5,7 @@ import { useSession } from "next-auth/react";
 
 import { SigninButton } from "../../auth-manager/signin-button";
 import {
-  // serviceWorkerClient,
+  serviceWorkerClient,
   distantDatabaseClient,
 } from "../../../connectors/apollo-client/client";
 
@@ -21,11 +21,9 @@ export type Props = {
 export const TopBar = ({ breadcrumbs, rightContent }: Props) => {
   const { status } = useSession({ required: false });
 
-  // const client = globalThis?.location?.pathname?.startsWith("/local")
-  //   ? serviceWorkerClient
-  //   : distantDatabaseClient;
-
-  const client = distantDatabaseClient;
+  const client = globalThis?.location?.pathname?.startsWith("/local")
+    ? serviceWorkerClient
+    : distantDatabaseClient;
 
   return (
     <ApolloProvider client={distantDatabaseClient}>

@@ -14,7 +14,7 @@ import { ChakraProvider } from "@chakra-ui/react";
 import { pageView } from "../utils/google-analytics";
 import { theme } from "../theme";
 import {
-  // serviceWorkerClient,
+  serviceWorkerClient,
   distantDatabaseClient,
 } from "../connectors/apollo-client/client";
 import { QueryParamProvider } from "../utils/query-params-provider";
@@ -74,11 +74,9 @@ const App = (props: AppProps & InitialProps) => {
   // See https://mariestarck.com/add-google-analytics-to-your-next-js-application-in-5-easy-steps/
   const router = useRouter();
 
-  // const client = globalThis?.location?.pathname?.startsWith("/local")
-  //   ? serviceWorkerClient
-  //   : distantDatabaseClient;
-
-  const client = distantDatabaseClient;
+  const client = globalThis?.location?.pathname?.startsWith("/local")
+    ? serviceWorkerClient
+    : distantDatabaseClient;
 
   useEffect(() => {
     const handleRouteChange = (url: string) => {

@@ -1,4 +1,4 @@
-// const withPWA = require("next-pwa");
+const withPWA = require("next-pwa");
 // const { BundleAnalyzerPlugin } = require("webpack-bundle-analyzer");
 const path = require("path");
 
@@ -23,25 +23,25 @@ const path = require("path");
 
 //withSentryConfig(
 // withPWA(
-module.exports = {
+module.exports = withPWA({
   reactStrictMode: true,
-  // sentry: {
-  //   disableServerWebpackPlugin:
-  //     process.env.SENTRY_AUTH_TOKEN != null ? false : true,
-  //   disableClientWebpackPlugin:
-  //     process.env.SENTRY_AUTH_TOKEN != null ? false : true,
-  // },
-  // images: {
-  //   deviceSizes: [
-  //     320, 480, 640, 750, 828, 960, 1080, 1200, 1440, 1920, 2048, 2560, 3840,
-  //   ],
-  // },
+  sentry: {
+    disableServerWebpackPlugin:
+      process.env.SENTRY_AUTH_TOKEN != null ? false : true,
+    disableClientWebpackPlugin:
+      process.env.SENTRY_AUTH_TOKEN != null ? false : true,
+  },
+  images: {
+    deviceSizes: [
+      320, 480, 640, 750, 828, 960, 1080, 1200, 1440, 1920, 2048, 2560, 3840,
+    ],
+  },
   experimental: {
-    //esmExternals: "loose", 
+    esmExternals: false,
     swcLoader: true,
     swcMinify: false,
   },
-  // webpack5: true,
+  webpack5: true,
   typescript: {
     ignoreDevErrors: true,
     ignoreBuildErrors: true,
@@ -50,21 +50,19 @@ module.exports = {
     config,
     { defaultLoaders, dev, isServer, config: nextConfig, ...others }
   ) => {
-    //   // Note: we provide webpack above so you should not `require` it
-    //   // Perform customizations to webpack config
+    // Note: we provide webpack above so you should not `require` it
+    // Perform customizations to webpack config
 
-    //   // const isWebpack5 = nextConfig.webpack5;
-
-    //   // Add graphql import
-    //   // // See https://www.npmjs.com/package/graphql-tag#webpack-loading-and-preprocessing
-    //   // config.module.rules = [
-    //   //   ...config.module.rules,
-    //   //   {
-    //   //     test: /\.(graphql|gql)$/,
-    //   //     use: "graphql-tag/loader",
-    //   //     exclude: /node_modules/,
-    //   //   },
-    //   // ];
+    // Add graphql import
+    // See https://www.npmjs.com/package/graphql-tag#webpack-loading-and-preprocessing
+    config.module.rules = [
+      ...config.module.rules,
+      {
+        test: /\.(graphql|gql)$/,
+        use: "graphql-tag/loader",
+        exclude: /node_modules/,
+      },
+    ];
 
     // Transpile other packages of the monorepo
     // E.g.: `@labelflow/react-openlayers-fiber`
@@ -132,74 +130,53 @@ module.exports = {
     //   //   }
     //   // });
 
-    //   // // Allow to transpile node modules that depends on node built-ins into browser.
-    //   // // E.g.: `apollo-server-core`
-    //   // // See https://github.com/webpack-contrib/css-loader/issues/447
-    //   // // See https://github.com/vercel/next.js/issues/7755
-    //   // if (!isServer) {
-    //   //   if (isWebpack5) {
-    //   //     // See https://www.npmjs.com/package/node-polyfill-webpack-plugin
-    //   //     const NodePolyfillPlugin = require("node-polyfill-webpack-plugin");
+    // Allow to transpile node modules that depends on node built - ins into browser.
+    //   E.g.: `apollo-server-core`
+    // See https://github.com/webpack-contrib/css-loader/issues/447
+    // See https://github.com/vercel/next.js/issues/7755
+    if (!isServer) {
 
-    //   //     // See https://github.com/webpack-contrib/css-loader/issues/447#issuecomment-761853289
-    //   //     // See https://github.com/vercel/next.js/issues/7755#issuecomment-812805708
-    //   //     config.resolve = {
-    //   //       ...(config.resolve ?? {}),
-    //   //       fallback: {
-    //   //         ...(config.resolve?.fallback ?? {}),
-    //   //         module: false,
-    //   //         dgram: false,
-    //   //         dns: false,
-    //   //         fs: false,
-    //   //         http2: false,
-    //   //         net: false,
-    //   //         tls: false,
-    //   //         child_process: false,
-    //   //       },
-    //   //     };
-    //   //     config.plugins = [
-    //   //       ...(config?.plugins ?? []),
-    //   //       new NodePolyfillPlugin({
-    //   //         excludeAliases: ["console"],
-    //   //       }),
-    //   //     ];
-    //   //   } else {
-    //   //     // Webpack 4 uses the `node` option
-    //   //     config.node = {
-    //   //       ...(config.node ?? {}),
-    //   //       module: "empty",
-    //   //       dgram: "empty",
-    //   //       dns: "empty",
-    //   //       path: "empty",
-    //   //       fs: "empty",
-    //   //       os: "empty",
-    //   //       crypto: "empty",
-    //   //       process: "empty",
-    //   //       // stream: "empty",
-    //   //       http2: "empty",
-    //   //       http: "empty",
-    //   //       https: "empty",
-    //   //       net: "empty",
-    //   //       tls: "empty",
-    //   //       zlib: "empty",
-    //   //       child_process: "empty",
-    //   //     };
-    //   //   }
-    //   // }
+      // See https://www.npmjs.com/package/node-polyfill-webpack-plugin
+      const NodePolyfillPlugin = require("node-polyfill-webpack-plugin");
 
-    //   // // Add webpack bundle analyzer with custom config to expose the reports publicly
-    //   // // See https://github.com/vercel/next.js/blob/canary/packages/next-bundle-analyzer/index.js
-    //   // if (!dev) {
-    //   //   config.plugins.push(
-    //   //     new BundleAnalyzerPlugin({
-    //   //       analyzerMode: "static",
-    //   //       openAnalyzer: false,
-    //   //       reportFilename: isServer
-    //   //         ? "../../static/bundle-analyzer/server.html"
-    //   //         : "./static/bundle-analyzer/client.html",
-    //   //     })
-    //   //   );
-    //   // }
+      // See https://github.com/webpack-contrib/css-loader/issues/447#issuecomment-761853289
+      // See https://github.com/vercel/next.js/issues/7755#issuecomment-812805708
+      config.resolve = {
+        ...(config.resolve ?? {}),
+        fallback: {
+          ...(config.resolve?.fallback ?? {}),
+          module: false,
+          dgram: false,
+          dns: false,
+          fs: false,
+          http2: false,
+          net: false,
+          tls: false,
+          child_process: false,
+        },
+      };
+      config.plugins = [
+        ...(config?.plugins ?? []),
+        new NodePolyfillPlugin({
+          excludeAliases: ["console"],
+        }),
+      ];
+
+    }
+
+    // Add webpack bundle analyzer with custom config to expose the reports publicly
+    // See https://github.com/vercel/next.js/blob/canary/packages/next-bundle-analyzer/index.js
+    if (!dev) {
+      config.plugins.push(
+        new BundleAnalyzerPlugin({
+          analyzerMode: "static",
+          openAnalyzer: false,
+          reportFilename: isServer
+            ? "../../static/bundle-analyzer/server.html"
+            : "./static/bundle-analyzer/client.html",
+        })
+      );
+    }
 
     // // Enable top level await for apollo-server-micro in `typescript/web/src/pages/api/graphql.ts`
     // // See https://stackoverflow.com/questions/68339243/how-can-i-use-top-level-await-in-typescript-next-js
@@ -213,26 +190,26 @@ module.exports = {
   },
   // Make sure entries are not getting disposed.
   // See https://github.com/vercel/next.js/blob/0af3b526408bae26d6b3f8cab75c4229998bf7cb/test/integration/typescript-workspaces-paths/packages/www/next.config.js
-  // onDemandEntries: {
-  //   maxInactiveAge: 1000 * 60 * 60,
-  // },
-  // // Put the Service Worker code in the `public` folder to avoid having to serve it separately
-  // // See https://github.com/shadowwalker/next-pwa#usage-without-custom-server-nextjs-9
-  // pwa: {
-  //   dest: "public",
-  //   swSrc: "./src/worker/index.ts",
-  //   compileSrc: true,
-  //   // Register false, since we register manually in `_app.tsx`, and ask the user when to upgrade
-  //   register: false,
-  //   // Cache on frontend nav, it pre-fetches stuff more eagerly
-  //   // See https://github.com/shadowwalker/next-pwa#available-options
-  //   cacheOnFrontEndNav: true,
-  //   // Add plugins to the webpack config of the service worker bundler
-  //   // See https://developers.google.com/web/tools/workbox/reference-docs/latest/module-workbox-webpack-plugin.InjectManifest
-  //   webpackCompilationPlugins: [],
-  //   // exclude: ["/api/worker/"]
-  // },
-}
+  onDemandEntries: {
+    maxInactiveAge: 1000 * 60 * 60,
+  },
+  // Put the Service Worker code in the `public` folder to avoid having to serve it separately
+  // See https://github.com/shadowwalker/next-pwa#usage-without-custom-server-nextjs-9
+  pwa: {
+    dest: "public",
+    swSrc: "./src/worker/index.ts",
+    compileSrc: true,
+    // Register false, since we register manually in `_app.tsx`, and ask the user when to upgrade
+    register: false,
+    // Cache on frontend nav, it pre-fetches stuff more eagerly
+    // See https://github.com/shadowwalker/next-pwa#available-options
+    cacheOnFrontEndNav: true,
+    // Add plugins to the webpack config of the service worker bundler
+    // See https://developers.google.com/web/tools/workbox/reference-docs/latest/module-workbox-webpack-plugin.InjectManifest
+    webpackCompilationPlugins: [],
+    // exclude: ["/api/worker/"]
+  },
+});
 //   ,
 //   // ),
 //   SentryWebpackPluginOptions
