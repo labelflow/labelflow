@@ -257,6 +257,9 @@ export const OpenlayersMap = () => {
                       );
                       // To solve a rare bug where image does not load
                       // See https://github.com/labelflow/labelflow/issues/431
+                      console.warn(
+                        "Reloading window to prevent bug https://github.com/labelflow/labelflow/issues/431"
+                      );
                       window?.location?.reload?.();
                       return true;
                     }}
