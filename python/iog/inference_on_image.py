@@ -18,10 +18,12 @@ from cache import Cache
 # Constants for experiments
 PADDING_PIXEL = 10
 RELAX_PIXEL = 30
-SIGMA_IOG_POINT_PIXEL = 10
+# SIGMA_IOG_POINT_PIXEL = 10
+SIGMA_IOG_POINT_PIXEL = 20
 SHAPE_IMAGE_MODEL = (512, 512)
 MAX_PIXEL_INTENSITY = 255
 THRESHOLD_PIXEL_INTENSITY = 127
+PIXEL_TOLERANCE_SIMPLIFICATION = 0
 
 
 def convert_openlayers_point_to_numpy_image_point(
@@ -60,7 +62,7 @@ def transform_contour_item(item: list, imageHeight: int, roiHeight: int) -> list
 
 def simplify_geojson_coordinates(coordinates):
     polygon = Polygon(coordinates)
-    simplified_polygon = polygon.simplify(2)
+    simplified_polygon = polygon.simplify(PIXEL_TOLERANCE_SIMPLIFICATION)
     return simplified_polygon.exterior.coords
 
 
@@ -327,6 +329,9 @@ def refine(
     return convert_net_output_to_geojson_polygon(
         fine_net_output.to("cpu"), tr_sample["gt"], image, roi
     )
+    # inputs = tr_sample["concat"][None]
+    # res = net.inference(inputs.to(device), IOG_points.to(device))
+    # return convert_net_output_to_geojson_polygon(res[-1], tr_sample["gt"], image, roi)
 
 
 def run_iog(data, cache: Cache):
