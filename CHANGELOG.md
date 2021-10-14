@@ -1,6 +1,12 @@
 # Changelog
 
-## [1.0.21](https://github.com/labelflow/labelflow/compare/1.0.20...1.0.21)
+## [1.0.23](https://github.com/labelflow/labelflow/compare/1.0.22...1.0.23)
+
+- rename labelling to labeling [`#502`](https://github.com/labelflow/labelflow/pull/502)
+## [1.0.22](https://github.com/labelflow/labelflow/compare/1.0.21...1.0.22) - 2021-10-11
+
+- Feature/iog [`#180`](https://github.com/labelflow/labelflow/pull/180)
+## [1.0.21](https://github.com/labelflow/labelflow/compare/1.0.20...1.0.21) - 2021-10-08
 
 - Delete images [`#488`](https://github.com/labelflow/labelflow/pull/488)
 - Feature/#462 mjml emails [`#489`](https://github.com/labelflow/labelflow/pull/489)

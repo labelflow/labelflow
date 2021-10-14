@@ -15,7 +15,7 @@ import {
   DbWorkspaceWithType,
   Repository,
 } from "@labelflow/common-resolvers";
-import { prisma } from "../repository/prisma-client";
+import { getPrismaClient } from "../prisma-client";
 import { castObjectNullsToUndefined } from "../repository/utils";
 
 const getWorkspace = async (
@@ -54,7 +54,9 @@ const createWorkspace = async (
   if (typeof user?.id !== "string") {
     throw new Error("Couldn't create workspace: No user id");
   }
-  const userInDb = await prisma.user.findUnique({ where: { id: user.id } });
+  const userInDb = await (
+    await getPrismaClient()
+  ).user.findUnique({ where: { id: user.id } });
 
   if (userInDb == null) {
     throw new Error(
@@ -89,7 +91,9 @@ const updateWorkspace = async (
 };
 
 const memberships = async (parent: Workspace) => {
-  return (await prisma.membership.findMany({
+  return (await (
+    await getPrismaClient()
+  ).membership.findMany({
     where: { workspaceSlug: parent.slug },
     orderBy: { createdAt: Prisma.SortOrder.asc },
     // needs to be casted to avoid conflicts between enums
@@ -97,7 +101,9 @@ const memberships = async (parent: Workspace) => {
 };
 
 const datasets = async (parent: Workspace) => {
-  return await prisma.dataset.findMany({
+  return await (
+    await getPrismaClient()
+  ).dataset.findMany({
     where: { workspaceSlug: parent.slug },
     orderBy: { createdAt: Prisma.SortOrder.asc },
   });

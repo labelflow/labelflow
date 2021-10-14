@@ -1,33 +1,40 @@
-import { ApolloServer, AuthenticationError } from "apollo-server-micro";
+import { NextApiHandler } from "next";
+import { ApolloServer } from "apollo-server-micro";
 import { schemaWithResolvers, repository } from "@labelflow/db";
 import { getSession } from "next-auth/react";
 import { captureException } from "@sentry/nextjs";
 
-const apolloServer = new ApolloServer({
-  schema: schemaWithResolvers,
-  context: async ({ req }) => {
-    const session = await getSession({ req });
-    // Block all queries by unauthenticated users
-    // This will need to be removed once we want to have public datasets
-    if (typeof session?.user.id !== "string") {
-      throw new AuthenticationError(
-        "User must be signed in to perform GraphQL queries."
-      );
-    }
-    return { repository, session, user: session?.user, req };
-  },
-  introspection: true,
-  formatError: (error) => {
-    captureException(error);
-    return error;
-  },
-});
+const createHandler = async () => {
+  const apolloServer = new ApolloServer({
+    schema: schemaWithResolvers,
+    context: async ({ req }) => {
+      const session = await getSession({ req });
+      return { repository, session, user: session?.user, req };
+    },
+    introspection: true,
+    formatError: (error) => {
+      captureException(error);
+      return error;
+    },
+  });
+  await apolloServer.start();
+  return apolloServer.createHandler({ path: "/api/graphql" });
+};
+
+const handlerPromise = createHandler();
+let handler: NextApiHandler | null = null;
 
 export const config = {
   api: {
     bodyParser: false,
   },
 };
-await apolloServer.start();
 
-export default apolloServer.createHandler({ path: "/api/graphql" });
+const handleRequest: NextApiHandler = async (req, res) => {
+  if (handler == null) {
+    handler = await handlerPromise;
+  }
+  return await handler(req, res);
+};
+
+export default handleRequest;

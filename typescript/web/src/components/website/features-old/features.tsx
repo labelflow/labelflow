@@ -32,7 +32,7 @@ export const Features = () => (
         letterSpacing="tight"
         fontWeight="extrabold"
       >
-        The fastest labelling interface on the internet
+        The fastest labeling interface on the internet
       </Heading>
       <Text align="center" textAlign="center" maxW="lg" mx="auto" mt="12">
         No cruft, no time lost, only fun. We focus on performance and user
@@ -86,7 +86,7 @@ export const Features = () => (
           Our mission is to generalize standard good practices around visual
           data management. Dataset curation should not require any &quot;secret
           sauce&quot;. LabelFlow is building a community around an open source
-          labelling tool to set the standard.
+          labeling tool to set the standard.
         </Feature>
         <Feature title="Own your data and algorithms" icon={<FcKey />}>
           LabelFlow does not try to own your data or algorithms, but integrates

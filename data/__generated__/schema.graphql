@@ -157,6 +157,10 @@ type ImportStatus {
   error: String
 }
 
+type IogInferenceResult {
+  polygons: [[[Float!]]]!
+}
+
 scalar JSON
 
 type Label {
@@ -262,12 +266,17 @@ input MembershipCreateInput {
 }
 
 enum MembershipRole {
+  Owner
   Admin
   Member
 }
 
 input MembershipUpdateInput {
   role: MembershipRole
+}
+
+input MembershipWhereInput {
+  workspaceSlug: String
 }
 
 input MembershipWhereUniqueInput {
@@ -288,6 +297,7 @@ type Mutation {
   deleteLabelClass(where: LabelClassWhereUniqueInput!): LabelClass
   createDataset(data: DatasetCreateInput!): Dataset
   createDemoDataset: Dataset
+  runIog(data: RunIogInput!): IogInferenceResult
   updateDataset(where: DatasetWhereUniqueInput!, data: DatasetUpdateInput!): Dataset
   deleteDataset(where: DatasetWhereUniqueInput!): Dataset
   importDataset(where: DatasetWhereUniqueInput!, data: DatasetImportInput!): ImportStatus
@@ -318,11 +328,23 @@ type Query {
   workspace(where: WorkspaceWhereUniqueInput!): Workspace!
   workspaces(first: Int, skip: Int, where: WorkspaceWhereInput): [Workspace!]!
   membership(where: MembershipWhereUniqueInput!): Membership!
-  memberships(first: Int, skip: Int): [Membership!]!
+  memberships(where: MembershipWhereInput, first: Int, skip: Int): [Membership!]!
   user(where: UserWhereUniqueInput!): User!
   users(first: Int, skip: Int): [User!]!
   exportDataset(where: ExportWhereUniqueInput!, format: ExportFormat!, options: ExportOptions): String!
   debug: JSON!
+}
+
+input RunIogInput {
+  id: ID!
+  imageUrl: String
+  x: Float
+  y: Float
+  width: Float
+  height: Float
+  pointsInside: [[Float!]]
+  pointsOutside: [[Float!]]
+  centerPoint: [Float!]
 }
 
 scalar Upload
@@ -346,8 +368,8 @@ type User {
   id: ID!
   createdAt: DateTime!
   updatedAt: DateTime!
-  name: String!
-  email: String!
+  name: String
+  email: String
   image: String
   memberships: [Membership!]!
 }

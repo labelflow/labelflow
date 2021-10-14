@@ -17,6 +17,7 @@ import { ServiceWorkerManagerModal } from "../../../components/service-worker-ma
 import { AuthManager } from "../../../components/auth-manager";
 import { WelcomeManager } from "../../../components/welcome-manager";
 import { CookieBanner } from "../../../components/cookie-banner";
+import { WorkspaceTabBar } from "../../../components/layout/tab-bar/workspace-tab-bar";
 import { WorkspaceSwitcher } from "../../../components/workspace-switcher";
 import { NavLogo } from "../../../components/logo/nav-logo";
 
@@ -44,7 +45,10 @@ export const getDatasetsQuery = gql`
 `;
 
 const DatasetPage = () => {
-  const workspaceSlug = useRouter().query?.workspaceSlug;
+  const {
+    query: { workspaceSlug },
+    isReady,
+  } = useRouter();
 
   const { data: datasetsResult } = useQuery<{
     datasets: Pick<
@@ -97,6 +101,12 @@ const DatasetPage = () => {
       <Meta title="LabelFlow | Datasets" />
       <CookieBanner />
       <Layout
+        tabBar={
+          <WorkspaceTabBar
+            currentTab="datasets"
+            workspaceSlug={workspaceSlug as string}
+          />
+        }
         breadcrumbs={[
           <NavLogo key={0} />,
           <WorkspaceSwitcher key={1} />,
@@ -117,6 +127,7 @@ const DatasetPage = () => {
 
         <Flex direction="row" wrap="wrap" p={4}>
           <NewDatasetCard
+            disabled={!isReady}
             addDataset={() => {
               setIsCreatingDataset(true, "replaceIn");
             }}

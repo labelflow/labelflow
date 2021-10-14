@@ -17,6 +17,7 @@ mockMatchMedia(jest);
 
 mockUseQueryParams();
 mockNextRouter({
+  isReady: true,
   query: { datasetSlug: "mocked-dataset", workspaceSlug: "local" },
 });
 

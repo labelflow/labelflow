@@ -15,13 +15,16 @@ describe("Golden path", () => {
     );
 
     cy.get('[aria-label="loading indicator"]').should("not.exist");
-    cy.get("a").contains("Datasets").click();
+    cy.get('[aria-label="Navigate in hidden breadcrumbs"]').click();
+    cy.get('[aria-label="Hidden breadcrumbs"]').within(() => {
+      cy.contains("Datasets").click({ force: true });
+    });
 
-    cy.contains("Create new dataset...").click();
-    cy.get("input").type("cypress dataset");
+    cy.get('[aria-label="Create new dataset"]').click();
+    cy.get('[aria-label="Dataset name input"]').type("cypress dataset");
 
     cy.wait(420);
-    cy.contains("Start Labelling").click();
+    cy.contains("Start Labeling").click();
 
     cy.wait(420);
     cy.contains("cypress dataset").click();

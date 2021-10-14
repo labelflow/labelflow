@@ -1,6 +1,6 @@
 import { createCreateLabelClassAndUpdateLabelEffect } from "../create-label-class-and-update-label";
 import { useUndoStore } from "../..";
-import { useLabellingStore } from "../../../labelling-state";
+import { useLabelingStore } from "../../../labeling-state";
 import { client } from "../../../apollo-client/schema-client";
 
 import { setupTestsWithLocalDatabase } from "../../../../utils/setup-local-db-tests";
@@ -42,7 +42,7 @@ const { perform } = useUndoStore.getState();
 
 beforeEach(async () => {
   jest.clearAllMocks();
-  useLabellingStore.setState({
+  useLabelingStore.setState({
     selectedLabelClassId: "previous label class id",
   });
   await perform(
@@ -60,7 +60,7 @@ beforeEach(async () => {
   );
 });
 
-it("should create the label class and update the label and the labelling store", async () => {
+it("should create the label class and update the label and the labeling store", async () => {
   expect(client.mutate).toHaveBeenNthCalledWith(
     1,
     expect.objectContaining({
@@ -82,12 +82,12 @@ it("should create the label class and update the label and the labelling store",
       },
     })
   );
-  expect(useLabellingStore.getState()).toMatchObject({
+  expect(useLabelingStore.getState()).toMatchObject({
     selectedLabelClassId: "label class id",
   });
 });
 
-it("should undo the label class creation and update the label and the labelling store", async () => {
+it("should undo the label class creation and update the label and the labeling store", async () => {
   await useUndoStore.getState().undo();
 
   expect(client.mutate).toHaveBeenNthCalledWith(
@@ -107,12 +107,12 @@ it("should undo the label class creation and update the label and the labelling 
       },
     })
   );
-  expect(useLabellingStore.getState()).toMatchObject({
+  expect(useLabelingStore.getState()).toMatchObject({
     selectedLabelClassId: "previous label class id",
   });
 });
 
-it("should redo the label class creation and the update of the label class of a label and the labelling store", async () => {
+it("should redo the label class creation and the update of the label class of a label and the labeling store", async () => {
   await useUndoStore.getState().undo();
   await useUndoStore.getState().redo();
 
@@ -138,7 +138,7 @@ it("should redo the label class creation and the update of the label class of a 
       },
     })
   );
-  expect(useLabellingStore.getState()).toMatchObject({
+  expect(useLabelingStore.getState()).toMatchObject({
     selectedLabelClassId: "label class id",
   });
 });

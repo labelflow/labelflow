@@ -143,7 +143,7 @@ const performWelcomeWorkflow = async ({
     await router.prefetch(tutorialDatasetFirstImageUrl);
 
     setIsLoadingWorkerAndDemo(false);
-  } catch (error) {
+  } catch (error: any) {
     setBrowserError(error);
   }
 };
@@ -251,6 +251,7 @@ export const WelcomeModal = ({
     if (
       !process.env.STORYBOOK &&
       router?.isReady &&
+      router?.query?.workspaceSlug === "local" &&
       ((!(browserWarning && tryDespiteBrowserWarning !== "true") &&
         !isServiceWorkerActive &&
         paramModalWelcome !== "closed") ||
@@ -266,7 +267,7 @@ export const WelcomeModal = ({
         setIsLoadingWorkerAndDemo,
       });
     }
-  }, [tryDespiteBrowserWarning, router?.isReady]);
+  }, [tryDespiteBrowserWarning, router?.isReady, router?.query?.workspaceSlug]);
 
   // welcome => undefined
   const handleGetStarted = useCallback(() => {

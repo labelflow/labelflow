@@ -31,7 +31,7 @@ const IndexPage = () => {
   return (
     <>
       <ServiceWorkerManagerBackground />
-      <Meta title="LabelFlow: The open standard platform for image labelling." />
+      <Meta title="LabelFlow: The open standard platform for image labeling." />
       <CookieBanner />
       <Layout>
         <Center h="full">

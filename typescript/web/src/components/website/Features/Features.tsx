@@ -62,7 +62,7 @@ export const Features = () => {
             complicated scripts to synchronize your data between various tools.
           </Feature>
           <Feature icon={BsHeartFill} title="Open community and standard">
-            LabelFlow is building a community around an open labelling tool
+            LabelFlow is building a community around an open labeling tool
             (under Business Source Licence) to set the standard around visual
             data management. Dataset curation should not require any
             &ldquo;secret sauce&rdquo;.

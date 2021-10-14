@@ -8,7 +8,7 @@ import {
 } from "@labelflow/graphql-types";
 import { probeImage } from "@labelflow/common-resolvers/src/utils/probe-image";
 import { createClient } from "@supabase/supabase-js";
-import { prisma } from "../../repository/prisma-client";
+import { getPrismaClient } from "../../prisma-client";
 import { client, user } from "../../dev/apollo-client";
 import { LabelType } from ".prisma/client";
 
@@ -187,14 +187,18 @@ const createImage = async (
 };
 
 beforeAll(async () => {
-  await prisma.user.create({ data: { id: testUser1Id, name: "test-user-1" } });
-  await prisma.user.create({ data: { id: testUser2Id, name: "test-user-2" } });
+  await (
+    await getPrismaClient()
+  ).user.create({ data: { id: testUser1Id, name: "test-user-1" } });
+  await (
+    await getPrismaClient()
+  ).user.create({ data: { id: testUser2Id, name: "test-user-2" } });
 });
 
 beforeEach(async () => {
   user.id = testUser1Id;
-  await prisma.membership.deleteMany({});
-  await prisma.workspace.deleteMany({});
+  await (await getPrismaClient()).membership.deleteMany({});
+  await (await getPrismaClient()).workspace.deleteMany({});
   await createWorkspace({ name: "My workspace" });
   await createDataset("My dataset", "my-workspace", testDatasetId);
   await createImage("test-image", testDatasetId, testImageId);
@@ -202,7 +206,7 @@ beforeEach(async () => {
 
 afterAll(async () => {
   // Needed to avoid having the test process running indefinitely after the test suite has been run
-  await prisma.$disconnect();
+  await (await getPrismaClient()).$disconnect();
 });
 
 describe("Access control for label", () => {

@@ -40,7 +40,7 @@ const TriggerButton = forwardRef<any, any>((props, ref) => (
     <MenuButton
       ref={ref}
       as={IconButton}
-      aria-label="Navigation"
+      aria-label="Navigate in hidden breadcrumbs"
       icon={<EllipsisIcon fontSize="xl" />}
       color={mode("gray.700", "gray.300")}
       variant="ghost"
@@ -60,7 +60,7 @@ export const CollapsedBreadcrumbs = ({
   return (
     <Menu isLazy>
       <TriggerButton {...otherProps} />
-      <MenuList>
+      <MenuList aria-label="Hidden breadcrumbs">
         {(() => {
           if (containsLastElement) {
             return [
