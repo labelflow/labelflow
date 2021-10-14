@@ -3,6 +3,7 @@ import {
   Box,
   Button,
   Heading,
+  Input,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -12,14 +13,33 @@ import {
   Stack,
   Text,
   useColorModeValue as mode,
-  Input,
+  useToast,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
+import { useQueryParam } from "use-query-params";
 
 import React, { useState, useEffect } from "react";
 import slugify from "slugify";
 import { Logo } from "../../logo";
 import { Features } from "../../auth-manager/signin-modal/features";
+import { BoolParam } from "../../../utils/query-param-bool";
+
+const searchWorkspacesQuery = gql`
+  query searchWorkspaces($slug: String!) {
+    workspaces(first: 1, where: { slug: $slug }) {
+      id
+    }
+  }
+`;
+
+const createWorkspaceMutation = gql`
+  mutation createWorkspace($name: String!) {
+    createWorkspace(data: { name: $name }) {
+      id
+      slug
+    }
+  }
+`;
 
 const Message = ({
   error,
@@ -63,33 +83,18 @@ const Message = ({
   );
 };
 
-const searchWorkspacesQuery = gql`
-  query searchWorkspaces($slug: String!) {
-    workspaces(first: 1, where: { slug: $slug }) {
-      id
-    }
-  }
-`;
-
-const createWorkspaceMutation = gql`
-  mutation createWorkspace($name: String!) {
-    createWorkspace(data: { name: $name }) {
-      id
-      slug
-    }
-  }
-`;
-
 export const WorkspaceCreationModal = ({
   initialWorkspaceName,
   isOpen,
   onClose,
 }: {
-  initialWorkspaceName: string | undefined;
+  initialWorkspaceName?: string | undefined;
   isOpen: boolean;
   onClose: () => void;
 }) => {
   const router = useRouter();
+  const toast = useToast();
+  const setSigninModalOpen = useQueryParam("modal-signin", BoolParam)[1];
   const [workspaceName, setWorkspaceName] =
     useState<string | undefined>(initialWorkspaceName);
   const slug = slugify(workspaceName ?? "", { lower: true });
@@ -113,6 +118,29 @@ export const WorkspaceCreationModal = ({
     refetchQueries: ["getWorkspaces"],
     onCompleted: (createdData) => {
       router.push(`/${createdData.createWorkspace.slug}`);
+    },
+    onError: (caughtError: any) => {
+      if (caughtError instanceof ApolloError) {
+        toast({
+          title: "Needs to be signed in",
+          description:
+            "Only signed-in users can to create and share Workspaces online, please sign in.",
+          isClosable: true,
+          status: "info",
+          position: "bottom-right",
+          duration: 10000,
+        });
+        setSigninModalOpen(true, "replaceIn");
+      } else {
+        toast({
+          title: "Could not create workspace",
+          description: caughtError?.message ?? caughtError,
+          isClosable: true,
+          status: "error",
+          position: "bottom-right",
+          duration: 10000,
+        });
+      }
     },
   });
 
