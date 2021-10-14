@@ -1,9 +1,9 @@
 import { Button, useDisclosure } from "@chakra-ui/react";
 
 import { NewMemberModal } from "../new-member-modal";
-import { chakraDecorator } from "../../../../utils/chakra-decorator";
-import { apolloDecorator } from "../../../../utils/apollo-decorator";
-import { queryParamsDecorator } from "../../../../utils/query-params-decorator";
+import { chakraDecorator } from "../../../utils/chakra-decorator";
+import { apolloDecorator } from "../../../utils/apollo-decorator";
+import { queryParamsDecorator } from "../../../utils/query-params-decorator";
 
 export default {
   title: "web/New member modal",

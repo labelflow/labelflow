@@ -22,10 +22,11 @@ import {
 import { useRouter } from "next/router";
 // import { useQueryParam, StringParam, withDefault } from "use-query-params";
 import { useApolloClient } from "@apollo/client";
-import { datasetDataQuery } from "../../../pages/[workspaceSlug]/datasets/[datasetSlug]/images";
-import { getDatasetsQuery } from "../../../pages/[workspaceSlug]/datasets";
-import { RoleSelection } from "../../members/role-selection";
-import { Role } from "../../members/types";
+import { datasetDataQuery } from "../../pages/[workspaceSlug]/datasets/[datasetSlug]/images";
+import { getDatasetsQuery } from "../../pages/[workspaceSlug]/datasets";
+
+import { RoleSelection } from "./role-selection";
+import { Role } from "./types";
 
 const validateEmail = (email: string): boolean => {
   const re =
