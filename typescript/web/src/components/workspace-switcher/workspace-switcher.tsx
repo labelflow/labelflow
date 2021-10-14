@@ -3,10 +3,12 @@ import { Workspace } from "@labelflow/graphql-types";
 import { useRouter } from "next/router";
 import { useState, useCallback, useMemo } from "react";
 import { startCase } from "lodash/fp";
+import { useQueryParam } from "use-query-params";
 
 import { WorkspaceMenu } from "./workspace-menu";
 import { WorkspaceItem } from "./workspace-menu/workspace-selection-popover";
 import { WorkspaceCreationModal } from "./workspace-creation-modal";
+import { BoolParam } from "../../utils/query-param-bool";
 
 const getWorkspacesQuery = gql`
   query getWorkspaces {
@@ -23,6 +25,11 @@ export const WorkspaceSwitcher = () => {
   const workspaceSlug = router?.query.workspaceSlug as string;
 
   const [isOpen, setIsOpen] = useState(false);
+
+  const [isCreationModalOpen, setIsCreationModalOpen] = useQueryParam(
+    "modal-create-workspace",
+    BoolParam
+  );
 
   const { data: getWorkspacesData, previousData: getWorkspacesPreviousData } =
     useQuery(getWorkspacesQuery);
@@ -56,13 +63,12 @@ export const WorkspaceSwitcher = () => {
     }
   }, []);
 
-  const [isCreationModalOpen, setIsCreationModalOpen] = useState(false);
   const [initialWorkspaceName, setInitialWorkspaceName] =
     useState<string | undefined>();
 
   const createNewWorkspace = useCallback(async (name: string) => {
     setInitialWorkspaceName(name);
-    setIsCreationModalOpen(true);
+    setIsCreationModalOpen(true, "replaceIn");
   }, []);
 
   if (workspaces == null) {
@@ -84,7 +90,7 @@ export const WorkspaceSwitcher = () => {
       <WorkspaceCreationModal
         initialWorkspaceName={initialWorkspaceName}
         isOpen={isCreationModalOpen}
-        onClose={() => setIsCreationModalOpen(false)}
+        onClose={() => setIsCreationModalOpen(false, "replaceIn")}
       />
     </>
   );
