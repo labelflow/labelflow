@@ -103,14 +103,16 @@ export const WorkspaceCreationModal = ({
     setWorkspaceName(initialWorkspaceName);
   }, [initialWorkspaceName]);
 
-  // TODO: hardcode the use of the distant client here!
+  /**
+   * This query and the following mutation need to run against the distant database endpoint;
+   * This is currently enforced in the TopBar component.
+   */
   const { data } = useQuery(searchWorkspacesQuery, {
     skip: workspaceName === undefined,
     variables: { slug },
     fetchPolicy: "network-only",
   });
 
-  // TODO: hardcode the use of the distant client here!
   const [createWorkspace, { error }] = useMutation<{
     createWorkspace: { id: string; slug: string };
   }>(createWorkspaceMutation, {
