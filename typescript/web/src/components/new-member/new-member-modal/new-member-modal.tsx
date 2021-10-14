@@ -1,11 +1,10 @@
 import { useEffect, useState, ChangeEvent } from "react";
 import {
+  Flex,
   Alert,
   AlertIcon,
   AlertDescription,
-  Stack,
   VStack,
-  Select,
   Text,
   Textarea,
   Modal,
@@ -83,14 +82,14 @@ export const NewMemberModal = ({
       isCentered
     >
       <ModalOverlay />
-      <ModalContent height="80vh">
+      <ModalContent>
         <ModalCloseButton />
         <ModalHeader textAlign="center" padding="6">
           <Heading as="h2" size="lg" pb="2">
             Invite members
           </Heading>
           <Text fontSize="lg" fontWeight="medium">
-            Adding workspace members will give them access to{" "}
+            Adding members to the workspace will give them access to{" "}
             <b>every dataset</b> in the workspace.
           </Text>
         </ModalHeader>
@@ -103,77 +102,70 @@ export const NewMemberModal = ({
           pl="6"
           flexDirection="column"
         >
-          <VStack spacing={2} flex="1" alignItems="stretch">
-            <Text fontSize="md" fontWeight="bold">
-              Emails:
-            </Text>
-            <Stack
-              as="form"
-              border="1px"
-              borderColor={mode("gray.100", "gray.400")}
-              borderRadius="md"
-              bg="transparent"
-              flex="1"
-            >
+          <VStack alignItems="stretch">
+            <Flex flexDirection="column">
+              <Text fontSize="md" fontWeight="bold" marginBottom={2}>
+                Emails:
+              </Text>
               <Textarea
+                border="1px"
+                borderColor={mode("gray.200", "gray.400")}
                 borderRadius="md"
-                border="none"
+                bg="transparent"
                 value={value}
                 onChange={handleInputChange}
                 placeholder="user1@example.com&#13;&#10;user2@example.com&#13;&#10;..."
                 size="sm"
-                h="full"
+                height="3xs"
                 resize="none"
               />
-            </Stack>
-            <Text
-              fontSize="sm"
-              fontWeight="medium"
-              color={`${
-                emails.length > maxNumberOfEmails || hasInvalidEmails
-                  ? "red"
-                  : "black"
-              }`}
-            >
-              {`${emails.length} ${
-                emails.length <= 1 ? "Invitee." : "Invitees."
-              } ${
-                emails.length > maxNumberOfEmails
-                  ? ` You can invite a maximum of ${maxNumberOfEmails} members at a time.`
-                  : ""
-              } ${
-                hasInvalidEmails
-                  ? "\nInvalid emails found, please check them."
-                  : ""
-              }`}
-            </Text>
-            <Text fontSize="md" fontWeight="bold" paddingTop={2}>
-              Invite as:
-            </Text>
-            <RoleSelection role={role} changeMembershipRole={setRole} />
-            {/* <Select>
-              <option value="owner">
-                Owner - manage datasets, members and billing
-              </option>
-            </Select> */}
-            <Alert status="info" borderRadius={5}>
-              <AlertIcon />
-              {/* <AlertTitle mr={2} fontSize={15} whiteSpace="nowrap">
-                
-              </AlertTitle> */}
-              <AlertDescription fontSize={13} fontWeight="medium">
-                <b>Tip</b>: Until January 2022 the number of members in a Shared
-                Workspace is not limited, the time for us to collect your{" "}
-                <Link
-                  href="https://discord.com/channels/877517176498692166/877517176498692169"
-                  color="blue.600"
-                  textDecoration="underline"
-                >
-                  feedbacks
-                </Link>
-                .
-              </AlertDescription>
-            </Alert>
+              <Text
+                fontSize="xs"
+                fontWeight="medium"
+                color={`${
+                  emails.length > maxNumberOfEmails || hasInvalidEmails
+                    ? "red"
+                    : "black"
+                }`}
+              >
+                {`${emails.length} ${
+                  emails.length <= 1 ? "Invitee." : "Invitees."
+                } ${
+                  emails.length > maxNumberOfEmails
+                    ? ` You can invite a maximum of ${maxNumberOfEmails} members at a time.`
+                    : ""
+                } ${
+                  hasInvalidEmails
+                    ? "\nInvalid emails found, please check them."
+                    : ""
+                }`}
+              </Text>
+            </Flex>
+            <Flex paddingTop={4} flexDirection="column">
+              <Text fontSize="md" fontWeight="bold" marginBottom={2}>
+                Invite as:
+              </Text>
+              <RoleSelection role={role} changeMembershipRole={setRole} />
+            </Flex>
+            <Flex paddingTop={4}>
+              <Alert status="info" borderRadius={5}>
+                <AlertIcon />
+                <AlertDescription fontSize={13} fontWeight="medium">
+                  <b>Tip</b>: Until January 2022 the number of members in a
+                  Shared Workspace is not limited, the time for us to collect
+                  your{" "}
+                  <Link
+                    target="_blank"
+                    href="https://discord.gg/NyYQ4dM3Dj"
+                    color="blue.600"
+                    textDecoration="underline"
+                  >
+                    feedbacks
+                  </Link>
+                  .
+                </AlertDescription>
+              </Alert>
+            </Flex>
           </VStack>
         </ModalBody>
 
@@ -190,6 +182,7 @@ export const NewMemberModal = ({
             flexShrink={0}
             onClick={() => {
               onClose();
+              setValue("");
               setHasUploaded(false);
             }}
           >
