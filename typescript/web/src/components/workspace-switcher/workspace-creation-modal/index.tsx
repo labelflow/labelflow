@@ -20,6 +20,10 @@ import { useQueryParam } from "use-query-params";
 
 import React, { useState, useEffect } from "react";
 import slugify from "slugify";
+import {
+  forbiddenWorkspaceSlugs,
+  isValidWorkspaceName,
+} from "@labelflow/common-resolvers";
 import { Logo } from "../../logo";
 import { Features } from "../../auth-manager/signin-modal/features";
 import { BoolParam } from "../../../utils/query-param-bool";
@@ -66,14 +70,32 @@ const Message = ({
     );
   }
 
-  if (workspaceName && globalThis.location) {
+  if (workspaceName) {
+    if (!isValidWorkspaceName(workspaceName)) {
+      return (
+        <Text fontSize="sm" color="red.500">
+          The name &quot;{workspaceName}&quot; contains invalid characters.
+        </Text>
+      );
+    }
+
     const slug = slugify(workspaceName, { lower: true });
 
-    return (
-      <Text fontSize="sm" color={mode("gray.800", "gray.200")}>
-        Your URL will be: {`${globalThis.location.origin}/${slug}`}
-      </Text>
-    );
+    if (forbiddenWorkspaceSlugs.includes(slug)) {
+      return (
+        <Text fontSize="sm" color="red.500">
+          The name &quot;{workspaceName}&quot; is reserved.
+        </Text>
+      );
+    }
+
+    if (globalThis.location) {
+      return (
+        <Text fontSize="sm" color={mode("gray.800", "gray.200")}>
+          Your URL will be: {`${globalThis.location.origin}/${slug}`}
+        </Text>
+      );
+    }
   }
 
   return (
@@ -212,7 +234,12 @@ export const WorkspaceCreationModal = ({
                 <Button
                   width="full"
                   type="submit"
-                  isDisabled={workspaceNameIsAlreadyTaken}
+                  isDisabled={
+                    workspaceNameIsAlreadyTaken ||
+                    slug.length <= 0 ||
+                    forbiddenWorkspaceSlugs.includes(slug) ||
+                    !isValidWorkspaceName(workspaceName ?? "")
+                  }
                   colorScheme="brand"
                   onClick={() => createWorkspace()}
                 >
