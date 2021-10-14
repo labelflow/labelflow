@@ -46,26 +46,6 @@ export const generateHtml = (props: {
           <mj-image align="center" alt="" border="none" href="${origin}" type="Unit" padding-bottom="30px" padding-top="0px" padding="10px 25px" src="${origin}/static/img/logo-email.png" target="_blank" title="" height="auto" width="300px"></mj-image>
         </mj-column>
       </mj-section>
-      <mj-section background-color="#ffffff" background-repeat="repeat" padding-bottom="0px" padding-left="0px" padding-right="0px" padding-top="0px" padding="20px 0" text-align="center" vertical-align="top">
-        <mj-column>
-        <mj-text align="left" color="${
-          theme.colors.gray["800"]
-        }" font-familyInter,="Inter, Open Sans, Helvetica, Arial, sans-serif" font-size="17px" line-height="22px" padding-bottom="0px" padding-left="50px" padding-right="50px" padding-top="0px" padding="0px 25px 0px 25px">
-          <h1 style="text-align:center; color: ${
-            theme.colors.gray["900"]
-          }; line-height:32px">Join your team on LabelFlow</h1>
-        </mj-text>
-        <mj-text align="left" color="${
-          theme.colors.gray["800"]
-        }" font-familyInter,="Inter, Open Sans, Helvetica, Arial, sans-serif" font-size="15px" line-height="22px" padding-bottom="0px" padding-left="50px" padding-right="50px" padding-top="0px" padding="0px 25px 0px 25px">
-          <p style="margin: 10px 0; text-align: center;">${
-            senderName ?? "A user"
-          } ${
-      senderEmail ? `(${senderEmail})` : ""
-    } has invited you to use</br> LabelFlow in a workspace called ${workspaceName}.<br /></p>
-        </mj-text>
-        </mj-column>
-        </mj-section>
       <mj-section background-color="#ffffff" background-repeat="repeat" background-size="auto" padding-bottom="0px" padding-top="0px" padding="20px 0" text-align="center" vertical-align="top">
         <mj-column>
           <mj-image align="center" alt="" border="none" height="auto" type="Unit" padding-bottom="0px" padding-left="50px" padding-right="50px" padding-top="40px" padding="10px 25px" src="${origin}/static/graphics/png/computer-hand.png" target="_blank" title="" width="200px"></mj-image>
@@ -78,16 +58,25 @@ export const generateHtml = (props: {
           }" font-familyInter,="Inter, Open Sans, Helvetica, Arial, sans-serif" font-size="13px" line-height="22px" padding-bottom="0px" padding-left="50px" padding-right="50px" padding-top="0px" padding="0px 25px 0px 25px">
             <h1 style="text-align:center; color: ${
               theme.colors.gray["900"]
-            }; line-height:32px">What is LabelFlow?</h1>
+            }; line-height:32px">Join your team on LabelFlow</h1>
           </mj-text>
           <mj-text align="left" color="${
             theme.colors.gray["800"]
           }" font-familyInter,="Inter, Open Sans, Helvetica, Arial, sans-serif" font-size="15px" line-height="22px" padding-bottom="0px" padding-left="50px" padding-right="50px" padding-top="0px" padding="0px 25px 0px 25px">
-            <p style="margin: 10px 0; text-align: center;">LabelFlow is an open labeling platform, a place to collaborate to annotate, review and share image datasets. <a href="${origin}">Learn more about</br> LabelFlow.</a><br /></p>
+            <p style="margin: 10px 0; text-align: center;">${
+              senderName ?? "A user"
+            } ${
+      senderEmail ? `(${senderEmail})` : ""
+    } has invited you to use</br> LabelFlow in a workspace called ${workspaceName}.<br /></p>
+          </mj-text>
+          <mj-text align="left" color="${
+            theme.colors.gray["800"]
+          }" font-familyInter,="Inter, Open Sans, Helvetica, Arial, sans-serif" font-size="15px" line-height="22px" padding-bottom="0px" padding-left="50px" padding-right="50px" padding-top="0px" padding="0px 25px 0px 25px">
+            <p style="margin: 10px 0; text-align: center;">Note that this invitation expires in 24 hours and can only be used once. Do not share it.<br /></p>
           </mj-text>
           <mj-button align="center" background-color="${
             theme.colors.brand["500"]
-          }" border-radius="100px" border="none" color="#ffffff" font-familyInter,="Inter, Open Sans, Helvetica, Arial, sans-serif" font-size="15px" font-weight="normal" href="${url}" inner-padding="15px 25px 15px 25px" padding-bottom="20px" padding-top="20px" padding="10px 25px" text-decoration="none" text-transform="none" vertical-align="middle"><b style="font-weight:700"><b style="font-weight:700">Access Now</b></b></mj-button>
+          }" border-radius="100px" border="none" color="#ffffff" font-familyInter,="Inter, Open Sans, Helvetica, Arial, sans-serif" font-size="15px" font-weight="normal" href="${url}" inner-padding="15px 25px 15px 25px" padding-bottom="20px" padding-top="20px" padding="10px 25px" text-decoration="none" text-transform="none" vertical-align="middle"><b style="font-weight:700"><b style="font-weight:700">ACCESS NOW</b></b></mj-button>
           <mj-text align="left" color="${
             theme.colors.gray["800"]
           }" font-familyInter,="Inter, Open Sans, Helvetica, Arial, sans-serif" font-size="15px" line-height="22px" padding-bottom="0px" padding-left="50px" padding-right="50px" padding-top="0px" padding="0px 25px 0px 25px">
