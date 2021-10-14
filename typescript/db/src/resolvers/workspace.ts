@@ -44,7 +44,11 @@ const workspaces = async (
   args: QueryWorkspacesArgs,
   { repository, user }: Context
 ): Promise<DbWorkspaceWithType[]> =>
-  await repository.workspace.list({ user }, args.skip, args.first);
+  await repository.workspace.list(
+    { user, ...args.where },
+    args.skip,
+    args.first
+  );
 
 const createWorkspace = async (
   _: any,

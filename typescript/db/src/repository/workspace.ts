@@ -26,6 +26,7 @@ export const addWorkspace: Repository["workspace"]["add"] = async (
   }
   const slug = slugify(workspace.name, { lower: true });
   const plan = WorkspacePlan.Community;
+
   const createdWorkspace = await (
     await getPrismaClient()
   ).workspace.create({
@@ -35,7 +36,7 @@ export const addWorkspace: Repository["workspace"]["add"] = async (
       ...workspace,
       memberships: {
         create: {
-          userId: user?.id,
+          user: { connect: { id: user?.id } },
           role: UserRole.Owner,
         },
       },
