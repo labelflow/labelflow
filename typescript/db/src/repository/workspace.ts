@@ -24,14 +24,12 @@ export const addWorkspace: Repository["workspace"]["add"] = async (
   if (typeof user?.id !== "string") {
     throw new Error("Couldn't create workspace: No user id");
   }
-  const slug = slugify(workspace.name, { lower: true });
   const plan = WorkspacePlan.Community;
 
   const createdWorkspace = await (
     await getPrismaClient()
   ).workspace.create({
     data: castObjectNullsToUndefined({
-      slug,
       plan,
       ...workspace,
       memberships: {

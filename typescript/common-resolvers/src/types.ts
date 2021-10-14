@@ -140,7 +140,7 @@ export type Repository = {
     update: Update<DbDataset, DatasetWhereUniqueInput>;
   };
   workspace: {
-    add: Add<WorkspaceCreateInput>;
+    add: Add<WorkspaceCreateInput & { slug: string }>;
     get: Get<DbWorkspaceWithType, WorkspaceWhereUniqueInput>;
     list: List<
       DbWorkspaceWithType,
