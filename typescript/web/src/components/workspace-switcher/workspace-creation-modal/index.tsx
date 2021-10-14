@@ -110,6 +110,7 @@ export const WorkspaceCreationModal = ({
     createWorkspace: { id: string; slug: string };
   }>(createWorkspaceMutation, {
     variables: { name: workspaceName },
+    refetchQueries: ["getWorkspaces"],
     onCompleted: (createdData) => {
       router.push(`/${createdData.createWorkspace.slug}`);
     },

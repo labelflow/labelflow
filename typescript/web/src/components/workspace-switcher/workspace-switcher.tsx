@@ -40,9 +40,7 @@ export const WorkspaceSwitcher = () => {
   const client = useApolloClient();
 
   const { data: getWorkspacesData, previousData: getWorkspacesPreviousData } =
-    useQuery(getWorkspacesQuery, {
-      variables: { workspaceSlug },
-    });
+    useQuery(getWorkspacesQuery);
 
   const workspaces: (Workspace & { src?: string })[] = [
     { id: "local", slug: "local", name: "Local", src: null },
