@@ -34,13 +34,7 @@ export const generateHtml = (props: {
       <mj-section background-color="#ffffff" background-repeat="repeat" padding-bottom="0px" padding-left="0px" padding-right="0px" padding-top="0px" padding="20px 0" text-align="center" vertical-align="top">
         <mj-column>
           <mj-divider border-color="${theme.colors.brand["500"]}" border-style="solid" border-width="7px" padding-bottom="40px" padding-left="0px" padding-right="0px" padding-top="0px" padding="10px 25px" width="100%"></mj-divider>
-          <mj-image align="center" alt="" border="none" href="${origin}" type="Unit" src="${origin}/static/icon-192x192.png" target="_blank" title="" height="auto" width="100"></mj-image>
-          <mj-text align="left" color="${theme.colors.gray["800"]}" font-family="Inter, Open Sans, Helvetica, Arial, sans-serif" font-size="30px" line-height="0px" padding-bottom="0px" padding-left="50px" padding-right="50px" padding-top="0px">
-            <h1 style="text-align:center; color: ${theme.colors.gray["900"]}; line-height:70px; margin-top:0px; margin-bottom:20px">Welcome to LabelFlow!</h1>
-          </mj-text>
-          <mj-text align="left" color="${theme.colors.gray["800"]}" font-family="Inter, Open Sans, Helvetica, Arial, sans-serif" font-size="15px" line-height="22px" padding-bottom="0px" padding-left="50px" padding-right="50px" padding-top="0px" padding="0px 25px 0px 25px">
-            <p style="margin: 10px 0; text-align: center;">You can now start collaborating to annotate your datasets.</br> Share the annotation work with your team and export your labels</br> to build the next big thing!<br /></p>
-          </mj-text>
+          <mj-image align="center" alt="" border="none" href="${origin}" type="Unit" padding-bottom="30px" padding-top="0px" padding="10px 25px" src="${origin}/static/img/logo-email.png" target="_blank" title="" height="auto" width="300px"></mj-image>
         </mj-column>
       </mj-section>
       <mj-section background-color="#ffffff" background-repeat="repeat" background-size="auto" padding-bottom="0px" padding-top="0px" padding="20px 0" text-align="center" vertical-align="top">
@@ -50,10 +44,12 @@ export const generateHtml = (props: {
       </mj-section>
       <mj-section background-color="#ffffff" background-repeat="repeat" background-size="auto" padding-bottom="70px" padding-top="30px" padding="20px 0px 20px 0px" text-align="center" vertical-align="top">
         <mj-column>
-          <mj-text align="left" color="${theme.colors.gray["800"]}" font-family="Inter, Open Sans, Helvetica, Arial, sans-serif" font-size="15px" line-height="22px" padding-bottom="0px" padding-left="50px" padding-right="50px" padding-top="0px" padding="0px 25px 0px 25px">
-            <p style="margin: 10px 0; text-align: center;">Tap the button below to activate your account and get started on</br> the platform.<br /></p>
+          <mj-text align="left" color="${theme.colors.gray["800"]}" font-familyInter,="Inter, Open Sans, Helvetica, Arial, sans-serif" font-size="15px" line-height="22px" padding-bottom="0px" padding-left="50px" padding-right="50px" padding-top="0px" padding="0px 25px 0px 25px">
+            <h1 style="text-align:center; color: ${theme.colors.gray["900"]}; line-height:32px">Welcome aboard!</h1>
           </mj-text>
-          <mj-button align="center" background-color="${theme.colors.brand["500"]}" border-radius="100px" border="none" color="#ffffff" font-family="Inter, Open Sans, Helvetica, Arial, sans-serif" font-size="15px" font-weight="normal" href="${url}" inner-padding="15px 25px 15px 25px" padding-bottom="20px" padding-top="20px" padding="10px 25px" text-decoration="none" text-transform="none" vertical-align="middle"><b style="font-weight:700"><b style="font-weight:700">Activate</b></b></mj-button>
+          <mj-text align="left" color="${theme.colors.gray["800"]}" font-familyInter,="Inter, Open Sans, Helvetica, Arial, sans-serif" font-size="15px" line-height="22px" padding-bottom="0px" padding-left="50px" padding-right="50px" padding-top="0px" padding="0px 25px 0px 25px">
+            <p style="margin: 10px 0; text-align: center;">You can now start collaborating to annotate your datasets.</br> Tap the button below within thew next 24 hours to activate your account.<br /></p>
+          </mj-text>
           <mj-text align="left" color="${theme.colors.gray["800"]}" font-family="Inter, Open Sans, Helvetica, Arial, sans-serif" font-size="13px" line-height="22px" padding-bottom="0px" padding-left="50px" padding-right="50px" padding-top="0px" padding="0px 25px 0px 25px">
             <p style="margin: 10px 0; text-align: center;">If the link doesn&rsquo;t work, copy this URL into your browser:</br> <a target="_blank" rel="noopener noreferrer" href="${url}" style="color:${theme.colors.brand["500"]}">${url}</a></p>
           </mj-text>
