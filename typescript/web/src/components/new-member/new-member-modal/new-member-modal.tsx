@@ -136,7 +136,7 @@ export const NewMemberModal = ({
                     : ""
                 } ${
                   hasInvalidEmails
-                    ? "\nInvalid emails found, please check them."
+                    ? "\nAt lease one email format is invalid. Write one email address per line."
                     : ""
                 }`}
               </Text>
