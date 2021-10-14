@@ -9,6 +9,7 @@ import { useQueryParam } from "use-query-params";
 import { WorkspaceMenu } from "./workspace-menu";
 import { WorkspaceItem } from "./workspace-menu/workspace-selection-popover";
 import { BoolParam } from "../../utils/query-param-bool";
+import { WorkspaceCreationModal } from "./workspace-creation-modal";
 
 const getWorkspacesQuery = gql`
   query getWorkspaces {
@@ -77,30 +78,36 @@ export const WorkspaceSwitcher = () => {
     }
   }, []);
 
+  const [isCreationModalOpen, setIsCreationModalOpen] = useState(false);
+  const [initialWorkspaceName, setInitialWorkspaceName] =
+    useState<string | undefined>();
+
   const createNewWorkspace = useCallback(
     async (name: string) => {
-      try {
-        const { data, errors } = await client.mutate({
-          mutation: createWorkspacesQuery,
-          variables: { name },
-          refetchQueries: [
-            { query: getWorkspacesQuery, variables: { workspaceSlug } },
-          ],
-        });
-        const slug = data?.createWorkspace?.slug;
+      setInitialWorkspaceName(name);
+      setIsCreationModalOpen(true);
 
-        if (slug !== null) {
-          router.push(`/${slug}`);
-        } else {
-          toast({
-            title: "Could not create workspace",
-            description: errors?.[0],
-            isClosable: true,
-            status: "error",
-            position: "bottom-right",
-            duration: 10000,
-          });
-        }
+      try {
+        // const { data, errors } = await client.mutate({
+        //   mutation: createWorkspacesQuery,
+        //   variables: { name },
+        //   refetchQueries: [
+        //     { query: getWorkspacesQuery, variables: { workspaceSlug } },
+        //   ],
+        // });
+        // const slug = data?.createWorkspace?.slug;
+        // if (slug !== null) {
+        //   router.push(`/${slug}`);
+        // } else {
+        //   toast({
+        //     title: "Could not create workspace",
+        //     description: errors?.[0],
+        //     isClosable: true,
+        //     status: "error",
+        //     position: "bottom-right",
+        //     duration: 10000,
+        //   });
+        // }
       } catch (error: any) {
         if (error instanceof ApolloError) {
           toast({
@@ -148,15 +155,22 @@ export const WorkspaceSwitcher = () => {
   }
 
   return (
-    <WorkspaceMenu
-      isOpen={isOpen}
-      setIsOpen={setIsOpen}
-      workspaces={workspaces}
-      onSelectedWorkspaceChange={(workspace: WorkspaceItem) =>
-        setSelectedWorkspace(workspace)
-      }
-      createNewWorkspace={createNewWorkspace}
-      selectedWorkspace={selectedWorkspace}
-    />
+    <>
+      <WorkspaceMenu
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        workspaces={workspaces}
+        onSelectedWorkspaceChange={(workspace: WorkspaceItem) =>
+          setSelectedWorkspace(workspace)
+        }
+        createNewWorkspace={createNewWorkspace}
+        selectedWorkspace={selectedWorkspace}
+      />
+      <WorkspaceCreationModal
+        initialWorkspaceName={initialWorkspaceName}
+        isOpen={isCreationModalOpen}
+        onClose={() => setIsCreationModalOpen(false)}
+      />
+    </>
   );
 };

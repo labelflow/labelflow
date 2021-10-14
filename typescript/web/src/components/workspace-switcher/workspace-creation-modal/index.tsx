@@ -2,7 +2,6 @@ import { ApolloError, gql, useMutation, useQuery } from "@apollo/client";
 import {
   Box,
   Button,
-  Flex,
   Heading,
   Modal,
   ModalBody,
@@ -12,32 +11,15 @@ import {
   SimpleGrid,
   Stack,
   Text,
-  chakra,
   useColorModeValue as mode,
   Input,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 
-import React, { useState } from "react";
-import { FaCheck } from "react-icons/fa";
+import React, { useState, useEffect } from "react";
 import slugify from "slugify";
 import { Logo } from "../../logo";
 import { Features } from "../../auth-manager/signin-modal/features";
-
-const ChakraCheck = chakra(FaCheck);
-
-const Feature = (props: { title: string; children: React.ReactNode }) => {
-  const { title, children } = props;
-  return (
-    <Stack>
-      <Text fontWeight="bold" display="inline-block">
-        <ChakraCheck display="inline" color="brand.500" mr="2" />
-        {title}
-      </Text>
-      <Text>{children}</Text>
-    </Stack>
-  );
-};
 
 const Message = ({
   error,
@@ -99,15 +81,22 @@ const createWorkspaceMutation = gql`
 `;
 
 export const WorkspaceCreationModal = ({
+  initialWorkspaceName,
   isOpen,
   onClose,
 }: {
+  initialWorkspaceName: string | undefined;
   isOpen: boolean;
   onClose: () => void;
 }) => {
   const router = useRouter();
-  const [workspaceName, setWorkspaceName] = useState<string | undefined>();
+  const [workspaceName, setWorkspaceName] =
+    useState<string | undefined>(initialWorkspaceName);
   const slug = slugify(workspaceName ?? "", { lower: true });
+
+  useEffect(() => {
+    setWorkspaceName(initialWorkspaceName);
+  }, [initialWorkspaceName]);
 
   // TODO: hardcode the use of the distant client here!
   const { data } = useQuery(searchWorkspacesQuery, {

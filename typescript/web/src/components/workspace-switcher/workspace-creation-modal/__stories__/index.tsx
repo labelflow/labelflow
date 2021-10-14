@@ -7,6 +7,22 @@ export default {
   decorators: [chakraDecorator, apolloDecorator],
 };
 
-export const Basic = () => (
+export const Open = () => (
   <WorkspaceCreationModal isOpen onClose={console.log} />
+);
+
+export const WithPreFilledText = () => (
+  <WorkspaceCreationModal
+    isOpen
+    onClose={console.log}
+    initialWorkspaceName="Hello"
+  />
+);
+
+export const WithPreFilledTextAlreadyTaken = () => (
+  <WorkspaceCreationModal
+    isOpen
+    onClose={console.log}
+    initialWorkspaceName="local"
+  />
 );
