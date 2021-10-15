@@ -7,29 +7,36 @@ import { generateHtml } from "./templates/invitation";
 export enum InvitationStatus {
   Sent,
   UserAlreadyIn,
+  SessionError,
 }
 
 export const sendInvitationFromPrisma =
   (prisma: PrismaClient) =>
   async ({
+    sessionToken,
+    inviterId,
     inviteeEmail,
     inviteeRole,
-    inviterEmail,
-    inviterName,
-    url,
     workspaceSlug,
-    workspaceName,
     provider: { server, from },
   }: {
-    workspaceSlug: string;
+    sessionToken: string;
+    inviterId: string;
     inviteeEmail: string;
-    inviterName: string;
     inviteeRole: MembershipRole;
-    inviterEmail: string;
-    url: string;
-    workspaceName: string;
+    workspaceSlug: string;
     provider: { server: any; from?: string };
   }) => {
+    const isSessionTrue = await prisma.session.count({
+      where: { sessionToken: { equals: sessionToken } },
+    }); // TODO: Check user id as well..
+    const inviter = await prisma.user.findUnique({
+      where: { id: inviterId },
+      select: { name: true, email: true },
+    });
+    if (!isSessionTrue || !inviter) {
+      return InvitationStatus.SessionError;
+    }
     const isUserAlreadyInWorkspace = await prisma.membership.count({
       where: {
         AND: [
