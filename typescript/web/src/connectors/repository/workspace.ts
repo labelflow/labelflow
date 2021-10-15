@@ -16,7 +16,9 @@ export const localWorkspace = {
 };
 
 export const getWorkspace = async () => localWorkspace;
-export const listWorkspaces = async (where: WorkspaceWhereInput) => {
+export const listWorkspaces = async (
+  where: WorkspaceWhereInput | null | undefined
+) => {
   if (where != null && "slug" in where) {
     return [localWorkspace].filter(({ slug }) => slug === where.slug);
   }
