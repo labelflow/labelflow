@@ -18,8 +18,10 @@ import {
 // import { initialize as initializeGoogleAnalytics } from "workbox-google-analytics";
 
 import { trimCharsEnd } from "lodash/fp";
-import * as Sentry from "@sentry/nextjs";
-import typeDefs from "../../../../data/__generated__/schema.graphql";
+import * as Sentry from "@sentry/browser";
+import { Integrations } from "@sentry/tracing"; // Must import second
+
+import { makeSchema } from "./schema";
 import { resolvers } from "../connectors/resolvers";
 import {
   uploadsCacheName,
@@ -36,6 +38,12 @@ Sentry.init({
   environment: process.env.NEXT_PUBLIC_SENTRY_ENVIRONMENT ?? "development",
   // Adjust this value in production, or use tracesSampler for greater control
   tracesSampleRate: 1.0,
+  integrations: [
+    new Integrations.BrowserTracing({
+      tracingOrigins: ["localhost", "labelflow.ai", /^\//],
+      // ... other options
+    }),
+  ],
   // ...
   // Note: if you want to override the automatic release value, do not set a
   // `release` value here - use the environment variable `SENTRY_RELEASE`, so
@@ -128,7 +136,7 @@ cleanupOutdatedCaches();
 registerRoute(
   "/api/worker/graphql",
   new ApolloServerServiceWorker({
-    typeDefs,
+    typeDefs: makeSchema(),
     resolvers,
     context: ({ req, res }) => {
       return { req, res, repository };

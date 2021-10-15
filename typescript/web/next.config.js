@@ -1,4 +1,4 @@
-const withPWA = require("next-pwa");
+// const withPWA = require("next-pwa");
 // const { BundleAnalyzerPlugin } = require("webpack-bundle-analyzer");
 const path = require("path");
 
@@ -23,7 +23,8 @@ const path = require("path");
 
 //withSentryConfig(
 // withPWA(
-module.exports = withPWA({
+// module.exports = withPWA({
+module.exports = {
   reactStrictMode: true,
   sentry: {
     disableServerWebpackPlugin:
@@ -130,39 +131,39 @@ module.exports = withPWA({
     //   //   }
     //   // });
 
-    // Allow to transpile node modules that depends on node built - ins into browser.
-    //   E.g.: `apollo-server-core`
-    // See https://github.com/webpack-contrib/css-loader/issues/447
-    // See https://github.com/vercel/next.js/issues/7755
-    if (!isServer) {
+    // // Allow to transpile node modules that depends on node built - ins into browser.
+    // //   E.g.: `apollo-server-core`
+    // // See https://github.com/webpack-contrib/css-loader/issues/447
+    // // See https://github.com/vercel/next.js/issues/7755
+    // if (!isServer) {
 
-      // See https://www.npmjs.com/package/node-polyfill-webpack-plugin
-      const NodePolyfillPlugin = require("node-polyfill-webpack-plugin");
+    //   // See https://www.npmjs.com/package/node-polyfill-webpack-plugin
+    //   const NodePolyfillPlugin = require("node-polyfill-webpack-plugin");
 
-      // See https://github.com/webpack-contrib/css-loader/issues/447#issuecomment-761853289
-      // See https://github.com/vercel/next.js/issues/7755#issuecomment-812805708
-      config.resolve = {
-        ...(config.resolve ?? {}),
-        fallback: {
-          ...(config.resolve?.fallback ?? {}),
-          module: false,
-          dgram: false,
-          dns: false,
-          fs: false,
-          http2: false,
-          net: false,
-          tls: false,
-          child_process: false,
-        },
-      };
-      config.plugins = [
-        ...(config?.plugins ?? []),
-        new NodePolyfillPlugin({
-          excludeAliases: ["console"],
-        }),
-      ];
+    //   // See https://github.com/webpack-contrib/css-loader/issues/447#issuecomment-761853289
+    //   // See https://github.com/vercel/next.js/issues/7755#issuecomment-812805708
+    //   config.resolve = {
+    //     ...(config.resolve ?? {}),
+    //     fallback: {
+    //       ...(config.resolve?.fallback ?? {}),
+    //       module: false,
+    //       dgram: false,
+    //       dns: false,
+    //       fs: false,
+    //       http2: false,
+    //       net: false,
+    //       tls: false,
+    //       child_process: false,
+    //     },
+    //   };
+    //   config.plugins = [
+    //     ...(config?.plugins ?? []),
+    //     new NodePolyfillPlugin({
+    //       excludeAliases: ["console"],
+    //     }),
+    //   ];
 
-    }
+    // }
 
     // Add webpack bundle analyzer with custom config to expose the reports publicly
     // See https://github.com/vercel/next.js/blob/canary/packages/next-bundle-analyzer/index.js
@@ -195,21 +196,21 @@ module.exports = withPWA({
   },
   // Put the Service Worker code in the `public` folder to avoid having to serve it separately
   // See https://github.com/shadowwalker/next-pwa#usage-without-custom-server-nextjs-9
-  pwa: {
-    dest: "public",
-    swSrc: "./src/worker/index.ts",
-    compileSrc: true,
-    // Register false, since we register manually in `_app.tsx`, and ask the user when to upgrade
-    register: false,
-    // Cache on frontend nav, it pre-fetches stuff more eagerly
-    // See https://github.com/shadowwalker/next-pwa#available-options
-    cacheOnFrontEndNav: true,
-    // Add plugins to the webpack config of the service worker bundler
-    // See https://developers.google.com/web/tools/workbox/reference-docs/latest/module-workbox-webpack-plugin.InjectManifest
-    webpackCompilationPlugins: [],
-    // exclude: ["/api/worker/"]
-  },
-});
+  // pwa: {
+  //   dest: "public",
+  //   swSrc: "./src/worker/index.ts",
+  //   compileSrc: true,
+  //   // Register false, since we register manually in `_app.tsx`, and ask the user when to upgrade
+  //   register: false,
+  //   // Cache on frontend nav, it pre-fetches stuff more eagerly
+  //   // See https://github.com/shadowwalker/next-pwa#available-options
+  //   cacheOnFrontEndNav: true,
+  //   // Add plugins to the webpack config of the service worker bundler
+  //   // See https://developers.google.com/web/tools/workbox/reference-docs/latest/module-workbox-webpack-plugin.InjectManifest
+  //   webpackCompilationPlugins: [],
+  //   // exclude: ["/api/worker/"]
+  // },
+};
 //   ,
 //   // ),
 //   SentryWebpackPluginOptions

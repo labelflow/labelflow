@@ -1,5 +1,6 @@
 import { Workbox } from "workbox-window";
 import { WorkboxEventMap } from "workbox-window/utils/WorkboxEvent";
+import { ensureServiceWorkerPresent } from "../worker/ensure-present";
 import { timeout } from "./timeout";
 
 export const messageNoWindow =
@@ -46,7 +47,7 @@ export const checkServiceWorkerReady = async (
     if (typeof window === "undefined") {
       throw new Error(messageNoWindow);
     }
-
+    ensureServiceWorkerPresent();
     // Get the workbox instance from the window
     const wb = window.workbox;
     if (!wb) {

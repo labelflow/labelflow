@@ -4,6 +4,8 @@ import { useErrorHandler } from "react-error-boundary";
 import { useQueryParam, StringParam } from "use-query-params";
 import { UpdateServiceWorkerModal } from "./update-service-worker-modal/update-service-worker-modal";
 
+import { ensureServiceWorkerPresent } from "../../worker/ensure-present";
+
 export const ServiceWorkerManagerModal = () => {
   // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
   // This param can have several values:
@@ -33,6 +35,7 @@ export const ServiceWorkerManagerModal = () => {
       return;
     }
     try {
+      ensureServiceWorkerPresent();
       const wb = window.workbox;
 
       if (!wb) {
@@ -64,6 +67,7 @@ export const ServiceWorkerManagerModal = () => {
     }
 
     try {
+      ensureServiceWorkerPresent();
       const wb = window.workbox;
 
       if (!wb) {
