@@ -52,8 +52,7 @@ describe("Image Navigation", () => {
       delay: 0,
     });
     cy.contains("Start Import").click();
-    cy.wait(10);
-    cy.get(`[aria-label="Close"]`).click();
+    cy.contains("Start labeling").click();
     cy.get("main").contains("photo").click();
 
     // Check that we can reach the end of the list
