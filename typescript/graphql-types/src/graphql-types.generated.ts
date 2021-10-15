@@ -297,7 +297,7 @@ export type Membership = {
 export type MembershipCreateInput = {
   id?: Maybe<Scalars['ID']>;
   role: MembershipRole;
-  userId: Scalars['ID'];
+  userId?: Maybe<Scalars['ID']>;
   workspaceSlug: Scalars['String'];
 };
 

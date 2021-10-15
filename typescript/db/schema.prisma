@@ -87,7 +87,7 @@ model Membership {
   role                  UserRole
   workspaceSlug         String
   workspace             Workspace @relation(fields: [workspaceSlug], references: [slug])
-  userId                String    @db.Uuid
+  userId                String?    @db.Uuid
   user                  User?     @relation(fields: [userId], references: [id])
   invitationEmailSentTo String?   
   invitationToken       String?   @unique @db.Uuid

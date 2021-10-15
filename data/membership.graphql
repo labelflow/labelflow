@@ -9,7 +9,7 @@ input MembershipWhereInput {
 input MembershipCreateInput {
   id: ID
   role: MembershipRole!
-  userId: ID!
+  userId: ID
   workspaceSlug: String!
 }
 
