@@ -89,8 +89,10 @@ type Membership {
   createdAt: DateTime!
   updatedAt: DateTime!
   role: MembershipRole!
-  user: User!
+  user: User
   workspace: Workspace!
+  invitationEmailSentTo: String
+  invitationToken: ID
 }
 
 type User {

@@ -288,8 +288,10 @@ export type Membership = {
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
   role: MembershipRole;
-  user: User;
+  user?: Maybe<User>;
   workspace: Workspace;
+  invitationEmailSentTo?: Maybe<Scalars['String']>;
+  invitationToken?: Maybe<Scalars['ID']>;
 };
 
 export type MembershipCreateInput = {
@@ -1029,8 +1031,10 @@ export type MembershipResolvers<ContextType = any, ParentType extends ResolversP
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   role?: Resolver<ResolversTypes['MembershipRole'], ParentType, ContextType>;
-  user?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
+  user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   workspace?: Resolver<ResolversTypes['Workspace'], ParentType, ContextType>;
+  invitationEmailSentTo?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  invitationToken?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
