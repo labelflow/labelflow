@@ -24,8 +24,11 @@ import {
   RiSunLine,
   RiLoginCircleLine,
   RiLogoutCircleRLine,
+  RiSettings4Line,
 } from "react-icons/ri";
 import { signOut, useSession } from "next-auth/react";
+import { gql, useQuery } from "@apollo/client";
+import { useRouter } from "next/router";
 import { useQueryParam } from "use-query-params";
 import { BoolParam } from "../../../utils/query-param-bool";
 import { randomBackgroundGradient } from "../../../utils/random-background-gradient";
@@ -38,14 +41,39 @@ const LightModeIcon = chakra(RiSunLine);
 const SigninIcon = chakra(RiLoginCircleLine);
 const SignoutIcon = chakra(RiLogoutCircleRLine);
 
+const SettingsIcon = chakra(RiSettings4Line);
+
+const userQuery = gql`
+  query getUserProfileInfo($id: ID!) {
+    user(where: { id: $id }) {
+      id
+      createdAt
+      name
+      email
+      image
+    }
+  }
+`;
+
 export const UserMenu = () => {
   const { colorMode, toggleColorMode } = useColorMode();
   const { data: session, status } = useSession({ required: false });
 
   const [, setIsSigninOpen] = useQueryParam("modal-signin", BoolParam);
 
+  const userInfoFromSession = session?.user;
+
+  const { data: userData } = useQuery(userQuery, {
+    variables: { id: userInfoFromSession?.id },
+    skip: userInfoFromSession?.id == null,
+  });
+
+  const user = userData?.user;
+
   const fadeColor = useColorModeValue("gray.600", "gray.400");
   const avatarBackground = useColorModeValue("white", "gray.700");
+
+  const router = useRouter();
 
   return (
     <Menu>
@@ -59,13 +87,12 @@ export const UserMenu = () => {
               <Avatar
                 size="sm"
                 bg={
-                  session?.user?.image != null &&
-                  session?.user?.image.length > 0
+                  user?.image != null && user?.image.length > 0
                     ? avatarBackground
-                    : randomBackgroundGradient(session?.user?.name)
+                    : randomBackgroundGradient(user?.name)
                 }
-                name={session?.user?.name}
-                src={session?.user?.image}
+                name={user?.name}
+                src={user?.image}
                 icon={<UserMenuIcon fontSize="xl" />}
               />
             ) : (
@@ -94,20 +121,17 @@ export const UserMenu = () => {
                 <Avatar
                   size="sm"
                   bg={
-                    session?.user?.image != null &&
-                    session?.user?.image.length > 0
+                    user?.image != null && user?.image.length > 0
                       ? avatarBackground
-                      : randomBackgroundGradient(session?.user?.name)
+                      : randomBackgroundGradient(user?.name)
                   }
-                  name={session?.user?.name}
-                  src={session?.user?.image}
+                  name={user?.name}
+                  src={user?.image}
                 />
                 <Flex direction="column" fontWeight="medium">
-                  <Text fontSize="sm">
-                    {session?.user?.name ?? "Anonymous"}
-                  </Text>
+                  <Text fontSize="sm">{user?.name ?? "Anonymous"}</Text>
                   <Text fontSize="xs" lineHeight="shorter" color={fadeColor}>
-                    {session?.user?.email ?? ""}
+                    {user?.email ?? ""}
                   </Text>
                 </Flex>
               </HStack>
@@ -128,12 +152,22 @@ export const UserMenu = () => {
                 </MenuItem>
               )}
               {status === "authenticated" && (
-                <MenuItem
-                  icon={<SignoutIcon fontSize="lg" />}
-                  onClick={() => signOut()}
-                >
-                  Sign out
-                </MenuItem>
+                <>
+                  <MenuItem
+                    icon={<SignoutIcon fontSize="lg" />}
+                    onClick={() => signOut()}
+                  >
+                    Sign out
+                  </MenuItem>
+                  <MenuItem
+                    icon={<SettingsIcon fontSize="lg" />}
+                    onClick={() => {
+                      router.push("/settings/profile");
+                    }}
+                  >
+                    Settings
+                  </MenuItem>
+                </>
               )}
               {status === "unauthenticated" && (
                 <MenuItem
