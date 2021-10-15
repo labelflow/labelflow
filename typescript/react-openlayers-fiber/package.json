@@ -25,7 +25,6 @@
     "react-dom": "17.x"
   },
   "devDependencies": {
-    "@storybook/addon-knobs": "^6.2.9",
     "@storybook/react": "^6.2.9",
     "@turf/turf": "6.3.0",
     "@types/jest": "24.0.13",
