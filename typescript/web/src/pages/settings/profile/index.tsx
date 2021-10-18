@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { gql, useMutation, useQuery } from "@apollo/client";
 import { Meta } from "../../../components/meta";
@@ -34,7 +34,7 @@ const ProfilePage = () => {
   const session = useSession({ required: false });
   const userInfoFromSession = session?.data?.user;
 
-  const { data: userData } = useQuery(userQuery, {
+  const { data: userData, loading } = useQuery(userQuery, {
     variables: { id: userInfoFromSession?.id },
     skip: userInfoFromSession?.id == null,
   });
@@ -48,6 +48,17 @@ const ProfilePage = () => {
     },
     [updateUser, user]
   );
+  useEffect(() => {
+    if (
+      (user == null && loading === false && userInfoFromSession?.id != null) ||
+      session.status === "unauthenticated"
+    ) {
+      throw new Error("User not authenticated");
+    }
+  }, [user, loading, userInfoFromSession?.id, session.status]);
+  if (user == null) {
+    return null;
+  }
   return (
     <>
       <ServiceWorkerManagerModal />
