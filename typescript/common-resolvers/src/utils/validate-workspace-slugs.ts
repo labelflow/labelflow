@@ -13,6 +13,7 @@ export const forbiddenWorkspaceSlugs = [
   "posts",
   "pricing",
   "request-access",
+  "settings",
   "static",
   "terms",
   "thank-you",
