@@ -1,7 +1,7 @@
 import React from "react";
 import { Text, Box } from "@chakra-ui/react";
 import { useRouter } from "next/router";
-import { useQuery, gql, useMutation } from "@apollo/client";
+// import { useQuery, gql, useMutation } from "@apollo/client";
 import { Meta } from "../../../components/meta";
 import { Layout } from "../../../components/layout";
 import { ServiceWorkerManagerModal } from "../../../components/service-worker-manager";
