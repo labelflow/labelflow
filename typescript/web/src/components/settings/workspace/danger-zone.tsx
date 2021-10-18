@@ -1,7 +1,7 @@
 import { Button, Stack, StackProps, Text } from "@chakra-ui/react";
 import * as React from "react";
-import { Card } from "./card";
-import { HeadingGroup } from "./heading-group";
+import { Card } from "../card";
+import { HeadingGroup } from "../heading-group";
 
 export const DangerZone = (props: StackProps) => (
   <Stack as="section" spacing="6" {...props}>

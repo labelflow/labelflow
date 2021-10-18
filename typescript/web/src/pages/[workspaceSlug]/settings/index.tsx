@@ -9,7 +9,7 @@ import { AuthManager } from "../../../components/auth-manager";
 import { WelcomeManager } from "../../../components/welcome-manager";
 import { CookieBanner } from "../../../components/cookie-banner";
 import { WorkspaceTabBar } from "../../../components/layout/tab-bar/workspace-tab-bar";
-import { WorkspaceSettings } from "../../../components/workspace-settings";
+import { WorkspaceSettings } from "../../../components/settings/workspace";
 import { WorkspaceSwitcher } from "../../../components/workspace-switcher";
 import { NavLogo } from "../../../components/logo/nav-logo";
 
