@@ -45,7 +45,7 @@ const createWorkspaceMutation = gql`
   }
 `;
 
-const Message = ({
+export const Message = ({
   error,
   workspaceName,
   workspaceNameIsAlreadyTaken,
@@ -84,7 +84,7 @@ const Message = ({
     if (forbiddenWorkspaceSlugs.includes(slug)) {
       return (
         <Text fontSize="sm" color="red.500">
-          The name &quot;{workspaceName}&quot; is reserved.
+          The name &quot;{workspaceName}&quot; is already taken
         </Text>
       );
     }
@@ -217,12 +217,13 @@ export const WorkspaceCreationModal = ({
                     Workspace Name
                   </Text>
                   <Input
+                    aria-label="workspace name input"
                     focusBorderColor={
                       workspaceNameIsAlreadyTaken ? "red.500" : undefined
                     }
                     isInvalid={workspaceNameIsAlreadyTaken}
                     placeholder="My online workspace name"
-                    value={workspaceName}
+                    value={workspaceName ?? ""}
                     onChange={(event) => setWorkspaceName(event.target.value)}
                   />
                   <Message
