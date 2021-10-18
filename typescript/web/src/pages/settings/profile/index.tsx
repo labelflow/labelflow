@@ -48,9 +48,6 @@ const ProfilePage = () => {
     },
     [updateUser, user]
   );
-  if (user == null) {
-    return null;
-  }
   return (
     <>
       <ServiceWorkerManagerModal />
