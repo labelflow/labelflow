@@ -34,6 +34,7 @@ export const Profile = ({
               <Avatar src={user?.image} name={getDisplayName(user)} />
               <Box>
                 <Input
+                  aria-label="Change username"
                   value={userName}
                   onChange={(e) => setUserName(e.target.value)}
                 />

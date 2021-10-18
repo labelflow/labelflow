@@ -56,9 +56,7 @@ const ProfilePage = () => {
       throw new Error("User not authenticated");
     }
   }, [user, loading, userInfoFromSession?.id, session.status]);
-  if (user == null) {
-    return null;
-  }
+
   return (
     <>
       <ServiceWorkerManagerModal />
@@ -67,7 +65,9 @@ const ProfilePage = () => {
       <Meta title="LabelFlow | Profile" />
       <CookieBanner />
       <Layout breadcrumbs={[<NavLogo key={0} />]}>
-        <UserSettings user={user} changeUserName={changeUserName} />
+        {user != null && (
+          <UserSettings user={user} changeUserName={changeUserName} />
+        )}
       </Layout>
     </>
   );
