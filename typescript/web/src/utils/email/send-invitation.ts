@@ -4,6 +4,17 @@ import { MembershipRole } from "@labelflow/graphql-types";
 import { createTransport } from "nodemailer";
 import { generateHtml } from "./templates/invitation";
 
+export type InvitationEmailInputs = {
+  origin: string;
+  sessionToken: string;
+  inviterId: string;
+  inviteeEmail: string;
+  inviteeRole: MembershipRole;
+  workspaceSlug: string;
+  providerServer: string;
+  providerFrom: string;
+};
+
 export enum InvitationStatus {
   Sent,
   UserAlreadyIn,
@@ -13,6 +24,7 @@ export enum InvitationStatus {
 export const sendInvitationFromPrisma =
   (prisma: PrismaClient) =>
   async ({
+    origin,
     sessionToken,
     inviterId,
     inviteeEmail,
@@ -20,15 +32,7 @@ export const sendInvitationFromPrisma =
     workspaceSlug,
     providerServer,
     providerFrom,
-  }: {
-    sessionToken: string;
-    inviterId: string;
-    inviteeEmail: string;
-    inviteeRole: MembershipRole;
-    workspaceSlug: string;
-    providerServer: string;
-    providerFrom: string;
-  }) => {
+  }: InvitationEmailInputs) => {
     const isSessionTokenValid = await prisma.session.count({
       where: {
         AND: [
@@ -93,17 +97,9 @@ export const sendInvitationFromPrisma =
       });
     }
     const searchParams = new URLSearchParams({
-      sessionToken,
-      inviterId,
-      inviteeEmail,
-      inviteeRole,
-      workspaceSlug,
-      providerServer,
-      providerFrom,
+      invitationToken,
     });
-    const url = `${
-      process.env.NEXTAUTH_URL
-    }/api/accept-invitation?${searchParams.toString()}`;
+    const url = `${origin}/api/accept-invitation?${searchParams.toString()}`;
     const transport = createTransport(providerServer);
     await transport.sendMail({
       to: inviteeEmail,
