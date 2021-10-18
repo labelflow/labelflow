@@ -10,7 +10,7 @@ import {
 } from "@chakra-ui/react";
 import * as React from "react";
 import { getDisplayName } from "../../members/user";
-import { SettingsContainer, FieldGroup, HeadingGroup, Card } from "..";
+import { FieldGroup, HeadingGroup, Card } from "..";
 
 export const Profile = ({
   user,
@@ -22,7 +22,7 @@ export const Profile = ({
   const [userName, setUserName] = useState(getDisplayName(user));
   useEffect(() => setUserName(getDisplayName(user)), [getDisplayName(user)]);
   return (
-    <SettingsContainer>
+    <>
       <HeadingGroup
         title="Account Settings"
         description="Change your profile"
@@ -66,6 +66,6 @@ export const Profile = ({
           </Box>
         </Stack>
       </Card>
-    </SettingsContainer>
+    </>
   );
 };
