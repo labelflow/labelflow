@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import { getSession } from "next-auth/react";
 import { NextApiRequest, NextApiResponse } from "next";
 
 import {
@@ -16,17 +17,26 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const { query } = req as unknown as {
-    query: Omit<
-      InvitationEmailInputs,
-      "origin" | "providerServer" | "providerFrom"
-    >;
-  };
-  const status = await sendInvitation({
-    ...query,
-    origin: process.env.NEXTAUTH_URL ?? "",
-    providerServer: process.env.EMAIL_SERVER ?? "",
-    providerFrom: process.env.EMAIL_FROM ?? "",
-  });
-  res.status(200).json({ status });
+  const session = await getSession({ req });
+  if (session) {
+    // Signed in
+    console.log("Session", JSON.stringify(session, null, 2));
+    const { query } = req as unknown as {
+      query: Omit<
+        InvitationEmailInputs,
+        "origin" | "providerServer" | "providerFrom"
+      >;
+    };
+    const status = await sendInvitation({
+      ...query,
+      origin: process.env.NEXTAUTH_URL ?? "",
+      providerServer: process.env.EMAIL_SERVER ?? "",
+      providerFrom: process.env.EMAIL_FROM ?? "",
+    });
+    res.status(200).json({ status });
+  } else {
+    // Not Signed in
+    res.status(401);
+  }
+  res.end();
 }

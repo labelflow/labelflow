@@ -6,8 +6,8 @@ import { generateHtml } from "./templates/invitation";
 
 export type InvitationEmailInputs = {
   origin: string;
-  sessionToken: string;
-  inviterId: string;
+  inviterName?: string;
+  inviterEmail?: string;
   inviteeEmail: string;
   inviteeRole: MembershipRole;
   workspaceSlug: string;
@@ -25,31 +25,19 @@ export const sendInvitationFromPrisma =
   (prisma: PrismaClient) =>
   async ({
     origin,
-    sessionToken,
-    inviterId,
+    inviterName,
+    inviterEmail,
     inviteeEmail,
     inviteeRole,
     workspaceSlug,
     providerServer,
     providerFrom,
   }: InvitationEmailInputs) => {
-    const isSessionTokenValid = await prisma.session.count({
-      where: {
-        AND: [
-          { userId: inviterId },
-          { sessionToken: { equals: sessionToken } },
-        ],
-      },
-    });
-    const inviter = await prisma.user.findUnique({
-      where: { id: inviterId },
-      select: { name: true, email: true },
-    });
     const workspace = await prisma.workspace.findUnique({
       where: { slug: workspaceSlug },
       select: { name: true },
     });
-    if (!isSessionTokenValid || !inviter) {
+    if (!workspace) {
       return InvitationStatus.Error;
     }
     const isUserAlreadyInWorkspace = await prisma.membership.count({
@@ -107,8 +95,8 @@ export const sendInvitationFromPrisma =
       subject: `Join ${workspace?.name} on LabelFlow`,
       text: `Join ${workspace?.name} on LabelFlow\n${url}\n\n`,
       html: generateHtml({
-        inviterName: inviter?.name ?? undefined,
-        inviterEmail: inviter?.email ?? undefined,
+        inviterName: inviterName ?? undefined,
+        inviterEmail: inviterEmail ?? undefined,
         url,
         origin,
         workspaceName: workspace?.name ?? "undefined workspace",

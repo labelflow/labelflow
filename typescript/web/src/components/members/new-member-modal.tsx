@@ -1,4 +1,4 @@
-import { useEffect, useState, ChangeEvent } from "react";
+import { useState, ChangeEvent } from "react";
 import {
   Flex,
   Alert,
@@ -20,10 +20,8 @@ import {
   Link,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
-// import { useQueryParam, StringParam, withDefault } from "use-query-params";
-import { useApolloClient } from "@apollo/client";
-import { datasetDataQuery } from "../../pages/[workspaceSlug]/datasets/[datasetSlug]/images";
-import { getDatasetsQuery } from "../../pages/[workspaceSlug]/datasets";
+import { useSession } from "next-auth/react";
+import { InvitationStatus } from "../../utils/email/send-invitation";
 
 import { RoleSelection } from "./role-selection";
 import { Role } from "./types";
@@ -34,6 +32,7 @@ const validateEmail = (email: string): boolean => {
   return re.test(String(email).toLowerCase());
 };
 const maxNumberOfEmails = 20;
+type EmailStatuses = Record<InvitationStatus, string[]>;
 
 export const NewMemberModal = ({
   isOpen = false,
@@ -42,11 +41,12 @@ export const NewMemberModal = ({
   isOpen?: boolean;
   onClose?: () => void;
 }) => {
-  const client = useApolloClient();
   const router = useRouter();
-  const { datasetSlug, workspaceSlug } = router?.query;
+  const { data: session } = useSession({ required: false });
+  const { workspaceSlug } = router?.query;
 
-  const [hasUploaded, setHasUploaded] = useState(false);
+  const [emailStatuses, setEmailStatuses] =
+    useState<EmailStatuses | null>(null);
   const [value, setValue] = useState<string>("");
   const [role, setRole] = useState<Role>("Owner");
   const handleInputChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
@@ -56,21 +56,6 @@ export const NewMemberModal = ({
   const emails = value.split("\n").filter((email) => email !== "");
   const hasInvalidEmails = emails.some((email) => !validateEmail(email));
 
-  useEffect(() => {
-    // Manually refetch
-    if (hasUploaded) {
-      client.query({
-        query: datasetDataQuery,
-        variables: {
-          slug: datasetSlug,
-          workspaceSlug,
-        },
-        fetchPolicy: "network-only",
-      });
-      client.query({ query: getDatasetsQuery, fetchPolicy: "network-only" });
-    }
-  }, [hasUploaded]);
-
   return (
     <Modal
       isOpen={isOpen}
@@ -78,7 +63,6 @@ export const NewMemberModal = ({
       scrollBehavior="inside"
       onClose={() => {
         onClose();
-        setHasUploaded(false);
       }}
       isCentered
     >
@@ -181,10 +165,42 @@ export const NewMemberModal = ({
               hasInvalidEmails
             }
             flexShrink={0}
-            onClick={() => {
+            onClick={async () => {
               onClose();
+              const { origin } = new URL(window.location.href);
+              const statuses = await emails.reduce(
+                async (statusesPromise, email) => {
+                  const statusesCurrent = await statusesPromise;
+                  const inputsInvitation = {
+                    ...{
+                      inviteeEmail: email,
+                      inviteeRole: role,
+                      workspaceSlug: workspaceSlug as string,
+                    },
+                    ...(session?.user?.email && {
+                      inviterEmail: session?.user?.email,
+                    }),
+                    ...(session?.user?.name && {
+                      inviterName: session?.user?.name,
+                    }),
+                  };
+                  const searchParams = new URLSearchParams(inputsInvitation);
+                  const { status }: { status: InvitationStatus } = await fetch(
+                    `${origin}/api/email/send-invitation?${searchParams.toString()}`
+                  );
+                  statusesCurrent[status].push(email);
+                  return statusesCurrent;
+                },
+                new Promise((resolve) => {
+                  resolve({
+                    0: [],
+                    1: [],
+                    2: [],
+                  });
+                }) as Promise<EmailStatuses>
+              );
+              setEmailStatuses(statuses);
               setValue("");
-              setHasUploaded(false);
             }}
           >
             Send
