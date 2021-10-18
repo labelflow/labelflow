@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   HStack,
   Avatar,
@@ -9,18 +9,25 @@ import {
   Input,
 } from "@chakra-ui/react";
 import * as React from "react";
-import { getDisplayName } from "../../members/user";
 import { SettingsContainer, FieldGroup, HeadingGroup, Card } from "..";
 
 export const Profile = ({
-  user,
-  changeUserName,
+  workspace,
+  changeName,
+  changeImage,
 }: {
-  user: { id: string; name?: string; image?: string };
-  changeUserName: (name: string) => void;
+  workspace: { id: string; name?: string; image?: string };
+  changeName: (name: string) => void;
+  changeImage: (image: string) => void;
 }) => {
-  const [userName, setUserName] = useState(getDisplayName(user));
-  useEffect(() => setUserName(getDisplayName(user)), [getDisplayName(user)]);
+  const [workspaceName, setWorkspaceName] = useState(workspace.name);
+  const [workspaceImagee, setWorkspaceImage] = useState(workspace.image);
+  useEffect(() => setWorkspaceName(workspace.name), [workspace]);
+
+  const handleImageUpload = useCallback(() => {}, []);
+
+  const handleSubmit = useCallback(() => {}, []);
+
   return (
     <SettingsContainer>
       <HeadingGroup
@@ -31,11 +38,11 @@ export const Profile = ({
         <Stack divider={<StackDivider />} spacing="6">
           <FieldGroup title="Name &amp; Avatar" description="Change your name">
             <HStack spacing="4">
-              <Avatar src={user?.image} name={getDisplayName(user)} />
+              <Avatar src={workspace?.image} name={workspace.name} />
               <Box>
                 <Input
-                  value={userName}
-                  onChange={(e) => setUserName(e.target.value)}
+                  value={workspaceName}
+                  onChange={(e) => setWorkspaceName(e.target.value)}
                 />
               </Box>
             </HStack>
@@ -46,8 +53,8 @@ export const Profile = ({
               size="sm"
               fontWeight="normal"
               alignSelf="flex-end"
-              disabled={userName === getDisplayName(user)}
-              onClick={() => setUserName(getDisplayName(user))}
+              disabled={workspaceName === workspace.name}
+              onClick={() => setWorkspaceName(workspace.name)}
             >
               Cancel
             </Button>
@@ -58,8 +65,8 @@ export const Profile = ({
               alignSelf="flex-end"
               bg="brand.500"
               color="#FFFFFF"
-              onClick={() => changeUserName(userName)}
-              disabled={userName === getDisplayName(user)}
+              onClick={() => changeName(workspaceName)}
+              disabled={workspaceName === workspace.name}
             >
               Save Changes
             </Button>

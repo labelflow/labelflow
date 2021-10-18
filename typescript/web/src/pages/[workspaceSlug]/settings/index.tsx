@@ -32,7 +32,7 @@ import { NavLogo } from "../../../components/logo/nav-logo";
 //   }
 // `;
 
-const MembersPage = () => {
+const WorkspaceSettingsPage = () => {
   const workspaceSlug = useRouter().query?.workspaceSlug as string;
 
   // const { data: membershipsData } = useQuery(membershipsQuery, {
@@ -70,13 +70,14 @@ const MembersPage = () => {
       >
         <Box p={8}>
           <WorkspaceSettings
-          // memberships={membershipsData?.memberships ?? []}
-          // changeMembershipRole={({ id, role }) => {
-          //   updateMembership({ variables: { id, data: { role } } });
-          // }}
-          // removeMembership={(id) => {
-          //   deleteMembership({ variables: { id } });
-          // }}
+            workspace={{
+              id: "1",
+              slug: workspaceSlug,
+              name: workspaceSlug,
+              image: null,
+            }}
+            changeName={(name: string) => {}}
+            changeImage={(name: string) => {}}
           />
         </Box>
       </Layout>
@@ -84,4 +85,4 @@ const MembersPage = () => {
   );
 };
 
-export default MembersPage;
+export default WorkspaceSettingsPage;
