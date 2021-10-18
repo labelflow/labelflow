@@ -222,10 +222,15 @@ export const DrawingTool = () => {
     }
   }, []);
 
+  useEffect(() => {
+    if (selectedTool !== Tools.SELECTION) {
+      setSelectedLabelId(null);
+    }
+  }, [selectedTool, setSelectedLabelId]);
+
   useHotkeys(
     keymap.toolClassification.key,
     () => {
-      setSelectedLabelId(null);
       setSelectedTool(Tools.CLASSIFICATION);
     },
     {},
@@ -234,7 +239,6 @@ export const DrawingTool = () => {
   useHotkeys(
     keymap.toolBoundingBox.key,
     () => {
-      setSelectedLabelId(null);
       setSelectedTool(Tools.BOX);
     },
     {},
@@ -243,7 +247,6 @@ export const DrawingTool = () => {
   useHotkeys(
     keymap.toolPolygon.key,
     () => {
-      setSelectedLabelId(null);
       setSelectedTool(Tools.POLYGON);
     },
     {},
@@ -253,7 +256,6 @@ export const DrawingTool = () => {
     keymap.toolIog.key,
     () => {
       if (process.env.NEXT_PUBLIC_IOG_API_ENDPOINT) {
-        setSelectedLabelId(null);
         setSelectedTool(Tools.IOG);
       }
     },
@@ -278,7 +280,6 @@ export const DrawingTool = () => {
         }}
         selectedTool={selectedTool}
         setSelectedTool={(tool: Tools) => {
-          setSelectedLabelId(null);
           setSelectedTool(tool);
         }}
       />
@@ -296,7 +297,6 @@ export const DrawingTool = () => {
               shortcut={keymap.toolClassification.key}
               selected={selectedTool === Tools.CLASSIFICATION}
               onClick={() => {
-                setSelectedLabelId(null);
                 setSelectedTool(Tools.CLASSIFICATION);
                 setIsPopoverOpened(false);
               }}
@@ -311,7 +311,6 @@ export const DrawingTool = () => {
               shortcut={keymap.toolBoundingBox.key}
               selected={selectedTool === Tools.BOX}
               onClick={() => {
-                setSelectedLabelId(null);
                 setSelectedTool(Tools.BOX);
                 setIsPopoverOpened(false);
               }}
@@ -326,7 +325,6 @@ export const DrawingTool = () => {
               shortcut={keymap.toolPolygon.key}
               selected={selectedTool === Tools.POLYGON}
               onClick={() => {
-                setSelectedLabelId(null);
                 setSelectedTool(Tools.POLYGON);
                 setIsPopoverOpened(false);
               }}
@@ -342,7 +340,6 @@ export const DrawingTool = () => {
                 shortcut={keymap.toolIog.key}
                 selected={selectedTool === Tools.IOG}
                 onClick={() => {
-                  setSelectedLabelId(null);
                   setSelectedTool(Tools.IOG);
                   setIsPopoverOpened(false);
                 }}
