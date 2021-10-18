@@ -7,7 +7,7 @@ import { generateHtml } from "./templates/invitation";
 export enum InvitationStatus {
   Sent,
   UserAlreadyIn,
-  SessionError,
+  Error,
 }
 
 export const sendInvitationFromPrisma =
@@ -18,24 +18,35 @@ export const sendInvitationFromPrisma =
     inviteeEmail,
     inviteeRole,
     workspaceSlug,
-    provider: { server, from },
+    providerServer,
+    providerFrom,
   }: {
     sessionToken: string;
     inviterId: string;
     inviteeEmail: string;
     inviteeRole: MembershipRole;
     workspaceSlug: string;
-    provider: { server: any; from?: string };
+    providerServer: string;
+    providerFrom: string;
   }) => {
-    const isSessionTrue = await prisma.session.count({
-      where: { sessionToken: { equals: sessionToken } },
-    }); // TODO: Check user id as well..
+    const isSessionTokenValid = await prisma.session.count({
+      where: {
+        AND: [
+          { userId: inviterId },
+          { sessionToken: { equals: sessionToken } },
+        ],
+      },
+    });
     const inviter = await prisma.user.findUnique({
       where: { id: inviterId },
       select: { name: true, email: true },
     });
-    if (!isSessionTrue || !inviter) {
-      return InvitationStatus.SessionError;
+    const workspace = await prisma.workspace.findUnique({
+      where: { slug: workspaceSlug },
+      select: { name: true },
+    });
+    if (!isSessionTokenValid || !inviter) {
+      return InvitationStatus.Error;
     }
     const isUserAlreadyInWorkspace = await prisma.membership.count({
       where: {
@@ -81,19 +92,30 @@ export const sendInvitationFromPrisma =
         },
       });
     }
-    const { origin } = new URL(url);
-    const transport = createTransport(server);
+    const searchParams = new URLSearchParams({
+      sessionToken,
+      inviterId,
+      inviteeEmail,
+      inviteeRole,
+      workspaceSlug,
+      providerServer,
+      providerFrom,
+    });
+    const url = `${
+      process.env.NEXTAUTH_URL
+    }/api/accept-invitation?${searchParams.toString()}`;
+    const transport = createTransport(providerServer);
     await transport.sendMail({
       to: inviteeEmail,
-      from,
-      subject: `Join ${workspaceName} on LabelFlow`,
-      text: `Join ${workspaceName} on LabelFlow\n${url}\n\n`,
+      from: providerFrom,
+      subject: `Join ${workspace?.name} on LabelFlow`,
+      text: `Join ${workspace?.name} on LabelFlow\n${url}\n\n`,
       html: generateHtml({
-        inviterName,
-        inviterEmail,
+        inviterName: inviter?.name ?? undefined,
+        inviterEmail: inviter?.email ?? undefined,
         url,
         origin,
-        workspaceName,
+        workspaceName: workspace?.name ?? "undefined workspace",
         type: "invitation",
       }),
     });
