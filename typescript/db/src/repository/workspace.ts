@@ -24,18 +24,17 @@ export const addWorkspace: Repository["workspace"]["add"] = async (
   if (typeof user?.id !== "string") {
     throw new Error("Couldn't create workspace: No user id");
   }
-  const slug = slugify(workspace.name, { lower: true });
   const plan = WorkspacePlan.Community;
+
   const createdWorkspace = await (
     await getPrismaClient()
   ).workspace.create({
     data: castObjectNullsToUndefined({
-      slug,
       plan,
       ...workspace,
       memberships: {
         create: {
-          userId: user?.id,
+          user: { connect: { id: user?.id } },
           role: UserRole.Owner,
         },
       },
@@ -78,7 +77,10 @@ export const listWorkspace: Repository["workspace"]["list"] = async (
       skip: skip ?? undefined,
       take: first ?? undefined,
       orderBy: { createdAt: Prisma.SortOrder.asc },
-      where: { memberships: { some: { userId: where?.user?.id } } },
+      where: {
+        memberships: { some: { userId: where?.user?.id } },
+        slug: where?.slug ?? undefined,
+      },
     })
   );
   return workspacesFromDb.map(addTypeToWorkspace);
