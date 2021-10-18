@@ -11,9 +11,11 @@ export type ChangeMembershipRole = ({
 export type RemoveMembership = (id: string) => void;
 export type Membership = {
   id: string;
-  role: string;
-  user: {
-    id: string;
+  role: "Owner" | "Admin" | "Member";
+  invitationEmailSentTo?: string;
+  invitationToken?: string;
+  user?: {
+    id?: string;
     name?: string;
     email?: string;
     image?: string;

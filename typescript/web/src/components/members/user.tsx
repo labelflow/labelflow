@@ -4,10 +4,10 @@ import * as React from "react";
 
 interface UserProps {
   data: {
-    id: string;
-    image: string;
-    name: string;
-    email: string;
+    id?: string;
+    image?: string;
+    name?: string;
+    email?: string;
   };
 }
 
@@ -18,7 +18,7 @@ export const getDisplayName = ({
 }: {
   name?: string;
   email?: string;
-  id: string;
+  id?: string;
 }) => {
   if (name) {
     return name;
@@ -26,10 +26,10 @@ export const getDisplayName = ({
   if (email) {
     return email.split("@")[0];
   }
-  if (id === "local-user") {
-    return "";
+  if (id && id !== "local-user") {
+    return `User - ${id.substr(id.length - 5, 4)}`;
   }
-  return `User - ${id.substr(id.length - 5, 4)}`;
+  return "";
 };
 
 export const User = (props: UserProps) => {

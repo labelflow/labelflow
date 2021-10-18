@@ -98,6 +98,7 @@ const user = async (
     Prisma.PromiseReturnType<typeof prisma.membership.findUnique>
   >
 ) => {
+  if (!parent.userId) return null;
   return await prisma.user.findUnique({
     where: { id: parent.userId },
   });

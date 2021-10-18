@@ -18,10 +18,11 @@ import {
   ModalBody,
   useColorModeValue as mode,
   Link,
+  useToast,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
-import { InvitationStatus } from "../../utils/email/send-invitation";
+import { InvitationStatus } from "../../utils/email/types";
 
 import { RoleSelection } from "./role-selection";
 import { Role } from "./types";
@@ -34,6 +35,18 @@ const validateEmail = (email: string): boolean => {
 const maxNumberOfEmails = 20;
 type EmailStatuses = Record<InvitationStatus, string[]>;
 
+const summarizeEmailList = (emailList: string[]): string => {
+  if (emailList.length === 1) {
+    return `${emailList[0]}`;
+  }
+  if (emailList.length === 2) {
+    return `${emailList[0]} and ${emailList[1]}
+    `;
+  }
+  return `${emailList[0]}, ${emailList[1]} and ${emailList.length - 2} others
+    `;
+};
+
 export const NewMemberModal = ({
   isOpen = false,
   onClose = () => {},
@@ -42,11 +55,9 @@ export const NewMemberModal = ({
   onClose?: () => void;
 }) => {
   const router = useRouter();
+  const toast = useToast();
   const { data: session } = useSession({ required: false });
   const { workspaceSlug } = router?.query;
-
-  const [emailStatuses, setEmailStatuses] =
-    useState<EmailStatuses | null>(null);
   const [value, setValue] = useState<string>("");
   const [role, setRole] = useState<Role>("Owner");
   const handleInputChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
@@ -185,9 +196,11 @@ export const NewMemberModal = ({
                     }),
                   };
                   const searchParams = new URLSearchParams(inputsInvitation);
-                  const { status }: { status: InvitationStatus } = await fetch(
-                    `${origin}/api/email/send-invitation?${searchParams.toString()}`
-                  );
+                  const { status } = (await (
+                    await fetch(
+                      `${origin}/api/email/send-invitation?${searchParams.toString()}`
+                    )
+                  ).json()) as unknown as { status: InvitationStatus };
                   statusesCurrent[status].push(email);
                   return statusesCurrent;
                 },
@@ -199,7 +212,58 @@ export const NewMemberModal = ({
                   });
                 }) as Promise<EmailStatuses>
               );
-              setEmailStatuses(statuses);
+              if (statuses[InvitationStatus.Sent].length > 0) {
+                toast({
+                  title: `${statuses[InvitationStatus.Sent].length} Invitation${
+                    statuses[InvitationStatus.Sent].length > 1 ? "s" : ""
+                  } sent.`,
+                  description: `${summarizeEmailList(
+                    statuses[InvitationStatus.Sent]
+                  )} ${
+                    statuses[InvitationStatus.Sent].length > 1 ? "were" : "was"
+                  } successfully invited to this workspace.`,
+                  status: "success",
+                  duration: 9000,
+                  isClosable: true,
+                  position: "bottom-right",
+                });
+              }
+              if (statuses[InvitationStatus.UserAlreadyIn].length > 0) {
+                toast({
+                  title: `${
+                    statuses[InvitationStatus.UserAlreadyIn].length
+                  } Invitation${
+                    statuses[InvitationStatus.UserAlreadyIn].length > 1
+                      ? "s"
+                      : ""
+                  } not sent.`,
+                  description: `${summarizeEmailList(
+                    statuses[InvitationStatus.UserAlreadyIn]
+                  )} ${
+                    statuses[InvitationStatus.Sent].length > 1 ? "were" : "was"
+                  } already member${
+                    statuses[InvitationStatus.Sent].length > 1 ? "s" : ""
+                  } of this workspace.`,
+                  status: "warning",
+                  duration: 9000,
+                  isClosable: true,
+                  position: "bottom-right",
+                });
+              }
+              if (statuses[InvitationStatus.Error].length > 0) {
+                toast({
+                  title: `${statuses[InvitationStatus.Error].length} Error${
+                    statuses[InvitationStatus.Error].length > 1 ? "s" : ""
+                  } encountered.`,
+                  description: `Encountered an error when sending invitation to ${summarizeEmailList(
+                    statuses[InvitationStatus.Error]
+                  )}. Please check the email addresses.`,
+                  status: "error",
+                  duration: 9000,
+                  isClosable: true,
+                  position: "bottom-right",
+                });
+              }
               setValue("");
             }}
           >

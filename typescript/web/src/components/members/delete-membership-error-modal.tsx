@@ -24,7 +24,7 @@ export const DeleteMembershipErrorModal = ({
   if (membership == null) {
     return null;
   }
-  const displayName = getDisplayName(membership.user);
+  const displayName = getDisplayName(membership?.user ?? {});
   return (
     <AlertDialog
       isOpen={isOpen}

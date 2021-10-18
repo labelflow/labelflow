@@ -3,6 +3,7 @@ import { PrismaClient } from "@prisma/client";
 import { MembershipRole } from "@labelflow/graphql-types";
 import { createTransport } from "nodemailer";
 import { generateHtml } from "./templates/invitation";
+import { InvitationStatus } from "./types";
 
 export type InvitationEmailInputs = {
   origin: string;
@@ -14,12 +15,6 @@ export type InvitationEmailInputs = {
   providerServer: string;
   providerFrom: string;
 };
-
-export enum InvitationStatus {
-  Sent,
-  UserAlreadyIn,
-  Error,
-}
 
 export const sendInvitationFromPrisma =
   (prisma: PrismaClient) =>

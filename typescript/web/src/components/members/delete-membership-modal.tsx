@@ -32,7 +32,8 @@ export const DeleteMembershipModal = ({
   if (membership == null) {
     return null;
   }
-  const isRemovingCurrentUser = membership.user.id === session?.data?.user?.id;
+  const isRemovingCurrentUser =
+    membership?.user?.id === session?.data?.user?.id;
   return (
     <AlertDialog
       isOpen={isOpen}
@@ -45,7 +46,7 @@ export const DeleteMembershipModal = ({
           <AlertDialogHeader>
             {isRemovingCurrentUser
               ? `Leave ${membership.workspace.name}?`
-              : `Remove ${getDisplayName(membership.user)} from ${
+              : `Remove ${getDisplayName(membership?.user ?? {})} from ${
                   membership.workspace.name
                 }?`}
           </AlertDialogHeader>

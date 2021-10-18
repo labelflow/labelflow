@@ -20,7 +20,6 @@ export default async function handler(
   const session = await getSession({ req });
   if (session) {
     // Signed in
-    console.log("Session", JSON.stringify(session, null, 2));
     const { query } = req as unknown as {
       query: Omit<
         InvitationEmailInputs,

@@ -15,7 +15,7 @@ import { User } from "./user";
 import { RoleSelection } from "./role-selection";
 import { ChangeMembershipRole, RemoveMembership, Membership } from "./types";
 import { DeleteMembershipModal } from "./delete-membership-modal";
-import { DeleteMembershipErrorModal } from "./delete-memebership-error-modal";
+import { DeleteMembershipErrorModal } from "./delete-membership-error-modal";
 
 const badgeEnum: Record<string, string> = {
   active: "green",
@@ -23,20 +23,36 @@ const badgeEnum: Record<string, string> = {
   declined: "red",
 };
 
+const getMembershipStatus = (
+  membership: Membership
+): "active" | "reviewing" | "declined" => {
+  if (membership?.user) {
+    return "active";
+  }
+  if (membership?.invitationToken) {
+    return "reviewing";
+  }
+  return "declined";
+};
+
 const columns = [
   {
     Header: "Member",
-    accessor: "user",
-    Cell: function MemberCell(data: any) {
-      return <User data={data} />;
+    Cell: function MemberCell({
+      invitationEmailSentTo,
+      user: userInput,
+    }: Membership) {
+      const user = {
+        ...{ email: invitationEmailSentTo },
+        ...userInput,
+      };
+      return <User data={user} />;
     },
   },
   {
     Header: "Role",
-    accessor: "role",
     Cell: function RoleSelectionCell(
-      role: any,
-      id: string,
+      { id, role }: Membership,
       changeMembershipRole: any
     ) {
       return (
@@ -51,9 +67,8 @@ const columns = [
   },
   {
     Header: "Status",
-    accessor: "status",
-    Cell: function StatusCell(data: any) {
-      const status = data ?? "active";
+    Cell: function StatusCell(membership: Membership) {
+      const status = getMembershipStatus(membership);
       return (
         <Badge fontSize="xs" colorScheme={badgeEnum[status]}>
           {status}
@@ -79,11 +94,14 @@ export const TableContent = ({
 
   const filteredMemberships = memberships.filter(
     (membership) =>
-      membership.user.email
+      membership?.user?.email
         ?.toLowerCase()
         ?.includes(searchText.toLowerCase()) ||
-      membership.user.name?.toLowerCase()?.includes(searchText.toLowerCase()) ||
-      membership.user.id?.toLowerCase()?.includes(searchText.toLowerCase())
+      membership?.user?.name
+        ?.toLowerCase()
+        ?.includes(searchText.toLowerCase()) ||
+      membership?.user?.id?.toLowerCase()?.includes(searchText.toLowerCase()) ||
+      membership?.invitationEmailSentTo
   );
   return (
     <>
@@ -113,9 +131,7 @@ export const TableContent = ({
           {filteredMemberships.map((row, membershipIndex) => (
             <Tr key={membershipIndex}>
               {columns.map((column, index) => {
-                const cell = row[column.accessor as keyof typeof row];
-                const element =
-                  column.Cell?.(cell, row.id, changeMembershipRole) ?? cell;
+                const element = column.Cell?.(row, changeMembershipRole) ?? row;
                 return (
                   <Td whiteSpace="nowrap" key={index}>
                     {element}

@@ -3,6 +3,7 @@ import { chakraDecorator } from "../../../utils/chakra-decorator";
 import { apolloDecorator } from "../../../utils/apollo-decorator";
 
 import { Members } from "..";
+import { Membership } from "../types";
 
 export default {
   title: "web/Workspace members",
@@ -10,7 +11,7 @@ export default {
   decorators: [chakraDecorator, apolloDecorator],
 };
 
-const memberships = [
+const memberships: Membership[] = [
   {
     role: "Admin",
     id: "membership1",
@@ -44,13 +45,7 @@ const memberships = [
   {
     role: "Admin",
     id: "membership3",
-    user: {
-      id: "user3",
-      image:
-        "https://images.unsplash.com/photo-1470506028280-a011fb34b6f7?ixid=MXwxMjA3fDB8MHxzZWFyY2h8NjN8fGxhZHklMjBmYWNlfGVufDB8fDB8&ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=60",
-      name: "Susan Schwartz",
-      email: "jenyzx@example.com",
-    },
+    invitationEmailSentTo: "blabla@toto.com",
     workspace: {
       id: "ws-1",
       name: "My workspace",
@@ -64,6 +59,16 @@ const memberships = [
       image:
         "https://images.unsplash.com/photo-1533674689012-136b487b7736?ixid=MXwxMjA3fDB8MHxzZWFyY2h8Mjl8fGFmcmljYSUyMGxhZHklMjBmYWNlfGVufDB8fDB8&ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=60",
     },
+    workspace: {
+      id: "ws-1",
+      name: "My workspace",
+    },
+  },
+  {
+    role: "Admin",
+    id: "membership5",
+    invitationEmailSentTo: "member5@gmail.com",
+    invitationToken: "abcd",
     workspace: {
       id: "ws-1",
       name: "My workspace",

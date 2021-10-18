@@ -18,6 +18,8 @@ const membershipsQuery = gql`
     memberships(where: { workspaceSlug: $workspaceSlug }) {
       id
       role
+      invitationEmailSentTo
+      invitationToken
       user {
         id
         name

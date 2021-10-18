@@ -1,3 +1,4 @@
+import { SessionProvider } from "next-auth/react";
 import { Button, useDisclosure } from "@chakra-ui/react";
 
 import { NewMemberModal } from "../new-member-modal";
@@ -23,10 +24,12 @@ export const Default = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
-    <div>
-      <Button onClick={onOpen}>Display</Button>
-      <NewMemberModal isOpen={isOpen} onClose={onClose} />
-    </div>
+    <SessionProvider session={undefined}>
+      <div>
+        <Button onClick={onOpen}>Display</Button>
+        <NewMemberModal isOpen={isOpen} onClose={onClose} />
+      </div>
+    </SessionProvider>
   );
 };
 
@@ -34,9 +37,11 @@ export const OpenedByDefault = () => {
   const { isOpen, onOpen, onClose } = useDisclosure({ defaultIsOpen: true });
 
   return (
-    <div>
-      <Button onClick={onOpen}>Display</Button>
-      <NewMemberModal isOpen={isOpen} onClose={onClose} />
-    </div>
+    <SessionProvider session={undefined}>
+      <div>
+        <Button onClick={onOpen}>Display</Button>
+        <NewMemberModal isOpen={isOpen} onClose={onClose} />
+      </div>
+    </SessionProvider>
   );
 };
