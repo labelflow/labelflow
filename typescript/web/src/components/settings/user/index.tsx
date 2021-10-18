@@ -7,8 +7,8 @@ export const UserSettings = ({
 }: {
   user: { id: string; name?: string; image?: string };
   changeUserName: (name: string) => void;
-}) => {
+}) => (
   <SettingsContainer>
     <Profile user={user} changeUserName={changeUserName} />
-  </SettingsContainer>;
-};
+  </SettingsContainer>
+);

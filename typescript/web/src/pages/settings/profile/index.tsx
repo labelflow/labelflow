@@ -8,7 +8,7 @@ import { AuthManager } from "../../../components/auth-manager";
 import { WelcomeManager } from "../../../components/welcome-manager";
 import { CookieBanner } from "../../../components/cookie-banner";
 import { NavLogo } from "../../../components/logo/nav-logo";
-import { Profile } from "../../../components/settings/user/profile";
+import { UserSettings } from "../../../components/settings/user";
 
 const updateUserQuery = gql`
   mutation updateUser($id: ID!, $data: UserUpdateInput!) {
@@ -59,7 +59,7 @@ const ProfilePage = () => {
       <Meta title="LabelFlow | Profile" />
       <CookieBanner />
       <Layout breadcrumbs={[<NavLogo key={0} />]}>
-        <Profile user={user} changeUserName={changeUserName} />
+        <UserSettings user={user} changeUserName={changeUserName} />
       </Layout>
     </>
   );
