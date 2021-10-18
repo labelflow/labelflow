@@ -398,6 +398,7 @@ type Workspace {
 input WorkspaceCreateInput {
   id: ID
   name: String!
+  image: String
 }
 
 enum WorkspacePlan {
@@ -419,6 +420,7 @@ enum WorkspaceType {
 
 input WorkspaceUpdateInput {
   name: String
+  image: String
 }
 
 input WorkspaceWhereUniqueInput {
