@@ -102,6 +102,8 @@ export const TableContent = ({
         ?.includes(searchText.toLowerCase()) ||
       membership?.user?.id?.toLowerCase()?.includes(searchText.toLowerCase()) ||
       membership?.invitationEmailSentTo
+        ?.toLowerCase()
+        ?.includes(searchText.toLowerCase())
   );
   return (
     <>
