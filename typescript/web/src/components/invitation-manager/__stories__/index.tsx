@@ -21,3 +21,9 @@ export const AcceptOrDecline = () => (
     />
   </div>
 );
+
+export const RevokedInvitation = () => (
+  <div style={{ width: "100vw", height: "100vh", backgroundColor: "grey" }}>
+    <RevokedInvitationComponent invitationEmailAddress="toto@sterblue.com" />
+  </div>
+);
