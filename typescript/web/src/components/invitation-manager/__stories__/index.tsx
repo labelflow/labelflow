@@ -4,6 +4,8 @@ import { apolloDecorator } from "../../../utils/apollo-decorator";
 import { queryParamsDecorator } from "../../../utils/query-params-decorator";
 
 import { AcceptOrDeclineMembershipInvitation } from "../accept-or-decline-membership-invitation";
+import { RevokedInvitation as RevokedInvitationComponent } from "../revoked-invitation";
+import { AlreadyAcceptedInvitation as AlreadyAcceptedInvitationComponent } from "../already-accepted-invitation";
 
 export default {
   title: "web/Invitation manager",
@@ -25,5 +27,11 @@ export const AcceptOrDecline = () => (
 export const RevokedInvitation = () => (
   <div style={{ width: "100vw", height: "100vh", backgroundColor: "grey" }}>
     <RevokedInvitationComponent invitationEmailAddress="toto@sterblue.com" />
+  </div>
+);
+
+export const AlreadyAcceptedInvitation = () => (
+  <div style={{ width: "100vw", height: "100vh", backgroundColor: "grey" }}>
+    <AlreadyAcceptedInvitationComponent userInMembershipEmailAddress="toto@sterblue.com" />
   </div>
 );
