@@ -326,7 +326,7 @@ type Query {
   datasets(where: DatasetWhereInput, first: Int, skip: Int): [Dataset!]!
   searchDataset(where: DatasetWhereUniqueInput!): Dataset
   workspace(where: WorkspaceWhereUniqueInput!): Workspace!
-  workspaces(first: Int, skip: Int): [Workspace!]!
+  workspaces(first: Int, skip: Int, where: WorkspaceWhereInput): [Workspace!]!
   membership(where: MembershipWhereUniqueInput!): Membership!
   memberships(where: MembershipWhereInput, first: Int, skip: Int): [Membership!]!
   user(where: UserWhereUniqueInput!): User!
@@ -421,6 +421,10 @@ enum WorkspaceType {
 input WorkspaceUpdateInput {
   name: String
   image: String
+}
+
+input WorkspaceWhereInput {
+  slug: String
 }
 
 input WorkspaceWhereUniqueInput {

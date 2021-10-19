@@ -13,8 +13,11 @@ import {
 import {
   Context,
   DbWorkspaceWithType,
+  forbiddenWorkspaceSlugs,
+  isValidWorkspaceName,
   Repository,
 } from "@labelflow/common-resolvers";
+import slugify from "slugify";
 import { getPrismaClient } from "../prisma-client";
 import { castObjectNullsToUndefined } from "../repository/utils";
 
@@ -44,7 +47,11 @@ const workspaces = async (
   args: QueryWorkspacesArgs,
   { repository, user }: Context
 ): Promise<DbWorkspaceWithType[]> =>
-  await repository.workspace.list({ user }, args.skip, args.first);
+  await repository.workspace.list(
+    { user, ...args.where },
+    args.skip,
+    args.first
+  );
 
 const createWorkspace = async (
   _: any,
@@ -64,11 +71,30 @@ const createWorkspace = async (
     );
   }
 
+  const slug = slugify(args.data.name, { lower: true });
+
+  if (slug.length <= 0) {
+    throw new Error(`Cannot create a workspace with an empty name.`);
+  }
+
+  if (!isValidWorkspaceName(args.data.name)) {
+    throw new Error(
+      `Cannot create a workspace with the name "${args.data.name}". This name contains invalid characters.`
+    );
+  }
+
+  if (forbiddenWorkspaceSlugs.includes(slug)) {
+    throw new Error(
+      `Cannot create a workspace with the slug "${slug}". This slug is reserved.`
+    );
+  }
+
   const createdWorkspaceId = await repository.workspace.add(
     {
       id: args.data.id ?? undefined,
       name: args.data.name,
       image: args.data.image ?? undefined,
+      slug,
     },
     user
   );

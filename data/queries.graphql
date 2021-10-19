@@ -30,7 +30,7 @@ type Query {
   searchDataset(where: DatasetWhereUniqueInput!): Dataset
 
   workspace(where: WorkspaceWhereUniqueInput!): Workspace!
-  workspaces(first: Int, skip: Int): [Workspace!]!
+  workspaces(first: Int, skip: Int, where: WorkspaceWhereInput): [Workspace!]!
 
   membership(where: MembershipWhereUniqueInput!): Membership!
   memberships(

@@ -9,6 +9,10 @@ input WorkspaceWhereUniqueInput {
   slug: String
 }
 
+input WorkspaceWhereInput {
+  slug: String
+}
+
 input WorkspaceUpdateInput {
   name: String
   image: String
