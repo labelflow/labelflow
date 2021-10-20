@@ -29,6 +29,7 @@ import { signOut, useSession } from "next-auth/react";
 import { useQueryParam } from "use-query-params";
 import { BoolParam } from "../../../utils/query-param-bool";
 import { randomBackgroundGradient } from "../../../utils/random-background-gradient";
+import { getDisplayName } from "../../members/user";
 
 const UserMenuIcon = chakra(RiUserLine);
 
@@ -47,9 +48,13 @@ export const UserMenu = () => {
   const fadeColor = useColorModeValue("gray.600", "gray.400");
   const avatarBackground = useColorModeValue("white", "gray.700");
 
+  const displayName = session?.user
+    ? getDisplayName(session?.user)
+    : "Anonymous";
+
   return (
     <Menu>
-      <Tooltip label="User and Preferences" openDelay={300}>
+      <Tooltip label="User and Preferences" placement="left" openDelay={300}>
         <MenuButton
           as={IconButton}
           borderRadius="full"
@@ -62,9 +67,9 @@ export const UserMenu = () => {
                   session?.user?.image != null &&
                   session?.user?.image.length > 0
                     ? avatarBackground
-                    : randomBackgroundGradient(session?.user?.name)
+                    : randomBackgroundGradient(displayName)
                 }
-                name={session?.user?.name}
+                name={displayName}
                 src={session?.user?.image}
                 icon={<UserMenuIcon fontSize="xl" />}
               />
@@ -97,15 +102,13 @@ export const UserMenu = () => {
                     session?.user?.image != null &&
                     session?.user?.image.length > 0
                       ? avatarBackground
-                      : randomBackgroundGradient(session?.user?.name)
+                      : randomBackgroundGradient(displayName)
                   }
-                  name={session?.user?.name}
+                  name={displayName}
                   src={session?.user?.image}
                 />
                 <Flex direction="column" fontWeight="medium">
-                  <Text fontSize="sm">
-                    {session?.user?.name ?? "Anonymous"}
-                  </Text>
+                  <Text fontSize="sm">{displayName}</Text>
                   <Text fontSize="xs" lineHeight="shorter" color={fadeColor}>
                     {session?.user?.email ?? ""}
                   </Text>
