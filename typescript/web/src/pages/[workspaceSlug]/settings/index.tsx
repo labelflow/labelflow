@@ -1,7 +1,7 @@
 import React from "react";
 import { Text, Box } from "@chakra-ui/react";
 import { useRouter } from "next/router";
-// import { useQuery, gql, useMutation } from "@apollo/client";
+import { gql, useQuery } from "@apollo/client";
 import { Meta } from "../../../components/meta";
 import { Layout } from "../../../components/layout";
 import { ServiceWorkerManagerModal } from "../../../components/service-worker-manager";
@@ -13,40 +13,31 @@ import { WorkspaceSettings } from "../../../components/settings/workspace";
 import { WorkspaceSwitcher } from "../../../components/workspace-switcher";
 import { NavLogo } from "../../../components/logo/nav-logo";
 
-// const membershipsQuery = gql`
-//   query getMembershipsMembers($workspaceSlug: String) {
-//     memberships(where: { workspaceSlug: $workspaceSlug }) {
-//       id
-//       role
-//       user {
-//         id
-//         name
-//         email
-//         image
-//       }
-//       workspace {
-//         id
-//         name
-//       }
-//     }
-//   }
-// `;
+const getWorkspaceDetailsQuery = gql`
+  query getWorkspaceDetails($workspaceSlug: String) {
+    workspace(where: { slug: $workspaceSlug }) {
+      id
+      slug
+      image
+      name
+    }
+  }
+`;
 
 const WorkspaceSettingsPage = () => {
   const workspaceSlug = useRouter().query?.workspaceSlug as string;
 
-  // const { data: membershipsData } = useQuery(membershipsQuery, {
-  //   variables: { workspaceSlug },
-  //   skip: workspaceSlug == null,
-  // });
+  const {
+    data: getWorkspaceDetailsData,
+    previousData: getWorkspaceDetailsPreviousData,
+  } = useQuery(getWorkspaceDetailsQuery, {
+    variables: { workspaceSlug },
+    skip: workspaceSlug == null,
+  });
 
-  // const [deleteMembership] = useMutation(deleteMembershipMutation, {
-  //   refetchQueries: ["getMembershipsMembers"],
-  // });
-
-  // const [updateMembership] = useMutation(updateMembershipMutation, {
-  //   refetchQueries: ["getMembershipsMembers"],
-  // });
+  const getWorkspaceDetailsFinalData =
+    getWorkspaceDetailsData?.workspace ??
+    getWorkspaceDetailsPreviousData?.workspace;
 
   return (
     <>
@@ -69,16 +60,7 @@ const WorkspaceSettingsPage = () => {
         }
       >
         <Box p={8}>
-          <WorkspaceSettings
-            workspace={{
-              id: "1",
-              slug: workspaceSlug,
-              name: workspaceSlug,
-              image: null,
-            }}
-            changeName={(name: string) => {}}
-            changeImage={(name: string) => {}}
-          />
+          <WorkspaceSettings workspace={getWorkspaceDetailsFinalData} />
         </Box>
       </Layout>
     </>

@@ -19,6 +19,7 @@
     "start:web": "cd ./typescript/web && yarn start",
     "bundlewatch:web": "cd ./typescript/web && yarn build && yarn bundlewatch",
     "codegen": "graphql-codegen --config ./codegen.yml",
+    "codegen:all": "yarn codegen",
     "codegen:ci": "graphql-codegen --config ./codegen.yml && git diff --exit-code",
     "storybook": "start-storybook -s ./typescript/web/public -p 6006",
     "storybook:all": "start-storybook -s ./typescript/web/public -p 6006",

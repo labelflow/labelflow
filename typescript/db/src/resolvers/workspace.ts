@@ -107,6 +107,9 @@ const updateWorkspace = async (
   args: MutationUpdateWorkspaceArgs,
   { repository, user }: Context
 ): Promise<DbWorkspaceWithType> => {
+  // We need to get the id of the workspace, to keep track of it even if the slug changes
+  const currentWorkspace = await getWorkspace(args.where, repository, user);
+
   // Update workspace
   await repository.workspace.update(
     castObjectNullsToUndefined(args.where),
@@ -114,7 +117,7 @@ const updateWorkspace = async (
     user
   );
 
-  return await getWorkspace(args.where, repository, user);
+  return await getWorkspace({ id: currentWorkspace.id }, repository, user);
 };
 
 const memberships = async (parent: Workspace) => {

@@ -1,46 +1,117 @@
 import { useState, useEffect, useCallback } from "react";
+import { ApolloError, gql, useMutation, useQuery } from "@apollo/client";
 import {
   HStack,
   Avatar,
   useColorModeValue as mode,
   Box,
+  SkeletonCircle,
   Button,
   Stack,
   chakra,
   StackDivider,
   Input,
+  useToast,
 } from "@chakra-ui/react";
-
+import slugify from "slugify";
 import { RiGroupFill } from "react-icons/ri";
-
-import { randomBackgroundGradient } from "../../../utils/random-background-gradient";
-
+import { useRouter } from "next/router";
 import {
-  WorkspaceSelectionPopover,
-  WorkspaceItem,
-} from "./workspace-selection-popover";
-
-import { SettingsContainer, FieldGroup, HeadingGroup, Card } from "..";
+  Message,
+  searchWorkspacesQuery,
+} from "../../workspace-switcher/workspace-creation-modal";
+import { randomBackgroundGradient } from "../../../utils/random-background-gradient";
+import { FieldGroup, HeadingGroup, Card } from "..";
 
 const TeamIcon = chakra(RiGroupFill);
 
+const updateWorkspaceMutation = gql`
+  mutation updateWorkspace(
+    $workspaceSlug: String
+    $name: String
+    $image: String
+  ) {
+    updateWorkspace(
+      where: { slug: $workspaceSlug }
+      data: { name: $name, image: $image }
+    ) {
+      id
+      slug
+      name
+      image
+    }
+  }
+`;
+
 export const Profile = ({
   workspace,
-  changeName,
-  changeImage,
   ...props
 }: {
-  workspace: { id: string; name?: string; image?: string };
-  changeName: (name: string) => void;
-  changeImage: (image: string) => void;
+  workspace?: { id: string; name: string; image?: string | null; slug: string };
 }) => {
-  const [workspaceName, setWorkspaceName] = useState(workspace?.name);
-  const [workspaceImagee, setWorkspaceImage] = useState(workspace?.image);
-  useEffect(() => setWorkspaceName(workspace?.name), [workspace]);
+  const router = useRouter();
+  const toast = useToast();
+  const [workspaceName, setWorkspaceName] = useState(workspace?.name ?? "");
 
-  const handleImageUpload = useCallback(() => {}, []);
+  const slug = slugify(workspaceName, { lower: true });
 
-  const handleSubmit = useCallback(() => {}, []);
+  const [updateWorkspace, { error }] = useMutation<{
+    updateWorkspace: {
+      id: string;
+      name: string;
+      image?: string | null;
+      slug: string;
+    };
+  }>(updateWorkspaceMutation, {
+    variables: {
+      name: workspaceName !== workspace?.name ? workspaceName : null,
+      image: null,
+      workspaceSlug: workspace?.slug,
+    },
+    refetchQueries: ["getWorkspaces"],
+    onCompleted: (createdData) => {
+      console.log(`Moving to /${createdData.updateWorkspace.slug}/settings`);
+      router.push(`/${createdData.updateWorkspace.slug}/settings`);
+    },
+    onError: (caughtError: any) => {
+      if (caughtError instanceof ApolloError) {
+        toast({
+          title: "Needs to be signed in",
+          description:
+            "Only signed-in users can to create and share Workspaces online, please sign in.",
+          isClosable: true,
+          status: "info",
+          position: "bottom-right",
+          duration: 10000,
+        });
+      } else {
+        toast({
+          title: "Could not update workspace",
+          description: caughtError?.message ?? caughtError,
+          isClosable: true,
+          status: "error",
+          position: "bottom-right",
+          duration: 10000,
+        });
+      }
+    },
+  });
+
+  useEffect(() => {
+    setWorkspaceName(workspace?.name ?? "");
+  }, [workspace?.name ?? ""]);
+
+  /**
+   * This query and the following mutation need to run against the distant database endpoint;
+   * This is currently enforced in the TopBar component.
+   */
+  const { data } = useQuery(searchWorkspacesQuery, {
+    skip: workspaceName === workspace?.name ?? "",
+    variables: { slug },
+    fetchPolicy: "network-only",
+  });
+
+  const workspaceNameIsAlreadyTaken = data?.workspaces?.length === 1;
 
   const avatarBorderColor = mode("gray.200", "gray.700");
   const avatarBackground = mode("white", "gray.700");
@@ -58,31 +129,44 @@ export const Profile = ({
             description="Change workspace public name and image"
           >
             <HStack spacing="4">
-              <Avatar
-                borderWidth="1px"
-                borderColor={avatarBorderColor}
-                color="white"
-                borderRadius="md"
-                name={workspace?.name}
-                src={workspace?.image}
-                mr="2"
-                bg={
-                  workspace?.image != null && workspace?.image.length > 0
-                    ? avatarBackground
-                    : randomBackgroundGradient(workspace?.name)
-                }
-                icon={<TeamIcon color="white" fontSize="1rem" />}
-              />
-
-              {/* <Avatar src={workspace?.image} nafme={workspace?.name} /> */}
+              {workspaceName == null ?? workspaceName === "" ? (
+                <SkeletonCircle size="10" />
+              ) : (
+                <Avatar
+                  borderWidth="1px"
+                  borderColor={avatarBorderColor}
+                  color="white"
+                  borderRadius="md"
+                  name={workspaceName}
+                  src={workspace?.image ?? undefined}
+                  mr="2"
+                  sx={{
+                    "div[role=img]": {
+                      fontSize: "32",
+                    },
+                  }}
+                  bg={
+                    workspace?.image != null && workspace?.image.length > 0
+                      ? avatarBackground
+                      : randomBackgroundGradient(workspaceName)
+                  }
+                  icon={<TeamIcon color="white" fontSize="1rem" />}
+                />
+              )}
               <Box>
                 <Input
                   value={workspaceName}
-                  onChange={(e) => setWorkspaceName(e.target.value)}
+                  onChange={(e) => setWorkspaceName(e.target.value ?? "")}
                 />
               </Box>
             </HStack>
           </FieldGroup>
+          <Message
+            isOnlyDisplaying={workspaceName === workspace?.name}
+            error={error}
+            workspaceName={workspaceName}
+            workspaceNameIsAlreadyTaken={workspaceNameIsAlreadyTaken}
+          />
           <Box flexDirection="row" alignSelf="flex-end">
             <Button
               m="1"
@@ -90,7 +174,7 @@ export const Profile = ({
               fontWeight="normal"
               alignSelf="flex-end"
               disabled={workspaceName === workspace?.name}
-              onClick={() => setWorkspaceName(workspace?.name)}
+              onClick={() => setWorkspaceName(workspace?.name ?? "")}
             >
               Cancel
             </Button>
@@ -101,7 +185,7 @@ export const Profile = ({
               alignSelf="flex-end"
               bg="brand.500"
               color="#FFFFFF"
-              onClick={() => changeName(workspaceName)}
+              onClick={() => updateWorkspace()}
               disabled={workspaceName === workspace?.name}
             >
               Save Changes
