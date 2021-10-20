@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { ApolloError, gql, useMutation, useQuery } from "@apollo/client";
 import {
   HStack,
