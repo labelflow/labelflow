@@ -674,6 +674,7 @@ export type Workspace = {
   updatedAt: Scalars['DateTime'];
   name: Scalars['String'];
   slug: Scalars['String'];
+  image?: Maybe<Scalars['String']>;
   type: WorkspaceType;
   plan: WorkspacePlan;
   datasets: Array<Dataset>;
@@ -683,6 +684,7 @@ export type Workspace = {
 export type WorkspaceCreateInput = {
   id?: Maybe<Scalars['ID']>;
   name: Scalars['String'];
+  image?: Maybe<Scalars['String']>;
 };
 
 export enum WorkspacePlan {
@@ -704,6 +706,7 @@ export enum WorkspaceType {
 
 export type WorkspaceUpdateInput = {
   name?: Maybe<Scalars['String']>;
+  image?: Maybe<Scalars['String']>;
 };
 
 export type WorkspaceWhereInput = {
@@ -1155,6 +1158,7 @@ export type WorkspaceResolvers<ContextType = any, ParentType extends ResolversPa
   updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  image?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   type?: Resolver<ResolversTypes['WorkspaceType'], ParentType, ContextType>;
   plan?: Resolver<ResolversTypes['WorkspacePlan'], ParentType, ContextType>;
   datasets?: Resolver<Array<ResolversTypes['Dataset']>, ParentType, ContextType>;

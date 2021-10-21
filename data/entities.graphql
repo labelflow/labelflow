@@ -78,6 +78,7 @@ type Workspace {
   updatedAt: DateTime!
   name: String!
   slug: String!
+  image: String
   type: WorkspaceType!
   plan: WorkspacePlan!
   datasets: [Dataset!]!

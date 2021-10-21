@@ -384,7 +384,12 @@ describe("user query", () => {
     ).user.create({
       data: { id: testUser1Id, name: "test-user-1" },
     });
-    loggedInUser.id = testUser1Id;
+    await (
+      await getPrismaClient()
+    ).user.create({
+      data: { id: testUser2Id, name: "test-user-2" },
+    });
+    loggedInUser.id = testUser2Id;
     await expect(queryUser(testUser1Id)).rejects.toThrow(
       "User not authorized to access user"
     );

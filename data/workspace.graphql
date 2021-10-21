@@ -1,6 +1,7 @@
 input WorkspaceCreateInput {
   id: ID
   name: String!
+  image: String
 }
 
 input WorkspaceWhereUniqueInput {
@@ -14,4 +15,5 @@ input WorkspaceWhereInput {
 
 input WorkspaceUpdateInput {
   name: String
+  image: String
 }
