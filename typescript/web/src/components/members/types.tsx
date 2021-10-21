@@ -19,19 +19,3 @@ export type InviteMember = ({
 }) => Promise<InvitationStatus>;
 
 export type RemoveMembership = (id: string) => void;
-// export type Membership = {
-//   id: string;
-//   role: "Owner" | "Admin" | "Member";
-//   invitationEmailSentTo?: string;
-//   invitationToken?: string;
-//   user?: {
-//     id?: string;
-//     name?: string;
-//     email?: string;
-//     image?: string;
-//   };
-//   workspace: {
-//     id: string;
-//     name: string;
-//   };
-// };
