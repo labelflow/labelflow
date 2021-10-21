@@ -57,7 +57,6 @@ export const NewMemberModal = ({
 }) => {
   const router = useRouter();
   const toast = useToast();
-  const { workspaceSlug } = router?.query as { workspaceSlug: string };
   const [value, setValue] = useState<string>("");
   const [role, setRole] = useState<MembershipRole>(MembershipRole.Owner);
   const handleInputChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
@@ -184,7 +183,7 @@ export const NewMemberModal = ({
                   const status = await inviteMember({
                     email,
                     role,
-                    workspaceSlug,
+                    workspaceSlug: router?.query?.workspaceSlug as string,
                   });
                   statusesCurrent[status].push(email);
                   return statusesCurrent;
