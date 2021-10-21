@@ -1,6 +1,9 @@
 # Changelog
 
-## [1.0.23](https://github.com/labelflow/labelflow/compare/1.0.22...1.0.23)
+## [1.0.24](https://github.com/labelflow/labelflow/compare/1.0.23...1.0.24)
+
+- Enable to set classification class from shortcut [`#505`](https://github.com/labelflow/labelflow/pull/505)
+## [1.0.23](https://github.com/labelflow/labelflow/compare/1.0.22...1.0.23) - 2021-10-11
 
 - rename labelling to labeling [`#502`](https://github.com/labelflow/labelflow/pull/502)
 ## [1.0.22](https://github.com/labelflow/labelflow/compare/1.0.21...1.0.22) - 2021-10-11
