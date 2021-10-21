@@ -48,7 +48,7 @@ const updateMembershipMutation = gql`
   }
 `;
 
-const MembersPage = () => {
+const WorkspaceMembersPage = () => {
   const workspaceSlug = useRouter().query?.workspaceSlug as string;
 
   const { data: membershipsData } = useQuery(membershipsQuery, {
@@ -97,4 +97,4 @@ const MembersPage = () => {
   );
 };
 
-export default MembersPage;
+export default WorkspaceMembersPage;
