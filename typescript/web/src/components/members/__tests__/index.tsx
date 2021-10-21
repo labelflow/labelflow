@@ -2,7 +2,6 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom/extend-expect";
 import { Members } from "..";
-import { Membership } from "../types";
 
 jest.mock("next-auth/react", () => ({
   useSession: () => ({
@@ -74,7 +73,7 @@ const testMemberships = [
   },
 ];
 
-const renderMembersComponent = (memberships: Membership[]): void => {
+const renderMembersComponent = (memberships: any[]): void => {
   render(
     <Members
       memberships={memberships}

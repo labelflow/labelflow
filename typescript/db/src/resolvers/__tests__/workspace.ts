@@ -208,7 +208,7 @@ describe("createWorkspace mutation", () => {
       variables: { data: { name: "test" } },
     });
 
-    expect(data?.createWorkspace.memberships[0]?.user.id).toEqual(user.id);
+    expect(data?.createWorkspace.memberships[0]?.user?.id).toEqual(user.id);
     expect(data?.createWorkspace.memberships[0]?.role).toEqual(
       MembershipRole.Owner
     );

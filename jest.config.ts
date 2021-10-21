@@ -15,7 +15,7 @@ export default {
     "\\.[jt]sx?$": "ts-jest",
   },
   transformIgnorePatterns: [
-    "<rootDir>/node_modules/(?!(ol/|@mapbox/mapbox-gl-style-spec/|ol-mapbox-style/))",
+    "<rootDir>/node_modules/(?!(ol/|@mapbox/mapbox-gl-style-spec/|ol-mapbox-style/|fetch-blob))",
   ],
   setupFiles: ["jest-canvas-mock"],
 };
