@@ -24,11 +24,11 @@ const inviteMember = async (
   if (!workspace || !membership) {
     return InvitationStatus.Error;
   }
-  const userFull = await prisma.user.findUnique({
+  const inviter = await prisma.user.findUnique({
     where: { id: user?.id },
     select: { name: true, email: true },
   });
-  const isUserAlreadyInWorkspace = await prisma.membership.count({
+  const isInviteeAlreadyInWorkspace = await prisma.membership.count({
     where: {
       AND: [
         { workspaceSlug: { equals: workspaceSlug } },
@@ -36,7 +36,7 @@ const inviteMember = async (
       ],
     },
   });
-  if (isUserAlreadyInWorkspace) {
+  if (isInviteeAlreadyInWorkspace) {
     return InvitationStatus.UserAlreadyIn;
   }
   const membershipAlreadyExists = await prisma.membership.findFirst({
@@ -57,11 +57,11 @@ const inviteMember = async (
       workspaceName: workspace.name,
       invitationToken,
     },
-    ...(userFull?.email && {
-      inviterEmail: userFull?.email,
+    ...(inviter?.email && {
+      inviterEmail: inviter?.email,
     }),
-    ...(userFull?.name && {
-      inviterName: userFull?.name,
+    ...(inviter?.name && {
+      inviterName: inviter?.name,
     }),
   };
   const searchParams = new URLSearchParams(inputsInvitation);
