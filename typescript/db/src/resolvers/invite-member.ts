@@ -39,17 +39,6 @@ const inviteMember = async (
   if (isInviteeAlreadyInWorkspace) {
     return InvitationStatus.UserAlreadyIn;
   }
-  const membershipAlreadyExists = await prisma.membership.findFirst({
-    where: {
-      AND: [
-        { workspaceSlug: { equals: workspaceSlug } },
-        { invitationEmailSentTo: { equals: inviteeEmail } },
-      ],
-    },
-    select: {
-      id: true,
-    },
-  });
   const invitationToken = uuidv4();
   const inputsInvitation = {
     ...{
@@ -78,6 +67,17 @@ const inviteMember = async (
     // console.error(`Failed sending email with error ${e}`);
     return InvitationStatus.Error;
   }
+  const membershipAlreadyExists = await prisma.membership.findFirst({
+    where: {
+      AND: [
+        { workspaceSlug: { equals: workspaceSlug } },
+        { invitationEmailSentTo: { equals: inviteeEmail } },
+      ],
+    },
+    select: {
+      id: true,
+    },
+  });
   if (!membershipAlreadyExists) {
     // Create that membership
     await prisma.membership.create({
