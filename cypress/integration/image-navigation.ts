@@ -43,6 +43,7 @@ describe("Image Navigation", () => {
       `http://localhost:3000/local/datasets/${datasetSlug}/images?modal-welcome=closed&modal-update-service-worker=update`
     );
     cy.contains("You don't have any images.").should("be.visible");
+    cy.wait(420);
     cy.get("header").within(() => {
       cy.contains("Add images").click();
     });
@@ -51,7 +52,7 @@ describe("Image Navigation", () => {
       delay: 0,
     });
     cy.contains("Start Import").click();
-    cy.get(`[aria-label="Close"]`).click();
+    cy.contains("Start labeling").click();
     cy.get("main").contains("photo").click();
 
     // Check that we can reach the end of the list

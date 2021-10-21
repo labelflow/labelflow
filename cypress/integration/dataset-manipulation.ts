@@ -6,6 +6,7 @@ describe("Dataset creation, edition, deletion", () => {
     // cy.visit("/");
     // cy.contains("Try it now").click();
     cy.visit("http://localhost:3000/local/datasets");
+    cy.wait(420);
     cy.contains("Create new dataset...").click();
     cy.get("input").type("cypress dataset");
     cy.contains("Start Labeling").click();
