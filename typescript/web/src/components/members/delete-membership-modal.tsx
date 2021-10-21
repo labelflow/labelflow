@@ -12,7 +12,7 @@ import {
 } from "@chakra-ui/react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
-import { Membership } from "./types";
+import { Membership } from "@labelflow/graphql-types";
 import { getDisplayName } from "./user";
 
 export const DeleteMembershipModal = ({
@@ -46,9 +46,11 @@ export const DeleteMembershipModal = ({
           <AlertDialogHeader>
             {isRemovingCurrentUser
               ? `Leave ${membership.workspace.name}?`
-              : `Remove ${getDisplayName(membership?.user ?? {})} from ${
-                  membership.workspace.name
-                }?`}
+              : `Remove ${getDisplayName({
+                  name: membership?.user?.name ?? undefined,
+                  email: membership?.user?.email ?? undefined,
+                  id: membership?.user?.id,
+                })} from ${membership.workspace.name}?`}
           </AlertDialogHeader>
 
           {isRemovingCurrentUser ? (

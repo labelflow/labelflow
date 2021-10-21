@@ -8,7 +8,7 @@ import {
   AlertDialogOverlay,
   Button,
 } from "@chakra-ui/react";
-import { Membership } from "./types";
+import { Membership } from "@labelflow/graphql-types";
 import { getDisplayName } from "./user";
 
 export const DeleteMembershipErrorModal = ({
@@ -24,7 +24,11 @@ export const DeleteMembershipErrorModal = ({
   if (membership == null) {
     return null;
   }
-  const displayName = getDisplayName(membership?.user ?? {});
+  const displayName = getDisplayName({
+    name: membership?.user?.name ?? undefined,
+    email: membership?.user?.email ?? undefined,
+    id: membership?.user?.id,
+  });
   return (
     <AlertDialog
       isOpen={isOpen}

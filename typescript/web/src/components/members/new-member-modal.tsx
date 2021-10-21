@@ -21,11 +21,10 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
-import { useSession } from "next-auth/react";
-import { InvitationStatus } from "../../utils/email/types";
+import { MembershipRole, InvitationStatus } from "@labelflow/graphql-types";
 
 import { RoleSelection } from "./role-selection";
-import { Role } from "./types";
+import { InviteMember } from "./types";
 
 const validateEmail = (email: string): boolean => {
   const re =
@@ -50,16 +49,17 @@ const summarizeEmailList = (emailList: string[]): string => {
 export const NewMemberModal = ({
   isOpen = false,
   onClose = () => {},
+  inviteMember = async () => InvitationStatus.Sent,
 }: {
   isOpen?: boolean;
   onClose?: () => void;
+  inviteMember?: InviteMember;
 }) => {
   const router = useRouter();
   const toast = useToast();
-  const { data: session } = useSession({ required: false });
-  const { workspaceSlug } = router?.query;
+  const { workspaceSlug } = router?.query as { workspaceSlug: string };
   const [value, setValue] = useState<string>("");
-  const [role, setRole] = useState<Role>("Owner");
+  const [role, setRole] = useState<MembershipRole>(MembershipRole.Owner);
   const handleInputChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     const inputValue = e.target.value;
     setValue(inputValue);
@@ -178,37 +178,23 @@ export const NewMemberModal = ({
             flexShrink={0}
             onClick={async () => {
               onClose();
-              const { origin } = new URL(window.location.href);
               const statuses = await emails.reduce(
                 async (statusesPromise, email) => {
                   const statusesCurrent = await statusesPromise;
-                  const inputsInvitation = {
-                    ...{
-                      inviteeEmail: email,
-                      inviteeRole: role,
-                      workspaceSlug: workspaceSlug as string,
-                    },
-                    ...(session?.user?.email && {
-                      inviterEmail: session?.user?.email,
-                    }),
-                    ...(session?.user?.name && {
-                      inviterName: session?.user?.name,
-                    }),
-                  };
-                  const searchParams = new URLSearchParams(inputsInvitation);
-                  const { status } = (await (
-                    await fetch(
-                      `${origin}/api/email/send-invitation?${searchParams.toString()}`
-                    )
-                  ).json()) as unknown as { status: InvitationStatus };
+                  const status = await inviteMember({
+                    email,
+                    role,
+                    workspaceSlug,
+                  });
+                  console.log("Status received = ", status);
                   statusesCurrent[status].push(email);
                   return statusesCurrent;
                 },
                 new Promise((resolve) => {
                   resolve({
-                    0: [],
-                    1: [],
-                    2: [],
+                    [InvitationStatus.Error]: [],
+                    [InvitationStatus.Sent]: [],
+                    [InvitationStatus.UserAlreadyIn]: [],
                   });
                 }) as Promise<EmailStatuses>
               );

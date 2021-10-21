@@ -17,17 +17,21 @@ import { useState } from "react";
 import { IoSearch } from "react-icons/io5";
 import { RiAddFill } from "react-icons/ri";
 import { useRouter } from "next/router";
+import { InvitationStatus } from "@labelflow/graphql-types";
 
 import { NewMemberModal } from "./new-member-modal";
+import { InviteMember } from "./types";
 
 const SearchIcon = chakra(IoSearch);
 
 export const TableActions = ({
   searchText,
   setSearchText,
+  inviteMember = async () => InvitationStatus.Sent,
 }: {
   searchText: string;
   setSearchText: (text: string) => void;
+  inviteMember?: InviteMember;
 }) => {
   const [isNewMemberModalOpen, setIsNewMemberModalOpen] = useState(false);
   const router = useRouter();
@@ -38,6 +42,7 @@ export const TableActions = ({
       <NewMemberModal
         isOpen={isNewMemberModalOpen}
         onClose={() => setIsNewMemberModalOpen(false)}
+        inviteMember={inviteMember}
       />
       <Stack
         spacing="4"

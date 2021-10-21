@@ -10,10 +10,11 @@ import {
   useColorModeValue as mode,
   Badge,
 } from "@chakra-ui/react";
+import { Membership } from "@labelflow/graphql-types";
 import * as React from "react";
 import { User } from "./user";
 import { RoleSelection } from "./role-selection";
-import { ChangeMembershipRole, RemoveMembership, Membership } from "./types";
+import { ChangeMembershipRole, RemoveMembership } from "./types";
 import { DeleteMembershipModal } from "./delete-membership-modal";
 import { DeleteMembershipErrorModal } from "./delete-membership-error-modal";
 

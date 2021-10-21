@@ -16,7 +16,6 @@ import { useSelect } from "downshift";
 import { MembershipRole } from "@labelflow/graphql-types";
 import { RiArrowDownSFill, RiArrowUpSFill } from "react-icons/ri";
 import { BiCheck } from "react-icons/bi";
-import { Role } from "./types";
 
 const CheckIcon = chakra(BiCheck);
 
@@ -94,10 +93,10 @@ export const RoleSelection = ({
   role: currentRole,
   changeMembershipRole,
 }: {
-  role: Role;
-  changeMembershipRole: (role: Role) => void;
+  role: MembershipRole;
+  changeMembershipRole: (role: MembershipRole) => void;
 }) => {
-  const roleItems = Object.keys(MembershipRole) as Array<Role>;
+  const roleItems = Object.keys(MembershipRole) as Array<MembershipRole>;
   const {
     isOpen,
     getToggleButtonProps,
@@ -105,7 +104,7 @@ export const RoleSelection = ({
     highlightedIndex,
     getItemProps,
     reset,
-  } = useSelect<Role>({
+  } = useSelect<MembershipRole>({
     items: roleItems,
     onSelectedItemChange: (changes) => {
       const newRole = changes.selectedItem;

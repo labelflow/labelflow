@@ -16,3 +16,15 @@ input MembershipCreateInput {
 input MembershipUpdateInput {
   role: MembershipRole
 }
+
+input InviteMemberInput {
+  email: String!
+  role: MembershipRole!
+  workspaceSlug: String!
+}
+
+enum InvitationStatus{
+  Sent
+  UserAlreadyIn
+  Error
+}

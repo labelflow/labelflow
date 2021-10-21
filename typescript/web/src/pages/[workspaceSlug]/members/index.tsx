@@ -50,6 +50,12 @@ const updateMembershipMutation = gql`
   }
 `;
 
+const inviteMemberMutation = gql`
+  mutation inviteMember($where: InviteMemberInput!) {
+    inviteMember(where: $where)
+  }
+`;
+
 const MembersPage = () => {
   const workspaceSlug = useRouter().query?.workspaceSlug as string;
 
@@ -63,6 +69,10 @@ const MembersPage = () => {
   });
 
   const [updateMembership] = useMutation(updateMembershipMutation, {
+    refetchQueries: ["getMembershipsMembers"],
+  });
+
+  const [inviteMember] = useMutation(inviteMemberMutation, {
     refetchQueries: ["getMembershipsMembers"],
   });
 
@@ -91,6 +101,12 @@ const MembersPage = () => {
             }}
             removeMembership={(id) => {
               deleteMembership({ variables: { id } });
+            }}
+            inviteMember={async (where) => {
+              const {
+                data: { inviteMember: invitationStatus },
+              } = await inviteMember({ variables: { where } });
+              return invitationStatus;
             }}
           />
         </Box>

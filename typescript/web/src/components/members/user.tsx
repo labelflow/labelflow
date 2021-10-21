@@ -1,14 +1,11 @@
 import { Box, Stack, Badge, Flex, Avatar } from "@chakra-ui/react";
+import { User as UserType } from "@labelflow/graphql-types";
 import { useSession } from "next-auth/react";
 import * as React from "react";
 
 interface UserProps {
-  data: {
-    id?: string;
-    image?: string;
-    name?: string;
-    email?: string;
-  };
+  data: Pick<UserType, "name" | "email" | "image"> &
+    Partial<Pick<UserType, "id">>;
 }
 
 export const getDisplayName = ({
@@ -39,11 +36,15 @@ export const User = (props: UserProps) => {
   const session = useSession({ required: false });
   const loggedInUser = session.data?.user;
   const isLoggedInUser = loggedInUser?.id === id;
-  const displayName = getDisplayName({ name, email, id });
+  const displayName = getDisplayName({
+    name: name ?? undefined,
+    email: email ?? undefined,
+    id,
+  });
   return (
     <Stack direction="row" spacing="4" align="center">
       <Box flexShrink={0} h="10" w="10">
-        <Avatar name={displayName} src={image} bg="brand.600" />
+        <Avatar name={displayName} src={image ?? undefined} bg="brand.600" />
       </Box>
       <Box>
         <Flex flexDirection="row">

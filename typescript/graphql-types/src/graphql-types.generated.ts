@@ -186,6 +186,18 @@ export type ImportStatus = {
   error?: Maybe<Scalars['String']>;
 };
 
+export enum InvitationStatus {
+  Sent = 'Sent',
+  UserAlreadyIn = 'UserAlreadyIn',
+  Error = 'Error'
+}
+
+export type InviteMemberInput = {
+  email: Scalars['String'];
+  role: MembershipRole;
+  workspaceSlug: Scalars['String'];
+};
+
 export type IogInferenceResult = {
   __typename?: 'IogInferenceResult';
   polygons: Array<Maybe<Array<Maybe<Array<Scalars['Float']>>>>>;
@@ -343,6 +355,7 @@ export type Mutation = {
   createMembership?: Maybe<Membership>;
   updateMembership?: Maybe<Membership>;
   deleteMembership?: Maybe<Membership>;
+  inviteMember?: Maybe<InvitationStatus>;
   updateUser?: Maybe<User>;
 };
 
@@ -456,6 +469,11 @@ export type MutationUpdateMembershipArgs = {
 
 export type MutationDeleteMembershipArgs = {
   where: MembershipWhereUniqueInput;
+};
+
+
+export type MutationInviteMemberArgs = {
+  where: InviteMemberInput;
 };
 
 
@@ -802,6 +820,8 @@ export type ResolversTypes = {
   ImportOptions: ImportOptions;
   ImportOptionsCoco: ImportOptionsCoco;
   ImportStatus: ResolverTypeWrapper<ImportStatus>;
+  InvitationStatus: InvitationStatus;
+  InviteMemberInput: InviteMemberInput;
   IogInferenceResult: ResolverTypeWrapper<IogInferenceResult>;
   Float: ResolverTypeWrapper<Scalars['Float']>;
   JSON: ResolverTypeWrapper<Scalars['JSON']>;
@@ -877,6 +897,7 @@ export type ResolversParentTypes = {
   ImportOptions: ImportOptions;
   ImportOptionsCoco: ImportOptionsCoco;
   ImportStatus: ImportStatus;
+  InviteMemberInput: InviteMemberInput;
   IogInferenceResult: IogInferenceResult;
   Float: Scalars['Float'];
   JSON: Scalars['JSON'];
@@ -1061,6 +1082,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   createMembership?: Resolver<Maybe<ResolversTypes['Membership']>, ParentType, ContextType, RequireFields<MutationCreateMembershipArgs, 'data'>>;
   updateMembership?: Resolver<Maybe<ResolversTypes['Membership']>, ParentType, ContextType, RequireFields<MutationUpdateMembershipArgs, 'where' | 'data'>>;
   deleteMembership?: Resolver<Maybe<ResolversTypes['Membership']>, ParentType, ContextType, RequireFields<MutationDeleteMembershipArgs, 'where'>>;
+  inviteMember?: Resolver<Maybe<ResolversTypes['InvitationStatus']>, ParentType, ContextType, RequireFields<MutationInviteMemberArgs, 'where'>>;
   updateUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationUpdateUserArgs, 'where' | 'data'>>;
 };
 
