@@ -32,6 +32,7 @@ import { useRouter } from "next/router";
 import { useQueryParam } from "use-query-params";
 import { BoolParam } from "../../../utils/query-param-bool";
 import { randomBackgroundGradient } from "../../../utils/random-background-gradient";
+import { getDisplayName } from "../../members/user";
 
 const UserMenuIcon = chakra(RiUserLine);
 
@@ -75,9 +76,11 @@ export const UserMenu = () => {
 
   const router = useRouter();
 
+  const displayName = user != null ? getDisplayName(user) : "Anonymous";
+
   return (
     <Menu>
-      <Tooltip label="User and Preferences" openDelay={300}>
+      <Tooltip label="User and Preferences" placement="left" openDelay={300}>
         <MenuButton
           as={IconButton}
           borderRadius="full"
@@ -89,9 +92,9 @@ export const UserMenu = () => {
                 bg={
                   user?.image != null && user?.image.length > 0
                     ? avatarBackground
-                    : randomBackgroundGradient(user?.name)
+                    : randomBackgroundGradient(displayName)
                 }
-                name={user?.name}
+                name={displayName}
                 src={user?.image}
                 icon={<UserMenuIcon fontSize="xl" />}
               />
@@ -123,13 +126,13 @@ export const UserMenu = () => {
                   bg={
                     user?.image != null && user?.image.length > 0
                       ? avatarBackground
-                      : randomBackgroundGradient(user?.name)
+                      : randomBackgroundGradient(displayName)
                   }
-                  name={user?.name}
+                  name={displayName}
                   src={user?.image}
                 />
                 <Flex direction="column" fontWeight="medium">
-                  <Text fontSize="sm">{user?.name ?? "Anonymous"}</Text>
+                  <Text fontSize="sm">{displayName}</Text>
                   <Text fontSize="xs" lineHeight="shorter" color={fadeColor}>
                     {user?.email ?? ""}
                   </Text>
