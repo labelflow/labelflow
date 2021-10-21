@@ -94,6 +94,65 @@ describe("createWorkspace mutation", () => {
     ).rejects.toThrow();
   });
 
+  it("fails if the name is an empty string", async () => {
+    await expect(() =>
+      client.mutate({
+        mutation: gql`
+          mutation createWorkspace($data: WorkspaceCreateInput!) {
+            createWorkspace(data: $data) {
+              id
+            }
+          }
+        `,
+        variables: { data: { name: "" } },
+      })
+    ).rejects.toThrow("Cannot create a workspace with an empty name.");
+  });
+
+  it("fails if the name contains non-alphanumeric chars is provided", async () => {
+    await expect(() =>
+      client.mutate({
+        mutation: gql`
+          mutation createWorkspace($data: WorkspaceCreateInput!) {
+            createWorkspace(data: $data) {
+              id
+            }
+          }
+        `,
+        variables: { data: { name: "Hello!" } },
+      })
+    ).rejects.toThrow(
+      'Cannot create a workspace with the name "Hello!". This name contains invalid characters.'
+    );
+  });
+
+  it("fails if the name is reserved", async () => {
+    await expect(() =>
+      client.mutate({
+        mutation: gql`
+          mutation createWorkspace($data: WorkspaceCreateInput!) {
+            createWorkspace(data: $data) {
+              id
+            }
+          }
+        `,
+        variables: { data: { name: "pricing" } },
+      })
+    ).rejects.toThrow(
+      'Cannot create a workspace with the slug "pricing". This slug is reserved.'
+    );
+  });
+
+  it("accepts a name with hyphens, spaces, underscores, and alphanumeric characters", async () => {
+    const { data } = await createWorkspace({
+      name: "Test with spaces-and-Caps-and-hyphens",
+    });
+
+    expect(data?.createWorkspace.slug).toEqual(
+      "test-with-spaces-and-caps-and-hyphens"
+    );
+  });
+
   it("returns the created workspace", async () => {
     const { data } = await createWorkspace();
 

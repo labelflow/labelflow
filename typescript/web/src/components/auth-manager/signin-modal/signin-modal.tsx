@@ -1,4 +1,4 @@
-import React, { ReactNode, useCallback, useState } from "react";
+import React, { useCallback, useState } from "react";
 
 import {
   Heading,
@@ -13,19 +13,16 @@ import {
   Box,
   Button,
   FormControl,
-  chakra,
   Input,
   SimpleGrid,
   useColorModeValue as mode,
-  Flex,
 } from "@chakra-ui/react";
 import { RiMailSendLine } from "react-icons/ri";
 import { signIn } from "next-auth/react";
-import { FaGithub, FaGoogle, FaCheck } from "react-icons/fa";
+import { FaGithub, FaGoogle } from "react-icons/fa";
 import { DividerWithText } from "./divider-with-text";
 import { Logo } from "../../logo";
-
-const ChakraCheck = chakra(FaCheck);
+import { Features } from "./features";
 
 const errors = {
   Signin: "Try signing in with a different account.",
@@ -40,19 +37,6 @@ const errors = {
   CredentialsSignin:
     "Sign in failed. Check the details you provided are correct.",
   default: "Unable to sign in.",
-};
-
-const Feature = (props: { title: string; children: ReactNode }) => {
-  const { title, children } = props;
-  return (
-    <Stack>
-      <Text fontWeight="bold" display="inline-block">
-        <ChakraCheck display="inline" color="brand.500" mr="2" />
-        {title}
-      </Text>
-      <Text>{children}</Text>
-    </Stack>
-  );
 };
 
 export const SigninModal = ({
@@ -111,44 +95,7 @@ export const SigninModal = ({
           flexDirection="column"
         >
           <SimpleGrid columns={{ base: 1, lg: 2 }} spacing="14">
-            <Flex
-              direction="column"
-              display={{ base: "none", lg: "flex" }}
-              alignItems="start"
-            >
-              <Logo
-                h="9"
-                mb={{ base: "16", lg: "10" }}
-                iconColor="brand.600"
-                mx={{ base: "auto", lg: "unset" }}
-              />
-              <Box mb="8" textAlign={{ base: "center", lg: "start" }}>
-                <Heading size="md" mb="2" fontWeight="extrabold">
-                  Join thousands of people building the future of AI
-                </Heading>
-              </Box>
-              <SimpleGrid
-                rounded="lg"
-                mt="18"
-                p={{ base: "10", lg: "0" }}
-                columns={1}
-                spacing="10"
-                bg={{ base: mode("gray.200", "gray.700"), lg: "unset" }}
-              >
-                <Feature title="Collaborate Easily">
-                  Invite your teammates to work together on datasets and share
-                  your results.
-                </Feature>
-                <Feature title="Secure your Data">
-                  Your data is stored securely on our servers, no worry about
-                  your data integrity.
-                </Feature>
-                <Feature title="Label Faster (soon)">
-                  Use smart tools based on AI to label your data faster and more
-                  precisely.
-                </Feature>
-              </SimpleGrid>
-            </Flex>
+            <Features />
             <Box w="full">
               <Logo
                 h="9"
