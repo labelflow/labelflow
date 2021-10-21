@@ -226,7 +226,7 @@ export const DrawingTool = () => {
     if (selectedTool !== Tools.SELECTION) {
       setSelectedLabelId(null);
     }
-  }, [selectedTool, setSelectedLabelId]);
+  }, [selectedTool]);
 
   useHotkeys(
     keymap.toolClassification.key,
@@ -234,7 +234,7 @@ export const DrawingTool = () => {
       setSelectedTool(Tools.CLASSIFICATION);
     },
     {},
-    [setSelectedTool, setSelectedLabelId]
+    [setSelectedTool]
   );
   useHotkeys(
     keymap.toolBoundingBox.key,
@@ -242,7 +242,7 @@ export const DrawingTool = () => {
       setSelectedTool(Tools.BOX);
     },
     {},
-    [setSelectedTool, setSelectedLabelId]
+    [setSelectedTool]
   );
   useHotkeys(
     keymap.toolPolygon.key,
@@ -250,7 +250,7 @@ export const DrawingTool = () => {
       setSelectedTool(Tools.POLYGON);
     },
     {},
-    [setSelectedTool, setSelectedLabelId]
+    [setSelectedTool]
   );
   useHotkeys(
     keymap.toolIog.key,
@@ -260,7 +260,7 @@ export const DrawingTool = () => {
       }
     },
     {},
-    [setSelectedTool, setSelectedLabelId]
+    [setSelectedTool]
   );
   return (
     <Popover
@@ -279,9 +279,7 @@ export const DrawingTool = () => {
           e.stopPropagation();
         }}
         selectedTool={selectedTool}
-        setSelectedTool={(tool: Tools) => {
-          setSelectedTool(tool);
-        }}
+        setSelectedTool={setSelectedTool}
       />
       <PopoverContent
         borderColor={mode("gray.200", "gray.600")}
