@@ -170,6 +170,9 @@ export const WelcomeModal = ({
   const [{ tryDespiteBrowserWarning }, setTryDespiteBrowserWarning] =
     useCookies(["tryDespiteBrowserWarning"]);
 
+  const [{ lastVisitedWorkspaceSlug }, setLastVisitedWorkspaceSlug] =
+    useCookies(["lastVisitedWorkspaceSlug"]);
+
   const [browserWarning] = useState(() => {
     const name = browser?.name;
     const os = browser?.os;
@@ -268,6 +271,17 @@ export const WelcomeModal = ({
       });
     }
   }, [tryDespiteBrowserWarning, router?.isReady, router?.query?.workspaceSlug]);
+
+  // Set cookie of last visited workspace if the user navigated to a new workspace
+  useEffect(() => {
+    const workspaceSlug = router?.query?.workspaceSlug;
+    if (workspaceSlug != null && lastVisitedWorkspaceSlug !== workspaceSlug) {
+      setLastVisitedWorkspaceSlug("lastVisitedWorkspaceSlug", workspaceSlug, {
+        path: "/",
+        httpOnly: false,
+      });
+    }
+  }, [router?.query?.workspaceSlug]);
 
   // welcome => undefined
   const handleGetStarted = useCallback(() => {
