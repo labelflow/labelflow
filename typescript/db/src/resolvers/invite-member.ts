@@ -4,7 +4,7 @@ import fetch, { RequestInit } from "node-fetch";
 import type { MutationInviteMemberArgs } from "@labelflow/graphql-types";
 import { InvitationStatus } from "@labelflow/graphql-types";
 import { Context } from "@labelflow/common-resolvers";
-import { prisma } from "../repository/prisma-client";
+import { getPrismaClient } from "../prisma-client";
 
 const inviteMember = async (
   _: any,
@@ -14,21 +14,29 @@ const inviteMember = async (
   const {
     where: { email: inviteeEmail, role: inviteeRole, workspaceSlug },
   } = args;
-  const workspace = await prisma.workspace.findUnique({
+  const workspace = await (
+    await getPrismaClient()
+  ).workspace.findUnique({
     where: { slug: workspaceSlug },
     select: { name: true },
   });
-  const membership = await prisma.membership.findMany({
+  const membership = await (
+    await getPrismaClient()
+  ).membership.findMany({
     where: { AND: [{ userId: user?.id }, { workspaceSlug }] },
   });
   if (!workspace || !membership) {
     return InvitationStatus.Error;
   }
-  const inviter = await prisma.user.findUnique({
+  const inviter = await (
+    await getPrismaClient()
+  ).user.findUnique({
     where: { id: user?.id },
     select: { name: true, email: true },
   });
-  const isInviteeAlreadyInWorkspace = await prisma.membership.count({
+  const isInviteeAlreadyInWorkspace = await (
+    await getPrismaClient()
+  ).membership.count({
     where: {
       AND: [
         { workspaceSlug: { equals: workspaceSlug } },
@@ -67,7 +75,9 @@ const inviteMember = async (
     // console.error(`Failed sending email with error ${e}`);
     return InvitationStatus.Error;
   }
-  const membershipAlreadyExists = await prisma.membership.findFirst({
+  const membershipAlreadyExists = await (
+    await getPrismaClient()
+  ).membership.findFirst({
     where: {
       AND: [
         { workspaceSlug: { equals: workspaceSlug } },
@@ -80,7 +90,9 @@ const inviteMember = async (
   });
   if (!membershipAlreadyExists) {
     // Create that membership
-    await prisma.membership.create({
+    await (
+      await getPrismaClient()
+    ).membership.create({
       data: {
         role: inviteeRole,
         workspaceSlug,
@@ -91,7 +103,9 @@ const inviteMember = async (
     });
   } else {
     // Update that membership
-    await prisma.membership.update({
+    await (
+      await getPrismaClient()
+    ).membership.update({
       where: { id: membershipAlreadyExists.id },
       data: {
         invitationToken,
