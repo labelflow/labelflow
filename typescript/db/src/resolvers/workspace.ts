@@ -13,9 +13,12 @@ import {
 import {
   Context,
   DbWorkspaceWithType,
+  forbiddenWorkspaceSlugs,
+  isValidWorkspaceName,
   Repository,
 } from "@labelflow/common-resolvers";
-import { prisma } from "../repository/prisma-client";
+import slugify from "slugify";
+import { getPrismaClient } from "../prisma-client";
 import { castObjectNullsToUndefined } from "../repository/utils";
 
 const getWorkspace = async (
@@ -44,7 +47,11 @@ const workspaces = async (
   args: QueryWorkspacesArgs,
   { repository, user }: Context
 ): Promise<DbWorkspaceWithType[]> =>
-  await repository.workspace.list({ user }, args.skip, args.first);
+  await repository.workspace.list(
+    { user, ...args.where },
+    args.skip,
+    args.first
+  );
 
 const createWorkspace = async (
   _: any,
@@ -54,7 +61,9 @@ const createWorkspace = async (
   if (typeof user?.id !== "string") {
     throw new Error("Couldn't create workspace: No user id");
   }
-  const userInDb = await prisma.user.findUnique({ where: { id: user.id } });
+  const userInDb = await (
+    await getPrismaClient()
+  ).user.findUnique({ where: { id: user.id } });
 
   if (userInDb == null) {
     throw new Error(
@@ -62,10 +71,29 @@ const createWorkspace = async (
     );
   }
 
+  const slug = slugify(args.data.name, { lower: true });
+
+  if (slug.length <= 0) {
+    throw new Error(`Cannot create a workspace with an empty name.`);
+  }
+
+  if (!isValidWorkspaceName(args.data.name)) {
+    throw new Error(
+      `Cannot create a workspace with the name "${args.data.name}". This name contains invalid characters.`
+    );
+  }
+
+  if (forbiddenWorkspaceSlugs.includes(slug)) {
+    throw new Error(
+      `Cannot create a workspace with the slug "${slug}". This slug is reserved.`
+    );
+  }
+
   const createdWorkspaceId = await repository.workspace.add(
     {
       id: args.data.id ?? undefined,
       name: args.data.name,
+      slug,
     },
     user
   );
@@ -89,7 +117,9 @@ const updateWorkspace = async (
 };
 
 const memberships = async (parent: Workspace) => {
-  return (await prisma.membership.findMany({
+  return (await (
+    await getPrismaClient()
+  ).membership.findMany({
     where: { workspaceSlug: parent.slug },
     orderBy: { createdAt: Prisma.SortOrder.asc },
     // needs to be casted to avoid conflicts between enums
@@ -97,7 +127,9 @@ const memberships = async (parent: Workspace) => {
 };
 
 const datasets = async (parent: Workspace) => {
-  return await prisma.dataset.findMany({
+  return await (
+    await getPrismaClient()
+  ).dataset.findMany({
     where: { workspaceSlug: parent.slug },
     orderBy: { createdAt: Prisma.SortOrder.asc },
   });

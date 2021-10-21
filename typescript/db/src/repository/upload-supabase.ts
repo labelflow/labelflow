@@ -16,7 +16,7 @@ export const uploadsRoute = "/api/uploads";
 
 export const getUploadTargetHttp = async (
   key: string,
-  origin?: string
+  origin: string
 ): Promise<UploadTargetHttp> => {
   return {
     __typename: "UploadTargetHttp",
@@ -57,13 +57,14 @@ export const deleteFromStorage: Repository["upload"]["delete"] = async (
 };
 
 export const putInStorage: Repository["upload"]["put"] = async (url, blob) => {
-  const query = `${bucket}/`;
   const client = getClient();
-  await client.storage
-    .from(bucket)
-    .upload(url.substring(url.lastIndexOf(query) + query.length), blob, {
-      contentType: blob.type,
-      upsert: false,
-      cacheControl: "public, max-age=31536000, immutable",
-    });
+
+  const query = `${uploadsRoute}/`;
+  const key = url.substring(url.lastIndexOf(query) + query.length);
+
+  await client.storage.from(bucket).upload(key, blob, {
+    contentType: blob.type,
+    upsert: false,
+    cacheControl: "public, max-age=31536000, immutable",
+  });
 };

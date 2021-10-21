@@ -73,6 +73,7 @@ self.addEventListener("message", (event) => {
   //     window.workbox.messageSW({command: 'log', message: 'hello world'})
 
   if (event?.data?.type === "SKIP_WAITING") {
+    console.log("[Service Worker] Skip waiting");
     // Refresh service worker to next version
     self.skipWaiting();
     return;
@@ -91,8 +92,10 @@ self.addEventListener("message", (event) => {
     return;
   }
 
-  console.warn("Received unsupported message from window:");
-  console.warn(event?.data);
+  console.warn(
+    "[Service Worker] Received unsupported message from window:",
+    event?.data
+  );
 });
 
 // Clear service worker cache when it becomes active

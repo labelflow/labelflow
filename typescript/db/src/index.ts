@@ -21,3 +21,5 @@ export const schemaWithResolvers = addResolversToSchema({
   schema,
   resolvers,
 });
+
+export * from "./prisma-client";

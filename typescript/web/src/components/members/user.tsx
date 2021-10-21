@@ -2,6 +2,7 @@ import { Box, Stack, Badge, Flex, Avatar } from "@chakra-ui/react";
 import { User as UserType } from "@labelflow/graphql-types";
 import { useSession } from "next-auth/react";
 import * as React from "react";
+import { randomBackgroundGradient } from "../../utils/random-background-gradient";
 
 interface UserProps {
   data: Pick<UserType, "name" | "email" | "image"> &
@@ -44,7 +45,11 @@ export const User = (props: UserProps) => {
   return (
     <Stack direction="row" spacing="4" align="center">
       <Box flexShrink={0} h="10" w="10">
-        <Avatar name={displayName} src={image ?? undefined} bg="brand.600" />
+        <Avatar
+          name={displayName}
+          src={image ?? undefined}
+          bg={randomBackgroundGradient(displayName)}
+        />
       </Box>
       <Box>
         <Flex flexDirection="row">

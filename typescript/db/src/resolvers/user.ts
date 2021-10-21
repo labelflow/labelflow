@@ -7,14 +7,16 @@ import {
 } from "@labelflow/graphql-types";
 import { Context, DbUser } from "@labelflow/common-resolvers";
 
-import { prisma } from "../repository/prisma-client";
+import { getPrismaClient } from "../prisma-client";
 import { checkUserAccessToUser } from "../repository/access-control";
 
 const users = async (_: any, args: QueryUsersArgs, { user }: Context) => {
   if (user?.id == null) {
     return [];
   }
-  return await prisma.user.findMany({
+  return await (
+    await getPrismaClient()
+  ).user.findMany({
     skip: args.skip ?? undefined,
     take: args.first ?? undefined,
     orderBy: { createdAt: Prisma.SortOrder.asc },
@@ -32,7 +34,9 @@ const user = async (
   { user: userData }: Context
 ) => {
   await checkUserAccessToUser({ where: args.where, user: userData });
-  const userFromDb = await prisma.user.findUnique({
+  const userFromDb = await (
+    await getPrismaClient()
+  ).user.findUnique({
     where: args.where,
   });
 
@@ -51,7 +55,9 @@ const updateUser = async (
   if (userData?.id !== args.where.id) {
     throw new Error("User not authorized to access user");
   }
-  return await prisma.user.update({
+  return await (
+    await getPrismaClient()
+  ).user.update({
     where: args.where,
     data: { ...args.data, name: args.data.name ?? undefined },
   });
@@ -65,7 +71,9 @@ const memberships = async (
   if (userData?.id == null) {
     return [];
   }
-  return await prisma.membership.findMany({
+  return await (
+    await getPrismaClient()
+  ).membership.findMany({
     where: {
       userId: parent.id,
       workspace: { memberships: { some: { userId: userData?.id } } },

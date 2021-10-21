@@ -291,16 +291,7 @@ export const EditLabelClass = forwardRef<
         const digit = Number(keyboardEvent.code[5]);
         const indexOfLabelClass = (digit + 9) % 10;
         if (indexOfLabelClass < labelClasses.length) {
-          perform(
-            createUpdateLabelClassOfLabelEffect(
-              {
-                selectedLabelId,
-                selectedLabelClassId: labelClasses[indexOfLabelClass]?.id,
-              },
-              { client }
-            )
-          );
-          onClose();
+          handleSelectedClassChange(labelClasses[indexOfLabelClass]);
         }
       }
     },

@@ -12,6 +12,7 @@ import mime from "mime-types";
 import { probeImage } from "./utils/probe-image";
 import { Context, DbImage, Repository, DbImageCreateInput } from "./types";
 import { throwIfResolvesToNil } from "./utils/throw-if-resolves-to-nil";
+import { getOrigin } from "./utils/get-origin";
 
 // Mutations
 const getImageFileKey = (
@@ -56,6 +57,7 @@ export const getImageEntityFromMutationArgs = async (
     externalUrl,
     datasetId,
   } = data;
+
   const now = data?.createdAt ?? new Date().toISOString();
   const imageId = id ?? uuidv4();
   let finalUrl: string | undefined;
@@ -83,13 +85,16 @@ export const getImageEntityFromMutationArgs = async (
 
     if (fetchResult.status !== 200) {
       throw new Error(
-        `While transfering image could not fetch image at url ${externalUrl} properly, code ${fetchResult.status}`
+        `While transferring image could not fetch image at url ${externalUrl} properly, code ${fetchResult.status}`
       );
     }
 
+    const origin = getOrigin(req);
+
     const blob = await fetchResult.blob();
     const uploadTarget = await repository.upload.getUploadTargetHttp(
-      getImageFileKey(imageId, datasetId, blob.type)
+      getImageFileKey(imageId, datasetId, blob.type),
+      origin
     );
 
     // eslint-disable-next-line no-underscore-dangle
@@ -100,6 +105,7 @@ export const getImageEntityFromMutationArgs = async (
     }
 
     finalUrl = uploadTarget.downloadUrl;
+
     await repository.upload.put(uploadTarget.uploadUrl, blob);
   }
 
@@ -107,7 +113,8 @@ export const getImageEntityFromMutationArgs = async (
     // File Content based upload
 
     const uploadTarget = await repository.upload.getUploadTargetHttp(
-      getImageFileKey(imageId, datasetId, file.type)
+      getImageFileKey(imageId, datasetId, file.type),
+      origin
     );
 
     // eslint-disable-next-line no-underscore-dangle
@@ -143,6 +150,7 @@ export const getImageEntityFromMutationArgs = async (
     name: getImageName({ externalUrl, finalUrl, name }),
     ...imageMetaData,
   };
+
   return newImageEntity;
 };
 
@@ -213,7 +221,9 @@ const createImage = async (
   );
 
   const newImageId = await repository.image.add(newImageEntity, user);
+
   const createdImage = await repository.image.get({ id: newImageId }, user);
+
   if (createdImage == null) {
     throw new Error("An error has occurred during image creation");
   }

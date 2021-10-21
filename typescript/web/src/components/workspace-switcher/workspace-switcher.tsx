@@ -1,12 +1,14 @@
-import { gql, useQuery, useApolloClient, ApolloError } from "@apollo/client";
+import { gql, useQuery } from "@apollo/client";
 import { Workspace } from "@labelflow/graphql-types";
-import { useToast } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { useState, useCallback, useMemo } from "react";
 import { startCase } from "lodash/fp";
-import { WorkspaceMenu } from "./workspace-menu";
+import { useQueryParam } from "use-query-params";
 
+import { WorkspaceMenu } from "./workspace-menu";
 import { WorkspaceItem } from "./workspace-menu/workspace-selection-popover";
+import { WorkspaceCreationModal } from "./workspace-creation-modal";
+import { BoolParam } from "../../utils/query-param-bool";
 
 const getWorkspacesQuery = gql`
   query getWorkspaces {
@@ -18,27 +20,19 @@ const getWorkspacesQuery = gql`
   }
 `;
 
-const createWorkspacesQuery = gql`
-  mutation createWorkspace($name: String!) {
-    createWorkspace(data: { name: $name }) {
-      id
-      name
-      slug
-    }
-  }
-`;
-
 export const WorkspaceSwitcher = () => {
   const router = useRouter();
-
   const workspaceSlug = router?.query.workspaceSlug as string;
 
-  const client = useApolloClient();
+  const [isOpen, setIsOpen] = useState(false);
+
+  const [isCreationModalOpen, setIsCreationModalOpen] = useQueryParam(
+    "modal-create-workspace",
+    BoolParam
+  );
 
   const { data: getWorkspacesData, previousData: getWorkspacesPreviousData } =
-    useQuery(getWorkspacesQuery, {
-      variables: { workspaceSlug },
-    });
+    useQuery(getWorkspacesQuery);
 
   const workspaces: (Workspace & { src?: string })[] = [
     { id: "local", slug: "local", name: "Local", src: null },
@@ -46,10 +40,6 @@ export const WorkspaceSwitcher = () => {
       getWorkspacesPreviousData?.workspaces ??
       []),
   ];
-
-  const [isOpen, setIsOpen] = useState(false);
-
-  const toast = useToast();
 
   const selectedWorkspace = useMemo(() => {
     if (workspaceSlug == null) {
@@ -68,65 +58,25 @@ export const WorkspaceSwitcher = () => {
 
   const setSelectedWorkspace = useCallback((workspace: WorkspaceItem) => {
     const slug = workspace?.slug;
-    console.log(`Switch to workspace ${slug ?? "unknown"}`);
     if (slug !== null) {
       router.push(`/${slug}`);
     }
   }, []);
 
-  const createNewWorkspace = useCallback(
-    async (name: string) => {
-      try {
-        const { data, errors } = await client.mutate({
-          mutation: createWorkspacesQuery,
-          variables: { name },
-        });
-        const slug = data?.createWorkspace?.slug;
+  const [initialWorkspaceName, setInitialWorkspaceName] =
+    useState<string | undefined>();
 
-        if (slug !== null) {
-          router.push(`/${slug}`);
-        } else {
-          toast({
-            title: "Could not create workspace",
-            description: errors?.[0],
-            isClosable: true,
-            status: "error",
-            position: "bottom-right",
-            duration: 10000,
-          });
-        }
-      } catch (error: any) {
-        if (error instanceof ApolloError) {
-          toast({
-            title: "Needs to be signed in",
-            description:
-              "Only signed-in users can to create a new Workspace, please sign in.",
-            isClosable: true,
-            status: "error",
-            position: "bottom-right",
-            duration: 10000,
-          });
-        } else {
-          toast({
-            title: "Could not create workspace",
-            description: error?.message ?? error,
-            isClosable: true,
-            status: "error",
-            position: "bottom-right",
-            duration: 10000,
-          });
-        }
-      }
-    },
-    [client, toast]
-  );
+  const createNewWorkspace = useCallback(async (name: string) => {
+    setInitialWorkspaceName(name);
+    setIsCreationModalOpen(true, "replaceIn");
+  }, []);
 
   if (workspaces == null) {
     return null;
   }
 
-  if (selectedWorkspace == null) {
-    return (
+  return (
+    <>
       <WorkspaceMenu
         isOpen={isOpen}
         setIsOpen={setIsOpen}
@@ -135,21 +85,13 @@ export const WorkspaceSwitcher = () => {
           setSelectedWorkspace(workspace)
         }
         createNewWorkspace={createNewWorkspace}
-        selectedWorkspace={null}
+        selectedWorkspace={selectedWorkspace == null ? null : selectedWorkspace}
       />
-    );
-  }
-
-  return (
-    <WorkspaceMenu
-      isOpen={isOpen}
-      setIsOpen={setIsOpen}
-      workspaces={workspaces}
-      onSelectedWorkspaceChange={(workspace: WorkspaceItem) =>
-        setSelectedWorkspace(workspace)
-      }
-      createNewWorkspace={createNewWorkspace}
-      selectedWorkspace={selectedWorkspace}
-    />
+      <WorkspaceCreationModal
+        initialWorkspaceName={initialWorkspaceName}
+        isOpen={isCreationModalOpen}
+        onClose={() => setIsCreationModalOpen(false, "replaceIn")}
+      />
+    </>
   );
 };

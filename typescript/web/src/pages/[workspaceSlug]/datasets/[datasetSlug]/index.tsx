@@ -35,7 +35,7 @@ const getDataset = gql`
 
 const DatasetIndexPage = () => {
   const router = useRouter();
-  const { datasetSlug, workspaceSlug } = router?.query;
+  const { datasetSlug, workspaceSlug, ...queryRest } = router.query;
 
   const {
     data: datasetResult,
@@ -49,12 +49,13 @@ const DatasetIndexPage = () => {
   const datasetName = datasetResult?.dataset.name;
 
   useEffect(() => {
-    if (!error && !loading) {
+    if (router.isReady && !error && !loading) {
       router.replace({
         pathname: `/${workspaceSlug}/datasets/${datasetSlug}/images`,
+        query: queryRest,
       });
     }
-  }, [error, loading]);
+  }, [error, loading, router.isReady]);
 
   const handleError = useErrorHandler();
   if (error && !loading) {

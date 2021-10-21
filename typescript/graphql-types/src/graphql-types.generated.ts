@@ -584,6 +584,7 @@ export type QueryWorkspaceArgs = {
 export type QueryWorkspacesArgs = {
   first?: Maybe<Scalars['Int']>;
   skip?: Maybe<Scalars['Int']>;
+  where?: Maybe<WorkspaceWhereInput>;
 };
 
 
@@ -703,6 +704,10 @@ export enum WorkspaceType {
 
 export type WorkspaceUpdateInput = {
   name?: Maybe<Scalars['String']>;
+};
+
+export type WorkspaceWhereInput = {
+  slug?: Maybe<Scalars['String']>;
 };
 
 export type WorkspaceWhereUniqueInput = {
@@ -862,6 +867,7 @@ export type ResolversTypes = {
   WorkspaceSlugAndDatasetSlug: WorkspaceSlugAndDatasetSlug;
   WorkspaceType: WorkspaceType;
   WorkspaceUpdateInput: WorkspaceUpdateInput;
+  WorkspaceWhereInput: WorkspaceWhereInput;
   WorkspaceWhereUniqueInput: WorkspaceWhereUniqueInput;
 };
 
@@ -934,6 +940,7 @@ export type ResolversParentTypes = {
   WorkspaceCreateInput: WorkspaceCreateInput;
   WorkspaceSlugAndDatasetSlug: WorkspaceSlugAndDatasetSlug;
   WorkspaceUpdateInput: WorkspaceUpdateInput;
+  WorkspaceWhereInput: WorkspaceWhereInput;
   WorkspaceWhereUniqueInput: WorkspaceWhereUniqueInput;
 };
 

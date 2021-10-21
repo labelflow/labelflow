@@ -7,13 +7,14 @@ export const uploadsRoute = "/api/worker/uploads";
 declare let self: ServiceWorkerGlobalScope;
 
 export const getUploadTargetHttp = async (
-  key: string
+  key: string,
+  origin: string
 ): Promise<UploadTargetHttp> => {
   return {
     __typename: "UploadTargetHttp",
     // Upload and download URL do not have to be the same. But in our implementation it is:
-    uploadUrl: `${self.location.protocol}//${self.location.host}${uploadsRoute}/${key}`,
-    downloadUrl: `${self.location.protocol}//${self.location.host}${uploadsRoute}/${key}`,
+    uploadUrl: `${origin}${uploadsRoute}/${key}`,
+    downloadUrl: `${origin}${uploadsRoute}/${key}`,
   };
 };
 
@@ -28,7 +29,7 @@ export const getUploadTarget = async (key: string): Promise<UploadTarget> => {
   }
 
   // We run in the worker scope or nodejs
-  return await getUploadTargetHttp(key);
+  return await getUploadTargetHttp(key, self.location.origin);
 };
 
 export const putInStorage = async (url: string, file: Blob) => {
