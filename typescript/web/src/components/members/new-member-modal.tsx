@@ -186,7 +186,6 @@ export const NewMemberModal = ({
                     role,
                     workspaceSlug,
                   });
-                  console.log("Status received = ", status);
                   statusesCurrent[status].push(email);
                   return statusesCurrent;
                 },
