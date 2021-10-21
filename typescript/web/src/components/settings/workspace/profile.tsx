@@ -70,7 +70,6 @@ export const Profile = ({
     },
     refetchQueries: ["getWorkspaces"],
     onCompleted: (createdData) => {
-      console.log(`Moving to /${createdData.updateWorkspace.slug}/settings`);
       router.push(`/${createdData.updateWorkspace.slug}/settings`);
     },
     onError: (caughtError: any) => {
@@ -78,7 +77,7 @@ export const Profile = ({
         toast({
           title: "Needs to be signed in",
           description:
-            "Only signed-in users can to create and share Workspaces online, please sign in.",
+            "Please sign in first, only signed-in users can create and share Workspaces online.",
           isClosable: true,
           status: "info",
           position: "bottom-right",
