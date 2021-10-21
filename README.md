@@ -52,6 +52,12 @@ You can build LabelFlow from source, and serve it from your machine. Read how to
 * [Python](https://www.python.org/) for the machine learning server
 * [PyTorch](https://pytorch.org/) for the machine learning server
 
+### Stay Up-to-Date
+
+LabelFlow officially launched as v.0.1 on 7th of September, however a lot of new features are coming. Watch releases of this repository to be notified for future updates:
+
+![](https://github.com/labelflow/labelflow/raw/main/typescript/web/public/static/img/subscribe.gif)
+
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 ## Getting Started
