@@ -28,11 +28,19 @@
 
 ## About
 
-LabelFlow is an open platform for image labeling. Its source is entirely available on this Github repository.
+![LabelFlow Screenshot](./typescript/web/public/static/img/home-screenshot5.png)
+
+# Visual Data for absolutely everyone
+
+LabelFlow is an open platform for image labeling. Its source is entirely available on this Github repository. You are in charge of your own data and workflows.
+
+LabelBox, Roboflow, v7labs and other Image labeling tools are are awesome. They made our lives massively easier when we needed to label data. However, most tools are very limited in terms of control and customisations.
+
+That's where LabelFlow.ai comes in. Self-hosted or hosted by us. White-label by design. API-driven and ready to be deployed on your own domain. Full control over your images and labels.
 
 [Labelflow.ai](https://labelflow.ai) is the parent company developing LabelFlow, and commercializing a Hosted version. 
 
-You can also build LabelFlow from source, and serve it from your machine. Read how to [deploy it yourself](#running-labelflow-on-your-machine).
+You can build LabelFlow from source, and serve it from your machine. Read how to [deploy it yourself](#running-labelflow-on-your-machine).
 
 ### Built With
 
