@@ -210,6 +210,9 @@ export const DrawingTool = () => {
   const isImageLoading = useLabelingStore((state) => state.isImageLoading);
   const selectedTool = useLabelingStore((state) => state.selectedTool);
   const setSelectedTool = useLabelingStore((state) => state.setSelectedTool);
+  const setSelectedLabelId = useLabelingStore(
+    (state) => state.setSelectedLabelId
+  );
   const [isPopoverOpened, doSetIsPopoverOpened] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const setIsPopoverOpened = useCallback((newState) => {
@@ -219,13 +222,19 @@ export const DrawingTool = () => {
     }
   }, []);
 
+  useEffect(() => {
+    if (selectedTool !== Tools.SELECTION) {
+      setSelectedLabelId(null);
+    }
+  }, [selectedTool]);
+
   useHotkeys(
     keymap.toolClassification.key,
     () => {
       setSelectedTool(Tools.CLASSIFICATION);
     },
     {},
-    []
+    [setSelectedTool]
   );
   useHotkeys(
     keymap.toolBoundingBox.key,
@@ -233,7 +242,7 @@ export const DrawingTool = () => {
       setSelectedTool(Tools.BOX);
     },
     {},
-    []
+    [setSelectedTool]
   );
   useHotkeys(
     keymap.toolPolygon.key,
@@ -241,7 +250,7 @@ export const DrawingTool = () => {
       setSelectedTool(Tools.POLYGON);
     },
     {},
-    []
+    [setSelectedTool]
   );
   useHotkeys(
     keymap.toolIog.key,
@@ -251,7 +260,7 @@ export const DrawingTool = () => {
       }
     },
     {},
-    []
+    [setSelectedTool]
   );
   return (
     <Popover
