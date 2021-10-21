@@ -64,7 +64,7 @@ export const Profile = ({
     };
   }>(updateWorkspaceMutation, {
     variables: {
-      name: workspaceName !== workspace?.name ? workspaceName : null,
+      name: workspaceName,
       image: null,
       workspaceSlug: workspace?.slug,
     },
