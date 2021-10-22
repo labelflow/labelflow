@@ -49,12 +49,12 @@ module.exports = config({
       vm: 'browser-builtins/node_modules/vm-browserify/index.js',
       zlib: 'zlib-browserify/index.js',
     }
-
   },
   options: {
     // "env": {
     //   "coreJs": 3
     // },
+    "minify": false,
     // // "exclude": ["stream", "jszip"],
     "module": {
       // You can specify "commonjs", "es6", "amd", "umd"
@@ -68,6 +68,9 @@ module.exports = config({
     jsc: {
       //  es3 / es5 / es2015 / es2016
       "target": "es2016",
+      "loose": false,
+      "externalHelpers": true,
+      "keepClassNames": true,
       "parser": {
         "syntax": "typescript",
         "tsx": true,
