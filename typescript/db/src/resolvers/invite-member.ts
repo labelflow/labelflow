@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from "uuid";
-import fetch, { RequestInit } from "node-fetch";
+import "isomorphic-fetch";
 
 import type { MutationInviteMemberArgs } from "@labelflow/graphql-types";
 import { InvitationStatus } from "@labelflow/graphql-types";
@@ -66,7 +66,7 @@ const inviteMember = async (
   try {
     const result = await fetch(
       `${origin}/api/email/send-invitation?${searchParams.toString()}`,
-      req as unknown as RequestInit
+      req
     );
     if (result.status !== 200) {
       throw new Error(`Not signed in.`);
