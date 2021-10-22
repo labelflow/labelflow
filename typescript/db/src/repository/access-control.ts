@@ -187,6 +187,7 @@ export const checkUserAccessToUser = async ({
   }
   // Has access to user if the current user shares a workspace with the user in the query
   const hasAccessToUser =
+    where.id === user.id ||
     (await (
       await getPrismaClient()
     ).workspace.findFirst({

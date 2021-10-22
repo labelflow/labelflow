@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from "react";
 import { ApolloError, gql, useMutation, useQuery } from "@apollo/client";
 import {
   Box,
@@ -17,18 +18,17 @@ import {
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { useQueryParam } from "use-query-params";
-
-import React, { useState, useEffect } from "react";
 import slugify from "slugify";
 import {
   forbiddenWorkspaceSlugs,
   isValidWorkspaceName,
 } from "@labelflow/common-resolvers";
+
 import { Logo } from "../../logo";
 import { Features } from "../../auth-manager/signin-modal/features";
 import { BoolParam } from "../../../utils/query-param-bool";
 
-const searchWorkspacesQuery = gql`
+export const searchWorkspacesQuery = gql`
   query searchWorkspaces($slug: String!) {
     workspaces(first: 1, where: { slug: $slug }) {
       id
@@ -36,7 +36,7 @@ const searchWorkspacesQuery = gql`
   }
 `;
 
-const createWorkspaceMutation = gql`
+export const createWorkspaceMutation = gql`
   mutation createWorkspace($name: String!) {
     createWorkspace(data: { name: $name }) {
       id
@@ -49,10 +49,12 @@ export const Message = ({
   error,
   workspaceName,
   workspaceNameIsAlreadyTaken,
+  isOnlyDisplaying,
 }: {
   error: ApolloError | undefined;
   workspaceName: string | undefined;
   workspaceNameIsAlreadyTaken: boolean;
+  isOnlyDisplaying?: boolean;
 }) => {
   if (error) {
     return (
@@ -90,6 +92,13 @@ export const Message = ({
     }
 
     if (globalThis.location) {
+      if (isOnlyDisplaying) {
+        return (
+          <Text fontSize="sm" color={mode("gray.800", "gray.200")}>
+            Your workspace URL: {`${globalThis.location.origin}/${slug}`}
+          </Text>
+        );
+      }
       return (
         <Text fontSize="sm" color={mode("gray.800", "gray.200")}>
           Your URL will be: {`${globalThis.location.origin}/${slug}`}
