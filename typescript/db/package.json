@@ -5,6 +5,9 @@
   "scripts": {
     "dev:server": "nodemon src/dev/apollo-server.ts",
     "dev": "prisma migrate dev",
+    "build": "prisma generate",
+    "start": "docker compose up --detach && sleep 10 && yarn deploy",
+    "stop": "docker compose down --volumes --remove-orphans",
     "deploy": "prisma migrate deploy",
     "dev:push": "prisma db push",
     "generate": "prisma generate"
