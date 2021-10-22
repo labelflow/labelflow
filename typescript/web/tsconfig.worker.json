@@ -1,14 +1,23 @@
 {
   "compilerOptions": {
-    "allowSyntheticDefaultImports": true,
+    "allowJs": true,
+    "alwaysStrict": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
     "isolatedModules": true,
-    "strict": true,
-    "module": "esnext",
+    "jsx": "preserve",
     "lib": ["es2019", "es6", "dom", "webworker"],
-    "noEmit": true,
     "moduleResolution": "node",
-    "skipLibCheck": true
+    "noEmit": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "target": "esnext",
+    "module": "esnext"
   },
-  "include": ["*.ts"],
-  "exclude": ["node_modules/**/*"]
+  "exclude": ["node_modules", "**/*.graphql"],
+  "include": ["**/*.ts", "**/*.tsx"]
 }

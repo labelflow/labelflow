@@ -33,6 +33,11 @@ module.exports = {
   module: {
     rules: [
       {
+        test: /\.(graphql|gql)$/,
+        use: "graphql-tag/loader",
+        exclude: /node_modules/
+      },
+      {
         test: /\.ts$/,
         loader: "ts-loader",
         options: {
