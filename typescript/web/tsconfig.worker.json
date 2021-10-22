@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "isolatedModules": true,
+    "strict": true,
+    "module": "esnext",
+    "lib": ["es2019", "es6", "dom", "webworker"],
+    "noEmit": true,
+    "moduleResolution": "node",
+    "skipLibCheck": true
+  },
+  "include": ["*.ts"],
+  "exclude": ["node_modules/**/*"]
+}
