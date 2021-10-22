@@ -7,7 +7,7 @@ export const ensureServiceWorkerPresent = () => {
     "serviceWorker" in navigator &&
     !("workbox" in window && window.workbox != null)
   ) {
-    const wb = new Workbox("/static/sw/index.js");
+    const wb = new Workbox("/sw.js");
     window.workbox = wb;
   }
 };

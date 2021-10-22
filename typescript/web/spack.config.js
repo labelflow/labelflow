@@ -1,10 +1,10 @@
 const { config } = require("@swc/core/spack");
 module.exports = config({
   entry: {
-    index: __dirname + "/src/worker/index.ts",
+    sw: __dirname + "/src/worker/index.ts",
   },
   output: {
-    path: __dirname + "/public/static/sw",
+    path: __dirname + "/public",
   },
   target: "browser",
   alias: {
@@ -52,20 +52,28 @@ module.exports = config({
 
   },
   options: {
-
     // "env": {
     //   "coreJs": 3
     // },
     // // "exclude": ["stream", "jszip"],
-    // "module": {
-    //   // You can specify "commonjs", "es6", "amd", "umd"
-    //   "type": "commonjs",
-    //   "strict": false,
-    //   "strictMode": true,
-    //   "lazy": false,
-    //   "noInterop": false
-    // },
+    "module": {
+      // You can specify "commonjs", "es6", "amd", "umd"
+      "type": "es6",
+      "strict": true,
+      "strictMode": true,
+      "lazy": false,
+      "noInterop": false,
+      // ignoreDynamic: true
+    },
     jsc: {
+      //  es3 / es5 / es2015 / es2016
+      "target": "es2016",
+      "parser": {
+        "syntax": "typescript",
+        "tsx": true,
+        "decorators": false,
+        "dynamicImport": true
+      },
       "transform": {
         "optimizer": {
           "globals": {
@@ -77,9 +85,9 @@ module.exports = config({
           }
         }
       }
-    }
+    },
     //   "transform": null,
-    //   "target": "es2016",
+    // "target": "es2016",
     //   "loose": false,
     //   "externalHelpers": false,
     //   "keepClassNames": false,

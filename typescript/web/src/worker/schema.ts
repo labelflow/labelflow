@@ -1,13 +1,6 @@
-// import * as ApolloServerCore from "apollo-server-core";
+import { gql } from "apollo-server-core";
 
-// export const schema = ApolloServerCore.gql
-
-import graphql from "graphql";
-
-console.log("parse", graphql.parse);
-
-export const makeSchema = () =>
-  graphql.parse(`
+export const makeSchema = () => gql`
   scalar ColorHex
 
   type Dataset {
@@ -363,7 +356,7 @@ export const makeSchema = () =>
     datasets(where: DatasetWhereInput, first: Int, skip: Int): [Dataset!]!
     searchDataset(where: DatasetWhereUniqueInput!): Dataset
     workspace(where: WorkspaceWhereUniqueInput!): Workspace!
-    workspaces(first: Int, skip: Int): [Workspace!]!
+    workspaces(first: Int, skip: Int, where: WorkspaceWhereInput): [Workspace!]!
     membership(where: MembershipWhereUniqueInput!): Membership!
     memberships(
       where: MembershipWhereInput
@@ -434,6 +427,7 @@ export const makeSchema = () =>
     updatedAt: DateTime!
     name: String!
     slug: String!
+    image: String
     type: WorkspaceType!
     plan: WorkspacePlan!
     datasets: [Dataset!]!
@@ -443,6 +437,7 @@ export const makeSchema = () =>
   input WorkspaceCreateInput {
     id: ID
     name: String!
+    image: String
   }
 
   enum WorkspacePlan {
@@ -464,10 +459,15 @@ export const makeSchema = () =>
 
   input WorkspaceUpdateInput {
     name: String
+    image: String
+  }
+
+  input WorkspaceWhereInput {
+    slug: String
   }
 
   input WorkspaceWhereUniqueInput {
     id: ID
     slug: String
   }
-`);
+`;
