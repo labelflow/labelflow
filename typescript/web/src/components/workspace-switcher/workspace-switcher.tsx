@@ -1,10 +1,10 @@
 import { gql, useQuery } from "@apollo/client";
 import { Workspace } from "@labelflow/graphql-types";
 import { useRouter } from "next/router";
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useEffect } from "react";
 import { startCase } from "lodash/fp";
 import { useQueryParam } from "use-query-params";
-
+import { useCookies } from "react-cookie";
 import { WorkspaceMenu } from "./workspace-menu";
 import { WorkspaceItem } from "./workspace-menu/workspace-selection-popover";
 import { WorkspaceCreationModal } from "./workspace-creation-modal";
@@ -23,6 +23,18 @@ const getWorkspacesQuery = gql`
 export const WorkspaceSwitcher = () => {
   const router = useRouter();
   const workspaceSlug = router?.query.workspaceSlug as string;
+
+  // Set cookie of last visited workspace if the user navigated to a new workspace
+  const [{ lastVisitedWorkspaceSlug }, setLastVisitedWorkspaceSlug] =
+    useCookies(["lastVisitedWorkspaceSlug"]);
+  useEffect(() => {
+    if (workspaceSlug != null && lastVisitedWorkspaceSlug !== workspaceSlug) {
+      setLastVisitedWorkspaceSlug("lastVisitedWorkspaceSlug", workspaceSlug, {
+        path: "/",
+        httpOnly: false,
+      });
+    }
+  }, [workspaceSlug]);
 
   const [isOpen, setIsOpen] = useState(false);
 

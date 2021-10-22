@@ -7,7 +7,6 @@ import {
 import { ApolloClient, gql, useApolloClient } from "@apollo/client";
 import { useCookies } from "react-cookie";
 import { Modal, ModalOverlay } from "@chakra-ui/react";
-
 import { QueryParamConfig, StringParam, useQueryParam } from "use-query-params";
 import type { Dataset as DatasetType } from "@labelflow/graphql-types";
 import { useRouter, NextRouter } from "next/router";

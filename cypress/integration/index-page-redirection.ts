@@ -25,4 +25,12 @@ describe("Index page redirections", () => {
     cy.url().should("match", /\/website/);
     cy.get("body").contains("LabelFlow, All rights reserved").should("exist");
   });
+
+  it("Redirects to the last visited workspace", () => {
+    cy.setCookie("consentedCookies", "true");
+    cy.setCookie("hasUserTriedApp", "true");
+    cy.setCookie("lastVisitedWorkspaceSlug", "my-workspace");
+    cy.visit(`/?modal-update-service-worker=update`);
+    cy.url().should("match", /\/my-workspace\/datasets/);
+  });
 });
