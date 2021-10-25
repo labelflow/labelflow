@@ -145,6 +145,20 @@ jobs:
     name: E2E Tests and bundle analysis
     runs-on: ubuntu-20.04
     needs: install-typescript
+    services:
+      db:
+        image: postgres:12.6
+        env:
+          POSTGRES_USER: ${{secrets.POSTGRES_ADMIN_USER}}
+          POSTGRES_PASSWORD: ${{secrets.POSTGRES_ADMIN_PASSWORD}}
+          POSTGRES_DB: ${{secrets.POSTGRES_DB}}
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5433:5432
     steps:
       - name: Check out repository code
         uses: actions/checkout@v2
@@ -160,6 +174,10 @@ jobs:
         with:
           path: /home/runner/.cache/Cypress
           key: ${{ runner.os }}-cypress-${{secrets.ACTIONS_CACHE_VERSION}}-${{ hashFiles('yarn.lock') }}
+      - name: generate prisma
+        run: cd typescript/db && yarn deploy && yarn generate
+        env:
+          POSTGRES_EXTERNAL_URL: ${{secrets.POSTGRES_EXTERNAL_URL}}
       - name: Cypress run
         uses: cypress-io/github-action@v2
         with:
@@ -185,6 +203,7 @@ jobs:
           CI_COMMIT_SHA: ${{ github.event.pull_request.head.sha }}
           CI_BRANCH: ${{ github.ref	}}
           CI_BRANCH_BASE: refs/heads/main
+          POSTGRES_EXTERNAL_URL: ${{secrets.POSTGRES_EXTERNAL_URL}}
 
   deployment-chromatic-pr:
     name: Deploy Storybook PR
