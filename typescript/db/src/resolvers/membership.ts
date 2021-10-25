@@ -110,6 +110,7 @@ const user = async (
     Prisma.PromiseReturnType<PrismaClient["membership"]["findUnique"]>
   >
 ) => {
+  if (!parent.userId) return null;
   return await (
     await getPrismaClient()
   ).user.findUnique({

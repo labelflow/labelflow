@@ -16,7 +16,6 @@ import { useSelect } from "downshift";
 import { MembershipRole } from "@labelflow/graphql-types";
 import { RiArrowDownSFill, RiArrowUpSFill } from "react-icons/ri";
 import { BiCheck } from "react-icons/bi";
-import { ChangeMembershipRole, Role } from "./types";
 
 const CheckIcon = chakra(BiCheck);
 
@@ -93,13 +92,11 @@ const RoleListItem = ({
 export const RoleSelection = ({
   role: currentRole,
   changeMembershipRole,
-  id,
 }: {
-  role: Role;
-  changeMembershipRole: ChangeMembershipRole;
-  id: string;
+  role: MembershipRole;
+  changeMembershipRole: (role: MembershipRole) => void;
 }) => {
-  const roleItems = Object.keys(MembershipRole) as Array<Role>;
+  const roleItems = Object.keys(MembershipRole) as Array<MembershipRole>;
   const {
     isOpen,
     getToggleButtonProps,
@@ -107,12 +104,12 @@ export const RoleSelection = ({
     highlightedIndex,
     getItemProps,
     reset,
-  } = useSelect<Role>({
+  } = useSelect<MembershipRole>({
     items: roleItems,
     onSelectedItemChange: (changes) => {
       const newRole = changes.selectedItem;
       if (newRole != null) {
-        changeMembershipRole({ id, role: newRole });
+        changeMembershipRole(newRole);
       }
     },
     initialSelectedItem: currentRole,
@@ -123,11 +120,15 @@ export const RoleSelection = ({
       onClose={() => {
         reset();
       }}
+      matchWidth
     >
       <PopoverTrigger>
         <Button
           {...getToggleButtonProps()}
-          variant="ghost"
+          variant="outline"
+          textAlign="start"
+          justifyContent="space-between"
+          alignContent="flex-start"
           rightIcon={isOpen ? <RiArrowUpSFill /> : <RiArrowDownSFill />}
         >
           {currentRole}

@@ -9,10 +9,22 @@ input MembershipWhereInput {
 input MembershipCreateInput {
   id: ID
   role: MembershipRole!
-  userId: ID!
+  userId: ID
   workspaceSlug: String!
 }
 
 input MembershipUpdateInput {
   role: MembershipRole
+}
+
+input InviteMemberInput {
+  email: String!
+  role: MembershipRole!
+  workspaceSlug: String!
+}
+
+enum InvitationStatus{
+  Sent
+  UserAlreadyIn
+  Error
 }

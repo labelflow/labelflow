@@ -1,15 +1,12 @@
 import { Box, Stack, Badge, Flex, Avatar } from "@chakra-ui/react";
+import { User as UserType } from "@labelflow/graphql-types";
 import { useSession } from "next-auth/react";
 import * as React from "react";
 import { randomBackgroundGradient } from "../../utils/random-background-gradient";
 
 interface UserProps {
-  data: {
-    id: string;
-    image: string;
-    name: string;
-    email: string;
-  };
+  data: Pick<UserType, "name" | "email" | "image"> &
+    Partial<Pick<UserType, "id">>;
 }
 
 export const getDisplayName = ({
@@ -19,7 +16,7 @@ export const getDisplayName = ({
 }: {
   name?: string;
   email?: string;
-  id: string;
+  id?: string;
 }) => {
   if (name) {
     return name;
@@ -27,10 +24,10 @@ export const getDisplayName = ({
   if (email) {
     return email.split("@")[0];
   }
-  if (id === "local-user") {
-    return "";
+  if (id && id !== "local-user") {
+    return `User - ${id.substr(id.length - 5, 4)}`;
   }
-  return `User - ${id.substr(id.length - 5, 4)}`;
+  return "";
 };
 
 export const User = (props: UserProps) => {
@@ -40,13 +37,17 @@ export const User = (props: UserProps) => {
   const session = useSession({ required: false });
   const loggedInUser = session.data?.user;
   const isLoggedInUser = loggedInUser?.id === id;
-  const displayName = getDisplayName({ name, email, id });
+  const displayName = getDisplayName({
+    name: name ?? undefined,
+    email: email ?? undefined,
+    id,
+  });
   return (
     <Stack direction="row" spacing="4" align="center">
       <Box flexShrink={0} h="10" w="10">
         <Avatar
           name={displayName}
-          src={image}
+          src={image ?? undefined}
           bg={randomBackgroundGradient(displayName)}
         />
       </Box>
