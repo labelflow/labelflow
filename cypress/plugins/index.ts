@@ -17,6 +17,8 @@ import webpackPreprocessor from "@cypress/webpack-preprocessor";
 // See https://www.npmjs.com/package/node-polyfill-webpack-plugin
 import NodePolyfillPlugin from "node-polyfill-webpack-plugin";
 import path from "path";
+// Load env vars to pass them to Cypress, see https://docs.cypress.io/guides/guides/environment-variables#Option-5-Plugins
+import { getPrismaClient } from "../../typescript/db/src/prisma-client";
 
 /**
  * @type {Cypress.PluginConfig}
@@ -83,4 +85,37 @@ module.exports = (on: (type: string, preprocessor: any) => void) => {
       webpackOptions: config,
     })
   );
+  on("task", {
+    async clearDb() {
+      const prisma = await getPrismaClient();
+      await prisma.membership.deleteMany({});
+      await prisma.workspace.deleteMany({});
+      await prisma.session.deleteMany({});
+      await prisma.user.deleteMany({});
+      return null;
+    },
+    async performLogin() {
+      const prisma = await getPrismaClient();
+      const email = "test@labelflow.ai";
+      const existingUser = await prisma.user.findFirst({ where: { email } });
+      const user =
+        existingUser != null
+          ? existingUser
+          : await prisma.user.create({
+              data: { name: "Cypress test user", email },
+            });
+      await prisma.session.deleteMany({});
+      const session = await prisma.session.create({
+        data: {
+          userId: user.id,
+          sessionToken: "123456789",
+          expires: new Date(
+            new Date().getTime() + 60 * 60 * 1000
+          ).toISOString(),
+        },
+      });
+
+      return session.sessionToken;
+    },
+  });
 };
