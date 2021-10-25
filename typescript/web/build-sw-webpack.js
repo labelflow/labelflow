@@ -38,15 +38,42 @@ module.exports = {
         exclude: /node_modules/
       },
       {
-        test: /\.ts$/,
-        loader: "ts-loader",
-        options: {
-          transpileOnly: true,
-          onlyCompileBundledFiles: true,
-          context: __dirname,
-          configFile: path.join(__dirname, 'tsconfig.worker.json')
-        },
-      },
+        test: /\.(t|j)s$/i,
+        use: [
+          {
+            loader: 'babel-loader',
+            options: {
+              presets: [
+                [
+                  'next/babel',
+                  {
+                    'transform-runtime': {
+                      corejs: false,
+                      helpers: true,
+                      regenerator: false,
+                      useESModules: true
+                    },
+                    'preset-env': {
+                      modules: false,
+                      targets: 'chrome >= 56'
+                    }
+                  }
+                ]
+              ]
+            }
+          }
+        ]
+      }
+      // {
+      //   test: /\.ts$/,
+      //   loader: "ts-loader",
+      //   options: {
+      //     transpileOnly: true,
+      //     onlyCompileBundledFiles: true,
+      //     context: __dirname,
+      //     configFile: path.join(__dirname, 'tsconfig.worker.json')
+      //   },
+      // },
     ],
   },
   plugins: [

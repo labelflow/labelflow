@@ -55,7 +55,7 @@
     "fscreen": "^1.2.0",
     "github-markdown-css": "^4.0.0",
     "graphiql": "^1.4.2",
-    "graphql": "15.5.1",
+    "graphql": "^15.6.1",
     "graphql-subscriptions": "^1.2.1",
     "graphql-tag": "2.12.4",
     "graphql-type-json": "^0.3.2",

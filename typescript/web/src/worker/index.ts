@@ -21,7 +21,7 @@ import { trimCharsEnd } from "lodash/fp";
 import * as Sentry from "@sentry/browser";
 import { Integrations } from "@sentry/tracing"; // Must import second
 
-// import { makeSchema } from "./schema";
+import { makeSchema } from "./schema";
 import { resolvers } from "../connectors/resolvers";
 import {
   uploadsCacheName,

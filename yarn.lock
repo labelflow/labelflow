@@ -6115,7 +6115,7 @@ __metadata:
     fscreen: ^1.2.0
     github-markdown-css: ^4.0.0
     graphiql: ^1.4.2
-    graphql: 15.5.1
+    graphql: ^15.6.1
     graphql-subscriptions: ^1.2.1
     graphql-tag: 2.12.4
     graphql-type-json: ^0.3.2
@@ -16071,9 +16071,9 @@ __metadata:
   linkType: hard
 
 "core-js-bundle@npm:*":
-  version: 3.18.3
-  resolution: "core-js-bundle@npm:3.18.3"
-  checksum: 3707eba755ae4526aa8ee14bb4c767498aac2c925fef1581bc09c82e91f486caecbd3b1c153d9a3ee0348ca0f471a510c8ef31a6b9f8196c0ad3920a843d2ae5
+  version: 3.13.0
+  resolution: "core-js-bundle@npm:3.13.0"
+  checksum: 467a8567b6a073bcd1d9113c4f185ce2ea5eab26338b3906bb78349e0730618048aabf8a883df5f545ed0e67f42c3019724235ed7fa3f44286823b2c8a18e618
   languageName: node
   linkType: hard
 
@@ -20154,10 +20154,10 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"graphql@npm:15.5.1":
-  version: 15.5.1
-  resolution: "graphql@npm:15.5.1"
-  checksum: 7e45ae27021e5bafd2a3ce557e708606ff28504aae705654764fa6239b0151d014a90cbd4c68300f4f95a9074820aaee9b1f25b560ff089c8db0b49563e34080
+"graphql@npm:^15.6.1":
+  version: 15.6.1
+  resolution: "graphql@npm:15.6.1"
+  checksum: 4c6dcf385f7a87a5103fcb7640394244ae8d1d4ede521085192a1cf1e60115c4f6285d783961575d908709f7ee3e4cdd16b3f7c54eb37499c0420c6301e98968
   languageName: node
   linkType: hard
 
@@ -23146,7 +23146,7 @@ fsevents@^1.2.7:
     eslint-plugin-react: 7.23.2
     eslint-plugin-react-hooks: 4.2.0
     fake-indexeddb: 3.1.2
-    graphql: 15.5.1
+    graphql: ^15.6.1
     graphql-tag: 2.12.4
     jest: 26.6.3
     jest-canvas-mock: 2.3.1
@@ -28650,10 +28650,10 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"regenerator-runtime@npm:*":
-  version: 0.13.9
-  resolution: "regenerator-runtime@npm:0.13.9"
-  checksum: 65ed455fe5afd799e2897baf691ca21c2772e1a969d19bb0c4695757c2d96249eb74ee3553ea34a91062b2a676beedf630b4c1551cc6299afb937be1426ec55e
+"regenerator-runtime@npm:*, regenerator-runtime@npm:^0.13.7":
+  version: 0.13.8
+  resolution: "regenerator-runtime@npm:0.13.8"
+  checksum: 5f89699ab578301e3f47fe323d2a9e19ed4b7302481b37ce96843602be3a5cb1e5b66a07c1500e69d4710c1dd6fa3b3f3e56d188ef56df4c17a744d853ac36ed
   languageName: node
   linkType: hard
 
@@ -28661,13 +28661,6 @@ fsevents@^1.2.7:
   version: 0.13.7
   resolution: "regenerator-runtime@npm:0.13.7"
   checksum: 52b66e6669152c0b1bccd95c8e11aabbfe67bb97bdf00e223bdf723b0f0052d4da5c02001d4c4bef576bdc5bcdc38a20496d1b5363b65c950c8434ed5071d9e0
-  languageName: node
-  linkType: hard
-
-"regenerator-runtime@npm:^0.13.7":
-  version: 0.13.8
-  resolution: "regenerator-runtime@npm:0.13.8"
-  checksum: 5f89699ab578301e3f47fe323d2a9e19ed4b7302481b37ce96843602be3a5cb1e5b66a07c1500e69d4710c1dd6fa3b3f3e56d188ef56df4c17a744d853ac36ed
   languageName: node
   linkType: hard
 
