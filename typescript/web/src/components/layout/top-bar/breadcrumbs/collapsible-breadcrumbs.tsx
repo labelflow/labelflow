@@ -57,7 +57,7 @@ export const CollapsibleBreadcrumbs = ({
   const separatorColor = useColorModeValue("gray.300", "gray.600");
   return (
     <Breadcrumb
-      overflowX="hidden"
+      // overflowX="hidden" // TODO: comment this removes problem with cypress errors with non visible problem
       overflowY="visible"
       textOverflow="ellipsis"
       whiteSpace="nowrap"

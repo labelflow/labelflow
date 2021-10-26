@@ -132,7 +132,6 @@ const DatasetPage = () => {
               setIsCreatingDataset(true, "replaceIn");
             }}
           />
-
           {datasetsResult?.datasets?.map(
             ({
               id,

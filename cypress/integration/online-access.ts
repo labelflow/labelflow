@@ -35,11 +35,11 @@ describe("Online workspaces access", () => {
     cy.focused().type("Test workspace");
     cy.get('[aria-label="Create workspace"]').click();
     cy.wait(420);
+    cy.url().should("match", /test-workspace/); // TODO: redirection works only sometimes, so this fails pretty often
     cy.get('[aria-label="Open workspace selection popover"]').click();
     cy.get('[aria-label="Workspace selection menu popover"]')
       .contains("Test workspace")
       .should("be.visible"); // TODO: this fails because cypress says the element is not visible, when it is. Fix this
-    cy.url().should("match", /test-workspace/); // TODO: redirection works only sometimes, so this fails pretty often
   });
   it("Should allow a user to access one of his workspaces and the datasets in it", () => {
     cy.task("performLogin").then((token) => {
@@ -48,7 +48,7 @@ describe("Online workspaces access", () => {
     cy.task("createWorkspaceAndDatasets");
     cy.setCookie("hasUserTriedApp", "true");
     cy.setCookie("consentedCookies", "true");
-    cy.visit("/cypress-test-workspace/datasets?");
+    cy.visit("/cypress-test-workspace/datasets");
     cy.contains("Test dataset cypress").should("be.visible");
     cy.get('[aria-label="Open workspace selection popover"]').click();
     cy.get('[aria-label="Workspace selection menu popover"]')
