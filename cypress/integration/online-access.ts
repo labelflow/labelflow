@@ -17,10 +17,28 @@ describe("Online workspaces access", () => {
     cy.url().should("match", /modal-signin/);
     cy.contains("Sign in to LabelFlow").should("be.visible");
   });
+  it.only("Should allow to create a new workspace to a signed in user", () => {
+    cy.task("performLogin").then((token) => {
+      cy.setCookie("next-auth.session-token", token as string);
+    });
+    cy.setCookie("hasUserTriedApp", "true");
+    cy.setCookie("consentedCookies", "true");
+    // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
+    cy.visit("/local/datasets?modal-update-service-worker=update");
+    cy.get('[aria-label="User and Preferences"]').click();
+    cy.contains("Cypress test user").should("be.visible");
+    cy.get('[aria-label="Open workspace selection popover"]').click();
+    cy.get('[aria-label="Workspace selection menu popover"]')
+      .contains("Create workspace")
+      .click({ force: true }); // TODO: fix this, we should not use {force:true}, but try to understand why Cypress thinks it's not visible
+    cy.contains("Workspace Name").should("be.visible");
+    cy.focused().type("Test workspace");
+    cy.get('[aria-label="Create workspace"]').click();
+    cy.wait(420);
+    cy.get('[aria-label="Open workspace selection popover"]').click();
+    cy.get('[aria-label="Workspace selection menu popover"]')
+      .contains("Test workspace")
+      .should("be.visible"); // TODO: this fails because cypress says the element is not visible, when it is. Fix this
+    cy.url().should("match", /test-workspace/); // TODO: redirection works only sometimes, so this fails pretty often
+  });
 });
-
-// cy.task("performLogin").then((token) => {
-//   cy.setCookie("next-auth.session-token", token as string);
-// });
-// cy.get('[aria-label="User and Preferences"]').click();
-//     cy.contains("Cypress test user").should("be.visible");
