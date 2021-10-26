@@ -23,6 +23,23 @@ const SentryWebpackPluginOptions = {
 
 module.exports = withSentryConfig(
   withPWA({
+    async headers() {
+      return [
+        {
+          source: '/:path*',
+          headers: [
+            {
+              key: 'Cross-Origin-Embedder-Policy',
+              value: 'require-corp',
+            },
+            {
+              key: 'Cross-Origin-Opener-Policy',
+              value: 'same-origin',
+            },
+          ],
+        },
+      ]
+    },
     sentry: {
       disableServerWebpackPlugin:
         process.env.SENTRY_AUTH_TOKEN != null ? false : true,
@@ -144,6 +161,8 @@ module.exports = withSentryConfig(
               http2: false,
               net: false,
               tls: false,
+              worker_threads: false,
+              perf_hooks: false,
               child_process: false,
             },
           };
@@ -169,6 +188,8 @@ module.exports = withSentryConfig(
             http2: "empty",
             http: "empty",
             https: "empty",
+            worker_threads: "empty",
+            perf_hooks: "empty",
             net: "empty",
             tls: "empty",
             zlib: "empty",

@@ -1,4 +1,5 @@
 import probe from "probe-image-size";
+import { getVips } from "./wasm-vips";
 
 const defaultMaxImageSizePixel: number = 60e6;
 const maxImageSizePixel: { [mimetype: string]: number } = {
@@ -60,6 +61,21 @@ export const probeImage = async (
   if (width && height && mimetype) {
     return { width, height, mimetype };
   }
+
+  const vips = await getVips();
+
+  const im = vips.Image.newFromFile(url);
+
+  console.log(
+    JSON.stringify({
+      loader: im.getString("vips-loader"), // The loader which was used to load the image
+      width: im.width,
+      height: im.height,
+      space: im.interpretation,
+      channels: im.bands,
+      depth: im.format,
+    })
+  );
 
   const probeInput = new Uint8Array(await getImage(url));
 

@@ -10,7 +10,7 @@ index b741ebc639ffc16a56001bb33212a6d4752be9f5..ae0167b5f144ae83f9f678defdbb02c3
  const TerserPlugin = require('terser-webpack-plugin')
  
  const buildCustomWorker = ({ id, basedir, destdir, plugins, success, minify }) => {
-@@ -34,10 +35,25 @@ const buildCustomWorker = ({ id, basedir, destdir, plugins, success, minify }) =
+@@ -34,10 +35,27 @@ const buildCustomWorker = ({ id, basedir, destdir, plugins, success, minify }) =
        main: customWorkerEntry
      },
      resolve: {
@@ -24,6 +24,8 @@ index b741ebc639ffc16a56001bb33212a6d4752be9f5..ae0167b5f144ae83f9f678defdbb02c3
 +        http2: false,
 +        net: false,
 +        tls: false,
++        worker_threads: false,
++        perf_hooks: false,
 +        child_process: false
 +      }
      },
@@ -59,7 +61,7 @@ index af3ce017de6f008500f567f58f4f96749a27004e..5e17925de6d925354f5ca71fd69a9ec1
  const TerserPlugin = require('terser-webpack-plugin')
  
  const getFallbackEnvs = ({fallbacks, basedir, id}) => {
-@@ -68,10 +69,25 @@ const buildFallbackWorker = ({ id, fallbacks, basedir, destdir, success, minify
+@@ -68,10 +69,27 @@ const buildFallbackWorker = ({ id, fallbacks, basedir, destdir, success, minify
        main: fallbackJs
      },
      resolve: {
@@ -73,6 +75,8 @@ index af3ce017de6f008500f567f58f4f96749a27004e..5e17925de6d925354f5ca71fd69a9ec1
 +        http2: false,
 +        net: false,
 +        tls: false,
++        worker_threads: false,
++        perf_hooks: false,
 +        child_process: false
 +      }
      },
