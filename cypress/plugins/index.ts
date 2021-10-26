@@ -85,6 +85,10 @@ module.exports = (on: (type: string, preprocessor: any) => void) => {
       webpackOptions: config,
     })
   );
+  const testUser = {
+    name: "Cypress test user",
+    email: "test@labelflow.ai",
+  };
   on("task", {
     async clearDb() {
       const prisma = await getPrismaClient();
@@ -96,13 +100,13 @@ module.exports = (on: (type: string, preprocessor: any) => void) => {
     },
     async performLogin() {
       const prisma = await getPrismaClient();
-      const email = "test@labelflow.ai";
+      const { name, email } = testUser;
       const existingUser = await prisma.user.findFirst({ where: { email } });
       const user =
         existingUser != null
           ? existingUser
           : await prisma.user.create({
-              data: { name: "Cypress test user", email },
+              data: { name, email },
             });
       await prisma.session.deleteMany({});
       const session = await prisma.session.create({
@@ -114,8 +118,31 @@ module.exports = (on: (type: string, preprocessor: any) => void) => {
           ).toISOString(),
         },
       });
-
       return session.sessionToken;
+    },
+    async createWorkspaceAndDatasets() {
+      const prisma = await getPrismaClient();
+      await prisma.workspace.create({
+        data: {
+          slug: "cypress-test-workspace",
+          name: "Cypress test workspace",
+          plan: "Community",
+          memberships: {
+            create: {
+              user: { connect: { email: testUser.email } },
+              role: "Owner",
+            },
+          },
+        },
+      });
+      await prisma.dataset.create({
+        data: {
+          workspace: { connect: { slug: "cypress-test-workspace" } },
+          slug: "test-dataset-cypress",
+          name: "Test dataset cypress",
+        },
+      });
+      return null;
     },
   });
 };

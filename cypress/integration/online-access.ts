@@ -17,7 +17,7 @@ describe("Online workspaces access", () => {
     cy.url().should("match", /modal-signin/);
     cy.contains("Sign in to LabelFlow").should("be.visible");
   });
-  it.only("Should allow to create a new workspace to a signed in user", () => {
+  it("Should allow to create a new workspace to a signed in user", () => {
     cy.task("performLogin").then((token) => {
       cy.setCookie("next-auth.session-token", token as string);
     });
@@ -40,5 +40,19 @@ describe("Online workspaces access", () => {
       .contains("Test workspace")
       .should("be.visible"); // TODO: this fails because cypress says the element is not visible, when it is. Fix this
     cy.url().should("match", /test-workspace/); // TODO: redirection works only sometimes, so this fails pretty often
+  });
+  it("Should allow a user to access one of his workspaces and the datasets in it", () => {
+    cy.task("performLogin").then((token) => {
+      cy.setCookie("next-auth.session-token", token as string);
+    });
+    cy.task("createWorkspaceAndDatasets");
+    cy.setCookie("hasUserTriedApp", "true");
+    cy.setCookie("consentedCookies", "true");
+    cy.visit("/cypress-test-workspace/datasets?");
+    cy.contains("Test dataset cypress").should("be.visible");
+    cy.get('[aria-label="Open workspace selection popover"]').click();
+    cy.get('[aria-label="Workspace selection menu popover"]')
+      .contains("Cypress test workspace")
+      .should("be.visible"); // TODO: this fails because cypress says the element is not visible, when it is. Fix this
   });
 });
