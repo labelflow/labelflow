@@ -1,4 +1,3 @@
-const withPWA = require("next-pwa");
 const { BundleAnalyzerPlugin } = require("webpack-bundle-analyzer");
 const path = require("path");
 
@@ -22,7 +21,7 @@ const SentryWebpackPluginOptions = {
 };
 
 module.exports = withSentryConfig(
-  withPWA({
+  {
     sentry: {
       disableServerWebpackPlugin:
         process.env.SENTRY_AUTH_TOKEN != null ? false : true,
@@ -205,23 +204,7 @@ module.exports = withSentryConfig(
     // See https://github.com/vercel/next.js/blob/0af3b526408bae26d6b3f8cab75c4229998bf7cb/test/integration/typescript-workspaces-paths/packages/www/next.config.js
     onDemandEntries: {
       maxInactiveAge: 1000 * 60 * 60,
-    },
-    // Put the Service Worker code in the `public` folder to avoid having to serve it separately
-    // See https://github.com/shadowwalker/next-pwa#usage-without-custom-server-nextjs-9
-    pwa: {
-      dest: "public",
-      swSrc: "./src/worker/index.ts",
-      compileSrc: true,
-      // Register false, since we register manually in `_app.tsx`, and ask the user when to upgrade
-      register: false,
-      // Cache on frontend nav, it pre-fetches stuff more eagerly
-      // See https://github.com/shadowwalker/next-pwa#available-options
-      cacheOnFrontEndNav: true,
-      // Add plugins to the webpack config of the service worker bundler
-      // See https://developers.google.com/web/tools/workbox/reference-docs/latest/module-workbox-webpack-plugin.InjectManifest
-      webpackCompilationPlugins: [],
-      // exclude: ["/api/worker/"]
-    },
-  }),
+    }
+  },
   SentryWebpackPluginOptions
 );

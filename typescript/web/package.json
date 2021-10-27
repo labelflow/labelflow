@@ -27,7 +27,10 @@
     "@labelflow/react-openlayers-fiber": "workspace:typescript/react-openlayers-fiber",
     "@next-auth/prisma-adapter": "next",
     "@prisma/client": "2.30.3",
+    "@sentry/browser": "^6.13.3",
     "@sentry/nextjs": "^6.12.0",
+    "@sentry/tracing": "^6.13.3",
+    "@sentry/utils": "^6.13.3",
     "@storybook/client-api": "^6.3.7",
     "@supabase/supabase-js": "1.21.0",
     "@turf/bbox": "^6.5.0",
@@ -64,7 +67,6 @@
     "next-auth": "4.0.0-beta.1",
     "next-connect": "0.10.2",
     "next-cookie": "2.6.2",
-    "next-pwa": "patch:next-pwa@5.2.21#./next-pwa.patch",
     "next-seo": "^4.26.0",
     "next-transpile-modules": "8.0.0",
     "node-polyfill-webpack-plugin": "^1.1.2",
@@ -130,6 +132,8 @@
     "typescript": "4.3.5",
     "webpack": "5.38.1",
     "webpack-bundle-analyzer": "^4.4.2",
+    "webpack-cli": "^4.9.1",
+    "webpack-node-externals": "^3.0.0",
     "workbox-window": "6.1.5"
   }
 }
