@@ -8,6 +8,8 @@ const path = require("path");
 
 const { withSentryConfig } = require("@sentry/nextjs");
 
+const buildServiceWorker = require("./build-service-worker-webpack-babel");
+
 const SentryWebpackPluginOptions = {
   // Additional config options for the Sentry Webpack plugin. Keep in mind that
   // the following options are set automatically, and overriding them is not
@@ -43,6 +45,10 @@ module.exports = withSentryConfig(
       // Perform customizations to webpack config
 
       const isWebpack5 = nextConfig.webpack5;
+
+      if (!isServer) {
+        buildServiceWorker();
+      }
 
       // Add graphql import
       // See https://www.npmjs.com/package/graphql-tag#webpack-loading-and-preprocessing
