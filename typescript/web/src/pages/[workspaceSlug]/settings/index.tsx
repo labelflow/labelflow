@@ -17,9 +17,11 @@ const getWorkspaceDetailsQuery = gql`
   query getWorkspaceDetails($workspaceSlug: String) {
     workspace(where: { slug: $workspaceSlug }) {
       id
+      plan
       slug
       image
       name
+      stripeCustomerPortalUrl
     }
   }
 `;

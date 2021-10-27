@@ -1,13 +1,14 @@
 import { Prisma } from "@prisma/client";
+import Stripe from "stripe";
 
 import {
   QueryWorkspaceArgs,
   QueryWorkspacesArgs,
-  Workspace,
   Membership,
   MutationCreateWorkspaceArgs,
   MutationUpdateWorkspaceArgs,
   WorkspaceWhereUniqueInput,
+  MembershipRole,
 } from "@labelflow/graphql-types";
 
 import {
@@ -20,6 +21,13 @@ import {
 import slugify from "slugify";
 import { getPrismaClient } from "../prisma-client";
 import { castObjectNullsToUndefined } from "../repository/utils";
+
+if (!process.env.STRIPE_SECRET_KEY) {
+  throw new Error("You need to provide a STRIPE_SECRET_KEY");
+}
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+  apiVersion: "2020-08-27",
+});
 
 const getWorkspace = async (
   where: WorkspaceWhereUniqueInput,
@@ -89,12 +97,32 @@ const createWorkspace = async (
     );
   }
 
+  const { id: stripeCustomerId } = await stripe.customers.create({
+    metadata: { slug, name: args.data.name },
+    name: args.data.name,
+  });
+
+  // TODO: Dont hardcode this ?
+  const freePlanPriceId = "price_1Jk7VLKVrYd2FThGqrI4HeZE";
+
+  await stripe.subscriptions.create({
+    customer: stripeCustomerId,
+    metadata: { slug },
+    items: [
+      {
+        price: freePlanPriceId,
+        quantity: 1,
+      },
+    ],
+  });
+
   const createdWorkspaceId = await repository.workspace.add(
     {
       id: args.data.id ?? undefined,
       name: args.data.name,
       image: args.data.image ?? undefined,
       slug,
+      stripeCustomerId,
     },
     user
   );
@@ -120,7 +148,7 @@ const updateWorkspace = async (
   return await getWorkspace({ id: currentWorkspace.id }, repository, user);
 };
 
-const memberships = async (parent: Workspace) => {
+const memberships = async (parent: DbWorkspaceWithType) => {
   return (await (
     await getPrismaClient()
   ).membership.findMany({
@@ -130,7 +158,7 @@ const memberships = async (parent: Workspace) => {
   })) as Omit<Membership, "user" | "workspace">[];
 };
 
-const datasets = async (parent: Workspace) => {
+const datasets = async (parent: DbWorkspaceWithType) => {
   return await (
     await getPrismaClient()
   ).dataset.findMany({
@@ -139,11 +167,51 @@ const datasets = async (parent: Workspace) => {
   });
 };
 
+const stripeCustomerPortalUrl = async (
+  parent: DbWorkspaceWithType,
+  _args: any,
+  { user, req }: Context
+) => {
+  const { stripeCustomerId, slug } = parent;
+
+  if (user?.id == null) {
+    throw new Error("User must be logged in to request this field");
+  }
+
+  if (stripeCustomerId == null) {
+    throw new Error(
+      `Couldn't retrieve Stripe Customer Portal Url of "${slug}" as this workspace doesn't have a Stripe Customer Id.`
+    );
+  }
+
+  const membership = await (
+    await getPrismaClient()
+  ).membership.findUnique({
+    where: { workspaceSlug_userId: { userId: user?.id, workspaceSlug: slug } },
+  });
+
+  if (membership?.role !== MembershipRole.Owner) {
+    throw new Error(
+      `User must have the role "Owner" of the workspace ${slug} to access billing information`
+    );
+  }
+
+  const session = await stripe.billingPortal.sessions.create({
+    customer: stripeCustomerId,
+    return_url: `${
+      // @ts-ignore ts says it doesn't exist but it does
+      req?.headers.origin ?? "http://localhost:3000"
+    }/${slug}/settings`,
+  });
+
+  return session.url;
+};
+
 export default {
   Query: {
     workspace,
     workspaces,
   },
   Mutation: { createWorkspace, updateWorkspace },
-  Workspace: { memberships, datasets },
+  Workspace: { memberships, datasets, stripeCustomerPortalUrl },
 };

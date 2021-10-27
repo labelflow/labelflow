@@ -78,15 +78,16 @@ model Dataset {
 model Workspace {
   // Id exists for regularity reasons.
   // It's more appropriate to query Workspaces using the slug
-  id          String        @id @default(uuid()) @db.Uuid
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
-  name        String        @unique
-  slug        String        @unique
-  image       String?
-  plan        WorkspacePlan
-  datasets    Dataset[]
-  memberships Membership[]
+  id               String        @id @default(uuid()) @db.Uuid
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+  name             String        @unique
+  slug             String        @unique
+  image            String?
+  plan             WorkspacePlan
+  stripeCustomerId String?
+  datasets         Dataset[]
+  memberships      Membership[]
 }
 
 model Membership {
