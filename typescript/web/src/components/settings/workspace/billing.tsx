@@ -2,6 +2,7 @@ import { Button, Stack, StackProps, Text, Flex } from "@chakra-ui/react";
 import * as React from "react";
 import { Card } from "../card";
 import { HeadingGroup } from "../heading-group";
+import { FieldGroup } from "../field-group";
 
 export const Billing = ({
   workspace,
@@ -22,18 +23,23 @@ export const Billing = ({
       description="Change Plan, payment methods or billing information"
     />
     <Card>
-      <Text fontWeight="bold">Current Plan</Text>
-      <Flex direction="row" justifyContent="space-between">
-        <Text fontSize="sm" mt="1" mb="3">
+      <FieldGroup
+        title="Plan"
+        description="Your current plan. You can change it by clicking on Manage Billing"
+      >
+        <Text mt="1" mb="3">
           {workspace?.plan}
         </Text>
+      </FieldGroup>
+
+      <Flex direction="row" justifyContent="flex-end">
         <Button
           as="a"
           href={workspace?.stripeCustomerPortalUrl}
           size="sm"
           colorScheme="brand"
         >
-          Change Plan
+          Manage Billing
         </Button>
       </Flex>
     </Card>
