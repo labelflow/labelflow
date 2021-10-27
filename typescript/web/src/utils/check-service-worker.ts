@@ -82,7 +82,7 @@ export const checkServiceWorkerReady = async (
     }
 
     return { wb, sw };
-  } catch (error) {
+  } catch (error: any) {
     // If we are not in window scope, this is not going to change by retrying
     if (error.message === messageNoWindow) {
       throw error;
