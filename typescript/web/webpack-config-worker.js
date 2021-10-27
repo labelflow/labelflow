@@ -6,16 +6,20 @@ const NodePolyfillPlugin = require("node-polyfill-webpack-plugin");
 
 module.exports = {
   target: "webworker",
-  mode: "development",
+  mode: "none",
   // WARNING: commented out to disable source maps
-  devtool: 'inline-source-map',
+  // devtool: 'inline-source-map',
   entry: {
-    index: path.join(__dirname, "src", "worker", "index.ts"),
+    main: path.join(__dirname, "src", "worker", "index.ts"),
+  },
+  output: {
+    path: path.join(__dirname, "public"),
+    filename: "sw.js",
   },
   // externalsPresets: { node: true }, // in order to ignore built-in modules like path, fs, etc.
   // externals: [nodeExternals({ modulesDir: path.resolve(__dirname, 'node_modules') })],
   resolve: {
-    extensions: [".js", ".ts", ".jsx", ".tsx"],
+    extensions: [".mjs", ".js", ".ts", ".jsx", ".tsx"],
     fallback: {
       child_process: false,
       dgram: false,
@@ -27,14 +31,13 @@ module.exports = {
       tls: false
     }
   },
-  output: {
-    path: path.join(__dirname, "public"),
-    filename: "sw.js",
-  },
   module: {
     rules: [
       {
-        test: /\.(t|j)s$/i,
+        test: /\.m?(t|j)sx?$/i,
+        resolve: {
+          fullySpecified: false
+        },
         use: [
           {
             loader: 'babel-loader',
@@ -77,4 +80,5 @@ module.exports = {
       excludeAliases: ["console"],
     }),
   ],
+  optimization: undefined
 };
