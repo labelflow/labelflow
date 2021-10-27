@@ -40,6 +40,63 @@ const buildServiceWorker = ({ minify }) => {
             {
               loader: "swc-loader",
               options: {
+
+
+                // "env": {
+                //   "coreJs": 3
+                // },
+                "minify": minify,
+                // // "exclude": ["stream", "jszip"],
+                "module": {
+                  // You can specify "commonjs", "es6", "amd", "umd"
+                  "type": "es6",
+                  "strict": true,
+                  "strictMode": true,
+                  "lazy": false,
+                  "noInterop": false,
+                  // ignoreDynamic: true
+                },
+                jsc: {
+                  //  es3 / es5 / es2015 / es2016
+                  "target": "es2016",
+                  "loose": false,
+                  "externalHelpers": true,
+                  "keepClassNames": true,
+                  "parser": {
+                    "syntax": "typescript",
+                    "tsx": true,
+                    "decorators": false,
+                    "dynamicImport": true
+                  },
+                  "transform": {
+                    "optimizer": {
+                      "globals": {
+                        "vars": {
+                          // "process.env.NODE_ENV": "production",
+                          // "process.env.SENTRY_DSN": process.env.SENTRY_DSN || process.env.NEXT_PUBLIC_SENTRY_DSN,
+                          // "process.env.NEXT_PUBLIC_SENTRY_DSN": process.env.SENTRY_DSN || process.env.NEXT_PUBLIC_SENTRY_DSN
+                        }
+                      }
+                    }
+                  }
+                },
+                //   "transform": null,
+                // "target": "es2016",
+                //   "loose": false,
+                //   "externalHelpers": false,
+                //   "keepClassNames": false,
+                //   "transform": {
+                //     "constModules": {
+
+                //       "globals": {
+                //         "stream": {
+                //           "DEBUG": "true"
+                //         },
+                //       }
+                //     }
+                //   }
+                // }
+
               }
             }
           ]
