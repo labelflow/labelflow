@@ -21,7 +21,7 @@ const { withSentryConfig } = require("@sentry/nextjs");
 // // Compiles, but errors at runtime during init with "ReferenceError: GraphQLJSON is not defined"
 // const buildServiceWorker = require("./build-service-worker-swcpack");
 
-// Compiles, but errors at runtime during init with "Uncaught TypeError: Class constructor ApolloServerBase cannot be invoked without 'new'"
+// Works
 const buildServiceWorker = require("./build-service-worker-webpack-swc");
 
 ////////////////////////////////////////////////////////////////////////////////

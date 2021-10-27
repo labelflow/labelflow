@@ -33,73 +33,46 @@ const buildServiceWorker = ({ minify }) => {
       rules: [
 
         {
-          test: /\.(t|j)sx?$/i,
+          test: /\.ts$/i,
           exclude: /(node_modules|bower_components)/,
-          resolve: {
-            fullySpecified: false
-          },
+          // resolve: {
+          //   fullySpecified: false
+          // },
           use: [
             {
               loader: "swc-loader",
               options: {
-
-
-                // "env": {
-                //   "coreJs": 3
-                // },
-                // "minify": minify,
                 minify: false,
-                // // "exclude": ["stream", "jszip"],
-                // "module": {
-                //   // You can specify "commonjs", "es6", "amd", "umd"
-                //   "type": "es6",
-                //   "strict": true,
-                //   "strictMode": true,
-                //   "lazy": false,
-                //   "noInterop": false,
-                //   // ignoreDynamic: true
+                // module: {
+                //   type: 'commonjs',
                 // },
                 jsc: {
-                  //  es3 / es5 / es2015 / es2016
-                  "target": "es2015",
-                  "loose": false,
-                  "externalHelpers": true,
-                  "keepClassNames": true,
-                  "parser": {
-                    "syntax": "typescript",
-                    "tsx": true,
-                    "decorators": false,
-                    "dynamicImport": true
-                  },
-                  // "transform": {
-                  //   "optimizer": {
-                  //     "globals": {
-                  //       "vars": {
-                  //         // "process.env.NODE_ENV": "production",
-                  //         // "process.env.SENTRY_DSN": process.env.SENTRY_DSN || process.env.NEXT_PUBLIC_SENTRY_DSN,
-                  //         // "process.env.NEXT_PUBLIC_SENTRY_DSN": process.env.SENTRY_DSN || process.env.NEXT_PUBLIC_SENTRY_DSN
-                  //       }
-                  //     }
-                  //   }
-                  // }
+                  // target: "es5",
+                  // parser: {
+                  //   syntax: 'typescript',
+                  //   dynamicImport: true,
+                  //   tsx: false,
+                  // },
+                  // transform: {
+                  //   // react: {
+                  //   //   runtime: 'automatic',
+                  //   //   pragma: 'React.createElement',
+                  //   //   pragmaFrag: 'React.Fragment',
+                  //   //   throwIfNamespace: true,
+                  //   //   // development: development,
+                  //   //   useBuiltins: true,
+                  //   //   // refresh: hasReactRefresh,
+                  //   // },
+                  //   optimizer: {
+                  //     // simplify: false,
+                  //     globals: {
+                  //       // typeofs: {
+                  //       //   window: 'undefined',
+                  //       // },
+                  //     },
+                  //   },
+                  // },
                 },
-                //   "transform": null,
-                // "target": "es2016",
-                //   "loose": false,
-                //   "externalHelpers": false,
-                //   "keepClassNames": false,
-                //   "transform": {
-                //     "constModules": {
-
-                //       "globals": {
-                //         "stream": {
-                //           "DEBUG": "true"
-                //         },
-                //       }
-                //     }
-                //   }
-                // }
-
               }
             }
           ]
