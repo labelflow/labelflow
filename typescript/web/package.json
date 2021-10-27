@@ -34,6 +34,7 @@
     "@storybook/client-api": "^6.3.7",
     "@supabase/supabase-js": "1.21.0",
     "@swc/core": "1.2.90",
+    "@swc/helpers": "^0.2.13",
     "@turf/bbox": "^6.5.0",
     "@turf/bbox-polygon": "^6.5.0",
     "@turf/helpers": "^6.5.0",

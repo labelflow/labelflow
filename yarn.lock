@@ -6085,6 +6085,7 @@ __metadata:
     "@storybook/react": 6.3.0
     "@supabase/supabase-js": 1.21.0
     "@swc/core": 1.2.90
+    "@swc/helpers": ^0.2.13
     "@testing-library/dom": ^7.31.0
     "@testing-library/jest-dom": ^5.12.0
     "@testing-library/react": 11.2.6
@@ -9294,6 +9295,13 @@ __metadata:
     "@swc/core-win32-x64-msvc":
       optional: true
   checksum: dade99708c4c12cf2e0160330fb811111fd5fcf724a11bf598b0f007ba8622b72c3a3f52df85c8b863a2aa1608325213a173a9b4910ae6d9b4203e6ea57fccf1
+  languageName: node
+  linkType: hard
+
+"@swc/helpers@npm:^0.2.13":
+  version: 0.2.13
+  resolution: "@swc/helpers@npm:0.2.13"
+  checksum: 712f15dfb42fa8bdca64fe3556001ac11c93e95b27ea0ea0c4c3f718b770d414b3a93bb9260ad68fbbcac624a834bf14c4a2261aeabf156917d532a3981bd378
   languageName: node
   linkType: hard
 

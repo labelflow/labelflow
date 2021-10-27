@@ -31,8 +31,10 @@ const buildServiceWorker = ({ minify }) => {
     },
     module: {
       rules: [
+
         {
-          test: /\.m?(t|j)sx?$/i,
+          test: /\.(t|j)sx?$/i,
+          exclude: /(node_modules|bower_components)/,
           resolve: {
             fullySpecified: false
           },
@@ -45,20 +47,21 @@ const buildServiceWorker = ({ minify }) => {
                 // "env": {
                 //   "coreJs": 3
                 // },
-                "minify": minify,
+                // "minify": minify,
+                minify: false,
                 // // "exclude": ["stream", "jszip"],
-                "module": {
-                  // You can specify "commonjs", "es6", "amd", "umd"
-                  "type": "es6",
-                  "strict": true,
-                  "strictMode": true,
-                  "lazy": false,
-                  "noInterop": false,
-                  // ignoreDynamic: true
-                },
+                // "module": {
+                //   // You can specify "commonjs", "es6", "amd", "umd"
+                //   "type": "es6",
+                //   "strict": true,
+                //   "strictMode": true,
+                //   "lazy": false,
+                //   "noInterop": false,
+                //   // ignoreDynamic: true
+                // },
                 jsc: {
                   //  es3 / es5 / es2015 / es2016
-                  "target": "es2016",
+                  "target": "es2015",
                   "loose": false,
                   "externalHelpers": true,
                   "keepClassNames": true,
@@ -68,17 +71,17 @@ const buildServiceWorker = ({ minify }) => {
                     "decorators": false,
                     "dynamicImport": true
                   },
-                  "transform": {
-                    "optimizer": {
-                      "globals": {
-                        "vars": {
-                          // "process.env.NODE_ENV": "production",
-                          // "process.env.SENTRY_DSN": process.env.SENTRY_DSN || process.env.NEXT_PUBLIC_SENTRY_DSN,
-                          // "process.env.NEXT_PUBLIC_SENTRY_DSN": process.env.SENTRY_DSN || process.env.NEXT_PUBLIC_SENTRY_DSN
-                        }
-                      }
-                    }
-                  }
+                  // "transform": {
+                  //   "optimizer": {
+                  //     "globals": {
+                  //       "vars": {
+                  //         // "process.env.NODE_ENV": "production",
+                  //         // "process.env.SENTRY_DSN": process.env.SENTRY_DSN || process.env.NEXT_PUBLIC_SENTRY_DSN,
+                  //         // "process.env.NEXT_PUBLIC_SENTRY_DSN": process.env.SENTRY_DSN || process.env.NEXT_PUBLIC_SENTRY_DSN
+                  //       }
+                  //     }
+                  //   }
+                  // }
                 },
                 //   "transform": null,
                 // "target": "es2016",
@@ -100,7 +103,13 @@ const buildServiceWorker = ({ minify }) => {
               }
             }
           ]
-        }
+        },
+        {
+          test: /\.m?js/,
+          resolve: {
+            fullySpecified: false
+          }
+        },
       ],
     },
     plugins: [
