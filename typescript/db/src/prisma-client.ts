@@ -7,6 +7,18 @@ declare module globalThis {
 
 export type PrismaClient = PrismaClientClass;
 
+export const createPrismaClient = () => {
+  const areTestsRunning =
+    process.env.RUNNING_TESTS === "true" ||
+    process.env.JEST_WORKER_ID !== undefined;
+  const url = areTestsRunning // Connect to the test DB if we are running tests
+    ? process.env.POSTGRES_TEST_URL
+    : process.env.POSTGRES_EXTERNAL_URL;
+  return new PrismaClientClass({
+    datasources: { db: { url } },
+  });
+};
+
 export const resetPrismaClient = async (): Promise<PrismaClientClass> => {
   console.log("[Prisma Client] Initializing prismaInstance");
   if (globalThis.prismaInstance) {
@@ -19,9 +31,7 @@ export const resetPrismaClient = async (): Promise<PrismaClientClass> => {
       );
     }
   }
-  globalThis.prismaInstance = new PrismaClientClass({
-    datasources: { db: { url: process.env.POSTGRES_EXTERNAL_URL } },
-  });
+  globalThis.prismaInstance = createPrismaClient();
   globalThis.prismaInstance.$on("beforeExit", () => {
     globalThis.prismaInstanceIsConnected = false;
   });
