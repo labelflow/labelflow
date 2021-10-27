@@ -47,7 +47,7 @@ module.exports = withSentryConfig(
       const isWebpack5 = nextConfig.webpack5;
 
       if (!isServer) {
-        buildServiceWorker();
+        buildServiceWorker({ minify: !dev });
       }
 
       // Add graphql import

@@ -1,8 +1,9 @@
 const path = require("path");
 const webpack = require('webpack')
 const NodePolyfillPlugin = require("node-polyfill-webpack-plugin");
+const TerserPlugin = require('terser-webpack-plugin')
 
-const buildServiceWorker = () => {
+const buildServiceWorker = ({ minify }) => {
   webpack({
     target: "webworker",
     mode: "none",
@@ -77,7 +78,12 @@ const buildServiceWorker = () => {
         excludeAliases: ["console"],
       }),
     ],
-    optimization: undefined
+    optimization: minify
+      ? {
+        minimize: true,
+        minimizer: [new TerserPlugin()]
+      }
+      : undefined
   }).run((error, status) => {
     if (error || status.hasErrors()) {
       console.error(`Failed to build service worker`);
