@@ -83,7 +83,7 @@ type Workspace {
   plan: WorkspacePlan!
   datasets: [Dataset!]!
   memberships: [Membership!]!
-  stripeCustomerPortalUrl: String!
+  stripeCustomerPortalUrl: String
 }
 
 type Membership {

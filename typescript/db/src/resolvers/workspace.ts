@@ -22,12 +22,11 @@ import slugify from "slugify";
 import { getPrismaClient } from "../prisma-client";
 import { castObjectNullsToUndefined } from "../repository/utils";
 
-if (!process.env.STRIPE_SECRET_KEY) {
-  throw new Error("You need to provide a STRIPE_SECRET_KEY");
-}
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: "2020-08-27",
-});
+const stripe = process.env.STRIPE_SECRET_KEY
+  ? new Stripe(process.env.STRIPE_SECRET_KEY, {
+      apiVersion: "2020-08-27",
+    })
+  : null;
 
 const getWorkspace = async (
   where: WorkspaceWhereUniqueInput,
@@ -97,24 +96,29 @@ const createWorkspace = async (
     );
   }
 
-  const { id: stripeCustomerId } = await stripe.customers.create({
-    metadata: { slug, name: args.data.name },
-    name: args.data.name,
-  });
+  let stripeCustomerId;
+  if (stripe) {
+    const { id } = await stripe.customers.create({
+      metadata: { slug, name: args.data.name },
+      name: args.data.name,
+    });
 
-  // TODO: Dont hardcode this ?
-  const freePlanPriceId = "price_1Jk7VLKVrYd2FThGqrI4HeZE";
+    stripeCustomerId = id;
 
-  await stripe.subscriptions.create({
-    customer: stripeCustomerId,
-    metadata: { slug },
-    items: [
-      {
-        price: freePlanPriceId,
-        quantity: 1,
-      },
-    ],
-  });
+    // TODO: Dont hardcode this ?
+    const freePlanPriceId = "price_1Jk7VLKVrYd2FThGqrI4HeZE";
+
+    await stripe.subscriptions.create({
+      customer: id,
+      metadata: { slug },
+      items: [
+        {
+          price: freePlanPriceId,
+          quantity: 1,
+        },
+      ],
+    });
+  }
 
   const createdWorkspaceId = await repository.workspace.add(
     {
@@ -172,6 +176,10 @@ const stripeCustomerPortalUrl = async (
   _args: any,
   { user, req }: Context
 ) => {
+  if (!stripe) {
+    return null;
+  }
+
   const { stripeCustomerId, slug } = parent;
 
   if (user?.id == null) {

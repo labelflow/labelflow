@@ -10,7 +10,7 @@ export const WorkspaceSettings = ({ workspace }: { workspace?: Workspace }) => {
   return (
     <SettingsContainer>
       <Profile workspace={workspace} />
-      <Billing workspace={workspace} />
+      {workspace?.stripeCustomerPortalUrl && <Billing workspace={workspace} />}
       {/* <DangerZone /> */}
     </SettingsContainer>
   );
