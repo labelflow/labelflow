@@ -8,8 +8,24 @@ const path = require("path");
 
 const { withSentryConfig } = require("@sentry/nextjs");
 
+////////////////////////////////////////////////////////////////////////////////
+// Service worker compilation (4 options)
+////////////////////////////////////////////////////////////////////////////////
+
+// // Works
 // const buildServiceWorker = require("./build-service-worker-webpack-babel");
-const buildServiceWorker = require("./build-service-worker-swcpack");
+
+// // Works
+// const buildServiceWorker = require("./build-service-worker-webpack-ts");
+
+// // Compiles, but errors at runtime during init with "ReferenceError: GraphQLJSON is not defined"
+// const buildServiceWorker = require("./build-service-worker-swcpack");
+
+// Does not compile "Identifier '_templateObject' has already been declared (165:9)"
+const buildServiceWorker = require("./build-service-worker-webpack-swc");
+
+////////////////////////////////////////////////////////////////////////////////
+
 
 const SentryWebpackPluginOptions = {
   // Additional config options for the Sentry Webpack plugin. Keep in mind that

@@ -94,6 +94,7 @@
     "remark-gfm": "1.0.0",
     "slugify": "^1.6.0",
     "styled-jsx": "^4.0.0",
+    "swc-loader": "0.1.15",
     "use-query-params": "^1.2.2",
     "uuid": "^8.3.2",
     "valid-url": "^1.0.9",

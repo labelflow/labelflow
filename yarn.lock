@@ -6164,6 +6164,7 @@ __metadata:
     slugify: ^1.6.0
     storybook-addon-next-router: 3.0.7
     styled-jsx: ^4.0.0
+    swc-loader: 0.1.15
     terser-webpack-plugin: ^5.2.4
     typescript: 4.3.5
     use-query-params: ^1.2.2
@@ -30910,6 +30911,18 @@ service-worker-mock@2.0.5:
   dependencies:
     tslib: ^2.0.3
   checksum: 6e21c9e1b3cd5735eb2af679a99ec3efc78a14e3d4d5e3fd594e254b91cfd37185b3d1c6e41b22f53a2cdf5d1b963ce30c0fe8b78337e3fd43d0137084670a5f
+  languageName: node
+  linkType: hard
+
+"swc-loader@npm:0.1.15":
+  version: 0.1.15
+  resolution: "swc-loader@npm:0.1.15"
+  dependencies:
+    loader-utils: ^2.0.0
+  peerDependencies:
+    "@swc/core": ^1.2.52
+    webpack: ">=2"
+  checksum: dd3b5893cc04abba85f7f3abbd97f4e810da5df24fe87123d4c0b4ac8559df37b59b3b044e88661e9ae52cbb111e0eb6eff02c96e243f984f26cba651eb90f15
   languageName: node
   linkType: hard
 

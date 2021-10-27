@@ -36,31 +36,14 @@ const buildServiceWorker = ({ minify }) => {
           resolve: {
             fullySpecified: false
           },
-          use: [
-            {
-              loader: 'babel-loader',
-              options: {
-                presets: [
-                  [
-                    'next/babel',
-                    {
-                      'transform-runtime': {
-                        corejs: false,
-                        helpers: true,
-                        regenerator: false,
-                        useESModules: true
-                      },
-                      'preset-env': {
-                        modules: false,
-                        targets: 'chrome >= 56'
-                      }
-                    }
-                  ]
-                ]
-              }
-            }
-          ]
-        }
+          loader: "ts-loader",
+          options: {
+            transpileOnly: true,
+            onlyCompileBundledFiles: true,
+            context: __dirname,
+            configFile: path.join(__dirname, 'tsconfig.worker.json')
+          },
+        },
       ],
     },
     plugins: [

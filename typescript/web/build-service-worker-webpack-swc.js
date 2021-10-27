@@ -38,25 +38,8 @@ const buildServiceWorker = ({ minify }) => {
           },
           use: [
             {
-              loader: 'babel-loader',
+              loader: "swc-loader",
               options: {
-                presets: [
-                  [
-                    'next/babel',
-                    {
-                      'transform-runtime': {
-                        corejs: false,
-                        helpers: true,
-                        regenerator: false,
-                        useESModules: true
-                      },
-                      'preset-env': {
-                        modules: false,
-                        targets: 'chrome >= 56'
-                      }
-                    }
-                  ]
-                ]
               }
             }
           ]
