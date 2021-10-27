@@ -8,7 +8,8 @@ const path = require("path");
 
 const { withSentryConfig } = require("@sentry/nextjs");
 
-const buildServiceWorker = require("./build-service-worker-webpack-babel");
+// const buildServiceWorker = require("./build-service-worker-webpack-babel");
+const buildServiceWorker = require("./build-service-worker-swcpack");
 
 const SentryWebpackPluginOptions = {
   // Additional config options for the Sentry Webpack plugin. Keep in mind that
