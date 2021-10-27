@@ -1,7 +1,7 @@
 // DEV Webpack configuration used to build the service worker
 
 const path = require("path");
-
+// const nodeExternals = require('webpack-node-externals');
 const NodePolyfillPlugin = require("node-polyfill-webpack-plugin");
 
 module.exports = {
@@ -12,18 +12,24 @@ module.exports = {
   entry: {
     index: path.join(__dirname, "src", "worker", "index.ts"),
   },
+  // externalsPresets: { node: true }, // in order to ignore built-in modules like path, fs, etc.
+  // externals: [nodeExternals({ modulesDir: path.resolve(__dirname, 'node_modules') })],
   resolve: {
     extensions: [".js", ".ts", ".jsx", ".tsx"],
     fallback: {
+      child_process: false,
       crypto: false,
-      module: false,
       dgram: false,
       dns: false,
       fs: false,
       http2: false,
+      module: false,
       net: false,
+      os: false,
+      path: false,
+      stream: false,
       tls: false,
-      child_process: false
+      zlib: false,
     }
   },
   output: {
@@ -32,48 +38,48 @@ module.exports = {
   },
   module: {
     rules: [
-      {
-        test: /\.(graphql|gql)$/,
-        use: "graphql-tag/loader",
-        exclude: /node_modules/
-      },
-      {
-        test: /\.(t|j)s$/i,
-        use: [
-          {
-            loader: 'babel-loader',
-            options: {
-              presets: [
-                [
-                  'next/babel',
-                  {
-                    'transform-runtime': {
-                      corejs: false,
-                      helpers: true,
-                      regenerator: false,
-                      useESModules: true
-                    },
-                    'preset-env': {
-                      modules: false,
-                      targets: 'chrome >= 56'
-                    }
-                  }
-                ]
-              ]
-            }
-          }
-        ]
-      }
       // {
-      //   test: /\.ts$/,
-      //   loader: "ts-loader",
-      //   options: {
-      //     transpileOnly: true,
-      //     onlyCompileBundledFiles: true,
-      //     context: __dirname,
-      //     configFile: path.join(__dirname, 'tsconfig.worker.json')
-      //   },
+      //   test: /\.(graphql|gql)$/,
+      //   use: "graphql-tag/loader",
+      //   exclude: /node_modules/
       // },
+      // {
+      //   test: /\.(t|j)s$/i,
+      //   use: [
+      //     {
+      //       loader: 'babel-loader',
+      //       options: {
+      //         presets: [
+      //           [
+      //             'next/babel',
+      //             {
+      //               'transform-runtime': {
+      //                 corejs: false,
+      //                 helpers: true,
+      //                 regenerator: false,
+      //                 useESModules: true
+      //               },
+      //               'preset-env': {
+      //                 modules: false,
+      //                 targets: 'chrome >= 56'
+      //               }
+      //             }
+      //           ]
+      //         ]
+      //       }
+      //     }
+      //   ]
+      // }
+      {
+        test: /\.ts$/,
+        loader: "ts-loader",
+        options: {
+          transpileOnly: true,
+          onlyCompileBundledFiles: true,
+          context: __dirname,
+          configFile: path.join(__dirname, 'tsconfig.worker.json')
+        },
+      },
     ],
   },
   plugins: [
