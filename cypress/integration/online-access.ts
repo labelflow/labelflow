@@ -10,7 +10,7 @@ describe("Online workspaces access", () => {
 
     cy.get('[aria-label="Workspace selection menu popover"]')
       .contains("Create workspace")
-      .click({ force: true }); // TODO: fix this, we should not use {force:true}, but try to understand why Cypress thinks it's not visible
+      .click();
     cy.contains("Workspace Name").should("be.visible");
     cy.focused().type("Test workspace");
     cy.get('[aria-label="Create workspace"]').click();
@@ -30,16 +30,16 @@ describe("Online workspaces access", () => {
     cy.get('[aria-label="Open workspace selection popover"]').click();
     cy.get('[aria-label="Workspace selection menu popover"]')
       .contains("Create workspace")
-      .click({ force: true }); // TODO: fix this, we should not use {force:true}, but try to understand why Cypress thinks it's not visible
+      .click();
     cy.contains("Workspace Name").should("be.visible");
     cy.focused().type("Test workspace");
     cy.get('[aria-label="Create workspace"]').click();
     cy.wait(420);
-    cy.url().should("match", /test-workspace/); // TODO: redirection works only sometimes, so this fails pretty often
+    cy.url().should("match", /test-workspace/);
     cy.get('[aria-label="Open workspace selection popover"]').click();
     cy.get('[aria-label="Workspace selection menu popover"]')
       .contains("Test workspace")
-      .should("be.visible"); // TODO: this fails because cypress says the element is not visible, when it is. Fix this
+      .should("be.visible");
   });
   it("Should allow a user to access one of his workspaces and the datasets in it", () => {
     cy.task("performLogin").then((token) => {
@@ -53,6 +53,6 @@ describe("Online workspaces access", () => {
     cy.get('[aria-label="Open workspace selection popover"]').click();
     cy.get('[aria-label="Workspace selection menu popover"]')
       .contains("Cypress test workspace")
-      .should("be.visible"); // TODO: this fails because cypress says the element is not visible, when it is. Fix this
+      .should("be.visible");
   });
 });
