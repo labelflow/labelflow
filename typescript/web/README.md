@@ -18,5 +18,5 @@ yarn dev
 You have two choices
 
 - SWC: `rm -rf public/static/sw && npx spack`
-- Webpack TS `yarn webpack --config ./build-sw-webpack.js --progress --colors`
+- Webpack TS `yarn webpack --config ./build-sw-webpack.js --progress`
 - Esbuild (Does not work) `npx esbuild src/worker/index.ts --bundle --outdir=public/statc/sw/ --target=browser`

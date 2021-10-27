@@ -5953,7 +5953,6 @@ __metadata:
     slugify: ^1.6.0
     typescript: 4.3.5
     uuid: 8.3.2
-    wasm-vips: ^0.0.1
   languageName: unknown
   linkType: soft
 
@@ -33036,13 +33035,6 @@ typescript@~3.7.3:
   dependencies:
     loose-envify: ^1.0.0
   checksum: 4f2cb6a9575e4faf71ddad9ad1ae7a00d0a75d24521c193fa464f30e6b04027bd97aa5d9546b0e13d3a150ab402eda216d59c1d0f2d6ca60124d96cd40dfa35c
-  languageName: node
-  linkType: hard
-
-"wasm-vips@npm:^0.0.1":
-  version: 0.0.1
-  resolution: "wasm-vips@npm:0.0.1"
-  checksum: 0911fa89bd21b2d5484ec46594d553224c32d8c2ea686ae50927d81f1cfd893f47f5d2e056e931129ea7c1d719f75cfcd16c45c07de535868e91c957e9edd21b
   languageName: node
   linkType: hard
 
