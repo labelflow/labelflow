@@ -157,6 +157,10 @@ type ImportStatus {
   error: String
 }
 
+type IogInferenceResult {
+  polygons: [[[Float!]]]!
+}
+
 scalar JSON
 
 type Label {
@@ -171,7 +175,6 @@ type Label {
   y: Float!
   height: Float!
   width: Float!
-  smartToolInput: JSON
 }
 
 type LabelClass {
@@ -219,7 +222,6 @@ input LabelCreateInput {
   imageId: ID!
   labelClassId: ID
   geometry: GeometryInput!
-  smartToolInput: JSON
 }
 
 enum LabelType {
@@ -231,7 +233,6 @@ enum LabelType {
 input LabelUpdateInput {
   labelClassId: ID
   geometry: GeometryInput
-  smartToolInput: JSON
 }
 
 input LabelWhereInput {
@@ -291,7 +292,7 @@ type Mutation {
   deleteLabelClass(where: LabelClassWhereUniqueInput!): LabelClass
   createDataset(data: DatasetCreateInput!): Dataset
   createDemoDataset: Dataset
-  runIog(data: RunIogInput!): Label
+  runIog(data: RunIogInput!): IogInferenceResult
   updateDataset(where: DatasetWhereUniqueInput!, data: DatasetUpdateInput!): Dataset
   deleteDataset(where: DatasetWhereUniqueInput!): Dataset
   importDataset(where: DatasetWhereUniqueInput!, data: DatasetImportInput!): ImportStatus

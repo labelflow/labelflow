@@ -1,3 +1,7 @@
+type IogInferenceResult {
+  polygons: [[[Float!]]]!
+}
+
 input RunIogInput {
   id: ID!
   imageUrl: String

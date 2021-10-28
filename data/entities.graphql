@@ -39,7 +39,6 @@ type Label {
   y: Float!
   height: Float!
   width: Float!
-  smartToolInput: JSON
 }
 
 type Geometry {
