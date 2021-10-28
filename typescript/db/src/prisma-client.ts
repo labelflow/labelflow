@@ -14,7 +14,7 @@ export const createPrismaClient = () => {
   const url = areTestsRunning // Connect to the test DB if we are running tests
     ? process.env.POSTGRES_TEST_URL
     : process.env.POSTGRES_EXTERNAL_URL;
-  console.log("Will create prisma instance in URL", url);
+  console.log("Will create prisma instance in URL", url?.split("/").join("-"));
   return new PrismaClientClass({
     datasources: { db: { url } },
   });
