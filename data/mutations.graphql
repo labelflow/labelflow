@@ -21,7 +21,7 @@ type Mutation {
   deleteLabelClass(where: LabelClassWhereUniqueInput!): LabelClass
   createDataset(data: DatasetCreateInput!): Dataset
   createDemoDataset: Dataset
-  runIog(data: RunIogInput!): IogInferenceResult
+  runIog(data: RunIogInput!): Label
   updateDataset(
     where: DatasetWhereUniqueInput!
     data: DatasetUpdateInput!
