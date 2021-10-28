@@ -223,7 +223,7 @@ export const DrawingTool = () => {
   }, []);
 
   useEffect(() => {
-    if (selectedTool !== Tools.SELECTION) {
+    if (selectedTool !== Tools.SELECTION && selectedTool !== Tools.IOG) {
       setSelectedLabelId(null);
     }
   }, [selectedTool]);

@@ -12,6 +12,10 @@ import { LabelType } from "@labelflow/graphql-types";
 import { SelectInteraction } from "./select-interaction";
 import { Tools, useLabelingStore } from "../../../../connectors/labeling-state";
 import {
+  ResizeIogBox,
+  ResizeIogEvent,
+} from "./resize-and-translate-box-interaction-iog";
+import {
   ResizeAndTranslateBox,
   ResizeAndTranslateEvent,
 } from "./resize-and-translate-box-interaction";
@@ -21,6 +25,7 @@ import { createUpdateLabelEffect } from "../../../../connectors/undo-store/effec
 // Extend react-openlayers-catalogue to include resize and translate interaction
 extend({
   ResizeAndTranslateBox: { object: ResizeAndTranslateBox, kind: "Interaction" },
+  ResizeIogBox: { object: ResizeIogBox, kind: "Interaction" },
 });
 
 const getLabelQuery = gql`
@@ -41,7 +46,12 @@ const getLabelQuery = gql`
 `;
 
 export const interactionEnd = async (
-  e: TranslateEvent | ModifyEvent | ResizeAndTranslateEvent | null,
+  e:
+    | TranslateEvent
+    | ModifyEvent
+    | ResizeAndTranslateEvent
+    | ResizeIogEvent
+    | null,
   perform: (effect: Effect<any>) => Promise<void>,
   client: ApolloClient<Object>,
   imageId: string,
@@ -152,6 +162,21 @@ export const SelectAndModifyFeature = (props: {
             }}
           />
         )}
+      {selectedTool === Tools.IOG && (
+        /* @ts-ignore - We need to add this because resizeAndTranslateBox is not included in the react-openalyers-fiber original catalogue */
+        <resizeIogBox
+          args={{ selectedFeature, pixelTolerance: 20 }}
+          onInteractionEnd={async (e: ResizeIogEvent | null) => {
+            return await interactionEnd(
+              e,
+              perform,
+              client,
+              imageId as string,
+              toast
+            );
+          }}
+        />
+      )}
       {selectedTool === Tools.SELECTION &&
         labelData?.label?.type === LabelType.Polygon &&
         selectedFeature && (
