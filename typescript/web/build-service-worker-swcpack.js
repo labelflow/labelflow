@@ -60,24 +60,27 @@ const buildServiceWorker = ({ minify }) => {
       // },
       "minify": minify,
       // // "exclude": ["stream", "jszip"],
-      "module": {
-        // You can specify "commonjs", "es6", "amd", "umd"
-        "type": "es6",
-        "strict": true,
-        "strictMode": true,
-        "lazy": false,
-        "noInterop": false,
-        // ignoreDynamic: true
+      // "module": {
+      //   // You can specify "commonjs", "es6", "amd", "umd"
+      //   "type": "es6",
+      //   "strict": true,
+      //   "strictMode": true,
+      //   "lazy": false,
+      //   "noInterop": false,
+      //   // ignoreDynamic: true
+      // },
+      module: {
+        type: 'commonjs',
       },
       jsc: {
         //  es3 / es5 / es2015 / es2016
-        "target": "es2016",
+        "target": "es2015",
         "loose": false,
         "externalHelpers": true,
         "keepClassNames": true,
         "parser": {
           "syntax": "typescript",
-          "tsx": true,
+          "tsx": false,
           "decorators": false,
           "dynamicImport": true
         },

@@ -18,14 +18,17 @@ const { withSentryConfig } = require("@sentry/nextjs");
 // // Works
 // const buildServiceWorker = require("./build-service-worker-webpack-ts");
 
-// // Compiles, but errors at runtime during init with "ReferenceError: GraphQLJSON is not defined"
-// const buildServiceWorker = require("./build-service-worker-swcpack");
-
 // Works
 const buildServiceWorker = require("./build-service-worker-webpack-swc");
 
-////////////////////////////////////////////////////////////////////////////////
+// // Compiles, but errors at runtime during init with 
+// //  - "ReferenceError: GraphQLJSON is not defined" if { "module": { "type": "es6" }, "jsc": { "target": "es2016" } }
+// //  - "ReferenceError: GraphQLJSON is not defined" if { "module": { "type": "commonjs" }, "jsc": { "target": "es2016" } }
+// //  - "__default is not defined" if { "module": { "type": "commonjs" }, "jsc": { "target": "es5" } }
+// //  - "__default is not defined" if { "module": { "type": "commonjs" }, "jsc": { "target": "es2015" } }
+// const buildServiceWorker = require("./build-service-worker-swcpack");
 
+////////////////////////////////////////////////////////////////////////////////
 
 const SentryWebpackPluginOptions = {
   // Additional config options for the Sentry Webpack plugin. Keep in mind that
