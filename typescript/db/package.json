@@ -8,7 +8,7 @@
     "build": "prisma generate",
     "start": "docker compose up --detach && sleep 10 && yarn deploy",
     "stop": "docker compose down --volumes --remove-orphans",
-    "deploy": "prisma migrate deploy",
+    "deploy": "prisma migrate deploy && dotenv -e .env.test prisma migrate deploy",
     "dev:push": "prisma db push",
     "generate": "prisma generate"
   },
@@ -32,6 +32,7 @@
     "@prisma/client": "2.30.3",
     "@supabase/supabase-js": "1.21.0",
     "apollo-server": "3.0.2",
+    "dotenv-cli": "^4.0.0",
     "graphql": "15.5.1",
     "isomorphic-fetch": "3.0.0",
     "memoize-one": "^5.2.1",
