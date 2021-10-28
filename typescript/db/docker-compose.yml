@@ -19,11 +19,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_ADMIN_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB_TEST}
     command: -p 5434
-    volumes:
-      - db_home_test:/var/lib/postgresql/data
 
 volumes:
   db_home:
-    external: false
-  db_home_test:
     external: false
