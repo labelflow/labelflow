@@ -8,7 +8,9 @@
     "build": "prisma generate",
     "start": "docker compose up --detach && sleep 10 && yarn deploy",
     "stop": "docker compose down --volumes --remove-orphans",
-    "deploy": "prisma migrate deploy && dotenv -e .env.test prisma migrate deploy",
+    "deploy": "prisma migrate deploy",
+    "deploy:test": "dotenv -e .env.test prisma migrate deploy",
+    "deploy:all": "yarn deploy && yarn deploy:test",
     "dev:push": "prisma db push",
     "generate": "prisma generate"
   },
