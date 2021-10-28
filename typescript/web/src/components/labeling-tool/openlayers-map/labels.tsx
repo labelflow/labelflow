@@ -60,7 +60,7 @@ export const Labels = ({
   const selectedLabel = labels.filter(
     ({ id }: Label) => id === selectedLabelId
   )?.[0];
-  console.log(`selectedLabel = ${JSON.stringify(selectedLabel, null, 1)}`);
+  // console.log(`selectedLabel = ${JSON.stringify(selectedLabel, null, 1)}`);
 
   return (
     <>

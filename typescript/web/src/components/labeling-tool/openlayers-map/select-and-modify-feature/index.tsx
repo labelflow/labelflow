@@ -21,6 +21,7 @@ import {
 } from "./resize-and-translate-box-interaction";
 import { Effect, useUndoStore } from "../../../../connectors/undo-store";
 import { createUpdateLabelEffect } from "../../../../connectors/undo-store/effects/update-label";
+import { createRunIogEffect } from "../../../../connectors/undo-store/effects/run-iog";
 
 // Extend react-openlayers-catalogue to include resize and translate interaction
 extend({
@@ -76,6 +77,61 @@ export const interactionEnd = async (
     } catch (error) {
       toast({
         title: "Error updating label",
+        // @ts-ignore
+        description: error?.message,
+        isClosable: true,
+        status: "error",
+        position: "bottom-right",
+        duration: 10000,
+      });
+    }
+  }
+  return true;
+};
+
+export const interactionEndIog = async (
+  e:
+    | TranslateEvent
+    | ModifyEvent
+    | ResizeAndTranslateEvent
+    | ResizeIogEvent
+    | null,
+  perform: (effect: Effect<any>) => Promise<void>,
+  client: ApolloClient<Object>,
+  toast: (options: UseToastOptions) => void
+) => {
+  const feature = e?.features?.item(0) as Feature<Polygon>;
+  if (feature != null) {
+    const coordinates = feature.getGeometry().getCoordinates();
+    const xCoordinates = coordinates[coordinates.length - 1].map(
+      (point) => point[0]
+    );
+    const yCoordinates = coordinates[coordinates.length - 1].map(
+      (point) => point[1]
+    );
+    const [x, y, destX, destY] = [
+      Math.min(...xCoordinates),
+      Math.min(...yCoordinates),
+      Math.max(...xCoordinates),
+      Math.max(...yCoordinates),
+    ];
+    const { id: labelIdIog } = feature.getProperties();
+    try {
+      await perform(
+        createRunIogEffect(
+          {
+            labelId: labelIdIog.split("-iog-canvas")[0],
+            x,
+            y,
+            width: destX - x,
+            height: destY - y,
+          },
+          { client }
+        )
+      );
+    } catch (error) {
+      toast({
+        title: "Error running IOG",
         // @ts-ignore
         description: error?.message,
         isClosable: true,
@@ -178,13 +234,7 @@ export const SelectAndModifyFeature = (props: {
         <resizeIogBox
           args={{ selectedFeature: selectedFeatureIog, pixelTolerance: 20 }}
           onInteractionEnd={async (e: ResizeIogEvent | null) => {
-            return await interactionEnd(
-              e,
-              perform,
-              client,
-              imageId as string,
-              toast
-            );
+            return await interactionEndIog(e, perform, client, toast);
           }}
         />
       )}

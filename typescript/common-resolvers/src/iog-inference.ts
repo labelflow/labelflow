@@ -53,7 +53,7 @@ const runIog = async (
       type: "Polygon",
       coordinates: result?.polygons,
     };
-    const { imageId } = await throwIfResolvesToNil(
+    const { imageId, smartToolInput } = await throwIfResolvesToNil(
       "No label with such id",
       repository.label.get
     )({ id: args.data.id }, user);
@@ -72,7 +72,7 @@ const runIog = async (
     const now = new Date();
 
     const newLabelEntity = {
-      smartToolInput: args.data,
+      smartToolInput: { ...smartToolInput, ...args.data },
       updatedAt: now.toISOString(),
       geometry: clippedGeometry,
       x,
