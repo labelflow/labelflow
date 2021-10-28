@@ -39,8 +39,7 @@ export const TopBar = ({ breadcrumbs, rightContent }: Props) => {
         <Spacer minWidth="6" />
         <ApolloProvider client={client}>{rightContent}</ApolloProvider>
         <HelpMenu />
-        {process.env.NEXT_PUBLIC_FEATURE_SIGNIN === "true" &&
-          status === "unauthenticated" && <SigninButton />}
+        {status === "unauthenticated" && <SigninButton />}
         <UserMenu />
       </HStack>
     </ApolloProvider>
