@@ -11,7 +11,7 @@ import { Geometry, Polygon, Point } from "ol/geom";
 import { useApolloClient, useQuery, gql } from "@apollo/client";
 import { useToast } from "@chakra-ui/react";
 import { useHotkeys } from "react-hotkeys-hook";
-// import { Coordinate } from "ol/coordinate";
+import { Coordinate } from "ol/coordinate";
 import CircleStyle from "ol/style/Circle";
 import { LabelType } from "@labelflow/graphql-types";
 import { ModifyEvent } from "ol/interaction/Modify";
@@ -24,9 +24,7 @@ import {
 import { keymap } from "../../../../keymap";
 import { noneClassColor } from "../../../../utils/class-color-generator";
 import { createCreateLabelEffect } from "../../../../connectors/undo-store/effects/create-label";
-// import { createUpdateLabelEffect } from "../../../../connectors/undo-store/effects/update-label";
-import { createRunIogEffect } from "../../../../connectors/undo-store/effects/run-iog";
-import { useUndoStore } from "../../../../connectors/undo-store";
+import { createUpdateLabelEffect } from "../../../../connectors/undo-store/effects/update-label";
 
 const labelClassQuery = gql`
   query getLabelClass($id: ID!) {
@@ -47,49 +45,46 @@ const imageQuery = gql`
   }
 `;
 
-// TODO: cleanup comments
-// const runIogMutation = gql`
-//   mutation runIog(
-//     $id: ID!
-//     $imageUrl: String
-//     $x: Float
-//     $y: Float
-//     $width: Float
-//     $height: Float
-//     $pointsInside: [[Float!]]
-//     $pointsOutside: [[Float!]]
-//     $centerPoint: [Float!]
-//   ) {
-//     runIog(
-//       data: {
-//         id: $id
-//         imageUrl: $imageUrl
-//         x: $x
-//         y: $y
-//         width: $width
-//         height: $height
-//         pointsInside: $pointsInside
-//         pointsOutside: $pointsOutside
-//         centerPoint: $centerPoint
-//       }
-//     ) {
-//       polygons
-//     }
-//   }
-// `;
+const runIogMutation = gql`
+  mutation runIog(
+    $id: ID!
+    $imageUrl: String
+    $x: Float
+    $y: Float
+    $width: Float
+    $height: Float
+    $pointsInside: [[Float!]]
+    $pointsOutside: [[Float!]]
+    $centerPoint: [Float!]
+  ) {
+    runIog(
+      data: {
+        id: $id
+        imageUrl: $imageUrl
+        x: $x
+        y: $y
+        width: $width
+        height: $height
+        pointsInside: $pointsInside
+        pointsOutside: $pointsOutside
+        centerPoint: $centerPoint
+      }
+    ) {
+      polygons
+    }
+  }
+`;
 
 const geometryFunction = createBox();
-type Coordinate = [number, number];
 
 export const DrawIogInteraction = ({ imageId }: { imageId: string }) => {
   const map = useMap();
   const drawRef = useRef<OlDraw>(null);
   const client = useApolloClient();
 
-  const { perform } = useUndoStore();
   const [pointsInside, setPointsInside] = useState<Coordinate[]>([]);
   const [pointsOutside, setPointsOutside] = useState<Coordinate[]>([]);
-  const [centerPoint, setCenterPoint] = useState<Coordinate | null>(null);
+  const [centerPoint, setCenterPoint] = useState<Coordinate>([]);
   const vectorSourceRef = useRef<OlSourceVector<Geometry>>(null);
   const [centerPointFeature, setCenterPointFeature] =
     useState<Feature<Polygon> | null>(null);
@@ -138,8 +133,8 @@ export const DrawIogInteraction = ({ imageId }: { imageId: string }) => {
   const clearIogFeatures = useCallback(() => {
     setPointsInside([]);
     setPointsOutside([]);
-    setCenterPoint(null);
-    // setSelectedLabelId(null);
+    setCenterPoint([]);
+    setSelectedLabelId(null);
   }, [setPointsInside, setPointsOutside, setCenterPoint, setSelectedLabelId]);
   useHotkeys(keymap.validateIogLabel.key, clearIogFeatures, {}, [
     clearIogFeatures,
@@ -159,85 +154,75 @@ export const DrawIogInteraction = ({ imageId }: { imageId: string }) => {
 
   const errorMessage = "Error executing IOG";
 
-  // const runIog = async ({
-  //   id,
-  //   imageUrl,
-  //   x,
-  //   y,
-  //   width,
-  //   height,
-  //   pointsInside: pointsInsideIog,
-  //   pointsOutside: pointsOutsideIog,
-  //   centerPoint: centerPointIog,
-  // }: {
-  //   id: string | null;
-  //   imageUrl?: string;
-  //   x?: number;
-  //   y?: number;
-  //   width?: number;
-  //   height?: number;
-  //   pointsInside?: Coordinate[];
-  //   pointsOutside?: Coordinate[];
-  //   centerPoint?: Coordinate;
-  // }) => {
-  //   if (dataImage?.image != null && id != null) {
-  //     const inferencePromise = (async () => {
-  //       const { data } = await client.mutate({
-  //         mutation: runIogMutation,
-  //         variables: {
-  //           id,
-  //           imageUrl,
-  //           x,
-  //           y,
-  //           width,
-  //           height,
-  //           centerPoint: centerPointIog,
-  //           pointsInside: pointsInsideIog,
-  //           pointsOutside: pointsOutsideIog,
-  //         },
-  //       });
+  const runIog = async ({
+    id,
+    imageUrl,
+    x,
+    y,
+    width,
+    height,
+    pointsInside: pointsInsideIog,
+    pointsOutside: pointsOutsideIog,
+    centerPoint: centerPointIog,
+  }: {
+    id: string | null;
+    imageUrl?: string;
+    x?: number;
+    y?: number;
+    width?: number;
+    height?: number;
+    pointsInside?: Coordinate[];
+    pointsOutside?: Coordinate[];
+    centerPoint?: Coordinate;
+  }) => {
+    if (dataImage?.image != null && id != null) {
+      const inferencePromise = (async () => {
+        const { data } = await client.mutate({
+          mutation: runIogMutation,
+          variables: {
+            id,
+            imageUrl,
+            x,
+            y,
+            width,
+            height,
+            centerPoint: centerPointIog,
+            pointsInside: pointsInsideIog,
+            pointsOutside: pointsOutsideIog,
+          },
+        });
 
-  //       return createUpdateLabelEffect(
-  //         {
-  //           geometry: {
-  //             type: "Polygon",
-  //             coordinates: data?.runIog?.polygons,
-  //           },
-  //           labelId: id,
-  //           imageId: dataImage?.image?.id,
-  //         },
-  //         { client }
-  //       ).do();
-  //     })();
+        return createUpdateLabelEffect(
+          {
+            geometry: {
+              type: "Polygon",
+              coordinates: data?.runIog?.polygons,
+            },
+            labelId: id,
+            imageId: dataImage?.image?.id,
+          },
+          { client }
+        ).do();
+      })();
 
-  //     try {
-  //       await inferencePromise;
-  //     } catch (error) {
-  //       toast({
-  //         title: errorMessage,
-  //         description: error?.message,
-  //         isClosable: true,
-  //         status: "error",
-  //         position: "bottom-right",
-  //         duration: 10000,
-  //       });
-  //     }
-  //   }
-  // };
+      try {
+        await inferencePromise;
+      } catch (error) {
+        toast({
+          title: errorMessage,
+          description: error?.message,
+          isClosable: true,
+          status: "error",
+          position: "bottom-right",
+          duration: 10000,
+        });
+      }
+    }
+  };
 
   useEffect(() => {
     if (pointsInside.length > 0 || pointsOutside.length > 0)
-      perform(
-        createRunIogEffect(
-          {
-            labelId: selectedLabelId ?? "",
-            pointsInside,
-            pointsOutside,
-          },
-          { client }
-        )
-      );
-    // runIog({ id: selectedLabelId, pointsInside, pointsOutside });
+      runIog({ id: selectedLabelId, pointsInside, pointsOutside });
   }, [pointsInside, pointsOutside, selectedLabelId]);
 
   const style = useMemo(() => {
@@ -266,12 +251,12 @@ export const DrawIogInteraction = ({ imageId }: { imageId: string }) => {
       if (idOfClickedFeature === selectedLabelId) {
         setPointsOutside((previousPoints) => [
           ...previousPoints,
-          event.coordinate as Coordinate,
+          event.coordinate,
         ]);
       } else {
         setPointsInside((previousPoints) => [
           ...previousPoints,
-          event.coordinate as Coordinate,
+          event.coordinate,
         ]);
       }
 
@@ -293,7 +278,7 @@ export const DrawIogInteraction = ({ imageId }: { imageId: string }) => {
     const geometry = new GeoJSON().writeGeometryObject(
       openLayersGeometry
     ) as GeoJSONPolygon;
-    const labelId = await createCreateLabelEffect(
+    const labelIdPromise = createCreateLabelEffect(
       {
         imageId,
         selectedLabelClassId,
@@ -305,8 +290,6 @@ export const DrawIogInteraction = ({ imageId }: { imageId: string }) => {
         client,
       }
     ).do();
-    // console.log(await labelId);
-    // return labelId;
     const inferencePromise = (async () => {
       const dataUrl = await (async function () {
         const blob = await fetch(dataImage?.image?.url).then((r) => r.blob());
@@ -317,27 +300,22 @@ export const DrawIogInteraction = ({ imageId }: { imageId: string }) => {
         });
       })();
       const [x, y, xMax, yMax] = openLayersGeometry.getExtent();
-      const boundingBoxCenterPoint: Coordinate = [
+      const boundingBoxCenterPoint = [
         Math.floor((x + xMax) / 2),
         Math.floor((y + yMax) / 2),
       ];
 
       setCenterPoint(boundingBoxCenterPoint);
 
-      return perform(
-        createRunIogEffect(
-          {
-            labelId,
-            x,
-            y,
-            height: yMax - y,
-            width: xMax - x,
-            imageUrl: dataUrl,
-            centerPoint: boundingBoxCenterPoint,
-          },
-          { client }
-        )
-      );
+      return runIog({
+        id: await labelIdPromise,
+        x,
+        y,
+        height: yMax - y,
+        width: xMax - x,
+        imageUrl: dataUrl,
+        centerPoint: boundingBoxCenterPoint,
+      });
     })();
 
     setDrawingToolState(DrawingToolState.IDLE);
@@ -360,17 +338,12 @@ export const DrawIogInteraction = ({ imageId }: { imageId: string }) => {
   ): Promise<boolean> => {
     const newCoordinates = modifyEvent.mapBrowserEvent.coordinate;
     setCenterPoint(newCoordinates);
-    await perform(
-      createRunIogEffect(
-        {
-          labelId: selectedLabelId ?? "",
-          centerPoint: newCoordinates,
-          pointsInside,
-          pointsOutside,
-        },
-        { client }
-      )
-    );
+    await runIog({
+      id: selectedLabelId,
+      centerPoint: newCoordinates,
+      pointsInside,
+      pointsOutside,
+    });
     return true;
   };
 
@@ -457,28 +430,26 @@ export const DrawIogInteraction = ({ imageId }: { imageId: string }) => {
                 />
               );
             }),
-            centerPoint ? (
-              <olFeature
-                key={centerPoint.join("-")}
-                id="centerPoint"
-                geometry={new Point(centerPoint)}
-                style={
-                  new Style({
-                    image: new CircleStyle({
-                      radius: 8,
-                      fill: new Fill({
-                        color: "#0023ffff",
-                      }),
-                      stroke: new Stroke({
-                        color: "#ffffffff",
-                        width: 2,
-                      }),
+            <olFeature
+              key={centerPoint.join("-")}
+              id="centerPoint"
+              geometry={new Point(centerPoint)}
+              style={
+                new Style({
+                  image: new CircleStyle({
+                    radius: 8,
+                    fill: new Fill({
+                      color: "#0023ffff",
                     }),
-                  })
-                }
-              />
-            ) : null,
-          ].filter((item) => item)}
+                    stroke: new Stroke({
+                      color: "#ffffffff",
+                      width: 2,
+                    }),
+                  }),
+                })
+              }
+            />,
+          ]}
         </olSourceVector>
       </olLayerVector>
     </>

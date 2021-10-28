@@ -54,8 +54,7 @@ const createLabel = async (
   args: MutationCreateLabelArgs,
   { repository, user }: Context
 ): Promise<Label> => {
-  const { id, imageId, labelClassId, geometry, type, smartToolInput } =
-    args.data;
+  const { id, imageId, labelClassId, geometry, type } = args.data;
 
   // Since we don't have any constraint checks with Dexie
   // We need to ensure that the imageId and the labelClassId
@@ -95,7 +94,6 @@ const createLabel = async (
     width,
     height,
     geometry: clippedGeometry,
-    smartToolInput,
   };
 
   await repository.label.add(newLabelEntity, user);
