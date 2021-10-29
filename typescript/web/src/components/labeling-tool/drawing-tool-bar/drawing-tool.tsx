@@ -20,16 +20,18 @@ import {
   Text,
   chakra,
 } from "@chakra-ui/react";
+import { useCookies } from "react-cookie";
 import { RiArrowDownSLine } from "react-icons/ri";
 import {
   BiShapeSquare,
   BiPurchaseTagAlt,
   BiShapePolygon,
-  BiArea,
 } from "react-icons/bi";
+import { IoColorWandOutline } from "react-icons/io5";
 import { useHotkeys } from "react-hotkeys-hook";
 
 import { useLabelingStore, Tools } from "../../../connectors/labeling-state";
+import { IogAlertDialog } from "./iog-alert-dialog";
 
 import { keymap } from "../../../keymap";
 
@@ -39,7 +41,7 @@ const ChakraBiLabel = chakra(BiPurchaseTagAlt);
 const ChakraBiShapeSquare = chakra(BiShapeSquare);
 const ChakraBiShapePolygon = chakra(BiShapePolygon);
 const ChakraRiArrowDownSLine = chakra(RiArrowDownSLine);
-const ChakraBiArea = chakra(BiArea);
+const ChakraIoColorWandOutline = chakra(IoColorWandOutline);
 
 export const ToolSelectionPopoverItem = (props: {
   name: string;
@@ -131,7 +133,7 @@ export const DrawingToolIcon = (props: {
       toolTipLabel = `Polygon tool [${keymap.toolPolygon.key}]`;
       break;
     case Tools.IOG:
-      toolTipLabel = `IOG tool [${keymap.toolIog.key}]`;
+      toolTipLabel = `Auto Polygon tool [${keymap.toolIog.key}]`;
       break;
     default:
       toolTipLabel = `Bounding Box tool [${keymap.toolBoundingBox.key}]`;
@@ -167,7 +169,7 @@ export const DrawingToolIcon = (props: {
             case Tools.POLYGON:
               return <ChakraBiShapePolygon size="1.3em" />;
             case Tools.IOG:
-              return <ChakraBiArea size="1.3em" />;
+              return <ChakraIoColorWandOutline size="1.3em" />;
             default:
               return <ChakraBiShapeSquare size="1.3em" />;
           }
@@ -214,6 +216,7 @@ export const DrawingTool = () => {
     (state) => state.setSelectedLabelId
   );
   const [isPopoverOpened, doSetIsPopoverOpened] = useState(false);
+  const [isIogAlertDialogOpen, doSetIsIogAlertDialogOpen] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const setIsPopoverOpened = useCallback((newState) => {
     doSetIsPopoverOpened(newState);
@@ -221,6 +224,9 @@ export const DrawingTool = () => {
       buttonRef.current.focus();
     }
   }, []);
+  const [{ hasUserAcceptedIog }, setHasUserAcceptedIog] = useCookies([
+    "hasUserAcceptedIog",
+  ]);
 
   useEffect(() => {
     if (selectedTool !== Tools.SELECTION && selectedTool !== Tools.IOG) {
@@ -263,94 +269,109 @@ export const DrawingTool = () => {
     [setSelectedTool]
   );
   return (
-    <Popover
-      isOpen={isPopoverOpened}
-      placement="right-start"
-      closeOnBlur
-      onClose={() => {
-        setIsPopoverOpened(false);
-      }}
-    >
-      <DrawingToolIcon
-        buttonRef={buttonRef}
-        isDisabled={isImageLoading}
-        onClickDetails={(e) => {
-          setIsPopoverOpened(!isPopoverOpened);
-          e.stopPropagation();
+    <>
+      <IogAlertDialog
+        isOpen={isIogAlertDialogOpen}
+        onClose={() => doSetIsIogAlertDialogOpen(false)}
+        onAccept={() => {
+          setHasUserAcceptedIog("hasUserAcceptedIog", "true", {
+            path: "/",
+            httpOnly: false,
+          });
         }}
-        selectedTool={selectedTool}
-        setSelectedTool={setSelectedTool}
       />
-      <PopoverContent
-        borderColor={mode("gray.200", "gray.600")}
-        cursor="default"
-        pointerEvents="initial"
-        aria-label="Change Drawing Tool"
-        width="60"
+      <Popover
+        isOpen={isPopoverOpened}
+        placement="right-start"
+        closeOnBlur
+        onClose={() => {
+          setIsPopoverOpened(false);
+        }}
       >
-        <PopoverBody pl="0" pr="0">
-          <Box>
-            <ToolSelectionPopoverItem
-              name="Classification"
-              shortcut={keymap.toolClassification.key}
-              selected={selectedTool === Tools.CLASSIFICATION}
-              onClick={() => {
-                setSelectedTool(Tools.CLASSIFICATION);
-                setIsPopoverOpened(false);
-              }}
-              ariaLabel="Classification tool"
-            >
-              <Box ml="2">
-                <ChakraBiLabel size="1.3em" />
-              </Box>
-            </ToolSelectionPopoverItem>
-            <ToolSelectionPopoverItem
-              name="Bounding Box"
-              shortcut={keymap.toolBoundingBox.key}
-              selected={selectedTool === Tools.BOX}
-              onClick={() => {
-                setSelectedTool(Tools.BOX);
-                setIsPopoverOpened(false);
-              }}
-              ariaLabel="Bounding box tool"
-            >
-              <Box ml="2">
-                <ChakraBiShapeSquare size="1.3em" />
-              </Box>
-            </ToolSelectionPopoverItem>
-            <ToolSelectionPopoverItem
-              name="Polygon"
-              shortcut={keymap.toolPolygon.key}
-              selected={selectedTool === Tools.POLYGON}
-              onClick={() => {
-                setSelectedTool(Tools.POLYGON);
-                setIsPopoverOpened(false);
-              }}
-              ariaLabel="Polygon tool"
-            >
-              <Box ml="2">
-                <ChakraBiShapePolygon size="1.3em" />
-              </Box>
-            </ToolSelectionPopoverItem>
-            {process.env.NEXT_PUBLIC_IOG_API_ENDPOINT && (
+        <DrawingToolIcon
+          buttonRef={buttonRef}
+          isDisabled={isImageLoading}
+          onClickDetails={(e) => {
+            setIsPopoverOpened(!isPopoverOpened);
+            e.stopPropagation();
+          }}
+          selectedTool={selectedTool}
+          setSelectedTool={setSelectedTool}
+        />
+        <PopoverContent
+          borderColor={mode("gray.200", "gray.600")}
+          cursor="default"
+          pointerEvents="initial"
+          aria-label="Change Drawing Tool"
+          width="60"
+        >
+          <PopoverBody pl="0" pr="0">
+            <Box>
               <ToolSelectionPopoverItem
-                name="IOG tool"
-                shortcut={keymap.toolIog.key}
-                selected={selectedTool === Tools.IOG}
+                name="Classification"
+                shortcut={keymap.toolClassification.key}
+                selected={selectedTool === Tools.CLASSIFICATION}
                 onClick={() => {
-                  setSelectedTool(Tools.IOG);
+                  setSelectedTool(Tools.CLASSIFICATION);
                   setIsPopoverOpened(false);
                 }}
-                ariaLabel="Select iog tool"
+                ariaLabel="Classification tool"
               >
                 <Box ml="2">
-                  <ChakraBiArea size="1.3em" />
+                  <ChakraBiLabel size="1.3em" />
                 </Box>
               </ToolSelectionPopoverItem>
-            )}
-          </Box>
-        </PopoverBody>
-      </PopoverContent>
-    </Popover>
+              <ToolSelectionPopoverItem
+                name="Bounding Box"
+                shortcut={keymap.toolBoundingBox.key}
+                selected={selectedTool === Tools.BOX}
+                onClick={() => {
+                  setSelectedTool(Tools.BOX);
+                  setIsPopoverOpened(false);
+                }}
+                ariaLabel="Bounding box tool"
+              >
+                <Box ml="2">
+                  <ChakraBiShapeSquare size="1.3em" />
+                </Box>
+              </ToolSelectionPopoverItem>
+              <ToolSelectionPopoverItem
+                name="Polygon"
+                shortcut={keymap.toolPolygon.key}
+                selected={selectedTool === Tools.POLYGON}
+                onClick={() => {
+                  setSelectedTool(Tools.POLYGON);
+                  setIsPopoverOpened(false);
+                }}
+                ariaLabel="Polygon tool"
+              >
+                <Box ml="2">
+                  <ChakraBiShapePolygon size="1.3em" />
+                </Box>
+              </ToolSelectionPopoverItem>
+              {process.env.NEXT_PUBLIC_IOG_API_ENDPOINT && (
+                <ToolSelectionPopoverItem
+                  name="IOG tool"
+                  shortcut={keymap.toolIog.key}
+                  selected={selectedTool === Tools.IOG}
+                  onClick={() => {
+                    if (hasUserAcceptedIog !== "true") {
+                      doSetIsIogAlertDialogOpen(true);
+                    }
+                    setSelectedTool(Tools.IOG);
+                    setIsPopoverOpened(false);
+                  }}
+                  ariaLabel="Select iog tool"
+                >
+                  <Box ml="2">
+                    <ChakraIoColorWandOutline size="1.3em" />
+                  </Box>
+                </ToolSelectionPopoverItem>
+              )}
+            </Box>
+          </PopoverBody>
+        </PopoverContent>
+      </Popover>
+    </>
   );
 };
