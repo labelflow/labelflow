@@ -4,6 +4,12 @@ import { Coordinate, distance } from "ol/coordinate";
 import { Extent } from "ol/extent";
 import { Geometry, Polygon } from "ol/geom";
 
+import {
+  extractIogMaskFromLabel,
+  extractSmartToolInputInputFromIogMask,
+  extractImageDimensionsFromIogMask,
+} from "../../../../connectors/iog";
+
 type FeatureVertices = [Coordinate, Coordinate, Coordinate, Coordinate];
 type ClosestElement = {
   distanceToElement: number | null;
@@ -40,45 +46,25 @@ export class ResizeIogBox extends PointerInteraction {
     this.feature = options?.selectedFeature ?? null;
     this.onInteractionEnd = options?.onInteractionEnd ?? this.onInteractionEnd;
     if (this.feature != null) {
-      const coordinates = this.feature.getGeometry().getCoordinates();
-      const xCoordinates = coordinates[coordinates.length - 1].map(
-        (point) => point[0]
+      const smartToolInput = extractSmartToolInputInputFromIogMask(
+        this.feature.getGeometry().getCoordinates()
       );
-      const yCoordinates = coordinates[coordinates.length - 1].map(
-        (point) => point[1]
-      );
-      const [x, y, destX, destY] = [
-        Math.min(...xCoordinates),
-        Math.min(...yCoordinates),
-        Math.max(...xCoordinates),
-        Math.max(...yCoordinates),
-      ];
       this.featureVertices = this.getFeatureVerticesFromExtent({
-        x,
-        y,
-        destX,
-        destY,
+        x: smartToolInput.x,
+        y: smartToolInput.y,
+        destX: smartToolInput.x + smartToolInput.width,
+        destY: smartToolInput.y + smartToolInput.height,
       });
       this.feature.on("change", () => {
         if (this.feature != null) {
-          const newCoordinates = this.feature.getGeometry().getCoordinates();
-          const newXCoordinates = newCoordinates[newCoordinates.length - 1].map(
-            (point) => point[0]
+          const smartToolInputNew = extractSmartToolInputInputFromIogMask(
+            this.feature.getGeometry().getCoordinates()
           );
-          const newYCoordinates = newCoordinates[newCoordinates.length - 1].map(
-            (point) => point[1]
-          );
-          const [newX, newY, newDestX, newDestY] = [
-            Math.min(...newXCoordinates),
-            Math.min(...newYCoordinates),
-            Math.max(...newXCoordinates),
-            Math.max(...newYCoordinates),
-          ];
           this.featureVertices = this.getFeatureVerticesFromExtent({
-            x: newX,
-            y: newY,
-            destX: newDestX,
-            destY: newDestY,
+            x: smartToolInputNew.x,
+            y: smartToolInputNew.y,
+            destX: smartToolInputNew.x + smartToolInputNew.width,
+            destY: smartToolInputNew.y + smartToolInputNew.height,
           });
         }
       });
@@ -253,34 +239,35 @@ export class ResizeIogBox extends PointerInteraction {
   handleDragEvent(e: MapBrowserEvent<UIEvent>) {
     if (this.selectedElement != null && this.feature != null) {
       const coordinates = this.feature.getGeometry().getCoordinates();
-      const xCoordinates = coordinates[coordinates.length - 1].map(
-        (point) => point[0]
-      );
-      const yCoordinates = coordinates[coordinates.length - 1].map(
-        (point) => point[1]
-      );
+      const smartToolInput = extractSmartToolInputInputFromIogMask(coordinates);
       const extent = [
-        Math.min(...xCoordinates),
-        Math.min(...yCoordinates),
-        Math.max(...xCoordinates),
-        Math.max(...yCoordinates),
+        smartToolInput.x,
+        smartToolInput.y,
+        smartToolInput.x + smartToolInput.width,
+        smartToolInput.y + smartToolInput.height,
       ];
       const [x, y, X, Y] = this.getNewFeatureExtentFromDragEvent({
         extent,
         vertex: this.selectedElement,
         coordinate: e.coordinate,
       });
+      const { width: imageWidth, height: imageHeight } =
+        extractImageDimensionsFromIogMask(coordinates);
       this.feature.setGeometry(
-        new Polygon([
-          ...coordinates.slice(0, coordinates.length - 1),
-          [
-            [x, y],
-            [X, y],
-            [X, Y],
-            [x, Y],
-            [x, y],
-          ],
-        ])
+        new Polygon(
+          extractIogMaskFromLabel(
+            {
+              smartToolInput: {
+                x,
+                y,
+                width: X - x,
+                height: Y - y,
+              },
+            },
+            imageWidth,
+            imageHeight
+          )
+        )
       );
       this.featureChanged = true;
       e.preventDefault();

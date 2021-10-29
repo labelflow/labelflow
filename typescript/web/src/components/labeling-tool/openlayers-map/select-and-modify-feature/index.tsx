@@ -22,6 +22,11 @@ import {
 import { Effect, useUndoStore } from "../../../../connectors/undo-store";
 import { createUpdateLabelEffect } from "../../../../connectors/undo-store/effects/update-label";
 import { createRunIogEffect } from "../../../../connectors/undo-store/effects/run-iog";
+import {
+  extractSmartToolInputInputFromIogMask,
+  getIogMaskIdFromLabelId,
+  getLabelIdFromIogMaskId,
+} from "../../../../connectors/iog";
 
 // Extend react-openlayers-catalogue to include resize and translate interaction
 extend({
@@ -102,29 +107,15 @@ export const interactionEndIog = async (
 ) => {
   const feature = e?.features?.item(0) as Feature<Polygon>;
   if (feature != null) {
-    const coordinates = feature.getGeometry().getCoordinates();
-    const xCoordinates = coordinates[coordinates.length - 1].map(
-      (point) => point[0]
-    );
-    const yCoordinates = coordinates[coordinates.length - 1].map(
-      (point) => point[1]
-    );
-    const [x, y, destX, destY] = [
-      Math.min(...xCoordinates),
-      Math.min(...yCoordinates),
-      Math.max(...xCoordinates),
-      Math.max(...yCoordinates),
-    ];
     const { id: labelIdIog } = feature.getProperties();
     try {
       await perform(
         createRunIogEffect(
           {
-            labelId: labelIdIog.split("-iog-canvas")[0],
-            x,
-            y,
-            width: destX - x,
-            height: destY - y,
+            labelId: getLabelIdFromIogMaskId(labelIdIog),
+            ...extractSmartToolInputInputFromIogMask(
+              feature.getGeometry().getCoordinates()
+            ),
           },
           { client }
         )
@@ -186,7 +177,8 @@ export const SelectAndModifyFeature = (props: {
           ?.getFeatures()
           ?.filter(
             (feature) =>
-              feature.getProperties().id === `${selectedLabelId}-iog-canvas`
+              feature.getProperties().id ===
+              getIogMaskIdFromLabelId(selectedLabelId)
           )?.[0];
         if (featureFromSourceIog != null) {
           setSelectedFeatureIog(featureFromSourceIog as Feature<Polygon>);

@@ -13,6 +13,11 @@ import { Feature } from "ol";
 import { Label, LabelType } from "@labelflow/graphql-types";
 
 import { Tools, useLabelingStore } from "../../../connectors/labeling-state";
+import {
+  extractIogMaskFromLabel,
+  iogMaskColor,
+  getIogMaskIdFromLabelId,
+} from "../../../connectors/iog";
 
 import { noneClassColor } from "../../../utils/class-color-generator";
 
@@ -115,54 +120,24 @@ export const Labels = ({
             })}
           {selectedLabel?.smartToolInput && selectedTool === Tools.IOG && (
             <olFeature
-              key={`${selectedLabel?.id}-iog-canvas`}
-              id={`${selectedLabel?.id}-iog-canvas`}
+              key={getIogMaskIdFromLabelId(selectedLabel?.id)}
+              id={getIogMaskIdFromLabelId(selectedLabel?.id)}
               properties={{ isSelected: true }}
               geometry={new GeoJSON().readGeometry({
-                coordinates: [
-                  [
-                    [0, 0],
-                    [data?.image?.width, 0],
-                    [data?.image?.width, data?.image?.height],
-                    [0, data?.image?.height],
-                    [0, 0],
-                  ],
-                  [
-                    [
-                      selectedLabel?.smartToolInput?.x,
-                      selectedLabel?.smartToolInput?.y,
-                    ],
-                    [
-                      selectedLabel?.smartToolInput?.x +
-                        selectedLabel?.smartToolInput?.width,
-                      selectedLabel?.smartToolInput?.y,
-                    ],
-                    [
-                      selectedLabel?.smartToolInput?.x +
-                        selectedLabel?.smartToolInput?.width,
-                      selectedLabel?.smartToolInput?.y +
-                        selectedLabel?.smartToolInput?.height,
-                    ],
-                    [
-                      selectedLabel?.smartToolInput?.x,
-                      selectedLabel?.smartToolInput?.y +
-                        selectedLabel?.smartToolInput?.height,
-                    ],
-                    [
-                      selectedLabel?.smartToolInput?.x,
-                      selectedLabel?.smartToolInput?.y,
-                    ],
-                  ],
-                ],
+                coordinates: extractIogMaskFromLabel(
+                  selectedLabel,
+                  data?.image?.width,
+                  data?.image?.height
+                ),
                 type: "Polygon",
               })}
               style={
                 new Style({
                   fill: new Fill({
-                    color: "#DDDDDDAA",
+                    color: `${iogMaskColor}AA`,
                   }),
                   stroke: new Stroke({
-                    color: "#DDDDDDFF",
+                    color: `${iogMaskColor}FF`,
                     width: 2,
                   }),
                   zIndex: 2,
