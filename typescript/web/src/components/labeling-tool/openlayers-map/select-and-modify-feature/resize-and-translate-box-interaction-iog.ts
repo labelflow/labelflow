@@ -25,6 +25,8 @@ export class ResizeIogBox extends PointerInteraction {
 
   featureVertices: FeatureVertices | null = null;
 
+  imageDimensions: { width: number; height: number } | null = null;
+
   selectedElement: string | null = null;
 
   pixelTolerance: number = 10;
@@ -46,9 +48,9 @@ export class ResizeIogBox extends PointerInteraction {
     this.feature = options?.selectedFeature ?? null;
     this.onInteractionEnd = options?.onInteractionEnd ?? this.onInteractionEnd;
     if (this.feature != null) {
-      const smartToolInput = extractSmartToolInputInputFromIogMask(
-        this.feature.getGeometry().getCoordinates()
-      );
+      const coordinates = this.feature.getGeometry().getCoordinates();
+      const smartToolInput = extractSmartToolInputInputFromIogMask(coordinates);
+      this.imageDimensions = extractImageDimensionsFromIogMask(coordinates);
       this.featureVertices = this.getFeatureVerticesFromExtent({
         x: smartToolInput.x,
         y: smartToolInput.y,
@@ -112,7 +114,16 @@ export class ResizeIogBox extends PointerInteraction {
     ) {
       const geometry = this.feature.getGeometry();
       const [x, y, destX, destY] = extent;
-      const [newX, newY] = coordinate;
+      const [newX, newY] = [
+        Math.max(
+          0,
+          Math.min(coordinate[0], this.imageDimensions?.width ?? Infinity)
+        ),
+        Math.max(
+          0,
+          Math.min(coordinate[1], this.imageDimensions?.height ?? Infinity)
+        ),
+      ];
       switch (vertex) {
         case "bottomLeft":
           return [Math.min(newX, destX), Math.min(newY, destY), destX, destY];
