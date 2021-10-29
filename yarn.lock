@@ -6049,7 +6049,6 @@ __metadata:
   resolution: "@labelflow/web@workspace:typescript/web"
   dependencies:
     "@apollo/client": 3.4.10
-    "@babel/core": 7.14.3
     "@chakra-ui/react": 1.6.7
     "@chakra-ui/system": ^1.7.3
     "@chakra-ui/theme-tools": ^1.2.0
