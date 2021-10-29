@@ -34,6 +34,7 @@ module.exports = withSentryConfig(
         320, 480, 640, 750, 828, 960, 1080, 1200, 1440, 1920, 2048, 2560, 3840,
       ],
     },
+    swcMinify: true,
     experimental: { esmExternals: "loose" },
     webpack5: true,
     webpack: (
@@ -81,104 +82,72 @@ module.exports = withSentryConfig(
         },
       ];
 
-      // Transpile node-modules packages that provides no nodejs compatible files
-      // E.g.: `ol`
-      // See https://github.com/vercel/next.js/issues/9890
-      // See https://github.com/openlayers/openlayers/issues/10470
-      // See https://github.com/vercel/next.js/blob/bd589349d2a90c41e7fc9549ea2438febfc9a510/packages/next/build/webpack-config.ts#L637
-      // To do this we modify the `externals` option of webpack:
-      config.externals = config.externals.map((external) => {
-        if (!(typeof external === "function")) {
-          // `externals` options that are hardcoded strings and arrays are used directly
-          return external;
-        } else {
-          // `externals` options that are functions are overridden, to force externalize of the packages we want
+      // // Transpile node-modules packages that provides no nodejs compatible files
+      // // E.g.: `ol`
+      // // See https://github.com/vercel/next.js/issues/9890
+      // // See https://github.com/openlayers/openlayers/issues/10470
+      // // See https://github.com/vercel/next.js/blob/bd589349d2a90c41e7fc9549ea2438febfc9a510/packages/next/build/webpack-config.ts#L637
+      // // To do this we modify the `externals` option of webpack:
+      // config.externals = config.externals.map((external) => {
+      //   if (!(typeof external === "function")) {
+      //     // `externals` options that are hardcoded strings and arrays are used directly
+      //     return external;
+      //   } else {
+      //     // `externals` options that are functions are overridden, to force externalize of the packages we want
 
-          if (isWebpack5) {
-            // Return a webpack5-like `externals` option function
-            return (
-              { context, request, contextInfo, getResolve },
-              callback
-            ) => {
-              if (/^ol/.test(request)) {
-                // Make an exception for `ol`, never externalize this import, it must be transpiled and bundled
-                return callback?.();
-              } else {
-                // Use the standard NextJS `externals` function
-                return external(
-                  { context, request, contextInfo, getResolve },
-                  callback
-                );
-              }
-            };
-          } else {
-            // Return a webpack4-like `externals` option function
-            return (context, request, callback) => {
-              if (/^ol/.test(request)) {
-                // Make an exception for `ol`, never externalize this import, it must be transpiled and bundled
-                return callback?.();
-              } else {
-                // Use the standard NextJS `externals` function
-                return external(context, request, callback);
-              }
-            };
-          }
-        }
-      });
+
+      //     // Return a webpack5-like `externals` option function
+      //     return (
+      //       { context, request, contextInfo, getResolve },
+      //       callback
+      //     ) => {
+      //       if (/^ol/.test(request)) {
+      //         // Make an exception for `ol`, never externalize this import, it must be transpiled and bundled
+      //         return callback?.();
+      //       } else {
+      //         // Use the standard NextJS `externals` function
+      //         return external(
+      //           { context, request, contextInfo, getResolve },
+      //           callback
+      //         );
+      //       }
+      //     };
+
+      //   }
+      // });
 
       // Allow to transpile node modules that depends on node built-ins into browser.
       // E.g.: `apollo-server-core`
       // See https://github.com/webpack-contrib/css-loader/issues/447
       // See https://github.com/vercel/next.js/issues/7755
       if (!isServer) {
-        if (isWebpack5) {
-          // See https://www.npmjs.com/package/node-polyfill-webpack-plugin
-          const NodePolyfillPlugin = require("node-polyfill-webpack-plugin");
 
-          // See https://github.com/webpack-contrib/css-loader/issues/447#issuecomment-761853289
-          // See https://github.com/vercel/next.js/issues/7755#issuecomment-812805708
-          config.resolve = {
-            ...(config.resolve ?? {}),
-            fallback: {
-              ...(config.resolve?.fallback ?? {}),
-              module: false,
-              dgram: false,
-              dns: false,
-              fs: false,
-              http2: false,
-              net: false,
-              tls: false,
-              child_process: false,
-            },
-          };
-          config.plugins = [
-            ...(config?.plugins ?? []),
-            new NodePolyfillPlugin({
-              excludeAliases: ["console"],
-            }),
-          ];
-        } else {
-          // Webpack 4 uses the `node` option
-          config.node = {
-            ...(config.node ?? {}),
-            module: "empty",
-            dgram: "empty",
-            dns: "empty",
-            path: "empty",
-            fs: "empty",
-            os: "empty",
-            crypto: "empty",
-            process: "empty",
-            // stream: "empty",
-            http2: "empty",
-            http: "empty",
-            https: "empty",
-            net: "empty",
-            tls: "empty",
-            zlib: "empty",
-            child_process: "empty",
-          };
-        }
+        // See https://www.npmjs.com/package/node-polyfill-webpack-plugin
+        const NodePolyfillPlugin = require("node-polyfill-webpack-plugin");
+
+        // See https://github.com/webpack-contrib/css-loader/issues/447#issuecomment-761853289
+        // See https://github.com/vercel/next.js/issues/7755#issuecomment-812805708
+        config.resolve = {
+          ...(config.resolve ?? {}),
+          fallback: {
+            ...(config.resolve?.fallback ?? {}),
+            module: false,
+            dgram: false,
+            dns: false,
+            fs: false,
+            http2: false,
+            net: false,
+            tls: false,
+            child_process: false,
+          },
+        };
+        config.plugins = [
+          ...(config?.plugins ?? []),
+          new NodePolyfillPlugin({
+            excludeAliases: ["console"],
+          }),
+        ];
+
       }
 
       // Add webpack bundle analyzer with custom config to expose the reports publicly
