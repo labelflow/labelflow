@@ -29,6 +29,10 @@ module.exports = withSentryConfig(
       disableClientWebpackPlugin:
         process.env.SENTRY_AUTH_TOKEN != null ? false : true,
     },
+    // Fix Sentry problem with Next 12
+    // See https://github.com/getsentry/sentry-javascript/issues/4090#issuecomment-954484086
+    // See https://github.com/vercel/next.js/issues/30561#issuecomment-954032510
+    outputFileTracing: false,
     images: {
       deviceSizes: [
         320, 480, 640, 750, 828, 960, 1080, 1200, 1440, 1920, 2048, 2560, 3840,
