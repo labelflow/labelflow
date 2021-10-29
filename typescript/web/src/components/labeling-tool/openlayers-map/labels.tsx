@@ -60,21 +60,14 @@ export const Labels = ({
   const selectedLabel = labels.filter(
     ({ id }: Label) => id === selectedLabelId
   )?.[0];
-  // console.log(`selectedLabel = ${JSON.stringify(selectedLabel, null, 1)}`);
 
   return (
     <>
       <olLayerVector>
         <olSourceVector ref={sourceVectorLabelsRef}>
           {labels
-            .filter(
-              ({ type, id, smartToolInput }: Label) =>
-                [LabelType.Box, LabelType.Polygon].includes(type) //&&
-                // !(
-                //   id === selectedLabelId &&
-                //   smartToolInput &&
-                //   selectedTool === Tools.IOG
-                // )
+            .filter(({ type }: Label) =>
+              [LabelType.Box, LabelType.Polygon].includes(type)
             )
             .map(({ id, labelClass, geometry }: Label) => {
               const isSelected = id === selectedLabelId;
