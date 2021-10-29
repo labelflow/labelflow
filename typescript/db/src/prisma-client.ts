@@ -8,13 +8,7 @@ declare module globalThis {
 export type PrismaClient = PrismaClientClass;
 
 export const createPrismaClient = () => {
-  const areTestsRunning =
-    process.env.RUNNING_TESTS === "true" ||
-    process.env.JEST_WORKER_ID !== undefined;
-  const url = areTestsRunning // Connect to the test DB if we are running tests
-    ? process.env.POSTGRES_TEST_URL
-    : process.env.POSTGRES_EXTERNAL_URL;
-  console.log("Will create prisma instance in URL", url?.split("/").join("-"));
+  const url = process.env.POSTGRES_EXTERNAL_URL;
   return new PrismaClientClass({
     datasources: { db: { url } },
   });

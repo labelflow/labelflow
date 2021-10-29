@@ -10,8 +10,8 @@
   "scripts": {
     "lint": "eslint '{cypress,typescript}/**/*.{ts,tsx}'",
     "lint:all": "eslint '{cypress,typescript}/**/*.{ts,tsx}'",
-    "test": "jest --runInBand",
-    "test:all": "jest --runInBand",
+    "test": "dotenv -e .env.test -- jest --runInBand",
+    "test:all": "dotenv -e .env.test -- jest --runInBand",
     "cypress:open": "RUNNING_TESTS=\"true\" && cypress open",
     "cypress:run": "RUNNING_TESTS=\"true\" && cypress run",
     "dev:web": "cd ./typescript/web && yarn dev",
@@ -56,6 +56,7 @@
     "chromatic": "5.8.2",
     "cypress": "8.5.0",
     "dexie": "3.0.3",
+    "dotenv-cli": "^4.0.0",
     "eslint": "7.26.0",
     "eslint-config-airbnb-typescript": "12.3.1",
     "eslint-config-prettier": "8.3.0",
