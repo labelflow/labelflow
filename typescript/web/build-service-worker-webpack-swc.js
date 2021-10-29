@@ -2,6 +2,7 @@ const path = require("path");
 const webpack = require('webpack')
 const NodePolyfillPlugin = require("node-polyfill-webpack-plugin");
 const TerserPlugin = require('terser-webpack-plugin')
+// const { TerserPlugin } = require("next/dist/build/webpack/plugins/terser-webpack-plugin/src/index.js");
 
 const buildServiceWorker = ({ minify }) => {
   webpack({
@@ -32,45 +33,23 @@ const buildServiceWorker = ({ minify }) => {
     module: {
       rules: [
         {
-          test: /\.m?(t|j)sx?$/i,
-          resolve: {
-            fullySpecified: false
-          },
+          test: /\.ts$/i,
+          exclude: /(node_modules|bower_components)/,
           use: [
             {
-              loader: 'babel-loader',
+              loader: "swc-loader",
               options: {
-                presets: [
-                  [
-                    'next/babel',
-                    {
-                      'transform-runtime': {
-                        corejs: false,
-                        helpers: true,
-                        regenerator: false,
-                        useESModules: true
-                      },
-                      'preset-env': {
-                        modules: false,
-                        targets: 'chrome >= 56'
-                      }
-                    }
-                  ]
-                ]
+                minify: false,
               }
             }
           ]
-        }
-        // {
-        //   test: /\.ts$/,
-        //   loader: "ts-loader",
-        //   options: {
-        //     transpileOnly: true,
-        //     onlyCompileBundledFiles: true,
-        //     context: __dirname,
-        //     configFile: path.join(__dirname, 'tsconfig.worker.json')
-        //   },
-        // },
+        },
+        {
+          test: /\.m?js/,
+          resolve: {
+            fullySpecified: false
+          }
+        },
       ],
     },
     plugins: [
@@ -81,7 +60,9 @@ const buildServiceWorker = ({ minify }) => {
     optimization: minify
       ? {
         minimize: true,
-        minimizer: [new TerserPlugin()]
+        minimizer: [new TerserPlugin(
+          // { swcMinify: true }
+        )]
       }
       : undefined
   }).run((error, status) => {

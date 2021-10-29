@@ -6,6 +6,7 @@
 // See https://github.com/stutrek/apollo-server-service-worker/blob/master/src/serviceWorkerApollo.ts
 import {
   ApolloServerBase,
+  Config,
   GraphQLOptions,
   runHttpQuery,
 } from "apollo-server-core";
@@ -73,15 +74,46 @@ async function graphQLServiceWorker(
   }
 }
 
+/// /////////////////////////////////////////////////////////////////////////////
+// RouteHandlerObject: It would be better to just extend ApolloServerBase
+// But SWC does not like this and compiles to code that creates an error at runtime
+// So I commented it, and made a version that does not extend ApolloServerBase,
+// But instead contains an instance of ApolloServerBase.
+/// /////////////////////////////////////////////////////////////////////////////
+
+// /**
+//  * A class to bridge between ApolloServerBase and workbox RouteHandlerObject
+//  */
+// export class ApolloServerServiceWorker
+//   extends ApolloServerBase
+//   implements RouteHandlerObject
+// {
+//   async handle({ request }: RouteHandlerCallbackOptions): Promise<Response> {
+//     const options = await this.graphQLServerOptions({
+//       req: request,
+//     });
+//     const response = await graphQLServiceWorker(
+//       request as unknown as ApolloRequest,
+//       await request.json(),
+//       options
+//     );
+//     return response;
+//   }
+// }
+
 /**
  * A class to bridge between ApolloServerBase and workbox RouteHandlerObject
  */
-export class ApolloServerServiceWorker
-  extends ApolloServerBase
-  implements RouteHandlerObject
-{
+export class ApolloServerServiceWorker implements RouteHandlerObject {
+  apolloServer: ApolloServerBase;
+
+  constructor(config: Config) {
+    this.apolloServer = new ApolloServerBase(config);
+  }
+
   async handle({ request }: RouteHandlerCallbackOptions): Promise<Response> {
-    const options = await this.graphQLServerOptions({
+    // @ts-ignore
+    const options = await this.apolloServer.graphQLServerOptions({
       req: request,
     });
     const response = await graphQLServiceWorker(
