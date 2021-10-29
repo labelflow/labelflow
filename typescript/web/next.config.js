@@ -34,7 +34,8 @@ module.exports = withSentryConfig(
         320, 480, 640, 750, 828, 960, 1080, 1200, 1440, 1920, 2048, 2560, 3840,
       ],
     },
-    swcMinify: true,
+    // // Enabling SWC minify leads to "fatal runtime error: failed to initiate panic, error 5" during build
+    // swcMinify: true,
     experimental: { esmExternals: "loose" },
     webpack5: true,
     webpack: (
