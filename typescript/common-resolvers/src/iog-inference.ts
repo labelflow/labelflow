@@ -36,18 +36,24 @@ const runIog = async (
   // args?.data?.x + args?.data?.width = ${args?.data?.x + args?.data?.width}
   // args?.data?.width = ${args?.data?.height}
   // `);
+  const [x, y, X, Y] = [
+    args?.data?.x + args?.data?.width / 4,
+    args?.data?.y + args?.data?.height / 4,
+    args?.data?.x + (3 * args?.data?.width) / 4,
+    args?.data?.y + (3 * args?.data?.height) / 4,
+  ];
   const result = {
     polygons: [
       [
-        [args?.data?.x, args?.data?.y],
-        [args?.data?.x + args?.data?.width, args?.data?.y],
-        [args?.data?.x + args?.data?.width, args?.data?.y + args?.data?.height],
-        [args?.data?.x, args?.data?.y + args?.data?.height],
-        [args?.data?.x, args?.data?.y],
+        [x, y],
+        [X, y],
+        [X, Y],
+        [x, Y],
+        [x, y],
       ],
     ],
   };
-  console.log(`result = ${JSON.stringify(result, null, 1)}`);
+  // console.log(`result = ${JSON.stringify(result, null, 1)}`);
   if (result) {
     const geometry = {
       type: "Polygon",
