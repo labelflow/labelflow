@@ -7,3 +7,7 @@ generates:
   ./data/__generated__/schema.graphql:
     plugins:
       - schema-ast
+  ./typescript/web/src/worker/__generated__/schema.ts:
+    plugins:
+      - ./codegen-plugin-ts-schema.js:
+          gqlTagImport: 'import { gql } from "apollo-server-core"'
