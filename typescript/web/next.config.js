@@ -34,33 +34,15 @@ module.exports = withSentryConfig(
         320, 480, 640, 750, 828, 960, 1080, 1200, 1440, 1920, 2048, 2560, 3840,
       ],
     },
-    // // Enabling SWC minify leads to "fatal runtime error: failed to initiate panic, error 5" during build
-    // swcMinify: true,
     experimental: { esmExternals: "loose" },
-    webpack5: true,
     webpack: (
       config,
       { defaultLoaders, dev, isServer, config: nextConfig, ...others }
     ) => {
-      // Note: we provide webpack above so you should not `require` it
-      // Perform customizations to webpack config
-
-      const isWebpack5 = nextConfig.webpack5;
-
+      // Build the service worker
       if (!isServer) {
         buildServiceWorker({ minify: !dev });
       }
-
-      // Add graphql import
-      // See https://www.npmjs.com/package/graphql-tag#webpack-loading-and-preprocessing
-      config.module.rules = [
-        ...config.module.rules,
-        {
-          test: /\.(graphql|gql)$/,
-          use: "graphql-tag/loader",
-          exclude: /node_modules/,
-        },
-      ];
 
       // Transpile other packages of the monorepo
       // E.g.: `@labelflow/react-openlayers-fiber`
@@ -82,40 +64,6 @@ module.exports = withSentryConfig(
           },
         },
       ];
-
-      // // Transpile node-modules packages that provides no nodejs compatible files
-      // // E.g.: `ol`
-      // // See https://github.com/vercel/next.js/issues/9890
-      // // See https://github.com/openlayers/openlayers/issues/10470
-      // // See https://github.com/vercel/next.js/blob/bd589349d2a90c41e7fc9549ea2438febfc9a510/packages/next/build/webpack-config.ts#L637
-      // // To do this we modify the `externals` option of webpack:
-      // config.externals = config.externals.map((external) => {
-      //   if (!(typeof external === "function")) {
-      //     // `externals` options that are hardcoded strings and arrays are used directly
-      //     return external;
-      //   } else {
-      //     // `externals` options that are functions are overridden, to force externalize of the packages we want
-
-
-      //     // Return a webpack5-like `externals` option function
-      //     return (
-      //       { context, request, contextInfo, getResolve },
-      //       callback
-      //     ) => {
-      //       if (/^ol/.test(request)) {
-      //         // Make an exception for `ol`, never externalize this import, it must be transpiled and bundled
-      //         return callback?.();
-      //       } else {
-      //         // Use the standard NextJS `externals` function
-      //         return external(
-      //           { context, request, contextInfo, getResolve },
-      //           callback
-      //         );
-      //       }
-      //     };
-
-      //   }
-      // });
 
       // Allow to transpile node modules that depends on node built-ins into browser.
       // E.g.: `apollo-server-core`
@@ -164,13 +112,6 @@ module.exports = withSentryConfig(
           })
         );
       }
-
-      // Enable top level await for apollo-server-micro in `typescript/web/src/pages/api/graphql.ts`
-      // See https://stackoverflow.com/questions/68339243/how-can-i-use-top-level-await-in-typescript-next-js
-      config.experiments = {
-        ...config.experiments,
-        topLevelAwait: true,
-      };
 
       // Important: return the modified config
       return config;
