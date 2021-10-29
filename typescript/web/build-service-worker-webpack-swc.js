@@ -1,7 +1,8 @@
 const path = require("path");
 const webpack = require('webpack')
 const NodePolyfillPlugin = require("node-polyfill-webpack-plugin");
-const TerserPlugin = require('terser-webpack-plugin')
+// const TerserPlugin = require('terser-webpack-plugin')
+const TerserPlugin = require("next/dist/build/webpack/plugins/terser-webpack-plugin/src/index.js");
 
 const buildServiceWorker = ({ minify }) => {
   webpack({
@@ -31,48 +32,14 @@ const buildServiceWorker = ({ minify }) => {
     },
     module: {
       rules: [
-
         {
           test: /\.ts$/i,
           exclude: /(node_modules|bower_components)/,
-          // resolve: {
-          //   fullySpecified: false
-          // },
           use: [
             {
               loader: "swc-loader",
               options: {
                 minify: false,
-                // module: {
-                //   type: 'commonjs',
-                // },
-                jsc: {
-                  // target: "es5",
-                  // parser: {
-                  //   syntax: 'typescript',
-                  //   dynamicImport: true,
-                  //   tsx: false,
-                  // },
-                  // transform: {
-                  //   // react: {
-                  //   //   runtime: 'automatic',
-                  //   //   pragma: 'React.createElement',
-                  //   //   pragmaFrag: 'React.Fragment',
-                  //   //   throwIfNamespace: true,
-                  //   //   // development: development,
-                  //   //   useBuiltins: true,
-                  //   //   // refresh: hasReactRefresh,
-                  //   // },
-                  //   optimizer: {
-                  //     // simplify: false,
-                  //     globals: {
-                  //       // typeofs: {
-                  //       //   window: 'undefined',
-                  //       // },
-                  //     },
-                  //   },
-                  // },
-                },
               }
             }
           ]
@@ -93,7 +60,7 @@ const buildServiceWorker = ({ minify }) => {
     optimization: minify
       ? {
         minimize: true,
-        minimizer: [new TerserPlugin()]
+        minimizer: [new TerserPlugin({ swcMinify: true })]
       }
       : undefined
   }).run((error, status) => {
