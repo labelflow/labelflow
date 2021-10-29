@@ -166,10 +166,10 @@ export const Labels = ({
               style={
                 new Style({
                   fill: new Fill({
-                    color: "#E2E8F0bb",
+                    color: "#DDDDDDAA",
                   }),
                   stroke: new Stroke({
-                    color: "#E2E8F0FF",
+                    color: "#DDDDDDFF",
                     width: 2,
                   }),
                   zIndex: 2,
