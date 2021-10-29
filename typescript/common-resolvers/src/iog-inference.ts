@@ -12,48 +12,38 @@ const runIog = async (
   { repository, user }: Context,
   { operation }: GraphQLResolveInfo
 ) => {
-  // TODO: cleanup
-  // const result = await fetch(process.env.NEXT_PUBLIC_IOG_API_ENDPOINT ?? "", {
-  //   method: "POST",
-  //   headers: {
-  //     "Content-Type": "application/json",
-  //     Accept: "application/json",
-  //   },
-  //   body: JSON.stringify({
-  //     operationName: "runIog",
-  //     query: print(operation),
-  //     variables: args.data,
-  //   }),
-  // }).then((res) =>
-  //   res.json().then((parsedResponse) => parsedResponse.data.runIog)
-  // );
-  // console.log(
-  //   `args?.data = ${JSON.stringify({ ...args?.data, imageUrl: null }, null, 1)}`
-  // );
-  // console.log(`
-  // args?.data?.x = ${args?.data?.x}
-  // args?.data?.width = ${args?.data?.width}
-  // args?.data?.x + args?.data?.width = ${args?.data?.x + args?.data?.width}
-  // args?.data?.width = ${args?.data?.height}
-  // `);
-  const [x, y, X, Y] = [
-    args?.data?.x + args?.data?.width / 4,
-    args?.data?.y + args?.data?.height / 4,
-    args?.data?.x + (3 * args?.data?.width) / 4,
-    args?.data?.y + (3 * args?.data?.height) / 4,
-  ];
-  const result = {
-    polygons: [
-      [
-        [x, y],
-        [X, y],
-        [X, Y],
-        [x, Y],
-        [x, y],
-      ],
-    ],
-  };
-  // console.log(`result = ${JSON.stringify(result, null, 1)}`);
+  const result = await fetch(process.env.NEXT_PUBLIC_IOG_API_ENDPOINT ?? "", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    },
+    body: JSON.stringify({
+      operationName: "runIog",
+      query: print(operation),
+      variables: args.data,
+    }),
+  }).then((res) =>
+    res.json().then((parsedResponse) => parsedResponse.data.runIog)
+  );
+  // Uncomment bellow for dummy IOG (test purpose)
+  // const [x, y, X, Y] = [
+  //   args?.data?.x + args?.data?.width / 4,
+  //   args?.data?.y + args?.data?.height / 4,
+  //   args?.data?.x + (3 * args?.data?.width) / 4,
+  //   args?.data?.y + (3 * args?.data?.height) / 4,
+  // ];
+  // const result = {
+  //   polygons: [
+  //     [
+  //       [x, y],
+  //       [X, y],
+  //       [X, Y],
+  //       [x, Y],
+  //       [x, y],
+  //     ],
+  //   ],
+  // };
   if (result) {
     const geometry = {
       type: "Polygon",
