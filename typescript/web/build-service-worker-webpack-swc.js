@@ -1,8 +1,8 @@
 const path = require("path");
 const webpack = require('webpack')
 const NodePolyfillPlugin = require("node-polyfill-webpack-plugin");
-// const TerserPlugin = require('terser-webpack-plugin')
-const TerserPlugin = require("next/dist/build/webpack/plugins/terser-webpack-plugin/src/index.js");
+const TerserPlugin = require('terser-webpack-plugin')
+// const { TerserPlugin } = require("next/dist/build/webpack/plugins/terser-webpack-plugin/src/index.js");
 
 const buildServiceWorker = ({ minify }) => {
   webpack({
@@ -60,7 +60,9 @@ const buildServiceWorker = ({ minify }) => {
     optimization: minify
       ? {
         minimize: true,
-        minimizer: [new TerserPlugin({ swcMinify: true })]
+        minimizer: [new TerserPlugin(
+          // { swcMinify: true }
+        )]
       }
       : undefined
   }).run((error, status) => {

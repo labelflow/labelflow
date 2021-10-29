@@ -309,37 +309,19 @@ export const typeDefs = gql`
     updateLabel(where: LabelWhereUniqueInput!, data: LabelUpdateInput!): Label
     deleteLabel(where: LabelWhereUniqueInput!): Label
     createLabelClass(data: LabelClassCreateInput!): LabelClass
-    updateLabelClass(
-      where: LabelClassWhereUniqueInput!
-      data: LabelClassUpdateInput!
-    ): LabelClass
-    reorderLabelClass(
-      where: LabelClassWhereUniqueInput!
-      data: LabelClassReorderInput!
-    ): LabelClass
+    updateLabelClass(where: LabelClassWhereUniqueInput!, data: LabelClassUpdateInput!): LabelClass
+    reorderLabelClass(where: LabelClassWhereUniqueInput!, data: LabelClassReorderInput!): LabelClass
     deleteLabelClass(where: LabelClassWhereUniqueInput!): LabelClass
     createDataset(data: DatasetCreateInput!): Dataset
     createDemoDataset: Dataset
     runIog(data: RunIogInput!): IogInferenceResult
-    updateDataset(
-      where: DatasetWhereUniqueInput!
-      data: DatasetUpdateInput!
-    ): Dataset
+    updateDataset(where: DatasetWhereUniqueInput!, data: DatasetUpdateInput!): Dataset
     deleteDataset(where: DatasetWhereUniqueInput!): Dataset
-    importDataset(
-      where: DatasetWhereUniqueInput!
-      data: DatasetImportInput!
-    ): ImportStatus
+    importDataset(where: DatasetWhereUniqueInput!, data: DatasetImportInput!): ImportStatus
     createWorkspace(data: WorkspaceCreateInput!): Workspace
-    updateWorkspace(
-      where: WorkspaceWhereUniqueInput!
-      data: WorkspaceUpdateInput!
-    ): Workspace
+    updateWorkspace(where: WorkspaceWhereUniqueInput!, data: WorkspaceUpdateInput!): Workspace
     createMembership(data: MembershipCreateInput!): Membership
-    updateMembership(
-      where: MembershipWhereUniqueInput!
-      data: MembershipUpdateInput!
-    ): Membership
+    updateMembership(where: MembershipWhereUniqueInput!, data: MembershipUpdateInput!): Membership
     deleteMembership(where: MembershipWhereUniqueInput!): Membership
     inviteMember(where: InviteMemberInput!): InvitationStatus
     updateUser(where: UserWhereUniqueInput!, data: UserUpdateInput!): User
@@ -348,21 +330,12 @@ export const typeDefs = gql`
   type Query {
     hello: String
     example(where: ExampleWhereUniqueInput!): Example!
-    examples(
-      where: ExampleWhereInput
-      first: Int
-      skip: Int
-      orderBy: ExampleOrderByInput
-    ): [Example!]!
+    examples(where: ExampleWhereInput, first: Int, skip: Int, orderBy: ExampleOrderByInput): [Example!]!
     image(where: ImageWhereUniqueInput!): Image!
     images(where: ImageWhereInput, first: Int, skip: Int): [Image!]!
     imagesAggregates: ImagesAggregates!
     labelClass(where: LabelClassWhereUniqueInput!): LabelClass!
-    labelClasses(
-      where: LabelClassWhereInput
-      first: Int
-      skip: Int
-    ): [LabelClass!]!
+    labelClasses(where: LabelClassWhereInput, first: Int, skip: Int): [LabelClass!]!
     labelClassesAggregates: LabelClassesAggregates!
     labelsAggregates: LabelsAggregates!
     label(where: LabelWhereUniqueInput!): Label!
@@ -373,18 +346,10 @@ export const typeDefs = gql`
     workspace(where: WorkspaceWhereUniqueInput!): Workspace!
     workspaces(first: Int, skip: Int, where: WorkspaceWhereInput): [Workspace!]!
     membership(where: MembershipWhereUniqueInput!): Membership!
-    memberships(
-      where: MembershipWhereInput
-      first: Int
-      skip: Int
-    ): [Membership!]!
+    memberships(where: MembershipWhereInput, first: Int, skip: Int): [Membership!]!
     user(where: UserWhereUniqueInput!): User!
     users(first: Int, skip: Int): [User!]!
-    exportDataset(
-      where: ExportWhereUniqueInput!
-      format: ExportFormat!
-      options: ExportOptions
-    ): String!
+    exportDataset(where: ExportWhereUniqueInput!, format: ExportFormat!, options: ExportOptions): String!
     debug: JSON!
   }
 
