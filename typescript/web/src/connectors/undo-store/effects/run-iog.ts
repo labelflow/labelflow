@@ -28,6 +28,19 @@ const runIogMutation = gql`
       }
     ) {
       id
+      type
+      geometry {
+        type
+        coordinates
+      }
+      x
+      y
+      width
+      height
+      smartToolInput
+      labelClass {
+        id
+      }
     }
   }
 `;
@@ -60,10 +73,15 @@ const getLabelQuery = gql`
     label(where: { id: $id }) {
       type
       id
+      x
+      y
+      width
+      height
       geometry {
         type
         coordinates
       }
+      smartToolInput
       labelClass {
         id
         color
@@ -105,12 +123,17 @@ export const createRunIogEffect = (
     const labelResponse = cache.readQuery<{
       label: {
         id: string;
+        x: number;
+        y: number;
+        width: number;
+        height: number;
         geometry: GeometryInput;
         imageId: string;
         labelClass: {
           id: string;
           color: string;
         };
+        smartToolInput: any;
         type: LabelType;
       };
     }>({
@@ -122,6 +145,29 @@ export const createRunIogEffect = (
     }
     const { label } = labelResponse;
     const originalGeometry = label.geometry;
+    const optimisticResponse = {
+      runIog: {
+        id: labelId,
+        geometry: originalGeometry,
+        x: label?.x,
+        y: label?.y,
+        width: label?.width,
+        height: label?.height,
+        smartToolInput: {
+          x: x ?? label?.smartToolInput?.x,
+          y: y ?? label?.smartToolInput?.y,
+          width: width ?? label?.smartToolInput?.width,
+          height: height ?? label?.smartToolInput?.height,
+          pointsInside: pointsInside ?? label?.smartToolInput?.pointsInside,
+          pointsOutside: pointsOutside ?? label?.smartToolInput?.pointsOutside,
+          centerPoint: centerPoint ?? label?.smartToolInput?.centerPoint,
+          imageUrl: imageUrl ?? label?.smartToolInput?.imageUrl,
+        },
+        labelClass: label.labelClass,
+        type: label.type,
+        __typename: "Label",
+      },
+    };
 
     client.mutate({
       mutation: runIogMutation,
@@ -137,25 +183,13 @@ export const createRunIogEffect = (
         centerPoint,
       },
       refetchQueries: ["getImageLabels"],
-      // optimisticResponse: {
-      //   updateLabel: {
-      //     id: labelId,
-      //     geometry: boundedGeometry.geometry,
-      //     x: boundedGeometry.x,
-      //     y: boundedGeometry.y,
-      //     width: boundedGeometry.width,
-      //     height: boundedGeometry.height,
-      //     labelClass: label.labelClass,
-      //     type: label.type,
-      //     __typename: "Label",
-      //   },
-      // },
-      // update: (apolloCache, { data }) => {
-      //   apolloCache.writeQuery({
-      //     query: getLabelQuery,
-      //     data: data?.runIog,
-      //   });
-      // },
+      optimisticResponse,
+      update: (apolloCache, { data }) => {
+        apolloCache.writeQuery({
+          query: getLabelQuery,
+          data: { label: data?.runIog },
+        });
+      },
     });
 
     return { id: labelId, originalGeometry };
