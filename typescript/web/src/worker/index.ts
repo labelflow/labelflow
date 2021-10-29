@@ -32,27 +32,27 @@ import { repository } from "../connectors/repository";
 
 import { typeDefs } from "./__generated__/schema";
 
-//  Configure and initialize Sentry in the service worker
+// Configure and initialize Sentry in the service worker
 const SENTRY_DSN = process.env.SENTRY_DSN || process.env.NEXT_PUBLIC_SENTRY_DSN;
 Sentry.init({
   dsn: SENTRY_DSN,
   environment: process.env.NEXT_PUBLIC_SENTRY_ENVIRONMENT ?? "development",
-  //  Adjust this value in production, or use tracesSampler for greater control
+  // Adjust this value in production, or use tracesSampler for greater control
   tracesSampleRate: 1.0,
-  //  ...
-  //  Note: if you want to override the automatic release value, do not set a
-  //  `release` value here - use the environment variable `SENTRY_RELEASE`, so
-  //  that it will also get attached to your source maps
+  // ...
+  // Note: if you want to override the automatic release value, do not set a
+  // `release` value here - use the environment variable `SENTRY_RELEASE`, so
+  // that it will also get attached to your source maps
 });
 
 declare let self: ServiceWorkerGlobalScope;
 
-//  To disable all workbox logging during development, you can set self.__WB_DISABLE_DEV_LOGS to true
-//  https://developers.google.com/web/tools/workbox/guides/configure-workbox#disable_logging
-//  eslint-disable-next-line no-underscore-dangle
+// To disable all workbox logging during development, you can set self.__WB_DISABLE_DEV_LOGS to true
+// https://developers.google.com/web/tools/workbox/guides/configure-workbox#disable_logging
+// eslint-disable-next-line no-underscore-dangle
 self.__WB_DISABLE_DEV_LOGS = true;
 
-//  Declare expiration plugins for caches
+// Declare expiration plugins for caches
 const nextJsArtifactsExpirationPlugin = new ExpirationPlugin({
   maxEntries: 10000,
   maxAgeSeconds: 86400 * 7,
@@ -70,27 +70,27 @@ const staticAssetsExpirationPlugin = new ExpirationPlugin({
 });
 
 self.addEventListener("message", (event) => {
-  //  TO TEST THIS? Run this in your browser console:
-  //     window.navigator.serviceWorker.controller.postMessage({command: 'log', message: 'hello world'})
-  //  OR use next-pwa injected workbox object
-  //     window.workbox.messageSW({command: 'log', message: 'hello world'})
+  // TO TEST THIS? Run this in your browser console:
+  //    window.navigator.serviceWorker.controller.postMessage({command: 'log', message: 'hello world'})
+  // OR use next-pwa injected workbox object
+  //    window.workbox.messageSW({command: 'log', message: 'hello world'})
 
   if (event?.data?.type === "SKIP_WAITING") {
     console.log("[Service Worker] Skip waiting");
-    //  Refresh service worker to next version
+    // Refresh service worker to next version
     self.skipWaiting();
     return;
   }
 
-  //  TODO Send this message from client side when user wants to load app to work online
+  // TODO Send this message from client side when user wants to load app to work online
   if (event?.data?.type === "PRECACHE_ALL") {
-    //  Inject the manifest
-    //  See https://github.com/GoogleChrome/workbox/issues/2519#issuecomment-634164566
-    //  eslint-disable-next-line @typescript-eslint/no-use-before-define
-    //  eslint-disable-next-line no-underscore-dangle
+    // Inject the manifest
+    // See https://github.com/GoogleChrome/workbox/issues/2519#issuecomment-634164566
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
+    // eslint-disable-next-line no-underscore-dangle
     const WB_MANIFEST = self.__WB_MANIFEST;
     precacheAndRoute(WB_MANIFEST);
-    //  @ts-ignore
+    // @ts-ignore
     self.WB_MANIFEST = WB_MANIFEST;
     return;
   }
@@ -101,7 +101,7 @@ self.addEventListener("message", (event) => {
   );
 });
 
-//  Clear service worker cache when it becomes active
+// Clear service worker cache when it becomes active
 self.addEventListener("activate", (event) => {
   if (event == null) {
     nextJsArtifactsExpirationPlugin.deleteCacheAndMetadata();
@@ -121,12 +121,12 @@ self.addEventListener("activate", (event) => {
 clientsClaim();
 
 // / / Initialize workbox Google analytics. For some reason this is broken right now, so we commented it.
-//  initializeGoogleAnalytics();
+// initializeGoogleAnalytics();
 
 cleanupOutdatedCaches();
 
-//  Routes
-//  See https://github.com/shadowwalker/next-pwa/issues/38
+// Routes
+// See https://github.com/shadowwalker/next-pwa/issues/38
 
 registerRoute(
   "/api/worker/graphql",
@@ -193,18 +193,18 @@ registerRoute(
   "GET"
 );
 
-//  Following lines gives you control of the offline fallback strategies
-//  See https://developers.google.com/web/tools/workbox/guides/advanced-recipes#comprehensive_fallbacks
+// Following lines gives you control of the offline fallback strategies
+// See https://developers.google.com/web/tools/workbox/guides/advanced-recipes#comprehensive_fallbacks
 // / / Use a stale-while-revalidate strategy for all other requests.
-//  setDefaultHandler(new StaleWhileRevalidate({}));
-//  See https://github.com/shadowwalker/next-pwa/blob/master/examples/offline-fallback/service-worker.js
+// setDefaultHandler(new StaleWhileRevalidate({}));
+// See https://github.com/shadowwalker/next-pwa/blob/master/examples/offline-fallback/service-worker.js
 setCatchHandler(async ({ event }) => {
   switch (event.request.destination) {
     case "document":
-      //  If using precached URLs:
+      // If using precached URLs:
       return (await matchPrecache("/_fallback")) ?? Response.error();
     default:
-      //  If we don't have a fallback, just return an error response.
+      // If we don't have a fallback, just return an error response.
       return Response.error();
   }
 });
