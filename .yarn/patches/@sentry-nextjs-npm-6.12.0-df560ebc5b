@@ -1,0 +1,34 @@
+diff --git a/dist/index.server.js b/dist/index.server.js
+index 4518433888185bf3f941a23f6751db8f09c549ea..7f389f0afbd9f8173844db0d7acc3b31d5118b4d 100644
+--- a/dist/index.server.js
++++ b/dist/index.server.js
+@@ -67,5 +67,5 @@ exports.withSentryConfig = config_1.withSentryConfig;
+ var withSentry_1 = require("./utils/withSentry");
+ exports.withSentry = withSentry_1.withSentry;
+ // wrap various server methods to enable error monitoring and tracing
+-instrumentServer_1.instrumentServer();
++// instrumentServer_1.instrumentServer();
+ //# sourceMappingURL=index.server.js.map
+\ No newline at end of file
+diff --git a/esm/index.server.js b/esm/index.server.js
+index 5b10206f315809f2205bce16c5f2303d0a07f9fb..5a93910853072d7d58f87008f60785a373dc18c4 100644
+--- a/esm/index.server.js
++++ b/esm/index.server.js
+@@ -60,5 +60,5 @@ function addServerIntegrations(options) {
+ export { withSentryConfig } from './config';
+ export { withSentry } from './utils/withSentry';
+ // wrap various server methods to enable error monitoring and tracing
+-instrumentServer();
++// instrumentServer();
+ //# sourceMappingURL=index.server.js.map
+\ No newline at end of file
+diff --git a/src/index.server.ts b/src/index.server.ts
+index e8c096b9baf52256ce9bad74d108dae9e80ea77f..027938ffe614ab171e9ebc879991fa7eca4a2b7a 100644
+--- a/src/index.server.ts
++++ b/src/index.server.ts
+@@ -76,4 +76,4 @@ export { withSentryConfig } from './config';
+ export { withSentry } from './utils/withSentry';
+ 
+ // wrap various server methods to enable error monitoring and tracing
+-instrumentServer();
++// instrumentServer();
