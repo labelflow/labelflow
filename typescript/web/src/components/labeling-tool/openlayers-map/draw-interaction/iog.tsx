@@ -25,6 +25,7 @@ import { noneClassColor } from "../../../../utils/class-color-generator";
 import { createCreateLabelEffect } from "../../../../connectors/undo-store/effects/create-label";
 import { createRunIogEffect } from "../../../../connectors/undo-store/effects/run-iog";
 import { useUndoStore } from "../../../../connectors/undo-store";
+import { getIogMaskIdFromLabelId } from "../../../../connectors/iog";
 
 const labelClassQuery = gql`
   query getLabelClass($id: ID!) {
@@ -45,6 +46,15 @@ const imageQuery = gql`
   }
 `;
 
+const labelQuery = gql`
+  query getLabel($id: ID!) {
+    label(where: { id: $id }) {
+      id
+      smartToolInput
+    }
+  }
+`;
+
 const geometryFunction = createBox();
 type Coordinate = [number, number];
 
@@ -53,13 +63,42 @@ export const DrawIogInteraction = ({ imageId }: { imageId: string }) => {
   const drawRef = useRef<OlDraw>(null);
   const client = useApolloClient();
 
+  const setDrawingToolState = useLabelingStore(
+    (state) => state.setDrawingToolState
+  );
+  const selectedLabelId = useLabelingStore((state) => state.selectedLabelId);
+  const setSelectedLabelId = useLabelingStore(
+    useCallback((state) => state.setSelectedLabelId, [])
+  );
+  const selectedLabelClassId = useLabelingStore(
+    (state) => state.selectedLabelClassId
+  );
+
+  const { data: dataLabelQuery } = useQuery(labelQuery, {
+    variables: { id: selectedLabelId },
+    skip: selectedLabelId == null,
+  });
+  const pointsInside: Coordinate[] =
+    dataLabelQuery?.label?.smartToolInput?.pointsInside ?? [];
+  const pointsOutside: Coordinate[] =
+    dataLabelQuery?.label?.smartToolInput?.pointsOutside ?? [];
+  const centerPoint: null | Coordinate =
+    dataLabelQuery?.label?.smartToolInput?.centerPoint;
+
   const { perform } = useUndoStore();
-  const [pointsInside, setPointsInside] = useState<Coordinate[]>([]);
-  const [pointsOutside, setPointsOutside] = useState<Coordinate[]>([]);
-  const [centerPoint, setCenterPoint] = useState<Coordinate | null>(null);
   const vectorSourceRef = useRef<OlSourceVector<Geometry>>(null);
   const [centerPointFeature, setCenterPointFeature] =
     useState<Feature<Polygon> | null>(null);
+  const { data: dataLabelClass } = useQuery(labelClassQuery, {
+    variables: { id: selectedLabelClassId },
+    skip: selectedLabelClassId == null,
+  });
+  const selectedLabelClass = dataLabelClass?.labelClass;
+  const { data: dataImage } = useQuery(imageQuery, {
+    variables: { id: imageId },
+    skip: imageId == null,
+  });
+  const toast = useToast();
 
   useEffect(() => {
     if (vectorSourceRef.current != null) {
@@ -80,64 +119,15 @@ export const DrawIogInteraction = ({ imageId }: { imageId: string }) => {
     return () => {};
   }, [vectorSourceRef.current]);
 
-  const setDrawingToolState = useLabelingStore(
-    (state) => state.setDrawingToolState
-  );
-  const setSelectedLabelId = useLabelingStore(
-    useCallback((state) => state.setSelectedLabelId, [])
-  );
-  const selectedLabelClassId = useLabelingStore(
-    (state) => state.selectedLabelClassId
-  );
-  const { data: dataLabelClass } = useQuery(labelClassQuery, {
-    variables: { id: selectedLabelClassId },
-    skip: selectedLabelClassId == null,
-  });
-  const { data: dataImage } = useQuery(imageQuery, {
-    variables: { id: imageId },
-    skip: imageId == null,
-  });
-
-  const selectedLabelClass = dataLabelClass?.labelClass;
-
-  const selectedLabelId = useLabelingStore((state) => state.selectedLabelId);
-
-  const clearIogFeatures = useCallback(() => {
-    setPointsInside([]);
-    setPointsOutside([]);
-    setCenterPoint(null);
-    setSelectedLabelId(null);
-  }, [setPointsInside, setPointsOutside, setCenterPoint, setSelectedLabelId]);
-  useHotkeys(keymap.validateIogLabel.key, clearIogFeatures, {}, [
-    clearIogFeatures,
+  useHotkeys(keymap.validateIogLabel.key, () => setSelectedLabelId(null), {}, [
+    setSelectedLabelId,
   ]);
-  useEffect(() => {
-    clearIogFeatures();
-  }, [imageId, clearIogFeatures]);
-
   useHotkeys(
     keymap.cancelAction.key,
     () => drawRef.current?.abortDrawing(),
     {},
     [drawRef]
   );
-
-  const toast = useToast();
-
-  const errorMessage = "Error executing IOG";
-  useEffect(() => {
-    if (pointsInside.length > 0 || pointsOutside.length > 0)
-      perform(
-        createRunIogEffect(
-          {
-            labelId: selectedLabelId ?? "",
-            pointsInside,
-            pointsOutside,
-          },
-          { client }
-        )
-      );
-  }, [pointsInside, pointsOutside, selectedLabelId]);
 
   const style = useMemo(() => {
     const color = selectedLabelClass?.color ?? noneClassColor;
@@ -153,7 +143,7 @@ export const DrawIogInteraction = ({ imageId }: { imageId: string }) => {
     });
   }, [selectedLabelClass?.color]);
 
-  const createPointInsideOrOutside = useCallback(
+  const handleClick = useCallback(
     (event: MapBrowserEvent<UIEvent>) => {
       const { map: mapEvent } = event;
 
@@ -162,30 +152,49 @@ export const DrawIogInteraction = ({ imageId }: { imageId: string }) => {
         (feature) => feature.getProperties().id
       );
 
-      if (idOfClickedFeature === selectedLabelId) {
-        setPointsOutside((previousPoints) => [
-          ...previousPoints,
-          event.coordinate as Coordinate,
-        ]);
+      if (
+        idOfClickedFeature === getIogMaskIdFromLabelId(selectedLabelId ?? "")
+      ) {
+        // Deselect feature
+        setSelectedLabelId(null);
+      } else if (idOfClickedFeature === selectedLabelId) {
+        // Add point outside
+        perform(
+          createRunIogEffect(
+            {
+              labelId: dataLabelQuery?.label?.id,
+              pointsInside,
+              pointsOutside: [...pointsOutside, event.coordinate as Coordinate],
+            },
+            { client }
+          )
+        );
       } else {
-        setPointsInside((previousPoints) => [
-          ...previousPoints,
-          event.coordinate as Coordinate,
-        ]);
+        // Add point inside
+        perform(
+          createRunIogEffect(
+            {
+              labelId: dataLabelQuery?.label?.id,
+              pointsInside: [...pointsInside, event.coordinate as Coordinate],
+              pointsOutside,
+            },
+            { client }
+          )
+        );
       }
 
       return false;
     },
-    [selectedLabelId]
+    [selectedLabelId, dataLabelQuery]
   );
 
   useEffect(() => {
     if (selectedLabelId != null) {
-      map?.on("click", createPointInsideOrOutside);
-      return () => map?.un("click", createPointInsideOrOutside);
+      map?.on("click", handleClick);
+      return () => map?.un("click", handleClick);
     }
     return () => {};
-  }, [map, selectedLabelId, createPointInsideOrOutside]);
+  }, [map, selectedLabelId, handleClick]);
 
   const performIOGFromDrawEvent = async (drawEvent: DrawEvent) => {
     const openLayersGeometry = drawEvent.feature.getGeometry();
@@ -219,8 +228,6 @@ export const DrawIogInteraction = ({ imageId }: { imageId: string }) => {
         Math.floor((y + yMax) / 2),
       ];
 
-      setCenterPoint(boundingBoxCenterPoint);
-
       return perform(
         createRunIogEffect(
           {
@@ -242,7 +249,7 @@ export const DrawIogInteraction = ({ imageId }: { imageId: string }) => {
       await inferencePromise;
     } catch (error) {
       toast({
-        title: errorMessage,
+        title: "Error executing IOG",
         description: error?.message,
         isClosable: true,
         status: "error",
@@ -256,14 +263,13 @@ export const DrawIogInteraction = ({ imageId }: { imageId: string }) => {
     modifyEvent: ModifyEvent
   ): Promise<boolean> => {
     const newCoordinates = modifyEvent.mapBrowserEvent.coordinate;
-    setCenterPoint(newCoordinates);
     await perform(
       createRunIogEffect(
         {
           labelId: selectedLabelId ?? "",
           centerPoint: newCoordinates,
-          pointsInside,
-          pointsOutside,
+          pointsInside: pointsInside ?? undefined,
+          pointsOutside: pointsOutside ?? undefined,
         },
         { client }
       )
@@ -310,7 +316,7 @@ export const DrawIogInteraction = ({ imageId }: { imageId: string }) => {
       <olLayerVector>
         <olSourceVector ref={vectorSourceRef}>
           {[
-            ...pointsInside.map((coordinates) => {
+            ...(pointsInside?.map((coordinates) => {
               return (
                 <olFeature
                   key={coordinates.join("-")}
@@ -331,8 +337,8 @@ export const DrawIogInteraction = ({ imageId }: { imageId: string }) => {
                   }
                 />
               );
-            }),
-            ...pointsOutside.map((coordinates) => {
+            }) ?? []),
+            ...(pointsOutside?.map((coordinates) => {
               return (
                 <olFeature
                   key={coordinates.join("-")}
@@ -353,7 +359,7 @@ export const DrawIogInteraction = ({ imageId }: { imageId: string }) => {
                   }
                 />
               );
-            }),
+            }) ?? []),
             centerPoint ? (
               <olFeature
                 key={centerPoint.join("-")}
