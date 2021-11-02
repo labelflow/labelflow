@@ -1,6 +1,5 @@
-import { gql } from "apollo-server-core";
-
-export const typeDefs = gql`
+export const typeDefs = [
+  `
   scalar ColorHex
 
   type Dataset {
@@ -450,4 +449,5 @@ export const typeDefs = gql`
     id: ID
     slug: String
   }
-`;
+`,
+];

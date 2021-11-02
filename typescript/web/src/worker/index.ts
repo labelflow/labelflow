@@ -26,7 +26,7 @@ import {
   uploadsCacheName,
   uploadsRoute,
 } from "../connectors/repository/upload";
-import { ApolloServerServiceWorker } from "./apollo-server-service-worker";
+import { GraphqlServerServiceWorker } from "./graphql-server";
 import { UploadServer } from "./upload-server";
 import { repository } from "../connectors/repository";
 
@@ -130,7 +130,7 @@ cleanupOutdatedCaches();
 
 registerRoute(
   "/api/worker/graphql",
-  new ApolloServerServiceWorker({
+  new GraphqlServerServiceWorker({
     typeDefs,
     resolvers,
     context: ({ req, res }) => {
