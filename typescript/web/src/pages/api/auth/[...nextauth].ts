@@ -7,7 +7,7 @@ import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { PrismaClient as PrismaClientClass } from "@prisma/client";
 import { OAuthConfig } from "next-auth/providers";
 import { captureException } from "@sentry/nextjs";
-import { createPrismaClient } from "@labelflow/db";
+import { createPrismaClient } from "@labelflow/db/src/prisma-client";
 
 import { sendVerificationRequestFromPrisma } from "../../../utils/email/send-verification-request";
 
