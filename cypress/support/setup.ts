@@ -16,6 +16,9 @@ beforeEach(async () => {
           return window.caches.delete(cacheName);
         })
       );
+      // @ts-ignore
+      // eslint-disable-next-line no-param-reassign
+      window.cacheCleared = true; // This is needed to ensure that the cy.window() command and the next cy commands do not interfere
     } catch (error) {
       console.error(error);
     } finally {
@@ -24,6 +27,7 @@ beforeEach(async () => {
       );
     }
   });
+  cy.window().should("have.property", "cacheCleared", true);
   console.log("Clear cookies");
   cy.clearCookies();
   // This action needs to be outside of the cy.window() callback in order to avoid having that callback executed twice
@@ -32,7 +36,6 @@ beforeEach(async () => {
 
   // This action needs to be outside of the cy.window() callback to prevent an error with Cypress of a promise being returned inside a cypress command (https://docs.cypress.io/guides/references/error-messages#Cypress-detected-that-you-returned-a-promise-in-a-test-but-also-invoked-one-or-more-cy-commands-inside-of-that-promise)
   console.log("Clear online DB");
-  cy.wait(420);
   cy.task("clearDb");
 });
 
