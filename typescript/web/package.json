@@ -43,7 +43,6 @@
     "@types/mjml": "4.7.0",
     "@types/nodemailer": "6.4.4",
     "@types/react-beautiful-dnd": "10.1.4",
-    "apollo-server-core": "3.4.0",
     "apollo-server-micro": "3.4.0",
     "autoprefixer": "^10.2.6",
     "browser-builtins": "^3.3.1",

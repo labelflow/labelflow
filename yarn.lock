@@ -6108,8 +6108,6 @@ __metadata:
     "@types/react-dom": 17.0.1
     "@types/uuid": ^8.3.0
     "@types/valid-url": ^1.0.3
-    apollo-server-core: 3.4.0
-    apollo-server-env: 4.1.0
     apollo-server-micro: 3.4.0
     auto-changelog: ^2.3.0
     autoprefixer: ^10.2.6
@@ -13040,7 +13038,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"apollo-server-core@npm:3.4.0, apollo-server-core@npm:^3.4.0":
+"apollo-server-core@npm:^3.4.0":
   version: 3.4.0
   resolution: "apollo-server-core@npm:3.4.0"
   dependencies:
@@ -13071,7 +13069,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"apollo-server-env@npm:4.1.0, apollo-server-env@npm:^4.1.0":
+"apollo-server-env@npm:^4.1.0":
   version: 4.1.0
   resolution: "apollo-server-env@npm:4.1.0"
   dependencies:
