@@ -103,13 +103,13 @@ export const DrawIogInteraction = ({ imageId }: { imageId: string }) => {
   useEffect(() => {
     if (vectorSourceRef.current != null) {
       const centerPointFeatureFromSource =
-        vectorSourceRef.current.getFeatureById("centerPoint");
+        vectorSourceRef.current.getFeatureById("point-center");
       if (centerPoint != null)
         setCenterPointFeature(centerPointFeatureFromSource as Feature<Polygon>);
 
       const listener = (event: BaseEvent) => {
         const { feature } = event as unknown as { feature: Feature<Geometry> };
-        if (feature.getProperties().id === "centerPoint") {
+        if (feature.getProperties().id === "point-center") {
           setCenterPointFeature(feature as Feature<Polygon>);
         }
       };
@@ -169,6 +169,52 @@ export const DrawIogInteraction = ({ imageId }: { imageId: string }) => {
             { client }
           )
         );
+      } else if (idOfClickedFeature?.includes("point-inside-")) {
+        // Remove point inside
+        const indexPointToRemove = parseInt(
+          idOfClickedFeature.split("point-inside-")[1],
+          10
+        );
+        perform(
+          createRunIogEffect(
+            {
+              labelId: dataLabelQuery?.label?.id,
+              pointsInside: [
+                ...pointsInside.slice(0, indexPointToRemove),
+                ...pointsInside.slice(
+                  indexPointToRemove + 1,
+                  pointsInside.length
+                ),
+              ],
+              pointsOutside,
+            },
+            { client }
+          )
+        );
+      } else if (idOfClickedFeature?.includes("point-outside-")) {
+        // Remove point outside
+        const indexPointToRemove = parseInt(
+          idOfClickedFeature.split("point-outside-")[1],
+          10
+        );
+        perform(
+          createRunIogEffect(
+            {
+              labelId: dataLabelQuery?.label?.id,
+              pointsInside,
+              pointsOutside: [
+                ...pointsOutside.slice(0, indexPointToRemove),
+                ...pointsOutside.slice(
+                  indexPointToRemove + 1,
+                  pointsOutside.length
+                ),
+              ],
+            },
+            { client }
+          )
+        );
+      } else if (idOfClickedFeature?.includes("point-center")) {
+        return false;
       } else {
         // Add point inside
         perform(
@@ -316,9 +362,10 @@ export const DrawIogInteraction = ({ imageId }: { imageId: string }) => {
       <olLayerVector>
         <olSourceVector ref={vectorSourceRef}>
           {[
-            ...(pointsInside?.map((coordinates) => {
+            ...(pointsInside?.map((coordinates, index) => {
               return (
                 <olFeature
+                  id={`point-inside-${index}`}
                   key={coordinates.join("-")}
                   geometry={new Point(coordinates)}
                   style={
@@ -338,9 +385,10 @@ export const DrawIogInteraction = ({ imageId }: { imageId: string }) => {
                 />
               );
             }) ?? []),
-            ...(pointsOutside?.map((coordinates) => {
+            ...(pointsOutside?.map((coordinates, index) => {
               return (
                 <olFeature
+                  id={`point-outside-${index}`}
                   key={coordinates.join("-")}
                   geometry={new Point(coordinates)}
                   style={
@@ -363,7 +411,7 @@ export const DrawIogInteraction = ({ imageId }: { imageId: string }) => {
             centerPoint ? (
               <olFeature
                 key={centerPoint.join("-")}
-                id="centerPoint"
+                id="point-center"
                 geometry={new Point(centerPoint)}
                 style={
                   new Style({
