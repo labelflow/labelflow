@@ -191,6 +191,7 @@ jobs:
           wait-on-timeout: 300
           browser: chrome
           record: true
+          config-file: cypress-ci.json
         env:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           # Recommended: pass the GitHub token lets this action correctly
@@ -207,7 +208,6 @@ jobs:
           CI_BRANCH: ${{ github.ref	}}
           CI_BRANCH_BASE: refs/heads/main
           POSTGRES_EXTERNAL_URL: ${{secrets.POSTGRES_EXTERNAL_URL}}
-          POSTGRES_TEST_URL: ${{secrets.POSTGRES_EXTERNAL_URL}}
 
   deployment-chromatic-pr:
     name: Deploy Storybook PR
