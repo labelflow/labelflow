@@ -10,13 +10,12 @@ module.exports = {
   plugin: async (schema, documents, config) => {
     const gqlSchema = await plugin(schema, documents, config);
 
-    const formattedSchema = gqlSchema.replace(/\n([^\n])/g, "\n  $1");
+    const indentationString = config.indent;
 
-    const output = `${config.gqlTagImport || 'import { gql } from "graphql-tag"'};
+    const formattedSchema = indentationString + gqlSchema.replace(/\n([^\n])/g, `\n${indentationString}$1`);
 
-export const typeDefs = gql\`
-  ${formattedSchema}\`;
-`;
+    const output = `${config.prefix || ''}${formattedSchema}${config.suffix || ''}`;
+
     return output;
   },
   validate: async (_schema, _documents, _config, outputFile, allPlugins) => {

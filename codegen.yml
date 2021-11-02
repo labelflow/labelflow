@@ -10,8 +10,21 @@ generates:
   ./typescript/web/src/worker/__generated__/schema.ts:
     plugins:
       - ./codegen-plugin-ts-schema.js:
-          gqlTagImport: 'import { gql } from "apollo-server-core"'
+          indent: "  "
+          prefix: |
+            export const typeDefs = [
+              `
+          suffix: |
+            `,
+            ];
   ./typescript/web/src/connectors/apollo-client/__generated__/schema.ts:
     plugins:
       - ./codegen-plugin-ts-schema.js:
-          gqlTagImport: 'import { gql } from "@apollo/client"'
+          indent: "  "
+          prefix: |
+            import { gql } from "@apollo/client";
+            
+            export const typeDefs = gql`
+
+          suffix: |
+            `;
