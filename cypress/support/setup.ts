@@ -33,6 +33,7 @@ beforeEach(async () => {
 
   // This action needs to be outside of the cy.window() callback to prevent an error with Cypress of a promise being returned inside a cypress command (https://docs.cypress.io/guides/references/error-messages#Cypress-detected-that-you-returned-a-promise-in-a-test-but-also-invoked-one-or-more-cy-commands-inside-of-that-promise)
   console.log("Clear online DB");
+  cy.wait(420);
   cy.task("clearDb");
 });
 
