@@ -12,6 +12,7 @@ import { useApolloClient, useQuery, gql } from "@apollo/client";
 import { useToast } from "@chakra-ui/react";
 import { useHotkeys } from "react-hotkeys-hook";
 import CircleStyle from "ol/style/Circle";
+import Icon from "ol/style/Icon";
 import { LabelType } from "@labelflow/graphql-types";
 import { ModifyEvent } from "ol/interaction/Modify";
 import { useMap } from "@labelflow/react-openlayers-fiber";
@@ -415,16 +416,19 @@ export const DrawIogInteraction = ({ imageId }: { imageId: string }) => {
                 geometry={new Point(centerPoint)}
                 style={
                   new Style({
-                    image: new CircleStyle({
-                      radius: 8,
-                      fill: new Fill({
-                        color: "#0023ffff",
-                      }),
-                      stroke: new Stroke({
-                        color: "#ffffffff",
-                        width: 2,
-                      }),
+                    image: new Icon({
+                      src: "/static/graphics/iog-target.svg",
                     }),
+                    // image: new CircleStyle({
+                    //   radius: 8,
+                    //   fill: new Fill({
+                    //     color: "#0023ffff",
+                    //   }),
+                    //   stroke: new Stroke({
+                    //     color: "#ffffffff",
+                    //     width: 2,
+                    //   }),
+                    // }),
                   })
                 }
               />
