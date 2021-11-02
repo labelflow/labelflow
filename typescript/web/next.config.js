@@ -57,6 +57,27 @@ module.exports = withSentryConfig(
         buildServiceWorker({ minify: !dev });
       }
 
+      // Transpile other packages of the monorepo
+      // E.g.: `@labelflow/react-openlayers-fiber`
+      // See https://github.com/vercel/next.js/blob/0af3b526408bae26d6b3f8cab75c4229998bf7cb/test/integration/typescript-workspaces-paths/packages/www/next.config.js
+      // The root folder of the monorepo:
+      const resolvedBaseUrl = path.resolve(config.context, "../../");
+      // We add a rule to transpile files in this folder, except files in `node_modules`
+      config.module.rules = [
+        ...config.module.rules,
+        {
+          test: /\.(tsx|ts|js|mjs|jsx)$/,
+          use: defaultLoaders.babel,
+          include: [resolvedBaseUrl],
+          exclude: (excludePath) => {
+            // To allow to resolve files inside `node_modules`, we could add a condition like this:
+            //     return /node_modules/.test(excludePath) && ! /\/ol/.test(excludePath)
+            // This is not needed for now though:
+            return /node_modules/.test(excludePath);
+          },
+        },
+      ];
+
       // Allow to transpile node modules that depends on node built-ins into browser.
       // E.g.: `apollo-server-core`
       // See https://github.com/webpack-contrib/css-loader/issues/447
