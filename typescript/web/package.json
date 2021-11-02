@@ -3,6 +3,9 @@
   "version": "1.0.24",
   "scripts": {
     "dev": "next",
+    "dev:test": "dotenv -e .env.test -- NODE_ENV=\"test\" && next dev -p 3001",
+    "dev:tests": "NODE_ENV=\"test\" && next dev -p 3001",
+    "simple:test": "dotenv -e .env.test -- bash -c 'echo ${DEV_SERVER_PORT}'",
     "build": "cd ../db && yarn generate && cd ../web && next build",
     "start": "next start",
     "type-check": "tsc",

@@ -12,7 +12,7 @@ const filePath = join(
   // The path below actually works in the next.js context (that's much deeper)
   "../../../../../../data/__generated__/schema.graphql"
 );
-
+console.log("Hello there, filepath is", filePath);
 export const schema = loadSchemaSync(filePath, {
   loaders: [new GraphQLFileLoader()],
 });
