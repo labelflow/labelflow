@@ -136,11 +136,11 @@ registerRoute(
     context: ({ req, res }) => {
       return { req, res, repository };
     },
-    introspection: true,
-    formatError: (error) => {
-      Sentry.captureException(error);
-      return error;
-    },
+    // introspection: true,
+    // formatError: (error) => {
+    //   Sentry.captureException(error);
+    //   return error;
+    // },
   }),
   "POST"
 );

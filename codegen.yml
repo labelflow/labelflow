@@ -17,6 +17,16 @@ generates:
           suffix: |
             `,
             ];
+  ./typescript/db/src/__generated__/schema.ts:
+    plugins:
+      - ./codegen-plugin-ts-schema.js:
+          indent: "  "
+          prefix: |
+            export const typeDefs = [
+              `
+          suffix: |
+            `,
+            ];
   ./typescript/web/src/connectors/apollo-client/__generated__/schema.ts:
     plugins:
       - ./codegen-plugin-ts-schema.js:
