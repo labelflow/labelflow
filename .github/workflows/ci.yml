@@ -185,7 +185,7 @@ jobs:
         uses: cypress-io/github-action@v2
         with:
           install: false
-          build: yarn bundlewatch:web
+          build: yarn codegen && yarn bundlewatch:web
           start: yarn start:web
           wait-on: "http://localhost:3000"
           wait-on-timeout: 300

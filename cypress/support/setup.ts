@@ -9,9 +9,6 @@ beforeEach(async () => {
         "Start resetting everything before each test ============================================================================"
       );
 
-      console.log("Clear cookies");
-      cy.clearCookies();
-
       console.log("Clear caches");
       const cacheNames = await window.caches.keys();
       await Promise.all(
@@ -27,6 +24,8 @@ beforeEach(async () => {
       );
     }
   });
+  console.log("Clear cookies");
+  cy.clearCookies();
   // This action needs to be outside of the cy.window() callback in order to avoid having that callback executed twice
   console.log("Clear database");
   await Promise.all((await getDatabase()).tables.map((table) => table.clear()));
