@@ -371,15 +371,9 @@ export const DrawIogInteraction = ({ imageId }: { imageId: string }) => {
                   geometry={new Point(coordinates)}
                   style={
                     new Style({
-                      image: new CircleStyle({
-                        radius: 8,
-                        fill: new Fill({
-                          color: "#23e623ff",
-                        }),
-                        stroke: new Stroke({
-                          color: "#ffffffff",
-                          width: 2,
-                        }),
+                      image: new Icon({
+                        src: "/static/graphics/iog-inside.svg",
+                        scale: 0.5,
                       }),
                     })
                   }
@@ -394,15 +388,9 @@ export const DrawIogInteraction = ({ imageId }: { imageId: string }) => {
                   geometry={new Point(coordinates)}
                   style={
                     new Style({
-                      image: new CircleStyle({
-                        radius: 8,
-                        fill: new Fill({
-                          color: "#ff2323ff",
-                        }),
-                        stroke: new Stroke({
-                          color: "#ffffffff",
-                          width: 2,
-                        }),
+                      image: new Icon({
+                        src: "/static/graphics/iog-outside.svg",
+                        scale: 0.5,
                       }),
                     })
                   }
@@ -418,17 +406,8 @@ export const DrawIogInteraction = ({ imageId }: { imageId: string }) => {
                   new Style({
                     image: new Icon({
                       src: "/static/graphics/iog-target.svg",
+                      scale: 0.5,
                     }),
-                    // image: new CircleStyle({
-                    //   radius: 8,
-                    //   fill: new Fill({
-                    //     color: "#0023ffff",
-                    //   }),
-                    //   stroke: new Stroke({
-                    //     color: "#ffffffff",
-                    //     width: 2,
-                    //   }),
-                    // }),
                   })
                 }
               />
