@@ -1,5 +1,6 @@
 import { Workbox } from "workbox-window";
 import { WorkboxEventMap } from "workbox-window/utils/WorkboxEvent";
+import { ensureServiceWorkerPresent } from "../worker/ensure-present";
 import { timeout } from "./timeout";
 
 export const messageNoWindow =
@@ -47,6 +48,7 @@ export const checkServiceWorkerReady = async (
       throw new Error(messageNoWindow);
     }
 
+    ensureServiceWorkerPresent();
     // Get the workbox instance from the window
     const wb = window.workbox;
     if (!wb) {
@@ -82,7 +84,7 @@ export const checkServiceWorkerReady = async (
     }
 
     return { wb, sw };
-  } catch (error) {
+  } catch (error: any) {
     // If we are not in window scope, this is not going to change by retrying
     if (error.message === messageNoWindow) {
       throw error;

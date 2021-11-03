@@ -22,15 +22,7 @@ const bundlewatchConfig = {
     {
       path: "./public/sw.js",
       maxSize: "1100kb",
-    },
-    {
-      path: "./public/worker-*.js",
-      maxSize: "1100kb",
-    },
-    {
-      path: "./public/fallback-*.js",
-      maxSize: "4kb",
-    },
+    }
   ],
   ci: {
     trackBranches: ["refs/heads/main"],

@@ -1,6 +1,6 @@
 import Dexie from "dexie";
 
-import {
+import type {
   DbImage,
   DbLabel,
   DbLabelClass,

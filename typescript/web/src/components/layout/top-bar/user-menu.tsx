@@ -142,48 +142,46 @@ export const UserMenu = () => {
             <MenuDivider />
           </>
         )}
-        {process.env.NEXT_PUBLIC_FEATURE_SIGNIN === "true" && (
-          <>
-            <MenuGroup title="User">
-              {status === "loading" && (
+        <>
+          <MenuGroup title="User">
+            {status === "loading" && (
+              <MenuItem
+                cursor="default"
+                disabled
+                icon={<SignoutIcon fontSize="lg" />}
+              >
+                Sign out
+              </MenuItem>
+            )}
+            {status === "authenticated" && (
+              <>
                 <MenuItem
-                  cursor="default"
-                  disabled
                   icon={<SignoutIcon fontSize="lg" />}
+                  onClick={() => signOut()}
                 >
                   Sign out
                 </MenuItem>
-              )}
-              {status === "authenticated" && (
-                <>
-                  <MenuItem
-                    icon={<SignoutIcon fontSize="lg" />}
-                    onClick={() => signOut()}
-                  >
-                    Sign out
-                  </MenuItem>
-                  <MenuItem
-                    icon={<SettingsIcon fontSize="lg" />}
-                    onClick={() => {
-                      router.push("/settings/profile");
-                    }}
-                  >
-                    Settings
-                  </MenuItem>
-                </>
-              )}
-              {status === "unauthenticated" && (
                 <MenuItem
-                  icon={<SigninIcon fontSize="lg" />}
-                  onClick={() => setIsSigninOpen(true, "replaceIn")}
+                  icon={<SettingsIcon fontSize="lg" />}
+                  onClick={() => {
+                    router.push("/settings/profile");
+                  }}
                 >
-                  Sign in
+                  Settings
                 </MenuItem>
-              )}
-            </MenuGroup>
-            <MenuDivider />
-          </>
-        )}
+              </>
+            )}
+            {status === "unauthenticated" && (
+              <MenuItem
+                icon={<SigninIcon fontSize="lg" />}
+                onClick={() => setIsSigninOpen(true, "replaceIn")}
+              >
+                Sign in
+              </MenuItem>
+            )}
+          </MenuGroup>
+          <MenuDivider />
+        </>
         <MenuGroup title="Preferences">
           {colorMode === "light" ? (
             <MenuItem

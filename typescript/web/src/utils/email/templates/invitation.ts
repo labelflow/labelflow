@@ -3,17 +3,17 @@ import { stringify } from "query-string";
 import { theme } from "../../../theme";
 
 // To view this email, go to this page:
-// http://localhost:3000/api/email/view?type=invitation&url=http://google.com&origin=http://localhost:3000&email=test@labelflow.ai&workspaceName=Airbus&senderName=Nicolas&senderEmail=nicolas.draber@airbus.com
+// http://localhost:3000/api/email/view?type=invitation&url=http://google.com&origin=http://localhost:3000&email=test@labelflow.ai&workspaceName=Airbus&inviterName=Nicolas&inviterEmail=nicolas.draber@airbus.com
 
 export const generateHtml = (props: {
   url: string;
   origin: string;
   type: string;
   workspaceName: string;
-  senderName?: string;
-  senderEmail?: string;
+  inviterName?: string;
+  inviterEmail?: string;
 }) => {
-  const { url, origin, workspaceName, senderName, senderEmail } = props;
+  const { url, origin, workspaceName, inviterName, inviterEmail } = props;
   const viewOnlineLink = `${origin}/api/email/view?${stringify(props)}`;
   return mjml2html(
     `
@@ -64,9 +64,9 @@ export const generateHtml = (props: {
             theme.colors.gray["800"]
           }" font-familyInter,="Inter, Open Sans, Helvetica, Arial, sans-serif" font-size="15px" line-height="22px" padding-bottom="0px" padding-left="50px" padding-right="50px" padding-top="0px" padding="0px 25px 0px 25px">
             <p style="margin: 10px 0; text-align: center;">${
-              senderName ?? "A user"
+              inviterName ?? "A user"
             } ${
-      senderEmail ? `(${senderEmail})` : ""
+      inviterEmail ? `(${inviterEmail})` : ""
     } has invited you to use</br> LabelFlow in a workspace called ${workspaceName}.<br /></p>
           </mj-text>
           <mj-text align="left" color="${

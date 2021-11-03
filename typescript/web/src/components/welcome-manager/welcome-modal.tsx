@@ -91,7 +91,7 @@ const performWelcomeWorkflow = async ({
 
     try {
       await checkServiceWorkerReady();
-    } catch (e) {
+    } catch (e: any) {
       if (e.message === messageNoWindow) {
         // In Next JS SSR, the window is not available.
         return;

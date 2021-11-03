@@ -13,59 +13,73 @@ import {
   AlertIcon,
   AlertTitle,
 } from "@chakra-ui/react";
-import * as React from "react";
+import { useState } from "react";
 import { IoSearch } from "react-icons/io5";
 import { RiAddFill } from "react-icons/ri";
 import { useRouter } from "next/router";
+import { InvitationStatus } from "@labelflow/graphql-types";
+
+import { NewMemberModal } from "./new-member-modal";
+import { InviteMember } from "./types";
 
 const SearchIcon = chakra(IoSearch);
 
 export const TableActions = ({
   searchText,
   setSearchText,
+  inviteMember = async () => InvitationStatus.Sent,
 }: {
   searchText: string;
   setSearchText: (text: string) => void;
+  inviteMember?: InviteMember;
 }) => {
+  const [isNewMemberModalOpen, setIsNewMemberModalOpen] = useState(false);
   const router = useRouter();
   const workspaceSlug = router?.query.workspaceSlug as string;
 
   const tableActionsForOnlineWorkspace = (
-    <Stack
-      spacing="4"
-      direction={{ base: "column", md: "row" }}
-      justify="space-between"
-    >
-      <HStack>
-        <FormControl minW={{ md: "320px" }} id="search">
-          <InputGroup size="sm">
-            <FormLabel srOnly>Find a member</FormLabel>
-            <InputLeftElement pointerEvents="none" color="gray.400">
-              <SearchIcon />
-            </InputLeftElement>
-            <Input
-              rounded="base"
-              type="search"
-              placeholder="Find a member"
-              bgColor="#FFFFFF"
-              value={searchText}
-              onChange={(e) => setSearchText(e.target.value)}
-            />
-          </InputGroup>
-        </FormControl>
-      </HStack>
-      <ButtonGroup size="sm" variant="outline">
-        <Button
-          backgroundColor="brand.500"
-          color="#ffffff"
-          iconSpacing="1"
-          leftIcon={<RiAddFill fontSize="1.25em" />}
-          disabled
-        >
-          New member
-        </Button>
-      </ButtonGroup>
-    </Stack>
+    <>
+      <NewMemberModal
+        isOpen={isNewMemberModalOpen}
+        onClose={() => setIsNewMemberModalOpen(false)}
+        inviteMember={inviteMember}
+      />
+      <Stack
+        spacing="4"
+        direction={{ base: "column", md: "row" }}
+        justify="space-between"
+      >
+        <HStack>
+          <FormControl minW={{ md: "320px" }} id="search">
+            <InputGroup size="sm">
+              <FormLabel srOnly>Find a member</FormLabel>
+              <InputLeftElement pointerEvents="none" color="gray.400">
+                <SearchIcon />
+              </InputLeftElement>
+              <Input
+                rounded="base"
+                type="search"
+                placeholder="Find a member"
+                bgColor="#FFFFFF"
+                value={searchText}
+                onChange={(e) => setSearchText(e.target.value)}
+              />
+            </InputGroup>
+          </FormControl>
+        </HStack>
+        <ButtonGroup size="sm" variant="outline">
+          <Button
+            backgroundColor="brand.500"
+            color="#ffffff"
+            iconSpacing="1"
+            leftIcon={<RiAddFill fontSize="1.25em" />}
+            onClick={() => setIsNewMemberModalOpen(true)}
+          >
+            New member
+          </Button>
+        </ButtonGroup>
+      </Stack>
+    </>
   );
 
   const tableActionsForLocalWorkspace = (

@@ -713,7 +713,7 @@ describe("nested resolvers", () => {
       fetchPolicy: "no-cache",
     });
 
-    expect(data.membership.user.id).toEqual(testUser2Id);
+    expect(data.membership?.user?.id).toEqual(testUser2Id);
   });
 
   it("can return the workspace of the membership ", async () => {

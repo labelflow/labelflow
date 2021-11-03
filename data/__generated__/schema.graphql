@@ -157,6 +157,18 @@ type ImportStatus {
   error: String
 }
 
+enum InvitationStatus {
+  Sent
+  UserAlreadyIn
+  Error
+}
+
+input InviteMemberInput {
+  email: String!
+  role: MembershipRole!
+  workspaceSlug: String!
+}
+
 type IogInferenceResult {
   polygons: [[[Float!]]]!
 }
@@ -254,14 +266,16 @@ type Membership {
   createdAt: DateTime!
   updatedAt: DateTime!
   role: MembershipRole!
-  user: User!
+  user: User
   workspace: Workspace!
+  invitationEmailSentTo: String
+  invitationToken: ID
 }
 
 input MembershipCreateInput {
   id: ID
   role: MembershipRole!
-  userId: ID!
+  userId: ID
   workspaceSlug: String!
 }
 
@@ -306,6 +320,7 @@ type Mutation {
   createMembership(data: MembershipCreateInput!): Membership
   updateMembership(where: MembershipWhereUniqueInput!, data: MembershipUpdateInput!): Membership
   deleteMembership(where: MembershipWhereUniqueInput!): Membership
+  inviteMember(where: InviteMemberInput!): InvitationStatus
   updateUser(where: UserWhereUniqueInput!, data: UserUpdateInput!): User
 }
 
