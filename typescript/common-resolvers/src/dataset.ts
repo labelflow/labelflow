@@ -193,9 +193,7 @@ const createDemoDataset = async (
           createdAt: add(now, { seconds: index }).toISOString(),
           name: image.url.match(/\/static\/img\/(.*?)$/)?.[1],
         },
-        {
-          upload: repository.upload,
-        },
+        repository,
         req
       );
       return await repository.image.add(imageEntity, user);
