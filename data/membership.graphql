@@ -25,6 +25,19 @@ input InviteMemberInput {
 
 enum InvitationStatus{
   Sent
-  UserAlreadyIn
   Error
+  UserAlreadyIn
+}
+
+enum MembershipStatus {
+  Sent
+  Active
+  Declined
+}
+
+enum CurrentUserCanAcceptInvitation {
+   Yes,
+   AlreadyAccepted,
+   AlreadyMemberOfTheWorkspace,
+   AlreadyDeclined,
 }

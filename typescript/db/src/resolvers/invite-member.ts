@@ -1,8 +1,11 @@
 import { v4 as uuidv4 } from "uuid";
 import "isomorphic-fetch";
 
-import type { MutationInviteMemberArgs } from "@labelflow/graphql-types";
-import { InvitationStatus } from "@labelflow/graphql-types";
+import {
+  MutationInviteMemberArgs,
+  InvitationStatus,
+} from "@labelflow/graphql-types";
+
 import { Context } from "@labelflow/common-resolvers";
 import { getPrismaClient } from "../prisma-client";
 

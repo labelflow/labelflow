@@ -46,6 +46,8 @@ type Mutation {
   ): Membership
   deleteMembership(where: MembershipWhereUniqueInput!): Membership
   inviteMember(where: InviteMemberInput!): InvitationStatus
+  acceptInvitation(where: MembershipWhereUniqueInput!): Membership
+  declineInvitation(where: MembershipWhereUniqueInput!): Membership
 
   updateUser(where: UserWhereUniqueInput!, data: UserUpdateInput!): User
 }

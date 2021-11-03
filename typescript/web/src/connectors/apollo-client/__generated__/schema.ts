@@ -3,6 +3,13 @@ import { gql } from "@apollo/client";
 export const typeDefs = gql`
   scalar ColorHex
 
+  enum CurrentUserCanAcceptInvitation {
+    Yes
+    AlreadyAccepted
+    AlreadyMemberOfTheWorkspace
+    AlreadyDeclined
+  }
+
   type Dataset {
     id: ID!
     createdAt: DateTime!
@@ -162,8 +169,8 @@ export const typeDefs = gql`
 
   enum InvitationStatus {
     Sent
-    UserAlreadyIn
     Error
+    UserAlreadyIn
   }
 
   input InviteMemberInput {
@@ -267,11 +274,14 @@ export const typeDefs = gql`
     id: ID!
     createdAt: DateTime!
     updatedAt: DateTime!
+    declinedAt: DateTime
     role: MembershipRole!
     user: User
     workspace: Workspace!
     invitationEmailSentTo: String
     invitationToken: ID
+    status: MembershipStatus!
+    currentUserCanAcceptInvitation: CurrentUserCanAcceptInvitation!
   }
 
   input MembershipCreateInput {
@@ -285,6 +295,12 @@ export const typeDefs = gql`
     Owner
     Admin
     Member
+  }
+
+  enum MembershipStatus {
+    Sent
+    Active
+    Declined
   }
 
   input MembershipUpdateInput {
@@ -323,6 +339,8 @@ export const typeDefs = gql`
     updateMembership(where: MembershipWhereUniqueInput!, data: MembershipUpdateInput!): Membership
     deleteMembership(where: MembershipWhereUniqueInput!): Membership
     inviteMember(where: InviteMemberInput!): InvitationStatus
+    acceptInvitation(where: MembershipWhereUniqueInput!): Membership
+    declineInvitation(where: MembershipWhereUniqueInput!): Membership
     updateUser(where: UserWhereUniqueInput!, data: UserUpdateInput!): User
   }
 
