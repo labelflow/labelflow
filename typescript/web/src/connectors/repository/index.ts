@@ -33,6 +33,7 @@ import {
   listWorkspaces,
   updateWorkspace,
 } from "./workspace";
+import { probeImage } from "./probe-image";
 import { removeUserFromWhere } from "./utils/remove-user-from-where";
 
 export const repository: Repository = {
@@ -117,5 +118,8 @@ export const repository: Repository = {
     put: putInStorage,
     get: getFromStorage,
     delete: deleteFromStorage,
+  },
+  imageProcessing: {
+    probeImage,
   },
 };

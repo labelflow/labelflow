@@ -161,6 +161,26 @@ export type Repository = {
     get: (url: string, req?: Request) => Promise<ArrayBuffer>;
     delete: (url: string) => Promise<void>;
   };
+  imageProcessing: {
+    probeImage: (
+      {
+        width,
+        height,
+        mimetype,
+        url,
+      }: {
+        width: number | null | undefined;
+        height: number | null | undefined;
+        mimetype: string | null | undefined;
+        url: string;
+      },
+      fetcher: (urlToProbe: string) => Promise<ArrayBuffer>
+    ) => Promise<{
+      width: number;
+      height: number;
+      mimetype: string;
+    }>;
+  };
 };
 
 export type Context = {

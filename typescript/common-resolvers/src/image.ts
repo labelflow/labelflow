@@ -9,7 +9,6 @@ import type {
   MutationDeleteImageArgs,
 } from "@labelflow/graphql-types";
 import mime from "mime-types";
-import { probeImage } from "./utils/probe-image";
 import { Context, DbImage, Repository, DbImageCreateInput } from "./types";
 import { throwIfResolvesToNil } from "./utils/throw-if-resolves-to-nil";
 import { getOrigin } from "./utils/get-origin";
@@ -42,7 +41,7 @@ const getImageName = ({
 
 export const getImageEntityFromMutationArgs = async (
   data: ImageCreateInput,
-  repository: Pick<Repository, "upload">,
+  repository: Pick<Repository, "upload" | "imageProcessing">,
   req?: Request
 ) => {
   const {
@@ -129,7 +128,7 @@ export const getImageEntityFromMutationArgs = async (
   }
 
   // Probe the file to get its dimensions and mimetype if not provided
-  const imageMetaData = await probeImage(
+  const imageMetaData = await repository.imageProcessing.probeImage(
     {
       width,
       height,

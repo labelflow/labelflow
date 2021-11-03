@@ -24,6 +24,7 @@ import {
   checkUserAccessToLabelClass,
   checkUserAccessToWorkspace,
 } from "./access-control";
+import { probeImage } from "./probe-image";
 
 export const repository: Repository = {
   image: {
@@ -312,5 +313,8 @@ export const repository: Repository = {
     getUploadTarget: getUploadTargetHttp,
     getUploadTargetHttp,
     put: putInStorage,
+  },
+  imageProcessing: {
+    probeImage,
   },
 };
