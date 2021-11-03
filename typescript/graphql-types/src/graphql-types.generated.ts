@@ -193,7 +193,7 @@ export type ImportStatus = {
   error?: Maybe<Scalars['String']>;
 };
 
-export enum InvitationStatus {
+export enum InvitationResult {
   Sent = 'Sent',
   Error = 'Error',
   UserAlreadyIn = 'UserAlreadyIn'
@@ -369,7 +369,7 @@ export type Mutation = {
   createMembership?: Maybe<Membership>;
   updateMembership?: Maybe<Membership>;
   deleteMembership?: Maybe<Membership>;
-  inviteMember?: Maybe<InvitationStatus>;
+  inviteMember?: Maybe<InvitationResult>;
   acceptInvitation?: Maybe<Membership>;
   declineInvitation?: Maybe<Membership>;
   updateUser?: Maybe<User>;
@@ -855,7 +855,7 @@ export type ResolversTypes = {
   ImportOptions: ImportOptions;
   ImportOptionsCoco: ImportOptionsCoco;
   ImportStatus: ResolverTypeWrapper<ImportStatus>;
-  InvitationStatus: InvitationStatus;
+  InvitationResult: InvitationResult;
   InviteMemberInput: InviteMemberInput;
   JSON: ResolverTypeWrapper<Scalars['JSON']>;
   Label: ResolverTypeWrapper<Label>;
@@ -1117,7 +1117,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   createMembership?: Resolver<Maybe<ResolversTypes['Membership']>, ParentType, ContextType, RequireFields<MutationCreateMembershipArgs, 'data'>>;
   updateMembership?: Resolver<Maybe<ResolversTypes['Membership']>, ParentType, ContextType, RequireFields<MutationUpdateMembershipArgs, 'where' | 'data'>>;
   deleteMembership?: Resolver<Maybe<ResolversTypes['Membership']>, ParentType, ContextType, RequireFields<MutationDeleteMembershipArgs, 'where'>>;
-  inviteMember?: Resolver<Maybe<ResolversTypes['InvitationStatus']>, ParentType, ContextType, RequireFields<MutationInviteMemberArgs, 'where'>>;
+  inviteMember?: Resolver<Maybe<ResolversTypes['InvitationResult']>, ParentType, ContextType, RequireFields<MutationInviteMemberArgs, 'where'>>;
   acceptInvitation?: Resolver<Maybe<ResolversTypes['Membership']>, ParentType, ContextType, RequireFields<MutationAcceptInvitationArgs, 'where'>>;
   declineInvitation?: Resolver<Maybe<ResolversTypes['Membership']>, ParentType, ContextType, RequireFields<MutationDeclineInvitationArgs, 'where'>>;
   updateUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationUpdateUserArgs, 'where' | 'data'>>;

@@ -3,7 +3,7 @@ import "isomorphic-fetch";
 
 import {
   MutationInviteMemberArgs,
-  InvitationStatus,
+  InvitationResult,
 } from "@labelflow/graphql-types";
 
 import { Context } from "@labelflow/common-resolvers";
@@ -29,7 +29,7 @@ const inviteMember = async (
     where: { AND: [{ userId: user?.id }, { workspaceSlug }] },
   });
   if (!workspace || !membership) {
-    return InvitationStatus.Error;
+    return InvitationResult.Error;
   }
   const inviter = await (
     await getPrismaClient()
@@ -48,7 +48,7 @@ const inviteMember = async (
     },
   });
   if (isInviteeAlreadyInWorkspace) {
-    return InvitationStatus.UserAlreadyIn;
+    return InvitationResult.UserAlreadyIn;
   }
   const invitationToken = uuidv4();
   const inputsInvitation = {
@@ -76,7 +76,7 @@ const inviteMember = async (
     }
   } catch (e) {
     // console.error(`Failed sending email with error ${e}`);
-    return InvitationStatus.Error;
+    return InvitationResult.Error;
   }
   const membershipAlreadyExists = await (
     await getPrismaClient()
@@ -117,7 +117,7 @@ const inviteMember = async (
     });
   }
   // Query api route to send email
-  return InvitationStatus.Sent;
+  return InvitationResult.Sent;
 };
 
 export default {

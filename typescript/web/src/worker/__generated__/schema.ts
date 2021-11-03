@@ -166,7 +166,7 @@ export const typeDefs = [
     error: String
   }
 
-  enum InvitationStatus {
+  enum InvitationResult {
     Sent
     Error
     UserAlreadyIn
@@ -337,7 +337,7 @@ export const typeDefs = [
     createMembership(data: MembershipCreateInput!): Membership
     updateMembership(where: MembershipWhereUniqueInput!, data: MembershipUpdateInput!): Membership
     deleteMembership(where: MembershipWhereUniqueInput!): Membership
-    inviteMember(where: InviteMemberInput!): InvitationStatus
+    inviteMember(where: InviteMemberInput!): InvitationResult
     acceptInvitation(where: MembershipWhereUniqueInput!): Membership
     declineInvitation(where: MembershipWhereUniqueInput!): Membership
     updateUser(where: UserWhereUniqueInput!, data: UserUpdateInput!): User

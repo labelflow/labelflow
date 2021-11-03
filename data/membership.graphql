@@ -23,7 +23,7 @@ input InviteMemberInput {
   workspaceSlug: String!
 }
 
-enum InvitationStatus{
+enum InvitationResult{
   Sent
   Error
   UserAlreadyIn

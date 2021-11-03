@@ -1,4 +1,4 @@
-import { MembershipRole, InvitationStatus } from "@labelflow/graphql-types";
+import { MembershipRole, InvitationResult } from "@labelflow/graphql-types";
 
 export type ChangeMembershipRole = ({
   id,
@@ -16,6 +16,6 @@ export type InviteMember = ({
   role: MembershipRole;
   email: string;
   workspaceSlug: string;
-}) => Promise<InvitationStatus>;
+}) => Promise<InvitationResult>;
 
 export type RemoveMembership = (id: string) => void;
