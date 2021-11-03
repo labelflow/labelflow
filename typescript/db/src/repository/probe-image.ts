@@ -1,3 +1,5 @@
+// ES6 module
+import Vips from "wasm-vips";
 import probe from "probe-image-size";
 
 const defaultMaxImageSizePixel: number = 60e6;
@@ -57,6 +59,22 @@ export const probeImage = async (
   height: number;
   mimetype: string;
 }> => {
+  const vips = await Vips();
+
+  const mask = vips.Image.newFromArray(
+    [
+      [-1, -1, -1],
+      [-1, 16, -1],
+      [-1, -1, -1],
+    ],
+    8.0
+  );
+
+  // Finally, write the result to a buffer
+  const outBuffer = mask.writeToBuffer(".jpg");
+
+  console.log("outBuffer", outBuffer);
+
   if (width && height && mimetype) {
     return { width, height, mimetype };
   }
