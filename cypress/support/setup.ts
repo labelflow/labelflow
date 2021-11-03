@@ -2,13 +2,17 @@
 import { getDatabase } from "../../typescript/web/src/connectors/database";
 
 // From https://github.com/cypress-io/cypress/issues/702#issuecomment-435873135
-beforeEach(async () => {
+beforeEach(() => {
   cy.window().then(async (window) => {
     try {
       console.log(
         "Start resetting everything before each test ============================================================================"
       );
 
+      console.log("Clear database");
+      await Promise.all(
+        (await getDatabase()).tables.map((table) => table.clear())
+      );
       console.log("Clear caches");
       const cacheNames = await window.caches.keys();
       await Promise.all(
@@ -28,15 +32,8 @@ beforeEach(async () => {
     }
   });
   cy.window().should("have.property", "cacheCleared", true);
-  console.log("Clear cookies");
-  cy.clearCookies();
-  // This action needs to be outside of the cy.window() callback in order to avoid having that callback executed twice
-  console.log("Clear database");
-  await Promise.all((await getDatabase()).tables.map((table) => table.clear()));
-
-  // This action needs to be outside of the cy.window() callback to prevent an error with Cypress of a promise being returned inside a cypress command (https://docs.cypress.io/guides/references/error-messages#Cypress-detected-that-you-returned-a-promise-in-a-test-but-also-invoked-one-or-more-cy-commands-inside-of-that-promise)
-  console.log("Clear online DB");
-  cy.task("clearDb");
+  console.log("Clear cookies and online DB");
+  cy.clearCookies().task("clearDb");
 });
 
 // From https://github.com/cypress-io/cypress/issues/702#issuecomment-435873135
