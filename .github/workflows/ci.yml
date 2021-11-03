@@ -116,11 +116,11 @@ jobs:
       - name: generate prisma
         run: cd typescript/db && yarn deploy && yarn generate
         env:
-          POSTGRES_EXTERNAL_URL: ${{secrets.POSTGRES_EXTERNAL_URL}}
+          POSTGRES_EXTERNAL_URL: postgresql://admin:admin@localhost:5433/labelflow?schema=public
       - name: run tests
         run: yarn test
         env:
-          POSTGRES_EXTERNAL_URL: ${{secrets.POSTGRES_EXTERNAL_URL}}
+          POSTGRES_EXTERNAL_URL: postgresql://admin:admin@localhost:5433/labelflow?schema=public
 
   check-codegen-diff:
     name: Check diff after codegen
@@ -177,7 +177,7 @@ jobs:
       - name: generate prisma
         run: cd typescript/db && yarn deploy && yarn generate
         env:
-          POSTGRES_EXTERNAL_URL: ${{secrets.POSTGRES_EXTERNAL_URL}}
+          POSTGRES_EXTERNAL_URL: postgresql://admin:admin@localhost:5433/labelflow?schema=public
       - name: Cypress run
         uses: cypress-io/github-action@v2
         with:
@@ -203,7 +203,7 @@ jobs:
           CI_COMMIT_SHA: ${{ github.event.pull_request.head.sha }}
           CI_BRANCH: ${{ github.ref	}}
           CI_BRANCH_BASE: refs/heads/main
-          POSTGRES_EXTERNAL_URL: ${{secrets.POSTGRES_EXTERNAL_URL}}
+          POSTGRES_EXTERNAL_URL: postgresql://admin:admin@localhost:5433/labelflow?schema=public
 
   deployment-chromatic-pr:
     name: Deploy Storybook PR
