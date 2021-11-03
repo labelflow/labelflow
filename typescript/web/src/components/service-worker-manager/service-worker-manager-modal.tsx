@@ -1,7 +1,8 @@
 import React, { useEffect, useCallback } from "react";
 import { useErrorHandler } from "react-error-boundary";
-
 import { useQueryParam, StringParam } from "use-query-params";
+
+import { ensureServiceWorkerPresent } from "../../worker/ensure-present";
 import { UpdateServiceWorkerModal } from "./update-service-worker-modal/update-service-worker-modal";
 
 export const ServiceWorkerManagerModal = () => {
@@ -33,6 +34,7 @@ export const ServiceWorkerManagerModal = () => {
       return;
     }
     try {
+      ensureServiceWorkerPresent();
       const wb = window.workbox;
 
       if (!wb) {
@@ -64,6 +66,7 @@ export const ServiceWorkerManagerModal = () => {
     }
 
     try {
+      ensureServiceWorkerPresent();
       const wb = window.workbox;
 
       if (!wb) {

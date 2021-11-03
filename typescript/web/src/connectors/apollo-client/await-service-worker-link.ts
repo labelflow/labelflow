@@ -20,7 +20,7 @@ const manageServerReadiness = async (maxTries = 2) => {
       // eslint-disable-next-line no-await-in-loop
       await checkServiceWorkerRedundant({ wb });
       isServerReady.reset();
-    } catch (error) {
+    } catch (error: any) {
       if (error.message === messageNoWindow) {
         isServerReady.resolve(true);
         return;

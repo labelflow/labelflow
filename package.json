@@ -34,7 +34,7 @@
     "typescript/*"
   ],
   "devDependencies": {
-    "@apollo/client": "3.4.10",
+    "@apollo/client": "3.4.16",
     "@babel/core": "7.14.3",
     "@babel/preset-env": "7.14.7",
     "@cypress/webpack-preprocessor": "5.9.1",

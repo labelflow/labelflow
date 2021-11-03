@@ -13,7 +13,7 @@
     "generate": "prisma generate"
   },
   "devDependencies": {
-    "@apollo/client": "3.4.10",
+    "@apollo/client": "3.4.16",
     "@types/node": "16.4.1",
     "nodemon": "2.0.12",
     "prisma": "2.30.3",
@@ -31,7 +31,7 @@
     "@labelflow/graphql-types": "workspace:typescript/graphql-types",
     "@prisma/client": "2.30.3",
     "@supabase/supabase-js": "1.21.0",
-    "apollo-server": "3.0.2",
+    "apollo-server": "3.4.0",
     "graphql": "15.5.1",
     "isomorphic-fetch": "3.0.0",
     "memoize-one": "^5.2.1",

@@ -1,5 +1,5 @@
 import { ApolloCache, ApolloClient, Reference, gql } from "@apollo/client";
-import { getBoundedGeometryFromImage } from "@labelflow/common-resolvers";
+import { getBoundedGeometryFromImage } from "@labelflow/common-resolvers/src/utils/get-bounded-geometry-from-image";
 
 import { GeometryInput, LabelType } from "@labelflow/graphql-types";
 import { GeoJSONPolygon } from "ol/format/GeoJSON";
