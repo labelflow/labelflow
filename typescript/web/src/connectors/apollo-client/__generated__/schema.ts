@@ -172,10 +172,6 @@ export const typeDefs = gql`
     workspaceSlug: String!
   }
 
-  type IogInferenceResult {
-    polygons: [[[Float!]]]!
-  }
-
   scalar JSON
 
   type Label {
@@ -190,6 +186,7 @@ export const typeDefs = gql`
     y: Float!
     height: Float!
     width: Float!
+    smartToolInput: JSON
   }
 
   type LabelClass {
@@ -237,6 +234,7 @@ export const typeDefs = gql`
     imageId: ID!
     labelClassId: ID
     geometry: GeometryInput!
+    smartToolInput: JSON
   }
 
   enum LabelType {
@@ -248,6 +246,7 @@ export const typeDefs = gql`
   input LabelUpdateInput {
     labelClassId: ID
     geometry: GeometryInput
+    smartToolInput: JSON
   }
 
   input LabelWhereInput {
@@ -314,7 +313,7 @@ export const typeDefs = gql`
     deleteLabelClass(where: LabelClassWhereUniqueInput!): LabelClass
     createDataset(data: DatasetCreateInput!): Dataset
     createDemoDataset: Dataset
-    runIog(data: RunIogInput!): IogInferenceResult
+    runIog(data: RunIogInput!): Label
     updateDataset(where: DatasetWhereUniqueInput!, data: DatasetUpdateInput!): Dataset
     deleteDataset(where: DatasetWhereUniqueInput!): Dataset
     importDataset(where: DatasetWhereUniqueInput!, data: DatasetImportInput!): ImportStatus

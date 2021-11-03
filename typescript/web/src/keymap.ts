@@ -74,7 +74,7 @@ export const keymap: Keymap = {
     category: "Actions", // TODO: change that category?
   },
   toolIog: {
-    key: "i",
+    key: "a",
     description: "Inside outside guidance tool",
     category: "Tools",
   },
