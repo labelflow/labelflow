@@ -10,7 +10,7 @@ import {
   useColorModeValue as mode,
   Badge,
 } from "@chakra-ui/react";
-import { Membership } from "@labelflow/graphql-types";
+import { Membership, MembershipStatus } from "@labelflow/graphql-types";
 import * as React from "react";
 import { User } from "./user";
 import { RoleSelection } from "./role-selection";
@@ -27,13 +27,16 @@ const badgeEnum: Record<string, string> = {
 const getMembershipStatus = (
   membership: Membership
 ): "active" | "reviewing" | "declined" => {
-  if (membership?.user) {
-    return "active";
+  switch (membership.status) {
+    case MembershipStatus.Active:
+      return "active";
+    case MembershipStatus.Sent:
+      return "reviewing";
+    case MembershipStatus.Declined:
+      return "declined";
+    default:
+      return "reviewing";
   }
-  if (membership?.invitationToken) {
-    return "reviewing";
-  }
-  return "declined";
 };
 
 const columns = [
