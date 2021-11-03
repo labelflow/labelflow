@@ -62,9 +62,7 @@ export const Labels = ({
   const selectedLabelId = useLabelingStore((state) => state.selectedLabelId);
   const selectedTool = useLabelingStore((state) => state.selectedTool);
   const labels = data?.image?.labels ?? previousData?.image?.labels ?? [];
-  const selectedLabel = labels.filter(
-    ({ id }: Label) => id === selectedLabelId
-  )?.[0];
+  const selectedLabel = labels.find(({ id }: Label) => id === selectedLabelId);
 
   return (
     <>
