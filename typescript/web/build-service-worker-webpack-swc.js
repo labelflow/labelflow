@@ -4,7 +4,7 @@ const NodePolyfillPlugin = require("node-polyfill-webpack-plugin");
 const TerserPlugin = require('terser-webpack-plugin')
 // const { TerserPlugin } = require("next/dist/build/webpack/plugins/terser-webpack-plugin/src/index.js");
 
-const buildServiceWorker = ({ minify }) => {
+const buildServiceWorker = ({ minify } = {}) => {
   webpack({
     target: "webworker",
     mode: "none",
