@@ -17,7 +17,6 @@ import webpackPreprocessor from "@cypress/webpack-preprocessor";
 // See https://www.npmjs.com/package/node-polyfill-webpack-plugin
 import NodePolyfillPlugin from "node-polyfill-webpack-plugin";
 import path from "path";
-// Load env vars to pass them to Cypress, see https://docs.cypress.io/guides/guides/environment-variables#Option-5-Plugins
 import { getPrismaClient } from "../../typescript/db/src/prisma-client";
 
 /**
@@ -108,7 +107,6 @@ module.exports = (on: (type: string, preprocessor: any) => void) => {
           : await prisma.user.create({
               data: { name, email },
             });
-      await prisma.session.deleteMany({});
       const session = await prisma.session.create({
         data: {
           userId: user.id,
