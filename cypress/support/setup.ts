@@ -2,21 +2,17 @@
 import { getDatabase } from "../../typescript/web/src/connectors/database";
 
 // From https://github.com/cypress-io/cypress/issues/702#issuecomment-435873135
-beforeEach(() =>
+beforeEach(() => {
   cy.window().then(async (window) => {
     try {
       console.log(
         "Start resetting everything before each test ============================================================================"
       );
 
-      console.log("Clear cookies");
-      cy.clearCookies();
-
       console.log("Clear database");
       await Promise.all(
         (await getDatabase()).tables.map((table) => table.clear())
       );
-
       console.log("Clear caches");
       const cacheNames = await window.caches.keys();
       await Promise.all(
@@ -24,6 +20,9 @@ beforeEach(() =>
           return window.caches.delete(cacheName);
         })
       );
+      // @ts-ignore
+      // eslint-disable-next-line no-param-reassign
+      window.cacheCleared = true; // This is needed to ensure that the cy.window() command and the next cy commands do not interfere
     } catch (error) {
       console.error(error);
     } finally {
@@ -31,8 +30,11 @@ beforeEach(() =>
         "Finish resetting everything before each test ==========================================================================="
       );
     }
-  })
-);
+  });
+  cy.window().should("have.property", "cacheCleared", true);
+  console.log("Clear cookies and online DB");
+  cy.clearCookies().task("clearDb");
+});
 
 // From https://github.com/cypress-io/cypress/issues/702#issuecomment-435873135
 afterEach(() =>

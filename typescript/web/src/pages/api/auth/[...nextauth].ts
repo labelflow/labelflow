@@ -7,6 +7,7 @@ import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { PrismaClient as PrismaClientClass } from "@prisma/client";
 import { OAuthConfig } from "next-auth/providers";
 import { captureException } from "@sentry/nextjs";
+import { createPrismaClient } from "@labelflow/db/src/prisma-client";
 
 import { sendVerificationRequestFromPrisma } from "../../../utils/email/send-verification-request";
 
@@ -21,9 +22,7 @@ declare module globalThis {
 }
 if (!globalThis.prismaInstance) {
   console.log("[Prisma Client] Initializing prismaInstance from next auth");
-  globalThis.prismaInstance = new PrismaClientClass({
-    datasources: { db: { url: process.env.POSTGRES_EXTERNAL_URL } },
-  });
+  globalThis.prismaInstance = createPrismaClient();
 }
 globalThis.prismaInstanceIsConnected = true;
 

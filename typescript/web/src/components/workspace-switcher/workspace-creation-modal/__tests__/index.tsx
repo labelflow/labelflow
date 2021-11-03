@@ -98,7 +98,7 @@ describe("WorkspaceCreationModal", () => {
       />,
       { wrapper: Wrapper }
     );
-    expect(getByRole("button", { name: "Create" })).toBeDisabled();
+    expect(getByRole("button", { name: "Create workspace" })).toBeDisabled();
   });
 
   it("can create if the input is valid", () => {
@@ -117,7 +117,9 @@ describe("WorkspaceCreationModal", () => {
 
     userEvent.type(input, "My new workspace");
 
-    expect(getByRole("button", { name: "Create" })).not.toBeDisabled();
+    expect(
+      getByRole("button", { name: "Create workspace" })
+    ).not.toBeDisabled();
   });
 
   it("cannot create if the input contains invalid characters", () => {
@@ -136,7 +138,7 @@ describe("WorkspaceCreationModal", () => {
 
     userEvent.type(input, "My new workspace!");
 
-    expect(getByRole("button", { name: "Create" })).toBeDisabled();
+    expect(getByRole("button", { name: "Create workspace" })).toBeDisabled();
   });
 
   it("cannot create if the input is a reserved name", () => {
@@ -155,7 +157,7 @@ describe("WorkspaceCreationModal", () => {
 
     userEvent.type(input, "settings");
 
-    expect(getByRole("button", { name: "Create" })).toBeDisabled();
+    expect(getByRole("button", { name: "Create workspace" })).toBeDisabled();
   });
 
   it("cannot create if the name is already taken", () => {
@@ -174,7 +176,7 @@ describe("WorkspaceCreationModal", () => {
 
     userEvent.type(input, "local");
 
-    expect(getByRole("button", { name: "Create" })).toBeDisabled();
+    expect(getByRole("button", { name: "Create workspace" })).toBeDisabled();
   });
 
   it("pre-fills the workspace name", () => {
