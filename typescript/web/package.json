@@ -3,6 +3,7 @@
   "version": "1.0.24",
   "scripts": {
     "dev": "next",
+    "dev:test": "NODE_ENV=\"test\" && next dev -p 3001",
     "build": "cd ../db && yarn generate && cd ../web && next build",
     "start": "next start",
     "type-check": "tsc",
@@ -127,6 +128,7 @@
     "auto-changelog": "^2.3.0",
     "bluebird": "^3.7.2",
     "bundlewatch": "^0.3.2",
+    "dotenv-cli": "^4.0.0",
     "fake-indexeddb": "^3.1.2",
     "release-it": "^14.11.5",
     "storybook-addon-next-router": "3.0.7",

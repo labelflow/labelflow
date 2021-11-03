@@ -13,6 +13,7 @@ import {
   InputRightElement,
   chakra,
   Text,
+  Portal,
 } from "@chakra-ui/react";
 import { IoSearch } from "react-icons/io5";
 import { RiCloseCircleFill } from "react-icons/ri";
@@ -143,81 +144,95 @@ export const WorkspaceSelectionPopover = ({
       initialFocusRef={searchInputRef}
     >
       <PopoverTrigger>{trigger}</PopoverTrigger>
-      <PopoverContent
-        borderColor={borderColor}
-        cursor="default"
-        pointerEvents="initial"
-        aria-label={ariaLabel}
-      >
-        <PopoverBody pl="0" pr="0" pt="0">
-          <Box>
-            <Box {...getComboboxProps()} pl="3" pr="3" pt="3">
-              <InputGroup>
-                <InputLeftElement pointerEvents="none">
-                  <MagnifierIcon fontSize="2xl" />
-                </InputLeftElement>
-                {/* Visually hidden accessible label. See: https://www.w3.org/WAI/tutorials/forms/labels/#hiding-label-text */}
-                <Text
-                  as="label"
-                  {...getLabelProps()}
-                  border={0}
-                  clip="rect(0 0 0 0)"
-                  height="1px"
-                  margin="-1px"
-                  overflow="hidden"
-                  padding={0}
-                  position="absolute"
-                  width="1px"
-                >
-                  Search in workspace selection popover
-                </Text>
-                <Input
-                  {...getInputProps({ ref: searchInputRef })}
-                  name="workspace-selection-search"
-                  placeholder="Search..."
-                  pr="4rem"
-                />
-                <InputRightElement
-                  width="4rem"
-                  justifyContent="flex-end"
-                  pr="2"
-                >
-                  {inputValue && (
-                    <>
-                      <CloseCircleIcon
-                        fontSize="2xl"
-                        onClick={reset}
-                        cursor="pointer"
-                        color={closeCircleIconColor}
+      <Portal>
+        <PopoverContent
+          borderColor={borderColor}
+          cursor="default"
+          pointerEvents="initial"
+          aria-label={ariaLabel}
+          overflowX="visible"
+          overflow="visible"
+        >
+          <PopoverBody pl="0" pr="0" pt="0">
+            <Box>
+              <Box {...getComboboxProps()} pl="3" pr="3" pt="3">
+                <InputGroup>
+                  <InputLeftElement pointerEvents="none">
+                    <MagnifierIcon fontSize="2xl" />
+                  </InputLeftElement>
+                  {/* Visually hidden accessible label. See: https://www.w3.org/WAI/tutorials/forms/labels/#hiding-label-text */}
+                  <Text
+                    as="label"
+                    {...getLabelProps()}
+                    border={0}
+                    clip="rect(0 0 0 0)"
+                    height="1px"
+                    margin="-1px"
+                    overflow="hidden"
+                    padding={0}
+                    position="absolute"
+                    width="1px"
+                  >
+                    Search in workspace selection popover
+                  </Text>
+                  <Input
+                    {...getInputProps({ ref: searchInputRef })}
+                    name="workspace-selection-search"
+                    placeholder="Search..."
+                    pr="4rem"
+                  />
+                  <InputRightElement
+                    width="4rem"
+                    justifyContent="flex-end"
+                    pr="2"
+                  >
+                    {inputValue && (
+                      <>
+                        <CloseCircleIcon
+                          fontSize="2xl"
+                          onClick={reset}
+                          cursor="pointer"
+                          color={closeCircleIconColor}
+                        />
+                        <Kbd fontSize="md">↩</Kbd>
+                      </>
+                    )}
+                  </InputRightElement>
+                </InputGroup>
+              </Box>
+              <Box
+                pt="1"
+                {...getMenuProps()}
+                overflowY="scroll"
+                maxHeight="340"
+              >
+                {filteredWorkspaces.map(
+                  (
+                    item: WorkspaceItem | CreateWorkspaceInput,
+                    index: number
+                  ) => {
+                    return (
+                      <WorkspaceListItem
+                        itemProps={getItemProps({ item, index })}
+                        item={item}
+                        highlight={highlightedIndex === index}
+                        selected={
+                          "id" in item && item.id === selectedWorkspaceId
+                        }
+                        isCreateWorkspaceItem={
+                          "type" in item && item.type === "CreateWorkspaceItem"
+                        }
+                        index={index}
+                        key={item.name}
                       />
-                      <Kbd fontSize="md">↩</Kbd>
-                    </>
-                  )}
-                </InputRightElement>
-              </InputGroup>
+                    );
+                  }
+                )}
+              </Box>
             </Box>
-            <Box pt="1" {...getMenuProps()} overflowY="scroll" maxHeight="340">
-              {filteredWorkspaces.map(
-                (item: WorkspaceItem | CreateWorkspaceInput, index: number) => {
-                  return (
-                    <WorkspaceListItem
-                      itemProps={getItemProps({ item, index })}
-                      item={item}
-                      highlight={highlightedIndex === index}
-                      selected={"id" in item && item.id === selectedWorkspaceId}
-                      isCreateWorkspaceItem={
-                        "type" in item && item.type === "CreateWorkspaceItem"
-                      }
-                      index={index}
-                      key={item.name}
-                    />
-                  );
-                }
-              )}
-            </Box>
-          </Box>
-        </PopoverBody>
-      </PopoverContent>
+          </PopoverBody>
+        </PopoverContent>
+      </Portal>
     </Popover>
   );
 };

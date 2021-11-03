@@ -12,15 +12,26 @@ import { LabelType } from "@labelflow/graphql-types";
 import { SelectInteraction } from "./select-interaction";
 import { Tools, useLabelingStore } from "../../../../connectors/labeling-state";
 import {
+  ResizeIogBox,
+  ResizeIogEvent,
+} from "./resize-and-translate-box-interaction-iog";
+import {
   ResizeAndTranslateBox,
   ResizeAndTranslateEvent,
 } from "./resize-and-translate-box-interaction";
 import { Effect, useUndoStore } from "../../../../connectors/undo-store";
 import { createUpdateLabelEffect } from "../../../../connectors/undo-store/effects/update-label";
+import { createRunIogEffect } from "../../../../connectors/undo-store/effects/run-iog";
+import {
+  extractSmartToolInputInputFromIogMask,
+  getIogMaskIdFromLabelId,
+  getLabelIdFromIogMaskId,
+} from "../../../../connectors/iog";
 
 // Extend react-openlayers-catalogue to include resize and translate interaction
 extend({
   ResizeAndTranslateBox: { object: ResizeAndTranslateBox, kind: "Interaction" },
+  ResizeIogBox: { object: ResizeIogBox, kind: "Interaction" },
 });
 
 const getLabelQuery = gql`
@@ -41,7 +52,12 @@ const getLabelQuery = gql`
 `;
 
 export const interactionEnd = async (
-  e: TranslateEvent | ModifyEvent | ResizeAndTranslateEvent | null,
+  e:
+    | TranslateEvent
+    | ModifyEvent
+    | ResizeAndTranslateEvent
+    | ResizeIogEvent
+    | null,
   perform: (effect: Effect<any>) => Promise<void>,
   client: ApolloClient<Object>,
   imageId: string,
@@ -78,6 +94,47 @@ export const interactionEnd = async (
   return true;
 };
 
+export const interactionEndIog = async (
+  e:
+    | TranslateEvent
+    | ModifyEvent
+    | ResizeAndTranslateEvent
+    | ResizeIogEvent
+    | null,
+  perform: (effect: Effect<any>) => Promise<void>,
+  client: ApolloClient<Object>,
+  toast: (options: UseToastOptions) => void
+) => {
+  const feature = e?.features?.item(0) as Feature<Polygon>;
+  if (feature != null) {
+    const { id: labelIdIog } = feature.getProperties();
+    try {
+      await perform(
+        createRunIogEffect(
+          {
+            labelId: getLabelIdFromIogMaskId(labelIdIog),
+            ...extractSmartToolInputInputFromIogMask(
+              feature.getGeometry().getCoordinates()
+            ),
+          },
+          { client }
+        )
+      );
+    } catch (error) {
+      toast({
+        title: "Error running IOG",
+        // @ts-ignore
+        description: error?.message,
+        isClosable: true,
+        status: "error",
+        position: "bottom-right",
+        duration: 10000,
+      });
+    }
+  }
+  return true;
+};
+
 export const SelectAndModifyFeature = (props: {
   sourceVectorLabelsRef: MutableRefObject<OlSourceVector<Geometry> | null>;
   map: OlMap | null;
@@ -92,6 +149,8 @@ export const SelectAndModifyFeature = (props: {
 
   // We need to have this state in order to store the selected feature in the addfeature listener below
   const [selectedFeature, setSelectedFeature] =
+    useState<Feature<Polygon> | null>(null);
+  const [selectedFeatureIog, setSelectedFeatureIog] =
     useState<Feature<Polygon> | null>(null);
   const selectedLabelId = useLabelingStore((state) => state.selectedLabelId);
   const selectedTool = useLabelingStore((state) => state.selectedTool);
@@ -113,6 +172,16 @@ export const SelectAndModifyFeature = (props: {
           )?.[0];
         if (featureFromSource != null) {
           setSelectedFeature(featureFromSource as Feature<Polygon>);
+        }
+        const featureFromSourceIog = sourceVectorLabelsRef.current
+          ?.getFeatures()
+          ?.filter(
+            (feature) =>
+              feature.getProperties().id ===
+              getIogMaskIdFromLabelId(selectedLabelId)
+          )?.[0];
+        if (featureFromSourceIog != null) {
+          setSelectedFeatureIog(featureFromSourceIog as Feature<Polygon>);
         }
       }
     }
@@ -152,6 +221,15 @@ export const SelectAndModifyFeature = (props: {
             }}
           />
         )}
+      {selectedTool === Tools.IOG && (
+        /* @ts-ignore - We need to add this because resizeAndTranslateBox is not included in the react-openalyers-fiber original catalogue */
+        <resizeIogBox
+          args={{ selectedFeature: selectedFeatureIog, pixelTolerance: 20 }}
+          onInteractionEnd={async (e: ResizeIogEvent | null) => {
+            return await interactionEndIog(e, perform, client, toast);
+          }}
+        />
+      )}
       {selectedTool === Tools.SELECTION &&
         labelData?.label?.type === LabelType.Polygon &&
         selectedFeature && (

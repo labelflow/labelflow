@@ -17,6 +17,7 @@ import webpackPreprocessor from "@cypress/webpack-preprocessor";
 // See https://www.npmjs.com/package/node-polyfill-webpack-plugin
 import NodePolyfillPlugin from "node-polyfill-webpack-plugin";
 import path from "path";
+import { getPrismaClient } from "../../typescript/db/src/prisma-client";
 
 /**
  * @type {Cypress.PluginConfig}
@@ -83,4 +84,63 @@ module.exports = (on: (type: string, preprocessor: any) => void) => {
       webpackOptions: config,
     })
   );
+  const testUser = {
+    name: "Cypress test user",
+    email: "test@labelflow.ai",
+  };
+  on("task", {
+    async clearDb() {
+      const prisma = await getPrismaClient();
+      await prisma.membership.deleteMany({});
+      await prisma.workspace.deleteMany({});
+      await prisma.session.deleteMany({});
+      await prisma.user.deleteMany({});
+      return null;
+    },
+    async performLogin() {
+      const prisma = await getPrismaClient();
+      const { name, email } = testUser;
+      const existingUser = await prisma.user.findFirst({ where: { email } });
+      const user =
+        existingUser != null
+          ? existingUser
+          : await prisma.user.create({
+              data: { name, email },
+            });
+      const session = await prisma.session.create({
+        data: {
+          userId: user.id,
+          sessionToken: "123456789",
+          expires: new Date(
+            new Date().getTime() + 60 * 60 * 1000
+          ).toISOString(),
+        },
+      });
+      return session.sessionToken;
+    },
+    async createWorkspaceAndDatasets() {
+      const prisma = await getPrismaClient();
+      await prisma.workspace.create({
+        data: {
+          slug: "cypress-test-workspace",
+          name: "Cypress test workspace",
+          plan: "Community",
+          memberships: {
+            create: {
+              user: { connect: { email: testUser.email } },
+              role: "Owner",
+            },
+          },
+        },
+      });
+      await prisma.dataset.create({
+        data: {
+          workspace: { connect: { slug: "cypress-test-workspace" } },
+          slug: "test-dataset-cypress",
+          name: "Test dataset cypress",
+        },
+      });
+      return null;
+    },
+  });
 };

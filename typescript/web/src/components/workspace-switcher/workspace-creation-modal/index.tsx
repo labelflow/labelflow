@@ -252,6 +252,7 @@ export const WorkspaceCreationModal = ({
                   }
                   colorScheme="brand"
                   onClick={() => createWorkspace()}
+                  aria-label="Create workspace"
                 >
                   Create
                 </Button>
