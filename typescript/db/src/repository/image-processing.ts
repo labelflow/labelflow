@@ -2,6 +2,13 @@
 // @ts-ignore
 import Vips from "wasm-vips";
 
+import "isomorphic-fetch";
+
+import Blob from "fetch-blob";
+import { getThumbnailUrlFromImageUrl } from "@labelflow/common-resolvers/src/utils/thumbnail-url";
+
+globalThis.Blob = Blob;
+
 const vipsPromise = Vips();
 
 const defaultMaxImageSizePixel: number = 60e6;
@@ -22,8 +29,10 @@ const vipsFormats: { [key: string]: string } = {
   heifload: "image/heif",
   jp2kload: "image/jp2",
   jpegload: "image/jpeg",
+  jpegload_buffer: "image/jpeg",
   jxlload: "image/jxl",
   magickload: "image/bmp", // Not sure, but vips use magick to load bmp See https://www.libvips.org/API/8.6/VipsForeignSave.html
+  magickload_buffer: "image/bmp", // Not sure, but vips use magick to load bmp See https://www.libvips.org/API/8.6/VipsForeignSave.html
   matload: "application/x-matlab-data",
   matrixload: "image/matrix", // Not sure
   niftiload: "image/nifti", // Not sure
@@ -31,13 +40,16 @@ const vipsFormats: { [key: string]: string } = {
   openslideload: "image/openslide", // Not sure
   pdfload: "application/pdf",
   pngload: "image/png",
+  pngload_buffer: "image/png",
   ppmload: "image/x-portable-anymap", // See https://fr.wikipedia.org/wiki/Portable_pixmap
   radload: "image/vnd.radiance",
   rawload: "image/raw", // Not sure, maybe not relevant
   svgload: "image/svg+xml",
   tiffload: "image/tiff",
+  tiffload_buffer: "image/tiff",
   vipsload: "image/vips", // Not sure
   webpload: "image/webp",
+  webpload_buffer: "image/webp",
 };
 
 const validateImageSize = ({
@@ -105,8 +117,18 @@ export const processImage = async (
       ".jpg"
     );
 
+    putImage(
+      getThumbnailUrlFromImageUrl({ url, size: 20, extension: "jpeg" }),
+      new Blob([vipsThumbnail20], { type: "image/jpeg" })
+    );
+
     const vipsThumbnail50 = VipsImage.thumbnailBuffer(buffer, 50).writeToBuffer(
       ".jpg"
+    );
+
+    putImage(
+      getThumbnailUrlFromImageUrl({ url, size: 50, extension: "jpeg" }),
+      new Blob([vipsThumbnail50], { type: "image/jpeg" })
     );
 
     const vipsThumbnail100 = VipsImage.thumbnailBuffer(
@@ -114,15 +136,30 @@ export const processImage = async (
       100
     ).writeToBuffer(".jpg");
 
+    putImage(
+      getThumbnailUrlFromImageUrl({ url, size: 100, extension: "jpeg" }),
+      new Blob([vipsThumbnail100], { type: "image/jpeg" })
+    );
+
     const vipsThumbnail200 = VipsImage.thumbnailBuffer(
       buffer,
       200
     ).writeToBuffer(".jpg");
 
+    putImage(
+      getThumbnailUrlFromImageUrl({ url, size: 200, extension: "jpeg" }),
+      new Blob([vipsThumbnail200], { type: "image/jpeg" })
+    );
+
     const vipsThumbnail500 = VipsImage.thumbnailBuffer(
       buffer,
       500
     ).writeToBuffer(".jpg");
+
+    putImage(
+      getThumbnailUrlFromImageUrl({ url, size: 500, extension: "jpeg" }),
+      new Blob([vipsThumbnail500], { type: "image/jpeg" })
+    );
 
     return validateImageSize({
       width: width ?? vipsImage.width,
@@ -130,6 +167,7 @@ export const processImage = async (
       mimetype: mimetype ?? vipsFormats[vipsImage.getString("vips-loader")],
     });
   } catch (e) {
+    console.error(e);
     throw new Error(
       `Could not probe the external image at url ${url} it may be damaged or corrupted.`
     );
