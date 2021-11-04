@@ -134,6 +134,7 @@ export function Hero() {
             h={{ base: "auto", lg: "560px" }}
           >
             <Img
+              crossOrigin="anonymous"
               w="full"
               transform={{ base: "", lg: "scale(1.1)", xl: "scale(1.3)" }}
               pos="relative"

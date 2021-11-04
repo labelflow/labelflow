@@ -107,5 +107,5 @@ export const Image = ({ variant, ...props }: ImageProps): ReactElement => {
    */
   const styles = useStyleConfig("Image", { variant });
   // eslint-disable-next-line react/jsx-props-no-spreading
-  return <ImageWithChakra sx={styles} {...props} />;
+  return <ImageWithChakra sx={styles} crossOrigin="anonymous" {...props} />;
 };

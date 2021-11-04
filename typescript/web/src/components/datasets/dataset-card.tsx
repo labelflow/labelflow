@@ -66,6 +66,7 @@ export const DatasetCard = (props: {
               <Image
                 src={imageUrl}
                 alt={imageAlt}
+                crossOrigin="anonymous"
                 alignSelf="center"
                 fit="cover"
               />

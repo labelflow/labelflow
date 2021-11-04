@@ -23,23 +23,23 @@ const SentryWebpackPluginOptions = {
 
 module.exports = withSentryConfig(
   {
-    // async headers() {
-    //   return [
-    //     {
-    //       source: '/:path*',
-    //       headers: [
-    //         {
-    //           key: 'Cross-Origin-Embedder-Policy',
-    //           value: 'require-corp',
-    //         },
-    //         {
-    //           key: 'Cross-Origin-Opener-Policy',
-    //           value: 'same-origin',
-    //         },
-    //       ],
-    //     },
-    //   ]
-    // },
+    async headers() {
+      return [
+        {
+          source: '/:path*',
+          headers: [
+            {
+              key: 'Cross-Origin-Embedder-Policy',
+              value: 'require-corp',
+            },
+            {
+              key: 'Cross-Origin-Opener-Policy',
+              value: 'same-origin',
+            },
+          ],
+        },
+      ]
+    },
     sentry: {
       disableServerWebpackPlugin:
         process.env.SENTRY_AUTH_TOKEN != null ? false : true,

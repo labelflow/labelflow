@@ -70,7 +70,13 @@ export const ExportFormatCard = ({
         spacing={4}
         boxSizing="border-box"
       >
-        <Image src={logoSrc} w="16" flexGrow={0} flexShrink={0} />
+        <Image
+          src={logoSrc}
+          crossOrigin="anonymous"
+          w="16"
+          flexGrow={0}
+          flexShrink={0}
+        />
         <VStack
           alignItems="flex-start"
           spacing="1"

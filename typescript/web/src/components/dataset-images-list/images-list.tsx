@@ -129,6 +129,7 @@ export const ImagesList = ({
                       alt={name}
                       src={url}
                       ignoreFallback
+                      crossOrigin="anonymous"
                       objectFit="contain"
                       h="208px"
                       w="full"

@@ -12,6 +12,7 @@ export const Quotee = (props: Props) => {
   return (
     <Box {...boxProps}>
       <Img
+        crossOrigin="anonymous"
         src={imageSrc}
         alt={name}
         mx="auto"

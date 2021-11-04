@@ -37,6 +37,7 @@ export const BlogCard = (props: BlogProps) => {
     >
       <Flex direction="column">
         <Img
+          crossOrigin="anonymous"
           height="60"
           objectFit="cover"
           alt={title}

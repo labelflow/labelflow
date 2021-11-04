@@ -49,6 +49,7 @@ export const GalleryItem = memo(
               <AspectRatio ratio={3 / 2}>
                 <Image
                   src={url}
+                  crossOrigin="anonymous"
                   fallback={
                     <Skeleton height="100%" width="100%" borderRadius="md" />
                   }
