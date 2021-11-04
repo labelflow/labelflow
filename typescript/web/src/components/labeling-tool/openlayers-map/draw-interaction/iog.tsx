@@ -120,9 +120,15 @@ export const DrawIogInteraction = ({ imageId }: { imageId: string }) => {
     return () => {};
   }, [vectorSourceRef.current]);
 
-  useHotkeys(keymap.validateIogLabel.key, () => setSelectedLabelId(null), {}, [
-    setSelectedLabelId,
-  ]);
+  useHotkeys(
+    keymap.validateIogLabel.key,
+    () => {
+      setSelectedLabelId(null);
+      setDrawingToolState(DrawingToolState.IDLE);
+    },
+    {},
+    [setSelectedLabelId]
+  );
   useHotkeys(
     keymap.cancelAction.key,
     () => drawRef.current?.abortDrawing(),
@@ -158,6 +164,7 @@ export const DrawIogInteraction = ({ imageId }: { imageId: string }) => {
       ) {
         // Deselect feature
         setSelectedLabelId(null);
+        setDrawingToolState(DrawingToolState.IDLE);
       } else if (idOfClickedFeature === selectedLabelId) {
         // Add point outside
         perform(
@@ -291,7 +298,7 @@ export const DrawIogInteraction = ({ imageId }: { imageId: string }) => {
       );
     })();
 
-    setDrawingToolState(DrawingToolState.IDLE);
+    // setDrawingToolState(DrawingToolState.IDLE);
     try {
       await inferencePromise;
     } catch (error) {
@@ -323,6 +330,37 @@ export const DrawIogInteraction = ({ imageId }: { imageId: string }) => {
     );
     return true;
   };
+
+  useEffect(() => {
+    const handler = function (event: MapBrowserEvent<UIEvent>) {
+      const { map: mapEvent } = event;
+      if (!map) return;
+      const idOfHoveredFeature = mapEvent.forEachFeatureAtPixel(
+        event.pixel,
+        (feature) => feature.getProperties().id
+      );
+      if (idOfHoveredFeature === selectedLabelId) {
+        map.getViewport().style.cursor = `url("/static/graphics/iog-remove.svg") 12 14, auto`;
+      } else if (
+        idOfHoveredFeature?.includes("point-inside-") ||
+        idOfHoveredFeature?.includes("point-outside-")
+      ) {
+        map.getViewport().style.cursor = `url("/static/graphics/iog-delete.svg") 16 16, auto`;
+      } else if (
+        idOfHoveredFeature !== getIogMaskIdFromLabelId(selectedLabelId ?? "") &&
+        !idOfHoveredFeature?.includes("point-center") &&
+        selectedLabelId != null
+      ) {
+        map.getViewport().style.cursor = `url("/static/graphics/iog-add.svg") 12 12, auto`;
+      }
+    };
+    map?.on("pointermove", handler);
+    return () => {
+      if (!map) return;
+      map.un("pointermove", handler);
+      map.getViewport().style.cursor = "auto";
+    };
+  }, [map, selectedLabelId]);
 
   if (typeof imageId !== "string") {
     return null;
@@ -367,7 +405,8 @@ export const DrawIogInteraction = ({ imageId }: { imageId: string }) => {
               return (
                 <olFeature
                   id={`point-inside-${index}`}
-                  key={coordinates.join("-")}
+                  // eslint-disable-next-line react/no-array-index-key
+                  key={`${coordinates.join("-")}-${index}`}
                   geometry={new Point(coordinates)}
                   style={
                     new Style({
@@ -384,7 +423,8 @@ export const DrawIogInteraction = ({ imageId }: { imageId: string }) => {
               return (
                 <olFeature
                   id={`point-outside-${index}`}
-                  key={coordinates.join("-")}
+                  // eslint-disable-next-line react/no-array-index-key
+                  key={`${coordinates.join("-")}-${index}`}
                   geometry={new Point(coordinates)}
                   style={
                     new Style({
