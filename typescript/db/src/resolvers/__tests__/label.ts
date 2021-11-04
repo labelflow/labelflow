@@ -6,14 +6,14 @@ import {
   MutationCreateWorkspaceArgs,
   Workspace,
 } from "@labelflow/graphql-types";
-import { probeImage } from "@labelflow/common-resolvers/src/utils/probe-image";
 import { createClient } from "@supabase/supabase-js";
+import { processImage } from "../../repository/image-processing";
 import { getPrismaClient } from "../../prisma-client";
 import { client, user } from "../../dev/apollo-client";
 import { LabelType } from ".prisma/client";
 
-jest.mock("@labelflow/common-resolvers/src/utils/probe-image");
-const mockedProbeSync = probeImage as jest.Mock;
+jest.mock("../../repository/image-processing");
+const mockedProcessImage = processImage as jest.Mock;
 
 jest.mock("@supabase/supabase-js");
 const mockedSupabaseCreateClient = createClient as jest.Mock;
@@ -135,7 +135,7 @@ const createImage = async (
   datasetId: String,
   imageId?: String
 ) => {
-  mockedProbeSync.mockReturnValue({
+  mockedProcessImage.mockReturnValue({
     width: imageWidth,
     height: imageHeight,
     mimetype: "image/jpeg",

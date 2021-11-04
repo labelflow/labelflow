@@ -33,7 +33,7 @@ import {
   listWorkspaces,
   updateWorkspace,
 } from "./workspace";
-import { probeImage } from "./image-processing";
+import { processImage } from "./image-processing";
 import { removeUserFromWhere } from "./utils/remove-user-from-where";
 
 export const repository: Repository = {
@@ -120,6 +120,6 @@ export const repository: Repository = {
     delete: deleteFromStorage,
   },
   imageProcessing: {
-    probeImage,
+    processImage,
   },
 };

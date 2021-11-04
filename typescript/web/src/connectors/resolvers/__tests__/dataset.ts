@@ -1,13 +1,13 @@
 import { gql } from "@apollo/client";
 import { incrementMockedDate } from "@labelflow/dev-utils/mockdate";
-import { probeImage } from "@labelflow/common-resolvers/src/utils/probe-image";
+import { processImage } from "../../repository/image-processing";
 import { client } from "../../apollo-client/schema-client";
 import { setupTestsWithLocalDatabase } from "../../../utils/setup-local-db-tests";
 
 setupTestsWithLocalDatabase();
 
-jest.mock("@labelflow/common-resolvers/src/utils/probe-image");
-const mockedProbeSync = probeImage as jest.Mock;
+jest.mock("../../repository/image-processing");
+const mockedProcessImage = processImage as jest.Mock;
 
 const createDataset = async (name: string, datasetId?: string | null) => {
   return await client.mutate({
@@ -304,7 +304,7 @@ describe("Dataset resolver test suite", () => {
   });
 
   test("should delete a dataset and its content", async () => {
-    mockedProbeSync.mockReturnValue({
+    mockedProcessImage.mockReturnValue({
       width: 42,
       height: 36,
       mime: "image/jpeg",
@@ -580,7 +580,7 @@ describe("Dataset resolver test suite", () => {
   });
 
   it("should list a dataset images, label classes, labels and workspace", async () => {
-    mockedProbeSync.mockReturnValue({
+    mockedProcessImage.mockReturnValue({
       width: 42,
       height: 36,
       mime: "image/jpeg",
@@ -645,7 +645,7 @@ describe("Dataset resolver test suite", () => {
   });
 
   it("should count a dataset images, label classes and labels", async () => {
-    mockedProbeSync.mockReturnValue({
+    mockedProcessImage.mockReturnValue({
       width: 42,
       height: 36,
       mime: "image/jpeg",

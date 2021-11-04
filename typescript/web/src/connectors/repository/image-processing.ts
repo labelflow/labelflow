@@ -39,7 +39,7 @@ const validateImageSize = ({
 /**
  * Given a partial image, return a completed version of the image, probing it if necessary
  */
-export const probeImage = async (
+export const processImage = async (
   {
     width,
     height,
@@ -51,7 +51,8 @@ export const probeImage = async (
     mimetype: string | null | undefined;
     url: string;
   },
-  getImage: (url: string) => Promise<ArrayBuffer>
+  getImage: (url: string) => Promise<ArrayBuffer>,
+  putImage: (url: string, blob: Blob) => Promise<void>
 ): Promise<{
   width: number;
   height: number;
@@ -60,17 +61,6 @@ export const probeImage = async (
   if (width && height && mimetype) {
     return { width, height, mimetype };
   }
-
-  // console.log(
-  //   JSON.stringify({
-  //     loader: im.getString("vips-loader"), // The loader which was used to load the image
-  //     width: im.width,
-  //     height: im.height,
-  //     space: im.interpretation,
-  //     channels: im.bands,
-  //     depth: im.format,
-  //   })
-  // );
 
   const probeInput = new Uint8Array(await getImage(url));
 

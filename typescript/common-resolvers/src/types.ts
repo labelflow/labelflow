@@ -162,7 +162,7 @@ export type Repository = {
     delete: (url: string) => Promise<void>;
   };
   imageProcessing: {
-    probeImage: (
+    processImage: (
       {
         width,
         height,
@@ -174,7 +174,8 @@ export type Repository = {
         mimetype: string | null | undefined;
         url: string;
       },
-      fetcher: (urlToProbe: string) => Promise<ArrayBuffer>
+      getImage: (url: string) => Promise<ArrayBuffer>,
+      putThumbnail: (url: string, blob: Blob) => Promise<void>
     ) => Promise<{
       width: number;
       height: number;

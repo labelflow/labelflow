@@ -73,7 +73,7 @@ const validateImageSize = ({
 /**
  * Given a partial image, return a completed version of the image, probing it if necessary
  */
-export const probeImage = async (
+export const processImage = async (
   {
     width,
     height,
@@ -85,7 +85,8 @@ export const probeImage = async (
     mimetype: string | null | undefined;
     url: string;
   },
-  getImage: (url: string) => Promise<ArrayBuffer>
+  getImage: (url: string) => Promise<ArrayBuffer>,
+  putImage: (url: string, blob: Blob) => Promise<void>
 ): Promise<{
   width: number;
   height: number;

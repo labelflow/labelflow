@@ -136,14 +136,15 @@ export const getImageEntityFromMutationArgs = async (
   }
 
   // Probe the file to get its dimensions and mimetype if not provided
-  const imageMetaData = await repository.imageProcessing.probeImage(
+  const imageMetaData = await repository.imageProcessing.processImage(
     {
       width,
       height,
       mimetype,
       url: finalUrl!,
     },
-    (urlToProbe: string) => repository.upload.get(urlToProbe, req)
+    (fromUrl: string) => repository.upload.get(fromUrl, req),
+    (toUrl: string, blob: Blob) => repository.upload.put(toUrl, blob)
   );
 
   const newImageEntity: DbImageCreateInput = {

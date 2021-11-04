@@ -4,7 +4,7 @@ import userEvent from "@testing-library/user-event";
 import { ApolloProvider, gql } from "@apollo/client";
 import { PropsWithChildren } from "react";
 import "@testing-library/jest-dom/extend-expect";
-import { probeImage } from "@labelflow/common-resolvers/src/utils/probe-image";
+import { processImage } from "../../../../connectors/repository/image-processing";
 import { client } from "../../../../connectors/apollo-client/schema-client";
 import { setupTestsWithLocalDatabase } from "../../../../utils/setup-local-db-tests";
 import {
@@ -31,10 +31,10 @@ const Wrapper = ({ children }: PropsWithChildren<{}>) => (
 
 setupTestsWithLocalDatabase();
 
-jest.mock("@labelflow/common-resolvers/src/utils/probe-image");
-const mockedProbeSync = probeImage as jest.Mock;
+jest.mock("../../../../connectors/repository/image-processing");
+const mockedProcessImage = processImage as jest.Mock;
 
-mockedProbeSync.mockReturnValue({
+mockedProcessImage.mockReturnValue({
   width: 42,
   height: 36,
   mime: "image/jpeg",
