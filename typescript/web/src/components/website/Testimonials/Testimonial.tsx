@@ -28,7 +28,6 @@ export const Testimonial = (props: TestimonialProps) => {
       {...props}
     >
       <Img
-        crossOrigin="anonymous"
         display={{ base: "none", md: "block" }}
         mt="2"
         flexShrink={0}
@@ -52,7 +51,6 @@ export const Testimonial = (props: TestimonialProps) => {
         </Box>
         <HStack>
           <Img
-            crossOrigin="anonymous"
             display={{ base: "block", md: "none" }}
             flexShrink={0}
             src={image}

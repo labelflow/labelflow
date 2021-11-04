@@ -52,7 +52,6 @@ export const Roadmap = () => {
             </Button>
           </Box>
           <Img
-            crossOrigin="anonymous"
             htmlWidth="500px"
             htmlHeight="280px"
             height={{ md: "400px" }}

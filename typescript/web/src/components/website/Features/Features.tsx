@@ -25,7 +25,6 @@ export const Features = () => {
       >
         <SimpleGrid columns={{ base: 1, md: 2 }} spacing="10">
           <Img
-            crossOrigin="anonymous"
             htmlWidth="500px"
             htmlHeight="320px"
             height={{ md: "320px" }}

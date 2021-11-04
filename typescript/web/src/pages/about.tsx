@@ -57,7 +57,6 @@ export default function About() {
               <br />
               <Center>
                 <img
-                  crossOrigin="anonymous"
                   src="static/img/about-screenshot1.jpg"
                   alt="Sterblue Platform"
                 />

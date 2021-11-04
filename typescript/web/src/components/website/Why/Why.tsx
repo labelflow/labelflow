@@ -28,7 +28,6 @@ export const Why = () => {
           </Text>
         </NextLink>
         <Image
-          crossOrigin="anonymous"
           alt="LabelFlow infrastructure diagram"
           mt="12"
           objectFit="cover"
