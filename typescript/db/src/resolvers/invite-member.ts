@@ -1,4 +1,3 @@
-import { v4 as uuidv4 } from "uuid";
 import "isomorphic-fetch";
 
 import {
@@ -23,12 +22,12 @@ const inviteMember = async (
     where: { slug: workspaceSlug },
     select: { name: true },
   });
-  const membership = await (
+  const inviterMembership = await (
     await getPrismaClient()
   ).membership.findMany({
     where: { AND: [{ userId: user?.id }, { workspaceSlug }] },
   });
-  if (!workspace || !membership) {
+  if (!workspace || !inviterMembership) {
     return InvitationResult.Error;
   }
   const inviter = await (
@@ -50,12 +49,55 @@ const inviteMember = async (
   if (isInviteeAlreadyInWorkspace) {
     return InvitationResult.UserAlreadyIn;
   }
-  const invitationToken = uuidv4();
+
+  const membershipAlreadyExists = await (
+    await getPrismaClient()
+  ).membership.findFirst({
+    where: {
+      AND: [
+        { workspaceSlug: { equals: workspaceSlug } },
+        { invitationEmailSentTo: { equals: inviteeEmail } },
+      ],
+    },
+    select: {
+      id: true,
+    },
+  });
+  let membershipId;
+  if (!membershipAlreadyExists) {
+    // Create that membership
+    const membership = await (
+      await getPrismaClient()
+    ).membership.create({
+      data: {
+        role: inviteeRole,
+        workspaceSlug,
+        invitationEmailSentTo: inviteeEmail,
+      },
+      select: { id: true },
+    });
+
+    membershipId = membership.id;
+  } else {
+    // Update that membership
+    const membership = await (
+      await getPrismaClient()
+    ).membership.update({
+      where: { id: membershipAlreadyExists.id },
+      data: {
+        role: inviteeRole,
+      },
+      select: { id: true },
+    });
+    membershipId = membership.id;
+  }
+
   const inputsInvitation = {
     ...{
       inviteeEmail,
       workspaceName: workspace.name,
-      invitationToken,
+      workspaceSlug,
+      membershipId,
     },
     ...(inviter?.email && {
       inviterEmail: inviter?.email,
@@ -78,44 +120,7 @@ const inviteMember = async (
     // console.error(`Failed sending email with error ${e}`);
     return InvitationResult.Error;
   }
-  const membershipAlreadyExists = await (
-    await getPrismaClient()
-  ).membership.findFirst({
-    where: {
-      AND: [
-        { workspaceSlug: { equals: workspaceSlug } },
-        { invitationEmailSentTo: { equals: inviteeEmail } },
-      ],
-    },
-    select: {
-      id: true,
-    },
-  });
-  if (!membershipAlreadyExists) {
-    // Create that membership
-    await (
-      await getPrismaClient()
-    ).membership.create({
-      data: {
-        role: inviteeRole,
-        workspaceSlug,
-        invitationEmailSentTo: inviteeEmail,
-        invitationToken,
-      },
-      select: { invitationToken: true },
-    });
-  } else {
-    // Update that membership
-    await (
-      await getPrismaClient()
-    ).membership.update({
-      where: { id: membershipAlreadyExists.id },
-      data: {
-        invitationToken,
-        role: inviteeRole,
-      },
-    });
-  }
+
   // Query api route to send email
   return InvitationResult.Sent;
 };

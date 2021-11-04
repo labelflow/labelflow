@@ -100,7 +100,6 @@ model Membership {
   userId                String?   @db.Uuid
   user                  User?     @relation(fields: [userId], references: [id])
   invitationEmailSentTo String?
-  invitationToken       String?   @unique @db.Uuid
 
   @@unique([workspaceSlug, userId])
   @@unique([workspaceSlug, invitationEmailSentTo])
