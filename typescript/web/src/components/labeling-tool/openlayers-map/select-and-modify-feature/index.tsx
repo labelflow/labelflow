@@ -11,10 +11,7 @@ import { TranslateEvent } from "ol/interaction/Translate";
 import { LabelType } from "@labelflow/graphql-types";
 import { SelectInteraction } from "./select-interaction";
 import { Tools, useLabelingStore } from "../../../../connectors/labeling-state";
-import {
-  ResizeIogBox,
-  ResizeIogEvent,
-} from "./resize-and-translate-box-interaction-iog";
+import { ResizeIogBox, ResizeIogEvent } from "./resize-box-interaction-iog";
 import {
   ResizeAndTranslateBox,
   ResizeAndTranslateEvent,
@@ -116,6 +113,8 @@ export const interactionEndIog = async (
             ...extractSmartToolInputInputFromIogMask(
               feature.getGeometry().getCoordinates()
             ),
+            pointsInside: [],
+            pointsOutside: [],
           },
           { client }
         )
