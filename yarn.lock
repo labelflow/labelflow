@@ -5952,7 +5952,6 @@ __metadata:
     "@turf/intersect": 6.5.0
     "@turf/meta": ^6.5.0
     "@types/mime-types": 2.1.0
-    "@types/probe-image-size": 7.0.1
     date-fns: ^2.23.0
     graphql: 15.5.1
     graphql-type-json: 0.3.2
@@ -5989,7 +5988,6 @@ __metadata:
     memoize-one: ^5.2.1
     nodemon: 2.0.12
     prisma: 2.30.3
-    probe-image-size: 7.2.1
     sharp: 0.29.2
     slugify: ^1.6.0
     ts-node: 10.1.0
@@ -11669,15 +11667,6 @@ __metadata:
   version: 1.0.0
   resolution: "@types/pretty-hrtime@npm:1.0.0"
   checksum: d7b291c1d1fb1d9865dcd79c6ddd4504b42cb6053b052e17ad5a1155ed89ec4dab8f4960300d89a37afa9beb3ae16f85d4717d5c0d8e8afb2f7e23dc22b33f89
-  languageName: node
-  linkType: hard
-
-"@types/probe-image-size@npm:7.0.1":
-  version: 7.0.1
-  resolution: "@types/probe-image-size@npm:7.0.1"
-  dependencies:
-    "@types/node": "*"
-  checksum: a193a39dca0ec2bf70ec98456824f3503b895912307335f26278e0aab00a0115059c8ee622c88667a8935ce0eed029ee13e8d0c6d112d6b76b54bac3b6c6397b
   languageName: node
   linkType: hard
 
