@@ -39,6 +39,13 @@ const getImageName = ({
   return nameBase.replace(/\.[^/.]+$/, "");
 };
 
+/**
+ * Very important function, which processes images (download from external URL if needed, probe metadata, create and upload thumbnails, etc.)
+ * @param data ImageCreateInput
+ * @param repository
+ * @param req
+ * @returns
+ */
 export const getImageEntityFromMutationArgs = async (
   data: ImageCreateInput,
   repository: Pick<Repository, "upload" | "imageProcessing">,
@@ -103,9 +110,9 @@ export const getImageEntityFromMutationArgs = async (
       );
     }
 
-    finalUrl = uploadTarget.downloadUrl;
-
     await repository.upload.put(uploadTarget.uploadUrl, blob);
+
+    finalUrl = uploadTarget.downloadUrl;
   }
 
   if (file && !externalUrl && !url) {
@@ -122,9 +129,10 @@ export const getImageEntityFromMutationArgs = async (
         "This Server does not support file upload. You can create images by providing a `file` directly in the `createImage` mutation"
       );
     }
-    finalUrl = uploadTarget.downloadUrl;
 
     await repository.upload.put(uploadTarget.uploadUrl, file);
+
+    finalUrl = uploadTarget.downloadUrl;
   }
 
   // Probe the file to get its dimensions and mimetype if not provided

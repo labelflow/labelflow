@@ -24,7 +24,7 @@ import {
   checkUserAccessToLabelClass,
   checkUserAccessToWorkspace,
 } from "./access-control";
-import { probeImage } from "./probe-image";
+import { probeImage } from "./image-processing";
 
 export const repository: Repository = {
   image: {
