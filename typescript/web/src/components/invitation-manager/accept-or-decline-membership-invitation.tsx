@@ -1,15 +1,4 @@
-import { useCallback, useRef } from "react";
-
-import {
-  AlertDialog,
-  AlertDialogContent,
-  AlertDialogFooter,
-  AlertDialogBody,
-  AlertDialogHeader,
-  Button,
-} from "@chakra-ui/react";
-
-const noOp = () => {};
+import { Button, Center, chakra } from "@chakra-ui/react";
 
 export const AcceptOrDeclineMembershipInvitation = ({
   accept,
@@ -17,40 +6,67 @@ export const AcceptOrDeclineMembershipInvitation = ({
   decline,
   invitationEmailAddress,
   workspaceName,
+  disabled = false,
 }: {
   accept: () => void;
   currentUserIdentifier: string;
   decline: () => void;
   invitationEmailAddress: string;
   workspaceName: string;
+  disabled: boolean;
 }) => {
-  const acceptRef = useRef<HTMLButtonElement>(null);
-
   return (
-    <AlertDialog
-      size="2xl"
-      motionPreset="none"
-      leastDestructiveRef={acceptRef}
-      onClose={noOp}
-      isOpen
-      isCentered
-      closeOnEsc={false}
-    >
-      <AlertDialogContent boxShadow="none">
-        <AlertDialogHeader>
-          Join {workspaceName} as {currentUserIdentifier}?
-        </AlertDialogHeader>
-        <AlertDialogBody>
-          This invitation was sent to {invitationEmailAddress}, by accepting it
-          you will have access to every datasets in the workspace.
-        </AlertDialogBody>
-        <AlertDialogFooter>
-          <Button onClick={decline}>Decline</Button>
-          <Button ref={acceptRef} colorScheme="brand" ml={3} onClick={accept}>
-            Accept
-          </Button>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
+    <>
+      <Center as="section" h="full">
+        <chakra.div
+          bg="white"
+          borderRadius="md"
+          boxShadow="lg"
+          color="inherit"
+          display="flex"
+          flexDirection="column"
+          maxW="2xl"
+          my="3.75rem"
+          outline={0}
+          position="relative"
+          width="100%"
+        >
+          <chakra.header
+            fontSize="xl"
+            fontWeight="semibold"
+            px={6}
+            py={4}
+            flex={0}
+          >
+            Join {workspaceName} as {currentUserIdentifier}?
+          </chakra.header>
+          <chakra.div flex={1} px={6} py={2}>
+            This invitation was sent to {invitationEmailAddress}, by accepting
+            it you will have access to every datasets in the workspace.
+          </chakra.div>
+
+          <chakra.footer
+            display="flex"
+            alignItems="center"
+            justifyContent="flex-end"
+            px={6}
+            py={4}
+          >
+            <Button disabled={disabled} onClick={decline}>
+              Decline
+            </Button>
+            <Button
+              autoFocus
+              disabled={disabled}
+              colorScheme="brand"
+              ml={3}
+              onClick={accept}
+            >
+              Accept
+            </Button>
+          </chakra.footer>
+        </chakra.div>
+      </Center>
+    </>
   );
 };

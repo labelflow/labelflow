@@ -4,8 +4,8 @@ import { apolloDecorator } from "../../../utils/apollo-decorator";
 import { queryParamsDecorator } from "../../../utils/query-params-decorator";
 
 import { AcceptOrDeclineMembershipInvitation } from "../accept-or-decline-membership-invitation";
-import { RevokedInvitation as RevokedInvitationComponent } from "../revoked-invitation";
-import { AlreadyAcceptedInvitation as AlreadyAcceptedInvitationComponent } from "../already-accepted-invitation";
+import { InvalidInvitation as InvalidInvitationComponent } from "../invalid-invitation";
+import { UserNeedsToSignIn as UserNeedsToSignInComponent } from "../user-needs-to-sign-in";
 
 export default {
   title: "web/Invitation manager",
@@ -20,18 +20,19 @@ export const AcceptOrDecline = () => (
       decline={() => console.log("decline")}
       invitationEmailAddress="toto@sterblue.com"
       workspaceName="Sterblue"
+      disabled={false}
     />
   </div>
 );
 
-export const RevokedInvitation = () => (
+export const InvalidInvitation = () => (
   <div style={{ width: "100vw", height: "100vh", backgroundColor: "grey" }}>
-    <RevokedInvitationComponent invitationEmailAddress="toto@sterblue.com" />
+    <InvalidInvitationComponent reason="This is the reason" />
   </div>
 );
 
-export const AlreadyAcceptedInvitation = () => (
+export const UserNeedsToSignIn = () => (
   <div style={{ width: "100vw", height: "100vh", backgroundColor: "grey" }}>
-    <AlreadyAcceptedInvitationComponent userInMembershipEmailAddress="toto@sterblue.com" />
+    <UserNeedsToSignInComponent />
   </div>
 );
