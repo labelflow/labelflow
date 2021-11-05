@@ -6156,6 +6156,7 @@ __metadata:
     "@graphql-tools/merge": 6.2.14
     "@labelflow/graphql-types": "workspace:typescript/graphql-types"
     "@prisma/client": 2.30.3
+    "@turf/area": 6.5.0
     "@turf/bbox": 6.5.0
     "@turf/bbox-polygon": 6.5.0
     "@turf/flatten": ^6.5.0
@@ -9567,6 +9568,16 @@ __metadata:
     "@turf/invariant": ^6.3.0
     "@turf/rhumb-bearing": ^6.3.0
   checksum: 6561bae99b00801bfd5a596343e93eb1c18c5821be6c0f16d7267175823c92821bc6fa0530c0269c145339d4cf8a6d874b8fa39cfd4aa1f4db9b193fb77735ad
+  languageName: node
+  linkType: hard
+
+"@turf/area@npm:6.5.0":
+  version: 6.5.0
+  resolution: "@turf/area@npm:6.5.0"
+  dependencies:
+    "@turf/helpers": ^6.5.0
+    "@turf/meta": ^6.5.0
+  checksum: 4b62c6874f65bd477483ef259fa0fd34dc745a672a7544f5fbaba4a2b06a6b542edef8de786f907348594d847b38f82f22998534747d2810d2d0ed4587bf6e92
   languageName: node
   linkType: hard
 
