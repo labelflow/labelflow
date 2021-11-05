@@ -1,5 +1,3 @@
-import "isomorphic-fetch";
-
 import Blob from "fetch-blob";
 
 import { getThumbnailUrlFromImageUrl } from "@labelflow/common-resolvers/src/utils/thumbnail-url";
