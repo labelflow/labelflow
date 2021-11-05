@@ -1,5 +1,11 @@
+import "isomorphic-fetch";
+
+import Blob from "fetch-blob";
+
 import { getThumbnailUrlFromImageUrl } from "@labelflow/common-resolvers/src/utils/thumbnail-url";
 import Jimp from "jimp/es";
+
+globalThis.Blob = Blob;
 
 const defaultMaxImageSizePixel: number = 60e6;
 const maxImageSizePixel: { [mimetype: string]: number } = {
