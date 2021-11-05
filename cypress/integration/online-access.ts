@@ -10,7 +10,7 @@ describe("Online workspaces access", () => {
     cy.get('[aria-label="Open workspace selection popover"]').click();
     cy.get('[aria-label="Workspace selection menu popover"]')
       .contains("Create workspace")
-      .click();
+      .click({ force: true });
     // Type a workspace name in the workspace creation modal
     cy.contains("Workspace Name").should("be.visible");
     cy.focused().type("Test workspace");
@@ -34,7 +34,7 @@ describe("Online workspaces access", () => {
     cy.get('[aria-label="Open workspace selection popover"]').click();
     cy.get('[aria-label="Workspace selection menu popover"]')
       .contains("Create workspace")
-      .click();
+      .click({ force: true });
     // Click on create workspace in workspace creation modal
     cy.contains("Workspace Name").should("be.visible");
     cy.focused().type("Test workspace");
@@ -46,7 +46,7 @@ describe("Online workspaces access", () => {
     cy.get('[aria-label="Open workspace selection popover"]').click();
     cy.get('[aria-label="Workspace selection menu popover"]')
       .contains("Test workspace")
-      .should("be.visible");
+      .should("exist");
   });
   it("Should allow a user to access one of his workspaces and the datasets in it", () => {
     // Login and create a workspace with datasets in it
@@ -63,6 +63,6 @@ describe("Online workspaces access", () => {
     cy.get('[aria-label="Open workspace selection popover"]').click();
     cy.get('[aria-label="Workspace selection menu popover"]')
       .contains("Cypress test workspace")
-      .should("be.visible");
+      .should("exist");
   });
 });
