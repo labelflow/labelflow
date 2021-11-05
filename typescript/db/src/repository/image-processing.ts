@@ -1,55 +1,10 @@
-// ES6 module
-// @ts-ignore
-import Vips from "wasm-vips";
-
-import "isomorphic-fetch";
-
-import Blob from "fetch-blob";
 import { getThumbnailUrlFromImageUrl } from "@labelflow/common-resolvers/src/utils/thumbnail-url";
-
-globalThis.Blob = Blob;
-
-const vipsPromise = Vips();
+import Jimp from "jimp/es";
 
 const defaultMaxImageSizePixel: number = 60e6;
 const maxImageSizePixel: { [mimetype: string]: number } = {
   "image/jpeg": 100e6,
   "image/png": 60e6,
-};
-
-// Map from Vips loaders to MIME types
-// Done manually and verified by me
-// See https://www.rubydoc.info/gems/ruby-vips/Vips/Image for the list of all image.xxload() methods
-// See https://www.iana.org/assignments/media-types/media-types.xhtml for list of all mime types
-const vipsFormats: { [key: string]: string } = {
-  analyzeload: "image/analyze", // Not sure
-  csvload: "text/csv",
-  fitsload: "image/fits",
-  gifload: "image/gif",
-  heifload: "image/heif",
-  jp2kload: "image/jp2",
-  jpegload: "image/jpeg",
-  jpegload_buffer: "image/jpeg",
-  jxlload: "image/jxl",
-  magickload: "image/bmp", // Not sure, but vips use magick to load bmp See https://www.libvips.org/API/8.6/VipsForeignSave.html
-  magickload_buffer: "image/bmp", // Not sure, but vips use magick to load bmp See https://www.libvips.org/API/8.6/VipsForeignSave.html
-  matload: "application/x-matlab-data",
-  matrixload: "image/matrix", // Not sure
-  niftiload: "image/nifti", // Not sure
-  openexrload: "image/x-exr", // See https://lists.gnu.org/archive/html/openexr-devel/2014-05/msg00014.html
-  openslideload: "image/openslide", // Not sure
-  pdfload: "application/pdf",
-  pngload: "image/png",
-  pngload_buffer: "image/png",
-  ppmload: "image/x-portable-anymap", // See https://fr.wikipedia.org/wiki/Portable_pixmap
-  radload: "image/vnd.radiance",
-  rawload: "image/raw", // Not sure, maybe not relevant
-  svgload: "image/svg+xml",
-  tiffload: "image/tiff",
-  tiffload_buffer: "image/tiff",
-  vipsload: "image/vips", // Not sure
-  webpload: "image/webp",
-  webpload_buffer: "image/webp",
 };
 
 const validateImageSize = ({
@@ -104,78 +59,69 @@ export const processImage = async (
   height: number;
   mimetype: string;
 }> => {
-  const vipsObject = await vipsPromise;
-  // The type comes from typescript/db/src/@types/wasm-vips.d.ts
-  const VipsImage: typeof vips.Image = vipsObject.Image as typeof vips.Image;
-
   const buffer = await getImage(url);
 
-  try {
-    const vipsImage = VipsImage.newFromBuffer(buffer);
+  const image = await Jimp.read(buffer as Buffer);
 
-    const result = {
-      width: vipsImage.width,
-      height: vipsImage.height,
-      mimetype: vipsFormats[vipsImage.getString("vips-loader")],
-    };
+  const result = {
+    width: image.bitmap.width,
+    height: image.bitmap.height,
+    mimetype: image.getMIME(),
+  };
 
-    const vipsThumbnail20 = VipsImage.thumbnailBuffer(buffer, 20).writeToBuffer(
-      ".jpg"
-    );
+  const vipsThumbnail20 = await image
+    .clone()
+    .scaleToFit(20, 20, Jimp.RESIZE_BEZIER)
+    .getBufferAsync("image/jpeg");
 
-    putImage(
-      getThumbnailUrlFromImageUrl({ url, size: 20, extension: "jpeg" }),
-      new Blob([vipsThumbnail20], { type: "image/jpeg" })
-    );
+  putImage(
+    getThumbnailUrlFromImageUrl({ url, size: 20, extension: "jpeg" }),
+    new Blob([vipsThumbnail20], { type: "image/jpeg" })
+  );
 
-    const vipsThumbnail50 = VipsImage.thumbnailBuffer(buffer, 50).writeToBuffer(
-      ".jpg"
-    );
+  const vipsThumbnail50 = await image
+    .clone()
+    .scaleToFit(50, 50, Jimp.RESIZE_BEZIER)
+    .getBufferAsync("image/jpeg");
 
-    putImage(
-      getThumbnailUrlFromImageUrl({ url, size: 50, extension: "jpeg" }),
-      new Blob([vipsThumbnail50], { type: "image/jpeg" })
-    );
+  putImage(
+    getThumbnailUrlFromImageUrl({ url, size: 50, extension: "jpeg" }),
+    new Blob([vipsThumbnail50], { type: "image/jpeg" })
+  );
 
-    const vipsThumbnail100 = VipsImage.thumbnailBuffer(
-      buffer,
-      100
-    ).writeToBuffer(".jpg");
+  const vipsThumbnail100 = await image
+    .clone()
+    .scaleToFit(100, 100, Jimp.RESIZE_BEZIER)
+    .getBufferAsync("image/jpeg");
 
-    putImage(
-      getThumbnailUrlFromImageUrl({ url, size: 100, extension: "jpeg" }),
-      new Blob([vipsThumbnail100], { type: "image/jpeg" })
-    );
+  putImage(
+    getThumbnailUrlFromImageUrl({ url, size: 100, extension: "jpeg" }),
+    new Blob([vipsThumbnail100], { type: "image/jpeg" })
+  );
 
-    const vipsThumbnail200 = VipsImage.thumbnailBuffer(
-      buffer,
-      200
-    ).writeToBuffer(".jpg");
+  const vipsThumbnail200 = await image
+    .clone()
+    .scaleToFit(200, 200, Jimp.RESIZE_BEZIER)
+    .getBufferAsync("image/jpeg");
 
-    putImage(
-      getThumbnailUrlFromImageUrl({ url, size: 200, extension: "jpeg" }),
-      new Blob([vipsThumbnail200], { type: "image/jpeg" })
-    );
+  putImage(
+    getThumbnailUrlFromImageUrl({ url, size: 200, extension: "jpeg" }),
+    new Blob([vipsThumbnail200], { type: "image/jpeg" })
+  );
 
-    const vipsThumbnail500 = VipsImage.thumbnailBuffer(
-      buffer,
-      500
-    ).writeToBuffer(".jpg");
+  const vipsThumbnail500 = await image
+    .clone()
+    .scaleToFit(500, 500, Jimp.RESIZE_BEZIER)
+    .getBufferAsync("image/jpeg");
 
-    putImage(
-      getThumbnailUrlFromImageUrl({ url, size: 500, extension: "jpeg" }),
-      new Blob([vipsThumbnail500], { type: "image/jpeg" })
-    );
+  putImage(
+    getThumbnailUrlFromImageUrl({ url, size: 500, extension: "jpeg" }),
+    new Blob([vipsThumbnail500], { type: "image/jpeg" })
+  );
 
-    return validateImageSize({
-      width: width ?? result.width,
-      height: height ?? result.height,
-      mimetype: mimetype ?? result.mimetype,
-    });
-  } catch (e) {
-    console.error(e);
-    throw new Error(
-      `Could not probe the external image at url ${url} it may be damaged or corrupted.`
-    );
-  }
+  return validateImageSize({
+    width: width ?? result.width,
+    height: height ?? result.height,
+    mimetype: mimetype ?? result.mimetype,
+  });
 };

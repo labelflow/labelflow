@@ -58,7 +58,7 @@
     "graphql-tag": "2.12.4",
     "graphql-type-json": "^0.3.2",
     "http-browserify": "^1.7.0",
-    "jimp": "^0.16.1",
+    "jimp": "0.16.1",
     "jszip": "3.7.0",
     "lodash": "4.17.21",
     "mem": "^8.1.1",
