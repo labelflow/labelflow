@@ -1,4 +1,5 @@
-import probe from "probe-image-size";
+import { getThumbnailUrlFromImageUrl } from "@labelflow/common-resolvers/src/utils/thumbnail-url";
+import Jimp from "jimp/es";
 
 const defaultMaxImageSizePixel: number = 60e6;
 const maxImageSizePixel: { [mimetype: string]: number } = {
@@ -58,25 +59,69 @@ export const processImage = async (
   height: number;
   mimetype: string;
 }> => {
-  if (width && height && mimetype) {
-    return { width, height, mimetype };
-  }
+  const buffer = await getImage(url);
 
-  const probeInput = new Uint8Array(await getImage(url));
+  const image = await Jimp.read(buffer as Buffer);
 
-  // TODO: It would be nice to import "probe-image-size" asynchronously to reduce initial bundle size of sw, but webpack config todo.
-  // const probe = await import(/* webpackPrefetch: true */ "probe-image-size");
-  const probeResult = probe.sync(probeInput as Buffer);
+  const result = {
+    width: image.bitmap.width,
+    height: image.bitmap.height,
+    mimetype: image.getMIME(),
+  };
 
-  if (probeResult == null) {
-    throw new Error(
-      `Could not probe the external image at url ${url} it may be damaged or corrupted.`
-    );
-  }
+  const vipsThumbnail20 = await image
+    .clone()
+    .scaleToFit(20, 20, Jimp.RESIZE_BEZIER)
+    .getBufferAsync("image/jpeg");
+
+  putImage(
+    getThumbnailUrlFromImageUrl({ url, size: 20, extension: "jpeg" }),
+    new Blob([vipsThumbnail20], { type: "image/jpeg" })
+  );
+
+  const vipsThumbnail50 = await image
+    .clone()
+    .scaleToFit(50, 50, Jimp.RESIZE_BEZIER)
+    .getBufferAsync("image/jpeg");
+
+  putImage(
+    getThumbnailUrlFromImageUrl({ url, size: 50, extension: "jpeg" }),
+    new Blob([vipsThumbnail50], { type: "image/jpeg" })
+  );
+
+  const vipsThumbnail100 = await image
+    .clone()
+    .scaleToFit(100, 100, Jimp.RESIZE_BEZIER)
+    .getBufferAsync("image/jpeg");
+
+  putImage(
+    getThumbnailUrlFromImageUrl({ url, size: 100, extension: "jpeg" }),
+    new Blob([vipsThumbnail100], { type: "image/jpeg" })
+  );
+
+  const vipsThumbnail200 = await image
+    .clone()
+    .scaleToFit(200, 200, Jimp.RESIZE_BEZIER)
+    .getBufferAsync("image/jpeg");
+
+  putImage(
+    getThumbnailUrlFromImageUrl({ url, size: 200, extension: "jpeg" }),
+    new Blob([vipsThumbnail200], { type: "image/jpeg" })
+  );
+
+  const vipsThumbnail500 = await image
+    .clone()
+    .scaleToFit(500, 500, Jimp.RESIZE_BEZIER)
+    .getBufferAsync("image/jpeg");
+
+  putImage(
+    getThumbnailUrlFromImageUrl({ url, size: 500, extension: "jpeg" }),
+    new Blob([vipsThumbnail500], { type: "image/jpeg" })
+  );
 
   return validateImageSize({
-    width: width ?? probeResult.width,
-    height: height ?? probeResult.height,
-    mimetype: mimetype ?? probeResult.mime,
+    width: width ?? result.width,
+    height: height ?? result.height,
+    mimetype: mimetype ?? result.mimetype,
   });
 };

@@ -113,6 +113,12 @@ export const processImage = async (
   try {
     const vipsImage = VipsImage.newFromBuffer(buffer);
 
+    const result = {
+      width: vipsImage.width,
+      height: vipsImage.height,
+      mimetype: vipsFormats[vipsImage.getString("vips-loader")],
+    };
+
     const vipsThumbnail20 = VipsImage.thumbnailBuffer(buffer, 20).writeToBuffer(
       ".jpg"
     );
@@ -162,9 +168,9 @@ export const processImage = async (
     );
 
     return validateImageSize({
-      width: width ?? vipsImage.width,
-      height: height ?? vipsImage.height,
-      mimetype: mimetype ?? vipsFormats[vipsImage.getString("vips-loader")],
+      width: width ?? result.width,
+      height: height ?? result.height,
+      mimetype: mimetype ?? result.mimetype,
     });
   } catch (e) {
     console.error(e);
