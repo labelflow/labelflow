@@ -130,7 +130,7 @@ describe("Class selection popover", () => {
         labelClassId,
         type: LabelType.Box,
         geometry: {
-          type: LabelType.Box,
+          type: LabelType.Polygon,
           coordinates: [
             [
               [0, 900],
