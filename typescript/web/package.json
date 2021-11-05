@@ -2,7 +2,7 @@
   "name": "@labelflow/web",
   "version": "1.0.24",
   "scripts": {
-    "dev": "node --experimental-wasm-threads --experimental-wasm-bulk-memory --experimental-wasm-simd ../../node_modules/next/dist/bin/next",
+    "dev": "next dev",
     "dev:test": "NODE_ENV=\"test\" && next dev -p 3001",
     "build": "cd ../db && yarn generate && cd ../web && next build",
     "start": "next start",
