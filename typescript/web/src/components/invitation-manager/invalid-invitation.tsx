@@ -5,8 +5,9 @@ export const InvalidInvitation = ({ reason }: { reason: string }) => {
   const router = useRouter();
 
   return (
-    <Center as="section" h="full">
+    <Center h="full">
       <chakra.div
+        role="dialog"
         bg="white"
         borderRadius="md"
         boxShadow="lg"

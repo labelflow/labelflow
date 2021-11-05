@@ -17,8 +17,9 @@ export const AcceptOrDeclineMembershipInvitation = ({
 }) => {
   return (
     <>
-      <Center as="section" h="full">
+      <Center h="full">
         <chakra.div
+          role="dialog"
           bg="white"
           borderRadius="md"
           boxShadow="lg"
@@ -52,10 +53,15 @@ export const AcceptOrDeclineMembershipInvitation = ({
             px={6}
             py={4}
           >
-            <Button disabled={disabled} onClick={decline}>
+            <Button
+              aria-label="Decline invitation"
+              disabled={disabled}
+              onClick={decline}
+            >
               Decline
             </Button>
             <Button
+              aria-label="Accept invitation"
               autoFocus
               disabled={disabled}
               colorScheme="brand"
