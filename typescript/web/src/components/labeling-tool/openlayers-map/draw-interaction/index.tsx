@@ -5,9 +5,9 @@ import { DrawIogInteraction } from "./iog";
 import { DrawBoundingBoxAndPolygonInteraction } from "./bounding-box-polygon";
 
 export const DrawInteraction = ({
-  iogSpinnerRefs,
+  iogSpinnerRef,
 }: {
-  iogSpinnerRefs: MutableRefObject<Array<HTMLDivElement | null>>;
+  iogSpinnerRef: MutableRefObject<HTMLDivElement | null>;
 }) => {
   const { imageId } = useRouter()?.query;
 
@@ -20,7 +20,7 @@ export const DrawInteraction = ({
     return null;
   }
   return selectedTool === Tools.IOG ? (
-    <DrawIogInteraction imageId={imageId} iogSpinnerRefs={iogSpinnerRefs} />
+    <DrawIogInteraction imageId={imageId} iogSpinnerRef={iogSpinnerRef} />
   ) : (
     <DrawBoundingBoxAndPolygonInteraction imageId={imageId} />
   );

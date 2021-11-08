@@ -153,6 +153,9 @@ export const SelectAndModifyFeature = (props: {
     useState<Feature<Polygon> | null>(null);
   const selectedLabelId = useLabelingStore((state) => state.selectedLabelId);
   const selectedTool = useLabelingStore((state) => state.selectedTool);
+  const setIogSpinnerPosition = useLabelingStore(
+    (state) => state.setIogSpinnerPosition
+  );
 
   const { data: labelData } = useQuery(getLabelQuery, {
     variables: { id: selectedLabelId },
@@ -225,7 +228,14 @@ export const SelectAndModifyFeature = (props: {
         <resizeIogBox
           args={{ selectedFeature: selectedFeatureIog, pixelTolerance: 20 }}
           onInteractionEnd={async (e: ResizeIogEvent | null) => {
-            return await interactionEndIog(e, perform, client, toast);
+            const feature = e?.features?.item(0) as Feature<Polygon>;
+            setIogSpinnerPosition(
+              extractSmartToolInputInputFromIogMask(
+                feature.getGeometry().getCoordinates()
+              ).centerPoint
+            );
+            await interactionEndIog(e, perform, client, toast);
+            setIogSpinnerPosition(null);
           }}
         />
       )}
