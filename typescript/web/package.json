@@ -75,7 +75,6 @@
     "ol": "6.6.1",
     "path-browserify": "^1.0.1",
     "postcss": "^8.3.5",
-    "probe-image-size": "7.2.1",
     "query-string": "^7.0.0",
     "react": "17.x",
     "react-beautiful-dnd": "13.1.0",
