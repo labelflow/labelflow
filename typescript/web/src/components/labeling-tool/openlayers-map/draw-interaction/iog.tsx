@@ -79,12 +79,8 @@ export const DrawIogInteraction = ({
   const iogSpinnerPosition = useLabelingStore(
     (state) => state.iogSpinnerPosition
   );
-  const setIogSpinnerPosition = useLabelingStore(
-    (state) => state.setIogSpinnerPosition
-  );
-  const unsetIogSpinnerPosition = useLabelingStore(
-    (state) => state.unsetIogSpinnerPosition
-  );
+  const registerIogJob = useLabelingStore((state) => state.registerIogJob);
+  const unregisterIogJob = useLabelingStore((state) => state.unregisterIogJob);
   const client = useApolloClient();
 
   const setDrawingToolState = useLabelingStore(
@@ -191,7 +187,7 @@ export const DrawIogInteraction = ({
         setDrawingToolState(DrawingToolState.IDLE);
       } else if (idOfClickedFeature === selectedLabelId) {
         // Add point outside
-        setIogSpinnerPosition(timestamp, centerPoint);
+        registerIogJob(timestamp, selectedLabelId, centerPoint);
         await perform(
           createRunIogEffect(
             {
@@ -202,14 +198,14 @@ export const DrawIogInteraction = ({
             { client }
           )
         );
-        unsetIogSpinnerPosition(timestamp);
+        unregisterIogJob(timestamp, selectedLabelId);
       } else if (idOfClickedFeature?.includes("point-inside-")) {
         // Remove point inside
         const indexPointToRemove = parseInt(
           idOfClickedFeature.split("point-inside-")[1],
           10
         );
-        setIogSpinnerPosition(timestamp, centerPoint);
+        registerIogJob(timestamp, selectedLabelId, centerPoint);
         await perform(
           createRunIogEffect(
             {
@@ -226,14 +222,14 @@ export const DrawIogInteraction = ({
             { client }
           )
         );
-        unsetIogSpinnerPosition(timestamp);
+        unregisterIogJob(timestamp, selectedLabelId);
       } else if (idOfClickedFeature?.includes("point-outside-")) {
         // Remove point outside
         const indexPointToRemove = parseInt(
           idOfClickedFeature.split("point-outside-")[1],
           10
         );
-        setIogSpinnerPosition(timestamp, centerPoint);
+        registerIogJob(timestamp, selectedLabelId, centerPoint);
         await perform(
           createRunIogEffect(
             {
@@ -250,12 +246,12 @@ export const DrawIogInteraction = ({
             { client }
           )
         );
-        unsetIogSpinnerPosition(timestamp);
+        unregisterIogJob(timestamp, selectedLabelId);
       } else if (idOfClickedFeature?.includes("point-center")) {
         return false;
       } else {
         // Add point inside
-        setIogSpinnerPosition(timestamp, centerPoint);
+        registerIogJob(timestamp, selectedLabelId, centerPoint);
         await perform(
           createRunIogEffect(
             {
@@ -266,7 +262,7 @@ export const DrawIogInteraction = ({
             { client }
           )
         );
-        unsetIogSpinnerPosition(timestamp);
+        unregisterIogJob(timestamp, selectedLabelId);
       }
 
       return false;
@@ -314,7 +310,7 @@ export const DrawIogInteraction = ({
         Math.floor((x + xMax) / 2),
         Math.floor((y + yMax) / 2),
       ];
-      setIogSpinnerPosition(timestamp, boundingBoxCenterPoint);
+      registerIogJob(timestamp, labelId, boundingBoxCenterPoint);
 
       return perform(
         createRunIogEffect(
@@ -334,7 +330,7 @@ export const DrawIogInteraction = ({
 
     try {
       await inferencePromise;
-      unsetIogSpinnerPosition(timestamp);
+      unregisterIogJob(timestamp, labelId);
     } catch (error) {
       toast({
         title: "Error executing IOG",
@@ -352,7 +348,7 @@ export const DrawIogInteraction = ({
   ): Promise<boolean> => {
     const timestamp = new Date().getTime();
     const newCoordinates = modifyEvent.mapBrowserEvent.coordinate;
-    setIogSpinnerPosition(timestamp, newCoordinates);
+    registerIogJob(timestamp, selectedLabelId, newCoordinates);
     await perform(
       createRunIogEffect(
         {
@@ -364,7 +360,7 @@ export const DrawIogInteraction = ({
         { client }
       )
     );
-    unsetIogSpinnerPosition(timestamp);
+    unregisterIogJob(timestamp, selectedLabelId);
     return true;
   };
 

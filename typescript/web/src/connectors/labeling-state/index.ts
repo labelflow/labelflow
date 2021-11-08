@@ -30,13 +30,15 @@ export type LabelingState = {
   canZoomIn: boolean;
   canZoomOut: boolean;
   isImageLoading: boolean;
+  iogProcessingLabels: Set<string>;
   iogSpinnerPosition: Coordinate | null;
   iogSpinnerPositions: { [timestamp: number]: Coordinate };
-  setIogSpinnerPosition: (
+  registerIogJob: (
     timestamp: number,
+    idLabel: string | null,
     iogSpinnerPosition: Coordinate | null
   ) => void;
-  unsetIogSpinnerPosition: (timestamp: number) => void;
+  unregisterIogJob: (timestamp: number, idLabel: string | null) => void;
   isContextMenuOpen: boolean;
   setIsContextMenuOpen: (isContextMenuOpen: boolean) => void;
   contextMenuLocation: Coordinate | undefined;
@@ -63,20 +65,24 @@ export const useLabelingStore = create<LabelingState>(
     canZoomIn: true,
     canZoomOut: false,
     iogSpinnerPosition: null,
+    iogProcessingLabels: new Set(),
     iogSpinnerPositions: {},
-    setIogSpinnerPosition: (timestamp, iogSpinnerPosition) => {
-      if (!iogSpinnerPosition) return;
-      const { iogSpinnerPositions } = get();
+    registerIogJob: (timestamp, idLabel, iogSpinnerPosition) => {
+      if (!iogSpinnerPosition || !idLabel) return;
+      const { iogSpinnerPositions, iogProcessingLabels } = get();
+      iogProcessingLabels.add(idLabel);
       // @ts-ignore See https://github.com/Diablow/zustand-store-addons/issues/2
       set({
         iogSpinnerPositions: {
           ...iogSpinnerPositions,
           [timestamp]: iogSpinnerPosition,
         },
+        iogProcessingLabels,
       });
     },
-    unsetIogSpinnerPosition: (timestamp) => {
-      const { iogSpinnerPositions } = get();
+    unregisterIogJob: (timestamp, idLabel) => {
+      const { iogSpinnerPositions, iogProcessingLabels } = get();
+      if (idLabel) iogProcessingLabels.delete(idLabel);
       // @ts-ignore See https://github.com/Diablow/zustand-store-addons/issues/2
       return set({
         iogSpinnerPositions: Object.fromEntries(
@@ -86,6 +92,7 @@ export const useLabelingStore = create<LabelingState>(
             )
             .map((key) => [key, iogSpinnerPositions[parseInt(key, 10)]])
         ),
+        iogProcessingLabels,
       });
     },
     isContextMenuOpen: false,

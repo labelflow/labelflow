@@ -61,6 +61,9 @@ export const Labels = ({
   });
   const selectedLabelId = useLabelingStore((state) => state.selectedLabelId);
   const selectedTool = useLabelingStore((state) => state.selectedTool);
+  const iogProcessingLabels = useLabelingStore(
+    (state) => state.iogProcessingLabels
+  );
   const labels = data?.image?.labels ?? previousData?.image?.labels ?? [];
   const selectedLabel = labels.find(({ id }: Label) => id === selectedLabelId);
 
@@ -82,6 +85,9 @@ export const Labels = ({
                 stroke: new Stroke({
                   color: labelClassColor,
                   width: isSelected ? 4 : 2,
+                  ...(id && iogProcessingLabels.has(id)
+                    ? { lineDash: [5, 15] }
+                    : {}),
                 }),
                 zIndex: isSelected ? 2 : 1,
               });
