@@ -1,5 +1,7 @@
 import { getThumbnailUrlFromImageUrl } from "@labelflow/common-resolvers/src/utils/thumbnail-url";
-import Jimp from "jimp/es";
+// // FIXME
+// // The Jimp import need to be async otherwise storybooks does not work...
+// import Jimp from "jimp/es";
 
 const defaultMaxImageSizePixel: number = 60e6;
 const maxImageSizePixel: { [mimetype: string]: number } = {
@@ -59,6 +61,10 @@ export const processImage = async (
   height: number;
   mimetype: string;
 }> => {
+  // FIXME
+  // The Jimp import need to be async otherwise storybooks does not work...
+  const Jimp = await import("jimp/es");
+
   const buffer = await getImage(url);
 
   const image = await Jimp.read(buffer as Buffer);

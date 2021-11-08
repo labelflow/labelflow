@@ -6569,7 +6569,6 @@ __metadata:
     ol: 6.6.1
     path-browserify: ^1.0.1
     postcss: ^8.3.5
-    probe-image-size: 7.2.1
     query-string: ^7.0.0
     react: 17.x
     react-beautiful-dnd: 13.1.0
@@ -21034,7 +21033,7 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"iconv-lite@npm:0.4.24, iconv-lite@npm:^0.4.24, iconv-lite@npm:^0.4.4":
+"iconv-lite@npm:0.4.24, iconv-lite@npm:^0.4.24":
   version: 0.4.24
   resolution: "iconv-lite@npm:0.4.24"
   dependencies:
@@ -23736,7 +23735,7 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"lodash.merge@npm:^4.6.1, lodash.merge@npm:^4.6.2":
+"lodash.merge@npm:^4.6.1":
   version: 4.6.2
   resolution: "lodash.merge@npm:4.6.2"
   checksum: ad580b4bdbb7ca1f7abf7e1bce63a9a0b98e370cf40194b03380a46b4ed799c9573029599caebc1b14e3f24b111aef72b96674a56cfa105e0f5ac70546cdc005
@@ -25425,19 +25424,6 @@ fsevents@^1.2.7:
   version: 1.4.0
   resolution: "natural-compare@npm:1.4.0"
   checksum: 23ad088b08f898fc9b53011d7bb78ec48e79de7627e01ab5518e806033861bef68d5b0cd0e2205c2f36690ac9571ff6bcb05eb777ced2eeda8d4ac5b44592c3d
-  languageName: node
-  linkType: hard
-
-"needle@npm:^2.5.2":
-  version: 2.6.0
-  resolution: "needle@npm:2.6.0"
-  dependencies:
-    debug: ^3.2.6
-    iconv-lite: ^0.4.4
-    sax: ^1.2.4
-  bin:
-    needle: bin/needle
-  checksum: 810d0b3cb6234a314e1c81e5b4d39a3c02d761f53c118147e4126a8eb390d40c2a748017a4390c2bedfb7687a4118bedcbe8e27640ba9bb16452c66f198f01b0
   languageName: node
   linkType: hard
 
@@ -27477,17 +27463,6 @@ fsevents@^1.2.7:
     clipboard:
       optional: true
   checksum: 8c3cf69150418170aceb6d935e61a12e49802ca6c6abc98e3331921cac8cc992e0cd477bd77fdea1a06a3f16cd3d2615a3aadcefa0db3efb159f2c2ef403a2c4
-  languageName: node
-  linkType: hard
-
-"probe-image-size@npm:7.2.1":
-  version: 7.2.1
-  resolution: "probe-image-size@npm:7.2.1"
-  dependencies:
-    lodash.merge: ^4.6.2
-    needle: ^2.5.2
-    stream-parser: ~0.3.1
-  checksum: a902c4fb23c7cf75d6e7717adf51de9ba4b19388945b195a7baba92befee4a032d2953dc9b7414db7f9d954a952f69cd5067642b5ac79a1a540c9429c8846e78
   languageName: node
   linkType: hard
 
@@ -29625,7 +29600,7 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
-"sax@npm:>=0.6.0, sax@npm:^1.2.4":
+"sax@npm:>=0.6.0":
   version: 1.2.4
   resolution: "sax@npm:1.2.4"
   checksum: d3df7d32b897a2c2f28e941f732c71ba90e27c24f62ee918bd4d9a8cfb3553f2f81e5493c7f0be94a11c1911b643a9108f231dd6f60df3fa9586b5d2e3e9e1fe
@@ -30726,7 +30701,7 @@ service-worker-mock@2.0.5:
   languageName: node
   linkType: hard
 
-"stream-parser@npm:^0.3.1, stream-parser@npm:~0.3.1":
+"stream-parser@npm:^0.3.1":
   version: 0.3.1
   resolution: "stream-parser@npm:0.3.1"
   dependencies:
