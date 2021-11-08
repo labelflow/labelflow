@@ -1,8 +1,10 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import {
+  CurrentUserCanAcceptInvitation,
   Membership,
   MembershipRole,
+  MembershipStatus,
   WorkspacePlan,
   WorkspaceType,
 } from "@labelflow/graphql-types";
@@ -21,6 +23,8 @@ const mockedRemoveMembership = jest.fn();
 const testMemberships: Membership[] = [
   {
     role: MembershipRole.Admin,
+    status: MembershipStatus.Active,
+    currentUserCanAcceptInvitation: CurrentUserCanAcceptInvitation.Yes,
     id: "membership1",
     createdAt: "",
     updatedAt: "",
@@ -49,6 +53,8 @@ const testMemberships: Membership[] = [
   },
   {
     role: MembershipRole.Owner,
+    status: MembershipStatus.Active,
+    currentUserCanAcceptInvitation: CurrentUserCanAcceptInvitation.Yes,
     id: "membership2",
     createdAt: "",
     updatedAt: "",
@@ -77,6 +83,8 @@ const testMemberships: Membership[] = [
   },
   {
     role: MembershipRole.Admin,
+    status: MembershipStatus.Active,
+    currentUserCanAcceptInvitation: CurrentUserCanAcceptInvitation.Yes,
     id: "membership3",
     createdAt: "",
     updatedAt: "",
@@ -105,6 +113,8 @@ const testMemberships: Membership[] = [
   },
   {
     role: MembershipRole.Owner,
+    status: MembershipStatus.Active,
+    currentUserCanAcceptInvitation: CurrentUserCanAcceptInvitation.Yes,
     id: "membership4",
     createdAt: "",
     updatedAt: "",
