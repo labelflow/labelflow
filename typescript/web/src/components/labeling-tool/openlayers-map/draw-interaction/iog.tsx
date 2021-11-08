@@ -1,4 +1,12 @@
-import { useMemo, useRef, useCallback, useState, useEffect } from "react";
+import {
+  useMemo,
+  useRef,
+  useCallback,
+  useState,
+  useEffect,
+  MutableRefObject,
+} from "react";
+import { v4 as uuidv4 } from "uuid";
 import { Draw as OlDraw } from "ol/interaction";
 import { createBox, DrawEvent } from "ol/interaction/Draw";
 import GeoJSON, { GeoJSONPolygon } from "ol/format/GeoJSON";
@@ -11,12 +19,13 @@ import { Geometry, Polygon, Point } from "ol/geom";
 import { useApolloClient, useQuery, gql } from "@apollo/client";
 import { useToast } from "@chakra-ui/react";
 import { useHotkeys } from "react-hotkeys-hook";
-import CircleStyle from "ol/style/Circle";
 import Icon from "ol/style/Icon";
 import { LabelType } from "@labelflow/graphql-types";
 import { ModifyEvent } from "ol/interaction/Modify";
 import { useMap } from "@labelflow/react-openlayers-fiber";
 import BaseEvent from "ol/events/Event";
+import OverlayPositioning from "ol/OverlayPositioning";
+
 import {
   useLabelingStore,
   DrawingToolState,
@@ -59,9 +68,21 @@ const labelQuery = gql`
 const geometryFunction = createBox();
 type Coordinate = [number, number];
 
-export const DrawIogInteraction = ({ imageId }: { imageId: string }) => {
+export const DrawIogInteraction = ({
+  imageId,
+  iogSpinnerRefs,
+}: {
+  imageId: string;
+  iogSpinnerRefs: MutableRefObject<Array<HTMLDivElement | null>>;
+}) => {
   const map = useMap();
   const drawRef = useRef<OlDraw>(null);
+  const iogSpinners = useLabelingStore((state) => state.iogSpinners);
+  const idSpinner = useMemo(() => uuidv4(), []);
+  const setIogSpinners = useLabelingStore(
+    useCallback((state) => state.setIogSpinners, [])
+  );
+  // const [isIogLoading, setIsIogLoading] = useState(false);
   const client = useApolloClient();
 
   const setDrawingToolState = useLabelingStore(
@@ -281,6 +302,14 @@ export const DrawIogInteraction = ({ imageId }: { imageId: string }) => {
         Math.floor((x + xMax) / 2),
         Math.floor((y + yMax) / 2),
       ];
+      const newIogSpinners = {
+        ...iogSpinners,
+        [idSpinner]: boundingBoxCenterPoint,
+      };
+      console.log(
+        `#0 newIogSpinners = ${JSON.stringify(newIogSpinners, null, 1)}`
+      );
+      setIogSpinners(newIogSpinners);
 
       return perform(
         createRunIogEffect(
@@ -298,9 +327,17 @@ export const DrawIogInteraction = ({ imageId }: { imageId: string }) => {
       );
     })();
 
-    // setDrawingToolState(DrawingToolState.IDLE);
     try {
       await inferencePromise;
+      const newIogSpinners = Object.fromEntries(
+        Object.keys(iogSpinners)
+          .filter((id) => id !== idSpinner)
+          .map((key) => [key, iogSpinners[key]])
+      );
+      console.log(
+        `#1 newIogSpinners = ${JSON.stringify(newIogSpinners, null, 1)}`
+      );
+      setIogSpinners(newIogSpinners);
     } catch (error) {
       toast({
         title: "Error executing IOG",
@@ -387,16 +424,32 @@ export const DrawIogInteraction = ({ imageId }: { imageId: string }) => {
         setDrawingToolState(DrawingToolState.DRAWING);
         return true;
       }}
-      onDrawend={performIOGFromDrawEvent}
+      onDrawend={async (e) => {
+        await performIOGFromDrawEvent(e);
+      }}
     />
   ) : (
     <>
       {centerPointFeature != null && (
         <olInteractionModify
           args={{ features: new Collection([centerPointFeature]) }}
-          onModifyend={performIogFromModifyEvent}
+          onModifyend={async (e) => {
+            // setIsIogLoading(true);
+            const result = await performIogFromModifyEvent(e);
+            // setIsIogLoading(false);
+            return result;
+          }}
         />
       )}
+      {Object.keys(iogSpinners).map((idSpinnerCurrent, index) => (
+        <olOverlay
+          id={`overlay-spinner-${idSpinnerCurrent}`}
+          key={`overlay-spinner-${idSpinnerCurrent}`}
+          element={iogSpinnerRefs?.current?.[index] ?? undefined}
+          position={iogSpinners[idSpinnerCurrent]}
+          positioning={OverlayPositioning.CENTER_CENTER}
+        />
+      ))}
 
       <olLayerVector>
         <olSourceVector ref={vectorSourceRef}>
@@ -437,7 +490,7 @@ export const DrawIogInteraction = ({ imageId }: { imageId: string }) => {
                 />
               );
             }) ?? []),
-            centerPoint ? (
+            centerPoint && selectedLabelId in iogSpinners ? (
               <olFeature
                 key={centerPoint.join("-")}
                 id="point-center"

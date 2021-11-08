@@ -30,6 +30,10 @@ export type LabelingState = {
   canZoomIn: boolean;
   canZoomOut: boolean;
   isImageLoading: boolean;
+  iogSpinners: { [idLabel: string]: [number, number] };
+  setIogSpinners: (iogSpinners: {
+    [idLabel: string]: [number, number];
+  }) => void;
   isContextMenuOpen: boolean;
   setIsContextMenuOpen: (isContextMenuOpen: boolean) => void;
   contextMenuLocation: Coordinate | undefined;
@@ -55,6 +59,10 @@ export const useLabelingStore = create<LabelingState>(
     zoomFactor: 0.5,
     canZoomIn: true,
     canZoomOut: false,
+    iogSpinners: {},
+    setIogSpinners: (iogSpinners: { [idLabel: string]: [number, number] }) =>
+      // @ts-ignore See https://github.com/Diablow/zustand-store-addons/issues/2
+      set({ iogSpinners }),
     isContextMenuOpen: false,
     setIsContextMenuOpen: (isContextMenuOpen: boolean) =>
       // @ts-ignore See https://github.com/Diablow/zustand-store-addons/issues/2

@@ -1,4 +1,4 @@
-import { useRef, useCallback } from "react";
+import { useRef, useCallback, useEffect } from "react";
 import { Spinner, Center, ThemeProvider, Box } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { RouterContext } from "next/dist/shared/lib/router-context";
@@ -97,6 +97,15 @@ export const OpenlayersMap = () => {
   const isContextMenuOpen = useLabelingStore(
     (state) => state.isContextMenuOpen
   );
+  const iogSpinners = useLabelingStore((state) => state.iogSpinners);
+  console.log(`OpenlayersMap ${JSON.stringify(iogSpinners, null, 1)}`);
+  const iogSpinnerRefs = useRef<Array<HTMLDivElement | null>>([]);
+  useEffect(() => {
+    iogSpinnerRefs.current = iogSpinnerRefs.current.slice(
+      0,
+      Object.keys(iogSpinners).length
+    );
+  }, [iogSpinners]);
   const setIsContextMenuOpen = useLabelingStore(
     (state) => state.setIsContextMenuOpen
   );
@@ -277,7 +286,7 @@ export const OpenlayersMap = () => {
                 image={memoizedImage}
                 classificationOverlayRef={classificationOverlayRef}
               />
-              <DrawInteraction />
+              <DrawInteraction iogSpinnerRefs={iogSpinnerRefs} />
               <SelectAndModifyFeature
                 editClassOverlayRef={editClassOverlayRef}
                 sourceVectorLabelsRef={sourceVectorBoxesRef}
@@ -331,6 +340,23 @@ export const OpenlayersMap = () => {
           }
         }}
       />
+      {Object.keys(iogSpinners).map((iogSpinnerId, index) => (
+        <Spinner
+          id={`spinner-${iogSpinnerId}`}
+          key={`spinner-${iogSpinnerId}`}
+          ref={(e) => {
+            console.log(`
+            REF REF REF iogSpinners ${JSON.stringify(iogSpinners, null, 1)}
+            REF REF REF iogSpinnerRefs.current.length  ${iogSpinnerRefs.current.length}
+            `);
+            if (e && iogSpinnerRefs.current[index] !== e) {
+              // eslint-disable-next-line no-param-reassign
+              iogSpinnerRefs.current[index] = e;
+            }
+          }}
+          color="brand"
+        />
+      ))}
     </Box>
   );
 };

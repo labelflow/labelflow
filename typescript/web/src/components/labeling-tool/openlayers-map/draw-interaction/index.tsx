@@ -1,9 +1,14 @@
+import { MutableRefObject } from "react";
 import { useRouter } from "next/router";
 import { useLabelingStore, Tools } from "../../../../connectors/labeling-state";
 import { DrawIogInteraction } from "./iog";
 import { DrawBoundingBoxAndPolygonInteraction } from "./bounding-box-polygon";
 
-export const DrawInteraction = () => {
+export const DrawInteraction = ({
+  iogSpinnerRefs,
+}: {
+  iogSpinnerRefs: MutableRefObject<Array<HTMLDivElement | null>>;
+}) => {
   const { imageId } = useRouter()?.query;
 
   const selectedTool = useLabelingStore((state) => state.selectedTool);
@@ -15,7 +20,7 @@ export const DrawInteraction = () => {
     return null;
   }
   return selectedTool === Tools.IOG ? (
-    <DrawIogInteraction imageId={imageId} />
+    <DrawIogInteraction imageId={imageId} iogSpinnerRefs={iogSpinnerRefs} />
   ) : (
     <DrawBoundingBoxAndPolygonInteraction imageId={imageId} />
   );
