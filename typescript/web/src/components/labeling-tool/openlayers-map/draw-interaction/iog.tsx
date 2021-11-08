@@ -121,6 +121,10 @@ export const DrawIogInteraction = ({
   const toast = useToast();
 
   useEffect(() => {
+    if (selectedLabelId == null) setDrawingToolState(DrawingToolState.IDLE);
+  }, [selectedLabelId]);
+
+  useEffect(() => {
     if (vectorSourceRef.current != null) {
       const centerPointFeatureFromSource =
         vectorSourceRef.current.getFeatureById("point-center");
