@@ -82,6 +82,9 @@ export const DrawIogInteraction = ({
   const setIogSpinnerPosition = useLabelingStore(
     (state) => state.setIogSpinnerPosition
   );
+  const unsetIogSpinnerPosition = useLabelingStore(
+    (state) => state.unsetIogSpinnerPosition
+  );
   const client = useApolloClient();
 
   const setDrawingToolState = useLabelingStore(
@@ -172,6 +175,7 @@ export const DrawIogInteraction = ({
 
   const handleClick = useCallback(
     async (event: MapBrowserEvent<UIEvent>) => {
+      const timestamp = new Date().getTime();
       const { map: mapEvent } = event;
 
       const idOfClickedFeature = mapEvent.forEachFeatureAtPixel(
@@ -187,7 +191,7 @@ export const DrawIogInteraction = ({
         setDrawingToolState(DrawingToolState.IDLE);
       } else if (idOfClickedFeature === selectedLabelId) {
         // Add point outside
-        setIogSpinnerPosition(centerPoint);
+        setIogSpinnerPosition(timestamp, centerPoint);
         await perform(
           createRunIogEffect(
             {
@@ -198,14 +202,14 @@ export const DrawIogInteraction = ({
             { client }
           )
         );
-        setIogSpinnerPosition(null);
+        unsetIogSpinnerPosition(timestamp);
       } else if (idOfClickedFeature?.includes("point-inside-")) {
         // Remove point inside
         const indexPointToRemove = parseInt(
           idOfClickedFeature.split("point-inside-")[1],
           10
         );
-        setIogSpinnerPosition(centerPoint);
+        setIogSpinnerPosition(timestamp, centerPoint);
         await perform(
           createRunIogEffect(
             {
@@ -222,14 +226,14 @@ export const DrawIogInteraction = ({
             { client }
           )
         );
-        setIogSpinnerPosition(null);
+        unsetIogSpinnerPosition(timestamp);
       } else if (idOfClickedFeature?.includes("point-outside-")) {
         // Remove point outside
         const indexPointToRemove = parseInt(
           idOfClickedFeature.split("point-outside-")[1],
           10
         );
-        setIogSpinnerPosition(centerPoint);
+        setIogSpinnerPosition(timestamp, centerPoint);
         await perform(
           createRunIogEffect(
             {
@@ -246,12 +250,12 @@ export const DrawIogInteraction = ({
             { client }
           )
         );
-        setIogSpinnerPosition(null);
+        unsetIogSpinnerPosition(timestamp);
       } else if (idOfClickedFeature?.includes("point-center")) {
         return false;
       } else {
         // Add point inside
-        setIogSpinnerPosition(centerPoint);
+        setIogSpinnerPosition(timestamp, centerPoint);
         await perform(
           createRunIogEffect(
             {
@@ -262,7 +266,7 @@ export const DrawIogInteraction = ({
             { client }
           )
         );
-        setIogSpinnerPosition(null);
+        unsetIogSpinnerPosition(timestamp);
       }
 
       return false;
@@ -279,6 +283,7 @@ export const DrawIogInteraction = ({
   }, [map, selectedLabelId, handleClick]);
 
   const performIOGFromDrawEvent = async (drawEvent: DrawEvent) => {
+    const timestamp = new Date().getTime();
     const openLayersGeometry = drawEvent.feature.getGeometry();
     const geometry = new GeoJSON().writeGeometryObject(
       openLayersGeometry
@@ -309,7 +314,7 @@ export const DrawIogInteraction = ({
         Math.floor((x + xMax) / 2),
         Math.floor((y + yMax) / 2),
       ];
-      setIogSpinnerPosition(boundingBoxCenterPoint);
+      setIogSpinnerPosition(timestamp, boundingBoxCenterPoint);
 
       return perform(
         createRunIogEffect(
@@ -329,7 +334,7 @@ export const DrawIogInteraction = ({
 
     try {
       await inferencePromise;
-      setIogSpinnerPosition(null);
+      unsetIogSpinnerPosition(timestamp);
     } catch (error) {
       toast({
         title: "Error executing IOG",
@@ -345,8 +350,9 @@ export const DrawIogInteraction = ({
   const performIogFromModifyEvent = async (
     modifyEvent: ModifyEvent
   ): Promise<boolean> => {
+    const timestamp = new Date().getTime();
     const newCoordinates = modifyEvent.mapBrowserEvent.coordinate;
-    setIogSpinnerPosition(newCoordinates);
+    setIogSpinnerPosition(timestamp, newCoordinates);
     await perform(
       createRunIogEffect(
         {
@@ -358,6 +364,7 @@ export const DrawIogInteraction = ({
         { client }
       )
     );
+    unsetIogSpinnerPosition(timestamp);
     return true;
   };
 
@@ -426,11 +433,7 @@ export const DrawIogInteraction = ({
       {centerPointFeature != null && (
         <olInteractionModify
           args={{ features: new Collection([centerPointFeature]) }}
-          onModifyend={async (e) => {
-            const result = await performIogFromModifyEvent(e);
-            setIogSpinnerPosition(null);
-            return result;
-          }}
+          onModifyend={performIogFromModifyEvent}
         />
       )}
       <olOverlay

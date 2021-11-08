@@ -31,7 +31,12 @@ export type LabelingState = {
   canZoomOut: boolean;
   isImageLoading: boolean;
   iogSpinnerPosition: Coordinate | null;
-  setIogSpinnerPosition: (iogSpinnerPosition: Coordinate | null) => void;
+  iogSpinnerPositions: { [timestamp: number]: Coordinate };
+  setIogSpinnerPosition: (
+    timestamp: number,
+    iogSpinnerPosition: Coordinate | null
+  ) => void;
+  unsetIogSpinnerPosition: (timestamp: number) => void;
   isContextMenuOpen: boolean;
   setIsContextMenuOpen: (isContextMenuOpen: boolean) => void;
   contextMenuLocation: Coordinate | undefined;
@@ -58,9 +63,31 @@ export const useLabelingStore = create<LabelingState>(
     canZoomIn: true,
     canZoomOut: false,
     iogSpinnerPosition: null,
-    setIogSpinnerPosition: (iogSpinnerPosition) =>
+    iogSpinnerPositions: {},
+    setIogSpinnerPosition: (timestamp, iogSpinnerPosition) => {
+      if (!iogSpinnerPosition) return;
+      const { iogSpinnerPositions } = get();
       // @ts-ignore See https://github.com/Diablow/zustand-store-addons/issues/2
-      set({ iogSpinnerPosition }),
+      set({
+        iogSpinnerPositions: {
+          ...iogSpinnerPositions,
+          [timestamp]: iogSpinnerPosition,
+        },
+      });
+    },
+    unsetIogSpinnerPosition: (timestamp) => {
+      const { iogSpinnerPositions } = get();
+      // @ts-ignore See https://github.com/Diablow/zustand-store-addons/issues/2
+      return set({
+        iogSpinnerPositions: Object.fromEntries(
+          Object.keys(iogSpinnerPositions)
+            .filter(
+              (timestampCurrent) => parseInt(timestampCurrent, 10) !== timestamp
+            )
+            .map((key) => [key, iogSpinnerPositions[parseInt(key, 10)]])
+        ),
+      });
+    },
     isContextMenuOpen: false,
     setIsContextMenuOpen: (isContextMenuOpen: boolean) =>
       // @ts-ignore See https://github.com/Diablow/zustand-store-addons/issues/2
@@ -100,6 +127,17 @@ export const useLabelingStore = create<LabelingState>(
     },
   }),
   {
+    computed: {
+      iogSpinnerPosition() {
+        if (!this.iogSpinnerPositions) {
+          return null;
+        }
+        const latestPosition = Object.keys(this.iogSpinnerPositions).sort(
+          (a, b) => (a > b ? -1 : 1)
+        )[0];
+        return this.iogSpinnerPositions[latestPosition];
+      },
+    },
     watchers: {
       selectedTool: setRouterValue("selectedTool"),
       selectedLabelId: setRouterValue("selectedLabelId"),
