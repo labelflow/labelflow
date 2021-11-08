@@ -20,22 +20,22 @@ import { DeleteMembershipErrorModal } from "./delete-membership-error-modal";
 
 const badgeEnum: Record<string, string> = {
   active: "green",
-  reviewing: "orange",
+  sent: "orange",
   declined: "red",
 };
 
 const getMembershipStatus = (
   membership: Membership
-): "active" | "reviewing" | "declined" => {
+): "active" | "sent" | "declined" => {
   switch (membership.status) {
     case MembershipStatus.Active:
       return "active";
     case MembershipStatus.Sent:
-      return "reviewing";
+      return "sent";
     case MembershipStatus.Declined:
       return "declined";
     default:
-      return "reviewing";
+      return "sent";
   }
 };
 
