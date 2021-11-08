@@ -169,7 +169,7 @@ export const createRunIogEffect = (
       },
     };
 
-    client.mutate({
+    await client.mutate({
       mutation: runIogMutation,
       variables: {
         id: labelId,
