@@ -129,7 +129,10 @@ describe("Invitation Manager", () => {
 
     cy.get('[role="dialog"]')
       .should("contain", "This invitation is invalid")
-      .should("contain", "This invitation has already been declined.");
+      .should(
+        "contain",
+        "This invitation has already been declined. If it wasn't you, contact your Workspace Administrator."
+      );
   });
 
   it("should tell the user they can't join the workspace if they are already in", () => {

@@ -178,7 +178,7 @@ export const InvitationManager = () => {
 
     case CurrentUserCanAcceptInvitation.AlreadyDeclined:
       return (
-        <InvalidInvitation reason="This invitation has already been declined." />
+        <InvalidInvitation reason="This invitation has already been declined. If it wasn't you, contact your Workspace Administrator." />
       );
 
     case CurrentUserCanAcceptInvitation.AlreadyMemberOfTheWorkspace:
