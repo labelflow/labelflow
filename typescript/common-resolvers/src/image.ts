@@ -117,6 +117,7 @@ export const getImageEntityFromMutationArgs = async (
 
   if (file && !externalUrl && !url) {
     // File Content based upload
+    const origin = getOrigin(req);
 
     const uploadTarget = await repository.upload.getUploadTargetHttp(
       getImageFileKey(imageId, datasetId, file.type),
