@@ -104,9 +104,9 @@ const WorkspaceMembersPage = () => {
             }}
             inviteMember={async (where) => {
               const {
-                data: { inviteMember: InvitationResult },
+                data: { inviteMember: invitationResult },
               } = await inviteMember({ variables: { where } });
-              return InvitationResult;
+              return invitationResult;
             }}
           />
         </Box>
