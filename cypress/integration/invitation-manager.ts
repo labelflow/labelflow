@@ -1,5 +1,6 @@
 describe("Invitation Manager", () => {
   it("should let the user accept an invite", () => {
+    // log in as the default user
     cy.task("performLogin").then((token) => {
       cy.setCookie("next-auth.session-token", token as string);
     });
@@ -8,26 +9,31 @@ describe("Invitation Manager", () => {
     cy.task("createWorkspaceAndDatasets").then(({ workspaceSlug }: any) => {
       cy.clearCookie("next-auth.session-token");
 
+      // invite a new user to the workspace
       cy.task("inviteUser").then(({ inviteUrl }: any) => {
         cy.task("performLogin", {
           name: "UserNotAlreadyAMember",
           email: "test+1@labelflow.ai",
         }).then((token) => {
           cy.setCookie("next-auth.session-token", token as string);
+          // visit the url from the invite mail
           cy.visit(inviteUrl);
         });
       });
 
+      // accept the invite
       cy.get(`button[aria-label="Accept invitation"]`)
         .should("be.visible")
         .click();
 
+      // check for the toast to be present
       cy.get('[role="alert"]').should("contain", "Invitation accepted");
       cy.location("pathname").should("eq", `/${workspaceSlug}/datasets`);
     });
   });
 
   it("should let the user decline an invite", () => {
+    // log in as the default user
     cy.task("performLogin").then((token) => {
       cy.setCookie("next-auth.session-token", token as string);
     });
@@ -36,25 +42,30 @@ describe("Invitation Manager", () => {
     cy.task("createWorkspaceAndDatasets");
     cy.clearCookie("next-auth.session-token");
 
+    // invite a new user to the workspace
     cy.task("inviteUser").then(({ inviteUrl }: any) => {
       cy.task("performLogin", {
         name: "UserNotAlreadyAMember",
         email: "test+1@labelflow.ai",
       }).then((token) => {
         cy.setCookie("next-auth.session-token", token as string);
+        // visit the url from the invite mail
         cy.visit(inviteUrl);
       });
     });
 
+    // decline the invite
     cy.get(`button[aria-label="Decline invitation"]`)
       .should("be.visible")
       .click();
 
+    // check for the toast to be present
     cy.get('[role="alert"]').should("contain", "Invitation declined");
     cy.location("pathname").should("eq", `/local/datasets`);
   });
 
   it("shouldn't let a user accept an invitation that has already been accepted", () => {
+    // log in as the default user
     cy.task("performLogin").then((token) => {
       cy.setCookie("next-auth.session-token", token as string);
     });
@@ -63,6 +74,7 @@ describe("Invitation Manager", () => {
     cy.task("createWorkspaceAndDatasets").then(() => {
       cy.clearCookie("next-auth.session-token");
 
+      // invite a new user to the workspace
       cy.task("inviteUser").then(({ inviteUrl }: any) => {
         cy.task("performLogin", {
           name: "UserNotAlreadyAMember",
@@ -70,10 +82,12 @@ describe("Invitation Manager", () => {
         }).then((token) => {
           cy.setCookie("next-auth.session-token", token as string);
           cy.visit(inviteUrl);
+          // accept the invitation
           cy.get(`button[aria-label="Accept invitation"]`)
             .should("be.visible")
             .click();
 
+          // log in as another user
           cy.clearCookie("next-auth.session-token");
           cy.task("performLogin", {
             name: "Another",
@@ -95,6 +109,7 @@ describe("Invitation Manager", () => {
   });
 
   it("shouldn't let a user accept an invitation that has already been declined", () => {
+    // log in as the default user
     cy.task("performLogin").then((token) => {
       cy.setCookie("next-auth.session-token", token as string);
     });
@@ -102,7 +117,7 @@ describe("Invitation Manager", () => {
     cy.setCookie("consentedCookies", "true");
     cy.task("createWorkspaceAndDatasets").then(() => {
       cy.clearCookie("next-auth.session-token");
-
+      // invite a new user to the workspace
       cy.task("inviteUser").then(({ inviteUrl }: any) => {
         cy.task("performLogin", {
           name: "UserNotAlreadyAMember",
@@ -110,10 +125,12 @@ describe("Invitation Manager", () => {
         }).then((token) => {
           cy.setCookie("next-auth.session-token", token as string);
           cy.visit(inviteUrl);
+          // decline the invitation
           cy.get(`button[aria-label="Decline invitation"]`)
             .should("be.visible")
             .click();
 
+          // log in as another user
           cy.clearCookie("next-auth.session-token");
           cy.task("performLogin", {
             name: "Another",
@@ -136,13 +153,17 @@ describe("Invitation Manager", () => {
   });
 
   it("should tell the user they can't join the workspace if they are already in", () => {
+    // log in as the default user
     cy.task("performLogin").then((token) => {
       cy.setCookie("next-auth.session-token", token as string);
       cy.setCookie("hasUserTriedApp", "true");
       cy.setCookie("consentedCookies", "true");
     });
     cy.task("createWorkspaceAndDatasets");
+
+    // invite a new user to the workspace
     cy.task("inviteUser").then(({ inviteUrl }: any) => {
+      // visit the url from the invite mail, but as the default user (already in the workspace)
       cy.visit(inviteUrl);
     });
 
@@ -159,19 +180,25 @@ describe("Invitation Manager", () => {
 
   // flacky in the CI
   it.skip("should open the sign in modal if the user isn't logged in", () => {
+    // log in as the default user
     cy.task("performLogin").then((token) => {
       cy.setCookie("next-auth.session-token", token as string);
     });
     cy.setCookie("hasUserTriedApp", "true");
     cy.setCookie("consentedCookies", "true");
     cy.task("createWorkspaceAndDatasets").then(() => {
+      // sign out
       cy.clearCookie("next-auth.session-token");
+      // invite a new user to the workspace
       cy.task("inviteUser").then(({ inviteUrl }: any) => {
+        // visit the url from the invite mail, but without being logged in
         cy.visit(inviteUrl);
       });
     });
+
+    // try closing the sign in modals
     cy.contains("Sign in to LabelFlow").should("be.visible");
-    // need to click twice to loose the focus
+    // need to click twice to loose the focus?
     cy.get(`button[aria-label="Close"]`).click();
     cy.get(`button[aria-label="Close"]`).click();
 
@@ -180,6 +207,7 @@ describe("Invitation Manager", () => {
     cy.contains("Sign in to LabelFlow").should("be.visible");
     cy.get(`button[aria-label="Close"]`).click();
 
+    // log in as another user
     cy.task("performLogin", {
       name: "UserNotAlreadyAMember",
       email: "test+1@labelflow.ai",
@@ -192,12 +220,15 @@ describe("Invitation Manager", () => {
   });
 
   it("should tell the user they can't join the workspace if the invite doesn't exist", () => {
+    // log in as the default user
     cy.task("performLogin").then((token) => {
       cy.setCookie("next-auth.session-token", token as string);
       cy.setCookie("hasUserTriedApp", "true");
       cy.setCookie("consentedCookies", "true");
     });
     cy.task("createWorkspaceAndDatasets");
+
+    // visit a invite url with a membership id that doesn't exist
     cy.visit("/test-dataset-cypress/accept-invite?membershipId=fakeId");
 
     cy.get('[role="dialog"]')
