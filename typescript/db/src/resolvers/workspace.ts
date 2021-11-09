@@ -22,11 +22,12 @@ import slugify from "slugify";
 import { getPrismaClient } from "../prisma-client";
 import { castObjectNullsToUndefined } from "../repository/utils";
 
-const stripe = process.env.STRIPE_SECRET_KEY
-  ? new Stripe(process.env.STRIPE_SECRET_KEY, {
-      apiVersion: "2020-08-27",
-    })
-  : null;
+const stripe =
+  process.env.STRIPE_SECRET_KEY && process.env.STRIPE_COMMUNITY_PLAN_PRICE_ID
+    ? new Stripe(process.env.STRIPE_SECRET_KEY, {
+        apiVersion: "2020-08-27",
+      })
+    : null;
 
 const getWorkspace = async (
   where: WorkspaceWhereUniqueInput,
@@ -105,8 +106,7 @@ const createWorkspace = async (
 
     stripeCustomerId = id;
 
-    // TODO: Dont hardcode this ?
-    const freePlanPriceId = "price_1Jk7VLKVrYd2FThGqrI4HeZE";
+    const freePlanPriceId = process.env.STRIPE_COMMUNITY_PLAN_PRICE_ID;
 
     await stripe.subscriptions.create({
       customer: id,
