@@ -5,7 +5,7 @@ describe("Dataset creation, edition, deletion", () => {
     // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
     // cy.visit("/");
     // cy.contains("Try it now").click();
-    cy.visit("http://localhost:3000/local/datasets");
+    cy.visit("/local/datasets");
     cy.wait(420);
     cy.get('[aria-label="Create new dataset"]').click();
     cy.get('[aria-label="Dataset name input"]').type("cypress dataset");

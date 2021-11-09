@@ -15,19 +15,22 @@ import {
   precacheAndRoute,
   cleanupOutdatedCaches,
 } from "workbox-precaching";
+
 // import { initialize as initializeGoogleAnalytics } from "workbox-google-analytics";
 
 import { trimCharsEnd } from "lodash/fp";
-import * as Sentry from "@sentry/nextjs";
-import typeDefs from "../../../../data/__generated__/schema.graphql";
+import * as Sentry from "@sentry/browser";
+
 import { resolvers } from "../connectors/resolvers";
 import {
   uploadsCacheName,
   uploadsRoute,
 } from "../connectors/repository/upload";
-import { ApolloServerServiceWorker } from "./apollo-server-service-worker";
+import { GraphqlServerServiceWorker } from "./graphql-server";
 import { UploadServer } from "./upload-server";
 import { repository } from "../connectors/repository";
+
+import { typeDefs } from "./__generated__/schema";
 
 // Configure and initialize Sentry in the service worker
 const SENTRY_DSN = process.env.SENTRY_DSN || process.env.NEXT_PUBLIC_SENTRY_DSN;
@@ -39,7 +42,7 @@ Sentry.init({
   // ...
   // Note: if you want to override the automatic release value, do not set a
   // `release` value here - use the environment variable `SENTRY_RELEASE`, so
-  //  that it will also get attached to your source maps
+  // that it will also get attached to your source maps
 });
 
 declare let self: ServiceWorkerGlobalScope;
@@ -68,9 +71,9 @@ const staticAssetsExpirationPlugin = new ExpirationPlugin({
 
 self.addEventListener("message", (event) => {
   // TO TEST THIS? Run this in your browser console:
-  //     window.navigator.serviceWorker.controller.postMessage({command: 'log', message: 'hello world'})
+  //    window.navigator.serviceWorker.controller.postMessage({command: 'log', message: 'hello world'})
   // OR use next-pwa injected workbox object
-  //     window.workbox.messageSW({command: 'log', message: 'hello world'})
+  //    window.workbox.messageSW({command: 'log', message: 'hello world'})
 
   if (event?.data?.type === "SKIP_WAITING") {
     console.log("[Service Worker] Skip waiting");
@@ -117,7 +120,7 @@ self.addEventListener("activate", (event) => {
 
 clientsClaim();
 
-// // Initialize workbox Google analytics. For some reason this is broken right now, so we commented it.
+// / / Initialize workbox Google analytics. For some reason this is broken right now, so we commented it.
 // initializeGoogleAnalytics();
 
 cleanupOutdatedCaches();
@@ -127,17 +130,17 @@ cleanupOutdatedCaches();
 
 registerRoute(
   "/api/worker/graphql",
-  new ApolloServerServiceWorker({
+  new GraphqlServerServiceWorker({
     typeDefs,
     resolvers,
     context: ({ req, res }) => {
       return { req, res, repository };
     },
-    introspection: true,
-    formatError: (error) => {
-      Sentry.captureException(error);
-      return error;
-    },
+    // introspection: true,
+    // formatError: (error) => {
+    //   Sentry.captureException(error);
+    //   return error;
+    // },
   }),
   "POST"
 );
@@ -192,7 +195,7 @@ registerRoute(
 
 // Following lines gives you control of the offline fallback strategies
 // See https://developers.google.com/web/tools/workbox/guides/advanced-recipes#comprehensive_fallbacks
-// // Use a stale-while-revalidate strategy for all other requests.
+// / / Use a stale-while-revalidate strategy for all other requests.
 // setDefaultHandler(new StaleWhileRevalidate({}));
 // See https://github.com/shadowwalker/next-pwa/blob/master/examples/offline-fallback/service-worker.js
 setCatchHandler(async ({ event }) => {

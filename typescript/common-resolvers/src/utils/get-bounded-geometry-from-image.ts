@@ -1,14 +1,22 @@
 import bboxPolygon from "@turf/bbox-polygon";
-import { multiPolygon } from "@turf/helpers";
+import { multiPolygon, polygon } from "@turf/helpers";
 import intersect from "@turf/intersect";
 import bbox from "@turf/bbox";
+import area from "@turf/area";
 import { GeometryInput } from "@labelflow/graphql-types";
 
 export const getBoundedGeometryFromImage = (
   imageDimensions: { width: number; height: number },
   geometry: GeometryInput
 ) => {
-  const geometryPolygon = multiPolygon(geometry.coordinates);
+  const geometryPolygon =
+    geometry?.type === "Polygon"
+      ? polygon(geometry.coordinates)
+      : multiPolygon(geometry.coordinates);
+  const polygonArea = area(geometryPolygon);
+  if (polygonArea === 0) {
+    throw new Error("A label must have more than two distinct points");
+  }
   const imagePolygon = bboxPolygon([
     0,
     0,

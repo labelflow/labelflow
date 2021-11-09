@@ -148,6 +148,8 @@ export const WorkspaceSelectionPopover = ({
         cursor="default"
         pointerEvents="initial"
         aria-label={ariaLabel}
+        overflowX="visible"
+        overflow="visible"
       >
         <PopoverBody pl="0" pr="0" pt="0">
           <Box>
