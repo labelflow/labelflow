@@ -141,11 +141,10 @@ const webhookHandler = async (req: NextApiRequest, res: NextApiResponse) => {
       }
     }
 
-    res.json({ received: true });
-  } else {
-    res.setHeader("Allow", "POST");
-    res.status(405).end("Method Not Allowed");
+    return res.json({ received: true });
   }
+  res.setHeader("Allow", "POST");
+  return res.status(405).end("Method Not Allowed");
 };
 
 export default webhookHandler;
