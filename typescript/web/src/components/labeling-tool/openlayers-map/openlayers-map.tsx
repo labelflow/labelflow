@@ -278,7 +278,10 @@ export const OpenlayersMap = () => {
                 image={memoizedImage}
                 classificationOverlayRef={classificationOverlayRef}
               />
-              <DrawInteraction iogSpinnerRef={iogSpinnerRef} />
+              <DrawInteraction
+                iogSpinnerRef={iogSpinnerRef}
+                sourceVectorLabelsRef={sourceVectorBoxesRef}
+              />
               <SelectAndModifyFeature
                 editClassOverlayRef={editClassOverlayRef}
                 sourceVectorLabelsRef={sourceVectorBoxesRef}

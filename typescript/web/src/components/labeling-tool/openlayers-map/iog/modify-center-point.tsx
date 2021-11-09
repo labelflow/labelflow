@@ -14,7 +14,7 @@ import { useUndoStore } from "../../../../connectors/undo-store";
 
 import { labelQuery } from "./queries";
 
-export const ModifyCenterPoint = ({
+export const ModifyIogCenterPoint = ({
   vectorSourceRef,
 }: {
   vectorSourceRef: RefObject<OlSourceVector<Geometry>>;

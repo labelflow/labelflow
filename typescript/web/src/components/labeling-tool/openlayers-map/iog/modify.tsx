@@ -1,4 +1,4 @@
-import { useRef, useCallback, useEffect, MutableRefObject } from "react";
+import { useRef, useCallback, MutableRefObject } from "react";
 import { Style } from "ol/style";
 import { Vector as OlSourceVector } from "ol/source";
 import { Geometry, Point } from "ol/geom";
@@ -8,29 +8,25 @@ import Icon from "ol/style/Icon";
 import OverlayPositioning from "ol/OverlayPositioning";
 import { Coordinate } from "ol/coordinate";
 
-import {
-  useLabelingStore,
-  DrawingToolState,
-} from "../../../../connectors/labeling-state";
+import { useLabelingStore } from "../../../../connectors/labeling-state";
 import { keymap } from "../../../../keymap";
 
 import { labelQuery } from "./queries";
 import { HandleIogClick, HandleIogHover } from "./click-and-hover";
-import { DrawIogCanvas } from "./draw-canvas";
-import { ModifyCenterPoint } from "./modify-center-point";
+import { ModifyIogCenterPoint } from "./modify-center-point";
+import { ResizeIogCanvas } from "./resize-canvas";
 
-export const DrawIogInteraction = ({
+export const ModifyIog = ({
   imageId,
   iogSpinnerRef,
+  sourceVectorLabelsRef,
 }: {
   imageId: string;
   iogSpinnerRef: MutableRefObject<HTMLDivElement | null>;
+  sourceVectorLabelsRef: MutableRefObject<OlSourceVector<Geometry> | null>;
 }) => {
   const iogSpinnerPosition = useLabelingStore(
     (state) => state.iogSpinnerPosition
-  );
-  const setDrawingToolState = useLabelingStore(
-    (state) => state.setDrawingToolState
   );
   const selectedLabelId = useLabelingStore((state) => state.selectedLabelId);
   const setSelectedLabelId = useLabelingStore(
@@ -50,15 +46,10 @@ export const DrawIogInteraction = ({
 
   const vectorSourceRef = useRef<OlSourceVector<Geometry>>(null);
 
-  useEffect(() => {
-    if (selectedLabelId == null) setDrawingToolState(DrawingToolState.IDLE);
-  }, [selectedLabelId]);
-
   useHotkeys(
     keymap.validateIogLabel.key,
     () => {
       setSelectedLabelId(null);
-      setDrawingToolState(DrawingToolState.IDLE);
     },
     {},
     [setSelectedLabelId]
@@ -68,13 +59,12 @@ export const DrawIogInteraction = ({
     return null;
   }
 
-  return selectedLabelId == null ? (
-    <DrawIogCanvas imageId={imageId} />
-  ) : (
+  return (
     <>
-      <ModifyCenterPoint vectorSourceRef={vectorSourceRef} />
+      <ModifyIogCenterPoint vectorSourceRef={vectorSourceRef} />
       <HandleIogClick />
       <HandleIogHover />
+      <ResizeIogCanvas sourceVectorLabelsRef={sourceVectorLabelsRef} />
       <olOverlay
         id="overlay-spinner"
         key="overlay-spinner"
