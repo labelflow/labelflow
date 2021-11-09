@@ -145,20 +145,6 @@ jobs:
     name: E2E Tests and bundle analysis
     runs-on: ubuntu-20.04
     needs: install-typescript
-    services:
-      db:
-        image: postgres:12.6
-        env:
-          POSTGRES_USER: ${{secrets.POSTGRES_ADMIN_USER}}
-          POSTGRES_PASSWORD: ${{secrets.POSTGRES_ADMIN_PASSWORD}}
-          POSTGRES_DB: ${{secrets.POSTGRES_DB}}
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports:
-          - 5433:5432
     steps:
       - name: Check out repository code
         uses: actions/checkout@v2
@@ -174,10 +160,20 @@ jobs:
         with:
           path: /home/runner/.cache/Cypress
           key: ${{ runner.os }}-cypress-${{secrets.ACTIONS_CACHE_VERSION}}-${{ hashFiles('yarn.lock') }}
+      - name: launch docker container
+        run: cd typescript/db && docker compose up --detach
+        env:
+          JWT_SECRET: IkPC70Zk3Pyzots1iNZjcPGkBzVv8LiX
+          ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyAgCiAgICAicm9sZSI6ICJhbm9uIiwKICAgICJpYXQiOiAxNjM2NDE2MDAwLAogICAgImV4cCI6IDE3OTQxODI0MDAKfQ.VHCfoI_VcHZKbx79K0gOBIJKHBFM_XDPWNme_f5k1Os
+          SERVICE_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyAgCiAgICAicm9sZSI6ICJzZXJ2aWNlX3JvbGUiLAogICAgImlhdCI6IDE2MzY0MTYwMDAsCiAgICAiZXhwIjogMTc5NDE4MjQwMAp9.zS-Gap5q71X1l56pVy8ldJpXhWpavxxydWg2bw0fq_I
+          KONG_HTTP_PORT: 8000
+          KONG_HTTPS_PORT: 8443
+          POSTGRES_PORT: 5433
+          POSTGRES_PASSWORD: your-super-secret-and-long-postgres-password
       - name: generate prisma
         run: cd typescript/db && yarn deploy && yarn generate
         env:
-          POSTGRES_EXTERNAL_URL: postgresql://admin:admin@localhost:5433/labelflow?schema=public
+          POSTGRES_EXTERNAL_URL: postgresql://postgres:your-super-secret-and-long-postgres-password@localhost:5433/labelflow?schema=public
       - name: Cypress run
         uses: cypress-io/github-action@v2
         with:
