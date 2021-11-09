@@ -2,6 +2,13 @@ export const typeDefs = [
   `
   scalar ColorHex
 
+  enum CurrentUserCanAcceptInvitation {
+    Yes
+    AlreadyAccepted
+    AlreadyMemberOfTheWorkspace
+    AlreadyDeclined
+  }
+
   type Dataset {
     id: ID!
     createdAt: DateTime!
@@ -159,10 +166,10 @@ export const typeDefs = [
     error: String
   }
 
-  enum InvitationStatus {
+  enum InvitationResult {
     Sent
-    UserAlreadyIn
     Error
+    UserAlreadyIn
   }
 
   input InviteMemberInput {
@@ -266,11 +273,13 @@ export const typeDefs = [
     id: ID!
     createdAt: DateTime!
     updatedAt: DateTime!
+    declinedAt: DateTime
     role: MembershipRole!
     user: User
     workspace: Workspace!
     invitationEmailSentTo: String
-    invitationToken: ID
+    status: MembershipStatus!
+    currentUserCanAcceptInvitation: CurrentUserCanAcceptInvitation!
   }
 
   input MembershipCreateInput {
@@ -284,6 +293,12 @@ export const typeDefs = [
     Owner
     Admin
     Member
+  }
+
+  enum MembershipStatus {
+    Sent
+    Active
+    Declined
   }
 
   input MembershipUpdateInput {
@@ -321,7 +336,9 @@ export const typeDefs = [
     createMembership(data: MembershipCreateInput!): Membership
     updateMembership(where: MembershipWhereUniqueInput!, data: MembershipUpdateInput!): Membership
     deleteMembership(where: MembershipWhereUniqueInput!): Membership
-    inviteMember(where: InviteMemberInput!): InvitationStatus
+    inviteMember(where: InviteMemberInput!): InvitationResult
+    acceptInvitation(where: MembershipWhereUniqueInput!): Membership
+    declineInvitation(where: MembershipWhereUniqueInput!): Membership
     updateUser(where: UserWhereUniqueInput!, data: UserUpdateInput!): User
   }
 

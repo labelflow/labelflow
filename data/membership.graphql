@@ -23,8 +23,21 @@ input InviteMemberInput {
   workspaceSlug: String!
 }
 
-enum InvitationStatus{
+enum InvitationResult{
   Sent
-  UserAlreadyIn
   Error
+  UserAlreadyIn
+}
+
+enum MembershipStatus {
+  Sent
+  Active
+  Declined
+}
+
+enum CurrentUserCanAcceptInvitation {
+   Yes,
+   AlreadyAccepted,
+   AlreadyMemberOfTheWorkspace,
+   AlreadyDeclined,
 }

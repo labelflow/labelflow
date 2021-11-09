@@ -72,7 +72,7 @@ export const generateHtml = (props: {
           <mj-text align="left" color="${
             theme.colors.gray["800"]
           }" font-familyInter,="Inter, Open Sans, Helvetica, Arial, sans-serif" font-size="15px" line-height="22px" padding-bottom="0px" padding-left="50px" padding-right="50px" padding-top="0px" padding="0px 25px 0px 25px">
-            <p style="margin: 10px 0; text-align: center;">Note that this invitation expires in 24 hours and can only be used once. Do not share it.<br /></p>
+            <p style="margin: 10px 0; text-align: center;">Note that this invitation can only be used once. Do not share it.<br /></p>
           </mj-text>
           <mj-button align="center" background-color="${
             theme.colors.brand["500"]

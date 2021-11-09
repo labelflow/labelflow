@@ -21,7 +21,7 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
-import { MembershipRole, InvitationStatus } from "@labelflow/graphql-types";
+import { MembershipRole, InvitationResult } from "@labelflow/graphql-types";
 
 import { RoleSelection } from "./role-selection";
 import { InviteMember } from "./types";
@@ -32,7 +32,7 @@ const validateEmail = (email: string): boolean => {
   return re.test(String(email).toLowerCase());
 };
 const maxNumberOfEmails = 20;
-type EmailStatuses = Record<InvitationStatus, string[]>;
+type EmailStatuses = Record<InvitationResult, string[]>;
 
 const summarizeEmailList = (emailList: string[]): string => {
   if (emailList.length === 1) {
@@ -49,7 +49,7 @@ const summarizeEmailList = (emailList: string[]): string => {
 export const NewMemberModal = ({
   isOpen = false,
   onClose = () => {},
-  inviteMember = async () => InvitationStatus.Sent,
+  inviteMember = async () => InvitationResult.Sent,
 }: {
   isOpen?: boolean;
   onClose?: () => void;
@@ -190,21 +190,21 @@ export const NewMemberModal = ({
                 },
                 new Promise((resolve) => {
                   resolve({
-                    [InvitationStatus.Error]: [],
-                    [InvitationStatus.Sent]: [],
-                    [InvitationStatus.UserAlreadyIn]: [],
+                    [InvitationResult.Error]: [],
+                    [InvitationResult.Sent]: [],
+                    [InvitationResult.UserAlreadyIn]: [],
                   });
                 }) as Promise<EmailStatuses>
               );
-              if (statuses[InvitationStatus.Sent].length > 0) {
+              if (statuses[InvitationResult.Sent].length > 0) {
                 toast({
-                  title: `${statuses[InvitationStatus.Sent].length} Invitation${
-                    statuses[InvitationStatus.Sent].length > 1 ? "s" : ""
+                  title: `${statuses[InvitationResult.Sent].length} Invitation${
+                    statuses[InvitationResult.Sent].length > 1 ? "s" : ""
                   } sent.`,
                   description: `${summarizeEmailList(
-                    statuses[InvitationStatus.Sent]
+                    statuses[InvitationResult.Sent]
                   )} ${
-                    statuses[InvitationStatus.Sent].length > 1 ? "were" : "was"
+                    statuses[InvitationResult.Sent].length > 1 ? "were" : "was"
                   } successfully invited to this workspace.`,
                   status: "success",
                   duration: 9000,
@@ -212,21 +212,21 @@ export const NewMemberModal = ({
                   position: "bottom-right",
                 });
               }
-              if (statuses[InvitationStatus.UserAlreadyIn].length > 0) {
+              if (statuses[InvitationResult.UserAlreadyIn].length > 0) {
                 toast({
                   title: `${
-                    statuses[InvitationStatus.UserAlreadyIn].length
+                    statuses[InvitationResult.UserAlreadyIn].length
                   } Invitation${
-                    statuses[InvitationStatus.UserAlreadyIn].length > 1
+                    statuses[InvitationResult.UserAlreadyIn].length > 1
                       ? "s"
                       : ""
                   } not sent.`,
                   description: `${summarizeEmailList(
-                    statuses[InvitationStatus.UserAlreadyIn]
+                    statuses[InvitationResult.UserAlreadyIn]
                   )} ${
-                    statuses[InvitationStatus.Sent].length > 1 ? "were" : "was"
+                    statuses[InvitationResult.Sent].length > 1 ? "were" : "was"
                   } already member${
-                    statuses[InvitationStatus.Sent].length > 1 ? "s" : ""
+                    statuses[InvitationResult.Sent].length > 1 ? "s" : ""
                   } of this workspace.`,
                   status: "warning",
                   duration: 9000,
@@ -234,13 +234,13 @@ export const NewMemberModal = ({
                   position: "bottom-right",
                 });
               }
-              if (statuses[InvitationStatus.Error].length > 0) {
+              if (statuses[InvitationResult.Error].length > 0) {
                 toast({
-                  title: `${statuses[InvitationStatus.Error].length} Error${
-                    statuses[InvitationStatus.Error].length > 1 ? "s" : ""
+                  title: `${statuses[InvitationResult.Error].length} Error${
+                    statuses[InvitationResult.Error].length > 1 ? "s" : ""
                   } encountered.`,
                   description: `Encountered an error when sending invitation to ${summarizeEmailList(
-                    statuses[InvitationStatus.Error]
+                    statuses[InvitationResult.Error]
                   )}. Please check the email addresses.`,
                   status: "error",
                   duration: 9000,
