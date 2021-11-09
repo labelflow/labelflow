@@ -18,6 +18,13 @@ export type Scalars = {
 };
 
 
+export enum CurrentUserCanAcceptInvitation {
+  Yes = 'Yes',
+  AlreadyAccepted = 'AlreadyAccepted',
+  AlreadyMemberOfTheWorkspace = 'AlreadyMemberOfTheWorkspace',
+  AlreadyDeclined = 'AlreadyDeclined'
+}
+
 export type Dataset = {
   __typename?: 'Dataset';
   id: Scalars['ID'];
@@ -186,10 +193,10 @@ export type ImportStatus = {
   error?: Maybe<Scalars['String']>;
 };
 
-export enum InvitationStatus {
+export enum InvitationResult {
   Sent = 'Sent',
-  UserAlreadyIn = 'UserAlreadyIn',
-  Error = 'Error'
+  Error = 'Error',
+  UserAlreadyIn = 'UserAlreadyIn'
 }
 
 export type InviteMemberInput = {
@@ -297,11 +304,13 @@ export type Membership = {
   id: Scalars['ID'];
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
+  declinedAt?: Maybe<Scalars['DateTime']>;
   role: MembershipRole;
   user?: Maybe<User>;
   workspace: Workspace;
   invitationEmailSentTo?: Maybe<Scalars['String']>;
-  invitationToken?: Maybe<Scalars['ID']>;
+  status: MembershipStatus;
+  currentUserCanAcceptInvitation: CurrentUserCanAcceptInvitation;
 };
 
 export type MembershipCreateInput = {
@@ -315,6 +324,12 @@ export enum MembershipRole {
   Owner = 'Owner',
   Admin = 'Admin',
   Member = 'Member'
+}
+
+export enum MembershipStatus {
+  Sent = 'Sent',
+  Active = 'Active',
+  Declined = 'Declined'
 }
 
 export type MembershipUpdateInput = {
@@ -353,7 +368,9 @@ export type Mutation = {
   createMembership?: Maybe<Membership>;
   updateMembership?: Maybe<Membership>;
   deleteMembership?: Maybe<Membership>;
-  inviteMember?: Maybe<InvitationStatus>;
+  inviteMember?: Maybe<InvitationResult>;
+  acceptInvitation?: Maybe<Membership>;
+  declineInvitation?: Maybe<Membership>;
   updateUser?: Maybe<User>;
 };
 
@@ -472,6 +489,16 @@ export type MutationDeleteMembershipArgs = {
 
 export type MutationInviteMemberArgs = {
   where: InviteMemberInput;
+};
+
+
+export type MutationAcceptInvitationArgs = {
+  where: MembershipWhereUniqueInput;
+};
+
+
+export type MutationDeclineInvitationArgs = {
+  where: MembershipWhereUniqueInput;
 };
 
 
@@ -796,6 +823,7 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
   ColorHex: ResolverTypeWrapper<Scalars['ColorHex']>;
+  CurrentUserCanAcceptInvitation: CurrentUserCanAcceptInvitation;
   Dataset: ResolverTypeWrapper<Dataset>;
   String: ResolverTypeWrapper<Scalars['String']>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
@@ -827,7 +855,7 @@ export type ResolversTypes = {
   ImportOptions: ImportOptions;
   ImportOptionsCoco: ImportOptionsCoco;
   ImportStatus: ResolverTypeWrapper<ImportStatus>;
-  InvitationStatus: InvitationStatus;
+  InvitationResult: InvitationResult;
   InviteMemberInput: InviteMemberInput;
   JSON: ResolverTypeWrapper<Scalars['JSON']>;
   Label: ResolverTypeWrapper<Label>;
@@ -848,6 +876,7 @@ export type ResolversTypes = {
   Membership: ResolverTypeWrapper<Membership>;
   MembershipCreateInput: MembershipCreateInput;
   MembershipRole: MembershipRole;
+  MembershipStatus: MembershipStatus;
   MembershipUpdateInput: MembershipUpdateInput;
   MembershipWhereInput: MembershipWhereInput;
   MembershipWhereUniqueInput: MembershipWhereUniqueInput;
@@ -1054,11 +1083,13 @@ export type MembershipResolvers<ContextType = any, ParentType extends ResolversP
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  declinedAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
   role?: Resolver<ResolversTypes['MembershipRole'], ParentType, ContextType>;
   user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   workspace?: Resolver<ResolversTypes['Workspace'], ParentType, ContextType>;
   invitationEmailSentTo?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  invitationToken?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
+  status?: Resolver<ResolversTypes['MembershipStatus'], ParentType, ContextType>;
+  currentUserCanAcceptInvitation?: Resolver<ResolversTypes['CurrentUserCanAcceptInvitation'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1085,7 +1116,9 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   createMembership?: Resolver<Maybe<ResolversTypes['Membership']>, ParentType, ContextType, RequireFields<MutationCreateMembershipArgs, 'data'>>;
   updateMembership?: Resolver<Maybe<ResolversTypes['Membership']>, ParentType, ContextType, RequireFields<MutationUpdateMembershipArgs, 'where' | 'data'>>;
   deleteMembership?: Resolver<Maybe<ResolversTypes['Membership']>, ParentType, ContextType, RequireFields<MutationDeleteMembershipArgs, 'where'>>;
-  inviteMember?: Resolver<Maybe<ResolversTypes['InvitationStatus']>, ParentType, ContextType, RequireFields<MutationInviteMemberArgs, 'where'>>;
+  inviteMember?: Resolver<Maybe<ResolversTypes['InvitationResult']>, ParentType, ContextType, RequireFields<MutationInviteMemberArgs, 'where'>>;
+  acceptInvitation?: Resolver<Maybe<ResolversTypes['Membership']>, ParentType, ContextType, RequireFields<MutationAcceptInvitationArgs, 'where'>>;
+  declineInvitation?: Resolver<Maybe<ResolversTypes['Membership']>, ParentType, ContextType, RequireFields<MutationDeclineInvitationArgs, 'where'>>;
   updateUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationUpdateUserArgs, 'where' | 'data'>>;
 };
 

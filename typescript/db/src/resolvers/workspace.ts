@@ -159,7 +159,10 @@ const memberships = async (parent: DbWorkspaceWithType) => {
     where: { workspaceSlug: parent.slug },
     orderBy: { createdAt: Prisma.SortOrder.asc },
     // needs to be casted to avoid conflicts between enums
-  })) as Omit<Membership, "user" | "workspace">[];
+  })) as Omit<
+    Membership,
+    "user" | "workspace" | "status" | "currentUserCanAcceptInvitation"
+  >[];
 };
 
 const datasets = async (parent: DbWorkspaceWithType) => {
