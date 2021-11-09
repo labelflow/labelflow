@@ -1,4 +1,3 @@
-import { print, GraphQLResolveInfo } from "graphql";
 import { MutationRunIogArgs } from "@labelflow/graphql-types";
 
 import { Context } from "./types";
@@ -9,8 +8,7 @@ import { getBoundedGeometryFromImage } from "./utils/get-bounded-geometry-from-i
 const runIog = async (
   _parent: any,
   args: MutationRunIogArgs,
-  { repository, user }: Context,
-  { operation }: GraphQLResolveInfo
+  { repository, user }: Context
 ) => {
   const result = await fetch(process.env.NEXT_PUBLIC_IOG_API_ENDPOINT ?? "", {
     method: "POST",
@@ -20,7 +18,35 @@ const runIog = async (
     },
     body: JSON.stringify({
       operationName: "runIog",
-      query: print(operation),
+      query: `
+      mutation runIog(
+        $id: ID!
+        $imageUrl: String
+        $x: Float
+        $y: Float
+        $width: Float
+        $height: Float
+        $pointsInside: [[Float!]]
+        $pointsOutside: [[Float!]]
+        $centerPoint: [Float!]
+      ) {
+        runIog(
+          data: {
+            id: $id
+            imageUrl: $imageUrl
+            x: $x
+            y: $y
+            width: $width
+            height: $height
+            pointsInside: $pointsInside
+            pointsOutside: $pointsOutside
+            centerPoint: $centerPoint
+          }
+        ) {
+          polygons
+        }
+      }
+      `,
       variables: args.data,
     }),
   }).then((res) =>
