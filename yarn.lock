@@ -3684,7 +3684,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/runtime@npm:7.15.4, @babel/runtime@npm:^7.14.6, @babel/runtime@npm:^7.15.4":
+"@babel/runtime@npm:7.15.4, @babel/runtime@npm:^7.14.6":
   version: 7.15.4
   resolution: "@babel/runtime@npm:7.15.4"
   dependencies:
@@ -6137,7 +6137,7 @@ __metadata:
     mjml: 4.10.3
     multer: 1.4.3
     next: 12.0.2
-    next-auth: 4.0.0-beta.6
+    next-auth: 4.0.0-beta.4
     next-connect: 0.11.0
     next-seo: 4.28.1
     node-polyfill-webpack-plugin: ^1.1.2
@@ -6708,13 +6708,6 @@ __metadata:
   version: 1.0.0
   resolution: "@panva/asn1.js@npm:1.0.0"
   checksum: cb6bcc1918a7f08e81e7d7f5bde83c20a66b30248ddc3ef10b1612e0e0b9f722c2b07ca6b586a089a49c1b6cfb29d63fdd23d4bc00c8cc40538b5595bec66d7d
-  languageName: node
-  linkType: hard
-
-"@panva/hkdf@npm:^1.0.0":
-  version: 1.0.1
-  resolution: "@panva/hkdf@npm:1.0.1"
-  checksum: 883c423c006fdef48021ed3982938e814acac60b2b4820253064ef5d7d057c58684aa294af1aff767541a71cc23d878db60464e7243dc5150188d81c06c82196
   languageName: node
   linkType: hard
 
@@ -19199,6 +19192,13 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
+"futoin-hkdf@npm:^1.3.3":
+  version: 1.4.2
+  resolution: "futoin-hkdf@npm:1.4.2"
+  checksum: 273c7368ae1adb39bdf13eeee0ba504b0a28a27bd13838497e802e4fe47a6687290d649c5b82a1cde4981a939747f0e684236bccf4f5a05b4ce14105b90490f1
+  languageName: node
+  linkType: hard
+
 "gauge@npm:~2.7.3":
   version: 2.7.4
   resolution: "gauge@npm:2.7.4"
@@ -22292,19 +22292,21 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
+"jose@npm:^1.27.2":
+  version: 1.28.1
+  resolution: "jose@npm:1.28.1"
+  dependencies:
+    "@panva/asn1.js": ^1.0.0
+  checksum: b91458949df7df08810b7a896a10751f25d3108dfcc41af138dc01e8e5bf7f90ea510cdb3d6bc37e3a293ec7d5cc26fb587de7ce15785a8109892c412e5c0416
+  languageName: node
+  linkType: hard
+
 "jose@npm:^2.0.5":
   version: 2.0.5
   resolution: "jose@npm:2.0.5"
   dependencies:
     "@panva/asn1.js": ^1.0.0
   checksum: 80a3447b51f794f8f2c7e21395dd880b55d374a055564595c69ff17722fb07aeb2dff722b5da9030651f67fafc7494e9ec5f5b56f5e1836d1ac94e604e6096ea
-  languageName: node
-  linkType: hard
-
-"jose@npm:^4.1.0, jose@npm:^4.1.2":
-  version: 4.1.2
-  resolution: "jose@npm:4.1.2"
-  checksum: 398a65477c2a1c6abbdf67c8b14a869fcc211d8dc65cb35eb28e7a16d2beceec7ce2cb7dbf23fa9c1438d9fb88ac14b8d8baf9e33f5066260d0768333fc06bc8
   languageName: node
   linkType: hard
 
@@ -24958,26 +24960,25 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"next-auth@npm:4.0.0-beta.6":
-  version: 4.0.0-beta.6
-  resolution: "next-auth@npm:4.0.0-beta.6"
+"next-auth@npm:4.0.0-beta.4":
+  version: 4.0.0-beta.4
+  resolution: "next-auth@npm:4.0.0-beta.4"
   dependencies:
-    "@babel/runtime": ^7.15.4
-    "@panva/hkdf": ^1.0.0
-    jose: ^4.1.2
+    "@babel/runtime": ^7.14.6
+    futoin-hkdf: ^1.3.3
+    jose: ^1.27.2
     oauth: ^0.9.15
-    openid-client: ^5.0.1
-    preact: ^10.5.14
+    openid-client: ^4.7.4
+    preact: ^10.5.13
     preact-render-to-string: ^5.1.19
-    uuid: ^8.3.2
   peerDependencies:
-    nodemailer: ^6.6.5
+    nodemailer: ^6.6.2
     react: ^17.0.2
     react-dom: ^17.0.2
   peerDependenciesMeta:
     nodemailer:
       optional: true
-  checksum: 115157d2d3ce508bf67388e76363c804cd3f4eafb606c857efaa2c07ef8c3c7588990a7b7f2553e7a3cc2b960dade2e8d45d61d4011d42f4b2c51ee16919e687
+  checksum: b3f817dc6fa3270acfe8e8b23bc73549d5b90d3cd72aaa72b724eb64c83412160aa22467e16b50a846a24c2c5347bf80a5ad8aaf5abeef8e62ede6213e555fc5
   languageName: node
   linkType: hard
 
@@ -25778,15 +25779,18 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"openid-client@npm:^5.0.1":
-  version: 5.0.2
-  resolution: "openid-client@npm:5.0.2"
+"openid-client@npm:^4.7.4":
+  version: 4.9.1
+  resolution: "openid-client@npm:4.9.1"
   dependencies:
-    jose: ^4.1.0
+    aggregate-error: ^3.1.0
+    got: ^11.8.0
+    jose: ^2.0.5
     lru-cache: ^6.0.0
+    make-error: ^1.3.6
     object-hash: ^2.0.1
     oidc-token-hash: ^5.0.1
-  checksum: 79acd4815707cb5aad387465cef08004ee9a543c19fdce79834b672d8e4fcfa2437b4ad0c7583d5900d4c4b565dbfb658d6af5428cee42fddd6d38be954a6b5f
+  checksum: f40f1b4f2c4618cc823c77b7c6fed2a8240550d2c2f73710c823c127233a80af5e8c30acc248115bd17e2766d5d5bc1032989a515aa135259ffd5ebcdf90226c
   languageName: node
   linkType: hard
 
@@ -26782,7 +26786,7 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"preact@npm:^10.5.14":
+"preact@npm:^10.5.13":
   version: 10.5.15
   resolution: "preact@npm:10.5.15"
   checksum: 1c9f025ed6ff9c6cbe85da4feb88011795914d615244089396d1157376897a09f478eac0d582c66bc5a96c2841ebd9f8dfbe0a28e8c1820bdd7c314083350d40
