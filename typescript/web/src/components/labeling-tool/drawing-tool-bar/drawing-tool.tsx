@@ -269,9 +269,7 @@ export const DrawingTool = () => {
   useHotkeys(
     keymap.toolIog.key,
     () => {
-      if (process.env.NEXT_PUBLIC_IOG_API_ENDPOINT) {
-        setSelectedTool(Tools.IOG);
-      }
+      setSelectedTool(Tools.IOG);
     },
     {},
     [setSelectedTool]
@@ -357,25 +355,23 @@ export const DrawingTool = () => {
                   <ChakraBiShapePolygon size="1.3em" />
                 </Box>
               </ToolSelectionPopoverItem>
-              {process.env.NEXT_PUBLIC_IOG_API_ENDPOINT && (
-                <ToolSelectionPopoverItem
-                  name="IOG tool"
-                  shortcut={keymap.toolIog.key}
-                  selected={selectedTool === Tools.IOG}
-                  onClick={() => {
-                    if (hasUserAcceptedIog !== "true") {
-                      doSetIsIogAlertDialogOpen(true);
-                    }
-                    setSelectedTool(Tools.IOG);
-                    setIsPopoverOpened(false);
-                  }}
-                  ariaLabel="Select iog tool"
-                >
-                  <Box ml="2">
-                    <ChakraIoColorWandOutline size="1.3em" />
-                  </Box>
-                </ToolSelectionPopoverItem>
-              )}
+              <ToolSelectionPopoverItem
+                name="IOG tool"
+                shortcut={keymap.toolIog.key}
+                selected={selectedTool === Tools.IOG}
+                onClick={() => {
+                  if (hasUserAcceptedIog !== "true") {
+                    doSetIsIogAlertDialogOpen(true);
+                  }
+                  setSelectedTool(Tools.IOG);
+                  setIsPopoverOpened(false);
+                }}
+                ariaLabel="Select iog tool"
+              >
+                <Box ml="2">
+                  <ChakraIoColorWandOutline size="1.3em" />
+                </Box>
+              </ToolSelectionPopoverItem>
             </Box>
           </PopoverBody>
         </PopoverContent>
