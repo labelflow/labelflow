@@ -145,3 +145,6 @@ storybook-static
 **/public/worker-*.js.*
 **/public/*.chunk.*.js.*
 .env
+
+typescript/db/volumes/db/data
+typescript/db/volumes/storage
