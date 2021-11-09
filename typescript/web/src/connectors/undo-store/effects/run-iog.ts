@@ -1,4 +1,6 @@
 import { ApolloClient, gql } from "@apollo/client";
+import { Coordinate } from "ol/coordinate";
+
 import { GeometryInput, LabelType } from "@labelflow/graphql-types";
 import { Effect } from "..";
 
@@ -108,9 +110,9 @@ export const createRunIogEffect = (
     y?: number;
     width?: number;
     height?: number;
-    pointsInside?: [number, number][];
-    pointsOutside?: [number, number][];
-    centerPoint?: [number, number];
+    pointsInside?: Coordinate[];
+    pointsOutside?: Coordinate[];
+    centerPoint?: Coordinate;
   },
   {
     client,
