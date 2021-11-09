@@ -15,6 +15,7 @@ import {
   ResizeAndTranslateBox,
   ResizeAndTranslateEvent,
 } from "./resize-and-translate-box-interaction";
+import { ModifyIog } from "../iog/modify";
 import { Effect, useUndoStore } from "../../../../connectors/undo-store";
 import { createUpdateLabelEffect } from "../../../../connectors/undo-store/effects/update-label";
 
@@ -84,10 +85,12 @@ export const SelectAndModifyFeature = (props: {
   image: { id?: string; width?: number; height?: number };
   setIsContextMenuOpen?: (state: boolean) => void;
   editClassOverlayRef?: MutableRefObject<HTMLDivElement | null>;
+  iogSpinnerRef: MutableRefObject<HTMLDivElement | null>;
 }) => {
   const {
     sourceVectorLabelsRef,
     image: { id: imageId },
+    iogSpinnerRef,
   } = props;
 
   // We need to have this state in order to store the selected feature in the addfeature listener below
@@ -150,6 +153,16 @@ export const SelectAndModifyFeature = (props: {
                 toast
               );
             }}
+          />
+        )}
+      {imageId &&
+        selectedTool === Tools.MODIFY_IOG &&
+        labelData?.label?.type === LabelType.Polygon &&
+        selectedFeature && (
+          <ModifyIog
+            imageId={imageId}
+            sourceVectorLabelsRef={sourceVectorLabelsRef}
+            iogSpinnerRef={iogSpinnerRef}
           />
         )}
       {selectedTool === Tools.SELECTION &&

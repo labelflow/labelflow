@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { Vector as OlSourceVector } from "ol/source";
 import { Geometry } from "ol/geom";
 import { useLabelingStore, Tools } from "../../../../connectors/labeling-state";
-import { DrawIogInteraction } from "../iog/draw";
+import { DrawIogInteraction } from "./iog";
 import { DrawBoundingBoxAndPolygonInteraction } from "./bounding-box-polygon";
 
 export const DrawInteraction = ({

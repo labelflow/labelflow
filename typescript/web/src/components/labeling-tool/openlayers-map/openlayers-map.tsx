@@ -283,6 +283,7 @@ export const OpenlayersMap = () => {
                 sourceVectorLabelsRef={sourceVectorBoxesRef}
               />
               <SelectAndModifyFeature
+                iogSpinnerRef={iogSpinnerRef}
                 editClassOverlayRef={editClassOverlayRef}
                 sourceVectorLabelsRef={sourceVectorBoxesRef}
                 setIsContextMenuOpen={setIsContextMenuOpen}

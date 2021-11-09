@@ -259,6 +259,14 @@ export const DrawingTool = () => {
     [setSelectedTool]
   );
   useHotkeys(
+    keymap.modifyIog.key,
+    () => {
+      setSelectedTool(Tools.MODIFY_IOG);
+    },
+    {},
+    [setSelectedTool]
+  );
+  useHotkeys(
     keymap.toolIog.key,
     () => {
       if (process.env.NEXT_PUBLIC_IOG_API_ENDPOINT) {

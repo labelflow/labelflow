@@ -13,6 +13,7 @@ import {
 export enum Tools {
   SELECTION = "select",
   CLASSIFICATION = "classification",
+  MODIFY_IOG = "modifyIog",
   BOX = "box",
   POLYGON = "polygon",
   IOG = "iog",

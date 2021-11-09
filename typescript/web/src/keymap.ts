@@ -75,7 +75,12 @@ export const keymap: Keymap = {
   },
   toolIog: {
     key: "a",
-    description: "Inside outside guidance tool",
+    description: "Auto annotate creation tool",
+    category: "Tools",
+  },
+  modifyIog: {
+    key: "e",
+    description: "Auto annotate modification tool",
     category: "Tools",
   },
   validateIogLabel: {
