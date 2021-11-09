@@ -3,10 +3,17 @@ import Stripe from "stripe";
 import { getPrismaClient } from "@labelflow/db";
 import { WorkspacePlan } from "@labelflow/graphql-types";
 
-if (!process.env.STRIPE_SECRET_KEY) {
-  throw new Error("You need to provide a STRIPE_SECRET_KEY");
+const {
+  STRIPE_SECRET_KEY: stripeSecretKey,
+  STRIPE_WEBHOOK_SECRET: stripeWebhookSecret,
+} = process.env;
+
+if (!stripeSecretKey || !stripeWebhookSecret) {
+  throw new Error(
+    "You need to provide both STRIPE_SECRET_KEY and STRIPE_WEBHOOK_SECRET to handle stripe webhooks"
+  );
 }
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+const stripe = new Stripe(stripeSecretKey, {
   apiVersion: "2020-08-27",
 });
 
@@ -39,7 +46,6 @@ const updateWorkspacePlan = async ({
   workspaceSlug: string;
   workspacePlan: keyof typeof WorkspacePlan;
 }) => {
-  console.log("Here", workspaceSlug, workspacePlan);
   const prisma = await getPrismaClient();
   await prisma.workspace.update({
     where: { slug: workspaceSlug },
@@ -47,80 +53,88 @@ const updateWorkspacePlan = async ({
   });
 };
 
-const manageSubscriptionStatusChange = async (
-  subscription: Stripe.Subscription
-) => {
-  const { status } = subscription;
-  console.log(`Subscription status is ${status}.`);
-  if (status === "active") {
-    const { workspaceSlug } = subscription.metadata;
-    console.log("workspaceSlug", workspaceSlug);
-    const newProductId = subscription.items.data[0].price.product;
-    console.log("newProductId", newProductId);
-    const product = await stripe.products.retrieve(newProductId as string);
-    console.log("product", product);
-
-    const productName = product.name;
-    console.log("productName", productName);
-
-    if (!(productName in WorkspacePlan)) {
-      throw new Error(`Unknown plan ${productName}`);
-    }
-    const workspacePlan =
-      WorkspacePlan[productName as keyof typeof WorkspacePlan];
-    updateWorkspacePlan({ workspacePlan, workspaceSlug });
-  }
-};
-
 const webhookHandler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === "POST") {
     const buf = await buffer(req);
     const sig = req.headers["stripe-signature"];
-    const webhookSecret =
-      process.env.STRIPE_WEBHOOK_SECRET_LIVE ??
-      process.env.STRIPE_WEBHOOK_SECRET;
 
-    if (!webhookSecret) {
-      throw new Error(
-        "You need to provide a webhook secret through STRIPE_WEBHOOK_SECRET_LIVE or STRIPE_WEBHOOK_SECRET"
-      );
-    }
     let event;
 
     try {
       event = stripe.webhooks.constructEvent(
         buf,
         sig as string,
-        webhookSecret as string
+        stripeWebhookSecret
       );
     } catch (err: any) {
-      console.log(`❌ Error message: ${err.message}`);
       return res.status(400).send(`Webhook Error: ${err.message!}`);
     }
 
     if (relevantEvents.has(event.type)) {
       try {
+        const { customer, status, items } = event.data
+          .object as Stripe.Subscription;
+
+        const prisma = await getPrismaClient();
+        const workspaceSlug = (
+          await prisma.workspace.findFirst({
+            where: { stripeCustomerId: customer as string },
+            select: { slug: true },
+          })
+        )?.slug;
+
+        if (!workspaceSlug) {
+          throw new Error("No workspace found for this subscription");
+        }
+
         switch (event.type) {
+          case "customer.subscription.created":
+          case "customer.subscription.updated":
+            switch (status) {
+              case "active":
+              case "incomplete":
+              case "trialing": {
+                const newProductId = items.data[0].price.product;
+                const { name: productName } = await stripe.products.retrieve(
+                  newProductId as string
+                );
+
+                if (!(productName in WorkspacePlan)) {
+                  throw new Error(`Unknown plan ${productName}`);
+                }
+
+                const workspacePlan =
+                  WorkspacePlan[productName as keyof typeof WorkspacePlan];
+
+                await updateWorkspacePlan({ workspacePlan, workspaceSlug });
+                break;
+              }
+              case "canceled":
+              case "incomplete_expired":
+              case "unpaid":
+              case "past_due": {
+                await updateWorkspacePlan({
+                  workspacePlan: WorkspacePlan.Community,
+                  workspaceSlug,
+                });
+                break;
+              }
+              default:
+                throw new Error(`Unknown status ${status}`);
+            }
+            break;
           case "customer.subscription.deleted": {
-            const subscription = event.data.object as Stripe.Subscription;
-            const { workspaceSlug } = subscription.metadata;
             await updateWorkspacePlan({
               workspaceSlug,
               workspacePlan: WorkspacePlan.Community,
             });
             break;
           }
-          case "customer.subscription.created":
-          case "customer.subscription.updated":
-            manageSubscriptionStatusChange(
-              event.data.object as Stripe.Subscription
-            );
-            break;
           default:
-            throw new Error("Unhandled relevant event: ");
+            throw new Error("Unknown event type");
         }
       } catch (error) {
-        console.log(error);
+        console.error(error);
         return res
           .status(400)
           .send('Webhook error: "Webhook handler failed. View logs."');
