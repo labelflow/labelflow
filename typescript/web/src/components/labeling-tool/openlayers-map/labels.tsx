@@ -122,48 +122,50 @@ export const Labels = ({
                 />
               );
             })}
-          {selectedLabel?.smartToolInput && selectedTool === Tools.IOG && (
-            <olFeature
-              key={getIogMaskIdFromLabelId(selectedLabel?.id)}
-              id={getIogMaskIdFromLabelId(selectedLabel?.id)}
-              properties={{ isSelected: true }}
-              geometry={new GeoJSON().readGeometry({
-                coordinates: extractIogMaskFromLabel(
-                  selectedLabel,
-                  data?.image?.width,
-                  data?.image?.height
-                ),
-                type: "Polygon",
-              })}
-              style={[
-                new Style({
-                  fill: new Fill({
-                    color: `${iogMaskColor}AA`,
-                  }),
-                  stroke: new Stroke({
-                    color: `${iogMaskColor}FF`,
-                    width: 2,
-                  }),
-                  zIndex: 2,
-                }),
-                new Style({
-                  image: new CircleStyle({
-                    radius: 3,
+          {selectedLabel?.smartToolInput &&
+            (selectedTool === Tools.IOG ||
+              selectedTool === Tools.MODIFY_IOG) && (
+              <olFeature
+                key={getIogMaskIdFromLabelId(selectedLabel?.id)}
+                id={getIogMaskIdFromLabelId(selectedLabel?.id)}
+                properties={{ isSelected: true }}
+                geometry={new GeoJSON().readGeometry({
+                  coordinates: extractIogMaskFromLabel(
+                    selectedLabel,
+                    data?.image?.width,
+                    data?.image?.height
+                  ),
+                  type: "Polygon",
+                })}
+                style={[
+                  new Style({
                     fill: new Fill({
-                      color: iogMaskColor,
+                      color: `${iogMaskColor}AA`,
                     }),
+                    stroke: new Stroke({
+                      color: `${iogMaskColor}FF`,
+                      width: 2,
+                    }),
+                    zIndex: 2,
                   }),
-                  geometry: (feature) => {
-                    const coordinates = (feature as Feature<Polygon>)
-                      .getGeometry()
-                      .getCoordinates()[1];
-                    return new MultiPoint(coordinates);
-                  },
-                  zIndex: 2,
-                }),
-              ]}
-            />
-          )}
+                  new Style({
+                    image: new CircleStyle({
+                      radius: 3,
+                      fill: new Fill({
+                        color: iogMaskColor,
+                      }),
+                    }),
+                    geometry: (feature) => {
+                      const coordinates = (feature as Feature<Polygon>)
+                        .getGeometry()
+                        .getCoordinates()[1];
+                      return new MultiPoint(coordinates);
+                    },
+                    zIndex: 2,
+                  }),
+                ]}
+              />
+            )}
         </olSourceVector>
       </olLayerVector>
     </>
