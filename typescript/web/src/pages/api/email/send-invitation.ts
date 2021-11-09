@@ -9,7 +9,8 @@ type InvitationEmailInputs = {
   inviterEmail?: string;
   inviteeEmail: string;
   workspaceName: string;
-  invitationToken: string;
+  workspaceSlug: string;
+  membershipId: string;
 };
 
 export default async function handler(
@@ -25,16 +26,17 @@ export default async function handler(
         inviterEmail,
         inviterName,
         workspaceName,
-        invitationToken,
+        workspaceSlug,
+        membershipId,
       },
     } = req as unknown as {
       query: InvitationEmailInputs;
     };
     const searchParams = new URLSearchParams({
-      invitationToken,
+      membershipId,
     });
     const origin = process.env.NEXTAUTH_URL ?? "";
-    const url = `${origin}/api/accept-invite?${searchParams.toString()}`;
+    const url = `${origin}/${workspaceSlug}/accept-invite?${searchParams.toString()}`;
     const transport = createTransport(process.env.EMAIL_SERVER ?? "");
     await transport.sendMail({
       to: inviteeEmail,

@@ -22826,6 +22826,7 @@ fsevents@^1.2.7:
     ts-loader: 9.2.3
     ts-node: 9.1.1
     typescript: 4.3.5
+    uuid: 8.3.2
     webpack: 5.38.1
   languageName: unknown
   linkType: soft

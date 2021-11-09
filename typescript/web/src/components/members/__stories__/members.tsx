@@ -1,7 +1,9 @@
 import { SessionProvider } from "next-auth/react";
 import {
+  CurrentUserCanAcceptInvitation,
   Membership,
   MembershipRole,
+  MembershipStatus,
   WorkspacePlan,
   WorkspaceType,
 } from "@labelflow/graphql-types";
@@ -20,6 +22,8 @@ export default {
 const memberships: Membership[] = [
   {
     role: MembershipRole.Admin,
+    status: MembershipStatus.Active,
+    currentUserCanAcceptInvitation: CurrentUserCanAcceptInvitation.Yes,
     id: "membership1",
     createdAt: "",
     updatedAt: "",
@@ -47,6 +51,8 @@ const memberships: Membership[] = [
   },
   {
     role: MembershipRole.Owner,
+    status: MembershipStatus.Active,
+    currentUserCanAcceptInvitation: CurrentUserCanAcceptInvitation.Yes,
     id: "membership2",
     createdAt: "",
     updatedAt: "",
@@ -76,6 +82,8 @@ const memberships: Membership[] = [
     createdAt: "",
     updatedAt: "",
     role: MembershipRole.Admin,
+    status: MembershipStatus.Declined,
+    currentUserCanAcceptInvitation: CurrentUserCanAcceptInvitation.Yes,
     id: "membership3",
     invitationEmailSentTo: "blabla@toto.com",
     workspace: {
@@ -92,6 +100,8 @@ const memberships: Membership[] = [
   },
   {
     role: MembershipRole.Owner,
+    status: MembershipStatus.Active,
+    currentUserCanAcceptInvitation: CurrentUserCanAcceptInvitation.Yes,
     id: "membership4",
     createdAt: "",
     updatedAt: "",
@@ -119,9 +129,10 @@ const memberships: Membership[] = [
     createdAt: "",
     updatedAt: "",
     role: MembershipRole.Admin,
+    status: MembershipStatus.Sent,
+    currentUserCanAcceptInvitation: CurrentUserCanAcceptInvitation.Yes,
     id: "membership5",
     invitationEmailSentTo: "member5@gmail.com",
-    invitationToken: "abcd",
     workspace: {
       datasets: [],
       memberships: [],

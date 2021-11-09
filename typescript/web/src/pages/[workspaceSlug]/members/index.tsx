@@ -18,8 +18,8 @@ const membershipsQuery = gql`
     memberships(where: { workspaceSlug: $workspaceSlug }) {
       id
       role
+      status
       invitationEmailSentTo
-      invitationToken
       user {
         id
         name
@@ -104,9 +104,9 @@ const WorkspaceMembersPage = () => {
             }}
             inviteMember={async (where) => {
               const {
-                data: { inviteMember: invitationStatus },
+                data: { inviteMember: invitationResult },
               } = await inviteMember({ variables: { where } });
-              return invitationStatus;
+              return invitationResult;
             }}
           />
         </Box>

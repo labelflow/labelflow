@@ -1,4 +1,8 @@
-import { MembershipRole } from "@labelflow/graphql-types";
+import {
+  CurrentUserCanAcceptInvitation,
+  MembershipRole,
+  MembershipStatus,
+} from "@labelflow/graphql-types";
 import { getSession } from "next-auth/react";
 import { notImplementedInLocalWorkspaceRepository } from "../repository/utils";
 import { localWorkspace } from "../repository/workspace";
@@ -10,6 +14,9 @@ export const localMembership = {
   role: MembershipRole.Owner,
   workspaceSlug: "local",
   userId: "",
+  status: MembershipStatus.Active,
+  currentUserCanAcceptInvitation:
+    CurrentUserCanAcceptInvitation.AlreadyMemberOfTheWorkspace,
 };
 
 export default {
@@ -18,6 +25,8 @@ export default {
     memberships: () => [localMembership],
   },
   Mutation: {
+    acceptInvitation: notImplementedInLocalWorkspaceRepository,
+    declineInvitation: notImplementedInLocalWorkspaceRepository,
     createMembership: notImplementedInLocalWorkspaceRepository,
     updateMembership: notImplementedInLocalWorkspaceRepository,
     deleteMembership: notImplementedInLocalWorkspaceRepository,
