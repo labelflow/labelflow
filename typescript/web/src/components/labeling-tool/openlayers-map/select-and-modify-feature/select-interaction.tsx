@@ -170,27 +170,27 @@ export const SelectInteraction = ({
 
   return (
     <>
-      {selectedTool === Tools.SELECTION ||
-        (selectedTool === Tools.MODIFY_IOG && (
-          <olInteractionPointer
-            // Key is a trick to force react open layers to take into account the change in image
-            key={`${selectedTool}-${image.height}-${image.width}`}
-            style={null}
-            args={{
-              handleEvent: (e) => {
-                const eventType = e?.type ?? null;
-                switch (eventType) {
-                  case "click":
-                    return clickHandler(e);
-                  case "contextmenu":
-                    return contextMenuHandler(e);
-                  default:
-                    return true;
-                }
-              },
-            }}
-          />
-        ))}
+      {(selectedTool === Tools.SELECTION ||
+        selectedTool === Tools.MODIFY_IOG) && (
+        <olInteractionPointer
+          // Key is a trick to force react open layers to take into account the change in image
+          key={`${selectedTool}-${image.height}-${image.width}`}
+          style={null}
+          args={{
+            handleEvent: (e) => {
+              const eventType = e?.type ?? null;
+              switch (eventType) {
+                case "click":
+                  return clickHandler(e);
+                case "contextmenu":
+                  return contextMenuHandler(e);
+                default:
+                  return true;
+              }
+            },
+          }}
+        />
+      )}
       {selectedTool === Tools.CLASSIFICATION && (
         <olInteractionPointer
           // Key is a trick to force react open layers to take into account the change in image
