@@ -20,7 +20,6 @@ const membershipsQuery = gql`
       role
       status
       invitationEmailSentTo
-      invitationToken
       user {
         id
         name

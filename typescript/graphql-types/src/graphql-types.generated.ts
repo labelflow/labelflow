@@ -309,7 +309,6 @@ export type Membership = {
   user?: Maybe<User>;
   workspace: Workspace;
   invitationEmailSentTo?: Maybe<Scalars['String']>;
-  invitationToken?: Maybe<Scalars['ID']>;
   status: MembershipStatus;
   currentUserCanAcceptInvitation: CurrentUserCanAcceptInvitation;
 };
@@ -1088,7 +1087,6 @@ export type MembershipResolvers<ContextType = any, ParentType extends ResolversP
   user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   workspace?: Resolver<ResolversTypes['Workspace'], ParentType, ContextType>;
   invitationEmailSentTo?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  invitationToken?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
   status?: Resolver<ResolversTypes['MembershipStatus'], ParentType, ContextType>;
   currentUserCanAcceptInvitation?: Resolver<ResolversTypes['CurrentUserCanAcceptInvitation'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;

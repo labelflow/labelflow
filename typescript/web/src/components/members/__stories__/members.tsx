@@ -133,7 +133,6 @@ const memberships: Membership[] = [
     currentUserCanAcceptInvitation: CurrentUserCanAcceptInvitation.Yes,
     id: "membership5",
     invitationEmailSentTo: "member5@gmail.com",
-    invitationToken: "abcd",
     workspace: {
       datasets: [],
       memberships: [],

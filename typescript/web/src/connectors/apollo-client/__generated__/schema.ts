@@ -279,7 +279,6 @@ export const typeDefs = gql`
     user: User
     workspace: Workspace!
     invitationEmailSentTo: String
-    invitationToken: ID
     status: MembershipStatus!
     currentUserCanAcceptInvitation: CurrentUserCanAcceptInvitation!
   }
