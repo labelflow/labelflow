@@ -10,9 +10,6 @@ export const Billing = ({
 }: StackProps & {
   workspace?: {
     id: string;
-    name: string;
-    image?: string | null;
-    slug: string;
     plan: string;
     stripeCustomerPortalUrl: string;
   };
