@@ -9,6 +9,7 @@
     "start": "dotenv -e .env.development -e .env.local -- docker compose up --detach && sleep 10 && yarn deploy:all",
     "stop": "dotenv -e .env.development -e .env.local -- docker compose down --volumes --remove-orphans",
     "deploy": "dotenv -e .env.development -e .env.local prisma migrate deploy",
+    "deploy:production": "dotenv -e .env.production prisma migrate deploy",
     "deploy:test": "dotenv -e .env.test prisma migrate deploy",
     "deploy:all": "yarn deploy && yarn deploy:test",
     "dev:push": "dotenv -e .env.development -e .env.local prisma db push",
