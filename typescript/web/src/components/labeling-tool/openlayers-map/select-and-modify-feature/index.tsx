@@ -10,7 +10,11 @@ import { ModifyEvent } from "ol/interaction/Modify";
 import { TranslateEvent } from "ol/interaction/Translate";
 import { LabelType } from "@labelflow/graphql-types";
 import { SelectInteraction } from "./select-interaction";
-import { Tools, useLabelingStore } from "../../../../connectors/labeling-state";
+import {
+  Tools,
+  useLabelingStore,
+  SelectionToolState,
+} from "../../../../connectors/labeling-state";
 import {
   ResizeAndTranslateBox,
   ResizeAndTranslateEvent,
@@ -98,6 +102,9 @@ export const SelectAndModifyFeature = (props: {
     useState<Feature<Polygon> | null>(null);
   const selectedLabelId = useLabelingStore((state) => state.selectedLabelId);
   const selectedTool = useLabelingStore((state) => state.selectedTool);
+  const selectionToolState = useLabelingStore(
+    (state) => state.selectionToolState
+  );
 
   const { data: labelData } = useQuery(getLabelQuery, {
     variables: { id: selectedLabelId },
@@ -156,7 +163,8 @@ export const SelectAndModifyFeature = (props: {
           />
         )}
       {imageId &&
-        selectedTool === Tools.MODIFY_IOG &&
+        selectedTool === Tools.SELECTION &&
+        selectionToolState === SelectionToolState.IOG &&
         labelData?.label?.type === LabelType.Polygon &&
         selectedFeature && (
           <ModifyIog

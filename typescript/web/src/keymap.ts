@@ -78,9 +78,10 @@ export const keymap: Keymap = {
     description: "Auto annotate creation tool",
     category: "Tools",
   },
-  modifyIog: {
+  changeSelectionMode: {
     key: "e",
-    description: "Auto annotate modification tool",
+    description:
+      "Change between default selection and auto annotate modification tool",
     category: "Tools",
   },
   validateIogLabel: {

@@ -12,7 +12,11 @@ import CircleStyle from "ol/style/Circle";
 import { Feature } from "ol";
 import { Label, LabelType } from "@labelflow/graphql-types";
 
-import { Tools, useLabelingStore } from "../../../connectors/labeling-state";
+import {
+  SelectionToolState,
+  Tools,
+  useLabelingStore,
+} from "../../../connectors/labeling-state";
 import {
   extractIogMaskFromLabel,
   iogMaskColor,
@@ -61,6 +65,9 @@ export const Labels = ({
   });
   const selectedLabelId = useLabelingStore((state) => state.selectedLabelId);
   const selectedTool = useLabelingStore((state) => state.selectedTool);
+  const selectionToolState = useLabelingStore(
+    (state) => state.selectionToolState
+  );
   const iogProcessingLabels = useLabelingStore(
     (state) => state.iogProcessingLabels
   );
@@ -124,7 +131,8 @@ export const Labels = ({
             })}
           {selectedLabel?.smartToolInput &&
             (selectedTool === Tools.IOG ||
-              selectedTool === Tools.MODIFY_IOG) && (
+              (selectedTool === Tools.SELECTION &&
+                selectionToolState === SelectionToolState.IOG)) && (
               <olFeature
                 key={getIogMaskIdFromLabelId(selectedLabel?.id)}
                 id={getIogMaskIdFromLabelId(selectedLabel?.id)}

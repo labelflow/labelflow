@@ -7,7 +7,11 @@ import { Geometry } from "ol/geom";
 import { createEmpty, extend, getCenter } from "ol/extent";
 
 import OverlayPositioning from "ol/OverlayPositioning";
-import { useLabelingStore, Tools } from "../../../../connectors/labeling-state";
+import {
+  useLabelingStore,
+  Tools,
+  SelectionToolState,
+} from "../../../../connectors/labeling-state";
 
 import { keymap } from "../../../../keymap";
 
@@ -66,6 +70,9 @@ export const SelectInteraction = ({
   }
 
   const selectedTool = useLabelingStore((state) => state.selectedTool);
+  const selectionToolState = useLabelingStore(
+    (state) => state.selectionToolState
+  );
   const setSelectedLabelId = useLabelingStore(
     (state) => state.setSelectedLabelId
   );
@@ -136,7 +143,11 @@ export const SelectInteraction = ({
   };
 
   const clickHandler = (e: MapBrowserEvent<UIEvent>) => {
-    if (selectedTool === Tools.MODIFY_IOG && selectedLabelId != null)
+    if (
+      selectedTool === Tools.SELECTION &&
+      selectionToolState === SelectionToolState.IOG &&
+      selectedLabelId != null
+    )
       return true;
     const feature = getClosestFeature(e);
     setSelectedLabelId(feature?.getProperties().id ?? null);
@@ -173,8 +184,7 @@ export const SelectInteraction = ({
 
   return (
     <>
-      {(selectedTool === Tools.SELECTION ||
-        selectedTool === Tools.MODIFY_IOG) && (
+      {selectedTool === Tools.SELECTION && (
         <olInteractionPointer
           // Key is a trick to force react open layers to take into account the change in image
           key={`${selectedTool}-${image.height}-${image.width}`}

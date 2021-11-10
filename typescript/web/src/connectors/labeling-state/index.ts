@@ -13,7 +13,6 @@ import {
 export enum Tools {
   SELECTION = "select",
   CLASSIFICATION = "classification",
-  MODIFY_IOG = "modifyIog",
   BOX = "box",
   POLYGON = "polygon",
   IOG = "iog",
@@ -22,6 +21,11 @@ export enum Tools {
 export enum DrawingToolState {
   IDLE = "idle",
   DRAWING = "drawing",
+}
+
+export enum SelectionToolState {
+  DEFAULT = "default",
+  IOG = "iog",
 }
 
 export type LabelingState = {
@@ -49,6 +53,8 @@ export type LabelingState = {
   selectedLabelClassId: string | null;
   boxDrawingToolState: DrawingToolState;
   setDrawingToolState: (state: DrawingToolState) => void;
+  selectionToolState: SelectionToolState;
+  setSelectionToolState: (state: SelectionToolState) => void;
   setIsImageLoading: (isImageLoading: boolean) => void;
   setCanZoomIn: (canZoomIn: boolean) => void;
   setCanZoomOut: (canZoomOut: boolean) => void;
@@ -111,6 +117,10 @@ export const useLabelingStore = create<LabelingState>(
     setDrawingToolState: (boxDrawingToolState: DrawingToolState) =>
       // @ts-ignore See https://github.com/Diablow/zustand-store-addons/issues/2
       set({ boxDrawingToolState }),
+    selectionToolState: SelectionToolState.DEFAULT,
+    setSelectionToolState: (selectionToolState: SelectionToolState) =>
+      // @ts-ignore See https://github.com/Diablow/zustand-store-addons/issues/2
+      set({ selectionToolState }),
     // @ts-ignore See https://github.com/Diablow/zustand-store-addons/issues/2
     setView: (view: OlView) => set({ view }),
     // @ts-ignore See https://github.com/Diablow/zustand-store-addons/issues/2
