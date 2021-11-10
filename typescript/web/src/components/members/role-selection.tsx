@@ -16,6 +16,7 @@ import { useSelect } from "downshift";
 import { MembershipRole } from "@labelflow/graphql-types";
 import { RiArrowDownSFill, RiArrowUpSFill } from "react-icons/ri";
 import { BiCheck } from "react-icons/bi";
+import { isDisabled } from "@chakra-ui/utils";
 
 const CheckIcon = chakra(BiCheck);
 
@@ -90,9 +91,11 @@ const RoleListItem = ({
 };
 
 export const RoleSelection = ({
+  isDisabled,
   role: currentRole,
   changeMembershipRole,
 }: {
+  isDisabled: boolean;
   role: MembershipRole;
   changeMembershipRole: (role: MembershipRole) => void;
 }) => {
@@ -125,6 +128,7 @@ export const RoleSelection = ({
       <PopoverTrigger>
         <Button
           {...getToggleButtonProps()}
+          isDisabled={isDisabled}
           variant="outline"
           textAlign="start"
           justifyContent="space-between"

@@ -29,6 +29,7 @@ const membershipsQuery = gql`
       workspace {
         id
         name
+        slug
       }
     }
   }
