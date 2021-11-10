@@ -69,6 +69,7 @@ export const SelectInteraction = ({
   const setSelectedLabelId = useLabelingStore(
     (state) => state.setSelectedLabelId
   );
+  const selectedLabelId = useLabelingStore((state) => state.selectedLabelId);
 
   useHotkeys(
     keymap.openLabelClassSelectionPopover.key,
@@ -135,6 +136,8 @@ export const SelectInteraction = ({
   };
 
   const clickHandler = (e: MapBrowserEvent<UIEvent>) => {
+    if (selectedTool === Tools.MODIFY_IOG && selectedLabelId != null)
+      return true;
     const feature = getClosestFeature(e);
     setSelectedLabelId(feature?.getProperties().id ?? null);
     return true;
