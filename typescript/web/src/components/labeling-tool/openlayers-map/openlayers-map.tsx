@@ -102,6 +102,9 @@ export const OpenlayersMap = () => {
     (state) => state.setIsContextMenuOpen
   );
   const selectedTool = useLabelingStore((state) => state.selectedTool);
+  const iogSpinnerPosition = useLabelingStore(
+    (state) => state.iogSpinnerPosition
+  );
   const setIsImageLoading = useLabelingStore(
     (state) => state.setIsImageLoading
   );
@@ -339,6 +342,7 @@ export const OpenlayersMap = () => {
       <Spinner
         id="spinner"
         key="spinner"
+        visibility={iogSpinnerPosition ? "visible" : "hidden"}
         ref={(e) => {
           if (e && iogSpinnerRef.current !== e) {
             // eslint-disable-next-line no-param-reassign
