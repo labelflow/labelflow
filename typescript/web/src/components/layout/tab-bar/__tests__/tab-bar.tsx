@@ -1,6 +1,12 @@
 import { screen, render } from "@testing-library/react";
 import { TabBar, TabBarItem } from "..";
 
+jest.mock("next/router", () => ({
+  useRouter: jest.fn(() => ({
+    query: { datasetSlug: "test-dataset", workspaceSlug: "test" },
+  })),
+}));
+
 const renderTabBar = (tabs: TabBarItem[]) => {
   render(<TabBar tabs={tabs} />);
 };
