@@ -1,4 +1,4 @@
-import { useRef, useCallback, MutableRefObject } from "react";
+import { useRef, useCallback, MutableRefObject, useMemo } from "react";
 import { Style } from "ol/style";
 import { Vector as OlSourceVector } from "ol/source";
 import { Geometry, Point } from "ol/geom";
@@ -45,6 +45,36 @@ export const ModifyIog = ({
     dataLabelQuery?.label?.smartToolInput?.centerPoint;
 
   const vectorSourceRef = useRef<OlSourceVector<Geometry>>(null);
+  const stylePointInside = useMemo(
+    () =>
+      new Style({
+        image: new Icon({
+          src: "/static/graphics/iog-inside.svg",
+          scale: 0.5,
+        }),
+      }),
+    []
+  );
+  const stylePointOutside = useMemo(
+    () =>
+      new Style({
+        image: new Icon({
+          src: "/static/graphics/iog-outside.svg",
+          scale: 0.5,
+        }),
+      }),
+    []
+  );
+  const stylePointCenter = useMemo(
+    () =>
+      new Style({
+        image: new Icon({
+          src: "/static/graphics/iog-target.svg",
+          scale: 0.5,
+        }),
+      }),
+    []
+  );
 
   useHotkeys(
     keymap.validateIogLabel.key,
@@ -82,14 +112,7 @@ export const ModifyIog = ({
                   // eslint-disable-next-line react/no-array-index-key
                   key={`${coordinates.join("-")}-${index}`}
                   geometry={new Point(coordinates)}
-                  style={
-                    new Style({
-                      image: new Icon({
-                        src: "/static/graphics/iog-inside.svg",
-                        scale: 0.5,
-                      }),
-                    })
-                  }
+                  style={stylePointInside}
                 />
               );
             }) ?? []),
@@ -100,14 +123,7 @@ export const ModifyIog = ({
                   // eslint-disable-next-line react/no-array-index-key
                   key={`${coordinates.join("-")}-${index}`}
                   geometry={new Point(coordinates)}
-                  style={
-                    new Style({
-                      image: new Icon({
-                        src: "/static/graphics/iog-outside.svg",
-                        scale: 0.5,
-                      }),
-                    })
-                  }
+                  style={stylePointOutside}
                 />
               );
             }) ?? []),
@@ -116,14 +132,7 @@ export const ModifyIog = ({
                 key={centerPoint.join("-")}
                 id="point-center"
                 geometry={new Point(centerPoint)}
-                style={
-                  new Style({
-                    image: new Icon({
-                      src: "/static/graphics/iog-target.svg",
-                      scale: 0.5,
-                    }),
-                  })
-                }
+                style={stylePointCenter}
               />
             ) : null,
           ].filter((item) => item)}
