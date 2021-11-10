@@ -3,7 +3,7 @@ import { MutationRunIogArgs } from "@labelflow/graphql-types";
 import { Context } from "./types";
 
 import { throwIfResolvesToNil } from "./utils/throw-if-resolves-to-nil";
-import { getBoundedGeometryFromImage } from "./utils/get-bounded-geometry-from-image";
+// import { getBoundedGeometryFromImage } from "./utils/get-bounded-geometry-from-image";
 
 const runIog = async (
   _parent: any,
@@ -85,28 +85,53 @@ const runIog = async (
       type: "Polygon",
       coordinates: result?.polygons,
     };
-    const { imageId, smartToolInput } = await throwIfResolvesToNil(
+    const { smartToolInput } = await throwIfResolvesToNil(
       "No label with such id",
       repository.label.get
     )({ id: args.data.id }, user);
-    const image = await throwIfResolvesToNil(
-      `The image id ${imageId} doesn't exist.`,
-      repository.image.get
-    )({ id: imageId }, user);
+    // const image = await throwIfResolvesToNil(
+    //   `The image id ${imageId} doesn't exist.`,
+    //   repository.image.get
+    // )({ id: imageId }, user);
 
-    const {
-      geometry: clippedGeometry,
-      x,
-      y,
-      width,
-      height,
-    } = getBoundedGeometryFromImage(image, geometry);
+    // const {
+    //   geometry: clippedGeometry,
+    //   x,
+    //   y,
+    //   width,
+    //   height,
+    // } = getBoundedGeometryFromImage(image, geometry);
+    // const geometryPolygon = multiPolygon(geometry.coordinates);
+
+    const xCoordinates = geometry.coordinates.reduce(
+      (xCoordinatesCurrent, polygon) => [
+        ...xCoordinatesCurrent,
+        ...polygon.map((point) => point[0]),
+      ],
+      []
+    );
+    const yCoordinates = geometry.coordinates.reduce(
+      (yCoordinatesCurrent, polygon) => [
+        ...yCoordinatesCurrent,
+        ...polygon.map((point) => point[1]),
+      ],
+      []
+    );
+    const [x, y, X, Y] = [
+      Math.min(...xCoordinates),
+      Math.min(...yCoordinates),
+      Math.max(...xCoordinates),
+      Math.max(...yCoordinates),
+    ];
+    const width = X - x;
+    const height = Y - y;
+
     const now = new Date();
 
     const newLabelEntity = {
       smartToolInput: { ...smartToolInput, ...args.data },
       updatedAt: now.toISOString(),
-      geometry: clippedGeometry,
+      geometry,
       x,
       y,
       height,

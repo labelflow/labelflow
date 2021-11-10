@@ -7,7 +7,6 @@ import GeometryType from "ol/geom/GeometryType";
 import { useApolloClient, useQuery } from "@apollo/client";
 import { useToast } from "@chakra-ui/react";
 import { useHotkeys } from "react-hotkeys-hook";
-import { Coordinate } from "ol/coordinate";
 import { getBoundedGeometryFromImage } from "@labelflow/common-resolvers";
 import { LabelType } from "@labelflow/graphql-types";
 
@@ -87,21 +86,17 @@ export const DrawIogCanvas = ({ imageId }: { imageId: string }) => {
           reader.readAsDataURL(blob);
         });
       })();
-      const [x, y, xMax, yMax] = openLayersGeometry.getExtent();
-      const boundingBoxCenterPoint: Coordinate = [
-        Math.floor((x + xMax) / 2),
-        Math.floor((y + yMax) / 2),
-      ];
-      registerIogJob(timestamp, labelId, boundingBoxCenterPoint);
+      const smartToolInput = extractSmartToolInputInputFromIogMask(
+        boundedGeometry.coordinates as number[][][]
+      );
+      registerIogJob(timestamp, labelId, smartToolInput.centerPoint);
 
       return perform(
         createRunIogEffect(
           {
             labelId,
             imageUrl: dataUrl,
-            ...extractSmartToolInputInputFromIogMask(
-              boundedGeometry.coordinates as number[][][]
-            ),
+            ...smartToolInput,
           },
           { client }
         )
@@ -113,6 +108,7 @@ export const DrawIogCanvas = ({ imageId }: { imageId: string }) => {
       unregisterIogJob(timestamp, labelId);
     } catch (error) {
       unregisterIogJob(timestamp, labelId);
+      setSelectedLabelId(null);
       toast({
         title: "Error executing IOG",
         description: error?.message,
@@ -121,6 +117,7 @@ export const DrawIogCanvas = ({ imageId }: { imageId: string }) => {
         position: "bottom-right",
         duration: 10000,
       });
+      throw error;
     }
   };
   const selectedLabelClass = dataLabelClass?.labelClass;
