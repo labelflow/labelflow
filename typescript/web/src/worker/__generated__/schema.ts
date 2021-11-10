@@ -427,6 +427,7 @@ export const typeDefs = [
     plan: WorkspacePlan!
     datasets: [Dataset!]!
     memberships: [Membership!]!
+    stripeCustomerPortalUrl: String
   }
 
   input WorkspaceCreateInput {

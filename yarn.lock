@@ -5993,6 +5993,7 @@ __metadata:
     prisma: 2.30.3
     probe-image-size: 7.2.1
     slugify: ^1.6.0
+    stripe: ^8.184.0
     ts-node: 10.1.0
     typescript: 4.3.5
     uuid: 8.3.2
@@ -6086,6 +6087,8 @@ __metadata:
     "@storybook/addons": 6.3.0
     "@storybook/client-api": ^6.3.7
     "@storybook/react": 6.3.0
+    "@stripe/react-stripe-js": ^1.6.0
+    "@stripe/stripe-js": ^1.19.1
     "@supabase/supabase-js": 1.21.0
     "@swc/core": 1.2.90
     "@swc/helpers": ^0.2.13
@@ -6163,6 +6166,7 @@ __metadata:
     remark-gfm: 1.0.0
     slugify: ^1.6.0
     storybook-addon-next-router: 3.0.7
+    stripe: ^8.181.0
     styled-jsx: ^4.0.0
     swc-loader: 0.1.15
     terser-webpack-plugin: ^5.2.4
@@ -9199,6 +9203,26 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@stripe/react-stripe-js@npm:^1.6.0":
+  version: 1.6.0
+  resolution: "@stripe/react-stripe-js@npm:1.6.0"
+  dependencies:
+    prop-types: ^15.7.2
+  peerDependencies:
+    "@stripe/stripe-js": ^1.19.1
+    react: ^16.8.0 || ^17.0.0
+    react-dom: ^16.8.0 || ^17.0.0
+  checksum: 717e9fbe267b2bf2d98c28b0f37a11d5dfad3af7d80021f32a1b0bab3011bcbfd75e29a936d998164c7c3b8fc42f9cedf05d788c90ccabbca989deb0c13c8c47
+  languageName: node
+  linkType: hard
+
+"@stripe/stripe-js@npm:^1.19.1":
+  version: 1.19.1
+  resolution: "@stripe/stripe-js@npm:1.19.1"
+  checksum: 65ab990bf475046c6950c23e0cba3804436c63c56fa7de9d1ede023e6fbb2909430b806e1e184064e112613919b0e0ba3ee774db15e4b33fe3242c24627aa1f0
+  languageName: node
+  linkType: hard
+
 "@supabase/gotrue-js@npm:^1.17.0":
   version: 1.17.0
   resolution: "@supabase/gotrue-js@npm:1.17.0"
@@ -11585,6 +11609,13 @@ __metadata:
   version: 16.10.1
   resolution: "@types/node@npm:16.10.1"
   checksum: 84d7f082e9421fdf1f08dbe00b66848897b2675eacc94a4fa445c4d34cef57c901ecd3276d03ebe110607a848d3df0ab33816aeff51a234e036111dd8ef1422f
+  languageName: node
+  linkType: hard
+
+"@types/node@npm:>=8.1.0":
+  version: 16.10.5
+  resolution: "@types/node@npm:16.10.5"
+  checksum: 24ebd1199c4630ea59bdbd85416cfa7502ca4b5042ee9626e0fb4aa482530ba5832e6346a006993c2508d4b916347b0a558dd088f3fabc448d8e93110b9e2c1e
   languageName: node
   linkType: hard
 
@@ -27265,7 +27296,7 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"qs@npm:^6.10.0, qs@npm:^6.9.4":
+"qs@npm:^6.10.0, qs@npm:^6.6.0, qs@npm:^6.9.4":
   version: 6.10.1
   resolution: "qs@npm:6.10.1"
   dependencies:
@@ -30443,6 +30474,26 @@ service-worker-mock@2.0.5:
   version: 2.0.1
   resolution: "strip-json-comments@npm:2.0.1"
   checksum: 1074ccb63270d32ca28edfb0a281c96b94dc679077828135141f27d52a5a398ef5e78bcf22809d23cadc2b81dfbe345eb5fd8699b385c8b1128907dec4a7d1e1
+  languageName: node
+  linkType: hard
+
+"stripe@npm:^8.181.0":
+  version: 8.181.0
+  resolution: "stripe@npm:8.181.0"
+  dependencies:
+    "@types/node": ">=8.1.0"
+    qs: ^6.6.0
+  checksum: 1a64d71d657cfae6b172d140c08b2738fbb75659c8f98e27e5d59e35ae4195b6cc35c3ae57186b8f2afa19044e261c714664c5c9b757d382af21e42cff6e6bde
+  languageName: node
+  linkType: hard
+
+"stripe@npm:^8.184.0":
+  version: 8.184.0
+  resolution: "stripe@npm:8.184.0"
+  dependencies:
+    "@types/node": ">=8.1.0"
+    qs: ^6.6.0
+  checksum: 3c34c40fe0f3b00ca60e59c30e9720fc075b646b63620f9858a18a4f958d86bcf05fcce09fcfb915dc13e2d1fb1489f182571394eaa5800790a1cc97633c999d
   languageName: node
   linkType: hard
 

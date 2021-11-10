@@ -704,6 +704,7 @@ export type Workspace = {
   plan: WorkspacePlan;
   datasets: Array<Dataset>;
   memberships: Array<Membership>;
+  stripeCustomerPortalUrl?: Maybe<Scalars['String']>;
 };
 
 export type WorkspaceCreateInput = {
@@ -1188,6 +1189,7 @@ export type WorkspaceResolvers<ContextType = any, ParentType extends ResolversPa
   plan?: Resolver<ResolversTypes['WorkspacePlan'], ParentType, ContextType>;
   datasets?: Resolver<Array<ResolversTypes['Dataset']>, ParentType, ContextType>;
   memberships?: Resolver<Array<ResolversTypes['Membership']>, ParentType, ContextType>;
+  stripeCustomerPortalUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
