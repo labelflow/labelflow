@@ -16,7 +16,6 @@ import { useSelect } from "downshift";
 import { MembershipRole } from "@labelflow/graphql-types";
 import { RiArrowDownSFill, RiArrowUpSFill } from "react-icons/ri";
 import { BiCheck } from "react-icons/bi";
-import { isDisabled } from "@chakra-ui/utils";
 
 const CheckIcon = chakra(BiCheck);
 
@@ -95,7 +94,7 @@ export const RoleSelection = ({
   role: currentRole,
   changeMembershipRole,
 }: {
-  isDisabled: boolean;
+  isDisabled?: boolean;
   role: MembershipRole;
   changeMembershipRole: (role: MembershipRole) => void;
 }) => {
