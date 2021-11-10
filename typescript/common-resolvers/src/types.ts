@@ -63,8 +63,13 @@ export type DbDataset = Omit<
 
 export type DbWorkspace = Omit<
   GeneratedWorkspace,
-  "__typename" | "type" | "datasets" | "memberships" | "plan"
-> & { plan: WorkspacePlan };
+  | "__typename"
+  | "type"
+  | "datasets"
+  | "memberships"
+  | "plan"
+  | "stripeCustomerPortalUrl"
+> & { plan: WorkspacePlan; stripeCustomerId?: string | undefined | null };
 
 export type DbWorkspaceWithType = DbWorkspace & { type: WorkspaceType };
 
@@ -140,7 +145,12 @@ export type Repository = {
     update: Update<DbDataset, DatasetWhereUniqueInput>;
   };
   workspace: {
-    add: Add<WorkspaceCreateInput & { slug: string }>;
+    add: Add<
+      WorkspaceCreateInput & {
+        slug: string;
+        stripeCustomerId?: string | undefined;
+      }
+    >;
     get: Get<DbWorkspaceWithType, WorkspaceWhereUniqueInput>;
     list: List<
       DbWorkspaceWithType,
