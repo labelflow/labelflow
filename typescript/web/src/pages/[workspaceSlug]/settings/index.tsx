@@ -1,5 +1,5 @@
 import React from "react";
-import { Text, Box } from "@chakra-ui/react";
+import { Text, Box, Center, Spinner } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { gql, useQuery } from "@apollo/client";
 import { Meta } from "../../../components/meta";
@@ -59,9 +59,15 @@ const WorkspaceSettingsPage = () => {
           />
         }
       >
-        <Box p={8}>
-          <WorkspaceSettings workspace={getWorkspaceDetailsFinalData} />
-        </Box>
+        {getWorkspaceDetailsFinalData ? (
+          <Box p={8}>
+            <WorkspaceSettings workspace={getWorkspaceDetailsFinalData} />
+          </Box>
+        ) : (
+          <Center h="full">
+            <Spinner size="xl" />
+          </Center>
+        )}
       </Layout>
     </>
   );
