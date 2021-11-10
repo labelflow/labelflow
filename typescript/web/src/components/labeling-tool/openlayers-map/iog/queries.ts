@@ -15,6 +15,8 @@ export const imageQuery = gql`
     image(where: { id: $id }) {
       id
       url
+      width
+      height
     }
   }
 `;

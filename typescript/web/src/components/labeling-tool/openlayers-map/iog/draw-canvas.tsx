@@ -7,8 +7,9 @@ import GeometryType from "ol/geom/GeometryType";
 import { useApolloClient, useQuery } from "@apollo/client";
 import { useToast } from "@chakra-ui/react";
 import { useHotkeys } from "react-hotkeys-hook";
-import { LabelType } from "@labelflow/graphql-types";
 import { Coordinate } from "ol/coordinate";
+import { getBoundedGeometryFromImage } from "@labelflow/common-resolvers";
+import { LabelType } from "@labelflow/graphql-types";
 
 import {
   useLabelingStore,
@@ -21,6 +22,7 @@ import { createRunIogEffect } from "../../../../connectors/undo-store/effects/ru
 import { useUndoStore } from "../../../../connectors/undo-store";
 
 import { labelClassQuery, imageQuery } from "./queries";
+import { extractSmartToolInputInputFromIogMask } from "../../../../connectors/iog";
 
 const geometryFunction = createBox();
 
@@ -60,11 +62,15 @@ export const DrawIogCanvas = ({ imageId }: { imageId: string }) => {
     const geometry = new GeoJSON().writeGeometryObject(
       openLayersGeometry
     ) as GeoJSONPolygon;
+    const boundedGeometry = getBoundedGeometryFromImage(
+      { width: dataImage?.image?.width, height: dataImage?.image?.height },
+      geometry
+    ).geometry;
     const labelId = await createCreateLabelEffect(
       {
         imageId,
         selectedLabelClassId,
-        geometry,
+        geometry: boundedGeometry,
         labelType: LabelType.Polygon,
       },
       {
@@ -92,12 +98,10 @@ export const DrawIogCanvas = ({ imageId }: { imageId: string }) => {
         createRunIogEffect(
           {
             labelId,
-            x,
-            y,
-            height: yMax - y,
-            width: xMax - x,
             imageUrl: dataUrl,
-            centerPoint: boundingBoxCenterPoint,
+            ...extractSmartToolInputInputFromIogMask(
+              boundedGeometry.coordinates as number[][][]
+            ),
           },
           { client }
         )
@@ -108,6 +112,7 @@ export const DrawIogCanvas = ({ imageId }: { imageId: string }) => {
       await inferencePromise;
       unregisterIogJob(timestamp, labelId);
     } catch (error) {
+      unregisterIogJob(timestamp, labelId);
       toast({
         title: "Error executing IOG",
         description: error?.message,
