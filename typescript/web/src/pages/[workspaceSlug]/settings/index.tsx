@@ -2,6 +2,7 @@ import React from "react";
 import { Text, Box, Center, Spinner } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { gql, useQuery } from "@apollo/client";
+import { GetServerSideProps, GetStaticProps } from "next";
 import { Meta } from "../../../components/meta";
 import { Layout } from "../../../components/layout";
 import { ServiceWorkerManagerModal } from "../../../components/service-worker-manager";
@@ -74,3 +75,15 @@ const WorkspaceSettingsPage = () => {
 };
 
 export default WorkspaceSettingsPage;
+
+export const getServerSideProps: GetServerSideProps = async ({ query }) => {
+  if (query?.workspaceSlug === "local") {
+    return {
+      notFound: true,
+    };
+  }
+
+  return {
+    props: {},
+  };
+};
