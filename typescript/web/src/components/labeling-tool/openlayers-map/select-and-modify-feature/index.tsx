@@ -174,6 +174,7 @@ export const SelectAndModifyFeature = (props: {
           />
         )}
       {selectedTool === Tools.SELECTION &&
+        selectionToolState === SelectionToolState.DEFAULT &&
         labelData?.label?.type === LabelType.Polygon &&
         selectedFeature && (
           <>

@@ -50,7 +50,6 @@ export const ModifyIog = ({
       new Style({
         image: new Icon({
           src: "/static/graphics/iog-inside.svg",
-          scale: 0.5,
         }),
       }),
     []
@@ -60,7 +59,6 @@ export const ModifyIog = ({
       new Style({
         image: new Icon({
           src: "/static/graphics/iog-outside.svg",
-          scale: 0.5,
         }),
       }),
     []
@@ -70,7 +68,6 @@ export const ModifyIog = ({
       new Style({
         image: new Icon({
           src: "/static/graphics/iog-target.svg",
-          scale: 0.5,
         }),
       }),
     []

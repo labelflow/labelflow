@@ -164,18 +164,18 @@ export const HandleIogHover = () => {
         (feature) => feature.getProperties().id
       );
       if (idOfHoveredFeature === selectedLabelId) {
-        map.getViewport().style.cursor = `url("/static/graphics/iog-remove.svg") 12 14, auto`;
+        map.getViewport().style.cursor = `url("/static/graphics/iog-remove.svg") 6 7, auto`;
       } else if (
         idOfHoveredFeature?.includes("point-inside-") ||
         idOfHoveredFeature?.includes("point-outside-")
       ) {
-        map.getViewport().style.cursor = `url("/static/graphics/iog-delete.svg") 16 16, auto`;
+        map.getViewport().style.cursor = `url("/static/graphics/iog-delete.svg") 8 8, auto`;
       } else if (
         idOfHoveredFeature !== getIogMaskIdFromLabelId(selectedLabelId ?? "") &&
         !idOfHoveredFeature?.includes("point-center") &&
         selectedLabelId != null
       ) {
-        map.getViewport().style.cursor = `url("/static/graphics/iog-add.svg") 12 12, auto`;
+        map.getViewport().style.cursor = `url("/static/graphics/iog-add.svg") 6 6, auto`;
       }
     };
     map?.on("pointermove", handler);

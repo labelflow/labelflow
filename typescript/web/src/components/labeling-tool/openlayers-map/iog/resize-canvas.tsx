@@ -117,27 +117,32 @@ export const ResizeIogCanvas = (props: {
   useEffect(() => {
     getSelectedFeature();
   }, [selectedLabelId]);
-
   const client = useApolloClient();
   const { perform } = useUndoStore();
   const toast = useToast();
+
+  const onInteractionEnd = useCallback(
+    async (e: ResizeIogEvent | null) => {
+      const feature = e?.features?.item(0) as Feature<Polygon>;
+      const timestamp = new Date().getTime();
+      registerIogJob(
+        timestamp,
+        selectedLabelId,
+        extractSmartToolInputInputFromIogMask(
+          feature.getGeometry().getCoordinates()
+        ).centerPoint
+      );
+      await interactionEndIog(e, perform, client, toast);
+      unregisterIogJob(timestamp, selectedLabelId);
+    },
+    [toast, perform, client]
+  );
+
   return (
     // @ts-ignore - We need to add this because resizeAndTranslateBox is not included in the react-openalyers-fiber original catalogue
     <resizeIogCanvasInteraction
       args={{ selectedFeature: selectedFeatureIog, pixelTolerance: 20 }}
-      onInteractionEnd={async (e: ResizeIogEvent | null) => {
-        const feature = e?.features?.item(0) as Feature<Polygon>;
-        const timestamp = new Date().getTime();
-        registerIogJob(
-          timestamp,
-          selectedLabelId,
-          extractSmartToolInputInputFromIogMask(
-            feature.getGeometry().getCoordinates()
-          ).centerPoint
-        );
-        await interactionEndIog(e, perform, client, toast);
-        unregisterIogJob(timestamp, selectedLabelId);
-      }}
+      onInteractionEnd={onInteractionEnd}
     />
   );
 };
