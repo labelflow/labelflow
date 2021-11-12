@@ -3,7 +3,7 @@ import { Workspace } from "@labelflow/graphql-types";
 import { useRouter } from "next/router";
 import { useState, useCallback, useMemo, useEffect } from "react";
 import { startCase } from "lodash/fp";
-import { useQueryParam } from "use-query-params";
+import { StringParam, useQueryParams } from "use-query-params";
 import { useCookies } from "react-cookie";
 import { WorkspaceMenu } from "./workspace-menu";
 import { WorkspaceItem } from "./workspace-menu/workspace-selection-popover";
@@ -38,10 +38,11 @@ export const WorkspaceSwitcher = () => {
 
   const [isOpen, setIsOpen] = useState(false);
 
-  const [isCreationModalOpen, setIsCreationModalOpen] = useQueryParam(
-    "modal-create-workspace",
-    BoolParam
-  );
+  const [{ "modal-create-workspace": isCreationModalOpen }, setQueryParams] =
+    useQueryParams({
+      "modal-create-workspace": BoolParam,
+      "workspace-name": StringParam,
+    });
 
   const { data: getWorkspacesData, previousData: getWorkspacesPreviousData } =
     useQuery(getWorkspacesQuery);
@@ -75,12 +76,11 @@ export const WorkspaceSwitcher = () => {
     }
   }, []);
 
-  const [initialWorkspaceName, setInitialWorkspaceName] =
-    useState<string | undefined>();
-
   const createNewWorkspace = useCallback(async (name: string) => {
-    setInitialWorkspaceName(name);
-    setIsCreationModalOpen(true, "replaceIn");
+    setQueryParams(
+      { "modal-create-workspace": true, "workspace-name": name },
+      "replaceIn"
+    );
   }, []);
 
   if (workspaces == null) {
@@ -100,9 +100,13 @@ export const WorkspaceSwitcher = () => {
         selectedWorkspace={selectedWorkspace == null ? null : selectedWorkspace}
       />
       <WorkspaceCreationModal
-        initialWorkspaceName={initialWorkspaceName}
         isOpen={isCreationModalOpen}
-        onClose={() => setIsCreationModalOpen(false, "replaceIn")}
+        onClose={() => {
+          setQueryParams(
+            { "modal-create-workspace": false, "workspace-name": null },
+            "replaceIn"
+          );
+        }}
       />
     </>
   );

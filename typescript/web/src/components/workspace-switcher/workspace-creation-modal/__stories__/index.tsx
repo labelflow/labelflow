@@ -13,33 +13,41 @@ export const Open = () => (
 );
 
 export const WithPreFilledText = () => (
-  <WorkspaceCreationModal
-    isOpen
-    onClose={console.log}
-    initialWorkspaceName="Hello"
-  />
+  <WorkspaceCreationModal isOpen onClose={console.log} />
 );
+
+WithPreFilledText.parameters = {
+  nextRouter: {
+    asPath: "/?workspace-name=Hello",
+  },
+};
 
 export const WithPreFilledTextAlreadyTaken = () => (
-  <WorkspaceCreationModal
-    isOpen
-    onClose={console.log}
-    initialWorkspaceName="local"
-  />
+  <WorkspaceCreationModal isOpen onClose={console.log} />
 );
+
+WithPreFilledTextAlreadyTaken.parameters = {
+  nextRouter: {
+    asPath: "/?workspace-name=local",
+  },
+};
 
 export const WithPreFilledTextReservedWord = () => (
-  <WorkspaceCreationModal
-    isOpen
-    onClose={console.log}
-    initialWorkspaceName="Pricing"
-  />
+  <WorkspaceCreationModal isOpen onClose={console.log} />
 );
 
+WithPreFilledTextReservedWord.parameters = {
+  nextRouter: {
+    asPath: "/?workspace-name=Pricing",
+  },
+};
+
 export const WithPreFilledTextInvalidCharacters = () => (
-  <WorkspaceCreationModal
-    isOpen
-    onClose={console.log}
-    initialWorkspaceName="hello!"
-  />
+  <WorkspaceCreationModal isOpen onClose={console.log} />
 );
+
+WithPreFilledTextInvalidCharacters.parameters = {
+  nextRouter: {
+    asPath: "/?workspace-name=hello!",
+  },
+};

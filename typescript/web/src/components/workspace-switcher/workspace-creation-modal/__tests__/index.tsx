@@ -1,5 +1,5 @@
+import React, { useState } from "react";
 import { ApolloProvider, ApolloError } from "@apollo/client";
-import React from "react";
 
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
@@ -8,9 +8,15 @@ import { forbiddenWorkspaceSlugs } from "@labelflow/common-resolvers";
 import { WorkspaceCreationModal, Message } from "..";
 import { client } from "../../../../connectors/apollo-client/schema-client";
 
-jest.mock("use-query-params", () => ({
-  useQueryParam: () => jest.fn(),
-}));
+const initialState: Record<string, any> = { "workspace-name": undefined };
+
+jest.mock(
+  "use-query-params",
+  jest.fn(() => ({
+    useQueryParam: (key: keyof typeof initialState) =>
+      useState(initialState[key] ?? undefined),
+  }))
+);
 
 describe("Message", () => {
   it("renders the future url if it is possible", () => {
@@ -87,15 +93,13 @@ describe("Message", () => {
 
 describe("WorkspaceCreationModal", () => {
   const Wrapper = ({ children }: React.PropsWithChildren<{}>) => (
+    // <QueryParamProvider>
     <ApolloProvider client={client}>{children}</ApolloProvider>
+    // </QueryParamProvider>
   );
   it("renders a disabled button if no name is specified", () => {
     const { getByRole } = render(
-      <WorkspaceCreationModal
-        isOpen
-        onClose={console.log}
-        initialWorkspaceName={undefined}
-      />,
+      <WorkspaceCreationModal isOpen onClose={console.log} />,
       { wrapper: Wrapper }
     );
     expect(getByRole("button", { name: "Create workspace" })).toBeDisabled();
@@ -103,11 +107,7 @@ describe("WorkspaceCreationModal", () => {
 
   it("can create if the input is valid", () => {
     const { getByRole } = render(
-      <WorkspaceCreationModal
-        isOpen
-        onClose={console.log}
-        initialWorkspaceName={undefined}
-      />,
+      <WorkspaceCreationModal isOpen onClose={console.log} />,
       { wrapper: Wrapper }
     );
 
@@ -124,11 +124,7 @@ describe("WorkspaceCreationModal", () => {
 
   it("cannot create if the input contains invalid characters", () => {
     const { getByRole } = render(
-      <WorkspaceCreationModal
-        isOpen
-        onClose={console.log}
-        initialWorkspaceName={undefined}
-      />,
+      <WorkspaceCreationModal isOpen onClose={console.log} />,
       { wrapper: Wrapper }
     );
 
@@ -143,11 +139,7 @@ describe("WorkspaceCreationModal", () => {
 
   it("cannot create if the input is a reserved name", () => {
     const { getByRole } = render(
-      <WorkspaceCreationModal
-        isOpen
-        onClose={console.log}
-        initialWorkspaceName={undefined}
-      />,
+      <WorkspaceCreationModal isOpen onClose={console.log} />,
       { wrapper: Wrapper }
     );
 
@@ -162,11 +154,7 @@ describe("WorkspaceCreationModal", () => {
 
   it("cannot create if the name is already taken", () => {
     const { getByRole } = render(
-      <WorkspaceCreationModal
-        isOpen
-        onClose={console.log}
-        initialWorkspaceName={undefined}
-      />,
+      <WorkspaceCreationModal isOpen onClose={console.log} />,
       { wrapper: Wrapper }
     );
 
@@ -180,14 +168,10 @@ describe("WorkspaceCreationModal", () => {
   });
 
   it("pre-fills the workspace name", () => {
-    render(
-      <WorkspaceCreationModal
-        isOpen
-        onClose={console.log}
-        initialWorkspaceName="Pre-filled workspace name"
-      />,
-      { wrapper: Wrapper }
-    );
+    initialState["workspace-name"] = "Pre-filled workspace name";
+    render(<WorkspaceCreationModal isOpen onClose={console.log} />, {
+      wrapper: Wrapper,
+    });
 
     const input = screen.getByLabelText(
       /workspace name input/i
