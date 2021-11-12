@@ -31,6 +31,7 @@ export const datasetDataQuery = gql`
         id
         name
         url
+        thumbnail500Url
       }
       imagesAggregates {
         totalCount

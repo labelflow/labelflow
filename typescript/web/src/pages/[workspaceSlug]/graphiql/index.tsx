@@ -1,17 +1,19 @@
 import React from "react";
 import dynamic from "next/dynamic";
+import { useRouter } from "next/router";
 import { Box, Center, Spinner, Text } from "@chakra-ui/react";
 
-import { Meta } from "../../components/meta";
-import { Layout } from "../../components/layout";
-import { ServiceWorkerManagerModal } from "../../components/service-worker-manager";
-import { WelcomeManager } from "../../components/welcome-manager";
-import { AuthManager } from "../../components/auth-manager";
-import { CookieBanner } from "../../components/cookie-banner";
-import { NavLogo } from "../../components/logo/nav-logo";
-import { WorkspaceSwitcher } from "../../components/workspace-switcher";
+import { WorkspaceTabBar } from "../../../components/layout/tab-bar/workspace-tab-bar";
+import { Meta } from "../../../components/meta";
+import { Layout } from "../../../components/layout";
+import { ServiceWorkerManagerModal } from "../../../components/service-worker-manager";
+import { WelcomeManager } from "../../../components/welcome-manager";
+import { AuthManager } from "../../../components/auth-manager";
+import { CookieBanner } from "../../../components/cookie-banner";
+import { NavLogo } from "../../../components/logo/nav-logo";
+import { WorkspaceSwitcher } from "../../../components/workspace-switcher";
 
-const GraphiQL = dynamic(() => import("../../components/graphiql"), {
+const GraphiQL = dynamic(() => import("../../../components/graphiql"), {
   ssr: false,
   loading: ({ error }) => {
     if (error) throw error;
@@ -24,6 +26,8 @@ const GraphiQL = dynamic(() => import("../../components/graphiql"), {
 });
 
 const GraphqlPlayground = () => {
+  const workspaceSlug = useRouter().query?.workspaceSlug as string;
+
   return (
     <>
       <ServiceWorkerManagerModal />
@@ -37,6 +41,12 @@ const GraphqlPlayground = () => {
           <WorkspaceSwitcher key={1} />,
           <Text key={2}>Graphiql</Text>,
         ]}
+        tabBar={
+          <WorkspaceTabBar
+            currentTab="graphiql"
+            workspaceSlug={workspaceSlug}
+          />
+        }
       >
         <Box
           h="100%"
@@ -48,7 +58,7 @@ const GraphqlPlayground = () => {
           {globalThis.location && (
             <GraphiQL
               url={
-                globalThis?.location?.pathname?.startsWith("/local")
+                workspaceSlug === "local"
                   ? `${globalThis.location.origin}/api/worker/graphql`
                   : `${globalThis.location.origin}/api/graphql`
               }

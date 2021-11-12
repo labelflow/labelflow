@@ -14,7 +14,6 @@ yarn dev
 
 ## Build service worker
 
-
 ```sh
-yarn webpack --config ./webpack-config-worker.js --progress
+yarn node -e 'require("./build-service-worker-webpack-swc")()'
 ```

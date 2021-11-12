@@ -72,14 +72,14 @@ module.exports = withSentryConfig(
           ...(config.resolve ?? {}),
           fallback: {
             ...(config.resolve?.fallback ?? {}),
-            module: false,
+            child_process: false,
             dgram: false,
             dns: false,
             fs: false,
             http2: false,
+            module: false,
             net: false,
-            tls: false,
-            child_process: false,
+            tls: false
           },
         };
         config.plugins = [

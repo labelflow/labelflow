@@ -12,6 +12,11 @@ type Image {
   updatedAt: DateTime!
   url: String!
   externalUrl: String
+  thumbnail20Url: String
+  thumbnail50Url: String
+  thumbnail100Url: String
+  thumbnail200Url: String
+  thumbnail500Url: String
   name: String!
   path: String!
   mimetype: String!

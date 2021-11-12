@@ -30,8 +30,30 @@ type NoUndefinedField<T> = { [P in keyof T]: NonNullable<T[P]> };
 
 export type DbImage = Omit<GeneratedImage, "labels" | "dataset">;
 export type DbImageCreateInput = WithCreatedAtAndUpdatedAt<
-  Required<NoUndefinedField<Omit<ImageCreateInput, "file" | "externalUrl">>> &
-    Pick<ImageCreateInput, "externalUrl">
+  Required<
+    NoUndefinedField<
+      Omit<
+        ImageCreateInput,
+        | "file"
+        | "externalUrl"
+        | "noThumbnails"
+        | "thumbnail20Url"
+        | "thumbnail50Url"
+        | "thumbnail100Url"
+        | "thumbnail200Url"
+        | "thumbnail500Url"
+      >
+    >
+  > &
+    Pick<
+      ImageCreateInput,
+      | "externalUrl"
+      | "thumbnail20Url"
+      | "thumbnail50Url"
+      | "thumbnail100Url"
+      | "thumbnail200Url"
+      | "thumbnail500Url"
+    >
 >;
 
 export type DbLabel = Omit<GeneratedLabel, "labelClass"> & {
@@ -120,6 +142,7 @@ export type Repository = {
     get: Get<DbImage, ImageWhereUniqueInput>;
     list: List<DbImage, ImageWhereInput & { user?: { id: string } }>;
     delete: Delete<ImageWhereUniqueInput>;
+    update: Update<DbImage, ImageWhereUniqueInput>;
   };
   label: {
     add: Add<DbLabelCreateInput>;
@@ -170,6 +193,35 @@ export type Repository = {
     put: (url: string, file: Blob) => Promise<void>;
     get: (url: string, req?: Request) => Promise<ArrayBuffer>;
     delete: (url: string) => Promise<void>;
+  };
+  imageProcessing: {
+    processImage: (
+      image: {
+        id: string;
+        width: number | null | undefined;
+        height: number | null | undefined;
+        mimetype: string | null | undefined;
+        url: string;
+        thumbnail20Url?: string;
+        thumbnail50Url?: string;
+        thumbnail100Url?: string;
+        thumbnail200Url?: string;
+        thumbnail500Url?: string;
+      },
+      getImage: (url: string) => Promise<ArrayBuffer>,
+      putThumbnail: (url: string, blob: Blob) => Promise<void>,
+      updateImage: Update<DbImage, ImageWhereUniqueInput>,
+      user?: { id: string }
+    ) => Promise<{
+      width: number;
+      height: number;
+      mimetype: string;
+      thumbnail20Url?: string;
+      thumbnail50Url?: string;
+      thumbnail100Url?: string;
+      thumbnail200Url?: string;
+      thumbnail500Url?: string;
+    }>;
   };
 };
 

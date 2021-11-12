@@ -2,7 +2,7 @@ import { renderHook } from "@testing-library/react-hooks";
 import { ApolloProvider, gql } from "@apollo/client";
 
 import { useRouter } from "next/router";
-import { probeImage } from "@labelflow/common-resolvers/src/utils/probe-image";
+import { processImage } from "../../connectors/repository/image-processing";
 import { setupTestsWithLocalDatabase } from "../../utils/setup-local-db-tests";
 import { useImagesNavigation } from "../use-images-navigation";
 import { client } from "../../connectors/apollo-client/schema-client";
@@ -10,8 +10,8 @@ import { incrementMockedDate } from "../../../../dev-utils/mockdate";
 
 setupTestsWithLocalDatabase();
 
-jest.mock("@labelflow/common-resolvers/src/utils/probe-image");
-const mockedProbeSync = probeImage as jest.Mock;
+jest.mock("../../connectors/repository/image-processing");
+const mockedProcessImage = processImage as jest.Mock;
 
 const testDatasetId = "mocked-dataset-id";
 
@@ -22,7 +22,7 @@ jest.mock("next/router", () => ({
 }));
 
 async function createImage(name: String) {
-  mockedProbeSync.mockReturnValue({
+  mockedProcessImage.mockReturnValue({
     width: 42,
     height: 36,
     mime: "image/jpeg",

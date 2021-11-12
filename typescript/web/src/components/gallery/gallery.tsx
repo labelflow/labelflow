@@ -59,7 +59,7 @@ export const Gallery = () => {
             imageId={images?.[item.index]?.id}
             datasetSlug={datasetSlug}
             workspaceSlug={workspaceSlug}
-            url={images?.[item.index]?.url}
+            url={images?.[item.index]?.thumbnail200Url ?? undefined}
             isSelected={imageId === images?.[item.index]?.id}
             start={item.start}
             index={item.index}

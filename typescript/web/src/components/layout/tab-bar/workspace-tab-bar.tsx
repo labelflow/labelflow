@@ -1,7 +1,7 @@
 import { TabBar } from "./tab-bar";
 
 export type Props = {
-  currentTab: "datasets" | "members" | "settings";
+  currentTab: "datasets" | "members" | "settings" | "graphiql";
   workspaceSlug: string;
 };
 
@@ -21,6 +21,11 @@ export const WorkspaceTabBar = ({ currentTab, workspaceSlug }: Props) => {
       name: "settings",
       url: `/${workspaceSlug}/settings`,
       isActive: currentTab === "settings",
+    },
+    {
+      name: "GraphiQL",
+      url: `/${workspaceSlug}/graphiql`,
+      isActive: currentTab === "graphiql",
     },
   ];
 

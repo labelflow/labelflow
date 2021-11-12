@@ -144,6 +144,11 @@ export type Image = {
   updatedAt: Scalars['DateTime'];
   url: Scalars['String'];
   externalUrl?: Maybe<Scalars['String']>;
+  thumbnail20Url?: Maybe<Scalars['String']>;
+  thumbnail50Url?: Maybe<Scalars['String']>;
+  thumbnail100Url?: Maybe<Scalars['String']>;
+  thumbnail200Url?: Maybe<Scalars['String']>;
+  thumbnail500Url?: Maybe<Scalars['String']>;
   name: Scalars['String'];
   path: Scalars['String'];
   mimetype: Scalars['String'];
@@ -165,6 +170,20 @@ export type ImageCreateInput = {
   file?: Maybe<Scalars['Upload']>;
   url?: Maybe<Scalars['String']>;
   externalUrl?: Maybe<Scalars['String']>;
+  noThumbnails?: Maybe<Scalars['Boolean']>;
+  thumbnail20Url?: Maybe<Scalars['String']>;
+  thumbnail50Url?: Maybe<Scalars['String']>;
+  thumbnail100Url?: Maybe<Scalars['String']>;
+  thumbnail200Url?: Maybe<Scalars['String']>;
+  thumbnail500Url?: Maybe<Scalars['String']>;
+};
+
+export type ImageUpdateInput = {
+  thumbnail20Url?: Maybe<Scalars['String']>;
+  thumbnail50Url?: Maybe<Scalars['String']>;
+  thumbnail100Url?: Maybe<Scalars['String']>;
+  thumbnail200Url?: Maybe<Scalars['String']>;
+  thumbnail500Url?: Maybe<Scalars['String']>;
 };
 
 export type ImageWhereInput = {
@@ -347,8 +366,9 @@ export type MembershipWhereUniqueInput = {
 export type Mutation = {
   __typename?: 'Mutation';
   createExample?: Maybe<Example>;
-  getUploadTarget: UploadTarget;
   createImage?: Maybe<Image>;
+  getUploadTarget: UploadTarget;
+  updateImage?: Maybe<Image>;
   deleteImage?: Maybe<Image>;
   createLabel?: Maybe<Label>;
   updateLabel?: Maybe<Label>;
@@ -380,13 +400,19 @@ export type MutationCreateExampleArgs = {
 };
 
 
+export type MutationCreateImageArgs = {
+  data: ImageCreateInput;
+};
+
+
 export type MutationGetUploadTargetArgs = {
   data: UploadTargetInput;
 };
 
 
-export type MutationCreateImageArgs = {
-  data: ImageCreateInput;
+export type MutationUpdateImageArgs = {
+  where: ImageWhereUniqueInput;
+  data: ImageUpdateInput;
 };
 
 
@@ -849,6 +875,7 @@ export type ResolversTypes = {
   ID: ResolverTypeWrapper<Scalars['ID']>;
   Image: ResolverTypeWrapper<Image>;
   ImageCreateInput: ImageCreateInput;
+  ImageUpdateInput: ImageUpdateInput;
   ImageWhereInput: ImageWhereInput;
   ImageWhereUniqueInput: ImageWhereUniqueInput;
   ImagesAggregates: ResolverTypeWrapper<ImagesAggregates>;
@@ -927,6 +954,7 @@ export type ResolversParentTypes = {
   ID: Scalars['ID'];
   Image: Image;
   ImageCreateInput: ImageCreateInput;
+  ImageUpdateInput: ImageUpdateInput;
   ImageWhereInput: ImageWhereInput;
   ImageWhereUniqueInput: ImageWhereUniqueInput;
   ImagesAggregates: ImagesAggregates;
@@ -1017,6 +1045,11 @@ export type ImageResolvers<ContextType = any, ParentType extends ResolversParent
   updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   url?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   externalUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  thumbnail20Url?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  thumbnail50Url?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  thumbnail100Url?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  thumbnail200Url?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  thumbnail500Url?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   path?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   mimetype?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -1095,8 +1128,9 @@ export type MembershipResolvers<ContextType = any, ParentType extends ResolversP
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   createExample?: Resolver<Maybe<ResolversTypes['Example']>, ParentType, ContextType, RequireFields<MutationCreateExampleArgs, 'data'>>;
-  getUploadTarget?: Resolver<ResolversTypes['UploadTarget'], ParentType, ContextType, RequireFields<MutationGetUploadTargetArgs, 'data'>>;
   createImage?: Resolver<Maybe<ResolversTypes['Image']>, ParentType, ContextType, RequireFields<MutationCreateImageArgs, 'data'>>;
+  getUploadTarget?: Resolver<ResolversTypes['UploadTarget'], ParentType, ContextType, RequireFields<MutationGetUploadTargetArgs, 'data'>>;
+  updateImage?: Resolver<Maybe<ResolversTypes['Image']>, ParentType, ContextType, RequireFields<MutationUpdateImageArgs, 'where' | 'data'>>;
   deleteImage?: Resolver<Maybe<ResolversTypes['Image']>, ParentType, ContextType, RequireFields<MutationDeleteImageArgs, 'where'>>;
   createLabel?: Resolver<Maybe<ResolversTypes['Label']>, ParentType, ContextType, RequireFields<MutationCreateLabelArgs, 'data'>>;
   updateLabel?: Resolver<Maybe<ResolversTypes['Label']>, ParentType, ContextType, RequireFields<MutationUpdateLabelArgs, 'where' | 'data'>>;
