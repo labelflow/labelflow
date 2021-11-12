@@ -194,6 +194,7 @@ const createDemoDataset = async (
           name: image.url.match(/\/static\/img\/(.*?)$/)?.[1],
         },
         repository,
+        user,
         req
       );
       return await repository.image.add(imageEntity, user);
