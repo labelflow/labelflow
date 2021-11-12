@@ -50,7 +50,7 @@ const getImageName = ({
 export const getImageEntityFromMutationArgs = async (
   data: ImageCreateInput,
   repository: Repository,
-  user: { id: string },
+  user?: { id: string },
   req?: Request
 ) => {
   const {

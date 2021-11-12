@@ -64,7 +64,7 @@ const generateThumbnail = async ({
     data: {},
     user?: { id: string }
   ) => Promise<boolean>;
-  user: { id: string };
+  user?: { id: string };
 }) => {
   try {
     const thumbnailUrl = getThumbnailUrlFromImageUrl({
