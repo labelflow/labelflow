@@ -39,6 +39,7 @@ const Template: Story = () => (
 
 export const Images = Template.bind({});
 Images.parameters = {
+  chromatic: { delay: 30000 },
   mockImages: { datasetId, datasetName: "dataset gallery", images },
   nextRouter: {
     query: {
