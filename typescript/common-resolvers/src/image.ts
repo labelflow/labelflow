@@ -154,11 +154,11 @@ export const getImageEntityFromMutationArgs = async (
   if (data.noThumbnails) {
     // Do not generate or store thumbnails on server, use either the thumbnails url provided above, or use the full size image as thumbnails
     thumbnailsUrls = {
-      thumbnail20Url: finalUrl,
-      thumbnail50Url: finalUrl,
-      thumbnail100Url: finalUrl,
-      thumbnail200Url: finalUrl,
-      thumbnail500Url: finalUrl,
+      thumbnail20Url: finalUrl!,
+      thumbnail50Url: finalUrl!,
+      thumbnail100Url: finalUrl!,
+      thumbnail200Url: finalUrl!,
+      thumbnail500Url: finalUrl!,
       ...thumbnailsUrls,
     };
   }

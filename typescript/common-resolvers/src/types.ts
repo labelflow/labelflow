@@ -36,6 +36,7 @@ export type DbImageCreateInput = WithCreatedAtAndUpdatedAt<
         ImageCreateInput,
         | "file"
         | "externalUrl"
+        | "noThumbnails"
         | "thumbnail20Url"
         | "thumbnail50Url"
         | "thumbnail100Url"
