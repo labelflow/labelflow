@@ -92,7 +92,18 @@ const generateThumbnail = async ({
  */
 export const processImage: Repository["imageProcessing"]["processImage"] =
   async (
-    { width, height, mimetype, url, id },
+    {
+      width,
+      height,
+      mimetype,
+      url,
+      id,
+      thumbnail20Url,
+      thumbnail50Url,
+      thumbnail100Url,
+      thumbnail200Url,
+      thumbnail500Url,
+    },
     getImage,
     putImage,
     updateImage,
@@ -108,59 +119,60 @@ export const processImage: Repository["imageProcessing"]["processImage"] =
       mimetype: image.getMIME(),
     };
 
-    generateThumbnail({
-      size: 20,
+    const thumbnailGenerationInput = {
       id,
       image,
       url,
       putImage,
       updateImage,
       user,
-    });
+    };
 
-    generateThumbnail({
-      size: 50,
-      id,
-      image,
-      url,
-      putImage,
-      updateImage,
-      user,
-    });
+    if (!thumbnail20Url) {
+      generateThumbnail({
+        size: 20,
+        ...thumbnailGenerationInput,
+      });
+    }
 
-    generateThumbnail({
-      size: 100,
-      id,
-      image,
-      url,
-      putImage,
-      updateImage,
-      user,
-    });
+    if (!thumbnail50Url) {
+      generateThumbnail({
+        size: 50,
+        ...thumbnailGenerationInput,
+      });
+    }
 
-    generateThumbnail({
-      size: 200,
-      id,
-      image,
-      url,
-      putImage,
-      updateImage,
-      user,
-    });
+    if (!thumbnail100Url) {
+      generateThumbnail({
+        size: 100,
+        ...thumbnailGenerationInput,
+      });
+    }
 
-    generateThumbnail({
-      size: 500,
-      id,
-      image,
-      url,
-      putImage,
-      updateImage,
-      user,
-    });
+    if (!thumbnail200Url) {
+      generateThumbnail({
+        size: 200,
+        ...thumbnailGenerationInput,
+      });
+    }
 
-    return validateImageSize({
-      width: width ?? result.width,
-      height: height ?? result.height,
-      mimetype: mimetype ?? result.mimetype,
-    });
+    if (!thumbnail500Url) {
+      generateThumbnail({
+        size: 500,
+        ...thumbnailGenerationInput,
+      });
+    }
+
+    return {
+      thumbnail20Url,
+      thumbnail50Url,
+      thumbnail100Url,
+      thumbnail200Url,
+      thumbnail500Url,
+      ...validateImageSize({
+        width: width ?? result.width,
+        height: height ?? result.height,
+        mimetype: mimetype ?? result.mimetype,
+      }),
+    };
   };

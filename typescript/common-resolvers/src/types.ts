@@ -195,18 +195,17 @@ export type Repository = {
   };
   imageProcessing: {
     processImage: (
-      {
-        id,
-        width,
-        height,
-        mimetype,
-        url,
-      }: {
+      image: {
         id: string;
         width: number | null | undefined;
         height: number | null | undefined;
         mimetype: string | null | undefined;
         url: string;
+        thumbnail20Url?: string;
+        thumbnail50Url?: string;
+        thumbnail100Url?: string;
+        thumbnail200Url?: string;
+        thumbnail500Url?: string;
       },
       getImage: (url: string) => Promise<ArrayBuffer>,
       putThumbnail: (url: string, blob: Blob) => Promise<void>,
@@ -216,6 +215,11 @@ export type Repository = {
       width: number;
       height: number;
       mimetype: string;
+      thumbnail20Url?: string;
+      thumbnail50Url?: string;
+      thumbnail100Url?: string;
+      thumbnail200Url?: string;
+      thumbnail500Url?: string;
     }>;
   };
 };

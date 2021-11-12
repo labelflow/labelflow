@@ -69,9 +69,18 @@ export const getImageEntityFromMutationArgs = async (
   const now = data?.createdAt ?? new Date().toISOString();
   const imageId = id ?? uuidv4();
   let finalUrl: string | undefined;
+  let thumbnailsUrls: { [key: string]: string };
+
   if (!file && !externalUrl && url) {
     // No File Upload
     finalUrl = url;
+    thumbnailsUrls = {
+      thumbnail20Url: finalUrl,
+      thumbnail50Url: finalUrl,
+      thumbnail100Url: finalUrl,
+      thumbnail200Url: finalUrl,
+      thumbnail500Url: finalUrl,
+    };
   }
 
   if (!file && externalUrl && !url) {
@@ -115,6 +124,7 @@ export const getImageEntityFromMutationArgs = async (
     await repository.upload.put(uploadTarget.uploadUrl, blob);
 
     finalUrl = uploadTarget.downloadUrl;
+    thumbnailsUrls = {};
   }
 
   if (file && !externalUrl && !url) {
@@ -136,11 +146,13 @@ export const getImageEntityFromMutationArgs = async (
     await repository.upload.put(uploadTarget.uploadUrl, file);
 
     finalUrl = uploadTarget.downloadUrl;
+    thumbnailsUrls = {};
   }
 
   // Probe the file to get its dimensions and mimetype if not provided
   const imageMetaData = await repository.imageProcessing.processImage(
     {
+      ...thumbnailsUrls,
       id: imageId,
       width,
       height,
