@@ -191,7 +191,13 @@ const labelsResolver = async (
 const thumbnailResolver =
   (size: 20 | 50 | 100 | 200 | 500) =>
   async (dbImage: DbImage): Promise<string> => {
-    return dbImage[`thumbnail${size}Url`] ?? dbImage.url ?? dbImage.externalUrl;
+    return (
+      (dbImage as unknown as { [key: string]: string })[
+        `thumbnail${size}Url`
+      ] ??
+      dbImage.url ??
+      dbImage.externalUrl
+    );
   };
 
 const image = async (
