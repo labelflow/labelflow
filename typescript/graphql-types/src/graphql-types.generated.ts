@@ -170,6 +170,7 @@ export type ImageCreateInput = {
   file?: Maybe<Scalars['Upload']>;
   url?: Maybe<Scalars['String']>;
   externalUrl?: Maybe<Scalars['String']>;
+  noThumbnails?: Maybe<Scalars['Boolean']>;
   thumbnail20Url?: Maybe<Scalars['String']>;
   thumbnail50Url?: Maybe<Scalars['String']>;
   thumbnail100Url?: Maybe<Scalars['String']>;

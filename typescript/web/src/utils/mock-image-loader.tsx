@@ -48,7 +48,13 @@ async function createImage(
           $datasetId: ID!
         ) {
           createImage(
-            data: { url: $url, id: $id, name: $name, datasetId: $datasetId }
+            data: {
+              url: $url
+              id: $id
+              name: $name
+              datasetId: $datasetId
+              noThumbnails: true
+            }
           ) {
             id
             name

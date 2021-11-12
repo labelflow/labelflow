@@ -145,6 +145,7 @@ export const typeDefs = [
     file: Upload
     url: String
     externalUrl: String
+    noThumbnails: Boolean
     thumbnail20Url: String
     thumbnail50Url: String
     thumbnail100Url: String

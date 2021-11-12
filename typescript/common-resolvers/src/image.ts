@@ -85,16 +85,6 @@ export const getImageEntityFromMutationArgs = async (
   if (!file && !externalUrl && url) {
     // No File Upload
     finalUrl = url;
-
-    // Since this is an external file that we are not importing, we won't generate the thumbnails for it in the local server
-    thumbnailsUrls = {
-      thumbnail20Url: finalUrl,
-      thumbnail50Url: finalUrl,
-      thumbnail100Url: finalUrl,
-      thumbnail200Url: finalUrl,
-      thumbnail500Url: finalUrl,
-      ...thumbnailsUrls,
-    };
   }
 
   if (!file && externalUrl && !url) {
@@ -138,11 +128,6 @@ export const getImageEntityFromMutationArgs = async (
     await repository.upload.put(uploadTarget.uploadUrl, blob);
 
     finalUrl = uploadTarget.downloadUrl;
-
-    // We will generate the thumbnails if they are not provided in the mutation
-    thumbnailsUrls = {
-      ...thumbnailsUrls,
-    };
   }
 
   if (file && !externalUrl && !url) {
@@ -164,9 +149,16 @@ export const getImageEntityFromMutationArgs = async (
     await repository.upload.put(uploadTarget.uploadUrl, file);
 
     finalUrl = uploadTarget.downloadUrl;
+  }
 
-    // We will generate the thumbnails if they are not provided in the mutation
+  if (data.noThumbnails) {
+    // Do not generate or store thumbnails on server, use either the thumbnails url provided above, or use the full size image as thumbnails
     thumbnailsUrls = {
+      thumbnail20Url: finalUrl,
+      thumbnail50Url: finalUrl,
+      thumbnail100Url: finalUrl,
+      thumbnail200Url: finalUrl,
+      thumbnail500Url: finalUrl,
       ...thumbnailsUrls,
     };
   }
