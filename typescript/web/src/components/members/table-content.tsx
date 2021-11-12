@@ -1,6 +1,7 @@
 import { useState } from "react";
 import {
   Button,
+  Tooltip,
   Table,
   Tbody,
   Td,
@@ -9,6 +10,7 @@ import {
   Tr,
   useColorModeValue as mode,
   Badge,
+  Flex,
 } from "@chakra-ui/react";
 import { Membership, MembershipStatus } from "@labelflow/graphql-types";
 import * as React from "react";
@@ -56,11 +58,12 @@ const columns = [
   {
     Header: "Role",
     Cell: function RoleSelectionCell(
-      { id, role }: Membership,
-      changeMembershipRole: any
+      { id, role, workspace }: Membership,
+      { changeMembershipRole }: any
     ) {
       return (
         <RoleSelection
+          isDisabled={workspace?.slug === "local"}
           role={role}
           changeMembershipRole={(newRole) =>
             changeMembershipRole({ role: newRole, id })
@@ -77,6 +80,38 @@ const columns = [
         <Badge fontSize="xs" colorScheme={badgeEnum[status]}>
           {status}
         </Badge>
+      );
+    },
+  },
+  {
+    Header: null,
+    Cell: function DeleteCell(
+      { workspace }: Membership,
+      { deleteMembership }: any
+    ) {
+      return (
+        <Flex justifyContent="flex-end">
+          <Tooltip
+            placement="top"
+            label={
+              workspace?.slug === "local"
+                ? "You cannot leave your own local workspace"
+                : "Remove this user from the workspace"
+            }
+          >
+            {/* This span is needed else the tooltip is not visible when the button is disabled */}
+            <span>
+              <Button
+                isDisabled={workspace?.slug === "local"}
+                variant="link"
+                colorScheme="blue"
+                onClick={deleteMembership}
+              >
+                Remove
+              </Button>
+            </span>
+          </Tooltip>
+        </Flex>
       );
     },
   },
@@ -130,29 +165,19 @@ export const TableContent = ({
                 {column.Header}
               </Th>
             ))}
-            <Th />
           </Tr>
         </Thead>
         <Tbody bgColor="#FFFFFF">
           {filteredMemberships.map((row, membershipIndex) => (
             <Tr key={membershipIndex}>
-              {columns.map((column, index) => {
-                const element = column.Cell?.(row, changeMembershipRole) ?? row;
-                return (
-                  <Td whiteSpace="nowrap" key={index}>
-                    {element}
-                  </Td>
-                );
-              })}
-              <Td textAlign="right">
-                <Button
-                  variant="link"
-                  colorScheme="blue"
-                  onClick={() => setMembershipToDelete(row)}
-                >
-                  Remove
-                </Button>
-              </Td>
+              {columns.map((column, index) => (
+                <Td whiteSpace="nowrap" key={index}>
+                  {column.Cell?.(row, {
+                    changeMembershipRole,
+                    deleteMembership: () => setMembershipToDelete(row),
+                  }) ?? row}
+                </Td>
+              ))}
             </Tr>
           ))}
         </Tbody>

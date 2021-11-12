@@ -90,9 +90,11 @@ const RoleListItem = ({
 };
 
 export const RoleSelection = ({
+  isDisabled,
   role: currentRole,
   changeMembershipRole,
 }: {
+  isDisabled?: boolean;
   role: MembershipRole;
   changeMembershipRole: (role: MembershipRole) => void;
 }) => {
@@ -125,6 +127,7 @@ export const RoleSelection = ({
       <PopoverTrigger>
         <Button
           {...getToggleButtonProps()}
+          isDisabled={isDisabled}
           variant="outline"
           textAlign="start"
           justifyContent="space-between"
