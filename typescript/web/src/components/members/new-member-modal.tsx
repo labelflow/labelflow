@@ -109,7 +109,9 @@ export const NewMemberModal = ({
                 bg="transparent"
                 value={value}
                 onChange={handleInputChange}
-                placeholder="user1@example.com&#13;&#10;user2@example.com&#13;&#10;..."
+                placeholder={`user1@example.com
+user2@example.com
+...`}
                 size="sm"
                 height="3xs"
                 resize="none"
