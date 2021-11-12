@@ -10,6 +10,7 @@ const getAllImagesOfADatasetQuery = gql`
       images {
         id
         url
+        thumbnail200Url
       }
     }
   }

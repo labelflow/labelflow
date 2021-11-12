@@ -188,6 +188,10 @@ const labelsResolver = async (
   return await repository.label.list({ imageId: id, user });
 };
 
+const thumbnailResolver = (size: number) => async (dbImage: DbImage) => {
+  return dbImage[`thumbnail${size}Url`] ?? dbImage.url ?? dbImage.externalUrl;
+};
+
 const image = async (
   _: any,
   args: QueryImageArgs,
@@ -334,6 +338,11 @@ export default {
 
   Image: {
     labels: labelsResolver,
+    thumbnail20Url: thumbnailResolver(20),
+    thumbnail50Url: thumbnailResolver(50),
+    thumbnail100Url: thumbnailResolver(100),
+    thumbnail200Url: thumbnailResolver(200),
+    thumbnail500Url: thumbnailResolver(500),
   },
 
   ImagesAggregates: { totalCount },

@@ -9,6 +9,7 @@ const imageQuery = gql`
       width
       height
       url
+      thumbnail200Url
     }
   }
 `;
