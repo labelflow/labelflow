@@ -4,6 +4,7 @@ import "isomorphic-fetch";
 import type {
   ImageCreateInput,
   MutationCreateImageArgs,
+  MutationUpdateImageArgs,
   QueryImageArgs,
   QueryImagesArgs,
   MutationDeleteImageArgs,
@@ -48,7 +49,8 @@ const getImageName = ({
  */
 export const getImageEntityFromMutationArgs = async (
   data: ImageCreateInput,
-  repository: Pick<Repository, "upload" | "imageProcessing">,
+  repository: Repository,
+  user: { id: string },
   req?: Request
 ) => {
   const {
@@ -139,13 +141,16 @@ export const getImageEntityFromMutationArgs = async (
   // Probe the file to get its dimensions and mimetype if not provided
   const imageMetaData = await repository.imageProcessing.processImage(
     {
+      id: imageId,
       width,
       height,
       mimetype,
       url: finalUrl!,
     },
     (fromUrl: string) => repository.upload.get(fromUrl, req),
-    (toUrl: string, blob: Blob) => repository.upload.put(toUrl, blob)
+    (toUrl: string, blob: Blob) => repository.upload.put(toUrl, blob),
+    repository.image.update,
+    user
   );
 
   const newImageEntity: DbImageCreateInput = {
@@ -163,6 +168,17 @@ export const getImageEntityFromMutationArgs = async (
   return newImageEntity;
 };
 
+const getImageById = async (
+  id: string,
+  repository: Repository,
+  user?: { id: string }
+): Promise<DbImage> => {
+  return await throwIfResolvesToNil(
+    `No image with id "${id}"`,
+    repository.image.get
+  )({ id }, user);
+};
+
 // Queries
 const labelsResolver = async (
   { id }: DbImage,
@@ -177,10 +193,7 @@ const image = async (
   args: QueryImageArgs,
   { repository, user }: Context
 ) => {
-  return await throwIfResolvesToNil(
-    `No image with id "${args?.where?.id}"`,
-    repository.image.get
-  )(args?.where, user);
+  return await getImageById(args?.where?.id, repository, user);
 };
 
 const images = async (
@@ -226,6 +239,7 @@ const createImage = async (
   const newImageEntity = await getImageEntityFromMutationArgs(
     args.data,
     repository,
+    user,
     req
   );
 
@@ -264,6 +278,25 @@ const deleteImage = async (
   return imageToDelete;
 };
 
+const updateImage = async (
+  _: any,
+  args: MutationUpdateImageArgs,
+  { repository, user }: Context
+) => {
+  const imageId = args.where.id;
+
+  const now = new Date();
+
+  const newImageEntity = {
+    ...args.data,
+    updatedAt: now.toISOString(),
+  };
+
+  await repository.image.update({ id: imageId }, newImageEntity, user);
+
+  return await getImageById(imageId, repository, user);
+};
+
 const imagesAggregates = (parent: any) => {
   // Forward `parent` to chained resolvers if it exists
   return parent ?? {};
@@ -295,6 +328,7 @@ export default {
 
   Mutation: {
     createImage,
+    updateImage,
     deleteImage,
   },
 

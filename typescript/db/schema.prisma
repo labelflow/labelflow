@@ -17,19 +17,24 @@ datasource db {
 /////////////////////////////////////////////////////////////////////////////
 
 model Image {
-  id          String   @id @default(uuid()) @db.Uuid
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  url         String
-  name        String
-  path        String
-  mimetype    String
-  width       Float
-  height      Float
-  datasetId   String   @db.Uuid
-  externalUrl String?
-  dataset     Dataset  @relation(fields: [datasetId], references: [id], onDelete: Cascade)
-  labels      Label[]
+  id              String   @id @default(uuid()) @db.Uuid
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  url             String
+  name            String
+  path            String
+  mimetype        String
+  width           Float
+  height          Float
+  datasetId       String   @db.Uuid
+  externalUrl     String?
+  dataset         Dataset  @relation(fields: [datasetId], references: [id], onDelete: Cascade)
+  labels          Label[]
+  thumbnail20Url  String?
+  thumbnail50Url  String?
+  thumbnail100Url String?
+  thumbnail200Url String?
+  thumbnail500Url String?
 }
 
 model Label {

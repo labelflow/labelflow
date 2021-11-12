@@ -30,8 +30,29 @@ type NoUndefinedField<T> = { [P in keyof T]: NonNullable<T[P]> };
 
 export type DbImage = Omit<GeneratedImage, "labels" | "dataset">;
 export type DbImageCreateInput = WithCreatedAtAndUpdatedAt<
-  Required<NoUndefinedField<Omit<ImageCreateInput, "file" | "externalUrl">>> &
-    Pick<ImageCreateInput, "externalUrl">
+  Required<
+    NoUndefinedField<
+      Omit<
+        ImageCreateInput,
+        | "file"
+        | "externalUrl"
+        | "thumbnail20Url"
+        | "thumbnail50Url"
+        | "thumbnail100Url"
+        | "thumbnail200Url"
+        | "thumbnail500Url"
+      >
+    >
+  > &
+    Pick<
+      ImageCreateInput,
+      | "externalUrl"
+      | "thumbnail20Url"
+      | "thumbnail50Url"
+      | "thumbnail100Url"
+      | "thumbnail200Url"
+      | "thumbnail500Url"
+    >
 >;
 
 export type DbLabel = Omit<GeneratedLabel, "labelClass"> & {
@@ -120,6 +141,7 @@ export type Repository = {
     get: Get<DbImage, ImageWhereUniqueInput>;
     list: List<DbImage, ImageWhereInput & { user?: { id: string } }>;
     delete: Delete<ImageWhereUniqueInput>;
+    update: Update<DbImage, ImageWhereUniqueInput>;
   };
   label: {
     add: Add<DbLabelCreateInput>;
@@ -174,18 +196,22 @@ export type Repository = {
   imageProcessing: {
     processImage: (
       {
+        id,
         width,
         height,
         mimetype,
         url,
       }: {
+        id: string;
         width: number | null | undefined;
         height: number | null | undefined;
         mimetype: string | null | undefined;
         url: string;
       },
       getImage: (url: string) => Promise<ArrayBuffer>,
-      putThumbnail: (url: string, blob: Blob) => Promise<void>
+      putThumbnail: (url: string, blob: Blob) => Promise<void>,
+      updateImage: Update<DbImage, ImageWhereUniqueInput>,
+      user: { id: string }
     ) => Promise<{
       width: number;
       height: number;

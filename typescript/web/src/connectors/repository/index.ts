@@ -50,6 +50,9 @@ export const repository: Repository = {
     get: async ({ id }) => {
       return await (await getDatabase()).image.get(id);
     },
+    update: async ({ id }, changes) => {
+      return (await (await getDatabase()).image.update(id, changes)) === 1;
+    },
     list: (whereWithUser, skip, first) => {
       return list<DbImage, ImageWhereInput>(
         async () => (await getDatabase()).image

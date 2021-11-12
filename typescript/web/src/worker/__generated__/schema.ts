@@ -119,6 +119,11 @@ export const typeDefs = [
     updatedAt: DateTime!
     url: String!
     externalUrl: String
+    thumbnail20Url: String
+    thumbnail50Url: String
+    thumbnail100Url: String
+    thumbnail200Url: String
+    thumbnail500Url: String
     name: String!
     path: String!
     mimetype: String!
@@ -140,6 +145,19 @@ export const typeDefs = [
     file: Upload
     url: String
     externalUrl: String
+    thumbnail20Url: String
+    thumbnail50Url: String
+    thumbnail100Url: String
+    thumbnail200Url: String
+    thumbnail500Url: String
+  }
+
+  input ImageUpdateInput {
+    thumbnail20Url: String
+    thumbnail50Url: String
+    thumbnail100Url: String
+    thumbnail200Url: String
+    thumbnail500Url: String
   }
 
   input ImageWhereInput {
@@ -315,8 +333,9 @@ export const typeDefs = [
 
   type Mutation {
     createExample(data: ExampleCreateInput!): Example
-    getUploadTarget(data: UploadTargetInput!): UploadTarget!
     createImage(data: ImageCreateInput!): Image
+    getUploadTarget(data: UploadTargetInput!): UploadTarget!
+    updateImage(where: ImageWhereUniqueInput!, data: ImageUpdateInput!): Image
     deleteImage(where: ImageWhereUniqueInput!): Image
     createLabel(data: LabelCreateInput!): Label
     updateLabel(where: LabelWhereUniqueInput!, data: LabelUpdateInput!): Label

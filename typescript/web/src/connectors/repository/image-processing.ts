@@ -1,4 +1,5 @@
 import { getThumbnailUrlFromImageUrl } from "@labelflow/common-resolvers/src/utils/thumbnail-url";
+import type { Repository } from "@labelflow/common-resolvers";
 
 // The Jimp import need to like this, otherwise storybook does not work...
 import Jimp from "jimp/browser/lib/jimp";
@@ -40,90 +41,124 @@ const validateImageSize = ({
 };
 
 /**
+ * Generate a thumbnail of a given size from an image, upload it, and update the image in the db, with the new thumbnail url
+ */
+const generateThumbnail = async ({
+  id,
+  image,
+  url,
+  size,
+  putImage,
+  updateImage,
+  user,
+}: {
+  id: string;
+  image: Jimp;
+  url: string;
+  size: 20 | 50 | 100 | 200 | 500;
+  putImage: (url: string, blob: Blob) => Promise<void>;
+  updateImage: (
+    input: { id: string },
+    data: {},
+    user?: { id: string }
+  ) => Promise<boolean>;
+  user: { id: string };
+}) => {
+  try {
+    const thumbnailUrl = getThumbnailUrlFromImageUrl({
+      url,
+      size,
+      extension: "jpeg",
+    });
+    const vipsThumbnail = await image
+      .clone()
+      .scaleToFit(size, size, Jimp.RESIZE_BILINEAR)
+      .getBufferAsync("image/jpeg");
+    await putImage(
+      thumbnailUrl,
+      new Blob([vipsThumbnail], { type: "image/jpeg" })
+    );
+    await updateImage({ id }, { [`thumbnail${size}Url`]: thumbnailUrl }, user);
+    return true;
+  } catch (e) {
+    return false;
+  }
+};
+
+/**
  * Given a partial image, return a completed version of the image, probing it if necessary
  */
-export const processImage = async (
-  {
-    width,
-    height,
-    mimetype,
-    url,
-  }: {
-    width: number | null | undefined;
-    height: number | null | undefined;
-    mimetype: string | null | undefined;
-    url: string;
-  },
-  getImage: (url: string) => Promise<ArrayBuffer>,
-  putImage: (url: string, blob: Blob) => Promise<void>
-): Promise<{
-  width: number;
-  height: number;
-  mimetype: string;
-}> => {
-  const buffer = await getImage(url);
+export const processImage: Repository["imageProcessing"]["processImage"] =
+  async (
+    { width, height, mimetype, url, id },
+    getImage,
+    putImage,
+    updateImage,
+    user
+  ) => {
+    const buffer = await getImage(url);
 
-  const image = await Jimp.read(buffer as Buffer);
+    const image = await Jimp.read(buffer as Buffer);
 
-  const result = {
-    width: image.bitmap.width,
-    height: image.bitmap.height,
-    mimetype: image.getMIME(),
+    const result = {
+      width: image.bitmap.width,
+      height: image.bitmap.height,
+      mimetype: image.getMIME(),
+    };
+
+    generateThumbnail({
+      size: 20,
+      id,
+      image,
+      url,
+      putImage,
+      updateImage,
+      user,
+    });
+
+    generateThumbnail({
+      size: 50,
+      id,
+      image,
+      url,
+      putImage,
+      updateImage,
+      user,
+    });
+
+    generateThumbnail({
+      size: 100,
+      id,
+      image,
+      url,
+      putImage,
+      updateImage,
+      user,
+    });
+
+    generateThumbnail({
+      size: 200,
+      id,
+      image,
+      url,
+      putImage,
+      updateImage,
+      user,
+    });
+
+    generateThumbnail({
+      size: 500,
+      id,
+      image,
+      url,
+      putImage,
+      updateImage,
+      user,
+    });
+
+    return validateImageSize({
+      width: width ?? result.width,
+      height: height ?? result.height,
+      mimetype: mimetype ?? result.mimetype,
+    });
   };
-
-  const vipsThumbnail20 = await image
-    .clone()
-    .scaleToFit(20, 20, Jimp.RESIZE_BEZIER)
-    .getBufferAsync("image/jpeg");
-
-  putImage(
-    getThumbnailUrlFromImageUrl({ url, size: 20, extension: "jpeg" }),
-    new Blob([vipsThumbnail20], { type: "image/jpeg" })
-  );
-
-  const vipsThumbnail50 = await image
-    .clone()
-    .scaleToFit(50, 50, Jimp.RESIZE_BEZIER)
-    .getBufferAsync("image/jpeg");
-
-  putImage(
-    getThumbnailUrlFromImageUrl({ url, size: 50, extension: "jpeg" }),
-    new Blob([vipsThumbnail50], { type: "image/jpeg" })
-  );
-
-  const vipsThumbnail100 = await image
-    .clone()
-    .scaleToFit(100, 100, Jimp.RESIZE_BEZIER)
-    .getBufferAsync("image/jpeg");
-
-  putImage(
-    getThumbnailUrlFromImageUrl({ url, size: 100, extension: "jpeg" }),
-    new Blob([vipsThumbnail100], { type: "image/jpeg" })
-  );
-
-  const vipsThumbnail200 = await image
-    .clone()
-    .scaleToFit(200, 200, Jimp.RESIZE_BEZIER)
-    .getBufferAsync("image/jpeg");
-
-  putImage(
-    getThumbnailUrlFromImageUrl({ url, size: 200, extension: "jpeg" }),
-    new Blob([vipsThumbnail200], { type: "image/jpeg" })
-  );
-
-  const vipsThumbnail500 = await image
-    .clone()
-    .scaleToFit(500, 500, Jimp.RESIZE_BEZIER)
-    .getBufferAsync("image/jpeg");
-
-  putImage(
-    getThumbnailUrlFromImageUrl({ url, size: 500, extension: "jpeg" }),
-    new Blob([vipsThumbnail500], { type: "image/jpeg" })
-  );
-
-  return validateImageSize({
-    width: width ?? result.width,
-    height: height ?? result.height,
-    mimetype: mimetype ?? result.mimetype,
-  });
-};

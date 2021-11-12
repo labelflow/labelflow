@@ -10,6 +10,19 @@ input ImageCreateInput {
   file: Upload # Either file or url or externalUrl are needed
   url: String # Either file or url or externalUrl are needed
   externalUrl: String # Either file or url or externalUrl are needed
+  thumbnail20Url: String
+  thumbnail50Url: String
+  thumbnail100Url: String
+  thumbnail200Url: String
+  thumbnail500Url: String
+}
+
+input ImageUpdateInput {
+  thumbnail20Url: String
+  thumbnail50Url: String
+  thumbnail100Url: String
+  thumbnail200Url: String
+  thumbnail500Url: String
 }
 
 input ImageWhereInput {
