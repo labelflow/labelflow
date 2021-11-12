@@ -81,6 +81,7 @@ const generateThumbnail = async ({
     await updateImage({ id }, { [`thumbnail${size}Url`]: thumbnailUrl }, user);
     return true;
   } catch (e) {
+    console.error(e);
     return false;
   }
 };
