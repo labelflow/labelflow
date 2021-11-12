@@ -203,6 +203,7 @@ const createDemoDataset = async (
       const imageEntity = await getImageEntityFromMutationArgs(
         {
           ...image,
+          noThumbnails: true,
           createdAt: add(now, { seconds: index }).toISOString(),
           name: image.url.match(/\/static\/img\/(.*?)$/)?.[1],
         },
