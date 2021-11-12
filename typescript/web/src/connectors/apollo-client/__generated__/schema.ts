@@ -428,6 +428,7 @@ export const typeDefs = gql`
     plan: WorkspacePlan!
     datasets: [Dataset!]!
     memberships: [Membership!]!
+    stripeCustomerPortalUrl: String
   }
 
   input WorkspaceCreateInput {
