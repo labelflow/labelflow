@@ -130,35 +130,35 @@ export const processImage: Repository["imageProcessing"]["processImage"] =
     };
 
     if (!thumbnail20Url) {
-      generateThumbnail({
+      await generateThumbnail({
         size: 20,
         ...thumbnailGenerationInput,
       });
     }
 
     if (!thumbnail50Url) {
-      generateThumbnail({
+      await generateThumbnail({
         size: 50,
         ...thumbnailGenerationInput,
       });
     }
 
     if (!thumbnail100Url) {
-      generateThumbnail({
+      await generateThumbnail({
         size: 100,
         ...thumbnailGenerationInput,
       });
     }
 
     if (!thumbnail200Url) {
-      generateThumbnail({
+      await generateThumbnail({
         size: 200,
         ...thumbnailGenerationInput,
       });
     }
 
     if (!thumbnail500Url) {
-      generateThumbnail({
+      await generateThumbnail({
         size: 500,
         ...thumbnailGenerationInput,
       });
