@@ -55,13 +55,15 @@ async function createImage(
             width
             height
             url
+            thumbnail100Url
+            thumbnail200Url
+            thumbnail500Url
           }
         }
       `,
       variables: {
         url,
         id,
-
         name,
         datasetId: parentDatasetId,
       },
