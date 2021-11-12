@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { ApolloError, gql, useMutation, useQuery } from "@apollo/client";
 import {
   Box,
@@ -17,7 +17,7 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
-import { useQueryParam } from "use-query-params";
+import { StringParam, useQueryParam } from "use-query-params";
 import slugify from "slugify";
 import {
   forbiddenWorkspaceSlugs,
@@ -52,7 +52,7 @@ export const Message = ({
   isOnlyDisplaying,
 }: {
   error: ApolloError | undefined;
-  workspaceName: string | undefined;
+  workspaceName: string | null | undefined;
   workspaceNameIsAlreadyTaken: boolean;
   isOnlyDisplaying?: boolean;
 }) => {
@@ -115,24 +115,21 @@ export const Message = ({
 };
 
 export const WorkspaceCreationModal = ({
-  initialWorkspaceName,
   isOpen,
   onClose,
 }: {
-  initialWorkspaceName?: string | undefined;
   isOpen: boolean;
   onClose: () => void;
 }) => {
   const router = useRouter();
   const toast = useToast();
   const setSigninModalOpen = useQueryParam("modal-signin", BoolParam)[1];
-  const [workspaceName, setWorkspaceName] =
-    useState<string | undefined>(initialWorkspaceName);
-  const slug = slugify(workspaceName ?? "", { lower: true });
+  const [workspaceName, setWorkspaceName] = useQueryParam(
+    "workspace-name",
+    StringParam
+  );
 
-  useEffect(() => {
-    setWorkspaceName(initialWorkspaceName);
-  }, [initialWorkspaceName]);
+  const slug = slugify(workspaceName ?? "", { lower: true });
 
   /**
    * This query and the following mutation need to run against the distant database endpoint;

@@ -20,12 +20,12 @@ export const GalleryItem = memo(
   ({
     size,
     start,
+    url,
     imageId,
     datasetSlug,
     workspaceSlug,
     isSelected,
     index,
-    url,
   }: Props) => {
     return (
       <Box

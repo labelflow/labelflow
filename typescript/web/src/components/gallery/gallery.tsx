@@ -22,8 +22,10 @@ export const Gallery = () => {
   const listRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
   const imageId = router?.query?.imageId as string;
-  const datasetSlug = router?.query?.datasetSlug as string;
-  const workspaceSlug = router?.query?.workspaceSlug as string;
+  const { datasetSlug, workspaceSlug } = router?.query as {
+    datasetSlug: string;
+    workspaceSlug: string;
+  };
 
   const { images, currentImageIndex } = useImagesNavigation();
 
