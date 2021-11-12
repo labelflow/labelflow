@@ -188,9 +188,11 @@ const labelsResolver = async (
   return await repository.label.list({ imageId: id, user });
 };
 
-const thumbnailResolver = (size: number) => async (dbImage: DbImage) => {
-  return dbImage[`thumbnail${size}Url`] ?? dbImage.url ?? dbImage.externalUrl;
-};
+const thumbnailResolver =
+  (size: number) =>
+  async (dbImage: DbImage): Promise<string> => {
+    return dbImage[`thumbnail${size}Url`] ?? dbImage.url ?? dbImage.externalUrl;
+  };
 
 const image = async (
   _: any,
