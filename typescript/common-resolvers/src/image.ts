@@ -64,22 +64,36 @@ export const getImageEntityFromMutationArgs = async (
     url,
     externalUrl,
     datasetId,
+    thumbnail20Url,
+    thumbnail50Url,
+    thumbnail100Url,
+    thumbnail200Url,
+    thumbnail500Url,
   } = data;
 
   const now = data?.createdAt ?? new Date().toISOString();
   const imageId = id ?? uuidv4();
   let finalUrl: string | undefined;
-  let thumbnailsUrls: { [key: string]: string };
+
+  let thumbnailsUrls: { [key: string]: string } = {};
+  if (thumbnail20Url) thumbnailsUrls.thumbnail20Url = thumbnail20Url;
+  if (thumbnail50Url) thumbnailsUrls.thumbnail50Url = thumbnail50Url;
+  if (thumbnail100Url) thumbnailsUrls.thumbnail100Url = thumbnail100Url;
+  if (thumbnail200Url) thumbnailsUrls.thumbnail200Url = thumbnail200Url;
+  if (thumbnail500Url) thumbnailsUrls.thumbnail500Url = thumbnail500Url;
 
   if (!file && !externalUrl && url) {
     // No File Upload
     finalUrl = url;
+
+    // Since this is an external file that we are not importing, we won't generate the thumbnails for it in the local server
     thumbnailsUrls = {
       thumbnail20Url: finalUrl,
       thumbnail50Url: finalUrl,
       thumbnail100Url: finalUrl,
       thumbnail200Url: finalUrl,
       thumbnail500Url: finalUrl,
+      ...thumbnailsUrls,
     };
   }
 
@@ -124,7 +138,11 @@ export const getImageEntityFromMutationArgs = async (
     await repository.upload.put(uploadTarget.uploadUrl, blob);
 
     finalUrl = uploadTarget.downloadUrl;
-    thumbnailsUrls = {};
+
+    // We will generate the thumbnails if they are not provided in the mutation
+    thumbnailsUrls = {
+      ...thumbnailsUrls,
+    };
   }
 
   if (file && !externalUrl && !url) {
@@ -146,7 +164,11 @@ export const getImageEntityFromMutationArgs = async (
     await repository.upload.put(uploadTarget.uploadUrl, file);
 
     finalUrl = uploadTarget.downloadUrl;
-    thumbnailsUrls = {};
+
+    // We will generate the thumbnails if they are not provided in the mutation
+    thumbnailsUrls = {
+      ...thumbnailsUrls,
+    };
   }
 
   // Probe the file to get its dimensions and mimetype if not provided
