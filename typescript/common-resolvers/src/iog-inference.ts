@@ -89,31 +89,18 @@ const runIog = async (
       "No label with such id",
       repository.label.get
     )({ id: args.data.id }, user);
-    // const image = await throwIfResolvesToNil(
-    //   `The image id ${imageId} doesn't exist.`,
-    //   repository.image.get
-    // )({ id: imageId }, user);
-
-    // const {
-    //   geometry: clippedGeometry,
-    //   x,
-    //   y,
-    //   width,
-    //   height,
-    // } = getBoundedGeometryFromImage(image, geometry);
-    // const geometryPolygon = multiPolygon(geometry.coordinates);
 
     const xCoordinates = geometry.coordinates.reduce(
-      (xCoordinatesCurrent, polygon) => [
+      (xCoordinatesCurrent: number[], polygon: number[][]) => [
         ...xCoordinatesCurrent,
-        ...polygon.map((point) => point[0]),
+        ...polygon.map((point: number[]) => point[0]),
       ],
       []
     );
     const yCoordinates = geometry.coordinates.reduce(
-      (yCoordinatesCurrent, polygon) => [
+      (yCoordinatesCurrent: number[], polygon: number[][]) => [
         ...yCoordinatesCurrent,
-        ...polygon.map((point) => point[1]),
+        ...polygon.map((point: number[]) => point[1]),
       ],
       []
     );

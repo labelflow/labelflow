@@ -4,7 +4,7 @@ import { Geometry, Polygon } from "ol/geom";
 import { Vector as OlSourceVector } from "ol/source";
 import { extend } from "@labelflow/react-openlayers-fiber";
 import { useApolloClient } from "@apollo/client";
-import { useToast} from "@chakra-ui/react";
+import { useToast } from "@chakra-ui/react";
 import { useLabelingStore } from "../../../../connectors/labeling-state";
 import {
   ResizeIogCanvasInteraction,

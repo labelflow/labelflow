@@ -83,9 +83,13 @@ export const SelectInteraction = ({
     () => {
       // To open the context menu when pressing "c" when no label is selected
       // in classification mode
-      const { selectedLabelId } = useLabelingStore.getState();
+      const { selectedLabelId: selectedLabelIdHotKey } =
+        useLabelingStore.getState();
 
-      if (selectedTool === Tools.CLASSIFICATION && selectedLabelId == null) {
+      if (
+        selectedTool === Tools.CLASSIFICATION &&
+        selectedLabelIdHotKey == null
+      ) {
         setIsContextMenuOpen(true);
         setContextMenuLocation([
           (imageRef.current?.width ?? 0) / 2,

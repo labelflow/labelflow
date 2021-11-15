@@ -12,7 +12,8 @@ interface ToggleButtonGroupProps<T> extends Omit<ButtonGroupProps, "onChange"> {
 export const ToggleButtonGroup = <T extends string>(
   props: ToggleButtonGroupProps<T>
 ) => {
-  const { children, name, defaultValue, value, onChange, isDisabled, ...rest } = props;
+  const { children, name, defaultValue, value, onChange, isDisabled, ...rest } =
+    props;
   const { getRootProps, getRadioProps } = useRadioGroup({
     name,
     defaultValue,
