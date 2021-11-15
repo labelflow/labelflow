@@ -3,16 +3,14 @@ import { Feature } from "ol";
 import { Geometry, Polygon } from "ol/geom";
 import { Vector as OlSourceVector } from "ol/source";
 import { extend } from "@labelflow/react-openlayers-fiber";
-import { ApolloClient, useApolloClient } from "@apollo/client";
-import { useToast, UseToastOptions } from "@chakra-ui/react";
-import { ModifyEvent } from "ol/interaction/Modify";
-import { TranslateEvent } from "ol/interaction/Translate";
+import { useApolloClient } from "@apollo/client";
+import { useToast} from "@chakra-ui/react";
 import { useLabelingStore } from "../../../../connectors/labeling-state";
 import {
   ResizeIogCanvasInteraction,
   ResizeIogEvent,
 } from "./resize-canvas-interaction";
-import { Effect, useUndoStore } from "../../../../connectors/undo-store";
+import { useUndoStore } from "../../../../connectors/undo-store";
 import { createRunIogEffect } from "../../../../connectors/undo-store/effects/run-iog";
 import {
   extractSmartToolInputInputFromIogMask,
@@ -27,44 +25,6 @@ extend({
     kind: "Interaction",
   },
 });
-
-export const interactionEndIog = async (
-  e: TranslateEvent | ModifyEvent | ResizeIogEvent | null,
-  perform: (effect: Effect<any>) => Promise<void>,
-  client: ApolloClient<Object>,
-  toast: (options: UseToastOptions) => void
-) => {
-  const feature = e?.features?.item(0) as Feature<Polygon>;
-  if (feature != null) {
-    const { id: labelIdIog } = feature.getProperties();
-    try {
-      await perform(
-        createRunIogEffect(
-          {
-            labelId: getLabelIdFromIogMaskId(labelIdIog),
-            ...extractSmartToolInputInputFromIogMask(
-              feature.getGeometry().getCoordinates()
-            ),
-            pointsInside: [],
-            pointsOutside: [],
-          },
-          { client }
-        )
-      );
-    } catch (error) {
-      toast({
-        title: "Error running IOG",
-        // @ts-ignore
-        description: error?.message,
-        isClosable: true,
-        status: "error",
-        position: "bottom-right",
-        duration: 10000,
-      });
-    }
-  }
-  return true;
-};
 
 export const ResizeIogCanvas = (props: {
   sourceVectorLabelsRef: MutableRefObject<OlSourceVector<Geometry> | null>;
@@ -121,28 +81,52 @@ export const ResizeIogCanvas = (props: {
   const { perform } = useUndoStore();
   const toast = useToast();
 
-  const onInteractionEnd = useCallback(
+  const interactionEndIog = useCallback(
     async (e: ResizeIogEvent | null) => {
       const feature = e?.features?.item(0) as Feature<Polygon>;
+      const coordinates = feature.getGeometry().getCoordinates();
+      const positionSpinner =
+        extractSmartToolInputInputFromIogMask(coordinates).centerPoint;
       const timestamp = new Date().getTime();
-      registerIogJob(
-        timestamp,
-        selectedLabelId,
-        extractSmartToolInputInputFromIogMask(
-          feature.getGeometry().getCoordinates()
-        ).centerPoint
-      );
-      await interactionEndIog(e, perform, client, toast);
+      registerIogJob(timestamp, selectedLabelId, positionSpinner);
+      // await interactionEndIog(e, perform, client, toast);
+      if (feature != null) {
+        const { id: labelIdIog } = feature.getProperties();
+        try {
+          await perform(
+            createRunIogEffect(
+              {
+                labelId: getLabelIdFromIogMaskId(labelIdIog),
+                ...extractSmartToolInputInputFromIogMask(coordinates),
+                pointsInside: [],
+                pointsOutside: [],
+              },
+              { client }
+            )
+          );
+        } catch (error) {
+          toast({
+            title: "Error running IOG",
+            // @ts-ignore
+            description: error?.message,
+            isClosable: true,
+            status: "error",
+            position: "bottom-right",
+            duration: 10000,
+          });
+        }
+      }
       unregisterIogJob(timestamp, selectedLabelId);
+      return true;
     },
-    [toast, perform, client]
+    [toast, perform, client, registerIogJob, unregisterIogJob]
   );
 
   return (
     // @ts-ignore - We need to add this because resizeAndTranslateBox is not included in the react-openalyers-fiber original catalogue
     <resizeIogCanvasInteraction
       args={{ selectedFeature: selectedFeatureIog, pixelTolerance: 20 }}
-      onInteractionEnd={onInteractionEnd}
+      onInteractionEnd={interactionEndIog}
     />
   );
 };

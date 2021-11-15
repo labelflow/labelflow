@@ -78,27 +78,29 @@ export const useLabelingStore = create<LabelingState>(
       if (!iogSpinnerPosition || !idLabel) return;
       const { iogSpinnerPositions, iogProcessingLabels } = get();
       iogProcessingLabels.add(idLabel);
+      const newIogSpinnerPositions = {
+        ...iogSpinnerPositions,
+        [timestamp]: iogSpinnerPosition,
+      };
       // @ts-ignore See https://github.com/Diablow/zustand-store-addons/issues/2
       set({
-        iogSpinnerPositions: {
-          ...iogSpinnerPositions,
-          [timestamp]: iogSpinnerPosition,
-        },
         iogProcessingLabels,
+        iogSpinnerPositions: newIogSpinnerPositions,
       });
     },
     unregisterIogJob: (timestamp, idLabel) => {
       const { iogSpinnerPositions, iogProcessingLabels } = get();
       if (idLabel) iogProcessingLabels.delete(idLabel);
+      const newIogSpinnerPositions = Object.fromEntries(
+        Object.keys(iogSpinnerPositions)
+          .filter(
+            (timestampCurrent) => parseInt(timestampCurrent, 10) !== timestamp
+          )
+          .map((key) => [key, iogSpinnerPositions[parseInt(key, 10)]])
+      );
       // @ts-ignore See https://github.com/Diablow/zustand-store-addons/issues/2
       return set({
-        iogSpinnerPositions: Object.fromEntries(
-          Object.keys(iogSpinnerPositions)
-            .filter(
-              (timestampCurrent) => parseInt(timestampCurrent, 10) !== timestamp
-            )
-            .map((key) => [key, iogSpinnerPositions[parseInt(key, 10)]])
-        ),
+        iogSpinnerPositions: newIogSpinnerPositions,
         iogProcessingLabels,
       });
     },
