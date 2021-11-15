@@ -204,7 +204,7 @@ jobs:
           CI_BRANCH: ${{ github.ref	}}
           CI_BRANCH_BASE: refs/heads/main
           POSTGRES_EXTERNAL_URL: postgresql://admin:admin@localhost:5433/labelflow?schema=public
-          NEXTAUTH_URL: http://localhost:3001
+          VERCEL_URL: http://localhost:3001
 
   deployment-chromatic-pr:
     name: Deploy Storybook PR
