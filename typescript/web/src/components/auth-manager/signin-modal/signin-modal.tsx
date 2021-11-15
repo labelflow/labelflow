@@ -23,6 +23,7 @@ import { FaGithub, FaGoogle } from "react-icons/fa";
 import { DividerWithText } from "./divider-with-text";
 import { Logo } from "../../logo";
 import { Features } from "./features";
+import { validateEmail } from "../../../utils/validate-email";
 
 const errors = {
   Signin: "Try signing in with a different account.",
@@ -57,6 +58,8 @@ export const SigninModal = ({
   setLinkSent: (email: string) => void;
 }) => {
   const [sendingLink, setSendingLink] = useState(false);
+  const [isEmailInvalid, setIsEmailInvalid] =
+    useState<boolean | undefined>(undefined);
 
   const performSignIn = useCallback(
     async (method, options = {}) => {
@@ -140,6 +143,9 @@ export const SigninModal = ({
 
               <DividerWithText>or sign in with email</DividerWithText>
               <form
+                css={{
+                  ":invalid": { button: { color: "red" } },
+                }}
                 onSubmit={(e) => {
                   e.preventDefault();
                   const email = (
@@ -161,8 +167,25 @@ export const SigninModal = ({
                     </>
                   ) : (
                     <>
-                      <FormControl id="email">
+                      <FormControl
+                        id="email"
+                        isRequired
+                        isInvalid={isEmailInvalid}
+                      >
                         <Input
+                          onChange={(event) => {
+                            setIsEmailInvalid(
+                              !validateEmail(event.target.value)
+                            );
+                          }}
+                          onBlur={(event) => {
+                            if (event.target.value.length === 0) {
+                              setIsEmailInvalid(undefined);
+                            }
+                          }}
+                          focusBorderColor={
+                            isEmailInvalid ? "red.500" : undefined
+                          }
                           type="email"
                           autoComplete="email"
                           placeholder="you@company.com"
@@ -171,6 +194,7 @@ export const SigninModal = ({
                       <Button
                         type="submit"
                         variant="outline"
+                        isDisabled={isEmailInvalid ?? true}
                         leftIcon={<Box as={RiMailSendLine} color="brand.500" />}
                         isLoading={sendingLink}
                         loadingText="Submitting"
