@@ -11,8 +11,8 @@ import {
   SelectionToolState,
 } from "../../../../connectors/labeling-state";
 import { keymap } from "../../../../keymap";
-import { ToggleButtonGroup } from "./ToggleButtonGroup";
-import { ToggleButton } from "./ToggleButton";
+import { ToggleButtonGroup } from "./toggle-button-group";
+import { ToggleButton } from "./toggle-button";
 
 const ChakraBiShapePolygon = chakra(BiShapePolygon);
 const ChakraIoColorWandOutline = chakra(IoColorWandOutline);

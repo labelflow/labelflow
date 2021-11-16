@@ -1,6 +1,6 @@
 import { ButtonGroup, ButtonGroupProps, useRadioGroup } from "@chakra-ui/react";
 import * as React from "react";
-import { ToggleButtonProps } from "./ToggleButton";
+import { ToggleButtonProps } from "./toggle-button";
 
 interface ToggleButtonGroupProps<T> extends Omit<ButtonGroupProps, "onChange"> {
   name?: string;

@@ -3,7 +3,6 @@ import { MutationRunIogArgs } from "@labelflow/graphql-types";
 import { Context } from "./types";
 
 import { throwIfResolvesToNil } from "./utils/throw-if-resolves-to-nil";
-// import { getBoundedGeometryFromImage } from "./utils/get-bounded-geometry-from-image";
 
 const runIog = async (
   _parent: any,
