@@ -146,6 +146,9 @@ export const EditLabelClassMenu = () => {
 
   const handleCreateNewClass = useCallback(
     async (name) => {
+      if (!selectedLabelId) {
+        throw new Error("No label selected");
+      }
       const newClassColor =
         labelClasses.length < 1
           ? hexColorSequence[0]
@@ -159,8 +162,6 @@ export const EditLabelClassMenu = () => {
               color: newClassColor,
               selectedLabelId,
               datasetId,
-              datasetSlug,
-              workspaceSlug,
             },
             { client }
           )

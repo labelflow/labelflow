@@ -123,8 +123,6 @@ export const EditLabelClass = forwardRef<
               color: newClassColor,
               selectedLabelId,
               datasetId,
-              datasetSlug,
-              workspaceSlug,
             },
             { client }
           )
