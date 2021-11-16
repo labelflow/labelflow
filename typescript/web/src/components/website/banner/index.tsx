@@ -39,14 +39,28 @@ export const Banner = () => {
           </Heading>
 
           <Text mt="4" fontSize="lg" color="gray.800">
-            From preserving whales to preventing wild fires going through
-            fitness app to workout during Covid. Discover how artificial
-            intelligence impacts you with leaders and data engineers that build
-            and use it. Certified with no BS
+            From preserving whales to preventing wild fires and developing a
+            fitness app to workout during Covid. Discover how AI impacts your
+            day to day life with leaders from around the world.
             <br />
             <br />
-            <b> From Wednesday November 27th, 2021 </b>
+            <b> From Wednesday November 27th, 2021</b>
           </Text>
+
+          <LightMode>
+            <Button
+              mt="8"
+              as="a"
+              href="https://labelflow.ai/posts
+            "
+              target="blank"
+              size="lg"
+              colorScheme="brand"
+              fontWeight="bold"
+            >
+              Visit Now
+            </Button>
+          </LightMode>
         </Box>
       </Box>
     </Box>
