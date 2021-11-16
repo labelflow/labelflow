@@ -143,9 +143,6 @@ export const SigninModal = ({
 
               <DividerWithText>or sign in with email</DividerWithText>
               <form
-                css={{
-                  ":invalid": { button: { color: "red" } },
-                }}
                 onSubmit={(e) => {
                   e.preventDefault();
                   const email = (
