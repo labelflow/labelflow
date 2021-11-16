@@ -130,7 +130,7 @@ describe("Class selection popover", () => {
         labelClassId,
         type: LabelType.Box,
         geometry: {
-          type: LabelType.Box,
+          type: LabelType.Polygon,
           coordinates: [
             [
               [0, 900],
@@ -364,7 +364,8 @@ describe("Class selection popover", () => {
 
     cy.wait(420);
     cy.get('[aria-label="loading indicator"]').should("not.exist");
-    cy.contains("cypress test dataset").click();
+    cy.get('[aria-label="Navigate in hidden breadcrumbs"]').click();
+    cy.contains("cypress test dataset").click({ force: true });
 
     cy.wait(420);
     cy.contains("classes").click();

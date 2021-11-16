@@ -4,6 +4,7 @@ import type {
 } from "@labelflow/graphql-types";
 
 import { Context } from "./types";
+import { getOrigin } from "./utils/get-origin";
 
 export const uploadsRoute = "/api/worker/uploads";
 
@@ -16,10 +17,8 @@ const getUploadTarget = async (
   args: MutationGetUploadTargetArgs,
   { repository, req }: Context
 ): Promise<UploadTarget> => {
-  return await repository.upload.getUploadTarget(
-    args?.data?.key,
-    (req?.headers as any)?.origin ?? ""
-  );
+  const origin = getOrigin(req);
+  return await repository.upload.getUploadTarget(args?.data?.key, origin);
 };
 
 export default {

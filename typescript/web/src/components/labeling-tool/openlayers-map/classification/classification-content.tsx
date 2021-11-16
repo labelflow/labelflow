@@ -19,8 +19,8 @@ import { createUpdateLabelClassOfLabelEffect } from "../../../../connectors/undo
 import { createDeleteLabelEffect } from "../../../../connectors/undo-store/effects/delete-label";
 
 const getLabelClassesOfDatasetQuery = gql`
-  query getLabelClassesOfDataset($slug: String!) {
-    dataset(where: { slugs: { slug: $slug, workspaceSlug: "local" } }) {
+  query getLabelClassesOfDataset($slug: String!, $workspaceSlug: String!) {
+    dataset(where: { slugs: { slug: $slug, workspaceSlug: $workspaceSlug } }) {
       id
       labelClasses {
         id
@@ -70,7 +70,8 @@ export const ClassificationContent = forwardRef<HTMLDivElement>(
         variables: { imageId: imageId as string },
       });
     const { data: labelClassesData } = useQuery(getLabelClassesOfDatasetQuery, {
-      variables: { slug: datasetSlug },
+      variables: { slug: datasetSlug, workspaceSlug },
+      skip: !datasetSlug || !workspaceSlug,
     });
     const datasetId = labelClassesData?.dataset.id;
     const labelClasses = labelClassesData?.dataset.labelClasses ?? [];

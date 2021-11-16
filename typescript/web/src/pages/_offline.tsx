@@ -2,12 +2,13 @@ import { Heading, Text, Center, Box, Button } from "@chakra-ui/react";
 import { Meta } from "../components/meta";
 import { Layout } from "../components/layout";
 import { EmptyStateNoConnection } from "../components/empty-state";
+import { NavLogo } from "../components/logo/nav-logo";
 
 const OfflinePage = () => {
   return (
     <>
       <Meta title="LabelFlow | Offline" />
-      <Layout>
+      <Layout breadcrumbs={[<NavLogo key={0} />]}>
         <Center h="full">
           <Box as="section">
             <Box

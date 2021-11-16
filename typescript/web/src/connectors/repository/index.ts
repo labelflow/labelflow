@@ -33,6 +33,7 @@ import {
   listWorkspaces,
   updateWorkspace,
 } from "./workspace";
+import { processImage } from "./image-processing";
 import { removeUserFromWhere } from "./utils/remove-user-from-where";
 
 export const repository: Repository = {
@@ -48,6 +49,9 @@ export const repository: Repository = {
     },
     get: async ({ id }) => {
       return await (await getDatabase()).image.get(id);
+    },
+    update: async ({ id }, changes) => {
+      return (await (await getDatabase()).image.update(id, changes)) === 1;
     },
     list: (whereWithUser, skip, first) => {
       return list<DbImage, ImageWhereInput>(
@@ -117,5 +121,8 @@ export const repository: Repository = {
     put: putInStorage,
     get: getFromStorage,
     delete: deleteFromStorage,
+  },
+  imageProcessing: {
+    processImage,
   },
 };

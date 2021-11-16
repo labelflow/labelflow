@@ -19,14 +19,14 @@ import { setupTestsWithLocalDatabase } from "../../../../utils/setup-local-db-te
 
 setupTestsWithLocalDatabase();
 
-import { probeImage } from "@labelflow/common-resolvers/src/utils/probe-image";
+import { processImage } from "../../../../connectors/repository/image-processing";
 
-jest.mock("@labelflow/common-resolvers/src/utils/probe-image");
-const mockedProbeSync = probeImage as jest.Mock;
+jest.mock("../../../../connectors/repository/image-processing");
+const mockedProcessImage = processImage as jest.Mock;
 const testDatasetId = "mocked-dataset-id";
 
 const createImage = async (name: String) => {
-  mockedProbeSync.mockReturnValue({
+  mockedProcessImage.mockReturnValue({
     width: 42,
     height: 36,
     mime: "image/jpeg",

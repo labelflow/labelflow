@@ -1,33 +1,65 @@
-import { ApolloServer, AuthenticationError } from "apollo-server-micro";
-import { schemaWithResolvers, repository } from "@labelflow/db";
+/* eslint-disable no-await-in-loop */
+import { NextApiHandler, NextApiRequest, NextApiResponse } from "next";
+import { typeDefs, resolvers, repository } from "@labelflow/db";
+import { makeExecutableSchema } from "@graphql-tools/schema";
 import { getSession } from "next-auth/react";
+import { execute, parse } from "graphql";
 import { captureException } from "@sentry/nextjs";
 
-const apolloServer = new ApolloServer({
-  schema: schemaWithResolvers,
-  context: async ({ req }) => {
-    const session = await getSession({ req });
-    // Block all queries by unauthenticated users
-    // This will need to be removed once we want to have public datasets
-    if (typeof session?.user.id !== "string") {
-      throw new AuthenticationError(
-        "User must be signed in to perform GraphQL queries."
-      );
-    }
-    return { repository, session, user: session?.user, req };
-  },
-  introspection: true,
-  formatError: (error) => {
-    captureException(error);
-    return error;
-  },
+const maxRetries = 1;
+
+const executableSchema = makeExecutableSchema({
+  typeDefs,
+  resolvers,
 });
 
-export const config = {
-  api: {
-    bodyParser: false,
-  },
+const createContext = async ({
+  req,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  res,
+}: {
+  req: NextApiRequest;
+  res: NextApiResponse;
+}) => {
+  const session = await getSession({ req });
+  return { repository, session, user: session?.user, req };
 };
-await apolloServer.start();
 
-export default apolloServer.createHandler({ path: "/api/graphql" });
+const handleRequest: NextApiHandler = async (req, res) => {
+  const { query, variables, operationName } = req.body;
+
+  const documentAst = parse(query);
+
+  let retries = 0;
+  let error: Error | null = null;
+
+  while (retries < maxRetries) {
+    try {
+      const graphqlResult = await execute({
+        schema: executableSchema,
+        document: documentAst,
+        variableValues: variables,
+        operationName,
+        contextValue: await createContext({ req, res }),
+      });
+
+      res
+        .status((graphqlResult.errors?.length ?? 0) > 0 ? 400 : 200)
+        .json(graphqlResult);
+
+      return;
+    } catch (e: any) {
+      // await resetDatabase();
+      retries += 1;
+      error ??= error;
+    }
+  }
+
+  console.error("Error while running graphql query", error);
+
+  captureException(error);
+
+  res.status(400).json({ error });
+};
+
+export default handleRequest;

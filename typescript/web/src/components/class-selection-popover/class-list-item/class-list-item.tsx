@@ -39,7 +39,7 @@ export const ClassListItem = (props: {
     if (highlight) {
       return mode("gray.100", "gray.600");
     }
-    return "transparent";
+    return mode("transparent", "transparent");
   })();
 
   return (

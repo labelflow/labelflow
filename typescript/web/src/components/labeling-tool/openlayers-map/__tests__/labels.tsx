@@ -20,13 +20,13 @@ import { Labels } from "../labels";
 import { LabelCreateInput } from "@labelflow/graphql-types";
 import { useLabelingStore } from "../../../../connectors/labeling-state";
 import { setupTestsWithLocalDatabase } from "../../../../utils/setup-local-db-tests";
-import { probeImage } from "@labelflow/common-resolvers/src/utils/probe-image";
+import { processImage } from "../../../../connectors/repository/image-processing";
 import VectorSource from "ol/source/Vector";
 
 setupTestsWithLocalDatabase();
 
-jest.mock("@labelflow/common-resolvers/src/utils/probe-image");
-const mockedProbeSync = probeImage as jest.Mock;
+jest.mock("../../../../connectors/repository/image-processing");
+const mockedProcessImage = processImage as jest.Mock;
 
 const imageWidth = 500;
 const imageHeight = 900;
@@ -57,7 +57,7 @@ const createDataset = async (
 };
 
 const createImage = async (name: String) => {
-  mockedProbeSync.mockReturnValue({
+  mockedProcessImage.mockReturnValue({
     width: 42,
     height: 36,
     mime: "image/jpeg",

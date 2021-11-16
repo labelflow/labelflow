@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { ensureServiceWorkerPresent } from "../../worker/ensure-present";
 
 export const ServiceWorkerManagerBackground = () => {
   // This hook only run once in browser after the component is rendered for the first time.
@@ -11,6 +12,7 @@ export const ServiceWorkerManagerBackground = () => {
     // Don't show any modals but register and update service worker automatically
     // Good for website pages
     try {
+      ensureServiceWorkerPresent();
       const wb = window.workbox;
 
       if (!wb) {

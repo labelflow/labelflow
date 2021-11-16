@@ -4,14 +4,15 @@ import "isomorphic-fetch";
 import type {
   ImageCreateInput,
   MutationCreateImageArgs,
+  MutationUpdateImageArgs,
   QueryImageArgs,
   QueryImagesArgs,
   MutationDeleteImageArgs,
 } from "@labelflow/graphql-types";
 import mime from "mime-types";
-import { probeImage } from "./utils/probe-image";
 import { Context, DbImage, Repository, DbImageCreateInput } from "./types";
 import { throwIfResolvesToNil } from "./utils/throw-if-resolves-to-nil";
+import { getOrigin } from "./utils/get-origin";
 
 // Mutations
 const getImageFileKey = (
@@ -39,9 +40,17 @@ const getImageName = ({
   return nameBase.replace(/\.[^/.]+$/, "");
 };
 
+/**
+ * Very important function, which processes images (download from external URL if needed, probe metadata, create and upload thumbnails, etc.)
+ * @param data ImageCreateInput
+ * @param repository
+ * @param req
+ * @returns
+ */
 export const getImageEntityFromMutationArgs = async (
   data: ImageCreateInput,
-  repository: Pick<Repository, "upload">,
+  repository: Repository,
+  user?: { id: string },
   req?: Request
 ) => {
   const {
@@ -55,10 +64,24 @@ export const getImageEntityFromMutationArgs = async (
     url,
     externalUrl,
     datasetId,
+    thumbnail20Url,
+    thumbnail50Url,
+    thumbnail100Url,
+    thumbnail200Url,
+    thumbnail500Url,
   } = data;
+
   const now = data?.createdAt ?? new Date().toISOString();
   const imageId = id ?? uuidv4();
   let finalUrl: string | undefined;
+
+  let thumbnailsUrls: { [key: string]: string } = {};
+  if (thumbnail20Url) thumbnailsUrls.thumbnail20Url = thumbnail20Url;
+  if (thumbnail50Url) thumbnailsUrls.thumbnail50Url = thumbnail50Url;
+  if (thumbnail100Url) thumbnailsUrls.thumbnail100Url = thumbnail100Url;
+  if (thumbnail200Url) thumbnailsUrls.thumbnail200Url = thumbnail200Url;
+  if (thumbnail500Url) thumbnailsUrls.thumbnail500Url = thumbnail500Url;
+
   if (!file && !externalUrl && url) {
     // No File Upload
     finalUrl = url;
@@ -83,13 +106,16 @@ export const getImageEntityFromMutationArgs = async (
 
     if (fetchResult.status !== 200) {
       throw new Error(
-        `While transfering image could not fetch image at url ${externalUrl} properly, code ${fetchResult.status}`
+        `While transferring image could not fetch image at url ${externalUrl} properly, code ${fetchResult.status}`
       );
     }
 
+    const origin = getOrigin(req);
+
     const blob = await fetchResult.blob();
     const uploadTarget = await repository.upload.getUploadTargetHttp(
-      getImageFileKey(imageId, datasetId, blob.type)
+      getImageFileKey(imageId, datasetId, blob.type),
+      origin
     );
 
     // eslint-disable-next-line no-underscore-dangle
@@ -99,15 +125,18 @@ export const getImageEntityFromMutationArgs = async (
       );
     }
 
-    finalUrl = uploadTarget.downloadUrl;
     await repository.upload.put(uploadTarget.uploadUrl, blob);
+
+    finalUrl = uploadTarget.downloadUrl;
   }
 
   if (file && !externalUrl && !url) {
     // File Content based upload
+    const origin = getOrigin(req);
 
     const uploadTarget = await repository.upload.getUploadTargetHttp(
-      getImageFileKey(imageId, datasetId, file.type)
+      getImageFileKey(imageId, datasetId, file.type),
+      origin
     );
 
     // eslint-disable-next-line no-underscore-dangle
@@ -116,20 +145,38 @@ export const getImageEntityFromMutationArgs = async (
         "This Server does not support file upload. You can create images by providing a `file` directly in the `createImage` mutation"
       );
     }
-    finalUrl = uploadTarget.downloadUrl;
 
     await repository.upload.put(uploadTarget.uploadUrl, file);
+
+    finalUrl = uploadTarget.downloadUrl;
+  }
+
+  if (data.noThumbnails) {
+    // Do not generate or store thumbnails on server, use either the thumbnails url provided above, or use the full size image as thumbnails
+    thumbnailsUrls = {
+      thumbnail20Url: finalUrl!,
+      thumbnail50Url: finalUrl!,
+      thumbnail100Url: finalUrl!,
+      thumbnail200Url: finalUrl!,
+      thumbnail500Url: finalUrl!,
+      ...thumbnailsUrls,
+    };
   }
 
   // Probe the file to get its dimensions and mimetype if not provided
-  const imageMetaData = await probeImage(
+  const imageMetaData = await repository.imageProcessing.processImage(
     {
+      ...thumbnailsUrls,
+      id: imageId,
       width,
       height,
       mimetype,
       url: finalUrl!,
     },
-    (urlToProbe: string) => repository.upload.get(urlToProbe, req)
+    (fromUrl: string) => repository.upload.get(fromUrl, req),
+    (toUrl: string, blob: Blob) => repository.upload.put(toUrl, blob),
+    repository.image.update,
+    user
   );
 
   const newImageEntity: DbImageCreateInput = {
@@ -143,7 +190,19 @@ export const getImageEntityFromMutationArgs = async (
     name: getImageName({ externalUrl, finalUrl, name }),
     ...imageMetaData,
   };
+
   return newImageEntity;
+};
+
+const getImageById = async (
+  id: string,
+  repository: Repository,
+  user?: { id: string }
+): Promise<DbImage> => {
+  return await throwIfResolvesToNil(
+    `No image with id "${id}"`,
+    repository.image.get
+  )({ id }, user);
 };
 
 // Queries
@@ -155,15 +214,24 @@ const labelsResolver = async (
   return await repository.label.list({ imageId: id, user });
 };
 
+const thumbnailResolver =
+  (size: 20 | 50 | 100 | 200 | 500) =>
+  async (dbImage: DbImage): Promise<string> => {
+    return (
+      (dbImage as unknown as { [key: string]: string })[
+        `thumbnail${size}Url`
+      ] ??
+      dbImage.url ??
+      dbImage.externalUrl
+    );
+  };
+
 const image = async (
   _: any,
   args: QueryImageArgs,
   { repository, user }: Context
 ) => {
-  return await throwIfResolvesToNil(
-    `No image with id "${args?.where?.id}"`,
-    repository.image.get
-  )(args?.where, user);
+  return await getImageById(args?.where?.id, repository, user);
 };
 
 const images = async (
@@ -209,11 +277,14 @@ const createImage = async (
   const newImageEntity = await getImageEntityFromMutationArgs(
     args.data,
     repository,
+    user,
     req
   );
 
   const newImageId = await repository.image.add(newImageEntity, user);
+
   const createdImage = await repository.image.get({ id: newImageId }, user);
+
   if (createdImage == null) {
     throw new Error("An error has occurred during image creation");
   }
@@ -243,6 +314,25 @@ const deleteImage = async (
   await repository.upload.delete(imageToDelete.url);
 
   return imageToDelete;
+};
+
+const updateImage = async (
+  _: any,
+  args: MutationUpdateImageArgs,
+  { repository, user }: Context
+) => {
+  const imageId = args.where.id;
+
+  const now = new Date();
+
+  const newImageEntity = {
+    ...args.data,
+    updatedAt: now.toISOString(),
+  };
+
+  await repository.image.update({ id: imageId }, newImageEntity, user);
+
+  return await getImageById(imageId, repository, user);
 };
 
 const imagesAggregates = (parent: any) => {
@@ -276,11 +366,17 @@ export default {
 
   Mutation: {
     createImage,
+    updateImage,
     deleteImage,
   },
 
   Image: {
     labels: labelsResolver,
+    thumbnail20Url: thumbnailResolver(20),
+    thumbnail50Url: thumbnailResolver(50),
+    thumbnail100Url: thumbnailResolver(100),
+    thumbnail200Url: thumbnailResolver(200),
+    thumbnail500Url: thumbnailResolver(500),
   },
 
   ImagesAggregates: { totalCount },

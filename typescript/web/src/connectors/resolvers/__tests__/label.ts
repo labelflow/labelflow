@@ -1,14 +1,14 @@
 import { incrementMockedDate } from "@labelflow/dev-utils/mockdate";
 import { gql } from "@apollo/client";
 import { LabelCreateInput, LabelType } from "@labelflow/graphql-types";
-import { probeImage } from "@labelflow/common-resolvers/src/utils/probe-image";
+import { processImage } from "../../repository/image-processing";
 import { client } from "../../apollo-client/schema-client";
 import { setupTestsWithLocalDatabase } from "../../../utils/setup-local-db-tests";
 
 setupTestsWithLocalDatabase();
 
-jest.mock("@labelflow/common-resolvers/src/utils/probe-image");
-const mockedProbeSync = probeImage as jest.Mock;
+jest.mock("../../repository/image-processing");
+const mockedProcessImage = processImage as jest.Mock;
 
 const getGeometryFromExtent = ({
   x,
@@ -88,7 +88,7 @@ const createLabel = (data: LabelCreateInput) => {
 };
 
 const createImage = async (name: String) => {
-  mockedProbeSync.mockReturnValue({
+  mockedProcessImage.mockReturnValue({
     width: imageWidth,
     height: imageHeight,
     mime: "image/jpeg",

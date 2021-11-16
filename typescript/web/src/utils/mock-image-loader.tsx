@@ -48,20 +48,28 @@ async function createImage(
           $datasetId: ID!
         ) {
           createImage(
-            data: { url: $url, id: $id, name: $name, datasetId: $datasetId }
+            data: {
+              url: $url
+              id: $id
+              name: $name
+              datasetId: $datasetId
+              noThumbnails: true
+            }
           ) {
             id
             name
             width
             height
             url
+            thumbnail100Url
+            thumbnail200Url
+            thumbnail500Url
           }
         }
       `,
       variables: {
         url,
         id,
-
         name,
         datasetId: parentDatasetId,
       },
@@ -118,9 +126,8 @@ export const mockImagesLoader = async ({
   }
 
   // We use mapSeries to ensure images are created in the same order
-  const loadedImages = await Bluebird.mapSeries(
-    imageArray,
-    ({ id, url, name }) => createImage(url, id, name, parentDatasetId)
+  const loadedImages = await Bluebird.map(imageArray, ({ id, url, name }) =>
+    createImage(url, id, name, parentDatasetId)
   );
 
   console.log("Mock images ok");

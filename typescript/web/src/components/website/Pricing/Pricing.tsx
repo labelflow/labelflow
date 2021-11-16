@@ -40,11 +40,13 @@ export const Pricing = () => (
           pricePost: "for ever",
           name: "Community",
           features: [
-            "Sleek labeling interface",
-            "Dataset import/export",
-            "Unlimited datasets",
+            "Smart labeling",
+            "1,000 hosted images",
             "Unlimited local images",
-            "1 user",
+            "Unlimited datasets",
+            "Dataset import/export",
+            "Unlimited users",
+            "Sleek labeling interface",
           ],
         }}
         icon={BsPeopleFill}
@@ -64,10 +66,12 @@ export const Pricing = () => (
           name: "Starter",
           features: [
             "Smart labeling",
-            "Workflow management",
-            "Unlimited datasets",
             "5,000 hosted images",
-            "5 users collaboration",
+            "Unlimited local images",
+            "Unlimited datasets",
+            "Dataset import/export",
+            "Unlimited users",
+            "Sleek labeling interface",
           ],
         }}
         icon={GiCommercialAirplane}
@@ -81,15 +85,17 @@ export const Pricing = () => (
       />
       <PricingCard
         data={{
-          price: "$199",
+          price: "$149",
           pricePost: "/mo",
           name: "Pro",
           features: [
-            "All Starter features",
-            "Premium support",
-            "Unlimited datasets",
+            "Smart labeling",
             "50,000 hosted images",
-            "25 users collaboration",
+            "Unlimited local images",
+            "Unlimited datasets",
+            "Dataset import/export",
+            "Unlimited users",
+            "Sleek labeling interface",
           ],
         }}
         icon={IoRocketSharp}

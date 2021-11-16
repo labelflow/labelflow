@@ -77,7 +77,7 @@ apiRoute.get(async (req, res) => {
       .json({ error: { name: error.name, message: error.message } });
   }
   if (signedURL) {
-    return res.redirect(301, signedURL);
+    return res.redirect(302, signedURL);
   }
 
   return res.status(404).json({ error: { name: "Unknown error" } });

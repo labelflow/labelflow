@@ -11,12 +11,22 @@ type Props = {
   url?: string;
   imageId?: string;
   datasetSlug?: string;
+  workspaceSlug?: string;
   isSelected: boolean;
   index: number;
 };
 
 export const GalleryItem = memo(
-  ({ size, start, url, imageId, datasetSlug, isSelected, index }: Props) => {
+  ({
+    size,
+    start,
+    url,
+    imageId,
+    datasetSlug,
+    workspaceSlug,
+    isSelected,
+    index,
+  }: Props) => {
     return (
       <Box
         position="absolute"
@@ -30,7 +40,7 @@ export const GalleryItem = memo(
       >
         {imageId ? (
           <Link
-            href={`/local/datasets/${datasetSlug}/images/${imageId}`}
+            href={`/${workspaceSlug}/datasets/${datasetSlug}/images/${imageId}`}
             passHref
           >
             <a aria-current={isSelected ? "page" : undefined}>

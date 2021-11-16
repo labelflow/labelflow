@@ -116,11 +116,11 @@ jobs:
       - name: generate prisma
         run: cd typescript/db && yarn deploy && yarn generate
         env:
-          POSTGRES_EXTERNAL_URL: ${{secrets.POSTGRES_EXTERNAL_URL}}
+          POSTGRES_EXTERNAL_URL: postgresql://admin:admin@localhost:5433/labelflow?schema=public
       - name: run tests
         run: yarn test
         env:
-          POSTGRES_EXTERNAL_URL: ${{secrets.POSTGRES_EXTERNAL_URL}}
+          POSTGRES_EXTERNAL_URL: postgresql://admin:admin@localhost:5433/labelflow?schema=public
 
   check-codegen-diff:
     name: Check diff after codegen
@@ -145,6 +145,20 @@ jobs:
     name: E2E Tests and bundle analysis
     runs-on: ubuntu-20.04
     needs: install-typescript
+    services:
+      db:
+        image: postgres:12.6
+        env:
+          POSTGRES_USER: ${{secrets.POSTGRES_ADMIN_USER}}
+          POSTGRES_PASSWORD: ${{secrets.POSTGRES_ADMIN_PASSWORD}}
+          POSTGRES_DB: ${{secrets.POSTGRES_DB}}
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5433:5432
     steps:
       - name: Check out repository code
         uses: actions/checkout@v2
@@ -160,13 +174,17 @@ jobs:
         with:
           path: /home/runner/.cache/Cypress
           key: ${{ runner.os }}-cypress-${{secrets.ACTIONS_CACHE_VERSION}}-${{ hashFiles('yarn.lock') }}
+      - name: generate prisma
+        run: cd typescript/db && yarn deploy && yarn generate
+        env:
+          POSTGRES_EXTERNAL_URL: postgresql://admin:admin@localhost:5433/labelflow?schema=public
       - name: Cypress run
         uses: cypress-io/github-action@v2
         with:
           install: false
           build: yarn bundlewatch:web
-          start: yarn start:web
-          wait-on: "http://localhost:3000"
+          start: yarn start:web -p 3001
+          wait-on: "http://localhost:3001"
           wait-on-timeout: 300
           browser: chrome
           record: true
@@ -185,6 +203,8 @@ jobs:
           CI_COMMIT_SHA: ${{ github.event.pull_request.head.sha }}
           CI_BRANCH: ${{ github.ref	}}
           CI_BRANCH_BASE: refs/heads/main
+          POSTGRES_EXTERNAL_URL: postgresql://admin:admin@localhost:5433/labelflow?schema=public
+          NEXTAUTH_URL: http://localhost:3001
 
   deployment-chromatic-pr:
     name: Deploy Storybook PR
