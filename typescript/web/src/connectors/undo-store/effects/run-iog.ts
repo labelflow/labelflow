@@ -42,6 +42,7 @@ const runIogMutation = gql`
       smartToolInput
       labelClass {
         id
+        color
       }
     }
   }
@@ -65,6 +66,7 @@ const updateLabelMutation = gql`
       height
       labelClass {
         id
+        color
       }
     }
   }
