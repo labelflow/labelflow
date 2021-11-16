@@ -74,6 +74,7 @@ export const EditSelectionMode = () => {
     >
       <ToggleButton
         value={SelectionToolState.DEFAULT}
+        description="Choose default selection mode [e]"
         aria-label="Choose default selection mode"
         bg={bg}
         pointerEvents="initial"
@@ -81,6 +82,7 @@ export const EditSelectionMode = () => {
       />
       <ToggleButton
         value={SelectionToolState.IOG}
+        description="Choose auto annotate edition mode [e]"
         aria-label="Choose auto annotate selection mode"
         bg={bg}
         pointerEvents="initial"
