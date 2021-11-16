@@ -172,14 +172,16 @@ export const SigninModal = ({
                         <Input
                           onFocus={(event) => {
                             setIsEmailInvalid(
-                              !validateEmail(event.target.value) ||
-                                event.target.value.length === 0
+                              event.target.value.length === 0
+                                ? undefined
+                                : !validateEmail(event.target.value)
                             );
                           }}
                           onChange={(event) => {
                             setIsEmailInvalid(
-                              !validateEmail(event.target.value) ||
-                                event.target.value.length === 0
+                              event.target.value.length === 0
+                                ? undefined
+                                : !validateEmail(event.target.value)
                             );
                           }}
                           onBlur={(event) => {
