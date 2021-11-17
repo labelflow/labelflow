@@ -1,4 +1,5 @@
-import { useState, useEffect, RefObject } from "react";
+import { useToast } from "@chakra-ui/react";
+import { useState, useEffect, RefObject, useCallback } from "react";
 import { Vector as OlSourceVector } from "ol/source";
 import Collection from "ol/Collection";
 import { Feature } from "ol";
@@ -32,26 +33,49 @@ export const ModifyIogCenterPoint = ({
     dataLabelQuery?.label?.smartToolInput?.pointsInside ?? [];
   const pointsOutside: Coordinate[] =
     dataLabelQuery?.label?.smartToolInput?.pointsOutside ?? [];
-  const performIogFromModifyEvent = async (
-    modifyEvent: ModifyEvent
-  ): Promise<boolean> => {
-    const timestamp = new Date().getTime();
-    const newCoordinates = modifyEvent.mapBrowserEvent.coordinate;
-    registerIogJob(timestamp, selectedLabelId, newCoordinates);
-    await perform(
-      createRunIogEffect(
-        {
-          labelId: selectedLabelId ?? "",
-          centerPoint: newCoordinates,
-          pointsInside: pointsInside ?? undefined,
-          pointsOutside: pointsOutside ?? undefined,
-        },
-        { client }
-      )
-    );
-    unregisterIogJob(timestamp, selectedLabelId);
-    return true;
-  };
+  const toast = useToast();
+  const performIogFromModifyEvent = useCallback(
+    async (modifyEvent: ModifyEvent): Promise<boolean> => {
+      const timestamp = new Date().getTime();
+      const newCoordinates = modifyEvent.mapBrowserEvent.coordinate;
+      registerIogJob(timestamp, selectedLabelId, newCoordinates);
+      try {
+        await perform(
+          createRunIogEffect(
+            {
+              labelId: selectedLabelId ?? "",
+              centerPoint: newCoordinates,
+              pointsInside: pointsInside ?? undefined,
+              pointsOutside: pointsOutside ?? undefined,
+            },
+            { client }
+          )
+        );
+        unregisterIogJob(timestamp, selectedLabelId);
+        return true;
+      } catch (error) {
+        toast({
+          title: "Error running IOG",
+          // @ts-ignore
+          description: error?.message,
+          isClosable: true,
+          status: "error",
+          position: "bottom-right",
+          duration: 10000,
+        });
+        throw error;
+      }
+    },
+    [
+      registerIogJob,
+      selectedLabelId,
+      perform,
+      pointsInside,
+      pointsOutside,
+      client,
+      unregisterIogJob,
+    ]
+  );
   const [centerPointFeature, setCenterPointFeature] =
     useState<Feature<Polygon> | null>(null);
   useEffect(() => {

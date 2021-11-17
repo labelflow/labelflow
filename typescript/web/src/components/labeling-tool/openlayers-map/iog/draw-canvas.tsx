@@ -55,71 +55,85 @@ export const DrawIogCanvas = ({ imageId }: { imageId: string }) => {
     [drawRef]
   );
   const toast = useToast();
-  const performIOGFromDrawEvent = async (drawEvent: DrawEvent) => {
-    const timestamp = new Date().getTime();
-    const openLayersGeometry = drawEvent.feature.getGeometry();
-    const geometry = new GeoJSON().writeGeometryObject(
-      openLayersGeometry
-    ) as GeoJSONPolygon;
-    const boundedGeometry = getBoundedGeometryFromImage(
-      { width: dataImage?.image?.width, height: dataImage?.image?.height },
-      geometry
-    ).geometry;
-    const labelId = await createCreateLabelEffect(
-      {
-        imageId,
-        selectedLabelClassId,
-        geometry: boundedGeometry,
-        labelType: LabelType.Polygon,
-      },
-      {
-        setSelectedLabelId,
-        client,
-      }
-    ).do();
-    const inferencePromise = (async () => {
-      const dataUrl = await (async function () {
-        const blob = await fetch(dataImage?.image?.url).then((r) => r.blob());
-        return new Promise<string>((resolve) => {
-          const reader = new FileReader();
-          reader.onload = () => resolve(reader.result as string);
-          reader.readAsDataURL(blob);
-        });
+  const performIOGFromDrawEvent = useCallback(
+    async (drawEvent: DrawEvent) => {
+      const timestamp = new Date().getTime();
+      const openLayersGeometry = drawEvent.feature.getGeometry();
+      const geometry = new GeoJSON().writeGeometryObject(
+        openLayersGeometry
+      ) as GeoJSONPolygon;
+      const boundedGeometry = getBoundedGeometryFromImage(
+        { width: dataImage?.image?.width, height: dataImage?.image?.height },
+        geometry
+      ).geometry;
+      const labelId = await createCreateLabelEffect(
+        {
+          imageId,
+          selectedLabelClassId,
+          geometry: boundedGeometry,
+          labelType: LabelType.Polygon,
+        },
+        {
+          setSelectedLabelId,
+          client,
+        }
+      ).do();
+      const inferencePromise = (async () => {
+        const dataUrl = await (async function () {
+          const blob = await fetch(dataImage?.image?.url).then((r) => r.blob());
+          return new Promise<string>((resolve) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result as string);
+            reader.readAsDataURL(blob);
+          });
+        })();
+        const smartToolInput = extractSmartToolInputInputFromIogMask(
+          boundedGeometry.coordinates as number[][][]
+        );
+        registerIogJob(timestamp, labelId, smartToolInput.centerPoint);
+
+        return perform(
+          createRunIogEffect(
+            {
+              labelId,
+              imageUrl: dataUrl,
+              ...smartToolInput,
+            },
+            { client }
+          )
+        );
       })();
-      const smartToolInput = extractSmartToolInputInputFromIogMask(
-        boundedGeometry.coordinates as number[][][]
-      );
-      registerIogJob(timestamp, labelId, smartToolInput.centerPoint);
 
-      return perform(
-        createRunIogEffect(
-          {
-            labelId,
-            imageUrl: dataUrl,
-            ...smartToolInput,
-          },
-          { client }
-        )
-      );
-    })();
-
-    try {
-      await inferencePromise;
-      unregisterIogJob(timestamp, labelId);
-    } catch (error) {
-      unregisterIogJob(timestamp, labelId);
-      setSelectedLabelId(null);
-      toast({
-        title: "Error executing IOG",
-        description: error?.message,
-        isClosable: true,
-        status: "error",
-        position: "bottom-right",
-        duration: 10000,
-      });
-      throw error;
-    }
-  };
+      try {
+        await inferencePromise;
+        unregisterIogJob(timestamp, labelId);
+      } catch (error) {
+        unregisterIogJob(timestamp, labelId);
+        setSelectedLabelId(null);
+        toast({
+          title: "Error executing IOG",
+          description: error?.message,
+          isClosable: true,
+          status: "error",
+          position: "bottom-right",
+          duration: 10000,
+        });
+        throw error;
+      }
+    },
+    [
+      dataImage,
+      imageId,
+      selectedLabelClassId,
+      setSelectedLabelId,
+      client,
+      registerIogJob,
+      unregisterIogJob,
+      setSelectedLabelId,
+      toast,
+      perform,
+    ]
+  );
   const selectedLabelClass = dataLabelClass?.labelClass;
   const style = useMemo(() => {
     const color = selectedLabelClass?.color ?? noneClassColor;
@@ -155,9 +169,7 @@ export const DrawIogCanvas = ({ imageId }: { imageId: string }) => {
         setDrawingToolState(DrawingToolState.DRAWING);
         return true;
       }}
-      onDrawend={async (e) => {
-        await performIOGFromDrawEvent(e);
-      }}
+      onDrawend={performIOGFromDrawEvent}
     />
   );
 };

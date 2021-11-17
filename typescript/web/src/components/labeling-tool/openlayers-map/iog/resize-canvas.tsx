@@ -114,6 +114,7 @@ export const ResizeIogCanvas = (props: {
             position: "bottom-right",
             duration: 10000,
           });
+          throw error;
         }
       }
       unregisterIogJob(timestamp, selectedLabelId);

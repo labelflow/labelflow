@@ -1,3 +1,4 @@
+import { useToast } from "@chakra-ui/react";
 import { useCallback, useEffect } from "react";
 import { MapBrowserEvent } from "ol";
 import { useApolloClient, useQuery } from "@apollo/client";
@@ -40,6 +41,7 @@ export const HandleIogClick = () => {
     dataLabelQuery?.label?.smartToolInput?.centerPoint;
 
   const { perform } = useUndoStore();
+  const toast = useToast();
 
   const handleClick = useCallback(
     async (event: MapBrowserEvent<UIEvent>) => {
@@ -51,95 +53,124 @@ export const HandleIogClick = () => {
         (feature) => feature.getProperties().id
       );
 
-      if (
-        idOfClickedFeature === getIogMaskIdFromLabelId(selectedLabelId ?? "")
-      ) {
-        // Deselect feature
-        setSelectedLabelId(null);
-        setDrawingToolState(DrawingToolState.IDLE);
-      } else if (idOfClickedFeature === selectedLabelId) {
-        // Add point outside
-        registerIogJob(timestamp, selectedLabelId, centerPoint);
-        await perform(
-          createRunIogEffect(
-            {
-              labelId: dataLabelQuery?.label?.id,
-              pointsInside,
-              pointsOutside: [...pointsOutside, event.coordinate as Coordinate],
-            },
-            { client }
-          )
-        );
-        unregisterIogJob(timestamp, selectedLabelId);
-      } else if (idOfClickedFeature?.includes("point-inside-")) {
-        // Remove point inside
-        const indexPointToRemove = parseInt(
-          idOfClickedFeature.split("point-inside-")[1],
-          10
-        );
-        registerIogJob(timestamp, selectedLabelId, centerPoint);
-        await perform(
-          createRunIogEffect(
-            {
-              labelId: dataLabelQuery?.label?.id,
-              pointsInside: [
-                ...pointsInside.slice(0, indexPointToRemove),
-                ...pointsInside.slice(
-                  indexPointToRemove + 1,
-                  pointsInside.length
-                ),
-              ],
-              pointsOutside,
-            },
-            { client }
-          )
-        );
-        unregisterIogJob(timestamp, selectedLabelId);
-      } else if (idOfClickedFeature?.includes("point-outside-")) {
-        // Remove point outside
-        const indexPointToRemove = parseInt(
-          idOfClickedFeature.split("point-outside-")[1],
-          10
-        );
-        registerIogJob(timestamp, selectedLabelId, centerPoint);
-        await perform(
-          createRunIogEffect(
-            {
-              labelId: dataLabelQuery?.label?.id,
-              pointsInside,
-              pointsOutside: [
-                ...pointsOutside.slice(0, indexPointToRemove),
-                ...pointsOutside.slice(
-                  indexPointToRemove + 1,
-                  pointsOutside.length
-                ),
-              ],
-            },
-            { client }
-          )
-        );
-        unregisterIogJob(timestamp, selectedLabelId);
-      } else if (idOfClickedFeature?.includes("point-center")) {
-        return false;
-      } else {
-        // Add point inside
-        registerIogJob(timestamp, selectedLabelId, centerPoint);
-        await perform(
-          createRunIogEffect(
-            {
-              labelId: dataLabelQuery?.label?.id,
-              pointsInside: [...pointsInside, event.coordinate as Coordinate],
-              pointsOutside,
-            },
-            { client }
-          )
-        );
-        unregisterIogJob(timestamp, selectedLabelId);
-      }
+      try {
+        if (
+          idOfClickedFeature === getIogMaskIdFromLabelId(selectedLabelId ?? "")
+        ) {
+          // Deselect feature
+          setSelectedLabelId(null);
+          setDrawingToolState(DrawingToolState.IDLE);
+        } else if (idOfClickedFeature === selectedLabelId) {
+          // Add point outside
+          registerIogJob(timestamp, selectedLabelId, centerPoint);
+          await perform(
+            createRunIogEffect(
+              {
+                labelId: dataLabelQuery?.label?.id,
+                pointsInside,
+                pointsOutside: [
+                  ...pointsOutside,
+                  event.coordinate as Coordinate,
+                ],
+              },
+              { client }
+            )
+          );
+          unregisterIogJob(timestamp, selectedLabelId);
+        } else if (idOfClickedFeature?.includes("point-inside-")) {
+          // Remove point inside
+          const indexPointToRemove = parseInt(
+            idOfClickedFeature.split("point-inside-")[1],
+            10
+          );
+          registerIogJob(timestamp, selectedLabelId, centerPoint);
+          await perform(
+            createRunIogEffect(
+              {
+                labelId: dataLabelQuery?.label?.id,
+                pointsInside: [
+                  ...pointsInside.slice(0, indexPointToRemove),
+                  ...pointsInside.slice(
+                    indexPointToRemove + 1,
+                    pointsInside.length
+                  ),
+                ],
+                pointsOutside,
+              },
+              { client }
+            )
+          );
+          unregisterIogJob(timestamp, selectedLabelId);
+        } else if (idOfClickedFeature?.includes("point-outside-")) {
+          // Remove point outside
+          const indexPointToRemove = parseInt(
+            idOfClickedFeature.split("point-outside-")[1],
+            10
+          );
+          registerIogJob(timestamp, selectedLabelId, centerPoint);
+          await perform(
+            createRunIogEffect(
+              {
+                labelId: dataLabelQuery?.label?.id,
+                pointsInside,
+                pointsOutside: [
+                  ...pointsOutside.slice(0, indexPointToRemove),
+                  ...pointsOutside.slice(
+                    indexPointToRemove + 1,
+                    pointsOutside.length
+                  ),
+                ],
+              },
+              { client }
+            )
+          );
+          unregisterIogJob(timestamp, selectedLabelId);
+        } else if (idOfClickedFeature?.includes("point-center")) {
+          return false;
+        } else {
+          // Add point inside
+          registerIogJob(timestamp, selectedLabelId, centerPoint);
+          await perform(
+            createRunIogEffect(
+              {
+                labelId: dataLabelQuery?.label?.id,
+                pointsInside: [...pointsInside, event.coordinate as Coordinate],
+                pointsOutside,
+              },
+              { client }
+            )
+          );
+          unregisterIogJob(timestamp, selectedLabelId);
+        }
 
-      return false;
+        return false;
+      } catch (error) {
+        toast({
+          title: "Error running IOG",
+          // @ts-ignore
+          description: error?.message,
+          isClosable: true,
+          status: "error",
+          position: "bottom-right",
+          duration: 10000,
+        });
+        throw error;
+      }
     },
-    [selectedLabelId, dataLabelQuery]
+    [
+      selectedLabelId,
+      dataLabelQuery,
+      setSelectedLabelId,
+      setDrawingToolState,
+      perform,
+      toast,
+      registerIogJob,
+      unregisterIogJob,
+      client,
+      pointsInside,
+      pointsOutside,
+      centerPoint,
+    ]
   );
 
   useEffect(() => {
