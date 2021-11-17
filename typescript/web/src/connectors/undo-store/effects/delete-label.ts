@@ -5,6 +5,7 @@ import { Label } from "@labelflow/graphql-types";
 import { Effect } from "..";
 import { removeLabelFromImageCache } from "./cache-updates/remove-label-from-image-cache";
 import { addLabelToImageInCache } from "./cache-updates/add-label-to-image-in-cache";
+import { createLabelMutation } from "./shared-queries";
 
 const deleteLabelMutation = gql`
   mutation deleteLabel($id: ID!) {
@@ -15,6 +16,7 @@ const deleteLabelMutation = gql`
       width
       height
       imageId
+      type
       labelClass {
         id
       }
@@ -22,26 +24,6 @@ const deleteLabelMutation = gql`
         type
         coordinates
       }
-    }
-  }
-`;
-
-const createLabelWithIdMutation = gql`
-  mutation createLabel(
-    $id: ID!
-    $imageId: ID!
-    $labelClassId: ID
-    $geometry: GeometryInput!
-  ) {
-    createLabel(
-      data: {
-        id: $id
-        imageId: $imageId
-        labelClassId: $labelClassId
-        geometry: $geometry
-      }
-    ) {
-      id
     }
   }
 `;
@@ -84,6 +66,7 @@ export const createDeleteLabelEffect = (
       | "id"
       | "x"
       | "y"
+      | "type"
       | "width"
       | "height"
       | "imageId"
@@ -91,7 +74,7 @@ export const createDeleteLabelEffect = (
       | "geometry"
     >
   ) => {
-    const { id: labelId, imageId, geometry } = deletedLabel;
+    const { id: labelId, imageId, geometry, type } = deletedLabel;
     const labelClassId = deletedLabel?.labelClass?.id;
 
     const createLabelInputs = {
@@ -99,12 +82,13 @@ export const createDeleteLabelEffect = (
       imageId,
       labelClassId,
       geometry: omit(["__typename"], geometry),
+      labelType: type,
     };
 
     /* It is important to use the same id for the re-creation when the label
      * was created in the current session to enable the undoing of the creation effect */
     const { data } = await client.mutate({
-      mutation: createLabelWithIdMutation,
+      mutation: createLabelMutation,
       variables: createLabelInputs,
       refetchQueries: ["countLabels", "getDatasets", "countLabelsOfDataset"],
       optimisticResponse: { createLabel: { id: labelId, __typename: "Label" } },

@@ -40,3 +40,76 @@ export const createdLabelFragment = gql`
     }
   }
 `;
+
+export const createLabelClassQuery = gql`
+  mutation createLabelClass($data: LabelClassCreateInput!) {
+    createLabelClass(data: $data) {
+      id
+      name
+      color
+    }
+  }
+`;
+
+export const deleteLabelClassQuery = gql`
+  mutation deleteLabelClass($where: LabelClassWhereUniqueInput!) {
+    deleteLabelClass(where: $where) {
+      id
+    }
+  }
+`;
+
+export const createLabelMutation = gql`
+  mutation createLabel(
+    $id: ID
+    $imageId: ID!
+    $labelType: LabelType!
+    $labelClassId: ID
+    $geometry: GeometryInput!
+  ) {
+    createLabel(
+      data: {
+        id: $id
+        type: $labelType
+        imageId: $imageId
+        labelClassId: $labelClassId
+        geometry: $geometry
+      }
+    ) {
+      id
+    }
+  }
+`;
+
+export const deleteLabelMutation = gql`
+  mutation deleteLabel($id: ID!) {
+    deleteLabel(where: { id: $id }) {
+      id
+    }
+  }
+`;
+
+export const getLabelQuery = gql`
+  query getLabel($id: ID!) {
+    label(where: { id: $id }) {
+      id
+      labelClass {
+        id
+      }
+    }
+  }
+`;
+
+export const updateLabelQuery = gql`
+  mutation updateLabelClass(
+    $where: LabelWhereUniqueInput!
+    $data: LabelUpdateInput!
+  ) {
+    updateLabel(where: $where, data: $data) {
+      id
+      labelClass {
+        id
+      }
+    }
+  }
+`;

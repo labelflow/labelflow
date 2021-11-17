@@ -1,4 +1,4 @@
-import { gql, ApolloClient } from "@apollo/client";
+import { ApolloClient } from "@apollo/client";
 
 import { v4 as uuid } from "uuid";
 import { useLabelingStore } from "../../labeling-state";
@@ -6,49 +6,12 @@ import { useLabelingStore } from "../../labeling-state";
 import { Effect } from "..";
 import { createLabelClassMutationUpdate } from "./cache-updates/create-label-class-mutation-update";
 import { deleteLabelClassMutationUpdate } from "./cache-updates/delete-label-class-mutation-update";
-
-const getLabelQuery = gql`
-  query getLabel($id: ID!) {
-    label(where: { id: $id }) {
-      id
-      labelClass {
-        id
-      }
-    }
-  }
-`;
-
-const createLabelClassQuery = gql`
-  mutation createLabelClass($data: LabelClassCreateInput!) {
-    createLabelClass(data: $data) {
-      id
-      name
-      color
-    }
-  }
-`;
-
-const deleteLabelClassQuery = gql`
-  mutation deleteLabelClass($where: LabelClassWhereUniqueInput!) {
-    deleteLabelClass(where: $where) {
-      id
-    }
-  }
-`;
-
-const updateLabelQuery = gql`
-  mutation updateLabelClass(
-    $where: LabelWhereUniqueInput!
-    $data: LabelUpdateInput!
-  ) {
-    updateLabel(where: $where, data: $data) {
-      id
-      labelClass {
-        id
-      }
-    }
-  }
-`;
+import {
+  getLabelQuery,
+  createLabelClassQuery,
+  updateLabelQuery,
+  deleteLabelClassQuery,
+} from "./shared-queries";
 
 export const createCreateLabelClassAndUpdateLabelEffect = (
   {

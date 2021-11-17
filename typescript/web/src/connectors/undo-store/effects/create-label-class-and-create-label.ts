@@ -1,4 +1,4 @@
-import { gql, ApolloClient } from "@apollo/client";
+import { ApolloClient } from "@apollo/client";
 
 import { GeoJSONPolygon } from "ol/format/GeoJSON";
 import { LabelType } from "@labelflow/graphql-types";
@@ -11,56 +11,12 @@ import { addLabelToImageInCache } from "./cache-updates/add-label-to-image-in-ca
 import { removeLabelFromImageCache } from "./cache-updates/remove-label-from-image-cache";
 import { createLabelClassMutationUpdate } from "./cache-updates/create-label-class-mutation-update";
 import { deleteLabelClassMutationUpdate } from "./cache-updates/delete-label-class-mutation-update";
-
-const createLabelClassQuery = gql`
-  mutation createLabelClass($data: LabelClassCreateInput!) {
-    createLabelClass(data: $data) {
-      id
-      name
-      color
-    }
-  }
-`;
-
-const deleteLabelClassQuery = gql`
-  mutation deleteLabelClass($where: LabelClassWhereUniqueInput!) {
-    deleteLabelClass(where: $where) {
-      id
-    }
-  }
-`;
-
-const createLabelMutation = gql`
-  mutation createLabel(
-    $id: ID
-    $imageId: ID!
-    $labelType: LabelType!
-    $labelClassId: ID
-    $geometry: GeometryInput!
-  ) {
-    createLabel(
-      data: {
-        id: $id
-        type: $labelType
-        imageId: $imageId
-        labelClassId: $labelClassId
-        geometry: $geometry
-      }
-    ) {
-      id
-      name
-      color
-    }
-  }
-`;
-
-const deleteLabelMutation = gql`
-  mutation deleteLabel($id: ID!) {
-    deleteLabel(where: { id: $id }) {
-      id
-    }
-  }
-`;
+import {
+  createLabelClassQuery,
+  createLabelMutation,
+  deleteLabelMutation,
+  deleteLabelClassQuery,
+} from "./shared-queries";
 
 export const createCreateLabelClassAndCreateLabelEffect = (
   {

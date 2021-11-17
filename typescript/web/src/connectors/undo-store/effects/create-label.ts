@@ -1,74 +1,11 @@
-import { ApolloClient, gql } from "@apollo/client";
+import { ApolloClient } from "@apollo/client";
 
-import { GeometryInput, LabelType } from "@labelflow/graphql-types";
+import { LabelType } from "@labelflow/graphql-types";
 import { GeoJSONPolygon } from "ol/format/GeoJSON";
 import { Effect } from "..";
+import { createLabelMutation, deleteLabelMutation } from "./shared-queries";
 import { addLabelToImageInCache } from "./cache-updates/add-label-to-image-in-cache";
 import { removeLabelFromImageCache } from "./cache-updates/remove-label-from-image-cache";
-
-export type CreateLabelInputs = {
-  imageId: string;
-  id?: string;
-  labelClassId: string | null | undefined;
-  geometry: GeometryInput;
-};
-
-const createLabelMutation = gql`
-  mutation createLabel(
-    $id: ID
-    $imageId: ID!
-    $labelType: LabelType!
-    $labelClassId: ID
-    $geometry: GeometryInput!
-  ) {
-    createLabel(
-      data: {
-        id: $id
-        type: $labelType
-        imageId: $imageId
-        labelClassId: $labelClassId
-        geometry: $geometry
-      }
-    ) {
-      id
-    }
-  }
-`;
-
-export const imageDimensionsQuery = gql`
-  query imageDimensions($id: ID!) {
-    image(where: { id: $id }) {
-      id
-      width
-      height
-    }
-  }
-`;
-
-const deleteLabelMutation = gql`
-  mutation deleteLabel($id: ID!) {
-    deleteLabel(where: { id: $id }) {
-      id
-    }
-  }
-`;
-
-export const createdLabelFragment = gql`
-  fragment NewLabel on Label {
-    id
-    x
-    y
-    width
-    height
-    labelClass {
-      id
-    }
-    geometry {
-      type
-      coordinates
-    }
-  }
-`;
 
 export const createCreateLabelEffect = (
   {
