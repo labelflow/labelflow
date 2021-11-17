@@ -57,7 +57,12 @@ export const exportToCoco: ExportFunction = async (
         );
       })
     );
-    const blobZip = await zip.generateAsync({ type: "blob" });
+    const blobZip = new Blob(
+      [await zip.generateAsync({ type: "arraybuffer" })],
+      {
+        type: "application/zip",
+      }
+    );
     return blobZip;
   }
   return new Blob([annotationsFileJson], { type: "application/json" });

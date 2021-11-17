@@ -1,4 +1,5 @@
 import { ExportOptionsYolo, LabelType } from "@labelflow/graphql-types";
+// import { Blob } from "buffer";
 import JSZip from "jszip";
 import mime from "mime-types";
 import { DbImage, DbLabel, DbLabelClass } from "../../types";
@@ -63,10 +64,11 @@ export const generateLabelsOfImageFile = (
 export const exportToYolo: ExportFunction = async (
   datasetId,
   options: ExportOptionsYolo = {},
-  { repository }
+  { repository },
+  user
 ) => {
-  const images = await repository.image.list({ datasetId });
-  const labelClasses = await repository.labelClass.list({ datasetId });
+  const images = await repository.image.list({ datasetId, user });
+  const labelClasses = await repository.labelClass.list({ datasetId, user });
   const datasetName = options?.name ?? "dataset-yolo";
   const zip = new JSZip();
   zip.file(
@@ -95,13 +97,18 @@ export const exportToYolo: ExportFunction = async (
           blob
         );
       }
-      const labelsOfImage = await repository.label.list({ imageId: image.id });
+      const labelsOfImage = await repository.label.list({
+        imageId: image.id,
+        user,
+      });
       zip.file(
         `${datasetName}/obj_train_data/${imageName}.txt`,
         generateLabelsOfImageFile(labelsOfImage, image, labelClasses, options)
       );
     })
   );
-  const blobZip = await zip.generateAsync({ type: "blob" });
+  const blobZip = new Blob([await zip.generateAsync({ type: "arraybuffer" })], {
+    type: "application/zip",
+  });
   return blobZip;
 };
