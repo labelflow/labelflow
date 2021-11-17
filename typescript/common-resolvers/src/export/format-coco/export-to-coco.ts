@@ -12,15 +12,17 @@ import { addImageDimensionsToLabels } from "./add-image-dimensions-to-labels";
 export const exportToCoco: ExportFunction = async (
   datasetId,
   options: ExportOptionsCoco = {},
-  { repository }
+  { repository },
+  user
 ) => {
-  const images = await repository.image.list({ datasetId });
-  const labelClasses = await repository.labelClass.list({ datasetId });
-  const labels = await repository.label.list({ datasetId });
+  const images = await repository.image.list({ datasetId, user });
+  const labelClasses = await repository.labelClass.list({ datasetId, user });
+  const labels = await repository.label.list({ datasetId, user });
 
   const labelsWithImageDimensions = await addImageDimensionsToLabels(
     labels,
-    repository
+    repository,
+    user
   );
   const annotationsFileJson = JSON.stringify(
     convertLabelflowDatasetToCocoDataset(

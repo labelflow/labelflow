@@ -4,5 +4,6 @@ import { Context } from "../types";
 export type ExportFunction = (
   datasetId: string,
   options: ExportOptionsCoco | ExportOptionsYolo,
-  context: Context
+  context: Context,
+  user?: { id: string }
 ) => Promise<Blob>;
