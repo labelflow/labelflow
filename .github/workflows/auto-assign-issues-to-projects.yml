@@ -40,11 +40,11 @@ jobs:
       with:
         project: 'https://github.com/labelflow/labelflow/projects/1'
         column_name: 'To do'
-    - name: Assign issues and pull requests with `bug` label to project `bugs`
+    - name: Assign issues and pull requests with `bug` label to project `labelflow`
       uses: srggrs/assign-one-project-github-action@1.2.1
       if: |
         contains(github.event.issue.labels.*.name, 'bug') 
       with:
-        project: 'https://github.com/labelflow/labelflow/projects/3'
+        project: 'https://github.com/labelflow/labelflow/projects/1'
         column_name: 'To do'
     
