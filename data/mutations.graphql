@@ -1,8 +1,9 @@
 type Mutation {
   createExample(data: ExampleCreateInput!): Example
 
-  getUploadTarget(data: UploadTargetInput!): UploadTarget!
   createImage(data: ImageCreateInput!): Image
+  getUploadTarget(data: UploadTargetInput!): UploadTarget!
+  updateImage(where: ImageWhereUniqueInput!, data: ImageUpdateInput!): Image
   deleteImage(where: ImageWhereUniqueInput!): Image
 
   createLabel(data: LabelCreateInput!): Label
@@ -45,7 +46,9 @@ type Mutation {
     data: MembershipUpdateInput!
   ): Membership
   deleteMembership(where: MembershipWhereUniqueInput!): Membership
-  inviteMember(where: InviteMemberInput!): InvitationStatus
+  inviteMember(where: InviteMemberInput!): InvitationResult
+  acceptInvitation(where: MembershipWhereUniqueInput!): Membership
+  declineInvitation(where: MembershipWhereUniqueInput!): Membership
 
   updateUser(where: UserWhereUniqueInput!, data: UserUpdateInput!): User
 }

@@ -24,6 +24,7 @@ import {
   checkUserAccessToLabelClass,
   checkUserAccessToWorkspace,
 } from "./access-control";
+import { processImage } from "./image-processing";
 
 export const repository: Repository = {
   image: {
@@ -59,6 +60,22 @@ export const repository: Repository = {
       ).image.findUnique({
         where,
       })) as unknown as Image;
+    },
+    update: async (where, image, user) => {
+      await checkUserAccessToImage({ where, user });
+      try {
+        if (image) {
+          await (
+            await getPrismaClient()
+          ).image.update({
+            where,
+            data: castObjectNullsToUndefined(image),
+          });
+        }
+        return true;
+      } catch (e) {
+        return false;
+      }
     },
     list: async (whereWithUser, skip = undefined, first = undefined) => {
       const { user, ...where } = whereWithUser ?? { user: undefined };
@@ -312,5 +329,8 @@ export const repository: Repository = {
     getUploadTarget: getUploadTargetHttp,
     getUploadTargetHttp,
     put: putInStorage,
+  },
+  imageProcessing: {
+    processImage,
   },
 };

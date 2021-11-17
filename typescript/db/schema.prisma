@@ -17,19 +17,24 @@ datasource db {
 /////////////////////////////////////////////////////////////////////////////
 
 model Image {
-  id          String   @id @default(uuid()) @db.Uuid
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  url         String
-  name        String
-  path        String
-  mimetype    String
-  width       Float
-  height      Float
-  datasetId   String   @db.Uuid
-  externalUrl String?
-  dataset     Dataset  @relation(fields: [datasetId], references: [id], onDelete: Cascade)
-  labels      Label[]
+  id              String   @id @default(uuid()) @db.Uuid
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  url             String
+  name            String
+  path            String
+  mimetype        String
+  width           Float
+  height          Float
+  datasetId       String   @db.Uuid
+  externalUrl     String?
+  dataset         Dataset  @relation(fields: [datasetId], references: [id], onDelete: Cascade)
+  labels          Label[]
+  thumbnail20Url  String?
+  thumbnail50Url  String?
+  thumbnail100Url String?
+  thumbnail200Url String?
+  thumbnail500Url String?
 }
 
 model Label {
@@ -78,28 +83,29 @@ model Dataset {
 model Workspace {
   // Id exists for regularity reasons.
   // It's more appropriate to query Workspaces using the slug
-  id          String        @id @default(uuid()) @db.Uuid
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
-  name        String        @unique
-  slug        String        @unique
-  image       String?
-  plan        WorkspacePlan
-  datasets    Dataset[]
-  memberships Membership[]
+  id               String        @id @default(uuid()) @db.Uuid
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+  name             String        @unique
+  slug             String        @unique
+  image            String?
+  plan             WorkspacePlan
+  stripeCustomerId String?
+  datasets         Dataset[]
+  memberships      Membership[]
 }
 
 model Membership {
   id                    String    @id @default(uuid()) @db.Uuid
   createdAt             DateTime  @default(now())
   updatedAt             DateTime  @updatedAt
+  declinedAt            DateTime?
   role                  UserRole
   workspaceSlug         String
   workspace             Workspace @relation(fields: [workspaceSlug], references: [slug])
-  userId                String?    @db.Uuid
+  userId                String?   @db.Uuid
   user                  User?     @relation(fields: [userId], references: [id])
-  invitationEmailSentTo String?   
-  invitationToken       String?   @unique @db.Uuid
+  invitationEmailSentTo String?
 
   @@unique([workspaceSlug, userId])
   @@unique([workspaceSlug, invitationEmailSentTo])

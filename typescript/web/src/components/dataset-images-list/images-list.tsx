@@ -82,7 +82,7 @@ export const ImagesList = ({
             spacing={{ base: "2", md: "8" }}
             padding={{ base: "2", md: "8" }}
           >
-            {images?.map(({ id, name, url }) => (
+            {images?.map(({ id, name, thumbnail500Url }) => (
               <NextLink
                 href={`/${workspaceSlug}/datasets/${datasetSlug}/images/${id}`}
                 key={id}
@@ -127,7 +127,7 @@ export const ImagesList = ({
                     <Image
                       background={imageBackground}
                       alt={name}
-                      src={url}
+                      src={thumbnail500Url ?? undefined}
                       ignoreFallback
                       objectFit="contain"
                       h="208px"

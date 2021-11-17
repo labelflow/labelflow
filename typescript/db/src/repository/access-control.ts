@@ -157,7 +157,7 @@ export const checkUserAccessToMembership = async ({
   if (user?.id == null) {
     throw new Error("User not authenticated");
   }
-  // Has access to membership if the user belongs to a workspace that is linked to the memberhsip
+  // Has access to membership if the user belongs to a workspace that is linked to the membership
   const hasAccessToMembership =
     (await (
       await getPrismaClient()

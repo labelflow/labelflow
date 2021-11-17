@@ -1,13 +1,13 @@
 import { incrementMockedDate } from "@labelflow/dev-utils/mockdate";
 import { gql } from "@apollo/client";
-import { probeImage } from "@labelflow/common-resolvers/src/utils/probe-image";
+import { processImage } from "../../repository/image-processing";
 import { client } from "../../apollo-client/schema-client";
 import { setupTestsWithLocalDatabase } from "../../../utils/setup-local-db-tests";
 
 setupTestsWithLocalDatabase();
 
-jest.mock("@labelflow/common-resolvers/src/utils/probe-image");
-const mockedProbeSync = probeImage as jest.Mock;
+jest.mock("../../repository/image-processing");
+const mockedProcessImage = processImage as jest.Mock;
 const testDatasetId = "test dataset id";
 
 const createLabelClass = async (data: {
@@ -44,7 +44,7 @@ const createLabel = async (
   datasetId: string = testDatasetId,
   labelId: string = "myLabelId"
 ) => {
-  mockedProbeSync.mockReturnValue({
+  mockedProcessImage.mockReturnValue({
     width: 42,
     height: 36,
     mime: "image/jpeg",

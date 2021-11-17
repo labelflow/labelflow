@@ -30,6 +30,7 @@ export const getDatasetsQuery = gql`
       images(first: 1) {
         id
         url
+        thumbnail500Url
       }
       imagesAggregates {
         totalCount
@@ -145,7 +146,7 @@ const DatasetPage = () => {
               <DatasetCard
                 key={id}
                 url={`/${workspaceSlug}/datasets/${slug}`}
-                imageUrl={images[0]?.url}
+                imageUrl={images[0]?.thumbnail500Url ?? undefined}
                 datasetName={name}
                 imagesCount={imagesAggregates.totalCount}
                 labelClassesCount={labelClassesAggregates.totalCount}

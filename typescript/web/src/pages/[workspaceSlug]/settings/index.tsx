@@ -1,7 +1,8 @@
 import React from "react";
-import { Text, Box } from "@chakra-ui/react";
+import { Text, Box, Center, Spinner } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { gql, useQuery } from "@apollo/client";
+import { GetServerSideProps } from "next";
 import { Meta } from "../../../components/meta";
 import { Layout } from "../../../components/layout";
 import { ServiceWorkerManagerModal } from "../../../components/service-worker-manager";
@@ -17,9 +18,11 @@ const getWorkspaceDetailsQuery = gql`
   query getWorkspaceDetails($workspaceSlug: String) {
     workspace(where: { slug: $workspaceSlug }) {
       id
+      plan
       slug
       image
       name
+      stripeCustomerPortalUrl
     }
   }
 `;
@@ -59,12 +62,30 @@ const WorkspaceSettingsPage = () => {
           />
         }
       >
-        <Box p={8}>
-          <WorkspaceSettings workspace={getWorkspaceDetailsFinalData} />
-        </Box>
+        {getWorkspaceDetailsFinalData ? (
+          <Box p={8}>
+            <WorkspaceSettings workspace={getWorkspaceDetailsFinalData} />
+          </Box>
+        ) : (
+          <Center h="full">
+            <Spinner size="xl" />
+          </Center>
+        )}
       </Layout>
     </>
   );
 };
 
 export default WorkspaceSettingsPage;
+
+export const getServerSideProps: GetServerSideProps = async ({ query }) => {
+  if (query?.workspaceSlug === "local") {
+    return {
+      notFound: true,
+    };
+  }
+
+  return {
+    props: {},
+  };
+};

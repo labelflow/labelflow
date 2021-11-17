@@ -10,6 +10,7 @@
     "start:test": "dotenv -e .env.test -e .env.local -- docker compose up --detach && sleep 10 && yarn deploy:test",
     "stop": "dotenv -e .env.development -e .env.local -- docker compose down --volumes --remove-orphans",
     "deploy": "dotenv -e .env.development -e .env.local prisma migrate deploy",
+    "prisma:production": "dotenv -e .env.production prisma",
     "deploy:test": "dotenv -e .env.test prisma migrate deploy",
     "deploy:all": "yarn deploy && yarn deploy:test",
     "dev:push": "dotenv -e .env.development -e .env.local prisma db push",
@@ -36,11 +37,13 @@
     "@prisma/client": "2.30.3",
     "@supabase/supabase-js": "1.21.0",
     "apollo-server": "3.4.0",
+    "fetch-blob": "3.1.3",
     "graphql": "15.5.1",
     "isomorphic-fetch": "3.0.0",
+    "jimp": "0.16.1",
     "memoize-one": "^5.2.1",
-    "probe-image-size": "7.2.1",
     "slugify": "^1.6.0",
+    "stripe": "^8.184.0",
     "uuid": "8.3.2"
   }
 }

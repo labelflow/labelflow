@@ -35,31 +35,30 @@ export const Banner = () => {
             letterSpacing="tight"
             color="gray.800"
           >
-            Webinar - Get an AI model ready in no time
+            Announcing AI Stories
           </Heading>
 
           <Text mt="4" fontSize="lg" color="gray.800">
-            From image labeling to automatic inference, discover how to build a
-            proof of concept model for your custom use case in no time. We will
-            go through a real life use case: equipment inventory on the
-            distribution electrical system.
+            From preserving whales to preventing wild fires and developing a
+            fitness app to workout during Covid. Discover how AI impacts your
+            day to day life with leaders from around the world.
             <br />
             <br />
-            <b> Sept 28th - 4.30pm CET Time - Duration: 45min</b>
+            <b> From November 27th, 2021 </b>
           </Text>
 
           <LightMode>
             <Button
               mt="8"
               as="a"
-              href="https://app.livestorm.co/labelflow/get-an-ai-model-ready-in-no-time
+              href="https://labelflow.ai/posts
             "
               target="blank"
               size="lg"
               colorScheme="brand"
               fontWeight="bold"
             >
-              Register now
+              Visit now
             </Button>
           </LightMode>
         </Box>

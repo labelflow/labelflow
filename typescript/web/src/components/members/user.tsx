@@ -1,8 +1,11 @@
-import { Box, Stack, Badge, Flex, Avatar } from "@chakra-ui/react";
+import { Box, Stack, Badge, Flex, Avatar, chakra } from "@chakra-ui/react";
 import { User as UserType } from "@labelflow/graphql-types";
 import { useSession } from "next-auth/react";
 import * as React from "react";
+import { RiUserLine } from "react-icons/ri";
 import { randomBackgroundGradient } from "../../utils/random-background-gradient";
+
+const UserMenuIcon = chakra(RiUserLine);
 
 interface UserProps {
   data: Pick<UserType, "name" | "email" | "image"> &
@@ -42,25 +45,36 @@ export const User = (props: UserProps) => {
     email: email ?? undefined,
     id,
   });
+
   return (
     <Stack direction="row" spacing="4" align="center">
       <Box flexShrink={0} h="10" w="10">
         <Avatar
+          h="10"
+          w="10"
           name={displayName}
           src={image ?? undefined}
-          bg={randomBackgroundGradient(displayName)}
+          bg={
+            displayName !== ""
+              ? randomBackgroundGradient(displayName)
+              : "gray.200"
+          }
+          icon={<UserMenuIcon />}
         />
       </Box>
       <Box>
         <Flex flexDirection="row">
           <Box fontSize="sm" fontWeight="medium">
-            {displayName}
+            {displayName || "Anonymous"}
           </Box>
-          {isLoggedInUser || (id === "local-user" && <Badge>You</Badge>)}
+
+          {(isLoggedInUser || id === "local-user") && <Badge ml="2">You</Badge>}
         </Flex>
-        <Box fontSize="sm" color="gray.500">
-          {email}
-        </Box>
+        {email && (
+          <Box fontSize="sm" color="gray.500">
+            {email}
+          </Box>
+        )}
       </Box>
     </Stack>
   );

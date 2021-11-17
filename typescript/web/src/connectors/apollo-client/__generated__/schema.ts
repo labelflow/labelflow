@@ -3,6 +3,13 @@ import { gql } from "@apollo/client";
 export const typeDefs = gql`
   scalar ColorHex
 
+  enum CurrentUserCanAcceptInvitation {
+    Yes
+    AlreadyAccepted
+    AlreadyMemberOfTheWorkspace
+    AlreadyDeclined
+  }
+
   type Dataset {
     id: ID!
     createdAt: DateTime!
@@ -113,6 +120,11 @@ export const typeDefs = gql`
     updatedAt: DateTime!
     url: String!
     externalUrl: String
+    thumbnail20Url: String
+    thumbnail50Url: String
+    thumbnail100Url: String
+    thumbnail200Url: String
+    thumbnail500Url: String
     name: String!
     path: String!
     mimetype: String!
@@ -134,6 +146,20 @@ export const typeDefs = gql`
     file: Upload
     url: String
     externalUrl: String
+    noThumbnails: Boolean
+    thumbnail20Url: String
+    thumbnail50Url: String
+    thumbnail100Url: String
+    thumbnail200Url: String
+    thumbnail500Url: String
+  }
+
+  input ImageUpdateInput {
+    thumbnail20Url: String
+    thumbnail50Url: String
+    thumbnail100Url: String
+    thumbnail200Url: String
+    thumbnail500Url: String
   }
 
   input ImageWhereInput {
@@ -160,10 +186,10 @@ export const typeDefs = gql`
     error: String
   }
 
-  enum InvitationStatus {
+  enum InvitationResult {
     Sent
-    UserAlreadyIn
     Error
+    UserAlreadyIn
   }
 
   input InviteMemberInput {
@@ -267,11 +293,13 @@ export const typeDefs = gql`
     id: ID!
     createdAt: DateTime!
     updatedAt: DateTime!
+    declinedAt: DateTime
     role: MembershipRole!
     user: User
     workspace: Workspace!
     invitationEmailSentTo: String
-    invitationToken: ID
+    status: MembershipStatus!
+    currentUserCanAcceptInvitation: CurrentUserCanAcceptInvitation!
   }
 
   input MembershipCreateInput {
@@ -285,6 +313,12 @@ export const typeDefs = gql`
     Owner
     Admin
     Member
+  }
+
+  enum MembershipStatus {
+    Sent
+    Active
+    Declined
   }
 
   input MembershipUpdateInput {
@@ -301,8 +335,9 @@ export const typeDefs = gql`
 
   type Mutation {
     createExample(data: ExampleCreateInput!): Example
-    getUploadTarget(data: UploadTargetInput!): UploadTarget!
     createImage(data: ImageCreateInput!): Image
+    getUploadTarget(data: UploadTargetInput!): UploadTarget!
+    updateImage(where: ImageWhereUniqueInput!, data: ImageUpdateInput!): Image
     deleteImage(where: ImageWhereUniqueInput!): Image
     createLabel(data: LabelCreateInput!): Label
     updateLabel(where: LabelWhereUniqueInput!, data: LabelUpdateInput!): Label
@@ -322,7 +357,9 @@ export const typeDefs = gql`
     createMembership(data: MembershipCreateInput!): Membership
     updateMembership(where: MembershipWhereUniqueInput!, data: MembershipUpdateInput!): Membership
     deleteMembership(where: MembershipWhereUniqueInput!): Membership
-    inviteMember(where: InviteMemberInput!): InvitationStatus
+    inviteMember(where: InviteMemberInput!): InvitationResult
+    acceptInvitation(where: MembershipWhereUniqueInput!): Membership
+    declineInvitation(where: MembershipWhereUniqueInput!): Membership
     updateUser(where: UserWhereUniqueInput!, data: UserUpdateInput!): User
   }
 
@@ -411,6 +448,7 @@ export const typeDefs = gql`
     plan: WorkspacePlan!
     datasets: [Dataset!]!
     memberships: [Membership!]!
+    stripeCustomerPortalUrl: String
   }
 
   input WorkspaceCreateInput {

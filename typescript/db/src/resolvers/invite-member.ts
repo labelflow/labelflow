@@ -1,8 +1,10 @@
-import { v4 as uuidv4 } from "uuid";
 import "isomorphic-fetch";
 
-import type { MutationInviteMemberArgs } from "@labelflow/graphql-types";
-import { InvitationStatus } from "@labelflow/graphql-types";
+import {
+  MutationInviteMemberArgs,
+  InvitationResult,
+} from "@labelflow/graphql-types";
+
 import { Context } from "@labelflow/common-resolvers";
 import { getPrismaClient } from "../prisma-client";
 
@@ -20,13 +22,13 @@ const inviteMember = async (
     where: { slug: workspaceSlug },
     select: { name: true },
   });
-  const membership = await (
+  const inviterMembership = await (
     await getPrismaClient()
   ).membership.findMany({
     where: { AND: [{ userId: user?.id }, { workspaceSlug }] },
   });
-  if (!workspace || !membership) {
-    return InvitationStatus.Error;
+  if (!workspace || !inviterMembership) {
+    return InvitationResult.Error;
   }
   const inviter = await (
     await getPrismaClient()
@@ -45,36 +47,9 @@ const inviteMember = async (
     },
   });
   if (isInviteeAlreadyInWorkspace) {
-    return InvitationStatus.UserAlreadyIn;
+    return InvitationResult.UserAlreadyIn;
   }
-  const invitationToken = uuidv4();
-  const inputsInvitation = {
-    ...{
-      inviteeEmail,
-      workspaceName: workspace.name,
-      invitationToken,
-    },
-    ...(inviter?.email && {
-      inviterEmail: inviter?.email,
-    }),
-    ...(inviter?.name && {
-      inviterName: inviter?.name,
-    }),
-  };
-  const searchParams = new URLSearchParams(inputsInvitation);
-  const origin = (req?.headers as any)?.origin ?? "";
-  try {
-    const result = await fetch(
-      `${origin}/api/email/send-invitation?${searchParams.toString()}`,
-      req
-    );
-    if (result.status !== 200) {
-      throw new Error(`Not signed in.`);
-    }
-  } catch (e) {
-    // console.error(`Failed sending email with error ${e}`);
-    return InvitationStatus.Error;
-  }
+
   const membershipAlreadyExists = await (
     await getPrismaClient()
   ).membership.findFirst({
@@ -88,33 +63,66 @@ const inviteMember = async (
       id: true,
     },
   });
+  let membershipId;
   if (!membershipAlreadyExists) {
     // Create that membership
-    await (
+    const membership = await (
       await getPrismaClient()
     ).membership.create({
       data: {
         role: inviteeRole,
         workspaceSlug,
         invitationEmailSentTo: inviteeEmail,
-        invitationToken,
       },
-      select: { invitationToken: true },
+      select: { id: true },
     });
+
+    membershipId = membership.id;
   } else {
     // Update that membership
-    await (
+    const membership = await (
       await getPrismaClient()
     ).membership.update({
       where: { id: membershipAlreadyExists.id },
       data: {
-        invitationToken,
         role: inviteeRole,
       },
+      select: { id: true },
     });
+    membershipId = membership.id;
   }
+
+  const inputsInvitation = {
+    ...{
+      inviteeEmail,
+      workspaceName: workspace.name,
+      workspaceSlug,
+      membershipId,
+    },
+    ...(inviter?.email && {
+      inviterEmail: inviter?.email,
+    }),
+    ...(inviter?.name && {
+      inviterName: inviter?.name,
+    }),
+  };
+  const searchParams = new URLSearchParams(inputsInvitation);
+  const origin = (req?.headers as any)?.origin ?? "";
+  try {
+    const result = await fetch(
+      `${origin}/api/email/send-invitation?${searchParams.toString()}`,
+      { headers: { cookie: (req?.headers as any).cookie } }
+    );
+    if (result.status !== 200) {
+      throw new Error(`Not signed in.`);
+    }
+  } catch (e) {
+    // console.error(`Failed sending email with error ${e}`);
+    return InvitationResult.Error;
+  }
+
   // Query api route to send email
-  return InvitationStatus.Sent;
+  return InvitationResult.Sent;
 };
 
 export default {
