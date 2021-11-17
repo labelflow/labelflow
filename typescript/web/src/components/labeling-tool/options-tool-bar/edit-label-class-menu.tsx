@@ -146,14 +146,15 @@ export const EditLabelClassMenu = () => {
 
   const handleCreateNewClass = useCallback(
     async (name) => {
-      if (!selectedLabelId) {
-        throw new Error("No label selected");
-      }
       const newClassColor =
         labelClasses.length < 1
           ? hexColorSequence[0]
           : getNextClassColor(labelClasses[labelClasses.length - 1].color);
+
       if (!isInDrawingMode) {
+        if (!selectedLabelId) {
+          throw new Error("No label selected");
+        }
         // Update class of an existing label with a new class
         await perform(
           createCreateLabelClassAndUpdateLabelEffect(
@@ -193,12 +194,10 @@ export const EditLabelClassMenu = () => {
               name,
               color: newClassColor,
               datasetId,
-              datasetSlug,
               imageId,
               previouslySelectedLabelClassId: selectedLabelClassId,
               geometry,
               labelType: LabelType.Classification,
-              workspaceSlug,
             },
             {
               setSelectedLabelId,
@@ -217,8 +216,6 @@ export const EditLabelClassMenu = () => {
             color: newClassColor,
             selectedLabelClassIdPrevious: selectedLabelClassId,
             datasetId,
-            datasetSlug,
-            workspaceSlug,
           },
           { client }
         )

@@ -2,20 +2,22 @@ import { gql, ApolloClient } from "@apollo/client";
 
 import { GeoJSONPolygon } from "ol/format/GeoJSON";
 import { LabelType } from "@labelflow/graphql-types";
+import { v4 as uuid } from "uuid";
 import { useLabelingStore } from "../../labeling-state";
 
 import { Effect } from "..";
-import { getDatasetsQuery } from "../../../pages/[workspaceSlug]/datasets";
-import { datasetLabelClassesQuery } from "../../../components/dataset-class-list/class-item";
-import {
-  addLabelToImageInCache,
-  removeLabelFromImageCache,
-} from "./create-label";
+
+import { addLabelToImageInCache } from "./cache-updates/add-label-to-image-in-cache";
+import { removeLabelFromImageCache } from "./cache-updates/remove-label-from-image-cache";
+import { createLabelClassMutationUpdate } from "./cache-updates/create-label-class-mutation-update";
+import { deleteLabelClassMutationUpdate } from "./cache-updates/delete-label-class-mutation-update";
 
 const createLabelClassQuery = gql`
   mutation createLabelClass($data: LabelClassCreateInput!) {
     createLabelClass(data: $data) {
       id
+      name
+      color
     }
   }
 `;
@@ -46,6 +48,8 @@ const createLabelMutation = gql`
       }
     ) {
       id
+      name
+      color
     }
   }
 `;
@@ -63,9 +67,7 @@ export const createCreateLabelClassAndCreateLabelEffect = (
     name,
     color,
     datasetId,
-    datasetSlug,
     imageId,
-    workspaceSlug,
     previouslySelectedLabelClassId,
     geometry,
     labelType,
@@ -73,8 +75,6 @@ export const createCreateLabelClassAndCreateLabelEffect = (
     name: string;
     color: string;
     datasetId: string;
-    datasetSlug: string;
-    workspaceSlug: string;
     imageId: string;
     previouslySelectedLabelClassId: string | null;
     geometry: GeoJSONPolygon;
@@ -89,21 +89,20 @@ export const createCreateLabelClassAndCreateLabelEffect = (
   }
 ): Effect => ({
   do: async () => {
-    const {
-      data: {
-        createLabelClass: { id: labelClassId },
-      },
-    } = await client.mutate({
+    const labelClassId = uuid();
+
+    await client.mutate({
       mutation: createLabelClassQuery,
-      variables: { data: { name, color, datasetId } },
-      refetchQueries: [
-        "getLabelClassesOfDataset",
-        { query: getDatasetsQuery },
-        {
-          query: datasetLabelClassesQuery,
-          variables: { slug: datasetSlug, workspaceSlug },
+      variables: { data: { name, color, datasetId, id: labelClassId } },
+      optimisticResponse: {
+        createLabelClass: {
+          id: labelClassId,
+          name,
+          color,
+          __typename: "LabelClass",
         },
-      ],
+      },
+      update: createLabelClassMutationUpdate(datasetId),
     });
 
     const createLabelInputs = {
@@ -115,7 +114,7 @@ export const createCreateLabelClassAndCreateLabelEffect = (
     const { data } = await client.mutate({
       mutation: createLabelMutation,
       variables: createLabelInputs,
-      refetchQueries: ["countLabels", "getDatasets", "countLabelsOfDataset"],
+      // refetchQueries: ["countLabels", "getDatasets", "countLabelsOfDataset"],
       optimisticResponse: {
         createLabel: { id: `temp-${Date.now()}`, __typename: "Label" },
       },
@@ -153,7 +152,8 @@ export const createCreateLabelClassAndCreateLabelEffect = (
     await client.mutate({
       mutation: deleteLabelMutation,
       variables: { id },
-      refetchQueries: ["countLabels", "getDatasets", "countLabelsOfDataset"],
+      // TODO: handle count update
+      // refetchQueries: ["countLabels", "getDatasets", "countLabelsOfDataset"],
       optimisticResponse: { deleteLabel: { id, __typename: "Label" } },
       update(cache) {
         removeLabelFromImageCache(cache, { imageId, id });
@@ -167,14 +167,10 @@ export const createCreateLabelClassAndCreateLabelEffect = (
       variables: {
         where: { id: labelClassId },
       },
-      refetchQueries: [
-        "getLabelClassesOfDataset",
-        { query: getDatasetsQuery },
-        {
-          query: datasetLabelClassesQuery,
-          variables: { slug: datasetSlug, workspaceSlug },
-        },
-      ],
+      optimisticResponse: {
+        deleteLabelClass: { __typename: "LabelClass", id: labelClassId },
+      },
+      update: deleteLabelClassMutationUpdate(datasetId),
     });
 
     useLabelingStore.setState({ selectedLabelClassId: labelClassIdPrevious });
@@ -196,14 +192,15 @@ export const createCreateLabelClassAndCreateLabelEffect = (
     await client.mutate({
       mutation: createLabelClassQuery,
       variables: { data: { name, color, id: labelClassId, datasetId } },
-      refetchQueries: [
-        "getLabelClassesOfDataset",
-        { query: getDatasetsQuery },
-        {
-          query: datasetLabelClassesQuery,
-          variables: { slug: datasetSlug, workspaceSlug },
+      update: createLabelClassMutationUpdate(datasetId),
+      optimisticResponse: {
+        createLabelClass: {
+          id: labelClassId,
+          name,
+          color,
+          __typename: "LabelClass",
         },
-      ],
+      },
     });
 
     const createLabelInputs = {
@@ -216,7 +213,7 @@ export const createCreateLabelClassAndCreateLabelEffect = (
     const { data } = await client.mutate({
       mutation: createLabelMutation,
       variables: createLabelInputs,
-      refetchQueries: ["countLabels", "getDatasets", "countLabelsOfDataset"],
+      // refetchQueries: ["countLabels", "getDatasets", "countLabelsOfDataset"],
       optimisticResponse: {
         createLabel: { id: `temp-${Date.now()}`, __typename: "Label" },
       },

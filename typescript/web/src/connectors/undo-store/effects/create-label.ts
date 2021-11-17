@@ -1,11 +1,12 @@
-import { ApolloCache, ApolloClient, Reference, gql } from "@apollo/client";
-import { getBoundedGeometryFromImage } from "@labelflow/common-resolvers/src/utils/get-bounded-geometry-from-image";
+import { ApolloClient, gql } from "@apollo/client";
 
 import { GeometryInput, LabelType } from "@labelflow/graphql-types";
 import { GeoJSONPolygon } from "ol/format/GeoJSON";
 import { Effect } from "..";
+import { addLabelToImageInCache } from "./cache-updates/add-label-to-image-in-cache";
+import { removeLabelFromImageCache } from "./cache-updates/remove-label-from-image-cache";
 
-type CreateLabelInputs = {
+export type CreateLabelInputs = {
   imageId: string;
   id?: string;
   labelClassId: string | null | undefined;
@@ -34,7 +35,7 @@ const createLabelMutation = gql`
   }
 `;
 
-const imageDimensionsQuery = gql`
+export const imageDimensionsQuery = gql`
   query imageDimensions($id: ID!) {
     image(where: { id: $id }) {
       id
@@ -52,7 +53,7 @@ const deleteLabelMutation = gql`
   }
 `;
 
-const createdLabelFragment = gql`
+export const createdLabelFragment = gql`
   fragment NewLabel on Label {
     id
     x
@@ -68,77 +69,6 @@ const createdLabelFragment = gql`
     }
   }
 `;
-
-export function addLabelToImageInCache(
-  cache: ApolloCache<{
-    createLabel: {
-      id: string;
-      __typename: string;
-    };
-  }>,
-  { imageId, id, labelClassId, geometry }: CreateLabelInputs & { id: string }
-) {
-  const imageDimensionsResult = cache.readQuery<{
-    image: { width: number; height: number };
-  }>({
-    query: imageDimensionsQuery,
-    variables: { id: imageId },
-  });
-  if (imageDimensionsResult != null) {
-    const { image } = imageDimensionsResult;
-    const boundedGeometry = getBoundedGeometryFromImage(
-      { width: image.width, height: image.height },
-      geometry
-    );
-    const createdLabel = {
-      id,
-      labelClass:
-        labelClassId != null
-          ? {
-              id: labelClassId,
-              __typename: "LabelClass",
-            }
-          : null,
-      geometry: boundedGeometry.geometry,
-      x: boundedGeometry.x,
-      y: boundedGeometry.y,
-      width: boundedGeometry.width,
-      height: boundedGeometry.height,
-      __typename: "Label",
-    };
-    cache.modify({
-      id: cache.identify({ id: imageId, __typename: "Image" }),
-      fields: {
-        labels: (existingLabelsRefs = []) => {
-          const newLabelRef = cache.writeFragment({
-            data: createdLabel,
-            fragment: createdLabelFragment,
-          });
-
-          return [...existingLabelsRefs, newLabelRef];
-        },
-      },
-    });
-  } else {
-    throw new Error(`The image id ${imageId} doesn't exist.`);
-  }
-}
-
-export function removeLabelFromImageCache(
-  cache: ApolloCache<{ deleteLabel: { id: string; __typename: string } }>,
-  { imageId, id }: { imageId: string; id: string }
-) {
-  cache.modify({
-    id: cache.identify({ id: imageId, __typename: "Image" }),
-    fields: {
-      labels: (existingLabelsRefs: Reference[] = [], { readField }) => {
-        return existingLabelsRefs.filter(
-          (labelRef) => readField("id", labelRef) !== id
-        );
-      },
-    },
-  });
-}
 
 export const createCreateLabelEffect = (
   {

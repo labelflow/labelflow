@@ -3,10 +3,8 @@ import { omit } from "lodash/fp";
 
 import { Label } from "@labelflow/graphql-types";
 import { Effect } from "..";
-import {
-  addLabelToImageInCache,
-  removeLabelFromImageCache,
-} from "./create-label";
+import { removeLabelFromImageCache } from "./cache-updates/remove-label-from-image-cache";
+import { addLabelToImageInCache } from "./cache-updates/add-label-to-image-in-cache";
 
 const deleteLabelMutation = gql`
   mutation deleteLabel($id: ID!) {

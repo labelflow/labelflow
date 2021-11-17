@@ -1,12 +1,11 @@
-import { gql, ApolloClient, Reference } from "@apollo/client";
+import { gql, ApolloClient } from "@apollo/client";
 
 import { v4 as uuid } from "uuid";
-import { MutationBaseOptions } from "@apollo/client/core/watchQueryOptions";
 import { useLabelingStore } from "../../labeling-state";
 
 import { Effect } from "..";
-import { getDatasetsQuery } from "../../../pages/[workspaceSlug]/datasets";
-import { datasetLabelClassesQuery } from "../../../components/dataset-class-list/class-item";
+import { createLabelClassMutationUpdate } from "./cache-updates/create-label-class-mutation-update";
+import { deleteLabelClassMutationUpdate } from "./cache-updates/delete-label-class-mutation-update";
 
 const getLabelQuery = gql`
   query getLabel($id: ID!) {
@@ -50,54 +49,6 @@ const updateLabelQuery = gql`
     }
   }
 `;
-
-const createLabelClassMutationUpdate: (
-  datasetId: string
-) => MutationBaseOptions["update"] =
-  (datasetId) =>
-  (cache, { data }) => {
-    const createdLabelClass = data?.createLabelClass;
-    if (!createdLabelClass) {
-      return;
-    }
-
-    cache.modify({
-      id: cache.identify({ __typename: "Dataset", id: datasetId }),
-      fields: {
-        labelClasses: (existingLabelClasses: Reference[], { readField }) => {
-          const newLabelClassRef = cache.writeFragment({
-            data: createdLabelClass,
-            fragment: gql`
-              fragment NewLabelClass on LabelClass {
-                id
-                name
-                color
-              }
-            `,
-          });
-
-          if (
-            existingLabelClasses.find(
-              (labelClass) =>
-                readField("id", labelClass) === createdLabelClass.id
-            ) !== undefined
-          ) {
-            return existingLabelClasses;
-          }
-
-          return [...existingLabelClasses, newLabelClassRef];
-        },
-        // Apollo is smart and this is compatible with the optimistic response
-        labelClassesAggregates({ totalCount = 0, ...aggregates } = {}) {
-          return {
-            ...aggregates,
-            totalCount: totalCount + 1,
-          };
-        },
-      },
-      optimistic: true,
-    });
-  };
 
 export const createCreateLabelClassAndUpdateLabelEffect = (
   {
@@ -227,35 +178,7 @@ export const createCreateLabelClassAndUpdateLabelEffect = (
       optimisticResponse: {
         deleteLabelClass: { __typename: "LabelClass", id: labelClassId },
       },
-      update: (cache, { data }) => {
-        const deletedLabelClass = data?.deleteLabelClass;
-        if (!deletedLabelClass) {
-          return;
-        }
-
-        cache.modify({
-          id: cache.identify({ __typename: "Dataset", id: datasetId }),
-          fields: {
-            labelClasses: (
-              existingLabelClasses: Reference[],
-              { readField }
-            ) => {
-              return existingLabelClasses.filter(
-                (labelClass) =>
-                  readField("id", labelClass) !== deletedLabelClass.id
-              );
-            },
-            // Apollo is smart and this is compatible with the optimistic response
-            labelClassesAggregates({ totalCount = 0, ...aggregates } = {}) {
-              return {
-                ...aggregates,
-                totalCount: Math.max(0, totalCount - 1),
-              };
-            },
-          },
-          optimistic: true,
-        });
-      },
+      update: deleteLabelClassMutationUpdate(datasetId),
     });
 
     return {
