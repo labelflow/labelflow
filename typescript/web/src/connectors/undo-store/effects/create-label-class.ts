@@ -27,9 +27,7 @@ export const createCreateLabelClassEffect = (
     client: ApolloClient<object>;
   }
 ): Effect => ({
-  do: async () => {
-    const labelClassId = uuid();
-
+  do: async (labelClassId: string = uuid()) => {
     await client.mutate({
       mutation: createLabelClassQuery,
       variables: { data: { name, color, datasetId, id: labelClassId } },
@@ -62,25 +60,6 @@ export const createCreateLabelClassEffect = (
     useLabelingStore.setState({
       selectedLabelClassId: selectedLabelClassIdPrevious,
     });
-
-    return labelClassId;
-  },
-  redo: async (labelClassId: string) => {
-    await client.mutate({
-      mutation: createLabelClassQuery,
-      variables: { data: { name, color, id: labelClassId, datasetId } },
-      update: createLabelClassMutationUpdate(datasetId),
-      optimisticResponse: {
-        createLabelClass: {
-          id: labelClassId,
-          name,
-          color,
-          __typename: "LabelClass",
-        },
-      },
-    });
-
-    useLabelingStore.setState({ selectedLabelClassId: labelClassId });
 
     return labelClassId;
   },

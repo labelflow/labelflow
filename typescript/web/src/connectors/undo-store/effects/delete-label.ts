@@ -74,11 +74,11 @@ export const createDeleteLabelEffect = (
       | "geometry"
     >
   ) => {
-    const { id: labelId, imageId, geometry, type } = deletedLabel;
+    const { imageId, geometry, type } = deletedLabel;
     const labelClassId = deletedLabel?.labelClass?.id;
 
     const createLabelInputs = {
-      id: labelId,
+      id,
       imageId,
       labelClassId,
       geometry: omit(["__typename"], geometry),
@@ -87,42 +87,16 @@ export const createDeleteLabelEffect = (
 
     /* It is important to use the same id for the re-creation when the label
      * was created in the current session to enable the undoing of the creation effect */
-    const { data } = await client.mutate({
+    await client.mutate({
       mutation: createLabelMutation,
       variables: createLabelInputs,
       refetchQueries: ["countLabelsOfDataset"],
-      optimisticResponse: { createLabel: { id: labelId, __typename: "Label" } },
+      optimisticResponse: { createLabel: { id, __typename: "Label" } },
       update(cache) {
         addLabelToImageInCache(cache, createLabelInputs);
       },
     });
 
-    if (typeof data?.createLabel?.id !== "string") {
-      throw new Error("Couldn't get the id of the newly created label");
-    }
-
-    setSelectedLabelId(data.createLabel.id);
-    return data.createLabel.id;
-  },
-  redo: async (labelId: string) => {
-    const { data } = await client.mutate({
-      mutation: deleteLabelMutation,
-      variables: { id: labelId },
-      refetchQueries: ["countLabelsOfDataset"],
-      /* Note that there is no optimistic response here, only a cache update.
-       * We could add it but it feels like premature optimization */
-      update(cache, { data: updateData }) {
-        if (typeof updateData?.deleteLabel?.imageId !== "string") {
-          return;
-        }
-        removeLabelFromImageCache(cache, {
-          id,
-          imageId: updateData.deleteLabel.imageId,
-        });
-      },
-    });
-
-    setSelectedLabelId(null);
-    return data?.deleteLabel;
+    setSelectedLabelId(id);
   },
 });
