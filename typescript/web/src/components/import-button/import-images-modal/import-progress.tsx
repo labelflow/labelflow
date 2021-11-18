@@ -42,7 +42,7 @@ export const ImportProgress = ({ status }: { status: boolean | string }) => {
   }
 
   return (
-    <Tooltip label="Loading indicator" placement="left">
+    <Tooltip label="Upload in progress" placement="left">
       <span>
         <LoadingIcon
           display="inline-block"
