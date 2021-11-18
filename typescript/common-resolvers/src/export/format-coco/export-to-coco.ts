@@ -12,7 +12,7 @@ import { addImageDimensionsToLabels } from "./add-image-dimensions-to-labels";
 export const exportToCoco: ExportFunction = async (
   datasetId,
   options: ExportOptionsCoco = {},
-  { repository },
+  { repository, req },
   user
 ) => {
   const images = await repository.image.list({ datasetId, user });
@@ -45,15 +45,13 @@ export const exportToCoco: ExportFunction = async (
     );
     await Promise.all(
       images.map(async (image) => {
-        const blob = new Blob([await repository.upload.get(image.url)], {
-          type: image.mimetype,
-        });
+        const arrayBufferImage = await repository.upload.get(image.url, req);
         zip.file(
           `${datasetName}/images/${getImageName(
             image,
             options?.avoidImageNameCollisions ?? false
           )}.${mime.extension(image.mimetype)}`,
-          blob
+          arrayBufferImage
         );
       })
     );

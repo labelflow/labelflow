@@ -64,7 +64,7 @@ export const generateLabelsOfImageFile = (
 export const exportToYolo: ExportFunction = async (
   datasetId,
   options: ExportOptionsYolo = {},
-  { repository },
+  { repository, req },
   user
 ) => {
   const images = await repository.image.list({ datasetId, user });
@@ -87,14 +87,12 @@ export const exportToYolo: ExportFunction = async (
         options?.avoidImageNameCollisions ?? false
       );
       if (options?.exportImages) {
-        const blob = new Blob([await repository.upload.get(image.url)], {
-          type: image.mimetype,
-        });
+        const arrayBufferImage = await repository.upload.get(image.url, req);
         zip.file(
           `${datasetName}/obj_train_data/${imageName}.${mime.extension(
             image.mimetype
           )}`,
-          blob
+          arrayBufferImage
         );
       }
       const labelsOfImage = await repository.label.list({
