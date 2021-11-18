@@ -31,6 +31,8 @@ export const createdLabelFragment = gql`
     y
     width
     height
+    smartToolInput
+    type
     labelClass {
       id
     }
@@ -63,14 +65,14 @@ export const createLabelMutation = gql`
   mutation createLabel(
     $id: ID
     $imageId: ID!
-    $labelType: LabelType!
+    $type: LabelType!
     $labelClassId: ID
     $geometry: GeometryInput!
   ) {
     createLabel(
       data: {
         id: $id
-        type: $labelType
+        type: $type
         imageId: $imageId
         labelClassId: $labelClassId
         geometry: $geometry

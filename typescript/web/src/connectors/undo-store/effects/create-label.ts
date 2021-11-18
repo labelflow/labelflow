@@ -2,6 +2,7 @@ import { ApolloClient } from "@apollo/client";
 
 import { LabelType } from "@labelflow/graphql-types";
 import { GeoJSONPolygon } from "ol/format/GeoJSON";
+import { v4 as uuid } from "uuid";
 import { Effect } from "..";
 import { createLabelMutation, deleteLabelMutation } from "./shared-queries";
 import { addLabelToImageInCache } from "./cache-updates/add-label-to-image-in-cache";
@@ -27,38 +28,42 @@ export const createCreateLabelEffect = (
     client: ApolloClient<object>;
   }
 ): Effect => ({
-  do: async () => {
+  do: async (id = uuid()) => {
     const createLabelInputs = {
+      id,
       imageId,
       labelClassId: selectedLabelClassId,
       geometry,
-      labelType,
+      type: labelType,
     };
-    const { data } = await client.mutate({
+
+    const createLabelPromise = client.mutate({
       mutation: createLabelMutation,
       variables: createLabelInputs,
       refetchQueries: ["countLabelsOfDataset"],
       optimisticResponse: {
-        createLabel: { id: `temp-${Date.now()}`, __typename: "Label" },
+        createLabel: { id, __typename: "Label" },
       },
       update(cache, { data: mutationPayloadData }) {
-        const id = mutationPayloadData?.createLabel?.id;
-        if (typeof id !== "string") {
+        if (typeof mutationPayloadData?.createLabel?.id !== "string") {
           return;
         }
 
-        addLabelToImageInCache(cache, { ...createLabelInputs, id });
+        addLabelToImageInCache(cache, createLabelInputs);
       },
     });
 
-    if (typeof data?.createLabel?.id !== "string") {
-      throw new Error("Couldn't get the id of the newly created label");
-    }
+    // TODO: Ideally we could select the label before awaiting for the mutation to complete
+    // because the optimistic response is run synchronously.
+    // However it makes some query fails. It would be nice to try to reverse those 2 lines
+    // and make the other "cache-first"
+    await createLabelPromise;
+    setSelectedLabelId(id);
 
-    setSelectedLabelId(data.createLabel.id);
-    return data.createLabel.id;
+    return id;
   },
   undo: async (id: string): Promise<string> => {
+    setSelectedLabelId(null);
     await client.mutate({
       mutation: deleteLabelMutation,
       variables: { id },
@@ -69,34 +74,6 @@ export const createCreateLabelEffect = (
       },
     });
 
-    setSelectedLabelId(null);
     return id;
-  },
-  redo: async (id: string) => {
-    const createLabelInputs = {
-      id,
-      imageId,
-      labelClassId: selectedLabelClassId,
-      geometry,
-      labelType,
-    };
-    const { data } = await client.mutate({
-      mutation: createLabelMutation,
-      variables: createLabelInputs,
-      refetchQueries: ["countLabelsOfDataset"],
-      optimisticResponse: {
-        createLabel: { id: `temp-${Date.now()}`, __typename: "Label" },
-      },
-      update(cache) {
-        addLabelToImageInCache(cache, createLabelInputs);
-      },
-    });
-
-    if (typeof data?.createLabel?.id !== "string") {
-      throw new Error("Couldn't get the id of the newly created label");
-    }
-
-    setSelectedLabelId(data.createLabel.id);
-    return data.createLabel.id;
   },
 });
