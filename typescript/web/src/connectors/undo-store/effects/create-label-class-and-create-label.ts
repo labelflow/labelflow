@@ -45,6 +45,7 @@ export const createCreateLabelClassAndCreateLabelEffect = (
   }
 ): Effect => ({
   do: async () => {
+    const labelId = uuid();
     const labelClassId = uuid();
 
     await client.mutate({
@@ -62,10 +63,11 @@ export const createCreateLabelClassAndCreateLabelEffect = (
     });
 
     const createLabelInputs = {
+      id: labelId,
       imageId,
       labelClassId,
       geometry,
-      labelType,
+      type: labelType,
     };
     const { data } = await client.mutate({
       mutation: createLabelMutation,
@@ -74,13 +76,8 @@ export const createCreateLabelClassAndCreateLabelEffect = (
       optimisticResponse: {
         createLabel: { id: `temp-${Date.now()}`, __typename: "Label" },
       },
-      update(cache, { data: mutationPayloadData }) {
-        const id = mutationPayloadData?.createLabel?.id;
-        if (typeof id !== "string") {
-          return;
-        }
-
-        addLabelToImageInCache(cache, { ...createLabelInputs, id });
+      update(cache) {
+        addLabelToImageInCache(cache, createLabelInputs);
       },
     });
 
@@ -163,7 +160,7 @@ export const createCreateLabelClassAndCreateLabelEffect = (
       imageId,
       labelClassId,
       geometry,
-      labelType,
+      type: labelType,
     };
     const { data } = await client.mutate({
       mutation: createLabelMutation,

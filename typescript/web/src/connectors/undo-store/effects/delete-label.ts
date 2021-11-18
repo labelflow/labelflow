@@ -82,7 +82,7 @@ export const createDeleteLabelEffect = (
       imageId,
       labelClassId,
       geometry: omit(["__typename"], geometry),
-      labelType: type,
+      type,
     };
 
     /* It is important to use the same id for the re-creation when the label
