@@ -1,3 +1,5 @@
+import imageSampleCollection from "../../typescript/web/src/utils/image-sample-collection";
+
 describe("Online workspaces access", () => {
   it("Should ask for sign up modal when not signed in and creating a workspace", () => {
     cy.setCookie("hasUserTriedApp", "false");
@@ -64,5 +66,39 @@ describe("Online workspaces access", () => {
     cy.get('[aria-label="Workspace selection menu popover"]')
       .contains("Cypress test workspace")
       .should("exist");
+  });
+  it.only("Should allow a user to add images to a dataset", () => {
+    // Login and create a workspace with datasets in it
+    cy.task("performLogin").then((token) => {
+      cy.setCookie("next-auth.session-token", token as string);
+    });
+    cy.task("createBucketIfNonExisting");
+    cy.task("createWorkspaceAndDatasets");
+    cy.setCookie("hasUserTriedApp", "true");
+    cy.setCookie("consentedCookies", "true");
+    // Access dataset and click on import images
+    cy.visit("/cypress-test-workspace/datasets");
+    cy.contains("Test dataset cypress").click();
+    cy.contains("You don't have any images.").should("be.visible");
+    cy.wait(420);
+    cy.get("header").within(() => {
+      cy.contains("Add images").click();
+    });
+    // Add images from example URLs
+    cy.contains("Import from a list of URLs instead").click();
+    cy.get("textarea").type(imageSampleCollection.slice(0, 8).join("\n"), {
+      delay: 0,
+    });
+    cy.wait(420);
+    // Check that uploaded images exist
+    cy.contains("Start Import").click();
+    cy.get(`[aria-label="Close"]`).click();
+    cy.wait(420);
+    cy.get("main")
+      .contains(
+        imageSampleCollection[1]
+          .split("?")[0]
+          .split("https://images.unsplash.com/")[1]
+      ).should("be.visible")
   });
 });

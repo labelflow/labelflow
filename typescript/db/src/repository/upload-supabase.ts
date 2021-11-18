@@ -5,7 +5,7 @@ import memoizeOne from "memoize-one";
 import { Repository } from "../../../common-resolvers/src";
 import { UploadTargetHttp } from "../../../graphql-types/src/graphql-types.generated";
 
-const getClient = memoizeOne(() =>
+export const getClient = memoizeOne(() =>
   createClient(
     process?.env?.SUPABASE_API_URL as string,
     process?.env?.SUPABASE_API_KEY as string

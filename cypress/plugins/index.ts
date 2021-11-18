@@ -19,6 +19,7 @@ import NodePolyfillPlugin from "node-polyfill-webpack-plugin";
 import path from "path";
 import { v4 as uuidV4 } from "uuid";
 import { getPrismaClient } from "../../typescript/db/src/prisma-client";
+import { getClient } from "../../typescript/db/src/repository/upload-supabase";
 import { MembershipRole } from "../../typescript/graphql-types/src/graphql-types.generated";
 
 /**
@@ -153,6 +154,15 @@ module.exports = (on: (type: string, preprocessor: any) => void) => {
         })
       ).id;
       return { workspaceSlug, datasetId };
+    },
+    async createBucketIfNonExisting() {
+      const supabase = await getClient();
+      const bucketName = "labelflow-images"
+      const bucket = await supabase.storage.getBucket(bucketName)
+      if ( bucket.data==null){
+        await supabase.storage.createBucket(bucketName)
+      }
+      return null;
     },
     async inviteUser({ workspaceSlug }: { workspaceSlug?: string } = {}) {
       const prisma = await getPrismaClient();
