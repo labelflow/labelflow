@@ -108,7 +108,6 @@ export const createCreateLabelClassAndCreateLabelEffect = (
     await client.mutate({
       mutation: deleteLabelMutation,
       variables: { id },
-      // TODO: handle count update
       refetchQueries: ["countLabelsOfDataset"],
       optimisticResponse: { deleteLabel: { id, __typename: "Label" } },
       update(cache) {
