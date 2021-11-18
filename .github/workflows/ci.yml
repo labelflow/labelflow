@@ -170,6 +170,8 @@ jobs:
           KONG_HTTPS_PORT: 8443
           POSTGRES_PORT: 5433
           POSTGRES_PASSWORD: your-super-secret-and-long-postgres-password
+          SUPABASE_API_URL: http://localhost:8000
+          SUPABASE_API_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyAgCiAgICAicm9sZSI6ICJzZXJ2aWNlX3JvbGUiLAogICAgImlhdCI6IDE2MzY0MTYwMDAsCiAgICAiZXhwIjogMTc5NDE4MjQwMAp9.zS-Gap5q71X1l56pVy8ldJpXhWpavxxydWg2bw0fq_I
       - name: generate prisma
         run: cd typescript/db && yarn deploy && yarn generate
         env:
