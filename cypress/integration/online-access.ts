@@ -99,6 +99,7 @@ describe("Online workspaces access", () => {
         imageSampleCollection[1]
           .split("?")[0]
           .split("https://images.unsplash.com/")[1]
-      ).should("be.visible")
+      )
+      .should("be.visible");
   });
 });

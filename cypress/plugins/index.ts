@@ -157,10 +157,10 @@ module.exports = (on: (type: string, preprocessor: any) => void) => {
     },
     async createBucketIfNonExisting() {
       const supabase = await getClient();
-      const bucketName = "labelflow-images"
-      const bucket = await supabase.storage.getBucket(bucketName)
-      if ( bucket.data==null){
-        await supabase.storage.createBucket(bucketName)
+      const bucketName = "labelflow-images";
+      const bucket = await supabase.storage.getBucket(bucketName);
+      if (bucket.data == null) {
+        await supabase.storage.createBucket(bucketName);
       }
       return null;
     },
