@@ -46,7 +46,7 @@ export const createDeleteLabelEffect = (
       variables: { id },
       refetchQueries: ["countLabelsOfDataset"],
       /* Note that there is no optimistic response here, only a cache update.
-       * We could add it but it feels like premature optimization */
+       * We could add it but it would imply to fetch a lot of data beforehand */
       update(cache, { data: updateData }) {
         if (typeof updateData?.deleteLabel?.imageId !== "string") {
           return;

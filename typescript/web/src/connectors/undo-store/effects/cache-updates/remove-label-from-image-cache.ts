@@ -13,5 +13,6 @@ export function removeLabelFromImageCache(
         );
       },
     },
+    optimistic: true,
   });
 }
