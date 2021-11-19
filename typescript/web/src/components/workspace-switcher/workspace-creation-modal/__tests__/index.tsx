@@ -24,7 +24,7 @@ describe("Message", () => {
       <Message
         error={undefined}
         workspaceName="test"
-        workspaceNameIsAlreadyTaken={false}
+        isWorkspaceSlugAlreadyTaken={false}
       />
     );
     expect(
@@ -37,7 +37,7 @@ describe("Message", () => {
       <Message
         error={undefined}
         workspaceName="test"
-        workspaceNameIsAlreadyTaken
+        isWorkspaceSlugAlreadyTaken
       />
     );
     expect(getByText(/The name "test" is already taken/)).toBeDefined();
@@ -48,7 +48,7 @@ describe("Message", () => {
       <Message
         error={undefined}
         workspaceName={forbiddenWorkspaceSlugs[0]}
-        workspaceNameIsAlreadyTaken={false}
+        isWorkspaceSlugAlreadyTaken={false}
       />
     );
     expect(getByText(/The name ".*?" is already taken/)).toBeDefined();
@@ -59,7 +59,7 @@ describe("Message", () => {
       <Message
         error={undefined}
         workspaceName="hello!"
-        workspaceNameIsAlreadyTaken={false}
+        isWorkspaceSlugAlreadyTaken={false}
       />
     );
     expect(
@@ -72,7 +72,7 @@ describe("Message", () => {
       <Message
         error={new ApolloError({ errorMessage: "this is an error" })}
         workspaceName="test"
-        workspaceNameIsAlreadyTaken={false}
+        isWorkspaceSlugAlreadyTaken={false}
       />
     );
     expect(getByText(/this is an error/)).toBeDefined();
@@ -83,7 +83,7 @@ describe("Message", () => {
       <Message
         error={undefined}
         workspaceName={undefined}
-        workspaceNameIsAlreadyTaken={false}
+        isWorkspaceSlugAlreadyTaken={false}
       />
     );
 
