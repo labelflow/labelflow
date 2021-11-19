@@ -9,6 +9,7 @@ import { useEffect } from "react";
 import {
   useLabelingStore,
   SelectionToolState,
+  Tools,
 } from "../../../../connectors/labeling-state";
 import { keymap } from "../../../../keymap";
 import { ToggleButtonGroup } from "./toggle-button-group";
@@ -33,6 +34,7 @@ export const EditSelectionMode = () => {
     skip: selectedLabelId == null,
   });
   const isIogModeAvailable = dataLabelQuery?.label?.smartToolInput != null;
+  const selectedTool = useLabelingStore((state) => state.selectedTool);
   const selectionToolState = useLabelingStore(
     (state) => state.selectionToolState
   );
@@ -59,7 +61,7 @@ export const EditSelectionMode = () => {
   );
   const bg = useColorModeValue("white", "gray.800");
 
-  if (!selectedLabelId) {
+  if (!selectedLabelId || selectedTool !== Tools.SELECTION) {
     return null;
   }
 
