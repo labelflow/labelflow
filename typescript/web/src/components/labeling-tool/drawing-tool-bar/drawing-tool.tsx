@@ -348,7 +348,7 @@ export const DrawingTool = () => {
                 </Box>
               </ToolSelectionPopoverItem>
               <ToolSelectionPopoverItem
-                name="Auto Polygon tool"
+                name="Auto Polygon"
                 shortcut={keymap.toolIog.key}
                 selected={selectedTool === Tools.IOG}
                 onClick={() => {
@@ -358,7 +358,7 @@ export const DrawingTool = () => {
                   setSelectedTool(Tools.IOG);
                   setIsPopoverOpened(false);
                 }}
-                ariaLabel="Select auto polygon tool"
+                ariaLabel="Auto polygon Tool"
               >
                 <Box ml="2">
                   <ChakraIoColorWandOutline size="1.3em" />
