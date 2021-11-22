@@ -88,11 +88,11 @@ export const ResizeIogCanvas = (props: {
       const positionSpinner =
         extractSmartToolInputInputFromIogMask(coordinates).centerPoint;
       const timestamp = new Date().getTime();
-      registerIogJob(timestamp, selectedLabelId, positionSpinner);
       // await interactionEndIog(e, perform, client, toast);
       if (feature != null) {
         const { id: labelIdIog } = feature.getProperties();
         try {
+          registerIogJob(timestamp, selectedLabelId, positionSpinner);
           await perform(
             createRunIogEffect(
               {
@@ -115,9 +115,10 @@ export const ResizeIogCanvas = (props: {
             duration: 10000,
           });
           throw error;
+        } finally {
+          unregisterIogJob(timestamp, selectedLabelId);
         }
       }
-      unregisterIogJob(timestamp, selectedLabelId);
       return true;
     },
     [toast, perform, client, registerIogJob, unregisterIogJob]

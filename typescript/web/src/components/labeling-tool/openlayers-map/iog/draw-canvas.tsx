@@ -106,9 +106,7 @@ export const DrawIogCanvas = ({ imageId }: { imageId: string }) => {
 
       try {
         await inferencePromise;
-        unregisterIogJob(timestamp, labelId);
       } catch (error) {
-        unregisterIogJob(timestamp, labelId);
         setSelectedLabelId(null);
         toast({
           title: "Error executing IOG",
@@ -119,6 +117,8 @@ export const DrawIogCanvas = ({ imageId }: { imageId: string }) => {
           duration: 10000,
         });
         throw error;
+      } finally {
+        unregisterIogJob(timestamp, labelId);
       }
     },
     [

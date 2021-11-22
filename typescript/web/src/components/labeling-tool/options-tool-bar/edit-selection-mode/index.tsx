@@ -3,7 +3,6 @@ import { BiShapePolygon } from "react-icons/bi";
 import { IoColorWandOutline } from "react-icons/io5";
 import { chakra, useColorModeValue } from "@chakra-ui/react";
 import { useHotkeys } from "react-hotkeys-hook";
-import * as React from "react";
 
 import { useEffect } from "react";
 import {
