@@ -1,5 +1,4 @@
 import { ExportOptionsYolo, LabelType } from "@labelflow/graphql-types";
-// import { Blob } from "buffer";
 import JSZip from "jszip";
 import mime from "mime-types";
 import { DbImage, DbLabel, DbLabelClass } from "../../types";
