@@ -48,7 +48,13 @@ export const extractIogMaskFromLabel = (
 
 export const extractSmartToolInputInputFromIogMask = (
   coordinates: number[][][]
-): { x: number; y: number; width: number; height: number } => {
+): {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  centerPoint: [number, number];
+} => {
   const xCoordinates = coordinates[coordinates.length - 1].map(
     (point) => point[0]
   );
@@ -61,11 +67,14 @@ export const extractSmartToolInputInputFromIogMask = (
     Math.max(...xCoordinates),
     Math.max(...yCoordinates),
   ];
+  const width = destX - x;
+  const height = destY - y;
   return {
     x,
     y,
-    width: destX - x,
-    height: destY - y,
+    width,
+    height,
+    centerPoint: [x + width / 2, y + height / 2],
   };
 };
 

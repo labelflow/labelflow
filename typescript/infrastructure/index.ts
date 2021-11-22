@@ -364,9 +364,9 @@ export const serviceName = service.metadata.apply((m) => m.name);
 //   (s) => s.loadBalancer.ingress[0].ip
 // );
 
-// const ipAddress = new gcp.compute.Address("test-iog-address", {});
-// export const staticIpAddress = ipAddress.address;
-// export const staticIpName = ipAddress.name;
+const ipAddress = new gcp.compute.Address("test-iog-address", {});
+export const staticIpAddress = ipAddress.address;
+export const staticIpName = ipAddress.name;
 
 export const managedCertificate = new k8s.apiextensions.CustomResource(
   "test-iog-managed-certificate",
@@ -381,7 +381,8 @@ export const managedCertificate = new k8s.apiextensions.CustomResource(
   { provider: clusterProvider }
 );
 
-const managedCertificateName = managedCertificate.metadata.apply((m) => m.name);
+// Uncomment bellow for FIRST deployment
+// const managedCertificateName = managedCertificate.metadata.apply((m) => m.name);
 
 export const ingress = new k8s.networking.v1.Ingress(
   "test-iog-ingress",
@@ -389,17 +390,15 @@ export const ingress = new k8s.networking.v1.Ingress(
     metadata: {
       namespace: namespaceName,
       annotations: {
-        // // Does not work yet so far...
-        // "kubernetes.io/ingress.global-static-ip-name": staticIpName,
-
-        // Enable https on the ingress
-        "networking.gke.io/managed-certificates": managedCertificateName,
+        // Enable https on the ingress to use once without the following annotation during FIRST deployment
+        // "networking.gke.io/managed-certificates": managedCertificateName,
 
         // // Warning you cannot use this annotation with the one above...
         // // See https://github.com/kubernetes/ingress-gce/issues/764
-        // "kubernetes.io/ingress.allow-http": "false",
-
-        // "kubernetes.io/ingress.class": "gce",
+        "kubernetes.io/ingress.allow-http": "false",
+        // // Does not work yet so far...
+        "kubernetes.io/ingress.global-static-ip-name": staticIpName,
+        "kubernetes.io/ingress.class": "gce",
       },
     },
     spec: {

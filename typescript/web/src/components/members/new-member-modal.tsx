@@ -25,12 +25,8 @@ import { MembershipRole, InvitationResult } from "@labelflow/graphql-types";
 
 import { RoleSelection } from "./role-selection";
 import { InviteMember } from "./types";
+import { validateEmail } from "../../utils/validate-email";
 
-const validateEmail = (email: string): boolean => {
-  const re =
-    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-  return re.test(String(email).toLowerCase());
-};
 const maxNumberOfEmails = 20;
 type EmailStatuses = Record<InvitationResult, string[]>;
 

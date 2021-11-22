@@ -7,7 +7,11 @@ import { Geometry } from "ol/geom";
 import { createEmpty, extend, getCenter } from "ol/extent";
 
 import OverlayPositioning from "ol/OverlayPositioning";
-import { useLabelingStore, Tools } from "../../../../connectors/labeling-state";
+import {
+  useLabelingStore,
+  Tools,
+  SelectionToolState,
+} from "../../../../connectors/labeling-state";
 
 import { keymap } from "../../../../keymap";
 
@@ -66,18 +70,26 @@ export const SelectInteraction = ({
   }
 
   const selectedTool = useLabelingStore((state) => state.selectedTool);
+  const selectionToolState = useLabelingStore(
+    (state) => state.selectionToolState
+  );
   const setSelectedLabelId = useLabelingStore(
     (state) => state.setSelectedLabelId
   );
+  const selectedLabelId = useLabelingStore((state) => state.selectedLabelId);
 
   useHotkeys(
     keymap.openLabelClassSelectionPopover.key,
     () => {
       // To open the context menu when pressing "c" when no label is selected
       // in classification mode
-      const { selectedLabelId } = useLabelingStore.getState();
+      const { selectedLabelId: selectedLabelIdHotKey } =
+        useLabelingStore.getState();
 
-      if (selectedTool === Tools.CLASSIFICATION && selectedLabelId == null) {
+      if (
+        selectedTool === Tools.CLASSIFICATION &&
+        selectedLabelIdHotKey == null
+      ) {
         setIsContextMenuOpen(true);
         setContextMenuLocation([
           (imageRef.current?.width ?? 0) / 2,
@@ -135,6 +147,12 @@ export const SelectInteraction = ({
   };
 
   const clickHandler = (e: MapBrowserEvent<UIEvent>) => {
+    if (
+      selectedTool === Tools.SELECTION &&
+      selectionToolState === SelectionToolState.IOG &&
+      selectedLabelId != null
+    )
+      return true;
     const feature = getClosestFeature(e);
     setSelectedLabelId(feature?.getProperties().id ?? null);
     return true;

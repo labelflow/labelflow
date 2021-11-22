@@ -7,7 +7,7 @@ import pickle
 
 class Cache:
     def __init__(
-        self, cache_folder="./cache", max_file_number=10, validation_time=86400
+        self, cache_folder="./cache", max_file_number=100, validation_time=86400
     ):
         self.cache_folder = cache_folder
         self.max_file_number = max_file_number

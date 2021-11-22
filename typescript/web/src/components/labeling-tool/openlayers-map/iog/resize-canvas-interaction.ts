@@ -20,7 +20,7 @@ export type ResizeIogEvent = {
   features: Collection<Feature<Geometry>>;
 };
 
-export class ResizeIogBox extends PointerInteraction {
+export class ResizeIogCanvasInteraction extends PointerInteraction {
   feature: Feature<Polygon> | null;
 
   featureVertices: FeatureVertices | null = null;

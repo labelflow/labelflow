@@ -1,7 +1,7 @@
 const path = require("path");
-const webpack = require('webpack')
+const webpack = require('webpack');
 const NodePolyfillPlugin = require("node-polyfill-webpack-plugin");
-const TerserPlugin = require('terser-webpack-plugin')
+const TerserPlugin = require('terser-webpack-plugin');
 // const { TerserPlugin } = require("next/dist/build/webpack/plugins/terser-webpack-plugin/src/index.js");
 
 const buildServiceWorker = ({ minify } = {}) => {
@@ -57,6 +57,7 @@ const buildServiceWorker = ({ minify } = {}) => {
         new NodePolyfillPlugin({
           excludeAliases: ["console"],
         }),
+        new webpack.EnvironmentPlugin(['NODE_ENV'].concat(Object.keys(process.env).filter(key => key.startsWith("NEXT_PUBLIC")))),
       ],
       optimization: minify
         ? {

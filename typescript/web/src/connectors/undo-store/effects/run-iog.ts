@@ -1,4 +1,6 @@
 import { ApolloClient, gql } from "@apollo/client";
+import { Coordinate } from "ol/coordinate";
+
 import { GeometryInput, LabelType } from "@labelflow/graphql-types";
 import { Effect } from "..";
 
@@ -40,6 +42,7 @@ const runIogMutation = gql`
       smartToolInput
       labelClass {
         id
+        color
       }
     }
   }
@@ -63,6 +66,7 @@ const updateLabelMutation = gql`
       height
       labelClass {
         id
+        color
       }
     }
   }
@@ -108,9 +112,9 @@ export const createRunIogEffect = (
     y?: number;
     width?: number;
     height?: number;
-    pointsInside?: [number, number][];
-    pointsOutside?: [number, number][];
-    centerPoint?: [number, number];
+    pointsInside?: Coordinate[];
+    pointsOutside?: Coordinate[];
+    centerPoint?: Coordinate;
   },
   {
     client,
@@ -169,7 +173,7 @@ export const createRunIogEffect = (
       },
     };
 
-    client.mutate({
+    await client.mutate({
       mutation: runIogMutation,
       variables: {
         id: labelId,

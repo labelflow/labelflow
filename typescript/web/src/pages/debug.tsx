@@ -228,6 +228,8 @@ const DebugPage = () => {
                         process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_AUTHOR_LOGIN,
                       NEXT_PUBLIC_VERCEL_GIT_COMMIT_AUTHOR_NAME:
                         process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_AUTHOR_NAME,
+                      NEXT_PUBLIC_IOG_API_ENDPOINT:
+                        process.env.NEXT_PUBLIC_IOG_API_ENDPOINT,
                     },
                   },
                   null,
