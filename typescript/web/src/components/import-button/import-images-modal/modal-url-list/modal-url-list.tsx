@@ -9,7 +9,7 @@ import {
 } from "@chakra-ui/react";
 import { useApolloClient, useQuery, gql } from "@apollo/client";
 import { useRouter } from "next/router";
-
+import Bluebird from "bluebird";
 import { UrlList } from "./url-list";
 import { UrlStatuses } from "./url-statuses";
 import { DroppedUrl, UploadStatuses } from "../types";
@@ -75,37 +75,37 @@ export const ImportImagesModalUrlList = ({
 
     const createImages = async () => {
       const now = new Date();
-      await Promise.all(
-        urls
-          .filter((url) => isEmpty(url.errors))
-          .map(async (acceptedUrl, index) => {
-            try {
-              const createdAt = new Date();
-              createdAt.setTime(now.getTime() + index);
-              await apolloClient.mutate({
-                mutation: createImageFromUrlMutation,
-                variables: {
-                  externalUrl: acceptedUrl.url,
-                  createdAt: createdAt.toISOString(),
-                  datasetId,
-                },
-              });
+      await Bluebird.Promise.map(
+        urls.filter((url) => isEmpty(url.errors)),
+        async (acceptedUrl, index) => {
+          try {
+            const createdAt = new Date();
+            createdAt.setTime(now.getTime() + index);
+            await apolloClient.mutate({
+              mutation: createImageFromUrlMutation,
+              variables: {
+                externalUrl: acceptedUrl.url,
+                createdAt: createdAt.toISOString(),
+                datasetId,
+              },
+            });
 
-              setUploadStatuses((previousUploadStatuses) => {
-                return {
-                  ...previousUploadStatuses,
-                  [acceptedUrl.url]: true,
-                };
-              });
-            } catch (err) {
-              setUploadStatuses((previousUploadStatuses) => {
-                return {
-                  ...previousUploadStatuses,
-                  [acceptedUrl.url]: err.message,
-                };
-              });
-            }
-          })
+            setUploadStatuses((previousUploadStatuses) => {
+              return {
+                ...previousUploadStatuses,
+                [acceptedUrl.url]: true,
+              };
+            });
+          } catch (err) {
+            setUploadStatuses((previousUploadStatuses) => {
+              return {
+                ...previousUploadStatuses,
+                [acceptedUrl.url]: err.message,
+              };
+            });
+          }
+        },
+        { concurrency: 2 }
       );
       onUploadEnd();
     };
