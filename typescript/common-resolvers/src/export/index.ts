@@ -8,25 +8,24 @@ import { getOrigin } from "../utils/get-origin";
 
 const generateExportFile = async (
   args: QueryExportDatasetArgs,
-  { repository }: Context
+  context: Context,
+  user?: { id: string }
 ): Promise<Blob> => {
   switch (args.format) {
     case ExportFormat.Yolo: {
       return await exportToYolo(
         args.where.datasetId,
         args?.options?.yolo ?? {},
-        {
-          repository,
-        }
+        context,
+        user
       );
     }
     case ExportFormat.Coco: {
       return await exportToCoco(
         args.where.datasetId,
         args?.options?.coco ?? {},
-        {
-          repository,
-        }
+        context,
+        user
       );
     }
     default: {
@@ -38,9 +37,9 @@ const generateExportFile = async (
 const exportDataset = async (
   _: any,
   args: QueryExportDatasetArgs,
-  { repository, req }: Context
+  { repository, req, user }: Context
 ) => {
-  const fileExport = await generateExportFile(args, { repository });
+  const fileExport = await generateExportFile(args, { repository, req }, user);
   const origin = getOrigin(req);
   const outUrl = (
     await repository.upload.getUploadTargetHttp(
