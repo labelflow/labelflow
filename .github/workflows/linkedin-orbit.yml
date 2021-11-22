@@ -1,7 +1,7 @@
 name: Check for New LinkedIn Interactions and Add to Orbit
 on:
   schedule:
-    - cron: "0 */1 */1 * *"
+    - cron: "0 0 */1 * *"
   workflow_dispatch:
 jobs:
   comments-workflow:
@@ -21,7 +21,7 @@ jobs:
         gem install --no-document linkedin_orbit
     - name: Check for New Comments
       run: |
-        linkedin_orbit --check-comments --historical-import
+        linkedin_orbit --check-comments
       env:
         LINKEDIN_ORGANIZATION: ${{ secrets.LINKEDIN_ORGANIZATION }}
         LINKEDIN_TOKEN: ${{ secrets.LINKEDIN_TOKEN }}
