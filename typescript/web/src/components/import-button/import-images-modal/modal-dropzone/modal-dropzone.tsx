@@ -283,7 +283,7 @@ export const ImportImagesModalDropzone = ({
             });
           }
         },
-        { concurrency: 10 }
+        { concurrency: 2 }
       );
       onUploadEnd();
     };
