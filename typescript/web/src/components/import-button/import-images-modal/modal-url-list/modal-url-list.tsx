@@ -105,7 +105,7 @@ export const ImportImagesModalUrlList = ({
             });
           }
         },
-        { concurrency: 2 }
+        { concurrency: 5 }
       );
       onUploadEnd();
     };
