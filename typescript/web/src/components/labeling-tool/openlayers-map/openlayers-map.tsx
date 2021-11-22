@@ -97,10 +97,14 @@ export const OpenlayersMap = () => {
   const isContextMenuOpen = useLabelingStore(
     (state) => state.isContextMenuOpen
   );
+  const iogSpinnerRef = useRef<HTMLDivElement | null>(null);
   const setIsContextMenuOpen = useLabelingStore(
     (state) => state.setIsContextMenuOpen
   );
   const selectedTool = useLabelingStore((state) => state.selectedTool);
+  const iogSpinnerPosition = useLabelingStore(
+    (state) => state.iogSpinnerPosition
+  );
   const setIsImageLoading = useLabelingStore(
     (state) => state.setIsImageLoading
   );
@@ -280,8 +284,12 @@ export const OpenlayersMap = () => {
                 image={memoizedImage}
                 classificationOverlayRef={classificationOverlayRef}
               />
-              <DrawInteraction />
+              <DrawInteraction
+                iogSpinnerRef={iogSpinnerRef}
+                sourceVectorLabelsRef={sourceVectorBoxesRef}
+              />
               <SelectAndModifyFeature
+                iogSpinnerRef={iogSpinnerRef}
                 editClassOverlayRef={editClassOverlayRef}
                 sourceVectorLabelsRef={sourceVectorBoxesRef}
                 setIsContextMenuOpen={setIsContextMenuOpen}
@@ -333,6 +341,18 @@ export const OpenlayersMap = () => {
             classificationOverlayRef.current = e;
           }
         }}
+      />
+      <Spinner
+        id="spinner"
+        key="spinner"
+        visibility={iogSpinnerPosition ? "visible" : "hidden"}
+        ref={(e) => {
+          if (e && iogSpinnerRef.current !== e) {
+            // eslint-disable-next-line no-param-reassign
+            iogSpinnerRef.current = e;
+          }
+        }}
+        color="brand"
       />
     </Box>
   );
