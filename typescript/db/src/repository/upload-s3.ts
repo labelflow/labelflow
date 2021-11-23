@@ -5,7 +5,7 @@ import memoizeOne from "memoize-one";
 import { Repository } from "../../../common-resolvers/src";
 import { UploadTargetHttp } from "../../../graphql-types/src/graphql-types.generated";
 
-const bucket = "labelflow-images";
+const bucket = "labelflow";
 const region = process.env?.AWS_REGION!;
 
 const getClient = memoizeOne(
