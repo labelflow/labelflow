@@ -1,7 +1,6 @@
 import nextConnect from "next-connect";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
-// import multer from "multer";
 import { getSession } from "next-auth/react";
 import { NextApiResponse, NextApiRequest } from "next";
 import { captureException } from "@sentry/nextjs";
@@ -14,7 +13,6 @@ const client = new S3Client({
   },
 });
 const bucket = "labelflow";
-// const upload = multer();
 
 const apiRoute = nextConnect({
   onError(error, req: NextApiRequest, res: NextApiResponse) {
@@ -28,8 +26,6 @@ const apiRoute = nextConnect({
     captureException(new Error(`Method '${req.method}' Not Allowed`));
   },
 });
-
-// apiRoute.use(upload.single("image"));
 
 apiRoute.get(async (req, res) => {
   const session = await getSession({ req });
