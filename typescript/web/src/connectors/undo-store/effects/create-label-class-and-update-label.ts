@@ -45,7 +45,7 @@ export const createCreateLabelClassAndUpdateLabelEffect = (
      * This makes the optimistic less useful.
      * We still need to wait for the first mutation to answer before doing the update and optimistic response of the second one.
      *
-     * Technically, it is not needed to wait for the first mutation as we already now the id of the label class we will create, however,
+     * Technically, it is not needed to wait for the first mutation as we already know the id of the label class we will create, however,
      * we have a check in the backend to ensure that the new label class exist before updating a label. This would add a race condition.
      *
      * It would be better if we could create the label class and update the label in the same mutation.
