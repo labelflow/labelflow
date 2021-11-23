@@ -125,7 +125,7 @@ export const getImageEntityFromMutationArgs = async (
       );
     }
 
-    await repository.upload.put(uploadTarget.uploadUrl, blob);
+    await repository.upload.put(uploadTarget.downloadUrl, blob);
 
     finalUrl = uploadTarget.downloadUrl;
   }
@@ -146,7 +146,7 @@ export const getImageEntityFromMutationArgs = async (
       );
     }
 
-    await repository.upload.put(uploadTarget.uploadUrl, file);
+    await repository.upload.put(uploadTarget.downloadUrl, file);
 
     finalUrl = uploadTarget.downloadUrl;
   }

@@ -72,8 +72,14 @@ export const deleteFromStorage: Repository["upload"]["delete"] = async (
 };
 
 export const putInStorage: Repository["upload"]["put"] = async (url, blob) => {
-  await fetch(url, {
-    method: "PUT",
-    body: await blob.arrayBuffer(),
+  const s3Client = getClient();
+  const query = `${uploadsRoute}/`;
+  const key = url.substring(url.lastIndexOf(query) + query.length);
+  const imageBuffer = await blob.arrayBuffer();
+  const command = await new PutObjectCommand({
+    Bucket: bucket,
+    Key: key,
+    Body: imageBuffer,
   });
+  await s3Client.send(command);
 };
