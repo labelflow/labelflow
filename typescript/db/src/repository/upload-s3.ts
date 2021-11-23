@@ -51,7 +51,7 @@ export const getFromStorage: Repository["upload"]["get"] = async (url, req) => {
   const fetchResult = await fetch(url, {
     method: "GET",
     headers,
-    credentials: "include", // TODO: added this, is it needed?
+    credentials: "include",
   });
 
   if (fetchResult.status !== 200) {
