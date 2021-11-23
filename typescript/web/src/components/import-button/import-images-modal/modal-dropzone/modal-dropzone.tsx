@@ -212,12 +212,18 @@ export const ImportImagesModalDropzone = ({
                     };
                   });
                 }
+                // SUPABASE upload
+                // const form = new FormData();
+                // form.append("image", acceptedFile.file);
+                // await fetch(target.uploadUrl, {
+                //   method: "PUT",
+                //   body: form,
+                // });
 
-                const form = new FormData();
-                form.append("image", acceptedFile.file);
+                // AWS upload
                 await fetch(target.uploadUrl, {
                   method: "PUT",
-                  body: form,
+                  body: acceptedFile.file,
                 });
                 if (acceptedFile.file.type.startsWith("image")) {
                   const createdAt = new Date();
