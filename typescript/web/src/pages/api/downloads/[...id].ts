@@ -13,7 +13,7 @@ const client = new S3Client({
     secretAccessKey: process.env?.AWS_SECRET_ACCESS_KEY!,
   },
 });
-const bucket = "labelflow-images";
+const bucket = "labelflow";
 // const upload = multer();
 
 const apiRoute = nextConnect({
