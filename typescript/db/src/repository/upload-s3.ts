@@ -79,7 +79,7 @@ export const putInStorage: Repository["upload"]["put"] = async (url, blob) => {
   const command = await new PutObjectCommand({
     Bucket: bucket,
     Key: key,
-    Body: imageBuffer,
+    Body: imageBuffer as Buffer,
   });
   await s3Client.send(command);
 };
