@@ -13,7 +13,7 @@ interface NavLinkProps extends HTMLChakraProps<"a"> {
 
 const DesktopNavLink = React.forwardRef<HTMLAnchorElement, NavLinkProps>(
   (props: NavLinkProps, ref) => {
-    const { active, href, ...rest } = props;
+    const { active, href, target, ...rest } = props;
     return (
       <NextLink href={href ?? "#"}>
         <chakra.a
@@ -26,6 +26,7 @@ const DesktopNavLink = React.forwardRef<HTMLAnchorElement, NavLinkProps>(
           aria-current={active ? "page" : undefined}
           color={mode("gray.600", "gray.400")}
           transition="all 0.2s"
+          target={target}
           {...rest}
           _hover={{ color: "gray.500" }}
           _active={{ color: "brand.600" }}
@@ -42,7 +43,7 @@ const DesktopNavLink = React.forwardRef<HTMLAnchorElement, NavLinkProps>(
 DesktopNavLink.displayName = "DesktopNavLink";
 
 export const MobileNavLink = (props: NavLinkProps) => {
-  const { active, href, ...rest } = props;
+  const { active, href, target, ...rest } = props;
   return (
     <NextLink href={href ?? "#"}>
       <chakra.a
@@ -55,6 +56,7 @@ export const MobileNavLink = (props: NavLinkProps) => {
         fontWeight="semibold"
         borderBottomWidth="1px"
         href={href}
+        target={target}
         {...rest}
       />
     </NextLink>
