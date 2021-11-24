@@ -11,7 +11,7 @@ import { useApolloClient, useQuery, gql } from "@apollo/client";
 import { useRouter } from "next/router";
 import { v4 as uuidv4 } from "uuid";
 import mime from "mime-types";
-
+import Bluebird from "bluebird";
 import {
   ExportFormat,
   UploadTarget,
@@ -145,35 +145,61 @@ export const ImportImagesModalDropzone = ({
 
     const createImages = async () => {
       const now = new Date();
-      await Promise.all(
-        files
-          .filter((file) => isEmpty(file.errors))
-          .map(async (acceptedFile, index) => {
-            try {
-              // Ask server how to upload image
-              const { data } = await apolloClient.mutate({
-                mutation: getImageUploadTargetMutation,
+      await Bluebird.Promise.map(
+        files.filter((file) => isEmpty(file.errors)),
+        async (acceptedFile, index) => {
+          try {
+            // Ask server how to upload image
+            const { data } = await apolloClient.mutate({
+              mutation: getImageUploadTargetMutation,
+              variables: {
+                key: getImageStoreKey(
+                  datasetId as string,
+                  uuidv4(),
+                  acceptedFile.file.type
+                ),
+              },
+            });
+
+            const target: UploadTarget = data.getUploadTarget;
+
+            // eslint-disable-next-line no-underscore-dangle
+            if (target.__typename === "UploadTargetDirect") {
+              // Direct file upload through graphql upload mutation
+              const createdAt = new Date();
+              createdAt.setTime(now.getTime() + index);
+              await apolloClient.mutate({
+                mutation: createImageFromFileMutation,
                 variables: {
-                  key: getImageStoreKey(
-                    datasetId as string,
-                    uuidv4(),
-                    acceptedFile.file.type
-                  ),
+                  file: acceptedFile.file,
+                  createdAt: createdAt.toISOString(),
+                  datasetId,
                 },
               });
 
-              const target: UploadTarget = data.getUploadTarget;
+              return setFileUploadStatuses((previousFileUploadStatuses) => {
+                return {
+                  ...previousFileUploadStatuses,
+                  [acceptedFile.file.path ?? acceptedFile.file.name]: true,
+                };
+              });
+            }
 
-              // eslint-disable-next-line no-underscore-dangle
-              if (target.__typename === "UploadTargetDirect") {
-                // Direct file upload through graphql upload mutation
-                const createdAt = new Date();
-                createdAt.setTime(now.getTime() + index);
+            // eslint-disable-next-line no-underscore-dangle
+            if (target.__typename === "UploadTargetHttp") {
+              // File upload to the url provided by the server
+
+              if (browser?.name === "safari") {
+                // This special case is needed for Safari
+                // See https://github.com/labelflow/labelflow/issues/228
+                // See https://stackoverflow.com/questions/63144979/fetch-event-listener-not-triggering-in-service-worker-for-file-upload-via-mult
+                const url = await encodeFileToDataUrl(acceptedFile.file);
+
                 await apolloClient.mutate({
-                  mutation: createImageFromFileMutation,
+                  mutation: createImageFromUrlMutation,
                   variables: {
-                    file: acceptedFile.file,
-                    createdAt: createdAt.toISOString(),
+                    url,
+                    name: acceptedFile.file.name,
                     datasetId,
                   },
                 });
@@ -186,105 +212,78 @@ export const ImportImagesModalDropzone = ({
                 });
               }
 
-              // eslint-disable-next-line no-underscore-dangle
-              if (target.__typename === "UploadTargetHttp") {
-                // File upload to the url provided by the server
-
-                if (browser?.name === "safari") {
-                  // This special case is needed for Safari
-                  // See https://github.com/labelflow/labelflow/issues/228
-                  // See https://stackoverflow.com/questions/63144979/fetch-event-listener-not-triggering-in-service-worker-for-file-upload-via-mult
-                  const url = await encodeFileToDataUrl(acceptedFile.file);
-
-                  await apolloClient.mutate({
-                    mutation: createImageFromUrlMutation,
-                    variables: {
-                      url,
-                      name: acceptedFile.file.name,
-                      datasetId,
-                    },
-                  });
-
-                  return setFileUploadStatuses((previousFileUploadStatuses) => {
-                    return {
-                      ...previousFileUploadStatuses,
-                      [acceptedFile.file.path ?? acceptedFile.file.name]: true,
-                    };
-                  });
-                }
-
-                const form = new FormData();
-                form.append("image", acceptedFile.file);
-                await fetch(target.uploadUrl, {
-                  method: "PUT",
-                  body: form,
+              const form = new FormData();
+              form.append("image", acceptedFile.file);
+              await fetch(target.uploadUrl, {
+                method: "PUT",
+                body: form,
+              });
+              if (acceptedFile.file.type.startsWith("image")) {
+                const createdAt = new Date();
+                createdAt.setTime(now.getTime() + index);
+                await apolloClient.mutate({
+                  mutation: createImageFromUrlMutation,
+                  variables: {
+                    url: target.downloadUrl,
+                    createdAt: createdAt.toISOString(),
+                    name: acceptedFile.file.name,
+                    datasetId,
+                  },
                 });
-                if (acceptedFile.file.type.startsWith("image")) {
-                  const createdAt = new Date();
-                  createdAt.setTime(now.getTime() + index);
-                  await apolloClient.mutate({
-                    mutation: createImageFromUrlMutation,
-                    variables: {
+              } else {
+                // It's a dataset / annotations that we want to import
+                const dataImportDataset = await apolloClient.mutate({
+                  mutation: importDataset,
+                  variables: {
+                    where: { id: datasetId },
+                    data: {
                       url: target.downloadUrl,
-                      createdAt: createdAt.toISOString(),
-                      name: acceptedFile.file.name,
-                      datasetId,
-                    },
-                  });
-                } else {
-                  // It's a dataset / annotations that we want to import
-                  const dataImportDataset = await apolloClient.mutate({
-                    mutation: importDataset,
-                    variables: {
-                      where: { id: datasetId },
-                      data: {
-                        url: target.downloadUrl,
-                        format: ExportFormat.Coco,
-                        options: {
-                          coco: {
-                            annotationsOnly:
-                              acceptedFile.file.type === "application/json",
-                          },
+                      format: ExportFormat.Coco,
+                      options: {
+                        coco: {
+                          annotationsOnly:
+                            acceptedFile.file.type === "application/json",
                         },
                       },
                     },
-                    refetchQueries: [
-                      "getDatasetData",
-                      "getImageLabels",
-                      "getLabel",
-                      "countLabelsOfDataset",
-                      "getDatasetLabelClasses",
-                    ],
-                  });
-                  if (dataImportDataset?.data?.importDataset?.error) {
-                    throw new Error(
-                      dataImportDataset?.data?.importDataset?.error
-                    );
-                  }
-                }
-
-                return setFileUploadStatuses((previousFileUploadStatuses) => {
-                  return {
-                    ...previousFileUploadStatuses,
-                    [acceptedFile.file.path ?? acceptedFile.file.name]: true,
-                  };
+                  },
+                  refetchQueries: [
+                    "getDatasetData",
+                    "getImageLabels",
+                    "getLabel",
+                    "countLabelsOfDataset",
+                    "getDatasetLabelClasses",
+                  ],
                 });
+                if (dataImportDataset?.data?.importDataset?.error) {
+                  throw new Error(
+                    dataImportDataset?.data?.importDataset?.error
+                  );
+                }
               }
 
-              throw new Error(
-                // eslint-disable-next-line no-underscore-dangle
-                `Unrecognized upload target provided by server: ${target.__typename}`
-              );
-            } catch (err) {
               return setFileUploadStatuses((previousFileUploadStatuses) => {
                 return {
                   ...previousFileUploadStatuses,
-                  [acceptedFile.file.path ?? acceptedFile.file.name]:
-                    err.message,
+                  [acceptedFile.file.path ?? acceptedFile.file.name]: true,
                 };
               });
             }
-          })
+
+            throw new Error(
+              // eslint-disable-next-line no-underscore-dangle
+              `Unrecognized upload target provided by server: ${target.__typename}`
+            );
+          } catch (err) {
+            return setFileUploadStatuses((previousFileUploadStatuses) => {
+              return {
+                ...previousFileUploadStatuses,
+                [acceptedFile.file.path ?? acceptedFile.file.name]: err.message,
+              };
+            });
+          }
+        },
+        { concurrency: 5 }
       );
       onUploadEnd();
     };

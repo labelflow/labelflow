@@ -122,7 +122,7 @@ const DebugPage = () => {
                   <Link
                     target="_blank"
                     rel="noreferrer"
-                    href="https://app.supabase.io/dataset/zokyprbhquvvrleedkkk/editor/table"
+                    href="https://app.supabase.io/project/zokyprbhquvvrleedkkk/editor/table"
                   >
                     Link to Database admin
                   </Link>
