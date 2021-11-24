@@ -4,13 +4,14 @@
 
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["dataProxy"]
   // Added this to solve this issue: https://github.com/prisma/prisma/issues/9435#issuecomment-974576800
   output   = "../../node_modules/@~internal/prisma-myschema/client"
 }
 
 datasource db {
   provider = "postgresql"
-  url      = env("POSTGRES_EXTERNAL_URL")
+  url      = env("POSTGRES_EXTERNAL_URL_TEMP")
 }
 
 /////////////////////////////////////////////////////////////////////////////
