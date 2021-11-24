@@ -1,8 +1,8 @@
-// eslint-disable-next-line import/no-extraneous-dependencies
 import {
   Prisma,
   WorkspacePlan,
   UserRole,
+  // eslint-disable-next-line import/no-extraneous-dependencies
 } from "@~internal/prisma-myschema/client";
 import {
   DbWorkspace,
