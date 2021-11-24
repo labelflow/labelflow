@@ -105,8 +105,6 @@ export const ClassificationContent = forwardRef<HTMLDivElement>(
                 color: newClassColor,
                 selectedLabelId,
                 datasetId,
-                datasetSlug,
-                workspaceSlug,
               },
               { client }
             )
