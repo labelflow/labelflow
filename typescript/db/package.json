@@ -20,7 +20,7 @@
     "@types/node": "16.4.1",
     "dotenv-cli": "^4.0.0",
     "nodemon": "2.0.12",
-    "prisma": "^3.5.0-integration-fix-bundlers-broken-require.2",
+    "prisma": "3.5.0-integration-fix-bundlers-broken-require.2",
     "ts-node": "10.1.0",
     "typescript": "4.3.5"
   },
@@ -33,7 +33,7 @@
     "@graphql-tools/schema": "7.1.5",
     "@labelflow/common-resolvers": "workspace:typescript/common-resolvers",
     "@labelflow/graphql-types": "workspace:typescript/graphql-types",
-    "@prisma/client": "^3.5.0-integration-fix-bundlers-broken-require.2",
+    "@prisma/client": "3.5.0-integration-fix-bundlers-broken-require.2",
     "@supabase/supabase-js": "1.21.0",
     "apollo-server": "3.4.0",
     "fetch-blob": "3.1.3",
