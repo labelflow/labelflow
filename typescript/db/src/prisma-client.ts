@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { PrismaClient as PrismaClientClass } from "@~internal/prisma-myschema/client";
 
 declare module globalThis {
