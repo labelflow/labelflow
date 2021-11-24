@@ -4,7 +4,8 @@ import EmailProvider from "next-auth/providers/email";
 import GoogleProvider from "next-auth/providers/google";
 import GitHubProvider from "next-auth/providers/github";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
-import { PrismaClient as PrismaClientClass } from "@prisma/client";
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { PrismaClient as PrismaClientClass } from "@~internal/prisma-myschema/client";
 import { OAuthConfig } from "next-auth/providers";
 import { captureException } from "@sentry/nextjs";
 import { createPrismaClient } from "@labelflow/db/src/prisma-client";

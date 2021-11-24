@@ -1,4 +1,5 @@
-import { Prisma } from "@prisma/client";
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { Prisma } from "@~internal/prisma-myschema/client";
 import Stripe from "stripe";
 
 import {

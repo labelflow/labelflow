@@ -1,4 +1,5 @@
-import { Prisma } from "@prisma/client";
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { Prisma } from "@~internal/prisma-myschema/client";
 import { DbLabel, Repository } from "@labelflow/common-resolvers";
 import { Image } from "@labelflow/graphql-types";
 import slugify from "slugify";

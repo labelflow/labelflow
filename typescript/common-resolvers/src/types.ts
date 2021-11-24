@@ -24,7 +24,8 @@ import type {
   WorkspaceWhereUniqueInput,
   WorkspaceType,
 } from "@labelflow/graphql-types";
-import { WorkspacePlan } from "@prisma/client";
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { WorkspacePlan } from "@~internal/prisma-myschema/client";
 
 type NoUndefinedField<T> = { [P in keyof T]: NonNullable<T[P]> };
 

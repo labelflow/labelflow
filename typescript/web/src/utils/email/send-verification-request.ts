@@ -1,4 +1,5 @@
-import { PrismaClient } from "@prisma/client";
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { PrismaClient } from "@~internal/prisma-myschema/client";
 import { createTransport } from "nodemailer";
 import { generateHtml as generateHtmlSignin } from "./templates/sign-in";
 import { generateHtml as generateHtmlSignup } from "./templates/sign-up";

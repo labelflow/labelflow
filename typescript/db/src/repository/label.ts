@@ -1,4 +1,5 @@
-import { Prisma } from "@prisma/client";
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { Prisma } from "@~internal/prisma-myschema/client";
 import { Repository, DbLabel } from "@labelflow/common-resolvers";
 import { getPrismaClient } from "../prisma-client";
 import { castObjectNullsToUndefined } from "./utils";
