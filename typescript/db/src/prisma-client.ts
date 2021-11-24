@@ -1,4 +1,4 @@
-import { PrismaClient as PrismaClientClass } from "@prisma/client";
+import { PrismaClient as PrismaClientClass } from "@~internal/prisma-myschema/client";
 
 declare module globalThis {
   let prismaInstance: PrismaClientClass;

@@ -3,8 +3,9 @@
 /////////////////////////////////////////////////////////////////////////////
 
 generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["referentialActions"]
+  provider = "prisma-client-js"
+  // Added this to solve this issue: https://github.com/prisma/prisma/issues/9435#issuecomment-974576800
+  output   = "../../node_modules/@~internal/prisma-myschema/client"
 }
 
 datasource db {
