@@ -56,8 +56,8 @@ export const PricingCard = (props: PricingCardProps) => {
         </Text>
       </Flex>
       <List spacing="4" mb="8" maxW="28ch" mx="auto">
-        {features.map((feature, index) => (
-          <ListItem fontWeight="medium" key={index}>
+        {features.map((feature) => (
+          <ListItem fontWeight="medium" key={feature}>
             <ListIcon
               fontSize="xl"
               as={HiCheckCircle}
