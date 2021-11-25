@@ -205,7 +205,7 @@ export const DrawIogInteraction = ({ imageId }: { imageId: string }) => {
       }
     ).do();
     const inferencePromise = (async () => {
-      const dataUrl = await (async function () {
+      const dataUrl = await (async () => {
         const blob = await fetch(dataImage?.image?.url).then((r) => r.blob());
         return new Promise<string>((resolve) => {
           const reader = new FileReader();
