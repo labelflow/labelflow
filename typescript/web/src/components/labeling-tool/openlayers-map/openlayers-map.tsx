@@ -1,4 +1,4 @@
-import { useRef, useCallback, useEffect } from "react";
+import { useRef, useCallback } from "react";
 import { Spinner, Center, ThemeProvider, Box } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { RouterContext } from "next/dist/shared/lib/router-context";
