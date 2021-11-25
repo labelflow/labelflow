@@ -102,7 +102,26 @@ jobs:
           --health-retries 5
         ports:
           - 5433:5432
+    env:
+      MINIO_ACCESS_KEY: minioadmin
+      MINIO_SECRET_KEY: minioadmin
+      AWS_ACCESS_KEY_ID: minioadmin
+      AWS_SECRET_ACCESS_KEY: minioadmin
+      # https://github.com/aws/aws-cli/issues/5262#issuecomment-705832151
+      AWS_EC2_METADATA_DISABLED: true
     steps:
+      # GitHub Services doesn't let us forward a command when starting the docker container
+      # and we need to run minio like this `docker start minio/minio server /data`.
+      # And, as of today, there are no easy way to pass the `server /data` part.
+      # Therefore, we start minio in docker manually
+      - name: Setup storage with minio
+        run: |
+          docker run -d \
+                     --name minio \
+                     -p 9000:9000 \
+                     -e MINIO_ROOT_USER=$MINIO_ACCESS_KEY \
+                     -e MINIO_ROOT_PASSWORD=$MINIO_SECRET_KEY \
+                     minio/minio server /data
       - name: Check out repository code
         uses: actions/checkout@v2
       - name: Fetch node_modules from cache
@@ -159,7 +178,26 @@ jobs:
           --health-retries 5
         ports:
           - 5433:5432
+    env:
+      MINIO_ACCESS_KEY: minioadmin
+      MINIO_SECRET_KEY: minioadmin
+      AWS_ACCESS_KEY_ID: minioadmin
+      AWS_SECRET_ACCESS_KEY: minioadmin
+      # https://github.com/aws/aws-cli/issues/5262#issuecomment-705832151
+      AWS_EC2_METADATA_DISABLED: true
     steps:
+      # GitHub Services doesn't let us forward a command when starting the docker container
+      # and we need to run minio like this `docker start minio/minio server /data`.
+      # And, as of today, there are no easy way to pass the `server /data` part.
+      # Therefore, we start minio in docker manually
+      - name: Setup storage with minio
+        run: |
+          docker run -d \
+                     --name minio \
+                     -p 9000:9000 \
+                     -e MINIO_ROOT_USER=$MINIO_ACCESS_KEY \
+                     -e MINIO_ROOT_PASSWORD=$MINIO_SECRET_KEY \
+                     minio/minio server /data
       - name: Check out repository code
         uses: actions/checkout@v2
       - name: Fetch node_modules from cache
@@ -229,7 +267,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           # 👇 Chromatic projectToken, refer to the manage page to obtain it.
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
-          
+
   # # Code to deploy to vercel with a github action (instead of automatically using vercel github integration)
   # deploy-webapp-pr:
   #   name: Deploy webapp PR branch
