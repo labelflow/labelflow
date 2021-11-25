@@ -2,7 +2,7 @@
 
 All of the components in Chakra UI are designed for Chakra UI v1.0+<br>
 
-#In some components we use `react-icons` to pep up the visual appearance. Feel free to replace them with your own icons.
+In some components we use `react-icons` to pep up the visual appearance. Feel free to replace them with your own icons.
 
 ## Installation
 

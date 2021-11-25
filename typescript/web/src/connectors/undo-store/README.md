@@ -68,7 +68,7 @@ Note that:
 - The returned value of `do` will be passed as an argument of `undo`.
 - The returned value of `undo` will be passed as an argument of `redo` (or `do` if no `redo` was provided).
 
-### 2. It does not guaranty the order of resolution of the effects.
+### 2. It does not guaranty the order of resolution of the effects
 
 It triggers every effect as soon as they are performed. It does not
 await for the previous effect before starting the new one.

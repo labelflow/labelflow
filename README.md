@@ -38,7 +38,7 @@ LabelBox, Roboflow, v7labs and other Image labeling tools are are awesome. They 
 
 That's where LabelFlow.ai comes in. Self-hosted or hosted by us. White-label by design. API-driven and ready to be deployed on your own domain. Full control over your images and labels.
 
-[Labelflow.ai](https://labelflow.ai) is the parent company developing LabelFlow, and commercializing a Hosted version. 
+[Labelflow.ai](https://labelflow.ai) is the parent company developing LabelFlow, and commercializing a Hosted version.
 
 You can build LabelFlow from source, and serve it from your machine. Read how to [deploy it yourself](#running-labelflow-on-your-machine).
 
@@ -48,7 +48,7 @@ You can build LabelFlow from source, and serve it from your machine. Read how to
 * [ReactJS](https://reactjs.org/): View library of the web app
 * [NextJS](https://nextjs.org/): Web framework of the web app
 * [GraphQL](https://graphql.org/): API, communication between client and server, and service worker
-* [NodeJS](https://nodejs.org/en/): Javascript runtime for development and production on docker 
+* [NodeJS](https://nodejs.org/en/): Javascript runtime for development and production on docker
 * [Python](https://www.python.org/) for the machine learning server
 * [PyTorch](https://pytorch.org/) for the machine learning server
 
@@ -56,7 +56,7 @@ You can build LabelFlow from source, and serve it from your machine. Read how to
 
 LabelFlow officially launched as v.0.1 on 7th of September, however a lot of new features are coming. Watch releases of this repository to be notified for future updates:
 
-![](https://github.com/labelflow/labelflow/raw/main/typescript/web/public/static/img/subscribe.gif)
+![Subscribe](https://github.com/labelflow/labelflow/raw/main/typescript/web/public/static/img/subscribe.gif)
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
@@ -75,11 +75,10 @@ Before continuing, please have a look at our <a href="./LICENSE">License</a> ⬅
 #### Prerequisites
 
 You need to have below listed softwares installed on your machine to run labelflow.
-     
-   - ✔️ Git 📦
-   - ✔️ Node (v15.5.0 or above) 📦
-   - ✔️ Yarn (v1.22.4 or above) 📦
 
+* ✔️ Git 📦
+* ✔️ Node (v15.5.0 or above) 📦
+* ✔️ Yarn (v1.22.4 or above) 📦
 
 #### Running LabelFlow on your machine
 
@@ -116,7 +115,6 @@ You need to have below listed softwares installed on your machine to run labelfl
 6. Open your browser and visit [http://localhost:3000](http://localhost:3000).
 
 <p align="right">(<a href="#top">back to top</a>)</p>
-
 
 ## Roadmap
 
