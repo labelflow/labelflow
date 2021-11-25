@@ -21,7 +21,7 @@ services:
     command: -p 5434
 
   storage:
-    image: quay.io/minio/minio
+    image: minio/minio
     ports:
       - "9000:9000"
       - "9001:9001"
