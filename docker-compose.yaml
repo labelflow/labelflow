@@ -1,0 +1,68 @@
+version: "3.5"
+services:
+  db:
+    image: postgres:12.6
+    environment:
+      POSTGRES_USER: ${POSTGRES_ADMIN_USER:-admin}
+      POSTGRES_PASSWORD: ${POSTGRES_ADMIN_PASSWORD:-admin}
+      POSTGRES_DB: ${POSTGRES_DB:-labelflow}
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_home:/var/lib/postgresql/dat
+  
+  db-migrate:
+    build: 
+      context: .
+      dockerfile: ./typescript/db/Dockerfile.migrate
+    environment:
+      - POSTGRES_EXTERNAL_URL=postgresql://${POSTGRES_ADMIN_USER:-admin}:${POSTGRES_ADMIN_PASSWORD:-admin}@db:5432/${POSTGRES_DB:-labelflow}?schema=public
+    depends_on: 
+      - db
+
+  storage:
+    image: minio/minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin}
+    volumes:
+      - storage_volume:/data
+    command: server /data --console-address ":9001"
+  
+  iog:
+    container_name: iog
+    restart: always
+    build: 
+      context: ./python/iog
+      dockerfile: Dockerfile
+    runtime: nvidia
+    command: python server.py 
+    ports:
+      - "5001:5000"
+    depends_on:
+      - storage
+
+  web:
+    build:
+      context: .
+      dockerfile: ./typescript/web/Dockerfile
+    ports: 
+      - "3000:3000"
+    environment:
+      - POSTGRES_EXTERNAL_URL=postgresql://${POSTGRES_ADMIN_USER:-admin}:${POSTGRES_ADMIN_PASSWORD:-admin}@db:5432/${POSTGRES_DB:-labelflow}?schema=public
+      - NEXT_PUBLIC_IOG_API_ENDPOINT=http://iog:5001/graphql/
+      - NEXT_PUBLIC_VERCEL_URL=http://localhost:3000
+      - VERCEL_URL=http://localhost:3000
+    depends_on:
+      - db
+      - migrate-db
+      - storage
+
+volumes:
+  db_home:
+    external: false
+  storage_volume:
+    external: false

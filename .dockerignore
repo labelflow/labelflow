@@ -40,6 +40,7 @@ build/Release
 
 # Dependency directories
 node_modules/
+**/node_modules
 jspm_packages/
 
 # TypeScript v1 declaration files
@@ -146,3 +147,18 @@ storybook-static
 **/public/worker-*.js.*
 **/public/*.chunk.*.js.*
 .env
+
+**/Dockerfile
+**/Dockerfile.*
+**/docker-compose.yml
+**/docker-compose.yaml
+docker-compose.yml
+docker-compose.yaml
+Dockerfile
+Dockerfile.*
+
+strapi/.cache
+storybook-static
+**/.next
+
+.git

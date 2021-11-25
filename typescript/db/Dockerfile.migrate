@@ -1,0 +1,25 @@
+################################################################################
+# Needs to be run from the root of the monorepo, like this:
+# docker build --file=./typescript/db/Dockerfile.migrate .
+#
+# Running this docker will apply the migrations to an existing database.
+
+FROM node:14-alpine AS builder
+
+# probably optional
+RUN apk add --no-cache libc6-compat
+
+WORKDIR /app
+
+# Maybe optimise this
+COPY . .
+
+RUN yarn install --immutable
+
+WORKDIR /app/typescript/db
+
+RUN yarn prisma generate
+
+ENV POSTGRES_EXTERNAL_URL=${POSTGRES_EXTERNAL_URL}
+
+CMD ["yarn", "prisma", "migrate", "dev"]
