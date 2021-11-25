@@ -67,6 +67,7 @@ export const DatasetCard = (props: {
                 src={imageUrl}
                 alt={imageAlt}
                 alignSelf="center"
+                fallbackSrc="/static/graphics/png/broken-image.png"
                 fit="cover"
               />
             ) : (

@@ -128,7 +128,7 @@ export const ImagesList = ({
                       background={imageBackground}
                       alt={name}
                       src={thumbnail500Url ?? undefined}
-                      ignoreFallback
+                      fallbackSrc="/static/graphics/png/broken-image.png"
                       objectFit="contain"
                       h="208px"
                       w="full"

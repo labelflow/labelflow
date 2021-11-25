@@ -62,6 +62,7 @@ export const GalleryItem = memo(
                   fallback={
                     <Skeleton height="100%" width="100%" borderRadius="md" />
                   }
+                  fallbackSrc="/static/graphics/png/broken-image.png"
                   height="100%"
                   width="100%"
                   align="center center"
