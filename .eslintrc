@@ -28,6 +28,20 @@
       }
     ]
   },
+  "overrides": [
+    {
+      "files": [
+        "**/*.stories.ts",
+        "**/__stories__/**/*.ts",
+        "**/*.stories.tsx",
+        "**/__stories__/**/*.tsx"
+      ],
+      "rules": {
+        "no-console": "off",
+        "no-alert": "off"
+      }
+    }
+  ],
   "parserOptions": {
     "project": "./tsconfig.json"
   }
