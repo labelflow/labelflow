@@ -224,9 +224,17 @@ export const WorkspaceCreationModal = ({
                   <Input
                     aria-label="workspace name input"
                     focusBorderColor={
-                      isWorkspaceSlugAlreadyTaken ? "red.500" : undefined
+                      isWorkspaceSlugAlreadyTaken ||
+                      forbiddenWorkspaceSlugs.includes(slug) ||
+                      !isValidWorkspaceName(workspaceName ?? "")
+                        ? "red.500"
+                        : undefined
                     }
-                    isInvalid={isWorkspaceSlugAlreadyTaken}
+                    isInvalid={
+                      isWorkspaceSlugAlreadyTaken ||
+                      forbiddenWorkspaceSlugs.includes(slug) ||
+                      !isValidWorkspaceName(workspaceName ?? "")
+                    }
                     placeholder="My online workspace name"
                     value={workspaceName ?? ""}
                     onChange={(event) => setWorkspaceName(event.target.value)}
