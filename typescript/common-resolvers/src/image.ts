@@ -17,9 +17,10 @@ import { getOrigin } from "./utils/get-origin";
 // Mutations
 const getImageFileKey = (
   imageId: string,
+  workspaceId: string,
   datasetId: string,
   mimetype: string
-) => `${datasetId}/${imageId}.${mime.extension(mimetype)}`;
+) => `${workspaceId}/${datasetId}/${imageId}.${mime.extension(mimetype)}`;
 
 const getImageName = ({
   externalUrl,
@@ -70,6 +71,16 @@ export const getImageEntityFromMutationArgs = async (
     thumbnail200Url,
     thumbnail500Url,
   } = data;
+  const { workspaceSlug } = await repository.dataset.get(
+    { id: datasetId },
+    user
+  );
+  const { id: workspaceId } = await repository.workspace.get(
+    {
+      slug: workspaceSlug,
+    },
+    user
+  );
 
   const now = data?.createdAt ?? new Date().toISOString();
   const imageId = id ?? uuidv4();
@@ -114,7 +125,7 @@ export const getImageEntityFromMutationArgs = async (
 
     const blob = await fetchResult.blob();
     const uploadTarget = await repository.upload.getUploadTargetHttp(
-      getImageFileKey(imageId, datasetId, blob.type),
+      getImageFileKey(imageId, workspaceId, datasetId, blob.type),
       origin
     );
 
@@ -135,7 +146,7 @@ export const getImageEntityFromMutationArgs = async (
     const origin = getOrigin(req);
 
     const uploadTarget = await repository.upload.getUploadTargetHttp(
-      getImageFileKey(imageId, datasetId, file.type),
+      getImageFileKey(imageId, workspaceId, datasetId, file.type),
       origin
     );
 
