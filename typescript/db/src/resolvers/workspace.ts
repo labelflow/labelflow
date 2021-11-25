@@ -50,6 +50,24 @@ const workspace = async (
 ): Promise<DbWorkspaceWithType> =>
   await getWorkspace(args.where, repository, user);
 
+const isWorkspaceSlugAlreadyTaken = async (
+  _: any,
+  args: QueryWorkspaceArgs,
+  { repository, user }: Context
+): Promise<boolean> => {
+  try {
+    return (await repository.workspace.get(args.where, user)) != null;
+  } catch (error) {
+    if (
+      error instanceof Error &&
+      error.message.includes("User not authorized to access workspace")
+    ) {
+      return true;
+    }
+    throw error;
+  }
+};
+
 const workspaces = async (
   _: any,
   args: QueryWorkspacesArgs,
@@ -222,6 +240,7 @@ export default {
   Query: {
     workspace,
     workspaces,
+    isWorkspaceSlugAlreadyTaken,
   },
   Mutation: { createWorkspace, updateWorkspace },
   Workspace: { memberships, datasets, stripeCustomerPortalUrl },
