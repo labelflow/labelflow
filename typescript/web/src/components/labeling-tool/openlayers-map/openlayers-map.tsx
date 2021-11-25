@@ -119,7 +119,7 @@ export const OpenlayersMap = () => {
   const setView = useLabelingStore((state) => state.setView);
   const zoomFactor = useLabelingStore((state) => state.zoomFactor);
 
-  const [_, setImageLoadError] = useQueryParam("image-load-error", BoolParam);
+  const [, setImageLoadError] = useQueryParam("image-load-error", BoolParam);
   const { data: imageData, previousData: imageDataPrevious } = useQuery<{
     image: Pick<Image, "id" | "url" | "width" | "height">;
   }>(imageQuery, {
