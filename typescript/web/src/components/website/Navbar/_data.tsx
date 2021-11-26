@@ -5,6 +5,7 @@ import * as React from "react";
 export interface Link {
   label: string;
   href?: string;
+  target?: "_blank";
   children?: Array<{
     label: string;
     description?: string;
@@ -48,5 +49,10 @@ export const links: Link[] = [
   { label: "Pricing", href: "/pricing" },
   { label: "About", href: "/about" },
   { label: "Blog", href: "/posts" },
-  { label: "Documentation", href: "https://labelflow.gitbook.io/labelflow/" },
+  {
+    label: "Documentation",
+    href: "https://labelflow.gitbook.io/labelflow/",
+    target: "_blank",
+  },
+  { label: "Jobs", href: "https://labelflow.recruitee.com", target: "_blank" },
 ];
