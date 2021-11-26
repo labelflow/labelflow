@@ -1,6 +1,5 @@
 import {
   Box,
-  Image,
   Text,
   VStack,
   useColorModeValue as mode,
@@ -10,10 +9,12 @@ import {
   IconButton,
   AspectRatio,
   chakra,
+  Skeleton,
 } from "@chakra-ui/react";
 import NextLink from "next/link";
 import { HiTrash, HiPencilAlt } from "react-icons/hi";
-import { EmptyStateNoImages } from "../empty-state";
+import { ImageWithFallback } from "../../utils/image-with-fallback";
+import { EmptyStateImageNotFound, EmptyStateNoImages } from "../empty-state";
 
 const EditIcon = chakra(HiPencilAlt);
 const TrashIcon = chakra(HiTrash);
@@ -63,11 +64,12 @@ export const DatasetCard = (props: {
         >
           <AspectRatio maxH="36">
             {imageUrl ? (
-              <Image
+              <ImageWithFallback
                 src={imageUrl}
                 alt={imageAlt}
                 alignSelf="center"
-                fallbackSrc="/static/graphics/png/broken-image.png"
+                loadingFallback={<Skeleton height="100%" width="100%" />}
+                errorFallback={<EmptyStateImageNotFound />}
                 fit="cover"
               />
             ) : (
