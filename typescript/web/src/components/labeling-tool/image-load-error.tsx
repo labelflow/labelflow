@@ -1,6 +1,6 @@
 import React from "react";
 import { Box, Center, Text, Heading } from "@chakra-ui/react";
-import { EmptyStateBrokenImage } from "../empty-state";
+import { EmptyStateImageNotFound } from "../empty-state";
 
 export const ImageLoadError = () => (
   <Center h="full">
@@ -12,7 +12,7 @@ export const ImageLoadError = () => (
         py={{ base: "16", sm: "20" }}
         textAlign="center"
       >
-        <EmptyStateBrokenImage w="full" />
+        <EmptyStateImageNotFound w="full" />
         <Heading as="h2">Oops, there is an error loading this image</Heading>
         <Text mt="4" fontSize="lg">
           You can try reloading the page
