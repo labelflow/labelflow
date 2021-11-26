@@ -36,12 +36,12 @@ export default async function handler(
       membershipId,
     });
 
-    // We use the NEXTAUTH_URL on the production deployment only
-    // Vercel_URL is different on each deployment (=== commit)
     const origin =
-      process.env.NEXTAUTH_URL ||
+      (req?.headers?.origin as string | undefined) ||
+      process.env.NEXTAUTH_URL || // We use the NEXTAUTH_URL on the production deployments only
       process.env.VERCEL_URL ||
       "https://labelflow.ai";
+
     const url = `${origin}/${workspaceSlug}/accept-invite?${searchParams.toString()}`;
     const transport = createTransport(process.env.EMAIL_SERVER ?? "");
     await transport.sendMail({
