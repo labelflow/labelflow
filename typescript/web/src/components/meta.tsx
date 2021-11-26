@@ -49,6 +49,7 @@ export const Meta = ({
         site: "@LabelflowAI",
         cardType: "summary_large_image",
       }}
+      facebook={{ appId: "461943602167313" }}
     />
     <Head>
       <link rel="icon" href="/static/favicon.ico" />
