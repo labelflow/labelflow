@@ -21,6 +21,9 @@ const updateLabelQuery = gql`
   ) {
     updateLabel(where: $where, data: $data) {
       id
+      labelClass {
+        id
+      }
     }
   }
 `;
@@ -37,39 +40,54 @@ export const createUpdateLabelClassOfLabelEffect = (
   }
 ): Effect => ({
   do: async () => {
-    const {
-      data: {
-        label: { labelClass },
-      },
-    } = selectedLabelId
-      ? await client.query({
-          query: getLabelQuery,
-          variables: { id: selectedLabelId },
-        })
-      : { data: { label: { labelClass: null } } };
-
-    const labelClassIdPrevious = labelClass?.id ?? null;
+    const labelClassIdPrevious = selectedLabelId
+      ? ((
+          await client.query({
+            query: getLabelQuery,
+            variables: { id: selectedLabelId },
+          })
+        ).data?.label?.labelClass?.id as string)
+      : null;
 
     await client.mutate({
       mutation: updateLabelQuery,
       variables: {
         where: { id: selectedLabelId },
-        data: { labelClassId: selectedLabelClassId ?? null },
+        data: { labelClassId: selectedLabelClassId },
       },
-      refetchQueries: ["getImageLabels"],
+      optimisticResponse: {
+        updateLabel: {
+          id: selectedLabelId,
+          labelClass: selectedLabelClassId
+            ? { id: selectedLabelClassId, __typename: "LabelClass" }
+            : null,
+          __typename: "Label",
+        },
+      },
+      // no need to write an update as apollo automatically does it if we query the labelClass id
     });
+
     useLabelingStore.setState({ selectedLabelClassId });
 
     return labelClassIdPrevious;
   },
-  undo: async (labelClassIdPrevious: string) => {
+  undo: async (labelClassIdPrevious: string | null) => {
     await client.mutate({
       mutation: updateLabelQuery,
       variables: {
         where: { id: selectedLabelId },
-        data: { labelClassId: labelClassIdPrevious ?? null },
+        data: { labelClassId: labelClassIdPrevious },
       },
-      refetchQueries: ["getImageLabels"],
+      optimisticResponse: {
+        updateLabel: {
+          id: selectedLabelId,
+          labelClass: selectedLabelClassId
+            ? { id: selectedLabelClassId, __typename: "LabelClass" }
+            : null,
+          __typename: "Label",
+        },
+      },
+      // no need to write an update as apollo automatically does it if we query the labelClass id
     });
 
     useLabelingStore.setState({ selectedLabelClassId: labelClassIdPrevious });

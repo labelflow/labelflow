@@ -35,7 +35,8 @@ export default async function handler(
     const searchParams = new URLSearchParams({
       membershipId,
     });
-    const origin = process.env.NEXTAUTH_URL ?? "";
+
+    const origin = process.env.VERCEL_URL ?? "https://labelflow.ai";
     const url = `${origin}/${workspaceSlug}/accept-invite?${searchParams.toString()}`;
     const transport = createTransport(process.env.EMAIL_SERVER ?? "");
     await transport.sendMail({

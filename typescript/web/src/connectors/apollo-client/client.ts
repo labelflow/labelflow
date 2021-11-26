@@ -2,6 +2,7 @@ import { ApolloClient, InMemoryCache, HttpLink, concat } from "@apollo/client";
 import { awaitServiceWorkerLink } from "./await-service-worker-link";
 
 export const serviceWorkerClient = new ApolloClient({
+  connectToDevTools: false,
   link: concat(
     awaitServiceWorkerLink,
     new HttpLink({ uri: "/api/worker/graphql", credentials: "same-origin" })
@@ -29,6 +30,7 @@ export const serviceWorkerClient = new ApolloClient({
 });
 
 export const distantDatabaseClient = new ApolloClient({
+  connectToDevTools: true,
   link: new HttpLink({
     uri: "/api/graphql",
     credentials: "same-origin",
