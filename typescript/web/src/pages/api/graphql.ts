@@ -63,3 +63,11 @@ const handleRequest: NextApiHandler = async (req, res) => {
 };
 
 export default handleRequest;
+
+export const config = {
+  api: {
+    bodyParser: {
+      sizeLimit: "10mb",
+    },
+  },
+};
