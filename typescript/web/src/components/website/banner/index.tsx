@@ -4,6 +4,7 @@ import {
   Heading,
   LightMode,
   Text,
+  Center,
   useTheme,
 } from "@chakra-ui/react";
 import * as React from "react";
@@ -44,23 +45,26 @@ export const Banner = () => {
             day to day life with leaders from around the world.
             <br />
             <br />
-            <b> From November 27th, 2021 </b>
           </Text>
 
-          <LightMode>
-            <Button
-              mt="8"
-              as="a"
-              href="https://labelflow.ai/posts
+          <Center>
+            <Box>
+              <LightMode>
+                <Button
+                  mt="8"
+                  as="a"
+                  href="https://labelflow.ai/posts
             "
-              target="blank"
-              size="lg"
-              colorScheme="brand"
-              fontWeight="bold"
-            >
-              Visit now
-            </Button>
-          </LightMode>
+                  target="blank"
+                  size="lg"
+                  colorScheme="brand"
+                  fontWeight="bold"
+                >
+                  Visit now
+                </Button>
+              </LightMode>
+            </Box>
+          </Center>
         </Box>
       </Box>
     </Box>

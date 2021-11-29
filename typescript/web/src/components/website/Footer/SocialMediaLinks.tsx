@@ -12,7 +12,7 @@ export const SocialMediaLinks = (props: ButtonGroupProps) => (
   <ButtonGroup variant="ghost" color="gray.600" {...props}>
     <IconButton
       as="a"
-      href="https://www.linkedin.com/company/labelflow/"
+      href="https://www.linkedin.com/company/labelflowai/"
       aria-label="LinkedIn"
       icon={<FaLinkedin fontSize="20px" />}
     />

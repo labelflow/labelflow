@@ -34,7 +34,7 @@ export const Features = () => {
           />
           <Box>
             <Heading size="xl" mb="4" fontWeight="extrabold">
-              Build the next big thing with AI
+              The image labeling tool you need to unleash your AI projects
             </Heading>
             <Text
               fontSize={{ md: "lg" }}
@@ -42,29 +42,34 @@ export const Features = () => {
               maxW="md"
               color={mode("gray.600", "gray.400")}
             >
-              You now have the tool to unleash the potential of all your AI
-              projects.
+              Building large and accurate datasets for machine learning
+              algorithms has never been that easy
             </Text>
           </Box>
         </SimpleGrid>
         <SimpleGrid columns={{ base: 1, md: 3 }} mt="16" spacing="8">
-          <Feature icon={BsFillLightningFill} title="Blazing Fast">
-            LabelFlow is designed for optimum productivity. Keyboard shortcuts,
-            interface layout, collaboration, everything is designed with users,
-            for users.
+          <Feature
+            icon={BsFillLightningFill}
+            title="Blazing Fast Image Labeling Tool"
+          >
+            LabelFlow is an image labeling tool designed for optimum
+            productivity. Keyboard shortcuts, interface layout, collaboration,
+            everything is designed to build the most accurate datasets for
+            machine learning.
           </Feature>
           <Feature
             icon={BsFillShieldLockFill}
             title="Own your data and algorithms"
           >
-            LabelFlow does not try to own your data or algorithms, but
-            integrates with them seamlessly. No duplicate source of truth and
-            complicated scripts to synchronize your data between various tools.
+            LabelFlow image annotation tool does not try to own your data or
+            algorithms, but integrates with them seamlessly. No duplicate source
+            of truth and complicated scripts to synchronize your data between
+            various tools.
           </Feature>
           <Feature icon={BsHeartFill} title="Open community and standard">
-            LabelFlow is building a community around an open labeling tool
-            (under Business Source Licence) to set the standard around visual
-            data management. Dataset curation should not require any
+            LabelFlow is building a community around an open source data
+            labeling tool (under Business Source Licence) to set the standard
+            around visual data management. Data cleaning should not require any
             &ldquo;secret sauce&rdquo;.
           </Feature>
         </SimpleGrid>
