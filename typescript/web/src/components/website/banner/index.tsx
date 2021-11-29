@@ -53,8 +53,7 @@ export const Banner = () => {
                 <Button
                   mt="8"
                   as="a"
-                  href="https://labelflow.ai/posts
-            "
+                  href="https://labelflow.ai/posts"
                   target="blank"
                   size="lg"
                   colorScheme="brand"
