@@ -56,17 +56,28 @@ export const deleteFromStorage: Repository["upload"]["delete"] = async (
   `);
 };
 
-export const putInStorage: Repository["upload"]["put"] = async (url, blob) => {
-  const client = getClient();
+export const putInStorage: Repository["upload"]["put"] = async (
+  url,
+  blob,
+  req
+) => {
+  const headers = new Headers();
+  headers.set("Accept", "image/tiff,image/jpeg,image/png,image/*,*/*;q=0.8");
+  headers.set("Sec-Fetch-Dest", "image");
+  if ((req?.headers as any)?.cookie) {
+    headers.set("Cookie", (req?.headers as any)?.cookie);
+  }
 
-  const query = `${uploadsRoute}/`;
-  const key = url.substring(url.lastIndexOf(query) + query.length);
-
-  const buf = await blob.arrayBuffer();
-
-  await client.storage.from(bucket).upload(key, buf, {
-    contentType: blob.type,
-    upsert: false,
-    cacheControl: "public, max-age=31536000, immutable",
+  const fetchResult = await fetch(url, {
+    method: "PUT",
+    headers,
+    credentials: "include",
+    body: blob,
   });
+
+  if (fetchResult.status !== 200) {
+    throw new Error(
+      `Putting to Supabase storage, could not put at url ${url} properly, code ${fetchResult.status}`
+    );
+  }
 };

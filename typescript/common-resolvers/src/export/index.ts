@@ -47,8 +47,8 @@ const exportDataset = async (
       uuidv4(),
       origin
     )
-  )?.downloadUrl;
-  await repository.upload.put(outUrl, fileExport);
+  )?.uploadUrl;
+  await repository.upload.put(outUrl, fileExport, req);
   return outUrl;
 };
 

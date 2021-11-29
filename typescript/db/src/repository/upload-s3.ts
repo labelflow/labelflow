@@ -25,6 +25,12 @@ export const getUploadTargetHttp = async (
   key: string,
   origin: string
 ): Promise<UploadTargetHttp> => {
+  if (!key)
+    return {
+      __typename: "UploadTargetHttp",
+      uploadUrl: "",
+      downloadUrl: `${origin}${uploadsRoute}/`,
+    };
   const s3Client = getClient();
   const command = new PutObjectCommand({
     Bucket: bucket,
@@ -71,16 +77,28 @@ export const deleteFromStorage: Repository["upload"]["delete"] = async (
       `);
 };
 
-export const putInStorage: Repository["upload"]["put"] = async (url, blob) => {
-  const s3Client = getClient();
-  const query = `${uploadsRoute}/`;
-  const key = url.substring(url.lastIndexOf(query) + query.length);
-  const imageBuffer = await blob.arrayBuffer();
-  const command = await new PutObjectCommand({
-    Bucket: bucket,
-    Key: key,
-    Body: imageBuffer as Buffer,
-    ContentType: blob.type,
+export const putInStorage: Repository["upload"]["put"] = async (
+  url,
+  blob,
+  req
+) => {
+  const headers = new Headers();
+  headers.set("Accept", "image/tiff,image/jpeg,image/png,image/*,*/*;q=0.8");
+  headers.set("Sec-Fetch-Dest", "image");
+  if ((req?.headers as any)?.cookie) {
+    headers.set("Cookie", (req?.headers as any)?.cookie);
+  }
+
+  const fetchResult = await fetch(url, {
+    method: "PUT",
+    headers,
+    credentials: "include",
+    body: blob,
   });
-  await s3Client.send(command);
+
+  if (fetchResult.status !== 200) {
+    throw new Error(
+      `Putting to S3 storage, could not put at url ${url} properly, code ${fetchResult.status}`
+    );
+  }
 };

@@ -98,6 +98,7 @@ export const getImageEntityFromMutationArgs = async (
     finalUrl = url;
   }
 
+  const origin = getOrigin(req);
   if (!file && externalUrl && !url) {
     // External file based upload
 
@@ -121,8 +122,6 @@ export const getImageEntityFromMutationArgs = async (
       );
     }
 
-    const origin = getOrigin(req);
-
     const blob = await fetchResult.blob();
     const uploadTarget = await repository.upload.getUploadTargetHttp(
       getImageFileKey(imageId, workspaceId, datasetId, blob.type),
@@ -136,15 +135,13 @@ export const getImageEntityFromMutationArgs = async (
       );
     }
 
-    await repository.upload.put(uploadTarget.downloadUrl, blob);
+    await repository.upload.put(uploadTarget.uploadUrl, blob, req);
 
     finalUrl = uploadTarget.downloadUrl;
   }
 
   if (file && !externalUrl && !url) {
     // File Content based upload
-    const origin = getOrigin(req);
-
     const uploadTarget = await repository.upload.getUploadTargetHttp(
       getImageFileKey(imageId, workspaceId, datasetId, file.type),
       origin
@@ -157,7 +154,7 @@ export const getImageEntityFromMutationArgs = async (
       );
     }
 
-    await repository.upload.put(uploadTarget.downloadUrl, file);
+    await repository.upload.put(uploadTarget.uploadUrl, file, req);
 
     finalUrl = uploadTarget.downloadUrl;
   }
@@ -174,6 +171,9 @@ export const getImageEntityFromMutationArgs = async (
     };
   }
 
+  const downloadUrlPrefix = (
+    await repository.upload.getUploadTargetHttp("", origin)
+  ).downloadUrl;
   // Probe the file to get its dimensions and mimetype if not provided
   const imageMetaData = await repository.imageProcessing.processImage(
     {
@@ -185,7 +185,12 @@ export const getImageEntityFromMutationArgs = async (
       url: finalUrl!,
     },
     (fromUrl: string) => repository.upload.get(fromUrl, req),
-    (toUrl: string, blob: Blob) => repository.upload.put(toUrl, blob),
+    async (targetDownloadUrl: string, blob: Blob) => {
+      const key = targetDownloadUrl.substring(downloadUrlPrefix.length);
+      const toUrl = (await repository.upload.getUploadTargetHttp(key, origin))
+        .uploadUrl;
+      await repository.upload.put(toUrl, blob, req);
+    },
     repository.image.update,
     user
   );
