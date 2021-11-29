@@ -2,7 +2,10 @@ import {
   Box,
   Stack,
   Heading,
+  LightMode,
+  Button,
   Text,
+  Center,
   SimpleGrid,
   useColorModeValue as mode,
 } from "@chakra-ui/react";
@@ -18,15 +21,35 @@ export const LogoGrid = () => {
         px={{ base: "6", md: "8" }}
       >
         <Heading align="center" fontWeight="extrabold" maxW="lg" mx="auto">
-          Connect seamlessly with the best data tools
+          Connect seamlessly with the best machine learning tools
         </Heading>
         <Text align="center" textAlign="center" maxW="lg" mx="auto" mt="12">
           An added benefit of being <strong>open source</strong> is that
-          LabelFlow can integrate with a ton of tools in the ecosystem, thanks
-          to a clean <strong>API and SDKs</strong>. Image storage, databases,
-          data warehouses, deployment tools and AI libraries all work seamlessly
-          with LabelFlow.
+          LabelFlow image labeling tool can integrate with a ton of tools in the
+          ecosystem, thanks to a clean <strong>API and SDKs</strong>. Image
+          storage, databases, data warehouses, deployment tools and AI libraries
+          all work seamlessly with LabelFlow. If you want to make it easier you
+          can also export your datasets in COCO or YOLO format for example.
         </Text>
+        <Center>
+          <Box>
+            <LightMode>
+              <Button
+                mt="8"
+                as="a"
+                href="https://labelflow.gitbook.io/labelflow/
+            "
+                target="blank"
+                size="lg"
+                colorScheme="brand"
+                fontWeight="bold"
+              >
+                Discover more
+              </Button>
+            </LightMode>
+          </Box>
+        </Center>
+
         <SimpleGrid
           columns={{ base: 1, sm: 2, md: 4 }}
           mt="24"
