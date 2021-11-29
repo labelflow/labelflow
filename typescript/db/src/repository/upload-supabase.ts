@@ -1,7 +1,9 @@
 import { createClient } from "@supabase/supabase-js";
 import "isomorphic-fetch";
 import memoizeOne from "memoize-one";
+import FormData from "form-data";
 
+import { Stream } from "stream";
 import { Repository } from "../../../common-resolvers/src";
 import { UploadTargetHttp } from "../../../graphql-types/src/graphql-types.generated";
 
@@ -62,17 +64,19 @@ export const putInStorage: Repository["upload"]["put"] = async (
   req
 ) => {
   const headers = new Headers();
-  headers.set("Accept", "image/tiff,image/jpeg,image/png,image/*,*/*;q=0.8");
-  headers.set("Sec-Fetch-Dest", "image");
   if ((req?.headers as any)?.cookie) {
     headers.set("Cookie", (req?.headers as any)?.cookie);
   }
-
+  const form = new FormData();
+  const readStream = new Stream.Readable();
+  readStream.push(blob);
+  readStream.push(null);
+  form.append("image", readStream);
   const fetchResult = await fetch(url, {
     method: "PUT",
     headers,
     credentials: "include",
-    body: blob,
+    body: form,
   });
 
   if (fetchResult.status !== 200) {
