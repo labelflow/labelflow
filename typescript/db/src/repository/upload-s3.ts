@@ -6,15 +6,15 @@ import { Repository } from "../../../common-resolvers/src";
 import { UploadTargetHttp } from "../../../graphql-types/src/graphql-types.generated";
 
 const bucket = "labelflow";
-const region = process.env?.AWS_REGION!;
+const region = process.env?.LABELFLOW_AWS_REGION!;
 
 const getClient = memoizeOne(
   () =>
     new S3Client({
       region,
       credentials: {
-        accessKeyId: process.env?.AWS_ACCESS_KEY_ID!,
-        secretAccessKey: process.env?.AWS_SECRET_ACCESS_KEY!,
+        accessKeyId: process.env?.LABELFLOW_AWS_ACCESS_KEY_ID!,
+        secretAccessKey: process.env?.LABELFLOW_AWS_SECRET_ACCESS_KEY!,
       },
     })
 );
