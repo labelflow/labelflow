@@ -71,16 +71,16 @@ export const getImageEntityFromMutationArgs = async (
     thumbnail200Url,
     thumbnail500Url,
   } = data;
-  const { workspaceSlug } = await repository.dataset.get(
+  const { workspaceSlug } = (await repository.dataset.get(
     { id: datasetId },
     user
-  );
-  const { id: workspaceId } = await repository.workspace.get(
+  )) as { workspaceSlug: string };
+  const { id: workspaceId } = (await repository.workspace.get(
     {
       slug: workspaceSlug,
     },
     user
-  );
+  )) as { id: string };
 
   const now = data?.createdAt ?? new Date().toISOString();
   const imageId = id ?? uuidv4();
