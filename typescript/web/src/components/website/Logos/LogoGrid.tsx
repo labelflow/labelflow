@@ -3,7 +3,6 @@ import {
   Stack,
   Heading,
   LightMode,
-  Link,
   Button,
   Text,
   Center,
