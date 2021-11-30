@@ -11,11 +11,22 @@ const region = process.env?.LABELFLOW_AWS_REGION!;
 const getClient = memoizeOne(
   () =>
     new S3Client({
-      region,
-      credentials: {
-        accessKeyId: process.env?.LABELFLOW_AWS_ACCESS_KEY_ID!,
-        secretAccessKey: process.env?.LABELFLOW_AWS_SECRET_ACCESS_KEY!,
+      ...{
+        region,
+        credentials: {
+          accessKeyId: process.env?.LABELFLOW_AWS_ACCESS_KEY_ID!,
+          secretAccessKey: process.env?.LABELFLOW_AWS_SECRET_ACCESS_KEY!,
+        },
       },
+      // Uncomment bellow to try making minio work with s3 sdk
+      // See https://docs.min.io/docs/how-to-use-aws-sdk-for-javascript-with-minio-server.html
+      // // If we set an given endpoint, it means that we test with minio
+      // ...(process.env?.LABELFLOW_AWS_ENDPOINT
+      //   ? {
+      //       endpoint: process.env?.LABELFLOW_AWS_ENDPOINT,
+      //       forcePathStyle: true, // required to make minio work
+      //     }
+      //   : {}),
     })
 );
 
