@@ -18,7 +18,7 @@ import { RiGroupFill } from "react-icons/ri";
 import { useRouter } from "next/router";
 import {
   Message,
-  searchWorkspacesQuery,
+  isWorkspaceSlugAlreadyTakenQuery,
 } from "../../workspace-switcher/workspace-creation-modal";
 import { randomBackgroundGradient } from "../../../utils/random-background-gradient";
 import { FieldGroup, HeadingGroup, Card } from "..";
@@ -104,13 +104,14 @@ export const Profile = ({
    * This query and the following mutation need to run against the distant database endpoint;
    * This is currently enforced in the TopBar component.
    */
-  const { data } = useQuery(searchWorkspacesQuery, {
+  const { data } = useQuery(isWorkspaceSlugAlreadyTakenQuery, {
     skip: workspaceName === workspace?.name ?? "",
     variables: { slug },
     fetchPolicy: "network-only",
   });
 
-  const workspaceNameIsAlreadyTaken = data?.workspaces?.length === 1;
+  const isWorkspaceSlugAlreadyTaken =
+    data?.isWorkspaceSlugAlreadyTaken ?? false;
 
   const avatarBorderColor = mode("gray.200", "gray.700");
   const avatarBackground = mode("white", "gray.700");
@@ -164,7 +165,7 @@ export const Profile = ({
             isOnlyDisplaying={workspaceName === workspace?.name}
             error={error}
             workspaceName={workspaceName}
-            workspaceNameIsAlreadyTaken={workspaceNameIsAlreadyTaken}
+            isWorkspaceSlugAlreadyTaken={isWorkspaceSlugAlreadyTaken}
           />
           <Box flexDirection="row" alignSelf="flex-end">
             <Button

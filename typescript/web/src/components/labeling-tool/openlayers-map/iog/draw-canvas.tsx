@@ -92,6 +92,8 @@ export const DrawIogCanvas = ({ imageId }: { imageId: string }) => {
           duration: 10000,
         });
         throw error;
+      } finally {
+        unregisterIogJob(timestamp, jobId);
       }
     },
     [

@@ -51,7 +51,6 @@ export const ModifyIogCenterPoint = ({
             { client }
           )
         );
-        unregisterIogJob(timestamp, selectedLabelId);
         return true;
       } catch (error) {
         toast({
@@ -64,6 +63,8 @@ export const ModifyIogCenterPoint = ({
           duration: 10000,
         });
         throw error;
+      } finally {
+        unregisterIogJob(timestamp, selectedLabelId);
       }
     },
     [

@@ -48,8 +48,6 @@ beforeEach(async () => {
         name: "new label class",
         color: "0xaa45f8",
         datasetId: "a dataset id",
-        datasetSlug: "a-dataset-slug",
-        workspaceSlug: "local",
         selectedLabelClassIdPrevious: "previous label class id",
       },
       { client }

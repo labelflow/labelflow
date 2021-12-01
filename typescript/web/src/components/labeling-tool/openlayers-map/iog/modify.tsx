@@ -126,7 +126,7 @@ export const ModifyIog = ({
             }) ?? []),
             centerPoint && !iogSpinnerPosition ? (
               <olFeature
-                key={centerPoint.join("-")}
+                key="point-center"
                 id="point-center"
                 geometry={new Point(centerPoint)}
                 style={stylePointCenter}

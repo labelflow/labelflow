@@ -28,11 +28,9 @@ import { Logo } from "../../logo";
 import { Features } from "../../auth-manager/signin-modal/features";
 import { BoolParam } from "../../../utils/query-param-bool";
 
-export const searchWorkspacesQuery = gql`
-  query searchWorkspaces($slug: String!) {
-    workspaces(first: 1, where: { slug: $slug }) {
-      id
-    }
+export const isWorkspaceSlugAlreadyTakenQuery = gql`
+  query isWorkspaceSlugAlreadyTaken($slug: String!) {
+    isWorkspaceSlugAlreadyTaken(where: { slug: $slug })
   }
 `;
 
@@ -48,12 +46,12 @@ export const createWorkspaceMutation = gql`
 export const Message = ({
   error,
   workspaceName,
-  workspaceNameIsAlreadyTaken,
+  isWorkspaceSlugAlreadyTaken,
   isOnlyDisplaying,
 }: {
   error: ApolloError | undefined;
   workspaceName: string | null | undefined;
-  workspaceNameIsAlreadyTaken: boolean;
+  isWorkspaceSlugAlreadyTaken: boolean;
   isOnlyDisplaying?: boolean;
 }) => {
   if (error) {
@@ -64,7 +62,7 @@ export const Message = ({
     );
   }
 
-  if (workspaceNameIsAlreadyTaken) {
+  if (isWorkspaceSlugAlreadyTaken) {
     return (
       <Text fontSize="sm" color="red.500">
         The name &quot;{workspaceName}&quot; is already taken
@@ -135,7 +133,7 @@ export const WorkspaceCreationModal = ({
    * This query and the following mutation need to run against the distant database endpoint;
    * This is currently enforced in the TopBar component.
    */
-  const { data } = useQuery(searchWorkspacesQuery, {
+  const { data } = useQuery(isWorkspaceSlugAlreadyTakenQuery, {
     skip: workspaceName === undefined,
     variables: { slug },
     fetchPolicy: "network-only",
@@ -174,7 +172,8 @@ export const WorkspaceCreationModal = ({
     },
   });
 
-  const workspaceNameIsAlreadyTaken = data?.workspaces?.length === 1;
+  const isWorkspaceSlugAlreadyTaken =
+    data?.isWorkspaceSlugAlreadyTaken ?? false;
 
   return (
     <Modal
@@ -225,9 +224,17 @@ export const WorkspaceCreationModal = ({
                   <Input
                     aria-label="workspace name input"
                     focusBorderColor={
-                      workspaceNameIsAlreadyTaken ? "red.500" : undefined
+                      isWorkspaceSlugAlreadyTaken ||
+                      forbiddenWorkspaceSlugs.includes(slug) ||
+                      !isValidWorkspaceName(workspaceName ?? "")
+                        ? "red.500"
+                        : undefined
                     }
-                    isInvalid={workspaceNameIsAlreadyTaken}
+                    isInvalid={
+                      isWorkspaceSlugAlreadyTaken ||
+                      forbiddenWorkspaceSlugs.includes(slug) ||
+                      !isValidWorkspaceName(workspaceName ?? "")
+                    }
                     placeholder="My online workspace name"
                     value={workspaceName ?? ""}
                     onChange={(event) => setWorkspaceName(event.target.value)}
@@ -235,14 +242,14 @@ export const WorkspaceCreationModal = ({
                   <Message
                     error={error}
                     workspaceName={workspaceName}
-                    workspaceNameIsAlreadyTaken={workspaceNameIsAlreadyTaken}
+                    isWorkspaceSlugAlreadyTaken={isWorkspaceSlugAlreadyTaken}
                   />
                 </Stack>
                 <Button
                   width="full"
                   type="submit"
                   isDisabled={
-                    workspaceNameIsAlreadyTaken ||
+                    isWorkspaceSlugAlreadyTaken ||
                     slug.length <= 0 ||
                     forbiddenWorkspaceSlugs.includes(slug) ||
                     !isValidWorkspaceName(workspaceName ?? "")

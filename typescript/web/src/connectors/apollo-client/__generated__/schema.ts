@@ -392,6 +392,7 @@ export const typeDefs = gql`
     searchDataset(where: DatasetWhereUniqueInput!): Dataset
     workspace(where: WorkspaceWhereUniqueInput!): Workspace!
     workspaces(first: Int, skip: Int, where: WorkspaceWhereInput): [Workspace!]!
+    isWorkspaceSlugAlreadyTaken(where: WorkspaceWhereInput!): Boolean!
     membership(where: MembershipWhereUniqueInput!): Membership!
     memberships(where: MembershipWhereInput, first: Int, skip: Int): [Membership!]!
     user(where: UserWhereUniqueInput!): User!

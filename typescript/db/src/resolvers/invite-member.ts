@@ -111,7 +111,7 @@ const inviteMember = async (
   try {
     const result = await fetch(
       `${origin}/api/email/send-invitation?${searchParams.toString()}`,
-      { headers: { cookie: (req?.headers as any).cookie } }
+      { headers: { cookie: (req?.headers as any).cookie, origin } }
     );
     if (result.status !== 200) {
       throw new Error(`Not signed in.`);

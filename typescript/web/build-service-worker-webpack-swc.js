@@ -3,7 +3,6 @@ const webpack = require('webpack');
 const NodePolyfillPlugin = require("node-polyfill-webpack-plugin");
 const TerserPlugin = require('terser-webpack-plugin');
 // const { TerserPlugin } = require("next/dist/build/webpack/plugins/terser-webpack-plugin/src/index.js");
-// console.log(`SW env = ${JSON.stringify(['NODE_ENV'].concat(Object.keys(process.env).filter(key => key.startsWith("NEXT_PUBLIC"))), null, 1)}`);
 
 const buildServiceWorker = ({ minify } = {}) => {
   try {

@@ -52,8 +52,12 @@ export const HandleIogClick = () => {
         event.pixel,
         (feature) => feature.getProperties().id
       );
+      if (idOfClickedFeature?.includes("point-center")) {
+        return false;
+      }
 
       try {
+        registerIogJob(timestamp, selectedLabelId, centerPoint);
         if (
           idOfClickedFeature === getIogMaskIdFromLabelId(selectedLabelId ?? "")
         ) {
@@ -62,7 +66,6 @@ export const HandleIogClick = () => {
           setDrawingToolState(DrawingToolState.IDLE);
         } else if (idOfClickedFeature === selectedLabelId) {
           // Add point outside
-          registerIogJob(timestamp, selectedLabelId, centerPoint);
           await perform(
             createUpdateIogLabelEffect(
               {
@@ -76,14 +79,12 @@ export const HandleIogClick = () => {
               { client }
             )
           );
-          unregisterIogJob(timestamp, selectedLabelId);
         } else if (idOfClickedFeature?.includes("point-inside-")) {
           // Remove point inside
           const indexPointToRemove = parseInt(
             idOfClickedFeature.split("point-inside-")[1],
             10
           );
-          registerIogJob(timestamp, selectedLabelId, centerPoint);
           await perform(
             createUpdateIogLabelEffect(
               {
@@ -100,14 +101,12 @@ export const HandleIogClick = () => {
               { client }
             )
           );
-          unregisterIogJob(timestamp, selectedLabelId);
         } else if (idOfClickedFeature?.includes("point-outside-")) {
           // Remove point outside
           const indexPointToRemove = parseInt(
             idOfClickedFeature.split("point-outside-")[1],
             10
           );
-          registerIogJob(timestamp, selectedLabelId, centerPoint);
           await perform(
             createUpdateIogLabelEffect(
               {
@@ -124,12 +123,8 @@ export const HandleIogClick = () => {
               { client }
             )
           );
-          unregisterIogJob(timestamp, selectedLabelId);
-        } else if (idOfClickedFeature?.includes("point-center")) {
-          return false;
         } else {
           // Add point inside
-          registerIogJob(timestamp, selectedLabelId, centerPoint);
           await perform(
             createUpdateIogLabelEffect(
               {
@@ -140,7 +135,6 @@ export const HandleIogClick = () => {
               { client }
             )
           );
-          unregisterIogJob(timestamp, selectedLabelId);
         }
 
         return false;
@@ -155,6 +149,8 @@ export const HandleIogClick = () => {
           duration: 10000,
         });
         throw error;
+      } finally {
+        unregisterIogJob(timestamp, selectedLabelId);
       }
     },
     [
