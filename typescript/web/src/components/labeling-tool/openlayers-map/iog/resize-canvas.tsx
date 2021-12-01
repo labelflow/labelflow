@@ -11,7 +11,7 @@ import {
   ResizeIogEvent,
 } from "./resize-canvas-interaction";
 import { useUndoStore } from "../../../../connectors/undo-store";
-import { createUpdateIogLabelEffect } from "../../../../connectors/undo-store/effects/run-iog";
+import { createUpdateIogLabelEffect } from "../../../../connectors/undo-store/effects/update-iog-label";
 import {
   extractSmartToolInputInputFromIogMask,
   getIogMaskIdFromLabelId,

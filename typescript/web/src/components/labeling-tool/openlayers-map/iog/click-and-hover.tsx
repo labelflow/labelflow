@@ -9,7 +9,7 @@ import {
   useLabelingStore,
   DrawingToolState,
 } from "../../../../connectors/labeling-state";
-import { createUpdateIogLabelEffect } from "../../../../connectors/undo-store/effects/run-iog";
+import { createUpdateIogLabelEffect } from "../../../../connectors/undo-store/effects/update-iog-label";
 import { useUndoStore } from "../../../../connectors/undo-store";
 import { getIogMaskIdFromLabelId } from "../../../../connectors/iog";
 

@@ -10,7 +10,7 @@ import BaseEvent from "ol/events/Event";
 import { Coordinate } from "ol/coordinate";
 
 import { useLabelingStore } from "../../../../connectors/labeling-state";
-import { createUpdateIogLabelEffect } from "../../../../connectors/undo-store/effects/run-iog";
+import { createUpdateIogLabelEffect } from "../../../../connectors/undo-store/effects/update-iog-label";
 import { useUndoStore } from "../../../../connectors/undo-store";
 
 import { labelQuery } from "./queries";
