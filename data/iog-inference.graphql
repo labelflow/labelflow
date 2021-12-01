@@ -9,3 +9,24 @@ input RunIogInput {
   pointsOutside: [[Float!]]
   centerPoint: [Float!]
 }
+
+input UpdateIogInput {
+  id: ID!
+  x: Float
+  y: Float
+  width: Float
+  height: Float
+  pointsInside: [[Float!]]
+  pointsOutside: [[Float!]]
+  centerPoint: [Float!]
+}
+
+input CreateIogLabelInput {
+  id: ID
+  imageId: String!
+  x: Float!
+  y: Float!
+  width: Float!
+  height: Float!
+  centerPoint: [Float!]!
+}

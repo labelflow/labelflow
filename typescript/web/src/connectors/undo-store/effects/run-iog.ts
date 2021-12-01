@@ -1,13 +1,18 @@
+import { v4 as uuidv4 } from "uuid";
 import { ApolloClient, gql } from "@apollo/client";
 import { Coordinate } from "ol/coordinate";
 
 import { GeometryInput, LabelType } from "@labelflow/graphql-types";
 import { Effect } from "..";
+import {
+  deleteLabelMutation,
+  addLabelToImageInCache,
+  removeLabelFromImageCache,
+} from "./create-label";
 
-const runIogMutation = gql`
-  mutation runIog(
+const updateIogLabelMutation = gql`
+  mutation updateIogLabel(
     $id: ID!
-    $imageUrl: String
     $x: Float
     $y: Float
     $width: Float
@@ -16,16 +21,53 @@ const runIogMutation = gql`
     $pointsOutside: [[Float!]]
     $centerPoint: [Float!]
   ) {
-    runIog(
+    updateIogLabel(
       data: {
         id: $id
-        imageUrl: $imageUrl
         x: $x
         y: $y
         width: $width
         height: $height
         pointsInside: $pointsInside
         pointsOutside: $pointsOutside
+        centerPoint: $centerPoint
+      }
+    ) {
+      id
+      type
+      geometry {
+        type
+        coordinates
+      }
+      x
+      y
+      width
+      height
+      smartToolInput
+      labelClass {
+        id
+        color
+      }
+    }
+  }
+`;
+
+const createIogLabelMutation = gql`
+  mutation createIogLabel(
+    $imageId: String!
+    $x: Float!
+    $y: Float!
+    $width: Float!
+    $height: Float!
+    $centerPoint: [Float!]!
+  ) {
+    createIogLabel(
+      data: {
+        imageId: $imageId
+        x: $x
+        y: $y
+        width: $width
+        height: $height
         centerPoint: $centerPoint
       }
     ) {
@@ -94,10 +136,193 @@ const getLabelQuery = gql`
   }
 `;
 
-export const createRunIogEffect = (
+export const createCreateIogLabelEffect = (
+  {
+    imageId,
+    x,
+    y,
+    width,
+    height,
+    centerPoint,
+  }: {
+    imageId: string;
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+    centerPoint: Coordinate;
+  },
+  {
+    setSelectedLabelId,
+    client,
+  }: {
+    setSelectedLabelId: (labelId: string | null) => void;
+    client: ApolloClient<object>;
+  }
+): Effect => ({
+  do: async () => {
+    const labelId = `temp-${Date.now()}`;
+    const optimisticResponse = {
+      createIogLabel: {
+        id: labelId,
+        geometry: {
+          type: LabelType.Polygon,
+          coordinates: [
+            [
+              [x, y],
+              [x + width, y],
+              [x + width, y + height],
+              [x, y + height],
+              [x, y],
+            ],
+          ],
+        },
+        x,
+        y,
+        width,
+        height,
+        smartToolInput: {
+          x,
+          y,
+          width,
+          height,
+          pointsInside: [],
+          pointsOutside: [],
+          centerPoint,
+        },
+        labelClass: null,
+        type: LabelType.Polygon,
+        __typename: "Label",
+      },
+    };
+    // const { cache } = client;
+    // addLabelToImageInCache(
+    //   cache,
+    //   {
+    //     imageId,
+    //     id: labelId,
+    //     labelClassId: null,
+    //     geometry: optimisticResponse.createIogLabel.geometry,
+    //   },
+    //   optimisticResponse.createIogLabel.smartToolInput
+    // );
+
+    const { data } = await client.mutate({
+      mutation: createIogLabelMutation,
+      variables: {
+        imageId,
+        x,
+        y,
+        width,
+        height,
+        centerPoint,
+      },
+      refetchQueries: [
+        "getImageLabels",
+        "countLabels",
+        "getDatasets",
+        "countLabelsOfDataset",
+      ],
+      optimisticResponse,
+      update: (apolloCache, { data: mutationPayloadData }) => {
+        apolloCache.writeQuery({
+          query: getLabelQuery,
+          data: { label: mutationPayloadData?.createIogLabel },
+        });
+      },
+    });
+
+    if (typeof data?.createIogLabel?.id !== "string") {
+      throw new Error("Couldn't get the id of the newly created label");
+    }
+
+    setSelectedLabelId(data.createIogLabel.id);
+    return data.createIogLabel.id;
+  },
+  undo: async (id: string): Promise<string> => {
+    await client.mutate({
+      mutation: deleteLabelMutation,
+      variables: { id },
+      refetchQueries: ["countLabels", "getDatasets", "countLabelsOfDataset"],
+      optimisticResponse: { deleteLabel: { id, __typename: "Label" } },
+      update(cache) {
+        removeLabelFromImageCache(cache, { imageId, id });
+      },
+    });
+
+    setSelectedLabelId(null);
+    return id;
+  },
+  redo: async (id: string) => {
+    const optimisticResponse = {
+      createIogLabel: {
+        id,
+        geometry: [
+          [
+            [x, y],
+            [x + width, y],
+            [x + width, y + height],
+            [x, y + height],
+            [x, y],
+          ],
+        ],
+        x,
+        y,
+        width,
+        height,
+        smartToolInput: {
+          x,
+          y,
+          width,
+          height,
+          pointsInside: [],
+          pointsOutside: [],
+          centerPoint,
+        },
+        labelClass: null,
+        type: LabelType.Polygon,
+        __typename: "Label",
+      },
+    };
+
+    const { data } = await client.mutate({
+      mutation: createIogLabelMutation,
+      variables: {
+        id,
+        imageId,
+        x,
+        y,
+        width,
+        height,
+        centerPoint,
+      },
+      refetchQueries: [
+        "getImageLabels",
+        "countLabels",
+        "getDatasets",
+        "countLabelsOfDataset",
+      ],
+      optimisticResponse,
+      update: (apolloCache, { data: mutationPayloadData }) => {
+        apolloCache.writeQuery({
+          query: getLabelQuery,
+          data: { label: mutationPayloadData?.createIogLabel },
+        });
+      },
+    });
+
+    if (typeof data?.createIogLabel?.id !== "string") {
+      throw new Error("Couldn't get the id of the newly created label");
+    }
+
+    setSelectedLabelId(data.createIogLabel.id);
+    return data.createIogLabel.id;
+  },
+});
+
+export const createUpdateIogLabelEffect = (
   {
     labelId,
-    imageUrl,
     x,
     y,
     width,
@@ -107,7 +332,6 @@ export const createRunIogEffect = (
     centerPoint,
   }: {
     labelId: string;
-    imageUrl?: string;
     x?: number;
     y?: number;
     width?: number;
@@ -165,7 +389,6 @@ export const createRunIogEffect = (
           pointsInside: pointsInside ?? label?.smartToolInput?.pointsInside,
           pointsOutside: pointsOutside ?? label?.smartToolInput?.pointsOutside,
           centerPoint: centerPoint ?? label?.smartToolInput?.centerPoint,
-          imageUrl: imageUrl ?? label?.smartToolInput?.imageUrl,
         },
         labelClass: label.labelClass,
         type: label.type,
@@ -174,10 +397,9 @@ export const createRunIogEffect = (
     };
 
     await client.mutate({
-      mutation: runIogMutation,
+      mutation: updateIogLabelMutation,
       variables: {
         id: labelId,
-        imageUrl,
         x,
         y,
         width,

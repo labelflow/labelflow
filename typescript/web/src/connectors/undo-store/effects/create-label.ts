@@ -44,7 +44,7 @@ const imageDimensionsQuery = gql`
   }
 `;
 
-const deleteLabelMutation = gql`
+export const deleteLabelMutation = gql`
   mutation deleteLabel($id: ID!) {
     deleteLabel(where: { id: $id }) {
       id
@@ -66,17 +66,14 @@ const createdLabelFragment = gql`
       type
       coordinates
     }
+    smartToolInput
   }
 `;
 
 export function addLabelToImageInCache(
-  cache: ApolloCache<{
-    createLabel: {
-      id: string;
-      __typename: string;
-    };
-  }>,
-  { imageId, id, labelClassId, geometry }: CreateLabelInputs & { id: string }
+  cache: ApolloCache<{}>,
+  { imageId, id, labelClassId, geometry }: CreateLabelInputs & { id: string },
+  smartToolInput?: any
 ) {
   const imageDimensionsResult = cache.readQuery<{
     image: { width: number; height: number };
@@ -91,20 +88,23 @@ export function addLabelToImageInCache(
       geometry
     );
     const createdLabel = {
-      id,
-      labelClass:
-        labelClassId != null
-          ? {
-              id: labelClassId,
-              __typename: "LabelClass",
-            }
-          : null,
-      geometry: boundedGeometry.geometry,
-      x: boundedGeometry.x,
-      y: boundedGeometry.y,
-      width: boundedGeometry.width,
-      height: boundedGeometry.height,
-      __typename: "Label",
+      ...{
+        id,
+        labelClass:
+          labelClassId != null
+            ? {
+                id: labelClassId,
+                __typename: "LabelClass",
+              }
+            : null,
+        geometry: boundedGeometry.geometry,
+        x: boundedGeometry.x,
+        y: boundedGeometry.y,
+        width: boundedGeometry.width,
+        height: boundedGeometry.height,
+        __typename: "Label",
+      },
+      ...(smartToolInput ? { smartToolInput } : {}),
     };
     cache.modify({
       id: cache.identify({ id: imageId, __typename: "Image" }),
@@ -218,7 +218,7 @@ export const createCreateLabelEffect = (
       variables: createLabelInputs,
       refetchQueries: ["countLabels", "getDatasets", "countLabelsOfDataset"],
       optimisticResponse: {
-        createLabel: { id: `temp-${Date.now()}`, __typename: "Label" },
+        createLabel: { id, __typename: "Label" },
       },
       update(cache) {
         addLabelToImageInCache(cache, createLabelInputs);

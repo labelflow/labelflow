@@ -1,3 +1,4 @@
+import { v4 as uuidv4 } from "uuid";
 import { useMemo, useRef, useCallback } from "react";
 import { Draw as OlDraw } from "ol/interaction";
 import { createBox, DrawEvent } from "ol/interaction/Draw";
@@ -8,7 +9,6 @@ import { useApolloClient, useQuery } from "@apollo/client";
 import { useToast } from "@chakra-ui/react";
 import { useHotkeys } from "react-hotkeys-hook";
 import { getBoundedGeometryFromImage } from "@labelflow/common-resolvers";
-import { LabelType } from "@labelflow/graphql-types";
 
 import {
   useLabelingStore,
@@ -16,8 +16,7 @@ import {
 } from "../../../../connectors/labeling-state";
 import { keymap } from "../../../../keymap";
 import { noneClassColor } from "../../../../utils/class-color-generator";
-import { createCreateLabelEffect } from "../../../../connectors/undo-store/effects/create-label";
-import { createRunIogEffect } from "../../../../connectors/undo-store/effects/run-iog";
+import { createCreateIogLabelEffect } from "../../../../connectors/undo-store/effects/run-iog";
 import { useUndoStore } from "../../../../connectors/undo-store";
 
 import { labelClassQuery, imageQuery } from "./queries";
@@ -58,57 +57,31 @@ export const DrawIogCanvas = ({ imageId }: { imageId: string }) => {
   const performIOGFromDrawEvent = useCallback(
     async (drawEvent: DrawEvent) => {
       const timestamp = new Date().getTime();
-      const openLayersGeometry = drawEvent.feature.getGeometry();
-      const geometry = new GeoJSON().writeGeometryObject(
-        openLayersGeometry
-      ) as GeoJSONPolygon;
-      const boundedGeometry = getBoundedGeometryFromImage(
-        { width: dataImage?.image?.width, height: dataImage?.image?.height },
-        geometry
-      ).geometry;
-      const labelId = await createCreateLabelEffect(
-        {
-          imageId,
-          selectedLabelClassId,
-          geometry: boundedGeometry,
-          labelType: LabelType.Polygon,
-        },
-        {
-          setSelectedLabelId,
-          client,
-        }
-      ).do();
-      const inferencePromise = (async () => {
-        const dataUrl = await (async function () {
-          const blob = await fetch(dataImage?.image?.url).then((r) => r.blob());
-          return new Promise<string>((resolve) => {
-            const reader = new FileReader();
-            reader.onload = () => resolve(reader.result as string);
-            reader.readAsDataURL(blob);
-          });
-        })();
+      const jobId = uuidv4();
+      try {
+        const openLayersGeometry = drawEvent.feature.getGeometry();
+        const geometry = new GeoJSON().writeGeometryObject(
+          openLayersGeometry
+        ) as GeoJSONPolygon;
+        const boundedGeometry = getBoundedGeometryFromImage(
+          { width: dataImage?.image?.width, height: dataImage?.image?.height },
+          geometry
+        ).geometry;
         const smartToolInput = extractSmartToolInputInputFromIogMask(
           boundedGeometry.coordinates as number[][][]
         );
-        registerIogJob(timestamp, labelId, smartToolInput.centerPoint);
-
-        return perform(
-          createRunIogEffect(
+        await perform(
+          createCreateIogLabelEffect(
             {
-              labelId,
-              imageUrl: dataUrl,
+              imageId,
               ...smartToolInput,
             },
-            { client }
+            { setSelectedLabelId, client }
           )
         );
-      })();
-
-      try {
-        await inferencePromise;
-        unregisterIogJob(timestamp, labelId);
+        unregisterIogJob(timestamp, jobId);
       } catch (error) {
-        unregisterIogJob(timestamp, labelId);
+        unregisterIogJob(timestamp, jobId);
         setSelectedLabelId(null);
         toast({
           title: "Error executing IOG",
@@ -124,12 +97,10 @@ export const DrawIogCanvas = ({ imageId }: { imageId: string }) => {
     [
       dataImage,
       imageId,
-      selectedLabelClassId,
       setSelectedLabelId,
       client,
       registerIogJob,
       unregisterIogJob,
-      setSelectedLabelId,
       toast,
       perform,
     ]
