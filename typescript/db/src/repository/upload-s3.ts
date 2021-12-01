@@ -30,7 +30,7 @@ const getClient = memoizeOne(
     })
 );
 
-export const uploadsRoute = "/api/downloads";
+export const downloadsRoute = "/api/downloads";
 
 export const getUploadTargetHttp = async (
   key: string,
@@ -40,7 +40,7 @@ export const getUploadTargetHttp = async (
     return {
       __typename: "UploadTargetHttp",
       uploadUrl: "",
-      downloadUrl: `${origin}${uploadsRoute}/`,
+      downloadUrl: `${origin}${downloadsRoute}/`,
     };
   const s3Client = getClient();
   const command = new PutObjectCommand({
@@ -53,7 +53,7 @@ export const getUploadTargetHttp = async (
   return {
     __typename: "UploadTargetHttp",
     uploadUrl: signedUrl,
-    downloadUrl: `${origin}${uploadsRoute}/${key}`,
+    downloadUrl: `${origin}${downloadsRoute}/${key}`,
   };
 };
 
