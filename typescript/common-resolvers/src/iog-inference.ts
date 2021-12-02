@@ -5,18 +5,45 @@ import {
   MutationCreateIogLabelArgs,
   MutationUpdateIogLabelArgs,
 } from "@labelflow/graphql-types";
+import "isomorphic-fetch";
 
 import { Context } from "./types";
 
 import { throwIfResolvesToNil } from "./utils/throw-if-resolves-to-nil";
 
-const downloadUrlToDataUrl = async (url: string) => {
-  const blob = await fetch(url).then((r) => r.blob());
-  return new Promise<string>((resolve) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result as string);
-    reader.readAsDataURL(blob);
+const downloadUrlToDataUrl = async (url: string, req) => {
+  const headers = new Headers();
+  headers.set("Accept", "image/tiff,image/jpeg,image/png,image/*,*/*;q=0.8");
+  headers.set("Sec-Fetch-Dest", "image");
+  if ((req?.headers as any)?.cookie) {
+    headers.set("Cookie", (req?.headers as any)?.cookie);
+  }
+  const fetchResult = await fetch(url, {
+    method: "GET",
+    headers,
+    credentials: "include",
   });
+  if (fetchResult.status !== 200) {
+    throw new Error(
+      `[IOG revolver] -- Getting image from storage, could not fetch image at url ${url} properly, code ${fetchResult.status}`
+    );
+  }
+  try {
+    // Try executing as if we were in local service worker
+    const reader = new FileReader(); // Fails here on NodeJs
+    // It's important that it fails before fetchResult.blob() on NodeJs, which avoids a bug
+    const blob = await fetchResult.blob();
+    return await new Promise<string>((resolve) => {
+      reader.onload = () => resolve(reader.result as string);
+      reader.readAsDataURL(blob);
+    });
+  } catch (e) {
+    // We're on NodeJs (remote server)
+    const arrayBuffer = await fetchResult.arrayBuffer();
+    return `data:application/json;base64,${Buffer.from(arrayBuffer).toString(
+      "base64"
+    )}`;
+  }
 };
 
 const fetchIogServer = async (
@@ -142,7 +169,7 @@ const fetchIogServer = async (
 const createIogLabel = async (
   _parent: any,
   args: MutationCreateIogLabelArgs,
-  { repository, user }: Context
+  { repository, user, req }: Context
 ) => {
   const labelId = args?.data?.id ?? uuidv4();
   // Since we don't have any constraint checks with Dexie
@@ -152,7 +179,7 @@ const createIogLabel = async (
     `The image id ${args.data.imageId} doesn't exist.`,
     repository.image.get
   )({ id: args.data.imageId }, user);
-  const dataUrl = await downloadUrlToDataUrl(image.url);
+  const dataUrl = await downloadUrlToDataUrl(image.url, req);
   const now = new Date();
 
   const { xInit, yInit } = {
