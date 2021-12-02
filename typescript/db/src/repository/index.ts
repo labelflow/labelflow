@@ -8,7 +8,7 @@ import {
   getFromStorage,
   putInStorage,
   deleteFromStorage,
-} from "./upload-supabase";
+} from "./upload-s3";
 import {
   addWorkspace,
   getWorkspace,

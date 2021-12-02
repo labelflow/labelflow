@@ -29,8 +29,9 @@ const uploadImage = async (
     throw new Error("Can't direct upload this image.");
   }
   repository.upload.put(
-    (uploadTarget as UploadTargetHttp)?.downloadUrl,
-    fileBlob
+    (uploadTarget as UploadTargetHttp)?.uploadUrl,
+    fileBlob,
+    req
   );
   return await imageResolvers.Mutation.createImage(
     null,

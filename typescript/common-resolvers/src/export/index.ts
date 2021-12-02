@@ -48,7 +48,7 @@ const exportDataset = async (
       origin
     )
   )?.uploadUrl;
-  await repository.upload.put(outUrl, fileExport);
+  await repository.upload.put(outUrl, fileExport, req);
   return outUrl;
 };
 
