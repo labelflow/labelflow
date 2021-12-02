@@ -63,7 +63,6 @@ export const putInStorage: Repository["upload"]["put"] = async (url, blob) => {
   const key = url.substring(url.lastIndexOf(query) + query.length);
 
   const buf = await blob.arrayBuffer();
-
   await client.storage.from(bucket).upload(key, buf, {
     contentType: blob.type,
     upsert: false,

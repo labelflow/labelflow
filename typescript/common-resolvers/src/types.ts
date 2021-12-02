@@ -190,7 +190,7 @@ export type Repository = {
       key: string,
       origin: string
     ) => Promise<UploadTarget> | UploadTarget;
-    put: (url: string, file: Blob) => Promise<void>;
+    put: (url: string, file: Blob, req?: Request) => Promise<void>;
     get: (url: string, req?: Request) => Promise<ArrayBuffer>;
     delete: (url: string) => Promise<void>;
   };
@@ -209,7 +209,7 @@ export type Repository = {
         thumbnail500Url?: string;
       },
       getImage: (url: string) => Promise<ArrayBuffer>,
-      putThumbnail: (url: string, blob: Blob) => Promise<void>,
+      putThumbnail: (targetDownloadUrl: string, blob: Blob) => Promise<void>,
       updateImage: Update<DbImage, ImageWhereUniqueInput>,
       user?: { id: string }
     ) => Promise<{

@@ -17,9 +17,10 @@ import { getOrigin } from "./utils/get-origin";
 // Mutations
 const getImageFileKey = (
   imageId: string,
+  workspaceId: string,
   datasetId: string,
   mimetype: string
-) => `${datasetId}/${imageId}.${mime.extension(mimetype)}`;
+) => `${workspaceId}/${datasetId}/${imageId}.${mime.extension(mimetype)}`;
 
 const getImageName = ({
   externalUrl,
@@ -70,6 +71,16 @@ export const getImageEntityFromMutationArgs = async (
     thumbnail200Url,
     thumbnail500Url,
   } = data;
+  const { workspaceSlug } = (await repository.dataset.get(
+    { id: datasetId },
+    user
+  )) as { workspaceSlug: string };
+  const { id: workspaceId } = (await repository.workspace.get(
+    {
+      slug: workspaceSlug,
+    },
+    user
+  )) as { id: string };
 
   const now = data?.createdAt ?? new Date().toISOString();
   const imageId = id ?? uuidv4();
@@ -87,6 +98,7 @@ export const getImageEntityFromMutationArgs = async (
     finalUrl = url;
   }
 
+  const origin = getOrigin(req);
   if (!file && externalUrl && !url) {
     // External file based upload
 
@@ -110,11 +122,9 @@ export const getImageEntityFromMutationArgs = async (
       );
     }
 
-    const origin = getOrigin(req);
-
     const blob = await fetchResult.blob();
     const uploadTarget = await repository.upload.getUploadTargetHttp(
-      getImageFileKey(imageId, datasetId, blob.type),
+      getImageFileKey(imageId, workspaceId, datasetId, blob.type),
       origin
     );
 
@@ -125,17 +135,15 @@ export const getImageEntityFromMutationArgs = async (
       );
     }
 
-    await repository.upload.put(uploadTarget.uploadUrl, blob);
+    await repository.upload.put(uploadTarget.uploadUrl, blob, req);
 
     finalUrl = uploadTarget.downloadUrl;
   }
 
   if (file && !externalUrl && !url) {
     // File Content based upload
-    const origin = getOrigin(req);
-
     const uploadTarget = await repository.upload.getUploadTargetHttp(
-      getImageFileKey(imageId, datasetId, file.type),
+      getImageFileKey(imageId, workspaceId, datasetId, file.type),
       origin
     );
 
@@ -146,7 +154,7 @@ export const getImageEntityFromMutationArgs = async (
       );
     }
 
-    await repository.upload.put(uploadTarget.uploadUrl, file);
+    await repository.upload.put(uploadTarget.uploadUrl, file, req);
 
     finalUrl = uploadTarget.downloadUrl;
   }
@@ -163,6 +171,9 @@ export const getImageEntityFromMutationArgs = async (
     };
   }
 
+  const downloadUrlPrefix = (
+    await repository.upload.getUploadTargetHttp("", origin)
+  ).downloadUrl;
   // Probe the file to get its dimensions and mimetype if not provided
   const imageMetaData = await repository.imageProcessing.processImage(
     {
@@ -174,7 +185,12 @@ export const getImageEntityFromMutationArgs = async (
       url: finalUrl!,
     },
     (fromUrl: string) => repository.upload.get(fromUrl, req),
-    (toUrl: string, blob: Blob) => repository.upload.put(toUrl, blob),
+    async (targetDownloadUrl: string, blob: Blob) => {
+      const key = targetDownloadUrl.substring(downloadUrlPrefix.length);
+      const toUrl = (await repository.upload.getUploadTargetHttp(key, origin))
+        .uploadUrl;
+      await repository.upload.put(toUrl, blob, req);
+    },
     repository.image.update,
     user
   );

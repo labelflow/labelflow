@@ -79,6 +79,14 @@ const getDataset = gql`
   }
 `;
 
+const getWorkspaceIdQuery = gql`
+  query getWorkspaceId($workspaceSlug: String) {
+    workspace(where: { slug: $workspaceSlug }) {
+      id
+    }
+  }
+`;
+
 const importDataset = gql`
   mutation importDataset(
     $where: DatasetWhereUniqueInput!
@@ -103,10 +111,11 @@ const encodeFileToDataUrl = (file: File): Promise<string> => {
 };
 
 const getImageStoreKey = (
+  workspaceId: string,
   datasetId: string,
   fileId: string,
   mimetype: string
-) => `${datasetId}/${fileId}.${mime.extension(mimetype)}`;
+) => `${workspaceId}/${datasetId}/${fileId}.${mime.extension(mimetype)}`;
 
 export const ImportImagesModalDropzone = ({
   setMode,
@@ -136,8 +145,13 @@ export const ImportImagesModalDropzone = ({
     variables: { slug: datasetSlug, workspaceSlug },
     skip: typeof datasetSlug !== "string" || typeof workspaceSlug !== "string",
   });
+  const { data: getWorkspaceIdData } = useQuery(getWorkspaceIdQuery, {
+    variables: { workspaceSlug },
+    skip: workspaceSlug == null,
+  });
 
   const datasetId = datasetResult?.dataset.id;
+  const workspaceId = getWorkspaceIdData?.workspace.id;
 
   useEffect(() => {
     if (isEmpty(files)) return;
@@ -154,6 +168,7 @@ export const ImportImagesModalDropzone = ({
               mutation: getImageUploadTargetMutation,
               variables: {
                 key: getImageStoreKey(
+                  workspaceId as string,
                   datasetId as string,
                   uuidv4(),
                   acceptedFile.file.type
@@ -171,6 +186,12 @@ export const ImportImagesModalDropzone = ({
               await apolloClient.mutate({
                 mutation: createImageFromFileMutation,
                 variables: {
+                  key: getImageStoreKey(
+                    workspaceId as string,
+                    datasetId as string,
+                    uuidv4(),
+                    acceptedFile.file.type
+                  ),
                   file: acceptedFile.file,
                   createdAt: createdAt.toISOString(),
                   datasetId,
@@ -212,11 +233,18 @@ export const ImportImagesModalDropzone = ({
                 });
               }
 
-              const form = new FormData();
-              form.append("image", acceptedFile.file);
+              // SUPABASE upload
+              // const form = new FormData();
+              // form.append("image", acceptedFile.file);
+              // await fetch(target.uploadUrl, {
+              //   method: "PUT",
+              //   body: form,
+              // });
+
+              // AWS upload
               await fetch(target.uploadUrl, {
                 method: "PUT",
-                body: form,
+                body: acceptedFile.file,
               });
               if (acceptedFile.file.type.startsWith("image")) {
                 const createdAt = new Date();
