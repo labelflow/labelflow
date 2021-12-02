@@ -281,6 +281,10 @@ const ns = new k8s.core.v1.Namespace(
 // Export the Namespace name
 export const namespaceName = ns.metadata.apply((m) => m.name);
 
+if (!process.env?.IOG_VERSION) {
+  throw new Error("Cannot create deployment: env var IOG_VERSION not set");
+}
+
 // Create a Deployment
 const appLabels = { appClass: clusterName };
 const deployment = new k8s.apps.v1.Deployment(
@@ -301,8 +305,7 @@ const deployment = new k8s.apps.v1.Deployment(
           containers: [
             {
               name: "test-iog-container",
-              image:
-                "us-central1-docker.pkg.dev/labelflow-321909/labelflow/iog:07.10.21",
+              image: `us-central1-docker.pkg.dev/labelflow-321909/labelflow/iog:${process.env?.IOG_VERSION}`,
               ports: [{ containerPort: 5000 }],
               readinessProbe: {
                 httpGet: { path: "/graphql/", port: 5000 },
