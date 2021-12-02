@@ -1,4 +1,3 @@
-import { v4 as uuid } from "uuid";
 import { ApolloClient, gql } from "@apollo/client";
 import { Coordinate } from "ol/coordinate";
 
