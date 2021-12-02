@@ -11,7 +11,7 @@ import { Context } from "./types";
 
 import { throwIfResolvesToNil } from "./utils/throw-if-resolves-to-nil";
 
-const downloadUrlToDataUrl = async (url: string, req) => {
+const downloadUrlToDataUrl = async (url: string, req: Request | undefined) => {
   const headers = new Headers();
   headers.set("Accept", "image/tiff,image/jpeg,image/png,image/*,*/*;q=0.8");
   headers.set("Sec-Fetch-Dest", "image");
