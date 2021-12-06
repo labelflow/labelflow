@@ -1,3 +1,6 @@
+// Script added to copy the contents of one supabase storage bucket to another bucket in a different project
+// Added in the context of creating a new Supabase project for production in https://github.com/labelflow/labelflow/issues/621
+
 import { createClient, SupabaseClient } from "@supabase/supabase-js";
 import Bluebird from "bluebird";
 
