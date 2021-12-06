@@ -6,6 +6,12 @@ import * as cloudflare from "@pulumi/cloudflare";
 import * as k8sOfficial from "@kubernetes/client-node";
 // import { writeFileSync } from "fs";
 
+/*
+ * WARNING: in case of deploying from scratch, you'll need to deploy twice
+ * - Once with lines flagged "FIRST DEPLOYMENT ONLY" uncommented and lines flagged "NON FIRST DEPLOYMENT ONLY" commented
+ * - Once with lines flagged "NON FIRST DEPLOYMENT ONLY" uncommented and lines flagged "FIRST DEPLOYMENT ONLY" commented
+ */
+
 const domain = "labelflow.net";
 const subdomain = "iog";
 const fullyQualifiedDomain = `${subdomain}.${domain}`;
@@ -344,9 +350,6 @@ const service = new k8s.core.v1.Service(
   "test-iog-service",
   {
     metadata: {
-      //   annotations: {
-      //     "cloud.google.com/app-protocols": '{"": }',
-      //   },
       labels: appLabels,
       namespace: namespaceName,
     },
@@ -363,9 +366,6 @@ const service = new k8s.core.v1.Service(
 
 // Export the Service name and public LoadBalancer endpoint
 export const serviceName = service.metadata.apply((m) => m.name);
-// export const servicePublicIP = service.status.apply(
-//   (s) => s.loadBalancer.ingress[0].ip
-// );
 
 const ipAddress = new gcp.compute.Address("test-iog-address", {});
 export const staticIpAddress = ipAddress.address;
@@ -384,7 +384,7 @@ export const managedCertificate = new k8s.apiextensions.CustomResource(
   { provider: clusterProvider }
 );
 
-// Uncomment bellow for FIRST deployment
+// FIRST DEPLOYMENT ONLY
 // const managedCertificateName = managedCertificate.metadata.apply((m) => m.name);
 
 export const ingress = new k8s.networking.v1.Ingress(
@@ -393,21 +393,19 @@ export const ingress = new k8s.networking.v1.Ingress(
     metadata: {
       namespace: namespaceName,
       annotations: {
-        // Enable https on the ingress to use once without the following annotation during FIRST deployment
+        "kubernetes.io/ingress.class": "gce",
+
+        // FIRST DEPLOYMENT ONLY
         // "networking.gke.io/managed-certificates": managedCertificateName,
 
-        // // Warning you cannot use this annotation with the one above...
-        // // See https://github.com/kubernetes/ingress-gce/issues/764
+        // See https://github.com/kubernetes/ingress-gce/issues/764
+        // NON FIRST DEPLOYMENT ONLY
         "kubernetes.io/ingress.allow-http": "false",
-        // // Does not work yet so far...
+        // NON FIRST DEPLOYMENT ONLY
         "kubernetes.io/ingress.global-static-ip-name": staticIpName,
-        "kubernetes.io/ingress.class": "gce",
       },
     },
     spec: {
-      // ingressClassName: "gce",
-      // tls: [{ secretName: secret.metadata.name }],
-      // defaultBackend: { service: { name: serviceName, port: { number: 80 } } },
       rules: [
         {
           host: fullyQualifiedDomain,
@@ -483,8 +481,9 @@ export const record = new cloudflare.Record("test-iog-record", {
   name: subdomain,
   zoneId: process.env?.CLOUDFLARE_LABELFLOWNET_ZONE_ID,
   type: "A",
-  // value: staticIpAddress,
-  // value: "34.117.17.101", // FIXME Hardcoded for now....
-  value: ingressIpAddress,
+  // NON FIRST DEPLOYMENT ONLY
+  value: staticIpAddress,
+  // FIRST DEPLOYMENT ONLY
+  // value: ingressIpAddress,
   ttl: 3600,
 });
