@@ -63,7 +63,10 @@ export type DbLabel = Omit<GeneratedLabel, "labelClass"> & {
 };
 export type DbLabelCreateInput = WithCreatedAtAndUpdatedAt<DbLabel>;
 
-export type DbLabelClass = Omit<GeneratedLabelClass, "labels" | "dataset"> & {
+export type DbLabelClass = Omit<
+  GeneratedLabelClass,
+  "labels" | "dataset" | "labelsAggregates"
+> & {
   datasetId: string;
 };
 export type DbLabelClassCreateInput = Required<

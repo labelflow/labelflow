@@ -1,19 +1,30 @@
 import { useMemo, useState, useCallback } from "react";
 import { useQuery, gql, useApolloClient } from "@apollo/client";
-import {
-  Box,
-  Text,
-  Divider,
-  useColorModeValue as mode,
-} from "@chakra-ui/react";
+import { Box, Heading } from "@chakra-ui/react";
 
-import { DragDropContext, Droppable } from "react-beautiful-dnd";
-import {
-  ClassItem,
-  datasetLabelClassesQuery,
-  DatasetClassesQueryResult,
-} from "./class-item";
+import { ClassTableActions } from "./table-actions";
+import { ClassTableContent } from "./table-content";
 import { DeleteLabelClassModal } from "./delete-class-modal";
+import { UpsertClassModal } from "./upsert-class-modal/upsert-class-modal";
+import { DatasetClassesQueryResult, LabelClassWithShortcut } from "./types";
+
+const datasetLabelClassesQuery = gql`
+  query getDatasetLabelClasses($slug: String!, $workspaceSlug: String!) {
+    dataset(where: { slugs: { slug: $slug, workspaceSlug: $workspaceSlug } }) {
+      id
+      name
+      labelClasses {
+        id
+        index
+        name
+        color
+        labelsAggregates {
+          totalCount
+        }
+      }
+    }
+  }
+`;
 
 const reorderLabelClassMutation = gql`
   mutation reorderLabelClass($id: ID!, $index: Int!) {
@@ -22,6 +33,7 @@ const reorderLabelClassMutation = gql`
     }
   }
 `;
+
 const reorder = (list: any[], startIndex: number, endIndex: number) => {
   const result = Array.from(list);
   const [removed] = result.splice(startIndex, 1);
@@ -43,8 +55,11 @@ export const ClassesList = ({
   workspaceSlug: string;
 }) => {
   const client = useApolloClient();
-  const [editClassId, setEditClassId] = useState<string | null>(null);
   const [deleteClassId, setDeleteClassId] = useState<string | null>(null);
+  const [editClass, setEditClass] =
+    useState<LabelClassWithShortcut | null>(null);
+  const [isCreatingClassLabel, setIsCreatingClassLabel] = useState(false);
+  const [searchText, setSearchText] = useState("");
 
   const {
     data: datasetResult,
@@ -105,56 +120,42 @@ export const ClassesList = ({
         labelClassId={deleteClassId}
         onClose={() => setDeleteClassId(null)}
       />
-
-      <Box
-        d="flex"
-        flexDirection="column"
-        bg={mode("white", "gray.800")}
-        m={{ base: "2", md: "8" }}
-        borderRadius="lg"
-        maxWidth="5xl"
-        flexGrow={1}
-      >
-        <>
-          <Text
-            margin="2"
-            fontWeight="bold"
-          >{`${labelClassWithShortcut.length} Classes`}</Text>
-          <Divider />
-          {!loading && (
-            <DragDropContext onDragEnd={onDragEnd}>
-              <Droppable droppableId="droppable">
-                {(provided) => (
-                  <Box
-                    {...provided.droppableProps}
-                    ref={provided.innerRef}
-                    // style={getListStyle(snapshot.isDraggingOver)}
-                  >
-                    {labelClassWithShortcut.map(
-                      ({ id, name, color, shortcut, index }) => (
-                        <ClassItem
-                          key={id}
-                          id={id}
-                          index={index}
-                          name={name}
-                          color={color}
-                          shortcut={shortcut}
-                          edit={editClassId === id}
-                          datasetSlug={datasetSlug}
-                          workspaceSlug={workspaceSlug}
-                          onClickEdit={setEditClassId}
-                          onClickDelete={setDeleteClassId}
-                        />
-                      )
-                    )}
-                    {provided.placeholder}
-                  </Box>
-                )}
-              </Droppable>
-            </DragDropContext>
-          )}
-        </>
-      </Box>
+      <UpsertClassModal
+        isOpen={editClass != null}
+        item={editClass}
+        onClose={() => setEditClass(null)}
+        datasetId={datasetId}
+        datasetSlug={datasetSlug}
+      />
+      {!loading && (
+        <Box
+          display="flex"
+          flexDirection="column"
+          w="full"
+          p={8}
+          maxWidth="5xl"
+          flexGrow={1}
+        >
+          <Heading mb={5}>
+            {`Classes (${labelClassWithShortcut.length})`}
+          </Heading>
+          <ClassTableActions
+            searchText={searchText}
+            setSearchText={setSearchText}
+            isCreatingClassLabel={isCreatingClassLabel}
+            setIsCreatingClassLabel={setIsCreatingClassLabel}
+            datasetId={datasetId}
+            datasetSlug={datasetSlug}
+          />
+          <ClassTableContent
+            classes={labelClassWithShortcut}
+            onDragEnd={onDragEnd}
+            onClickDelete={setDeleteClassId}
+            onClickEdit={setEditClass}
+            searchText={searchText}
+          />
+        </Box>
+      )}
     </>
   );
 };

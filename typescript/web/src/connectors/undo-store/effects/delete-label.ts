@@ -3,8 +3,8 @@ import { omit } from "lodash/fp";
 
 import { Label } from "@labelflow/graphql-types";
 import { Effect } from "..";
-import { removeLabelFromImageCache } from "./cache-updates/remove-label-from-image-cache";
-import { addLabelToImageInCache } from "./cache-updates/add-label-to-image-in-cache";
+import { createLabelMutationUpdate } from "./cache-updates/create-label-mutation-update";
+import { deleteLabelMutationUpdate } from "./cache-updates/delete-label-mutation-update";
 import { createLabelMutation } from "./shared-queries";
 
 const deleteLabelMutation = gql`
@@ -47,15 +47,7 @@ export const createDeleteLabelEffect = (
       refetchQueries: ["countLabelsOfDataset"],
       /* Note that there is no optimistic response here, only a cache update.
        * We could add it but it would imply to fetch a lot of data beforehand */
-      update(cache, { data: updateData }) {
-        if (typeof updateData?.deleteLabel?.imageId !== "string") {
-          return;
-        }
-        removeLabelFromImageCache(cache, {
-          id,
-          imageId: updateData.deleteLabel.imageId,
-        });
-      },
+      update: deleteLabelMutationUpdate(),
     });
     setSelectedLabelId(null);
     return data?.deleteLabel;
@@ -92,9 +84,7 @@ export const createDeleteLabelEffect = (
       variables: createLabelInputs,
       refetchQueries: ["countLabelsOfDataset"],
       optimisticResponse: { createLabel: { id, __typename: "Label" } },
-      update(cache) {
-        addLabelToImageInCache(cache, createLabelInputs);
-      },
+      update: createLabelMutationUpdate(createLabelInputs),
     });
 
     setSelectedLabelId(id);

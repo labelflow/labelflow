@@ -3,8 +3,8 @@ import { Coordinate } from "ol/coordinate";
 
 import { LabelType } from "@labelflow/graphql-types";
 import { Effect } from "..";
-import { addLabelToImageInCache } from "./cache-updates/add-label-to-image-in-cache";
-import { removeLabelFromImageCache } from "./cache-updates/remove-label-from-image-cache";
+import { createLabelMutationUpdate } from "./cache-updates/create-label-mutation-update";
+import { deleteLabelMutationUpdate } from "./cache-updates/delete-label-mutation-update";
 import { deleteLabelMutation } from "./shared-queries";
 
 const createIogLabelMutation = gql`
@@ -99,13 +99,7 @@ export const createCreateIogLabelEffect = (
       optimisticResponse: {
         createIogLabel: { id, __typename: "Label" },
       },
-      update(cache, { data: mutationPayloadData }) {
-        if (typeof mutationPayloadData?.createIogLabel?.id !== "string") {
-          return;
-        }
-
-        addLabelToImageInCache(cache, createLabelInputs);
-      },
+      update: createLabelMutationUpdate(createLabelInputs),
     });
 
     // TODO: Ideally we could select the label before awaiting for the mutation to complete
@@ -123,9 +117,7 @@ export const createCreateIogLabelEffect = (
       variables: { id: labelId },
       refetchQueries: ["countLabelsOfDataset"],
       optimisticResponse: { deleteLabel: { id: labelId, __typename: "Label" } },
-      update(cache) {
-        removeLabelFromImageCache(cache, { imageId, id: labelId });
-      },
+      update: deleteLabelMutationUpdate({ imageId, id: labelId, labelClassId }),
     });
   },
 });

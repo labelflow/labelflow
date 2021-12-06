@@ -6804,7 +6804,7 @@ __metadata:
     "@types/node": 12.12.21
     "@types/nodemailer": 6.4.4
     "@types/react": 17.0.3
-    "@types/react-beautiful-dnd": 10.1.4
+    "@types/react-beautiful-dnd": 13.1.2
     "@types/react-dom": 17.0.1
     "@types/uuid": ^8.3.0
     "@types/valid-url": ^1.0.3
@@ -12483,12 +12483,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-beautiful-dnd@npm:10.1.4":
-  version: 10.1.4
-  resolution: "@types/react-beautiful-dnd@npm:10.1.4"
+"@types/react-beautiful-dnd@npm:13.1.2":
+  version: 13.1.2
+  resolution: "@types/react-beautiful-dnd@npm:13.1.2"
   dependencies:
     "@types/react": "*"
-  checksum: 6bb9f6250877bd1306640e9bd9fc3eef1231ed117618b011f766e65cb498ef4b10a25848d5cb8343b06a1fbe50a4b7c736631f160e201c732b9424a2966e4c31
+  checksum: 28372854fcd4b7546aabe55ee6569da59fad10f117929cff8a9c6f928448e4dd08ed1139facca33232833b9de100edf017aab9a0ee34065f8fc0e2a7a1262b2c
   languageName: node
   linkType: hard
 

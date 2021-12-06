@@ -11,7 +11,7 @@ import { keymap } from "../../../../keymap";
 import { ClassSelectionPopover } from "../../../class-selection-popover";
 
 // The class selection menu doesn't need all the attributes of the label class
-export type LabelClassItem = Omit<LabelClass, "dataset">;
+export type LabelClassItem = Omit<LabelClass, "dataset" | "labelsAggregates">;
 
 export const ClassificationTag = ({
   label,

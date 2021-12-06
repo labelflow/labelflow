@@ -16,6 +16,7 @@ input LabelClassReorderInput {
 
 input LabelClassWhereInput {
   datasetId: ID
+  name: String
 }
 
 input LabelClassWhereUniqueInput {
