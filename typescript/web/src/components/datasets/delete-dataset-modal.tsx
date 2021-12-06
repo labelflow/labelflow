@@ -46,6 +46,10 @@ export const DeleteDatasetModal = ({
     {
       variables: { id: datasetId },
       refetchQueries: ["getDatasets"],
+      update: (cache) => {
+        // Avoid issue https://github.com/labelflow/labelflow/issues/563
+        cache.evict({ id: `Dataset:${datasetId}` });
+      },
     }
   );
 
