@@ -98,6 +98,7 @@ const duplicateBucket = async () => {
           const { error: uploadError } = await toClient.storage
             .from(bucket)
             .upload(fileName, fileData, {
+              contentType: fileData.type,
               cacheControl: "3600",
               upsert: true,
             });
@@ -107,10 +108,10 @@ const duplicateBucket = async () => {
         },
         { concurrency: 10 }
       );
+      console.log(
+        `\n Successfully copied all elements to ${process.env.TO_SUPABASE_API_URL}`
+      );
     }
-    console.log(
-      `\n Successfully copied all elements to ${process.env.TO_SUPABASE_API_URL}`
-    );
   } catch (error) {
     console.log(error);
   }
