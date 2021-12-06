@@ -11,7 +11,19 @@ const client = new S3Client({
     accessKeyId: process.env?.LABELFLOW_AWS_ACCESS_KEY_ID!,
     secretAccessKey: process.env?.LABELFLOW_AWS_SECRET_ACCESS_KEY!,
   },
+  ...(process.env?.LABELFLOW_AWS_ENDPOINT
+    ? {
+        // endpoint: process.env?.LABELFLOW_AWS_ENDPOINT,
+        endpoint: {
+          protocol: "http",
+          hostname: "localhost:9000",
+          path: "/",
+        },
+        forcePathStyle: true, // required to make minio work
+      }
+    : {}),
 });
+
 const bucket = "labelflow";
 
 const apiRoute = nextConnect({
