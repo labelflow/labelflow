@@ -5,6 +5,7 @@ import {
   Text,
   Divider,
   useColorModeValue as mode,
+  Heading,
 } from "@chakra-ui/react";
 
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
@@ -13,6 +14,8 @@ import {
   datasetLabelClassesQuery,
   DatasetClassesQueryResult,
 } from "./class-item";
+import { ClassTableActions } from "./table-actions";
+import { ClassTableContent } from "./table-content";
 import { DeleteLabelClassModal } from "./delete-class-modal";
 
 const reorderLabelClassMutation = gql`
@@ -45,6 +48,7 @@ export const ClassesList = ({
   const client = useApolloClient();
   const [editClassId, setEditClassId] = useState<string | null>(null);
   const [deleteClassId, setDeleteClassId] = useState<string | null>(null);
+  const [searchText, setSearchText] = useState("");
 
   const {
     data: datasetResult,
@@ -105,55 +109,61 @@ export const ClassesList = ({
         labelClassId={deleteClassId}
         onClose={() => setDeleteClassId(null)}
       />
-
-      <Box
-        d="flex"
-        flexDirection="column"
-        bg={mode("white", "gray.800")}
-        m={{ base: "2", md: "8" }}
-        borderRadius="lg"
-        maxWidth="5xl"
-        flexGrow={1}
-      >
-        <>
-          <Text
-            margin="2"
-            fontWeight="bold"
-          >{`${labelClassWithShortcut.length} Classes`}</Text>
-          <Divider />
-          {!loading && (
-            <DragDropContext onDragEnd={onDragEnd}>
-              <Droppable droppableId="droppable">
-                {(provided) => (
-                  <Box
-                    {...provided.droppableProps}
-                    ref={provided.innerRef}
-                    // style={getListStyle(snapshot.isDraggingOver)}
-                  >
-                    {labelClassWithShortcut.map(
-                      ({ id, name, color, shortcut, index }) => (
-                        <ClassItem
-                          key={id}
-                          id={id}
-                          index={index}
-                          name={name}
-                          color={color}
-                          shortcut={shortcut}
-                          edit={editClassId === id}
-                          datasetSlug={datasetSlug}
-                          workspaceSlug={workspaceSlug}
-                          onClickEdit={setEditClassId}
-                          onClickDelete={setDeleteClassId}
-                        />
-                      )
-                    )}
-                    {provided.placeholder}
-                  </Box>
-                )}
-              </Droppable>
-            </DragDropContext>
-          )}
-        </>
+      <Box display="flex" flexDirection="column" w="full" p={8}>
+        <Heading mb={5}>{`Classes (${labelClassWithShortcut.length})`}</Heading>
+        <ClassTableActions
+          searchText={searchText}
+          setSearchText={setSearchText}
+        />
+        <ClassTableContent classes={labelClassWithShortcut} />
+        <Box
+          d="flex"
+          flexDirection="column"
+          bg={mode("white", "gray.800")}
+          borderRadius="lg"
+          maxWidth="5xl"
+          flexGrow={1}
+        >
+          <>
+            <Text
+              margin="2"
+              fontWeight="bold"
+            >{`${labelClassWithShortcut.length} Classes`}</Text>
+            <Divider />
+            {!loading && (
+              <DragDropContext onDragEnd={onDragEnd}>
+                <Droppable droppableId="droppable">
+                  {(provided) => (
+                    <Box
+                      {...provided.droppableProps}
+                      ref={provided.innerRef}
+                      // style={getListStyle(snapshot.isDraggingOver)}
+                    >
+                      {labelClassWithShortcut.map(
+                        ({ id, name, color, shortcut, index }) => (
+                          <ClassItem
+                            key={id}
+                            id={id}
+                            index={index}
+                            name={name}
+                            color={color}
+                            shortcut={shortcut}
+                            edit={editClassId === id}
+                            datasetSlug={datasetSlug}
+                            workspaceSlug={workspaceSlug}
+                            onClickEdit={setEditClassId}
+                            onClickDelete={setDeleteClassId}
+                          />
+                        )
+                      )}
+                      {provided.placeholder}
+                    </Box>
+                  )}
+                </Droppable>
+              </DragDropContext>
+            )}
+          </>
+        </Box>
       </Box>
     </>
   );
