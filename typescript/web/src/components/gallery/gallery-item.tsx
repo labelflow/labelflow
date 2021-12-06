@@ -2,7 +2,7 @@
 import { memo } from "react";
 import Link from "next/link";
 import { Box, Skeleton, Badge, AspectRatio } from "@chakra-ui/react";
-import { ImageWithFallback } from "../../utils/image-with-fallback";
+import { ImageWithFallback } from "../image";
 
 import { itemHeight } from "./constants";
 import { EmptyStateImageNotFound } from "../empty-state";

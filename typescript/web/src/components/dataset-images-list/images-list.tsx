@@ -20,7 +20,7 @@ import type { Image as ImageType } from "@labelflow/graphql-types";
 import { ImportButton } from "../import-button";
 import { EmptyStateNoImages, EmptyStateImageNotFound } from "../empty-state";
 import { DeleteImageModal } from "./delete-image-modal";
-import { ImageWithFallback } from "../../utils/image-with-fallback";
+import { ImageWithFallback } from "../image";
 
 const TrashIcon = chakra(HiTrash);
 
