@@ -12,6 +12,7 @@ import memoize from "mem";
 import Projection from "ol/proj/Projection";
 import useMeasure from "react-use-measure";
 import { ApolloProvider, useApolloClient, useQuery, gql } from "@apollo/client";
+import { useQueryParam } from "use-query-params";
 
 import { Map } from "@labelflow/react-openlayers-fiber";
 import type { Image } from "@labelflow/graphql-types";
@@ -30,6 +31,7 @@ import {
 } from "../../../connectors/labeling-state";
 import { theme } from "../../../theme";
 import { useImagePrefecthing } from "../../../hooks/use-image-prefetching";
+import { BoolParam } from "../../../utils/query-param-bool";
 
 const empty: any[] = [];
 
@@ -117,6 +119,7 @@ export const OpenlayersMap = () => {
   const setView = useLabelingStore((state) => state.setView);
   const zoomFactor = useLabelingStore((state) => state.zoomFactor);
 
+  const [, setImageLoadError] = useQueryParam("image-load-error", BoolParam);
   const { data: imageData, previousData: imageDataPrevious } = useQuery<{
     image: Pick<Image, "id" | "url" | "width" | "height">;
   }>(imageQuery, {
@@ -264,7 +267,16 @@ export const OpenlayersMap = () => {
                       console.warn(
                         "Reloading window to prevent bug https://github.com/labelflow/labelflow/issues/431"
                       );
-                      window?.location?.reload?.();
+                      if (
+                        window.localStorage &&
+                        !localStorage.getItem("hasRetriedImageLoad")
+                      ) {
+                        localStorage.hasRetriedImageLoad = true;
+                        window.location.reload();
+                      } else {
+                        localStorage.removeItem("hasRetriedImageLoad");
+                        setImageLoadError(true);
+                      }
                       return true;
                     }}
                     onImageloadstart={() => {

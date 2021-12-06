@@ -5,7 +5,6 @@ import {
   VStack,
   Flex,
   useColorModeValue as mode,
-  Image,
   Center,
   Spinner,
   Text,
@@ -13,13 +12,15 @@ import {
   SimpleGrid,
   IconButton,
   chakra,
+  Skeleton,
 } from "@chakra-ui/react";
 import { isEmpty } from "lodash/fp";
 import { HiTrash } from "react-icons/hi";
 import type { Image as ImageType } from "@labelflow/graphql-types";
 import { ImportButton } from "../import-button";
-import { EmptyStateNoImages } from "../empty-state";
+import { EmptyStateNoImages, EmptyStateImageNotFound } from "../empty-state";
 import { DeleteImageModal } from "./delete-image-modal";
+import { ImageWithFallback } from "../image";
 
 const TrashIcon = chakra(HiTrash);
 
@@ -124,11 +125,12 @@ export const ImagesList = ({
                         }}
                       />
                     </Flex>
-                    <Image
+                    <ImageWithFallback
                       background={imageBackground}
                       alt={name}
                       src={thumbnail500Url ?? undefined}
-                      ignoreFallback
+                      loadingFallback={<Skeleton height="100%" width="100%" />}
+                      errorFallback={<EmptyStateImageNotFound />}
                       objectFit="contain"
                       h="208px"
                       w="full"
