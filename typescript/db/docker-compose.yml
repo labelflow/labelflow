@@ -30,7 +30,10 @@ services:
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
     volumes:
       - storage_volume:/data
-    command: server /data --console-address ":9001"
+    entrypoint: sh
+    # create a labelflow folder in the storage to create a bucket named labelflow
+    command: -c 'mkdir -p /data/labelflow && /usr/bin/docker-entrypoint.sh server /data --console-address ":9001"'
+
 
 volumes:
   db_home:
