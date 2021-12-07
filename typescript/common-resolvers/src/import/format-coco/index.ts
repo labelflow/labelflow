@@ -17,9 +17,9 @@ const uploadImage = async (
   file: JSZip.JSZipObject,
   name: string,
   datasetId: string,
-  { repository, req }: Context
+  { repository, req, user }: Context
 ) => {
-  const fileBlob = await file.async("blob", () => {});
+  const fileBlob = new Blob([await file.async("arraybuffer", () => {})]);
   const origin = getOrigin(req);
   const uploadTarget = await repository.upload.getUploadTarget(
     uuidv4(),
@@ -28,7 +28,7 @@ const uploadImage = async (
   if (!(uploadTarget as UploadTargetHttp)?.downloadUrl) {
     throw new Error("Can't direct upload this image.");
   }
-  repository.upload.put(
+  await repository.upload.put(
     (uploadTarget as UploadTargetHttp)?.uploadUrl,
     fileBlob,
     req
@@ -42,19 +42,19 @@ const uploadImage = async (
         datasetId,
       },
     },
-    { repository }
+    { repository, req, user }
   );
 };
 
 export const importCoco: ImportFunction = async (
   blob,
   datasetId,
-  { repository },
+  { repository, req, user },
   options
 ) => {
   let annotationBlob = blob;
   if (!options?.annotationsOnly) {
-    const zip = await JSZip.loadAsync(blob);
+    const zip = await JSZip.loadAsync(await blob.arrayBuffer()); // Passing to array buffer to avoid issues with jszip
     const annotationsFilesJSZip = zip.filter(
       (relativePath) => path.extname(relativePath) === ".json"
     );
@@ -69,7 +69,9 @@ export const importCoco: ImportFunction = async (
     const annotationFile: CocoDataset = JSON.parse(
       await annotationsFilesJSZip[0].async("string", () => {})
     );
-    annotationBlob = await annotationsFilesJSZip[0].async("blob", () => {});
+    annotationBlob = new Blob([
+      await annotationsFilesJSZip[0].async("arraybuffer", () => {}),
+    ]);
     const imageFiles = zip.filter((relativePath) =>
       path.dirname(relativePath).endsWith("images")
     );
@@ -81,7 +83,7 @@ export const importCoco: ImportFunction = async (
       new Map()
     );
     // Manage coco images => labelflow images
-    const images = await repository.image.list({ datasetId });
+    const images = await repository.image.list({ datasetId, user });
     const imagesCoco = annotationFile.images.filter(
       (imageCoco) =>
         !images.find(
@@ -96,13 +98,15 @@ export const importCoco: ImportFunction = async (
       // eslint-disable-next-line no-await-in-loop
       await uploadImage(imageFile, imageCoco.file_name, datasetId, {
         repository,
+        req,
+        user,
       });
       // cocoImageIdToLabelFlowImageId.set(imageCoco.id, labelFlowImageId);
       console.log(`Created image ${imageCoco.file_name}`);
     }
   }
   const annotationFile: CocoDataset = JSON.parse(await annotationBlob.text());
-  const images = await repository.image.list({ datasetId });
+  const images = await repository.image.list({ datasetId, user });
   const cocoImageIdToLabelFlowImageId = annotationFile.images.reduce(
     (currentMap, imageCoco) => {
       const labelFlowImage = images.find(
@@ -119,7 +123,7 @@ export const importCoco: ImportFunction = async (
   );
   // Manage coco categories => labelflow labelclasses
   const cocoCategoryIdToLabelFlowLabelClassId = new Map<number, string>();
-  const labelClasses = await repository.labelClass.list({ datasetId });
+  const labelClasses = await repository.labelClass.list({ datasetId, user });
   const categoriesCoco = annotationFile.categories.filter((categoryCoco) => {
     const labelFlowLabelClass = labelClasses.find(
       (labelClass) => labelClass.name === categoryCoco.name
@@ -142,7 +146,7 @@ export const importCoco: ImportFunction = async (
         {
           data: { name: categoryCoco.name, datasetId },
         },
-        { repository }
+        { repository, user, req }
       );
     cocoCategoryIdToLabelFlowLabelClassId.set(
       categoryCoco.id,
@@ -174,7 +178,7 @@ export const importCoco: ImportFunction = async (
             ),
           },
         },
-        { repository }
+        { repository, user, req }
       );
       console.log(`Created annotation ${annotation.id}`);
     })
