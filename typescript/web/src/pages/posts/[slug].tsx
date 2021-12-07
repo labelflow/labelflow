@@ -48,6 +48,11 @@ export default function Posts({
             : undefined
         }
         canonical={`${origin}/posts/${article?.slug}`}
+        article={{
+          authors: [article?.author?.name],
+          publishedTime: article?.published_at,
+          section: article?.category?.name,
+        }}
       />
       <CookieBanner />
       <Box minH="640px">
