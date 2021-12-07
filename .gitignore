@@ -123,7 +123,6 @@ cypress/videos
 !.yarn/versions
 
 # Python
-python/iog/data
 python/iog/outputs
 python/iog/results
 python/iog/inputs
@@ -143,4 +142,3 @@ storybook-static
 **/public/sw.js.*
 **/public/worker-*.js.*
 **/public/*.chunk.*.js.*
-.env
