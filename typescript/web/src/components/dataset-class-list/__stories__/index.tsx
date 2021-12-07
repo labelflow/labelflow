@@ -1,4 +1,15 @@
-import { Table, Tbody, Th, Thead, Tr } from "@chakra-ui/react";
+import {
+  Table,
+  Tbody,
+  Th,
+  Thead,
+  Tr,
+  Flex,
+  Tooltip,
+  chakra,
+  useColorModeValue as mode,
+} from "@chakra-ui/react";
+import { RiInformationLine } from "react-icons/ri";
 import React, { useCallback, useState } from "react";
 import {
   DragDropContext,
@@ -7,134 +18,72 @@ import {
   DropResult,
 } from "react-beautiful-dnd";
 import { chakraDecorator } from "../../../utils/chakra-decorator";
+import { TableRow, IsDraggingContext } from "../table-row";
+
+const InfoIcon = chakra(RiInformationLine);
 
 export default {
   title: "web/Dataset class list",
   decorators: [chakraDecorator],
 };
 
-const DEFAULT_TABLE_ITEMS = [
-  ["A", "1"],
-  ["B", "2"],
-  ["C", "3"],
+type LabelClassWithShortcut = {
+  id: string;
+  index: number;
+  name: string;
+  color: string;
+  occurences: number;
+  shortcut: string;
+};
+
+const classes: LabelClassWithShortcut[] = [
+  {
+    id: "1",
+    index: 1,
+    name: "Horse",
+    occurences: 12,
+    shortcut: "1",
+    color: "#EFAB22",
+  },
+  {
+    id: "2",
+    index: 2,
+    name: "Drone",
+    occurences: 0,
+    shortcut: "2",
+    color: "#E53E3E",
+  },
+  {
+    id: "3",
+    index: 3,
+    name: "Light house",
+    occurences: 3,
+    shortcut: "3",
+    color: "#31CECA",
+  },
+  {
+    id: "4",
+    index: 4,
+    name: "Pyramid",
+    occurences: 231,
+    shortcut: "4",
+    color: "#02AEF2",
+  },
 ];
 
-function reorder<TList extends Array<unknown>>(
-  list: TList[],
+function reorder(
+  list: LabelClassWithShortcut[],
   startIndex: number,
   endIndex: number
-): TList[] {
+): LabelClassWithShortcut[] {
   const result = Array.from(list);
   const [removed] = result.splice(startIndex, 1);
   result.splice(endIndex, 0, removed);
   return result;
 }
 
-type TableCellProps = {
-  children: any;
-  isDragOccurring: boolean;
-};
-
-type TableCellSnapshot = {
-  width: number;
-  height: number;
-};
-
-// eslint-disable-next-line react/prefer-stateless-function
-class TableCell extends React.Component<TableCellProps> {
-  ref = React.createRef<HTMLTableCellElement>();
-
-  getSnapshotBeforeUpdate(prevProps: TableCellProps): TableCellSnapshot | null {
-    const { isDragOccurring } = this.props;
-    if (!this.ref.current) {
-      return null;
-    }
-
-    const isDragStarting: boolean =
-      isDragOccurring && !prevProps.isDragOccurring;
-
-    if (!isDragStarting) {
-      return null;
-    }
-
-    const { width, height } = this.ref.current.getBoundingClientRect();
-
-    const snapshot: TableCellSnapshot = {
-      width,
-      height,
-    };
-
-    return snapshot;
-  }
-
-  componentDidUpdate(
-    prevProps: TableCellProps,
-    prevState: any,
-    snapshot: TableCellSnapshot
-  ) {
-    const { ref } = this;
-    const { isDragOccurring } = this.props;
-    if (!ref.current) {
-      return;
-    }
-
-    if (snapshot) {
-      if (ref.current.style.width === snapshot.width.toString()) {
-        return;
-      }
-      ref.current.style.width = `${snapshot.width}px`;
-      ref.current.style.height = `${snapshot.height}px`;
-      return;
-    }
-
-    if (isDragOccurring) {
-      return;
-    }
-
-    // inline styles not applied
-    if (ref.current.style.width == null) {
-      return;
-    }
-
-    // no snapshot and drag is finished - clear the inline styles
-    ref.current.style.removeProperty("height");
-    ref.current.style.removeProperty("width");
-  }
-
-  render() {
-    const { children } = this.props;
-    return <td ref={this.ref}>{children}</td>;
-  }
-}
-
-type TableRowProps = {
-  provided: any;
-  snapshot: any;
-  item: any;
-};
-
-const IsDraggingContext = React.createContext<boolean>(false);
-
-const TableRow = ({ provided, item }: TableRowProps) => {
-  const [letter, index] = item;
-  return (
-    <IsDraggingContext.Consumer>
-      {(isDragging: boolean) => (
-        <tr
-          ref={provided.innerRef}
-          {...provided.draggableProps}
-          {...provided.dragHandleProps}
-        >
-          <TableCell isDragOccurring={isDragging}>{letter}</TableCell>
-          <TableCell isDragOccurring={isDragging}>{index}</TableCell>
-        </tr>
-      )}
-    </IsDraggingContext.Consumer>
-  );
-};
-
 export const ReorderableTable = () => {
-  const [items, setItems] = useState(DEFAULT_TABLE_ITEMS);
+  const [items, setItems] = useState(classes);
   const [isDragging, setIsDragging] = useState(false);
 
   const onBeforeDragStart = () => {
@@ -158,31 +107,61 @@ export const ReorderableTable = () => {
     [items, setItems]
   );
   return (
-    <IsDraggingContext.Provider value={isDragging}>
-      <DragDropContext
-        onDragEnd={onDragEnd}
-        onBeforeDragStart={onBeforeDragStart}
-      >
-        <Table>
-          <Thead>
-            <Tr>
-              <Th>Name</Th>
-              <Th>Value</Th>
-            </Tr>
-          </Thead>
+    <Table borderWidth="1px">
+      <Thead bg={mode("gray.50", "gray.800")}>
+        <Tr>
+          <Th whiteSpace="nowrap" scope="col" w={0} p={0} />
+          <Th whiteSpace="nowrap" scope="col">
+            Class
+          </Th>
+          <Th whiteSpace="nowrap" scope="col">
+            Occurences
+          </Th>
+          <Th whiteSpace="nowrap" scope="col">
+            <Flex justifyContent="flex-start" alignItems="center">
+              <span>Shortcut</span>
+              <Tooltip
+                label="A keyboard shortcut is available for the first 9 classes"
+                aria-label="A keyboard shortcut is available for the first 9 classes"
+              >
+                {/* See this PR for more info on why using a span is necessary https://github.com/chakra-ui/chakra-ui/pull/2882 */}
+                <span>
+                  <InfoIcon
+                    flexShrink={0}
+                    flexGrow={0}
+                    fontSize="xl"
+                    ml="2"
+                    mr="2"
+                  />
+                </span>
+              </Tooltip>
+            </Flex>
+          </Th>
+          <Th whiteSpace="nowrap" scope="col" />
+        </Tr>
+      </Thead>
+      <IsDraggingContext.Provider value={isDragging}>
+        <DragDropContext
+          onDragEnd={onDragEnd}
+          onBeforeDragStart={onBeforeDragStart}
+        >
           <Droppable droppableId="droppable">
             {(droppableProvided) => (
               <Tbody
                 ref={droppableProvided.innerRef}
                 {...droppableProvided.droppableProps}
               >
-                {items.map(([name, value], index) => (
-                  <Draggable key={name} draggableId={name} index={index}>
+                {items.map((item, index) => (
+                  <Draggable
+                    key={item.name}
+                    draggableId={item.name}
+                    index={index}
+                  >
                     {(trProvided, trSnapshot) => (
                       <TableRow
                         provided={trProvided}
                         snapshot={trSnapshot}
-                        item={[name, value]}
+                        item={item}
                       />
                     )}
                   </Draggable>
@@ -190,8 +169,8 @@ export const ReorderableTable = () => {
               </Tbody>
             )}
           </Droppable>
-        </Table>
-      </DragDropContext>
-    </IsDraggingContext.Provider>
+        </DragDropContext>
+      </IsDraggingContext.Provider>
+    </Table>
   );
 };

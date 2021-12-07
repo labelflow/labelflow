@@ -1,23 +1,38 @@
 import { useMemo, useState, useCallback } from "react";
 import { useQuery, gql, useApolloClient } from "@apollo/client";
-import {
-  Box,
-  Text,
-  Divider,
-  useColorModeValue as mode,
-  Heading,
-} from "@chakra-ui/react";
+import { Box, Heading } from "@chakra-ui/react";
 
-import { DragDropContext, Droppable } from "react-beautiful-dnd";
-import {
-  ClassItem,
-  datasetLabelClassesQuery,
-  DatasetClassesQueryResult,
-} from "./class-item";
 import { ClassTableActions } from "./table-actions";
 import { ClassTableContent } from "./table-content";
 import { DeleteLabelClassModal } from "./delete-class-modal";
 
+type DatasetClassesQueryResult = {
+  dataset: {
+    id: string;
+    name: string;
+    labelClasses: {
+      id: string;
+      index: number;
+      name: string;
+      color: string;
+    }[];
+  };
+};
+
+const datasetLabelClassesQuery = gql`
+  query getDatasetLabelClasses($slug: String!, $workspaceSlug: String!) {
+    dataset(where: { slugs: { slug: $slug, workspaceSlug: $workspaceSlug } }) {
+      id
+      name
+      labelClasses {
+        id
+        index
+        name
+        color
+      }
+    }
+  }
+`;
 const reorderLabelClassMutation = gql`
   mutation reorderLabelClass($id: ID!, $index: Int!) {
     reorderLabelClass(where: { id: $id }, data: { index: $index }) {
@@ -46,7 +61,6 @@ export const ClassesList = ({
   workspaceSlug: string;
 }) => {
   const client = useApolloClient();
-  const [editClassId, setEditClassId] = useState<string | null>(null);
   const [deleteClassId, setDeleteClassId] = useState<string | null>(null);
   const [searchText, setSearchText] = useState("");
 
@@ -109,62 +123,21 @@ export const ClassesList = ({
         labelClassId={deleteClassId}
         onClose={() => setDeleteClassId(null)}
       />
-      <Box display="flex" flexDirection="column" w="full" p={8}>
-        <Heading mb={5}>{`Classes (${labelClassWithShortcut.length})`}</Heading>
-        <ClassTableActions
-          searchText={searchText}
-          setSearchText={setSearchText}
-        />
-        <ClassTableContent classes={labelClassWithShortcut} />
-        <Box
-          d="flex"
-          flexDirection="column"
-          bg={mode("white", "gray.800")}
-          borderRadius="lg"
-          maxWidth="5xl"
-          flexGrow={1}
-        >
-          <>
-            <Text
-              margin="2"
-              fontWeight="bold"
-            >{`${labelClassWithShortcut.length} Classes`}</Text>
-            <Divider />
-            {!loading && (
-              <DragDropContext onDragEnd={onDragEnd}>
-                <Droppable droppableId="droppable">
-                  {(provided) => (
-                    <Box
-                      {...provided.droppableProps}
-                      ref={provided.innerRef}
-                      // style={getListStyle(snapshot.isDraggingOver)}
-                    >
-                      {labelClassWithShortcut.map(
-                        ({ id, name, color, shortcut, index }) => (
-                          <ClassItem
-                            key={id}
-                            id={id}
-                            index={index}
-                            name={name}
-                            color={color}
-                            shortcut={shortcut}
-                            edit={editClassId === id}
-                            datasetSlug={datasetSlug}
-                            workspaceSlug={workspaceSlug}
-                            onClickEdit={setEditClassId}
-                            onClickDelete={setDeleteClassId}
-                          />
-                        )
-                      )}
-                      {provided.placeholder}
-                    </Box>
-                  )}
-                </Droppable>
-              </DragDropContext>
-            )}
-          </>
+      {!loading && (
+        <Box display="flex" flexDirection="column" w="full" p={8}>
+          <Heading
+            mb={5}
+          >{`Classes (${labelClassWithShortcut.length})`}</Heading>
+          <ClassTableActions
+            searchText={searchText}
+            setSearchText={setSearchText}
+          />
+          <ClassTableContent
+            classes={labelClassWithShortcut}
+            onDragEnd={onDragEnd}
+          />
         </Box>
-      </Box>
+      )}
     </>
   );
 };
