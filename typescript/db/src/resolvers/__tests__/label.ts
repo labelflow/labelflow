@@ -1,7 +1,7 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { gql } from "@apollo/client";
 import { v4 as uuidV4 } from "uuid";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+
 import {
   LabelCreateInput,
   MutationCreateWorkspaceArgs,
@@ -19,15 +19,10 @@ const mockedProcessImage = processImage as jest.Mock;
 jest.mock("@supabase/supabase-js");
 const mockedSupabaseCreateClient = createClient as jest.Mock;
 
-jest.mock("@aws-sdk/client-s3");
-
 global.fetch = () => {
   // console.log(`fetch called with url ${url}`);
   return new Promise((res) => res({ status: 200 } as Response));
 };
-
-jest.mock("@aws-sdk/s3-request-presigner");
-const mockedGetSignedUrl = getSignedUrl as jest.Mock;
 
 const getGeometryFromExtent = ({
   x,
@@ -154,7 +149,7 @@ const createImage = async (
   mockedSupabaseCreateClient.mockReturnValue({
     storage: { from: () => ({ upload: () => {} }) },
   });
-  mockedGetSignedUrl.mockReturnValue("mockedSignedUrl");
+
   const mutationResult = await client.mutate({
     mutation: gql`
       mutation createImage(
