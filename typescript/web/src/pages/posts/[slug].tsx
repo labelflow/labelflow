@@ -19,6 +19,11 @@ import { CookieBanner } from "../../components/cookie-banner";
 
 const ChakraReactMarkdown = chakra(ReactMarkdown);
 
+const origin =
+  process.env.NEXTAUTH_URL ??
+  (process.env.VERCEL_URL && `https://${process.env.VERCEL_URL}`) ??
+  "https://labelflow.com";
+
 export default function Posts({
   article,
   moreArticles,
@@ -42,6 +47,7 @@ export default function Posts({
               ]
             : undefined
         }
+        canonical={`${origin}/posts/${article?.slug}`}
       />
       <CookieBanner />
       <Box minH="640px">
