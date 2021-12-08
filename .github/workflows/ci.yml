@@ -122,6 +122,8 @@ jobs:
                      -e MINIO_ROOT_USER=$MINIO_ACCESS_KEY \
                      -e MINIO_ROOT_PASSWORD=$MINIO_SECRET_KEY \
                      minio/minio server /data
+      - name: Create labelflow bucket on minio
+        run: aws --endpoint-url http://127.0.0.1:9000/ s3 mb s3://labelflow
       - name: Check out repository code
         uses: actions/checkout@v2
       - name: Fetch node_modules from cache
@@ -198,6 +200,8 @@ jobs:
                      -e MINIO_ROOT_USER=$MINIO_ACCESS_KEY \
                      -e MINIO_ROOT_PASSWORD=$MINIO_SECRET_KEY \
                      minio/minio server /data
+      - name: Create labelflow bucket on minio
+        run: aws --endpoint-url http://127.0.0.1:9000/ s3 mb s3://labelflow
       - name: Check out repository code
         uses: actions/checkout@v2
       - name: Fetch node_modules from cache
