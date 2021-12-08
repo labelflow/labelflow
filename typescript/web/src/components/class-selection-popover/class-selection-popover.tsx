@@ -26,7 +26,7 @@ import { keymap } from "../../keymap";
 type CreateClassInput = { name: string; type: string };
 type NoneClass = { name: string; color: string; type: string };
 // The popover doesn't need all the attributes of the label class
-export type LabelClassItem = Omit<LabelClass, "dataset">;
+export type LabelClassItem = Omit<LabelClass, "dataset" | "labelsAggregates">;
 
 const noneClass = {
   name: "None",

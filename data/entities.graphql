@@ -61,6 +61,7 @@ type LabelClass {
   color: ColorHex!
   labels: [Label!]!
   dataset: Dataset!
+  labelsAggregates: LabelsAggregates!
 }
 
 type Dataset {

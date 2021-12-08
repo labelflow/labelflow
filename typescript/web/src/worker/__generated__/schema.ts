@@ -223,6 +223,7 @@ export const typeDefs = [
     color: ColorHex!
     labels: [Label!]!
     dataset: Dataset!
+    labelsAggregates: LabelsAggregates!
   }
 
   input LabelClassCreateInput {

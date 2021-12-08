@@ -251,6 +251,7 @@ export type LabelClass = {
   color: Scalars['ColorHex'];
   labels: Array<Label>;
   dataset: Dataset;
+  labelsAggregates: LabelsAggregates;
 };
 
 export type LabelClassCreateInput = {
@@ -1105,6 +1106,7 @@ export type LabelClassResolvers<ContextType = any, ParentType extends ResolversP
   color?: Resolver<ResolversTypes['ColorHex'], ParentType, ContextType>;
   labels?: Resolver<Array<ResolversTypes['Label']>, ParentType, ContextType>;
   dataset?: Resolver<ResolversTypes['Dataset'], ParentType, ContextType>;
+  labelsAggregates?: Resolver<ResolversTypes['LabelsAggregates'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 

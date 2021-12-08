@@ -15,7 +15,7 @@ import { LabelClass } from "@labelflow/graphql-types";
 import { ClassSelectionPopover } from "../../../class-selection-popover";
 
 // The class addition menu doesn't need all the attributes of the label class
-export type LabelClassItem = Omit<LabelClass, "dataset">;
+export type LabelClassItem = Omit<LabelClass, "dataset" | "labelsAggregates">;
 
 const AddIcon = chakra(IoMdAddCircleOutline);
 const SelectorIcon = chakra(HiSelector);

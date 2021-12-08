@@ -224,6 +224,7 @@ export const typeDefs = gql`
     color: ColorHex!
     labels: [Label!]!
     dataset: Dataset!
+    labelsAggregates: LabelsAggregates!
   }
 
   input LabelClassCreateInput {

@@ -12,7 +12,7 @@ import { keymap } from "../../../../keymap";
 import { useLabelingStore } from "../../../../connectors/labeling-state";
 
 // The class selection menu doesn't need all the attributes of the label class
-export type LabelClassItem = Omit<LabelClass, "dataset">;
+export type LabelClassItem = Omit<LabelClass, "dataset" | "labelsAggregates">;
 
 export const ClassificationTag = ({
   label,

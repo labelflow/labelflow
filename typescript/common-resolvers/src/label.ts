@@ -1,11 +1,14 @@
 import { v4 as uuidv4 } from "uuid";
 
 import type {
+  Dataset,
   Label,
+  LabelClass,
   MutationCreateLabelArgs,
   MutationDeleteLabelArgs,
   MutationUpdateLabelArgs,
   QueryLabelArgs,
+  LabelWhereInput
 } from "@labelflow/graphql-types";
 import { LabelType } from "@labelflow/graphql-types";
 
@@ -172,24 +175,39 @@ const updateLabel = async (
   return await getLabelById(labelId, repository, user);
 };
 
-const labelsAggregates = (parent: any) => {
-  // Forward `parent` to chained resolvers if it exists
-  return parent ?? {};
+const labelsAggregates = () => ({});
+
+const labelsAggregatesOfDataset = (parent: Dataset) => {
+  if (!parent) {
+    throw new Error("No parent Dataset");
+  }
+  return {...parent, __typename: "Dataset"};
+};
+
+const labelsAggregatesOfLabelClass = (parent: LabelClass) => {
+  if (!parent) {
+    throw new Error("No parent LabelClass");
+  }
+  return {...parent, __typename: "LabelClass"};
 };
 
 const totalCount = async (
-  parent: any,
+  parent: LabelClass | Dataset | null,
   _args: any,
   { repository, user }: Context
 ) => {
-  // eslint-disable-next-line no-underscore-dangle
-  const typename = parent?.__typename;
-
-  if (typename === "Dataset") {
-    return await repository.label.count({ datasetId: parent.id, user });
+  let where : LabelWhereInput & { user?: { id: string } } = { user };
+  if (parent) {
+    // eslint-disable-next-line no-underscore-dangle
+    const typename = parent?.__typename;
+    if (typename === "Dataset") {
+      where = { datasetId: parent.id, user };
+    } else if (typename === "LabelClass") {
+      where = { labelClassId: parent.id, user };
+    }
   }
 
-  return await repository.label.count({ user });
+  return await repository.label.count(where);
 };
 
 export default {
@@ -205,6 +223,7 @@ export default {
   Label: {
     labelClass,
   },
+  LabelClass: { labelsAggregates: labelsAggregatesOfLabelClass },
   LabelsAggregates: { totalCount },
-  Dataset: { labelsAggregates },
+  Dataset: { labelsAggregates: labelsAggregatesOfDataset },
 };
