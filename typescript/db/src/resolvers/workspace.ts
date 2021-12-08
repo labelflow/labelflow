@@ -50,7 +50,7 @@ const workspace = async (
 ): Promise<DbWorkspaceWithType> =>
   await getWorkspace(args.where, repository, user);
 
-const isWorkspaceSlugAlreadyTaken = async (
+const workspaceExists = async (
   _: any,
   args: QueryWorkspaceArgs,
   { repository, user }: Context
@@ -240,7 +240,7 @@ export default {
   Query: {
     workspace,
     workspaces,
-    isWorkspaceSlugAlreadyTaken,
+    workspaceExists,
   },
   Mutation: { createWorkspace, updateWorkspace },
   Workspace: { memberships, datasets, stripeCustomerPortalUrl },

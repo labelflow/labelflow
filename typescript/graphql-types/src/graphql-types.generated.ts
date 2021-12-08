@@ -552,7 +552,7 @@ export type Query = {
   searchDataset?: Maybe<Dataset>;
   workspace: Workspace;
   workspaces: Array<Workspace>;
-  isWorkspaceSlugAlreadyTaken: Scalars['Boolean'];
+  workspaceExists: Scalars['Boolean'];
   membership: Membership;
   memberships: Array<Membership>;
   user: User;
@@ -640,7 +640,7 @@ export type QueryWorkspacesArgs = {
 };
 
 
-export type QueryIsWorkspaceSlugAlreadyTakenArgs = {
+export type QueryWorkspaceExistsArgs = {
   where: WorkspaceWhereInput;
 };
 
@@ -1180,7 +1180,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   searchDataset?: Resolver<Maybe<ResolversTypes['Dataset']>, ParentType, ContextType, RequireFields<QuerySearchDatasetArgs, 'where'>>;
   workspace?: Resolver<ResolversTypes['Workspace'], ParentType, ContextType, RequireFields<QueryWorkspaceArgs, 'where'>>;
   workspaces?: Resolver<Array<ResolversTypes['Workspace']>, ParentType, ContextType, RequireFields<QueryWorkspacesArgs, never>>;
-  isWorkspaceSlugAlreadyTaken?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<QueryIsWorkspaceSlugAlreadyTakenArgs, 'where'>>;
+  workspaceExists?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<QueryWorkspaceExistsArgs, 'where'>>;
   membership?: Resolver<ResolversTypes['Membership'], ParentType, ContextType, RequireFields<QueryMembershipArgs, 'where'>>;
   memberships?: Resolver<Array<ResolversTypes['Membership']>, ParentType, ContextType, RequireFields<QueryMembershipsArgs, never>>;
   user?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<QueryUserArgs, 'where'>>;

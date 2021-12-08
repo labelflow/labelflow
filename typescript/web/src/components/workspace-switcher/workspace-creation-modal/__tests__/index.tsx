@@ -5,7 +5,7 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 import { forbiddenWorkspaceSlugs } from "@labelflow/common-resolvers";
-import { WorkspaceCreationModal, Message } from "..";
+import { WorkspaceCreationModal, WorkspaceNameMessage } from "..";
 import { client } from "../../../../connectors/apollo-client/schema-client";
 
 const initialState: Record<string, any> = { "workspace-name": undefined };
@@ -18,13 +18,15 @@ jest.mock(
   }))
 );
 
-describe("Message", () => {
+describe("WorkspaceNameMessage", () => {
   it("renders the future url if it is possible", () => {
     const { getByText } = render(
-      <Message
+      <WorkspaceNameMessage
         error={undefined}
         workspaceName="test"
-        isWorkspaceSlugAlreadyTaken={false}
+        workspaceSlug="test"
+        workspaceExists={false}
+        isInvalid={false}
       />
     );
     expect(
@@ -34,10 +36,12 @@ describe("Message", () => {
 
   it("warns if the name is already taken", () => {
     const { getByText } = render(
-      <Message
+      <WorkspaceNameMessage
         error={undefined}
         workspaceName="test"
-        isWorkspaceSlugAlreadyTaken
+        workspaceSlug="test"
+        workspaceExists
+        isInvalid
       />
     );
     expect(getByText(/The name "test" is already taken/)).toBeDefined();
@@ -45,10 +49,12 @@ describe("Message", () => {
 
   it("warns if the name is a reserved name", () => {
     const { getByText } = render(
-      <Message
+      <WorkspaceNameMessage
         error={undefined}
         workspaceName={forbiddenWorkspaceSlugs[0]}
-        isWorkspaceSlugAlreadyTaken={false}
+        workspaceSlug={forbiddenWorkspaceSlugs[0]}
+        workspaceExists={false}
+        isInvalid
       />
     );
     expect(getByText(/The name ".*?" is already taken/)).toBeDefined();
@@ -56,10 +62,12 @@ describe("Message", () => {
 
   it("warns if the name contains invalid characters", () => {
     const { getByText } = render(
-      <Message
+      <WorkspaceNameMessage
         error={undefined}
         workspaceName="hello!"
-        isWorkspaceSlugAlreadyTaken={false}
+        workspaceSlug="hello"
+        workspaceExists={false}
+        isInvalid
       />
     );
     expect(
@@ -69,10 +77,12 @@ describe("Message", () => {
 
   it("displays the error if given one", () => {
     const { getByText } = render(
-      <Message
+      <WorkspaceNameMessage
         error={new ApolloError({ errorMessage: "this is an error" })}
         workspaceName="test"
-        isWorkspaceSlugAlreadyTaken={false}
+        workspaceSlug="test"
+        workspaceExists={false}
+        isInvalid
       />
     );
     expect(getByText(/this is an error/)).toBeDefined();
@@ -80,10 +90,12 @@ describe("Message", () => {
 
   it("displays an empty line if no workspace name is provided", () => {
     const { container } = render(
-      <Message
+      <WorkspaceNameMessage
         error={undefined}
-        workspaceName={undefined}
-        isWorkspaceSlugAlreadyTaken={false}
+        workspaceName=""
+        workspaceSlug=""
+        workspaceExists={false}
+        isInvalid
       />
     );
 
