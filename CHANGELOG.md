@@ -1,6 +1,9 @@
 # Changelog
 
-## [1.0.25](https://github.com/labelflow/labelflow/compare/1.0.24...1.0.25)
+## [1.0.26](https://github.com/labelflow/labelflow/compare/1.0.25...1.0.26)
+
+- Set correct value for `og:url` of articles [`#641`](https://github.com/labelflow/labelflow/pull/641)
+## [1.0.25](https://github.com/labelflow/labelflow/compare/1.0.24...1.0.25) - 2021-12-08
 
 - Images are not deleted in a deleted dataset [`#637`](https://github.com/labelflow/labelflow/pull/637)
 - Create a new prod DB [`#636`](https://github.com/labelflow/labelflow/pull/636)
