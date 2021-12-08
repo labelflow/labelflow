@@ -182,10 +182,8 @@ const createIogLabel = async (
   const dataUrl = await downloadUrlToDataUrl(image.url, req);
   const now = new Date();
 
-  const { xInit, yInit } = {
-    xInit: Math.min(image.width, Math.max(0, args.data.x)),
-    yInit: Math.min(image.height, Math.max(0, args.data.y)),
-  };
+  const xInit = Math.min(image.width, Math.max(0, args.data.x)),
+  const yInit = Math.min(image.height, Math.max(0, args.data.y)),
   const { geometry, x, y, height, width } = await fetchIogServer({
     id: labelId,
     imageUrl: dataUrl,
