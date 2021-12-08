@@ -32,17 +32,23 @@ export const ClassTableContent = ({
   onDragEnd,
   onClickDelete,
   onClickEdit,
+  searchText,
 }: {
   classes: LabelClassWithShortcut[];
   onDragEnd: (result: any) => Promise<void>;
   onClickDelete: (classId: string | null) => void;
   onClickEdit: (classId: string | null) => void;
+  searchText: string;
 }) => {
   const [isDragging, setIsDragging] = useState(false);
 
   const onBeforeDragStart = () => {
     setIsDragging(true);
   };
+
+  const filteredClasses = classes.filter((labelClass) =>
+    labelClass.name.toLowerCase()?.includes(searchText.toLowerCase())
+  );
 
   return (
     <Table my="8" borderWidth="1px">
@@ -89,7 +95,7 @@ export const ClassTableContent = ({
                 ref={droppableProvided.innerRef}
                 {...droppableProvided.droppableProps}
               >
-                {classes.map((row, classIndex) => (
+                {filteredClasses.map((row, classIndex) => (
                   <Draggable
                     key={row.id}
                     draggableId={row.id}

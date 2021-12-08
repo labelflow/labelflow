@@ -117,6 +117,8 @@ export const ReorderableTable = () => {
         isOpen={editClassId != null}
         classId={editClassId}
         onClose={() => setEditClassId(null)}
+        datasetSlug=""
+        workspaceSlug=""
       />
       <DeleteLabelClassModal
         isOpen={deleteClassId != null}

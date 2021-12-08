@@ -6,22 +6,7 @@ import { ClassTableActions } from "./table-actions";
 import { ClassTableContent } from "./table-content";
 import { DeleteLabelClassModal } from "./delete-class-modal";
 import { UpsertClassModal } from "./upsert-class-modal";
-
-type DatasetClassesQueryResult = {
-  dataset: {
-    id: string;
-    name: string;
-    labelClasses: {
-      id: string;
-      index: number;
-      name: string;
-      color: string;
-      labelsAggregates: {
-        totalCount: number;
-      }
-    }[];
-  };
-};
+import { DatasetClassesQueryResult } from "./types";
 
 const datasetLabelClassesQuery = gql`
   query getDatasetLabelClasses($slug: String!, $workspaceSlug: String!) {
@@ -135,6 +120,9 @@ export const ClassesList = ({
         isOpen={editClassId != null}
         classId={editClassId}
         onClose={() => setEditClassId(null)}
+        datasetId={datasetId}
+        datasetSlug={datasetSlug}
+        workspaceSlug={workspaceSlug}
       />
       {!loading && (
         <Box display="flex" flexDirection="column" w="full" p={8}>
@@ -150,6 +138,7 @@ export const ClassesList = ({
             onDragEnd={onDragEnd}
             onClickDelete={setDeleteClassId}
             onClickEdit={setEditClassId}
+            searchText={searchText}
           />
         </Box>
       )}
