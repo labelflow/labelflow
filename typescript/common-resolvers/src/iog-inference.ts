@@ -134,35 +134,35 @@ const fetchIogServer = async (
     type: "Polygon",
     coordinates: result?.polygons as number[][][],
   };
-
-  const xCoordinates = geometry.coordinates.reduce(
-    (xCoordinatesCurrent: number[], polygon: number[][]) => [
-      ...xCoordinatesCurrent,
-      ...polygon.map((point: number[]) => point[0]),
-    ],
-    []
+  const [x, y, X, Y] = geometry.coordinates.reduce(
+    ([xCurrent, yCurrent, XCurrent, YCurrent], polygon: number[][]) => {
+      const [xPolygon, yPolygon, XPolygon, YPolygon] = polygon.reduce(
+        (
+          [xPolygonCurrent, yPolygonCurrent, XPolygonCurrent, YPolygonCurrent],
+          point
+        ) => [
+          Math.min(xPolygonCurrent, point[0]),
+          Math.min(yPolygonCurrent, point[1]),
+          Math.max(XPolygonCurrent, point[0]),
+          Math.max(YPolygonCurrent, point[1]),
+        ],
+        [Infinity, Infinity, 0, 0]
+      );
+      return [
+        Math.min(xPolygon, xCurrent),
+        Math.min(yPolygon, yCurrent),
+        Math.max(XPolygon, XCurrent),
+        Math.max(YPolygon, YCurrent),
+      ];
+    },
+    [Infinity, Infinity, 0, 0]
   );
-  const yCoordinates = geometry.coordinates.reduce(
-    (yCoordinatesCurrent: number[], polygon: number[][]) => [
-      ...yCoordinatesCurrent,
-      ...polygon.map((point: number[]) => point[1]),
-    ],
-    []
-  );
-  const [x, y, X, Y] = [
-    Math.min(...xCoordinates),
-    Math.min(...yCoordinates),
-    Math.max(...xCoordinates),
-    Math.max(...yCoordinates),
-  ];
-  const width = X - x;
-  const height = Y - y;
   return {
     geometry,
     x,
     y,
-    height,
-    width,
+    width: X - x,
+    height: Y - y,
   };
 };
 
@@ -182,8 +182,8 @@ const createIogLabel = async (
   const dataUrl = await downloadUrlToDataUrl(image.url, req);
   const now = new Date();
 
-  const xInit = Math.min(image.width, Math.max(0, args.data.x)),
-  const yInit = Math.min(image.height, Math.max(0, args.data.y)),
+  const xInit = Math.min(image.width, Math.max(0, args.data.x));
+  const yInit = Math.min(image.height, Math.max(0, args.data.y));
   const { geometry, x, y, height, width } = await fetchIogServer({
     id: labelId,
     imageUrl: dataUrl,
