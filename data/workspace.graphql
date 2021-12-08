@@ -1,6 +1,7 @@
 input WorkspaceCreateInput {
   id: ID
   name: String!
+  image: String
 }
 
 input WorkspaceWhereUniqueInput {
@@ -8,6 +9,11 @@ input WorkspaceWhereUniqueInput {
   slug: String
 }
 
+input WorkspaceWhereInput {
+  slug: String
+}
+
 input WorkspaceUpdateInput {
   name: String
+  image: String
 }

@@ -20,6 +20,7 @@ import type {
   DatasetWhereUniqueInput,
   ImageWhereUniqueInput,
   WorkspaceCreateInput,
+  WorkspaceWhereInput,
   WorkspaceWhereUniqueInput,
   WorkspaceType,
 } from "@labelflow/graphql-types";
@@ -29,8 +30,30 @@ type NoUndefinedField<T> = { [P in keyof T]: NonNullable<T[P]> };
 
 export type DbImage = Omit<GeneratedImage, "labels" | "dataset">;
 export type DbImageCreateInput = WithCreatedAtAndUpdatedAt<
-  Required<NoUndefinedField<Omit<ImageCreateInput, "file" | "externalUrl">>> &
-    Pick<ImageCreateInput, "externalUrl">
+  Required<
+    NoUndefinedField<
+      Omit<
+        ImageCreateInput,
+        | "file"
+        | "externalUrl"
+        | "noThumbnails"
+        | "thumbnail20Url"
+        | "thumbnail50Url"
+        | "thumbnail100Url"
+        | "thumbnail200Url"
+        | "thumbnail500Url"
+      >
+    >
+  > &
+    Pick<
+      ImageCreateInput,
+      | "externalUrl"
+      | "thumbnail20Url"
+      | "thumbnail50Url"
+      | "thumbnail100Url"
+      | "thumbnail200Url"
+      | "thumbnail500Url"
+    >
 >;
 
 export type DbLabel = Omit<GeneratedLabel, "labelClass"> & {
@@ -62,8 +85,13 @@ export type DbDataset = Omit<
 
 export type DbWorkspace = Omit<
   GeneratedWorkspace,
-  "__typename" | "type" | "datasets" | "memberships" | "plan"
-> & { plan: WorkspacePlan };
+  | "__typename"
+  | "type"
+  | "datasets"
+  | "memberships"
+  | "plan"
+  | "stripeCustomerPortalUrl"
+> & { plan: WorkspacePlan; stripeCustomerId?: string | undefined | null };
 
 export type DbWorkspaceWithType = DbWorkspace & { type: WorkspaceType };
 
@@ -114,6 +142,7 @@ export type Repository = {
     get: Get<DbImage, ImageWhereUniqueInput>;
     list: List<DbImage, ImageWhereInput & { user?: { id: string } }>;
     delete: Delete<ImageWhereUniqueInput>;
+    update: Update<DbImage, ImageWhereUniqueInput>;
   };
   label: {
     add: Add<DbLabelCreateInput>;
@@ -139,23 +168,60 @@ export type Repository = {
     update: Update<DbDataset, DatasetWhereUniqueInput>;
   };
   workspace: {
-    add: Add<WorkspaceCreateInput>;
+    add: Add<
+      WorkspaceCreateInput & {
+        slug: string;
+        stripeCustomerId?: string | undefined;
+      }
+    >;
     get: Get<DbWorkspaceWithType, WorkspaceWhereUniqueInput>;
-    list: List<DbWorkspaceWithType, { user?: { id: string } }>;
+    list: List<
+      DbWorkspaceWithType,
+      WorkspaceWhereInput & { user?: { id: string } }
+    >;
     update: Update<DbWorkspaceWithType, WorkspaceWhereUniqueInput>;
   };
   upload: {
     getUploadTargetHttp: (
       key: string,
-      origin?: string
+      origin: string
     ) => Promise<UploadTargetHttp> | UploadTargetHttp;
     getUploadTarget: (
       key: string,
-      origin?: string
+      origin: string
     ) => Promise<UploadTarget> | UploadTarget;
-    put: (url: string, file: Blob) => Promise<void>;
+    put: (url: string, file: Blob, req?: Request) => Promise<void>;
     get: (url: string, req?: Request) => Promise<ArrayBuffer>;
     delete: (url: string) => Promise<void>;
+  };
+  imageProcessing: {
+    processImage: (
+      image: {
+        id: string;
+        width: number | null | undefined;
+        height: number | null | undefined;
+        mimetype: string | null | undefined;
+        url: string;
+        thumbnail20Url?: string;
+        thumbnail50Url?: string;
+        thumbnail100Url?: string;
+        thumbnail200Url?: string;
+        thumbnail500Url?: string;
+      },
+      getImage: (url: string) => Promise<ArrayBuffer>,
+      putThumbnail: (targetDownloadUrl: string, blob: Blob) => Promise<void>,
+      updateImage: Update<DbImage, ImageWhereUniqueInput>,
+      user?: { id: string }
+    ) => Promise<{
+      width: number;
+      height: number;
+      mimetype: string;
+      thumbnail20Url?: string;
+      thumbnail50Url?: string;
+      thumbnail100Url?: string;
+      thumbnail200Url?: string;
+      thumbnail500Url?: string;
+    }>;
   };
 };
 

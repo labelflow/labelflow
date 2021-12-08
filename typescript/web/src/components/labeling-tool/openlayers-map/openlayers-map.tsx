@@ -12,6 +12,7 @@ import memoize from "mem";
 import Projection from "ol/proj/Projection";
 import useMeasure from "react-use-measure";
 import { ApolloProvider, useApolloClient, useQuery, gql } from "@apollo/client";
+import { useQueryParam } from "use-query-params";
 
 import { Map } from "@labelflow/react-openlayers-fiber";
 import type { Image } from "@labelflow/graphql-types";
@@ -30,6 +31,7 @@ import {
 } from "../../../connectors/labeling-state";
 import { theme } from "../../../theme";
 import { useImagePrefecthing } from "../../../hooks/use-image-prefetching";
+import { BoolParam } from "../../../utils/query-param-bool";
 
 const empty: any[] = [];
 
@@ -97,10 +99,14 @@ export const OpenlayersMap = () => {
   const isContextMenuOpen = useLabelingStore(
     (state) => state.isContextMenuOpen
   );
+  const iogSpinnerRef = useRef<HTMLDivElement | null>(null);
   const setIsContextMenuOpen = useLabelingStore(
     (state) => state.setIsContextMenuOpen
   );
   const selectedTool = useLabelingStore((state) => state.selectedTool);
+  const iogSpinnerPosition = useLabelingStore(
+    (state) => state.iogSpinnerPosition
+  );
   const setIsImageLoading = useLabelingStore(
     (state) => state.setIsImageLoading
   );
@@ -113,6 +119,7 @@ export const OpenlayersMap = () => {
   const setView = useLabelingStore((state) => state.setView);
   const zoomFactor = useLabelingStore((state) => state.zoomFactor);
 
+  const [, setImageLoadError] = useQueryParam("image-load-error", BoolParam);
   const { data: imageData, previousData: imageDataPrevious } = useQuery<{
     image: Pick<Image, "id" | "url" | "width" | "height">;
   }>(imageQuery, {
@@ -257,7 +264,19 @@ export const OpenlayersMap = () => {
                       );
                       // To solve a rare bug where image does not load
                       // See https://github.com/labelflow/labelflow/issues/431
-                      window?.location?.reload?.();
+                      console.warn(
+                        "Reloading window to prevent bug https://github.com/labelflow/labelflow/issues/431"
+                      );
+                      if (
+                        window.localStorage &&
+                        !localStorage.getItem("hasRetriedImageLoad")
+                      ) {
+                        localStorage.hasRetriedImageLoad = true;
+                        window.location.reload();
+                      } else {
+                        localStorage.removeItem("hasRetriedImageLoad");
+                        setImageLoadError(true);
+                      }
                       return true;
                     }}
                     onImageloadstart={() => {
@@ -277,8 +296,12 @@ export const OpenlayersMap = () => {
                 image={memoizedImage}
                 classificationOverlayRef={classificationOverlayRef}
               />
-              <DrawInteraction />
+              <DrawInteraction
+                iogSpinnerRef={iogSpinnerRef}
+                sourceVectorLabelsRef={sourceVectorBoxesRef}
+              />
               <SelectAndModifyFeature
+                iogSpinnerRef={iogSpinnerRef}
                 editClassOverlayRef={editClassOverlayRef}
                 sourceVectorLabelsRef={sourceVectorBoxesRef}
                 setIsContextMenuOpen={setIsContextMenuOpen}
@@ -330,6 +353,18 @@ export const OpenlayersMap = () => {
             classificationOverlayRef.current = e;
           }
         }}
+      />
+      <Spinner
+        id="spinner"
+        key="spinner"
+        visibility={iogSpinnerPosition ? "visible" : "hidden"}
+        ref={(e) => {
+          if (e && iogSpinnerRef.current !== e) {
+            // eslint-disable-next-line no-param-reassign
+            iogSpinnerRef.current = e;
+          }
+        }}
+        color="brand"
       />
     </Box>
   );

@@ -63,10 +63,11 @@ export const generateLabelsOfImageFile = (
 export const exportToYolo: ExportFunction = async (
   datasetId,
   options: ExportOptionsYolo = {},
-  { repository }
+  { repository, req },
+  user
 ) => {
-  const images = await repository.image.list({ datasetId });
-  const labelClasses = await repository.labelClass.list({ datasetId });
+  const images = await repository.image.list({ datasetId, user });
+  const labelClasses = await repository.labelClass.list({ datasetId, user });
   const datasetName = options?.name ?? "dataset-yolo";
   const zip = new JSZip();
   zip.file(
@@ -85,23 +86,26 @@ export const exportToYolo: ExportFunction = async (
         options?.avoidImageNameCollisions ?? false
       );
       if (options?.exportImages) {
-        const blob = new Blob([await repository.upload.get(image.url)], {
-          type: image.mimetype,
-        });
+        const arrayBufferImage = await repository.upload.get(image.url, req);
         zip.file(
           `${datasetName}/obj_train_data/${imageName}.${mime.extension(
             image.mimetype
           )}`,
-          blob
+          arrayBufferImage
         );
       }
-      const labelsOfImage = await repository.label.list({ imageId: image.id });
+      const labelsOfImage = await repository.label.list({
+        imageId: image.id,
+        user,
+      });
       zip.file(
         `${datasetName}/obj_train_data/${imageName}.txt`,
         generateLabelsOfImageFile(labelsOfImage, image, labelClasses, options)
       );
     })
   );
-  const blobZip = await zip.generateAsync({ type: "blob" });
+  const blobZip = new Blob([await zip.generateAsync({ type: "arraybuffer" })], {
+    type: "application/zip",
+  });
   return blobZip;
 };

@@ -1,4 +1,4 @@
-import React, { ReactNode } from "react";
+import React, { ReactNode, forwardRef } from "react";
 import {
   chakra,
   ChakraProps,
@@ -6,6 +6,7 @@ import {
   IconButtonProps,
   Menu,
   MenuButton,
+  Tooltip,
   MenuItem,
   MenuList,
   useColorModeValue as mode,
@@ -34,6 +35,20 @@ export type CollapsedBreadcrumbsProps = {
   containsLastElement?: boolean;
 } & Partial<IconButtonProps>;
 
+const TriggerButton = forwardRef<any, any>((props, ref) => (
+  <Tooltip label="Open Navigation Menu" placement="bottom" openDelay={1000}>
+    <MenuButton
+      ref={ref}
+      as={IconButton}
+      aria-label="Navigate in hidden breadcrumbs"
+      icon={<EllipsisIcon fontSize="xl" />}
+      color={mode("gray.700", "gray.300")}
+      variant="ghost"
+      {...props}
+    />
+  </Tooltip>
+));
+
 export const CollapsedBreadcrumbs = ({
   children,
   containsLastElement = false,
@@ -44,15 +59,8 @@ export const CollapsedBreadcrumbs = ({
 
   return (
     <Menu isLazy>
-      <MenuButton
-        as={IconButton}
-        aria-label="Navigation"
-        icon={<EllipsisIcon fontSize="xl" />}
-        color={mode("gray.700", "gray.300")}
-        variant="ghost"
-        {...otherProps}
-      />
-      <MenuList>
+      <TriggerButton {...otherProps} />
+      <MenuList aria-label="Hidden breadcrumbs">
         {(() => {
           if (containsLastElement) {
             return [

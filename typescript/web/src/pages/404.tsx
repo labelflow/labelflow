@@ -9,9 +9,10 @@ import { ServiceWorkerManagerModal } from "../components/service-worker-manager"
 import { WelcomeManager } from "../components/welcome-manager";
 import { AuthManager } from "../components/auth-manager";
 import { CookieBanner } from "../components/cookie-banner";
+import { NavLogo } from "../components/logo/nav-logo";
 
 export const Error404Content = () => (
-  <Layout>
+  <Layout breadcrumbs={[<NavLogo key={0} />]}>
     <Center h="full">
       <Box as="section">
         <Box

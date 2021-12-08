@@ -11,13 +11,15 @@ import { Meta } from "../../../components/meta";
 import { Layout } from "../../../components/layout";
 import { IdParam, BoolParam } from "../../../utils/query-param-bool";
 import { NewDatasetCard, DatasetCard } from "../../../components/datasets";
-
 import { UpsertDatasetModal } from "../../../components/datasets/upsert-dataset-modal";
 import { DeleteDatasetModal } from "../../../components/datasets/delete-dataset-modal";
 import { ServiceWorkerManagerModal } from "../../../components/service-worker-manager";
 import { AuthManager } from "../../../components/auth-manager";
 import { WelcomeManager } from "../../../components/welcome-manager";
 import { CookieBanner } from "../../../components/cookie-banner";
+import { WorkspaceTabBar } from "../../../components/layout/tab-bar/workspace-tab-bar";
+import { WorkspaceSwitcher } from "../../../components/workspace-switcher";
+import { NavLogo } from "../../../components/logo/nav-logo";
 
 export const getDatasetsQuery = gql`
   query getDatasets($where: DatasetWhereInput) {
@@ -28,6 +30,7 @@ export const getDatasetsQuery = gql`
       images(first: 1) {
         id
         url
+        thumbnail500Url
       }
       imagesAggregates {
         totalCount
@@ -43,7 +46,10 @@ export const getDatasetsQuery = gql`
 `;
 
 const DatasetPage = () => {
-  const workspaceSlug = useRouter().query?.workspaceSlug;
+  const {
+    query: { workspaceSlug },
+    isReady,
+  } = useRouter();
 
   const { data: datasetsResult } = useQuery<{
     datasets: Pick<
@@ -95,7 +101,19 @@ const DatasetPage = () => {
       <AuthManager />
       <Meta title="LabelFlow | Datasets" />
       <CookieBanner />
-      <Layout breadcrumbs={[<Text key={0}>Datasets</Text>]}>
+      <Layout
+        tabBar={
+          <WorkspaceTabBar
+            currentTab="datasets"
+            workspaceSlug={workspaceSlug as string}
+          />
+        }
+        breadcrumbs={[
+          <NavLogo key={0} />,
+          <WorkspaceSwitcher key={1} />,
+          <Text key={2}>Datasets</Text>,
+        ]}
+      >
         <UpsertDatasetModal
           isOpen={isCreatingDataset || editDatasetId != null}
           onClose={onClose}
@@ -110,11 +128,11 @@ const DatasetPage = () => {
 
         <Flex direction="row" wrap="wrap" p={4}>
           <NewDatasetCard
+            disabled={!isReady}
             addDataset={() => {
               setIsCreatingDataset(true, "replaceIn");
             }}
           />
-
           {datasetsResult?.datasets?.map(
             ({
               id,
@@ -128,7 +146,7 @@ const DatasetPage = () => {
               <DatasetCard
                 key={id}
                 url={`/${workspaceSlug}/datasets/${slug}`}
-                imageUrl={images[0]?.url}
+                imageUrl={images[0]?.thumbnail500Url ?? undefined}
                 datasetName={name}
                 imagesCount={imagesAggregates.totalCount}
                 labelClassesCount={labelClassesAggregates.totalCount}

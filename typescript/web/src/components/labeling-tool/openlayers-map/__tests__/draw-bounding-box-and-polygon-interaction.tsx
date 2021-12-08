@@ -6,6 +6,8 @@ import { ApolloProvider } from "@apollo/client";
 import { Map } from "@labelflow/react-openlayers-fiber";
 import { render, waitFor, screen } from "@testing-library/react";
 import { Feature, Map as OlMap } from "ol";
+import { Vector as OlSourceVector } from "ol/source";
+import { Geometry } from "ol/geom";
 import Polygon, { fromExtent } from "ol/geom/Polygon";
 import { DrawEvent, DrawEventType } from "ol/interaction/Draw";
 
@@ -43,18 +45,28 @@ beforeEach(() => {
 
 it("create a label when the user has finished to draw a bounding box on the labeling interface", async () => {
   const mapRef: { current: OlMap | null } = { current: null };
-  render(<DrawInteraction />, {
-    wrapper: ({ children }) => (
-      <Map
-        args={{ interactions: [] }}
-        ref={(map) => {
-          mapRef.current = map;
-        }}
-      >
-        <ApolloProvider client={client}>{children}</ApolloProvider>
-      </Map>
-    ),
-  });
+  const iogSpinnerRef: { current: HTMLDivElement | null } = { current: null };
+  const sourceVectorLabelsRef: { current: OlSourceVector<Geometry> | null } = {
+    current: null,
+  };
+  render(
+    <DrawInteraction
+      iogSpinnerRef={iogSpinnerRef}
+      sourceVectorLabelsRef={sourceVectorLabelsRef}
+    />,
+    {
+      wrapper: ({ children }) => (
+        <Map
+          args={{ interactions: [] }}
+          ref={(map) => {
+            mapRef.current = map;
+          }}
+        >
+          <ApolloProvider client={client}>{children}</ApolloProvider>
+        </Map>
+      ),
+    }
+  );
 
   const drawInteraction = mapRef.current?.getInteractions().getArray()?.[0];
   drawInteraction?.dispatchEvent(
@@ -87,18 +99,28 @@ it("create a label when the user has finished to draw a bounding box on the labe
 
 it("is possible to undo the creation of the label", async () => {
   const mapRef: { current: OlMap | null } = { current: null };
-  render(<DrawInteraction />, {
-    wrapper: ({ children }) => (
-      <Map
-        args={{ interactions: [] }}
-        ref={(map) => {
-          mapRef.current = map;
-        }}
-      >
-        <ApolloProvider client={client}>{children}</ApolloProvider>
-      </Map>
-    ),
-  });
+  const iogSpinnerRef: { current: HTMLDivElement | null } = { current: null };
+  const sourceVectorLabelsRef: { current: OlSourceVector<Geometry> | null } = {
+    current: null,
+  };
+  render(
+    <DrawInteraction
+      iogSpinnerRef={iogSpinnerRef}
+      sourceVectorLabelsRef={sourceVectorLabelsRef}
+    />,
+    {
+      wrapper: ({ children }) => (
+        <Map
+          args={{ interactions: [] }}
+          ref={(map) => {
+            mapRef.current = map;
+          }}
+        >
+          <ApolloProvider client={client}>{children}</ApolloProvider>
+        </Map>
+      ),
+    }
+  );
 
   const drawInteraction = mapRef.current?.getInteractions().getArray()?.[0];
   drawInteraction?.dispatchEvent(
@@ -119,18 +141,28 @@ it("is possible to undo the creation of the label", async () => {
 
 it("should select the newly created label", async () => {
   const mapRef: { current: OlMap | null } = { current: null };
-  render(<DrawInteraction />, {
-    wrapper: ({ children }) => (
-      <Map
-        args={{ interactions: [] }}
-        ref={(map) => {
-          mapRef.current = map;
-        }}
-      >
-        <ApolloProvider client={client}>{children}</ApolloProvider>
-      </Map>
-    ),
-  });
+  const iogSpinnerRef: { current: HTMLDivElement | null } = { current: null };
+  const sourceVectorLabelsRef: { current: OlSourceVector<Geometry> | null } = {
+    current: null,
+  };
+  render(
+    <DrawInteraction
+      iogSpinnerRef={iogSpinnerRef}
+      sourceVectorLabelsRef={sourceVectorLabelsRef}
+    />,
+    {
+      wrapper: ({ children }) => (
+        <Map
+          args={{ interactions: [] }}
+          ref={(map) => {
+            mapRef.current = map;
+          }}
+        >
+          <ApolloProvider client={client}>{children}</ApolloProvider>
+        </Map>
+      ),
+    }
+  );
 
   const drawInteraction = mapRef.current?.getInteractions().getArray()?.[0];
   drawInteraction?.dispatchEvent(
@@ -149,18 +181,28 @@ it("should select the newly created label", async () => {
 
 it("should unset the selected label when the effect is undone", async () => {
   const mapRef: { current: OlMap | null } = { current: null };
-  render(<DrawInteraction />, {
-    wrapper: ({ children }) => (
-      <Map
-        args={{ interactions: [] }}
-        ref={(map) => {
-          mapRef.current = map;
-        }}
-      >
-        <ApolloProvider client={client}>{children}</ApolloProvider>
-      </Map>
-    ),
-  });
+  const iogSpinnerRef: { current: HTMLDivElement | null } = { current: null };
+  const sourceVectorLabelsRef: { current: OlSourceVector<Geometry> | null } = {
+    current: null,
+  };
+  render(
+    <DrawInteraction
+      iogSpinnerRef={iogSpinnerRef}
+      sourceVectorLabelsRef={sourceVectorLabelsRef}
+    />,
+    {
+      wrapper: ({ children }) => (
+        <Map
+          args={{ interactions: [] }}
+          ref={(map) => {
+            mapRef.current = map;
+          }}
+        >
+          <ApolloProvider client={client}>{children}</ApolloProvider>
+        </Map>
+      ),
+    }
+  );
 
   const drawInteraction = mapRef.current?.getInteractions().getArray()?.[0];
   drawInteraction?.dispatchEvent(
@@ -181,18 +223,28 @@ it("should unset the selected label when the effect is undone", async () => {
 
 it("is possible to redo an undone action", async () => {
   const mapRef: { current: OlMap | null } = { current: null };
-  render(<DrawInteraction />, {
-    wrapper: ({ children }) => (
-      <Map
-        args={{ interactions: [] }}
-        ref={(map) => {
-          mapRef.current = map;
-        }}
-      >
-        <ApolloProvider client={client}>{children}</ApolloProvider>
-      </Map>
-    ),
-  });
+  const iogSpinnerRef: { current: HTMLDivElement | null } = { current: null };
+  const sourceVectorLabelsRef: { current: OlSourceVector<Geometry> | null } = {
+    current: null,
+  };
+  render(
+    <DrawInteraction
+      iogSpinnerRef={iogSpinnerRef}
+      sourceVectorLabelsRef={sourceVectorLabelsRef}
+    />,
+    {
+      wrapper: ({ children }) => (
+        <Map
+          args={{ interactions: [] }}
+          ref={(map) => {
+            mapRef.current = map;
+          }}
+        >
+          <ApolloProvider client={client}>{children}</ApolloProvider>
+        </Map>
+      ),
+    }
+  );
 
   const drawInteraction = mapRef.current?.getInteractions().getArray()?.[0];
   drawInteraction?.dispatchEvent(
@@ -229,18 +281,28 @@ it("is possible to redo an undone action", async () => {
 
 it("should set back the selected label when the effect is redone after an undone", async () => {
   const mapRef: { current: OlMap | null } = { current: null };
-  render(<DrawInteraction />, {
-    wrapper: ({ children }) => (
-      <Map
-        args={{ interactions: [] }}
-        ref={(map) => {
-          mapRef.current = map;
-        }}
-      >
-        <ApolloProvider client={client}>{children}</ApolloProvider>
-      </Map>
-    ),
-  });
+  const iogSpinnerRef: { current: HTMLDivElement | null } = { current: null };
+  const sourceVectorLabelsRef: { current: OlSourceVector<Geometry> | null } = {
+    current: null,
+  };
+  render(
+    <DrawInteraction
+      iogSpinnerRef={iogSpinnerRef}
+      sourceVectorLabelsRef={sourceVectorLabelsRef}
+    />,
+    {
+      wrapper: ({ children }) => (
+        <Map
+          args={{ interactions: [] }}
+          ref={(map) => {
+            mapRef.current = map;
+          }}
+        >
+          <ApolloProvider client={client}>{children}</ApolloProvider>
+        </Map>
+      ),
+    }
+  );
 
   const drawInteraction = mapRef.current?.getInteractions().getArray()?.[0];
   drawInteraction?.dispatchEvent(
@@ -262,18 +324,28 @@ it("should set back the selected label when the effect is redone after an undone
 
 it("handles cases where the label creation throws an error", async () => {
   const mapRef: { current: OlMap | null } = { current: null };
-  render(<DrawInteraction />, {
-    wrapper: ({ children }) => (
-      <Map
-        args={{ interactions: [] }}
-        ref={(map) => {
-          mapRef.current = map;
-        }}
-      >
-        <ApolloProvider client={client}>{children}</ApolloProvider>
-      </Map>
-    ),
-  });
+  const iogSpinnerRef: { current: HTMLDivElement | null } = { current: null };
+  const sourceVectorLabelsRef: { current: OlSourceVector<Geometry> | null } = {
+    current: null,
+  };
+  render(
+    <DrawInteraction
+      iogSpinnerRef={iogSpinnerRef}
+      sourceVectorLabelsRef={sourceVectorLabelsRef}
+    />,
+    {
+      wrapper: ({ children }) => (
+        <Map
+          args={{ interactions: [] }}
+          ref={(map) => {
+            mapRef.current = map;
+          }}
+        >
+          <ApolloProvider client={client}>{children}</ApolloProvider>
+        </Map>
+      ),
+    }
+  );
 
   (client.mutate as jest.Mock).mockImplementationOnce(async () => {
     throw new Error("Can't create label");
@@ -313,18 +385,28 @@ it("handles cases where the label creation throws an error", async () => {
 
 it("create a label when the user has finished to draw a polygon on the labeling interface", async () => {
   const mapRef: { current: OlMap | null } = { current: null };
-  render(<DrawInteraction />, {
-    wrapper: ({ children }) => (
-      <Map
-        args={{ interactions: [] }}
-        ref={(map) => {
-          mapRef.current = map;
-        }}
-      >
-        <ApolloProvider client={client}>{children}</ApolloProvider>
-      </Map>
-    ),
-  });
+  const iogSpinnerRef: { current: HTMLDivElement | null } = { current: null };
+  const sourceVectorLabelsRef: { current: OlSourceVector<Geometry> | null } = {
+    current: null,
+  };
+  render(
+    <DrawInteraction
+      iogSpinnerRef={iogSpinnerRef}
+      sourceVectorLabelsRef={sourceVectorLabelsRef}
+    />,
+    {
+      wrapper: ({ children }) => (
+        <Map
+          args={{ interactions: [] }}
+          ref={(map) => {
+            mapRef.current = map;
+          }}
+        >
+          <ApolloProvider client={client}>{children}</ApolloProvider>
+        </Map>
+      ),
+    }
+  );
 
   useLabelingStore.setState({ selectedTool: Tools.POLYGON });
 

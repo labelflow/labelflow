@@ -47,10 +47,23 @@ const searchDataset = async (
   args: QueryDatasetArgs,
   { repository, user }: Context
 ): Promise<(DbDataset & { __typename: string }) | undefined> => {
-  const datasetFromRepository = await repository.dataset.get(args.where, user);
-  return datasetFromRepository != null
-    ? { ...datasetFromRepository, __typename: "Dataset" }
-    : undefined;
+  try {
+    const datasetFromRepository = await repository.dataset.get(
+      args.where,
+      user
+    );
+    return datasetFromRepository != null
+      ? { ...datasetFromRepository, __typename: "Dataset" }
+      : undefined;
+  } catch (error) {
+    if (
+      error instanceof Error &&
+      error.message.includes("User not authorized to access dataset")
+    ) {
+      return undefined;
+    }
+    throw error;
+  }
 };
 
 // Queries
@@ -190,12 +203,12 @@ const createDemoDataset = async (
       const imageEntity = await getImageEntityFromMutationArgs(
         {
           ...image,
+          noThumbnails: true,
           createdAt: add(now, { seconds: index }).toISOString(),
           name: image.url.match(/\/static\/img\/(.*?)$/)?.[1],
         },
-        {
-          upload: repository.upload,
-        },
+        repository,
+        user,
         req
       );
       return await repository.image.add(imageEntity, user);

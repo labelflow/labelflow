@@ -26,6 +26,7 @@ import { Layout } from "../components/layout";
 import { ServiceWorkerManagerBackground } from "../components/service-worker-manager";
 import { AuthManager } from "../components/auth-manager";
 import { CookieBanner } from "../components/cookie-banner";
+import { NavLogo } from "../components/logo/nav-logo";
 
 export const debugQuery = gql`
   query getDebug {
@@ -42,7 +43,7 @@ const DebugPage = () => {
       <AuthManager />
       <Meta title="LabelFlow | Debug" />
       <CookieBanner />
-      <Layout breadcrumbs={[<Text key={0}>Debug</Text>]}>
+      <Layout breadcrumbs={[<NavLogo key={0} />, <Text key={1}>Debug</Text>]}>
         <Center h="full">
           <Box as="section">
             <VStack
@@ -121,7 +122,7 @@ const DebugPage = () => {
                   <Link
                     target="_blank"
                     rel="noreferrer"
-                    href="https://app.supabase.io/dataset/zokyprbhquvvrleedkkk/editor/table"
+                    href="https://app.supabase.io/project/zokyprbhquvvrleedkkk/editor/table"
                   >
                     Link to Database admin
                   </Link>
@@ -227,6 +228,8 @@ const DebugPage = () => {
                         process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_AUTHOR_LOGIN,
                       NEXT_PUBLIC_VERCEL_GIT_COMMIT_AUTHOR_NAME:
                         process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_AUTHOR_NAME,
+                      NEXT_PUBLIC_IOG_API_ENDPOINT:
+                        process.env.NEXT_PUBLIC_IOG_API_ENDPOINT,
                     },
                   },
                   null,

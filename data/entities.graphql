@@ -12,6 +12,11 @@ type Image {
   updatedAt: DateTime!
   url: String!
   externalUrl: String
+  thumbnail20Url: String
+  thumbnail50Url: String
+  thumbnail100Url: String
+  thumbnail200Url: String
+  thumbnail500Url: String
   name: String!
   path: String!
   mimetype: String!
@@ -79,27 +84,33 @@ type Workspace {
   updatedAt: DateTime!
   name: String!
   slug: String!
+  image: String
   type: WorkspaceType!
   plan: WorkspacePlan!
   datasets: [Dataset!]!
   memberships: [Membership!]!
+  stripeCustomerPortalUrl: String
 }
 
 type Membership {
   id: ID!
   createdAt: DateTime!
   updatedAt: DateTime!
+  declinedAt: DateTime
   role: MembershipRole!
-  user: User!
+  user: User
   workspace: Workspace!
+  invitationEmailSentTo: String
+  status: MembershipStatus!
+  currentUserCanAcceptInvitation: CurrentUserCanAcceptInvitation!
 }
 
 type User {
   id: ID!
   createdAt: DateTime!
   updatedAt: DateTime!
-  name: String!
-  email: String!
+  name: String
+  email: String
   image: String
   memberships: [Membership!]!
 }
@@ -117,6 +128,7 @@ enum WorkspacePlan {
 }
 
 enum MembershipRole {
+  Owner
   Admin
   Member
 }

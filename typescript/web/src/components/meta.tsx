@@ -1,13 +1,13 @@
 import * as React from "react";
 import { NextSeo } from "next-seo";
 import Head from "next/head";
-import { OpenGraphImages } from "next-seo/lib/types";
+import type { OpenGraphMedia } from "next-seo/lib/types";
 
 type Props = {
   title?: string;
   desc?: string;
   canonical?: string;
-  images?: OpenGraphImages[];
+  images?: OpenGraphMedia[];
 };
 
 const defaultImages = [

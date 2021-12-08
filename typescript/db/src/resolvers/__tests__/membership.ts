@@ -2,13 +2,15 @@
 import { gql } from "@apollo/client";
 import { v4 as uuidV4 } from "uuid";
 import {
+  CurrentUserCanAcceptInvitation,
   Membership,
   MembershipRole,
+  MembershipStatus,
   MutationCreateMembershipArgs,
   MutationCreateWorkspaceArgs,
   Workspace,
 } from "@labelflow/graphql-types";
-import { prisma } from "../../repository/prisma-client";
+import { getPrismaClient } from "../../prisma-client";
 import { client, user } from "../../dev/apollo-client";
 
 // @ts-ignore
@@ -16,21 +18,29 @@ fetch.disableFetchMocks();
 
 const testUser1Id = uuidV4();
 const testUser2Id = uuidV4();
+const testUser3Id = uuidV4();
 
 beforeAll(async () => {
-  await prisma.user.create({ data: { id: testUser1Id, name: "test-user-1" } });
-  await prisma.user.create({ data: { id: testUser2Id, name: "test-user-2" } });
+  await (
+    await getPrismaClient()
+  ).user.create({ data: { id: testUser1Id, name: "test-user-1" } });
+  await (
+    await getPrismaClient()
+  ).user.create({ data: { id: testUser2Id, name: "test-user-2" } });
+  await (
+    await getPrismaClient()
+  ).user.create({ data: { id: testUser3Id, name: "test-user-3" } });
 });
 
 beforeEach(async () => {
   user.id = testUser1Id;
-  await prisma.membership.deleteMany({});
-  return await prisma.workspace.deleteMany({});
+  await (await getPrismaClient()).membership.deleteMany({});
+  return await (await getPrismaClient()).workspace.deleteMany({});
 });
 
 afterAll(async () => {
   // Needed to avoid having the test process running indefinitely after the test suite has been run
-  await prisma.$disconnect();
+  await (await getPrismaClient()).$disconnect();
 });
 
 const createMembership = async (
@@ -69,6 +79,42 @@ const createWorkspace = async (
       }
     `,
     variables: { data: { ...data, name: data?.name ?? "test" } },
+  });
+};
+
+const acceptInvitation = async (membershipId: string) => {
+  return await client.mutate<{
+    acceptInvitation: Pick<Membership, "id" | "user">;
+  }>({
+    mutation: gql`
+      mutation acceptInvitation($id: ID!) {
+        acceptInvitation(where: { id: $id }) {
+          id
+          user {
+            id
+          }
+        }
+      }
+    `,
+    variables: { id: membershipId },
+    fetchPolicy: "no-cache",
+  });
+};
+
+const declineInvitation = async (membershipId: string) => {
+  return await client.mutate<{
+    declineInvitation: Pick<Membership, "id" | "declinedAt">;
+  }>({
+    mutation: gql`
+      mutation declineInvitation($id: ID!) {
+        declineInvitation(where: { id: $id }) {
+          id
+          declinedAt
+        }
+      }
+    `,
+    variables: { id: membershipId },
+    fetchPolicy: "no-cache",
   });
 };
 
@@ -235,8 +281,8 @@ describe("memberships query", () => {
       fetchPolicy: "no-cache",
     });
     expect(data.memberships.map((workspace) => workspace.role)).toEqual([
-      MembershipRole.Admin,
-      MembershipRole.Admin,
+      MembershipRole.Owner,
+      MembershipRole.Owner,
     ]);
   });
 
@@ -267,8 +313,47 @@ describe("memberships query", () => {
     });
 
     expect(data.memberships.map((workspace) => workspace.role)).toEqual([
-      MembershipRole.Admin,
-      MembershipRole.Admin,
+      MembershipRole.Owner,
+      MembershipRole.Owner,
+    ]);
+  });
+
+  it("gets memberships by workspace slug", async () => {
+    // both this workspaces are linked to testUser1Id by default
+    const workspace1Slug = (await createWorkspace({ name: "test1" }))?.data
+      ?.createWorkspace.slug as string;
+    const workspace2Slug = (await createWorkspace({ name: "test2" }))?.data
+      ?.createWorkspace.slug as string;
+
+    await createMembership({
+      userId: testUser2Id,
+      workspaceSlug: workspace1Slug,
+      role: MembershipRole.Member,
+    });
+
+    await createMembership({
+      userId: testUser2Id,
+      workspaceSlug: workspace2Slug,
+      role: MembershipRole.Member,
+    });
+
+    const { data } = await client.query<{
+      memberships: Pick<Membership, "id" | "role">[];
+    }>({
+      query: gql`
+        query memberships($workspaceSlug: String) {
+          memberships(where: { workspaceSlug: $workspaceSlug }) {
+            id
+            role
+          }
+        }
+      `,
+      fetchPolicy: "no-cache",
+      variables: { workspaceSlug: workspace1Slug },
+    });
+    expect(data.memberships.map((workspace) => workspace.role)).toEqual([
+      MembershipRole.Owner,
+      MembershipRole.Member,
     ]);
   });
 
@@ -311,7 +396,7 @@ describe("memberships query", () => {
     });
 
     expect(data.memberships.map((workspace) => workspace.role)).toEqual([
-      MembershipRole.Admin,
+      MembershipRole.Owner,
       MembershipRole.Member,
       MembershipRole.Member,
     ]);
@@ -357,8 +442,8 @@ describe("memberships query", () => {
     });
 
     expect(data.memberships.map((workspace) => workspace.role)).toEqual([
-      MembershipRole.Admin,
-      MembershipRole.Admin,
+      MembershipRole.Owner,
+      MembershipRole.Owner,
       MembershipRole.Member,
     ]);
   });
@@ -403,7 +488,7 @@ describe("memberships query", () => {
     });
 
     expect(data.memberships.map((workspace) => workspace.role)).toEqual([
-      MembershipRole.Admin,
+      MembershipRole.Owner,
       MembershipRole.Member,
     ]);
   });
@@ -442,31 +527,6 @@ describe("membership query", () => {
     const { data } = await queryMembership(membershipId);
 
     expect(data.membership.id).toEqual(membershipId);
-  });
-
-  it("throws if the user can't access membership", async () => {
-    const workspaceSlug = (await createWorkspace()).data?.createWorkspace
-      .slug as string;
-
-    const membershipId = (
-      await createMembership({
-        userId: testUser2Id,
-        workspaceSlug,
-        role: MembershipRole.Member,
-      })
-    )?.data?.createMembership.id as string;
-    user.id = uuidV4();
-    await expect(() => queryMembership(membershipId)).rejects.toThrow(
-      `User not authorized to access membership`
-    );
-  });
-
-  it("throws if the provided id doesn't match any membership", async () => {
-    const idOfAMembershipThaDoesNotExist = uuidV4();
-
-    await expect(() =>
-      queryMembership(idOfAMembershipThaDoesNotExist)
-    ).rejects.toThrow(`User not authorized to access membership`);
   });
 });
 
@@ -514,6 +574,7 @@ describe("updateMembership mutation", () => {
   });
 
   it("throws if the user does not have access to the membership", async () => {
+    user.id = testUser3Id;
     const workspaceSlug = (await createWorkspace())?.data?.createWorkspace
       .slug as string;
 
@@ -524,6 +585,7 @@ describe("updateMembership mutation", () => {
         workspaceSlug,
       })
     ).data?.createMembership.id as string;
+    user.id = testUser1Id;
     await expect(
       updateMembership({
         id: membershipId,
@@ -608,6 +670,7 @@ describe("deleteMembership mutation", () => {
   });
 
   it("throws if the user does not have access to the membership", async () => {
+    user.id = testUser3Id;
     const workspaceSlug = (await createWorkspace())?.data?.createWorkspace
       .slug as string;
 
@@ -618,7 +681,7 @@ describe("deleteMembership mutation", () => {
         workspaceSlug,
       })
     ).data?.createMembership.id as string;
-
+    user.id = testUser1Id;
     await expect(() => deleteMembership(membershipId)).rejects.toThrow(
       "User not authorized to access membership"
     );
@@ -633,8 +696,206 @@ describe("deleteMembership mutation", () => {
   });
 });
 
+describe("declineInvitation mutation", () => {
+  it("returns the updated membership with the declinedAt", async () => {
+    const workspaceSlug = (await createWorkspace())?.data?.createWorkspace
+      .slug as string;
+
+    const membershipId = (
+      await createMembership({
+        role: MembershipRole.Admin,
+        workspaceSlug,
+      })
+    ).data?.createMembership.id as string;
+    user.id = testUser2Id;
+    const { data } = await declineInvitation(membershipId);
+
+    expect(data?.declineInvitation?.declinedAt).toBeDefined();
+  });
+
+  it("throws if the user isn't logged in", async () => {
+    const workspaceSlug = (await createWorkspace())?.data?.createWorkspace
+      .slug as string;
+
+    const membershipId = (
+      await createMembership({
+        role: MembershipRole.Admin,
+        workspaceSlug,
+      })
+    ).data?.createMembership.id as string;
+    user.id = undefined;
+
+    await expect(() => declineInvitation(membershipId)).rejects.toThrow(
+      "User is not logged in"
+    );
+  });
+
+  it("throws if the membership doesn't exist", async () => {
+    const workspaceSlug = (await createWorkspace())?.data?.createWorkspace
+      .slug as string;
+
+    await createMembership({
+      role: MembershipRole.Admin,
+      workspaceSlug,
+    });
+
+    user.id = testUser2Id;
+
+    await expect(() => declineInvitation(uuidV4())).rejects.toThrow(
+      "Couldn't find the membership you are trying to accept"
+    );
+  });
+
+  it("throws if the membership already has a user", async () => {
+    const workspaceSlug = (await createWorkspace())?.data?.createWorkspace
+      .slug as string;
+
+    const membershipId = (
+      await createMembership({
+        userId: testUser3Id,
+        role: MembershipRole.Admin,
+        workspaceSlug,
+      })
+    ).data?.createMembership.id as string;
+
+    user.id = testUser2Id;
+
+    await expect(() => declineInvitation(membershipId)).rejects.toThrow(
+      "This invitation was already accepted by a user"
+    );
+  });
+
+  it("throws if the membership was already declined", async () => {
+    const workspaceSlug = (await createWorkspace())?.data?.createWorkspace
+      .slug as string;
+
+    const membershipId = (
+      await createMembership({
+        role: MembershipRole.Admin,
+        workspaceSlug,
+      })
+    ).data?.createMembership.id as string;
+
+    user.id = testUser2Id;
+
+    await declineInvitation(membershipId);
+
+    await expect(() => declineInvitation(membershipId)).rejects.toThrow(
+      "This invitation has already been declined"
+    );
+  });
+});
+
+describe("acceptInvitation mutation", () => {
+  it("returns the updated membership with the user", async () => {
+    const workspaceSlug = (await createWorkspace())?.data?.createWorkspace
+      .slug as string;
+
+    const membershipId = (
+      await createMembership({
+        role: MembershipRole.Admin,
+        workspaceSlug,
+      })
+    ).data?.createMembership.id as string;
+    user.id = testUser2Id;
+    const { data } = await acceptInvitation(membershipId);
+
+    expect(data?.acceptInvitation?.user?.id).toEqual(testUser2Id);
+  });
+
+  it("throws if the user isn't logged in", async () => {
+    const workspaceSlug = (await createWorkspace())?.data?.createWorkspace
+      .slug as string;
+
+    const membershipId = (
+      await createMembership({
+        role: MembershipRole.Admin,
+        workspaceSlug,
+      })
+    ).data?.createMembership.id as string;
+    user.id = undefined;
+
+    await expect(() => acceptInvitation(membershipId)).rejects.toThrow(
+      "User is not logged in"
+    );
+  });
+
+  it("throws if the membership doesn't exist", async () => {
+    const workspaceSlug = (await createWorkspace())?.data?.createWorkspace
+      .slug as string;
+
+    await createMembership({
+      role: MembershipRole.Admin,
+      workspaceSlug,
+    });
+
+    user.id = testUser2Id;
+
+    await expect(() => acceptInvitation(uuidV4())).rejects.toThrow(
+      "Couldn't find the membership you are trying to accept"
+    );
+  });
+
+  it("throws if the membership already has a user", async () => {
+    const workspaceSlug = (await createWorkspace())?.data?.createWorkspace
+      .slug as string;
+
+    const membershipId = (
+      await createMembership({
+        userId: testUser3Id,
+        role: MembershipRole.Admin,
+        workspaceSlug,
+      })
+    ).data?.createMembership.id as string;
+
+    user.id = testUser2Id;
+
+    await expect(() => acceptInvitation(membershipId)).rejects.toThrow(
+      "This invitation was already accepted by a user"
+    );
+  });
+
+  it("throws if the membership was already declined", async () => {
+    const workspaceSlug = (await createWorkspace())?.data?.createWorkspace
+      .slug as string;
+
+    const membershipId = (
+      await createMembership({
+        role: MembershipRole.Admin,
+        workspaceSlug,
+      })
+    ).data?.createMembership.id as string;
+
+    user.id = testUser2Id;
+
+    await declineInvitation(membershipId);
+
+    await expect(() => acceptInvitation(membershipId)).rejects.toThrow(
+      "This invitation has already been declined"
+    );
+  });
+
+  it("throws if the user accepting the invite is already a membership of the workspace", async () => {
+    const workspaceSlug = (await createWorkspace())?.data?.createWorkspace
+      .slug as string;
+
+    const membershipId = (
+      await createMembership({
+        role: MembershipRole.Admin,
+        workspaceSlug,
+      })
+    ).data?.createMembership.id as string;
+
+    user.id = testUser1Id;
+
+    await expect(() => acceptInvitation(membershipId)).rejects.toThrow(
+      "User cannot accept this invitation as they are already part of this workspace"
+    );
+  });
+});
+
 describe("nested resolvers", () => {
-  it("can return the user of the membership ", async () => {
+  it("can return the user of the membership", async () => {
     const workspaceSlug = (await createWorkspace({ name: "test" })).data
       ?.createWorkspace.slug as string;
 
@@ -663,10 +924,10 @@ describe("nested resolvers", () => {
       fetchPolicy: "no-cache",
     });
 
-    expect(data.membership.user.id).toEqual(testUser2Id);
+    expect(data.membership?.user?.id).toEqual(testUser2Id);
   });
 
-  it("can return the workspace of the membership ", async () => {
+  it("can return the workspace of the membership", async () => {
     const workspaceSlug = (await createWorkspace({ name: "test" })).data
       ?.createWorkspace.slug as string;
 
@@ -697,5 +958,302 @@ describe("nested resolvers", () => {
     });
 
     expect(data.membership.workspace.slug).toEqual(workspaceSlug);
+  });
+});
+
+describe("membership status", () => {
+  it("returns the 'Sent' status if no user has accepted the invite", async () => {
+    const workspaceSlug = (await createWorkspace({ name: "test" })).data
+      ?.createWorkspace.slug as string;
+
+    const membershipId = (
+      await createMembership({
+        workspaceSlug,
+        role: MembershipRole.Admin,
+      })
+    ).data?.createMembership.id as string;
+    user.id = testUser2Id;
+
+    const { data } = await client.query<{
+      membership: Pick<Membership, "id" | "status">;
+    }>({
+      query: gql`
+        query membership($id: ID!) {
+          membership(where: { id: $id }) {
+            id
+            status
+          }
+        }
+      `,
+      variables: { id: membershipId },
+      fetchPolicy: "no-cache",
+    });
+
+    expect(data.membership?.status).toEqual(MembershipStatus.Sent);
+  });
+
+  it("returns the 'DeclinedAt' status if it was declined", async () => {
+    const workspaceSlug = (await createWorkspace({ name: "test" })).data
+      ?.createWorkspace.slug as string;
+
+    const membershipId = (
+      await createMembership({
+        workspaceSlug,
+        role: MembershipRole.Admin,
+      })
+    ).data?.createMembership.id as string;
+    user.id = testUser2Id;
+
+    await declineInvitation(membershipId);
+
+    const { data } = await client.query<{
+      membership: Pick<Membership, "id" | "status">;
+    }>({
+      query: gql`
+        query membership($id: ID!) {
+          membership(where: { id: $id }) {
+            id
+            status
+          }
+        }
+      `,
+      variables: { id: membershipId },
+      fetchPolicy: "no-cache",
+    });
+
+    expect(data.membership?.status).toEqual(MembershipStatus.Declined);
+  });
+
+  it("returns the 'Active' status if it was accepted", async () => {
+    const workspaceSlug = (await createWorkspace({ name: "test" })).data
+      ?.createWorkspace.slug as string;
+
+    const membershipId = (
+      await createMembership({
+        workspaceSlug,
+        role: MembershipRole.Admin,
+      })
+    ).data?.createMembership.id as string;
+    user.id = testUser2Id;
+
+    await acceptInvitation(membershipId);
+
+    const { data } = await client.query<{
+      membership: Pick<Membership, "id" | "status">;
+    }>({
+      query: gql`
+        query membership($id: ID!) {
+          membership(where: { id: $id }) {
+            id
+            status
+          }
+        }
+      `,
+      variables: { id: membershipId },
+      fetchPolicy: "no-cache",
+    });
+
+    expect(data.membership?.status).toEqual(MembershipStatus.Active);
+  });
+
+  it("throws if the user isn't logged in", async () => {
+    const workspaceSlug = (await createWorkspace({ name: "test" })).data
+      ?.createWorkspace.slug as string;
+
+    const membershipId = (
+      await createMembership({
+        workspaceSlug,
+        role: MembershipRole.Admin,
+      })
+    ).data?.createMembership.id as string;
+
+    user.id = undefined;
+
+    const query = () =>
+      client.query<{
+        membership: Pick<Membership, "id" | "status">;
+      }>({
+        query: gql`
+          query membership($id: ID!) {
+            membership(where: { id: $id }) {
+              id
+              status
+            }
+          }
+        `,
+        variables: { id: membershipId },
+        fetchPolicy: "no-cache",
+      });
+
+    await expect(query).rejects.toThrow("User is not logged in");
+  });
+});
+
+describe("membership currentUserCanAcceptInvitation", () => {
+  it("returns 'Yes' if the user can accept the invitation", async () => {
+    const workspaceSlug = (await createWorkspace({ name: "test" })).data
+      ?.createWorkspace.slug as string;
+
+    const membershipId = (
+      await createMembership({
+        workspaceSlug,
+        role: MembershipRole.Admin,
+      })
+    ).data?.createMembership.id as string;
+    user.id = testUser2Id;
+
+    const { data } = await client.query<{
+      membership: Pick<Membership, "id" | "currentUserCanAcceptInvitation">;
+    }>({
+      query: gql`
+        query membership($id: ID!) {
+          membership(where: { id: $id }) {
+            id
+            currentUserCanAcceptInvitation
+          }
+        }
+      `,
+      variables: { id: membershipId },
+      fetchPolicy: "no-cache",
+    });
+
+    expect(data.membership?.currentUserCanAcceptInvitation).toEqual(
+      CurrentUserCanAcceptInvitation.Yes
+    );
+  });
+
+  it("returns 'AlreadyAccepted' if someone already accepted this invitation", async () => {
+    const workspaceSlug = (await createWorkspace({ name: "test" })).data
+      ?.createWorkspace.slug as string;
+
+    const membershipId = (
+      await createMembership({
+        // we create a membership which is already accepted
+        userId: testUser3Id,
+        workspaceSlug,
+        role: MembershipRole.Admin,
+      })
+    ).data?.createMembership.id as string;
+    user.id = testUser2Id;
+
+    const { data } = await client.query<{
+      membership: Pick<Membership, "id" | "currentUserCanAcceptInvitation">;
+    }>({
+      query: gql`
+        query membership($id: ID!) {
+          membership(where: { id: $id }) {
+            id
+            currentUserCanAcceptInvitation
+          }
+        }
+      `,
+      variables: { id: membershipId },
+      fetchPolicy: "no-cache",
+    });
+
+    expect(data.membership?.currentUserCanAcceptInvitation).toEqual(
+      CurrentUserCanAcceptInvitation.AlreadyAccepted
+    );
+  });
+
+  it("returns 'AlreadyMemberOfTheWorkspace' if someone wants to accept an invitation for a workspace they already belong to", async () => {
+    const workspaceSlug = (await createWorkspace({ name: "test" })).data
+      ?.createWorkspace.slug as string;
+
+    const membershipId = (
+      await createMembership({
+        workspaceSlug,
+        role: MembershipRole.Admin,
+      })
+    ).data?.createMembership.id as string;
+
+    // user 1 is already member of this workspace
+    user.id = testUser1Id;
+
+    const { data } = await client.query<{
+      membership: Pick<Membership, "id" | "currentUserCanAcceptInvitation">;
+    }>({
+      query: gql`
+        query membership($id: ID!) {
+          membership(where: { id: $id }) {
+            id
+            currentUserCanAcceptInvitation
+          }
+        }
+      `,
+      variables: { id: membershipId },
+      fetchPolicy: "no-cache",
+    });
+
+    expect(data.membership?.currentUserCanAcceptInvitation).toEqual(
+      CurrentUserCanAcceptInvitation.AlreadyMemberOfTheWorkspace
+    );
+  });
+
+  it("returns 'AlreadyDeclined' if the invitation was already declined by someone.", async () => {
+    const workspaceSlug = (await createWorkspace({ name: "test" })).data
+      ?.createWorkspace.slug as string;
+
+    const membershipId = (
+      await createMembership({
+        workspaceSlug,
+        role: MembershipRole.Admin,
+      })
+    ).data?.createMembership.id as string;
+
+    user.id = testUser2Id;
+
+    await declineInvitation(membershipId);
+
+    const { data } = await client.query<{
+      membership: Pick<Membership, "id" | "currentUserCanAcceptInvitation">;
+    }>({
+      query: gql`
+        query membership($id: ID!) {
+          membership(where: { id: $id }) {
+            id
+            currentUserCanAcceptInvitation
+          }
+        }
+      `,
+      variables: { id: membershipId },
+      fetchPolicy: "no-cache",
+    });
+
+    expect(data.membership?.currentUserCanAcceptInvitation).toEqual(
+      CurrentUserCanAcceptInvitation.AlreadyDeclined
+    );
+  });
+
+  it("throw if the user isn't logged in", async () => {
+    const workspaceSlug = (await createWorkspace({ name: "test" })).data
+      ?.createWorkspace.slug as string;
+
+    const membershipId = (
+      await createMembership({
+        workspaceSlug,
+        role: MembershipRole.Admin,
+      })
+    ).data?.createMembership.id as string;
+
+    user.id = undefined;
+
+    const query = () =>
+      client.query<{
+        membership: Pick<Membership, "id" | "currentUserCanAcceptInvitation">;
+      }>({
+        query: gql`
+          query membership($id: ID!) {
+            membership(where: { id: $id }) {
+              id
+              currentUserCanAcceptInvitation
+            }
+          }
+        `,
+        variables: { id: membershipId },
+        fetchPolicy: "no-cache",
+      });
+
+    await expect(query).rejects.toThrow("User is not logged in");
   });
 });

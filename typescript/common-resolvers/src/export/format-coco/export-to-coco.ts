@@ -12,15 +12,17 @@ import { addImageDimensionsToLabels } from "./add-image-dimensions-to-labels";
 export const exportToCoco: ExportFunction = async (
   datasetId,
   options: ExportOptionsCoco = {},
-  { repository }
+  { repository, req },
+  user
 ) => {
-  const images = await repository.image.list({ datasetId });
-  const labelClasses = await repository.labelClass.list({ datasetId });
-  const labels = await repository.label.list({ datasetId });
+  const images = await repository.image.list({ datasetId, user });
+  const labelClasses = await repository.labelClass.list({ datasetId, user });
+  const labels = await repository.label.list({ datasetId, user });
 
   const labelsWithImageDimensions = await addImageDimensionsToLabels(
     labels,
-    repository
+    repository,
+    user
   );
   const annotationsFileJson = JSON.stringify(
     convertLabelflowDatasetToCocoDataset(
@@ -43,19 +45,22 @@ export const exportToCoco: ExportFunction = async (
     );
     await Promise.all(
       images.map(async (image) => {
-        const blob = new Blob([await repository.upload.get(image.url)], {
-          type: image.mimetype,
-        });
+        const arrayBufferImage = await repository.upload.get(image.url, req);
         zip.file(
           `${datasetName}/images/${getImageName(
             image,
             options?.avoidImageNameCollisions ?? false
           )}.${mime.extension(image.mimetype)}`,
-          blob
+          arrayBufferImage
         );
       })
     );
-    const blobZip = await zip.generateAsync({ type: "blob" });
+    const blobZip = new Blob(
+      [await zip.generateAsync({ type: "arraybuffer" })],
+      {
+        type: "application/zip",
+      }
+    );
     return blobZip;
   }
   return new Blob([annotationsFileJson], { type: "application/json" });

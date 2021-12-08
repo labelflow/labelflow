@@ -11,21 +11,27 @@ import labelResolvers from "../../label";
 import { CocoDataset } from "../../export/format-coco/coco-core/types";
 import { Context } from "../../types";
 import { convertCocoSegmentationToLabel } from "./converters";
+import { getOrigin } from "../../utils/get-origin";
 
 const uploadImage = async (
   file: JSZip.JSZipObject,
   name: string,
   datasetId: string,
-  { repository }: Context
+  { repository, req }: Context
 ) => {
   const fileBlob = await file.async("blob", () => {});
-  const uploadTarget = await repository.upload.getUploadTarget(uuidv4());
+  const origin = getOrigin(req);
+  const uploadTarget = await repository.upload.getUploadTarget(
+    uuidv4(),
+    origin
+  );
   if (!(uploadTarget as UploadTargetHttp)?.downloadUrl) {
     throw new Error("Can't direct upload this image.");
   }
   repository.upload.put(
-    (uploadTarget as UploadTargetHttp)?.downloadUrl,
-    fileBlob
+    (uploadTarget as UploadTargetHttp)?.uploadUrl,
+    fileBlob,
+    req
   );
   return await imageResolvers.Mutation.createImage(
     null,

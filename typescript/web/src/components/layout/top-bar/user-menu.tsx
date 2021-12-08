@@ -24,10 +24,16 @@ import {
   RiSunLine,
   RiLoginCircleLine,
   RiLogoutCircleRLine,
+  RiSettings4Line,
 } from "react-icons/ri";
 import { signOut, useSession } from "next-auth/react";
+import { gql, useQuery } from "@apollo/client";
+import { useRouter } from "next/router";
 import { useQueryParam } from "use-query-params";
+import { useCookies } from "react-cookie";
 import { BoolParam } from "../../../utils/query-param-bool";
+import { randomBackgroundGradient } from "../../../utils/random-background-gradient";
+import { getDisplayName } from "../../members/user";
 
 const UserMenuIcon = chakra(RiUserLine);
 
@@ -37,17 +43,49 @@ const LightModeIcon = chakra(RiSunLine);
 const SigninIcon = chakra(RiLoginCircleLine);
 const SignoutIcon = chakra(RiLogoutCircleRLine);
 
+const SettingsIcon = chakra(RiSettings4Line);
+
+const userQuery = gql`
+  query getUserProfileInfo($id: ID!) {
+    user(where: { id: $id }) {
+      id
+      createdAt
+      name
+      email
+      image
+    }
+  }
+`;
+
 export const UserMenu = () => {
   const { colorMode, toggleColorMode } = useColorMode();
   const { data: session, status } = useSession({ required: false });
 
   const [, setIsSigninOpen] = useQueryParam("modal-signin", BoolParam);
 
+  const removeLastVisitedWorkspaceSlugCookie = useCookies([
+    "lastVisitedWorkspaceSlug",
+  ])[2];
+
+  const userInfoFromSession = session?.user;
+
+  const { data: userData } = useQuery(userQuery, {
+    variables: { id: userInfoFromSession?.id },
+    skip: userInfoFromSession?.id == null,
+  });
+
+  const user = userData?.user;
+
   const fadeColor = useColorModeValue("gray.600", "gray.400");
+  const avatarBackground = useColorModeValue("white", "gray.700");
+
+  const router = useRouter();
+
+  const displayName = user != null ? getDisplayName(user) : "Anonymous";
 
   return (
     <Menu>
-      <Tooltip label="User and Preferences" openDelay={300}>
+      <Tooltip label="User and Preferences" placement="left" openDelay={300}>
         <MenuButton
           as={IconButton}
           borderRadius="full"
@@ -56,8 +94,13 @@ export const UserMenu = () => {
             session ? (
               <Avatar
                 size="sm"
-                name={session?.user?.name}
-                src={session?.user?.image}
+                bg={
+                  user?.image != null && user?.image.length > 0
+                    ? avatarBackground
+                    : randomBackgroundGradient(displayName)
+                }
+                name={displayName}
+                src={user?.image}
                 icon={<UserMenuIcon fontSize="xl" />}
               />
             ) : (
@@ -85,15 +128,18 @@ export const UserMenu = () => {
               <HStack spacing="4" flexShrink={0}>
                 <Avatar
                   size="sm"
-                  name={session?.user?.name}
-                  src={session?.user?.image}
+                  bg={
+                    user?.image != null && user?.image.length > 0
+                      ? avatarBackground
+                      : randomBackgroundGradient(displayName)
+                  }
+                  name={displayName}
+                  src={user?.image}
                 />
                 <Flex direction="column" fontWeight="medium">
-                  <Text fontSize="sm">
-                    {session?.user?.name ?? "Anonymous"}
-                  </Text>
+                  <Text fontSize="sm">{displayName}</Text>
                   <Text fontSize="xs" lineHeight="shorter" color={fadeColor}>
-                    {session?.user?.email ?? ""}
+                    {user?.email ?? ""}
                   </Text>
                 </Flex>
               </HStack>
@@ -101,38 +147,52 @@ export const UserMenu = () => {
             <MenuDivider />
           </>
         )}
-        {process.env.NEXT_PUBLIC_FEATURE_SIGNIN === "true" && (
-          <>
-            <MenuGroup title="User">
-              {status === "loading" && (
+        <>
+          <MenuGroup title="User">
+            {status === "loading" && (
+              <MenuItem
+                cursor="default"
+                disabled
+                icon={<SignoutIcon fontSize="lg" />}
+              >
+                Sign out
+              </MenuItem>
+            )}
+            {status === "authenticated" && (
+              <>
                 <MenuItem
-                  cursor="default"
-                  disabled
                   icon={<SignoutIcon fontSize="lg" />}
+                  onClick={() => {
+                    removeLastVisitedWorkspaceSlugCookie(
+                      "lastVisitedWorkspaceSlug",
+                      { path: "/", httpOnly: false }
+                    );
+                    signOut({ callbackUrl: "/" });
+                  }}
                 >
                   Sign out
                 </MenuItem>
-              )}
-              {status === "authenticated" && (
                 <MenuItem
-                  icon={<SignoutIcon fontSize="lg" />}
-                  onClick={() => signOut()}
+                  icon={<SettingsIcon fontSize="lg" />}
+                  onClick={() => {
+                    router.push("/settings/profile");
+                  }}
                 >
-                  Sign out
+                  Settings
                 </MenuItem>
-              )}
-              {status === "unauthenticated" && (
-                <MenuItem
-                  icon={<SigninIcon fontSize="lg" />}
-                  onClick={() => setIsSigninOpen(true, "replaceIn")}
-                >
-                  Sign in
-                </MenuItem>
-              )}
-            </MenuGroup>
-            <MenuDivider />
-          </>
-        )}
+              </>
+            )}
+            {status === "unauthenticated" && (
+              <MenuItem
+                icon={<SigninIcon fontSize="lg" />}
+                onClick={() => setIsSigninOpen(true, "replaceIn")}
+              >
+                Sign in
+              </MenuItem>
+            )}
+          </MenuGroup>
+          <MenuDivider />
+        </>
         <MenuGroup title="Preferences">
           {colorMode === "light" ? (
             <MenuItem

@@ -6,14 +6,16 @@ import {
   useColorModeValue as mode,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
-
+import { useQueryParam } from "use-query-params";
 import { OpenlayersMap } from "./openlayers-map";
 import { DrawingToolbar } from "./drawing-tool-bar";
 import { ViewToolbar } from "./view-tool-bar";
 import { OptionsToolBar } from "./options-tool-bar";
+import { ImageLoadError } from "./image-load-error";
 import { ImageNavigationToolbar } from "./image-navigation-tool-bar";
 import { useUndoStore } from "../../connectors/undo-store";
 import { useLabelingStore } from "../../connectors/labeling-state";
+import { BoolParam } from "../../utils/query-param-bool";
 
 export const LabelingTool = () => {
   const { clear } = useUndoStore();
@@ -34,6 +36,8 @@ export const LabelingTool = () => {
     };
   }, [imageId]);
 
+  const [imageLoadError] = useQueryParam("image-load-error", BoolParam);
+
   return (
     <Box
       height="100%"
@@ -42,7 +46,8 @@ export const LabelingTool = () => {
       ref={containerRef}
       sx={containerSx}
     >
-      <OpenlayersMap />
+      {imageLoadError ? <ImageLoadError /> : <OpenlayersMap />}
+
       <HStack
         position="absolute"
         top={0}

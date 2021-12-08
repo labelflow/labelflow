@@ -1,5 +1,5 @@
 import { ApolloClient, gql } from "@apollo/client";
-import { GeometryInput, LabelType } from "@labelflow/graphql-types";
+import { GeometryInput, Label } from "@labelflow/graphql-types";
 import { getBoundedGeometryFromImage } from "@labelflow/common-resolvers";
 import { Effect } from "..";
 
@@ -39,19 +39,20 @@ const imageDimensionsQuery = gql`
 const getLabelQuery = gql`
   query getLabel($id: ID!) {
     label(where: { id: $id }) {
-      type
       id
+      type
       geometry {
         type
         coordinates
       }
       labelClass {
         id
-        color
       }
     }
   }
 `;
+
+type PartialLabel = Pick<Label, "id" | "type" | "geometry" | "labelClass">;
 
 export const createUpdateLabelEffect = (
   {
@@ -83,16 +84,7 @@ export const createUpdateLabelEffect = (
     const { image } = imageResponse;
 
     const labelResponse = cache.readQuery<{
-      label: {
-        id: string;
-        geometry: GeometryInput;
-        imageId: string;
-        labelClass: {
-          id: string;
-          color: string;
-        };
-        type: LabelType;
-      };
+      label: PartialLabel;
     }>({
       query: getLabelQuery,
       variables: { id: labelId },
@@ -100,12 +92,12 @@ export const createUpdateLabelEffect = (
     if (labelResponse == null) {
       throw new Error(`Missing label with id ${labelId}`);
     }
-    const { label } = labelResponse;
+    const { label: originalLabel } = labelResponse;
     const imageDimensions = {
       width: image.width,
       height: image.height,
     };
-    const originalGeometry = label.geometry;
+
     const boundedGeometry = getBoundedGeometryFromImage(
       imageDimensions,
       geometry
@@ -117,7 +109,6 @@ export const createUpdateLabelEffect = (
         id: labelId,
         geometry,
       },
-      refetchQueries: ["getImageLabels"],
       optimisticResponse: {
         updateLabel: {
           id: labelId,
@@ -126,38 +117,61 @@ export const createUpdateLabelEffect = (
           y: boundedGeometry.y,
           width: boundedGeometry.width,
           height: boundedGeometry.height,
-          labelClass: label.labelClass,
-          type: label.type,
+          labelClass: originalLabel.labelClass,
+          type: originalLabel.type,
           __typename: "Label",
         },
       },
-      update: (apolloCache, { data }) => {
-        apolloCache.writeQuery({
-          query: getLabelQuery,
-          data: data?.updateLabel,
-        });
-      },
+      // no need to write an update as apollo automatically does it if we query the updated fields.
     });
 
-    return { id: labelId, originalGeometry };
+    return { id: labelId, originalLabel };
   },
   undo: async ({
     id,
-    originalGeometry,
+    originalLabel,
   }: {
     id: string;
-    originalGeometry: GeometryInput;
+    originalLabel: PartialLabel;
   }): Promise<string> => {
+    const { cache } = client;
+    const imageResponse = cache.readQuery<{
+      image: { width: number; height: number };
+    }>({
+      query: imageDimensionsQuery,
+      variables: { id: imageId },
+    });
+    if (imageResponse == null) {
+      throw new Error(`Missing image with id ${imageId}`);
+    }
+    const { image } = imageResponse;
+
+    const boundedGeometry = getBoundedGeometryFromImage(image, geometry);
+
     await client.mutate({
       mutation: updateLabelMutation,
+      optimisticResponse: {
+        updateLabel: {
+          id,
+          geometry: originalLabel.geometry,
+          coordinates: originalLabel.geometry.coordinates,
+          x: boundedGeometry.x,
+          y: boundedGeometry.y,
+          width: boundedGeometry.width,
+          height: boundedGeometry.height,
+          labelClass: originalLabel.labelClass,
+          type: originalLabel.type,
+          __typename: "Label",
+        },
+      },
       variables: {
         id: labelId,
         geometry: {
-          type: originalGeometry.type,
-          coordinates: originalGeometry.coordinates,
+          type: originalLabel.geometry.type,
+          coordinates: originalLabel.geometry.coordinates,
         },
       },
-      refetchQueries: ["getImageLabels"],
+      // no need to write an update as apollo automatically does it if we query the updated fields.
     });
     return id;
   },

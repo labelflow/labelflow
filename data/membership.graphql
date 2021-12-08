@@ -2,13 +2,42 @@ input MembershipWhereUniqueInput {
   id: ID!
 }
 
+input MembershipWhereInput {
+  workspaceSlug: String
+}
+
 input MembershipCreateInput {
   id: ID
   role: MembershipRole!
-  userId: ID!
+  userId: ID
   workspaceSlug: String!
 }
 
 input MembershipUpdateInput {
   role: MembershipRole
+}
+
+input InviteMemberInput {
+  email: String!
+  role: MembershipRole!
+  workspaceSlug: String!
+}
+
+enum InvitationResult{
+  Sent
+  Error
+  UserAlreadyIn
+}
+
+enum MembershipStatus {
+  Sent
+  Active
+  Declined
+}
+
+enum CurrentUserCanAcceptInvitation {
+   Yes,
+   AlreadyAccepted,
+   AlreadyMemberOfTheWorkspace,
+   AlreadyDeclined,
 }

@@ -18,6 +18,13 @@ export type Scalars = {
 };
 
 
+export enum CurrentUserCanAcceptInvitation {
+  Yes = 'Yes',
+  AlreadyAccepted = 'AlreadyAccepted',
+  AlreadyMemberOfTheWorkspace = 'AlreadyMemberOfTheWorkspace',
+  AlreadyDeclined = 'AlreadyDeclined'
+}
+
 export type Dataset = {
   __typename?: 'Dataset';
   id: Scalars['ID'];
@@ -137,6 +144,11 @@ export type Image = {
   updatedAt: Scalars['DateTime'];
   url: Scalars['String'];
   externalUrl?: Maybe<Scalars['String']>;
+  thumbnail20Url?: Maybe<Scalars['String']>;
+  thumbnail50Url?: Maybe<Scalars['String']>;
+  thumbnail100Url?: Maybe<Scalars['String']>;
+  thumbnail200Url?: Maybe<Scalars['String']>;
+  thumbnail500Url?: Maybe<Scalars['String']>;
   name: Scalars['String'];
   path: Scalars['String'];
   mimetype: Scalars['String'];
@@ -158,6 +170,20 @@ export type ImageCreateInput = {
   file?: Maybe<Scalars['Upload']>;
   url?: Maybe<Scalars['String']>;
   externalUrl?: Maybe<Scalars['String']>;
+  noThumbnails?: Maybe<Scalars['Boolean']>;
+  thumbnail20Url?: Maybe<Scalars['String']>;
+  thumbnail50Url?: Maybe<Scalars['String']>;
+  thumbnail100Url?: Maybe<Scalars['String']>;
+  thumbnail200Url?: Maybe<Scalars['String']>;
+  thumbnail500Url?: Maybe<Scalars['String']>;
+};
+
+export type ImageUpdateInput = {
+  thumbnail20Url?: Maybe<Scalars['String']>;
+  thumbnail50Url?: Maybe<Scalars['String']>;
+  thumbnail100Url?: Maybe<Scalars['String']>;
+  thumbnail200Url?: Maybe<Scalars['String']>;
+  thumbnail500Url?: Maybe<Scalars['String']>;
 };
 
 export type ImageWhereInput = {
@@ -184,6 +210,18 @@ export type ImportOptionsCoco = {
 export type ImportStatus = {
   __typename?: 'ImportStatus';
   error?: Maybe<Scalars['String']>;
+};
+
+export enum InvitationResult {
+  Sent = 'Sent',
+  Error = 'Error',
+  UserAlreadyIn = 'UserAlreadyIn'
+}
+
+export type InviteMemberInput = {
+  email: Scalars['String'];
+  role: MembershipRole;
+  workspaceSlug: Scalars['String'];
 };
 
 
@@ -285,25 +323,40 @@ export type Membership = {
   id: Scalars['ID'];
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
+  declinedAt?: Maybe<Scalars['DateTime']>;
   role: MembershipRole;
-  user: User;
+  user?: Maybe<User>;
   workspace: Workspace;
+  invitationEmailSentTo?: Maybe<Scalars['String']>;
+  status: MembershipStatus;
+  currentUserCanAcceptInvitation: CurrentUserCanAcceptInvitation;
 };
 
 export type MembershipCreateInput = {
   id?: Maybe<Scalars['ID']>;
   role: MembershipRole;
-  userId: Scalars['ID'];
+  userId?: Maybe<Scalars['ID']>;
   workspaceSlug: Scalars['String'];
 };
 
 export enum MembershipRole {
+  Owner = 'Owner',
   Admin = 'Admin',
   Member = 'Member'
 }
 
+export enum MembershipStatus {
+  Sent = 'Sent',
+  Active = 'Active',
+  Declined = 'Declined'
+}
+
 export type MembershipUpdateInput = {
   role?: Maybe<MembershipRole>;
+};
+
+export type MembershipWhereInput = {
+  workspaceSlug?: Maybe<Scalars['String']>;
 };
 
 export type MembershipWhereUniqueInput = {
@@ -313,8 +366,9 @@ export type MembershipWhereUniqueInput = {
 export type Mutation = {
   __typename?: 'Mutation';
   createExample?: Maybe<Example>;
-  getUploadTarget: UploadTarget;
   createImage?: Maybe<Image>;
+  getUploadTarget: UploadTarget;
+  updateImage?: Maybe<Image>;
   deleteImage?: Maybe<Image>;
   createLabel?: Maybe<Label>;
   updateLabel?: Maybe<Label>;
@@ -334,6 +388,9 @@ export type Mutation = {
   createMembership?: Maybe<Membership>;
   updateMembership?: Maybe<Membership>;
   deleteMembership?: Maybe<Membership>;
+  inviteMember?: Maybe<InvitationResult>;
+  acceptInvitation?: Maybe<Membership>;
+  declineInvitation?: Maybe<Membership>;
   updateUser?: Maybe<User>;
 };
 
@@ -343,13 +400,19 @@ export type MutationCreateExampleArgs = {
 };
 
 
+export type MutationCreateImageArgs = {
+  data: ImageCreateInput;
+};
+
+
 export type MutationGetUploadTargetArgs = {
   data: UploadTargetInput;
 };
 
 
-export type MutationCreateImageArgs = {
-  data: ImageCreateInput;
+export type MutationUpdateImageArgs = {
+  where: ImageWhereUniqueInput;
+  data: ImageUpdateInput;
 };
 
 
@@ -450,6 +513,21 @@ export type MutationDeleteMembershipArgs = {
 };
 
 
+export type MutationInviteMemberArgs = {
+  where: InviteMemberInput;
+};
+
+
+export type MutationAcceptInvitationArgs = {
+  where: MembershipWhereUniqueInput;
+};
+
+
+export type MutationDeclineInvitationArgs = {
+  where: MembershipWhereUniqueInput;
+};
+
+
 export type MutationUpdateUserArgs = {
   where: UserWhereUniqueInput;
   data: UserUpdateInput;
@@ -474,6 +552,7 @@ export type Query = {
   searchDataset?: Maybe<Dataset>;
   workspace: Workspace;
   workspaces: Array<Workspace>;
+  isWorkspaceSlugAlreadyTaken: Scalars['Boolean'];
   membership: Membership;
   memberships: Array<Membership>;
   user: User;
@@ -557,6 +636,12 @@ export type QueryWorkspaceArgs = {
 export type QueryWorkspacesArgs = {
   first?: Maybe<Scalars['Int']>;
   skip?: Maybe<Scalars['Int']>;
+  where?: Maybe<WorkspaceWhereInput>;
+};
+
+
+export type QueryIsWorkspaceSlugAlreadyTakenArgs = {
+  where: WorkspaceWhereInput;
 };
 
 
@@ -566,6 +651,7 @@ export type QueryMembershipArgs = {
 
 
 export type QueryMembershipsArgs = {
+  where?: Maybe<MembershipWhereInput>;
   first?: Maybe<Scalars['Int']>;
   skip?: Maybe<Scalars['Int']>;
 };
@@ -623,8 +709,8 @@ export type User = {
   id: Scalars['ID'];
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
-  name: Scalars['String'];
-  email: Scalars['String'];
+  name?: Maybe<Scalars['String']>;
+  email?: Maybe<Scalars['String']>;
   image?: Maybe<Scalars['String']>;
   memberships: Array<Membership>;
 };
@@ -645,15 +731,18 @@ export type Workspace = {
   updatedAt: Scalars['DateTime'];
   name: Scalars['String'];
   slug: Scalars['String'];
+  image?: Maybe<Scalars['String']>;
   type: WorkspaceType;
   plan: WorkspacePlan;
   datasets: Array<Dataset>;
   memberships: Array<Membership>;
+  stripeCustomerPortalUrl?: Maybe<Scalars['String']>;
 };
 
 export type WorkspaceCreateInput = {
   id?: Maybe<Scalars['ID']>;
   name: Scalars['String'];
+  image?: Maybe<Scalars['String']>;
 };
 
 export enum WorkspacePlan {
@@ -675,6 +764,11 @@ export enum WorkspaceType {
 
 export type WorkspaceUpdateInput = {
   name?: Maybe<Scalars['String']>;
+  image?: Maybe<Scalars['String']>;
+};
+
+export type WorkspaceWhereInput = {
+  slug?: Maybe<Scalars['String']>;
 };
 
 export type WorkspaceWhereUniqueInput = {
@@ -761,6 +855,7 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
   ColorHex: ResolverTypeWrapper<Scalars['ColorHex']>;
+  CurrentUserCanAcceptInvitation: CurrentUserCanAcceptInvitation;
   Dataset: ResolverTypeWrapper<Dataset>;
   String: ResolverTypeWrapper<Scalars['String']>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
@@ -786,12 +881,15 @@ export type ResolversTypes = {
   ID: ResolverTypeWrapper<Scalars['ID']>;
   Image: ResolverTypeWrapper<Image>;
   ImageCreateInput: ImageCreateInput;
+  ImageUpdateInput: ImageUpdateInput;
   ImageWhereInput: ImageWhereInput;
   ImageWhereUniqueInput: ImageWhereUniqueInput;
   ImagesAggregates: ResolverTypeWrapper<ImagesAggregates>;
   ImportOptions: ImportOptions;
   ImportOptionsCoco: ImportOptionsCoco;
   ImportStatus: ResolverTypeWrapper<ImportStatus>;
+  InvitationResult: InvitationResult;
+  InviteMemberInput: InviteMemberInput;
   JSON: ResolverTypeWrapper<Scalars['JSON']>;
   Label: ResolverTypeWrapper<Label>;
   Float: ResolverTypeWrapper<Scalars['Float']>;
@@ -811,7 +909,9 @@ export type ResolversTypes = {
   Membership: ResolverTypeWrapper<Membership>;
   MembershipCreateInput: MembershipCreateInput;
   MembershipRole: MembershipRole;
+  MembershipStatus: MembershipStatus;
   MembershipUpdateInput: MembershipUpdateInput;
+  MembershipWhereInput: MembershipWhereInput;
   MembershipWhereUniqueInput: MembershipWhereUniqueInput;
   Mutation: ResolverTypeWrapper<{}>;
   Query: ResolverTypeWrapper<{}>;
@@ -830,6 +930,7 @@ export type ResolversTypes = {
   WorkspaceSlugAndDatasetSlug: WorkspaceSlugAndDatasetSlug;
   WorkspaceType: WorkspaceType;
   WorkspaceUpdateInput: WorkspaceUpdateInput;
+  WorkspaceWhereInput: WorkspaceWhereInput;
   WorkspaceWhereUniqueInput: WorkspaceWhereUniqueInput;
 };
 
@@ -859,12 +960,14 @@ export type ResolversParentTypes = {
   ID: Scalars['ID'];
   Image: Image;
   ImageCreateInput: ImageCreateInput;
+  ImageUpdateInput: ImageUpdateInput;
   ImageWhereInput: ImageWhereInput;
   ImageWhereUniqueInput: ImageWhereUniqueInput;
   ImagesAggregates: ImagesAggregates;
   ImportOptions: ImportOptions;
   ImportOptionsCoco: ImportOptionsCoco;
   ImportStatus: ImportStatus;
+  InviteMemberInput: InviteMemberInput;
   JSON: Scalars['JSON'];
   Label: Label;
   Float: Scalars['Float'];
@@ -883,6 +986,7 @@ export type ResolversParentTypes = {
   Membership: Membership;
   MembershipCreateInput: MembershipCreateInput;
   MembershipUpdateInput: MembershipUpdateInput;
+  MembershipWhereInput: MembershipWhereInput;
   MembershipWhereUniqueInput: MembershipWhereUniqueInput;
   Mutation: {};
   Query: {};
@@ -899,6 +1003,7 @@ export type ResolversParentTypes = {
   WorkspaceCreateInput: WorkspaceCreateInput;
   WorkspaceSlugAndDatasetSlug: WorkspaceSlugAndDatasetSlug;
   WorkspaceUpdateInput: WorkspaceUpdateInput;
+  WorkspaceWhereInput: WorkspaceWhereInput;
   WorkspaceWhereUniqueInput: WorkspaceWhereUniqueInput;
 };
 
@@ -946,6 +1051,11 @@ export type ImageResolvers<ContextType = any, ParentType extends ResolversParent
   updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   url?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   externalUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  thumbnail20Url?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  thumbnail50Url?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  thumbnail100Url?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  thumbnail200Url?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  thumbnail500Url?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   path?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   mimetype?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -1012,16 +1122,21 @@ export type MembershipResolvers<ContextType = any, ParentType extends ResolversP
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  declinedAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
   role?: Resolver<ResolversTypes['MembershipRole'], ParentType, ContextType>;
-  user?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
+  user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   workspace?: Resolver<ResolversTypes['Workspace'], ParentType, ContextType>;
+  invitationEmailSentTo?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  status?: Resolver<ResolversTypes['MembershipStatus'], ParentType, ContextType>;
+  currentUserCanAcceptInvitation?: Resolver<ResolversTypes['CurrentUserCanAcceptInvitation'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   createExample?: Resolver<Maybe<ResolversTypes['Example']>, ParentType, ContextType, RequireFields<MutationCreateExampleArgs, 'data'>>;
-  getUploadTarget?: Resolver<ResolversTypes['UploadTarget'], ParentType, ContextType, RequireFields<MutationGetUploadTargetArgs, 'data'>>;
   createImage?: Resolver<Maybe<ResolversTypes['Image']>, ParentType, ContextType, RequireFields<MutationCreateImageArgs, 'data'>>;
+  getUploadTarget?: Resolver<ResolversTypes['UploadTarget'], ParentType, ContextType, RequireFields<MutationGetUploadTargetArgs, 'data'>>;
+  updateImage?: Resolver<Maybe<ResolversTypes['Image']>, ParentType, ContextType, RequireFields<MutationUpdateImageArgs, 'where' | 'data'>>;
   deleteImage?: Resolver<Maybe<ResolversTypes['Image']>, ParentType, ContextType, RequireFields<MutationDeleteImageArgs, 'where'>>;
   createLabel?: Resolver<Maybe<ResolversTypes['Label']>, ParentType, ContextType, RequireFields<MutationCreateLabelArgs, 'data'>>;
   updateLabel?: Resolver<Maybe<ResolversTypes['Label']>, ParentType, ContextType, RequireFields<MutationUpdateLabelArgs, 'where' | 'data'>>;
@@ -1041,6 +1156,9 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   createMembership?: Resolver<Maybe<ResolversTypes['Membership']>, ParentType, ContextType, RequireFields<MutationCreateMembershipArgs, 'data'>>;
   updateMembership?: Resolver<Maybe<ResolversTypes['Membership']>, ParentType, ContextType, RequireFields<MutationUpdateMembershipArgs, 'where' | 'data'>>;
   deleteMembership?: Resolver<Maybe<ResolversTypes['Membership']>, ParentType, ContextType, RequireFields<MutationDeleteMembershipArgs, 'where'>>;
+  inviteMember?: Resolver<Maybe<ResolversTypes['InvitationResult']>, ParentType, ContextType, RequireFields<MutationInviteMemberArgs, 'where'>>;
+  acceptInvitation?: Resolver<Maybe<ResolversTypes['Membership']>, ParentType, ContextType, RequireFields<MutationAcceptInvitationArgs, 'where'>>;
+  declineInvitation?: Resolver<Maybe<ResolversTypes['Membership']>, ParentType, ContextType, RequireFields<MutationDeclineInvitationArgs, 'where'>>;
   updateUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationUpdateUserArgs, 'where' | 'data'>>;
 };
 
@@ -1062,6 +1180,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   searchDataset?: Resolver<Maybe<ResolversTypes['Dataset']>, ParentType, ContextType, RequireFields<QuerySearchDatasetArgs, 'where'>>;
   workspace?: Resolver<ResolversTypes['Workspace'], ParentType, ContextType, RequireFields<QueryWorkspaceArgs, 'where'>>;
   workspaces?: Resolver<Array<ResolversTypes['Workspace']>, ParentType, ContextType, RequireFields<QueryWorkspacesArgs, never>>;
+  isWorkspaceSlugAlreadyTaken?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<QueryIsWorkspaceSlugAlreadyTakenArgs, 'where'>>;
   membership?: Resolver<ResolversTypes['Membership'], ParentType, ContextType, RequireFields<QueryMembershipArgs, 'where'>>;
   memberships?: Resolver<Array<ResolversTypes['Membership']>, ParentType, ContextType, RequireFields<QueryMembershipsArgs, never>>;
   user?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<QueryUserArgs, 'where'>>;
@@ -1093,8 +1212,8 @@ export type UserResolvers<ContextType = any, ParentType extends ResolversParentT
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
-  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  email?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   image?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   memberships?: Resolver<Array<ResolversTypes['Membership']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -1106,10 +1225,12 @@ export type WorkspaceResolvers<ContextType = any, ParentType extends ResolversPa
   updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  image?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   type?: Resolver<ResolversTypes['WorkspaceType'], ParentType, ContextType>;
   plan?: Resolver<ResolversTypes['WorkspacePlan'], ParentType, ContextType>;
   datasets?: Resolver<Array<ResolversTypes['Dataset']>, ParentType, ContextType>;
   memberships?: Resolver<Array<ResolversTypes['Membership']>, ParentType, ContextType>;
+  stripeCustomerPortalUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 

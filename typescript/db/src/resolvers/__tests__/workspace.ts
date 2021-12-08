@@ -9,7 +9,7 @@ import {
   Workspace,
   WorkspaceType,
 } from "@labelflow/graphql-types";
-import { prisma } from "../../repository/prisma-client";
+import { getPrismaClient } from "../../prisma-client";
 import { client, user } from "../../dev/apollo-client";
 import { WorkspacePlan } from ".prisma/client";
 
@@ -20,19 +20,23 @@ const testUser1Id = uuidV4();
 const testUser2Id = uuidV4();
 
 beforeAll(async () => {
-  await prisma.user.create({ data: { id: testUser1Id, name: "test-user-1" } });
-  await prisma.user.create({ data: { id: testUser2Id, name: "test-user-2" } });
+  await (
+    await getPrismaClient()
+  ).user.create({ data: { id: testUser1Id, name: "test-user-1" } });
+  await (
+    await getPrismaClient()
+  ).user.create({ data: { id: testUser2Id, name: "test-user-2" } });
 });
 
 beforeEach(async () => {
   user.id = testUser1Id;
-  await prisma.membership.deleteMany({});
-  return await prisma.workspace.deleteMany({});
+  await (await getPrismaClient()).membership.deleteMany({});
+  return await (await getPrismaClient()).workspace.deleteMany({});
 });
 
 afterAll(async () => {
   // Needed to avoid having the test process running indefinitely after the test suite has been run
-  await prisma.$disconnect();
+  await (await getPrismaClient()).$disconnect();
 });
 
 const createWorkspace = async (
@@ -90,6 +94,65 @@ describe("createWorkspace mutation", () => {
     ).rejects.toThrow();
   });
 
+  it("fails if the name is an empty string", async () => {
+    await expect(() =>
+      client.mutate({
+        mutation: gql`
+          mutation createWorkspace($data: WorkspaceCreateInput!) {
+            createWorkspace(data: $data) {
+              id
+            }
+          }
+        `,
+        variables: { data: { name: "" } },
+      })
+    ).rejects.toThrow("Cannot create a workspace with an empty name.");
+  });
+
+  it("fails if the name contains non-alphanumeric chars is provided", async () => {
+    await expect(() =>
+      client.mutate({
+        mutation: gql`
+          mutation createWorkspace($data: WorkspaceCreateInput!) {
+            createWorkspace(data: $data) {
+              id
+            }
+          }
+        `,
+        variables: { data: { name: "Hello!" } },
+      })
+    ).rejects.toThrow(
+      'Cannot create a workspace with the name "Hello!". This name contains invalid characters.'
+    );
+  });
+
+  it("fails if the name is reserved", async () => {
+    await expect(() =>
+      client.mutate({
+        mutation: gql`
+          mutation createWorkspace($data: WorkspaceCreateInput!) {
+            createWorkspace(data: $data) {
+              id
+            }
+          }
+        `,
+        variables: { data: { name: "pricing" } },
+      })
+    ).rejects.toThrow(
+      'Cannot create a workspace with the slug "pricing". This slug is reserved.'
+    );
+  });
+
+  it("accepts a name with hyphens, spaces, underscores, and alphanumeric characters", async () => {
+    const { data } = await createWorkspace({
+      name: "Test with spaces-and-Caps-and-hyphens",
+    });
+
+    expect(data?.createWorkspace.slug).toEqual(
+      "test-with-spaces-and-caps-and-hyphens"
+    );
+  });
+
   it("returns the created workspace", async () => {
     const { data } = await createWorkspace();
 
@@ -124,7 +187,7 @@ describe("createWorkspace mutation", () => {
     expect(data?.createWorkspace.type).toEqual(WorkspaceType.Online);
   });
 
-  it("sets the user who created the workspace as admin", async () => {
+  it("sets the user who created the workspace as owner", async () => {
     const { data } = await client.mutate<{
       createWorkspace: Pick<Workspace, "id" | "memberships">;
     }>({
@@ -145,9 +208,9 @@ describe("createWorkspace mutation", () => {
       variables: { data: { name: "test" } },
     });
 
-    expect(data?.createWorkspace.memberships[0]?.user.id).toEqual(user.id);
+    expect(data?.createWorkspace.memberships[0]?.user?.id).toEqual(user.id);
     expect(data?.createWorkspace.memberships[0]?.role).toEqual(
-      MembershipRole.Admin
+      MembershipRole.Owner
     );
   });
 });

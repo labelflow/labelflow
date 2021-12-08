@@ -40,7 +40,7 @@ describe("Image Navigation", () => {
   it("Should let the user navigate within the image gallery", () => {
     // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
     cy.visit(
-      `http://localhost:3000/local/datasets/${datasetSlug}/images?modal-welcome=closed&modal-update-service-worker=update`
+      `/local/datasets/${datasetSlug}/images?modal-welcome=closed&modal-update-service-worker=update`
     );
     cy.contains("You don't have any images.").should("be.visible");
     cy.wait(420);
@@ -52,8 +52,8 @@ describe("Image Navigation", () => {
       delay: 0,
     });
     cy.contains("Start Import").click();
-    cy.contains("Start labeling").click();
-    cy.get("main").contains("photo").click();
+    cy.get(`[aria-label="Close"]`).click();
+    cy.get("main").contains("photo").click({ force: true });
 
     // Check that we can reach the end of the list
     cy.get("main nav").scrollTo("right");
