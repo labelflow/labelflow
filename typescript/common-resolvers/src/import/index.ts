@@ -17,7 +17,6 @@ const makeImport = async (
       type: "application/zip",
     }
   );
-  // const datasetBlob = await repository.upload.get(args.data.url, req);
   await repository.upload.delete(args.data.url); // Remove blob from cache immediately
   // TODO: handle when args.where.slugs is used over args.where.id
   if (!args.where.id) {
