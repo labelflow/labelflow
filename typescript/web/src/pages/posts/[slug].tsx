@@ -49,7 +49,7 @@ export default function Posts({
         }
         canonical={`${origin}/posts/${article?.slug}`}
         article={{
-          authors: [article?.author?.name],
+          authors: article?.author?.name ? [article?.author?.name] : [],
           publishedTime: article?.published_at,
           section: article?.category?.name,
         }}
