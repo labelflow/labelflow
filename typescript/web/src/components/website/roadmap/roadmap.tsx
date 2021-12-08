@@ -33,7 +33,8 @@ export const Roadmap = () => {
               We make our roadmap transparent and we value your feedback. We are
               a small passionate team, we want to build the features that matter
               to you. Workflows, active learning, smart tools, online version,
-              discover our plan here (our friends from Canny support us)
+              datasets versioning, discover our plan here (our friends from
+              Canny support us)
             </Text>
 
             <Button

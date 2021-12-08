@@ -39,7 +39,8 @@ export const ArticlesList = ({
               LabelFlow Blog
             </Heading>
             <Text mt="4" fontSize="lg" color={mode("gray.600", "gray.400")}>
-              Discover the latest news and tech from our team and community
+              Discover the latest news and tech from our team and around
+              artifical intelligence
             </Text>
           </Box>
         )}
