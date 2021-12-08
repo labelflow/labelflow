@@ -22,7 +22,7 @@ type LabelClassWithShortcut = {
   shortcut: string;
   labelsAggregates: {
     totalCount: number;
-  }
+  };
 };
 
 type TableCellProps = {
@@ -117,8 +117,15 @@ type TableRowProps = {
   provided: any;
   snapshot: any;
   item: LabelClassWithShortcut;
+  onClickDelete: (classId: string | null) => void;
+  onClickEdit: (classId: string | null) => void;
 };
-export const TableRow = ({ provided, item }: TableRowProps) => {
+export const TableRow = ({
+  provided,
+  item,
+  onClickDelete,
+  onClickEdit,
+}: TableRowProps) => {
   const { name: className, shortcut, color, id } = item;
   const occurences = item.labelsAggregates.totalCount;
   return (
@@ -170,8 +177,7 @@ export const TableRow = ({ provided, item }: TableRowProps) => {
                 <Button
                   variant="link"
                   colorScheme="blue"
-                  // TODO: Code edit function
-                  onClick={() => console.log("Edit")}
+                  onClick={() => onClickEdit(id)}
                 >
                   Edit
                 </Button>
@@ -180,8 +186,7 @@ export const TableRow = ({ provided, item }: TableRowProps) => {
                 <Button
                   variant="link"
                   colorScheme="blue"
-                  // TODO: Code remove function
-                  onClick={() => console.log("Remove")}
+                  onClick={() => onClickDelete(id)}
                 >
                   Remove
                 </Button>

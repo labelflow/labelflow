@@ -30,9 +30,13 @@ const InfoIcon = chakra(RiInformationLine);
 export const ClassTableContent = ({
   classes,
   onDragEnd,
+  onClickDelete,
+  onClickEdit,
 }: {
   classes: LabelClassWithShortcut[];
   onDragEnd: (result: any) => Promise<void>;
+  onClickDelete: (classId: string | null) => void;
+  onClickEdit: (classId: string | null) => void;
 }) => {
   const [isDragging, setIsDragging] = useState(false);
 
@@ -96,6 +100,8 @@ export const ClassTableContent = ({
                         provided={trProvided}
                         snapshot={trSnapshot}
                         item={row}
+                        onClickDelete={onClickDelete}
+                        onClickEdit={onClickEdit}
                       />
                     )}
                   </Draggable>

@@ -44,6 +44,21 @@ const labelClasses = async (
   );
 };
 
+const isLabelClassNameAlreadyTaken = async (
+  _: any,
+  args: QueryLabelClassArgs,
+  { repository, user }: Context
+): Promise<Boolean> => {
+  try {
+    return (
+      (await repository.labelClass.list({ ...args?.where, user }))?.length !== 0
+    );
+  } catch (error) {
+    console.error(error);
+    return true;
+  }
+};
+
 // Mutations
 const createLabelClass = async (
   _: any,
@@ -234,6 +249,7 @@ export default {
     labelClass,
     labelClasses,
     labelClassesAggregates,
+    isLabelClassNameAlreadyTaken,
   },
 
   Mutation: {

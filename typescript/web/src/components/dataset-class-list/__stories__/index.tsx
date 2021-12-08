@@ -19,12 +19,15 @@ import {
 } from "react-beautiful-dnd";
 import { chakraDecorator } from "../../../utils/chakra-decorator";
 import { TableRow, IsDraggingContext } from "../table-row";
+import { DeleteLabelClassModal } from "../delete-class-modal";
+import { apolloDecorator } from "../../../utils/apollo-decorator";
+import { UpsertClassModal } from "../upsert-class-modal";
 
 const InfoIcon = chakra(RiInformationLine);
 
 export default {
   title: "web/Dataset class list",
-  decorators: [chakraDecorator],
+  decorators: [chakraDecorator, apolloDecorator],
 };
 
 type LabelClassWithShortcut = {
@@ -85,6 +88,8 @@ function reorder(
 export const ReorderableTable = () => {
   const [items, setItems] = useState(classes);
   const [isDragging, setIsDragging] = useState(false);
+  const [deleteClassId, setDeleteClassId] = useState<string | null>(null);
+  const [editClassId, setEditClassId] = useState<string | null>(null);
 
   const onBeforeDragStart = () => {
     setIsDragging(true);
@@ -107,70 +112,85 @@ export const ReorderableTable = () => {
     [items, setItems]
   );
   return (
-    <Table borderWidth="1px">
-      <Thead bg={mode("gray.50", "gray.800")}>
-        <Tr>
-          <Th whiteSpace="nowrap" scope="col" w={0} p={0} />
-          <Th whiteSpace="nowrap" scope="col">
-            Class
-          </Th>
-          <Th whiteSpace="nowrap" scope="col">
-            Occurences
-          </Th>
-          <Th whiteSpace="nowrap" scope="col">
-            <Flex justifyContent="flex-start" alignItems="center">
-              <span>Shortcut</span>
-              <Tooltip
-                label="A keyboard shortcut is available for the first 9 classes"
-                aria-label="A keyboard shortcut is available for the first 9 classes"
-              >
-                {/* See this PR for more info on why using a span is necessary https://github.com/chakra-ui/chakra-ui/pull/2882 */}
-                <span>
-                  <InfoIcon
-                    flexShrink={0}
-                    flexGrow={0}
-                    fontSize="xl"
-                    ml="2"
-                    mr="2"
-                  />
-                </span>
-              </Tooltip>
-            </Flex>
-          </Th>
-          <Th whiteSpace="nowrap" scope="col" />
-        </Tr>
-      </Thead>
-      <IsDraggingContext.Provider value={isDragging}>
-        <DragDropContext
-          onDragEnd={onDragEnd}
-          onBeforeDragStart={onBeforeDragStart}
-        >
-          <Droppable droppableId="droppable">
-            {(droppableProvided) => (
-              <Tbody
-                ref={droppableProvided.innerRef}
-                {...droppableProvided.droppableProps}
-              >
-                {items.map((item, index) => (
-                  <Draggable
-                    key={item.name}
-                    draggableId={item.name}
-                    index={index}
-                  >
-                    {(trProvided, trSnapshot) => (
-                      <TableRow
-                        provided={trProvided}
-                        snapshot={trSnapshot}
-                        item={item}
-                      />
-                    )}
-                  </Draggable>
-                ))}
-              </Tbody>
-            )}
-          </Droppable>
-        </DragDropContext>
-      </IsDraggingContext.Provider>
-    </Table>
+    <>
+      <UpsertClassModal
+        isOpen={editClassId != null}
+        classId={editClassId}
+        onClose={() => setEditClassId(null)}
+      />
+      <DeleteLabelClassModal
+        isOpen={deleteClassId != null}
+        datasetId={undefined}
+        labelClassId={deleteClassId}
+        onClose={() => setDeleteClassId(null)}
+      />
+      <Table borderWidth="1px">
+        <Thead bg={mode("gray.50", "gray.800")}>
+          <Tr>
+            <Th whiteSpace="nowrap" scope="col" w={0} p={0} />
+            <Th whiteSpace="nowrap" scope="col">
+              Class
+            </Th>
+            <Th whiteSpace="nowrap" scope="col">
+              Occurences
+            </Th>
+            <Th whiteSpace="nowrap" scope="col">
+              <Flex justifyContent="flex-start" alignItems="center">
+                <span>Shortcut</span>
+                <Tooltip
+                  label="A keyboard shortcut is available for the first 9 classes"
+                  aria-label="A keyboard shortcut is available for the first 9 classes"
+                >
+                  {/* See this PR for more info on why using a span is necessary https://github.com/chakra-ui/chakra-ui/pull/2882 */}
+                  <span>
+                    <InfoIcon
+                      flexShrink={0}
+                      flexGrow={0}
+                      fontSize="xl"
+                      ml="2"
+                      mr="2"
+                    />
+                  </span>
+                </Tooltip>
+              </Flex>
+            </Th>
+            <Th whiteSpace="nowrap" scope="col" />
+          </Tr>
+        </Thead>
+        <IsDraggingContext.Provider value={isDragging}>
+          <DragDropContext
+            onDragEnd={onDragEnd}
+            onBeforeDragStart={onBeforeDragStart}
+          >
+            <Droppable droppableId="droppable">
+              {(droppableProvided) => (
+                <Tbody
+                  ref={droppableProvided.innerRef}
+                  {...droppableProvided.droppableProps}
+                >
+                  {items.map((item, index) => (
+                    <Draggable
+                      key={item.name}
+                      draggableId={item.name}
+                      index={index}
+                    >
+                      {(trProvided, trSnapshot) => (
+                        <TableRow
+                          onClickDelete={() => setDeleteClassId(item.id)}
+                          onClickEdit={() => setEditClassId(item.id)}
+                          provided={trProvided}
+                          snapshot={trSnapshot}
+                          item={item}
+                        />
+                      )}
+                    </Draggable>
+                  ))}
+                </Tbody>
+              )}
+            </Droppable>
+          </DragDropContext>
+        </IsDraggingContext.Provider>
+      </Table>
+    </>
   );
 };

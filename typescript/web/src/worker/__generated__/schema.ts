@@ -244,6 +244,7 @@ export const typeDefs = [
 
   input LabelClassWhereInput {
     datasetId: ID
+    name: String
   }
 
   input LabelClassWhereUniqueInput {
@@ -373,6 +374,7 @@ export const typeDefs = [
     labelClass(where: LabelClassWhereUniqueInput!): LabelClass!
     labelClasses(where: LabelClassWhereInput, first: Int, skip: Int): [LabelClass!]!
     labelClassesAggregates: LabelClassesAggregates!
+    isLabelClassNameAlreadyTaken(where: LabelClassWhereInput!): Boolean!
     labelsAggregates: LabelsAggregates!
     label(where: LabelWhereUniqueInput!): Label!
     labels(where: LabelWhereInput, first: Int, skip: Int): [Label!]!

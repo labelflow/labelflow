@@ -272,6 +272,7 @@ export type LabelClassUpdateInput = {
 
 export type LabelClassWhereInput = {
   datasetId?: Maybe<Scalars['ID']>;
+  name?: Maybe<Scalars['String']>;
 };
 
 export type LabelClassWhereUniqueInput = {
@@ -545,6 +546,7 @@ export type Query = {
   labelClass: LabelClass;
   labelClasses: Array<LabelClass>;
   labelClassesAggregates: LabelClassesAggregates;
+  isLabelClassNameAlreadyTaken: Scalars['Boolean'];
   labelsAggregates: LabelsAggregates;
   label: Label;
   labels: Array<Label>;
@@ -597,6 +599,11 @@ export type QueryLabelClassesArgs = {
   where?: Maybe<LabelClassWhereInput>;
   first?: Maybe<Scalars['Int']>;
   skip?: Maybe<Scalars['Int']>;
+};
+
+
+export type QueryIsLabelClassNameAlreadyTakenArgs = {
+  where: LabelClassWhereInput;
 };
 
 
@@ -1174,6 +1181,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   labelClass?: Resolver<ResolversTypes['LabelClass'], ParentType, ContextType, RequireFields<QueryLabelClassArgs, 'where'>>;
   labelClasses?: Resolver<Array<ResolversTypes['LabelClass']>, ParentType, ContextType, RequireFields<QueryLabelClassesArgs, never>>;
   labelClassesAggregates?: Resolver<ResolversTypes['LabelClassesAggregates'], ParentType, ContextType>;
+  isLabelClassNameAlreadyTaken?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<QueryIsLabelClassNameAlreadyTakenArgs, 'where'>>;
   labelsAggregates?: Resolver<ResolversTypes['LabelsAggregates'], ParentType, ContextType>;
   label?: Resolver<ResolversTypes['Label'], ParentType, ContextType, RequireFields<QueryLabelArgs, 'where'>>;
   labels?: Resolver<Array<ResolversTypes['Label']>, ParentType, ContextType, RequireFields<QueryLabelsArgs, never>>;

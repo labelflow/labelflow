@@ -5,6 +5,7 @@ import { Box, Heading } from "@chakra-ui/react";
 import { ClassTableActions } from "./table-actions";
 import { ClassTableContent } from "./table-content";
 import { DeleteLabelClassModal } from "./delete-class-modal";
+import { UpsertClassModal } from "./upsert-class-modal";
 
 type DatasetClassesQueryResult = {
   dataset: {
@@ -68,6 +69,7 @@ export const ClassesList = ({
 }) => {
   const client = useApolloClient();
   const [deleteClassId, setDeleteClassId] = useState<string | null>(null);
+  const [editClassId, setEditClassId] = useState<string | null>(null);
   const [searchText, setSearchText] = useState("");
 
   const {
@@ -129,6 +131,11 @@ export const ClassesList = ({
         labelClassId={deleteClassId}
         onClose={() => setDeleteClassId(null)}
       />
+      <UpsertClassModal
+        isOpen={editClassId != null}
+        classId={editClassId}
+        onClose={() => setEditClassId(null)}
+      />
       {!loading && (
         <Box display="flex" flexDirection="column" w="full" p={8}>
           <Heading
@@ -141,6 +148,8 @@ export const ClassesList = ({
           <ClassTableContent
             classes={labelClassWithShortcut}
             onDragEnd={onDragEnd}
+            onClickDelete={setDeleteClassId}
+            onClickEdit={setEditClassId}
           />
         </Box>
       )}
