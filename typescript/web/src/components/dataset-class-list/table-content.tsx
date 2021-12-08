@@ -19,9 +19,11 @@ export type LabelClassWithShortcut = {
   id: string;
   index: number;
   name: string;
-  occurences: number;
   color: string;
   shortcut: string;
+  labelsAggregates: {
+    totalCount: number;
+  }
 };
 const InfoIcon = chakra(RiInformationLine);
 

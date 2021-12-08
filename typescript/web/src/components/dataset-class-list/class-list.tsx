@@ -15,6 +15,9 @@ type DatasetClassesQueryResult = {
       index: number;
       name: string;
       color: string;
+      labelsAggregates: {
+        totalCount: number;
+      }
     }[];
   };
 };
@@ -29,6 +32,9 @@ const datasetLabelClassesQuery = gql`
         index
         name
         color
+        labelsAggregates {
+          totalCount
+        }
       }
     }
   }

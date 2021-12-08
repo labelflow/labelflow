@@ -19,8 +19,10 @@ type LabelClassWithShortcut = {
   index: number;
   name: string;
   color: string;
-  occurences: number;
   shortcut: string;
+  labelsAggregates: {
+    totalCount: number;
+  }
 };
 
 type TableCellProps = {
@@ -117,7 +119,8 @@ type TableRowProps = {
   item: LabelClassWithShortcut;
 };
 export const TableRow = ({ provided, item }: TableRowProps) => {
-  const { name: className, occurences, shortcut, color, id } = item;
+  const { name: className, shortcut, color, id } = item;
+  const occurences = item.labelsAggregates.totalCount;
   return (
     <IsDraggingContext.Consumer>
       {(isDragging: boolean) => (
