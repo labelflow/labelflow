@@ -150,10 +150,6 @@ export const Labels = ({
                     fill: new Fill({
                       color: `${iogMaskColor}B3`,
                     }),
-                    // stroke: new Stroke({
-                    //   color: `${iogMaskColor}FF`,
-                    //   width: 2,
-                    // }),
                     zIndex: 2,
                   }),
                   // new Style({
