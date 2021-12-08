@@ -7,7 +7,6 @@ import {
   MutationCreateWorkspaceArgs,
   Workspace,
 } from "@labelflow/graphql-types";
-import { createClient } from "@supabase/supabase-js";
 import { processImage } from "../../repository/image-processing";
 import { getPrismaClient } from "../../prisma-client";
 import { client, user } from "../../dev/apollo-client";
@@ -16,13 +15,8 @@ import { LabelType } from ".prisma/client";
 jest.mock("../../repository/image-processing");
 const mockedProcessImage = processImage as jest.Mock;
 
-jest.mock("@supabase/supabase-js");
-const mockedSupabaseCreateClient = createClient as jest.Mock;
-
-global.fetch = () => {
-  // console.log(`fetch called with url ${url}`);
-  return new Promise((res) => res({ status: 200 } as Response));
-};
+// @ts-ignore
+fetch.disableFetchMocks();
 
 const getGeometryFromExtent = ({
   x,
@@ -53,9 +47,6 @@ const labelDataExtent = {
   height: 768,
   width: 362,
 };
-
-// @ts-ignore
-// fetch.disableFetchMocks();
 
 const testUser1Id = uuidV4();
 const testUser2Id = uuidV4();
@@ -145,9 +136,6 @@ const createImage = async (
     width: imageWidth,
     height: imageHeight,
     mimetype: "image/jpeg",
-  });
-  mockedSupabaseCreateClient.mockReturnValue({
-    storage: { from: () => ({ upload: () => {} }) },
   });
 
   const mutationResult = await client.mutate({
