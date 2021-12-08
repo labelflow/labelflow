@@ -16,13 +16,9 @@ import { PostTitle } from "../../components/website/Blog/PostTitle";
 import "github-markdown-css";
 import { ServiceWorkerManagerBackground } from "../../components/service-worker-manager";
 import { CookieBanner } from "../../components/cookie-banner";
+import { WEB_APP_URL_ORIGIN } from "../../constants";
 
 const ChakraReactMarkdown = chakra(ReactMarkdown);
-
-const origin =
-  process.env.NEXTAUTH_URL ??
-  (process.env.VERCEL_URL && `https://${process.env.VERCEL_URL}`) ??
-  "https://labelflow.com";
 
 export default function Posts({
   article,
@@ -47,7 +43,7 @@ export default function Posts({
               ]
             : undefined
         }
-        canonical={`${origin}/posts/${article?.slug}`}
+        canonical={`${WEB_APP_URL_ORIGIN}/posts/${article?.slug}`}
         article={{
           authors: article?.author?.name ? [article?.author?.name] : [],
           publishedTime: article?.published_at,
