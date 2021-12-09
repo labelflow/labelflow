@@ -4,10 +4,12 @@
 #
 # Running this docker will apply the migrations to an existing database.
 
-FROM node:14-alpine AS builder
+# Ideally, use alpine or slim, but see https://github.com/prisma/prisma/issues/8478
+# and https://github.com/prisma/prisma/issues/7755
+# FROM node:14-alpine AS builder
+# RUN apk add --no-cache libc6-compat
 
-# probably optional
-RUN apk add --no-cache libc6-compat
+FROM node:14 AS builder
 
 WORKDIR /app
 

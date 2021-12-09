@@ -38,7 +38,7 @@ services:
     build: 
       context: ./python/iog
       dockerfile: Dockerfile
-    runtime: nvidia
+    # runtime: nvidia
     command: python server.py 
     ports:
       - "5001:5000"

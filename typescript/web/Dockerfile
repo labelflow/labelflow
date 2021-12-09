@@ -7,7 +7,14 @@
 
 ################################################################################
 # Build the web app
-FROM node:14-alpine AS builder
+
+# Ideally, use alpine or slim, but see https://github.com/prisma/prisma/issues/8478
+# and https://github.com/prisma/prisma/issues/7755
+# FROM node:14-alpine AS builder
+# RUN apk add --no-cache libc6-compat
+
+FROM node:14 AS builder
+
 
 WORKDIR /app
 
@@ -16,18 +23,26 @@ COPY . .
 
 RUN yarn install --immutable
 
-RUN yarn build:web
+ENV NODE_OPTIONS --max-old-space-size=4096 
+
+RUN yarn build:web --debug
 
 ################################################################################
 # Run the web server
-FROM node:14-alpine AS runner
+
+# Ideally, use alpine or slim, but see https://github.com/prisma/prisma/issues/8478
+# and https://github.com/prisma/prisma/issues/7755
+# FROM node:14-alpine AS runner
+# RUN apk add --no-cache libc6-compat
+
+FROM node:14 AS runner
 
 WORKDIR /app
 
 ENV NODE_ENV production
 
-RUN addgroup -g 1001 -S nodejs
-RUN adduser -S nextjs -u 1001
+RUN addgroup --gecos 1001 --system nodejs
+RUN adduser --system nextjs --uid 1001
 
 # COPY --from=builder /app/typescript/web/next.config.js ./
 COPY --from=builder /app/typescript/web/public ./public
