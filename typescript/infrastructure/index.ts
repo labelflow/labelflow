@@ -481,9 +481,7 @@ export const record = new cloudflare.Record("test-iog-record", {
   name: subdomain,
   zoneId: process.env?.CLOUDFLARE_LABELFLOWNET_ZONE_ID,
   type: "A",
-  // NON FIRST DEPLOYMENT ONLY
-  value: staticIpAddress,
-  // FIRST DEPLOYMENT ONLY
-  // value: ingressIpAddress,
+  // value: staticIpAddress, // This seems legit but doesn't work after a while...
+  value: ingressIpAddress,
   ttl: 3600,
 });
