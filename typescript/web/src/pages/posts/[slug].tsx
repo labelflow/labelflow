@@ -37,7 +37,7 @@ export default function Posts({
           article?.image?.url !== null
             ? [
                 {
-                  url: article.image.url,
+                  url: article?.image?.url,
                   alt: "LabelFlow",
                 },
               ]

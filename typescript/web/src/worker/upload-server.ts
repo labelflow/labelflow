@@ -15,8 +15,7 @@ export class UploadServer implements RouteHandlerObject {
       switch (request.method) {
         // Handles upload
         case "PUT": {
-          const formData = await request.formData();
-          const blob = formData.get("image") as Blob;
+          const blob = await request.blob();
 
           if (!blob) {
             return new Response("", {
