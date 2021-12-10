@@ -134,7 +134,10 @@ export const repository: Repository = {
             await getPrismaClient()
           ).label.update({
             where,
-            data: castObjectNullsToUndefined(label),
+            data: {
+              ...castObjectNullsToUndefined(label),
+              labelClassId: label.labelClassId,
+            },
           });
         }
         return true;
