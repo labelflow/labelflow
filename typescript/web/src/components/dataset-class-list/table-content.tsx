@@ -23,7 +23,7 @@ export type LabelClassWithShortcut = {
   shortcut: string;
   labelsAggregates: {
     totalCount: number;
-  }
+  };
 };
 const InfoIcon = chakra(RiInformationLine);
 

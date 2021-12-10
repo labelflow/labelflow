@@ -55,6 +55,7 @@ export const ClassesList = ({
   const client = useApolloClient();
   const [deleteClassId, setDeleteClassId] = useState<string | null>(null);
   const [editClassId, setEditClassId] = useState<string | null>(null);
+  const [isCreatingClassLabel, setIsCreatingClassLabel] = useState(false);
   const [searchText, setSearchText] = useState("");
 
   const {
@@ -132,6 +133,11 @@ export const ClassesList = ({
           <ClassTableActions
             searchText={searchText}
             setSearchText={setSearchText}
+            isCreatingClassLabel={isCreatingClassLabel}
+            setIsCreatingClassLabel={setIsCreatingClassLabel}
+            datasetId={datasetId}
+            datasetSlug={datasetSlug}
+            workspaceSlug={workspaceSlug}
           />
           <ClassTableContent
             classes={labelClassWithShortcut}

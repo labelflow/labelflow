@@ -1,4 +1,5 @@
-import { gql, useLazyQuery, useApolloClient } from "@apollo/client";
+import { gql, useQuery, useLazyQuery, useApolloClient } from "@apollo/client";
+import { v4 as uuid } from "uuid";
 import {
   Modal,
   ModalOverlay,
@@ -16,6 +17,10 @@ import {
 } from "@chakra-ui/react";
 import { useState, useCallback, useEffect, useRef } from "react";
 import { debounce } from "lodash/fp";
+import {
+  getNextClassColor,
+  hexColorSequence,
+} from "../../utils/class-color-generator";
 import { DatasetClassesQueryResult } from "./types";
 
 const debounceTime = 200;
@@ -31,6 +36,24 @@ const updateLabelClassNameMutation = gql`
     updateLabelClass(where: { id: $id }, data: { name: $name }) {
       id
       name
+      color
+    }
+  }
+`;
+
+const createLabelClassMutation = gql`
+  mutation createLabelClass(
+    $id: ID!
+    $name: String!
+    $color: ColorHex
+    $datasetId: ID!
+  ) {
+    createLabelClass(
+      data: { name: $name, id: $id, color: $color, datasetId: $datasetId }
+    ) {
+      id
+      name
+      color
     }
   }
 `;
@@ -47,8 +70,8 @@ export const UpsertClassModal = ({
   onClose?: () => void;
   classId?: string | null;
   datasetId?: string | null;
-  datasetSlug: string;
-  workspaceSlug: string;
+  datasetSlug?: string;
+  workspaceSlug?: string;
 }) => {
   const client = useApolloClient();
   const [classNameInputValue, setClassNameInputValue] = useState<string>("");
@@ -68,10 +91,16 @@ export const UpsertClassModal = ({
         labelClasses {
           id
           name
+          color
         }
       }
     }
   `;
+
+  const { data: queryData } = useQuery(datasetLabelClassesQuery, {
+    variables: { slug: datasetSlug, workspaceSlug },
+    skip: !datasetSlug || !workspaceSlug,
+  });
 
   const updateLabelClassNameWithOptimistic = useCallback(() => {
     client.mutate({
@@ -81,6 +110,7 @@ export const UpsertClassModal = ({
         updateLabelClass: {
           id: classId,
           name: className,
+          // TODO: probably have to add color to get rid of the error in front
           __typeName: "LabelClass",
         },
       },
@@ -116,6 +146,60 @@ export const UpsertClassModal = ({
       },
     });
   }, [className, classId, datasetSlug]);
+
+  const createLabelClassWithOptimistic = useCallback(() => {
+    const labelClassId = uuid();
+    const labelClasses = queryData?.dataset?.labelClasses ?? [];
+    const color =
+      labelClasses.length < 1
+        ? hexColorSequence[0]
+        : getNextClassColor(labelClasses[labelClasses.length - 1].color);
+    client.mutate({
+      mutation: createLabelClassMutation,
+      variables: { id: labelClassId, name: className, color, datasetId },
+      optimisticResponse: {
+        createLabelClass: {
+          id: labelClassId,
+          name: className,
+          color,
+          datasetId,
+          __typeName: "LabelClass",
+        },
+      },
+      update: (cache, { data }) => {
+        if (data != null) {
+          const { createLabelClass } = data;
+          const datasetCacheResult = cache.readQuery<DatasetClassesQueryResult>(
+            {
+              query: datasetLabelClassesQuery,
+              variables: { slug: datasetSlug, workspaceSlug },
+            }
+          );
+          if (datasetCacheResult?.dataset == null) {
+            throw new Error(`Missing dataset with slug ${datasetSlug}`);
+          }
+          const { dataset } = datasetCacheResult;
+          const tmp = dataset.labelClasses.concat({
+            ...createLabelClass,
+            index: labelClasses.length,
+          });
+          const updatedDataset = {
+            ...dataset,
+            labelClasses: tmp,
+          };
+          cache.writeQuery({
+            query: datasetLabelClassesQuery,
+            variables: { slug: datasetSlug, workspaceSlug },
+            data: { dataset: updatedDataset },
+          });
+        } else {
+          throw new Error(
+            "Received null data in update label class name function"
+          );
+        }
+      },
+    });
+  }, [className, datasetSlug, queryData]);
 
   const [
     queryExistingLabelClass,
@@ -160,8 +244,7 @@ export const UpsertClassModal = ({
         if (classId) {
           updateLabelClassNameWithOptimistic();
         } else {
-          // TODO: perform create
-          console.log("create");
+          createLabelClassWithOptimistic();
         }
 
         onClose();
@@ -220,9 +303,6 @@ export const UpsertClassModal = ({
           <Button
             type="submit"
             colorScheme="brand"
-            // TODO: change is loading
-            isLoading={false}
-            loadingText={classId ? "Updating..." : "Creating..."}
             disabled={!canCreateClass()}
             aria-label={classId ? "Update" : "Create"}
           >

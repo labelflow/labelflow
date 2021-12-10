@@ -13,18 +13,36 @@ import {
 } from "@chakra-ui/react";
 // import { useState } from "react";
 import { RiAddFill } from "react-icons/ri";
+import { UpsertClassModal } from "./upsert-class-modal";
 
 const SearchIcon = chakra(IoSearch);
 
 export const ClassTableActions = ({
   searchText,
   setSearchText,
+  isCreatingClassLabel,
+  setIsCreatingClassLabel,
+  datasetId,
+  datasetSlug,
+  workspaceSlug,
 }: {
   searchText: string;
   setSearchText: (text: string) => void;
+  isCreatingClassLabel: boolean;
+  setIsCreatingClassLabel: (value: boolean) => void;
+  datasetId: string | null | undefined;
+  datasetSlug: string;
+  workspaceSlug: string;
 }) => {
   return (
     <>
+      <UpsertClassModal
+        isOpen={isCreatingClassLabel}
+        onClose={() => setIsCreatingClassLabel(false)}
+        datasetId={datasetId}
+        datasetSlug={datasetSlug}
+        workspaceSlug={workspaceSlug}
+      />
       <Stack
         spacing="4"
         direction={{ base: "column", md: "row" }}
@@ -54,8 +72,7 @@ export const ClassTableActions = ({
             color="#ffffff"
             iconSpacing="1"
             leftIcon={<RiAddFill fontSize="1.25em" />}
-            // TODO: Add the modal
-            onClick={() => console.log("coucou")}
+            onClick={() => setIsCreatingClassLabel(true)}
           >
             New class
           </Button>
