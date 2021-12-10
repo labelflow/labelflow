@@ -49,7 +49,7 @@ useLabelingStore.setState({
 });
 
 it("should zoom out by a zoom factor", async () => {
-  useLabelingStore.setState({ canZoomOut: true });
+  useLabelingStore.setState({ canZoomOut: true, isImageLoading: false });
   render(<ViewToolbar containerRef={{ current: null }} />);
 
   userEvent.click(screen.getByRole("button", { name: "Zoom out" }));
@@ -59,7 +59,7 @@ it("should zoom out by a zoom factor", async () => {
 });
 
 it("should zoom in by a zoom factor", async () => {
-  useLabelingStore.setState({ canZoomIn: true });
+  useLabelingStore.setState({ canZoomIn: true, isImageLoading: false });
   render(<ViewToolbar containerRef={{ current: null }} />);
 
   userEvent.click(screen.getByRole("button", { name: "Zoom in" }));
