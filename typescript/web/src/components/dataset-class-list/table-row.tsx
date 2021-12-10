@@ -6,6 +6,7 @@ import {
   Flex,
   chakra,
   IconButton,
+  useColorModeValue as mode,
 } from "@chakra-ui/react";
 import { RiCheckboxBlankCircleFill } from "react-icons/ri";
 import { VscGripper } from "react-icons/vsc";
@@ -128,13 +129,14 @@ export const TableRow = ({
 }: TableRowProps) => {
   const { name: className, shortcut, color, id } = item;
   const occurences = item.labelsAggregates.totalCount;
+  const backgroundColor = mode("white", "gray.900");
   return (
     <IsDraggingContext.Consumer>
       {(isDragging: boolean) => (
         <Tr
           id={id}
           ref={provided.innerRef}
-          backgroundColor="white"
+          bg={backgroundColor}
           {...provided.draggableProps}
         >
           <TableCell isDragOccurring={isDragging} isSmall>
