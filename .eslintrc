@@ -29,7 +29,9 @@
           "**/__stories__/**/*.tsx"
         ]
       }
-    ]
+    ],
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "error"
   },
   "parserOptions": {
     "project": "./tsconfig.json"
