@@ -180,6 +180,7 @@ export const TableRow = ({
                   variant="link"
                   colorScheme="blue"
                   onClick={() => onClickEdit(id)}
+                  aria-label="Edit class"
                 >
                   Edit
                 </Button>
@@ -189,6 +190,7 @@ export const TableRow = ({
                   variant="link"
                   colorScheme="blue"
                   onClick={() => onClickDelete(id)}
+                  aria-label="Delete class"
                 >
                   Remove
                 </Button>

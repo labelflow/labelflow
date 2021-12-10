@@ -53,7 +53,10 @@ export const ClassTableActions = ({
           <FormControl minW={{ md: "320px" }} id="search">
             <InputGroup size="sm">
               <FormLabel srOnly>Find a member</FormLabel>
-              <InputLeftElement pointerEvents="none" color={mode("gray.400", "gray.200")}>
+              <InputLeftElement
+                pointerEvents="none"
+                color={mode("gray.400", "gray.200")}
+              >
                 <SearchIcon />
               </InputLeftElement>
               <Input

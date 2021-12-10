@@ -8,7 +8,7 @@ import type {
   MutationDeleteLabelArgs,
   MutationUpdateLabelArgs,
   QueryLabelArgs,
-  LabelWhereInput
+  LabelWhereInput,
 } from "@labelflow/graphql-types";
 import { LabelType } from "@labelflow/graphql-types";
 
@@ -181,14 +181,14 @@ const labelsAggregatesOfDataset = (parent: Dataset) => {
   if (!parent) {
     throw new Error("No parent Dataset");
   }
-  return {...parent, __typename: "Dataset"};
+  return { ...parent, __typename: "Dataset" };
 };
 
 const labelsAggregatesOfLabelClass = (parent: LabelClass) => {
   if (!parent) {
     throw new Error("No parent LabelClass");
   }
-  return {...parent, __typename: "LabelClass"};
+  return { ...parent, __typename: "LabelClass" };
 };
 
 const totalCount = async (
@@ -196,7 +196,7 @@ const totalCount = async (
   _args: any,
   { repository, user }: Context
 ) => {
-  let where : LabelWhereInput & { user?: { id: string } } = { user };
+  let where: LabelWhereInput & { user?: { id: string } } = { user };
   if (parent) {
     // eslint-disable-next-line no-underscore-dangle
     const typename = parent?.__typename;
