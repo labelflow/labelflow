@@ -1,33 +1,4 @@
-import { gql } from "@apollo/client";
-
-import { client } from "../../typescript/web/src/connectors/apollo-client/schema-client";
 import imageSampleCollection from "../../typescript/web/src/utils/image-sample-collection";
-
-const createDataset = async (name: string) => {
-  const mutationResult = await client.mutate({
-    mutation: gql`
-      mutation createDataset($name: String) {
-        createDataset(
-          data: { name: $name, workspaceSlug: "cypress-test-workspace" }
-        ) {
-          id
-          slug
-        }
-      }
-    `,
-    variables: {
-      name,
-    },
-  });
-
-  const {
-    data: {
-      createDataset: { slug },
-    },
-  } = mutationResult;
-
-  return slug;
-};
 
 describe("Image Navigation", () => {
   beforeEach(() => {
