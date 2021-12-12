@@ -1,6 +1,24 @@
 # Changelog
 
-## [1.0.24](https://github.com/labelflow/labelflow/compare/1.0.23...1.0.24)
+## [1.0.26](https://github.com/labelflow/labelflow/compare/1.0.25...1.0.26)
+
+- Set correct value for `og:url` of articles [`#641`](https://github.com/labelflow/labelflow/pull/641)
+## [1.0.25](https://github.com/labelflow/labelflow/compare/1.0.24...1.0.25) - 2021-12-08
+
+- Images are not deleted in a deleted dataset [`#637`](https://github.com/labelflow/labelflow/pull/637)
+- Create a new prod DB [`#636`](https://github.com/labelflow/labelflow/pull/636)
+- Small changes on website [`#620`](https://github.com/labelflow/labelflow/pull/620)
+- fix: rename `askgit` to `mergestat` to fix failing GitHub Action [`#619`](https://github.com/labelflow/labelflow/pull/619)
+- Bug/fix facebook article preview [`#616`](https://github.com/labelflow/labelflow/pull/616)
+- Open links in other tabs in website [`#605`](https://github.com/labelflow/labelflow/pull/605)
+- Cron job to run once per day on the Linkedin to Orbit gitHub action [`#604`](https://github.com/labelflow/labelflow/pull/604)
+- Create linkedin-orbit.yml [`#602`](https://github.com/labelflow/labelflow/pull/602)
+- Replace usage of external url env var by hardcoded url for tests [`#590`](https://github.com/labelflow/labelflow/pull/590)
+- Change banner [`#586`](https://github.com/labelflow/labelflow/pull/586)
+- Change error thrown when user tries to create an invalid label [`#549`](https://github.com/labelflow/labelflow/pull/549)
+- Feature/#518 mask iog [`#545`](https://github.com/labelflow/labelflow/pull/545)
+- Refactor auto polygon tool and workflow [`#547`](https://github.com/labelflow/labelflow/pull/547)
+## [1.0.24](https://github.com/labelflow/labelflow/compare/1.0.23...1.0.24) - 2021-10-21
 
 - Enable to set classification class from shortcut [`#505`](https://github.com/labelflow/labelflow/pull/505)
 ## [1.0.23](https://github.com/labelflow/labelflow/compare/1.0.22...1.0.23) - 2021-10-11
