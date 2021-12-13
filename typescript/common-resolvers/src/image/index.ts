@@ -93,11 +93,20 @@ const createImage = async (
     );
   }
 
+  const { workspaceSlug } = await repository.dataset.get(
+    { id: datasetId },
+    user
+  );
+  const { id: workspaceId } = await repository.workspace.get(
+    {
+      slug: workspaceSlug,
+    },
+    user
+  );
+
   const newImageEntity = await getImageEntityFromMutationArgs(
-    args.data,
-    repository,
-    user,
-    req
+    { image: args.data, workspaceId, user },
+    { repository, req }
   );
 
   const newImageId = await repository.image.add(newImageEntity, user);
@@ -126,6 +135,17 @@ const createManyImages = async (
     repository.dataset.get
   )({ id: datasetId }, user);
 
+  const { workspaceSlug } = (await repository.dataset.get(
+    { id: datasetId },
+    user
+  )) as { workspaceSlug: string };
+  const { id: workspaceId } = (await repository.workspace.get(
+    {
+      slug: workspaceSlug,
+    },
+    user
+  )) as { id: string };
+
   // eslint-disable-next-line @typescript-eslint/no-shadow
   const performOne = async (image: ImageCreateInput) => {
     const { file, url, externalUrl } = image;
@@ -142,7 +162,10 @@ const createManyImages = async (
       );
     }
 
-    return await getImageEntityFromMutationArgs(image, repository, user, req);
+    return await getImageEntityFromMutationArgs(
+      { image, workspaceId, user },
+      { repository, req }
+    );
   };
 
   const imagesToCreate: DbImageCreateInput[] = await Promise.all(

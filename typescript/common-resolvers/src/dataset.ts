@@ -198,18 +198,31 @@ const createDemoDataset = async (
     throw error;
   }
 
+  const { workspaceSlug } = await repository.dataset.get(
+    { id: tutorialDatasets[0].id },
+    user
+  );
+  const { id: workspaceId } = await repository.workspace.get(
+    {
+      slug: workspaceSlug,
+    },
+    user
+  );
+
   await Promise.all(
     tutorialImages.map(async (image, index) => {
       const imageEntity = await getImageEntityFromMutationArgs(
         {
-          ...image,
-          noThumbnails: true,
-          createdAt: add(now, { seconds: index }).toISOString(),
-          name: image.url.match(/\/static\/img\/(.*?)$/)?.[1],
+          image: {
+            ...image,
+            noThumbnails: true,
+            createdAt: add(now, { seconds: index }).toISOString(),
+            name: image.url.match(/\/static\/img\/(.*?)$/)?.[1],
+          },
+          user,
+          workspaceId,
         },
-        repository,
-        user,
-        req
+        { repository, req }
       );
       return await repository.image.add(imageEntity, user);
     })

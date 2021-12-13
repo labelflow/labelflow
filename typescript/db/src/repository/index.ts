@@ -37,6 +37,17 @@ export const repository: Repository = {
       });
       return createdImage.id;
     },
+    addMany: async ({ images, datasetId }, user) => {
+      await checkUserAccessToDataset({ where: { id: datasetId }, user });
+
+      const prisma = await getPrismaClient();
+
+      await prisma.image.createMany({
+        data: images,
+      });
+
+      return images.map((image) => image.id);
+    },
     count: async (whereWithUser) => {
       const { user, ...where } = whereWithUser ?? { user: undefined };
       if (user?.id == null) {

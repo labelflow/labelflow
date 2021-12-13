@@ -6,17 +6,18 @@ import { getImageFileKey, getImageName } from "./utils";
 
 /**
  * Very important function, which processes images (download from external URL if needed, probe metadata, create and upload thumbnails, etc.)
- * @param data ImageCreateInput
+ * @param image ImageCreateInput
  * @param repository
  * @param req
  * @returns
  */
-
 export const getImageEntityFromMutationArgs = async (
-  data: ImageCreateInput,
-  repository: Repository,
-  user?: { id: string },
-  req?: Request
+  {
+    image,
+    workspaceId,
+    user,
+  }: { image: ImageCreateInput; workspaceId: string; user?: { id: string } },
+  { repository, req }: { repository: Repository; req?: Request }
 ) => {
   const {
     file,
@@ -34,19 +35,9 @@ export const getImageEntityFromMutationArgs = async (
     thumbnail100Url,
     thumbnail200Url,
     thumbnail500Url,
-  } = data;
-  const { workspaceSlug } = (await repository.dataset.get(
-    { id: datasetId },
-    user
-  )) as { workspaceSlug: string };
-  const { id: workspaceId } = (await repository.workspace.get(
-    {
-      slug: workspaceSlug,
-    },
-    user
-  )) as { id: string };
+  } = image;
 
-  const now = data?.createdAt ?? new Date().toISOString();
+  const now = image?.createdAt ?? new Date().toISOString();
   const imageId = id ?? uuidv4();
   let finalUrl: string | undefined;
 
@@ -122,7 +113,7 @@ export const getImageEntityFromMutationArgs = async (
     finalUrl = uploadTarget.downloadUrl;
   }
 
-  if (data.noThumbnails) {
+  if (image.noThumbnails) {
     // Do not generate or store thumbnails on server, use either the thumbnails url provided above, or use the full size image as thumbnails
     thumbnailsUrls = {
       thumbnail20Url: finalUrl!,
