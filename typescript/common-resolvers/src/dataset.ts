@@ -12,7 +12,7 @@ import {
   QueryImagesArgs,
 } from "@labelflow/graphql-types";
 import { Context, DbDataset, Repository } from "./types";
-import { getImageEntityFromMutationArgs } from "./image";
+import { getImageEntityFromMutationArgs } from "./image/get-image-entity-from-mutation-args";
 import {
   tutorialDatasets,
   tutorialImages,

@@ -34,7 +34,7 @@ export {
   jsonToDataUri,
   dataUriToJson,
 } from "./export/format-coco/json-to-data-uri";
-export { getImageEntityFromMutationArgs } from "./image";
+export { getImageEntityFromMutationArgs } from "./image/get-image-entity-from-mutation-args";
 
 export * from "./types";
 export * from "./export/format-coco/coco-core/types";
