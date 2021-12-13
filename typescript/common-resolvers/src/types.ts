@@ -138,9 +138,16 @@ type Update<Entity, EntityWhereUniqueInput> = (
 export type Repository = {
   image: {
     add: Add<DbImageCreateInput>;
+    addMany: (
+      args: { images: DbImageCreateInput[]; datasetId: string },
+      user?: { id: string }
+    ) => Promise<ID[]>;
     count: Count<ImageWhereInput & { user?: { id: string } }>;
     get: Get<DbImage, ImageWhereUniqueInput>;
-    list: List<DbImage, ImageWhereInput & { user?: { id: string } }>;
+    list: List<
+      DbImage,
+      ImageWhereInput & { user?: { id: string } } & { id?: { in: string[] } }
+    >;
     delete: Delete<ImageWhereUniqueInput>;
     update: Update<DbImage, ImageWhereUniqueInput>;
   };

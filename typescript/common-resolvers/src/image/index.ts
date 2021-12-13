@@ -9,7 +9,7 @@ import type {
   QueryImagesArgs,
   MutationDeleteImageArgs,
 } from "@labelflow/graphql-types";
-import { Context, DbImage, Repository } from "../types";
+import { Context, DbImage, DbImageCreateInput, Repository } from "../types";
 import { throwIfResolvesToNil } from "../utils/throw-if-resolves-to-nil";
 import { getImageEntityFromMutationArgs } from "./get-image-entity-from-mutation-args";
 
@@ -142,27 +142,23 @@ const createManyImages = async (
       );
     }
 
-    const newImageEntity = await getImageEntityFromMutationArgs(
-      image,
-      repository,
-      user,
-      req
-    );
-
-    const newImageId = await repository.image.add(newImageEntity, user);
-
-    const createdImage = await repository.image.get({ id: newImageId }, user);
-
-    if (createdImage == null) {
-      throw new Error("An error has occurred during image creation");
-    }
-    return createdImage;
+    return await getImageEntityFromMutationArgs(image, repository, user, req);
   };
 
-  return await Promise.all(
+  const imagesToCreate: DbImageCreateInput[] = await Promise.all(
     // eslint-disable-next-line @typescript-eslint/no-shadow
     images.map((image) => performOne({ ...image, datasetId }))
   );
+
+  const imageIds = await repository.image.addMany(
+    {
+      datasetId,
+      images: imagesToCreate,
+    },
+    user
+  );
+
+  return await repository.image.list({ id: { in: imageIds }, user });
 };
 
 const deleteImage = async (
