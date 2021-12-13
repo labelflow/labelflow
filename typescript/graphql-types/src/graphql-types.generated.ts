@@ -178,6 +178,30 @@ export type ImageCreateInput = {
   thumbnail500Url?: Maybe<Scalars['String']>;
 };
 
+export type ImageCreateManyInput = {
+  images: Array<ImageCreateManySingleImage>;
+  datasetId: Scalars['ID'];
+};
+
+export type ImageCreateManySingleImage = {
+  id?: Maybe<Scalars['ID']>;
+  createdAt?: Maybe<Scalars['DateTime']>;
+  name?: Maybe<Scalars['String']>;
+  path?: Maybe<Scalars['String']>;
+  mimetype?: Maybe<Scalars['String']>;
+  height?: Maybe<Scalars['Int']>;
+  width?: Maybe<Scalars['Int']>;
+  file?: Maybe<Scalars['Upload']>;
+  url?: Maybe<Scalars['String']>;
+  externalUrl?: Maybe<Scalars['String']>;
+  noThumbnails?: Maybe<Scalars['Boolean']>;
+  thumbnail20Url?: Maybe<Scalars['String']>;
+  thumbnail50Url?: Maybe<Scalars['String']>;
+  thumbnail100Url?: Maybe<Scalars['String']>;
+  thumbnail200Url?: Maybe<Scalars['String']>;
+  thumbnail500Url?: Maybe<Scalars['String']>;
+};
+
 export type ImageUpdateInput = {
   thumbnail20Url?: Maybe<Scalars['String']>;
   thumbnail50Url?: Maybe<Scalars['String']>;
@@ -367,6 +391,7 @@ export type Mutation = {
   __typename?: 'Mutation';
   createExample?: Maybe<Example>;
   createImage?: Maybe<Image>;
+  createManyImages: Array<Image>;
   getUploadTarget: UploadTarget;
   updateImage?: Maybe<Image>;
   deleteImage?: Maybe<Image>;
@@ -377,9 +402,9 @@ export type Mutation = {
   updateLabelClass?: Maybe<LabelClass>;
   reorderLabelClass?: Maybe<LabelClass>;
   deleteLabelClass?: Maybe<LabelClass>;
+  runIog?: Maybe<Label>;
   createDataset?: Maybe<Dataset>;
   createDemoDataset?: Maybe<Dataset>;
-  runIog?: Maybe<Label>;
   updateDataset?: Maybe<Dataset>;
   deleteDataset?: Maybe<Dataset>;
   importDataset?: Maybe<ImportStatus>;
@@ -402,6 +427,11 @@ export type MutationCreateExampleArgs = {
 
 export type MutationCreateImageArgs = {
   data: ImageCreateInput;
+};
+
+
+export type MutationCreateManyImagesArgs = {
+  data?: Maybe<ImageCreateManyInput>;
 };
 
 
@@ -459,13 +489,13 @@ export type MutationDeleteLabelClassArgs = {
 };
 
 
-export type MutationCreateDatasetArgs = {
-  data: DatasetCreateInput;
+export type MutationRunIogArgs = {
+  data: RunIogInput;
 };
 
 
-export type MutationRunIogArgs = {
-  data: RunIogInput;
+export type MutationCreateDatasetArgs = {
+  data: DatasetCreateInput;
 };
 
 
@@ -881,6 +911,8 @@ export type ResolversTypes = {
   ID: ResolverTypeWrapper<Scalars['ID']>;
   Image: ResolverTypeWrapper<Image>;
   ImageCreateInput: ImageCreateInput;
+  ImageCreateManyInput: ImageCreateManyInput;
+  ImageCreateManySingleImage: ImageCreateManySingleImage;
   ImageUpdateInput: ImageUpdateInput;
   ImageWhereInput: ImageWhereInput;
   ImageWhereUniqueInput: ImageWhereUniqueInput;
@@ -960,6 +992,8 @@ export type ResolversParentTypes = {
   ID: Scalars['ID'];
   Image: Image;
   ImageCreateInput: ImageCreateInput;
+  ImageCreateManyInput: ImageCreateManyInput;
+  ImageCreateManySingleImage: ImageCreateManySingleImage;
   ImageUpdateInput: ImageUpdateInput;
   ImageWhereInput: ImageWhereInput;
   ImageWhereUniqueInput: ImageWhereUniqueInput;
@@ -1135,6 +1169,7 @@ export type MembershipResolvers<ContextType = any, ParentType extends ResolversP
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   createExample?: Resolver<Maybe<ResolversTypes['Example']>, ParentType, ContextType, RequireFields<MutationCreateExampleArgs, 'data'>>;
   createImage?: Resolver<Maybe<ResolversTypes['Image']>, ParentType, ContextType, RequireFields<MutationCreateImageArgs, 'data'>>;
+  createManyImages?: Resolver<Array<ResolversTypes['Image']>, ParentType, ContextType, RequireFields<MutationCreateManyImagesArgs, never>>;
   getUploadTarget?: Resolver<ResolversTypes['UploadTarget'], ParentType, ContextType, RequireFields<MutationGetUploadTargetArgs, 'data'>>;
   updateImage?: Resolver<Maybe<ResolversTypes['Image']>, ParentType, ContextType, RequireFields<MutationUpdateImageArgs, 'where' | 'data'>>;
   deleteImage?: Resolver<Maybe<ResolversTypes['Image']>, ParentType, ContextType, RequireFields<MutationDeleteImageArgs, 'where'>>;
@@ -1145,9 +1180,9 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   updateLabelClass?: Resolver<Maybe<ResolversTypes['LabelClass']>, ParentType, ContextType, RequireFields<MutationUpdateLabelClassArgs, 'where' | 'data'>>;
   reorderLabelClass?: Resolver<Maybe<ResolversTypes['LabelClass']>, ParentType, ContextType, RequireFields<MutationReorderLabelClassArgs, 'where' | 'data'>>;
   deleteLabelClass?: Resolver<Maybe<ResolversTypes['LabelClass']>, ParentType, ContextType, RequireFields<MutationDeleteLabelClassArgs, 'where'>>;
+  runIog?: Resolver<Maybe<ResolversTypes['Label']>, ParentType, ContextType, RequireFields<MutationRunIogArgs, 'data'>>;
   createDataset?: Resolver<Maybe<ResolversTypes['Dataset']>, ParentType, ContextType, RequireFields<MutationCreateDatasetArgs, 'data'>>;
   createDemoDataset?: Resolver<Maybe<ResolversTypes['Dataset']>, ParentType, ContextType>;
-  runIog?: Resolver<Maybe<ResolversTypes['Label']>, ParentType, ContextType, RequireFields<MutationRunIogArgs, 'data'>>;
   updateDataset?: Resolver<Maybe<ResolversTypes['Dataset']>, ParentType, ContextType, RequireFields<MutationUpdateDatasetArgs, 'where' | 'data'>>;
   deleteDataset?: Resolver<Maybe<ResolversTypes['Dataset']>, ParentType, ContextType, RequireFields<MutationDeleteDatasetArgs, 'where'>>;
   importDataset?: Resolver<Maybe<ResolversTypes['ImportStatus']>, ParentType, ContextType, RequireFields<MutationImportDatasetArgs, 'where' | 'data'>>;

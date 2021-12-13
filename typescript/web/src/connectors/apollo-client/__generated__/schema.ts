@@ -154,6 +154,30 @@ export const typeDefs = gql`
     thumbnail500Url: String
   }
 
+  input ImageCreateManyInput {
+    images: [ImageCreateManySingleImage!]!
+    datasetId: ID!
+  }
+
+  input ImageCreateManySingleImage {
+    id: ID
+    createdAt: DateTime
+    name: String
+    path: String
+    mimetype: String
+    height: Int
+    width: Int
+    file: Upload
+    url: String
+    externalUrl: String
+    noThumbnails: Boolean
+    thumbnail20Url: String
+    thumbnail50Url: String
+    thumbnail100Url: String
+    thumbnail200Url: String
+    thumbnail500Url: String
+  }
+
   input ImageUpdateInput {
     thumbnail20Url: String
     thumbnail50Url: String
@@ -336,6 +360,7 @@ export const typeDefs = gql`
   type Mutation {
     createExample(data: ExampleCreateInput!): Example
     createImage(data: ImageCreateInput!): Image
+    createManyImages(data: ImageCreateManyInput): [Image!]!
     getUploadTarget(data: UploadTargetInput!): UploadTarget!
     updateImage(where: ImageWhereUniqueInput!, data: ImageUpdateInput!): Image
     deleteImage(where: ImageWhereUniqueInput!): Image
@@ -346,9 +371,9 @@ export const typeDefs = gql`
     updateLabelClass(where: LabelClassWhereUniqueInput!, data: LabelClassUpdateInput!): LabelClass
     reorderLabelClass(where: LabelClassWhereUniqueInput!, data: LabelClassReorderInput!): LabelClass
     deleteLabelClass(where: LabelClassWhereUniqueInput!): LabelClass
+    runIog(data: RunIogInput!): Label
     createDataset(data: DatasetCreateInput!): Dataset
     createDemoDataset: Dataset
-    runIog(data: RunIogInput!): Label
     updateDataset(where: DatasetWhereUniqueInput!, data: DatasetUpdateInput!): Dataset
     deleteDataset(where: DatasetWhereUniqueInput!): Dataset
     importDataset(where: DatasetWhereUniqueInput!, data: DatasetImportInput!): ImportStatus

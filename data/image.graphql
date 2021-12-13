@@ -18,6 +18,31 @@ input ImageCreateInput {
   thumbnail500Url: String
 }
 
+# Same as ImageCreateInput but without datasetId
+input ImageCreateManySingleImage {
+  id: ID
+  createdAt: DateTime
+  name: String
+  path: String
+  mimetype: String
+  height: Int
+  width: Int
+  file: Upload # Either file or url or externalUrl are needed
+  url: String # Either file or url or externalUrl are needed
+  externalUrl: String # Either file or url or externalUrl are needed
+  noThumbnails: Boolean # Do not generate or store thumbnails on server, use either the thumbnails url provided below, or use the full size image as thumbnails
+  thumbnail20Url: String
+  thumbnail50Url: String
+  thumbnail100Url: String
+  thumbnail200Url: String
+  thumbnail500Url: String
+}
+
+input ImageCreateManyInput {
+  images: [ImageCreateManySingleImage!]!
+  datasetId: ID!
+}
+
 input ImageUpdateInput {
   thumbnail20Url: String
   thumbnail50Url: String

@@ -2,6 +2,7 @@ type Mutation {
   createExample(data: ExampleCreateInput!): Example
 
   createImage(data: ImageCreateInput!): Image
+  createManyImages(data: ImageCreateManyInput): [Image!]!
   getUploadTarget(data: UploadTargetInput!): UploadTarget!
   updateImage(where: ImageWhereUniqueInput!, data: ImageUpdateInput!): Image
   deleteImage(where: ImageWhereUniqueInput!): Image
@@ -20,20 +21,20 @@ type Mutation {
     data: LabelClassReorderInput!
   ): LabelClass
   deleteLabelClass(where: LabelClassWhereUniqueInput!): LabelClass
+
+  runIog(data: RunIogInput!): Label
+
   createDataset(data: DatasetCreateInput!): Dataset
   createDemoDataset: Dataset
-  runIog(data: RunIogInput!): Label
   updateDataset(
     where: DatasetWhereUniqueInput!
     data: DatasetUpdateInput!
   ): Dataset
   deleteDataset(where: DatasetWhereUniqueInput!): Dataset
-
   importDataset(
     where: DatasetWhereUniqueInput!
     data: DatasetImportInput!
   ): ImportStatus
-
   createWorkspace(data: WorkspaceCreateInput!): Workspace
   updateWorkspace(
     where: WorkspaceWhereUniqueInput!
