@@ -123,7 +123,6 @@ export const ClassesList = ({
         onClose={() => setEditClassId(null)}
         datasetId={datasetId}
         datasetSlug={datasetSlug}
-        workspaceSlug={workspaceSlug}
       />
       {!loading && (
         <Box display="flex" flexDirection="column" w="full" p={8}>
@@ -137,7 +136,6 @@ export const ClassesList = ({
             setIsCreatingClassLabel={setIsCreatingClassLabel}
             datasetId={datasetId}
             datasetSlug={datasetSlug}
-            workspaceSlug={workspaceSlug}
           />
           <ClassTableContent
             classes={labelClassWithShortcut}

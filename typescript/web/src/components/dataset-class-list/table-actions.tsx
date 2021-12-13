@@ -25,7 +25,6 @@ export const ClassTableActions = ({
   setIsCreatingClassLabel,
   datasetId,
   datasetSlug,
-  workspaceSlug,
 }: {
   searchText: string;
   setSearchText: (text: string) => void;
@@ -33,7 +32,6 @@ export const ClassTableActions = ({
   setIsCreatingClassLabel: (value: boolean) => void;
   datasetId: string | null | undefined;
   datasetSlug: string;
-  workspaceSlug: string;
 }) => {
   return (
     <>
@@ -42,7 +40,6 @@ export const ClassTableActions = ({
         onClose={() => setIsCreatingClassLabel(false)}
         datasetId={datasetId}
         datasetSlug={datasetSlug}
-        workspaceSlug={workspaceSlug}
       />
       <Stack
         spacing="4"
