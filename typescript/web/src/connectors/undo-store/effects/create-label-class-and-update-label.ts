@@ -12,6 +12,7 @@ import {
   updateLabelQuery,
   deleteLabelClassQuery,
 } from "./shared-queries";
+import { updateLabelClassOfLabel } from "./cache-updates/update-label-class-of-label";
 
 export const createCreateLabelClassAndUpdateLabelEffect = (
   {
@@ -98,7 +99,7 @@ export const createCreateLabelClassAndUpdateLabelEffect = (
           __typename: "Label",
         },
       },
-      // no need to write an update as apollo automatically does it if we query the labelClass id
+      update: updateLabelClassOfLabel(labelClassIdPrevious),
     });
 
     return {
@@ -128,7 +129,7 @@ export const createCreateLabelClassAndUpdateLabelEffect = (
           __typename: "Label",
         },
       },
-      // no need to write an update as apollo automatically does it if we query the labelClass id
+      update: updateLabelClassOfLabel(labelClassId),
     });
 
     useLabelingStore.setState({ selectedLabelClassId: labelClassIdPrevious });
@@ -185,7 +186,7 @@ export const createCreateLabelClassAndUpdateLabelEffect = (
           __typename: "Label",
         },
       },
-      // no need to write an update as apollo automatically does it if we query the labelClass id
+      update: updateLabelClassOfLabel(labelClassIdPrevious),
     });
 
     return {

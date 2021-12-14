@@ -3,6 +3,8 @@ import { gql, ApolloClient } from "@apollo/client";
 import { useLabelingStore } from "../../labeling-state";
 import { Effect } from "..";
 
+import { updateLabelClassOfLabel } from "./cache-updates/update-label-class-of-label";
+
 const getLabelQuery = gql`
   query getLabel($id: ID!) {
     label(where: { id: $id }) {
@@ -15,7 +17,7 @@ const getLabelQuery = gql`
 `;
 
 const updateLabelQuery = gql`
-  mutation updateLabelClass(
+  mutation updateLabelClassOfLabel(
     $where: LabelWhereUniqueInput!
     $data: LabelUpdateInput!
   ) {
@@ -46,9 +48,8 @@ export const createUpdateLabelClassOfLabelEffect = (
             query: getLabelQuery,
             variables: { id: selectedLabelId },
           })
-        ).data?.label?.labelClass?.id as string)
+        ).data?.label?.labelClass?.id as string) || null
       : null;
-
     await client.mutate({
       mutation: updateLabelQuery,
       variables: {
@@ -64,7 +65,7 @@ export const createUpdateLabelClassOfLabelEffect = (
           __typename: "Label",
         },
       },
-      // no need to write an update as apollo automatically does it if we query the labelClass id
+      update: updateLabelClassOfLabel(labelClassIdPrevious),
     });
 
     useLabelingStore.setState({ selectedLabelClassId });
@@ -81,13 +82,13 @@ export const createUpdateLabelClassOfLabelEffect = (
       optimisticResponse: {
         updateLabel: {
           id: selectedLabelId,
-          labelClass: selectedLabelClassId
-            ? { id: selectedLabelClassId, __typename: "LabelClass" }
+          labelClass: labelClassIdPrevious
+            ? { id: labelClassIdPrevious, __typename: "LabelClass" }
             : null,
           __typename: "Label",
         },
       },
-      // no need to write an update as apollo automatically does it if we query the labelClass id
+      update: updateLabelClassOfLabel(selectedLabelClassId),
     });
 
     useLabelingStore.setState({ selectedLabelClassId: labelClassIdPrevious });

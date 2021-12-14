@@ -101,17 +101,15 @@ export const UpsertClassModal = ({
     skip: !datasetSlug || !workspaceSlug,
   });
 
-  const [updateDatasetMutate, { loading: updateMutationLoading }] = useMutation(
-    updateLabelClassNameMutation,
-    {
+  const [updateLabelClassMutate, { loading: updateMutationLoading }] =
+    useMutation(updateLabelClassNameMutation, {
       variables: {
         id: classId,
         name: className,
       },
       refetchQueries: ["getDatasetLabelClasses"],
       awaitRefetchQueries: true,
-    }
-  );
+    });
 
   const labelClassId = uuid();
   const labelClasses = queryData?.dataset?.labelClasses ?? [];
@@ -172,7 +170,7 @@ export const UpsertClassModal = ({
 
       try {
         if (classId) {
-          await updateDatasetMutate();
+          await updateLabelClassMutate();
         } else {
           await createLabelClassMutate();
         }
