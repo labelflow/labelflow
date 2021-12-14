@@ -20,7 +20,7 @@ const classExample = {
   shortcut: "myShortcut",
 };
 
-const wrapper = ({ children }: PropsWithChildren<{}>) => (
+const Wrapper = ({ children }: PropsWithChildren<{}>) => (
   <ApolloProvider client={client}>
     <ChakraProvider theme={theme} resetCSS>
       <Table>
@@ -64,7 +64,7 @@ describe("Dataset class table row tests", () => {
           />
         )}
       </Draggable>,
-      { wrapper }
+      { wrapper: Wrapper }
     );
 
     expect(screen.getByText(/Horse/i)).toBeDefined();
@@ -87,7 +87,7 @@ describe("Dataset class table row tests", () => {
           />
         )}
       </Draggable>,
-      { wrapper }
+      { wrapper: Wrapper }
     );
 
     fireEvent.click(screen.getByRole("button", { name: "Edit class" }));
@@ -107,7 +107,7 @@ describe("Dataset class table row tests", () => {
           />
         )}
       </Draggable>,
-      { wrapper }
+      { wrapper: Wrapper }
     );
 
     fireEvent.click(screen.getByRole("button", { name: "Delete class" }));

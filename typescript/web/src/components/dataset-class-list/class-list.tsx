@@ -25,6 +25,7 @@ const datasetLabelClassesQuery = gql`
     }
   }
 `;
+
 const reorderLabelClassMutation = gql`
   mutation reorderLabelClass($id: ID!, $index: Int!) {
     reorderLabelClass(where: { id: $id }, data: { index: $index }) {
@@ -32,6 +33,7 @@ const reorderLabelClassMutation = gql`
     }
   }
 `;
+
 const reorder = (list: any[], startIndex: number, endIndex: number) => {
   const result = Array.from(list);
   const [removed] = result.splice(startIndex, 1);

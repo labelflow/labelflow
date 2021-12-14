@@ -50,12 +50,16 @@ const isLabelClassNameAlreadyTaken = async (
   { repository, user }: Context
 ): Promise<Boolean> => {
   try {
-    return (
-      (await repository.labelClass.list({ ...args?.where, user }))?.length !== 0
-    );
+    const data = await repository.labelClass.list({ ...args?.where, user });
+    return data.length > 0;
   } catch (error) {
-    console.error(error);
-    return true;
+    if (
+      error instanceof Error &&
+      error.message.includes("User not authorized to access workspace")
+    ) {
+      return true;
+    }
+    throw error;
   }
 };
 

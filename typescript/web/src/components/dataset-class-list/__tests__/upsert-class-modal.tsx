@@ -38,6 +38,67 @@ const renderModal = (props = {}) => {
   });
 };
 
+const createTestDataset = async () => {
+  const datasetName = "test";
+  const {
+    data: {
+      createDataset: { id: datasetId },
+    },
+  } = await client.mutate({
+    mutation: gql`
+      mutation createDataset($name: String) {
+        createDataset(data: { name: $name, workspaceSlug: "local" }) {
+          id
+          name
+          slug
+        }
+      }
+    `,
+    variables: { name: datasetName },
+  });
+
+  return datasetId;
+};
+
+const createLabelClassInTestDataset = async ({
+  labelClassName,
+  datasetId,
+}: {
+  labelClassName: string;
+  datasetId: string;
+}) => {
+  const {
+    data: {
+      createLabelClass: { id: labelClassId },
+    },
+  } = await client.mutate({
+    mutation: gql`
+      mutation createLabelClassMutation(
+        $id: ID!
+        $name: String!
+        $color: ColorHex!
+        $datasetId: ID!
+      ) {
+        createLabelClass(
+          data: { name: $name, id: $id, color: $color, datasetId: $datasetId }
+        ) {
+          id
+          name
+          color
+        }
+      }
+    `,
+    variables: {
+      name: labelClassName,
+      id: uuid(),
+      color: "#F87171",
+      datasetId,
+    },
+  });
+
+  return labelClassId;
+};
+
 it("Should render edit modal when a class id is passed", async () => {
   renderModal({ classId: "classId" });
   expect(screen.getByText("Edit Class")).toBeDefined();
@@ -52,7 +113,6 @@ it("Should render a modal with an empty input and a disabled button", () => {
   renderModal({ classId: "classId" });
 
   const input = screen.getByLabelText(/Class name input/i) as HTMLInputElement;
-
   const button = screen.getByLabelText(/Update/i);
 
   expect(input.value).toEqual("");
@@ -74,25 +134,8 @@ it("Should enable update button when class name is not empty", async () => {
 
 it("Should create a label class when the form is submitted", async () => {
   const onClose = jest.fn();
+  const datasetId = await createTestDataset();
 
-  // We need to create a dataset to attach the new LabelClass to
-  const datasetName = "test";
-  const {
-    data: {
-      createDataset: { id: datasetId },
-    },
-  } = await client.mutate({
-    mutation: gql`
-      mutation createDataset($name: String) {
-        createDataset(data: { name: $name, workspaceSlug: "local" }) {
-          id
-          name
-          slug
-        }
-      }
-    `,
-    variables: { name: datasetName },
-  });
   renderModal({ datasetId, onClose });
 
   const className = "My new class";
@@ -126,49 +169,9 @@ it("Should create a label class when the form is submitted", async () => {
 
 it("Should display an error message if the label class already exists", async () => {
   const onClose = jest.fn();
-  const datasetName = "test";
   const labelClassName = "Horse";
-  const {
-    data: {
-      createDataset: { id: datasetId },
-    },
-  } = await client.mutate({
-    mutation: gql`
-      mutation createDataset($name: String) {
-        createDataset(data: { name: $name, workspaceSlug: "local" }) {
-          id
-          name
-          slug
-        }
-      }
-    `,
-    variables: { name: datasetName },
-  });
-
-  await client.mutate({
-    mutation: gql`
-      mutation createLabelClassMutation(
-        $id: ID!
-        $name: String!
-        $color: ColorHex!
-        $datasetId: ID!
-      ) {
-        createLabelClass(
-          data: { name: $name, id: $id, color: $color, datasetId: $datasetId }
-        ) {
-          id
-          name
-          color
-        }
-      }
-    `,
-    variables: {
-      name: labelClassName,
-      id: uuid(),
-      color: "#F87171",
-      datasetId,
-    },
-  });
+  const datasetId = await createTestDataset();
+  await createLabelClassInTestDataset({ datasetId, labelClassName });
 
   renderModal({ datasetId, onClose });
   const input = screen.getByLabelText(/class name input/i) as HTMLInputElement;
@@ -185,53 +188,12 @@ it("Should display an error message if the label class already exists", async ()
 
 it("Should update a dataset when the form is submitted", async () => {
   const onClose = jest.fn();
-  const datasetName = "test";
   const labelClassName = "Horse";
   const newLabelClassName = "Dog";
-  const {
-    data: {
-      createDataset: { id: datasetId },
-    },
-  } = await client.mutate({
-    mutation: gql`
-      mutation createDataset($name: String) {
-        createDataset(data: { name: $name, workspaceSlug: "local" }) {
-          id
-          name
-          slug
-        }
-      }
-    `,
-    variables: { name: datasetName },
-  });
-
-  const {
-    data: {
-      createLabelClass: { id: labelClassId },
-    },
-  } = await client.mutate({
-    mutation: gql`
-      mutation createLabelClassMutation(
-        $id: ID!
-        $name: String!
-        $color: ColorHex!
-        $datasetId: ID!
-      ) {
-        createLabelClass(
-          data: { name: $name, id: $id, color: $color, datasetId: $datasetId }
-        ) {
-          id
-          name
-          color
-        }
-      }
-    `,
-    variables: {
-      name: labelClassName,
-      id: uuid(),
-      color: "#F87171",
-      datasetId,
-    },
+  const datasetId = await createTestDataset();
+  const labelClassId = await createLabelClassInTestDataset({
+    labelClassName,
+    datasetId,
   });
 
   renderModal({ classId: labelClassId, datasetId, onClose });

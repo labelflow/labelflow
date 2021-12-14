@@ -30,7 +30,7 @@ export const ClassTableActions = ({
   setSearchText: (text: string) => void;
   isCreatingClassLabel: boolean;
   setIsCreatingClassLabel: (value: boolean) => void;
-  datasetId: string | null | undefined;
+  datasetId: string | undefined;
   datasetSlug: string;
 }) => {
   return (
