@@ -167,7 +167,7 @@ export const TableContent = ({
             ))}
           </Tr>
         </Thead>
-        <Tbody bgColor="#FFFFFF">
+        <Tbody bg={mode("white", "gray.900")}>
           {filteredMemberships.map((row, membershipIndex) => (
             <Tr key={membershipIndex}>
               {columns.map((column, index) => (
