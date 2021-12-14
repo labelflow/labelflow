@@ -248,6 +248,10 @@ jobs:
           CI_BRANCH_BASE: refs/heads/main
           POSTGRES_EXTERNAL_URL: postgresql://admin:admin@localhost:5433/labelflow?schema=public
           VERCEL_URL: http://localhost:3001
+          LABELFLOW_AWS_ACCESS_KEY_ID: minioadmin
+          LABELFLOW_AWS_SECRET_ACCESS_KEY: minioadmin
+          LABELFLOW_AWS_REGION: eu-west-1
+          LABELFLOW_AWS_ENDPOINT: http://localhost:9000
 
   deployment-chromatic-pr:
     name: Deploy Storybook PR
