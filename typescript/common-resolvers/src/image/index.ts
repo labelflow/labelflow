@@ -12,6 +12,7 @@ import type {
 import { Context, DbImage, DbImageCreateInput, Repository } from "../types";
 import { throwIfResolvesToNil } from "../utils/throw-if-resolves-to-nil";
 import { getImageEntityFromMutationArgs } from "./get-image-entity-from-mutation-args";
+import { throwIfInvalidImageInputs } from "./utils";
 
 const getImageById = async (
   id: string,
@@ -81,17 +82,7 @@ const createImage = async (
     repository.dataset.get
   )({ id: datasetId }, user);
 
-  if (
-    !(
-      (!file && !externalUrl && url) ||
-      (!file && externalUrl && !url) ||
-      (file && !externalUrl && !url)
-    )
-  ) {
-    throw new Error(
-      "Image creation upload must include either a `file` field of type `Upload`, or a `url` field of type `String`, or a `externalUrl` field of type `String`"
-    );
-  }
+  throwIfInvalidImageInputs({ file, externalUrl, url });
 
   const { workspaceSlug } = await repository.dataset.get(
     { id: datasetId },
