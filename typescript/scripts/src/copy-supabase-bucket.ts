@@ -68,8 +68,9 @@ const duplicateBucket = async () => {
 
     const fromData = await listFilesFromClient(fromClient, bucket);
     const toData = await listFilesFromClient(toClient, bucket);
-    const filteredData = fromData.filter((file) => toData.includes(file));
-
+    const filteredData = fromData.filter(
+      (file) => !toData.some((toFile) => file.name === toFile.name)
+    );
     const { name: userAnswer } = await prompt.get({
       properties: {
         name: {

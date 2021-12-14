@@ -124,6 +124,7 @@
     "@testing-library/react": "11.2.6",
     "@testing-library/react-hooks": "^7.0.0",
     "@testing-library/user-event": "^13.1.9",
+    "@types/jest": "^27.0.3",
     "@types/mime-types": "2.1.0",
     "@types/multer": "1.4.7",
     "@types/node": "12.12.21",

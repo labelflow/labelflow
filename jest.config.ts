@@ -39,8 +39,8 @@ export default {
       testEnvironment: "jsdom",
       testMatch: [
         "<rootDir>/typescript/common-resolvers/**/__tests__/**/*.{ts,tsx}",
-        "<rootDir>/typescript/react-openlayers-fiber/__tests__/**/*.{ts,tsx}",
-        "<rootDir>/typescript/web/__tests__/**/*.{ts,tsx}",
+        "<rootDir>/typescript/react-openlayers-fiber/**/__tests__/**/*.{ts,tsx}",
+        "<rootDir>/typescript/web/**/__tests__/**/*.{ts,tsx}",
       ],
     },
     {
