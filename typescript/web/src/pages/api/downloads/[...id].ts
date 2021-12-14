@@ -5,13 +5,32 @@ import { getSession } from "next-auth/react";
 import { NextApiResponse, NextApiRequest } from "next";
 import { captureException } from "@sentry/nextjs";
 
+let awsS3CustomEndpointOptions = {};
+
+if (process.env.LABELFLOW_AWS_ENDPOINT) {
+  const endpointUrl = new URL(process.env.LABELFLOW_AWS_ENDPOINT);
+
+  awsS3CustomEndpointOptions = {
+    endpoint: {
+      protocol: endpointUrl.protocol.slice(0, -1), // remove trailing colon
+      hostname: endpointUrl.host, // needs to contains the port, so host, not hostname
+      path: endpointUrl.pathname, // required, else we have this issue: https://github.com/aws/aws-sdk-js-v3/issues/1941#issuecomment-824194714
+    },
+    forcePathStyle: true, // required to make minio work
+  };
+}
+
 const client = new S3Client({
-  region: process.env?.LABELFLOW_AWS_REGION,
+  region: process.env.LABELFLOW_AWS_REGION,
   credentials: {
-    accessKeyId: process.env?.LABELFLOW_AWS_ACCESS_KEY_ID!,
-    secretAccessKey: process.env?.LABELFLOW_AWS_SECRET_ACCESS_KEY!,
+    accessKeyId: process.env.LABELFLOW_AWS_ACCESS_KEY_ID!,
+    secretAccessKey: process.env.LABELFLOW_AWS_SECRET_ACCESS_KEY!,
   },
+  // If we set an given endpoint, it means that we test with minio
+  // See https://docs.min.io/docs/how-to-use-aws-sdk-for-javascript-with-minio-server.html
+  ...awsS3CustomEndpointOptions,
 });
+
 const bucket = "labelflow";
 
 const apiRoute = nextConnect({

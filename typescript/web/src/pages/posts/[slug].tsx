@@ -16,6 +16,7 @@ import { PostTitle } from "../../components/website/Blog/PostTitle";
 import "github-markdown-css";
 import { ServiceWorkerManagerBackground } from "../../components/service-worker-manager";
 import { CookieBanner } from "../../components/cookie-banner";
+import { WEB_APP_URL_ORIGIN } from "../../constants";
 
 const ChakraReactMarkdown = chakra(ReactMarkdown);
 
@@ -36,12 +37,18 @@ export default function Posts({
           article?.image?.url !== null
             ? [
                 {
-                  url: article.image.url,
+                  url: article?.image?.url,
                   alt: "LabelFlow",
                 },
               ]
             : undefined
         }
+        canonical={`${WEB_APP_URL_ORIGIN}/posts/${article?.slug}`}
+        article={{
+          authors: article?.author?.name ? [article?.author?.name] : [],
+          publishedTime: article?.published_at,
+          section: article?.category?.name,
+        }}
       />
       <CookieBanner />
       <Box minH="640px">

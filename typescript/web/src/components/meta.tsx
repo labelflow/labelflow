@@ -1,13 +1,14 @@
 import * as React from "react";
 import { NextSeo } from "next-seo";
 import Head from "next/head";
-import type { OpenGraphMedia } from "next-seo/lib/types";
+import { OpenGraph } from "next-seo/lib/types";
 
 type Props = {
   title?: string;
   desc?: string;
   canonical?: string;
-  images?: OpenGraphMedia[];
+  images?: OpenGraph["images"];
+  article?: OpenGraph["article"];
 };
 
 const defaultImages = [
@@ -30,6 +31,7 @@ export const Meta = ({
   desc = "The fastest and simplest image labeling tool on the Internet!",
   canonical = "https://labelflow.ai/",
   images = defaultImages,
+  article,
 }: Props) => (
   <>
     <NextSeo
@@ -37,18 +39,20 @@ export const Meta = ({
       description={desc}
       canonical={canonical}
       openGraph={{
-        type: "website",
+        type: article ? "article" : "website",
         url: canonical,
         title,
         description: desc,
         locale: "en_US",
         images,
+        article,
       }}
       twitter={{
-        handle: "@VLecrubier",
-        site: "@VLecrubier",
+        handle: "@LabelflowAI",
+        site: "@LabelflowAI",
         cardType: "summary_large_image",
       }}
+      facebook={{ appId: "461943602167313" }}
     />
     <Head>
       <link rel="icon" href="/static/favicon.ico" />

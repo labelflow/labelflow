@@ -19,6 +19,7 @@ export const ZoomTool = () => {
   const canZoomOut = useLabelingStore((state) => state.canZoomOut);
   const zoomByDelta = useLabelingStore((state) => state.zoomByDelta);
   const zoomFactor = useLabelingStore((state) => state.zoomFactor);
+  const isImageLoading = useLabelingStore((state) => state.isImageLoading);
 
   useHotkeys(
     keymap.zoomIn.key,
@@ -54,7 +55,7 @@ export const ZoomTool = () => {
           backgroundColor={mode("white", "gray.800")}
           aria-label="Zoom in"
           pointerEvents="initial"
-          isDisabled={!canZoomIn}
+          isDisabled={!canZoomIn || isImageLoading}
           onClick={() => {
             zoomByDelta(zoomFactor);
           }}
@@ -70,7 +71,7 @@ export const ZoomTool = () => {
           backgroundColor={mode("white", "gray.800")}
           aria-label="Zoom out"
           pointerEvents="initial"
-          isDisabled={!canZoomOut}
+          isDisabled={!canZoomOut || isImageLoading}
           onClick={() => {
             zoomByDelta(-zoomFactor);
           }}

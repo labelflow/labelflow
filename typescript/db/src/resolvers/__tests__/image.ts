@@ -1,12 +1,11 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { gql } from "@apollo/client";
 import { v4 as uuidV4 } from "uuid";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import {
   MutationCreateWorkspaceArgs,
   Workspace,
 } from "@labelflow/graphql-types";
-import { createClient } from "@supabase/supabase-js";
+
 import { processImage } from "../../repository/image-processing";
 import { getPrismaClient } from "../../prisma-client";
 import { client, user } from "../../dev/apollo-client";
@@ -14,21 +13,8 @@ import { client, user } from "../../dev/apollo-client";
 jest.mock("../../repository/image-processing");
 const mockedProcessImage = processImage as jest.Mock;
 
-jest.mock("@supabase/supabase-js");
-const mockedSupabaseCreateClient = createClient as jest.Mock;
-
-jest.mock("@aws-sdk/client-s3");
-
-global.fetch = () => {
-  // console.log(`fetch called with url ${url}`);
-  return new Promise((res) => res({ status: 200 } as Response));
-};
-
-jest.mock("@aws-sdk/s3-request-presigner");
-const mockedGetSignedUrl = getSignedUrl as jest.Mock;
-
 // @ts-ignore
-// fetch.disableFetchMocks();
+fetch.disableFetchMocks();
 
 const testUser1Id = uuidV4();
 const testUser2Id = uuidV4();
@@ -98,10 +84,6 @@ const createImage = async (
     height: imageHeight,
     mimetype: "image/jpeg",
   });
-  mockedSupabaseCreateClient.mockReturnValue({
-    storage: { from: () => ({ upload: () => {} }) },
-  });
-  mockedGetSignedUrl.mockReturnValue("mockedSignedUrl");
   const mutationResult = await client.mutate({
     mutation: gql`
       mutation createImage(

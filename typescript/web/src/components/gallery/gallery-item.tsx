@@ -1,9 +1,11 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import { memo } from "react";
 import Link from "next/link";
-import { Image, Box, Skeleton, Badge, AspectRatio } from "@chakra-ui/react";
+import { Box, Skeleton, Badge, AspectRatio } from "@chakra-ui/react";
+import { ImageWithFallback } from "../image";
 
 import { itemHeight } from "./constants";
+import { EmptyStateImageNotFound } from "../empty-state";
 
 type Props = {
   size: number;
@@ -57,10 +59,18 @@ export const GalleryItem = memo(
                 {index + 1}
               </Badge>
               <AspectRatio ratio={3 / 2}>
-                <Image
+                <ImageWithFallback
                   src={url}
-                  fallback={
+                  loadingFallback={
                     <Skeleton height="100%" width="100%" borderRadius="md" />
+                  }
+                  errorFallback={
+                    <EmptyStateImageNotFound
+                      border="4px solid"
+                      borderColor={isSelected ? "brand.500" : "transparent"}
+                      borderRadius="md"
+                      backgroundColor="gray.100"
+                    />
                   }
                   height="100%"
                   width="100%"

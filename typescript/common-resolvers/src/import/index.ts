@@ -9,11 +9,14 @@ import { Context } from "../types";
 
 const makeImport = async (
   args: MutationImportDatasetArgs,
-  { repository }: Context
+  { repository, req, user }: Context
 ): Promise<void> => {
-  const datasetBlob: Blob = new Blob([
-    await repository.upload.get(args.data.url),
-  ]);
+  const datasetBlob = new Blob(
+    [await repository.upload.get(args.data.url, req)],
+    {
+      type: "application/zip",
+    }
+  );
   await repository.upload.delete(args.data.url); // Remove blob from cache immediately
   // TODO: handle when args.where.slugs is used over args.where.id
   if (!args.where.id) {
@@ -31,6 +34,8 @@ const makeImport = async (
         args.where?.id,
         {
           repository,
+          req,
+          user,
         },
         args.data?.options?.coco ?? undefined
       );
@@ -44,10 +49,10 @@ const makeImport = async (
 const importDataset = async (
   _: any,
   args: MutationImportDatasetArgs,
-  { repository }: Context
+  { repository, req, user }: Context
 ): Promise<ImportStatus> => {
   try {
-    await makeImport(args, { repository });
+    await makeImport(args, { repository, req, user });
     return {};
   } catch (e) {
     return {

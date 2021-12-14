@@ -86,9 +86,9 @@ export function Hero() {
               fontSize="lg"
               fontWeight="medium"
             >
-              Create and manage your image data, workflows and teams in a single
-              place. Stay in control of your data, focus on building the next
-              big thing.
+              Create and manage large image datasets for machine learning in a
+              single place. Labelflow is the open image labeling tool to build
+              the next big thing with AI.
             </Text>
             <Stack
               direction={{ base: "column", md: "row" }}

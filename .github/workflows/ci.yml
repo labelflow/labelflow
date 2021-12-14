@@ -109,6 +109,7 @@ jobs:
       AWS_SECRET_ACCESS_KEY: minioadmin
       # https://github.com/aws/aws-cli/issues/5262#issuecomment-705832151
       AWS_EC2_METADATA_DISABLED: true
+      NODE_OPTIONS: "--max_old_space_size=4096"
     steps:
       # GitHub Services doesn't let us forward a command when starting the docker container
       # and we need to run minio like this `docker start minio/minio server /data`.
@@ -122,6 +123,8 @@ jobs:
                      -e MINIO_ROOT_USER=$MINIO_ACCESS_KEY \
                      -e MINIO_ROOT_PASSWORD=$MINIO_SECRET_KEY \
                      minio/minio server /data
+      - name: Create labelflow bucket on minio
+        run: aws --endpoint-url http://127.0.0.1:9000/ s3 mb s3://labelflow
       - name: Check out repository code
         uses: actions/checkout@v2
       - name: Fetch node_modules from cache
@@ -198,6 +201,8 @@ jobs:
                      -e MINIO_ROOT_USER=$MINIO_ACCESS_KEY \
                      -e MINIO_ROOT_PASSWORD=$MINIO_SECRET_KEY \
                      minio/minio server /data
+      - name: Create labelflow bucket on minio
+        run: aws --endpoint-url http://127.0.0.1:9000/ s3 mb s3://labelflow
       - name: Check out repository code
         uses: actions/checkout@v2
       - name: Fetch node_modules from cache

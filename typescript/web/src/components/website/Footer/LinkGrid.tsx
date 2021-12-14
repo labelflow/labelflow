@@ -36,6 +36,9 @@ export const LinkGrid = (props: SimpleGridProps) => (
             Documentation
           </Link>
         </NextLink>
+        <NextLink href="https://labelflow.recruitee.com/">
+          <Link href="https://labelflow.recruitee.com/">Jobs</Link>
+        </NextLink>
       </Stack>
     </Box>
     <Box minW="150px">
