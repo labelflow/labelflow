@@ -207,7 +207,8 @@ const totalCount = async (
   // eslint-disable-next-line no-underscore-dangle
   const typename = parent?.__typename;
   const idProp = typename ? LABEL_CLASS_ID_PROPERTY_NAMES[typename] : undefined;
-  const idWhere: LabelWhereInput = idProp ? { [idProp]: parent.id } : undefined;
+  const idWhere: LabelWhereInput | undefined =
+    idProp && parent ? { [idProp]: parent.id } : undefined;
 
   return await repository.label.count({ user, ...idWhere });
 };
