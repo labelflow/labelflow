@@ -17,6 +17,14 @@ import { DbLabel, Context, Repository } from "./types";
 import { throwIfResolvesToNil } from "./utils/throw-if-resolves-to-nil";
 import { getBoundedGeometryFromImage } from "./utils/get-bounded-geometry-from-image";
 
+const LABEL_CLASS_ID_PROPERTY_NAMES: Record<
+  "Dataset" | "LabelClass",
+  keyof LabelWhereInput
+> = {
+  Dataset: "datasetId",
+  LabelClass: "labelClassId",
+};
+
 const getLabelById = async (
   id: string,
   repository: Repository,
@@ -196,18 +204,12 @@ const totalCount = async (
   _args: any,
   { repository, user }: Context
 ) => {
-  let where: LabelWhereInput & { user?: { id: string } } = { user };
-  if (parent) {
-    // eslint-disable-next-line no-underscore-dangle
-    const typename = parent?.__typename;
-    if (typename === "Dataset") {
-      where = { datasetId: parent.id, user };
-    } else if (typename === "LabelClass") {
-      where = { labelClassId: parent.id, user };
-    }
-  }
+  // eslint-disable-next-line no-underscore-dangle
+  const typename = parent?.__typename;
+  const idProp = typename ? LABEL_CLASS_ID_PROPERTY_NAMES[typename] : undefined;
+  const idWhere: LabelWhereInput = idProp ? { [idProp]: parent.id } : undefined;
 
-  return await repository.label.count(where);
+  return await repository.label.count({ user, ...idWhere });
 };
 
 export default {
