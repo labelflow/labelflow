@@ -96,7 +96,7 @@ const createImage = async (
   );
 
   const newImageEntity = await getImageEntityFromMutationArgs(
-    { image: args.data, workspaceId, user },
+    { image: args.data, workspaceId },
     { repository, req }
   );
 
@@ -154,7 +154,7 @@ const createManyImages = async (
     }
 
     return await getImageEntityFromMutationArgs(
-      { image, workspaceId, user },
+      { image, workspaceId },
       { repository, req }
     );
   };

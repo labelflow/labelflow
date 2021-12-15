@@ -47,6 +47,7 @@ const importFromExternalUrl = async (
     );
   }
 
+  // We decided to store the image in our file storage even if it comes from an external url.
   await repository.upload.put(uploadTarget.uploadUrl, blob, req);
 
   return uploadTarget.downloadUrl;
@@ -84,11 +85,7 @@ const importFromFile = async (
  * @returns
  */
 export const getImageEntityFromMutationArgs = async (
-  {
-    image,
-    workspaceId,
-    user,
-  }: { image: ImageCreateInput; workspaceId: string; user?: { id: string } },
+  { image, workspaceId }: { image: ImageCreateInput; workspaceId: string },
   { repository, req }: { repository: Repository; req?: Request }
 ) => {
   const {
@@ -102,6 +99,7 @@ export const getImageEntityFromMutationArgs = async (
     url,
     externalUrl,
     datasetId,
+    noThumbnails,
     thumbnail20Url,
     thumbnail50Url,
     thumbnail100Url,
@@ -112,14 +110,9 @@ export const getImageEntityFromMutationArgs = async (
   const now = image?.createdAt ?? new Date().toISOString();
   const imageId = id ?? uuidv4();
 
-  let finalUrl: string | undefined;
+  const origin = getOrigin(req);
 
-  let thumbnailsUrls: { [key: string]: string } = {};
-  if (thumbnail20Url) thumbnailsUrls.thumbnail20Url = thumbnail20Url;
-  if (thumbnail50Url) thumbnailsUrls.thumbnail50Url = thumbnail50Url;
-  if (thumbnail100Url) thumbnailsUrls.thumbnail100Url = thumbnail100Url;
-  if (thumbnail200Url) thumbnailsUrls.thumbnail200Url = thumbnail200Url;
-  if (thumbnail500Url) thumbnailsUrls.thumbnail500Url = thumbnail500Url;
+  let finalUrl: string | undefined;
 
   const getImageFileKeyFromMimeType = (mimeType: string) =>
     getImageFileKey(imageId, workspaceId, datasetId, mimeType);
@@ -144,42 +137,34 @@ export const getImageEntityFromMutationArgs = async (
     });
   }
 
-  if (image.noThumbnails) {
-    // Do not generate or store thumbnails on server, use either the thumbnails url provided above, or use the full size image as thumbnails
-    thumbnailsUrls = {
-      thumbnail20Url: finalUrl,
-      thumbnail50Url: finalUrl,
-      thumbnail100Url: finalUrl,
-      thumbnail200Url: finalUrl,
-      thumbnail500Url: finalUrl,
-      ...thumbnailsUrls,
-    };
-  }
-
-  const origin = getOrigin(req);
-
-  const downloadUrlPrefix = (
-    await repository.upload.getUploadTargetHttp("", origin)
-  ).downloadUrl;
+  // Use the full size url if we don't want to generate thumbnails.
+  // Else, use `undefined` to specify that it will need to be generated
+  const defaultThumbnail = noThumbnails ? finalUrl : undefined;
 
   const imageToProcess = {
-    ...thumbnailsUrls,
     id: imageId,
     width,
     height,
     mimetype,
     url: finalUrl,
+    thumbnail20Url: thumbnail20Url ?? defaultThumbnail,
+    thumbnail50Url: thumbnail50Url ?? defaultThumbnail,
+    thumbnail100Url: thumbnail100Url ?? defaultThumbnail,
+    thumbnail200Url: thumbnail200Url ?? defaultThumbnail,
+    thumbnail500Url: thumbnail500Url ?? defaultThumbnail,
   };
 
   const getImage = (fromUrl: string) => repository.upload.get(fromUrl, req);
+
+  const downloadUrlPrefix = (
+    await repository.upload.getUploadTargetHttp("", origin)
+  ).downloadUrl;
 
   const putThumbnail = async (targetDownloadUrl: string, blob: Blob) => {
     const key = targetDownloadUrl.substring(downloadUrlPrefix.length);
     const toUrl = (await repository.upload.getUploadTargetHttp(key, origin))
       .uploadUrl;
-    // console.log("targetDownloadUrl", targetDownloadUrl);
-    // console.log(" key", key);
-    // console.log(" toUrl", toUrl);
+
     await repository.upload.put(toUrl, blob, req);
   };
 
@@ -187,9 +172,7 @@ export const getImageEntityFromMutationArgs = async (
     await repository.imageProcessing.processImage(
       imageToProcess,
       getImage,
-      putThumbnail,
-      repository.image.update,
-      user
+      putThumbnail
     );
 
   const finalName = getImageName({ externalUrl, finalUrl, name });

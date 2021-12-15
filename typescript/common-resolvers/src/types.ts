@@ -216,9 +216,7 @@ export type Repository = {
         thumbnail500Url?: string;
       },
       getImage: (url: string) => Promise<ArrayBuffer>,
-      putThumbnail: (targetDownloadUrl: string, blob: Blob) => Promise<void>,
-      updateImage: Update<DbImage, ImageWhereUniqueInput>,
-      user?: { id: string }
+      putThumbnail: (targetDownloadUrl: string, blob: Blob) => Promise<void>
     ) => Promise<{
       width: number;
       height: number;
