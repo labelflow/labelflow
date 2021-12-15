@@ -25,7 +25,7 @@ RUN yarn install --immutable
 
 ENV NODE_OPTIONS --max-old-space-size=4096 
 
-RUN yarn build:web --debug
+RUN yarn build:web
 
 ################################################################################
 # Run the web server
@@ -40,6 +40,7 @@ FROM node:14 AS runner
 WORKDIR /app
 
 ENV NODE_ENV production
+ENV NEXTAUTH_URL http://localhost:3000
 
 RUN addgroup --gecos 1001 --system nodejs
 RUN adduser --system nextjs --uid 1001
