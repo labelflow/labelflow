@@ -7,16 +7,19 @@ import {
   AlertDialogHeader,
   AlertDialogOverlay,
   Button,
+  Link,
 } from "@chakra-ui/react";
 
 export const IogAlertDialog = ({
   isOpen = false,
   onClose = () => {},
   onAccept = () => {},
+  onCancel = () => {},
 }: {
   isOpen?: boolean;
   onClose?: () => void;
   onAccept?: () => void;
+  onCancel?: () => void;
 }) => {
   const cancelRef = useRef<HTMLButtonElement>(null);
 
@@ -35,13 +38,25 @@ export const IogAlertDialog = ({
 
           <AlertDialogBody>
             Images annotated with the Auto Polygon tool are processed on our
-            secured servers.
+            secured servers. <br />
+            Check the documentation{" "}
+            <Link
+              href="https://labelflow.gitbook.io/labelflow/labelling-interface/label-types/auto-polygons"
+              color="brand.600"
+              target="_blank"
+            >
+              here
+            </Link>
+            .
           </AlertDialogBody>
 
           <AlertDialogFooter>
             <Button
               ref={cancelRef}
-              onClick={onClose}
+              onClick={() => {
+                onCancel();
+                onClose();
+              }}
               aria-label="Cancel using auto polygon"
             >
               Cancel
