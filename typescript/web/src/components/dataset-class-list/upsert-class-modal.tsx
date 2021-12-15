@@ -39,9 +39,9 @@ type DatasetClassesQueryResult = {
 
 const debounceTime = 200;
 
-const isLabelClassAlreadyTakenQuery = gql`
-  query isLabelClassNameAlreadyTaken($datasetId: ID!, $name: String!) {
-    isLabelClassNameAlreadyTaken(where: { datasetId: $datasetId, name: $name })
+const labelClassExistsQuery = gql`
+  query labelClassExists($datasetId: ID!, $name: String!) {
+    labelClassExists(where: { datasetId: $datasetId, name: $name })
   }
 `;
 
@@ -200,7 +200,7 @@ export const UpsertClassModal = ({
       loading: loadingExistingLabelClass,
       variables: variablesExistingLabelClass,
     },
-  ] = useLazyQuery(isLabelClassAlreadyTakenQuery, {
+  ] = useLazyQuery(labelClassExistsQuery, {
     fetchPolicy: "network-only",
   });
 
@@ -222,7 +222,7 @@ export const UpsertClassModal = ({
 
   useEffect(() => {
     if (
-      existingLabelClass?.isLabelClassNameAlreadyTaken &&
+      existingLabelClass?.labelClassExists &&
       !loadingExistingLabelClass &&
       variablesExistingLabelClass?.name === className
     ) {

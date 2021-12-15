@@ -44,7 +44,7 @@ const labelClasses = async (
   );
 };
 
-const isLabelClassNameAlreadyTaken = async (
+const labelClassExists = async (
   _: any,
   args: QueryLabelClassArgs,
   { repository, user }: Context
@@ -253,7 +253,7 @@ export default {
     labelClass,
     labelClasses,
     labelClassesAggregates,
-    isLabelClassNameAlreadyTaken,
+    labelClassExists,
   },
 
   Mutation: {

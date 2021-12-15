@@ -20,7 +20,7 @@ type Query {
     skip: Int
   ): [LabelClass!]!
   labelClassesAggregates: LabelClassesAggregates!
-  isLabelClassNameAlreadyTaken(where: LabelClassWhereInput!): Boolean!
+  labelClassExists(where: LabelClassWhereInput!): Boolean!
 
   labelsAggregates: LabelsAggregates!
   label(where: LabelWhereUniqueInput!): Label!

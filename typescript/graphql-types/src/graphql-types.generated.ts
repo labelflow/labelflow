@@ -546,7 +546,7 @@ export type Query = {
   labelClass: LabelClass;
   labelClasses: Array<LabelClass>;
   labelClassesAggregates: LabelClassesAggregates;
-  isLabelClassNameAlreadyTaken: Scalars['Boolean'];
+  labelClassExists: Scalars['Boolean'];
   labelsAggregates: LabelsAggregates;
   label: Label;
   labels: Array<Label>;
@@ -602,7 +602,7 @@ export type QueryLabelClassesArgs = {
 };
 
 
-export type QueryIsLabelClassNameAlreadyTakenArgs = {
+export type QueryLabelClassExistsArgs = {
   where: LabelClassWhereInput;
 };
 
@@ -1181,7 +1181,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   labelClass?: Resolver<ResolversTypes['LabelClass'], ParentType, ContextType, RequireFields<QueryLabelClassArgs, 'where'>>;
   labelClasses?: Resolver<Array<ResolversTypes['LabelClass']>, ParentType, ContextType, RequireFields<QueryLabelClassesArgs, never>>;
   labelClassesAggregates?: Resolver<ResolversTypes['LabelClassesAggregates'], ParentType, ContextType>;
-  isLabelClassNameAlreadyTaken?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<QueryIsLabelClassNameAlreadyTakenArgs, 'where'>>;
+  labelClassExists?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<QueryLabelClassExistsArgs, 'where'>>;
   labelsAggregates?: Resolver<ResolversTypes['LabelsAggregates'], ParentType, ContextType>;
   label?: Resolver<ResolversTypes['Label'], ParentType, ContextType, RequireFields<QueryLabelArgs, 'where'>>;
   labels?: Resolver<Array<ResolversTypes['Label']>, ParentType, ContextType, RequireFields<QueryLabelsArgs, never>>;
