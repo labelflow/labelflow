@@ -11,20 +11,10 @@ import {
 import { RiCheckboxBlankCircleFill } from "react-icons/ri";
 import { VscGripper } from "react-icons/vsc";
 import React from "react";
+import { LabelClassWithShortcut } from "./types";
 
 const CircleIcon = chakra(RiCheckboxBlankCircleFill);
 const DragIcon = chakra(VscGripper);
-
-type LabelClassWithShortcut = {
-  id: string;
-  index: number;
-  name: string;
-  color: string;
-  shortcut: string;
-  labelsAggregates: {
-    totalCount: number;
-  };
-};
 
 type TableCellProps = {
   children: any;
@@ -119,7 +109,7 @@ type TableRowProps = {
   snapshot: any;
   item: LabelClassWithShortcut;
   onClickDelete: (classId: string | null) => void;
-  onClickEdit: (classId: string | null) => void;
+  onClickEdit: (item: LabelClassWithShortcut | null) => void;
 };
 export const TableRow = ({
   provided,
@@ -179,7 +169,7 @@ export const TableRow = ({
                 <Button
                   variant="link"
                   colorScheme="blue"
-                  onClick={() => onClickEdit(id)}
+                  onClick={() => onClickEdit(item)}
                   aria-label="Edit class"
                 >
                   Edit

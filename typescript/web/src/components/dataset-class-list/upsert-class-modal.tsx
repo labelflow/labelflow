@@ -1,4 +1,4 @@
-import { gql, useQuery, useLazyQuery, useMutation } from "@apollo/client";
+import { gql, useQuery, useLazyQuery, useApolloClient } from "@apollo/client";
 import { v4 as uuid } from "uuid";
 import { useRouter } from "next/router";
 import {
@@ -22,6 +22,20 @@ import {
   getNextClassColor,
   hexColorSequence,
 } from "../../utils/class-color-generator";
+import { LabelClassWithShortcut } from "./types";
+
+type DatasetClassesQueryResult = {
+  dataset: {
+    id: string;
+    name: string;
+    labelClasses: {
+      id: string;
+      index: number;
+      name: string;
+      color: string;
+    }[];
+  };
+};
 
 const debounceTime = 200;
 
@@ -61,16 +75,19 @@ const createLabelClassMutation = gql`
 export const UpsertClassModal = ({
   isOpen = false,
   onClose = () => {},
-  classId = undefined,
+  item = undefined,
   datasetId = undefined,
   datasetSlug,
 }: {
   isOpen?: boolean;
   onClose?: () => void;
-  classId?: string | null;
+  item?: LabelClassWithShortcut | null;
   datasetId?: string | null;
   datasetSlug?: string;
 }) => {
+  const classId = item?.id ?? undefined;
+  const classColor = item?.color ?? undefined;
+  const client = useApolloClient();
   const [classNameInputValue, setClassNameInputValue] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState<string>("");
   const handleInputValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -101,28 +118,80 @@ export const UpsertClassModal = ({
     skip: !datasetSlug || !workspaceSlug,
   });
 
-  const [updateLabelClassMutate, { loading: updateMutationLoading }] =
-    useMutation(updateLabelClassNameMutation, {
-      variables: {
-        id: classId,
-        name: className,
+  const updateLabelClassWithOptimistic = useCallback(async () => {
+    await client.mutate({
+      mutation: updateLabelClassNameMutation,
+      variables: { id: classId, name: className },
+      optimisticResponse: {
+        updateLabelClass: {
+          id: classId,
+          name: className,
+          color: classColor,
+          __typeName: "LabelClass",
+        },
       },
-      refetchQueries: ["getDatasetLabelClasses"],
-      awaitRefetchQueries: true,
     });
+  }, [classId, className]);
 
-  const labelClassId = uuid();
-  const labelClasses = queryData?.dataset?.labelClasses ?? [];
-  const color =
-    labelClasses.length < 1
-      ? hexColorSequence[0]
-      : getNextClassColor(labelClasses[labelClasses.length - 1].color);
-  const [createLabelClassMutate, { loading: createMutationLoading }] =
-    useMutation(createLabelClassMutation, {
-      variables: { id: labelClassId, name: className, color, datasetId },
-      refetchQueries: ["getDatasetLabelClasses"],
-      awaitRefetchQueries: true,
+  const createLabelClassWithOptimistic = useCallback(async () => {
+    const newClassId = uuid();
+    const labelClasses = queryData?.dataset?.labelClasses ?? [];
+    const color =
+      labelClasses.length < 1
+        ? hexColorSequence[0]
+        : getNextClassColor(labelClasses[labelClasses.length - 1].color);
+
+    await client.mutate({
+      mutation: createLabelClassMutation,
+      variables: { id: newClassId, name: className, color, datasetId },
+      optimisticResponse: {
+        createLabelClass: {
+          id: newClassId,
+          name: className,
+          color,
+          datasetId,
+          __typeName: "LabelClass",
+        },
+      },
+      update: (cache, { data }) => {
+        if (data != null) {
+          const { createLabelClass } = data;
+          const datasetCacheResult = cache.readQuery<DatasetClassesQueryResult>(
+            {
+              query: datasetLabelClassesQuery,
+              variables: { slug: datasetSlug, workspaceSlug },
+            }
+          );
+
+          if (datasetCacheResult?.dataset == null) {
+            throw new Error(`Missing dataset with slug ${datasetSlug}`);
+          }
+
+          const { dataset } = datasetCacheResult;
+          const newLabelClass = {
+            ...createLabelClass,
+            index: dataset.labelClasses.length,
+          };
+          const updatedLabelClasses = dataset.labelClasses.concat({
+            ...newLabelClass,
+          });
+          const updatedDataset = {
+            ...dataset,
+            labelClasses: updatedLabelClasses,
+          };
+          cache.writeQuery({
+            query: datasetLabelClassesQuery,
+            variables: { slug: datasetSlug, workspaceSlug },
+            data: { dataset: updatedDataset },
+          });
+        } else {
+          throw new Error(
+            "Received null data in update label class name function"
+          );
+        }
+      },
     });
+  }, [datasetId, queryData, className]);
 
   const [
     queryExistingLabelClass,
@@ -170,9 +239,9 @@ export const UpsertClassModal = ({
 
       try {
         if (classId) {
-          await updateLabelClassMutate();
+          await updateLabelClassWithOptimistic();
         } else {
-          await createLabelClassMutate();
+          await createLabelClassWithOptimistic();
         }
 
         onClose();
@@ -229,8 +298,6 @@ export const UpsertClassModal = ({
 
         <ModalFooter>
           <Button
-            isLoading={createMutationLoading || updateMutationLoading}
-            loadingText={classId ? "Updating..." : "Creating..."}
             type="submit"
             colorScheme="brand"
             disabled={!canCreateClass()}

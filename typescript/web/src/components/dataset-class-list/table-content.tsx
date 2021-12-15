@@ -14,17 +14,8 @@ import {
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { RiInformationLine } from "react-icons/ri";
 import { TableRow, IsDraggingContext } from "./table-row";
+import { LabelClassWithShortcut } from "./types";
 
-export type LabelClassWithShortcut = {
-  id: string;
-  index: number;
-  name: string;
-  color: string;
-  shortcut: string;
-  labelsAggregates: {
-    totalCount: number;
-  };
-};
 const InfoIcon = chakra(RiInformationLine);
 
 export const ClassTableContent = ({
@@ -37,7 +28,7 @@ export const ClassTableContent = ({
   classes: LabelClassWithShortcut[];
   onDragEnd: (result: any) => Promise<void>;
   onClickDelete: (classId: string | null) => void;
-  onClickEdit: (classId: string | null) => void;
+  onClickEdit: (item: LabelClassWithShortcut | null) => void;
   searchText: string;
 }) => {
   const [isDragging, setIsDragging] = useState(false);

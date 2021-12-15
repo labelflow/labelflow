@@ -10,3 +10,14 @@ export type DatasetClassesQueryResult = {
     }[];
   };
 };
+
+export type LabelClassWithShortcut = {
+  id: string;
+  index: number;
+  name: string;
+  color: string;
+  shortcut: string;
+  labelsAggregates: {
+    totalCount: number;
+  };
+};

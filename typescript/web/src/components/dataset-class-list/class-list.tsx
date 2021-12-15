@@ -6,7 +6,7 @@ import { ClassTableActions } from "./table-actions";
 import { ClassTableContent } from "./table-content";
 import { DeleteLabelClassModal } from "./delete-class-modal";
 import { UpsertClassModal } from "./upsert-class-modal";
-import { DatasetClassesQueryResult } from "./types";
+import { DatasetClassesQueryResult, LabelClassWithShortcut } from "./types";
 
 const datasetLabelClassesQuery = gql`
   query getDatasetLabelClasses($slug: String!, $workspaceSlug: String!) {
@@ -56,7 +56,8 @@ export const ClassesList = ({
 }) => {
   const client = useApolloClient();
   const [deleteClassId, setDeleteClassId] = useState<string | null>(null);
-  const [editClassId, setEditClassId] = useState<string | null>(null);
+  const [editClass, setEditClass] =
+    useState<LabelClassWithShortcut | null>(null);
   const [isCreatingClassLabel, setIsCreatingClassLabel] = useState(false);
   const [searchText, setSearchText] = useState("");
 
@@ -120,17 +121,17 @@ export const ClassesList = ({
         onClose={() => setDeleteClassId(null)}
       />
       <UpsertClassModal
-        isOpen={editClassId != null}
-        classId={editClassId}
-        onClose={() => setEditClassId(null)}
+        isOpen={editClass != null}
+        item={editClass}
+        onClose={() => setEditClass(null)}
         datasetId={datasetId}
         datasetSlug={datasetSlug}
       />
       {!loading && (
         <Box display="flex" flexDirection="column" w="full" p={8}>
-          <Heading
-            mb={5}
-          >{`Classes (${labelClassWithShortcut.length})`}</Heading>
+          <Heading mb={5}>
+            {`Classes (${labelClassWithShortcut.length})`}
+          </Heading>
           <ClassTableActions
             searchText={searchText}
             setSearchText={setSearchText}
@@ -143,7 +144,7 @@ export const ClassesList = ({
             classes={labelClassWithShortcut}
             onDragEnd={onDragEnd}
             onClickDelete={setDeleteClassId}
-            onClickEdit={setEditClassId}
+            onClickEdit={setEditClass}
             searchText={searchText}
           />
         </Box>

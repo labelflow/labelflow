@@ -99,8 +99,14 @@ const createLabelClassInTestDataset = async ({
   return labelClassId;
 };
 
+const fakeItem = {
+  id: "0d2fe56c-a533-4c41-b197-9a5e1787d2bd",
+  name: "fake name",
+  color: "#F87171",
+};
+
 it("Should render edit modal when a class id is passed", async () => {
-  renderModal({ classId: "classId" });
+  renderModal({ item: fakeItem });
   expect(screen.getByText("Edit Class")).toBeDefined();
 });
 
@@ -110,7 +116,7 @@ it("Should render create modal when a class id is not passed", async () => {
 });
 
 it("Should render a modal with an empty input and a disabled button", () => {
-  renderModal({ classId: "classId" });
+  renderModal({ item: fakeItem });
 
   const input = screen.getByLabelText(/Class name input/i) as HTMLInputElement;
   const button = screen.getByLabelText(/Update/i);
@@ -120,7 +126,7 @@ it("Should render a modal with an empty input and a disabled button", () => {
 });
 
 it("Should enable update button when class name is not empty", async () => {
-  renderModal({ classId: "classId" });
+  renderModal({ item: fakeItem });
   const input = screen.getByLabelText(/Class name input/i) as HTMLInputElement;
 
   fireEvent.change(input, { target: { value: "My new class" } });
@@ -195,8 +201,12 @@ it("Should update a dataset when the form is submitted", async () => {
     labelClassName,
     datasetId,
   });
+  const item = {
+    id: labelClassId,
+    color: "#F87171",
+  };
 
-  renderModal({ classId: labelClassId, datasetId, onClose });
+  renderModal({ item, datasetId, onClose });
 
   const input = screen.getByLabelText(/class name input/i) as HTMLInputElement;
   const button = screen.getByLabelText(/update/i);
@@ -226,7 +236,6 @@ it("Should update a dataset when the form is submitted", async () => {
         }
       `,
       variables: { id: labelClassId },
-      fetchPolicy: "no-cache",
     });
     expect(newLabelClassNameFromQuery).toEqual(newLabelClassName);
   });
