@@ -91,7 +91,7 @@ describe("Dataset class table row tests", () => {
     );
 
     fireEvent.click(screen.getByRole("button", { name: "Edit class" }));
-    expect(onClickEdit).toHaveBeenCalledWith("myClassId");
+    expect(onClickEdit).toHaveBeenCalledWith(classExample);
   });
 
   it("Should call function to delete name when delete button is clicked", async () => {

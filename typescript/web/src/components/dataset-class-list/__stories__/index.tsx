@@ -81,7 +81,8 @@ function reorder(
 export const ReorderableTable = () => {
   const [items, setItems] = useState(classes);
   const [deleteClassId, setDeleteClassId] = useState<string | null>(null);
-  const [editClassId, setEditClassId] = useState<string | null>(null);
+  const [editClass, setEditClass] =
+    useState<LabelClassWithShortcut | null>(null);
   const [isCreatingClassLabel, setIsCreatingClassLabel] = useState(false);
   const [searchText, setSearchText] = useState("");
 
@@ -103,9 +104,9 @@ export const ReorderableTable = () => {
   return (
     <>
       <UpsertClassModal
-        isOpen={editClassId != null}
-        classId={editClassId}
-        onClose={() => setEditClassId(null)}
+        isOpen={editClass != null}
+        item={editClass}
+        onClose={() => setEditClass(null)}
         datasetSlug=""
       />
       <DeleteLabelClassModal
@@ -128,7 +129,7 @@ export const ReorderableTable = () => {
           classes={items}
           onDragEnd={onDragEnd}
           onClickDelete={setDeleteClassId}
-          onClickEdit={setEditClassId}
+          onClickEdit={setEditClass}
           searchText={searchText}
         />
       </Box>
