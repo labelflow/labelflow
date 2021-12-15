@@ -1,4 +1,4 @@
-import { gql, useQuery, useLazyQuery, useApolloClient } from "@apollo/client";
+import { gql, useLazyQuery, useApolloClient } from "@apollo/client";
 import { v4 as uuid } from "uuid";
 import { useRouter } from "next/router";
 import {
@@ -104,6 +104,7 @@ export const UpsertClassModal = ({
       ) {
         id
         name
+        slug
         labelClasses {
           id
           name
@@ -112,11 +113,6 @@ export const UpsertClassModal = ({
       }
     }
   `;
-
-  const { data: queryData } = useQuery(datasetLabelClassesQuery, {
-    variables: { slug: datasetSlug, workspaceSlug },
-    skip: !datasetSlug || !workspaceSlug,
-  });
 
   const updateLabelClassWithOptimistic = useCallback(async () => {
     await client.mutate({
@@ -134,6 +130,10 @@ export const UpsertClassModal = ({
   }, [classId, className]);
 
   const createLabelClassWithOptimistic = useCallback(async () => {
+    const { data: queryData } = await client.query({
+      query: datasetLabelClassesQuery,
+      variables: { slug: datasetSlug, workspaceSlug },
+    });
     const newClassId = uuid();
     const labelClasses = queryData?.dataset?.labelClasses ?? [];
     const color =
@@ -162,7 +162,6 @@ export const UpsertClassModal = ({
               variables: { slug: datasetSlug, workspaceSlug },
             }
           );
-
           if (datasetCacheResult?.dataset == null) {
             throw new Error(`Missing dataset with slug ${datasetSlug}`);
           }
@@ -191,7 +190,7 @@ export const UpsertClassModal = ({
         }
       },
     });
-  }, [datasetId, queryData, className]);
+  }, [datasetId, className, datasetSlug, workspaceSlug]);
 
   const [
     queryExistingLabelClass,
