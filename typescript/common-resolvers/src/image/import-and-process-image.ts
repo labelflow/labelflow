@@ -2,8 +2,19 @@ import { v4 as uuidv4 } from "uuid";
 import { ImageCreateInput } from "@labelflow/graphql-types";
 import { Repository, DbImageCreateInput } from "../types";
 import { getOrigin } from "../utils/get-origin";
-import { getImageFileKey, getImageName } from "./utils";
+import {
+  getImageFileKey,
+  getImageName,
+  throwIfInvalidImageInputs,
+} from "./utils";
 
+/**
+ * Downloads the image from the external url and upload it
+ * into our storage.
+ *
+ * We could however directly use the external url,
+ * but be would rely on this external storage server.
+ */
 const importFromExternalUrl = async (
   externalUrl: string,
   getImageFileKeyFromMimeType: (mimeType: string) => string,
@@ -42,12 +53,14 @@ const importFromExternalUrl = async (
     );
   }
 
-  // We decided to store the image in our file storage even if it comes from an external url.
   await repository.upload.put(uploadTarget.uploadUrl, blob, req);
 
   return uploadTarget.downloadUrl;
 };
 
+/**
+ * Simply put the given file into our storage.
+ */
 const importFromFile = async (
   file: any,
   getImageFileKeyFromMimeType: (mimeType: string) => string,
@@ -73,13 +86,12 @@ const importFromFile = async (
 };
 
 /**
- * Very important function, which processes images (download from external URL if needed, probe metadata, create and upload thumbnails, etc.)
- * @param image ImageCreateInput
- * @param repository
- * @param req
- * @returns
+ * This functions does multiple things:
+ * - It ensures that the inputs are corrects
+ * - It imports the image to the storage if necessary
+ * - It processes the image (generates thumbnails, validate size)
  */
-export const getImageEntityFromMutationArgs = async (
+export const importAndProcessImage = async (
   { image, workspaceId }: { image: ImageCreateInput; workspaceId: string },
   { repository, req }: { repository: Repository; req?: Request }
 ) => {
@@ -102,15 +114,16 @@ export const getImageEntityFromMutationArgs = async (
     thumbnail500Url,
   } = image;
 
+  throwIfInvalidImageInputs({ file, externalUrl, url });
+
   const now = image?.createdAt ?? new Date().toISOString();
   const imageId = id ?? uuidv4();
-
   const origin = getOrigin(req);
-
-  let finalUrl: string | undefined;
 
   const getImageFileKeyFromMimeType = (mimeType: string) =>
     getImageFileKey(imageId, workspaceId, datasetId, mimeType);
+
+  let finalUrl: string | undefined;
 
   if (url) {
     // We don't need to perform anything else, we can use the provided URL

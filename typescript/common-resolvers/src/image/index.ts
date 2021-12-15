@@ -11,7 +11,7 @@ import type {
 } from "@labelflow/graphql-types";
 import { Context, DbImage, DbImageCreateInput, Repository } from "../types";
 import { throwIfResolvesToNil } from "../utils/throw-if-resolves-to-nil";
-import { getImageEntityFromMutationArgs } from "./get-image-entity-from-mutation-args";
+import { importAndProcessImage } from "./import-and-process-image";
 import { throwIfInvalidImageInputs } from "./utils";
 
 const getImageById = async (
@@ -72,7 +72,7 @@ const createImage = async (
   args: MutationCreateImageArgs,
   { repository, req, user }: Context
 ): Promise<DbImage> => {
-  const { file, url, externalUrl, datasetId } = args.data;
+  const { datasetId } = args.data;
 
   // Since we don't have any constraint checks with Dexie
   // we need to ensure that the datasetId matches some
@@ -81,8 +81,6 @@ const createImage = async (
     `The dataset id ${datasetId} doesn't exist.`,
     repository.dataset.get
   )({ id: datasetId }, user);
-
-  throwIfInvalidImageInputs({ file, externalUrl, url });
 
   const { workspaceSlug } = await repository.dataset.get(
     { id: datasetId },
@@ -95,7 +93,7 @@ const createImage = async (
     user
   );
 
-  const newImageEntity = await getImageEntityFromMutationArgs(
+  const newImageEntity = await importAndProcessImage(
     { image: args.data, workspaceId },
     { repository, req }
   );
@@ -137,31 +135,13 @@ const createManyImages = async (
     user
   )) as { id: string };
 
-  // eslint-disable-next-line @typescript-eslint/no-shadow
-  const performOne = async (image: ImageCreateInput) => {
-    const { file, url, externalUrl } = image;
-
-    if (
-      !(
-        (!file && !externalUrl && url) ||
-        (!file && externalUrl && !url) ||
-        (file && !externalUrl && !url)
-      )
-    ) {
-      throw new Error(
-        "Image creation upload must include either a `file` field of type `Upload`, or a `url` field of type `String`, or a `externalUrl` field of type `String`"
-      );
-    }
-
-    return await getImageEntityFromMutationArgs(
-      { image, workspaceId },
-      { repository, req }
-    );
-  };
-
   const imagesToCreate: DbImageCreateInput[] = await Promise.all(
-    // eslint-disable-next-line @typescript-eslint/no-shadow
-    images.map((image) => performOne({ ...image, datasetId }))
+    images.map((imageToImport) =>
+      importAndProcessImage(
+        { image: { ...imageToImport, datasetId }, workspaceId },
+        { repository, req }
+      )
+    )
   );
 
   const imageIds = await repository.image.addMany(

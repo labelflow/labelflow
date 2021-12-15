@@ -12,7 +12,7 @@ import {
   QueryImagesArgs,
 } from "@labelflow/graphql-types";
 import { Context, DbDataset, Repository } from "./types";
-import { getImageEntityFromMutationArgs } from "./image/get-image-entity-from-mutation-args";
+import { importAndProcessImage } from "./image/import-and-process-image";
 import {
   tutorialDatasets,
   tutorialImages,
@@ -211,7 +211,7 @@ const createDemoDataset = async (
 
   await Promise.all(
     tutorialImages.map(async (image, index) => {
-      const imageEntity = await getImageEntityFromMutationArgs(
+      const imageEntity = await importAndProcessImage(
         {
           image: {
             ...image,
