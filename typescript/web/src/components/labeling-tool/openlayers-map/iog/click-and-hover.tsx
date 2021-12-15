@@ -182,8 +182,8 @@ export const HandleIogClick = () => {
 export const HandleIogHover = () => {
   const map = useMap();
   const selectedLabelId = useLabelingStore((state) => state.selectedLabelId);
-  useEffect(() => {
-    const handler = function (event: MapBrowserEvent<UIEvent>) {
+  const handler = useCallback(
+    (event: MapBrowserEvent<UIEvent>) => {
       const { map: mapEvent } = event;
       if (!map) return;
       const idOfHoveredFeature = mapEvent.forEachFeatureAtPixel(
@@ -204,13 +204,16 @@ export const HandleIogHover = () => {
       ) {
         map.getViewport().style.cursor = `url("/static/graphics/iog-add.svg") 6 6, auto`;
       }
-    };
+    },
+    [map, selectedLabelId]
+  );
+  useEffect(() => {
     map?.on("pointermove", handler);
     return () => {
       if (!map) return;
       map.un("pointermove", handler);
       map.getViewport().style.cursor = "auto";
     };
-  }, [map, selectedLabelId]);
+  }, [handler, map, selectedLabelId]);
   return null;
 };
