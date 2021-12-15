@@ -9,7 +9,7 @@
     "start": "docker compose up --detach && sleep 10 && yarn deploy",
     "stop": "docker compose down --volumes --remove-orphans",
     "deploy": "prisma migrate deploy",
-    "deploy:vercel":"if [ -n \"$MIGRATE_DATABASE\" ]; then POSTGRES_EXTERNAL_URL=$MIGRATE_DATABASE prisma migrate deploy; else echo 'Skipping migration. No $MIGRATE_DATABASE'; fi",
+    "deploy:vercel": "if [ -n \"$MIGRATE_DATABASE\" ]; then POSTGRES_EXTERNAL_URL=$MIGRATE_DATABASE prisma migrate deploy; else echo 'Skipping migration. No $MIGRATE_DATABASE'; fi",
     "dev:push": "prisma db push",
     "generate": "prisma generate",
     "resolve": "prisma migrate resolve --applied  20210601170000_add_strapi"

@@ -4,7 +4,7 @@
   "scripts": {
     "dev": "next",
     "build": "cd ../db && yarn generate && cd ../web && next build",
-    "build:vercel":"cd ../db && yarn deploy:vercel && yarn generate && cd ../web && next build",
+    "build:vercel": "cd ../db && yarn deploy:vercel && yarn generate && cd ../web && next build",
     "start": "next start",
     "type-check": "tsc",
     "bundlewatch": "bundlewatch --config ./bundlewatch.config.js",
