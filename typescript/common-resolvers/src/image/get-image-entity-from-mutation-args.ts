@@ -15,11 +15,6 @@ const importFromExternalUrl = async (
   headers.set("Accept", "image/tiff,image/jpeg,image/png,image/*,*/*;q=0.8");
   headers.set("Sec-Fetch-Dest", "image");
 
-  // TODO: Investigate this. It looks like a major security issue.
-  if ((req?.headers as any)?.cookie) {
-    headers.set("Cookie", (req?.headers as any)?.cookie);
-  }
-
   const fetchResult = await fetch(externalUrl, {
     method: "GET",
     mode: "cors",
