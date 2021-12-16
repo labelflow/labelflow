@@ -88,7 +88,7 @@ const createLabelClass = async (
   return id;
 };
 
-describe("Classification", () => {
+describe("Classification (local)", () => {
   let datasetId!: string;
   let datasetSlug!: string;
   let imageId!: string;

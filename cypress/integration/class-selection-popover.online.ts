@@ -105,7 +105,7 @@ const createLabelClass = async (
   return id;
 };
 
-describe("Class selection popover", () => {
+describe("Class selection popover (online)", () => {
   let datasetId: string;
   let datasetSlug: string;
   let imageId: string;

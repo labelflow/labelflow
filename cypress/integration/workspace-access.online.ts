@@ -1,4 +1,4 @@
-describe("Online workspaces access", () => {
+describe("Online workspaces access (online)", () => {
   it("Should ask for sign up modal when not signed in and creating a workspace", () => {
     cy.setCookie("hasUserTriedApp", "false");
     cy.setCookie("consentedCookies", "true");

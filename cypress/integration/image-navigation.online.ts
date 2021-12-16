@@ -1,6 +1,6 @@
 import { declareImageNavigationTests } from "./image-navigation.common";
 
-describe("Image Navigation", () => {
+describe("Image Navigation (online)", () => {
   beforeEach(() => {
     cy.setCookie("consentedCookies", "true");
     cy.task("performLogin").then((token) => {

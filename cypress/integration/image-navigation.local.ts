@@ -27,7 +27,7 @@ const createDataset = async (name: string) => {
   return slug;
 };
 
-describe("Image Navigation", () => {
+describe("Image Navigation (local)", () => {
   let datasetSlug: string;
   beforeEach(() => {
     cy.setCookie("consentedCookies", "true");

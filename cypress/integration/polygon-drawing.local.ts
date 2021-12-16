@@ -88,7 +88,7 @@ const createLabelClass = async (
   return id;
 };
 
-describe("Polygon drawing", () => {
+describe("Polygon drawing (local)", () => {
   let datasetId: string;
   let datasetSlug: string;
   let imageId: string;

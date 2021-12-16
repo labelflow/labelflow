@@ -1,6 +1,6 @@
 import { declareGoldenPathTests } from "./golden-path.common";
 
-describe("Golden path", () => {
+describe("Golden path (online)", () => {
   beforeEach(() => {
     // Login and create a workspace with datasets in it
     cy.task("performLogin").then((token) => {
