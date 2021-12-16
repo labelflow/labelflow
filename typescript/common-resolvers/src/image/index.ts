@@ -1,7 +1,6 @@
 import "isomorphic-fetch";
 
 import type {
-  ImageCreateInput,
   MutationCreateImageArgs,
   MutationCreateManyImagesArgs,
   MutationUpdateImageArgs,
@@ -12,7 +11,6 @@ import type {
 import { Context, DbImage, DbImageCreateInput, Repository } from "../types";
 import { throwIfResolvesToNil } from "../utils/throw-if-resolves-to-nil";
 import { importAndProcessImage } from "./import-and-process-image";
-import { throwIfInvalidImageInputs } from "./utils";
 
 const getImageById = async (
   id: string,
