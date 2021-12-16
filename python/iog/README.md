@@ -21,9 +21,10 @@ source '.venv/bin/activate'
 ```
 
 ### Install requirements
-Install the requirements on this fresh virtual environment.
 
-```console 
+Make sure pip is at the latest version, then install the requirements on this fresh virtual environment.
+
+```console
 pip install -r requirements.txt
 ```
 
