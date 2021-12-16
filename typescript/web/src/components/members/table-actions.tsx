@@ -12,6 +12,7 @@ import {
   Alert,
   AlertIcon,
   AlertTitle,
+  useColorModeValue as mode,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { IoSearch } from "react-icons/io5";
@@ -53,14 +54,17 @@ export const TableActions = ({
           <FormControl minW={{ md: "320px" }} id="search">
             <InputGroup size="sm">
               <FormLabel srOnly>Find a member</FormLabel>
-              <InputLeftElement pointerEvents="none" color="gray.400">
+              <InputLeftElement
+                pointerEvents="none"
+                color={mode("gray.400", "gray.200")}
+              >
                 <SearchIcon />
               </InputLeftElement>
               <Input
                 rounded="base"
                 type="search"
                 placeholder="Find a member"
-                bgColor="#FFFFFF"
+                bgColor={mode("white", "gray.800")}
                 value={searchText}
                 onChange={(e) => setSearchText(e.target.value)}
               />
@@ -69,8 +73,8 @@ export const TableActions = ({
         </HStack>
         <ButtonGroup size="sm" variant="outline">
           <Button
-            backgroundColor="brand.500"
-            color="#ffffff"
+            colorScheme="brand"
+            variant="solid"
             iconSpacing="1"
             leftIcon={<RiAddFill fontSize="1.25em" />}
             onClick={() => setIsNewMemberModalOpen(true)}
