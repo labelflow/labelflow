@@ -75,7 +75,7 @@ export const keymap: Keymap = {
   },
   toolIog: {
     key: "a",
-    description: "Auto annotate",
+    description: "Auto Polygon",
     category: "Tools",
   },
   changeSelectionMode: {
