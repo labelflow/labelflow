@@ -3,31 +3,7 @@ import { gql } from "@apollo/client";
 import { LabelCreateInput, LabelType } from "../../typescript/graphql-types";
 import { distantDatabaseClient as client } from "../../typescript/web/src/connectors/apollo-client/client";
 import { declareClassSelectionPopoverTests } from "./class-selection-popover.common";
-
-const createDataset = async (name: string) => {
-  const mutationResult = await client.mutate({
-    mutation: gql`
-      mutation createDataset($name: String) {
-        createDataset(
-          data: { name: $name, workspaceSlug: "cypress-test-workspace" }
-        ) {
-          id
-          slug
-        }
-      }
-    `,
-    variables: {
-      name,
-    },
-  });
-
-  const {
-    data: {
-      createDataset: { id, slug },
-    },
-  } = mutationResult;
-  return { id, slug };
-};
+import { createDataset } from "./graphql-definitions.common";
 
 async function createImage(url: string, datasetId: string) {
   const mutationResult = await client.mutate({
@@ -115,7 +91,11 @@ describe("Class selection popover (online)", () => {
       cy.setCookie("next-auth.session-token", token as string);
     });
     cy.task("createWorkspaceAndDatasets").then(async () => {
-      const createResult = await createDataset("cypress test dataset");
+      const createResult = await createDataset({
+        name: "cypress test dataset",
+        workspaceSlug: "cypress-test-workspace",
+        client,
+      });
       datasetId = createResult.id;
       datasetSlug = createResult.slug;
       const { id } = await createImage(
