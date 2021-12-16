@@ -3,33 +3,7 @@ import { gql } from "@apollo/client";
 import { LabelCreateInput, LabelType } from "../../typescript/graphql-types";
 import { distantDatabaseClient as client } from "../../typescript/web/src/connectors/apollo-client/client";
 import { declareClassSelectionPopoverTests } from "./class-selection-popover.common";
-import { createDataset } from "./graphql-definitions.common";
-
-async function createImage(url: string, datasetId: string) {
-  const mutationResult = await client.mutate({
-    mutation: gql`
-      mutation createImage($url: String, $datasetId: ID!) {
-        createImage(data: { url: $url, datasetId: $datasetId }) {
-          id
-          name
-          width
-          height
-          url
-        }
-      }
-    `,
-    variables: {
-      datasetId,
-      url,
-    },
-  });
-
-  const {
-    data: { createImage: image },
-  } = mutationResult;
-
-  return image;
-}
+import { createDataset, createImage } from "./graphql-definitions.common";
 
 const createLabel = (data: LabelCreateInput) => {
   return client.mutate({
@@ -98,10 +72,11 @@ describe("Class selection popover (online)", () => {
       });
       datasetId = createResult.id;
       datasetSlug = createResult.slug;
-      const { id } = await createImage(
-        "https://images.unsplash.com/photo-1579513141590-c597876aefbc?auto=format&fit=crop&w=882&q=80",
-        datasetId
-      );
+      const { id } = await createImage({
+        url: "https://images.unsplash.com/photo-1579513141590-c597876aefbc?auto=format&fit=crop&w=882&q=80",
+        datasetId,
+        client,
+      });
       imageId = id;
       const labelClassId = await createLabelClass(
         "A new class",

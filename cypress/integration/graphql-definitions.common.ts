@@ -32,3 +32,37 @@ export const createDataset = async ({
 
   return { id, slug };
 };
+
+export const createImage = async ({
+  url,
+  datasetId,
+  client,
+}: {
+  url: string;
+  datasetId: string;
+  client: ApolloClient<NormalizedCacheObject>;
+}) => {
+  const mutationResult = await client.mutate({
+    mutation: gql`
+      mutation createImage($url: String, $datasetId: ID!) {
+        createImage(data: { url: $url, datasetId: $datasetId }) {
+          id
+          name
+          width
+          height
+          url
+        }
+      }
+    `,
+    variables: {
+      datasetId,
+      url,
+    },
+  });
+
+  const {
+    data: { createImage: image },
+  } = mutationResult;
+
+  return image;
+};

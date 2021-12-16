@@ -2,33 +2,7 @@ import { gql } from "@apollo/client";
 
 import { client } from "../../typescript/web/src/connectors/apollo-client/schema-client";
 import { declareClassificationTests } from "./classification.common";
-import { createDataset } from "./graphql-definitions.common";
-
-async function createImage(url: string, datasetId: string) {
-  const mutationResult = await client.mutate({
-    mutation: gql`
-      mutation createImage($url: String, $datasetId: ID!) {
-        createImage(data: { url: $url, datasetId: $datasetId }) {
-          id
-          name
-          width
-          height
-          url
-        }
-      }
-    `,
-    variables: {
-      datasetId,
-      url,
-    },
-  });
-
-  const {
-    data: { createImage: image },
-  } = mutationResult;
-
-  return image;
-}
+import { createDataset, createImage } from "./graphql-definitions.common";
 
 const createLabelClass = async (
   name: String,
@@ -80,10 +54,11 @@ describe("Classification (local)", () => {
       datasetId = createResult.id;
       datasetSlug = createResult.slug;
 
-      const { id } = await createImage(
-        "https://images.unsplash.com/photo-1579513141590-c597876aefbc?auto=format&fit=crop&w=882&q=80",
-        datasetId
-      );
+      const { id } = await createImage({
+        url: "https://images.unsplash.com/photo-1579513141590-c597876aefbc?auto=format&fit=crop&w=882&q=80",
+        datasetId,
+        client,
+      });
       imageId = id;
 
       await createLabelClass("Rocket", "#F87171", datasetId);
