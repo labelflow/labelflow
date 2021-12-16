@@ -172,7 +172,14 @@ export const declareClassSelectionPopoverTests = ({
     const datasetId = getDatasetId();
     const datasetSlug = getDatasetSlug();
     const imageId = getImageId();
-    cy.wrap(createLabelClass("My new class", "#65A30D", datasetId, client));
+    cy.wrap(
+      createLabelClass({
+        name: "My new class",
+        color: "#65A30D",
+        datasetId,
+        client,
+      })
+    );
     // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
     cy.visit(
       `/${workspaceSlug}/datasets/${datasetSlug}/images/${imageId}?modal-welcome=closed&modal-update-service-worker=update`
