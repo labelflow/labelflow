@@ -131,6 +131,7 @@ export const createUpdateIogLabelEffect = (
     const { label: originalLabel } = labelResponse;
     const optimisticResponse = {
       updateIogLabel: {
+        ...originalLabel,
         id: labelId,
         smartToolInput: {
           x: x ?? originalLabel?.smartToolInput?.x,
