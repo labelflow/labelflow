@@ -16,6 +16,15 @@ RUN yarn install --immutable
 # Build the whole web application and its dependencies
 FROM common AS web-builder
 
+# Propagate client-side environment variables since their value is inlined at
+# build time with NextJS
+ARG NEXT_PUBLIC_VERCEL_URL
+ARG NEXT_PUBLIC_IOG_API_ENDPOINT
+RUN cat > typescript/web/.env.local << EOF\
+NEXT_PUBLIC_VERCEL_URL=${NEXT_PUBLIC_VERCEL_URL}\\n\
+NEXT_PUBLIC_IOG_API_ENDPOINT=${NEXT_PUBLIC_IOG_API_ENDPOINT}\\n\
+EOF
+
 # Increase default maximum the default 512MB memory allowed since the build
 # proceess needs at-least 4GB.
 # Don't forget to increase your Docker host memory to a greater value!
