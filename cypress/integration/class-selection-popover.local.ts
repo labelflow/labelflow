@@ -1,59 +1,12 @@
-import { gql } from "@apollo/client";
-
-import { LabelCreateInput, LabelType } from "../../typescript/graphql-types";
+import { LabelType } from "../../typescript/graphql-types";
 import { client } from "../../typescript/web/src/connectors/apollo-client/schema-client";
 import { declareClassSelectionPopoverTests } from "./class-selection-popover.common";
-import { createDataset, createImage } from "./graphql-definitions.common";
-
-const createLabel = (data: LabelCreateInput) => {
-  return client.mutate({
-    mutation: gql`
-      mutation createLabel($data: LabelCreateInput!) {
-        createLabel(data: $data) {
-          id
-        }
-      }
-    `,
-    variables: {
-      data,
-    },
-  });
-};
-
-const createLabelClass = async (
-  name: String,
-  color = "#ffffff",
-  datasetId: string
-) => {
-  const {
-    data: {
-      createLabelClass: { id },
-    },
-  } = await client.mutate({
-    mutation: gql`
-      mutation createLabelClass(
-        $name: String!
-        $color: String!
-        $datasetId: ID!
-      ) {
-        createLabelClass(
-          data: { name: $name, color: $color, datasetId: $datasetId }
-        ) {
-          id
-          name
-          color
-        }
-      }
-    `,
-    variables: {
-      name,
-      color,
-      datasetId,
-    },
-  });
-
-  return id;
-};
+import {
+  createDataset,
+  createImage,
+  createLabel,
+  createLabelClass,
+} from "./graphql-definitions.common";
 
 describe("Class selection popover (local)", () => {
   let datasetId!: string;
@@ -77,27 +30,31 @@ describe("Class selection popover (local)", () => {
       });
       imageId = id;
 
-      const labelClassId = await createLabelClass(
-        "A new class",
-        "#F87171",
-        datasetId
-      );
+      const labelClassId = await createLabelClass({
+        name: "A new class",
+        color: "#F87171",
+        datasetId,
+        client,
+      });
       await createLabel({
-        imageId,
-        labelClassId,
-        type: LabelType.Box,
-        geometry: {
-          type: LabelType.Polygon,
-          coordinates: [
-            [
-              [0, 900],
-              [900, 900],
-              [900, 1500],
-              [0, 1500],
-              [0, 900],
+        data: {
+          imageId,
+          labelClassId,
+          type: LabelType.Box,
+          geometry: {
+            type: LabelType.Polygon,
+            coordinates: [
+              [
+                [0, 900],
+                [900, 900],
+                [900, 1500],
+                [0, 1500],
+                [0, 900],
+              ],
             ],
-          ],
+          },
         },
+        client,
       });
     });
   });

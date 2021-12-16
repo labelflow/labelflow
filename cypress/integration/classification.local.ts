@@ -1,43 +1,10 @@
-import { gql } from "@apollo/client";
-
 import { client } from "../../typescript/web/src/connectors/apollo-client/schema-client";
 import { declareClassificationTests } from "./classification.common";
-import { createDataset, createImage } from "./graphql-definitions.common";
-
-const createLabelClass = async (
-  name: String,
-  color = "#ffffff",
-  datasetId: string
-) => {
-  const {
-    data: {
-      createLabelClass: { id },
-    },
-  } = await client.mutate({
-    mutation: gql`
-      mutation createLabelClass(
-        $name: String!
-        $color: String!
-        $datasetId: ID!
-      ) {
-        createLabelClass(
-          data: { name: $name, color: $color, datasetId: $datasetId }
-        ) {
-          id
-          name
-          color
-        }
-      }
-    `,
-    variables: {
-      name,
-      color,
-      datasetId,
-    },
-  });
-
-  return id;
-};
+import {
+  createDataset,
+  createImage,
+  createLabelClass,
+} from "./graphql-definitions.common";
 
 describe("Classification (local)", () => {
   let datasetId!: string;
@@ -61,7 +28,12 @@ describe("Classification (local)", () => {
       });
       imageId = id;
 
-      await createLabelClass("Rocket", "#F87171", datasetId);
+      await createLabelClass({
+        name: "Rocket",
+        color: "#F87171",
+        datasetId,
+        client,
+      });
     });
   });
 

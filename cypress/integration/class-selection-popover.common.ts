@@ -1,40 +1,5 @@
-import { ApolloClient, gql, NormalizedCacheObject } from "@apollo/client";
-
-const createLabelClass = async (
-  name: String,
-  color = "#ffffff",
-  datasetId: string,
-  client: ApolloClient<NormalizedCacheObject>
-) => {
-  const {
-    data: {
-      createLabelClass: { id },
-    },
-  } = await client.mutate({
-    mutation: gql`
-      mutation createLabelClass(
-        $name: String!
-        $color: String!
-        $datasetId: ID!
-      ) {
-        createLabelClass(
-          data: { name: $name, color: $color, datasetId: $datasetId }
-        ) {
-          id
-          name
-          color
-        }
-      }
-    `,
-    variables: {
-      name,
-      color,
-      datasetId,
-    },
-  });
-
-  return id;
-};
+import { ApolloClient, NormalizedCacheObject } from "@apollo/client";
+import { createLabelClass } from "./graphql-definitions.common";
 
 export const declareClassSelectionPopoverTests = ({
   client,
@@ -110,7 +75,14 @@ export const declareClassSelectionPopoverTests = ({
     const datasetId = getDatasetId();
     const datasetSlug = getDatasetSlug();
     const imageId = getImageId();
-    cy.wrap(createLabelClass("My new class", "#65A30D", datasetId, client));
+    cy.wrap(
+      createLabelClass({
+        name: "My new class",
+        color: "#65A30D",
+        datasetId,
+        client,
+      })
+    );
 
     // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
     cy.visit(

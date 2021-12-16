@@ -1,4 +1,5 @@
 import { ApolloClient, gql, NormalizedCacheObject } from "@apollo/client";
+import { LabelCreateInput } from "../../typescript/graphql-types";
 
 export const createDataset = async ({
   client,
@@ -65,4 +66,66 @@ export const createImage = async ({
   } = mutationResult;
 
   return image;
+};
+
+export const createLabel = ({
+  data,
+  client,
+}: {
+  data: LabelCreateInput;
+  client: ApolloClient<NormalizedCacheObject>;
+}) => {
+  return client.mutate({
+    mutation: gql`
+      mutation createLabel($data: LabelCreateInput!) {
+        createLabel(data: $data) {
+          id
+        }
+      }
+    `,
+    variables: {
+      data,
+    },
+  });
+};
+
+export const createLabelClass = async ({
+  name,
+  color = "#ffffff",
+  datasetId,
+  client,
+}: {
+  name: string;
+  color: string;
+  datasetId: string;
+  client: ApolloClient<NormalizedCacheObject>;
+}) => {
+  const {
+    data: {
+      createLabelClass: { id },
+    },
+  } = await client.mutate({
+    mutation: gql`
+      mutation createLabelClass(
+        $name: String!
+        $color: String!
+        $datasetId: ID!
+      ) {
+        createLabelClass(
+          data: { name: $name, color: $color, datasetId: $datasetId }
+        ) {
+          id
+          name
+          color
+        }
+      }
+    `,
+    variables: {
+      name,
+      color,
+      datasetId,
+    },
+  });
+
+  return id;
 };
