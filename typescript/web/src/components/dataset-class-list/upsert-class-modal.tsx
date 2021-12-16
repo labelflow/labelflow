@@ -93,7 +93,7 @@ export const UpsertClassModal = ({
   const handleInputValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setClassNameInputValue(e.target.value);
   };
-  const className = classNameInputValue.trim();
+  const className = classNameInputValue?.trim() ?? "";
 
   const workspaceSlug = useRouter()?.query?.workspaceSlug as string | undefined;
 
@@ -259,6 +259,8 @@ export const UpsertClassModal = ({
     if (!isOpen) {
       setClassNameInputValue("");
       setErrorMessage("");
+    } else if (item) {
+      setClassNameInputValue(item.name);
     }
   }, [isOpen]);
 

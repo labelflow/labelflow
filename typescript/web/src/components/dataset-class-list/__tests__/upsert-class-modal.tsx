@@ -115,14 +115,14 @@ it("Should render create modal when a class id is not passed", async () => {
   expect(screen.getByText("New Class")).toBeDefined();
 });
 
-it("Should render a modal with an empty input and a disabled button", () => {
+it("Should render a modal with a prefilled input and an enabled button", () => {
   renderModal({ item: fakeItem });
 
   const input = screen.getByLabelText(/Class name input/i) as HTMLInputElement;
   const button = screen.getByLabelText(/Update/i);
 
-  expect(input.value).toEqual("");
-  expect(button).toHaveAttribute("disabled");
+  expect(input.value).toEqual(fakeItem.name);
+  expect(button).not.toHaveAttribute("disabled");
 });
 
 it("Should enable update button when class name is not empty", async () => {
@@ -212,6 +212,7 @@ it("Should update a dataset when the form is submitted", async () => {
   const button = screen.getByLabelText(/update/i);
 
   userEvent.click(input);
+  userEvent.clear(input);
   userEvent.type(input, newLabelClassName);
   await waitFor(() => {
     expect(input.value).toBe(newLabelClassName);

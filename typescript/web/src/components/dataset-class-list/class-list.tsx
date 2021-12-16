@@ -128,7 +128,14 @@ export const ClassesList = ({
         datasetSlug={datasetSlug}
       />
       {!loading && (
-        <Box display="flex" flexDirection="column" w="full" p={8}>
+        <Box
+          display="flex"
+          flexDirection="column"
+          w="full"
+          p={8}
+          maxWidth="5xl"
+          flexGrow={1}
+        >
           <Heading mb={5}>
             {`Classes (${labelClassWithShortcut.length})`}
           </Heading>

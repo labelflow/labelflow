@@ -6,7 +6,9 @@ import {
   Flex,
   chakra,
   IconButton,
+  Text,
   useColorModeValue as mode,
+  Tooltip,
 } from "@chakra-ui/react";
 import { RiCheckboxBlankCircleFill } from "react-icons/ri";
 import { VscGripper } from "react-icons/vsc";
@@ -92,6 +94,7 @@ class TableCell extends React.Component<TableCellProps> {
     const { children, isSmall } = this.props;
     return (
       <Td
+        maxWidth="md"
         p={isSmall ? 0 : undefined}
         w={isSmall ? 0 : undefined}
         ref={this.ref}
@@ -154,14 +157,18 @@ export const TableRow = ({
                 ml="2"
                 mr="2"
               />
-              {className}
+              <Tooltip placement="top" label={className}>
+                <Text isTruncated>{className}</Text>
+              </Tooltip>
             </Flex>
           </TableCell>
           <TableCell isDragOccurring={isDragging}>{occurences}</TableCell>
           <TableCell isDragOccurring={isDragging}>
-            <Kbd flexShrink={0} flexGrow={0} justifyContent="center" mr="1">
-              {shortcut}
-            </Kbd>
+            {shortcut && (
+              <Kbd flexShrink={0} flexGrow={0} justifyContent="center" mr="1">
+                {shortcut}
+              </Kbd>
+            )}
           </TableCell>
           <TableCell isDragOccurring={isDragging}>
             <Flex justifyContent="flex-end">

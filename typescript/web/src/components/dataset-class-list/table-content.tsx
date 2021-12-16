@@ -42,7 +42,7 @@ export const ClassTableContent = ({
   );
 
   return (
-    <Table my="8" borderWidth="1px">
+    <Table my="8" borderWidth="1px" overflowX="clip" maxWidth="5xl">
       <Thead bg={mode("gray.50", "gray.800")}>
         <Tr>
           <Th whiteSpace="nowrap" scope="col" w={0} p={0} />
@@ -56,8 +56,8 @@ export const ClassTableContent = ({
             <Flex justifyContent="flex-start" alignItems="center">
               <span>Shortcut</span>
               <Tooltip
-                label="A keyboard shortcut is available for the first 9 classes"
-                aria-label="A keyboard shortcut is available for the first 9 classes"
+                label="A keyboard shortcut is available for the first 10 classes"
+                aria-label="A keyboard shortcut is available for the first 10 classes"
               >
                 {/* See this PR for more info on why using a span is necessary https://github.com/chakra-ui/chakra-ui/pull/2882 */}
                 <span>
