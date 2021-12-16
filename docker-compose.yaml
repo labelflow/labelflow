@@ -14,7 +14,8 @@ services:
   db_migrate:
     build:
       context: .
-      dockerfile: ./typescript/db/Dockerfile.migrate
+      dockerfile: ./typescript/web/Dockerfile
+      target: db-migrate
     environment:
       - POSTGRES_EXTERNAL_URL=postgresql://${POSTGRES_ADMIN_USER:-admin}:${POSTGRES_ADMIN_PASSWORD:-admin}@db:5432/${POSTGRES_DB:-labelflow}?schema=public
     depends_on:

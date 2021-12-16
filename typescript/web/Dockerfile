@@ -3,15 +3,18 @@
 # Inspired from: https://github.com/vercel/next.js/blob/canary/examples/with-docker/Dockerfile
 
 ################################################################################
-# Build the whole web application and its dependencies
-FROM node:14 AS builder
+# Common layer between the web-builder and the db-migrate images
+FROM node:14 AS common
 
 WORKDIR /app
 
-# Maybe only copy what's needed
 COPY . .
 
 RUN yarn install --immutable
+
+################################################################################
+# Build the whole web application and its dependencies
+FROM common AS web-builder
 
 # Increase default maximum the default 512MB memory allowed since the build
 # proceess needs at-least 4GB.
@@ -41,11 +44,11 @@ ENV NEXTAUTH_URL "http://localhost:${PORT}"
 RUN addgroup --gecos 1001 --system nodejs
 RUN adduser --system labelflow --uid 1001
 
-# COPY --from=builder /app/typescript/web/next.config.js ./
-COPY --from=builder /app/typescript/web/public ./public
-COPY --from=builder --chown=labelflow:nodejs /app/typescript/web/.next ./.next
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/package.json ./package.json
+# COPY --from=web-builder /app/typescript/web/next.config.js ./
+COPY --from=web-builder /app/typescript/web/public ./public
+COPY --from=web-builder --chown=labelflow:nodejs /app/typescript/web/.next ./.next
+COPY --from=web-builder /app/node_modules ./node_modules
+COPY --from=web-builder /app/package.json ./package.json
 
 USER labelflow
 
@@ -82,6 +85,18 @@ RUN apt-get update && \
 COPY ./docker-compose.dev.nginx /etc/nginx/sites-enabled/
 
 CMD ["bash", "-c", "service nginx start && node_modules/.bin/next start"]
+
+################################################################################
+# Docker image in-charge of running DB migrations as a job
+FROM node:14 AS db-migrate
+WORKDIR /app
+COPY --from=common /app/typescript/db ./typescript/db
+COPY --from=common /app/node_modules ./node_modules
+COPY --from=common /app/package.json ./package.json
+WORKDIR /app/typescript/db
+RUN yarn prisma generate
+ENV POSTGRES_EXTERNAL_URL="${POSTGRES_EXTERNAL_URL}"
+CMD ["yarn", "prisma", "migrate", "dev"]
 
 ################################################################################
 # Re-expose the standard version at the end since Docker takes the latest image
