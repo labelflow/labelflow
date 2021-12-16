@@ -9,18 +9,18 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - db_home:/var/lib/postgresql/data
-  
-  db-migrate:
-    build: 
+      - "db:/var/lib/postgresql/data"
+
+  db_migrate:
+    build:
       context: .
       dockerfile: ./typescript/db/Dockerfile.migrate
     environment:
       - POSTGRES_EXTERNAL_URL=postgresql://${POSTGRES_ADMIN_USER:-admin}:${POSTGRES_ADMIN_PASSWORD:-admin}@db:5432/${POSTGRES_DB:-labelflow}?schema=public
-    depends_on: 
+    depends_on:
       - db
 
-  storage:
+  minio:
     image: minio/minio
     ports:
       - "9000:9000"
@@ -29,30 +29,30 @@ services:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin}
     volumes:
-      - storage_volume:/data
+      - "minio:/data"
     entrypoint: sh
-    # create a labelflow folder in the storage to create a bucket named labelflow
+    # create a labelflow folder in the minio to create a bucket named labelflow
     command: -c 'mkdir -p /data/labelflow && /usr/bin/docker-entrypoint.sh server /data --console-address ":9001"'
-    
 
   iog:
     container_name: iog
     restart: always
-    build: 
+    build:
       context: ./python/iog
       dockerfile: Dockerfile
     # runtime: nvidia
-    command: python server.py 
+    command: python server.py
     ports:
       - "5001:5000"
     depends_on:
-      - storage
+      - minio
 
   web:
     build:
       context: .
       dockerfile: ./typescript/web/Dockerfile
-    ports: 
+      target: local-dev
+    ports:
       - "3000:3000"
     environment:
       POSTGRES_EXTERNAL_URL: "postgresql://${POSTGRES_ADMIN_USER:-admin}:${POSTGRES_ADMIN_PASSWORD:-admin}@db:5432/${POSTGRES_DB:-labelflow}?schema=public"
@@ -66,11 +66,11 @@ services:
       LABELFLOW_AWS_ENDPOINT: "http://localhost:9000"
     depends_on:
       - db
-      - migrate-db
-      - storage
+      - db_migrate
+      - minio
 
 volumes:
-  db_home:
+  db:
     external: false
-  storage_volume:
+  minio:
     external: false
