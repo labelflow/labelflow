@@ -7,39 +7,26 @@ import {
 } from "@labelflow/graphql-types";
 import "isomorphic-fetch";
 
-import { Context } from "./types";
+import { Context, Repository } from "./types";
 
 import { throwIfResolvesToNil } from "./utils/throw-if-resolves-to-nil";
 
-const downloadUrlToDataUrl = async (url: string, req: Request | undefined) => {
-  const headers = new Headers();
-  headers.set("Accept", "image/tiff,image/jpeg,image/png,image/*,*/*;q=0.8");
-  headers.set("Sec-Fetch-Dest", "image");
-  if ((req?.headers as any)?.cookie) {
-    headers.set("Cookie", (req?.headers as any)?.cookie);
-  }
-  const fetchResult = await fetch(url, {
-    method: "GET",
-    headers,
-    credentials: "include",
-  });
-  if (fetchResult.status !== 200) {
-    throw new Error(
-      `[IOG revolver] -- Getting image from storage, could not fetch image at url ${url} properly, code ${fetchResult.status}`
-    );
-  }
+const downloadUrlToDataUrl = async (
+  url: string,
+  repository: Repository,
+  req: undefined | Request
+) => {
+  const arrayBuffer = await repository.upload.get(url, req);
   try {
     // Try executing as if we were in local service worker
     const reader = new FileReader(); // Fails here on NodeJs
-    // It's important that it fails before fetchResult.blob() on NodeJs, which avoids a bug
-    const blob = await fetchResult.blob();
+    const blob = new Blob([arrayBuffer]);
     return await new Promise<string>((resolve) => {
       reader.onload = () => resolve(reader.result as string);
       reader.readAsDataURL(blob);
     });
   } catch (e) {
     // We're on NodeJs (remote server)
-    const arrayBuffer = await fetchResult.arrayBuffer();
     return `data:application/json;base64,${Buffer.from(arrayBuffer).toString(
       "base64"
     )}`;
@@ -179,7 +166,7 @@ const createIogLabel = async (
     `The image id ${args.data.imageId} doesn't exist.`,
     repository.image.get
   )({ id: args.data.imageId }, user);
-  const dataUrl = await downloadUrlToDataUrl(image.url, req);
+  const dataUrl = await downloadUrlToDataUrl(image.url, repository, req);
   const now = new Date();
 
   const xInit = Math.min(image.width, Math.max(0, args.data.x));
