@@ -86,6 +86,108 @@ const importFromFile = async (
 };
 
 /**
+ * Handles import for every case (either url, externalUrl or file).
+ * - url: Nothing to do, we assume it was already loaded on our storage by the web client.
+ * - externalUrl: Downloads the image from the external url and put it into our storage.
+ * - file: Puts the file into our storage.
+ */
+const importImageIfNeeded = async (
+  {
+    url,
+    externalUrl,
+    file,
+    imageId,
+    workspaceId,
+    datasetId,
+  }: {
+    url: string;
+    externalUrl: string;
+    file: any;
+    imageId: string;
+    workspaceId: string;
+    datasetId: string;
+  },
+  { req, repository }: { req: Request; repository: Repository }
+) => {
+  const getImageFileKeyFromMimeType = (mimeType: string) =>
+    getImageFileKey(imageId, workspaceId, datasetId, mimeType);
+
+  if (externalUrl) {
+    return await importFromExternalUrl(
+      externalUrl,
+      getImageFileKeyFromMimeType,
+      { req, repository }
+    );
+  }
+
+  if (file) {
+    return await importFromFile(file, getImageFileKeyFromMimeType, {
+      req,
+      repository,
+    });
+  }
+
+  return url;
+};
+
+const processImage = async (
+  {
+    noThumbnails,
+    ...image
+  }: {
+    id: string;
+    url: string;
+    width: number;
+    height: number;
+    mimetype: string;
+    noThumbnails: boolean;
+    thumbnail20Url: string;
+    thumbnail50Url: string;
+    thumbnail100Url: string;
+    thumbnail200Url: string;
+    thumbnail500Url: string;
+  },
+  { repository, req }: { repository: Repository; req: Request }
+) => {
+  const origin = getOrigin(req);
+
+  const getImage = (fromUrl: string) => repository.upload.get(fromUrl, req);
+
+  const downloadUrlPrefix = (
+    await repository.upload.getUploadTargetHttp("", origin)
+  ).downloadUrl;
+
+  const putThumbnail = async (targetDownloadUrl: string, blob: Blob) => {
+    const key = targetDownloadUrl.substring(downloadUrlPrefix.length);
+    const toUrl = (await repository.upload.getUploadTargetHttp(key, origin))
+      .uploadUrl;
+
+    await repository.upload.put(toUrl, blob, req);
+  };
+
+  if (noThumbnails) {
+    return await repository.imageProcessing.processImage(
+      {
+        ...image,
+        thumbnail20Url: image.thumbnail20Url ?? image.url,
+        thumbnail50Url: image.thumbnail50Url ?? image.url,
+        thumbnail100Url: image.thumbnail100Url ?? image.url,
+        thumbnail200Url: image.thumbnail200Url ?? image.url,
+        thumbnail500Url: image.thumbnail500Url ?? image.url,
+      },
+      getImage,
+      putThumbnail
+    );
+  }
+
+  return await repository.imageProcessing.processImage(
+    image,
+    getImage,
+    putThumbnail
+  );
+};
+
+/**
  * This functions does multiple things:
  * - It ensures that the inputs are corrects
  * - It imports the image to the storage if necessary
@@ -118,70 +220,28 @@ export const importAndProcessImage = async (
 
   const now = image?.createdAt ?? new Date().toISOString();
   const imageId = id ?? uuidv4();
-  const origin = getOrigin(req);
 
-  const getImageFileKeyFromMimeType = (mimeType: string) =>
-    getImageFileKey(imageId, workspaceId, datasetId, mimeType);
+  const finalUrl: string | undefined = await importImageIfNeeded(
+    { url, externalUrl, file, imageId, workspaceId, datasetId },
+    { req, repository }
+  );
 
-  let finalUrl: string | undefined;
-
-  if (url) {
-    // We don't need to perform anything else, we can use the provided URL
-    finalUrl = url;
-  }
-
-  if (externalUrl) {
-    finalUrl = await importFromExternalUrl(
-      externalUrl,
-      getImageFileKeyFromMimeType,
-      { req, repository }
-    );
-  }
-
-  if (file) {
-    finalUrl = await importFromFile(file, getImageFileKeyFromMimeType, {
-      req,
-      repository,
-    });
-  }
-
-  // Use the full size url if we don't want to generate thumbnails.
-  // Else, use `undefined` to specify that it will need to be generated
-  const defaultThumbnail = noThumbnails ? finalUrl : undefined;
-
-  const imageToProcess = {
-    id: imageId,
-    width,
-    height,
-    mimetype,
-    url: finalUrl,
-    thumbnail20Url: thumbnail20Url ?? defaultThumbnail,
-    thumbnail50Url: thumbnail50Url ?? defaultThumbnail,
-    thumbnail100Url: thumbnail100Url ?? defaultThumbnail,
-    thumbnail200Url: thumbnail200Url ?? defaultThumbnail,
-    thumbnail500Url: thumbnail500Url ?? defaultThumbnail,
-  };
-
-  const getImage = (fromUrl: string) => repository.upload.get(fromUrl, req);
-
-  const downloadUrlPrefix = (
-    await repository.upload.getUploadTargetHttp("", origin)
-  ).downloadUrl;
-
-  const putThumbnail = async (targetDownloadUrl: string, blob: Blob) => {
-    const key = targetDownloadUrl.substring(downloadUrlPrefix.length);
-    const toUrl = (await repository.upload.getUploadTargetHttp(key, origin))
-      .uploadUrl;
-
-    await repository.upload.put(toUrl, blob, req);
-  };
-
-  const imageMetaDataFromProcessing =
-    await repository.imageProcessing.processImage(
-      imageToProcess,
-      getImage,
-      putThumbnail
-    );
+  const imageMetaDataFromProcessing = await processImage(
+    {
+      id: imageId,
+      url: finalUrl,
+      width,
+      height,
+      mimetype,
+      noThumbnails,
+      thumbnail20Url,
+      thumbnail50Url,
+      thumbnail100Url,
+      thumbnail200Url,
+      thumbnail500Url,
+    },
+    { repository, req }
+  );
 
   const finalName = getImageName({ externalUrl, finalUrl, name });
   const finalPath = path ?? externalUrl ?? finalUrl;
