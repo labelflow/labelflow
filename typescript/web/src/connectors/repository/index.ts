@@ -41,6 +41,17 @@ export const repository: Repository = {
     add: async (image: DbImageCreateInput) => {
       return await (await getDatabase()).image.add(addIdIfNil(image));
     },
+    addMany: async ({ images, datasetId }) => {
+      const imagesToAdd = images.map((image) =>
+        addIdIfNil({ ...image, datasetId })
+      );
+
+      return await (
+        await getDatabase()
+      ).image.bulkAdd(imagesToAdd, {
+        allKeys: true,
+      });
+    },
     count: async (whereWithUser) => {
       const where = removeUserFromWhere(whereWithUser);
       return where
