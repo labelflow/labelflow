@@ -1,154 +1,27 @@
-import { gql } from "@apollo/client";
+import { ApolloClient, NormalizedCacheObject } from "@apollo/client";
+import { createLabelClass } from "./graphql-definitions.common";
 
-import { LabelCreateInput, LabelType } from "../../typescript/graphql-types";
-import { client } from "../../typescript/web/src/connectors/apollo-client/schema-client";
-
-const createDataset = async (name: string) => {
-  const mutationResult = await client.mutate({
-    mutation: gql`
-      mutation createDataset($name: String) {
-        createDataset(data: { name: $name, workspaceSlug: "local" }) {
-          id
-          slug
-        }
-      }
-    `,
-    variables: {
-      name,
-    },
-  });
-
-  const {
-    data: {
-      createDataset: { id, slug },
-    },
-  } = mutationResult;
-
-  return { id, slug };
+type TestInput = {
+  client: ApolloClient<NormalizedCacheObject>;
+  workspaceSlug: string;
+  getDatasetId: () => string;
+  getDatasetSlug: () => string;
+  getImageId: () => string;
 };
 
-async function createImage(url: string, datasetId: string) {
-  const mutationResult = await client.mutate({
-    mutation: gql`
-      mutation createImage($url: String, $datasetId: ID!) {
-        createImage(data: { url: $url, datasetId: $datasetId }) {
-          id
-          name
-          width
-          height
-          url
-        }
-      }
-    `,
-    variables: {
-      datasetId,
-      url,
-    },
-  });
-
-  const {
-    data: { createImage: image },
-  } = mutationResult;
-
-  return image;
-}
-
-const createLabel = (data: LabelCreateInput) => {
-  return client.mutate({
-    mutation: gql`
-      mutation createLabel($data: LabelCreateInput!) {
-        createLabel(data: $data) {
-          id
-        }
-      }
-    `,
-    variables: {
-      data,
-    },
-  });
-};
-
-const createLabelClass = async (
-  name: String,
-  color = "#ffffff",
-  datasetId: string
-) => {
-  const {
-    data: {
-      createLabelClass: { id },
-    },
-  } = await client.mutate({
-    mutation: gql`
-      mutation createLabelClass(
-        $name: String!
-        $color: String!
-        $datasetId: ID!
-      ) {
-        createLabelClass(
-          data: { name: $name, color: $color, datasetId: $datasetId }
-        ) {
-          id
-          name
-          color
-        }
-      }
-    `,
-    variables: {
-      name,
-      color,
-      datasetId,
-    },
-  });
-
-  return id;
-};
-
-describe("Class selection popover", () => {
-  let datasetId: string;
-  let datasetSlug: string;
-  let imageId: string;
-  beforeEach(() => {
-    cy.setCookie("consentedCookies", "true");
-    cy.window().then(async () => {
-      const createResult = await createDataset("cypress test dataset");
-      datasetId = createResult.id;
-      datasetSlug = createResult.slug;
-
-      const { id } = await createImage(
-        "https://images.unsplash.com/photo-1579513141590-c597876aefbc?auto=format&fit=crop&w=882&q=80",
-        datasetId
-      );
-      imageId = id;
-
-      const labelClassId = await createLabelClass(
-        "A new class",
-        "#F87171",
-        datasetId
-      );
-      await createLabel({
-        imageId,
-        labelClassId,
-        type: LabelType.Box,
-        geometry: {
-          type: LabelType.Polygon,
-          coordinates: [
-            [
-              [0, 900],
-              [900, 900],
-              [900, 1500],
-              [0, 1500],
-              [0, 900],
-            ],
-          ],
-        },
-      });
-    });
-  });
-
+export const declareTests = ({
+  client,
+  workspaceSlug,
+  getDatasetId,
+  getDatasetSlug,
+  getImageId,
+}: TestInput) => {
   it("right clicks on a label to change its class", () => {
+    const datasetSlug = getDatasetSlug();
+    const imageId = getImageId();
     // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
     cy.visit(
-      `/local/datasets/${datasetSlug}/images/${imageId}?modal-welcome=closed&modal-update-service-worker=update`
+      `/${workspaceSlug}/datasets/${datasetSlug}/images/${imageId}?modal-welcome=closed&modal-update-service-worker=update`
     );
     cy.get('[aria-label="loading indicator"]').should("not.exist");
     cy.get('[aria-label="Selection tool"]').click();
@@ -201,11 +74,21 @@ describe("Class selection popover", () => {
   });
 
   it("uses the class selection menu to change the class of created labels", () => {
-    cy.wrap(createLabelClass("My new class", "#65A30D", datasetId));
+    const datasetId = getDatasetId();
+    const datasetSlug = getDatasetSlug();
+    const imageId = getImageId();
+    cy.wrap(
+      createLabelClass({
+        name: "My new class",
+        color: "#65A30D",
+        datasetId,
+        client,
+      })
+    );
 
     // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
     cy.visit(
-      `/local/datasets/${datasetSlug}/images/${imageId}?modal-welcome=closed&modal-update-service-worker=update`
+      `/${workspaceSlug}/datasets/${datasetSlug}/images/${imageId}?modal-welcome=closed&modal-update-service-worker=update`
     );
 
     cy.wait(420);
@@ -288,10 +171,20 @@ describe("Class selection popover", () => {
   });
 
   it("uses shortcuts to change classes", () => {
-    cy.wrap(createLabelClass("My new class", "#65A30D", datasetId));
+    const datasetId = getDatasetId();
+    const datasetSlug = getDatasetSlug();
+    const imageId = getImageId();
+    cy.wrap(
+      createLabelClass({
+        name: "My new class",
+        color: "#65A30D",
+        datasetId,
+        client,
+      })
+    );
     // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
     cy.visit(
-      `/local/datasets/${datasetSlug}/images/${imageId}?modal-welcome=closed&modal-update-service-worker=update`
+      `/${workspaceSlug}/datasets/${datasetSlug}/images/${imageId}?modal-welcome=closed&modal-update-service-worker=update`
     );
     cy.get('[aria-label="loading indicator"]').should("not.exist");
     cy.get('[aria-label="Selection tool"]').click();
@@ -358,8 +251,10 @@ describe("Class selection popover", () => {
   });
 
   it("should update the label classes list when a label class is deleted", () => {
+    const datasetSlug = getDatasetSlug();
+    const imageId = getImageId();
     cy.visit(
-      `/local/datasets/${datasetSlug}/images/${imageId}?modal-welcome=closed&modal-update-service-worker=update`
+      `/${workspaceSlug}/datasets/${datasetSlug}/images/${imageId}?modal-welcome=closed&modal-update-service-worker=update`
     );
 
     cy.wait(420);
@@ -369,7 +264,10 @@ describe("Class selection popover", () => {
 
     cy.wait(420);
     cy.contains("classes").click();
-    cy.url().should("contain", `/local/datasets/${datasetSlug}/classes`);
+    cy.url().should(
+      "contain",
+      `/${workspaceSlug}/datasets/${datasetSlug}/classes`
+    );
 
     cy.wait(420);
     cy.contains("A new class");
@@ -391,4 +289,4 @@ describe("Class selection popover", () => {
       .contains("A new class")
       .should("not.exist");
   });
-});
+};

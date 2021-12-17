@@ -1,24 +1,27 @@
 import imageSampleCollection from "../../typescript/web/src/utils/image-sample-collection";
 
-describe("Golden path", () => {
+type TestInput = {
+  workspaceSlug: string;
+};
+
+export const declareTests = ({ workspaceSlug }: TestInput) => {
   it("Should execute the golden path without errors", () => {
     cy.setCookie("hasUserTriedApp", "false");
     cy.setCookie("consentedCookies", "true");
-    // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
-    // cy.visit("/");
-    // cy.contains("Try it now").click();
-    cy.visit("/local/datasets?modal-update-service-worker=update");
+    cy.visit(`/${workspaceSlug}/datasets?modal-update-service-worker=update`);
     cy.contains("Get started").click();
-    cy.url().should(
-      "match",
-      /\/local\/datasets\/tutorial-dataset\/images\/2bbbf664-5810-4760-a10f-841de2f35510/
-    );
+    if (workspaceSlug === "local") {
+      cy.url().should(
+        "match",
+        /\/local\/datasets\/tutorial-dataset\/images\/2bbbf664-5810-4760-a10f-841de2f35510/
+      );
 
-    cy.get('[aria-label="loading indicator"]').should("not.exist");
-    cy.get('[aria-label="Navigate in hidden breadcrumbs"]').click();
-    cy.get('[aria-label="Hidden breadcrumbs"]').within(() => {
-      cy.contains("Datasets").click({ force: true });
-    });
+      cy.get('[aria-label="loading indicator"]').should("not.exist");
+      cy.get('[aria-label="Navigate in hidden breadcrumbs"]').click();
+      cy.get('[aria-label="Hidden breadcrumbs"]').within(() => {
+        cy.contains("Datasets").click({ force: true });
+      });
+    }
 
     cy.get('[aria-label="Create new dataset"]').click();
     cy.get('[aria-label="Dataset name input"]').type("cypress dataset");
@@ -206,4 +209,4 @@ describe("Golden path", () => {
     cy.contains("Export to COCO").should("exist").click();
     cy.contains("Export Options").should("be.visible");
   });
-});
+};

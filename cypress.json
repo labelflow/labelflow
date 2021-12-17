@@ -5,5 +5,8 @@
   "retries": {
     "runMode": 2,
     "openMode": 0
-  }
+  },
+  "ignoreTestFiles": [
+    "*.common.ts"
+  ]
 }
