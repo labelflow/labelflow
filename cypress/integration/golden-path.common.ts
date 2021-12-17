@@ -2,17 +2,15 @@ import imageSampleCollection from "../../typescript/web/src/utils/image-sample-c
 
 export const declareGoldenPathTests = ({
   workspaceSlug,
-  isLocal = false,
 }: {
   workspaceSlug: string;
-  isLocal?: boolean;
 }) => {
   it("Should execute the golden path without errors", () => {
     cy.setCookie("hasUserTriedApp", "false");
     cy.setCookie("consentedCookies", "true");
     cy.visit(`/${workspaceSlug}/datasets?modal-update-service-worker=update`);
     cy.contains("Get started").click();
-    if (isLocal) {
+    if (workspaceSlug === "local") {
       cy.url().should(
         "match",
         /\/local\/datasets\/tutorial-dataset\/images\/2bbbf664-5810-4760-a10f-841de2f35510/
