@@ -13,6 +13,7 @@ import {
 } from "@chakra-ui/react";
 import NextLink from "next/link";
 import { HiTrash, HiPencilAlt } from "react-icons/hi";
+import { DatasetCardBox } from "./dataset-card-box";
 import { ImageWithFallback } from "../image";
 import { EmptyStateImageNotFound, EmptyStateNoImages } from "../empty-state";
 
@@ -44,12 +45,7 @@ export const DatasetCard = (props: {
 
   // This card is flexible, so its width will depend on the width of its parent
   return (
-    <Box
-      w="100%"
-      maxWidth={["100%", "100%", "50%", "33%", "25%"]}
-      p={4}
-      boxSizing="border-box"
-    >
+    <DatasetCardBox>
       <NextLink href={url}>
         <Box
           as="a"
@@ -130,6 +126,6 @@ export const DatasetCard = (props: {
           </VStack>
         </Box>
       </NextLink>
-    </Box>
+    </DatasetCardBox>
   );
 };
