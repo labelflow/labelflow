@@ -54,7 +54,6 @@ const generateThumbnail = async ({
   size,
   putImage,
 }: {
-  id: string;
   image: Jimp;
   url: string;
   size: ThumbnailSizes;
@@ -94,7 +93,6 @@ export const processImage: Repository["imageProcessing"]["processImage"] =
       height,
       mimetype,
       url,
-      id,
       thumbnail20Url,
       thumbnail50Url,
       thumbnail100Url,
@@ -110,7 +108,6 @@ export const processImage: Repository["imageProcessing"]["processImage"] =
     const generateThumbnailFromSize = (size: ThumbnailSizes) =>
       generateThumbnail({
         size,
-        id,
         image,
         url,
         putImage,
