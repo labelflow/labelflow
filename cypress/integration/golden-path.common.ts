@@ -1,10 +1,10 @@
 import imageSampleCollection from "../../typescript/web/src/utils/image-sample-collection";
 
-export const declareGoldenPathTests = ({
-  workspaceSlug,
-}: {
+type TestInput = {
   workspaceSlug: string;
-}) => {
+};
+
+export const declareTests = ({ workspaceSlug }: TestInput) => {
   it("Should execute the golden path without errors", () => {
     cy.setCookie("hasUserTriedApp", "false");
     cy.setCookie("consentedCookies", "true");

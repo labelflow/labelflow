@@ -1,4 +1,4 @@
-import { declareImageNavigationTests } from "./image-navigation.common";
+import { declateTests } from "./image-navigation.common";
 
 describe("Image Navigation (online)", () => {
   beforeEach(() => {
@@ -9,7 +9,7 @@ describe("Image Navigation (online)", () => {
     cy.task("createWorkspaceAndDatasets");
   });
 
-  declareImageNavigationTests({
+  declateTests({
     workspaceSlug: "cypress-test-workspace",
     getDatasetSlug: () => "test-dataset-cypress",
   });

@@ -1,4 +1,4 @@
-import { declareGoldenPathTests } from "./golden-path.common";
+import { declareTests } from "./golden-path.common";
 
 describe("Golden path (online)", () => {
   beforeEach(() => {
@@ -8,5 +8,5 @@ describe("Golden path (online)", () => {
     });
     cy.task("createWorkspaceAndDatasets");
   });
-  declareGoldenPathTests({ workspaceSlug: "cypress-test-workspace" });
+  declareTests({ workspaceSlug: "cypress-test-workspace" });
 });

@@ -4,7 +4,7 @@ import {
   createImage,
   createLabelClass,
 } from "./graphql-definitions.common";
-import { declarePolygonDrawingTests } from "./polygon-drawing.common";
+import { declareTests } from "./polygon-drawing.common";
 
 describe("Polygon drawing (local)", () => {
   let datasetId: string;
@@ -37,7 +37,7 @@ describe("Polygon drawing (local)", () => {
     });
   });
 
-  declarePolygonDrawingTests({
+  declareTests({
     workspaceSlug: "local",
     getDatasetSlug: () => datasetSlug,
     getImageId: () => imageId,

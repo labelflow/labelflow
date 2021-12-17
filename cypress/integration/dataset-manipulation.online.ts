@@ -1,4 +1,4 @@
-import { declareDatasetManipulationTests } from "./dataset-manipulation.common";
+import { declareTests } from "./dataset-manipulation.common";
 
 describe("Dataset creation, edition, deletion (online)", () => {
   beforeEach(() => {
@@ -7,5 +7,5 @@ describe("Dataset creation, edition, deletion (online)", () => {
     });
     cy.task("createWorkspace");
   });
-  declareDatasetManipulationTests("cypress-test-workspace");
+  declareTests({ workspaceSlug: "cypress-test-workspace" });
 });

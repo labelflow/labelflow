@@ -1,12 +1,11 @@
 import imageSampleCollection from "../../typescript/web/src/utils/image-sample-collection";
 
-export const declareImageNavigationTests = ({
-  getDatasetSlug,
-  workspaceSlug,
-}: {
+type TestInput = {
   getDatasetSlug: () => string;
   workspaceSlug: string;
-}) => {
+};
+
+export const declateTests = ({ getDatasetSlug, workspaceSlug }: TestInput) => {
   it("Should let the user navigate within the image gallery", () => {
     const datasetSlug = getDatasetSlug();
     // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard

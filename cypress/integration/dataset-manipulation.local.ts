@@ -1,5 +1,5 @@
-import { declareDatasetManipulationTests } from "./dataset-manipulation.common";
+import { declareTests } from "./dataset-manipulation.common";
 
 describe("Dataset creation, edition, deletion (local)", () => {
-  declareDatasetManipulationTests("local");
+  declareTests({ workspaceSlug: "local" });
 });

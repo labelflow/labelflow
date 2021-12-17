@@ -1,4 +1,6 @@
-export const declareDatasetManipulationTests = (workspaceSlug: string) => {
+type TestInput = { workspaceSlug: string };
+
+export const declareTests = ({ workspaceSlug }: TestInput) => {
   it("Should create, rename and delete a dataset", () => {
     cy.setCookie("hasUserTriedApp", "true");
     cy.setCookie("consentedCookies", "true");

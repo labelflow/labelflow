@@ -1,12 +1,14 @@
-export const declarePolygonDrawingTests = ({
-  workspaceSlug,
-  getDatasetSlug,
-  getImageId,
-}: {
+type TestInput = {
   workspaceSlug: string;
   getDatasetSlug: () => string;
   getImageId: () => string;
-}) => {
+};
+
+export const declareTests = ({
+  workspaceSlug,
+  getDatasetSlug,
+  getImageId,
+}: TestInput) => {
   it("switches between drawing tools", () => {
     const datasetSlug = getDatasetSlug();
     const imageId = getImageId();

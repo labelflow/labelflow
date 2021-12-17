@@ -1,5 +1,5 @@
 import { client } from "../../typescript/web/src/connectors/apollo-client/schema-client";
-import { declareClassificationTests } from "./classification.common";
+import { declareTests } from "./classification.common";
 import {
   createDataset,
   createImage,
@@ -37,7 +37,7 @@ describe("Classification (local)", () => {
     });
   });
 
-  declareClassificationTests({
+  declareTests({
     workspaceSlug: "local",
     getDatasetSlug: () => datasetSlug,
     getImageId: () => imageId,

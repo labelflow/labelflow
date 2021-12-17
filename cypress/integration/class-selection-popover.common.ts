@@ -1,19 +1,21 @@
 import { ApolloClient, NormalizedCacheObject } from "@apollo/client";
 import { createLabelClass } from "./graphql-definitions.common";
 
-export const declareClassSelectionPopoverTests = ({
-  client,
-  workspaceSlug,
-  getDatasetId,
-  getDatasetSlug,
-  getImageId,
-}: {
+type TestInput = {
   client: ApolloClient<NormalizedCacheObject>;
   workspaceSlug: string;
   getDatasetId: () => string;
   getDatasetSlug: () => string;
   getImageId: () => string;
-}) => {
+};
+
+export const declareTests = ({
+  client,
+  workspaceSlug,
+  getDatasetId,
+  getDatasetSlug,
+  getImageId,
+}: TestInput) => {
   it("right clicks on a label to change its class", () => {
     const datasetSlug = getDatasetSlug();
     const imageId = getImageId();

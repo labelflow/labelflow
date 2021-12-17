@@ -4,7 +4,7 @@ import {
   createImage,
   createLabelClass,
 } from "./graphql-definitions.common";
-import { declarePolygonDrawingTests } from "./polygon-drawing.common";
+import { declareTests } from "./polygon-drawing.common";
 
 describe("Polygon drawing (online)", () => {
   let datasetId: string;
@@ -40,7 +40,7 @@ describe("Polygon drawing (online)", () => {
     });
   });
 
-  declarePolygonDrawingTests({
+  declareTests({
     workspaceSlug: "cypress-test-workspace",
     getDatasetSlug: () => datasetSlug,
     getImageId: () => imageId,

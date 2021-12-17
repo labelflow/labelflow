@@ -1,6 +1,6 @@
 import { LabelType } from "../../typescript/graphql-types";
 import { client } from "../../typescript/web/src/connectors/apollo-client/schema-client";
-import { declareClassSelectionPopoverTests } from "./class-selection-popover.common";
+import { declareTests } from "./class-selection-popover.common";
 import {
   createDataset,
   createImage,
@@ -59,7 +59,7 @@ describe("Class selection popover (local)", () => {
     });
   });
 
-  declareClassSelectionPopoverTests({
+  declareTests({
     client,
     workspaceSlug: "local",
     getDatasetId: () => datasetId,

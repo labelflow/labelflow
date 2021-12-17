@@ -1,6 +1,6 @@
 import { client } from "../../typescript/web/src/connectors/apollo-client/schema-client";
 import { createDataset } from "./graphql-definitions.common";
-import { declareImageNavigationTests } from "./image-navigation.common";
+import { declateTests } from "./image-navigation.common";
 
 describe("Image Navigation (local)", () => {
   let datasetSlug: string;
@@ -16,7 +16,7 @@ describe("Image Navigation (local)", () => {
     });
   });
 
-  declareImageNavigationTests({
+  declateTests({
     workspaceSlug: "local",
     getDatasetSlug: () => datasetSlug,
   });

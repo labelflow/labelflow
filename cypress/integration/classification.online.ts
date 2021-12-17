@@ -1,5 +1,5 @@
 import { distantDatabaseClient as client } from "../../typescript/web/src/connectors/apollo-client/client";
-import { declareClassificationTests } from "./classification.common";
+import { declareTests } from "./classification.common";
 import {
   createDataset,
   createImage,
@@ -40,7 +40,7 @@ describe("Classification (online)", () => {
     });
   });
 
-  declareClassificationTests({
+  declareTests({
     workspaceSlug: "cypress-test-workspace",
     getDatasetSlug: () => datasetSlug,
     getImageId: () => imageId,

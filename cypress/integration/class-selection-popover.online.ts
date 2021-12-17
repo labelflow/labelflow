@@ -1,6 +1,6 @@
 import { LabelType } from "../../typescript/graphql-types";
 import { distantDatabaseClient as client } from "../../typescript/web/src/connectors/apollo-client/client";
-import { declareClassSelectionPopoverTests } from "./class-selection-popover.common";
+import { declareTests } from "./class-selection-popover.common";
 import {
   createDataset,
   createImage,
@@ -61,7 +61,7 @@ describe("Class selection popover (online)", () => {
     });
   });
 
-  declareClassSelectionPopoverTests({
+  declareTests({
     client,
     workspaceSlug: "cypress-test-workspace",
     getDatasetId: () => datasetId,
