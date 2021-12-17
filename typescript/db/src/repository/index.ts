@@ -1,22 +1,7 @@
-import { Prisma } from "@prisma/client";
-import { DbLabel, Repository } from "@labelflow/common-resolvers";
+import { DbLabel, getSlug, Repository } from "@labelflow/common-resolvers";
 import { Image } from "@labelflow/graphql-types";
-import slugify from "slugify";
+import { Prisma } from "@prisma/client";
 import { getPrismaClient } from "../prisma-client";
-import {
-  getUploadTargetHttp,
-  getFromStorage,
-  putInStorage,
-  deleteFromStorage,
-} from "./upload-s3";
-import {
-  addWorkspace,
-  getWorkspace,
-  listWorkspace,
-  updateWorkspace,
-} from "./workspace";
-import { listLabels, countLabels } from "./label";
-import { castObjectNullsToUndefined } from "./utils";
 import {
   checkUserAccessToDataset,
   checkUserAccessToImage,
@@ -25,6 +10,32 @@ import {
   checkUserAccessToWorkspace,
 } from "./access-control";
 import { processImage } from "./image-processing";
+import { countLabels, listLabels } from "./label";
+import {
+  deleteFromStorage,
+  getFromStorage,
+  getUploadTargetHttp,
+  putInStorage,
+} from "./upload-s3";
+import { castObjectNullsToUndefined } from "./utils";
+import {
+  addWorkspace,
+  deleteWorkspace,
+  getWorkspace,
+  listWorkspace,
+  updateWorkspace,
+} from "./workspace";
+
+const getWorkspaceFilter = (
+  userId: string | undefined,
+  extraFilter?: Prisma.WorkspaceWhereInput
+): { workspace: Prisma.WorkspaceWhereInput } => ({
+  workspace: {
+    memberships: { some: { userId } },
+    deletedAt: { equals: null },
+    ...extraFilter,
+  },
+});
 
 export const repository: Repository = {
   image: {
@@ -47,9 +58,7 @@ export const repository: Repository = {
       ).image.count({
         where: castObjectNullsToUndefined({
           ...where,
-          dataset: {
-            workspace: { memberships: { some: { userId: user?.id } } },
-          },
+          dataset: getWorkspaceFilter(user?.id),
         }),
       });
     },
@@ -88,9 +97,7 @@ export const repository: Repository = {
         castObjectNullsToUndefined({
           where: castObjectNullsToUndefined({
             ...where,
-            dataset: {
-              workspace: { memberships: { some: { userId: user?.id } } },
-            },
+            dataset: getWorkspaceFilter(user?.id),
           }),
           orderBy: { createdAt: Prisma.SortOrder.asc },
           skip,
@@ -170,9 +177,7 @@ export const repository: Repository = {
       ).labelClass.count({
         where: castObjectNullsToUndefined({
           ...where,
-          dataset: {
-            workspace: { memberships: { some: { userId: user?.id } } },
-          },
+          dataset: getWorkspaceFilter(user?.id),
         }),
       });
     },
@@ -199,9 +204,7 @@ export const repository: Repository = {
         castObjectNullsToUndefined({
           where: castObjectNullsToUndefined({
             ...where,
-            dataset: {
-              workspace: { memberships: { some: { userId: user?.id } } },
-            },
+            dataset: getWorkspaceFilter(user?.id),
           }),
           orderBy: { index: Prisma.SortOrder.asc },
           skip,
@@ -230,16 +233,12 @@ export const repository: Repository = {
         where: { slug: workspaceSlug },
         user,
       });
-      const slug = slugify(dataset.name, { lower: true });
-      const createdDataset = await (
-        await getPrismaClient()
-      ).dataset.create({
+      const db = await getPrismaClient();
+      const createdDataset = await db.dataset.create({
         data: castObjectNullsToUndefined({
           ...dataset,
-          slug,
-          workspace: {
-            connect: { slug: workspaceSlug },
-          },
+          slug: getSlug(dataset.name),
+          workspace: { connect: { slug: workspaceSlug } },
         }),
       });
       return createdDataset.id;
@@ -288,11 +287,13 @@ export const repository: Repository = {
       }
       await checkUserAccessToDataset({ where, user });
       try {
-        await (
-          await getPrismaClient()
-        ).dataset.update({
+        const db = await getPrismaClient();
+        await db.dataset.update({
           where: castObjectNullsToUndefined(where),
-          data: castObjectNullsToUndefined(dataset),
+          data: {
+            ...castObjectNullsToUndefined(dataset),
+            updatedAt: new Date().toISOString(),
+          },
         });
         return true;
       } catch (e) {
@@ -310,12 +311,9 @@ export const repository: Repository = {
           orderBy: { createdAt: Prisma.SortOrder.asc },
           skip,
           take: first,
-          where: {
-            workspace: {
-              slug: where?.workspaceSlug,
-              memberships: { some: { userId: where?.user?.id } },
-            },
-          },
+          where: getWorkspaceFilter(where?.user?.id, {
+            slug: where?.workspaceSlug,
+          }),
         })
       );
     },
@@ -325,6 +323,7 @@ export const repository: Repository = {
     get: getWorkspace,
     list: listWorkspace,
     update: updateWorkspace,
+    delete: deleteWorkspace,
   },
   upload: {
     delete: deleteFromStorage,

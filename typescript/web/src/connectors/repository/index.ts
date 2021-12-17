@@ -9,8 +9,6 @@ import {
   LabelClassWhereInput,
 } from "@labelflow/graphql-types";
 import { getDatabase } from "../database";
-import { list } from "./utils/list";
-import { countLabels, listLabels } from "./label";
 import {
   addDataset,
   deleteDataset,
@@ -18,23 +16,26 @@ import {
   listDataset,
   updateDataset,
 } from "./dataset";
+import { processImage } from "./image-processing";
+import { countLabels, listLabels } from "./label";
 import { deleteLabelClass } from "./label-class";
 import {
+  deleteFromStorage,
+  getFromStorage,
   getUploadTarget,
   getUploadTargetHttp,
-  getFromStorage,
   putInStorage,
-  deleteFromStorage,
 } from "./upload";
 import { addIdIfNil } from "./utils/add-id-if-nil";
+import { list } from "./utils/list";
+import { removeUserFromWhere } from "./utils/remove-user-from-where";
 import {
   addWorkspace,
+  deleteWorkspace,
   getWorkspace,
   listWorkspaces,
   updateWorkspace,
 } from "./workspace";
-import { processImage } from "./image-processing";
-import { removeUserFromWhere } from "./utils/remove-user-from-where";
 
 export const repository: Repository = {
   image: {
@@ -114,6 +115,7 @@ export const repository: Repository = {
     get: getWorkspace,
     list: listWorkspaces,
     update: updateWorkspace,
+    delete: deleteWorkspace,
   },
   upload: {
     getUploadTarget,

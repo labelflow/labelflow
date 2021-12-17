@@ -103,6 +103,7 @@
     "stripe": "^8.181.0",
     "styled-jsx": "^4.0.0",
     "swc-loader": "0.1.15",
+    "use-debounce": "^7.0.1",
     "use-query-params": "^1.2.2",
     "uuid": "^8.3.2",
     "valid-url": "^1.0.9",

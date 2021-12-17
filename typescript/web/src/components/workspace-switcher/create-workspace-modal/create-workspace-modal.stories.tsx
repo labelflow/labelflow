@@ -1,19 +1,17 @@
-import { WorkspaceCreationModal } from "..";
-import { chakraDecorator } from "../../../../utils/chakra-decorator";
-import { apolloDecorator } from "../../../../utils/apollo-decorator";
-import { queryParamsDecorator } from "../../../../utils/query-params-decorator";
+import { CreateWorkspaceModal } from ".";
+import { chakraDecorator } from "../../../utils/chakra-decorator";
+import { apolloDecorator } from "../../../utils/apollo-decorator";
+import { queryParamsDecorator } from "../../../utils/query-params-decorator";
 
 export default {
   title: "web/Workspace Switcher/Workspace creation modal",
   decorators: [chakraDecorator, apolloDecorator, queryParamsDecorator],
 };
 
-export const Open = () => (
-  <WorkspaceCreationModal isOpen onClose={console.log} />
-);
+export const Open = () => <CreateWorkspaceModal isOpen onClose={console.log} />;
 
 export const WithPreFilledText = () => (
-  <WorkspaceCreationModal isOpen onClose={console.log} />
+  <CreateWorkspaceModal isOpen onClose={console.log} />
 );
 
 WithPreFilledText.parameters = {
@@ -23,7 +21,7 @@ WithPreFilledText.parameters = {
 };
 
 export const WithPreFilledTextAlreadyTaken = () => (
-  <WorkspaceCreationModal isOpen onClose={console.log} />
+  <CreateWorkspaceModal isOpen onClose={console.log} />
 );
 
 WithPreFilledTextAlreadyTaken.parameters = {
@@ -33,7 +31,7 @@ WithPreFilledTextAlreadyTaken.parameters = {
 };
 
 export const WithPreFilledTextReservedWord = () => (
-  <WorkspaceCreationModal isOpen onClose={console.log} />
+  <CreateWorkspaceModal isOpen onClose={console.log} />
 );
 
 WithPreFilledTextReservedWord.parameters = {
@@ -43,7 +41,7 @@ WithPreFilledTextReservedWord.parameters = {
 };
 
 export const WithPreFilledTextInvalidCharacters = () => (
-  <WorkspaceCreationModal isOpen onClose={console.log} />
+  <CreateWorkspaceModal isOpen onClose={console.log} />
 );
 
 WithPreFilledTextInvalidCharacters.parameters = {
