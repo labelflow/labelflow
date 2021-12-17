@@ -5,6 +5,7 @@
     "dev": "next dev",
     "dev:test": "NODE_ENV=\"test\" && next dev -p 3001",
     "build": "cd ../db && yarn generate && cd ../web && next build",
+    "build:vercel": "cd ../db && yarn generate && cd ../web && next build && cd ../db && sh ./deploy-vercel.sh",
     "start": "next start",
     "type-check": "tsc",
     "bundlewatch": "bundlewatch --config ./bundlewatch.config.js",
