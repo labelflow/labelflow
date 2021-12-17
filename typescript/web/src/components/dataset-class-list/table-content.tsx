@@ -11,7 +11,12 @@ import {
   useColorModeValue as mode,
 } from "@chakra-ui/react";
 
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import {
+  DragDropContext,
+  Droppable,
+  Draggable,
+  DropResult,
+} from "react-beautiful-dnd";
 import { RiInformationLine } from "react-icons/ri";
 import { TableRow, IsDraggingContext } from "./table-row";
 import { LabelClassWithShortcut } from "./types";
@@ -20,13 +25,13 @@ const InfoIcon = chakra(RiInformationLine);
 
 export const ClassTableContent = ({
   classes,
-  onDragEnd,
+  onDragEnd: onDragEndRecieved,
   onClickDelete,
   onClickEdit,
   searchText,
 }: {
   classes: LabelClassWithShortcut[];
-  onDragEnd: (result: any) => Promise<void>;
+  onDragEnd: (result: DropResult) => Promise<void>;
   onClickDelete: (classId: string | null) => void;
   onClickEdit: (item: LabelClassWithShortcut | null) => void;
   searchText: string;
@@ -35,6 +40,11 @@ export const ClassTableContent = ({
 
   const onBeforeDragStart = () => {
     setIsDragging(true);
+  };
+
+  const onDragEnd = (result: DropResult) => {
+    onDragEndRecieved(result);
+    setIsDragging(false);
   };
 
   const filteredClasses = classes.filter((labelClass) =>
@@ -92,10 +102,9 @@ export const ClassTableContent = ({
                     draggableId={row.id}
                     index={classIndex}
                   >
-                    {(trProvided, trSnapshot) => (
+                    {(trProvided) => (
                       <TableRow
                         provided={trProvided}
-                        snapshot={trSnapshot}
                         item={row}
                         onClickDelete={onClickDelete}
                         onClickEdit={onClickEdit}

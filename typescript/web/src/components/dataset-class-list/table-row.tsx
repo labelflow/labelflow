@@ -13,6 +13,7 @@ import {
 import { RiCheckboxBlankCircleFill } from "react-icons/ri";
 import { VscGripper } from "react-icons/vsc";
 import React from "react";
+import { DraggableProvided } from "react-beautiful-dnd";
 import { LabelClassWithShortcut } from "./types";
 
 const CircleIcon = chakra(RiCheckboxBlankCircleFill);
@@ -108,8 +109,7 @@ class TableCell extends React.Component<TableCellProps> {
 export const IsDraggingContext = React.createContext<boolean>(false);
 
 type TableRowProps = {
-  provided: any;
-  snapshot: any;
+  provided: DraggableProvided;
   item: LabelClassWithShortcut;
   onClickDelete: (classId: string | null) => void;
   onClickEdit: (item: LabelClassWithShortcut | null) => void;

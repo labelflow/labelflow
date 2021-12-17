@@ -46,26 +46,29 @@ const Wrapper = ({ children }: PropsWithChildren<{}>) => (
 const onClickEdit = jest.fn();
 const onClickDelete = jest.fn();
 
+const renderTableRow = () => {
+  return render(
+    <Draggable key={classExample.id} draggableId={classExample.id} index={0}>
+      {(provided) => (
+        <TableRow
+          item={classExample}
+          onClickDelete={onClickDelete}
+          onClickEdit={onClickEdit}
+          provided={provided}
+        />
+      )}
+    </Draggable>,
+    { wrapper: Wrapper }
+  );
+};
+
 describe("Dataset class table row tests", () => {
   beforeEach(() => {
     jest.resetAllMocks();
   });
 
   it("Should display a class with the possibility to reorder, edit and delete it", () => {
-    render(
-      <Draggable key={classExample.id} draggableId={classExample.id} index={0}>
-        {(provided, snapshot) => (
-          <TableRow
-            item={classExample}
-            onClickDelete={onClickDelete}
-            onClickEdit={onClickEdit}
-            provided={provided}
-            snapshot={snapshot}
-          />
-        )}
-      </Draggable>,
-      { wrapper: Wrapper }
-    );
+    renderTableRow();
 
     expect(screen.getByText(/Horse/i)).toBeDefined();
     expect(screen.getByRole("button", { name: "Drag" })).toBeDefined();
@@ -75,40 +78,14 @@ describe("Dataset class table row tests", () => {
   });
 
   it("Should call function to edit name when edit button is clicked", async () => {
-    render(
-      <Draggable key={classExample.id} draggableId={classExample.id} index={0}>
-        {(provided, snapshot) => (
-          <TableRow
-            item={classExample}
-            onClickDelete={onClickDelete}
-            onClickEdit={onClickEdit}
-            provided={provided}
-            snapshot={snapshot}
-          />
-        )}
-      </Draggable>,
-      { wrapper: Wrapper }
-    );
+    renderTableRow();
 
     fireEvent.click(screen.getByRole("button", { name: "Edit class" }));
     expect(onClickEdit).toHaveBeenCalledWith(classExample);
   });
 
   it("Should call function to delete name when delete button is clicked", async () => {
-    render(
-      <Draggable key={classExample.id} draggableId={classExample.id} index={0}>
-        {(provided, snapshot) => (
-          <TableRow
-            item={classExample}
-            onClickDelete={onClickDelete}
-            onClickEdit={onClickEdit}
-            provided={provided}
-            snapshot={snapshot}
-          />
-        )}
-      </Draggable>,
-      { wrapper: Wrapper }
-    );
+    renderTableRow();
 
     fireEvent.click(screen.getByRole("button", { name: "Delete class" }));
     expect(onClickDelete).toHaveBeenCalledWith("myClassId");
