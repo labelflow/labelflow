@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { isEmpty } from "lodash/fp";
 import {
   Heading,
@@ -13,7 +13,7 @@ import { Dropzone } from "./dropzone";
 import { FilesStatuses } from "./file-statuses";
 import { DroppedFile, UploadStatuses } from "../types";
 
-import { createCreateImages } from "./create-create-images";
+import { importDroppedFiles } from "./import-dropped-files";
 
 const getDataset = gql`
   query getDataset($slug: String!, $workspaceSlug: String!) {
@@ -67,21 +67,35 @@ export const ImportImagesModalDropzone = ({
   const datasetId = datasetResult?.dataset.id;
   const workspaceId = getWorkspaceIdData?.workspace.id;
 
+  const handleImport = useCallback(
+    (filesToImport: DroppedFile[]) => {
+      onUploadStart();
+
+      importDroppedFiles({
+        files: filesToImport,
+        workspaceId,
+        datasetId,
+        setFileUploadStatuses,
+        apolloClient,
+      });
+
+      onUploadEnd();
+    },
+    [
+      workspaceId,
+      datasetId,
+      setFileUploadStatuses,
+      apolloClient,
+      onUploadStart,
+      onUploadEnd,
+    ]
+  );
+
   useEffect(() => {
     if (isEmpty(files)) return;
     if (!datasetId) return;
 
-    const createImages = createCreateImages(
-      files,
-      apolloClient,
-      workspaceId,
-      datasetId,
-      setFileUploadStatuses,
-      onUploadEnd
-    );
-
-    onUploadStart();
-    createImages();
+    handleImport(files);
   }, [files, datasetId]);
 
   return (

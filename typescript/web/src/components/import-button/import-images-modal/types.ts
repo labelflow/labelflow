@@ -22,3 +22,13 @@ export type DroppedUrl = {
  * the file being uploaded
  */
 export type UploadStatuses = Record<string, boolean | string>;
+
+/**
+ * Generic type of an useState setter function
+ */
+type SetState<T> = (newStateOrUpdater: T | ((oldState: T) => T)) => void;
+
+/**
+ * Setter function for the upload statuses
+ */
+export type SetUploadStatuses = SetState<UploadStatuses>;
