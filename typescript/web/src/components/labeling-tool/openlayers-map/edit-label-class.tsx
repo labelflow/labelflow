@@ -112,7 +112,9 @@ export const EditLabelClass = forwardRef<
       const newClassColor =
         labelClasses.length < 1
           ? hexColorSequence[0]
-          : getNextClassColor(labelClasses[labelClasses.length - 1].color);
+          : getNextClassColor(
+              labelClasses.map((labelClass: any) => labelClass.color)
+            );
       if (selectedLabelId != null) {
         // Update class of an existing label with a new class
         onClose();

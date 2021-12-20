@@ -139,7 +139,9 @@ export const UpsertClassModal = ({
     const color =
       labelClasses.length < 1
         ? hexColorSequence[0]
-        : getNextClassColor(labelClasses[labelClasses.length - 1].color);
+        : getNextClassColor(
+            labelClasses.map((labelClass: any) => labelClass.color)
+          );
 
     await client.mutate({
       mutation: createLabelClassMutation,

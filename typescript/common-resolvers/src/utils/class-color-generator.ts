@@ -98,22 +98,73 @@ export const hexColorSequence = [
 // It's charkra's gray.200
 export const noneClassColor = "#E2E8F0";
 
-export const previousHexToNextHexMap: { [key: string]: string } =
-  hexColorSequence.reduce((accumulator, colorHex, index) => {
-    const indexOfNextColor = (index + 1) % hexColorSequence.length; // The number that you are adding to index and the length of the array have to be prime numbers between each other
-    const nextColorHex = hexColorSequence[indexOfNextColor];
-    return {
-      ...accumulator,
-      [colorHex]: nextColorHex,
-    };
-  }, {});
-export const getNextClassColor = (lastHexClassColor: string): string => {
-  if (lastHexClassColor in previousHexToNextHexMap) {
-    return previousHexToNextHexMap?.[lastHexClassColor];
+const createColorHashMap = (attibutedColors: string[]) => {
+  const hashMap: { [key: string]: number } = {};
+  attibutedColors.forEach((attributedColor) => {
+    if (attributedColor in hashMap) {
+      hashMap[attributedColor] += 1;
+    } else {
+      hashMap[attributedColor] = 1;
+    }
+  });
+
+  return hashMap;
+};
+
+const getColorNotAttributed = (
+  numberOfAttributedColors: number,
+  attibutedColors: string[]
+) => {
+  for (let i = 0; i < numberOfAttributedColors; i += 1) {
+    if (!attibutedColors.includes(hexColorSequence[i])) {
+      return hexColorSequence[i];
+    }
   }
-  throw new Error(
-    `Unrecognized color ${lastHexClassColor} passed to getNextClassColor, it should be one among:\n\t- ${Object.keys(
-      previousHexToNextHexMap
-    ).join("\n\t- ")}`
+
+  return hexColorSequence[numberOfAttributedColors];
+};
+
+const getFirstColorLessAttributed = (
+  numberOfAttributedColors: number,
+  attibutedColors: string[],
+  overflow: number
+) => {
+  const hashMap: { [key: string]: number } =
+    createColorHashMap(attibutedColors);
+
+  const targetNumberOfOccurrences = Math.floor(
+    numberOfAttributedColors / hexColorSequence.length
+  );
+
+  for (let i = 0; i < overflow; i += 1) {
+    if (hashMap[hexColorSequence[i]] === targetNumberOfOccurrences) {
+      return hexColorSequence[i];
+    }
+  }
+
+  return hexColorSequence[overflow];
+};
+export const getNextClassColor = (attibutedColors: string[]): string => {
+  const numberOfAttributedColors = attibutedColors.length;
+  const overflow = numberOfAttributedColors % hexColorSequence.length;
+
+  if (overflow === 0) {
+    // If the rest of the division is 0, all colors have been attributed once or several
+    // times, so we return the first color of the array
+    return hexColorSequence[0];
+  }
+
+  if (numberOfAttributedColors < hexColorSequence.length) {
+    // If number of attributed colors is strictly less than the number of available colors, we
+    // want the first color not attributed already
+    return getColorNotAttributed(numberOfAttributedColors, attibutedColors);
+  }
+
+  // Last case is all colors have been attributed at least once, but not a number of times that
+  // is a multiple of hexColorSequence. We want the first color with the smallest number of attributions
+  return getFirstColorLessAttributed(
+    numberOfAttributedColors,
+    attibutedColors,
+    overflow
   );
 };
