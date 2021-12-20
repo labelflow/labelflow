@@ -94,10 +94,8 @@ async function getImageFilesFromZip(zip: JSZip) {
 
 async function importCocoFromZip(
   blob: Blob,
-  repository: Repository,
   datasetId: string,
-  user: { id: string },
-  req: Request
+  { repository, req, user }: Context
 ) {
   const zip = await JSZip.loadAsync(await blob.arrayBuffer()); // Passing to array buffer to avoid issues with jszip
   const annotationFile: CocoDataset = await getAnnotationFileFromZip(zip);
@@ -129,7 +127,7 @@ async function importCocoFromZip(
         `Image declared in the COCO annotation file was not found in the zip file: ${imageCoco.file_name}`
       );
     }
-    const imageFile = imageNameToFile.get(imageCoco.file_name);
+    const imageFile = imageNameToFile.get(imageCoco.file_name)!;
     // eslint-disable-next-line no-await-in-loop
     await uploadImage(imageFile, imageCoco.file_name, datasetId, {
       repository,
@@ -165,7 +163,7 @@ function getCocoImageIdToLabelFlowImageId(
 async function getCocoCategories(
   repository: Repository,
   datasetId: string,
-  user: { id: string },
+  user: { id: string } | undefined,
   annotationFile: CocoDataset,
   cocoCategoryIdToLabelFlowLabelClassId: Map<number, string>
 ) {
@@ -187,15 +185,10 @@ async function getCocoCategories(
 }
 
 async function importCocoCategoriesIntoLabelClasses(
-  repository: Repository,
   datasetId: string,
-  user: {
-    // eslint-disable-next-line no-await-in-loop
-    id: string;
-  },
   annotationFile: CocoDataset,
   cocoCategoryIdToLabelFlowLabelClassId: Map<number, string>,
-  req: Request
+  { repository, req, user }: Context
 ) {
   const cocoCategories = await getCocoCategories(
     repository,
@@ -227,9 +220,7 @@ async function importCocoAnnotationsIntoLabels(
   annotationFile: CocoDataset,
   cocoImageIdToLabelFlowImageId: Map<number, string>,
   cocoCategoryIdToLabelFlowLabelClassId: Map<number, string>,
-  repository: Repository,
-  user: { id: string },
-  req: Request
+  { repository, req, user }: Context
 ) {
   const indexedCocoImages = annotationFile.images.reduce(
     (imagesMap, image) => imagesMap.set(image.id, image),
@@ -255,7 +246,8 @@ async function importCocoAnnotationsIntoLabels(
             ),
             ...convertCocoSegmentationToLabel(
               annotation.segmentation,
-              indexedCocoImages.get(annotation.image_id).height
+              annotation.bbox,
+              indexedCocoImages.get(annotation.image_id)!.height
             ),
           },
         },
@@ -276,7 +268,7 @@ export const importCoco: ImportFunction = async (
   // Otherwise blob is a zip file containing the JSON as well as images
   const annotationFile: CocoDataset = options?.annotationsOnly
     ? JSON.parse(await blob.text())
-    : await importCocoFromZip(blob, repository, datasetId, user, req);
+    : await importCocoFromZip(blob, datasetId, { repository, req, user });
   const images = await repository.image.list({ datasetId, user });
   const cocoImageIdToLabelFlowImageId = getCocoImageIdToLabelFlowImageId(
     annotationFile,
@@ -284,19 +276,15 @@ export const importCoco: ImportFunction = async (
   );
   const cocoCategoryIdToLabelFlowLabelClassId = new Map<number, string>();
   await importCocoCategoriesIntoLabelClasses(
-    repository,
     datasetId,
-    user,
     annotationFile,
     cocoCategoryIdToLabelFlowLabelClassId,
-    req
+    { repository, req, user }
   );
   await importCocoAnnotationsIntoLabels(
     annotationFile,
     cocoImageIdToLabelFlowImageId,
     cocoCategoryIdToLabelFlowLabelClassId,
-    repository,
-    user,
-    req
+    { repository, req, user }
   );
 };

@@ -6,8 +6,8 @@ import { range } from "lodash/fp";
 export const isCocoSegmentationBox = (
   cocoSegmentation: number[][]
 ): boolean => {
-  if (cocoSegmentation.length === 0) {
-    throw new Error("received segmentation without any items inside.");
+  if (!cocoSegmentation || cocoSegmentation.length === 0) {
+    return true;
   }
   if (cocoSegmentation.length > 1 || cocoSegmentation[0].length !== 10) {
     return false;
@@ -52,6 +52,7 @@ export const isCocoSegmentationBox = (
 
 export const convertCocoSegmentationToLabel = (
   cocoSegmentation: number[][],
+  bbox: number[], // [x, y, width, height]
   imageHeight: number
 ): { geometry: GeometryInput; type: LabelType } => ({
   type: isCocoSegmentationBox(cocoSegmentation)
@@ -59,11 +60,22 @@ export const convertCocoSegmentationToLabel = (
     : LabelTypeOptions.Polygon,
   geometry: {
     type: "Polygon",
-    coordinates: cocoSegmentation.map((cocoPolygon) =>
-      range(0, cocoPolygon.length / 2).map((index) => [
-        cocoPolygon[2 * index],
-        imageHeight - cocoPolygon[2 * index + 1],
-      ])
-    ),
+    coordinates:
+      !cocoSegmentation || cocoSegmentation.length === 0
+        ? [
+            [
+              [bbox[0], bbox[1] + bbox[3]],
+              [bbox[0] + bbox[2], bbox[1] + bbox[3]],
+              [bbox[0] + bbox[2], bbox[1]],
+              [bbox[0], bbox[1]],
+              [bbox[0], bbox[1] + bbox[3]],
+            ],
+          ]
+        : cocoSegmentation.map((cocoPolygon) =>
+            range(0, cocoPolygon.length / 2).map((index) => [
+              cocoPolygon[2 * index],
+              imageHeight - cocoPolygon[2 * index + 1],
+            ])
+          ),
   },
 });
