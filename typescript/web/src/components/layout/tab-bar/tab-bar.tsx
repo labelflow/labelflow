@@ -67,7 +67,7 @@ export const TabBar = ({ tabs }: Props) => {
     >
       {tabs.map(({ name, url, isActive }) => {
         if (workspaceSlug === "local" && name === "settings") {
-          return <DisabledSettingsLink />;
+          return <DisabledSettingsLink key="settings" />;
         }
 
         return (
