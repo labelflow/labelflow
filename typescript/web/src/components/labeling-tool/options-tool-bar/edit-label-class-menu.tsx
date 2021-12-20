@@ -149,7 +149,9 @@ export const EditLabelClassMenu = () => {
       const newClassColor =
         labelClasses.length < 1
           ? hexColorSequence[0]
-          : getNextClassColor(labelClasses[labelClasses.length - 1].color);
+          : getNextClassColor(
+              labelClasses.map((labelClass: any) => labelClass.color)
+            );
 
       if (!isInDrawingMode) {
         if (!selectedLabelId) {
