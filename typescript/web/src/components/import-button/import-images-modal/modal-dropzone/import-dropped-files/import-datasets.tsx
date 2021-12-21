@@ -7,18 +7,7 @@ import Bluebird from "bluebird";
 import { uploadFile } from "../../../../../utils/upload-file";
 import { DroppedFile, SetUploadStatuses } from "../../types";
 
-/**
- * Maximum number of datasets that can be imported at once.
- *
- * Increasing this number should reduce potentials bottlenecks,
- * and thus, make the upload faster.
- * For example, if the user uploads faster than the datasets are processed on
- * the server, then the upload would be delayed until import is fully finished.
- *
- * However, increasing this number will also increase the number
- * of connections to the database.
- */
-const CONCURRENCY = 2;
+import { CONCURRENCY } from "../../constants";
 
 const importDatasetMutation = gql`
   mutation importDataset(
