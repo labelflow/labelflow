@@ -6613,6 +6613,7 @@ __metadata:
   dependencies:
     "@graphql-tools/merge": 6.2.14
     "@labelflow/graphql-types": "workspace:typescript/graphql-types"
+    "@labelflow/utils": "workspace:typescript/utils"
     "@prisma/client": 2.30.3
     "@turf/area": 6.5.0
     "@turf/bbox": 6.5.0
@@ -6741,6 +6742,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@labelflow/utils@workspace:typescript/utils":
+  version: 0.0.0-use.local
+  resolution: "@labelflow/utils@workspace:typescript/utils"
+  languageName: unknown
+  linkType: soft
+
 "@labelflow/web@workspace:typescript/web":
   version: 0.0.0-use.local
   resolution: "@labelflow/web@workspace:typescript/web"
@@ -6762,6 +6769,7 @@ __metadata:
     "@labelflow/dev-utils": "workspace:typescript/dev-utils"
     "@labelflow/graphql-types": "workspace:typescript/graphql-types"
     "@labelflow/react-openlayers-fiber": "workspace:typescript/react-openlayers-fiber"
+    "@labelflow/utils": "workspace:typescript/utils"
     "@next-auth/prisma-adapter": next
     "@prisma/client": 2.30.3
     "@sentry/browser": ^6.13.3

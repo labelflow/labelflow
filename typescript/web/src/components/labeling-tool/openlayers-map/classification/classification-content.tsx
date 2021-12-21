@@ -1,22 +1,18 @@
-import React, { forwardRef, useCallback } from "react";
-import { HStack, Box } from "@chakra-ui/react";
-
-import { useRouter } from "next/router";
-import { useQuery, gql, useApolloClient } from "@apollo/client";
-
+import { gql, useApolloClient, useQuery } from "@apollo/client";
+import { Box, HStack } from "@chakra-ui/react";
 import { Label, LabelType } from "@labelflow/graphql-types";
-
-import { Tools, useLabelingStore } from "../../../../connectors/labeling-state";
-
-import { useUndoStore } from "../../../../connectors/undo-store";
-import { ClassificationTag, LabelClassItem } from "./classification-tag";
 import {
   getNextClassColor,
   hexColorSequence,
-} from "../../../../utils/class-color-generator";
+} from "@labelflow/utils/class-color-generator";
+import { useRouter } from "next/router";
+import React, { forwardRef, useCallback } from "react";
+import { Tools, useLabelingStore } from "../../../../connectors/labeling-state";
+import { useUndoStore } from "../../../../connectors/undo-store";
 import { createCreateLabelClassAndUpdateLabelEffect } from "../../../../connectors/undo-store/effects/create-label-class-and-update-label";
-import { createUpdateLabelClassOfLabelEffect } from "../../../../connectors/undo-store/effects/update-label-class-of-label";
 import { createDeleteLabelEffect } from "../../../../connectors/undo-store/effects/delete-label";
+import { createUpdateLabelClassOfLabelEffect } from "../../../../connectors/undo-store/effects/update-label-class-of-label";
+import { ClassificationTag, LabelClassItem } from "./classification-tag";
 
 const getLabelClassesOfDatasetQuery = gql`
   query getLabelClassesOfDataset($slug: String!, $workspaceSlug: String!) {

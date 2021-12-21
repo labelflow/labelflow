@@ -8,9 +8,9 @@ import type {
   QueryLabelClassArgs,
   QueryLabelClassesArgs,
 } from "@labelflow/graphql-types";
+import { getNextClassColor } from "@labelflow/utils/class-color-generator";
 import { Context, DbLabelClass } from "./types";
 import { throwIfResolvesToNil } from "./utils/throw-if-resolves-to-nil";
-import { hexColorSequence } from "./utils/class-color-generator";
 
 // Queries
 const labels = async (
@@ -51,7 +51,7 @@ const createLabelClass = async (
   { repository, user }: Context
 ): Promise<DbLabelClass> => {
   const { color, name, id, datasetId } = args.data;
-  const numberLabelClasses = await repository.labelClass.count({
+  const createdLabelClasses = await repository.labelClass.list({
     datasetId,
     user,
   });
@@ -69,12 +69,15 @@ const createLabelClass = async (
 
   const newLabelClassEntity = {
     id: labelClassId,
-    index: numberLabelClasses,
+    index: createdLabelClasses.length,
     createdAt: now.toISOString(),
     updatedAt: now.toISOString(),
     name,
     color:
-      color ?? hexColorSequence[numberLabelClasses % hexColorSequence.length],
+      color ??
+      getNextClassColor(
+        createdLabelClasses.map((attributedClass) => attributedClass.color)
+      ),
     datasetId,
   };
   await repository.labelClass.add(newLabelClassEntity, user);

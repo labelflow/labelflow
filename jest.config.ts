@@ -66,6 +66,7 @@ export default {
       testMatch: [
         "<rootDir>/typescript/db/**/__tests__/**/*.{ts,tsx}",
         "<rootDir>/typescript/common-resolvers/**/__tests__/**/*.{ts,tsx}",
+        "<rootDir>/typescript/utils/**/__tests__/**/*.{ts,tsx}",
       ],
     },
   ],

@@ -1,27 +1,27 @@
-import React, { useEffect, useState, useRef, useMemo } from "react";
 import {
   Box,
-  Popover,
-  useColorModeValue as mode,
-  PopoverContent,
-  PopoverBody,
-  PopoverTrigger,
-  Kbd,
+  chakra,
   Input,
   InputGroup,
   InputLeftElement,
   InputRightElement,
-  chakra,
+  Kbd,
+  Popover,
+  PopoverBody,
+  PopoverContent,
+  PopoverTrigger,
   Text,
+  useColorModeValue as mode,
 } from "@chakra-ui/react";
+import { LabelClass } from "@labelflow/graphql-types";
+import { noneClassColor } from "@labelflow/utils/class-color-generator";
+import { useCombobox, UseComboboxStateChange } from "downshift";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { useHotkeys } from "react-hotkeys-hook";
 import { IoSearch } from "react-icons/io5";
 import { RiCloseCircleFill } from "react-icons/ri";
-import { useCombobox, UseComboboxStateChange } from "downshift";
-import { useHotkeys } from "react-hotkeys-hook";
-import { LabelClass } from "@labelflow/graphql-types";
-import { ClassListItem } from "./class-list-item";
-import { noneClassColor } from "../../utils/class-color-generator";
 import { keymap } from "../../keymap";
+import { ClassListItem } from "./class-list-item";
 
 type CreateClassInput = { name: string; type: string };
 type NoneClass = { name: string; color: string; type: string };
