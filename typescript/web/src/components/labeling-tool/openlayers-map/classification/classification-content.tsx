@@ -3,7 +3,7 @@ import { Box, HStack } from "@chakra-ui/react";
 import { Label, LabelType } from "@labelflow/graphql-types";
 import {
   getNextClassColor,
-  hexColorSequence,
+  LABEL_CLASS_COLOR_PALETTE,
 } from "@labelflow/utils/class-color-generator";
 import { useRouter } from "next/router";
 import React, { forwardRef, useCallback } from "react";
@@ -91,7 +91,7 @@ export const ClassificationContent = forwardRef<HTMLDivElement>(
           // Update class of an existing label with a new class
           const newClassColor =
             labelClasses.length < 1
-              ? hexColorSequence[0]
+              ? LABEL_CLASS_COLOR_PALETTE[0]
               : getNextClassColor(
                   labelClasses.map((labelClass: any) => labelClass.color)
                 );

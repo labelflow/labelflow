@@ -1,4 +1,4 @@
-export const hexColorSequence = [
+export const LABEL_CLASS_COLOR_PALETTE = [
   "#F87171",
   "#FACC15",
   "#34D399",
@@ -39,7 +39,7 @@ export const hexColorSequence = [
 export const noneClassColor = "#E2E8F0";
 
 const fillColorHashMap = (colors: string[]) => {
-  const hashMap = hexColorSequence.reduce<Record<string, number>>(
+  const hashMap = LABEL_CLASS_COLOR_PALETTE.reduce<Record<string, number>>(
     (obj, key) => ({ ...obj, [key]: 0 }),
     {}
   );
@@ -52,7 +52,7 @@ const fillColorHashMap = (colors: string[]) => {
 
 export const getNextClassColor = (attributedColors: string[]): string => {
   if (attributedColors.length === 0) {
-    return hexColorSequence[0];
+    return LABEL_CLASS_COLOR_PALETTE[0];
   }
 
   const hashMap: { [key: string]: number } = fillColorHashMap(attributedColors);

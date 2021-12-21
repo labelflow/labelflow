@@ -1,10 +1,13 @@
-import { getNextClassColor, hexColorSequence } from "../class-color-generator";
+import {
+  getNextClassColor,
+  LABEL_CLASS_COLOR_PALETTE,
+} from "../class-color-generator";
 
-const firstColor = hexColorSequence[0];
-const thirdColor = hexColorSequence[2];
-const firstTwoInOrder = hexColorSequence.slice(0, 2);
-const firstTwoReversed = [hexColorSequence[1], firstColor];
-const secondAndThird = hexColorSequence.slice(1, 3);
+const firstColor = LABEL_CLASS_COLOR_PALETTE[0];
+const thirdColor = LABEL_CLASS_COLOR_PALETTE[2];
+const firstTwoInOrder = LABEL_CLASS_COLOR_PALETTE.slice(0, 2);
+const firstTwoReversed = [LABEL_CLASS_COLOR_PALETTE[1], firstColor];
+const secondAndThird = LABEL_CLASS_COLOR_PALETTE.slice(1, 3);
 
 it("Gets the first color if no color has been attributed", () => {
   expect(getNextClassColor([])).toEqual(firstColor);
@@ -23,11 +26,11 @@ it("Gets the first hex color if we pass only the second and the third", () => {
 });
 
 it("Gets the first hex color if all colors have been attributed", () => {
-  expect(getNextClassColor(hexColorSequence)).toEqual(firstColor);
+  expect(getNextClassColor(LABEL_CLASS_COLOR_PALETTE)).toEqual(firstColor);
 });
 
 it("Gets the first hex color if all colors have been attributed, then second and third colors have been attributed again", () => {
-  expect(getNextClassColor([...hexColorSequence, ...secondAndThird])).toEqual(
-    firstColor
-  );
+  expect(
+    getNextClassColor([...LABEL_CLASS_COLOR_PALETTE, ...secondAndThird])
+  ).toEqual(firstColor);
 });

@@ -2,7 +2,7 @@ import { gql, useApolloClient, useQuery } from "@apollo/client";
 import { Label, LabelType } from "@labelflow/graphql-types";
 import {
   getNextClassColor,
-  hexColorSequence,
+  LABEL_CLASS_COLOR_PALETTE,
 } from "@labelflow/utils/class-color-generator";
 import { useRouter } from "next/router";
 import GeoJSON, { GeoJSONPolygon } from "ol/format/GeoJSON";
@@ -110,7 +110,7 @@ export const EditLabelClass = forwardRef<
     async (name) => {
       const newClassColor =
         labelClasses.length < 1
-          ? hexColorSequence[0]
+          ? LABEL_CLASS_COLOR_PALETTE[0]
           : getNextClassColor(
               labelClasses.map((labelClass: any) => labelClass.color)
             );
