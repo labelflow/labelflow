@@ -22,7 +22,7 @@
     "@chakra-ui/utils": "1.8.2",
     "@emotion/react": "^11",
     "@emotion/styled": "^11",
-    "@graphiql/toolkit": "^0.2.2",
+    "@graphiql/toolkit": "^0.4.2",
     "@graphql-tools/merge": "^6.2.14",
     "@graphql-tools/schema": "^8.3.1",
     "@labelflow/common-resolvers": "workspace:typescript/common-resolvers",

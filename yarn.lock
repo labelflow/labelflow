@@ -5172,23 +5172,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphiql/toolkit@npm:^0.2.2":
-  version: 0.2.2
-  resolution: "@graphiql/toolkit@npm:0.2.2"
-  dependencies:
-    "@n1ru4l/push-pull-async-iterable-iterator": ^2.1.4
-    graphql-ws: ^4.3.2
-    meros: ^1.1.4
-    subscriptions-transport-ws: ^0.9.18
-  peerDependencies:
-    graphql: ">= v14.5.0 <= 15.5.0"
-  dependenciesMeta:
-    subscriptions-transport-ws:
-      optional: true
-  checksum: c92d8ff858566dd586dc6885141d934c6eb5b787dbfb28109d55af75ea6033414a034645cc2361f336b398aea5a29ff02f414361f6d0dc1f5a6b966a5fff9ec3
-  languageName: node
-  linkType: hard
-
 "@graphiql/toolkit@npm:^0.4.2":
   version: 0.4.2
   resolution: "@graphiql/toolkit@npm:0.4.2"
@@ -6771,7 +6754,7 @@ __metadata:
     "@chakra-ui/utils": 1.8.2
     "@emotion/react": ^11
     "@emotion/styled": ^11
-    "@graphiql/toolkit": ^0.2.2
+    "@graphiql/toolkit": ^0.4.2
     "@graphql-tools/merge": ^6.2.14
     "@graphql-tools/schema": ^8.3.1
     "@labelflow/common-resolvers": "workspace:typescript/common-resolvers"
@@ -7018,13 +7001,6 @@ __metadata:
   peerDependencies:
     graphql: ^15.4.0 || ^16.0.0
   checksum: 746c7a2b23440a2daee5737aece454c756bf9f3e77decd53feed921f88907743301b569209d124afde63271b3f9db59a1fb997c0c280205662a7622992057e4a
-  languageName: node
-  linkType: hard
-
-"@n1ru4l/push-pull-async-iterable-iterator@npm:^2.1.4":
-  version: 2.1.4
-  resolution: "@n1ru4l/push-pull-async-iterable-iterator@npm:2.1.4"
-  checksum: 52cd59b9502db34d51e591b83f3dc1a15ab7c0cd923fefc9eadc00a55b9213cc683d0216edc4ed4050ffae01b3da66a6d0b14acd0cbd483678304ecfc1e313b8
   languageName: node
   linkType: hard
 
@@ -20828,15 +20804,6 @@ fsevents@^1.2.7:
   peerDependencies:
     graphql: ">=0.8.0"
   checksum: 41620699637a5294937bd61d6e2696edea5a1279ef3d8f4b33716a910635595435381ccd1b74c6fae62c2bc81064c62ae27d3559c8380c0f99bdfdc8ecb249b0
-  languageName: node
-  linkType: hard
-
-"graphql-ws@npm:^4.3.2":
-  version: 4.9.0
-  resolution: "graphql-ws@npm:4.9.0"
-  peerDependencies:
-    graphql: ">=0.11 <=15"
-  checksum: f74f5d42843798136202bed9766d2ac6ce614950d31a69d5b935b4f41255d3ace8329b659658fe88a45a4dad43c0d668361b826889d0191859839856084c1eb9
   languageName: node
   linkType: hard
 
