@@ -148,27 +148,8 @@ export const Labels = ({
                 style={[
                   new Style({
                     fill: new Fill({
-                      color: `${iogMaskColor}AA`,
+                      color: `${iogMaskColor}B3`,
                     }),
-                    stroke: new Stroke({
-                      color: `${iogMaskColor}FF`,
-                      width: 2,
-                    }),
-                    zIndex: 2,
-                  }),
-                  new Style({
-                    image: new CircleStyle({
-                      radius: 3,
-                      fill: new Fill({
-                        color: iogMaskColor,
-                      }),
-                    }),
-                    geometry: (feature) => {
-                      const coordinates = (feature as Feature<Polygon>)
-                        .getGeometry()
-                        .getCoordinates()[1];
-                      return new MultiPoint(coordinates);
-                    },
                     zIndex: 2,
                   }),
                 ]}

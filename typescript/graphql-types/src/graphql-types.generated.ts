@@ -18,6 +18,17 @@ export type Scalars = {
 };
 
 
+export type CreateIogLabelInput = {
+  id?: Maybe<Scalars['ID']>;
+  imageId: Scalars['String'];
+  x: Scalars['Float'];
+  y: Scalars['Float'];
+  width: Scalars['Float'];
+  height: Scalars['Float'];
+  centerPoint: Array<Scalars['Float']>;
+  labelClassId?: Maybe<Scalars['ID']>;
+};
+
 export enum CurrentUserCanAcceptInvitation {
   Yes = 'Yes',
   AlreadyAccepted = 'AlreadyAccepted',
@@ -379,7 +390,8 @@ export type Mutation = {
   deleteLabelClass?: Maybe<LabelClass>;
   createDataset?: Maybe<Dataset>;
   createDemoDataset?: Maybe<Dataset>;
-  runIog?: Maybe<Label>;
+  updateIogLabel?: Maybe<Label>;
+  createIogLabel?: Maybe<Label>;
   updateDataset?: Maybe<Dataset>;
   deleteDataset?: Maybe<Dataset>;
   importDataset?: Maybe<ImportStatus>;
@@ -464,8 +476,13 @@ export type MutationCreateDatasetArgs = {
 };
 
 
-export type MutationRunIogArgs = {
-  data: RunIogInput;
+export type MutationUpdateIogLabelArgs = {
+  data: UpdateIogInput;
+};
+
+
+export type MutationCreateIogLabelArgs = {
+  data: CreateIogLabelInput;
 };
 
 
@@ -686,6 +703,17 @@ export type RunIogInput = {
   centerPoint?: Maybe<Array<Scalars['Float']>>;
 };
 
+export type UpdateIogInput = {
+  id: Scalars['ID'];
+  x?: Maybe<Scalars['Float']>;
+  y?: Maybe<Scalars['Float']>;
+  width?: Maybe<Scalars['Float']>;
+  height?: Maybe<Scalars['Float']>;
+  pointsInside?: Maybe<Array<Maybe<Array<Scalars['Float']>>>>;
+  pointsOutside?: Maybe<Array<Maybe<Array<Scalars['Float']>>>>;
+  centerPoint?: Maybe<Array<Scalars['Float']>>;
+};
+
 
 export type UploadTarget = UploadTargetDirect | UploadTargetHttp;
 
@@ -855,9 +883,11 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
   ColorHex: ResolverTypeWrapper<Scalars['ColorHex']>;
+  CreateIogLabelInput: CreateIogLabelInput;
+  String: ResolverTypeWrapper<Scalars['String']>;
+  Float: ResolverTypeWrapper<Scalars['Float']>;
   CurrentUserCanAcceptInvitation: CurrentUserCanAcceptInvitation;
   Dataset: ResolverTypeWrapper<Dataset>;
-  String: ResolverTypeWrapper<Scalars['String']>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
   DatasetCreateInput: DatasetCreateInput;
   DatasetImportInput: DatasetImportInput;
@@ -892,7 +922,6 @@ export type ResolversTypes = {
   InviteMemberInput: InviteMemberInput;
   JSON: ResolverTypeWrapper<Scalars['JSON']>;
   Label: ResolverTypeWrapper<Label>;
-  Float: ResolverTypeWrapper<Scalars['Float']>;
   LabelClass: ResolverTypeWrapper<LabelClass>;
   LabelClassCreateInput: LabelClassCreateInput;
   LabelClassReorderInput: LabelClassReorderInput;
@@ -916,6 +945,7 @@ export type ResolversTypes = {
   Mutation: ResolverTypeWrapper<{}>;
   Query: ResolverTypeWrapper<{}>;
   RunIogInput: RunIogInput;
+  UpdateIogInput: UpdateIogInput;
   Upload: ResolverTypeWrapper<Scalars['Upload']>;
   UploadTarget: ResolversTypes['UploadTargetDirect'] | ResolversTypes['UploadTargetHttp'];
   UploadTargetDirect: ResolverTypeWrapper<UploadTargetDirect>;
@@ -937,8 +967,10 @@ export type ResolversTypes = {
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
   ColorHex: Scalars['ColorHex'];
-  Dataset: Dataset;
+  CreateIogLabelInput: CreateIogLabelInput;
   String: Scalars['String'];
+  Float: Scalars['Float'];
+  Dataset: Dataset;
   Int: Scalars['Int'];
   DatasetCreateInput: DatasetCreateInput;
   DatasetImportInput: DatasetImportInput;
@@ -970,7 +1002,6 @@ export type ResolversParentTypes = {
   InviteMemberInput: InviteMemberInput;
   JSON: Scalars['JSON'];
   Label: Label;
-  Float: Scalars['Float'];
   LabelClass: LabelClass;
   LabelClassCreateInput: LabelClassCreateInput;
   LabelClassReorderInput: LabelClassReorderInput;
@@ -991,6 +1022,7 @@ export type ResolversParentTypes = {
   Mutation: {};
   Query: {};
   RunIogInput: RunIogInput;
+  UpdateIogInput: UpdateIogInput;
   Upload: Scalars['Upload'];
   UploadTarget: ResolversParentTypes['UploadTargetDirect'] | ResolversParentTypes['UploadTargetHttp'];
   UploadTargetDirect: UploadTargetDirect;
@@ -1147,7 +1179,8 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   deleteLabelClass?: Resolver<Maybe<ResolversTypes['LabelClass']>, ParentType, ContextType, RequireFields<MutationDeleteLabelClassArgs, 'where'>>;
   createDataset?: Resolver<Maybe<ResolversTypes['Dataset']>, ParentType, ContextType, RequireFields<MutationCreateDatasetArgs, 'data'>>;
   createDemoDataset?: Resolver<Maybe<ResolversTypes['Dataset']>, ParentType, ContextType>;
-  runIog?: Resolver<Maybe<ResolversTypes['Label']>, ParentType, ContextType, RequireFields<MutationRunIogArgs, 'data'>>;
+  updateIogLabel?: Resolver<Maybe<ResolversTypes['Label']>, ParentType, ContextType, RequireFields<MutationUpdateIogLabelArgs, 'data'>>;
+  createIogLabel?: Resolver<Maybe<ResolversTypes['Label']>, ParentType, ContextType, RequireFields<MutationCreateIogLabelArgs, 'data'>>;
   updateDataset?: Resolver<Maybe<ResolversTypes['Dataset']>, ParentType, ContextType, RequireFields<MutationUpdateDatasetArgs, 'where' | 'data'>>;
   deleteDataset?: Resolver<Maybe<ResolversTypes['Dataset']>, ParentType, ContextType, RequireFields<MutationDeleteDatasetArgs, 'where'>>;
   importDataset?: Resolver<Maybe<ResolversTypes['ImportStatus']>, ParentType, ContextType, RequireFields<MutationImportDatasetArgs, 'where' | 'data'>>;

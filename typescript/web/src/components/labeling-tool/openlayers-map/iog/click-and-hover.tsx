@@ -9,7 +9,7 @@ import {
   useLabelingStore,
   DrawingToolState,
 } from "../../../../connectors/labeling-state";
-import { createRunIogEffect } from "../../../../connectors/undo-store/effects/run-iog";
+import { createUpdateIogLabelEffect } from "../../../../connectors/undo-store/effects/update-iog-label";
 import { useUndoStore } from "../../../../connectors/undo-store";
 import { getIogMaskIdFromLabelId } from "../../../../connectors/iog";
 
@@ -67,7 +67,7 @@ export const HandleIogClick = () => {
         } else if (idOfClickedFeature === selectedLabelId) {
           // Add point outside
           await perform(
-            createRunIogEffect(
+            createUpdateIogLabelEffect(
               {
                 labelId: dataLabelQuery?.label?.id,
                 pointsInside,
@@ -86,7 +86,7 @@ export const HandleIogClick = () => {
             10
           );
           await perform(
-            createRunIogEffect(
+            createUpdateIogLabelEffect(
               {
                 labelId: dataLabelQuery?.label?.id,
                 pointsInside: [
@@ -108,7 +108,7 @@ export const HandleIogClick = () => {
             10
           );
           await perform(
-            createRunIogEffect(
+            createUpdateIogLabelEffect(
               {
                 labelId: dataLabelQuery?.label?.id,
                 pointsInside,
@@ -126,7 +126,7 @@ export const HandleIogClick = () => {
         } else {
           // Add point inside
           await perform(
-            createRunIogEffect(
+            createUpdateIogLabelEffect(
               {
                 labelId: dataLabelQuery?.label?.id,
                 pointsInside: [...pointsInside, event.coordinate as Coordinate],

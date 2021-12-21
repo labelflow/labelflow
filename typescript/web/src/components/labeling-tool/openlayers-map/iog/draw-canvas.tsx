@@ -1,14 +1,15 @@
-import { useMemo, useRef, useCallback } from "react";
+import { v4 as uuidv4 } from "uuid";
+import { useMemo, useRef, useCallback, MutableRefObject } from "react";
 import { Draw as OlDraw } from "ol/interaction";
 import { createBox, DrawEvent } from "ol/interaction/Draw";
 import GeoJSON, { GeoJSONPolygon } from "ol/format/GeoJSON";
 import { Fill, Stroke, Style } from "ol/style";
 import GeometryType from "ol/geom/GeometryType";
+import OverlayPositioning from "ol/OverlayPositioning";
 import { useApolloClient, useQuery } from "@apollo/client";
 import { useToast } from "@chakra-ui/react";
 import { useHotkeys } from "react-hotkeys-hook";
 import { getBoundedGeometryFromImage } from "@labelflow/common-resolvers";
-import { LabelType } from "@labelflow/graphql-types";
 
 import {
   useLabelingStore,
@@ -16,8 +17,7 @@ import {
 } from "../../../../connectors/labeling-state";
 import { keymap } from "../../../../keymap";
 import { noneClassColor } from "../../../../utils/class-color-generator";
-import { createCreateLabelEffect } from "../../../../connectors/undo-store/effects/create-label";
-import { createRunIogEffect } from "../../../../connectors/undo-store/effects/run-iog";
+import { createCreateIogLabelEffect } from "../../../../connectors/undo-store/effects/create-iog-label";
 import { useUndoStore } from "../../../../connectors/undo-store";
 
 import { labelClassQuery, imageQuery } from "./queries";
@@ -25,7 +25,16 @@ import { extractSmartToolInputInputFromIogMask } from "../../../../connectors/io
 
 const geometryFunction = createBox();
 
-export const DrawIogCanvas = ({ imageId }: { imageId: string }) => {
+export const DrawIogCanvas = ({
+  imageId,
+  iogSpinnerRef,
+}: {
+  imageId: string;
+  iogSpinnerRef: MutableRefObject<HTMLDivElement | null>;
+}) => {
+  const iogSpinnerPosition = useLabelingStore(
+    (state) => state.iogSpinnerPosition
+  );
   const drawRef = useRef<OlDraw>(null);
   const setSelectedLabelId = useLabelingStore(
     useCallback((state) => state.setSelectedLabelId, [])
@@ -58,6 +67,7 @@ export const DrawIogCanvas = ({ imageId }: { imageId: string }) => {
   const performIOGFromDrawEvent = useCallback(
     async (drawEvent: DrawEvent) => {
       const timestamp = new Date().getTime();
+      const labelId = uuidv4();
       const openLayersGeometry = drawEvent.feature.getGeometry();
       const geometry = new GeoJSON().writeGeometryObject(
         openLayersGeometry
@@ -66,46 +76,22 @@ export const DrawIogCanvas = ({ imageId }: { imageId: string }) => {
         { width: dataImage?.image?.width, height: dataImage?.image?.height },
         geometry
       ).geometry;
-      const labelId = await createCreateLabelEffect(
-        {
-          imageId,
-          selectedLabelClassId,
-          geometry: boundedGeometry,
-          labelType: LabelType.Polygon,
-        },
-        {
-          setSelectedLabelId,
-          client,
-        }
-      ).do();
-      const inferencePromise = (async () => {
-        const dataUrl = await (async function fetchData() {
-          const blob = await fetch(dataImage?.image?.url).then((r) => r.blob());
-          return new Promise<string>((resolve) => {
-            const reader = new FileReader();
-            reader.onload = () => resolve(reader.result as string);
-            reader.readAsDataURL(blob);
-          });
-        })();
-        const smartToolInput = extractSmartToolInputInputFromIogMask(
-          boundedGeometry.coordinates as number[][][]
-        );
-        registerIogJob(timestamp, labelId, smartToolInput.centerPoint);
-
-        return perform(
-          createRunIogEffect(
+      const smartToolInput = extractSmartToolInputInputFromIogMask(
+        boundedGeometry.coordinates as number[][][]
+      );
+      registerIogJob(timestamp, labelId, smartToolInput.centerPoint);
+      try {
+        await perform(
+          createCreateIogLabelEffect(
             {
-              labelId,
-              imageUrl: dataUrl,
+              id: labelId,
+              imageId,
+              labelClassId: selectedLabelClassId ?? undefined,
               ...smartToolInput,
             },
-            { client }
+            { setSelectedLabelId, client }
           )
         );
-      })();
-
-      try {
-        await inferencePromise;
       } catch (error) {
         setSelectedLabelId(null);
         toast({
@@ -124,11 +110,11 @@ export const DrawIogCanvas = ({ imageId }: { imageId: string }) => {
     [
       dataImage,
       imageId,
+      setSelectedLabelId,
       selectedLabelClassId,
       client,
       registerIogJob,
       unregisterIogJob,
-      setSelectedLabelId,
       toast,
       perform,
     ]
@@ -148,27 +134,36 @@ export const DrawIogCanvas = ({ imageId }: { imageId: string }) => {
     });
   }, [selectedLabelClass?.color]);
   return (
-    <olInteractionDraw
-      ref={drawRef}
-      args={{
-        type: GeometryType.CIRCLE,
-        geometryFunction,
-        style, // Needed here to trigger the rerender of the component when the selected class changes
-      }}
-      condition={(e) => {
-        // 0 is the main mouse button. See: https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/button
-        // @ts-ignore
-        return e.originalEvent.button === 0;
-      }}
-      onDrawabort={() => {
-        setDrawingToolState(DrawingToolState.IDLE);
-        return true;
-      }}
-      onDrawstart={() => {
-        setDrawingToolState(DrawingToolState.DRAWING);
-        return true;
-      }}
-      onDrawend={performIOGFromDrawEvent}
-    />
+    <>
+      <olOverlay
+        id="overlay-spinner"
+        key="overlay-spinner"
+        element={iogSpinnerRef.current ?? undefined}
+        position={iogSpinnerPosition ?? undefined}
+        positioning={OverlayPositioning.CENTER_CENTER}
+      />
+      <olInteractionDraw
+        ref={drawRef}
+        args={{
+          type: GeometryType.CIRCLE,
+          geometryFunction,
+          style, // Needed here to trigger the rerender of the component when the selected class changes
+        }}
+        condition={(e) => {
+          // 0 is the main mouse button. See: https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/button
+          // @ts-ignore
+          return e.originalEvent.button === 0;
+        }}
+        onDrawabort={() => {
+          setDrawingToolState(DrawingToolState.IDLE);
+          return true;
+        }}
+        onDrawstart={() => {
+          setDrawingToolState(DrawingToolState.DRAWING);
+          return true;
+        }}
+        onDrawend={performIOGFromDrawEvent}
+      />
+    </>
   );
 };

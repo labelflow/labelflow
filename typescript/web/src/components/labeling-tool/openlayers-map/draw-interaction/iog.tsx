@@ -31,6 +31,7 @@ export const DrawIogInteraction = ({
 
   useEffect(() => {
     if (selectedLabelId == null) setDrawingToolState(DrawingToolState.IDLE);
+    else setDrawingToolState(DrawingToolState.DRAWING);
   }, [selectedLabelId]);
 
   useHotkeys(
@@ -48,7 +49,7 @@ export const DrawIogInteraction = ({
   }
 
   return selectedLabelId == null ? (
-    <DrawIogCanvas imageId={imageId} />
+    <DrawIogCanvas imageId={imageId} iogSpinnerRef={iogSpinnerRef} />
   ) : (
     <ModifyIog
       imageId={imageId}

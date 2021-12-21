@@ -9,7 +9,7 @@ import { deleteLabelClassMutationUpdate } from "./cache-updates/delete-label-cla
 import {
   getLabelQuery,
   createLabelClassQuery,
-  updateLabelQuery,
+  updateLabelMutation,
   deleteLabelClassQuery,
 } from "./shared-queries";
 
@@ -86,7 +86,7 @@ export const createCreateLabelClassAndUpdateLabelEffect = (
         __typename: "Label";
       };
     }>({
-      mutation: updateLabelQuery,
+      mutation: updateLabelMutation,
       variables: {
         where: { id: selectedLabelId },
         data: { labelClassId: labelClassId ?? null },
@@ -114,7 +114,7 @@ export const createCreateLabelClassAndUpdateLabelEffect = (
     labelClassIdPrevious: string;
   }) => {
     await client.mutate({
-      mutation: updateLabelQuery,
+      mutation: updateLabelMutation,
       variables: {
         where: { id: selectedLabelId },
         data: { labelClassId: labelClassIdPrevious ?? null },
@@ -173,7 +173,7 @@ export const createCreateLabelClassAndUpdateLabelEffect = (
     useLabelingStore.setState({ selectedLabelClassId: labelClassId });
 
     await client.mutate({
-      mutation: updateLabelQuery,
+      mutation: updateLabelMutation,
       variables: {
         where: { id: selectedLabelId },
         data: { labelClassId },

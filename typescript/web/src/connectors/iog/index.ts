@@ -1,3 +1,5 @@
+import { theme } from "../../theme";
+
 const iogMaskIdSuffix = "-iog-mask";
 
 export const getIogMaskIdFromLabelId = (labelId: string): string =>
@@ -5,7 +7,7 @@ export const getIogMaskIdFromLabelId = (labelId: string): string =>
 export const getLabelIdFromIogMaskId = (iogMaskId: string): string =>
   iogMaskId.split(iogMaskIdSuffix)[0];
 
-export const iogMaskColor = "#DDDDDD";
+export const iogMaskColor = theme.colors.gray["700"];
 
 export const extractIogMaskFromLabel = (
   label: {

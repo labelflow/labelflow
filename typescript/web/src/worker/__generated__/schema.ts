@@ -2,6 +2,17 @@ export const typeDefs = [
   `
   scalar ColorHex
 
+  input CreateIogLabelInput {
+    id: ID
+    imageId: String!
+    x: Float!
+    y: Float!
+    width: Float!
+    height: Float!
+    centerPoint: [Float!]!
+    labelClassId: ID
+  }
+
   enum CurrentUserCanAcceptInvitation {
     Yes
     AlreadyAccepted
@@ -347,7 +358,8 @@ export const typeDefs = [
     deleteLabelClass(where: LabelClassWhereUniqueInput!): LabelClass
     createDataset(data: DatasetCreateInput!): Dataset
     createDemoDataset: Dataset
-    runIog(data: RunIogInput!): Label
+    updateIogLabel(data: UpdateIogInput!): Label
+    createIogLabel(data: CreateIogLabelInput!): Label
     updateDataset(where: DatasetWhereUniqueInput!, data: DatasetUpdateInput!): Dataset
     deleteDataset(where: DatasetWhereUniqueInput!): Dataset
     importDataset(where: DatasetWhereUniqueInput!, data: DatasetImportInput!): ImportStatus
@@ -392,6 +404,17 @@ export const typeDefs = [
   input RunIogInput {
     id: ID!
     imageUrl: String
+    x: Float
+    y: Float
+    width: Float
+    height: Float
+    pointsInside: [[Float!]]
+    pointsOutside: [[Float!]]
+    centerPoint: [Float!]
+  }
+
+  input UpdateIogInput {
+    id: ID!
     x: Float
     y: Float
     width: Float
