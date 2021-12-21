@@ -38,73 +38,28 @@ export const hexColorSequence = [
 // It's charkra's gray.200
 export const noneClassColor = "#E2E8F0";
 
-const createColorHashMap = (attibutedColors: string[]) => {
-  const hashMap: { [key: string]: number } = {};
-  attibutedColors.forEach((attributedColor) => {
-    if (attributedColor in hashMap) {
-      hashMap[attributedColor] += 1;
-    } else {
-      hashMap[attributedColor] = 1;
-    }
+const fillColorHashMap = (colors: string[]) => {
+  const hashMap = hexColorSequence.reduce<Record<string, number>>(
+    (obj, key) => ({ ...obj, [key]: 0 }),
+    {}
+  );
+  colors.forEach((color) => {
+    hashMap[color] += 1;
   });
 
   return hashMap;
 };
 
-const getColorNotAttributed = (
-  numberOfAttributedColors: number,
-  attibutedColors: string[]
-) => {
-  for (let i = 0; i < numberOfAttributedColors; i += 1) {
-    if (!attibutedColors.includes(hexColorSequence[i])) {
-      return hexColorSequence[i];
-    }
-  }
-
-  return hexColorSequence[numberOfAttributedColors];
-};
-
-const getFirstColorLessAttributed = (
-  numberOfAttributedColors: number,
-  attibutedColors: string[],
-  overflow: number
-) => {
-  const hashMap: { [key: string]: number } =
-    createColorHashMap(attibutedColors);
-
-  const targetNumberOfOccurrences = Math.floor(
-    numberOfAttributedColors / hexColorSequence.length
-  );
-
-  for (let i = 0; i < overflow; i += 1) {
-    if (hashMap[hexColorSequence[i]] === targetNumberOfOccurrences) {
-      return hexColorSequence[i];
-    }
-  }
-
-  return hexColorSequence[overflow];
-};
-export const getNextClassColor = (attibutedColors: string[]): string => {
-  const numberOfAttributedColors = attibutedColors.length;
-  const overflow = numberOfAttributedColors % hexColorSequence.length;
-
-  if (overflow === 0) {
-    // If the rest of the division is 0, all colors have been attributed once or several
-    // times, so we return the first color of the array
+export const getNextClassColor = (attributedColors: string[]): string => {
+  if (attributedColors.length === 0) {
     return hexColorSequence[0];
   }
 
-  if (numberOfAttributedColors < hexColorSequence.length) {
-    // If number of attributed colors is strictly less than the number of available colors, we
-    // want the first color not attributed already
-    return getColorNotAttributed(numberOfAttributedColors, attibutedColors);
-  }
+  const hashMap: { [key: string]: number } = fillColorHashMap(attributedColors);
 
-  // Last case is all colors have been attributed at least once, but not a number of times that
-  // is a multiple of hexColorSequence. We want the first color with the smallest number of attributions
-  return getFirstColorLessAttributed(
-    numberOfAttributedColors,
-    attibutedColors,
-    overflow
+  const [nextColor] = Object.entries(hashMap).reduceRight((previous, current) =>
+    previous[1] < current[1] ? previous : current
   );
+
+  return nextColor;
 };
