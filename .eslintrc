@@ -1,6 +1,11 @@
 {
-  "extends": ["airbnb-typescript", "plugin:prettier/recommended"],
+  "extends": [
+    "airbnb-typescript",
+    "plugin:prettier/recommended",
+    "plugin:react-hooks/recommended"
+  ],
   "rules": {
+    "func-names": ["error", "always"],
     "react/prop-types": "off",
     "react/react-in-jsx-scope": "off",
     "react/jsx-props-no-spreading": "off",
@@ -27,6 +32,20 @@
       }
     ]
   },
+  "overrides": [
+    {
+      "files": [
+        "**/*.stories.ts",
+        "**/__stories__/**/*.ts",
+        "**/*.stories.tsx",
+        "**/__stories__/**/*.tsx"
+      ],
+      "rules": {
+        "no-console": "off",
+        "no-alert": "off"
+      }
+    }
+  ],
   "parserOptions": {
     "project": "./tsconfig.json"
   }

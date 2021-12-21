@@ -40,6 +40,30 @@ const errors = {
   default: "Unable to sign in.",
 };
 
+const ErrorText = ({ error }: { error: string }) => (
+  <Text
+    mb="8"
+    textAlign={{ base: "center", lg: "start" }}
+    mt="12"
+    fontSize="xs"
+    color={useColorModeValue("red.600", "red.400")}
+  >
+    {error in errors ? errors[error as keyof typeof errors] : errors.default}
+  </Text>
+);
+
+const Disclaimer = () => (
+  <Text
+    mb="8"
+    textAlign={{ base: "center", lg: "start" }}
+    mt="12"
+    fontSize="xs"
+    color={useColorModeValue("gray.600", "gray.400")}
+  >
+    By continuing, you agree to LabelFlow Terms of Service and Privacy Policy
+  </Text>
+);
+
 export const SigninModal = ({
   isOpen = false,
   onClose = () => {},
@@ -211,30 +235,7 @@ export const SigninModal = ({
                   )}
                 </Stack>
               </form>
-              {error ? (
-                <Text
-                  mb="8"
-                  textAlign={{ base: "center", lg: "start" }}
-                  mt="12"
-                  fontSize="xs"
-                  color={useColorModeValue("red.600", "red.400")}
-                >
-                  {error in errors
-                    ? errors[error as keyof typeof errors]
-                    : errors.default}
-                </Text>
-              ) : (
-                <Text
-                  mb="8"
-                  textAlign={{ base: "center", lg: "start" }}
-                  mt="12"
-                  fontSize="xs"
-                  color={useColorModeValue("gray.600", "gray.400")}
-                >
-                  By continuing, you agree to LabelFlow Terms of Service and
-                  Privacy Policy
-                </Text>
-              )}
+              {error ? <ErrorText error={error} /> : <Disclaimer />}
             </Box>
           </SimpleGrid>
         </ModalBody>

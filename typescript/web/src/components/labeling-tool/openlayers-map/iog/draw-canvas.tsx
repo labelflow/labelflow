@@ -79,7 +79,7 @@ export const DrawIogCanvas = ({ imageId }: { imageId: string }) => {
         }
       ).do();
       const inferencePromise = (async () => {
-        const dataUrl = await (async function () {
+        const dataUrl = await (async function fetchData() {
           const blob = await fetch(dataImage?.image?.url).then((r) => r.blob());
           return new Promise<string>((resolve) => {
             const reader = new FileReader();
@@ -125,7 +125,6 @@ export const DrawIogCanvas = ({ imageId }: { imageId: string }) => {
       dataImage,
       imageId,
       selectedLabelClassId,
-      setSelectedLabelId,
       client,
       registerIogJob,
       unregisterIogJob,

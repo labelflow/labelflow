@@ -56,7 +56,7 @@ You can build LabelFlow from source, and serve it from your machine. Read how to
 
 LabelFlow officially launched as v.0.1 on 7th of September, however a lot of new features are coming. Watch releases of this repository to be notified for future updates:
 
-![](https://github.com/labelflow/labelflow/raw/main/typescript/web/public/static/img/subscribe.gif)
+![Subscribe](https://github.com/labelflow/labelflow/raw/main/typescript/web/public/static/img/subscribe.gif)
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
@@ -119,6 +119,7 @@ You need to have below listed softwares installed on your machine to run labelfl
 You can find the full list of environment variables needed for a fully featured app in the [`.env.development`](https://github.com/labelflow/labelflow/blob/feature/workspaces/.env.development) file. As you can see this file contains variables that are secrets and that should not be committed to your repo. In order to still be able to have secrets you should create:
 
 - an `.env.local` file at the root of the repo and make a copy of it inside the folders `typescript/db`, `typescript/infrastructure` and `typescript/db`. We recommend doing symlinks between the files to avoid having to copy/paste again each file when modifying it
+
 - an `.env.production` file that will be a copy of `.env.development` but with the env var values set to the production ones. This file won't be committed either so you can safely store your secrets here
 
 <p align="right">(<a href="#top">back to top</a>)</p>
