@@ -14,6 +14,9 @@ describe("isCocoSegmentationBox", () => {
       ])
     ).toBeTruthy();
   });
+  test("Should consider an empty segmentation to a box, based on the bounding box", () => {
+    expect(isCocoSegmentationBox([])).toBeTruthy();
+  });
   test("Should discard segmentation with more than one polygon", () => {
     expect(
       isCocoSegmentationBox([
@@ -67,8 +70,14 @@ describe("convertCocoSegmentationToLabel", () => {
             567.09456, 123.33, 254.0001,
           ],
         ],
+        [0, 0, 568, 568],
         568
       )
+    ).toMatchSnapshot();
+  });
+  test("Should convert an empty segmentation's bounding box into a box", () => {
+    expect(
+      convertCocoSegmentationToLabel([], [100, 200, 300, 400], 700)
     ).toMatchSnapshot();
   });
   test("Should convert a polygon into a polygon", () => {
@@ -80,6 +89,7 @@ describe("convertCocoSegmentationToLabel", () => {
             567.09456, 100, 550, 123.33, 254.0001,
           ],
         ],
+        [0, 0, 568, 568],
         568
       )
     ).toMatchSnapshot();

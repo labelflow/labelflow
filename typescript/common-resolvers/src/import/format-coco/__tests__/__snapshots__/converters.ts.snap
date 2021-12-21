@@ -69,3 +69,36 @@ Object {
   "type": "Polygon",
 }
 `;
+
+exports[`convertCocoSegmentationToLabel Should convert an empty segmentation's bounding box into a box 1`] = `
+Object {
+  "geometry": Object {
+    "coordinates": Array [
+      Array [
+        Array [
+          100,
+          600,
+        ],
+        Array [
+          400,
+          600,
+        ],
+        Array [
+          400,
+          200,
+        ],
+        Array [
+          100,
+          200,
+        ],
+        Array [
+          100,
+          600,
+        ],
+      ],
+    ],
+    "type": "Polygon",
+  },
+  "type": "Box",
+}
+`;
