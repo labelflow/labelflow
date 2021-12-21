@@ -16,6 +16,7 @@ const createIogLabelMutation = gql`
     $width: Float!
     $height: Float!
     $centerPoint: [Float!]!
+    $labelClassId: ID
   ) {
     createIogLabel(
       data: {
@@ -26,6 +27,7 @@ const createIogLabelMutation = gql`
         width: $width
         height: $height
         centerPoint: $centerPoint
+        labelClassId: $labelClassId
       }
     ) {
       id
@@ -42,6 +44,7 @@ export const createCreateIogLabelEffect = (
     width,
     height,
     centerPoint,
+    labelClassId,
   }: {
     id: string;
     imageId: string;
@@ -50,6 +53,7 @@ export const createCreateIogLabelEffect = (
     width: number;
     height: number;
     centerPoint: Coordinate;
+    labelClassId?: string;
   },
   {
     setSelectedLabelId,
@@ -63,7 +67,7 @@ export const createCreateIogLabelEffect = (
     const createLabelInputs = {
       id,
       imageId,
-      labelClassId: null,
+      labelClassId,
       geometry: {
         type: "Polygon",
         coordinates: [
@@ -89,6 +93,7 @@ export const createCreateIogLabelEffect = (
         width,
         height,
         centerPoint,
+        labelClassId,
       },
       refetchQueries: ["countLabelsOfDataset", "getImageLabels"],
       optimisticResponse: {

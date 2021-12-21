@@ -10,6 +10,7 @@ export const typeDefs = [
     width: Float!
     height: Float!
     centerPoint: [Float!]!
+    labelClassId: ID
   }
 
   enum CurrentUserCanAcceptInvitation {

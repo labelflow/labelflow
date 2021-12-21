@@ -11,6 +11,7 @@ export const typeDefs = gql`
     width: Float!
     height: Float!
     centerPoint: [Float!]!
+    labelClassId: ID
   }
 
   enum CurrentUserCanAcceptInvitation {

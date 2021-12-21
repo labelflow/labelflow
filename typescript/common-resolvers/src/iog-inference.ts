@@ -186,7 +186,7 @@ const createIogLabel = async (
     type: LabelType.Polygon,
     createdAt: now.toISOString(),
     updatedAt: now.toISOString(),
-    labelClassId: null,
+    labelClassId: args?.data?.labelClassId ?? null,
     imageId: args.data.imageId,
     geometry,
     x,

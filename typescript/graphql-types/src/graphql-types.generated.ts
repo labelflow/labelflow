@@ -26,6 +26,7 @@ export type CreateIogLabelInput = {
   width: Scalars['Float'];
   height: Scalars['Float'];
   centerPoint: Array<Scalars['Float']>;
+  labelClassId?: Maybe<Scalars['ID']>;
 };
 
 export enum CurrentUserCanAcceptInvitation {

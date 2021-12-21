@@ -8,6 +8,7 @@ input CreateIogLabelInput {
   width: Float!
   height: Float!
   centerPoint: [Float!]!
+  labelClassId: ID
 }
 
 enum CurrentUserCanAcceptInvitation {

@@ -86,6 +86,7 @@ export const DrawIogCanvas = ({
             {
               id: labelId,
               imageId,
+              labelClassId: selectedLabelClassId ?? undefined,
               ...smartToolInput,
             },
             { setSelectedLabelId, client }
@@ -110,6 +111,7 @@ export const DrawIogCanvas = ({
       dataImage,
       imageId,
       setSelectedLabelId,
+      selectedLabelClassId,
       client,
       registerIogJob,
       unregisterIogJob,
