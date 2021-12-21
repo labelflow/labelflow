@@ -6834,6 +6834,7 @@ __metadata:
     graphql-subscriptions: ^1.2.1
     graphql-tag: 2.12.4
     graphql-type-json: ^0.3.2
+    graphql-ws: ^5.5.5
     http-browserify: ^1.7.0
     jimp: 0.16.1
     jszip: 3.7.0
@@ -18424,13 +18425,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"entities@npm:~2.1.0":
-  version: 2.1.0
-  resolution: "entities@npm:2.1.0"
-  checksum: a10a877e489586a3f6a691fe49bf3fc4e58f06c8e80522f08214a5150ba457e7017b447d4913a3fa041bda06ee4c92517baa4d8d75373eaa79369e9639225ffd
-  languageName: node
-  linkType: hard
-
 "env-ci@npm:^5.0.2":
   version: 5.0.2
   resolution: "env-ci@npm:5.0.2"
@@ -20855,7 +20849,7 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"graphql-ws@npm:^5.4.1":
+"graphql-ws@npm:^5.4.1, graphql-ws@npm:^5.5.5":
   version: 5.5.5
   resolution: "graphql-ws@npm:5.5.5"
   peerDependencies:
@@ -24044,15 +24038,6 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"linkify-it@npm:^3.0.1":
-  version: 3.0.3
-  resolution: "linkify-it@npm:3.0.3"
-  dependencies:
-    uc.micro: ^1.0.1
-  checksum: 31367a4bb70c5bbc9703246236b504b0a8e049bcd4e0de4291fa50f0ebdebf235b5eb54db6493cb0b1319357c6eeafc4324c9f4aa34b0b943d9f2e11a1268fbc
-  languageName: node
-  linkType: hard
-
 "listr-silent-renderer@npm:^1.1.1":
   version: 1.1.1
   resolution: "listr-silent-renderer@npm:1.1.1"
@@ -24722,7 +24707,6 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-<<<<<<< HEAD
 "markdown-it@npm:12.2.0":
   version: 12.2.0
   resolution: "markdown-it@npm:12.2.0"
@@ -24738,14 +24722,9 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"markdown-it@npm:^10.0.0":
-  version: 10.0.0
-  resolution: "markdown-it@npm:10.0.0"
-=======
 "markdown-it@npm:^12.2.0":
   version: 12.3.0
   resolution: "markdown-it@npm:12.3.0"
->>>>>>> bf2e27de (Update graphiql version)
   dependencies:
     argparse: ^2.0.1
     entities: ~2.1.0

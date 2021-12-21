@@ -64,6 +64,7 @@
     "graphql-subscriptions": "^1.2.1",
     "graphql-tag": "2.12.4",
     "graphql-type-json": "^0.3.2",
+    "graphql-ws": "^5.5.5",
     "http-browserify": "^1.7.0",
     "jimp": "0.16.1",
     "jszip": "3.7.0",
