@@ -60,7 +60,11 @@ export const EditSelectionMode = () => {
   );
   const bg = useColorModeValue("white", "gray.800");
 
-  if (!selectedLabelId || selectedTool !== Tools.SELECTION) {
+  if (
+    !selectedLabelId ||
+    selectedTool !== Tools.SELECTION ||
+    !isIogModeAvailable
+  ) {
     return null;
   }
 
