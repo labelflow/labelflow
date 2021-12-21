@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { gql, useQuery } from "@apollo/client";
 
-import { Flex, Text } from "@chakra-ui/react";
+import { Flex, Text, Spinner } from "@chakra-ui/react";
 
 import { useQueryParam } from "use-query-params";
 
@@ -10,7 +10,11 @@ import { useRouter } from "next/router";
 import { Meta } from "../../../components/meta";
 import { Layout } from "../../../components/layout";
 import { IdParam, BoolParam } from "../../../utils/query-param-bool";
-import { NewDatasetCard, DatasetCard } from "../../../components/datasets";
+import {
+  NewDatasetCard,
+  DatasetCard,
+  DatasetCardBox,
+} from "../../../components/datasets";
 import { UpsertDatasetModal } from "../../../components/datasets/upsert-dataset-modal";
 import { DeleteDatasetModal } from "../../../components/datasets/delete-dataset-modal";
 import { ServiceWorkerManagerModal } from "../../../components/service-worker-manager";
@@ -45,13 +49,32 @@ export const getDatasetsQuery = gql`
   }
 `;
 
+const LoadingCard = () => (
+  <DatasetCardBox>
+    <Flex
+      w="100%"
+      h="2xs"
+      direction="column"
+      alignItems="center"
+      justify="center"
+    >
+      <Spinner
+        thickness="4px"
+        speed="0.65s"
+        emptyColor="gray.200"
+        color="#31CECA"
+        size="xl"
+      />
+    </Flex>
+  </DatasetCardBox>
+);
 const DatasetPage = () => {
   const {
     query: { workspaceSlug },
     isReady,
   } = useRouter();
 
-  const { data: datasetsResult } = useQuery<{
+  const { data: datasetsResult, loading } = useQuery<{
     datasets: Pick<
       DatasetType,
       | "id"
@@ -133,31 +156,35 @@ const DatasetPage = () => {
               setIsCreatingDataset(true, "replaceIn");
             }}
           />
-          {datasetsResult?.datasets?.map(
-            ({
-              id,
-              slug,
-              images,
-              name,
-              imagesAggregates,
-              labelsAggregates,
-              labelClassesAggregates,
-            }) => (
-              <DatasetCard
-                key={id}
-                url={`/${workspaceSlug}/datasets/${slug}`}
-                imageUrl={images[0]?.thumbnail500Url ?? undefined}
-                datasetName={name}
-                imagesCount={imagesAggregates.totalCount}
-                labelClassesCount={labelClassesAggregates.totalCount}
-                labelsCount={labelsAggregates.totalCount}
-                editDataset={() => {
-                  setEditDatasetId(id, "replaceIn");
-                }}
-                deleteDataset={() => {
-                  setDeleteDatasetId(id, "replaceIn");
-                }}
-              />
+          {loading ? (
+            <LoadingCard />
+          ) : (
+            datasetsResult?.datasets?.map(
+              ({
+                id,
+                slug,
+                images,
+                name,
+                imagesAggregates,
+                labelsAggregates,
+                labelClassesAggregates,
+              }) => (
+                <DatasetCard
+                  key={id}
+                  url={`/${workspaceSlug}/datasets/${slug}`}
+                  imageUrl={images[0]?.thumbnail500Url ?? undefined}
+                  datasetName={name}
+                  imagesCount={imagesAggregates.totalCount}
+                  labelClassesCount={labelClassesAggregates.totalCount}
+                  labelsCount={labelsAggregates.totalCount}
+                  editDataset={() => {
+                    setEditDatasetId(id, "replaceIn");
+                  }}
+                  deleteDataset={() => {
+                    setDeleteDatasetId(id, "replaceIn");
+                  }}
+                />
+              )
             )
           )}
         </Flex>

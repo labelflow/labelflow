@@ -75,7 +75,7 @@ const styles = {
   }),
 };
 
-const styleFunction = function (feature: any) {
+const styleFunction = (feature: any) => {
   return styles[feature.getGeometry().getType() as keyof typeof styles];
 };
 

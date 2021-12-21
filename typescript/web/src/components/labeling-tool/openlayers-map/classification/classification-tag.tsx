@@ -61,7 +61,6 @@ export const ClassificationTag = ({
     keymap.deselect.key,
     () => {
       if (id === selectedLabelId) {
-        console.log("deselect current classification tag");
         setIsOpen(false);
         useLabelingStore.getState().setIsContextMenuOpen(false);
         useLabelingStore.getState().setSelectedLabelId(null);

@@ -13,7 +13,7 @@ export type TabBarItem = {
   isActive: boolean;
 };
 
-export type Props = {
+export type TabBarProps = {
   tabs: Array<TabBarItem>;
 };
 
@@ -49,12 +49,8 @@ const DisabledSettingsLink = () => {
   );
 };
 
-export const TabBar = ({ tabs }: Props) => {
-  if (!tabs || tabs.length === 0) {
-    return <></>;
-  }
+export const TabBarBody = ({ tabs }: TabBarProps) => {
   const { workspaceSlug } = useRouter().query;
-
   return (
     <Flex
       alignItems="center"
@@ -67,7 +63,7 @@ export const TabBar = ({ tabs }: Props) => {
     >
       {tabs.map(({ name, url, isActive }) => {
         if (workspaceSlug === "local" && name === "settings") {
-          return <DisabledSettingsLink />;
+          return <DisabledSettingsLink key="settings" />;
         }
 
         return (
@@ -99,3 +95,7 @@ export const TabBar = ({ tabs }: Props) => {
     </Flex>
   );
 };
+
+export const TabBar = ({ tabs }: TabBarProps) => (
+  <>{tabs.length > 0 && <TabBarBody tabs={tabs} />}</>
+);
