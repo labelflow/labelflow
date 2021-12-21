@@ -52,12 +52,14 @@ export const validMimeTypesFlatString = getValidMimeTypeCategoriesListString();
 
 export function isFilePathOfValidMimeTypeCategory(
   filePath: string,
-  category: ValidMimeTypeCategory
+  category: ValidMimeTypeCategory | undefined = undefined
 ): boolean {
   const filePathMimeType = mime.lookup(filePath);
   return filePathMimeType === false
     ? false
-    : validMimeTypes[category].includes(filePathMimeType as string);
+    : (category ? validMimeTypes[category] : validMimeTypesFlat).includes(
+        filePathMimeType as string
+      );
 }
 
 // TODO implement in a way that works both for front and back
