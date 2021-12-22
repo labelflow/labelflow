@@ -28,15 +28,12 @@ export const getImageName = ({
   return nameBase.replace(/\.[^/.]+$/, "");
 };
 
-export const throwIfInvalidImageInputs = ({
-  file,
-  externalUrl,
-  url,
-}: {
-  file: any;
-  externalUrl: string;
-  url: string;
-}) => {
+export function throwIfInvalidImageInputs(input: {
+  file: any | null | undefined;
+  externalUrl: string | null | undefined;
+  url: string | null | undefined;
+}) {
+  const { file, externalUrl, url } = input;
   if (
     !(
       (!file && !externalUrl && url) ||
@@ -48,4 +45,4 @@ export const throwIfInvalidImageInputs = ({
       "Image creation upload must include either a `file` field of type `Upload`, or a `url` field of type `String`, or a `externalUrl` field of type `String`"
     );
   }
-};
+}

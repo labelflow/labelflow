@@ -100,15 +100,17 @@ const importImageIfNeeded = async (
     workspaceId,
     datasetId,
   }: {
-    url: string;
-    externalUrl: string;
-    file: any;
+    url: string | undefined | null;
+    externalUrl: string | undefined | null;
+    file: any | undefined | null;
     imageId: string;
     workspaceId: string;
     datasetId: string;
   },
   { req, repository }: { req: Request; repository: Repository }
-) => {
+): Promise<string> => {
+  throwIfInvalidImageInputs({ file, externalUrl, url });
+
   const getImageFileKeyFromMimeType = (mimeType: string) =>
     getImageFileKey(imageId, workspaceId, datasetId, mimeType);
 
@@ -127,7 +129,7 @@ const importImageIfNeeded = async (
     });
   }
 
-  return url;
+  return url as string;
 };
 
 const processImage = async (
@@ -137,15 +139,15 @@ const processImage = async (
   }: {
     id: string;
     url: string;
-    width: number;
-    height: number;
-    mimetype: string;
-    noThumbnails: boolean;
-    thumbnail20Url: string;
-    thumbnail50Url: string;
-    thumbnail100Url: string;
-    thumbnail200Url: string;
-    thumbnail500Url: string;
+    width: number | null | undefined;
+    height: number | null | undefined;
+    mimetype: string | null | undefined;
+    noThumbnails?: boolean | null | undefined;
+    thumbnail20Url: string | null | undefined;
+    thumbnail50Url: string | null | undefined;
+    thumbnail100Url: string | null | undefined;
+    thumbnail200Url: string | null | undefined;
+    thumbnail500Url: string | null | undefined;
   },
   { repository, req }: { repository: Repository; req: Request }
 ) => {
@@ -195,7 +197,7 @@ const processImage = async (
  */
 export const importAndProcessImage = async (
   { image, workspaceId }: { image: ImageCreateInput; workspaceId: string },
-  { repository, req }: { repository: Repository; req?: Request }
+  { repository, req }: { repository: Repository; req: Request }
 ) => {
   const {
     file,
@@ -215,8 +217,6 @@ export const importAndProcessImage = async (
     thumbnail200Url,
     thumbnail500Url,
   } = image;
-
-  throwIfInvalidImageInputs({ file, externalUrl, url });
 
   const now = image?.createdAt ?? new Date().toISOString();
   const imageId = id ?? uuidv4();

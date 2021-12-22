@@ -205,15 +205,16 @@ export type Repository = {
     processImage: (
       image: {
         id: string;
+        url: string;
         width: number | null | undefined;
         height: number | null | undefined;
         mimetype: string | null | undefined;
-        url: string;
-        thumbnail20Url?: string;
-        thumbnail50Url?: string;
-        thumbnail100Url?: string;
-        thumbnail200Url?: string;
-        thumbnail500Url?: string;
+        noThumbnails?: boolean | null | undefined;
+        thumbnail20Url?: string | null | undefined;
+        thumbnail50Url?: string | null | undefined;
+        thumbnail100Url?: string | null | undefined;
+        thumbnail200Url?: string | null | undefined;
+        thumbnail500Url?: string | null | undefined;
       },
       getImage: (url: string) => Promise<ArrayBuffer>,
       putThumbnail: (targetDownloadUrl: string, blob: Blob) => Promise<void>
@@ -234,5 +235,5 @@ export type Context = {
   repository: Repository;
   user?: { id: string };
   session?: any;
-  req?: Request;
+  req: Request;
 };
