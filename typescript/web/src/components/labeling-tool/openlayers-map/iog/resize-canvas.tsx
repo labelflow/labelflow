@@ -11,7 +11,7 @@ import {
   ResizeIogEvent,
 } from "./resize-canvas-interaction";
 import { useUndoStore } from "../../../../connectors/undo-store";
-import { createRunIogEffect } from "../../../../connectors/undo-store/effects/run-iog";
+import { createUpdateIogLabelEffect } from "../../../../connectors/undo-store/effects/update-iog-label";
 import {
   extractSmartToolInputInputFromIogMask,
   getIogMaskIdFromLabelId,
@@ -94,7 +94,7 @@ export const ResizeIogCanvas = (props: {
         try {
           registerIogJob(timestamp, selectedLabelId, positionSpinner);
           await perform(
-            createRunIogEffect(
+            createUpdateIogLabelEffect(
               {
                 labelId: getLabelIdFromIogMaskId(labelIdIog),
                 ...extractSmartToolInputInputFromIogMask(coordinates),

@@ -12,6 +12,7 @@ import { keymap } from "../../../keymap";
 import {
   useLabelingStore,
   DrawingToolState,
+  Tools,
 } from "../../../connectors/labeling-state";
 
 export type Props = {};
@@ -21,10 +22,15 @@ export const UndoTool = () => {
   const drawingToolState = useLabelingStore(
     (state) => state.boxDrawingToolState
   );
+  const selectedTool = useLabelingStore((state) => state.selectedTool);
+  const isUndoAvailable =
+    canUndo() &&
+    (drawingToolState !== DrawingToolState.DRAWING ||
+      selectedTool === Tools.IOG);
   useHotkeys(
     keymap.undo.key,
     () => {
-      if (drawingToolState !== DrawingToolState.DRAWING) {
+      if (isUndoAvailable) {
         undo();
       }
     },
@@ -40,7 +46,7 @@ export const UndoTool = () => {
         backgroundColor={mode("white", "gray.800")}
         aria-label="Undo tool"
         pointerEvents="initial"
-        isDisabled={!canUndo() || drawingToolState === DrawingToolState.DRAWING}
+        isDisabled={!isUndoAvailable}
       />
     </Tooltip>
   );
@@ -51,6 +57,7 @@ export const RedoTool = () => {
   const drawingToolState = useLabelingStore(
     (state) => state.boxDrawingToolState
   );
+  const selectedTool = useLabelingStore((state) => state.selectedTool);
 
   useHotkeys(
     keymap.redo.key,
@@ -71,7 +78,11 @@ export const RedoTool = () => {
         backgroundColor={mode("white", "gray.800")}
         aria-label="Redo tool"
         pointerEvents="initial"
-        isDisabled={!canRedo() || drawingToolState === DrawingToolState.DRAWING}
+        isDisabled={
+          !canRedo() ||
+          (drawingToolState === DrawingToolState.DRAWING &&
+            selectedTool !== Tools.IOG)
+        }
       />
     </Tooltip>
   );

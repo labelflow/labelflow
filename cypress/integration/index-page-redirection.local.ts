@@ -1,4 +1,4 @@
-describe("Index page redirections", () => {
+describe("Index page redirections (local)", () => {
   it("Redirects to datasets page when user visits app and has tried app", () => {
     cy.setCookie("consentedCookies", "true");
     cy.setCookie("hasUserTriedApp", "true");

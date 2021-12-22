@@ -1,11 +1,13 @@
-describe("Dataset creation, edition, deletion", () => {
+type TestInput = { workspaceSlug: string };
+
+export const declareTests = ({ workspaceSlug }: TestInput) => {
   it("Should create, rename and delete a dataset", () => {
     cy.setCookie("hasUserTriedApp", "true");
     cy.setCookie("consentedCookies", "true");
     // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
     // cy.visit("/");
     // cy.contains("Try it now").click();
-    cy.visit("/local/datasets");
+    cy.visit(`/${workspaceSlug}/datasets`);
     cy.wait(420);
     cy.get('[aria-label="Create new dataset"]').click();
     cy.get('[aria-label="Dataset name input"]').type("cypress dataset");
@@ -25,4 +27,4 @@ describe("Dataset creation, edition, deletion", () => {
     cy.get('[aria-label="Dataset delete"]').click();
     cy.get('[aria-label="delete dataset"]').should("not.exist");
   });
-});
+};

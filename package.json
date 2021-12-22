@@ -8,8 +8,10 @@
     "yarn": ">=1.0.0"
   },
   "scripts": {
-    "lint": "eslint '{cypress,typescript}/**/*.{ts,tsx}'",
-    "lint:all": "eslint '{cypress,typescript}/**/*.{ts,tsx}'",
+    "lint": "yarn lint:ts && yarn lint:md",
+    "lint:md": "markdownlint **/*.md",
+    "lint:ts": "eslint '{cypress,typescript}/**/*.{ts,tsx}'",
+    "lint:all": "yarn lint",
     "test": "dotenv -e .env.test -- jest --runInBand",
     "test:all": "dotenv -e .env.test -- jest --runInBand",
     "cypress:open": "dotenv -e .env.test -- cypress open",
@@ -73,6 +75,7 @@
     "jest-canvas-mock": "2.3.1",
     "jest-fetch-mock": "3.0.3",
     "jest-transform-graphql": "2.1.0",
+    "markdownlint-cli": "^0.30.0",
     "node-polyfill-webpack-plugin": "1.1.2",
     "prettier": "2.3.0",
     "react": "17.0.2",

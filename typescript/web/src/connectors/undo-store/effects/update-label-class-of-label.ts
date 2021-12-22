@@ -14,7 +14,7 @@ const getLabelQuery = gql`
   }
 `;
 
-const updateLabelQuery = gql`
+const updateLabelMutation = gql`
   mutation updateLabelClass(
     $where: LabelWhereUniqueInput!
     $data: LabelUpdateInput!
@@ -50,7 +50,7 @@ export const createUpdateLabelClassOfLabelEffect = (
       : null;
 
     await client.mutate({
-      mutation: updateLabelQuery,
+      mutation: updateLabelMutation,
       variables: {
         where: { id: selectedLabelId },
         data: { labelClassId: selectedLabelClassId },
@@ -73,7 +73,7 @@ export const createUpdateLabelClassOfLabelEffect = (
   },
   undo: async (labelClassIdPrevious: string | null) => {
     await client.mutate({
-      mutation: updateLabelQuery,
+      mutation: updateLabelMutation,
       variables: {
         where: { id: selectedLabelId },
         data: { labelClassId: labelClassIdPrevious },

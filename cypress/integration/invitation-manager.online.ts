@@ -1,4 +1,4 @@
-describe("Invitation Manager", () => {
+describe("Invitation Manager (online)", () => {
   it("should let the user accept an invite", () => {
     // log in as the default user
     cy.task("performLogin").then((token) => {

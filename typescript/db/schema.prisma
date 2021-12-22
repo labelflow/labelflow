@@ -51,6 +51,7 @@ model Label {
   type         LabelType
   image        Image       @relation(fields: [imageId], references: [id], onDelete: Cascade)
   labelClass   LabelClass? @relation(fields: [labelClassId], references: [id])
+  smartToolInput Json?
 }
 
 model LabelClass {

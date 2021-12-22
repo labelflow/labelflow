@@ -126,6 +126,25 @@ module.exports = (on: (type: string, preprocessor: any) => void) => {
       });
       return session.sessionToken;
     },
+    async createWorkspace() {
+      const prisma = await getPrismaClient();
+      const workspaceSlug = (
+        await prisma.workspace.create({
+          data: {
+            slug: "cypress-test-workspace",
+            name: "Cypress test workspace",
+            plan: "Community",
+            memberships: {
+              create: {
+                user: { connect: { email: testUser.email } },
+                role: "Owner",
+              },
+            },
+          },
+        })
+      ).slug;
+      return { workspaceSlug };
+    },
     async createWorkspaceAndDatasets() {
       const prisma = await getPrismaClient();
       const workspaceSlug = (

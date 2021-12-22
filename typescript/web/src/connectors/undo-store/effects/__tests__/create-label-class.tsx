@@ -12,6 +12,7 @@ jest.mock("../../../apollo-client/schema-client", () => {
   return {
     client: {
       ...original.client,
+      clearStore: original.client.clearStore, // This needs to be passed like this otherwise the resulting object does not have the clearStore method
       mutate: jest.fn(() => {
         return { data: { createLabelClass: { id: "label class id" } } };
       }),

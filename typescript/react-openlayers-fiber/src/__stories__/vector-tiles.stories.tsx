@@ -29,7 +29,7 @@ export const VectorTiles = () => {
         const newMapboxStyle = theMap.get("mapbox-style");
         setMapboxStyle(newMapboxStyle);
 
-        theMap.getLayers().forEach(function (layer: any) {
+        theMap.getLayers().forEach((layer: any) => {
           const mapboxSource = layer.get("mapbox-source");
           if (
             mapboxSource &&

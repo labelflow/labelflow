@@ -232,6 +232,11 @@ export const DrawingTool = () => {
     if (selectedTool !== Tools.SELECTION) {
       setSelectedLabelId(null);
     }
+    if (selectedTool === Tools.IOG) {
+      if (hasUserAcceptedIog !== "true") {
+        doSetIsIogAlertDialogOpen(true);
+      }
+    }
   }, [selectedTool]);
 
   useHotkeys(
@@ -270,12 +275,17 @@ export const DrawingTool = () => {
     <>
       <IogAlertDialog
         isOpen={isIogAlertDialogOpen}
-        onClose={() => doSetIsIogAlertDialogOpen(false)}
+        onClose={() => {
+          doSetIsIogAlertDialogOpen(false);
+        }}
         onAccept={() => {
           setHasUserAcceptedIog("hasUserAcceptedIog", "true", {
             path: "/",
             httpOnly: false,
           });
+        }}
+        onCancel={() => {
+          setSelectedTool(Tools.SELECTION);
         }}
       />
       <Popover
@@ -348,17 +358,14 @@ export const DrawingTool = () => {
                 </Box>
               </ToolSelectionPopoverItem>
               <ToolSelectionPopoverItem
-                name="Auto Polygon tool"
+                name="Auto Polygon"
                 shortcut={keymap.toolIog.key}
                 selected={selectedTool === Tools.IOG}
                 onClick={() => {
-                  if (hasUserAcceptedIog !== "true") {
-                    doSetIsIogAlertDialogOpen(true);
-                  }
                   setSelectedTool(Tools.IOG);
                   setIsPopoverOpened(false);
                 }}
-                ariaLabel="Select auto polygon tool"
+                ariaLabel="Auto polygon Tool"
               >
                 <Box ml="2">
                   <ChakraIoColorWandOutline size="1.3em" />

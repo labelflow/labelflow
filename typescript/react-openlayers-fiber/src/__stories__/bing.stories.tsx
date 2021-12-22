@@ -21,8 +21,8 @@ export const Bing = () => {
         value={currentStyle}
         onChange={(e) => setCurrentStyle(e.target.value)}
       >
-        {styles.map((style, index) => (
-          <option key={index} value={style}>
+        {styles.map((style) => (
+          <option key={style} value={style}>
             {style}
           </option>
         ))}
@@ -32,9 +32,9 @@ export const Bing = () => {
           initialCenter={[-6655.5402445057125, 6709968.258934638]}
           initialZoom={13}
         />
-        {styles.map((style, index) => (
+        {styles.map((style) => (
           <olLayerTile
-            key={index}
+            key={style}
             visible={style === currentStyle}
             preload={Infinity}
           >
