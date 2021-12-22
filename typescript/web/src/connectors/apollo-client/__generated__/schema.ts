@@ -143,6 +143,7 @@ export const typeDefs = gql`
     width: Int!
     labels: [Label!]!
     dataset: Dataset!
+    metadata: JSON
   }
 
   input ImageCreateInput {
@@ -163,6 +164,7 @@ export const typeDefs = gql`
     thumbnail100Url: String
     thumbnail200Url: String
     thumbnail500Url: String
+    metadata: JSON
   }
 
   input ImageUpdateInput {

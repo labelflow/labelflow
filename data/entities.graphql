@@ -24,6 +24,7 @@ type Image {
   width: Int!
   labels: [Label!]!
   dataset: Dataset!
+  metadata: JSON
 }
 
 enum LabelType {
