@@ -370,7 +370,7 @@ export const typeDefs = [
   type Mutation {
     createExample(data: ExampleCreateInput!): Example
     createImage(data: ImageCreateInput!): Image
-    createManyImages(data: ImageCreateManyInput): [Image!]!
+    createManyImages(data: ImageCreateManyInput!): [Image!]!
     getUploadTarget(data: UploadTargetInput!): UploadTarget!
     updateImage(where: ImageWhereUniqueInput!, data: ImageUpdateInput!): Image
     deleteImage(where: ImageWhereUniqueInput!): Image
