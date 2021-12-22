@@ -80,16 +80,27 @@ const createImage = async (
     repository.dataset.get
   )({ id: datasetId }, user);
 
-  const { workspaceSlug } = await repository.dataset.get(
-    { id: datasetId },
-    user
-  );
-  const { id: workspaceId } = await repository.workspace.get(
-    {
-      slug: workspaceSlug,
-    },
-    user
-  );
+  const workspaceSlug = (await repository.dataset.get({ id: datasetId }, user))
+    ?.workspaceSlug;
+
+  if (!workspaceSlug) {
+    throw new Error(
+      "Could not find workspace slug associated with the dataset"
+    );
+  }
+
+  const workspaceId = (
+    await repository.workspace.get(
+      {
+        slug: workspaceSlug,
+      },
+      user
+    )
+  )?.id;
+
+  if (!workspaceId) {
+    throw new Error("Could not find workspace id associated with the dataset");
+  }
 
   const newImageEntity = await importAndProcessImage(
     { image: args.data, workspaceId },
@@ -122,16 +133,27 @@ const createManyImages = async (
     repository.dataset.get
   )({ id: datasetId }, user);
 
-  const { workspaceSlug } = (await repository.dataset.get(
-    { id: datasetId },
-    user
-  )) as { workspaceSlug: string };
-  const { id: workspaceId } = (await repository.workspace.get(
-    {
-      slug: workspaceSlug,
-    },
-    user
-  )) as { id: string };
+  const workspaceSlug = (await repository.dataset.get({ id: datasetId }, user))
+    ?.workspaceSlug;
+
+  if (!workspaceSlug) {
+    throw new Error(
+      "Could not find workspace slug associated with the dataset"
+    );
+  }
+
+  const workspaceId = (
+    await repository.workspace.get(
+      {
+        slug: workspaceSlug,
+      },
+      user
+    )
+  )?.id;
+
+  if (!workspaceId) {
+    throw new Error("Could not find workspace id associated with the dataset");
+  }
 
   const imagesToCreate: DbImageCreateInput[] = await Promise.all(
     images.map((imageToImport) =>

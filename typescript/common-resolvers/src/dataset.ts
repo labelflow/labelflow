@@ -198,16 +198,28 @@ const createDemoDataset = async (
     throw error;
   }
 
-  const { workspaceSlug } = await repository.dataset.get(
-    { id: tutorialDatasets[0].id },
-    user
-  );
-  const { id: workspaceId } = await repository.workspace.get(
-    {
-      slug: workspaceSlug,
-    },
-    user
-  );
+  const workspaceSlug = (
+    await repository.dataset.get({ id: tutorialDatasets[0].id }, user)
+  )?.workspaceSlug;
+
+  if (!workspaceSlug) {
+    throw new Error(
+      "Could not find workspace slug associated with the dataset"
+    );
+  }
+
+  const workspaceId = (
+    await repository.workspace.get(
+      {
+        slug: workspaceSlug,
+      },
+      user
+    )
+  )?.id;
+
+  if (!workspaceId) {
+    throw new Error("Could not find workspace id associated with the dataset");
+  }
 
   await Promise.all(
     tutorialImages.map(async (image, index) => {
