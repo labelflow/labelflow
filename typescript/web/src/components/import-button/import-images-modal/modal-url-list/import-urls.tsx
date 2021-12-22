@@ -44,17 +44,29 @@ export const importUrls = async ({
         };
       });
 
-      await apolloClient.mutate({
-        mutation: createManyImagesMutation,
-        variables: { images: imagesToCreate, datasetId },
-      });
+      try {
+        await apolloClient.mutate({
+          mutation: createManyImagesMutation,
+          variables: { images: imagesToCreate, datasetId },
+        });
 
-      setUploadStatuses((oldStatuses) => ({
-        ...oldStatuses,
-        ...Object.fromEntries(
-          imagesToCreate.map(({ externalUrl }) => [externalUrl, true])
-        ),
-      }));
+        setUploadStatuses((oldStatuses) => ({
+          ...oldStatuses,
+          ...Object.fromEntries(
+            imagesToCreate.map(({ externalUrl }) => [externalUrl, true])
+          ),
+        }));
+      } catch (error) {
+        setUploadStatuses((oldStatuses) => ({
+          ...oldStatuses,
+          ...Object.fromEntries(
+            imagesToCreate.map(({ externalUrl }) => [
+              externalUrl,
+              error?.message,
+            ])
+          ),
+        }));
+      }
     },
     { concurrency: CONCURRENCY }
   );

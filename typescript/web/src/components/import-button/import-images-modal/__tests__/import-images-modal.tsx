@@ -109,7 +109,9 @@ test("should display the number of valid images", async () => {
   ).not.toBeInTheDocument();
 });
 
-test("should update completed number as valid images are uploaded", async () => {
+// Currently, the progress is done per batch. Leaving this test on purpose but skipped
+// as this is likely something we want to enable again.
+test.skip("should update completed number as valid images are uploaded", async () => {
   await renderModalAndImport();
 
   await waitFor(() =>

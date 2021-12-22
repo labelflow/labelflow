@@ -68,10 +68,10 @@ export const ImportImagesModalDropzone = ({
   const workspaceId = getWorkspaceIdData?.workspace.id;
 
   const handleImport = useCallback(
-    (filesToImport: DroppedFile[]) => {
+    async (filesToImport: DroppedFile[]) => {
       onUploadStart();
 
-      importDroppedFiles({
+      await importDroppedFiles({
         files: filesToImport,
         workspaceId,
         datasetId,

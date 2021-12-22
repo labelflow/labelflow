@@ -74,26 +74,35 @@ export const importImages = async ({
   await Bluebird.Promise.map(
     batches,
     async (batch, batchIndex) => {
-      const imagesToCreate = await uploadBatchOfImages({
-        batch,
-        batchIndex,
-        firstUploadDate,
-        datasetId,
-        workspaceId,
-        apolloClient,
-      });
+      try {
+        const imagesToCreate = await uploadBatchOfImages({
+          batch,
+          batchIndex,
+          firstUploadDate,
+          datasetId,
+          workspaceId,
+          apolloClient,
+        });
 
-      await apolloClient.mutate({
-        mutation: createManyImagesMutation,
-        variables: { images: imagesToCreate, datasetId },
-      });
+        await apolloClient.mutate({
+          mutation: createManyImagesMutation,
+          variables: { images: imagesToCreate, datasetId },
+        });
 
-      setFileUploadStatuses((oldStatuses) => ({
-        ...oldStatuses,
-        ...Object.fromEntries(
-          imagesToCreate.map((image) => [image.name, true])
-        ),
-      }));
+        setFileUploadStatuses((oldStatuses) => ({
+          ...oldStatuses,
+          ...Object.fromEntries(
+            imagesToCreate.map((image) => [image.name, true])
+          ),
+        }));
+      } catch (error) {
+        setFileUploadStatuses((oldStatuses) => ({
+          ...oldStatuses,
+          ...Object.fromEntries(
+            batch.map(({ file }) => [file.name, error?.message])
+          ),
+        }));
+      }
     },
     { concurrency: CONCURRENCY }
   );
