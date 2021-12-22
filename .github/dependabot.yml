@@ -1,0 +1,101 @@
+version: 2
+updates:
+  # npm / yarn
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 0
+
+  - package-ecosystem: "npm"
+    directory: "/strapi"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 0
+
+  - package-ecosystem: "npm"
+    directory: "/typescript/common-resolvers"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 0
+
+  - package-ecosystem: "npm"
+    directory: "/typescript/db"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 0
+
+  - package-ecosystem: "npm"
+    directory: "/typescript/dev-utils"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 0
+
+  - package-ecosystem: "npm"
+    directory: "/typescript/graphql-types"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 0
+
+  - package-ecosystem: "npm"
+    directory: "/typescript/infrastructure"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 0
+
+  - package-ecosystem: "npm"
+    directory: "/typescript/react-openlayers-fiber"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 0
+
+  - package-ecosystem: "npm"
+    directory: "/typescript/release"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 0
+
+  - package-ecosystem: "npm"
+    directory: "/typescript/scripts"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 0
+
+  - package-ecosystem: "npm"
+    directory: "/typescript/web"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 0
+
+  # python
+  - package-ecosystem: "pip"
+    directory: "/python/api"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 0
+
+  - package-ecosystem: "pip"
+    directory: "/python/iog"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 0
+
+  # dockerfiles
+  - package-ecosystem: "docker"
+    directory: "/python/api"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 0
+
+  - package-ecosystem: "docker"
+    directory: "/python/iog"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 0
+
+  # GitHub actions 
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 0
