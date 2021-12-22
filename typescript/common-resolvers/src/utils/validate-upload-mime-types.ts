@@ -42,13 +42,8 @@ export function getValidMimeTypeCategoriesList(
       );
 }
 
-export function getValidMimeTypeCategoriesListString(
-  categories: ValidMimeTypeCategory[] | undefined = undefined
-): string {
-  return getValidMimeTypeCategoriesList(categories).join(", ");
-}
-
-export const validMimeTypesFlatString = getValidMimeTypeCategoriesListString();
+export const validMimeTypesFlatString =
+  getValidMimeTypeCategoriesList().join(", ");
 
 export function isFilePathOfValidMimeTypeCategory(
   filePath: string,

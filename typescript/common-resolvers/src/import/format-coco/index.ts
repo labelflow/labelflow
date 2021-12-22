@@ -1,4 +1,4 @@
-import JSZip, { JSZipObject } from "jszip";
+import JSZip from "jszip";
 import path from "path";
 import { v4 as uuidv4 } from "uuid";
 
@@ -13,7 +13,7 @@ import {
   CocoImage,
 } from "../../export/format-coco/coco-core/types";
 import { Context, Repository, DbImage } from "../../types";
-import { convertCocoSegmentationToLabel } from "./converters";
+import { convertGeometryFromCocoAnnotationToLabel } from "./converters";
 import { getOrigin } from "../../utils/get-origin";
 import {
   isJSZipObjectOfValidMimeTypeCategory,
@@ -84,12 +84,7 @@ async function getImageFilesFromZip(zip: JSZip) {
           : null
       )
     )
-  ).reduce((filesList, file) => {
-    if (file !== null) {
-      filesList.push(file);
-    }
-    return filesList;
-  }, [] as JSZipObject[]);
+  ).filter((file) => file !== null) as JSZip.JSZipObject[];
 }
 
 async function importCocoFromZip(
@@ -198,21 +193,21 @@ async function importCocoCategoriesIntoLabelClasses(
     cocoCategoryIdToLabelFlowLabelClassId
   );
   // eslint-disable-next-line no-restricted-syntax
-  for (const categoryCoco of cocoCategories) {
+  for (const cocoCategory of cocoCategories) {
     const { id: labelFlowLabelClassId } =
       // eslint-disable-next-line no-await-in-loop
       await labelClassResolvers.Mutation.createLabelClass(
         null,
         {
-          data: { name: categoryCoco.name, datasetId },
+          data: { name: cocoCategory.name, datasetId },
         },
         { repository, user, req }
       );
     cocoCategoryIdToLabelFlowLabelClassId.set(
-      categoryCoco.id,
+      cocoCategory.id,
       labelFlowLabelClassId
     );
-    console.log(`Created category ${categoryCoco.name}`);
+    console.log(`Created category ${cocoCategory.name}`);
   }
 }
 
@@ -244,7 +239,7 @@ async function importCocoAnnotationsIntoLabels(
             labelClassId: cocoCategoryIdToLabelFlowLabelClassId.get(
               annotation.category_id
             ),
-            ...convertCocoSegmentationToLabel(
+            ...convertGeometryFromCocoAnnotationToLabel(
               annotation.segmentation,
               annotation.bbox,
               indexedCocoImages.get(annotation.image_id)!.height

@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`convertCocoSegmentationToLabel Should convert a box into a box 1`] = `
+exports[`convertGeometryFromCocoAnnotationToLabel Should convert a box into a box 1`] = `
 Object {
   "geometry": Object {
     "coordinates": Array [
@@ -33,7 +33,7 @@ Object {
 }
 `;
 
-exports[`convertCocoSegmentationToLabel Should convert a polygon into a polygon 1`] = `
+exports[`convertGeometryFromCocoAnnotationToLabel Should convert a polygon into a polygon 1`] = `
 Object {
   "geometry": Object {
     "coordinates": Array [
@@ -70,7 +70,7 @@ Object {
 }
 `;
 
-exports[`convertCocoSegmentationToLabel Should convert an empty segmentation's bounding box into a box 1`] = `
+exports[`convertGeometryFromCocoAnnotationToLabel Should convert an empty segmentation's bounding box into a box 1`] = `
 Object {
   "geometry": Object {
     "coordinates": Array [
@@ -80,16 +80,16 @@ Object {
           600,
         ],
         Array [
-          400,
-          600,
-        ],
-        Array [
-          400,
-          200,
-        ],
-        Array [
           100,
           200,
+        ],
+        Array [
+          400,
+          200,
+        ],
+        Array [
+          400,
+          600,
         ],
         Array [
           100,

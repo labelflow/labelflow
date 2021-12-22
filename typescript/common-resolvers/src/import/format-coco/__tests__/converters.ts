@@ -1,6 +1,6 @@
 import {
   isCocoSegmentationBox,
-  convertCocoSegmentationToLabel,
+  convertGeometryFromCocoAnnotationToLabel,
 } from "../converters";
 
 describe("isCocoSegmentationBox", () => {
@@ -60,10 +60,10 @@ describe("isCocoSegmentationBox", () => {
   });
 });
 
-describe("convertCocoSegmentationToLabel", () => {
+describe("convertGeometryFromCocoAnnotationToLabel", () => {
   test("Should convert a box into a box", () => {
     expect(
-      convertCocoSegmentationToLabel(
+      convertGeometryFromCocoAnnotationToLabel(
         [
           [
             123.33, 254.0001, 369.12346, 254.0005, 369.12348, 567.09436, 123.33,
@@ -77,12 +77,12 @@ describe("convertCocoSegmentationToLabel", () => {
   });
   test("Should convert an empty segmentation's bounding box into a box", () => {
     expect(
-      convertCocoSegmentationToLabel([], [100, 200, 300, 400], 700)
+      convertGeometryFromCocoAnnotationToLabel([], [100, 200, 300, 400], 700)
     ).toMatchSnapshot();
   });
   test("Should convert a polygon into a polygon", () => {
     expect(
-      convertCocoSegmentationToLabel(
+      convertGeometryFromCocoAnnotationToLabel(
         [
           [
             123.33, 254.0001, 369.12346, 254.0005, 369.12348, 567.09436, 123.33,

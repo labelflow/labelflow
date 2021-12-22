@@ -50,7 +50,7 @@ export const isCocoSegmentationBox = (
   return xValues.size === 2 && yValues.size === 2 && !polygonIsDegenerate;
 };
 
-export const convertCocoSegmentationToLabel = (
+export const convertGeometryFromCocoAnnotationToLabel = (
   cocoSegmentation: number[][],
   bbox: number[], // [x, y, width, height]
   imageHeight: number
@@ -65,9 +65,9 @@ export const convertCocoSegmentationToLabel = (
         ? [
             [
               [bbox[0], bbox[1] + bbox[3]],
-              [bbox[0] + bbox[2], bbox[1] + bbox[3]],
-              [bbox[0] + bbox[2], bbox[1]],
               [bbox[0], bbox[1]],
+              [bbox[0] + bbox[2], bbox[1]],
+              [bbox[0] + bbox[2], bbox[1] + bbox[3]],
               [bbox[0], bbox[1] + bbox[3]],
             ],
           ]
