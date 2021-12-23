@@ -9,8 +9,8 @@ export const declareTests = ({ workspaceSlug }: TestInput) => {
     cy.setCookie("hasUserTriedApp", "false");
     cy.setCookie("consentedCookies", "true");
     cy.visit(`/${workspaceSlug}/datasets?modal-update-service-worker=update`);
-    cy.contains("Get started").click();
     if (workspaceSlug === "local") {
+      cy.contains("Get started").click();
       cy.url().should(
         "match",
         /\/local\/datasets\/tutorial-dataset\/images\/2bbbf664-5810-4760-a10f-841de2f35510/
@@ -22,7 +22,9 @@ export const declareTests = ({ workspaceSlug }: TestInput) => {
         cy.contains("Datasets").click({ force: true });
       });
     }
-    cy.wait(420);
+    if (workspaceSlug !== "local") {
+      cy.contains("Skip the tutorial").click();
+    }
     cy.get('[aria-label="Create new dataset"]').click();
     cy.get('[aria-label="Dataset name input"]').type("cypress dataset");
 
