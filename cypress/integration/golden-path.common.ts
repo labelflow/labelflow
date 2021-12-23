@@ -22,7 +22,7 @@ export const declareTests = ({ workspaceSlug }: TestInput) => {
         cy.contains("Datasets").click({ force: true });
       });
     }
-
+    cy.wait(420);
     cy.get('[aria-label="Create new dataset"]').click();
     cy.get('[aria-label="Dataset name input"]').type("cypress dataset");
 
