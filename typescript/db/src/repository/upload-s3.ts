@@ -2,8 +2,8 @@ import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import "isomorphic-fetch";
 import memoizeOne from "memoize-one";
-import { Repository } from "../../../common-resolvers/src";
-import { UploadTargetHttp } from "../../../graphql-types/src/graphql-types.generated";
+import { Repository } from "@labelflow/common-resolvers";
+import { UploadTargetHttp } from "@labelflow/graphql-types";
 
 const bucket = "labelflow";
 const region = process.env?.LABELFLOW_AWS_REGION!;
