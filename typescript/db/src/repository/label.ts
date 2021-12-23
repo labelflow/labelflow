@@ -1,4 +1,4 @@
-import { Prisma } from "@prisma/client";
+import { Prisma } from "../__generated__";
 import { Repository, DbLabel } from "@labelflow/common-resolvers";
 import { getPrismaClient } from "../prisma-client";
 import { castObjectNullsToUndefined } from "./utils";

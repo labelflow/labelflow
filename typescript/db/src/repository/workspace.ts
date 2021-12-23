@@ -7,10 +7,10 @@ import {
   validWorkspaceName,
 } from "@labelflow/common-resolvers";
 import { WorkspaceType } from "@labelflow/graphql-types";
-import { Prisma, UserRole, WorkspacePlan } from "@prisma/client";
 import { isNil } from "lodash";
 import { getPrismaClient } from "../prisma-client";
 import { stripe } from "../utils";
+import { Prisma, UserRole, WorkspacePlan } from "../__generated__";
 import { checkUserAccessToWorkspace } from "./access-control";
 import { castObjectNullsToUndefined } from "./utils";
 
