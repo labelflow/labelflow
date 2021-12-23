@@ -89,9 +89,10 @@ export const TableActions = ({
   const tableActionsForLocalWorkspace = (
     <Alert status="info" variant="subtle">
       <AlertIcon />
-      <AlertTitle>This workspace is private to you only.</AlertTitle>
-      Its datasets are saved on your device only, not online. To collaborate and
-      invite people, switch to an online workspace.
+      <AlertTitle>
+        This workspace is private and images are stored locally on your device.
+      </AlertTitle>
+      To collaborate and invite people, switch to an online workspace.
     </Alert>
   );
   return workspaceSlug === "local"
