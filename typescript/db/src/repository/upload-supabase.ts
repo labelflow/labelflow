@@ -2,8 +2,8 @@ import { createClient } from "@supabase/supabase-js";
 import "isomorphic-fetch";
 import memoizeOne from "memoize-one";
 
-import { Repository } from "../../../common-resolvers/src";
-import { UploadTargetHttp } from "../../../graphql-types/src/graphql-types.generated";
+import { Repository } from "@labelflow/common-resolvers";
+import { UploadTargetHttp } from "@labelflow/graphql-types";
 
 const getClient = memoizeOne(() =>
   createClient(
