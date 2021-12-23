@@ -19,6 +19,7 @@ import {
   tutorialLabelClasses,
   tutorialLabels,
 } from "./data/dataset-tutorial";
+import { getWorkspaceIdOfDataset } from "./image/getWorkspaceIdOfDataset";
 
 const getLabelClassesByDatasetId = async (
   datasetId: string,
@@ -198,28 +199,11 @@ const createDemoDataset = async (
     throw error;
   }
 
-  const workspaceSlug = (
-    await repository.dataset.get({ id: tutorialDatasets[0].id }, user)
-  )?.workspaceSlug;
-
-  if (!workspaceSlug) {
-    throw new Error(
-      "Could not find workspace slug associated with the dataset"
-    );
-  }
-
-  const workspaceId = (
-    await repository.workspace.get(
-      {
-        slug: workspaceSlug,
-      },
-      user
-    )
-  )?.id;
-
-  if (!workspaceId) {
-    throw new Error("Could not find workspace id associated with the dataset");
-  }
+  const workspaceId = await getWorkspaceIdOfDataset({
+    repository,
+    datasetId: tutorialDatasets[0].id,
+    user,
+  });
 
   await Promise.all(
     tutorialImages.map(async (image, index) => {

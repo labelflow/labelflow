@@ -11,6 +11,7 @@ import type {
 import { Context, DbImage, DbImageCreateInput, Repository } from "../types";
 import { throwIfResolvesToNil } from "../utils/throw-if-resolves-to-nil";
 import { importAndProcessImage } from "./import-and-process-image";
+import { getWorkspaceIdOfDataset } from "./getWorkspaceIdOfDataset";
 
 const getImageById = async (
   id: string,
@@ -80,27 +81,11 @@ const createImage = async (
     repository.dataset.get
   )({ id: datasetId }, user);
 
-  const workspaceSlug = (await repository.dataset.get({ id: datasetId }, user))
-    ?.workspaceSlug;
-
-  if (!workspaceSlug) {
-    throw new Error(
-      "Could not find workspace slug associated with the dataset"
-    );
-  }
-
-  const workspaceId = (
-    await repository.workspace.get(
-      {
-        slug: workspaceSlug,
-      },
-      user
-    )
-  )?.id;
-
-  if (!workspaceId) {
-    throw new Error("Could not find workspace id associated with the dataset");
-  }
+  const workspaceId = await getWorkspaceIdOfDataset({
+    repository,
+    datasetId,
+    user,
+  });
 
   const newImageEntity = await importAndProcessImage(
     { image: args.data, workspaceId },
@@ -133,27 +118,11 @@ const createManyImages = async (
     repository.dataset.get
   )({ id: datasetId }, user);
 
-  const workspaceSlug = (await repository.dataset.get({ id: datasetId }, user))
-    ?.workspaceSlug;
-
-  if (!workspaceSlug) {
-    throw new Error(
-      "Could not find workspace slug associated with the dataset"
-    );
-  }
-
-  const workspaceId = (
-    await repository.workspace.get(
-      {
-        slug: workspaceSlug,
-      },
-      user
-    )
-  )?.id;
-
-  if (!workspaceId) {
-    throw new Error("Could not find workspace id associated with the dataset");
-  }
+  const workspaceId = await getWorkspaceIdOfDataset({
+    repository,
+    datasetId,
+    user,
+  });
 
   const imagesToCreate: DbImageCreateInput[] = await Promise.all(
     images.map((imageToImport) =>
