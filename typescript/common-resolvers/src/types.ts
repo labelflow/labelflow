@@ -22,9 +22,9 @@ import type {
   WorkspaceCreateInput,
   WorkspaceWhereInput,
   WorkspaceWhereUniqueInput,
+  WorkspacePlan,
   WorkspaceType,
 } from "@labelflow/graphql-types";
-import { WorkspacePlan } from "@prisma/client";
 
 type NoUndefinedField<T> = { [P in keyof T]: NonNullable<T[P]> };
 
