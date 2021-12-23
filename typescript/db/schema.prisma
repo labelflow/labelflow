@@ -35,22 +35,23 @@ model Image {
   thumbnail100Url String?
   thumbnail200Url String?
   thumbnail500Url String?
+  metadata        Json?
 }
 
 model Label {
-  id           String      @id @default(uuid()) @db.Uuid
-  createdAt    DateTime    @default(now())
-  updatedAt    DateTime    @updatedAt
-  x            Float
-  y            Float
-  height       Float
-  width        Float
-  geometry     Json
-  imageId      String      @db.Uuid
-  labelClassId String?     @db.Uuid
-  type         LabelType
-  image        Image       @relation(fields: [imageId], references: [id], onDelete: Cascade)
-  labelClass   LabelClass? @relation(fields: [labelClassId], references: [id])
+  id             String      @id @default(uuid()) @db.Uuid
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  x              Float
+  y              Float
+  height         Float
+  width          Float
+  geometry       Json
+  imageId        String      @db.Uuid
+  labelClassId   String?     @db.Uuid
+  type           LabelType
+  image          Image       @relation(fields: [imageId], references: [id], onDelete: Cascade)
+  labelClass     LabelClass? @relation(fields: [labelClassId], references: [id])
   smartToolInput Json?
 }
 

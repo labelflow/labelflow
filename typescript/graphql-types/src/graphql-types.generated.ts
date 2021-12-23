@@ -167,6 +167,7 @@ export type Image = {
   width: Scalars['Int'];
   labels: Array<Label>;
   dataset: Dataset;
+  metadata?: Maybe<Scalars['JSON']>;
 };
 
 export type ImageCreateInput = {
@@ -187,6 +188,7 @@ export type ImageCreateInput = {
   thumbnail100Url?: Maybe<Scalars['String']>;
   thumbnail200Url?: Maybe<Scalars['String']>;
   thumbnail500Url?: Maybe<Scalars['String']>;
+  metadata?: Maybe<Scalars['JSON']>;
 };
 
 export type ImageUpdateInput = {
@@ -1095,6 +1097,7 @@ export type ImageResolvers<ContextType = any, ParentType extends ResolversParent
   width?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   labels?: Resolver<Array<ResolversTypes['Label']>, ParentType, ContextType>;
   dataset?: Resolver<ResolversTypes['Dataset'], ParentType, ContextType>;
+  metadata?: Resolver<Maybe<ResolversTypes['JSON']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 

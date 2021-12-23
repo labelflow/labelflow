@@ -42,6 +42,7 @@ export type DbImageCreateInput = WithCreatedAtAndUpdatedAt<
         | "thumbnail100Url"
         | "thumbnail200Url"
         | "thumbnail500Url"
+        | "metadata"
       >
     >
   > &
@@ -53,6 +54,7 @@ export type DbImageCreateInput = WithCreatedAtAndUpdatedAt<
       | "thumbnail100Url"
       | "thumbnail200Url"
       | "thumbnail500Url"
+      | "metadata"
     >
 >;
 

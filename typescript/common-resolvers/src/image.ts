@@ -70,6 +70,7 @@ export const getImageEntityFromMutationArgs = async (
     thumbnail100Url,
     thumbnail200Url,
     thumbnail500Url,
+    metadata,
   } = data;
   const { workspaceSlug } = (await repository.dataset.get(
     { id: datasetId },
@@ -205,6 +206,7 @@ export const getImageEntityFromMutationArgs = async (
     path: path ?? externalUrl ?? finalUrl!,
     name: getImageName({ externalUrl, finalUrl, name }),
     ...imageMetaData,
+    metadata,
   };
 
   return newImageEntity;
