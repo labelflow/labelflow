@@ -1,3 +1,7 @@
+// It seems that this file is almost a copy past of `typescript/db/src/repository/image-processing.ts`
+// We should either: merge/factorize the two files, or let them diverge and have a dedicated
+// version for each repository.
+
 import { getThumbnailUrlFromImageUrl } from "@labelflow/common-resolvers/src/utils/thumbnail-url";
 import type { Repository } from "@labelflow/common-resolvers";
 
