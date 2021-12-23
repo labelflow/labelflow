@@ -1,5 +1,5 @@
 /* eslint-disable import/first */
-import { render, screen, waitFor } from "@testing-library/react";
+import { act, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { ApolloProvider, gql } from "@apollo/client";
 import { PropsWithChildren } from "react";
@@ -55,7 +55,12 @@ jest.mock("../../../../connectors/apollo-client/schema-client", () => {
   );
 
   return {
-    client: { ...original.client, mutate: jest.fn(original.client.mutate) },
+    client: {
+      ...original.client,
+      mutate: jest.fn(original.client.mutate),
+      refetchQueries: () => {},
+      writeQuery: original.client.writeQuery,
+    },
   };
 });
 
@@ -178,8 +183,10 @@ test("should display the error description when a file could not be imported", a
 });
 
 test("should not display the modal by default", async () => {
-  render(<ImportImagesModal />, {
-    wrapper: Wrapper,
+  act(() => {
+    render(<ImportImagesModal />, {
+      wrapper: Wrapper,
+    });
   });
 
   expect(screen.queryByText(/Import/i)).not.toBeInTheDocument();
