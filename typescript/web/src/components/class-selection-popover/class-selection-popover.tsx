@@ -14,12 +14,12 @@ import {
   useColorModeValue as mode,
 } from "@chakra-ui/react";
 import { LabelClass } from "@labelflow/graphql-types";
-import { noneClassColor } from "@labelflow/utils/class-color-generator";
 import { useCombobox, UseComboboxStateChange } from "downshift";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 import { IoSearch } from "react-icons/io5";
 import { RiCloseCircleFill } from "react-icons/ri";
+import { noneClassColor } from "../../theme";
 import { keymap } from "../../keymap";
 import { ClassListItem } from "./class-list-item";
 

@@ -27,3 +27,5 @@ export const theme = extendTheme({
     },
   },
 });
+
+export const noneClassColor = "#E2E8F0";

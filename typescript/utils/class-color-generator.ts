@@ -35,9 +35,6 @@ export const LABEL_CLASS_COLOR_PALETTE = [
   "#C026D3",
 ];
 
-// It's charkra's gray.200
-export const noneClassColor = "#E2E8F0";
-
 const fillColorHashMap = (colors: string[]) => {
   const hashMap = LABEL_CLASS_COLOR_PALETTE.reduce<Record<string, number>>(
     (obj, key) => ({ ...obj, [key]: 0 }),

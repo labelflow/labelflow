@@ -1,12 +1,12 @@
 import { ApolloClient } from "@apollo/client";
 import { Tag, TagCloseButton, TagLabel } from "@chakra-ui/react";
 import { Label, LabelClass } from "@labelflow/graphql-types";
-import { noneClassColor } from "@labelflow/utils/class-color-generator";
 import React, { useEffect, useState } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 import { useLabelingStore } from "../../../../connectors/labeling-state";
 import { useUndoStore } from "../../../../connectors/undo-store";
 import { createDeleteLabelEffect } from "../../../../connectors/undo-store/effects/delete-label";
+import { noneClassColor } from "../../../../theme";
 import { keymap } from "../../../../keymap";
 import { ClassSelectionPopover } from "../../../class-selection-popover";
 

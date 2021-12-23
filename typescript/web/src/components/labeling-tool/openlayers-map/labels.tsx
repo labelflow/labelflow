@@ -1,6 +1,5 @@
 import { gql, useQuery } from "@apollo/client";
 import { Label, LabelType } from "@labelflow/graphql-types";
-import { noneClassColor } from "@labelflow/utils/class-color-generator";
 import { useRouter } from "next/router";
 import { Feature } from "ol";
 import GeoJSON from "ol/format/GeoJSON";
@@ -20,6 +19,7 @@ import {
   Tools,
   useLabelingStore,
 } from "../../../connectors/labeling-state";
+import { noneClassColor } from "../../../theme";
 
 const getImageLabelsQuery = gql`
   query getImageLabels($imageId: ID!) {
