@@ -80,8 +80,8 @@ export const NewMemberModal = ({
             Invite members
           </Heading>
           <Text fontSize="lg" fontWeight="medium">
-            Adding members to the workspace will give them access to{" "}
-            <b>every dataset</b> in the workspace.
+            Adding members will give them access to <b>every dataset</b> in the
+            workspace.
           </Text>
         </ModalHeader>
 

@@ -216,6 +216,7 @@ export const importAndProcessImage = async (
     thumbnail100Url,
     thumbnail200Url,
     thumbnail500Url,
+    metadata,
   } = image;
 
   const now = image?.createdAt ?? new Date().toISOString();
@@ -255,6 +256,7 @@ export const importAndProcessImage = async (
     url: finalUrl,
     externalUrl,
     datasetId,
+    metadata,
     ...imageMetaDataFromProcessing,
   };
 

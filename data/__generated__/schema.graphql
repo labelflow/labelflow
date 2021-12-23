@@ -140,6 +140,7 @@ type Image {
   width: Int!
   labels: [Label!]!
   dataset: Dataset!
+  metadata: JSON
 }
 
 input ImageCreateInput {
@@ -160,6 +161,7 @@ input ImageCreateInput {
   thumbnail100Url: String
   thumbnail200Url: String
   thumbnail500Url: String
+  metadata: JSON
 }
 
 input ImageCreateManyInput {

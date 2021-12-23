@@ -142,6 +142,7 @@ export const typeDefs = [
     width: Int!
     labels: [Label!]!
     dataset: Dataset!
+    metadata: JSON
   }
 
   input ImageCreateInput {
@@ -162,6 +163,7 @@ export const typeDefs = [
     thumbnail100Url: String
     thumbnail200Url: String
     thumbnail500Url: String
+    metadata: JSON
   }
 
   input ImageCreateManyInput {
