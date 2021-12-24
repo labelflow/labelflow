@@ -1,15 +1,14 @@
-import React, { useState, useEffect } from "react";
-import { Tag, TagLabel, TagCloseButton } from "@chakra-ui/react";
-import { Label, LabelClass } from "@labelflow/graphql-types";
 import { ApolloClient } from "@apollo/client";
+import { Tag, TagCloseButton, TagLabel } from "@chakra-ui/react";
+import { Label, LabelClass } from "@labelflow/graphql-types";
+import React, { useEffect, useState } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
-
-import { createDeleteLabelEffect } from "../../../../connectors/undo-store/effects/delete-label";
-import { ClassSelectionPopover } from "../../../class-selection-popover";
-import { noneClassColor } from "../../../../utils/class-color-generator";
-import { useUndoStore } from "../../../../connectors/undo-store";
-import { keymap } from "../../../../keymap";
 import { useLabelingStore } from "../../../../connectors/labeling-state";
+import { useUndoStore } from "../../../../connectors/undo-store";
+import { createDeleteLabelEffect } from "../../../../connectors/undo-store/effects/delete-label";
+import { noneClassColor } from "../../../../theme";
+import { keymap } from "../../../../keymap";
+import { ClassSelectionPopover } from "../../../class-selection-popover";
 
 // The class selection menu doesn't need all the attributes of the label class
 export type LabelClassItem = Omit<LabelClass, "dataset">;

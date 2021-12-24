@@ -14,6 +14,7 @@
   "dependencies": {
     "@graphql-tools/merge": "6.2.14",
     "@labelflow/graphql-types": "workspace:typescript/graphql-types",
+    "@labelflow/utils": "workspace:typescript/utils",
     "@prisma/client": "2.30.3",
     "@turf/area": "6.5.0",
     "@turf/bbox": "6.5.0",

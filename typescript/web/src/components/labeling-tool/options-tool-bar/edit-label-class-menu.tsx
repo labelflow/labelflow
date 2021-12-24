@@ -1,29 +1,26 @@
-import { useState, useEffect, useCallback } from "react";
-import { gql, useQuery, useApolloClient } from "@apollo/client";
+import { gql, useApolloClient, useQuery } from "@apollo/client";
 import { Label, LabelType } from "@labelflow/graphql-types";
-import GeoJSON, { GeoJSONPolygon } from "ol/format/GeoJSON";
-import { Polygon } from "ol/geom";
-
-import { useHotkeys } from "react-hotkeys-hook";
-import { useRouter } from "next/router";
-import { ClassSelectionMenu, LabelClassItem } from "./class-selection-menu";
-import { ClassAdditionMenu } from "./class-addition-menu";
-import { Tools, useLabelingStore } from "../../../connectors/labeling-state";
-import { useUndoStore } from "../../../connectors/undo-store";
-import { createCreateLabelClassAndUpdateLabelEffect } from "../../../connectors/undo-store/effects/create-label-class-and-update-label";
-import { createUpdateLabelClassOfLabelEffect } from "../../../connectors/undo-store/effects/update-label-class-of-label";
-import { createCreateLabelClassEffect } from "../../../connectors/undo-store/effects/create-label-class";
 import {
   getNextClassColor,
-  hexColorSequence,
-} from "../../../utils/class-color-generator";
-import { createUpdateLabelClassEffect } from "../../../connectors/undo-store/effects/update-label-class";
-import { keymap } from "../../../keymap";
-
+  LABEL_CLASS_COLOR_PALETTE,
+} from "@labelflow/utils/class-color-generator";
+import { useRouter } from "next/router";
+import GeoJSON, { GeoJSONPolygon } from "ol/format/GeoJSON";
+import { Polygon } from "ol/geom";
+import { useCallback, useEffect, useState } from "react";
+import { useHotkeys } from "react-hotkeys-hook";
+import { Tools, useLabelingStore } from "../../../connectors/labeling-state";
+import { useUndoStore } from "../../../connectors/undo-store";
 import { createCreateLabelEffect } from "../../../connectors/undo-store/effects/create-label";
-
-import { createDeleteLabelEffect } from "../../../connectors/undo-store/effects/delete-label";
+import { createCreateLabelClassEffect } from "../../../connectors/undo-store/effects/create-label-class";
 import { createCreateLabelClassAndCreateLabelEffect } from "../../../connectors/undo-store/effects/create-label-class-and-create-label";
+import { createCreateLabelClassAndUpdateLabelEffect } from "../../../connectors/undo-store/effects/create-label-class-and-update-label";
+import { createDeleteLabelEffect } from "../../../connectors/undo-store/effects/delete-label";
+import { createUpdateLabelClassEffect } from "../../../connectors/undo-store/effects/update-label-class";
+import { createUpdateLabelClassOfLabelEffect } from "../../../connectors/undo-store/effects/update-label-class-of-label";
+import { keymap } from "../../../keymap";
+import { ClassAdditionMenu } from "./class-addition-menu";
+import { ClassSelectionMenu, LabelClassItem } from "./class-selection-menu";
 
 const getLabelClassesOfDatasetQuery = gql`
   query getLabelClassesOfDataset($slug: String!, $workspaceSlug: String!) {
@@ -148,8 +145,10 @@ export const EditLabelClassMenu = () => {
     async (name) => {
       const newClassColor =
         labelClasses.length < 1
-          ? hexColorSequence[0]
-          : getNextClassColor(labelClasses[labelClasses.length - 1].color);
+          ? LABEL_CLASS_COLOR_PALETTE[0]
+          : getNextClassColor(
+              labelClasses.map((labelClass: any) => labelClass.color)
+            );
 
       if (!isInDrawingMode) {
         if (!selectedLabelId) {

@@ -1,27 +1,25 @@
-import { v4 as uuidv4 } from "uuid";
-import { useMemo, useRef, useCallback, MutableRefObject } from "react";
-import { Draw as OlDraw } from "ol/interaction";
-import { createBox, DrawEvent } from "ol/interaction/Draw";
-import GeoJSON, { GeoJSONPolygon } from "ol/format/GeoJSON";
-import { Fill, Stroke, Style } from "ol/style";
-import GeometryType from "ol/geom/GeometryType";
-import OverlayPositioning from "ol/OverlayPositioning";
 import { useApolloClient, useQuery } from "@apollo/client";
 import { useToast } from "@chakra-ui/react";
-import { useHotkeys } from "react-hotkeys-hook";
 import { getBoundedGeometryFromImage } from "@labelflow/common-resolvers";
-
-import {
-  useLabelingStore,
-  DrawingToolState,
-} from "../../../../connectors/labeling-state";
-import { keymap } from "../../../../keymap";
-import { noneClassColor } from "../../../../utils/class-color-generator";
-import { createCreateIogLabelEffect } from "../../../../connectors/undo-store/effects/create-iog-label";
-import { useUndoStore } from "../../../../connectors/undo-store";
-
-import { labelClassQuery, imageQuery } from "./queries";
+import GeoJSON, { GeoJSONPolygon } from "ol/format/GeoJSON";
+import GeometryType from "ol/geom/GeometryType";
+import { Draw as OlDraw } from "ol/interaction";
+import { createBox, DrawEvent } from "ol/interaction/Draw";
+import OverlayPositioning from "ol/OverlayPositioning";
+import { Fill, Stroke, Style } from "ol/style";
+import { MutableRefObject, useCallback, useMemo, useRef } from "react";
+import { useHotkeys } from "react-hotkeys-hook";
+import { v4 as uuidv4 } from "uuid";
 import { extractSmartToolInputInputFromIogMask } from "../../../../connectors/iog";
+import {
+  DrawingToolState,
+  useLabelingStore,
+} from "../../../../connectors/labeling-state";
+import { useUndoStore } from "../../../../connectors/undo-store";
+import { createCreateIogLabelEffect } from "../../../../connectors/undo-store/effects/create-iog-label";
+import { noneClassColor } from "../../../../theme";
+import { keymap } from "../../../../keymap";
+import { imageQuery, labelClassQuery } from "./queries";
 
 const geometryFunction = createBox();
 
