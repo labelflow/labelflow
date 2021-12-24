@@ -1,19 +1,24 @@
 import {
   Button,
-  Td,
-  Tr,
-  Kbd,
-  Flex,
+  ButtonProps,
   chakra,
+  Flex,
+  HStack,
   IconButton,
+  Kbd,
+  Td,
   Text,
-  useColorModeValue as mode,
   Tooltip,
+  Tr,
+  useColorModeValue as mode,
 } from "@chakra-ui/react";
+import { Component, createContext, createRef, useContext } from "react";
+import {
+  DraggableProvided,
+  DraggableProvidedDragHandleProps,
+} from "react-beautiful-dnd";
 import { RiCheckboxBlankCircleFill } from "react-icons/ri";
 import { VscGripper } from "react-icons/vsc";
-import React from "react";
-import { DraggableProvided } from "react-beautiful-dnd";
 import { LabelClassWithShortcut } from "./types";
 
 const CircleIcon = chakra(RiCheckboxBlankCircleFill);
@@ -21,7 +26,7 @@ const DragIcon = chakra(VscGripper);
 
 type TableCellProps = {
   children: any;
-  isDragOccurring: boolean;
+  isDragging: boolean;
   isSmall?: boolean;
 };
 
@@ -31,17 +36,16 @@ type TableCellSnapshot = {
 };
 
 // eslint-disable-next-line react/prefer-stateless-function
-class TableCell extends React.Component<TableCellProps> {
-  ref = React.createRef<HTMLTableCellElement>();
+class TableCell extends Component<TableCellProps> {
+  ref = createRef<HTMLTableCellElement>();
 
   getSnapshotBeforeUpdate(prevProps: TableCellProps): TableCellSnapshot | null {
-    const { isDragOccurring } = this.props;
+    const { isDragging: isDragOccurring } = this.props;
     if (!this.ref.current) {
       return null;
     }
 
-    const isDragStarting: boolean =
-      isDragOccurring && !prevProps.isDragOccurring;
+    const isDragStarting: boolean = isDragOccurring && !prevProps.isDragging;
 
     if (!isDragStarting) {
       return null;
@@ -63,7 +67,7 @@ class TableCell extends React.Component<TableCellProps> {
     snapshot: TableCellSnapshot
   ) {
     const { ref } = this;
-    const { isDragOccurring } = this.props;
+    const { isDragging: isDragOccurring } = this.props;
     if (!ref.current) {
       return;
     }
@@ -106,96 +110,137 @@ class TableCell extends React.Component<TableCellProps> {
   }
 }
 
-export const IsDraggingContext = React.createContext<boolean>(false);
+export const IsDraggingContext = createContext(false);
 
-type TableRowProps = {
+const DragHandleButton = () => (
+  <IconButton
+    aria-label="Drag"
+    icon={<DragIcon />}
+    variant="ghost"
+    ml="1"
+    minWidth="8"
+    h="8"
+    w="8"
+    alignItems="center"
+    justifyContent="center"
+    cursor="move"
+    // Removes the blue border around the button
+    _focus={{ boxShadow: "none" }}
+  />
+);
+
+const DragHandleCell = (props: Partial<DraggableProvidedDragHandleProps>) => {
+  const isDragging = useContext(IsDraggingContext);
+  return (
+    <TableCell isDragging={isDragging} isSmall>
+      <div {...props}>
+        <DragHandleButton />
+      </div>
+    </TableCell>
+  );
+};
+
+const NameAndColorCell = ({ name, color }: { name: string; color: string }) => {
+  const isDragging = useContext(IsDraggingContext);
+  return (
+    <TableCell isDragging={isDragging}>
+      <Flex alignItems="center">
+        <CircleIcon
+          flexShrink={0}
+          flexGrow={0}
+          color={color}
+          fontSize="4xl"
+          ml="2"
+          mr="2"
+        />
+        <Tooltip placement="top" label={name}>
+          <Text isTruncated>{name}</Text>
+        </Tooltip>
+      </Flex>
+    </TableCell>
+  );
+};
+
+const OccurrencesCell = ({ occurences }: { occurences: number }) => {
+  const isDragging = useContext(IsDraggingContext);
+  return <TableCell isDragging={isDragging}>{occurences}</TableCell>;
+};
+
+const ShortcutCell = ({ shortcut }: { shortcut: string | undefined }) => {
+  const isDragging = useContext(IsDraggingContext);
+  return (
+    <TableCell isDragging={isDragging}>
+      {shortcut && (
+        <Kbd flexShrink={0} flexGrow={0} justifyContent="center" mr="1">
+          {shortcut}
+        </Kbd>
+      )}
+    </TableCell>
+  );
+};
+
+const EditButton = (props: ButtonProps) => (
+  <Button variant="link" colorScheme="blue" aria-label="Edit class" {...props}>
+    Edit
+  </Button>
+);
+
+const DeleteButton = (props: ButtonProps) => (
+  <Button
+    variant="link"
+    colorScheme="blue"
+    aria-label="Delete class"
+    {...props}
+  >
+    Delete
+  </Button>
+);
+
+const ActionsCell = ({
+  onEdit,
+  onDelete,
+}: {
+  onEdit: () => void;
+  onDelete: () => void;
+}) => {
+  const isDragging = useContext(IsDraggingContext);
+  return (
+    <TableCell isDragging={isDragging}>
+      <HStack justify="flex-end">
+        <EditButton onClick={onEdit} />
+        <DeleteButton onClick={onDelete} />
+      </HStack>
+    </TableCell>
+  );
+};
+
+export interface TableRowProps {
   provided: DraggableProvided;
   item: LabelClassWithShortcut;
-  onClickDelete: (classId: string | null) => void;
-  onClickEdit: (item: LabelClassWithShortcut | null) => void;
-};
+  onDelete: (classId: string | null) => void;
+  onEdit: (item: LabelClassWithShortcut | null) => void;
+}
+
 export const TableRow = ({
   provided,
   item,
-  onClickDelete,
-  onClickEdit,
+  onDelete,
+  onEdit,
 }: TableRowProps) => {
   const { name: className, shortcut, color, id } = item;
-  const occurences = item.labelsAggregates.totalCount;
   const backgroundColor = mode("white", "gray.900");
   return (
-    <IsDraggingContext.Consumer>
-      {(isDragging: boolean) => (
-        <Tr
-          id={id}
-          ref={provided.innerRef}
-          bg={backgroundColor}
-          {...provided.draggableProps}
-        >
-          <TableCell isDragOccurring={isDragging} isSmall>
-            <div {...provided.dragHandleProps}>
-              <IconButton
-                variant="ghost"
-                aria-label="Drag"
-                alignItems="center"
-                justifyContent="center"
-                ml="1"
-                icon={<DragIcon />}
-                h="8"
-                w="8"
-                minWidth="8"
-              />
-            </div>
-          </TableCell>
-          <TableCell isDragOccurring={isDragging}>
-            <Flex alignItems="center">
-              <CircleIcon
-                flexShrink={0}
-                flexGrow={0}
-                color={color}
-                fontSize="4xl"
-                ml="2"
-                mr="2"
-              />
-              <Tooltip placement="top" label={className}>
-                <Text isTruncated>{className}</Text>
-              </Tooltip>
-            </Flex>
-          </TableCell>
-          <TableCell isDragOccurring={isDragging}>{occurences}</TableCell>
-          <TableCell isDragOccurring={isDragging}>
-            {shortcut && (
-              <Kbd flexShrink={0} flexGrow={0} justifyContent="center" mr="1">
-                {shortcut}
-              </Kbd>
-            )}
-          </TableCell>
-          <TableCell isDragOccurring={isDragging}>
-            <Flex justifyContent="flex-end">
-              <span>
-                <Button
-                  variant="link"
-                  colorScheme="blue"
-                  onClick={() => onClickEdit(item)}
-                  aria-label="Edit class"
-                >
-                  Edit
-                </Button>
-              </span>
-              <span>
-                <Button
-                  variant="link"
-                  colorScheme="blue"
-                  onClick={() => onClickDelete(id)}
-                  aria-label="Delete class"
-                >
-                  Remove
-                </Button>
-              </span>
-            </Flex>
-          </TableCell>
-        </Tr>
-      )}
-    </IsDraggingContext.Consumer>
+    <Tr
+      id={id}
+      ref={provided.innerRef}
+      bg={backgroundColor}
+      {...provided.draggableProps}
+    >
+      <DragHandleCell {...provided.dragHandleProps} />
+      <NameAndColorCell name={className} color={color} />
+      <OccurrencesCell occurences={item.labelsAggregates.totalCount} />
+      <ShortcutCell shortcut={shortcut} />
+      <ActionsCell onEdit={() => onEdit(item)} onDelete={() => onDelete(id)} />
+    </Tr>
   );
 };

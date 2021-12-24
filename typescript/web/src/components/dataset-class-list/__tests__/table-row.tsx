@@ -52,8 +52,8 @@ const renderTableRow = () => {
       {(provided) => (
         <TableRow
           item={classExample}
-          onClickDelete={onClickDelete}
-          onClickEdit={onClickEdit}
+          onDelete={onClickDelete}
+          onEdit={onClickEdit}
           provided={provided}
         />
       )}
