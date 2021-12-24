@@ -1,5 +1,5 @@
 import { useRef, useCallback } from "react";
-import { Spinner, Center, ThemeProvider, Box } from "@chakra-ui/react";
+import { Center, ThemeProvider, Box } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { RouterContext } from "next/dist/shared/lib/router-context";
 import { Extent, getCenter } from "ol/extent";
@@ -18,6 +18,7 @@ import { Map } from "@labelflow/react-openlayers-fiber";
 import type { Image } from "@labelflow/graphql-types";
 import "ol/ol.css";
 
+import { Spinner } from "../../spinner";
 import { DrawInteraction } from "./draw-interaction";
 import { SelectAndModifyFeature } from "./select-and-modify-feature";
 import { ClassificationContent, ClassificationOverlay } from "./classification";
@@ -331,7 +332,7 @@ export const OpenlayersMap = () => {
       >
         {url == null && (
           <Center h="full">
-            <Spinner aria-label="loading indicator" size="xl" />
+            <Spinner ariaLabel="loading indicator" />
           </Center>
         )}
       </Box>

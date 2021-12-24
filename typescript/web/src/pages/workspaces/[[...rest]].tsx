@@ -1,6 +1,7 @@
-import { Spinner, Center } from "@chakra-ui/react";
+import { Center } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import React, { useEffect } from "react";
+import { Spinner } from "../../components/spinner";
 import { ServiceWorkerManagerModal } from "../../components/service-worker-manager";
 import { AuthManager } from "../../components/auth-manager";
 import { Layout } from "../../components/layout";
@@ -28,7 +29,7 @@ const LocalWorkspacesRedirectPage = () => {
       <CookieBanner />
       <Layout breadcrumbs={[<NavLogo key={0} />]}>
         <Center h="full">
-          <Spinner size="xl" />
+          <Spinner />
         </Center>
       </Layout>
     </>

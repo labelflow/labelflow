@@ -1,9 +1,10 @@
 import React, { useEffect } from "react";
 import { GetServerSideProps } from "next";
 import { Cookies, useCookies } from "react-cookie";
-import { Spinner, Center } from "@chakra-ui/react";
+import { Center } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { join, map, toPairs, isEmpty } from "lodash/fp";
+import { Spinner } from "../components/spinner";
 import { Meta } from "../components/meta";
 import { Layout } from "../components/layout";
 import Website from "./website";
@@ -35,7 +36,7 @@ const IndexPage = () => {
       <CookieBanner />
       <Layout>
         <Center h="full">
-          <Spinner size="xl" />
+          <Spinner />
         </Center>
       </Layout>
     </>

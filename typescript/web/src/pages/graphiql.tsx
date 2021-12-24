@@ -1,7 +1,8 @@
 import React from "react";
 import dynamic from "next/dynamic";
-import { Box, Center, Spinner, Text } from "@chakra-ui/react";
+import { Box, Center, Text } from "@chakra-ui/react";
 
+import { Spinner } from "../components/spinner";
 import { Meta } from "../components/meta";
 import { Layout } from "../components/layout";
 import { ServiceWorkerManagerModal } from "../components/service-worker-manager";
@@ -16,7 +17,7 @@ const GraphiQL = dynamic(() => import("../components/graphiql"), {
     if (error) throw error;
     return (
       <Center h="full">
-        <Spinner size="xl" />
+        <Spinner />
       </Center>
     );
   },

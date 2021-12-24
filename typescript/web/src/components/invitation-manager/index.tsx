@@ -1,10 +1,11 @@
 import React from "react";
-import { Center, Spinner, useToast } from "@chakra-ui/react";
+import { Center, useToast } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 import { gql, useMutation, useQuery } from "@apollo/client";
 import { CurrentUserCanAcceptInvitation } from "@labelflow/graphql-types";
 
+import { Spinner } from "../spinner";
 import { getDisplayName } from "../members/user";
 import { AcceptOrDeclineMembershipInvitation } from "./accept-or-decline-membership-invitation";
 import { InvalidInvitation } from "./invalid-invitation";
@@ -139,7 +140,7 @@ export const InvitationManager = () => {
   if (invitationDetailsAreLoading || status === "loading" || userIsLoading) {
     return (
       <Center h="full">
-        <Spinner size="xl" />
+        <Spinner />
       </Center>
     );
   }

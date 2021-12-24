@@ -1,26 +1,26 @@
-import React, { useState } from "react";
-import NextLink from "next/link";
 import {
   Box,
-  VStack,
-  Flex,
-  useColorModeValue as mode,
   Center,
-  Spinner,
-  Text,
-  Heading,
-  SimpleGrid,
-  IconButton,
   chakra,
+  Flex,
+  Heading,
+  IconButton,
+  SimpleGrid,
   Skeleton,
+  Text,
+  useColorModeValue as mode,
+  VStack,
 } from "@chakra-ui/react";
-import { isEmpty } from "lodash/fp";
-import { HiTrash } from "react-icons/hi";
 import type { Image as ImageType } from "@labelflow/graphql-types";
-import { ImportButton } from "../import-button";
-import { EmptyStateNoImages, EmptyStateImageNotFound } from "../empty-state";
-import { DeleteImageModal } from "./delete-image-modal";
+import { isEmpty } from "lodash/fp";
+import NextLink from "next/link";
+import React, { useState } from "react";
+import { HiTrash } from "react-icons/hi";
+import { EmptyStateImageNotFound, EmptyStateNoImages } from "../empty-state";
 import { ImageWithFallback } from "../image";
+import { ImportButton } from "../import-button";
+import { Spinner } from "../spinner";
+import { DeleteImageModal } from "./delete-image-modal";
 
 const TrashIcon = chakra(HiTrash);
 
@@ -41,7 +41,7 @@ export const ImagesList = ({
     <>
       {!images && (
         <Center h="full">
-          <Spinner size="xl" />
+          <Spinner />
         </Center>
       )}
       {isEmpty(images) && (

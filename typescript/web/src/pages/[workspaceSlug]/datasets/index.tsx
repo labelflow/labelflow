@@ -1,12 +1,13 @@
 import React, { useCallback } from "react";
 import { gql, useQuery } from "@apollo/client";
 
-import { Flex, Text, Spinner } from "@chakra-ui/react";
+import { Flex, Text } from "@chakra-ui/react";
 
 import { useQueryParam } from "use-query-params";
 
 import type { Dataset as DatasetType } from "@labelflow/graphql-types";
 import { useRouter } from "next/router";
+import { Spinner } from "../../../components/spinner";
 import { Meta } from "../../../components/meta";
 import { Layout } from "../../../components/layout";
 import { IdParam, BoolParam } from "../../../utils/query-param-bool";
@@ -58,13 +59,7 @@ const LoadingCard = () => (
       alignItems="center"
       justify="center"
     >
-      <Spinner
-        thickness="4px"
-        speed="0.65s"
-        emptyColor="gray.200"
-        color="#31CECA"
-        size="xl"
-      />
+      <Spinner color="brand.500" />
     </Flex>
   </DatasetCardBox>
 );

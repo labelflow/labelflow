@@ -1,8 +1,9 @@
 import React from "react";
-import { Text, Box, Center, Spinner } from "@chakra-ui/react";
+import { Text, Box, Center } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { gql, useQuery } from "@apollo/client";
 import { GetServerSideProps } from "next";
+import { Spinner } from "../../../components/spinner";
 import { Meta } from "../../../components/meta";
 import { Layout } from "../../../components/layout";
 import { ServiceWorkerManagerModal } from "../../../components/service-worker-manager";
@@ -68,7 +69,7 @@ const WorkspaceSettingsPage = () => {
           </Box>
         ) : (
           <Center h="full">
-            <Spinner size="xl" />
+            <Spinner />
           </Center>
         )}
       </Layout>

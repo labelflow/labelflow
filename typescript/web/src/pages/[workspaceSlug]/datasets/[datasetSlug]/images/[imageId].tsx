@@ -6,7 +6,6 @@ import {
   useColorModeValue as mode,
   Skeleton,
   Center,
-  Spinner,
   Box,
   Flex,
 } from "@chakra-ui/react";
@@ -16,6 +15,7 @@ import NextLink from "next/link";
 import type { Image } from "@labelflow/graphql-types";
 import { useErrorHandler } from "react-error-boundary";
 
+import { Spinner } from "../../../../../components/spinner";
 import { WorkspaceSwitcher } from "../../../../../components/workspace-switcher";
 import { NavLogo } from "../../../../../components/logo/nav-logo";
 import { ServiceWorkerManagerModal } from "../../../../../components/service-worker-manager";
@@ -41,7 +41,7 @@ const LabelingTool = dynamic(
       if (error) throw error;
       return (
         <Center h="full">
-          <Spinner aria-label="loading indicator" size="xl" />
+          <Spinner ariaLabel="loading indicator" />
         </Center>
       );
     },

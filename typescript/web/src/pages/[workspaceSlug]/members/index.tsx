@@ -112,7 +112,7 @@ const WorkspaceMembersPage = () => {
           />
         ) : (
           <Center h="full">
-            <Spinner size="xl" />
+            <Spinner />
           </Center>
         )}
       </Layout>

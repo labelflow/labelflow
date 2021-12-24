@@ -1,16 +1,11 @@
 import React, { useEffect } from "react";
-import {
-  Spinner,
-  Skeleton,
-  Text,
-  Center,
-  BreadcrumbLink,
-} from "@chakra-ui/react";
+import { Skeleton, Text, Center, BreadcrumbLink } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { useQuery, gql } from "@apollo/client";
 import { useErrorHandler } from "react-error-boundary";
 import NextLink from "next/link";
 
+import { Spinner } from "../../../../components/spinner";
 import { WorkspaceSwitcher } from "../../../../components/workspace-switcher";
 import { NavLogo } from "../../../../components/logo/nav-logo";
 import { Meta } from "../../../../components/meta";
@@ -101,7 +96,7 @@ const DatasetIndexPage = () => {
         }
       >
         <Center h="full">
-          <Spinner size="xl" />
+          <Spinner />
         </Center>
       </Layout>
     </>

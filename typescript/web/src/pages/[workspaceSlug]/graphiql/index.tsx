@@ -1,8 +1,9 @@
 import React from "react";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
-import { Box, Center, Spinner, Text } from "@chakra-ui/react";
+import { Box, Center, Text } from "@chakra-ui/react";
 
+import { Spinner } from "../../../components/spinner";
 import { WorkspaceTabBar } from "../../../components/layout/tab-bar/workspace-tab-bar";
 import { Meta } from "../../../components/meta";
 import { Layout } from "../../../components/layout";
@@ -19,7 +20,7 @@ const GraphiQL = dynamic(() => import("../../../components/graphiql"), {
     if (error) throw error;
     return (
       <Center h="full">
-        <Spinner size="xl" />
+        <Spinner />
       </Center>
     );
   },

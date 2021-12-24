@@ -4,10 +4,10 @@ import {
   VStack,
   Text,
   Box,
-  Spinner,
   useColorModeValue as mode,
   useTheme,
 } from "@chakra-ui/react";
+import { Spinner } from "../../spinner";
 
 type Props = {
   disabled?: boolean;
@@ -61,7 +61,7 @@ export const ExportFormatCard = ({
           justifyContent="center"
           alignItems="center"
         >
-          <Spinner size="xl" color="brand.500" aria-label="loading" />
+          <Spinner color="brand.500" ariaLabel="loading" />
         </Box>
       )}
       <HStack
