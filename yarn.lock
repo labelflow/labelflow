@@ -6848,7 +6848,7 @@ __metadata:
     react-icons: ^4.2.0
     react-markdown: 6.0.3
     react-use-measure: ^2.0.4
-    react-virtual: ^2.7.1
+    react-virtual: ^2.10.0
     rehype-raw: 6.0.0
     release-it: ^14.11.5
     remark-gfm: 1.0.0
@@ -29269,14 +29269,14 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"react-virtual@npm:^2.7.1":
-  version: 2.7.1
-  resolution: "react-virtual@npm:2.7.1"
+"react-virtual@npm:^2.10.0":
+  version: 2.10.0
+  resolution: "react-virtual@npm:2.10.0"
   dependencies:
     "@reach/observe-rect": ^1.1.0
   peerDependencies:
     react: ^16.6.3 || ^17.0.0
-  checksum: 00f47269ff3e3a48305c4b6b67b65cf5c5b5507cf13c316dd8c3a320461e6a7520d4a611005a8cca4f3ef2e38c0c79759c7fd806326fa583d8aa222781c743c9
+  checksum: 87f87c736dc1f4526446952d81491a682df3cf8d8e7e6f4dc291c698b88ef83cd20c3de5f764f39978310adbe7f81a0d12e60e63653685ba727c909d32c4895d
   languageName: node
   linkType: hard
 
