@@ -3,6 +3,7 @@ import { chakra, Stack, useColorModeValue as mode } from "@chakra-ui/react";
 import { RiUploadCloud2Line } from "react-icons/ri";
 import { useDropzone, FileWithPath, FileRejection } from "react-dropzone";
 import { isEmpty } from "lodash/fp";
+import { validMimeTypesFlatString } from "@labelflow/common-resolvers/src/utils/validate-upload-mime-types";
 import { DroppedFile } from "../types";
 
 const UploadIcon = chakra(RiUploadCloud2Line);
@@ -23,8 +24,7 @@ export const Dropzone = ({
     getRootProps: () => object;
     getInputProps: () => object;
   } = useDropzone({
-    accept:
-      "image/jpeg, image/png, image/bmp, application/zip, application/json",
+    accept: validMimeTypesFlatString,
   });
 
   useEffect(() => {
