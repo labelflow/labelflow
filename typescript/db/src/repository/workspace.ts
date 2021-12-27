@@ -141,10 +141,14 @@ export const deleteWorkspace: Repository["workspace"]["delete"] = async (
   if (isNil(data)) {
     throw new Error("Could not find workspace");
   }
-  const { stripeCustomerId, slug } = data;
+  const { name, slug, stripeCustomerId } = data;
   await db.workspace.update({
     where: castObjectNullsToUndefined(where),
-    data: { deletedAt: new Date().toISOString(), slug: `${slug}-${data.id}` },
+    data: {
+      deletedAt: new Date().toISOString(),
+      name: `${name}-${data.id}`,
+      slug: `${slug}-${data.id}`,
+    },
   });
   if (stripeCustomerId) {
     await stripe.tryDeleteCustomer(stripeCustomerId);
