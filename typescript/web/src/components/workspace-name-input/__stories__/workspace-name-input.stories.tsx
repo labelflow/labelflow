@@ -1,32 +1,25 @@
-import { MockedProvider as ApolloProvider } from "@apollo/client/testing";
-import {
-  WorkspaceNameInput,
-  WorkspaceNameInputProvider,
-  WorkspaceNameMessage,
-} from "..";
+import { Heading } from "@chakra-ui/react";
+import { WorkspaceNameInput } from "..";
 import { apolloDecorator } from "../../../utils/apollo-decorator";
 import { chakraDecorator } from "../../../utils/chakra-decorator";
-import { GRAPHQL_MOCKS } from "../workspace-name-input.fixtures";
+import { TestComponent, TEST_CASES } from "../workspace-name-input.fixtures";
 
 export default {
   title: `web/${WorkspaceNameInput.name}`,
-  component: WorkspaceNameInput,
   decorators: [chakraDecorator, apolloDecorator],
 };
 
-interface TemplateProps {
-  defaultName?: string;
-}
-
-const Template = ({ defaultName }: TemplateProps) => (
-  <ApolloProvider mocks={GRAPHQL_MOCKS}>
-    <WorkspaceNameInputProvider defaultName={defaultName}>
-      <WorkspaceNameInput />
-      <WorkspaceNameMessage hideError={false} />
-    </WorkspaceNameInputProvider>
-  </ApolloProvider>
+export const Default = () => (
+  <div>
+    {Object.entries(TEST_CASES).map(([name, [props, expected]]) => (
+      <>
+        <Heading size="lg">{name}</Heading>
+        <Heading size="md">Expected:</Heading>
+        {expected}
+        <Heading size="md">Actual:</Heading>
+        <TestComponent storybook {...props} />
+        <br />
+      </>
+    ))}
+  </div>
 );
-
-export const WithoutDefaultName = Template;
-
-export const WithDefaultName = Template.bind({ defaultName: "default name" });
