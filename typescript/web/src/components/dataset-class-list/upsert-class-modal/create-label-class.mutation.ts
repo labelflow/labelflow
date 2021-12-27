@@ -1,12 +1,9 @@
 import { DocumentNode, gql, useApolloClient } from "@apollo/client";
 import { MutationBaseOptions } from "@apollo/client/core/watchQueryOptions";
 import { Query } from "@labelflow/graphql-types";
+import { getNextClassColor, LABEL_CLASS_COLOR_PALETTE } from "@labelflow/utils";
 import { useCallback } from "react";
 import { v4 as uuid } from "uuid";
-import {
-  getNextClassColor,
-  hexColorSequence,
-} from "../../../utils/class-color-generator";
 import { DATASET_LABEL_CLASSES_QUERY } from "./dataset-label-classes.query";
 
 export const CREATE_LABEL_CLASS_MUTATION = gql`
@@ -85,7 +82,7 @@ export const useCreateLabelClassMutation = (
     const labelClasses = queryData?.dataset?.labelClasses ?? [];
     const color =
       labelClasses.length < 1
-        ? hexColorSequence[0]
+        ? LABEL_CLASS_COLOR_PALETTE[0]
         : getNextClassColor(labelClasses[labelClasses.length - 1].color);
 
     await client.mutate({

@@ -8,7 +8,7 @@ import type {
   QueryLabelClassArgs,
   QueryLabelClassesArgs,
 } from "@labelflow/graphql-types";
-import { getNextClassColor } from "@labelflow/utils/class-color-generator";
+import { getNextClassColor } from "@labelflow/utils";
 import { Context, DbLabelClass } from "./types";
 import { throwIfResolvesToNil } from "./utils/throw-if-resolves-to-nil";
 
