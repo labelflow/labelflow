@@ -17,7 +17,7 @@ import { WorkspaceNameMessageProps } from "./workspace-name-message";
 
 export type ApolloMock = ApolloResponse<Partial<Query | Mutation>>;
 
-const WORKSPACE_EXISTS_MOCK_ALREADY_TAKEN_NAME: ApolloMock = {
+export const WORKSPACE_EXISTS_MOCK_ALREADY_TAKEN_NAME: ApolloMock = {
   request: {
     query: WORKSPACE_EXISTS_QUERY,
     variables: { slug: "already-taken-name" },
@@ -25,7 +25,7 @@ const WORKSPACE_EXISTS_MOCK_ALREADY_TAKEN_NAME: ApolloMock = {
   result: { data: { workspaceExists: true } },
 };
 
-const WORKSPACE_EXISTS_MOCK_TEST: ApolloMock = {
+export const WORKSPACE_EXISTS_MOCK_TEST: ApolloMock = {
   request: {
     query: WORKSPACE_EXISTS_QUERY,
     variables: { slug: "test" },
