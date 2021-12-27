@@ -167,7 +167,7 @@ beforeEach(async () => {
 describe("Label resolver test suite", () => {
   test("Creating a label should fail if its image doesn't exist", async () => {
     const imageId = "0024fbc1-387b-444f-8ad0-d7a3e316726a";
-    return expect(
+    await expect(
       createLabel({
         ...labelData,
         imageId,
@@ -178,7 +178,7 @@ describe("Label resolver test suite", () => {
   test("Creating a label should fail if its labelClassId doesn't exist", async () => {
     const imageId = await createImage("an image");
     const labelClassId = "0024fbc1-387b-444f-8ad0-d7a3e316726a";
-    return expect(
+    await expect(
       createLabel({
         ...labelData,
         imageId,
@@ -519,7 +519,7 @@ describe("Label resolver test suite", () => {
     });
     const labelId = createResult.data.createLabel.id;
 
-    return expect(
+    await expect(
       client.mutate({
         mutation: gql`
           mutation updateLabel($id: ID!, $data: LabelUpdateInput!) {
@@ -537,7 +537,7 @@ describe("Label resolver test suite", () => {
   });
 
   test("Query label when id doesn't exists", async () => {
-    return expect(
+    await expect(
       client.query({
         query: gql`
           query getlabel($id: ID!) {
