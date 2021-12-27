@@ -61,7 +61,7 @@ const workspaceExists = async (
 ): Promise<boolean> => {
   try {
     const data = await repository.workspace.get(args.where, user);
-    return !isNil(data) && isNil(data.deletedAt);
+    return !isNil(data);
   } catch (error) {
     if (error instanceof AuthorizationError) {
       return true;
