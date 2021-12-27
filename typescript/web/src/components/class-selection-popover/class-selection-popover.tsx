@@ -19,6 +19,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 import { IoSearch } from "react-icons/io5";
 import { RiCloseCircleFill } from "react-icons/ri";
+import { useVirtual } from "react-virtual";
 import { noneClassColor } from "../../theme";
 import { keymap } from "../../keymap";
 import { ClassListItem } from "./class-list-item";
@@ -115,6 +116,14 @@ export const ClassSelectionPopover = ({
       }),
     [labelClasses, inputValueCombobox, includeNoneClass]
   );
+
+  const listRef = useRef<HTMLDivElement | null>(null);
+
+  const rowVirtualizer = useVirtual({
+    size: filteredLabelClasses.length,
+    parentRef: listRef,
+    estimateSize: React.useCallback(() => 32, []),
+  });
 
   const {
     reset,
@@ -249,32 +258,46 @@ export const ClassSelectionPopover = ({
                 </InputRightElement>
               </InputGroup>
             </Box>
-            <Box pt="1" {...getMenuProps()} overflowY="scroll" maxHeight="340">
-              {filteredLabelClasses.map(
-                (
-                  item: LabelClassItem | CreateClassInput | NoneClass,
-                  index: number
-                ) => {
+            <Box
+              pt="1"
+              {...getMenuProps({ ref: listRef })}
+              overflowY="scroll"
+              maxHeight="340"
+            >
+              <Box height={rowVirtualizer.totalSize} position="relative">
+                {rowVirtualizer.virtualItems.map(({ index, size, start }) => {
+                  const item = filteredLabelClasses[index];
                   return (
-                    <ClassListItem
-                      itemProps={getItemProps({ item, index })}
-                      item={item}
-                      highlight={highlightedIndex === index}
-                      selected={
-                        ("id" in item && item.id === selectedLabelClassId) ||
-                        (selectedLabelClassId === null &&
-                          "type" in item &&
-                          item.type === "NoneClass")
-                      }
-                      isCreateClassItem={
-                        "type" in item && item.type === "CreateClassItem"
-                      }
-                      index={index}
-                      key={item.name}
-                    />
+                    <Box
+                      style={{
+                        position: "absolute",
+                        top: 0,
+                        left: 0,
+                        width: "100%",
+                        height: `${size}px`,
+                        transform: `translateY(${start}px)`,
+                      }}
+                    >
+                      <ClassListItem
+                        itemProps={getItemProps({ item, index })}
+                        item={item}
+                        highlight={highlightedIndex === index}
+                        selected={
+                          ("id" in item && item.id === selectedLabelClassId) ||
+                          (selectedLabelClassId === null &&
+                            "type" in item &&
+                            item.type === "NoneClass")
+                        }
+                        isCreateClassItem={
+                          "type" in item && item.type === "CreateClassItem"
+                        }
+                        index={index}
+                        key={item.name}
+                      />
+                    </Box>
                   );
-                }
-              )}
+                })}
+              </Box>
             </Box>
           </Box>
         </PopoverBody>

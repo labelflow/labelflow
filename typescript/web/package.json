@@ -96,7 +96,7 @@
     "react-icons": "^4.2.0",
     "react-markdown": "6.0.3",
     "react-use-measure": "^2.0.4",
-    "react-virtual": "^2.7.1",
+    "react-virtual": "^2.10.0",
     "rehype-raw": "6.0.0",
     "remark-gfm": "1.0.0",
     "slugify": "^1.6.0",
