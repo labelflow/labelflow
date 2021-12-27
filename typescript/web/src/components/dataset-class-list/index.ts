@@ -1,1 +1,1 @@
-export { ClassesList } from "./class-list";
+export { LabelClasses } from "./label-classes";

@@ -6848,6 +6848,7 @@ __metadata:
     query-string: ^7.0.0
     react: 17.x
     react-beautiful-dnd: 13.1.0
+    react-beautiful-dnd-test-utils: ^4.1.1
     react-cookie: 4.1.1
     react-countdown-hook: ^1.1.0
     react-dom: 17.x
@@ -28737,6 +28738,18 @@ fsevents@^1.2.7:
   bin:
     rc: ./cli.js
   checksum: 2e26e052f8be2abd64e6d1dabfbd7be03f80ec18ccbc49562d31f617d0015fbdbcf0f9eed30346ea6ab789e0fdfe4337f033f8016efdbee0df5354751842080e
+  languageName: node
+  linkType: hard
+
+"react-beautiful-dnd-test-utils@npm:^4.1.1":
+  version: 4.1.1
+  resolution: "react-beautiful-dnd-test-utils@npm:4.1.1"
+  peerDependencies:
+    "@testing-library/jest-dom": ">=5"
+    "@testing-library/react": ">=11"
+    "@testing-library/user-event": ">=13"
+    jest: ">=26"
+  checksum: 6ab2d598643d865689329f36bb3138a57ab7ed0d810e780c9b38f7d0b5e2e8b0abc249c9a594f3f94e7003415a0633a9c9b5e44d4f2dbf5d7d2d584784ec4685
   languageName: node
   linkType: hard
 

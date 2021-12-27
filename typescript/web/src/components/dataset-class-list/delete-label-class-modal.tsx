@@ -1,11 +1,10 @@
 import {
   gql,
-  useQuery,
-  useApolloClient,
   makeReference,
   Reference,
+  useApolloClient,
+  useQuery,
 } from "@apollo/client";
-import { useRef, useCallback } from "react";
 import {
   AlertDialog,
   AlertDialogBody,
@@ -15,6 +14,9 @@ import {
   AlertDialogOverlay,
   Button,
 } from "@chakra-ui/react";
+import { isEmpty, isNil } from "lodash/fp";
+import { useCallback, useRef } from "react";
+import { useLabelClasses } from "./label-classes.context";
 
 const getLabelClassByIdQuery = gql`
   query getLabelClassById($id: ID!) {
@@ -33,28 +35,26 @@ const deleteLabelClassMutation = gql`
   }
 `;
 
-export const DeleteLabelClassModal = ({
-  isOpen = false,
-  onClose = () => {},
-  labelClassId,
-  datasetId,
-}: {
-  isOpen?: boolean;
-  onClose?: () => void;
-  labelClassId?: string | null;
-  datasetId: string | undefined;
-}) => {
+export const DeleteLabelClassModal = () => {
+  const { datasetId, deleteClassId, setDeleteClassId } = useLabelClasses();
+
+  const isOpen = !isNil(deleteClassId);
+  const onClose = useCallback(
+    () => setDeleteClassId(undefined),
+    [setDeleteClassId]
+  );
+
   const cancelRef = useRef<HTMLButtonElement>(null);
   const { data } = useQuery(getLabelClassByIdQuery, {
-    variables: { id: labelClassId },
-    skip: labelClassId == null,
+    variables: { id: deleteClassId },
+    skip: isEmpty(deleteClassId),
   });
   const client = useApolloClient();
 
   const deleteLabelClass = useCallback(() => {
     client.mutate({
       mutation: deleteLabelClassMutation,
-      variables: { id: labelClassId },
+      variables: { id: deleteClassId },
       refetchQueries: ["getDatasetLabelClasses", "getImageLabels"],
       update(cache) {
         cache.modify({
@@ -78,7 +78,7 @@ export const DeleteLabelClassModal = ({
                     "labelClass",
                     labelRef
                   );
-                  if (labelClassId === readField("id", labelClassRef)) {
+                  if (deleteClassId === readField("id", labelClassRef)) {
                     cache.modify({
                       /* eslint-disable-next-line no-underscore-dangle */
                       id: labelRef.__ref,
@@ -101,7 +101,7 @@ export const DeleteLabelClassModal = ({
             labelClasses: (existingLabelClassesRefs, { readField }) => {
               return existingLabelClassesRefs.filter(
                 (labelClassRef: Reference) =>
-                  labelClassId !== readField("id", labelClassRef)
+                  deleteClassId !== readField("id", labelClassRef)
               );
             },
           },
@@ -109,7 +109,7 @@ export const DeleteLabelClassModal = ({
       },
     });
     onClose();
-  }, [labelClassId, client, onClose]);
+  }, [client, deleteClassId, onClose, datasetId]);
 
   return (
     <AlertDialog
@@ -133,14 +133,14 @@ export const DeleteLabelClassModal = ({
             <Button
               ref={cancelRef}
               onClick={onClose}
-              aria-label="Cancel delete"
+              aria-label="Cancel delete label class"
             >
               Cancel
             </Button>
             <Button
               colorScheme="red"
               onClick={deleteLabelClass}
-              aria-label="Confirm deleting class"
+              aria-label="Confirm delete label class"
               ml={3}
             >
               Delete

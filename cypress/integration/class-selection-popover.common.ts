@@ -275,7 +275,7 @@ export const declareTests = ({
     cy.get('[aria-label="Delete class"]').click();
 
     cy.wait(420);
-    cy.get('[aria-label="Confirm deleting class"]').click();
+    cy.get('[aria-label="Confirm delete label class"]').click();
     cy.contains("A new class").should("not.exist");
     cy.contains(/^images$/).click();
     cy.get("main").contains("photo-1579513141590-c597876aefbc").click();

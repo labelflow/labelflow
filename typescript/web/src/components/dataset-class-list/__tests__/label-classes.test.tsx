@@ -2,7 +2,7 @@ import { PropsWithChildren } from "react";
 import { render, screen, waitFor, fireEvent } from "@testing-library/react";
 import { ChakraProvider } from "@chakra-ui/react";
 import { ApolloProvider, gql } from "@apollo/client";
-import { ClassesList } from "../class-list";
+import { LabelClasses } from "../label-classes";
 import { client } from "../../../connectors/apollo-client/schema-client";
 import { theme } from "../../../theme";
 import { setupTestsWithLocalDatabase } from "../../../utils/setup-local-db-tests";
@@ -67,7 +67,7 @@ describe("Dataset class list tests", () => {
   it("Renders if the dataset has no classes", async () => {
     const datasetId = "myDatasetId";
     await createDataset("myDataset", datasetId);
-    render(<ClassesList datasetSlug="mydataset" workspaceSlug="local" />, {
+    render(<LabelClasses datasetSlug="mydataset" workspaceSlug="local" />, {
       wrapper,
     });
     await waitFor(() => {
@@ -93,7 +93,7 @@ describe("Dataset class list tests", () => {
       name: "MyThirdClass",
       color: "red",
     });
-    render(<ClassesList datasetSlug="mydataset" workspaceSlug="local" />, {
+    render(<LabelClasses datasetSlug="mydataset" workspaceSlug="local" />, {
       wrapper,
     });
 
@@ -113,7 +113,7 @@ describe("Dataset class list tests", () => {
       name: "MyFirstClass",
       color: "blue",
     });
-    render(<ClassesList datasetSlug="mydataset" workspaceSlug="local" />, {
+    render(<LabelClasses datasetSlug="mydataset" workspaceSlug="local" />, {
       wrapper,
     });
 
@@ -133,7 +133,7 @@ describe("Dataset class list tests", () => {
       name: "MyFirstClass",
       color: "blue",
     });
-    render(<ClassesList datasetSlug="mydataset" workspaceSlug="local" />, {
+    render(<LabelClasses datasetSlug="mydataset" workspaceSlug="local" />, {
       wrapper,
     });
 

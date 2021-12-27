@@ -1,7 +1,15 @@
+import { ApolloError } from "@apollo/client";
 import { Modal, ModalOverlay } from "@chakra-ui/react";
-import { isNil } from "lodash/fp";
+import { isEmpty, isNil } from "lodash/fp";
 import { useRouter } from "next/router";
-import React, { ChangeEvent, useCallback, useEffect, useState } from "react";
+import React, {
+  ChangeEvent,
+  FormEvent,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
+import { useLabelClasses } from "../label-classes.context";
 import { LabelClassWithShortcut } from "../types";
 import { useCreateLabelClassMutation } from "./create-label-class.mutation";
 import { useLabelClassExists } from "./label-class-exists.query";
@@ -27,18 +35,23 @@ const useCreateClass = (
     datasetId
   );
   return useCallback(
-    async (event) => {
+    async (event: FormEvent) => {
       event.preventDefault();
-      if (className === "") return;
+      if (isEmpty(className)) return;
       try {
-        if (classId) {
+        if (!isNil(classId)) {
           await updateLabelClass();
         } else {
           await createLabelClass();
         }
         onClose();
-      } catch (error: any) {
-        setErrorMessage(error.message);
+      } catch (error) {
+        if (error instanceof ApolloError) {
+          setErrorMessage(error.message);
+          throw error;
+        } else {
+          throw error;
+        }
       }
     },
     [
@@ -76,29 +89,33 @@ const useModalObserver = (
   setErrorMessage: React.Dispatch<React.SetStateAction<string>>,
   item: LabelClassWithShortcut | null | undefined
 ) => {
-  useEffect(() => {
-    if (!isOpen) {
-      setClassNameInputValue("");
-      setErrorMessage("");
-    } else if (item) {
-      setClassNameInputValue(item.name);
-    }
-  }, [isOpen]);
+  useEffect(
+    () => {
+      if (!isOpen) {
+        setClassNameInputValue("");
+        setErrorMessage("");
+      } else if (item) {
+        setClassNameInputValue(item.name);
+      }
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [isOpen]
+  );
 };
 
-const useModalState = (
-  item: LabelClassWithShortcut | undefined,
-  datasetId: string | undefined,
-  datasetSlug: string | undefined,
-  isOpen: boolean,
-  onClose: () => void
-) => {
+export interface UpsertClassModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+const useModalState = ({ isOpen, onClose }: UpsertClassModalProps) => {
+  const { editClass, datasetId, datasetSlug } = useLabelClasses();
   const [classNameInputValue, setClassNameInputValue] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState<string>("");
   const handleInputValueChange = (event: ChangeEvent<HTMLInputElement>) => {
     setClassNameInputValue(event.target.value);
   };
-  const classId = item?.id ?? undefined;
+  const classId = editClass?.id ?? undefined;
   const className = classNameInputValue?.trim() ?? "";
   useCheckName(datasetId, className, setErrorMessage);
   const createClass = useCreateClass(
@@ -106,11 +123,11 @@ const useModalState = (
     datasetSlug,
     classId,
     className,
-    item?.color ?? undefined,
+    editClass?.color ?? undefined,
     onClose,
     setErrorMessage
   );
-  useModalObserver(isOpen, setClassNameInputValue, setErrorMessage, item);
+  useModalObserver(isOpen, setClassNameInputValue, setErrorMessage, editClass);
   return {
     classId,
     createClass,
@@ -120,28 +137,9 @@ const useModalState = (
   };
 };
 
-export interface UpsertClassModalProps {
-  isOpen?: boolean;
-  onClose: () => void;
-  item?: LabelClassWithShortcut | null;
-  datasetId?: string | null;
-  datasetSlug?: string;
-}
-
-export const UpsertClassModal = ({
-  isOpen = false,
-  onClose,
-  item = undefined,
-  datasetId,
-  datasetSlug,
-}: UpsertClassModalProps) => {
-  const state = useModalState(
-    item ?? undefined,
-    datasetId ?? undefined,
-    datasetSlug,
-    isOpen,
-    onClose
-  );
+export const UpsertClassModal = (props: UpsertClassModalProps) => {
+  const { isOpen, onClose } = props;
+  const state = useModalState(props);
   return (
     <Modal
       scrollBehavior="inside"
