@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { v4 as uuid } from "uuid";
-import { OptionalText, OptionalTextProps } from "./optional-text";
+import { OptionalText, OptionalTextProps } from "../optional-text";
 
 type TestCase = [OptionalTextProps, string];
 

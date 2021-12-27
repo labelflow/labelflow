@@ -1,5 +1,5 @@
-import { OptionalText } from ".";
-import { chakraDecorator } from "../../utils/chakra-decorator";
+import { OptionalText } from "..";
+import { chakraDecorator } from "../../../utils/chakra-decorator";
 
 export default {
   title: `web/${OptionalText.name}`,

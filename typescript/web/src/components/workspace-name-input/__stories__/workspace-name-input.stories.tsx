@@ -3,10 +3,10 @@ import {
   WorkspaceNameInput,
   WorkspaceNameInputProvider,
   WorkspaceNameMessage,
-} from ".";
-import { apolloDecorator } from "../../utils/apollo-decorator";
-import { chakraDecorator } from "../../utils/chakra-decorator";
-import { GRAPHQL_MOCKS } from "./workspace-name-input.fixtures";
+} from "..";
+import { apolloDecorator } from "../../../utils/apollo-decorator";
+import { chakraDecorator } from "../../../utils/chakra-decorator";
+import { GRAPHQL_MOCKS } from "../workspace-name-input.fixtures";
 
 export default {
   title: `web/${WorkspaceNameInput.name}`,

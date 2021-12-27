@@ -4,8 +4,8 @@ import { render, RenderResult, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { isNil } from "lodash/fp";
 import { PropsWithChildren, ReactElement, useState } from "react";
-import { client } from "../../../connectors/apollo-client/schema-client";
-import { CreateWorkspaceModal } from "./create-workspace-modal";
+import { client } from "../../../../connectors/apollo-client/schema-client";
+import { CreateWorkspaceModal } from "../create-workspace-modal";
 
 export const ApolloWrapper = ({ children }: PropsWithChildren<{}>) => (
   <ApolloProvider client={client}>{children}</ApolloProvider>

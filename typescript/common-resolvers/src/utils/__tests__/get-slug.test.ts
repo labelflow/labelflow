@@ -1,4 +1,4 @@
-import { getSlug } from "./get-slug";
+import { getSlug } from "../get-slug";
 
 type TestCase = [string, string];
 

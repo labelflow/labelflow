@@ -8,9 +8,9 @@ import {
   WorkspaceNameInput,
   WorkspaceNameMessage,
   WorkspaceNameMessageProps,
-} from ".";
-import { WorkspaceNameInputProvider } from "./workspace-name-input.context";
-import { GRAPHQL_MOCKS } from "./workspace-name-input.fixtures";
+} from "..";
+import { WorkspaceNameInputProvider } from "../workspace-name-input.context";
+import { GRAPHQL_MOCKS } from "../workspace-name-input.fixtures";
 
 jest.mock(
   "use-debounce",

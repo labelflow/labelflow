@@ -1,7 +1,7 @@
-import { CreateWorkspaceModal } from ".";
-import { chakraDecorator } from "../../../utils/chakra-decorator";
-import { apolloDecorator } from "../../../utils/apollo-decorator";
-import { queryParamsDecorator } from "../../../utils/query-params-decorator";
+import { CreateWorkspaceModal } from "..";
+import { chakraDecorator } from "../../../../utils/chakra-decorator";
+import { apolloDecorator } from "../../../../utils/apollo-decorator";
+import { queryParamsDecorator } from "../../../../utils/query-params-decorator";
 
 export default {
   title: "web/Workspace Switcher/Workspace creation modal",
