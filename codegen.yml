@@ -1,8 +1,10 @@
 schema: "./data/*.graphql"
 generates:
   ./typescript/graphql-types/src/graphql-types.generated.ts:
+    # https://github.com/prisma/prisma1/issues/3429#issuecomment-592459375
     plugins:
-      - typescript
+      - typescript:
+          enumsAsConst: true
       - typescript-resolvers
   ./data/__generated__/schema.graphql:
     plugins:

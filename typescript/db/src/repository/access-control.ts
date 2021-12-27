@@ -1,11 +1,11 @@
 import {
-  WorkspaceWhereUniqueInput,
   DatasetWhereUniqueInput,
-  LabelWhereUniqueInput,
   ImageWhereUniqueInput,
   LabelClassWhereUniqueInput,
+  LabelWhereUniqueInput,
   MembershipWhereUniqueInput,
   UserWhereUniqueInput,
+  WorkspaceWhereUniqueInput,
 } from "@labelflow/graphql-types";
 import { isNil } from "lodash/fp";
 import { getPrismaClient } from "../prisma-client";

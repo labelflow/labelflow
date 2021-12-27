@@ -1,14 +1,12 @@
-import { Prisma } from "../__generated__";
-
+import { Context, DbUser } from "@labelflow/common-resolvers";
 import {
   MutationUpdateUserArgs,
   QueryUserArgs,
   QueryUsersArgs,
 } from "@labelflow/graphql-types";
-import { Context, DbUser } from "@labelflow/common-resolvers";
-
 import { getPrismaClient } from "../prisma-client";
 import { checkUserAccessToUser } from "../repository/access-control";
+import { Prisma } from "../__generated__";
 
 const users = async (_: any, args: QueryUsersArgs, { user }: Context) => {
   if (user?.id == null) {
