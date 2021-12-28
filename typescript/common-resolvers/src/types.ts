@@ -28,6 +28,8 @@ import { WorkspacePlan } from "@prisma/client";
 
 type NoUndefinedField<T> = { [P in keyof T]: NonNullable<T[P]> };
 
+export type ThumbnailSizes = 20 | 50 | 100 | 200 | 500;
+
 export type DbImage = Omit<GeneratedImage, "labels" | "dataset">;
 export type DbImageCreateInput = WithCreatedAtAndUpdatedAt<
   Required<

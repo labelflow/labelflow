@@ -2,7 +2,7 @@ import Blob from "fetch-blob";
 
 import { getThumbnailUrlFromImageUrl } from "@labelflow/common-resolvers/src/utils/thumbnail-url";
 import Jimp from "jimp/es";
-import type { Repository } from "@labelflow/common-resolvers";
+import type { Repository, ThumbnailSizes } from "@labelflow/common-resolvers";
 
 globalThis.Blob = Blob;
 
@@ -11,8 +11,6 @@ const maxImageSizePixel: { [mimetype: string]: number } = {
   "image/jpeg": 100e6,
   "image/png": 60e6,
 };
-
-type ThumbnailSizes = 20 | 50 | 100 | 200 | 500;
 
 const validateImageSize = ({
   width,

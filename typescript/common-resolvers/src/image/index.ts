@@ -8,7 +8,13 @@ import type {
   QueryImagesArgs,
   MutationDeleteImageArgs,
 } from "@labelflow/graphql-types";
-import { Context, DbImage, DbImageCreateInput, Repository } from "../types";
+import {
+  Context,
+  DbImage,
+  DbImageCreateInput,
+  Repository,
+  ThumbnailSizes,
+} from "../types";
 import { throwIfResolvesToNil } from "../utils/throw-if-resolves-to-nil";
 import { importAndProcessImage } from "./import-and-process-image";
 import { getWorkspaceIdOfDataset } from "./get-workspace-id-of-dataset";
@@ -34,7 +40,7 @@ const labelsResolver = async (
 };
 
 const thumbnailResolver =
-  (size: 20 | 50 | 100 | 200 | 500) =>
+  (size: ThumbnailSizes) =>
   async (dbImage: DbImage): Promise<string> => {
     return (
       (dbImage as unknown as { [key: string]: string })[

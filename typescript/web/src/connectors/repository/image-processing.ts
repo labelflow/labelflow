@@ -3,7 +3,7 @@
 // version for each repository.
 
 import { getThumbnailUrlFromImageUrl } from "@labelflow/common-resolvers/src/utils/thumbnail-url";
-import type { Repository } from "@labelflow/common-resolvers";
+import type { Repository, ThumbnailSizes } from "@labelflow/common-resolvers";
 
 // The Jimp import need to like this, otherwise storybook does not work...
 import Jimp from "jimp/browser/lib/jimp";
@@ -13,8 +13,6 @@ const maxImageSizePixel: { [mimetype: string]: number } = {
   "image/jpeg": 100e6,
   "image/png": 60e6,
 };
-
-type ThumbnailSizes = 20 | 50 | 100 | 200 | 500;
 
 const validateImageSize = ({
   width,
@@ -58,7 +56,7 @@ const generateThumbnail = async ({
 }: {
   image: Jimp;
   url: string;
-  size: 20 | 50 | 100 | 200 | 500;
+  size: ThumbnailSizes;
   putImage: (url: string, blob: Blob) => Promise<void>;
 }): Promise<string> => {
   try {
