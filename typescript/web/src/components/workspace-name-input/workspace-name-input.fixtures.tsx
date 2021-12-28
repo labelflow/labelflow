@@ -76,7 +76,7 @@ export type TestCase = [TestComponentProps, string];
 export const TEST_CASES: Record<string, TestCase> = {
   "renders the future url if it is possible": [
     { name: "test" },
-    "URL will be http://localhost/test",
+    "URL will be: http://localhost/test",
   ],
   "uses present tense when isEditing is true": [
     { name: "test", isEditing: true },

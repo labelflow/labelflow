@@ -23,7 +23,7 @@ const useUrlMessage = (
   const workspaceUrl = `${globalThis.location.origin}/${slug}`;
   return isEditing
     ? `Workspace URL: ${workspaceUrl}`
-    : `URL will be ${workspaceUrl}`;
+    : `URL will be: ${workspaceUrl}`;
 };
 
 export interface WorkspaceNameMessageProps {
