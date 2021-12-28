@@ -92,7 +92,7 @@ export const ImportImagesModalDropzone = ({
   );
 
   useEffect(() => {
-    if (isEmpty(files)) || !datasetId) return;
+    if (isEmpty(files) || !datasetId) return;
 
     handleImport(files);
   }, [files, datasetId]);
