@@ -33,7 +33,7 @@ const importFromExternalUrl = async (
 
   if (fetchResult.status !== 200) {
     throw new Error(
-      `While transferring image could not fetch image at url ${externalUrl} properly, code ${fetchResult.status}`
+      `Could not fetch image at url ${externalUrl} properly, code ${fetchResult.status}`
     );
   }
 

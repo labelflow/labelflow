@@ -42,13 +42,11 @@ const labelsResolver = async (
 const thumbnailResolver =
   (size: ThumbnailSizes) =>
   async (dbImage: DbImage): Promise<string> => {
-    return (
-      (dbImage as unknown as { [key: string]: string })[
-        `thumbnail${size}Url`
-      ] ??
-      dbImage.url ??
-      dbImage.externalUrl
-    );
+    const thumbnailProp = `thumbnail${size}Url`;
+    if (thumbnailProp in dbImage) {
+      return dbImage[thumbnailProp];
+    }
+    return dbImage.url ?? dbImage.externalUrl;
   };
 
 const image = async (
@@ -140,10 +138,7 @@ const createManyImages = async (
   );
 
   const imageIds = await repository.image.addMany(
-    {
-      datasetId,
-      images: imagesToCreate,
-    },
+    { datasetId, images: imagesToCreate },
     user
   );
 

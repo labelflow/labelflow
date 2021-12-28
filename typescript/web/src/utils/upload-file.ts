@@ -18,8 +18,8 @@ const getImageUploadTargetMutation = gql`
 
 /**
  * Retrieves the upload url and download url for the given key.
- * @param key key to identify the file in the storage
- * @param apolloClient The apollo client to use for the mutation
+ * @param key - Unique key to identify the file in the storage
+ * @param apolloClient - The apollo client to use for the mutation
  */
 const getImageUploadTarget = async (
   key: string,
@@ -43,13 +43,14 @@ const getImageUploadTarget = async (
 };
 
 /**
- * Uploads a file to the storage at the specify key.
+ * Uploads a file to the storage at the specify key
+ * @remarks
  * Gets the upload url from the server.
  *
- * @param file the blob or file to upload
- * @param key key to identify the file in the storage
- * @param apolloClient The apollo client to use for the mutation
- * @returns the url to download the file
+ * @param file - The blob or file to upload
+ * @param key - Unique key to identify the file in the storage
+ * @param apolloClient - The apollo client to use for the mutation
+ * @returns The url to download the file
  */
 export const uploadFile = async ({
   file,

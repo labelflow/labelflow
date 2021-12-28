@@ -24,9 +24,9 @@ export const importDroppedFiles = async ({
   const acceptedFiles = files.filter((file) => isEmpty(file.errors));
 
   const [images, datasets] = partition(
-    // Accepted files are either `images/*`, `application/json` or `application/zip`
+    // Accepted files are either `image/*`, `application/json` or `application/zip`
     // The two last are treated as datasets
-    (acceptedFile) => acceptedFile.file.type.startsWith("image"),
+    (acceptedFile) => acceptedFile.file.type.startsWith("image/"),
     acceptedFiles
   );
 

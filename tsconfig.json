@@ -7,10 +7,7 @@
     "forceConsistentCasingInFileNames": true,
     "isolatedModules": true,
     "jsx": "preserve",
-    "lib": [
-      "dom",
-      "es2020"
-    ],
+    "lib": ["dom", "es2020"],
     "moduleResolution": "node",
     "noEmit": true,
     "noFallthroughCasesInSwitch": true,
@@ -23,12 +20,6 @@
     "module": "esnext",
     "strictNullChecks": true
   },
-  "exclude": [
-    "node_modules",
-    "**/*.graphql"
-  ],
-  "include": [
-    "**/*.ts",
-    "**/*.tsx"
-  ]
+  "exclude": ["node_modules", "**/*.graphql"],
+  "include": ["**/*.ts", "**/*.tsx"]
 }
