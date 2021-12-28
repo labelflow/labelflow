@@ -383,7 +383,6 @@ export const typeDefs = [
     updateLabelClass(where: LabelClassWhereUniqueInput!, data: LabelClassUpdateInput!): LabelClass
     reorderLabelClass(where: LabelClassWhereUniqueInput!, data: LabelClassReorderInput!): LabelClass
     deleteLabelClass(where: LabelClassWhereUniqueInput!): LabelClass
-    runIog(data: RunIogInput!): Label
     updateIogLabel(data: UpdateIogInput!): Label
     createIogLabel(data: CreateIogLabelInput!): Label
     createDataset(data: DatasetCreateInput!): Dataset

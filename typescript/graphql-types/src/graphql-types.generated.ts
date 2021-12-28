@@ -415,7 +415,6 @@ export type Mutation = {
   updateLabelClass?: Maybe<LabelClass>;
   reorderLabelClass?: Maybe<LabelClass>;
   deleteLabelClass?: Maybe<LabelClass>;
-  runIog?: Maybe<Label>;
   updateIogLabel?: Maybe<Label>;
   createIogLabel?: Maybe<Label>;
   createDataset?: Maybe<Dataset>;
@@ -502,11 +501,6 @@ export type MutationReorderLabelClassArgs = {
 
 export type MutationDeleteLabelClassArgs = {
   where: LabelClassWhereUniqueInput;
-};
-
-
-export type MutationRunIogArgs = {
-  data: RunIogInput;
 };
 
 
@@ -1227,7 +1221,6 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   updateLabelClass?: Resolver<Maybe<ResolversTypes['LabelClass']>, ParentType, ContextType, RequireFields<MutationUpdateLabelClassArgs, 'where' | 'data'>>;
   reorderLabelClass?: Resolver<Maybe<ResolversTypes['LabelClass']>, ParentType, ContextType, RequireFields<MutationReorderLabelClassArgs, 'where' | 'data'>>;
   deleteLabelClass?: Resolver<Maybe<ResolversTypes['LabelClass']>, ParentType, ContextType, RequireFields<MutationDeleteLabelClassArgs, 'where'>>;
-  runIog?: Resolver<Maybe<ResolversTypes['Label']>, ParentType, ContextType, RequireFields<MutationRunIogArgs, 'data'>>;
   updateIogLabel?: Resolver<Maybe<ResolversTypes['Label']>, ParentType, ContextType, RequireFields<MutationUpdateIogLabelArgs, 'data'>>;
   createIogLabel?: Resolver<Maybe<ResolversTypes['Label']>, ParentType, ContextType, RequireFields<MutationCreateIogLabelArgs, 'data'>>;
   createDataset?: Resolver<Maybe<ResolversTypes['Dataset']>, ParentType, ContextType, RequireFields<MutationCreateDatasetArgs, 'data'>>;
