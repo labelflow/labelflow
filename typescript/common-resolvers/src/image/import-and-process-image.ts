@@ -62,7 +62,7 @@ const importFromExternalUrl = async (
  * Simply put the given file into our storage.
  */
 const importFromFile = async (
-  file: any,
+  file: Blob,
   getImageFileKeyFromMimeType: (mimeType: string) => string,
   { req, repository }: { req: Request; repository: Repository }
 ) => {
