@@ -31,9 +31,10 @@ const importDataset = async ({
   workspaceId: string;
   file: Blob;
 }) => {
-  const key = `${workspaceId}/${datasetId}/import-datasets/${uuidv4()}-${new Date().toISOString()}.${mime.extension(
-    file.type
-  )}`;
+  const id = uuidv4();
+  const now = new Date().toISOString();
+  const extension = mime.extension(file.type);
+  const key = `${workspaceId}/${datasetId}/import-datasets/${id}-${now}.${extension}`;
   const url = await uploadFile({ file, key, apolloClient });
 
   const dataImportDataset = await apolloClient.mutate({
