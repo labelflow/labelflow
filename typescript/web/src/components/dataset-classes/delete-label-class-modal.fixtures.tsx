@@ -1,9 +1,9 @@
 import React from "react";
 import { DeleteLabelClassModal } from "./delete-label-class-modal";
 import {
-  LabelClassesContext,
-  LabelClassesState,
-} from "./label-classes.context";
+  DatasetClassesContext,
+  DatasetClassesState,
+} from "./dataset-classes.context";
 
 export type TestComponentProps = {
   setDeleteClassId?: () => void;
@@ -12,14 +12,14 @@ export type TestComponentProps = {
 export const TestComponent = ({
   setDeleteClassId = () => {},
 }: TestComponentProps) => (
-  <LabelClassesContext.Provider
+  <DatasetClassesContext.Provider
     value={{
-      ...({} as LabelClassesState),
+      ...({} as DatasetClassesState),
       datasetId: "1",
       setDeleteClassId,
       deleteClassId: "2",
     }}
   >
     <DeleteLabelClassModal />
-  </LabelClassesContext.Provider>
+  </DatasetClassesContext.Provider>
 );

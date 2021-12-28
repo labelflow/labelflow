@@ -18,9 +18,9 @@ import {
 } from "../../../utils/router-mocks";
 import { setupTestsWithLocalDatabase } from "../../../utils/setup-local-db-tests";
 import {
-  LabelClassesContext,
-  LabelClassesState,
-} from "../label-classes.context";
+  DatasetClassesContext,
+  DatasetClassesState,
+} from "../dataset-classes.context";
 import { LabelClassWithShortcut } from "../types";
 
 mockUseQueryParams();
@@ -41,21 +41,21 @@ const Wrapper = ({ children }: PropsWithChildren<{}>) => (
 
 const onClose = jest.fn();
 
-type TestComponentProps = Pick<LabelClassesState, "editClass" | "datasetId">;
+type TestComponentProps = Pick<DatasetClassesState, "editClass" | "datasetId">;
 
 const TEST_DATASET_SLUG = "test";
 
 const renderTest = (props: TestComponentProps) => {
   return render(
-    <LabelClassesContext.Provider
+    <DatasetClassesContext.Provider
       value={{
-        ...({} as LabelClassesState),
+        ...({} as DatasetClassesState),
         datasetSlug: TEST_DATASET_SLUG,
         ...props,
       }}
     >
       <UpsertClassModal isOpen onClose={onClose} />
-    </LabelClassesContext.Provider>,
+    </DatasetClassesContext.Provider>,
     { wrapper: Wrapper }
   );
 };

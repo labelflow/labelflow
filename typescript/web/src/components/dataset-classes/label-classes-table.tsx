@@ -15,7 +15,7 @@ import {
   ReorderableTableHeadRow,
 } from "../reorderable-table";
 import { LabelClassesTableRow } from "./label-classes-table-row";
-import { useLabelClasses } from "./label-classes.context";
+import { useDatasetClasses } from "./dataset-classes.context";
 
 const InfoIcon = chakra(RiInformationLine);
 
@@ -50,7 +50,7 @@ const TableHead = () => (
 );
 
 export const TableBody = () => {
-  const { labelClasses, onReorder, searchText } = useLabelClasses();
+  const { labelClasses, onReorder, searchText } = useDatasetClasses();
   const filteredClasses = labelClasses?.filter((labelClass) =>
     labelClass.name.toLowerCase()?.includes(searchText.toLowerCase())
   );

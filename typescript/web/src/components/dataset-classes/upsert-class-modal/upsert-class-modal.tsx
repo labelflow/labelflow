@@ -9,7 +9,7 @@ import React, {
   useEffect,
   useState,
 } from "react";
-import { useLabelClasses } from "../label-classes.context";
+import { useDatasetClasses } from "../dataset-classes.context";
 import { LabelClassWithShortcut } from "../types";
 import { useCreateLabelClassMutation } from "./create-label-class.mutation";
 import { useLabelClassExists } from "./label-class-exists.query";
@@ -109,7 +109,7 @@ export interface UpsertClassModalProps {
 }
 
 const useModalState = ({ isOpen, onClose }: UpsertClassModalProps) => {
-  const { editClass, datasetId, datasetSlug } = useLabelClasses();
+  const { editClass, datasetId, datasetSlug } = useDatasetClasses();
   const [classNameInputValue, setClassNameInputValue] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState<string>("");
   const handleInputValueChange = (event: ChangeEvent<HTMLInputElement>) => {

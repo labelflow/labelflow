@@ -3,9 +3,9 @@ import { PropsWithChildren } from "react";
 import { ReorderableTable, ReorderableTableBody } from "../reorderable-table";
 import { LabelClassesTableRow } from "./label-classes-table-row";
 import {
-  LabelClassesContext,
-  LabelClassesState,
-} from "./label-classes.context";
+  DatasetClassesContext,
+  DatasetClassesState,
+} from "./dataset-classes.context";
 
 export const TEST_DATA = {
   __typename: "LabelClass",
@@ -31,14 +31,14 @@ export const Wrapper = ({ children }: PropsWithChildren<{}>) => (
 export const TestComponent = ({
   setEditClass,
   setDeleteClassId,
-}: Pick<LabelClassesState, "setEditClass" | "setDeleteClassId">) => (
-  <LabelClassesContext.Provider
+}: Pick<DatasetClassesState, "setEditClass" | "setDeleteClassId">) => (
+  <DatasetClassesContext.Provider
     value={{
-      ...({} as LabelClassesState),
+      ...({} as DatasetClassesState),
       setEditClass,
       setDeleteClassId,
     }}
   >
     <LabelClassesTableRow {...TEST_DATA} />
-  </LabelClassesContext.Provider>
+  </DatasetClassesContext.Provider>
 );

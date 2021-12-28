@@ -5,14 +5,15 @@ import { DeleteLabelClassModal } from "./delete-label-class-modal";
 import { LabelClassesActions } from "./label-classes-actions";
 import { LabelClassesTable } from "./label-classes-table";
 import {
-  LabelClassesProps,
-  LabelClassesProvider,
-  useLabelClasses,
-} from "./label-classes.context";
+  DatasetClassesProps,
+  DatasetClassesProvider,
+  useDatasetClasses,
+} from "./dataset-classes.context";
 import { UpsertClassModal } from "./upsert-class-modal";
 
-const LabelClassesBody = () => {
-  const { loading, labelClasses, editClass, setEditClass } = useLabelClasses();
+const DatasetClassesBody = () => {
+  const { loading, labelClasses, editClass, setEditClass } =
+    useDatasetClasses();
   const handleCloseEditModal = useCallback(
     () => setEditClass(undefined),
     [setEditClass]
@@ -42,8 +43,8 @@ const LabelClassesBody = () => {
   );
 };
 
-export const LabelClasses = (props: LabelClassesProps) => (
-  <LabelClassesProvider {...props}>
-    <LabelClassesBody />
-  </LabelClassesProvider>
+export const DatasetClasses = (props: DatasetClassesProps) => (
+  <DatasetClassesProvider {...props}>
+    <DatasetClassesBody />
+  </DatasetClassesProvider>
 );

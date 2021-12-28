@@ -8,7 +8,7 @@ import { resetServerContext } from "react-beautiful-dnd";
 import { useErrorHandler } from "react-error-boundary";
 import { AuthManager } from "../../../../../components/auth-manager";
 import { CookieBanner } from "../../../../../components/cookie-banner";
-import { LabelClasses } from "../../../../../components/dataset-class-list";
+import { DatasetClasses } from "../../../../../components/dataset-classes";
 import { ExportButton } from "../../../../../components/export-button";
 import { ImportButton } from "../../../../../components/import-button";
 import { Layout } from "../../../../../components/layout";
@@ -105,7 +105,7 @@ const DatasetClassesPage = () => {
         }
       >
         <Center>
-          <LabelClasses
+          <DatasetClasses
             datasetSlug={datasetSlug}
             workspaceSlug={workspaceSlug}
           />

@@ -4,7 +4,7 @@ import { chakraDecorator } from "../../../utils/chakra-decorator";
 import { TestComponent, Wrapper } from "../label-classes-table-row.fixtures";
 
 export default {
-  title: "web/Label classes table row",
+  title: "web/Dataset classes/Label classes table row",
   decorators: [
     chakraDecorator,
     (StoryComponent: Story) => (

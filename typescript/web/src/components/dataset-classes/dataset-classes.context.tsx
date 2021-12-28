@@ -8,11 +8,11 @@ import {
   useState,
 } from "react";
 import { OnReorderCallback } from "../reorderable-table";
-import { useLabelClassesQuery } from "./label-classes.query";
+import { useDatasetLabelClassesQuery } from "./dataset-classes.query";
 import { useReorderLabelClassMutation } from "./reorder-label-class.mutation";
 import { LabelClassWithShortcut } from "./types";
 
-export interface LabelClassesState {
+export interface DatasetClassesState {
   datasetSlug: string;
   datasetId?: string;
   deleteClassId?: string;
@@ -28,7 +28,7 @@ export interface LabelClassesState {
   onReorder: OnReorderCallback;
 }
 
-export const LabelClassesContext = createContext({} as LabelClassesState);
+export const DatasetClassesContext = createContext({} as DatasetClassesState);
 
 const addShortcutsToLabelClasses = (labelClasses: any[]) =>
   labelClasses.map((labelClass, index) => ({
@@ -36,25 +36,26 @@ const addShortcutsToLabelClasses = (labelClasses: any[]) =>
     shortcut: index > 9 ? null : `${(index + 1) % 10}`,
   }));
 
-export interface LabelClassesProps {
+export interface DatasetClassesProps {
   workspaceSlug: string;
   datasetSlug: string;
 }
 
-export type LabelClassesProviderProps = PropsWithChildren<LabelClassesProps>;
+export type DatasetClassesProviderProps =
+  PropsWithChildren<DatasetClassesProps>;
 
-export const LabelClassesProvider = ({
+export const DatasetClassesProvider = ({
   workspaceSlug,
   datasetSlug,
   children,
-}: LabelClassesProviderProps) => {
+}: DatasetClassesProviderProps) => {
   const [deleteClassId, setDeleteClassId] =
     useState<string | undefined>(undefined);
   const [editClass, setEditClass] =
     useState<LabelClassWithShortcut | undefined>(undefined);
   const [isCreating, setIsCreating] = useState(false);
   const [searchText, setSearchText] = useState("");
-  const { data, loading, refetch, updateQuery } = useLabelClassesQuery(
+  const { data, loading, refetch, updateQuery } = useDatasetLabelClassesQuery(
     workspaceSlug,
     datasetSlug
   );
@@ -83,7 +84,7 @@ export const LabelClassesProvider = ({
     [refetch, reorderLabelClass, updateQuery]
   );
 
-  const value: LabelClassesState = {
+  const value: DatasetClassesState = {
     datasetSlug,
     datasetId: data?.dataset.id,
     deleteClassId,
@@ -100,12 +101,12 @@ export const LabelClassesProvider = ({
   };
 
   return (
-    <LabelClassesContext.Provider value={value}>
+    <DatasetClassesContext.Provider value={value}>
       {children}
-    </LabelClassesContext.Provider>
+    </DatasetClassesContext.Provider>
   );
 };
 
-export const useLabelClasses = () => {
-  return useContext(LabelClassesContext);
+export const useDatasetClasses = () => {
+  return useContext(DatasetClassesContext);
 };

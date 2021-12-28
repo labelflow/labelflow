@@ -1,7 +1,7 @@
 import { gql, useQuery } from "@apollo/client";
 import { DatasetClassesQueryResult } from "./types";
 
-export const LABEL_CLASSES_QUERY = gql`
+export const DATASET_LABEL_CLASSES_QUERY = gql`
   query getDatasetLabelClasses($workspaceSlug: String!, $datasetSlug: String!) {
     dataset(
       where: { slugs: { workspaceSlug: $workspaceSlug, slug: $datasetSlug } }
@@ -21,11 +21,11 @@ export const LABEL_CLASSES_QUERY = gql`
   }
 `;
 
-export const useLabelClassesQuery = (
+export const useDatasetLabelClassesQuery = (
   workspaceSlug: string,
   datasetSlug: string
 ) => {
-  return useQuery<DatasetClassesQueryResult>(LABEL_CLASSES_QUERY, {
+  return useQuery<DatasetClassesQueryResult>(DATASET_LABEL_CLASSES_QUERY, {
     variables: { workspaceSlug, datasetSlug },
     skip: !datasetSlug,
   });

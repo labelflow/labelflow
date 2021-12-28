@@ -16,7 +16,7 @@ import {
 } from "@chakra-ui/react";
 import { isEmpty, isNil } from "lodash/fp";
 import { useCallback, useRef } from "react";
-import { useLabelClasses } from "./label-classes.context";
+import { useDatasetClasses } from "./dataset-classes.context";
 
 const getLabelClassByIdQuery = gql`
   query getLabelClassById($id: ID!) {
@@ -36,7 +36,7 @@ const deleteLabelClassMutation = gql`
 `;
 
 export const DeleteLabelClassModal = () => {
-  const { datasetId, deleteClassId, setDeleteClassId } = useLabelClasses();
+  const { datasetId, deleteClassId, setDeleteClassId } = useDatasetClasses();
 
   const isOpen = !isNil(deleteClassId);
   const onClose = useCallback(

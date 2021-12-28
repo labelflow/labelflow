@@ -14,13 +14,13 @@ import {
 } from "@chakra-ui/react";
 import { RiAddFill } from "react-icons/ri";
 import { UpsertClassModal } from "./upsert-class-modal";
-import { useLabelClasses } from "./label-classes.context";
+import { useDatasetClasses } from "./dataset-classes.context";
 
 const SearchIcon = chakra(IoSearch);
 
 export const LabelClassesActions = () => {
   const { searchText, setSearchText, isCreating, setIsCreating } =
-    useLabelClasses();
+    useDatasetClasses();
   return (
     <>
       <UpsertClassModal

@@ -15,7 +15,7 @@ import {
   ReorderableTableCell,
   ReorderableTableRow,
 } from "../reorderable-table";
-import { useLabelClasses } from "./label-classes.context";
+import { useDatasetClasses } from "./dataset-classes.context";
 import { LabelClassWithShortcut } from "./types";
 
 const CircleIcon = chakra(RiCheckboxBlankCircleFill);
@@ -88,7 +88,7 @@ const ActionButton = (props: ButtonProps) => (
 
 const EditButton = () => {
   const item = useRow();
-  const { setEditClass } = useLabelClasses();
+  const { setEditClass } = useDatasetClasses();
   const handleEdit = useCallback(
     () => setEditClass(item),
     [setEditClass, item]
@@ -102,7 +102,7 @@ const EditButton = () => {
 
 const DeleteButton = () => {
   const { id } = useRow();
-  const { setDeleteClassId } = useLabelClasses();
+  const { setDeleteClassId } = useDatasetClasses();
   const handleDelete = useCallback(
     () => setDeleteClassId(id),
     [setDeleteClassId, id]
