@@ -167,11 +167,11 @@ export const typeDefs = [
   }
 
   input ImageCreateManyInput {
-    images: [ImageCreateManySingleImage!]!
+    images: [ImageCreateManySingleInput!]!
     datasetId: ID!
   }
 
-  input ImageCreateManySingleImage {
+  input ImageCreateManySingleInput {
     id: ID
     createdAt: DateTime
     name: String

@@ -192,11 +192,11 @@ export type ImageCreateInput = {
 };
 
 export type ImageCreateManyInput = {
-  images: Array<ImageCreateManySingleImage>;
+  images: Array<ImageCreateManySingleInput>;
   datasetId: Scalars['ID'];
 };
 
-export type ImageCreateManySingleImage = {
+export type ImageCreateManySingleInput = {
   id?: Maybe<Scalars['ID']>;
   createdAt?: Maybe<Scalars['DateTime']>;
   name?: Maybe<Scalars['String']>;
@@ -950,7 +950,7 @@ export type ResolversTypes = {
   Image: ResolverTypeWrapper<Image>;
   ImageCreateInput: ImageCreateInput;
   ImageCreateManyInput: ImageCreateManyInput;
-  ImageCreateManySingleImage: ImageCreateManySingleImage;
+  ImageCreateManySingleInput: ImageCreateManySingleInput;
   ImageUpdateInput: ImageUpdateInput;
   ImageWhereInput: ImageWhereInput;
   ImageWhereUniqueInput: ImageWhereUniqueInput;
@@ -1033,7 +1033,7 @@ export type ResolversParentTypes = {
   Image: Image;
   ImageCreateInput: ImageCreateInput;
   ImageCreateManyInput: ImageCreateManyInput;
-  ImageCreateManySingleImage: ImageCreateManySingleImage;
+  ImageCreateManySingleInput: ImageCreateManySingleInput;
   ImageUpdateInput: ImageUpdateInput;
   ImageWhereInput: ImageWhereInput;
   ImageWhereUniqueInput: ImageWhereUniqueInput;

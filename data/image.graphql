@@ -20,7 +20,7 @@ input ImageCreateInput {
 }
 
 # Same as ImageCreateInput but without datasetId
-input ImageCreateManySingleImage {
+input ImageCreateManySingleInput {
   id: ID
   createdAt: DateTime
   name: String
@@ -40,7 +40,7 @@ input ImageCreateManySingleImage {
 }
 
 input ImageCreateManyInput {
-  images: [ImageCreateManySingleImage!]!
+  images: [ImageCreateManySingleInput!]!
   datasetId: ID!
 }
 
