@@ -5,6 +5,7 @@ import {
   Flex,
   HStack,
   Kbd,
+  TableCellProps,
   Text,
   Tooltip,
 } from "@chakra-ui/react";
@@ -22,6 +23,10 @@ const CircleIcon = chakra(RiCheckboxBlankCircleFill);
 const RowContext = createContext({} as LabelClassWithShortcut);
 
 const useRow = () => useContext(RowContext);
+
+const TableCell = (props: TableCellProps) => (
+  <ReorderableTableCell whiteSpace="nowrap" {...props} />
+);
 
 const ColorField = () => {
   const { color } = useRow();
@@ -49,33 +54,31 @@ const NameField = () => {
 };
 
 const NameAndColorCell = () => (
-  <ReorderableTableCell>
+  <TableCell>
     <Flex alignItems="center">
       <ColorField />
       <NameField />
     </Flex>
-  </ReorderableTableCell>
+  </TableCell>
 );
 
 const OccurrencesCell = () => {
   const { labelsAggregates } = useRow();
   return (
-    <ReorderableTableCell isNumeric>
-      {labelsAggregates.totalCount}
-    </ReorderableTableCell>
+    <TableCell alignItems="center">{labelsAggregates.totalCount}</TableCell>
   );
 };
 
 const ShortcutCell = () => {
   const { shortcut } = useRow();
   return (
-    <ReorderableTableCell isNumeric>
+    <TableCell alignItems="center">
       {shortcut && (
         <Kbd flexShrink={0} flexGrow={0} justifyContent="center" mr="1">
           {shortcut}
         </Kbd>
       )}
-    </ReorderableTableCell>
+    </TableCell>
   );
 };
 
@@ -112,12 +115,12 @@ const DeleteButton = () => {
 };
 
 const ActionsCell = () => (
-  <ReorderableTableCell>
+  <TableCell alignItems="center">
     <HStack justify="flex-end">
       <EditButton />
       <DeleteButton />
     </HStack>
-  </ReorderableTableCell>
+  </TableCell>
 );
 
 const RowBody = () => (

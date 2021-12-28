@@ -24,7 +24,7 @@ const TableHeadCell = (props: TableColumnHeaderProps) => (
 );
 
 const ShortcutHeadCell = () => (
-  <TableHeadCell isNumeric>
+  <TableHeadCell>
     <Flex alignItems="center">
       <span>Shortcut</span>
       <Tooltip
@@ -42,9 +42,9 @@ const TableHead = () => (
   <Thead bg={mode("gray.50", "gray.800")}>
     <ReorderableTableHeadRow>
       <TableHeadCell>Class</TableHeadCell>
-      <TableHeadCell isNumeric>Occurrences</TableHeadCell>
+      <TableHeadCell>Occurrences</TableHeadCell>
       <ShortcutHeadCell />
-      <TableHeadCell textAlign="center">Actions</TableHeadCell>
+      <TableHeadCell>Actions</TableHeadCell>
     </ReorderableTableHeadRow>
   </Thead>
 );
