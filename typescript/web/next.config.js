@@ -52,6 +52,11 @@ module.exports = withSentryConfig(
       config,
       { defaultLoaders, dev, isServer, config: nextConfig, ...others }
     ) => {
+      // Module not found: Can't resolve '_http_common'
+      // https://github.com/prisma/prisma/issues/6899#issuecomment-849126557
+      if (isServer) {
+        config.externals.push('_http_common');
+      }
       // Build the service worker
       if (!isServer) {
         buildServiceWorker({ minify: !dev });
