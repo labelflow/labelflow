@@ -22,7 +22,6 @@ type Mutation {
   ): LabelClass
   deleteLabelClass(where: LabelClassWhereUniqueInput!): LabelClass
 
-  runIog(data: RunIogInput!): Label
   updateIogLabel(data: UpdateIogInput!): Label
   createIogLabel(data: CreateIogLabelInput!): Label
 
