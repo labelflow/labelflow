@@ -41,6 +41,7 @@ type Mutation {
     where: WorkspaceWhereUniqueInput!
     data: WorkspaceUpdateInput!
   ): Workspace
+  deleteWorkspace(where: WorkspaceWhereUniqueInput!): Workspace
 
   createMembership(data: MembershipCreateInput!): Membership
   updateMembership(

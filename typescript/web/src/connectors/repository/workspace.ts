@@ -16,6 +16,7 @@ export const localWorkspace = {
 };
 
 export const getWorkspace = async () => localWorkspace;
+
 export const listWorkspaces = async (
   where: WorkspaceWhereInput | null | undefined
 ) => {
@@ -25,11 +26,17 @@ export const listWorkspaces = async (
 
   return [localWorkspace];
 };
+
 export const updateWorkspace = async () => {
   notImplementedInLocalWorkspaceRepository();
   return false;
 };
+
 export const addWorkspace = async () => {
   notImplementedInLocalWorkspaceRepository();
   return "local";
+};
+
+export const deleteWorkspace = async () => {
+  notImplementedInLocalWorkspaceRepository();
 };

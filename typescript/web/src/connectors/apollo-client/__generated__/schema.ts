@@ -394,6 +394,7 @@ export const typeDefs = gql`
     importDataset(where: DatasetWhereUniqueInput!, data: DatasetImportInput!): ImportStatus
     createWorkspace(data: WorkspaceCreateInput!): Workspace
     updateWorkspace(where: WorkspaceWhereUniqueInput!, data: WorkspaceUpdateInput!): Workspace
+    deleteWorkspace(where: WorkspaceWhereUniqueInput!): Workspace
     createMembership(data: MembershipCreateInput!): Membership
     updateMembership(where: MembershipWhereUniqueInput!, data: MembershipUpdateInput!): Membership
     deleteMembership(where: MembershipWhereUniqueInput!): Membership
@@ -421,7 +422,7 @@ export const typeDefs = gql`
     searchDataset(where: DatasetWhereUniqueInput!): Dataset
     workspace(where: WorkspaceWhereUniqueInput!): Workspace!
     workspaces(first: Int, skip: Int, where: WorkspaceWhereInput): [Workspace!]!
-    isWorkspaceSlugAlreadyTaken(where: WorkspaceWhereInput!): Boolean!
+    workspaceExists(where: WorkspaceWhereUniqueInput!): Boolean!
     membership(where: MembershipWhereUniqueInput!): Membership!
     memberships(where: MembershipWhereInput, first: Int, skip: Int): [Membership!]!
     user(where: UserWhereUniqueInput!): User!

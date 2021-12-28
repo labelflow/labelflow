@@ -425,6 +425,7 @@ export type Mutation = {
   importDataset?: Maybe<ImportStatus>;
   createWorkspace?: Maybe<Workspace>;
   updateWorkspace?: Maybe<Workspace>;
+  deleteWorkspace?: Maybe<Workspace>;
   createMembership?: Maybe<Membership>;
   updateMembership?: Maybe<Membership>;
   deleteMembership?: Maybe<Membership>;
@@ -552,6 +553,11 @@ export type MutationUpdateWorkspaceArgs = {
 };
 
 
+export type MutationDeleteWorkspaceArgs = {
+  where: WorkspaceWhereUniqueInput;
+};
+
+
 export type MutationCreateMembershipArgs = {
   data: MembershipCreateInput;
 };
@@ -607,7 +613,7 @@ export type Query = {
   searchDataset?: Maybe<Dataset>;
   workspace: Workspace;
   workspaces: Array<Workspace>;
-  isWorkspaceSlugAlreadyTaken: Scalars['Boolean'];
+  workspaceExists: Scalars['Boolean'];
   membership: Membership;
   memberships: Array<Membership>;
   user: User;
@@ -695,8 +701,8 @@ export type QueryWorkspacesArgs = {
 };
 
 
-export type QueryIsWorkspaceSlugAlreadyTakenArgs = {
-  where: WorkspaceWhereInput;
+export type QueryWorkspaceExistsArgs = {
+  where: WorkspaceWhereUniqueInput;
 };
 
 
@@ -1231,6 +1237,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   importDataset?: Resolver<Maybe<ResolversTypes['ImportStatus']>, ParentType, ContextType, RequireFields<MutationImportDatasetArgs, 'where' | 'data'>>;
   createWorkspace?: Resolver<Maybe<ResolversTypes['Workspace']>, ParentType, ContextType, RequireFields<MutationCreateWorkspaceArgs, 'data'>>;
   updateWorkspace?: Resolver<Maybe<ResolversTypes['Workspace']>, ParentType, ContextType, RequireFields<MutationUpdateWorkspaceArgs, 'where' | 'data'>>;
+  deleteWorkspace?: Resolver<Maybe<ResolversTypes['Workspace']>, ParentType, ContextType, RequireFields<MutationDeleteWorkspaceArgs, 'where'>>;
   createMembership?: Resolver<Maybe<ResolversTypes['Membership']>, ParentType, ContextType, RequireFields<MutationCreateMembershipArgs, 'data'>>;
   updateMembership?: Resolver<Maybe<ResolversTypes['Membership']>, ParentType, ContextType, RequireFields<MutationUpdateMembershipArgs, 'where' | 'data'>>;
   deleteMembership?: Resolver<Maybe<ResolversTypes['Membership']>, ParentType, ContextType, RequireFields<MutationDeleteMembershipArgs, 'where'>>;
@@ -1258,7 +1265,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   searchDataset?: Resolver<Maybe<ResolversTypes['Dataset']>, ParentType, ContextType, RequireFields<QuerySearchDatasetArgs, 'where'>>;
   workspace?: Resolver<ResolversTypes['Workspace'], ParentType, ContextType, RequireFields<QueryWorkspaceArgs, 'where'>>;
   workspaces?: Resolver<Array<ResolversTypes['Workspace']>, ParentType, ContextType, RequireFields<QueryWorkspacesArgs, never>>;
-  isWorkspaceSlugAlreadyTaken?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<QueryIsWorkspaceSlugAlreadyTakenArgs, 'where'>>;
+  workspaceExists?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<QueryWorkspaceExistsArgs, 'where'>>;
   membership?: Resolver<ResolversTypes['Membership'], ParentType, ContextType, RequireFields<QueryMembershipArgs, 'where'>>;
   memberships?: Resolver<Array<ResolversTypes['Membership']>, ParentType, ContextType, RequireFields<QueryMembershipsArgs, never>>;
   user?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<QueryUserArgs, 'where'>>;

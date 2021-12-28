@@ -1,7 +1,3 @@
-import { trim } from "lodash/fp";
-import { v4 as uuidv4 } from "uuid";
-import slugify from "slugify";
-import { add } from "date-fns";
 import {
   DatasetWhereUniqueInput,
   MutationCreateDatasetArgs,
@@ -11,8 +7,9 @@ import {
   QueryDatasetsArgs,
   QueryImagesArgs,
 } from "@labelflow/graphql-types";
-import { Context, DbDataset, Repository } from "./types";
-import { importAndProcessImage } from "./image/import-and-process-image";
+import { add } from "date-fns";
+import { isNil, trim } from "lodash/fp";
+import { v4 as uuidv4 } from "uuid";
 import {
   tutorialDatasets,
   tutorialImages,
@@ -20,6 +17,9 @@ import {
   tutorialLabels,
 } from "./data/dataset-tutorial";
 import { getWorkspaceIdOfDataset } from "./image/get-workspace-id-of-dataset";
+import { importAndProcessImage } from "./image/import-and-process-image";
+import { Context, DbDataset, Repository } from "./types";
+import { getSlug } from "./utils";
 
 const getLabelClassesByDatasetId = async (
   datasetId: string,
@@ -148,7 +148,6 @@ const createDataset = async (
     createdAt: date,
     updatedAt: date,
     name,
-    slug: slugify(name, { lower: true }),
     workspaceSlug: args.data.workspaceSlug,
   };
   try {
@@ -170,33 +169,15 @@ const createDemoDataset = async (
   args: {},
   { repository, req, user }: Context
 ): Promise<DbDataset> => {
+  const { slug, workspaceSlug } = tutorialDatasets[0];
   const now = new Date();
-  const currentDate = now.toISOString();
 
-  try {
-    await repository.dataset.add(
-      {
-        ...tutorialDatasets[0],
-        createdAt: currentDate,
-        updatedAt: currentDate,
-      },
-      user
-    );
-  } catch (error) {
-    if (error.name === "ConstraintError") {
-      // The tutorial dataset already exists, just return it
-      return await getDataset(
-        {
-          slugs: {
-            slug: "tutorial-dataset",
-            workspaceSlug: "local",
-          },
-        },
-        repository,
-        user
-      );
-    }
-    throw error;
+  const existing = await repository.dataset.get(
+    { slugs: { slug, workspaceSlug } },
+    user
+  );
+  if (!isNil(existing)) {
+    return { ...existing, __typename: "Dataset" };
   }
 
   const workspaceId = await getWorkspaceIdOfDataset({
@@ -204,6 +185,8 @@ const createDemoDataset = async (
     datasetId: tutorialDatasets[0].id,
     user,
   });
+
+  await repository.dataset.add({ ...tutorialDatasets[0] }, user);
 
   await Promise.all(
     tutorialImages.map(async (image, index) => {
@@ -223,6 +206,7 @@ const createDemoDataset = async (
     })
   );
 
+  const currentDate = now.toISOString();
   await Promise.all(
     tutorialLabelClasses.map(async (labelClass) => {
       return await repository.labelClass.add({
@@ -255,7 +239,7 @@ const updateDataset = async (
 
   const newData =
     "name" in args.data
-      ? { ...args.data, slug: slugify(args.data.name, { lower: true }) }
+      ? { ...args.data, slug: getSlug(args.data.name) }
       : args.data;
 
   try {

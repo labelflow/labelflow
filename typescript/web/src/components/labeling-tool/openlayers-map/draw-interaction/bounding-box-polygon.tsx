@@ -1,22 +1,22 @@
-import { useMemo, useRef } from "react";
+import { gql, useApolloClient, useQuery } from "@apollo/client";
+import { useToast } from "@chakra-ui/react";
+import { LabelType } from "@labelflow/graphql-types";
+import GeoJSON, { GeoJSONPolygon } from "ol/format/GeoJSON";
+import GeometryType from "ol/geom/GeometryType";
 import { Draw as OlDraw } from "ol/interaction";
 import { createBox, DrawEvent } from "ol/interaction/Draw";
-import GeoJSON, { GeoJSONPolygon } from "ol/format/GeoJSON";
 import { Fill, Stroke, Style } from "ol/style";
-import GeometryType from "ol/geom/GeometryType";
-import { useApolloClient, useQuery, gql } from "@apollo/client";
-import { useToast } from "@chakra-ui/react";
+import { useMemo, useRef } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
-import { LabelType } from "@labelflow/graphql-types";
 import {
-  useLabelingStore,
-  Tools,
   DrawingToolState,
+  Tools,
+  useLabelingStore,
 } from "../../../../connectors/labeling-state";
-import { keymap } from "../../../../keymap";
 import { useUndoStore } from "../../../../connectors/undo-store";
-import { noneClassColor } from "../../../../utils/class-color-generator";
 import { createCreateLabelEffect } from "../../../../connectors/undo-store/effects/create-label";
+import { noneClassColor } from "../../../../theme";
+import { keymap } from "../../../../keymap";
 
 const labelClassQuery = gql`
   query getLabelClass($id: ID!) {

@@ -1,25 +1,24 @@
-import { forwardRef, useCallback } from "react";
-import { useQuery, useApolloClient, gql } from "@apollo/client";
-import { useRouter } from "next/router";
-import { useHotkeys } from "react-hotkeys-hook";
-import GeoJSON, { GeoJSONPolygon } from "ol/format/GeoJSON";
-import { Polygon } from "ol/geom";
+import { gql, useApolloClient, useQuery } from "@apollo/client";
 import { Label, LabelType } from "@labelflow/graphql-types";
-
-import { ClassSelectionPopover } from "../../class-selection-popover";
-import { Tools, useLabelingStore } from "../../../connectors/labeling-state";
-import { useUndoStore } from "../../../connectors/undo-store";
-import { createCreateLabelClassAndUpdateLabelEffect } from "../../../connectors/undo-store/effects/create-label-class-and-update-label";
-import { createUpdateLabelClassOfLabelEffect } from "../../../connectors/undo-store/effects/update-label-class-of-label";
-import { keymap } from "../../../keymap";
 import {
   getNextClassColor,
-  hexColorSequence,
-} from "../../../utils/class-color-generator";
-import { LabelClassItem } from "../../class-selection-popover/class-selection-popover";
+  LABEL_CLASS_COLOR_PALETTE,
+} from "@labelflow/utils/class-color-generator";
+import { useRouter } from "next/router";
+import GeoJSON, { GeoJSONPolygon } from "ol/format/GeoJSON";
+import { Polygon } from "ol/geom";
+import { forwardRef, useCallback } from "react";
+import { useHotkeys } from "react-hotkeys-hook";
+import { Tools, useLabelingStore } from "../../../connectors/labeling-state";
+import { useUndoStore } from "../../../connectors/undo-store";
 import { createCreateLabelEffect } from "../../../connectors/undo-store/effects/create-label";
-import { createDeleteLabelEffect } from "../../../connectors/undo-store/effects/delete-label";
 import { createCreateLabelClassAndCreateLabelEffect } from "../../../connectors/undo-store/effects/create-label-class-and-create-label";
+import { createCreateLabelClassAndUpdateLabelEffect } from "../../../connectors/undo-store/effects/create-label-class-and-update-label";
+import { createDeleteLabelEffect } from "../../../connectors/undo-store/effects/delete-label";
+import { createUpdateLabelClassOfLabelEffect } from "../../../connectors/undo-store/effects/update-label-class-of-label";
+import { keymap } from "../../../keymap";
+import { ClassSelectionPopover } from "../../class-selection-popover";
+import { LabelClassItem } from "../../class-selection-popover/class-selection-popover";
 
 const getLabelClassesOfDatasetQuery = gql`
   query getLabelClassesOfDataset($slug: String!, $workspaceSlug: String!) {
@@ -111,8 +110,10 @@ export const EditLabelClass = forwardRef<
     async (name) => {
       const newClassColor =
         labelClasses.length < 1
-          ? hexColorSequence[0]
-          : getNextClassColor(labelClasses[labelClasses.length - 1].color);
+          ? LABEL_CLASS_COLOR_PALETTE[0]
+          : getNextClassColor(
+              labelClasses.map((labelClass: any) => labelClass.color)
+            );
       if (selectedLabelId != null) {
         // Update class of an existing label with a new class
         onClose();
