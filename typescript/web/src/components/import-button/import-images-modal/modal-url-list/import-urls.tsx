@@ -1,6 +1,6 @@
 import isEmpty from "lodash/fp/isEmpty";
 import chunk from "lodash/fp/chunk";
-import { ApolloClient, gql } from "@apollo/client";
+import { ApolloClient, gql, NormalizedCacheObject } from "@apollo/client";
 import Bluebird from "bluebird";
 import { DroppedUrl, SetUploadStatuses } from "../types";
 
@@ -21,7 +21,7 @@ export const importUrls = async ({
   setUploadStatuses,
 }: {
   urls: DroppedUrl[];
-  apolloClient: ApolloClient<any>;
+  apolloClient: ApolloClient<NormalizedCacheObject>;
   datasetId: any;
   setUploadStatuses: SetUploadStatuses;
 }) => {

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Tag, TagLabel, TagCloseButton } from "@chakra-ui/react";
 import { Label, LabelClass } from "@labelflow/graphql-types";
-import { ApolloClient } from "@apollo/client";
+import { ApolloClient, NormalizedCacheObject } from "@apollo/client";
 import { useHotkeys } from "react-hotkeys-hook";
 
 import { createDeleteLabelEffect } from "../../../../connectors/undo-store/effects/delete-label";
@@ -29,7 +29,7 @@ export const ClassificationTag = ({
   labelClasses: LabelClassItem[];
   selectedLabelId: string | null;
   setSelectedLabelId: (labelId: string | null) => void;
-  client: ApolloClient<any>;
+  client: ApolloClient<NormalizedCacheObject>;
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const { perform } = useUndoStore();
@@ -111,8 +111,7 @@ export const ClassificationTag = ({
           onClick={handleClick}
           onContextMenu={handleClick}
           cursor="pointer"
-          boxSizing="content-box"
-        >
+          boxSizing="content-box">
           <TagLabel>{labelClass?.name ?? "None"}</TagLabel>
           <TagCloseButton
             onClick={(e) => {

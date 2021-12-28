@@ -1,6 +1,6 @@
 /* eslint-disable no-underscore-dangle */
 
-import { ApolloClient } from "@apollo/client";
+import { ApolloClient, NormalizedCacheObject } from "@apollo/client";
 import isEmpty from "lodash/fp/isEmpty";
 import partition from "lodash/fp/partition";
 
@@ -19,7 +19,7 @@ export const importDroppedFiles = async ({
   workspaceId: string;
   datasetId: string;
   setFileUploadStatuses: SetUploadStatuses;
-  apolloClient: ApolloClient<any>;
+  apolloClient: ApolloClient<NormalizedCacheObject>;
 }) => {
   const acceptedFiles = files.filter((file) => isEmpty(file.errors));
 
