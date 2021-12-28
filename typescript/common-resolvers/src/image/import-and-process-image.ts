@@ -227,7 +227,7 @@ export const importAndProcessImage = async (
     { req, repository }
   );
 
-  const imageMetaDataFromProcessing = await processImage(
+  const imageMetadataFromProcessing = await processImage(
     {
       id: imageId,
       url: finalUrl,
@@ -257,7 +257,7 @@ export const importAndProcessImage = async (
     externalUrl,
     datasetId,
     metadata,
-    ...imageMetaDataFromProcessing,
+    ...imageMetadataFromProcessing,
   };
 
   return newImageEntity;
