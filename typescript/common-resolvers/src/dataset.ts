@@ -19,7 +19,7 @@ import {
   tutorialLabelClasses,
   tutorialLabels,
 } from "./data/dataset-tutorial";
-import { getWorkspaceIdOfDataset } from "./image/getWorkspaceIdOfDataset";
+import { getWorkspaceIdOfDataset } from "./image/get-workspace-id-of-dataset";
 
 const getLabelClassesByDatasetId = async (
   datasetId: string,

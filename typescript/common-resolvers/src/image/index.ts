@@ -11,7 +11,7 @@ import type {
 import { Context, DbImage, DbImageCreateInput, Repository } from "../types";
 import { throwIfResolvesToNil } from "../utils/throw-if-resolves-to-nil";
 import { importAndProcessImage } from "./import-and-process-image";
-import { getWorkspaceIdOfDataset } from "./getWorkspaceIdOfDataset";
+import { getWorkspaceIdOfDataset } from "./get-workspace-id-of-dataset";
 
 const getImageById = async (
   id: string,
