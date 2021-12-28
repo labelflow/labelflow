@@ -1,5 +1,5 @@
 /* eslint-disable no-underscore-dangle */
-import { ApolloClient, gql, NormalizedCacheObject } from "@apollo/client";
+import { ApolloClient, gql } from "@apollo/client";
 import { UploadTarget } from "@labelflow/graphql-types";
 
 const getImageUploadTargetMutation = gql`
@@ -23,7 +23,7 @@ const getImageUploadTargetMutation = gql`
  */
 const getImageUploadTarget = async (
   key: string,
-  apolloClient: ApolloClient<NormalizedCacheObject>
+  apolloClient: ApolloClient<object>
 ) => {
   const uploadTarget = (
     await apolloClient.mutate<{ getUploadTarget: UploadTarget }>({
@@ -59,7 +59,7 @@ export const uploadFile = async ({
 }: {
   file: Blob;
   key: string;
-  apolloClient: ApolloClient<NormalizedCacheObject>;
+  apolloClient: ApolloClient<object>;
 }) => {
   const { downloadUrl, uploadUrl } = await getImageUploadTarget(
     key,

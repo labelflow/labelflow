@@ -1,4 +1,4 @@
-import { ApolloClient, NormalizedCacheObject } from "@apollo/client";
+import { ApolloClient } from "@apollo/client";
 import { Tag, TagCloseButton, TagLabel } from "@chakra-ui/react";
 import { Label, LabelClass } from "@labelflow/graphql-types";
 import React, { useEffect, useState } from "react";
@@ -28,7 +28,7 @@ export const ClassificationTag = ({
   labelClasses: LabelClassItem[];
   selectedLabelId: string | null;
   setSelectedLabelId: (labelId: string | null) => void;
-  client: ApolloClient<NormalizedCacheObject>;
+  client: ApolloClient<object>;
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const { perform } = useUndoStore();

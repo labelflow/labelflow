@@ -1,8 +1,8 @@
-import { ApolloClient, NormalizedCacheObject } from "@apollo/client";
+import { ApolloClient } from "@apollo/client";
 import { createLabelClass } from "./graphql-definitions.common";
 
 type TestInput = {
-  client: ApolloClient<NormalizedCacheObject>;
+  client: ApolloClient<object>;
   workspaceSlug: string;
   getDatasetId: () => string;
   getDatasetSlug: () => string;

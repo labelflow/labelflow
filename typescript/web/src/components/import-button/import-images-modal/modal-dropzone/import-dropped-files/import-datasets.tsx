@@ -1,4 +1,4 @@
-import { ApolloClient, gql, NormalizedCacheObject } from "@apollo/client";
+import { ApolloClient, gql } from "@apollo/client";
 import { ExportFormat } from "@labelflow/graphql-types";
 import { v4 as uuidv4 } from "uuid";
 import mime from "mime-types";
@@ -26,7 +26,7 @@ const importDataset = async ({
   workspaceId,
   file,
 }: {
-  apolloClient: ApolloClient<NormalizedCacheObject>;
+  apolloClient: ApolloClient<object>;
   datasetId: string;
   workspaceId: string;
   file: Blob;
@@ -74,7 +74,7 @@ export const importDatasets = async ({
   datasets: DroppedFile[];
   datasetId: string;
   workspaceId: string;
-  apolloClient: ApolloClient<NormalizedCacheObject>;
+  apolloClient: ApolloClient<object>;
   setFileUploadStatuses: SetUploadStatuses;
 }) => {
   return await Bluebird.Promise.map(

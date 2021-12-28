@@ -1,5 +1,5 @@
 /* eslint-disable no-underscore-dangle */
-import { ApolloClient, gql, NormalizedCacheObject } from "@apollo/client";
+import { ApolloClient, gql } from "@apollo/client";
 import { v4 as uuidv4 } from "uuid";
 import Bluebird from "bluebird";
 import mime from "mime-types";
@@ -31,7 +31,7 @@ const uploadBatchOfImages = async ({
   batchIndex: number;
   datasetId: string;
   workspaceId: string;
-  apolloClient: ApolloClient<NormalizedCacheObject>;
+  apolloClient: ApolloClient<object>;
 }) => {
   return await Promise.all(
     batch.map(async ({ file }, fileIndex) => {
@@ -65,7 +65,7 @@ export const importImages = async ({
   images: DroppedFile[];
   workspaceId: string;
   datasetId: string;
-  apolloClient: ApolloClient<NormalizedCacheObject>;
+  apolloClient: ApolloClient<object>;
   setFileUploadStatuses: SetUploadStatuses;
 }) => {
   const firstUploadDate = new Date();
