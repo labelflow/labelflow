@@ -269,6 +269,7 @@ export const ClassSelectionPopover = ({
                   const item = filteredLabelClasses[index];
                   return (
                     <Box
+                      key={item.name}
                       style={{
                         position: "absolute",
                         top: 0,
@@ -292,7 +293,6 @@ export const ClassSelectionPopover = ({
                           "type" in item && item.type === "CreateClassItem"
                         }
                         index={index}
-                        key={item.name}
                       />
                     </Box>
                   );
