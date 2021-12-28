@@ -1,6 +1,5 @@
 import { ExportFormat } from "@labelflow/graphql-types";
-import { apolloDecorator } from "../../../../utils/apollo-decorator";
-import { chakraDecorator } from "../../../../utils/chakra-decorator";
+import { apolloDecorator, chakraDecorator } from "../../../../utils/storybook";
 import { ExportModalContext, ExportModalState } from "../export-modal.context";
 import { ExportOptionsModal } from "../export-options-modal";
 

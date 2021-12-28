@@ -1,12 +1,14 @@
-import React from "react";
 import { BreadcrumbLink, Skeleton, Text } from "@chakra-ui/react";
 import NextLink from "next/link";
-import { chakraDecorator } from "../../../../../utils/chakra-decorator";
-
+import React from "react";
+import {
+  chakraDecorator,
+  storybookTitle,
+} from "../../../../../utils/storybook";
 import { CollapsibleBreadcrumbs } from "../collapsible-breadcrumbs";
 
 export default {
-  title: "web/Breadcrumbs/Collapsible",
+  title: storybookTitle("Breadcrumbs", CollapsibleBreadcrumbs),
   decorators: [chakraDecorator],
 };
 

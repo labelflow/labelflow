@@ -1,5 +1,5 @@
 import { Spinner } from "..";
-import { chakraDecorator } from "../../../utils/chakra-decorator";
+import { chakraDecorator } from "../../../utils/storybook/chakra-decorator";
 
 export default {
   title: `web/Spinner/${Spinner.name}`,

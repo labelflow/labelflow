@@ -1,11 +1,11 @@
 import { Table, Tbody, Td, Thead, Tr } from "@chakra-ui/react";
 import { isEmpty, isNil } from "lodash/fp";
 import { OptionalText } from "..";
-import { chakraDecorator } from "../../../utils/chakra-decorator";
+import { chakraDecorator, storybookTitle } from "../../../utils/storybook";
 import { TEST_CASES } from "../optional-text.fixtures";
 
 export default {
-  title: `web/${OptionalText.name}`,
+  title: storybookTitle(OptionalText),
   decorators: [chakraDecorator],
 };
 

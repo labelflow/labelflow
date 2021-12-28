@@ -1,12 +1,14 @@
 import { Button, useDisclosure } from "@chakra-ui/react";
-
+import {
+  apolloDecorator,
+  chakraDecorator,
+  queryParamsDecorator,
+  storybookTitle,
+} from "../../../utils/storybook";
 import { DeleteDatasetModal } from "../delete-dataset-modal";
-import { chakraDecorator } from "../../../utils/chakra-decorator";
-import { apolloDecorator } from "../../../utils/apollo-decorator";
-import { queryParamsDecorator } from "../../../utils/query-params-decorator";
 
 export default {
-  title: "web/Delete dataset dialog",
+  title: storybookTitle(DeleteDatasetModal),
   decorators: [chakraDecorator, apolloDecorator, queryParamsDecorator],
 };
 

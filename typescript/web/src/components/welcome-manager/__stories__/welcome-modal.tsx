@@ -1,11 +1,14 @@
-import { chakraDecorator } from "../../../utils/chakra-decorator";
-import { queryParamsDecorator } from "../../../utils/query-params-decorator";
-import { apolloDecorator } from "../../../utils/apollo-decorator";
-import { cookieDecorator } from "../../../utils/cookie-decorator";
 import { WelcomeModal } from "..";
+import {
+  apolloDecorator,
+  chakraDecorator,
+  queryParamsDecorator,
+  cookieDecorator,
+  storybookTitle,
+} from "../../../utils/storybook";
 
 export default {
-  title: "web/app lifecycle/welcome modal",
+  title: storybookTitle(WelcomeModal),
   decorators: [
     chakraDecorator,
     apolloDecorator,

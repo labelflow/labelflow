@@ -1,6 +1,5 @@
 import { ExportModal } from "..";
-import { chakraDecorator } from "../../../../utils/chakra-decorator";
-import { apolloDecorator } from "../../../../utils/apollo-decorator";
+import { chakraDecorator, apolloDecorator } from "../../../../utils/storybook";
 
 export default {
   title: "web/Export Button/Modal",

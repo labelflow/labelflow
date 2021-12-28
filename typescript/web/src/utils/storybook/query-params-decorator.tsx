@@ -1,4 +1,4 @@
-import { QueryParamProvider } from "./query-params-provider";
+import { QueryParamProvider } from "../query-params-provider";
 
 export const queryParamsDecorator = (Story: any) => {
   return (

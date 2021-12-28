@@ -1,12 +1,14 @@
 import React from "react";
-import { chakraDecorator } from "../../../utils/chakra-decorator";
-import { apolloDecorator } from "../../../utils/apollo-decorator";
-import { queryParamsDecorator } from "../../../utils/query-params-decorator";
-
+import {
+  apolloDecorator,
+  chakraDecorator,
+  queryParamsDecorator,
+  storybookTitle,
+} from "../../../utils/storybook";
 import { CookieBanner } from "../cookie-banner";
 
 export default {
-  title: "web/Cookie banner",
+  title: storybookTitle(CookieBanner),
   decorators: [chakraDecorator, apolloDecorator, queryParamsDecorator],
 };
 

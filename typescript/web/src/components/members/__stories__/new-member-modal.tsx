@@ -1,13 +1,15 @@
-import { SessionProvider } from "next-auth/react";
 import { Button, useDisclosure } from "@chakra-ui/react";
-
+import { SessionProvider } from "next-auth/react";
+import {
+  apolloDecorator,
+  chakraDecorator,
+  queryParamsDecorator,
+  storybookTitle,
+} from "../../../utils/storybook";
 import { NewMemberModal } from "../new-member-modal";
-import { chakraDecorator } from "../../../utils/chakra-decorator";
-import { apolloDecorator } from "../../../utils/apollo-decorator";
-import { queryParamsDecorator } from "../../../utils/query-params-decorator";
 
 export default {
-  title: "web/New member modal",
+  title: storybookTitle(NewMemberModal),
   parameters: {
     nextRouter: {
       path: "/images/[id]",

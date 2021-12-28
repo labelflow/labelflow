@@ -6832,6 +6832,7 @@ __metadata:
     bluebird: ^3.7.2
     browser-builtins: ^3.3.1
     bundlewatch: ^0.3.2
+    change-case: ^4.1.2
     detect-browser: ^5.2.0
     dexie: ^3.0.3
     dotenv-cli: ^4.0.0
@@ -23886,6 +23887,7 @@ fsevents@^1.2.7:
     "@typescript-eslint/parser": 4.23.0
     auto-changelog: 2.3.0
     babel-loader: 8.2.2
+    change-case: ^4.1.2
     chromatic: 5.8.2
     cypress: 8.5.0
     dotenv-cli: ^4.0.0

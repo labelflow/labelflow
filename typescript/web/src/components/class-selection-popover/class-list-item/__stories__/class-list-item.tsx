@@ -1,10 +1,9 @@
 import { omit } from "lodash/fp";
-
+import { chakraDecorator, storybookTitle } from "../../../../utils/storybook";
 import { ClassListItem } from "../class-list-item";
-import { chakraDecorator } from "../../../../utils/chakra-decorator";
 
 export default {
-  title: "web/Class list item",
+  title: storybookTitle(ClassListItem),
   decorators: [chakraDecorator],
 };
 

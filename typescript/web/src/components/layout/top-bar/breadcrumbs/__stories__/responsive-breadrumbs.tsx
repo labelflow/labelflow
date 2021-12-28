@@ -1,23 +1,24 @@
-import React from "react";
 import {
-  BreadcrumbItem,
   Breadcrumb,
+  BreadcrumbItem,
   BreadcrumbLink,
+  chakra,
   Skeleton,
   Text,
-  chakra,
 } from "@chakra-ui/react";
 import NextLink from "next/link";
+import React from "react";
 import { RiArrowRightSLine } from "react-icons/ri";
-
-import { chakraDecorator } from "../../../../../utils/chakra-decorator";
-
 import { ResponsiveBreadcrumbs } from "..";
+import {
+  chakraDecorator,
+  storybookTitle,
+} from "../../../../../utils/storybook";
 
 const ArrowRightIcon = chakra(RiArrowRightSLine);
 
 export default {
-  title: "web/Breadcrumbs/Responsive",
+  title: storybookTitle("Breadcrumbs", ResponsiveBreadcrumbs),
   decorators: [chakraDecorator],
 };
 

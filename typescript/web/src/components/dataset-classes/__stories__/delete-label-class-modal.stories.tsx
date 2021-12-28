@@ -1,6 +1,6 @@
 import { MockedProvider as ApolloProvider } from "@apollo/client/testing";
 import React from "react";
-import { chakraDecorator } from "../../../utils/chakra-decorator";
+import { chakraDecorator } from "../../../utils/storybook/chakra-decorator";
 import { TestComponent } from "../delete-label-class-modal.fixtures";
 import { GRAPHQL_MOCKS } from "../dataset-classes.fixtures";
 
