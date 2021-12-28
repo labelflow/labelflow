@@ -6,6 +6,26 @@ import { validateImageInput } from "./validate-image-input";
 import { getImageName } from "./get-image-name";
 import { getImageFileKey } from "./get-image-file-key";
 
+const uploadBlobIntoStorage = async (
+  blob: Blob,
+  key: string,
+  { repository, req }: { repository: Repository; req: Request }
+) => {
+  const origin = getOrigin(req);
+
+  const uploadTarget = await repository.upload.getUploadTargetHttp(key, origin);
+
+  // eslint-disable-next-line no-underscore-dangle
+  if (uploadTarget.__typename !== "UploadTargetHttp") {
+    throw new Error(
+      "This Server does not support file upload. You can create images by providing a `file` directly in the `createImage` mutation"
+    );
+  }
+
+  await repository.upload.put(uploadTarget.uploadUrl, blob, req);
+  return uploadTarget.downloadUrl;
+};
+
 /**
  * Downloads the image from the external url and upload it
  * into our storage.
@@ -18,8 +38,6 @@ const importFromExternalUrl = async (
   getImageFileKeyFromMimeType: (mimeType: string) => string,
   { req, repository }: { req: Request; repository: Repository }
 ) => {
-  const origin = getOrigin(req);
-
   const headers = new Headers();
   headers.set("Accept", "image/tiff,image/jpeg,image/png,image/*,*/*;q=0.8");
   headers.set("Sec-Fetch-Dest", "image");
@@ -38,22 +56,12 @@ const importFromExternalUrl = async (
   }
 
   const blob = await fetchResult.blob();
+  const key = getImageFileKeyFromMimeType(blob.type);
 
-  const uploadTarget = await repository.upload.getUploadTargetHttp(
-    getImageFileKeyFromMimeType(blob.type),
-    origin
-  );
-
-  // eslint-disable-next-line no-underscore-dangle
-  if (uploadTarget.__typename !== "UploadTargetHttp") {
-    throw new Error(
-      "This Server does not support file upload. You can create images by providing a `file` directly in the `createImage` mutation"
-    );
-  }
-
-  await repository.upload.put(uploadTarget.uploadUrl, blob, req);
-
-  return uploadTarget.downloadUrl;
+  return await uploadBlobIntoStorage(blob, key, {
+    req,
+    repository,
+  });
 };
 
 /**
@@ -64,23 +72,12 @@ const importFromFile = async (
   getImageFileKeyFromMimeType: (mimeType: string) => string,
   { req, repository }: { req: Request; repository: Repository }
 ) => {
-  const origin = getOrigin(req);
+  const key = getImageFileKeyFromMimeType(file.type);
 
-  const uploadTarget = await repository.upload.getUploadTargetHttp(
-    getImageFileKeyFromMimeType(file.type),
-    origin
-  );
-
-  // eslint-disable-next-line no-underscore-dangle
-  if (uploadTarget.__typename !== "UploadTargetHttp") {
-    throw new Error(
-      "This Server does not support file upload. You can create images by providing a `file` directly in the `createImage` mutation"
-    );
-  }
-
-  await repository.upload.put(uploadTarget.uploadUrl, file, req);
-
-  return uploadTarget.downloadUrl;
+  return await uploadBlobIntoStorage(file, key, {
+    req,
+    repository,
+  });
 };
 
 /**
