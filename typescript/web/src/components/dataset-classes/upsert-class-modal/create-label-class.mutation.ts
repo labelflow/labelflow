@@ -74,7 +74,9 @@ export const useCreateLabelClassMutation = (
 ) => {
   const client = useApolloClient();
   return useCallback(async () => {
-    const { data: queryData } = await client.query({
+    const { data: queryData } = await client.query<
+      Partial<Pick<Query, "dataset">>
+    >({
       query: DATASET_LABEL_CLASSES_QUERY,
       variables: { slug: datasetSlug, workspaceSlug },
     });
@@ -83,7 +85,7 @@ export const useCreateLabelClassMutation = (
     const color =
       labelClasses.length < 1
         ? LABEL_CLASS_COLOR_PALETTE[0]
-        : getNextClassColor(labelClasses[labelClasses.length - 1].color);
+        : getNextClassColor(labelClasses.map((labelClass) => labelClass.color));
 
     await client.mutate({
       mutation: CREATE_LABEL_CLASS_MUTATION,
