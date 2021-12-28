@@ -1,6 +1,11 @@
 # Changelog
 
-## [1.0.26](https://github.com/labelflow/labelflow/compare/1.0.25...1.0.26)
+## [1.0.27](https://github.com/labelflow/labelflow/compare/1.0.26...1.0.27)
+
+- Make issues faster to create and cleanup pull-request template [`#698`](https://github.com/labelflow/labelflow/pull/698)
+- Deploy schema in CI [`#657`](https://github.com/labelflow/labelflow/pull/657)
+- Have strapi running on prod DB [`#645`](https://github.com/labelflow/labelflow/pull/645)
+## [1.0.26](https://github.com/labelflow/labelflow/compare/1.0.25...1.0.26) - 2021-12-08
 
 - Set correct value for `og:url` of articles [`#641`](https://github.com/labelflow/labelflow/pull/641)
 ## [1.0.25](https://github.com/labelflow/labelflow/compare/1.0.24...1.0.25) - 2021-12-08
