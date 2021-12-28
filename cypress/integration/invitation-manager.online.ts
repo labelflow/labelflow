@@ -178,8 +178,7 @@ describe("Invitation Manager (online)", () => {
     cy.location("pathname").should("eq", "/local/datasets");
   });
 
-  // flacky in the CI
-  it.skip("should open the sign in modal if the user isn't logged in", () => {
+  it("should open the sign in modal if the user isn't logged in", () => {
     // log in as the default user
     cy.task("performLogin").then((token) => {
       cy.setCookie("next-auth.session-token", token as string);
