@@ -14,13 +14,17 @@ import {
   ReorderableTableBody,
   ReorderableTableHeadRow,
 } from "../reorderable-table";
-import { LabelClassesTableRow } from "./label-classes-table-row";
+import {
+  COMMON_CLASS_TABLE_CELL_PROPS,
+  COMMON_TABLE_CELL_PROPS,
+  LabelClassesTableRow,
+} from "./label-classes-table-row";
 import { useDatasetClasses } from "./dataset-classes.context";
 
 const InfoIcon = chakra(RiInformationLine);
 
 const TableHeadCell = (props: TableColumnHeaderProps) => (
-  <Th whiteSpace="nowrap" scope="col" {...props} />
+  <Th scope="col" {...COMMON_TABLE_CELL_PROPS} {...props} />
 );
 
 const ShortcutHeadCell = () => (
@@ -41,7 +45,7 @@ const ShortcutHeadCell = () => (
 const TableHead = () => (
   <Thead bg={mode("gray.50", "gray.800")}>
     <ReorderableTableHeadRow>
-      <TableHeadCell>Class</TableHeadCell>
+      <TableHeadCell {...COMMON_CLASS_TABLE_CELL_PROPS}>Class</TableHeadCell>
       <TableHeadCell>Occurrences</TableHeadCell>
       <ShortcutHeadCell />
       <TableHeadCell>Actions</TableHeadCell>

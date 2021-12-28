@@ -24,8 +24,17 @@ const RowContext = createContext({} as LabelClassWithShortcut);
 
 const useRow = () => useContext(RowContext);
 
+export const COMMON_TABLE_CELL_PROPS: TableCellProps = {
+  width: "auto",
+  whiteSpace: "nowrap",
+};
+
+export const COMMON_CLASS_TABLE_CELL_PROPS: TableCellProps = {
+  width: "100%",
+};
+
 const TableCell = (props: TableCellProps) => (
-  <ReorderableTableCell whiteSpace="nowrap" {...props} />
+  <ReorderableTableCell {...COMMON_TABLE_CELL_PROPS} {...props} />
 );
 
 const ColorField = () => {
@@ -53,8 +62,8 @@ const NameField = () => {
   );
 };
 
-const NameAndColorCell = () => (
-  <TableCell>
+const ClassCell = () => (
+  <TableCell {...COMMON_CLASS_TABLE_CELL_PROPS}>
     <Flex alignItems="center">
       <ColorField />
       <NameField />
@@ -125,7 +134,7 @@ const ActionsCell = () => (
 
 const RowBody = () => (
   <>
-    <NameAndColorCell />
+    <ClassCell />
     <OccurrencesCell />
     <ShortcutCell />
     <ActionsCell />

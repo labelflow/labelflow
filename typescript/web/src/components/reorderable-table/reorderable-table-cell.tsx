@@ -7,21 +7,16 @@ type ReorderableTableCellProps = TableCellProps & {
   isDragging: boolean;
 };
 
-type ReorderableTableCellSnapshot = {
-  width: number;
-  height: number;
-};
-
 // eslint-disable-next-line react/prefer-stateless-function
 class ReorderableTableCellComponent extends Component<ReorderableTableCellProps> {
   ref = createRef<HTMLTableCellElement>();
 
   getSnapshotBeforeUpdate(
     prevProps: ReorderableTableCellProps
-  ): ReorderableTableCellSnapshot | null {
-    const { isDragging: isDragOccurring } = this.props;
+  ): DOMRect | null {
+    const { isDragging } = this.props;
     if (isNil(this.ref.current)) return null;
-    const isDragStarting = isDragOccurring && !prevProps.isDragging;
+    const isDragStarting = isDragging && !prevProps.isDragging;
     if (!isDragStarting) return null;
     return this.ref.current.getBoundingClientRect();
   }
@@ -29,7 +24,7 @@ class ReorderableTableCellComponent extends Component<ReorderableTableCellProps>
   componentDidUpdate(
     _prevProps: ReorderableTableCellProps,
     _prevState: any,
-    snapshot: ReorderableTableCellSnapshot
+    snapshot: DOMRect
   ) {
     const { isDragging: isDragOccurring } = this.props;
     const refStyle = this.ref.current?.style;
@@ -52,7 +47,7 @@ class ReorderableTableCellComponent extends Component<ReorderableTableCellProps>
 
   render() {
     const { isDragging, ...props } = this.props;
-    return <Td maxWidth="md" ref={this.ref} {...props} />;
+    return <Td ref={this.ref} {...props} />;
   }
 }
 
