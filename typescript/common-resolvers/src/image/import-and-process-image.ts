@@ -2,7 +2,7 @@ import { v4 as uuidv4 } from "uuid";
 import { ImageCreateInput } from "@labelflow/graphql-types";
 import { Repository, DbImageCreateInput } from "../types";
 import { getOrigin } from "../utils/get-origin";
-import { validImageInput } from "./validate-image-input";
+import { validateImageInput } from "./validate-image-input";
 import { getImageName } from "./get-image-name";
 import { getImageFileKey } from "./get-image-file-key";
 
@@ -107,7 +107,7 @@ const importImageIfNeeded = async (
   },
   { req, repository }: { req: Request; repository: Repository }
 ): Promise<string> => {
-  validImageInput({ file, externalUrl, url });
+  validateImageInput({ file, externalUrl, url });
 
   const getImageFileKeyFromMimeType = (mimeType: string) =>
     getImageFileKey(imageId, workspaceId, datasetId, mimeType);
