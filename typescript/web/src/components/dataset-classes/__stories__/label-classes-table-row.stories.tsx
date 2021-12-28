@@ -3,16 +3,15 @@ import React from "react";
 import { chakraDecorator } from "../../../utils/chakra-decorator";
 import { TestComponent, Wrapper } from "../label-classes-table-row.fixtures";
 
+const testDecorator = (StoryComponent: Story) => (
+  <Wrapper>
+    <StoryComponent />
+  </Wrapper>
+);
+
 export default {
   title: "web/Dataset classes/Label classes table row",
-  decorators: [
-    chakraDecorator,
-    (StoryComponent: Story) => (
-      <Wrapper>
-        <StoryComponent />
-      </Wrapper>
-    ),
-  ],
+  decorators: [chakraDecorator, testDecorator],
 };
 
 export const Default = () => (

@@ -1,10 +1,9 @@
-import { Th, Thead } from "@chakra-ui/react";
+import { Table, Th, Thead } from "@chakra-ui/react";
 import { reorderArray } from "@labelflow/common-resolvers";
 import { range } from "lodash/fp";
 import React, { useCallback, useState } from "react";
 import {
   OnReorderCallback,
-  ReorderableTable,
   ReorderableTableBody,
   ReorderableTableCell,
   ReorderableTableHeadRow,
@@ -35,7 +34,7 @@ const useData = (
 export const TestComponent = ({ onReorder }: TestComponentProps) => {
   const [data, handleReorder] = useData(onReorder);
   return (
-    <ReorderableTable variant="striped">
+    <Table variant="striped">
       <Thead>
         <ReorderableTableHeadRow>
           <Th>Value</Th>
@@ -48,6 +47,6 @@ export const TestComponent = ({ onReorder }: TestComponentProps) => {
           </ReorderableTableRow>
         ))}
       </ReorderableTableBody>
-    </ReorderableTable>
+    </Table>
   );
 };

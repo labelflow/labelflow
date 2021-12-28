@@ -43,7 +43,7 @@ export const GRAPHQL_MOCKS: ApolloResponse<Partial<Query | Mutation>>[] = [
             {
               id: "3",
               index: 2,
-              name: "veeeeeeeeeeeeeeery loooooooooooooooooong name",
+              name: "veeeeeeeeeeeeeeery loooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong name",
               color: "#0000ff",
               labelsAggregates: { totalCount: 12 },
             },

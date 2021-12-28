@@ -7,41 +7,69 @@ type ReorderableTableCellProps = TableCellProps & {
   isDragging: boolean;
 };
 
+type ReorderableTableCellState = {
+  prevWidth?: number;
+};
+
+type Snapshot = {
+  width: string | undefined;
+  minWidth: string | undefined;
+  height: string | undefined;
+  minHeight: string | undefined;
+};
+
 // eslint-disable-next-line react/prefer-stateless-function
-class ReorderableTableCellComponent extends Component<ReorderableTableCellProps> {
+class ReorderableTableCellComponent extends Component<
+  ReorderableTableCellProps,
+  ReorderableTableCellState
+> {
   ref = createRef<HTMLTableCellElement>();
+
+  constructor(props: ReorderableTableCellProps) {
+    super(props);
+    this.state = {};
+  }
 
   getSnapshotBeforeUpdate(
     prevProps: ReorderableTableCellProps
-  ): DOMRect | null {
+  ): Snapshot | null {
     const { isDragging } = this.props;
     if (isNil(this.ref.current)) return null;
     const isDragStarting = isDragging && !prevProps.isDragging;
-    if (!isDragStarting) return null;
-    return this.ref.current.getBoundingClientRect();
+    const isDragEnding = !isDragging && prevProps.isDragging;
+    if (isDragStarting) {
+      const rect = this.ref.current.getBoundingClientRect();
+      const width = `${rect.width}px`;
+      const height = `${rect.height}px`;
+      return { width, minWidth: width, height, minHeight: height };
+    }
+    return isDragEnding
+      ? {
+          width: undefined,
+          minWidth: undefined,
+          height: undefined,
+          minHeight: undefined,
+        }
+      : null;
   }
 
   componentDidUpdate(
     _prevProps: ReorderableTableCellProps,
-    _prevState: any,
-    snapshot: DOMRect
+    _prevState: never,
+    snapshot?: Snapshot
   ) {
-    const { isDragging: isDragOccurring } = this.props;
-    const refStyle = this.ref.current?.style;
-    if (isNil(refStyle)) return;
-    if (snapshot) {
-      if (refStyle.width !== snapshot.width.toString()) {
-        refStyle.width = `${snapshot.width}px`;
-        refStyle.height = `${snapshot.height}px`;
-      }
-    } else if (!isDragOccurring) {
-      // no snapshot and drag is finished - clear the inline styles
-      if (!isNil(refStyle.width)) {
-        refStyle.removeProperty("width");
-      }
-      if (!isNil(refStyle.height)) {
-        refStyle.removeProperty("height");
-      }
+    Object.entries(snapshot ?? {}).forEach(([name, value]) => {
+      this.setStyleProperty(name as keyof Snapshot, value);
+    });
+  }
+
+  setStyleProperty(name: keyof Snapshot, value: string | undefined) {
+    if (isNil(this.ref.current)) return;
+    const { style } = this.ref.current;
+    if (isNil(value)) {
+      style[name] = "";
+    } else {
+      style[name] = value;
     }
   }
 

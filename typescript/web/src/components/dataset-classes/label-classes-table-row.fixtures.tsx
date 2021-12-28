@@ -1,6 +1,6 @@
-import { StylesProvider } from "@chakra-ui/react";
+import { StylesProvider, Table } from "@chakra-ui/react";
 import { PropsWithChildren } from "react";
-import { ReorderableTable, ReorderableTableBody } from "../reorderable-table";
+import { ReorderableTableBody } from "../reorderable-table";
 import { LabelClassesTableRow } from "./label-classes-table-row";
 import {
   DatasetClassesContext,
@@ -21,11 +21,11 @@ export const TEST_DATA = {
 };
 
 export const Wrapper = ({ children }: PropsWithChildren<{}>) => (
-  <ReorderableTable>
+  <Table>
     <ReorderableTableBody onReorder={() => {}}>
       <StylesProvider value={{}}>{children}</StylesProvider>
     </ReorderableTableBody>
-  </ReorderableTable>
+  </Table>
 );
 
 export const TestComponent = ({

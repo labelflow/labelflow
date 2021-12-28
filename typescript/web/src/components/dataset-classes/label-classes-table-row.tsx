@@ -18,12 +18,6 @@ import {
 import { useDatasetClasses } from "./dataset-classes.context";
 import { LabelClassWithShortcut } from "./types";
 
-const CircleIcon = chakra(RiCheckboxBlankCircleFill);
-
-const RowContext = createContext({} as LabelClassWithShortcut);
-
-const useRow = () => useContext(RowContext);
-
 export const COMMON_TABLE_CELL_PROPS: TableCellProps = {
   width: "auto",
   whiteSpace: "nowrap",
@@ -31,16 +25,24 @@ export const COMMON_TABLE_CELL_PROPS: TableCellProps = {
 
 export const COMMON_CLASS_TABLE_CELL_PROPS: TableCellProps = {
   width: "100%",
+  maxWidth: "0",
+  textOverflow: "ellipsis",
 };
+
+const RowContext = createContext({} as LabelClassWithShortcut);
+
+const useRow = () => useContext(RowContext);
 
 const TableCell = (props: TableCellProps) => (
   <ReorderableTableCell {...COMMON_TABLE_CELL_PROPS} {...props} />
 );
 
+const CircleIcon = chakra(RiCheckboxBlankCircleFill);
+
 const ColorField = () => {
   const { color } = useRow();
   return (
-    <Tooltip placement="top" label={color} shouldWrapChildren>
+    <Tooltip label={color} shouldWrapChildren>
       <CircleIcon
         flexShrink={0}
         flexGrow={0}
@@ -56,7 +58,7 @@ const ColorField = () => {
 const NameField = () => {
   const { name } = useRow();
   return (
-    <Tooltip placement="top" label={name}>
+    <Tooltip label={name}>
       <Text isTruncated>{name}</Text>
     </Tooltip>
   );
@@ -64,7 +66,7 @@ const NameField = () => {
 
 const ClassCell = () => (
   <TableCell {...COMMON_CLASS_TABLE_CELL_PROPS}>
-    <Flex alignItems="center">
+    <Flex alignItems="center" p={0}>
       <ColorField />
       <NameField />
     </Flex>

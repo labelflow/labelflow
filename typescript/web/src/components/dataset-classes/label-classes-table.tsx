@@ -1,6 +1,7 @@
 import {
   chakra,
   Flex,
+  Table,
   TableColumnHeaderProps,
   Th,
   Thead,
@@ -10,16 +11,15 @@ import {
 import React from "react";
 import { RiInformationLine } from "react-icons/ri";
 import {
-  ReorderableTable,
   ReorderableTableBody,
   ReorderableTableHeadRow,
 } from "../reorderable-table";
+import { useDatasetClasses } from "./dataset-classes.context";
 import {
   COMMON_CLASS_TABLE_CELL_PROPS,
   COMMON_TABLE_CELL_PROPS,
   LabelClassesTableRow,
 } from "./label-classes-table-row";
-import { useDatasetClasses } from "./dataset-classes.context";
 
 const InfoIcon = chakra(RiInformationLine);
 
@@ -72,8 +72,8 @@ export const TableBody = () => {
 };
 
 export const LabelClassesTable = () => (
-  <ReorderableTable my="8" borderWidth="1px" overflowX="clip">
+  <Table maxWidth="5xl" my="8" borderWidth="1px">
     <TableHead />
     <TableBody />
-  </ReorderableTable>
+  </Table>
 );
