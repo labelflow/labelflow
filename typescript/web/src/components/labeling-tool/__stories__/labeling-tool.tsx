@@ -1,11 +1,12 @@
-import { DecoratorFn, Story } from "@storybook/react";
 import { Box } from "@chakra-ui/react";
-
-import { chakraDecorator } from "../../../utils/chakra-decorator";
-import { queryParamsDecorator } from "../../../utils/query-params-decorator";
-import { apolloDecorator } from "../../../utils/apollo-decorator";
-
+import { DecoratorFn, Story } from "@storybook/react";
 import { mockImagesLoader } from "../../../utils/mock-image-loader";
+import {
+  apolloDecorator,
+  chakraDecorator,
+  queryParamsDecorator,
+  storybookTitle,
+} from "../../../utils/storybook";
 import { LabelingTool } from "../labeling-tool";
 
 const datasetId = "233e8af4-7be3-4371-a6de-1ebbe71c90b9";
@@ -39,7 +40,7 @@ function inGreyBoxDecorator(
 }
 
 export default {
-  title: "web/Labeling Tool",
+  title: storybookTitle(LabelingTool),
   component: LabelingTool,
   loaders: [mockImagesLoader],
   decorators: [

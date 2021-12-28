@@ -2,8 +2,10 @@ import React, { useState, useRef } from "react";
 
 import { Popover, PopoverBody, PopoverContent, VStack } from "@chakra-ui/react";
 
-import { chakraDecorator } from "../../../../utils/chakra-decorator";
-import { queryParamsDecorator } from "../../../../utils/query-params-decorator";
+import {
+  chakraDecorator,
+  queryParamsDecorator,
+} from "../../../../utils/storybook";
 
 import { DrawingToolIcon } from "../drawing-tool";
 import { Tools } from "../../../../connectors/labeling-state";

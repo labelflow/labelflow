@@ -1,11 +1,13 @@
-import { chakraDecorator } from "../../../utils/chakra-decorator";
-import { apolloDecorator } from "../../../utils/apollo-decorator";
-import { queryParamsDecorator } from "../../../utils/query-params-decorator";
-
 import { ExportButton } from "..";
+import {
+  apolloDecorator,
+  chakraDecorator,
+  queryParamsDecorator,
+  storybookTitle,
+} from "../../../utils/storybook";
 
 export default {
-  title: "web/Export Button",
+  title: storybookTitle(ExportButton),
   decorators: [chakraDecorator, apolloDecorator, queryParamsDecorator],
 };
 

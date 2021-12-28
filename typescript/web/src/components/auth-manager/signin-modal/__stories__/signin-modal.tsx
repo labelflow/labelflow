@@ -1,10 +1,12 @@
-import { chakraDecorator } from "../../../../utils/chakra-decorator";
-import { apolloDecorator } from "../../../../utils/apollo-decorator";
-
 import { SigninModal } from "..";
+import {
+  apolloDecorator,
+  chakraDecorator,
+  storybookTitle,
+} from "../../../../utils/storybook";
 
 export default {
-  title: "web/Signin/Modal",
+  title: storybookTitle(SigninModal),
   decorators: [chakraDecorator, apolloDecorator],
 };
 

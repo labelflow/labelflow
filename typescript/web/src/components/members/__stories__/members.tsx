@@ -1,4 +1,3 @@
-import { SessionProvider } from "next-auth/react";
 import {
   CurrentUserCanAcceptInvitation,
   Membership,
@@ -7,14 +6,16 @@ import {
   WorkspacePlan,
   WorkspaceType,
 } from "@labelflow/graphql-types";
-
-import { chakraDecorator } from "../../../utils/chakra-decorator";
-import { apolloDecorator } from "../../../utils/apollo-decorator";
-
+import { SessionProvider } from "next-auth/react";
 import { Members } from "..";
+import {
+  apolloDecorator,
+  chakraDecorator,
+  storybookTitle,
+} from "../../../utils/storybook";
 
 export default {
-  title: "web/Workspace members",
+  title: storybookTitle(Members),
   component: Members,
   decorators: [chakraDecorator, apolloDecorator],
 };

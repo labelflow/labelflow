@@ -1,8 +1,11 @@
+import {
+  chakraDecorator,
+  storybookTitle,
+} from "../../../../../../utils/storybook";
 import { WorkspaceListItem } from "../workspace-list-item";
-import { chakraDecorator } from "../../../../../../utils/chakra-decorator";
 
 export default {
-  title: "web/Workspace Switcher/Workspace list item",
+  title: storybookTitle("Workspace Switcher", WorkspaceListItem),
   decorators: [chakraDecorator],
 };
 

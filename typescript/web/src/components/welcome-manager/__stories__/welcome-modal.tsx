@@ -1,11 +1,15 @@
-import { chakraDecorator } from "../../../utils/chakra-decorator";
-import { queryParamsDecorator } from "../../../utils/query-params-decorator";
-import { apolloDecorator } from "../../../utils/apollo-decorator";
-import { cookieDecorator } from "../../../utils/cookie-decorator";
 import { WelcomeManager } from "..";
+import {
+  apolloDecorator,
+  chakraDecorator,
+  queryParamsDecorator,
+  storybookTitle,
+} from "../../../utils/storybook";
+import { cookieDecorator } from "../../../utils/storybook/cookie-decorator";
+import { WelcomeModal } from "../welcome-modal";
 
 export default {
-  title: "web/app lifecycle/welcome modal",
+  title: storybookTitle(WelcomeModal),
   decorators: [
     chakraDecorator,
     apolloDecorator,

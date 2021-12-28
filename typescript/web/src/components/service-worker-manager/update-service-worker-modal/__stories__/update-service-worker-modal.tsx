@@ -1,9 +1,8 @@
-import { chakraDecorator } from "../../../../utils/chakra-decorator";
-
+import { chakraDecorator, storybookTitle } from "../../../../utils/storybook";
 import { UpdateServiceWorkerModal } from "../update-service-worker-modal";
 
 export default {
-  title: "web/app lifecycle/update service worker modal",
+  title: storybookTitle(UpdateServiceWorkerModal),
   decorators: [chakraDecorator],
 };
 

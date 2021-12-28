@@ -1,12 +1,14 @@
 import { Button, useDisclosure } from "@chakra-ui/react";
-
+import {
+  apolloDecorator,
+  chakraDecorator,
+  queryParamsDecorator,
+  storybookTitle,
+} from "../../../../utils/storybook";
 import { ImportImagesModal } from "../import-images-modal";
-import { chakraDecorator } from "../../../../utils/chakra-decorator";
-import { apolloDecorator } from "../../../../utils/apollo-decorator";
-import { queryParamsDecorator } from "../../../../utils/query-params-decorator";
 
 export default {
-  title: "web/Import images modal",
+  title: storybookTitle(ImportImagesModal),
   parameters: {
     nextRouter: {
       path: "/images/[id]",

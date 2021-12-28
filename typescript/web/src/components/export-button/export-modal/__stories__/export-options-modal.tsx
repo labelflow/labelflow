@@ -1,7 +1,6 @@
 import { ExportFormat } from "@labelflow/graphql-types";
 import { ExportOptionsModal } from "../export-options-modal";
-import { chakraDecorator } from "../../../../utils/chakra-decorator";
-import { apolloDecorator } from "../../../../utils/apollo-decorator";
+import { chakraDecorator, apolloDecorator } from "../../../../utils/storybook";
 
 export default {
   title: "web/Export Button/Options Modal",

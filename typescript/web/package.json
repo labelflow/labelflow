@@ -138,6 +138,7 @@
     "@types/valid-url": "^1.0.3",
     "auto-changelog": "^2.3.0",
     "bundlewatch": "^0.3.2",
+    "change-case": "^4.1.2",
     "dotenv-cli": "^4.0.0",
     "fake-indexeddb": "^3.1.2",
     "release-it": "^14.11.5",

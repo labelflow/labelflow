@@ -1,14 +1,16 @@
 import React from "react";
-import { chakraDecorator } from "../../../utils/chakra-decorator";
-import { apolloDecorator } from "../../../utils/apollo-decorator";
-import { queryParamsDecorator } from "../../../utils/query-params-decorator";
-
+import {
+  apolloDecorator,
+  chakraDecorator,
+  queryParamsDecorator,
+  storybookTitle,
+} from "../../../utils/storybook";
 import { AcceptOrDeclineMembershipInvitation } from "../accept-or-decline-membership-invitation";
 import { InvalidInvitation as InvalidInvitationComponent } from "../invalid-invitation";
 import { UserNeedsToSignIn as UserNeedsToSignInComponent } from "../user-needs-to-sign-in";
 
 export default {
-  title: "web/Invitation manager",
+  title: storybookTitle("Invitation manager"),
   decorators: [chakraDecorator, apolloDecorator, queryParamsDecorator],
 };
 

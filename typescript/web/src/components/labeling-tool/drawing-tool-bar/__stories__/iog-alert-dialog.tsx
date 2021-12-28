@@ -2,8 +2,10 @@ import React, { useState } from "react";
 
 import { useToast, Button } from "@chakra-ui/react";
 
-import { chakraDecorator } from "../../../../utils/chakra-decorator";
-import { queryParamsDecorator } from "../../../../utils/query-params-decorator";
+import {
+  chakraDecorator,
+  queryParamsDecorator,
+} from "../../../../utils/storybook";
 
 import { IogAlertDialog } from "../iog-alert-dialog";
 

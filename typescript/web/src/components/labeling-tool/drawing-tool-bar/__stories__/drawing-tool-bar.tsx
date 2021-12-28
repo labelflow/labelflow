@@ -2,8 +2,10 @@ import React from "react";
 import { Story } from "@storybook/react";
 import { VStack } from "@chakra-ui/react";
 
-import { chakraDecorator } from "../../../../utils/chakra-decorator";
-import { queryParamsDecorator } from "../../../../utils/query-params-decorator";
+import {
+  chakraDecorator,
+  queryParamsDecorator,
+} from "../../../../utils/storybook";
 
 import { DrawingToolbar, Props } from "../drawing-tool-bar";
 

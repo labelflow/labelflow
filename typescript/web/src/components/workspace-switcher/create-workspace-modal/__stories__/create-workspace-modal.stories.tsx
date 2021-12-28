@@ -1,15 +1,18 @@
 import { MockedProvider as ApolloProvider } from "@apollo/client/testing";
 import { Story } from "@storybook/react";
 import { CreateWorkspaceModal } from "..";
-import { chakraDecorator } from "../../../../utils/chakra-decorator";
-import { queryParamsDecorator } from "../../../../utils/query-params-decorator";
+import {
+  chakraDecorator,
+  queryParamsDecorator,
+  storybookTitle,
+} from "../../../../utils/storybook";
 import {
   WORKSPACE_EXISTS_MOCK_ALREADY_TAKEN_NAME,
   WORKSPACE_EXISTS_MOCK_TEST,
 } from "../../../workspace-name-input/workspace-name-input.fixtures";
 
 export default {
-  title: "web/Workspace Switcher/Create Workspace Modal",
+  title: storybookTitle("Workspace Switcher", CreateWorkspaceModal),
   decorators: [chakraDecorator, queryParamsDecorator],
 };
 

@@ -3,10 +3,10 @@ import { Story } from "@storybook/react";
 
 import { HStack, Button, Flex } from "@chakra-ui/react";
 
-import { chakraDecorator } from "../../../../utils/chakra-decorator";
+import { chakraDecorator, apolloDecorator } from "../../../../utils/storybook";
 
 import { ImageNavigationTool } from "../image-navigation-tool";
-import { apolloDecorator } from "../../../../utils/apollo-decorator";
+
 import { mockImagesLoader } from "../../../../utils/mock-image-loader";
 
 const datasetId = "2e5e2ff4-7be3-4371-a6de-1ebbe71c90b9";

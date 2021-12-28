@@ -1,11 +1,12 @@
-import { DecoratorFn, Story } from "@storybook/react";
 import { Box } from "@chakra-ui/react";
-
-import { chakraDecorator } from "../../../utils/chakra-decorator";
-import { queryParamsDecorator } from "../../../utils/query-params-decorator";
-import { apolloDecorator } from "../../../utils/apollo-decorator";
-
+import { DecoratorFn, Story } from "@storybook/react";
 import { mockImagesLoader } from "../../../utils/mock-image-loader";
+import {
+  apolloDecorator,
+  chakraDecorator,
+  queryParamsDecorator,
+  storybookTitle,
+} from "../../../utils/storybook";
 import { ImageLoadError } from "../image-load-error";
 
 function inGreyBoxDecorator(
@@ -19,7 +20,7 @@ function inGreyBoxDecorator(
 }
 
 export default {
-  title: "web/Image Load Error",
+  title: storybookTitle(ImageLoadError),
   component: ImageLoadError,
   loaders: [mockImagesLoader],
   decorators: [
