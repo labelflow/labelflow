@@ -20,6 +20,7 @@
     "dev:web:test": "cd ./typescript/web && yarn dev:test",
     "build:web": "cd ./typescript/web && yarn build",
     "start:web": "cd ./typescript/web && yarn start",
+    "dev:db": "cd ./typescript/db && yarn dev",
     "build:db": "cd ./typescript/db && yarn build",
     "start:db": "cd ./typescript/db && yarn start",
     "stop:db": "cd ./typescript/db && yarn stop",

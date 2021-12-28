@@ -27,7 +27,7 @@ export default {
   Query: {
     workspace,
     workspaces,
-    isWorkspaceSlugAlreadyTaken: notImplementedInLocalWorkspaceRepository,
+    workspaceExists: notImplementedInLocalWorkspaceRepository,
   },
 
   Mutation: {

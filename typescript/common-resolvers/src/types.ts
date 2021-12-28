@@ -97,13 +97,11 @@ export type DbWorkspace = Omit<
 
 export type DbWorkspaceWithType = DbWorkspace & { type: WorkspaceType };
 
-export type DbDatasetCreateInput = WithCreatedAtAndUpdatedAt<
-  DatasetCreateInput & { slug: string }
->;
-
 export type DbUser = Omit<User, "memberships">;
 
-type PartialWithNullAllowed<T> = { [P in keyof T]?: T[P] | undefined | null };
+export type PartialWithNullAllowed<T> = {
+  [P in keyof T]?: T[P] | undefined | null;
+};
 
 type WithCreatedAtAndUpdatedAt<T extends {}> = T & {
   createdAt: string;
@@ -116,11 +114,14 @@ type Add<EntityType> = (
   entity: EntityType,
   user?: { id: string }
 ) => Promise<ID>;
+
 type Count<Where> = (where?: Where) => Promise<number>;
+
 type Delete<EntityWhereUniqueInput> = (
   input: EntityWhereUniqueInput,
   user?: { id: string }
 ) => Promise<void>;
+
 type Get<EntityType, EntityWhereUniqueInput> = (
   input: EntityWhereUniqueInput,
   user?: { id: string }
@@ -131,6 +132,7 @@ type List<Entity = unknown, Where extends Record<string, any> | null = null> = (
   skip?: number | null,
   first?: number | null
 ) => Promise<Entity[]>;
+
 type Update<Entity, EntityWhereUniqueInput> = (
   input: EntityWhereUniqueInput,
   data: PartialWithNullAllowed<Entity>,
@@ -163,25 +165,21 @@ export type Repository = {
     update: Update<DbLabelClass, LabelClassWhereUniqueInput>;
   };
   dataset: {
-    add: Add<DbDatasetCreateInput>;
+    add: Add<DatasetCreateInput>;
     delete: Delete<DatasetWhereUniqueInput>;
     get: Get<DbDataset, DatasetWhereUniqueInput>;
     list: List<DbDataset, { workspaceSlug?: string; user?: { id: string } }>;
     update: Update<DbDataset, DatasetWhereUniqueInput>;
   };
   workspace: {
-    add: Add<
-      WorkspaceCreateInput & {
-        slug: string;
-        stripeCustomerId?: string | undefined;
-      }
-    >;
+    add: Add<WorkspaceCreateInput>;
     get: Get<DbWorkspaceWithType, WorkspaceWhereUniqueInput>;
     list: List<
       DbWorkspaceWithType,
       WorkspaceWhereInput & { user?: { id: string } }
     >;
     update: Update<DbWorkspaceWithType, WorkspaceWhereUniqueInput>;
+    delete: Delete<WorkspaceWhereUniqueInput>;
   };
   upload: {
     getUploadTargetHttp: (

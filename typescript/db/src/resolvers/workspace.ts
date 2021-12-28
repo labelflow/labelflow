@@ -1,46 +1,50 @@
-import { Prisma } from "@prisma/client";
-import Stripe from "stripe";
-
-import {
-  QueryWorkspaceArgs,
-  QueryWorkspacesArgs,
-  Membership,
-  MutationCreateWorkspaceArgs,
-  MutationUpdateWorkspaceArgs,
-  WorkspaceWhereUniqueInput,
-  MembershipRole,
-} from "@labelflow/graphql-types";
-
 import {
   Context,
+  DbWorkspace,
   DbWorkspaceWithType,
-  forbiddenWorkspaceSlugs,
-  isValidWorkspaceName,
   Repository,
 } from "@labelflow/common-resolvers";
-import slugify from "slugify";
+import {
+  Membership,
+  MembershipRole,
+  MutationCreateWorkspaceArgs,
+  MutationDeleteWorkspaceArgs,
+  MutationUpdateWorkspaceArgs,
+  QueryWorkspaceArgs,
+  QueryWorkspacesArgs,
+  WorkspaceWhereUniqueInput,
+} from "@labelflow/graphql-types";
+import { Prisma } from "@prisma/client";
+import { isNil } from "lodash/fp";
 import { getPrismaClient } from "../prisma-client";
+import { AuthorizationError } from "../repository/authorization-error";
 import { castObjectNullsToUndefined } from "../repository/utils";
+import { stripe } from "../utils";
 
-const stripe =
-  process.env.STRIPE_SECRET_KEY && process.env.STRIPE_COMMUNITY_PLAN_PRICE_ID
-    ? new Stripe(process.env.STRIPE_SECRET_KEY, {
-        apiVersion: "2020-08-27",
-      })
-    : null;
+const addTypename = <TData extends DbWorkspaceWithType | DbWorkspace>(
+  data: TData
+): TData & { __typename: "Workspace" } => {
+  return { ...data, __typename: "Workspace" };
+};
+
+function foundWorkspace<TData extends DbWorkspaceWithType | DbWorkspace>(
+  data: TData | null | undefined,
+  input: WorkspaceWhereUniqueInput
+): asserts data is NonNullable<TData> {
+  if (isNil(data)) {
+    const msg = `Couldn't find workspace from input "${JSON.stringify(input)}"`;
+    throw new Error(msg);
+  }
+}
 
 const getWorkspace = async (
   where: WorkspaceWhereUniqueInput,
   repository: Repository,
   user?: { id: string }
 ): Promise<DbWorkspaceWithType & { __typename: "Workspace" }> => {
-  const workspaceFromDb = await repository.workspace.get(where, user);
-  if (workspaceFromDb == null) {
-    throw new Error(
-      `Couldn't find workspace from input "${JSON.stringify(where)}"`
-    );
-  }
-  return { ...workspaceFromDb, __typename: "Workspace" };
+  const data = await repository.workspace.get(where, user);
+  foundWorkspace(data, where);
+  return addTypename(data);
 };
 
 const workspace = async (
@@ -50,18 +54,16 @@ const workspace = async (
 ): Promise<DbWorkspaceWithType> =>
   await getWorkspace(args.where, repository, user);
 
-const isWorkspaceSlugAlreadyTaken = async (
+const workspaceExists = async (
   _: any,
   args: QueryWorkspaceArgs,
   { repository, user }: Context
 ): Promise<boolean> => {
   try {
-    return (await repository.workspace.get(args.where, user)) != null;
+    const data = await repository.workspace.get(args.where, user);
+    return !isNil(data);
   } catch (error) {
-    if (
-      error instanceof Error &&
-      error.message.includes("User not authorized to access workspace")
-    ) {
+    if (error instanceof AuthorizationError) {
       return true;
     }
     throw error;
@@ -72,12 +74,13 @@ const workspaces = async (
   _: any,
   args: QueryWorkspacesArgs,
   { repository, user }: Context
-): Promise<DbWorkspaceWithType[]> =>
-  await repository.workspace.list(
+): Promise<DbWorkspaceWithType[]> => {
+  return await repository.workspace.list(
     { user, ...args.where },
     args.skip,
     args.first
   );
+};
 
 const createWorkspace = async (
   _: any,
@@ -87,9 +90,8 @@ const createWorkspace = async (
   if (typeof user?.id !== "string") {
     throw new Error("Couldn't create workspace: No user id");
   }
-  const userInDb = await (
-    await getPrismaClient()
-  ).user.findUnique({ where: { id: user.id } });
+  const db = await getPrismaClient();
+  const userInDb = await db.user.findUnique({ where: { id: user.id } });
 
   if (userInDb == null) {
     throw new Error(
@@ -97,54 +99,11 @@ const createWorkspace = async (
     );
   }
 
-  const slug = slugify(args.data.name, { lower: true });
-
-  if (slug.length <= 0) {
-    throw new Error(`Cannot create a workspace with an empty name.`);
-  }
-
-  if (!isValidWorkspaceName(args.data.name)) {
-    throw new Error(
-      `Cannot create a workspace with the name "${args.data.name}". This name contains invalid characters.`
-    );
-  }
-
-  if (forbiddenWorkspaceSlugs.includes(slug)) {
-    throw new Error(
-      `Cannot create a workspace with the slug "${slug}". This slug is reserved.`
-    );
-  }
-
-  let stripeCustomerId;
-  if (stripe) {
-    const { id } = await stripe.customers.create({
-      metadata: { slug, name: args.data.name },
-      name: args.data.name,
-    });
-
-    stripeCustomerId = id;
-
-    const freePlanPriceId = process.env.STRIPE_COMMUNITY_PLAN_PRICE_ID;
-
-    await stripe.subscriptions.create({
-      customer: id,
-      metadata: { slug },
-      items: [
-        {
-          price: freePlanPriceId,
-          quantity: 1,
-        },
-      ],
-    });
-  }
-
   const createdWorkspaceId = await repository.workspace.add(
     {
       id: args.data.id ?? undefined,
       name: args.data.name,
       image: args.data.image ?? undefined,
-      slug,
-      stripeCustomerId,
     },
     user
   );
@@ -158,22 +117,31 @@ const updateWorkspace = async (
   { repository, user }: Context
 ): Promise<DbWorkspaceWithType> => {
   // We need to get the id of the workspace, to keep track of it even if the slug changes
-  const currentWorkspace = await getWorkspace(args.where, repository, user);
-
-  // Update workspace
+  const { id } = await getWorkspace(args.where, repository, user);
   await repository.workspace.update(
     castObjectNullsToUndefined(args.where),
     { ...args.data },
     user
   );
+  return await getWorkspace({ id }, repository, user);
+};
 
-  return await getWorkspace({ id: currentWorkspace.id }, repository, user);
+const deleteWorkspace = async (
+  _: unknown,
+  args: MutationDeleteWorkspaceArgs,
+  { repository, user }: Context
+) => {
+  const { id } = await getWorkspace(args.where, repository, user);
+  await repository.workspace.delete(args.where, user);
+  const db = await getPrismaClient();
+  const data = await db.workspace.findUnique({ where: { id } });
+  foundWorkspace(data, args.where);
+  return addTypename(data);
 };
 
 const memberships = async (parent: DbWorkspaceWithType) => {
-  return (await (
-    await getPrismaClient()
-  ).membership.findMany({
+  const db = await getPrismaClient();
+  return (await db.membership.findMany({
     where: { workspaceSlug: parent.slug },
     orderBy: { createdAt: Prisma.SortOrder.asc },
     // needs to be casted to avoid conflicts between enums
@@ -184,9 +152,8 @@ const memberships = async (parent: DbWorkspaceWithType) => {
 };
 
 const datasets = async (parent: DbWorkspaceWithType) => {
-  return await (
-    await getPrismaClient()
-  ).dataset.findMany({
+  const db = await getPrismaClient();
+  return await db.dataset.findMany({
     where: { workspaceSlug: parent.slug },
     orderBy: { createdAt: Prisma.SortOrder.asc },
   });
@@ -197,7 +164,7 @@ const stripeCustomerPortalUrl = async (
   _args: any,
   { user, req }: Context
 ) => {
-  if (!stripe) {
+  if (!stripe.hasStripe) {
     return null;
   }
 
@@ -213,9 +180,8 @@ const stripeCustomerPortalUrl = async (
     );
   }
 
-  const membership = await (
-    await getPrismaClient()
-  ).membership.findUnique({
+  const db = await getPrismaClient();
+  const membership = await db.membership.findUnique({
     where: { workspaceSlug_userId: { userId: user?.id, workspaceSlug: slug } },
   });
 
@@ -225,23 +191,18 @@ const stripeCustomerPortalUrl = async (
     );
   }
 
-  const session = await stripe.billingPortal.sessions.create({
-    customer: stripeCustomerId,
-    return_url: `${
-      // @ts-ignore ts says it doesn't exist but it does
-      req?.headers.origin ?? "http://localhost:3000"
-    }/${slug}/settings`,
-  });
-
-  return session.url;
+  // headers.origin will actually exist if defined
+  const origin = (req?.headers as any).origin ?? "http://localhost:3000";
+  const returnUrl = `${origin}/${slug}/settings`;
+  return await stripe.createBillingPortalSession(stripeCustomerId, returnUrl);
 };
 
 export default {
   Query: {
     workspace,
     workspaces,
-    isWorkspaceSlugAlreadyTaken,
+    workspaceExists,
   },
-  Mutation: { createWorkspace, updateWorkspace },
+  Mutation: { createWorkspace, updateWorkspace, deleteWorkspace },
   Workspace: { memberships, datasets, stripeCustomerPortalUrl },
 };
