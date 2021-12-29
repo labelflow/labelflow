@@ -112,19 +112,24 @@ export const processImage: Repository["imageProcessing"]["processImage"] =
         putImage,
       });
 
+    const generatedThumbnailUrls = await Promise.all([
+      thumbnail20Url ?? (await generateThumbnailFromSize(20)),
+      thumbnail50Url ?? (await generateThumbnailFromSize(50)),
+      thumbnail100Url ?? (await generateThumbnailFromSize(100)),
+      thumbnail200Url ?? (await generateThumbnailFromSize(200)),
+      thumbnail500Url ?? (await generateThumbnailFromSize(500)),
+    ]);
+
     return {
       ...validateImageSize({
         width: width ?? image.bitmap.width,
         height: height ?? image.bitmap.height,
         mimetype: mimetype ?? image.getMIME(),
       }),
-      thumbnail20Url: thumbnail20Url ?? (await generateThumbnailFromSize(20)),
-      thumbnail50Url: thumbnail50Url ?? (await generateThumbnailFromSize(50)),
-      thumbnail100Url:
-        thumbnail100Url ?? (await generateThumbnailFromSize(100)),
-      thumbnail200Url:
-        thumbnail200Url ?? (await generateThumbnailFromSize(200)),
-      thumbnail500Url:
-        thumbnail500Url ?? (await generateThumbnailFromSize(500)),
+      thumbnail20Url: generatedThumbnailUrls[0],
+      thumbnail50Url: generatedThumbnailUrls[1],
+      thumbnail100Url: generatedThumbnailUrls[2],
+      thumbnail200Url: generatedThumbnailUrls[3],
+      thumbnail500Url: generatedThumbnailUrls[4],
     };
   };
