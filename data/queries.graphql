@@ -31,7 +31,7 @@ type Query {
 
   workspace(where: WorkspaceWhereUniqueInput!): Workspace!
   workspaces(first: Int, skip: Int, where: WorkspaceWhereInput): [Workspace!]!
-  workspaceExists(where: WorkspaceWhereUniqueInput!): Boolean!
+  isWorkspaceSlugAlreadyTaken(where: WorkspaceWhereInput!): Boolean!
 
   membership(where: MembershipWhereUniqueInput!): Membership!
   memberships(

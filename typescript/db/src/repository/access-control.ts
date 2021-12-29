@@ -7,40 +7,30 @@ import {
   MembershipWhereUniqueInput,
   UserWhereUniqueInput,
 } from "@labelflow/graphql-types";
-import { isNil } from "lodash/fp";
 import { getPrismaClient } from "../prisma-client";
-import { AuthenticationError } from "./authentication-error";
-import { AuthorizationError } from "./authorization-error";
 
-/**
- * Throws an error if user does not have access to workspace
- */
 export const checkUserAccessToWorkspace = async ({
   where,
   user,
 }: {
   where?: WorkspaceWhereUniqueInput;
   user?: { id: string };
-}): Promise<void> => {
-  if (isNil(user) || isNil(user?.id)) {
-    throw new AuthenticationError();
+}): Promise<boolean> => {
+  if (user?.id == null) {
+    throw new Error("User not authenticated");
   }
   const membership = await (
     await getPrismaClient()
   ).membership.findFirst({
     where: {
       userId: user.id,
-      workspace: {
-        id: where?.id ?? undefined,
-        slug: where?.slug ?? undefined,
-        // Prevent user from accessing deleted workspaces
-        deletedAt: { equals: null },
-      },
+      workspace: { id: where?.id ?? undefined, slug: where?.slug ?? undefined },
     },
   });
-  if (isNil(membership)) {
-    throw new AuthorizationError("workspace");
+  if (membership == null) {
+    throw new Error("User not authorized to access workspace");
   }
+  return membership != null;
 };
 
 export const checkUserAccessToDataset = async ({
@@ -51,7 +41,7 @@ export const checkUserAccessToDataset = async ({
   user?: { id: string };
 }): Promise<boolean> => {
   if (user?.id == null) {
-    throw new AuthenticationError();
+    throw new Error("User not authenticated");
   }
   const datasetCondition =
     where.id != null ? { id: where.id } : { slug: where.slugs?.slug };
@@ -65,7 +55,7 @@ export const checkUserAccessToDataset = async ({
       },
     })) != null;
   if (!hasAccessToDataset) {
-    throw new AuthorizationError("dataset");
+    throw new Error("User not authorized to access dataset");
   }
   return hasAccessToDataset;
 };
@@ -78,7 +68,7 @@ export const checkUserAccessToLabel = async ({
   user?: { id: string };
 }): Promise<boolean> => {
   if (user?.id == null) {
-    throw new AuthenticationError();
+    throw new Error("User not authenticated");
   }
   const hasAccessToLabel =
     (await (
@@ -94,7 +84,7 @@ export const checkUserAccessToLabel = async ({
       },
     })) != null;
   if (!hasAccessToLabel) {
-    throw new AuthorizationError("label");
+    throw new Error("User not authorized to access label");
   }
   return hasAccessToLabel;
 };
@@ -107,7 +97,7 @@ export const checkUserAccessToImage = async ({
   user?: { id: string };
 }): Promise<boolean> => {
   if (user?.id == null) {
-    throw new AuthenticationError();
+    throw new Error("User not authenticated");
   }
   const hasAccessToImage =
     (await (
@@ -123,7 +113,7 @@ export const checkUserAccessToImage = async ({
       },
     })) != null;
   if (!hasAccessToImage) {
-    throw new AuthorizationError("image");
+    throw new Error("User not authorized to access image");
   }
   return hasAccessToImage;
 };
@@ -136,7 +126,7 @@ export const checkUserAccessToLabelClass = async ({
   user?: { id: string };
 }): Promise<boolean> => {
   if (user?.id == null) {
-    throw new AuthenticationError();
+    throw new Error("User not authenticated");
   }
   const hasAccessToLabelClass =
     (await (
@@ -152,7 +142,7 @@ export const checkUserAccessToLabelClass = async ({
       },
     })) != null;
   if (!hasAccessToLabelClass) {
-    throw new AuthorizationError("label class");
+    throw new Error("User not authorized to access label class");
   }
   return hasAccessToLabelClass;
 };
@@ -165,7 +155,7 @@ export const checkUserAccessToMembership = async ({
   user?: { id: string };
 }): Promise<boolean> => {
   if (user?.id == null) {
-    throw new AuthenticationError();
+    throw new Error("User not authenticated");
   }
   // Has access to membership if the user belongs to a workspace that is linked to the membership
   const hasAccessToMembership =
@@ -180,7 +170,7 @@ export const checkUserAccessToMembership = async ({
       },
     })) != null;
   if (!hasAccessToMembership) {
-    throw new AuthorizationError("membership");
+    throw new Error("User not authorized to access membership");
   }
   return hasAccessToMembership;
 };
@@ -193,7 +183,7 @@ export const checkUserAccessToUser = async ({
   user?: { id: string };
 }): Promise<boolean> => {
   if (user?.id == null) {
-    throw new AuthenticationError();
+    throw new Error("User not authenticated");
   }
   // Has access to user if the current user shares a workspace with the user in the query
   const hasAccessToUser =
@@ -209,7 +199,7 @@ export const checkUserAccessToUser = async ({
       },
     })) != null;
   if (!hasAccessToUser) {
-    throw new AuthorizationError("user");
+    throw new Error("User not authorized to access user");
   }
   return hasAccessToUser;
 };

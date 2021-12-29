@@ -22,7 +22,7 @@ const IndexPage = () => {
     } else {
       router.replace({ pathname: "/website", query: router.query });
     }
-  }, [hasUserTriedApp, router]);
+  }, [hasUserTriedApp]);
 
   if (!hasUserTriedApp) {
     return <Website previewArticles={[]} />;

@@ -40,7 +40,6 @@
     "graphql": "15.5.1",
     "isomorphic-fetch": "3.0.0",
     "jimp": "0.16.1",
-    "lodash": "4.17.21",
     "memoize-one": "^5.2.1",
     "slugify": "^1.6.0",
     "stripe": "^8.184.0",

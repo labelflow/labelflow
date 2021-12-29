@@ -11,12 +11,6 @@
       "source.fixAll.eslint": true
     }
   },
-  "[typescriptreact]": {
-    "editor.formatOnSave": false,
-    "editor.codeActionsOnSave": {
-      "source.fixAll.eslint": true
-    }
-  },
   "eslint.workingDirectories": [{ "mode": "auto" }],
   "cSpell.words": [
     "Heatmap",

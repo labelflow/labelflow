@@ -1,18 +1,14 @@
+import { Prisma, WorkspacePlan, UserRole } from "@prisma/client";
 import {
   DbWorkspace,
   DbWorkspaceWithType,
-  getSlug,
-  PartialWithNullAllowed,
   Repository,
-  validWorkspaceName,
 } from "@labelflow/common-resolvers";
 import { WorkspaceType } from "@labelflow/graphql-types";
-import { Prisma, UserRole, WorkspacePlan } from "@prisma/client";
-import { isNil } from "lodash";
+import slugify from "slugify";
 import { getPrismaClient } from "../prisma-client";
-import { stripe } from "../utils";
-import { checkUserAccessToWorkspace } from "./access-control";
 import { castObjectNullsToUndefined } from "./utils";
+import { checkUserAccessToWorkspace } from "./access-control";
 
 const addTypeToWorkspace = (
   workspaceWithoutType: DbWorkspace
@@ -29,16 +25,13 @@ export const addWorkspace: Repository["workspace"]["add"] = async (
     throw new Error("Couldn't create workspace: No user id");
   }
   const plan = WorkspacePlan.Community;
-  const slug = getSlug(workspace.name);
-  validWorkspaceName(workspace.name, slug);
-  const stripeCustomerId = await stripe.tryCreateCustomer(workspace.name, slug);
-  const db = await getPrismaClient();
-  const createdWorkspace = await db.workspace.create({
+
+  const createdWorkspace = await (
+    await getPrismaClient()
+  ).workspace.create({
     data: castObjectNullsToUndefined({
       plan,
       ...workspace,
-      slug,
-      stripeCustomerId,
       memberships: {
         create: {
           user: { connect: { id: user?.id } },
@@ -54,18 +47,19 @@ export const getWorkspace: Repository["workspace"]["get"] = async (
   where,
   user
 ) => {
-  const db = await getPrismaClient();
-  const workspaceFromDb = await db.workspace.findUnique({
+  const workspaceFromDb = await (
+    await getPrismaClient()
+  ).workspace.findUnique({
     where: castObjectNullsToUndefined(where),
   });
-  if (isNil(workspaceFromDb) || !isNil(workspaceFromDb.deletedAt)) {
-    return undefined;
+  if (workspaceFromDb != null) {
+    await checkUserAccessToWorkspace({
+      user,
+      where,
+    });
+    return addTypeToWorkspace(workspaceFromDb);
   }
-  await checkUserAccessToWorkspace({
-    user,
-    where,
-  });
-  return addTypeToWorkspace(workspaceFromDb);
+  return workspaceFromDb;
 };
 
 export const listWorkspace: Repository["workspace"]["list"] = async (
@@ -73,32 +67,23 @@ export const listWorkspace: Repository["workspace"]["list"] = async (
   skip = undefined,
   first = undefined
 ) => {
-  if (isNil(where?.user?.id)) return [];
-  const db = await getPrismaClient();
-  const workspacesFromDb = await db.workspace.findMany({
-    skip: skip ?? undefined,
-    take: first ?? undefined,
-    orderBy: { createdAt: Prisma.SortOrder.asc },
-    where: {
-      memberships: { some: { userId: where?.user?.id ?? undefined } },
-      slug: where?.slug ?? undefined,
-      // Don't list deleted workspaces
-      deletedAt: { equals: null },
-    },
-  });
-  return workspacesFromDb.map(addTypeToWorkspace);
-};
-
-/**
- * Throws an error if the given where filter has a deletedAt property
- */
-const noDeleteUpdate = (
-  workspace: PartialWithNullAllowed<DbWorkspaceWithType>
-) => {
-  const hasDeletedAt = Object.keys(workspace).includes("deletedAt");
-  if (hasDeletedAt) {
-    throw new Error("Cannot update internal property deletedAt");
+  if (where?.user?.id == null) {
+    return [];
   }
+  const workspacesFromDb = await (
+    await getPrismaClient()
+  ).workspace.findMany(
+    castObjectNullsToUndefined({
+      skip: skip ?? undefined,
+      take: first ?? undefined,
+      orderBy: { createdAt: Prisma.SortOrder.asc },
+      where: {
+        memberships: { some: { userId: where?.user?.id } },
+        slug: where?.slug ?? undefined,
+      },
+    })
+  );
+  return workspacesFromDb.map(addTypeToWorkspace);
 };
 
 export const updateWorkspace: Repository["workspace"]["update"] = async (
@@ -106,51 +91,29 @@ export const updateWorkspace: Repository["workspace"]["update"] = async (
   workspace,
   user
 ) => {
-  noDeleteUpdate(workspace);
+  // Check if user has access to workspace, this will throw it it does not
   await checkUserAccessToWorkspace({ user, where });
+  // Update workspace
   const newNameAndSlugs =
     typeof workspace.name === "string"
       ? {
           name: workspace.name,
-          slug: getSlug(workspace.name),
+          slug: slugify(workspace.name, { lower: true }),
         }
       : // needed to make prisma happy with the types
         { name: undefined };
   try {
-    const db = await getPrismaClient();
-    await db.workspace.update({
+    await (
+      await getPrismaClient()
+    ).workspace.update({
       where: castObjectNullsToUndefined(where),
       data: castObjectNullsToUndefined({
         ...workspace,
         ...newNameAndSlugs,
-        deletedAt: undefined,
       }),
     });
     return true;
   } catch (e) {
     return false;
-  }
-};
-
-export const deleteWorkspace: Repository["workspace"]["delete"] = async (
-  where,
-  user
-) => {
-  const db = await getPrismaClient();
-  const data = await getWorkspace(where, user);
-  if (isNil(data)) {
-    throw new Error("Could not find workspace");
-  }
-  const { name, slug, stripeCustomerId } = data;
-  await db.workspace.update({
-    where: castObjectNullsToUndefined(where),
-    data: {
-      deletedAt: new Date().toISOString(),
-      name: `${name}-${data.id}`,
-      slug: `${slug}-${data.id}`,
-    },
-  });
-  if (stripeCustomerId) {
-    await stripe.tryDeleteCustomer(stripeCustomerId);
   }
 };

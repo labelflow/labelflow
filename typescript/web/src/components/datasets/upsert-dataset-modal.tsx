@@ -1,23 +1,24 @@
-import { gql, useLazyQuery, useMutation, useQuery } from "@apollo/client";
+import { gql, useMutation, useLazyQuery, useQuery } from "@apollo/client";
+import slugify from "slugify";
+import { useEffect, useState, useCallback, useRef } from "react";
+import debounce from "lodash/fp/debounce";
+
 import {
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalCloseButton,
+  ModalFooter,
   Button,
+  ModalHeader,
+  Heading,
+  ModalBody,
+  Input,
   FormControl,
   FormErrorMessage,
   FormLabel,
-  Heading,
-  Input,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
 } from "@chakra-ui/react";
-import { getSlug } from "@labelflow/common-resolvers";
-import debounce from "lodash/fp/debounce";
 import { useRouter } from "next/router";
-import { useCallback, useEffect, useRef, useState } from "react";
 
 const debounceTime = 200;
 
@@ -127,7 +128,7 @@ export const UpsertDatasetModal = ({
     // eslint-disable-next-line @typescript-eslint/no-shadow
     debounce(debounceTime, (nextName: string, workspaceSlug: string) => {
       return queryExistingDatasets({
-        variables: { slug: getSlug(nextName), workspaceSlug },
+        variables: { slug: slugify(nextName, { lower: true }), workspaceSlug },
       });
     })
   ).current;
@@ -142,7 +143,7 @@ export const UpsertDatasetModal = ({
       existingDataset?.searchDataset?.id != null &&
       !loadingExistingDatasets &&
       existingDataset?.searchDataset?.id !== datasetId &&
-      variablesExistingDatasets?.slug === getSlug(datasetName)
+      variablesExistingDatasets?.slug === slugify(datasetName, { lower: true })
     ) {
       setErrorMessage("This name is already taken");
     } else {

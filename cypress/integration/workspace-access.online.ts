@@ -14,7 +14,7 @@ describe("Online workspaces access (online)", () => {
     // Type a workspace name in the workspace creation modal
     cy.contains("Workspace Name").should("be.visible");
     cy.focused().type("Test workspace");
-    cy.get('[aria-label="create workspace button"]').click();
+    cy.get('[aria-label="Create workspace"]').click();
     // Check that we were redirected to the sign in modal
     cy.url().should("match", /modal-signin/);
     cy.contains("Sign in to LabelFlow").should("be.visible");
@@ -38,7 +38,7 @@ describe("Online workspaces access (online)", () => {
     // Click on create workspace in workspace creation modal
     cy.contains("Workspace Name").should("be.visible");
     cy.focused().type("Test workspace");
-    cy.get('[aria-label="create workspace button"]').click();
+    cy.get('[aria-label="Create workspace"]').click();
     cy.wait(420);
     // Check that we were redirected to the new workspace page
     cy.url().should("match", /test-workspace/);

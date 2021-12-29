@@ -1,10 +1,7 @@
 const NodePolyfillPlugin = require("node-polyfill-webpack-plugin")
 
 module.exports = {
-  stories: [
-    "../typescript/**/__stories__/*.tsx",
-    "../typescript/**/*.stories.tsx",
-  ],
+  stories: ["../typescript/**/__stories__/*.tsx"],
   core: {
     builder: "webpack5",
   },

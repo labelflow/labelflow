@@ -2,7 +2,6 @@ import {
   throwIfResolvesToNil,
   Repository,
   DbDataset,
-  getSlug,
 } from "@labelflow/common-resolvers";
 import { getDatabase } from "../database";
 import { addIdIfNil } from "./utils/add-id-if-nil";
@@ -68,16 +67,7 @@ export const updateDataset: Repository["dataset"]["update"] = async (
 };
 
 export const addDataset: Repository["dataset"]["add"] = async (dataset) => {
-  const db = await getDatabase();
-  const createdAt = new Date().toISOString();
-  return await db.dataset.add(
-    addIdIfNil({
-      ...dataset,
-      slug: getSlug(dataset.name),
-      createdAt,
-      updatedAt: createdAt,
-    })
-  );
+  return await (await getDatabase()).dataset.add(addIdIfNil(dataset));
 };
 
 export const listDataset: Repository["dataset"]["list"] = (_, skip, first) =>

@@ -1,5 +1,4 @@
-import { getSlug } from "@labelflow/common-resolvers";
-import { isEmpty } from "lodash/fp";
+import slugify from "slugify";
 import { Database } from "./types";
 
 // https://dexie.org/docs/Version/Version.stores()
@@ -33,10 +32,9 @@ export default [
     upgrade: (transaction: Dexie.Transaction) => {
       const db = transaction.db as Database;
       return db.dataset.toCollection().modify((dataset) => {
-        if (isEmpty(dataset.slug)) {
-          // Immutability is not working with the upgrade process
+        if (dataset.slug == null) {
           // eslint-disable-next-line no-param-reassign
-          dataset.slug = getSlug(dataset.name);
+          dataset.slug = slugify(dataset.name, { lower: true });
         }
         return dataset;
       });
