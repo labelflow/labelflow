@@ -44,7 +44,7 @@ const thumbnailResolver =
   async (dbImage: DbImage): Promise<string> => {
     const thumbnailProp = `thumbnail${size}Url`;
     if (thumbnailProp in dbImage) {
-      return dbImage[thumbnailProp];
+      return dbImage[thumbnailProp as keyof DbImage];
     }
     return dbImage.url ?? dbImage.externalUrl;
   };
