@@ -1,10 +1,11 @@
 import { createPrismaClient } from "@labelflow/db/src/prisma-client";
+import { filterNil, getEnv } from "@labelflow/utils";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { PrismaClient as PrismaClientClass } from "@prisma/client";
 import { captureException } from "@sentry/nextjs";
-import { isEmpty } from "lodash/fp";
+import { isEmpty, isNil } from "lodash/fp";
 import NextAuth, { Profile } from "next-auth";
-import { OAuthConfig } from "next-auth/providers";
+import { OAuthConfig, OAuthUserConfig, Provider } from "next-auth/providers";
 import EmailProvider from "next-auth/providers/email";
 import GitHubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
@@ -30,24 +31,66 @@ if (!globalThis.prismaInstance) {
 }
 globalThis.prismaInstanceIsConnected = true;
 
+const getEmailProvider = () => {
+  const server = process.env.EMAIL_SERVER;
+  if (isNil(server)) return undefined;
+  const from = getEnv("EMAIL_FROM");
+  const sendVerificationRequest = sendVerificationRequestFromPrisma(
+    globalThis.prismaInstance
+  );
+  return EmailProvider({ server, from, sendVerificationRequest });
+};
+
+const getOAuthConfig = <TProfile = Profile>(
+  idVar: string,
+  secretVar: string
+): OAuthUserConfig<TProfile> | undefined => {
+  const clientId = process.env[idVar];
+  if (isNil(clientId)) return undefined;
+  const clientSecret = getEnv(secretVar);
+  return { clientId, clientSecret };
+};
+
+const getOAuthProvider = <TProfile = Profile>(
+  idVar: string,
+  secretVar: string,
+  factory: (config: OAuthUserConfig<TProfile>) => OAuthConfig<TProfile>
+): OAuthConfig<TProfile> | undefined => {
+  const config = getOAuthConfig<TProfile>(idVar, secretVar);
+  if (isNil(config)) return undefined;
+  return factory(config);
+};
+
+const getGoogleProvider = () => {
+  return getOAuthProvider(
+    "GOOGLE_CLIENT_ID",
+    "GOOGLE_CLIENT_SECRET",
+    GoogleProvider
+  );
+};
+
+const getGitHubProvider = () => {
+  return getOAuthProvider(
+    "GOOGLE_CLIENT_ID",
+    "GOOGLE_CLIENT_SECRET",
+    GitHubProvider
+  );
+};
+
+const getProviders = (): Provider[] => {
+  const providers = filterNil([
+    getEmailProvider(),
+    getGoogleProvider(),
+    getGitHubProvider(),
+  ]);
+  if (process.env.NODE_ENV === "production" && isEmpty(providers)) {
+    throw new Error("No authentication provider has been configured");
+  }
+  return providers;
+};
+
 export default NextAuth({
-  providers: [
-    EmailProvider({
-      server: process.env.EMAIL_SERVER,
-      from: process.env.EMAIL_FROM,
-      sendVerificationRequest: sendVerificationRequestFromPrisma(
-        globalThis.prismaInstance
-      ),
-    }),
-    GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID as string,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
-    }) as OAuthConfig<Profile>,
-    GitHubProvider({
-      clientId: process.env.GITHUB_CLIENT_ID,
-      clientSecret: process.env.GITHUB_CLIENT_SECRET,
-    }),
-  ],
+  providers: getProviders(),
   adapter: PrismaAdapter(globalThis.prismaInstance),
   secret: process.env.JWT_SECRET,
   session: { strategy: "jwt" },
