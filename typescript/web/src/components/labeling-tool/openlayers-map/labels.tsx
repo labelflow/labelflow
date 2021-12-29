@@ -75,8 +75,9 @@ export const Labels = ({
       <olLayerVector>
         <olSourceVector ref={sourceVectorLabelsRef}>
           {labels
-            .filter(({ type }: Label) =>
-              [LabelType.Box, LabelType.Polygon].includes(type)
+            .filter(
+              ({ type }: Label) =>
+                type === LabelType.Box || type === LabelType.Polygon
             )
             .map(({ id, labelClass, geometry }: Label) => {
               const isSelected = id === selectedLabelId;

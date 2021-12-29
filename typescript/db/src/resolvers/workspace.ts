@@ -14,12 +14,12 @@ import {
   QueryWorkspacesArgs,
   WorkspaceWhereUniqueInput,
 } from "@labelflow/graphql-types";
-import { Prisma } from "@prisma/client";
 import { isNil } from "lodash/fp";
 import { getPrismaClient } from "../prisma-client";
 import { AuthorizationError } from "../repository/authorization-error";
 import { castObjectNullsToUndefined } from "../repository/utils";
 import { stripe } from "../utils";
+import { Prisma } from "../__generated__";
 
 const addTypename = <TData extends DbWorkspaceWithType | DbWorkspace>(
   data: TData

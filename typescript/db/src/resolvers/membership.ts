@@ -10,7 +10,7 @@ import {
   QueryMembershipArgs,
   QueryMembershipsArgs,
 } from "@labelflow/graphql-types";
-import { Prisma } from "@prisma/client";
+import { Prisma } from "../__generated__";
 import {
   checkUserAccessToMembership,
   checkUserAccessToWorkspace,

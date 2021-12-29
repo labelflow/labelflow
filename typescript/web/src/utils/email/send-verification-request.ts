@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "@labelflow/db";
 import { createTransport } from "nodemailer";
 import { generateHtml as generateHtmlSignin } from "./templates/sign-in";
 import { generateHtml as generateHtmlSignup } from "./templates/sign-up";

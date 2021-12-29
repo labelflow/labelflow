@@ -11,7 +11,7 @@ import {
 } from "@labelflow/graphql-types";
 import { getPrismaClient } from "../../prisma-client";
 import { client, user } from "../../dev/apollo-client";
-import { WorkspacePlan } from ".prisma/client";
+import { WorkspacePlan } from "../../__generated__";
 
 // @ts-ignore
 fetch.disableFetchMocks();

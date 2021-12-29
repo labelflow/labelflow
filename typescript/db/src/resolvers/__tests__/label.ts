@@ -10,7 +10,7 @@ import {
 import { processImage } from "../../repository/image-processing";
 import { getPrismaClient } from "../../prisma-client";
 import { client, user } from "../../dev/apollo-client";
-import { LabelType } from ".prisma/client";
+import { LabelType } from "../../__generated__";
 
 jest.mock("../../repository/image-processing");
 const mockedProcessImage = processImage as jest.Mock;

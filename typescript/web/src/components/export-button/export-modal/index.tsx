@@ -144,7 +144,9 @@ export const ExportModal = ({
 
   const [isExportRunning, setIsExportRunning] = useState(false);
   const [isOptionsModalOpen, setIsOptionsModalOpen] = useState(false);
-  const [exportFormat, setExportFormat] = useState(ExportFormat.Coco);
+  const [exportFormat, setExportFormat] = useState<ExportFormat>(
+    ExportFormat.Coco
+  );
   const exportFunctionGenerator = useCallback(
     async (options: ExportOptions) =>
       await exportDataset({

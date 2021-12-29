@@ -29,13 +29,14 @@ export type CreateIogLabelInput = {
   labelClassId?: Maybe<Scalars['ID']>;
 };
 
-export enum CurrentUserCanAcceptInvitation {
-  Yes = 'Yes',
-  AlreadyAccepted = 'AlreadyAccepted',
-  AlreadyMemberOfTheWorkspace = 'AlreadyMemberOfTheWorkspace',
-  AlreadyDeclined = 'AlreadyDeclined'
-}
+export const CurrentUserCanAcceptInvitation = {
+  Yes: 'Yes',
+  AlreadyAccepted: 'AlreadyAccepted',
+  AlreadyMemberOfTheWorkspace: 'AlreadyMemberOfTheWorkspace',
+  AlreadyDeclined: 'AlreadyDeclined'
+} as const;
 
+export type CurrentUserCanAcceptInvitation = typeof CurrentUserCanAcceptInvitation[keyof typeof CurrentUserCanAcceptInvitation];
 export type Dataset = {
   __typename?: 'Dataset';
   id: Scalars['ID'];
@@ -97,11 +98,12 @@ export type ExampleCreateInput = {
   id?: Maybe<Scalars['ID']>;
 };
 
-export enum ExampleOrderByInput {
-  IdAsc = 'id_ASC',
-  IdDesc = 'id_DESC'
-}
+export const ExampleOrderByInput = {
+  IdAsc: 'id_ASC',
+  IdDesc: 'id_DESC'
+} as const;
 
+export type ExampleOrderByInput = typeof ExampleOrderByInput[keyof typeof ExampleOrderByInput];
 export type ExampleWhereInput = {
   id?: Maybe<Scalars['ID']>;
 };
@@ -110,11 +112,12 @@ export type ExampleWhereUniqueInput = {
   id: Scalars['ID'];
 };
 
-export enum ExportFormat {
-  Yolo = 'YOLO',
-  Coco = 'COCO'
-}
+export const ExportFormat = {
+  Yolo: 'YOLO',
+  Coco: 'COCO'
+} as const;
 
+export type ExportFormat = typeof ExportFormat[keyof typeof ExportFormat];
 export type ExportOptions = {
   coco?: Maybe<ExportOptionsCoco>;
   yolo?: Maybe<ExportOptionsYolo>;
@@ -249,12 +252,13 @@ export type ImportStatus = {
   error?: Maybe<Scalars['String']>;
 };
 
-export enum InvitationResult {
-  Sent = 'Sent',
-  Error = 'Error',
-  UserAlreadyIn = 'UserAlreadyIn'
-}
+export const InvitationResult = {
+  Sent: 'Sent',
+  Error: 'Error',
+  UserAlreadyIn: 'UserAlreadyIn'
+} as const;
 
+export type InvitationResult = typeof InvitationResult[keyof typeof InvitationResult];
 export type InviteMemberInput = {
   email: Scalars['String'];
   role: MembershipRole;
@@ -330,12 +334,13 @@ export type LabelCreateInput = {
   smartToolInput?: Maybe<Scalars['JSON']>;
 };
 
-export enum LabelType {
-  Classification = 'Classification',
-  Polygon = 'Polygon',
-  Box = 'Box'
-}
+export const LabelType = {
+  Classification: 'Classification',
+  Polygon: 'Polygon',
+  Box: 'Box'
+} as const;
 
+export type LabelType = typeof LabelType[keyof typeof LabelType];
 export type LabelUpdateInput = {
   labelClassId?: Maybe<Scalars['ID']>;
   geometry?: Maybe<GeometryInput>;
@@ -378,18 +383,20 @@ export type MembershipCreateInput = {
   workspaceSlug: Scalars['String'];
 };
 
-export enum MembershipRole {
-  Owner = 'Owner',
-  Admin = 'Admin',
-  Member = 'Member'
-}
+export const MembershipRole = {
+  Owner: 'Owner',
+  Admin: 'Admin',
+  Member: 'Member'
+} as const;
 
-export enum MembershipStatus {
-  Sent = 'Sent',
-  Active = 'Active',
-  Declined = 'Declined'
-}
+export type MembershipRole = typeof MembershipRole[keyof typeof MembershipRole];
+export const MembershipStatus = {
+  Sent: 'Sent',
+  Active: 'Active',
+  Declined: 'Declined'
+} as const;
 
+export type MembershipStatus = typeof MembershipStatus[keyof typeof MembershipStatus];
 export type MembershipUpdateInput = {
   role?: Maybe<MembershipRole>;
 };
@@ -819,23 +826,25 @@ export type WorkspaceCreateInput = {
   image?: Maybe<Scalars['String']>;
 };
 
-export enum WorkspacePlan {
-  Community = 'Community',
-  Starter = 'Starter',
-  Pro = 'Pro',
-  Enterprise = 'Enterprise'
-}
+export const WorkspacePlan = {
+  Community: 'Community',
+  Starter: 'Starter',
+  Pro: 'Pro',
+  Enterprise: 'Enterprise'
+} as const;
 
+export type WorkspacePlan = typeof WorkspacePlan[keyof typeof WorkspacePlan];
 export type WorkspaceSlugAndDatasetSlug = {
   slug: Scalars['String'];
   workspaceSlug: Scalars['String'];
 };
 
-export enum WorkspaceType {
-  Local = 'Local',
-  Online = 'Online'
-}
+export const WorkspaceType = {
+  Local: 'Local',
+  Online: 'Online'
+} as const;
 
+export type WorkspaceType = typeof WorkspaceType[keyof typeof WorkspaceType];
 export type WorkspaceUpdateInput = {
   name?: Maybe<Scalars['String']>;
   image?: Maybe<Scalars['String']>;
