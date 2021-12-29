@@ -163,7 +163,7 @@ export const UpsertDatasetModal = ({
         }
 
         onClose();
-      } catch (error) {
+      } catch (error: any) {
         setErrorMessage(error.message);
       }
     },

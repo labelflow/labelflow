@@ -8,7 +8,7 @@ import type {
   QueryLabelClassArgs,
   QueryLabelClassesArgs,
 } from "@labelflow/graphql-types";
-import { getNextClassColor } from "@labelflow/utils/class-color-generator";
+import { getNextClassColor } from "@labelflow/utils";
 import { Context, DbLabelClass } from "./types";
 import { throwIfResolvesToNil } from "./utils/throw-if-resolves-to-nil";
 
@@ -42,6 +42,25 @@ const labelClasses = async (
     args?.skip,
     args?.first
   );
+};
+
+const labelClassExists = async (
+  _: any,
+  args: QueryLabelClassArgs,
+  { repository, user }: Context
+): Promise<Boolean> => {
+  try {
+    const data = await repository.labelClass.list({ ...args?.where, user });
+    return data.length > 0;
+  } catch (error) {
+    if (
+      error instanceof Error &&
+      error.message.includes("User not authorized to access workspace")
+    ) {
+      return true;
+    }
+    throw error;
+  }
 };
 
 // Mutations
@@ -174,19 +193,19 @@ const deleteLabelClass = async (
   args: MutationDeleteLabelClassArgs,
   { repository, user }: Context
 ) => {
-  const labelToDelete = await throwIfResolvesToNil(
+  const labelClassToDelete = await throwIfResolvesToNil(
     "No labelClass with such id",
     repository.labelClass.get
   )({ id: args.where.id }, user);
 
-  await repository.labelClass.delete({ id: labelToDelete.id }, user);
+  await repository.labelClass.delete({ id: labelClassToDelete.id }, user);
   const labelClassesOfDataset = await repository.labelClass.list({
-    datasetId: labelToDelete?.datasetId,
+    datasetId: labelClassToDelete?.datasetId,
     user,
   });
   await Promise.all(
     labelClassesOfDataset.map(async (labelClassOfDataset) => {
-      if (labelClassOfDataset.index > labelToDelete.index) {
+      if (labelClassOfDataset.index > labelClassToDelete.index) {
         await repository.labelClass.update(
           { id: labelClassOfDataset.id },
           {
@@ -198,7 +217,7 @@ const deleteLabelClass = async (
       }
     })
   );
-  return labelToDelete;
+  return labelClassToDelete;
 };
 
 const labelClassesAggregates = (parent: any) => {
@@ -237,6 +256,7 @@ export default {
     labelClass,
     labelClasses,
     labelClassesAggregates,
+    labelClassExists,
   },
 
   Mutation: {

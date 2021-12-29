@@ -1,9 +1,6 @@
 import { gql, useApolloClient, useQuery } from "@apollo/client";
 import { Label, LabelType } from "@labelflow/graphql-types";
-import {
-  getNextClassColor,
-  LABEL_CLASS_COLOR_PALETTE,
-} from "@labelflow/utils/class-color-generator";
+import { getNextClassColor, LABEL_CLASS_COLOR_PALETTE } from "@labelflow/utils";
 import { useRouter } from "next/router";
 import GeoJSON, { GeoJSONPolygon } from "ol/format/GeoJSON";
 import { Polygon } from "ol/geom";

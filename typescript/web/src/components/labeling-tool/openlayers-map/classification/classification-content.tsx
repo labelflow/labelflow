@@ -1,10 +1,7 @@
 import { gql, useApolloClient, useQuery } from "@apollo/client";
 import { Box, HStack } from "@chakra-ui/react";
 import { Label, LabelType } from "@labelflow/graphql-types";
-import {
-  getNextClassColor,
-  LABEL_CLASS_COLOR_PALETTE,
-} from "@labelflow/utils/class-color-generator";
+import { getNextClassColor, LABEL_CLASS_COLOR_PALETTE } from "@labelflow/utils";
 import { useRouter } from "next/router";
 import React, { forwardRef, useCallback } from "react";
 import { Tools, useLabelingStore } from "../../../../connectors/labeling-state";

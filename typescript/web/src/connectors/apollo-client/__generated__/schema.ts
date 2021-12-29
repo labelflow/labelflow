@@ -261,6 +261,7 @@ export const typeDefs = gql`
     color: ColorHex!
     labels: [Label!]!
     dataset: Dataset!
+    labelsAggregates: LabelsAggregates!
   }
 
   input LabelClassCreateInput {
@@ -281,6 +282,7 @@ export const typeDefs = gql`
 
   input LabelClassWhereInput {
     datasetId: ID
+    name: String
   }
 
   input LabelClassWhereUniqueInput {
@@ -413,6 +415,7 @@ export const typeDefs = gql`
     labelClass(where: LabelClassWhereUniqueInput!): LabelClass!
     labelClasses(where: LabelClassWhereInput, first: Int, skip: Int): [LabelClass!]!
     labelClassesAggregates: LabelClassesAggregates!
+    labelClassExists(where: LabelClassWhereInput!): Boolean!
     labelsAggregates: LabelsAggregates!
     label(where: LabelWhereUniqueInput!): Label!
     labels(where: LabelWhereInput, first: Int, skip: Int): [Label!]!

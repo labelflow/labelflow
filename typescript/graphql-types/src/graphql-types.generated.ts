@@ -288,6 +288,7 @@ export type LabelClass = {
   color: Scalars['ColorHex'];
   labels: Array<Label>;
   dataset: Dataset;
+  labelsAggregates: LabelsAggregates;
 };
 
 export type LabelClassCreateInput = {
@@ -308,6 +309,7 @@ export type LabelClassUpdateInput = {
 
 export type LabelClassWhereInput = {
   datasetId?: Maybe<Scalars['ID']>;
+  name?: Maybe<Scalars['String']>;
 };
 
 export type LabelClassWhereUniqueInput = {
@@ -599,6 +601,7 @@ export type Query = {
   labelClass: LabelClass;
   labelClasses: Array<LabelClass>;
   labelClassesAggregates: LabelClassesAggregates;
+  labelClassExists: Scalars['Boolean'];
   labelsAggregates: LabelsAggregates;
   label: Label;
   labels: Array<Label>;
@@ -651,6 +654,11 @@ export type QueryLabelClassesArgs = {
   where?: Maybe<LabelClassWhereInput>;
   first?: Maybe<Scalars['Int']>;
   skip?: Maybe<Scalars['Int']>;
+};
+
+
+export type QueryLabelClassExistsArgs = {
+  where: LabelClassWhereInput;
 };
 
 
@@ -1180,6 +1188,7 @@ export type LabelClassResolvers<ContextType = any, ParentType extends ResolversP
   color?: Resolver<ResolversTypes['ColorHex'], ParentType, ContextType>;
   labels?: Resolver<Array<ResolversTypes['Label']>, ParentType, ContextType>;
   dataset?: Resolver<ResolversTypes['Dataset'], ParentType, ContextType>;
+  labelsAggregates?: Resolver<ResolversTypes['LabelsAggregates'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1250,6 +1259,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   labelClass?: Resolver<ResolversTypes['LabelClass'], ParentType, ContextType, RequireFields<QueryLabelClassArgs, 'where'>>;
   labelClasses?: Resolver<Array<ResolversTypes['LabelClass']>, ParentType, ContextType, RequireFields<QueryLabelClassesArgs, never>>;
   labelClassesAggregates?: Resolver<ResolversTypes['LabelClassesAggregates'], ParentType, ContextType>;
+  labelClassExists?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<QueryLabelClassExistsArgs, 'where'>>;
   labelsAggregates?: Resolver<ResolversTypes['LabelsAggregates'], ParentType, ContextType>;
   label?: Resolver<ResolversTypes['Label'], ParentType, ContextType, RequireFields<QueryLabelArgs, 'where'>>;
   labels?: Resolver<Array<ResolversTypes['Label']>, ParentType, ContextType, RequireFields<QueryLabelsArgs, never>>;

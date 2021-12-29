@@ -1,10 +1,9 @@
-import { render, screen, fireEvent } from "@testing-library/react";
 import { ApolloProvider } from "@apollo/client";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { PropsWithChildren } from "react";
-
 import { client } from "../../../connectors/apollo-client/schema-client";
 import { setupTestsWithLocalDatabase } from "../../../utils/setup-local-db-tests";
-import { DeleteLabelClassModal } from "../delete-class-modal";
+import { TestComponent } from "../delete-label-class-modal.fixtures";
 
 jest.mock("../../../connectors/apollo-client/schema-client", () => {
   const original = jest.requireActual(
@@ -26,41 +25,37 @@ const Wrapper = ({ children }: PropsWithChildren<{}>) => (
 
 setupTestsWithLocalDatabase();
 
-const renderModal = (props = {}) => {
-  return render(
-    <DeleteLabelClassModal datasetId="some id" isOpen {...props} />,
-    {
-      wrapper: Wrapper,
-    }
-  );
+const setDeleteClassId = jest.fn();
+
+const renderModal = () => {
+  render(<TestComponent setDeleteClassId={setDeleteClassId} />, {
+    wrapper: Wrapper,
+  });
 };
 
 describe("Class delete modal tests", () => {
   beforeEach(() => {
-    jest.resetAllMocks();
+    setDeleteClassId.mockReset();
+    (client.mutate as jest.Mock).mockReset();
   });
 
-  test("should delete a class when the button is clicked", async () => {
-    const onClose = jest.fn();
-    renderModal({ onClose, labelClassId: "Toto" });
-
-    fireEvent.click(screen.getByLabelText(/Confirm deleting class/i));
-
-    expect(onClose).toHaveBeenCalled();
+  test("should delete a class when confirm is clicked", async () => {
+    renderModal();
+    const confirmButton = screen.getByLabelText(/Confirm delete label class/);
+    fireEvent.click(confirmButton);
+    expect(setDeleteClassId).toHaveBeenCalledWith(undefined);
     expect(client.mutate).toHaveBeenCalledWith(
       expect.objectContaining({
-        variables: { id: "Toto" },
+        variables: { id: "2" },
       })
     );
   });
 
-  test("shouldn't delete a class when the cancel is clicked", async () => {
-    const onClose = jest.fn();
-    renderModal({ onClose, labelClassId: "Toto" });
-
-    fireEvent.click(screen.getByLabelText(/Cancel delete/i));
-
-    expect(onClose).toHaveBeenCalled();
-    expect(client.mutate).toHaveBeenCalledTimes(0);
+  test("shouldn't delete a class when cancel is clicked", async () => {
+    renderModal();
+    const cancelButton = screen.getByLabelText(/Cancel delete label class/);
+    fireEvent.click(cancelButton);
+    expect(setDeleteClassId).toHaveBeenCalledWith(undefined);
+    expect(client.mutate).not.toHaveBeenCalled();
   });
 });

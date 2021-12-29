@@ -65,6 +65,7 @@ model LabelClass {
   datasetId String   @db.Uuid
   dataset   Dataset  @relation(fields: [datasetId], references: [id], onDelete: Cascade)
   labels    Label[]
+  @@index([name, datasetId])
 }
 
 model Dataset {
