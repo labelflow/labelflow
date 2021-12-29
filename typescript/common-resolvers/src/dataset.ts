@@ -179,14 +179,13 @@ const createDemoDataset = async (
   if (!isNil(existing)) {
     return { ...existing, __typename: "Dataset" };
   }
+  await repository.dataset.add({ ...tutorialDatasets[0] }, user);
 
   const workspaceId = await getWorkspaceIdOfDataset({
-    repository,
     datasetId: tutorialDatasets[0].id,
+    repository,
     user,
   });
-
-  await repository.dataset.add({ ...tutorialDatasets[0] }, user);
 
   await Promise.all(
     tutorialImages.map(async (image, index) => {
