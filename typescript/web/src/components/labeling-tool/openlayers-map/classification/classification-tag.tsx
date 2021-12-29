@@ -28,7 +28,7 @@ export const ClassificationTag = ({
   labelClasses: LabelClassItem[];
   selectedLabelId: string | null;
   setSelectedLabelId: (labelId: string | null) => void;
-  client: ApolloClient<any>;
+  client: ApolloClient<object>;
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const { perform } = useUndoStore();

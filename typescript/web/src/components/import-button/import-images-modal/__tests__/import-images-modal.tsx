@@ -109,16 +109,6 @@ test("should display the number of valid images", async () => {
   ).not.toBeInTheDocument();
 });
 
-test("should update completed number as valid images are uploaded", async () => {
-  await renderModalAndImport();
-
-  await waitFor(() =>
-    expect(screen.getByText(/Completed 1 of 2 items/i)).toBeDefined()
-  );
-
-  await ensuresUploadsAreFinished();
-});
-
 test("should display an indicator when upload succeed", async () => {
   await renderModalAndImport(files.slice(0, 1));
 

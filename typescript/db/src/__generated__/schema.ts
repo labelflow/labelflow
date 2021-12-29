@@ -166,6 +166,30 @@ export const typeDefs = [
     metadata: JSON
   }
 
+  input ImageCreateManyInput {
+    images: [ImageCreateManySingleInput!]!
+    datasetId: ID!
+  }
+
+  input ImageCreateManySingleInput {
+    id: ID
+    createdAt: DateTime
+    name: String
+    path: String
+    mimetype: String
+    height: Int
+    width: Int
+    file: Upload
+    url: String
+    externalUrl: String
+    noThumbnails: Boolean
+    thumbnail20Url: String
+    thumbnail50Url: String
+    thumbnail100Url: String
+    thumbnail200Url: String
+    thumbnail500Url: String
+  }
+
   input ImageUpdateInput {
     thumbnail20Url: String
     thumbnail50Url: String
@@ -348,6 +372,7 @@ export const typeDefs = [
   type Mutation {
     createExample(data: ExampleCreateInput!): Example
     createImage(data: ImageCreateInput!): Image
+    createManyImages(data: ImageCreateManyInput!): [Image!]!
     getUploadTarget(data: UploadTargetInput!): UploadTarget!
     updateImage(where: ImageWhereUniqueInput!, data: ImageUpdateInput!): Image
     deleteImage(where: ImageWhereUniqueInput!): Image
@@ -358,10 +383,10 @@ export const typeDefs = [
     updateLabelClass(where: LabelClassWhereUniqueInput!, data: LabelClassUpdateInput!): LabelClass
     reorderLabelClass(where: LabelClassWhereUniqueInput!, data: LabelClassReorderInput!): LabelClass
     deleteLabelClass(where: LabelClassWhereUniqueInput!): LabelClass
-    createDataset(data: DatasetCreateInput!): Dataset
-    createDemoDataset: Dataset
     updateIogLabel(data: UpdateIogInput!): Label
     createIogLabel(data: CreateIogLabelInput!): Label
+    createDataset(data: DatasetCreateInput!): Dataset
+    createDemoDataset: Dataset
     updateDataset(where: DatasetWhereUniqueInput!, data: DatasetUpdateInput!): Dataset
     deleteDataset(where: DatasetWhereUniqueInput!): Dataset
     importDataset(where: DatasetWhereUniqueInput!, data: DatasetImportInput!): ImportStatus

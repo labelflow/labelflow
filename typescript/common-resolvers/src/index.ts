@@ -30,7 +30,7 @@ export {
   jsonToDataUri,
   dataUriToJson,
 } from "./export/format-coco/json-to-data-uri";
-export { getImageEntityFromMutationArgs } from "./image";
+export { importAndProcessImage } from "./image/import-and-process-image";
 
 export * from "./types";
 export * from "./export/format-coco/coco-core/types";

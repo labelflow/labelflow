@@ -16,7 +16,8 @@ import {
   tutorialLabelClasses,
   tutorialLabels,
 } from "./data/dataset-tutorial";
-import { getImageEntityFromMutationArgs } from "./image";
+import { getWorkspaceIdOfDataset } from "./image/get-workspace-id-of-dataset";
+import { importAndProcessImage } from "./image/import-and-process-image";
 import { Context, DbDataset, Repository } from "./types";
 import { getSlug } from "./utils";
 
@@ -169,6 +170,8 @@ const createDemoDataset = async (
   { repository, req, user }: Context
 ): Promise<DbDataset> => {
   const { slug, workspaceSlug } = tutorialDatasets[0];
+  const now = new Date();
+
   const existing = await repository.dataset.get(
     { slugs: { slug, workspaceSlug } },
     user
@@ -176,21 +179,27 @@ const createDemoDataset = async (
   if (!isNil(existing)) {
     return { ...existing, __typename: "Dataset" };
   }
-
   await repository.dataset.add({ ...tutorialDatasets[0] }, user);
-  const now = new Date();
+
+  const workspaceId = await getWorkspaceIdOfDataset({
+    datasetId: tutorialDatasets[0].id,
+    repository,
+    user,
+  });
+
   await Promise.all(
     tutorialImages.map(async (image, index) => {
-      const imageEntity = await getImageEntityFromMutationArgs(
+      const imageEntity = await importAndProcessImage(
         {
-          ...image,
-          noThumbnails: true,
-          createdAt: add(now, { seconds: index }).toISOString(),
-          name: image.url.match(/\/static\/img\/(.*?)$/)?.[1],
+          image: {
+            ...image,
+            noThumbnails: true,
+            createdAt: add(now, { seconds: index }).toISOString(),
+            name: image.url.match(/\/static\/img\/(.*?)$/)?.[1],
+          },
+          workspaceId,
         },
-        repository,
-        user,
-        req
+        { repository, req }
       );
       return await repository.image.add(imageEntity, user);
     })
