@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { isEmpty } from "lodash/fp";
 import {
   Heading,
@@ -9,28 +9,10 @@ import {
 } from "@chakra-ui/react";
 import { useApolloClient, useQuery, gql } from "@apollo/client";
 import { useRouter } from "next/router";
-
 import { UrlList } from "./url-list";
 import { UrlStatuses } from "./url-statuses";
 import { DroppedUrl, UploadStatuses } from "../types";
-
-const createImageFromUrlMutation = gql`
-  mutation createImageMutation(
-    $externalUrl: String!
-    $createdAt: DateTime
-    $datasetId: ID!
-  ) {
-    createImage(
-      data: {
-        externalUrl: $externalUrl
-        createdAt: $createdAt
-        datasetId: $datasetId
-      }
-    ) {
-      id
-    }
-  }
-`;
+import { importUrls } from "./import-urls";
 
 const getDataset = gql`
   query getDataset($slug: String!, $workspaceSlug: String!) {
@@ -69,49 +51,27 @@ export const ImportImagesModalUrlList = ({
 
   const datasetId = datasetResult?.dataset.id;
 
+  const handleImport = useCallback(
+    async (urlsToImport: DroppedUrl[]) => {
+      onUploadStart();
+
+      await importUrls({
+        urls: urlsToImport,
+        apolloClient,
+        datasetId,
+        setUploadStatuses,
+      });
+
+      onUploadEnd();
+    },
+    [apolloClient, datasetId, setUploadStatuses, onUploadStart, onUploadEnd]
+  );
+
   useEffect(() => {
     if (isEmpty(urls)) return;
     if (!datasetId) return;
 
-    const createImages = async () => {
-      const now = new Date();
-      await Promise.all(
-        urls
-          .filter((url) => isEmpty(url.errors))
-          .map(async (acceptedUrl, index) => {
-            try {
-              const createdAt = new Date();
-              createdAt.setTime(now.getTime() + index);
-              await apolloClient.mutate({
-                mutation: createImageFromUrlMutation,
-                variables: {
-                  externalUrl: acceptedUrl.url,
-                  createdAt: createdAt.toISOString(),
-                  datasetId,
-                },
-              });
-
-              setUploadStatuses((previousUploadStatuses) => {
-                return {
-                  ...previousUploadStatuses,
-                  [acceptedUrl.url]: true,
-                };
-              });
-            } catch (err) {
-              setUploadStatuses((previousUploadStatuses) => {
-                return {
-                  ...previousUploadStatuses,
-                  [acceptedUrl.url]: err.message,
-                };
-              });
-            }
-          })
-      );
-      onUploadEnd();
-    };
-
-    onUploadStart();
-    createImages();
+    handleImport(urls);
   }, [urls, datasetId]);
 
   return (

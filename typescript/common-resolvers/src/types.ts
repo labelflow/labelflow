@@ -20,6 +20,7 @@ import type {
   DatasetWhereUniqueInput,
   ImageWhereUniqueInput,
   WorkspaceCreateInput,
+  WorkspaceWhereInput,
   WorkspaceWhereUniqueInput,
   WorkspaceType,
 } from "@labelflow/graphql-types";
@@ -27,10 +28,36 @@ import { WorkspacePlan } from "@prisma/client";
 
 type NoUndefinedField<T> = { [P in keyof T]: NonNullable<T[P]> };
 
+export type ThumbnailSizes = 20 | 50 | 100 | 200 | 500;
+
 export type DbImage = Omit<GeneratedImage, "labels" | "dataset">;
 export type DbImageCreateInput = WithCreatedAtAndUpdatedAt<
-  Required<NoUndefinedField<Omit<ImageCreateInput, "file" | "externalUrl">>> &
-    Pick<ImageCreateInput, "externalUrl">
+  Required<
+    NoUndefinedField<
+      Omit<
+        ImageCreateInput,
+        | "file"
+        | "externalUrl"
+        | "noThumbnails"
+        | "thumbnail20Url"
+        | "thumbnail50Url"
+        | "thumbnail100Url"
+        | "thumbnail200Url"
+        | "thumbnail500Url"
+        | "metadata"
+      >
+    >
+  > &
+    Pick<
+      ImageCreateInput,
+      | "externalUrl"
+      | "thumbnail20Url"
+      | "thumbnail50Url"
+      | "thumbnail100Url"
+      | "thumbnail200Url"
+      | "thumbnail500Url"
+      | "metadata"
+    >
 >;
 
 export type DbLabel = Omit<GeneratedLabel, "labelClass"> & {
@@ -38,7 +65,10 @@ export type DbLabel = Omit<GeneratedLabel, "labelClass"> & {
 };
 export type DbLabelCreateInput = WithCreatedAtAndUpdatedAt<DbLabel>;
 
-export type DbLabelClass = Omit<GeneratedLabelClass, "labels" | "dataset"> & {
+export type DbLabelClass = Omit<
+  GeneratedLabelClass,
+  "labels" | "dataset" | "labelsAggregates"
+> & {
   datasetId: string;
 };
 export type DbLabelClassCreateInput = Required<
@@ -62,18 +92,21 @@ export type DbDataset = Omit<
 
 export type DbWorkspace = Omit<
   GeneratedWorkspace,
-  "__typename" | "type" | "datasets" | "memberships" | "plan"
-> & { plan: WorkspacePlan };
+  | "__typename"
+  | "type"
+  | "datasets"
+  | "memberships"
+  | "plan"
+  | "stripeCustomerPortalUrl"
+> & { plan: WorkspacePlan; stripeCustomerId?: string | undefined | null };
 
 export type DbWorkspaceWithType = DbWorkspace & { type: WorkspaceType };
 
-export type DbDatasetCreateInput = WithCreatedAtAndUpdatedAt<
-  DatasetCreateInput & { slug: string }
->;
-
 export type DbUser = Omit<User, "memberships">;
 
-type PartialWithNullAllowed<T> = { [P in keyof T]?: T[P] | undefined | null };
+export type PartialWithNullAllowed<T> = {
+  [P in keyof T]?: T[P] | undefined | null;
+};
 
 type WithCreatedAtAndUpdatedAt<T extends {}> = T & {
   createdAt: string;
@@ -86,11 +119,14 @@ type Add<EntityType> = (
   entity: EntityType,
   user?: { id: string }
 ) => Promise<ID>;
+
 type Count<Where> = (where?: Where) => Promise<number>;
+
 type Delete<EntityWhereUniqueInput> = (
   input: EntityWhereUniqueInput,
   user?: { id: string }
 ) => Promise<void>;
+
 type Get<EntityType, EntityWhereUniqueInput> = (
   input: EntityWhereUniqueInput,
   user?: { id: string }
@@ -101,6 +137,7 @@ type List<Entity = unknown, Where extends Record<string, any> | null = null> = (
   skip?: number | null,
   first?: number | null
 ) => Promise<Entity[]>;
+
 type Update<Entity, EntityWhereUniqueInput> = (
   input: EntityWhereUniqueInput,
   data: PartialWithNullAllowed<Entity>,
@@ -110,10 +147,18 @@ type Update<Entity, EntityWhereUniqueInput> = (
 export type Repository = {
   image: {
     add: Add<DbImageCreateInput>;
+    addMany: (
+      args: { images: DbImageCreateInput[]; datasetId: string },
+      user?: { id: string }
+    ) => Promise<ID[]>;
     count: Count<ImageWhereInput & { user?: { id: string } }>;
     get: Get<DbImage, ImageWhereUniqueInput>;
-    list: List<DbImage, ImageWhereInput & { user?: { id: string } }>;
+    list: List<
+      DbImage,
+      ImageWhereInput & { user?: { id: string } } & { id?: { in: string[] } }
+    >;
     delete: Delete<ImageWhereUniqueInput>;
+    update: Update<DbImage, ImageWhereUniqueInput>;
   };
   label: {
     add: Add<DbLabelCreateInput>;
@@ -132,7 +177,7 @@ export type Repository = {
     update: Update<DbLabelClass, LabelClassWhereUniqueInput>;
   };
   dataset: {
-    add: Add<DbDatasetCreateInput>;
+    add: Add<DatasetCreateInput>;
     delete: Delete<DatasetWhereUniqueInput>;
     get: Get<DbDataset, DatasetWhereUniqueInput>;
     list: List<DbDataset, { workspaceSlug?: string; user?: { id: string } }>;
@@ -141,21 +186,53 @@ export type Repository = {
   workspace: {
     add: Add<WorkspaceCreateInput>;
     get: Get<DbWorkspaceWithType, WorkspaceWhereUniqueInput>;
-    list: List<DbWorkspaceWithType, { user?: { id: string } }>;
+    list: List<
+      DbWorkspaceWithType,
+      WorkspaceWhereInput & { user?: { id: string } }
+    >;
     update: Update<DbWorkspaceWithType, WorkspaceWhereUniqueInput>;
+    delete: Delete<WorkspaceWhereUniqueInput>;
   };
   upload: {
     getUploadTargetHttp: (
       key: string,
-      origin?: string
+      origin: string
     ) => Promise<UploadTargetHttp> | UploadTargetHttp;
     getUploadTarget: (
       key: string,
-      origin?: string
+      origin: string
     ) => Promise<UploadTarget> | UploadTarget;
-    put: (url: string, file: Blob) => Promise<void>;
+    put: (url: string, file: Blob, req?: Request) => Promise<void>;
     get: (url: string, req?: Request) => Promise<ArrayBuffer>;
     delete: (url: string) => Promise<void>;
+  };
+  imageProcessing: {
+    processImage: (
+      image: {
+        id: string;
+        url: string;
+        width: number | null | undefined;
+        height: number | null | undefined;
+        mimetype: string | null | undefined;
+        noThumbnails?: boolean | null | undefined;
+        thumbnail20Url?: string | null | undefined;
+        thumbnail50Url?: string | null | undefined;
+        thumbnail100Url?: string | null | undefined;
+        thumbnail200Url?: string | null | undefined;
+        thumbnail500Url?: string | null | undefined;
+      },
+      getImage: (url: string) => Promise<ArrayBuffer>,
+      putThumbnail: (targetDownloadUrl: string, blob: Blob) => Promise<void>
+    ) => Promise<{
+      width: number;
+      height: number;
+      mimetype: string;
+      thumbnail20Url?: string;
+      thumbnail50Url?: string;
+      thumbnail100Url?: string;
+      thumbnail200Url?: string;
+      thumbnail500Url?: string;
+    }>;
   };
 };
 
@@ -163,5 +240,5 @@ export type Context = {
   repository: Repository;
   user?: { id: string };
   session?: any;
-  req?: Request;
+  req: Request;
 };

@@ -1,8 +1,10 @@
 type Mutation {
   createExample(data: ExampleCreateInput!): Example
 
-  getUploadTarget(data: UploadTargetInput!): UploadTarget!
   createImage(data: ImageCreateInput!): Image
+  createManyImages(data: ImageCreateManyInput!): [Image!]!
+  getUploadTarget(data: UploadTargetInput!): UploadTarget!
+  updateImage(where: ImageWhereUniqueInput!, data: ImageUpdateInput!): Image
   deleteImage(where: ImageWhereUniqueInput!): Image
 
   createLabel(data: LabelCreateInput!): Label
@@ -19,25 +21,27 @@ type Mutation {
     data: LabelClassReorderInput!
   ): LabelClass
   deleteLabelClass(where: LabelClassWhereUniqueInput!): LabelClass
+
+  updateIogLabel(data: UpdateIogInput!): Label
+  createIogLabel(data: CreateIogLabelInput!): Label
+
   createDataset(data: DatasetCreateInput!): Dataset
   createDemoDataset: Dataset
-  runIog(data: RunIogInput!): Label
   updateDataset(
     where: DatasetWhereUniqueInput!
     data: DatasetUpdateInput!
   ): Dataset
   deleteDataset(where: DatasetWhereUniqueInput!): Dataset
-
   importDataset(
     where: DatasetWhereUniqueInput!
     data: DatasetImportInput!
   ): ImportStatus
-
   createWorkspace(data: WorkspaceCreateInput!): Workspace
   updateWorkspace(
     where: WorkspaceWhereUniqueInput!
     data: WorkspaceUpdateInput!
   ): Workspace
+  deleteWorkspace(where: WorkspaceWhereUniqueInput!): Workspace
 
   createMembership(data: MembershipCreateInput!): Membership
   updateMembership(
@@ -45,6 +49,9 @@ type Mutation {
     data: MembershipUpdateInput!
   ): Membership
   deleteMembership(where: MembershipWhereUniqueInput!): Membership
+  inviteMember(where: InviteMemberInput!): InvitationResult
+  acceptInvitation(where: MembershipWhereUniqueInput!): Membership
+  declineInvitation(where: MembershipWhereUniqueInput!): Membership
 
   updateUser(where: UserWhereUniqueInput!, data: UserUpdateInput!): User
 }

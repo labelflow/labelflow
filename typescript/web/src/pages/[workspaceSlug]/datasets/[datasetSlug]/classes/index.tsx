@@ -1,22 +1,25 @@
-import React from "react";
-import { useQuery, gql } from "@apollo/client";
+import { gql, useQuery } from "@apollo/client";
+import { BreadcrumbLink, Center, Skeleton, Text } from "@chakra-ui/react";
+import { GetServerSideProps } from "next";
 import NextLink from "next/link";
-import { Text, BreadcrumbLink, Skeleton, Center } from "@chakra-ui/react";
 import { useRouter } from "next/router";
+import React from "react";
+import { resetServerContext } from "react-beautiful-dnd";
 import { useErrorHandler } from "react-error-boundary";
-
-import { ServiceWorkerManagerModal } from "../../../../../components/service-worker-manager";
-import { KeymapButton } from "../../../../../components/layout/top-bar/keymap-button";
-import { ImportButton } from "../../../../../components/import-button";
+import { AuthManager } from "../../../../../components/auth-manager";
+import { CookieBanner } from "../../../../../components/cookie-banner";
+import { DatasetClasses } from "../../../../../components/dataset-classes";
 import { ExportButton } from "../../../../../components/export-button";
-import { Meta } from "../../../../../components/meta";
+import { ImportButton } from "../../../../../components/import-button";
 import { Layout } from "../../../../../components/layout";
 import { DatasetTabBar } from "../../../../../components/layout/tab-bar/dataset-tab-bar";
-import { ClassesList } from "../../../../../components/dataset-class-list";
-import { Error404Content } from "../../../../404";
-import { AuthManager } from "../../../../../components/auth-manager";
+import { KeymapButton } from "../../../../../components/layout/top-bar/keymap-button";
+import { NavLogo } from "../../../../../components/logo/nav-logo";
+import { Meta } from "../../../../../components/meta";
+import { ServiceWorkerManagerModal } from "../../../../../components/service-worker-manager";
 import { WelcomeManager } from "../../../../../components/welcome-manager";
-import { CookieBanner } from "../../../../../components/cookie-banner";
+import { WorkspaceSwitcher } from "../../../../../components/workspace-switcher";
+import { Error404Content } from "../../../../404";
 
 const datasetNameQuery = gql`
   query getDatasetName($slug: String!, $workspaceSlug: String!) {
@@ -74,15 +77,17 @@ const DatasetClassesPage = () => {
       <CookieBanner />
       <Layout
         breadcrumbs={[
-          <NextLink key={0} href={`/${workspaceSlug}/datasets`}>
+          <NavLogo key={0} />,
+          <WorkspaceSwitcher key={1} />,
+          <NextLink key={2} href={`/${workspaceSlug}/datasets`}>
             <BreadcrumbLink>Datasets</BreadcrumbLink>
           </NextLink>,
-          <NextLink key={1} href={`/${workspaceSlug}/datasets/${datasetSlug}`}>
+          <NextLink key={3} href={`/${workspaceSlug}/datasets/${datasetSlug}`}>
             <BreadcrumbLink>
               {datasetName ?? <Skeleton>Dataset Name</Skeleton>}
             </BreadcrumbLink>
           </NextLink>,
-          <Text key={2}>Classes</Text>,
+          <Text key={4}>Classes</Text>,
         ]}
         topBarRightContent={
           <>
@@ -100,7 +105,7 @@ const DatasetClassesPage = () => {
         }
       >
         <Center>
-          <ClassesList
+          <DatasetClasses
             datasetSlug={datasetSlug}
             workspaceSlug={workspaceSlug}
           />
@@ -109,4 +114,11 @@ const DatasetClassesPage = () => {
     </>
   );
 };
+
 export default DatasetClassesPage;
+
+export const getServerSideProps: GetServerSideProps = async () => {
+  // https://stackoverflow.com/a/64242579
+  resetServerContext();
+  return { props: { data: [] } };
+};

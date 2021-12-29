@@ -24,13 +24,16 @@ export const commonResolvers = mergeResolvers([
 // We maybe should extract those functions in a dedicated package, feel free to discuss this
 export { getBoundedGeometryFromImage } from "./utils/get-bounded-geometry-from-image";
 export { throwIfResolvesToNil } from "./utils/throw-if-resolves-to-nil";
+export { reorderArray, reorderArrayMutable } from "./utils/reorder-array";
 
 export { initialCocoDataset } from "./export/format-coco/coco-core/converters";
 export {
   jsonToDataUri,
   dataUriToJson,
 } from "./export/format-coco/json-to-data-uri";
-export { getImageEntityFromMutationArgs } from "./image";
+export { importAndProcessImage } from "./image/import-and-process-image";
 
 export * from "./types";
 export * from "./export/format-coco/coco-core/types";
+
+export * from "./utils";

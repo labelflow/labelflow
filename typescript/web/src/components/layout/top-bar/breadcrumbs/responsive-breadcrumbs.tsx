@@ -1,16 +1,14 @@
 import React, { ReactNode } from "react";
-import { chakra, useColorModeValue as mode } from "@chakra-ui/react";
+import { useBreakpointValue } from "@chakra-ui/react";
 
-import { HiOutlineChevronDoubleRight } from "react-icons/hi";
 import { CollapsibleBreadcrumbs } from "./collapsible-breadcrumbs";
-
-const BreadcrumbIcon = chakra(HiOutlineChevronDoubleRight);
 
 export type ResponsiveBreadcrumbsProps = {
   children?: ReactNode;
 };
 
 const sxBase = {
+  ml: 0,
   "& ol": {
     display: "flex",
   },
@@ -22,50 +20,26 @@ const sxBase = {
 export const ResponsiveBreadcrumbs = ({
   children,
 }: ResponsiveBreadcrumbsProps) => {
+  const breadcrumbSplittingProps = useBreakpointValue({
+    base: {
+      maxNumberOfBreadcrumbsBeforeSplit: 2,
+      numberOfFirstBreadcrumbsDisplayedWhenSplit: 2,
+      numberOfLastBreadcrumbsDisplayedWhenSplit: 0,
+    },
+    md: {
+      maxNumberOfBreadcrumbsBeforeSplit: 5,
+      numberOfFirstBreadcrumbsDisplayedWhenSplit: 2,
+      numberOfLastBreadcrumbsDisplayedWhenSplit: 2,
+    },
+    xl: {
+      maxNumberOfBreadcrumbsBeforeSplit: 6,
+      numberOfFirstBreadcrumbsDisplayedWhenSplit: 3,
+      numberOfLastBreadcrumbsDisplayedWhenSplit: 2,
+    },
+  });
   return (
-    <>
-      <CollapsibleBreadcrumbs
-        sx={{
-          ...sxBase,
-          display: { base: "inline", md: "none", lg: "none" },
-        }}
-        maxNumberOfBreadcrumbsBeforeSplit={0}
-        numberOfFirstBreadcrumbsDisplayedWhenSplit={0}
-        numberOfLastBreadcrumbsDisplayedWhenSplit={0}
-        collapsedProps={{
-          variant: "ghost",
-          icon: (
-            <BreadcrumbIcon
-              fontSize="xl"
-              color={mode("gray.700", "gray.300")}
-            />
-          ),
-        }}
-      >
-        {children}
-      </CollapsibleBreadcrumbs>
-      <CollapsibleBreadcrumbs
-        sx={{
-          ...sxBase,
-          display: { base: "none", md: "inline", lg: "none" },
-        }}
-        maxNumberOfBreadcrumbsBeforeSplit={3}
-        numberOfFirstBreadcrumbsDisplayedWhenSplit={0}
-        numberOfLastBreadcrumbsDisplayedWhenSplit={2}
-      >
-        {children}
-      </CollapsibleBreadcrumbs>
-      <CollapsibleBreadcrumbs
-        sx={{
-          ...sxBase,
-          display: { base: "none", md: "none", lg: "inline" },
-        }}
-        maxNumberOfBreadcrumbsBeforeSplit={4}
-        numberOfFirstBreadcrumbsDisplayedWhenSplit={1}
-        numberOfLastBreadcrumbsDisplayedWhenSplit={2}
-      >
-        {children}
-      </CollapsibleBreadcrumbs>
-    </>
+    <CollapsibleBreadcrumbs sx={sxBase} {...breadcrumbSplittingProps}>
+      {children}
+    </CollapsibleBreadcrumbs>
   );
 };

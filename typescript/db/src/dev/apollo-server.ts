@@ -5,7 +5,7 @@ import { GraphQLFileLoader } from "@graphql-tools/graphql-file-loader";
 import { addResolversToSchema } from "@graphql-tools/schema";
 import { resolvers } from "../resolvers";
 import { repository } from "../repository";
-import { prisma } from "../repository/prisma-client";
+import { getPrismaClient } from "../prisma-client";
 
 const schema = loadSchemaSync(
   join(__dirname, "../../../../data/__generated__/schema.graphql"),
@@ -33,7 +33,9 @@ const server = new ApolloServer({
             })
           )
         : {};
-    const session = await prisma.session.findUnique({
+    const session = await (
+      await getPrismaClient()
+    ).session.findUnique({
       where: { sessionToken: parsedCookie?.["next-auth.session-token"] },
     });
     return { repository, user: { id: session?.userId } };

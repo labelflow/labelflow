@@ -1,11 +1,14 @@
 import { v4 as uuidv4 } from "uuid";
 
 import type {
+  Dataset,
   Label,
+  LabelClass,
   MutationCreateLabelArgs,
   MutationDeleteLabelArgs,
   MutationUpdateLabelArgs,
   QueryLabelArgs,
+  LabelWhereInput,
 } from "@labelflow/graphql-types";
 import { LabelType } from "@labelflow/graphql-types";
 
@@ -13,6 +16,14 @@ import { DbLabel, Context, Repository } from "./types";
 
 import { throwIfResolvesToNil } from "./utils/throw-if-resolves-to-nil";
 import { getBoundedGeometryFromImage } from "./utils/get-bounded-geometry-from-image";
+
+const LABEL_CLASS_ID_PROPERTY_NAMES: Record<
+  "Dataset" | "LabelClass",
+  keyof LabelWhereInput
+> = {
+  Dataset: "datasetId",
+  LabelClass: "labelClassId",
+};
 
 const getLabelById = async (
   id: string,
@@ -172,24 +183,34 @@ const updateLabel = async (
   return await getLabelById(labelId, repository, user);
 };
 
-const labelsAggregates = (parent: any) => {
-  // Forward `parent` to chained resolvers if it exists
-  return parent ?? {};
+const labelsAggregates = () => ({});
+
+const labelsAggregatesOfDataset = (parent: Dataset) => {
+  if (!parent) {
+    throw new Error("No parent Dataset");
+  }
+  return { ...parent, __typename: "Dataset" };
+};
+
+const labelsAggregatesOfLabelClass = (parent: LabelClass) => {
+  if (!parent) {
+    throw new Error("No parent LabelClass");
+  }
+  return { ...parent, __typename: "LabelClass" };
 };
 
 const totalCount = async (
-  parent: any,
+  parent: LabelClass | Dataset | null,
   _args: any,
   { repository, user }: Context
 ) => {
   // eslint-disable-next-line no-underscore-dangle
   const typename = parent?.__typename;
+  const idProp = typename ? LABEL_CLASS_ID_PROPERTY_NAMES[typename] : undefined;
+  const idWhere: LabelWhereInput | undefined =
+    idProp && parent ? { [idProp]: parent.id } : undefined;
 
-  if (typename === "Dataset") {
-    return await repository.label.count({ datasetId: parent.id, user });
-  }
-
-  return await repository.label.count({ user });
+  return await repository.label.count({ user, ...idWhere });
 };
 
 export default {
@@ -205,6 +226,7 @@ export default {
   Label: {
     labelClass,
   },
+  LabelClass: { labelsAggregates: labelsAggregatesOfLabelClass },
   LabelsAggregates: { totalCount },
-  Dataset: { labelsAggregates },
+  Dataset: { labelsAggregates: labelsAggregatesOfDataset },
 };

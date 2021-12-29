@@ -10,7 +10,33 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
     volumes:
       - db_home:/var/lib/postgresql/data
+  db_test:
+    image: postgres:12.6
+    ports:
+      - "5435:5434"
+    environment:
+      POSTGRES_USER: ${POSTGRES_ADMIN_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_ADMIN_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB_TEST}
+    command: -p 5434
+
+  storage:
+    image: minio/minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+    volumes:
+      - storage_volume:/data
+    entrypoint: sh
+    # create a labelflow folder in the storage to create a bucket named labelflow
+    command: -c 'mkdir -p /data/labelflow && /usr/bin/docker-entrypoint.sh server /data --console-address ":9001"'
+
 
 volumes:
   db_home:
+    external: false
+  storage_volume:
     external: false

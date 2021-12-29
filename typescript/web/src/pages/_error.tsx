@@ -1,9 +1,11 @@
+import React from "react";
 import {
   Heading,
   Text,
   Code,
   Center,
   Box,
+  chakra,
   Button,
   HStack,
 } from "@chakra-ui/react";
@@ -13,6 +15,20 @@ import { NextPageContext } from "next";
 import { Meta } from "../components/meta";
 import { Layout } from "../components/layout";
 import { EmptyStateError } from "../components/empty-state";
+import { NavLogo } from "../components/logo/nav-logo";
+import { AuthManager } from "../components/auth-manager";
+import BrowserLock from "../components/graphics/browser-lock";
+import { SigninButton } from "../components/auth-manager/signin-button";
+
+export const EmptyStateLock = chakra(BrowserLock, {
+  baseStyle: {
+    width: 250,
+    height: 250,
+    padding: 6,
+    opacity: 1,
+    boxSizing: "border-box",
+  },
+});
 
 type Props = FallbackProps & {
   statusCode?: number;
@@ -21,10 +37,55 @@ type Props = FallbackProps & {
 };
 
 const ErrorPage = ({ statusCode, error, resetErrorBoundary }: Props) => {
+  if ((error?.message ?? error ?? "").match(/not authenticated/) != null) {
+    return (
+      <>
+        <Meta title="LabelFlow | Authentication required" />
+        <AuthManager />
+        <Layout breadcrumbs={[<NavLogo key={0} />]}>
+          <Center h="full">
+            <Box as="section">
+              <Box
+                maxW="2xl"
+                mx="auto"
+                px={{ base: "6", lg: "8" }}
+                py={{ base: "16", sm: "20" }}
+                textAlign="center"
+              >
+                <EmptyStateLock w="full" />
+                <Heading as="h2">Authentication required</Heading>
+
+                <Text mt="4" fontSize="lg">
+                  This page is only available to signed-in users. Please sign in
+                  to access it.
+                </Text>
+
+                <HStack
+                  spacing={4}
+                  align="center"
+                  justifyContent="center"
+                  mt="8"
+                  width="full"
+                >
+                  {/* Not using next/link here in order to resetErrorBoundary and clear the error reliably  */}
+                  <Button as="a" href="/">
+                    Go back to safety
+                  </Button>
+
+                  <SigninButton />
+                </HStack>
+              </Box>
+            </Box>
+          </Center>
+        </Layout>
+      </>
+    );
+  }
   return (
     <>
       <Meta title="LabelFlow | Error" />
-      <Layout>
+      <AuthManager />
+      <Layout breadcrumbs={[<NavLogo key={0} />]}>
         <Center h="full">
           <Box as="section">
             <Box

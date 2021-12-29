@@ -22,7 +22,7 @@ const IndexPage = () => {
     } else {
       router.replace({ pathname: "/website", query: router.query });
     }
-  }, [hasUserTriedApp]);
+  }, [hasUserTriedApp, router]);
 
   if (!hasUserTriedApp) {
     return <Website previewArticles={[]} />;
@@ -46,11 +46,13 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const parsedCookie = new Cookies(context.req.headers.cookie);
 
   if (parsedCookie.get("hasUserTriedApp") === "true") {
+    const workspaceSlug =
+      parsedCookie.get("lastVisitedWorkspaceSlug") ?? "local";
     return {
       props: {},
       redirect: {
         // Keep query params after redirect
-        destination: `/local/datasets${
+        destination: `/${workspaceSlug}/datasets${
           isEmpty(context.query)
             ? ""
             : `?${join(

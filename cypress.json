@@ -1,9 +1,12 @@
 {
   "projectId": "jmqq5y",
-  "baseUrl": "http://localhost:3000",
+  "baseUrl": "http://localhost:3001",
   "defaultCommandTimeout": 30000,
   "retries": {
     "runMode": 2,
     "openMode": 0
-  }
+  },
+  "ignoreTestFiles": [
+    "*.common.ts"
+  ]
 }

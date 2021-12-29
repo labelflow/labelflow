@@ -31,6 +31,12 @@ export const list =
   ): Promise<Entity[]> => {
     const table = await getTable();
     if (where) {
+      if ("id" in where && "in" in where.id) {
+        return (await table.bulkGet(where.id.in)).filter(
+          (entity) => entity !== undefined
+        ) as Entity[];
+      }
+
       const query = table.where(where);
       const listElements = await query.sortBy(criterion);
       const beginSlice = skip ?? 0;

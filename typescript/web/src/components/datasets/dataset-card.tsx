@@ -1,6 +1,5 @@
 import {
   Box,
-  Image,
   Text,
   VStack,
   useColorModeValue as mode,
@@ -10,10 +9,13 @@ import {
   IconButton,
   AspectRatio,
   chakra,
+  Skeleton,
 } from "@chakra-ui/react";
 import NextLink from "next/link";
 import { HiTrash, HiPencilAlt } from "react-icons/hi";
-import { EmptyStateNoImages } from "../empty-state";
+import { DatasetCardBox } from "./dataset-card-box";
+import { ImageWithFallback } from "../image";
+import { EmptyStateImageNotFound, EmptyStateNoImages } from "../empty-state";
 
 const EditIcon = chakra(HiPencilAlt);
 const TrashIcon = chakra(HiTrash);
@@ -43,12 +45,7 @@ export const DatasetCard = (props: {
 
   // This card is flexible, so its width will depend on the width of its parent
   return (
-    <Box
-      w="100%"
-      maxWidth={["100%", "100%", "50%", "33%", "25%"]}
-      p={4}
-      boxSizing="border-box"
-    >
+    <DatasetCardBox>
       <NextLink href={url}>
         <Box
           as="a"
@@ -63,10 +60,12 @@ export const DatasetCard = (props: {
         >
           <AspectRatio maxH="36">
             {imageUrl ? (
-              <Image
+              <ImageWithFallback
                 src={imageUrl}
                 alt={imageAlt}
                 alignSelf="center"
+                loadingFallback={<Skeleton height="100%" width="100%" />}
+                errorFallback={<EmptyStateImageNotFound />}
                 fit="cover"
               />
             ) : (
@@ -127,6 +126,6 @@ export const DatasetCard = (props: {
           </VStack>
         </Box>
       </NextLink>
-    </Box>
+    </DatasetCardBox>
   );
 };

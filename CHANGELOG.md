@@ -8,8 +8,6 @@
 ## [1.0.26](https://github.com/labelflow/labelflow/compare/1.0.25...1.0.26) - 2021-12-08
 
 - Set correct value for `og:url` of articles [`#641`](https://github.com/labelflow/labelflow/pull/641)
-## [1.0.25](https://github.com/labelflow/labelflow/compare/1.0.24...1.0.25) - 2021-12-08
-
 - Images are not deleted in a deleted dataset [`#637`](https://github.com/labelflow/labelflow/pull/637)
 - Create a new prod DB [`#636`](https://github.com/labelflow/labelflow/pull/636)
 - Small changes on website [`#620`](https://github.com/labelflow/labelflow/pull/620)
@@ -23,83 +21,109 @@
 - Change error thrown when user tries to create an invalid label [`#549`](https://github.com/labelflow/labelflow/pull/549)
 - Feature/#518 mask iog [`#545`](https://github.com/labelflow/labelflow/pull/545)
 - Refactor auto polygon tool and workflow [`#547`](https://github.com/labelflow/labelflow/pull/547)
+
+## [1.0.25](https://github.com/labelflow/labelflow/compare/1.0.24...1.0.25) - 2021-10-21
+
 ## [1.0.24](https://github.com/labelflow/labelflow/compare/1.0.23...1.0.24) - 2021-10-21
 
 - Enable to set classification class from shortcut [`#505`](https://github.com/labelflow/labelflow/pull/505)
+
 ## [1.0.23](https://github.com/labelflow/labelflow/compare/1.0.22...1.0.23) - 2021-10-11
 
 - rename labelling to labeling [`#502`](https://github.com/labelflow/labelflow/pull/502)
+
 ## [1.0.22](https://github.com/labelflow/labelflow/compare/1.0.21...1.0.22) - 2021-10-11
 
 - Feature/iog [`#180`](https://github.com/labelflow/labelflow/pull/180)
+
 ## [1.0.21](https://github.com/labelflow/labelflow/compare/1.0.20...1.0.21) - 2021-10-08
 
 - Delete images [`#488`](https://github.com/labelflow/labelflow/pull/488)
 - Feature/#462 mjml emails [`#489`](https://github.com/labelflow/labelflow/pull/489)
+
 ## [1.0.20](https://github.com/labelflow/labelflow/compare/1.0.19...1.0.20) - 2021-10-04
 
 - Feature/split local workspace urls [`#472`](https://github.com/labelflow/labelflow/pull/472)
 - Add legal pages in footer and cookie banner [`#486`](https://github.com/labelflow/labelflow/pull/486)
+
 ## [1.0.19](https://github.com/labelflow/labelflow/compare/1.0.18...1.0.19) - 2021-10-01
 
 - Add Image classification [`#447`](https://github.com/labelflow/labelflow/pull/447)
+
 ## [1.0.18](https://github.com/labelflow/labelflow/compare/1.0.17...1.0.18) - 2021-10-01
 
 - Padding and logo size updated in sign-in modal [`#483`](https://github.com/labelflow/labelflow/pull/483)
+
 ## [1.0.17](https://github.com/labelflow/labelflow/compare/1.0.16...1.0.17) - 2021-10-01
 
 - Add access control to dataset [`#454`](https://github.com/labelflow/labelflow/pull/454)
 - Enhancement/remove manual deploy of prs [`#479`](https://github.com/labelflow/labelflow/pull/479)
+
 ## [1.0.16](https://github.com/labelflow/labelflow/compare/1.0.15...1.0.16) - 2021-10-01
 
 - Bug/#469 cannot rename dataset [`#476`](https://github.com/labelflow/labelflow/pull/476)
 - Display blog post details in social media previews [`#478`](https://github.com/labelflow/labelflow/pull/478)
 - Avoid shrinking export button [`#474`](https://github.com/labelflow/labelflow/pull/474)
+
 ## [1.0.15](https://github.com/labelflow/labelflow/compare/1.0.14...1.0.15) - 2021-09-30
 
 - Add tracking event to export button [`#464`](https://github.com/labelflow/labelflow/pull/464)
+
 ## [1.0.14](https://github.com/labelflow/labelflow/compare/1.0.13...1.0.14) - 2021-09-27
 
 - Add full screen mode [`#456`](https://github.com/labelflow/labelflow/pull/456)
+
 ## [1.0.13](https://github.com/labelflow/labelflow/compare/1.0.12...1.0.13) - 2021-09-24
 
 - Disambiguate dataset name at export [`#465`](https://github.com/labelflow/labelflow/pull/465)
+
 ## [1.0.12](https://github.com/labelflow/labelflow/compare/1.0.11...1.0.12) - 2021-09-24
 
 - Fix bug at build time when user does not have a Sentry token [`#466`](https://github.com/labelflow/labelflow/pull/466)
+
 ## [1.0.11](https://github.com/labelflow/labelflow/compare/1.0.10...1.0.11) - 2021-09-24
 
 - Add backend resolver tests to CI [`#457`](https://github.com/labelflow/labelflow/pull/457)
+
 ## [1.0.10](https://github.com/labelflow/labelflow/compare/1.0.9...1.0.10) - 2021-09-23
 
 - Feature/#227 import coco [`#455`](https://github.com/labelflow/labelflow/pull/455)
+
 ## [1.0.9](https://github.com/labelflow/labelflow/compare/1.0.8...1.0.9) - 2021-09-22
 
 - Updates on export feature [`#448`](https://github.com/labelflow/labelflow/pull/448)
+
 ## [1.0.8](https://github.com/labelflow/labelflow/compare/1.0.7...1.0.8) - 2021-09-17
 
 - Fix bug of errors being thrown in service worker from create dataset modal [`#450`](https://github.com/labelflow/labelflow/pull/450)
+
 ## [1.0.7](https://github.com/labelflow/labelflow/compare/1.0.6...1.0.7) - 2021-09-17
 
 - Fix bug of error being thrown when clearing site data and reloading page [`#451`](https://github.com/labelflow/labelflow/pull/451)
+
 ## [1.0.6](https://github.com/labelflow/labelflow/compare/1.0.5...1.0.6) - 2021-09-17
 
 - Feature/#317 cru workspaces [`#354`](https://github.com/labelflow/labelflow/pull/354)
+
 ## [1.0.5](https://github.com/labelflow/labelflow/compare/1.0.4...1.0.5) - 2021-09-15
 
 - Make a more generic version of the coco exporter [`#417`](https://github.com/labelflow/labelflow/pull/417)
+
 ## [1.0.4](https://github.com/labelflow/labelflow/compare/1.0.3...1.0.4) - 2021-09-14
 
 - Feature/responsive breadcrumbs [`#445`](https://github.com/labelflow/labelflow/pull/445)
+
 ## [1.0.3](https://github.com/labelflow/labelflow/compare/1.0.2...1.0.3) - 2021-09-13
 
 - Track more actions in GA [`#443`](https://github.com/labelflow/labelflow/pull/443)
 - Enhance cookie banner [`#442`](https://github.com/labelflow/labelflow/pull/442)
 - Prefetch previous and next images [`#439`](https://github.com/labelflow/labelflow/pull/439)
 - Fix bug in change class shortcut on azerty keyboards [`#440`](https://github.com/labelflow/labelflow/pull/440)
+
 ## [1.0.2](https://github.com/labelflow/labelflow/compare/1.0.1...1.0.2) - 2021-09-09
 
 - Enhancement/release patches instead of minors [`#437`](https://github.com/labelflow/labelflow/pull/437)
+
 ## [1.0.1](https://github.com/labelflow/labelflow/compare/1.0.0...1.0.1) - 2021-09-09
 
 - Bug/heavy images dont load without reload [`#435`](https://github.com/labelflow/labelflow/pull/435)
@@ -118,6 +142,7 @@
 - #314 file upload resolver for online storage [`#326`](https://github.com/labelflow/labelflow/pull/326)
 - Implement the api/graphql server [`#330`](https://github.com/labelflow/labelflow/pull/330)
 - Implement basic upload route [`#329`](https://github.com/labelflow/labelflow/pull/329)
+
 ## [1.0.0](https://github.com/labelflow/labelflow/compare/0.1.0...1.0.0) - 2021-09-02
 
 - Enhancement/lighthouse fixes [`#411`](https://github.com/labelflow/labelflow/pull/411)
@@ -145,6 +170,7 @@
 - Fix dexie await promise bug [`#381`](https://github.com/labelflow/labelflow/pull/381)
 - Feature/#352 update url with local [`#376`](https://github.com/labelflow/labelflow/pull/376)
 - Bug/#360 cant modify invalid geometry [`#369`](https://github.com/labelflow/labelflow/pull/369)
+
 ## 0.1.0 - 2021-08-25
 
 - Feature/add license and update readme [`#373`](https://github.com/labelflow/labelflow/pull/373)

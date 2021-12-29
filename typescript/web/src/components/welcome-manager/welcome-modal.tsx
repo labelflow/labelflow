@@ -7,7 +7,6 @@ import {
 import { ApolloClient, gql, useApolloClient } from "@apollo/client";
 import { useCookies } from "react-cookie";
 import { Modal, ModalOverlay } from "@chakra-ui/react";
-
 import { QueryParamConfig, StringParam, useQueryParam } from "use-query-params";
 import type { Dataset as DatasetType } from "@labelflow/graphql-types";
 import { useRouter, NextRouter } from "next/router";
@@ -92,7 +91,7 @@ const performWelcomeWorkflow = async ({
 
     try {
       await checkServiceWorkerReady();
-    } catch (e) {
+    } catch (e: any) {
       if (e.message === messageNoWindow) {
         // In Next JS SSR, the window is not available.
         return;
@@ -143,7 +142,7 @@ const performWelcomeWorkflow = async ({
     await router.prefetch(tutorialDatasetFirstImageUrl);
 
     setIsLoadingWorkerAndDemo(false);
-  } catch (error) {
+  } catch (error: any) {
     setBrowserError(error);
   }
 };
@@ -251,6 +250,7 @@ export const WelcomeModal = ({
     if (
       !process.env.STORYBOOK &&
       router?.isReady &&
+      router?.query?.workspaceSlug === "local" &&
       ((!(browserWarning && tryDespiteBrowserWarning !== "true") &&
         !isServiceWorkerActive &&
         paramModalWelcome !== "closed") ||
@@ -266,7 +266,7 @@ export const WelcomeModal = ({
         setIsLoadingWorkerAndDemo,
       });
     }
-  }, [tryDespiteBrowserWarning, router?.isReady]);
+  }, [tryDespiteBrowserWarning, router?.isReady, router?.query?.workspaceSlug]);
 
   // welcome => undefined
   const handleGetStarted = useCallback(() => {

@@ -20,6 +20,7 @@ type Query {
     skip: Int
   ): [LabelClass!]!
   labelClassesAggregates: LabelClassesAggregates!
+  labelClassExists(where: LabelClassWhereInput!): Boolean!
 
   labelsAggregates: LabelsAggregates!
   label(where: LabelWhereUniqueInput!): Label!
@@ -30,10 +31,15 @@ type Query {
   searchDataset(where: DatasetWhereUniqueInput!): Dataset
 
   workspace(where: WorkspaceWhereUniqueInput!): Workspace!
-  workspaces(first: Int, skip: Int): [Workspace!]!
+  workspaces(first: Int, skip: Int, where: WorkspaceWhereInput): [Workspace!]!
+  workspaceExists(where: WorkspaceWhereUniqueInput!): Boolean!
 
   membership(where: MembershipWhereUniqueInput!): Membership!
-  memberships(first: Int, skip: Int): [Membership!]!
+  memberships(
+    where: MembershipWhereInput
+    first: Int
+    skip: Int
+  ): [Membership!]!
 
   user(where: UserWhereUniqueInput!): User!
   users(first: Int, skip: Int): [User!]!

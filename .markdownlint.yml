@@ -1,0 +1,8 @@
+default: true
+line-length: false
+no-bare-urls: false
+
+# Repository main README.md has a custom top-level header
+no-inline-html: false
+first-line-heading: false
+heading-increment: false

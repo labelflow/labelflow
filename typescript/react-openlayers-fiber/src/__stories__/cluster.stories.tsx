@@ -61,8 +61,8 @@ export const Cluster = () => {
         >
           <olSourceCluster distance={distance}>
             <olSourceVector>
-              {coordinates.map((coordinate, i) => (
-                <olFeature key={i}>
+              {coordinates.map((coordinate) => (
+                <olFeature key={coordinate.join()}>
                   <olGeomPoint args={[coordinate]} />
                 </olFeature>
               ))}

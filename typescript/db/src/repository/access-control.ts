@@ -7,28 +7,40 @@ import {
   MembershipWhereUniqueInput,
   UserWhereUniqueInput,
 } from "@labelflow/graphql-types";
-import { prisma } from "./prisma-client";
+import { isNil } from "lodash/fp";
+import { getPrismaClient } from "../prisma-client";
+import { AuthenticationError } from "./authentication-error";
+import { AuthorizationError } from "./authorization-error";
 
+/**
+ * Throws an error if user does not have access to workspace
+ */
 export const checkUserAccessToWorkspace = async ({
   where,
   user,
 }: {
   where?: WorkspaceWhereUniqueInput;
   user?: { id: string };
-}): Promise<boolean> => {
-  if (user?.id == null) {
-    throw new Error("User not authenticated");
+}): Promise<void> => {
+  if (isNil(user) || isNil(user?.id)) {
+    throw new AuthenticationError();
   }
-  const membership = await prisma.membership.findFirst({
+  const membership = await (
+    await getPrismaClient()
+  ).membership.findFirst({
     where: {
       userId: user.id,
-      workspace: { id: where?.id ?? undefined, slug: where?.slug ?? undefined },
+      workspace: {
+        id: where?.id ?? undefined,
+        slug: where?.slug ?? undefined,
+        // Prevent user from accessing deleted workspaces
+        deletedAt: { equals: null },
+      },
     },
   });
-  if (membership == null) {
-    throw new Error("User not authorized to access workspace");
+  if (isNil(membership)) {
+    throw new AuthorizationError("workspace");
   }
-  return membership != null;
 };
 
 export const checkUserAccessToDataset = async ({
@@ -39,19 +51,21 @@ export const checkUserAccessToDataset = async ({
   user?: { id: string };
 }): Promise<boolean> => {
   if (user?.id == null) {
-    throw new Error("User not authenticated");
+    throw new AuthenticationError();
   }
   const datasetCondition =
     where.id != null ? { id: where.id } : { slug: where.slugs?.slug };
   const hasAccessToDataset =
-    (await prisma.membership.findFirst({
+    (await (
+      await getPrismaClient()
+    ).membership.findFirst({
       where: {
         userId: user?.id,
         workspace: { datasets: { some: datasetCondition } },
       },
     })) != null;
   if (!hasAccessToDataset) {
-    throw new Error("User not authorized to access dataset");
+    throw new AuthorizationError("dataset");
   }
   return hasAccessToDataset;
 };
@@ -64,10 +78,12 @@ export const checkUserAccessToLabel = async ({
   user?: { id: string };
 }): Promise<boolean> => {
   if (user?.id == null) {
-    throw new Error("User not authenticated");
+    throw new AuthenticationError();
   }
   const hasAccessToLabel =
-    (await prisma.membership.findFirst({
+    (await (
+      await getPrismaClient()
+    ).membership.findFirst({
       where: {
         userId: user?.id,
         workspace: {
@@ -78,7 +94,7 @@ export const checkUserAccessToLabel = async ({
       },
     })) != null;
   if (!hasAccessToLabel) {
-    throw new Error("User not authorized to access label");
+    throw new AuthorizationError("label");
   }
   return hasAccessToLabel;
 };
@@ -91,10 +107,12 @@ export const checkUserAccessToImage = async ({
   user?: { id: string };
 }): Promise<boolean> => {
   if (user?.id == null) {
-    throw new Error("User not authenticated");
+    throw new AuthenticationError();
   }
   const hasAccessToImage =
-    (await prisma.membership.findFirst({
+    (await (
+      await getPrismaClient()
+    ).membership.findFirst({
       where: {
         userId: user?.id,
         workspace: {
@@ -105,7 +123,7 @@ export const checkUserAccessToImage = async ({
       },
     })) != null;
   if (!hasAccessToImage) {
-    throw new Error("User not authorized to access image");
+    throw new AuthorizationError("image");
   }
   return hasAccessToImage;
 };
@@ -118,10 +136,12 @@ export const checkUserAccessToLabelClass = async ({
   user?: { id: string };
 }): Promise<boolean> => {
   if (user?.id == null) {
-    throw new Error("User not authenticated");
+    throw new AuthenticationError();
   }
   const hasAccessToLabelClass =
-    (await prisma.membership.findFirst({
+    (await (
+      await getPrismaClient()
+    ).membership.findFirst({
       where: {
         userId: user?.id,
         workspace: {
@@ -132,7 +152,7 @@ export const checkUserAccessToLabelClass = async ({
       },
     })) != null;
   if (!hasAccessToLabelClass) {
-    throw new Error("User not authorized to access label class");
+    throw new AuthorizationError("label class");
   }
   return hasAccessToLabelClass;
 };
@@ -145,17 +165,22 @@ export const checkUserAccessToMembership = async ({
   user?: { id: string };
 }): Promise<boolean> => {
   if (user?.id == null) {
-    throw new Error("User not authenticated");
+    throw new AuthenticationError();
   }
+  // Has access to membership if the user belongs to a workspace that is linked to the membership
   const hasAccessToMembership =
-    (await prisma.membership.findFirst({
+    (await (
+      await getPrismaClient()
+    ).workspace.findFirst({
       where: {
-        id: where.id,
-        userId: user?.id,
+        AND: [
+          { memberships: { some: { id: where.id } } },
+          { memberships: { some: { userId: user.id } } },
+        ],
       },
     })) != null;
   if (!hasAccessToMembership) {
-    throw new Error("User not authorized to access membership");
+    throw new AuthorizationError("membership");
   }
   return hasAccessToMembership;
 };
@@ -168,10 +193,14 @@ export const checkUserAccessToUser = async ({
   user?: { id: string };
 }): Promise<boolean> => {
   if (user?.id == null) {
-    throw new Error("User not authenticated");
+    throw new AuthenticationError();
   }
+  // Has access to user if the current user shares a workspace with the user in the query
   const hasAccessToUser =
-    (await prisma.workspace.findFirst({
+    where.id === user.id ||
+    (await (
+      await getPrismaClient()
+    ).workspace.findFirst({
       where: {
         AND: [
           { memberships: { some: { userId: where.id } } },
@@ -180,7 +209,7 @@ export const checkUserAccessToUser = async ({
       },
     })) != null;
   if (!hasAccessToUser) {
-    throw new Error("User not authorized to access user");
+    throw new AuthorizationError("user");
   }
   return hasAccessToUser;
 };

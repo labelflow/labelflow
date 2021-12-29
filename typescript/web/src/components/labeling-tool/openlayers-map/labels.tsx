@@ -1,25 +1,25 @@
-import { MutableRefObject } from "react";
+import { gql, useQuery } from "@apollo/client";
+import { Label, LabelType } from "@labelflow/graphql-types";
 import { useRouter } from "next/router";
-import { useQuery, gql } from "@apollo/client";
-
-import { Vector as OlSourceVector } from "ol/source";
+import { Feature } from "ol";
 import GeoJSON from "ol/format/GeoJSON";
 import { Geometry, MultiPoint } from "ol/geom";
 import Polygon from "ol/geom/Polygon";
+import { Vector as OlSourceVector } from "ol/source";
 import { Fill, Stroke, Style } from "ol/style";
-
 import CircleStyle from "ol/style/Circle";
-import { Feature } from "ol";
-import { Label, LabelType } from "@labelflow/graphql-types";
-
-import { Tools, useLabelingStore } from "../../../connectors/labeling-state";
+import { MutableRefObject } from "react";
 import {
   extractIogMaskFromLabel,
-  iogMaskColor,
   getIogMaskIdFromLabelId,
+  iogMaskColor,
 } from "../../../connectors/iog";
-
-import { noneClassColor } from "../../../utils/class-color-generator";
+import {
+  SelectionToolState,
+  Tools,
+  useLabelingStore,
+} from "../../../connectors/labeling-state";
+import { noneClassColor } from "../../../theme";
 
 const getImageLabelsQuery = gql`
   query getImageLabels($imageId: ID!) {
@@ -61,6 +61,12 @@ export const Labels = ({
   });
   const selectedLabelId = useLabelingStore((state) => state.selectedLabelId);
   const selectedTool = useLabelingStore((state) => state.selectedTool);
+  const selectionToolState = useLabelingStore(
+    (state) => state.selectionToolState
+  );
+  const iogProcessingLabels = useLabelingStore(
+    (state) => state.iogProcessingLabels
+  );
   const labels = data?.image?.labels ?? previousData?.image?.labels ?? [];
   const selectedLabel = labels.find(({ id }: Label) => id === selectedLabelId);
 
@@ -82,6 +88,9 @@ export const Labels = ({
                 stroke: new Stroke({
                   color: labelClassColor,
                   width: isSelected ? 4 : 2,
+                  ...(id && iogProcessingLabels.has(id)
+                    ? { lineDash: [5, 15] }
+                    : {}),
                 }),
                 zIndex: isSelected ? 2 : 1,
               });
@@ -116,48 +125,32 @@ export const Labels = ({
                 />
               );
             })}
-          {selectedLabel?.smartToolInput && selectedTool === Tools.IOG && (
-            <olFeature
-              key={getIogMaskIdFromLabelId(selectedLabel?.id)}
-              id={getIogMaskIdFromLabelId(selectedLabel?.id)}
-              properties={{ isSelected: true }}
-              geometry={new GeoJSON().readGeometry({
-                coordinates: extractIogMaskFromLabel(
-                  selectedLabel,
-                  data?.image?.width,
-                  data?.image?.height
-                ),
-                type: "Polygon",
-              })}
-              style={[
-                new Style({
-                  fill: new Fill({
-                    color: `${iogMaskColor}AA`,
-                  }),
-                  stroke: new Stroke({
-                    color: `${iogMaskColor}FF`,
-                    width: 2,
-                  }),
-                  zIndex: 2,
-                }),
-                new Style({
-                  image: new CircleStyle({
-                    radius: 3,
+          {selectedLabel?.smartToolInput &&
+            (selectedTool === Tools.IOG ||
+              (selectedTool === Tools.SELECTION &&
+                selectionToolState === SelectionToolState.IOG)) && (
+              <olFeature
+                key={getIogMaskIdFromLabelId(selectedLabel?.id)}
+                id={getIogMaskIdFromLabelId(selectedLabel?.id)}
+                properties={{ isSelected: true }}
+                geometry={new GeoJSON().readGeometry({
+                  coordinates: extractIogMaskFromLabel(
+                    selectedLabel,
+                    data?.image?.width,
+                    data?.image?.height
+                  ),
+                  type: "Polygon",
+                })}
+                style={[
+                  new Style({
                     fill: new Fill({
-                      color: iogMaskColor,
+                      color: `${iogMaskColor}B3`,
                     }),
+                    zIndex: 2,
                   }),
-                  geometry: (feature) => {
-                    const coordinates = (feature as Feature<Polygon>)
-                      .getGeometry()
-                      .getCoordinates()[1];
-                    return new MultiPoint(coordinates);
-                  },
-                  zIndex: 2,
-                }),
-              ]}
-            />
-          )}
+                ]}
+              />
+            )}
         </olSourceVector>
       </olLayerVector>
     </>

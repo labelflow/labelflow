@@ -1,22 +1,22 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { gql } from "@apollo/client";
 import { v4 as uuidV4 } from "uuid";
+
 import {
   LabelCreateInput,
   MutationCreateWorkspaceArgs,
   Workspace,
 } from "@labelflow/graphql-types";
-import { probeImage } from "@labelflow/common-resolvers/src/utils/probe-image";
-import { createClient } from "@supabase/supabase-js";
-import { prisma } from "../../repository/prisma-client";
+import { processImage } from "../../repository/image-processing";
+import { getPrismaClient } from "../../prisma-client";
 import { client, user } from "../../dev/apollo-client";
 import { LabelType } from ".prisma/client";
 
-jest.mock("@labelflow/common-resolvers/src/utils/probe-image");
-const mockedProbeSync = probeImage as jest.Mock;
+jest.mock("../../repository/image-processing");
+const mockedProcessImage = processImage as jest.Mock;
 
-jest.mock("@supabase/supabase-js");
-const mockedSupabaseCreateClient = createClient as jest.Mock;
+// @ts-ignore
+fetch.disableFetchMocks();
 
 const getGeometryFromExtent = ({
   x,
@@ -47,9 +47,6 @@ const labelDataExtent = {
   height: 768,
   width: 362,
 };
-
-// @ts-ignore
-fetch.disableFetchMocks();
 
 const testUser1Id = uuidV4();
 const testUser2Id = uuidV4();
@@ -135,14 +132,12 @@ const createImage = async (
   datasetId: String,
   imageId?: String
 ) => {
-  mockedProbeSync.mockReturnValue({
+  mockedProcessImage.mockReturnValue({
     width: imageWidth,
     height: imageHeight,
     mimetype: "image/jpeg",
   });
-  mockedSupabaseCreateClient.mockReturnValue({
-    storage: { from: () => ({ upload: () => {} }) },
-  });
+
   const mutationResult = await client.mutate({
     mutation: gql`
       mutation createImage(
@@ -187,14 +182,18 @@ const createImage = async (
 };
 
 beforeAll(async () => {
-  await prisma.user.create({ data: { id: testUser1Id, name: "test-user-1" } });
-  await prisma.user.create({ data: { id: testUser2Id, name: "test-user-2" } });
+  await (
+    await getPrismaClient()
+  ).user.create({ data: { id: testUser1Id, name: "test-user-1" } });
+  await (
+    await getPrismaClient()
+  ).user.create({ data: { id: testUser2Id, name: "test-user-2" } });
 });
 
 beforeEach(async () => {
   user.id = testUser1Id;
-  await prisma.membership.deleteMany({});
-  await prisma.workspace.deleteMany({});
+  await (await getPrismaClient()).membership.deleteMany({});
+  await (await getPrismaClient()).workspace.deleteMany({});
   await createWorkspace({ name: "My workspace" });
   await createDataset("My dataset", "my-workspace", testDatasetId);
   await createImage("test-image", testDatasetId, testImageId);
@@ -202,7 +201,7 @@ beforeEach(async () => {
 
 afterAll(async () => {
   // Needed to avoid having the test process running indefinitely after the test suite has been run
-  await prisma.$disconnect();
+  await (await getPrismaClient()).$disconnect();
 });
 
 describe("Access control for label", () => {

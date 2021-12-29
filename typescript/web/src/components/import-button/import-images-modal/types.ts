@@ -1,4 +1,5 @@
 import { FileError, FileWithPath } from "react-dropzone";
+import { SetState } from "../../../utils/types";
 
 /**
  * Dropped file is intermediate file which let us
@@ -22,3 +23,8 @@ export type DroppedUrl = {
  * the file being uploaded
  */
 export type UploadStatuses = Record<string, boolean | string>;
+
+/**
+ * Setter function for the upload statuses
+ */
+export type SetUploadStatuses = SetState<UploadStatuses>;

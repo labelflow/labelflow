@@ -1,26 +1,19 @@
-import React, { forwardRef, useCallback } from "react";
-import { HStack, Box } from "@chakra-ui/react";
-
-import { useRouter } from "next/router";
-import { useQuery, gql, useApolloClient } from "@apollo/client";
-
+import { gql, useApolloClient, useQuery } from "@apollo/client";
+import { Box, HStack } from "@chakra-ui/react";
 import { Label, LabelType } from "@labelflow/graphql-types";
-
+import { getNextClassColor, LABEL_CLASS_COLOR_PALETTE } from "@labelflow/utils";
+import { useRouter } from "next/router";
+import React, { forwardRef, useCallback } from "react";
 import { Tools, useLabelingStore } from "../../../../connectors/labeling-state";
-
 import { useUndoStore } from "../../../../connectors/undo-store";
-import { ClassificationTag, LabelClassItem } from "./classification-tag";
-import {
-  getNextClassColor,
-  hexColorSequence,
-} from "../../../../utils/class-color-generator";
 import { createCreateLabelClassAndUpdateLabelEffect } from "../../../../connectors/undo-store/effects/create-label-class-and-update-label";
-import { createUpdateLabelClassOfLabelEffect } from "../../../../connectors/undo-store/effects/update-label-class-of-label";
 import { createDeleteLabelEffect } from "../../../../connectors/undo-store/effects/delete-label";
+import { createUpdateLabelClassOfLabelEffect } from "../../../../connectors/undo-store/effects/update-label-class-of-label";
+import { ClassificationTag, LabelClassItem } from "./classification-tag";
 
 const getLabelClassesOfDatasetQuery = gql`
-  query getLabelClassesOfDataset($slug: String!) {
-    dataset(where: { slugs: { slug: $slug, workspaceSlug: "local" } }) {
+  query getLabelClassesOfDataset($slug: String!, $workspaceSlug: String!) {
+    dataset(where: { slugs: { slug: $slug, workspaceSlug: $workspaceSlug } }) {
       id
       labelClasses {
         id
@@ -70,7 +63,8 @@ export const ClassificationContent = forwardRef<HTMLDivElement>(
         variables: { imageId: imageId as string },
       });
     const { data: labelClassesData } = useQuery(getLabelClassesOfDatasetQuery, {
-      variables: { slug: datasetSlug },
+      variables: { slug: datasetSlug, workspaceSlug },
+      skip: !datasetSlug || !workspaceSlug,
     });
     const datasetId = labelClassesData?.dataset.id;
     const labelClasses = labelClassesData?.dataset.labelClasses ?? [];
@@ -94,8 +88,10 @@ export const ClassificationContent = forwardRef<HTMLDivElement>(
           // Update class of an existing label with a new class
           const newClassColor =
             labelClasses.length < 1
-              ? hexColorSequence[0]
-              : getNextClassColor(labelClasses[labelClasses.length - 1].color);
+              ? LABEL_CLASS_COLOR_PALETTE[0]
+              : getNextClassColor(
+                  labelClasses.map((labelClass: any) => labelClass.color)
+                );
 
           await perform(
             createCreateLabelClassAndUpdateLabelEffect(
@@ -104,8 +100,6 @@ export const ClassificationContent = forwardRef<HTMLDivElement>(
                 color: newClassColor,
                 selectedLabelId,
                 datasetId,
-                datasetSlug,
-                workspaceSlug,
               },
               { client }
             )

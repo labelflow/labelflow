@@ -3,10 +3,9 @@ import { omit } from "lodash/fp";
 
 import { Label } from "@labelflow/graphql-types";
 import { Effect } from "..";
-import {
-  addLabelToImageInCache,
-  removeLabelFromImageCache,
-} from "./create-label";
+import { createLabelMutationUpdate } from "./cache-updates/create-label-mutation-update";
+import { deleteLabelMutationUpdate } from "./cache-updates/delete-label-mutation-update";
+import { createLabelMutation } from "./shared-queries";
 
 const deleteLabelMutation = gql`
   mutation deleteLabel($id: ID!) {
@@ -17,6 +16,7 @@ const deleteLabelMutation = gql`
       width
       height
       imageId
+      type
       labelClass {
         id
       }
@@ -24,26 +24,6 @@ const deleteLabelMutation = gql`
         type
         coordinates
       }
-    }
-  }
-`;
-
-const createLabelWithIdMutation = gql`
-  mutation createLabel(
-    $id: ID!
-    $imageId: ID!
-    $labelClassId: ID
-    $geometry: GeometryInput!
-  ) {
-    createLabel(
-      data: {
-        id: $id
-        imageId: $imageId
-        labelClassId: $labelClassId
-        geometry: $geometry
-      }
-    ) {
-      id
     }
   }
 `;
@@ -64,18 +44,10 @@ export const createDeleteLabelEffect = (
     }>({
       mutation: deleteLabelMutation,
       variables: { id },
-      refetchQueries: ["countLabels", "getDatasets", "countLabelsOfDataset"],
+      refetchQueries: ["countLabelsOfDataset"],
       /* Note that there is no optimistic response here, only a cache update.
-       * We could add it but it feels like premature optimization */
-      update(cache, { data: updateData }) {
-        if (typeof updateData?.deleteLabel?.imageId !== "string") {
-          return;
-        }
-        removeLabelFromImageCache(cache, {
-          id,
-          imageId: updateData.deleteLabel.imageId,
-        });
-      },
+       * We could add it but it would imply to fetch a lot of data beforehand */
+      update: deleteLabelMutationUpdate(),
     });
     setSelectedLabelId(null);
     return data?.deleteLabel;
@@ -86,6 +58,7 @@ export const createDeleteLabelEffect = (
       | "id"
       | "x"
       | "y"
+      | "type"
       | "width"
       | "height"
       | "imageId"
@@ -93,54 +66,27 @@ export const createDeleteLabelEffect = (
       | "geometry"
     >
   ) => {
-    const { id: labelId, imageId, geometry } = deletedLabel;
+    const { imageId, geometry, type } = deletedLabel;
     const labelClassId = deletedLabel?.labelClass?.id;
 
     const createLabelInputs = {
-      id: labelId,
+      id,
       imageId,
       labelClassId,
       geometry: omit(["__typename"], geometry),
+      type,
     };
 
     /* It is important to use the same id for the re-creation when the label
      * was created in the current session to enable the undoing of the creation effect */
-    const { data } = await client.mutate({
-      mutation: createLabelWithIdMutation,
+    await client.mutate({
+      mutation: createLabelMutation,
       variables: createLabelInputs,
-      refetchQueries: ["countLabels", "getDatasets", "countLabelsOfDataset"],
-      optimisticResponse: { createLabel: { id: labelId, __typename: "Label" } },
-      update(cache) {
-        addLabelToImageInCache(cache, createLabelInputs);
-      },
+      refetchQueries: ["countLabelsOfDataset"],
+      optimisticResponse: { createLabel: { id, __typename: "Label" } },
+      update: createLabelMutationUpdate(createLabelInputs),
     });
 
-    if (typeof data?.createLabel?.id !== "string") {
-      throw new Error("Couldn't get the id of the newly created label");
-    }
-
-    setSelectedLabelId(data.createLabel.id);
-    return data.createLabel.id;
-  },
-  redo: async (labelId: string) => {
-    const { data } = await client.mutate({
-      mutation: deleteLabelMutation,
-      variables: { id: labelId },
-      refetchQueries: ["countLabels", "getDatasets", "countLabelsOfDataset"],
-      /* Note that there is no optimistic response here, only a cache update.
-       * We could add it but it feels like premature optimization */
-      update(cache, { data: updateData }) {
-        if (typeof updateData?.deleteLabel?.imageId !== "string") {
-          return;
-        }
-        removeLabelFromImageCache(cache, {
-          id,
-          imageId: updateData.deleteLabel.imageId,
-        });
-      },
-    });
-
-    setSelectedLabelId(null);
-    return data?.deleteLabel;
+    setSelectedLabelId(id);
   },
 });

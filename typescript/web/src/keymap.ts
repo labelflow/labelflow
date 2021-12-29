@@ -75,7 +75,13 @@ export const keymap: Keymap = {
   },
   toolIog: {
     key: "a",
-    description: "Inside outside guidance tool",
+    description: "Auto Polygon",
+    category: "Tools",
+  },
+  changeSelectionMode: {
+    key: "e",
+    description:
+      "Change between default selection and auto annotate modification tool",
     category: "Tools",
   },
   validateIogLabel: {

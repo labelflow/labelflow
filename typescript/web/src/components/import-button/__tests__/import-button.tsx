@@ -4,7 +4,7 @@ import userEvent from "@testing-library/user-event";
 import { ApolloProvider, gql } from "@apollo/client";
 import { PropsWithChildren } from "react";
 import "@testing-library/jest-dom/extend-expect";
-import { probeImage } from "@labelflow/common-resolvers/src/utils/probe-image";
+import { processImage } from "../../../connectors/repository/image-processing";
 import { client } from "../../../connectors/apollo-client/schema-client";
 import { setupTestsWithLocalDatabase } from "../../../utils/setup-local-db-tests";
 import {
@@ -17,6 +17,7 @@ mockMatchMedia(jest);
 
 mockUseQueryParams();
 mockNextRouter({
+  isReady: true,
   query: { datasetSlug: "mocked-dataset", workspaceSlug: "local" },
 });
 
@@ -34,8 +35,8 @@ const Wrapper = ({ children }: PropsWithChildren<{}>) => (
 
 setupTestsWithLocalDatabase();
 
-jest.mock("@labelflow/common-resolvers/src/utils/probe-image");
-const mockedProbeSync = probeImage as jest.Mock;
+jest.mock("../../../connectors/repository/image-processing");
+const mockedProcessImage = processImage as jest.Mock;
 
 /**
  * Mock the apollo client to avoid creating corrupted files that allows
@@ -47,7 +48,11 @@ jest.mock("../../../connectors/apollo-client/schema-client", () => {
   );
 
   return {
-    client: { ...original.client, mutate: jest.fn(original.client.mutate) },
+    client: {
+      ...original.client,
+      clearStore: original.client.clearStore, // This needs to be passed like this otherwise the resulting object does not have the clearStore method
+      mutate: jest.fn(original.client.mutate),
+    },
   };
 });
 
@@ -66,7 +71,7 @@ beforeEach(async () => {
 });
 
 test("should clear the modal content when closed", async () => {
-  mockedProbeSync.mockReturnValue({
+  mockedProcessImage.mockReturnValue({
     width: 42,
     height: 36,
     mime: "image/jpeg",

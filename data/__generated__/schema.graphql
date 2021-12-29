@@ -1,5 +1,23 @@
 scalar ColorHex
 
+input CreateIogLabelInput {
+  id: ID
+  imageId: String!
+  x: Float!
+  y: Float!
+  width: Float!
+  height: Float!
+  centerPoint: [Float!]!
+  labelClassId: ID
+}
+
+enum CurrentUserCanAcceptInvitation {
+  Yes
+  AlreadyAccepted
+  AlreadyMemberOfTheWorkspace
+  AlreadyDeclined
+}
+
 type Dataset {
   id: ID!
   createdAt: DateTime!
@@ -110,6 +128,11 @@ type Image {
   updatedAt: DateTime!
   url: String!
   externalUrl: String
+  thumbnail20Url: String
+  thumbnail50Url: String
+  thumbnail100Url: String
+  thumbnail200Url: String
+  thumbnail500Url: String
   name: String!
   path: String!
   mimetype: String!
@@ -117,6 +140,7 @@ type Image {
   width: Int!
   labels: [Label!]!
   dataset: Dataset!
+  metadata: JSON
 }
 
 input ImageCreateInput {
@@ -131,6 +155,45 @@ input ImageCreateInput {
   file: Upload
   url: String
   externalUrl: String
+  noThumbnails: Boolean
+  thumbnail20Url: String
+  thumbnail50Url: String
+  thumbnail100Url: String
+  thumbnail200Url: String
+  thumbnail500Url: String
+  metadata: JSON
+}
+
+input ImageCreateManyInput {
+  images: [ImageCreateManySingleInput!]!
+  datasetId: ID!
+}
+
+input ImageCreateManySingleInput {
+  id: ID
+  createdAt: DateTime
+  name: String
+  path: String
+  mimetype: String
+  height: Int
+  width: Int
+  file: Upload
+  url: String
+  externalUrl: String
+  noThumbnails: Boolean
+  thumbnail20Url: String
+  thumbnail50Url: String
+  thumbnail100Url: String
+  thumbnail200Url: String
+  thumbnail500Url: String
+}
+
+input ImageUpdateInput {
+  thumbnail20Url: String
+  thumbnail50Url: String
+  thumbnail100Url: String
+  thumbnail200Url: String
+  thumbnail500Url: String
 }
 
 input ImageWhereInput {
@@ -155,6 +218,18 @@ input ImportOptionsCoco {
 
 type ImportStatus {
   error: String
+}
+
+enum InvitationResult {
+  Sent
+  Error
+  UserAlreadyIn
+}
+
+input InviteMemberInput {
+  email: String!
+  role: MembershipRole!
+  workspaceSlug: String!
 }
 
 scalar JSON
@@ -183,6 +258,7 @@ type LabelClass {
   color: ColorHex!
   labels: [Label!]!
   dataset: Dataset!
+  labelsAggregates: LabelsAggregates!
 }
 
 input LabelClassCreateInput {
@@ -203,6 +279,7 @@ input LabelClassUpdateInput {
 
 input LabelClassWhereInput {
   datasetId: ID
+  name: String
 }
 
 input LabelClassWhereUniqueInput {
@@ -252,25 +329,40 @@ type Membership {
   id: ID!
   createdAt: DateTime!
   updatedAt: DateTime!
+  declinedAt: DateTime
   role: MembershipRole!
-  user: User!
+  user: User
   workspace: Workspace!
+  invitationEmailSentTo: String
+  status: MembershipStatus!
+  currentUserCanAcceptInvitation: CurrentUserCanAcceptInvitation!
 }
 
 input MembershipCreateInput {
   id: ID
   role: MembershipRole!
-  userId: ID!
+  userId: ID
   workspaceSlug: String!
 }
 
 enum MembershipRole {
+  Owner
   Admin
   Member
 }
 
+enum MembershipStatus {
+  Sent
+  Active
+  Declined
+}
+
 input MembershipUpdateInput {
   role: MembershipRole
+}
+
+input MembershipWhereInput {
+  workspaceSlug: String
 }
 
 input MembershipWhereUniqueInput {
@@ -279,8 +371,10 @@ input MembershipWhereUniqueInput {
 
 type Mutation {
   createExample(data: ExampleCreateInput!): Example
-  getUploadTarget(data: UploadTargetInput!): UploadTarget!
   createImage(data: ImageCreateInput!): Image
+  createManyImages(data: ImageCreateManyInput!): [Image!]!
+  getUploadTarget(data: UploadTargetInput!): UploadTarget!
+  updateImage(where: ImageWhereUniqueInput!, data: ImageUpdateInput!): Image
   deleteImage(where: ImageWhereUniqueInput!): Image
   createLabel(data: LabelCreateInput!): Label
   updateLabel(where: LabelWhereUniqueInput!, data: LabelUpdateInput!): Label
@@ -289,17 +383,22 @@ type Mutation {
   updateLabelClass(where: LabelClassWhereUniqueInput!, data: LabelClassUpdateInput!): LabelClass
   reorderLabelClass(where: LabelClassWhereUniqueInput!, data: LabelClassReorderInput!): LabelClass
   deleteLabelClass(where: LabelClassWhereUniqueInput!): LabelClass
+  updateIogLabel(data: UpdateIogInput!): Label
+  createIogLabel(data: CreateIogLabelInput!): Label
   createDataset(data: DatasetCreateInput!): Dataset
   createDemoDataset: Dataset
-  runIog(data: RunIogInput!): Label
   updateDataset(where: DatasetWhereUniqueInput!, data: DatasetUpdateInput!): Dataset
   deleteDataset(where: DatasetWhereUniqueInput!): Dataset
   importDataset(where: DatasetWhereUniqueInput!, data: DatasetImportInput!): ImportStatus
   createWorkspace(data: WorkspaceCreateInput!): Workspace
   updateWorkspace(where: WorkspaceWhereUniqueInput!, data: WorkspaceUpdateInput!): Workspace
+  deleteWorkspace(where: WorkspaceWhereUniqueInput!): Workspace
   createMembership(data: MembershipCreateInput!): Membership
   updateMembership(where: MembershipWhereUniqueInput!, data: MembershipUpdateInput!): Membership
   deleteMembership(where: MembershipWhereUniqueInput!): Membership
+  inviteMember(where: InviteMemberInput!): InvitationResult
+  acceptInvitation(where: MembershipWhereUniqueInput!): Membership
+  declineInvitation(where: MembershipWhereUniqueInput!): Membership
   updateUser(where: UserWhereUniqueInput!, data: UserUpdateInput!): User
 }
 
@@ -313,6 +412,7 @@ type Query {
   labelClass(where: LabelClassWhereUniqueInput!): LabelClass!
   labelClasses(where: LabelClassWhereInput, first: Int, skip: Int): [LabelClass!]!
   labelClassesAggregates: LabelClassesAggregates!
+  labelClassExists(where: LabelClassWhereInput!): Boolean!
   labelsAggregates: LabelsAggregates!
   label(where: LabelWhereUniqueInput!): Label!
   labels(where: LabelWhereInput, first: Int, skip: Int): [Label!]!
@@ -320,9 +420,10 @@ type Query {
   datasets(where: DatasetWhereInput, first: Int, skip: Int): [Dataset!]!
   searchDataset(where: DatasetWhereUniqueInput!): Dataset
   workspace(where: WorkspaceWhereUniqueInput!): Workspace!
-  workspaces(first: Int, skip: Int): [Workspace!]!
+  workspaces(first: Int, skip: Int, where: WorkspaceWhereInput): [Workspace!]!
+  workspaceExists(where: WorkspaceWhereUniqueInput!): Boolean!
   membership(where: MembershipWhereUniqueInput!): Membership!
-  memberships(first: Int, skip: Int): [Membership!]!
+  memberships(where: MembershipWhereInput, first: Int, skip: Int): [Membership!]!
   user(where: UserWhereUniqueInput!): User!
   users(first: Int, skip: Int): [User!]!
   exportDataset(where: ExportWhereUniqueInput!, format: ExportFormat!, options: ExportOptions): String!
@@ -332,6 +433,17 @@ type Query {
 input RunIogInput {
   id: ID!
   imageUrl: String
+  x: Float
+  y: Float
+  width: Float
+  height: Float
+  pointsInside: [[Float!]]
+  pointsOutside: [[Float!]]
+  centerPoint: [Float!]
+}
+
+input UpdateIogInput {
+  id: ID!
   x: Float
   y: Float
   width: Float
@@ -362,8 +474,8 @@ type User {
   id: ID!
   createdAt: DateTime!
   updatedAt: DateTime!
-  name: String!
-  email: String!
+  name: String
+  email: String
   image: String
   memberships: [Membership!]!
 }
@@ -383,15 +495,18 @@ type Workspace {
   updatedAt: DateTime!
   name: String!
   slug: String!
+  image: String
   type: WorkspaceType!
   plan: WorkspacePlan!
   datasets: [Dataset!]!
   memberships: [Membership!]!
+  stripeCustomerPortalUrl: String
 }
 
 input WorkspaceCreateInput {
   id: ID
   name: String!
+  image: String
 }
 
 enum WorkspacePlan {
@@ -413,6 +528,11 @@ enum WorkspaceType {
 
 input WorkspaceUpdateInput {
   name: String
+  image: String
+}
+
+input WorkspaceWhereInput {
+  slug: String
 }
 
 input WorkspaceWhereUniqueInput {

@@ -54,6 +54,7 @@ export const countLabelsOfDatasetQuery = gql`
         totalCount
       }
       labels {
+        id
         labelClass {
           id
         }

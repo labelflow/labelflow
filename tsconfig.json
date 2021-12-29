@@ -2,14 +2,12 @@
   "compilerOptions": {
     "allowJs": true,
     "alwaysStrict": true,
+    "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "isolatedModules": true,
     "jsx": "preserve",
-    "lib": [
-      "dom",
-      "es2020"
-    ],
+    "lib": ["dom", "es2020"],
     "moduleResolution": "node",
     "noEmit": true,
     "noFallthroughCasesInSwitch": true,
@@ -19,14 +17,9 @@
     "skipLibCheck": true,
     "strict": true,
     "target": "esnext",
-    "module": "esnext"
+    "module": "esnext",
+    "strictNullChecks": true
   },
-  "exclude": [
-    "node_modules",
-    "**/*.graphql"
-  ],
-  "include": [
-    "**/*.ts",
-    "**/*.tsx"
-  ]
+  "exclude": ["node_modules", "**/*.graphql"],
+  "include": ["**/*.ts", "**/*.tsx"]
 }

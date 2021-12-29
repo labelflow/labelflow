@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   Modal,
   ModalOverlay,
@@ -54,6 +54,15 @@ export const ImportImagesModal = ({
     }
   }, [hasUploaded]);
 
+  const onUploadStart = useCallback(() => {
+    setCloseable(false);
+  }, []);
+
+  const onUploadEnd = useCallback(() => {
+    setCloseable(true);
+    setHasUploaded(true);
+  }, []);
+
   return (
     <Modal
       isOpen={isOpen}
@@ -72,25 +81,15 @@ export const ImportImagesModal = ({
         {mode !== "url-list" && (
           <ImportImagesModalDropzone
             setMode={setMode}
-            onUploadStart={() => {
-              setCloseable(false);
-            }}
-            onUploadEnd={() => {
-              setCloseable(true);
-              setHasUploaded(true);
-            }}
+            onUploadStart={onUploadStart}
+            onUploadEnd={onUploadEnd}
           />
         )}
         {mode === "url-list" && (
           <ImportImagesModalUrlList
             setMode={setMode}
-            onUploadStart={() => {
-              setCloseable(false);
-            }}
-            onUploadEnd={() => {
-              setCloseable(true);
-              setHasUploaded(true);
-            }}
+            onUploadStart={onUploadStart}
+            onUploadEnd={onUploadEnd}
           />
         )}
 

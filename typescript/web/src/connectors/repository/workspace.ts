@@ -1,4 +1,8 @@
-import { WorkspaceType, WorkspacePlan } from "@labelflow/graphql-types";
+import {
+  WorkspaceType,
+  WorkspacePlan,
+  WorkspaceWhereInput,
+} from "@labelflow/graphql-types";
 import { notImplementedInLocalWorkspaceRepository } from "./utils";
 
 export const localWorkspace = {
@@ -12,12 +16,27 @@ export const localWorkspace = {
 };
 
 export const getWorkspace = async () => localWorkspace;
-export const listWorkspaces = async () => [localWorkspace];
+
+export const listWorkspaces = async (
+  where: WorkspaceWhereInput | null | undefined
+) => {
+  if (where != null && "slug" in where) {
+    return [localWorkspace].filter(({ slug }) => slug === where.slug);
+  }
+
+  return [localWorkspace];
+};
+
 export const updateWorkspace = async () => {
   notImplementedInLocalWorkspaceRepository();
   return false;
 };
+
 export const addWorkspace = async () => {
   notImplementedInLocalWorkspaceRepository();
   return "local";
+};
+
+export const deleteWorkspace = async () => {
+  notImplementedInLocalWorkspaceRepository();
 };

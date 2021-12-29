@@ -16,6 +16,8 @@ import NextLink from "next/link";
 import type { Image } from "@labelflow/graphql-types";
 import { useErrorHandler } from "react-error-boundary";
 
+import { WorkspaceSwitcher } from "../../../../../components/workspace-switcher";
+import { NavLogo } from "../../../../../components/logo/nav-logo";
 import { ServiceWorkerManagerModal } from "../../../../../components/service-worker-manager";
 import { KeymapButton } from "../../../../../components/layout/top-bar/keymap-button";
 import { ImportButton } from "../../../../../components/import-button";
@@ -138,11 +140,13 @@ const ImagePage = () => {
       <CookieBanner />
       <Layout
         breadcrumbs={[
-          <NextLink key={0} href={`/${workspaceSlug}/datasets`}>
+          <NavLogo key={0} />,
+          <WorkspaceSwitcher key={1} />,
+          <NextLink key={2} href={`/${workspaceSlug}/datasets`}>
             <BreadcrumbLink>Datasets</BreadcrumbLink>
           </NextLink>,
           <NextLink
-            key={1}
+            key={3}
             href={`/${workspaceSlug}/datasets/${datasetSlug}/images`}
           >
             <BreadcrumbLink>
@@ -150,15 +154,15 @@ const ImagePage = () => {
             </BreadcrumbLink>
           </NextLink>,
           <NextLink
-            key={2}
+            key={4}
             href={`/${workspaceSlug}/datasets/${datasetSlug}/images`}
           >
             <BreadcrumbLink>Images</BreadcrumbLink>
           </NextLink>,
           imageName ? (
-            <Text key={3}>{imageName}</Text>
+            <Text key={5}>{imageName}</Text>
           ) : (
-            <Skeleton key={3}>Image Name</Skeleton>
+            <Skeleton key={5}>Image Name</Skeleton>
           ),
         ]}
         topBarRightContent={

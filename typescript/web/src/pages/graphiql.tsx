@@ -8,6 +8,7 @@ import { ServiceWorkerManagerModal } from "../components/service-worker-manager"
 import { WelcomeManager } from "../components/welcome-manager";
 import { AuthManager } from "../components/auth-manager";
 import { CookieBanner } from "../components/cookie-banner";
+import { NavLogo } from "../components/logo/nav-logo";
 
 const GraphiQL = dynamic(() => import("../components/graphiql"), {
   ssr: false,
@@ -29,7 +30,9 @@ const GraphqlPlayground = () => {
       <AuthManager />
       <Meta title="LabelFlow | GraphiQL" />
       <CookieBanner />
-      <Layout breadcrumbs={[<Text key={0}>Graphiql</Text>]}>
+      <Layout
+        breadcrumbs={[<NavLogo key={0} />, <Text key={0}>Graphiql</Text>]}
+      >
         <Box
           h="100%"
           w="100%"

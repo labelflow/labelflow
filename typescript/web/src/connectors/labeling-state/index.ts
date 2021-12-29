@@ -23,6 +23,11 @@ export enum DrawingToolState {
   DRAWING = "drawing",
 }
 
+export enum SelectionToolState {
+  DEFAULT = "default",
+  IOG = "iog",
+}
+
 export type LabelingState = {
   zoomFactor: number;
   view: OlView | null;
@@ -30,6 +35,15 @@ export type LabelingState = {
   canZoomIn: boolean;
   canZoomOut: boolean;
   isImageLoading: boolean;
+  iogProcessingLabels: Set<string>;
+  iogSpinnerPosition: Coordinate | null;
+  iogSpinnerPositions: { [timestamp: number]: Coordinate };
+  registerIogJob: (
+    timestamp: number,
+    idLabel: string | null,
+    iogSpinnerPosition: Coordinate | null
+  ) => void;
+  unregisterIogJob: (timestamp: number, idLabel: string | null) => void;
   isContextMenuOpen: boolean;
   setIsContextMenuOpen: (isContextMenuOpen: boolean) => void;
   contextMenuLocation: Coordinate | undefined;
@@ -39,6 +53,8 @@ export type LabelingState = {
   selectedLabelClassId: string | null;
   boxDrawingToolState: DrawingToolState;
   setDrawingToolState: (state: DrawingToolState) => void;
+  selectionToolState: SelectionToolState;
+  setSelectionToolState: (state: SelectionToolState) => void;
   setIsImageLoading: (isImageLoading: boolean) => void;
   setCanZoomIn: (canZoomIn: boolean) => void;
   setCanZoomOut: (canZoomOut: boolean) => void;
@@ -55,6 +71,39 @@ export const useLabelingStore = create<LabelingState>(
     zoomFactor: 0.5,
     canZoomIn: true,
     canZoomOut: false,
+    iogSpinnerPosition: null,
+    iogProcessingLabels: new Set(),
+    iogSpinnerPositions: {},
+    registerIogJob: (timestamp, idLabel, iogSpinnerPosition) => {
+      if (!iogSpinnerPosition || !idLabel) return;
+      const { iogSpinnerPositions, iogProcessingLabels } = get();
+      iogProcessingLabels.add(idLabel);
+      const newIogSpinnerPositions = {
+        ...iogSpinnerPositions,
+        [timestamp]: iogSpinnerPosition,
+      };
+      // @ts-ignore See https://github.com/Diablow/zustand-store-addons/issues/2
+      set({
+        iogProcessingLabels,
+        iogSpinnerPositions: newIogSpinnerPositions,
+      });
+    },
+    unregisterIogJob: (timestamp, idLabel) => {
+      const { iogSpinnerPositions, iogProcessingLabels } = get();
+      if (idLabel) iogProcessingLabels.delete(idLabel);
+      const newIogSpinnerPositions = Object.fromEntries(
+        Object.keys(iogSpinnerPositions)
+          .filter(
+            (timestampCurrent) => parseInt(timestampCurrent, 10) !== timestamp
+          )
+          .map((key) => [key, iogSpinnerPositions[parseInt(key, 10)]])
+      );
+      // @ts-ignore See https://github.com/Diablow/zustand-store-addons/issues/2
+      return set({
+        iogSpinnerPositions: newIogSpinnerPositions,
+        iogProcessingLabels,
+      });
+    },
     isContextMenuOpen: false,
     setIsContextMenuOpen: (isContextMenuOpen: boolean) =>
       // @ts-ignore See https://github.com/Diablow/zustand-store-addons/issues/2
@@ -70,6 +119,10 @@ export const useLabelingStore = create<LabelingState>(
     setDrawingToolState: (boxDrawingToolState: DrawingToolState) =>
       // @ts-ignore See https://github.com/Diablow/zustand-store-addons/issues/2
       set({ boxDrawingToolState }),
+    selectionToolState: SelectionToolState.DEFAULT,
+    setSelectionToolState: (selectionToolState: SelectionToolState) =>
+      // @ts-ignore See https://github.com/Diablow/zustand-store-addons/issues/2
+      set({ selectionToolState }),
     // @ts-ignore See https://github.com/Diablow/zustand-store-addons/issues/2
     setView: (view: OlView) => set({ view }),
     // @ts-ignore See https://github.com/Diablow/zustand-store-addons/issues/2
@@ -94,6 +147,17 @@ export const useLabelingStore = create<LabelingState>(
     },
   }),
   {
+    computed: {
+      iogSpinnerPosition() {
+        if (!this.iogSpinnerPositions) {
+          return null;
+        }
+        const latestPosition = Object.keys(this.iogSpinnerPositions).sort(
+          (a, b) => (a > b ? -1 : 1)
+        )[0];
+        return this.iogSpinnerPositions[latestPosition];
+      },
+    },
     watchers: {
       selectedTool: setRouterValue("selectedTool"),
       selectedLabelId: setRouterValue("selectedLabelId"),

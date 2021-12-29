@@ -8,7 +8,7 @@ import { PropsWithChildren } from "react";
 
 import { incrementMockedDate } from "@labelflow/dev-utils/mockdate";
 import { LabelCreateInput } from "@labelflow/graphql-types";
-import { probeImage } from "@labelflow/common-resolvers/src/utils/probe-image";
+import { processImage } from "../../../../connectors/repository/image-processing";
 import { mockNextRouter } from "../../../../utils/router-mocks";
 
 mockNextRouter({
@@ -22,8 +22,8 @@ import { setupTestsWithLocalDatabase } from "../../../../utils/setup-local-db-te
 
 setupTestsWithLocalDatabase();
 
-jest.mock("@labelflow/common-resolvers/src/utils/probe-image");
-const mockedProbeSync = probeImage as jest.Mock;
+jest.mock("../../../../connectors/repository/image-processing");
+const mockedProcessImage = processImage as jest.Mock;
 
 const wrapper = ({ children }: PropsWithChildren<{}>) => (
   <ApolloProvider client={client}>
@@ -152,7 +152,7 @@ test("File should be downloaded when user clicks on Export to COCO and Export", 
 test("Export Modal should display the number of labels", async () => {
   await createDataset();
   await createDataset("second-dataset-id", "second-test-dataset");
-  mockedProbeSync.mockReturnValue({
+  mockedProcessImage.mockReturnValue({
     width: 42,
     height: 36,
     mime: "image/jpeg",
