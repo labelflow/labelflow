@@ -8,13 +8,14 @@ import {
 } from "@labelflow/common-resolvers";
 import { Mutation, Query } from "@labelflow/graphql-types";
 import { isEmpty, isNil } from "lodash/fp";
-import { useEffect } from "react";
+import { PropsWithChildren, useEffect } from "react";
 import {
   useWorkspaceNameInput,
   WorkspaceNameInput,
   WorkspaceNameInputProvider,
   WorkspaceNameMessage,
 } from ".";
+import { MockableLocationProvider } from "../../utils/mockable-location";
 import { WORKSPACE_EXISTS_QUERY } from "./workspace-exists.query";
 import { WorkspaceNameMessageProps } from "./workspace-name-message";
 
@@ -41,6 +42,7 @@ export type TestComponentProps = Partial<WorkspaceNameMessageProps> & {
   defaultName?: string;
   graphqlMocks?: ApolloResponse<Partial<Query | Mutation>>[];
   storybook?: boolean;
+  origin?: string;
 };
 
 const NameObserver = ({
@@ -57,6 +59,25 @@ const NameObserver = ({
   return null;
 };
 
+const Wrapper = ({
+  name,
+  storybook = false,
+  defaultName,
+  graphqlMocks,
+  children,
+}: PropsWithChildren<TestComponentProps>) => (
+  <MockableLocationProvider
+    location={storybook ? "http://localhost" : undefined}
+  >
+    <ApolloProvider mocks={graphqlMocks}>
+      <WorkspaceNameInputProvider defaultName={defaultName}>
+        <NameObserver name={name} storybook={storybook} />
+        {children}
+      </WorkspaceNameInputProvider>
+    </ApolloProvider>
+  </MockableLocationProvider>
+);
+
 export const TestComponent = ({
   name,
   storybook,
@@ -65,13 +86,15 @@ export const TestComponent = ({
   graphqlMocks = [WORKSPACE_EXISTS_MOCK_TEST],
   ...messageProps
 }: TestComponentProps) => (
-  <ApolloProvider mocks={graphqlMocks}>
-    <WorkspaceNameInputProvider defaultName={defaultName}>
-      <NameObserver name={name} storybook={storybook} />
-      <WorkspaceNameInput />
-      <WorkspaceNameMessage hideError={hideError} {...messageProps} />
-    </WorkspaceNameInputProvider>
-  </ApolloProvider>
+  <Wrapper
+    name={name}
+    storybook={storybook}
+    defaultName={defaultName}
+    graphqlMocks={graphqlMocks}
+  >
+    <WorkspaceNameInput />
+    <WorkspaceNameMessage hideError={hideError} {...messageProps} />
+  </Wrapper>
 );
 
 export type TestCase = [TestComponentProps, string];
