@@ -47,17 +47,17 @@ export const repository: Repository = {
         addIdIfNil({ ...image, datasetId })
       );
 
-      return await (
-        await getDatabase()
-      ).image.bulkAdd(imagesToAdd, {
-        allKeys: true,
-      });
+      const db = await getDatabase();
+
+      return await db.image.bulkAdd(imagesToAdd, { allKeys: true });
     },
     count: async (whereWithUser) => {
       const where = removeUserFromWhere(whereWithUser);
+      const db = await getDatabase();
+
       return where
-        ? await (await getDatabase()).image.where(where).count()
-        : await (await getDatabase()).image.count();
+        ? await db.image.where(where).count()
+        : await db.image.count();
     },
     get: async ({ id }) => {
       return await (await getDatabase()).image.get(id);
