@@ -1,7 +1,5 @@
+import { sleep } from "@labelflow/utils";
 import { createUndoStore, Effect } from "../create-undo-store";
-
-const sleep = (sleepTime: number): Promise<void> =>
-  new Promise((resolve) => setTimeout(resolve, sleepTime));
 
 test("It calls the `do` of the effect when it is performed", () => {
   const testEffect: Effect = { do: jest.fn(), undo: jest.fn() };
