@@ -2,12 +2,15 @@ import {
   DbWorkspace,
   DbWorkspaceWithType,
   getSlug,
+  INVALID_WORKSPACE_NAME_MESSAGES,
   PartialWithNullAllowed,
   Repository,
   validWorkspaceName,
 } from "@labelflow/common-resolvers";
 import { WorkspaceType } from "@labelflow/graphql-types";
+import { ErrorOverride, withErrorOverridesAsync } from "@labelflow/utils";
 import { Prisma, UserRole, WorkspacePlan } from "@prisma/client";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime";
 import { isNil } from "lodash";
 import { getPrismaClient } from "../prisma-client";
 import { stripe } from "../utils";
@@ -21,7 +24,22 @@ const addTypeToWorkspace = (
   type: WorkspaceType.Online,
 });
 
-export const addWorkspace: Repository["workspace"]["add"] = async (
+const overrideWorkspaceExistError: ErrorOverride = (error: unknown) => {
+  // Try to see if the query failed because another workspace with the same name or slug already exists
+  if (
+    error instanceof PrismaClientKnownRequestError &&
+    // P2002: "Unique constraint failed on the {constraint}"
+    error.code === "P2002" &&
+    !isNil(error.meta)
+  ) {
+    const { target = [] } = error.meta as { target?: string[] };
+    if (target.includes("name") || target.includes("slug")) {
+      throw new Error(INVALID_WORKSPACE_NAME_MESSAGES.workspaceExists);
+    }
+  }
+};
+
+export const addWorkspaceImpl: Repository["workspace"]["add"] = async (
   workspace,
   user
 ) => {
@@ -49,6 +67,10 @@ export const addWorkspace: Repository["workspace"]["add"] = async (
   });
   return createdWorkspace.id;
 };
+
+export const addWorkspace = withErrorOverridesAsync(addWorkspaceImpl, [
+  overrideWorkspaceExistError,
+]);
 
 export const getWorkspace: Repository["workspace"]["get"] = async (
   where,
@@ -101,7 +123,7 @@ const noDeleteUpdate = (
   }
 };
 
-export const updateWorkspace: Repository["workspace"]["update"] = async (
+export const updateWorkspaceImpl: Repository["workspace"]["update"] = async (
   where,
   workspace,
   user
@@ -131,6 +153,10 @@ export const updateWorkspace: Repository["workspace"]["update"] = async (
     return false;
   }
 };
+
+export const updateWorkspace = withErrorOverridesAsync(updateWorkspaceImpl, [
+  overrideWorkspaceExistError,
+]);
 
 export const deleteWorkspace: Repository["workspace"]["delete"] = async (
   where,

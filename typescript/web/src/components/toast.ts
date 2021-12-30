@@ -1,6 +1,7 @@
 import { ApolloError } from "@apollo/client";
 import { AlertStatus, useToast as useChakraToast } from "@chakra-ui/react";
 import { useCallback } from "react";
+import { getApolloErrorMessage } from "../utils/get-apollo-error-message";
 
 /**
  * Returns a toast reusable across the application
@@ -39,7 +40,10 @@ export const useApolloErrorToast = () => {
   const toast = useErrorToast();
   return useCallback(
     (error: ApolloError) => {
-      toast("Error while contacting the GraphQL server", error.message);
+      toast(
+        "Error while contacting the GraphQL server",
+        getApolloErrorMessage(error)
+      );
     },
     [toast]
   );

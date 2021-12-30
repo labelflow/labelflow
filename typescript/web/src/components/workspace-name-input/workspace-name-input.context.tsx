@@ -13,6 +13,7 @@ import {
   useState,
 } from "react";
 import { useDebounce } from "use-debounce";
+import { getApolloErrorMessage } from "../../utils/get-apollo-error-message";
 import { useWorkspaceExistsQuery } from "./workspace-exists.query";
 
 export interface WorkspaceNameInputState {
@@ -48,20 +49,32 @@ const useValidName = (name: string, slug: string): string | undefined => {
     : undefined;
 };
 
-const useWorkspaceExists = (
+const useSkipQuery = (
   slug: string,
   defaultName: string,
   skip: boolean
-) => {
+): [boolean, boolean] => {
   const [debouncedSlug] = useDebounce(slug, 250, {
     leading: true,
     trailing: true,
   });
   const isDebouncing = slug !== debouncedSlug;
-  const isDefaultSlug = slug === getSlug(defaultName);
-  const skipQuery = skip || isDebouncing || isEmpty(slug) || isDefaultSlug;
+  const skipQuery =
+    skip || isDebouncing || isEmpty(slug) || slug === getSlug(defaultName);
+  return [skipQuery, isDebouncing];
+};
+
+const useWorkspaceExists = (
+  slug: string,
+  defaultName: string,
+  skip: boolean
+) => {
+  const [skipQuery, isDebouncing] = useSkipQuery(slug, defaultName, skip);
   const result = useWorkspaceExistsQuery(slug, { skip: skipQuery });
-  return { ...result, loading: isDebouncing || result.loading };
+  const loading = isDebouncing || result.loading;
+  const error =
+    result.variables?.slug === slug && !skipQuery ? result.error : undefined;
+  return { ...result, loading, error };
 };
 
 const useDontExist = (
@@ -71,13 +84,13 @@ const useDontExist = (
 ): [boolean, string | undefined] => {
   const { data, error, loading } = useWorkspaceExists(slug, defaultName, skip);
   if (skip) return [false, undefined];
-  return [
-    loading,
-    error?.message ||
-      (data?.workspaceExists
-        ? `A workspace with the slug ${slug} already exists`
-        : undefined),
-  ];
+  const apolloError = isNil(error) ? undefined : getApolloErrorMessage(error);
+  const errorMessage =
+    apolloError ||
+    (data?.workspaceExists
+      ? INVALID_WORKSPACE_NAME_MESSAGES.workspaceExists
+      : undefined);
+  return [loading, errorMessage];
 };
 
 const useValidation = (

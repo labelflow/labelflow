@@ -10,10 +10,15 @@ import {
 import { Mutation } from "@labelflow/graphql-types";
 import { isNil } from "lodash/fp";
 import { useRouter } from "next/router";
-import { useCallback } from "react";
+import {
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
 import { useQueryParam } from "use-query-params";
 import { BoolParam } from "../../../utils/query-param-bool";
-import { useApolloError } from "../../error-handlers";
 
 export const CREATE_WORKSPACE_MUTATION = gql`
   mutation createWorkspace($name: String!) {
@@ -24,7 +29,7 @@ export const CREATE_WORKSPACE_MUTATION = gql`
   }
 `;
 
-type CreateWorkspaceMutationResult = Pick<Mutation, "createWorkspace">;
+export type CreateWorkspaceMutationResult = Pick<Mutation, "createWorkspace">;
 
 const isAuthenticationError = (error: ApolloError) => {
   return (
@@ -35,19 +40,41 @@ const isAuthenticationError = (error: ApolloError) => {
   );
 };
 
-const useCreateWorkspaceMutationError = () => {
-  const onError = useApolloError();
+type MutationErrorState = {
+  showError: boolean;
+  lastName?: string;
+};
+
+const useErrorState = (
+  workspaceName: string
+): [boolean, Dispatch<SetStateAction<MutationErrorState>>] => {
+  const [{ showError, lastName }, setErrorState] = useState<MutationErrorState>(
+    { showError: false }
+  );
+  useEffect(() => {
+    if (showError && workspaceName !== lastName) {
+      setErrorState({ showError: false });
+    }
+  }, [lastName, showError, workspaceName]);
+  return [showError, setErrorState];
+};
+
+const useCreateWorkspaceMutationError = (
+  workspaceName: string
+): [(error: ApolloError) => void, boolean] => {
   const setSignInModalOpen = useQueryParam("modal-signin", BoolParam)[1];
-  return useCallback(
+  const [showError, setErrorState] = useErrorState(workspaceName);
+  const onError = useCallback(
     (error: ApolloError) => {
       if (isAuthenticationError(error)) {
         setSignInModalOpen(true, "replaceIn");
       } else {
-        onError(error);
+        setErrorState({ showError: true, lastName: workspaceName });
       }
     },
-    [onError, setSignInModalOpen]
+    [setSignInModalOpen, setErrorState, workspaceName]
   );
+  return [onError, showError];
 };
 
 const useCreateWorkspaceMutationCompleted = () => {
@@ -62,7 +89,7 @@ const useCreateWorkspaceMutationCompleted = () => {
   );
 };
 
-export function useCreateWorkspace(
+export function useCreateWorkspaceMutation(
   workspaceName: string
 ): MutationTuple<
   CreateWorkspaceMutationResult,
@@ -70,12 +97,23 @@ export function useCreateWorkspace(
   DefaultContext,
   ApolloCache<unknown>
 > {
-  const onError = useCreateWorkspaceMutationError();
+  const [onError, isUpToDate] = useCreateWorkspaceMutationError(workspaceName);
   const onCompleted = useCreateWorkspaceMutationCompleted();
-  return useMutation<CreateWorkspaceMutationResult>(CREATE_WORKSPACE_MUTATION, {
-    variables: { name: workspaceName },
-    refetchQueries: ["getWorkspaces"],
-    onCompleted,
-    onError,
-  });
+  const [createWorkspace, result] = useMutation<CreateWorkspaceMutationResult>(
+    CREATE_WORKSPACE_MUTATION,
+    {
+      variables: { name: workspaceName },
+      refetchQueries: ["getWorkspaces"],
+      onCompleted,
+      onError,
+    }
+  );
+  return [
+    createWorkspace,
+    {
+      ...result,
+      called: result.called && isUpToDate,
+      error: isUpToDate ? result.error : undefined,
+    },
+  ];
 }

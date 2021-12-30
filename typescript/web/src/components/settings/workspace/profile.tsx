@@ -17,7 +17,7 @@ import { useCallback } from "react";
 import { RiGroupFill } from "react-icons/ri";
 import { Card, FieldGroup, HeadingGroup } from "..";
 import { randomBackgroundGradient } from "../../../utils/random-background-gradient";
-import { useApolloErrorToast } from "../../toast";
+import { useApolloError } from "../../error-handlers";
 import {
   useWorkspaceNameInput,
   WorkspaceNameInput,
@@ -50,7 +50,7 @@ const useUpdateWorkspace = (): [() => void, string | undefined] => {
   const router = useRouter();
   const workspace = useWorkspaceSettings();
   const { name } = useWorkspaceNameInput();
-  const onError = useApolloErrorToast();
+  const onError = useApolloError();
   const [updateWorkspace, { error }] = useMutation<
     Pick<Mutation, "updateWorkspace">
   >(updateWorkspaceMutation, {
