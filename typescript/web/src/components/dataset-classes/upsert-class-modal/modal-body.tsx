@@ -10,7 +10,12 @@ import { ModalContext } from "./modal-context";
 export const ModalBody = () => {
   return (
     <ModalContext.Consumer>
-      {({ classNameInputValue, handleInputValueChange, errorMessage }) => {
+      {({
+        classNameInputValue,
+        handleInputValueChange,
+        errorMessage,
+        isClassCreationPending,
+      }) => {
         return (
           <ChakraModalBody pt="0" pb="6" pr="20" pl="20">
             <FormControl isInvalid={errorMessage !== ""} isRequired>
@@ -22,6 +27,7 @@ export const ModalBody = () => {
                 onChange={handleInputValueChange}
                 aria-label="Class name input"
                 autoFocus
+                disabled={isClassCreationPending}
               />
               <FormErrorMessage>{errorMessage}</FormErrorMessage>
             </FormControl>

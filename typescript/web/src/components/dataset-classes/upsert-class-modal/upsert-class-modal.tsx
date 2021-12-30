@@ -24,7 +24,8 @@ const useCreateClass = (
   className: string,
   classColor: string | undefined,
   onClose: () => void,
-  setErrorMessage: (message: string) => void
+  setErrorMessage: (message: string) => void,
+  setPendingStatus: (isPending: boolean) => void
 ) => {
   const workspaceSlug = useRouter()?.query?.workspaceSlug as string | undefined;
   const updateLabelClass = useUpdateLabelClass(classId, className, classColor);
@@ -39,6 +40,7 @@ const useCreateClass = (
       event.preventDefault();
       if (isEmpty(className)) return;
       try {
+        setPendingStatus(true);
         if (!isNil(classId)) {
           await updateLabelClass();
         } else {
@@ -52,6 +54,8 @@ const useCreateClass = (
         } else {
           throw error;
         }
+      } finally {
+        setPendingStatus(false);
       }
     },
     [
@@ -61,6 +65,7 @@ const useCreateClass = (
       onClose,
       setErrorMessage,
       updateLabelClass,
+      setPendingStatus,
     ]
   );
 };
@@ -112,6 +117,8 @@ const useModalState = ({ isOpen, onClose }: UpsertClassModalProps) => {
   const { editClass, datasetId, datasetSlug } = useDatasetClasses();
   const [classNameInputValue, setClassNameInputValue] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState<string>("");
+  const [isClassCreationPending, setIsClassCreationPending] =
+    useState<boolean>(false);
   const handleInputValueChange = (event: ChangeEvent<HTMLInputElement>) => {
     setClassNameInputValue(event.target.value);
   };
@@ -125,7 +132,8 @@ const useModalState = ({ isOpen, onClose }: UpsertClassModalProps) => {
     className,
     editClass?.color ?? undefined,
     onClose,
-    setErrorMessage
+    setErrorMessage,
+    setIsClassCreationPending
   );
   useModalObserver(isOpen, setClassNameInputValue, setErrorMessage, editClass);
   return {
@@ -134,6 +142,7 @@ const useModalState = ({ isOpen, onClose }: UpsertClassModalProps) => {
     classNameInputValue,
     errorMessage,
     handleInputValueChange,
+    isClassCreationPending,
   };
 };
 
