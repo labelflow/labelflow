@@ -1,9 +1,16 @@
-import { DocumentNode, gql, useApolloClient } from "@apollo/client";
+import {
+  DocumentNode,
+  gql,
+  MutationResult,
+  useApolloClient,
+  useMutation,
+} from "@apollo/client";
 import { MutationBaseOptions } from "@apollo/client/core/watchQueryOptions";
 import { Query } from "@labelflow/graphql-types";
 import { getNextClassColor, LABEL_CLASS_COLOR_PALETTE } from "@labelflow/utils";
 import { useCallback } from "react";
 import { v4 as uuid } from "uuid";
+import { CREATE_WORKSPACE_MUTATION } from "../../workspace-switcher/create-workspace-modal/create-workspace.mutation";
 import { DATASET_LABEL_CLASSES_QUERY } from "./dataset-label-classes.query";
 
 export const CREATE_LABEL_CLASS_MUTATION = gql`
@@ -71,9 +78,16 @@ export const useCreateLabelClassMutation = (
   datasetSlug: string | undefined,
   className: string,
   datasetId: string | undefined | null
-) => {
+): [() => Promise<void>, MutationResult<{}>] => {
   const client = useApolloClient();
-  return useCallback(async () => {
+  const [createLabelClass, result] = useMutation(CREATE_WORKSPACE_MUTATION, {
+    update: createLabelMutationUpdate(
+      DATASET_LABEL_CLASSES_QUERY,
+      datasetSlug,
+      workspaceSlug
+    ),
+  });
+  const onCreateLabelClass = useCallback(async () => {
     const { data: queryData } = await client.query<
       Partial<Pick<Query, "dataset">>
     >({
@@ -86,8 +100,7 @@ export const useCreateLabelClassMutation = (
       labelClasses.length < 1
         ? LABEL_CLASS_COLOR_PALETTE[0]
         : getNextClassColor(labelClasses.map((labelClass) => labelClass.color));
-
-    await client.mutate({
+    await createLabelClass({
       mutation: CREATE_LABEL_CLASS_MUTATION,
       variables: { id: newClassId, name: className, color, datasetId },
       optimisticResponse: {
@@ -99,11 +112,14 @@ export const useCreateLabelClassMutation = (
           __typeName: "LabelClass",
         },
       },
-      update: createLabelMutationUpdate(
-        DATASET_LABEL_CLASSES_QUERY,
-        datasetSlug,
-        workspaceSlug
-      ),
     });
-  }, [client, datasetSlug, workspaceSlug, className, datasetId]);
+  }, [
+    client,
+    datasetSlug,
+    workspaceSlug,
+    createLabelClass,
+    className,
+    datasetId,
+  ]);
+  return [onCreateLabelClass, result];
 };

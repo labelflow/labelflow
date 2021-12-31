@@ -1,4 +1,4 @@
-import { gql, useApolloClient } from "@apollo/client";
+import { gql, MutationResult, useMutation } from "@apollo/client";
 import { useCallback } from "react";
 
 export const UPDATE_LABEL_CLASS_NAME_MUTATION = gql`
@@ -15,10 +15,12 @@ export const useUpdateLabelClass = (
   classId: string | undefined,
   className: string,
   classColor: string | undefined
-) => {
-  const client = useApolloClient();
-  return useCallback(async () => {
-    await client.mutate({
+): [() => Promise<void>, MutationResult<{}>] => {
+  const [updateLabelClass, result] = useMutation(
+    UPDATE_LABEL_CLASS_NAME_MUTATION
+  );
+  const onUpdate = useCallback(async () => {
+    await updateLabelClass({
       mutation: UPDATE_LABEL_CLASS_NAME_MUTATION,
       variables: { id: classId, name: className },
       optimisticResponse: {
@@ -30,5 +32,6 @@ export const useUpdateLabelClass = (
         },
       },
     });
-  }, [client, classId, className, classColor]);
+  }, [updateLabelClass, classId, className, classColor]);
+  return [onUpdate, result];
 };

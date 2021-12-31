@@ -17,7 +17,7 @@ import { ModalContent } from "./modal-content";
 import { ModalContext } from "./modal-context";
 import { useUpdateLabelClass } from "./update-label-class-name.mutation";
 
-const useCreateClass = (
+const useSubmit = (
   datasetId: string | undefined,
   datasetSlug: string | undefined,
   classId: string | undefined,
@@ -25,16 +25,20 @@ const useCreateClass = (
   classColor: string | undefined,
   onClose: () => void,
   setErrorMessage: (message: string) => void
-) => {
+): [(event: FormEvent) => Promise<void>, boolean] => {
   const workspaceSlug = useRouter()?.query?.workspaceSlug as string | undefined;
-  const updateLabelClass = useUpdateLabelClass(classId, className, classColor);
-  const createLabelClass = useCreateLabelClassMutation(
+  const [updateLabelClass, { loading: updating }] = useUpdateLabelClass(
+    classId,
+    className,
+    classColor
+  );
+  const [createLabelClass, { loading: creating }] = useCreateLabelClassMutation(
     workspaceSlug,
     datasetSlug,
     className,
     datasetId
   );
-  return useCallback(
+  const onSubmit = useCallback(
     async (event: FormEvent) => {
       event.preventDefault();
       if (isEmpty(className)) return;
@@ -63,6 +67,7 @@ const useCreateClass = (
       updateLabelClass,
     ]
   );
+  return [onSubmit, creating || updating];
 };
 
 const useCheckName = (
@@ -118,7 +123,7 @@ const useModalState = ({ isOpen, onClose }: UpsertClassModalProps) => {
   const classId = editClass?.id ?? undefined;
   const className = classNameInputValue?.trim() ?? "";
   useCheckName(datasetId, className, setErrorMessage);
-  const createClass = useCreateClass(
+  const [createClass, loading] = useSubmit(
     datasetId,
     datasetSlug,
     classId,
@@ -134,6 +139,7 @@ const useModalState = ({ isOpen, onClose }: UpsertClassModalProps) => {
     classNameInputValue,
     errorMessage,
     handleInputValueChange,
+    loading,
   };
 };
 
