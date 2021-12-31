@@ -1,6 +1,10 @@
 # Changelog
 
-## [1.1.0](https://github.com/labelflow/labelflow/compare/1.0.27...1.1.0)
+## [1.1.1](https://github.com/labelflow/labelflow/compare/1.1.0...1.1.1)
+
+- Display a more meaningful error message in the app when createWorkspace fails [`#714`](https://github.com/labelflow/labelflow/pull/714)
+
+## [1.1.0](https://github.com/labelflow/labelflow/compare/1.0.27...1.1.0) - 2021-12-29
 
 - Release Workspaces to Allow Team Collaboration and Auto Polygon to Boost Labeling Productivity [`#497`](https://github.com/labelflow/labelflow/pull/497)
 - Define a unique key prop in class-selection-popover list [`#696`](https://github.com/labelflow/labelflow/pull/696)
@@ -69,6 +73,9 @@
 ## [1.0.26](https://github.com/labelflow/labelflow/compare/1.0.25...1.0.26) - 2021-12-08
 
 - Set correct value for `og:url` of articles [`#641`](https://github.com/labelflow/labelflow/pull/641)
+
+## [1.0.25](https://github.com/labelflow/labelflow/compare/1.0.24...1.0.25) - 2021-12-08
+
 - Images are not deleted in a deleted dataset [`#637`](https://github.com/labelflow/labelflow/pull/637)
 - Create a new prod DB [`#636`](https://github.com/labelflow/labelflow/pull/636)
 - Small changes on website [`#620`](https://github.com/labelflow/labelflow/pull/620)
@@ -82,8 +89,6 @@
 - Change error thrown when user tries to create an invalid label [`#549`](https://github.com/labelflow/labelflow/pull/549)
 - Feature/#518 mask iog [`#545`](https://github.com/labelflow/labelflow/pull/545)
 - Refactor auto polygon tool and workflow [`#547`](https://github.com/labelflow/labelflow/pull/547)
-
-## [1.0.25](https://github.com/labelflow/labelflow/compare/1.0.24...1.0.25) - 2021-10-21
 
 ## [1.0.24](https://github.com/labelflow/labelflow/compare/1.0.23...1.0.24) - 2021-10-21
 
