@@ -6649,6 +6649,7 @@ __metadata:
     "@graphql-tools/schema": 7.1.5
     "@labelflow/common-resolvers": "workspace:typescript/common-resolvers"
     "@labelflow/graphql-types": "workspace:typescript/graphql-types"
+    "@labelflow/utils": "workspace:typescript/utils"
     "@prisma/client": 2.30.3
     "@supabase/supabase-js": 1.21.0
     "@types/node": 16.4.1
@@ -6699,7 +6700,7 @@ __metadata:
     "@types/react-dom": 17.0.0
     "@types/react-reconciler": ^0.26.1
     "@types/storybook__react": 4.0.1
-    lodash: ^4.17.21
+    lodash: 4.17.21
     ol: 6.6.1
     ol-mapbox-style: 6.4.1
     proj4: 2.6.3
@@ -6746,6 +6747,8 @@ __metadata:
 "@labelflow/utils@workspace:typescript/utils":
   version: 0.0.0-use.local
   resolution: "@labelflow/utils@workspace:typescript/utils"
+  dependencies:
+    lodash: 4.17.21
   languageName: unknown
   linkType: soft
 

@@ -12,7 +12,7 @@ import {
   Text,
   useColorModeValue as mode,
 } from "@chakra-ui/react";
-import { isEmpty } from "lodash/fp";
+import { isEmpty, isNil } from "lodash/fp";
 import React, {
   createContext,
   FC,
@@ -23,6 +23,7 @@ import React, {
   useState,
 } from "react";
 import { StringParam, useQueryParam } from "use-query-params";
+import { getApolloErrorMessage } from "../../../utils/get-apollo-error-message";
 import { Features } from "../../auth-manager/signin-modal/features";
 import { Logo } from "../../logo";
 import {
@@ -31,7 +32,7 @@ import {
   WorkspaceNameInputProvider,
   WorkspaceNameMessage,
 } from "../../workspace-name-input";
-import { useCreateWorkspace } from "./create-workspace.mutation";
+import { useCreateWorkspaceMutation } from "./create-workspace.mutation";
 
 const ModalIsOpenContext = createContext(false);
 
@@ -107,22 +108,36 @@ const CreateButton: FC<{ isDisabled?: boolean }> = ({ isDisabled }) => (
   </Button>
 );
 
-const FormBody = () => {
-  const { name, error: nameError } = useWorkspaceNameInput();
-  const [create, { error: createError, loading }] = useCreateWorkspace(name);
-  const isDisabled = loading ? false : !isEmpty(nameError);
-  const handleSubmit = useCallback(
+const useCreateWorkspace = (): [() => void, boolean, string | undefined] => {
+  const { name } = useWorkspaceNameInput();
+  const [create, { loading, error: createError, called }] =
+    useCreateWorkspaceMutation(name);
+  const error =
+    isNil(createError) || !called
+      ? undefined
+      : getApolloErrorMessage(createError);
+  return [create, loading, error];
+};
+
+const useForm = (create: () => void, isDisabled: boolean) => {
+  return useCallback(
     (event: FormEvent<HTMLFormElement>) => {
       event.preventDefault();
-      if (!isDisabled) {
-        create();
-      }
+      if (isDisabled) return;
+      create();
     },
-    [isDisabled, create]
+    [create, isDisabled]
   );
+};
+
+const FormBody = () => {
+  const [create, isLoading, createError] = useCreateWorkspace();
+  const { error: nameError } = useWorkspaceNameInput();
+  const isDisabled = isLoading ? false : !isEmpty(nameError);
+  const handleSubmit = useForm(create, isLoading);
   return (
     <form onSubmit={handleSubmit}>
-      <WorkspaceName error={createError?.message} />
+      <WorkspaceName error={createError} />
       <CreateButton isDisabled={isDisabled} />
     </form>
   );

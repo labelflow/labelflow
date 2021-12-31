@@ -41,6 +41,7 @@ export enum WorkspaceNameErrorType {
   invalidNameCharacters = "invalidNameCharacters",
   emptySlug = "emptySlug",
   forbiddenSlug = "forbiddenSlug",
+  workspaceExists = "workspaceExists",
 }
 
 export const validateWorkspaceName = (
@@ -70,6 +71,7 @@ export const INVALID_WORKSPACE_NAME_MESSAGES: Record<
   invalidNameCharacters: "Name contains invalid characters",
   emptySlug: "Slug is empty",
   forbiddenSlug: "This name is reserved",
+  workspaceExists: `A workspace with this name already exists`,
 };
 
 export const validWorkspaceName = (

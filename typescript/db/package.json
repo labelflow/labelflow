@@ -33,6 +33,7 @@
     "@graphql-tools/schema": "7.1.5",
     "@labelflow/common-resolvers": "workspace:typescript/common-resolvers",
     "@labelflow/graphql-types": "workspace:typescript/graphql-types",
+    "@labelflow/utils": "workspace:typescript/utils",
     "@prisma/client": "2.30.3",
     "@supabase/supabase-js": "1.21.0",
     "apollo-server": "3.5.0",

@@ -2,7 +2,10 @@ import {
   MockedProvider as ApolloProvider,
   MockedResponse as ApolloResponse,
 } from "@apollo/client/testing";
-import { FORBIDDEN_WORKSPACE_SLUGS } from "@labelflow/common-resolvers";
+import {
+  FORBIDDEN_WORKSPACE_SLUGS,
+  INVALID_WORKSPACE_NAME_MESSAGES,
+} from "@labelflow/common-resolvers";
 import { Mutation, Query } from "@labelflow/graphql-types";
 import { isEmpty, isNil } from "lodash/fp";
 import { useEffect } from "react";
@@ -84,18 +87,18 @@ export const TEST_CASES: Record<string, TestCase> = {
   ],
   "warns if the name is a reserved name": [
     { name: FORBIDDEN_WORKSPACE_SLUGS[0] },
-    `This name is reserved`,
+    INVALID_WORKSPACE_NAME_MESSAGES.forbiddenSlug,
   ],
   "warns if the name contains invalid characters": [
     { name: "hello!" },
-    "Name contains invalid characters",
+    INVALID_WORKSPACE_NAME_MESSAGES.invalidNameCharacters,
   ],
   "warns if the name is already taken": [
     {
       name: "Already taken name",
       graphqlMocks: [WORKSPACE_EXISTS_MOCK_ALREADY_TAKEN_NAME],
     },
-    "A workspace with the slug already-taken-name already exists",
+    INVALID_WORKSPACE_NAME_MESSAGES.workspaceExists,
   ],
   "displays the error if given one": [
     { customError: "this is an error" },
