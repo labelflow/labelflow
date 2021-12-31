@@ -17,30 +17,32 @@ import { ModalContent } from "./modal-content";
 import { ModalContext } from "./modal-context";
 import { useUpdateLabelClass } from "./update-label-class-name.mutation";
 
-const useCreateClass = (
+const useSubmit = (
   datasetId: string | undefined,
   datasetSlug: string | undefined,
   classId: string | undefined,
   className: string,
   classColor: string | undefined,
   onClose: () => void,
-  setErrorMessage: (message: string) => void,
-  setPendingStatus: (isPending: boolean) => void
-) => {
+  setErrorMessage: (message: string) => void
+): [(event: FormEvent) => Promise<void>, boolean] => {
   const workspaceSlug = useRouter()?.query?.workspaceSlug as string | undefined;
-  const updateLabelClass = useUpdateLabelClass(classId, className, classColor);
-  const createLabelClass = useCreateLabelClassMutation(
+  const [updateLabelClass, { loading: updating }] = useUpdateLabelClass(
+    classId,
+    className,
+    classColor
+  );
+  const [createLabelClass, { loading: creating }] = useCreateLabelClassMutation(
     workspaceSlug,
     datasetSlug,
     className,
     datasetId
   );
-  return useCallback(
+  const onSubmit = useCallback(
     async (event: FormEvent) => {
       event.preventDefault();
       if (isEmpty(className)) return;
       try {
-        setPendingStatus(true);
         if (!isNil(classId)) {
           await updateLabelClass();
         } else {
@@ -54,8 +56,6 @@ const useCreateClass = (
         } else {
           throw error;
         }
-      } finally {
-        setPendingStatus(false);
       }
     },
     [
@@ -65,9 +65,9 @@ const useCreateClass = (
       onClose,
       setErrorMessage,
       updateLabelClass,
-      setPendingStatus,
     ]
   );
+  return [onSubmit, creating || updating];
 };
 
 const useCheckName = (
@@ -117,23 +117,20 @@ const useModalState = ({ isOpen, onClose }: UpsertClassModalProps) => {
   const { editClass, datasetId, datasetSlug } = useDatasetClasses();
   const [classNameInputValue, setClassNameInputValue] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState<string>("");
-  const [isClassCreationPending, setIsClassCreationPending] =
-    useState<boolean>(false);
   const handleInputValueChange = (event: ChangeEvent<HTMLInputElement>) => {
     setClassNameInputValue(event.target.value);
   };
   const classId = editClass?.id ?? undefined;
   const className = classNameInputValue?.trim() ?? "";
   useCheckName(datasetId, className, setErrorMessage);
-  const createClass = useCreateClass(
+  const [createClass, loading] = useSubmit(
     datasetId,
     datasetSlug,
     classId,
     className,
     editClass?.color ?? undefined,
     onClose,
-    setErrorMessage,
-    setIsClassCreationPending
+    setErrorMessage
   );
   useModalObserver(isOpen, setClassNameInputValue, setErrorMessage, editClass);
   return {
@@ -142,7 +139,7 @@ const useModalState = ({ isOpen, onClose }: UpsertClassModalProps) => {
     classNameInputValue,
     errorMessage,
     handleInputValueChange,
-    isClassCreationPending,
+    loading,
   };
 };
 

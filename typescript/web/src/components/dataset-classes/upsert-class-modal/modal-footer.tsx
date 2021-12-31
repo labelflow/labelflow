@@ -3,20 +3,13 @@ import { ModalContext } from "./modal-context";
 
 export const ModalFooter = () => (
   <ModalContext.Consumer>
-    {({
-      errorMessage,
-      classNameInputValue,
-      classId,
-      isClassCreationPending,
-    }) => (
+    {({ errorMessage, classNameInputValue, classId, loading }) => (
       <ChakraModalFooter>
         <Button
           type="submit"
           colorScheme="brand"
           disabled={
-            classNameInputValue === "" ||
-            errorMessage !== "" ||
-            isClassCreationPending
+            classNameInputValue === "" || errorMessage !== "" || loading
           }
           aria-label={classId ? "Update" : "Create"}
         >

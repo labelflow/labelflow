@@ -6,7 +6,7 @@ export interface UpsertClassModalState {
   classNameInputValue: string;
   errorMessage: string;
   handleInputValueChange: (e: ChangeEvent<HTMLInputElement>) => void;
-  isClassCreationPending: boolean;
+  loading: boolean;
 }
 
 export const ModalContext = React.createContext<UpsertClassModalState>({
@@ -15,5 +15,5 @@ export const ModalContext = React.createContext<UpsertClassModalState>({
   classNameInputValue: "",
   errorMessage: "",
   handleInputValueChange: () => {},
-  isClassCreationPending: false,
+  loading: false,
 });
