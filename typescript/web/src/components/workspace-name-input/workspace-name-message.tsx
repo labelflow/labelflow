@@ -1,4 +1,5 @@
 import { isEmpty } from "lodash/fp";
+import { useMockableLocation } from "../../utils/mockable-location";
 import { OptionalText } from "../optional-text";
 import { useWorkspaceNameInput } from "./workspace-name-input.context";
 
@@ -17,10 +18,10 @@ const useUrlMessage = (
   isEditing: boolean | undefined
 ): string | undefined => {
   const { slug } = useWorkspaceNameInput();
-  const hideUrl =
-    !isEmpty(error) || isEmpty(slug) || isEmpty(globalThis.location);
+  const { origin } = useMockableLocation();
+  const hideUrl = !isEmpty(error) || isEmpty(slug) || isEmpty(origin);
   if (hideUrl) return undefined;
-  const workspaceUrl = `${globalThis.location.origin}/${slug}`;
+  const workspaceUrl = `${origin}/${slug}`;
   return isEditing
     ? `Workspace URL: ${workspaceUrl}`
     : `URL will be: ${workspaceUrl}`;

@@ -2,6 +2,7 @@ import { MockedProvider as ApolloProvider } from "@apollo/client/testing";
 import { Story } from "@storybook/react";
 import { CreateWorkspaceModal } from "..";
 import { chakraDecorator } from "../../../../utils/chakra-decorator";
+import { MockableLocationProvider } from "../../../../utils/mockable-location";
 import { queryParamsDecorator } from "../../../../utils/query-params-decorator";
 import {
   WORKSPACE_EXISTS_MOCK_ALREADY_TAKEN_NAME,
@@ -21,7 +22,9 @@ const Template = () => (
     ]}
   >
     <div>
-      <CreateWorkspaceModal isOpen onClose={console.log} />
+      <MockableLocationProvider location="http://localhost">
+        <CreateWorkspaceModal isOpen onClose={console.log} />
+      </MockableLocationProvider>
     </div>
   </ApolloProvider>
 );

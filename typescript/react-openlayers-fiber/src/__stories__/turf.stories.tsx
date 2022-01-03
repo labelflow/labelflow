@@ -67,3 +67,7 @@ export const Turf = () => {
     </Map>
   );
 };
+
+Turf.parameters = {
+  chromatic: { disableSnapshot: true },
+};

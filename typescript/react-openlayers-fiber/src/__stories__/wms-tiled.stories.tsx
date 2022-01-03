@@ -20,3 +20,7 @@ export const TiledWMS = () => {
     </Map>
   );
 };
+
+TiledWMS.parameters = {
+  chromatic: { disableSnapshot: true },
+};

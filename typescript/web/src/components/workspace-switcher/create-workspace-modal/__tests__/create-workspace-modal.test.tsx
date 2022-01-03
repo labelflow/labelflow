@@ -1,19 +1,18 @@
 import { ApolloProvider } from "@apollo/client";
 import { FORBIDDEN_WORKSPACE_SLUGS } from "@labelflow/common-resolvers";
-import { render, RenderResult, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { isNil } from "lodash/fp";
-import { PropsWithChildren, ReactElement, useState } from "react";
+import { PropsWithChildren, useState } from "react";
 import { client } from "../../../../connectors/apollo-client/schema-client";
+import { MockableLocationProvider } from "../../../../utils/mockable-location";
 import { CreateWorkspaceModal } from "../create-workspace-modal";
 
-export const ApolloWrapper = ({ children }: PropsWithChildren<{}>) => (
-  <ApolloProvider client={client}>{children}</ApolloProvider>
+export const Wrapper = ({ children }: PropsWithChildren<{}>) => (
+  <MockableLocationProvider>
+    <ApolloProvider client={client}>{children}</ApolloProvider>
+  </MockableLocationProvider>
 );
-
-export const renderWithApollo = (ui: ReactElement): RenderResult => {
-  return render(ui, { wrapper: ApolloWrapper });
-};
 
 const INITIAL_QUERY_PARAMS = { "workspace-name": undefined };
 
@@ -83,7 +82,9 @@ const runTest = async ({
   expected,
 }: TestCase) => {
   initQueryParams(testCaseQueryParams);
-  renderWithApollo(<CreateWorkspaceModal isOpen onClose={handleClose} />);
+  render(<CreateWorkspaceModal isOpen onClose={handleClose} />, {
+    wrapper: Wrapper,
+  });
   validateInput(
     workspaceName,
     workspaceName ?? testCaseQueryParams?.["workspace-name"]
