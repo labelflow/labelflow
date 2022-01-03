@@ -144,9 +144,8 @@ user2@example.com
               <Alert status="info" borderRadius={5}>
                 <AlertIcon />
                 <AlertDescription fontSize={13} fontWeight="medium">
-                  <b>Tip</b>: Until January 2022 the number of members in a
-                  Shared Workspace is not limited, the time for us to collect
-                  your{" "}
+                  <b>Tip</b>: Until March 2022 the number of members in a Shared
+                  Workspace is not limited, the time for us to collect your{" "}
                   <Link
                     target="_blank"
                     href="https://discord.gg/NyYQ4dM3Dj"
