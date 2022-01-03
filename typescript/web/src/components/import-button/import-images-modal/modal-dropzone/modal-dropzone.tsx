@@ -104,8 +104,7 @@ export const ImportImagesModalDropzone = ({
           Import
         </Heading>
         <Text fontSize="lg" fontWeight="medium">
-          Start working with your images. Stay in control of your data. Images
-          are not uploaded on LabelFlow servers.{" "}
+          Start working with your images. Stay in control of your data.{" "}
           <Button
             colorScheme="brand"
             variant="link"

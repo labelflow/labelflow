@@ -96,3 +96,7 @@ export const DrawShapes = () => {
     </>
   );
 };
+
+DrawShapes.parameters = {
+  chromatic: { disableSnapshot: true },
+};

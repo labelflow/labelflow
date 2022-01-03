@@ -19,6 +19,7 @@ import {
 } from "../connectors/apollo-client/client";
 import { QueryParamProvider } from "../utils/query-params-provider";
 import ErrorPage from "./_error";
+import { MockableLocationProvider } from "../utils/mockable-location";
 
 interface InitialProps {
   cookie: string;
@@ -100,14 +101,16 @@ const App = (props: AppProps & InitialProps) => {
             <ApolloProvider client={client}>
               <QueryParamProvider>
                 <ChakraProvider theme={theme} resetCSS>
-                  <Head>
-                    {/* Set proper initial appearance of content for mobile */}
-                    <meta
-                      name="viewport"
-                      content="width=device-width, initial-scale=1.0"
-                    />
-                  </Head>
-                  <Component {...pageProps} />
+                  <MockableLocationProvider>
+                    <Head>
+                      {/* Set proper initial appearance of content for mobile */}
+                      <meta
+                        name="viewport"
+                        content="width=device-width, initial-scale=1.0"
+                      />
+                    </Head>
+                    <Component {...pageProps} />
+                  </MockableLocationProvider>
                 </ChakraProvider>
               </QueryParamProvider>
             </ApolloProvider>

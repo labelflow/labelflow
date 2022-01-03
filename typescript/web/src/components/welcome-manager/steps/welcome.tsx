@@ -26,19 +26,26 @@ const SpeedIcon = chakra(RiSpeedMiniFill);
 type Props = {
   onClickNext: () => void;
   onClickSkip?: () => void;
+  autoStartCountDown?: boolean;
 };
 
 const delayMilliSeconds = 10 * 1000;
 
-export const Welcome = ({ onClickSkip, onClickNext }: Props) => {
+export const Welcome = ({
+  onClickSkip,
+  onClickNext,
+  autoStartCountDown = true,
+}: Props) => {
   const [isCountDownStarted, setIsCountDownStarted] = useState(false);
   const [timeLeft, { start }] = useCountDown(delayMilliSeconds, 1000 / 30);
   const startLabelingButtonRef = useRef<HTMLButtonElement>(null);
   // Start the timer during the first render
   useEffect(() => {
-    setIsCountDownStarted(true);
-    start();
-    startLabelingButtonRef.current?.focus();
+    if (autoStartCountDown) {
+      setIsCountDownStarted(true);
+      start();
+      startLabelingButtonRef.current?.focus();
+    }
   }, []);
 
   useEffect(() => {
