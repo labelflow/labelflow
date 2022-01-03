@@ -1,23 +1,22 @@
-import React, { useEffect } from "react";
-import { Skeleton, Text, Center, BreadcrumbLink } from "@chakra-ui/react";
-import { useRouter } from "next/router";
-import { useQuery, gql } from "@apollo/client";
-import { useErrorHandler } from "react-error-boundary";
+import { gql, useQuery } from "@apollo/client";
+import { BreadcrumbLink, Skeleton, Text } from "@chakra-ui/react";
 import NextLink from "next/link";
-
-import { Spinner } from "../../../../components/spinner";
-import { WorkspaceSwitcher } from "../../../../components/workspace-switcher";
+import { useRouter } from "next/router";
+import React, { useEffect } from "react";
+import { useErrorHandler } from "react-error-boundary";
+import { AuthManager } from "../../../../components/auth-manager";
+import { CookieBanner } from "../../../../components/cookie-banner";
+import { ExportButton } from "../../../../components/export-button";
+import { ImportButton } from "../../../../components/import-button";
+import { Layout } from "../../../../components/layout";
+import { KeymapButton } from "../../../../components/layout/top-bar/keymap-button";
 import { NavLogo } from "../../../../components/logo/nav-logo";
 import { Meta } from "../../../../components/meta";
 import { ServiceWorkerManagerModal } from "../../../../components/service-worker-manager";
-import { Layout } from "../../../../components/layout";
-import { Error404Content } from "../../../404";
-import { ExportButton } from "../../../../components/export-button";
-import { ImportButton } from "../../../../components/import-button";
-import { KeymapButton } from "../../../../components/layout/top-bar/keymap-button";
-import { AuthManager } from "../../../../components/auth-manager";
+import { LayoutSpinner } from "../../../../components/spinner";
 import { WelcomeManager } from "../../../../components/welcome-manager";
-import { CookieBanner } from "../../../../components/cookie-banner";
+import { WorkspaceSwitcher } from "../../../../components/workspace-switcher";
+import { Error404Content } from "../../../404";
 
 const getDataset = gql`
   query getDataset($slug: String!, $workspaceSlug: String!) {
@@ -95,9 +94,7 @@ const DatasetIndexPage = () => {
           </>
         }
       >
-        <Center h="full">
-          <Spinner />
-        </Center>
+        <LayoutSpinner />
       </Layout>
     </>
   );

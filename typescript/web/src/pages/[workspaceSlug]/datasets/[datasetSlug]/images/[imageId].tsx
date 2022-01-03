@@ -1,34 +1,32 @@
-import React from "react";
-import { useQuery, gql } from "@apollo/client";
+import { gql, useQuery } from "@apollo/client";
 import {
-  Text,
-  BreadcrumbLink,
-  useColorModeValue as mode,
-  Skeleton,
-  Center,
   Box,
+  BreadcrumbLink,
   Flex,
+  Skeleton,
+  Text,
+  useColorModeValue as mode,
 } from "@chakra-ui/react";
-import dynamic from "next/dynamic";
-import { useRouter } from "next/router";
-import NextLink from "next/link";
 import type { Image } from "@labelflow/graphql-types";
+import dynamic from "next/dynamic";
+import NextLink from "next/link";
+import { useRouter } from "next/router";
+import React from "react";
 import { useErrorHandler } from "react-error-boundary";
-
-import { Spinner } from "../../../../../components/spinner";
-import { WorkspaceSwitcher } from "../../../../../components/workspace-switcher";
-import { NavLogo } from "../../../../../components/logo/nav-logo";
-import { ServiceWorkerManagerModal } from "../../../../../components/service-worker-manager";
-import { KeymapButton } from "../../../../../components/layout/top-bar/keymap-button";
-import { ImportButton } from "../../../../../components/import-button";
-import { ExportButton } from "../../../../../components/export-button";
-import { Meta } from "../../../../../components/meta";
-import { Layout } from "../../../../../components/layout";
-import { Gallery } from "../../../../../components/gallery";
-import { Error404Content } from "../../../../404";
 import { AuthManager } from "../../../../../components/auth-manager";
-import { WelcomeManager } from "../../../../../components/welcome-manager";
 import { CookieBanner } from "../../../../../components/cookie-banner";
+import { ExportButton } from "../../../../../components/export-button";
+import { Gallery } from "../../../../../components/gallery";
+import { ImportButton } from "../../../../../components/import-button";
+import { Layout } from "../../../../../components/layout";
+import { KeymapButton } from "../../../../../components/layout/top-bar/keymap-button";
+import { NavLogo } from "../../../../../components/logo/nav-logo";
+import { Meta } from "../../../../../components/meta";
+import { ServiceWorkerManagerModal } from "../../../../../components/service-worker-manager";
+import { LayoutSpinner } from "../../../../../components/spinner";
+import { WelcomeManager } from "../../../../../components/welcome-manager";
+import { WorkspaceSwitcher } from "../../../../../components/workspace-switcher";
+import { Error404Content } from "../../../../404";
 
 // The dynamic import is needed because openlayers use web apis that are not available
 // in NodeJS, like `Blob`, so it crashes when rendering in NextJS server side.
@@ -39,11 +37,7 @@ const LabelingTool = dynamic(
     ssr: false,
     loading: ({ error }) => {
       if (error) throw error;
-      return (
-        <Center h="full">
-          <Spinner ariaLabel="loading indicator" />
-        </Center>
-      );
+      return <LayoutSpinner aria-label="loading indicator" />;
     },
   }
 );

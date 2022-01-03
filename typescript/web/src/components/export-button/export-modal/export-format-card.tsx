@@ -61,7 +61,7 @@ export const ExportFormatCard = ({
           justifyContent="center"
           alignItems="center"
         >
-          <Spinner color="brand.500" ariaLabel="loading" />
+          <Spinner color="brand.500" size="xl" aria-label="loading" />
         </Box>
       )}
       <HStack

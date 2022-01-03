@@ -19,7 +19,7 @@ import { HiTrash } from "react-icons/hi";
 import { EmptyStateImageNotFound, EmptyStateNoImages } from "../empty-state";
 import { ImageWithFallback } from "../image";
 import { ImportButton } from "../import-button";
-import { Spinner } from "../spinner";
+import { LayoutSpinner } from "../spinner";
 import { DeleteImageModal } from "./delete-image-modal";
 
 const TrashIcon = chakra(HiTrash);
@@ -39,11 +39,7 @@ export const ImagesList = ({
   const imageBackground = mode("gray.100", "gray.800");
   return (
     <>
-      {!images && (
-        <Center h="full">
-          <Spinner />
-        </Center>
-      )}
+      {!images && <LayoutSpinner />}
       {isEmpty(images) && (
         <Center h="full">
           <Box as="section">

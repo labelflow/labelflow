@@ -59,7 +59,7 @@ const LoadingCard = () => (
       alignItems="center"
       justify="center"
     >
-      <Spinner color="brand.500" />
+      <Spinner color="brand.500" size="xl" />
     </Flex>
   </DatasetCardBox>
 );

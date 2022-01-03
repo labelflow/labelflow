@@ -1,28 +1,23 @@
-import React from "react";
+import { Box, Text } from "@chakra-ui/react";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
-import { Box, Center, Text } from "@chakra-ui/react";
-
-import { Spinner } from "../../../components/spinner";
-import { WorkspaceTabBar } from "../../../components/layout/tab-bar/workspace-tab-bar";
-import { Meta } from "../../../components/meta";
-import { Layout } from "../../../components/layout";
-import { ServiceWorkerManagerModal } from "../../../components/service-worker-manager";
-import { WelcomeManager } from "../../../components/welcome-manager";
+import React from "react";
 import { AuthManager } from "../../../components/auth-manager";
 import { CookieBanner } from "../../../components/cookie-banner";
+import { Layout } from "../../../components/layout";
+import { WorkspaceTabBar } from "../../../components/layout/tab-bar/workspace-tab-bar";
 import { NavLogo } from "../../../components/logo/nav-logo";
+import { Meta } from "../../../components/meta";
+import { ServiceWorkerManagerModal } from "../../../components/service-worker-manager";
+import { LayoutSpinner } from "../../../components/spinner";
+import { WelcomeManager } from "../../../components/welcome-manager";
 import { WorkspaceSwitcher } from "../../../components/workspace-switcher";
 
 const GraphiQL = dynamic(() => import("../../../components/graphiql"), {
   ssr: false,
   loading: ({ error }) => {
     if (error) throw error;
-    return (
-      <Center h="full">
-        <Spinner />
-      </Center>
-    );
+    return <LayoutSpinner />;
   },
 });
 
