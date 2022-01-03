@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Heading,
   Text,
@@ -12,6 +12,7 @@ import {
 import { FallbackProps } from "react-error-boundary";
 import { NextPageContext } from "next";
 
+import { useRouter } from "next/router";
 import { Meta } from "../components/meta";
 import { Layout } from "../components/layout";
 import { EmptyStateError } from "../components/empty-state";
@@ -37,6 +38,22 @@ type Props = FallbackProps & {
 };
 
 const ErrorPage = ({ statusCode, error, resetErrorBoundary }: Props) => {
+  const router = useRouter();
+
+  useEffect(() => {
+    const resetErrorBoundaryIfExist = () => {
+      if (resetErrorBoundary) resetErrorBoundary();
+    };
+    // resetErrorBoundary and clear the error reliably
+    router.events.on("routeChangeComplete", resetErrorBoundaryIfExist);
+
+    // If the component is unmounted, unsubscribe
+    // from the event with the `off` method
+    return () => {
+      router.events.off("routeChangeComplete", resetErrorBoundaryIfExist);
+    };
+  }, [router.events, router.reload, resetErrorBoundary]);
+
   if ((error?.message ?? error ?? "").match(/not authenticated/) != null) {
     return (
       <>
