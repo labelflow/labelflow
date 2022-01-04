@@ -1,34 +1,38 @@
-import { useState, ChangeEvent } from "react";
 import {
-  Flex,
   Alert,
-  AlertIcon,
   AlertDescription,
-  VStack,
+  AlertIcon,
+  Button,
+  Flex,
+  Heading,
+  Link,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
   Text,
   Textarea,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalCloseButton,
-  ModalFooter,
-  Button,
-  Heading,
-  ModalHeader,
-  ModalBody,
   useColorModeValue as mode,
-  Link,
   useToast,
+  VStack,
 } from "@chakra-ui/react";
+import { InvitationResult, MembershipRole } from "@labelflow/graphql-types";
+import { isEmpty } from "lodash/fp";
 import { useRouter } from "next/router";
-import { MembershipRole, InvitationResult } from "@labelflow/graphql-types";
-
+import { ChangeEvent, useState } from "react";
+import { validateEmail } from "../../utils/validate-email";
 import { RoleSelection } from "./role-selection";
 import { InviteMember } from "./types";
-import { validateEmail } from "../../utils/validate-email";
 
 const maxNumberOfEmails = 20;
 type EmailStatuses = Record<InvitationResult, string[]>;
+
+const parseEmails = (text: string): string[] => {
+  return text.split(/[,;\s]/).filter((email) => !isEmpty(email));
+};
 
 const summarizeEmailList = (emailList: string[]): string => {
   if (emailList.length === 1) {
@@ -59,9 +63,7 @@ export const NewMemberModal = ({
     const inputValue = e.target.value;
     setValue(inputValue);
   };
-  const emails = value
-    .split(/[,;\s]/)
-    .filter((email) => email !== "");
+  const emails = parseEmails(value);
   const hasInvalidEmails = emails.some((email) => !validateEmail(email));
 
   return (
