@@ -61,7 +61,6 @@ export const NewMemberModal = ({
   };
   const emails = value
     .split(/[,;\s]/)
-    .map((email) => email.trim())
     .filter((email) => email !== "");
   const hasInvalidEmails = emails.some((email) => !validateEmail(email));
 
