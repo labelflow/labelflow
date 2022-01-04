@@ -20,6 +20,8 @@ import {
 import { RiMailSendLine } from "react-icons/ri";
 import { signIn } from "next-auth/react";
 import { FaGithub, FaGoogle } from "react-icons/fa";
+import { UrlUpdateType } from "use-query-params";
+
 import { DividerWithText } from "./divider-with-text";
 import { Logo } from "../../logo";
 import { Features } from "./features";
@@ -64,6 +66,20 @@ const Disclaimer = () => (
   </Text>
 );
 
+const sanitizeUrl = (url: string): string => {
+  const parsedUrl = new URL(url);
+  // We remove the part related to the open modal
+  parsedUrl.searchParams.delete("modal-signin");
+  // We don't want to propagate modal related errors
+  parsedUrl.searchParams.delete("error");
+
+  const callbackUrl = parsedUrl.searchParams.get("callbackUrl");
+  if (callbackUrl !== null) {
+    return callbackUrl;
+  }
+  return parsedUrl.href;
+};
+
 export const SigninModal = ({
   isOpen = false,
   onClose = () => {},
@@ -77,7 +93,10 @@ export const SigninModal = ({
   onClose?: () => void;
   setIsOpen: (isOpen: boolean) => void;
   error?: string | null;
-  setError: (error: string) => void;
+  setError: (
+    error: string | null | undefined,
+    updateType?: UrlUpdateType
+  ) => void;
   linkSent?: string | null;
   setLinkSent: (email: string) => void;
 }) => {
@@ -87,16 +106,20 @@ export const SigninModal = ({
 
   const performSignIn = useCallback(
     async (method, options = {}) => {
+      // used to remove a potential previous error message from the modal
+      setError(undefined, "replaceIn");
+      const callbackUrl = sanitizeUrl(window.location.toString());
       const signInResult = await signIn<"email" | "credentials">(method, {
         redirect: false,
-        callbackUrl: window.location.toString().replace("modal-signin", ""),
+        callbackUrl,
         ...options,
       });
       if (signInResult?.error) {
         setError(signInResult.error);
       } else if (signInResult?.ok) {
         if (method === "email") {
-          setLinkSent(options?.email);
+          // Necessary to solve https://github.com/pbeshai/use-query-params/issues/53
+          setTimeout(() => setLinkSent(options?.email), 1);
           setSendingLink(false);
         } else {
           setIsOpen(false);
