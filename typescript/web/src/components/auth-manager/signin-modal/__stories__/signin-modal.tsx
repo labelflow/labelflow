@@ -26,6 +26,7 @@ const useStory = (linkSent?: string): SignInModalState => {
   };
 };
 
+<<<<<<< HEAD
 export const Opened = () => (
   <SignInModalContext.Provider value={useStory()}>
     <SignInModal />
@@ -37,3 +38,28 @@ export const LinkSent = () => (
     <SignInModal />
   </SignInModalContext.Provider>
 );
+=======
+export const LinkSent = () => {
+  return (
+    <SigninModal
+      isOpen
+      linkSent="example@company.com"
+      setIsOpen={() => {}}
+      setError={() => {}}
+      setLinkSent={() => {}}
+    />
+  );
+};
+
+export const ErrorSigninMethod = () => {
+  return (
+    <SigninModal
+      isOpen
+      error="OAuthAccountNotLinked"
+      setIsOpen={() => {}}
+      setError={() => {}}
+      setLinkSent={() => {}}
+    />
+  );
+};
+>>>>>>> fe2bfe18 (Fix style + add story)
