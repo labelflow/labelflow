@@ -131,7 +131,7 @@ user2@example.com
                     : ""
                 } ${
                   hasInvalidEmails
-                    ? "\nAt lease one email format is invalid. Emails should be separated by , ; or spaces."
+                    ? "\nAt least one email address is invalid. Addresses can be separated by new lines, spaces, commas or semicolons."
                     : ""
                 }`}
               </Text>
