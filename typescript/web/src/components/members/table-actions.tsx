@@ -13,6 +13,8 @@ import {
   AlertIcon,
   AlertTitle,
   useColorModeValue as mode,
+  Box,
+  AlertDescription,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { IoSearch } from "react-icons/io5";
@@ -24,6 +26,19 @@ import { NewMemberModal } from "./new-member-modal";
 import { InviteMember } from "./types";
 
 const SearchIcon = chakra(IoSearch);
+
+const tableActionsForLocalWorkspace = (
+  <Alert status="info" variant="subtle">
+    <AlertIcon />
+    <Box flex={1}>
+      <AlertTitle>This workspace is private.</AlertTitle>
+      <AlertDescription>
+        Images are stored locally on your device. To collaborate and invite
+        people, switch to an online workspace.
+      </AlertDescription>
+    </Box>
+  </Alert>
+);
 
 export const TableActions = ({
   searchText,
@@ -86,15 +101,6 @@ export const TableActions = ({
     </>
   );
 
-  const tableActionsForLocalWorkspace = (
-    <Alert status="info" variant="subtle">
-      <AlertIcon />
-      <AlertTitle>
-        This workspace is private and images are stored locally on your device.
-      </AlertTitle>
-      To collaborate and invite people, switch to an online workspace.
-    </Alert>
-  );
   return workspaceSlug === "local"
     ? tableActionsForLocalWorkspace
     : tableActionsForOnlineWorkspace;
