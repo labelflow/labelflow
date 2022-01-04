@@ -132,7 +132,7 @@ user2@example.com
                     : ""
                 } ${
                   hasInvalidEmails
-                    ? "\nAt lease one email format is invalid. Write one email address per line."
+                    ? "\nAt lease one email format is invalid. Emails should be separated by , ; or spaces."
                     : ""
                 }`}
               </Text>
