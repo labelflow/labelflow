@@ -12,14 +12,14 @@
 // This function is called when a dataset is opened or re-opened (e.g. due to
 // the dataset's config changing)
 
-import { Configuration } from "webpack";
 import webpackPreprocessor from "@cypress/webpack-preprocessor";
 // See https://www.npmjs.com/package/node-polyfill-webpack-plugin
 import NodePolyfillPlugin from "node-polyfill-webpack-plugin";
 import path from "path";
-import { v4 as uuidV4 } from "uuid";
+import { Configuration } from "webpack";
 import { getPrismaClient } from "../../typescript/db/src/prisma-client";
 import { MembershipRole } from "../../typescript/graphql-types/src/graphql-types.generated";
+import { createJwt } from "../fixtures";
 
 /**
  * @type {Cypress.PluginConfig}
@@ -100,31 +100,12 @@ module.exports = (on: (type: string, preprocessor: any) => void) => {
       return null;
     },
     async performLogin({
-      email,
-      name,
+      email = testUser.email,
+      name = testUser.name,
     }: { email?: string; name?: string } = {}) {
       const prisma = await getPrismaClient();
-      const nameToUse = name ?? testUser.name;
-      const emailToUse = email ?? testUser.email;
-      const existingUser = await prisma.user.findFirst({
-        where: { email: emailToUse },
-      });
-      const user =
-        existingUser != null
-          ? existingUser
-          : await prisma.user.create({
-              data: { name: nameToUse, email: emailToUse },
-            });
-      const session = await prisma.session.create({
-        data: {
-          userId: user.id,
-          sessionToken: uuidV4(),
-          expires: new Date(
-            new Date().getTime() + 60 * 60 * 1000
-          ).toISOString(),
-        },
-      });
-      return session.sessionToken;
+      const user = await prisma.user.create({ data: { name, email } });
+      return await createJwt(user);
     },
     async createWorkspace() {
       const prisma = await getPrismaClient();
