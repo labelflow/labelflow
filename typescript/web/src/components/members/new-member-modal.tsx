@@ -59,7 +59,10 @@ export const NewMemberModal = ({
     const inputValue = e.target.value;
     setValue(inputValue);
   };
-  const emails = value.split("\n").filter((email) => email !== "");
+  const emails = value
+    .split("\n")
+    .filter((email) => email !== "")
+    .map((email) => email.trim());
   const hasInvalidEmails = emails.some((email) => !validateEmail(email));
 
   return (
