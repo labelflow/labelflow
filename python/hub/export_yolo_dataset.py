@@ -4,12 +4,15 @@ import os
 import argparse
 
 
-def read_yolo_boxes(fn: str):
+def read_yolo_boxes(fn: str, image_shape: tuple):
     """
     Function reads a label.txt YOLO file and returns a numpy array of yolo_boxes
     for the box geometry and yolo_labels for the corresponding box labels.
+    args:
+        fn = path to file
+        image_shape = (H, W, C)
     """
-
+    (h_image, w_image, _) = image_shape
     box_f = open(fn)
     lines = box_f.read()
     box_f.close()
@@ -23,12 +26,18 @@ def read_yolo_boxes(fn: str):
     # Go through each line and parse data
     for l, line in enumerate(lines_split):
         line_split = line.split()
+        x, y, w, h = (
+            float(line_split[1]) * w_image,
+            float(line_split[2]) * h_image,
+            float(line_split[3]) * w_image,
+            float(line_split[4]) * h_image,
+        )
         yolo_boxes[l, :] = np.array(
             (
-                float(line_split[1]),
-                float(line_split[2]),
-                float(line_split[3]),
-                float(line_split[4]),
+                x,
+                h_image - (y + h),
+                w,
+                h,
             )
         )
         yolo_labels[l] = int(line_split[0])
@@ -36,27 +45,23 @@ def read_yolo_boxes(fn: str):
     return yolo_boxes, yolo_labels
 
 
-def export_yolo_dataset_hub(path_to_dataset: str):
-    name_dataset = os.path.basename(path_to_dataset)
-    # print("name_dataset = {}".format(name_dataset))
+def export_yolo_dataset_hub(local_path: str, remote_path: str):
+    name_dataset = os.path.basename(local_path)
     ds = hub.empty(
-        "s3://labelflow-hub-1/{}".format(name_dataset), overwrite=True
+        remote_path, overwrite=True
     )  # Create the dataset on our dedicated s3 bucket
 
     # List of all images
-    with open(os.path.join(path_to_dataset, "train.txt"), "r") as f:
+    with open(os.path.join(local_path, "train.txt"), "r") as f:
         fn_imgs = map(
-            lambda path_outside_dataset: path_to_dataset
+            lambda path_outside_dataset: local_path
             + path_outside_dataset.split(name_dataset)[1],
             f.read().splitlines(),
         )
 
     # List of all class names
-    with open(os.path.join(path_to_dataset, "obj.names"), "r") as f:
+    with open(os.path.join(local_path, "obj.names"), "r") as f:
         class_names = f.read().splitlines()
-
-    # print("fn_imgs = {}".format(list(fn_imgs)))
-    # print("class_names = {}".format(class_names))
 
     with ds:
         ds.create_tensor("images", htype="image", sample_compression="jpeg")
@@ -67,31 +72,31 @@ def export_yolo_dataset_hub(path_to_dataset: str):
 
             img_name = os.path.splitext(os.path.basename(fn_img))[0]
             fn_box = img_name + ".txt"
+            image_sample = hub.read(fn_img)
 
             # Get the arrays for the bounding boxes and their classes
             yolo_boxes, yolo_labels = read_yolo_boxes(
-                os.path.join(path_to_dataset, "obj_train_data", fn_box)
+                os.path.join(local_path, "obj_train_data", fn_box),
+                image_sample.array.shape,
             )
-            # print("fn_img = {}".format(fn_img))
-            # print("yolo_labels = {}".format(yolo_labels))
-            # print("yolo_boxes = {}".format(yolo_boxes))
-
             # Append data to tensors
-            ds.images.append(hub.read(fn_img))
+            ds.images.append(image_sample)
             ds.labels.append(yolo_labels.astype(np.uint32))
             ds.boxes.append(yolo_boxes.astype(np.float32))
 
-        # ds.commit("test")
-        # ds.flush()
-
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Run class agnostic segmentation")
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--local-path",
+        type=str,
+        help="path to local yolo dataset dataset",
+    )
     parser.add_argument(
         "--path",
         type=str,
-        help="path to yolo dataset",
+        help="path to remote dataset",
     )
 
     args = parser.parse_args()
-    export_yolo_dataset_hub(args.path)
+    export_yolo_dataset_hub(args.local_path, args.path)
