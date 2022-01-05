@@ -1,65 +1,53 @@
 import { HStack } from "@chakra-ui/react";
-
-import { ExportFormatCard } from "../export-format-card";
-
-import { chakraDecorator } from "../../../../utils/chakra-decorator";
+import { ExportFormat } from "@labelflow/graphql-types";
 import { apolloDecorator } from "../../../../utils/apollo-decorator";
+import { chakraDecorator } from "../../../../utils/chakra-decorator";
+import { ExportFormatCard } from "../export-format-card";
+import { ExportModalContext, ExportModalState } from "../export-modal.context";
 
 export default {
   title: "web/Export Button/export format card",
   decorators: [chakraDecorator, apolloDecorator],
 };
 
+const loadingValue: ExportModalState = {
+  isOpen: false,
+  onClose: () => {},
+  exportFormat: ExportFormat.Coco,
+  setExportFormat: () => {},
+  loading: false,
+  datasetId: "",
+  numberUndefinedLabelsOfDataset: 0,
+  datasetSlug: "",
+  setIsExportRunning: () => {},
+  isExportRunning: true,
+  imagesNumber: 0,
+  labelsNumber: 0,
+  isOptionsModalOpen: true,
+  setIsOptionsModalOpen: () => {},
+};
+
 export const COCO = () => {
-  return (
-    <ExportFormatCard
-      colorScheme="brand"
-      logoSrc="/static/export-formats/coco.png"
-      title="Export to COCO"
-      subtext="Annotation file used with Pytorch and Detectron 2"
-    />
-  );
+  return <ExportFormatCard colorScheme="brand" formatKey="coco" />;
 };
 
 export const Loading = () => {
   return (
-    <ExportFormatCard
-      loading
-      colorScheme="brand"
-      logoSrc="/static/export-formats/coco.png"
-      title="Export to COCO"
-      subtext="Annotation file used with Pytorch and Detectron 2"
-    />
+    <ExportModalContext.Provider value={loadingValue}>
+      <ExportFormatCard colorScheme="brand" formatKey="coco" />
+    </ExportModalContext.Provider>
   );
 };
 
 export const Disabled = () => {
-  return (
-    <ExportFormatCard
-      disabled
-      colorScheme="gray"
-      logoSrc="/static/export-formats/tensorflow-grey.png"
-      title="Export to TensorFlow (soon)"
-      subtext="TF Object Detection file in its human readable format"
-    />
-  );
+  return <ExportFormatCard disabled colorScheme="gray" formatKey="yolo" />;
 };
 
 export const SideBySide = () => {
   return (
     <HStack spacing="4">
-      <ExportFormatCard
-        colorScheme="brand"
-        logoSrc="/static/export-formats/coco.png"
-        title="Export to COCO"
-        subtext="Annotation file used with Pytorch and Detectron 2"
-      />
-      <ExportFormatCard
-        colorScheme="gray"
-        logoSrc="/static/export-formats/tensorflow-grey.png"
-        title="Export to TensorFlow (soon)"
-        subtext="TF Object Detection file in its human readable format"
-      />
+      <ExportFormatCard colorScheme="brand" formatKey="coco" />
+      <ExportFormatCard colorScheme="gray" formatKey="yolo" />
     </HStack>
   );
 };
@@ -67,19 +55,8 @@ export const SideBySide = () => {
 export const SideBySideWithOneDisabled = () => {
   return (
     <HStack spacing="4">
-      <ExportFormatCard
-        colorScheme="brand"
-        logoSrc="/static/export-formats/coco.png"
-        title="Export to COCO"
-        subtext="Annotation file used with Pytorch and Detectron 2"
-      />
-      <ExportFormatCard
-        disabled
-        colorScheme="gray"
-        logoSrc="/static/export-formats/tensorflow-grey.png"
-        title="Export to TensorFlow (soon)"
-        subtext="TF Object Detection file in its human readable format"
-      />
+      <ExportFormatCard colorScheme="brand" formatKey="coco" />
+      <ExportFormatCard disabled colorScheme="gray" formatKey="yolo" />
     </HStack>
   );
 };
@@ -87,20 +64,10 @@ export const SideBySideWithOneDisabled = () => {
 export const SideBySideWithOneLoadingAndOneDisabled = () => {
   return (
     <HStack spacing="4">
-      <ExportFormatCard
-        loading
-        colorScheme="brand"
-        logoSrc="/static/export-formats/coco.png"
-        title="Export to COCO"
-        subtext="Annotation file used with Pytorch and Detectron 2"
-      />
-      <ExportFormatCard
-        disabled
-        colorScheme="gray"
-        logoSrc="/static/export-formats/tensorflow-grey.png"
-        title="Export to TensorFlow (soon)"
-        subtext="TF Object Detection file in its human readable format"
-      />
+      <ExportModalContext.Provider value={loadingValue}>
+        <ExportFormatCard colorScheme="brand" formatKey="coco" />
+      </ExportModalContext.Provider>
+      <ExportFormatCard disabled colorScheme="gray" formatKey="yolo" />
     </HStack>
   );
 };
