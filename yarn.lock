@@ -4813,6 +4813,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@corex/deepmerge@npm:^2.6.34":
+  version: 2.6.148
+  resolution: "@corex/deepmerge@npm:2.6.148"
+  checksum: b80b6b3e408901151de26e27b519a43cda1771a81e5390ff10cd6b47add0139bb315ca44112ff076d68ac887d7cfe237c9fb33868efb04839c4afb7c38864385
+  languageName: node
+  linkType: hard
+
 "@cspotcode/source-map-consumer@npm:0.8.0":
   version: 0.8.0
   resolution: "@cspotcode/source-map-consumer@npm:0.8.0"
@@ -6853,6 +6860,7 @@ __metadata:
     next-auth: 4.0.6
     next-connect: 0.11.0
     next-seo: 4.28.1
+    next-sitemap: ^1.6.203
     node-polyfill-webpack-plugin: ^1.1.2
     nodemailer: ^6.6.3
     ol: 6.6.1
@@ -24806,6 +24814,15 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
+"matcher@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "matcher@npm:4.0.0"
+  dependencies:
+    escape-string-regexp: ^4.0.0
+  checksum: d338aff31d8dfd3626873e43777f46b123579734d53bb8d18d64b08a822ba5e8d39f5fe2e23403258e6143aa0cbe20a15662720d825cd0d3af961d5a44230328
+  languageName: node
+  linkType: hard
+
 "md5.js@npm:^1.3.4":
   version: 1.3.5
   resolution: "md5.js@npm:1.3.5"
@@ -26165,6 +26182,21 @@ fsevents@^1.2.7:
     react: ">=16.0.0"
     react-dom: ">=16.0.0"
   checksum: 4f845275b8dbe1023b983e3c243634a6d13a9f3f4fc0f0b800d4163db5d0933e473d0deca65779bcc95c249317a8e6a8c9df1fedeb531dd83ae66b9827cfa920
+  languageName: node
+  linkType: hard
+
+"next-sitemap@npm:^1.6.203":
+  version: 1.6.203
+  resolution: "next-sitemap@npm:1.6.203"
+  dependencies:
+    "@corex/deepmerge": ^2.6.34
+    matcher: ^4.0.0
+    minimist: ^1.2.5
+  peerDependencies:
+    next: "*"
+  bin:
+    next-sitemap: bin/next-sitemap
+  checksum: a083a5ab9e6dc6345dcb27207d31a46dd4f84ff3cc7fa673038ed82d9961cbb7481958e35e67f6febff659d4e99749ab3256bab1263917f4e842d82147ab49b4
   languageName: node
   linkType: hard
 
