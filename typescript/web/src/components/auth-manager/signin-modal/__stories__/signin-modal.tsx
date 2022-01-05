@@ -9,8 +9,7 @@ export default {
   title: "web/Signin/Modal",
   decorators: [chakraDecorator, apolloDecorator],
 };
-
-const useStory = (linkSent?: string): SignInModalState => {
+const useStory = (linkSent?: string, error?: string): SignInModalState => {
   const [email, setEmail] = useState("");
   return {
     isOpen: true,
@@ -20,13 +19,12 @@ const useStory = (linkSent?: string): SignInModalState => {
     setSendingLink: () => {},
     signIn: async () => {},
     validEmail: validateEmail(email),
-    error: undefined,
+    error,
     linkSent,
     sendingLink: undefined,
   };
 };
 
-<<<<<<< HEAD
 export const Opened = () => (
   <SignInModalContext.Provider value={useStory()}>
     <SignInModal />
@@ -38,28 +36,9 @@ export const LinkSent = () => (
     <SignInModal />
   </SignInModalContext.Provider>
 );
-=======
-export const LinkSent = () => {
-  return (
-    <SigninModal
-      isOpen
-      linkSent="example@company.com"
-      setIsOpen={() => {}}
-      setError={() => {}}
-      setLinkSent={() => {}}
-    />
-  );
-};
 
-export const ErrorSigninMethod = () => {
-  return (
-    <SigninModal
-      isOpen
-      error="OAuthAccountNotLinked"
-      setIsOpen={() => {}}
-      setError={() => {}}
-      setLinkSent={() => {}}
-    />
-  );
-};
->>>>>>> fe2bfe18 (Fix style + add story)
+export const ErrorSigninMethod = () => (
+  <SignInModalContext.Provider value={useStory("", "OAuthAccountNotLinked")}>
+    <SignInModal />
+  </SignInModalContext.Provider>
+);
