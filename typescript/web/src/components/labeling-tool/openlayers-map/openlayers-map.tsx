@@ -22,7 +22,7 @@ import {
   Tools,
   useLabelingStore,
 } from "../../../connectors/labeling-state";
-import { useImagePrefecthing } from "../../../hooks/use-image-prefetching";
+import { useImagePreFetching } from "../../../hooks/use-image-pre-fetching";
 import { theme } from "../../../theme";
 import { BoolParam } from "../../../utils/query-param-bool";
 import { LayoutSpinner, Spinner } from "../../spinner";
@@ -129,7 +129,7 @@ export const OpenlayersMap = () => {
 
   const image = imageData?.image ?? imageDataPrevious?.image;
 
-  useImagePrefecthing();
+  const preFetch = useImagePreFetching();
 
   const client = useApolloClient();
   const [containerRef, bounds] = useMeasure();
@@ -285,6 +285,7 @@ export const OpenlayersMap = () => {
                     }}
                     onImageloadend={() => {
                       setIsImageLoading(false);
+                      preFetch();
                       return true;
                     }}
                   />
