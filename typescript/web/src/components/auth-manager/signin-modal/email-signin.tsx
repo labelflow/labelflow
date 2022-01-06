@@ -51,10 +51,14 @@ const EmailSubmitButton = () => {
 };
 
 const EmailFormControls = () => {
-  const { validEmail } = useSignInModal();
+  const { validEmail, email } = useSignInModal();
   return (
     <>
-      <FormControl id="email" isRequired isInvalid={!validEmail}>
+      <FormControl
+        id="email"
+        isRequired
+        isInvalid={!isEmpty(email) && !validEmail}
+      >
         <EmailInput />
       </FormControl>
       <EmailSubmitButton />
