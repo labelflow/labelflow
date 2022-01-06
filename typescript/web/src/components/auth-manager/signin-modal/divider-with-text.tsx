@@ -7,7 +7,7 @@ import {
 } from "@chakra-ui/react";
 import * as React from "react";
 
-export const DividerWithText = (props: StackProps) => (
+export const DividerWithText = ({ children, ...props }: StackProps) => (
   <HStack my="8" {...props}>
     <Divider />
     <Text
@@ -17,10 +17,7 @@ export const DividerWithText = (props: StackProps) => (
       color={mode("gray.600", "gray.200")}
       minW="fit-content"
     >
-      {
-        // eslint-disable-next-line react/destructuring-assignment
-        props.children
-      }
+      {children}
     </Text>
     <Divider />
   </HStack>
