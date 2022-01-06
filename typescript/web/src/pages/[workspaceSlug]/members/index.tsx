@@ -1,5 +1,5 @@
 import React from "react";
-import { Text, Box, Center, Spinner } from "@chakra-ui/react";
+import { Text, Center, Spinner } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { useQuery, gql, useMutation } from "@apollo/client";
 import { Meta } from "../../../components/meta";
@@ -95,23 +95,21 @@ const WorkspaceMembersPage = () => {
         }
       >
         {membershipsData?.memberships ? (
-          <Box p={8}>
-            <Members
-              memberships={membershipsData?.memberships ?? []}
-              changeMembershipRole={({ id, role }) => {
-                updateMembership({ variables: { id, data: { role } } });
-              }}
-              removeMembership={(id) => {
-                deleteMembership({ variables: { id } });
-              }}
-              inviteMember={async (where) => {
-                const {
-                  data: { inviteMember: invitationResult },
-                } = await inviteMember({ variables: { where } });
-                return invitationResult;
-              }}
-            />
-          </Box>
+          <Members
+            memberships={membershipsData?.memberships ?? []}
+            changeMembershipRole={({ id, role }) => {
+              updateMembership({ variables: { id, data: { role } } });
+            }}
+            removeMembership={(id) => {
+              deleteMembership({ variables: { id } });
+            }}
+            inviteMember={async (where) => {
+              const {
+                data: { inviteMember: invitationResult },
+              } = await inviteMember({ variables: { where } });
+              return invitationResult;
+            }}
+          />
         ) : (
           <Center h="full">
             <Spinner size="xl" />

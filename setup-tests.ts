@@ -1,5 +1,6 @@
 import "@testing-library/jest-dom";
 import "fake-indexeddb/auto";
+import { configure } from "@testing-library/react";
 import fetchMock from "jest-fetch-mock";
 import CacheStorage from "service-worker-mock/models/CacheStorage";
 import Request from "service-worker-mock/models/Request";
@@ -10,6 +11,12 @@ Object.assign(global, {
   Request,
   Response,
 });
+
+// FIXME Default timeout is often exceeded on our CI
+const TESTING_LIBRARY_TIMEOUT = 30000;
+const JEST_TIMEOUT = TESTING_LIBRARY_TIMEOUT * 2;
+jest.setTimeout(JEST_TIMEOUT);
+configure({ asyncUtilTimeout: TESTING_LIBRARY_TIMEOUT });
 
 fetchMock.enableMocks();
 
