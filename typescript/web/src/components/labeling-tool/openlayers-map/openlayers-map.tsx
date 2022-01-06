@@ -3,6 +3,7 @@ import { Box, ThemeProvider } from "@chakra-ui/react";
 import type { Image } from "@labelflow/graphql-types";
 import { Map } from "@labelflow/react-openlayers-fiber";
 import * as Sentry from "@sentry/nextjs";
+import { isEmpty } from "lodash/fp";
 import memoize from "mem";
 import { RouterContext } from "next/dist/shared/lib/router-context";
 import { useRouter } from "next/router";
@@ -328,7 +329,7 @@ export const OpenlayersMap = () => {
           width: "100%",
         }}
       >
-        {url == null && <LayoutSpinner aria-label="loading indicator" />}
+        {isEmpty(url) && <LayoutSpinner />}
       </Box>
 
       <EditLabelClass
@@ -358,13 +359,13 @@ export const OpenlayersMap = () => {
         }}
         hidden={!iogSpinnerPosition}
       >
-        <Spinner
-          key="spinner"
-          id="spinner"
-          color="brand"
-          size="xl"
-          aria-label="loading indicator"
-        />
+        {
+          // Force spinner to be hidden so that Cypress doesn't complain about
+          // the element still being present in the DOM
+          iogSpinnerPosition && (
+            <Spinner key="spinner" id="spinner" color="brand" size="xl" />
+          )
+        }
       </div>
     </Box>
   );

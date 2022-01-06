@@ -37,7 +37,7 @@ const LabelingTool = dynamic(
     ssr: false,
     loading: ({ error }) => {
       if (error) throw error;
-      return <LayoutSpinner aria-label="loading indicator" />;
+      return <LayoutSpinner />;
     },
   }
 );
