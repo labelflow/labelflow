@@ -1,6 +1,6 @@
 {
   "name": "@labelflow/web",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "scripts": {
     "dev": "next dev",
     "dev:test": "NODE_ENV=\"test\" && next dev -p 3001",
