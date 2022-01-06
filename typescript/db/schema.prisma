@@ -36,6 +36,8 @@ model Image {
   thumbnail200Url String?
   thumbnail500Url String?
   metadata        Json?
+
+  @@index([datasetId, createdAt])
 }
 
 model Label {
@@ -53,6 +55,9 @@ model Label {
   image          Image       @relation(fields: [imageId], references: [id], onDelete: Cascade)
   labelClass     LabelClass? @relation(fields: [labelClassId], references: [id])
   smartToolInput Json?
+
+  @@index([labelClassId])
+  @@index([imageId, createdAt])
 }
 
 model LabelClass {
@@ -65,7 +70,9 @@ model LabelClass {
   datasetId String   @db.Uuid
   dataset   Dataset  @relation(fields: [datasetId], references: [id], onDelete: Cascade)
   labels    Label[]
-  @@index([name, datasetId])
+
+  @@index([datasetId, createdAt])
+  @@index([datasetId, name])
 }
 
 model Dataset {
@@ -81,6 +88,8 @@ model Dataset {
 
   @@unique(fields: [workspaceSlug, slug], name: "slugs")
   @@unique(fields: [workspaceSlug, name], name: "workspaceSlugAndDatasetName")
+  @@index([workspaceSlug, createdAt])
+  @@index([createdAt])
 }
 
 model Workspace {
@@ -97,6 +106,10 @@ model Workspace {
   stripeCustomerId String?
   datasets         Dataset[]
   memberships      Membership[]
+
+  @@index([slug, deletedAt, createdAt])
+  @@index([createdAt])
+  @@index([name])
 }
 
 model Membership {
@@ -113,6 +126,7 @@ model Membership {
 
   @@unique([workspaceSlug, userId])
   @@unique([workspaceSlug, invitationEmailSentTo])
+  @@index([workspaceSlug, createdAt])
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -139,6 +153,7 @@ model Account {
   user               User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@unique([provider, providerAccountId], name: "provider_providerAccountId")
+  @@index([userId])
 }
 
 model Session {
@@ -149,6 +164,8 @@ model Session {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@index([userId])
 }
 
 model User {
@@ -162,6 +179,8 @@ model User {
   accounts      Account[]
   sessions      Session[]
   memberships   Membership[]
+
+  @@index([createdAt])
 }
 
 model VerificationToken {
