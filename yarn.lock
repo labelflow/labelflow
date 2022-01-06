@@ -23875,6 +23875,7 @@ fsevents@^1.2.7:
     "@storybook/manager-webpack5": next
     "@storybook/react": 6.3.12
     "@testing-library/jest-dom": 5.14.1
+    "@testing-library/react": 11.2.6
     "@typescript-eslint/eslint-plugin": 4.23.0
     "@typescript-eslint/parser": 4.23.0
     auto-changelog: 2.3.0
