@@ -1,11 +1,11 @@
-import React from "react";
-import { Center, Spinner, useToast } from "@chakra-ui/react";
-import { useRouter } from "next/router";
-import { useSession } from "next-auth/react";
 import { gql, useMutation, useQuery } from "@apollo/client";
+import { useToast } from "@chakra-ui/react";
 import { CurrentUserCanAcceptInvitation } from "@labelflow/graphql-types";
-
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/router";
+import React from "react";
 import { getDisplayName } from "../members/user";
+import { LayoutSpinner } from "../spinner";
 import { AcceptOrDeclineMembershipInvitation } from "./accept-or-decline-membership-invitation";
 import { InvalidInvitation } from "./invalid-invitation";
 import { UserNeedsToSignIn } from "./user-needs-to-sign-in";
@@ -137,11 +137,7 @@ export const InvitationManager = () => {
     : "Anonymous";
 
   if (invitationDetailsAreLoading || status === "loading" || userIsLoading) {
-    return (
-      <Center h="full">
-        <Spinner size="xl" />
-      </Center>
-    );
+    return <LayoutSpinner />;
   }
 
   if (!userData?.user) {

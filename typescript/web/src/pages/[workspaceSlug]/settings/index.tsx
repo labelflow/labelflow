@@ -1,18 +1,19 @@
-import React from "react";
-import { Text, Box, Center, Spinner } from "@chakra-ui/react";
-import { useRouter } from "next/router";
 import { gql, useQuery } from "@apollo/client";
+import { Box, Text } from "@chakra-ui/react";
 import { GetServerSideProps } from "next";
-import { Meta } from "../../../components/meta";
-import { Layout } from "../../../components/layout";
-import { ServiceWorkerManagerModal } from "../../../components/service-worker-manager";
+import { useRouter } from "next/router";
+import React from "react";
 import { AuthManager } from "../../../components/auth-manager";
-import { WelcomeManager } from "../../../components/welcome-manager";
 import { CookieBanner } from "../../../components/cookie-banner";
+import { Layout } from "../../../components/layout";
 import { WorkspaceTabBar } from "../../../components/layout/tab-bar/workspace-tab-bar";
-import { WorkspaceSettings } from "../../../components/settings/workspace";
-import { WorkspaceSwitcher } from "../../../components/workspace-switcher";
 import { NavLogo } from "../../../components/logo/nav-logo";
+import { Meta } from "../../../components/meta";
+import { ServiceWorkerManagerModal } from "../../../components/service-worker-manager";
+import { WorkspaceSettings } from "../../../components/settings/workspace";
+import { LayoutSpinner } from "../../../components/spinner";
+import { WelcomeManager } from "../../../components/welcome-manager";
+import { WorkspaceSwitcher } from "../../../components/workspace-switcher";
 
 const getWorkspaceDetailsQuery = gql`
   query getWorkspaceDetails($workspaceSlug: String) {
@@ -67,9 +68,7 @@ const WorkspaceSettingsPage = () => {
             <WorkspaceSettings workspace={getWorkspaceDetailsFinalData} />
           </Box>
         ) : (
-          <Center h="full">
-            <Spinner size="xl" />
-          </Center>
+          <LayoutSpinner />
         )}
       </Layout>
     </>

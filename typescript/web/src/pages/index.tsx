@@ -1,14 +1,14 @@
-import React, { useEffect } from "react";
+import { isEmpty, join, map, toPairs } from "lodash/fp";
 import { GetServerSideProps } from "next";
-import { Cookies, useCookies } from "react-cookie";
-import { Spinner, Center } from "@chakra-ui/react";
 import { useRouter } from "next/router";
-import { join, map, toPairs, isEmpty } from "lodash/fp";
-import { Meta } from "../components/meta";
-import { Layout } from "../components/layout";
-import Website from "./website";
-import { ServiceWorkerManagerBackground } from "../components/service-worker-manager";
+import React, { useEffect } from "react";
+import { Cookies, useCookies } from "react-cookie";
 import { CookieBanner } from "../components/cookie-banner";
+import { Layout } from "../components/layout";
+import { Meta } from "../components/meta";
+import { ServiceWorkerManagerBackground } from "../components/service-worker-manager";
+import { LayoutSpinner } from "../components/spinner";
+import Website from "./website";
 
 const IndexPage = () => {
   const router = useRouter();
@@ -34,9 +34,7 @@ const IndexPage = () => {
       <Meta title="LabelFlow: The open standard platform for image labeling." />
       <CookieBanner />
       <Layout>
-        <Center h="full">
-          <Spinner size="xl" />
-        </Center>
+        <LayoutSpinner />
       </Layout>
     </>
   );
