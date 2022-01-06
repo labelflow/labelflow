@@ -153,10 +153,15 @@ const memberships = async (parent: DbWorkspaceWithType) => {
 
 const datasets = async (parent: DbWorkspaceWithType) => {
   const db = await getPrismaClient();
-  return await db.dataset.findMany({
+  const queryResult = await db.dataset.findMany({
     where: { workspaceSlug: parent.slug },
     orderBy: { createdAt: Prisma.SortOrder.asc },
   });
+
+  return queryResult.map((datasetWithoutTypename) => ({
+    ...datasetWithoutTypename,
+    __typename: "Dataset",
+  }));
 };
 
 const stripeCustomerPortalUrl = async (

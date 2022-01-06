@@ -19,8 +19,13 @@ const workspaces = async (
   { repository }: Context
 ) => await repository.workspace.list(args.where);
 
-const datasets = (_parent: any, _args: any, { repository }: Context) => {
-  return repository.dataset.list();
+const datasets = async (_parent: any, _args: any, { repository }: Context) => {
+  const queryResult = await repository.dataset.list();
+
+  return queryResult.map((datasetWithoutTypename) => ({
+    ...datasetWithoutTypename,
+    __typename: "Dataset",
+  }));
 };
 
 export default {
