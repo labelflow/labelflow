@@ -54,7 +54,7 @@ const EmailFormControls = () => {
   const { validEmail } = useSignInModal();
   return (
     <>
-      <FormControl id="email" isRequired isInvalid={validEmail}>
+      <FormControl id="email" isRequired isInvalid={!validEmail}>
         <EmailInput />
       </FormControl>
       <EmailSubmitButton />
