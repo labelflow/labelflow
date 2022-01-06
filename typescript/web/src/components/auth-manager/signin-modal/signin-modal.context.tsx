@@ -147,6 +147,7 @@ const useSendingLink = (
   response: SignInResponse | undefined
 ): [
   Pick<SignInState, "sendingLink" | "setSendingLink" | "linkSent">,
+  () => Promise<void>,
   () => Promise<void>
 ] => {
   const { close } = useSignInModal();
@@ -167,6 +168,7 @@ const useSendingLink = (
     [response]
   );
   const clearSendingLink = useClearQueryParam(setSendingLink);
+  const clearLinkSent = useClearQueryParam(setLinkSent);
   return [
     {
       sendingLink,
@@ -174,16 +176,20 @@ const useSendingLink = (
       linkSent: linkSent || undefined,
     },
     clearSendingLink,
+    clearLinkSent,
   ];
 };
 
 const useSignIn = (): [SignInState, () => Promise<void>] => {
   const [signInState, response, clearError] = useSignInWithError();
-  const [sendingLinkState, clearSendingLink] = useSendingLink(response);
+  const [sendingLinkState, clearSendingLink, clearLinkSent] =
+    useSendingLink(response);
+
   const clearQueryParams = useCallback(async () => {
     await clearError();
     await clearSendingLink();
-  }, [clearError, clearSendingLink]);
+    await clearLinkSent();
+  }, [clearError, clearSendingLink, clearLinkSent]);
   return [{ ...signInState, ...sendingLinkState }, clearQueryParams];
 };
 
