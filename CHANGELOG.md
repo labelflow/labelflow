@@ -1,6 +1,25 @@
 # Changelog
 
-## [1.1.0](https://github.com/labelflow/labelflow/compare/1.0.27...1.1.0)
+## [1.2.0](https://github.com/labelflow/labelflow/compare/1.1.1...1.2.0)
+
+- Add and optimize DB schema indexes [`#707`](https://github.com/labelflow/labelflow/pull/707)
+- Factorise spinners through the app [`#692`](https://github.com/labelflow/labelflow/pull/692)
+- Fix wrong url sent during sign in [`#734`](https://github.com/labelflow/labelflow/pull/734)
+- Use JWT session tokens [`#717`](https://github.com/labelflow/labelflow/pull/717)
+- Increase testing-library/react default timeout to 30s [`#740`](https://github.com/labelflow/labelflow/pull/740)
+- Update members list max width [`#735`](https://github.com/labelflow/labelflow/pull/735)
+- Trim white spaces around email addresses [`#732`](https://github.com/labelflow/labelflow/pull/732)
+- Fix bug with being apparently signed out after error [`#729`](https://github.com/labelflow/labelflow/pull/729)
+- * Disable non-determinist react-openlayers-fiber stories [`#704`](https://github.com/labelflow/labelflow/pull/704)
+- Updated texts: trial period, upload modal [`#723`](https://github.com/labelflow/labelflow/pull/723)
+- Fixed background of dataset class list rows [`#722`](https://github.com/labelflow/labelflow/pull/722)
+- Fix bug creating duplicate label classes from modal [`#715`](https://github.com/labelflow/labelflow/pull/715)
+
+## [1.1.1](https://github.com/labelflow/labelflow/compare/1.1.0...1.1.1) - 2021-12-31
+
+- Display a more meaningful error message in the app when createWorkspace fails [`#714`](https://github.com/labelflow/labelflow/pull/714)
+
+## [1.1.0](https://github.com/labelflow/labelflow/compare/1.0.27...1.1.0) - 2021-12-29
 
 - Release Workspaces to Allow Team Collaboration and Auto Polygon to Boost Labeling Productivity [`#497`](https://github.com/labelflow/labelflow/pull/497)
 - Define a unique key prop in class-selection-popover list [`#696`](https://github.com/labelflow/labelflow/pull/696)
