@@ -1,15 +1,19 @@
-import NextAuth, { Profile } from "next-auth";
-
-import EmailProvider from "next-auth/providers/email";
-import GoogleProvider from "next-auth/providers/google";
-import GitHubProvider from "next-auth/providers/github";
+import { createPrismaClient } from "@labelflow/db/src/prisma-client";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { PrismaClient as PrismaClientClass } from "@prisma/client";
-import { OAuthConfig } from "next-auth/providers";
 import { captureException } from "@sentry/nextjs";
-import { createPrismaClient } from "@labelflow/db/src/prisma-client";
-
+import { isEmpty } from "lodash/fp";
+import NextAuth, { Profile } from "next-auth";
+import { OAuthConfig } from "next-auth/providers";
+import EmailProvider from "next-auth/providers/email";
+import GitHubProvider from "next-auth/providers/github";
+import GoogleProvider from "next-auth/providers/google";
 import { sendVerificationRequestFromPrisma } from "../../../utils/email/send-verification-request";
+
+// https://next-auth.js.org/configuration/options#secret
+if (process.env.NODE_ENV === "production" && isEmpty(process.env.JWT_SECRET)) {
+  throw new Error("Missing required environment variable JWT_SECRET");
+}
 
 // interface NextAuthUserWithStringId extends NextAuthUser {
 //   id: string;
@@ -45,6 +49,8 @@ export default NextAuth({
     }),
   ],
   adapter: PrismaAdapter(globalThis.prismaInstance),
+  secret: process.env.JWT_SECRET,
+  session: { strategy: "jwt" },
   // Uncomment to implement your custom pages
   pages: {
     signIn: "/auth/signin",
@@ -55,16 +61,14 @@ export default NextAuth({
   },
   // debug: true,
   callbacks: {
-    session: ({ session, user }) =>
+    session: ({ session, user, token }) =>
       // : {
       //   session: Session;
       //   user: NextAuthUserWithStringId;
       // }
       {
-        if (session?.user && user?.id) {
-          // eslint-disable-next-line no-param-reassign
-          session.user.id = user?.id;
-        }
+        // eslint-disable-next-line no-param-reassign
+        session.user.id = user?.id ?? token.sub;
         return session;
       },
   },

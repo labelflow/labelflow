@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Heading } from "@chakra-ui/react";
+import { Heading, Box, Center } from "@chakra-ui/react";
 import { InvitationResult, Membership } from "@labelflow/graphql-types";
 import { TableActions } from "./table-actions";
 import { TableContent } from "./table-content";
@@ -18,19 +18,28 @@ export const Members = ({
 }) => {
   const [searchText, setSearchText] = useState("");
   return (
-    <>
-      <Heading mb="5">{`Members (${memberships?.length ?? ""})`}</Heading>
-      <TableActions
-        searchText={searchText}
-        setSearchText={setSearchText}
-        inviteMember={inviteMember}
-      />
-      <TableContent
-        memberships={memberships}
-        changeMembershipRole={changeMembershipRole}
-        removeMembership={removeMembership}
-        searchText={searchText}
-      />
-    </>
+    <Center>
+      <Box
+        display="flex"
+        flexDirection="column"
+        w="full"
+        p={8}
+        maxWidth="5xl"
+        flexGrow={1}
+      >
+        <Heading mb="5">{`Members (${memberships?.length ?? ""})`}</Heading>
+        <TableActions
+          searchText={searchText}
+          setSearchText={setSearchText}
+          inviteMember={inviteMember}
+        />
+        <TableContent
+          memberships={memberships}
+          changeMembershipRole={changeMembershipRole}
+          removeMembership={removeMembership}
+          searchText={searchText}
+        />
+      </Box>
+    </Center>
   );
 };
