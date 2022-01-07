@@ -1,5 +1,5 @@
 import { gql, useQuery } from "@apollo/client";
-import { useEffect, useState } from "react";
+import { useEffect, useReducer } from "react";
 import { useImagesNavigation } from "./use-images-navigation";
 
 const imageQuery = gql`
@@ -39,10 +39,25 @@ const getImageLabelsQuery = gql`
   }
 `;
 
+type CanFetchState = {
+  canFetchNext?: boolean;
+  canFetchPrevious?: boolean;
+};
+
+const useCanFetch = (initState: Required<CanFetchState>) =>
+  useReducer<
+    (
+      oldState: Required<CanFetchState>,
+      newState: CanFetchState
+    ) => Required<CanFetchState>
+  >((oldState, newState) => ({ ...oldState, ...newState }), initState);
+
 export const useImagePreFetching = () => {
   const { nextImageId, previousImageId } = useImagesNavigation();
-  const [canPreFetchPrevious, setCanPreFetchPrevious] = useState(false);
-  const [canPreFetchNext, setCanPreFetchNext] = useState(false);
+  const [{ canFetchNext, canFetchPrevious }, setCanFetch] = useCanFetch({
+    canFetchNext: false,
+    canFetchPrevious: false,
+  });
   // Fetch previous and next image details
   const { data: previousImageData } = useQuery(imageQuery, {
     variables: { id: previousImageId },
@@ -65,19 +80,21 @@ export const useImagePreFetching = () => {
   const previousImageUrl = previousImageData?.image?.url;
   const nextImageUrl = nextImageData?.image?.url;
   useEffect(() => {
-    if (previousImageUrl != null && canPreFetchPrevious) {
+    if (previousImageUrl != null && canFetchPrevious) {
       fetch(previousImageUrl);
     }
-    setCanPreFetchPrevious(false);
-  }, [previousImageUrl, canPreFetchPrevious]);
+    setCanFetch({ canFetchPrevious: false });
+  }, [previousImageUrl, canFetchPrevious, setCanFetch]);
   useEffect(() => {
-    if (nextImageUrl != null && canPreFetchNext) {
+    if (nextImageUrl != null && canFetchNext) {
       fetch(nextImageUrl);
     }
-    setCanPreFetchNext(false);
-  }, [nextImageUrl, canPreFetchNext]);
+    setCanFetch({ canFetchNext: false });
+  }, [nextImageUrl, canFetchNext, setCanFetch]);
   return () => {
-    setCanPreFetchPrevious(true);
-    setCanPreFetchNext(true);
+    setCanFetch({
+      canFetchNext: true,
+      canFetchPrevious: true,
+    });
   };
 };
