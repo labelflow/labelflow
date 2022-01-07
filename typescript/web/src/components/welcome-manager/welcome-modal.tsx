@@ -16,10 +16,6 @@ import { BrowserWarning } from "./steps/browser-warning";
 import { BrowserError } from "./steps/browser-error";
 import { Welcome } from "./steps/welcome";
 import { Loading } from "./steps/loading";
-import {
-  checkServiceWorkerReady,
-  messageNoWindow,
-} from "../../utils/check-service-worker";
 
 const tutorialDatasetFirstImageUrl =
   "/local/datasets/tutorial-dataset/images/2bbbf664-5810-4760-a10f-841de2f35510";
@@ -62,47 +58,20 @@ export const createDemoDatasetQuery = gql`
 
 const performWelcomeWorkflow = async ({
   router,
-  isServiceWorkerActive,
-  setIsServiceWorkerActive,
   client,
   setParamModalWelcome,
-  setIsLoadingWorkerAndDemo,
   setBrowserError,
 }: {
   router: NextRouter;
-  isServiceWorkerActive: boolean;
-  setIsServiceWorkerActive: (state: boolean) => void;
   setParamModalWelcome: (
     state: WelcomeModalParam,
     updateType: "replaceIn"
   ) => void;
   setBrowserError: (state: Error) => void;
-  setIsLoadingWorkerAndDemo: (state: boolean) => void;
   client: ApolloClient<{}>;
 }) => {
   try {
-    if (isServiceWorkerActive) {
-      return;
-    }
-
     setParamModalWelcome(undefined, "replaceIn");
-
-    setIsLoadingWorkerAndDemo(true);
-
-    try {
-      await checkServiceWorkerReady();
-    } catch (e: any) {
-      if (e.message === messageNoWindow) {
-        // In Next JS SSR, the window is not available.
-        return;
-      }
-      if (process.env.STORYBOOK) {
-        // In Storybook, the Service Worker is not available.
-        return;
-      }
-      throw e;
-    }
-    setIsServiceWorkerActive(true);
 
     const { data: getDatasetsResult } = await client.query({
       query: getDatasetsQuery,
@@ -140,23 +109,17 @@ const performWelcomeWorkflow = async ({
     }
 
     await router.prefetch(tutorialDatasetFirstImageUrl);
-
-    setIsLoadingWorkerAndDemo(false);
   } catch (error: any) {
     setBrowserError(error);
   }
 };
 
 export const WelcomeModal = ({
-  initialIsServiceWorkerActive = false,
   initialBrowserWarning = false,
-  initialIsLoadingWorkerAndDemo = false,
   initialBrowserError = undefined,
   autoStartCountDown = true,
 }: {
-  initialIsServiceWorkerActive?: boolean;
   initialBrowserWarning?: boolean;
-  initialIsLoadingWorkerAndDemo?: boolean;
   initialBrowserError?: Error;
   autoStartCountDown?: boolean;
 }) => {
@@ -196,14 +159,6 @@ export const WelcomeModal = ({
     return false;
   });
 
-  // State variables
-
-  // By default (including during SSR) we consider the service worker to be ready
-  // since this is the nominal case that happen all the time except during the very first visit
-  const [isServiceWorkerActive, setIsServiceWorkerActive] = useState(
-    initialIsServiceWorkerActive || hasUserTriedApp === "true"
-  );
-
   // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
   // This param can have several values:
   //   - undefined: Normal behavior, only show the welcome modal when needed
@@ -231,10 +186,6 @@ export const WelcomeModal = ({
     }
   }, [paramModalWelcome, hasUserTriedApp]);
 
-  const [isLoadingWorkerAndDemo, setIsLoadingWorkerAndDemo] = useState(
-    initialIsLoadingWorkerAndDemo
-  );
-
   const [browserError, setBrowserError] = useState(initialBrowserError);
 
   // State Transitions
@@ -254,18 +205,14 @@ export const WelcomeModal = ({
       router?.isReady &&
       router?.query?.workspaceSlug === "local" &&
       ((!(browserWarning && tryDespiteBrowserWarning !== "true") &&
-        !isServiceWorkerActive &&
         paramModalWelcome !== "closed") ||
         paramModalWelcome === "open")
     ) {
       performWelcomeWorkflow({
         router,
         setBrowserError,
-        isServiceWorkerActive,
-        setIsServiceWorkerActive,
-        client,
         setParamModalWelcome,
-        setIsLoadingWorkerAndDemo,
+        client,
       });
     }
   }, [tryDespiteBrowserWarning, router?.isReady, router?.query?.workspaceSlug]);
@@ -302,15 +249,12 @@ export const WelcomeModal = ({
     tryDespiteBrowserWarning !== "true" &&
     hasUserTriedApp !== "true";
 
-  const shouldShowLoadingModal =
-    router?.isReady && hasUserTriedApp !== "true" && isLoadingWorkerAndDemo;
+  const shouldShowLoadingModal = router?.isReady && hasUserTriedApp !== "true";
 
   const shouldShowWelcomeModal =
     router?.isReady &&
     (paramModalWelcome === "open" ||
-      (paramModalWelcome !== "closed" &&
-        hasUserTriedApp !== "true" &&
-        !isLoadingWorkerAndDemo));
+      (paramModalWelcome !== "closed" && hasUserTriedApp !== "true"));
 
   return (
     <Modal

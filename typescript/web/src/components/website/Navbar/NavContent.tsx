@@ -46,7 +46,7 @@ const MobileNavContext = (props: FlexProps) => {
           icon={<GithubIcon fontSize="2xl" />}
         />
         <Box display={{ base: "none", sm: "block" }}>
-          <NextLink href="/local/datasets">
+          <NextLink href="/test/datasets">
             <Button as="a" colorScheme="brand" variant="outline" ml="3">
               Try it now
             </Button>
@@ -68,7 +68,7 @@ const MobileNavContext = (props: FlexProps) => {
             </NavLink.Mobile>
           )
         )}
-        <NextLink href="/local/datasets">
+        <NextLink href="/test/datasets">
           <Button colorScheme="brand" w="full" size="lg" mt="5">
             Try it now
           </Button>
@@ -136,7 +136,7 @@ const DesktopNavContent = (props: FlexProps) => {
           mr="-2"
           icon={<GithubIcon fontSize="2xl" />}
         />
-        <NextLink href="/local/datasets">
+        <NextLink href="/test/datasets">
           <Button
             as="a"
             href="#"

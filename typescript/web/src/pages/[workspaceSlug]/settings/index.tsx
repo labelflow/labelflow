@@ -9,10 +9,9 @@ import { Layout } from "../../../components/layout";
 import { WorkspaceTabBar } from "../../../components/layout/tab-bar/workspace-tab-bar";
 import { NavLogo } from "../../../components/logo/nav-logo";
 import { Meta } from "../../../components/meta";
-import { ServiceWorkerManagerModal } from "../../../components/service-worker-manager";
 import { WorkspaceSettings } from "../../../components/settings/workspace";
 import { LayoutSpinner } from "../../../components/spinner";
-import { WelcomeManager } from "../../../components/welcome-manager";
+import { WelcomeModal } from "../../../components/welcome-manager";
 import { WorkspaceSwitcher } from "../../../components/workspace-switcher";
 
 const getWorkspaceDetailsQuery = gql`
@@ -45,8 +44,7 @@ const WorkspaceSettingsPage = () => {
 
   return (
     <>
-      <ServiceWorkerManagerModal />
-      <WelcomeManager />
+      <WelcomeModal />
       <AuthManager />
       <Meta title="LabelFlow | Workspace Settings" />
       <CookieBanner />

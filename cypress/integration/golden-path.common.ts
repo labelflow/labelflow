@@ -8,7 +8,7 @@ export const declareTests = ({ workspaceSlug }: TestInput) => {
   it("Should execute the golden path without errors", () => {
     cy.setCookie("hasUserTriedApp", "false");
     cy.setCookie("consentedCookies", "true");
-    cy.visit(`/${workspaceSlug}/datasets?modal-update-service-worker=update`);
+    cy.visit(`/${workspaceSlug}/datasets?`);
     if (workspaceSlug === "local") {
       cy.contains("Get started").click();
       cy.url().should(

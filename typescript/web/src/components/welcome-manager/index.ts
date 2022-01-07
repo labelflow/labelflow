@@ -1,1 +1,1 @@
-export { WelcomeModal as WelcomeManager } from "./welcome-modal";
+export * from "./welcome-modal";

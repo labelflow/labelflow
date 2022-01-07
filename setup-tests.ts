@@ -2,9 +2,6 @@ import "@testing-library/jest-dom";
 import "fake-indexeddb/auto";
 import { configure } from "@testing-library/react";
 import fetchMock from "jest-fetch-mock";
-import CacheStorage from "service-worker-mock/models/CacheStorage";
-import Request from "service-worker-mock/models/Request";
-import Response from "service-worker-mock/models/Response";
 
 Object.assign(global, {
   caches: new CacheStorage(),

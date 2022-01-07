@@ -17,15 +17,15 @@ export const Empty = () => {
 export const Loading = () => {
   return (
     <CollapsedBreadcrumbs>
-      <NextLink href="/local/datasets">
+      <NextLink href="/test/datasets">
         <BreadcrumbLink>Datasets</BreadcrumbLink>
       </NextLink>
 
-      <NextLink href="/local/datasets/xxx/images">
+      <NextLink href="/test/datasets/xxx/images">
         <Skeleton>Dataset Name</Skeleton>
       </NextLink>
 
-      <NextLink href="/local/datasets/xxx/images">
+      <NextLink href="/test/datasets/xxx/images">
         <BreadcrumbLink>Images</BreadcrumbLink>
       </NextLink>
 
@@ -37,15 +37,15 @@ export const Loading = () => {
 export const Normal = () => {
   return (
     <CollapsedBreadcrumbs>
-      <NextLink href="/local/datasets">
+      <NextLink href="/test/datasets">
         <BreadcrumbLink>Datasets</BreadcrumbLink>
       </NextLink>
 
-      <NextLink href="/local/datasets/xxx/images">
+      <NextLink href="/test/datasets/xxx/images">
         <BreadcrumbLink>Hello</BreadcrumbLink>
       </NextLink>
 
-      <NextLink href="/local/datasets/xxx/images">
+      <NextLink href="/test/datasets/xxx/images">
         <BreadcrumbLink>Images</BreadcrumbLink>
       </NextLink>
 
@@ -57,17 +57,17 @@ export const Normal = () => {
 export const LongNames = () => {
   return (
     <CollapsedBreadcrumbs>
-      <NextLink href="/local/datasets">
+      <NextLink href="/test/datasets">
         <BreadcrumbLink>Datasets</BreadcrumbLink>
       </NextLink>
 
-      <NextLink href="/local/datasets/xxx/images">
+      <NextLink href="/test/datasets/xxx/images">
         <BreadcrumbLink>
           Hello this is a very long dataset name is it not ?
         </BreadcrumbLink>
       </NextLink>
 
-      <NextLink href="/local/datasets/xxx/images">
+      <NextLink href="/test/datasets/xxx/images">
         <BreadcrumbLink>Images</BreadcrumbLink>
       </NextLink>
 
@@ -79,17 +79,17 @@ export const LongNames = () => {
 export const WithLastElementCurrent = () => {
   return (
     <CollapsedBreadcrumbs containsLastElement>
-      <NextLink href="/local/datasets">
+      <NextLink href="/test/datasets">
         <BreadcrumbLink>Datasets</BreadcrumbLink>
       </NextLink>
 
-      <NextLink href="/local/datasets/xxx/images">
+      <NextLink href="/test/datasets/xxx/images">
         <BreadcrumbLink>
           Hello this is a very long dataset name is it not ?
         </BreadcrumbLink>
       </NextLink>
 
-      <NextLink href="/local/datasets/xxx/images">
+      <NextLink href="/test/datasets/xxx/images">
         <BreadcrumbLink>Images</BreadcrumbLink>
       </NextLink>
 
@@ -103,17 +103,17 @@ export const WithLastElementCurrent = () => {
 export const WithCustomIcon = () => {
   return (
     <CollapsedBreadcrumbs icon={<Text>This text could be an icon!</Text>}>
-      <NextLink href="/local/datasets">
+      <NextLink href="/test/datasets">
         <BreadcrumbLink>Datasets</BreadcrumbLink>
       </NextLink>
 
-      <NextLink href="/local/datasets/xxx/images">
+      <NextLink href="/test/datasets/xxx/images">
         <BreadcrumbLink>
           Hello this is a very long dataset name is it not ?
         </BreadcrumbLink>
       </NextLink>
 
-      <NextLink href="/local/datasets/xxx/images">
+      <NextLink href="/test/datasets/xxx/images">
         <BreadcrumbLink>Images</BreadcrumbLink>
       </NextLink>
 

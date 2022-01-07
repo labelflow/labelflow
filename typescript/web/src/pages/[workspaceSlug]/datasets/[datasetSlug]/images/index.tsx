@@ -8,7 +8,6 @@ import type { Dataset as DatasetType } from "@labelflow/graphql-types";
 
 import { WorkspaceSwitcher } from "../../../../../components/workspace-switcher";
 import { NavLogo } from "../../../../../components/logo/nav-logo";
-import { ServiceWorkerManagerModal } from "../../../../../components/service-worker-manager";
 import { KeymapButton } from "../../../../../components/layout/top-bar/keymap-button";
 import { ImportButton } from "../../../../../components/import-button";
 import { ExportButton } from "../../../../../components/export-button";
@@ -18,7 +17,7 @@ import { DatasetTabBar } from "../../../../../components/layout/tab-bar/dataset-
 import { Error404Content } from "../../../../404";
 import { AuthManager } from "../../../../../components/auth-manager";
 
-import { WelcomeManager } from "../../../../../components/welcome-manager";
+import { WelcomeModal } from "../../../../../components/welcome-manager";
 import { CookieBanner } from "../../../../../components/cookie-banner";
 import { ImagesList } from "../../../../../components/dataset-images-list";
 
@@ -74,8 +73,7 @@ const ImagesPage = () => {
     }
     return (
       <>
-        <ServiceWorkerManagerModal />
-        <WelcomeManager />
+        <WelcomeModal />
         <AuthManager />
         <Meta title="LabelFlow | Dataset not found" />
         <CookieBanner />
@@ -85,8 +83,7 @@ const ImagesPage = () => {
   }
   return (
     <>
-      <ServiceWorkerManagerModal />
-      <WelcomeManager />
+      <WelcomeModal />
       <AuthManager />
       <Meta title="LabelFlow | Images" />
       <CookieBanner />

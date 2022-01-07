@@ -6,8 +6,6 @@ import type {
 import { Context } from "./types";
 import { getOrigin } from "./utils/get-origin";
 
-export const uploadsRoute = "/api/worker/uploads";
-
 /**
  * A way for the server to tell how it wants to accept file uploads
  * @returns a presigned URL for the client to upload files to, or `null` if the server wants to accept direct graphql uploads

@@ -16,8 +16,7 @@ import { DatasetTabBar } from "../../../../../components/layout/tab-bar/dataset-
 import { KeymapButton } from "../../../../../components/layout/top-bar/keymap-button";
 import { NavLogo } from "../../../../../components/logo/nav-logo";
 import { Meta } from "../../../../../components/meta";
-import { ServiceWorkerManagerModal } from "../../../../../components/service-worker-manager";
-import { WelcomeManager } from "../../../../../components/welcome-manager";
+import { WelcomeModal } from "../../../../../components/welcome-manager";
 import { WorkspaceSwitcher } from "../../../../../components/workspace-switcher";
 import { Error404Content } from "../../../../404";
 
@@ -58,8 +57,7 @@ const DatasetClassesPage = () => {
     }
     return (
       <>
-        <ServiceWorkerManagerModal />
-        <WelcomeManager />
+        <WelcomeModal />
         <AuthManager />
         <Meta title="LabelFlow | Dataset not found" />
         <CookieBanner />
@@ -70,8 +68,7 @@ const DatasetClassesPage = () => {
 
   return (
     <>
-      <ServiceWorkerManagerModal />
-      <WelcomeManager />
+      <WelcomeModal />
       <AuthManager />
       <Meta title="LabelFlow | Classes" />
       <CookieBanner />

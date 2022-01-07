@@ -8,9 +8,8 @@ import { Layout } from "../../../components/layout";
 import { WorkspaceTabBar } from "../../../components/layout/tab-bar/workspace-tab-bar";
 import { NavLogo } from "../../../components/logo/nav-logo";
 import { Meta } from "../../../components/meta";
-import { ServiceWorkerManagerModal } from "../../../components/service-worker-manager";
 import { LayoutSpinner } from "../../../components/spinner";
-import { WelcomeManager } from "../../../components/welcome-manager";
+import { WelcomeModal } from "../../../components/welcome-manager";
 import { WorkspaceSwitcher } from "../../../components/workspace-switcher";
 
 const GraphiQL = dynamic(() => import("../../../components/graphiql"), {
@@ -26,8 +25,7 @@ const GraphqlPlayground = () => {
 
   return (
     <>
-      <ServiceWorkerManagerModal />
-      <WelcomeManager />
+      <WelcomeModal />
       <AuthManager />
       <Meta title="LabelFlow | GraphiQL" />
       <CookieBanner />
@@ -52,13 +50,7 @@ const GraphqlPlayground = () => {
           boxSizing="border-box"
         >
           {globalThis.location && (
-            <GraphiQL
-              url={
-                workspaceSlug === "local"
-                  ? `${globalThis.location.origin}/api/worker/graphql`
-                  : `${globalThis.location.origin}/api/graphql`
-              }
-            />
+            <GraphiQL url={`${globalThis.location.origin}/api/graphql`} />
           )}
         </Box>
       </Layout>

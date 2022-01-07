@@ -17,15 +17,15 @@ export const Empty = () => {
 export const Loading = () => {
   return (
     <CollapsibleBreadcrumbs>
-      <NextLink href="/local/datasets">
+      <NextLink href="/test/datasets">
         <BreadcrumbLink>Datasets</BreadcrumbLink>
       </NextLink>
 
-      <NextLink href="/local/datasets/xxx/images">
+      <NextLink href="/test/datasets/xxx/images">
         <Skeleton>Dataset Name</Skeleton>
       </NextLink>
 
-      <NextLink href="/local/datasets/xxx/images">
+      <NextLink href="/test/datasets/xxx/images">
         <BreadcrumbLink>Images</BreadcrumbLink>
       </NextLink>
 
@@ -37,15 +37,15 @@ export const Loading = () => {
 export const Normal = () => {
   return (
     <CollapsibleBreadcrumbs>
-      <NextLink href="/local/datasets">
+      <NextLink href="/test/datasets">
         <BreadcrumbLink>Datasets</BreadcrumbLink>
       </NextLink>
 
-      <NextLink href="/local/datasets/xxx/images">
+      <NextLink href="/test/datasets/xxx/images">
         <BreadcrumbLink>Hello</BreadcrumbLink>
       </NextLink>
 
-      <NextLink href="/local/datasets/xxx/images">
+      <NextLink href="/test/datasets/xxx/images">
         <BreadcrumbLink>Images</BreadcrumbLink>
       </NextLink>
 
@@ -57,7 +57,7 @@ export const Normal = () => {
 export const LongNames1Element = () => {
   return (
     <CollapsibleBreadcrumbs>
-      <NextLink href="/local/datasets/xxx/images">
+      <NextLink href="/test/datasets/xxx/images">
         <BreadcrumbLink>
           Hello this is a very long dataset name is it not ?
         </BreadcrumbLink>
@@ -69,7 +69,7 @@ export const LongNames1Element = () => {
 export const LongNames2Element = () => {
   return (
     <CollapsibleBreadcrumbs>
-      <NextLink href="/local/datasets/xxx/images">
+      <NextLink href="/test/datasets/xxx/images">
         <BreadcrumbLink>
           Hello this is a very long dataset name is it not ?
         </BreadcrumbLink>
@@ -83,11 +83,11 @@ export const LongNames2Element = () => {
 export const LongNames3Element = () => {
   return (
     <CollapsibleBreadcrumbs>
-      <NextLink href="/local/datasets">
+      <NextLink href="/test/datasets">
         <BreadcrumbLink>Datasets</BreadcrumbLink>
       </NextLink>
 
-      <NextLink href="/local/datasets/xxx/images">
+      <NextLink href="/test/datasets/xxx/images">
         <BreadcrumbLink>
           Hello this is a very long dataset name is it not ?
         </BreadcrumbLink>
@@ -101,17 +101,17 @@ export const LongNames3Element = () => {
 export const LongNames4Element = () => {
   return (
     <CollapsibleBreadcrumbs>
-      <NextLink href="/local/datasets">
+      <NextLink href="/test/datasets">
         <BreadcrumbLink>Datasets</BreadcrumbLink>
       </NextLink>
 
-      <NextLink href="/local/datasets/xxx/images">
+      <NextLink href="/test/datasets/xxx/images">
         <BreadcrumbLink>
           Hello this is a very long dataset name is it not ?
         </BreadcrumbLink>
       </NextLink>
 
-      <NextLink href="/local/datasets/xxx/images">
+      <NextLink href="/test/datasets/xxx/images">
         <BreadcrumbLink>Images</BreadcrumbLink>
       </NextLink>
 
@@ -123,21 +123,21 @@ export const LongNames4Element = () => {
 export const LongNames5Element = () => {
   return (
     <CollapsibleBreadcrumbs>
-      <NextLink href="/local/datasets">
+      <NextLink href="/test/datasets">
         <BreadcrumbLink>Datasets</BreadcrumbLink>
       </NextLink>
 
-      <NextLink href="/local/datasets/xxx/images">
+      <NextLink href="/test/datasets/xxx/images">
         <BreadcrumbLink>
           Hello this is a very long dataset name is it not ?
         </BreadcrumbLink>
       </NextLink>
 
-      <NextLink href="/local/datasets/xxx/images">
+      <NextLink href="/test/datasets/xxx/images">
         <BreadcrumbLink>Images</BreadcrumbLink>
       </NextLink>
 
-      <NextLink href="/local/datasets/xxx/images">
+      <NextLink href="/test/datasets/xxx/images">
         <BreadcrumbLink>
           Even longer wowowowowo whats going on yoooooo way too long to be
           honest
@@ -152,28 +152,28 @@ export const LongNames5Element = () => {
 export const LongNames6Element = () => {
   return (
     <CollapsibleBreadcrumbs>
-      <NextLink href="/local/datasets">
+      <NextLink href="/test/datasets">
         <BreadcrumbLink>Datasets</BreadcrumbLink>
       </NextLink>
 
-      <NextLink href="/local/datasets/xxx/images">
+      <NextLink href="/test/datasets/xxx/images">
         <BreadcrumbLink>
           Hello this is a very long dataset name is it not ?
         </BreadcrumbLink>
       </NextLink>
 
-      <NextLink href="/local/datasets/xxx/images">
+      <NextLink href="/test/datasets/xxx/images">
         <BreadcrumbLink>Images</BreadcrumbLink>
       </NextLink>
 
-      <NextLink href="/local/datasets/xxx/images">
+      <NextLink href="/test/datasets/xxx/images">
         <BreadcrumbLink>
           Even longer wowowowowo whats going on yoooooo way too long to be
           honest
         </BreadcrumbLink>
       </NextLink>
 
-      <NextLink href="/local/datasets/xxx/images">
+      <NextLink href="/test/datasets/xxx/images">
         <BreadcrumbLink>
           Wow such a looooooooooong image name bro ! What the hell
         </BreadcrumbLink>
@@ -191,28 +191,28 @@ export const DifferentSettings1 = () => {
       numberOfFirstBreadcrumbsDisplayedWhenSplit={1}
       numberOfLastBreadcrumbsDisplayedWhenSplit={2}
     >
-      <NextLink href="/local/datasets">
+      <NextLink href="/test/datasets">
         <BreadcrumbLink>Datasets</BreadcrumbLink>
       </NextLink>
 
-      <NextLink href="/local/datasets/xxx/images">
+      <NextLink href="/test/datasets/xxx/images">
         <BreadcrumbLink>
           Hello this is a very long dataset name is it not ?
         </BreadcrumbLink>
       </NextLink>
 
-      <NextLink href="/local/datasets/xxx/images">
+      <NextLink href="/test/datasets/xxx/images">
         <BreadcrumbLink>Images</BreadcrumbLink>
       </NextLink>
 
-      <NextLink href="/local/datasets/xxx/images">
+      <NextLink href="/test/datasets/xxx/images">
         <BreadcrumbLink>
           Even longer wowowowowo whats going on yoooooo way too long to be
           honest
         </BreadcrumbLink>
       </NextLink>
 
-      <NextLink href="/local/datasets/xxx/images">
+      <NextLink href="/test/datasets/xxx/images">
         <BreadcrumbLink>
           Wow such a looooooooooong image name bro ! What the hell
         </BreadcrumbLink>
@@ -230,28 +230,28 @@ export const DifferentSettings2 = () => {
       numberOfFirstBreadcrumbsDisplayedWhenSplit={0}
       numberOfLastBreadcrumbsDisplayedWhenSplit={2}
     >
-      <NextLink href="/local/datasets">
+      <NextLink href="/test/datasets">
         <BreadcrumbLink>Datasets</BreadcrumbLink>
       </NextLink>
 
-      <NextLink href="/local/datasets/xxx/images">
+      <NextLink href="/test/datasets/xxx/images">
         <BreadcrumbLink>
           Hello this is a very long dataset name is it not ?
         </BreadcrumbLink>
       </NextLink>
 
-      <NextLink href="/local/datasets/xxx/images">
+      <NextLink href="/test/datasets/xxx/images">
         <BreadcrumbLink>Images</BreadcrumbLink>
       </NextLink>
 
-      <NextLink href="/local/datasets/xxx/images">
+      <NextLink href="/test/datasets/xxx/images">
         <BreadcrumbLink>
           Even longer wowowowowo whats going on yoooooo way too long to be
           honest
         </BreadcrumbLink>
       </NextLink>
 
-      <NextLink href="/local/datasets/xxx/images">
+      <NextLink href="/test/datasets/xxx/images">
         <BreadcrumbLink>
           Wow such a looooooooooong image name bro ! What the hell
         </BreadcrumbLink>

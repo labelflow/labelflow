@@ -21,7 +21,7 @@ export const declareTests = ({
     const imageId = getImageId();
     // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
     cy.visit(
-      `/${workspaceSlug}/datasets/${datasetSlug}/images/${imageId}?modal-welcome=closed&modal-update-service-worker=update`
+      `/${workspaceSlug}/datasets/${datasetSlug}/images/${imageId}?modal-welcome=closed`
     );
     cy.get('[aria-label="loading indicator"]').should("not.exist");
     cy.get('[aria-label="Selection tool"]').click();
@@ -88,7 +88,7 @@ export const declareTests = ({
 
     // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
     cy.visit(
-      `/${workspaceSlug}/datasets/${datasetSlug}/images/${imageId}?modal-welcome=closed&modal-update-service-worker=update`
+      `/${workspaceSlug}/datasets/${datasetSlug}/images/${imageId}?modal-welcome=closed`
     );
 
     cy.wait(420);
@@ -185,7 +185,7 @@ export const declareTests = ({
     );
     // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
     cy.visit(
-      `/${workspaceSlug}/datasets/${datasetSlug}/images/${imageId}?modal-welcome=closed&modal-update-service-worker=update`
+      `/${workspaceSlug}/datasets/${datasetSlug}/images/${imageId}?modal-welcome=closed`
     );
     cy.get('[aria-label="loading indicator"]').should("not.exist");
     cy.get('[aria-label="Selection tool"]').click();
@@ -255,7 +255,7 @@ export const declareTests = ({
     const datasetSlug = getDatasetSlug();
     const imageId = getImageId();
     cy.visit(
-      `/${workspaceSlug}/datasets/${datasetSlug}/images/${imageId}?modal-welcome=closed&modal-update-service-worker=update`
+      `/${workspaceSlug}/datasets/${datasetSlug}/images/${imageId}?modal-welcome=closed`
     );
 
     cy.wait(420);

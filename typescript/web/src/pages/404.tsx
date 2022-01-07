@@ -5,8 +5,7 @@ import { Meta } from "../components/meta";
 
 import { Layout } from "../components/layout";
 import { EmptyStateNoSearchResult } from "../components/empty-state";
-import { ServiceWorkerManagerModal } from "../components/service-worker-manager";
-import { WelcomeManager } from "../components/welcome-manager";
+import { WelcomeModal } from "../components/welcome-manager";
 import { AuthManager } from "../components/auth-manager";
 import { CookieBanner } from "../components/cookie-banner";
 import { NavLogo } from "../components/logo/nav-logo";
@@ -60,8 +59,7 @@ export const Error404Content = () => (
 const Error404Page = () => {
   return (
     <>
-      <ServiceWorkerManagerModal />
-      <WelcomeManager />
+      <WelcomeModal />
       <AuthManager />
       <Meta title="LabelFlow | Not found" />
       <CookieBanner />

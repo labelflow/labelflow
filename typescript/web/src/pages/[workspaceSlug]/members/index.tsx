@@ -8,9 +8,8 @@ import { WorkspaceTabBar } from "../../../components/layout/tab-bar/workspace-ta
 import { NavLogo } from "../../../components/logo/nav-logo";
 import { Members } from "../../../components/members";
 import { Meta } from "../../../components/meta";
-import { ServiceWorkerManagerModal } from "../../../components/service-worker-manager";
 import { LayoutSpinner } from "../../../components/spinner";
-import { WelcomeManager } from "../../../components/welcome-manager";
+import { WelcomeModal } from "../../../components/welcome-manager";
 import { WorkspaceSwitcher } from "../../../components/workspace-switcher";
 
 const membershipsQuery = gql`
@@ -79,8 +78,7 @@ const WorkspaceMembersPage = () => {
 
   return (
     <>
-      <ServiceWorkerManagerModal />
-      <WelcomeManager />
+      <WelcomeModal />
       <AuthManager />
       <Meta title="LabelFlow | Members" />
       <CookieBanner />

@@ -17760,7 +17760,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dexie@npm:3.0.3, dexie@npm:^3.0.3":
+"dexie@npm:^3.0.3":
   version: 3.0.3
   resolution: "dexie@npm:3.0.3"
   checksum: 5419ad5cb81d5a45926886645c30dc77e16e994cc1c67ff626f89ffd70f39253b79b696c79abaae3b891c369f61989ccf95909f2d04877d12fc6855fe97a2256
@@ -17924,15 +17924,6 @@ __metadata:
     domhandler: ^4.2.0
     entities: ^2.0.0
   checksum: bff48714944d67b160db71ba244fb0f3fe72e77ef2ec8414e2eeb56f2d926e404a13456b8b83a5392e217ba47dec2ec0c368801b31481813e94d185276c3e964
-  languageName: node
-  linkType: hard
-
-"dom-urls@npm:^1.1.0":
-  version: 1.1.0
-  resolution: "dom-urls@npm:1.1.0"
-  dependencies:
-    urijs: ^1.16.1
-  checksum: 78bc97f1f8c052c11d11ed50d505b6307422d64c65b947fca8e0f57f7befcbc6148d58fac917c63e5cbf9c74b43f511e243a9272c5736339497def1e5a9a1842
   languageName: node
   linkType: hard
 
@@ -23889,7 +23880,6 @@ fsevents@^1.2.7:
     babel-loader: 8.2.2
     chromatic: 5.8.2
     cypress: 8.5.0
-    dexie: 3.0.3
     dotenv-cli: ^4.0.0
     eslint: 7.26.0
     eslint-config-airbnb-typescript: 12.3.1
@@ -23912,7 +23902,6 @@ fsevents@^1.2.7:
     react: 17.0.2
     react-dom: 17.0.2
     release-it: 14.11.5
-    service-worker-mock: "patch:service-worker-mock@2.0.5#./service-worker-mock.patch"
     ts-jest: 26.5.6
     ts-loader: 9.2.3
     ts-node: 9.1.1
@@ -24228,13 +24217,6 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"lodash._basefor@npm:^3.0.0":
-  version: 3.0.3
-  resolution: "lodash._basefor@npm:3.0.3"
-  checksum: 8028af9901a33c336eeb18945bfe304f9e2abc1a741f688a5e26e3fa1a1c975688f7a40ec90d8dc3eda3c04160ede0aa5a89c2beb04ac29daf914b5aeb8b6b5a
-  languageName: node
-  linkType: hard
-
 "lodash.clonedeep@npm:^4.5.0":
   version: 4.5.0
   resolution: "lodash.clonedeep@npm:4.5.0"
@@ -24277,20 +24259,6 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"lodash.isarguments@npm:^3.0.0":
-  version: 3.1.0
-  resolution: "lodash.isarguments@npm:3.1.0"
-  checksum: ae1526f3eb5c61c77944b101b1f655f846ecbedcb9e6b073526eba6890dc0f13f09f72e11ffbf6540b602caee319af9ac363d6cdd6be41f4ee453436f04f13b5
-  languageName: node
-  linkType: hard
-
-"lodash.isarray@npm:^3.0.0":
-  version: 3.0.4
-  resolution: "lodash.isarray@npm:3.0.4"
-  checksum: 3b298fb76ff16981353f7d0695d8680be9451b74d2e76714ddbd903a90fbaa8e1d84979d0ae99325f5a9033776771154b19e05027ab23de83202251c8abe81b5
-  languageName: node
-  linkType: hard
-
 "lodash.isboolean@npm:^3.0.3":
   version: 3.0.3
   resolution: "lodash.isboolean@npm:3.0.3"
@@ -24312,17 +24280,6 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"lodash.isplainobject@npm:^3.0.2":
-  version: 3.2.0
-  resolution: "lodash.isplainobject@npm:3.2.0"
-  dependencies:
-    lodash._basefor: ^3.0.0
-    lodash.isarguments: ^3.0.0
-    lodash.keysin: ^3.0.0
-  checksum: c49ee7642dea4427aeae37ad987fb43b574e15322c0cd5c8e9d6097099394dd68783948da646291e25471b7faa917ce8e18435403a6da89b1652520ea735d9c5
-  languageName: node
-  linkType: hard
-
 "lodash.isplainobject@npm:^4.0.6":
   version: 4.0.6
   resolution: "lodash.isplainobject@npm:4.0.6"
@@ -24334,16 +24291,6 @@ fsevents@^1.2.7:
   version: 4.0.1
   resolution: "lodash.isstring@npm:4.0.1"
   checksum: eaac87ae9636848af08021083d796e2eea3d02e80082ab8a9955309569cb3a463ce97fd281d7dc119e402b2e7d8c54a23914b15d2fc7fff56461511dc8937ba0
-  languageName: node
-  linkType: hard
-
-"lodash.keysin@npm:^3.0.0":
-  version: 3.0.8
-  resolution: "lodash.keysin@npm:3.0.8"
-  dependencies:
-    lodash.isarguments: ^3.0.0
-    lodash.isarray: ^3.0.0
-  checksum: 7d748df105266a474b6b3b17bef339f16c8625fb3091e3c6cad4a02ad943617c3fd5cb9036fed0dbd4a38e6d02e1f6d4a8cc5399f075d411f2a8f21b2eb8a8e4
   languageName: node
   linkType: hard
 
@@ -29479,15 +29426,6 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"realistic-structured-clone@npm:^1.0.1":
-  version: 1.0.1
-  resolution: "realistic-structured-clone@npm:1.0.1"
-  dependencies:
-    lodash.isplainobject: ^3.0.2
-  checksum: a60ef2588c856e0776439463fb314a3b0aa59a791d93298c44481642048fd5cb3ac887f0720294d560663ddfad22e51d90f29b2b3c137c23ed30134ae30f54d1
-  languageName: node
-  linkType: hard
-
 "realistic-structured-clone@npm:^2.0.1":
   version: 2.0.2
   resolution: "realistic-structured-clone@npm:2.0.2"
@@ -30613,30 +30551,6 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
-service-worker-mock@2.0.5:
-  version: 2.0.5
-  resolution: "service-worker-mock@npm:2.0.5"
-  dependencies:
-    dom-urls: ^1.1.0
-    shelving-mock-indexeddb: ^1.1.0
-    url-search-params: ^0.10.0
-    w3c-hr-time: ^1.0.1
-  checksum: 5662b214ccf4c3c5b129b7f4f9db407c715a7d54b81e0f2318a1dc5861b28f99882a6db6c1b0f6808a6493f123cc7c60388ae25c36afcd9913d634a90dc08a55
-  languageName: node
-  linkType: hard
-
-"service-worker-mock@patch:service-worker-mock@2.0.5#./service-worker-mock.patch::locator=labelflow%40workspace%3A.":
-  version: 2.0.5
-  resolution: "service-worker-mock@patch:service-worker-mock@npm%3A2.0.5#./service-worker-mock.patch::version=2.0.5&hash=63b335&locator=labelflow%40workspace%3A."
-  dependencies:
-    dom-urls: ^1.1.0
-    shelving-mock-indexeddb: ^1.1.0
-    url-search-params: ^0.10.0
-    w3c-hr-time: ^1.0.1
-  checksum: 5b5b844bcefd768e1026ae1a8bf855612751d0f767384a5b5d0928c28d15d583f9fbb9d44528362c252f9bc64f8c4b8218a90cf76c51c7e474147d888fb01a97
-  languageName: node
-  linkType: hard
-
 "set-blocking@npm:^2.0.0, set-blocking@npm:~2.0.0":
   version: 2.0.0
   resolution: "set-blocking@npm:2.0.0"
@@ -30782,23 +30696,6 @@ service-worker-mock@2.0.5:
   version: 0.1.1
   resolution: "shellwords@npm:0.1.1"
   checksum: 8d73a5e9861f5e5f1068e2cfc39bc0002400fe58558ab5e5fa75630d2c3adf44ca1fac81957609c8320d5533e093802fcafc72904bf1a32b95de3c19a0b1c0d4
-  languageName: node
-  linkType: hard
-
-"shelving-mock-event@npm:^1.0.12":
-  version: 1.0.12
-  resolution: "shelving-mock-event@npm:1.0.12"
-  checksum: 14ff1c09e1e2916ce08ef327933c6c8426223e0ebb29244a8992de3ebaa6b1cc4f76cfa0c8e292d31544d54868e5afee18dc182cdd57727141bc3437cb88811e
-  languageName: node
-  linkType: hard
-
-"shelving-mock-indexeddb@npm:^1.1.0":
-  version: 1.1.0
-  resolution: "shelving-mock-indexeddb@npm:1.1.0"
-  dependencies:
-    realistic-structured-clone: ^1.0.1
-    shelving-mock-event: ^1.0.12
-  checksum: 2a6d2b30966459f4996bd440b80b6664a5921718b3ae9430cd5145291ed1fabede49eb72369854a8bfb9cfa15dd1a0efceaf14d299b413af98aee3b45fcb6644
   languageName: node
   linkType: hard
 
@@ -33671,13 +33568,6 @@ typescript@~3.7.3:
   languageName: node
   linkType: hard
 
-"urijs@npm:^1.16.1":
-  version: 1.19.6
-  resolution: "urijs@npm:1.19.6"
-  checksum: 78b841e6f6a4abfad8c75e9e497fa5ea51527ea484cb24d3ac9f26338a57dcd41c10d14e11a94fe4699706350d2f03502a02ad712b3940fc6efe2178d9082f00
-  languageName: node
-  linkType: hard
-
 "urix@npm:^0.1.0":
   version: 0.1.0
   resolution: "urix@npm:0.1.0"
@@ -33715,13 +33605,6 @@ typescript@~3.7.3:
   dependencies:
     prepend-http: ^2.0.0
   checksum: 1040e357750451173132228036aff1fd04abbd43eac1fb3e4fca7495a078bcb8d33cb765fe71ad7e473d9c94d98fd67adca63bd2716c815a2da066198dd37217
-  languageName: node
-  linkType: hard
-
-"url-search-params@npm:^0.10.0":
-  version: 0.10.2
-  resolution: "url-search-params@npm:0.10.2"
-  checksum: 9caf90260243d6e6b75d91dc41209663b5b454c5687eb8280466e511a03f41d23d4a8894663bb1ffb315bc4d2f6aba437cb4f18bd080f0ff22b7aecff8907e37
   languageName: node
   linkType: hard
 
@@ -34141,7 +34024,7 @@ typescript@~3.7.3:
   languageName: node
   linkType: hard
 
-"w3c-hr-time@npm:^1.0.1, w3c-hr-time@npm:^1.0.2":
+"w3c-hr-time@npm:^1.0.2":
   version: 1.0.2
   resolution: "w3c-hr-time@npm:1.0.2"
   dependencies:

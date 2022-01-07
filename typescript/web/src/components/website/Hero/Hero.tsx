@@ -96,7 +96,7 @@ export function Hero() {
               mt="8"
             >
               <GithubButton />
-              <NextLink href="/local/datasets">
+              <NextLink href="/test/datasets">
                 <Button
                   size="lg"
                   minW="210px"

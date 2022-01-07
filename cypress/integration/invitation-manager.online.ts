@@ -61,7 +61,7 @@ describe("Invitation Manager (online)", () => {
 
     // check for the toast to be present
     cy.get('[role="alert"]').should("contain", "Invitation declined");
-    cy.location("pathname").should("eq", `/local/datasets`);
+    cy.location("pathname").should("eq", `/`);
   });
 
   it("shouldn't let a user accept an invitation that has already been accepted", () => {
@@ -175,7 +175,7 @@ describe("Invitation Manager (online)", () => {
       );
 
     cy.get("button").contains("Continue to Home Page").click();
-    cy.location("pathname").should("eq", "/local/datasets");
+    cy.location("pathname").should("eq", "/");
   });
 
   // flacky in the CI
@@ -239,6 +239,6 @@ describe("Invitation Manager (online)", () => {
       );
 
     cy.get("button").contains("Continue to Home Page").click();
-    cy.location("pathname").should("eq", "/local/datasets");
+    cy.location("pathname").should("eq", "/");
   });
 });

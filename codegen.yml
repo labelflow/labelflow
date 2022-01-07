@@ -7,16 +7,6 @@ generates:
   ./data/__generated__/schema.graphql:
     plugins:
       - schema-ast
-  ./typescript/web/src/worker/__generated__/schema.ts:
-    plugins:
-      - ./codegen-plugin-ts-schema.js:
-          indent: "  "
-          prefix: |
-            export const typeDefs = [
-              `
-          suffix: |
-            `,
-            ];
   ./typescript/db/src/__generated__/schema.ts:
     plugins:
       - ./codegen-plugin-ts-schema.js:

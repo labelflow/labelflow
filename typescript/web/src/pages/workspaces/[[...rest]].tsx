@@ -5,9 +5,8 @@ import { CookieBanner } from "../../components/cookie-banner";
 import { Layout } from "../../components/layout";
 import { NavLogo } from "../../components/logo/nav-logo";
 import { Meta } from "../../components/meta";
-import { ServiceWorkerManagerModal } from "../../components/service-worker-manager";
 import { LayoutSpinner } from "../../components/spinner";
-import { WelcomeManager } from "../../components/welcome-manager";
+import { WelcomeModal } from "../../components/welcome-manager";
 
 const LocalWorkspacesRedirectPage = () => {
   const router = useRouter();
@@ -21,8 +20,7 @@ const LocalWorkspacesRedirectPage = () => {
 
   return (
     <>
-      <ServiceWorkerManagerModal />
-      <WelcomeManager />
+      <WelcomeModal />
       <AuthManager />
       <Meta title="LabelFlow | Workspace" />
       <CookieBanner />

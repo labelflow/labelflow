@@ -14,7 +14,7 @@ export const declareTests = ({
     const imageId = getImageId();
     // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
     cy.visit(
-      `/${workspaceSlug}/datasets/${datasetSlug}/images/${imageId}?modal-welcome=closed&modal-update-service-worker=update`
+      `/${workspaceSlug}/datasets/${datasetSlug}/images/${imageId}?modal-welcome=closed`
     );
     cy.get('[aria-label="loading indicator"]').should("not.exist");
     cy.get('[aria-label="Drawing classification tool"]').should("not.exist");
@@ -38,7 +38,7 @@ export const declareTests = ({
     const imageId = getImageId();
     // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
     cy.visit(
-      `/${workspaceSlug}/datasets/${datasetSlug}/images/${imageId}?modal-welcome=closed&modal-update-service-worker=update`
+      `/${workspaceSlug}/datasets/${datasetSlug}/images/${imageId}?modal-welcome=closed`
     );
 
     // Switch to classification tool

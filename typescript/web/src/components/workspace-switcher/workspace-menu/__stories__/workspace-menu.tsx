@@ -48,15 +48,15 @@ export const Normal = () => {
         selectedWorkspace={selectedWorkspace}
       />
 
-      <NextLink href="/local/datasets">
+      <NextLink href="/test/datasets">
         <BreadcrumbLink>Datasets</BreadcrumbLink>
       </NextLink>
 
-      <NextLink href="/local/datasets/xxx">
+      <NextLink href="/test/datasets/xxx">
         <BreadcrumbLink>Hello</BreadcrumbLink>
       </NextLink>
 
-      <NextLink href="/local/datasets/xxx/images">
+      <NextLink href="/test/datasets/xxx/images">
         <BreadcrumbLink>Images</BreadcrumbLink>
       </NextLink>
 

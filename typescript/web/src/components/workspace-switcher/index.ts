@@ -1,1 +1,1 @@
-export { WorkspaceSwitcher } from "./workspace-switcher";
+export * from "./workspace-switcher";

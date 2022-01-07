@@ -10,7 +10,7 @@ export const declateTests = ({ getDatasetSlug, workspaceSlug }: TestInput) => {
     const datasetSlug = getDatasetSlug();
     // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
     cy.visit(
-      `/${workspaceSlug}/datasets/${datasetSlug}/images?modal-welcome=closed&modal-update-service-worker=update`
+      `/${workspaceSlug}/datasets/${datasetSlug}/images?modal-welcome=closed`
     );
     cy.contains("You don't have any images.").should("be.visible");
     cy.wait(420);

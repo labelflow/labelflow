@@ -3,10 +3,9 @@ import type { GetServerSideProps } from "next";
 import { getSession } from "next-auth/react";
 
 import { Meta } from "../../components/meta";
-import { ServiceWorkerManagerModal } from "../../components/service-worker-manager";
 import { AuthManager } from "../../components/auth-manager";
 import { Layout } from "../../components/layout";
-import { WelcomeManager } from "../../components/welcome-manager";
+import { WelcomeModal } from "../../components/welcome-manager";
 import { CookieBanner } from "../../components/cookie-banner";
 import { NavLogo } from "../../components/logo/nav-logo";
 
@@ -15,8 +14,7 @@ import { InvitationManager } from "../../components/invitation-manager";
 const AcceptInvite = () => {
   return (
     <>
-      <ServiceWorkerManagerModal />
-      <WelcomeManager />
+      <WelcomeModal />
       <AuthManager />
       <Meta title="LabelFlow | Local Workspace" />
       <CookieBanner />

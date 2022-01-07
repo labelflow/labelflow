@@ -17,20 +17,10 @@ const downloadUrlToDataUrl = async (
   req: undefined | Request
 ) => {
   const arrayBuffer = await repository.upload.get(url, req);
-  try {
-    // Try executing as if we were in local service worker
-    const reader = new FileReader(); // Fails here on NodeJs
-    const blob = new Blob([arrayBuffer]);
-    return await new Promise<string>((resolve) => {
-      reader.onload = () => resolve(reader.result as string);
-      reader.readAsDataURL(blob);
-    });
-  } catch (e) {
-    // We're on NodeJs (remote server)
-    return `data:application/json;base64,${Buffer.from(arrayBuffer).toString(
-      "base64"
-    )}`;
-  }
+  // We're on NodeJs (remote server)
+  return `data:application/json;base64,${Buffer.from(arrayBuffer).toString(
+    "base64"
+  )}`;
 };
 
 const fetchIogServer = async (

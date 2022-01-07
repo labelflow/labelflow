@@ -18,9 +18,8 @@ import {
 } from "../../../components/datasets";
 import { UpsertDatasetModal } from "../../../components/datasets/upsert-dataset-modal";
 import { DeleteDatasetModal } from "../../../components/datasets/delete-dataset-modal";
-import { ServiceWorkerManagerModal } from "../../../components/service-worker-manager";
 import { AuthManager } from "../../../components/auth-manager";
-import { WelcomeManager } from "../../../components/welcome-manager";
+import { WelcomeModal } from "../../../components/welcome-manager";
 import { CookieBanner } from "../../../components/cookie-banner";
 import { WorkspaceTabBar } from "../../../components/layout/tab-bar/workspace-tab-bar";
 import { WorkspaceSwitcher } from "../../../components/workspace-switcher";
@@ -114,8 +113,7 @@ const DatasetPage = () => {
 
   return (
     <>
-      <ServiceWorkerManagerModal />
-      <WelcomeManager />
+      <WelcomeModal />
       <AuthManager />
       <Meta title="LabelFlow | Datasets" />
       <CookieBanner />

@@ -3,9 +3,8 @@ import { useSession } from "next-auth/react";
 import { gql, useMutation, useQuery } from "@apollo/client";
 import { Meta } from "../../../components/meta";
 import { Layout } from "../../../components/layout";
-import { ServiceWorkerManagerModal } from "../../../components/service-worker-manager";
 import { AuthManager } from "../../../components/auth-manager";
-import { WelcomeManager } from "../../../components/welcome-manager";
+import { WelcomeModal } from "../../../components/welcome-manager";
 import { CookieBanner } from "../../../components/cookie-banner";
 import { NavLogo } from "../../../components/logo/nav-logo";
 import { UserSettings } from "../../../components/settings/user";
@@ -59,8 +58,7 @@ const ProfilePage = () => {
 
   return (
     <>
-      <ServiceWorkerManagerModal />
-      <WelcomeManager />
+      <WelcomeModal />
       <AuthManager />
       <Meta title="LabelFlow | Profile" />
       <CookieBanner />

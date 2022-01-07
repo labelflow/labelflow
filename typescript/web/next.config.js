@@ -7,8 +7,6 @@ const path = require("path");
 // https://docs.sentry.io/platforms/javascript/guides/nextjs/
 const { withSentryConfig } = require("@sentry/nextjs");
 
-const buildServiceWorker = require("./build-service-worker-webpack-swc");
-
 const SentryWebpackPluginOptions = {
   // Additional config options for the Sentry Webpack plugin. Keep in mind that
   // the following options are set automatically, and overriding them is not
@@ -52,11 +50,6 @@ module.exports = withSentryConfig(
       config,
       { defaultLoaders, dev, isServer, config: nextConfig, ...others }
     ) => {
-      // Build the service worker
-      if (!isServer) {
-        buildServiceWorker({ minify: !dev });
-      }
-
       // Allow to transpile node modules that depends on node built-ins into browser.
       // E.g.: `apollo-server-core`
       // See https://github.com/webpack-contrib/css-loader/issues/447

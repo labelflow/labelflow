@@ -2,7 +2,7 @@ import { chakraDecorator } from "../../../utils/chakra-decorator";
 import { queryParamsDecorator } from "../../../utils/query-params-decorator";
 import { apolloDecorator } from "../../../utils/apollo-decorator";
 import { cookieDecorator } from "../../../utils/cookie-decorator";
-import { WelcomeManager } from "..";
+import { WelcomeModal } from "..";
 
 export default {
   title: "web/app lifecycle/welcome modal",
@@ -15,13 +15,13 @@ export default {
 };
 
 export const Closed = () => {
-  return <WelcomeManager />;
+  return <WelcomeModal />;
 };
 
 Closed.parameters = {
   nextRouter: {
-    path: "/local/datasets",
-    asPath: "/local/datasets",
+    path: "/",
+    asPath: "/",
     query: {},
   },
   cookie: {
@@ -31,7 +31,7 @@ Closed.parameters = {
 
 export const BrowserError = () => {
   return (
-    <WelcomeManager
+    <WelcomeModal
       initialBrowserError={new Error("Wow")}
       initialBrowserWarning
     />
@@ -40,8 +40,8 @@ export const BrowserError = () => {
 
 BrowserError.parameters = {
   nextRouter: {
-    path: "/local/datasets?modal-welcome=open",
-    asPath: "/local/datasets?modal-welcome=open",
+    path: "/?modal-welcome=open",
+    asPath: "/?modal-welcome=open",
     query: {
       "modal-welcome": "open",
     },
@@ -52,31 +52,13 @@ BrowserError.parameters = {
 };
 
 export const BrowserWarning = () => {
-  return <WelcomeManager initialBrowserWarning />;
+  return <WelcomeModal initialBrowserWarning />;
 };
 
 BrowserWarning.parameters = {
   nextRouter: {
-    path: "/local/datasets?modal-welcome=open",
-    asPath: "/local/datasets?modal-welcome=open",
-    query: {
-      "modal-welcome": "open",
-    },
-  },
-  cookie: {
-    hasUserTriedApp: "false",
-    tryDespiteBrowserWarning: "false",
-  },
-};
-
-export const Loading = () => {
-  return <WelcomeManager initialIsLoadingWorkerAndDemo />;
-};
-
-Loading.parameters = {
-  nextRouter: {
-    path: "/local/datasets?modal-welcome=open",
-    asPath: "/local/datasets?modal-welcome=open",
+    path: "/?modal-welcome=open",
+    asPath: "/?modal-welcome=open",
     query: {
       "modal-welcome": "open",
     },
@@ -94,20 +76,20 @@ Loading.parameters = {
  * So, it's deterministic and can be snapshot tested.
  */
 export const Welcome = () => {
-  return <WelcomeManager />;
+  return <WelcomeModal />;
 };
 Welcome.parameters = {
   chromatic: { disableSnapshot: true },
 };
 
 export const WelcomeWithoutCountDown = () => {
-  return <WelcomeManager autoStartCountDown={false} />;
+  return <WelcomeModal autoStartCountDown={false} />;
 };
 
 Welcome.parameters = {
   nextRouter: {
-    path: "/local/datasets?modal-welcome=open",
-    asPath: "/local/datasets?modal-welcome=open",
+    path: "/?modal-welcome=open",
+    asPath: "/?modal-welcome=open",
     query: {
       "modal-welcome": "open",
     },

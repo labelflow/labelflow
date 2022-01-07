@@ -18,12 +18,10 @@ import { Meta } from "../components/meta";
 
 import {
   isInWindowScope,
-  isInServiceWorkerScope,
   isDevelopmentEnvironment,
 } from "../utils/detect-scope";
 
 import { Layout } from "../components/layout";
-import { ServiceWorkerManagerBackground } from "../components/service-worker-manager";
 import { AuthManager } from "../components/auth-manager";
 import { CookieBanner } from "../components/cookie-banner";
 import { NavLogo } from "../components/logo/nav-logo";
@@ -39,7 +37,6 @@ const DebugPage = () => {
 
   return (
     <>
-      <ServiceWorkerManagerBackground />
       <AuthManager />
       <Meta title="LabelFlow | Debug" />
       <CookieBanner />
@@ -198,7 +195,6 @@ const DebugPage = () => {
                   {
                     clientType: "Standard LabelFlow Client App",
                     isInWindowScope,
-                    isInServiceWorkerScope,
                     isDevelopmentEnvironment,
                     browser: { ...detect() },
                     env: {

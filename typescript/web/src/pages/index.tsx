@@ -3,11 +3,13 @@ import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import React, { useEffect } from "react";
 import { Cookies, useCookies } from "react-cookie";
+import { AuthManager } from "../components/auth-manager";
 import { CookieBanner } from "../components/cookie-banner";
+import { Home } from "../components/home";
 import { Layout } from "../components/layout";
+import { NavLogo } from "../components/logo/nav-logo";
 import { Meta } from "../components/meta";
-import { ServiceWorkerManagerBackground } from "../components/service-worker-manager";
-import { LayoutSpinner } from "../components/spinner";
+import { WelcomeModal } from "../components/welcome-manager";
 import Website from "./website";
 
 const IndexPage = () => {
@@ -17,9 +19,7 @@ const IndexPage = () => {
   const hasUserTriedApp = cookies.hasUserTriedApp === "true";
 
   useEffect(() => {
-    if (hasUserTriedApp) {
-      router.replace({ pathname: "/local/datasets", query: router.query });
-    } else {
+    if (!hasUserTriedApp) {
       router.replace({ pathname: "/website", query: router.query });
     }
   }, [hasUserTriedApp, router]);
@@ -30,11 +30,13 @@ const IndexPage = () => {
 
   return (
     <>
-      <ServiceWorkerManagerBackground />
+      <WelcomeModal />
+      <AuthManager />
       <Meta title="LabelFlow: The open standard platform for image labeling." />
+      <Meta title="LabelFlow | GraphiQL" />
       <CookieBanner />
-      <Layout>
-        <LayoutSpinner />
+      <Layout breadcrumbs={[<NavLogo key={0} />]}>
+        <Home />
       </Layout>
     </>
   );
@@ -44,8 +46,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const parsedCookie = new Cookies(context.req.headers.cookie);
 
   if (parsedCookie.get("hasUserTriedApp") === "true") {
-    const workspaceSlug =
-      parsedCookie.get("lastVisitedWorkspaceSlug") ?? "local";
+    const workspaceSlug = parsedCookie.get("lastVisitedWorkspaceSlug");
+    if (!isEmpty(workspaceSlug)) return { props: {} };
     return {
       props: {},
       redirect: {

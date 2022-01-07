@@ -14,7 +14,6 @@ import { Meta } from "../../components/meta";
 import { ArticlesList } from "../../components/website/Blog/articles-list";
 import { PostTitle } from "../../components/website/Blog/PostTitle";
 import "github-markdown-css";
-import { ServiceWorkerManagerBackground } from "../../components/service-worker-manager";
 import { CookieBanner } from "../../components/cookie-banner";
 import { WEB_APP_URL_ORIGIN } from "../../constants";
 
@@ -29,7 +28,6 @@ export default function Posts({
 }) {
   return (
     <>
-      <ServiceWorkerManagerBackground />
       <Meta
         title={`LabelFlow | ${article?.title}`}
         desc={article?.description}

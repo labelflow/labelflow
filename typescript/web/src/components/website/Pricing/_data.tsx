@@ -737,7 +737,7 @@ export const data = [
     type: "header",
     description: <Box minW="12em" />,
     free: (
-      <NextLink href="/local/datasets">
+      <NextLink href="/test/datasets">
         <Button colorScheme="brand">Try it now</Button>
       </NextLink>
     ),

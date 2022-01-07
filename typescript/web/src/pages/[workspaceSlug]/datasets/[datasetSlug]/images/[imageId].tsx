@@ -22,9 +22,8 @@ import { Layout } from "../../../../../components/layout";
 import { KeymapButton } from "../../../../../components/layout/top-bar/keymap-button";
 import { NavLogo } from "../../../../../components/logo/nav-logo";
 import { Meta } from "../../../../../components/meta";
-import { ServiceWorkerManagerModal } from "../../../../../components/service-worker-manager";
 import { LayoutSpinner } from "../../../../../components/spinner";
-import { WelcomeManager } from "../../../../../components/welcome-manager";
+import { WelcomeModal } from "../../../../../components/welcome-manager";
 import { WorkspaceSwitcher } from "../../../../../components/workspace-switcher";
 import { Error404Content } from "../../../../404";
 
@@ -99,8 +98,7 @@ const ImagePage = () => {
       }
       return (
         <>
-          <ServiceWorkerManagerModal />
-          <WelcomeManager />
+          <WelcomeModal />
           <AuthManager />
           <Meta title="LabelFlow | Dataset not found" />
           <CookieBanner />
@@ -114,8 +112,7 @@ const ImagePage = () => {
       }
       return (
         <>
-          <ServiceWorkerManagerModal />
-          <WelcomeManager />
+          <WelcomeModal />
           <AuthManager />
           <Meta title="LabelFlow | Image not found" />
           <CookieBanner />
@@ -127,8 +124,7 @@ const ImagePage = () => {
 
   return (
     <>
-      <ServiceWorkerManagerModal />
-      <WelcomeManager />
+      <WelcomeModal />
       <AuthManager />
       <Meta title={`LabelFlow | Image ${imageName ?? ""}`} />
       <CookieBanner />
