@@ -152,7 +152,7 @@ it("should create a class", async () => {
   });
 });
 
-it.only("should change a class", async () => {
+it("should change a class", async () => {
   renderEditLabelClass();
 
   await waitFor(() =>
