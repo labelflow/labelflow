@@ -71,8 +71,8 @@ const getGoogleProvider = () => {
 
 const getGitHubProvider = () => {
   return getOAuthProvider(
-    "GOOGLE_CLIENT_ID",
-    "GOOGLE_CLIENT_SECRET",
+    "GITHUB_CLIENT_ID",
+    "GITHUB_CLIENT_SECRET",
     GitHubProvider
   );
 };
