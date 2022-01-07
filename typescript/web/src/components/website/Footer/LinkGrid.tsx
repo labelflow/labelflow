@@ -9,51 +9,55 @@ import * as React from "react";
 import NextLink from "next/link";
 import { FooterHeading } from "./FooterHeading";
 
+interface FooterLink {
+  href: string;
+  label: string;
+}
+
+const productLinks: FooterLink[] = [
+  { href: "/", label: "Product" },
+  { href: "/pricing", label: "Pricing" },
+];
+
+const learnLinks: FooterLink[] = [
+  { href: "/about", label: "About" },
+  { href: "/posts", label: "Blog" },
+  { href: "https://labelflow.gitbook.io/labelflow/", label: "Documentation" },
+  { href: "https://labelflow.recruitee.com/", label: "Jobs" },
+];
+
+const legalLinks: FooterLink[] = [
+  { href: "/legal/privacy-policy", label: "Privacy policy" },
+  { href: "/legal/cookie-policy", label: "Cookie policy" },
+  { href: "/legal/terms-and-conditions", label: "Terms & Conditions" },
+];
+
+interface GridBoxProps {
+  minW: string;
+  heading: string;
+  links: FooterLink[];
+}
+const GridBox = ({ minW, heading, links }: GridBoxProps) => {
+  return (
+    <Box minW={minW}>
+      <FooterHeading mb="4" textAlign={{ base: "center", md: "start" }}>
+        {heading}
+      </FooterHeading>
+      <Stack align={{ base: "center", md: "start" }}>
+        {links.map((link: FooterLink) => (
+          <NextLink href={link.href}>
+            <Link href="/">{link.label}</Link>
+          </NextLink>
+        ))}
+      </Stack>
+    </Box>
+  );
+};
+
 export const LinkGrid = (props: SimpleGridProps) => (
-  <SimpleGrid columns={3} {...props} fontSize={14}>
-    <Box minW="130px">
-      <FooterHeading mb="4">Product</FooterHeading>
-      <Stack>
-        <NextLink href="/">
-          <Link href="/">Product</Link>
-        </NextLink>
-        <NextLink href="/pricing">
-          <Link href="/pricing">Pricing</Link>
-        </NextLink>
-      </Stack>
-    </Box>
-    <Box minW="130px">
-      <FooterHeading mb="4">Learn</FooterHeading>
-      <Stack>
-        <NextLink href="/about">
-          <Link href="/about">About</Link>
-        </NextLink>
-        <NextLink href="/posts">
-          <Link href="/posts">Blog</Link>
-        </NextLink>
-        <NextLink href="https://labelflow.gitbook.io/labelflow/">
-          <Link href="https://labelflow.gitbook.io/labelflow/">
-            Documentation
-          </Link>
-        </NextLink>
-        <NextLink href="https://labelflow.recruitee.com/">
-          <Link href="https://labelflow.recruitee.com/">Jobs</Link>
-        </NextLink>
-      </Stack>
-    </Box>
-    <Box minW="150px">
-      <FooterHeading mb="4">Legal</FooterHeading>
-      <Stack>
-        <NextLink href="/legal/privacy-policy">
-          <Link href="/legal/privacy-policy">Privacy policy</Link>
-        </NextLink>
-        <NextLink href="/legal/cookie-policy">
-          <Link href="/legal/cookie-policy">Cookie policy</Link>
-        </NextLink>
-        <NextLink href="/legal/terms-and-conditions">
-          <Link href="/legal/terms-and-conditions">Terms &amp; Conditions</Link>
-        </NextLink>
-      </Stack>
-    </Box>
+  <SimpleGrid columns={{ base: 1, md: 3 }} fontSize={14} {...props}>
+    <GridBox minW="130px" heading="Product" links={productLinks} />
+    <GridBox minW="130px" heading="Learn" links={learnLinks} />
+    <GridBox minW="150px" heading="Legal" links={legalLinks} />
   </SimpleGrid>
 );
