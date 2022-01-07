@@ -10,8 +10,8 @@ const AUTHENTICATION_ERRORS = {
   OAuthCreateAccount: "Try signing in with a different account.",
   EmailCreateAccount: "Try signing in with a different account.",
   Callback: "Try signing in with a different account.",
-  OAuthAccountNotLinked:
-    "To confirm your identity, sign in with the same account you used originally.",
+  OAuthAccountNotLinked: `We could not sign you in. If you have already signed
+  in with this email address, try again using the same method you originally used.`,
   EmailSignin: "Check your email inbox.",
   CredentialsSignin:
     "Sign in failed. Check the details you provided are correct.",
