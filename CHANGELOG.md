@@ -1,6 +1,10 @@
 # Changelog
 
-## [1.2.1](https://github.com/labelflow/labelflow/compare/1.2.0...1.2.1)
+## [1.2.2](https://github.com/labelflow/labelflow/compare/1.2.1...1.2.2)
+
+- Increase default Cypress timeout to 60s [`#747`](https://github.com/labelflow/labelflow/pull/747)
+
+## [1.2.1](https://github.com/labelflow/labelflow/compare/1.2.0...1.2.1) - 2022-01-06
 
 - Update next to version 12.0.7 [`#744`](https://github.com/labelflow/labelflow/pull/744)
 - Don't skip any Jest test [`#697`](https://github.com/labelflow/labelflow/pull/697)
