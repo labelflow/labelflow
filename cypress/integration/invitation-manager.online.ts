@@ -178,8 +178,7 @@ describe("Invitation Manager (online)", () => {
     cy.location("pathname").should("eq", "/local/datasets");
   });
 
-  // flacky in the CI
-  it.skip("should open the sign in modal if the user isn't logged in", () => {
+  it("should open the sign in modal if the user isn't logged in", () => {
     // log in as the default user
     cy.task("performLogin").then((token) => {
       cy.setCookie("next-auth.session-token", token as string);
@@ -198,12 +197,9 @@ describe("Invitation Manager (online)", () => {
 
     // try closing the sign in modals
     cy.contains("Sign in to LabelFlow").should("be.visible");
-    // need to click twice to loose the focus?
-    cy.get(`button[aria-label="Close"]`).click();
     cy.get(`button[aria-label="Close"]`).click();
 
     cy.contains("You need to sign in to continue").should("be.visible");
-    cy.get("button").contains("Sign In").click();
     cy.contains("Sign in to LabelFlow").should("be.visible");
     cy.get(`button[aria-label="Close"]`).click();
 
