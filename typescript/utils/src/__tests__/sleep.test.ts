@@ -7,7 +7,10 @@ describe("sleep", () => {
     const resolve = jest.fn();
     const reject = jest.fn();
     sleep(100).then(resolve).catch(reject);
-    jest.advanceTimersByTime(100);
+    jest.advanceTimersByTime(50);
+    await Promise.resolve();
+    expect(resolve).not.toHaveBeenCalled();
+    jest.advanceTimersByTime(50);
     await Promise.resolve();
     expect(resolve).toHaveBeenCalled();
   });
