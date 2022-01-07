@@ -96,6 +96,7 @@ Loading.parameters = {
 export const Welcome = () => {
   return <WelcomeManager />;
 };
+
 Welcome.parameters = {
   chromatic: { disableSnapshot: true },
 };
@@ -104,7 +105,7 @@ export const WelcomeWithoutCountDown = () => {
   return <WelcomeManager autoStartCountDown={false} />;
 };
 
-Welcome.parameters = {
+WelcomeWithoutCountDown.parameters = {
   nextRouter: {
     path: "/local/datasets?modal-welcome=open",
     asPath: "/local/datasets?modal-welcome=open",
