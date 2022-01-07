@@ -42,8 +42,12 @@ export const SubscribeForm = (props: HTMLChakraProps<"form">) => {
       encType="multipart/form-data"
     >
       <Stack spacing="4">
-        <FooterHeading>Newsletter</FooterHeading>
-        <Text>Get news about our product and releases</Text>
+        <FooterHeading textAlign={{ base: "center", md: "start" }}>
+          Newsletter
+        </FooterHeading>
+        <Text textAlign={{ base: "center", md: "start" }}>
+          Get news about our product and releases
+        </Text>
         <Stack spacing="4" direction={{ base: "column", md: "row" }}>
           <Input
             bg={useColorModeValue("white", "inherit")}

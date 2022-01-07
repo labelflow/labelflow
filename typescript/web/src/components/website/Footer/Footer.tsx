@@ -22,18 +22,18 @@ export const Footer = () => (
         spacing={{ base: "10", lg: "28" }}
       >
         <NextLink href="/website">
-          <Box as="a" href="/website" flex="1">
+          <Box as="a" href="/website" mx={{ base: "auto", lg: "0" }}>
             <VisuallyHidden>LabelFlow</VisuallyHidden>
             <Logo h="24px" iconColor="brand.400" cursor="pointer" />
           </Box>
         </NextLink>
 
         <Stack
-          direction={{ base: "column", md: "row" }}
-          spacing={{ base: "10", md: "20" }}
+          direction={{ base: "column", xl: "row" }}
+          spacing={{ base: "10", xl: "20" }}
         >
-          <LinkGrid spacing={{ base: "10", md: "20", lg: "28" }} flex="1" />
-          <SubscribeForm width={{ base: "full", md: "sm" }} />
+          <LinkGrid spacing={{ base: "10", md: "20" }} flex="1" />
+          <SubscribeForm />
         </Stack>
       </Stack>
       <Stack
