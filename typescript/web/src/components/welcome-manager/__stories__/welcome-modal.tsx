@@ -78,6 +78,7 @@ BrowserWarning.parameters = {
 export const Welcome = () => {
   return <WelcomeModal />;
 };
+
 Welcome.parameters = {
   chromatic: { disableSnapshot: true },
 };
@@ -86,7 +87,7 @@ export const WelcomeWithoutCountDown = () => {
   return <WelcomeModal autoStartCountDown={false} />;
 };
 
-Welcome.parameters = {
+WelcomeWithoutCountDown.parameters = {
   nextRouter: {
     path: "/?modal-welcome=open",
     asPath: "/?modal-welcome=open",
