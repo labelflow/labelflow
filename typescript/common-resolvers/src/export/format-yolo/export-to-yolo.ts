@@ -55,7 +55,7 @@ export const generateLabelsOfImageFile = (
       )?.index;
       return `${labelsOfImageFile}${labelClassIndex} ${label.x / image.width} ${
         label.y / image.height
-      } ${label.width / image.width} ${label.height / image.width}\n`;
+      } ${label.width / image.width} ${label.height / image.height}\n`;
     }, "")
     .trim();
 };
