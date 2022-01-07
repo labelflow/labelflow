@@ -1,6 +1,10 @@
 # Changelog
 
-## [1.2.2](https://github.com/labelflow/labelflow/compare/1.2.1...1.2.2)
+## [1.2.3](https://github.com/labelflow/labelflow/compare/1.2.2...1.2.3)
+
+- Fix yolo export  [`#739`](https://github.com/labelflow/labelflow/pull/739)
+
+## [1.2.2](https://github.com/labelflow/labelflow/compare/1.2.1...1.2.2) - 2022-01-07
 
 - Increase default Cypress timeout to 60s [`#747`](https://github.com/labelflow/labelflow/pull/747)
 
