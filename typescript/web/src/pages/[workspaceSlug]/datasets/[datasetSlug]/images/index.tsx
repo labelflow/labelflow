@@ -1,4 +1,3 @@
-import React from "react";
 import { gql, useQuery } from "@apollo/client";
 import NextLink from "next/link";
 import { Skeleton, Text, BreadcrumbLink } from "@chakra-ui/react";
@@ -26,12 +25,6 @@ export const datasetDataQuery = gql`
     dataset(where: { slugs: { slug: $slug, workspaceSlug: $workspaceSlug } }) {
       id
       name
-      images {
-        id
-        name
-        url
-        thumbnail500Url
-      }
       imagesAggregates {
         totalCount
       }
@@ -52,8 +45,8 @@ const ImagesPage = () => {
 
   const {
     data: datasetResult,
-    error,
-    loading,
+    error: datasetQueryError,
+    loading: datasetQueryLoading,
   } = useQuery<{
     dataset: DatasetType;
   }>(datasetDataQuery, {
@@ -64,12 +57,16 @@ const ImagesPage = () => {
     skip: !datasetSlug || !workspaceSlug,
   });
 
+  const imagesTotalCount: number | undefined =
+    datasetResult?.dataset?.imagesAggregates?.totalCount;
   const datasetName = datasetResult?.dataset.name;
 
   const handleError = useErrorHandler();
-  if (error && !loading) {
-    if (!error.message.match(/Couldn't find dataset corresponding to/)) {
-      handleError(error);
+  if (datasetQueryError && !datasetQueryLoading) {
+    if (
+      !datasetQueryError.message.match(/Couldn't find dataset corresponding to/)
+    ) {
+      handleError(datasetQueryError);
     }
     return (
       <>
@@ -119,7 +116,8 @@ const ImagesPage = () => {
         <ImagesList
           datasetSlug={datasetSlug}
           workspaceSlug={workspaceSlug}
-          images={datasetResult?.dataset?.images}
+          datasetId={datasetResult?.dataset.id}
+          imagesTotalCount={imagesTotalCount ?? 0}
         />
       </Layout>
     </>
