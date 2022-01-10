@@ -1,16 +1,20 @@
 import { ButtonGroup, ButtonGroupProps, useRadioGroup } from "@chakra-ui/react";
 import * as React from "react";
+import { ToggleIconButtonProps } from "./toggle-icon-button";
 import { ToggleButtonProps } from "./toggle-button";
 
-interface ToggleButtonGroupProps<T> extends Omit<ButtonGroupProps, "onChange"> {
+export type ToggleButtonGroupProps<TValue> = Omit<
+  ButtonGroupProps,
+  "onChange"
+> & {
   name?: string;
-  value: T;
+  value: TValue;
   defaultValue?: string;
-  onChange?: (value: T) => void;
-}
+  onChange?: (value: TValue) => void;
+};
 
-export const ToggleButtonGroup = <T extends string>(
-  props: ToggleButtonGroupProps<T>
+export const ToggleButtonGroup = <TValue extends string>(
+  props: ToggleButtonGroupProps<TValue>
 ) => {
   const { children, name, defaultValue, value, onChange, isDisabled, ...rest } =
     props;
@@ -24,7 +28,9 @@ export const ToggleButtonGroup = <T extends string>(
   const buttons = React.useMemo(
     () =>
       React.Children.toArray(children)
-        .filter<React.ReactElement<ToggleButtonProps>>(React.isValidElement)
+        .filter<React.ReactElement<ToggleIconButtonProps | ToggleButtonProps>>(
+          React.isValidElement
+        )
         .map((button, index, array) => {
           const isFirstItem = index === 0;
           const isLastItem = array.length === index + 1;
@@ -46,5 +52,9 @@ export const ToggleButtonGroup = <T extends string>(
         }),
     [children, getRadioProps, isDisabled]
   );
-  return <ButtonGroup {...getRootProps(rest)}>{buttons}</ButtonGroup>;
+  return (
+    <ButtonGroup isAttached variant="outline" {...getRootProps(rest)}>
+      {buttons}
+    </ButtonGroup>
+  );
 };

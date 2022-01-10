@@ -64,7 +64,7 @@ export const ImageNavigationTool = () => {
     setValue(format(currentImageIndex));
   };
 
-  const handleKeyPress = (event: any) => {
+  const handleKeyDown = (event: any) => {
     if (event.key === "Enter") {
       goTo(event.target.value);
     }
@@ -159,7 +159,7 @@ export const ImageNavigationTool = () => {
           size="sm"
           value={value}
           onChange={setValue}
-          onKeyPress={handleKeyPress}
+          onKeyDown={handleKeyDown}
           onBlur={handleBlur}
         >
           <NumberInputField

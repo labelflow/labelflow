@@ -10,13 +10,13 @@ import {
 } from "@chakra-ui/react";
 import * as React from "react";
 
-export interface ToggleButtonProps extends IconButtonProps {
+export interface ToggleIconButtonProps extends IconButtonProps {
   value: string;
   description: string;
   radioProps?: UseRadioProps;
 }
 
-export const ToggleButton = (props: ToggleButtonProps) => {
+export const ToggleIconButton = (props: ToggleIconButtonProps) => {
   const { radioProps, description, ...rest } = props;
   const { getInputProps, getCheckboxProps, getLabelProps } =
     useRadio(radioProps);
@@ -26,17 +26,24 @@ export const ToggleButton = (props: ToggleButtonProps) => {
   const checkboxProps = getCheckboxProps();
   const labelProps = getLabelProps();
 
+  const { value } = rest;
+
   return (
     <Tooltip label={description} placement="bottom" openDelay={300}>
       <Box as="label" cursor="pointer" {...labelProps}>
-        <input {...inputProps} aria-labelledby={id} />
+        <input
+          {...inputProps}
+          aria-labelledby={id}
+          data-testid={`toggle button input ${value}`}
+        />
         <IconButton
-          as="div"
           id={id}
+          as="div"
+          data-testid={`toggle button ${value}`}
           color={useColorModeValue("gray.600", "whiteAlpha.700")}
           _checked={{
             color: useColorModeValue("inherit", "whiteAlpha.900"),
-            bg: useColorModeValue("gray.200", "whiteAlpha.300"),
+            bg: useColorModeValue("gray.300", "whiteAlpha.300"),
           }}
           {...checkboxProps}
           {...rest}
