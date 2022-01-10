@@ -2,7 +2,11 @@ import {
   QueryWorkspaceArgs,
   QueryWorkspacesArgs,
 } from "@labelflow/graphql-types";
-import { Context, DbWorkspaceWithType } from "@labelflow/common-resolvers";
+import {
+  addTypenames,
+  Context,
+  DbWorkspaceWithType,
+} from "@labelflow/common-resolvers";
 import { notImplementedInLocalWorkspaceRepository } from "../repository/utils";
 import { localWorkspace } from "../repository/workspace";
 
@@ -19,13 +23,13 @@ const workspaces = async (
   { repository }: Context
 ) => await repository.workspace.list(args.where);
 
-const datasets = async (_parent: any, _args: any, { repository }: Context) => {
+const datasets = async (
+  _parent: never,
+  _args: never,
+  { repository }: Context
+) => {
   const queryResult = await repository.dataset.list();
-
-  return queryResult.map((datasetWithoutTypename) => ({
-    ...datasetWithoutTypename,
-    __typename: "Dataset",
-  }));
+  return addTypenames(queryResult, "Dataset");
 };
 
 export default {
