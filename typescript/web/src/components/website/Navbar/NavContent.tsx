@@ -8,8 +8,7 @@ import {
   useDisclosure,
   VisuallyHidden,
   Spacer,
-  IconButton,
-  // useColorModeValue as mode,
+  Link,
 } from "@chakra-ui/react";
 import { RiGithubFill } from "react-icons/ri";
 import * as React from "react";
@@ -22,6 +21,22 @@ import { ToggleButton } from "./ToggleButton";
 import { links } from "./_data";
 
 const GithubIcon = chakra(RiGithubFill);
+
+const GitHubButton = () => (
+  <Link
+    href="https://github.com/labelflow/labelflow"
+    target="_blank"
+    rel="noreferrer"
+  >
+    <Button
+      aria-label="See code on github"
+      variant="outline"
+      leftIcon={<GithubIcon fontSize="2xl" />}
+    >
+      Star us on GitHub
+    </Button>
+  </Link>
+);
 
 const MobileNavContext = (props: FlexProps) => {
   const { isOpen, onToggle } = useDisclosure();
@@ -37,14 +52,7 @@ const MobileNavContext = (props: FlexProps) => {
           </Box>
         </NextLink>
         <Spacer />
-        <IconButton
-          aria-label="See code on github"
-          href="https://github.com/labelflow/labelflow"
-          as="a"
-          target="blank"
-          variant="link"
-          icon={<GithubIcon fontSize="2xl" />}
-        />
+        <GitHubButton />
         <Box display={{ base: "none", sm: "block" }}>
           <NextLink href="/local/datasets">
             <Button as="a" colorScheme="brand" variant="outline" ml="3">
@@ -115,27 +123,11 @@ const DesktopNavContent = (props: FlexProps) => {
         ))}
       </HStack>
       <HStack
-        spacing="8"
+        spacing="4"
         //  minW="240px"
         justify="space-between"
       >
-        {/* <Box
-          as="a"
-          href="#"
-          color={mode("brand.600", "brand.300")}
-          fontWeight="bold"
-        >
-          Sign In
-        </Box> */}
-        <IconButton
-          aria-label="See code on github"
-          href="https://github.com/labelflow/labelflow"
-          as="a"
-          target="blank"
-          variant="link"
-          mr="-2"
-          icon={<GithubIcon fontSize="2xl" />}
-        />
+        <GitHubButton />
         <NextLink href="/local/datasets">
           <Button
             as="a"
