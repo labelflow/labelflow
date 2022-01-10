@@ -16,6 +16,7 @@ import { DbLabel, Context, Repository } from "./types";
 
 import { throwIfResolvesToNil } from "./utils/throw-if-resolves-to-nil";
 import { getBoundedGeometryFromImage } from "./utils/get-bounded-geometry-from-image";
+import { addTypename } from "./utils";
 
 const LABEL_CLASS_ID_PROPERTY_NAMES: Record<
   "Dataset" | "LabelClass",
@@ -189,14 +190,14 @@ const labelsAggregatesOfDataset = (parent: Dataset) => {
   if (!parent) {
     throw new Error("No parent Dataset");
   }
-  return { ...parent, __typename: "Dataset" };
+  return addTypename(parent, "Dataset");
 };
 
 const labelsAggregatesOfLabelClass = (parent: LabelClass) => {
   if (!parent) {
     throw new Error("No parent LabelClass");
   }
-  return { ...parent, __typename: "LabelClass" };
+  return addTypename(parent, "LabelClass");
 };
 
 const totalCount = async (

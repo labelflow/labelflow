@@ -19,7 +19,7 @@ import {
 import { getWorkspaceIdOfDataset } from "./image/get-workspace-id-of-dataset";
 import { importAndProcessImage } from "./image/import-and-process-image";
 import { Context, DbDataset, Repository } from "./types";
-import { getSlug } from "./utils";
+import { getSlug, addTypename, addTypenames } from "./utils";
 
 const getLabelClassesByDatasetId = async (
   datasetId: string,
@@ -40,7 +40,7 @@ const getDataset = async (
       `Couldn't find dataset corresponding to ${JSON.stringify(where)}`
     );
   }
-  return { ...datasetFromRepository, __typename: "Dataset" };
+  return addTypename(datasetFromRepository, "Dataset");
 };
 
 const searchDataset = async (
@@ -54,7 +54,7 @@ const searchDataset = async (
       user
     );
     return datasetFromRepository != null
-      ? { ...datasetFromRepository, __typename: "Dataset" }
+      ? addTypename(datasetFromRepository, "Dataset")
       : undefined;
   } catch (error) {
     if (
@@ -122,10 +122,7 @@ const datasets = async (
     args.first
   );
 
-  return queryResult.map((datasetWithoutTypename) => ({
-    ...datasetWithoutTypename,
-    __typename: "Dataset",
-  }));
+  return addTypenames(queryResult, "Dataset");
 };
 
 // Mutations
@@ -177,7 +174,7 @@ const createDemoDataset = async (
     user
   );
   if (!isNil(existing)) {
-    return { ...existing, __typename: "Dataset" };
+    return addTypename(existing, "Dataset");
   }
   await repository.dataset.add({ ...tutorialDatasets[0] }, user);
 
