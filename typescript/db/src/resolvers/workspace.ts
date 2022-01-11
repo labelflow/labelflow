@@ -3,6 +3,8 @@ import {
   DbWorkspace,
   DbWorkspaceWithType,
   Repository,
+  addTypename,
+  addTypenames,
 } from "@labelflow/common-resolvers";
 import {
   Membership,
@@ -21,12 +23,6 @@ import { AuthorizationError } from "../repository/authorization-error";
 import { castObjectNullsToUndefined } from "../repository/utils";
 import { stripe } from "../utils";
 
-const addTypename = <TData extends DbWorkspaceWithType | DbWorkspace>(
-  data: TData
-): TData & { __typename: "Workspace" } => {
-  return { ...data, __typename: "Workspace" };
-};
-
 function foundWorkspace<TData extends DbWorkspaceWithType | DbWorkspace>(
   data: TData | null | undefined,
   input: WorkspaceWhereUniqueInput
@@ -44,7 +40,7 @@ const getWorkspace = async (
 ): Promise<DbWorkspaceWithType & { __typename: "Workspace" }> => {
   const data = await repository.workspace.get(where, user);
   foundWorkspace(data, where);
-  return addTypename(data);
+  return addTypename(data, "Workspace");
 };
 
 const workspace = async (
@@ -136,7 +132,7 @@ const deleteWorkspace = async (
   const db = await getPrismaClient();
   const data = await db.workspace.findUnique({ where: { id } });
   foundWorkspace(data, args.where);
-  return addTypename(data);
+  return addTypename(data, "Workspace");
 };
 
 const memberships = async (parent: DbWorkspaceWithType) => {
@@ -153,10 +149,11 @@ const memberships = async (parent: DbWorkspaceWithType) => {
 
 const datasets = async (parent: DbWorkspaceWithType) => {
   const db = await getPrismaClient();
-  return await db.dataset.findMany({
+  const queryResult = await db.dataset.findMany({
     where: { workspaceSlug: parent.slug },
     orderBy: { createdAt: Prisma.SortOrder.asc },
   });
+  return addTypenames(queryResult, "Dataset");
 };
 
 const stripeCustomerPortalUrl = async (
