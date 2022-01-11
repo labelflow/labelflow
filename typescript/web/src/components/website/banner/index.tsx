@@ -34,15 +34,17 @@ export const Banner = () => {
             size="3xl"
             fontWeight="extrabold"
             letterSpacing="tight"
-            color="gray.800"
+            color="gray.600"
           >
-            Announcing AI Stories
+            Product Release
+            <br />01-2022
           </Heading>
 
           <Text mt="4" fontSize="lg" color="gray.800">
-            From preserving whales to preventing wild fires and developing a
-            fitness app to workout during Covid. Discover how AI impacts your
-            day to day life with leaders from around the world.
+            Over the last months we have been working hard to release a new
+            version of LabelFlow, the open platform for image labeling. In short
+            you can now collaborate online and label your datasets faster using
+            the Auto Polygon feature powered by AI.
             <br />
             <br />
           </Text>
@@ -53,13 +55,13 @@ export const Banner = () => {
                 <Button
                   mt="8"
                   as="a"
-                  href="https://labelflow.ai/posts"
+                  href="https://labelflow.ai/posts/product-release-collaboration-and-boosted-labeling-productivity-with-auto-polygon-1"
                   target="blank"
                   size="lg"
                   colorScheme="brand"
                   fontWeight="bold"
                 >
-                  Visit now
+                  Discover what's new
                 </Button>
               </LightMode>
             </Box>
