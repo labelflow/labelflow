@@ -9,6 +9,8 @@ import {
 } from "@chakra-ui/react";
 import * as React from "react";
 
+const DISCOVER_WHATS_NEW = "Discover what's new";
+
 export const Banner = () => {
   const theme = useTheme();
 
@@ -37,7 +39,8 @@ export const Banner = () => {
             color="gray.600"
           >
             Product Release
-            <br />01-2022
+            <br />
+            01-2022
           </Heading>
 
           <Text mt="4" fontSize="lg" color="gray.800">
@@ -61,7 +64,7 @@ export const Banner = () => {
                   colorScheme="brand"
                   fontWeight="bold"
                 >
-                  Discover what's new
+                  {DISCOVER_WHATS_NEW}
                 </Button>
               </LightMode>
             </Box>
