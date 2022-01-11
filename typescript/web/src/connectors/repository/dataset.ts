@@ -81,4 +81,9 @@ export const addDataset: Repository["dataset"]["add"] = async (dataset) => {
 };
 
 export const listDataset: Repository["dataset"]["list"] = (_, skip, first) =>
-  list<DbDataset>(async () => (await getDatabase()).dataset)(null, skip, first);
+  list<DbDataset>(async () => (await getDatabase()).dataset)(
+    null,
+    skip,
+    first,
+    true
+  );
