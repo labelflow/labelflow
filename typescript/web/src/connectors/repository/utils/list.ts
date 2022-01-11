@@ -39,6 +39,7 @@ export const list =
       }
 
       const query = table.where(where);
+      // reversed is used for getting list in desc order
       const listElements = reversed
         ? await query.reverse().sortBy(criterion)
         : await query.sortBy(criterion);

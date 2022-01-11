@@ -15,9 +15,12 @@ import {
   ModalOverlay,
 } from "@chakra-ui/react";
 import { getSlug } from "@labelflow/common-resolvers";
+import { Dataset, Query } from "@labelflow/graphql-types";
 import debounce from "lodash/fp/debounce";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useRef, useState } from "react";
+import slugify from "slugify";
+import { getDatasetsQuery } from "./dataset-list";
 
 const debounceTime = 200;
 
@@ -25,6 +28,22 @@ const createDatasetMutation = gql`
   mutation createDataset($name: String!, $workspaceSlug: String!) {
     createDataset(data: { name: $name, workspaceSlug: $workspaceSlug }) {
       id
+      name
+      slug
+      images(first: 1) {
+        id
+        url
+        thumbnail500Url
+      }
+      imagesAggregates {
+        totalCount
+      }
+      labelsAggregates {
+        totalCount
+      }
+      labelClassesAggregates {
+        totalCount
+      }
     }
   }
 `;
@@ -102,8 +121,50 @@ export const UpsertDatasetModal = ({
         name: datasetName,
         workspaceSlug,
       },
-      refetchQueries: ["getDatasets"],
-      awaitRefetchQueries: true,
+      update: (cache, { data }) => {
+        if (data != null) {
+          const { createDataset } = data;
+          const datasetCacheResult = cache.readQuery<Pick<Query, "datasets">>({
+            query: getDatasetsQuery,
+            variables: { where: { workspaceSlug } },
+          });
+          if (datasetCacheResult?.datasets == null) {
+            throw new Error(`Error retrieving datasets`);
+          }
+
+          const { datasets } = datasetCacheResult;
+          const updatedDatasets = datasets.concat(createDataset);
+          cache.writeQuery({
+            query: getDatasetsQuery,
+            variables: { where: { workspaceSlug } },
+            data: { datasets: updatedDatasets },
+          });
+        } else {
+          throw new Error("Received null data during dataset creation");
+        }
+      },
+      refetchQueries: ["getPaginatedDatasets"],
+      optimisticResponse: {
+        createDataset: {
+          id: "",
+          __typename: "Dataset",
+          name: datasetName,
+          slug: slugify(datasetName),
+          images: [],
+          imagesAggregates: {
+            __typename: "ImagesAggregates",
+            totalCount: 0,
+          },
+          labelsAggregates: {
+            __typename: "LabelsAggregates",
+            totalCount: 0,
+          },
+          labelClassesAggregates: {
+            __typename: "LabelClassesAggregates",
+            totalCount: 0,
+          },
+        } as unknown as Dataset,
+      },
     }
   );
 
@@ -114,7 +175,7 @@ export const UpsertDatasetModal = ({
         id: datasetId,
         name: datasetName,
       },
-      refetchQueries: ["getDatasets"],
+      refetchQueries: ["getPaginatedDatasets"],
       awaitRefetchQueries: true,
     }
   );

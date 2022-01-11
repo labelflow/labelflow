@@ -22,6 +22,7 @@ mockUseQueryParams();
 mockNextRouter({ query: { workspaceSlug: "local" } });
 
 import { UpsertDatasetModal } from "../upsert-dataset-modal";
+import { getDatasetsQuery } from "../dataset-list";
 
 setupTestsWithLocalDatabase();
 
@@ -68,6 +69,11 @@ test("should enable start button when dataset name is not empty", async () => {
 
 test("should create a dataset when the form is submitted", async () => {
   const onClose = jest.fn();
+  // Used to put the query in apollo's cache
+  await client.query({
+    query: getDatasetsQuery,
+    variables: { where: { workspaceSlug: "local" } },
+  });
   renderModal({ onClose });
 
   const datasetSlug = "good-day";

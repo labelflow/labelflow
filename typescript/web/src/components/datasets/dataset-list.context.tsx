@@ -1,7 +1,8 @@
 import { gql, useQuery } from "@apollo/client";
 import type { Dataset as DatasetType } from "@labelflow/graphql-types";
-import { isNil } from "lodash/fp";
+import { isEmpty, isNil } from "lodash/fp";
 import { createContext, PropsWithChildren, useContext } from "react";
+import { UrlUpdateType } from "use-query-params";
 import { usePagination } from "../pagination";
 
 export const getPaginatedDatasetsQuery = gql`
@@ -34,14 +35,15 @@ export const getPaginatedDatasetsQuery = gql`
 
 type UseQueryParamSetter = (
   value: string,
-  updateType?: "replace" | "push" | "replaceIn" | "pushIn" | undefined
+  updateType?: UrlUpdateType | undefined
 ) => void;
 
 export type DatasetListProps = {
-  workspaceSlug: string | string[];
+  workspaceSlug?: string | string[];
   setEditDatasetId: UseQueryParamSetter;
   setDeleteDatasetId: UseQueryParamSetter;
 };
+
 export type DatasetListProviderProps = PropsWithChildren<DatasetListProps>;
 
 export type DatasetListState = {
@@ -56,19 +58,17 @@ export type DatasetListState = {
     | "labelClassesAggregates"
     | "labelsAggregates"
   >[];
-  workspaceSlug: string | string[];
+  workspaceSlug?: string | string[];
   setEditDatasetId: UseQueryParamSetter;
   setDeleteDatasetId: UseQueryParamSetter;
 };
 
 export const DatasetListContext = createContext({} as DatasetListState);
 
-export const DatasetListProvider = ({
-  workspaceSlug,
-  children,
-  setEditDatasetId,
-  setDeleteDatasetId,
-}: DatasetListProviderProps) => {
+const useProviderState = (
+  props: DatasetListProviderProps
+): DatasetListState => {
+  const { workspaceSlug, setDeleteDatasetId, setEditDatasetId } = props;
   const { page, perPage, itemCount } = usePagination();
   const { data: datasetsResult, loading: datasetQueryLoading } = useQuery<{
     datasets: Pick<
@@ -87,7 +87,7 @@ export const DatasetListProvider = ({
       first: perPage,
       skip: (page - 1) * perPage,
     },
-    skip: workspaceSlug == null,
+    skip: isEmpty(workspaceSlug) || itemCount === 0,
   });
   const state = {
     datasets: datasetsResult?.datasets ?? [],
@@ -96,13 +96,19 @@ export const DatasetListProvider = ({
     setEditDatasetId,
     setDeleteDatasetId,
   };
+
+  return state;
+};
+
+export const DatasetListProvider = ({
+  children,
+  ...props
+}: DatasetListProviderProps) => {
   return (
-    <DatasetListContext.Provider value={state}>
+    <DatasetListContext.Provider value={useProviderState(props)}>
       {children}
     </DatasetListContext.Provider>
   );
 };
 
-export const useDatasetList = () => {
-  return useContext(DatasetListContext);
-};
+export const useDatasetList = () => useContext(DatasetListContext);

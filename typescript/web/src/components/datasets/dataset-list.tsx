@@ -1,7 +1,8 @@
 import { gql, useQuery } from "@apollo/client";
 import { Flex } from "@chakra-ui/react";
 import type { Dataset as DatasetType } from "@labelflow/graphql-types";
-import { PaginationProvider, PaginationToolbar } from "../pagination";
+import { PaginationProvider } from "../pagination";
+import { PaginationFooter } from "../pagination/pagination-footer";
 import { Spinner } from "../spinner";
 import { DatasetCard } from "./dataset-card";
 import { DatasetCardBox } from "./dataset-card-box";
@@ -18,6 +19,7 @@ export const getDatasetsQuery = gql`
     }
   }
 `;
+
 const LoadingCard = () => (
   <DatasetCardBox>
     <Flex
@@ -62,12 +64,8 @@ const Content = () => {
             imagesCount={imagesAggregates.totalCount}
             labelClassesCount={labelClassesAggregates.totalCount}
             labelsCount={labelsAggregates.totalCount}
-            editDataset={() => {
-              setEditDatasetId(id, "replaceIn");
-            }}
-            deleteDataset={() => {
-              setDeleteDatasetId(id, "replaceIn");
-            }}
+            editDataset={() => setEditDatasetId(id, "replaceIn")}
+            deleteDataset={() => setDeleteDatasetId(id, "replaceIn")}
           />
         )
       )}
@@ -102,7 +100,7 @@ export const DatasetList = (props: DatasetListProps) => {
       ) : (
         <DatasetListProvider {...props}>
           <Content />
-          <PaginationToolbar pos="fixed" bottom={0} w="100%" />
+          <PaginationFooter />
         </DatasetListProvider>
       )}
     </PaginationProvider>

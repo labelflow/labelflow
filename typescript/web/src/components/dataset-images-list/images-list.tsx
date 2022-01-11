@@ -3,13 +3,10 @@ import { isEmpty } from "lodash/fp";
 import React from "react";
 import { EmptyStateNoImages } from "../empty-state";
 import { ImportButton } from "../import-button";
-import {
-  PaginationProvider,
-  PaginationToolbar,
-  usePagination,
-} from "../pagination";
-import { DeleteImageModal } from "./delete-image-modal";
+import { PaginationProvider } from "../pagination";
+import { PaginationFooter } from "../pagination/pagination-footer";
 import { LayoutSpinner } from "../spinner";
+import { DeleteImageModal } from "./delete-image-modal";
 import { ImageCard } from "./image-card";
 import {
   ImagesListProps,
@@ -90,13 +87,6 @@ const Content = () => {
 const Body = () => {
   const { loading } = useImagesList();
   return <>{loading ? <LayoutSpinner /> : <Content />}</>;
-};
-
-const PaginationFooter = () => {
-  const { total } = usePagination();
-  return (
-    <>{total > 0 && <PaginationToolbar pos="fixed" bottom={0} w="100%" />}</>
-  );
 };
 
 export const ImagesList = (props: ImagesListProps) => {

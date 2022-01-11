@@ -240,8 +240,8 @@ describe("Dataset resolver test suite", () => {
       `,
       variables: { where: { workspaceSlug: "local" } },
     });
-    expect(queryResults.data.datasets[0].name).toEqual("dataset 1");
-    expect(queryResults.data.datasets[1].name).toEqual("dataset 2");
+    expect(queryResults.data.datasets[0].name).toEqual("dataset 2");
+    expect(queryResults.data.datasets[1].name).toEqual("dataset 1");
   });
 
   test("Should return no datasets when database is empty", async () => {
@@ -277,7 +277,7 @@ describe("Dataset resolver test suite", () => {
       `,
     });
     expect(queryResults.data.datasets).toHaveLength(2);
-    expect(queryResults.data.datasets[0].name).toEqual("dataset 1");
+    expect(queryResults.data.datasets[0].name).toEqual("dataset 3");
     expect(queryResults.data.datasets[1].name).toEqual("dataset 2");
   });
 
@@ -300,7 +300,7 @@ describe("Dataset resolver test suite", () => {
     });
     expect(queryResults.data.datasets).toHaveLength(2);
     expect(queryResults.data.datasets[0].name).toEqual("dataset 2");
-    expect(queryResults.data.datasets[1].name).toEqual("dataset 3");
+    expect(queryResults.data.datasets[1].name).toEqual("dataset 1");
   });
 
   test("should delete a dataset and its content", async () => {
