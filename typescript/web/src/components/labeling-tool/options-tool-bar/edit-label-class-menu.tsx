@@ -1,4 +1,4 @@
-import { gql, useApolloClient, useQuery } from "@apollo/client";
+import { useApolloClient, useQuery } from "@apollo/client";
 import { Label, LabelType } from "@labelflow/graphql-types";
 import { getNextClassColor, LABEL_CLASS_COLOR_PALETTE } from "@labelflow/utils";
 import { useRouter } from "next/router";
@@ -16,72 +16,14 @@ import { createDeleteLabelEffect } from "../../../connectors/undo-store/effects/
 import { createUpdateLabelClassEffect } from "../../../connectors/undo-store/effects/update-label-class";
 import { createUpdateLabelClassOfLabelEffect } from "../../../connectors/undo-store/effects/update-label-class-of-label";
 import { keymap } from "../../../keymap";
+import {
+  getImageLabelsQuery,
+  getLabelClassesOfDatasetQuery,
+  getLabelQuery,
+  labelClassQuery,
+} from "../openlayers-map/queries";
 import { ClassAdditionMenu } from "./class-addition-menu";
 import { ClassSelectionMenu, LabelClassItem } from "./class-selection-menu";
-
-const getLabelClassesOfDatasetQuery = gql`
-  query getLabelClassesOfDataset($slug: String!, $workspaceSlug: String!) {
-    dataset(where: { slugs: { slug: $slug, workspaceSlug: $workspaceSlug } }) {
-      id
-      labelClasses {
-        id
-        name
-        color
-      }
-    }
-  }
-`;
-
-const labelClassQuery = gql`
-  query getLabelClass($id: ID!) {
-    labelClass(where: { id: $id }) {
-      id
-      name
-      color
-    }
-  }
-`;
-
-const getLabelQuery = gql`
-  query getLabel($id: ID!) {
-    label(where: { id: $id }) {
-      id
-      type
-      labelClass {
-        id
-        name
-        color
-      }
-    }
-  }
-`;
-
-const getImageLabelsQuery = gql`
-  query getImageLabels($imageId: ID!) {
-    image(where: { id: $imageId }) {
-      id
-      width
-      height
-      labels {
-        type
-        id
-        x
-        y
-        width
-        height
-        labelClass {
-          id
-          name
-          color
-        }
-        geometry {
-          type
-          coordinates
-        }
-      }
-    }
-  }
-`;
 
 export const EditLabelClassMenu = () => {
   const router = useRouter();

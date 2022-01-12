@@ -1,12 +1,15 @@
+import { ApolloProvider } from "@apollo/client";
 import { renderHook } from "@testing-library/react-hooks";
-import { ApolloProvider, gql } from "@apollo/client";
-
 import { useRouter } from "next/router";
+import { incrementMockedDate } from "../../../../dev-utils/mockdate";
+import { client } from "../../connectors/apollo-client/schema-client";
 import { processImage } from "../../connectors/repository/image-processing";
 import { setupTestsWithLocalDatabase } from "../../utils/setup-local-db-tests";
+import {
+  createTestDatasetMutation,
+  createTestImageMutation,
+} from "../../utils/tests/mutations";
 import { useImagesNavigation } from "../use-images-navigation";
-import { client } from "../../connectors/apollo-client/schema-client";
-import { incrementMockedDate } from "../../../../dev-utils/mockdate";
 
 setupTestsWithLocalDatabase();
 
@@ -28,13 +31,7 @@ async function createImage(name: String) {
     mime: "image/jpeg",
   });
   const mutationResult = await client.mutate({
-    mutation: gql`
-      mutation createImage($file: Upload!, $name: String!, $datasetId: ID!) {
-        createImage(data: { name: $name, file: $file, datasetId: $datasetId }) {
-          id
-        }
-      }
-    `,
+    mutation: createTestImageMutation,
     variables: {
       file: new Blob(),
       name,
@@ -53,17 +50,11 @@ async function createImage(name: String) {
 
 beforeEach(async () => {
   await client.mutate({
-    mutation: gql`
-      mutation createDataset($datasetId: ID!) {
-        createDataset(
-          data: { name: "test dataset", id: $datasetId, workspaceSlug: "local" }
-        ) {
-          id
-        }
-      }
-    `,
+    mutation: createTestDatasetMutation,
     variables: {
+      name: "test dataset",
       datasetId: testDatasetId,
+      workspaceSlug: "local",
     },
   });
 });

@@ -8,23 +8,12 @@ import { WelcomeModal } from "../../../components/welcome-manager";
 import { CookieBanner } from "../../../components/cookie-banner";
 import { NavLogo } from "../../../components/logo/nav-logo";
 import { UserSettings } from "../../../components/settings/user";
+import { userQuery } from "../../../utils/shared-queries";
 
 const updateUserQuery = gql`
   mutation updateUser($id: ID!, $data: UserUpdateInput!) {
     updateUser(where: { id: $id }, data: $data) {
       id
-    }
-  }
-`;
-
-const userQuery = gql`
-  query getUserProfileInfo($id: ID!) {
-    user(where: { id: $id }) {
-      id
-      createdAt
-      name
-      email
-      image
     }
   }
 `;

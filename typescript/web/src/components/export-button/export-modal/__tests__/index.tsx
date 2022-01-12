@@ -2,7 +2,7 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom/extend-expect";
-import { ApolloProvider, gql } from "@apollo/client";
+import { ApolloProvider } from "@apollo/client";
 import { ChakraProvider } from "@chakra-ui/react";
 import { PropsWithChildren } from "react";
 
@@ -19,6 +19,11 @@ import { ExportModal } from "..";
 import { theme } from "../../../../theme";
 import { client } from "../../../../connectors/apollo-client/schema-client";
 import { setupTestsWithLocalDatabase } from "../../../../utils/setup-local-db-tests";
+import {
+  createTestDatasetMutation,
+  createTestImageMutation,
+} from "../../../../utils/tests/mutations";
+import { createLabelMutation } from "../../../../connectors/undo-store/effects/shared-queries";
 
 setupTestsWithLocalDatabase();
 
@@ -38,16 +43,8 @@ const createDataset = async (
   name = "test dataset"
 ) => {
   return await client.mutate({
-    mutation: gql`
-      mutation createDataset($name: String!, $datasetId: ID) {
-        createDataset(
-          data: { name: $name, id: $datasetId, workspaceSlug: "local" }
-        ) {
-          id
-        }
-      }
-    `,
-    variables: { datasetId, name },
+    mutation: createTestDatasetMutation,
+    variables: { datasetId, name, workspaceSlug: "local" },
   });
 };
 
@@ -68,13 +65,7 @@ const labelData = {
 
 const createLabel = (data: LabelCreateInput) => {
   return client.mutate({
-    mutation: gql`
-      mutation createLabel($data: LabelCreateInput!) {
-        createLabel(data: $data) {
-          id
-        }
-      }
-    `,
+    mutation: createLabelMutation,
     variables: {
       data,
     },
@@ -86,30 +77,10 @@ const imageHeight = 900;
 
 const createImage = async (name: String) => {
   const mutationResult = await client.mutate({
-    mutation: gql`
-      mutation createImage(
-        $file: Upload!
-        $name: String!
-        $width: Int
-        $height: Int
-        $datasetId: ID!
-      ) {
-        createImage(
-          data: {
-            name: $name
-            file: $file
-            width: $width
-            height: $height
-            datasetId: $datasetId
-          }
-        ) {
-          id
-        }
-      }
-    `,
+    mutation: createTestImageMutation,
     variables: {
-      file: new Blob(),
       name,
+      file: new Blob(),
       width: imageWidth,
       height: imageHeight,
       datasetId: "mocked-dataset-id",

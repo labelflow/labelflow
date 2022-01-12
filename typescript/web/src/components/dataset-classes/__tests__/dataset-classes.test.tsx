@@ -1,29 +1,23 @@
-import { PropsWithChildren } from "react";
-import { render, screen, waitFor, fireEvent } from "@testing-library/react";
+import { ApolloProvider } from "@apollo/client";
 import { ChakraProvider } from "@chakra-ui/react";
-import { ApolloProvider, gql } from "@apollo/client";
-import { DatasetClasses } from "../dataset-classes";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { PropsWithChildren } from "react";
 import { client } from "../../../connectors/apollo-client/schema-client";
 import { theme } from "../../../theme";
 import { setupTestsWithLocalDatabase } from "../../../utils/setup-local-db-tests";
+import { createTestDatasetMutation } from "../../../utils/tests/mutations";
+import { DatasetClasses } from "../dataset-classes";
+import { createLabelClassMutation } from "../upsert-class-modal/create-label-class.mutation";
 
 setupTestsWithLocalDatabase();
 
 const createDataset = async (name: string, datasetId?: string | null) => {
   return await client.mutate({
-    mutation: gql`
-      mutation createDataset($datasetId: String, $name: String!) {
-        createDataset(
-          data: { id: $datasetId, name: $name, workspaceSlug: "local" }
-        ) {
-          id
-          name
-        }
-      }
-    `,
+    mutation: createTestDatasetMutation,
     variables: {
       name,
       datasetId,
+      workspaceSlug: "local",
     },
   });
 };
@@ -38,19 +32,11 @@ const createLabelClassInDataset = async ({
   color: string;
 }) => {
   await client.mutate({
-    mutation: gql`
-      mutation createLabelClass($data: LabelClassCreateInput) {
-        createLabelClass(data: $data) {
-          id
-        }
-      }
-    `,
+    mutation: createLabelClassMutation,
     variables: {
-      data: {
-        name,
-        color,
-        datasetId,
-      },
+      name,
+      color,
+      datasetId,
     },
   });
 };

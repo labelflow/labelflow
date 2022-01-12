@@ -5,12 +5,14 @@ import {
   waitFor,
   act,
 } from "@testing-library/react";
-import { ApolloProvider, gql } from "@apollo/client";
+import { ApolloProvider } from "@apollo/client";
 import { PropsWithChildren } from "react";
 
 import { client } from "../../../connectors/apollo-client/schema-client";
 import { setupTestsWithLocalDatabase } from "../../../utils/setup-local-db-tests";
 import { DeleteDatasetModal } from "../delete-dataset-modal";
+import { getDatasetByIdQuery } from "../datasets.query";
+import { createLocalTestDatasetMutation } from "../../../utils/tests/mutations";
 
 const Wrapper = ({ children }: PropsWithChildren<{}>) => (
   <ApolloProvider client={client}>{children}</ApolloProvider>
@@ -26,13 +28,7 @@ const renderModal = (props = {}) => {
 
 test("should delete a dataset when the button is clicked", async () => {
   const mutateResult = await client.mutate({
-    mutation: gql`
-      mutation {
-        createDataset(data: { name: "Toto", workspaceSlug: "local" }) {
-          id
-        }
-      }
-    `,
+    mutation: createLocalTestDatasetMutation,
   });
 
   const onClose = jest.fn();
@@ -47,13 +43,7 @@ test("should delete a dataset when the button is clicked", async () => {
 
   return expect(
     client.query({
-      query: gql`
-        query getDatasetById($id: ID) {
-          dataset(where: { id: $id }) {
-            name
-          }
-        }
-      `,
+      query: getDatasetByIdQuery,
       variables: { id: mutateResult.data.createDataset.id },
       fetchPolicy: "no-cache",
     })
@@ -62,13 +52,7 @@ test("should delete a dataset when the button is clicked", async () => {
 
 test("shouldn't delete a dataset when the cancel is clicked", async () => {
   const mutateResult = await client.mutate({
-    mutation: gql`
-      mutation {
-        createDataset(data: { name: "Toto", workspaceSlug: "local" }) {
-          id
-        }
-      }
-    `,
+    mutation: createLocalTestDatasetMutation,
   });
 
   const onClose = jest.fn();
@@ -83,13 +67,7 @@ test("shouldn't delete a dataset when the cancel is clicked", async () => {
 
   await act(async () => {
     const queryResult = await client.query({
-      query: gql`
-        query getDatasetById($id: ID) {
-          dataset(where: { id: $id }) {
-            name
-          }
-        }
-      `,
+      query: getDatasetByIdQuery,
       variables: { id: mutateResult.data.createDataset.id },
       fetchPolicy: "no-cache",
     });
