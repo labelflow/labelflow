@@ -7,6 +7,8 @@ assignees: ''
 
 ---
 
+<!-- For better visibility to the team: submit or upvote the identified bugs on our Canny board: https://labelflow.canny.io/bugs  -->
+
 ## Describe the bug
 
 <!-- A clear and concise description of what the bug is. -->
