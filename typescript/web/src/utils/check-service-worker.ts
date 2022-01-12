@@ -1,7 +1,7 @@
+import { timeout } from "@labelflow/utils";
 import { Workbox } from "workbox-window";
 import { WorkboxEventMap } from "workbox-window/utils/WorkboxEvent";
 import { ensureServiceWorkerPresent } from "../worker/ensure-present";
-import { timeout } from "./timeout";
 
 export const messageNoWindow =
   "Not in window scope, service worker does not exist";

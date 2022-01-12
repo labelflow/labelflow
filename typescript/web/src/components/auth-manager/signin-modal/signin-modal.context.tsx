@@ -15,6 +15,7 @@ import {
   useState,
 } from "react";
 import { StringParam, UrlUpdateType, useQueryParam } from "use-query-params";
+import { trackEvent } from "../../../utils/google-analytics";
 import { BoolParam } from "../../../utils/query-param-bool";
 import { validateEmail } from "../../../utils/validate-email";
 
@@ -72,12 +73,14 @@ const useSignInQuery = (): [SignInCallback, SignInResponse | undefined] => {
   const [response, setResponse] = useState<SignInResponse | undefined>();
   const handleSignIn = useCallback<SignInCallback>(
     async (method, options = {}) => {
+      trackEvent(`signin_${method}`, {});
       const callbackUrl = sanitizeUrl(window.location.toString());
-      const signInResponse = await signIn<SignInMethod>(method, {
+      const signInOptions: SignInOptions = {
         redirect: false,
         callbackUrl,
         ...options,
-      });
+      };
+      const signInResponse = await signIn<SignInMethod>(method, signInOptions);
       setResponse(signInResponse);
     },
     []

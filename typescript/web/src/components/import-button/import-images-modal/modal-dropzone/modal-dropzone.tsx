@@ -14,6 +14,7 @@ import { FilesStatuses } from "./file-statuses";
 import { DroppedFile, UploadStatuses } from "../types";
 
 import { importDroppedFiles } from "./import-dropped-files";
+import { flushPaginatedImagesCache } from "../../../dataset-images-list";
 
 const getDataset = gql`
   query getDataset($slug: String!, $workspaceSlug: String!) {
@@ -70,7 +71,7 @@ export const ImportImagesModalDropzone = ({
   const handleImport = useCallback(
     async (filesToImport: DroppedFile[]) => {
       onUploadStart();
-
+      await flushPaginatedImagesCache(apolloClient, datasetId);
       await importDroppedFiles({
         files: filesToImport,
         workspaceId,
@@ -78,7 +79,6 @@ export const ImportImagesModalDropzone = ({
         setFileUploadStatuses,
         apolloClient,
       });
-
       onUploadEnd();
     },
     [

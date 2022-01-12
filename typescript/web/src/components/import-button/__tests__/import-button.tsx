@@ -46,11 +46,12 @@ jest.mock("../../../connectors/apollo-client/schema-client", () => {
   const original = jest.requireActual(
     "../../../connectors/apollo-client/schema-client"
   );
-
   return {
     client: {
       ...original.client,
       clearStore: original.client.clearStore, // This needs to be passed like this otherwise the resulting object does not have the clearStore method
+      writeQuery: original.client.writeQuery,
+      refetchQueries: jest.fn(),
       mutate: jest.fn(original.client.mutate),
     },
   };
@@ -111,4 +112,9 @@ test("should clear the modal content when closed", async () => {
   await waitFor(() =>
     expect(screen.getByText(/Completed 1 of 1 items/i)).toBeDefined()
   );
-}, 15000);
+
+  expect(client.refetchQueries).toHaveBeenNthCalledWith(2, {
+    include: ["paginatedImagesQuery"],
+  });
+  expect(client.mutate).toHaveBeenCalled();
+});

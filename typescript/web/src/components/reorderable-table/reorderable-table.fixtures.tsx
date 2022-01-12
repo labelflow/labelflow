@@ -1,5 +1,5 @@
 import { Table, Th, Thead } from "@chakra-ui/react";
-import { reorderArray } from "@labelflow/common-resolvers";
+import { reorderArray } from "@labelflow/utils";
 import { range } from "lodash/fp";
 import React, { useCallback, useState } from "react";
 import {

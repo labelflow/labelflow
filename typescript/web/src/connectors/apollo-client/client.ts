@@ -1,5 +1,6 @@
 import { ApolloClient, InMemoryCache, HttpLink, concat } from "@apollo/client";
 import { awaitServiceWorkerLink } from "./await-service-worker-link";
+import { APOLLO_CACHE_CONFIG } from "./cache-config";
 
 export const serviceWorkerClient = new ApolloClient({
   connectToDevTools: false,
@@ -7,26 +8,7 @@ export const serviceWorkerClient = new ApolloClient({
     awaitServiceWorkerLink,
     new HttpLink({ uri: "/api/worker/graphql", credentials: "same-origin" })
   ),
-  cache: new InMemoryCache({
-    typePolicies: {
-      Label: {
-        fields: {
-          geometry: {
-            // Short for options.mergeObjects(existing, incoming), see https://www.apollographql.com/docs/react/caching/cache-field-behavior/#merging-non-normalized-objects
-            merge: true,
-          },
-        },
-      },
-      Dataset: {
-        fields: {
-          labelClasses: {
-            // Short for keeping only the incoming data, see https://www.apollographql.com/docs/react/caching/cache-field-behavior/#merging-non-normalized-objects
-            merge: false,
-          },
-        },
-      },
-    },
-  }),
+  cache: new InMemoryCache(APOLLO_CACHE_CONFIG),
 });
 
 export const distantDatabaseClient = new ApolloClient({
@@ -35,24 +17,5 @@ export const distantDatabaseClient = new ApolloClient({
     uri: "/api/graphql",
     credentials: "same-origin",
   }),
-  cache: new InMemoryCache({
-    typePolicies: {
-      Label: {
-        fields: {
-          geometry: {
-            // Short for options.mergeObjects(existing, incoming), see https://www.apollographql.com/docs/react/caching/cache-field-behavior/#merging-non-normalized-objects
-            merge: true,
-          },
-        },
-      },
-      Dataset: {
-        fields: {
-          labelClasses: {
-            // Short for keeping only the incoming data, see https://www.apollographql.com/docs/react/caching/cache-field-behavior/#merging-non-normalized-objects
-            merge: false,
-          },
-        },
-      },
-    },
-  }),
+  cache: new InMemoryCache(APOLLO_CACHE_CONFIG),
 });

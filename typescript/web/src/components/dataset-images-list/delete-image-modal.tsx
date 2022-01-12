@@ -9,6 +9,10 @@ import {
   AlertDialogOverlay,
   Button,
 } from "@chakra-ui/react";
+import {
+  paginatedImagesQuery,
+  useFlushPaginatedImagesCache,
+} from "./paginated-images-query";
 
 const getImageByIdQuery = gql`
   query getImageById($id: ID!) {
@@ -31,10 +35,12 @@ export const DeleteImageModal = ({
   isOpen = false,
   onClose = () => {},
   imageId,
+  datasetId,
 }: {
   isOpen?: boolean;
   onClose?: () => void;
   imageId?: string | null;
+  datasetId: string;
 }) => {
   const cancelRef = useRef<HTMLButtonElement>(null);
   const { data } = useQuery(getImageByIdQuery, {
@@ -42,7 +48,18 @@ export const DeleteImageModal = ({
     skip: imageId == null,
   });
 
-  const [deleteImage] = useMutation(deleteImageMutation);
+  const flushPaginatedImagesCache = useFlushPaginatedImagesCache(datasetId);
+  const [deleteImage, { loading: deleteImageLoading }] =
+    useMutation(deleteImageMutation);
+
+  const handleDeleteButtonClick = async () => {
+    await flushPaginatedImagesCache();
+    await deleteImage({
+      variables: { id: imageId },
+      refetchQueries: ["getDatasetData", paginatedImagesQuery],
+    });
+    onClose();
+  };
 
   return (
     <AlertDialog
@@ -64,6 +81,7 @@ export const DeleteImageModal = ({
 
           <AlertDialogFooter>
             <Button
+              disabled={deleteImageLoading}
               ref={cancelRef}
               onClick={onClose}
               aria-label="Cancel delete"
@@ -71,14 +89,9 @@ export const DeleteImageModal = ({
               Cancel
             </Button>
             <Button
+              disabled={deleteImageLoading}
               colorScheme="red"
-              onClick={() => {
-                deleteImage({
-                  variables: { id: imageId },
-                  refetchQueries: ["getDatasetData"],
-                });
-                onClose();
-              }}
+              onClick={handleDeleteButtonClick}
               aria-label="Confirm deleting image"
               ml={3}
             >
