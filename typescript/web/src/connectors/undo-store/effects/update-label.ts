@@ -37,7 +37,7 @@ const imageDimensionsQuery = gql`
 `;
 
 const getLabelQuery = gql`
-  query getLabel($id: ID!) {
+  query getLabelAndGeometry($id: ID!) {
     label(where: { id: $id }) {
       id
       type

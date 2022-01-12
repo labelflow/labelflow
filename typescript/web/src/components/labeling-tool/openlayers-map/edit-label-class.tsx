@@ -1,4 +1,4 @@
-import { gql, useApolloClient, useQuery } from "@apollo/client";
+import { useApolloClient, useQuery } from "@apollo/client";
 import { Label, LabelType } from "@labelflow/graphql-types";
 import { getNextClassColor, LABEL_CLASS_COLOR_PALETTE } from "@labelflow/utils";
 import { useRouter } from "next/router";
@@ -16,58 +16,11 @@ import { createUpdateLabelClassOfLabelEffect } from "../../../connectors/undo-st
 import { keymap } from "../../../keymap";
 import { ClassSelectionPopover } from "../../class-selection-popover";
 import { LabelClassItem } from "../../class-selection-popover/class-selection-popover";
-
-const getLabelClassesOfDatasetQuery = gql`
-  query getLabelClassesOfDataset($slug: String!, $workspaceSlug: String!) {
-    dataset(where: { slugs: { slug: $slug, workspaceSlug: $workspaceSlug } }) {
-      id
-      labelClasses {
-        id
-        name
-        color
-      }
-    }
-  }
-`;
-
-const getLabelQuery = gql`
-  query getLabel($id: ID!) {
-    label(where: { id: $id }) {
-      id
-      type
-      labelClass {
-        id
-      }
-    }
-  }
-`;
-
-const getImageLabelsQuery = gql`
-  query getImageLabels($imageId: ID!) {
-    image(where: { id: $imageId }) {
-      id
-      width
-      height
-      labels {
-        type
-        id
-        x
-        y
-        width
-        height
-        labelClass {
-          id
-          name
-          color
-        }
-        geometry {
-          type
-          coordinates
-        }
-      }
-    }
-  }
-`;
+import {
+  getImageLabelsQuery,
+  getLabelClassesOfDatasetQuery,
+  getLabelQuery,
+} from "./queries";
 
 export const EditLabelClass = forwardRef<
   HTMLDivElement | null,

@@ -1,4 +1,4 @@
-import { gql, useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client";
 import { BreadcrumbLink, Skeleton, Text } from "@chakra-ui/react";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
@@ -6,6 +6,7 @@ import React, { useEffect } from "react";
 import { useErrorHandler } from "react-error-boundary";
 import { AuthManager } from "../../../../components/auth-manager";
 import { CookieBanner } from "../../../../components/cookie-banner";
+import { getDatasetBySlugQuery } from "../../../../components/datasets/datasets.query";
 import { ExportButton } from "../../../../components/export-button";
 import { ImportButton } from "../../../../components/import-button";
 import { Layout } from "../../../../components/layout";
@@ -17,15 +18,6 @@ import { WelcomeModal } from "../../../../components/welcome-manager";
 import { WorkspaceSwitcher } from "../../../../components/workspace-switcher";
 import { Error404Content } from "../../../404";
 
-const getDataset = gql`
-  query getDataset($slug: String!, $workspaceSlug: String!) {
-    dataset(where: { slugs: { slug: $slug, workspaceSlug: $workspaceSlug } }) {
-      id
-      name
-    }
-  }
-`;
-
 const DatasetIndexPage = () => {
   const router = useRouter();
   const { datasetSlug, workspaceSlug, ...queryRest } = router.query;
@@ -34,7 +26,7 @@ const DatasetIndexPage = () => {
     data: datasetResult,
     error,
     loading,
-  } = useQuery(getDataset, {
+  } = useQuery(getDatasetBySlugQuery, {
     variables: { slug: datasetSlug, workspaceSlug },
     skip: typeof datasetSlug !== "string" || typeof workspaceSlug !== "string",
   });

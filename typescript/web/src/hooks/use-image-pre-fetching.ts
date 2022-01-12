@@ -1,40 +1,16 @@
 import { gql, useQuery } from "@apollo/client";
 import { useEffect, useReducer } from "react";
+import { getImageLabelsQuery } from "../components/labeling-tool/openlayers-map/queries";
 import { useImagesNavigation } from "./use-images-navigation";
 
 const imageQuery = gql`
-  query image($id: ID!) {
+  query prefetchImage($id: ID!) {
     image(where: { id: $id }) {
       id
       width
       height
       url
       thumbnail200Url
-    }
-  }
-`;
-
-const getImageLabelsQuery = gql`
-  query getImageLabels($imageId: ID!) {
-    image(where: { id: $imageId }) {
-      id
-      width
-      height
-      labels {
-        id
-        x
-        y
-        width
-        height
-        labelClass {
-          id
-          color
-        }
-        geometry {
-          type
-          coordinates
-        }
-      }
     }
   }
 `;

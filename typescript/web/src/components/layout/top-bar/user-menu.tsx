@@ -1,4 +1,4 @@
-import { gql, useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client";
 import {
   Avatar,
   chakra,
@@ -36,6 +36,7 @@ import { useQueryParam } from "use-query-params";
 import { trackEvent } from "../../../utils/google-analytics";
 import { BoolParam } from "../../../utils/query-param-bool";
 import { randomBackgroundGradient } from "../../../utils/random-background-gradient";
+import { userQuery } from "../../../utils/shared-queries";
 import { getDisplayName } from "../../members/user";
 
 const UserMenuIcon = chakra(RiUserLine);
@@ -47,18 +48,6 @@ const SigninIcon = chakra(RiLoginCircleLine);
 const SignoutIcon = chakra(RiLogoutCircleRLine);
 
 const SettingsIcon = chakra(RiSettings4Line);
-
-const userQuery = gql`
-  query getUserProfileInfo($id: ID!) {
-    user(where: { id: $id }) {
-      id
-      createdAt
-      name
-      email
-      image
-    }
-  }
-`;
 
 type UserQueryResult = DeepPartial<Query>;
 

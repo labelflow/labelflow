@@ -30,3 +30,12 @@ export const useDatasetLabelClassesQuery = (
     skip: !datasetSlug,
   });
 };
+
+export const getLabelClassByIdQuery = gql`
+  query getLabelClassById($id: ID!) {
+    labelClass(where: { id: $id }) {
+      id
+      name
+    }
+  }
+`;

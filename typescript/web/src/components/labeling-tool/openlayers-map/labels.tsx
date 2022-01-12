@@ -1,4 +1,4 @@
-import { gql, useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client";
 import { Label, LabelType } from "@labelflow/graphql-types";
 import { useRouter } from "next/router";
 import { Feature } from "ol";
@@ -20,34 +20,7 @@ import {
   useLabelingStore,
 } from "../../../connectors/labeling-state";
 import { noneClassColor } from "../../../theme";
-
-const getImageLabelsQuery = gql`
-  query getImageLabels($imageId: ID!) {
-    image(where: { id: $imageId }) {
-      id
-      width
-      height
-      labels {
-        type
-        id
-        x
-        y
-        width
-        height
-        smartToolInput
-        labelClass {
-          id
-          name
-          color
-        }
-        geometry {
-          type
-          coordinates
-        }
-      }
-    }
-  }
-`;
+import { getImageLabelsQuery } from "./queries";
 
 export const Labels = ({
   sourceVectorLabelsRef,

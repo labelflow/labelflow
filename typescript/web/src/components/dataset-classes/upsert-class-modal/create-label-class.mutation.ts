@@ -13,9 +13,9 @@ import { v4 as uuid } from "uuid";
 import { CREATE_WORKSPACE_MUTATION } from "../../workspace-switcher/create-workspace-modal/create-workspace.mutation";
 import { DATASET_LABEL_CLASSES_QUERY } from "./dataset-label-classes.query";
 
-export const CREATE_LABEL_CLASS_MUTATION = gql`
+export const createLabelClassMutation = gql`
   mutation createLabelClass(
-    $id: ID!
+    $id: ID
     $name: String!
     $color: ColorHex
     $datasetId: ID!
@@ -101,7 +101,7 @@ export const useCreateLabelClassMutation = (
         ? LABEL_CLASS_COLOR_PALETTE[0]
         : getNextClassColor(labelClasses.map((labelClass) => labelClass.color));
     await createLabelClass({
-      mutation: CREATE_LABEL_CLASS_MUTATION,
+      mutation: createLabelClassMutation,
       variables: { id: newClassId, name: className, color, datasetId },
       optimisticResponse: {
         createLabelClass: {

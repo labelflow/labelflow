@@ -3,4 +3,11 @@
 .sentryclirc
 
 next-env.d.ts
+<<<<<<< HEAD
 public/sitemap.xml
+=======
+
+**/__generated__/
+!src/worker/__generated__/
+!src/connectors/apollo-client/__generated__/
+>>>>>>> b33c4d32 (Add apollo generated types)
