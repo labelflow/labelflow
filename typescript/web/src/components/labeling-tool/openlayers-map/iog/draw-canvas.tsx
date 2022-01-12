@@ -19,7 +19,8 @@ import { useUndoStore } from "../../../../connectors/undo-store";
 import { createCreateIogLabelEffect } from "../../../../connectors/undo-store/effects/create-iog-label";
 import { noneClassColor } from "../../../../theme";
 import { keymap } from "../../../../keymap";
-import { imageQuery, labelClassQuery } from "./queries";
+import { imageQuery } from "./queries";
+import { labelClassQuery } from "../queries";
 
 const geometryFunction = createBox();
 

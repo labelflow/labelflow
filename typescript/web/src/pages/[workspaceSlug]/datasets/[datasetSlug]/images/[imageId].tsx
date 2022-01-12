@@ -15,6 +15,7 @@ import React from "react";
 import { useErrorHandler } from "react-error-boundary";
 import { AuthManager } from "../../../../../components/auth-manager";
 import { CookieBanner } from "../../../../../components/cookie-banner";
+import { getDatasetBySlugQuery } from "../../../../../components/datasets/datasets.query";
 import { ExportButton } from "../../../../../components/export-button";
 import { Gallery } from "../../../../../components/gallery";
 import { ImportButton } from "../../../../../components/import-button";
@@ -42,17 +43,8 @@ const LabelingTool = dynamic(
 );
 
 const imageQuery = gql`
-  query image($id: ID!) {
+  query imageName($id: ID!) {
     image(where: { id: $id }) {
-      id
-      name
-    }
-  }
-`;
-
-const getDatasetQuery = gql`
-  query getDataset($slug: String!, $workspaceSlug: String!) {
-    dataset(where: { slugs: { slug: $slug, workspaceSlug: $workspaceSlug } }) {
       id
       name
     }
@@ -80,7 +72,7 @@ const ImagePage = () => {
     data: datasetResult,
     error: errorDataset,
     loading: loadingDataset,
-  } = useQuery(getDatasetQuery, {
+  } = useQuery(getDatasetBySlugQuery, {
     variables: { slug: datasetSlug, workspaceSlug },
     skip: !datasetSlug || !workspaceSlug,
   });

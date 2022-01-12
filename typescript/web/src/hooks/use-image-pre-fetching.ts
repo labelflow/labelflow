@@ -3,7 +3,7 @@ import { useEffect, useReducer } from "react";
 import { useImagesNavigation } from "./use-images-navigation";
 
 const imageQuery = gql`
-  query image($id: ID!) {
+  query prefetchImage($id: ID!) {
     image(where: { id: $id }) {
       id
       width
@@ -52,7 +52,7 @@ const useCanFetch = (initState: Required<CanFetchState>) =>
     ) => Required<CanFetchState>
   >((oldState, newState) => ({ ...oldState, ...newState }), initState);
 
-export const useImagePreFetching = () => {
+export const useImagePrefecthing = () => {
   const { nextImageId, previousImageId } = useImagesNavigation();
   const [{ canFetchNext, canFetchPrevious }, setCanFetch] = useCanFetch({
     canFetchNext: false,

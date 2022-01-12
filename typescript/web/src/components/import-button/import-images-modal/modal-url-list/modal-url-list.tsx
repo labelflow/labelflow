@@ -1,26 +1,19 @@
-import { useState, useEffect, useCallback } from "react";
-import { isEmpty } from "lodash/fp";
+import { useApolloClient, useQuery } from "@apollo/client";
 import {
-  Heading,
-  ModalHeader,
-  ModalBody,
   Button,
+  Heading,
+  ModalBody,
+  ModalHeader,
   Text,
 } from "@chakra-ui/react";
-import { useApolloClient, useQuery, gql } from "@apollo/client";
+import { isEmpty } from "lodash/fp";
 import { useRouter } from "next/router";
-import { UrlList } from "./url-list";
-import { UrlStatuses } from "./url-statuses";
+import { useCallback, useEffect, useState } from "react";
+import { getDatasetBySlugQuery } from "../../../datasets/datasets.query";
 import { DroppedUrl, UploadStatuses } from "../types";
 import { importUrls } from "./import-urls";
-
-const getDataset = gql`
-  query getDataset($slug: String!, $workspaceSlug: String!) {
-    dataset(where: { slugs: { slug: $slug, workspaceSlug: $workspaceSlug } }) {
-      id
-    }
-  }
-`;
+import { UrlList } from "./url-list";
+import { UrlStatuses } from "./url-statuses";
 
 export const ImportImagesModalUrlList = ({
   setMode = () => {},
@@ -44,7 +37,7 @@ export const ImportImagesModalUrlList = ({
   const [urls, setUrls] = useState<Array<DroppedUrl>>([]);
   const [uploadStatuses, setUploadStatuses] = useState<UploadStatuses>({});
 
-  const { data: datasetResult } = useQuery(getDataset, {
+  const { data: datasetResult } = useQuery(getDatasetBySlugQuery, {
     variables: { slug: datasetSlug, workspaceSlug },
     skip: typeof datasetSlug !== "string" || typeof workspaceSlug !== "string",
   });

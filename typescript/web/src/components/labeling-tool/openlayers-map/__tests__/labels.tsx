@@ -3,7 +3,7 @@
 // @ts-ignore Needs to be done before ol is imported
 global.URL.createObjectURL = jest.fn(() => "mockedUrl");
 
-import { ApolloProvider, gql } from "@apollo/client";
+import { ApolloProvider } from "@apollo/client";
 import { Map } from "@labelflow/react-openlayers-fiber";
 import { render, waitFor } from "@testing-library/react";
 
@@ -22,6 +22,11 @@ import { useLabelingStore } from "../../../../connectors/labeling-state";
 import { setupTestsWithLocalDatabase } from "../../../../utils/setup-local-db-tests";
 import { processImage } from "../../../../connectors/repository/image-processing";
 import VectorSource from "ol/source/Vector";
+import {
+  createTestDatasetMutation,
+  createTestImageMutation,
+} from "../../../../utils/tests/mutations";
+import { createLabelMutation } from "../../../../connectors/undo-store/effects/shared-queries";
 
 setupTestsWithLocalDatabase();
 
@@ -38,19 +43,11 @@ const createDataset = async (
   datasetId: string = testDatasetId
 ) => {
   return await client.mutate({
-    mutation: gql`
-      mutation createDataset($datasetId: String, $name: String!) {
-        createDataset(
-          data: { id: $datasetId, name: $name, workspaceSlug: "local" }
-        ) {
-          id
-          name
-        }
-      }
-    `,
+    mutation: createTestDatasetMutation,
     variables: {
       name,
       datasetId,
+      workspaceSlug: "local",
     },
     fetchPolicy: "no-cache",
   });
@@ -63,27 +60,7 @@ const createImage = async (name: String) => {
     mime: "image/jpeg",
   });
   const mutationResult = await client.mutate({
-    mutation: gql`
-      mutation createImage(
-        $file: Upload!
-        $name: String!
-        $width: Int
-        $height: Int
-        $datasetId: ID!
-      ) {
-        createImage(
-          data: {
-            name: $name
-            file: $file
-            width: $width
-            height: $height
-            datasetId: $datasetId
-          }
-        ) {
-          id
-        }
-      }
-    `,
+    mutation: createTestImageMutation,
     variables: {
       file: new Blob(),
       name,
@@ -104,13 +81,7 @@ const createImage = async (name: String) => {
 
 const createLabel = async (data: Partial<LabelCreateInput>) => {
   const mutationResult = await client.mutate({
-    mutation: gql`
-      mutation createLabel($data: LabelCreateInput!) {
-        createLabel(data: $data) {
-          id
-        }
-      }
-    `,
+    mutation: createLabelMutation,
     variables: {
       data: {
         ...data,

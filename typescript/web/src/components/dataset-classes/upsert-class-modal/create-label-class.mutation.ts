@@ -12,9 +12,9 @@ import { useCallback } from "react";
 import { v4 as uuid } from "uuid";
 import { DATASET_LABEL_CLASSES_QUERY } from "./dataset-label-classes.query";
 
-export const CREATE_LABEL_CLASS_MUTATION = gql`
+export const createLabelClassMutation = gql`
   mutation createLabelClass(
-    $id: ID!
+    $id: ID
     $name: String!
     $color: ColorHex
     $datasetId: ID!
@@ -79,7 +79,7 @@ export const useCreateLabelClassMutation = (
   datasetId: string | undefined | null
 ): [() => Promise<void>, MutationResult<{}>] => {
   const client = useApolloClient();
-  const [createLabelClass, result] = useMutation(CREATE_LABEL_CLASS_MUTATION, {
+  const [createLabelClass, result] = useMutation(createLabelClassMutation, {
     update: createLabelMutationUpdate(
       DATASET_LABEL_CLASSES_QUERY,
       datasetSlug,

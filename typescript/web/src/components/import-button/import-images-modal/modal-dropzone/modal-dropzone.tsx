@@ -15,14 +15,7 @@ import { DroppedFile, UploadStatuses } from "../types";
 
 import { importDroppedFiles } from "./import-dropped-files";
 import { flushPaginatedImagesCache } from "../../../dataset-images-list";
-
-const getDataset = gql`
-  query getDataset($slug: String!, $workspaceSlug: String!) {
-    dataset(where: { slugs: { slug: $slug, workspaceSlug: $workspaceSlug } }) {
-      id
-    }
-  }
-`;
+import { getDatasetBySlugQuery } from "../../../datasets/datasets.query";
 
 const getWorkspaceIdQuery = gql`
   query getWorkspaceId($workspaceSlug: String) {
@@ -56,7 +49,7 @@ export const ImportImagesModalDropzone = ({
     {}
   );
 
-  const { data: datasetResult } = useQuery(getDataset, {
+  const { data: datasetResult } = useQuery(getDatasetBySlugQuery, {
     variables: { slug: datasetSlug, workspaceSlug },
     skip: typeof datasetSlug !== "string" || typeof workspaceSlug !== "string",
   });
