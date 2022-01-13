@@ -40,7 +40,8 @@ export const ImagesListProvider = ({
     variables: {
       datasetId,
       first: perPage,
-      skip: (page - 1) * perPage,
+      // If page is 0, skip becomes negative, which is forbidden
+      skip: Math.max((page - 1) * perPage, 0),
     },
     skip: !datasetSlug || !workspaceSlug || !datasetId,
   });
