@@ -6,5 +6,24 @@ export const distantDatabaseClient = new ApolloClient({
     uri: "/api/graphql",
     credentials: "same-origin",
   }),
-  cache: new InMemoryCache(APOLLO_CACHE_CONFIG),
+  cache: new InMemoryCache({
+    typePolicies: {
+      Label: {
+        fields: {
+          geometry: {
+            // Short for options.mergeObjects(existing, incoming), see https://www.apollographql.com/docs/react/caching/cache-field-behavior/#merging-non-normalized-objects
+            merge: true,
+          },
+        },
+      },
+      Dataset: {
+        fields: {
+          labelClasses: {
+            // Short for keeping only the incoming data, see https://www.apollographql.com/docs/react/caching/cache-field-behavior/#merging-non-normalized-objects
+            merge: false,
+          },
+        },
+      },
+    },
+  }),
 });

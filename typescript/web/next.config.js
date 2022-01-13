@@ -1,5 +1,5 @@
 const { BundleAnalyzerPlugin } = require("webpack-bundle-analyzer");
-const path = require("path");
+const exec = require("child_process").exec;
 
 // This file sets a custom webpack configuration to use your Next.js app
 // with Sentry.
@@ -55,7 +55,6 @@ module.exports = withSentryConfig(
       // See https://github.com/webpack-contrib/css-loader/issues/447
       // See https://github.com/vercel/next.js/issues/7755
       if (!isServer) {
-
         // See https://www.npmjs.com/package/node-polyfill-webpack-plugin
         const NodePolyfillPlugin = require("node-polyfill-webpack-plugin");
 
@@ -72,7 +71,7 @@ module.exports = withSentryConfig(
             http2: false,
             module: false,
             net: false,
-            tls: false
+            tls: false,
           },
         };
         config.plugins = [
@@ -80,8 +79,20 @@ module.exports = withSentryConfig(
           new NodePolyfillPlugin({
             excludeAliases: ["console"],
           }),
+          {
+            apply: (compiler) => {
+              compiler.hooks.afterEmit.tap("AfterEmitPlugin", (compilation) => {
+                exec(
+                  'yarn apollo codegen:generate --localSchemaFile=../../data/__generated__/schema.graphql --target=typescript --tagName=gql --includes="src/**/*.tsx"',
+                  (err, stdout, stderr) => {
+                    if (stdout) process.stdout.write(stdout);
+                    if (stderr) process.stderr.write(stderr);
+                  }
+                );
+              });
+            },
+          },
         ];
-
       }
 
       // Add webpack bundle analyzer with custom config to expose the reports publicly
@@ -105,7 +116,7 @@ module.exports = withSentryConfig(
     // See https://github.com/vercel/next.js/blob/0af3b526408bae26d6b3f8cab75c4229998bf7cb/test/integration/typescript-workspaces-paths/packages/www/next.config.js
     onDemandEntries: {
       maxInactiveAge: 1000 * 60 * 60,
-    }
+    },
   },
   SentryWebpackPluginOptions
 );
