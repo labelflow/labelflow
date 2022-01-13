@@ -57,8 +57,10 @@ export const exportDataset = async ({
   const blobDataset = await (await fetch(exportDatasetUrl)).blob();
   const url = window.URL.createObjectURL(blobDataset);
   const element = document.createElement("a");
+  const extension =
+    format === ExportFormat.Yolo || options.coco?.exportImages ? "zip" : "json";
   element.href = url;
-  element.download = datasetName;
+  element.download = `${datasetName}.${extension}`;
   setIsExportRunning(false);
   element.click();
 };
