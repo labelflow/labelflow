@@ -23,7 +23,7 @@ import { links } from "./_data";
 const StarIcon = chakra(RiStarLine);
 
 const GitHubButton = ({ isMobile }: { isMobile?: boolean }) => {
-  const label = "Star us on github";
+  const label = "Star us on GitHub";
   const mobileProps = isMobile ? { w: "full", size: "lg", mt: "5" } : {};
   return (
     <Link
