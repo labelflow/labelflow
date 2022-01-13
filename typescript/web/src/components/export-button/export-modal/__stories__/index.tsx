@@ -8,5 +8,5 @@ export default {
 };
 
 export const Opened = () => {
-  return <ExportModal isOpen />;
+  return <ExportModal isOpen onClose={() => {}} />;
 };
