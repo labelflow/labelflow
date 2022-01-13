@@ -29,12 +29,6 @@ export const datasetDataQuery = gql`
       imagesAggregates {
         totalCount
       }
-      labelsAggregates {
-        totalCount
-      }
-      labelClassesAggregates {
-        totalCount
-      }
     }
   }
 `;
