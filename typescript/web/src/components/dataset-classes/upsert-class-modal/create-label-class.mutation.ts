@@ -10,6 +10,7 @@ import { Query } from "@labelflow/graphql-types";
 import { getNextClassColor, LABEL_CLASS_COLOR_PALETTE } from "@labelflow/utils";
 import { useCallback } from "react";
 import { v4 as uuid } from "uuid";
+import { CREATE_WORKSPACE_MUTATION } from "../../workspace-switcher/create-workspace-modal/create-workspace.mutation";
 import { DATASET_LABEL_CLASSES_QUERY } from "./dataset-label-classes.query";
 
 export const CREATE_LABEL_CLASS_MUTATION = gql`
@@ -79,7 +80,7 @@ export const useCreateLabelClassMutation = (
   datasetId: string | undefined | null
 ): [() => Promise<void>, MutationResult<{}>] => {
   const client = useApolloClient();
-  const [createLabelClass, result] = useMutation(CREATE_LABEL_CLASS_MUTATION, {
+  const [createLabelClass, result] = useMutation(CREATE_WORKSPACE_MUTATION, {
     update: createLabelMutationUpdate(
       DATASET_LABEL_CLASSES_QUERY,
       datasetSlug,
@@ -100,6 +101,7 @@ export const useCreateLabelClassMutation = (
         ? LABEL_CLASS_COLOR_PALETTE[0]
         : getNextClassColor(labelClasses.map((labelClass) => labelClass.color));
     await createLabelClass({
+      mutation: CREATE_LABEL_CLASS_MUTATION,
       variables: { id: newClassId, name: className, color, datasetId },
       optimisticResponse: {
         createLabelClass: {
