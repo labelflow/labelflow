@@ -111,6 +111,7 @@ const DatasetPage = () => {
           isOpen={deleteDatasetId != null}
           onClose={onClose}
           datasetId={deleteDatasetId}
+          workspaceSlug={workspaceSlug as string}
         />
 
         <Flex direction="row" wrap="wrap" p={4}>

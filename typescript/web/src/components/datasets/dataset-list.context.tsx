@@ -1,37 +1,10 @@
-import { gql, useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client";
 import type { Dataset as DatasetType } from "@labelflow/graphql-types";
 import { isEmpty, isNil } from "lodash/fp";
 import { createContext, PropsWithChildren, useContext } from "react";
 import { UrlUpdateType } from "use-query-params";
 import { usePagination } from "../pagination";
-
-export const getPaginatedDatasetsQuery = gql`
-  query getPaginatedDatasets(
-    $where: DatasetWhereInput
-    $first: Int!
-    $skip: Int!
-  ) {
-    datasets(where: $where, first: $first, skip: $skip) {
-      id
-      name
-      slug
-      images(first: 1) {
-        id
-        url
-        thumbnail500Url
-      }
-      imagesAggregates {
-        totalCount
-      }
-      labelsAggregates {
-        totalCount
-      }
-      labelClassesAggregates {
-        totalCount
-      }
-    }
-  }
-`;
+import { getPaginatedDatasetsQuery } from "./datasets.query";
 
 type UseQueryParamSetter = (
   value: string,
