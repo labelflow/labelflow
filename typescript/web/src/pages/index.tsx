@@ -45,25 +45,7 @@ const IndexPage = () => {
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const parsedCookie = new Cookies(context.req.headers.cookie);
 
-  if (parsedCookie.get("hasUserTriedApp") === "true") {
-    const workspaceSlug = parsedCookie.get("lastVisitedWorkspaceSlug");
-    if (!isEmpty(workspaceSlug)) return { props: {} };
-    return {
-      props: {},
-      redirect: {
-        // Keep query params after redirect
-        destination: `/${workspaceSlug}/datasets${
-          isEmpty(context.query)
-            ? ""
-            : `?${join(
-                "&",
-                map(([key, value]) => `${key}=${value}`, toPairs(context.query))
-              )}`
-        }`,
-        permanent: false,
-      },
-    };
-  }
+  if (parsedCookie.get("hasUserTriedApp") === "true") return { props: {} };
 
   return {
     props: {},

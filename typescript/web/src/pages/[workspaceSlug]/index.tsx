@@ -28,7 +28,7 @@ const LocalDatasetsIndexPage = () => {
     <>
       <WelcomeModal />
       <AuthManager />
-      <Meta title="LabelFlow | Local Workspace" />
+      <Meta title="LabelFlow" />
       <CookieBanner />
       <Layout
         breadcrumbs={[<NavLogo key={0} />, <WorkspaceSwitcher key={1} />]}
