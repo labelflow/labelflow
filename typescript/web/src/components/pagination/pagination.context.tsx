@@ -81,8 +81,8 @@ const usePaginationState = ({
     perPage: defaultPerPage,
   });
   const { perPage } = pagination;
-  const total = Math.ceil(itemCount / perPage);
-  const page = Math.min(pagination.page, total);
+  const total = Math.max(1, Math.ceil(itemCount / perPage));
+  const page = Math.min(Math.max(1, pagination.page), total);
   return {
     page,
     perPage,
