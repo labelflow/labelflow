@@ -1,6 +1,5 @@
 import { gql, useQuery } from "@apollo/client";
 import { Workspace } from "@labelflow/graphql-types";
-import { startCase } from "lodash/fp";
 import { useRouter } from "next/router";
 import { useCallback, useMemo, useState } from "react";
 import { StringParam, useQueryParams } from "use-query-params";
@@ -36,7 +35,6 @@ export const WorkspaceSwitcher = () => {
 
   const workspaces: (Workspace & { src?: string })[] = useMemo(
     () => [
-      { id: "local", slug: "local", name: "Local", src: null },
       ...(getWorkspacesData?.workspaces ??
         getWorkspacesPreviousData?.workspaces ??
         []),
@@ -48,14 +46,7 @@ export const WorkspaceSwitcher = () => {
     if (workspaceSlug == null) {
       return null;
     }
-    if (workspaces == null) {
-      return {
-        id: "local",
-        slug: workspaceSlug,
-        name: startCase(workspaceSlug),
-        src: null,
-      };
-    }
+
     return workspaces.find(({ slug }) => slug === workspaceSlug);
   }, [workspaceSlug, workspaces]);
 
