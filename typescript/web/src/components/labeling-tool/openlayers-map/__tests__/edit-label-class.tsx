@@ -7,7 +7,7 @@ import { client } from "../../../../connectors/apollo-client/schema-client";
 import { useLabelingStore, Tools } from "../../../../connectors/labeling-state";
 import { setupTestsWithLocalDatabase } from "../../../../utils/setup-local-db-tests";
 import { createTestDatasetMutation } from "../../../../utils/tests/mutations";
-import { createLabelClassMutation } from "../../../dataset-classes/upsert-class-modal/create-label-class.mutation";
+import { CREATE_LABEL_CLASS_MUTATION } from "../../../dataset-classes/upsert-class-modal/create-label-class.mutation";
 
 import { EditLabelClass } from "../edit-label-class";
 
@@ -92,7 +92,7 @@ beforeEach(async () => {
 
   // @ts-ignore
   await client.mutateOriginal({
-    mutation: createLabelClassMutation,
+    mutation: CREATE_LABEL_CLASS_MUTATION,
     variables: {
       id: "existing label class id",
       name: "existing label class",

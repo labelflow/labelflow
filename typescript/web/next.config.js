@@ -83,7 +83,7 @@ module.exports = withSentryConfig(
             apply: (compiler) => {
               compiler.hooks.afterEmit.tap("AfterEmitPlugin", (compilation) => {
                 exec(
-                  'yarn apollo codegen:generate --localSchemaFile=../../data/__generated__/schema.graphql --target=typescript --tagName=gql --includes="src/**/*.tsx"',
+                  'yarn generate',
                   (err, stdout, stderr) => {
                     if (stdout) process.stdout.write(stdout);
                     if (stderr) process.stderr.write(stderr);
