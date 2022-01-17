@@ -1,9 +1,14 @@
-import { ApolloProvider } from "@apollo/client";
+import {
+  ApolloMockedProvider,
+  ApolloMockedResponse,
+} from "../testing/mock-apollo";
 
-import { client } from "../../connectors/apollo-client/schema-client";
+export const getApolloDecorator =
+  (mockQueries?: ReadonlyArray<ApolloMockedResponse>) => (Story: any) =>
+    (
+      <ApolloMockedProvider mocks={mockQueries}>
+        <Story />
+      </ApolloMockedProvider>
+    );
 
-export const apolloDecorator = (Story: any) => (
-  <ApolloProvider client={client}>
-    <Story />
-  </ApolloProvider>
-);
+export const apolloDecorator = getApolloDecorator();

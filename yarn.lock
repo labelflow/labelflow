@@ -6890,6 +6890,7 @@ __metadata:
     styled-jsx: ^4.0.0
     swc-loader: 0.1.15
     terser-webpack-plugin: ^5.2.4
+    type-fest: ^2.9.0
     typescript: 4.3.5
     use-debounce: ^7.0.1
     use-query-params: ^1.2.2
@@ -33012,6 +33013,13 @@ resolve@^2.0.0-next.3:
   version: 0.8.1
   resolution: "type-fest@npm:0.8.1"
   checksum: d61c4b2eba24009033ae4500d7d818a94fd6d1b481a8111612ee141400d5f1db46f199c014766b9fa9b31a6a7374d96fc748c6d688a78a3ce5a33123839becb7
+  languageName: node
+  linkType: hard
+
+"type-fest@npm:^2.9.0":
+  version: 2.9.0
+  resolution: "type-fest@npm:2.9.0"
+  checksum: 497b9b367536fe69a9d4258fb5afda04755de34278d2d949fa04325e6cd586b31643dd94ab3085f22088f054f39f44f4bbabfcaf789a00f508b1aed8ec43cd73
   languageName: node
   linkType: hard
 
