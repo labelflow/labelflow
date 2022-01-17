@@ -82,13 +82,13 @@ module.exports = withSentryConfig(
           {
             apply: (compiler) => {
               compiler.hooks.afterEmit.tap("AfterEmitPlugin", (compilation) => {
-                exec(
-                  'yarn generate',
-                  (err, stdout, stderr) => {
-                    if (stdout) process.stdout.write(stdout);
-                    if (stderr) process.stderr.write(stderr);
+                exec("yarn generate", (err, stdout, stderr) => {
+                  if (stdout) process.stdout.write(stdout);
+                  if (stderr) process.stdout.write(stderr);
+                  if (err) {
+                    process.exit(1);
                   }
-                );
+                });
               });
             },
           },
