@@ -4,7 +4,6 @@ import { ApolloClient, InMemoryCache } from "@apollo/client";
 import { typeDefs } from "./__generated__/schema";
 import { resolvers } from "../resolvers";
 import { repository } from "../repository";
-import { APOLLO_CACHE_CONFIG } from "./cache-config";
 
 const schema = makeExecutableSchema({
   typeDefs,
@@ -13,5 +12,5 @@ const schema = makeExecutableSchema({
 
 export const client = new ApolloClient({
   link: new SchemaLink({ schema, context: { repository } }),
-  cache: new InMemoryCache(APOLLO_CACHE_CONFIG),
+  cache: new InMemoryCache(),
 });
