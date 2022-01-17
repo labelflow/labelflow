@@ -67,8 +67,8 @@ type UserProps = UserQueryResult["user"] & { displayName?: string };
 const UserAvatar = ({ image, displayName }: UserProps) => {
   const avatarBackground = useColorModeValue("white", "gray.700");
   const bg = isEmpty(image)
-    ? avatarBackground
-    : randomBackgroundGradient(displayName);
+    ? randomBackgroundGradient(displayName)
+    : avatarBackground;
   return (
     <Avatar
       size="sm"
