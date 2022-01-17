@@ -1,14 +1,12 @@
-import React from "react";
-import { Heading, Text, Center, Box, Button, HStack } from "@chakra-ui/react";
+import { Box, Button, Center, Heading, HStack, Text } from "@chakra-ui/react";
 import NextLink from "next/link";
-import { Meta } from "../components/meta";
-
-import { Layout } from "../components/layout";
-import { EmptyStateNoSearchResult } from "../components/empty-state";
-import { WelcomeModal } from "../components/welcome-manager";
-import { AuthManager } from "../components/auth-manager";
+import React from "react";
 import { CookieBanner } from "../components/cookie-banner";
+import { EmptyStateNoSearchResult } from "../components/empty-state";
+import { Layout } from "../components/layout";
 import { NavLogo } from "../components/logo/nav-logo";
+import { Meta } from "../components/meta";
+import { WelcomeModal } from "../components/welcome-manager";
 
 export const Error404Content = () => (
   <Layout breadcrumbs={[<NavLogo key={0} />]}>
@@ -60,7 +58,6 @@ const Error404Page = () => {
   return (
     <>
       <WelcomeModal />
-      <AuthManager />
       <Meta title="LabelFlow | Not found" />
       <CookieBanner />
       <Error404Content />

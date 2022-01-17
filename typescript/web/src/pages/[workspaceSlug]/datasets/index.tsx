@@ -18,7 +18,7 @@ import {
 } from "../../../components/datasets";
 import { UpsertDatasetModal } from "../../../components/datasets/upsert-dataset-modal";
 import { DeleteDatasetModal } from "../../../components/datasets/delete-dataset-modal";
-import { AuthManager } from "../../../components/auth-manager";
+import { Authenticated } from "../../../components/auth";
 import { WelcomeModal } from "../../../components/welcome-manager";
 import { CookieBanner } from "../../../components/cookie-banner";
 import { WorkspaceTabBar } from "../../../components/layout/tab-bar/workspace-tab-bar";
@@ -112,9 +112,8 @@ const DatasetPage = () => {
   }, [editDatasetId, isCreatingDataset, deleteDatasetId]);
 
   return (
-    <>
+    <Authenticated>
       <WelcomeModal />
-      <AuthManager />
       <Meta title="LabelFlow | Datasets" />
       <CookieBanner />
       <Layout
@@ -182,7 +181,7 @@ const DatasetPage = () => {
           )}
         </Flex>
       </Layout>
-    </>
+    </Authenticated>
   );
 };
 

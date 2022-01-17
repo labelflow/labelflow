@@ -1,24 +1,19 @@
 import {
   Box,
   Heading,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalOverlay,
   SimpleGrid,
   Text,
   useColorModeValue as mode,
   useColorModeValue,
 } from "@chakra-ui/react";
 import React from "react";
-import { Logo } from "../../logo";
+import { Logo } from "../logo";
 import { DividerWithText } from "./divider-with-text";
-import { EmailSignIn } from "./email-signin";
+import { EmailSignIn } from "./email-sign-in";
 import { Features } from "./features";
-import { OAuthSignIn } from "./oauth-signin";
-import { SignInError } from "./signin-error";
-import { useSignInModal } from "./signin-modal.context";
+import { OAuthSignIn } from "./oauth-sign-in";
+import { SignInError } from "./sign-in-error";
+import { useSignIn } from "./sign-in.context";
 
 const BigLogo = () => (
   <Logo
@@ -58,7 +53,7 @@ const Disclaimer = () => (
 );
 
 const Status = () => {
-  const { error } = useSignInModal();
+  const { error } = useSignIn();
   return error ? <SignInError /> : <Disclaimer />;
 };
 
@@ -73,34 +68,9 @@ const RightBody = () => (
   </Box>
 );
 
-const SignInBody = () => (
-  <ModalBody display="flex" p={{ base: "6", lg: "10" }} flexDirection="column">
-    <SimpleGrid columns={{ base: 1, lg: 2 }} spacing="14">
-      <Features />
-      <RightBody />
-    </SimpleGrid>
-  </ModalBody>
+export const SignIn = () => (
+  <SimpleGrid columns={{ base: 1, lg: 2 }} spacing="14">
+    <Features />
+    <RightBody />
+  </SimpleGrid>
 );
-
-const SignInContent = () => (
-  <ModalContent height="auto">
-    <SignInBody />
-    <ModalCloseButton />
-  </ModalContent>
-);
-
-export const SignInModal = () => {
-  const { isOpen, close } = useSignInModal();
-  return (
-    <Modal
-      scrollBehavior="inside"
-      isOpen={isOpen}
-      size="3xl"
-      onClose={close}
-      isCentered
-    >
-      <ModalOverlay />
-      <SignInContent />
-    </Modal>
-  );
-};

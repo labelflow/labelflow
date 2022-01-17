@@ -2,10 +2,10 @@ import { Box, Button, FormControl, Input, Stack, Text } from "@chakra-ui/react";
 import { isEmpty } from "lodash/fp";
 import React, { ChangeEvent, useCallback } from "react";
 import { RiMailSendLine } from "react-icons/ri";
-import { useSignInModal } from "./signin-modal.context";
+import { useSignIn } from "./sign-in.context";
 
 const LinkSent = () => {
-  const { linkSent } = useSignInModal();
+  const { linkSent } = useSignIn();
   return (
     <>
       <Text fontWeight="bold">Awaiting Confirmation</Text>
@@ -15,7 +15,7 @@ const LinkSent = () => {
 };
 
 const EmailInput = () => {
-  const { email, setEmail, validEmail } = useSignInModal();
+  const { email, setEmail, validEmail } = useSignIn();
   const handleChange = useCallback(
     (event: ChangeEvent<HTMLInputElement>) =>
       setEmail(event.currentTarget.value),
@@ -35,7 +35,7 @@ const EmailInput = () => {
 };
 
 const EmailSubmitButton = () => {
-  const { sendingLink, validEmail } = useSignInModal();
+  const { sendingLink, validEmail } = useSignIn();
   return (
     <Button
       type="submit"
@@ -51,7 +51,7 @@ const EmailSubmitButton = () => {
 };
 
 const EmailFormControls = () => {
-  const { validEmail, email } = useSignInModal();
+  const { validEmail, email } = useSignIn();
   return (
     <>
       <FormControl
@@ -67,7 +67,7 @@ const EmailFormControls = () => {
 };
 
 const EmailFormBody = () => {
-  const { linkSent } = useSignInModal();
+  const { linkSent } = useSignIn();
   return (
     <Stack spacing="4" h="24">
       {linkSent ? <LinkSent /> : <EmailFormControls />}
@@ -76,7 +76,7 @@ const EmailFormBody = () => {
 };
 
 export const EmailSignIn = () => {
-  const { signIn, setSendingLink } = useSignInModal();
+  const { signIn, setSendingLink } = useSignIn();
   return (
     <form
       onSubmit={(event) => {

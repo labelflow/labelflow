@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  ButtonProps,
   chakra,
   Flex,
   FlexProps,
@@ -43,6 +44,20 @@ const GitHubButton = ({ isMobile }: { isMobile?: boolean }) => {
   );
 };
 
+const SignInButton = ({ children = "Sign in", ...props }: ButtonProps) => (
+  <NextLink href="/auth/signin">
+    <Button as="a" href="#" colorScheme="brand" variant="outline" {...props}>
+      {children}
+    </Button>
+  </NextLink>
+);
+
+const TryItNowButton = (props: ButtonProps) => (
+  <SignInButton variant="solid" fontWeight="bold" {...props}>
+    Try it now
+  </SignInButton>
+);
+
 const MobileNavContext = (props: FlexProps) => {
   const { isOpen, onToggle } = useDisclosure();
   return (
@@ -58,11 +73,7 @@ const MobileNavContext = (props: FlexProps) => {
         </NextLink>
         <Spacer />
         <Box display={{ base: "none", sm: "block" }}>
-          <NextLink href="/test/datasets">
-            <Button colorScheme="brand" variant="outline" ml="3">
-              Try it now
-            </Button>
-          </NextLink>
+          <TryItNowButton ml="3" />
         </Box>
       </Flex>
       <NavMenu animate={isOpen ? "open" : "closed"}>
@@ -80,11 +91,10 @@ const MobileNavContext = (props: FlexProps) => {
             </NavLink.Mobile>
           )
         )}
-        <NextLink href="/test/datasets">
-          <Button colorScheme="brand" w="full" size="lg" mt="5">
-            Try it now
-          </Button>
-        </NextLink>
+        <HStack mt="5">
+          <SignInButton w="full" size="lg" />
+          <TryItNowButton w="full" size="lg" />
+        </HStack>
         <GitHubButton isMobile />
       </NavMenu>
     </>
@@ -127,23 +137,10 @@ const DesktopNavContent = (props: FlexProps) => {
           </Box>
         ))}
       </HStack>
-      <HStack
-        spacing="4"
-        //  minW="240px"
-        justify="space-between"
-      >
+      <HStack spacing="4">
         <GitHubButton />
-        <NextLink href="/test/datasets">
-          <Button
-            as="a"
-            href="#"
-            colorScheme="brand"
-            fontWeight="bold"
-            variant="outline"
-          >
-            Try it now
-          </Button>
-        </NextLink>
+        <SignInButton />
+        <TryItNowButton />
       </HStack>
     </Flex>
   );

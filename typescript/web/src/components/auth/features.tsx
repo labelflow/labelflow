@@ -11,7 +11,7 @@ import {
 } from "@chakra-ui/react";
 import { FaCheck } from "react-icons/fa";
 
-import { Logo } from "../../logo";
+import { Logo } from "../logo";
 
 const ChakraCheck = chakra(FaCheck);
 

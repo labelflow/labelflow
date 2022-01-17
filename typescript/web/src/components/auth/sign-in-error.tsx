@@ -1,7 +1,7 @@
 import { Text, useColorModeValue } from "@chakra-ui/react";
 import { isNil } from "lodash/fp";
 import React from "react";
-import { useSignInModal } from "./signin-modal.context";
+import { useSignIn } from "./sign-in.context";
 
 const AUTHENTICATION_ERRORS = {
   Signin: "Try signing in with a different account.",
@@ -19,7 +19,7 @@ const AUTHENTICATION_ERRORS = {
 };
 
 export const SignInError = () => {
-  const { error } = useSignInModal();
+  const { error } = useSignIn();
   return (
     <Text
       mb="8"

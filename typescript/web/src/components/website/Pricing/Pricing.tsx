@@ -51,7 +51,7 @@ export const Pricing = () => (
         }}
         icon={BsPeopleFill}
         button={
-          <NextLink href="/test/datasets">
+          <NextLink href="/auth/signin">
             <ActionButton>Try it now</ActionButton>
           </NextLink>
         }

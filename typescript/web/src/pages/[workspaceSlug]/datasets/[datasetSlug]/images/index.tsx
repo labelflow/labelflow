@@ -14,7 +14,7 @@ import { Meta } from "../../../../../components/meta";
 import { Layout } from "../../../../../components/layout";
 import { DatasetTabBar } from "../../../../../components/layout/tab-bar/dataset-tab-bar";
 import { Error404Content } from "../../../../404";
-import { AuthManager } from "../../../../../components/auth-manager";
+import { Authenticated } from "../../../../../components/auth";
 
 import { WelcomeModal } from "../../../../../components/welcome-manager";
 import { CookieBanner } from "../../../../../components/cookie-banner";
@@ -63,19 +63,17 @@ const ImagesPage = () => {
       handleError(datasetQueryError);
     }
     return (
-      <>
+      <Authenticated>
         <WelcomeModal />
-        <AuthManager />
         <Meta title="LabelFlow | Dataset not found" />
         <CookieBanner />
         <Error404Content />
-      </>
+      </Authenticated>
     );
   }
   return (
-    <>
+    <Authenticated>
       <WelcomeModal />
-      <AuthManager />
       <Meta title="LabelFlow | Images" />
       <CookieBanner />
       <Layout
@@ -114,7 +112,7 @@ const ImagesPage = () => {
           imagesTotalCount={imagesTotalCount ?? 0}
         />
       </Layout>
-    </>
+    </Authenticated>
   );
 };
 
