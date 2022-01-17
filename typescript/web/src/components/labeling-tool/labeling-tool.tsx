@@ -12,7 +12,7 @@ import { DrawingToolbar } from "./drawing-tool-bar";
 import { ViewToolbar } from "./view-tool-bar";
 import { OptionsToolBar } from "./options-tool-bar";
 import { ImageLoadError } from "./image-load-error";
-import { ImageNavigationToolbar } from "./image-navigation-tool-bar";
+import { ImageNavigationTool } from "./image-navigation";
 import { useUndoStore } from "../../connectors/undo-store";
 import { useLabelingStore } from "../../connectors/labeling-state";
 import { BoolParam } from "../../utils/query-param-bool";
@@ -80,7 +80,7 @@ export const LabelingTool = () => {
         left={0}
         pointerEvents="none"
       >
-        <ImageNavigationToolbar />
+        <ImageNavigationTool />
       </HStack>
     </Box>
   );

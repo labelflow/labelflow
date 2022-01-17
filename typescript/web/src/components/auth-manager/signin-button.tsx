@@ -1,12 +1,10 @@
-import React, { useCallback } from "react";
 import { Button, ButtonProps, useBreakpointValue } from "@chakra-ui/react";
+import React, { useCallback } from "react";
 import { useQueryParam } from "use-query-params";
 import { trackEvent } from "../../utils/google-analytics";
 import { BoolParam } from "../../utils/query-param-bool";
 
-type Props = ButtonProps;
-
-export const SigninButton = ({ ...props }: Props) => {
+export const SigninButton = ({ ...props }: ButtonProps) => {
   const [, setIsOpen] = useQueryParam("modal-signin", BoolParam);
 
   const handleOpen = useCallback(() => {

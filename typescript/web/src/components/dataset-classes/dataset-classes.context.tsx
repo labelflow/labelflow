@@ -1,4 +1,4 @@
-import { reorderArray } from "@labelflow/common-resolvers";
+import { reorderArray } from "@labelflow/utils";
 import {
   createContext,
   PropsWithChildren,

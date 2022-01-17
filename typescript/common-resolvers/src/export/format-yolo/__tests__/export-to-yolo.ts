@@ -53,7 +53,7 @@ describe("Yolo converters", () => {
   const createImage = (
     name: string,
     height: number = 10,
-    width: number = 10
+    width: number = 20
   ): DbImageCreateInput => ({
     id: `id-${name}`,
     name,
@@ -124,8 +124,8 @@ my-dataset-name/obj_train_data/toto_id-toto.png`
           includePolygons: false,
         }
       )
-    ).toEqual(`2 0.1 0.2 0.3 0.4
-5 0.1 0.2 0.3 0.4`);
+    ).toEqual(`2 0.05 0.2 0.15 0.4
+5 0.05 0.2 0.15 0.4`);
   });
 
   test("Should generate the file string content of one image labels information and include polygons", () => {
@@ -145,8 +145,8 @@ my-dataset-name/obj_train_data/toto_id-toto.png`
           includePolygons: true,
         }
       )
-    ).toEqual(`2 0.1 0.2 0.3 0.4
-5 0.1 0.2 0.3 0.4
-2 0.1 0.2 0.3 0.4`);
+    ).toEqual(`2 0.05 0.2 0.15 0.4
+5 0.05 0.2 0.15 0.4
+2 0.05 0.2 0.15 0.4`);
   });
 });

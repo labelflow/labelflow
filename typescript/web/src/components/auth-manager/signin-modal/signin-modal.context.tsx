@@ -15,6 +15,7 @@ import {
   useState,
 } from "react";
 import { StringParam, UrlUpdateType, useQueryParam } from "use-query-params";
+import { trackEvent } from "../../../utils/google-analytics";
 import { BoolParam } from "../../../utils/query-param-bool";
 import { validateEmail } from "../../../utils/validate-email";
 
@@ -72,12 +73,14 @@ const useSignInQuery = (): [SignInCallback, SignInResponse | undefined] => {
   const [response, setResponse] = useState<SignInResponse | undefined>();
   const handleSignIn = useCallback<SignInCallback>(
     async (method, options = {}) => {
+      trackEvent(`signin_${method}`, {});
       const callbackUrl = sanitizeUrl(window.location.toString());
-      const signInResponse = await signIn<SignInMethod>(method, {
+      const signInOptions: SignInOptions = {
         redirect: false,
         callbackUrl,
         ...options,
-      });
+      };
+      const signInResponse = await signIn<SignInMethod>(method, signInOptions);
       setResponse(signInResponse);
     },
     []
@@ -147,6 +150,7 @@ const useSendingLink = (
   response: SignInResponse | undefined
 ): [
   Pick<SignInState, "sendingLink" | "setSendingLink" | "linkSent">,
+  () => Promise<void>,
   () => Promise<void>
 ] => {
   const { close } = useSignInModal();
@@ -167,6 +171,7 @@ const useSendingLink = (
     [response]
   );
   const clearSendingLink = useClearQueryParam(setSendingLink);
+  const clearLinkSent = useClearQueryParam(setLinkSent);
   return [
     {
       sendingLink,
@@ -174,16 +179,20 @@ const useSendingLink = (
       linkSent: linkSent || undefined,
     },
     clearSendingLink,
+    clearLinkSent,
   ];
 };
 
 const useSignIn = (): [SignInState, () => Promise<void>] => {
   const [signInState, response, clearError] = useSignInWithError();
-  const [sendingLinkState, clearSendingLink] = useSendingLink(response);
+  const [sendingLinkState, clearSendingLink, clearLinkSent] =
+    useSendingLink(response);
+
   const clearQueryParams = useCallback(async () => {
     await clearError();
     await clearSendingLink();
-  }, [clearError, clearSendingLink]);
+    await clearLinkSent();
+  }, [clearError, clearSendingLink, clearLinkSent]);
   return [{ ...signInState, ...sendingLinkState }, clearQueryParams];
 };
 

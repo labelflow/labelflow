@@ -7,6 +7,8 @@ assignees: ''
 
 ---
 
+<!-- For better visibility to the team: submit or upvote your feature requests on our Canny board: https://labelflow.canny.io/feature-requests  -->
+
 ## Is your feature request related to a problem? Please describe
 
 <!-- A clear and concise description of what the problem is. Ex. I'm always frustrated when [...] -->

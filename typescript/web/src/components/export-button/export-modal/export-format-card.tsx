@@ -8,27 +8,40 @@ import {
   useTheme,
 } from "@chakra-ui/react";
 import { Spinner } from "../../spinner";
+import { useExportModal } from "./export-modal.context";
+import { Format, formatMainInformation } from "./formats";
 
 type Props = {
   disabled?: boolean;
-  loading?: boolean;
-  onClick?: () => void;
+  formatKey: string;
   colorScheme: string;
-  logoSrc: string;
-  title: string;
-  subtext: string;
 };
 
 export const ExportFormatCard = ({
   colorScheme,
-  logoSrc,
-  title,
-  subtext,
-  loading,
+  formatKey,
   disabled,
-  onClick,
 }: Props) => {
   const theme = useTheme();
+  const {
+    isExportRunning,
+    exportFormat,
+    setExportFormat,
+    setIsOptionsModalOpen,
+  } = useExportModal();
+  const loading = isExportRunning && formatKey === exportFormat.toLowerCase();
+  const {
+    format,
+    description: subtext,
+    logoSrc,
+    title,
+  } = formatMainInformation[formatKey as Format];
+
+  const onClick = () => {
+    setExportFormat(format);
+    setIsOptionsModalOpen(true);
+  };
+
   return (
     <Box
       alignItems="flex-start"

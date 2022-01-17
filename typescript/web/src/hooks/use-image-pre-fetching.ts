@@ -1,5 +1,5 @@
 import { gql, useQuery } from "@apollo/client";
-import { useEffect } from "react";
+import { useEffect, useReducer } from "react";
 import { useImagesNavigation } from "./use-images-navigation";
 
 const imageQuery = gql`
@@ -39,8 +39,25 @@ const getImageLabelsQuery = gql`
   }
 `;
 
-export const useImagePrefecthing = () => {
+type CanFetchState = {
+  canFetchNext?: boolean;
+  canFetchPrevious?: boolean;
+};
+
+const useCanFetch = (initState: Required<CanFetchState>) =>
+  useReducer<
+    (
+      oldState: Required<CanFetchState>,
+      newState: CanFetchState
+    ) => Required<CanFetchState>
+  >((oldState, newState) => ({ ...oldState, ...newState }), initState);
+
+export const useImagePreFetching = () => {
   const { nextImageId, previousImageId } = useImagesNavigation();
+  const [{ canFetchNext, canFetchPrevious }, setCanFetch] = useCanFetch({
+    canFetchNext: false,
+    canFetchPrevious: false,
+  });
   // Fetch previous and next image details
   const { data: previousImageData } = useQuery(imageQuery, {
     variables: { id: previousImageId },
@@ -63,13 +80,21 @@ export const useImagePrefecthing = () => {
   const previousImageUrl = previousImageData?.image?.url;
   const nextImageUrl = nextImageData?.image?.url;
   useEffect(() => {
-    if (previousImageUrl != null) {
+    if (previousImageUrl != null && canFetchPrevious) {
       fetch(previousImageUrl);
     }
-  }, [previousImageUrl]);
+    setCanFetch({ canFetchPrevious: false });
+  }, [previousImageUrl, canFetchPrevious, setCanFetch]);
   useEffect(() => {
-    if (nextImageUrl != null) {
+    if (nextImageUrl != null && canFetchNext) {
       fetch(nextImageUrl);
     }
-  }, [nextImageUrl]);
+    setCanFetch({ canFetchNext: false });
+  }, [nextImageUrl, canFetchNext, setCanFetch]);
+  return () => {
+    setCanFetch({
+      canFetchNext: true,
+      canFetchPrevious: true,
+    });
+  };
 };

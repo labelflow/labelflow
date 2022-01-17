@@ -1,21 +1,24 @@
+import { useApolloClient } from "@apollo/client";
 import {
+  Box,
+  Button,
   Heading,
+  HStack,
   Modal,
   ModalBody,
   ModalCloseButton,
   ModalContent,
   ModalHeader,
   ModalOverlay,
-  Button,
-  Box,
-  HStack,
-  Text,
   Switch,
+  Text,
 } from "@chakra-ui/react";
-import { useState } from "react";
-import { ExportFormat, ExportOptions } from "@labelflow/graphql-types";
-import { defaultOptions, formatsOptionsInformation, Format } from "./formats";
+import { ExportOptions } from "@labelflow/graphql-types";
+import { useCallback, useState } from "react";
 import { trackEvent } from "../../../utils/google-analytics";
+import { useExportModal } from "./export-modal.context";
+import { defaultOptions, Format, formatsOptionsInformation } from "./formats";
+import { exportDataset } from "./export-dataset";
 
 const OptionLine = ({
   header,
@@ -44,30 +47,65 @@ const OptionLine = ({
   </Box>
 );
 
-export const ExportOptionsModal = ({
-  isOpen = false,
-  exportFormat,
-  exportFunction = () => {},
-  onClose = () => {},
-}: {
-  isOpen?: boolean;
-  exportFormat: ExportFormat;
-  exportFunction?: (options: ExportOptions) => void;
-  onClose?: () => void;
-}) => {
+export const ExportOptionsModal = () => {
+  const {
+    exportFormat,
+    datasetId,
+    datasetSlug,
+    setIsExportRunning,
+    isOptionsModalOpen,
+    setIsOptionsModalOpen,
+  } = useExportModal();
+  const client = useApolloClient();
   const [exportOptions, setExportOptions] =
     useState<ExportOptions>(defaultOptions);
   const exportFormatLowerCase = exportFormat.toLowerCase() as Format;
   const formatOptionsInformation =
     formatsOptionsInformation[exportFormatLowerCase];
   const optionsOfFormat = exportOptions[exportFormatLowerCase];
+  const exportFunction = useCallback(
+    async (options: ExportOptions) =>
+      await exportDataset({
+        datasetId,
+        datasetSlug,
+        setIsExportRunning,
+        client,
+        format: exportFormat,
+        options,
+      }),
+    [client, datasetId, datasetSlug, exportFormat, setIsExportRunning]
+  );
+
+  const handleChange = useCallback(
+    (optionName) => {
+      setExportOptions((previousOptions) => ({
+        ...previousOptions,
+        [exportFormatLowerCase]: {
+          ...previousOptions[exportFormatLowerCase],
+          [optionName]:
+          // @ts-ignore
+            !previousOptions[exportFormatLowerCase][
+              // @ts-ignore
+              optionName as keyof typeof previousOptions[exportFormatLowerCase]
+            ],
+        },
+      }));
+    },
+    [exportFormatLowerCase]
+  );
+
+  const handleClick = useCallback(() => {
+    exportFunction(exportOptions);
+    trackEvent(`export_button_click_${exportFormat.toLocaleLowerCase()}`, {});
+    setIsOptionsModalOpen(false);
+  }, [exportFormat, exportFunction, exportOptions, setIsOptionsModalOpen]);
 
   return (
     <Modal
       scrollBehavior="inside"
-      isOpen={isOpen}
+      isOpen={isOptionsModalOpen}
       size="xl"
-      onClose={onClose}
+      onClose={() => setIsOptionsModalOpen(false)}
       isCentered
     >
       <ModalOverlay />
@@ -99,20 +137,7 @@ export const ExportOptionsModal = ({
                     optionName as keyof typeof optionsOfFormat
                   ] as boolean
                 }
-                onChange={() => {
-                  setExportOptions((previousOptions) => ({
-                    ...previousOptions,
-                    [exportFormatLowerCase]: {
-                      ...previousOptions[exportFormatLowerCase],
-                      [optionName]:
-                      // @ts-ignore
-                        !previousOptions[exportFormatLowerCase][
-                          // @ts-ignore
-                          optionName as keyof typeof previousOptions[exportFormatLowerCase]
-                        ],
-                    },
-                  }));
-                }}
+                onChange={() => handleChange(optionName)}
               />
             );
           })}
@@ -121,14 +146,7 @@ export const ExportOptionsModal = ({
             size="md"
             alignSelf="flex-end"
             flexShrink={0}
-            onClick={() => {
-              exportFunction(exportOptions);
-              trackEvent(
-                `export_button_click_${exportFormat.toLocaleLowerCase()}`,
-                {}
-              );
-              onClose();
-            }}
+            onClick={handleClick}
           >
             Export
           </Button>

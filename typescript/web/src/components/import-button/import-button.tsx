@@ -1,83 +1,79 @@
-import React, { useCallback } from "react";
-import { useRouter } from "next/router";
-
 import {
   Button,
-  IconButton,
   ButtonProps,
   chakra,
+  IconButton,
+  IconButtonProps,
   Tooltip,
   useBreakpointValue,
 } from "@chakra-ui/react";
-import { useQueryParam } from "use-query-params";
-
+import { useRouter } from "next/router";
+import React, { useCallback } from "react";
 import { RiUploadCloud2Line } from "react-icons/ri";
+import { useQueryParam } from "use-query-params";
+import { trackEvent } from "../../utils/google-analytics";
 import { BoolParam } from "../../utils/query-param-bool";
 import { ImportImagesModal } from "./import-images-modal";
-import { trackEvent } from "../../utils/google-analytics";
 
 const UploadIcon = chakra(RiUploadCloud2Line);
 
-type Props = ButtonProps & {
+type OpenModalButtonProps = (ButtonProps | IconButtonProps) & {
+  breakpoint: "md" | "lg" | "base";
+};
+
+const OpenModalButton = ({
+  breakpoint,
+  disabled,
+  ...props
+}: OpenModalButtonProps) => {
+  const uploadIcon = <UploadIcon fontSize="xl" />;
+  const isIconButton = breakpoint === "md";
+  const buttonProps = {
+    "aria-label": "Add images",
+    variant: "ghost",
+    display: breakpoint === "base" ? "none" : undefined,
+    flexShrink: isIconButton ? undefined : 0,
+    ...props,
+  };
+  return isIconButton ? (
+    <Tooltip label="Add images" openDelay={300}>
+      <IconButton icon={uploadIcon} {...buttonProps} />
+    </Tooltip>
+  ) : (
+    <Button leftIcon={uploadIcon} {...buttonProps}>
+      Add images
+    </Button>
+  );
+};
+
+const ResponsiveOpenModalButton = (props: ButtonProps) => {
+  const hiddenButton = <OpenModalButton breakpoint="base" {...props} />;
+  return (
+    useBreakpointValue({
+      base: hiddenButton,
+      md: <OpenModalButton breakpoint="md" {...props} />,
+      lg: <OpenModalButton breakpoint="lg" {...props} />,
+    }) ?? hiddenButton
+    // We need to give here a default value like this for tests to pass,
+    // otherwise the button is undefined and it's not findable in the tests
+  );
+};
+
+export type ImportButtonProps = ButtonProps & {
   showModal?: boolean;
 };
 
-export const ImportButton = ({ showModal = true, ...props }: Props) => {
+export const ImportButton = ({
+  showModal = true,
+  disabled,
+  ...props
+}: ImportButtonProps) => {
   const { isReady } = useRouter();
   const [isOpen, setIsOpen] = useQueryParam("modal-import", BoolParam);
   const handleOpen = useCallback(() => {
     setIsOpen(true, "replaceIn");
     trackEvent("import_button_click", {});
   }, [setIsOpen]);
-
-  const largeButton = (
-    <Button
-      aria-label="Add images"
-      leftIcon={<UploadIcon fontSize="xl" />}
-      onClick={handleOpen}
-      variant="ghost"
-      flexShrink={0}
-      {...props}
-      disabled={!isReady || props.disabled === true}
-    >
-      Add images
-    </Button>
-  );
-  const hiddenButton = (
-    <Button
-      aria-label="Add images"
-      leftIcon={<UploadIcon fontSize="xl" />}
-      onClick={handleOpen}
-      variant="ghost"
-      flexShrink={0}
-      display="none"
-      {...props}
-      disabled={!isReady || props.disabled === true}
-    >
-      Add images
-    </Button>
-  );
-
-  const smallButton = (
-    <Tooltip label="Add images" openDelay={300}>
-      <IconButton
-        aria-label="Add images"
-        icon={<UploadIcon fontSize="xl" />}
-        onClick={handleOpen}
-        variant="ghost"
-        {...props}
-        disabled={!isReady || props.disabled === true}
-      />
-    </Tooltip>
-  );
-
-  const button =
-    useBreakpointValue({
-      base: hiddenButton,
-      md: smallButton,
-      lg: largeButton,
-    }) ?? hiddenButton; // We need to give here a default value like this for tests to pass, otherwise the button is undefined and it's not findable in the tests
-
   return (
     <>
       {showModal && (
@@ -86,7 +82,11 @@ export const ImportButton = ({ showModal = true, ...props }: Props) => {
           onClose={() => setIsOpen(false, "replaceIn")}
         />
       )}
-      {button}
+      <ResponsiveOpenModalButton
+        onClick={handleOpen}
+        disabled={!isReady || disabled}
+        {...props}
+      />
     </>
   );
 };
