@@ -4,7 +4,7 @@ import type { Dataset as DatasetType } from "@labelflow/graphql-types";
 import { isEmpty } from "lodash/fp";
 import NextLink from "next/link";
 import { useErrorHandler } from "react-error-boundary";
-import { AuthManager } from "../../../../../components/auth-manager";
+import { Authenticated } from "../../../../../components/auth";
 import { CookieBanner } from "../../../../../components/cookie-banner";
 import { ImagesList } from "../../../../../components/dataset-images-list";
 import { ExportButton } from "../../../../../components/export-button";
@@ -49,19 +49,17 @@ const ImagesPage = () => {
       handleError(datasetQueryError);
     }
     return (
-      <>
+      <Authenticated>
         <WelcomeModal />
-        <AuthManager />
         <Meta title="LabelFlow | Dataset not found" />
         <CookieBanner />
         <Error404Content />
-      </>
+      </Authenticated>
     );
   }
   return (
-    <>
+    <Authenticated>
       <WelcomeModal />
-      <AuthManager />
       <Meta title="LabelFlow | Images" />
       <CookieBanner />
       <Layout
@@ -102,7 +100,7 @@ const ImagesPage = () => {
           />
         )}
       </Layout>
-    </>
+    </Authenticated>
   );
 };
 

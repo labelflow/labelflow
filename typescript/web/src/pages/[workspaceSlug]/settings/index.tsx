@@ -3,7 +3,7 @@ import { Box, Text } from "@chakra-ui/react";
 import { isEmpty } from "lodash/fp";
 import { GetServerSideProps } from "next";
 import React from "react";
-import { AuthManager } from "../../../components/auth-manager";
+import { Authenticated } from "../../../components/auth";
 import { CookieBanner } from "../../../components/cookie-banner";
 import { Layout } from "../../../components/layout";
 import { WorkspaceTabBar } from "../../../components/layout/tab-bar/workspace-tab-bar";
@@ -51,9 +51,8 @@ const WorkspaceSettingsPage = () => {
     getWorkspaceDetailsPreviousData?.workspace;
 
   return (
-    <>
+    <Authenticated>
       <WelcomeModal />
-      <AuthManager />
       <Meta title="LabelFlow | Workspace Settings" />
       <CookieBanner />
       <Layout
@@ -77,7 +76,7 @@ const WorkspaceSettingsPage = () => {
           <LayoutSpinner />
         )}
       </Layout>
-    </>
+    </Authenticated>
   );
 };
 

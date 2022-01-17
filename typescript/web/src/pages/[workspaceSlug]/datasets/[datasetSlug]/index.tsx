@@ -4,7 +4,7 @@ import NextLink from "next/link";
 import { useRouter } from "next/router";
 import React, { useEffect } from "react";
 import { useErrorHandler } from "react-error-boundary";
-import { AuthManager } from "../../../../components/auth-manager";
+import { Authenticated } from "../../../../components/auth";
 import { CookieBanner } from "../../../../components/cookie-banner";
 import { GET_DATASET_BY_SLUG_QUERY } from "../../../../components/datasets/datasets.query";
 import { ExportButton } from "../../../../components/export-button";
@@ -48,20 +48,18 @@ const DatasetIndexPage = () => {
       handleError(error);
     }
     return (
-      <>
+      <Authenticated>
         <WelcomeModal />
-        <AuthManager />
         <Meta title="LabelFlow | Dataset not found" />
         <CookieBanner />
         <Error404Content />
-      </>
+      </Authenticated>
     );
   }
 
   return (
-    <>
+    <Authenticated>
       <WelcomeModal />
-      <AuthManager />
       <Meta title={`LabelFlow | ${datasetName ?? "Dataset"}`} />
       <CookieBanner />
       <Layout
@@ -85,7 +83,7 @@ const DatasetIndexPage = () => {
       >
         <LayoutSpinner />
       </Layout>
-    </>
+    </Authenticated>
   );
 };
 

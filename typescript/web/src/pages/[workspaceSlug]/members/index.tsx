@@ -1,7 +1,7 @@
 import { gql, useMutation, useQuery } from "@apollo/client";
 import { Text } from "@chakra-ui/react";
 import { isEmpty } from "lodash/fp";
-import { AuthManager } from "../../../components/auth-manager";
+import { Authenticated } from "../../../components/auth";
 import { CookieBanner } from "../../../components/cookie-banner";
 import { Layout } from "../../../components/layout";
 import { WorkspaceTabBar } from "../../../components/layout/tab-bar/workspace-tab-bar";
@@ -85,9 +85,8 @@ const WorkspaceMembersPage = () => {
   });
 
   return (
-    <>
+    <Authenticated>
       <WelcomeModal />
-      <AuthManager />
       <Meta title="LabelFlow | Members" />
       <CookieBanner />
       <Layout
@@ -120,7 +119,7 @@ const WorkspaceMembersPage = () => {
           <LayoutSpinner />
         )}
       </Layout>
-    </>
+    </Authenticated>
   );
 };
 

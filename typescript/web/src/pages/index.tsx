@@ -1,67 +1,56 @@
-import { isEmpty, join, map, toPairs } from "lodash/fp";
+import { isEmpty } from "lodash/fp";
 import { GetServerSideProps } from "next";
-import { useRouter } from "next/router";
-import React, { useEffect } from "react";
-import { Cookies, useCookies } from "react-cookie";
-import { AuthManager } from "../components/auth-manager";
+import { useSession } from "next-auth/react";
+import { ParsedUrlQuery } from "querystring";
+import React from "react";
+import { Authenticated } from "../components/auth";
 import { CookieBanner } from "../components/cookie-banner";
 import { Home } from "../components/home";
 import { Layout } from "../components/layout";
 import { NavLogo } from "../components/logo/nav-logo";
 import { Meta } from "../components/meta";
 import { WelcomeModal } from "../components/welcome-manager";
+import { APP_TITLE } from "../constants";
 import Website from "./website";
 
+const App = () => (
+  <Authenticated>
+    <WelcomeModal />
+    <Meta title={APP_TITLE} />
+    <CookieBanner />
+    <Layout breadcrumbs={[<NavLogo key={0} />]}>
+      <Home />
+    </Layout>
+  </Authenticated>
+);
+
 const IndexPage = () => {
-  const router = useRouter();
-
-  const [cookies] = useCookies(["hasUserTriedApp"]);
-  const hasUserTriedApp = cookies.hasUserTriedApp === "true";
-
-  useEffect(() => {
-    if (!hasUserTriedApp) {
-      router.replace({ pathname: "/website", query: router.query });
-    }
-  }, [hasUserTriedApp, router]);
-
-  if (!hasUserTriedApp) {
-    return <Website previewArticles={[]} />;
-  }
-
+  const { status } = useSession();
   return (
     <>
-      <WelcomeModal />
-      <AuthManager />
-      <Meta title="LabelFlow: The open standard platform for image labeling." />
-      <Meta title="LabelFlow | GraphiQL" />
-      <CookieBanner />
-      <Layout breadcrumbs={[<NavLogo key={0} />]}>
-        <Home />
-      </Layout>
+      {status === "authenticated" && <App />}
+      {status === "unauthenticated" && <Website previewArticles={[]} />}
     </>
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const parsedCookie = new Cookies(context.req.headers.cookie);
-
-  if (parsedCookie.get("hasUserTriedApp") === "true") return { props: {} };
-
-  return {
-    props: {},
-    redirect: {
-      // Keep query params after redirect
-      destination: `/website${
-        isEmpty(context.query)
-          ? ""
-          : `?${join(
-              "&",
-              map(([key, value]) => `${key}=${value}`, toPairs(context.query))
-            )}`
-      }`,
-      permanent: false,
-    },
-  };
+const getQueryParams = (query: ParsedUrlQuery): string => {
+  return Object.entries(query)
+    .map(
+      ([key, value]) =>
+        `${encodeURIComponent(key)}=${encodeURIComponent(`${value}`)}`
+    )
+    .join("&");
 };
+
+export const getServerSideProps: GetServerSideProps = async ({ query }) => ({
+  props: {},
+  redirect: isEmpty(query)
+    ? undefined
+    : {
+        destination: `/website?${getQueryParams(query)}`,
+        permanent: false,
+      },
+});
 
 export default IndexPage;

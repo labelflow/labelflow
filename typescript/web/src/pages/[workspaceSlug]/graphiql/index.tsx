@@ -1,7 +1,7 @@
 import { Box, Text } from "@chakra-ui/react";
 import dynamic from "next/dynamic";
 import React from "react";
-import { AuthManager } from "../../../components/auth-manager";
+import { Authenticated } from "../../../components/auth";
 import { CookieBanner } from "../../../components/cookie-banner";
 import { Layout } from "../../../components/layout";
 import { WorkspaceTabBar } from "../../../components/layout/tab-bar/workspace-tab-bar";
@@ -23,9 +23,8 @@ const GraphiQL = dynamic(() => import("../../../components/graphiql"), {
 const GraphqlPlayground = () => {
   const { workspaceSlug } = useWorkspace();
   return (
-    <>
+    <Authenticated>
       <WelcomeModal />
-      <AuthManager />
       <Meta title="LabelFlow | GraphiQL" />
       <CookieBanner />
       <Layout
@@ -53,7 +52,7 @@ const GraphqlPlayground = () => {
           )}
         </Box>
       </Layout>
-    </>
+    </Authenticated>
   );
 };
 

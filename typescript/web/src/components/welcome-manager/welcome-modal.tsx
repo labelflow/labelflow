@@ -14,7 +14,6 @@ import { browser } from "../../utils/detect-scope";
 import { BrowserWarning } from "./steps/browser-warning";
 import { BrowserError } from "./steps/browser-error";
 import { Welcome } from "./steps/welcome";
-import { Loading } from "./steps/loading";
 import {
   GetDatasetsNameQuery,
   GetDatasetsNameQueryVariables,
@@ -257,8 +256,6 @@ export const WelcomeModal = ({
     tryDespiteBrowserWarning !== "true" &&
     hasUserTriedApp !== "true";
 
-  const shouldShowLoadingModal = router?.isReady && hasUserTriedApp !== "true";
-
   const shouldShowWelcomeModal =
     router?.isReady &&
     (paramModalWelcome === "open" ||
@@ -271,10 +268,6 @@ export const WelcomeModal = ({
         (!shouldShowBrowserErrorModal && shouldShowBrowserWarningModal) ||
         (!shouldShowBrowserErrorModal &&
           !shouldShowBrowserWarningModal &&
-          shouldShowLoadingModal) ||
-        (!shouldShowBrowserErrorModal &&
-          !shouldShowBrowserWarningModal &&
-          !shouldShowLoadingModal &&
           shouldShowWelcomeModal)
       }
       onClose={() => {}}
@@ -299,11 +292,6 @@ export const WelcomeModal = ({
           return (
             <BrowserWarning onClickTryAnyway={pretendIsCompatibleBrowser} />
           );
-        }
-
-        // Nominal loading on first visit
-        if (shouldShowLoadingModal) {
-          return <Loading />;
         }
 
         // Nominal welcome modal on first vist after loading

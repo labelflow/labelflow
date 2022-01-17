@@ -11,7 +11,7 @@ import {
 } from "@chakra-ui/react";
 import { FaCheck } from "react-icons/fa";
 
-import { Logo } from "../../logo";
+import { Logo } from "../logo";
 
 const ChakraCheck = chakra(FaCheck);
 
@@ -47,10 +47,9 @@ export const Features = () => (
     </Box>
     <SimpleGrid
       rounded="lg"
-      mt="18"
       p={{ base: "10", lg: "0" }}
       columns={1}
-      spacing="10"
+      spacing="6"
       bg={{ base: mode("gray.200", "gray.700"), lg: "unset" }}
     >
       <Feature title="Collaborate Easily">
