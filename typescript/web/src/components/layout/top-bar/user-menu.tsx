@@ -30,7 +30,6 @@ import { signOut, useSession } from "next-auth/react";
 import { gql, useQuery } from "@apollo/client";
 import { useRouter } from "next/router";
 import { useQueryParam } from "use-query-params";
-import { useCookies } from "react-cookie";
 import { BoolParam } from "../../../utils/query-param-bool";
 import { randomBackgroundGradient } from "../../../utils/random-background-gradient";
 import { getDisplayName } from "../../members/user";
@@ -62,10 +61,6 @@ export const UserMenu = () => {
   const { data: session, status } = useSession({ required: false });
 
   const [, setIsSigninOpen] = useQueryParam("modal-signin", BoolParam);
-
-  const removeLastVisitedWorkspaceSlugCookie = useCookies([
-    "lastVisitedWorkspaceSlug",
-  ])[2];
 
   const userInfoFromSession = session?.user;
 
@@ -162,13 +157,7 @@ export const UserMenu = () => {
               <>
                 <MenuItem
                   icon={<SignoutIcon fontSize="lg" />}
-                  onClick={() => {
-                    removeLastVisitedWorkspaceSlugCookie(
-                      "lastVisitedWorkspaceSlug",
-                      { path: "/", httpOnly: false }
-                    );
-                    signOut({ callbackUrl: "/" });
-                  }}
+                  onClick={() => signOut({ callbackUrl: "/" })}
                 >
                   Sign out
                 </MenuItem>

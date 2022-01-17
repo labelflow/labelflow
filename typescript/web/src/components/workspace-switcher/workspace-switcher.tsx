@@ -1,14 +1,12 @@
 import { gql, useQuery } from "@apollo/client";
 import { Workspace } from "@labelflow/graphql-types";
 import { useRouter } from "next/router";
-import { useState, useCallback, useMemo, useEffect } from "react";
-import { isNil, startCase } from "lodash/fp";
+import { useCallback, useMemo, useState } from "react";
 import { StringParam, useQueryParams } from "use-query-params";
-import { useCookies } from "react-cookie";
+import { BoolParam } from "../../utils/query-param-bool";
+import { CreateWorkspaceModal } from "./create-workspace-modal";
 import { WorkspaceMenu } from "./workspace-menu";
 import { WorkspaceItem } from "./workspace-menu/workspace-selection-popover";
-import { CreateWorkspaceModal } from "./create-workspace-modal";
-import { BoolParam } from "../../utils/query-param-bool";
 
 const getWorkspacesQuery = gql`
   query getWorkspaces {
@@ -24,22 +22,6 @@ export const WorkspaceSwitcher = () => {
   const router = useRouter();
   const workspaceSlug = router?.query.workspaceSlug as string;
 
-  // Set cookie of last visited workspace if the user navigated to a new workspace
-  const [{ lastVisitedWorkspaceSlug }, setLastVisitedWorkspaceSlug] =
-    useCookies(["lastVisitedWorkspaceSlug"]);
-  useEffect(
-    () => {
-      if (!isNil(workspaceSlug) && lastVisitedWorkspaceSlug !== workspaceSlug) {
-        setLastVisitedWorkspaceSlug("lastVisitedWorkspaceSlug", workspaceSlug, {
-          path: "/",
-          httpOnly: false,
-        });
-      }
-    },
-    // We only want to call effect when current workspaceSlug has changed
-    [workspaceSlug]
-  );
-
   const [isOpen, setIsOpen] = useState(false);
 
   const [{ "modal-create-workspace": isCreationModalOpen }, setQueryParams] =
@@ -53,7 +35,6 @@ export const WorkspaceSwitcher = () => {
 
   const workspaces: (Workspace & { src?: string })[] = useMemo(
     () => [
-      { id: "local", slug: "local", name: "Local", src: null },
       ...(getWorkspacesData?.workspaces ??
         getWorkspacesPreviousData?.workspaces ??
         []),
@@ -65,14 +46,7 @@ export const WorkspaceSwitcher = () => {
     if (workspaceSlug == null) {
       return null;
     }
-    if (workspaces == null) {
-      return {
-        id: "local",
-        slug: workspaceSlug,
-        name: startCase(workspaceSlug),
-        src: null,
-      };
-    }
+
     return workspaces.find(({ slug }) => slug === workspaceSlug);
   }, [workspaceSlug, workspaces]);
 
