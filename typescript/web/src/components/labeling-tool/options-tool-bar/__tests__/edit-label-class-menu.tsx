@@ -4,7 +4,7 @@ import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { mockMatchMedia } from "../../../../utils/mock-window";
 import { createTestDatasetMutation } from "../../../../utils/tests/mutations";
-import { createLabelClassMutation } from "../../../dataset-classes/upsert-class-modal/create-label-class.mutation";
+import { CREATE_LABEL_CLASS_MUTATION } from "../../../dataset-classes/upsert-class-modal/create-label-class.mutation";
 
 mockMatchMedia(jest);
 
@@ -96,7 +96,7 @@ beforeEach(async () => {
 
   // @ts-ignore
   await client.mutateOriginal({
-    mutation: createLabelClassMutation,
+    mutation: CREATE_LABEL_CLASS_MUTATION,
     variables: {
       id: "existing label class id",
       name: "existing label class",

@@ -11,7 +11,8 @@
     "type-check": "tsc",
     "bundlewatch": "bundlewatch --config ./bundlewatch.config.js",
     "release": "release-it",
-    "release:update": "cd ../release && yarn update"
+    "release:update": "cd ../release && yarn update",
+    "generate:apollo": "yarn apollo codegen:generate --localSchemaFile=../../data/__generated__/schema.graphql --target=typescript --tagName=gql --includes=\"src/**/*.tsx\""
   },
   "dependencies": {
     "@apollo/client": "3.4.16",
