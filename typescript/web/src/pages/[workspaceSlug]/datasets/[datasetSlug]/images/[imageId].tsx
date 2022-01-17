@@ -13,7 +13,7 @@ import NextLink from "next/link";
 import { useRouter } from "next/router";
 import React from "react";
 import { useErrorHandler } from "react-error-boundary";
-import { AuthManager } from "../../../../../components/auth-manager";
+import { Authenticated } from "../../../../../components/auth";
 import { CookieBanner } from "../../../../../components/cookie-banner";
 import { ExportButton } from "../../../../../components/export-button";
 import { Gallery } from "../../../../../components/gallery";
@@ -97,13 +97,12 @@ const ImagePage = () => {
         handleError(errorDataset);
       }
       return (
-        <>
+        <Authenticated>
           <WelcomeModal />
-          <AuthManager />
           <Meta title="LabelFlow | Dataset not found" />
           <CookieBanner />
           <Error404Content />
-        </>
+        </Authenticated>
       );
     }
     if (errorImage && !loadingImage) {
@@ -111,21 +110,19 @@ const ImagePage = () => {
         handleError(errorImage);
       }
       return (
-        <>
+        <Authenticated>
           <WelcomeModal />
-          <AuthManager />
           <Meta title="LabelFlow | Image not found" />
           <CookieBanner />
           <Error404Content />
-        </>
+        </Authenticated>
       );
     }
   }
 
   return (
-    <>
+    <Authenticated>
       <WelcomeModal />
-      <AuthManager />
       <Meta title={`LabelFlow | Image ${imageName ?? ""}`} />
       <CookieBanner />
       <Layout
@@ -172,7 +169,7 @@ const ImagePage = () => {
           </Box>
         </Flex>
       </Layout>
-    </>
+    </Authenticated>
   );
 };
 

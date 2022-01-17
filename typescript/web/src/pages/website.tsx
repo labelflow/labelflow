@@ -15,6 +15,7 @@ import { Meta } from "../components/meta";
 import { Banner } from "../components/website/banner";
 import { Proof } from "../components/website/proof";
 import { CookieBanner } from "../components/cookie-banner";
+import { APP_TITLE } from "../constants";
 
 export default function Website({
   previewArticles,
@@ -23,7 +24,7 @@ export default function Website({
 }) {
   return (
     <>
-      <Meta title="LabelFlow: The open standard platform for image labeling." />
+      <Meta title={APP_TITLE} />
       <CookieBanner />
       <Box minH="640px">
         <NavBar />

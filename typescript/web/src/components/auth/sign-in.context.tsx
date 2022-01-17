@@ -15,26 +15,21 @@ import {
   useState,
 } from "react";
 import { StringParam, UrlUpdateType, useQueryParam } from "use-query-params";
-import { trackEvent } from "../../../utils/google-analytics";
-import { BoolParam } from "../../../utils/query-param-bool";
-import { validateEmail } from "../../../utils/validate-email";
+import { trackEvent } from "../../utils/google-analytics";
+import { validateEmail } from "../../utils/validate-email";
 
 export type SignInCallback = (
   method: LiteralUnion<BuiltInProviderType>,
   options?: SignInOptions
 ) => Promise<void>;
 
-export type SignInState = {
+export type NextAuthState = {
   signIn: SignInCallback;
   sendingLink?: string;
   setSendingLink: (sendingLink?: string) => void;
   linkSent?: string;
   error?: string;
-};
-
-export type ModalState = {
-  isOpen: boolean;
-  close: () => Promise<void>;
+  clearQueryParams: () => Promise<void>;
 };
 
 export type EmailState = {
@@ -43,11 +38,11 @@ export type EmailState = {
   validEmail: boolean;
 };
 
-export type SignInModalState = SignInState & ModalState & EmailState;
+export type SignInState = NextAuthState & EmailState;
 
-export const SignInModalContext = createContext({} as SignInModalState);
+export const SignInContext = createContext({} as SignInState);
 
-export const useSignInModal = () => useContext(SignInModalContext);
+export const useSignIn = () => useContext(SignInContext);
 
 export type SignInModalProviderProps = PropsWithChildren<{
   onClose?: () => Promise<void>;
@@ -59,7 +54,6 @@ const sanitizeUrl = (url: string): string => {
   parsedUrl.searchParams.delete("modal-signin");
   // We don't want to propagate modal related errors
   parsedUrl.searchParams.delete("error");
-
   const callbackUrl = parsedUrl.searchParams.get("callbackUrl");
   if (callbackUrl !== null) {
     return callbackUrl;
@@ -128,7 +122,7 @@ const useClearQueryParam = (
 };
 
 const useSignInWithError = (): [
-  Pick<SignInState, "signIn" | "error">,
+  Pick<NextAuthState, "signIn" | "error">,
   SignInResponse | undefined,
   () => Promise<void>
 ] => {
@@ -149,22 +143,17 @@ const useSignInWithError = (): [
 const useSendingLink = (
   response: SignInResponse | undefined
 ): [
-  Pick<SignInState, "sendingLink" | "setSendingLink" | "linkSent">,
+  Pick<NextAuthState, "sendingLink" | "setSendingLink" | "linkSent">,
   () => Promise<void>,
   () => Promise<void>
 ] => {
-  const { close } = useSignInModal();
   const [linkSent, setLinkSent] = useQueryParam("link-sent", StringParam);
   const [sendingLink, setSendingLink] = useState<string | undefined>();
   useEffect(
     () => {
-      if (response?.ok) {
-        if (sendingLink) {
-          setLinkSent(sendingLink);
-          setSendingLink(undefined);
-        } else {
-          close();
-        }
+      if (response?.ok && sendingLink) {
+        setLinkSent(sendingLink);
+        setSendingLink(undefined);
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -183,7 +172,7 @@ const useSendingLink = (
   ];
 };
 
-const useSignIn = (): [SignInState, () => Promise<void>] => {
+const useNextAuth = (): NextAuthState => {
   const [signInState, response, clearError] = useSignInWithError();
   const [sendingLinkState, clearSendingLink, clearLinkSent] =
     useSendingLink(response);
@@ -193,23 +182,7 @@ const useSignIn = (): [SignInState, () => Promise<void>] => {
     await clearSendingLink();
     await clearLinkSent();
   }, [clearError, clearSendingLink, clearLinkSent]);
-  return [{ ...signInState, ...sendingLinkState }, clearQueryParams];
-};
-
-const useModal = (
-  canClose: boolean,
-  onClose: (() => Promise<void>) | undefined
-): ModalState => {
-  const [isOpen, setIsOpen] = useQueryParam("modal-signin", BoolParam);
-  const close = useCallback(async () => {
-    if (!isNil(onClose)) {
-      await onClose();
-    } else {
-      if (!canClose) return;
-      setIsOpen(false, "replaceIn");
-    }
-  }, [canClose, onClose, setIsOpen]);
-  return { isOpen: !canClose || isOpen, close };
+  return { ...signInState, ...sendingLinkState, clearQueryParams };
 };
 
 const useEmail = (): EmailState => {
@@ -218,26 +191,14 @@ const useEmail = (): EmailState => {
   return { email, setEmail, validEmail };
 };
 
-const useSignInModalState = ({
-  onClose,
-}: Omit<SignInModalProviderProps, "children">): SignInModalState => {
-  const canClose = isNil(onClose);
-  const { isOpen, close } = useModal(canClose, onClose);
-  const [signInState, clearQueryParams] = useSignIn();
-  const handleClose = useCallback(async () => {
-    await close();
-    if (!canClose) return;
-    await clearQueryParams();
-  }, [canClose, clearQueryParams, close]);
+const useProvider = (): SignInState => {
+  const nextAuthState = useNextAuth();
   const emailState = useEmail();
-  return { isOpen, close: handleClose, ...signInState, ...emailState };
+  return { ...nextAuthState, ...emailState };
 };
 
-export const SignInModalProvider = ({
-  children,
-  ...props
-}: SignInModalProviderProps) => (
-  <SignInModalContext.Provider value={useSignInModalState(props)}>
+export const SignInProvider = ({ children }: SignInModalProviderProps) => (
+  <SignInContext.Provider value={useProvider()}>
     {children}
-  </SignInModalContext.Provider>
+  </SignInContext.Provider>
 );

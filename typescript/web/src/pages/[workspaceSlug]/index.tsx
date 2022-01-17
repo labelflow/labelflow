@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 import React, { useEffect } from "react";
-import { AuthManager } from "../../components/auth-manager";
+import { Authenticated } from "../../components/auth";
 import { CookieBanner } from "../../components/cookie-banner";
 import { Layout } from "../../components/layout";
 import { NavLogo } from "../../components/logo/nav-logo";
@@ -25,9 +25,8 @@ const LocalDatasetsIndexPage = () => {
   }, [router.isReady]);
 
   return (
-    <>
+    <Authenticated>
       <WelcomeModal />
-      <AuthManager />
       <Meta title="LabelFlow" />
       <CookieBanner />
       <Layout
@@ -35,7 +34,7 @@ const LocalDatasetsIndexPage = () => {
       >
         <LayoutSpinner />
       </Layout>
-    </>
+    </Authenticated>
   );
 };
 

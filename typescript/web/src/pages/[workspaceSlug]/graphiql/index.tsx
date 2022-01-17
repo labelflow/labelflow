@@ -2,7 +2,7 @@ import { Box, Text } from "@chakra-ui/react";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import React from "react";
-import { AuthManager } from "../../../components/auth-manager";
+import { Authenticated } from "../../../components/auth";
 import { CookieBanner } from "../../../components/cookie-banner";
 import { Layout } from "../../../components/layout";
 import { WorkspaceTabBar } from "../../../components/layout/tab-bar/workspace-tab-bar";
@@ -24,9 +24,8 @@ const GraphqlPlayground = () => {
   const workspaceSlug = useRouter().query?.workspaceSlug as string;
 
   return (
-    <>
+    <Authenticated>
       <WelcomeModal />
-      <AuthManager />
       <Meta title="LabelFlow | GraphiQL" />
       <CookieBanner />
       <Layout
@@ -54,7 +53,7 @@ const GraphqlPlayground = () => {
           )}
         </Box>
       </Layout>
-    </>
+    </Authenticated>
   );
 };
 

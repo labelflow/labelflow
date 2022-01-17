@@ -3,7 +3,7 @@ import { useSession } from "next-auth/react";
 import { gql, useMutation, useQuery } from "@apollo/client";
 import { Meta } from "../../../components/meta";
 import { Layout } from "../../../components/layout";
-import { AuthManager } from "../../../components/auth-manager";
+import { Authenticated } from "../../../components/auth";
 import { WelcomeModal } from "../../../components/welcome-manager";
 import { CookieBanner } from "../../../components/cookie-banner";
 import { NavLogo } from "../../../components/logo/nav-logo";
@@ -57,9 +57,8 @@ const ProfilePage = () => {
   }, [user, loading, userInfoFromSession?.id, session.status]);
 
   return (
-    <>
+    <Authenticated>
       <WelcomeModal />
-      <AuthManager />
       <Meta title="LabelFlow | Profile" />
       <CookieBanner />
       <Layout breadcrumbs={[<NavLogo key={0} />]}>
@@ -67,7 +66,7 @@ const ProfilePage = () => {
           <UserSettings user={user} changeUserName={changeUserName} />
         )}
       </Layout>
-    </>
+    </Authenticated>
   );
 };
 

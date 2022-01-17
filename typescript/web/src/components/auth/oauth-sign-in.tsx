@@ -8,7 +8,7 @@ import {
 import { OAuthProviderType } from "next-auth/providers";
 import React, { useCallback } from "react";
 import { FaGithub, FaGoogle } from "react-icons/fa";
-import { useSignInModal } from "./signin-modal.context";
+import { useSignIn } from "./sign-in.context";
 
 type OAuthButtonProps = {
   provider: OAuthProviderType;
@@ -17,7 +17,7 @@ type OAuthButtonProps = {
 };
 
 const OAuthButton = ({ provider, label, icon }: OAuthButtonProps) => {
-  const { signIn } = useSignInModal();
+  const { signIn } = useSignIn();
   const handleClick = useCallback(() => signIn(provider), [provider, signIn]);
   return (
     <Button variant="outline" onClick={handleClick} leftIcon={icon}>

@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 import React from "react";
 import { resetServerContext } from "react-beautiful-dnd";
 import { useErrorHandler } from "react-error-boundary";
-import { AuthManager } from "../../../../../components/auth-manager";
+import { Authenticated } from "../../../../../components/auth";
 import { CookieBanner } from "../../../../../components/cookie-banner";
 import { DatasetClasses } from "../../../../../components/dataset-classes";
 import { ExportButton } from "../../../../../components/export-button";
@@ -56,20 +56,18 @@ const DatasetClassesPage = () => {
       handleError(error);
     }
     return (
-      <>
+      <Authenticated>
         <WelcomeModal />
-        <AuthManager />
         <Meta title="LabelFlow | Dataset not found" />
         <CookieBanner />
         <Error404Content />
-      </>
+      </Authenticated>
     );
   }
 
   return (
-    <>
+    <Authenticated>
       <WelcomeModal />
-      <AuthManager />
       <Meta title="LabelFlow | Classes" />
       <CookieBanner />
       <Layout
@@ -108,7 +106,7 @@ const DatasetClassesPage = () => {
           />
         </Center>
       </Layout>
-    </>
+    </Authenticated>
   );
 };
 
