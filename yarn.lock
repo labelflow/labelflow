@@ -12380,7 +12380,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/graphql@npm:14.5.0":
+"@types/graphql@npm:^14.5.0":
   version: 14.5.0
   resolution: "@types/graphql@npm:14.5.0"
   dependencies:
