@@ -70,14 +70,14 @@ export const APOLLO_CACHE_CONFIG: InMemoryCacheConfig = {
         images: {
           // Defining nested keyArgs is done in an unusual way but that's how it works
           // https://github.com/apollographql/apollo-client/issues/7314#issuecomment-726331129
-          keyArgs: ["where", ["datasetId"]],
+          keyArgs: ["where"],
           read: paginatedQueryRead,
           merge: paginatedQueryMerge,
         },
         datasets: {
           // Defining nested keyArgs is done in an unusual way but that's how it works
           // https://github.com/apollographql/apollo-client/issues/7314#issuecomment-726331129
-          keyArgs: ["where", ["workspaceSlug"]],
+          keyArgs: ["where"],
           read: paginatedQueryRead,
           merge: paginatedQueryMerge,
         },
