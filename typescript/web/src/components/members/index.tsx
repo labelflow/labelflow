@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Heading, Box, Center } from "@chakra-ui/react";
 import { InvitationResult, Membership } from "@labelflow/graphql-types";
-import { TableActions } from "./table-actions";
+import { MembersTableActions } from "./table-actions";
 import { TableContent } from "./table-content";
 import { RemoveMembership, ChangeMembershipRole, InviteMember } from "./types";
 
@@ -28,7 +28,7 @@ export const Members = ({
         flexGrow={1}
       >
         <Heading mb="5">{`Members (${memberships?.length ?? ""})`}</Heading>
-        <TableActions
+        <MembersTableActions
           searchText={searchText}
           setSearchText={setSearchText}
           inviteMember={inviteMember}

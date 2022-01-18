@@ -1,17 +1,9 @@
 import { gql, useQuery } from "@apollo/client";
-import {
-  Box,
-  Button,
-  Heading,
-  HStack,
-  Link,
-  ListItem,
-  UnorderedList,
-  useBoolean,
-} from "@chakra-ui/react";
-import { Query, Workspace } from "@labelflow/graphql-types";
+import { useBoolean } from "@chakra-ui/react";
+import { Query } from "@labelflow/graphql-types";
 import { LayoutSpinner } from "../spinner";
 import { CreateWorkspaceModal } from "../workspace-switcher/create-workspace-modal";
+import { Workspaces } from "../workspaces";
 
 export const GET_HOME_WORKSPACES_QUERY = gql`
   query getHomeWorkspaces {
@@ -19,25 +11,11 @@ export const GET_HOME_WORKSPACES_QUERY = gql`
       id
       name
       slug
+      plan
+      image
     }
   }
 `;
-
-type GqlWorkspace = Pick<Workspace, "id" | "name" | "slug">;
-
-const WorkspaceItem = ({ workspace }: { workspace: GqlWorkspace }) => (
-  <ListItem>
-    <Link href={`/${workspace.slug}`}>{workspace.name}</Link>
-  </ListItem>
-);
-
-const Workspaces = ({ workspaces }: { workspaces: GqlWorkspace[] }) => (
-  <UnorderedList>
-    {workspaces.map((workspace) => (
-      <WorkspaceItem key={workspace.id} workspace={workspace} />
-    ))}
-  </UnorderedList>
-);
 
 export const Home = () => {
   const { data, loading } = useQuery<Pick<Query, "workspaces">>(
@@ -53,24 +31,16 @@ export const Home = () => {
       {loading ? (
         <LayoutSpinner />
       ) : (
-        <Box
-          display="flex"
-          flexDirection="column"
-          w="full"
-          p={8}
-          maxWidth="5xl"
-          flexGrow={1}
-        >
-          <HStack>
-            <Heading size="lg">Workspaces</Heading>
-            <Button onClick={openCreateWorkspaceModal}>New workspace</Button>
-          </HStack>
-          <Workspaces workspaces={data?.workspaces ?? []} />
+        <>
+          <Workspaces
+            workspaces={data?.workspaces ?? []}
+            openCreateWorkspaceModal={openCreateWorkspaceModal}
+          />
           <CreateWorkspaceModal
             isOpen={showCreateWorkspaceModal}
             onClose={closeCreateWorkspaceModal}
           />
-        </Box>
+        </>
       )}
     </>
   );

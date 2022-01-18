@@ -10,7 +10,6 @@ import { Layout } from "../components/layout";
 import { NavLogo } from "../components/logo/nav-logo";
 import { Meta } from "../components/meta";
 import { WelcomeModal } from "../components/welcome-manager";
-import Website from "./website";
 
 const IndexPage = () => {
   const router = useRouter();
@@ -24,16 +23,11 @@ const IndexPage = () => {
     }
   }, [hasUserTriedApp, router]);
 
-  if (!hasUserTriedApp) {
-    return <Website previewArticles={[]} />;
-  }
-
   return (
     <>
       <WelcomeModal />
       <AuthManager />
-      <Meta title="LabelFlow: The open standard platform for image labeling." />
-      <Meta title="LabelFlow | GraphiQL" />
+      <Meta title="LabelFlow | Workspaces" />
       <CookieBanner />
       <Layout breadcrumbs={[<NavLogo key={0} />]}>
         <Home />
