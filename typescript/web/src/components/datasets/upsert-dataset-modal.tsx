@@ -21,7 +21,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 const debounceTime = 200;
 
-const createDatasetMutation = gql`
+export const createDatasetMutation = gql`
   mutation createDataset($name: String!, $workspaceSlug: String!) {
     createDataset(data: { name: $name, workspaceSlug: $workspaceSlug }) {
       id
@@ -29,7 +29,7 @@ const createDatasetMutation = gql`
   }
 `;
 
-const updateDatasetMutation = gql`
+export const updateDatasetMutation = gql`
   mutation updateDataset($id: ID!, $name: String!) {
     updateDataset(where: { id: $id }, data: { name: $name }) {
       id
@@ -37,7 +37,7 @@ const updateDatasetMutation = gql`
   }
 `;
 
-const getDatasetBySlugQuery = gql`
+export const getDatasetBySlugQuery = gql`
   query getDatasetBySlug($slug: String!, $workspaceSlug: String!) {
     searchDataset(
       where: { slugs: { slug: $slug, workspaceSlug: $workspaceSlug } }
@@ -48,7 +48,7 @@ const getDatasetBySlugQuery = gql`
   }
 `;
 
-const getDatasetByIdQuery = gql`
+export const getDatasetByIdQuery = gql`
   query getDatasetById($id: ID) {
     dataset(where: { id: $id }) {
       id

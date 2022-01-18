@@ -1,66 +1,112 @@
 /* eslint-disable import/first */
-import {
-  act,
-  render,
-  screen,
-  fireEvent,
-  waitFor,
-} from "@testing-library/react";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { ApolloProvider, gql } from "@apollo/client";
-import { PropsWithChildren } from "react";
 import "@testing-library/jest-dom/extend-expect";
-
-import { client } from "../../../connectors/apollo-client/schema-client";
-import { setupTestsWithLocalDatabase } from "../../../utils/setup-local-db-tests";
 import {
-  mockUseQueryParams,
-  mockNextRouter,
-} from "../../../utils/router-mocks";
+  getApolloMockWrapper,
+  ApolloMockedResponse,
+} from "../../../utils/testing/mock-apollo";
+import { mockDatasetSimple } from "../../../utils/testing/mock-data";
+import { mockNextRouter } from "../../../utils/router-mocks";
 
-mockUseQueryParams();
-mockNextRouter({ query: { workspaceSlug: "local" } });
+mockNextRouter({ query: { workspaceSlug: mockDatasetSimple.workspace.slug } });
 
-import { UpsertDatasetModal } from "../upsert-dataset-modal";
+import {
+  createDatasetMutation,
+  updateDatasetMutation,
+  getDatasetByIdQuery,
+  getDatasetBySlugQuery,
+  UpsertDatasetModal,
+} from "../upsert-dataset-modal";
 
-setupTestsWithLocalDatabase();
-
-const Wrapper = ({ children }: PropsWithChildren<{}>) => (
-  <ApolloProvider client={client}>{children}</ApolloProvider>
-);
-
-jest.mock("lodash/fp/debounce", () => jest.fn((_, fn) => fn));
+const updatedDatasetName = "My new test dataset";
+const mockQueries: Record<string, ApolloMockedResponse> = {
+  getDatasetById: {
+    request: {
+      query: getDatasetByIdQuery,
+      variables: { id: mockDatasetSimple.id },
+    },
+    result: {
+      data: {
+        dataset: { id: mockDatasetSimple.id, name: mockDatasetSimple.name },
+      },
+    },
+  },
+  getDatasetBySlug: {
+    request: {
+      query: getDatasetBySlugQuery,
+      variables: {
+        slug: mockDatasetSimple.slug,
+        workspaceSlug: mockDatasetSimple.workspace.slug,
+      },
+    },
+    result: {
+      data: {
+        searchDataset: {
+          id: mockDatasetSimple.id,
+          slug: mockDatasetSimple.slug,
+        },
+      },
+    },
+  },
+  createDataset: {
+    request: {
+      query: createDatasetMutation,
+      variables: {
+        name: mockDatasetSimple.name,
+        workspaceSlug: mockDatasetSimple.workspace.slug,
+      },
+    },
+    newData: jest.fn(() => ({
+      data: {
+        createDataset: { id: mockDatasetSimple.id },
+      },
+    })),
+  },
+  updateDataset: {
+    request: {
+      query: updateDatasetMutation,
+      variables: {
+        id: mockDatasetSimple.id,
+        name: updatedDatasetName,
+      },
+    },
+    newData: jest.fn(() => ({
+      data: {
+        updateDataset: { id: mockDatasetSimple.id },
+      },
+    })),
+  },
+};
 
 const renderModal = (props = {}) => {
   return render(<UpsertDatasetModal isOpen onClose={() => {}} {...props} />, {
-    wrapper: Wrapper,
+    wrapper: getApolloMockWrapper(Object.values(mockQueries)),
   });
 };
 
+afterEach(() => {
+  jest.clearAllMocks();
+});
+
 test("should initialize modal with an empty input and a disabled button", async () => {
   renderModal();
-
   const input = screen.getByLabelText(
     /dataset name input/i
   ) as HTMLInputElement;
   const button = screen.getByLabelText(/create dataset/i);
-
   expect(input.value).toEqual("");
   expect(button).toHaveAttribute("disabled");
 });
 
 test("should enable start button when dataset name is not empty", async () => {
   renderModal();
-
   const input = screen.getByLabelText(
     /dataset name input/i
   ) as HTMLInputElement;
-
   fireEvent.change(input, { target: { value: "Good Day" } });
   expect(input.value).toBe("Good Day");
-
   const button = screen.getByLabelText(/create dataset/i);
-
   await waitFor(() => {
     expect(button).not.toHaveAttribute("disabled");
   });
@@ -69,65 +115,25 @@ test("should enable start button when dataset name is not empty", async () => {
 test("should create a dataset when the form is submitted", async () => {
   const onClose = jest.fn();
   renderModal({ onClose });
-
-  const datasetSlug = "good-day";
-
   const input = screen.getByLabelText(
     /dataset name input/i
   ) as HTMLInputElement;
   const button = screen.getByLabelText(/create dataset/i);
-
-  fireEvent.change(input, { target: { value: datasetSlug } });
+  fireEvent.change(input, { target: { value: mockDatasetSimple.name } });
   fireEvent.click(button);
-
   await waitFor(() => {
     expect(onClose).toHaveBeenCalled();
+    expect(mockQueries.createDataset.newData).toHaveBeenCalledTimes(1);
   });
-
-  const {
-    data: {
-      dataset: { slug },
-    },
-  } = await client.query({
-    query: gql`
-      query getDatasetByName($slug: String) {
-        dataset(where: { slugs: { slug: $slug, workspaceSlug: "local" } }) {
-          slug
-        }
-      }
-    `,
-    variables: { slug: datasetSlug },
-  });
-
-  expect(slug).toEqual(datasetSlug);
 });
 
 test("should display an error message if dataset name already exists", async () => {
-  const datasetName = "Good Day";
-
-  await client.mutate({
-    mutation: gql`
-      mutation createDataset($name: String) {
-        createDataset(data: { name: $name, workspaceSlug: "local" }) {
-          id
-          name
-          slug
-        }
-      }
-    `,
-    variables: { name: datasetName },
-  });
-
   renderModal();
-
   const input = screen.getByLabelText(
     /dataset name input/i
   ) as HTMLInputElement;
-
-  fireEvent.change(input, { target: { value: datasetName } });
-
+  fireEvent.change(input, { target: { value: mockDatasetSimple.name } });
   const button = screen.getByLabelText(/create dataset/i);
-
   await waitFor(() => {
     expect(button).toHaveAttribute("disabled");
     expect(screen.getByText(/this name is already taken/i)).toBeDefined();
@@ -137,112 +143,43 @@ test("should display an error message if dataset name already exists", async () 
 test("should call the onClose handler", async () => {
   const onClose = jest.fn();
   renderModal({ onClose });
-
   userEvent.click(screen.getByLabelText("Close"));
-
   expect(onClose).toHaveBeenCalled();
 });
 
 test("update dataset: should have dataset name pre-filled when renaming existing dataset", async () => {
-  const datasetName = "Good Day";
-
-  const {
-    data: {
-      createDataset: { id: datasetId },
-    },
-  } = await client.mutate({
-    mutation: gql`
-      mutation createDataset($name: String) {
-        createDataset(data: { name: $name, workspaceSlug: "local" }) {
-          id
-        }
-      }
-    `,
-    variables: { name: datasetName },
-  });
-
-  renderModal({ datasetId });
-
+  renderModal({ datasetId: mockDatasetSimple.id });
   const input = screen.getByLabelText(
     /dataset name input/i
   ) as HTMLInputElement;
-
   await waitFor(() => {
-    expect(input.value).toBe(datasetName);
+    expect(input.value).toBe(mockDatasetSimple.name);
   });
-
   const button = screen.getByLabelText(/update dataset/i);
-
   await waitFor(() => {
     expect(button).not.toHaveAttribute("disabled");
   });
 });
 
 test("update dataset: should update a dataset when the form is submitted", async () => {
-  const datasetName = "Bad Day";
-  const datasetNewName = "Good Day";
-
-  const {
-    data: {
-      createDataset: { id: datasetId },
-    },
-  } = await client.mutate({
-    mutation: gql`
-      mutation createDataset($name: String) {
-        createDataset(data: { name: $name, workspaceSlug: "local" }) {
-          id
-        }
-      }
-    `,
-    variables: { name: datasetName },
-  });
-
   const onClose = jest.fn();
-
-  renderModal({ datasetId, onClose });
-
+  renderModal({ datasetId: mockDatasetSimple.id, onClose });
   const input = screen.getByLabelText(
     /dataset name input/i
   ) as HTMLInputElement;
-
   await waitFor(() => {
-    expect(input.value).toBe(datasetName);
+    expect(input.value).toBe(mockDatasetSimple.name);
   });
-
   const button = screen.getByLabelText(/update dataset/i);
-
   userEvent.click(input);
   userEvent.clear(input);
-  userEvent.type(input, datasetNewName);
+  userEvent.type(input, updatedDatasetName);
   await waitFor(() => {
-    expect(input.value).toBe(datasetNewName);
+    expect(input.value).toBe(updatedDatasetName);
   });
-
   userEvent.click(button);
-
   await waitFor(() => {
     expect(onClose).toHaveBeenCalled();
   });
-
-  await act(async () => {
-    // Check that new name is in DB, works
-    const {
-      data: {
-        dataset: { name: name1 },
-      },
-    } = await client.query({
-      query: gql`
-        query getDatasetById($id: ID) {
-          dataset(where: { id: $id }) {
-            id
-            name
-          }
-        }
-      `,
-      variables: { id: datasetId },
-      fetchPolicy: "no-cache",
-    });
-
-    expect(name1).toEqual(datasetNewName);
-  });
+  expect(mockQueries.updateDataset.newData).toHaveBeenCalledTimes(1);
 });

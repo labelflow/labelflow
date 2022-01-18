@@ -37,6 +37,6 @@ export class ApolloMockedProvider extends MockedProvider {
 }
 
 export const getApolloMockWrapper =
-  (mockQueries: ReadonlyArray<ApolloMockedResponse>) =>
+  (mockQueries?: ReadonlyArray<ApolloMockedResponse>) =>
   ({ children }: PropsWithChildren<{}>) =>
     <ApolloMockedProvider mocks={mockQueries}>{children}</ApolloMockedProvider>;

@@ -10,7 +10,7 @@ import {
   Button,
 } from "@chakra-ui/react";
 
-const getDatasetByIdQuery = gql`
+export const getDatasetByIdQuery = gql`
   query getDatasetById($id: ID) {
     dataset(where: { id: $id }) {
       name
@@ -18,7 +18,7 @@ const getDatasetByIdQuery = gql`
   }
 `;
 
-const deleteDatasetByIdMutation = gql`
+export const deleteDatasetByIdMutation = gql`
   mutation deleteDatasetById($id: ID!) {
     deleteDataset(where: { id: $id }) {
       id

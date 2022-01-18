@@ -1,99 +1,65 @@
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { v4 as uuidV4 } from "uuid";
 import {
-  render,
-  screen,
-  fireEvent,
-  waitFor,
-  act,
-} from "@testing-library/react";
-import { ApolloProvider, gql } from "@apollo/client";
-import { PropsWithChildren } from "react";
+  getApolloMockWrapper,
+  ApolloMockedResponse,
+} from "../../../utils/testing/mock-apollo";
+import {
+  DeleteDatasetModal,
+  getDatasetByIdQuery,
+  deleteDatasetByIdMutation,
+} from "../delete-dataset-modal";
+import { mockDatasetSimple } from "../../../utils/testing/mock-data";
 
-import { client } from "../../../connectors/apollo-client/schema-client";
-import { setupTestsWithLocalDatabase } from "../../../utils/setup-local-db-tests";
-import { DeleteDatasetModal } from "../delete-dataset-modal";
-
-const Wrapper = ({ children }: PropsWithChildren<{}>) => (
-  <ApolloProvider client={client}>{children}</ApolloProvider>
-);
-
-setupTestsWithLocalDatabase();
+const mockQueries: Record<string, ApolloMockedResponse> = {
+  getDatasetById: {
+    request: {
+      query: getDatasetByIdQuery,
+      variables: { id: mockDatasetSimple.id },
+    },
+    result: {
+      data: { dataset: { name: mockDatasetSimple.name } },
+    },
+  },
+  deleteDatasetById: {
+    request: {
+      query: deleteDatasetByIdMutation,
+      variables: { id: mockDatasetSimple.id },
+    },
+    newData: jest.fn(() => ({
+      data: { deleteDataset: { id: mockDatasetSimple.id } },
+    })),
+  },
+};
 
 const renderModal = (props = {}) => {
   return render(<DeleteDatasetModal isOpen {...props} />, {
-    wrapper: Wrapper,
+    wrapper: getApolloMockWrapper(Object.values(mockQueries)),
   });
 };
 
+afterEach(() => {
+  jest.clearAllMocks();
+});
+
 test("should delete a dataset when the button is clicked", async () => {
-  const mutateResult = await client.mutate({
-    mutation: gql`
-      mutation {
-        createDataset(data: { name: "Toto", workspaceSlug: "local" }) {
-          id
-        }
-      }
-    `,
-  });
-
   const onClose = jest.fn();
-  renderModal({ onClose, datasetId: mutateResult.data.createDataset.id });
-
+  renderModal({ onClose, datasetId: mockDatasetSimple.id });
   const button = screen.getByLabelText(/Dataset delete/i);
   fireEvent.click(button);
-
   await waitFor(() => {
     expect(onClose).toHaveBeenCalled();
   });
-
-  return expect(
-    client.query({
-      query: gql`
-        query getDatasetById($id: ID) {
-          dataset(where: { id: $id }) {
-            name
-          }
-        }
-      `,
-      variables: { id: mutateResult.data.createDataset.id },
-      fetchPolicy: "no-cache",
-    })
-  ).rejects.toThrow(/Couldn't find dataset corresponding to/);
+  expect(mockQueries.deleteDatasetById.newData).toHaveBeenCalledTimes(1);
 });
 
 test("shouldn't delete a dataset when the cancel is clicked", async () => {
-  const mutateResult = await client.mutate({
-    mutation: gql`
-      mutation {
-        createDataset(data: { name: "Toto", workspaceSlug: "local" }) {
-          id
-        }
-      }
-    `,
-  });
-
   const onClose = jest.fn();
-  renderModal({ onClose, datasetId: mutateResult.data.createDataset.id });
-
+  renderModal({ onClose, datasetId: uuidV4() });
   const button = screen.getByLabelText(/Cancel delete/i);
   fireEvent.click(button);
-
   await waitFor(() => {
     expect(onClose).toHaveBeenCalled();
   });
-
-  await act(async () => {
-    const queryResult = await client.query({
-      query: gql`
-        query getDatasetById($id: ID) {
-          dataset(where: { id: $id }) {
-            name
-          }
-        }
-      `,
-      variables: { id: mutateResult.data.createDataset.id },
-      fetchPolicy: "no-cache",
-    });
-
-    expect(queryResult.data.dataset.name).toEqual("Toto");
-  });
+  expect(mockQueries.deleteDatasetById.newData).toHaveBeenCalledTimes(0);
 });
