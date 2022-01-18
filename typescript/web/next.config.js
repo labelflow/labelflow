@@ -82,11 +82,11 @@ module.exports = withSentryConfig(
           {
             apply: (compiler) => {
               compiler.hooks.afterEmit.tap("AfterEmitPlugin", (compilation) => {
-                exec("yarn generate", (err, stdout, stderr) => {
+                exec("yarn codegen:all", (err, stdout, stderr) => {
                   if (stdout) process.stdout.write(stdout);
                   if (stderr) process.stdout.write(stderr);
                   if (err) {
-                    process.exit(1);
+                    throw new Error(`during codegen step\n${err}`);
                   }
                 });
               });
