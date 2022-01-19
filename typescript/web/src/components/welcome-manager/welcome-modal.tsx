@@ -152,11 +152,13 @@ export const WelcomeModal = ({
   initialBrowserWarning = false,
   initialIsLoadingWorkerAndDemo = false,
   initialBrowserError = undefined,
+  autoStartCountDown = true,
 }: {
   initialIsServiceWorkerActive?: boolean;
   initialBrowserWarning?: boolean;
   initialIsLoadingWorkerAndDemo?: boolean;
   initialBrowserError?: Error;
+  autoStartCountDown?: boolean;
 }) => {
   const router = useRouter();
 
@@ -355,7 +357,11 @@ export const WelcomeModal = ({
         // Nominal welcome modal on first vist after loading
         if (shouldShowWelcomeModal) {
           return (
-            <Welcome onClickSkip={handleSkip} onClickNext={handleGetStarted} />
+            <Welcome
+              onClickSkip={handleSkip}
+              onClickNext={handleGetStarted}
+              autoStartCountDown={autoStartCountDown}
+            />
           );
         }
 

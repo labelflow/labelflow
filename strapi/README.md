@@ -6,7 +6,7 @@ This uses NPM, for compatibility reasons (See https://github.com/strapi/strapi/i
 
 To run it:
 
-```
+```text
 cd <this folder>
 npm install
 npm run develop
@@ -20,13 +20,13 @@ Follow this https://strapi.io/documentation/developer-docs/latest/setup-deployme
 
 Then once setup is done, to redeploy each time, do:
 
-```
+```text
 git subtree push --prefix strapi heroku main
 ```
 
 To see production logs:
 
-```
+```text
 heroku logs --tail 
 ```
 
@@ -34,7 +34,7 @@ heroku logs --tail
 
 It was setup with:
 
-```
+```text
 npx create-strapi-app labelflow --use-npm
 ```
 

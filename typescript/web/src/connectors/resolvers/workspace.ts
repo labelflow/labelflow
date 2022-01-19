@@ -2,7 +2,11 @@ import {
   QueryWorkspaceArgs,
   QueryWorkspacesArgs,
 } from "@labelflow/graphql-types";
-import { Context, DbWorkspaceWithType } from "@labelflow/common-resolvers";
+import {
+  addTypenames,
+  Context,
+  DbWorkspaceWithType,
+} from "@labelflow/common-resolvers";
 import { notImplementedInLocalWorkspaceRepository } from "../repository/utils";
 import { localWorkspace } from "../repository/workspace";
 
@@ -19,15 +23,20 @@ const workspaces = async (
   { repository }: Context
 ) => await repository.workspace.list(args.where);
 
-const datasets = (_parent: any, _args: any, { repository }: Context) => {
-  return repository.dataset.list();
+const datasets = async (
+  _parent: never,
+  _args: never,
+  { repository }: Context
+) => {
+  const queryResult = await repository.dataset.list();
+  return addTypenames(queryResult, "Dataset");
 };
 
 export default {
   Query: {
     workspace,
     workspaces,
-    isWorkspaceSlugAlreadyTaken: notImplementedInLocalWorkspaceRepository,
+    workspaceExists: notImplementedInLocalWorkspaceRepository,
   },
 
   Mutation: {

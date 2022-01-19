@@ -1,5 +1,4 @@
-import { gql, useQuery, useMutation } from "@apollo/client";
-import { useRef } from "react";
+import { gql, useMutation, useQuery } from "@apollo/client";
 import {
   AlertDialog,
   AlertDialogBody,
@@ -9,6 +8,8 @@ import {
   AlertDialogOverlay,
   Button,
 } from "@chakra-ui/react";
+import { useRef } from "react";
+import { useFlushPaginatedDatasetsCache } from "./datasets.query";
 
 const getDatasetByIdQuery = gql`
   query getDatasetById($id: ID) {
@@ -30,11 +31,16 @@ export const DeleteDatasetModal = ({
   isOpen = false,
   onClose = () => {},
   datasetId = undefined,
+  workspaceSlug,
 }: {
   isOpen?: boolean;
   onClose?: () => void;
   datasetId?: string;
+  workspaceSlug?: string;
 }) => {
+  const flushPaginatedDatasets = useFlushPaginatedDatasetsCache(
+    workspaceSlug as string
+  );
   const cancelRef = useRef<HTMLButtonElement>(null);
   const { data } = useQuery(getDatasetByIdQuery, {
     variables: { id: datasetId },
@@ -54,6 +60,7 @@ export const DeleteDatasetModal = ({
   );
 
   const deleteDataset = async () => {
+    await flushPaginatedDatasets();
     await deleteDatasetMutate();
     onClose();
   };

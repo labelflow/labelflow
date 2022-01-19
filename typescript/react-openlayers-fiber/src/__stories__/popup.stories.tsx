@@ -82,3 +82,7 @@ export const Popup = () => {
     </div>
   );
 };
+
+Popup.parameters = {
+  chromatic: { disableSnapshot: true },
+};

@@ -23,7 +23,7 @@ function useGeometryFunction(
     return createBox();
   }
   if (shapeType === "Star") {
-    return function (coordinates, geometry) {
+    return (coordinates, geometry) => {
       const center = coordinates[0] as [number, number];
       const last = coordinates[1] as [number, number];
       const dx = center[0] - last[0];
@@ -95,4 +95,8 @@ export const DrawShapes = () => {
       </Map>
     </>
   );
+};
+
+DrawShapes.parameters = {
+  chromatic: { disableSnapshot: true },
 };

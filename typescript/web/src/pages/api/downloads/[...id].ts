@@ -6,6 +6,7 @@ import { NextApiResponse, NextApiRequest } from "next";
 import { captureException } from "@sentry/nextjs";
 
 let awsS3CustomEndpointOptions = {};
+const EXPIRATION_TIME_SEC = 3600;
 
 if (process.env.LABELFLOW_AWS_ENDPOINT) {
   const endpointUrl = new URL(process.env.LABELFLOW_AWS_ENDPOINT);
@@ -64,8 +65,11 @@ apiRoute.get(async (req, res) => {
     Key: key,
   });
   try {
-    const signedURL = await getSignedUrl(client, command, { expiresIn: 3600 });
+    const signedURL = await getSignedUrl(client, command, {
+      expiresIn: EXPIRATION_TIME_SEC,
+    });
     if (signedURL) {
+      res.setHeader("cache-control", `private, max-age=${EXPIRATION_TIME_SEC}`);
       return res.redirect(302, signedURL);
     }
     return res.status(404).json({ error: { name: "Unknown error" } });

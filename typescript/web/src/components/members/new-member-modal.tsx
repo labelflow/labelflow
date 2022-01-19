@@ -1,34 +1,38 @@
-import { useState, ChangeEvent } from "react";
 import {
-  Flex,
   Alert,
-  AlertIcon,
   AlertDescription,
-  VStack,
+  AlertIcon,
+  Button,
+  Flex,
+  Heading,
+  Link,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
   Text,
   Textarea,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalCloseButton,
-  ModalFooter,
-  Button,
-  Heading,
-  ModalHeader,
-  ModalBody,
   useColorModeValue as mode,
-  Link,
   useToast,
+  VStack,
 } from "@chakra-ui/react";
+import { InvitationResult, MembershipRole } from "@labelflow/graphql-types";
+import { isEmpty } from "lodash/fp";
 import { useRouter } from "next/router";
-import { MembershipRole, InvitationResult } from "@labelflow/graphql-types";
-
+import { ChangeEvent, useState } from "react";
+import { validateEmail } from "../../utils/validate-email";
 import { RoleSelection } from "./role-selection";
 import { InviteMember } from "./types";
-import { validateEmail } from "../../utils/validate-email";
 
 const maxNumberOfEmails = 20;
 type EmailStatuses = Record<InvitationResult, string[]>;
+
+const parseEmails = (text: string): string[] => {
+  return text.split(/[,;\s]/).filter((email) => !isEmpty(email));
+};
 
 const summarizeEmailList = (emailList: string[]): string => {
   if (emailList.length === 1) {
@@ -59,7 +63,7 @@ export const NewMemberModal = ({
     const inputValue = e.target.value;
     setValue(inputValue);
   };
-  const emails = value.split("\n").filter((email) => email !== "");
+  const emails = parseEmails(value);
   const hasInvalidEmails = emails.some((email) => !validateEmail(email));
 
   return (
@@ -80,8 +84,8 @@ export const NewMemberModal = ({
             Invite members
           </Heading>
           <Text fontSize="lg" fontWeight="medium">
-            Adding members to the workspace will give them access to{" "}
-            <b>every dataset</b> in the workspace.
+            Adding members will give them access to <b>every dataset</b> in the
+            workspace.
           </Text>
         </ModalHeader>
 
@@ -129,7 +133,7 @@ user2@example.com
                     : ""
                 } ${
                   hasInvalidEmails
-                    ? "\nAt lease one email format is invalid. Write one email address per line."
+                    ? "\nAt least one email address is invalid. Addresses can be separated by new lines, spaces, commas or semicolons."
                     : ""
                 }`}
               </Text>
@@ -144,9 +148,8 @@ user2@example.com
               <Alert status="info" borderRadius={5}>
                 <AlertIcon />
                 <AlertDescription fontSize={13} fontWeight="medium">
-                  <b>Tip</b>: Until January 2022 the number of members in a
-                  Shared Workspace is not limited, the time for us to collect
-                  your{" "}
+                  <b>Tip</b>: Until March 2022 the number of members in a Shared
+                  Workspace is not limited, the time for us to collect your{" "}
                   <Link
                     target="_blank"
                     href="https://discord.gg/NyYQ4dM3Dj"

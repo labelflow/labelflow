@@ -1,7 +1,12 @@
 {
   "name": "infrastructure",
+  "scripts": {
+    "deploy": "dotenv -e .env.local -- pulumi up -d",
+    "destroy": "dotenv -e .env.local -- pulumi destroy"
+  },
   "devDependencies": {
-    "@types/node": "^10.0.0"
+    "@types/node": "^10.0.0",
+    "dotenv-cli": "^4.0.0"
   },
   "dependencies": {
     "@kubernetes/client-node": "^0.15.1",

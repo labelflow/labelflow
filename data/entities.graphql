@@ -24,6 +24,7 @@ type Image {
   width: Int!
   labels: [Label!]!
   dataset: Dataset!
+  metadata: JSON
 }
 
 enum LabelType {
@@ -61,6 +62,7 @@ type LabelClass {
   color: ColorHex!
   labels: [Label!]!
   dataset: Dataset!
+  labelsAggregates: LabelsAggregates!
 }
 
 type Dataset {

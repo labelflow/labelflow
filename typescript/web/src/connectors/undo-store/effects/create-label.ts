@@ -5,8 +5,8 @@ import { GeoJSONPolygon } from "ol/format/GeoJSON";
 import { v4 as uuid } from "uuid";
 import { Effect } from "..";
 import { createLabelMutation, deleteLabelMutation } from "./shared-queries";
-import { addLabelToImageInCache } from "./cache-updates/add-label-to-image-in-cache";
-import { removeLabelFromImageCache } from "./cache-updates/remove-label-from-image-cache";
+import { createLabelMutationUpdate } from "./cache-updates/create-label-mutation-update";
+import { deleteLabelMutationUpdate } from "./cache-updates/delete-label-mutation-update";
 
 export const createCreateLabelEffect = (
   {
@@ -44,13 +44,7 @@ export const createCreateLabelEffect = (
       optimisticResponse: {
         createLabel: { id, __typename: "Label" },
       },
-      update(cache, { data: mutationPayloadData }) {
-        if (typeof mutationPayloadData?.createLabel?.id !== "string") {
-          return;
-        }
-
-        addLabelToImageInCache(cache, createLabelInputs);
-      },
+      update: createLabelMutationUpdate(createLabelInputs),
     });
 
     // TODO: Ideally we could select the label before awaiting for the mutation to complete
@@ -69,9 +63,11 @@ export const createCreateLabelEffect = (
       variables: { id },
       refetchQueries: ["countLabelsOfDataset"],
       optimisticResponse: { deleteLabel: { id, __typename: "Label" } },
-      update(cache) {
-        removeLabelFromImageCache(cache, { imageId, id });
-      },
+      update: deleteLabelMutationUpdate({
+        id,
+        imageId,
+        labelClassId: selectedLabelClassId,
+      }),
     });
 
     return id;

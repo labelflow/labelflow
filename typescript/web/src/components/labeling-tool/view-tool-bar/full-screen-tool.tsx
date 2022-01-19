@@ -20,41 +20,41 @@ const noOp = () => {};
 
 // See https://raobotics.com/blog/react-fullscreen
 export function useFullscreen(fullscreenRef: RefObject<HTMLDivElement>) {
-  if (!isInWindowScope) {
-    return {
-      fullscreenEnabled: true,
-      fullscreenActive: false,
-      enterFullscreen: noOp,
-      exitFullscreen: noOp,
-    };
-  }
   const [active, setActive] = useState(false);
+  const handleChange = useCallback(() => {
+    setActive(fscreen.fullscreenElement === fullscreenRef.current);
+  }, [fullscreenRef]);
   useLayoutEffect(() => {
-    const handleChange = () => {
-      setActive(fscreen.fullscreenElement === fullscreenRef.current);
-    };
+    if (!isInWindowScope) return () => {};
     fscreen.addEventListener("fullscreenchange", handleChange);
     return () => fscreen.removeEventListener("fullscreenchange", handleChange);
-  }, []);
-  const enterFullscreen = useCallback(async () => {
+  });
+  const enterFullscreen = useCallback(() => {
     if (fscreen.fullscreenElement) {
-      await fscreen.exitFullscreen();
+      fscreen.exitFullscreen();
     }
     if (fullscreenRef.current) {
       fscreen.requestFullscreen(fullscreenRef.current);
     }
-  }, []);
-  const exitFullscreen = useCallback(async () => {
+  }, [fullscreenRef]);
+  const exitFullscreen = useCallback(() => {
     if (fscreen.fullscreenElement === fullscreenRef.current) {
       fscreen.exitFullscreen();
     }
-  }, []);
-  return {
-    fullscreenEnabled: fscreen.fullscreenEnabled,
-    fullscreenActive: active,
-    enterFullscreen,
-    exitFullscreen,
-  };
+  }, [fullscreenRef]);
+  return isInWindowScope
+    ? {
+        fullscreenEnabled: fscreen.fullscreenEnabled,
+        fullscreenActive: active,
+        enterFullscreen,
+        exitFullscreen,
+      }
+    : {
+        fullscreenEnabled: true,
+        fullscreenActive: false,
+        enterFullscreen: noOp,
+        exitFullscreen: noOp,
+      };
 }
 
 export const FullScreenTool = ({

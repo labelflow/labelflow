@@ -6,7 +6,7 @@ on:
       - "feature/**"
   push:
     branches:
-      - "main"
+      - main
 jobs:
   install-typescript:
     name: Install Typescript packages
@@ -45,7 +45,7 @@ jobs:
           key: ${{ runner.os }}-modules-${{secrets.ACTIONS_CACHE_VERSION}}-${{ hashFiles('yarn.lock') }}
 
   lint-typescript:
-    name: Lint Typescript code
+    name: Lint TypeScript code
     runs-on: ubuntu-20.04
     needs: install-typescript
     steps:
@@ -57,8 +57,24 @@ jobs:
         with:
           path: "**/node_modules"
           key: ${{ runner.os }}-modules-${{secrets.ACTIONS_CACHE_VERSION}}-${{ hashFiles('yarn.lock') }}
-      - name: lint project code
-        run: yarn lint
+      - name: Lint project code
+        run: yarn lint:ts
+
+  lint-markdown:
+    name: Lint Markdown code
+    runs-on: ubuntu-20.04
+    needs: install-typescript
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
+      - name: Fetch node_modules from cache
+        uses: actions/cache@v2
+        id: node-modules-cache
+        with:
+          path: "**/node_modules"
+          key: ${{ runner.os }}-modules-${{secrets.ACTIONS_CACHE_VERSION}}-${{ hashFiles('yarn.lock') }}
+      - name: Lint markdown files
+        run: yarn lint:md
 
   lint-python:
     name: Lint Python code
@@ -248,6 +264,11 @@ jobs:
           CI_BRANCH_BASE: refs/heads/main
           POSTGRES_EXTERNAL_URL: postgresql://admin:admin@localhost:5433/labelflow?schema=public
           VERCEL_URL: http://localhost:3001
+          LABELFLOW_AWS_ACCESS_KEY_ID: minioadmin
+          LABELFLOW_AWS_SECRET_ACCESS_KEY: minioadmin
+          LABELFLOW_AWS_REGION: eu-west-1
+          LABELFLOW_AWS_ENDPOINT: http://localhost:9000
+          JWT_SECRET: 9W3LaNVnxT9UOaPWZHIyrAVu3ndIbBsLme3Ttq+WNoQ=
 
   deployment-chromatic-pr:
     name: Deploy Storybook PR

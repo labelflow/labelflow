@@ -61,7 +61,7 @@ export const Features = () => (
         Your data is stored securely on our servers, no worry about your data
         integrity.
       </Feature>
-      <Feature title="Label Faster (soon)">
+      <Feature title="Label Faster">
         Use smart tools based on AI to label your data faster and more
         precisely.
       </Feature>

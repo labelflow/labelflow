@@ -17,7 +17,8 @@
     "skipLibCheck": true,
     "strict": true,
     "target": "esnext",
-    "module": "esnext"
+    "module": "esnext",
+    "strictNullChecks": true
   },
   "exclude": ["node_modules", "**/*.graphql"],
   "include": ["**/*.ts", "**/*.tsx"]

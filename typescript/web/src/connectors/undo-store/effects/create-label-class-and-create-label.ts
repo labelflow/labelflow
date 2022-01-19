@@ -7,8 +7,8 @@ import { useLabelingStore } from "../../labeling-state";
 
 import { Effect } from "..";
 
-import { addLabelToImageInCache } from "./cache-updates/add-label-to-image-in-cache";
-import { removeLabelFromImageCache } from "./cache-updates/remove-label-from-image-cache";
+import { createLabelMutationUpdate } from "./cache-updates/create-label-mutation-update";
+import { deleteLabelMutationUpdate } from "./cache-updates/delete-label-mutation-update";
 import { createLabelClassMutationUpdate } from "./cache-updates/create-label-class-mutation-update";
 import { deleteLabelClassMutationUpdate } from "./cache-updates/delete-label-class-mutation-update";
 import {
@@ -76,9 +76,7 @@ export const createCreateLabelClassAndCreateLabelEffect = (
       optimisticResponse: {
         createLabel: { id: `temp-${Date.now()}`, __typename: "Label" },
       },
-      update(cache) {
-        addLabelToImageInCache(cache, createLabelInputs);
-      },
+      update: createLabelMutationUpdate(createLabelInputs),
     });
 
     if (typeof data?.createLabel?.id !== "string") {
@@ -107,9 +105,11 @@ export const createCreateLabelClassAndCreateLabelEffect = (
       variables: { id },
       refetchQueries: ["countLabelsOfDataset"],
       optimisticResponse: { deleteLabel: { id, __typename: "Label" } },
-      update(cache) {
-        removeLabelFromImageCache(cache, { imageId, id });
-      },
+      update: deleteLabelMutationUpdate({
+        id,
+        imageId,
+        labelClassId,
+      }),
     });
 
     setSelectedLabelId(null);
@@ -169,9 +169,7 @@ export const createCreateLabelClassAndCreateLabelEffect = (
       optimisticResponse: {
         createLabel: { id: `temp-${Date.now()}`, __typename: "Label" },
       },
-      update(cache) {
-        addLabelToImageInCache(cache, createLabelInputs);
-      },
+      update: createLabelMutationUpdate(createLabelInputs),
     });
 
     if (typeof data?.createLabel?.id !== "string") {

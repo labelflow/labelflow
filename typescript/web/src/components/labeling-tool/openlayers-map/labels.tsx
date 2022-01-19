@@ -1,29 +1,25 @@
-import { MutableRefObject } from "react";
+import { gql, useQuery } from "@apollo/client";
+import { Label, LabelType } from "@labelflow/graphql-types";
 import { useRouter } from "next/router";
-import { useQuery, gql } from "@apollo/client";
-
-import { Vector as OlSourceVector } from "ol/source";
+import { Feature } from "ol";
 import GeoJSON from "ol/format/GeoJSON";
 import { Geometry, MultiPoint } from "ol/geom";
 import Polygon from "ol/geom/Polygon";
+import { Vector as OlSourceVector } from "ol/source";
 import { Fill, Stroke, Style } from "ol/style";
-
 import CircleStyle from "ol/style/Circle";
-import { Feature } from "ol";
-import { Label, LabelType } from "@labelflow/graphql-types";
-
+import { MutableRefObject } from "react";
+import {
+  extractIogMaskFromLabel,
+  getIogMaskIdFromLabelId,
+  iogMaskColor,
+} from "../../../connectors/iog";
 import {
   SelectionToolState,
   Tools,
   useLabelingStore,
 } from "../../../connectors/labeling-state";
-import {
-  extractIogMaskFromLabel,
-  iogMaskColor,
-  getIogMaskIdFromLabelId,
-} from "../../../connectors/iog";
-
-import { noneClassColor } from "../../../utils/class-color-generator";
+import { noneClassColor } from "../../../theme";
 
 const getImageLabelsQuery = gql`
   query getImageLabels($imageId: ID!) {
@@ -148,27 +144,8 @@ export const Labels = ({
                 style={[
                   new Style({
                     fill: new Fill({
-                      color: `${iogMaskColor}AA`,
+                      color: `${iogMaskColor}B3`,
                     }),
-                    stroke: new Stroke({
-                      color: `${iogMaskColor}FF`,
-                      width: 2,
-                    }),
-                    zIndex: 2,
-                  }),
-                  new Style({
-                    image: new CircleStyle({
-                      radius: 3,
-                      fill: new Fill({
-                        color: iogMaskColor,
-                      }),
-                    }),
-                    geometry: (feature) => {
-                      const coordinates = (feature as Feature<Polygon>)
-                        .getGeometry()
-                        .getCoordinates()[1];
-                      return new MultiPoint(coordinates);
-                    },
                     zIndex: 2,
                   }),
                 ]}

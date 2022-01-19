@@ -12,6 +12,9 @@ import {
   Alert,
   AlertIcon,
   AlertTitle,
+  useColorModeValue as mode,
+  Box,
+  AlertDescription,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { IoSearch } from "react-icons/io5";
@@ -23,6 +26,19 @@ import { NewMemberModal } from "./new-member-modal";
 import { InviteMember } from "./types";
 
 const SearchIcon = chakra(IoSearch);
+
+const tableActionsForLocalWorkspace = (
+  <Alert status="info" variant="subtle">
+    <AlertIcon />
+    <Box flex={1}>
+      <AlertTitle>This workspace is private.</AlertTitle>
+      <AlertDescription>
+        Images are stored locally on your device. To collaborate and invite
+        people, switch to an online workspace.
+      </AlertDescription>
+    </Box>
+  </Alert>
+);
 
 export const TableActions = ({
   searchText,
@@ -53,14 +69,17 @@ export const TableActions = ({
           <FormControl minW={{ md: "320px" }} id="search">
             <InputGroup size="sm">
               <FormLabel srOnly>Find a member</FormLabel>
-              <InputLeftElement pointerEvents="none" color="gray.400">
+              <InputLeftElement
+                pointerEvents="none"
+                color={mode("gray.400", "gray.200")}
+              >
                 <SearchIcon />
               </InputLeftElement>
               <Input
                 rounded="base"
                 type="search"
                 placeholder="Find a member"
-                bgColor="#FFFFFF"
+                bgColor={mode("white", "gray.800")}
                 value={searchText}
                 onChange={(e) => setSearchText(e.target.value)}
               />
@@ -69,8 +88,8 @@ export const TableActions = ({
         </HStack>
         <ButtonGroup size="sm" variant="outline">
           <Button
-            backgroundColor="brand.500"
-            color="#ffffff"
+            colorScheme="brand"
+            variant="solid"
             iconSpacing="1"
             leftIcon={<RiAddFill fontSize="1.25em" />}
             onClick={() => setIsNewMemberModalOpen(true)}
@@ -82,14 +101,6 @@ export const TableActions = ({
     </>
   );
 
-  const tableActionsForLocalWorkspace = (
-    <Alert status="info" variant="subtle">
-      <AlertIcon />
-      <AlertTitle>This workspace is private to you only.</AlertTitle>
-      Its datasets are saved on your device only, not online. To collaborate and
-      invite people, switch to an online workspace.
-    </Alert>
-  );
   return workspaceSlug === "local"
     ? tableActionsForLocalWorkspace
     : tableActionsForOnlineWorkspace;

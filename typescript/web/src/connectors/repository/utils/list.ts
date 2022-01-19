@@ -27,19 +27,31 @@ export const list =
   async (
     where?: Where | null,
     skip?: number | null,
-    first?: number | null
+    first?: number | null,
+    reversed?: boolean | null
   ): Promise<Entity[]> => {
     const table = await getTable();
     if (where) {
+      if ("id" in where && "in" in where.id) {
+        return (await table.bulkGet(where.id.in)).filter(
+          (entity) => entity !== undefined
+        ) as Entity[];
+      }
+
       const query = table.where(where);
-      const listElements = await query.sortBy(criterion);
+      // reversed is used for getting list in desc order
+      const listElements = reversed
+        ? await query.reverse().sortBy(criterion)
+        : await query.sortBy(criterion);
       const beginSlice = skip ?? 0;
       const endSlice = first ? beginSlice + first : listElements.length;
 
       return listElements.slice(beginSlice, endSlice);
     }
 
-    const query = table.orderBy(criterion);
+    const query = reversed
+      ? table.orderBy(criterion).reverse()
+      : table.orderBy(criterion);
     if (skip) {
       query.offset(skip);
     }

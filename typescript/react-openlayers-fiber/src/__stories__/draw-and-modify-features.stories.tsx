@@ -72,3 +72,7 @@ export const DrawAndModifyFeatures = () => {
     </>
   );
 };
+
+DrawAndModifyFeatures.parameters = {
+  chromatic: { disableSnapshot: true },
+};

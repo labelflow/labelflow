@@ -18,6 +18,17 @@ export type Scalars = {
 };
 
 
+export type CreateIogLabelInput = {
+  id?: Maybe<Scalars['ID']>;
+  imageId: Scalars['String'];
+  x: Scalars['Float'];
+  y: Scalars['Float'];
+  width: Scalars['Float'];
+  height: Scalars['Float'];
+  centerPoint: Array<Scalars['Float']>;
+  labelClassId?: Maybe<Scalars['ID']>;
+};
+
 export enum CurrentUserCanAcceptInvitation {
   Yes = 'Yes',
   AlreadyAccepted = 'AlreadyAccepted',
@@ -156,11 +167,37 @@ export type Image = {
   width: Scalars['Int'];
   labels: Array<Label>;
   dataset: Dataset;
+  metadata?: Maybe<Scalars['JSON']>;
 };
 
 export type ImageCreateInput = {
   id?: Maybe<Scalars['ID']>;
   datasetId: Scalars['ID'];
+  createdAt?: Maybe<Scalars['DateTime']>;
+  name?: Maybe<Scalars['String']>;
+  path?: Maybe<Scalars['String']>;
+  mimetype?: Maybe<Scalars['String']>;
+  height?: Maybe<Scalars['Int']>;
+  width?: Maybe<Scalars['Int']>;
+  file?: Maybe<Scalars['Upload']>;
+  url?: Maybe<Scalars['String']>;
+  externalUrl?: Maybe<Scalars['String']>;
+  noThumbnails?: Maybe<Scalars['Boolean']>;
+  thumbnail20Url?: Maybe<Scalars['String']>;
+  thumbnail50Url?: Maybe<Scalars['String']>;
+  thumbnail100Url?: Maybe<Scalars['String']>;
+  thumbnail200Url?: Maybe<Scalars['String']>;
+  thumbnail500Url?: Maybe<Scalars['String']>;
+  metadata?: Maybe<Scalars['JSON']>;
+};
+
+export type ImageCreateManyInput = {
+  images: Array<ImageCreateManySingleInput>;
+  datasetId: Scalars['ID'];
+};
+
+export type ImageCreateManySingleInput = {
+  id?: Maybe<Scalars['ID']>;
   createdAt?: Maybe<Scalars['DateTime']>;
   name?: Maybe<Scalars['String']>;
   path?: Maybe<Scalars['String']>;
@@ -251,6 +288,7 @@ export type LabelClass = {
   color: Scalars['ColorHex'];
   labels: Array<Label>;
   dataset: Dataset;
+  labelsAggregates: LabelsAggregates;
 };
 
 export type LabelClassCreateInput = {
@@ -271,6 +309,7 @@ export type LabelClassUpdateInput = {
 
 export type LabelClassWhereInput = {
   datasetId?: Maybe<Scalars['ID']>;
+  name?: Maybe<Scalars['String']>;
 };
 
 export type LabelClassWhereUniqueInput = {
@@ -367,6 +406,7 @@ export type Mutation = {
   __typename?: 'Mutation';
   createExample?: Maybe<Example>;
   createImage?: Maybe<Image>;
+  createManyImages: Array<Image>;
   getUploadTarget: UploadTarget;
   updateImage?: Maybe<Image>;
   deleteImage?: Maybe<Image>;
@@ -377,14 +417,16 @@ export type Mutation = {
   updateLabelClass?: Maybe<LabelClass>;
   reorderLabelClass?: Maybe<LabelClass>;
   deleteLabelClass?: Maybe<LabelClass>;
+  updateIogLabel?: Maybe<Label>;
+  createIogLabel?: Maybe<Label>;
   createDataset?: Maybe<Dataset>;
   createDemoDataset?: Maybe<Dataset>;
-  runIog?: Maybe<Label>;
   updateDataset?: Maybe<Dataset>;
   deleteDataset?: Maybe<Dataset>;
   importDataset?: Maybe<ImportStatus>;
   createWorkspace?: Maybe<Workspace>;
   updateWorkspace?: Maybe<Workspace>;
+  deleteWorkspace?: Maybe<Workspace>;
   createMembership?: Maybe<Membership>;
   updateMembership?: Maybe<Membership>;
   deleteMembership?: Maybe<Membership>;
@@ -402,6 +444,11 @@ export type MutationCreateExampleArgs = {
 
 export type MutationCreateImageArgs = {
   data: ImageCreateInput;
+};
+
+
+export type MutationCreateManyImagesArgs = {
+  data: ImageCreateManyInput;
 };
 
 
@@ -459,13 +506,18 @@ export type MutationDeleteLabelClassArgs = {
 };
 
 
-export type MutationCreateDatasetArgs = {
-  data: DatasetCreateInput;
+export type MutationUpdateIogLabelArgs = {
+  data: UpdateIogInput;
 };
 
 
-export type MutationRunIogArgs = {
-  data: RunIogInput;
+export type MutationCreateIogLabelArgs = {
+  data: CreateIogLabelInput;
+};
+
+
+export type MutationCreateDatasetArgs = {
+  data: DatasetCreateInput;
 };
 
 
@@ -494,6 +546,11 @@ export type MutationCreateWorkspaceArgs = {
 export type MutationUpdateWorkspaceArgs = {
   where: WorkspaceWhereUniqueInput;
   data: WorkspaceUpdateInput;
+};
+
+
+export type MutationDeleteWorkspaceArgs = {
+  where: WorkspaceWhereUniqueInput;
 };
 
 
@@ -544,6 +601,7 @@ export type Query = {
   labelClass: LabelClass;
   labelClasses: Array<LabelClass>;
   labelClassesAggregates: LabelClassesAggregates;
+  labelClassExists: Scalars['Boolean'];
   labelsAggregates: LabelsAggregates;
   label: Label;
   labels: Array<Label>;
@@ -552,7 +610,7 @@ export type Query = {
   searchDataset?: Maybe<Dataset>;
   workspace: Workspace;
   workspaces: Array<Workspace>;
-  isWorkspaceSlugAlreadyTaken: Scalars['Boolean'];
+  workspaceExists: Scalars['Boolean'];
   membership: Membership;
   memberships: Array<Membership>;
   user: User;
@@ -599,6 +657,11 @@ export type QueryLabelClassesArgs = {
 };
 
 
+export type QueryLabelClassExistsArgs = {
+  where: LabelClassWhereInput;
+};
+
+
 export type QueryLabelArgs = {
   where: LabelWhereUniqueInput;
 };
@@ -640,8 +703,8 @@ export type QueryWorkspacesArgs = {
 };
 
 
-export type QueryIsWorkspaceSlugAlreadyTakenArgs = {
-  where: WorkspaceWhereInput;
+export type QueryWorkspaceExistsArgs = {
+  where: WorkspaceWhereUniqueInput;
 };
 
 
@@ -677,6 +740,17 @@ export type QueryExportDatasetArgs = {
 export type RunIogInput = {
   id: Scalars['ID'];
   imageUrl?: Maybe<Scalars['String']>;
+  x?: Maybe<Scalars['Float']>;
+  y?: Maybe<Scalars['Float']>;
+  width?: Maybe<Scalars['Float']>;
+  height?: Maybe<Scalars['Float']>;
+  pointsInside?: Maybe<Array<Maybe<Array<Scalars['Float']>>>>;
+  pointsOutside?: Maybe<Array<Maybe<Array<Scalars['Float']>>>>;
+  centerPoint?: Maybe<Array<Scalars['Float']>>;
+};
+
+export type UpdateIogInput = {
+  id: Scalars['ID'];
   x?: Maybe<Scalars['Float']>;
   y?: Maybe<Scalars['Float']>;
   width?: Maybe<Scalars['Float']>;
@@ -855,9 +929,11 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
   ColorHex: ResolverTypeWrapper<Scalars['ColorHex']>;
+  CreateIogLabelInput: CreateIogLabelInput;
+  String: ResolverTypeWrapper<Scalars['String']>;
+  Float: ResolverTypeWrapper<Scalars['Float']>;
   CurrentUserCanAcceptInvitation: CurrentUserCanAcceptInvitation;
   Dataset: ResolverTypeWrapper<Dataset>;
-  String: ResolverTypeWrapper<Scalars['String']>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
   DatasetCreateInput: DatasetCreateInput;
   DatasetImportInput: DatasetImportInput;
@@ -881,6 +957,8 @@ export type ResolversTypes = {
   ID: ResolverTypeWrapper<Scalars['ID']>;
   Image: ResolverTypeWrapper<Image>;
   ImageCreateInput: ImageCreateInput;
+  ImageCreateManyInput: ImageCreateManyInput;
+  ImageCreateManySingleInput: ImageCreateManySingleInput;
   ImageUpdateInput: ImageUpdateInput;
   ImageWhereInput: ImageWhereInput;
   ImageWhereUniqueInput: ImageWhereUniqueInput;
@@ -892,7 +970,6 @@ export type ResolversTypes = {
   InviteMemberInput: InviteMemberInput;
   JSON: ResolverTypeWrapper<Scalars['JSON']>;
   Label: ResolverTypeWrapper<Label>;
-  Float: ResolverTypeWrapper<Scalars['Float']>;
   LabelClass: ResolverTypeWrapper<LabelClass>;
   LabelClassCreateInput: LabelClassCreateInput;
   LabelClassReorderInput: LabelClassReorderInput;
@@ -916,6 +993,7 @@ export type ResolversTypes = {
   Mutation: ResolverTypeWrapper<{}>;
   Query: ResolverTypeWrapper<{}>;
   RunIogInput: RunIogInput;
+  UpdateIogInput: UpdateIogInput;
   Upload: ResolverTypeWrapper<Scalars['Upload']>;
   UploadTarget: ResolversTypes['UploadTargetDirect'] | ResolversTypes['UploadTargetHttp'];
   UploadTargetDirect: ResolverTypeWrapper<UploadTargetDirect>;
@@ -937,8 +1015,10 @@ export type ResolversTypes = {
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
   ColorHex: Scalars['ColorHex'];
-  Dataset: Dataset;
+  CreateIogLabelInput: CreateIogLabelInput;
   String: Scalars['String'];
+  Float: Scalars['Float'];
+  Dataset: Dataset;
   Int: Scalars['Int'];
   DatasetCreateInput: DatasetCreateInput;
   DatasetImportInput: DatasetImportInput;
@@ -960,6 +1040,8 @@ export type ResolversParentTypes = {
   ID: Scalars['ID'];
   Image: Image;
   ImageCreateInput: ImageCreateInput;
+  ImageCreateManyInput: ImageCreateManyInput;
+  ImageCreateManySingleInput: ImageCreateManySingleInput;
   ImageUpdateInput: ImageUpdateInput;
   ImageWhereInput: ImageWhereInput;
   ImageWhereUniqueInput: ImageWhereUniqueInput;
@@ -970,7 +1052,6 @@ export type ResolversParentTypes = {
   InviteMemberInput: InviteMemberInput;
   JSON: Scalars['JSON'];
   Label: Label;
-  Float: Scalars['Float'];
   LabelClass: LabelClass;
   LabelClassCreateInput: LabelClassCreateInput;
   LabelClassReorderInput: LabelClassReorderInput;
@@ -991,6 +1072,7 @@ export type ResolversParentTypes = {
   Mutation: {};
   Query: {};
   RunIogInput: RunIogInput;
+  UpdateIogInput: UpdateIogInput;
   Upload: Scalars['Upload'];
   UploadTarget: ResolversParentTypes['UploadTargetDirect'] | ResolversParentTypes['UploadTargetHttp'];
   UploadTargetDirect: UploadTargetDirect;
@@ -1063,6 +1145,7 @@ export type ImageResolvers<ContextType = any, ParentType extends ResolversParent
   width?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   labels?: Resolver<Array<ResolversTypes['Label']>, ParentType, ContextType>;
   dataset?: Resolver<ResolversTypes['Dataset'], ParentType, ContextType>;
+  metadata?: Resolver<Maybe<ResolversTypes['JSON']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1105,6 +1188,7 @@ export type LabelClassResolvers<ContextType = any, ParentType extends ResolversP
   color?: Resolver<ResolversTypes['ColorHex'], ParentType, ContextType>;
   labels?: Resolver<Array<ResolversTypes['Label']>, ParentType, ContextType>;
   dataset?: Resolver<ResolversTypes['Dataset'], ParentType, ContextType>;
+  labelsAggregates?: Resolver<ResolversTypes['LabelsAggregates'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1135,6 +1219,7 @@ export type MembershipResolvers<ContextType = any, ParentType extends ResolversP
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   createExample?: Resolver<Maybe<ResolversTypes['Example']>, ParentType, ContextType, RequireFields<MutationCreateExampleArgs, 'data'>>;
   createImage?: Resolver<Maybe<ResolversTypes['Image']>, ParentType, ContextType, RequireFields<MutationCreateImageArgs, 'data'>>;
+  createManyImages?: Resolver<Array<ResolversTypes['Image']>, ParentType, ContextType, RequireFields<MutationCreateManyImagesArgs, 'data'>>;
   getUploadTarget?: Resolver<ResolversTypes['UploadTarget'], ParentType, ContextType, RequireFields<MutationGetUploadTargetArgs, 'data'>>;
   updateImage?: Resolver<Maybe<ResolversTypes['Image']>, ParentType, ContextType, RequireFields<MutationUpdateImageArgs, 'where' | 'data'>>;
   deleteImage?: Resolver<Maybe<ResolversTypes['Image']>, ParentType, ContextType, RequireFields<MutationDeleteImageArgs, 'where'>>;
@@ -1145,14 +1230,16 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   updateLabelClass?: Resolver<Maybe<ResolversTypes['LabelClass']>, ParentType, ContextType, RequireFields<MutationUpdateLabelClassArgs, 'where' | 'data'>>;
   reorderLabelClass?: Resolver<Maybe<ResolversTypes['LabelClass']>, ParentType, ContextType, RequireFields<MutationReorderLabelClassArgs, 'where' | 'data'>>;
   deleteLabelClass?: Resolver<Maybe<ResolversTypes['LabelClass']>, ParentType, ContextType, RequireFields<MutationDeleteLabelClassArgs, 'where'>>;
+  updateIogLabel?: Resolver<Maybe<ResolversTypes['Label']>, ParentType, ContextType, RequireFields<MutationUpdateIogLabelArgs, 'data'>>;
+  createIogLabel?: Resolver<Maybe<ResolversTypes['Label']>, ParentType, ContextType, RequireFields<MutationCreateIogLabelArgs, 'data'>>;
   createDataset?: Resolver<Maybe<ResolversTypes['Dataset']>, ParentType, ContextType, RequireFields<MutationCreateDatasetArgs, 'data'>>;
   createDemoDataset?: Resolver<Maybe<ResolversTypes['Dataset']>, ParentType, ContextType>;
-  runIog?: Resolver<Maybe<ResolversTypes['Label']>, ParentType, ContextType, RequireFields<MutationRunIogArgs, 'data'>>;
   updateDataset?: Resolver<Maybe<ResolversTypes['Dataset']>, ParentType, ContextType, RequireFields<MutationUpdateDatasetArgs, 'where' | 'data'>>;
   deleteDataset?: Resolver<Maybe<ResolversTypes['Dataset']>, ParentType, ContextType, RequireFields<MutationDeleteDatasetArgs, 'where'>>;
   importDataset?: Resolver<Maybe<ResolversTypes['ImportStatus']>, ParentType, ContextType, RequireFields<MutationImportDatasetArgs, 'where' | 'data'>>;
   createWorkspace?: Resolver<Maybe<ResolversTypes['Workspace']>, ParentType, ContextType, RequireFields<MutationCreateWorkspaceArgs, 'data'>>;
   updateWorkspace?: Resolver<Maybe<ResolversTypes['Workspace']>, ParentType, ContextType, RequireFields<MutationUpdateWorkspaceArgs, 'where' | 'data'>>;
+  deleteWorkspace?: Resolver<Maybe<ResolversTypes['Workspace']>, ParentType, ContextType, RequireFields<MutationDeleteWorkspaceArgs, 'where'>>;
   createMembership?: Resolver<Maybe<ResolversTypes['Membership']>, ParentType, ContextType, RequireFields<MutationCreateMembershipArgs, 'data'>>;
   updateMembership?: Resolver<Maybe<ResolversTypes['Membership']>, ParentType, ContextType, RequireFields<MutationUpdateMembershipArgs, 'where' | 'data'>>;
   deleteMembership?: Resolver<Maybe<ResolversTypes['Membership']>, ParentType, ContextType, RequireFields<MutationDeleteMembershipArgs, 'where'>>;
@@ -1172,6 +1259,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   labelClass?: Resolver<ResolversTypes['LabelClass'], ParentType, ContextType, RequireFields<QueryLabelClassArgs, 'where'>>;
   labelClasses?: Resolver<Array<ResolversTypes['LabelClass']>, ParentType, ContextType, RequireFields<QueryLabelClassesArgs, never>>;
   labelClassesAggregates?: Resolver<ResolversTypes['LabelClassesAggregates'], ParentType, ContextType>;
+  labelClassExists?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<QueryLabelClassExistsArgs, 'where'>>;
   labelsAggregates?: Resolver<ResolversTypes['LabelsAggregates'], ParentType, ContextType>;
   label?: Resolver<ResolversTypes['Label'], ParentType, ContextType, RequireFields<QueryLabelArgs, 'where'>>;
   labels?: Resolver<Array<ResolversTypes['Label']>, ParentType, ContextType, RequireFields<QueryLabelsArgs, never>>;
@@ -1180,7 +1268,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   searchDataset?: Resolver<Maybe<ResolversTypes['Dataset']>, ParentType, ContextType, RequireFields<QuerySearchDatasetArgs, 'where'>>;
   workspace?: Resolver<ResolversTypes['Workspace'], ParentType, ContextType, RequireFields<QueryWorkspaceArgs, 'where'>>;
   workspaces?: Resolver<Array<ResolversTypes['Workspace']>, ParentType, ContextType, RequireFields<QueryWorkspacesArgs, never>>;
-  isWorkspaceSlugAlreadyTaken?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<QueryIsWorkspaceSlugAlreadyTakenArgs, 'where'>>;
+  workspaceExists?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<QueryWorkspaceExistsArgs, 'where'>>;
   membership?: Resolver<ResolversTypes['Membership'], ParentType, ContextType, RequireFields<QueryMembershipArgs, 'where'>>;
   memberships?: Resolver<Array<ResolversTypes['Membership']>, ParentType, ContextType, RequireFields<QueryMembershipsArgs, never>>;
   user?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<QueryUserArgs, 'where'>>;

@@ -1,17 +1,17 @@
-import React from "react";
-import { Text, Box, Center, Spinner } from "@chakra-ui/react";
+import { gql, useMutation, useQuery } from "@apollo/client";
+import { Text } from "@chakra-ui/react";
 import { useRouter } from "next/router";
-import { useQuery, gql, useMutation } from "@apollo/client";
-import { Meta } from "../../../components/meta";
-import { Layout } from "../../../components/layout";
-import { ServiceWorkerManagerModal } from "../../../components/service-worker-manager";
 import { AuthManager } from "../../../components/auth-manager";
-import { WelcomeManager } from "../../../components/welcome-manager";
 import { CookieBanner } from "../../../components/cookie-banner";
+import { Layout } from "../../../components/layout";
 import { WorkspaceTabBar } from "../../../components/layout/tab-bar/workspace-tab-bar";
-import { Members } from "../../../components/members";
-import { WorkspaceSwitcher } from "../../../components/workspace-switcher";
 import { NavLogo } from "../../../components/logo/nav-logo";
+import { Members } from "../../../components/members";
+import { Meta } from "../../../components/meta";
+import { ServiceWorkerManagerModal } from "../../../components/service-worker-manager";
+import { LayoutSpinner } from "../../../components/spinner";
+import { WelcomeManager } from "../../../components/welcome-manager";
+import { WorkspaceSwitcher } from "../../../components/workspace-switcher";
 
 const membershipsQuery = gql`
   query getMembershipsMembers($workspaceSlug: String) {
@@ -95,27 +95,23 @@ const WorkspaceMembersPage = () => {
         }
       >
         {membershipsData?.memberships ? (
-          <Box p={8}>
-            <Members
-              memberships={membershipsData?.memberships ?? []}
-              changeMembershipRole={({ id, role }) => {
-                updateMembership({ variables: { id, data: { role } } });
-              }}
-              removeMembership={(id) => {
-                deleteMembership({ variables: { id } });
-              }}
-              inviteMember={async (where) => {
-                const {
-                  data: { inviteMember: invitationResult },
-                } = await inviteMember({ variables: { where } });
-                return invitationResult;
-              }}
-            />
-          </Box>
+          <Members
+            memberships={membershipsData?.memberships ?? []}
+            changeMembershipRole={({ id, role }) => {
+              updateMembership({ variables: { id, data: { role } } });
+            }}
+            removeMembership={(id) => {
+              deleteMembership({ variables: { id } });
+            }}
+            inviteMember={async (where) => {
+              const {
+                data: { inviteMember: invitationResult },
+              } = await inviteMember({ variables: { where } });
+              return invitationResult;
+            }}
+          />
         ) : (
-          <Center h="full">
-            <Spinner size="xl" />
-          </Center>
+          <LayoutSpinner />
         )}
       </Layout>
     </>

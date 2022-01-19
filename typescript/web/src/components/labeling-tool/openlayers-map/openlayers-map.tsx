@@ -1,37 +1,37 @@
-import { useRef, useCallback } from "react";
-import { Spinner, Center, ThemeProvider, Box } from "@chakra-ui/react";
-import { useRouter } from "next/router";
-import { RouterContext } from "next/dist/shared/lib/router-context";
-import { Extent, getCenter } from "ol/extent";
-import { Map as OlMap, View as OlView, MapBrowserEvent } from "ol";
-import { Geometry } from "ol/geom";
-import { Vector as OlSourceVector } from "ol/source";
-import { Size } from "ol/size";
-import * as Sentry from "@sentry/nextjs";
-import memoize from "mem";
-import Projection from "ol/proj/Projection";
-import useMeasure from "react-use-measure";
-import { ApolloProvider, useApolloClient, useQuery, gql } from "@apollo/client";
-import { useQueryParam } from "use-query-params";
-
-import { Map } from "@labelflow/react-openlayers-fiber";
+import { ApolloProvider, gql, useApolloClient, useQuery } from "@apollo/client";
+import { Box, ThemeProvider } from "@chakra-ui/react";
 import type { Image } from "@labelflow/graphql-types";
+import { Map } from "@labelflow/react-openlayers-fiber";
+import * as Sentry from "@sentry/nextjs";
+import { isEmpty } from "lodash/fp";
+import memoize from "mem";
+import { RouterContext } from "next/dist/shared/lib/router-context";
+import { useRouter } from "next/router";
+import { Map as OlMap, MapBrowserEvent, View as OlView } from "ol";
+import { Extent, getCenter } from "ol/extent";
+import { Geometry } from "ol/geom";
 import "ol/ol.css";
-
-import { DrawInteraction } from "./draw-interaction";
-import { SelectAndModifyFeature } from "./select-and-modify-feature";
-import { ClassificationContent, ClassificationOverlay } from "./classification";
-import { Labels } from "./labels";
-import { EditLabelClass } from "./edit-label-class";
-import { CursorGuides } from "./cursor-guides";
+import Projection from "ol/proj/Projection";
+import { Size } from "ol/size";
+import { Vector as OlSourceVector } from "ol/source";
+import { useCallback, useRef } from "react";
+import useMeasure from "react-use-measure";
+import { useQueryParam } from "use-query-params";
 import {
-  useLabelingStore,
-  Tools,
   DrawingToolState,
+  Tools,
+  useLabelingStore,
 } from "../../../connectors/labeling-state";
+import { useImagePreFetching } from "../../../hooks/use-image-pre-fetching";
 import { theme } from "../../../theme";
-import { useImagePrefecthing } from "../../../hooks/use-image-prefetching";
 import { BoolParam } from "../../../utils/query-param-bool";
+import { LayoutSpinner, Spinner } from "../../spinner";
+import { ClassificationContent, ClassificationOverlay } from "./classification";
+import { CursorGuides } from "./cursor-guides";
+import { DrawInteraction } from "./draw-interaction";
+import { EditLabelClass } from "./edit-label-class";
+import { Labels } from "./labels";
+import { SelectAndModifyFeature } from "./select-and-modify-feature";
 
 const empty: any[] = [];
 
@@ -129,7 +129,7 @@ export const OpenlayersMap = () => {
 
   const image = imageData?.image ?? imageDataPrevious?.image;
 
-  useImagePrefecthing();
+  const preFetch = useImagePreFetching();
 
   const client = useApolloClient();
   const [containerRef, bounds] = useMeasure();
@@ -285,6 +285,7 @@ export const OpenlayersMap = () => {
                     }}
                     onImageloadend={() => {
                       setIsImageLoading(false);
+                      preFetch();
                       return true;
                     }}
                   />
@@ -329,11 +330,7 @@ export const OpenlayersMap = () => {
           width: "100%",
         }}
       >
-        {url == null && (
-          <Center h="full">
-            <Spinner aria-label="loading indicator" size="xl" />
-          </Center>
-        )}
+        {isEmpty(url) && <LayoutSpinner />}
       </Box>
 
       <EditLabelClass
@@ -354,18 +351,23 @@ export const OpenlayersMap = () => {
           }
         }}
       />
-      <Spinner
-        id="spinner"
-        key="spinner"
-        visibility={iogSpinnerPosition ? "visible" : "hidden"}
+      <div
         ref={(e) => {
           if (e && iogSpinnerRef.current !== e) {
             // eslint-disable-next-line no-param-reassign
             iogSpinnerRef.current = e;
           }
         }}
-        color="brand"
-      />
+        hidden={!iogSpinnerPosition}
+      >
+        {
+          // Force spinner to be hidden so that Cypress doesn't complain about
+          // the element still being present in the DOM
+          iogSpinnerPosition && (
+            <Spinner key="spinner" id="spinner" color="brand" size="xl" />
+          )
+        }
+      </div>
     </Box>
   );
 };

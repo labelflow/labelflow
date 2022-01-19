@@ -8,9 +8,9 @@ import type {
   QueryLabelClassArgs,
   QueryLabelClassesArgs,
 } from "@labelflow/graphql-types";
+import { getNextClassColor } from "@labelflow/utils";
 import { Context, DbLabelClass } from "./types";
 import { throwIfResolvesToNil } from "./utils/throw-if-resolves-to-nil";
-import { hexColorSequence } from "./utils/class-color-generator";
 
 // Queries
 const labels = async (
@@ -44,6 +44,25 @@ const labelClasses = async (
   );
 };
 
+const labelClassExists = async (
+  _: any,
+  args: QueryLabelClassArgs,
+  { repository, user }: Context
+): Promise<Boolean> => {
+  try {
+    const data = await repository.labelClass.list({ ...args?.where, user });
+    return data.length > 0;
+  } catch (error) {
+    if (
+      error instanceof Error &&
+      error.message.includes("User not authorized to access workspace")
+    ) {
+      return true;
+    }
+    throw error;
+  }
+};
+
 // Mutations
 const createLabelClass = async (
   _: any,
@@ -51,7 +70,7 @@ const createLabelClass = async (
   { repository, user }: Context
 ): Promise<DbLabelClass> => {
   const { color, name, id, datasetId } = args.data;
-  const numberLabelClasses = await repository.labelClass.count({
+  const createdLabelClasses = await repository.labelClass.list({
     datasetId,
     user,
   });
@@ -69,12 +88,15 @@ const createLabelClass = async (
 
   const newLabelClassEntity = {
     id: labelClassId,
-    index: numberLabelClasses,
+    index: createdLabelClasses.length,
     createdAt: now.toISOString(),
     updatedAt: now.toISOString(),
     name,
     color:
-      color ?? hexColorSequence[numberLabelClasses % hexColorSequence.length],
+      color ??
+      getNextClassColor(
+        createdLabelClasses.map((attributedClass) => attributedClass.color)
+      ),
     datasetId,
   };
   await repository.labelClass.add(newLabelClassEntity, user);
@@ -171,19 +193,19 @@ const deleteLabelClass = async (
   args: MutationDeleteLabelClassArgs,
   { repository, user }: Context
 ) => {
-  const labelToDelete = await throwIfResolvesToNil(
+  const labelClassToDelete = await throwIfResolvesToNil(
     "No labelClass with such id",
     repository.labelClass.get
   )({ id: args.where.id }, user);
 
-  await repository.labelClass.delete({ id: labelToDelete.id }, user);
+  await repository.labelClass.delete({ id: labelClassToDelete.id }, user);
   const labelClassesOfDataset = await repository.labelClass.list({
-    datasetId: labelToDelete?.datasetId,
+    datasetId: labelClassToDelete?.datasetId,
     user,
   });
   await Promise.all(
     labelClassesOfDataset.map(async (labelClassOfDataset) => {
-      if (labelClassOfDataset.index > labelToDelete.index) {
+      if (labelClassOfDataset.index > labelClassToDelete.index) {
         await repository.labelClass.update(
           { id: labelClassOfDataset.id },
           {
@@ -195,7 +217,7 @@ const deleteLabelClass = async (
       }
     })
   );
-  return labelToDelete;
+  return labelClassToDelete;
 };
 
 const labelClassesAggregates = (parent: any) => {
@@ -234,6 +256,7 @@ export default {
     labelClass,
     labelClasses,
     labelClassesAggregates,
+    labelClassExists,
   },
 
   Mutation: {

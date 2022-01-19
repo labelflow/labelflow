@@ -65,8 +65,8 @@ export const KitchenSink = () => {
         value={currentStyle}
         onChange={(e) => setCurrentStyle(e.target.value)}
       >
-        {bingstyles.map((style, index) => (
-          <option key={index} value={style}>
+        {bingstyles.map((style) => (
+          <option key={style} value={style}>
             {style}
           </option>
         ))}
@@ -86,9 +86,9 @@ export const KitchenSink = () => {
         <olControlScaleLine />
         <olInteractionDragRotateAndZoom />
 
-        {bingstyles.map((style, index) => (
+        {bingstyles.map((style) => (
           <olLayerTile
-            key={index}
+            key={style}
             visible={style === currentStyle}
             preload={Infinity}
           >

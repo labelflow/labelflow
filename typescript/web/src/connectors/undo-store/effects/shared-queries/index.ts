@@ -102,7 +102,7 @@ export const getLabelQuery = gql`
   }
 `;
 
-export const updateLabelQuery = gql`
+export const updateLabelMutation = gql`
   mutation updateLabelClass(
     $where: LabelWhereUniqueInput!
     $data: LabelUpdateInput!

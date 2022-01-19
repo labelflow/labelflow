@@ -13,7 +13,6 @@ import {
   Flex,
 } from "@chakra-ui/react";
 import { Membership, MembershipStatus } from "@labelflow/graphql-types";
-import * as React from "react";
 import { User } from "./user";
 import { RoleSelection } from "./role-selection";
 import { ChangeMembershipRole, RemoveMembership } from "./types";
@@ -167,7 +166,7 @@ export const TableContent = ({
             ))}
           </Tr>
         </Thead>
-        <Tbody bgColor="#FFFFFF">
+        <Tbody bg={mode("white", "gray.900")}>
           {filteredMemberships.map((row, membershipIndex) => (
             <Tr key={membershipIndex}>
               {columns.map((column, index) => (

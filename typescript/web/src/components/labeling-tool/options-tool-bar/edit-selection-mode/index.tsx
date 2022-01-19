@@ -8,10 +8,13 @@ import { useEffect } from "react";
 import {
   useLabelingStore,
   SelectionToolState,
+  Tools,
 } from "../../../../connectors/labeling-state";
 import { keymap } from "../../../../keymap";
-import { ToggleButtonGroup } from "./toggle-button-group";
-import { ToggleButton } from "./toggle-button";
+import {
+  ToggleButtonGroup,
+  ToggleIconButton,
+} from "../../../toggle-button-group";
 
 const ChakraBiShapePolygon = chakra(BiShapePolygon);
 const ChakraIoColorWandOutline = chakra(IoColorWandOutline);
@@ -32,6 +35,7 @@ export const EditSelectionMode = () => {
     skip: selectedLabelId == null,
   });
   const isIogModeAvailable = dataLabelQuery?.label?.smartToolInput != null;
+  const selectedTool = useLabelingStore((state) => state.selectedTool);
   const selectionToolState = useLabelingStore(
     (state) => state.selectionToolState
   );
@@ -58,7 +62,11 @@ export const EditSelectionMode = () => {
   );
   const bg = useColorModeValue("white", "gray.800");
 
-  if (!selectedLabelId) {
+  if (
+    !selectedLabelId ||
+    selectedTool !== Tools.SELECTION ||
+    !isIogModeAvailable
+  ) {
     return null;
   }
 
@@ -67,11 +75,9 @@ export const EditSelectionMode = () => {
       value={selectionToolState}
       onChange={setSelectionToolState}
       defaultValue={SelectionToolState.DEFAULT}
-      isAttached
-      variant="outline"
       aria-label="Edit selection mode"
     >
-      <ToggleButton
+      <ToggleIconButton
         value={SelectionToolState.DEFAULT}
         description="Choose default selection mode [e]"
         aria-label="Choose default selection mode"
@@ -79,7 +85,7 @@ export const EditSelectionMode = () => {
         pointerEvents="initial"
         icon={<ChakraBiShapePolygon size="1.3em" />}
       />
-      <ToggleButton
+      <ToggleIconButton
         value={SelectionToolState.IOG}
         description="Choose auto annotate edition mode [e]"
         aria-label="Choose auto annotate selection mode"

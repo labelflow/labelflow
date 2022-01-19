@@ -137,7 +137,7 @@ describe("LabelClass resolver test suite", () => {
   });
 
   test("Query labelClass when id doesn't exists", async () => {
-    return expect(
+    await expect(
       client.query({
         query: gql`
           query getLabelClass($id: ID!) {
@@ -488,7 +488,7 @@ describe("LabelClass resolver test suite", () => {
         id: labelClassId,
       },
     });
-    return expect(queryResult).rejects.toThrow("No labelClass with such id");
+    await expect(queryResult).rejects.toThrow("No labelClass with such id");
   });
   it("should set all the labels linked to label class to labelClassId none when the class is deleted", async () => {
     await createDataset("Test dataset");

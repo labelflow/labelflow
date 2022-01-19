@@ -355,12 +355,18 @@ def run_iog(data, cache: Cache):
     points_outside = data.get("pointsOutside", [])
     center_point = tuple(data.get("centerPoint", cached_center_point))
 
-    should_perform_inference = (
-        cached_center_point != center_point or not backbone_features
-    )
     should_perform_refinement = points_inside or points_outside
 
-    if should_perform_inference:
+    if should_perform_refinement:
+        polygons = refine(
+            image,
+            roi,
+            center_point,
+            backbone_features,
+            points_inside,
+            points_outside,
+        )
+    else:  # Perform inference
         polygons, backbone_features = inference(
             image,
             roi,
@@ -373,14 +379,5 @@ def run_iog(data, cache: Cache):
                 "backbone_features": backbone_features,
             },
             id,
-        )
-    if should_perform_refinement:
-        polygons = refine(
-            image,
-            roi,
-            center_point,
-            backbone_features,
-            points_inside,
-            points_outside,
         )
     return {"polygons": polygons}

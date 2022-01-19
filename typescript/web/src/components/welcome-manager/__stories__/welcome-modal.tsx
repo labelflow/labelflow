@@ -87,11 +87,25 @@ Loading.parameters = {
   },
 };
 
+/**
+ * The Welcome Modal displays a countdown.
+ * This is non-deterministic, so we can't do snapshot testing here.
+ * The next story is the same welcome modal, but without a countdown.
+ * So, it's deterministic and can be snapshot tested.
+ */
 export const Welcome = () => {
   return <WelcomeManager />;
 };
 
 Welcome.parameters = {
+  chromatic: { disableSnapshot: true },
+};
+
+export const WelcomeWithoutCountDown = () => {
+  return <WelcomeManager autoStartCountDown={false} />;
+};
+
+WelcomeWithoutCountDown.parameters = {
   nextRouter: {
     path: "/local/datasets?modal-welcome=open",
     asPath: "/local/datasets?modal-welcome=open",

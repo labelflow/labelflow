@@ -20,6 +20,7 @@ type Query {
     skip: Int
   ): [LabelClass!]!
   labelClassesAggregates: LabelClassesAggregates!
+  labelClassExists(where: LabelClassWhereInput!): Boolean!
 
   labelsAggregates: LabelsAggregates!
   label(where: LabelWhereUniqueInput!): Label!
@@ -31,7 +32,7 @@ type Query {
 
   workspace(where: WorkspaceWhereUniqueInput!): Workspace!
   workspaces(first: Int, skip: Int, where: WorkspaceWhereInput): [Workspace!]!
-  isWorkspaceSlugAlreadyTaken(where: WorkspaceWhereInput!): Boolean!
+  workspaceExists(where: WorkspaceWhereUniqueInput!): Boolean!
 
   membership(where: MembershipWhereUniqueInput!): Membership!
   memberships(

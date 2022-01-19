@@ -28,6 +28,8 @@ import { WorkspacePlan } from "@prisma/client";
 
 type NoUndefinedField<T> = { [P in keyof T]: NonNullable<T[P]> };
 
+export type ThumbnailSizes = 20 | 50 | 100 | 200 | 500;
+
 export type DbImage = Omit<GeneratedImage, "labels" | "dataset">;
 export type DbImageCreateInput = WithCreatedAtAndUpdatedAt<
   Required<
@@ -42,6 +44,7 @@ export type DbImageCreateInput = WithCreatedAtAndUpdatedAt<
         | "thumbnail100Url"
         | "thumbnail200Url"
         | "thumbnail500Url"
+        | "metadata"
       >
     >
   > &
@@ -53,6 +56,7 @@ export type DbImageCreateInput = WithCreatedAtAndUpdatedAt<
       | "thumbnail100Url"
       | "thumbnail200Url"
       | "thumbnail500Url"
+      | "metadata"
     >
 >;
 
@@ -61,7 +65,10 @@ export type DbLabel = Omit<GeneratedLabel, "labelClass"> & {
 };
 export type DbLabelCreateInput = WithCreatedAtAndUpdatedAt<DbLabel>;
 
-export type DbLabelClass = Omit<GeneratedLabelClass, "labels" | "dataset"> & {
+export type DbLabelClass = Omit<
+  GeneratedLabelClass,
+  "labels" | "dataset" | "labelsAggregates"
+> & {
   datasetId: string;
 };
 export type DbLabelClassCreateInput = Required<
@@ -95,13 +102,11 @@ export type DbWorkspace = Omit<
 
 export type DbWorkspaceWithType = DbWorkspace & { type: WorkspaceType };
 
-export type DbDatasetCreateInput = WithCreatedAtAndUpdatedAt<
-  DatasetCreateInput & { slug: string }
->;
-
 export type DbUser = Omit<User, "memberships">;
 
-type PartialWithNullAllowed<T> = { [P in keyof T]?: T[P] | undefined | null };
+export type PartialWithNullAllowed<T> = {
+  [P in keyof T]?: T[P] | undefined | null;
+};
 
 type WithCreatedAtAndUpdatedAt<T extends {}> = T & {
   createdAt: string;
@@ -114,11 +119,14 @@ type Add<EntityType> = (
   entity: EntityType,
   user?: { id: string }
 ) => Promise<ID>;
+
 type Count<Where> = (where?: Where) => Promise<number>;
+
 type Delete<EntityWhereUniqueInput> = (
   input: EntityWhereUniqueInput,
   user?: { id: string }
 ) => Promise<void>;
+
 type Get<EntityType, EntityWhereUniqueInput> = (
   input: EntityWhereUniqueInput,
   user?: { id: string }
@@ -129,6 +137,7 @@ type List<Entity = unknown, Where extends Record<string, any> | null = null> = (
   skip?: number | null,
   first?: number | null
 ) => Promise<Entity[]>;
+
 type Update<Entity, EntityWhereUniqueInput> = (
   input: EntityWhereUniqueInput,
   data: PartialWithNullAllowed<Entity>,
@@ -138,9 +147,16 @@ type Update<Entity, EntityWhereUniqueInput> = (
 export type Repository = {
   image: {
     add: Add<DbImageCreateInput>;
+    addMany: (
+      args: { images: DbImageCreateInput[]; datasetId: string },
+      user?: { id: string }
+    ) => Promise<ID[]>;
     count: Count<ImageWhereInput & { user?: { id: string } }>;
     get: Get<DbImage, ImageWhereUniqueInput>;
-    list: List<DbImage, ImageWhereInput & { user?: { id: string } }>;
+    list: List<
+      DbImage,
+      ImageWhereInput & { user?: { id: string } } & { id?: { in: string[] } }
+    >;
     delete: Delete<ImageWhereUniqueInput>;
     update: Update<DbImage, ImageWhereUniqueInput>;
   };
@@ -161,25 +177,21 @@ export type Repository = {
     update: Update<DbLabelClass, LabelClassWhereUniqueInput>;
   };
   dataset: {
-    add: Add<DbDatasetCreateInput>;
+    add: Add<DatasetCreateInput>;
     delete: Delete<DatasetWhereUniqueInput>;
     get: Get<DbDataset, DatasetWhereUniqueInput>;
     list: List<DbDataset, { workspaceSlug?: string; user?: { id: string } }>;
     update: Update<DbDataset, DatasetWhereUniqueInput>;
   };
   workspace: {
-    add: Add<
-      WorkspaceCreateInput & {
-        slug: string;
-        stripeCustomerId?: string | undefined;
-      }
-    >;
+    add: Add<WorkspaceCreateInput>;
     get: Get<DbWorkspaceWithType, WorkspaceWhereUniqueInput>;
     list: List<
       DbWorkspaceWithType,
       WorkspaceWhereInput & { user?: { id: string } }
     >;
     update: Update<DbWorkspaceWithType, WorkspaceWhereUniqueInput>;
+    delete: Delete<WorkspaceWhereUniqueInput>;
   };
   upload: {
     getUploadTargetHttp: (
@@ -198,20 +210,19 @@ export type Repository = {
     processImage: (
       image: {
         id: string;
+        url: string;
         width: number | null | undefined;
         height: number | null | undefined;
         mimetype: string | null | undefined;
-        url: string;
-        thumbnail20Url?: string;
-        thumbnail50Url?: string;
-        thumbnail100Url?: string;
-        thumbnail200Url?: string;
-        thumbnail500Url?: string;
+        noThumbnails?: boolean | null | undefined;
+        thumbnail20Url?: string | null | undefined;
+        thumbnail50Url?: string | null | undefined;
+        thumbnail100Url?: string | null | undefined;
+        thumbnail200Url?: string | null | undefined;
+        thumbnail500Url?: string | null | undefined;
       },
       getImage: (url: string) => Promise<ArrayBuffer>,
-      putThumbnail: (targetDownloadUrl: string, blob: Blob) => Promise<void>,
-      updateImage: Update<DbImage, ImageWhereUniqueInput>,
-      user?: { id: string }
+      putThumbnail: (targetDownloadUrl: string, blob: Blob) => Promise<void>
     ) => Promise<{
       width: number;
       height: number;
@@ -229,5 +240,5 @@ export type Context = {
   repository: Repository;
   user?: { id: string };
   session?: any;
-  req?: Request;
+  req: Request;
 };

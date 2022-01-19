@@ -9,8 +9,6 @@ import {
   LabelClassWhereInput,
 } from "@labelflow/graphql-types";
 import { getDatabase } from "../database";
-import { list } from "./utils/list";
-import { countLabels, listLabels } from "./label";
 import {
   addDataset,
   deleteDataset,
@@ -18,34 +16,48 @@ import {
   listDataset,
   updateDataset,
 } from "./dataset";
+import { processImage } from "./image-processing";
+import { countLabels, listLabels } from "./label";
 import { deleteLabelClass } from "./label-class";
 import {
+  deleteFromStorage,
+  getFromStorage,
   getUploadTarget,
   getUploadTargetHttp,
-  getFromStorage,
   putInStorage,
-  deleteFromStorage,
 } from "./upload";
 import { addIdIfNil } from "./utils/add-id-if-nil";
+import { list } from "./utils/list";
+import { removeUserFromWhere } from "./utils/remove-user-from-where";
 import {
   addWorkspace,
+  deleteWorkspace,
   getWorkspace,
   listWorkspaces,
   updateWorkspace,
 } from "./workspace";
-import { processImage } from "./image-processing";
-import { removeUserFromWhere } from "./utils/remove-user-from-where";
 
 export const repository: Repository = {
   image: {
     add: async (image: DbImageCreateInput) => {
       return await (await getDatabase()).image.add(addIdIfNil(image));
     },
+    addMany: async ({ images, datasetId }) => {
+      const imagesToAdd = images.map((image) =>
+        addIdIfNil({ ...image, datasetId })
+      );
+
+      const db = await getDatabase();
+
+      return await db.image.bulkAdd(imagesToAdd, { allKeys: true });
+    },
     count: async (whereWithUser) => {
       const where = removeUserFromWhere(whereWithUser);
+      const db = await getDatabase();
+
       return where
-        ? await (await getDatabase()).image.where(where).count()
-        : await (await getDatabase()).image.count();
+        ? await db.image.where(where).count()
+        : await db.image.count();
     },
     get: async ({ id }) => {
       return await (await getDatabase()).image.get(id);
@@ -114,6 +126,7 @@ export const repository: Repository = {
     get: getWorkspace,
     list: listWorkspaces,
     update: updateWorkspace,
+    delete: deleteWorkspace,
   },
   upload: {
     getUploadTarget,

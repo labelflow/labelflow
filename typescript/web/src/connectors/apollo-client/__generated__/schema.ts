@@ -3,6 +3,17 @@ import { gql } from "@apollo/client";
 export const typeDefs = gql`
   scalar ColorHex
 
+  input CreateIogLabelInput {
+    id: ID
+    imageId: String!
+    x: Float!
+    y: Float!
+    width: Float!
+    height: Float!
+    centerPoint: [Float!]!
+    labelClassId: ID
+  }
+
   enum CurrentUserCanAcceptInvitation {
     Yes
     AlreadyAccepted
@@ -132,11 +143,37 @@ export const typeDefs = gql`
     width: Int!
     labels: [Label!]!
     dataset: Dataset!
+    metadata: JSON
   }
 
   input ImageCreateInput {
     id: ID
     datasetId: ID!
+    createdAt: DateTime
+    name: String
+    path: String
+    mimetype: String
+    height: Int
+    width: Int
+    file: Upload
+    url: String
+    externalUrl: String
+    noThumbnails: Boolean
+    thumbnail20Url: String
+    thumbnail50Url: String
+    thumbnail100Url: String
+    thumbnail200Url: String
+    thumbnail500Url: String
+    metadata: JSON
+  }
+
+  input ImageCreateManyInput {
+    images: [ImageCreateManySingleInput!]!
+    datasetId: ID!
+  }
+
+  input ImageCreateManySingleInput {
+    id: ID
     createdAt: DateTime
     name: String
     path: String
@@ -224,6 +261,7 @@ export const typeDefs = gql`
     color: ColorHex!
     labels: [Label!]!
     dataset: Dataset!
+    labelsAggregates: LabelsAggregates!
   }
 
   input LabelClassCreateInput {
@@ -244,6 +282,7 @@ export const typeDefs = gql`
 
   input LabelClassWhereInput {
     datasetId: ID
+    name: String
   }
 
   input LabelClassWhereUniqueInput {
@@ -336,6 +375,7 @@ export const typeDefs = gql`
   type Mutation {
     createExample(data: ExampleCreateInput!): Example
     createImage(data: ImageCreateInput!): Image
+    createManyImages(data: ImageCreateManyInput!): [Image!]!
     getUploadTarget(data: UploadTargetInput!): UploadTarget!
     updateImage(where: ImageWhereUniqueInput!, data: ImageUpdateInput!): Image
     deleteImage(where: ImageWhereUniqueInput!): Image
@@ -346,14 +386,16 @@ export const typeDefs = gql`
     updateLabelClass(where: LabelClassWhereUniqueInput!, data: LabelClassUpdateInput!): LabelClass
     reorderLabelClass(where: LabelClassWhereUniqueInput!, data: LabelClassReorderInput!): LabelClass
     deleteLabelClass(where: LabelClassWhereUniqueInput!): LabelClass
+    updateIogLabel(data: UpdateIogInput!): Label
+    createIogLabel(data: CreateIogLabelInput!): Label
     createDataset(data: DatasetCreateInput!): Dataset
     createDemoDataset: Dataset
-    runIog(data: RunIogInput!): Label
     updateDataset(where: DatasetWhereUniqueInput!, data: DatasetUpdateInput!): Dataset
     deleteDataset(where: DatasetWhereUniqueInput!): Dataset
     importDataset(where: DatasetWhereUniqueInput!, data: DatasetImportInput!): ImportStatus
     createWorkspace(data: WorkspaceCreateInput!): Workspace
     updateWorkspace(where: WorkspaceWhereUniqueInput!, data: WorkspaceUpdateInput!): Workspace
+    deleteWorkspace(where: WorkspaceWhereUniqueInput!): Workspace
     createMembership(data: MembershipCreateInput!): Membership
     updateMembership(where: MembershipWhereUniqueInput!, data: MembershipUpdateInput!): Membership
     deleteMembership(where: MembershipWhereUniqueInput!): Membership
@@ -373,6 +415,7 @@ export const typeDefs = gql`
     labelClass(where: LabelClassWhereUniqueInput!): LabelClass!
     labelClasses(where: LabelClassWhereInput, first: Int, skip: Int): [LabelClass!]!
     labelClassesAggregates: LabelClassesAggregates!
+    labelClassExists(where: LabelClassWhereInput!): Boolean!
     labelsAggregates: LabelsAggregates!
     label(where: LabelWhereUniqueInput!): Label!
     labels(where: LabelWhereInput, first: Int, skip: Int): [Label!]!
@@ -381,7 +424,7 @@ export const typeDefs = gql`
     searchDataset(where: DatasetWhereUniqueInput!): Dataset
     workspace(where: WorkspaceWhereUniqueInput!): Workspace!
     workspaces(first: Int, skip: Int, where: WorkspaceWhereInput): [Workspace!]!
-    isWorkspaceSlugAlreadyTaken(where: WorkspaceWhereInput!): Boolean!
+    workspaceExists(where: WorkspaceWhereUniqueInput!): Boolean!
     membership(where: MembershipWhereUniqueInput!): Membership!
     memberships(where: MembershipWhereInput, first: Int, skip: Int): [Membership!]!
     user(where: UserWhereUniqueInput!): User!
@@ -393,6 +436,17 @@ export const typeDefs = gql`
   input RunIogInput {
     id: ID!
     imageUrl: String
+    x: Float
+    y: Float
+    width: Float
+    height: Float
+    pointsInside: [[Float!]]
+    pointsOutside: [[Float!]]
+    centerPoint: [Float!]
+  }
+
+  input UpdateIogInput {
+    id: ID!
     x: Float
     y: Float
     width: Float

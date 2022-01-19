@@ -1,149 +1,105 @@
-import React, { useState } from "react";
-import NextLink from "next/link";
-import {
-  Box,
-  VStack,
-  Flex,
-  useColorModeValue as mode,
-  Center,
-  Spinner,
-  Text,
-  Heading,
-  SimpleGrid,
-  IconButton,
-  chakra,
-  Skeleton,
-} from "@chakra-ui/react";
+import { Box, Center, Heading, SimpleGrid, Text } from "@chakra-ui/react";
 import { isEmpty } from "lodash/fp";
-import { HiTrash } from "react-icons/hi";
-import type { Image as ImageType } from "@labelflow/graphql-types";
+import React from "react";
+import { EmptyStateNoImages } from "../empty-state";
 import { ImportButton } from "../import-button";
-import { EmptyStateNoImages, EmptyStateImageNotFound } from "../empty-state";
+import { PaginationProvider } from "../pagination";
+import { PaginationFooter } from "../pagination/pagination-footer";
+import { LayoutSpinner } from "../spinner";
 import { DeleteImageModal } from "./delete-image-modal";
-import { ImageWithFallback } from "../image";
+import { ImageCard } from "./image-card";
+import {
+  ImagesListProps,
+  ImagesListProvider,
+  useImagesList,
+} from "./images-list.context";
 
-const TrashIcon = chakra(HiTrash);
+const NoImages = () => (
+  <Center h="full">
+    <Box as="section">
+      <Box
+        maxW="2xl"
+        mx="auto"
+        px={{ base: "6", lg: "8" }}
+        py={{ base: "16", sm: "20" }}
+        textAlign="center"
+      >
+        <EmptyStateNoImages w="full" />
+        <Heading as="h2">You don&apos;t have any images.</Heading>
+        <Text mt="4" fontSize="lg">
+          Fortunately, it’s very easy to add some.
+        </Text>
 
-export const ImagesList = ({
-  datasetSlug,
-  workspaceSlug,
-  images,
-}: {
-  datasetSlug: string;
-  workspaceSlug: string;
-  images: ImageType[] | undefined;
-}) => {
-  const [imageIdToDelete, setImageIdToDelete] = useState<string | null>(null);
+        <ImportButton
+          colorScheme="brand"
+          variant="solid"
+          mt="8"
+          showModal={false}
+        />
+      </Box>
+    </Box>
+  </Center>
+);
 
-  const cardBackground = mode("white", "gray.700");
-  const imageBackground = mode("gray.100", "gray.800");
+const Gallery = () => {
+  const {
+    workspaceSlug,
+    datasetSlug,
+    datasetId,
+    toDelete,
+    setToDelete,
+    images,
+  } = useImagesList();
   return (
     <>
-      {!images && (
-        <Center h="full">
-          <Spinner size="xl" />
-        </Center>
-      )}
-      {isEmpty(images) && (
-        <Center h="full">
-          <Box as="section">
-            <Box
-              maxW="2xl"
-              mx="auto"
-              px={{ base: "6", lg: "8" }}
-              py={{ base: "16", sm: "20" }}
-              textAlign="center"
-            >
-              <EmptyStateNoImages w="full" />
-              <Heading as="h2">You don&apos;t have any images.</Heading>
-              <Text mt="4" fontSize="lg">
-                Fortunately, it’s very easy to add some.
-              </Text>
-
-              <ImportButton
-                colorScheme="brand"
-                variant="solid"
-                mt="8"
-                showModal={false}
-              />
-            </Box>
-          </Box>
-        </Center>
-      )}
-
-      {!isEmpty(images) && (
-        <>
-          <DeleteImageModal
-            isOpen={imageIdToDelete != null}
-            onClose={() => setImageIdToDelete(null)}
-            imageId={imageIdToDelete}
+      <DeleteImageModal
+        isOpen={!isEmpty(toDelete)}
+        onClose={() => setToDelete(undefined)}
+        imageId={toDelete}
+        datasetId={datasetId!}
+      />
+      <SimpleGrid
+        minChildWidth="240px"
+        spacing={{ base: "2", md: "8" }}
+        padding={{ base: "2", md: "8" }}
+        paddingBottom={{ base: "24", md: "16" }}
+      >
+        {images?.map(({ id, name, thumbnail500Url }) => (
+          <ImageCard
+            key={id}
+            id={id}
+            name={name}
+            thumbnail={thumbnail500Url}
+            href={`/${workspaceSlug}/datasets/${datasetSlug}/images/${id}`}
+            onAskImageDelete={setToDelete}
           />
-          <SimpleGrid
-            minChildWidth="240px"
-            spacing={{ base: "2", md: "8" }}
-            padding={{ base: "2", md: "8" }}
-          >
-            {images?.map(({ id, name, thumbnail500Url }) => (
-              <NextLink
-                href={`/${workspaceSlug}/datasets/${datasetSlug}/images/${id}`}
-                key={id}
-              >
-                <a
-                  href={`/${workspaceSlug}/datasets/${datasetSlug}/images/${id}`}
-                >
-                  <VStack
-                    maxW="486px"
-                    p={4}
-                    background={cardBackground}
-                    rounded={8}
-                    height="270px"
-                    justifyContent="space-between"
-                  >
-                    <Flex
-                      justifyContent="space-between"
-                      w="100%"
-                      alignItems="center"
-                    >
-                      <Heading
-                        as="h3"
-                        size="sm"
-                        overflow="hidden"
-                        textOverflow="ellipsis"
-                        whiteSpace="nowrap"
-                      >
-                        {name}
-                      </Heading>
-                      <IconButton
-                        icon={<TrashIcon />}
-                        aria-label="delete image"
-                        isRound
-                        size="sm"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          setImageIdToDelete(id);
-                        }}
-                      />
-                    </Flex>
-                    <ImageWithFallback
-                      background={imageBackground}
-                      alt={name}
-                      src={thumbnail500Url ?? undefined}
-                      loadingFallback={<Skeleton height="100%" width="100%" />}
-                      errorFallback={<EmptyStateImageNotFound />}
-                      objectFit="contain"
-                      h="208px"
-                      w="full"
-                      flexGrow={0}
-                      flexShrink={0}
-                    />
-                  </VStack>
-                </a>
-              </NextLink>
-            ))}
-          </SimpleGrid>
-        </>
-      )}
+        ))}
+      </SimpleGrid>
     </>
+  );
+};
+
+const Content = () => {
+  const { images } = useImagesList();
+  return <>{isEmpty(images) ? <NoImages /> : <Gallery />}</>;
+};
+
+const Body = () => {
+  const { loading } = useImagesList();
+  return <>{loading ? <LayoutSpinner /> : <Content />}</>;
+};
+
+export const ImagesList = (props: ImagesListProps) => {
+  const { imagesTotalCount } = props;
+  return (
+    <PaginationProvider
+      itemCount={imagesTotalCount ?? 0}
+      perPageOptions={[50, 250, 1000]}
+    >
+      <ImagesListProvider {...props}>
+        <Body />
+        <PaginationFooter />
+      </ImagesListProvider>
+    </PaginationProvider>
   );
 };

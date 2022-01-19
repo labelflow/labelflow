@@ -41,15 +41,14 @@ const exportDataset = async (
 ) => {
   const fileExport = await generateExportFile(args, { repository, req }, user);
   const origin = getOrigin(req);
-  const outUrl = (
+  const { uploadUrl, downloadUrl } =
     await repository.upload.getUploadTargetHttp(
       // FIXME make this Url disappear at some point...
       uuidv4(),
       origin
-    )
-  )?.uploadUrl;
-  await repository.upload.put(outUrl, fileExport, req);
-  return outUrl;
+    );
+  await repository.upload.put(uploadUrl, fileExport, req);
+  return downloadUrl;
 };
 
 export default {

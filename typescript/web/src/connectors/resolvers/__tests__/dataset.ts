@@ -117,7 +117,7 @@ describe("Dataset resolver test suite", () => {
   test("Creating a dataset should fail if the dataset name already exists", async () => {
     await createDataset("my dataset", "an-id");
 
-    return expect(createDataset("my dataset", "an-other-id")).rejects.toThrow(
+    await expect(createDataset("my dataset", "an-other-id")).rejects.toThrow(
       /Could not create the dataset/
     );
   });
@@ -125,7 +125,7 @@ describe("Dataset resolver test suite", () => {
   test("Creating a dataset should fail if the dataset slug already exists", async () => {
     await createDataset("my dataset", "an-id");
 
-    return expect(createDataset("My Dataset", "an-other-id")).rejects.toThrow(
+    await expect(createDataset("My Dataset", "an-other-id")).rejects.toThrow(
       /Could not create the dataset/
     );
   });
@@ -189,7 +189,7 @@ describe("Dataset resolver test suite", () => {
   });
 
   test("that it throws when looking for a dataset that doesn't exist", async () => {
-    return expect(
+    await expect(
       client.query({
         query: gql`
           query getDataset($id: ID!) {
@@ -240,8 +240,8 @@ describe("Dataset resolver test suite", () => {
       `,
       variables: { where: { workspaceSlug: "local" } },
     });
-    expect(queryResults.data.datasets[0].name).toEqual("dataset 1");
-    expect(queryResults.data.datasets[1].name).toEqual("dataset 2");
+    expect(queryResults.data.datasets[0].name).toEqual("dataset 2");
+    expect(queryResults.data.datasets[1].name).toEqual("dataset 1");
   });
 
   test("Should return no datasets when database is empty", async () => {
@@ -277,7 +277,7 @@ describe("Dataset resolver test suite", () => {
       `,
     });
     expect(queryResults.data.datasets).toHaveLength(2);
-    expect(queryResults.data.datasets[0].name).toEqual("dataset 1");
+    expect(queryResults.data.datasets[0].name).toEqual("dataset 3");
     expect(queryResults.data.datasets[1].name).toEqual("dataset 2");
   });
 
@@ -300,7 +300,7 @@ describe("Dataset resolver test suite", () => {
     });
     expect(queryResults.data.datasets).toHaveLength(2);
     expect(queryResults.data.datasets[0].name).toEqual("dataset 2");
-    expect(queryResults.data.datasets[1].name).toEqual("dataset 3");
+    expect(queryResults.data.datasets[1].name).toEqual("dataset 1");
   });
 
   test("should delete a dataset and its content", async () => {
@@ -364,7 +364,7 @@ describe("Dataset resolver test suite", () => {
     expect(labelClasses.data.labelClassesAggregates.totalCount).toEqual(0);
     expect(images.data.imagesAggregates.totalCount).toEqual(0);
 
-    return expect(
+    await expect(
       client.query({
         query: gql`
           query getDataset($id: ID!) {
@@ -793,7 +793,7 @@ describe("Demo dataset mutation", () => {
       "Tutorial dataset"
     );
   });
-  test("Should create a demo dataset with 4 images", async () => {
+  test("Should create a demo dataset with 6 images", async () => {
     const demoDataset = await client.mutate({
       mutation: gql`
         mutation createDemoDataset {
@@ -808,9 +808,9 @@ describe("Demo dataset mutation", () => {
     });
     expect(
       demoDataset?.data?.createDemoDataset?.imagesAggregates?.totalCount
-    ).toEqual(4);
+    ).toEqual(6);
   });
-  test("Should create a demo dataset where the 3rd images already has labels", async () => {
+  test("Should create a demo dataset where the 4th images already has labels", async () => {
     const demoDataset = await client.mutate({
       mutation: gql`
         mutation {
@@ -827,7 +827,7 @@ describe("Demo dataset mutation", () => {
       `,
     });
     expect(
-      demoDataset?.data?.createDemoDataset?.images?.[2]?.labels?.length
+      demoDataset?.data?.createDemoDataset?.images?.[3]?.labels?.length
     ).toEqual(10);
   });
   test("Created images should have a correct name", async () => {
@@ -853,6 +853,8 @@ describe("Demo dataset mutation", () => {
       "tutorial-image-2",
       "tutorial-image-3",
       "tutorial-image-4",
+      "tutorial-image-5",
+      "tutorial-image-6",
     ]);
   });
 });

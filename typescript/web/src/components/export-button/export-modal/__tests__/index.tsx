@@ -127,7 +127,7 @@ const createImage = async (name: String) => {
 
 test("File should be downloaded when user clicks on Export to COCO and Export", async () => {
   await createDataset();
-  render(<ExportModal isOpen />, { wrapper });
+  render(<ExportModal isOpen onClose={() => {}} />, { wrapper });
   const anchorMocked = {
     href: "",
     click: jest.fn(),
@@ -168,7 +168,7 @@ test("Export Modal should display the number of labels", async () => {
     imageId,
   });
 
-  render(<ExportModal isOpen />, { wrapper });
+  render(<ExportModal isOpen onClose={() => {}} />, { wrapper });
 
   await waitFor(() =>
     expect(screen.getByRole("banner").textContent).toEqual(

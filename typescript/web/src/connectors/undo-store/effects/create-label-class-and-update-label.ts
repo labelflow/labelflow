@@ -9,9 +9,10 @@ import { deleteLabelClassMutationUpdate } from "./cache-updates/delete-label-cla
 import {
   getLabelQuery,
   createLabelClassQuery,
-  updateLabelQuery,
+  updateLabelMutation,
   deleteLabelClassQuery,
 } from "./shared-queries";
+import { updateLabelClassOfLabel } from "./cache-updates/update-label-class-of-label";
 
 export const createCreateLabelClassAndUpdateLabelEffect = (
   {
@@ -86,7 +87,7 @@ export const createCreateLabelClassAndUpdateLabelEffect = (
         __typename: "Label";
       };
     }>({
-      mutation: updateLabelQuery,
+      mutation: updateLabelMutation,
       variables: {
         where: { id: selectedLabelId },
         data: { labelClassId: labelClassId ?? null },
@@ -98,7 +99,7 @@ export const createCreateLabelClassAndUpdateLabelEffect = (
           __typename: "Label",
         },
       },
-      // no need to write an update as apollo automatically does it if we query the labelClass id
+      update: updateLabelClassOfLabel(labelClassIdPrevious),
     });
 
     return {
@@ -114,7 +115,7 @@ export const createCreateLabelClassAndUpdateLabelEffect = (
     labelClassIdPrevious: string;
   }) => {
     await client.mutate({
-      mutation: updateLabelQuery,
+      mutation: updateLabelMutation,
       variables: {
         where: { id: selectedLabelId },
         data: { labelClassId: labelClassIdPrevious ?? null },
@@ -128,7 +129,7 @@ export const createCreateLabelClassAndUpdateLabelEffect = (
           __typename: "Label",
         },
       },
-      // no need to write an update as apollo automatically does it if we query the labelClass id
+      update: updateLabelClassOfLabel(labelClassId),
     });
 
     useLabelingStore.setState({ selectedLabelClassId: labelClassIdPrevious });
@@ -173,7 +174,7 @@ export const createCreateLabelClassAndUpdateLabelEffect = (
     useLabelingStore.setState({ selectedLabelClassId: labelClassId });
 
     await client.mutate({
-      mutation: updateLabelQuery,
+      mutation: updateLabelMutation,
       variables: {
         where: { id: selectedLabelId },
         data: { labelClassId },
@@ -185,7 +186,7 @@ export const createCreateLabelClassAndUpdateLabelEffect = (
           __typename: "Label",
         },
       },
-      // no need to write an update as apollo automatically does it if we query the labelClass id
+      update: updateLabelClassOfLabel(labelClassIdPrevious),
     });
 
     return {

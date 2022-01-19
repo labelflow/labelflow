@@ -1,5 +1,9 @@
+// It seems that this file is almost a copy past of `typescript/db/src/repository/image-processing.ts`
+// We should either: merge/factorize the two files, or let them diverge and have a dedicated
+// version for each repository.
+
 import { getThumbnailUrlFromImageUrl } from "@labelflow/common-resolvers/src/utils/thumbnail-url";
-import type { Repository } from "@labelflow/common-resolvers";
+import type { Repository, ThumbnailSizes } from "@labelflow/common-resolvers";
 
 // The Jimp import need to like this, otherwise storybook does not work...
 import Jimp from "jimp/browser/lib/jimp";
@@ -41,29 +45,20 @@ const validateImageSize = ({
 };
 
 /**
- * Generate a thumbnail of a given size from an image, upload it, and update the image in the db, with the new thumbnail url
+ * Generate a thumbnail of a given size from an image & upload it.
+ * This function doesn't update the image in the database to store the thumbnail url.
  */
 const generateThumbnail = async ({
-  id,
   image,
   url,
   size,
   putImage,
-  updateImage,
-  user,
 }: {
-  id: string;
   image: Jimp;
   url: string;
-  size: 20 | 50 | 100 | 200 | 500;
+  size: ThumbnailSizes;
   putImage: (url: string, blob: Blob) => Promise<void>;
-  updateImage: (
-    input: { id: string },
-    data: {},
-    user?: { id: string }
-  ) => Promise<boolean>;
-  user?: { id: string };
-}) => {
+}): Promise<string> => {
   try {
     const thumbnailUrl = getThumbnailUrlFromImageUrl({
       url,
@@ -74,15 +69,16 @@ const generateThumbnail = async ({
       .clone()
       .scaleToFit(size, size, Jimp.RESIZE_BILINEAR)
       .getBufferAsync("image/jpeg");
+
     await putImage(
       thumbnailUrl,
       new Blob([vipsThumbnail], { type: "image/jpeg" })
     );
-    await updateImage({ id }, { [`thumbnail${size}Url`]: thumbnailUrl }, user);
-    return true;
+
+    return thumbnailUrl;
   } catch (e) {
     console.error(e);
-    return false;
+    return url;
   }
 };
 
@@ -96,7 +92,6 @@ export const processImage: Repository["imageProcessing"]["processImage"] =
       height,
       mimetype,
       url,
-      id,
       thumbnail20Url,
       thumbnail50Url,
       thumbnail100Url,
@@ -104,74 +99,37 @@ export const processImage: Repository["imageProcessing"]["processImage"] =
       thumbnail500Url,
     },
     getImage,
-    putImage,
-    updateImage,
-    user
+    putImage
   ) => {
     const buffer = await getImage(url);
-
     const image = await Jimp.read(buffer as Buffer);
 
-    const result = {
-      width: image.bitmap.width,
-      height: image.bitmap.height,
-      mimetype: image.getMIME(),
-    };
-
-    const thumbnailGenerationInput = {
-      id,
-      image,
-      url,
-      putImage,
-      updateImage,
-      user,
-    };
-
-    if (!thumbnail20Url) {
+    const generateThumbnailFromSize = (size: ThumbnailSizes) =>
       generateThumbnail({
-        size: 20,
-        ...thumbnailGenerationInput,
+        size,
+        image,
+        url,
+        putImage,
       });
-    }
 
-    if (!thumbnail50Url) {
-      generateThumbnail({
-        size: 50,
-        ...thumbnailGenerationInput,
-      });
-    }
-
-    if (!thumbnail100Url) {
-      generateThumbnail({
-        size: 100,
-        ...thumbnailGenerationInput,
-      });
-    }
-
-    if (!thumbnail200Url) {
-      generateThumbnail({
-        size: 200,
-        ...thumbnailGenerationInput,
-      });
-    }
-
-    if (!thumbnail500Url) {
-      generateThumbnail({
-        size: 500,
-        ...thumbnailGenerationInput,
-      });
-    }
+    const generatedThumbnailUrls = await Promise.all([
+      thumbnail20Url ?? (await generateThumbnailFromSize(20)),
+      thumbnail50Url ?? (await generateThumbnailFromSize(50)),
+      thumbnail100Url ?? (await generateThumbnailFromSize(100)),
+      thumbnail200Url ?? (await generateThumbnailFromSize(200)),
+      thumbnail500Url ?? (await generateThumbnailFromSize(500)),
+    ]);
 
     return {
-      thumbnail20Url,
-      thumbnail50Url,
-      thumbnail100Url,
-      thumbnail200Url,
-      thumbnail500Url,
       ...validateImageSize({
-        width: width ?? result.width,
-        height: height ?? result.height,
-        mimetype: mimetype ?? result.mimetype,
+        width: width ?? image.bitmap.width,
+        height: height ?? image.bitmap.height,
+        mimetype: mimetype ?? image.getMIME(),
       }),
+      thumbnail20Url: generatedThumbnailUrls[0],
+      thumbnail50Url: generatedThumbnailUrls[1],
+      thumbnail100Url: generatedThumbnailUrls[2],
+      thumbnail200Url: generatedThumbnailUrls[3],
+      thumbnail500Url: generatedThumbnailUrls[4],
     };
   };

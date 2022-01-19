@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { ErrorBoundary, FallbackProps } from "react-error-boundary";
-import { SessionProvider } from "next-auth/react";
+import { SessionProvider, useSession } from "next-auth/react";
 import Head from "next/head";
 import { AppProps } from "next/app";
 import { useRouter } from "next/router";
@@ -19,6 +19,7 @@ import {
 } from "../connectors/apollo-client/client";
 import { QueryParamProvider } from "../utils/query-params-provider";
 import ErrorPage from "./_error";
+import { MockableLocationProvider } from "../utils/mockable-location";
 
 interface InitialProps {
   cookie: string;
@@ -49,20 +50,19 @@ const ErrorFallbackErrorFallback = () => {
  * @returns
  */
 const ErrorFallback = (props: FallbackProps) => {
+  const { data: session } = useSession();
   return (
-    <ErrorBoundary FallbackComponent={ErrorFallbackErrorFallback}>
-      <SessionProvider session={undefined}>
-        <CookiesProvider cookies={new Cookies("")}>
-          <ApolloProvider client={distantDatabaseClient}>
-            <QueryParamProvider>
-              <ChakraProvider theme={theme} resetCSS>
-                <ErrorPage {...props} />
-              </ChakraProvider>
-            </QueryParamProvider>
-          </ApolloProvider>
-        </CookiesProvider>
-      </SessionProvider>
-    </ErrorBoundary>
+    <SessionProvider session={session}>
+      <CookiesProvider cookies={new Cookies("")}>
+        <ApolloProvider client={distantDatabaseClient}>
+          <QueryParamProvider>
+            <ChakraProvider theme={theme} resetCSS>
+              <ErrorPage {...props} />
+            </ChakraProvider>
+          </QueryParamProvider>
+        </ApolloProvider>
+      </CookiesProvider>
+    </SessionProvider>
   );
 };
 
@@ -94,24 +94,28 @@ const App = (props: AppProps & InitialProps) => {
   }, [router.events]);
 
   return (
-    <ErrorBoundary FallbackComponent={ErrorFallback}>
+    <ErrorBoundary FallbackComponent={ErrorFallbackErrorFallback}>
       <SessionProvider session={session}>
-        <CookiesProvider cookies={new Cookies("")}>
-          <ApolloProvider client={client}>
-            <QueryParamProvider>
-              <ChakraProvider theme={theme} resetCSS>
-                <Head>
-                  {/* Set proper initial appearance of content for mobile */}
-                  <meta
-                    name="viewport"
-                    content="width=device-width, initial-scale=1.0"
-                  />
-                </Head>
-                <Component {...pageProps} />
-              </ChakraProvider>
-            </QueryParamProvider>
-          </ApolloProvider>
-        </CookiesProvider>
+        <ErrorBoundary FallbackComponent={ErrorFallback}>
+          <CookiesProvider cookies={new Cookies("")}>
+            <ApolloProvider client={client}>
+              <QueryParamProvider>
+                <ChakraProvider theme={theme} resetCSS>
+                  <MockableLocationProvider>
+                    <Head>
+                      {/* Set proper initial appearance of content for mobile */}
+                      <meta
+                        name="viewport"
+                        content="width=device-width, initial-scale=1.0"
+                      />
+                    </Head>
+                    <Component {...pageProps} />
+                  </MockableLocationProvider>
+                </ChakraProvider>
+              </QueryParamProvider>
+            </ApolloProvider>
+          </CookiesProvider>
+        </ErrorBoundary>
       </SessionProvider>
     </ErrorBoundary>
   );

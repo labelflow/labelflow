@@ -106,7 +106,7 @@ describe("createWorkspace mutation", () => {
         `,
         variables: { data: { name: "" } },
       })
-    ).rejects.toThrow("Cannot create a workspace with an empty name.");
+    ).rejects.toThrow("Name is empty");
   });
 
   it("fails if the name contains non-alphanumeric chars is provided", async () => {
@@ -121,9 +121,7 @@ describe("createWorkspace mutation", () => {
         `,
         variables: { data: { name: "Hello!" } },
       })
-    ).rejects.toThrow(
-      'Cannot create a workspace with the name "Hello!". This name contains invalid characters.'
-    );
+    ).rejects.toThrow("Name contains invalid characters");
   });
 
   it("fails if the name is reserved", async () => {
@@ -138,9 +136,7 @@ describe("createWorkspace mutation", () => {
         `,
         variables: { data: { name: "pricing" } },
       })
-    ).rejects.toThrow(
-      'Cannot create a workspace with the slug "pricing". This slug is reserved.'
-    );
+    ).rejects.toThrow("This name is reserved");
   });
 
   it("accepts a name with hyphens, spaces, underscores, and alphanumeric characters", async () => {

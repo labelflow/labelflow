@@ -15,7 +15,7 @@
     "build-storybook": "build-storybook"
   },
   "dependencies": {
-    "lodash": "^4.17.21",
+    "lodash": "4.17.21",
     "react-reconciler": "0.25.1",
     "scheduler": "0.20.1"
   },
