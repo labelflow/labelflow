@@ -25,6 +25,22 @@ const createDatasetMutation = gql`
   mutation createDataset($name: String!, $workspaceSlug: String!) {
     createDataset(data: { name: $name, workspaceSlug: $workspaceSlug }) {
       id
+      name
+      slug
+      images(first: 1) {
+        id
+        url
+        thumbnail500Url
+      }
+      imagesAggregates {
+        totalCount
+      }
+      labelsAggregates {
+        totalCount
+      }
+      labelClassesAggregates {
+        totalCount
+      }
     }
   }
 `;
@@ -103,7 +119,6 @@ export const UpsertDatasetModal = ({
         workspaceSlug,
       },
       refetchQueries: ["getDatasets"],
-      awaitRefetchQueries: true,
     }
   );
 
@@ -114,7 +129,7 @@ export const UpsertDatasetModal = ({
         id: datasetId,
         name: datasetName,
       },
-      refetchQueries: ["getDatasets"],
+      refetchQueries: ["getPaginatedDatasets"],
       awaitRefetchQueries: true,
     }
   );
