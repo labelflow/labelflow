@@ -21,8 +21,8 @@ setupTestsWithLocalDatabase();
 
 import { processImage } from "../../../../connectors/repository/image-processing";
 import {
-  createTestDatasetMutation,
-  createTestImageMutation,
+  CREATE_TEST_DATASET_MUTATION,
+  CREATE_TEST_IMAGE_MUTATION,
 } from "../../../../utils/tests/mutations";
 
 jest.mock("../../../../connectors/repository/image-processing");
@@ -36,7 +36,7 @@ const createImage = async (name: String) => {
     mime: "image/jpeg",
   });
   const mutationResult = await client.mutate({
-    mutation: createTestImageMutation,
+    mutation: CREATE_TEST_IMAGE_MUTATION,
     variables: {
       datasetId: testDatasetId,
       file: new Blob(),
@@ -62,7 +62,7 @@ const renderImageNavigationTool = () =>
 
 beforeEach(async () => {
   await client.mutate({
-    mutation: createTestDatasetMutation,
+    mutation: CREATE_TEST_DATASET_MUTATION,
     variables: {
       datasetId: testDatasetId,
       name: "test dataset",

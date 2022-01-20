@@ -3,7 +3,7 @@ import { useQuery, gql } from "@apollo/client";
 
 import { Dataset, Image } from "@labelflow/graphql-types";
 
-const getAllImagesOfADatasetQuery = gql`
+const GET_ALL_IMAGES_OF_A_DATASET_QUERY = gql`
   query getAllImagesOfADataset($slug: String!, $workspaceSlug: String!) {
     dataset(where: { slugs: { slug: $slug, workspaceSlug: $workspaceSlug } }) {
       id
@@ -34,7 +34,7 @@ export const useImagesNavigation = () => {
   // Refetch images ?
   const { data } = useQuery<{
     dataset: Pick<Dataset, "id" | "images">;
-  }>(getAllImagesOfADatasetQuery, {
+  }>(GET_ALL_IMAGES_OF_A_DATASET_QUERY, {
     variables: { slug: datasetSlug, workspaceSlug },
     skip: !datasetSlug || !workspaceSlug,
   });

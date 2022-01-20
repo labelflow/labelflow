@@ -22,7 +22,7 @@ mockNextRouter({
 });
 
 import { ImportButton } from "../import-button";
-import { createLocalTestDatasetMutation } from "../../../utils/tests/mutations";
+import { CREATE_LOCAL_TEST_DATASET_MUTATION } from "../../../utils/tests/mutations";
 
 const files = [
   new File(["Hello"], "hello.png", { type: "image/png" }),
@@ -60,7 +60,7 @@ jest.mock("../../../connectors/apollo-client/schema-client", () => {
 
 beforeEach(async () => {
   await client.mutate({
-    mutation: createLocalTestDatasetMutation,
+    mutation: CREATE_LOCAL_TEST_DATASET_MUTATION,
   });
 });
 

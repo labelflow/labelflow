@@ -17,9 +17,12 @@ import {
 import { isEmpty, isNil } from "lodash/fp";
 import { useCallback, useRef } from "react";
 import { useDatasetClasses } from "./dataset-classes.context";
-import { getLabelClassByIdQuery } from "./dataset-classes.query";
+import {
+  DATASET_LABEL_CLASSES_QUERY,
+  GET_LABEL_CLASS_BY_ID_QUERY,
+} from "./dataset-classes.query";
 
-const deleteLabelClassMutation = gql`
+const DELETE_LABEL_CLASS_MUTATION = gql`
   mutation deleteLabelClass($id: ID!) {
     deleteLabelClass(where: { id: $id }) {
       id
@@ -37,7 +40,7 @@ export const DeleteLabelClassModal = () => {
   );
 
   const cancelRef = useRef<HTMLButtonElement>(null);
-  const { data } = useQuery(getLabelClassByIdQuery, {
+  const { data } = useQuery(GET_LABEL_CLASS_BY_ID_QUERY, {
     variables: { id: deleteClassId },
     skip: isEmpty(deleteClassId),
   });
@@ -45,9 +48,9 @@ export const DeleteLabelClassModal = () => {
 
   const deleteLabelClass = useCallback(() => {
     client.mutate({
-      mutation: deleteLabelClassMutation,
+      mutation: DELETE_LABEL_CLASS_MUTATION,
       variables: { id: deleteClassId },
-      refetchQueries: ["getDatasetLabelClasses", "getImageLabels"],
+      refetchQueries: [DATASET_LABEL_CLASSES_QUERY],
       update(cache) {
         cache.modify({
           id: cache.identify({ id: datasetId, __typename: "Dataset" }),

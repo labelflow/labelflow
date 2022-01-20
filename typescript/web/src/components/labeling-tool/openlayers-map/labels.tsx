@@ -20,7 +20,7 @@ import {
   useLabelingStore,
 } from "../../../connectors/labeling-state";
 import { noneClassColor } from "../../../theme";
-import { getImageLabelsQuery } from "./queries";
+import { GET_IMAGE_LABELS_QUERY } from "./queries";
 
 export const Labels = ({
   sourceVectorLabelsRef,
@@ -28,7 +28,7 @@ export const Labels = ({
   sourceVectorLabelsRef?: MutableRefObject<OlSourceVector<Geometry> | null>;
 }) => {
   const { imageId } = useRouter()?.query;
-  const { data, previousData } = useQuery(getImageLabelsQuery, {
+  const { data, previousData } = useQuery(GET_IMAGE_LABELS_QUERY, {
     skip: !imageId,
     variables: { imageId: imageId as string },
   });

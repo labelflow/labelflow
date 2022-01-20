@@ -5,7 +5,7 @@ import { PropsWithChildren } from "react";
 import { client } from "../../../connectors/apollo-client/schema-client";
 import { theme } from "../../../theme";
 import { setupTestsWithLocalDatabase } from "../../../utils/setup-local-db-tests";
-import { createTestDatasetMutation } from "../../../utils/tests/mutations";
+import { CREATE_TEST_DATASET_MUTATION } from "../../../utils/tests/mutations";
 import { DatasetClasses } from "../dataset-classes";
 import { CREATE_LABEL_CLASS_MUTATION } from "../upsert-class-modal/create-label-class.mutation";
 
@@ -13,7 +13,7 @@ setupTestsWithLocalDatabase();
 
 const createDataset = async (name: string, datasetId?: string | null) => {
   return await client.mutate({
-    mutation: createTestDatasetMutation,
+    mutation: CREATE_TEST_DATASET_MUTATION,
     variables: {
       name,
       datasetId,

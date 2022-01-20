@@ -5,9 +5,9 @@ import { LabelType } from "@labelflow/graphql-types";
 import { Effect } from "..";
 import { createLabelMutationUpdate } from "./cache-updates/create-label-mutation-update";
 import { deleteLabelMutationUpdate } from "./cache-updates/delete-label-mutation-update";
-import { deleteLabelMutation } from "./shared-queries";
+import { DELETE_LABEL_MUTATION } from "./shared-queries";
 
-const createIogLabelMutation = gql`
+const CREATE_IOG_LABEL_MUTATION = gql`
   mutation createIogLabel(
     $id: String!
     $imageId: String!
@@ -84,7 +84,7 @@ export const createCreateIogLabelEffect = (
     };
 
     const createLabelPromise = client.mutate({
-      mutation: createIogLabelMutation,
+      mutation: CREATE_IOG_LABEL_MUTATION,
       variables: {
         id,
         imageId,
@@ -113,7 +113,7 @@ export const createCreateIogLabelEffect = (
   undo: async (labelId: string): Promise<void> => {
     setSelectedLabelId(null);
     await client.mutate({
-      mutation: deleteLabelMutation,
+      mutation: DELETE_LABEL_MUTATION,
       variables: { id: labelId },
       refetchQueries: ["countLabelsOfDataset"],
       optimisticResponse: { deleteLabel: { id: labelId, __typename: "Label" } },

@@ -13,7 +13,7 @@ import { useLabelingStore } from "../../../../connectors/labeling-state";
 import { createUpdateIogLabelEffect } from "../../../../connectors/undo-store/effects/update-iog-label";
 import { useUndoStore } from "../../../../connectors/undo-store";
 
-import { labelQuery } from "./queries";
+import { IMAGE_QUERY } from "./queries";
 
 export const ModifyIogCenterPoint = ({
   vectorSourceRef,
@@ -25,7 +25,7 @@ export const ModifyIogCenterPoint = ({
   const unregisterIogJob = useLabelingStore((state) => state.unregisterIogJob);
   const { perform } = useUndoStore();
   const client = useApolloClient();
-  const { data: dataLabelQuery } = useQuery(labelQuery, {
+  const { data: dataLabelQuery } = useQuery(IMAGE_QUERY, {
     variables: { id: selectedLabelId },
     skip: selectedLabelId == null,
   });

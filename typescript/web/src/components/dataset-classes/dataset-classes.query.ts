@@ -31,7 +31,7 @@ export const useDatasetLabelClassesQuery = (
   });
 };
 
-export const getLabelClassByIdQuery = gql`
+export const GET_LABEL_CLASS_BY_ID_QUERY = gql`
   query getLabelClassById($id: ID!) {
     labelClass(where: { id: $id }) {
       id

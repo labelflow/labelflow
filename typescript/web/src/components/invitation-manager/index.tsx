@@ -4,14 +4,14 @@ import { CurrentUserCanAcceptInvitation } from "@labelflow/graphql-types";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import React from "react";
-import { userQuery } from "../../utils/shared-queries";
+import { USER_QUERY } from "../../utils/shared-queries";
 import { getDisplayName } from "../members/user";
 import { LayoutSpinner } from "../spinner";
 import { AcceptOrDeclineMembershipInvitation } from "./accept-or-decline-membership-invitation";
 import { InvalidInvitation } from "./invalid-invitation";
 import { UserNeedsToSignIn } from "./user-needs-to-sign-in";
 
-const invitationDetailsQuery = gql`
+const INVITATION_DETAILS_QUERY = gql`
   query invitationDetails($id: ID!) {
     membership(where: { id: $id }) {
       id
@@ -26,7 +26,7 @@ const invitationDetailsQuery = gql`
   }
 `;
 
-const acceptInvitationMutation = gql`
+const ACCEPT_INVITATION_MUTATION = gql`
   mutation acceptInvitation($id: ID!) {
     acceptInvitation(where: { id: $id }) {
       id
@@ -34,7 +34,7 @@ const acceptInvitationMutation = gql`
   }
 `;
 
-const declineInvitationMutation = gql`
+const DECLINE_INVITATION_MUTATION = gql`
   mutation declineInvitation($id: ID!) {
     declineInvitation(where: { id: $id }) {
       id
@@ -50,7 +50,7 @@ export const InvitationManager = () => {
   const userInfoFromSession = session?.user;
 
   const { data, loading: invitationDetailsAreLoading } = useQuery(
-    invitationDetailsQuery,
+    INVITATION_DETAILS_QUERY,
     {
       variables: { id: membershipId },
       skip: !membershipId,
@@ -59,7 +59,7 @@ export const InvitationManager = () => {
   const membership = data?.membership;
 
   const [acceptInvitation, { called: hasAccepted }] = useMutation(
-    acceptInvitationMutation,
+    ACCEPT_INVITATION_MUTATION,
     {
       variables: { id: membershipId },
       onCompleted: () => {
@@ -88,7 +88,7 @@ export const InvitationManager = () => {
     }
   );
   const [declineInvitation, { called: hasDeclined }] = useMutation(
-    declineInvitationMutation,
+    DECLINE_INVITATION_MUTATION,
     {
       variables: { id: membershipId },
       onCompleted: () => {
@@ -117,7 +117,7 @@ export const InvitationManager = () => {
     }
   );
 
-  const { data: userData, loading: userIsLoading } = useQuery(userQuery, {
+  const { data: userData, loading: userIsLoading } = useQuery(USER_QUERY, {
     variables: { id: userInfoFromSession?.id },
     skip: userInfoFromSession?.id == null,
   });

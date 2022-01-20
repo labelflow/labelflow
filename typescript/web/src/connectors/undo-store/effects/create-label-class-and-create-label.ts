@@ -12,10 +12,10 @@ import { deleteLabelMutationUpdate } from "./cache-updates/delete-label-mutation
 import { createLabelClassMutationUpdate } from "./cache-updates/create-label-class-mutation-update";
 import { deleteLabelClassMutationUpdate } from "./cache-updates/delete-label-class-mutation-update";
 import {
-  createLabelClassQuery,
-  createLabelMutation,
-  deleteLabelMutation,
-  deleteLabelClassQuery,
+  CREATED_LABEL_FRAGMENT,
+  CREATE_LABEL_MUTATION,
+  DELETE_LABEL_MUTATION,
+  DELETE_LABEL_CLASS_QUERY,
 } from "./shared-queries";
 
 export const createCreateLabelClassAndCreateLabelEffect = (
@@ -49,7 +49,7 @@ export const createCreateLabelClassAndCreateLabelEffect = (
     const labelClassId = uuid();
 
     await client.mutate({
-      mutation: createLabelClassQuery,
+      mutation: CREATED_LABEL_FRAGMENT,
       variables: { data: { name, color, datasetId, id: labelClassId } },
       optimisticResponse: {
         createLabelClass: {
@@ -70,7 +70,7 @@ export const createCreateLabelClassAndCreateLabelEffect = (
       type: labelType,
     };
     const { data } = await client.mutate({
-      mutation: createLabelMutation,
+      mutation: CREATE_LABEL_MUTATION,
       variables: { data: createLabelInputs },
       refetchQueries: ["countLabelsOfDataset"],
       optimisticResponse: {
@@ -101,7 +101,7 @@ export const createCreateLabelClassAndCreateLabelEffect = (
     labelClassIdPrevious: string;
   }) => {
     await client.mutate({
-      mutation: deleteLabelMutation,
+      mutation: DELETE_LABEL_MUTATION,
       variables: { id },
       refetchQueries: ["countLabelsOfDataset"],
       optimisticResponse: { deleteLabel: { id, __typename: "Label" } },
@@ -115,7 +115,7 @@ export const createCreateLabelClassAndCreateLabelEffect = (
     setSelectedLabelId(null);
 
     await client.mutate({
-      mutation: deleteLabelClassQuery,
+      mutation: DELETE_LABEL_CLASS_QUERY,
       variables: {
         where: { id: labelClassId },
       },
@@ -142,7 +142,7 @@ export const createCreateLabelClassAndCreateLabelEffect = (
     labelClassIdPrevious: string;
   }) => {
     await client.mutate({
-      mutation: createLabelClassQuery,
+      mutation: CREATED_LABEL_FRAGMENT,
       variables: { data: { name, color, id: labelClassId, datasetId } },
       update: createLabelClassMutationUpdate(datasetId),
       optimisticResponse: {
@@ -163,7 +163,7 @@ export const createCreateLabelClassAndCreateLabelEffect = (
       type: labelType,
     };
     const { data } = await client.mutate({
-      mutation: createLabelMutation,
+      mutation: CREATE_LABEL_MUTATION,
       variables: { data: createLabelInputs },
       refetchQueries: ["countLabelsOfDataset"],
       optimisticResponse: {

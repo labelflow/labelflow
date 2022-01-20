@@ -11,7 +11,7 @@ import { Coordinate } from "ol/coordinate";
 import { useLabelingStore } from "../../../../connectors/labeling-state";
 import { keymap } from "../../../../keymap";
 
-import { labelQuery } from "./queries";
+import { IMAGE_QUERY } from "./queries";
 import { HandleIogClick, HandleIogHover } from "./click-and-hover";
 import { ModifyIogCenterPoint } from "./modify-center-point";
 import { ResizeIogCanvas } from "./resize-canvas";
@@ -33,7 +33,7 @@ export const ModifyIog = ({
     useCallback((state) => state.setSelectedLabelId, [])
   );
 
-  const { data: dataLabelQuery } = useQuery(labelQuery, {
+  const { data: dataLabelQuery } = useQuery(IMAGE_QUERY, {
     variables: { id: selectedLabelId },
     skip: selectedLabelId == null,
   });

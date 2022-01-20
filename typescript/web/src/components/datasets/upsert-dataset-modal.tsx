@@ -18,14 +18,15 @@ import { getSlug } from "@labelflow/common-resolvers";
 import debounce from "lodash/fp/debounce";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { GET_DATASETS_QUERY } from "../../utils/shared-queries";
 import {
-  getDatasetByIdQuery,
-  searchDatasetBySlugQuery,
+  GET_DATASET_BY_ID_QUERY,
+  SEARCH_DATASET_BY_SLUG_QUERY,
 } from "./datasets.query";
 
 const debounceTime = 200;
 
-const createDatasetMutation = gql`
+const CREATE_DATASET_MUTATION = gql`
   mutation createDataset($name: String!, $workspaceSlug: String!) {
     createDataset(data: { name: $name, workspaceSlug: $workspaceSlug }) {
       id
@@ -33,7 +34,7 @@ const createDatasetMutation = gql`
   }
 `;
 
-const updateDatasetMutation = gql`
+const UPDATE_DATASET_MUTATION = gql`
   mutation updateDataset($id: ID!, $name: String!) {
     updateDataset(where: { id: $id }, data: { name: $name }) {
       id
@@ -58,7 +59,7 @@ export const UpsertDatasetModal = ({
 
   const datasetName = datasetNameInputValue.trim();
 
-  useQuery(getDatasetByIdQuery, {
+  useQuery(GET_DATASET_BY_ID_QUERY, {
     skip: typeof datasetId !== "string",
     variables: { id: datasetId },
     fetchPolicy: "cache-and-network",
@@ -77,28 +78,30 @@ export const UpsertDatasetModal = ({
       loading: loadingExistingDatasets,
       variables: variablesExistingDatasets,
     },
-  ] = useLazyQuery(searchDatasetBySlugQuery, { fetchPolicy: "network-only" });
+  ] = useLazyQuery(SEARCH_DATASET_BY_SLUG_QUERY, {
+    fetchPolicy: "network-only",
+  });
 
   const [createDatasetMutate, { loading: createMutationLoading }] = useMutation(
-    createDatasetMutation,
+    CREATE_DATASET_MUTATION,
     {
       variables: {
         name: datasetName,
         workspaceSlug,
       },
-      refetchQueries: ["getDatasets"],
+      refetchQueries: [GET_DATASETS_QUERY],
       awaitRefetchQueries: true,
     }
   );
 
   const [updateDatasetMutate, { loading: updateMutationLoading }] = useMutation(
-    updateDatasetMutation,
+    UPDATE_DATASET_MUTATION,
     {
       variables: {
         id: datasetId,
         name: datasetName,
       },
-      refetchQueries: ["getDatasets"],
+      refetchQueries: [GET_DATASETS_QUERY],
       awaitRefetchQueries: true,
     }
   );

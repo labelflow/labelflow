@@ -16,14 +16,14 @@ import {
   ToggleIconButton,
 } from "../../../toggle-button-group";
 
-import { labelQuery } from "../../openlayers-map/iog/queries";
+import { IMAGE_QUERY } from "../../openlayers-map/iog/queries";
 
 const ChakraBiShapePolygon = chakra(BiShapePolygon);
 const ChakraIoColorWandOutline = chakra(IoColorWandOutline);
 
 export const EditSelectionMode = () => {
   const selectedLabelId = useLabelingStore((state) => state.selectedLabelId);
-  const { data: dataLabelQuery } = useQuery(labelQuery, {
+  const { data: dataLabelQuery } = useQuery(IMAGE_QUERY, {
     variables: { id: selectedLabelId },
     skip: selectedLabelId == null,
   });

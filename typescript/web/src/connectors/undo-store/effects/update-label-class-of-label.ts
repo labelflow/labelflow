@@ -4,9 +4,9 @@ import { useLabelingStore } from "../../labeling-state";
 import { Effect } from "..";
 
 import { updateLabelClassOfLabel } from "./cache-updates/update-label-class-of-label";
-import { getLabelQuery } from "./shared-queries";
+import { DELETE_LABEL_MUTATION } from "./shared-queries";
 
-const updateLabelMutation = gql`
+const UPDATE_LABEL_MUTATION = gql`
   mutation updateLabelClassOfLabel(
     $where: LabelWhereUniqueInput!
     $data: LabelUpdateInput!
@@ -35,13 +35,13 @@ export const createUpdateLabelClassOfLabelEffect = (
     const labelClassIdPrevious = selectedLabelId
       ? ((
           await client.query({
-            query: getLabelQuery,
+            query: DELETE_LABEL_MUTATION,
             variables: { id: selectedLabelId },
           })
         ).data?.label?.labelClass?.id as string) || null
       : null;
     await client.mutate({
-      mutation: updateLabelMutation,
+      mutation: UPDATE_LABEL_MUTATION,
       variables: {
         where: { id: selectedLabelId },
         data: { labelClassId: selectedLabelClassId },
@@ -64,7 +64,7 @@ export const createUpdateLabelClassOfLabelEffect = (
   },
   undo: async (labelClassIdPrevious: string | null) => {
     await client.mutate({
-      mutation: updateLabelMutation,
+      mutation: UPDATE_LABEL_MUTATION,
       variables: {
         where: { id: selectedLabelId },
         data: { labelClassId: labelClassIdPrevious },

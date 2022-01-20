@@ -14,7 +14,7 @@ import { LayoutSpinner } from "../../../components/spinner";
 import { WelcomeModal } from "../../../components/welcome-manager";
 import { WorkspaceSwitcher } from "../../../components/workspace-switcher";
 
-const getWorkspaceDetailsQuery = gql`
+const GET_WORKSPACE_DETAILS_QUERY = gql`
   query getWorkspaceDetails($workspaceSlug: String) {
     workspace(where: { slug: $workspaceSlug }) {
       id
@@ -33,7 +33,7 @@ const WorkspaceSettingsPage = () => {
   const {
     data: getWorkspaceDetailsData,
     previousData: getWorkspaceDetailsPreviousData,
-  } = useQuery(getWorkspaceDetailsQuery, {
+  } = useQuery(GET_WORKSPACE_DETAILS_QUERY, {
     variables: { workspaceSlug },
     skip: workspaceSlug == null,
   });

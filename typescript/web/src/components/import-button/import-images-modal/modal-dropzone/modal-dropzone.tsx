@@ -15,9 +15,9 @@ import { DroppedFile, UploadStatuses } from "../types";
 
 import { importDroppedFiles } from "./import-dropped-files";
 import { flushPaginatedImagesCache } from "../../../dataset-images-list";
-import { getDatasetBySlugQuery } from "../../../datasets/datasets.query";
+import { GET_DATASET_BY_SLUG_QUERY } from "../../../datasets/datasets.query";
 
-const getWorkspaceIdQuery = gql`
+const GET_WORKSPACE_ID_QUERY = gql`
   query getWorkspaceId($workspaceSlug: String) {
     workspace(where: { slug: $workspaceSlug }) {
       id
@@ -49,11 +49,11 @@ export const ImportImagesModalDropzone = ({
     {}
   );
 
-  const { data: datasetResult } = useQuery(getDatasetBySlugQuery, {
+  const { data: datasetResult } = useQuery(GET_DATASET_BY_SLUG_QUERY, {
     variables: { slug: datasetSlug, workspaceSlug },
     skip: typeof datasetSlug !== "string" || typeof workspaceSlug !== "string",
   });
-  const { data: getWorkspaceIdData } = useQuery(getWorkspaceIdQuery, {
+  const { data: getWorkspaceIdData } = useQuery(GET_WORKSPACE_ID_QUERY, {
     variables: { workspaceSlug },
     skip: workspaceSlug == null,
   });

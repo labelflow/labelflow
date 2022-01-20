@@ -9,7 +9,7 @@ import { DroppedFile, SetUploadStatuses } from "../../types";
 
 import { CONCURRENCY } from "../../constants";
 
-const importDatasetMutation = gql`
+const IMPORT_DATASET_MUTATION = gql`
   mutation importDataset(
     $where: DatasetWhereUniqueInput!
     $data: DatasetImportInput!
@@ -38,7 +38,7 @@ const importDataset = async ({
   const url = await uploadFile({ file, key, apolloClient });
 
   const dataImportDataset = await apolloClient.mutate({
-    mutation: importDatasetMutation,
+    mutation: IMPORT_DATASET_MUTATION,
     variables: {
       where: { id: datasetId },
       data: {

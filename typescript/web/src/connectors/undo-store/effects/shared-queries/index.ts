@@ -14,7 +14,7 @@ import { gql } from "@apollo/client";
 /* optimistic responses and caches updates.                          */
 /* ----------------------------------------------------------------- */
 
-export const imageDimensionsQuery = gql`
+export const IMAGE_DIMENSIONS_QUERY = gql`
   query imageDimensions($id: ID!) {
     image(where: { id: $id }) {
       id
@@ -24,7 +24,7 @@ export const imageDimensionsQuery = gql`
   }
 `;
 
-export const createdLabelFragment = gql`
+export const CREATED_LABEL_FRAGMENT = gql`
   fragment NewLabel on Label {
     id
     x
@@ -43,7 +43,7 @@ export const createdLabelFragment = gql`
   }
 `;
 
-export const createLabelClassQuery = gql`
+export const CREATE_LABEL_CLASS_QUERY = gql`
   mutation createLabelClassInEffects($data: LabelClassCreateInput!) {
     createLabelClass(data: $data) {
       id
@@ -53,7 +53,7 @@ export const createLabelClassQuery = gql`
   }
 `;
 
-export const deleteLabelClassQuery = gql`
+export const DELETE_LABEL_CLASS_QUERY = gql`
   mutation deleteLabelClass($where: LabelClassWhereUniqueInput!) {
     deleteLabelClass(where: $where) {
       id
@@ -61,7 +61,7 @@ export const deleteLabelClassQuery = gql`
   }
 `;
 
-export const createLabelMutation = gql`
+export const CREATE_LABEL_MUTATION = gql`
   mutation createLabel($data: LabelCreateInput!) {
     createLabel(data: $data) {
       id
@@ -69,7 +69,7 @@ export const createLabelMutation = gql`
   }
 `;
 
-export const deleteLabelMutation = gql`
+export const DELETE_LABEL_MUTATION = gql`
   mutation deleteLabel($id: ID!) {
     deleteLabel(where: { id: $id }) {
       id
@@ -77,7 +77,7 @@ export const deleteLabelMutation = gql`
   }
 `;
 
-export const getLabelQuery = gql`
+export const GET_LABEL_QUERY = gql`
   query getLabelIdAndClassId($id: ID!) {
     label(where: { id: $id }) {
       id
@@ -88,7 +88,7 @@ export const getLabelQuery = gql`
   }
 `;
 
-export const updateLabelMutation = gql`
+export const UPDATE_LABEL_MUTATION = gql`
   mutation updateLabelClass(
     $where: LabelWhereUniqueInput!
     $data: LabelUpdateInput!

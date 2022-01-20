@@ -12,7 +12,7 @@ import { LayoutSpinner } from "../../../components/spinner";
 import { WelcomeModal } from "../../../components/welcome-manager";
 import { WorkspaceSwitcher } from "../../../components/workspace-switcher";
 
-const membershipsQuery = gql`
+const MEMBERSHIPS_QUERY = gql`
   query getMembershipsMembers($workspaceSlug: String) {
     memberships(where: { workspaceSlug: $workspaceSlug }) {
       id
@@ -34,7 +34,7 @@ const membershipsQuery = gql`
   }
 `;
 
-const deleteMembershipMutation = gql`
+const DELETE_MEMBERSHIP_MUTATION = gql`
   mutation deleteMembership($id: ID!) {
     deleteMembership(where: { id: $id }) {
       id
@@ -42,7 +42,7 @@ const deleteMembershipMutation = gql`
   }
 `;
 
-const updateMembershipMutation = gql`
+const UPDATE_MEMBERSHIP_MUTATION = gql`
   mutation updateMembership($id: ID!, $data: MembershipUpdateInput!) {
     updateMembership(where: { id: $id }, data: $data) {
       id
@@ -50,7 +50,7 @@ const updateMembershipMutation = gql`
   }
 `;
 
-const inviteMemberMutation = gql`
+const INVITE_MEMBER_MUTATION = gql`
   mutation inviteMember($where: InviteMemberInput!) {
     inviteMember(where: $where)
   }
@@ -59,20 +59,20 @@ const inviteMemberMutation = gql`
 const WorkspaceMembersPage = () => {
   const workspaceSlug = useRouter().query?.workspaceSlug as string;
 
-  const { data: membershipsData } = useQuery(membershipsQuery, {
+  const { data: membershipsData } = useQuery(MEMBERSHIPS_QUERY, {
     variables: { workspaceSlug },
     skip: workspaceSlug == null,
   });
 
-  const [deleteMembership] = useMutation(deleteMembershipMutation, {
+  const [deleteMembership] = useMutation(DELETE_MEMBERSHIP_MUTATION, {
     refetchQueries: ["getMembershipsMembers"],
   });
 
-  const [updateMembership] = useMutation(updateMembershipMutation, {
+  const [updateMembership] = useMutation(UPDATE_MEMBERSHIP_MUTATION, {
     refetchQueries: ["getMembershipsMembers"],
   });
 
-  const [inviteMember] = useMutation(inviteMemberMutation, {
+  const [inviteMember] = useMutation(INVITE_MEMBER_MUTATION, {
     refetchQueries: ["getMembershipsMembers"],
   });
 

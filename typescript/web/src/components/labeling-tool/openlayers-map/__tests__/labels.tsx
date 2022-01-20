@@ -23,10 +23,10 @@ import { setupTestsWithLocalDatabase } from "../../../../utils/setup-local-db-te
 import { processImage } from "../../../../connectors/repository/image-processing";
 import VectorSource from "ol/source/Vector";
 import {
-  createTestDatasetMutation,
-  createTestImageMutation,
+  CREATE_TEST_DATASET_MUTATION,
+  CREATE_TEST_IMAGE_MUTATION,
 } from "../../../../utils/tests/mutations";
-import { createLabelMutation } from "../../../../connectors/undo-store/effects/shared-queries";
+import { CREATE_LABEL_MUTATION } from "../../../../connectors/undo-store/effects/shared-queries";
 
 setupTestsWithLocalDatabase();
 
@@ -43,7 +43,7 @@ const createDataset = async (
   datasetId: string = testDatasetId
 ) => {
   return await client.mutate({
-    mutation: createTestDatasetMutation,
+    mutation: CREATE_TEST_DATASET_MUTATION,
     variables: {
       name,
       datasetId,
@@ -60,7 +60,7 @@ const createImage = async (name: String) => {
     mime: "image/jpeg",
   });
   const mutationResult = await client.mutate({
-    mutation: createTestImageMutation,
+    mutation: CREATE_TEST_IMAGE_MUTATION,
     variables: {
       file: new Blob(),
       name,
@@ -81,7 +81,7 @@ const createImage = async (name: String) => {
 
 const createLabel = async (data: Partial<LabelCreateInput>) => {
   const mutationResult = await client.mutate({
-    mutation: createLabelMutation,
+    mutation: CREATE_LABEL_MUTATION,
     variables: {
       data: {
         ...data,

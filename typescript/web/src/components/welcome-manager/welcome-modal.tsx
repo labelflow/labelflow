@@ -25,7 +25,7 @@ type WelcomeModalParam =
   | "open" // Force it to open asap
   | "closed"; // Force it to be closed and never open
 
-export const getDatasetsQuery = gql`
+export const GET_DATASETS_QUERY = gql`
   query getDatasetsName($where: DatasetWhereInput) {
     datasets(where: $where) {
       id
@@ -34,7 +34,7 @@ export const getDatasetsQuery = gql`
   }
 `;
 
-export const createDemoDatasetQuery = gql`
+export const CREATE_DEMO_DATASET_QUERY = gql`
   mutation createDemoDataset {
     createDemoDataset {
       id
@@ -74,7 +74,7 @@ const performWelcomeWorkflow = async ({
     setParamModalWelcome(undefined, "replaceIn");
 
     const { data: getDatasetsResult } = await client.query({
-      query: getDatasetsQuery,
+      query: GET_DATASETS_QUERY,
       variables: { where: { workspaceSlug: "local" } },
     });
 
@@ -89,7 +89,7 @@ const performWelcomeWorkflow = async ({
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { data: createDemoDatasetResult, errors: createDemoDatasetErrors } =
         await client.mutate({
-          mutation: createDemoDatasetQuery,
+          mutation: CREATE_DEMO_DATASET_QUERY,
           refetchQueries: [
             "getDatasetData",
             "getDatasetName",
