@@ -56,28 +56,29 @@ const generateThumbnail = async ({
   url: string;
   size: ThumbnailSizes;
   putImage: (url: string, blob: Blob) => Promise<void>;
-}): Promise<string> => {
+}): Promise<{ url: string; image?: Jimp }> => {
   try {
     const thumbnailUrl = getThumbnailUrlFromImageUrl({
       url,
       size,
       extension: "jpeg",
     });
-
-    const vipsThumbnail = await image
+    const jimpThumbnail = image
       .clone()
-      .scaleToFit(size, size, Jimp.RESIZE_BILINEAR)
-      .getBufferAsync("image/jpeg");
+      .scaleToFit(size, size, Jimp.RESIZE_BILINEAR);
+    const vipsThumbnail = await jimpThumbnail.getBufferAsync("image/jpeg");
 
     await putImage(
       thumbnailUrl,
       new Blob([vipsThumbnail], { type: "image/jpeg" })
     );
-
-    return thumbnailUrl;
+    return {
+      url: thumbnailUrl,
+      image: jimpThumbnail,
+    };
   } catch (e) {
     console.error(e);
-    return url;
+    return { url };
   }
 };
 
@@ -103,21 +104,40 @@ export const processImage: Repository["imageProcessing"]["processImage"] =
     const buffer = await getImage(url);
     const image = await Jimp.read(buffer as Buffer);
 
-    const generateThumbnailFromSize = (size: ThumbnailSizes) =>
-      generateThumbnail({
-        size,
-        image,
-        url,
-        putImage,
-      });
+    const { url: thumbnail500UrlNew, image: imageSrc } = thumbnail500Url
+      ? { url: thumbnail500Url, image }
+      : ((await generateThumbnail({ size: 500, image, url, putImage })) as {
+          url: string;
+          image: Jimp;
+        });
 
-    const generatedThumbnailUrls = await Promise.all([
-      thumbnail20Url ?? (await generateThumbnailFromSize(20)),
-      thumbnail50Url ?? (await generateThumbnailFromSize(50)),
-      thumbnail100Url ?? (await generateThumbnailFromSize(100)),
-      thumbnail200Url ?? (await generateThumbnailFromSize(200)),
-      thumbnail500Url ?? (await generateThumbnailFromSize(500)),
-    ]);
+    const generateThumbnailFromSize = async (
+      thumbUrl: string | null | undefined,
+      size: ThumbnailSizes
+    ) =>
+      thumbUrl ??
+      (
+        await generateThumbnail({
+          size,
+          image: imageSrc,
+          url,
+          putImage,
+        })
+      ).url;
+
+    const thumbnailsToGen: { url?: string | null; size: ThumbnailSizes }[] = [
+      { url: thumbnail20Url, size: 20 },
+      { url: thumbnail50Url, size: 50 },
+      { url: thumbnail100Url, size: 100 },
+      { url: thumbnail200Url, size: 200 },
+      { url: thumbnail500UrlNew, size: 500 },
+    ];
+
+    const generatedThumbnailUrls = await Promise.all(
+      thumbnailsToGen.map((thumbGenInfo) =>
+        generateThumbnailFromSize(thumbGenInfo.url, thumbGenInfo.size)
+      )
+    );
 
     return {
       ...validateImageSize({
