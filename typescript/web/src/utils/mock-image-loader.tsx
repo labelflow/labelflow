@@ -3,12 +3,12 @@ import { gql } from "@apollo/client";
 import Bluebird from "bluebird";
 import { client } from "../connectors/apollo-client/schema-client";
 import { getDatabase } from "../connectors/database";
-import { createTestDatasetMutation } from "./tests/mutations";
+import { CREATE_TEST_DATASET_MUTATION } from "./tests/mutations";
 
 async function createDataset(id: string, name: string) {
   try {
     const mutationResult = await client.mutate({
-      mutation: createTestDatasetMutation,
+      mutation: CREATE_TEST_DATASET_MUTATION,
       variables: { name, id, workspaceSlug: "local" },
     });
 

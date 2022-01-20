@@ -2,7 +2,7 @@ import { ApolloClient, gql } from "@apollo/client";
 import { ExportFormat, ExportOptions } from "@labelflow/graphql-types";
 import { Dispatch, SetStateAction } from "react";
 
-const exportQuery = gql`
+const EXPORT_QUERY = gql`
   query exportDatasetUrl(
     $datasetId: ID!
     $format: ExportFormat!
@@ -44,7 +44,7 @@ export const exportDataset = async ({
   const {
     data: { exportDataset: exportDatasetUrl },
   } = await client.query({
-    query: exportQuery,
+    query: EXPORT_QUERY,
     variables: {
       datasetId,
       format,

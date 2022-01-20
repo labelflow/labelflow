@@ -28,7 +28,7 @@ extend({
   ResizeAndTranslateBox: { object: ResizeAndTranslateBox, kind: "Interaction" },
 });
 
-const getLabelQuery = gql`
+const GET_LABEL_QUERY = gql`
   query getLabelWithGeometryAndClass($id: ID!) {
     label(where: { id: $id }) {
       type
@@ -106,7 +106,7 @@ export const SelectAndModifyFeature = (props: {
     (state) => state.selectionToolState
   );
 
-  const { data: labelData } = useQuery(getLabelQuery, {
+  const { data: labelData } = useQuery(GET_LABEL_QUERY, {
     variables: { id: selectedLabelId },
     skip: selectedLabelId == null,
   });

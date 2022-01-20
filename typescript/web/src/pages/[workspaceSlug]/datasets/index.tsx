@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { gql, useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client";
 
 import { Flex, Text } from "@chakra-ui/react";
 
@@ -24,30 +24,7 @@ import { CookieBanner } from "../../../components/cookie-banner";
 import { WorkspaceTabBar } from "../../../components/layout/tab-bar/workspace-tab-bar";
 import { WorkspaceSwitcher } from "../../../components/workspace-switcher";
 import { NavLogo } from "../../../components/logo/nav-logo";
-
-export const getDatasetsQuery = gql`
-  query getDatasets($where: DatasetWhereInput) {
-    datasets(where: $where) {
-      id
-      name
-      slug
-      images(first: 1) {
-        id
-        url
-        thumbnail500Url
-      }
-      imagesAggregates {
-        totalCount
-      }
-      labelsAggregates {
-        totalCount
-      }
-      labelClassesAggregates {
-        totalCount
-      }
-    }
-  }
-`;
+import { GET_DATASETS_QUERY } from "../../../utils/shared-queries";
 
 const LoadingCard = () => (
   <DatasetCardBox>
@@ -79,7 +56,7 @@ const DatasetPage = () => {
       | "labelClassesAggregates"
       | "labelsAggregates"
     >[];
-  }>(getDatasetsQuery, {
+  }>(GET_DATASETS_QUERY, {
     variables: { where: { workspaceSlug } },
     skip: workspaceSlug == null,
   });

@@ -4,7 +4,7 @@ import { LabelType } from "@labelflow/graphql-types";
 import { GeoJSONPolygon } from "ol/format/GeoJSON";
 import { v4 as uuid } from "uuid";
 import { Effect } from "..";
-import { createLabelMutation, deleteLabelMutation } from "./shared-queries";
+import { CREATE_LABEL_MUTATION, DELETE_LABEL_MUTATION } from "./shared-queries";
 import { createLabelMutationUpdate } from "./cache-updates/create-label-mutation-update";
 import { deleteLabelMutationUpdate } from "./cache-updates/delete-label-mutation-update";
 
@@ -38,7 +38,7 @@ export const createCreateLabelEffect = (
     };
 
     const createLabelPromise = client.mutate({
-      mutation: createLabelMutation,
+      mutation: CREATE_LABEL_MUTATION,
       variables: { data: createLabelInputs },
       refetchQueries: ["countLabelsOfDataset"],
       optimisticResponse: {
@@ -59,7 +59,7 @@ export const createCreateLabelEffect = (
   undo: async (id: string): Promise<string> => {
     setSelectedLabelId(null);
     await client.mutate({
-      mutation: deleteLabelMutation,
+      mutation: DELETE_LABEL_MUTATION,
       variables: { id },
       refetchQueries: ["countLabelsOfDataset"],
       optimisticResponse: { deleteLabel: { id, __typename: "Label" } },

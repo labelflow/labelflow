@@ -8,7 +8,7 @@ import { CreateWorkspaceModal } from "./create-workspace-modal";
 import { WorkspaceMenu } from "./workspace-menu";
 import { WorkspaceItem } from "./workspace-menu/workspace-selection-popover";
 
-const getWorkspacesQuery = gql`
+const GET_WORKSPACES_QUERY = gql`
   query getWorkspaces {
     workspaces {
       id
@@ -31,7 +31,7 @@ export const WorkspaceSwitcher = () => {
     });
 
   const { data: getWorkspacesData, previousData: getWorkspacesPreviousData } =
-    useQuery(getWorkspacesQuery);
+    useQuery(GET_WORKSPACES_QUERY);
 
   const workspaces: (Workspace & { src?: string })[] = useMemo(
     () => [

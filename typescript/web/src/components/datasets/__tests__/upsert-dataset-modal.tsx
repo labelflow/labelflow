@@ -16,8 +16,8 @@ import {
   mockUseQueryParams,
 } from "../../../utils/router-mocks";
 import { setupTestsWithLocalDatabase } from "../../../utils/setup-local-db-tests";
-import { createTestDatasetMutation } from "../../../utils/tests/mutations";
-import { getDatasetByIdQuery } from "../datasets.query";
+import { CREATE_TEST_DATASET_MUTATION } from "../../../utils/tests/mutations";
+import { GET_DATASET_BY_ID_QUERY } from "../datasets.query";
 
 mockUseQueryParams();
 mockNextRouter({ query: { workspaceSlug: "local" } });
@@ -107,7 +107,7 @@ test("should display an error message if dataset name already exists", async () 
   const datasetName = "Good Day";
 
   await client.mutate({
-    mutation: createTestDatasetMutation,
+    mutation: CREATE_TEST_DATASET_MUTATION,
     variables: { name: datasetName, workspaceSlug: "local" },
   });
 
@@ -144,7 +144,7 @@ test("update dataset: should have dataset name pre-filled when renaming existing
       createDataset: { id: datasetId },
     },
   } = await client.mutate({
-    mutation: createTestDatasetMutation,
+    mutation: CREATE_TEST_DATASET_MUTATION,
     variables: { name: datasetName, workspaceSlug: "local" },
   });
 
@@ -174,7 +174,7 @@ test("update dataset: should update a dataset when the form is submitted", async
       createDataset: { id: datasetId },
     },
   } = await client.mutate({
-    mutation: createTestDatasetMutation,
+    mutation: CREATE_TEST_DATASET_MUTATION,
     variables: { name: datasetName, workspaceSlug: "local" },
   });
 
@@ -212,7 +212,7 @@ test("update dataset: should update a dataset when the form is submitted", async
         dataset: { name: name1 },
       },
     } = await client.query({
-      query: getDatasetByIdQuery,
+      query: GET_DATASET_BY_ID_QUERY,
       variables: { id: datasetId },
       fetchPolicy: "no-cache",
     });

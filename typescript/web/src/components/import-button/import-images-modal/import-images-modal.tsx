@@ -12,8 +12,8 @@ import { useQueryParam, StringParam, withDefault } from "use-query-params";
 import { useApolloClient } from "@apollo/client";
 import { ImportImagesModalDropzone } from "./modal-dropzone/modal-dropzone";
 import { ImportImagesModalUrlList } from "./modal-url-list/modal-url-list";
-import { datasetDataQuery } from "../../../pages/[workspaceSlug]/datasets/[datasetSlug]/images";
-import { getDatasetsQuery } from "../../../pages/[workspaceSlug]/datasets";
+import { DATASET_DATA_QUERY } from "../../../pages/[workspaceSlug]/datasets/[datasetSlug]/images";
+import { GET_DATASETS_QUERY } from "../../../pages/[workspaceSlug]/datasets";
 
 export const ImportImagesModal = ({
   isOpen = false,
@@ -43,14 +43,14 @@ export const ImportImagesModal = ({
     // Manually refetch
     if (hasUploaded) {
       client.query({
-        query: datasetDataQuery,
+        query: DATASET_DATA_QUERY,
         variables: {
           slug: datasetSlug,
           workspaceSlug,
         },
         fetchPolicy: "network-only",
       });
-      client.query({ query: getDatasetsQuery, fetchPolicy: "network-only" });
+      client.query({ query: GET_DATASETS_QUERY, fetchPolicy: "network-only" });
       client.refetchQueries({ include: ["paginatedImagesQuery"] });
     }
   }, [hasUploaded]);

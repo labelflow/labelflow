@@ -9,7 +9,10 @@ import { useUndoStore } from "../../../../connectors/undo-store";
 import { createCreateLabelClassAndUpdateLabelEffect } from "../../../../connectors/undo-store/effects/create-label-class-and-update-label";
 import { createDeleteLabelEffect } from "../../../../connectors/undo-store/effects/delete-label";
 import { createUpdateLabelClassOfLabelEffect } from "../../../../connectors/undo-store/effects/update-label-class-of-label";
-import { getImageLabelsQuery, getLabelClassesOfDatasetQuery } from "../queries";
+import {
+  GET_IMAGE_LABELS_QUERY,
+  GET_LABEL_CLASSES_OF_DATASET_QUERY,
+} from "../queries";
 import { ClassificationTag, LabelClassItem } from "./classification-tag";
 
 export const ClassificationContent = forwardRef<HTMLDivElement>(
@@ -19,14 +22,17 @@ export const ClassificationContent = forwardRef<HTMLDivElement>(
     const workspaceSlug = router?.query.workspaceSlug as string;
     const imageId = router?.query.imageId as string;
     const { data: getImageLabelsData, previousData: previousImageLabelsData } =
-      useQuery(getImageLabelsQuery, {
+      useQuery(GET_IMAGE_LABELS_QUERY, {
         skip: !imageId,
         variables: { imageId: imageId as string },
       });
-    const { data: labelClassesData } = useQuery(getLabelClassesOfDatasetQuery, {
-      variables: { slug: datasetSlug, workspaceSlug },
-      skip: !datasetSlug || !workspaceSlug,
-    });
+    const { data: labelClassesData } = useQuery(
+      GET_LABEL_CLASSES_OF_DATASET_QUERY,
+      {
+        variables: { slug: datasetSlug, workspaceSlug },
+        skip: !datasetSlug || !workspaceSlug,
+      }
+    );
     const datasetId = labelClassesData?.dataset.id;
     const labelClasses = labelClassesData?.dataset.labelClasses ?? [];
     const selectedTool = useLabelingStore((state) => state.selectedTool);
@@ -75,7 +81,7 @@ export const ClassificationContent = forwardRef<HTMLDivElement>(
         if (selectedLabelId != null) {
           // Change the class of an existing classification label to an existing class
           const { data: imageLabelsData } = await client.query({
-            query: getImageLabelsQuery,
+            query: GET_IMAGE_LABELS_QUERY,
             variables: { imageId },
           });
 

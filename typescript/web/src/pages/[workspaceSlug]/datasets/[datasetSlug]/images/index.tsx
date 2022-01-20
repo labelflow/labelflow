@@ -20,7 +20,7 @@ import { WelcomeModal } from "../../../../../components/welcome-manager";
 import { CookieBanner } from "../../../../../components/cookie-banner";
 import { ImagesList } from "../../../../../components/dataset-images-list";
 
-export const datasetDataQuery = gql`
+export const DATASET_DATA_QUERY = gql`
   query getDatasetData($slug: String!, $workspaceSlug: String!) {
     dataset(where: { slugs: { slug: $slug, workspaceSlug: $workspaceSlug } }) {
       id
@@ -43,7 +43,7 @@ const ImagesPage = () => {
     loading: datasetQueryLoading,
   } = useQuery<{
     dataset: DatasetType;
-  }>(datasetDataQuery, {
+  }>(DATASET_DATA_QUERY, {
     variables: {
       slug: datasetSlug,
       workspaceSlug,

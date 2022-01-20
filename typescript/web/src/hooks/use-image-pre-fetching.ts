@@ -2,7 +2,7 @@ import { gql, useQuery } from "@apollo/client";
 import { useEffect, useReducer } from "react";
 import { useImagesNavigation } from "./use-images-navigation";
 
-const imageQuery = gql`
+const IMAGE_QUERY = gql`
   query prefetchImage($id: ID!) {
     image(where: { id: $id }) {
       id
@@ -14,7 +14,7 @@ const imageQuery = gql`
   }
 `;
 
-const getImageLabelsQuery = gql`
+const GET_IMAGE_LABELS_QUERY = gql`
   query getImageLabelsForPrefetch($imageId: ID!) {
     image(where: { id: $imageId }) {
       id
@@ -52,27 +52,27 @@ const useCanFetch = (initState: Required<CanFetchState>) =>
     ) => Required<CanFetchState>
   >((oldState, newState) => ({ ...oldState, ...newState }), initState);
 
-export const useImagePrefecthing = () => {
+export const useImagePreFetching = () => {
   const { nextImageId, previousImageId } = useImagesNavigation();
   const [{ canFetchNext, canFetchPrevious }, setCanFetch] = useCanFetch({
     canFetchNext: false,
     canFetchPrevious: false,
   });
   // Fetch previous and next image details
-  const { data: previousImageData } = useQuery(imageQuery, {
+  const { data: previousImageData } = useQuery(IMAGE_QUERY, {
     variables: { id: previousImageId },
     skip: previousImageId == null,
   });
-  const { data: nextImageData } = useQuery(imageQuery, {
+  const { data: nextImageData } = useQuery(IMAGE_QUERY, {
     variables: { id: nextImageId },
     skip: nextImageId == null,
   });
   // Fetch previous and next image labels
-  useQuery(getImageLabelsQuery, {
+  useQuery(GET_IMAGE_LABELS_QUERY, {
     variables: { imageId: previousImageId },
     skip: previousImageId == null,
   });
-  useQuery(getImageLabelsQuery, {
+  useQuery(GET_IMAGE_LABELS_QUERY, {
     variables: { imageId: nextImageId },
     skip: nextImageId == null,
   });

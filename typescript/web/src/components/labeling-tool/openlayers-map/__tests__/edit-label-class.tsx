@@ -6,7 +6,7 @@ import userEvent from "@testing-library/user-event";
 import { client } from "../../../../connectors/apollo-client/schema-client";
 import { useLabelingStore, Tools } from "../../../../connectors/labeling-state";
 import { setupTestsWithLocalDatabase } from "../../../../utils/setup-local-db-tests";
-import { createTestDatasetMutation } from "../../../../utils/tests/mutations";
+import { CREATE_TEST_DATASET_MUTATION } from "../../../../utils/tests/mutations";
 import { CREATE_LABEL_CLASS_MUTATION } from "../../../dataset-classes/upsert-class-modal/create-label-class.mutation";
 
 import { EditLabelClass } from "../edit-label-class";
@@ -62,7 +62,7 @@ const createDataset = async (
 ) => {
   // @ts-ignore
   return client.mutateOriginal({
-    mutation: createTestDatasetMutation,
+    mutation: CREATE_TEST_DATASET_MUTATION,
     variables: {
       name,
       datasetId,
