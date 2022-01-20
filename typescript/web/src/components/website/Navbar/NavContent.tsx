@@ -5,7 +5,6 @@ import {
   Flex,
   FlexProps,
   HStack,
-  Link,
   Spacer,
   useDisclosure,
   VisuallyHidden,
@@ -26,12 +25,11 @@ const GitHubButton = ({ isMobile }: { isMobile?: boolean }) => {
   const label = "Star us on GitHub";
   const mobileProps = isMobile ? { w: "full", size: "lg", mt: "5" } : {};
   return (
-    <Link
-      href="https://github.com/labelflow/labelflow"
-      target="_blank"
-      rel="noreferrer"
-    >
+    <NextLink href="https://github.com/labelflow/labelflow" passHref>
       <Button
+        as="a"
+        target="_blank"
+        rel="noreferrer"
         variant={isMobile ? "outline" : "ghost"}
         aria-label={label}
         leftIcon={<StarIcon fontSize="2xl" />}
@@ -39,7 +37,7 @@ const GitHubButton = ({ isMobile }: { isMobile?: boolean }) => {
       >
         {label}
       </Button>
-    </Link>
+    </NextLink>
   );
 };
 
@@ -127,11 +125,7 @@ const DesktopNavContent = (props: FlexProps) => {
           </Box>
         ))}
       </HStack>
-      <HStack
-        spacing="4"
-        //  minW="240px"
-        justify="space-between"
-      >
+      <HStack spacing="4" justify="space-between" align="center">
         <GitHubButton />
         <NextLink href="/local/datasets">
           <Button
