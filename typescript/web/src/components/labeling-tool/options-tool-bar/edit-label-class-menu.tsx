@@ -17,9 +17,9 @@ import { createUpdateLabelClassEffect } from "../../../connectors/undo-store/eff
 import { createUpdateLabelClassOfLabelEffect } from "../../../connectors/undo-store/effects/update-label-class-of-label";
 import { keymap } from "../../../keymap";
 import {
-  getImageLabelsQuery,
-  getLabelClassesOfDatasetQuery,
-  getLabelQuery,
+  GET_IMAGE_LABELS_QUERY,
+  GET_LABEL_CLASSES_OF_DATASET_QUERY,
+  GET_LABEL_QUERY,
   labelClassQuery,
 } from "../openlayers-map/queries";
 import { ClassAdditionMenu } from "./class-addition-menu";
@@ -35,7 +35,7 @@ export const EditLabelClassMenu = () => {
   const client = useApolloClient();
   const [isOpen, setIsOpen] = useState(false);
 
-  const { data } = useQuery(getLabelClassesOfDatasetQuery, {
+  const { data } = useQuery(GET_LABEL_CLASSES_OF_DATASET_QUERY, {
     variables: { slug: datasetSlug, workspaceSlug },
   });
   const datasetId = data?.dataset.id;
@@ -46,7 +46,7 @@ export const EditLabelClassMenu = () => {
   );
   const selectedTool = useLabelingStore((state) => state.selectedTool);
   const selectedLabelId = useLabelingStore((state) => state.selectedLabelId);
-  const { data: selectedLabelData } = useQuery(getLabelQuery, {
+  const { data: selectedLabelData } = useQuery(GET_LABEL_QUERY, {
     variables: { id: selectedLabelId },
     skip: selectedLabelId == null,
   });
@@ -111,7 +111,7 @@ export const EditLabelClassMenu = () => {
       if (selectedTool === Tools.CLASSIFICATION && imageId) {
         // Create a new classification label of a new class
         const { data: imageLabelsData } = await client.query({
-          query: getImageLabelsQuery,
+          query: GET_IMAGE_LABELS_QUERY,
           variables: { imageId },
         });
         const geometry = new GeoJSON().writeGeometryObject(
@@ -169,7 +169,7 @@ export const EditLabelClassMenu = () => {
           if (selectedLabelData?.label?.type === LabelType.Classification) {
             // Change the class of an existing classification label to an existing class
             const { data: imageLabelsData } = await client.query({
-              query: getImageLabelsQuery,
+              query: GET_IMAGE_LABELS_QUERY,
               variables: { imageId },
             });
 
@@ -208,7 +208,7 @@ export const EditLabelClassMenu = () => {
       if (selectedTool === Tools.CLASSIFICATION && imageId) {
         // Add a classification label of an existing class
         const { data: imageLabelsData } = await client.query({
-          query: getImageLabelsQuery,
+          query: GET_IMAGE_LABELS_QUERY,
           variables: { imageId },
         });
 

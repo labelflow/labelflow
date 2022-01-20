@@ -11,7 +11,7 @@ import {
 } from "react";
 import { useRouter } from "next/router";
 
-export const countLabelsOfDatasetQuery = gql`
+export const COUNT_LABELS_OF_DATASET_QUERY = gql`
   query countLabelsOfDataset($slug: String!, $workspaceSlug: String!) {
     dataset(where: { slugs: { slug: $slug, workspaceSlug: $workspaceSlug } }) {
       id
@@ -70,7 +70,7 @@ export const ExportModalProvider = ({
     datasetSlug: string;
     workspaceSlug: string;
   };
-  const { data, loading } = useQuery(countLabelsOfDatasetQuery, {
+  const { data, loading } = useQuery(COUNT_LABELS_OF_DATASET_QUERY, {
     variables: { slug: datasetSlug, workspaceSlug },
     skip: !datasetSlug || !isOpen,
   });

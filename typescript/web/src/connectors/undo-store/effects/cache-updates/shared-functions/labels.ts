@@ -2,8 +2,8 @@ import { ApolloCache, Reference } from "@apollo/client";
 import { getBoundedGeometryFromImage } from "@labelflow/common-resolvers/src/utils/get-bounded-geometry-from-image";
 import { GeometryInput, LabelType } from "@labelflow/graphql-types";
 import {
-  imageDimensionsQuery,
-  createdLabelFragment,
+  IMAGE_DIMENSIONS_QUERY,
+  CREATED_LABEL_FRAGMENT,
 } from "../../shared-queries";
 
 export type CachedLabel = {
@@ -33,7 +33,7 @@ export function getBoundedLabel(
   const imageDimensionsResult = cache.readQuery<{
     image: { width: number; height: number };
   }>({
-    query: imageDimensionsQuery,
+    query: IMAGE_DIMENSIONS_QUERY,
     variables: { id: imageId },
   });
 
@@ -80,7 +80,7 @@ export function addLabelToImageCache(
       labels(existingLabelsRefs: Reference[] = [], { readField }) {
         const newLabelRef = cache.writeFragment({
           data: createdLabel,
-          fragment: createdLabelFragment,
+          fragment: CREATED_LABEL_FRAGMENT,
         });
 
         if (

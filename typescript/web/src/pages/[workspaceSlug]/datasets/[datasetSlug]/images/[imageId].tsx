@@ -15,7 +15,7 @@ import React from "react";
 import { useErrorHandler } from "react-error-boundary";
 import { AuthManager } from "../../../../../components/auth-manager";
 import { CookieBanner } from "../../../../../components/cookie-banner";
-import { getDatasetBySlugQuery } from "../../../../../components/datasets/datasets.query";
+import { GET_DATASET_BY_SLUG_QUERY } from "../../../../../components/datasets/datasets.query";
 import { ExportButton } from "../../../../../components/export-button";
 import { Gallery } from "../../../../../components/gallery";
 import { ImportButton } from "../../../../../components/import-button";
@@ -42,7 +42,7 @@ const LabelingTool = dynamic(
   }
 );
 
-const imageQuery = gql`
+const IMAGE_QUERY = gql`
   query imageName($id: ID!) {
     image(where: { id: $id }) {
       id
@@ -63,7 +63,7 @@ const ImagePage = () => {
     data: imageResult,
     error: errorImage,
     loading: loadingImage,
-  } = useQuery<ImageQueryResponse>(imageQuery, {
+  } = useQuery<ImageQueryResponse>(IMAGE_QUERY, {
     variables: { id: imageId },
     skip: !imageId,
   });
@@ -72,7 +72,7 @@ const ImagePage = () => {
     data: datasetResult,
     error: errorDataset,
     loading: loadingDataset,
-  } = useQuery(getDatasetBySlugQuery, {
+  } = useQuery(GET_DATASET_BY_SLUG_QUERY, {
     variables: { slug: datasetSlug, workspaceSlug },
     skip: !datasetSlug || !workspaceSlug,
   });

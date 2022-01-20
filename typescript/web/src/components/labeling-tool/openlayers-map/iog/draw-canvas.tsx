@@ -19,7 +19,7 @@ import { useUndoStore } from "../../../../connectors/undo-store";
 import { createCreateIogLabelEffect } from "../../../../connectors/undo-store/effects/create-iog-label";
 import { noneClassColor } from "../../../../theme";
 import { keymap } from "../../../../keymap";
-import { imageQuery } from "./queries";
+import { IMAGE_QUERY } from "./queries";
 import { labelClassQuery } from "../queries";
 
 const geometryFunction = createBox();
@@ -48,7 +48,7 @@ export const DrawIogCanvas = ({
   const unregisterIogJob = useLabelingStore((state) => state.unregisterIogJob);
   const { perform } = useUndoStore();
   const client = useApolloClient();
-  const { data: dataImage } = useQuery(imageQuery, {
+  const { data: dataImage } = useQuery(IMAGE_QUERY, {
     variables: { id: imageId },
     skip: imageId == null,
   });

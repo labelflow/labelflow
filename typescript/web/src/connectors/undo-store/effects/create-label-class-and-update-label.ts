@@ -7,10 +7,10 @@ import { Effect } from "..";
 import { createLabelClassMutationUpdate } from "./cache-updates/create-label-class-mutation-update";
 import { deleteLabelClassMutationUpdate } from "./cache-updates/delete-label-class-mutation-update";
 import {
-  getLabelQuery,
-  createLabelClassQuery,
-  updateLabelMutation,
-  deleteLabelClassQuery,
+  GET_LABEL_QUERY,
+  CREATE_LABEL_CLASS_QUERY,
+  UPDATE_LABEL_MUTATION,
+  DELETE_LABEL_CLASS_QUERY,
 } from "./shared-queries";
 import { updateLabelClassOfLabel } from "./cache-updates/update-label-class-of-label";
 
@@ -37,7 +37,7 @@ export const createCreateLabelClassAndUpdateLabelEffect = (
     const labelClassId = uuid();
 
     const labelPreviousDetailsPromise = client.query({
-      query: getLabelQuery,
+      query: GET_LABEL_QUERY,
       variables: { id: selectedLabelId },
     });
 
@@ -59,7 +59,7 @@ export const createCreateLabelClassAndUpdateLabelEffect = (
         __typename: "LabelClass";
       };
     }>({
-      mutation: createLabelClassQuery,
+      mutation: CREATE_LABEL_CLASS_QUERY,
       variables: { data: { name, color, datasetId, id: labelClassId } },
       optimisticResponse: {
         createLabelClass: {
@@ -87,7 +87,7 @@ export const createCreateLabelClassAndUpdateLabelEffect = (
         __typename: "Label";
       };
     }>({
-      mutation: updateLabelMutation,
+      mutation: UPDATE_LABEL_MUTATION,
       variables: {
         where: { id: selectedLabelId },
         data: { labelClassId: labelClassId ?? null },
@@ -115,7 +115,7 @@ export const createCreateLabelClassAndUpdateLabelEffect = (
     labelClassIdPrevious: string;
   }) => {
     await client.mutate({
-      mutation: updateLabelMutation,
+      mutation: UPDATE_LABEL_MUTATION,
       variables: {
         where: { id: selectedLabelId },
         data: { labelClassId: labelClassIdPrevious ?? null },
@@ -135,7 +135,7 @@ export const createCreateLabelClassAndUpdateLabelEffect = (
     useLabelingStore.setState({ selectedLabelClassId: labelClassIdPrevious });
 
     await client.mutate({
-      mutation: deleteLabelClassQuery,
+      mutation: DELETE_LABEL_CLASS_QUERY,
       variables: {
         where: { id: labelClassId },
       },
@@ -158,7 +158,7 @@ export const createCreateLabelClassAndUpdateLabelEffect = (
     labelClassIdPrevious: string;
   }) => {
     await client.mutate({
-      mutation: createLabelClassQuery,
+      mutation: CREATE_LABEL_CLASS_QUERY,
       variables: { data: { name, color, id: labelClassId, datasetId } },
       update: createLabelClassMutationUpdate(datasetId),
       optimisticResponse: {
@@ -174,7 +174,7 @@ export const createCreateLabelClassAndUpdateLabelEffect = (
     useLabelingStore.setState({ selectedLabelClassId: labelClassId });
 
     await client.mutate({
-      mutation: updateLabelMutation,
+      mutation: UPDATE_LABEL_MUTATION,
       variables: {
         where: { id: selectedLabelId },
         data: { labelClassId },

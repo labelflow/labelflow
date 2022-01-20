@@ -6,7 +6,7 @@ import React, { useEffect } from "react";
 import { useErrorHandler } from "react-error-boundary";
 import { AuthManager } from "../../../../components/auth-manager";
 import { CookieBanner } from "../../../../components/cookie-banner";
-import { getDatasetBySlugQuery } from "../../../../components/datasets/datasets.query";
+import { GET_DATASET_BY_SLUG_QUERY } from "../../../../components/datasets/datasets.query";
 import { ExportButton } from "../../../../components/export-button";
 import { ImportButton } from "../../../../components/import-button";
 import { Layout } from "../../../../components/layout";
@@ -26,7 +26,7 @@ const DatasetIndexPage = () => {
     data: datasetResult,
     error,
     loading,
-  } = useQuery(getDatasetBySlugQuery, {
+  } = useQuery(GET_DATASET_BY_SLUG_QUERY, {
     variables: { slug: datasetSlug, workspaceSlug },
     skip: typeof datasetSlug !== "string" || typeof workspaceSlug !== "string",
   });

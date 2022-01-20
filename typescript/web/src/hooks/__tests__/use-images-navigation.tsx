@@ -6,8 +6,8 @@ import { client } from "../../connectors/apollo-client/schema-client";
 import { processImage } from "../../connectors/repository/image-processing";
 import { setupTestsWithLocalDatabase } from "../../utils/setup-local-db-tests";
 import {
-  createTestDatasetMutation,
-  createTestImageMutation,
+  CREATE_TEST_DATASET_MUTATION,
+  CREATE_TEST_IMAGE_MUTATION,
 } from "../../utils/tests/mutations";
 import { useImagesNavigation } from "../use-images-navigation";
 
@@ -31,7 +31,7 @@ async function createImage(name: String) {
     mime: "image/jpeg",
   });
   const mutationResult = await client.mutate({
-    mutation: createTestImageMutation,
+    mutation: CREATE_TEST_IMAGE_MUTATION,
     variables: {
       file: new Blob(),
       name,
@@ -50,7 +50,7 @@ async function createImage(name: String) {
 
 beforeEach(async () => {
   await client.mutate({
-    mutation: createTestDatasetMutation,
+    mutation: CREATE_TEST_DATASET_MUTATION,
     variables: {
       name: "test dataset",
       datasetId: testDatasetId,

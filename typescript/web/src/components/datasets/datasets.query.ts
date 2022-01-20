@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 
-export const getDatasetByIdQuery = gql`
+export const GET_DATASET_BY_ID_QUERY = gql`
   query getDatasetById($id: ID) {
     dataset(where: { id: $id }) {
       id
@@ -9,7 +9,7 @@ export const getDatasetByIdQuery = gql`
   }
 `;
 
-export const searchDatasetBySlugQuery = gql`
+export const SEARCH_DATASET_BY_SLUG_QUERY = gql`
   query searchDatasetBySlug($slug: String!, $workspaceSlug: String!) {
     searchDataset(
       where: { slugs: { slug: $slug, workspaceSlug: $workspaceSlug } }
@@ -20,7 +20,7 @@ export const searchDatasetBySlugQuery = gql`
   }
 `;
 
-export const getDatasetBySlugQuery = gql`
+export const GET_DATASET_BY_SLUG_QUERY = gql`
   query getDatasetBySlug($slug: String!, $workspaceSlug: String!) {
     dataset(where: { slugs: { slug: $slug, workspaceSlug: $workspaceSlug } }) {
       id

@@ -3,7 +3,7 @@ import { ApolloProvider } from "@apollo/client";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { mockMatchMedia } from "../../../../utils/mock-window";
-import { createTestDatasetMutation } from "../../../../utils/tests/mutations";
+import { CREATE_TEST_DATASET_MUTATION } from "../../../../utils/tests/mutations";
 import { CREATE_LABEL_CLASS_MUTATION } from "../../../dataset-classes/upsert-class-modal/create-label-class.mutation";
 
 mockMatchMedia(jest);
@@ -68,7 +68,7 @@ const createDataset = async (
 ) => {
   // @ts-ignore
   return client.mutateOriginal({
-    mutation: createTestDatasetMutation,
+    mutation: CREATE_TEST_DATASET_MUTATION,
     variables: {
       name,
       datasetId,

@@ -3,7 +3,7 @@ import { Image, Query } from "@labelflow/graphql-types";
 import { isEmpty } from "lodash/fp";
 import { createContext, PropsWithChildren, useContext, useState } from "react";
 import { usePagination } from "../pagination";
-import { paginatedImagesQuery } from "./paginated-images-query";
+import { PAGINATED_IMAGES_QUERY } from "./paginated-images-query";
 
 export type ImagesListProps = {
   workspaceSlug: string;
@@ -36,7 +36,7 @@ export const ImagesListProvider = ({
   const [toDelete, setToDelete] = useState<string | undefined>(undefined);
   const { data: imagesResult, loading: imagesQueryLoading } = useQuery<
     Pick<Query, "images">
-  >(paginatedImagesQuery, {
+  >(PAGINATED_IMAGES_QUERY, {
     variables: {
       datasetId,
       first: perPage,
