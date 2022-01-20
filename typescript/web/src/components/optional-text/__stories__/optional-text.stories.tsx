@@ -1,7 +1,7 @@
 import { Table, Tbody, Td, Thead, Tr } from "@chakra-ui/react";
 import { isEmpty, isNil } from "lodash/fp";
 import { OptionalText } from "..";
-import { chakraDecorator, storybookTitle } from "../../../utils/storybook";
+import { chakraDecorator, storybookTitle } from "../../../utils/stories";
 import { TEST_CASES } from "../optional-text.fixtures";
 
 export default {

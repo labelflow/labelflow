@@ -5,7 +5,7 @@ import {
   queryParamsDecorator,
   cookieDecorator,
   storybookTitle,
-} from "../../../utils/storybook";
+} from "../../../utils/stories";
 
 export default {
   title: storybookTitle(WelcomeModal),

@@ -1,5 +1,5 @@
 import React from "react";
-import { chakraDecorator } from "../../../utils/storybook/chakra-decorator";
+import { chakraDecorator } from "../../../utils/stories/chakra-decorator";
 import { TestComponent } from "../reorderable-table.fixtures";
 
 export default {

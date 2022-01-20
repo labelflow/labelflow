@@ -5,7 +5,7 @@ import { useToast, Button } from "@chakra-ui/react";
 import {
   chakraDecorator,
   queryParamsDecorator,
-} from "../../../../utils/storybook";
+} from "../../../../utils/stories";
 
 import { IogAlertDialog } from "../iog-alert-dialog";
 

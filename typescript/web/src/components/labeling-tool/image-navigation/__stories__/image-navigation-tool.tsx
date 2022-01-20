@@ -3,7 +3,7 @@ import { Story } from "@storybook/react";
 
 import { HStack, Button, Flex } from "@chakra-ui/react";
 
-import { chakraDecorator, apolloDecorator } from "../../../../utils/storybook";
+import { chakraDecorator, apolloDecorator } from "../../../../utils/stories";
 
 import { ImageNavigationTool } from "../image-navigation-tool";
 

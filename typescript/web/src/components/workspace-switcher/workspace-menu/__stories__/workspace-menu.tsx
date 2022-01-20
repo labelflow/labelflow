@@ -1,7 +1,7 @@
 import { BreadcrumbLink, Text } from "@chakra-ui/react";
 import NextLink from "next/link";
 import { useState } from "react";
-import { chakraDecorator, storybookTitle } from "../../../../utils/storybook";
+import { chakraDecorator, storybookTitle } from "../../../../utils/stories";
 import { ResponsiveBreadcrumbs } from "../../../layout/top-bar/breadcrumbs/responsive-breadcrumbs";
 import { WorkspaceMenu } from "../workspace-menu";
 import { WorkspaceItem } from "../workspace-selection-popover";

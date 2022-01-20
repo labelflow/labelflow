@@ -4,7 +4,7 @@ import {
   apolloDecorator,
   chakraDecorator,
   storybookTitle,
-} from "../../../utils/storybook";
+} from "../../../utils/stories";
 import { TestComponent, TEST_CASES } from "../workspace-name-input.fixtures";
 
 export default {

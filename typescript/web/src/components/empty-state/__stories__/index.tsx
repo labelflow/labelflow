@@ -6,7 +6,7 @@ import {
   EmptyStateNoSearchResult,
   EmptyStateNoTasks,
 } from "..";
-import { chakraDecorator, storybookTitle } from "../../../utils/storybook";
+import { chakraDecorator, storybookTitle } from "../../../utils/stories";
 
 export default {
   title: storybookTitle("Empty States"),

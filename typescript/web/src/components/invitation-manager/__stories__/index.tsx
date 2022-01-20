@@ -4,7 +4,7 @@ import {
   chakraDecorator,
   queryParamsDecorator,
   storybookTitle,
-} from "../../../utils/storybook";
+} from "../../../utils/stories";
 import { AcceptOrDeclineMembershipInvitation } from "../accept-or-decline-membership-invitation";
 import { InvalidInvitation as InvalidInvitationComponent } from "../invalid-invitation";
 import { UserNeedsToSignIn as UserNeedsToSignInComponent } from "../user-needs-to-sign-in";

@@ -1,7 +1,7 @@
 import { MockedProvider as ApolloProvider } from "@apollo/client/testing";
 import React from "react";
 import { DatasetClasses } from "..";
-import { chakraDecorator } from "../../../utils/storybook/chakra-decorator";
+import { chakraDecorator } from "../../../utils/stories/chakra-decorator";
 import { GRAPHQL_MOCKS } from "../dataset-classes.fixtures";
 
 export default {

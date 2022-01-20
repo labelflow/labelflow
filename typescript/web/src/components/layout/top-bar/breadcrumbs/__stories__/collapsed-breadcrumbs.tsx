@@ -1,10 +1,7 @@
 import { BreadcrumbLink, Skeleton, Text } from "@chakra-ui/react";
 import NextLink from "next/link";
 import React from "react";
-import {
-  chakraDecorator,
-  storybookTitle,
-} from "../../../../../utils/storybook";
+import { chakraDecorator, storybookTitle } from "../../../../../utils/stories";
 import { CollapsedBreadcrumbs } from "../collapsed-breadcrumbs";
 
 export default {

@@ -6,7 +6,7 @@ import {
   chakraDecorator,
   queryParamsDecorator,
   storybookTitle,
-} from "../../../utils/storybook";
+} from "../../../utils/stories";
 import { ImageLoadError } from "../image-load-error";
 
 function inGreyBoxDecorator(

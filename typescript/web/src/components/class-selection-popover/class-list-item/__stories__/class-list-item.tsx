@@ -1,5 +1,5 @@
 import { omit } from "lodash/fp";
-import { chakraDecorator, storybookTitle } from "../../../../utils/storybook";
+import { chakraDecorator, storybookTitle } from "../../../../utils/stories";
 import { ClassListItem } from "../class-list-item";
 
 export default {

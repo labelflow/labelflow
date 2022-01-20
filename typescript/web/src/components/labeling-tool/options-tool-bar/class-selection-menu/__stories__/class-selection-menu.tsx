@@ -1,9 +1,6 @@
 import { Button, Flex, HStack } from "@chakra-ui/react";
 import { useState } from "react";
-import {
-  chakraDecorator,
-  storybookTitle,
-} from "../../../../../utils/storybook";
+import { chakraDecorator, storybookTitle } from "../../../../../utils/stories";
 import { ClassSelectionMenu, LabelClassItem } from "../class-selection-menu";
 
 export default {

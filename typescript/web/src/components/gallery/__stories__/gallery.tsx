@@ -6,7 +6,7 @@ import {
   apolloDecorator,
   chakraDecorator,
   storybookTitle,
-} from "../../../utils/storybook";
+} from "../../../utils/stories";
 import { Gallery } from "../gallery";
 
 const datasetId = "233e2e14-7be3-4371-a6de-1ebbe71c90b9";

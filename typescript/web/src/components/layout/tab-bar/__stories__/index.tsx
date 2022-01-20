@@ -1,5 +1,5 @@
 import { TabBar, TabBarItem } from "..";
-import { chakraDecorator, storybookTitle } from "../../../../utils/storybook";
+import { chakraDecorator, storybookTitle } from "../../../../utils/stories";
 
 export default {
   title: storybookTitle(TabBar),

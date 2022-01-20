@@ -6,7 +6,7 @@ import {
   chakraDecorator,
   queryParamsDecorator,
   storybookTitle,
-} from "../../../../utils/storybook";
+} from "../../../../utils/stories";
 
 import {
   WORKSPACE_EXISTS_MOCK_ALREADY_TAKEN_NAME,

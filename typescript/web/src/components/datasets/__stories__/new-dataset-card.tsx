@@ -5,7 +5,7 @@ import {
   chakraDecorator,
   queryParamsDecorator,
   storybookTitle,
-} from "../../../utils/storybook";
+} from "../../../utils/stories";
 
 export default {
   title: storybookTitle(NewDatasetCard),

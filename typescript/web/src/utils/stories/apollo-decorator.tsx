@@ -1,7 +1,7 @@
 import {
   ApolloMockedProvider,
   ApolloMockedResponse,
-} from "../testing/mock-apollo";
+} from "../tests/mock-apollo";
 
 export const getApolloDecorator =
   (mockQueries?: ReadonlyArray<ApolloMockedResponse>) => (Story: any) =>

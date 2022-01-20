@@ -1,6 +1,6 @@
 import { HStack } from "@chakra-ui/react";
 import { ExportFormat } from "@labelflow/graphql-types";
-import { apolloDecorator, chakraDecorator } from "../../../../utils/storybook";
+import { apolloDecorator, chakraDecorator } from "../../../../utils/stories";
 import { ExportFormatCard } from "../export-format-card";
 import { ExportModalContext, ExportModalState } from "../export-modal.context";
 

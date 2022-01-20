@@ -1,7 +1,7 @@
 import {
   chakraDecorator,
   storybookTitle,
-} from "../../../../../../utils/storybook";
+} from "../../../../../../utils/stories";
 import { WorkspaceListItem } from "../workspace-list-item";
 
 export default {

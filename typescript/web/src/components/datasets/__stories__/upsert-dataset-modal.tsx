@@ -4,7 +4,7 @@ import {
   chakraDecorator,
   queryParamsDecorator,
   storybookTitle,
-} from "../../../utils/storybook";
+} from "../../../utils/stories";
 import { UpsertDatasetModal } from "../upsert-dataset-modal";
 
 export default {

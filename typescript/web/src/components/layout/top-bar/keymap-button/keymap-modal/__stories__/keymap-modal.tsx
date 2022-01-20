@@ -2,7 +2,7 @@ import { Button, useDisclosure } from "@chakra-ui/react";
 import {
   chakraDecorator,
   storybookTitle,
-} from "../../../../../../utils/storybook";
+} from "../../../../../../utils/stories";
 import { KeymapModal } from "../keymap-modal";
 
 export default {

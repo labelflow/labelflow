@@ -6,7 +6,7 @@ import {
   chakraDecorator,
   queryParamsDecorator,
   storybookTitle,
-} from "../../../utils/storybook";
+} from "../../../utils/stories";
 import { LabelingTool } from "../labeling-tool";
 
 const datasetId = "233e8af4-7be3-4371-a6de-1ebbe71c90b9";

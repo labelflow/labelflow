@@ -5,7 +5,7 @@ import { VStack } from "@chakra-ui/react";
 import {
   chakraDecorator,
   queryParamsDecorator,
-} from "../../../../utils/storybook";
+} from "../../../../utils/stories";
 
 import { DrawingToolbar, Props } from "../drawing-tool-bar";
 

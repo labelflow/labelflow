@@ -10,10 +10,7 @@ import NextLink from "next/link";
 import React from "react";
 import { RiArrowRightSLine } from "react-icons/ri";
 import { ResponsiveBreadcrumbs } from "..";
-import {
-  chakraDecorator,
-  storybookTitle,
-} from "../../../../../utils/storybook";
+import { chakraDecorator, storybookTitle } from "../../../../../utils/stories";
 
 const ArrowRightIcon = chakra(RiArrowRightSLine);
 
