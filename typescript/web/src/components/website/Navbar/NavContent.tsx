@@ -32,7 +32,7 @@ const GitHubButton = ({ isMobile }: { isMobile?: boolean }) => {
       rel="noreferrer"
     >
       <Button
-        variant={isMobile ? "outline" : "link"}
+        variant={isMobile ? "outline" : "ghost"}
         aria-label={label}
         leftIcon={<StarIcon fontSize="2xl" />}
         {...mobileProps}
