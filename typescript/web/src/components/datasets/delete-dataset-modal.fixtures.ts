@@ -3,19 +3,19 @@ import {
   ApolloMockResponse,
   ApolloMockResponses,
 } from "../../utils/tests/apollo-mock";
-import { deleteDatasetByIdMutation } from "./delete-dataset-modal";
+import { DELETE_DATASET_BY_ID_MUTATION } from "./delete-dataset-modal";
 import {
-  deleteDatasetById,
-  deleteDatasetByIdVariables,
-} from "./__generated__/deleteDatasetById";
+  DeleteDatasetByIdMutation,
+  DeleteDatasetByIdMutationVariables,
+} from "./__generated__/DeleteDatasetByIdMutation";
 import { GET_DATASET_BY_ID_MOCK } from "./upsert-dataset-modal.fixtures";
 
 export const DELETE_DATASET_BY_ID_MOCK: ApolloMockResponse<
-  deleteDatasetByIdVariables,
-  deleteDatasetById
+  DeleteDatasetByIdMutationVariables,
+  DeleteDatasetByIdMutation
 > = {
   request: {
-    query: deleteDatasetByIdMutation,
+    query: DELETE_DATASET_BY_ID_MUTATION,
     variables: { id: BASIC_DATASET_MOCK.id },
   },
   result: jest.fn(() => ({

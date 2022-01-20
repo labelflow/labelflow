@@ -5,9 +5,9 @@ import { Label } from "@labelflow/graphql-types";
 import { Effect } from "..";
 import { createLabelMutationUpdate } from "./cache-updates/create-label-mutation-update";
 import { deleteLabelMutationUpdate } from "./cache-updates/delete-label-mutation-update";
-import { createLabelMutation } from "./shared-queries";
+import { CREATE_LABEL_MUTATION } from "./shared-queries";
 
-const deleteLabelMutation = gql`
+const DELETE_LABEL_MUTATION = gql`
   mutation deleteLabelInUndoStore($id: ID!) {
     deleteLabel(where: { id: $id }) {
       id
@@ -42,7 +42,7 @@ export const createDeleteLabelEffect = (
     const { data } = await client.mutate<{
       deleteLabel: Label & { __typename: "Label" };
     }>({
-      mutation: deleteLabelMutation,
+      mutation: DELETE_LABEL_MUTATION,
       variables: { id },
       refetchQueries: ["countLabelsOfDataset"],
       /* Note that there is no optimistic response here, only a cache update.
@@ -80,7 +80,7 @@ export const createDeleteLabelEffect = (
     /* It is important to use the same id for the re-creation when the label
      * was created in the current session to enable the undoing of the creation effect */
     await client.mutate({
-      mutation: createLabelMutation,
+      mutation: CREATE_LABEL_MUTATION,
       variables: { data: createLabelInputs },
       refetchQueries: ["countLabelsOfDataset"],
       optimisticResponse: { createLabel: { id, __typename: "Label" } },

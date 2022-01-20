@@ -77,7 +77,7 @@ const getMemoizedProperties = memoize(
   }
 );
 
-const imageQuery = gql`
+const IMAGE_QUERY = gql`
   query image($id: ID!) {
     image(where: { id: $id }) {
       id
@@ -122,7 +122,7 @@ export const OpenlayersMap = () => {
   const [, setImageLoadError] = useQueryParam("image-load-error", BoolParam);
   const { data: imageData, previousData: imageDataPrevious } = useQuery<{
     image: Pick<Image, "id" | "url" | "width" | "height">;
-  }>(imageQuery, {
+  }>(IMAGE_QUERY, {
     variables: { id: imageId },
     skip: !imageId,
   });

@@ -4,39 +4,39 @@ import {
   ApolloMockResponses,
 } from "../../utils/tests/apollo-mock";
 import {
-  createDatasetMutation,
-  updateDatasetMutation,
+  CREATE_DATASET_MUTATION,
+  UPDATE_DATASET_MUTATION,
 } from "./upsert-dataset-modal";
 import {
-  getDatasetByIdQuery,
-  searchDatasetBySlugQuery,
+  GET_DATASET_BY_ID_QUERY,
+  SEARCH_DATASET_BY_SLUG_QUERY,
 } from "./datasets.query";
 import {
-  getDatasetById,
-  getDatasetByIdVariables,
-} from "./__generated__/getDatasetById";
+  GetDatasetByIdQuery,
+  GetDatasetByIdQueryVariables,
+} from "./__generated__/GetDatasetByIdQuery";
 import {
-  searchDatasetBySlug,
-  searchDatasetBySlugVariables,
-} from "./__generated__/searchDatasetBySlug";
+  SearchDatasetBySlugQuery,
+  SearchDatasetBySlugQueryVariables,
+} from "./__generated__/SearchDatasetBySlugQuery";
 import {
-  createDataset,
-  createDatasetVariables,
-} from "./__generated__/createDataset";
+  CreateDatasetMutation,
+  CreateDatasetMutationVariables,
+} from "./__generated__/CreateDatasetMutation";
 import {
-  updateDataset,
-  updateDatasetVariables,
-} from "./__generated__/updateDataset";
+  UpdateDatasetMutation,
+  UpdateDatasetMutationVariables,
+} from "./__generated__/UpdateDatasetMutation";
 
 export const UPDATED_DATASET_MOCK_NAME = "My new test dataset";
 export const UPDATED_DATASET_MOCK_SLUG = "my-new-test-dataset";
 
 export const GET_DATASET_BY_ID_MOCK: ApolloMockResponse<
-  getDatasetByIdVariables,
-  getDatasetById
+  GetDatasetByIdQueryVariables,
+  GetDatasetByIdQuery
 > = {
   request: {
-    query: getDatasetByIdQuery,
+    query: GET_DATASET_BY_ID_QUERY,
     variables: { id: BASIC_DATASET_MOCK.id },
   },
   result: {
@@ -51,11 +51,11 @@ export const GET_DATASET_BY_ID_MOCK: ApolloMockResponse<
 };
 
 export const GET_DATASET_BY_SLUG_MOCK: ApolloMockResponse<
-  searchDatasetBySlugVariables,
-  searchDatasetBySlug
+  SearchDatasetBySlugQueryVariables,
+  SearchDatasetBySlugQuery
 > = {
   request: {
-    query: searchDatasetBySlugQuery,
+    query: SEARCH_DATASET_BY_SLUG_QUERY,
     variables: {
       slug: BASIC_DATASET_MOCK.slug,
       workspaceSlug: BASIC_DATASET_MOCK.workspace.slug,
@@ -73,11 +73,11 @@ export const GET_DATASET_BY_SLUG_MOCK: ApolloMockResponse<
 };
 
 export const GET_UPDATED_DATASET_BY_SLUG_MOCK: ApolloMockResponse<
-  searchDatasetBySlugVariables,
-  searchDatasetBySlug
+  SearchDatasetBySlugQueryVariables,
+  SearchDatasetBySlugQuery
 > = {
   request: {
-    query: searchDatasetBySlugQuery,
+    query: SEARCH_DATASET_BY_SLUG_QUERY,
     variables: {
       slug: UPDATED_DATASET_MOCK_SLUG,
       workspaceSlug: BASIC_DATASET_MOCK.workspace.slug,
@@ -95,11 +95,11 @@ export const GET_UPDATED_DATASET_BY_SLUG_MOCK: ApolloMockResponse<
 };
 
 export const CREATE_DATASET_MOCK: ApolloMockResponse<
-  createDatasetVariables,
-  createDataset
+  CreateDatasetMutationVariables,
+  CreateDatasetMutation
 > = {
   request: {
-    query: createDatasetMutation,
+    query: CREATE_DATASET_MUTATION,
     variables: {
       name: BASIC_DATASET_MOCK.name,
       workspaceSlug: BASIC_DATASET_MOCK.workspace.slug,
@@ -107,17 +107,20 @@ export const CREATE_DATASET_MOCK: ApolloMockResponse<
   },
   result: jest.fn(() => ({
     data: {
-      createDataset: { __typename: "Dataset", id: BASIC_DATASET_MOCK.id },
+      CreateDatasetMutation: {
+        __typename: "Dataset",
+        id: BASIC_DATASET_MOCK.id,
+      },
     },
   })),
 };
 
 export const UPDATE_DATASET_MOCK: ApolloMockResponse<
-  updateDatasetVariables,
-  updateDataset
+  UpdateDatasetMutationVariables,
+  UpdateDatasetMutation
 > = {
   request: {
-    query: updateDatasetMutation,
+    query: UPDATE_DATASET_MUTATION,
     variables: {
       id: BASIC_DATASET_MOCK.id,
       name: UPDATED_DATASET_MOCK_NAME,
@@ -125,7 +128,10 @@ export const UPDATE_DATASET_MOCK: ApolloMockResponse<
   },
   result: jest.fn(() => ({
     data: {
-      updateDataset: { __typename: "Dataset", id: BASIC_DATASET_MOCK.id },
+      UpdateDatasetMutation: {
+        __typename: "Dataset",
+        id: BASIC_DATASET_MOCK.id,
+      },
     },
   })),
 };

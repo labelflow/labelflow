@@ -28,7 +28,7 @@ import { useWorkspaceSettings } from "./context";
 
 const TeamIcon = chakra(RiGroupFill);
 
-const updateWorkspaceMutation = gql`
+const UPDATE_WORKSPACE_MUTATION = gql`
   mutation updateWorkspace(
     $workspaceSlug: String
     $name: String
@@ -53,7 +53,7 @@ const useUpdateWorkspace = (): [() => void, string | undefined] => {
   const onError = useApolloError();
   const [updateWorkspace, { error }] = useMutation<
     Pick<Mutation, "updateWorkspace">
-  >(updateWorkspaceMutation, {
+  >(UPDATE_WORKSPACE_MUTATION, {
     variables: {
       name,
       image: null,

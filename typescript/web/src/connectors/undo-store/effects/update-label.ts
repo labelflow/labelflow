@@ -2,14 +2,9 @@ import { ApolloClient, gql } from "@apollo/client";
 import { GeometryInput, Label } from "@labelflow/graphql-types";
 import { getBoundedGeometryFromImage } from "@labelflow/common-resolvers";
 import { Effect } from "..";
-import { imageDimensionsQuery } from "./shared-queries";
 
-const updateLabelMutation = gql`
-  mutation updateLabelInUndoStore(
-    $id: ID!
-    $geometry: GeometryInput
-    $labelClassId: ID
-  ) {
+const UPDATE_LABEL_MUTATION = gql`
+  mutation updateLabel($id: ID!, $geometry: GeometryInput, $labelClassId: ID) {
     updateLabel(
       where: { id: $id }
       data: { geometry: $geometry, labelClassId: $labelClassId }
@@ -31,7 +26,17 @@ const updateLabelMutation = gql`
   }
 `;
 
-const getLabelQuery = gql`
+const IMAGE_DIMENSIONS_QUERY = gql`
+  query imageDimensions($id: ID!) {
+    image(where: { id: $id }) {
+      id
+      width
+      height
+    }
+  }
+`;
+
+const GET_LABEL_QUERY = gql`
   query getLabelAndGeometry($id: ID!) {
     label(where: { id: $id }) {
       id
@@ -70,7 +75,7 @@ export const createUpdateLabelEffect = (
     const imageResponse = cache.readQuery<{
       image: { width: number; height: number };
     }>({
-      query: imageDimensionsQuery,
+      query: IMAGE_DIMENSIONS_QUERY,
       variables: { id: imageId },
     });
     if (imageResponse == null) {
@@ -81,7 +86,7 @@ export const createUpdateLabelEffect = (
     const labelResponse = cache.readQuery<{
       label: PartialLabel;
     }>({
-      query: getLabelQuery,
+      query: GET_LABEL_QUERY,
       variables: { id: labelId },
     });
     if (labelResponse == null) {
@@ -99,7 +104,7 @@ export const createUpdateLabelEffect = (
     );
 
     client.mutate({
-      mutation: updateLabelMutation,
+      mutation: UPDATE_LABEL_MUTATION,
       variables: {
         id: labelId,
         geometry,
@@ -133,7 +138,7 @@ export const createUpdateLabelEffect = (
     const imageResponse = cache.readQuery<{
       image: { width: number; height: number };
     }>({
-      query: imageDimensionsQuery,
+      query: IMAGE_DIMENSIONS_QUERY,
       variables: { id: imageId },
     });
     if (imageResponse == null) {
@@ -144,7 +149,7 @@ export const createUpdateLabelEffect = (
     const boundedGeometry = getBoundedGeometryFromImage(image, geometry);
 
     await client.mutate({
-      mutation: updateLabelMutation,
+      mutation: UPDATE_LABEL_MUTATION,
       optimisticResponse: {
         updateLabel: {
           id,

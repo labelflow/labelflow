@@ -9,7 +9,7 @@ import {
 import { isEmpty } from "lodash/fp";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
-import { getDatasetBySlugQuery } from "../../../datasets/datasets.query";
+import { GET_DATASET_BY_SLUG_QUERY } from "../../../datasets/datasets.query";
 import { DroppedUrl, UploadStatuses } from "../types";
 import { importUrls } from "./import-urls";
 import { UrlList } from "./url-list";
@@ -37,7 +37,7 @@ export const ImportImagesModalUrlList = ({
   const [urls, setUrls] = useState<Array<DroppedUrl>>([]);
   const [uploadStatuses, setUploadStatuses] = useState<UploadStatuses>({});
 
-  const { data: datasetResult } = useQuery(getDatasetBySlugQuery, {
+  const { data: datasetResult } = useQuery(GET_DATASET_BY_SLUG_QUERY, {
     variables: { slug: datasetSlug, workspaceSlug },
     skip: typeof datasetSlug !== "string" || typeof workspaceSlug !== "string",
   });

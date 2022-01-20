@@ -10,11 +10,12 @@ import {
   Button,
 } from "@chakra-ui/react";
 import {
-  paginatedImagesQuery,
+  PAGINATED_IMAGES_QUERY,
   useFlushPaginatedImagesCache,
 } from "./paginated-images-query";
+import { DATASET_DATA_QUERY } from "../../pages/[workspaceSlug]/datasets/[datasetSlug]/images";
 
-const getImageByIdQuery = gql`
+const GET_IMAGE_BY_ID_QUERY = gql`
   query getImageById($id: ID!) {
     image(where: { id: $id }) {
       id
@@ -23,7 +24,7 @@ const getImageByIdQuery = gql`
   }
 `;
 
-const deleteImageMutation = gql`
+const DELETE_IMAGE_MUTATION = gql`
   mutation deleteImage($id: ID!) {
     deleteImage(where: { id: $id }) {
       id
@@ -43,20 +44,21 @@ export const DeleteImageModal = ({
   datasetId: string;
 }) => {
   const cancelRef = useRef<HTMLButtonElement>(null);
-  const { data } = useQuery(getImageByIdQuery, {
+  const { data } = useQuery(GET_IMAGE_BY_ID_QUERY, {
     variables: { id: imageId },
     skip: imageId == null,
   });
 
   const flushPaginatedImagesCache = useFlushPaginatedImagesCache(datasetId);
-  const [deleteImage, { loading: deleteImageLoading }] =
-    useMutation(deleteImageMutation);
+  const [deleteImage, { loading: deleteImageLoading }] = useMutation(
+    DELETE_IMAGE_MUTATION
+  );
 
   const handleDeleteButtonClick = async () => {
     await flushPaginatedImagesCache();
     await deleteImage({
       variables: { id: imageId },
-      refetchQueries: ["getDatasetData", paginatedImagesQuery],
+      refetchQueries: [DATASET_DATA_QUERY, PAGINATED_IMAGES_QUERY],
     });
     onClose();
   };

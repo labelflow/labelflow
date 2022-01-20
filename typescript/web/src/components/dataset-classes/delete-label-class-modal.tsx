@@ -20,10 +20,10 @@ import { useCallback, useRef } from "react";
 import { useDatasetClasses } from "./dataset-classes.context";
 import {
   DATASET_LABEL_CLASSES_QUERY_WITH_COUNT,
-  getLabelClassByIdQuery,
+  GET_LABEL_CLASS_BY_ID_QUERY,
 } from "./dataset-classes.query";
 
-export const deleteLabelClassMutation = gql`
+export const DELETE_LABEL_CLASS_MUTATION = gql`
   mutation deleteLabelClass($id: ID!) {
     deleteLabelClass(where: { id: $id }) {
       id
@@ -41,7 +41,7 @@ export const DeleteLabelClassModal = () => {
   );
 
   const cancelRef = useRef<HTMLButtonElement>(null);
-  const { data } = useQuery(getLabelClassByIdQuery, {
+  const { data } = useQuery(GET_LABEL_CLASS_BY_ID_QUERY, {
     variables: { id: deleteClassId },
     skip: isEmpty(deleteClassId),
   });
@@ -49,7 +49,7 @@ export const DeleteLabelClassModal = () => {
 
   const deleteLabelClass = useCallback(() => {
     client.mutate({
-      mutation: deleteLabelClassMutation,
+      mutation: DELETE_LABEL_CLASS_MUTATION,
       variables: { id: deleteClassId },
       refetchQueries: [
         getOperationName(DATASET_LABEL_CLASSES_QUERY_WITH_COUNT)!,

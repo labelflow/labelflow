@@ -9,9 +9,10 @@ import {
   Button,
 } from "@chakra-ui/react";
 import { useRef } from "react";
-import { getDatasetByIdQuery } from "./datasets.query";
+import { GET_DATASETS_QUERY } from "../../utils/shared-queries";
+import { GET_DATASET_BY_ID_QUERY } from "./datasets.query";
 
-export const deleteDatasetByIdMutation = gql`
+export const DELETE_DATASET_BY_ID_MUTATION = gql`
   mutation deleteDatasetById($id: ID!) {
     deleteDataset(where: { id: $id }) {
       id
@@ -29,16 +30,16 @@ export const DeleteDatasetModal = ({
   datasetId?: string;
 }) => {
   const cancelRef = useRef<HTMLButtonElement>(null);
-  const { data } = useQuery(getDatasetByIdQuery, {
+  const { data } = useQuery(GET_DATASET_BY_ID_QUERY, {
     variables: { id: datasetId },
     skip: datasetId == null,
   });
 
   const [deleteDatasetMutate, { loading }] = useMutation(
-    deleteDatasetByIdMutation,
+    DELETE_DATASET_BY_ID_MUTATION,
     {
       variables: { id: datasetId },
-      refetchQueries: ["getDatasets"],
+      refetchQueries: [GET_DATASETS_QUERY],
       update: (cache) => {
         // Avoid issue https://github.com/labelflow/labelflow/issues/563
         cache.evict({ id: `Dataset:${datasetId}` });

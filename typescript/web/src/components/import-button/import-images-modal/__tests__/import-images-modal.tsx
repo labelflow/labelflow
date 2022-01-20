@@ -18,7 +18,7 @@ mockNextRouter({
 });
 
 import { ImportImagesModal } from "../import-images-modal";
-import { createLocalTestDatasetMutation } from "../../../../utils/tests/mutations";
+import { CREATE_LOCAL_TEST_DATASET_MUTATION } from "../../../../utils/tests/mutations";
 
 const files = [
   new File(["Hello"], "hello.png", { type: "image/png" }),
@@ -88,7 +88,7 @@ function renderModalAndImport(filesToImport = files, props = {}) {
 
 beforeEach(async () => {
   await client.mutate({
-    mutation: createLocalTestDatasetMutation,
+    mutation: CREATE_LOCAL_TEST_DATASET_MUTATION,
   });
 });
 
