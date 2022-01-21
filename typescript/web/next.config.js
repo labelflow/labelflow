@@ -1,5 +1,4 @@
 const { BundleAnalyzerPlugin } = require("webpack-bundle-analyzer");
-const exec = require("child_process").exec;
 
 // This file sets a custom webpack configuration to use your Next.js app
 // with Sentry.
@@ -79,19 +78,6 @@ module.exports = withSentryConfig(
           new NodePolyfillPlugin({
             excludeAliases: ["console"],
           }),
-          {
-            apply: (compiler) => {
-              compiler.hooks.afterEmit.tap("AfterEmitPlugin", (compilation) => {
-                exec("yarn codegen:all", (err, stdout, stderr) => {
-                  if (stdout) process.stdout.write(stdout);
-                  if (stderr) process.stdout.write(stderr);
-                  if (err) {
-                    throw new Error(`during codegen step\n${err}`);
-                  }
-                });
-              });
-            },
-          },
         ];
       }
 

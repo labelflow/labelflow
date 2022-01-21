@@ -2,9 +2,9 @@
   "name": "@labelflow/web",
   "version": "1.2.2",
   "scripts": {
-    "dev": "next dev",
+    "dev": "yarn codegen:all && next dev",
     "dev:test": "NODE_ENV=\"test\" && next dev -p 3001",
-    "build": "cd ../db && yarn generate && cd ../web && next build",
+    "build": "cd ../db && yarn codegen:all && cd ../web && next build",
     "build:vercel": "yarn build && yarn sitemap && cd ../db && sh ./deploy-vercel.sh",
     "sitemap": "next-sitemap",
     "start": "next start",
