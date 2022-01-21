@@ -81,7 +81,7 @@ export const createDeleteLabelEffect = (
      * was created in the current session to enable the undoing of the creation effect */
     await client.mutate({
       mutation: createLabelMutation,
-      variables: createLabelInputs,
+      variables: { data: createLabelInputs },
       refetchQueries: ["countLabelsOfDataset"],
       optimisticResponse: { createLabel: { id, __typename: "Label" } },
       update: createLabelMutationUpdate(createLabelInputs),

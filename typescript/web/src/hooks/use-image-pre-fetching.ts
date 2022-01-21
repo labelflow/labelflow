@@ -52,7 +52,7 @@ const useCanFetch = (initState: Required<CanFetchState>) =>
     ) => Required<CanFetchState>
   >((oldState, newState) => ({ ...oldState, ...newState }), initState);
 
-export const useImagePrefecthing = () => {
+export const useImagePreFetching = () => {
   const { nextImageId, previousImageId } = useImagesNavigation();
   const [{ canFetchNext, canFetchPrevious }, setCanFetch] = useCanFetch({
     canFetchNext: false,
