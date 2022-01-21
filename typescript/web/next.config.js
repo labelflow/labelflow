@@ -74,6 +74,27 @@ module.exports = withSentryConfig(
           },
         };
         config.plugins = [
+          {
+            apply: (compiler) => {
+              compiler.hooks.watchRun.tapPromise(
+                "CodegenPlugin",
+                async (compilation) => {
+                  console.log("Starting codegen");
+                  return new Promise((resolve, reject) => {
+                    exec("yarn codegen:all", (err, stdout, stderr) => {
+                      if (stdout) process.stdout.write(stdout);
+                      if (stderr) process.stdout.write(stderr);
+                      if (err) {
+                        reject(new Error(`during codegen step\n${err}`));
+                      }
+                      console.log("Completed codegen");
+                      resolve();
+                    });
+                  });
+                }
+              );
+            },
+          },
           ...(config?.plugins ?? []),
           new NodePolyfillPlugin({
             excludeAliases: ["console"],
