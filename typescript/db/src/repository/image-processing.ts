@@ -1,33 +1,40 @@
-import Blob from "fetch-blob";
-
-import { getThumbnailUrlFromImageUrl } from "@labelflow/common-resolvers/src/utils/thumbnail-url";
-import Jimp from "jimp/es";
 import type { Repository, ThumbnailSizes } from "@labelflow/common-resolvers";
+import {
+  getThumbnailUrlFromImageUrl,
+  ImageUrlInfo,
+} from "@labelflow/common-resolvers/src/utils/thumbnail-url";
+import Blob from "fetch-blob";
+import Jimp from "jimp/es";
+import { isEmpty, isNil } from "lodash/fp";
+import { AsyncReturnType } from "type-fest";
 
 globalThis.Blob = Blob;
 
-const defaultMaxImageSizePixel: number = 60e6;
-const maxImageSizePixel: { [mimetype: string]: number } = {
+type ProcessImageResolver = Repository["imageProcessing"]["processImage"];
+type ProcessImageInput = Parameters<ProcessImageResolver>[0];
+type PutImageCallback = Parameters<ProcessImageResolver>[2];
+type ProcessImageResult = AsyncReturnType<ProcessImageResolver>;
+
+const DEFAULT_MAX_IMAGE_SIZE_PX: number = 60e6;
+const MAX_IMAGE_SIZES_PX: { [mimetype: string]: number } = {
   "image/jpeg": 100e6,
   "image/png": 60e6,
+};
+
+type ImageSize = {
+  width: number;
+  height: number;
+  mimetype: string;
 };
 
 const validateImageSize = ({
   width,
   height,
   mimetype,
-}: {
-  width: number;
-  height: number;
-  mimetype: string;
-}): {
-  width: number;
-  height: number;
-  mimetype: string;
-} => {
+}: ImageSize): ImageSize => {
   const imageSize = width * height;
-  const maxImageSize: number =
-    maxImageSizePixel?.[mimetype] ?? defaultMaxImageSizePixel;
+  const maxImageSize =
+    MAX_IMAGE_SIZES_PX?.[mimetype] ?? DEFAULT_MAX_IMAGE_SIZE_PX;
   if (imageSize > maxImageSize) {
     throw new Error(`
     Image is too big! Dimensions are ${width} x ${height} = ${Math.round(
@@ -35,11 +42,14 @@ const validateImageSize = ({
     )}Mpx while limit is ${Math.round(maxImageSize * 1e-6)}Mpx
     `);
   }
-  return {
-    width,
-    height,
-    mimetype,
-  };
+  return { width, height, mimetype };
+};
+
+type GenerateThumbnailOptions = {
+  image: Jimp;
+  url: string;
+  size: ThumbnailSizes;
+  putThumbnail: PutImageCallback;
 };
 
 /**
@@ -50,85 +60,111 @@ const generateThumbnail = async ({
   image,
   url,
   size,
-  putImage,
-}: {
-  image: Jimp;
-  url: string;
-  size: ThumbnailSizes;
-  putImage: (url: string, blob: Blob) => Promise<void>;
-}): Promise<string> => {
+  putThumbnail,
+}: GenerateThumbnailOptions): Promise<[string, Jimp | undefined]> => {
   try {
-    const thumbnailUrl = getThumbnailUrlFromImageUrl({
-      url,
-      size,
-      extension: "jpeg",
-    });
-
-    const vipsThumbnail = await image
+    const urlInfo: ImageUrlInfo = { url, size, extension: "jpeg" };
+    const thumbnailUrl = getThumbnailUrlFromImageUrl(urlInfo);
+    const jimpThumbnail = image
       .clone()
-      .scaleToFit(size, size, Jimp.RESIZE_BILINEAR)
-      .getBufferAsync("image/jpeg");
-
-    await putImage(
-      thumbnailUrl,
-      new Blob([vipsThumbnail], { type: "image/jpeg" })
-    );
-
-    return thumbnailUrl;
+      .scaleToFit(size, size, Jimp.RESIZE_BILINEAR);
+    const buffer = await jimpThumbnail.getBufferAsync("image/jpeg");
+    const blob = new Blob([buffer], { type: "image/jpeg" });
+    await putThumbnail(thumbnailUrl, blob);
+    return [thumbnailUrl, jimpThumbnail];
   } catch (e) {
     console.error(e);
-    return url;
+    return [url, undefined];
   }
+};
+
+type GenerateThumbnailFromSizeOptions = {
+  thumbnailUrl?: string;
+} & Pick<GenerateThumbnailOptions, "url" | "image" | "putThumbnail" | "size">;
+
+const generateThumbnailFromSize = async ({
+  thumbnailUrl,
+  ...options
+}: GenerateThumbnailFromSizeOptions): Promise<string> => {
+  if (!isNil(thumbnailUrl) && !isEmpty(thumbnailUrl)) return thumbnailUrl;
+  const [result] = await generateThumbnail(options);
+  return result;
+};
+
+type ThumbnailsKeys =
+  | "thumbnail20Url"
+  | "thumbnail50Url"
+  | "thumbnail100Url"
+  | "thumbnail200Url"
+  | "thumbnail500Url";
+
+type GenerateThumbnailsOptions = Pick<
+  GenerateThumbnailOptions,
+  "image" | "url" | "putThumbnail"
+> &
+  Pick<ProcessImageInput, ThumbnailsKeys>;
+
+type GenerateThumbnailsResult = Pick<ProcessImageResult, ThumbnailsKeys>;
+
+const generateThumbnails = async ({
+  image,
+  url,
+  thumbnail20Url,
+  thumbnail50Url,
+  thumbnail100Url,
+  thumbnail200Url,
+  thumbnail500Url,
+  putThumbnail,
+}: GenerateThumbnailsOptions): Promise<GenerateThumbnailsResult> => {
+  // Generate a first lower-res thumbnail so that the next ones will be faster
+  // to downscale
+  const [thumbnail500UrlNew, imageSrc] = thumbnail500Url
+    ? [thumbnail500Url, image]
+    : await generateThumbnail({ size: 500, image, url, putThumbnail });
+  const thumbnailsToGen: { url?: string | null; size: ThumbnailSizes }[] = [
+    { url: thumbnail20Url, size: 20 },
+    { url: thumbnail50Url, size: 50 },
+    { url: thumbnail100Url, size: 100 },
+    { url: thumbnail200Url, size: 200 },
+    { url: thumbnail500UrlNew, size: 500 },
+  ];
+  const generatedThumbnailUrls = await Promise.all(
+    thumbnailsToGen.map((options) =>
+      generateThumbnailFromSize({
+        thumbnailUrl: options.url ?? undefined,
+        size: options.size,
+        image: imageSrc ?? image,
+        putThumbnail,
+        url,
+      })
+    )
+  );
+  return {
+    thumbnail20Url: generatedThumbnailUrls[0],
+    thumbnail50Url: generatedThumbnailUrls[1],
+    thumbnail100Url: generatedThumbnailUrls[2],
+    thumbnail200Url: generatedThumbnailUrls[3],
+    thumbnail500Url: generatedThumbnailUrls[4],
+  };
 };
 
 /**
  * Given a partial image, return a completed version of the image, probing it if necessary
  */
 export const processImage: Repository["imageProcessing"]["processImage"] =
-  async (
-    {
-      width,
-      height,
-      mimetype,
-      url,
-      thumbnail20Url,
-      thumbnail50Url,
-      thumbnail100Url,
-      thumbnail200Url,
-      thumbnail500Url,
-    },
-    getImage,
-    putImage
-  ) => {
+  async (input, getImage, putThumbnail) => {
+    const { url, width, height, mimetype } = input;
     const buffer = await getImage(url);
     const image = await Jimp.read(buffer as Buffer);
-
-    const generateThumbnailFromSize = (size: ThumbnailSizes) =>
-      generateThumbnail({
-        size,
-        image,
-        url,
-        putImage,
-      });
-
-    const generatedThumbnailUrls = await Promise.all([
-      thumbnail20Url ?? (await generateThumbnailFromSize(20)),
-      thumbnail50Url ?? (await generateThumbnailFromSize(50)),
-      thumbnail100Url ?? (await generateThumbnailFromSize(100)),
-      thumbnail200Url ?? (await generateThumbnailFromSize(200)),
-      thumbnail500Url ?? (await generateThumbnailFromSize(500)),
-    ]);
-
-    return {
-      ...validateImageSize({
-        width: width ?? image.bitmap.width,
-        height: height ?? image.bitmap.height,
-        mimetype: mimetype ?? image.getMIME(),
-      }),
-      thumbnail20Url: generatedThumbnailUrls[0],
-      thumbnail50Url: generatedThumbnailUrls[1],
-      thumbnail100Url: generatedThumbnailUrls[2],
-      thumbnail200Url: generatedThumbnailUrls[3],
-      thumbnail500Url: generatedThumbnailUrls[4],
-    };
+    const thumbnails = await generateThumbnails({
+      ...input,
+      image,
+      putThumbnail,
+    });
+    const size = validateImageSize({
+      width: width ?? image.bitmap.width,
+      height: height ?? image.bitmap.height,
+      mimetype: mimetype ?? image.getMIME(),
+    });
+    return { ...size, ...thumbnails };
   };
