@@ -20,30 +20,15 @@
         "devDependencies": [
           "setup-tests.ts",
           "cypress/**/*.ts",
-          "**/*.test.ts",
-          "**/*.stories.ts",
-          "**/*.fixtures.ts",
-          "**/__tests__/**/*.ts",
-          "**/__stories__/**/*.ts",
-          "**/storybook/**/*.ts",
-          "**/*.test.tsx",
-          "**/*.stories.tsx",
-          "**/*.fixtures.tsx",
-          "**/__tests__/**/*.tsx",
-          "**/__stories__/**/*.tsx",
-          "**/storybook/**/*.tsx"
+          "**/*.@(test|stories|fixtures).ts?(x)",
+          "**/@(__tests__|__stories__|tests|stories)/**/*.ts?(x)"
         ]
       }
     ]
   },
   "overrides": [
     {
-      "files": [
-        "**/*.stories.ts",
-        "**/__stories__/**/*.ts",
-        "**/*.stories.tsx",
-        "**/__stories__/**/*.tsx"
-      ],
+      "files": ["**/*.stories.ts?(x)", "**/__stories__/**/*.ts?(x)"],
       "rules": {
         "no-console": "off",
         "no-alert": "off"
