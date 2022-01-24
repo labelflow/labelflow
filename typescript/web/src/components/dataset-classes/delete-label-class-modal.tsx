@@ -18,7 +18,7 @@ import { isEmpty, isNil } from "lodash/fp";
 import { useCallback, useRef } from "react";
 import { useDatasetClasses } from "./dataset-classes.context";
 
-const getLabelClassByIdQuery = gql`
+export const getLabelClassByIdQuery = gql`
   query getLabelClassById($id: ID!) {
     labelClass(where: { id: $id }) {
       id
@@ -27,7 +27,7 @@ const getLabelClassByIdQuery = gql`
   }
 `;
 
-const deleteLabelClassMutation = gql`
+export const deleteLabelClassMutation = gql`
   mutation deleteLabelClass($id: ID!) {
     deleteLabelClass(where: { id: $id }) {
       id

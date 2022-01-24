@@ -1,40 +1,12 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import { v4 as uuidV4 } from "uuid";
-import {
-  getApolloMockWrapper,
-  ApolloMockedResponse,
-} from "../../../utils/testing/mock-apollo";
-import {
-  DeleteDatasetModal,
-  getDatasetByIdQuery,
-  deleteDatasetByIdMutation,
-} from "../delete-dataset-modal";
-import { mockDatasetSimple } from "../../../utils/testing/mock-data";
-
-const mockQueries: Record<string, ApolloMockedResponse> = {
-  getDatasetById: {
-    request: {
-      query: getDatasetByIdQuery,
-      variables: { id: mockDatasetSimple.id },
-    },
-    result: {
-      data: { dataset: { name: mockDatasetSimple.name } },
-    },
-  },
-  deleteDatasetById: {
-    request: {
-      query: deleteDatasetByIdMutation,
-      variables: { id: mockDatasetSimple.id },
-    },
-    newData: jest.fn(() => ({
-      data: { deleteDataset: { id: mockDatasetSimple.id } },
-    })),
-  },
-};
+import { getMockApolloWrapper } from "../../../utils/tests/mock-apollo";
+import { DeleteDatasetModal } from "../delete-dataset-modal";
+import { MOCK_DATASET_SIMPLE } from "../../../utils/tests/data.fixtures";
+import { APOLLO_MOCKS } from "../delete-dataset-modal.fixtures";
 
 const renderModal = (props = {}) => {
   return render(<DeleteDatasetModal isOpen {...props} />, {
-    wrapper: getApolloMockWrapper(Object.values(mockQueries)),
+    wrapper: getMockApolloWrapper(APOLLO_MOCKS),
   });
 };
 
@@ -44,22 +16,22 @@ afterEach(() => {
 
 test("should delete a dataset when the button is clicked", async () => {
   const onClose = jest.fn();
-  renderModal({ onClose, datasetId: mockDatasetSimple.id });
+  renderModal({ onClose, datasetId: MOCK_DATASET_SIMPLE.id });
   const button = screen.getByLabelText(/Dataset delete/i);
   fireEvent.click(button);
   await waitFor(() => {
     expect(onClose).toHaveBeenCalled();
   });
-  expect(mockQueries.deleteDatasetById.newData).toHaveBeenCalledTimes(1);
+  expect(APOLLO_MOCKS.deleteDatasetById.result).toHaveBeenCalled();
 });
 
 test("shouldn't delete a dataset when the cancel is clicked", async () => {
   const onClose = jest.fn();
-  renderModal({ onClose, datasetId: uuidV4() });
+  renderModal({ onClose, datasetId: MOCK_DATASET_SIMPLE.id });
   const button = screen.getByLabelText(/Cancel delete/i);
   fireEvent.click(button);
   await waitFor(() => {
     expect(onClose).toHaveBeenCalled();
   });
-  expect(mockQueries.deleteDatasetById.newData).toHaveBeenCalledTimes(0);
+  expect(APOLLO_MOCKS.deleteDatasetById.result).not.toHaveBeenCalled();
 });

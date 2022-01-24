@@ -104,6 +104,7 @@
     "use-query-params": "^1.2.2",
     "uuid": "^8.3.2",
     "valid-url": "^1.0.9",
+    "wildcard-mock-link": "2.0.2",
     "workbox-core": "6.2.4",
     "workbox-expiration": "6.2.4",
     "workbox-google-analytics": "6.2.4",

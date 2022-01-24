@@ -1,14 +1,5 @@
-import {
-  ApolloMockedProvider,
-  ApolloMockedResponse,
-} from "../tests/mock-apollo";
+import { getMockApolloDecorator } from "../tests/mock-apollo";
 
-export const getApolloDecorator =
-  (mockQueries?: ReadonlyArray<ApolloMockedResponse>) => (Story: any) =>
-    (
-      <ApolloMockedProvider mocks={mockQueries}>
-        <Story />
-      </ApolloMockedProvider>
-    );
+export const getApolloDecorator = getMockApolloDecorator;
 
-export const apolloDecorator = getApolloDecorator();
+export const apolloDecorator = getMockApolloDecorator();

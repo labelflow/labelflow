@@ -1,143 +1,84 @@
 import { PropsWithChildren } from "react";
 import { render, screen, waitFor, fireEvent } from "@testing-library/react";
 import { ChakraProvider } from "@chakra-ui/react";
-import { ApolloProvider, gql } from "@apollo/client";
+import { MockedProvider } from "@apollo/client/testing";
 import { DatasetClasses } from "../dataset-classes";
-import { client } from "../../../connectors/apollo-client/schema-client";
 import { theme } from "../../../theme";
-import { setupTestsWithLocalDatabase } from "../../../utils/setup-local-db-tests";
-
-setupTestsWithLocalDatabase();
-
-const createDataset = async (name: string, datasetId?: string | null) => {
-  return await client.mutate({
-    mutation: gql`
-      mutation createDataset($datasetId: String, $name: String!) {
-        createDataset(
-          data: { id: $datasetId, name: $name, workspaceSlug: "local" }
-        ) {
-          id
-          name
-        }
-      }
-    `,
-    variables: {
-      name,
-      datasetId,
-    },
-  });
-};
-
-const createLabelClassInDataset = async ({
-  datasetId,
-  name,
-  color,
-}: {
-  datasetId: string;
-  name: string;
-  color: string;
-}) => {
-  await client.mutate({
-    mutation: gql`
-      mutation createLabelClass($data: LabelClassCreateInput) {
-        createLabelClass(data: $data) {
-          id
-        }
-      }
-    `,
-    variables: {
-      data: {
-        name,
-        color,
-        datasetId,
-      },
-    },
-  });
-};
+import { getMockApolloLink } from "../../../utils/tests/mock-apollo";
+import { APOLLO_MOCKS } from "../dataset-classes.fixtures";
+import {
+  MOCK_DATASET_SIMPLE,
+  MOCK_DATASET_WITH_CLASSES,
+} from "../../../utils/tests/data.fixtures";
 
 const wrapper = ({ children }: PropsWithChildren<{}>) => (
-  <ApolloProvider client={client}>
+  <MockedProvider link={getMockApolloLink(APOLLO_MOCKS)}>
     <ChakraProvider theme={theme} resetCSS>
       {children}
     </ChakraProvider>
-  </ApolloProvider>
+  </MockedProvider>
 );
+
+afterEach(() => {
+  jest.clearAllMocks();
+});
+
+const renderComponent = (dataset: {
+  slug: string;
+  workspace: { slug: string };
+}) => {
+  return render(
+    <DatasetClasses
+      datasetSlug={dataset.slug}
+      workspaceSlug={dataset.workspace.slug}
+    />,
+    {
+      wrapper,
+    }
+  );
+};
 
 describe("Dataset class list tests", () => {
   it("Renders if the dataset has no classes", async () => {
-    const datasetId = "myDatasetId";
-    await createDataset("myDataset", datasetId);
-    render(<DatasetClasses datasetSlug="mydataset" workspaceSlug="local" />, {
-      wrapper,
-    });
+    renderComponent(MOCK_DATASET_SIMPLE);
     await waitFor(() => {
       expect(screen.getByText("Classes (0)")).toBeDefined();
     });
   });
 
   it("Renders the dataset classes", async () => {
-    const datasetId = "myDatasetId";
-    await createDataset("myDataset", datasetId);
-    await createLabelClassInDataset({
-      datasetId,
-      name: "MyFirstClass",
-      color: "blue",
-    });
-    await createLabelClassInDataset({
-      datasetId,
-      name: "MySecondClass",
-      color: "white",
-    });
-    await createLabelClassInDataset({
-      datasetId,
-      name: "MyThirdClass",
-      color: "red",
-    });
-    render(<DatasetClasses datasetSlug="mydataset" workspaceSlug="local" />, {
-      wrapper,
-    });
-
+    renderComponent(MOCK_DATASET_WITH_CLASSES);
     await waitFor(() => {
-      expect(screen.getByText("Classes (3)")).toBeDefined();
-      expect(screen.getByText("MyFirstClass")).toBeDefined();
-      expect(screen.getByText("MySecondClass")).toBeDefined();
-      expect(screen.getByText("MyThirdClass")).toBeDefined();
+      expect(
+        screen.getByText(
+          `Classes (${MOCK_DATASET_WITH_CLASSES.labelClasses.length})`
+        )
+      ).toBeDefined();
+      MOCK_DATASET_WITH_CLASSES.labelClasses.forEach((labelClass) =>
+        expect(screen.getByText(labelClass.name)).toBeDefined()
+      );
     });
   });
 
   it("Renders the delete class modal", async () => {
-    const datasetId = "myDatasetId";
-    await createDataset("myDataset", datasetId);
-    await createLabelClassInDataset({
-      datasetId,
-      name: "MyFirstClass",
-      color: "blue",
-    });
-    render(<DatasetClasses datasetSlug="mydataset" workspaceSlug="local" />, {
-      wrapper,
-    });
-
+    renderComponent(MOCK_DATASET_WITH_CLASSES);
     await waitFor(() =>
-      fireEvent.click(screen.getByLabelText(/Delete class/i))
+      fireEvent.click(screen.getAllByLabelText(/Delete class/i)[0])
     );
     await waitFor(() =>
-      expect(screen.getByText("Delete Class MyFirstClass")).toBeDefined()
+      expect(
+        screen.getByText(
+          `Delete Class ${MOCK_DATASET_WITH_CLASSES.labelClasses[0].name}`
+        )
+      ).toBeDefined()
     );
   });
 
   it("Renders the edit class modal", async () => {
-    const datasetId = "myDatasetId";
-    await createDataset("myDataset", datasetId);
-    await createLabelClassInDataset({
-      datasetId,
-      name: "MyFirstClass",
-      color: "blue",
-    });
-    render(<DatasetClasses datasetSlug="mydataset" workspaceSlug="local" />, {
-      wrapper,
-    });
-
-    await waitFor(() => fireEvent.click(screen.getByLabelText(/Edit class/i)));
+    renderComponent(MOCK_DATASET_WITH_CLASSES);
+    await waitFor(() =>
+      fireEvent.click(screen.getAllByLabelText(/Edit class/i)[0])
+    );
     await waitFor(() => expect(screen.getByText("Edit Class")).toBeDefined());
   });
 });

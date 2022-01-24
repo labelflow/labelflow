@@ -1,42 +1,49 @@
 import { PropsWithChildren } from "react";
 import { PartialDeep } from "type-fest";
+import { MockedProvider } from "@apollo/client/testing";
 import {
-  ApolloCache,
-  ApolloLink,
-  DefaultOptions,
-  Resolvers,
-} from "@apollo/client/core";
-import {
-  MockedProvider,
-  MockedProviderProps,
-  MockedResponse,
-} from "@apollo/client/testing";
+  GraphQLVariables,
+  WildcardMockedResponse,
+  WildcardMockLink,
+} from "wildcard-mock-link";
 import { Mutation, Query } from "@labelflow/graphql-types";
+import { FetchResult } from "@apollo/client";
+import { act } from "@testing-library/react";
+import { Story } from "@storybook/react";
 
-export type ApolloMockedResponse = MockedResponse<
-  PartialDeep<Query | Mutation>
->;
+declare type ApolloQueryResult = PartialDeep<Query | Mutation>;
 
-export interface ApolloMockedProviderProps<TSerializedCache = {}>
-  extends MockedProviderProps {
-  mocks?: ReadonlyArray<ApolloMockedResponse>;
-  addTypename?: boolean;
-  defaultOptions?: DefaultOptions;
-  cache?: ApolloCache<TSerializedCache>;
-  resolvers?: Resolvers;
-  childProps?: object;
-  children?: any;
-  link?: ApolloLink;
+export interface MockedApolloResponse extends WildcardMockedResponse {
+  result?:
+    | FetchResult<ApolloQueryResult>
+    | ((variables?: GraphQLVariables) => FetchResult<ApolloQueryResult>);
 }
 
-export class ApolloMockedProvider extends MockedProvider {
-  // eslint-disable-next-line @typescript-eslint/no-useless-constructor
-  constructor(props: ApolloMockedProviderProps) {
-    super(props);
-  }
-}
+export type ApolloMocks = Record<string, MockedApolloResponse>;
 
-export const getApolloMockWrapper =
-  (mockQueries?: ReadonlyArray<ApolloMockedResponse>) =>
+export const getMockApolloLink = (mocks?: ApolloMocks) =>
+  new WildcardMockLink(mocks ? Object.values(mocks) : [], {
+    addTypename: true,
+    act,
+  });
+
+export const getMockApolloWrapper =
+  (data?: WildcardMockLink | ApolloMocks) =>
   ({ children }: PropsWithChildren<{}>) =>
-    <ApolloMockedProvider mocks={mockQueries}>{children}</ApolloMockedProvider>;
+    (
+      <MockedProvider
+        link={data instanceof WildcardMockLink ? data : getMockApolloLink(data)}
+      >
+        {children}
+      </MockedProvider>
+    );
+
+export const getMockApolloDecorator =
+  (data?: WildcardMockLink | ApolloMocks) => (StoryComponent: Story) => {
+    const Wrapper = getMockApolloWrapper(data);
+    return (
+      <Wrapper>
+        <StoryComponent />
+      </Wrapper>
+    );
+  };

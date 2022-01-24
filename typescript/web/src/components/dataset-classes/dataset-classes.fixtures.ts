@@ -1,55 +1,58 @@
-import { MockedResponse as ApolloResponse } from "@apollo/client/testing";
-import { Dataset, Mutation, Query } from "@labelflow/graphql-types";
+import { pick } from "lodash";
+import { ApolloMocks } from "../../utils/tests/mock-apollo";
 import { DATASET_LABEL_CLASSES_QUERY } from "./dataset-classes.query";
-import { LABEL_CLASS_EXISTS_QUERY } from "./upsert-class-modal/label-class-exists.query";
+import {
+  MOCK_DATASET_SIMPLE,
+  MOCK_DATASET_WITH_CLASSES,
+} from "../../utils/tests/data.fixtures";
+import { APOLLO_MOCKS as APOLLO_MOCKS_DELETE } from "./delete-label-class-modal.fixtures";
+import { APOLLO_MOCKS as APOLLO_MOCKS_UPSERT } from "./upsert-class-modal/upsert-class-modal.fixtures";
 
-export const GRAPHQL_MOCKS: ApolloResponse<Partial<Query | Mutation>>[] = [
-  {
-    request: {
-      query: LABEL_CLASS_EXISTS_QUERY,
-      variables: { slug: "already-taken-name" },
-    },
-    result: { data: { labelClassExists: true } },
-  },
-  {
-    request: { query: LABEL_CLASS_EXISTS_QUERY },
-    result: { data: { labelClassExists: false } },
-  },
-  {
+export const APOLLO_MOCKS: ApolloMocks = {
+  getLabelClassById: APOLLO_MOCKS_DELETE.getLabelClassById,
+  getLabelClassExists: APOLLO_MOCKS_UPSERT.getLabelClassExists,
+  getDatasetWithoutLabelClasses: {
     request: {
       query: DATASET_LABEL_CLASSES_QUERY,
-      variables: { workspaceSlug: "local", datasetSlug: "test" },
+      variables: {
+        workspaceSlug: MOCK_DATASET_SIMPLE.workspace.slug,
+        datasetSlug: MOCK_DATASET_SIMPLE.slug,
+      },
     },
     result: {
       data: {
         dataset: {
-          id: "0",
-          name: "Test",
-          labelClasses: [
-            {
-              id: "1",
-              index: 0,
-              name: "first",
-              color: "#ff0000",
-              labelsAggregates: { totalCount: 2 },
-            },
-            {
-              id: "2",
-              index: 1,
-              name: "second",
-              color: "#00ff00",
-              labelsAggregates: { totalCount: 4 },
-            },
-            {
-              id: "3",
-              index: 2,
-              name: "veeeeeeeeeeeeeeery loooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong name",
-              color: "#0000ff",
-              labelsAggregates: { totalCount: 12 },
-            },
-          ],
-        } as unknown as Dataset,
+          ...pick(MOCK_DATASET_SIMPLE, "id", "name"),
+          labelClasses: [],
+        },
       },
     },
   },
-];
+  getDatasetWithLabelClasses: {
+    request: {
+      query: DATASET_LABEL_CLASSES_QUERY,
+      variables: {
+        workspaceSlug: MOCK_DATASET_WITH_CLASSES.workspace.slug,
+        datasetSlug: MOCK_DATASET_WITH_CLASSES.slug,
+      },
+    },
+    result: {
+      data: {
+        dataset: {
+          ...pick(MOCK_DATASET_WITH_CLASSES, "id", "name"),
+          labelClasses: MOCK_DATASET_WITH_CLASSES.labelClasses.map(
+            (labelClass) =>
+              pick(
+                labelClass,
+                "id",
+                "index",
+                "name",
+                "color",
+                "labelsAggregates"
+              )
+          ),
+        },
+      },
+    },
+  },
+};
