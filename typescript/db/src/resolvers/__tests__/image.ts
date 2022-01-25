@@ -24,7 +24,7 @@ const testImageId = uuidV4();
 const imageWidth = 500;
 const imageHeight = 900;
 
-export const MUTATION_CREATE_IMAGE = gql`
+export const CREATE_IMAGE_MUTATION = gql`
   mutation createImageInDbTests(
     $datasetId: ID!
     $file: Upload!
@@ -109,7 +109,7 @@ const createImage = async (
     mimetype: "image/jpeg",
   });
   const mutationResult = await client.mutate({
-    mutation: MUTATION_CREATE_IMAGE,
+    mutation: CREATE_IMAGE_MUTATION,
     variables: {
       imageId,
       datasetId,

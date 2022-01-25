@@ -11,7 +11,7 @@ import { processImage } from "../../repository/image-processing";
 import { getPrismaClient } from "../../prisma-client";
 import { client, user } from "../../dev/apollo-client";
 import { LabelType } from ".prisma/client";
-import { MUTATION_CREATE_IMAGE } from "./image";
+import { CREATE_IMAGE_MUTATION } from "./image";
 
 jest.mock("../../repository/image-processing");
 const mockedProcessImage = processImage as jest.Mock;
@@ -156,7 +156,7 @@ const createImage = async (
   });
 
   const mutationResult = await client.mutate({
-    mutation: MUTATION_CREATE_IMAGE,
+    mutation: CREATE_IMAGE_MUTATION,
     variables: {
       imageId,
       datasetId,
