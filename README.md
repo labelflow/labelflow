@@ -64,7 +64,7 @@ LabelFlow officially launched as v.0.1 on 7th of September, however a lot of new
 
 ### LabelFlow.ai hosted version
 
-You can use our hsoted version now for free, at [labeflow.ai](https://labelflow.ai).
+You can use our hosted version now for free, at [labeflow.ai](https://labelflow.ai).
 
 ### Serving your own LabelFlow
 
@@ -126,14 +126,14 @@ You can find the full list of environment variables needed for a fully featured 
 
 ## Roadmap
 
-- The short term road map is on Github https://github.com/labelflow/labelflow/projects/1
-- The longer term feature road map is on Canny https://labelflow.canny.io/
+- The short term roadmap is on Github https://github.com/orgs/labelflow/projects/5
+- The longer term feature roadmap is on Canny https://labelflow.canny.io/
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 ## License
 
-LabelFlow sources is entirely available on Github, and LabelFlow is primarily distributed under the terms of the Business Source License (BSL), like our friends at [MariaDB](https://mariadb.com/bsl11/), [Sentry](https://blog.sentry.io/2019/11/06/relicensing-sentry) and [CockroachDB](https://www.cockroachlabs.com/blog/oss-relicensing-cockroachdb/).
+LabelFlow sources are entirely available on Github, and LabelFlow is primarily distributed under the terms of the Business Source License (BSL), like our friends at [MariaDB](https://mariadb.com/bsl11/), [Sentry](https://blog.sentry.io/2019/11/06/relicensing-sentry) and [CockroachDB](https://www.cockroachlabs.com/blog/oss-relicensing-cockroachdb/).
 
 As they explain very well, the BSL is the closest thing to open source that we can do without being threatened by external companies. LabelFlow source is available on this repository, you can deploy LabelFlow entirely on premises, and you can contribute to LabelFlow here!
 
