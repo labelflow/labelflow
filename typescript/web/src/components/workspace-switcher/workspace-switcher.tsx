@@ -1,7 +1,9 @@
 import { gql, useQuery } from "@apollo/client";
 import { Workspace } from "@labelflow/graphql-types";
+import { isNil } from "lodash/fp";
 import { useRouter } from "next/router";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCookies } from "react-cookie";
 import { StringParam, useQueryParams } from "use-query-params";
 import { BoolParam } from "../../utils/query-param-bool";
 import { CreateWorkspaceModal } from "./create-workspace-modal";
@@ -21,6 +23,21 @@ const getWorkspacesQuery = gql`
 export const WorkspaceSwitcher = () => {
   const router = useRouter();
   const workspaceSlug = router?.query.workspaceSlug as string;
+
+  const [{ lastVisitedWorkspaceSlug }, setLastVisitedWorkspaceSlug] =
+    useCookies(["lastVisitedWorkspaceSlug"]);
+  useEffect(
+    () => {
+      if (!isNil(workspaceSlug) && lastVisitedWorkspaceSlug !== workspaceSlug) {
+        setLastVisitedWorkspaceSlug("lastVisitedWorkspaceSlug", workspaceSlug, {
+          path: "/",
+          httpOnly: false,
+        });
+      }
+    },
+    // We only want to call effect when current workspaceSlug has changed
+    [workspaceSlug]
+  );
 
   const [isOpen, setIsOpen] = useState(false);
 

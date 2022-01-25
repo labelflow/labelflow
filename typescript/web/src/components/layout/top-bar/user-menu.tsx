@@ -30,6 +30,7 @@ import {
   RiSettings4Line,
   RiSunLine,
   RiUserLine,
+  RiTableAltLine,
 } from "react-icons/ri";
 import { useQueryParam } from "use-query-params";
 import { trackEvent } from "../../../utils/google-analytics";
@@ -46,6 +47,7 @@ const SigninIcon = chakra(RiLoginCircleLine);
 const SignoutIcon = chakra(RiLogoutCircleRLine);
 
 const SettingsIcon = chakra(RiSettings4Line);
+const WorkspaceIcon = chakra(RiTableAltLine);
 
 const userQuery = gql`
   query getUserProfileInfo($id: ID!) {
@@ -165,6 +167,16 @@ const SettingsMenuItem = () => {
   );
 };
 
+const WorkspacesMenuItem = () => {
+  const router = useRouter();
+  const handleClick = useCallback(() => router.push("/workspaces"), [router]);
+  return (
+    <MenuItem icon={<WorkspaceIcon fontSize="lg" />} onClick={handleClick}>
+      Workspaces
+    </MenuItem>
+  );
+};
+
 const UserMenuGroup = () => {
   const { status } = useSession({ required: false });
   return (
@@ -174,6 +186,7 @@ const UserMenuGroup = () => {
         <>
           <SignOutMenuItem />
           <SettingsMenuItem />
+          <WorkspacesMenuItem />
         </>
       )}
       {status === "unauthenticated" && <SignInMenuItem />}

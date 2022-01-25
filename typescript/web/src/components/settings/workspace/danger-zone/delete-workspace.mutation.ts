@@ -2,6 +2,7 @@ import { ApolloCache, gql, useMutation } from "@apollo/client";
 import { Mutation } from "@labelflow/graphql-types";
 import { useRouter } from "next/router";
 import { useCallback } from "react";
+import { useCookies } from "react-cookie";
 import { useApolloErrorToast } from "../../../toast";
 import { useWorkspaceSettings } from "../context";
 
@@ -24,10 +25,12 @@ const useDeleteWorkspaceMutationUpdate = (workspaceId: string | undefined) => {
 };
 
 const useDeleteWorkspaceMutationComplete = () => {
+  const [, , removeCookie] = useCookies(["lastVisitedWorkspaceSlug"]);
   const router = useRouter();
   return useCallback(() => {
+    removeCookie("lastVisitedWorkspaceSlug", { path: "/", httpOnly: false });
     router.push(`/`);
-  }, [router]);
+  }, [removeCookie, router]);
 };
 
 export const useDeleteWorkspaceMutation = () => {
