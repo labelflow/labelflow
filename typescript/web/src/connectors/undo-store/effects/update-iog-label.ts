@@ -5,7 +5,7 @@ import { Label } from "@labelflow/graphql-types";
 import { Effect } from "..";
 
 const UPDATE_LABEL_MUTATION = gql`
-  mutation updateLabel(
+  mutation updateLabelInEffects(
     $id: ID!
     $geometry: GeometryInput
     $smartToolInput: JSON

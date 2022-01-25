@@ -54,7 +54,7 @@ export const CREATE_LABEL_CLASS_QUERY = gql`
 `;
 
 export const DELETE_LABEL_CLASS_QUERY = gql`
-  mutation deleteLabelClass($where: LabelClassWhereUniqueInput!) {
+  mutation deleteLabelClassInEffects($where: LabelClassWhereUniqueInput!) {
     deleteLabelClass(where: $where) {
       id
     }
@@ -62,7 +62,7 @@ export const DELETE_LABEL_CLASS_QUERY = gql`
 `;
 
 export const CREATE_LABEL_MUTATION = gql`
-  mutation createLabel($data: LabelCreateInput!) {
+  mutation createLabelInEffects($data: LabelCreateInput!) {
     createLabel(data: $data) {
       id
     }
@@ -70,7 +70,7 @@ export const CREATE_LABEL_MUTATION = gql`
 `;
 
 export const DELETE_LABEL_MUTATION = gql`
-  mutation deleteLabel($id: ID!) {
+  mutation deleteLabelInEffects($id: ID!) {
     deleteLabel(where: { id: $id }) {
       id
     }
@@ -89,7 +89,7 @@ export const GET_LABEL_QUERY = gql`
 `;
 
 export const UPDATE_LABEL_MUTATION = gql`
-  mutation updateLabelClass(
+  mutation updateLabelClassInEffects(
     $where: LabelWhereUniqueInput!
     $data: LabelUpdateInput!
   ) {
