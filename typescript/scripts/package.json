@@ -6,14 +6,14 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "1.21.0",
-    "bluebird": "^3.7.2",
-    "prompt": "^1.2.0"
+    "bluebird": "3.7.2",
+    "prompt": "1.2.0"
   },
   "devDependencies": {
     "@babel/core": "7.14.3",
-    "@types/node": "^16.11.11",
-    "dotenv-cli": "^4.0.0",
-    "ts-node": "^10.4.0",
+    "@types/node": "16.11.11",
+    "dotenv-cli": "4.0.0",
+    "ts-node": "10.4.0",
     "typescript": "4.3.5"
   }
 }
