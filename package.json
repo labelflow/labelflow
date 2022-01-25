@@ -34,8 +34,7 @@
     "storybook:all": "start-storybook -s ./typescript/web/public -p 6006",
     "build-storybook": "build-storybook",
     "chromatic": "npx chromatic",
-    "release": "cd ./typescript/web && yarn release",
-    "generate": "yarn codegen && yarn generate:apollo"
+    "release": "cd ./typescript/web && yarn release"
   },
   "workspaces": [
     "typescript/*"

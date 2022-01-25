@@ -17,9 +17,9 @@ export const createTestDatasetMutation = gql`
 `;
 
 export const createTestImageMutation = gql`
-  mutation createImage(
+  mutation createImageForTests(
     $url: String
-    $id: String
+    $id: ID
     $name: String
     $datasetId: ID!
     $width: Int

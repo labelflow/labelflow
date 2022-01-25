@@ -8,7 +8,7 @@ import { deleteLabelMutationUpdate } from "./cache-updates/delete-label-mutation
 import { createLabelMutation } from "./shared-queries";
 
 const deleteLabelMutation = gql`
-  mutation deleteLabel($id: ID!) {
+  mutation deleteLabelInUndoStore($id: ID!) {
     deleteLabel(where: { id: $id }) {
       id
       x

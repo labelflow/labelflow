@@ -2,7 +2,10 @@ import { gql, useQuery } from "@apollo/client";
 import { DatasetClassesQueryResult } from "./types";
 
 export const DATASET_LABEL_CLASSES_QUERY = gql`
-  query getDatasetLabelClasses($workspaceSlug: String!, $datasetSlug: String!) {
+  query getDatasetLabelClassesWithTotalCount(
+    $workspaceSlug: String!
+    $datasetSlug: String!
+  ) {
     dataset(
       where: { slugs: { workspaceSlug: $workspaceSlug, slug: $datasetSlug } }
     ) {

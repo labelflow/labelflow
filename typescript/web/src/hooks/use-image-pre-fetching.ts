@@ -15,7 +15,7 @@ const imageQuery = gql`
 `;
 
 const getImageLabelsQuery = gql`
-  query getImageLabels($imageId: ID!) {
+  query getImageLabelsForPrefetch($imageId: ID!) {
     image(where: { id: $imageId }) {
       id
       width

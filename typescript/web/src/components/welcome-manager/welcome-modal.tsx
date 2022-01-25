@@ -26,7 +26,7 @@ type WelcomeModalParam =
   | "closed"; // Force it to be closed and never open
 
 export const getDatasetsQuery = gql`
-  query getDatasetsName($where: DatasetWhereInput) {
+  query getDatasetsNames($where: DatasetWhereInput) {
     datasets(where: $where) {
       id
       name

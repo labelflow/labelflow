@@ -54,7 +54,7 @@ export const createLabelClassQuery = gql`
 `;
 
 export const deleteLabelClassQuery = gql`
-  mutation deleteLabelClass($where: LabelClassWhereUniqueInput!) {
+  mutation deleteLabelClassUndoStore($where: LabelClassWhereUniqueInput!) {
     deleteLabelClass(where: $where) {
       id
     }
