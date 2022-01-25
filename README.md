@@ -126,8 +126,8 @@ You can find the full list of environment variables needed for a fully featured 
 
 ## Roadmap
 
-- The short term road map is on Github https://github.com/orgs/labelflow/projects/5
-- The longer term feature road map is on Canny https://labelflow.canny.io/
+- The short term roadmap is on Github https://github.com/orgs/labelflow/projects/5
+- The longer term feature roadmap is on Canny https://labelflow.canny.io/
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
