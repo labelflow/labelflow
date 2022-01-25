@@ -6962,22 +6962,24 @@ __metadata:
     dexie: 3.0.3
     dotenv-cli: 4.0.0
     downshift: 6.1.3
+    fake-indexeddb: 3.1.2
     framer-motion: 4
     fscreen: 1.2.0
     github-markdown-css: 4.0.0
     graphiql: 1.5.16
-    "@types/uuid": ^8.3.0
-    "@types/valid-url": ^1.0.3
-    apollo: ^2.33.9
-    auto-changelog: ^2.3.0
-    autoprefixer: ^10.2.6
-    bluebird: ^3.7.2
-    browser-builtins: ^3.3.1
-    bundlewatch: ^0.3.2
-    detect-browser: ^5.2.0
-    dexie: ^3.0.3
-    dotenv-cli: ^4.0.0
-    downshift: ^6.1.3
+    graphql: 15.5.1
+    graphql-subscriptions: 1.2.1
+    graphql-tag: 2.12.4
+    graphql-type-json: 0.3.2
+    graphql-ws: 5.5.5
+    http-browserify: 1.7.0
+    jest: 26.6.3
+    jimp: 0.16.1
+    jszip: 3.7.0
+    lodash: 4.17.21
+    mem: 8.1.1
+    micro: 9.3.4
+    mime-types: 2.1.32
     mjml: 4.10.3
     multer: 1.4.3
     next: 12.0.7
@@ -25412,13 +25414,6 @@ fsevents@^1.2.7:
   version: 4.17.21
   resolution: "lodash-es@npm:4.17.21"
   checksum: 05cbffad6e2adbb331a4e16fbd826e7faee403a1a04873b82b42c0f22090f280839f85b95393f487c1303c8a3d2a010048bf06151a6cbe03eee4d388fb0a12d2
-  languageName: node
-  linkType: hard
-
-"lodash._basefor@npm:^3.0.0":
-  version: 3.0.3
-  resolution: "lodash._basefor@npm:3.0.3"
-  checksum: 8028af9901a33c336eeb18945bfe304f9e2abc1a741f688a5e26e3fa1a1c975688f7a40ec90d8dc3eda3c04160ede0aa5a89c2beb04ac29daf914b5aeb8b6b5a
   languageName: node
   linkType: hard
 

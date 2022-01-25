@@ -7,7 +7,7 @@ import { theme } from "../../../theme";
 import { setupTestsWithLocalDatabase } from "../../../utils/setup-local-db-tests";
 import { createTestDatasetMutation } from "../../../utils/tests/mutations";
 import { DatasetClasses } from "../dataset-classes";
-import { createLabelClassMutation } from "../upsert-class-modal/create-label-class.mutation";
+import { CREATE_LABEL_CLASS_MUTATION } from "../upsert-class-modal/create-label-class.mutation";
 
 setupTestsWithLocalDatabase();
 
@@ -32,7 +32,7 @@ const createLabelClassInDataset = async ({
   color: string;
 }) => {
   await client.mutate({
-    mutation: createLabelClassMutation,
+    mutation: CREATE_LABEL_CLASS_MUTATION,
     variables: {
       name,
       color,
