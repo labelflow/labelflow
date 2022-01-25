@@ -93,7 +93,7 @@ const performWelcomeWorkflow = async ({
           refetchQueries: [
             "getDatasetData",
             "getDatasetName",
-            "getDatasets",
+            "getDatasetsNames",
             "getDatasetById",
             "getAllImagesOfADataset",
             "getDataset",
