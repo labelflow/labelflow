@@ -4,5 +4,15 @@
   "trailingSlash": false,
   "github": {
     "enabled": true
+  },
+  "functions": {
+    "pages/api/graphql.ts": {
+      "memory": 3008,
+      "maxDuration": 60
+    },
+    "api/graphql.ts": {
+      "memory": 3008,
+      "maxDuration": 60
+    }
   }
 }
