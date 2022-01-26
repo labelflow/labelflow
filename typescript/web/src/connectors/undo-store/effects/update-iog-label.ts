@@ -29,7 +29,7 @@ const updateLabelMutation = gql`
 `;
 
 const getLabelQuery = gql`
-  query getLabel($id: ID!) {
+  query getLabelGeometryAndSmartTool($id: ID!) {
     label(where: { id: $id }) {
       id
       x

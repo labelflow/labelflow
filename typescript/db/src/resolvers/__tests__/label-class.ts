@@ -16,6 +16,14 @@ const testUser2Id = uuidV4();
 const testDatasetId = uuidV4();
 const testLabelClassId = uuidV4();
 
+const DELETE_LABEL_CLASS_TEST = gql`
+  mutation deleteLabelClassTest($id: ID!) {
+    deleteLabelClass(where: { id: $id }) {
+      id
+    }
+  }
+`;
+
 const createWorkspace = async (
   data?: Partial<MutationCreateWorkspaceArgs["data"]>
 ) => {
@@ -276,13 +284,7 @@ describe("Access control for label", () => {
   it("allows to delete a label class to a user that has access to it", async () => {
     const createdLabelClassId = await createLabelClass(labelClassData);
     await client.query({
-      query: gql`
-        mutation deleteLabelClass($id: ID!) {
-          deleteLabelClass(where: { id: $id }) {
-            id
-          }
-        }
-      `,
+      query: DELETE_LABEL_CLASS_TEST,
       variables: {
         id: createdLabelClassId,
       },
@@ -306,13 +308,7 @@ describe("Access control for label", () => {
 
     await expect(() =>
       client.query({
-        query: gql`
-          mutation deleteLabelClass($id: ID!) {
-            deleteLabelClass(where: { id: $id }) {
-              id
-            }
-          }
-        `,
+        query: DELETE_LABEL_CLASS_TEST,
         variables: {
           id: createdLabelClassId,
         },

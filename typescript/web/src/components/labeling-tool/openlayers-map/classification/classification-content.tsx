@@ -1,4 +1,4 @@
-import { gql, useApolloClient, useQuery } from "@apollo/client";
+import { useApolloClient, useQuery } from "@apollo/client";
 import { Box, HStack } from "@chakra-ui/react";
 import { Label, LabelType } from "@labelflow/graphql-types";
 import { getNextClassColor, LABEL_CLASS_COLOR_PALETTE } from "@labelflow/utils";
@@ -9,47 +9,8 @@ import { useUndoStore } from "../../../../connectors/undo-store";
 import { createCreateLabelClassAndUpdateLabelEffect } from "../../../../connectors/undo-store/effects/create-label-class-and-update-label";
 import { createDeleteLabelEffect } from "../../../../connectors/undo-store/effects/delete-label";
 import { createUpdateLabelClassOfLabelEffect } from "../../../../connectors/undo-store/effects/update-label-class-of-label";
+import { getImageLabelsQuery, getLabelClassesOfDatasetQuery } from "../queries";
 import { ClassificationTag, LabelClassItem } from "./classification-tag";
-
-const getLabelClassesOfDatasetQuery = gql`
-  query getLabelClassesOfDataset($slug: String!, $workspaceSlug: String!) {
-    dataset(where: { slugs: { slug: $slug, workspaceSlug: $workspaceSlug } }) {
-      id
-      labelClasses {
-        id
-        name
-        color
-      }
-    }
-  }
-`;
-
-const getImageLabelsQuery = gql`
-  query getImageLabels($imageId: ID!) {
-    image(where: { id: $imageId }) {
-      id
-      width
-      height
-      labels {
-        type
-        id
-        x
-        y
-        width
-        height
-        labelClass {
-          id
-          name
-          color
-        }
-        geometry {
-          type
-          coordinates
-        }
-      }
-    }
-  }
-`;
 
 export const ClassificationContent = forwardRef<HTMLDivElement>(
   (props, ref) => {

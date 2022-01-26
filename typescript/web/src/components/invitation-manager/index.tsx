@@ -4,6 +4,7 @@ import { CurrentUserCanAcceptInvitation } from "@labelflow/graphql-types";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import React from "react";
+import { userQuery } from "../../utils/shared-queries";
 import { getDisplayName } from "../members/user";
 import { LayoutSpinner } from "../spinner";
 import { AcceptOrDeclineMembershipInvitation } from "./accept-or-decline-membership-invitation";
@@ -37,18 +38,6 @@ const declineInvitationMutation = gql`
   mutation declineInvitation($id: ID!) {
     declineInvitation(where: { id: $id }) {
       id
-    }
-  }
-`;
-
-const userQuery = gql`
-  query getUserProfileInfo($id: ID!) {
-    user(where: { id: $id }) {
-      id
-      createdAt
-      name
-      email
-      image
     }
   }
 `;

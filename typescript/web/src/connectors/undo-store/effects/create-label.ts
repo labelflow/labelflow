@@ -39,7 +39,7 @@ export const createCreateLabelEffect = (
 
     const createLabelPromise = client.mutate({
       mutation: createLabelMutation,
-      variables: createLabelInputs,
+      variables: { data: createLabelInputs },
       refetchQueries: ["countLabelsOfDataset"],
       optimisticResponse: {
         createLabel: { id, __typename: "Label" },

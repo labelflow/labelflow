@@ -57,6 +57,7 @@ const importDataset = async ({
       "getLabel",
       "countLabelsOfDataset",
       "getDatasetLabelClasses",
+      "getDatasetLabelClassesWithTotalCount",
     ],
   });
   if (dataImportDataset?.data?.importDataset?.error) {

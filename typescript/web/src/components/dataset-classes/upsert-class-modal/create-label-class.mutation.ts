@@ -14,7 +14,7 @@ import { DATASET_LABEL_CLASSES_QUERY } from "./dataset-label-classes.query";
 
 export const CREATE_LABEL_CLASS_MUTATION = gql`
   mutation createLabelClass(
-    $id: ID!
+    $id: ID
     $name: String!
     $color: ColorHex
     $datasetId: ID!

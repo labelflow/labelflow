@@ -17,10 +17,12 @@ import {
   mockUseQueryParams,
 } from "../../../utils/router-mocks";
 import { setupTestsWithLocalDatabase } from "../../../utils/setup-local-db-tests";
+import { createTestDatasetMutation } from "../../../utils/tests/mutations";
 import {
   DatasetClassesContext,
   DatasetClassesState,
 } from "../dataset-classes.context";
+import { getLabelClassByIdQuery } from "../dataset-classes.query";
 import { LabelClassWithShortcut } from "../types";
 
 mockUseQueryParams();
@@ -66,16 +68,8 @@ const createTestDataset = async () => {
       createDataset: { id: datasetId },
     },
   } = await client.mutate({
-    mutation: gql`
-      mutation createDataset($name: String) {
-        createDataset(data: { name: $name, workspaceSlug: "local" }) {
-          id
-          name
-          slug
-        }
-      }
-    `,
-    variables: { name: TEST_DATASET_SLUG },
+    mutation: createTestDatasetMutation,
+    variables: { name: TEST_DATASET_SLUG, workspaceSlug: "local" },
   });
 
   return datasetId;
@@ -265,13 +259,7 @@ describe("UpsertClassModal", () => {
           labelClass: { name: newLabelClassNameFromQuery },
         },
       } = await client.query({
-        query: gql`
-          query getLabelClassById($id: ID) {
-            labelClass(where: { id: $id }) {
-              name
-            }
-          }
-        `,
+        query: getLabelClassByIdQuery,
         variables: { id: labelClassId },
       });
       expect(newLabelClassNameFromQuery).toEqual(newLabelClassName);

@@ -29,7 +29,7 @@ extend({
 });
 
 const getLabelQuery = gql`
-  query getLabel($id: ID!) {
+  query getLabelWithGeometryAndClass($id: ID!) {
     label(where: { id: $id }) {
       type
       id

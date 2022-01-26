@@ -4,17 +4,7 @@ import { useLabelingStore } from "../../labeling-state";
 import { Effect } from "..";
 
 import { updateLabelClassOfLabel } from "./cache-updates/update-label-class-of-label";
-
-const getLabelQuery = gql`
-  query getLabel($id: ID!) {
-    label(where: { id: $id }) {
-      id
-      labelClass {
-        id
-      }
-    }
-  }
-`;
+import { getLabelQuery } from "./shared-queries";
 
 const updateLabelMutation = gql`
   mutation updateLabelClassOfLabel(

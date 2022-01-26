@@ -1,6 +1,6 @@
 import { MockedResponse as ApolloResponse } from "@apollo/client/testing";
 import { Dataset, Mutation, Query } from "@labelflow/graphql-types";
-import { DATASET_LABEL_CLASSES_QUERY } from "./dataset-classes.query";
+import { DATASET_LABEL_CLASSES_QUERY_WITH_COUNT } from "./dataset-classes.query";
 import { LABEL_CLASS_EXISTS_QUERY } from "./upsert-class-modal/label-class-exists.query";
 
 export const GRAPHQL_MOCKS: ApolloResponse<Partial<Query | Mutation>>[] = [
@@ -17,7 +17,7 @@ export const GRAPHQL_MOCKS: ApolloResponse<Partial<Query | Mutation>>[] = [
   },
   {
     request: {
-      query: DATASET_LABEL_CLASSES_QUERY,
+      query: DATASET_LABEL_CLASSES_QUERY_WITH_COUNT,
       variables: { workspaceSlug: "local", datasetSlug: "test" },
     },
     result: {

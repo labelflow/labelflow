@@ -1,11 +1,13 @@
 /* eslint-disable import/first */
-import { ApolloProvider, gql } from "@apollo/client";
+import { ApolloProvider } from "@apollo/client";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 import { client } from "../../../../connectors/apollo-client/schema-client";
 import { useLabelingStore, Tools } from "../../../../connectors/labeling-state";
 import { setupTestsWithLocalDatabase } from "../../../../utils/setup-local-db-tests";
+import { createTestDatasetMutation } from "../../../../utils/tests/mutations";
+import { CREATE_LABEL_CLASS_MUTATION } from "../../../dataset-classes/upsert-class-modal/create-label-class.mutation";
 
 import { EditLabelClass } from "../edit-label-class";
 
@@ -60,19 +62,11 @@ const createDataset = async (
 ) => {
   // @ts-ignore
   return client.mutateOriginal({
-    mutation: gql`
-      mutation createDataset($datasetId: String, $name: String!) {
-        createDataset(
-          data: { id: $datasetId, name: $name, workspaceSlug: "local" }
-        ) {
-          id
-          name
-        }
-      }
-    `,
+    mutation: createTestDatasetMutation,
     variables: {
       name,
       datasetId,
+      workspaceSlug: "local",
     },
     fetchPolicy: "no-cache",
   });
@@ -98,20 +92,12 @@ beforeEach(async () => {
 
   // @ts-ignore
   await client.mutateOriginal({
-    mutation: gql`
-      mutation createLabelClass($data: LabelClassCreateInput!) {
-        createLabelClass(data: $data) {
-          id
-        }
-      }
-    `,
+    mutation: CREATE_LABEL_CLASS_MUTATION,
     variables: {
-      data: {
-        id: "existing label class id",
-        name: "existing label class",
-        color: "0xaa45f7",
-        datasetId: testDatasetId,
-      },
+      id: "existing label class id",
+      name: "existing label class",
+      color: "0xaa45f7",
+      datasetId: testDatasetId,
     },
     fetchPolicy: "no-cache",
   });

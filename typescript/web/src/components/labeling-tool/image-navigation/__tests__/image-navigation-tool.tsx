@@ -11,7 +11,7 @@ import { mockNextRouter } from "../../../../utils/router-mocks";
 mockNextRouter({ query: { workspaceSlug: "local" } });
 
 import { useRouter } from "next/router";
-import { gql, ApolloProvider } from "@apollo/client";
+import { ApolloProvider } from "@apollo/client";
 
 import { ImageNavigationTool } from "../image-navigation-tool";
 import { client } from "../../../../connectors/apollo-client/schema-client";
@@ -20,6 +20,10 @@ import { setupTestsWithLocalDatabase } from "../../../../utils/setup-local-db-te
 setupTestsWithLocalDatabase();
 
 import { processImage } from "../../../../connectors/repository/image-processing";
+import {
+  createTestDatasetMutation,
+  createTestImageMutation,
+} from "../../../../utils/tests/mutations";
 
 jest.mock("../../../../connectors/repository/image-processing");
 const mockedProcessImage = processImage as jest.Mock;
@@ -32,13 +36,7 @@ const createImage = async (name: String) => {
     mime: "image/jpeg",
   });
   const mutationResult = await client.mutate({
-    mutation: gql`
-      mutation createImage($file: Upload!, $name: String!, $datasetId: ID!) {
-        createImage(data: { name: $name, file: $file, datasetId: $datasetId }) {
-          id
-        }
-      }
-    `,
+    mutation: createTestImageMutation,
     variables: {
       datasetId: testDatasetId,
       file: new Blob(),
@@ -64,17 +62,11 @@ const renderImageNavigationTool = () =>
 
 beforeEach(async () => {
   await client.mutate({
-    mutation: gql`
-      mutation createDataset($datasetId: ID!) {
-        createDataset(
-          data: { name: "test dataset", id: $datasetId, workspaceSlug: "local" }
-        ) {
-          id
-        }
-      }
-    `,
+    mutation: createTestDatasetMutation,
     variables: {
       datasetId: testDatasetId,
+      name: "test dataset",
+      workspaceSlug: "local",
     },
   });
 });
