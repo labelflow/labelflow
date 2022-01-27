@@ -9,10 +9,29 @@ import {
   DEEP_DATASET_MOCK_WITH_CLASSES,
   BASIC_LABEL_CLASS_MOCK,
 } from "../../../utils/tests/data.fixtures";
+import {
+  getDatasetLabelClasses,
+  getDatasetLabelClassesVariables,
+} from "./__generated__/getDatasetLabelClasses";
+import {
+  createLabelClass,
+  createLabelClassVariables,
+} from "./__generated__/createLabelClass";
+import {
+  labelClassExists,
+  labelClassExistsVariables,
+} from "./__generated__/labelClassExists";
+import {
+  updateLabelClassName,
+  updateLabelClassNameVariables,
+} from "./__generated__/updateLabelClassName";
 
 export const UPDATED_LABEL_CLASS_MOCK_NAME = "My New Class Name";
 
-export const GET_DATASET_WITH_LABEL_CLASSES_MOCK: ApolloMockResponse = {
+export const GET_DATASET_WITH_LABEL_CLASSES_MOCK: ApolloMockResponse<
+  getDatasetLabelClassesVariables,
+  getDatasetLabelClasses
+> = {
   request: {
     query: DATASET_LABEL_CLASSES_QUERY,
     variables: {
@@ -23,16 +42,25 @@ export const GET_DATASET_WITH_LABEL_CLASSES_MOCK: ApolloMockResponse = {
   result: {
     data: {
       dataset: {
-        ...pick(DEEP_DATASET_MOCK_WITH_CLASSES, "id", "name", "slug"),
+        ...pick(
+          DEEP_DATASET_MOCK_WITH_CLASSES,
+          "__typename",
+          "id",
+          "name",
+          "slug"
+        ),
         labelClasses: DEEP_DATASET_MOCK_WITH_CLASSES.labelClasses.map(
-          (labelClass) => pick(labelClass, "id", "name", "color")
+          (labelClass) => pick(labelClass, "__typename", "id", "name", "color")
         ),
       },
     },
   },
 };
 
-export const CREATE_LABEL_CLASS_DEFAULT_MOCK: ApolloMockResponse = {
+export const CREATE_LABEL_CLASS_DEFAULT_MOCK: ApolloMockResponse<
+  createLabelClassVariables,
+  createLabelClass
+> = {
   request: {
     query: CREATE_LABEL_CLASS_MUTATION,
     variables: MATCH_ANY_PARAMETERS,
@@ -40,6 +68,7 @@ export const CREATE_LABEL_CLASS_DEFAULT_MOCK: ApolloMockResponse = {
   result: jest.fn((variables) => ({
     data: {
       createLabelClass: {
+        __typename: "LabelClass",
         id: variables!.id,
         name: variables!.name,
         color: variables!.color,
@@ -48,7 +77,10 @@ export const CREATE_LABEL_CLASS_DEFAULT_MOCK: ApolloMockResponse = {
   })),
 };
 
-export const GET_LABEL_CLASS_EXISTS_MOCK: ApolloMockResponse = {
+export const GET_LABEL_CLASS_EXISTS_MOCK: ApolloMockResponse<
+  labelClassExistsVariables,
+  labelClassExists
+> = {
   request: {
     query: LABEL_CLASS_EXISTS_QUERY,
     variables: MATCH_ANY_PARAMETERS,
@@ -64,7 +96,10 @@ export const GET_LABEL_CLASS_EXISTS_MOCK: ApolloMockResponse = {
   },
 };
 
-export const UPDATE_LABEL_CLASS_NAME_MOCK: ApolloMockResponse = {
+export const UPDATE_LABEL_CLASS_NAME_MOCK: ApolloMockResponse<
+  updateLabelClassNameVariables,
+  updateLabelClassName
+> = {
   request: {
     query: UPDATE_LABEL_CLASS_NAME_MUTATION,
     variables: {
@@ -75,6 +110,7 @@ export const UPDATE_LABEL_CLASS_NAME_MOCK: ApolloMockResponse = {
   result: jest.fn(() => ({
     data: {
       updateLabelClass: {
+        __typename: "LabelClass",
         id: BASIC_LABEL_CLASS_MOCK.id,
         name: UPDATED_LABEL_CLASS_MOCK_NAME,
         color: BASIC_LABEL_CLASS_MOCK.color,

@@ -1,27 +1,24 @@
 import { BASIC_DATASET_MOCK } from "../../utils/tests/data.fixtures";
 import { ApolloMockResponse } from "../../utils/tests/apollo-mock";
 import { deleteDatasetByIdMutation } from "./delete-dataset-modal";
-import { getDatasetByIdQuery } from "./datasets.query";
+import {
+  deleteDatasetById,
+  deleteDatasetByIdVariables,
+} from "./__generated__/deleteDatasetById";
+import { GET_DATASET_BY_ID_MOCK } from "./upsert-dataset-modal.fixtures";
 
-export const GET_DATASET_BY_ID_MOCK: ApolloMockResponse = {
-  request: {
-    query: getDatasetByIdQuery,
-    variables: { id: BASIC_DATASET_MOCK.id },
-  },
-  result: {
-    data: {
-      dataset: { id: BASIC_DATASET_MOCK.id, name: BASIC_DATASET_MOCK.name },
-    },
-  },
-};
-
-export const DELETE_DATASET_BY_ID_MOCK: ApolloMockResponse = {
+export const DELETE_DATASET_BY_ID_MOCK: ApolloMockResponse<
+  deleteDatasetByIdVariables,
+  deleteDatasetById
+> = {
   request: {
     query: deleteDatasetByIdMutation,
     variables: { id: BASIC_DATASET_MOCK.id },
   },
   result: jest.fn(() => ({
-    data: { deleteDataset: { id: BASIC_DATASET_MOCK.id } },
+    data: {
+      deleteDataset: { __typename: "Dataset", id: BASIC_DATASET_MOCK.id },
+    },
   })),
 };
 

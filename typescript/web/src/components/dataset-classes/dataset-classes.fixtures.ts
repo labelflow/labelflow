@@ -7,8 +7,15 @@ import {
 } from "../../utils/tests/data.fixtures";
 import { GET_LABEL_CLASS_BY_ID_MOCK } from "./delete-label-class-modal.fixtures";
 import { GET_LABEL_CLASS_EXISTS_MOCK } from "./upsert-class-modal/upsert-class-modal.fixtures";
+import {
+  getDatasetLabelClassesWithTotalCount,
+  getDatasetLabelClassesWithTotalCountVariables,
+} from "./__generated__/getDatasetLabelClassesWithTotalCount";
 
-export const GET_DATASET_WITHOUT_LABEL_CLASSES_MOCK: ApolloMockResponse = {
+export const GET_DATASET_WITHOUT_LABEL_CLASSES_MOCK: ApolloMockResponse<
+  getDatasetLabelClassesWithTotalCountVariables,
+  getDatasetLabelClassesWithTotalCount
+> = {
   request: {
     query: DATASET_LABEL_CLASSES_QUERY_WITH_COUNT,
     variables: {
@@ -19,14 +26,17 @@ export const GET_DATASET_WITHOUT_LABEL_CLASSES_MOCK: ApolloMockResponse = {
   result: {
     data: {
       dataset: {
-        ...pick(BASIC_DATASET_MOCK, "id", "name"),
+        ...pick(BASIC_DATASET_MOCK, "__typename", "id", "name"),
         labelClasses: [],
       },
     },
   },
 };
 
-export const GET_DATASET_WITH_LABEL_CLASSES_MOCK: ApolloMockResponse = {
+export const GET_DATASET_WITH_LABEL_CLASSES_MOCK: ApolloMockResponse<
+  getDatasetLabelClassesWithTotalCountVariables,
+  getDatasetLabelClassesWithTotalCount
+> = {
   request: {
     query: DATASET_LABEL_CLASSES_QUERY_WITH_COUNT,
     variables: {
@@ -37,10 +47,18 @@ export const GET_DATASET_WITH_LABEL_CLASSES_MOCK: ApolloMockResponse = {
   result: {
     data: {
       dataset: {
-        ...pick(DEEP_DATASET_MOCK_WITH_CLASSES, "id", "name"),
+        ...pick(DEEP_DATASET_MOCK_WITH_CLASSES, "__typename", "id", "name"),
         labelClasses: DEEP_DATASET_MOCK_WITH_CLASSES.labelClasses.map(
           (labelClass) =>
-            pick(labelClass, "id", "index", "name", "color", "labelsAggregates")
+            pick(
+              labelClass,
+              "__typename",
+              "id",
+              "index",
+              "name",
+              "color",
+              "labelsAggregates"
+            )
         ),
       },
     },

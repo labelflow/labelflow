@@ -1,21 +1,24 @@
 import { PropsWithChildren } from "react";
-import { PartialDeep } from "type-fest";
 import { MockedProvider } from "@apollo/client/testing";
 import {
   GraphQLVariables,
+  MATCH_ANY_PARAMETERS,
   WildcardMockedResponse,
   WildcardMockLink,
 } from "wildcard-mock-link";
-import { Mutation, Query } from "@labelflow/graphql-types";
-import { FetchResult } from "@apollo/client";
+import { FetchResult, GraphQLRequest } from "@apollo/client";
 import { act } from "@testing-library/react";
 
-declare type ApolloQueryResult = PartialDeep<Query | Mutation>;
-
-export interface ApolloMockResponse extends WildcardMockedResponse {
+export interface ApolloMockResponse<
+  TVariables extends Record<string, any> = Record<string, any>,
+  TData extends Record<string, any> = Record<string, any>
+> extends WildcardMockedResponse {
+  request: Omit<GraphQLRequest, "variables"> & {
+    variables?: TVariables | typeof MATCH_ANY_PARAMETERS;
+  };
   result?:
-    | FetchResult<ApolloQueryResult>
-    | ((variables?: GraphQLVariables) => FetchResult<ApolloQueryResult>);
+    | FetchResult<TData>
+    | ((variables?: TVariables | GraphQLVariables) => FetchResult<TData>);
 }
 
 export const getApolloMockLink = (mocks?: ApolloMockResponse[]) =>

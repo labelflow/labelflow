@@ -8,23 +8,49 @@ import {
   getDatasetByIdQuery,
   searchDatasetBySlugQuery,
 } from "./datasets.query";
+import {
+  getDatasetById,
+  getDatasetByIdVariables,
+} from "./__generated__/getDatasetById";
+import {
+  searchDatasetBySlug,
+  searchDatasetBySlugVariables,
+} from "./__generated__/searchDatasetBySlug";
+import {
+  createDataset,
+  createDatasetVariables,
+} from "./__generated__/createDataset";
+import {
+  updateDataset,
+  updateDatasetVariables,
+} from "./__generated__/updateDataset";
 
 export const UPDATED_DATASET_MOCK_NAME = "My new test dataset";
 export const UPDATED_DATASET_MOCK_SLUG = "my-new-test-dataset";
 
-export const GET_DATASET_BY_ID_MOCK: ApolloMockResponse = {
+export const GET_DATASET_BY_ID_MOCK: ApolloMockResponse<
+  getDatasetByIdVariables,
+  getDatasetById
+> = {
   request: {
     query: getDatasetByIdQuery,
     variables: { id: BASIC_DATASET_MOCK.id },
   },
   result: {
     data: {
-      dataset: { id: BASIC_DATASET_MOCK.id, name: BASIC_DATASET_MOCK.name },
+      dataset: {
+        __typename: "Dataset",
+        id: BASIC_DATASET_MOCK.id,
+        name: BASIC_DATASET_MOCK.name,
+      },
     },
   },
 };
 
-export const GET_DATASET_BY_SLUG_MOCK: ApolloMockResponse = {
+export const GET_DATASET_BY_SLUG_MOCK: ApolloMockResponse<
+  searchDatasetBySlugVariables,
+  searchDatasetBySlug
+> = {
   request: {
     query: searchDatasetBySlugQuery,
     variables: {
@@ -35,6 +61,7 @@ export const GET_DATASET_BY_SLUG_MOCK: ApolloMockResponse = {
   result: {
     data: {
       searchDataset: {
+        __typename: "Dataset",
         id: BASIC_DATASET_MOCK.id,
         slug: BASIC_DATASET_MOCK.slug,
       },
@@ -42,7 +69,10 @@ export const GET_DATASET_BY_SLUG_MOCK: ApolloMockResponse = {
   },
 };
 
-export const GET_UPDATED_DATASET_BY_SLUG_MOCK: ApolloMockResponse = {
+export const GET_UPDATED_DATASET_BY_SLUG_MOCK: ApolloMockResponse<
+  searchDatasetBySlugVariables,
+  searchDatasetBySlug
+> = {
   request: {
     query: searchDatasetBySlugQuery,
     variables: {
@@ -53,6 +83,7 @@ export const GET_UPDATED_DATASET_BY_SLUG_MOCK: ApolloMockResponse = {
   result: {
     data: {
       searchDataset: {
+        __typename: "Dataset",
         id: BASIC_DATASET_MOCK.id,
         slug: UPDATED_DATASET_MOCK_SLUG,
       },
@@ -60,7 +91,10 @@ export const GET_UPDATED_DATASET_BY_SLUG_MOCK: ApolloMockResponse = {
   },
 };
 
-export const CREATE_DATASET_MOCK: ApolloMockResponse = {
+export const CREATE_DATASET_MOCK: ApolloMockResponse<
+  createDatasetVariables,
+  createDataset
+> = {
   request: {
     query: createDatasetMutation,
     variables: {
@@ -70,12 +104,15 @@ export const CREATE_DATASET_MOCK: ApolloMockResponse = {
   },
   result: jest.fn(() => ({
     data: {
-      createDataset: { id: BASIC_DATASET_MOCK.id },
+      createDataset: { __typename: "Dataset", id: BASIC_DATASET_MOCK.id },
     },
   })),
 };
 
-export const UPDATE_DATASET_MOCK: ApolloMockResponse = {
+export const UPDATE_DATASET_MOCK: ApolloMockResponse<
+  updateDatasetVariables,
+  updateDataset
+> = {
   request: {
     query: updateDatasetMutation,
     variables: {
@@ -85,7 +122,7 @@ export const UPDATE_DATASET_MOCK: ApolloMockResponse = {
   },
   result: jest.fn(() => ({
     data: {
-      updateDataset: { id: BASIC_DATASET_MOCK.id },
+      updateDataset: { __typename: "Dataset", id: BASIC_DATASET_MOCK.id },
     },
   })),
 };
