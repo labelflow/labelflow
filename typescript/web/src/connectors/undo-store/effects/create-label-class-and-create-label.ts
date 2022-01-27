@@ -15,7 +15,7 @@ import {
   CREATE_LABEL_CLASS_QUERY,
   CREATE_LABEL_MUTATION,
   DELETE_LABEL_MUTATION,
-  DELETE_LABEL_CLASS_QUERY,
+  DELETE_LABEL_CLASS_MUTATION,
 } from "./shared-queries";
 
 export const createCreateLabelClassAndCreateLabelEffect = (
@@ -115,7 +115,7 @@ export const createCreateLabelClassAndCreateLabelEffect = (
     setSelectedLabelId(null);
 
     await client.mutate({
-      mutation: DELETE_LABEL_CLASS_QUERY,
+      mutation: DELETE_LABEL_CLASS_MUTATION,
       variables: {
         where: { id: labelClassId },
       },

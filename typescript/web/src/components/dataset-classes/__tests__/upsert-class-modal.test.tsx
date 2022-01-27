@@ -88,7 +88,7 @@ const createLabelClassInTestDataset = async ({
     },
   } = await client.mutate({
     mutation: gql`
-      mutation CreateLabelClassMutation(
+      mutation CreateLabelClassInTestDatasetMutation(
         $id: ID!
         $name: String!
         $color: ColorHex!
