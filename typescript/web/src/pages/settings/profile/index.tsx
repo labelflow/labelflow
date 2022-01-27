@@ -10,8 +10,8 @@ import { NavLogo } from "../../../components/logo/nav-logo";
 import { UserSettings } from "../../../components/settings/user";
 import { USER_QUERY } from "../../../utils/shared-queries";
 
-const UPDATE_USER_QUERY = gql`
-  mutation updateUser($id: ID!, $data: UserUpdateInput!) {
+const UPDATE_USER_MUTATION = gql`
+  mutation UpdateUserMutation($id: ID!, $data: UserUpdateInput!) {
     updateUser(where: { id: $id }, data: $data) {
       id
     }
@@ -27,8 +27,8 @@ const ProfilePage = () => {
     skip: userInfoFromSession?.id == null,
   });
   const user = userData?.user;
-  const [updateUser] = useMutation(UPDATE_USER_QUERY, {
-    refetchQueries: ["getUserProfileInfo"],
+  const [updateUser] = useMutation(UPDATE_USER_MUTATION, {
+    refetchQueries: ["GetUserProfileInfoQuery"],
   });
   const changeUserName = useCallback(
     (name: string) => {

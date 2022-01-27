@@ -29,7 +29,7 @@ import { useWorkspaceSettings } from "./context";
 const TeamIcon = chakra(RiGroupFill);
 
 const UPDATE_WORKSPACE_MUTATION = gql`
-  mutation updateWorkspace(
+  mutation UpdateWorkspaceMutation(
     $workspaceSlug: String
     $name: String
     $image: String
@@ -59,7 +59,7 @@ const useUpdateWorkspace = (): [() => void, string | undefined] => {
       image: null,
       workspaceSlug: workspace?.slug,
     },
-    refetchQueries: ["getWorkspaces"],
+    refetchQueries: ["GetWorkspacesQuery"],
     onCompleted: (data) => {
       if (!data?.updateWorkspace) return;
       router.push(`/${data.updateWorkspace.slug}/settings`);

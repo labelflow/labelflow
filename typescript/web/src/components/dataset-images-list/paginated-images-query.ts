@@ -9,7 +9,7 @@ import { useCallback } from "react";
 import { ImagesQueryCache } from "../../connectors/apollo-client/cache-config";
 
 export const PAGINATED_IMAGES_QUERY = gql`
-  query paginatedImagesQuery($datasetId: ID!, $first: Int!, $skip: Int!) {
+  query PaginatedImagesQuery($datasetId: ID!, $first: Int!, $skip: Int!) {
     images(where: { datasetId: $datasetId }, first: $first, skip: $skip) {
       id
       name

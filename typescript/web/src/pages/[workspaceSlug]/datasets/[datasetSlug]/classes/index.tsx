@@ -21,7 +21,7 @@ import { WorkspaceSwitcher } from "../../../../../components/workspace-switcher"
 import { Error404Content } from "../../../../404";
 
 const DATASET_NAME_QUERY = gql`
-  query getDatasetName($slug: String!, $workspaceSlug: String!) {
+  query GetDatasetNameQuery($slug: String!, $workspaceSlug: String!) {
     dataset(where: { slugs: { slug: $slug, workspaceSlug: $workspaceSlug } }) {
       id
       name

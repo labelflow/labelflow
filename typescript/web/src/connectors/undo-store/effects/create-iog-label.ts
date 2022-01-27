@@ -8,7 +8,7 @@ import { deleteLabelMutationUpdate } from "./cache-updates/delete-label-mutation
 import { DELETE_LABEL_MUTATION } from "./shared-queries";
 
 const CREATE_IOG_LABEL_MUTATION = gql`
-  mutation createIogLabel(
+  mutation CreateIogLabelMutation(
     $id: ID!
     $imageId: String!
     $x: Float!
@@ -95,7 +95,7 @@ export const createCreateIogLabelEffect = (
         centerPoint,
         labelClassId,
       },
-      refetchQueries: ["countLabelsOfDataset", "getImageLabels"],
+      refetchQueries: ["CountLabelsOfDatasetQuery", "GetImageLabelsQuery"],
       optimisticResponse: {
         createIogLabel: { id, __typename: "Label" },
       },
@@ -115,7 +115,7 @@ export const createCreateIogLabelEffect = (
     await client.mutate({
       mutation: DELETE_LABEL_MUTATION,
       variables: { id: labelId },
-      refetchQueries: ["countLabelsOfDataset"],
+      refetchQueries: ["CountLabelsOfDatasetQuery"],
       optimisticResponse: { deleteLabel: { id: labelId, __typename: "Label" } },
       update: deleteLabelMutationUpdate({ imageId, id: labelId, labelClassId }),
     });

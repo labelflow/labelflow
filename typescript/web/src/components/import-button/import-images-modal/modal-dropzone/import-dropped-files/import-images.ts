@@ -11,7 +11,7 @@ import { DroppedFile, SetUploadStatuses } from "../../types";
 import { BATCH_SIZE, CONCURRENCY } from "../../constants";
 
 const CREATE_MANY_IMAGES_MUTATION = gql`
-  mutation createManyImagesInModal(
+  mutation CreateManyImagesInModalMutation(
     $images: [ImageCreateManySingleInput!]!
     $datasetId: ID!
   ) {

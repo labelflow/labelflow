@@ -13,7 +13,7 @@ import { v4 as uuid } from "uuid";
 import { DATASET_LABEL_CLASSES_QUERY } from "./dataset-label-classes.query";
 
 export const CREATE_LABEL_CLASS_MUTATION = gql`
-  mutation createLabelClass(
+  mutation CreateLabelClassMutation(
     $id: ID
     $name: String!
     $color: ColorHex

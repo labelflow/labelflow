@@ -21,7 +21,7 @@ import { CookieBanner } from "../../../../../components/cookie-banner";
 import { ImagesList } from "../../../../../components/dataset-images-list";
 
 export const DATASET_DATA_QUERY = gql`
-  query getDatasetData($slug: String!, $workspaceSlug: String!) {
+  query GetDatasetDataQuery($slug: String!, $workspaceSlug: String!) {
     dataset(where: { slugs: { slug: $slug, workspaceSlug: $workspaceSlug } }) {
       id
       name

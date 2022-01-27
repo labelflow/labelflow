@@ -13,7 +13,7 @@ import { WelcomeModal } from "../../../components/welcome-manager";
 import { WorkspaceSwitcher } from "../../../components/workspace-switcher";
 
 const MEMBERSHIPS_QUERY = gql`
-  query getMembershipsMembers($workspaceSlug: String) {
+  query GetMembershipsMembersQuery($workspaceSlug: String) {
     memberships(where: { workspaceSlug: $workspaceSlug }) {
       id
       role
@@ -35,7 +35,7 @@ const MEMBERSHIPS_QUERY = gql`
 `;
 
 const DELETE_MEMBERSHIP_MUTATION = gql`
-  mutation deleteMembership($id: ID!) {
+  mutation DeleteMembershipMutation($id: ID!) {
     deleteMembership(where: { id: $id }) {
       id
     }
@@ -43,7 +43,7 @@ const DELETE_MEMBERSHIP_MUTATION = gql`
 `;
 
 const UPDATE_MEMBERSHIP_MUTATION = gql`
-  mutation updateMembership($id: ID!, $data: MembershipUpdateInput!) {
+  mutation UpdateMembershipMutation($id: ID!, $data: MembershipUpdateInput!) {
     updateMembership(where: { id: $id }, data: $data) {
       id
     }
@@ -51,7 +51,7 @@ const UPDATE_MEMBERSHIP_MUTATION = gql`
 `;
 
 const INVITE_MEMBER_MUTATION = gql`
-  mutation inviteMember($where: InviteMemberInput!) {
+  mutation InviteMemberMutation($where: InviteMemberInput!) {
     inviteMember(where: $where)
   }
 `;
@@ -65,15 +65,15 @@ const WorkspaceMembersPage = () => {
   });
 
   const [deleteMembership] = useMutation(DELETE_MEMBERSHIP_MUTATION, {
-    refetchQueries: ["getMembershipsMembers"],
+    refetchQueries: ["GetMembershipsMembersQuery"],
   });
 
   const [updateMembership] = useMutation(UPDATE_MEMBERSHIP_MUTATION, {
-    refetchQueries: ["getMembershipsMembers"],
+    refetchQueries: ["GetMembershipsMembersQuery"],
   });
 
   const [inviteMember] = useMutation(INVITE_MEMBER_MUTATION, {
-    refetchQueries: ["getMembershipsMembers"],
+    refetchQueries: ["GetMembershipsMembersQuery"],
   });
 
   return (

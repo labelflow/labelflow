@@ -10,7 +10,7 @@ import {
   GET_LABEL_QUERY,
   CREATE_LABEL_CLASS_QUERY,
   UPDATE_LABEL_MUTATION,
-  DELETE_LABEL_CLASS_QUERY,
+  DELETE_LABEL_CLASS_MUTATION,
 } from "./shared-queries";
 import { updateLabelClassOfLabel } from "./cache-updates/update-label-class-of-label";
 
@@ -135,7 +135,7 @@ export const createCreateLabelClassAndUpdateLabelEffect = (
     useLabelingStore.setState({ selectedLabelClassId: labelClassIdPrevious });
 
     await client.mutate({
-      mutation: DELETE_LABEL_CLASS_QUERY,
+      mutation: DELETE_LABEL_CLASS_MUTATION,
       variables: {
         where: { id: labelClassId },
       },

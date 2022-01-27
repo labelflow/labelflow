@@ -34,7 +34,7 @@ async function createImage(
   try {
     const mutationResult = await client.mutate({
       mutation: gql`
-        mutation createImageInMock(
+        mutation CreateImageInMockMutations(
           $url: String!
           $id: ID
           $name: String!

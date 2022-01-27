@@ -15,7 +15,7 @@ import { WelcomeModal } from "../../../components/welcome-manager";
 import { WorkspaceSwitcher } from "../../../components/workspace-switcher";
 
 const GET_WORKSPACE_DETAILS_QUERY = gql`
-  query getWorkspaceDetails($workspaceSlug: String) {
+  query GetWorkspaceDetailsQuery($workspaceSlug: String) {
     workspace(where: { slug: $workspaceSlug }) {
       id
       plan

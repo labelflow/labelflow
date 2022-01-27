@@ -18,7 +18,7 @@ import { flushPaginatedImagesCache } from "../../../dataset-images-list";
 import { GET_DATASET_BY_SLUG_QUERY } from "../../../datasets/datasets.query";
 
 const GET_WORKSPACE_ID_QUERY = gql`
-  query getWorkspaceId($workspaceSlug: String) {
+  query GetWorkspaceIdQuery($workspaceSlug: String) {
     workspace(where: { slug: $workspaceSlug }) {
       id
     }

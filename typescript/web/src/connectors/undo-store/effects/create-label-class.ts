@@ -9,7 +9,7 @@ import { createLabelClassMutationUpdate } from "./cache-updates/create-label-cla
 import { deleteLabelClassMutationUpdate } from "./cache-updates/delete-label-class-mutation-update";
 import {
   CREATE_LABEL_CLASS_QUERY,
-  DELETE_LABEL_CLASS_QUERY,
+  DELETE_LABEL_CLASS_MUTATION,
 } from "./shared-queries";
 
 export const createCreateLabelClassEffect = (
@@ -50,7 +50,7 @@ export const createCreateLabelClassEffect = (
   },
   undo: async (labelClassId: string) => {
     await client.mutate({
-      mutation: DELETE_LABEL_CLASS_QUERY,
+      mutation: DELETE_LABEL_CLASS_MUTATION,
       variables: {
         where: { id: labelClassId },
       },

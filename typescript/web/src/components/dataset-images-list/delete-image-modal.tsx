@@ -16,7 +16,7 @@ import {
 import { DATASET_DATA_QUERY } from "../../pages/[workspaceSlug]/datasets/[datasetSlug]/images";
 
 const GET_IMAGE_BY_ID_QUERY = gql`
-  query getImageById($id: ID!) {
+  query GetImageByIdQuery($id: ID!) {
     image(where: { id: $id }) {
       id
       name
@@ -25,7 +25,7 @@ const GET_IMAGE_BY_ID_QUERY = gql`
 `;
 
 const DELETE_IMAGE_MUTATION = gql`
-  mutation deleteImage($id: ID!) {
+  mutation DeleteImageMutation($id: ID!) {
     deleteImage(where: { id: $id }) {
       id
     }

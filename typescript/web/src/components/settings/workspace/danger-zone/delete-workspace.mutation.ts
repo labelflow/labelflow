@@ -6,7 +6,7 @@ import { useApolloErrorToast } from "../../../toast";
 import { useWorkspaceSettings } from "../context";
 
 const DELETE_WORKSPACE_MUTATION = gql`
-  mutation deleteWorkspace($slug: String!) {
+  mutation DeleteWorkspaceMutation($slug: String!) {
     deleteWorkspace(where: { slug: $slug }) {
       id
     }

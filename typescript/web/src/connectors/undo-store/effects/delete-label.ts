@@ -8,7 +8,7 @@ import { deleteLabelMutationUpdate } from "./cache-updates/delete-label-mutation
 import { CREATE_LABEL_MUTATION } from "./shared-queries";
 
 const DELETE_LABEL_MUTATION = gql`
-  mutation deleteLabelInUndoStore($id: ID!) {
+  mutation DeleteLabelInUndoStoreMutation($id: ID!) {
     deleteLabel(where: { id: $id }) {
       id
       x
@@ -44,7 +44,7 @@ export const createDeleteLabelEffect = (
     }>({
       mutation: DELETE_LABEL_MUTATION,
       variables: { id },
-      refetchQueries: ["countLabelsOfDataset"],
+      refetchQueries: ["CountLabelsOfDatasetQuery"],
       /* Note that there is no optimistic response here, only a cache update.
        * We could add it but it would imply to fetch a lot of data beforehand */
       update: deleteLabelMutationUpdate(),
@@ -82,7 +82,7 @@ export const createDeleteLabelEffect = (
     await client.mutate({
       mutation: CREATE_LABEL_MUTATION,
       variables: { data: createLabelInputs },
-      refetchQueries: ["countLabelsOfDataset"],
+      refetchQueries: ["CountLabelsOfDatasetQuery"],
       optimisticResponse: { createLabel: { id, __typename: "Label" } },
       update: createLabelMutationUpdate(createLabelInputs),
     });

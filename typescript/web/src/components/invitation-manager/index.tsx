@@ -12,7 +12,7 @@ import { InvalidInvitation } from "./invalid-invitation";
 import { UserNeedsToSignIn } from "./user-needs-to-sign-in";
 
 const INVITATION_DETAILS_QUERY = gql`
-  query invitationDetails($id: ID!) {
+  query InvitationDetailsQuery($id: ID!) {
     membership(where: { id: $id }) {
       id
       currentUserCanAcceptInvitation
@@ -27,7 +27,7 @@ const INVITATION_DETAILS_QUERY = gql`
 `;
 
 const ACCEPT_INVITATION_MUTATION = gql`
-  mutation acceptInvitation($id: ID!) {
+  mutation AcceptInvitationMutation($id: ID!) {
     acceptInvitation(where: { id: $id }) {
       id
     }
@@ -35,7 +35,7 @@ const ACCEPT_INVITATION_MUTATION = gql`
 `;
 
 const DECLINE_INVITATION_MUTATION = gql`
-  mutation declineInvitation($id: ID!) {
+  mutation DeclineInvitationMutation($id: ID!) {
     declineInvitation(where: { id: $id }) {
       id
     }
