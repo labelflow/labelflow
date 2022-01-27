@@ -1,16 +1,18 @@
-import { MockedProvider as ApolloProvider } from "@apollo/client/testing";
 import React from "react";
 import { DatasetClasses } from "..";
-import { chakraDecorator } from "../../../utils/chakra-decorator";
-import { GRAPHQL_MOCKS } from "../dataset-classes.fixtures";
+import { chakraDecorator } from "../../../utils/stories/chakra-decorator";
+import { getApolloMockDecorator } from "../../../utils/stories/apollo-mock-decorator";
+import { APOLLO_MOCKS } from "../dataset-classes.fixtures";
+import { DEEP_DATASET_MOCK_WITH_CLASSES } from "../../../utils/tests/data.fixtures";
 
 export default {
   title: "web/Dataset classes/Classes",
-  decorators: [chakraDecorator],
+  decorators: [chakraDecorator, getApolloMockDecorator(APOLLO_MOCKS)],
 };
 
 export const Default = () => (
-  <ApolloProvider mocks={GRAPHQL_MOCKS}>
-    <DatasetClasses workspaceSlug="local" datasetSlug="test" />
-  </ApolloProvider>
+  <DatasetClasses
+    workspaceSlug={DEEP_DATASET_MOCK_WITH_CLASSES.workspace.slug}
+    datasetSlug={DEEP_DATASET_MOCK_WITH_CLASSES.slug}
+  />
 );

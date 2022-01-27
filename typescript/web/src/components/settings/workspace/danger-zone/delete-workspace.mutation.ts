@@ -8,7 +8,7 @@ import { useWorkspaceSettings } from "../context";
 const DELETE_WORKSPACE_MUTATION = gql`
   mutation deleteWorkspace($slug: String!) {
     deleteWorkspace(where: { slug: $slug }) {
-      deletedAt
+      id
     }
   }
 `;

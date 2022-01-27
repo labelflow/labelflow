@@ -4,6 +4,7 @@ import { initMockedDate } from "@labelflow/dev-utils/mockdate";
 import { getDatabase } from "../connectors/database";
 import { client } from "../connectors/apollo-client/schema-client";
 
+// TODO SW probably obsolete and to delete
 export function setupTestsWithLocalDatabase() {
   beforeAll(() => {
     // @ts-ignore

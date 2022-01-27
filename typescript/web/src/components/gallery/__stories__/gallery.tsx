@@ -1,14 +1,13 @@
 import { HStack } from "@chakra-ui/react";
 import { Story } from "@storybook/react";
-
-import { mockImagesLoader } from "../../../utils/mock-image-loader";
-
-import { chakraDecorator } from "../../../utils/chakra-decorator";
-import { apolloDecorator } from "../../../utils/apollo-decorator";
-
-import { Gallery } from "../gallery";
-
 import imageSampleCollection from "../../../utils/image-sample-collection";
+import { mockImagesLoader } from "../../../utils/mock-image-loader";
+import {
+  apolloMockDecorator,
+  chakraDecorator,
+  storybookTitle,
+} from "../../../utils/stories";
+import { Gallery } from "../gallery";
 
 const datasetId = "233e2e14-7be3-4371-a6de-1ebbe71c90b9";
 
@@ -25,10 +24,10 @@ const images = imageSampleCollection
   }));
 
 export default {
-  title: "web/Gallery",
+  title: storybookTitle(Gallery),
   component: Gallery,
   loaders: [mockImagesLoader],
-  decorators: [chakraDecorator, apolloDecorator],
+  decorators: [chakraDecorator, apolloMockDecorator],
 };
 
 const Template: Story = () => (

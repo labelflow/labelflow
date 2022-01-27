@@ -1,13 +1,15 @@
 import { Box } from "@chakra-ui/react";
-import { chakraDecorator } from "../../../utils/chakra-decorator";
-import { apolloDecorator } from "../../../utils/apollo-decorator";
-import { queryParamsDecorator } from "../../../utils/query-params-decorator";
-
 import { NewDatasetCard } from "..";
+import {
+  apolloMockDecorator,
+  chakraDecorator,
+  queryParamsDecorator,
+  storybookTitle,
+} from "../../../utils/stories";
 
 export default {
-  title: "web/New Dataset Card",
-  decorators: [chakraDecorator, apolloDecorator, queryParamsDecorator],
+  title: storybookTitle(NewDatasetCard),
+  decorators: [chakraDecorator, apolloMockDecorator, queryParamsDecorator],
 };
 
 export const Default = () => {

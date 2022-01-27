@@ -5,6 +5,7 @@ import {
   useApolloClient,
   useQuery,
 } from "@apollo/client";
+import { getOperationName } from "@apollo/client/utilities";
 import {
   AlertDialog,
   AlertDialogBody,
@@ -22,7 +23,7 @@ import {
   getLabelClassByIdQuery,
 } from "./dataset-classes.query";
 
-const deleteLabelClassMutation = gql`
+export const deleteLabelClassMutation = gql`
   mutation deleteLabelClass($id: ID!) {
     deleteLabelClass(where: { id: $id }) {
       id
@@ -50,7 +51,9 @@ export const DeleteLabelClassModal = () => {
     client.mutate({
       mutation: deleteLabelClassMutation,
       variables: { id: deleteClassId },
-      refetchQueries: [DATASET_LABEL_CLASSES_QUERY_WITH_COUNT],
+      refetchQueries: [
+        getOperationName(DATASET_LABEL_CLASSES_QUERY_WITH_COUNT)!,
+      ],
       update(cache) {
         cache.modify({
           id: cache.identify({ id: datasetId, __typename: "Dataset" }),

@@ -11,7 +11,7 @@ import {
 import { useRef } from "react";
 import { getDatasetByIdQuery } from "./datasets.query";
 
-const deleteDatasetByIdMutation = gql`
+export const deleteDatasetByIdMutation = gql`
   mutation deleteDatasetById($id: ID!) {
     deleteDataset(where: { id: $id }) {
       id

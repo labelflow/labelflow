@@ -1,15 +1,15 @@
-import { chakraDecorator } from "../../../utils/chakra-decorator";
 import {
-  EmptyStateNoTasks,
+  EmptyStateError,
+  EmptyStateNoConnection,
   EmptyStateNoCreditCard,
   EmptyStateNoImages,
-  EmptyStateNoConnection,
-  EmptyStateError,
   EmptyStateNoSearchResult,
+  EmptyStateNoTasks,
 } from "..";
+import { chakraDecorator, storybookTitle } from "../../../utils/stories";
 
 export default {
-  title: "web/Empty States",
+  title: storybookTitle("Empty States"),
   decorators: [chakraDecorator],
 };
 

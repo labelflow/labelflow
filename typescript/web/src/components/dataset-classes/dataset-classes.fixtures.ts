@@ -1,55 +1,76 @@
-import { MockedResponse as ApolloResponse } from "@apollo/client/testing";
-import { Dataset, Mutation, Query } from "@labelflow/graphql-types";
+import { pick } from "lodash";
+import {
+  ApolloMockResponse,
+  ApolloMockResponses,
+} from "../../utils/tests/apollo-mock";
 import { DATASET_LABEL_CLASSES_QUERY_WITH_COUNT } from "./dataset-classes.query";
-import { LABEL_CLASS_EXISTS_QUERY } from "./upsert-class-modal/label-class-exists.query";
+import {
+  BASIC_DATASET_MOCK,
+  DEEP_DATASET_MOCK_WITH_CLASSES,
+} from "../../utils/tests/data.fixtures";
+import { GET_LABEL_CLASS_BY_ID_MOCK } from "./delete-label-class-modal.fixtures";
+import { GET_LABEL_CLASS_EXISTS_MOCK } from "./upsert-class-modal/upsert-class-modal.fixtures";
+import {
+  getDatasetLabelClassesWithTotalCount,
+  getDatasetLabelClassesWithTotalCountVariables,
+} from "./__generated__/getDatasetLabelClassesWithTotalCount";
 
-export const GRAPHQL_MOCKS: ApolloResponse<Partial<Query | Mutation>>[] = [
-  {
-    request: {
-      query: LABEL_CLASS_EXISTS_QUERY,
-      variables: { slug: "already-taken-name" },
+export const GET_DATASET_WITHOUT_LABEL_CLASSES_MOCK: ApolloMockResponse<
+  getDatasetLabelClassesWithTotalCountVariables,
+  getDatasetLabelClassesWithTotalCount
+> = {
+  request: {
+    query: DATASET_LABEL_CLASSES_QUERY_WITH_COUNT,
+    variables: {
+      workspaceSlug: BASIC_DATASET_MOCK.workspace.slug,
+      datasetSlug: BASIC_DATASET_MOCK.slug,
     },
-    result: { data: { labelClassExists: true } },
   },
-  {
-    request: { query: LABEL_CLASS_EXISTS_QUERY },
-    result: { data: { labelClassExists: false } },
-  },
-  {
-    request: {
-      query: DATASET_LABEL_CLASSES_QUERY_WITH_COUNT,
-      variables: { workspaceSlug: "local", datasetSlug: "test" },
-    },
-    result: {
-      data: {
-        dataset: {
-          id: "0",
-          name: "Test",
-          labelClasses: [
-            {
-              id: "1",
-              index: 0,
-              name: "first",
-              color: "#ff0000",
-              labelsAggregates: { totalCount: 2 },
-            },
-            {
-              id: "2",
-              index: 1,
-              name: "second",
-              color: "#00ff00",
-              labelsAggregates: { totalCount: 4 },
-            },
-            {
-              id: "3",
-              index: 2,
-              name: "veeeeeeeeeeeeeeery loooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong name",
-              color: "#0000ff",
-              labelsAggregates: { totalCount: 12 },
-            },
-          ],
-        } as unknown as Dataset,
+  result: {
+    data: {
+      dataset: {
+        ...pick(BASIC_DATASET_MOCK, "__typename", "id", "name"),
+        labelClasses: [],
       },
     },
   },
+};
+
+export const GET_DATASET_WITH_LABEL_CLASSES_MOCK: ApolloMockResponse<
+  getDatasetLabelClassesWithTotalCountVariables,
+  getDatasetLabelClassesWithTotalCount
+> = {
+  request: {
+    query: DATASET_LABEL_CLASSES_QUERY_WITH_COUNT,
+    variables: {
+      workspaceSlug: DEEP_DATASET_MOCK_WITH_CLASSES.workspace.slug,
+      datasetSlug: DEEP_DATASET_MOCK_WITH_CLASSES.slug,
+    },
+  },
+  result: {
+    data: {
+      dataset: {
+        ...pick(DEEP_DATASET_MOCK_WITH_CLASSES, "__typename", "id", "name"),
+        labelClasses: DEEP_DATASET_MOCK_WITH_CLASSES.labelClasses.map(
+          (labelClass) =>
+            pick(
+              labelClass,
+              "__typename",
+              "id",
+              "index",
+              "name",
+              "color",
+              "labelsAggregates"
+            )
+        ),
+      },
+    },
+  },
+};
+
+export const APOLLO_MOCKS: ApolloMockResponses = [
+  GET_LABEL_CLASS_BY_ID_MOCK,
+  GET_LABEL_CLASS_EXISTS_MOCK,
+  GET_DATASET_WITHOUT_LABEL_CLASSES_MOCK,
+  GET_DATASET_WITH_LABEL_CLASSES_MOCK,
 ];

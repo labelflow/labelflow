@@ -1,7 +1,7 @@
 import { Story } from "@storybook/react";
 import React from "react";
 import { ToggleButtonGroup } from "..";
-import { chakraDecorator } from "../../../utils/chakra-decorator";
+import { chakraDecorator } from "../../../utils/stories/chakra-decorator";
 import { TestComponent } from "../toggle-button-group.fixtures";
 
 export default {

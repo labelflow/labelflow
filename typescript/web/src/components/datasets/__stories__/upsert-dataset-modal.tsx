@@ -1,13 +1,15 @@
 import { Button, useDisclosure } from "@chakra-ui/react";
-
+import {
+  apolloMockDecorator,
+  chakraDecorator,
+  queryParamsDecorator,
+  storybookTitle,
+} from "../../../utils/stories";
 import { UpsertDatasetModal } from "../upsert-dataset-modal";
-import { chakraDecorator } from "../../../utils/chakra-decorator";
-import { apolloDecorator } from "../../../utils/apollo-decorator";
-import { queryParamsDecorator } from "../../../utils/query-params-decorator";
 
 export default {
-  title: "web/Create dataset modal",
-  decorators: [chakraDecorator, apolloDecorator, queryParamsDecorator],
+  title: storybookTitle(UpsertDatasetModal),
+  decorators: [chakraDecorator, apolloMockDecorator, queryParamsDecorator],
 };
 
 export const Default = () => {

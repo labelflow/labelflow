@@ -1,4 +1,3 @@
-import { SessionProvider } from "next-auth/react";
 import {
   CurrentUserCanAcceptInvitation,
   Membership,
@@ -7,16 +6,18 @@ import {
   WorkspacePlan,
   WorkspaceType,
 } from "@labelflow/graphql-types";
-
-import { chakraDecorator } from "../../../utils/chakra-decorator";
-import { apolloDecorator } from "../../../utils/apollo-decorator";
-
+import { SessionProvider } from "next-auth/react";
 import { Members } from "..";
+import {
+  apolloMockDecorator,
+  chakraDecorator,
+  storybookTitle,
+} from "../../../utils/stories";
 
 export default {
-  title: "web/Workspace members",
+  title: storybookTitle(Members),
   component: Members,
-  decorators: [chakraDecorator, apolloDecorator],
+  decorators: [chakraDecorator, apolloMockDecorator],
 };
 
 const memberships: Membership[] = [
@@ -43,6 +44,7 @@ const memberships: Membership[] = [
       plan: WorkspacePlan.Community,
       createdAt: "",
       updatedAt: "",
+      deletedAt: "",
       slug: "",
       type: WorkspaceType.Online,
       id: "ws-1",
@@ -72,6 +74,7 @@ const memberships: Membership[] = [
       plan: WorkspacePlan.Community,
       createdAt: "",
       updatedAt: "",
+      deletedAt: "",
       slug: "",
       type: WorkspaceType.Online,
       id: "ws-1",
@@ -92,6 +95,7 @@ const memberships: Membership[] = [
       plan: WorkspacePlan.Community,
       createdAt: "",
       updatedAt: "",
+      deletedAt: "",
       slug: "",
       type: WorkspaceType.Online,
       id: "ws-1",
@@ -119,6 +123,7 @@ const memberships: Membership[] = [
       plan: WorkspacePlan.Community,
       createdAt: "",
       updatedAt: "",
+      deletedAt: "",
       slug: "",
       type: WorkspaceType.Online,
       id: "ws-1",
@@ -139,6 +144,7 @@ const memberships: Membership[] = [
       plan: WorkspacePlan.Community,
       createdAt: "",
       updatedAt: "",
+      deletedAt: "",
       slug: "",
       type: WorkspaceType.Online,
       id: "ws-1",
