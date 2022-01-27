@@ -11,6 +11,7 @@ import { processImage } from "../../repository/image-processing";
 import { getPrismaClient } from "../../prisma-client";
 import { client, user } from "../../dev/apollo-client";
 import { LabelType } from ".prisma/client";
+import { CREATE_IMAGE_MUTATION } from "./image";
 
 jest.mock("../../repository/image-processing");
 const mockedProcessImage = processImage as jest.Mock;
@@ -61,6 +62,22 @@ const labelData = {
 };
 const imageWidth = 500;
 const imageHeight = 900;
+
+const UPDATE_LABEL_MUTATION_TEST = gql`
+  mutation updateLabelTest($id: ID!, $data: LabelUpdateInput!) {
+    updateLabel(where: { id: $id }, data: $data) {
+      id
+    }
+  }
+`;
+
+const DELETE_LABEL_MUTATION_TEST = gql`
+  mutation deleteLabelTest($id: ID!) {
+    deleteLabel(where: { id: $id }) {
+      id
+    }
+  }
+`;
 
 const createWorkspace = async (
   data?: Partial<MutationCreateWorkspaceArgs["data"]>
@@ -139,29 +156,7 @@ const createImage = async (
   });
 
   const mutationResult = await client.mutate({
-    mutation: gql`
-      mutation createImage(
-        $datasetId: ID!
-        $file: Upload!
-        $name: String!
-        $width: Int
-        $height: Int
-        $imageId: ID
-      ) {
-        createImage(
-          data: {
-            id: $imageId
-            datasetId: $datasetId
-            name: $name
-            file: $file
-            width: $width
-            height: $height
-          }
-        ) {
-          id
-        }
-      }
-    `,
+    mutation: CREATE_IMAGE_MUTATION,
     variables: {
       imageId,
       datasetId,
@@ -291,13 +286,7 @@ describe("Access control for label", () => {
   it("allows to update a label to a user that has access to it", async () => {
     const createdLabel = await createLabel(labelData);
     await client.query({
-      query: gql`
-        mutation updateLabel($id: ID!, $data: LabelUpdateInput!) {
-          updateLabel(where: { id: $id }, data: $data) {
-            id
-          }
-        }
-      `,
+      query: UPDATE_LABEL_MUTATION_TEST,
       variables: {
         id: createdLabel.data.createLabel.id,
         data: {
@@ -331,13 +320,7 @@ describe("Access control for label", () => {
 
     await expect(() =>
       client.query({
-        query: gql`
-          mutation updateLabel($id: ID!, $data: LabelUpdateInput!) {
-            updateLabel(where: { id: $id }, data: $data) {
-              id
-            }
-          }
-        `,
+        query: UPDATE_LABEL_MUTATION_TEST,
         variables: {
           id: createdLabel.data.createLabel.id,
           data: {
@@ -351,13 +334,7 @@ describe("Access control for label", () => {
   it("allows to delete a label to a user that has access to it", async () => {
     const createdLabel = await createLabel(labelData);
     await client.query({
-      query: gql`
-        mutation deleteLabel($id: ID!) {
-          deleteLabel(where: { id: $id }) {
-            id
-          }
-        }
-      `,
+      query: DELETE_LABEL_MUTATION_TEST,
       variables: {
         id: createdLabel.data.createLabel.id,
       },
@@ -382,13 +359,7 @@ describe("Access control for label", () => {
 
     await expect(() =>
       client.query({
-        query: gql`
-          mutation deleteLabel($id: ID!) {
-            deleteLabel(where: { id: $id }) {
-              id
-            }
-          }
-        `,
+        query: DELETE_LABEL_MUTATION_TEST,
         variables: {
           id: createdLabel.data.createLabel.id,
         },

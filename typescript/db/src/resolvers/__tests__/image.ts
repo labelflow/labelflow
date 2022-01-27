@@ -24,6 +24,30 @@ const testImageId = uuidV4();
 const imageWidth = 500;
 const imageHeight = 900;
 
+export const CREATE_IMAGE_MUTATION = gql`
+  mutation createImageInDbTests(
+    $datasetId: ID!
+    $file: Upload!
+    $name: String!
+    $width: Int
+    $height: Int
+    $imageId: ID
+  ) {
+    createImage(
+      data: {
+        id: $imageId
+        datasetId: $datasetId
+        name: $name
+        file: $file
+        width: $width
+        height: $height
+      }
+    ) {
+      id
+    }
+  }
+`;
+
 const createWorkspace = async (
   data?: Partial<MutationCreateWorkspaceArgs["data"]>
 ) => {
@@ -85,29 +109,7 @@ const createImage = async (
     mimetype: "image/jpeg",
   });
   const mutationResult = await client.mutate({
-    mutation: gql`
-      mutation createImage(
-        $datasetId: ID!
-        $file: Upload!
-        $name: String!
-        $width: Int
-        $height: Int
-        $imageId: ID
-      ) {
-        createImage(
-          data: {
-            id: $imageId
-            datasetId: $datasetId
-            name: $name
-            file: $file
-            width: $width
-            height: $height
-          }
-        ) {
-          id
-        }
-      }
-    `,
+    mutation: CREATE_IMAGE_MUTATION,
     variables: {
       imageId,
       datasetId,

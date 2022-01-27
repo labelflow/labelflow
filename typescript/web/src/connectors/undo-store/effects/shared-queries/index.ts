@@ -44,7 +44,7 @@ export const createdLabelFragment = gql`
 `;
 
 export const createLabelClassQuery = gql`
-  mutation createLabelClass($data: LabelClassCreateInput!) {
+  mutation createLabelClassInEffects($data: LabelClassCreateInput!) {
     createLabelClass(data: $data) {
       id
       name
@@ -54,7 +54,7 @@ export const createLabelClassQuery = gql`
 `;
 
 export const deleteLabelClassQuery = gql`
-  mutation deleteLabelClass($where: LabelClassWhereUniqueInput!) {
+  mutation deleteLabelClassUndoStore($where: LabelClassWhereUniqueInput!) {
     deleteLabelClass(where: $where) {
       id
     }
@@ -62,22 +62,8 @@ export const deleteLabelClassQuery = gql`
 `;
 
 export const createLabelMutation = gql`
-  mutation createLabel(
-    $id: ID
-    $imageId: ID!
-    $type: LabelType!
-    $labelClassId: ID
-    $geometry: GeometryInput!
-  ) {
-    createLabel(
-      data: {
-        id: $id
-        type: $type
-        imageId: $imageId
-        labelClassId: $labelClassId
-        geometry: $geometry
-      }
-    ) {
+  mutation createLabel($data: LabelCreateInput!) {
+    createLabel(data: $data) {
       id
     }
   }
@@ -92,7 +78,7 @@ export const deleteLabelMutation = gql`
 `;
 
 export const getLabelQuery = gql`
-  query getLabel($id: ID!) {
+  query getLabelIdAndClassId($id: ID!) {
     label(where: { id: $id }) {
       id
       labelClass {

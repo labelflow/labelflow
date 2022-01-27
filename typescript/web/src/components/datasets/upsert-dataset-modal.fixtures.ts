@@ -3,9 +3,11 @@ import { ApolloMockResponse } from "../../utils/tests/apollo-mock";
 import {
   createDatasetMutation,
   updateDatasetMutation,
-  getDatasetByIdQuery,
-  getDatasetBySlugQuery,
 } from "./upsert-dataset-modal";
+import {
+  getDatasetByIdQuery,
+  searchDatasetBySlugQuery,
+} from "./datasets.query";
 
 export const UPDATED_DATASET_MOCK_NAME = "My new test dataset";
 export const UPDATED_DATASET_MOCK_SLUG = "my-new-test-dataset";
@@ -24,7 +26,7 @@ export const GET_DATASET_BY_ID_MOCK: ApolloMockResponse = {
 
 export const GET_DATASET_BY_SLUG_MOCK: ApolloMockResponse = {
   request: {
-    query: getDatasetBySlugQuery,
+    query: searchDatasetBySlugQuery,
     variables: {
       slug: BASIC_DATASET_MOCK.slug,
       workspaceSlug: BASIC_DATASET_MOCK.workspace.slug,
@@ -42,7 +44,7 @@ export const GET_DATASET_BY_SLUG_MOCK: ApolloMockResponse = {
 
 export const GET_UPDATED_DATASET_BY_SLUG_MOCK: ApolloMockResponse = {
   request: {
-    query: getDatasetBySlugQuery,
+    query: searchDatasetBySlugQuery,
     variables: {
       slug: UPDATED_DATASET_MOCK_SLUG,
       workspaceSlug: BASIC_DATASET_MOCK.workspace.slug,

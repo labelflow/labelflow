@@ -25,9 +25,11 @@
     "start:db": "cd ./typescript/db && yarn start",
     "stop:db": "cd ./typescript/db && yarn stop",
     "bundlewatch:web": "cd ./typescript/web && yarn build && yarn bundlewatch",
-    "codegen": "graphql-codegen --config ./codegen.yml",
+    "codegen": "yarn codegen:data && yarn codegen:web",
     "codegen:all": "yarn codegen",
     "codegen:ci": "graphql-codegen --config ./codegen.yml && git diff --exit-code",
+    "codegen:data": "graphql-codegen --config ./codegen.yml",
+    "codegen:web": "cd typescript/web && yarn codegen",
     "storybook": "start-storybook -s ./typescript/web/public -p 6006",
     "storybook:all": "start-storybook -s ./typescript/web/public -p 6006",
     "build-storybook": "build-storybook",
@@ -60,7 +62,7 @@
     "babel-loader": "8.2.2",
     "chromatic": "5.8.2",
     "cypress": "8.5.0",
-    "dotenv-cli": "^4.0.0",
+    "dotenv-cli": "4.0.0",
     "eslint": "7.26.0",
     "eslint-config-airbnb-typescript": "12.3.1",
     "eslint-config-prettier": "8.3.0",
@@ -76,7 +78,7 @@
     "jest-canvas-mock": "2.3.1",
     "jest-fetch-mock": "3.0.3",
     "jest-transform-graphql": "2.1.0",
-    "markdownlint-cli": "^0.30.0",
+    "markdownlint-cli": "0.30.0",
     "node-polyfill-webpack-plugin": "1.1.2",
     "prettier": "2.3.0",
     "react": "17.0.2",
@@ -88,5 +90,8 @@
     "typescript": "4.3.5",
     "uuid": "8.3.2",
     "webpack": "5.38.1"
+  },
+  "resolutions": {
+    "graphql": "15.5.1"
   }
 }

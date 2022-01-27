@@ -18,6 +18,10 @@ import { getSlug } from "@labelflow/common-resolvers";
 import debounce from "lodash/fp/debounce";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  getDatasetByIdQuery,
+  searchDatasetBySlugQuery,
+} from "./datasets.query";
 
 const debounceTime = 200;
 
@@ -33,26 +37,6 @@ export const updateDatasetMutation = gql`
   mutation updateDataset($id: ID!, $name: String!) {
     updateDataset(where: { id: $id }, data: { name: $name }) {
       id
-    }
-  }
-`;
-
-export const getDatasetBySlugQuery = gql`
-  query getDatasetBySlug($slug: String!, $workspaceSlug: String!) {
-    searchDataset(
-      where: { slugs: { slug: $slug, workspaceSlug: $workspaceSlug } }
-    ) {
-      id
-      slug
-    }
-  }
-`;
-
-export const getDatasetByIdQuery = gql`
-  query getDatasetById($id: ID) {
-    dataset(where: { id: $id }) {
-      id
-      name
     }
   }
 `;
@@ -93,7 +77,7 @@ export const UpsertDatasetModal = ({
       loading: loadingExistingDatasets,
       variables: variablesExistingDatasets,
     },
-  ] = useLazyQuery(getDatasetBySlugQuery, { fetchPolicy: "network-only" });
+  ] = useLazyQuery(searchDatasetBySlugQuery, { fetchPolicy: "network-only" });
 
   const [createDatasetMutate, { loading: createMutationLoading }] = useMutation(
     createDatasetMutation,

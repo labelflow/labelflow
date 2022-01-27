@@ -3,8 +3,8 @@ import { pick } from "lodash";
 import {
   DeleteLabelClassModal,
   deleteLabelClassMutation,
-  getLabelClassByIdQuery,
 } from "./delete-label-class-modal";
+import { getLabelClassByIdQuery } from "./dataset-classes.query";
 import {
   DatasetClassesContext,
   DatasetClassesState,

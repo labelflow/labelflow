@@ -2,9 +2,14 @@ import { ApolloClient, gql } from "@apollo/client";
 import { GeometryInput, Label } from "@labelflow/graphql-types";
 import { getBoundedGeometryFromImage } from "@labelflow/common-resolvers";
 import { Effect } from "..";
+import { imageDimensionsQuery } from "./shared-queries";
 
 const updateLabelMutation = gql`
-  mutation updateLabel($id: ID!, $geometry: GeometryInput, $labelClassId: ID) {
+  mutation updateLabelInUndoStore(
+    $id: ID!
+    $geometry: GeometryInput
+    $labelClassId: ID
+  ) {
     updateLabel(
       where: { id: $id }
       data: { geometry: $geometry, labelClassId: $labelClassId }
@@ -26,18 +31,8 @@ const updateLabelMutation = gql`
   }
 `;
 
-const imageDimensionsQuery = gql`
-  query imageDimensions($id: ID!) {
-    image(where: { id: $id }) {
-      id
-      width
-      height
-    }
-  }
-`;
-
 const getLabelQuery = gql`
-  query getLabel($id: ID!) {
+  query getLabelAndGeometry($id: ID!) {
     label(where: { id: $id }) {
       id
       type

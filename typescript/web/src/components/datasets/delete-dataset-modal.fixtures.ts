@@ -1,9 +1,7 @@
 import { BASIC_DATASET_MOCK } from "../../utils/tests/data.fixtures";
 import { ApolloMockResponse } from "../../utils/tests/apollo-mock";
-import {
-  getDatasetByIdQuery,
-  deleteDatasetByIdMutation,
-} from "./delete-dataset-modal";
+import { deleteDatasetByIdMutation } from "./delete-dataset-modal";
+import { getDatasetByIdQuery } from "./datasets.query";
 
 export const GET_DATASET_BY_ID_MOCK: ApolloMockResponse = {
   request: {
@@ -11,7 +9,9 @@ export const GET_DATASET_BY_ID_MOCK: ApolloMockResponse = {
     variables: { id: BASIC_DATASET_MOCK.id },
   },
   result: {
-    data: { dataset: { name: BASIC_DATASET_MOCK.name } },
+    data: {
+      dataset: { id: BASIC_DATASET_MOCK.id, name: BASIC_DATASET_MOCK.name },
+    },
   },
 };
 

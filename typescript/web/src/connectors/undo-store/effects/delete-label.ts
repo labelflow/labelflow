@@ -8,7 +8,7 @@ import { deleteLabelMutationUpdate } from "./cache-updates/delete-label-mutation
 import { createLabelMutation } from "./shared-queries";
 
 const deleteLabelMutation = gql`
-  mutation deleteLabel($id: ID!) {
+  mutation deleteLabelInUndoStore($id: ID!) {
     deleteLabel(where: { id: $id }) {
       id
       x
@@ -81,7 +81,7 @@ export const createDeleteLabelEffect = (
      * was created in the current session to enable the undoing of the creation effect */
     await client.mutate({
       mutation: createLabelMutation,
-      variables: createLabelInputs,
+      variables: { data: createLabelInputs },
       refetchQueries: ["countLabelsOfDataset"],
       optimisticResponse: { createLabel: { id, __typename: "Label" } },
       update: createLabelMutationUpdate(createLabelInputs),

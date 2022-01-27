@@ -1,6 +1,6 @@
 import { pick } from "lodash";
 import { ApolloMockResponse } from "../../utils/tests/apollo-mock";
-import { DATASET_LABEL_CLASSES_QUERY } from "./dataset-classes.query";
+import { DATASET_LABEL_CLASSES_QUERY_WITH_COUNT } from "./dataset-classes.query";
 import {
   BASIC_DATASET_MOCK,
   DEEP_DATASET_MOCK_WITH_CLASSES,
@@ -10,7 +10,7 @@ import { GET_LABEL_CLASS_EXISTS_MOCK } from "./upsert-class-modal/upsert-class-m
 
 export const GET_DATASET_WITHOUT_LABEL_CLASSES_MOCK: ApolloMockResponse = {
   request: {
-    query: DATASET_LABEL_CLASSES_QUERY,
+    query: DATASET_LABEL_CLASSES_QUERY_WITH_COUNT,
     variables: {
       workspaceSlug: BASIC_DATASET_MOCK.workspace.slug,
       datasetSlug: BASIC_DATASET_MOCK.slug,
@@ -28,7 +28,7 @@ export const GET_DATASET_WITHOUT_LABEL_CLASSES_MOCK: ApolloMockResponse = {
 
 export const GET_DATASET_WITH_LABEL_CLASSES_MOCK: ApolloMockResponse = {
   request: {
-    query: DATASET_LABEL_CLASSES_QUERY,
+    query: DATASET_LABEL_CLASSES_QUERY_WITH_COUNT,
     variables: {
       workspaceSlug: DEEP_DATASET_MOCK_WITH_CLASSES.workspace.slug,
       datasetSlug: DEEP_DATASET_MOCK_WITH_CLASSES.slug,

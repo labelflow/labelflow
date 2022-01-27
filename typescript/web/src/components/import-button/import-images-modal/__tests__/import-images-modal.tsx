@@ -1,7 +1,7 @@
 /* eslint-disable import/first */
 import { act, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { ApolloProvider, gql } from "@apollo/client";
+import { ApolloProvider } from "@apollo/client";
 import { PropsWithChildren } from "react";
 import "@testing-library/jest-dom/extend-expect";
 import { processImage } from "../../../../connectors/repository/image-processing";
@@ -18,6 +18,7 @@ mockNextRouter({
 });
 
 import { ImportImagesModal } from "../import-images-modal";
+import { createLocalTestDatasetMutation } from "../../../../utils/tests/mutations";
 
 const files = [
   new File(["Hello"], "hello.png", { type: "image/png" }),
@@ -87,19 +88,7 @@ function renderModalAndImport(filesToImport = files, props = {}) {
 
 beforeEach(async () => {
   await client.mutate({
-    mutation: gql`
-      mutation {
-        createDataset(
-          data: {
-            name: "test dataset"
-            id: "mocked-dataset-id"
-            workspaceSlug: "local"
-          }
-        ) {
-          id
-        }
-      }
-    `,
+    mutation: createLocalTestDatasetMutation,
   });
 });
 

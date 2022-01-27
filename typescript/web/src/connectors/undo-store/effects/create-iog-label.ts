@@ -9,7 +9,7 @@ import { deleteLabelMutation } from "./shared-queries";
 
 const createIogLabelMutation = gql`
   mutation createIogLabel(
-    $id: String!
+    $id: ID!
     $imageId: String!
     $x: Float!
     $y: Float!

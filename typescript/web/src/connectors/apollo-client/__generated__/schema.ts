@@ -1,5 +1,6 @@
-export const typeDefs = [
-  `
+import { gql } from "@apollo/client";
+
+export const typeDefs = gql`
   scalar ColorHex
 
   input CreateIogLabelInput {
@@ -542,5 +543,4 @@ export const typeDefs = [
     id: ID
     slug: String
   }
-`,
-];
+`;

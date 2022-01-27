@@ -1,5 +1,4 @@
-import { gql, useQuery, useMutation } from "@apollo/client";
-import { useRef } from "react";
+import { gql, useMutation, useQuery } from "@apollo/client";
 import {
   AlertDialog,
   AlertDialogBody,
@@ -9,14 +8,8 @@ import {
   AlertDialogOverlay,
   Button,
 } from "@chakra-ui/react";
-
-export const getDatasetByIdQuery = gql`
-  query getDatasetById($id: ID) {
-    dataset(where: { id: $id }) {
-      name
-    }
-  }
-`;
+import { useRef } from "react";
+import { getDatasetByIdQuery } from "./datasets.query";
 
 export const deleteDatasetByIdMutation = gql`
   mutation deleteDatasetById($id: ID!) {

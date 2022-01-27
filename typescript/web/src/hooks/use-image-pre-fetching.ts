@@ -3,7 +3,7 @@ import { useEffect, useReducer } from "react";
 import { useImagesNavigation } from "./use-images-navigation";
 
 const imageQuery = gql`
-  query image($id: ID!) {
+  query prefetchImage($id: ID!) {
     image(where: { id: $id }) {
       id
       width
@@ -15,7 +15,7 @@ const imageQuery = gql`
 `;
 
 const getImageLabelsQuery = gql`
-  query getImageLabels($imageId: ID!) {
+  query getImageLabelsForPrefetch($imageId: ID!) {
     image(where: { id: $imageId }) {
       id
       width

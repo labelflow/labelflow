@@ -1,5 +1,5 @@
 import { PropsWithChildren } from "react";
-import { render, screen, waitFor, fireEvent } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { ChakraProvider } from "@chakra-ui/react";
 import { MockedProvider } from "@apollo/client/testing";
 import { DatasetClasses } from "../dataset-classes";
