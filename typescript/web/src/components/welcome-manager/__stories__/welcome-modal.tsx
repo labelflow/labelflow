@@ -1,6 +1,6 @@
 import { WelcomeModal } from "..";
 import {
-  apolloDecorator,
+  apolloMockDecorator,
   chakraDecorator,
   queryParamsDecorator,
   cookieDecorator,
@@ -11,7 +11,7 @@ export default {
   title: storybookTitle(WelcomeModal),
   decorators: [
     chakraDecorator,
-    apolloDecorator,
+    apolloMockDecorator,
     queryParamsDecorator,
     cookieDecorator,
   ],

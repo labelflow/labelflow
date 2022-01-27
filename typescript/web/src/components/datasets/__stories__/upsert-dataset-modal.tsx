@@ -1,6 +1,6 @@
 import { Button, useDisclosure } from "@chakra-ui/react";
 import {
-  apolloDecorator,
+  apolloMockDecorator,
   chakraDecorator,
   queryParamsDecorator,
   storybookTitle,
@@ -9,7 +9,7 @@ import { UpsertDatasetModal } from "../upsert-dataset-modal";
 
 export default {
   title: storybookTitle(UpsertDatasetModal),
-  decorators: [chakraDecorator, apolloDecorator, queryParamsDecorator],
+  decorators: [chakraDecorator, apolloMockDecorator, queryParamsDecorator],
 };
 
 export const Default = () => {

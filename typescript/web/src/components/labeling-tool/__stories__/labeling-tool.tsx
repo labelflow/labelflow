@@ -2,7 +2,7 @@ import { Box } from "@chakra-ui/react";
 import { DecoratorFn, Story } from "@storybook/react";
 import { mockImagesLoader } from "../../../utils/mock-image-loader";
 import {
-  apolloDecorator,
+  apolloMockDecorator,
   chakraDecorator,
   queryParamsDecorator,
   storybookTitle,
@@ -47,7 +47,7 @@ export default {
     inGreyBoxDecorator,
     queryParamsDecorator,
     chakraDecorator,
-    apolloDecorator,
+    apolloMockDecorator,
   ],
 };
 

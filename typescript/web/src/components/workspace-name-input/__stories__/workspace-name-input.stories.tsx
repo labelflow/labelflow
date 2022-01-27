@@ -1,7 +1,7 @@
 import { Heading } from "@chakra-ui/react";
 import { WorkspaceNameInput } from "..";
 import {
-  apolloDecorator,
+  apolloMockDecorator,
   chakraDecorator,
   storybookTitle,
 } from "../../../utils/stories";
@@ -9,7 +9,7 @@ import { TestComponent, TEST_CASES } from "../workspace-name-input.fixtures";
 
 export default {
   title: storybookTitle(WorkspaceNameInput),
-  decorators: [chakraDecorator, apolloDecorator],
+  decorators: [chakraDecorator, apolloMockDecorator],
 };
 
 export const Default = () => (

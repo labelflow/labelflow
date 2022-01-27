@@ -2,7 +2,7 @@ import { Box } from "@chakra-ui/react";
 import { omit } from "lodash/fp";
 import { DatasetCard } from "..";
 import {
-  apolloDecorator,
+  apolloMockDecorator,
   chakraDecorator,
   queryParamsDecorator,
   storybookTitle,
@@ -10,7 +10,7 @@ import {
 
 export default {
   title: storybookTitle(DatasetCard),
-  decorators: [chakraDecorator, apolloDecorator, queryParamsDecorator],
+  decorators: [chakraDecorator, apolloMockDecorator, queryParamsDecorator],
 };
 
 const property = {

@@ -9,41 +9,28 @@ import {
 import { Mutation, Query } from "@labelflow/graphql-types";
 import { FetchResult } from "@apollo/client";
 import { act } from "@testing-library/react";
-import { Story } from "@storybook/react";
 
 declare type ApolloQueryResult = PartialDeep<Query | Mutation>;
 
-export interface MockedApolloResponse extends WildcardMockedResponse {
+export interface ApolloMockResponse extends WildcardMockedResponse {
   result?:
     | FetchResult<ApolloQueryResult>
     | ((variables?: GraphQLVariables) => FetchResult<ApolloQueryResult>);
 }
 
-export type ApolloMocks = Record<string, MockedApolloResponse>;
-
-export const getMockApolloLink = (mocks?: ApolloMocks) =>
-  new WildcardMockLink(mocks ? Object.values(mocks) : [], {
+export const getApolloMockLink = (mocks?: ApolloMockResponse[]) =>
+  new WildcardMockLink(mocks ?? [], {
     addTypename: true,
     act,
   });
 
-export const getMockApolloWrapper =
-  (data?: WildcardMockLink | ApolloMocks) =>
+export const getApolloMockWrapper =
+  (data?: WildcardMockLink | ApolloMockResponse[]) =>
   ({ children }: PropsWithChildren<{}>) =>
     (
       <MockedProvider
-        link={data instanceof WildcardMockLink ? data : getMockApolloLink(data)}
+        link={data instanceof WildcardMockLink ? data : getApolloMockLink(data)}
       >
         {children}
       </MockedProvider>
     );
-
-export const getMockApolloDecorator =
-  (data?: WildcardMockLink | ApolloMocks) => (StoryComponent: Story) => {
-    const Wrapper = getMockApolloWrapper(data);
-    return (
-      <Wrapper>
-        <StoryComponent />
-      </Wrapper>
-    );
-  };

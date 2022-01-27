@@ -1,13 +1,14 @@
 import { act, fireEvent, render, screen } from "@testing-library/react";
 import { WildcardMockLink } from "wildcard-mock-link";
 import {
-  getMockApolloLink,
-  getMockApolloWrapper,
-} from "../../../utils/tests/mock-apollo";
-import { MOCK_LABEL_CLASS_SIMPLE } from "../../../utils/tests/data.fixtures";
+  getApolloMockLink,
+  getApolloMockWrapper,
+} from "../../../utils/tests/apollo-mock";
+import { BASIC_LABEL_CLASS_MOCK } from "../../../utils/tests/data.fixtures";
 import {
   TestComponent,
   APOLLO_MOCKS,
+  DELETE_LABEL_CLASS_SIMPLE_MOCK,
 } from "../delete-label-class-modal.fixtures";
 
 const setDeleteClassId = jest.fn();
@@ -17,12 +18,12 @@ const renderModal = (mockLink: WildcardMockLink) => {
     <TestComponent
       setDeleteClassId={setDeleteClassId}
       labelClassInfo={{
-        id: MOCK_LABEL_CLASS_SIMPLE.id,
-        datasetId: MOCK_LABEL_CLASS_SIMPLE.dataset.id,
+        id: BASIC_LABEL_CLASS_MOCK.id,
+        datasetId: BASIC_LABEL_CLASS_MOCK.dataset.id,
       }}
     />,
     {
-      wrapper: getMockApolloWrapper(mockLink),
+      wrapper: getApolloMockWrapper(mockLink),
     }
   );
 };
@@ -33,22 +34,22 @@ describe("Class delete modal tests", () => {
   });
 
   test("should delete a class when confirm is clicked", async () => {
-    const mockLink = getMockApolloLink(APOLLO_MOCKS);
+    const mockLink = getApolloMockLink(APOLLO_MOCKS);
     renderModal(mockLink);
     const confirmButton = screen.getByLabelText(/Confirm delete label class/);
     fireEvent.click(confirmButton);
     await act(() => mockLink.waitForAllResponses());
     expect(setDeleteClassId).toHaveBeenCalledWith(undefined);
-    expect(APOLLO_MOCKS.deleteLabelClassSimple.result).toHaveBeenCalled();
+    expect(DELETE_LABEL_CLASS_SIMPLE_MOCK.result).toHaveBeenCalled();
   });
 
   test("shouldn't delete a class when cancel is clicked", async () => {
-    const mockLink = getMockApolloLink(APOLLO_MOCKS);
+    const mockLink = getApolloMockLink(APOLLO_MOCKS);
     renderModal(mockLink);
     const cancelButton = screen.getByLabelText(/Cancel delete label class/);
     fireEvent.click(cancelButton);
     await act(() => mockLink.waitForAllResponses());
     expect(setDeleteClassId).toHaveBeenCalledWith(undefined);
-    expect(APOLLO_MOCKS.deleteLabelClassSimple.result).not.toHaveBeenCalled();
+    expect(DELETE_LABEL_CLASS_SIMPLE_MOCK.result).not.toHaveBeenCalled();
   });
 });

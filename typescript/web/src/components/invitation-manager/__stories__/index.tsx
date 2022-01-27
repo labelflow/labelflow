@@ -1,6 +1,6 @@
 import React from "react";
 import {
-  apolloDecorator,
+  apolloMockDecorator,
   chakraDecorator,
   queryParamsDecorator,
   storybookTitle,
@@ -11,7 +11,7 @@ import { UserNeedsToSignIn as UserNeedsToSignInComponent } from "../user-needs-t
 
 export default {
   title: storybookTitle("Invitation manager"),
-  decorators: [chakraDecorator, apolloDecorator, queryParamsDecorator],
+  decorators: [chakraDecorator, apolloMockDecorator, queryParamsDecorator],
 };
 
 export const AcceptOrDecline = () => (

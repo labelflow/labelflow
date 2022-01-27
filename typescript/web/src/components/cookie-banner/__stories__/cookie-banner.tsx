@@ -1,6 +1,6 @@
 import React from "react";
 import {
-  apolloDecorator,
+  apolloMockDecorator,
   chakraDecorator,
   queryParamsDecorator,
   storybookTitle,
@@ -9,7 +9,7 @@ import { CookieBanner } from "../cookie-banner";
 
 export default {
   title: storybookTitle(CookieBanner),
-  decorators: [chakraDecorator, apolloDecorator, queryParamsDecorator],
+  decorators: [chakraDecorator, apolloMockDecorator, queryParamsDecorator],
 };
 
 export const Open = () => <CookieBanner />;

@@ -1,12 +1,15 @@
 import { HStack } from "@chakra-ui/react";
 import { ExportFormat } from "@labelflow/graphql-types";
-import { apolloDecorator, chakraDecorator } from "../../../../utils/stories";
+import {
+  apolloMockDecorator,
+  chakraDecorator,
+} from "../../../../utils/stories";
 import { ExportFormatCard } from "../export-format-card";
 import { ExportModalContext, ExportModalState } from "../export-modal.context";
 
 export default {
   title: "web/Export Button/export format card",
-  decorators: [chakraDecorator, apolloDecorator],
+  decorators: [chakraDecorator, apolloMockDecorator],
 };
 
 const loadingValue: ExportModalState = {

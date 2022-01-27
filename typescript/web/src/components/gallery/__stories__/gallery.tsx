@@ -3,7 +3,7 @@ import { Story } from "@storybook/react";
 import imageSampleCollection from "../../../utils/image-sample-collection";
 import { mockImagesLoader } from "../../../utils/mock-image-loader";
 import {
-  apolloDecorator,
+  apolloMockDecorator,
   chakraDecorator,
   storybookTitle,
 } from "../../../utils/stories";
@@ -27,7 +27,7 @@ export default {
   title: storybookTitle(Gallery),
   component: Gallery,
   loaders: [mockImagesLoader],
-  decorators: [chakraDecorator, apolloDecorator],
+  decorators: [chakraDecorator, apolloMockDecorator],
 };
 
 const Template: Story = () => (

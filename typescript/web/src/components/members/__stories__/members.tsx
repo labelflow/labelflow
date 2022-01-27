@@ -9,7 +9,7 @@ import {
 import { SessionProvider } from "next-auth/react";
 import { Members } from "..";
 import {
-  apolloDecorator,
+  apolloMockDecorator,
   chakraDecorator,
   storybookTitle,
 } from "../../../utils/stories";
@@ -17,7 +17,7 @@ import {
 export default {
   title: storybookTitle(Members),
   component: Members,
-  decorators: [chakraDecorator, apolloDecorator],
+  decorators: [chakraDecorator, apolloMockDecorator],
 };
 
 const memberships: Membership[] = [

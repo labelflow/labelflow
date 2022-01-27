@@ -1,34 +1,34 @@
 import { Workspace, Dataset, LabelClass } from "@labelflow/graphql-types";
 
-export type MockWorkspace = Pick<Workspace, "slug">;
+export type WorkspaceMock = Pick<Workspace, "slug">;
 
-export type MockDataset = Pick<Dataset, "id" | "name" | "slug"> & {
-  labelClasses: Omit<MockLabelClass, "dataset">[];
-  workspace: MockWorkspace;
+export type DatasetMock = Pick<Dataset, "id" | "name" | "slug"> & {
+  labelClasses: Omit<LabelClassMock, "dataset">[];
+  workspace: WorkspaceMock;
 };
 
-export type MockLabelClass = Pick<
+export type LabelClassMock = Pick<
   LabelClass,
   "id" | "index" | "name" | "color" | "labelsAggregates"
-> & { shortcut: string; dataset: MockDataset };
+> & { shortcut: string; dataset: DatasetMock };
 
-export const MOCK_WORKSPACE_SIMPLE: MockWorkspace = {
+export const BASIC_WORKSPACE_MOCK: WorkspaceMock = {
   slug: "my-test-workspace",
 };
 
-export const MOCK_DATASET_SIMPLE: MockDataset = {
+export const BASIC_DATASET_MOCK: DatasetMock = {
   id: "8f47e891-3b24-427a-8db0-dab362fbe269",
   name: "My Test Dataset",
   slug: "my-test-dataset",
-  workspace: MOCK_WORKSPACE_SIMPLE,
+  workspace: BASIC_WORKSPACE_MOCK,
   labelClasses: [],
 };
 
-export const MOCK_DATASET_WITH_CLASSES: MockDataset = {
+export const DEEP_DATASET_MOCK_WITH_CLASSES: DatasetMock = {
   id: "2f062478-aa66-4c77-be1a-bfbca1668695",
   name: "My Test Dataset With Classes",
   slug: "my-test-dataset-with-classes",
-  workspace: MOCK_WORKSPACE_SIMPLE,
+  workspace: BASIC_WORKSPACE_MOCK,
   labelClasses: [
     {
       id: "cc4051a6-6ef3-49c2-92fa-f5b0eadb8934",
@@ -63,7 +63,7 @@ export const MOCK_DATASET_WITH_CLASSES: MockDataset = {
   ],
 };
 
-export const MOCK_LABEL_CLASS_SIMPLE: MockLabelClass = {
-  ...MOCK_DATASET_WITH_CLASSES.labelClasses[0],
-  dataset: MOCK_DATASET_WITH_CLASSES,
+export const BASIC_LABEL_CLASS_MOCK: LabelClassMock = {
+  ...DEEP_DATASET_MOCK_WITH_CLASSES.labelClasses[0],
+  dataset: DEEP_DATASET_MOCK_WITH_CLASSES,
 };

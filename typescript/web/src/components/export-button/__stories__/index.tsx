@@ -1,6 +1,6 @@
 import { ExportButton } from "..";
 import {
-  apolloDecorator,
+  apolloMockDecorator,
   chakraDecorator,
   queryParamsDecorator,
   storybookTitle,
@@ -8,7 +8,7 @@ import {
 
 export default {
   title: storybookTitle(ExportButton),
-  decorators: [chakraDecorator, apolloDecorator, queryParamsDecorator],
+  decorators: [chakraDecorator, apolloMockDecorator, queryParamsDecorator],
 };
 
 export const WithButton = () => {

@@ -1,9 +1,12 @@
 import { ExportModal } from "..";
-import { chakraDecorator, apolloDecorator } from "../../../../utils/stories";
+import {
+  chakraDecorator,
+  apolloMockDecorator,
+} from "../../../../utils/stories";
 
 export default {
   title: "web/Export Button/Modal",
-  decorators: [chakraDecorator, apolloDecorator],
+  decorators: [chakraDecorator, apolloMockDecorator],
 };
 
 export const Opened = () => {

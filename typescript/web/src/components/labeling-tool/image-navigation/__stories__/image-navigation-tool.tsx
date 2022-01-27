@@ -3,7 +3,10 @@ import { Story } from "@storybook/react";
 
 import { HStack, Button, Flex } from "@chakra-ui/react";
 
-import { chakraDecorator, apolloDecorator } from "../../../../utils/stories";
+import {
+  chakraDecorator,
+  apolloMockDecorator,
+} from "../../../../utils/stories";
 
 import { ImageNavigationTool } from "../image-navigation-tool";
 
@@ -33,7 +36,7 @@ export default {
   title: "web/Image Navigation Toolbar",
   component: ImageNavigationTool,
   loaders: [mockImagesLoader],
-  decorators: [chakraDecorator, apolloDecorator],
+  decorators: [chakraDecorator, apolloMockDecorator],
 };
 
 const Template: Story = () => (

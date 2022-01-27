@@ -2,14 +2,14 @@ import { useState } from "react";
 import { SignInModal, SignInModalContext, SignInModalState } from "..";
 import { validateEmail } from "../../../../utils/validate-email";
 import {
-  apolloDecorator,
+  apolloMockDecorator,
   chakraDecorator,
   storybookTitle,
 } from "../../../../utils/stories";
 
 export default {
   title: storybookTitle(SignInModal),
-  decorators: [chakraDecorator, apolloDecorator],
+  decorators: [chakraDecorator, apolloMockDecorator],
 };
 const useStory = (linkSent?: string, error?: string): SignInModalState => {
   const [email, setEmail] = useState("");

@@ -2,23 +2,25 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom/extend-expect";
-import { getMockApolloWrapper } from "../../../utils/tests/mock-apollo";
-import { MOCK_DATASET_SIMPLE } from "../../../utils/tests/data.fixtures";
+import { getApolloMockWrapper } from "../../../utils/tests/apollo-mock";
+import { BASIC_DATASET_MOCK } from "../../../utils/tests/data.fixtures";
 import { mockNextRouter } from "../../../utils/router-mocks";
 
 mockNextRouter({
-  query: { workspaceSlug: MOCK_DATASET_SIMPLE.workspace.slug },
+  query: { workspaceSlug: BASIC_DATASET_MOCK.workspace.slug },
 });
 
 import { UpsertDatasetModal } from "../upsert-dataset-modal";
 import {
   APOLLO_MOCKS,
-  MOCK_UPDATED_DATASET_NAME,
+  UPDATED_DATASET_MOCK_NAME,
+  CREATE_DATASET_MOCK,
+  UPDATE_DATASET_MOCK,
 } from "../upsert-dataset-modal.fixtures";
 
 const renderModal = (props = {}) => {
   return render(<UpsertDatasetModal isOpen onClose={() => {}} {...props} />, {
-    wrapper: getMockApolloWrapper(APOLLO_MOCKS),
+    wrapper: getApolloMockWrapper(APOLLO_MOCKS),
   });
 };
 
@@ -56,11 +58,11 @@ test("should create a dataset when the form is submitted", async () => {
     /dataset name input/i
   ) as HTMLInputElement;
   const button = screen.getByLabelText(/create dataset/i);
-  fireEvent.change(input, { target: { value: MOCK_DATASET_SIMPLE.name } });
+  fireEvent.change(input, { target: { value: BASIC_DATASET_MOCK.name } });
   fireEvent.click(button);
   await waitFor(() => {
     expect(onClose).toHaveBeenCalled();
-    expect(APOLLO_MOCKS.createDataset.result).toHaveBeenCalled();
+    expect(CREATE_DATASET_MOCK.result).toHaveBeenCalled();
   });
 });
 
@@ -69,7 +71,7 @@ test("should display an error message if dataset name already exists", async () 
   const input = screen.getByLabelText(
     /dataset name input/i
   ) as HTMLInputElement;
-  fireEvent.change(input, { target: { value: MOCK_DATASET_SIMPLE.name } });
+  fireEvent.change(input, { target: { value: BASIC_DATASET_MOCK.name } });
   const button = screen.getByLabelText(/create dataset/i);
   await waitFor(() => {
     expect(button).toHaveAttribute("disabled");
@@ -85,12 +87,12 @@ test("should call the onClose handler", async () => {
 });
 
 test("update dataset: should have dataset name pre-filled when renaming existing dataset", async () => {
-  renderModal({ datasetId: MOCK_DATASET_SIMPLE.id });
+  renderModal({ datasetId: BASIC_DATASET_MOCK.id });
   const input = screen.getByLabelText(
     /dataset name input/i
   ) as HTMLInputElement;
   await waitFor(() => {
-    expect(input.value).toBe(MOCK_DATASET_SIMPLE.name);
+    expect(input.value).toBe(BASIC_DATASET_MOCK.name);
   });
   const button = screen.getByLabelText(/update dataset/i);
   await waitFor(() => {
@@ -100,23 +102,23 @@ test("update dataset: should have dataset name pre-filled when renaming existing
 
 test("update dataset: should update a dataset when the form is submitted", async () => {
   const onClose = jest.fn();
-  renderModal({ datasetId: MOCK_DATASET_SIMPLE.id, onClose });
+  renderModal({ datasetId: BASIC_DATASET_MOCK.id, onClose });
   const input = screen.getByLabelText(
     /dataset name input/i
   ) as HTMLInputElement;
   await waitFor(() => {
-    expect(input.value).toBe(MOCK_DATASET_SIMPLE.name);
+    expect(input.value).toBe(BASIC_DATASET_MOCK.name);
   });
   const button = screen.getByLabelText(/update dataset/i);
   userEvent.click(input);
   userEvent.clear(input);
-  userEvent.type(input, MOCK_UPDATED_DATASET_NAME);
+  userEvent.type(input, UPDATED_DATASET_MOCK_NAME);
   await waitFor(() => {
-    expect(input.value).toBe(MOCK_UPDATED_DATASET_NAME);
+    expect(input.value).toBe(UPDATED_DATASET_MOCK_NAME);
   });
   userEvent.click(button);
   await waitFor(() => {
     expect(onClose).toHaveBeenCalled();
   });
-  expect(APOLLO_MOCKS.updateDataset.result).toHaveBeenCalled();
+  expect(UPDATE_DATASET_MOCK.result).toHaveBeenCalled();
 });

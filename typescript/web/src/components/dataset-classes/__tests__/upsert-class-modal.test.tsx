@@ -2,24 +2,26 @@
 import "@testing-library/jest-dom/extend-expect";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { getMockApolloWrapper } from "../../../utils/tests/mock-apollo";
+import { getApolloMockWrapper } from "../../../utils/tests/apollo-mock";
 import {
   mockNextRouter,
   mockUseQueryParams,
 } from "../../../utils/router-mocks";
-import { MOCK_LABEL_CLASS_SIMPLE } from "../../../utils/tests/data.fixtures";
+import { BASIC_LABEL_CLASS_MOCK } from "../../../utils/tests/data.fixtures";
 import {
   DatasetClassesContext,
   DatasetClassesState,
 } from "../dataset-classes.context";
 import {
   APOLLO_MOCKS,
-  MOCK_LABEL_CLASS_UPDATED_NAME,
+  CREATE_LABEL_CLASS_DEFAULT_MOCK,
+  UPDATED_LABEL_CLASS_MOCK_NAME,
+  UPDATE_LABEL_CLASS_NAME_MOCK,
 } from "../upsert-class-modal/upsert-class-modal.fixtures";
 
 mockUseQueryParams();
 mockNextRouter({
-  query: { workspaceSlug: MOCK_LABEL_CLASS_SIMPLE.dataset.workspace.slug },
+  query: { workspaceSlug: BASIC_LABEL_CLASS_MOCK.dataset.workspace.slug },
 });
 
 jest.mock(
@@ -46,7 +48,7 @@ const renderTest = (props: TestComponentProps) => {
     >
       <UpsertClassModal isOpen onClose={onClose} />
     </DatasetClassesContext.Provider>,
-    { wrapper: getMockApolloWrapper(APOLLO_MOCKS) }
+    { wrapper: getApolloMockWrapper(APOLLO_MOCKS) }
   );
 };
 
@@ -57,21 +59,21 @@ describe("UpsertClassModal", () => {
 
   it("renders edit modal when a class id is passed", async () => {
     renderTest({
-      editClass: MOCK_LABEL_CLASS_SIMPLE,
-      datasetSlug: MOCK_LABEL_CLASS_SIMPLE.dataset.slug,
+      editClass: BASIC_LABEL_CLASS_MOCK,
+      datasetSlug: BASIC_LABEL_CLASS_MOCK.dataset.slug,
     });
     expect(screen.getByText("Edit Class")).toBeDefined();
   });
 
   it("renders create modal when a class id is not passed", async () => {
-    renderTest({ datasetSlug: MOCK_LABEL_CLASS_SIMPLE.dataset.slug });
+    renderTest({ datasetSlug: BASIC_LABEL_CLASS_MOCK.dataset.slug });
     expect(screen.getByText("New Class")).toBeDefined();
   });
 
   it("renders a modal with a prefilled input and an enabled button", () => {
     renderTest({
-      editClass: MOCK_LABEL_CLASS_SIMPLE,
-      datasetSlug: MOCK_LABEL_CLASS_SIMPLE.dataset.slug,
+      editClass: BASIC_LABEL_CLASS_MOCK,
+      datasetSlug: BASIC_LABEL_CLASS_MOCK.dataset.slug,
     });
 
     const input = screen.getByLabelText(
@@ -79,14 +81,14 @@ describe("UpsertClassModal", () => {
     ) as HTMLInputElement;
     const button = screen.getByLabelText(/Update/i);
 
-    expect(input.value).toEqual(MOCK_LABEL_CLASS_SIMPLE.name);
+    expect(input.value).toEqual(BASIC_LABEL_CLASS_MOCK.name);
     expect(button).not.toHaveAttribute("disabled");
   });
 
   it("enables update button when class name is not empty", async () => {
     renderTest({
-      editClass: MOCK_LABEL_CLASS_SIMPLE,
-      datasetSlug: MOCK_LABEL_CLASS_SIMPLE.dataset.slug,
+      editClass: BASIC_LABEL_CLASS_MOCK,
+      datasetSlug: BASIC_LABEL_CLASS_MOCK.dataset.slug,
     });
     const input = screen.getByLabelText(
       /Class name input/i
@@ -103,8 +105,8 @@ describe("UpsertClassModal", () => {
 
   it("creates a label class when the form is submitted", async () => {
     renderTest({
-      datasetId: MOCK_LABEL_CLASS_SIMPLE.dataset.id,
-      datasetSlug: MOCK_LABEL_CLASS_SIMPLE.dataset.slug,
+      datasetId: BASIC_LABEL_CLASS_MOCK.dataset.id,
+      datasetSlug: BASIC_LABEL_CLASS_MOCK.dataset.slug,
     });
 
     const input = screen.getByLabelText(
@@ -113,7 +115,7 @@ describe("UpsertClassModal", () => {
     const button = screen.getByLabelText(/Create/i);
 
     fireEvent.change(input, {
-      target: { value: MOCK_LABEL_CLASS_UPDATED_NAME },
+      target: { value: UPDATED_LABEL_CLASS_MOCK_NAME },
     });
     fireEvent.click(button);
 
@@ -121,20 +123,20 @@ describe("UpsertClassModal", () => {
       expect(onClose).toHaveBeenCalled();
     });
 
-    expect(APOLLO_MOCKS.createLabelClassDefault.result).toHaveBeenCalled();
+    expect(CREATE_LABEL_CLASS_DEFAULT_MOCK.result).toHaveBeenCalled();
   });
 
   it("displays an error message if the label class already exists", async () => {
     renderTest({
-      datasetId: MOCK_LABEL_CLASS_SIMPLE.dataset.id,
-      datasetSlug: MOCK_LABEL_CLASS_SIMPLE.dataset.slug,
+      datasetId: BASIC_LABEL_CLASS_MOCK.dataset.id,
+      datasetSlug: BASIC_LABEL_CLASS_MOCK.dataset.slug,
     });
     const input = screen.getByLabelText(
       /class name input/i
     ) as HTMLInputElement;
 
     fireEvent.change(input, {
-      target: { value: MOCK_LABEL_CLASS_SIMPLE.name },
+      target: { value: BASIC_LABEL_CLASS_MOCK.name },
     });
 
     const button = screen.getByLabelText(/create/i);
@@ -147,8 +149,8 @@ describe("UpsertClassModal", () => {
 
   it("updates a dataset when the form is submitted", async () => {
     renderTest({
-      editClass: MOCK_LABEL_CLASS_SIMPLE,
-      datasetSlug: MOCK_LABEL_CLASS_SIMPLE.dataset.slug,
+      editClass: BASIC_LABEL_CLASS_MOCK,
+      datasetSlug: BASIC_LABEL_CLASS_MOCK.dataset.slug,
     });
 
     const input = screen.getByLabelText(
@@ -158,9 +160,9 @@ describe("UpsertClassModal", () => {
 
     userEvent.click(input);
     userEvent.clear(input);
-    userEvent.type(input, MOCK_LABEL_CLASS_UPDATED_NAME);
+    userEvent.type(input, UPDATED_LABEL_CLASS_MOCK_NAME);
     await waitFor(() => {
-      expect(input.value).toBe(MOCK_LABEL_CLASS_UPDATED_NAME);
+      expect(input.value).toBe(UPDATED_LABEL_CLASS_MOCK_NAME);
     });
 
     userEvent.click(button);
@@ -168,6 +170,6 @@ describe("UpsertClassModal", () => {
       expect(onClose).toHaveBeenCalled();
     });
 
-    expect(APOLLO_MOCKS.updateLabelClassName.result).toHaveBeenCalled();
+    expect(UPDATE_LABEL_CLASS_NAME_MOCK.result).toHaveBeenCalled();
   });
 });
