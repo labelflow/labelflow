@@ -2,7 +2,7 @@ import { gql, QueryHookOptions, QueryResult, useQuery } from "@apollo/client";
 import { Query, QueryWorkspaceExistsArgs } from "@labelflow/graphql-types";
 
 export const WORKSPACE_EXISTS_QUERY = gql`
-  query workspaceExists($slug: String!) {
+  query WorkspaceExistsQuery($slug: String!) {
     workspaceExists(where: { slug: $slug })
   }
 `;

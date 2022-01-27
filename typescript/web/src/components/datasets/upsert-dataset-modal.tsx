@@ -27,7 +27,7 @@ import {
 const debounceTime = 200;
 
 const CREATE_DATASET_MUTATION = gql`
-  mutation createDataset($name: String!, $workspaceSlug: String!) {
+  mutation CreateDatasetMutation($name: String!, $workspaceSlug: String!) {
     createDataset(data: { name: $name, workspaceSlug: $workspaceSlug }) {
       id
     }
@@ -35,7 +35,7 @@ const CREATE_DATASET_MUTATION = gql`
 `;
 
 const UPDATE_DATASET_MUTATION = gql`
-  mutation updateDataset($id: ID!, $name: String!) {
+  mutation UpdateDatasetMutation($id: ID!, $name: String!) {
     updateDataset(where: { id: $id }, data: { name: $name }) {
       id
     }

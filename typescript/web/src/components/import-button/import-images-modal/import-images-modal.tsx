@@ -51,7 +51,7 @@ export const ImportImagesModal = ({
         fetchPolicy: "network-only",
       });
       client.query({ query: GET_DATASETS_QUERY, fetchPolicy: "network-only" });
-      client.refetchQueries({ include: ["paginatedImagesQuery"] });
+      client.refetchQueries({ include: ["PaginatedImagesQuery"] });
     }
   }, [hasUploaded]);
 

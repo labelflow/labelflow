@@ -4,7 +4,7 @@ import { useQuery, gql } from "@apollo/client";
 import { Dataset, Image } from "@labelflow/graphql-types";
 
 const GET_ALL_IMAGES_OF_A_DATASET_QUERY = gql`
-  query getAllImagesOfADataset($slug: String!, $workspaceSlug: String!) {
+  query GetAllImagesOfADatasetQuery($slug: String!, $workspaceSlug: String!) {
     dataset(where: { slugs: { slug: $slug, workspaceSlug: $workspaceSlug } }) {
       id
       images {

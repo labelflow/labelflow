@@ -21,7 +21,7 @@ import { useQueryParam } from "use-query-params";
 import { BoolParam } from "../../../utils/query-param-bool";
 
 export const CREATE_WORKSPACE_MUTATION = gql`
-  mutation createWorkspace($name: String!) {
+  mutation CreateWorkspaceMutation($name: String!) {
     createWorkspace(data: { name: $name }) {
       id
       slug
@@ -103,7 +103,7 @@ export function useCreateWorkspaceMutation(
     CREATE_WORKSPACE_MUTATION,
     {
       variables: { name: workspaceName },
-      refetchQueries: ["getWorkspaces"],
+      refetchQueries: ["GetWorkspacesQuery"],
       onCompleted,
       onError,
     }

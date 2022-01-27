@@ -10,7 +10,7 @@ import { DroppedFile, SetUploadStatuses } from "../../types";
 import { CONCURRENCY } from "../../constants";
 
 const IMPORT_DATASET_MUTATION = gql`
-  mutation importDataset(
+  mutation ImportDatasetMutation(
     $where: DatasetWhereUniqueInput!
     $data: DatasetImportInput!
   ) {
@@ -52,12 +52,12 @@ const importDataset = async ({
       },
     },
     refetchQueries: [
-      "getDatasetData",
-      "getImageLabels",
-      "getLabel",
-      "countLabelsOfDataset",
-      "getDatasetLabelClasses",
-      "getDatasetLabelClassesWithTotalCount",
+      "GetDatasetDataQuery",
+      "GetImageLabelsQuery",
+      "GetLabelQuery",
+      "CountLabelsOfDatasetQuery",
+      "GetDatasetLabelClassesQuery",
+      "GetDatasetLabelClassesWithTotalCountQuery",
     ],
   });
   if (dataImportDataset?.data?.importDataset?.error) {

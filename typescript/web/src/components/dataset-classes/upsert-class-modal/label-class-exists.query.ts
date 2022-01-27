@@ -3,7 +3,7 @@ import { Query, QueryLabelClassExistsArgs } from "@labelflow/graphql-types";
 import { useDebounce } from "use-debounce";
 
 export const LABEL_CLASS_EXISTS_QUERY = gql`
-  query labelClassExists($datasetId: ID!, $name: String!) {
+  query LabelClassExistsQuery($datasetId: ID!, $name: String!) {
     labelClassExists(where: { datasetId: $datasetId, name: $name })
   }
 `;

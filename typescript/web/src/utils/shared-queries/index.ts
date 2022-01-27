@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client";
 
 export const USER_QUERY = gql`
-  query getUserProfileInfo($id: ID!) {
+  query GetUserProfileInfoQuery($id: ID!) {
     user(where: { id: $id }) {
       id
       createdAt
@@ -13,7 +13,7 @@ export const USER_QUERY = gql`
 `;
 
 export const GET_DATASETS_QUERY = gql`
-  query getDatasets($where: DatasetWhereInput) {
+  query GetDatasetsQuery($where: DatasetWhereInput) {
     datasets(where: $where) {
       id
       name

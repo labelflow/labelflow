@@ -4,7 +4,11 @@ import { getBoundedGeometryFromImage } from "@labelflow/common-resolvers";
 import { Effect } from "..";
 
 const UPDATE_LABEL_MUTATION = gql`
-  mutation updateLabel($id: ID!, $geometry: GeometryInput, $labelClassId: ID) {
+  mutation UpdateLabelMutation(
+    $id: ID!
+    $geometry: GeometryInput
+    $labelClassId: ID
+  ) {
     updateLabel(
       where: { id: $id }
       data: { geometry: $geometry, labelClassId: $labelClassId }
@@ -27,7 +31,7 @@ const UPDATE_LABEL_MUTATION = gql`
 `;
 
 const IMAGE_DIMENSIONS_QUERY = gql`
-  query imageDimensions($id: ID!) {
+  query ImageDimensionsQuery($id: ID!) {
     image(where: { id: $id }) {
       id
       width
@@ -37,7 +41,7 @@ const IMAGE_DIMENSIONS_QUERY = gql`
 `;
 
 const GET_LABEL_QUERY = gql`
-  query getLabelAndGeometry($id: ID!) {
+  query GetLabelAndGeometryQuery($id: ID!) {
     label(where: { id: $id }) {
       id
       type

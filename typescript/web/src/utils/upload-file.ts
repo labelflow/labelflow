@@ -3,7 +3,7 @@ import { ApolloClient, gql } from "@apollo/client";
 import { UploadTarget } from "@labelflow/graphql-types";
 
 const GET_IMAGE_UPLOAD_TARGET_MUTATION = gql`
-  mutation getUploadTarget($key: String!) {
+  mutation GetUploadTargetMutation($key: String!) {
     getUploadTarget(data: { key: $key }) {
       ... on UploadTargetDirect {
         direct

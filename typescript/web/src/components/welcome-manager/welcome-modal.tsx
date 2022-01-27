@@ -26,7 +26,7 @@ type WelcomeModalParam =
   | "closed"; // Force it to be closed and never open
 
 export const GET_DATASETS_QUERY = gql`
-  query getDatasetsName($where: DatasetWhereInput) {
+  query GetDatasetsNameQuery($where: DatasetWhereInput) {
     datasets(where: $where) {
       id
       name
@@ -35,7 +35,7 @@ export const GET_DATASETS_QUERY = gql`
 `;
 
 export const CREATE_DEMO_DATASET_QUERY = gql`
-  mutation createDemoDataset {
+  mutation CreateDemoDatasetMutation {
     createDemoDataset {
       id
       name
@@ -91,16 +91,16 @@ const performWelcomeWorkflow = async ({
         await client.mutate({
           mutation: CREATE_DEMO_DATASET_QUERY,
           refetchQueries: [
-            "getDatasetData",
-            "getDatasetName",
-            "getDatasetsNames",
-            "getDatasetById",
-            "getAllImagesOfADataset",
-            "getDataset",
-            "countLabelsOfDataset",
-            "getLabelClassesOfDataset",
-            "image",
-            "getImageLabels",
+            "GetDatasetDataQuery",
+            "GetDatasetNameQuery",
+            "GetDatasetsNamesQuery",
+            "GetDatasetByIdQuery",
+            "GetAllImagesOfADatasetQuery",
+            "GetDatasetQuery",
+            "CountLabelsOfDatasetQuery",
+            "GetLabelClassesOfDatasetQuery",
+            "ImageQuery",
+            "GetImageLabelsQuery",
           ],
         });
       if (createDemoDatasetErrors) {

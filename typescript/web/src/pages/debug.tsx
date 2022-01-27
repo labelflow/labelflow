@@ -27,7 +27,7 @@ import { CookieBanner } from "../components/cookie-banner";
 import { NavLogo } from "../components/logo/nav-logo";
 
 export const DEBUG_QUERY = gql`
-  query getDebug {
+  query GetDebugQuery {
     debug
   }
 `;

@@ -91,7 +91,7 @@ test("should create a dataset when the form is submitted", async () => {
     },
   } = await client.query({
     query: gql`
-      query getDatasetByName($slug: String!) {
+      query GetDatasetByNameQuery($slug: String!) {
         dataset(where: { slugs: { slug: $slug, workspaceSlug: "local" } }) {
           slug
         }

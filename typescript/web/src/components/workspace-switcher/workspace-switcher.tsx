@@ -9,7 +9,7 @@ import { WorkspaceMenu } from "./workspace-menu";
 import { WorkspaceItem } from "./workspace-menu/workspace-selection-popover";
 
 const GET_WORKSPACES_QUERY = gql`
-  query getWorkspaces {
+  query GetWorkspacesQuery {
     workspaces {
       id
       name

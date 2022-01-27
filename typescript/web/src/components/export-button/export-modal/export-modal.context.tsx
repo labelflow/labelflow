@@ -12,7 +12,7 @@ import {
 import { useRouter } from "next/router";
 
 export const COUNT_LABELS_OF_DATASET_QUERY = gql`
-  query countLabelsOfDataset($slug: String!, $workspaceSlug: String!) {
+  query CountLabelsOfDatasetQuery($slug: String!, $workspaceSlug: String!) {
     dataset(where: { slugs: { slug: $slug, workspaceSlug: $workspaceSlug } }) {
       id
       imagesAggregates {

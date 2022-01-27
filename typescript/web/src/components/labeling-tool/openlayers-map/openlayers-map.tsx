@@ -78,7 +78,7 @@ const getMemoizedProperties = memoize(
 );
 
 const IMAGE_QUERY = gql`
-  query image($id: ID!) {
+  query ImageQuery($id: ID!) {
     image(where: { id: $id }) {
       id
       width

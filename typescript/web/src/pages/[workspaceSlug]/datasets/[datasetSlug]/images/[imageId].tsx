@@ -43,7 +43,7 @@ const LabelingTool = dynamic(
 );
 
 const IMAGE_QUERY = gql`
-  query imageName($id: ID!) {
+  query ImageNameQuery($id: ID!) {
     image(where: { id: $id }) {
       id
       name

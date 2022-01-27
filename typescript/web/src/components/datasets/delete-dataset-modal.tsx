@@ -13,7 +13,7 @@ import { GET_DATASETS_QUERY } from "../../utils/shared-queries";
 import { GET_DATASET_BY_ID_QUERY } from "./datasets.query";
 
 const DELETE_DATASET_BY_ID_MUTATION = gql`
-  mutation deleteDatasetById($id: ID!) {
+  mutation DeleteDatasetByIdMutation($id: ID!) {
     deleteDataset(where: { id: $id }) {
       id
     }

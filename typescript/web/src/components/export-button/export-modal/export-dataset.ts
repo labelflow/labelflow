@@ -3,7 +3,7 @@ import { ExportFormat, ExportOptions } from "@labelflow/graphql-types";
 import { Dispatch, SetStateAction } from "react";
 
 const EXPORT_QUERY = gql`
-  query exportDatasetUrl(
+  query ExportDatasetUrlQuery(
     $datasetId: ID!
     $format: ExportFormat!
     $options: ExportOptions

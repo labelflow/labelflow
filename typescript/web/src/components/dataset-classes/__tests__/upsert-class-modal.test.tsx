@@ -88,7 +88,7 @@ const createLabelClassInTestDataset = async ({
     },
   } = await client.mutate({
     mutation: gql`
-      mutation createLabelClassMutation(
+      mutation CreateLabelClassMutation(
         $id: ID!
         $name: String!
         $color: ColorHex!
@@ -189,7 +189,7 @@ describe("UpsertClassModal", () => {
         data: { labelClasses },
       } = await client.query({
         query: gql`
-          query getLabelClasses {
+          query GetLabelClassesQuery {
             labelClasses {
               id
               name

@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client";
 
 export const CREATE_TEST_DATASET_MUTATION = gql`
-  mutation createTestDataset(
+  mutation CreateTestDatasetMutation(
     $datasetId: ID
     $name: String!
     $workspaceSlug: String!
@@ -17,7 +17,7 @@ export const CREATE_TEST_DATASET_MUTATION = gql`
 `;
 
 export const CREATE_TEST_IMAGE_MUTATION = gql`
-  mutation createImageForTests(
+  mutation CreateImageForTestsMutation(
     $url: String
     $id: ID
     $name: String
@@ -50,7 +50,7 @@ export const CREATE_TEST_IMAGE_MUTATION = gql`
 `;
 
 export const CREATE_LOCAL_TEST_DATASET_MUTATION = gql`
-  mutation createLocalTestDataset {
+  mutation CreateLocalTestDatasetMutation {
     createDataset(data: { name: "Toto", workspaceSlug: "local" }) {
       id
     }

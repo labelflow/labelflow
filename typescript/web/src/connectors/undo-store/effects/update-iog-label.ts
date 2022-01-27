@@ -5,7 +5,7 @@ import { Label } from "@labelflow/graphql-types";
 import { Effect } from "..";
 
 const UPDATE_LABEL_MUTATION = gql`
-  mutation updateLabel(
+  mutation UpdateLabelMutation(
     $id: ID!
     $geometry: GeometryInput
     $smartToolInput: JSON
@@ -29,7 +29,7 @@ const UPDATE_LABEL_MUTATION = gql`
 `;
 
 const GET_LABEL_QUERY = gql`
-  query getLabelGeometryAndSmartTool($id: ID!) {
+  query GetLabelGeometryAndSmartToolQuery($id: ID!) {
     label(where: { id: $id }) {
       id
       x
@@ -46,7 +46,7 @@ const GET_LABEL_QUERY = gql`
 `;
 
 const updateIogLabelMutation = gql`
-  mutation updateIogLabel(
+  mutation UpdateIogLabelMutation(
     $id: ID!
     $x: Float
     $y: Float

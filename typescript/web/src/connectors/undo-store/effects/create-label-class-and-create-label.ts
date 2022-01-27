@@ -72,7 +72,7 @@ export const createCreateLabelClassAndCreateLabelEffect = (
     const { data } = await client.mutate({
       mutation: CREATE_LABEL_MUTATION,
       variables: { data: createLabelInputs },
-      refetchQueries: ["countLabelsOfDataset"],
+      refetchQueries: ["CountLabelsOfDatasetQuery"],
       optimisticResponse: {
         createLabel: { id: `temp-${Date.now()}`, __typename: "Label" },
       },
@@ -103,7 +103,7 @@ export const createCreateLabelClassAndCreateLabelEffect = (
     await client.mutate({
       mutation: DELETE_LABEL_MUTATION,
       variables: { id },
-      refetchQueries: ["countLabelsOfDataset"],
+      refetchQueries: ["CountLabelsOfDatasetQuery"],
       optimisticResponse: { deleteLabel: { id, __typename: "Label" } },
       update: deleteLabelMutationUpdate({
         id,
@@ -165,7 +165,7 @@ export const createCreateLabelClassAndCreateLabelEffect = (
     const { data } = await client.mutate({
       mutation: CREATE_LABEL_MUTATION,
       variables: { data: createLabelInputs },
-      refetchQueries: ["countLabelsOfDataset"],
+      refetchQueries: ["CountLabelsOfDatasetQuery"],
       optimisticResponse: {
         createLabel: { id: `temp-${Date.now()}`, __typename: "Label" },
       },

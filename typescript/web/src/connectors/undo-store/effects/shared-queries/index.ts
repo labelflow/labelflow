@@ -15,7 +15,7 @@ import { gql } from "@apollo/client";
 /* ----------------------------------------------------------------- */
 
 export const IMAGE_DIMENSIONS_QUERY = gql`
-  query imageDimensions($id: ID!) {
+  query ImageDimensionsQuery($id: ID!) {
     image(where: { id: $id }) {
       id
       width
@@ -44,7 +44,7 @@ export const CREATED_LABEL_FRAGMENT = gql`
 `;
 
 export const CREATE_LABEL_CLASS_QUERY = gql`
-  mutation createLabelClassInEffects($data: LabelClassCreateInput!) {
+  mutation CreateLabelClassInEffectsQuery($data: LabelClassCreateInput!) {
     createLabelClass(data: $data) {
       id
       name
@@ -54,7 +54,7 @@ export const CREATE_LABEL_CLASS_QUERY = gql`
 `;
 
 export const DELETE_LABEL_CLASS_QUERY = gql`
-  mutation deleteLabelClass($where: LabelClassWhereUniqueInput!) {
+  mutation DeleteLabelClassMutation($where: LabelClassWhereUniqueInput!) {
     deleteLabelClass(where: $where) {
       id
     }
@@ -62,7 +62,7 @@ export const DELETE_LABEL_CLASS_QUERY = gql`
 `;
 
 export const CREATE_LABEL_MUTATION = gql`
-  mutation createLabel($data: LabelCreateInput!) {
+  mutation CreateLabelMutation($data: LabelCreateInput!) {
     createLabel(data: $data) {
       id
     }
@@ -70,7 +70,7 @@ export const CREATE_LABEL_MUTATION = gql`
 `;
 
 export const DELETE_LABEL_MUTATION = gql`
-  mutation deleteLabel($id: ID!) {
+  mutation DeleteLabelMutation($id: ID!) {
     deleteLabel(where: { id: $id }) {
       id
     }
@@ -78,7 +78,7 @@ export const DELETE_LABEL_MUTATION = gql`
 `;
 
 export const GET_LABEL_QUERY = gql`
-  query getLabelIdAndClassId($id: ID!) {
+  query GetLabelIdAndClassIdQuery($id: ID!) {
     label(where: { id: $id }) {
       id
       labelClass {
@@ -89,7 +89,7 @@ export const GET_LABEL_QUERY = gql`
 `;
 
 export const UPDATE_LABEL_MUTATION = gql`
-  mutation updateLabelClass(
+  mutation UpdateLabelClassMutation(
     $where: LabelWhereUniqueInput!
     $data: LabelUpdateInput!
   ) {

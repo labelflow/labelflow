@@ -14,7 +14,7 @@ import { LayoutSpinner } from "../spinner";
 import { CreateWorkspaceModal } from "../workspace-switcher/create-workspace-modal";
 
 export const GET_HOME_WORKSPACES_QUERY = gql`
-  query getHomeWorkspaces {
+  query GetHomeWorkspacesQuery {
     workspaces {
       id
       name

@@ -107,7 +107,7 @@ test("should clear the modal content when closed", async () => {
   );
 
   expect(client.refetchQueries).toHaveBeenNthCalledWith(2, {
-    include: ["paginatedImagesQuery"],
+    include: ["PaginatedImagesQuery"],
   });
   expect(client.mutate).toHaveBeenCalled();
 });

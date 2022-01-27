@@ -23,7 +23,7 @@ import {
 } from "./dataset-classes.query";
 
 const DELETE_LABEL_CLASS_MUTATION = gql`
-  mutation deleteLabelClass($id: ID!) {
+  mutation DeleteLabelClassMutation($id: ID!) {
     deleteLabelClass(where: { id: $id }) {
       id
     }
