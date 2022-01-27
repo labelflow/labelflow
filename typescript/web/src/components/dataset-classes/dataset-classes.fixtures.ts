@@ -11,13 +11,13 @@ import {
 import { GET_LABEL_CLASS_BY_ID_MOCK } from "./delete-label-class-modal.fixtures";
 import { GET_LABEL_CLASS_EXISTS_MOCK } from "./upsert-class-modal/upsert-class-modal.fixtures";
 import {
-  getDatasetLabelClassesWithTotalCount,
-  getDatasetLabelClassesWithTotalCountVariables,
-} from "./__generated__/getDatasetLabelClassesWithTotalCount";
+  GetDatasetLabelClassesWithTotalCountQuery,
+  GetDatasetLabelClassesWithTotalCountQueryVariables,
+} from "../../graphql-types/GetDatasetLabelClassesWithTotalCountQuery";
 
 export const GET_DATASET_WITHOUT_LABEL_CLASSES_MOCK: ApolloMockResponse<
-  getDatasetLabelClassesWithTotalCountVariables,
-  getDatasetLabelClassesWithTotalCount
+  GetDatasetLabelClassesWithTotalCountQueryVariables,
+  GetDatasetLabelClassesWithTotalCountQuery
 > = {
   request: {
     query: DATASET_LABEL_CLASSES_QUERY_WITH_COUNT,
@@ -37,8 +37,8 @@ export const GET_DATASET_WITHOUT_LABEL_CLASSES_MOCK: ApolloMockResponse<
 };
 
 export const GET_DATASET_WITH_LABEL_CLASSES_MOCK: ApolloMockResponse<
-  getDatasetLabelClassesWithTotalCountVariables,
-  getDatasetLabelClassesWithTotalCount
+  GetDatasetLabelClassesWithTotalCountQueryVariables,
+  GetDatasetLabelClassesWithTotalCountQuery
 > = {
   request: {
     query: DATASET_LABEL_CLASSES_QUERY_WITH_COUNT,

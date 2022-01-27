@@ -17,11 +17,11 @@ import {
 import {
   GetLabelClassByIdQuery,
   GetLabelClassByIdQueryVariables,
-} from "./__generated__/GetLabelClassById";
+} from "../../graphql-types/GetLabelClassByIdQuery";
 import {
   DeleteLabelClassMutation,
   DeleteLabelClassMutationVariables,
-} from "./__generated__/DeleteLabelClass";
+} from "../../graphql-types/DeleteLabelClassMutation";
 
 export type TestComponentProps = {
   setDeleteClassId?: () => void;

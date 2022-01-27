@@ -13,7 +13,7 @@ import {
   PAGINATED_IMAGES_QUERY,
   useFlushPaginatedImagesCache,
 } from "./paginated-images-query";
-import { DATASET_DATA_QUERY } from "../../pages/[workspaceSlug]/datasets/[datasetSlug]/images";
+import { DATASET_IMAGES_PAGE_DATASET_QUERY } from "../../shared-queries/dataset-images-page.query";
 
 const GET_IMAGE_BY_ID_QUERY = gql`
   query GetImageByIdQuery($id: ID!) {
@@ -58,7 +58,10 @@ export const DeleteImageModal = ({
     await flushPaginatedImagesCache();
     await deleteImage({
       variables: { id: imageId },
-      refetchQueries: [DATASET_DATA_QUERY, PAGINATED_IMAGES_QUERY],
+      refetchQueries: [
+        DATASET_IMAGES_PAGE_DATASET_QUERY,
+        PAGINATED_IMAGES_QUERY,
+      ],
     });
     onClose();
   };

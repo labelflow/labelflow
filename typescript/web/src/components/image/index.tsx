@@ -1,34 +1,31 @@
-import { useState } from "react";
-import { Image, ImageProps } from "@chakra-ui/react";
+import { Image, ImageProps, useBoolean } from "@chakra-ui/react";
 
-/**
- * Image component separating the loading and error fallback properties
- * @param props
- * @returns
- */
-export const ImageWithFallback = (
-  props: Omit<ImageProps, "fallbackSrc" | "fallback"> & {
-    loadingFallbackSrc?: string;
-    loadingFallback?: React.ReactElement;
-    errorFallbackSrc?: string;
-    errorFallback?: React.ReactElement;
-  }
-) => {
-  const [hasError, setHasError] = useState(false);
-  const {
-    loadingFallbackSrc,
-    loadingFallback,
-    errorFallbackSrc,
-    errorFallback,
-  } = props;
+export type ImageWithFallbackProps = Omit<
+  ImageProps,
+  "fallbackSrc" | "fallback"
+> & {
+  loadingFallbackSrc?: string;
+  loadingFallback?: React.ReactElement;
+  errorFallbackSrc?: string;
+  errorFallback?: React.ReactElement;
+};
 
+/** Image component separating the loading and error fallback properties */
+export const ImageWithFallback = ({
+  loadingFallback,
+  errorFallback,
+  loadingFallbackSrc,
+  errorFallbackSrc,
+  ...props
+}: ImageWithFallbackProps) => {
+  const [hasError, setHasError] = useBoolean(false);
   return (
     <Image
-      {...props}
       fallback={hasError ? errorFallback : loadingFallback}
       fallbackSrc={hasError ? errorFallbackSrc : loadingFallbackSrc}
-      onError={() => setHasError(true)}
+      onError={setHasError.on}
       backgroundSize="contain"
+      {...props}
     />
   );
 };

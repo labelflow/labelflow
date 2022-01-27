@@ -39,7 +39,8 @@ export const flushPaginatedImagesCache = async (
 
 export const useFlushPaginatedImagesCache = (datasetId: string) => {
   const client = useApolloClient();
-  return useCallback(() => {
-    flushPaginatedImagesCache(client, datasetId);
-  }, [client, datasetId]);
+  return useCallback(
+    () => flushPaginatedImagesCache(client, datasetId),
+    [client, datasetId]
+  );
 };

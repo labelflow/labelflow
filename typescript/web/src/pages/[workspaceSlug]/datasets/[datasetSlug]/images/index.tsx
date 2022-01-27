@@ -1,4 +1,4 @@
-import { gql, useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client";
 import NextLink from "next/link";
 import { Skeleton, Text, BreadcrumbLink } from "@chakra-ui/react";
 import { useRouter } from "next/router";
@@ -19,18 +19,7 @@ import { AuthManager } from "../../../../../components/auth-manager";
 import { WelcomeModal } from "../../../../../components/welcome-manager";
 import { CookieBanner } from "../../../../../components/cookie-banner";
 import { ImagesList } from "../../../../../components/dataset-images-list";
-
-export const DATASET_DATA_QUERY = gql`
-  query GetDatasetDataQuery($slug: String!, $workspaceSlug: String!) {
-    dataset(where: { slugs: { slug: $slug, workspaceSlug: $workspaceSlug } }) {
-      id
-      name
-      imagesAggregates {
-        totalCount
-      }
-    }
-  }
-`;
+import { DATASET_IMAGES_PAGE_DATASET_QUERY } from "../../../../../shared-queries/dataset-images-page.query";
 
 const ImagesPage = () => {
   const router = useRouter();
@@ -43,7 +32,7 @@ const ImagesPage = () => {
     loading: datasetQueryLoading,
   } = useQuery<{
     dataset: DatasetType;
-  }>(DATASET_DATA_QUERY, {
+  }>(DATASET_IMAGES_PAGE_DATASET_QUERY, {
     variables: {
       slug: datasetSlug,
       workspaceSlug,

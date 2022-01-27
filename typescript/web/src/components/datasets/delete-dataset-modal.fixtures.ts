@@ -4,11 +4,11 @@ import {
   ApolloMockResponses,
 } from "../../utils/tests/apollo-mock";
 import { DELETE_DATASET_BY_ID_MUTATION } from "./delete-dataset-modal";
+import { GET_DATASET_BY_ID_MOCK } from "./upsert-dataset-modal.fixtures";
 import {
   DeleteDatasetByIdMutation,
   DeleteDatasetByIdMutationVariables,
-} from "./__generated__/DeleteDatasetByIdMutation";
-import { GET_DATASET_BY_ID_MOCK } from "./upsert-dataset-modal.fixtures";
+} from "../../graphql-types/DeleteDatasetByIdMutation";
 
 export const DELETE_DATASET_BY_ID_MOCK: ApolloMockResponse<
   DeleteDatasetByIdMutationVariables,

@@ -14,27 +14,27 @@ import {
   BASIC_LABEL_CLASS_MOCK,
 } from "../../../utils/tests/data.fixtures";
 import {
-  getDatasetLabelClasses,
-  getDatasetLabelClassesVariables,
-} from "./__generated__/getDatasetLabelClasses";
+  CreateLabelClassMutation,
+  CreateLabelClassMutationVariables,
+} from "../../../graphql-types/CreateLabelClassMutation";
 import {
-  createLabelClass,
-  createLabelClassVariables,
-} from "./__generated__/createLabelClass";
+  GetDatasetLabelClassesQuery,
+  GetDatasetLabelClassesQueryVariables,
+} from "../../../graphql-types/GetDatasetLabelClassesQuery";
 import {
-  labelClassExists,
-  labelClassExistsVariables,
-} from "./__generated__/labelClassExists";
+  LabelClassExistsQuery,
+  LabelClassExistsQueryVariables,
+} from "../../../graphql-types/LabelClassExistsQuery";
 import {
-  updateLabelClassName,
-  updateLabelClassNameVariables,
-} from "./__generated__/updateLabelClassName";
+  UpdateLabelClassNameMutation,
+  UpdateLabelClassNameMutationVariables,
+} from "../../../graphql-types/UpdateLabelClassNameMutation";
 
 export const UPDATED_LABEL_CLASS_MOCK_NAME = "My New Class Name";
 
 export const GET_DATASET_WITH_LABEL_CLASSES_MOCK: ApolloMockResponse<
-  getDatasetLabelClassesVariables,
-  getDatasetLabelClasses
+  GetDatasetLabelClassesQueryVariables,
+  GetDatasetLabelClassesQuery
 > = {
   request: {
     query: DATASET_LABEL_CLASSES_QUERY,
@@ -62,8 +62,8 @@ export const GET_DATASET_WITH_LABEL_CLASSES_MOCK: ApolloMockResponse<
 };
 
 export const CREATE_LABEL_CLASS_DEFAULT_MOCK: ApolloMockResponse<
-  createLabelClassVariables,
-  createLabelClass
+  CreateLabelClassMutationVariables,
+  CreateLabelClassMutation
 > = {
   request: {
     query: CREATE_LABEL_CLASS_MUTATION,
@@ -82,8 +82,8 @@ export const CREATE_LABEL_CLASS_DEFAULT_MOCK: ApolloMockResponse<
 };
 
 export const GET_LABEL_CLASS_EXISTS_MOCK: ApolloMockResponse<
-  labelClassExistsVariables,
-  labelClassExists
+  LabelClassExistsQueryVariables,
+  LabelClassExistsQuery
 > = {
   request: {
     query: LABEL_CLASS_EXISTS_QUERY,
@@ -101,8 +101,8 @@ export const GET_LABEL_CLASS_EXISTS_MOCK: ApolloMockResponse<
 };
 
 export const UPDATE_LABEL_CLASS_NAME_MOCK: ApolloMockResponse<
-  updateLabelClassNameVariables,
-  updateLabelClassName
+  UpdateLabelClassNameMutationVariables,
+  UpdateLabelClassNameMutation
 > = {
   request: {
     query: UPDATE_LABEL_CLASS_NAME_MUTATION,

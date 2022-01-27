@@ -9,7 +9,7 @@ import {
   Button,
 } from "@chakra-ui/react";
 import { useRef } from "react";
-import { GET_DATASETS_QUERY } from "../../utils/shared-queries";
+import { WORKSPACE_DATASETS_PAGE_DATASETS_QUERY } from "../../shared-queries/workspace-datasets-page.query";
 import { GET_DATASET_BY_ID_QUERY } from "./datasets.query";
 
 export const DELETE_DATASET_BY_ID_MUTATION = gql`
@@ -39,7 +39,7 @@ export const DeleteDatasetModal = ({
     DELETE_DATASET_BY_ID_MUTATION,
     {
       variables: { id: datasetId },
-      refetchQueries: [GET_DATASETS_QUERY],
+      refetchQueries: [WORKSPACE_DATASETS_PAGE_DATASETS_QUERY],
       update: (cache) => {
         // Avoid issue https://github.com/labelflow/labelflow/issues/563
         cache.evict({ id: `Dataset:${datasetId}` });

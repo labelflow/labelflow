@@ -32,10 +32,10 @@ import {
   RiUserLine,
 } from "react-icons/ri";
 import { useQueryParam } from "use-query-params";
+import { USER_PROFILE_QUERY } from "../../../shared-queries/user-profile.query";
 import { trackEvent } from "../../../utils/google-analytics";
 import { BoolParam } from "../../../utils/query-param-bool";
 import { randomBackgroundGradient } from "../../../utils/random-background-gradient";
-import { USER_QUERY } from "../../../utils/shared-queries";
 import { getDisplayName } from "../../members/user";
 
 const UserMenuIcon = chakra(RiUserLine);
@@ -224,7 +224,7 @@ const UserMenuList = (props: UserProps) => {
 const useUser = (): UserProps => {
   const { data: session } = useSession({ required: false });
   const userInfoFromSession = session?.user;
-  const { data: userData } = useQuery(USER_QUERY, {
+  const { data: userData } = useQuery(USER_PROFILE_QUERY, {
     variables: { id: userInfoFromSession?.id },
     skip: userInfoFromSession?.id == null,
   });

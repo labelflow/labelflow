@@ -1,19 +1,7 @@
 import { gql } from "@apollo/client";
 
-export const USER_QUERY = gql`
-  query GetUserProfileInfoQuery($id: ID!) {
-    user(where: { id: $id }) {
-      id
-      createdAt
-      name
-      email
-      image
-    }
-  }
-`;
-
-export const GET_DATASETS_QUERY = gql`
-  query GetDatasetsQuery($where: DatasetWhereInput) {
+export const WORKSPACE_DATASETS_PAGE_DATASETS_QUERY = gql`
+  query WorkspaceDatasetsPageDatasetsQuery($where: DatasetWhereInput) {
     datasets(where: $where) {
       id
       name

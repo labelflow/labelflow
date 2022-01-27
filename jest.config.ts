@@ -21,7 +21,7 @@ export default {
       displayName: "browser",
       preset: "ts-jest",
       collectCoverage: true,
-      testPathIgnorePatterns: ["node_modules", "__generated__"],
+      testPathIgnorePatterns: ["node_modules"],
       setupFilesAfterEnv: ["<rootDir>/setup-tests.ts"],
       globals: {
         "ts-jest": {
@@ -46,7 +46,7 @@ export default {
       displayName: "nodejs",
       preset: "ts-jest",
       collectCoverage: true,
-      testPathIgnorePatterns: ["node_modules", "__generated__"],
+      testPathIgnorePatterns: ["node_modules"],
       setupFilesAfterEnv: ["<rootDir>/setup-tests.ts"],
       globals: {
         "ts-jest": {

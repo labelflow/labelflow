@@ -12,7 +12,7 @@
     "bundlewatch": "bundlewatch --config ./bundlewatch.config.js",
     "release": "release-it",
     "release:update": "cd ../release && yarn update",
-    "codegen": "yarn apollo codegen:generate --localSchemaFile=../../data/__generated__/schema.graphql --target=typescript --tagName=gql --includes=\"src/**/*.ts?(x)\" --excludes=\"src/**/__generated__/*.ts\""
+    "codegen": "yarn apollo codegen:generate --localSchemaFile=../../data/__generated__/schema.graphql --target=typescript --tagName=gql --includes=\"src/**/*.ts?(x)\" --excludes=\"src/**/__generated__/*.ts\" --no-addTypename --outputFlat src/graphql-types"
   },
   "dependencies": {
     "@apollo/client": "3.4.16",

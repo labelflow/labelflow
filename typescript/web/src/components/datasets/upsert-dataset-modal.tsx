@@ -1,4 +1,4 @@
-import { gql, useLazyQuery, useMutation, useQuery } from "@apollo/client";
+import { useLazyQuery, useMutation, useQuery } from "@apollo/client";
 import {
   Button,
   FormControl,
@@ -18,29 +18,15 @@ import { getSlug } from "@labelflow/common-resolvers";
 import debounce from "lodash/fp/debounce";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { GET_DATASETS_QUERY } from "../../utils/shared-queries";
+import { WORKSPACE_DATASETS_PAGE_DATASETS_QUERY } from "../../shared-queries/workspace-datasets-page.query";
+import { CREATE_DATASET_MUTATION } from "./create-dataset.mutation";
 import {
   GET_DATASET_BY_ID_QUERY,
   SEARCH_DATASET_BY_SLUG_QUERY,
 } from "./datasets.query";
+import { UPDATE_DATASET_MUTATION } from "./update-dataset.mutation";
 
 const debounceTime = 200;
-
-const CREATE_DATASET_MUTATION = gql`
-  mutation CreateDatasetMutation($name: String!, $workspaceSlug: String!) {
-    createDataset(data: { name: $name, workspaceSlug: $workspaceSlug }) {
-      id
-    }
-  }
-`;
-
-const UPDATE_DATASET_MUTATION = gql`
-  mutation UpdateDatasetMutation($id: ID!, $name: String!) {
-    updateDataset(where: { id: $id }, data: { name: $name }) {
-      id
-    }
-  }
-`;
 
 export const UpsertDatasetModal = ({
   isOpen = false,
@@ -89,7 +75,7 @@ export const UpsertDatasetModal = ({
         name: datasetName,
         workspaceSlug,
       },
-      refetchQueries: [GET_DATASETS_QUERY],
+      refetchQueries: [WORKSPACE_DATASETS_PAGE_DATASETS_QUERY],
       awaitRefetchQueries: true,
     }
   );
@@ -101,7 +87,7 @@ export const UpsertDatasetModal = ({
         id: datasetId,
         name: datasetName,
       },
-      refetchQueries: [GET_DATASETS_QUERY],
+      refetchQueries: [WORKSPACE_DATASETS_PAGE_DATASETS_QUERY],
       awaitRefetchQueries: true,
     }
   );

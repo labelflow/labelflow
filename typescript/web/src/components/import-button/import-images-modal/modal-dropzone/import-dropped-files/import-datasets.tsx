@@ -52,7 +52,7 @@ const importDataset = async ({
       },
     },
     refetchQueries: [
-      "GetDatasetDataQuery",
+      "DatasetImagesPageDatasetQuery",
       "GetImageLabelsQuery",
       "GetLabelQuery",
       "CountLabelsOfDatasetQuery",

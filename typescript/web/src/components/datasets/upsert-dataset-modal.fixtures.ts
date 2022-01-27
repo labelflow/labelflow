@@ -4,29 +4,27 @@ import {
   ApolloMockResponses,
 } from "../../utils/tests/apollo-mock";
 import {
-  CREATE_DATASET_MUTATION,
-  UPDATE_DATASET_MUTATION,
-} from "./upsert-dataset-modal";
-import {
   GET_DATASET_BY_ID_QUERY,
   SEARCH_DATASET_BY_SLUG_QUERY,
 } from "./datasets.query";
 import {
   GetDatasetByIdQuery,
   GetDatasetByIdQueryVariables,
-} from "./__generated__/GetDatasetByIdQuery";
+} from "../../graphql-types/GetDatasetByIdQuery";
 import {
   SearchDatasetBySlugQuery,
   SearchDatasetBySlugQueryVariables,
-} from "./__generated__/SearchDatasetBySlugQuery";
+} from "../../graphql-types/SearchDatasetBySlugQuery";
 import {
   CreateDatasetMutation,
   CreateDatasetMutationVariables,
-} from "./__generated__/CreateDatasetMutation";
+} from "../../graphql-types/CreateDatasetMutation";
 import {
   UpdateDatasetMutation,
   UpdateDatasetMutationVariables,
-} from "./__generated__/UpdateDatasetMutation";
+} from "../../graphql-types/UpdateDatasetMutation";
+import { UPDATE_DATASET_MUTATION } from "./update-dataset.mutation";
+import { CREATE_DATASET_MUTATION } from "./create-dataset.mutation";
 
 export const UPDATED_DATASET_MOCK_NAME = "My new test dataset";
 export const UPDATED_DATASET_MOCK_SLUG = "my-new-test-dataset";
@@ -42,7 +40,6 @@ export const GET_DATASET_BY_ID_MOCK: ApolloMockResponse<
   result: {
     data: {
       dataset: {
-        __typename: "Dataset",
         id: BASIC_DATASET_MOCK.id,
         name: BASIC_DATASET_MOCK.name,
       },
@@ -64,7 +61,6 @@ export const GET_DATASET_BY_SLUG_MOCK: ApolloMockResponse<
   result: {
     data: {
       searchDataset: {
-        __typename: "Dataset",
         id: BASIC_DATASET_MOCK.id,
         slug: BASIC_DATASET_MOCK.slug,
       },
@@ -86,7 +82,6 @@ export const GET_UPDATED_DATASET_BY_SLUG_MOCK: ApolloMockResponse<
   result: {
     data: {
       searchDataset: {
-        __typename: "Dataset",
         id: BASIC_DATASET_MOCK.id,
         slug: UPDATED_DATASET_MOCK_SLUG,
       },
@@ -107,7 +102,7 @@ export const CREATE_DATASET_MOCK: ApolloMockResponse<
   },
   result: jest.fn(() => ({
     data: {
-      CreateDatasetMutation: {
+      createDataset: {
         __typename: "Dataset",
         id: BASIC_DATASET_MOCK.id,
       },
@@ -128,7 +123,7 @@ export const UPDATE_DATASET_MOCK: ApolloMockResponse<
   },
   result: jest.fn(() => ({
     data: {
-      UpdateDatasetMutation: {
+      updateDataset: {
         __typename: "Dataset",
         id: BASIC_DATASET_MOCK.id,
       },

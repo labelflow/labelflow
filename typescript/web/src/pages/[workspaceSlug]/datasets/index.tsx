@@ -24,7 +24,7 @@ import { CookieBanner } from "../../../components/cookie-banner";
 import { WorkspaceTabBar } from "../../../components/layout/tab-bar/workspace-tab-bar";
 import { WorkspaceSwitcher } from "../../../components/workspace-switcher";
 import { NavLogo } from "../../../components/logo/nav-logo";
-import { GET_DATASETS_QUERY } from "../../../utils/shared-queries";
+import { WORKSPACE_DATASETS_PAGE_DATASETS_QUERY } from "../../../shared-queries/workspace-datasets-page.query";
 
 const LoadingCard = () => (
   <DatasetCardBox>
@@ -56,7 +56,7 @@ const DatasetPage = () => {
       | "labelClassesAggregates"
       | "labelsAggregates"
     >[];
-  }>(GET_DATASETS_QUERY, {
+  }>(WORKSPACE_DATASETS_PAGE_DATASETS_QUERY, {
     variables: { where: { workspaceSlug } },
     skip: workspaceSlug == null,
   });
