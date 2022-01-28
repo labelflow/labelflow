@@ -2,7 +2,6 @@ import { gql, useQuery } from "@apollo/client";
 import { BreadcrumbLink, Center, Skeleton, Text } from "@chakra-ui/react";
 import { GetServerSideProps } from "next";
 import NextLink from "next/link";
-import { useRouter } from "next/router";
 import React from "react";
 import { resetServerContext } from "react-beautiful-dnd";
 import { useErrorHandler } from "react-error-boundary";
@@ -18,10 +17,11 @@ import { NavLogo } from "../../../../../components/logo/nav-logo";
 import { Meta } from "../../../../../components/meta";
 import { WelcomeModal } from "../../../../../components/welcome-manager";
 import { WorkspaceSwitcher } from "../../../../../components/workspace-switcher";
+import { useDataset } from "../../../../../hooks";
 import { Error404Content } from "../../../../404";
 
-const datasetNameQuery = gql`
-  query getDatasetName($slug: String!, $workspaceSlug: String!) {
+const DATASET_NAME_QUERY = gql`
+  query GetDatasetNameQuery($slug: String!, $workspaceSlug: String!) {
     dataset(where: { slugs: { slug: $slug, workspaceSlug: $workspaceSlug } }) {
       id
       name
@@ -30,9 +30,7 @@ const datasetNameQuery = gql`
 `;
 
 const DatasetClassesPage = () => {
-  const router = useRouter();
-  const datasetSlug = router?.query?.datasetSlug as string;
-  const workspaceSlug = router?.query?.workspaceSlug as string;
+  const { workspaceSlug, datasetSlug } = useDataset();
 
   const {
     data: datasetResult,
@@ -40,7 +38,7 @@ const DatasetClassesPage = () => {
     loading,
   } = useQuery<{
     dataset: { id: string; name: string };
-  }>(datasetNameQuery, {
+  }>(DATASET_NAME_QUERY, {
     variables: {
       slug: datasetSlug,
       workspaceSlug,

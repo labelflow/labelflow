@@ -7,9 +7,13 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { isEmpty } from "lodash/fp";
-import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
-import { getDatasetBySlugQuery } from "../../../datasets/datasets.query";
+import {
+  GetDatasetBySlugQuery,
+  GetDatasetBySlugQueryVariables,
+} from "../../../../graphql-types/GetDatasetBySlugQuery";
+import { GET_DATASET_BY_SLUG_QUERY } from "../../../datasets/datasets.query";
+import { useDataset } from "../../../../hooks";
 import { DroppedUrl, UploadStatuses } from "../types";
 import { importUrls } from "./import-urls";
 import { UrlList } from "./url-list";
@@ -26,8 +30,7 @@ export const ImportImagesModalUrlList = ({
 }) => {
   const apolloClient = useApolloClient();
 
-  const router = useRouter();
-  const { datasetSlug, workspaceSlug } = router?.query;
+  const { workspaceSlug, datasetSlug } = useDataset();
 
   /*
    * We need a state with the accepted and reject urls to be able to reset the list
@@ -37,9 +40,12 @@ export const ImportImagesModalUrlList = ({
   const [urls, setUrls] = useState<Array<DroppedUrl>>([]);
   const [uploadStatuses, setUploadStatuses] = useState<UploadStatuses>({});
 
-  const { data: datasetResult } = useQuery(getDatasetBySlugQuery, {
-    variables: { slug: datasetSlug, workspaceSlug },
-    skip: typeof datasetSlug !== "string" || typeof workspaceSlug !== "string",
+  const { data: datasetResult } = useQuery<
+    GetDatasetBySlugQuery,
+    GetDatasetBySlugQueryVariables
+  >(GET_DATASET_BY_SLUG_QUERY, {
+    variables: { workspaceSlug, slug: datasetSlug },
+    skip: isEmpty(workspaceSlug) || isEmpty(datasetSlug),
   });
 
   const datasetId = datasetResult?.dataset.id;

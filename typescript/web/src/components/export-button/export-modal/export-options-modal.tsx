@@ -13,12 +13,13 @@ import {
   Switch,
   Text,
 } from "@chakra-ui/react";
-import { ExportOptions } from "@labelflow/graphql-types";
 import { useCallback, useState } from "react";
+import { isNil } from "lodash";
 import { trackEvent } from "../../../utils/google-analytics";
 import { useExportModal } from "./export-modal.context";
 import { defaultOptions, Format, formatsOptionsInformation } from "./formats";
 import { exportDataset } from "./export-dataset";
+import { ExportOptions } from "../../../graphql-types/globalTypes";
 
 const OptionLine = ({
   header,
@@ -64,15 +65,17 @@ export const ExportOptionsModal = () => {
     formatsOptionsInformation[exportFormatLowerCase];
   const optionsOfFormat = exportOptions[exportFormatLowerCase];
   const exportFunction = useCallback(
-    async (options: ExportOptions) =>
-      await exportDataset({
+    async (options: ExportOptions) => {
+      if (isNil(datasetId)) return await Promise.resolve();
+      return await exportDataset({
         datasetId,
         datasetSlug,
         setIsExportRunning,
         client,
         format: exportFormat,
         options,
-      }),
+      });
+    },
     [client, datasetId, datasetSlug, exportFormat, setIsExportRunning]
   );
 

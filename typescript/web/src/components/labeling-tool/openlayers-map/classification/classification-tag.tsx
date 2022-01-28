@@ -1,6 +1,5 @@
 import { ApolloClient } from "@apollo/client";
 import { Tag, TagCloseButton, TagLabel } from "@chakra-ui/react";
-import { Label, LabelClass } from "@labelflow/graphql-types";
 import React, { useEffect, useState } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 import { useLabelingStore } from "../../../../connectors/labeling-state";
@@ -9,9 +8,10 @@ import { createDeleteLabelEffect } from "../../../../connectors/undo-store/effec
 import { noneClassColor } from "../../../../theme";
 import { keymap } from "../../../../keymap";
 import { ClassSelectionPopover } from "../../../class-selection-popover";
+import { GetImageLabelsQuery_image_labels } from "../../../../graphql-types/GetImageLabelsQuery";
+import { GetLabelClassesOfDatasetQuery_dataset_labelClasses } from "../../../../graphql-types/GetLabelClassesOfDatasetQuery";
 
-// The class selection menu doesn't need all the attributes of the label class
-export type LabelClassItem = Omit<LabelClass, "dataset" | "labelsAggregates">;
+export type LabelClassItem = GetLabelClassesOfDatasetQuery_dataset_labelClasses;
 
 export const ClassificationTag = ({
   label,
@@ -22,10 +22,10 @@ export const ClassificationTag = ({
   onSelectedClassChange,
   client,
 }: {
-  label: Label;
+  label: GetImageLabelsQuery_image_labels;
   onSelectedClassChange: (item: LabelClassItem | null) => void;
   createNewClass: (name: string) => void;
-  labelClasses: LabelClassItem[];
+  labelClasses: GetLabelClassesOfDatasetQuery_dataset_labelClasses[];
   selectedLabelId: string | null;
   setSelectedLabelId: (labelId: string | null) => void;
   client: ApolloClient<object>;

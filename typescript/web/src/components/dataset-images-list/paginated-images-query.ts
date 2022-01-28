@@ -8,8 +8,8 @@ import { canonicalStringify } from "@apollo/client/cache";
 import { useCallback } from "react";
 import { ImagesQueryCache } from "../../connectors/apollo-client/cache-config";
 
-export const paginatedImagesQuery = gql`
-  query paginatedImagesQuery($datasetId: ID!, $first: Int!, $skip: Int!) {
+export const PAGINATED_IMAGES_QUERY = gql`
+  query PaginatedImagesQuery($datasetId: ID!, $first: Int!, $skip: Int!) {
     images(where: { datasetId: $datasetId }, first: $first, skip: $skip) {
       id
       name
@@ -39,7 +39,8 @@ export const flushPaginatedImagesCache = async (
 
 export const useFlushPaginatedImagesCache = (datasetId: string) => {
   const client = useApolloClient();
-  return useCallback(() => {
-    flushPaginatedImagesCache(client, datasetId);
-  }, [client, datasetId]);
+  return useCallback(
+    () => flushPaginatedImagesCache(client, datasetId),
+    [client, datasetId]
+  );
 };

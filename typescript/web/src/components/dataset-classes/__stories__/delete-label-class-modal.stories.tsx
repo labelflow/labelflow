@@ -1,16 +1,14 @@
-import { MockedProvider as ApolloProvider } from "@apollo/client/testing";
 import React from "react";
-import { chakraDecorator } from "../../../utils/chakra-decorator";
-import { TestComponent } from "../delete-label-class-modal.fixtures";
-import { GRAPHQL_MOCKS } from "../dataset-classes.fixtures";
+import { chakraDecorator } from "../../../utils/stories/chakra-decorator";
+import { getApolloMockDecorator } from "../../../utils/stories/apollo-mock-decorator";
+import {
+  APOLLO_MOCKS,
+  TestComponent,
+} from "../delete-label-class-modal.fixtures";
 
 export default {
   title: "web/Dataset classes/Delete label class modal",
-  decorators: [chakraDecorator],
+  decorators: [chakraDecorator, getApolloMockDecorator(APOLLO_MOCKS)],
 };
 
-export const Default = () => (
-  <ApolloProvider mocks={GRAPHQL_MOCKS}>
-    <TestComponent />
-  </ApolloProvider>
-);
+export const Default = () => <TestComponent />;

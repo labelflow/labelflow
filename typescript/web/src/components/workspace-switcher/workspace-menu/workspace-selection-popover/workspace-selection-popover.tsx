@@ -18,13 +18,12 @@ import { IoSearch } from "react-icons/io5";
 import { RiCloseCircleFill } from "react-icons/ri";
 import { useCombobox, UseComboboxStateChange } from "downshift";
 
-import { Workspace } from "@labelflow/graphql-types";
 import { WorkspaceListItem } from "./workspace-list-item";
+import { GetWorkspacesQuery_workspaces } from "../../../../graphql-types/GetWorkspacesQuery";
 
 type CreateWorkspaceInput = { name: string; type: string };
 
-// The popover doesn't need all the attributes of the label workspace
-export type WorkspaceItem = Pick<Workspace, "slug" | "name" | "id">;
+export type WorkspaceItem = GetWorkspacesQuery_workspaces;
 
 const MagnifierIcon = chakra(IoSearch);
 const CloseCircleIcon = chakra(RiCloseCircleFill);

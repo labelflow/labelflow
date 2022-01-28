@@ -1,7 +1,7 @@
 import { gql, useQuery } from "@apollo/client";
 import { Box, Text } from "@chakra-ui/react";
+import { isEmpty } from "lodash/fp";
 import { GetServerSideProps } from "next";
-import { useRouter } from "next/router";
 import React from "react";
 import { AuthManager } from "../../../components/auth-manager";
 import { CookieBanner } from "../../../components/cookie-banner";
@@ -13,9 +13,14 @@ import { WorkspaceSettings } from "../../../components/settings/workspace";
 import { LayoutSpinner } from "../../../components/spinner";
 import { WelcomeModal } from "../../../components/welcome-manager";
 import { WorkspaceSwitcher } from "../../../components/workspace-switcher";
+import {
+  GetWorkspaceDetailsQuery,
+  GetWorkspaceDetailsQueryVariables,
+} from "../../../graphql-types/GetWorkspaceDetailsQuery";
+import { useWorkspace } from "../../../hooks";
 
-const getWorkspaceDetailsQuery = gql`
-  query getWorkspaceDetails($workspaceSlug: String) {
+const GET_WORKSPACE_DETAILS_QUERY = gql`
+  query GetWorkspaceDetailsQuery($workspaceSlug: String) {
     workspace(where: { slug: $workspaceSlug }) {
       id
       plan
@@ -28,15 +33,18 @@ const getWorkspaceDetailsQuery = gql`
 `;
 
 const WorkspaceSettingsPage = () => {
-  const workspaceSlug = useRouter().query?.workspaceSlug as string;
+  const { workspaceSlug } = useWorkspace();
 
   const {
     data: getWorkspaceDetailsData,
     previousData: getWorkspaceDetailsPreviousData,
-  } = useQuery(getWorkspaceDetailsQuery, {
-    variables: { workspaceSlug },
-    skip: workspaceSlug == null,
-  });
+  } = useQuery<GetWorkspaceDetailsQuery, GetWorkspaceDetailsQueryVariables>(
+    GET_WORKSPACE_DETAILS_QUERY,
+    {
+      variables: { workspaceSlug },
+      skip: isEmpty(workspaceSlug),
+    }
+  );
 
   const getWorkspaceDetailsFinalData =
     getWorkspaceDetailsData?.workspace ??

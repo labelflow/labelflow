@@ -1,7 +1,9 @@
-import { Workspace } from "@labelflow/graphql-types";
 import { createContext, useContext } from "react";
+import { GetWorkspaceDetailsQuery_workspace } from "../../../graphql-types/GetWorkspaceDetailsQuery";
 
 export const WorkspaceSettingsContext =
-  createContext<Workspace | undefined>(undefined);
+  createContext<GetWorkspaceDetailsQuery_workspace>(
+    {} as GetWorkspaceDetailsQuery_workspace
+  );
 
 export const useWorkspaceSettings = () => useContext(WorkspaceSettingsContext);

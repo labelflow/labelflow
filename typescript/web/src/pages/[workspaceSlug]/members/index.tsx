@@ -1,6 +1,6 @@
 import { gql, useMutation, useQuery } from "@apollo/client";
 import { Text } from "@chakra-ui/react";
-import { useRouter } from "next/router";
+import { isEmpty } from "lodash/fp";
 import { AuthManager } from "../../../components/auth-manager";
 import { CookieBanner } from "../../../components/cookie-banner";
 import { Layout } from "../../../components/layout";
@@ -11,9 +11,14 @@ import { Meta } from "../../../components/meta";
 import { LayoutSpinner } from "../../../components/spinner";
 import { WelcomeModal } from "../../../components/welcome-manager";
 import { WorkspaceSwitcher } from "../../../components/workspace-switcher";
+import {
+  GetMembershipsMembersQuery,
+  GetMembershipsMembersQueryVariables,
+} from "../../../graphql-types/GetMembershipsMembersQuery";
+import { useDatasetImage } from "../../../hooks/use-dataset-image";
 
-const membershipsQuery = gql`
-  query getMembershipsMembers($workspaceSlug: String) {
+const GET_MEMBERSHIPS_MEMBERS_QUERY = gql`
+  query GetMembershipsMembersQuery($workspaceSlug: String) {
     memberships(where: { workspaceSlug: $workspaceSlug }) {
       id
       role
@@ -34,46 +39,49 @@ const membershipsQuery = gql`
   }
 `;
 
-const deleteMembershipMutation = gql`
-  mutation deleteMembership($id: ID!) {
+const DELETE_MEMBERSHIP_MUTATION = gql`
+  mutation DeleteMembershipMutation($id: ID!) {
     deleteMembership(where: { id: $id }) {
       id
     }
   }
 `;
 
-const updateMembershipMutation = gql`
-  mutation updateMembership($id: ID!, $data: MembershipUpdateInput!) {
+const UPDATE_MEMBERSHIP_MUTATION = gql`
+  mutation UpdateMembershipMutation($id: ID!, $data: MembershipUpdateInput!) {
     updateMembership(where: { id: $id }, data: $data) {
       id
     }
   }
 `;
 
-const inviteMemberMutation = gql`
-  mutation inviteMember($where: InviteMemberInput!) {
+const INVITE_MEMBER_MUTATION = gql`
+  mutation InviteMemberMutation($where: InviteMemberInput!) {
     inviteMember(where: $where)
   }
 `;
 
 const WorkspaceMembersPage = () => {
-  const workspaceSlug = useRouter().query?.workspaceSlug as string;
+  const { workspaceSlug } = useDatasetImage();
 
-  const { data: membershipsData } = useQuery(membershipsQuery, {
+  const { data: membershipsData } = useQuery<
+    GetMembershipsMembersQuery,
+    GetMembershipsMembersQueryVariables
+  >(GET_MEMBERSHIPS_MEMBERS_QUERY, {
     variables: { workspaceSlug },
-    skip: workspaceSlug == null,
+    skip: isEmpty(workspaceSlug),
   });
 
-  const [deleteMembership] = useMutation(deleteMembershipMutation, {
-    refetchQueries: ["getMembershipsMembers"],
+  const [deleteMembership] = useMutation(DELETE_MEMBERSHIP_MUTATION, {
+    refetchQueries: [GET_MEMBERSHIPS_MEMBERS_QUERY],
   });
 
-  const [updateMembership] = useMutation(updateMembershipMutation, {
-    refetchQueries: ["getMembershipsMembers"],
+  const [updateMembership] = useMutation(UPDATE_MEMBERSHIP_MUTATION, {
+    refetchQueries: [GET_MEMBERSHIPS_MEMBERS_QUERY],
   });
 
-  const [inviteMember] = useMutation(inviteMemberMutation, {
-    refetchQueries: ["getMembershipsMembers"],
+  const [inviteMember] = useMutation(INVITE_MEMBER_MUTATION, {
+    refetchQueries: [GET_MEMBERSHIPS_MEMBERS_QUERY],
   });
 
   return (

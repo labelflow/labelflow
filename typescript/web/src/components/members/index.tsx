@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { Heading, Box, Center } from "@chakra-ui/react";
-import { InvitationResult, Membership } from "@labelflow/graphql-types";
 import { TableActions } from "./table-actions";
 import { TableContent } from "./table-content";
 import { RemoveMembership, ChangeMembershipRole, InviteMember } from "./types";
+import { InvitationResult } from "../../graphql-types/globalTypes";
+import { GetMembershipsMembersQuery_memberships } from "../../graphql-types/GetMembershipsMembersQuery";
 
 export const Members = ({
   memberships,
@@ -11,7 +12,7 @@ export const Members = ({
   removeMembership,
   inviteMember = async () => InvitationResult.Sent,
 }: {
-  memberships: Membership[];
+  memberships: GetMembershipsMembersQuery_memberships[];
   changeMembershipRole: ChangeMembershipRole;
   removeMembership: RemoveMembership;
   inviteMember?: InviteMember;

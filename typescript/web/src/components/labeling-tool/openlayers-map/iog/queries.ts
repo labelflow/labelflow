@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client";
 
-export const imageQuery = gql`
-  query getImage($id: ID!) {
+export const IMAGE_QUERY = gql`
+  query GetImageQuery($id: ID!) {
     image(where: { id: $id }) {
       id
       url
@@ -11,8 +11,8 @@ export const imageQuery = gql`
   }
 `;
 
-export const labelQuery = gql`
-  query getLabelIdSmartTool($id: ID!) {
+export const LABEL_QUERY = gql`
+  query GetLabelIdSmartToolQuery($id: ID!) {
     label(where: { id: $id }) {
       id
       smartToolInput

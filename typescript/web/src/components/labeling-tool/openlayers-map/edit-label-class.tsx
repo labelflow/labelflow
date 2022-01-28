@@ -1,7 +1,6 @@
 import { useApolloClient, useQuery } from "@apollo/client";
-import { Label, LabelType } from "@labelflow/graphql-types";
 import { getNextClassColor, LABEL_CLASS_COLOR_PALETTE } from "@labelflow/utils";
-import { useRouter } from "next/router";
+import { isEmpty } from "lodash/fp";
 import GeoJSON, { GeoJSONPolygon } from "ol/format/GeoJSON";
 import { Polygon } from "ol/geom";
 import { forwardRef, useCallback } from "react";
@@ -13,13 +12,19 @@ import { createCreateLabelClassAndCreateLabelEffect } from "../../../connectors/
 import { createCreateLabelClassAndUpdateLabelEffect } from "../../../connectors/undo-store/effects/create-label-class-and-update-label";
 import { createDeleteLabelEffect } from "../../../connectors/undo-store/effects/delete-label";
 import { createUpdateLabelClassOfLabelEffect } from "../../../connectors/undo-store/effects/update-label-class-of-label";
+import {
+  GetImageLabelsQuery,
+  GetImageLabelsQueryVariables,
+} from "../../../graphql-types/GetImageLabelsQuery";
+import { LabelType } from "../../../graphql-types/globalTypes";
+import { useDatasetImage } from "../../../hooks/use-dataset-image";
 import { keymap } from "../../../keymap";
 import { ClassSelectionPopover } from "../../class-selection-popover";
 import { LabelClassItem } from "../../class-selection-popover/class-selection-popover";
 import {
-  getImageLabelsQuery,
-  getLabelClassesOfDatasetQuery,
-  getLabelQuery,
+  GET_IMAGE_LABELS_QUERY,
+  GET_LABEL_CLASSES_OF_DATASET_QUERY,
+  GET_LABEL_QUERY,
 } from "./queries";
 
 export const EditLabelClass = forwardRef<
@@ -29,15 +34,11 @@ export const EditLabelClass = forwardRef<
     onClose: () => void;
   }
 >(({ isOpen, onClose }, ref) => {
-  const router = useRouter();
-  const imageId = router?.query.imageId as string;
-  const datasetSlug = router?.query.datasetSlug as string;
-  const workspaceSlug = router?.query.workspaceSlug as string;
-
+  const { workspaceSlug, datasetSlug, imageId } = useDatasetImage();
   const client = useApolloClient();
-  const { data } = useQuery(getLabelClassesOfDatasetQuery, {
+  const { data } = useQuery(GET_LABEL_CLASSES_OF_DATASET_QUERY, {
     variables: { slug: datasetSlug, workspaceSlug },
-    skip: !datasetSlug || !workspaceSlug,
+    skip: isEmpty(datasetSlug) || isEmpty(workspaceSlug),
   });
   const datasetId = data?.dataset.id;
   const { perform } = useUndoStore();
@@ -50,7 +51,7 @@ export const EditLabelClass = forwardRef<
     (state) => state.isContextMenuOpen
   );
   const selectedTool = useLabelingStore((state) => state.selectedTool);
-  const { data: selectedLabelData } = useQuery(getLabelQuery, {
+  const { data: selectedLabelData } = useQuery(GET_LABEL_QUERY, {
     variables: { id: selectedLabelId },
     skip: selectedLabelId == null,
   });
@@ -84,7 +85,7 @@ export const EditLabelClass = forwardRef<
       if (selectedTool === Tools.CLASSIFICATION && imageId) {
         // Create a new classification label of a new class
         const { data: imageLabelsData } = await client.query({
-          query: getImageLabelsQuery,
+          query: GET_IMAGE_LABELS_QUERY,
           variables: { imageId },
         });
         const geometry = new GeoJSON().writeGeometryObject(
@@ -134,14 +135,17 @@ export const EditLabelClass = forwardRef<
       if (selectedLabelId != null) {
         if (selectedLabelData?.label?.type === LabelType.Classification) {
           // Change the class of an existing classification label to an existing class
-          const { data: imageLabelsData } = await client.query({
-            query: getImageLabelsQuery,
+          const { data: imageLabelsData } = await client.query<
+            GetImageLabelsQuery,
+            GetImageLabelsQueryVariables
+          >({
+            query: GET_IMAGE_LABELS_QUERY,
             variables: { imageId },
           });
 
           const classificationsOfThisClass =
             imageLabelsData.image.labels.filter(
-              (label: Label) =>
+              (label) =>
                 label.labelClass?.id === item?.id &&
                 label.type === LabelType.Classification
             );
@@ -174,13 +178,16 @@ export const EditLabelClass = forwardRef<
 
       if (selectedTool === Tools.CLASSIFICATION && imageId) {
         // Add a classification label of an existing class
-        const { data: imageLabelsData } = await client.query({
-          query: getImageLabelsQuery,
+        const { data: imageLabelsData } = await client.query<
+          GetImageLabelsQuery,
+          GetImageLabelsQueryVariables
+        >({
+          query: GET_IMAGE_LABELS_QUERY,
           variables: { imageId },
         });
 
         const classificationsOfThisClass = imageLabelsData.image.labels.filter(
-          (label: Label) =>
+          (label) =>
             label.labelClass?.id === item?.id &&
             label.type === LabelType.Classification
         );

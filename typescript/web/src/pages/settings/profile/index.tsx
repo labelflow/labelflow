@@ -8,10 +8,10 @@ import { WelcomeModal } from "../../../components/welcome-manager";
 import { CookieBanner } from "../../../components/cookie-banner";
 import { NavLogo } from "../../../components/logo/nav-logo";
 import { UserSettings } from "../../../components/settings/user";
-import { userQuery } from "../../../utils/shared-queries";
+import { USER_PROFILE_QUERY } from "../../../shared-queries/user-profile.query";
 
-const updateUserQuery = gql`
-  mutation updateUser($id: ID!, $data: UserUpdateInput!) {
+const UPDATE_USER_MUTATION = gql`
+  mutation UpdateUserMutation($id: ID!, $data: UserUpdateInput!) {
     updateUser(where: { id: $id }, data: $data) {
       id
     }
@@ -22,13 +22,13 @@ const ProfilePage = () => {
   const session = useSession({ required: false });
   const userInfoFromSession = session?.data?.user;
 
-  const { data: userData, loading } = useQuery(userQuery, {
+  const { data: userData, loading } = useQuery(USER_PROFILE_QUERY, {
     variables: { id: userInfoFromSession?.id },
     skip: userInfoFromSession?.id == null,
   });
   const user = userData?.user;
-  const [updateUser] = useMutation(updateUserQuery, {
-    refetchQueries: ["getUserProfileInfo"],
+  const [updateUser] = useMutation(UPDATE_USER_MUTATION, {
+    refetchQueries: ["UserProfileQuery"],
   });
   const changeUserName = useCallback(
     (name: string) => {

@@ -1,13 +1,13 @@
-import { useState } from "react";
 import { BreadcrumbLink, Text } from "@chakra-ui/react";
 import NextLink from "next/link";
-import { WorkspaceMenu } from "../workspace-menu";
-import { chakraDecorator } from "../../../../utils/chakra-decorator";
-import { WorkspaceItem } from "../workspace-selection-popover";
+import { useState } from "react";
+import { chakraDecorator, storybookTitle } from "../../../../utils/stories";
 import { ResponsiveBreadcrumbs } from "../../../layout/top-bar/breadcrumbs/responsive-breadcrumbs";
+import { WorkspaceMenu } from "../workspace-menu";
+import { WorkspaceItem } from "../workspace-selection-popover";
 
 export default {
-  title: "web/Workspace Switcher/Workspace menu in breadcrumbs",
+  title: storybookTitle("Workspace Switcher", WorkspaceMenu),
   decorators: [chakraDecorator],
 };
 

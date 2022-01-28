@@ -1,6 +1,5 @@
 import { useApolloClient, useQuery } from "@apollo/client";
 import { useToast } from "@chakra-ui/react";
-import { LabelType } from "@labelflow/graphql-types";
 import GeoJSON, { GeoJSONPolygon } from "ol/format/GeoJSON";
 import GeometryType from "ol/geom/GeometryType";
 import { Draw as OlDraw } from "ol/interaction";
@@ -18,6 +17,7 @@ import { createCreateLabelEffect } from "../../../../connectors/undo-store/effec
 import { noneClassColor } from "../../../../theme";
 import { keymap } from "../../../../keymap";
 import { labelClassQuery } from "../queries";
+import { LabelType } from "../../../../graphql-types/globalTypes";
 
 const geometryFunction = createBox();
 

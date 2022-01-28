@@ -1,9 +1,8 @@
 import { ApolloProvider, gql, useApolloClient, useQuery } from "@apollo/client";
 import { Box, ThemeProvider } from "@chakra-ui/react";
-import type { Image } from "@labelflow/graphql-types";
 import { Map } from "@labelflow/react-openlayers-fiber";
 import * as Sentry from "@sentry/nextjs";
-import { isEmpty } from "lodash/fp";
+import { isEmpty, isNil } from "lodash/fp";
 import memoize from "mem";
 import { RouterContext } from "next/dist/shared/lib/router-context";
 import { useRouter } from "next/router";
@@ -22,6 +21,12 @@ import {
   Tools,
   useLabelingStore,
 } from "../../../connectors/labeling-state";
+import {
+  ImageQuery,
+  ImageQueryVariables,
+  ImageQuery_image,
+} from "../../../graphql-types/ImageQuery";
+import { useDatasetImage } from "../../../hooks/use-dataset-image";
 import { useImagePreFetching } from "../../../hooks/use-image-pre-fetching";
 import { theme } from "../../../theme";
 import { BoolParam } from "../../../utils/query-param-bool";
@@ -53,32 +58,27 @@ const standardProjection = new Projection({
 /*
  * Memoize openlayers parameters that we pass to the open layers components
  */
-const getMemoizedProperties = memoize(
-  (
-    _imageId,
-    image: Pick<Image, "id" | "url" | "width" | "height"> | null | undefined
-  ) => {
-    if (image == null) return {};
-    const { url, width, height, id } = image;
-    const size: Size = [width, height];
-    const extent: Extent = [0, 0, width, height];
-    const center = getCenter(extent);
-    const projection = standardProjection;
-    // We could also use an image-specific projection, as in openlayers examples:
-    // It seems that we don't need it for now, but we might find that having a single global projection
-    /// creates problem later on. So for now let's keep this option commented
-    //     const projection = new Projection({
-    //       code: imageId,
-    //       units: "pixels",
-    //       extent,
-    //     });
+const getMemoizedProperties = memoize((_imageId, image?: ImageQuery_image) => {
+  if (isNil(image)) return {};
+  const { url, width, height, id } = image;
+  const size: Size = [width, height];
+  const extent: Extent = [0, 0, width, height];
+  const center = getCenter(extent);
+  const projection = standardProjection;
+  // We could also use an image-specific projection, as in openlayers examples:
+  // It seems that we don't need it for now, but we might find that having a single global projection
+  /// creates problem later on. So for now let's keep this option commented
+  //     const projection = new Projection({
+  //       code: imageId,
+  //       units: "pixels",
+  //       extent,
+  //     });
 
-    return { id, url, width, height, size, extent, center, projection };
-  }
-);
+  return { id, url, width, height, size, extent, center, projection };
+});
 
-const imageQuery = gql`
-  query image($id: ID!) {
+const IMAGE_QUERY = gql`
+  query ImageQuery($id: ID!) {
     image(where: { id: $id }) {
       id
       width
@@ -95,7 +95,7 @@ export const OpenlayersMap = () => {
   const viewRef = useRef<OlView | null>(null);
   const sourceVectorBoxesRef = useRef<OlSourceVector<Geometry> | null>(null);
   const router = useRouter();
-  const { imageId } = router?.query;
+  const { imageId } = useDatasetImage();
   const isContextMenuOpen = useLabelingStore(
     (state) => state.isContextMenuOpen
   );
@@ -120,9 +120,10 @@ export const OpenlayersMap = () => {
   const zoomFactor = useLabelingStore((state) => state.zoomFactor);
 
   const [, setImageLoadError] = useQueryParam("image-load-error", BoolParam);
-  const { data: imageData, previousData: imageDataPrevious } = useQuery<{
-    image: Pick<Image, "id" | "url" | "width" | "height">;
-  }>(imageQuery, {
+  const { data: imageData, previousData: imageDataPrevious } = useQuery<
+    ImageQuery,
+    ImageQueryVariables
+  >(IMAGE_QUERY, {
     variables: { id: imageId },
     skip: !imageId,
   });

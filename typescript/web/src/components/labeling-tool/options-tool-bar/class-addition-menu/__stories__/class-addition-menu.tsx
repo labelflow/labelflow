@@ -1,11 +1,10 @@
+import { Button, Flex, HStack } from "@chakra-ui/react";
 import { useState } from "react";
-
-import { HStack, Button, Flex } from "@chakra-ui/react";
+import { chakraDecorator, storybookTitle } from "../../../../../utils/stories";
 import { ClassAdditionMenu, LabelClassItem } from "../class-addition-menu";
-import { chakraDecorator } from "../../../../../utils/chakra-decorator";
 
 export default {
-  title: "web/Class addition menu",
+  title: storybookTitle(ClassAdditionMenu),
   decorators: [chakraDecorator],
 };
 
@@ -22,48 +21,28 @@ const Template = (args: any) => (
 const labelClasses: LabelClassItem[] = [
   {
     id: "coaisndoiasndi0",
-    index: 0,
-    createdAt: "today",
-    updatedAt: "today",
     name: "SuperUltraLongNameOIANSOINASOINAOSINASOINAOINS",
     color: "#6B7280",
-    labels: [],
   },
   {
     id: "coaisndoiasndi1",
-    index: 1,
-    createdAt: "today",
-    updatedAt: "today",
     name: "Dog",
     color: "#EF4444 ",
-    labels: [],
   },
   {
     id: "coaisndoiasndi2",
-    index: 2,
-    createdAt: "today",
-    updatedAt: "today",
     name: "Car",
     color: "#F59E0B",
-    labels: [],
   },
   {
     id: "coaisndoiasndi3",
-    index: 3,
-    createdAt: "today",
-    updatedAt: "today",
     name: "Cycle",
     color: "#10B981",
-    labels: [],
   },
   {
     id: "coaisndoiasndi4",
-    index: 4,
-    createdAt: "today",
-    updatedAt: "today",
     name: "Plane",
     color: "#3B82F6",
-    labels: [],
   },
 ];
 

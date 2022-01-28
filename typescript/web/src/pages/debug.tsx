@@ -26,14 +26,14 @@ import { AuthManager } from "../components/auth-manager";
 import { CookieBanner } from "../components/cookie-banner";
 import { NavLogo } from "../components/logo/nav-logo";
 
-export const debugQuery = gql`
-  query getDebug {
+export const DEBUG_QUERY = gql`
+  query GetDebugQuery {
     debug
   }
 `;
 
 const DebugPage = () => {
-  const { data: debugResult } = useQuery<{ debug: any }>(debugQuery);
+  const { data: debugResult } = useQuery<{ debug: any }>(DEBUG_QUERY);
 
   return (
     <>

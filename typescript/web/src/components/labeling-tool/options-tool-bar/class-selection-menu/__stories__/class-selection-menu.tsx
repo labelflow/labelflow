@@ -1,11 +1,10 @@
+import { Button, Flex, HStack } from "@chakra-ui/react";
 import { useState } from "react";
-
-import { HStack, Button, Flex } from "@chakra-ui/react";
+import { chakraDecorator, storybookTitle } from "../../../../../utils/stories";
 import { ClassSelectionMenu, LabelClassItem } from "../class-selection-menu";
-import { chakraDecorator } from "../../../../../utils/chakra-decorator";
 
 export default {
-  title: "web/Class selection menu",
+  title: storybookTitle(ClassSelectionMenu),
   decorators: [chakraDecorator],
 };
 

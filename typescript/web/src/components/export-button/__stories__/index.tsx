@@ -1,12 +1,14 @@
-import { chakraDecorator } from "../../../utils/chakra-decorator";
-import { apolloDecorator } from "../../../utils/apollo-decorator";
-import { queryParamsDecorator } from "../../../utils/query-params-decorator";
-
 import { ExportButton } from "..";
+import {
+  apolloMockDecorator,
+  chakraDecorator,
+  queryParamsDecorator,
+  storybookTitle,
+} from "../../../utils/stories";
 
 export default {
-  title: "web/Export Button",
-  decorators: [chakraDecorator, apolloDecorator, queryParamsDecorator],
+  title: storybookTitle(ExportButton),
+  decorators: [chakraDecorator, apolloMockDecorator, queryParamsDecorator],
 };
 
 export const WithButton = () => {

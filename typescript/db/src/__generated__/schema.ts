@@ -495,7 +495,6 @@ export const typeDefs = [
     id: ID!
     createdAt: DateTime!
     updatedAt: DateTime!
-    deletedAt: DateTime!
     name: String!
     slug: String!
     image: String

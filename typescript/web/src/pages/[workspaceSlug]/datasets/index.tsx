@@ -1,11 +1,10 @@
 import React, { useCallback } from "react";
-import { gql, useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client";
 
 import { Flex, Text } from "@chakra-ui/react";
 
 import { useQueryParam } from "use-query-params";
 
-import type { Dataset as DatasetType } from "@labelflow/graphql-types";
 import { useRouter } from "next/router";
 import { Spinner } from "../../../components/spinner";
 import { Meta } from "../../../components/meta";
@@ -24,30 +23,11 @@ import { CookieBanner } from "../../../components/cookie-banner";
 import { WorkspaceTabBar } from "../../../components/layout/tab-bar/workspace-tab-bar";
 import { WorkspaceSwitcher } from "../../../components/workspace-switcher";
 import { NavLogo } from "../../../components/logo/nav-logo";
-
-export const getDatasetsQuery = gql`
-  query getDatasets($where: DatasetWhereInput) {
-    datasets(where: $where) {
-      id
-      name
-      slug
-      images(first: 1) {
-        id
-        url
-        thumbnail500Url
-      }
-      imagesAggregates {
-        totalCount
-      }
-      labelsAggregates {
-        totalCount
-      }
-      labelClassesAggregates {
-        totalCount
-      }
-    }
-  }
-`;
+import { WORKSPACE_DATASETS_PAGE_DATASETS_QUERY } from "../../../shared-queries/workspace-datasets-page.query";
+import {
+  WorkspaceDatasetsPageDatasetsQuery,
+  WorkspaceDatasetsPageDatasetsQueryVariables,
+} from "../../../graphql-types/WorkspaceDatasetsPageDatasetsQuery";
 
 const LoadingCard = () => (
   <DatasetCardBox>
@@ -68,19 +48,16 @@ const DatasetPage = () => {
     isReady,
   } = useRouter();
 
-  const { data: datasetsResult, loading } = useQuery<{
-    datasets: Pick<
-      DatasetType,
-      | "id"
-      | "name"
-      | "slug"
-      | "images"
-      | "imagesAggregates"
-      | "labelClassesAggregates"
-      | "labelsAggregates"
-    >[];
-  }>(getDatasetsQuery, {
-    variables: { where: { workspaceSlug } },
+  const { data: datasetsResult, loading } = useQuery<
+    WorkspaceDatasetsPageDatasetsQuery,
+    WorkspaceDatasetsPageDatasetsQueryVariables
+  >(WORKSPACE_DATASETS_PAGE_DATASETS_QUERY, {
+    variables: {
+      where: {
+        workspaceSlug:
+          typeof workspaceSlug === "string" ? workspaceSlug : workspaceSlug[0],
+      },
+    },
     skip: workspaceSlug == null,
   });
 

@@ -12,7 +12,7 @@
     "bundlewatch": "bundlewatch --config ./bundlewatch.config.js",
     "release": "release-it",
     "release:update": "cd ../release && yarn update",
-    "codegen": "yarn apollo codegen:generate --localSchemaFile=../../data/__generated__/schema.graphql --target=typescript --tagName=gql --includes=\"src/**/*.ts?(x)\" --excludes=\"src/**/__generated__/*.ts\""
+    "codegen": "yarn apollo codegen:generate --localSchemaFile=../../data/__generated__/schema.graphql --target=typescript --tagName=gql --includes=\"src/**/*.ts?(x)\" --no-addTypename --outputFlat src/graphql-types"
   },
   "dependencies": {
     "@apollo/client": "3.4.16",
@@ -100,10 +100,12 @@
     "stripe": "8.181.0",
     "styled-jsx": "4.0.0",
     "swc-loader": "0.1.15",
+    "type-fest": "2.9.0",
     "use-debounce": "7.0.1",
     "use-query-params": "1.2.2",
     "uuid": "8.3.2",
     "valid-url": "1.0.9",
+    "wildcard-mock-link": "2.0.2",
     "workbox-core": "6.2.4",
     "workbox-expiration": "6.2.4",
     "workbox-google-analytics": "6.2.4",
@@ -142,6 +144,7 @@
     "apollo": "2.33.9",
     "auto-changelog": "2.3.0",
     "bundlewatch": "0.3.2",
+    "change-case": "4.1.2",
     "dotenv-cli": "4.0.0",
     "fake-indexeddb": "3.1.2",
     "jest": "26.6.3",

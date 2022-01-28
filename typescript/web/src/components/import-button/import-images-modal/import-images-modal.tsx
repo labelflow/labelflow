@@ -12,8 +12,9 @@ import { useQueryParam, StringParam, withDefault } from "use-query-params";
 import { useApolloClient } from "@apollo/client";
 import { ImportImagesModalDropzone } from "./modal-dropzone/modal-dropzone";
 import { ImportImagesModalUrlList } from "./modal-url-list/modal-url-list";
-import { datasetDataQuery } from "../../../pages/[workspaceSlug]/datasets/[datasetSlug]/images";
-import { getDatasetsQuery } from "../../../pages/[workspaceSlug]/datasets";
+import { DATASET_IMAGES_PAGE_DATASET_QUERY } from "../../../shared-queries/dataset-images-page.query";
+import { WORKSPACE_DATASETS_PAGE_DATASETS_QUERY } from "../../../shared-queries/workspace-datasets-page.query";
+import { useDataset } from "../../../hooks";
 
 export const ImportImagesModal = ({
   isOpen = false,
@@ -23,8 +24,8 @@ export const ImportImagesModal = ({
   onClose?: () => void;
 }) => {
   const client = useApolloClient();
-  const router = useRouter();
-  const { datasetSlug, workspaceSlug } = router?.query;
+  const { isReady } = useRouter();
+  const { datasetSlug, workspaceSlug } = useDataset();
 
   const [isCloseable, setCloseable] = useState(true);
   const [hasUploaded, setHasUploaded] = useState(false);
@@ -34,24 +35,27 @@ export const ImportImagesModal = ({
   );
 
   useEffect(() => {
-    if (router?.isReady && !isOpen) {
+    if (isReady && !isOpen) {
       setMode(undefined, "replaceIn");
     }
-  }, [isOpen, router?.isReady]);
+  }, [isOpen, isReady]);
 
   useEffect(() => {
     // Manually refetch
     if (hasUploaded) {
       client.query({
-        query: datasetDataQuery,
+        query: DATASET_IMAGES_PAGE_DATASET_QUERY,
         variables: {
           slug: datasetSlug,
           workspaceSlug,
         },
         fetchPolicy: "network-only",
       });
-      client.query({ query: getDatasetsQuery, fetchPolicy: "network-only" });
-      client.refetchQueries({ include: ["paginatedImagesQuery"] });
+      client.query({
+        query: WORKSPACE_DATASETS_PAGE_DATASETS_QUERY,
+        fetchPolicy: "network-only",
+      });
+      client.refetchQueries({ include: ["PaginatedImagesQuery"] });
     }
   }, [hasUploaded]);
 

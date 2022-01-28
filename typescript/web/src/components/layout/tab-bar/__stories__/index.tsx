@@ -1,9 +1,8 @@
-import { chakraDecorator } from "../../../../utils/chakra-decorator";
-
 import { TabBar, TabBarItem } from "..";
+import { chakraDecorator, storybookTitle } from "../../../../utils/stories";
 
 export default {
-  title: "web/Tab bar",
+  title: storybookTitle(TabBar),
   decorators: [chakraDecorator],
 };
 

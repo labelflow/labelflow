@@ -1,15 +1,16 @@
-import { omit } from "lodash/fp";
-
 import { Box } from "@chakra-ui/react";
-import { chakraDecorator } from "../../../utils/chakra-decorator";
-import { apolloDecorator } from "../../../utils/apollo-decorator";
-import { queryParamsDecorator } from "../../../utils/query-params-decorator";
-
+import { omit } from "lodash/fp";
 import { DatasetCard } from "..";
+import {
+  apolloMockDecorator,
+  chakraDecorator,
+  queryParamsDecorator,
+  storybookTitle,
+} from "../../../utils/stories";
 
 export default {
-  title: "web/Dataset Card",
-  decorators: [chakraDecorator, apolloDecorator, queryParamsDecorator],
+  title: storybookTitle(DatasetCard),
+  decorators: [chakraDecorator, apolloMockDecorator, queryParamsDecorator],
 };
 
 const property = {

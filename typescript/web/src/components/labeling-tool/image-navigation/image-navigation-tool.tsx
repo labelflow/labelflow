@@ -17,6 +17,7 @@ import { useHotkeys } from "react-hotkeys-hook";
 
 import { useImagesNavigation } from "../../../hooks/use-images-navigation";
 import { keymap } from "../../../keymap";
+import { useDataset } from "../../../hooks";
 
 const digitsPerRem = 0.55;
 
@@ -26,9 +27,8 @@ const format = (x: number | undefined | null): string =>
   isNumber(x) && !isNaN(x) && x >= 0 ? `${x + 1}` : `-`;
 
 export const ImageNavigationTool = () => {
+  const { datasetSlug, workspaceSlug } = useDataset();
   const router = useRouter();
-
-  const { datasetSlug, workspaceSlug } = router?.query;
 
   const {
     images,

@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client";
 
-export const getLabelClassesOfDatasetQuery = gql`
-  query getLabelClassesOfDataset($slug: String!, $workspaceSlug: String!) {
+export const GET_LABEL_CLASSES_OF_DATASET_QUERY = gql`
+  query GetLabelClassesOfDatasetQuery($slug: String!, $workspaceSlug: String!) {
     dataset(where: { slugs: { slug: $slug, workspaceSlug: $workspaceSlug } }) {
       id
       labelClasses {
@@ -13,8 +13,8 @@ export const getLabelClassesOfDatasetQuery = gql`
   }
 `;
 
-export const getLabelQuery = gql`
-  query getLabelWithLabelClass($id: ID!) {
+export const GET_LABEL_QUERY = gql`
+  query GetLabelWithLabelClassQuery($id: ID!) {
     label(where: { id: $id }) {
       id
       type
@@ -27,8 +27,8 @@ export const getLabelQuery = gql`
   }
 `;
 
-export const getImageLabelsQuery = gql`
-  query getImageLabels($imageId: ID!) {
+export const GET_IMAGE_LABELS_QUERY = gql`
+  query GetImageLabelsQuery($imageId: ID!) {
     image(where: { id: $imageId }) {
       id
       width
@@ -40,6 +40,7 @@ export const getImageLabelsQuery = gql`
         y
         width
         height
+        smartToolInput
         labelClass {
           id
           name
@@ -55,7 +56,7 @@ export const getImageLabelsQuery = gql`
 `;
 
 export const labelClassQuery = gql`
-  query getLabelClass($id: ID!) {
+  query GetLabelClassQuery($id: ID!) {
     labelClass(where: { id: $id }) {
       id
       name

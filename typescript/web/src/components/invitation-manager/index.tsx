@@ -1,18 +1,18 @@
 import { gql, useMutation, useQuery } from "@apollo/client";
 import { useToast } from "@chakra-ui/react";
-import { CurrentUserCanAcceptInvitation } from "@labelflow/graphql-types";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import React from "react";
-import { userQuery } from "../../utils/shared-queries";
+import { CurrentUserCanAcceptInvitation } from "../../graphql-types/globalTypes";
+import { USER_PROFILE_QUERY } from "../../shared-queries/user-profile.query";
 import { getDisplayName } from "../members/user";
 import { LayoutSpinner } from "../spinner";
 import { AcceptOrDeclineMembershipInvitation } from "./accept-or-decline-membership-invitation";
 import { InvalidInvitation } from "./invalid-invitation";
 import { UserNeedsToSignIn } from "./user-needs-to-sign-in";
 
-const invitationDetailsQuery = gql`
-  query invitationDetails($id: ID!) {
+const INVITATION_DETAILS_QUERY = gql`
+  query InvitationDetailsQuery($id: ID!) {
     membership(where: { id: $id }) {
       id
       currentUserCanAcceptInvitation
@@ -26,16 +26,16 @@ const invitationDetailsQuery = gql`
   }
 `;
 
-const acceptInvitationMutation = gql`
-  mutation acceptInvitation($id: ID!) {
+const ACCEPT_INVITATION_MUTATION = gql`
+  mutation AcceptInvitationMutation($id: ID!) {
     acceptInvitation(where: { id: $id }) {
       id
     }
   }
 `;
 
-const declineInvitationMutation = gql`
-  mutation declineInvitation($id: ID!) {
+const DECLINE_INVITATION_MUTATION = gql`
+  mutation DeclineInvitationMutation($id: ID!) {
     declineInvitation(where: { id: $id }) {
       id
     }
@@ -50,7 +50,7 @@ export const InvitationManager = () => {
   const userInfoFromSession = session?.user;
 
   const { data, loading: invitationDetailsAreLoading } = useQuery(
-    invitationDetailsQuery,
+    INVITATION_DETAILS_QUERY,
     {
       variables: { id: membershipId },
       skip: !membershipId,
@@ -59,7 +59,7 @@ export const InvitationManager = () => {
   const membership = data?.membership;
 
   const [acceptInvitation, { called: hasAccepted }] = useMutation(
-    acceptInvitationMutation,
+    ACCEPT_INVITATION_MUTATION,
     {
       variables: { id: membershipId },
       onCompleted: () => {
@@ -88,7 +88,7 @@ export const InvitationManager = () => {
     }
   );
   const [declineInvitation, { called: hasDeclined }] = useMutation(
-    declineInvitationMutation,
+    DECLINE_INVITATION_MUTATION,
     {
       variables: { id: membershipId },
       onCompleted: () => {
@@ -117,10 +117,13 @@ export const InvitationManager = () => {
     }
   );
 
-  const { data: userData, loading: userIsLoading } = useQuery(userQuery, {
-    variables: { id: userInfoFromSession?.id },
-    skip: userInfoFromSession?.id == null,
-  });
+  const { data: userData, loading: userIsLoading } = useQuery(
+    USER_PROFILE_QUERY,
+    {
+      variables: { id: userInfoFromSession?.id },
+      skip: userInfoFromSession?.id == null,
+    }
+  );
   const displayName = userData?.user
     ? getDisplayName(userData?.user)
     : "Anonymous";

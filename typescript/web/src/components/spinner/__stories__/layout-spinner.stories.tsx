@@ -1,6 +1,6 @@
 import { Story } from "@storybook/react";
 import { LayoutSpinner } from "..";
-import { chakraDecorator } from "../../../utils/chakra-decorator";
+import { chakraDecorator } from "../../../utils/stories/chakra-decorator";
 import { TestComponent, Wrapper } from "../layout-spinner.fixtures";
 
 const testDecorator = (StoryComponent: Story) => (

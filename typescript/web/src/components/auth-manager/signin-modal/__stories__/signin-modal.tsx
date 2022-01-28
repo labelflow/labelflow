@@ -1,13 +1,15 @@
 import { useState } from "react";
-import { chakraDecorator } from "../../../../utils/chakra-decorator";
-import { apolloDecorator } from "../../../../utils/apollo-decorator";
-
 import { SignInModal, SignInModalContext, SignInModalState } from "..";
 import { validateEmail } from "../../../../utils/validate-email";
+import {
+  apolloMockDecorator,
+  chakraDecorator,
+  storybookTitle,
+} from "../../../../utils/stories";
 
 export default {
-  title: "web/Signin/Modal",
-  decorators: [chakraDecorator, apolloDecorator],
+  title: storybookTitle(SignInModal),
+  decorators: [chakraDecorator, apolloMockDecorator],
 };
 const useStory = (linkSent?: string, error?: string): SignInModalState => {
   const [email, setEmail] = useState("");

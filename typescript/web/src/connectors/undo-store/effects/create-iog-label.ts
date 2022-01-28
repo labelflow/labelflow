@@ -1,14 +1,14 @@
 import { ApolloClient, gql } from "@apollo/client";
 import { Coordinate } from "ol/coordinate";
 
-import { LabelType } from "@labelflow/graphql-types";
 import { Effect } from "..";
+import { LabelType } from "../../../graphql-types/globalTypes";
 import { createLabelMutationUpdate } from "./cache-updates/create-label-mutation-update";
 import { deleteLabelMutationUpdate } from "./cache-updates/delete-label-mutation-update";
-import { deleteLabelMutation } from "./shared-queries";
+import { DELETE_LABEL_MUTATION } from "./shared-queries";
 
-const createIogLabelMutation = gql`
-  mutation createIogLabel(
+const CREATE_IOG_LABEL_MUTATION = gql`
+  mutation CreateIogLabelMutation(
     $id: ID!
     $imageId: String!
     $x: Float!
@@ -84,7 +84,7 @@ export const createCreateIogLabelEffect = (
     };
 
     const createLabelPromise = client.mutate({
-      mutation: createIogLabelMutation,
+      mutation: CREATE_IOG_LABEL_MUTATION,
       variables: {
         id,
         imageId,
@@ -95,7 +95,7 @@ export const createCreateIogLabelEffect = (
         centerPoint,
         labelClassId,
       },
-      refetchQueries: ["countLabelsOfDataset", "getImageLabels"],
+      refetchQueries: ["CountLabelsOfDatasetQuery", "GetImageLabelsQuery"],
       optimisticResponse: {
         createIogLabel: { id, __typename: "Label" },
       },
@@ -113,9 +113,9 @@ export const createCreateIogLabelEffect = (
   undo: async (labelId: string): Promise<void> => {
     setSelectedLabelId(null);
     await client.mutate({
-      mutation: deleteLabelMutation,
+      mutation: DELETE_LABEL_MUTATION,
       variables: { id: labelId },
-      refetchQueries: ["countLabelsOfDataset"],
+      refetchQueries: ["CountLabelsOfDatasetQuery"],
       optimisticResponse: { deleteLabel: { id: labelId, __typename: "Label" } },
       update: deleteLabelMutationUpdate({ imageId, id: labelId, labelClassId }),
     });

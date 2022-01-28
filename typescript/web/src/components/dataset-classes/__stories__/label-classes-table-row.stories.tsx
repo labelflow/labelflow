@@ -1,6 +1,6 @@
 import { Story } from "@storybook/react";
 import React from "react";
-import { chakraDecorator } from "../../../utils/chakra-decorator";
+import { chakraDecorator } from "../../../utils/stories/chakra-decorator";
 import { TestComponent, Wrapper } from "../label-classes-table-row.fixtures";
 
 const testDecorator = (StoryComponent: Story) => (

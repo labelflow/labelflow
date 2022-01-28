@@ -8,7 +8,6 @@ import { ApolloClient, useApolloClient, gql, useQuery } from "@apollo/client";
 import { useToast, UseToastOptions } from "@chakra-ui/react";
 import { ModifyEvent } from "ol/interaction/Modify";
 import { TranslateEvent } from "ol/interaction/Translate";
-import { LabelType } from "@labelflow/graphql-types";
 import { SelectInteraction } from "./select-interaction";
 import {
   Tools,
@@ -22,14 +21,15 @@ import {
 import { ModifyIog } from "../iog/modify";
 import { Effect, useUndoStore } from "../../../../connectors/undo-store";
 import { createUpdateLabelEffect } from "../../../../connectors/undo-store/effects/update-label";
+import { LabelType } from "../../../../graphql-types/globalTypes";
 
 // Extend react-openlayers-catalogue to include resize and translate interaction
 extend({
   ResizeAndTranslateBox: { object: ResizeAndTranslateBox, kind: "Interaction" },
 });
 
-const getLabelQuery = gql`
-  query getLabelWithGeometryAndClass($id: ID!) {
+const GET_LABEL_QUERY = gql`
+  query GetLabelWithGeometryAndClassQuery($id: ID!) {
     label(where: { id: $id }) {
       type
       id
@@ -106,7 +106,7 @@ export const SelectAndModifyFeature = (props: {
     (state) => state.selectionToolState
   );
 
-  const { data: labelData } = useQuery(getLabelQuery, {
+  const { data: labelData } = useQuery(GET_LABEL_QUERY, {
     variables: { id: selectedLabelId },
     skip: selectedLabelId == null,
   });

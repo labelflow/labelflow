@@ -7,7 +7,6 @@ import { ChakraProvider } from "@chakra-ui/react";
 import { PropsWithChildren } from "react";
 
 import { incrementMockedDate } from "@labelflow/dev-utils/mockdate";
-import { LabelCreateInput } from "@labelflow/graphql-types";
 import { processImage } from "../../../../connectors/repository/image-processing";
 import { mockNextRouter } from "../../../../utils/router-mocks";
 
@@ -20,10 +19,11 @@ import { theme } from "../../../../theme";
 import { client } from "../../../../connectors/apollo-client/schema-client";
 import { setupTestsWithLocalDatabase } from "../../../../utils/setup-local-db-tests";
 import {
-  createTestDatasetMutation,
-  createTestImageMutation,
+  CREATE_TEST_DATASET_MUTATION,
+  CREATE_TEST_IMAGE_MUTATION,
 } from "../../../../utils/tests/mutations";
-import { createLabelMutation } from "../../../../connectors/undo-store/effects/shared-queries";
+import { CREATE_LABEL_MUTATION } from "../../../../connectors/undo-store/effects/shared-queries";
+import { LabelCreateInput } from "../../../../graphql-types/globalTypes";
 
 setupTestsWithLocalDatabase();
 
@@ -43,7 +43,7 @@ const createDataset = async (
   name = "test dataset"
 ) => {
   return await client.mutate({
-    mutation: createTestDatasetMutation,
+    mutation: CREATE_TEST_DATASET_MUTATION,
     variables: { datasetId, name, workspaceSlug: "local" },
   });
 };
@@ -65,7 +65,7 @@ const labelData = {
 
 const createLabel = (data: LabelCreateInput) => {
   return client.mutate({
-    mutation: createLabelMutation,
+    mutation: CREATE_LABEL_MUTATION,
     variables: {
       data,
     },
@@ -77,7 +77,7 @@ const imageHeight = 900;
 
 const createImage = async (name: String) => {
   const mutationResult = await client.mutate({
-    mutation: createTestImageMutation,
+    mutation: CREATE_TEST_IMAGE_MUTATION,
     variables: {
       name,
       file: new Blob(),

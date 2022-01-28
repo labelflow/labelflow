@@ -10,12 +10,15 @@ import {
   StackDivider,
   useColorModeValue as mode,
 } from "@chakra-ui/react";
-import { Mutation } from "@labelflow/graphql-types";
-import { isNil } from "lodash/fp";
+import { isEmpty, isNil } from "lodash/fp";
 import { useRouter } from "next/router";
 import { useCallback } from "react";
 import { RiGroupFill } from "react-icons/ri";
 import { Card, FieldGroup, HeadingGroup } from "..";
+import {
+  UpdateWorkspaceMutation,
+  UpdateWorkspaceMutationVariables,
+} from "../../../graphql-types/UpdateWorkspaceMutation";
 import { randomBackgroundGradient } from "../../../utils/random-background-gradient";
 import { useApolloError } from "../../error-handlers";
 import {
@@ -28,8 +31,8 @@ import { useWorkspaceSettings } from "./context";
 
 const TeamIcon = chakra(RiGroupFill);
 
-const updateWorkspaceMutation = gql`
-  mutation updateWorkspace(
+const UPDATE_WORKSPACE_MUTATION = gql`
+  mutation UpdateWorkspaceMutation(
     $workspaceSlug: String
     $name: String
     $image: String
@@ -48,18 +51,19 @@ const updateWorkspaceMutation = gql`
 
 const useUpdateWorkspace = (): [() => void, string | undefined] => {
   const router = useRouter();
-  const workspace = useWorkspaceSettings();
+  const { slug: workspaceSlug } = useWorkspaceSettings();
   const { name } = useWorkspaceNameInput();
   const onError = useApolloError();
   const [updateWorkspace, { error }] = useMutation<
-    Pick<Mutation, "updateWorkspace">
-  >(updateWorkspaceMutation, {
+    UpdateWorkspaceMutation,
+    UpdateWorkspaceMutationVariables
+  >(UPDATE_WORKSPACE_MUTATION, {
     variables: {
       name,
       image: null,
-      workspaceSlug: workspace?.slug,
+      workspaceSlug,
     },
-    refetchQueries: ["getWorkspaces"],
+    refetchQueries: ["GetWorkspacesQuery"],
     onCompleted: (data) => {
       if (!data?.updateWorkspace) return;
       router.push(`/${data.updateWorkspace.slug}/settings`);
@@ -70,7 +74,7 @@ const useUpdateWorkspace = (): [() => void, string | undefined] => {
 };
 
 const AvatarInput = () => {
-  const workspace = useWorkspaceSettings();
+  const { image } = useWorkspaceSettings();
   const { name } = useWorkspaceNameInput();
   const avatarBorderColor = mode("gray.200", "gray.700");
   const avatarBackground = mode("white", "gray.700");
@@ -85,7 +89,7 @@ const AvatarInput = () => {
           color="white"
           borderRadius="md"
           name={name}
-          src={workspace?.image ?? undefined}
+          src={image ?? undefined}
           mr="2"
           sx={{
             "div[role=img]": {
@@ -93,7 +97,7 @@ const AvatarInput = () => {
             },
           }}
           bg={
-            workspace?.image != null && workspace?.image.length > 0
+            !isNil(image) && !isEmpty(image)
               ? avatarBackground
               : randomBackgroundGradient(name)
           }
@@ -105,11 +109,11 @@ const AvatarInput = () => {
 };
 
 const CancelRenameButton = () => {
-  const workspace = useWorkspaceSettings();
+  const { name: workspaceName } = useWorkspaceSettings();
   const { name, setName } = useWorkspaceNameInput();
   const handleClick = useCallback(
-    () => setName(workspace?.name ?? ""),
-    [workspace?.name, setName]
+    () => setName(workspaceName ?? ""),
+    [workspaceName, setName]
   );
   return (
     <Button
@@ -117,7 +121,7 @@ const CancelRenameButton = () => {
       size="sm"
       fontWeight="normal"
       alignSelf="flex-end"
-      disabled={name === workspace?.name}
+      disabled={name === workspaceName}
       onClick={handleClick}
     >
       Cancel
@@ -130,7 +134,7 @@ interface SaveRenameButtonProps {
 }
 
 const SaveRenameButton = ({ onClick }: SaveRenameButtonProps) => {
-  const workspace = useWorkspaceSettings();
+  const { name: workspaceName } = useWorkspaceSettings();
   const { name, error, loading } = useWorkspaceNameInput();
   return (
     <Button
@@ -141,7 +145,7 @@ const SaveRenameButton = ({ onClick }: SaveRenameButtonProps) => {
       bg="brand.500"
       color="#FFFFFF"
       onClick={onClick}
-      disabled={name === workspace?.name || !isNil(error) || loading}
+      disabled={name === workspaceName || !isNil(error) || loading}
     >
       Save Changes
     </Button>
@@ -149,9 +153,9 @@ const SaveRenameButton = ({ onClick }: SaveRenameButtonProps) => {
 };
 
 const WorkspaceNameAndAvatarBody = () => {
-  const workspace = useWorkspaceSettings();
+  const { name: workspaceName } = useWorkspaceSettings();
   const { name } = useWorkspaceNameInput();
-  const isSame = workspace?.name === name;
+  const isSame = workspaceName === name;
   const [updateWorkspace, error] = useUpdateWorkspace();
   return (
     <Card>
@@ -178,22 +182,20 @@ const WorkspaceNameAndAvatarBody = () => {
 };
 
 const WorkspaceNameAndAvatar = () => {
-  const workspace = useWorkspaceSettings();
+  const { name } = useWorkspaceSettings();
   return (
-    <WorkspaceNameInputProvider defaultName={workspace?.name}>
+    <WorkspaceNameInputProvider defaultName={name}>
       <WorkspaceNameAndAvatarBody />
     </WorkspaceNameInputProvider>
   );
 };
 
-export const Profile = () => {
-  return (
-    <Stack as="section" spacing="6">
-      <HeadingGroup
-        title="Workspace Profile"
-        description="Change your workspace public profile"
-      />
-      <WorkspaceNameAndAvatar />
-    </Stack>
-  );
-};
+export const Profile = () => (
+  <Stack as="section" spacing="6">
+    <HeadingGroup
+      title="Workspace Profile"
+      description="Change your workspace public profile"
+    />
+    <WorkspaceNameAndAvatar />
+  </Stack>
+);

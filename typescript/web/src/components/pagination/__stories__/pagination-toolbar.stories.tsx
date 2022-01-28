@@ -1,6 +1,6 @@
 import React from "react";
 import { Story } from "@storybook/react";
-import { chakraDecorator } from "../../../utils/chakra-decorator";
+import { chakraDecorator } from "../../../utils/stories/chakra-decorator";
 import { PaginationProps, PaginationProvider, PaginationToolbar } from "..";
 
 export default {

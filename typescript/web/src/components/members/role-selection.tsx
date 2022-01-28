@@ -13,9 +13,9 @@ import {
 } from "@chakra-ui/react";
 
 import { useSelect } from "downshift";
-import { MembershipRole } from "@labelflow/graphql-types";
 import { RiArrowDownSFill, RiArrowUpSFill } from "react-icons/ri";
 import { BiCheck } from "react-icons/bi";
+import { MembershipRole } from "../../graphql-types/globalTypes";
 
 const CheckIcon = chakra(BiCheck);
 

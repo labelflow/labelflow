@@ -8,11 +8,17 @@ import {
   AlertDialogOverlay,
   Button,
 } from "@chakra-ui/react";
+import { isEmpty } from "lodash/fp";
 import { useRef } from "react";
-import { getDatasetByIdQuery } from "./datasets.query";
+import {
+  GetDatasetByIdQuery,
+  GetDatasetByIdQueryVariables,
+} from "../../graphql-types/GetDatasetByIdQuery";
+import { WORKSPACE_DATASETS_PAGE_DATASETS_QUERY } from "../../shared-queries/workspace-datasets-page.query";
+import { GET_DATASET_BY_ID_QUERY } from "./datasets.query";
 
-const deleteDatasetByIdMutation = gql`
-  mutation deleteDatasetById($id: ID!) {
+export const DELETE_DATASET_BY_ID_MUTATION = gql`
+  mutation DeleteDatasetByIdMutation($id: ID!) {
     deleteDataset(where: { id: $id }) {
       id
     }
@@ -29,16 +35,19 @@ export const DeleteDatasetModal = ({
   datasetId?: string;
 }) => {
   const cancelRef = useRef<HTMLButtonElement>(null);
-  const { data } = useQuery(getDatasetByIdQuery, {
-    variables: { id: datasetId },
-    skip: datasetId == null,
-  });
+  const { data } = useQuery<GetDatasetByIdQuery, GetDatasetByIdQueryVariables>(
+    GET_DATASET_BY_ID_QUERY,
+    {
+      variables: { id: datasetId ?? "" },
+      skip: isEmpty(datasetId),
+    }
+  );
 
   const [deleteDatasetMutate, { loading }] = useMutation(
-    deleteDatasetByIdMutation,
+    DELETE_DATASET_BY_ID_MUTATION,
     {
       variables: { id: datasetId },
-      refetchQueries: ["getDatasets"],
+      refetchQueries: [WORKSPACE_DATASETS_PAGE_DATASETS_QUERY],
       update: (cache) => {
         // Avoid issue https://github.com/labelflow/labelflow/issues/563
         cache.evict({ id: `Dataset:${datasetId}` });

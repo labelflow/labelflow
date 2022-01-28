@@ -1,9 +1,9 @@
 import { Button, useDisclosure } from "@chakra-ui/react";
+import { chakraDecorator, storybookTitle } from "../../../utils/stories";
 import { ClassSelectionPopover } from "../class-selection-popover";
-import { chakraDecorator } from "../../../utils/chakra-decorator";
 
 export default {
-  title: "web/Class selection popover",
+  title: storybookTitle(ClassSelectionPopover),
   decorators: [chakraDecorator],
 };
 

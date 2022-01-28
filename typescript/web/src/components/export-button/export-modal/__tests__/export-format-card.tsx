@@ -1,8 +1,8 @@
 import { ChakraProvider } from "@chakra-ui/react";
-import { ExportFormat } from "@labelflow/graphql-types";
 import "@testing-library/jest-dom/extend-expect";
 import { render, screen } from "@testing-library/react";
 import { PropsWithChildren } from "react";
+import { ExportFormat } from "../../../../graphql-types/globalTypes";
 import { theme } from "../../../../theme";
 import { ExportFormatCard } from "../export-format-card";
 import { ExportModalContext, ExportModalState } from "../export-modal.context";
@@ -10,7 +10,7 @@ import { ExportModalContext, ExportModalState } from "../export-modal.context";
 const loadingValue: ExportModalState = {
   isOpen: false,
   onClose: () => {},
-  exportFormat: ExportFormat.Coco,
+  exportFormat: ExportFormat.COCO,
   setExportFormat: () => {},
   loading: false,
   datasetId: "",

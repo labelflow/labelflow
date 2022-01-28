@@ -1,10 +1,13 @@
-import { useRouter } from "next/router";
 import { useQuery, gql } from "@apollo/client";
+import { isEmpty } from "lodash/fp";
+import {
+  GetAllImagesOfADatasetQuery,
+  GetAllImagesOfADatasetQueryVariables,
+} from "../graphql-types/GetAllImagesOfADatasetQuery";
+import { useDatasetImage } from "./use-dataset-image";
 
-import { Dataset, Image } from "@labelflow/graphql-types";
-
-const getAllImagesOfADatasetQuery = gql`
-  query getAllImagesOfADataset($slug: String!, $workspaceSlug: String!) {
+const GET_ALL_IMAGES_OF_A_DATASET_QUERY = gql`
+  query GetAllImagesOfADatasetQuery($slug: String!, $workspaceSlug: String!) {
     dataset(where: { slugs: { slug: $slug, workspaceSlug: $workspaceSlug } }) {
       id
       images {
@@ -28,15 +31,19 @@ const getAllImagesOfADatasetQuery = gql`
  * is already the last index of the array).
  */
 export const useImagesNavigation = () => {
-  const router = useRouter();
-  const { datasetSlug, imageId: currentImageId, workspaceSlug } = router?.query;
+  const {
+    workspaceSlug,
+    datasetSlug,
+    imageId: currentImageId,
+  } = useDatasetImage();
 
   // Refetch images ?
-  const { data } = useQuery<{
-    dataset: Pick<Dataset, "id" | "images">;
-  }>(getAllImagesOfADatasetQuery, {
+  const { data } = useQuery<
+    GetAllImagesOfADatasetQuery,
+    GetAllImagesOfADatasetQueryVariables
+  >(GET_ALL_IMAGES_OF_A_DATASET_QUERY, {
     variables: { slug: datasetSlug, workspaceSlug },
-    skip: !datasetSlug || !workspaceSlug,
+    skip: isEmpty(workspaceSlug) || isEmpty(datasetSlug),
   });
 
   // TODO: Investigate why you have to specify undefined states
@@ -53,9 +60,7 @@ export const useImagesNavigation = () => {
     };
   }
 
-  const currentImageIndex = images.findIndex(
-    (image: Partial<Image>) => image.id === currentImageId
-  );
+  const currentImageIndex = images.findIndex(({ id }) => id === currentImageId);
 
   if (currentImageIndex === -1) {
     return {

@@ -1,25 +1,22 @@
 import { gql, useQuery } from "@apollo/client";
-import { Query, QueryLabelClassExistsArgs } from "@labelflow/graphql-types";
 import { useDebounce } from "use-debounce";
+import {
+  LabelClassExistsQuery,
+  LabelClassExistsQueryVariables,
+} from "../../../graphql-types/LabelClassExistsQuery";
 
 export const LABEL_CLASS_EXISTS_QUERY = gql`
-  query labelClassExists($datasetId: ID!, $name: String!) {
+  query LabelClassExistsQuery($datasetId: ID!, $name: String!) {
     labelClassExists(where: { datasetId: $datasetId, name: $name })
   }
 `;
 
-export type LabelClassExistsInput = QueryLabelClassExistsArgs["where"];
-export type LabelClassExistsResult = Pick<Query, "labelClassExists">;
-
-export const useLabelClassExists = (
-  datasetId: string | undefined,
-  name: string
-) => {
+export const useLabelClassExists = (datasetId: string, name: string) => {
   const [debouncedName] = useDebounce(name, 200, {
     leading: true,
     trailing: true,
   });
-  return useQuery<LabelClassExistsResult, LabelClassExistsInput>(
+  return useQuery<LabelClassExistsQuery, LabelClassExistsQueryVariables>(
     LABEL_CLASS_EXISTS_QUERY,
     {
       fetchPolicy: "network-only",

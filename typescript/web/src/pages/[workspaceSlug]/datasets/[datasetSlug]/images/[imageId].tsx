@@ -7,15 +7,13 @@ import {
   Text,
   useColorModeValue as mode,
 } from "@chakra-ui/react";
-import type { Image } from "@labelflow/graphql-types";
 import dynamic from "next/dynamic";
 import NextLink from "next/link";
-import { useRouter } from "next/router";
 import React from "react";
 import { useErrorHandler } from "react-error-boundary";
 import { AuthManager } from "../../../../../components/auth-manager";
 import { CookieBanner } from "../../../../../components/cookie-banner";
-import { getDatasetBySlugQuery } from "../../../../../components/datasets/datasets.query";
+import { GET_DATASET_BY_SLUG_QUERY } from "../../../../../components/datasets/datasets.query";
 import { ExportButton } from "../../../../../components/export-button";
 import { Gallery } from "../../../../../components/gallery";
 import { ImportButton } from "../../../../../components/import-button";
@@ -26,6 +24,11 @@ import { Meta } from "../../../../../components/meta";
 import { LayoutSpinner } from "../../../../../components/spinner";
 import { WelcomeModal } from "../../../../../components/welcome-manager";
 import { WorkspaceSwitcher } from "../../../../../components/workspace-switcher";
+import {
+  ImageNameQuery,
+  ImageNameQueryVariables,
+} from "../../../../../graphql-types/ImageNameQuery";
+import { useDatasetImage } from "../../../../../hooks/use-dataset-image";
 import { Error404Content } from "../../../../404";
 
 // The dynamic import is needed because openlayers use web apis that are not available
@@ -42,8 +45,8 @@ const LabelingTool = dynamic(
   }
 );
 
-const imageQuery = gql`
-  query imageName($id: ID!) {
+const IMAGE_NAME_QUERY = gql`
+  query ImageNameQuery($id: ID!) {
     image(where: { id: $id }) {
       id
       name
@@ -51,20 +54,15 @@ const imageQuery = gql`
   }
 `;
 
-type ImageQueryResponse = {
-  image: Pick<Image, "id" | "name">;
-};
-
 const ImagePage = () => {
-  const router = useRouter();
-  const { datasetSlug, imageId, workspaceSlug } = router?.query;
+  const { workspaceSlug, datasetSlug, imageId } = useDatasetImage();
 
   const {
     data: imageResult,
     error: errorImage,
     loading: loadingImage,
-  } = useQuery<ImageQueryResponse>(imageQuery, {
-    variables: { id: imageId },
+  } = useQuery<ImageNameQuery, ImageNameQueryVariables>(IMAGE_NAME_QUERY, {
+    variables: { id: typeof imageId === "string" ? imageId : imageId[0] },
     skip: !imageId,
   });
 
@@ -72,7 +70,7 @@ const ImagePage = () => {
     data: datasetResult,
     error: errorDataset,
     loading: loadingDataset,
-  } = useQuery(getDatasetBySlugQuery, {
+  } = useQuery(GET_DATASET_BY_SLUG_QUERY, {
     variables: { slug: datasetSlug, workspaceSlug },
     skip: !datasetSlug || !workspaceSlug,
   });

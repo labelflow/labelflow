@@ -17,14 +17,3 @@ generates:
           suffix: |
             `,
             ];
-  ./typescript/web/src/connectors/apollo-client/__generated__/schema.ts:
-    plugins:
-      - ./codegen-plugin-ts-schema.js:
-          indent: "  "
-          prefix: |
-            import { gql } from "@apollo/client";
-            
-            export const typeDefs = gql`
-
-          suffix: |
-            `;

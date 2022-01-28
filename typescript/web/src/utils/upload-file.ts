@@ -2,8 +2,8 @@
 import { ApolloClient, gql } from "@apollo/client";
 import { UploadTarget } from "@labelflow/graphql-types";
 
-const getImageUploadTargetMutation = gql`
-  mutation getUploadTarget($key: String!) {
+const GET_IMAGE_UPLOAD_TARGET_MUTATION = gql`
+  mutation GetUploadTargetMutation($key: String!) {
     getUploadTarget(data: { key: $key }) {
       ... on UploadTargetDirect {
         direct
@@ -27,7 +27,7 @@ const getImageUploadTarget = async (
 ) => {
   const uploadTarget = (
     await apolloClient.mutate<{ getUploadTarget: UploadTarget }>({
-      mutation: getImageUploadTargetMutation,
+      mutation: GET_IMAGE_UPLOAD_TARGET_MUTATION,
       variables: { key },
     })
   )?.data?.getUploadTarget;

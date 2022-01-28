@@ -5,6 +5,7 @@ import {
   useApolloClient,
   useQuery,
 } from "@apollo/client";
+import { getOperationName } from "@apollo/client/utilities";
 import {
   AlertDialog,
   AlertDialogBody,
@@ -16,14 +17,18 @@ import {
 } from "@chakra-ui/react";
 import { isEmpty, isNil } from "lodash/fp";
 import { useCallback, useRef } from "react";
+import {
+  GetLabelClassByIdQuery,
+  GetLabelClassByIdQueryVariables,
+} from "../../graphql-types/GetLabelClassByIdQuery";
 import { useDatasetClasses } from "./dataset-classes.context";
 import {
   DATASET_LABEL_CLASSES_QUERY_WITH_COUNT,
-  getLabelClassByIdQuery,
+  GET_LABEL_CLASS_BY_ID_QUERY,
 } from "./dataset-classes.query";
 
-const deleteLabelClassMutation = gql`
-  mutation deleteLabelClass($id: ID!) {
+export const DELETE_LABEL_CLASS_MUTATION = gql`
+  mutation DeleteLabelClassMutation($id: ID!) {
     deleteLabelClass(where: { id: $id }) {
       id
     }
@@ -40,17 +45,22 @@ export const DeleteLabelClassModal = () => {
   );
 
   const cancelRef = useRef<HTMLButtonElement>(null);
-  const { data } = useQuery(getLabelClassByIdQuery, {
-    variables: { id: deleteClassId },
+  const { data } = useQuery<
+    GetLabelClassByIdQuery,
+    GetLabelClassByIdQueryVariables
+  >(GET_LABEL_CLASS_BY_ID_QUERY, {
+    variables: { id: deleteClassId ?? "" },
     skip: isEmpty(deleteClassId),
   });
   const client = useApolloClient();
 
   const deleteLabelClass = useCallback(() => {
     client.mutate({
-      mutation: deleteLabelClassMutation,
+      mutation: DELETE_LABEL_CLASS_MUTATION,
       variables: { id: deleteClassId },
-      refetchQueries: [DATASET_LABEL_CLASSES_QUERY_WITH_COUNT],
+      refetchQueries: [
+        getOperationName(DATASET_LABEL_CLASSES_QUERY_WITH_COUNT)!,
+      ],
       update(cache) {
         cache.modify({
           id: cache.identify({ id: datasetId, __typename: "Dataset" }),

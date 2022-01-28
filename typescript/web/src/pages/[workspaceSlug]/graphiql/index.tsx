@@ -1,6 +1,5 @@
 import { Box, Text } from "@chakra-ui/react";
 import dynamic from "next/dynamic";
-import { useRouter } from "next/router";
 import React from "react";
 import { AuthManager } from "../../../components/auth-manager";
 import { CookieBanner } from "../../../components/cookie-banner";
@@ -11,6 +10,7 @@ import { Meta } from "../../../components/meta";
 import { LayoutSpinner } from "../../../components/spinner";
 import { WelcomeModal } from "../../../components/welcome-manager";
 import { WorkspaceSwitcher } from "../../../components/workspace-switcher";
+import { useWorkspace } from "../../../hooks";
 
 const GraphiQL = dynamic(() => import("../../../components/graphiql"), {
   ssr: false,
@@ -21,8 +21,7 @@ const GraphiQL = dynamic(() => import("../../../components/graphiql"), {
 });
 
 const GraphqlPlayground = () => {
-  const workspaceSlug = useRouter().query?.workspaceSlug as string;
-
+  const { workspaceSlug } = useWorkspace();
   return (
     <>
       <WelcomeModal />
