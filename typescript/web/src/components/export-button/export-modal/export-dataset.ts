@@ -9,7 +9,9 @@ import {
   ExportOptions,
 } from "../../../graphql-types/globalTypes";
 
-const EXPORT_DATASET_URL_QUERY = gql`
+import { getDatasetExportName } from "./utils/get-dataset-name";
+
+export const EXPORT_DATASET_URL_QUERY = gql`
   query ExportDatasetUrlQuery(
     $datasetId: ID!
     $format: ExportFormat!
@@ -39,15 +41,7 @@ export const exportDataset = async ({
   options: ExportOptions;
 }) => {
   setIsExportRunning(true);
-  const dateObject = new Date();
-  const date = `${dateObject
-    .toLocaleDateString()
-    .split("/")
-    .reverse()
-    .join("-")}T${String(dateObject.getHours()).padStart(2, "0")}${String(
-    dateObject.getMinutes()
-  ).padStart(2, "0")}${String(dateObject.getSeconds()).padStart(2, "0")}`;
-  const datasetName = `${datasetSlug}-${format.toLowerCase()}-${date}`;
+  const datasetName = getDatasetExportName({ datasetSlug, format });
   const {
     data: { exportDataset: exportDatasetUrl },
   } = await client.query<ExportDatasetUrlQuery, ExportDatasetUrlQueryVariables>(
