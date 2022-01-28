@@ -4,7 +4,7 @@ import {
   getApolloMockLink,
   getApolloMockWrapper,
 } from "../../../utils/tests/apollo-mock";
-import { BASIC_LABEL_CLASS_MOCK } from "../../../utils/tests/data.fixtures";
+import { BASIC_LABEL_CLASS_DATA } from "../../../utils/tests/data.fixtures";
 import {
   TestComponent,
   APOLLO_MOCKS,
@@ -18,8 +18,8 @@ const renderModal = (mockLink: WildcardMockLink) => {
     <TestComponent
       setDeleteClassId={setDeleteClassId}
       labelClassInfo={{
-        id: BASIC_LABEL_CLASS_MOCK.id,
-        datasetId: BASIC_LABEL_CLASS_MOCK.dataset.id,
+        id: BASIC_LABEL_CLASS_DATA.id,
+        datasetId: BASIC_LABEL_CLASS_DATA.dataset.id,
       }}
     />,
     {

@@ -7,7 +7,7 @@ import {
   mockNextRouter,
   mockUseQueryParams,
 } from "../../../utils/router-mocks";
-import { BASIC_LABEL_CLASS_MOCK } from "../../../utils/tests/data.fixtures";
+import { BASIC_LABEL_CLASS_DATA } from "../../../utils/tests/data.fixtures";
 import {
   DatasetClassesContext,
   DatasetClassesState,
@@ -21,7 +21,7 @@ import {
 
 mockUseQueryParams();
 mockNextRouter({
-  query: { workspaceSlug: BASIC_LABEL_CLASS_MOCK.dataset.workspace.slug },
+  query: { workspaceSlug: BASIC_LABEL_CLASS_DATA.dataset.workspace.slug },
 });
 
 jest.mock(
@@ -59,21 +59,21 @@ describe("UpsertClassModal", () => {
 
   it("renders edit modal when a class id is passed", async () => {
     renderTest({
-      editClass: BASIC_LABEL_CLASS_MOCK,
-      datasetSlug: BASIC_LABEL_CLASS_MOCK.dataset.slug,
+      editClass: BASIC_LABEL_CLASS_DATA,
+      datasetSlug: BASIC_LABEL_CLASS_DATA.dataset.slug,
     });
     expect(screen.getByText("Edit Class")).toBeDefined();
   });
 
   it("renders create modal when a class id is not passed", async () => {
-    renderTest({ datasetSlug: BASIC_LABEL_CLASS_MOCK.dataset.slug });
+    renderTest({ datasetSlug: BASIC_LABEL_CLASS_DATA.dataset.slug });
     expect(screen.getByText("New Class")).toBeDefined();
   });
 
   it("renders a modal with a prefilled input and an enabled button", () => {
     renderTest({
-      editClass: BASIC_LABEL_CLASS_MOCK,
-      datasetSlug: BASIC_LABEL_CLASS_MOCK.dataset.slug,
+      editClass: BASIC_LABEL_CLASS_DATA,
+      datasetSlug: BASIC_LABEL_CLASS_DATA.dataset.slug,
     });
 
     const input = screen.getByLabelText(
@@ -81,14 +81,14 @@ describe("UpsertClassModal", () => {
     ) as HTMLInputElement;
     const button = screen.getByLabelText(/Update/i);
 
-    expect(input.value).toEqual(BASIC_LABEL_CLASS_MOCK.name);
+    expect(input.value).toEqual(BASIC_LABEL_CLASS_DATA.name);
     expect(button).not.toHaveAttribute("disabled");
   });
 
   it("enables update button when class name is not empty", async () => {
     renderTest({
-      editClass: BASIC_LABEL_CLASS_MOCK,
-      datasetSlug: BASIC_LABEL_CLASS_MOCK.dataset.slug,
+      editClass: BASIC_LABEL_CLASS_DATA,
+      datasetSlug: BASIC_LABEL_CLASS_DATA.dataset.slug,
     });
     const input = screen.getByLabelText(
       /Class name input/i
@@ -105,8 +105,8 @@ describe("UpsertClassModal", () => {
 
   it("creates a label class when the form is submitted", async () => {
     renderTest({
-      datasetId: BASIC_LABEL_CLASS_MOCK.dataset.id,
-      datasetSlug: BASIC_LABEL_CLASS_MOCK.dataset.slug,
+      datasetId: BASIC_LABEL_CLASS_DATA.dataset.id,
+      datasetSlug: BASIC_LABEL_CLASS_DATA.dataset.slug,
     });
 
     const input = screen.getByLabelText(
@@ -128,15 +128,15 @@ describe("UpsertClassModal", () => {
 
   it("displays an error message if the label class already exists", async () => {
     renderTest({
-      datasetId: BASIC_LABEL_CLASS_MOCK.dataset.id,
-      datasetSlug: BASIC_LABEL_CLASS_MOCK.dataset.slug,
+      datasetId: BASIC_LABEL_CLASS_DATA.dataset.id,
+      datasetSlug: BASIC_LABEL_CLASS_DATA.dataset.slug,
     });
     const input = screen.getByLabelText(
       /class name input/i
     ) as HTMLInputElement;
 
     fireEvent.change(input, {
-      target: { value: BASIC_LABEL_CLASS_MOCK.name },
+      target: { value: BASIC_LABEL_CLASS_DATA.name },
     });
 
     const button = screen.getByLabelText(/create/i);
@@ -149,8 +149,8 @@ describe("UpsertClassModal", () => {
 
   it("updates a dataset when the form is submitted", async () => {
     renderTest({
-      editClass: BASIC_LABEL_CLASS_MOCK,
-      datasetSlug: BASIC_LABEL_CLASS_MOCK.dataset.slug,
+      editClass: BASIC_LABEL_CLASS_DATA,
+      datasetSlug: BASIC_LABEL_CLASS_DATA.dataset.slug,
     });
 
     const input = screen.getByLabelText(

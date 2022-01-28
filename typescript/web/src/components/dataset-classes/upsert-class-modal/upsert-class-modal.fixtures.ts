@@ -10,8 +10,8 @@ import { CREATE_LABEL_CLASS_MUTATION } from "./create-label-class.mutation";
 import { LABEL_CLASS_EXISTS_QUERY } from "./label-class-exists.query";
 import { UPDATE_LABEL_CLASS_NAME_MUTATION } from "./update-label-class-name.mutation";
 import {
-  DEEP_DATASET_MOCK_WITH_CLASSES,
-  BASIC_LABEL_CLASS_MOCK,
+  DEEP_DATASET_WITH_CLASSES_DATA,
+  BASIC_LABEL_CLASS_DATA,
 } from "../../../utils/tests/data.fixtures";
 import {
   CreateLabelClassMutation,
@@ -39,22 +39,16 @@ export const GET_DATASET_WITH_LABEL_CLASSES_MOCK: ApolloMockResponse<
   request: {
     query: DATASET_LABEL_CLASSES_QUERY,
     variables: {
-      workspaceSlug: DEEP_DATASET_MOCK_WITH_CLASSES.workspace.slug,
-      slug: DEEP_DATASET_MOCK_WITH_CLASSES.slug,
+      workspaceSlug: DEEP_DATASET_WITH_CLASSES_DATA.workspace.slug,
+      slug: DEEP_DATASET_WITH_CLASSES_DATA.slug,
     },
   },
   result: {
     data: {
       dataset: {
-        ...pick(
-          DEEP_DATASET_MOCK_WITH_CLASSES,
-          "__typename",
-          "id",
-          "name",
-          "slug"
-        ),
-        labelClasses: DEEP_DATASET_MOCK_WITH_CLASSES.labelClasses.map(
-          (labelClass) => pick(labelClass, "__typename", "id", "name", "color")
+        ...pick(DEEP_DATASET_WITH_CLASSES_DATA, "id", "name", "slug"),
+        labelClasses: DEEP_DATASET_WITH_CLASSES_DATA.labelClasses.map(
+          (labelClass) => pick(labelClass, "id", "name", "color")
         ),
       },
     },
@@ -89,15 +83,13 @@ export const GET_LABEL_CLASS_EXISTS_MOCK: ApolloMockResponse<
     query: LABEL_CLASS_EXISTS_QUERY,
     variables: MATCH_ANY_PARAMETERS,
   },
-  result: (variables) => {
-    return {
-      data: {
-        labelClassExists:
-          variables?.datasetId === BASIC_LABEL_CLASS_MOCK.dataset.id &&
-          variables?.name === BASIC_LABEL_CLASS_MOCK.name,
-      },
-    };
-  },
+  result: ({ datasetId, name }) => ({
+    data: {
+      labelClassExists:
+        datasetId === BASIC_LABEL_CLASS_DATA.dataset.id &&
+        name === BASIC_LABEL_CLASS_DATA.name,
+    },
+  }),
 };
 
 export const UPDATE_LABEL_CLASS_NAME_MOCK: ApolloMockResponse<
@@ -107,7 +99,7 @@ export const UPDATE_LABEL_CLASS_NAME_MOCK: ApolloMockResponse<
   request: {
     query: UPDATE_LABEL_CLASS_NAME_MUTATION,
     variables: {
-      id: BASIC_LABEL_CLASS_MOCK.id,
+      id: BASIC_LABEL_CLASS_DATA.id,
       name: UPDATED_LABEL_CLASS_MOCK_NAME,
     },
   },
@@ -115,9 +107,9 @@ export const UPDATE_LABEL_CLASS_NAME_MOCK: ApolloMockResponse<
     data: {
       updateLabelClass: {
         __typename: "LabelClass",
-        id: BASIC_LABEL_CLASS_MOCK.id,
+        id: BASIC_LABEL_CLASS_DATA.id,
         name: UPDATED_LABEL_CLASS_MOCK_NAME,
-        color: BASIC_LABEL_CLASS_MOCK.color,
+        color: BASIC_LABEL_CLASS_DATA.color,
       },
     },
   })),

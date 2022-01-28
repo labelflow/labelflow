@@ -9,7 +9,7 @@ import {
   DatasetClassesContext,
   DatasetClassesState,
 } from "./dataset-classes.context";
-import { BASIC_LABEL_CLASS_MOCK } from "../../utils/tests/data.fixtures";
+import { BASIC_LABEL_CLASS_DATA } from "../../utils/tests/data.fixtures";
 import {
   ApolloMockResponse,
   ApolloMockResponses,
@@ -31,8 +31,8 @@ export type TestComponentProps = {
 export const TestComponent = ({
   setDeleteClassId = () => {},
   labelClassInfo = {
-    id: BASIC_LABEL_CLASS_MOCK.id,
-    datasetId: BASIC_LABEL_CLASS_MOCK.dataset.id,
+    id: BASIC_LABEL_CLASS_DATA.id,
+    datasetId: BASIC_LABEL_CLASS_DATA.dataset.id,
   },
 }: TestComponentProps) => (
   <DatasetClassesContext.Provider
@@ -54,14 +54,14 @@ export const GET_LABEL_CLASS_BY_ID_MOCK: ApolloMockResponse<
   request: {
     query: GET_LABEL_CLASS_BY_ID_QUERY,
     variables: {
-      id: BASIC_LABEL_CLASS_MOCK.id,
+      id: BASIC_LABEL_CLASS_DATA.id,
     },
   },
   nMatches: Number.POSITIVE_INFINITY,
   result: {
     data: {
       labelClass: {
-        ...pick(BASIC_LABEL_CLASS_MOCK, "__typename", "id", "name"),
+        ...pick(BASIC_LABEL_CLASS_DATA, "id", "name"),
       },
     },
   },
@@ -73,14 +73,14 @@ export const DELETE_LABEL_CLASS_SIMPLE_MOCK: ApolloMockResponse<
 > = {
   request: {
     query: DELETE_LABEL_CLASS_MUTATION,
-    variables: { id: BASIC_LABEL_CLASS_MOCK.id },
+    variables: { id: BASIC_LABEL_CLASS_DATA.id },
   },
   result: jest.fn(() => {
     return {
       data: {
         deleteLabelClass: {
           __typename: "LabelClass",
-          id: BASIC_LABEL_CLASS_MOCK.id,
+          id: BASIC_LABEL_CLASS_DATA.id,
         },
       },
     };

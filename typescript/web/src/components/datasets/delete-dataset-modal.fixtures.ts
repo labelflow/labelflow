@@ -1,4 +1,4 @@
-import { BASIC_DATASET_MOCK } from "../../utils/tests/data.fixtures";
+import { BASIC_DATASET_DATA } from "../../utils/tests/data.fixtures";
 import {
   ApolloMockResponse,
   ApolloMockResponses,
@@ -16,11 +16,11 @@ export const DELETE_DATASET_BY_ID_MOCK: ApolloMockResponse<
 > = {
   request: {
     query: DELETE_DATASET_BY_ID_MUTATION,
-    variables: { id: BASIC_DATASET_MOCK.id },
+    variables: { id: BASIC_DATASET_DATA.id },
   },
   result: jest.fn(() => ({
     data: {
-      deleteDataset: { __typename: "Dataset", id: BASIC_DATASET_MOCK.id },
+      deleteDataset: { __typename: "Dataset", id: BASIC_DATASET_DATA.id },
     },
   })),
 };

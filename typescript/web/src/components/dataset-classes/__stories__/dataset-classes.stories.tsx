@@ -3,7 +3,7 @@ import { DatasetClasses } from "..";
 import { chakraDecorator } from "../../../utils/stories/chakra-decorator";
 import { getApolloMockDecorator } from "../../../utils/stories/apollo-mock-decorator";
 import { APOLLO_MOCKS } from "../dataset-classes.fixtures";
-import { DEEP_DATASET_MOCK_WITH_CLASSES } from "../../../utils/tests/data.fixtures";
+import { DEEP_DATASET_WITH_CLASSES_DATA } from "../../../utils/tests/data.fixtures";
 
 export default {
   title: "web/Dataset classes/Classes",
@@ -12,7 +12,7 @@ export default {
 
 export const Default = () => (
   <DatasetClasses
-    workspaceSlug={DEEP_DATASET_MOCK_WITH_CLASSES.workspace.slug}
-    datasetSlug={DEEP_DATASET_MOCK_WITH_CLASSES.slug}
+    workspaceSlug={DEEP_DATASET_WITH_CLASSES_DATA.workspace.slug}
+    datasetSlug={DEEP_DATASET_WITH_CLASSES_DATA.slug}
   />
 );

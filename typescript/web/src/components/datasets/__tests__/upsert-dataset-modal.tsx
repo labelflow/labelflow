@@ -3,11 +3,11 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom/extend-expect";
 import { getApolloMockWrapper } from "../../../utils/tests/apollo-mock";
-import { BASIC_DATASET_MOCK } from "../../../utils/tests/data.fixtures";
+import { BASIC_DATASET_DATA } from "../../../utils/tests/data.fixtures";
 import { mockNextRouter } from "../../../utils/router-mocks";
 
 mockNextRouter({
-  query: { workspaceSlug: BASIC_DATASET_MOCK.workspace.slug },
+  query: { workspaceSlug: BASIC_DATASET_DATA.workspace.slug },
 });
 
 import { UpsertDatasetModal } from "../upsert-dataset-modal";
@@ -58,7 +58,7 @@ test("should create a dataset when the form is submitted", async () => {
     /dataset name input/i
   ) as HTMLInputElement;
   const button = screen.getByLabelText(/create dataset/i);
-  fireEvent.change(input, { target: { value: BASIC_DATASET_MOCK.name } });
+  fireEvent.change(input, { target: { value: BASIC_DATASET_DATA.name } });
   fireEvent.click(button);
   await waitFor(() => {
     expect(onClose).toHaveBeenCalled();
@@ -71,7 +71,7 @@ test("should display an error message if dataset name already exists", async () 
   const input = screen.getByLabelText(
     /dataset name input/i
   ) as HTMLInputElement;
-  fireEvent.change(input, { target: { value: BASIC_DATASET_MOCK.name } });
+  fireEvent.change(input, { target: { value: BASIC_DATASET_DATA.name } });
   const button = screen.getByLabelText(/create dataset/i);
   await waitFor(() => {
     expect(button).toHaveAttribute("disabled");
@@ -87,12 +87,12 @@ test("should call the onClose handler", async () => {
 });
 
 test("update dataset: should have dataset name pre-filled when renaming existing dataset", async () => {
-  renderModal({ datasetId: BASIC_DATASET_MOCK.id });
+  renderModal({ datasetId: BASIC_DATASET_DATA.id });
   const input = screen.getByLabelText(
     /dataset name input/i
   ) as HTMLInputElement;
   await waitFor(() => {
-    expect(input.value).toBe(BASIC_DATASET_MOCK.name);
+    expect(input.value).toBe(BASIC_DATASET_DATA.name);
   });
   const button = screen.getByLabelText(/update dataset/i);
   await waitFor(() => {
@@ -102,12 +102,12 @@ test("update dataset: should have dataset name pre-filled when renaming existing
 
 test("update dataset: should update a dataset when the form is submitted", async () => {
   const onClose = jest.fn();
-  renderModal({ datasetId: BASIC_DATASET_MOCK.id, onClose });
+  renderModal({ datasetId: BASIC_DATASET_DATA.id, onClose });
   const input = screen.getByLabelText(
     /dataset name input/i
   ) as HTMLInputElement;
   await waitFor(() => {
-    expect(input.value).toBe(BASIC_DATASET_MOCK.name);
+    expect(input.value).toBe(BASIC_DATASET_DATA.name);
   });
   const button = screen.getByLabelText(/update dataset/i);
   userEvent.click(input);

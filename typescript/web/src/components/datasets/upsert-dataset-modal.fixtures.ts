@@ -1,4 +1,4 @@
-import { BASIC_DATASET_MOCK } from "../../utils/tests/data.fixtures";
+import { BASIC_DATASET_DATA } from "../../utils/tests/data.fixtures";
 import {
   ApolloMockResponse,
   ApolloMockResponses,
@@ -35,13 +35,13 @@ export const GET_DATASET_BY_ID_MOCK: ApolloMockResponse<
 > = {
   request: {
     query: GET_DATASET_BY_ID_QUERY,
-    variables: { id: BASIC_DATASET_MOCK.id },
+    variables: { id: BASIC_DATASET_DATA.id },
   },
   result: {
     data: {
       dataset: {
-        id: BASIC_DATASET_MOCK.id,
-        name: BASIC_DATASET_MOCK.name,
+        id: BASIC_DATASET_DATA.id,
+        name: BASIC_DATASET_DATA.name,
       },
     },
   },
@@ -54,15 +54,15 @@ export const GET_DATASET_BY_SLUG_MOCK: ApolloMockResponse<
   request: {
     query: SEARCH_DATASET_BY_SLUG_QUERY,
     variables: {
-      slug: BASIC_DATASET_MOCK.slug,
-      workspaceSlug: BASIC_DATASET_MOCK.workspace.slug,
+      slug: BASIC_DATASET_DATA.slug,
+      workspaceSlug: BASIC_DATASET_DATA.workspace.slug,
     },
   },
   result: {
     data: {
       searchDataset: {
-        id: BASIC_DATASET_MOCK.id,
-        slug: BASIC_DATASET_MOCK.slug,
+        id: BASIC_DATASET_DATA.id,
+        slug: BASIC_DATASET_DATA.slug,
       },
     },
   },
@@ -76,13 +76,13 @@ export const GET_UPDATED_DATASET_BY_SLUG_MOCK: ApolloMockResponse<
     query: SEARCH_DATASET_BY_SLUG_QUERY,
     variables: {
       slug: UPDATED_DATASET_MOCK_SLUG,
-      workspaceSlug: BASIC_DATASET_MOCK.workspace.slug,
+      workspaceSlug: BASIC_DATASET_DATA.workspace.slug,
     },
   },
   result: {
     data: {
       searchDataset: {
-        id: BASIC_DATASET_MOCK.id,
+        id: BASIC_DATASET_DATA.id,
         slug: UPDATED_DATASET_MOCK_SLUG,
       },
     },
@@ -96,15 +96,15 @@ export const CREATE_DATASET_MOCK: ApolloMockResponse<
   request: {
     query: CREATE_DATASET_MUTATION,
     variables: {
-      name: BASIC_DATASET_MOCK.name,
-      workspaceSlug: BASIC_DATASET_MOCK.workspace.slug,
+      name: BASIC_DATASET_DATA.name,
+      workspaceSlug: BASIC_DATASET_DATA.workspace.slug,
     },
   },
   result: jest.fn(() => ({
     data: {
       createDataset: {
         __typename: "Dataset",
-        id: BASIC_DATASET_MOCK.id,
+        id: BASIC_DATASET_DATA.id,
       },
     },
   })),
@@ -117,7 +117,7 @@ export const UPDATE_DATASET_MOCK: ApolloMockResponse<
   request: {
     query: UPDATE_DATASET_MUTATION,
     variables: {
-      id: BASIC_DATASET_MOCK.id,
+      id: BASIC_DATASET_DATA.id,
       name: UPDATED_DATASET_MOCK_NAME,
     },
   },
@@ -125,7 +125,7 @@ export const UPDATE_DATASET_MOCK: ApolloMockResponse<
     data: {
       updateDataset: {
         __typename: "Dataset",
-        id: BASIC_DATASET_MOCK.id,
+        id: BASIC_DATASET_DATA.id,
       },
     },
   })),
