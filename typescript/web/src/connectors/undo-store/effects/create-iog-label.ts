@@ -1,8 +1,8 @@
 import { ApolloClient, gql } from "@apollo/client";
 import { Coordinate } from "ol/coordinate";
 
-import { LabelType } from "@labelflow/graphql-types";
 import { Effect } from "..";
+import { LabelType } from "../../../graphql-types/globalTypes";
 import { createLabelMutationUpdate } from "./cache-updates/create-label-mutation-update";
 import { deleteLabelMutationUpdate } from "./cache-updates/delete-label-mutation-update";
 import { DELETE_LABEL_MUTATION } from "./shared-queries";

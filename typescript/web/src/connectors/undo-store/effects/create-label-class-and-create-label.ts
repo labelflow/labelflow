@@ -1,7 +1,6 @@
 import { ApolloClient } from "@apollo/client";
 
 import { GeoJSONPolygon } from "ol/format/GeoJSON";
-import { LabelType } from "@labelflow/graphql-types";
 import { v4 as uuid } from "uuid";
 import { useLabelingStore } from "../../labeling-state";
 
@@ -17,6 +16,7 @@ import {
   DELETE_LABEL_MUTATION,
   DELETE_LABEL_CLASS_MUTATION,
 } from "./shared-queries";
+import { LabelType } from "../../../graphql-types/globalTypes";
 
 export const createCreateLabelClassAndCreateLabelEffect = (
   {

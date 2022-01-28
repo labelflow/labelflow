@@ -9,7 +9,7 @@ import {
 import { FetchResult, GraphQLRequest } from "@apollo/client";
 import { act } from "@testing-library/react";
 
-export type ApolloMockResponse<TVariables, TData> = Omit<
+export type ApolloMockResponse<TData, TVariables> = Omit<
   WildcardMockedResponse,
   "request" | "result"
 > & {

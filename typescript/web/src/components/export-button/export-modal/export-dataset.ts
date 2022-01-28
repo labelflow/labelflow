@@ -1,8 +1,15 @@
 import { ApolloClient, gql } from "@apollo/client";
-import { ExportFormat, ExportOptions } from "@labelflow/graphql-types";
 import { Dispatch, SetStateAction } from "react";
+import {
+  ExportDatasetUrlQuery,
+  ExportDatasetUrlQueryVariables,
+} from "../../../graphql-types/ExportDatasetUrlQuery";
+import {
+  ExportFormat,
+  ExportOptions,
+} from "../../../graphql-types/globalTypes";
 
-const EXPORT_QUERY = gql`
+const EXPORT_DATASET_URL_QUERY = gql`
   query ExportDatasetUrlQuery(
     $datasetId: ID!
     $format: ExportFormat!
@@ -43,22 +50,24 @@ export const exportDataset = async ({
   const datasetName = `${datasetSlug}-${format.toLowerCase()}-${date}`;
   const {
     data: { exportDataset: exportDatasetUrl },
-  } = await client.query({
-    query: EXPORT_QUERY,
-    variables: {
-      datasetId,
-      format,
-      options: {
-        coco: { ...options.coco, name: datasetName },
-        yolo: { ...options.yolo, name: datasetName },
+  } = await client.query<ExportDatasetUrlQuery, ExportDatasetUrlQueryVariables>(
+    {
+      query: EXPORT_DATASET_URL_QUERY,
+      variables: {
+        datasetId,
+        format,
+        options: {
+          coco: { ...options.coco, name: datasetName },
+          yolo: { ...options.yolo, name: datasetName },
+        },
       },
-    },
-  });
+    }
+  );
   const blobDataset = await (await fetch(exportDatasetUrl)).blob();
   const url = window.URL.createObjectURL(blobDataset);
   const element = document.createElement("a");
   const extension =
-    format === ExportFormat.Yolo || options.coco?.exportImages ? "zip" : "json";
+    format === ExportFormat.YOLO || options.coco?.exportImages ? "zip" : "json";
   element.href = url;
   element.download = `${datasetName}.${extension}`;
   setIsExportRunning(false);

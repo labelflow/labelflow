@@ -1,5 +1,8 @@
-import { gql, QueryHookOptions, QueryResult, useQuery } from "@apollo/client";
-import { Query, QueryWorkspaceExistsArgs } from "@labelflow/graphql-types";
+import { gql, QueryHookOptions, useQuery } from "@apollo/client";
+import {
+  WorkspaceExistsQuery,
+  WorkspaceExistsQueryVariables,
+} from "../../graphql-types/WorkspaceExistsQuery";
 
 export const WORKSPACE_EXISTS_QUERY = gql`
   query WorkspaceExistsQuery($slug: String!) {
@@ -7,18 +10,15 @@ export const WORKSPACE_EXISTS_QUERY = gql`
   }
 `;
 
-export type WorkspaceExistsInput = QueryWorkspaceExistsArgs["where"];
-export type WorkspaceExistsResult = Pick<Query, "workspaceExists">;
-
 export type UseWorkspaceExistsOptions = Partial<
-  QueryHookOptions<WorkspaceExistsResult, WorkspaceExistsInput>
+  QueryHookOptions<WorkspaceExistsQuery, WorkspaceExistsQueryVariables>
 >;
 
-export function useWorkspaceExistsQuery(
+export const useWorkspaceExistsQuery = (
   slug: string,
   options?: UseWorkspaceExistsOptions
-): QueryResult<WorkspaceExistsResult, WorkspaceExistsInput> {
-  return useQuery<WorkspaceExistsResult, WorkspaceExistsInput>(
+) =>
+  useQuery<WorkspaceExistsQuery, WorkspaceExistsQueryVariables>(
     WORKSPACE_EXISTS_QUERY,
     {
       skip: slug.length === 0,
@@ -28,4 +28,3 @@ export function useWorkspaceExistsQuery(
       ...options,
     }
   );
-}

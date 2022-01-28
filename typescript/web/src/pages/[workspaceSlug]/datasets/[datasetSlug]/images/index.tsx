@@ -96,12 +96,14 @@ const ImagesPage = () => {
           />
         }
       >
-        <ImagesList
-          datasetSlug={datasetSlug}
-          workspaceSlug={workspaceSlug}
-          datasetId={datasetResult?.dataset.id}
-          imagesTotalCount={imagesTotalCount ?? 0}
-        />
+        {datasetResult && (
+          <ImagesList
+            datasetSlug={datasetSlug}
+            workspaceSlug={workspaceSlug}
+            datasetId={datasetResult.dataset.id}
+            imagesTotalCount={imagesTotalCount ?? 0}
+          />
+        )}
       </Layout>
     </>
   );

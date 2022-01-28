@@ -1,5 +1,5 @@
 import { HStack } from "@chakra-ui/react";
-import { ExportFormat } from "@labelflow/graphql-types";
+import { ExportFormat } from "../../../../graphql-types/globalTypes";
 import {
   apolloMockDecorator,
   chakraDecorator,
@@ -15,7 +15,7 @@ export default {
 const loadingValue: ExportModalState = {
   isOpen: false,
   onClose: () => {},
-  exportFormat: ExportFormat.Coco,
+  exportFormat: ExportFormat.COCO,
   setExportFormat: () => {},
   loading: false,
   datasetId: "",

@@ -8,8 +8,8 @@ import {
   AlertDialogOverlay,
   Button,
 } from "@chakra-ui/react";
-import { Membership } from "@labelflow/graphql-types";
 import { getDisplayName } from "./user";
+import { GetMembershipsMembersQuery_memberships } from "../../graphql-types/GetMembershipsMembersQuery";
 
 export const DeleteMembershipErrorModal = ({
   isOpen = false,
@@ -18,7 +18,7 @@ export const DeleteMembershipErrorModal = ({
 }: {
   isOpen?: boolean;
   onClose?: () => void;
-  membership: Membership | null;
+  membership?: GetMembershipsMembersQuery_memberships;
 }) => {
   const cancelRef = useRef<HTMLButtonElement>(null);
   if (membership == null) {

@@ -11,8 +11,8 @@ import {
 } from "../../graphql-types/DeleteDatasetByIdMutation";
 
 export const DELETE_DATASET_BY_ID_MOCK: ApolloMockResponse<
-  DeleteDatasetByIdMutationVariables,
-  DeleteDatasetByIdMutation
+  DeleteDatasetByIdMutation,
+  DeleteDatasetByIdMutationVariables
 > = {
   request: {
     query: DELETE_DATASET_BY_ID_MUTATION,

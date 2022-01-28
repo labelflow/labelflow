@@ -1,8 +1,8 @@
 import { gql, useQuery } from "@apollo/client";
-import { Workspace } from "@labelflow/graphql-types";
 import { useRouter } from "next/router";
 import { useCallback, useMemo, useState } from "react";
 import { StringParam, useQueryParams } from "use-query-params";
+import { GetWorkspacesQuery } from "../../graphql-types/GetWorkspacesQuery";
 import { BoolParam } from "../../utils/query-param-bool";
 import { CreateWorkspaceModal } from "./create-workspace-modal";
 import { WorkspaceMenu } from "./workspace-menu";
@@ -31,9 +31,9 @@ export const WorkspaceSwitcher = () => {
     });
 
   const { data: getWorkspacesData, previousData: getWorkspacesPreviousData } =
-    useQuery(GET_WORKSPACES_QUERY);
+    useQuery<GetWorkspacesQuery>(GET_WORKSPACES_QUERY);
 
-  const workspaces: (Workspace & { src?: string })[] = useMemo(
+  const workspaces = useMemo(
     () => [
       ...(getWorkspacesData?.workspaces ??
         getWorkspacesPreviousData?.workspaces ??

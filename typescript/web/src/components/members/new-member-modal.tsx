@@ -19,10 +19,13 @@ import {
   useToast,
   VStack,
 } from "@chakra-ui/react";
-import { InvitationResult, MembershipRole } from "@labelflow/graphql-types";
 import { isEmpty } from "lodash/fp";
 import { useRouter } from "next/router";
 import { ChangeEvent, useState } from "react";
+import {
+  InvitationResult,
+  MembershipRole,
+} from "../../graphql-types/globalTypes";
 import { validateEmail } from "../../utils/validate-email";
 import { RoleSelection } from "./role-selection";
 import { InviteMember } from "./types";

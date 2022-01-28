@@ -1,6 +1,9 @@
 import { ApolloCache, Reference } from "@apollo/client";
 import { getBoundedGeometryFromImage } from "@labelflow/common-resolvers/src/utils/get-bounded-geometry-from-image";
-import { GeometryInput, LabelType } from "@labelflow/graphql-types";
+import {
+  GeometryInput,
+  LabelType,
+} from "../../../../../graphql-types/globalTypes";
 import {
   IMAGE_DIMENSIONS_QUERY,
   CREATED_LABEL_FRAGMENT,

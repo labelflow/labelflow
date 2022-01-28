@@ -1,8 +1,12 @@
 import { gql, ApolloClient } from "@apollo/client";
+import { Label } from "@labelflow/graphql-types";
 import { omit } from "lodash/fp";
 
-import { Label } from "@labelflow/graphql-types";
 import { Effect } from "..";
+import {
+  DeleteLabelActionMutation,
+  DeleteLabelActionMutationVariables,
+} from "../../../graphql-types/DeleteLabelActionMutation";
 import { createLabelMutationUpdate } from "./cache-updates/create-label-mutation-update";
 import { deleteLabelMutationUpdate } from "./cache-updates/delete-label-mutation-update";
 import { CREATE_LABEL_MUTATION } from "./shared-queries";
@@ -39,9 +43,10 @@ export const createDeleteLabelEffect = (
   }
 ): Effect => ({
   do: async () => {
-    const { data } = await client.mutate<{
-      deleteLabel: Label & { __typename: "Label" };
-    }>({
+    const { data } = await client.mutate<
+      DeleteLabelActionMutation,
+      DeleteLabelActionMutationVariables
+    >({
       mutation: DELETE_LABEL_MUTATION,
       variables: { id },
       refetchQueries: ["CountLabelsOfDatasetQuery"],

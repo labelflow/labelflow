@@ -1,4 +1,3 @@
-import { ExportFormat, Label } from "@labelflow/graphql-types";
 import { useQuery, gql } from "@apollo/client";
 import {
   createContext,
@@ -10,6 +9,11 @@ import {
   useMemo,
 } from "react";
 import { useRouter } from "next/router";
+import { ExportFormat } from "../../../graphql-types/globalTypes";
+import {
+  CountLabelsOfDatasetQuery,
+  CountLabelsOfDatasetQueryVariables,
+} from "../../../graphql-types/CountLabelsOfDatasetQuery";
 
 export const COUNT_LABELS_OF_DATASET_QUERY = gql`
   query CountLabelsOfDatasetQuery($slug: String!, $workspaceSlug: String!) {
@@ -37,7 +41,7 @@ export interface ExportModalState {
   exportFormat: ExportFormat;
   setExportFormat: Dispatch<SetStateAction<ExportFormat>>;
   loading: boolean;
-  datasetId: string;
+  datasetId?: string;
   numberUndefinedLabelsOfDataset: number;
   datasetSlug: string;
   setIsExportRunning: Dispatch<SetStateAction<boolean>>;
@@ -63,14 +67,17 @@ export const ExportModalProvider = ({
   children,
 }: ExportModalProviderProps) => {
   const router = useRouter();
-  const [exportFormat, setExportFormat] = useState(ExportFormat.Coco);
+  const [exportFormat, setExportFormat] = useState(ExportFormat.COCO);
   const [isExportRunning, setIsExportRunning] = useState(false);
   const [isOptionsModalOpen, setIsOptionsModalOpen] = useState(false);
   const { datasetSlug, workspaceSlug } = router?.query as {
     datasetSlug: string;
     workspaceSlug: string;
   };
-  const { data, loading } = useQuery(COUNT_LABELS_OF_DATASET_QUERY, {
+  const { data, loading } = useQuery<
+    CountLabelsOfDatasetQuery,
+    CountLabelsOfDatasetQueryVariables
+  >(COUNT_LABELS_OF_DATASET_QUERY, {
     variables: { slug: datasetSlug, workspaceSlug },
     skip: !datasetSlug || !isOpen,
   });
@@ -80,17 +87,13 @@ export const ExportModalProvider = ({
   const labelsNumber: number = data?.dataset?.labelsAggregates?.totalCount ?? 0;
 
   const numberUndefinedLabelsOfDataset: number = useMemo(() => {
-    if (loading === false) {
-      return data?.dataset?.labels?.reduce(
-        (numberUndefinedLabels: number, label: Label) => {
-          return !label?.labelClass
-            ? numberUndefinedLabels + 1
-            : numberUndefinedLabels;
-        },
-        0
-      );
-    }
-    return false;
+    if (loading) return 0;
+    const total = data?.dataset?.labels?.reduce<number>(
+      (numberUndefinedLabels, label) =>
+        !label?.labelClass ? numberUndefinedLabels + 1 : numberUndefinedLabels,
+      0
+    );
+    return total ?? 0;
   }, [data, loading]);
 
   const value: ExportModalState = {

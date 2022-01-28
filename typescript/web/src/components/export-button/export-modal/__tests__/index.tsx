@@ -7,7 +7,6 @@ import { ChakraProvider } from "@chakra-ui/react";
 import { PropsWithChildren } from "react";
 
 import { incrementMockedDate } from "@labelflow/dev-utils/mockdate";
-import { LabelCreateInput } from "@labelflow/graphql-types";
 import { processImage } from "../../../../connectors/repository/image-processing";
 import { mockNextRouter } from "../../../../utils/router-mocks";
 
@@ -24,6 +23,7 @@ import {
   CREATE_TEST_IMAGE_MUTATION,
 } from "../../../../utils/tests/mutations";
 import { CREATE_LABEL_MUTATION } from "../../../../connectors/undo-store/effects/shared-queries";
+import { LabelCreateInput } from "../../../../graphql-types/globalTypes";
 
 setupTestsWithLocalDatabase();
 

@@ -1,7 +1,9 @@
 import { useRouter } from "next/router";
 import { useQuery, gql } from "@apollo/client";
-
-import { Dataset, Image } from "@labelflow/graphql-types";
+import {
+  GetAllImagesOfADatasetQuery,
+  GetAllImagesOfADatasetQueryVariables,
+} from "../graphql-types/GetAllImagesOfADatasetQuery";
 
 const GET_ALL_IMAGES_OF_A_DATASET_QUERY = gql`
   query GetAllImagesOfADatasetQuery($slug: String!, $workspaceSlug: String!) {
@@ -32,10 +34,15 @@ export const useImagesNavigation = () => {
   const { datasetSlug, imageId: currentImageId, workspaceSlug } = router?.query;
 
   // Refetch images ?
-  const { data } = useQuery<{
-    dataset: Pick<Dataset, "id" | "images">;
-  }>(GET_ALL_IMAGES_OF_A_DATASET_QUERY, {
-    variables: { slug: datasetSlug, workspaceSlug },
+  const { data } = useQuery<
+    GetAllImagesOfADatasetQuery,
+    GetAllImagesOfADatasetQueryVariables
+  >(GET_ALL_IMAGES_OF_A_DATASET_QUERY, {
+    variables: {
+      slug: typeof datasetSlug === "string" ? datasetSlug : datasetSlug[0],
+      workspaceSlug:
+        typeof workspaceSlug === "string" ? workspaceSlug : workspaceSlug[0],
+    },
     skip: !datasetSlug || !workspaceSlug,
   });
 
@@ -53,9 +60,7 @@ export const useImagesNavigation = () => {
     };
   }
 
-  const currentImageIndex = images.findIndex(
-    (image: Partial<Image>) => image.id === currentImageId
-  );
+  const currentImageIndex = images.findIndex(({ id }) => id === currentImageId);
 
   if (currentImageIndex === -1) {
     return {

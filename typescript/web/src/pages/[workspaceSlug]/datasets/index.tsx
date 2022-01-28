@@ -5,7 +5,6 @@ import { Flex, Text } from "@chakra-ui/react";
 
 import { useQueryParam } from "use-query-params";
 
-import type { Dataset as DatasetType } from "@labelflow/graphql-types";
 import { useRouter } from "next/router";
 import { Spinner } from "../../../components/spinner";
 import { Meta } from "../../../components/meta";
@@ -25,6 +24,10 @@ import { WorkspaceTabBar } from "../../../components/layout/tab-bar/workspace-ta
 import { WorkspaceSwitcher } from "../../../components/workspace-switcher";
 import { NavLogo } from "../../../components/logo/nav-logo";
 import { WORKSPACE_DATASETS_PAGE_DATASETS_QUERY } from "../../../shared-queries/workspace-datasets-page.query";
+import {
+  WorkspaceDatasetsPageDatasetsQuery,
+  WorkspaceDatasetsPageDatasetsQueryVariables,
+} from "../../../graphql-types/WorkspaceDatasetsPageDatasetsQuery";
 
 const LoadingCard = () => (
   <DatasetCardBox>
@@ -45,19 +48,16 @@ const DatasetPage = () => {
     isReady,
   } = useRouter();
 
-  const { data: datasetsResult, loading } = useQuery<{
-    datasets: Pick<
-      DatasetType,
-      | "id"
-      | "name"
-      | "slug"
-      | "images"
-      | "imagesAggregates"
-      | "labelClassesAggregates"
-      | "labelsAggregates"
-    >[];
-  }>(WORKSPACE_DATASETS_PAGE_DATASETS_QUERY, {
-    variables: { where: { workspaceSlug } },
+  const { data: datasetsResult, loading } = useQuery<
+    WorkspaceDatasetsPageDatasetsQuery,
+    WorkspaceDatasetsPageDatasetsQueryVariables
+  >(WORKSPACE_DATASETS_PAGE_DATASETS_QUERY, {
+    variables: {
+      where: {
+        workspaceSlug:
+          typeof workspaceSlug === "string" ? workspaceSlug : workspaceSlug[0],
+      },
+    },
     skip: workspaceSlug == null,
   });
 

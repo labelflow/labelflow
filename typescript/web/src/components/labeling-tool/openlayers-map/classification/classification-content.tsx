@@ -1,6 +1,5 @@
 import { useApolloClient, useQuery } from "@apollo/client";
 import { Box, HStack } from "@chakra-ui/react";
-import { Label, LabelType } from "@labelflow/graphql-types";
 import { getNextClassColor, LABEL_CLASS_COLOR_PALETTE } from "@labelflow/utils";
 import { useRouter } from "next/router";
 import React, { forwardRef, useCallback } from "react";
@@ -9,6 +8,11 @@ import { useUndoStore } from "../../../../connectors/undo-store";
 import { createCreateLabelClassAndUpdateLabelEffect } from "../../../../connectors/undo-store/effects/create-label-class-and-update-label";
 import { createDeleteLabelEffect } from "../../../../connectors/undo-store/effects/delete-label";
 import { createUpdateLabelClassOfLabelEffect } from "../../../../connectors/undo-store/effects/update-label-class-of-label";
+import {
+  GetImageLabelsQuery,
+  GetImageLabelsQueryVariables,
+} from "../../../../graphql-types/GetImageLabelsQuery";
+import { LabelType } from "../../../../graphql-types/globalTypes";
 import {
   GET_IMAGE_LABELS_QUERY,
   GET_LABEL_CLASSES_OF_DATASET_QUERY,
@@ -22,10 +26,13 @@ export const ClassificationContent = forwardRef<HTMLDivElement>(
     const workspaceSlug = router?.query.workspaceSlug as string;
     const imageId = router?.query.imageId as string;
     const { data: getImageLabelsData, previousData: previousImageLabelsData } =
-      useQuery(GET_IMAGE_LABELS_QUERY, {
-        skip: !imageId,
-        variables: { imageId: imageId as string },
-      });
+      useQuery<GetImageLabelsQuery, GetImageLabelsQueryVariables>(
+        GET_IMAGE_LABELS_QUERY,
+        {
+          skip: !imageId,
+          variables: { imageId: imageId as string },
+        }
+      );
     const { data: labelClassesData } = useQuery(
       GET_LABEL_CLASSES_OF_DATASET_QUERY,
       {
@@ -80,14 +87,17 @@ export const ClassificationContent = forwardRef<HTMLDivElement>(
       async (item: LabelClassItem | null) => {
         if (selectedLabelId != null) {
           // Change the class of an existing classification label to an existing class
-          const { data: imageLabelsData } = await client.query({
+          const { data: imageLabelsData } = await client.query<
+            GetImageLabelsQuery,
+            GetImageLabelsQueryVariables
+          >({
             query: GET_IMAGE_LABELS_QUERY,
             variables: { imageId },
           });
 
           const classificationsOfThisClass =
             imageLabelsData.image.labels.filter(
-              (label: Label) =>
+              (label) =>
                 label.labelClass?.id === item?.id &&
                 label.type === LabelType.Classification
             );
@@ -134,8 +144,8 @@ export const ClassificationContent = forwardRef<HTMLDivElement>(
           pointerEvents={isInDrawingMode ? "none" : "initial"}
         >
           {labels
-            .filter(({ type }: Label) => type === LabelType.Classification)
-            .map((label: Label) => {
+            .filter(({ type }) => type === LabelType.Classification)
+            .map((label) => {
               return (
                 <ClassificationTag
                   key={label.id}

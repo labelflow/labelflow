@@ -1,4 +1,4 @@
-import { ExportFormat } from "@labelflow/graphql-types";
+import { ExportFormat } from "../../../../graphql-types/globalTypes";
 import {
   apolloMockDecorator,
   chakraDecorator,
@@ -14,7 +14,7 @@ export default {
 const value: ExportModalState = {
   isOpen: false,
   onClose: () => {},
-  exportFormat: ExportFormat.Coco,
+  exportFormat: ExportFormat.COCO,
   setExportFormat: () => {},
   loading: false,
   datasetId: "",

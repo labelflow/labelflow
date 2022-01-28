@@ -1,4 +1,7 @@
-import { ExportOptions, ExportFormat } from "@labelflow/graphql-types";
+import {
+  ExportFormat,
+  ExportOptions,
+} from "../../../graphql-types/globalTypes";
 
 export type Format = keyof ExportOptions;
 type RequiredExportOptions = Required<ExportOptions>;
@@ -22,13 +25,13 @@ export const formatMainInformation: {
   };
 } = {
   coco: {
-    format: ExportFormat.Coco,
+    format: ExportFormat.COCO,
     logoSrc: "/static/export-formats/coco.png",
     title: "Export to COCO",
     description: "Annotation file used with Pytorch and Detectron 2",
   },
   yolo: {
-    format: ExportFormat.Yolo,
+    format: ExportFormat.YOLO,
     logoSrc: "/static/export-formats/yolo.png",
     title: "Export to YOLO",
     description: "Annotation file used by YOLO frameworks",

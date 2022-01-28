@@ -17,7 +17,6 @@ mockNextRouter();
 import { useRouter } from "next/router";
 import { client } from "../../../../connectors/apollo-client/schema-client";
 import { Labels } from "../labels";
-import { LabelCreateInput } from "@labelflow/graphql-types";
 import { useLabelingStore } from "../../../../connectors/labeling-state";
 import { setupTestsWithLocalDatabase } from "../../../../utils/setup-local-db-tests";
 import { processImage } from "../../../../connectors/repository/image-processing";
@@ -27,6 +26,7 @@ import {
   CREATE_TEST_IMAGE_MUTATION,
 } from "../../../../utils/tests/mutations";
 import { CREATE_LABEL_MUTATION } from "../../../../connectors/undo-store/effects/shared-queries";
+import { LabelCreateInput } from "../../../../graphql-types/globalTypes";
 
 setupTestsWithLocalDatabase();
 
@@ -79,7 +79,7 @@ const createImage = async (name: String) => {
   return id;
 };
 
-const createLabel = async (data: Partial<LabelCreateInput>) => {
+const createLabel = async (data: Omit<LabelCreateInput, "geometry">) => {
   const mutationResult = await client.mutate({
     mutation: CREATE_LABEL_MUTATION,
     variables: {
@@ -123,11 +123,7 @@ beforeEach(async () => {
 
 it("displays a single label", async () => {
   const mapRef: { current: OlMap | null } = { current: null };
-
-  await createLabel({
-    imageId,
-  });
-
+  await createLabel({ imageId });
   render(<Labels />, {
     wrapper: ({ children }) => (
       <Map
@@ -139,7 +135,6 @@ it("displays a single label", async () => {
       </Map>
     ),
   });
-
   await waitFor(() => {
     expect(
       (
@@ -155,14 +150,8 @@ it("displays a single label", async () => {
 
 it("displays created labels", async () => {
   const mapRef: { current: OlMap | null } = { current: null };
-  await createLabel({
-    imageId,
-  });
-
-  await createLabel({
-    imageId,
-  });
-
+  await createLabel({ imageId });
+  await createLabel({ imageId });
   render(<Labels />, {
     wrapper: ({ children }) => (
       <Map
@@ -174,7 +163,6 @@ it("displays created labels", async () => {
       </Map>
     ),
   });
-
   await waitFor(() => {
     expect(
       (
@@ -190,12 +178,8 @@ it("displays created labels", async () => {
 
 it("should change style of selected label", async () => {
   const mapRef: { current: OlMap | null } = { current: null };
-  const labelId = await createLabel({
-    imageId,
-  });
-
+  const labelId = await createLabel({ imageId });
   useLabelingStore.setState({ selectedLabelId: labelId });
-
   render(<Labels />, {
     wrapper: ({ children }) => (
       <Map
@@ -207,7 +191,6 @@ it("should change style of selected label", async () => {
       </Map>
     ),
   });
-
   await waitFor(() => {
     const [feature] = (
       mapRef.current?.getLayers().getArray()[0] as VectorLayer<
@@ -216,7 +199,6 @@ it("should change style of selected label", async () => {
     )
       .getSource()
       .getFeatures();
-
     /* When the label is selected it contains two styles, one for the label, another for the vertices style */
     expect(feature.getStyle()).toHaveLength(2);
   });

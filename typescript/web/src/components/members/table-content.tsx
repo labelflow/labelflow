@@ -12,12 +12,14 @@ import {
   Badge,
   Flex,
 } from "@chakra-ui/react";
-import { Membership, MembershipStatus } from "@labelflow/graphql-types";
+import { isNil } from "lodash/fp";
 import { User } from "./user";
 import { RoleSelection } from "./role-selection";
 import { ChangeMembershipRole, RemoveMembership } from "./types";
 import { DeleteMembershipModal } from "./delete-membership-modal";
 import { DeleteMembershipErrorModal } from "./delete-membership-error-modal";
+import { GetMembershipsMembersQuery_memberships } from "../../graphql-types/GetMembershipsMembersQuery";
+import { MembershipStatus } from "../../graphql-types/globalTypes";
 
 const badgeEnum: Record<string, string> = {
   active: "green",
@@ -26,7 +28,7 @@ const badgeEnum: Record<string, string> = {
 };
 
 const getMembershipStatus = (
-  membership: Membership
+  membership: GetMembershipsMembersQuery_memberships
 ): "active" | "sent" | "declined" => {
   switch (membership.status) {
     case MembershipStatus.Active:
@@ -46,18 +48,14 @@ const columns = [
     Cell: function MemberCell({
       invitationEmailSentTo,
       user: userInput,
-    }: Membership) {
-      const user = {
-        ...{ email: invitationEmailSentTo },
-        ...userInput,
-      };
-      return <User data={user} />;
+    }: GetMembershipsMembersQuery_memberships) {
+      return <User email={invitationEmailSentTo} {...userInput} />;
     },
   },
   {
     Header: "Role",
     Cell: function RoleSelectionCell(
-      { id, role, workspace }: Membership,
+      { id, role, workspace }: GetMembershipsMembersQuery_memberships,
       { changeMembershipRole }: any
     ) {
       return (
@@ -73,7 +71,9 @@ const columns = [
   },
   {
     Header: "Status",
-    Cell: function StatusCell(membership: Membership) {
+    Cell: function StatusCell(
+      membership: GetMembershipsMembersQuery_memberships
+    ) {
       const status = getMembershipStatus(membership);
       return (
         <Badge fontSize="xs" colorScheme={badgeEnum[status]}>
@@ -85,7 +85,7 @@ const columns = [
   {
     Header: null,
     Cell: function DeleteCell(
-      { workspace }: Membership,
+      { workspace }: GetMembershipsMembersQuery_memberships,
       { deleteMembership }: any
     ) {
       return (
@@ -122,13 +122,13 @@ export const TableContent = ({
   removeMembership,
   searchText,
 }: {
-  memberships: Membership[];
+  memberships: GetMembershipsMembersQuery_memberships[];
   changeMembershipRole: ChangeMembershipRole;
   removeMembership: RemoveMembership;
   searchText: string;
 }) => {
   const [membershipToDelete, setMembershipToDelete] =
-    useState<null | Membership>(null);
+    useState<GetMembershipsMembersQuery_memberships | undefined>(undefined);
 
   const filteredMemberships = memberships.filter(
     (membership) =>
@@ -146,15 +146,15 @@ export const TableContent = ({
   return (
     <>
       <DeleteMembershipModal
-        isOpen={membershipToDelete != null && memberships.length > 1}
+        isOpen={!isNil(membershipToDelete) && memberships.length > 1}
         membership={membershipToDelete}
-        onClose={() => setMembershipToDelete(null)}
+        onClose={() => setMembershipToDelete(undefined)}
         deleteMembership={removeMembership}
       />
       <DeleteMembershipErrorModal
-        isOpen={membershipToDelete != null && memberships.length <= 1}
+        isOpen={!isNil(membershipToDelete) && memberships.length <= 1}
         membership={membershipToDelete}
-        onClose={() => setMembershipToDelete(null)}
+        onClose={() => setMembershipToDelete(undefined)}
       />
       <Table my="8" borderWidth="1px" fontSize="sm">
         <Thead bg={mode("gray.50", "gray.800")}>

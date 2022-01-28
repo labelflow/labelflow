@@ -13,6 +13,10 @@ import { WorkspaceSettings } from "../../../components/settings/workspace";
 import { LayoutSpinner } from "../../../components/spinner";
 import { WelcomeModal } from "../../../components/welcome-manager";
 import { WorkspaceSwitcher } from "../../../components/workspace-switcher";
+import {
+  GetWorkspaceDetailsQuery,
+  GetWorkspaceDetailsQueryVariables,
+} from "../../../graphql-types/GetWorkspaceDetailsQuery";
 
 const GET_WORKSPACE_DETAILS_QUERY = gql`
   query GetWorkspaceDetailsQuery($workspaceSlug: String) {
@@ -33,10 +37,13 @@ const WorkspaceSettingsPage = () => {
   const {
     data: getWorkspaceDetailsData,
     previousData: getWorkspaceDetailsPreviousData,
-  } = useQuery(GET_WORKSPACE_DETAILS_QUERY, {
-    variables: { workspaceSlug },
-    skip: workspaceSlug == null,
-  });
+  } = useQuery<GetWorkspaceDetailsQuery, GetWorkspaceDetailsQueryVariables>(
+    GET_WORKSPACE_DETAILS_QUERY,
+    {
+      variables: { workspaceSlug },
+      skip: workspaceSlug == null,
+    }
+  );
 
   const getWorkspaceDetailsFinalData =
     getWorkspaceDetailsData?.workspace ??

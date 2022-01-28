@@ -30,8 +30,8 @@ export const UPDATED_DATASET_MOCK_NAME = "My new test dataset";
 export const UPDATED_DATASET_MOCK_SLUG = "my-new-test-dataset";
 
 export const GET_DATASET_BY_ID_MOCK: ApolloMockResponse<
-  GetDatasetByIdQueryVariables,
-  GetDatasetByIdQuery
+  GetDatasetByIdQuery,
+  GetDatasetByIdQueryVariables
 > = {
   request: {
     query: GET_DATASET_BY_ID_QUERY,
@@ -48,8 +48,8 @@ export const GET_DATASET_BY_ID_MOCK: ApolloMockResponse<
 };
 
 export const GET_DATASET_BY_SLUG_MOCK: ApolloMockResponse<
-  SearchDatasetBySlugQueryVariables,
-  SearchDatasetBySlugQuery
+  SearchDatasetBySlugQuery,
+  SearchDatasetBySlugQueryVariables
 > = {
   request: {
     query: SEARCH_DATASET_BY_SLUG_QUERY,
@@ -69,8 +69,8 @@ export const GET_DATASET_BY_SLUG_MOCK: ApolloMockResponse<
 };
 
 export const GET_UPDATED_DATASET_BY_SLUG_MOCK: ApolloMockResponse<
-  SearchDatasetBySlugQueryVariables,
-  SearchDatasetBySlugQuery
+  SearchDatasetBySlugQuery,
+  SearchDatasetBySlugQueryVariables
 > = {
   request: {
     query: SEARCH_DATASET_BY_SLUG_QUERY,
@@ -90,8 +90,8 @@ export const GET_UPDATED_DATASET_BY_SLUG_MOCK: ApolloMockResponse<
 };
 
 export const CREATE_DATASET_MOCK: ApolloMockResponse<
-  CreateDatasetMutationVariables,
-  CreateDatasetMutation
+  CreateDatasetMutation,
+  CreateDatasetMutationVariables
 > = {
   request: {
     query: CREATE_DATASET_MUTATION,
@@ -111,8 +111,8 @@ export const CREATE_DATASET_MOCK: ApolloMockResponse<
 };
 
 export const UPDATE_DATASET_MOCK: ApolloMockResponse<
-  UpdateDatasetMutationVariables,
-  UpdateDatasetMutation
+  UpdateDatasetMutation,
+  UpdateDatasetMutationVariables
 > = {
   request: {
     query: UPDATE_DATASET_MUTATION,

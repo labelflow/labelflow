@@ -1,12 +1,12 @@
 import { ApolloClient } from "@apollo/client";
 
-import { LabelType } from "@labelflow/graphql-types";
 import { GeoJSONPolygon } from "ol/format/GeoJSON";
 import { v4 as uuid } from "uuid";
 import { Effect } from "..";
 import { CREATE_LABEL_MUTATION, DELETE_LABEL_MUTATION } from "./shared-queries";
 import { createLabelMutationUpdate } from "./cache-updates/create-label-mutation-update";
 import { deleteLabelMutationUpdate } from "./cache-updates/delete-label-mutation-update";
+import { LabelType } from "../../../graphql-types/globalTypes";
 
 export const createCreateLabelEffect = (
   {

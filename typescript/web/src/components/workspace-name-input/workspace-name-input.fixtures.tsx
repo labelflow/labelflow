@@ -1,12 +1,8 @@
-import {
-  MockedProvider as ApolloProvider,
-  MockedResponse as ApolloResponse,
-} from "@apollo/client/testing";
+import { MockedProvider as ApolloProvider } from "@apollo/client/testing";
 import {
   FORBIDDEN_WORKSPACE_SLUGS,
   INVALID_WORKSPACE_NAME_MESSAGES,
 } from "@labelflow/common-resolvers";
-import { Mutation, Query } from "@labelflow/graphql-types";
 import { isEmpty, isNil } from "lodash/fp";
 import { PropsWithChildren, useEffect } from "react";
 import {
@@ -15,13 +11,23 @@ import {
   WorkspaceNameInputProvider,
   WorkspaceNameMessage,
 } from ".";
+import {
+  WorkspaceExistsQuery,
+  WorkspaceExistsQueryVariables,
+} from "../../graphql-types/WorkspaceExistsQuery";
 import { MockableLocationProvider } from "../../utils/mockable-location";
+import {
+  ApolloMockResponse,
+  ApolloMockResponses,
+  getApolloMockLink,
+} from "../../utils/tests/apollo-mock";
 import { WORKSPACE_EXISTS_QUERY } from "./workspace-exists.query";
 import { WorkspaceNameMessageProps } from "./workspace-name-message";
 
-export type ApolloMock = ApolloResponse<Partial<Query | Mutation>>;
-
-export const WORKSPACE_EXISTS_MOCK_ALREADY_TAKEN_NAME: ApolloMock = {
+export const WORKSPACE_EXISTS_MOCK_ALREADY_TAKEN_NAME: ApolloMockResponse<
+  WorkspaceExistsQuery,
+  WorkspaceExistsQueryVariables
+> = {
   request: {
     query: WORKSPACE_EXISTS_QUERY,
     variables: { slug: "already-taken-name" },
@@ -29,7 +35,10 @@ export const WORKSPACE_EXISTS_MOCK_ALREADY_TAKEN_NAME: ApolloMock = {
   result: { data: { workspaceExists: true } },
 };
 
-export const WORKSPACE_EXISTS_MOCK_TEST: ApolloMock = {
+export const WORKSPACE_EXISTS_MOCK_TEST: ApolloMockResponse<
+  WorkspaceExistsQuery,
+  WorkspaceExistsQueryVariables
+> = {
   request: {
     query: WORKSPACE_EXISTS_QUERY,
     variables: { slug: "test" },
@@ -40,7 +49,7 @@ export const WORKSPACE_EXISTS_MOCK_TEST: ApolloMock = {
 export type TestComponentProps = Partial<WorkspaceNameMessageProps> & {
   name?: string;
   defaultName?: string;
-  graphqlMocks?: ApolloResponse<Partial<Query | Mutation>>[];
+  graphqlMocks?: ApolloMockResponses;
   storybook?: boolean;
   origin?: string;
 };
@@ -69,7 +78,7 @@ const Wrapper = ({
   <MockableLocationProvider
     location={storybook ? "http://localhost" : undefined}
   >
-    <ApolloProvider mocks={graphqlMocks}>
+    <ApolloProvider link={getApolloMockLink(graphqlMocks)}>
       <WorkspaceNameInputProvider defaultName={defaultName}>
         <NameObserver name={name} storybook={storybook} />
         {children}

@@ -16,8 +16,8 @@ import {
 } from "../../graphql-types/GetDatasetLabelClassesWithTotalCountQuery";
 
 export const GET_DATASET_WITHOUT_LABEL_CLASSES_MOCK: ApolloMockResponse<
-  GetDatasetLabelClassesWithTotalCountQueryVariables,
-  GetDatasetLabelClassesWithTotalCountQuery
+  GetDatasetLabelClassesWithTotalCountQuery,
+  GetDatasetLabelClassesWithTotalCountQueryVariables
 > = {
   request: {
     query: DATASET_LABEL_CLASSES_QUERY_WITH_COUNT,
@@ -37,8 +37,8 @@ export const GET_DATASET_WITHOUT_LABEL_CLASSES_MOCK: ApolloMockResponse<
 };
 
 export const GET_DATASET_WITH_LABEL_CLASSES_MOCK: ApolloMockResponse<
-  GetDatasetLabelClassesWithTotalCountQueryVariables,
-  GetDatasetLabelClassesWithTotalCountQuery
+  GetDatasetLabelClassesWithTotalCountQuery,
+  GetDatasetLabelClassesWithTotalCountQueryVariables
 > = {
   request: {
     query: DATASET_LABEL_CLASSES_QUERY_WITH_COUNT,

@@ -1,9 +1,9 @@
 import { gql, useMutation, useQuery } from "@apollo/client";
 import { useToast } from "@chakra-ui/react";
-import { CurrentUserCanAcceptInvitation } from "@labelflow/graphql-types";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import React from "react";
+import { CurrentUserCanAcceptInvitation } from "../../graphql-types/globalTypes";
 import { USER_PROFILE_QUERY } from "../../shared-queries/user-profile.query";
 import { getDisplayName } from "../members/user";
 import { LayoutSpinner } from "../spinner";

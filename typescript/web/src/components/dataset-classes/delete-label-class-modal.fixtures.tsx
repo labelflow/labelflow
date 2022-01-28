@@ -48,8 +48,8 @@ export const TestComponent = ({
 );
 
 export const GET_LABEL_CLASS_BY_ID_MOCK: ApolloMockResponse<
-  GetLabelClassByIdQueryVariables,
-  GetLabelClassByIdQuery
+  GetLabelClassByIdQuery,
+  GetLabelClassByIdQueryVariables
 > = {
   request: {
     query: GET_LABEL_CLASS_BY_ID_QUERY,
@@ -68,8 +68,8 @@ export const GET_LABEL_CLASS_BY_ID_MOCK: ApolloMockResponse<
 };
 
 export const DELETE_LABEL_CLASS_SIMPLE_MOCK: ApolloMockResponse<
-  DeleteLabelClassMutationVariables,
-  DeleteLabelClassMutation
+  DeleteLabelClassMutation,
+  DeleteLabelClassMutationVariables
 > = {
   request: {
     query: DELETE_LABEL_CLASS_MUTATION,

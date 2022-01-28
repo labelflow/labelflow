@@ -7,7 +7,6 @@ import {
   Text,
   useColorModeValue as mode,
 } from "@chakra-ui/react";
-import type { Image } from "@labelflow/graphql-types";
 import dynamic from "next/dynamic";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
@@ -26,6 +25,10 @@ import { Meta } from "../../../../../components/meta";
 import { LayoutSpinner } from "../../../../../components/spinner";
 import { WelcomeModal } from "../../../../../components/welcome-manager";
 import { WorkspaceSwitcher } from "../../../../../components/workspace-switcher";
+import {
+  ImageNameQuery,
+  ImageNameQueryVariables,
+} from "../../../../../graphql-types/ImageNameQuery";
 import { Error404Content } from "../../../../404";
 
 // The dynamic import is needed because openlayers use web apis that are not available
@@ -42,7 +45,7 @@ const LabelingTool = dynamic(
   }
 );
 
-const IMAGE_QUERY = gql`
+const IMAGE_NAME_QUERY = gql`
   query ImageNameQuery($id: ID!) {
     image(where: { id: $id }) {
       id
@@ -50,10 +53,6 @@ const IMAGE_QUERY = gql`
     }
   }
 `;
-
-type ImageQueryResponse = {
-  image: Pick<Image, "id" | "name">;
-};
 
 const ImagePage = () => {
   const router = useRouter();
@@ -63,8 +62,8 @@ const ImagePage = () => {
     data: imageResult,
     error: errorImage,
     loading: loadingImage,
-  } = useQuery<ImageQueryResponse>(IMAGE_QUERY, {
-    variables: { id: imageId },
+  } = useQuery<ImageNameQuery, ImageNameQueryVariables>(IMAGE_NAME_QUERY, {
+    variables: { id: typeof imageId === "string" ? imageId : imageId[0] },
     skip: !imageId,
   });
 

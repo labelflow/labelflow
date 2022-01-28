@@ -9,7 +9,10 @@ import {
   UnorderedList,
   useBoolean,
 } from "@chakra-ui/react";
-import { Query, Workspace } from "@labelflow/graphql-types";
+import {
+  GetHomeWorkspacesQuery,
+  GetHomeWorkspacesQuery_workspaces,
+} from "../../graphql-types/GetHomeWorkspacesQuery";
 import { LayoutSpinner } from "../spinner";
 import { CreateWorkspaceModal } from "../workspace-switcher/create-workspace-modal";
 
@@ -23,15 +26,21 @@ export const GET_HOME_WORKSPACES_QUERY = gql`
   }
 `;
 
-type GqlWorkspace = Pick<Workspace, "id" | "name" | "slug">;
-
-const WorkspaceItem = ({ workspace }: { workspace: GqlWorkspace }) => (
+const WorkspaceItem = ({
+  workspace,
+}: {
+  workspace: GetHomeWorkspacesQuery_workspaces;
+}) => (
   <ListItem>
     <Link href={`/${workspace.slug}`}>{workspace.name}</Link>
   </ListItem>
 );
 
-const Workspaces = ({ workspaces }: { workspaces: GqlWorkspace[] }) => (
+const Workspaces = ({
+  workspaces,
+}: {
+  workspaces: GetHomeWorkspacesQuery_workspaces[];
+}) => (
   <UnorderedList>
     {workspaces.map((workspace) => (
       <WorkspaceItem key={workspace.id} workspace={workspace} />
@@ -40,7 +49,7 @@ const Workspaces = ({ workspaces }: { workspaces: GqlWorkspace[] }) => (
 );
 
 export const Home = () => {
-  const { data, loading } = useQuery<Pick<Query, "workspaces">>(
+  const { data, loading } = useQuery<GetHomeWorkspacesQuery>(
     GET_HOME_WORKSPACES_QUERY,
     { fetchPolicy: "cache-and-network" }
   );

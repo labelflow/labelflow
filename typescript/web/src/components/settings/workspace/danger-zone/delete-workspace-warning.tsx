@@ -19,7 +19,7 @@ const WarningSign = () => (
 );
 
 export const DeleteWorkspaceWarning = () => {
-  const workspace = useWorkspaceSettings();
+  const { name } = useWorkspaceSettings();
   return (
     <Card bgColor={color("orange.100", "orange.600")}>
       <HStack spacing="1em">
@@ -28,7 +28,7 @@ export const DeleteWorkspaceWarning = () => {
           <UnorderedList>
             <ListItem>
               {"Deleting the "}
-              <b>{workspace?.name}</b>
+              <b>{name}</b>
               {" workspace will delete all of its images and labels"}
             </ListItem>
             <ListItem>The workspace plan will be canceled</ListItem>

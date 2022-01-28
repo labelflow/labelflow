@@ -20,10 +20,10 @@ import { useState } from "react";
 import { IoSearch } from "react-icons/io5";
 import { RiAddFill } from "react-icons/ri";
 import { useRouter } from "next/router";
-import { InvitationResult } from "@labelflow/graphql-types";
 
 import { NewMemberModal } from "./new-member-modal";
 import { InviteMember } from "./types";
+import { InvitationResult } from "../../graphql-types/globalTypes";
 
 const SearchIcon = chakra(IoSearch);
 

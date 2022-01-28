@@ -33,8 +33,8 @@ import {
 export const UPDATED_LABEL_CLASS_MOCK_NAME = "My New Class Name";
 
 export const GET_DATASET_WITH_LABEL_CLASSES_MOCK: ApolloMockResponse<
-  GetDatasetLabelClassesQueryVariables,
-  GetDatasetLabelClassesQuery
+  GetDatasetLabelClassesQuery,
+  GetDatasetLabelClassesQueryVariables
 > = {
   request: {
     query: DATASET_LABEL_CLASSES_QUERY,
@@ -62,8 +62,8 @@ export const GET_DATASET_WITH_LABEL_CLASSES_MOCK: ApolloMockResponse<
 };
 
 export const CREATE_LABEL_CLASS_DEFAULT_MOCK: ApolloMockResponse<
-  CreateLabelClassMutationVariables,
-  CreateLabelClassMutation
+  CreateLabelClassMutation,
+  CreateLabelClassMutationVariables
 > = {
   request: {
     query: CREATE_LABEL_CLASS_MUTATION,
@@ -82,8 +82,8 @@ export const CREATE_LABEL_CLASS_DEFAULT_MOCK: ApolloMockResponse<
 };
 
 export const GET_LABEL_CLASS_EXISTS_MOCK: ApolloMockResponse<
-  LabelClassExistsQueryVariables,
-  LabelClassExistsQuery
+  LabelClassExistsQuery,
+  LabelClassExistsQueryVariables
 > = {
   request: {
     query: LABEL_CLASS_EXISTS_QUERY,
@@ -101,8 +101,8 @@ export const GET_LABEL_CLASS_EXISTS_MOCK: ApolloMockResponse<
 };
 
 export const UPDATE_LABEL_CLASS_NAME_MOCK: ApolloMockResponse<
-  UpdateLabelClassNameMutationVariables,
-  UpdateLabelClassNameMutation
+  UpdateLabelClassNameMutation,
+  UpdateLabelClassNameMutationVariables
 > = {
   request: {
     query: UPDATE_LABEL_CLASS_NAME_MUTATION,

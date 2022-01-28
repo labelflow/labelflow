@@ -11,8 +11,12 @@ import { Meta } from "../../../components/meta";
 import { LayoutSpinner } from "../../../components/spinner";
 import { WelcomeModal } from "../../../components/welcome-manager";
 import { WorkspaceSwitcher } from "../../../components/workspace-switcher";
+import {
+  GetMembershipsMembersQuery,
+  GetMembershipsMembersQueryVariables,
+} from "../../../graphql-types/GetMembershipsMembersQuery";
 
-const MEMBERSHIPS_QUERY = gql`
+const GET_MEMBERSHIPS_MEMBERS_QUERY = gql`
   query GetMembershipsMembersQuery($workspaceSlug: String) {
     memberships(where: { workspaceSlug: $workspaceSlug }) {
       id
@@ -59,21 +63,24 @@ const INVITE_MEMBER_MUTATION = gql`
 const WorkspaceMembersPage = () => {
   const workspaceSlug = useRouter().query?.workspaceSlug as string;
 
-  const { data: membershipsData } = useQuery(MEMBERSHIPS_QUERY, {
+  const { data: membershipsData } = useQuery<
+    GetMembershipsMembersQuery,
+    GetMembershipsMembersQueryVariables
+  >(GET_MEMBERSHIPS_MEMBERS_QUERY, {
     variables: { workspaceSlug },
     skip: workspaceSlug == null,
   });
 
   const [deleteMembership] = useMutation(DELETE_MEMBERSHIP_MUTATION, {
-    refetchQueries: ["GetMembershipsMembersQuery"],
+    refetchQueries: [GET_MEMBERSHIPS_MEMBERS_QUERY],
   });
 
   const [updateMembership] = useMutation(UPDATE_MEMBERSHIP_MUTATION, {
-    refetchQueries: ["GetMembershipsMembersQuery"],
+    refetchQueries: [GET_MEMBERSHIPS_MEMBERS_QUERY],
   });
 
   const [inviteMember] = useMutation(INVITE_MEMBER_MUTATION, {
-    refetchQueries: ["GetMembershipsMembersQuery"],
+    refetchQueries: [GET_MEMBERSHIPS_MEMBERS_QUERY],
   });
 
   return (

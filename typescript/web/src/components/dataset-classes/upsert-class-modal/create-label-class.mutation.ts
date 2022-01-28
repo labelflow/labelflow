@@ -1,15 +1,17 @@
 import {
-  DocumentNode,
   gql,
   MutationResult,
   useApolloClient,
   useMutation,
 } from "@apollo/client";
 import { MutationBaseOptions } from "@apollo/client/core/watchQueryOptions";
-import { Query } from "@labelflow/graphql-types";
 import { getNextClassColor, LABEL_CLASS_COLOR_PALETTE } from "@labelflow/utils";
 import { useCallback } from "react";
 import { v4 as uuid } from "uuid";
+import {
+  GetDatasetLabelClassesQuery,
+  GetDatasetLabelClassesQueryVariables,
+} from "../../../graphql-types/GetDatasetLabelClassesQuery";
 import { DATASET_LABEL_CLASSES_QUERY } from "./dataset-label-classes.query";
 
 export const CREATE_LABEL_CLASS_MUTATION = gql`
@@ -29,20 +31,18 @@ export const CREATE_LABEL_CLASS_MUTATION = gql`
   }
 `;
 
-export const createLabelMutationUpdate: (
-  datasetLabelClassesQuery: DocumentNode,
-  datasetSlug: string | undefined,
-  workspaceSlug: string | undefined
-) => MutationBaseOptions["update"] = (
-  datasetLabelClassesQuery,
-  datasetSlug,
-  workspaceSlug
-) => {
+export const createLabelMutationUpdate = (
+  datasetSlug: string,
+  workspaceSlug: string
+): MutationBaseOptions["update"] => {
   return (cache, { data }) => {
     if (data != null) {
       const { createLabelClass } = data;
-      const datasetCacheResult = cache.readQuery<Pick<Query, "dataset">>({
-        query: datasetLabelClassesQuery,
+      const datasetCacheResult = cache.readQuery<
+        GetDatasetLabelClassesQuery,
+        GetDatasetLabelClassesQueryVariables
+      >({
+        query: DATASET_LABEL_CLASSES_QUERY,
         variables: { slug: datasetSlug, workspaceSlug },
       });
       if (datasetCacheResult?.dataset == null) {
@@ -62,7 +62,7 @@ export const createLabelMutationUpdate: (
         labelClasses: updatedLabelClasses,
       };
       cache.writeQuery({
-        query: datasetLabelClassesQuery,
+        query: DATASET_LABEL_CLASSES_QUERY,
         variables: { slug: datasetSlug, workspaceSlug },
         data: { dataset: updatedDataset },
       });
@@ -73,22 +73,19 @@ export const createLabelMutationUpdate: (
 };
 
 export const useCreateLabelClassMutation = (
-  workspaceSlug: string | undefined,
-  datasetSlug: string | undefined,
+  workspaceSlug: string,
+  datasetSlug: string,
   className: string,
-  datasetId: string | undefined | null
+  datasetId: string
 ): [() => Promise<void>, MutationResult<{}>] => {
   const client = useApolloClient();
   const [createLabelClass, result] = useMutation(CREATE_LABEL_CLASS_MUTATION, {
-    update: createLabelMutationUpdate(
-      DATASET_LABEL_CLASSES_QUERY,
-      datasetSlug,
-      workspaceSlug
-    ),
+    update: createLabelMutationUpdate(datasetSlug, workspaceSlug),
   });
   const onCreateLabelClass = useCallback(async () => {
     const { data: queryData } = await client.query<
-      Partial<Pick<Query, "dataset">>
+      GetDatasetLabelClassesQuery,
+      GetDatasetLabelClassesQueryVariables
     >({
       query: DATASET_LABEL_CLASSES_QUERY,
       variables: { slug: datasetSlug, workspaceSlug },

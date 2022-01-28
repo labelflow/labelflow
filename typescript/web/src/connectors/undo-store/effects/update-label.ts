@@ -1,8 +1,9 @@
 import { ApolloClient, gql } from "@apollo/client";
-import { GeometryInput, Label } from "@labelflow/graphql-types";
+import { Label } from "@labelflow/graphql-types";
 import { getBoundedGeometryFromImage } from "@labelflow/common-resolvers";
 import { Effect } from "..";
 import { IMAGE_DIMENSIONS_QUERY } from "./shared-queries";
+import { GeometryInput } from "../../../graphql-types/globalTypes";
 
 const UPDATE_LABEL_MUTATION = gql`
   mutation UpdateLabelMutation(

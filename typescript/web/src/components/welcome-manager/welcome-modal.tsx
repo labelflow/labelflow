@@ -8,7 +8,6 @@ import { ApolloClient, gql, useApolloClient } from "@apollo/client";
 import { useCookies } from "react-cookie";
 import { Modal, ModalOverlay } from "@chakra-ui/react";
 import { QueryParamConfig, StringParam, useQueryParam } from "use-query-params";
-import type { Dataset as DatasetType } from "@labelflow/graphql-types";
 import { useRouter, NextRouter } from "next/router";
 import { useErrorHandler } from "react-error-boundary";
 import { browser } from "../../utils/detect-scope";
@@ -16,6 +15,10 @@ import { BrowserWarning } from "./steps/browser-warning";
 import { BrowserError } from "./steps/browser-error";
 import { Welcome } from "./steps/welcome";
 import { Loading } from "./steps/loading";
+import {
+  GetDatasetsNameQuery,
+  GetDatasetsNameQueryVariables,
+} from "../../graphql-types/GetDatasetsNameQuery";
 
 const tutorialDatasetFirstImageUrl =
   "/local/datasets/tutorial-dataset/images/2bbbf664-5810-4760-a10f-841de2f35510";
@@ -73,7 +76,10 @@ const performWelcomeWorkflow = async ({
   try {
     setParamModalWelcome(undefined, "replaceIn");
 
-    const { data: getDatasetsResult } = await client.query({
+    const { data: getDatasetsResult } = await client.query<
+      GetDatasetsNameQuery,
+      GetDatasetsNameQueryVariables
+    >({
       query: GET_DATASETS_NAME_QUERY,
       variables: { where: { workspaceSlug: "local" } },
     });
@@ -82,7 +88,7 @@ const performWelcomeWorkflow = async ({
       getDatasetsResult?.datasets == null
         ? undefined
         : getDatasetsResult?.datasets.filter(
-            (dataset: DatasetType) => dataset.name === "Tutorial dataset"
+            (dataset) => dataset.name === "Tutorial dataset"
           )?.[0] ?? undefined;
 
     if (!demoDataset) {

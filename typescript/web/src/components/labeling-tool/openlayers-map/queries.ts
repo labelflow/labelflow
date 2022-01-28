@@ -40,6 +40,7 @@ export const GET_IMAGE_LABELS_QUERY = gql`
         y
         width
         height
+        smartToolInput
         labelClass {
           id
           name

@@ -1,5 +1,4 @@
 import { ApolloClient, gql } from "@apollo/client";
-import { ExportFormat } from "@labelflow/graphql-types";
 import { v4 as uuidv4 } from "uuid";
 import mime from "mime-types";
 
@@ -8,6 +7,7 @@ import { uploadFile } from "../../../../../utils/upload-file";
 import { DroppedFile, SetUploadStatuses } from "../../types";
 
 import { CONCURRENCY } from "../../constants";
+import { ExportFormat } from "../../../../../graphql-types/globalTypes";
 
 const IMPORT_DATASET_MUTATION = gql`
   mutation ImportDatasetMutation(
@@ -43,7 +43,7 @@ const importDataset = async ({
       where: { id: datasetId },
       data: {
         url,
-        format: ExportFormat.Coco,
+        format: ExportFormat.COCO,
         options: {
           coco: {
             annotationsOnly: file.type === "application/json",

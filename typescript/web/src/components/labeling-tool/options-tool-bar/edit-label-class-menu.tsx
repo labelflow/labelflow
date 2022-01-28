@@ -1,5 +1,4 @@
 import { useApolloClient, useQuery } from "@apollo/client";
-import { Label, LabelType } from "@labelflow/graphql-types";
 import { getNextClassColor, LABEL_CLASS_COLOR_PALETTE } from "@labelflow/utils";
 import { useRouter } from "next/router";
 import GeoJSON, { GeoJSONPolygon } from "ol/format/GeoJSON";
@@ -15,6 +14,11 @@ import { createCreateLabelClassAndUpdateLabelEffect } from "../../../connectors/
 import { createDeleteLabelEffect } from "../../../connectors/undo-store/effects/delete-label";
 import { createUpdateLabelClassEffect } from "../../../connectors/undo-store/effects/update-label-class";
 import { createUpdateLabelClassOfLabelEffect } from "../../../connectors/undo-store/effects/update-label-class-of-label";
+import {
+  GetImageLabelsQuery,
+  GetImageLabelsQueryVariables,
+} from "../../../graphql-types/GetImageLabelsQuery";
+import { LabelType } from "../../../graphql-types/globalTypes";
 import { keymap } from "../../../keymap";
 import {
   GET_IMAGE_LABELS_QUERY,
@@ -168,14 +172,17 @@ export const EditLabelClassMenu = () => {
         if (selectedLabelId != null) {
           if (selectedLabelData?.label?.type === LabelType.Classification) {
             // Change the class of an existing classification label to an existing class
-            const { data: imageLabelsData } = await client.query({
+            const { data: imageLabelsData } = await client.query<
+              GetImageLabelsQuery,
+              GetImageLabelsQueryVariables
+            >({
               query: GET_IMAGE_LABELS_QUERY,
               variables: { imageId },
             });
 
             const classificationsOfThisClass =
               imageLabelsData.image.labels.filter(
-                (label: Label) =>
+                (label) =>
                   label.labelClass?.id === item?.id &&
                   label.type === LabelType.Classification
               );
@@ -207,13 +214,16 @@ export const EditLabelClassMenu = () => {
       }
       if (selectedTool === Tools.CLASSIFICATION && imageId) {
         // Add a classification label of an existing class
-        const { data: imageLabelsData } = await client.query({
+        const { data: imageLabelsData } = await client.query<
+          GetImageLabelsQuery,
+          GetImageLabelsQueryVariables
+        >({
           query: GET_IMAGE_LABELS_QUERY,
           variables: { imageId },
         });
 
         const classificationsOfThisClass = imageLabelsData.image.labels.filter(
-          (label: Label) =>
+          (label) =>
             label.labelClass?.id === item?.id &&
             label.type === LabelType.Classification
         );
