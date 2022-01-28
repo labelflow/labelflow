@@ -8,12 +8,13 @@ import {
   SetStateAction,
   useMemo,
 } from "react";
-import { useRouter } from "next/router";
+import { isEmpty } from "lodash/fp";
 import { ExportFormat } from "../../../graphql-types/globalTypes";
 import {
   CountLabelsOfDatasetQuery,
   CountLabelsOfDatasetQueryVariables,
 } from "../../../graphql-types/CountLabelsOfDatasetQuery";
+import { useDataset } from "../../../hooks";
 
 export const COUNT_LABELS_OF_DATASET_QUERY = gql`
   query CountLabelsOfDatasetQuery($slug: String!, $workspaceSlug: String!) {
@@ -66,20 +67,16 @@ export const ExportModalProvider = ({
   onClose = () => {},
   children,
 }: ExportModalProviderProps) => {
-  const router = useRouter();
   const [exportFormat, setExportFormat] = useState(ExportFormat.COCO);
   const [isExportRunning, setIsExportRunning] = useState(false);
   const [isOptionsModalOpen, setIsOptionsModalOpen] = useState(false);
-  const { datasetSlug, workspaceSlug } = router?.query as {
-    datasetSlug: string;
-    workspaceSlug: string;
-  };
+  const { datasetSlug, workspaceSlug } = useDataset();
   const { data, loading } = useQuery<
     CountLabelsOfDatasetQuery,
     CountLabelsOfDatasetQueryVariables
   >(COUNT_LABELS_OF_DATASET_QUERY, {
     variables: { slug: datasetSlug, workspaceSlug },
-    skip: !datasetSlug || !isOpen,
+    skip: isEmpty(workspaceSlug) || isEmpty(datasetSlug) || !isOpen,
   });
 
   const datasetId = data?.dataset.id;

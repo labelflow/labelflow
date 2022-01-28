@@ -1,9 +1,10 @@
-import { useRouter } from "next/router";
 import { useQuery, gql } from "@apollo/client";
+import { isEmpty } from "lodash/fp";
 import {
   GetAllImagesOfADatasetQuery,
   GetAllImagesOfADatasetQueryVariables,
 } from "../graphql-types/GetAllImagesOfADatasetQuery";
+import { useDatasetImage } from "./use-dataset-image";
 
 const GET_ALL_IMAGES_OF_A_DATASET_QUERY = gql`
   query GetAllImagesOfADatasetQuery($slug: String!, $workspaceSlug: String!) {
@@ -30,20 +31,19 @@ const GET_ALL_IMAGES_OF_A_DATASET_QUERY = gql`
  * is already the last index of the array).
  */
 export const useImagesNavigation = () => {
-  const router = useRouter();
-  const { datasetSlug, imageId: currentImageId, workspaceSlug } = router?.query;
+  const {
+    workspaceSlug,
+    datasetSlug,
+    imageId: currentImageId,
+  } = useDatasetImage();
 
   // Refetch images ?
   const { data } = useQuery<
     GetAllImagesOfADatasetQuery,
     GetAllImagesOfADatasetQueryVariables
   >(GET_ALL_IMAGES_OF_A_DATASET_QUERY, {
-    variables: {
-      slug: typeof datasetSlug === "string" ? datasetSlug : datasetSlug[0],
-      workspaceSlug:
-        typeof workspaceSlug === "string" ? workspaceSlug : workspaceSlug[0],
-    },
-    skip: !datasetSlug || !workspaceSlug,
+    variables: { slug: datasetSlug, workspaceSlug },
+    skip: isEmpty(workspaceSlug) || isEmpty(datasetSlug),
   });
 
   // TODO: Investigate why you have to specify undefined states

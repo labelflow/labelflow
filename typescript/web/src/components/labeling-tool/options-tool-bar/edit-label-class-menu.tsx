@@ -1,6 +1,5 @@
 import { useApolloClient, useQuery } from "@apollo/client";
 import { getNextClassColor, LABEL_CLASS_COLOR_PALETTE } from "@labelflow/utils";
-import { useRouter } from "next/router";
 import GeoJSON, { GeoJSONPolygon } from "ol/format/GeoJSON";
 import { Polygon } from "ol/geom";
 import { useCallback, useEffect, useState } from "react";
@@ -19,6 +18,7 @@ import {
   GetImageLabelsQueryVariables,
 } from "../../../graphql-types/GetImageLabelsQuery";
 import { LabelType } from "../../../graphql-types/globalTypes";
+import { useDatasetImage } from "../../../hooks/use-dataset-image";
 import { keymap } from "../../../keymap";
 import {
   GET_IMAGE_LABELS_QUERY,
@@ -30,11 +30,7 @@ import { ClassAdditionMenu } from "./class-addition-menu";
 import { ClassSelectionMenu, LabelClassItem } from "./class-selection-menu";
 
 export const EditLabelClassMenu = () => {
-  const router = useRouter();
-  const datasetSlug = router?.query.datasetSlug as string;
-
-  const workspaceSlug = router?.query.workspaceSlug as string;
-  const imageId = router?.query.imageId as string;
+  const { workspaceSlug, datasetSlug, imageId } = useDatasetImage();
 
   const client = useApolloClient();
   const [isOpen, setIsOpen] = useState(false);

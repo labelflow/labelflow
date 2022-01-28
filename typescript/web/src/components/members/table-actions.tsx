@@ -19,11 +19,11 @@ import {
 import { useState } from "react";
 import { IoSearch } from "react-icons/io5";
 import { RiAddFill } from "react-icons/ri";
-import { useRouter } from "next/router";
 
 import { NewMemberModal } from "./new-member-modal";
 import { InviteMember } from "./types";
 import { InvitationResult } from "../../graphql-types/globalTypes";
+import { useWorkspace } from "../../hooks";
 
 const SearchIcon = chakra(IoSearch);
 
@@ -50,8 +50,7 @@ export const TableActions = ({
   inviteMember?: InviteMember;
 }) => {
   const [isNewMemberModalOpen, setIsNewMemberModalOpen] = useState(false);
-  const router = useRouter();
-  const workspaceSlug = router?.query.workspaceSlug as string;
+  const { workspaceSlug } = useWorkspace();
 
   const tableActionsForOnlineWorkspace = (
     <>

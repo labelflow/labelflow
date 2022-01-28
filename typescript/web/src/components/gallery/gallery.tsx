@@ -1,5 +1,4 @@
 import { useCallback, useRef, useEffect } from "react";
-import { useRouter } from "next/router";
 import { Box } from "@chakra-ui/react";
 import { useVirtual } from "react-virtual";
 
@@ -7,6 +6,7 @@ import { useImagesNavigation } from "../../hooks/use-images-navigation";
 
 import { GalleryItem } from "./gallery-item";
 import { itemHeight, itemWidth, scrollbarHeight } from "./constants";
+import { useDatasetImage } from "../../hooks/use-dataset-image";
 
 /**
  * Virtualized, unpaginated list of images.
@@ -20,12 +20,7 @@ import { itemHeight, itemWidth, scrollbarHeight } from "./constants";
  */
 export const Gallery = () => {
   const listRef = useRef<HTMLDivElement>(null);
-  const router = useRouter();
-  const imageId = router?.query?.imageId as string;
-  const { datasetSlug, workspaceSlug } = router?.query as {
-    datasetSlug: string;
-    workspaceSlug: string;
-  };
+  const { imageId, datasetSlug, workspaceSlug } = useDatasetImage();
 
   const { images, currentImageIndex } = useImagesNavigation();
 

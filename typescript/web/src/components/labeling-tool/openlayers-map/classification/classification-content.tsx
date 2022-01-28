@@ -1,7 +1,7 @@
 import { useApolloClient, useQuery } from "@apollo/client";
 import { Box, HStack } from "@chakra-ui/react";
 import { getNextClassColor, LABEL_CLASS_COLOR_PALETTE } from "@labelflow/utils";
-import { useRouter } from "next/router";
+import { isEmpty } from "lodash/fp";
 import React, { forwardRef, useCallback } from "react";
 import { Tools, useLabelingStore } from "../../../../connectors/labeling-state";
 import { useUndoStore } from "../../../../connectors/undo-store";
@@ -13,6 +13,7 @@ import {
   GetImageLabelsQueryVariables,
 } from "../../../../graphql-types/GetImageLabelsQuery";
 import { LabelType } from "../../../../graphql-types/globalTypes";
+import { useDatasetImage } from "../../../../hooks/use-dataset-image";
 import {
   GET_IMAGE_LABELS_QUERY,
   GET_LABEL_CLASSES_OF_DATASET_QUERY,
@@ -21,17 +22,11 @@ import { ClassificationTag, LabelClassItem } from "./classification-tag";
 
 export const ClassificationContent = forwardRef<HTMLDivElement>(
   (props, ref) => {
-    const router = useRouter();
-    const datasetSlug = router?.query.datasetSlug as string;
-    const workspaceSlug = router?.query.workspaceSlug as string;
-    const imageId = router?.query.imageId as string;
+    const { workspaceSlug, datasetSlug, imageId } = useDatasetImage();
     const { data: getImageLabelsData, previousData: previousImageLabelsData } =
       useQuery<GetImageLabelsQuery, GetImageLabelsQueryVariables>(
         GET_IMAGE_LABELS_QUERY,
-        {
-          skip: !imageId,
-          variables: { imageId: imageId as string },
-        }
+        { variables: { imageId }, skip: isEmpty(imageId) }
       );
     const { data: labelClassesData } = useQuery(
       GET_LABEL_CLASSES_OF_DATASET_QUERY,

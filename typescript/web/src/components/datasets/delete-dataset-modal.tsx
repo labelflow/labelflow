@@ -8,7 +8,12 @@ import {
   AlertDialogOverlay,
   Button,
 } from "@chakra-ui/react";
+import { isEmpty } from "lodash/fp";
 import { useRef } from "react";
+import {
+  GetDatasetByIdQuery,
+  GetDatasetByIdQueryVariables,
+} from "../../graphql-types/GetDatasetByIdQuery";
 import { WORKSPACE_DATASETS_PAGE_DATASETS_QUERY } from "../../shared-queries/workspace-datasets-page.query";
 import { GET_DATASET_BY_ID_QUERY } from "./datasets.query";
 
@@ -30,10 +35,13 @@ export const DeleteDatasetModal = ({
   datasetId?: string;
 }) => {
   const cancelRef = useRef<HTMLButtonElement>(null);
-  const { data } = useQuery(GET_DATASET_BY_ID_QUERY, {
-    variables: { id: datasetId },
-    skip: datasetId == null,
-  });
+  const { data } = useQuery<GetDatasetByIdQuery, GetDatasetByIdQueryVariables>(
+    GET_DATASET_BY_ID_QUERY,
+    {
+      variables: { id: datasetId ?? "" },
+      skip: isEmpty(datasetId),
+    }
+  );
 
   const [deleteDatasetMutate, { loading }] = useMutation(
     DELETE_DATASET_BY_ID_MUTATION,

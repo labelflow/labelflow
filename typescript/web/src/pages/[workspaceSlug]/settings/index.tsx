@@ -1,7 +1,7 @@
 import { gql, useQuery } from "@apollo/client";
 import { Box, Text } from "@chakra-ui/react";
+import { isEmpty } from "lodash/fp";
 import { GetServerSideProps } from "next";
-import { useRouter } from "next/router";
 import React from "react";
 import { AuthManager } from "../../../components/auth-manager";
 import { CookieBanner } from "../../../components/cookie-banner";
@@ -17,6 +17,7 @@ import {
   GetWorkspaceDetailsQuery,
   GetWorkspaceDetailsQueryVariables,
 } from "../../../graphql-types/GetWorkspaceDetailsQuery";
+import { useWorkspace } from "../../../hooks";
 
 const GET_WORKSPACE_DETAILS_QUERY = gql`
   query GetWorkspaceDetailsQuery($workspaceSlug: String) {
@@ -32,7 +33,7 @@ const GET_WORKSPACE_DETAILS_QUERY = gql`
 `;
 
 const WorkspaceSettingsPage = () => {
-  const workspaceSlug = useRouter().query?.workspaceSlug as string;
+  const { workspaceSlug } = useWorkspace();
 
   const {
     data: getWorkspaceDetailsData,
@@ -41,7 +42,7 @@ const WorkspaceSettingsPage = () => {
     GET_WORKSPACE_DETAILS_QUERY,
     {
       variables: { workspaceSlug },
-      skip: workspaceSlug == null,
+      skip: isEmpty(workspaceSlug),
     }
   );
 

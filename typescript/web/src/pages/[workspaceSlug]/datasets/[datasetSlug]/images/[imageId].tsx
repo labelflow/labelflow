@@ -9,7 +9,6 @@ import {
 } from "@chakra-ui/react";
 import dynamic from "next/dynamic";
 import NextLink from "next/link";
-import { useRouter } from "next/router";
 import React from "react";
 import { useErrorHandler } from "react-error-boundary";
 import { AuthManager } from "../../../../../components/auth-manager";
@@ -29,6 +28,7 @@ import {
   ImageNameQuery,
   ImageNameQueryVariables,
 } from "../../../../../graphql-types/ImageNameQuery";
+import { useDatasetImage } from "../../../../../hooks/use-dataset-image";
 import { Error404Content } from "../../../../404";
 
 // The dynamic import is needed because openlayers use web apis that are not available
@@ -55,8 +55,7 @@ const IMAGE_NAME_QUERY = gql`
 `;
 
 const ImagePage = () => {
-  const router = useRouter();
-  const { datasetSlug, imageId, workspaceSlug } = router?.query;
+  const { workspaceSlug, datasetSlug, imageId } = useDatasetImage();
 
   const {
     data: imageResult,

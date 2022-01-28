@@ -26,6 +26,7 @@ import {
   ImageQueryVariables,
   ImageQuery_image,
 } from "../../../graphql-types/ImageQuery";
+import { useDatasetImage } from "../../../hooks/use-dataset-image";
 import { useImagePreFetching } from "../../../hooks/use-image-pre-fetching";
 import { theme } from "../../../theme";
 import { BoolParam } from "../../../utils/query-param-bool";
@@ -94,7 +95,7 @@ export const OpenlayersMap = () => {
   const viewRef = useRef<OlView | null>(null);
   const sourceVectorBoxesRef = useRef<OlSourceVector<Geometry> | null>(null);
   const router = useRouter();
-  const { imageId } = router?.query;
+  const { imageId } = useDatasetImage();
   const isContextMenuOpen = useLabelingStore(
     (state) => state.isContextMenuOpen
   );
@@ -123,7 +124,7 @@ export const OpenlayersMap = () => {
     ImageQuery,
     ImageQueryVariables
   >(IMAGE_QUERY, {
-    variables: { id: typeof imageId === "string" ? imageId : imageId[0] },
+    variables: { id: imageId },
     skip: !imageId,
   });
 

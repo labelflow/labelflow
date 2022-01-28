@@ -2,7 +2,6 @@ import { gql, useQuery } from "@apollo/client";
 import { BreadcrumbLink, Center, Skeleton, Text } from "@chakra-ui/react";
 import { GetServerSideProps } from "next";
 import NextLink from "next/link";
-import { useRouter } from "next/router";
 import React from "react";
 import { resetServerContext } from "react-beautiful-dnd";
 import { useErrorHandler } from "react-error-boundary";
@@ -18,6 +17,7 @@ import { NavLogo } from "../../../../../components/logo/nav-logo";
 import { Meta } from "../../../../../components/meta";
 import { WelcomeModal } from "../../../../../components/welcome-manager";
 import { WorkspaceSwitcher } from "../../../../../components/workspace-switcher";
+import { useDataset } from "../../../../../hooks";
 import { Error404Content } from "../../../../404";
 
 const DATASET_NAME_QUERY = gql`
@@ -30,9 +30,7 @@ const DATASET_NAME_QUERY = gql`
 `;
 
 const DatasetClassesPage = () => {
-  const router = useRouter();
-  const datasetSlug = router?.query?.datasetSlug as string;
-  const workspaceSlug = router?.query?.workspaceSlug as string;
+  const { workspaceSlug, datasetSlug } = useDataset();
 
   const {
     data: datasetResult,

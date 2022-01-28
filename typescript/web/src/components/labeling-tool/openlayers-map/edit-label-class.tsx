@@ -1,6 +1,6 @@
 import { useApolloClient, useQuery } from "@apollo/client";
 import { getNextClassColor, LABEL_CLASS_COLOR_PALETTE } from "@labelflow/utils";
-import { useRouter } from "next/router";
+import { isEmpty } from "lodash/fp";
 import GeoJSON, { GeoJSONPolygon } from "ol/format/GeoJSON";
 import { Polygon } from "ol/geom";
 import { forwardRef, useCallback } from "react";
@@ -17,6 +17,7 @@ import {
   GetImageLabelsQueryVariables,
 } from "../../../graphql-types/GetImageLabelsQuery";
 import { LabelType } from "../../../graphql-types/globalTypes";
+import { useDatasetImage } from "../../../hooks/use-dataset-image";
 import { keymap } from "../../../keymap";
 import { ClassSelectionPopover } from "../../class-selection-popover";
 import { LabelClassItem } from "../../class-selection-popover/class-selection-popover";
@@ -33,15 +34,11 @@ export const EditLabelClass = forwardRef<
     onClose: () => void;
   }
 >(({ isOpen, onClose }, ref) => {
-  const router = useRouter();
-  const imageId = router?.query.imageId as string;
-  const datasetSlug = router?.query.datasetSlug as string;
-  const workspaceSlug = router?.query.workspaceSlug as string;
-
+  const { workspaceSlug, datasetSlug, imageId } = useDatasetImage();
   const client = useApolloClient();
   const { data } = useQuery(GET_LABEL_CLASSES_OF_DATASET_QUERY, {
     variables: { slug: datasetSlug, workspaceSlug },
-    skip: !datasetSlug || !workspaceSlug,
+    skip: isEmpty(datasetSlug) || isEmpty(workspaceSlug),
   });
   const datasetId = data?.dataset.id;
   const { perform } = useUndoStore();

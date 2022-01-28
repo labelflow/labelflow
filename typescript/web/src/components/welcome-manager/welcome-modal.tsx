@@ -19,6 +19,7 @@ import {
   GetDatasetsNameQuery,
   GetDatasetsNameQueryVariables,
 } from "../../graphql-types/GetDatasetsNameQuery";
+import { useWorkspace } from "../../hooks";
 
 const tutorialDatasetFirstImageUrl =
   "/local/datasets/tutorial-dataset/images/2bbbf664-5810-4760-a10f-841de2f35510";
@@ -129,6 +130,7 @@ export const WelcomeModal = ({
   initialBrowserError?: Error;
   autoStartCountDown?: boolean;
 }) => {
+  const { workspaceSlug } = useWorkspace();
   const router = useRouter();
 
   const handleError = useErrorHandler();
@@ -209,7 +211,7 @@ export const WelcomeModal = ({
     if (
       !process.env.STORYBOOK &&
       router?.isReady &&
-      router?.query?.workspaceSlug === "local" &&
+      workspaceSlug === "local" &&
       ((!(browserWarning && tryDespiteBrowserWarning !== "true") &&
         paramModalWelcome !== "closed") ||
         paramModalWelcome === "open")
@@ -221,7 +223,7 @@ export const WelcomeModal = ({
         client,
       });
     }
-  }, [tryDespiteBrowserWarning, router?.isReady, router?.query?.workspaceSlug]);
+  }, [tryDespiteBrowserWarning, router?.isReady, workspaceSlug]);
 
   // welcome => undefined
   const handleGetStarted = useCallback(() => {

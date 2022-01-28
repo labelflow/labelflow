@@ -15,10 +15,15 @@ import {
   ModalOverlay,
 } from "@chakra-ui/react";
 import { getSlug } from "@labelflow/common-resolvers";
+import { isEmpty } from "lodash/fp";
 import debounce from "lodash/fp/debounce";
-import { useRouter } from "next/router";
 import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  GetDatasetByIdQuery,
+  GetDatasetByIdQueryVariables,
+} from "../../graphql-types/GetDatasetByIdQuery";
 import { WORKSPACE_DATASETS_PAGE_DATASETS_QUERY } from "../../shared-queries/workspace-datasets-page.query";
+import { useWorkspace } from "../../hooks";
 import { CREATE_DATASET_MUTATION } from "./create-dataset.mutation";
 import {
   GET_DATASET_BY_ID_QUERY,
@@ -37,7 +42,7 @@ export const UpsertDatasetModal = ({
   onClose?: () => void;
   datasetId?: string;
 }) => {
-  const workspaceSlug = useRouter()?.query?.workspaceSlug as string | undefined;
+  const { workspaceSlug } = useWorkspace();
 
   const [datasetNameInputValue, setDatasetNameInputValue] =
     useState<string>("");
@@ -45,17 +50,20 @@ export const UpsertDatasetModal = ({
 
   const datasetName = datasetNameInputValue.trim();
 
-  useQuery(GET_DATASET_BY_ID_QUERY, {
-    skip: typeof datasetId !== "string",
-    variables: { id: datasetId },
-    fetchPolicy: "cache-and-network",
-    onError: (e) => {
-      setErrorMessage(e.message);
-    },
-    onCompleted: ({ dataset }) => {
-      setDatasetNameInputValue(dataset.name);
-    },
-  });
+  useQuery<GetDatasetByIdQuery, GetDatasetByIdQueryVariables>(
+    GET_DATASET_BY_ID_QUERY,
+    {
+      skip: typeof datasetId !== "string" || isEmpty(datasetId),
+      variables: { id: datasetId ?? "" },
+      fetchPolicy: "cache-and-network",
+      onError: (e) => {
+        setErrorMessage(e.message);
+      },
+      onCompleted: ({ dataset }) => {
+        setDatasetNameInputValue(dataset.name);
+      },
+    }
+  );
 
   const [
     queryExistingDatasets,

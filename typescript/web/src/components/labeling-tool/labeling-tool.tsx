@@ -5,7 +5,6 @@ import {
   VStack,
   useColorModeValue as mode,
 } from "@chakra-ui/react";
-import { useRouter } from "next/router";
 import { useQueryParam } from "use-query-params";
 import { OpenlayersMap } from "./openlayers-map";
 import { DrawingToolbar } from "./drawing-tool-bar";
@@ -16,12 +15,12 @@ import { ImageNavigationTool } from "./image-navigation";
 import { useUndoStore } from "../../connectors/undo-store";
 import { useLabelingStore } from "../../connectors/labeling-state";
 import { BoolParam } from "../../utils/query-param-bool";
+import { useDatasetImage } from "../../hooks/use-dataset-image";
 
 export const LabelingTool = () => {
   const { clear } = useUndoStore();
 
-  const router = useRouter();
-  const { imageId } = router?.query;
+  const { imageId } = useDatasetImage();
   const containerRef = useRef<HTMLDivElement>(null);
 
   const containerSx = {

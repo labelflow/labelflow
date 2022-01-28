@@ -1,6 +1,6 @@
 import { gql, useMutation, useQuery } from "@apollo/client";
 import { Text } from "@chakra-ui/react";
-import { useRouter } from "next/router";
+import { isEmpty } from "lodash/fp";
 import { AuthManager } from "../../../components/auth-manager";
 import { CookieBanner } from "../../../components/cookie-banner";
 import { Layout } from "../../../components/layout";
@@ -15,6 +15,7 @@ import {
   GetMembershipsMembersQuery,
   GetMembershipsMembersQueryVariables,
 } from "../../../graphql-types/GetMembershipsMembersQuery";
+import { useDatasetImage } from "../../../hooks/use-dataset-image";
 
 const GET_MEMBERSHIPS_MEMBERS_QUERY = gql`
   query GetMembershipsMembersQuery($workspaceSlug: String) {
@@ -61,14 +62,14 @@ const INVITE_MEMBER_MUTATION = gql`
 `;
 
 const WorkspaceMembersPage = () => {
-  const workspaceSlug = useRouter().query?.workspaceSlug as string;
+  const { workspaceSlug } = useDatasetImage();
 
   const { data: membershipsData } = useQuery<
     GetMembershipsMembersQuery,
     GetMembershipsMembersQueryVariables
   >(GET_MEMBERSHIPS_MEMBERS_QUERY, {
     variables: { workspaceSlug },
-    skip: workspaceSlug == null,
+    skip: isEmpty(workspaceSlug),
   });
 
   const [deleteMembership] = useMutation(DELETE_MEMBERSHIP_MUTATION, {

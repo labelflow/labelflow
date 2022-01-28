@@ -17,6 +17,10 @@ import {
 } from "@chakra-ui/react";
 import { isEmpty, isNil } from "lodash/fp";
 import { useCallback, useRef } from "react";
+import {
+  GetLabelClassByIdQuery,
+  GetLabelClassByIdQueryVariables,
+} from "../../graphql-types/GetLabelClassByIdQuery";
 import { useDatasetClasses } from "./dataset-classes.context";
 import {
   DATASET_LABEL_CLASSES_QUERY_WITH_COUNT,
@@ -41,8 +45,11 @@ export const DeleteLabelClassModal = () => {
   );
 
   const cancelRef = useRef<HTMLButtonElement>(null);
-  const { data } = useQuery(GET_LABEL_CLASS_BY_ID_QUERY, {
-    variables: { id: deleteClassId },
+  const { data } = useQuery<
+    GetLabelClassByIdQuery,
+    GetLabelClassByIdQueryVariables
+  >(GET_LABEL_CLASS_BY_ID_QUERY, {
+    variables: { id: deleteClassId ?? "" },
     skip: isEmpty(deleteClassId),
   });
   const client = useApolloClient();

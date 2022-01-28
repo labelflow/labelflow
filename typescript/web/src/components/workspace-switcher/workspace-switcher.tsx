@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import { useCallback, useMemo, useState } from "react";
 import { StringParam, useQueryParams } from "use-query-params";
 import { GetWorkspacesQuery } from "../../graphql-types/GetWorkspacesQuery";
+import { useWorkspace } from "../../hooks";
 import { BoolParam } from "../../utils/query-param-bool";
 import { CreateWorkspaceModal } from "./create-workspace-modal";
 import { WorkspaceMenu } from "./workspace-menu";
@@ -19,8 +20,8 @@ const GET_WORKSPACES_QUERY = gql`
 `;
 
 export const WorkspaceSwitcher = () => {
+  const { workspaceSlug } = useWorkspace();
   const router = useRouter();
-  const workspaceSlug = router?.query.workspaceSlug as string;
 
   const [isOpen, setIsOpen] = useState(false);
 
