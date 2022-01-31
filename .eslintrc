@@ -36,6 +36,6 @@
     }
   ],
   "parserOptions": {
-    "project": "./tsconfig.json"
+    "project": "./tsconfig.jest.json"
   }
 }
