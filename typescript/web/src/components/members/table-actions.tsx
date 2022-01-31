@@ -1,31 +1,16 @@
 import {
-  Button,
-  ButtonGroup,
-  FormControl,
-  FormLabel,
-  HStack,
-  Input,
-  InputGroup,
-  InputLeftElement,
-  Stack,
-  chakra,
   Alert,
+  AlertDescription,
   AlertIcon,
   AlertTitle,
-  useColorModeValue as mode,
   Box,
-  AlertDescription,
 } from "@chakra-ui/react";
+import { InvitationResult } from "@labelflow/graphql-types";
 import { useState } from "react";
-import { IoSearch } from "react-icons/io5";
-import { RiAddFill } from "react-icons/ri";
-
+import { useWorkspace } from "../../hooks";
+import { TableActions } from "../table-actions";
 import { NewMemberModal } from "./new-member-modal";
 import { InviteMember } from "./types";
-import { InvitationResult } from "../../graphql-types/globalTypes";
-import { useWorkspace } from "../../hooks";
-
-const SearchIcon = chakra(IoSearch);
 
 const tableActionsForLocalWorkspace = (
   <Alert status="info" variant="subtle">
@@ -40,7 +25,7 @@ const tableActionsForLocalWorkspace = (
   </Alert>
 );
 
-export const TableActions = ({
+export const MembersTableActions = ({
   searchText,
   setSearchText,
   inviteMember = async () => InvitationResult.Sent,
@@ -59,44 +44,13 @@ export const TableActions = ({
         onClose={() => setIsNewMemberModalOpen(false)}
         inviteMember={inviteMember}
       />
-      <Stack
-        spacing="4"
-        direction={{ base: "column", md: "row" }}
-        justify="space-between"
-      >
-        <HStack>
-          <FormControl minW={{ md: "320px" }} id="search">
-            <InputGroup size="sm">
-              <FormLabel srOnly>Find a member</FormLabel>
-              <InputLeftElement
-                pointerEvents="none"
-                color={mode("gray.400", "gray.200")}
-              >
-                <SearchIcon />
-              </InputLeftElement>
-              <Input
-                rounded="base"
-                type="search"
-                placeholder="Find a member"
-                bgColor={mode("white", "gray.800")}
-                value={searchText}
-                onChange={(e) => setSearchText(e.target.value)}
-              />
-            </InputGroup>
-          </FormControl>
-        </HStack>
-        <ButtonGroup size="sm" variant="outline">
-          <Button
-            colorScheme="brand"
-            variant="solid"
-            iconSpacing="1"
-            leftIcon={<RiAddFill fontSize="1.25em" />}
-            onClick={() => setIsNewMemberModalOpen(true)}
-          >
-            New member
-          </Button>
-        </ButtonGroup>
-      </Stack>
+      <TableActions
+        searchText={searchText}
+        setSearchText={setSearchText}
+        onNewItem={() => setIsNewMemberModalOpen(true)}
+        searchBarLabel="Find a member"
+        newButtonLabel="New member"
+      />
     </>
   );
 

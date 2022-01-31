@@ -108,7 +108,11 @@ const CreateButton: FC<{ isDisabled?: boolean }> = ({ isDisabled }) => (
   </Button>
 );
 
-const useCreateWorkspace = (): [() => void, boolean, string | undefined] => {
+export const useCreateWorkspace = (): [
+  () => void,
+  boolean,
+  string | undefined
+] => {
   const { name } = useWorkspaceNameInput();
   const [create, { loading, error: createError, called }] =
     useCreateWorkspaceMutation(name);

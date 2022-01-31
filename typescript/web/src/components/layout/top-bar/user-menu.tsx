@@ -64,7 +64,12 @@ const UserAvatar = ({ image, displayName }: UserProps) => {
       bg={bg}
       name={displayName}
       src={image ?? undefined}
-      icon={<UserMenuIcon fontSize="xl" />}
+      icon={
+        <UserMenuIcon
+          fontSize="xl"
+          color={useColorModeValue("gray.700", "white")}
+        />
+      }
     />
   );
 };

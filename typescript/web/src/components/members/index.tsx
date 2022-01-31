@@ -1,10 +1,10 @@
+import { Box, Center, Heading } from "@chakra-ui/react";
+import { InvitationResult } from "@labelflow/graphql-types";
 import { useState } from "react";
-import { Heading, Box, Center } from "@chakra-ui/react";
-import { TableActions } from "./table-actions";
-import { TableContent } from "./table-content";
-import { RemoveMembership, ChangeMembershipRole, InviteMember } from "./types";
-import { InvitationResult } from "../../graphql-types/globalTypes";
 import { GetMembershipsMembersQuery_memberships } from "../../graphql-types/GetMembershipsMembersQuery";
+import { MembersTableActions } from "./table-actions";
+import { TableContent } from "./table-content";
+import { ChangeMembershipRole, InviteMember, RemoveMembership } from "./types";
 
 export const Members = ({
   memberships,
@@ -29,7 +29,7 @@ export const Members = ({
         flexGrow={1}
       >
         <Heading mb="5">{`Members (${memberships?.length ?? ""})`}</Heading>
-        <TableActions
+        <MembersTableActions
           searchText={searchText}
           setSearchText={setSearchText}
           inviteMember={inviteMember}
