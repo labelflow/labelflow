@@ -1,13 +1,10 @@
 /* eslint-disable no-underscore-dangle */
 import { ApolloClient, gql } from "@apollo/client";
-import { UploadTarget } from "@labelflow/graphql-types";
+import { UploadTargetHttp } from "@labelflow/graphql-types";
 
-const GET_IMAGE_UPLOAD_TARGET_MUTATION = gql`
+export const GET_IMAGE_UPLOAD_TARGET_MUTATION = gql`
   mutation GetUploadTargetMutation($key: String!) {
     getUploadTarget(data: { key: $key }) {
-      ... on UploadTargetDirect {
-        direct
-      }
       ... on UploadTargetHttp {
         uploadUrl
         downloadUrl
@@ -26,7 +23,7 @@ const getImageUploadTarget = async (
   apolloClient: ApolloClient<object>
 ) => {
   const uploadTarget = (
-    await apolloClient.mutate<{ getUploadTarget: UploadTarget }>({
+    await apolloClient.mutate<{ getUploadTarget: UploadTargetHttp }>({
       mutation: GET_IMAGE_UPLOAD_TARGET_MUTATION,
       variables: { key },
     })
@@ -36,9 +33,6 @@ const getImageUploadTarget = async (
     throw new Error("Couldn't get the upload target from the server");
   }
 
-  if (uploadTarget.__typename !== "UploadTargetHttp") {
-    throw new Error("Direct uploads are not supported anymore");
-  }
   return uploadTarget;
 };
 

@@ -25,7 +25,7 @@ import {
 } from "../../../../graphql-types/GetWorkspaceIdQuery";
 import { useDataset } from "../../../../hooks";
 
-const GET_WORKSPACE_ID_QUERY = gql`
+export const GET_WORKSPACE_ID_QUERY = gql`
   query GetWorkspaceIdQuery($workspaceSlug: String) {
     workspace(where: { slug: $workspaceSlug }) {
       id
@@ -104,7 +104,7 @@ export const ImportImagesModalDropzone = ({
     if (isEmpty(files) || !datasetId) return;
 
     handleImport(files);
-  }, [files, datasetId]);
+  }, [files, datasetId, handleImport]);
 
   return (
     <>
