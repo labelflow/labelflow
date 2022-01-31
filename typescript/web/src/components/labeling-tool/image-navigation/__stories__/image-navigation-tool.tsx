@@ -6,11 +6,10 @@ import { HStack, Button, Flex } from "@chakra-ui/react";
 import {
   chakraDecorator,
   apolloMockDecorator,
+  mockImagesLoader,
 } from "../../../../utils/stories";
 
 import { ImageNavigationTool } from "../image-navigation-tool";
-
-import { mockImagesLoader } from "../../../../utils/mock-image-loader";
 
 const datasetId = "2e5e2ff4-7be3-4371-a6de-1ebbe71c90b9";
 

@@ -1,10 +1,10 @@
 import { HStack } from "@chakra-ui/react";
 import { Story } from "@storybook/react";
 import imageSampleCollection from "../../../utils/image-sample-collection";
-import { mockImagesLoader } from "../../../utils/mock-image-loader";
 import {
   apolloMockDecorator,
   chakraDecorator,
+  mockImagesLoader,
   storybookTitle,
 } from "../../../utils/stories";
 import { Gallery } from "../gallery";

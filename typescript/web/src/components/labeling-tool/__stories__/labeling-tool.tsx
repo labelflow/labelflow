@@ -1,9 +1,9 @@
 import { Box } from "@chakra-ui/react";
 import { DecoratorFn, Story } from "@storybook/react";
-import { mockImagesLoader } from "../../../utils/mock-image-loader";
 import {
   apolloMockDecorator,
   chakraDecorator,
+  mockImagesLoader,
   queryParamsDecorator,
   storybookTitle,
 } from "../../../utils/stories";
