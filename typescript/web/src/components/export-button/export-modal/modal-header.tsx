@@ -1,27 +1,10 @@
 import {
-  Alert,
-  AlertDescription,
-  AlertIcon,
-  AlertTitle,
-  Box,
   Heading,
   ModalHeader as ChakraModalHeader,
   Skeleton,
   Text,
 } from "@chakra-ui/react";
 import { useExportModal } from "./export-modal.context";
-
-const Disclaimer = () => (
-  <Box width="100%" pl={8} pr={8} pt={4}>
-    <Alert status="info" borderRadius={5}>
-      <AlertIcon />
-      <AlertTitle fontSize={15}>About your export</AlertTitle>
-      <AlertDescription fontSize={13} fontWeight="medium">
-        Labels without a class are not exported
-      </AlertDescription>
-    </Alert>
-  </Box>
-);
 
 export const ModalHeader = () => {
   const { labelsNumber, imagesNumber } = useExportModal();
@@ -35,7 +18,6 @@ export const ModalHeader = () => {
           Your dataset contains {imagesNumber} images and {labelsNumber} labels.
         </Text>
       </Skeleton>
-      <Disclaimer />
     </ChakraModalHeader>
   );
 };
