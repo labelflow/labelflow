@@ -8,10 +8,23 @@ import {
   useColorModeValue as mode,
 } from "@chakra-ui/react";
 import { RiGroupFill, RiAddFill } from "react-icons/ri";
+import { UserWorkspacesQuery_workspaces } from "../../../../../graphql-types/UserWorkspacesQuery";
+import { useWorkspace } from "../../../../../hooks";
 import { randomBackgroundGradient } from "../../../../../utils/random-background-gradient";
 
 const TeamIcon = chakra(RiGroupFill);
 const AddIcon = chakra(RiAddFill);
+
+export type WorkspaceListItemProps = {
+  item:
+    | UserWorkspacesQuery_workspaces
+    | { type: "CreateWorkspaceItem"; name?: string; id?: string };
+  itemId?: string;
+  highlight?: boolean;
+  index: number;
+  itemProps: any;
+  isCreateWorkspaceItem?: boolean;
+};
 
 /**
  * Represent a LabelClass item with its color as
@@ -21,19 +34,17 @@ const AddIcon = chakra(RiAddFill);
  * @param props
  * @returns
  */
-export const WorkspaceListItem = (props: {
-  item:
-    | { name: string; src?: string }
-    | { type: "CreateWorkspaceItem"; name?: string };
-  highlight?: boolean;
-  selected?: boolean;
-  index: number;
-  itemProps: any;
-  isCreateWorkspaceItem?: boolean;
-}) => {
-  const { item, highlight, selected, index, itemProps, isCreateWorkspaceItem } =
-    props;
+export const WorkspaceListItem = ({
+  item,
+  itemId,
+  highlight,
+  index,
+  itemProps,
+  isCreateWorkspaceItem,
+}: WorkspaceListItemProps) => {
   const { name } = item;
+  const { id: workspaceId } = useWorkspace();
+  const selected = itemId === workspaceId;
 
   // eslint-disable-next-line no-prototype-builtins
   const src = item.hasOwnProperty("src")

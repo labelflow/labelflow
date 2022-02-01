@@ -6,6 +6,7 @@ import { Flex, Text } from "@chakra-ui/react";
 import { useQueryParam } from "use-query-params";
 
 import { useRouter } from "next/router";
+import { isEmpty } from "lodash/fp";
 import { Spinner } from "../../../components/spinner";
 import { Meta } from "../../../components/meta";
 import { Layout } from "../../../components/layout";
@@ -28,6 +29,7 @@ import {
   WorkspaceDatasetsPageDatasetsQuery,
   WorkspaceDatasetsPageDatasetsQueryVariables,
 } from "../../../graphql-types/WorkspaceDatasetsPageDatasetsQuery";
+import { useWorkspace } from "../../../hooks";
 
 const LoadingCard = () => (
   <DatasetCardBox>
@@ -42,23 +44,17 @@ const LoadingCard = () => (
     </Flex>
   </DatasetCardBox>
 );
-const DatasetPage = () => {
-  const {
-    query: { workspaceSlug },
-    isReady,
-  } = useRouter();
+
+const Body = () => {
+  const { slug: workspaceSlug } = useWorkspace();
+  const { isReady } = useRouter();
 
   const { data: datasetsResult, loading } = useQuery<
     WorkspaceDatasetsPageDatasetsQuery,
     WorkspaceDatasetsPageDatasetsQueryVariables
   >(WORKSPACE_DATASETS_PAGE_DATASETS_QUERY, {
-    variables: {
-      where: {
-        workspaceSlug:
-          typeof workspaceSlug === "string" ? workspaceSlug : workspaceSlug[0],
-      },
-    },
-    skip: workspaceSlug == null,
+    variables: { where: { workspaceSlug } },
+    skip: isEmpty(workspaceSlug),
   });
 
   const [isCreatingDataset, setIsCreatingDataset] = useQueryParam(
@@ -86,20 +82,22 @@ const DatasetPage = () => {
     if (deleteDatasetId) {
       setDeleteDatasetId(null, "replaceIn");
     }
-  }, [editDatasetId, isCreatingDataset, deleteDatasetId]);
+  }, [
+    editDatasetId,
+    isCreatingDataset,
+    deleteDatasetId,
+    setEditDatasetId,
+    setIsCreatingDataset,
+    setDeleteDatasetId,
+  ]);
 
   return (
-    <Authenticated>
+    <>
       <WelcomeModal />
       <Meta title="LabelFlow | Datasets" />
       <CookieBanner />
       <Layout
-        tabBar={
-          <WorkspaceTabBar
-            currentTab="datasets"
-            workspaceSlug={workspaceSlug as string}
-          />
-        }
+        tabBar={<WorkspaceTabBar currentTab="datasets" />}
         breadcrumbs={[
           <NavLogo key={0} />,
           <WorkspaceSwitcher key={1} />,
@@ -158,8 +156,14 @@ const DatasetPage = () => {
           )}
         </Flex>
       </Layout>
-    </Authenticated>
+    </>
   );
 };
+
+const DatasetPage = () => (
+  <Authenticated withWorkspaces>
+    <Body />
+  </Authenticated>
+);
 
 export default DatasetPage;

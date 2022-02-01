@@ -18,7 +18,7 @@ import { WelcomeModal } from "../../../../components/welcome-manager";
 import { WorkspaceSwitcher } from "../../../../components/workspace-switcher";
 import { Error404Content } from "../../../404";
 
-const DatasetIndexPage = () => {
+const Body = () => {
   const router = useRouter();
   const { datasetSlug, workspaceSlug, ...queryRest } = router.query;
 
@@ -58,7 +58,7 @@ const DatasetIndexPage = () => {
   }
 
   return (
-    <Authenticated>
+    <>
       <WelcomeModal />
       <Meta title={`LabelFlow | ${datasetName ?? "Dataset"}`} />
       <CookieBanner />
@@ -83,8 +83,14 @@ const DatasetIndexPage = () => {
       >
         <LayoutSpinner />
       </Layout>
-    </Authenticated>
+    </>
   );
 };
+
+const DatasetIndexPage = () => (
+  <Authenticated withWorkspaces>
+    <Body />
+  </Authenticated>
+);
 
 export default DatasetIndexPage;

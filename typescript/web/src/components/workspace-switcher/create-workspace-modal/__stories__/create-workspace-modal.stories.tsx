@@ -7,11 +7,9 @@ import {
   queryParamsDecorator,
   storybookTitle,
 } from "../../../../utils/stories";
+import { getApolloMockLink } from "../../../../utils/tests/apollo-mock";
 
-import {
-  WORKSPACE_EXISTS_MOCK_ALREADY_TAKEN_NAME,
-  WORKSPACE_EXISTS_MOCK_TEST,
-} from "../../../workspace-name-input/workspace-name-input.fixtures";
+import { GRAPHQL_MOCKS } from "../../../workspace-name-input/workspace-name-input.fixtures";
 
 export default {
   title: storybookTitle("Workspace Switcher", CreateWorkspaceModal),
@@ -19,12 +17,7 @@ export default {
 };
 
 const Template = () => (
-  <ApolloProvider
-    mocks={[
-      WORKSPACE_EXISTS_MOCK_TEST,
-      WORKSPACE_EXISTS_MOCK_ALREADY_TAKEN_NAME,
-    ]}
-  >
+  <ApolloProvider link={getApolloMockLink(GRAPHQL_MOCKS)}>
     <div>
       <MockableLocationProvider location="http://localhost">
         <CreateWorkspaceModal isOpen onClose={console.log} />

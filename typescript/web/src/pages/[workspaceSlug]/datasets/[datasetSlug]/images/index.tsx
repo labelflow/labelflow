@@ -16,12 +16,13 @@ import { NavLogo } from "../../../../../components/logo/nav-logo";
 import { Meta } from "../../../../../components/meta";
 import { WelcomeModal } from "../../../../../components/welcome-manager";
 import { WorkspaceSwitcher } from "../../../../../components/workspace-switcher";
-import { useDatasetImage } from "../../../../../hooks/use-dataset-image";
+import { useDataset, useWorkspace } from "../../../../../hooks";
 import { DATASET_IMAGES_PAGE_DATASET_QUERY } from "../../../../../shared-queries/dataset-images-page.query";
 import { Error404Content } from "../../../../404";
 
-const ImagesPage = () => {
-  const { workspaceSlug, datasetSlug } = useDatasetImage();
+const Body = () => {
+  const { slug: workspaceSlug } = useWorkspace();
+  const { slug: datasetSlug } = useDataset();
 
   const {
     data: datasetResult,
@@ -58,7 +59,7 @@ const ImagesPage = () => {
     );
   }
   return (
-    <Authenticated>
+    <>
       <WelcomeModal />
       <Meta title="LabelFlow | Images" />
       <CookieBanner />
@@ -100,8 +101,14 @@ const ImagesPage = () => {
           />
         )}
       </Layout>
-    </Authenticated>
+    </>
   );
 };
+
+const ImagesPage = () => (
+  <Authenticated withWorkspaces>
+    <Body />
+  </Authenticated>
+);
 
 export default ImagesPage;

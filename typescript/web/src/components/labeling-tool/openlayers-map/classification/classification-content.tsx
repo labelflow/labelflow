@@ -13,7 +13,8 @@ import {
   GetImageLabelsQueryVariables,
 } from "../../../../graphql-types/GetImageLabelsQuery";
 import { LabelType } from "../../../../graphql-types/globalTypes";
-import { useDatasetImage } from "../../../../hooks/use-dataset-image";
+import { useDataset, useWorkspace, useDatasetImage } from "../../../../hooks";
+
 import {
   GET_IMAGE_LABELS_QUERY,
   GET_LABEL_CLASSES_OF_DATASET_QUERY,
@@ -22,7 +23,9 @@ import { ClassificationTag, LabelClassItem } from "./classification-tag";
 
 export const ClassificationContent = forwardRef<HTMLDivElement>(
   (props, ref) => {
-    const { workspaceSlug, datasetSlug, imageId } = useDatasetImage();
+    const { slug: workspaceSlug } = useWorkspace();
+    const { slug: datasetSlug } = useDataset();
+    const { id: imageId } = useDatasetImage();
     const { data: getImageLabelsData, previousData: previousImageLabelsData } =
       useQuery<GetImageLabelsQuery, GetImageLabelsQueryVariables>(
         GET_IMAGE_LABELS_QUERY,

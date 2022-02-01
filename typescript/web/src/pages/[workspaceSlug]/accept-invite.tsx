@@ -13,7 +13,7 @@ import { InvitationManager } from "../../components/invitation-manager";
 
 const AcceptInvite = () => {
   return (
-    <Authenticated>
+    <Authenticated withWorkspaces>
       <WelcomeModal />
       <Meta title="LabelFlow | Local Workspace" />
       <CookieBanner />

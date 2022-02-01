@@ -1,6 +1,7 @@
 import { Button, Center, chakra, Flex, Heading, Text } from "@chakra-ui/react";
 import { isEmpty } from "lodash";
 import { FC, useCallback, FormEvent } from "react";
+import { useWorkspaces } from "../../hooks";
 import NoWorkspacesGraphics from "../graphics/no-workspace";
 import {
   useWorkspaceNameInput,
@@ -75,7 +76,7 @@ const NoWorkspaces = () => (
 );
 
 export const Workspaces = (props: WorkspacesProps) => {
-  const { workspaces } = props;
+  const workspaces = useWorkspaces();
   return (
     <WorkspacesContextProvider {...props}>
       <WorkspaceNameInputProvider>

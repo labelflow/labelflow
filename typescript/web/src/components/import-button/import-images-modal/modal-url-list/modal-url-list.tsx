@@ -13,7 +13,7 @@ import {
   GetDatasetBySlugQueryVariables,
 } from "../../../../graphql-types/GetDatasetBySlugQuery";
 import { GET_DATASET_BY_SLUG_QUERY } from "../../../datasets/datasets.query";
-import { useDataset } from "../../../../hooks";
+import { useDataset, useWorkspace } from "../../../../hooks";
 import { DroppedUrl, UploadStatuses } from "../types";
 import { importUrls } from "./import-urls";
 import { UrlList } from "./url-list";
@@ -30,7 +30,8 @@ export const ImportImagesModalUrlList = ({
 }) => {
   const apolloClient = useApolloClient();
 
-  const { workspaceSlug, datasetSlug } = useDataset();
+  const { slug: workspaceSlug } = useWorkspace();
+  const { slug: datasetSlug } = useDataset();
 
   /*
    * We need a state with the accepted and reject urls to be able to reset the list

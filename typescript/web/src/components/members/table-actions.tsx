@@ -35,7 +35,7 @@ export const MembersTableActions = ({
   inviteMember?: InviteMember;
 }) => {
   const [isNewMemberModalOpen, setIsNewMemberModalOpen] = useState(false);
-  const { workspaceSlug } = useWorkspace();
+  const { slug: workspaceSlug } = useWorkspace();
 
   const tableActionsForOnlineWorkspace = (
     <>

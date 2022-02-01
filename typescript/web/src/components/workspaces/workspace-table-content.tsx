@@ -15,14 +15,15 @@ import {
 import { RiGroupFill } from "react-icons/ri";
 import { WorkspacePlan } from "@labelflow/graphql-types";
 import { isEmpty } from "lodash/fp";
-import { GqlWorkspace, useWorkspace } from "./workspaces-context";
+import { useWorkspace } from "./workspaces-context";
 import { randomBackgroundGradient } from "../../utils/random-background-gradient";
 import { WorkspacePlanBadge } from "./workspace-badge";
+import { UserWithWorkspacesQuery_user_memberships_workspace } from "../../graphql-types/UserWithWorkspacesQuery";
 
 const TableHead = () => (
   <Thead bg={mode("gray.50", "gray.800")}>
     <Tr>
-      <Th>Workspaces</Th>
+      <Th>Workspace</Th>
       <Th>Plan</Th>
     </Tr>
   </Thead>
@@ -30,7 +31,11 @@ const TableHead = () => (
 
 const TeamIcon = chakra(RiGroupFill);
 
-const WorkspaceAvatar = ({ workspace }: { workspace: GqlWorkspace }) => {
+type WorkspaceRowProps = {
+  workspace: UserWithWorkspacesQuery_user_memberships_workspace;
+};
+
+const WorkspaceAvatar = ({ workspace }: WorkspaceRowProps) => {
   const avatarBackground = mode("white", "gray.700");
   const avatarBorderColor = mode("gray.200", "gray.700");
   return (
@@ -59,7 +64,7 @@ const WorkspacePlanCell = ({ plan }: { plan: WorkspacePlan }) => (
   </Td>
 );
 
-const WorkspaceNameCell = ({ workspace }: { workspace: GqlWorkspace }) => {
+const WorkspaceNameCell = ({ workspace }: WorkspaceRowProps) => {
   return (
     <Td>
       <Link href={`/${workspace.slug}`}>

@@ -1,26 +1,14 @@
-import { gql, useQuery } from "@apollo/client";
 import { useRouter } from "next/router";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useState } from "react";
 import { StringParam, useQueryParams } from "use-query-params";
-import { GetWorkspacesQuery } from "../../graphql-types/GetWorkspacesQuery";
-import { useWorkspace } from "../../hooks";
+import { useWorkspaces } from "../../hooks";
 import { BoolParam } from "../../utils/query-param-bool";
 import { CreateWorkspaceModal } from "./create-workspace-modal";
 import { WorkspaceMenu } from "./workspace-menu";
 import { WorkspaceItem } from "./workspace-menu/workspace-selection-popover";
 
-const GET_WORKSPACES_QUERY = gql`
-  query GetWorkspacesQuery {
-    workspaces {
-      id
-      name
-      slug
-    }
-  }
-`;
-
 export const WorkspaceSwitcher = () => {
-  const { workspaceSlug } = useWorkspace();
+  const workspaces = useWorkspaces();
   const router = useRouter();
 
   const [isOpen, setIsOpen] = useState(false);
@@ -30,26 +18,6 @@ export const WorkspaceSwitcher = () => {
       "modal-create-workspace": BoolParam,
       "workspace-name": StringParam,
     });
-
-  const { data: getWorkspacesData, previousData: getWorkspacesPreviousData } =
-    useQuery<GetWorkspacesQuery>(GET_WORKSPACES_QUERY);
-
-  const workspaces = useMemo(
-    () => [
-      ...(getWorkspacesData?.workspaces ??
-        getWorkspacesPreviousData?.workspaces ??
-        []),
-    ],
-    [getWorkspacesData?.workspaces, getWorkspacesPreviousData?.workspaces]
-  );
-
-  const selectedWorkspace = useMemo(() => {
-    if (workspaceSlug == null) {
-      return null;
-    }
-
-    return workspaces.find(({ slug }) => slug === workspaceSlug);
-  }, [workspaceSlug, workspaces]);
 
   const setSelectedWorkspace = useCallback(
     (workspace: WorkspaceItem) => {
@@ -80,12 +48,8 @@ export const WorkspaceSwitcher = () => {
       <WorkspaceMenu
         isOpen={isOpen}
         setIsOpen={setIsOpen}
-        workspaces={workspaces}
-        onSelectedWorkspaceChange={(workspace: WorkspaceItem) =>
-          setSelectedWorkspace(workspace)
-        }
+        onSelectedWorkspaceChange={setSelectedWorkspace}
         createNewWorkspace={createNewWorkspace}
-        selectedWorkspace={selectedWorkspace == null ? null : selectedWorkspace}
       />
       <CreateWorkspaceModal
         isOpen={isCreationModalOpen}

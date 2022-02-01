@@ -4,6 +4,7 @@ import {
   LabelsAggregates,
   Workspace,
 } from "@labelflow/graphql-types";
+import { WORKSPACE_DATA } from "./user.fixtures";
 
 export type WorkspaceData = Pick<Workspace, "slug">;
 
@@ -21,15 +22,11 @@ export type LabelClassData = Pick<
   labelsAggregates: LabelsAggregates;
 };
 
-export const BASIC_WORKSPACE_DATA: WorkspaceData = {
-  slug: "my-test-workspace",
-};
-
 export const BASIC_DATASET_DATA: DatasetData = {
   id: "8f47e891-3b24-427a-8db0-dab362fbe269",
   name: "My Test Dataset",
   slug: "my-test-dataset",
-  workspace: BASIC_WORKSPACE_DATA,
+  workspace: WORKSPACE_DATA,
   labelClasses: [],
 };
 
@@ -37,7 +34,7 @@ export const DEEP_DATASET_WITH_CLASSES_DATA: DatasetData = {
   id: "2f062478-aa66-4c77-be1a-bfbca1668695",
   name: "My Test Dataset With Classes",
   slug: "my-test-dataset-with-classes",
-  workspace: BASIC_WORKSPACE_DATA,
+  workspace: WORKSPACE_DATA,
   labelClasses: [
     {
       id: "cc4051a6-6ef3-49c2-92fa-f5b0eadb8934",

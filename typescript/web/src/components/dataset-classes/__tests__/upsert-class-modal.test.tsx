@@ -1,28 +1,28 @@
 /* eslint-disable import/first */
 import "@testing-library/jest-dom/extend-expect";
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { act, fireEvent, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { getApolloMockWrapper } from "../../../utils/tests/apollo-mock";
-import {
-  mockNextRouter,
-  mockUseQueryParams,
-} from "../../../utils/router-mocks";
+import { isNil } from "lodash/fp";
+
 import { BASIC_LABEL_CLASS_DATA } from "../../../utils/tests/data.fixtures";
+import { mockWorkspace } from "../../../utils/tests/mock-workspace";
+
+mockWorkspace({ datasetSlug: BASIC_LABEL_CLASS_DATA.dataset.slug });
+
 import {
-  DatasetClassesContext,
-  DatasetClassesState,
-} from "../dataset-classes.context";
+  renderWithWrapper,
+  RenderWithWrapperResult,
+} from "../../../utils/tests";
 import {
   APOLLO_MOCKS,
   CREATE_LABEL_CLASS_DEFAULT_MOCK,
   UPDATED_LABEL_CLASS_MOCK_NAME,
   UPDATE_LABEL_CLASS_NAME_MOCK,
 } from "../upsert-class-modal/upsert-class-modal.fixtures";
-
-mockUseQueryParams();
-mockNextRouter({
-  query: { workspaceSlug: BASIC_LABEL_CLASS_DATA.dataset.workspace.slug },
-});
+import {
+  DatasetClassesContext,
+  DatasetClassesState,
+} from "../dataset-classes.context";
 
 jest.mock(
   "use-debounce",
@@ -38,18 +38,25 @@ type TestComponentProps = Pick<
   "editClass" | "datasetId" | "datasetSlug"
 >;
 
-const renderTest = (props: TestComponentProps) => {
-  return render(
+const renderTest = async (
+  props: Omit<TestComponentProps, "datasetSlug">
+): Promise<RenderWithWrapperResult> => {
+  const result = await renderWithWrapper(
     <DatasetClassesContext.Provider
       value={{
         ...({} as DatasetClassesState),
+        datasetSlug: BASIC_LABEL_CLASS_DATA.dataset.slug,
         ...props,
       }}
     >
       <UpsertClassModal isOpen onClose={onClose} />
     </DatasetClassesContext.Provider>,
-    { wrapper: getApolloMockWrapper(APOLLO_MOCKS) }
+    { auth: { withWorkspaces: true }, apollo: { extraMocks: APOLLO_MOCKS } }
   );
+  const title = `${isNil(props.editClass) ? "New" : "Edit"} Class`;
+  const { getByText } = result;
+  await waitFor(() => expect(getByText(title)).toBeDefined());
+  return result;
 };
 
 describe("UpsertClassModal", () => {
@@ -58,61 +65,47 @@ describe("UpsertClassModal", () => {
   });
 
   it("renders edit modal when a class id is passed", async () => {
-    renderTest({
-      editClass: BASIC_LABEL_CLASS_DATA,
-      datasetSlug: BASIC_LABEL_CLASS_DATA.dataset.slug,
-    });
-    expect(screen.getByText("Edit Class")).toBeDefined();
+    await renderTest({ editClass: BASIC_LABEL_CLASS_DATA });
   });
 
   it("renders create modal when a class id is not passed", async () => {
-    renderTest({ datasetSlug: BASIC_LABEL_CLASS_DATA.dataset.slug });
-    expect(screen.getByText("New Class")).toBeDefined();
+    await renderTest({});
   });
 
-  it("renders a modal with a prefilled input and an enabled button", () => {
-    renderTest({
+  it("renders a modal with a prefilled input and an enabled button", async () => {
+    const { getByLabelText } = await renderTest({
       editClass: BASIC_LABEL_CLASS_DATA,
-      datasetSlug: BASIC_LABEL_CLASS_DATA.dataset.slug,
     });
 
-    const input = screen.getByLabelText(
-      /Class name input/i
-    ) as HTMLInputElement;
-    const button = screen.getByLabelText(/Update/i);
+    const input = getByLabelText(/Class name input/i) as HTMLInputElement;
+    const button = getByLabelText(/Update/i);
 
     expect(input.value).toEqual(BASIC_LABEL_CLASS_DATA.name);
     expect(button).not.toHaveAttribute("disabled");
   });
 
   it("enables update button when class name is not empty", async () => {
-    renderTest({
+    const { getByLabelText } = await renderTest({
       editClass: BASIC_LABEL_CLASS_DATA,
-      datasetSlug: BASIC_LABEL_CLASS_DATA.dataset.slug,
     });
-    const input = screen.getByLabelText(
-      /Class name input/i
-    ) as HTMLInputElement;
+    const input = getByLabelText(/Class name input/i) as HTMLInputElement;
 
     fireEvent.change(input, { target: { value: "My new class" } });
     expect(input.value).toBe("My new class");
 
-    const button = screen.getByLabelText(/Update/i);
+    const button = getByLabelText(/Update/i);
     await waitFor(() => {
       expect(button).not.toHaveAttribute("disabled");
     });
   });
 
   it("creates a label class when the form is submitted", async () => {
-    renderTest({
+    const { getByLabelText } = await renderTest({
       datasetId: BASIC_LABEL_CLASS_DATA.dataset.id,
-      datasetSlug: BASIC_LABEL_CLASS_DATA.dataset.slug,
     });
 
-    const input = screen.getByLabelText(
-      /Class name input/i
-    ) as HTMLInputElement;
-    const button = screen.getByLabelText(/Create/i);
+    const input = getByLabelText(/Class name input/i) as HTMLInputElement;
+    const button = getByLabelText(/Create/i);
 
     fireEvent.change(input, {
       target: { value: UPDATED_LABEL_CLASS_MOCK_NAME },
@@ -127,36 +120,31 @@ describe("UpsertClassModal", () => {
   });
 
   it("displays an error message if the label class already exists", async () => {
-    renderTest({
+    const { getByLabelText, getByText, apolloMockLink } = await renderTest({
       datasetId: BASIC_LABEL_CLASS_DATA.dataset.id,
-      datasetSlug: BASIC_LABEL_CLASS_DATA.dataset.slug,
     });
-    const input = screen.getByLabelText(
-      /class name input/i
-    ) as HTMLInputElement;
+    const input = getByLabelText(/class name input/i) as HTMLInputElement;
 
     fireEvent.change(input, {
       target: { value: BASIC_LABEL_CLASS_DATA.name },
     });
+    await act(() => apolloMockLink.waitForAllResponses());
 
-    const button = screen.getByLabelText(/create/i);
+    const button = getByLabelText(/create/i);
 
     await waitFor(() => {
       expect(button).toHaveAttribute("disabled");
-      expect(screen.getByText(/this name is already taken/i)).toBeDefined();
+      expect(getByText(/this name is already taken/i)).toBeDefined();
     });
   });
 
   it("updates a dataset when the form is submitted", async () => {
-    renderTest({
+    const { getByLabelText, apolloMockLink } = await renderTest({
       editClass: BASIC_LABEL_CLASS_DATA,
-      datasetSlug: BASIC_LABEL_CLASS_DATA.dataset.slug,
     });
 
-    const input = screen.getByLabelText(
-      /class name input/i
-    ) as HTMLInputElement;
-    const button = screen.getByLabelText(/update/i);
+    const input = getByLabelText(/class name input/i) as HTMLInputElement;
+    const button = getByLabelText(/update/i);
 
     userEvent.click(input);
     userEvent.clear(input);
@@ -166,6 +154,8 @@ describe("UpsertClassModal", () => {
     });
 
     userEvent.click(button);
+    await act(() => apolloMockLink.waitForAllResponses());
+
     await waitFor(() => {
       expect(onClose).toHaveBeenCalled();
     });

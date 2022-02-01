@@ -22,10 +22,10 @@ const LocalDatasetsIndexPage = () => {
         query: queryRest,
       });
     }
-  }, [router.isReady]);
+  }, [router, router.isReady]);
 
   return (
-    <Authenticated>
+    <Authenticated withWorkspaces>
       <WelcomeModal />
       <Meta title="LabelFlow" />
       <CookieBanner />

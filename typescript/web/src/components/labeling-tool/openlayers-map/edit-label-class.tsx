@@ -17,7 +17,7 @@ import {
   GetImageLabelsQueryVariables,
 } from "../../../graphql-types/GetImageLabelsQuery";
 import { LabelType } from "../../../graphql-types/globalTypes";
-import { useDatasetImage } from "../../../hooks/use-dataset-image";
+import { useDataset, useDatasetImage, useWorkspace } from "../../../hooks";
 import { keymap } from "../../../keymap";
 import { ClassSelectionPopover } from "../../class-selection-popover";
 import { LabelClassItem } from "../../class-selection-popover/class-selection-popover";
@@ -34,7 +34,9 @@ export const EditLabelClass = forwardRef<
     onClose: () => void;
   }
 >(({ isOpen, onClose }, ref) => {
-  const { workspaceSlug, datasetSlug, imageId } = useDatasetImage();
+  const { slug: workspaceSlug } = useWorkspace();
+  const { slug: datasetSlug } = useDataset();
+  const { id: imageId } = useDatasetImage();
   const client = useApolloClient();
   const { data } = useQuery(GET_LABEL_CLASSES_OF_DATASET_QUERY, {
     variables: { slug: datasetSlug, workspaceSlug },

@@ -4,7 +4,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import React from "react";
 import { CurrentUserCanAcceptInvitation } from "../../graphql-types/globalTypes";
-import { USER_PROFILE_QUERY } from "../../shared-queries/user-profile.query";
+import { USER_QUERY } from "../../shared-queries/user.query";
 import { getDisplayName } from "../members/user";
 import { LayoutSpinner } from "../spinner";
 import { AcceptOrDeclineMembershipInvitation } from "./accept-or-decline-membership-invitation";
@@ -117,13 +117,10 @@ export const InvitationManager = () => {
     }
   );
 
-  const { data: userData, loading: userIsLoading } = useQuery(
-    USER_PROFILE_QUERY,
-    {
-      variables: { id: userInfoFromSession?.id },
-      skip: userInfoFromSession?.id == null,
-    }
-  );
+  const { data: userData, loading: userIsLoading } = useQuery(USER_QUERY, {
+    variables: { id: userInfoFromSession?.id },
+    skip: userInfoFromSession?.id == null,
+  });
   const displayName = userData?.user
     ? getDisplayName(userData?.user)
     : "Anonymous";

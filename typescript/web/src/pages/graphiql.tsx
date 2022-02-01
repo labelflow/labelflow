@@ -22,9 +22,7 @@ const GraphqlPlayground = () => (
     <WelcomeModal />
     <Meta title="LabelFlow | GraphiQL" />
     <CookieBanner />
-    <Layout
-      breadcrumbs={[<NavLogo key={0} />, <Text key={0}>Graphiql</Text>]}
-    >
+    <Layout breadcrumbs={[<NavLogo key={0} />, <Text key={0}>Graphiql</Text>]}>
       <Box
         h="100%"
         w="100%"

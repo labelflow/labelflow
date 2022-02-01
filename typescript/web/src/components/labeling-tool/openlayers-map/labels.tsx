@@ -22,7 +22,7 @@ import {
   GetImageLabelsQueryVariables,
 } from "../../../graphql-types/GetImageLabelsQuery";
 import { LabelType } from "../../../graphql-types/globalTypes";
-import { useDatasetImage } from "../../../hooks/use-dataset-image";
+import { useDatasetImage } from "../../../hooks";
 import { noneClassColor } from "../../../theme";
 import { GET_IMAGE_LABELS_QUERY } from "./queries";
 
@@ -31,7 +31,7 @@ export const Labels = ({
 }: {
   sourceVectorLabelsRef?: MutableRefObject<OlSourceVector<Geometry> | null>;
 }) => {
-  const { imageId } = useDatasetImage();
+  const { id: imageId } = useDatasetImage();
   const { data, previousData } = useQuery<
     GetImageLabelsQuery,
     GetImageLabelsQueryVariables

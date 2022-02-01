@@ -14,7 +14,7 @@ import { ImportImagesModalDropzone } from "./modal-dropzone/modal-dropzone";
 import { ImportImagesModalUrlList } from "./modal-url-list/modal-url-list";
 import { DATASET_IMAGES_PAGE_DATASET_QUERY } from "../../../shared-queries/dataset-images-page.query";
 import { WORKSPACE_DATASETS_PAGE_DATASETS_QUERY } from "../../../shared-queries/workspace-datasets-page.query";
-import { useDataset } from "../../../hooks";
+import { useDataset, useWorkspace } from "../../../hooks";
 
 export const ImportImagesModal = ({
   isOpen = false,
@@ -25,7 +25,8 @@ export const ImportImagesModal = ({
 }) => {
   const client = useApolloClient();
   const { isReady } = useRouter();
-  const { datasetSlug, workspaceSlug } = useDataset();
+  const { slug: workspaceSlug } = useWorkspace();
+  const { slug: datasetSlug } = useDataset();
 
   const [isCloseable, setCloseable] = useState(true);
   const [hasUploaded, setHasUploaded] = useState(false);

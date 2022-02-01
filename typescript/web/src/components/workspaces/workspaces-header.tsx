@@ -1,7 +1,7 @@
 import { Heading } from "@chakra-ui/react";
-import { useWorkspace } from "./workspaces-context";
+import { useWorkspaces } from "../../hooks";
 
 export const WorkspacesHeader = () => {
-  const { workspaces } = useWorkspace();
-  return <Heading mb="5">{`Workspaces (${workspaces?.length ?? ""})`}</Heading>;
+  const { length } = useWorkspaces();
+  return <Heading mb="5">{`Workspaces (${length})`}</Heading>;
 };

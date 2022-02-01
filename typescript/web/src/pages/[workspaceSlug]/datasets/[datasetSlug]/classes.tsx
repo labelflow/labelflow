@@ -5,20 +5,20 @@ import NextLink from "next/link";
 import React from "react";
 import { resetServerContext } from "react-beautiful-dnd";
 import { useErrorHandler } from "react-error-boundary";
-import { Authenticated } from "../../../../../components/auth";
-import { CookieBanner } from "../../../../../components/cookie-banner";
-import { DatasetClasses } from "../../../../../components/dataset-classes";
-import { ExportButton } from "../../../../../components/export-button";
-import { ImportButton } from "../../../../../components/import-button";
-import { Layout } from "../../../../../components/layout";
-import { DatasetTabBar } from "../../../../../components/layout/tab-bar/dataset-tab-bar";
-import { KeymapButton } from "../../../../../components/layout/top-bar/keymap-button";
-import { NavLogo } from "../../../../../components/logo/nav-logo";
-import { Meta } from "../../../../../components/meta";
-import { WelcomeModal } from "../../../../../components/welcome-manager";
-import { WorkspaceSwitcher } from "../../../../../components/workspace-switcher";
-import { useDataset } from "../../../../../hooks";
-import { Error404Content } from "../../../../404";
+import { Authenticated } from "../../../../components/auth";
+import { CookieBanner } from "../../../../components/cookie-banner";
+import { DatasetClasses } from "../../../../components/dataset-classes";
+import { ExportButton } from "../../../../components/export-button";
+import { ImportButton } from "../../../../components/import-button";
+import { Layout } from "../../../../components/layout";
+import { DatasetTabBar } from "../../../../components/layout/tab-bar/dataset-tab-bar";
+import { KeymapButton } from "../../../../components/layout/top-bar/keymap-button";
+import { NavLogo } from "../../../../components/logo/nav-logo";
+import { Meta } from "../../../../components/meta";
+import { WelcomeModal } from "../../../../components/welcome-manager";
+import { WorkspaceSwitcher } from "../../../../components/workspace-switcher";
+import { useDataset, useWorkspace } from "../../../../hooks";
+import { Error404Content } from "../../../404";
 
 const DATASET_NAME_QUERY = gql`
   query GetDatasetNameQuery($slug: String!, $workspaceSlug: String!) {
@@ -29,8 +29,9 @@ const DATASET_NAME_QUERY = gql`
   }
 `;
 
-const DatasetClassesPage = () => {
-  const { workspaceSlug, datasetSlug } = useDataset();
+const Body = () => {
+  const { slug: workspaceSlug } = useWorkspace();
+  const { slug: datasetSlug } = useDataset();
 
   const {
     data: datasetResult,
@@ -54,17 +55,17 @@ const DatasetClassesPage = () => {
       handleError(error);
     }
     return (
-      <Authenticated>
+      <>
         <WelcomeModal />
         <Meta title="LabelFlow | Dataset not found" />
         <CookieBanner />
         <Error404Content />
-      </Authenticated>
+      </>
     );
   }
 
   return (
-    <Authenticated>
+    <>
       <WelcomeModal />
       <Meta title="LabelFlow | Classes" />
       <CookieBanner />
@@ -104,9 +105,15 @@ const DatasetClassesPage = () => {
           />
         </Center>
       </Layout>
-    </Authenticated>
+    </>
   );
 };
+
+const DatasetClassesPage = () => (
+  <Authenticated withWorkspaces>
+    <Body />
+  </Authenticated>
+);
 
 export default DatasetClassesPage;
 

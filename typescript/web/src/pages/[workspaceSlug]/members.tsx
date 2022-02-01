@@ -1,21 +1,21 @@
 import { gql, useMutation, useQuery } from "@apollo/client";
 import { Text } from "@chakra-ui/react";
 import { isEmpty } from "lodash/fp";
-import { Authenticated } from "../../../components/auth";
-import { CookieBanner } from "../../../components/cookie-banner";
-import { Layout } from "../../../components/layout";
-import { WorkspaceTabBar } from "../../../components/layout/tab-bar/workspace-tab-bar";
-import { NavLogo } from "../../../components/logo/nav-logo";
-import { Members } from "../../../components/members";
-import { Meta } from "../../../components/meta";
-import { LayoutSpinner } from "../../../components/spinner";
-import { WelcomeModal } from "../../../components/welcome-manager";
-import { WorkspaceSwitcher } from "../../../components/workspace-switcher";
+import { Authenticated } from "../../components/auth";
+import { CookieBanner } from "../../components/cookie-banner";
+import { Layout } from "../../components/layout";
+import { WorkspaceTabBar } from "../../components/layout/tab-bar/workspace-tab-bar";
+import { NavLogo } from "../../components/logo/nav-logo";
+import { Members } from "../../components/members";
+import { Meta } from "../../components/meta";
+import { LayoutSpinner } from "../../components/spinner";
+import { WelcomeModal } from "../../components/welcome-manager";
+import { WorkspaceSwitcher } from "../../components/workspace-switcher";
 import {
   GetMembershipsMembersQuery,
   GetMembershipsMembersQueryVariables,
-} from "../../../graphql-types/GetMembershipsMembersQuery";
-import { useDatasetImage } from "../../../hooks/use-dataset-image";
+} from "../../graphql-types/GetMembershipsMembersQuery";
+import { useWorkspace } from "../../hooks";
 
 const GET_MEMBERSHIPS_MEMBERS_QUERY = gql`
   query GetMembershipsMembersQuery($workspaceSlug: String) {
@@ -61,8 +61,8 @@ const INVITE_MEMBER_MUTATION = gql`
   }
 `;
 
-const WorkspaceMembersPage = () => {
-  const { workspaceSlug } = useDatasetImage();
+const LayoutBody = () => {
+  const { slug: workspaceSlug } = useWorkspace();
 
   const { data: membershipsData } = useQuery<
     GetMembershipsMembersQuery,
@@ -84,8 +84,30 @@ const WorkspaceMembersPage = () => {
     refetchQueries: [GET_MEMBERSHIPS_MEMBERS_QUERY],
   });
 
+  return membershipsData?.memberships ? (
+    <Members
+      memberships={membershipsData?.memberships ?? []}
+      changeMembershipRole={({ id, role }) => {
+        updateMembership({ variables: { id, data: { role } } });
+      }}
+      removeMembership={(id) => {
+        deleteMembership({ variables: { id } });
+      }}
+      inviteMember={async (where) => {
+        const {
+          data: { inviteMember: invitationResult },
+        } = await inviteMember({ variables: { where } });
+        return invitationResult;
+      }}
+    />
+  ) : (
+    <LayoutSpinner />
+  );
+};
+
+const WorkspaceMembersPage = () => {
   return (
-    <Authenticated>
+    <Authenticated withWorkspaces>
       <WelcomeModal />
       <Meta title="LabelFlow | Members" />
       <CookieBanner />
@@ -95,29 +117,9 @@ const WorkspaceMembersPage = () => {
           <WorkspaceSwitcher key={1} />,
           <Text key={2}>Members</Text>,
         ]}
-        tabBar={
-          <WorkspaceTabBar currentTab="members" workspaceSlug={workspaceSlug} />
-        }
+        tabBar={<WorkspaceTabBar currentTab="members" />}
       >
-        {membershipsData?.memberships ? (
-          <Members
-            memberships={membershipsData?.memberships ?? []}
-            changeMembershipRole={({ id, role }) => {
-              updateMembership({ variables: { id, data: { role } } });
-            }}
-            removeMembership={(id) => {
-              deleteMembership({ variables: { id } });
-            }}
-            inviteMember={async (where) => {
-              const {
-                data: { inviteMember: invitationResult },
-              } = await inviteMember({ variables: { where } });
-              return invitationResult;
-            }}
-          />
-        ) : (
-          <LayoutSpinner />
-        )}
+        <LayoutBody />
       </Layout>
     </Authenticated>
   );

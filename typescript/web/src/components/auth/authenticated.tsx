@@ -1,6 +1,9 @@
+import { isNil } from "lodash/fp";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
-import { PropsWithChildren, useEffect } from "react";
+import { useEffect } from "react";
+import { UserProvider, useUser, useWorkspaces } from "../../hooks";
+import { PropsWithRequiredChildren } from "../../utils";
 
 const getSignInUrl = () => {
   const path = "/auth/signin";
@@ -9,16 +12,36 @@ const getSignInUrl = () => {
   return `${path}?${searchParams}`;
 };
 
-export type AuthenticatedProps = Required<PropsWithChildren<{}>>;
+export type AuthenticatedProps = PropsWithRequiredChildren<{
+  optional?: boolean;
+  withWorkspaces?: boolean;
+}>;
 
-export const Authenticated = ({ children }: AuthenticatedProps) => {
+const Body = ({ optional, withWorkspaces, children }: AuthenticatedProps) => {
+  const user = useUser();
+  const workspaces = useWorkspaces();
+  const hasChildren =
+    optional || (!isNil(user) && (!withWorkspaces || !isNil(workspaces)));
+  return <>{hasChildren && <>{children}</>}</>;
+};
+
+export const Authenticated = (props: AuthenticatedProps) => {
+  const { optional, withWorkspaces } = props;
   const router = useRouter();
   const { status } = useSession();
   useEffect(() => {
-    if (status === "unauthenticated") {
+    if (!optional && status === "unauthenticated") {
       const url = getSignInUrl();
       router.push(url);
     }
-  }, [router, status]);
-  return <>{status !== "authenticated" ? null : children}</>;
+  }, [optional, router, status]);
+  return (
+    <>
+      {status === "authenticated" && (
+        <UserProvider withWorkspaces={withWorkspaces}>
+          <Body {...props} />
+        </UserProvider>
+      )}
+    </>
+  );
 };

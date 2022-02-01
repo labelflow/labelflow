@@ -3,21 +3,21 @@ import { Box, Text } from "@chakra-ui/react";
 import { isEmpty } from "lodash/fp";
 import { GetServerSideProps } from "next";
 import React from "react";
-import { Authenticated } from "../../../components/auth";
-import { CookieBanner } from "../../../components/cookie-banner";
-import { Layout } from "../../../components/layout";
-import { WorkspaceTabBar } from "../../../components/layout/tab-bar/workspace-tab-bar";
-import { NavLogo } from "../../../components/logo/nav-logo";
-import { Meta } from "../../../components/meta";
-import { WorkspaceSettings } from "../../../components/settings/workspace";
-import { LayoutSpinner } from "../../../components/spinner";
-import { WelcomeModal } from "../../../components/welcome-manager";
-import { WorkspaceSwitcher } from "../../../components/workspace-switcher";
+import { Authenticated } from "../../components/auth";
+import { CookieBanner } from "../../components/cookie-banner";
+import { Layout } from "../../components/layout";
+import { WorkspaceTabBar } from "../../components/layout/tab-bar/workspace-tab-bar";
+import { NavLogo } from "../../components/logo/nav-logo";
+import { Meta } from "../../components/meta";
+import { WorkspaceSettings } from "../../components/settings/workspace";
+import { LayoutSpinner } from "../../components/spinner";
+import { WelcomeModal } from "../../components/welcome-manager";
+import { WorkspaceSwitcher } from "../../components/workspace-switcher";
 import {
   GetWorkspaceDetailsQuery,
   GetWorkspaceDetailsQueryVariables,
-} from "../../../graphql-types/GetWorkspaceDetailsQuery";
-import { useWorkspace } from "../../../hooks";
+} from "../../graphql-types/GetWorkspaceDetailsQuery";
+import { useWorkspace } from "../../hooks";
 
 const GET_WORKSPACE_DETAILS_QUERY = gql`
   query GetWorkspaceDetailsQuery($workspaceSlug: String) {
@@ -32,8 +32,8 @@ const GET_WORKSPACE_DETAILS_QUERY = gql`
   }
 `;
 
-const WorkspaceSettingsPage = () => {
-  const { workspaceSlug } = useWorkspace();
+const Body = () => {
+  const { slug: workspaceSlug } = useWorkspace();
 
   const {
     data: getWorkspaceDetailsData,
@@ -51,7 +51,7 @@ const WorkspaceSettingsPage = () => {
     getWorkspaceDetailsPreviousData?.workspace;
 
   return (
-    <Authenticated>
+    <>
       <WelcomeModal />
       <Meta title="LabelFlow | Workspace Settings" />
       <CookieBanner />
@@ -61,12 +61,7 @@ const WorkspaceSettingsPage = () => {
           <WorkspaceSwitcher key={1} />,
           <Text key={2}>Settings</Text>,
         ]}
-        tabBar={
-          <WorkspaceTabBar
-            currentTab="settings"
-            workspaceSlug={workspaceSlug}
-          />
-        }
+        tabBar={<WorkspaceTabBar currentTab="settings" />}
       >
         {getWorkspaceDetailsFinalData ? (
           <Box p={8}>
@@ -76,9 +71,15 @@ const WorkspaceSettingsPage = () => {
           <LayoutSpinner />
         )}
       </Layout>
-    </Authenticated>
+    </>
   );
 };
+
+const WorkspaceSettingsPage = () => (
+  <Authenticated withWorkspaces>
+    <Body />
+  </Authenticated>
+);
 
 export default WorkspaceSettingsPage;
 

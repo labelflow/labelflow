@@ -42,7 +42,7 @@ export const UpsertDatasetModal = ({
   onClose?: () => void;
   datasetId?: string;
 }) => {
-  const { workspaceSlug } = useWorkspace();
+  const { slug: workspaceSlug } = useWorkspace();
 
   const [datasetNameInputValue, setDatasetNameInputValue] =
     useState<string>("");

@@ -4,7 +4,9 @@ import {
   GetAllImagesOfADatasetQuery,
   GetAllImagesOfADatasetQueryVariables,
 } from "../graphql-types/GetAllImagesOfADatasetQuery";
+import { useDataset } from "./use-dataset";
 import { useDatasetImage } from "./use-dataset-image";
+import { useWorkspace } from "./use-user";
 
 const GET_ALL_IMAGES_OF_A_DATASET_QUERY = gql`
   query GetAllImagesOfADatasetQuery($slug: String!, $workspaceSlug: String!) {
@@ -31,11 +33,9 @@ const GET_ALL_IMAGES_OF_A_DATASET_QUERY = gql`
  * is already the last index of the array).
  */
 export const useImagesNavigation = () => {
-  const {
-    workspaceSlug,
-    datasetSlug,
-    imageId: currentImageId,
-  } = useDatasetImage();
+  const { slug: workspaceSlug } = useWorkspace();
+  const { slug: datasetSlug } = useDataset();
+  const { id: currentImageId } = useDatasetImage();
 
   // Refetch images ?
   const { data } = useQuery<

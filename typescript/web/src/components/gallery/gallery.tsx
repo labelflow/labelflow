@@ -6,7 +6,7 @@ import { useImagesNavigation } from "../../hooks/use-images-navigation";
 
 import { GalleryItem } from "./gallery-item";
 import { itemHeight, itemWidth, scrollbarHeight } from "./constants";
-import { useDatasetImage } from "../../hooks/use-dataset-image";
+import { useDataset, useDatasetImage, useWorkspace } from "../../hooks";
 
 /**
  * Virtualized, unpaginated list of images.
@@ -20,7 +20,9 @@ import { useDatasetImage } from "../../hooks/use-dataset-image";
  */
 export const Gallery = () => {
   const listRef = useRef<HTMLDivElement>(null);
-  const { imageId, datasetSlug, workspaceSlug } = useDatasetImage();
+  const { slug: workspaceSlug } = useWorkspace();
+  const { slug: datasetSlug } = useDataset();
+  const { id: imageId } = useDatasetImage();
 
   const { images, currentImageIndex } = useImagesNavigation();
 

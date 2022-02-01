@@ -14,7 +14,7 @@ import { APP_TITLE } from "../constants";
 import Website from "./website";
 
 const App = () => (
-  <Authenticated>
+  <Authenticated withWorkspaces>
     <WelcomeModal />
     <Meta title={APP_TITLE} />
     <CookieBanner />

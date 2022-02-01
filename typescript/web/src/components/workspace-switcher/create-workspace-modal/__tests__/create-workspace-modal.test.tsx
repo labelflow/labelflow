@@ -1,16 +1,19 @@
-import { ApolloProvider } from "@apollo/client";
+import { MockedProvider as ApolloProvider } from "@apollo/client/testing";
 import { FORBIDDEN_WORKSPACE_SLUGS } from "@labelflow/common-resolvers";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { isNil } from "lodash/fp";
 import { PropsWithChildren, useState } from "react";
-import { client } from "../../../../connectors/apollo-client/schema-client";
 import { MockableLocationProvider } from "../../../../utils/mockable-location";
+import { getApolloMockLink } from "../../../../utils/tests/apollo-mock";
+import { GRAPHQL_MOCKS } from "../../../workspace-name-input/workspace-name-input.fixtures";
 import { CreateWorkspaceModal } from "../create-workspace-modal";
 
 export const Wrapper = ({ children }: PropsWithChildren<{}>) => (
   <MockableLocationProvider>
-    <ApolloProvider client={client}>{children}</ApolloProvider>
+    <ApolloProvider link={getApolloMockLink(GRAPHQL_MOCKS)}>
+      {children}
+    </ApolloProvider>
   </MockableLocationProvider>
 );
 
@@ -99,7 +102,7 @@ const TEST_CASES: Record<string, TestCase> = {
     expected: { createWorkspaceButton: false },
   },
   "can create if the input is valid": {
-    workspaceName: "My new workspace",
+    workspaceName: "test",
     expected: { createWorkspaceButton: true },
   },
   "cannot create if the input contains invalid characters": {
@@ -111,7 +114,7 @@ const TEST_CASES: Record<string, TestCase> = {
     expected: { createWorkspaceButton: false },
   },
   "cannot create if the name is already taken": {
-    workspaceName: "test",
+    workspaceName: "already-taken-name",
     expected: { createWorkspaceButton: false },
   },
 };
