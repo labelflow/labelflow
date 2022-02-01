@@ -1,5 +1,5 @@
 import { v4 as uuid } from "uuid";
-import { pick } from "lodash";
+import { pick } from "lodash/fp";
 import { MATCH_ANY_PARAMETERS } from "wildcard-mock-link";
 import {
   ApolloMockResponse,
@@ -46,9 +46,9 @@ export const GET_DATASET_WITH_LABEL_CLASSES_MOCK: ApolloMockResponse<
   result: {
     data: {
       dataset: {
-        ...pick(DEEP_DATASET_WITH_CLASSES_DATA, "id", "name", "slug"),
+        ...pick(["id", "name", "slug"], DEEP_DATASET_WITH_CLASSES_DATA),
         labelClasses: DEEP_DATASET_WITH_CLASSES_DATA.labelClasses.map(
-          (labelClass) => pick(labelClass, "id", "name", "color")
+          (labelClass) => pick(["id", "name", "color"], labelClass)
         ),
       },
     },

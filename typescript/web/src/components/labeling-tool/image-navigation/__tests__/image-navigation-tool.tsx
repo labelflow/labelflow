@@ -1,151 +1,92 @@
 /* eslint-disable import/first */
 /* eslint-disable import/order */
-
-import { incrementMockedDate } from "@labelflow/dev-utils/mockdate";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom/extend-expect";
-
+import { getApolloMockWrapper } from "../../../../utils/tests/apollo-mock";
+import {
+  BASIC_IMAGE_DATA,
+  DEEP_DATASET_WITH_IMAGES_DATA,
+} from "../../../../utils/tests/data.fixtures";
 import { mockNextRouter } from "../../../../utils/router-mocks";
 
 mockNextRouter({ query: { workspaceSlug: "local" } });
 
 import { useRouter } from "next/router";
-import { ApolloProvider } from "@apollo/client";
-
 import { ImageNavigationTool } from "../image-navigation-tool";
-import { client } from "../../../../connectors/apollo-client/schema-client";
-import { setupTestsWithLocalDatabase } from "../../../../utils/setup-local-db-tests";
-
-setupTestsWithLocalDatabase();
-
-import { processImage } from "../../../../connectors/repository/image-processing";
-import {
-  CREATE_TEST_DATASET_MUTATION,
-  CREATE_TEST_IMAGE_MUTATION,
-} from "../../../../utils/tests/mutations";
-
-jest.mock("../../../../connectors/repository/image-processing");
-const mockedProcessImage = processImage as jest.Mock;
-const testDatasetId = "mocked-dataset-id";
-
-const createImage = async (name: String) => {
-  mockedProcessImage.mockReturnValue({
-    width: 42,
-    height: 36,
-    mime: "image/jpeg",
-  });
-  const mutationResult = await client.mutate({
-    mutation: CREATE_TEST_IMAGE_MUTATION,
-    variables: {
-      datasetId: testDatasetId,
-      file: new Blob(),
-      name,
-    },
-  });
-
-  const {
-    data: {
-      createImage: { id },
-    },
-  } = mutationResult;
-
-  return id;
-};
+import { APOLLO_MOCKS } from "../image-navigation-tool.fixtures";
 
 const renderImageNavigationTool = () =>
   render(<ImageNavigationTool />, {
-    wrapper: ({ children }) => (
-      <ApolloProvider client={client}>{children}</ApolloProvider>
-    ),
+    wrapper: getApolloMockWrapper(APOLLO_MOCKS),
   });
 
 beforeEach(async () => {
-  await client.mutate({
-    mutation: CREATE_TEST_DATASET_MUTATION,
-    variables: {
-      datasetId: testDatasetId,
-      name: "test dataset",
-      workspaceSlug: "local",
-    },
-  });
+  jest.clearAllMocks();
 });
 
 test("should display a dash and a zero when the image id isn't present/when the image list is empty", async () => {
   renderImageNavigationTool();
-
   // We look for the "left" value, the one in the 'input`
   expect(screen.queryByDisplayValue(/-/i)).toBeInTheDocument();
-
   // We look for the "right" value, the total count.
   await waitFor(() => expect(screen.queryByText(/0/i)).toBeInTheDocument());
 });
 
 test("should display one when only one image in list", async () => {
-  const imageId = await createImage("testImage");
+  // const imageId = await createImage("testImage");
   (useRouter as jest.Mock).mockImplementation(() => ({
-    query: { imageId, datasetSlug: "test-dataset", workspaceSlug: "local" },
+    query: {
+      imageId: BASIC_IMAGE_DATA.id,
+      datasetSlug: BASIC_IMAGE_DATA.dataset.slug,
+      workspaceSlug: BASIC_IMAGE_DATA.dataset.workspace.slug,
+    },
   }));
-
   renderImageNavigationTool();
-
   await waitFor(() =>
     expect(screen.queryByDisplayValue(/1/i)).toBeInTheDocument()
   );
   await waitFor(() => expect(screen.queryByText(/1/i)).toBeInTheDocument());
 });
 
-test("should select previous image when the left arrow is pressed", async () => {
+const testNextPrevImage = (direction: "previous" | "next") => async () => {
+  const workspaceSlug = DEEP_DATASET_WITH_IMAGES_DATA.workspace.slug;
+  const datasetSlug = DEEP_DATASET_WITH_IMAGES_DATA.slug;
+  const imageId = DEEP_DATASET_WITH_IMAGES_DATA.images[1].id;
+  const newImageId =
+    DEEP_DATASET_WITH_IMAGES_DATA.images[direction === "next" ? 2 : 0].id;
   const mockedPush = jest.fn();
-  const oldestImageId = await createImage("testImageA");
-  incrementMockedDate(1);
-  const imageId = await createImage("testImageB");
-  incrementMockedDate(1);
-
-  await createImage("testImageC");
   (useRouter as jest.Mock).mockImplementation(() => ({
-    query: { imageId, datasetSlug: "test-dataset", workspaceSlug: "local" },
+    query: {
+      imageId,
+      datasetSlug,
+      workspaceSlug,
+    },
     push: mockedPush,
   }));
-
   const { container } = renderImageNavigationTool();
-
-  // We need to make sure that images have been loaded
   await waitFor(() =>
     expect(
-      screen.getByRole("button", { name: /^Previous image$/i })
+      screen.getByRole("button", {
+        name: direction === "next" ? /^Next image$/i : /^Previous image$/i,
+      })
     ).toBeDefined()
   );
-
-  userEvent.type(container, "{arrowleft}");
-
+  userEvent.type(
+    container,
+    direction === "next" ? "{arrowright}" : "{arrowleft}"
+  );
   expect(mockedPush).toHaveBeenCalledWith(
-    `/local/datasets/test-dataset/images/${oldestImageId}`
+    `/${workspaceSlug}/datasets/${datasetSlug}/images/${newImageId}`
   );
-});
+};
 
-test("should select next image when the right arrow is pressed", async () => {
-  const mockedPush = jest.fn();
-  await createImage("testImageA");
-  incrementMockedDate(1);
-  const imageId = await createImage("testImageB");
-  incrementMockedDate(1);
-  const newestImageId = await createImage("testImageC");
+test(
+  "should select previous image when the left arrow is pressed",
+  testNextPrevImage("previous")
+);
 
-  (useRouter as jest.Mock).mockImplementation(() => ({
-    query: { imageId, datasetSlug: "test-dataset", workspaceSlug: "local" },
-    push: mockedPush,
-  }));
-  const { container } = renderImageNavigationTool();
-
-  // We need to make sure that images have been loaded
-  await waitFor(() =>
-    expect(screen.getByRole("button", { name: /^Next image$/i })).toBeDefined()
-  );
-
-  userEvent.type(container, "{arrowright}");
-
-  expect(mockedPush).toHaveBeenCalledWith(
-    `/local/datasets/test-dataset/images/${newestImageId}`
-  );
-});
+test(
+  "should select next image when the right arrow is pressed",
+  testNextPrevImage("next")
+);
