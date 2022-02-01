@@ -8,12 +8,11 @@ export const getDatasetExportName = ({
   format: ExportFormat;
 }) => {
   const dateObject = new Date();
-  const date = `${dateObject
-    .toLocaleDateString()
-    .split("/")
-    .reverse()
-    .join("-")}T${String(dateObject.getHours()).padStart(2, "0")}${String(
-    dateObject.getMinutes()
-  ).padStart(2, "0")}${String(dateObject.getSeconds()).padStart(2, "0")}`;
-  return `${datasetSlug}-${format.toLowerCase()}-${date}`;
+  // toLocaleDateString("fr") format is "01/11/1993"
+  const [day, month, year] = dateObject.toLocaleDateString("fr").split("/");
+  const date = `${year}-${month}-${day}`;
+  // toLocaleTimeString("fr") format is "14:31:32"
+  const time = dateObject.toLocaleTimeString("fr").replace(/:/g, "");
+  const dateAndTime = `${date}T${time}`;
+  return `${datasetSlug}-${format.toLowerCase()}-${dateAndTime}`;
 };
