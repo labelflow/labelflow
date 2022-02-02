@@ -10,6 +10,7 @@ import {
   useColorModeValue as mode,
 } from "@chakra-ui/react";
 import * as React from "react";
+import { DOCUMENTATION_URL } from "../../../constants";
 import * as Logo from "./Brands";
 
 export const LogoGrid = () => {
@@ -37,8 +38,7 @@ export const LogoGrid = () => {
               <Button
                 mt="8"
                 as="a"
-                href="https://labelflow.gitbook.io/labelflow/
-            "
+                href={DOCUMENTATION_URL}
                 target="blank"
                 size="lg"
                 colorScheme="brand"
