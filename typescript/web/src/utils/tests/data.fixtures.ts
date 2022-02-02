@@ -5,7 +5,7 @@ import {
   Workspace,
 } from "@labelflow/graphql-types";
 
-export type WorkspaceData = Pick<Workspace, "slug">;
+export type WorkspaceData = Pick<Workspace, "slug" | "id">;
 
 export type DatasetData = Pick<Dataset, "id" | "name" | "slug"> & {
   labelClasses: Omit<LabelClassData, "dataset">[];
@@ -22,6 +22,7 @@ export type LabelClassData = Pick<
 };
 
 export const BASIC_WORKSPACE_DATA: WorkspaceData = {
+  id: "ec30d6b0-7151-47e9-b1b8-97e0dbeaa6a1",
   slug: "my-test-workspace",
 };
 
