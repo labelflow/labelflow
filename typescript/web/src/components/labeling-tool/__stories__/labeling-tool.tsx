@@ -1,11 +1,9 @@
+import { Flex } from "@chakra-ui/react";
 import { DecoratorFn, Story } from "@storybook/react";
-import { Box } from "@chakra-ui/react";
-
-import { chakraDecorator } from "../../../utils/chakra-decorator";
-import { queryParamsDecorator } from "../../../utils/query-params-decorator";
 import { apolloDecorator } from "../../../utils/apollo-decorator";
-
+import { chakraDecorator } from "../../../utils/chakra-decorator";
 import { mockImagesLoader } from "../../../utils/mock-image-loader";
+import { queryParamsDecorator } from "../../../utils/query-params-decorator";
 import { LabelingTool } from "../labeling-tool";
 
 const datasetId = "233e8af4-7be3-4371-a6de-1ebbe71c90b9";
@@ -32,9 +30,9 @@ function inGreyBoxDecorator(
   storyFn: Parameters<DecoratorFn>[0]
 ): ReturnType<DecoratorFn> {
   return (
-    <Box background="gray.100" width="640px" height="480px">
+    <Flex direction="column" background="gray.100" width="640px" height="480px">
       {storyFn()}
-    </Box>
+    </Flex>
   );
 }
 

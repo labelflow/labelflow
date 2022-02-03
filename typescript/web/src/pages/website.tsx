@@ -1,21 +1,24 @@
 import { Box } from "@chakra-ui/react";
 import * as React from "react";
-
-import { NavBar } from "../components/website/Navbar/NavBar";
-import { Why } from "../components/website/Why/Why";
-import { Hero } from "../components/website/Hero/Hero";
-import { Features } from "../components/website/Features/Features";
-import { LogoGrid } from "../components/website/Logos/LogoGrid";
-import { Footer } from "../components/website/Footer/Footer";
-import { Pricing } from "../components/website/Pricing/Pricing";
-import { ArticlesList } from "../components/website/Blog/articles-list";
-import { getAllArticles, Article } from "../connectors/strapi";
-import { Roadmap } from "../components/website/roadmap/roadmap";
-import { Meta } from "../components/meta";
-import { Banner } from "../components/website/banner";
-import { Proof } from "../components/website/proof";
-import { ServiceWorkerManagerBackground } from "../components/service-worker-manager";
+import { Announcements } from "../components/announcements";
 import { CookieBanner } from "../components/cookie-banner";
+import { Meta } from "../components/meta";
+import { ServiceWorkerManagerBackground } from "../components/service-worker-manager";
+import { Banner } from "../components/website/banner";
+import { ArticlesList } from "../components/website/Blog/articles-list";
+import { Features } from "../components/website/Features/Features";
+import { Footer } from "../components/website/Footer/Footer";
+import { Hero } from "../components/website/Hero/Hero";
+import { LogoGrid } from "../components/website/Logos/LogoGrid";
+import { NavBar } from "../components/website/Navbar/NavBar";
+import { Pricing } from "../components/website/Pricing/Pricing";
+import { Proof } from "../components/website/proof";
+import { Roadmap } from "../components/website/roadmap/roadmap";
+import { Why } from "../components/website/Why/Why";
+import { Article, getAllArticles } from "../connectors/strapi";
+
+/** List of labels used to filter the announcements shown in /website */
+const ANNOUNCEKIT_WEBSITE_LABELS = ["announcement"];
 
 export default function Website({
   previewArticles,
@@ -27,6 +30,7 @@ export default function Website({
       <ServiceWorkerManagerBackground />
       <Meta title="LabelFlow: The open standard platform for image labeling." />
       <CookieBanner />
+      <Announcements labels={ANNOUNCEKIT_WEBSITE_LABELS} />
       <Box minH="640px">
         <NavBar />
         <Hero />

@@ -65,9 +65,9 @@ export const BlogCard = (props: BlogProps) => {
             fontSize="sm"
             color={mode("gray.600", "gray.400")}
           >
-            <Text>
+            <Box>
               By <Box textDecor="underline">{author?.name}</Box>
-            </Text>
+            </Box>
             <Link href={href}>
               <Box
                 as={BsClockFill}
