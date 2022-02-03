@@ -1,90 +1,49 @@
-import { ApolloProvider } from "@apollo/client";
+/* eslint-disable import/first */
 import { renderHook } from "@testing-library/react-hooks";
-import { useRouter } from "next/router";
-import { incrementMockedDate } from "../../../../dev-utils/mockdate";
-import { client } from "../../connectors/apollo-client/schema-client";
-import { processImage } from "../../connectors/repository/image-processing";
-import { setupTestsWithLocalDatabase } from "../../utils/setup-local-db-tests";
+import { mockNextRouter } from "../../utils/router-mocks";
+import { BASIC_DATASET_DATA } from "../../utils/tests/data.fixtures";
 import {
-  CREATE_TEST_DATASET_MUTATION,
-  CREATE_TEST_IMAGE_MUTATION,
-} from "../../utils/tests/mutations";
-import { useImagesNavigation } from "../use-images-navigation";
+  CURRENT_IMAGE_DATA,
+  CURRENT_NOT_IN_IMAGES_MOCKS,
+  IMAGE_1_DATA,
+  IMAGE_2_DATA,
+  IMAGE_IS_FIRST_MOCKS,
+  IMAGE_IS_LAST_MOCKS,
+  NO_IMAGES_MOCKS,
+  THREE_IMAGES_MOCKS,
+} from "../use-image-navigation.fixtures";
 
-setupTestsWithLocalDatabase();
-
-jest.mock("../../connectors/repository/image-processing");
-const mockedProcessImage = processImage as jest.Mock;
-
-const testDatasetId = "mocked-dataset-id";
-
-jest.mock("next/router", () => ({
-  useRouter: jest.fn(() => ({
-    query: { datasetSlug: "test-dataset", workspaceSlug: "local" },
-  })),
-}));
-
-async function createImage(name: String) {
-  mockedProcessImage.mockReturnValue({
-    width: 42,
-    height: 36,
-    mime: "image/jpeg",
-  });
-  const mutationResult = await client.mutate({
-    mutation: CREATE_TEST_IMAGE_MUTATION,
-    variables: {
-      file: new Blob(),
-      name,
-      datasetId: testDatasetId,
-    },
-  });
-
-  const {
-    data: {
-      createImage: { id },
-    },
-  } = mutationResult;
-
-  return id;
-}
-
-beforeEach(async () => {
-  await client.mutate({
-    mutation: CREATE_TEST_DATASET_MUTATION,
-    variables: {
-      name: "test dataset",
-      datasetId: testDatasetId,
-      workspaceSlug: "local",
-    },
-  });
+mockNextRouter({
+  isReady: true,
+  query: {
+    imageId: CURRENT_IMAGE_DATA.id,
+    datasetSlug: BASIC_DATASET_DATA.slug,
+    workspaceSlug: BASIC_DATASET_DATA.workspace.slug,
+  },
 });
 
-const Wrapper = ({ children }: React.PropsWithChildren<{}>) => (
-  <ApolloProvider client={client}>{children}</ApolloProvider>
-);
+import { useImagesNavigation } from "../use-images-navigation";
+import {
+  ApolloMockResponses,
+  getApolloMockLink,
+  getApolloMockWrapper,
+} from "../../utils/tests/apollo-mock";
+
+const renderTest = (mocks: ApolloMockResponses) => {
+  const link = getApolloMockLink(mocks);
+  const wrapper = getApolloMockWrapper(link);
+  return renderHook(() => useImagesNavigation(), { wrapper });
+};
 
 test("The currentImageIndex is undefined while loading", async () => {
-  const { result } = renderHook(() => useImagesNavigation(), {
-    wrapper: Wrapper,
-  });
+  const { result } = renderTest(NO_IMAGES_MOCKS);
 
   expect(result.current.currentImageIndex).toEqual(undefined);
 });
 
 test("The currentImageIndex is null if it can't be found in the images", async () => {
-  await createImage("image1");
-  await createImage("image2");
-  await createImage("image3");
-  (useRouter as jest.Mock).mockImplementation(() => ({
-    query: {
-      imageId: "fake-id",
-      datasetSlug: "test-dataset",
-      workspaceSlug: "local",
-    },
-  }));
-  const { result, waitForValueToChange } = renderHook(
-    () => useImagesNavigation(),
-    { wrapper: Wrapper }
+  const { result, waitForValueToChange } = renderTest(
+    CURRENT_NOT_IN_IMAGES_MOCKS
   );
 
   await waitForValueToChange(() => result.current.currentImageIndex);
@@ -93,13 +52,7 @@ test("The currentImageIndex is null if it can't be found in the images", async (
 });
 
 test("It returns the array of images when loaded", async () => {
-  await createImage("image1");
-  await createImage("image2");
-  await createImage("image3");
-  const { result, waitForValueToChange } = renderHook(
-    () => useImagesNavigation(),
-    { wrapper: Wrapper }
-  );
+  const { result, waitForValueToChange } = renderTest(THREE_IMAGES_MOCKS);
 
   await waitForValueToChange(() => result.current.images);
 
@@ -107,22 +60,7 @@ test("It returns the array of images when loaded", async () => {
 });
 
 test("It returns the index of the selected image when loaded", async () => {
-  await createImage("image1");
-  incrementMockedDate(1);
-  const id2 = await createImage("image2");
-  incrementMockedDate(1);
-  await createImage("image3");
-  (useRouter as jest.Mock).mockImplementation(() => ({
-    query: {
-      imageId: id2,
-      datasetSlug: "test-dataset",
-      workspaceSlug: "local",
-    },
-  }));
-  const { result, waitForValueToChange } = renderHook(
-    () => useImagesNavigation(),
-    { wrapper: Wrapper }
-  );
+  const { result, waitForValueToChange } = renderTest(THREE_IMAGES_MOCKS);
 
   await waitForValueToChange(() => result.current.currentImageIndex);
 
@@ -131,21 +69,14 @@ test("It returns the index of the selected image when loaded", async () => {
 
 describe("Previous and Next ids", () => {
   test("Previous and Next ids are undefined while loading", () => {
-    const { result } = renderHook(() => useImagesNavigation(), {
-      wrapper: Wrapper,
-    });
+    const { result } = renderTest(NO_IMAGES_MOCKS);
 
     expect(result.current.previousImageId).toEqual(undefined);
     expect(result.current.nextImageId).toEqual(undefined);
   });
 
   test("Previous and Next ids are null when there is no image", async () => {
-    const { result, waitForValueToChange } = renderHook(
-      () => useImagesNavigation(),
-      {
-        wrapper: Wrapper,
-      }
-    );
+    const { result, waitForValueToChange } = renderTest(NO_IMAGES_MOCKS);
 
     await waitForValueToChange(() => result.current.previousImageId);
 
@@ -154,21 +85,8 @@ describe("Previous and Next ids", () => {
   });
 
   test("Previous and Next ids are null when the selected image id can't be found in images", async () => {
-    await createImage("image1");
-    await createImage("image2");
-    await createImage("image3");
-    (useRouter as jest.Mock).mockImplementation(() => ({
-      query: {
-        imageId: "fake-id",
-        datasetSlug: "test-dataset",
-        workspaceSlug: "local",
-      },
-    }));
-    const { result, waitForValueToChange } = renderHook(
-      () => useImagesNavigation(),
-      {
-        wrapper: Wrapper,
-      }
+    const { result, waitForValueToChange } = renderTest(
+      CURRENT_NOT_IN_IMAGES_MOCKS
     );
 
     await waitForValueToChange(() => result.current.previousImageId);
@@ -178,24 +96,7 @@ describe("Previous and Next ids", () => {
   });
 
   test("Previous id is null when the selected image is the first", async () => {
-    const id1 = await createImage("image1");
-    incrementMockedDate(1);
-    await createImage("image2");
-    incrementMockedDate(1);
-    await createImage("image3");
-    (useRouter as jest.Mock).mockImplementation(() => ({
-      query: {
-        imageId: id1,
-        datasetSlug: "test-dataset",
-        workspaceSlug: "local",
-      },
-    }));
-    const { result, waitForValueToChange } = renderHook(
-      () => useImagesNavigation(),
-      {
-        wrapper: Wrapper,
-      }
-    );
+    const { result, waitForValueToChange } = renderTest(IMAGE_IS_FIRST_MOCKS);
 
     await waitForValueToChange(() => result.current.previousImageId);
 
@@ -203,24 +104,7 @@ describe("Previous and Next ids", () => {
   });
 
   test("Next id is null when the selected image is the last", async () => {
-    await createImage("image1");
-    incrementMockedDate(1);
-    await createImage("image2");
-    incrementMockedDate(1);
-    const id3 = await createImage("image3");
-    (useRouter as jest.Mock).mockImplementation(() => ({
-      query: {
-        imageId: id3,
-        datasetSlug: "test-dataset",
-        workspaceSlug: "local",
-      },
-    }));
-    const { result, waitForValueToChange } = renderHook(
-      () => useImagesNavigation(),
-      {
-        wrapper: Wrapper,
-      }
-    );
+    const { result, waitForValueToChange } = renderTest(IMAGE_IS_LAST_MOCKS);
 
     await waitForValueToChange(() => result.current.nextImageId);
 
@@ -228,52 +112,18 @@ describe("Previous and Next ids", () => {
   });
 
   test("Previous id is the first one when the selected image is the second", async () => {
-    const id1 = await createImage("image1");
-    incrementMockedDate(1);
-    const id2 = await createImage("image2");
-    incrementMockedDate(1);
-    await createImage("image3");
-    (useRouter as jest.Mock).mockImplementation(() => ({
-      query: {
-        imageId: id2,
-        datasetSlug: "test-dataset",
-        workspaceSlug: "local",
-      },
-    }));
-    const { result, waitForValueToChange } = renderHook(
-      () => useImagesNavigation(),
-      {
-        wrapper: Wrapper,
-      }
-    );
+    const { result, waitForValueToChange } = renderTest(THREE_IMAGES_MOCKS);
 
     await waitForValueToChange(() => result.current.previousImageId);
 
-    expect(result.current.previousImageId).toEqual(id1);
+    expect(result.current.previousImageId).toEqual(IMAGE_1_DATA.id);
   });
 
   test("Next id is the last one when the selected image is the second", async () => {
-    await createImage("image1");
-    incrementMockedDate(1);
-    const id2 = await createImage("image2");
-    incrementMockedDate(1);
-    const id3 = await createImage("image3");
-    (useRouter as jest.Mock).mockImplementation(() => ({
-      query: {
-        imageId: id2,
-        datasetSlug: "test-dataset",
-        workspaceSlug: "local",
-      },
-    }));
-    const { result, waitForValueToChange } = renderHook(
-      () => useImagesNavigation(),
-      {
-        wrapper: Wrapper,
-      }
-    );
+    const { result, waitForValueToChange } = renderTest(THREE_IMAGES_MOCKS);
 
     await waitForValueToChange(() => result.current.nextImageId);
 
-    expect(result.current.nextImageId).toEqual(id3);
+    expect(result.current.nextImageId).toEqual(IMAGE_2_DATA.id);
   });
 });

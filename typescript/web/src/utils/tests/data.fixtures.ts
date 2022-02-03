@@ -6,7 +6,7 @@ import {
 } from "@labelflow/graphql-types";
 import { WORKSPACE_DATA } from "./user.fixtures";
 
-export type WorkspaceData = Pick<Workspace, "slug">;
+export type WorkspaceData = Pick<Workspace, "slug" | "id">;
 
 export type DatasetData = Pick<Dataset, "id" | "name" | "slug"> & {
   labelClasses: Omit<LabelClassData, "dataset">[];

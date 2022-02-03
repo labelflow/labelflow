@@ -51,6 +51,7 @@
     "autoprefixer": "10.2.6",
     "bluebird": "3.7.2",
     "browser-builtins": "3.3.1",
+    "date-fns": "2.23.0",
     "detect-browser": "5.2.0",
     "dexie": "3.0.3",
     "downshift": "6.1.3",

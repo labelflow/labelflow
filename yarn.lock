@@ -6959,6 +6959,7 @@ __metadata:
     browser-builtins: 3.3.1
     bundlewatch: 0.3.2
     change-case: 4.1.2
+    date-fns: 2.23.0
     detect-browser: 5.2.0
     dexie: 3.0.3
     dotenv-cli: 4.0.0
