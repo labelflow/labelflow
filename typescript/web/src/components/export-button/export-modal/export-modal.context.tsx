@@ -1,17 +1,16 @@
-import { ExportFormat, Label } from "@labelflow/graphql-types";
-import { useQuery, gql } from "@apollo/client";
+import { gql, useQuery } from "@apollo/client";
+import { ExportFormat } from "@labelflow/graphql-types";
+import { useRouter } from "next/router";
 import {
   createContext,
+  Dispatch,
   PropsWithChildren,
+  SetStateAction,
   useContext,
   useState,
-  Dispatch,
-  SetStateAction,
-  useMemo,
 } from "react";
-import { useRouter } from "next/router";
 
-export const countLabelsOfDatasetQuery = gql`
+const countLabelsOfDatasetQuery = gql`
   query countLabelsOfDataset($slug: String!, $workspaceSlug: String!) {
     dataset(where: { slugs: { slug: $slug, workspaceSlug: $workspaceSlug } }) {
       id
@@ -20,12 +19,6 @@ export const countLabelsOfDatasetQuery = gql`
       }
       labelsAggregates {
         totalCount
-      }
-      labels {
-        id
-        labelClass {
-          id
-        }
       }
     }
   }
@@ -38,7 +31,6 @@ export interface ExportModalState {
   setExportFormat: Dispatch<SetStateAction<ExportFormat>>;
   loading: boolean;
   datasetId: string;
-  numberUndefinedLabelsOfDataset: number;
   datasetSlug: string;
   setIsExportRunning: Dispatch<SetStateAction<boolean>>;
   isExportRunning: boolean;
@@ -79,20 +71,6 @@ export const ExportModalProvider = ({
   const imagesNumber: number = data?.dataset?.imagesAggregates?.totalCount ?? 0;
   const labelsNumber: number = data?.dataset?.labelsAggregates?.totalCount ?? 0;
 
-  const numberUndefinedLabelsOfDataset: number = useMemo(() => {
-    if (loading === false) {
-      return data?.dataset?.labels?.reduce(
-        (numberUndefinedLabels: number, label: Label) => {
-          return !label?.labelClass
-            ? numberUndefinedLabels + 1
-            : numberUndefinedLabels;
-        },
-        0
-      );
-    }
-    return false;
-  }, [data, loading]);
-
   const value: ExportModalState = {
     isOpen,
     onClose,
@@ -100,7 +78,6 @@ export const ExportModalProvider = ({
     setExportFormat,
     loading,
     datasetId,
-    numberUndefinedLabelsOfDataset,
     datasetSlug,
     setIsExportRunning,
     isExportRunning,
