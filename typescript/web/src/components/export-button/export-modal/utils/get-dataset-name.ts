@@ -1,18 +1,14 @@
+import { format } from "date-fns";
 import { ExportFormat } from "../../../../graphql-types/globalTypes";
 
 export const getDatasetExportName = ({
   datasetSlug,
-  format,
+  exportFormat,
 }: {
   datasetSlug: string;
-  format: ExportFormat;
+  exportFormat: ExportFormat;
 }) => {
-  const dateObject = new Date();
-  // toLocaleDateString("fr") format is "01/11/1993"
-  const [day, month, year] = dateObject.toLocaleDateString("fr").split("/");
-  const date = `${year}-${month}-${day}`;
-  // toLocaleTimeString("fr") format is "14:31:32"
-  const time = dateObject.toLocaleTimeString("fr").replace(/:/g, "");
-  const dateAndTime = `${date}T${time}`;
-  return `${datasetSlug}-${format.toLowerCase()}-${dateAndTime}`;
+  const dateAndTime = format(new Date(), "yyyy-MM-dd'T'hhmmss");
+
+  return `${datasetSlug}-${exportFormat.toLowerCase()}-${dateAndTime}`;
 };

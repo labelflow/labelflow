@@ -18,7 +18,7 @@ import {
 
 const datasetName = getDatasetExportName({
   datasetSlug: BASIC_DATASET_DATA.slug,
-  format: ExportFormat.COCO,
+  exportFormat: ExportFormat.COCO,
 });
 
 const EXPORT_DATASET_URL_MOCK: ApolloMockResponse<
