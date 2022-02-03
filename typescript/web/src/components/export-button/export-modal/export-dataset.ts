@@ -41,10 +41,7 @@ export const exportDataset = async ({
   options: ExportOptions;
 }) => {
   setIsExportRunning(true);
-  const datasetName = getDatasetExportName({
-    datasetSlug,
-    exportFormat: format,
-  });
+  const datasetName = getDatasetExportName(datasetSlug, format);
   const {
     data: { exportDataset: exportDatasetUrl },
   } = await client.query<ExportDatasetUrlQuery, ExportDatasetUrlQueryVariables>(

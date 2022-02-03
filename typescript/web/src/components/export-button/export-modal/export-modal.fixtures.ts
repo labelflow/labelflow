@@ -16,10 +16,10 @@ import {
   ExportDatasetUrlQuery,
 } from "../../../graphql-types/ExportDatasetUrlQuery";
 
-const datasetName = getDatasetExportName({
-  datasetSlug: BASIC_DATASET_DATA.slug,
-  exportFormat: ExportFormat.COCO,
-});
+const datasetName = getDatasetExportName(
+  BASIC_DATASET_DATA.slug,
+  ExportFormat.COCO
+);
 
 const EXPORT_DATASET_URL_MOCK: ApolloMockResponse<
   ExportDatasetUrlQuery,
