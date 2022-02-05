@@ -212,9 +212,9 @@ const UserMenuList = (props: UserProps) => {
     <MenuList>
       <ProfileMenuItem {...props} />
       <MenuDivider />
-      <UserMenuGroup />
-      <MenuDivider />
       <PreferencesMenuGroup />
+      <MenuDivider />
+      <UserMenuGroup />
     </MenuList>
   );
 };
