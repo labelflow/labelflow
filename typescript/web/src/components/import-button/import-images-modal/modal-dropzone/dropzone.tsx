@@ -1,5 +1,10 @@
 import { useEffect } from "react";
-import { chakra, Stack, useColorModeValue as mode } from "@chakra-ui/react";
+import {
+  chakra,
+  Stack,
+  Text,
+  useColorModeValue as mode,
+} from "@chakra-ui/react";
 import { RiUploadCloud2Line } from "react-icons/ri";
 import { useDropzone, FileWithPath, FileRejection } from "react-dropzone";
 import { isEmpty } from "lodash/fp";
@@ -75,7 +80,14 @@ export const Dropzone = ({
           fontSize={{ base: "5xl", md: "9xl" }}
           color={mode("gray.600", "gray.400")}
         />
-        Drop folders or images, or click to browse your files
+        <Text>Drop images, annotations, or click to browse</Text>
+        <Text
+          fontWeight="500"
+          fontSize={{ base: "xs", md: "sm" }}
+          color="gray.400"
+        >
+          Supported file types: JPEG, PNG, COCO (JSON)
+        </Text>
         <input {...getInputProps()} id="file-uploader" />
       </chakra.label>
     </Stack>
