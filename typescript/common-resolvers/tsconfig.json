@@ -1,8 +1,23 @@
 {
-    "compilerOptions": {
-        "esModuleInterop": true,
-        "allowSyntheticDefaultImports": true,
-        "strict": true,
-        "strictNullChecks": true
-    }
+  "compilerOptions": {
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "strictNullChecks": true
+  },
+  "include": ["**/*.ts", "**/*.tsx"],
+  "exclude": [
+    "node_modules",
+    "**/*.graphql",
+    "**/__tests__",
+    "**/__stories__",
+    "**/*.test.ts",
+    "**/*.stories.ts",
+    "**/*.fixtures.ts",
+    "**/*.test.tsx",
+    "**/*.stories.tsx",
+    "**/*.fixtures.tsx",
+    "**/utils/tests",
+    "**/utils/stories"
+  ]
 }

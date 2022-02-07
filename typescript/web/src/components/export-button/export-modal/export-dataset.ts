@@ -9,7 +9,7 @@ import {
   ExportOptions,
 } from "../../../graphql-types/globalTypes";
 
-import { getDatasetExportName } from "./utils/get-dataset-name";
+import { getDatasetExportName } from "./get-dataset-export-name";
 
 export const EXPORT_DATASET_URL_QUERY = gql`
   query ExportDatasetUrlQuery(

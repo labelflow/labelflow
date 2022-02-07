@@ -7,7 +7,7 @@ import { Authenticated } from "../../../components/auth";
 import { WelcomeModal } from "../../../components/welcome-manager";
 import { CookieBanner } from "../../../components/cookie-banner";
 import { NavLogo } from "../../../components/logo/nav-logo";
-import { UserSettings } from "../../../components/settings/user";
+import { UserSettings } from "../../../components/settings/user/user-settings";
 import { USER_QUERY } from "../../../shared-queries/user.query";
 
 const UPDATE_USER_MUTATION = gql`

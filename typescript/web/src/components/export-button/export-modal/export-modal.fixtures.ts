@@ -6,7 +6,7 @@ import {
 import { BASIC_DATASET_DATA } from "../../../utils/tests/data.fixtures";
 import { EXPORT_DATASET_URL_QUERY } from "./export-dataset";
 import { COUNT_LABELS_OF_DATASET_QUERY } from "./export-modal.context";
-import { getDatasetExportName } from "./utils/get-dataset-name";
+import { getDatasetExportName } from "./get-dataset-export-name";
 import {
   CountLabelsOfDatasetQueryVariables,
   CountLabelsOfDatasetQuery,
