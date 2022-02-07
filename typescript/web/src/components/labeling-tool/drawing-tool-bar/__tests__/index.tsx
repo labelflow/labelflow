@@ -1,9 +1,7 @@
 /* eslint-disable import/first */
-import { ApolloProvider } from "@apollo/client";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom/extend-expect";
-import { client } from "../../../../connectors/apollo-client/schema-client";
 import { mockNextRouter } from "../../../../utils/router-mocks";
 import { useLabelingStore } from "../../../../connectors/labeling-state";
 
@@ -14,11 +12,7 @@ import { DrawingToolbar } from "..";
 test("should display tooltip", async () => {
   useLabelingStore.setState({ isImageLoading: false });
 
-  render(<DrawingToolbar />, {
-    wrapper: ({ children }) => (
-      <ApolloProvider client={client}>{children}</ApolloProvider>
-    ),
-  });
+  render(<DrawingToolbar />);
 
   const selectionToolButton = await screen.getByLabelText(/Selection tool/i);
 

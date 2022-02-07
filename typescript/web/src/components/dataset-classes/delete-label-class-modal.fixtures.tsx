@@ -1,5 +1,5 @@
 import React from "react";
-import { pick } from "lodash";
+import { pick } from "lodash/fp";
 import {
   DeleteLabelClassModal,
   DELETE_LABEL_CLASS_MUTATION,
@@ -61,7 +61,7 @@ export const GET_LABEL_CLASS_BY_ID_MOCK: ApolloMockResponse<
   result: {
     data: {
       labelClass: {
-        ...pick(BASIC_LABEL_CLASS_DATA, "id", "name"),
+        ...pick(["id", "name"], BASIC_LABEL_CLASS_DATA),
       },
     },
   },
