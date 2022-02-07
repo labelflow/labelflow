@@ -1,6 +1,5 @@
 import { Box } from "@chakra-ui/react";
 import * as React from "react";
-import { Announcements } from "../components/announcements";
 import { CookieBanner } from "../components/cookie-banner";
 import { Meta } from "../components/meta";
 import { ServiceWorkerManagerBackground } from "../components/service-worker-manager";
@@ -17,9 +16,6 @@ import { Roadmap } from "../components/website/roadmap/roadmap";
 import { Why } from "../components/website/Why/Why";
 import { Article, getAllArticles } from "../connectors/strapi";
 
-/** List of labels used to filter the announcements shown in /website */
-const ANNOUNCEKIT_WEBSITE_LABELS = ["announcement"];
-
 export default function Website({
   previewArticles,
 }: {
@@ -30,7 +26,6 @@ export default function Website({
       <ServiceWorkerManagerBackground />
       <Meta title="LabelFlow: The open standard platform for image labeling." />
       <CookieBanner />
-      <Announcements labels={ANNOUNCEKIT_WEBSITE_LABELS} />
       <Box minH="640px">
         <NavBar />
         <Hero />
