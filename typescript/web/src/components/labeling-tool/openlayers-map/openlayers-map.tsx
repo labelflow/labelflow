@@ -320,7 +320,9 @@ export const OpenlayersMap = () => {
       {[Tools.BOX, Tools.IOG].includes(selectedTool) &&
         boxDrawingToolState !== DrawingToolState.DRAWING &&
         !isContextMenuOpen && <CursorGuides map={mapRef.current} />}
-      {/* This div is needed to prevent a weird error that seems related to the EditLabelClass component */}
+      {/* FIXME Although its children are optional, this Box is always
+          displayed in-order to prevent a weird error that seems related
+          to the EditLabelClass component */}
       <Box
         key="FIXME"
         sx={{
