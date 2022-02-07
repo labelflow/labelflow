@@ -324,7 +324,6 @@ export const OpenlayersMap = () => {
           displayed in-order to prevent a weird error that seems related
           to the EditLabelClass component */}
       <Box
-        key="FIXME"
         sx={{
           position: "absolute",
           pointerEvents: "none",
