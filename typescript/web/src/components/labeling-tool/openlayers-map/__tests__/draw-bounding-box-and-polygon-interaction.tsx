@@ -2,54 +2,51 @@
 // @ts-ignore Needs to be done before ol is imported
 global.URL.createObjectURL = jest.fn(() => "mockedUrl");
 
-import { ApolloProvider } from "@apollo/client";
 import { Map } from "@labelflow/react-openlayers-fiber";
-import { render, waitFor, screen } from "@testing-library/react";
+import { render, waitFor, screen, act } from "@testing-library/react";
 import { Feature, Map as OlMap } from "ol";
 import { Vector as OlSourceVector } from "ol/source";
 import { Geometry } from "ol/geom";
 import Polygon, { fromExtent } from "ol/geom/Polygon";
 import { DrawEvent, DrawEventType } from "ol/interaction/Draw";
-
+import { MockedProvider as MockedApolloProvider } from "@apollo/client/testing";
+import { BASIC_IMAGE_DATA } from "../../../../utils/tests/data.fixtures";
 import { mockNextRouter } from "../../../../utils/router-mocks";
 
-mockNextRouter({ query: { imageId: "mocked-image-id" } });
+mockNextRouter({ query: { imageId: BASIC_IMAGE_DATA.id } });
 
-import { client } from "../../../../connectors/apollo-client/schema-client";
 import { useUndoStore } from "../../../../connectors/undo-store";
 import { useLabelingStore, Tools } from "../../../../connectors/labeling-state";
-import { setupTestsWithLocalDatabase } from "../../../../utils/setup-local-db-tests";
 
 import { DrawInteraction } from "../draw-interaction";
+import {
+  ApolloMockResponses,
+  getApolloMockLink,
+} from "../../../../utils/tests/apollo-mock";
+import {
+  APOLLO_MOCKS,
+  CREATE_LABEL_ACTION_MOCK,
+  DELETE_LABEL_ACTION_MOCK,
+  ERROR_CREATE_LABEL_ACTION_MOCK,
+} from "../draw-bounding-box-and-polygon-interaction.fixtures";
 
-setupTestsWithLocalDatabase();
-
-jest.mock("../../../../connectors/apollo-client/schema-client", () => {
-  const original = jest.requireActual(
-    "../../../../connectors/apollo-client/schema-client"
-  );
-  return {
-    client: {
-      ...original.client,
-      clearStore: original.client.clearStore, // This needs to be passed like this otherwise the resulting object does not have the clearStore method
-      mutate: jest.fn(() => ({
-        data: { createLabel: { id: "mocked-label-id" } },
-      })),
-    },
-  };
-});
+// Disabled/mocked due to part of the code throwing an error if the cache doesn't contain the image
+jest.mock(
+  "../../../../connectors/undo-store/effects/cache-updates/create-label-mutation-update"
+);
 
 beforeEach(() => {
-  (client.mutate as jest.Mock).mockClear();
   useLabelingStore.setState({ selectedTool: Tools.BOX });
+  jest.clearAllMocks();
 });
 
-it("create a label when the user has finished to draw a bounding box on the labeling interface", async () => {
+const renderDrawInteraction = (mocks?: ApolloMockResponses) => {
   const mapRef: { current: OlMap | null } = { current: null };
   const iogSpinnerRef: { current: HTMLDivElement | null } = { current: null };
   const sourceVectorLabelsRef: { current: OlSourceVector<Geometry> | null } = {
     current: null,
   };
+  const mockLink = getApolloMockLink(mocks ?? APOLLO_MOCKS);
   render(
     <DrawInteraction
       iogSpinnerRef={iogSpinnerRef}
@@ -63,12 +60,38 @@ it("create a label when the user has finished to draw a bounding box on the labe
             mapRef.current = map;
           }}
         >
-          <ApolloProvider client={client}>{children}</ApolloProvider>
+          <MockedApolloProvider link={mockLink}>
+            {children}
+          </MockedApolloProvider>
         </Map>
       ),
     }
   );
+  return { mapRef, iogSpinnerRef, sourceVectorLabelsRef, mockLink };
+};
 
+const basicBoxDrawExpectedMutationVars = expect.objectContaining({
+  data: expect.objectContaining({
+    imageId: BASIC_IMAGE_DATA.id,
+    geometry: {
+      type: "Polygon",
+      coordinates: [
+        [
+          [100, 200],
+          [100, 300],
+          [200, 300],
+          [200, 200],
+          [100, 200],
+        ],
+      ],
+    },
+  }),
+});
+
+const renderDrawInteractionWithBasicBox = async (
+  mocks?: ApolloMockResponses
+) => {
+  const { mapRef, mockLink } = renderDrawInteraction(mocks);
   const drawInteraction = mapRef.current?.getInteractions().getArray()?.[0];
   drawInteraction?.dispatchEvent(
     new DrawEvent(
@@ -76,111 +99,32 @@ it("create a label when the user has finished to draw a bounding box on the labe
       new Feature(fromExtent([100, 200, 200, 300]))
     )
   );
+  await act(() => mockLink.waitForAllResponses());
+  return mockLink;
+};
 
-  expect(client.mutate).toHaveBeenCalledWith(
-    expect.objectContaining({
-      variables: expect.objectContaining({
-        imageId: "mocked-image-id",
-        geometry: {
-          type: "Polygon",
-          coordinates: [
-            [
-              [100, 200],
-              [100, 300],
-              [200, 300],
-              [200, 200],
-              [100, 200],
-            ],
-          ],
-        },
-      }),
-    })
+it("create a label when the user has finished to draw a bounding box on the labeling interface", async () => {
+  await renderDrawInteractionWithBasicBox();
+  expect(CREATE_LABEL_ACTION_MOCK.result).toHaveBeenCalledWith(
+    basicBoxDrawExpectedMutationVars
   );
 });
 
 it("is possible to undo the creation of the label", async () => {
-  const mapRef: { current: OlMap | null } = { current: null };
-  const iogSpinnerRef: { current: HTMLDivElement | null } = { current: null };
-  const sourceVectorLabelsRef: { current: OlSourceVector<Geometry> | null } = {
-    current: null,
-  };
-  render(
-    <DrawInteraction
-      iogSpinnerRef={iogSpinnerRef}
-      sourceVectorLabelsRef={sourceVectorLabelsRef}
-    />,
-    {
-      wrapper: ({ children }) => (
-        <Map
-          args={{ interactions: [] }}
-          ref={(map) => {
-            mapRef.current = map;
-          }}
-        >
-          <ApolloProvider client={client}>{children}</ApolloProvider>
-        </Map>
-      ),
-    }
-  );
-
-  const drawInteraction = mapRef.current?.getInteractions().getArray()?.[0];
-  drawInteraction?.dispatchEvent(
-    new DrawEvent(
-      "drawend" as DrawEventType,
-      new Feature(fromExtent([100, 200, 200, 300]))
-    )
-  );
-
+  await renderDrawInteractionWithBasicBox();
   await useUndoStore.getState().undo();
-
-  // The id is generated by the effect. We retrieve it from the first mutation
-  // which is "createLabel"
-  const { id } = (client.mutate as jest.Mock).mock.calls[0][0].variables;
-
-  expect(client.mutate).toHaveBeenLastCalledWith(
-    expect.objectContaining({
-      variables: { id },
-    })
+  expect(CREATE_LABEL_ACTION_MOCK.result).toHaveBeenCalled();
+  const { id } = (CREATE_LABEL_ACTION_MOCK.result as jest.Mock).mock.calls[0][0]
+    .data;
+  expect(DELETE_LABEL_ACTION_MOCK.result).toHaveBeenCalledWith(
+    expect.objectContaining({ id })
   );
 });
 
 it("should select the newly created label", async () => {
-  const mapRef: { current: OlMap | null } = { current: null };
-  const iogSpinnerRef: { current: HTMLDivElement | null } = { current: null };
-  const sourceVectorLabelsRef: { current: OlSourceVector<Geometry> | null } = {
-    current: null,
-  };
-  render(
-    <DrawInteraction
-      iogSpinnerRef={iogSpinnerRef}
-      sourceVectorLabelsRef={sourceVectorLabelsRef}
-    />,
-    {
-      wrapper: ({ children }) => (
-        <Map
-          args={{ interactions: [] }}
-          ref={(map) => {
-            mapRef.current = map;
-          }}
-        >
-          <ApolloProvider client={client}>{children}</ApolloProvider>
-        </Map>
-      ),
-    }
-  );
-
-  const drawInteraction = mapRef.current?.getInteractions().getArray()?.[0];
-  drawInteraction?.dispatchEvent(
-    new DrawEvent(
-      "drawend" as DrawEventType,
-      new Feature(fromExtent([100, 200, 200, 300]))
-    )
-  );
-
-  // The id is generated by the effect. We retrieve it from the first mutation
-  // which is "createLabel"
-  const { id } = (client.mutate as jest.Mock).mock.calls[0][0].variables;
-
+  await renderDrawInteractionWithBasicBox();
+  const { id } = (CREATE_LABEL_ACTION_MOCK.result as jest.Mock).mock.calls[0][0]
+    .data;
   await waitFor(() => {
     expect(useLabelingStore.getState()).toMatchObject({
       selectedLabelId: id,
@@ -189,40 +133,8 @@ it("should select the newly created label", async () => {
 });
 
 it("should unset the selected label when the effect is undone", async () => {
-  const mapRef: { current: OlMap | null } = { current: null };
-  const iogSpinnerRef: { current: HTMLDivElement | null } = { current: null };
-  const sourceVectorLabelsRef: { current: OlSourceVector<Geometry> | null } = {
-    current: null,
-  };
-  render(
-    <DrawInteraction
-      iogSpinnerRef={iogSpinnerRef}
-      sourceVectorLabelsRef={sourceVectorLabelsRef}
-    />,
-    {
-      wrapper: ({ children }) => (
-        <Map
-          args={{ interactions: [] }}
-          ref={(map) => {
-            mapRef.current = map;
-          }}
-        >
-          <ApolloProvider client={client}>{children}</ApolloProvider>
-        </Map>
-      ),
-    }
-  );
-
-  const drawInteraction = mapRef.current?.getInteractions().getArray()?.[0];
-  drawInteraction?.dispatchEvent(
-    new DrawEvent(
-      "drawend" as DrawEventType,
-      new Feature(fromExtent([100, 200, 200, 300]))
-    )
-  );
-
+  await renderDrawInteractionWithBasicBox();
   await useUndoStore.getState().undo();
-
   await waitFor(() => {
     expect(useLabelingStore.getState()).toMatchObject({
       selectedLabelId: null,
@@ -231,103 +143,21 @@ it("should unset the selected label when the effect is undone", async () => {
 });
 
 it("is possible to redo an undone action", async () => {
-  const mapRef: { current: OlMap | null } = { current: null };
-  const iogSpinnerRef: { current: HTMLDivElement | null } = { current: null };
-  const sourceVectorLabelsRef: { current: OlSourceVector<Geometry> | null } = {
-    current: null,
-  };
-  render(
-    <DrawInteraction
-      iogSpinnerRef={iogSpinnerRef}
-      sourceVectorLabelsRef={sourceVectorLabelsRef}
-    />,
-    {
-      wrapper: ({ children }) => (
-        <Map
-          args={{ interactions: [] }}
-          ref={(map) => {
-            mapRef.current = map;
-          }}
-        >
-          <ApolloProvider client={client}>{children}</ApolloProvider>
-        </Map>
-      ),
-    }
-  );
-
-  const drawInteraction = mapRef.current?.getInteractions().getArray()?.[0];
-  drawInteraction?.dispatchEvent(
-    new DrawEvent(
-      "drawend" as DrawEventType,
-      new Feature(fromExtent([100, 200, 200, 300]))
-    )
-  );
-
+  await renderDrawInteractionWithBasicBox();
   await useUndoStore.getState().undo();
   await useUndoStore.getState().redo();
-
-  expect(client.mutate).toHaveBeenNthCalledWith(
+  expect(CREATE_LABEL_ACTION_MOCK.result).toHaveBeenNthCalledWith(
     3,
-    expect.objectContaining({
-      variables: expect.objectContaining({
-        imageId: "mocked-image-id",
-        geometry: {
-          type: "Polygon",
-          coordinates: [
-            [
-              [100, 200],
-              [100, 300],
-              [200, 300],
-              [200, 200],
-              [100, 200],
-            ],
-          ],
-        },
-      }),
-    })
+    basicBoxDrawExpectedMutationVars
   );
 });
 
 it("should set back the selected label when the effect is redone after an undone", async () => {
-  const mapRef: { current: OlMap | null } = { current: null };
-  const iogSpinnerRef: { current: HTMLDivElement | null } = { current: null };
-  const sourceVectorLabelsRef: { current: OlSourceVector<Geometry> | null } = {
-    current: null,
-  };
-  render(
-    <DrawInteraction
-      iogSpinnerRef={iogSpinnerRef}
-      sourceVectorLabelsRef={sourceVectorLabelsRef}
-    />,
-    {
-      wrapper: ({ children }) => (
-        <Map
-          args={{ interactions: [] }}
-          ref={(map) => {
-            mapRef.current = map;
-          }}
-        >
-          <ApolloProvider client={client}>{children}</ApolloProvider>
-        </Map>
-      ),
-    }
-  );
-
-  const drawInteraction = mapRef.current?.getInteractions().getArray()?.[0];
-  drawInteraction?.dispatchEvent(
-    new DrawEvent(
-      "drawend" as DrawEventType,
-      new Feature(fromExtent([100, 200, 200, 300]))
-    )
-  );
-
+  await renderDrawInteractionWithBasicBox();
   await useUndoStore.getState().undo();
   await useUndoStore.getState().redo();
-
-  // The id is generated by the effect. We retrieve it from the first mutation
-  // which is "createLabel"
-  const { id } = (client.mutate as jest.Mock).mock.calls[0][0].variables;
-
+  const { id } = (CREATE_LABEL_ACTION_MOCK.result as jest.Mock).mock.calls[0][0]
+    .data;
   await waitFor(() => {
     expect(useLabelingStore.getState()).toMatchObject({
       selectedLabelId: id,
@@ -336,93 +166,15 @@ it("should set back the selected label when the effect is redone after an undone
 });
 
 it("handles cases where the label creation throws an error", async () => {
-  const mapRef: { current: OlMap | null } = { current: null };
-  const iogSpinnerRef: { current: HTMLDivElement | null } = { current: null };
-  const sourceVectorLabelsRef: { current: OlSourceVector<Geometry> | null } = {
-    current: null,
-  };
-  render(
-    <DrawInteraction
-      iogSpinnerRef={iogSpinnerRef}
-      sourceVectorLabelsRef={sourceVectorLabelsRef}
-    />,
-    {
-      wrapper: ({ children }) => (
-        <Map
-          args={{ interactions: [] }}
-          ref={(map) => {
-            mapRef.current = map;
-          }}
-        >
-          <ApolloProvider client={client}>{children}</ApolloProvider>
-        </Map>
-      ),
-    }
-  );
-
-  (client.mutate as jest.Mock).mockImplementationOnce(async () => {
-    throw new Error("Can't create label");
-  });
-
-  const drawInteraction = mapRef.current?.getInteractions().getArray()?.[0];
-  drawInteraction?.dispatchEvent(
-    new DrawEvent(
-      "drawend" as DrawEventType,
-      new Feature(fromExtent([100, 200, 200, 300]))
-    )
-  );
-
-  expect(client.mutate).toHaveBeenCalledWith(
-    expect.objectContaining({
-      variables: expect.objectContaining({
-        imageId: "mocked-image-id",
-        geometry: {
-          type: "Polygon",
-          coordinates: [
-            [
-              [100, 200],
-              [100, 300],
-              [200, 300],
-              [200, 200],
-              [100, 200],
-            ],
-          ],
-        },
-      }),
-    })
-  );
+  await renderDrawInteractionWithBasicBox([ERROR_CREATE_LABEL_ACTION_MOCK]);
   await waitFor(() => {
     expect(screen.getByText("Error creating bounding box")).toBeDefined();
   });
 });
 
 it("create a label when the user has finished to draw a polygon on the labeling interface", async () => {
-  const mapRef: { current: OlMap | null } = { current: null };
-  const iogSpinnerRef: { current: HTMLDivElement | null } = { current: null };
-  const sourceVectorLabelsRef: { current: OlSourceVector<Geometry> | null } = {
-    current: null,
-  };
-  render(
-    <DrawInteraction
-      iogSpinnerRef={iogSpinnerRef}
-      sourceVectorLabelsRef={sourceVectorLabelsRef}
-    />,
-    {
-      wrapper: ({ children }) => (
-        <Map
-          args={{ interactions: [] }}
-          ref={(map) => {
-            mapRef.current = map;
-          }}
-        >
-          <ApolloProvider client={client}>{children}</ApolloProvider>
-        </Map>
-      ),
-    }
-  );
-
+  const { mapRef, mockLink } = renderDrawInteraction();
   useLabelingStore.setState({ selectedTool: Tools.POLYGON });
-
   const drawInteraction = mapRef.current?.getInteractions().getArray()?.[0];
   drawInteraction?.dispatchEvent(
     new DrawEvent(
@@ -440,11 +192,11 @@ it("create a label when the user has finished to draw a polygon on the labeling 
       })
     )
   );
-
-  expect(client.mutate).toHaveBeenCalledWith(
+  await act(() => mockLink.waitForAllResponses());
+  expect(CREATE_LABEL_ACTION_MOCK.result).toHaveBeenCalledWith(
     expect.objectContaining({
-      variables: expect.objectContaining({
-        imageId: "mocked-image-id",
+      data: expect.objectContaining({
+        imageId: BASIC_IMAGE_DATA.id,
         geometry: {
           type: "Polygon",
           coordinates: [

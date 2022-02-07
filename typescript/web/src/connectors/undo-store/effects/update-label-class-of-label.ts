@@ -6,7 +6,7 @@ import { Effect } from "..";
 import { updateLabelClassOfLabel } from "./cache-updates/update-label-class-of-label";
 import { GET_LABEL_QUERY } from "./shared-queries";
 
-const UPDATE_LABEL_MUTATION = gql`
+export const UPDATE_LABEL_MUTATION = gql`
   mutation UpdateLabelClassOfLabelMutation(
     $where: LabelWhereUniqueInput!
     $data: LabelUpdateInput!

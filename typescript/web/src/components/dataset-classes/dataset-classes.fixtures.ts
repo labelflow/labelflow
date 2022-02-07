@@ -1,4 +1,4 @@
-import { pick } from "lodash";
+import { pick } from "lodash/fp";
 import {
   ApolloMockResponse,
   ApolloMockResponses,
@@ -29,7 +29,7 @@ export const GET_DATASET_WITHOUT_LABEL_CLASSES_MOCK: ApolloMockResponse<
   result: {
     data: {
       dataset: {
-        ...pick(BASIC_DATASET_DATA, "id", "name"),
+        ...pick(["id", "name"], BASIC_DATASET_DATA),
         labelClasses: [],
       },
     },
@@ -50,10 +50,13 @@ export const GET_DATASET_WITH_LABEL_CLASSES_MOCK: ApolloMockResponse<
   result: {
     data: {
       dataset: {
-        ...pick(DEEP_DATASET_WITH_CLASSES_DATA, "id", "name"),
+        ...pick(["id", "name"], DEEP_DATASET_WITH_CLASSES_DATA),
         labelClasses: DEEP_DATASET_WITH_CLASSES_DATA.labelClasses.map(
           (labelClass) =>
-            pick(labelClass, "id", "index", "name", "color", "labelsAggregates")
+            pick(
+              ["id", "index", "name", "color", "labelsAggregates"],
+              labelClass
+            )
         ),
       },
     },
