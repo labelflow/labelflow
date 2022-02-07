@@ -9,6 +9,8 @@ import type {
   MutationUpdateLabelArgs,
   QueryLabelArgs,
   LabelWhereInput,
+  MutationCreateManyLabelsArgs,
+  MutationCreateManyTutorialLabelsArgs,
 } from "@labelflow/graphql-types";
 import { LabelType } from "@labelflow/graphql-types";
 
@@ -117,6 +119,92 @@ const createLabel = async (
   )({ id: labelId }, user);
 };
 
+const createManyLabels = async (
+  _: null,
+  args: MutationCreateManyLabelsArgs,
+  { repository, user }: Context
+): Promise<Label[]> => {
+  const { imageId, labels } = args.data;
+  const image = await throwIfResolvesToNil(
+    `The image id ${imageId} doesn't exist.`,
+    repository.image.get
+  )({ id: imageId }, user);
+
+  const labelsToCreate = labels.map((originalLabel) => {
+    const labelId = originalLabel.id ?? uuidv4();
+    const now = new Date();
+
+    const {
+      geometry: clippedGeometry,
+      x,
+      y,
+      width,
+      height,
+    } = getBoundedGeometryFromImage(image, originalLabel.geometry);
+
+    return {
+      id: labelId,
+      type: originalLabel.type ?? LabelType.Polygon,
+      createdAt: now.toISOString(),
+      updatedAt: now.toISOString(),
+      labelClassId: originalLabel.labelClassId,
+      imageId,
+      x,
+      y,
+      width,
+      height,
+      geometry: clippedGeometry,
+      smartToolInput: originalLabel.smartToolInput,
+    };
+  });
+
+  const labelsId = await repository.label.addMany(
+    {
+      imageId,
+      labels: labelsToCreate,
+    },
+    user
+  );
+
+  return repository.label.list({ id: { in: labelsId }, user });
+};
+
+const createManyTutorialLabels = async (
+  _: null,
+  args: MutationCreateManyTutorialLabelsArgs,
+  { repository, user }: Context
+): Promise<Label[]> => {
+  const { imageId, labels } = args.data;
+  await throwIfResolvesToNil(
+    `The image id ${imageId} doesn't exist.`,
+    repository.image.get
+  )({ id: imageId }, user);
+  const labelsToCreate = labels.map((originalLabel) => {
+    const labelId = uuidv4();
+    const now = new Date().toISOString();
+
+    return {
+      ...originalLabel,
+      labelClassId: originalLabel.labelClassId,
+      type: originalLabel.type ?? LabelType.Polygon,
+      id: labelId,
+      createdAt: now,
+      updatedAt: now,
+      imageId,
+    };
+  });
+
+  const labelsId = await repository.label.addMany(
+    {
+      imageId,
+      labels: labelsToCreate,
+    },
+    user
+  );
+
+  return repository.label.list({ id: { in: labelsId }, user });
+};
+
 const deleteLabel = async (
   _: any,
   args: MutationDeleteLabelArgs,
@@ -221,6 +309,8 @@ export default {
   },
   Mutation: {
     createLabel,
+    createManyLabels,
+    createManyTutorialLabels,
     deleteLabel,
     updateLabel,
   },

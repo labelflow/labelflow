@@ -22,6 +22,7 @@ import {
 } from "../../../graphql-types/CreateWorkspaceMutation";
 import { USER_WITH_WORKSPACES_QUERY } from "../../../shared-queries/user.query";
 import { BoolParam } from "../../../utils/query-param-bool";
+import { useCreateTutorialDataset } from "./create-tutorial-dataset";
 
 export const CREATE_WORKSPACE_MUTATION = gql`
   mutation CreateWorkspaceMutation($name: String!) {
@@ -80,13 +81,15 @@ const useCreateWorkspaceMutationError = (
 
 const useCreateWorkspaceMutationCompleted = () => {
   const router = useRouter();
+  const createTutorialDataset = useCreateTutorialDataset();
   return useCallback(
     ({ createWorkspace }: CreateWorkspaceMutation) => {
       if (!isNil(createWorkspace)) {
+        createTutorialDataset(createWorkspace.slug);
         router.push(`/${createWorkspace.slug}`);
       }
     },
-    [router]
+    [createTutorialDataset, router]
   );
 };
 

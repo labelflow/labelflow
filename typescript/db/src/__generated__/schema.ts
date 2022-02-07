@@ -301,6 +301,19 @@ export const typeDefs = [
     smartToolInput: JSON
   }
 
+  input LabelCreateManyInput {
+    labels: [LabelCreateManySingleInput!]!
+    imageId: ID!
+  }
+
+  input LabelCreateManySingleInput {
+    id: ID
+    type: LabelType
+    labelClassId: ID
+    geometry: GeometryInput!
+    smartToolInput: JSON
+  }
+
   enum LabelType {
     Classification
     Polygon
@@ -379,6 +392,8 @@ export const typeDefs = [
     updateImage(where: ImageWhereUniqueInput!, data: ImageUpdateInput!): Image
     deleteImage(where: ImageWhereUniqueInput!): Image
     createLabel(data: LabelCreateInput!): Label
+    createManyLabels(data: LabelCreateManyInput!): [Label!]!
+    createManyTutorialLabels(data: TutorialLabelCreateManyInput!): [Label!]!
     updateLabel(where: LabelWhereUniqueInput!, data: LabelUpdateInput!): Label
     deleteLabel(where: LabelWhereUniqueInput!): Label
     createLabelClass(data: LabelClassCreateInput!): LabelClass
@@ -389,6 +404,7 @@ export const typeDefs = [
     createIogLabel(data: CreateIogLabelInput!): Label
     createDataset(data: DatasetCreateInput!): Dataset
     createDemoDataset: Dataset
+    createTutorialDataset(data: TutorialDatasetCreateInput!): Dataset
     updateDataset(where: DatasetWhereUniqueInput!, data: DatasetUpdateInput!): Dataset
     deleteDataset(where: DatasetWhereUniqueInput!): Dataset
     importDataset(where: DatasetWhereUniqueInput!, data: DatasetImportInput!): ImportStatus
@@ -442,6 +458,37 @@ export const typeDefs = [
     pointsInside: [[Float!]]
     pointsOutside: [[Float!]]
     centerPoint: [Float!]
+  }
+
+  input TutorialDatasetCreateInput {
+    id: ID
+    name: String!
+    workspaceSlug: String!
+    labelClass: TutorialLabelClassCreateInput!
+    images: [ImageCreateManySingleInput!]!
+    labels: [TutorialLabelCreateManySingleInput!]!
+  }
+
+  input TutorialLabelClassCreateInput {
+    name: String!
+    color: ColorHex
+  }
+
+  input TutorialLabelCreateManyInput {
+    labels: [TutorialLabelCreateManySingleInput!]!
+    imageId: ID!
+  }
+
+  input TutorialLabelCreateManySingleInput {
+    id: ID
+    type: LabelType
+    labelClassId: ID
+    geometry: GeometryInput!
+    x: Float!
+    y: Float!
+    height: Float!
+    width: Float!
+    smartToolInput: JSON
   }
 
   input UpdateIogInput {

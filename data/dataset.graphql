@@ -4,6 +4,15 @@ input DatasetCreateInput {
   workspaceSlug: String!
 }
 
+input TutorialDatasetCreateInput {
+  id: ID
+  name: String!
+  workspaceSlug: String!
+  labelClass: TutorialLabelClassCreateInput!
+  images: [ImageCreateManySingleInput!]!
+  labels: [TutorialLabelCreateManySingleInput!]!
+}
+
 input WorkspaceSlugAndDatasetSlug {
   slug: String!
   workspaceSlug: String!

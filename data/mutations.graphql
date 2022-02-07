@@ -8,6 +8,8 @@ type Mutation {
   deleteImage(where: ImageWhereUniqueInput!): Image
 
   createLabel(data: LabelCreateInput!): Label
+  createManyLabels(data: LabelCreateManyInput!): [Label!]!
+  createManyTutorialLabels(data: TutorialLabelCreateManyInput!): [Label!]!
   updateLabel(where: LabelWhereUniqueInput!, data: LabelUpdateInput!): Label
   deleteLabel(where: LabelWhereUniqueInput!): Label
 
@@ -27,6 +29,7 @@ type Mutation {
 
   createDataset(data: DatasetCreateInput!): Dataset
   createDemoDataset: Dataset
+  createTutorialDataset(data: TutorialDatasetCreateInput!): Dataset
   updateDataset(
     where: DatasetWhereUniqueInput!
     data: DatasetUpdateInput!

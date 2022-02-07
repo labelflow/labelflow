@@ -78,6 +78,7 @@ const useWorkspaceProvider = () => {
     () => workspaces?.find(({ slug }) => slug === workspaceSlug),
     [workspaceSlug, workspaces]
   );
+  // FIXME: That 'if' is causing problems on workspace creation and deletion
   if (!isNil(workspaces) && !isEmpty(workspaceSlug) && isNil(workspace)) {
     const msg = `Could not find any workspace with slug ${workspaceSlug}`;
     throw new Error(msg);

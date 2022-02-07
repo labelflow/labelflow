@@ -1,6 +1,5 @@
 import {
   Box,
-  Button,
   Heading,
   Modal,
   ModalBody,
@@ -15,7 +14,6 @@ import {
 import { isEmpty, isNil } from "lodash/fp";
 import React, {
   createContext,
-  FC,
   FormEvent,
   useCallback,
   useContext,
@@ -32,6 +30,7 @@ import {
   WorkspaceNameInputProvider,
   WorkspaceNameMessage,
 } from "../../workspace-name-input";
+import { CreateWorkspaceButton } from "./create-workspace-button";
 import { useCreateWorkspaceMutation } from "./create-workspace.mutation";
 
 const ModalIsOpenContext = createContext(false);
@@ -96,18 +95,6 @@ const WorkspaceName = ({ error }: { error: string | undefined }) => {
   );
 };
 
-const CreateButton: FC<{ isDisabled?: boolean }> = ({ isDisabled }) => (
-  <Button
-    width="full"
-    type="submit"
-    isDisabled={isDisabled}
-    colorScheme="brand"
-    aria-label="create workspace button"
-  >
-    Create
-  </Button>
-);
-
 export const useCreateWorkspace = (): [
   () => void,
   boolean,
@@ -142,7 +129,7 @@ const FormBody = () => {
   return (
     <form onSubmit={handleSubmit}>
       <WorkspaceName error={createError} />
-      <CreateButton isDisabled={isDisabled} />
+      <CreateWorkspaceButton isDisabled={isDisabled} isLoading={isLoading} />
     </form>
   );
 };

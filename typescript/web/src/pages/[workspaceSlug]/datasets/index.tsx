@@ -1,7 +1,15 @@
 import React, { useCallback } from "react";
 import { useQuery } from "@apollo/client";
 
-import { Flex, Text } from "@chakra-ui/react";
+import {
+  AspectRatio,
+  Box,
+  Flex,
+  Skeleton,
+  Text,
+  useColorModeValue as mode,
+  VStack,
+} from "@chakra-ui/react";
 
 import { useQueryParam } from "use-query-params";
 
@@ -30,6 +38,8 @@ import {
   WorkspaceDatasetsPageDatasetsQueryVariables,
 } from "../../../graphql-types/WorkspaceDatasetsPageDatasetsQuery";
 import { useWorkspace } from "../../../hooks";
+import { useTutorialLoadingStore } from "../../../utils/use-loading-store";
+import { EmptyStateNoImages } from "../../../components/empty-state";
 
 const LoadingCard = () => (
   <DatasetCardBox>
@@ -45,16 +55,47 @@ const LoadingCard = () => (
   </DatasetCardBox>
 );
 
+const TutorialLoadingCard = () => (
+  <DatasetCardBox>
+    <Box
+      zIndex="1"
+      as="a"
+      w="100%"
+      h="2xs"
+      borderWidth="0px"
+      borderRadius="16px"
+      overflow="hidden"
+      bg={mode("white", "gray.700")}
+      display="block"
+      cursor="pointer"
+    >
+      <AspectRatio maxH="32">
+        <EmptyStateNoImages />
+      </AspectRatio>
+      <VStack pt="2" pl="5" pr="5" pb="5" align="center">
+        <Text color={mode("gray.600", "gray.300")}>
+          Your tutorial dataset is being loaded
+        </Text>
+        <Skeleton height="30px" width="90%" />
+        <Skeleton height="30px" width="90%" />
+      </VStack>
+    </Box>
+  </DatasetCardBox>
+);
+
 const Body = () => {
   const { slug: workspaceSlug } = useWorkspace();
   const { isReady } = useRouter();
+  const isTutorialLoading = useTutorialLoadingStore(
+    (state) => state.tutorialDatasetLoading
+  );
 
   const { data: datasetsResult, loading } = useQuery<
     WorkspaceDatasetsPageDatasetsQuery,
     WorkspaceDatasetsPageDatasetsQueryVariables
   >(WORKSPACE_DATASETS_PAGE_DATASETS_QUERY, {
     variables: { where: { workspaceSlug } },
-    skip: isEmpty(workspaceSlug),
+    skip: isEmpty(workspaceSlug) || isTutorialLoading,
   });
 
   const [isCreatingDataset, setIsCreatingDataset] = useQueryParam(
@@ -123,6 +164,7 @@ const Body = () => {
               setIsCreatingDataset(true, "replaceIn");
             }}
           />
+          {isTutorialLoading && <TutorialLoadingCard />}
           {loading ? (
             <LoadingCard />
           ) : (

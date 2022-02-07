@@ -1,6 +1,6 @@
-import { Button, Center, chakra, Flex, Heading, Text } from "@chakra-ui/react";
+import { Center, chakra, Flex, Heading, Text } from "@chakra-ui/react";
 import { isEmpty } from "lodash";
-import { FC, useCallback, FormEvent } from "react";
+import { useCallback, FormEvent } from "react";
 import { useWorkspaces } from "../../hooks";
 import NoWorkspacesGraphics from "../graphics/no-workspace";
 import {
@@ -10,6 +10,7 @@ import {
   WorkspaceNameMessage,
 } from "../workspace-name-input";
 import { useCreateWorkspace } from "../workspace-switcher/create-workspace-modal";
+import { CreateWorkspaceButton } from "../workspace-switcher/create-workspace-modal/create-workspace-button";
 import {
   WorkspacesContextProvider,
   WorkspacesProps,
@@ -17,19 +18,6 @@ import {
 import { WorkspacesList } from "./workspaces-list";
 
 const ChakraNoWorkspaces = chakra(NoWorkspacesGraphics);
-
-const CreateButton: FC<{ isDisabled?: boolean }> = ({ isDisabled }) => (
-  <Button
-    width="full"
-    type="submit"
-    isDisabled={isDisabled}
-    colorScheme="brand"
-    aria-label="create workspace button"
-    mt="8"
-  >
-    Create
-  </Button>
-);
 
 const useSubmitForm = (isDisabled: boolean, create: () => void) =>
   useCallback(
@@ -54,7 +42,7 @@ const CreateWorkspaceForm = () => {
       <form onSubmit={handleSubmit} style={{ width: "100%" }}>
         <WorkspaceNameInput hideInvalid={empty} bgColor="white" />
         <WorkspaceNameMessage customError={createError} hideError={empty} />
-        <CreateButton isDisabled={isDisabled} />
+        <CreateWorkspaceButton isDisabled={isDisabled} isLoading={isLoading} />
       </form>
     </Flex>
   );

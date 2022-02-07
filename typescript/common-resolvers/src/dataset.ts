@@ -1,6 +1,8 @@
 import {
   DatasetWhereUniqueInput,
+  LabelType,
   MutationCreateDatasetArgs,
+  MutationCreateTutorialDatasetArgs,
   MutationDeleteDatasetArgs,
   MutationUpdateDatasetArgs,
   QueryDatasetArgs,
@@ -18,7 +20,7 @@ import {
 } from "./data/dataset-tutorial";
 import { getWorkspaceIdOfDataset } from "./image/get-workspace-id-of-dataset";
 import { importAndProcessImage } from "./image/import-and-process-image";
-import { Context, DbDataset, Repository } from "./types";
+import { Context, DbDataset, DbImageCreateInput, Repository } from "./types";
 import { getSlug, addTypename, addTypenames } from "./utils";
 
 const getLabelClassesByDatasetId = async (
@@ -161,6 +163,124 @@ const createDataset = async (
   }
 };
 
+const createTutorialDataset = async (
+  _: any,
+  args: MutationCreateTutorialDatasetArgs,
+  { repository, req, user }: Context
+): Promise<any> => {
+  const now = new Date().toISOString();
+  const datasetId = args?.data?.id ?? uuidv4();
+  const datasetName = trim(args?.data?.name);
+
+  if (datasetName === "") {
+    throw new Error("Could not create the dataset with an empty name");
+  }
+
+  const dbDataset = {
+    id: datasetId,
+    createdAt: now,
+    updatedAt: now,
+    name: datasetName,
+    workspaceSlug: args.data.workspaceSlug,
+  };
+
+  try {
+    await repository.dataset.add(dbDataset, user);
+
+    const createdDataset = await getDataset(
+      { id: datasetId },
+      repository,
+      user
+    );
+    const labelClass = args?.data.labelClass;
+    const tutorialLabelClassId = uuidv4();
+    const dbLabelClass = {
+      id: tutorialLabelClassId,
+      index: 0,
+      createdAt: now,
+      updatedAt: now,
+      name: labelClass?.name ?? "",
+      color: labelClass?.color,
+      datasetId: createdDataset.id,
+    };
+    const createdLabelClass = await repository.labelClass.add(
+      dbLabelClass,
+      user
+    );
+    const datasetImages = args.data.images;
+    const workspaceId = await getWorkspaceIdOfDataset({
+      repository,
+      datasetId,
+      user,
+    });
+
+    const imagesToCreate: DbImageCreateInput[] = await Promise.all(
+      datasetImages.map((imageToImport) =>
+        importAndProcessImage(
+          { image: { ...imageToImport, datasetId }, workspaceId },
+          { repository, req }
+        )
+      )
+    );
+
+    const imageIds = await repository.image.addMany(
+      { datasetId, images: imagesToCreate },
+      user
+    );
+
+    const createdImages = await repository.image.list({
+      id: { in: imageIds },
+      user,
+    });
+
+    const imageWithLabelsId = createdImages.find(
+      (image) => image.name === "image-4"
+    );
+
+    const originalLabels = args?.data.labels;
+
+    const labelsToCreate = originalLabels.map((originalLabel) => {
+      const labelId = uuidv4();
+
+      return {
+        ...originalLabel,
+        labelClassId:
+          originalLabel.labelClassId === null ? null : tutorialLabelClassId,
+        type: originalLabel.type ?? LabelType.Polygon,
+        id: labelId,
+        createdAt: now,
+        updatedAt: now,
+        imageId: imageWithLabelsId?.id ?? "",
+      };
+    });
+
+    const createdLabels = await repository.label.addMany(
+      {
+        imageId: imageWithLabelsId?.id ?? "",
+        labels: labelsToCreate,
+      },
+      user
+    );
+
+    return {
+      ...createdDataset,
+      ...createdImages,
+      ...createdLabels,
+      createdLabelClass,
+    };
+  } catch (e) {
+    console.error(e);
+    if (e instanceof Error) {
+      throw new Error(
+        `Could not create the dataset ${JSON.stringify(
+          dbDataset
+        )} due to error "${e?.message ?? e}"`
+      );
+    }
+    throw new Error();
+  }
+};
+
 const createDemoDataset = async (
   _: any,
   args: {},
@@ -284,6 +404,7 @@ export default {
   Mutation: {
     createDataset,
     createDemoDataset,
+    createTutorialDataset,
     updateDataset,
     deleteDataset,
   },

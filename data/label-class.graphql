@@ -5,6 +5,11 @@ input LabelClassCreateInput {
   datasetId: ID!
 }
 
+input TutorialLabelClassCreateInput {
+  name: String!
+  color: ColorHex
+}
+
 input LabelClassUpdateInput {
   name: String
   color: ColorHex

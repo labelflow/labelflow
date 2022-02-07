@@ -124,6 +124,12 @@ export const repository: Repository = {
       ).label.create({ data: label });
       return createdLabel.id;
     },
+    addMany: async ({ labels, imageId }, user) => {
+      await checkUserAccessToImage({ where: { id: imageId }, user });
+      const prisma = await getPrismaClient();
+      await prisma.label.createMany({ data: labels });
+      return labels.map((label) => label.id);
+    },
     count: countLabels,
     delete: async ({ id }, user) => {
       await checkUserAccessToLabel({ where: { id }, user });

@@ -28,6 +28,36 @@ input GeometryInput {
   coordinates: JSON!
 }
 
+input LabelCreateManySingleInput {
+  id: ID
+  type: LabelType
+  labelClassId: ID
+  geometry: GeometryInput!
+  smartToolInput: JSON
+}
+
+input TutorialLabelCreateManySingleInput {
+  id: ID
+  type: LabelType
+  labelClassId: ID
+  geometry: GeometryInput!
+  x: Float!
+  y: Float!
+  height: Float!
+  width: Float!
+  smartToolInput: JSON
+}
+
+input LabelCreateManyInput {
+  labels: [LabelCreateManySingleInput!]!
+  imageId: ID!
+}
+
+input TutorialLabelCreateManyInput {
+  labels: [TutorialLabelCreateManySingleInput!]!
+  imageId: ID!
+}
+
 type LabelsAggregates {
   totalCount: Int!
 }

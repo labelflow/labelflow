@@ -6,7 +6,7 @@ import { DroppedUrl, SetUploadStatuses } from "../types";
 
 import { BATCH_SIZE, CONCURRENCY } from "../constants";
 
-const CREATE_MANY_IMAGES_MUTATION = gql`
+export const CREATE_MANY_IMAGES_MUTATION = gql`
   mutation CreateManyImagesMutation(
     $images: [ImageCreateManySingleInput!]!
     $datasetId: ID!
