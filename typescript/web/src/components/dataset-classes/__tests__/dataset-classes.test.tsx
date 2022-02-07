@@ -1,4 +1,3 @@
-/* eslint-disable import/first */
 import { fireEvent, screen, waitFor } from "@testing-library/react";
 
 import { mockWorkspace } from "../../../utils/tests/mock-workspace";

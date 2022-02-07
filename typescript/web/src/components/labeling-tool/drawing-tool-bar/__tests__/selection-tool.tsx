@@ -1,6 +1,5 @@
-/* eslint-disable import/first */
 import { render, screen } from "@testing-library/react";
-import { mockNextRouter } from "../../../../utils/router-mocks";
+import { mockNextRouter } from "../../../../utils/tests";
 
 mockNextRouter();
 

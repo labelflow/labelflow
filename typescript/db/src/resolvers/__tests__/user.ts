@@ -1,16 +1,9 @@
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { gql } from "@apollo/client";
 import { v4 as uuidV4 } from "uuid";
-import {
-  Membership,
-  MembershipRole,
-  MutationCreateMembershipArgs,
-  MutationCreateWorkspaceArgs,
-  User,
-  Workspace,
-} from "@labelflow/graphql-types";
+import { MembershipRole, User } from "@labelflow/graphql-types";
 import { getPrismaClient } from "../../prisma-client";
 import { client, user as loggedInUser, user } from "../../dev/apollo-client";
+import { createMembership, createWorkspace } from "../../utils/tests";
 
 // @ts-ignore
 fetch.disableFetchMocks();
@@ -30,45 +23,6 @@ afterAll(async () => {
   // Needed to avoid having the test process running indefinitely after the test suite has been run
   await (await getPrismaClient()).$disconnect();
 });
-
-const createMembership = async (
-  data?: MutationCreateMembershipArgs["data"]
-) => {
-  return await client.mutate<{
-    createMembership: Membership;
-  }>({
-    mutation: gql`
-      mutation createMembership($data: MembershipCreateInput!) {
-        createMembership(data: $data) {
-          id
-          role
-        }
-      }
-    `,
-    variables: { data },
-  });
-};
-
-const createWorkspace = async (
-  data?: Partial<MutationCreateWorkspaceArgs["data"]>
-) => {
-  return await client.mutate<{
-    createWorkspace: Pick<Workspace, "id" | "name" | "slug" | "plan" | "type">;
-  }>({
-    mutation: gql`
-      mutation createWorkspace($data: WorkspaceCreateInput!) {
-        createWorkspace(data: $data) {
-          id
-          name
-          slug
-          plan
-          type
-        }
-      }
-    `,
-    variables: { data: { ...data, name: data?.name ?? "test" } },
-  });
-};
 
 describe("users query", () => {
   it("returns an empty array when there aren't any", async () => {

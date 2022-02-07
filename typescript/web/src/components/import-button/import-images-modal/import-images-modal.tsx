@@ -16,13 +16,15 @@ import { DATASET_IMAGES_PAGE_DATASET_QUERY } from "../../../shared-queries/datas
 import { WORKSPACE_DATASETS_PAGE_DATASETS_QUERY } from "../../../shared-queries/workspace-datasets-page.query";
 import { useDataset, useWorkspace } from "../../../hooks";
 
+export type ImportImagesModalProps = {
+  isOpen?: boolean;
+  onClose?: () => void;
+};
+
 export const ImportImagesModal = ({
   isOpen = false,
   onClose = () => {},
-}: {
-  isOpen?: boolean;
-  onClose?: () => void;
-}) => {
+}: ImportImagesModalProps) => {
   const client = useApolloClient();
   const { isReady } = useRouter();
   const { slug: workspaceSlug } = useWorkspace();
@@ -82,7 +84,7 @@ export const ImportImagesModal = ({
       isCentered
     >
       <ModalOverlay />
-      <ModalContent height="80vh">
+      <ModalContent height="80vh" data-testid="import-images-modal-content">
         <ModalCloseButton disabled={!isCloseable} />
         {mode !== "url-list" && (
           <ImportImagesModalDropzone
@@ -99,16 +101,18 @@ export const ImportImagesModal = ({
           />
         )}
 
-        <ModalFooter visibility={hasUploaded ? "visible" : "hidden"}>
-          <Button
-            colorScheme="brand"
-            onClick={() => {
-              onClose();
-              setHasUploaded(false);
-            }}
-          >
-            Start labeling
-          </Button>
+        <ModalFooter>
+          {hasUploaded && (
+            <Button
+              colorScheme="brand"
+              onClick={() => {
+                onClose();
+                setHasUploaded(false);
+              }}
+            >
+              Start labeling
+            </Button>
+          )}
         </ModalFooter>
       </ModalContent>
     </Modal>

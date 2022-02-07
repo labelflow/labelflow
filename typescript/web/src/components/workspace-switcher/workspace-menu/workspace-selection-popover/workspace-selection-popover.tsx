@@ -18,13 +18,13 @@ import { IoSearch } from "react-icons/io5";
 import { RiCloseCircleFill } from "react-icons/ri";
 import { useCombobox, UseComboboxStateChange } from "downshift";
 
-import { WorkspaceListItem } from "./workspace-list-item";
-import { UserWorkspacesQuery_workspaces } from "../../../../graphql-types/UserWorkspacesQuery";
+import { UserWithWorkspacesQuery_user_memberships_workspace } from "../../../../graphql-types/UserWithWorkspacesQuery";
 import { useWorkspaces } from "../../../../hooks";
+import { WorkspaceListItem } from "./workspace-list-item";
 
 type CreateWorkspaceInput = { name: string; type: "CreateWorkspaceItem" };
 
-export type WorkspaceItem = UserWorkspacesQuery_workspaces;
+export type WorkspaceItem = UserWithWorkspacesQuery_user_memberships_workspace;
 
 const MagnifierIcon = chakra(IoSearch);
 const CloseCircleIcon = chakra(RiCloseCircleFill);
@@ -152,7 +152,12 @@ export const WorkspaceSelectionPopover = ({
         overflowX="visible"
         overflow="visible"
       >
-        <PopoverBody pl="0" pr="0" pt="0">
+        <PopoverBody
+          pl="0"
+          pr="0"
+          pt="0"
+          data-testid="workspace-selection-popover-body"
+        >
           <Box>
             <Box {...getComboboxProps()} pl="3" pr="3" pt="3">
               <InputGroup>

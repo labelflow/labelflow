@@ -1,12 +1,12 @@
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { gql } from "@apollo/client";
 import { v4 as uuidV4 } from "uuid";
-import {
-  MutationCreateWorkspaceArgs,
-  Workspace,
-} from "@labelflow/graphql-types";
-import { getPrismaClient } from "../../prisma-client";
 import { client, user } from "../../dev/apollo-client";
+import { getPrismaClient } from "../../prisma-client";
+import {
+  createDataset,
+  createWorkspace,
+  createLabelClass,
+} from "../../utils/tests";
 
 // @ts-ignore
 fetch.disableFetchMocks();
@@ -23,84 +23,6 @@ const DELETE_LABEL_CLASS_TEST = gql`
     }
   }
 `;
-
-const createWorkspace = async (
-  data?: Partial<MutationCreateWorkspaceArgs["data"]>
-) => {
-  return await client.mutate<{
-    createWorkspace: Pick<Workspace, "id" | "name" | "slug" | "plan" | "type">;
-  }>({
-    mutation: gql`
-      mutation createWorkspace($data: WorkspaceCreateInput!) {
-        createWorkspace(data: $data) {
-          id
-          name
-          slug
-          plan
-          type
-        }
-      }
-    `,
-    variables: { data: { ...data, name: data?.name ?? "test" } },
-  });
-};
-
-const createDataset = async (
-  name: string,
-  workspaceSlug: string,
-  datasetId?: string | null
-) => {
-  return await client.mutate({
-    mutation: gql`
-      mutation createDataset(
-        $datasetId: String
-        $name: String!
-        $workspaceSlug: String!
-      ) {
-        createDataset(
-          data: { id: $datasetId, name: $name, workspaceSlug: $workspaceSlug }
-        ) {
-          id
-          name
-        }
-      }
-    `,
-    variables: {
-      name,
-      datasetId,
-      workspaceSlug,
-    },
-    fetchPolicy: "no-cache",
-  });
-};
-
-const createLabelClass = async (data: {
-  name: string;
-  color: string;
-  datasetId: string;
-  id?: string;
-}) => {
-  const mutationResult = await client.mutate({
-    mutation: gql`
-      mutation createLabelClass($data: LabelClassCreateInput!) {
-        createLabelClass(data: $data) {
-          id
-        }
-      }
-    `,
-    variables: {
-      data,
-    },
-  });
-
-  const {
-    data: {
-      createLabelClass: { id },
-    },
-  } = mutationResult;
-
-  return id;
-};
 
 beforeAll(async () => {
   await (

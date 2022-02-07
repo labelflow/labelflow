@@ -1,27 +1,21 @@
-/* eslint-disable import/first */
-import { act, render, screen, waitFor } from "@testing-library/react";
+import { waitFor, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { MockedProvider } from "@apollo/client/testing";
-import { PropsWithChildren } from "react";
 import "@testing-library/jest-dom/extend-expect";
-import {
-  mockUseQueryParams,
-  mockNextRouter,
-} from "../../../../utils/router-mocks";
+
+import { mockWorkspace } from "../../../../utils/tests/mock-workspace";
 import { BASIC_DATASET_DATA } from "../../../../utils/tests/data.fixtures";
 
-mockUseQueryParams();
-mockNextRouter({
-  isReady: true,
-  query: {
-    datasetSlug: BASIC_DATASET_DATA.slug,
-    workspaceSlug: BASIC_DATASET_DATA.workspace.slug,
-  },
-});
+mockWorkspace({ queryParams: { datasetSlug: BASIC_DATASET_DATA.slug } });
 
-import { ImportImagesModal } from "../import-images-modal";
-import { getApolloMockLink } from "../../../../utils/tests/apollo-mock";
+import {
+  ImportImagesModal,
+  ImportImagesModalProps,
+} from "../import-images-modal";
 import { ERROR_MOCKS, IMPORT_BUTTON_MOCKS } from "../../import-button.fixtures";
+import {
+  renderWithWrapper,
+  RenderWithWrapperResult,
+} from "../../../../utils/tests";
 
 const files = [
   new File(["Hello"], "hello.png", { type: "image/png" }),
@@ -29,147 +23,127 @@ const files = [
   new File(["Error"], "error.pdf", { type: "application/pdf" }),
 ];
 
-const createWrapper =
-  (error: boolean = false) =>
-  ({ children }: PropsWithChildren<{}>) =>
-    (
-      <MockedProvider
-        link={getApolloMockLink(error ? ERROR_MOCKS : IMPORT_BUTTON_MOCKS)}
-      >
-        {children}
-      </MockedProvider>
-    );
-
 async function ensuresUploadsAreFinished(number = 2) {
   await waitFor(() =>
     expect(screen.getAllByLabelText("Upload succeed")).toHaveLength(number)
   );
 }
 
-const renderModalAndImport = (
-  filesToImport = files,
-  props = {},
+const renderTest = async (
+  props: ImportImagesModalProps = { isOpen: true },
   error = false
-) => {
-  render(<ImportImagesModal isOpen onClose={() => {}} {...props} />, {
-    wrapper: createWrapper(error),
-  });
-
-  const input = screen.getByLabelText(/drop folders or images/i);
-  return waitFor(() => userEvent.upload(input, filesToImport));
+): Promise<RenderWithWrapperResult> => {
+  const extraMocks = error ? ERROR_MOCKS : IMPORT_BUTTON_MOCKS;
+  return await renderWithWrapper(
+    <ImportImagesModal onClose={() => {}} {...props} />,
+    { auth: { withWorkspaces: true }, apollo: { extraMocks } }
+  );
 };
 
-test("should display the number of valid images", async () => {
-  await renderModalAndImport();
-
+const renderTestAndImport = async (
+  filesToImport: File[] = files,
+  props?: ImportImagesModalProps,
+  error?: boolean
+): Promise<RenderWithWrapperResult> => {
+  const result = await renderTest(props, error);
+  const { getByLabelText, getByTestId } = result;
   await waitFor(() =>
-    expect(screen.getByText(/Completed 2 of 2 items/i)).toBeDefined()
-  );
-  expect(
-    screen.queryByLabelText(/drop folders or images/i)
-  ).not.toBeInTheDocument();
-});
-
-test("should display an indicator when upload succeed", async () => {
-  await renderModalAndImport(files.slice(0, 1));
-
-  await waitFor(() =>
-    expect(screen.getByLabelText("Upload succeed")).toBeDefined()
-  );
-});
-
-test("should display an indicator when upload failed", async () => {
-  await renderModalAndImport(files.slice(0, 1), {}, true);
-
-  await waitFor(() =>
-    expect(screen.getByLabelText("Error indicator")).toBeDefined()
-  );
-});
-
-test("should display a loading indicator when file is uploading", async () => {
-  await renderModalAndImport(files.slice(0, 1));
-
-  await waitFor(() =>
-    expect(screen.getByLabelText("Loading indicator")).toBeDefined()
+    expect(getByTestId("import-images-modal-content")).toBeDefined()
   );
   await waitFor(() =>
-    expect(screen.getByLabelText("Upload succeed")).toBeDefined()
+    userEvent.upload(getByLabelText(/drop folders or images/i), filesToImport)
   );
-});
+  return result;
+};
 
-test("when the user drags invalid formats, only the valid pictures are uploaded", async () => {
-  await renderModalAndImport();
-
-  await waitFor(() =>
-    expect(screen.getAllByLabelText("Upload succeed")).toHaveLength(2)
-  );
-});
-
-test("should display the images name", async () => {
-  await renderModalAndImport();
-
-  expect(screen.getByText(/hello.png/i)).toBeDefined();
-  expect(screen.getByText(/world.png/i)).toBeDefined();
-
-  await ensuresUploadsAreFinished();
-});
-
-test("should display the rejected images name", async () => {
-  await renderModalAndImport(files.slice(2, 3));
-
-  expect(screen.getByText(/error.pdf/i)).toBeDefined();
-  expect(screen.getByText(/file type must be jpeg, png or bmp/i)).toBeDefined();
-});
-
-test("should display the error description when a file could not be imported", async () => {
-  await renderModalAndImport(files.slice(2, 3));
-
-  expect(screen.getByText(/file type must be jpeg, png or bmp/i)).toBeDefined();
-
-  userEvent.hover(screen.getByText(/file type must be jpeg, png or bmp/i));
-
-  // We need to wait for the tooltip to be rendered before checking its content.
-  await waitFor(() =>
-    expect(screen.getByText(/File type must be/i)).toBeDefined()
-  );
-});
-
-test("should not display the modal by default", async () => {
-  act(() => {
-    render(<ImportImagesModal />, {
-      wrapper: createWrapper(),
-    });
+describe("ImportImagesModal", () => {
+  it("displays the number of valid images", async () => {
+    const { getByText, queryByLabelText } = await renderTestAndImport();
+    await waitFor(() =>
+      expect(getByText(/Completed 2 of 2 items/i)).toBeDefined()
+    );
+    expect(queryByLabelText(/drop folders or images/i)).not.toBeInTheDocument();
   });
 
-  expect(screen.queryByText(/Import/i)).not.toBeInTheDocument();
-});
+  it("displays an indicator when upload succeeded", async () => {
+    const { getByLabelText } = await renderTestAndImport(files.slice(0, 1));
+    await waitFor(() => expect(getByLabelText("Upload succeed")).toBeDefined());
+  });
 
-test("should call the onClose handler", async () => {
-  const onClose = jest.fn();
-  await renderModalAndImport([], { onClose });
+  it("displays an indicator when upload failed", async () => {
+    const { getByLabelText } = await renderTestAndImport(
+      files.slice(0, 1),
+      { isOpen: true },
+      true
+    );
+    await waitFor(() =>
+      expect(getByLabelText("Error indicator")).toBeDefined()
+    );
+  });
 
-  userEvent.click(screen.getByLabelText("Close"));
+  it("displays a loading indicator when a file is uploading", async () => {
+    const { getByLabelText } = await renderTestAndImport(files.slice(0, 1));
+    expect(getByLabelText("Loading indicator")).toBeDefined();
+    await waitFor(() => expect(getByLabelText("Upload succeed")).toBeDefined());
+  });
 
-  expect(onClose).toHaveBeenCalled();
-});
+  it("only uploads the valid pictures when the user drags invalid formats", async () => {
+    const { getAllByLabelText } = await renderTestAndImport();
+    await waitFor(() =>
+      expect(getAllByLabelText("Upload succeed")).toHaveLength(2)
+    );
+  });
 
-test("should not close the modal while file are uploading", async () => {
-  await renderModalAndImport(files.slice(0, 1));
+  it("displays the images name", async () => {
+    const { getByText } = await renderTestAndImport();
+    expect(getByText(/hello.png/i)).toBeDefined();
+    expect(getByText(/world.png/i)).toBeDefined();
+    await ensuresUploadsAreFinished();
+  });
 
-  expect(screen.getByLabelText("Loading indicator")).toBeDefined();
-  expect(screen.getByLabelText("Close")).toBeDisabled();
+  it("displays the rejected images name", async () => {
+    const { getByText } = await renderTestAndImport(files.slice(2, 3));
+    expect(getByText(/error.pdf/i)).toBeDefined();
+    expect(getByText(/file type must be jpeg, png or bmp/i)).toBeDefined();
+  });
 
-  await ensuresUploadsAreFinished(1);
-});
+  it("displays the error description when a file could not be imported", async () => {
+    const { getByText } = await renderTestAndImport(files.slice(2, 3));
+    expect(getByText(/file type must be jpeg, png or bmp/i)).toBeDefined();
+    userEvent.hover(getByText(/file type must be jpeg, png or bmp/i));
+    // We need to wait for the tooltip to be rendered before checking its content.
+    await waitFor(() => expect(getByText(/File type must be/i)).toBeDefined());
+  });
 
-test("should display a start labeling button only when all the files are done", async () => {
-  await renderModalAndImport(files);
+  it("do not displays the modal by default", async () => {
+    const { queryByText } = await renderTest({});
+    expect(queryByText(/Import/i)).not.toBeInTheDocument();
+  });
 
-  expect(
-    screen.queryByRole("button", { name: /Start labeling/ })
-  ).not.toBeInTheDocument();
+  it("calls the onClose handler", async () => {
+    const onClose = jest.fn();
+    const { getByLabelText } = await renderTestAndImport([], {
+      isOpen: true,
+      onClose,
+    });
+    userEvent.click(getByLabelText("Close"));
+    await waitFor(() => expect(onClose).toHaveBeenCalled());
+  });
 
-  await waitFor(() =>
-    expect(screen.getByRole("button", { name: /Start labeling/ })).toBeDefined()
-  );
+  it("do not close the modal while files are uploading", async () => {
+    const { getByLabelText } = await renderTestAndImport(files.slice(0, 1));
+    expect(getByLabelText("Loading indicator")).toBeDefined();
+    expect(getByLabelText("Close")).toBeDisabled();
+    await ensuresUploadsAreFinished(1);
+  });
+
+  it("displays a start labeling button only when all the files are done", async () => {
+    const { getByRole, queryByRole } = await renderTestAndImport(files);
+    expect(
+      queryByRole("button", { name: /Start labeling/ })
+    ).not.toBeInTheDocument();
+    await waitFor(() =>
+      expect(getByRole("button", { name: /Start labeling/ })).toBeDefined()
+    );
+  });
 });

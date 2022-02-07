@@ -1,4 +1,5 @@
 import { SetRequired } from "type-fest";
+import { mockUseQueryParams } from "./mock-use-query-params";
 import { mockNextRouter } from "./router-mocks";
 import { USER_QUERY_DATA, WORKSPACE_DATA } from "./user.fixtures";
 
@@ -9,7 +10,7 @@ export type MockSessionOptions = {
 
 export type MockWorkspaceOptions<TMockSessionOptions = MockSessionOptions> = {
   workspaceSlug?: string;
-  datasetSlug?: string;
+  queryParams?: Record<string, unknown>;
   session?: TMockSessionOptions;
 };
 
@@ -22,7 +23,6 @@ type RequiredWorkspaceOptions = SetRequired<
 
 const DEFAULT_OPTIONS: RequiredWorkspaceOptions = {
   workspaceSlug: WORKSPACE_DATA.slug,
-  datasetSlug: undefined,
   session: {
     status: "authenticated",
     userId: USER_QUERY_DATA.id,
@@ -47,9 +47,11 @@ const getOptions = (options: MockWorkspaceOptions | undefined) => {
 };
 
 export const mockWorkspace = (options?: MockWorkspaceOptions) => {
-  const { workspaceSlug, datasetSlug, session } = getOptions(options);
+  const { workspaceSlug, queryParams, session } = getOptions(options);
   const { status } = session;
-  mockNextRouter({ query: { workspaceSlug, datasetSlug } });
+  const query = { workspaceSlug, ...queryParams };
+  mockUseQueryParams(query);
+  mockNextRouter({ query });
   const useSession = () => getSession(session);
   jest.mock("next-auth/react", () => ({ useSession, status }));
 };

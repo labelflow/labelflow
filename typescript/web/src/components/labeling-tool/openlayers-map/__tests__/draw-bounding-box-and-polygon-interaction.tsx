@@ -1,4 +1,3 @@
-/* eslint-disable import/first */
 // @ts-ignore Needs to be done before ol is imported
 global.URL.createObjectURL = jest.fn(() => "mockedUrl");
 
@@ -11,7 +10,7 @@ import Polygon, { fromExtent } from "ol/geom/Polygon";
 import { DrawEvent, DrawEventType } from "ol/interaction/Draw";
 import { MockedProvider as MockedApolloProvider } from "@apollo/client/testing";
 import { BASIC_IMAGE_DATA } from "../../../../utils/tests/data.fixtures";
-import { mockNextRouter } from "../../../../utils/router-mocks";
+import { mockNextRouter } from "../../../../utils/tests/router-mocks";
 
 mockNextRouter({ query: { imageId: BASIC_IMAGE_DATA.id } });
 

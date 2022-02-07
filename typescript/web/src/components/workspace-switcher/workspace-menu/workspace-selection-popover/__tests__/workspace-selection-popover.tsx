@@ -1,25 +1,20 @@
-import { render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom/extend-expect";
-import {
-  WorkspaceSelectionPopover,
-  WorkspaceItem,
-} from "../workspace-selection-popover";
+import userEvent from "@testing-library/user-event";
 
-const workspaces = [
-  {
-    id: "coaisndoiasndi1",
-    slug: "labelflow",
-    name: "LabelFlow",
-    src: "https://labelflow.ai/static/icon-512x512.png",
-  },
-  {
-    id: "coaisndoiasndi2",
-    slug: "sterblue",
-    name: "Sterblue",
-    src: "https://labelflow.ai/static/img/sterblue-logo.png",
-  },
-];
+import { mockWorkspace } from "../../../../../utils/tests/mock-workspace";
+
+mockWorkspace();
+
+import { UserWithWorkspacesQuery_user_memberships_workspace } from "../../../../../graphql-types/UserWithWorkspacesQuery";
+import { USER_WITH_WORKSPACES_QUERY } from "../../../../../shared-queries/user.query";
+import { WithWorkspacesUserTuple } from "../../../../../hooks";
+import { WorkspaceSelectionPopover } from "../workspace-selection-popover";
+import {
+  mockUserQuery,
+  renderWithWrapper,
+  USER_WITH_WORKSPACES_DATA,
+  WORKSPACE_DATA,
+} from "../../../../../utils/tests";
 
 const [onClose, onSelectedWorkspaceChange, createNewWorkspace] = [
   jest.fn(),
@@ -27,19 +22,53 @@ const [onClose, onSelectedWorkspaceChange, createNewWorkspace] = [
   jest.fn(),
 ];
 
-const renderWorkspaceSelectionPopover = (
-  workspacesInput: WorkspaceItem[]
-): void => {
-  render(
+const WORKSPACE_1_DATA: UserWithWorkspacesQuery_user_memberships_workspace = {
+  ...WORKSPACE_DATA,
+  id: "c6eafa43-f7ff-480d-89c1-10533100da97",
+  name: "FirstWorkspace",
+  slug: "firstworkspace",
+};
+
+const WORKSPACE_2_DATA: UserWithWorkspacesQuery_user_memberships_workspace = {
+  ...WORKSPACE_DATA,
+  id: "49b72357-abaa-442c-9235-bcec376b4ee2",
+  name: "SecondWorkspace",
+  slug: "secondworkspace",
+};
+
+const getUserWorkspaces = (noWorkspaces: boolean | undefined) =>
+  noWorkspaces ? [] : [WORKSPACE_1_DATA, WORKSPACE_2_DATA];
+
+const getUserData = (noWorkspaces: boolean | undefined) => {
+  const workspaces = getUserWorkspaces(noWorkspaces);
+  const memberships = workspaces.map((workspace) => ({ workspace }));
+  return { ...USER_WITH_WORKSPACES_DATA, memberships };
+};
+
+const getApolloMocks = (noWorkspaces: boolean | undefined) => [
+  mockUserQuery<WithWorkspacesUserTuple>(
+    USER_WITH_WORKSPACES_QUERY,
+    getUserData(noWorkspaces)
+  ),
+];
+
+const renderTest = async (noWorkspaces?: boolean) => {
+  const result = await renderWithWrapper(
     <WorkspaceSelectionPopover
       trigger={<div>Ok</div>}
       isOpen
       onClose={onClose}
-      workspaces={workspacesInput}
       onSelectedWorkspaceChange={onSelectedWorkspaceChange}
       createNewWorkspace={createNewWorkspace}
-    />
+    />,
+    {
+      auth: { withWorkspaces: true },
+      apollo: { mocks: getApolloMocks(noWorkspaces) },
+    }
   );
+  const { getByTestId } = result;
+  expect(getByTestId("workspace-selection-popover-body")).toBeDefined();
+  return result;
 };
 
 describe("Class selection popover tests", () => {
@@ -47,53 +76,50 @@ describe("Class selection popover tests", () => {
     jest.resetAllMocks();
   });
 
-  test("Should render component", () => {
-    renderWorkspaceSelectionPopover(workspaces);
-
-    expect(screen.getByPlaceholderText(/search/i)).toBeDefined();
+  test("Should render component", async () => {
+    const { getByPlaceholderText } = await renderTest();
+    expect(getByPlaceholderText(/search/i)).toBeDefined();
   });
 
-  test("Should render no workspaces if none were given", () => {
-    renderWorkspaceSelectionPopover([]);
-
-    expect(screen.queryByText(/Sterblue/i)).not.toBeInTheDocument();
-    expect(screen.queryByText(/LabelFlow/i)).not.toBeInTheDocument();
+  test("Should render no workspaces if none were given", async () => {
+    const { queryByText } = await renderTest(true);
+    expect(queryByText(WORKSPACE_1_DATA.name)).not.toBeInTheDocument();
+    expect(queryByText(WORKSPACE_2_DATA.name)).not.toBeInTheDocument();
   });
 
-  test("Should render all workspaces in the list", () => {
-    renderWorkspaceSelectionPopover(workspaces);
-
-    expect(screen.getByText(/Sterblue/i)).toBeDefined();
-    expect(screen.getByText(/LabelFlow/i)).toBeDefined();
+  test("Should render all workspaces in the list", async () => {
+    const { getByText } = await renderTest();
+    expect(getByText(WORKSPACE_1_DATA.name)).toBeDefined();
+    expect(getByText(WORKSPACE_2_DATA.name)).toBeDefined();
   });
 
   test("Should render matching workspaces with user search", async () => {
-    renderWorkspaceSelectionPopover(workspaces);
-    userEvent.type(screen.getByPlaceholderText(/search/i), "Labe");
-
-    expect(screen.getByText(/LabelFlow/i)).toBeDefined();
-    expect(screen.queryByText(/Sterblue/i)).not.toBeInTheDocument();
-    expect(screen.getByText(/Create workspace/)).toBeDefined();
-    expect(screen.getByText(/"Labe"/)).toBeDefined();
+    const { getByPlaceholderText, getByText, queryByText } = await renderTest();
+    const searchTerm = WORKSPACE_1_DATA.name.substring(0, 3);
+    userEvent.type(getByPlaceholderText(/search/i), searchTerm);
+    expect(getByText(WORKSPACE_1_DATA.name)).toBeDefined();
+    expect(queryByText(WORKSPACE_2_DATA.name)).not.toBeInTheDocument();
+    expect(getByText(/Create workspace/)).toBeDefined();
+    expect(getByText(`"${searchTerm}"`)).toBeDefined();
   });
 
   test("Should call onSelectedWorkspaceChange when clicking on existing workspace", async () => {
-    renderWorkspaceSelectionPopover(workspaces);
-    userEvent.click(screen.getByRole("option", { name: /LabelFlow/ }));
-
-    expect(onSelectedWorkspaceChange).toHaveBeenCalledWith({
-      id: "coaisndoiasndi1",
-      slug: "labelflow",
-      name: "LabelFlow",
-      src: "https://labelflow.ai/static/icon-512x512.png",
-    });
+    const { getByRole } = await renderTest();
+    userEvent.click(
+      getByRole("option", {
+        name: `${WORKSPACE_2_DATA.name} ${WORKSPACE_2_DATA.name}`,
+      })
+    );
+    expect(onSelectedWorkspaceChange).toHaveBeenCalledWith(
+      expect.objectContaining(WORKSPACE_2_DATA)
+    );
   });
 
   test("Should call onSelectedWorkspaceChange when clicking on create new workspace", async () => {
-    renderWorkspaceSelectionPopover(workspaces);
-    userEvent.type(screen.getByPlaceholderText(/search/i), "Labe");
-    userEvent.click(screen.getByRole("option", { name: /Create workspace/ }));
-
-    expect(createNewWorkspace).toHaveBeenCalledWith("Labe");
+    const { getByPlaceholderText, getByRole } = await renderTest();
+    const searchTerm = WORKSPACE_1_DATA.name.substring(0, 3);
+    userEvent.type(getByPlaceholderText(/search/i), searchTerm);
+    userEvent.click(getByRole("option", { name: /Create workspace/ }));
+    expect(createNewWorkspace).toHaveBeenCalledWith(searchTerm);
   });
 });

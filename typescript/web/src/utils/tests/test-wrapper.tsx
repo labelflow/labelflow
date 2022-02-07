@@ -42,8 +42,12 @@ export type TestWrapperProps = PropsWithChildren<{
   apollo?: ApolloMockOptions;
 }>;
 
-const hasWorkspaces = (auth: TestWrapperProps["auth"] | undefined): boolean =>
+const hasWorkspaces = (auth: AuthMockOptions | undefined): boolean =>
   typeof auth !== "boolean" && (auth?.withWorkspaces ?? false);
+
+const hasRequiredAuth = (auth: AuthMockOptions | undefined): boolean =>
+  (typeof auth === "boolean" && auth) ||
+  (typeof auth === "object" && !auth.optional);
 
 type GetDefaultApolloMocksOptions = Pick<TestWrapperProps, "auth"> &
   DefaultApolloMockOptions;
@@ -134,18 +138,43 @@ export const createTestWrapper = (
 };
 
 export type RenderWithWrapperOptions = Omit<TestWrapperProps, "children"> & {
-  renderOptions?: Omit<RenderOptions, "wrapper">;
+  renderOptions?: RenderOptions;
 };
 
 export type RenderWithWrapperResult = RenderResult &
   Pick<CreateTestWrapperResult, "apolloMockLink">;
 
+const waitForAuth = async (
+  auth: AuthMockOptions | undefined,
+  apolloMockLink: WildcardMockLink
+): Promise<void> => {
+  if (!hasRequiredAuth(auth)) return;
+  await act(() => apolloMockLink.waitForAllResponses());
+  await act(() => apolloMockLink.waitForAllResponses());
+};
+
+const addExtraWrapper = (
+  Wrapper: RenderOptions["wrapper"],
+  ExtraWrapper: RenderOptions["wrapper"] | undefined
+): RenderOptions["wrapper"] =>
+  ExtraWrapper
+    ? ({ children }: PropsWithChildren<{}>) => (
+        <Wrapper>
+          <ExtraWrapper>{children}</ExtraWrapper>
+        </Wrapper>
+      )
+    : Wrapper;
+
 export const renderWithWrapper = async (
   element: ReactElement,
-  { renderOptions, ...options }: RenderWithWrapperOptions = {}
+  {
+    renderOptions: { wrapper: extraWrapper, ...renderOptions } = {},
+    ...options
+  }: RenderWithWrapperOptions = {}
 ): Promise<RenderWithWrapperResult> => {
-  const { wrapper, apolloMockLink } = createTestWrapper(options);
+  const { wrapper: testWrapper, apolloMockLink } = createTestWrapper(options);
+  const wrapper = addExtraWrapper(testWrapper, extraWrapper);
   const renderResult = render(element, { wrapper, ...renderOptions });
-  await act(() => apolloMockLink.waitForAllResponses());
+  await waitForAuth(options.auth, apolloMockLink);
   return { ...renderResult, apolloMockLink };
 };

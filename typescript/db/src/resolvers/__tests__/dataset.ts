@@ -1,12 +1,8 @@
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { gql } from "@apollo/client";
 import { v4 as uuidV4 } from "uuid";
-import {
-  MutationCreateWorkspaceArgs,
-  Workspace,
-} from "@labelflow/graphql-types";
 import { getPrismaClient } from "../../prisma-client";
 import { client, user } from "../../dev/apollo-client";
+import { createDataset, createWorkspace } from "../../utils/tests";
 
 // @ts-ignore
 fetch.disableFetchMocks();
@@ -33,56 +29,6 @@ afterAll(async () => {
   // Needed to avoid having the test process running indefinitely after the test suite has been run
   await (await getPrismaClient()).$disconnect();
 });
-
-const createWorkspace = async (
-  data?: Partial<MutationCreateWorkspaceArgs["data"]>
-) => {
-  return await client.mutate<{
-    createWorkspace: Pick<Workspace, "id" | "name" | "slug" | "plan" | "type">;
-  }>({
-    mutation: gql`
-      mutation createWorkspace($data: WorkspaceCreateInput!) {
-        createWorkspace(data: $data) {
-          id
-          name
-          slug
-          plan
-          type
-        }
-      }
-    `,
-    variables: { data: { ...data, name: data?.name ?? "test" } },
-  });
-};
-
-const createDataset = async (
-  name: string,
-  workspaceSlug: string,
-  datasetId?: string | null
-) => {
-  return await client.mutate({
-    mutation: gql`
-      mutation createDataset(
-        $datasetId: String
-        $name: String!
-        $workspaceSlug: String!
-      ) {
-        createDataset(
-          data: { id: $datasetId, name: $name, workspaceSlug: $workspaceSlug }
-        ) {
-          id
-          name
-        }
-      }
-    `,
-    variables: {
-      name,
-      datasetId,
-      workspaceSlug,
-    },
-    fetchPolicy: "no-cache",
-  });
-};
 
 describe("Access control for dataset", () => {
   it("allows to create a dataset to a user that has access to the workspace", async () => {

@@ -1,14 +1,14 @@
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { gql } from "@apollo/client";
 import { v4 as uuidV4 } from "uuid";
-import {
-  MutationCreateWorkspaceArgs,
-  Workspace,
-} from "@labelflow/graphql-types";
 
 import { processImage } from "../../repository/image-processing";
 import { getPrismaClient } from "../../prisma-client";
 import { client, user } from "../../dev/apollo-client";
+import {
+  createWorkspace,
+  createDataset,
+  CREATE_IMAGE_MUTATION,
+} from "../../utils/tests";
 
 jest.mock("../../repository/image-processing");
 const mockedProcessImage = processImage as jest.Mock;
@@ -23,80 +23,6 @@ const testImageId = uuidV4();
 
 const imageWidth = 500;
 const imageHeight = 900;
-
-export const CREATE_IMAGE_MUTATION = gql`
-  mutation createImageInDbTests(
-    $datasetId: ID!
-    $file: Upload!
-    $name: String!
-    $width: Int
-    $height: Int
-    $imageId: ID
-  ) {
-    createImage(
-      data: {
-        id: $imageId
-        datasetId: $datasetId
-        name: $name
-        file: $file
-        width: $width
-        height: $height
-      }
-    ) {
-      id
-    }
-  }
-`;
-
-const createWorkspace = async (
-  data?: Partial<MutationCreateWorkspaceArgs["data"]>
-) => {
-  return await client.mutate<{
-    createWorkspace: Pick<Workspace, "id" | "name" | "slug" | "plan" | "type">;
-  }>({
-    mutation: gql`
-      mutation createWorkspace($data: WorkspaceCreateInput!) {
-        createWorkspace(data: $data) {
-          id
-          name
-          slug
-          plan
-          type
-        }
-      }
-    `,
-    variables: { data: { ...data, name: data?.name ?? "test" } },
-  });
-};
-
-const createDataset = async (
-  name: string,
-  workspaceSlug: string,
-  datasetId?: string | null
-) => {
-  return await client.mutate({
-    mutation: gql`
-      mutation createDataset(
-        $datasetId: String
-        $name: String!
-        $workspaceSlug: String!
-      ) {
-        createDataset(
-          data: { id: $datasetId, name: $name, workspaceSlug: $workspaceSlug }
-        ) {
-          id
-          name
-        }
-      }
-    `,
-    variables: {
-      name,
-      datasetId,
-      workspaceSlug,
-    },
-    fetchPolicy: "no-cache",
-  });
-};
 
 const createImage = async (
   name: String,

@@ -91,7 +91,7 @@ export const GET_LABEL_WITH_LABEL_CLASS_MOCK: ApolloMockResponse<
   },
 };
 
-const getLabelClassMockResult = jest.fn(
+export const getLabelClassMockResult = jest.fn(
   (variables: GetLabelClassQueryVariables) => {
     const expectedLabelClass = DEEP_DATASET_WITH_CLASSES_DATA.labelClasses[1];
     return {
@@ -140,7 +140,7 @@ export const GET_LABEL_ID_AND_CLASS_ID_MOCK: ApolloMockResponse<
   },
 };
 
-const CreateLabelClassActionMockResult = jest.fn(
+export const createLabelClassActionMockResult = jest.fn(
   ({ data: { id, name, color } }: CreateLabelClassActionMutationVariables) => ({
     data: {
       createLabelClass: {
@@ -160,10 +160,10 @@ export const CREATE_LABEL_CLASS_ACTION_MOCK: ApolloMockResponse<
     query: CREATE_LABEL_CLASS_QUERY,
     variables: MATCH_ANY_PARAMETERS,
   },
-  result: CreateLabelClassActionMockResult,
+  result: createLabelClassActionMockResult,
 };
 
-const UpdateLabelClassOfLabelMockResult = jest.fn(() => ({
+export const updateLabelClassOfLabelMockResult = jest.fn(() => ({
   data: {
     updateLabel: {
       id: BASIC_LABEL_DATA.id,
@@ -183,17 +183,19 @@ export const UPDATE_LABEL_CLASS_OF_LABEL_MOCK: ApolloMockResponse<
       data: { labelClassId: DEEP_DATASET_WITH_CLASSES_DATA.labelClasses[1].id },
     },
   },
-  result: UpdateLabelClassOfLabelMockResult,
+  result: updateLabelClassOfLabelMockResult,
 };
 
-const UpdateLabelClassActionMockResult = jest.fn((variables: UpdateLabelClassActionMutationVariables) => ({
-  data: {
-    updateLabel: {
-      id: variables.where.id,
-      labelClass: { id: variables.data.labelClassId! },
+export const updateLabelClassActionMockResult = jest.fn(
+  (variables: UpdateLabelClassActionMutationVariables) => ({
+    data: {
+      updateLabel: {
+        id: variables.where.id,
+        labelClass: { id: variables.data.labelClassId! },
+      },
     },
-  },
-}));
+  })
+);
 
 export const UPDATE_LABEL_CLASS_ACTION_MOCK: ApolloMockResponse<
   UpdateLabelClassActionMutation,
@@ -204,7 +206,7 @@ export const UPDATE_LABEL_CLASS_ACTION_MOCK: ApolloMockResponse<
     variables: MATCH_ANY_PARAMETERS,
   },
   nMatches: Number.POSITIVE_INFINITY,
-  result: UpdateLabelClassActionMockResult,
+  result: updateLabelClassActionMockResult,
 };
 
 export const APOLLO_MOCKS: ApolloMockResponses = [

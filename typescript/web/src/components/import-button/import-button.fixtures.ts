@@ -16,10 +16,6 @@ import {
   GetUploadTargetMutationVariables,
 } from "../../graphql-types/GetUploadTargetMutation";
 import {
-  GetWorkspaceIdQuery,
-  GetWorkspaceIdQueryVariables,
-} from "../../graphql-types/GetWorkspaceIdQuery";
-import {
   WorkspaceDatasetsPageDatasetsQuery,
   WorkspaceDatasetsPageDatasetsQueryVariables,
 } from "../../graphql-types/WorkspaceDatasetsPageDatasetsQuery";
@@ -33,7 +29,6 @@ import { BASIC_DATASET_DATA } from "../../utils/tests/data.fixtures";
 import { GET_IMAGE_UPLOAD_TARGET_MUTATION } from "../../utils/upload-file";
 import { GET_DATASET_BY_SLUG_QUERY } from "../datasets/datasets.query";
 import { CREATE_MANY_IMAGES_MUTATION } from "./import-images-modal/modal-dropzone/import-dropped-files/import-images";
-import { GET_WORKSPACE_ID_QUERY } from "./import-images-modal/modal-dropzone/modal-dropzone";
 
 const GET_DATASET_BY_SLUG_MOCK: ApolloMockResponse<
   GetDatasetBySlugQuery,
@@ -52,23 +47,6 @@ const GET_DATASET_BY_SLUG_MOCK: ApolloMockResponse<
         id: BASIC_DATASET_DATA.id,
         name: BASIC_DATASET_DATA.name,
       },
-    },
-  },
-};
-
-const GET_WORKSPACE_ID_MOCK: ApolloMockResponse<
-  GetWorkspaceIdQuery,
-  GetWorkspaceIdQueryVariables
-> = {
-  request: {
-    query: GET_WORKSPACE_ID_QUERY,
-    variables: {
-      workspaceSlug: BASIC_DATASET_DATA.workspace.slug,
-    },
-  },
-  result: {
-    data: {
-      workspace: BASIC_DATASET_DATA.workspace,
     },
   },
 };
@@ -167,7 +145,6 @@ const ERROR_CREATE_IMAGES_MOCK: ApolloMockResponse<
 
 export const ERROR_MOCKS: ApolloMockResponses = [
   GET_DATASET_BY_SLUG_MOCK,
-  GET_WORKSPACE_ID_MOCK,
   GET_UPLOAD_TARGET_MOCK,
   DATASET_IMAGES_PAGE_DATASET_MOCK,
   WORKSPACE_DATASETS_PAGE_DATASETS_MOCK,
@@ -176,7 +153,6 @@ export const ERROR_MOCKS: ApolloMockResponses = [
 
 export const IMPORT_BUTTON_MOCKS: ApolloMockResponses = [
   GET_DATASET_BY_SLUG_MOCK,
-  GET_WORKSPACE_ID_MOCK,
   GET_UPLOAD_TARGET_MOCK,
   DATASET_IMAGES_PAGE_DATASET_MOCK,
   WORKSPACE_DATASETS_PAGE_DATASETS_MOCK,

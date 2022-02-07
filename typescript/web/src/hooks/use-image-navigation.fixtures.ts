@@ -49,6 +49,7 @@ const createImagesGenerator = (
       },
     },
   },
+  delay: 10,
 });
 
 const createImagesMocks = (

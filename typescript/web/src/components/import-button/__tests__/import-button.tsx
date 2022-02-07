@@ -1,31 +1,18 @@
-/* eslint-disable import/first */
-import { act, render, screen, waitFor } from "@testing-library/react";
+import { act, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom/extend-expect";
-import {
-  mockUseQueryParams,
-  mockNextRouter,
-} from "../../../utils/router-mocks";
 import { mockMatchMedia } from "../../../utils/mock-window";
-import { BASIC_DATASET_DATA } from "../../../utils/tests/data.fixtures";
 
 mockMatchMedia(jest);
 
-mockUseQueryParams();
-mockNextRouter({
-  isReady: true,
-  query: {
-    datasetSlug: BASIC_DATASET_DATA.slug,
-    workspaceSlug: BASIC_DATASET_DATA.workspace.slug,
-  },
-});
+import { BASIC_DATASET_DATA } from "../../../utils/tests/data.fixtures";
+import { mockWorkspace } from "../../../utils/tests/mock-workspace";
+
+mockWorkspace({ queryParams: { datasetSlug: BASIC_DATASET_DATA.slug } });
 
 import { ImportButton } from "../import-button";
-import {
-  getApolloMockLink,
-  getApolloMockWrapper,
-} from "../../../utils/tests/apollo-mock";
 import { IMPORT_BUTTON_MOCKS } from "../import-button.fixtures";
+import { renderWithWrapper } from "../../../utils/tests";
 
 const files = [
   new File(["Hello"], "hello.png", { type: "image/png" }),
@@ -34,31 +21,28 @@ const files = [
 ];
 
 test("should clear the modal content when closed", async () => {
-  const mockLink = getApolloMockLink(IMPORT_BUTTON_MOCKS);
-  render(<ImportButton />, {
-    wrapper: getApolloMockWrapper(mockLink),
-  });
+  const { apolloMockLink, getAllByLabelText, getByLabelText, queryByText } =
+    await renderWithWrapper(<ImportButton />, {
+      auth: { withWorkspaces: true },
+      apollo: { extraMocks: IMPORT_BUTTON_MOCKS },
+    });
 
-  userEvent.click(screen.getByLabelText("Add images"));
+  userEvent.click(getByLabelText("Add images"));
 
-  const input = screen.getByLabelText(/drop folders or images/i);
+  const input = getByLabelText(/drop folders or images/i);
   await waitFor(() => userEvent.upload(input, files));
-
-  await act(() => mockLink.waitForAllResponses());
-
+  await act(() => apolloMockLink.waitForAllResponses());
   await waitFor(() =>
-    expect(screen.getAllByLabelText("Upload succeed")).toHaveLength(2)
+    expect(getAllByLabelText("Upload succeed")).toHaveLength(2)
   );
 
-  userEvent.click(screen.getByLabelText("Close"));
-
+  userEvent.click(getByLabelText("Close"));
   await waitFor(() => {
-    expect(screen.queryByText("Import")).not.toBeInTheDocument();
+    expect(queryByText("Import")).not.toBeInTheDocument();
   });
 
-  userEvent.click(screen.getByLabelText("Add images"));
+  userEvent.click(getByLabelText("Add images"));
+  expect(getByLabelText(/drop folders or images/i)).toBeDefined();
 
-  expect(screen.getByLabelText(/drop folders or images/i)).toBeDefined();
-
-  expect(screen.queryByText(/Completed 2 of 2 items/i)).toBeNull();
+  expect(queryByText(/Completed 2 of 2 items/i)).toBeNull();
 });

@@ -1,15 +1,12 @@
-/* eslint-disable import/first */
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { fireEvent, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom/extend-expect";
-import { getApolloMockWrapper } from "../../../utils/tests/apollo-mock";
-import { BASIC_DATASET_DATA } from "../../../utils/tests/data.fixtures";
-import { mockNextRouter } from "../../../utils/router-mocks";
 
-mockNextRouter({
-  query: { workspaceSlug: BASIC_DATASET_DATA.workspace.slug },
-});
+import { mockWorkspace } from "../../../utils/tests/mock-workspace";
 
+mockWorkspace();
+
+import { BASIC_DATASET_DATA, renderWithWrapper } from "../../../utils/tests";
 import { UpsertDatasetModal } from "../upsert-dataset-modal";
 import {
   APOLLO_MOCKS,
@@ -18,34 +15,30 @@ import {
   UPDATE_DATASET_MOCK,
 } from "../upsert-dataset-modal.fixtures";
 
-const renderModal = (props = {}) => {
-  return render(<UpsertDatasetModal isOpen onClose={() => {}} {...props} />, {
-    wrapper: getApolloMockWrapper(APOLLO_MOCKS),
-  });
-};
+const renderModal = (props = {}) =>
+  renderWithWrapper(
+    <UpsertDatasetModal isOpen onClose={() => {}} {...props} />,
+    { auth: { withWorkspaces: true }, apollo: { extraMocks: APOLLO_MOCKS } }
+  );
 
 afterEach(() => {
   jest.clearAllMocks();
 });
 
 test("should initialize modal with an empty input and a disabled button", async () => {
-  renderModal();
-  const input = screen.getByLabelText(
-    /dataset name input/i
-  ) as HTMLInputElement;
-  const button = screen.getByLabelText(/create dataset/i);
+  const { getByLabelText } = await renderModal();
+  const input = getByLabelText(/dataset name input/i) as HTMLInputElement;
+  const button = getByLabelText(/create dataset/i);
   expect(input.value).toEqual("");
   expect(button).toHaveAttribute("disabled");
 });
 
 test("should enable start button when dataset name is not empty", async () => {
-  renderModal();
-  const input = screen.getByLabelText(
-    /dataset name input/i
-  ) as HTMLInputElement;
+  const { getByLabelText } = await renderModal();
+  const input = getByLabelText(/dataset name input/i) as HTMLInputElement;
   fireEvent.change(input, { target: { value: "Good Day" } });
   expect(input.value).toBe("Good Day");
-  const button = screen.getByLabelText(/create dataset/i);
+  const button = getByLabelText(/create dataset/i);
   await waitFor(() => {
     expect(button).not.toHaveAttribute("disabled");
   });
@@ -53,11 +46,9 @@ test("should enable start button when dataset name is not empty", async () => {
 
 test("should create a dataset when the form is submitted", async () => {
   const onClose = jest.fn();
-  renderModal({ onClose });
-  const input = screen.getByLabelText(
-    /dataset name input/i
-  ) as HTMLInputElement;
-  const button = screen.getByLabelText(/create dataset/i);
+  const { getByLabelText } = await renderModal({ onClose });
+  const input = getByLabelText(/dataset name input/i) as HTMLInputElement;
+  const button = getByLabelText(/create dataset/i);
   fireEvent.change(input, { target: { value: BASIC_DATASET_DATA.name } });
   fireEvent.click(button);
   await waitFor(() => {
@@ -67,34 +58,32 @@ test("should create a dataset when the form is submitted", async () => {
 });
 
 test("should display an error message if dataset name already exists", async () => {
-  renderModal();
-  const input = screen.getByLabelText(
-    /dataset name input/i
-  ) as HTMLInputElement;
+  const { getByLabelText, getByText } = await renderModal();
+  const input = getByLabelText(/dataset name input/i) as HTMLInputElement;
   fireEvent.change(input, { target: { value: BASIC_DATASET_DATA.name } });
-  const button = screen.getByLabelText(/create dataset/i);
+  const button = getByLabelText(/create dataset/i);
   await waitFor(() => {
     expect(button).toHaveAttribute("disabled");
-    expect(screen.getByText(/this name is already taken/i)).toBeDefined();
+    expect(getByText(/this name is already taken/i)).toBeDefined();
   });
 });
 
 test("should call the onClose handler", async () => {
   const onClose = jest.fn();
-  renderModal({ onClose });
-  userEvent.click(screen.getByLabelText("Close"));
+  const { getByLabelText } = await renderModal({ onClose });
+  userEvent.click(getByLabelText("Close"));
   expect(onClose).toHaveBeenCalled();
 });
 
 test("update dataset: should have dataset name pre-filled when renaming existing dataset", async () => {
-  renderModal({ datasetId: BASIC_DATASET_DATA.id });
-  const input = screen.getByLabelText(
-    /dataset name input/i
-  ) as HTMLInputElement;
+  const { getByLabelText } = await renderModal({
+    datasetId: BASIC_DATASET_DATA.id,
+  });
+  const input = getByLabelText(/dataset name input/i) as HTMLInputElement;
   await waitFor(() => {
     expect(input.value).toBe(BASIC_DATASET_DATA.name);
   });
-  const button = screen.getByLabelText(/update dataset/i);
+  const button = getByLabelText(/update dataset/i);
   await waitFor(() => {
     expect(button).not.toHaveAttribute("disabled");
   });
@@ -102,14 +91,15 @@ test("update dataset: should have dataset name pre-filled when renaming existing
 
 test("update dataset: should update a dataset when the form is submitted", async () => {
   const onClose = jest.fn();
-  renderModal({ datasetId: BASIC_DATASET_DATA.id, onClose });
-  const input = screen.getByLabelText(
-    /dataset name input/i
-  ) as HTMLInputElement;
+  const { getByLabelText } = await renderModal({
+    datasetId: BASIC_DATASET_DATA.id,
+    onClose,
+  });
+  const input = getByLabelText(/dataset name input/i) as HTMLInputElement;
   await waitFor(() => {
     expect(input.value).toBe(BASIC_DATASET_DATA.name);
   });
-  const button = screen.getByLabelText(/update dataset/i);
+  const button = getByLabelText(/update dataset/i);
   userEvent.click(input);
   userEvent.clear(input);
   userEvent.type(input, UPDATED_DATASET_MOCK_NAME);

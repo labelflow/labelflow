@@ -1,4 +1,3 @@
-/* eslint-disable import/first */
 import { mockWorkspace } from "../../../../utils/tests/mock-workspace";
 
 mockWorkspace({ datasetSlug: "test-dataset" });

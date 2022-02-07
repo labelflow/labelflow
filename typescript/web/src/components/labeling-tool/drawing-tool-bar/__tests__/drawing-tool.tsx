@@ -1,8 +1,7 @@
-/* eslint-disable import/first */
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { Tools, useLabelingStore } from "../../../../connectors/labeling-state";
-import { mockNextRouter } from "../../../../utils/router-mocks";
+import { mockNextRouter } from "../../../../utils/tests";
 
 mockNextRouter();
 

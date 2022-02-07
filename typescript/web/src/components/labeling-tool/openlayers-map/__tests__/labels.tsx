@@ -1,5 +1,4 @@
 /* eslint-disable import/order */
-/* eslint-disable import/first */
 // @ts-ignore Needs to be done before ol is imported
 global.URL.createObjectURL = jest.fn(() => "mockedUrl");
 
@@ -8,7 +7,7 @@ import { render, waitFor } from "@testing-library/react";
 import { Map as OlMap } from "ol";
 import { Geometry } from "ol/geom";
 import VectorLayer from "ol/layer/Vector";
-import { mockNextRouter } from "../../../../utils/router-mocks";
+import { mockNextRouter } from "../../../../utils/tests/router-mocks";
 
 mockNextRouter();
 

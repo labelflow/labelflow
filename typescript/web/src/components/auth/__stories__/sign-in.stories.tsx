@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { SignIn, SignInContext, SignInState } from "..";
-import { apolloDecorator } from "../../../utils/apollo-decorator";
-import { chakraDecorator } from "../../../utils/chakra-decorator";
+import { apolloMockDecorator, chakraDecorator } from "../../../utils/stories";
+
 import { validateEmail } from "../../../utils/validate-email";
 
 export default {
   title: "web/Signin/Body",
-  decorators: [chakraDecorator, apolloDecorator],
+  decorators: [chakraDecorator, apolloMockDecorator],
 };
 const useStory = (linkSent?: string, error?: string): SignInState => {
   const [email, setEmail] = useState("");

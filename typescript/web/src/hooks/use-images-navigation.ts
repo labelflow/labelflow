@@ -7,7 +7,7 @@ import {
 import { useDataset } from "./use-dataset";
 import { useDatasetImage } from "./use-dataset-image";
 import { GET_ALL_IMAGES_OF_A_DATASET_QUERY } from "./use-images-navigation.query";
-import { useWorkspace } from "./use-user";
+import { useOptionalWorkspace } from "./use-user";
 
 /**
  * A Hook to handle image navigation.
@@ -21,7 +21,8 @@ import { useWorkspace } from "./use-user";
  * is already the last index of the array).
  */
 export const useImagesNavigation = () => {
-  const { slug: workspaceSlug } = useWorkspace();
+  const workspace = useOptionalWorkspace();
+  const workspaceSlug = workspace?.slug ?? "";
   const { slug: datasetSlug } = useDataset();
   const { id: currentImageId } = useDatasetImage();
 

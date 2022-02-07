@@ -1,23 +1,7 @@
 import { isNil } from "lodash/fp";
 import { NextRouter } from "next/router";
 import { ParsedUrlQuery } from "querystring";
-import { useState } from "react";
 import { Url } from "url";
-
-export const useQueryParamsMock = (
-  initialValues: { [key: string]: any } = {}
-) => ({
-  useQueryParam: (paramName: string) =>
-    useState(initialValues[paramName] ?? false),
-  withDefault: () => undefined,
-  StringParam: () => undefined,
-});
-
-export const mockUseQueryParams = (
-  options?: Parameters<typeof useQueryParamsMock>[0]
-) => {
-  jest.mock("use-query-params", () => useQueryParamsMock(options));
-};
 
 export class RouterMock implements Pick<NextRouter, "pathname" | "query"> {
   constructor(

@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { gql } from "@apollo/client";
 import { v4 as uuidV4 } from "uuid";
 import {
@@ -12,6 +11,7 @@ import {
 } from "@labelflow/graphql-types";
 import { getPrismaClient } from "../../prisma-client";
 import { client, user } from "../../dev/apollo-client";
+import { CREATE_WORKSPACE_MUTATION } from "../../utils/tests";
 
 // @ts-ignore
 fetch.disableFetchMocks();
@@ -67,17 +67,7 @@ const createWorkspace = async (
   return await client.mutate<{
     createWorkspace: Pick<Workspace, "id" | "name" | "slug" | "plan" | "type">;
   }>({
-    mutation: gql`
-      mutation createWorkspace($data: WorkspaceCreateInput!) {
-        createWorkspace(data: $data) {
-          id
-          name
-          slug
-          plan
-          type
-        }
-      }
-    `,
+    mutation: CREATE_WORKSPACE_MUTATION,
     variables: { data: { ...data, name: data?.name ?? "test" } },
   });
 };

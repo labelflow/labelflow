@@ -1,4 +1,3 @@
-/* eslint-disable import/first */
 import "@testing-library/jest-dom/extend-expect";
 import { act, fireEvent, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
@@ -7,7 +6,9 @@ import { isNil } from "lodash/fp";
 import { BASIC_LABEL_CLASS_DATA } from "../../../utils/tests/data.fixtures";
 import { mockWorkspace } from "../../../utils/tests/mock-workspace";
 
-mockWorkspace({ datasetSlug: BASIC_LABEL_CLASS_DATA.dataset.slug });
+mockWorkspace({
+  queryParams: { datasetSlug: BASIC_LABEL_CLASS_DATA.dataset.slug },
+});
 
 import {
   renderWithWrapper,

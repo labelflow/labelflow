@@ -26,6 +26,7 @@ export default {
       globals: {
         "ts-jest": {
           tsconfig: "tsconfig.jest.json",
+          isolatedModules: true,
         },
       },
       transform: {
@@ -51,6 +52,7 @@ export default {
       globals: {
         "ts-jest": {
           tsconfig: "tsconfig.jest.json",
+          isolatedModules: true,
         },
       },
       transform: {

@@ -33,6 +33,13 @@
         "no-console": "off",
         "no-alert": "off"
       }
+    },
+    {
+      "files": ["**/*.test.ts?(x)", "**/__tests__/**/*.ts?(x)"],
+      "rules": {
+        "import/first": "off",
+        "import/order": "off"
+      }
     }
   ],
   "parserOptions": {

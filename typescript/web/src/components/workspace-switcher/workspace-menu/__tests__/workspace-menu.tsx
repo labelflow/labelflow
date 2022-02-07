@@ -1,36 +1,26 @@
 /* eslint-disable import/order */
-/* eslint-disable import/first */
 import { PropsWithChildren } from "react";
-import { render, waitFor } from "@testing-library/react";
+import { waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom/extend-expect";
-import { ChakraProvider } from "@chakra-ui/react";
-import { MockedProvider as ApolloProvider } from "@apollo/client/testing";
 
 import { mockMatchMedia } from "../../../../utils/mock-window";
 
 mockMatchMedia(jest);
 
+import { mockWorkspace } from "../../../../utils/tests/mock-workspace";
+
+mockWorkspace();
+
 import {
   ApolloMockResponses,
-  getApolloMockLink,
-  mockNextRouter,
-  USER_WITH_WORKSPACES_DATA,
+  renderWithWrapper,
   USER_WITH_WORKSPACES_QUERY_MOCK,
   WORKSPACE_DATA,
 } from "../../../../utils/tests";
-
-mockNextRouter({ query: { workspaceSlug: WORKSPACE_DATA.slug } });
-
-jest.mock("next-auth/react", () => ({
-  useSession: () => ({ data: { user: { id: USER_WITH_WORKSPACES_DATA.id } } }),
-}));
-
-import { theme } from "../../../../theme";
-
-import { WorkspaceMenu } from "../workspace-menu";
+import { useUser } from "../../../../hooks";
 import { ResponsiveBreadcrumbs } from "../../../layout/top-bar/breadcrumbs";
-import { UserProvider, useUser } from "../../../../hooks";
+import { WorkspaceMenu } from "../workspace-menu";
 
 const APOLLO_MOCKS: ApolloMockResponses = [USER_WITH_WORKSPACES_QUERY_MOCK];
 
@@ -41,41 +31,36 @@ const WrapperBody = ({ children }: PropsWithChildren<{}>) => {
   );
 };
 
-const wrapper = ({ children }: PropsWithChildren<{}>) => (
-  <ApolloProvider link={getApolloMockLink(APOLLO_MOCKS)}>
-    <ChakraProvider theme={theme} resetCSS>
-      <UserProvider withWorkspaces>
-        <WrapperBody>{children}</WrapperBody>
-      </UserProvider>
-    </ChakraProvider>
-  </ApolloProvider>
-);
-
 const [onSelectedWorkspaceChange, createNewWorkspace] = [jest.fn(), jest.fn()];
 const setIsOpen = jest.fn();
 
-const renderClassSelectionMenu = (isOpen: boolean = false) =>
-  render(
+const renderTest = (isOpen: boolean = false) =>
+  renderWithWrapper(
     <WorkspaceMenu
       onSelectedWorkspaceChange={onSelectedWorkspaceChange}
       createNewWorkspace={createNewWorkspace}
       isOpen={isOpen}
       setIsOpen={setIsOpen}
     />,
-    { wrapper }
+    {
+      auth: { withWorkspaces: true },
+      apollo: { extraMocks: APOLLO_MOCKS },
+      renderOptions: { wrapper: WrapperBody },
+    }
   );
+
 describe("WorkspaceMenu", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
   it("renders component", async () => {
-    const { getByRole } = renderClassSelectionMenu();
+    const { getByRole } = await renderTest();
     await waitFor(() => expect(getByRole("button")).toBeDefined());
   });
 
   it("opens popover when clicking on the button", async () => {
-    const { getAllByLabelText } = renderClassSelectionMenu();
+    const { getAllByLabelText } = await renderTest();
     await waitFor(() =>
       expect(
         getAllByLabelText("Workspace selection menu popover")
@@ -87,7 +72,7 @@ describe("WorkspaceMenu", () => {
   });
 
   it("closes popover when clicking on a workspace", async () => {
-    const { getByRole } = renderClassSelectionMenu(true);
+    const { getByRole } = await renderTest(true);
     await waitFor(() => expect(getByRole("button")).toBeDefined());
     userEvent.click(getByRole("option", { name: RegExp(WORKSPACE_DATA.name) }));
     expect(onSelectedWorkspaceChange).toHaveBeenCalledWith(WORKSPACE_DATA);
@@ -95,8 +80,7 @@ describe("WorkspaceMenu", () => {
   });
 
   it("closes popover when creating a new workspace", async () => {
-    const { getAllByPlaceholderText, getByRole } =
-      renderClassSelectionMenu(true);
+    const { getAllByPlaceholderText, getByRole } = await renderTest(true);
     await waitFor(() => expect(getByRole("button")).toBeDefined());
     const id = "813e9c45-4e59-47f6-b8c1-cd62812e2c47";
     userEvent.type(getAllByPlaceholderText(/search/i)[0], id);

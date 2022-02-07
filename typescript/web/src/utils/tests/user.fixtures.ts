@@ -38,23 +38,21 @@ export const USER_WITH_WORKSPACES_DATA: UserWithWorkspacesQuery_user = {
   memberships: [{ workspace: WORKSPACE_DATA }],
 };
 
-const mockUser = <TTypes extends UserTupleTypes>(
+export const mockUserQuery = <TTypes extends UserTupleTypes>(
   query: DocumentNode,
   user: TTypes[2]
-): ApolloMockResponse<TTypes[0], TTypes[1]> => {
-  return {
-    request: { query, variables: { id: user.id } },
-    result: { data: { user } },
-  };
-};
+): ApolloMockResponse<TTypes[0], TTypes[1]> => ({
+  request: { query, variables: { id: user.id } },
+  result: { data: { user } },
+});
 
-export const USER_QUERY_MOCK = mockUser<MinimalUserTuple>(
+export const USER_QUERY_MOCK = mockUserQuery<MinimalUserTuple>(
   USER_QUERY,
   USER_QUERY_DATA
 );
 
 export const USER_WITH_WORKSPACES_QUERY_MOCK =
-  mockUser<WithWorkspacesUserTuple>(
+  mockUserQuery<WithWorkspacesUserTuple>(
     USER_WITH_WORKSPACES_QUERY,
     USER_WITH_WORKSPACES_DATA
   );
