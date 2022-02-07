@@ -420,7 +420,6 @@ export type Mutation = {
   updateIogLabel?: Maybe<Label>;
   createIogLabel?: Maybe<Label>;
   createDataset?: Maybe<Dataset>;
-  createDemoDataset?: Maybe<Dataset>;
   updateDataset?: Maybe<Dataset>;
   deleteDataset?: Maybe<Dataset>;
   importDataset?: Maybe<ImportStatus>;
@@ -1233,7 +1232,6 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   updateIogLabel?: Resolver<Maybe<ResolversTypes['Label']>, ParentType, ContextType, RequireFields<MutationUpdateIogLabelArgs, 'data'>>;
   createIogLabel?: Resolver<Maybe<ResolversTypes['Label']>, ParentType, ContextType, RequireFields<MutationCreateIogLabelArgs, 'data'>>;
   createDataset?: Resolver<Maybe<ResolversTypes['Dataset']>, ParentType, ContextType, RequireFields<MutationCreateDatasetArgs, 'data'>>;
-  createDemoDataset?: Resolver<Maybe<ResolversTypes['Dataset']>, ParentType, ContextType>;
   updateDataset?: Resolver<Maybe<ResolversTypes['Dataset']>, ParentType, ContextType, RequireFields<MutationUpdateDatasetArgs, 'where' | 'data'>>;
   deleteDataset?: Resolver<Maybe<ResolversTypes['Dataset']>, ParentType, ContextType, RequireFields<MutationDeleteDatasetArgs, 'where'>>;
   importDataset?: Resolver<Maybe<ResolversTypes['ImportStatus']>, ParentType, ContextType, RequireFields<MutationImportDatasetArgs, 'where' | 'data'>>;

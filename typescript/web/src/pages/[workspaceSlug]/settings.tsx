@@ -11,7 +11,6 @@ import { NavLogo } from "../../components/logo/nav-logo";
 import { Meta } from "../../components/meta";
 import { WorkspaceSettings } from "../../components/settings/workspace";
 import { LayoutSpinner } from "../../components/spinner";
-import { WelcomeModal } from "../../components/welcome-manager";
 import { WorkspaceSwitcher } from "../../components/workspace-switcher";
 import {
   GetWorkspaceDetailsQuery,
@@ -52,7 +51,6 @@ const Body = () => {
 
   return (
     <>
-      <WelcomeModal />
       <Meta title="LabelFlow | Workspace Settings" />
       <CookieBanner />
       <Layout

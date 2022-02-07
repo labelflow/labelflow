@@ -388,7 +388,6 @@ export const typeDefs = [
     updateIogLabel(data: UpdateIogInput!): Label
     createIogLabel(data: CreateIogLabelInput!): Label
     createDataset(data: DatasetCreateInput!): Dataset
-    createDemoDataset: Dataset
     updateDataset(where: DatasetWhereUniqueInput!, data: DatasetUpdateInput!): Dataset
     deleteDataset(where: DatasetWhereUniqueInput!): Dataset
     importDataset(where: DatasetWhereUniqueInput!, data: DatasetImportInput!): ImportStatus

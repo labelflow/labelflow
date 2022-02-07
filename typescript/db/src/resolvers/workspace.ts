@@ -7,6 +7,11 @@ import {
   addTypenames,
 } from "@labelflow/common-resolvers";
 import {
+  tutorialImages,
+  tutorialLabelClass,
+  tutorialLabels,
+} from "@labelflow/common-resolvers/src/data/dataset-tutorial";
+import {
   Membership,
   MembershipRole,
   MutationCreateWorkspaceArgs,
@@ -17,11 +22,12 @@ import {
   WorkspaceWhereUniqueInput,
 } from "@labelflow/graphql-types";
 import { Prisma } from "@prisma/client";
-import { isNil } from "lodash/fp";
+import { isNil, omit } from "lodash/fp";
 import { getPrismaClient } from "../prisma-client";
 import { AuthorizationError } from "../repository/authorization-error";
 import { castObjectNullsToUndefined } from "../repository/utils";
 import { stripe } from "../utils";
+import { createTutorialDataset } from "../utils/tutorial";
 
 function foundWorkspace<TData extends DbWorkspaceWithType | DbWorkspace>(
   data: TData | null | undefined,
@@ -78,10 +84,56 @@ const workspaces = async (
   );
 };
 
+type CreateTutorialDatasetOptions = Context & {
+  createdWorkspaceId: string;
+};
+
+const createTutorialDatasetInWorkspace = async ({
+  repository,
+  req,
+  user,
+  createdWorkspaceId,
+}: CreateTutorialDatasetOptions) => {
+  const now = new Date();
+  const createdWorkspace = await repository.workspace.get(
+    { id: createdWorkspaceId },
+    user
+  );
+  const imagesToCreate = tutorialImages.map(
+    ({ name, url, width, height, mimeType }, urlIndex) => {
+      const createdAt = new Date(now.getTime() + urlIndex);
+      return {
+        externalUrl: url,
+        name,
+        createdAt: createdAt.toISOString(),
+        noThumbnails: true,
+        width,
+        height,
+        mimeType,
+      };
+    }
+  );
+  const labels = tutorialLabels.map((label) => ({
+    ...omit(["id", "imageId"], label),
+  }));
+  const labelClass = tutorialLabelClass;
+  await createTutorialDataset(
+    null,
+    {
+      name: "Tutorial",
+      workspaceSlug: createdWorkspace?.slug ?? "",
+      images: imagesToCreate,
+      labelClass,
+      labels,
+    },
+    { repository, req, user }
+  );
+};
+
 const createWorkspace = async (
   _: any,
   args: MutationCreateWorkspaceArgs,
-  { repository, user }: Context
+  { repository, user, req }: Context
 ): Promise<DbWorkspaceWithType> => {
   if (typeof user?.id !== "string") {
     throw new Error("Couldn't create workspace: No user id");
@@ -103,6 +155,14 @@ const createWorkspace = async (
     },
     user
   );
+  if (createdWorkspaceId) {
+    await createTutorialDatasetInWorkspace({
+      repository,
+      user,
+      req,
+      createdWorkspaceId,
+    });
+  }
 
   return await getWorkspace({ id: createdWorkspaceId }, repository, user);
 };

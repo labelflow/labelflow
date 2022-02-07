@@ -15,7 +15,6 @@ import { DatasetTabBar } from "../../../../components/layout/tab-bar/dataset-tab
 import { KeymapButton } from "../../../../components/layout/top-bar/keymap-button";
 import { NavLogo } from "../../../../components/logo/nav-logo";
 import { Meta } from "../../../../components/meta";
-import { WelcomeModal } from "../../../../components/welcome-manager";
 import { WorkspaceSwitcher } from "../../../../components/workspace-switcher";
 import { useDataset, useWorkspace } from "../../../../hooks";
 import { Error404Content } from "../../../404";
@@ -56,7 +55,6 @@ const Body = () => {
     }
     return (
       <>
-        <WelcomeModal />
         <Meta title="LabelFlow | Dataset not found" />
         <CookieBanner />
         <Error404Content />
@@ -66,7 +64,6 @@ const Body = () => {
 
   return (
     <>
-      <WelcomeModal />
       <Meta title="LabelFlow | Classes" />
       <CookieBanner />
       <Layout

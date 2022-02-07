@@ -4,7 +4,6 @@ import { gql, useMutation, useQuery } from "@apollo/client";
 import { Meta } from "../../../components/meta";
 import { Layout } from "../../../components/layout";
 import { Authenticated } from "../../../components/auth";
-import { WelcomeModal } from "../../../components/welcome-manager";
 import { CookieBanner } from "../../../components/cookie-banner";
 import { NavLogo } from "../../../components/logo/nav-logo";
 import { UserSettings } from "../../../components/settings/user/user-settings";
@@ -47,7 +46,6 @@ const ProfilePage = () => {
 
   return (
     <Authenticated>
-      <WelcomeModal />
       <Meta title="LabelFlow | Profile" />
       <CookieBanner />
       <Layout breadcrumbs={[<NavLogo key={0} />]}>

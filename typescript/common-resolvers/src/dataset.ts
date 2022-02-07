@@ -7,17 +7,8 @@ import {
   QueryDatasetsArgs,
   QueryImagesArgs,
 } from "@labelflow/graphql-types";
-import { add } from "date-fns";
-import { isNil, trim } from "lodash/fp";
+import { trim } from "lodash/fp";
 import { v4 as uuidv4 } from "uuid";
-import {
-  tutorialDatasets,
-  tutorialImages,
-  tutorialLabelClasses,
-  tutorialLabels,
-} from "./data/dataset-tutorial";
-import { getWorkspaceIdOfDataset } from "./image/get-workspace-id-of-dataset";
-import { importAndProcessImage } from "./image/import-and-process-image";
 import { Context, DbDataset, Repository } from "./types";
 import { getSlug, addTypename, addTypenames } from "./utils";
 
@@ -29,7 +20,7 @@ const getLabelClassesByDatasetId = async (
   return await repository.labelClass.list({ datasetId, user });
 };
 
-const getDataset = async (
+export const getDataset = async (
   where: DatasetWhereUniqueInput,
   repository: Repository,
   user?: { id: string }
@@ -161,71 +152,6 @@ const createDataset = async (
   }
 };
 
-const createDemoDataset = async (
-  _: any,
-  args: {},
-  { repository, req, user }: Context
-): Promise<DbDataset> => {
-  const { slug, workspaceSlug } = tutorialDatasets[0];
-  const now = new Date();
-
-  const existing = await repository.dataset.get(
-    { slugs: { slug, workspaceSlug } },
-    user
-  );
-  if (!isNil(existing)) {
-    return addTypename(existing, "Dataset");
-  }
-  await repository.dataset.add({ ...tutorialDatasets[0] }, user);
-
-  const workspaceId = await getWorkspaceIdOfDataset({
-    datasetId: tutorialDatasets[0].id,
-    repository,
-    user,
-  });
-
-  await Promise.all(
-    tutorialImages.map(async (image, index) => {
-      const imageEntity = await importAndProcessImage(
-        {
-          image: {
-            ...image,
-            noThumbnails: true,
-            createdAt: add(now, { seconds: index }).toISOString(),
-            name: image.url.match(/\/static\/img\/(.*?)$/)?.[1],
-          },
-          workspaceId,
-        },
-        { repository, req }
-      );
-      return await repository.image.add(imageEntity, user);
-    })
-  );
-
-  const currentDate = now.toISOString();
-  await Promise.all(
-    tutorialLabelClasses.map(async (labelClass) => {
-      return await repository.labelClass.add({
-        ...labelClass,
-        createdAt: currentDate,
-        updatedAt: currentDate,
-      });
-    })
-  );
-
-  await Promise.all(
-    tutorialLabels.map(async (label) => {
-      return await repository.label.add({
-        ...label,
-        createdAt: currentDate,
-        updatedAt: currentDate,
-      });
-    })
-  );
-
-  return await getDataset({ id: tutorialDatasets[0]?.id }, repository, user);
-};
-
 const updateDataset = async (
   _: any,
   args: MutationUpdateDatasetArgs,
@@ -283,7 +209,6 @@ export default {
 
   Mutation: {
     createDataset,
-    createDemoDataset,
     updateDataset,
     deleteDataset,
   },

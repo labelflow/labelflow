@@ -9,7 +9,6 @@ describe("Dataset creation, edition, deletion (online)", () => {
   });
 
   it("Should create, rename and delete a dataset", () => {
-    cy.setCookie("hasUserTriedApp", "true");
     cy.setCookie("consentedCookies", "true");
     // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
     // cy.visit("/");

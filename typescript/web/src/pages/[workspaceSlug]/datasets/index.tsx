@@ -11,7 +11,6 @@ import { Layout } from "../../../components/layout";
 import { WorkspaceTabBar } from "../../../components/layout/tab-bar/workspace-tab-bar";
 import { NavLogo } from "../../../components/logo/nav-logo";
 import { Meta } from "../../../components/meta";
-import { WelcomeModal } from "../../../components/welcome-manager";
 import { WorkspaceSwitcher } from "../../../components/workspace-switcher";
 import { useWorkspace } from "../../../hooks";
 import { BoolParam, IdParam } from "../../../utils/query-param-bool";
@@ -56,7 +55,6 @@ const Body = () => {
 
   return (
     <>
-      <WelcomeModal />
       <Meta title="LabelFlow | Datasets" />
       <CookieBanner />
       <Layout

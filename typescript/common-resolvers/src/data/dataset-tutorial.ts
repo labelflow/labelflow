@@ -1,4 +1,5 @@
 import { LabelType } from "@labelflow/graphql-types";
+import { LABEL_CLASS_COLOR_PALETTE } from "@labelflow/utils/src/class-color-generator";
 
 const origin =
   "location" in globalThis && typeof globalThis.location?.origin === "string"
@@ -19,40 +20,72 @@ export const tutorialImages = [
     datasetId: "049fe9f0-9a19-43cd-be65-35d222d54b4d",
     id: "2bbbf664-5810-4760-a10f-841de2f35510",
     url: `${origin}/static/img/tutorial-image-1.jpg`,
+    name: "Image 1",
+    width: 2500,
+    height: 1667,
+    mimeType: "image/jpeg",
   },
   {
     datasetId: "049fe9f0-9a19-43cd-be65-35d222d54b4d",
     id: "506b263f-61a9-45ba-8f75-515534fae97c",
     url: `${origin}/static/img/tutorial-image-2.jpg`,
+    name: "Image 2",
+    width: 2500,
+    height: 1667,
+    mimeType: "image/jpeg",
   },
   {
     datasetId: "049fe9f0-9a19-43cd-be65-35d222d54b4d",
     id: "04f999da-780c-461c-8e8e-c3189ae560fb",
     url: `${origin}/static/img/tutorial-image-3.jpg`,
+    name: "Image 3",
+    width: 2500,
+    height: 1667,
+    mimeType: "image/jpeg",
   },
   {
     datasetId: "049fe9f0-9a19-43cd-be65-35d222d54b4d",
     id: "73b89fd9-0be8-4c76-bc4f-fee943b0d9d1",
     url: `${origin}/static/img/tutorial-image-4.jpg`,
+    name: "Image 4",
+    width: 2500,
+    height: 1667,
+    mimeType: "image/jpeg",
   },
   {
     datasetId: "049fe9f0-9a19-43cd-be65-35d222d54b4d",
     id: "d96db1e2-2ecd-425e-b88f-7692a28d2dcf",
     url: `${origin}/static/img/tutorial-image-5.jpg`,
+    name: "Image 5",
+    width: 2500,
+    height: 1667,
+    mimeType: "image/jpeg",
   },
   {
     datasetId: "049fe9f0-9a19-43cd-be65-35d222d54b4d",
     id: "dc736ae4-3c49-4081-9d75-b43e922e0ac9",
     url: `${origin}/static/img/tutorial-image-6.jpg`,
+    name: "Image 6",
+    width: 2500,
+    height: 1667,
+    mimeType: "image/jpeg",
   },
 ];
+
+export const tutorialLabelClass = {
+  id: "2b4f7ed2-4257-48f8-b546-81af73f3c904",
+  index: 0,
+  name: "Horse",
+  color: LABEL_CLASS_COLOR_PALETTE[0],
+  datasetId: "049fe9f0-9a19-43cd-be65-35d222d54b4d",
+};
 
 export const tutorialLabelClasses = [
   {
     id: "2b4f7ed2-4257-48f8-b546-81af73f3c904",
     index: 0,
     name: "Horse",
-    color: "#F87171",
+    color: LABEL_CLASS_COLOR_PALETTE[0],
     datasetId: "049fe9f0-9a19-43cd-be65-35d222d54b4d",
   },
 ];
