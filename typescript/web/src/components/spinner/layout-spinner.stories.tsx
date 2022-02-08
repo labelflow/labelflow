@@ -1,5 +1,6 @@
 import { Story } from "@storybook/react";
 import { LayoutSpinner } from ".";
+import { storybookTitle } from "../../utils/stories";
 import { chakraDecorator } from "../../utils/stories/chakra-decorator";
 import { TestComponent, Wrapper } from "./layout-spinner.fixtures";
 
@@ -10,7 +11,7 @@ const testDecorator = (StoryComponent: Story) => (
 );
 
 export default {
-  title: `web/Spinner/${LayoutSpinner.name}`,
+  title: storybookTitle("Spinner", LayoutSpinner),
   decorators: [chakraDecorator, testDecorator],
 };
 

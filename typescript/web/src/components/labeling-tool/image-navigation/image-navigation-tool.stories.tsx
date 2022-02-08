@@ -1,14 +1,12 @@
-import React from "react";
+import { Button, Flex, HStack } from "@chakra-ui/react";
 import { Story } from "@storybook/react";
-
-import { HStack, Button, Flex } from "@chakra-ui/react";
-
+import React from "react";
 import {
-  chakraDecorator,
   apolloMockDecorator,
+  chakraDecorator,
   mockImagesLoader,
+  storybookTitle,
 } from "../../../utils/stories";
-
 import { ImageNavigationTool } from "./image-navigation-tool";
 
 const datasetId = "2e5e2ff4-7be3-4371-a6de-1ebbe71c90b9";
@@ -32,7 +30,7 @@ const images = [
 ];
 
 export default {
-  title: "web/Image Navigation Toolbar",
+  title: storybookTitle(ImageNavigationTool),
   component: ImageNavigationTool,
   loaders: [mockImagesLoader],
   decorators: [chakraDecorator, apolloMockDecorator],

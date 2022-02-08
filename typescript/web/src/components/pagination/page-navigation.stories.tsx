@@ -1,11 +1,12 @@
 import { Story } from "@storybook/react";
 import React from "react";
+import { storybookTitle } from "../../utils/stories";
 import { chakraDecorator } from "../../utils/stories/chakra-decorator";
 import { PageNavigation } from "./page-navigation";
 import { PaginationProps, PaginationProvider } from "./pagination.context";
 
 export default {
-  title: "web/Pagination/Page navigation",
+  title: storybookTitle("Pagination", PageNavigation),
   component: PageNavigation,
   decorators: [chakraDecorator],
 };

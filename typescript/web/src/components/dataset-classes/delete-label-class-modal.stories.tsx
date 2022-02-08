@@ -1,13 +1,15 @@
 import React from "react";
-import { chakraDecorator } from "../../utils/stories/chakra-decorator";
+import { storybookTitle } from "../../utils/stories";
 import { getApolloMockDecorator } from "../../utils/stories/apollo-mock-decorator";
+import { chakraDecorator } from "../../utils/stories/chakra-decorator";
+import { DeleteLabelClassModal } from "./delete-label-class-modal";
 import {
   APOLLO_MOCKS,
   TestComponent,
 } from "./delete-label-class-modal.fixtures";
 
 export default {
-  title: "web/Dataset classes/Delete label class modal",
+  title: storybookTitle("Dataset classes", DeleteLabelClassModal),
   decorators: [chakraDecorator, getApolloMockDecorator(APOLLO_MOCKS)],
 };
 

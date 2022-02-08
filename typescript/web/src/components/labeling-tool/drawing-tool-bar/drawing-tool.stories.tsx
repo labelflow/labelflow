@@ -1,14 +1,15 @@
-import React, { useState, useRef } from "react";
-
 import { Popover, PopoverBody, PopoverContent, VStack } from "@chakra-ui/react";
-
-import { chakraDecorator, queryParamsDecorator } from "../../../utils/stories";
-
-import { DrawingToolIcon } from "./drawing-tool";
+import React, { useRef, useState } from "react";
 import { Tools } from "../../../connectors/labeling-state";
+import {
+  chakraDecorator,
+  queryParamsDecorator,
+  storybookTitle,
+} from "../../../utils/stories";
+import { DrawingToolIcon } from "./drawing-tool";
 
 export default {
-  title: "web/Drawing Toolbar/Drawing Tool",
+  title: storybookTitle("Drawing Toolbar", "Drawing Tool"),
   component: DrawingToolIcon,
   parameters: {
     nextRouter: {

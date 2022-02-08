@@ -1,11 +1,12 @@
 import { Story } from "@storybook/react";
 import React from "react";
+import { storybookTitle } from "../../utils/stories";
 import { chakraDecorator } from "../../utils/stories/chakra-decorator";
-import { PerPageInput } from "./per-page-input";
 import { PaginationProps, PaginationProvider } from "./pagination.context";
+import { PerPageInput } from "./per-page-input";
 
 export default {
-  title: "web/Pagination/Per-page input",
+  title: storybookTitle("Pagination", PerPageInput),
   component: PerPageInput,
   decorators: [chakraDecorator],
 };

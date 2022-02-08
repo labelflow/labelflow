@@ -1,13 +1,15 @@
-import React from "react";
-import { Story } from "@storybook/react";
 import { VStack } from "@chakra-ui/react";
-
-import { chakraDecorator, queryParamsDecorator } from "../../../utils/stories";
-
+import { Story } from "@storybook/react";
+import React from "react";
+import {
+  chakraDecorator,
+  queryParamsDecorator,
+  storybookTitle,
+} from "../../../utils/stories";
 import { DrawingToolbar, Props } from "./drawing-tool-bar";
 
 export default {
-  title: "web/Drawing Toolbar",
+  title: storybookTitle("Drawing toolbar", DrawingToolbar),
   component: DrawingToolbar,
   parameters: {
     nextRouter: {

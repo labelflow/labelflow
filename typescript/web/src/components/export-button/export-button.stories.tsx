@@ -7,7 +7,7 @@ import {
 } from "../../utils/stories";
 
 export default {
-  title: storybookTitle(ExportButton),
+  title: storybookTitle("Export Button", ExportButton),
   decorators: [chakraDecorator, apolloMockDecorator, queryParamsDecorator],
 };
 

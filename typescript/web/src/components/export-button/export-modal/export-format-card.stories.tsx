@@ -1,11 +1,15 @@
 import { HStack } from "@chakra-ui/react";
 import { ExportFormat } from "../../../graphql-types/globalTypes";
-import { apolloMockDecorator, chakraDecorator } from "../../../utils/stories";
+import {
+  apolloMockDecorator,
+  chakraDecorator,
+  storybookTitle,
+} from "../../../utils/stories";
 import { ExportFormatCard } from "./export-format-card";
 import { ExportModalContext, ExportModalState } from "./export-modal.context";
 
 export default {
-  title: "web/Export Button/export format card",
+  title: storybookTitle("Export Button", ExportFormatCard),
   decorators: [chakraDecorator, apolloMockDecorator],
 };
 

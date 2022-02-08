@@ -1,10 +1,14 @@
 import { ExportFormat } from "../../../graphql-types/globalTypes";
-import { apolloMockDecorator, chakraDecorator } from "../../../utils/stories";
+import {
+  apolloMockDecorator,
+  chakraDecorator,
+  storybookTitle,
+} from "../../../utils/stories";
 import { ExportModalContext, ExportModalState } from "./export-modal.context";
 import { ExportOptionsModal } from "./export-options-modal";
 
 export default {
-  title: "web/Export Button/Options Modal",
+  title: storybookTitle("Export Button", "Options Modal"),
   decorators: [chakraDecorator, apolloMockDecorator],
 };
 

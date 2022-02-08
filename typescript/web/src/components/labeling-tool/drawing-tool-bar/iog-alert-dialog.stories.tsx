@@ -1,13 +1,14 @@
+import { Button, useToast } from "@chakra-ui/react";
 import React, { useState } from "react";
-
-import { useToast, Button } from "@chakra-ui/react";
-
-import { chakraDecorator, queryParamsDecorator } from "../../../utils/stories";
-
+import {
+  chakraDecorator,
+  queryParamsDecorator,
+  storybookTitle,
+} from "../../../utils/stories";
 import { IogAlertDialog } from "./iog-alert-dialog";
 
 export default {
-  title: "web/Drawing Toolbar/Iog Alert Dialog",
+  title: storybookTitle("Drawing toolbar", IogAlertDialog),
   component: IogAlertDialog,
   parameters: {
     nextRouter: {
