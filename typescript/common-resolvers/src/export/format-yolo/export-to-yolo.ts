@@ -6,6 +6,19 @@ import { getImageName } from "../common";
 
 import { ExportFunction } from "../types";
 
+const groupLabelsByImage = (labelsArray: DbLabel[]) => {
+  return labelsArray
+    ? labelsArray.reduce((acc: { [imageId: string]: DbLabel[] }, label) => {
+        const key = label.imageId;
+        if (!acc[key]) {
+          acc[key] = [];
+        }
+        acc[key].push(label);
+        return acc;
+      }, {})
+    : {};
+};
+
 export const generateNamesFile = (labelClasses: DbLabelClass[]): string => {
   return labelClasses
     .reduce((namesFile, labelClass) => `${namesFile}${labelClass.name}\n`, "")
@@ -68,6 +81,8 @@ export const exportToYolo: ExportFunction = async (
 ) => {
   const images = await repository.image.list({ datasetId, user });
   const labelClasses = await repository.labelClass.list({ datasetId, user });
+  const labels = await repository.label.list({ datasetId, user });
+  const labelsByImage = groupLabelsByImage(labels);
   const datasetName = options?.name ?? "dataset-yolo";
   const zip = new JSZip();
   zip.file(
@@ -94,13 +109,16 @@ export const exportToYolo: ExportFunction = async (
           arrayBufferImage
         );
       }
-      const labelsOfImage = await repository.label.list({
-        imageId: image.id,
-        user,
-      });
+      const labelsOfImage = labelsByImage[image.id] ?? [];
+      const exportedLabels = generateLabelsOfImageFile(
+        labelsOfImage,
+        image,
+        labelClasses,
+        options
+      );
       zip.file(
         `${datasetName}/obj_train_data/${imageName}.txt`,
-        generateLabelsOfImageFile(labelsOfImage, image, labelClasses, options)
+        exportedLabels
       );
     })
   );

@@ -1,22 +1,28 @@
-import { DbLabel, Repository } from "../../types";
-import { DbLabelWithImageDimensions } from "./coco-core/types";
+import { DbImage } from "../..";
+import { DbLabel } from "../../types";
 
-export const addImageDimensionsToLabels = async (
+type ImageDimensions = {
+  width: number;
+  height: number;
+};
+
+export const addImageDimensionsToLabels = (
   labels: DbLabel[],
-  repository: Repository,
-  user?: { id: string }
-): Promise<DbLabelWithImageDimensions[]> => {
-  return await Promise.all(
-    labels.map(async (label) => {
-      const { imageId } = label;
-      const image = await repository.image.get({ id: imageId }, user);
-      if (image == null) {
-        throw new Error(`Missing image with id ${imageId}`);
+  images: DbImage[]
+) => {
+  const dimensionsByImage = images.reduce(
+    (acc: { [imageId: string]: ImageDimensions }, image) => {
+      const key = image.id;
+      if (!acc[key]) {
+        acc[key] = { width: image.width, height: image.height };
       }
-      return {
-        ...label,
-        imageDimensions: { height: image.height, width: image.width },
-      };
-    })
+      return acc;
+    },
+    {}
   );
+
+  return labels.map((label) => ({
+    ...label,
+    imageDimensions: dimensionsByImage[label.imageId],
+  }));
 };
