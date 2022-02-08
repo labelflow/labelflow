@@ -1,101 +1,60 @@
-import { createUpdateLabelClassOfLabelEffect } from "./update-label-class-of-label";
 import { useUndoStore } from "..";
-import { client } from "../../../apollo-client/schema-client";
-
-import { setupTestsWithLocalDatabase } from "../../../utils/setup-local-db-tests";
-
-setupTestsWithLocalDatabase();
-
-jest.mock("../../../apollo-client/schema-client", () => {
-  const original = jest.requireActual("../../../apollo-client/schema-client");
-  return {
-    client: {
-      ...original.client,
-      clearStore: original.client.clearStore, // This needs to be passed like this otherwise the resulting object does not have the clearStore method
-      mutate: jest.fn(() => {
-        return { data: { createLabelClass: { id: "label class id" } } };
-      }),
-      query: jest.fn(() => {
-        return {
-          data: {
-            labelClasses: [
-              {
-                id: "existing label class id",
-                name: "existing label class",
-                color: "0xaa45f7",
-              },
-            ],
-            label: {
-              id: "my label id",
-              labelClass: {
-                id: "previous label class id",
-              },
-            },
-          },
-        };
-      }),
-    },
-  };
-});
+import {
+  BASIC_LABEL_DATA,
+  DEEP_DATASET_WITH_CLASSES_DATA,
+} from "../../../utils/fixtures";
+import {
+  ApolloClientWithMockLink,
+  getApolloMockClient,
+} from "../../../utils/tests/apollo-mock";
+import {
+  APOLLO_MOCKS,
+  UPDATE_LABEL_CLASS_OF_LABEL_MOCK,
+} from "./label-and-label-class.fixtures";
+import { createUpdateLabelClassOfLabelEffect } from "./update-label-class-of-label";
 
 const { perform } = useUndoStore.getState();
+const [PREVIOUS_LABEL_CLASS_DATA, NEW_LABEL_CLASS_DATA] =
+  DEEP_DATASET_WITH_CLASSES_DATA.labelClasses;
 
 describe("UpdateLabelClassOfLabelEffect", () => {
+  let mockClient: ApolloClientWithMockLink;
+
   beforeEach(async () => {
     jest.clearAllMocks();
+    mockClient = getApolloMockClient(APOLLO_MOCKS);
     await perform(
       createUpdateLabelClassOfLabelEffect(
         {
-          selectedLabelId: "my label id",
-          selectedLabelClassId: "existing label class id",
+          selectedLabelId: BASIC_LABEL_DATA.id,
+          selectedLabelClassId: NEW_LABEL_CLASS_DATA.id,
         },
-        { client }
+        { client: mockClient.client }
       )
     );
   });
 
   it("updates the label class of a label", async () => {
-    expect(client.mutate).toHaveBeenNthCalledWith(
-      1,
-      expect.objectContaining({
-        variables: {
-          data: {
-            labelClassId: "existing label class id",
-          },
-          where: { id: "my label id" },
-        },
-      })
-    );
+    expect(UPDATE_LABEL_CLASS_OF_LABEL_MOCK.result).toHaveBeenCalledWith({
+      where: { id: BASIC_LABEL_DATA.id },
+      data: { labelClassId: NEW_LABEL_CLASS_DATA.id },
+    });
   });
 
   it("undo the update of the label class of a label", async () => {
     await useUndoStore.getState().undo();
-    expect(client.mutate).toHaveBeenNthCalledWith(
-      2,
-      expect.objectContaining({
-        variables: {
-          data: {
-            labelClassId: "previous label class id",
-          },
-          where: { id: "my label id" },
-        },
-      })
-    );
+    expect(UPDATE_LABEL_CLASS_OF_LABEL_MOCK.result).toHaveBeenCalledWith({
+      where: { id: BASIC_LABEL_DATA.id },
+      data: { labelClassId: PREVIOUS_LABEL_CLASS_DATA.id },
+    });
   });
 
   it("redo the update of the label class of a label", async () => {
     await useUndoStore.getState().undo();
     await useUndoStore.getState().redo();
-    expect(client.mutate).toHaveBeenNthCalledWith(
-      3,
-      expect.objectContaining({
-        variables: {
-          data: {
-            labelClassId: "existing label class id",
-          },
-          where: { id: "my label id" },
-        },
-      })
-    );
+    expect(UPDATE_LABEL_CLASS_OF_LABEL_MOCK.result).toHaveBeenNthCalledWith(5, {
+      where: { id: BASIC_LABEL_DATA.id },
+      data: { labelClassId: NEW_LABEL_CLASS_DATA.id },
+    });
   });
 });
