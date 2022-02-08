@@ -1,5 +1,4 @@
-import { DbImage } from "../..";
-import { DbLabel } from "../../types";
+import { DbLabel, DbImage } from "../../types";
 
 type ImageDimensions = {
   width: number;
