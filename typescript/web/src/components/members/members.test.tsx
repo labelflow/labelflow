@@ -1,4 +1,5 @@
 import "@testing-library/jest-dom/extend-expect";
+import { RenderResult, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 import { mockWorkspace } from "../../utils/tests/mock-workspace";
@@ -9,19 +10,36 @@ import { MembershipRole } from "../../graphql-types/globalTypes";
 import { GetMembershipsMembersQuery_memberships } from "../../graphql-types/GetMembershipsMembersQuery";
 import { renderWithWrapper } from "../../utils/tests";
 import { Members } from ".";
-import { TEST_MEMBERSHIPS } from "./members.fixtures";
+import {
+  TEST_MEMBERSHIPS,
+  TEST_MEMBERSHIPS_USER_1,
+  TEST_MEMBERSHIPS_USER_2,
+} from "./members.fixtures";
 
 const mockedChangeRole = jest.fn();
 const mockedRemoveMembership = jest.fn();
 
-const renderTest = (memberships: GetMembershipsMembersQuery_memberships[]) =>
-  renderWithWrapper(
+const renderTest = async (
+  memberships: GetMembershipsMembersQuery_memberships[]
+) => {
+  const result = await renderWithWrapper(
     <Members
       memberships={memberships}
       changeMembershipRole={mockedChangeRole}
       removeMembership={mockedRemoveMembership}
     />,
     { auth: { withWorkspaces: true }, apollo: true }
+  );
+  const { getByTestId } = result;
+  await waitFor(() => expect(getByTestId("members")).toBeDefined());
+  return result;
+};
+
+const waitForTooltipToClose = (queryByText: RenderResult["queryByText"]) =>
+  waitFor(() =>
+    expect(
+      queryByText("Remove this user from the workspace")
+    ).not.toBeInTheDocument()
   );
 
 describe(Members, () => {
@@ -45,13 +63,11 @@ describe(Members, () => {
     );
     userEvent.type(
       getByPlaceholderText(/Find a member/i),
-      TEST_MEMBERSHIPS[0].user?.name!
+      TEST_MEMBERSHIPS_USER_1.name!
     );
     expect(queryByText("Members (1)")).toBeDefined();
-    expect(getByText(TEST_MEMBERSHIPS[0].user?.name!)).toBeDefined();
-    expect(
-      queryByText(TEST_MEMBERSHIPS[1].user?.name!)
-    ).not.toBeInTheDocument();
+    expect(getByText(TEST_MEMBERSHIPS_USER_1.name)).toBeDefined();
+    expect(queryByText(TEST_MEMBERSHIPS_USER_2.name)).not.toBeInTheDocument();
   });
 
   it("calls function to change role when clicking role in popover", async () => {
@@ -68,6 +84,7 @@ describe(Members, () => {
     const { getByText, queryByText } = await renderTest([TEST_MEMBERSHIPS[1]]);
     userEvent.click(getByText("Remove"));
     expect(queryByText(/Cannot remove owner/i)).toBeDefined();
+    await waitForTooltipToClose(queryByText);
   });
 
   it("calls function to delete a membership when clicking on Remove", async () => {
@@ -78,5 +95,6 @@ describe(Members, () => {
     expect(queryByText(/Deactivate/i)).toBeDefined();
     userEvent.click(getByText("Deactivate"));
     expect(mockedRemoveMembership).toHaveBeenCalledWith("membership1");
+    await waitForTooltipToClose(queryByText);
   });
 });
