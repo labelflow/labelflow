@@ -8,7 +8,7 @@
  * (thumbnails generations & size validation) of the created all images.
  * If we the batch size, the "createManyImages" mutation will take longer to resolve.
  */
-export const BATCH_SIZE = 10;
+export const BATCH_SIZE = 2;
 
 /**
  * Maximum number of batches to perform in parallel.
@@ -20,4 +20,4 @@ export const BATCH_SIZE = 10;
  * However, increasing this number will also increase the number
  * of connections to the database.
  */
-export const CONCURRENCY = 2;
+export const CONCURRENCY = 20;

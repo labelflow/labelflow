@@ -17,6 +17,7 @@ import {
   CREATE_DATASET_MOCK,
   UPDATE_DATASET_MOCK,
 } from "../upsert-dataset-modal.fixtures";
+import { SEARCH_DATASET_BY_SLUG_QUERY } from "../datasets.query";
 
 const renderModal = (props = {}) => {
   return render(<UpsertDatasetModal isOpen onClose={() => {}} {...props} />, {
@@ -53,6 +54,11 @@ test("should enable start button when dataset name is not empty", async () => {
 
 test("should create a dataset when the form is submitted", async () => {
   const onClose = jest.fn();
+  // Used to put the query in apollo's cache
+  await client.query({
+    query: SEARCH_DATASET_BY_SLUG_QUERY,
+    variables: { where: { workspaceSlug: "my-workspace" } },
+  });
   renderModal({ onClose });
   const input = screen.getByLabelText(
     /dataset name input/i

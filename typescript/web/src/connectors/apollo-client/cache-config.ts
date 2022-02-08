@@ -11,7 +11,7 @@ export type ImagesQueryCache = {
   totalCount: number | undefined;
 };
 
-const readQueryImages: FieldReadFunction<ImagesQueryCache, Image[]> = (
+const paginatedQueryRead: FieldReadFunction = (
   existing,
   options: FieldFunctionOptions<QueryImagesArgs, Record<string, any>>
 ) => {
@@ -24,14 +24,12 @@ const readQueryImages: FieldReadFunction<ImagesQueryCache, Image[]> = (
   const limit = options.args?.first || undefined;
   const result =
     offset > 0 || limit !== undefined
-      ? existing.images.slice(
+      ? existing.items.slice(
           offset,
           limit !== undefined ? offset + limit : undefined
         )
-      : existing.images;
-  const isResultDataInvalid =
-    result.length === 0 ||
-    (result as (Image | undefined)[]).includes(undefined);
+      : existing.items;
+  const isResultDataInvalid = result.length === 0 || result.includes(undefined);
   const shouldBeLastPage = (limit && result.length < limit) || !limit;
   if (
     isResultDataInvalid ||
@@ -43,21 +41,21 @@ const readQueryImages: FieldReadFunction<ImagesQueryCache, Image[]> = (
   return result;
 };
 
-const mergeQueryImages: FieldMergeFunction<ImagesQueryCache, Image[]> = (
+const paginatedQueryMerge: FieldMergeFunction = (
   existing,
   incoming,
-  options: FieldFunctionOptions<QueryImagesArgs, Record<string, any>>
+  options
 ) => {
-  // Spreading the images array is necessary because the existing data is
+  // Spreading the items array is necessary because the existing data is
   // immutable, and frozen in development
   const merged = {
-    images: [...(existing?.images ?? [])],
+    items: [...(existing?.items ?? [])],
     totalCount: existing?.totalCount,
   };
   const offset = options.args?.skip || 0;
   const limit = options.args?.first || undefined;
   for (let i = 0; i < incoming.length; i += 1) {
-    merged.images[offset + i] = incoming[i];
+    merged.items[offset + i] = incoming[i];
   }
   if (incoming.length > 0 && (limit === undefined || incoming.length < limit)) {
     merged.totalCount = offset + incoming.length;
@@ -72,9 +70,16 @@ export const APOLLO_CACHE_CONFIG: InMemoryCacheConfig = {
         images: {
           // Defining nested keyArgs is done in an unusual way but that's how it works
           // https://github.com/apollographql/apollo-client/issues/7314#issuecomment-726331129
-          keyArgs: ["where", ["datasetId"]],
-          read: readQueryImages,
-          merge: mergeQueryImages,
+          keyArgs: ["where"],
+          read: paginatedQueryRead,
+          merge: paginatedQueryMerge,
+        },
+        datasets: {
+          // Defining nested keyArgs is done in an unusual way but that's how it works
+          // https://github.com/apollographql/apollo-client/issues/7314#issuecomment-726331129
+          keyArgs: ["where"],
+          read: paginatedQueryRead,
+          merge: paginatedQueryMerge,
         },
       },
     },

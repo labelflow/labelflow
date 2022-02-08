@@ -1,4 +1,4 @@
-import { Box } from "@chakra-ui/react";
+import { Flex } from "@chakra-ui/react";
 import { DecoratorFn, Story } from "@storybook/react";
 import { mockImagesLoader } from "../../../utils/mock-image-loader";
 import {
@@ -33,9 +33,9 @@ function inGreyBoxDecorator(
   storyFn: Parameters<DecoratorFn>[0]
 ): ReturnType<DecoratorFn> {
   return (
-    <Box background="gray.100" width="640px" height="480px">
+    <Flex direction="column" background="gray.100" width="640px" height="480px">
       {storyFn()}
-    </Box>
+    </Flex>
   );
 }
 

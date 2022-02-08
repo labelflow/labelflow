@@ -41,7 +41,9 @@ test("should clear the modal content when closed", async () => {
 
   userEvent.click(screen.getByLabelText("Add images"));
 
-  const input = screen.getByLabelText(/drop folders or images/i);
+  const input = screen.getByLabelText(
+    /Drop images and annotations or click to browse/i
+  );
   await waitFor(() => userEvent.upload(input, files));
 
   await act(() => mockLink.waitForAllResponses());
@@ -58,7 +60,20 @@ test("should clear the modal content when closed", async () => {
 
   userEvent.click(screen.getByLabelText("Add images"));
 
-  expect(screen.getByLabelText(/drop folders or images/i)).toBeDefined();
+  expect(
+    screen.getByLabelText(/Drop images and annotations or click to browse/i)
+  ).toBeDefined();
 
   expect(screen.queryByText(/Completed 2 of 2 items/i)).toBeNull();
+
+  await waitFor(() =>
+    userEvent.upload(
+      screen.getByLabelText(/Drop images and annotations or click to browse/i),
+      [new File(["Bonjour"], "bonjour.png", { type: "image/png" })]
+    )
+  );
+
+  await waitFor(() =>
+    expect(screen.getByText(/Completed 1 of 1 items/i)).toBeDefined()
+  );
 });

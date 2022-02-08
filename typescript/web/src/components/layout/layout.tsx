@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { Flex, Box, useColorModeValue as mode } from "@chakra-ui/react";
+import { Flex, useColorModeValue as mode } from "@chakra-ui/react";
 import { TopBar } from "./top-bar";
 
 export type Props = {
@@ -16,12 +16,17 @@ export const Layout = ({
   tabBar,
 }: Props) => {
   return (
-    <Flex direction="column" h="100vh">
+    <Flex grow={1} direction="column">
       <TopBar breadcrumbs={breadcrumbs} rightContent={topBarRightContent} />
       {tabBar}
-      <Box as="main" bg={mode("gray.100", "gray.900")} flex="1">
+      <Flex
+        grow={1}
+        direction="column"
+        as="main"
+        bg={mode("gray.100", "gray.900")}
+      >
         {children}
-      </Box>
+      </Flex>
     </Flex>
   );
 };

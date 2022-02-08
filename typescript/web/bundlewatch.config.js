@@ -4,11 +4,11 @@ const bundlewatchConfig = {
     // Next JS client files
     {
       path: "./.next/static/chunks/**/*-*.js",
-      maxSize: "300kb",
+      maxSize: "350kb",
     },
     {
       path: "./.next/static/chunks/**/*.*.js",
-      maxSize: "300kb",
+      maxSize: "350kb",
     },
     {
       path: "./.next/static/*/_buildManifest.js",

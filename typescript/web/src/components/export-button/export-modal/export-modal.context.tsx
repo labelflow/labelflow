@@ -1,19 +1,18 @@
-import { useQuery, gql } from "@apollo/client";
+import { gql, useQuery } from "@apollo/client";
+import { isEmpty } from "lodash/fp";
 import {
   createContext,
+  Dispatch,
   PropsWithChildren,
+  SetStateAction,
   useContext,
   useState,
-  Dispatch,
-  SetStateAction,
-  useMemo,
 } from "react";
-import { isEmpty } from "lodash/fp";
-import { ExportFormat } from "../../../graphql-types/globalTypes";
 import {
   CountLabelsOfDatasetQuery,
   CountLabelsOfDatasetQueryVariables,
 } from "../../../graphql-types/CountLabelsOfDatasetQuery";
+import { ExportFormat } from "../../../graphql-types/globalTypes";
 import { useDataset } from "../../../hooks";
 
 export const COUNT_LABELS_OF_DATASET_QUERY = gql`
@@ -26,12 +25,6 @@ export const COUNT_LABELS_OF_DATASET_QUERY = gql`
       labelsAggregates {
         totalCount
       }
-      labels {
-        id
-        labelClass {
-          id
-        }
-      }
     }
   }
 `;
@@ -42,8 +35,7 @@ export interface ExportModalState {
   exportFormat: ExportFormat;
   setExportFormat: Dispatch<SetStateAction<ExportFormat>>;
   loading: boolean;
-  datasetId?: string;
-  numberUndefinedLabelsOfDataset: number;
+  datasetId: string;
   datasetSlug: string;
   setIsExportRunning: Dispatch<SetStateAction<boolean>>;
   isExportRunning: boolean;
@@ -83,24 +75,13 @@ export const ExportModalProvider = ({
   const imagesNumber: number = data?.dataset?.imagesAggregates?.totalCount ?? 0;
   const labelsNumber: number = data?.dataset?.labelsAggregates?.totalCount ?? 0;
 
-  const numberUndefinedLabelsOfDataset: number = useMemo(() => {
-    if (loading) return 0;
-    const total = data?.dataset?.labels?.reduce<number>(
-      (numberUndefinedLabels, label) =>
-        !label?.labelClass ? numberUndefinedLabels + 1 : numberUndefinedLabels,
-      0
-    );
-    return total ?? 0;
-  }, [data, loading]);
-
   const value: ExportModalState = {
     isOpen,
     onClose,
     exportFormat,
     setExportFormat,
     loading,
-    datasetId,
-    numberUndefinedLabelsOfDataset,
+    datasetId: datasetId ?? "",
     datasetSlug,
     setIsExportRunning,
     isExportRunning,

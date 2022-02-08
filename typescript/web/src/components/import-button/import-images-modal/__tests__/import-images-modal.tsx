@@ -55,7 +55,9 @@ const renderModalAndImport = (
     wrapper: createWrapper(error),
   });
 
-  const input = screen.getByLabelText(/drop folders or images/i);
+  const input = screen.getByLabelText(
+    /Drop images and annotations or click to browse/i
+  );
   return waitFor(() => userEvent.upload(input, filesToImport));
 };
 
@@ -66,7 +68,7 @@ test("should display the number of valid images", async () => {
     expect(screen.getByText(/Completed 2 of 2 items/i)).toBeDefined()
   );
   expect(
-    screen.queryByLabelText(/drop folders or images/i)
+    screen.queryByLabelText(/Drop images and annotations or click to browse/i)
   ).not.toBeInTheDocument();
 });
 

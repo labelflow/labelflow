@@ -1,9 +1,9 @@
 import { useEffect, useRef } from "react";
 import {
-  Box,
   HStack,
   VStack,
   useColorModeValue as mode,
+  Flex,
 } from "@chakra-ui/react";
 import { useQueryParam } from "use-query-params";
 import { OpenlayersMap } from "./openlayers-map";
@@ -38,8 +38,9 @@ export const LabelingTool = () => {
   const [imageLoadError] = useQueryParam("image-load-error", BoolParam);
 
   return (
-    <Box
-      height="100%"
+    <Flex
+      grow={1}
+      direction="column"
       position="relative"
       overflow="hidden"
       ref={containerRef}
@@ -81,6 +82,6 @@ export const LabelingTool = () => {
       >
         <ImageNavigationTool />
       </HStack>
-    </Box>
+    </Flex>
   );
 };

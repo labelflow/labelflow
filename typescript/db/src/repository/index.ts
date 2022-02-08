@@ -314,7 +314,7 @@ export const repository: Repository = {
         await getPrismaClient()
       ).dataset.findMany(
         castObjectNullsToUndefined({
-          orderBy: { createdAt: Prisma.SortOrder.asc },
+          orderBy: { createdAt: Prisma.SortOrder.desc },
           skip,
           take: first,
           where: getWorkspaceFilter(where?.user?.id, {

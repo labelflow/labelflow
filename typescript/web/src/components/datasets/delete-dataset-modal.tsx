@@ -15,7 +15,10 @@ import {
   GetDatasetByIdQueryVariables,
 } from "../../graphql-types/GetDatasetByIdQuery";
 import { WORKSPACE_DATASETS_PAGE_DATASETS_QUERY } from "../../shared-queries/workspace-datasets-page.query";
-import { GET_DATASET_BY_ID_QUERY } from "./datasets.query";
+import {
+  GET_DATASET_BY_ID_QUERY,
+  useFlushPaginatedDatasetsCache,
+} from "./datasets.query";
 
 export const DELETE_DATASET_BY_ID_MUTATION = gql`
   mutation DeleteDatasetByIdMutation($id: ID!) {
@@ -29,11 +32,16 @@ export const DeleteDatasetModal = ({
   isOpen = false,
   onClose = () => {},
   datasetId = undefined,
+  workspaceSlug,
 }: {
   isOpen?: boolean;
   onClose?: () => void;
   datasetId?: string;
+  workspaceSlug?: string;
 }) => {
+  const flushPaginatedDatasets = useFlushPaginatedDatasetsCache(
+    workspaceSlug as string
+  );
   const cancelRef = useRef<HTMLButtonElement>(null);
   const { data } = useQuery<GetDatasetByIdQuery, GetDatasetByIdQueryVariables>(
     GET_DATASET_BY_ID_QUERY,
@@ -56,6 +64,7 @@ export const DeleteDatasetModal = ({
   );
 
   const deleteDataset = async () => {
+    await flushPaginatedDatasets();
     await deleteDatasetMutate();
     onClose();
   };
