@@ -9,6 +9,7 @@ import {
   Button,
   Link,
 } from "@chakra-ui/react";
+import { DOCUMENTATION_URL } from "../../../constants";
 
 export const IogAlertDialog = ({
   isOpen = false,
@@ -41,7 +42,7 @@ export const IogAlertDialog = ({
             secured servers. <br />
             Check the documentation{" "}
             <Link
-              href="https://labelflow.gitbook.io/labelflow/labelling-interface/label-types/auto-polygons"
+              href={`${DOCUMENTATION_URL}/labelflow/labelling-interface/label-types/auto-polygons`}
               color="brand.600"
               target="_blank"
             >

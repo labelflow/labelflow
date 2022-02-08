@@ -8,6 +8,7 @@ import {
 import * as React from "react";
 import NextLink from "next/link";
 import { FooterHeading } from "./FooterHeading";
+import { DOCUMENTATION_URL } from "../../../constants";
 
 interface FooterLink {
   href: string;
@@ -22,7 +23,7 @@ const productLinks: FooterLink[] = [
 const learnLinks: FooterLink[] = [
   { href: "/about", label: "About" },
   { href: "/posts", label: "Blog" },
-  { href: "https://labelflow.gitbook.io/labelflow/", label: "Documentation" },
+  { href: DOCUMENTATION_URL, label: "Documentation" },
   { href: "https://labelflow.recruitee.com/", label: "Jobs" },
 ];
 
