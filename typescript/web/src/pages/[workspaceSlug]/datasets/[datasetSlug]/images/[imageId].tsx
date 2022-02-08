@@ -167,10 +167,10 @@ const ImagePage = () => {
           </>
         }
       >
-        <Flex height="100%" flexDirection="column">
-          <Box flex="1">
+        <Flex grow={1} direction="column">
+          <Flex grow={1} direction="column">
             <LabelingTool />
-          </Box>
+          </Flex>
           <Box bg={mode("white", "gray.800")} overflow="hidden">
             <Gallery />
           </Box>

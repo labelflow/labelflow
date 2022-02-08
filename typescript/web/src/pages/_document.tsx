@@ -98,8 +98,21 @@ class MyDocument extends Document {
           `,
             }}
           />
+          <style>
+            {/* https://github.com/vercel/next.js/issues/4834 */}
+            {`
+            #__next { flex-grow: 1; display: flex; flex-direction: column; }
+          `}
+          </style>
         </Head>
-        <body>
+        <body
+          style={{
+            position: "unset",
+            display: "flex",
+            flexDirection: "column",
+            minHeight: "100vh",
+          }}
+        >
           <ColorModeScript initialColorMode={theme.config.initialColorMode} />
           <Main />
           <NextScript />

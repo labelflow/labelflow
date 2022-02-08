@@ -45,8 +45,8 @@ const GridBox = ({ minW, heading, links }: GridBoxProps) => {
         {heading}
       </FooterHeading>
       <Stack align={{ base: "center", md: "start" }}>
-        {links.map((link: FooterLink) => (
-          <NextLink href={link.href}>
+        {links.map((link) => (
+          <NextLink key={link.label} href={link.href}>
             <Link href="/">{link.label}</Link>
           </NextLink>
         ))}
