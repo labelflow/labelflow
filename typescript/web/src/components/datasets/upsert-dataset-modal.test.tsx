@@ -6,7 +6,8 @@ import { mockWorkspace } from "../../utils/tests/mock-workspace";
 
 mockWorkspace();
 
-import { BASIC_DATASET_DATA, renderWithWrapper } from "../../utils/tests";
+import { BASIC_DATASET_DATA } from "../../utils/fixtures";
+import { renderWithWrapper } from "../../utils/tests";
 import { UpsertDatasetModal } from "./upsert-dataset-modal";
 import {
   APOLLO_MOCKS,

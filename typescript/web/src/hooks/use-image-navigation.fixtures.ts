@@ -5,13 +5,10 @@ import {
   GetAllImagesOfADatasetQuery_dataset_images,
 } from "../graphql-types/GetAllImagesOfADatasetQuery";
 import {
-  ApolloMockResponse,
-  ApolloMockResponses,
-} from "../utils/tests/apollo-mock";
-import {
   BASIC_DATASET_DATA,
   DEEP_DATASET_WITH_IMAGES_DATA,
-} from "../utils/tests/data.fixtures";
+} from "../utils/fixtures";
+import { ApolloMockResponse, ApolloMockResponses } from "../utils/tests";
 import { GET_ALL_IMAGES_OF_A_DATASET_QUERY } from "./use-images-navigation.query";
 
 export const [CURRENT_IMAGE_DATA, IMAGE_1_DATA, IMAGE_2_DATA, IMAGE_3_DATA] = [

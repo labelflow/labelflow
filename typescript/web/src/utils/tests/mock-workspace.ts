@@ -1,7 +1,7 @@
 import { SetRequired } from "type-fest";
 import { mockUseQueryParams } from "./mock-use-query-params";
 import { mockNextRouter } from "./router-mocks";
-import { USER_QUERY_DATA, WORKSPACE_DATA } from "./user.fixtures";
+import { USER_QUERY_DATA, WORKSPACE_DATA } from "../fixtures";
 
 export type MockSessionOptions = {
   status?: "authenticated" | "unauthenticated" | "loading";

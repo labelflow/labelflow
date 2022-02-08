@@ -5,9 +5,9 @@ import { mockWorkspace } from "../../utils/tests/mock-workspace";
 
 mockWorkspace();
 
-import { renderWithWrapper } from "../../utils/tests";
 import { MembershipRole } from "../../graphql-types/globalTypes";
 import { GetMembershipsMembersQuery_memberships } from "../../graphql-types/GetMembershipsMembersQuery";
+import { renderWithWrapper } from "../../utils/tests";
 import { Members } from ".";
 import { TEST_MEMBERSHIPS } from "./members.fixtures";
 

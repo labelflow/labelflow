@@ -6,13 +6,10 @@ import {
 } from "../../../graphql-types/GetAllImagesOfADatasetQuery";
 import { GET_ALL_IMAGES_OF_A_DATASET_QUERY } from "../../../hooks/use-images-navigation.query";
 import {
-  ApolloMockResponse,
-  ApolloMockResponses,
-} from "../../../utils/tests/apollo-mock";
-import {
-  DEEP_DATASET_WITH_IMAGES_DATA,
   BASIC_DATASET_DATA,
-} from "../../../utils/tests/data.fixtures";
+  DEEP_DATASET_WITH_IMAGES_DATA,
+} from "../../../utils/fixtures";
+import { ApolloMockResponse, ApolloMockResponses } from "../../../utils/tests";
 
 const DATASET_SLUG_DATA = {
   [BASIC_DATASET_DATA.slug]: BASIC_DATASET_DATA,

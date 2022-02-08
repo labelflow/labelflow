@@ -21,7 +21,7 @@ import { ApolloMockResponses, getApolloMockLink } from "./apollo-mock";
 import {
   USER_QUERY_MOCK,
   USER_WITH_WORKSPACES_QUERY_MOCK,
-} from "./user.fixtures";
+} from "../fixtures/user.fixtures";
 
 export type AuthMockOptions = boolean | Omit<AuthenticatedProps, "children">;
 

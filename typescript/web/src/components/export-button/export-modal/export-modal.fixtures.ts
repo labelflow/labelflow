@@ -1,20 +1,20 @@
+import {
+  CountLabelsOfDatasetQuery,
+  CountLabelsOfDatasetQueryVariables,
+} from "../../../graphql-types/CountLabelsOfDatasetQuery";
+import {
+  ExportDatasetUrlQuery,
+  ExportDatasetUrlQueryVariables,
+} from "../../../graphql-types/ExportDatasetUrlQuery";
 import { ExportFormat } from "../../../graphql-types/globalTypes";
+import { BASIC_DATASET_DATA } from "../../../utils/fixtures";
 import {
   ApolloMockResponse,
   ApolloMockResponses,
 } from "../../../utils/tests/apollo-mock";
-import { BASIC_DATASET_DATA } from "../../../utils/tests/data.fixtures";
 import { EXPORT_DATASET_URL_QUERY } from "./export-dataset";
 import { COUNT_LABELS_OF_DATASET_QUERY } from "./export-modal.context";
 import { getDatasetExportName } from "./get-dataset-export-name";
-import {
-  CountLabelsOfDatasetQueryVariables,
-  CountLabelsOfDatasetQuery,
-} from "../../../graphql-types/CountLabelsOfDatasetQuery";
-import {
-  ExportDatasetUrlQueryVariables,
-  ExportDatasetUrlQuery,
-} from "../../../graphql-types/ExportDatasetUrlQuery";
 
 const datasetName = getDatasetExportName(
   BASIC_DATASET_DATA.slug,

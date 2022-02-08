@@ -1,15 +1,14 @@
 /* eslint-disable import/first */
 import { act, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-
-import {
-  BASIC_LABEL_DATA,
-  DEEP_DATASET_WITH_CLASSES_DATA,
-} from "../../../utils/tests/data.fixtures";
 import { mockMatchMedia } from "../../../utils/mock-window";
 
 mockMatchMedia(jest);
 
+import {
+  BASIC_LABEL_DATA,
+  DEEP_DATASET_WITH_CLASSES_DATA,
+} from "../../../utils/fixtures";
 import { mockWorkspace } from "../../../utils/tests/mock-workspace";
 
 mockWorkspace({

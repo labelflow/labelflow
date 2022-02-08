@@ -1,5 +1,5 @@
-import { MATCH_ANY_PARAMETERS } from "wildcard-mock-link";
 import { v4 as uuid } from "uuid";
+import { MATCH_ANY_PARAMETERS } from "wildcard-mock-link";
 import {
   CREATE_LABEL_MUTATION,
   DELETE_LABEL_MUTATION,
@@ -9,13 +9,10 @@ import {
   CreateLabelActionMutationVariables,
 } from "../../../graphql-types/CreateLabelActionMutation";
 import {
-  ApolloMockResponse,
-  ApolloMockResponses,
-} from "../../../utils/tests/apollo-mock";
-import {
   DeleteLabelActionMutation,
   DeleteLabelActionMutationVariables,
 } from "../../../graphql-types/DeleteLabelActionMutation";
+import { ApolloMockResponse, ApolloMockResponses } from "../../../utils/tests";
 
 export const CREATE_LABEL_ACTION_MOCK: ApolloMockResponse<
   CreateLabelActionMutation,

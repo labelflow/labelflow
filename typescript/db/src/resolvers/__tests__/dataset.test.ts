@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client";
 import { v4 as uuidV4 } from "uuid";
-import { getPrismaClient } from "../../prisma-client";
 import { client, user } from "../../dev/apollo-client";
+import { getPrismaClient } from "../../prisma-client";
 import { createDataset, createWorkspace } from "../../utils/tests";
 
 // @ts-ignore

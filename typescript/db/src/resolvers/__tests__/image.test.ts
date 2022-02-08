@@ -1,12 +1,11 @@
 import { gql } from "@apollo/client";
 import { v4 as uuidV4 } from "uuid";
-
-import { processImage } from "../../repository/image-processing";
-import { getPrismaClient } from "../../prisma-client";
 import { client, user } from "../../dev/apollo-client";
+import { getPrismaClient } from "../../prisma-client";
+import { processImage } from "../../repository/image-processing";
 import {
-  createWorkspace,
   createDataset,
+  createWorkspace,
   CREATE_IMAGE_MUTATION,
 } from "../../utils/tests";
 

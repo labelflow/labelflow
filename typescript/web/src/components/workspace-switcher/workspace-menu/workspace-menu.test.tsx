@@ -12,14 +12,13 @@ import { mockWorkspace } from "../../../utils/tests/mock-workspace";
 
 mockWorkspace();
 
-import {
-  ApolloMockResponses,
-  renderWithWrapper,
-  USER_WITH_WORKSPACES_QUERY_MOCK,
-  WORKSPACE_DATA,
-} from "../../../utils/tests";
 import { useUser } from "../../../hooks";
 import { ResponsiveBreadcrumbs } from "../../layout/top-bar/breadcrumbs";
+import {
+  USER_WITH_WORKSPACES_QUERY_MOCK,
+  WORKSPACE_DATA,
+} from "../../../utils/fixtures";
+import { ApolloMockResponses, renderWithWrapper } from "../../../utils/tests";
 import { WorkspaceMenu } from "./workspace-menu";
 
 const APOLLO_MOCKS: ApolloMockResponses = [USER_WITH_WORKSPACES_QUERY_MOCK];

@@ -8,16 +8,14 @@
   "include": ["**/*.ts", "**/*.tsx"],
   "exclude": [
     "node_modules",
-    "**/*.graphql",
-    "**/__tests__",
-    "**/__stories__",
     "**/*.test.ts",
-    "**/*.stories.ts",
-    "**/*.fixtures.ts",
     "**/*.test.tsx",
+    "**/*.stories.ts",
     "**/*.stories.tsx",
+    "**/*.fixtures.ts",
     "**/*.fixtures.tsx",
-    "**/utils/tests",
-    "**/utils/stories"
+    "src/utils/fixtures",
+    "src/utils/tests",
+    "src/utils/stories"
   ]
 }

@@ -1,14 +1,14 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
+import { WorkspacePlan } from ".prisma/client";
 import { gql } from "@apollo/client";
-import { v4 as uuidV4 } from "uuid";
 import {
   MembershipRole,
   Workspace,
   WorkspaceType,
 } from "@labelflow/graphql-types";
-import { getPrismaClient } from "../../prisma-client";
+import { v4 as uuidV4 } from "uuid";
 import { client, user } from "../../dev/apollo-client";
-import { WorkspacePlan } from ".prisma/client";
+import { getPrismaClient } from "../../prisma-client";
 import { createMembership, createWorkspace } from "../../utils/tests";
 
 // @ts-ignore

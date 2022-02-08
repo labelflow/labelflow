@@ -11,14 +11,14 @@ import { mockNextRouter } from "../../../utils/tests/router-mocks";
 
 mockNextRouter();
 
-import { useRouter } from "next/router";
-import { Labels } from "./labels";
-import { useLabelingStore } from "../../../connectors/labeling-state";
-import VectorSource from "ol/source/Vector";
 import { MockedProvider as MockedApolloProvider } from "@apollo/client/testing";
-import { getApolloMockLink } from "../../../utils/tests/apollo-mock";
+import VectorSource from "ol/source/Vector";
+import { useRouter } from "next/router";
+import { useLabelingStore } from "../../../connectors/labeling-state";
+import { DEEP_DATASET_WITH_LABELS_DATA } from "../../../utils/fixtures";
+import { getApolloMockLink } from "../../../utils/tests";
+import { Labels } from "./labels";
 import { APOLLO_MOCKS } from "./labels.fixtures";
-import { DEEP_DATASET_WITH_LABELS_DATA } from "../../../utils/tests/data.fixtures";
 
 const renderLabels = (imageId: string): { current: OlMap | null } => {
   const mapRef: { current: OlMap | null } = { current: null };

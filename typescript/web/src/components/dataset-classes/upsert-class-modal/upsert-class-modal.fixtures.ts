@@ -1,18 +1,6 @@
-import { v4 as uuid } from "uuid";
 import { pick } from "lodash/fp";
+import { v4 as uuid } from "uuid";
 import { MATCH_ANY_PARAMETERS } from "wildcard-mock-link";
-import {
-  ApolloMockResponse,
-  ApolloMockResponses,
-} from "../../../utils/tests/apollo-mock";
-import { DATASET_LABEL_CLASSES_QUERY } from "./dataset-label-classes.query";
-import { CREATE_LABEL_CLASS_MUTATION } from "./create-label-class.mutation";
-import { LABEL_CLASS_EXISTS_QUERY } from "./label-class-exists.query";
-import { UPDATE_LABEL_CLASS_NAME_MUTATION } from "./update-label-class-name.mutation";
-import {
-  DEEP_DATASET_WITH_CLASSES_DATA,
-  BASIC_LABEL_CLASS_DATA,
-} from "../../../utils/tests/data.fixtures";
 import {
   CreateLabelClassMutation,
   CreateLabelClassMutationVariables,
@@ -29,6 +17,15 @@ import {
   UpdateLabelClassNameMutation,
   UpdateLabelClassNameMutationVariables,
 } from "../../../graphql-types/UpdateLabelClassNameMutation";
+import {
+  BASIC_LABEL_CLASS_DATA,
+  DEEP_DATASET_WITH_CLASSES_DATA,
+} from "../../../utils/fixtures";
+import { ApolloMockResponse, ApolloMockResponses } from "../../../utils/tests";
+import { CREATE_LABEL_CLASS_MUTATION } from "./create-label-class.mutation";
+import { DATASET_LABEL_CLASSES_QUERY } from "./dataset-label-classes.query";
+import { LABEL_CLASS_EXISTS_QUERY } from "./label-class-exists.query";
+import { UPDATE_LABEL_CLASS_NAME_MUTATION } from "./update-label-class-name.mutation";
 
 export const UPDATED_LABEL_CLASS_MOCK_NAME = "My New Class Name";
 

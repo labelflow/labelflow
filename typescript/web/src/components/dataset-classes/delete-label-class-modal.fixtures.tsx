@@ -1,27 +1,24 @@
-import React from "react";
 import { pick } from "lodash/fp";
-import {
-  DeleteLabelClassModal,
-  DELETE_LABEL_CLASS_MUTATION,
-} from "./delete-label-class-modal";
-import { GET_LABEL_CLASS_BY_ID_QUERY } from "./dataset-classes.query";
-import {
-  DatasetClassesContext,
-  DatasetClassesState,
-} from "./dataset-classes.context";
-import { BASIC_LABEL_CLASS_DATA } from "../../utils/tests/data.fixtures";
-import {
-  ApolloMockResponse,
-  ApolloMockResponses,
-} from "../../utils/tests/apollo-mock";
-import {
-  GetLabelClassByIdQuery,
-  GetLabelClassByIdQueryVariables,
-} from "../../graphql-types/GetLabelClassByIdQuery";
+import React from "react";
 import {
   DeleteLabelClassMutation,
   DeleteLabelClassMutationVariables,
 } from "../../graphql-types/DeleteLabelClassMutation";
+import {
+  GetLabelClassByIdQuery,
+  GetLabelClassByIdQueryVariables,
+} from "../../graphql-types/GetLabelClassByIdQuery";
+import { BASIC_LABEL_CLASS_DATA } from "../../utils/fixtures";
+import { ApolloMockResponse, ApolloMockResponses } from "../../utils/tests";
+import {
+  DatasetClassesContext,
+  DatasetClassesState,
+} from "./dataset-classes.context";
+import { GET_LABEL_CLASS_BY_ID_QUERY } from "./dataset-classes.query";
+import {
+  DeleteLabelClassModal,
+  DELETE_LABEL_CLASS_MUTATION,
+} from "./delete-label-class-modal";
 
 export type TestComponentProps = {
   setDeleteClassId?: () => void;

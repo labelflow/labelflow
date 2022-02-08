@@ -7,9 +7,8 @@ mockWorkspace();
 import {
   BASIC_DATASET_DATA,
   DEEP_DATASET_WITH_CLASSES_DATA,
-  renderWithWrapper,
-  RenderWithWrapperResult,
-} from "../../utils/tests";
+} from "../../utils/fixtures";
+import { renderWithWrapper, RenderWithWrapperResult } from "../../utils/tests";
 import { DatasetClasses } from "./dataset-classes";
 import { APOLLO_MOCKS } from "./dataset-classes.fixtures";
 

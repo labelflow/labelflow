@@ -3,7 +3,7 @@ import { act, fireEvent, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { isNil } from "lodash/fp";
 
-import { BASIC_LABEL_CLASS_DATA } from "../../../utils/tests/data.fixtures";
+import { BASIC_LABEL_CLASS_DATA } from "../../../utils/fixtures";
 import { mockWorkspace } from "../../../utils/tests/mock-workspace";
 
 mockWorkspace({
@@ -15,15 +15,15 @@ import {
   RenderWithWrapperResult,
 } from "../../../utils/tests";
 import {
+  DatasetClassesContext,
+  DatasetClassesState,
+} from "../dataset-classes.context";
+import {
   APOLLO_MOCKS,
   CREATE_LABEL_CLASS_DEFAULT_MOCK,
   UPDATED_LABEL_CLASS_MOCK_NAME,
   UPDATE_LABEL_CLASS_NAME_MOCK,
 } from "./upsert-class-modal.fixtures";
-import {
-  DatasetClassesContext,
-  DatasetClassesState,
-} from "../dataset-classes.context";
 
 jest.mock(
   "use-debounce",

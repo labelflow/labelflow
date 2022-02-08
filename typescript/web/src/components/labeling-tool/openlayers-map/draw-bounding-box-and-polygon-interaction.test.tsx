@@ -9,19 +9,15 @@ import { Geometry } from "ol/geom";
 import Polygon, { fromExtent } from "ol/geom/Polygon";
 import { DrawEvent, DrawEventType } from "ol/interaction/Draw";
 import { MockedProvider as MockedApolloProvider } from "@apollo/client/testing";
-import { BASIC_IMAGE_DATA } from "../../../utils/tests/data.fixtures";
+import { BASIC_IMAGE_DATA } from "../../../utils/fixtures";
 import { mockNextRouter } from "../../../utils/tests/router-mocks";
 
 mockNextRouter({ query: { imageId: BASIC_IMAGE_DATA.id } });
 
 import { useUndoStore } from "../../../connectors/undo-store";
 import { useLabelingStore, Tools } from "../../../connectors/labeling-state";
-
+import { ApolloMockResponses, getApolloMockLink } from "../../../utils/tests";
 import { DrawInteraction } from "./draw-interaction";
-import {
-  ApolloMockResponses,
-  getApolloMockLink,
-} from "../../../utils/tests/apollo-mock";
 import {
   APOLLO_MOCKS,
   CREATE_LABEL_ACTION_MOCK,

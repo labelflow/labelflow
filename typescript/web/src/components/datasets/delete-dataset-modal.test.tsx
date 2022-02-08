@@ -1,7 +1,7 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import { getApolloMockWrapper } from "../../utils/tests/apollo-mock";
+import { BASIC_DATASET_DATA } from "../../utils/fixtures";
+import { getApolloMockWrapper } from "../../utils/tests";
 import { DeleteDatasetModal } from "./delete-dataset-modal";
-import { BASIC_DATASET_DATA } from "../../utils/tests/data.fixtures";
 import {
   APOLLO_MOCKS,
   DELETE_DATASET_BY_ID_MOCK,

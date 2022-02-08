@@ -7,8 +7,7 @@ import {
   queryParamsDecorator,
   storybookTitle,
 } from "../../../utils/stories";
-import { getApolloMockLink } from "../../../utils/tests/apollo-mock";
-
+import { getApolloMockLink } from "../../../utils/tests";
 import { GRAPHQL_MOCKS } from "../../workspace-name-input/workspace-name-input.fixtures";
 
 export default {

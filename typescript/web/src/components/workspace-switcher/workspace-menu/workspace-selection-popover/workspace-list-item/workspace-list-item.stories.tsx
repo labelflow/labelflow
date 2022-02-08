@@ -1,5 +1,5 @@
 import { chakraDecorator, storybookTitle } from "../../../../../utils/stories";
-import { WORKSPACE_DATA } from "../../../../../utils/tests";
+import { WORKSPACE_DATA } from "../../../../../utils/fixtures";
 import { WorkspaceListItem } from "./workspace-list-item";
 
 export default {

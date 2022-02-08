@@ -2,20 +2,20 @@ import { waitFor, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom/extend-expect";
 
+import { BASIC_DATASET_DATA } from "../../../utils/fixtures";
 import { mockWorkspace } from "../../../utils/tests/mock-workspace";
-import { BASIC_DATASET_DATA } from "../../../utils/tests/data.fixtures";
 
 mockWorkspace({ queryParams: { datasetSlug: BASIC_DATASET_DATA.slug } });
 
 import {
-  ImportImagesModal,
-  ImportImagesModalProps,
-} from "./import-images-modal";
-import { ERROR_MOCKS, IMPORT_BUTTON_MOCKS } from "../import-button.fixtures";
-import {
   renderWithWrapper,
   RenderWithWrapperResult,
 } from "../../../utils/tests";
+import { ERROR_MOCKS, IMPORT_BUTTON_MOCKS } from "../import-button.fixtures";
+import {
+  ImportImagesModal,
+  ImportImagesModalProps,
+} from "./import-images-modal";
 
 const files = [
   new File(["Hello"], "hello.png", { type: "image/png" }),

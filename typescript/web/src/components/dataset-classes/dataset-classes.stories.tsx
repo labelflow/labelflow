@@ -1,9 +1,9 @@
 import React from "react";
 import { DatasetClasses } from ".";
-import { chakraDecorator } from "../../utils/stories/chakra-decorator";
+import { DEEP_DATASET_WITH_CLASSES_DATA } from "../../utils/fixtures";
 import { getApolloMockDecorator } from "../../utils/stories/apollo-mock-decorator";
+import { chakraDecorator } from "../../utils/stories/chakra-decorator";
 import { APOLLO_MOCKS } from "./dataset-classes.fixtures";
-import { DEEP_DATASET_WITH_CLASSES_DATA } from "../../utils/tests/data.fixtures";
 
 export default {
   title: "web/Dataset classes/Classes",

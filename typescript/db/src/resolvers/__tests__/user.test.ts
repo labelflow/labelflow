@@ -1,8 +1,8 @@
 import { gql } from "@apollo/client";
-import { v4 as uuidV4 } from "uuid";
 import { MembershipRole, User } from "@labelflow/graphql-types";
-import { getPrismaClient } from "../../prisma-client";
+import { v4 as uuidV4 } from "uuid";
 import { client, user as loggedInUser, user } from "../../dev/apollo-client";
+import { getPrismaClient } from "../../prisma-client";
 import { createMembership, createWorkspace } from "../../utils/tests";
 
 // @ts-ignore

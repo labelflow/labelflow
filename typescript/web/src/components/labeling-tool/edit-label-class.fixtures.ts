@@ -36,13 +36,10 @@ import {
   UpdateLabelClassOfLabelMutationVariables,
 } from "../../graphql-types/UpdateLabelClassOfLabelMutation";
 import {
-  ApolloMockResponse,
-  ApolloMockResponses,
-} from "../../utils/tests/apollo-mock";
-import {
   BASIC_LABEL_DATA,
   DEEP_DATASET_WITH_CLASSES_DATA,
-} from "../../utils/tests/data.fixtures";
+} from "../../utils/fixtures";
+import { ApolloMockResponse, ApolloMockResponses } from "../../utils/tests";
 import {
   GET_LABEL_CLASSES_OF_DATASET_QUERY,
   GET_LABEL_QUERY as GET_LABEL_WITH_LABEL_CLASS_QUERY,

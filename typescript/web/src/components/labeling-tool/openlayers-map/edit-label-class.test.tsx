@@ -4,7 +4,7 @@ import userEvent from "@testing-library/user-event";
 import {
   BASIC_LABEL_DATA,
   DEEP_DATASET_WITH_CLASSES_DATA,
-} from "../../../utils/tests/data.fixtures";
+} from "../../../utils/fixtures";
 
 import { mockWorkspace } from "../../../utils/tests/mock-workspace";
 
@@ -16,7 +16,6 @@ mockWorkspace({
 });
 
 import { useLabelingStore, Tools } from "../../../connectors/labeling-state";
-import { EditLabelClass } from "./edit-label-class";
 import {
   APOLLO_MOCKS,
   createLabelClassActionMockResult,
@@ -24,6 +23,7 @@ import {
   updateLabelClassOfLabelMockResult,
 } from "../edit-label-class.fixtures";
 import { renderWithWrapper } from "../../../utils/tests";
+import { EditLabelClass } from "./edit-label-class";
 
 const onCloseEditLabelClass = jest.fn();
 

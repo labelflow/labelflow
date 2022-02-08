@@ -1,5 +1,4 @@
 import { DocumentNode } from "@apollo/client";
-import { WorkspacePlan } from "../../graphql-types/globalTypes";
 import { UserQuery_user } from "../../graphql-types/UserQuery";
 import { UserWithWorkspacesQuery_user } from "../../graphql-types/UserWithWorkspacesQuery";
 import {
@@ -11,7 +10,8 @@ import {
   USER_QUERY,
   USER_WITH_WORKSPACES_QUERY,
 } from "../../shared-queries/user.query";
-import { ApolloMockResponse } from "./apollo-mock";
+import { ApolloMockResponse } from "../tests/apollo-mock";
+import { WORKSPACE_DATA } from "./workspace.fixtures";
 
 export const USER_QUERY_DATA: UserQuery_user = {
   id: "e66e5aff-86f2-4543-bb51-7b414f5f6774",
@@ -19,14 +19,6 @@ export const USER_QUERY_DATA: UserQuery_user = {
   createdAt: new Date(),
   email: null,
   image: null,
-};
-
-export const WORKSPACE_DATA = {
-  id: "d0dbc712-8fb8-4b27-bad9-85de7cea5c86",
-  slug: "full-user-workspace",
-  name: "Full user workspace",
-  plan: WorkspacePlan.Community,
-  image: "https://labelflow.ai/static/icon-512x512.png",
 };
 
 export const USER_WITH_WORKSPACES_DATA: UserWithWorkspacesQuery_user = {

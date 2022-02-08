@@ -4,8 +4,8 @@ import { client, user } from "../../dev/apollo-client";
 import { getPrismaClient } from "../../prisma-client";
 import {
   createDataset,
-  createWorkspace,
   createLabelClass,
+  createWorkspace,
 } from "../../utils/tests";
 
 // @ts-ignore

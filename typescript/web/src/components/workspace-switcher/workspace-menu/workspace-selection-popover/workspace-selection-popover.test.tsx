@@ -8,13 +8,14 @@ mockWorkspace();
 import { UserWithWorkspacesQuery_user_memberships_workspace } from "../../../../graphql-types/UserWithWorkspacesQuery";
 import { USER_WITH_WORKSPACES_QUERY } from "../../../../shared-queries/user.query";
 import { WithWorkspacesUserTuple } from "../../../../hooks";
-import { WorkspaceSelectionPopover } from "./workspace-selection-popover";
 import {
-  mockUserQuery,
-  renderWithWrapper,
   USER_WITH_WORKSPACES_DATA,
   WORKSPACE_DATA,
-} from "../../../../utils/tests";
+  mockUserQuery,
+} from "../../../../utils/fixtures";
+
+import { renderWithWrapper } from "../../../../utils/tests";
+import { WorkspaceSelectionPopover } from "./workspace-selection-popover";
 
 const [onClose, onSelectedWorkspaceChange, createNewWorkspace] = [
   jest.fn(),

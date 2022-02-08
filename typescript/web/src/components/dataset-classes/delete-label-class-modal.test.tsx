@@ -1,15 +1,12 @@
 import { act, fireEvent, render, screen } from "@testing-library/react";
 import { WildcardMockLink } from "wildcard-mock-link";
-import {
-  getApolloMockLink,
-  getApolloMockWrapper,
-} from "../../utils/tests/apollo-mock";
-import { BASIC_LABEL_CLASS_DATA } from "../../utils/tests/data.fixtures";
+import { BASIC_LABEL_CLASS_DATA } from "../../utils/fixtures";
+import { getApolloMockLink, getApolloMockWrapper } from "../../utils/tests";
 import { DeleteLabelClassModal } from "./delete-label-class-modal";
 import {
-  TestComponent,
   APOLLO_MOCKS,
   DELETE_LABEL_CLASS_SIMPLE_MOCK,
+  TestComponent,
 } from "./delete-label-class-modal.fixtures";
 
 const setDeleteClassId = jest.fn();

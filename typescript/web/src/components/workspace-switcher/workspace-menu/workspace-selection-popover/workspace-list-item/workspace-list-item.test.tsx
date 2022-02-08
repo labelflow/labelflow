@@ -1,12 +1,13 @@
 import "@testing-library/jest-dom/extend-expect";
 import { ReactElement } from "react";
+import { waitFor } from "@testing-library/react";
 
 import { mockWorkspace } from "../../../../../utils/tests/mock-workspace";
 
 mockWorkspace();
 
-import { waitFor } from "@testing-library/react";
-import { renderWithWrapper, WORKSPACE_DATA } from "../../../../../utils/tests";
+import { WORKSPACE_DATA } from "../../../../../utils/fixtures";
+import { renderWithWrapper } from "../../../../../utils/tests";
 import { WorkspaceListItem } from "./workspace-list-item";
 
 const renderTest = async (element: ReactElement) =>

@@ -1,80 +1,6 @@
-import { SetRequired } from "type-fest";
-import {
-  Dataset,
-  LabelClass,
-  LabelsAggregates,
-  Workspace,
-  Image,
-  Label,
-} from "@labelflow/graphql-types";
-import { LabelType } from "../../graphql-types/globalTypes";
-import { WORKSPACE_DATA } from "./user.fixtures";
-
-export type WorkspaceData = Pick<Workspace, "slug" | "id">;
-
-export type DatasetData = Pick<Dataset, "id" | "name" | "slug"> & {
-  labelClasses: Omit<LabelClassData, "dataset">[];
-  images: Omit<ImageData, "dataset">[];
-  workspace: WorkspaceData;
-};
-
-export type LabelClassData = Pick<
-  LabelClass,
-  "id" | "index" | "name" | "color"
-> & {
-  shortcut: string;
-  dataset: DatasetData;
-  labelsAggregates: LabelsAggregates;
-};
-
-export type LabelData = SetRequired<
-  Pick<
-    Label,
-    | "id"
-    | "type"
-    | "imageId"
-    | "x"
-    | "y"
-    | "width"
-    | "height"
-    | "smartToolInput"
-    | "geometry"
-  >,
-  "smartToolInput"
-> & {
-  labelClass: LabelClassData;
-};
-
-export type ImageData = SetRequired<
-  Pick<Image, "id" | "name" | "url" | "thumbnail200Url" | "width" | "height">,
-  "thumbnail200Url"
-> & {
-  dataset: DatasetData;
-  labels: (Omit<LabelData, "imageId" | "labelClass"> & {
-    labelClass: Omit<LabelClassData, "dataset">;
-  })[];
-};
-
-const LABEL_GEOMETRY_DATA: Omit<LabelData, "id" | "imageId" | "labelClass"> = {
-  type: LabelType.Box,
-  x: 100,
-  y: 200,
-  width: 100,
-  height: 100,
-  smartToolInput: null,
-  geometry: {
-    type: "Polygon",
-    coordinates: [
-      [
-        [100, 200],
-        [100, 300],
-        [200, 300],
-        [200, 200],
-        [100, 200],
-      ],
-    ],
-  },
-};
+import { DatasetData, LabelClassData } from "./data-types";
+import { LABEL_GEOMETRY_DATA } from "./label-geometry.fixtures";
+import { WORKSPACE_DATA } from "./workspace.fixtures";
 
 export const BASIC_DATASET_DATA: DatasetData = {
   id: "8f47e891-3b24-427a-8db0-dab362fbe269",
@@ -176,7 +102,7 @@ export const DEEP_DATASET_WITH_CLASSES_DATA: DatasetData = {
   images: [],
 };
 
-const NESTED_LABEL_CLASS_IN_DATASET_WITH_LABELS_DATA: Omit<
+export const NESTED_LABEL_CLASS_IN_DATASET_WITH_LABELS_DATA: Omit<
   LabelClassData,
   "dataset"
 > = {
@@ -235,21 +161,4 @@ export const DEEP_DATASET_WITH_LABELS_DATA: DatasetData = {
       ],
     },
   ],
-};
-
-export const BASIC_IMAGE_DATA: ImageData = {
-  ...BASIC_DATASET_DATA.images[0],
-  dataset: BASIC_DATASET_DATA,
-};
-
-export const BASIC_LABEL_CLASS_DATA: LabelClassData = {
-  ...DEEP_DATASET_WITH_CLASSES_DATA.labelClasses[0],
-  dataset: DEEP_DATASET_WITH_CLASSES_DATA,
-};
-
-export const BASIC_LABEL_DATA: LabelData = {
-  id: "87a60aa2-8057-11ec-80be-5f791a5254d5",
-  labelClass: BASIC_LABEL_CLASS_DATA,
-  imageId: BASIC_IMAGE_DATA.id,
-  ...LABEL_GEOMETRY_DATA,
 };

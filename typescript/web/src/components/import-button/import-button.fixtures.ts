@@ -21,11 +21,11 @@ import {
 } from "../../graphql-types/WorkspaceDatasetsPageDatasetsQuery";
 import { DATASET_IMAGES_PAGE_DATASET_QUERY } from "../../shared-queries/dataset-images-page.query";
 import { WORKSPACE_DATASETS_PAGE_DATASETS_QUERY } from "../../shared-queries/workspace-datasets-page.query";
+import { BASIC_DATASET_DATA } from "../../utils/fixtures";
 import {
   ApolloMockResponse,
   ApolloMockResponses,
 } from "../../utils/tests/apollo-mock";
-import { BASIC_DATASET_DATA } from "../../utils/tests/data.fixtures";
 import { GET_IMAGE_UPLOAD_TARGET_MUTATION } from "../../utils/upload-file";
 import { GET_DATASET_BY_SLUG_QUERY } from "../datasets/datasets.query";
 import { CREATE_MANY_IMAGES_MUTATION } from "./import-images-modal/modal-dropzone/import-dropped-files/import-images";

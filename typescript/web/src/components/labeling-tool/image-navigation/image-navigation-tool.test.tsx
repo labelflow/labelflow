@@ -8,13 +8,13 @@ import { mockWorkspace } from "../../../utils/tests/mock-workspace";
 mockWorkspace();
 
 import { useRouter } from "next/router";
-import { ImageNavigationTool } from "./image-navigation-tool";
-import { APOLLO_MOCKS } from "./image-navigation-tool.fixtures";
 import {
   BASIC_IMAGE_DATA,
   DEEP_DATASET_WITH_IMAGES_DATA,
-  renderWithWrapper,
-} from "../../../utils/tests";
+} from "../../../utils/fixtures";
+import { renderWithWrapper } from "../../../utils/tests";
+import { ImageNavigationTool } from "./image-navigation-tool";
+import { APOLLO_MOCKS } from "./image-navigation-tool.fixtures";
 
 const renderImageNavigationTool = () =>
   renderWithWrapper(<ImageNavigationTool />, {
