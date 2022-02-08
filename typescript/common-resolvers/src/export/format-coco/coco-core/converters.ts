@@ -168,7 +168,6 @@ const convertImageToCocoImage = (
     )}.${mime.extension(mimetype)}`,
     coco_url: externalUrl ?? "",
     date_captured: createdAt,
-    flickr_url: "",
     height,
     width,
     license: 0,
