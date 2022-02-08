@@ -82,7 +82,7 @@ function renderModalAndImport(filesToImport = files, props = {}) {
   });
 
   const input = screen.getByLabelText(
-    /Drop images, annotations, or click to browse/i
+    /Drop images and annotations or click to browse/i
   );
   return waitFor(() => userEvent.upload(input, filesToImport));
 }
@@ -112,7 +112,7 @@ test("should display the number of valid images", async () => {
     expect(screen.getByText(/Completed 2 of 2 items/i)).toBeDefined()
   );
   expect(
-    screen.queryByLabelText(/Drop images, annotations, or click to browse/i)
+    screen.queryByLabelText(/Drop images and annotations or click to browse/i)
   ).not.toBeInTheDocument();
 });
 

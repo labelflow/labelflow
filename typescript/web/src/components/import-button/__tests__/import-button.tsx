@@ -84,7 +84,7 @@ test("should clear the modal content when closed", async () => {
   userEvent.click(screen.getByLabelText("Add images"));
 
   const input = screen.getByLabelText(
-    /Drop images, annotations, or click to browse/i
+    /Drop images and annotations or click to browse/i
   );
   await waitFor(() => userEvent.upload(input, files));
 
@@ -101,7 +101,7 @@ test("should clear the modal content when closed", async () => {
   userEvent.click(screen.getByLabelText("Add images"));
 
   expect(
-    screen.getByLabelText(/Drop images, annotations, or click to browse/i)
+    screen.getByLabelText(/Drop images and annotations or click to browse/i)
   ).toBeDefined();
 
   // Ensure that we really don't have the old state
@@ -109,7 +109,7 @@ test("should clear the modal content when closed", async () => {
 
   await waitFor(() =>
     userEvent.upload(
-      screen.getByLabelText(/Drop images, annotations, or click to browse/i),
+      screen.getByLabelText(/Drop images and annotations or click to browse/i),
       [new File(["Bonjour"], "bonjour.png", { type: "image/png" })]
     )
   );

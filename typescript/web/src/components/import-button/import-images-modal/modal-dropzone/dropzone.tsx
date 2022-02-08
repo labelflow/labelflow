@@ -80,7 +80,7 @@ export const Dropzone = ({
           fontSize={{ base: "5xl", md: "9xl" }}
           color={mode("gray.600", "gray.400")}
         />
-        <Text>Drop images, annotations, or click to browse</Text>
+        <Text>Drop images and annotations or click to browse</Text>
         <Text
           fontWeight="500"
           fontSize={{ base: "xs", md: "sm" }}
