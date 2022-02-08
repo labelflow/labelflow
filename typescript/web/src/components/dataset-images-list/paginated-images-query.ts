@@ -31,7 +31,7 @@ export const flushPaginatedImagesCache = async (
     fields: {
       images: (data: ImagesQueryCache, details) =>
         details.storeFieldName === storeFieldName
-          ? { images: [], totalCount: undefined }
+          ? { items: [], totalCount: undefined }
           : data,
     },
   });

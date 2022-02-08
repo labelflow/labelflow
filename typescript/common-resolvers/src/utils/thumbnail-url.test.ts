@@ -20,6 +20,8 @@ describe(`${getThumbnailUrlFromImageUrl.name} <=> ${getImageUrlFromThumbnailUrl.
       size: 500,
       extension: "jpeg",
       url: "https://example.com/image.jpg",
+      urlPrefix: "https://example.com/",
+      urlSuffix: "image.jpg",
     });
   });
 
@@ -39,6 +41,8 @@ describe(`${getThumbnailUrlFromImageUrl.name} <=> ${getImageUrlFromThumbnailUrl.
       size: 12,
       extension: "png",
       url: "/coucou/176371/loulou/image.jpeg.gif",
+      urlPrefix: "/coucou/176371/loulou/",
+      urlSuffix: "image.jpeg.gif",
     });
   });
 
@@ -56,6 +60,8 @@ describe(`${getThumbnailUrlFromImageUrl.name} <=> ${getImageUrlFromThumbnailUrl.
       size: 43,
       extension: "png",
       url: "ffds.jpeg.gif",
+      urlPrefix: undefined,
+      urlSuffix: "ffds.jpeg.gif",
     });
   });
 });

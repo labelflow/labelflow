@@ -15,7 +15,6 @@ const value: ExportModalState = {
   setExportFormat: () => {},
   loading: false,
   datasetId: "",
-  numberUndefinedLabelsOfDataset: 0,
   datasetSlug: "",
   setIsExportRunning: () => {},
   isExportRunning: true,

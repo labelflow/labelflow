@@ -58,7 +58,9 @@ export const ImportImagesModal = ({
         query: WORKSPACE_DATASETS_PAGE_DATASETS_QUERY,
         fetchPolicy: "network-only",
       });
-      client.refetchQueries({ include: ["PaginatedImagesQuery"] });
+      client.refetchQueries({
+        include: [WORKSPACE_DATASETS_PAGE_DATASETS_QUERY],
+      });
     }
   }, [hasUploaded]);
 

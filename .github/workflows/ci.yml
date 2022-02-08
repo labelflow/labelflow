@@ -89,7 +89,7 @@ jobs:
         with:
           python-version: 3.8
       - name: Install Black
-        run: pip install black
+        run: pip install black==21.5b1
       - name: Run black --check .
         run: black --check .
       # - name: If needed, commit black changes to the pull request

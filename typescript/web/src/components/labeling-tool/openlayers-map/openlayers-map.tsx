@@ -1,5 +1,5 @@
 import { ApolloProvider, gql, useApolloClient, useQuery } from "@apollo/client";
-import { Box, ThemeProvider } from "@chakra-ui/react";
+import { Box, Flex, ThemeProvider } from "@chakra-ui/react";
 import { Map } from "@labelflow/react-openlayers-fiber";
 import * as Sentry from "@sentry/nextjs";
 import { isEmpty, isNil } from "lodash/fp";
@@ -170,11 +170,10 @@ export const OpenlayersMap = () => {
       : 1;
 
   return (
-    <Box
+    <Flex
+      grow={1}
+      direction="column"
       sx={{
-        display: "flex",
-        width: "100%",
-        height: "100%",
         "& .pointereventsnone": {
           // This !importsant is needed to take over the "pointer-events: auto" put by openlayers
           // overlays, for example on the classifications tags
@@ -190,8 +189,9 @@ export const OpenlayersMap = () => {
         ref={mapRef}
         args={{ controls: empty }}
         style={{
-          height: "100%",
+          flexGrow: 1,
           width: "100%",
+          height: 0,
           // Touch action none fixes a bug with shitty touch experience in openlayers
           // See https://github.com/openlayers/openlayers/issues/10757
           touchAction: "none",
@@ -321,9 +321,10 @@ export const OpenlayersMap = () => {
       {[Tools.BOX, Tools.IOG].includes(selectedTool) &&
         boxDrawingToolState !== DrawingToolState.DRAWING &&
         !isContextMenuOpen && <CursorGuides map={mapRef.current} />}
-      {/* This div is needed to prevent a weird error that seems related to the EditLabelClass component */}
+      {/* FIXME Although its children are optional, this Box is always
+          displayed in-order to prevent a weird error that seems related
+          to the EditLabelClass component */}
       <Box
-        key="toto"
         sx={{
           position: "absolute",
           pointerEvents: "none",
@@ -369,6 +370,6 @@ export const OpenlayersMap = () => {
           )
         }
       </div>
-    </Box>
+    </Flex>
   );
 };

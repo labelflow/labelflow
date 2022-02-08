@@ -90,7 +90,8 @@ const usePaginationState = ({
     itemCount,
     total,
     setPagination,
-    setPerPage: (value: number) => setPagination({ perPage: value }),
+    setPerPage: (value: number) =>
+      setPagination({ perPage: value, page: perPage !== value ? 1 : page }),
     setPage: (value: number) => setPagination({ page: value }),
     ...useNavigation({ page, total, setPagination }),
   };

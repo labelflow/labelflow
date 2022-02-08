@@ -2,16 +2,28 @@ import { ApolloProvider } from "@apollo/client";
 import { HStack, Spacer } from "@chakra-ui/react";
 import { ReactNode } from "react";
 import { distantDatabaseClient } from "../../../connectors/apollo-client/client";
+import {
+  ANNOUNCEKIT_WARNING_URL,
+  Announcements,
+  AnnouncementsButton,
+} from "../../announcements";
 import { ResponsiveBreadcrumbs } from "./breadcrumbs";
 import { HelpMenu } from "./help-menu";
 import { UserMenu } from "./user-menu";
 
-export type Props = {
+const TopBarAnnouncements = () => (
+  <>
+    <Announcements widget={ANNOUNCEKIT_WARNING_URL} labels={["warning"]} />
+    <AnnouncementsButton boosters={false} />
+  </>
+);
+
+export type TopBarProps = {
   breadcrumbs?: ReactNode;
   rightContent?: ReactNode;
 };
 
-export const TopBar = ({ breadcrumbs, rightContent }: Props) => (
+export const TopBar = ({ breadcrumbs, rightContent }: TopBarProps) => (
   <ApolloProvider client={distantDatabaseClient}>
     <HStack
       as="header"
@@ -24,6 +36,7 @@ export const TopBar = ({ breadcrumbs, rightContent }: Props) => (
       <ResponsiveBreadcrumbs>{breadcrumbs}</ResponsiveBreadcrumbs>
       <Spacer minWidth="6" />
       {rightContent}
+      <TopBarAnnouncements />
       <HelpMenu />
       <UserMenu />
     </HStack>

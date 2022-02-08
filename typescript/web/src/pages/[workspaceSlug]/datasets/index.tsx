@@ -1,61 +1,24 @@
-import React, { useCallback } from "react";
-import { useQuery } from "@apollo/client";
-
 import { Flex, Text } from "@chakra-ui/react";
-
-import { useQueryParam } from "use-query-params";
-
 import { useRouter } from "next/router";
-import { isEmpty } from "lodash/fp";
-import { Spinner } from "../../../components/spinner";
-import { Meta } from "../../../components/meta";
-import { Layout } from "../../../components/layout";
-import { IdParam, BoolParam } from "../../../utils/query-param-bool";
-import {
-  NewDatasetCard,
-  DatasetCard,
-  DatasetCardBox,
-} from "../../../components/datasets";
-import { UpsertDatasetModal } from "../../../components/datasets/upsert-dataset-modal";
-import { DeleteDatasetModal } from "../../../components/datasets/delete-dataset-modal";
+import { useCallback } from "react";
+import { useQueryParam } from "use-query-params";
 import { Authenticated } from "../../../components/auth";
-import { WelcomeModal } from "../../../components/welcome-manager";
 import { CookieBanner } from "../../../components/cookie-banner";
+import { DatasetList, NewDatasetCard } from "../../../components/datasets";
+import { DeleteDatasetModal } from "../../../components/datasets/delete-dataset-modal";
+import { UpsertDatasetModal } from "../../../components/datasets/upsert-dataset-modal";
+import { Layout } from "../../../components/layout";
 import { WorkspaceTabBar } from "../../../components/layout/tab-bar/workspace-tab-bar";
-import { WorkspaceSwitcher } from "../../../components/workspace-switcher";
 import { NavLogo } from "../../../components/logo/nav-logo";
-import { WORKSPACE_DATASETS_PAGE_DATASETS_QUERY } from "../../../shared-queries/workspace-datasets-page.query";
-import {
-  WorkspaceDatasetsPageDatasetsQuery,
-  WorkspaceDatasetsPageDatasetsQueryVariables,
-} from "../../../graphql-types/WorkspaceDatasetsPageDatasetsQuery";
+import { Meta } from "../../../components/meta";
+import { WelcomeModal } from "../../../components/welcome-manager";
+import { WorkspaceSwitcher } from "../../../components/workspace-switcher";
 import { useWorkspace } from "../../../hooks";
-
-const LoadingCard = () => (
-  <DatasetCardBox>
-    <Flex
-      w="100%"
-      h="2xs"
-      direction="column"
-      alignItems="center"
-      justify="center"
-    >
-      <Spinner color="brand.500" size="xl" />
-    </Flex>
-  </DatasetCardBox>
-);
+import { BoolParam, IdParam } from "../../../utils/query-param-bool";
 
 const Body = () => {
   const { slug: workspaceSlug } = useWorkspace();
   const { isReady } = useRouter();
-
-  const { data: datasetsResult, loading } = useQuery<
-    WorkspaceDatasetsPageDatasetsQuery,
-    WorkspaceDatasetsPageDatasetsQueryVariables
-  >(WORKSPACE_DATASETS_PAGE_DATASETS_QUERY, {
-    variables: { where: { workspaceSlug } },
-    skip: isEmpty(workspaceSlug),
-  });
 
   const [isCreatingDataset, setIsCreatingDataset] = useQueryParam(
     "modal-create-dataset",
@@ -114,6 +77,7 @@ const Body = () => {
           isOpen={deleteDatasetId != null}
           onClose={onClose}
           datasetId={deleteDatasetId}
+          workspaceSlug={workspaceSlug as string}
         />
 
         <Flex direction="row" wrap="wrap" p={4}>
@@ -123,37 +87,11 @@ const Body = () => {
               setIsCreatingDataset(true, "replaceIn");
             }}
           />
-          {loading ? (
-            <LoadingCard />
-          ) : (
-            datasetsResult?.datasets?.map(
-              ({
-                id,
-                slug,
-                images,
-                name,
-                imagesAggregates,
-                labelsAggregates,
-                labelClassesAggregates,
-              }) => (
-                <DatasetCard
-                  key={id}
-                  url={`/${workspaceSlug}/datasets/${slug}`}
-                  imageUrl={images[0]?.thumbnail500Url ?? undefined}
-                  datasetName={name}
-                  imagesCount={imagesAggregates.totalCount}
-                  labelClassesCount={labelClassesAggregates.totalCount}
-                  labelsCount={labelsAggregates.totalCount}
-                  editDataset={() => {
-                    setEditDatasetId(id, "replaceIn");
-                  }}
-                  deleteDataset={() => {
-                    setDeleteDatasetId(id, "replaceIn");
-                  }}
-                />
-              )
-            )
-          )}
+          <DatasetList
+            workspaceSlug={workspaceSlug}
+            setDeleteDatasetId={setDeleteDatasetId}
+            setEditDatasetId={setEditDatasetId}
+          />
         </Flex>
       </Layout>
     </>

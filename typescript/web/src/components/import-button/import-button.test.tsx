@@ -30,7 +30,9 @@ describe(ImportButton, () => {
 
     userEvent.click(getByLabelText("Add images"));
 
-    const input = getByLabelText(/drop folders or images/i);
+    const input = getByLabelText(
+      /Drop images and annotations or click to browse/i
+    );
     await waitFor(() => userEvent.upload(input, files));
     await act(() => apolloMockLink.waitForAllResponses());
     await waitFor(() =>
@@ -41,7 +43,9 @@ describe(ImportButton, () => {
     await waitFor(() => expect(queryByText("Import")).not.toBeInTheDocument());
 
     userEvent.click(getByLabelText("Add images"));
-    expect(getByLabelText(/drop folders or images/i)).toBeDefined();
+    expect(
+      getByLabelText(/Drop images and annotations or click to browse/i)
+    ).toBeDefined();
 
     expect(queryByText(/Completed 2 of 2 items/i)).toBeNull();
   });

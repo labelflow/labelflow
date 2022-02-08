@@ -51,7 +51,10 @@ const renderTestAndImport = async (
     expect(getByTestId("import-images-modal-content")).toBeDefined()
   );
   await waitFor(() =>
-    userEvent.upload(getByLabelText(/drop folders or images/i), filesToImport)
+    userEvent.upload(
+      getByLabelText(/Drop images and annotations or click to browse/i),
+      filesToImport
+    )
   );
   return result;
 };
@@ -62,7 +65,9 @@ describe(ImportImagesModal, () => {
     await waitFor(() =>
       expect(getByText(/Completed 2 of 2 items/i)).toBeDefined()
     );
-    expect(queryByLabelText(/drop folders or images/i)).not.toBeInTheDocument();
+    expect(
+      queryByLabelText(/Drop images and annotations or click to browse/i)
+    ).not.toBeInTheDocument();
   });
 
   it("displays an indicator when upload succeeded", async () => {

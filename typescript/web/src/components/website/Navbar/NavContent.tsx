@@ -29,16 +29,20 @@ const GitHubButton = ({ isMobile, ...props }: GitHubButtonProps) => {
   const label = "Star us on GitHub";
   const mobileProps = isMobile ? { w: "full", size: "lg", mt: "5" } : {};
   return (
-    <Button
-      variant={isMobile ? "outline" : "ghost"}
-      aria-label={label}
-      leftIcon={<StarIcon fontSize="2xl" />}
-      onClick={() => window.open(APP_GITHUB_URL, "_blank")}
-      {...mobileProps}
-      {...props}
-    >
-      {label}
-    </Button>
+    <NextLink href={APP_GITHUB_URL} passHref>
+      <Button
+        as="a"
+        target="_blank"
+        rel="noreferrer"
+        variant={isMobile ? "outline" : "ghost"}
+        aria-label={label}
+        leftIcon={<StarIcon fontSize="2xl" />}
+        {...mobileProps}
+        {...props}
+      >
+        {label}
+      </Button>
+    </NextLink>
   );
 };
 
@@ -135,7 +139,7 @@ const DesktopNavContent = (props: FlexProps) => {
           </Box>
         ))}
       </HStack>
-      <HStack spacing="3">
+      <HStack spacing="3" justify="space-between" align="center">
         <GitHubButton />
         <SignInButton />
         <TryItNowButton display={{ base: "none", xl: "inherit" }} />

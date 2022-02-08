@@ -91,7 +91,7 @@ export const ImportImagesModalDropzone = ({
           Import
         </Heading>
         <Text fontSize="lg" fontWeight="medium">
-          Start working with your images. Stay in control of your data.{" "}
+          Start working with your images and annotation files.
           <Button
             colorScheme="brand"
             variant="link"
