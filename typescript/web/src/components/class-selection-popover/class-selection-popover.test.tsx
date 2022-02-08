@@ -50,45 +50,40 @@ const renderClassSelectionPopover = (
   );
 };
 
-describe("Class selection popover tests", () => {
+describe(ClassSelectionPopover, () => {
   beforeEach(() => {
     jest.resetAllMocks();
   });
 
-  test("Should render component", () => {
+  it("renders component", () => {
     renderClassSelectionPopover(labelClasses);
-
     expect(screen.getByPlaceholderText(/search/i)).toBeDefined();
   });
 
-  test("Should render no classes if none were given", () => {
+  it("renders no classes if none were given", () => {
     renderClassSelectionPopover([]);
-
     expect(screen.queryByText(/person/i)).not.toBeInTheDocument();
     expect(screen.queryByText(/dog/i)).not.toBeInTheDocument();
   });
 
-  test("Should render all classes in the list", () => {
+  it("renders all classes in the list", () => {
     renderClassSelectionPopover(labelClasses);
-
     expect(screen.getByText(/person/i)).toBeDefined();
     expect(screen.getByText(/dog/i)).toBeDefined();
   });
 
-  test("Should render matching classes with user search", async () => {
+  it("renders matching classes with user search", async () => {
     renderClassSelectionPopover(labelClasses);
     userEvent.type(screen.getByPlaceholderText(/search/i), "Perso");
-
     expect(screen.getByText(/person/i)).toBeDefined();
     expect(screen.queryByText(/dog/i)).not.toBeInTheDocument();
     expect(screen.getByText(/Create class/)).toBeDefined();
     expect(screen.getByText(/"Perso"/)).toBeDefined();
   });
 
-  test("Should call onSelectedClassChange when clicking on existing class", async () => {
+  it("calls onSelectedClassChange when clicking on existing class", async () => {
     renderClassSelectionPopover(labelClasses);
     userEvent.click(screen.getByRole("option", { name: /Person/ }));
-
     expect(onSelectedClassChange).toHaveBeenCalledWith({
       id: "coaisndoiasndi",
       index: 0,
@@ -101,11 +96,10 @@ describe("Class selection popover tests", () => {
     });
   });
 
-  test("Should call onSelectedClassChange when clicking on create new class", async () => {
+  it("calls onSelectedClassChange when clicking on create new class", async () => {
     renderClassSelectionPopover(labelClasses);
     userEvent.type(screen.getByPlaceholderText(/search/i), "Perso");
     userEvent.click(screen.getByRole("option", { name: /Create class/ }));
-
     expect(createNewClass).toHaveBeenCalledWith("Perso");
   });
 });

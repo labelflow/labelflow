@@ -1,16 +1,16 @@
 import { gql } from "@apollo/client";
 import { v4 as uuidV4 } from "uuid";
 
-import {
-  LabelCreateInput,
-  MutationCreateWorkspaceArgs,
-  Workspace,
-} from "@labelflow/graphql-types";
+import { LabelCreateInput } from "@labelflow/graphql-types";
 import { processImage } from "../../repository/image-processing";
 import { getPrismaClient } from "../../prisma-client";
 import { client, user } from "../../dev/apollo-client";
 import { LabelType } from ".prisma/client";
-import { CREATE_IMAGE_MUTATION } from "../../utils/tests";
+import {
+  createDataset,
+  createWorkspace,
+  CREATE_IMAGE_MUTATION,
+} from "../../utils/tests";
 
 jest.mock("../../repository/image-processing");
 const mockedProcessImage = processImage as jest.Mock;
@@ -78,56 +78,6 @@ const DELETE_LABEL_MUTATION_TEST = gql`
   }
 `;
 
-const createWorkspace = async (
-  data?: Partial<MutationCreateWorkspaceArgs["data"]>
-) => {
-  return await client.mutate<{
-    createWorkspace: Pick<Workspace, "id" | "name" | "slug" | "plan" | "type">;
-  }>({
-    mutation: gql`
-      mutation createWorkspace($data: WorkspaceCreateInput!) {
-        createWorkspace(data: $data) {
-          id
-          name
-          slug
-          plan
-          type
-        }
-      }
-    `,
-    variables: { data: { ...data, name: data?.name ?? "test" } },
-  });
-};
-
-const createDataset = async (
-  name: string,
-  workspaceSlug: string,
-  datasetId?: string | null
-) => {
-  return await client.mutate({
-    mutation: gql`
-      mutation createDataset(
-        $datasetId: String
-        $name: String!
-        $workspaceSlug: String!
-      ) {
-        createDataset(
-          data: { id: $datasetId, name: $name, workspaceSlug: $workspaceSlug }
-        ) {
-          id
-          name
-        }
-      }
-    `,
-    variables: {
-      name,
-      datasetId,
-      workspaceSlug,
-    },
-    fetchPolicy: "no-cache",
-  });
-};
-
 const createLabel = (data: LabelCreateInput) => {
   return client.mutate({
     mutation: gql`
@@ -175,40 +125,42 @@ const createImage = async (
   return id;
 };
 
-beforeAll(async () => {
-  await (
-    await getPrismaClient()
-  ).user.create({ data: { id: testUser1Id, name: "test-user-1" } });
-  await (
-    await getPrismaClient()
-  ).user.create({ data: { id: testUser2Id, name: "test-user-2" } });
-});
-
-beforeEach(async () => {
-  user.id = testUser1Id;
-  await (await getPrismaClient()).membership.deleteMany({});
-  await (await getPrismaClient()).workspace.deleteMany({});
-  await createWorkspace({ name: "My workspace" });
-  await createDataset("My dataset", "my-workspace", testDatasetId);
-  await createImage("test-image", testDatasetId, testImageId);
-});
-
-afterAll(async () => {
-  // Needed to avoid having the test process running indefinitely after the test suite has been run
-  await (await getPrismaClient()).$disconnect();
-});
-
 describe("Access control for label", () => {
+  beforeAll(async () => {
+    await (
+      await getPrismaClient()
+    ).user.create({ data: { id: testUser1Id, name: "test-user-1" } });
+    await (
+      await getPrismaClient()
+    ).user.create({ data: { id: testUser2Id, name: "test-user-2" } });
+  });
+
+  beforeEach(async () => {
+    user.id = testUser1Id;
+    await (await getPrismaClient()).membership.deleteMany({});
+    await (await getPrismaClient()).workspace.deleteMany({});
+    await createWorkspace({ name: "My workspace" });
+    await createDataset("My dataset", "my-workspace", testDatasetId);
+    await createImage("test-image", testDatasetId, testImageId);
+  });
+
+  afterAll(async () => {
+    // Needed to avoid having the test process running indefinitely after the test suite has been run
+    await (await getPrismaClient()).$disconnect();
+  });
+
   it("allows to create a label to a user that has access to the image", async () => {
     const createdLabel = await createLabel(labelData);
     expect(createdLabel.data.createLabel.id).toEqual(testLabelId);
   });
+
   it("fails to create a label when the user does not have access to the image", async () => {
     user.id = testUser2Id;
     await expect(() => createLabel(labelData)).rejects.toThrow(
       `User not authorized to access image`
     );
   });
+
   it("allows to get a label to the user that created it", async () => {
     const createdLabel = await createLabel(labelData);
     const { data } = await client.query({
@@ -229,6 +181,7 @@ describe("Access control for label", () => {
     expect(data.label.id).toEqual(testLabelId);
     expect(data.labelClass).toEqual(undefined);
   });
+
   it("fails to get a label if the user does not have access to it", async () => {
     const createdLabel = await createLabel(labelData);
     user.id = testUser2Id;
@@ -247,6 +200,7 @@ describe("Access control for label", () => {
       })
     ).rejects.toThrow(`User not authorized to access label`);
   });
+
   it("gives the amount of labels the user has access to", async () => {
     await createLabel(labelData);
     await createLabel({ ...labelData, id: undefined });
@@ -264,6 +218,7 @@ describe("Access control for label", () => {
     });
     expect(data.labelsAggregates.totalCount).toEqual(3);
   });
+
   it("returns zero elements if user does not have access to any label", async () => {
     await createLabel(labelData);
     await createLabel({ ...labelData, id: undefined });
@@ -282,6 +237,7 @@ describe("Access control for label", () => {
     });
     expect(data.labelsAggregates.totalCount).toEqual(0);
   });
+
   it("allows to update a label to a user that has access to it", async () => {
     const createdLabel = await createLabel(labelData);
     await client.query({
@@ -313,6 +269,7 @@ describe("Access control for label", () => {
       getGeometryFromExtent({ ...labelDataExtent, x: 0, y: 0 }).coordinates
     );
   });
+
   it("fails to update a label when the user does not have access to it", async () => {
     const createdLabel = await createLabel(labelData);
     user.id = testUser2Id;
@@ -330,6 +287,7 @@ describe("Access control for label", () => {
       })
     ).rejects.toThrow(`User not authorized to access label`);
   });
+
   it("allows to delete a label to a user that has access to it", async () => {
     const createdLabel = await createLabel(labelData);
     await client.query({
@@ -352,6 +310,7 @@ describe("Access control for label", () => {
     });
     expect(data.labelsAggregates.totalCount).toEqual(0);
   });
+
   it("fails to delete a label to a user that has access to it", async () => {
     const createdLabel = await createLabel(labelData);
     user.id = testUser2Id;

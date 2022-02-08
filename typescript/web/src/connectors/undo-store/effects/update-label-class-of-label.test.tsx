@@ -40,62 +40,62 @@ jest.mock("../../../apollo-client/schema-client", () => {
 
 const { perform } = useUndoStore.getState();
 
-beforeEach(async () => {
-  jest.clearAllMocks();
-  await perform(
-    createUpdateLabelClassOfLabelEffect(
-      {
-        selectedLabelId: "my label id",
-        selectedLabelClassId: "existing label class id",
-      },
-      { client }
-    )
-  );
-});
-
-it("should update the label class of a label", async () => {
-  expect(client.mutate).toHaveBeenNthCalledWith(
-    1,
-    expect.objectContaining({
-      variables: {
-        data: {
-          labelClassId: "existing label class id",
+describe("UpdateLabelClassOfLabelEffect", () => {
+  beforeEach(async () => {
+    jest.clearAllMocks();
+    await perform(
+      createUpdateLabelClassOfLabelEffect(
+        {
+          selectedLabelId: "my label id",
+          selectedLabelClassId: "existing label class id",
         },
-        where: { id: "my label id" },
-      },
-    })
-  );
-});
+        { client }
+      )
+    );
+  });
 
-it("should undo the update of the label class of a label", async () => {
-  await useUndoStore.getState().undo();
-
-  expect(client.mutate).toHaveBeenNthCalledWith(
-    2,
-    expect.objectContaining({
-      variables: {
-        data: {
-          labelClassId: "previous label class id",
+  it("updates the label class of a label", async () => {
+    expect(client.mutate).toHaveBeenNthCalledWith(
+      1,
+      expect.objectContaining({
+        variables: {
+          data: {
+            labelClassId: "existing label class id",
+          },
+          where: { id: "my label id" },
         },
-        where: { id: "my label id" },
-      },
-    })
-  );
-});
+      })
+    );
+  });
 
-it("should redo the update of the label class of a label", async () => {
-  await useUndoStore.getState().undo();
-  await useUndoStore.getState().redo();
-
-  expect(client.mutate).toHaveBeenNthCalledWith(
-    3,
-    expect.objectContaining({
-      variables: {
-        data: {
-          labelClassId: "existing label class id",
+  it("undo the update of the label class of a label", async () => {
+    await useUndoStore.getState().undo();
+    expect(client.mutate).toHaveBeenNthCalledWith(
+      2,
+      expect.objectContaining({
+        variables: {
+          data: {
+            labelClassId: "previous label class id",
+          },
+          where: { id: "my label id" },
         },
-        where: { id: "my label id" },
-      },
-    })
-  );
+      })
+    );
+  });
+
+  it("redo the update of the label class of a label", async () => {
+    await useUndoStore.getState().undo();
+    await useUndoStore.getState().redo();
+    expect(client.mutate).toHaveBeenNthCalledWith(
+      3,
+      expect.objectContaining({
+        variables: {
+          data: {
+            labelClassId: "existing label class id",
+          },
+          where: { id: "my label id" },
+        },
+      })
+    );
+  });
 });

@@ -20,29 +20,29 @@ const files = [
   new File(["Error"], "error.pdf", { type: "application/pdf" }),
 ];
 
-test("should clear the modal content when closed", async () => {
-  const { apolloMockLink, getAllByLabelText, getByLabelText, queryByText } =
-    await renderWithWrapper(<ImportButton />, {
-      auth: { withWorkspaces: true },
-      apollo: { extraMocks: IMPORT_BUTTON_MOCKS },
-    });
+describe(ImportButton, () => {
+  it("clears the modal content when closed", async () => {
+    const { apolloMockLink, getAllByLabelText, getByLabelText, queryByText } =
+      await renderWithWrapper(<ImportButton />, {
+        auth: { withWorkspaces: true },
+        apollo: { extraMocks: IMPORT_BUTTON_MOCKS },
+      });
 
-  userEvent.click(getByLabelText("Add images"));
+    userEvent.click(getByLabelText("Add images"));
 
-  const input = getByLabelText(/drop folders or images/i);
-  await waitFor(() => userEvent.upload(input, files));
-  await act(() => apolloMockLink.waitForAllResponses());
-  await waitFor(() =>
-    expect(getAllByLabelText("Upload succeed")).toHaveLength(2)
-  );
+    const input = getByLabelText(/drop folders or images/i);
+    await waitFor(() => userEvent.upload(input, files));
+    await act(() => apolloMockLink.waitForAllResponses());
+    await waitFor(() =>
+      expect(getAllByLabelText("Upload succeed")).toHaveLength(2)
+    );
 
-  userEvent.click(getByLabelText("Close"));
-  await waitFor(() => {
-    expect(queryByText("Import")).not.toBeInTheDocument();
+    userEvent.click(getByLabelText("Close"));
+    await waitFor(() => expect(queryByText("Import")).not.toBeInTheDocument());
+
+    userEvent.click(getByLabelText("Add images"));
+    expect(getByLabelText(/drop folders or images/i)).toBeDefined();
+
+    expect(queryByText(/Completed 2 of 2 items/i)).toBeNull();
   });
-
-  userEvent.click(getByLabelText("Add images"));
-  expect(getByLabelText(/drop folders or images/i)).toBeDefined();
-
-  expect(queryByText(/Completed 2 of 2 items/i)).toBeNull();
 });

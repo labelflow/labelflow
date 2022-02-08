@@ -1,5 +1,10 @@
 import { isEmpty } from "lodash/fp";
-import { ErrorOverride, withErrorOverrides, withErrorOverridesAsync } from ".";
+import {
+  ErrorOverride,
+  overrideError,
+  withErrorOverrides,
+  withErrorOverridesAsync,
+} from ".";
 
 type TestCase = [string | undefined, string | undefined];
 
@@ -63,6 +68,6 @@ const TEST_CASES_ENTRIES = Object.entries(TEST_CASES).flatMap<
   [`${description} (async)`, async () => await runAsyncTest(testCase)],
 ]);
 
-describe("override-error", () => {
+describe(overrideError, () => {
   it.concurrent.each(TEST_CASES_ENTRIES)("%s", async (_, exec) => await exec());
 });

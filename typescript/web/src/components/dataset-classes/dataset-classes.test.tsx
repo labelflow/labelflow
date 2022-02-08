@@ -32,23 +32,23 @@ const renderComponent = async (dataset: {
   const { getByText } = result;
   await waitFor(() => {
     const element = getByText(`Classes (${dataset.labelClasses.length})`);
-    return expect(element).toBeDefined();
+    expect(element).toBeDefined();
   });
   return result;
 };
 
-describe("Dataset class list tests", () => {
-  it("Renders if the dataset has no classes", () =>
+describe(DatasetClasses, () => {
+  it("renders if the dataset has no classes", () =>
     renderComponent(BASIC_DATASET_DATA));
 
-  it("Renders the dataset classes", async () => {
+  it("renders the dataset classes", async () => {
     const { getByText } = await renderComponent(DEEP_DATASET_WITH_CLASSES_DATA);
     DEEP_DATASET_WITH_CLASSES_DATA.labelClasses.forEach((labelClass) =>
       expect(getByText(labelClass.name)).toBeDefined()
     );
   });
 
-  it("Renders the delete class modal", async () => {
+  it("renders the delete class modal", async () => {
     const { getByText, getAllByLabelText } = await renderComponent(
       DEEP_DATASET_WITH_CLASSES_DATA
     );
@@ -58,7 +58,7 @@ describe("Dataset class list tests", () => {
     await waitFor(() => expect(getByText(deleteMessage)).toBeDefined());
   });
 
-  it("Renders the edit class modal", async () => {
+  it("renders the edit class modal", async () => {
     await renderComponent(DEEP_DATASET_WITH_CLASSES_DATA);
     fireEvent.click(screen.getAllByLabelText(/Edit class/i)[0]);
     await waitFor(() => expect(screen.getByText("Edit Class")).toBeDefined());

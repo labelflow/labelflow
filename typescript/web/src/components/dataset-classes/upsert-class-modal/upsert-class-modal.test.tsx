@@ -60,7 +60,7 @@ const renderTest = async (
   return result;
 };
 
-describe("UpsertClassModal", () => {
+describe(UpsertClassModal, () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
@@ -77,10 +77,8 @@ describe("UpsertClassModal", () => {
     const { getByLabelText } = await renderTest({
       editClass: BASIC_LABEL_CLASS_DATA,
     });
-
     const input = getByLabelText(/Class name input/i) as HTMLInputElement;
     const button = getByLabelText(/Update/i);
-
     expect(input.value).toEqual(BASIC_LABEL_CLASS_DATA.name);
     expect(button).not.toHaveAttribute("disabled");
   });
@@ -90,33 +88,23 @@ describe("UpsertClassModal", () => {
       editClass: BASIC_LABEL_CLASS_DATA,
     });
     const input = getByLabelText(/Class name input/i) as HTMLInputElement;
-
     fireEvent.change(input, { target: { value: "My new class" } });
     expect(input.value).toBe("My new class");
-
     const button = getByLabelText(/Update/i);
-    await waitFor(() => {
-      expect(button).not.toHaveAttribute("disabled");
-    });
+    await waitFor(() => expect(button).not.toHaveAttribute("disabled"));
   });
 
   it("creates a label class when the form is submitted", async () => {
     const { getByLabelText } = await renderTest({
       datasetId: BASIC_LABEL_CLASS_DATA.dataset.id,
     });
-
     const input = getByLabelText(/Class name input/i) as HTMLInputElement;
     const button = getByLabelText(/Create/i);
-
     fireEvent.change(input, {
       target: { value: UPDATED_LABEL_CLASS_MOCK_NAME },
     });
     fireEvent.click(button);
-
-    await waitFor(() => {
-      expect(onClose).toHaveBeenCalled();
-    });
-
+    await waitFor(() => expect(onClose).toHaveBeenCalled());
     expect(CREATE_LABEL_CLASS_DEFAULT_MOCK.result).toHaveBeenCalled();
   });
 
@@ -125,14 +113,11 @@ describe("UpsertClassModal", () => {
       datasetId: BASIC_LABEL_CLASS_DATA.dataset.id,
     });
     const input = getByLabelText(/class name input/i) as HTMLInputElement;
-
     fireEvent.change(input, {
       target: { value: BASIC_LABEL_CLASS_DATA.name },
     });
     await act(() => apolloMockLink.waitForAllResponses());
-
     const button = getByLabelText(/create/i);
-
     await waitFor(() => {
       expect(button).toHaveAttribute("disabled");
       expect(getByText(/this name is already taken/i)).toBeDefined();
@@ -143,24 +128,17 @@ describe("UpsertClassModal", () => {
     const { getByLabelText, apolloMockLink } = await renderTest({
       editClass: BASIC_LABEL_CLASS_DATA,
     });
-
     const input = getByLabelText(/class name input/i) as HTMLInputElement;
     const button = getByLabelText(/update/i);
-
     userEvent.click(input);
     userEvent.clear(input);
     userEvent.type(input, UPDATED_LABEL_CLASS_MOCK_NAME);
-    await waitFor(() => {
-      expect(input.value).toBe(UPDATED_LABEL_CLASS_MOCK_NAME);
-    });
-
+    await waitFor(() =>
+      expect(input.value).toBe(UPDATED_LABEL_CLASS_MOCK_NAME)
+    );
     userEvent.click(button);
     await act(() => apolloMockLink.waitForAllResponses());
-
-    await waitFor(() => {
-      expect(onClose).toHaveBeenCalled();
-    });
-
+    await waitFor(() => expect(onClose).toHaveBeenCalled());
     expect(UPDATE_LABEL_CLASS_NAME_MOCK.result).toHaveBeenCalled();
   });
 });

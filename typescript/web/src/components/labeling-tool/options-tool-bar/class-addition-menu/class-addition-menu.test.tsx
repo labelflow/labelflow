@@ -50,47 +50,41 @@ const renderClassAdditionMenu = (
   );
 };
 
-describe("Class addition popover tests", () => {
+describe(ClassAdditionMenu, () => {
   beforeEach(() => {
     jest.resetAllMocks();
   });
 
-  test("Should render component", () => {
+  it("renders component", () => {
     renderClassAdditionMenu(labelClasses);
-
     expect(screen.getByRole("button")).toBeDefined();
   });
 
-  test("Should render with a selected label class", () => {
+  it("renders with a selected label class", () => {
     renderClassAdditionMenu(labelClasses, labelClasses[0]);
-
     expect(screen.getByRole("button")).toBeDefined();
   });
 
-  test("Should open popover when clicking on the button", () => {
+  it("opens popover when clicking on the button", () => {
     renderClassAdditionMenu(labelClasses);
-
     expect(screen.getByRole("dialog", { hidden: true })).toBeDefined();
     userEvent.click(screen.getByRole("button"));
-
     expect(setIsOpen).toHaveBeenCalledWith(true);
   });
 
-  test("Should close popover when clicking on a class", () => {
+  it("closes popover when clicking on a class", () => {
     renderClassAdditionMenu(labelClasses, undefined, true);
     userEvent.click(
       screen.getByRole("option", { name: RegExp(labelClasses[0].name) })
     );
-
     expect(onSelectedClassChange).toHaveBeenCalledWith(labelClasses[0]);
     expect(setIsOpen).toHaveBeenCalledWith(false);
   });
 
-  test("Should close popover when creating a new class", () => {
+  it("closes popover when creating a new class", () => {
     renderClassAdditionMenu(labelClasses, undefined, true);
     userEvent.type(screen.getByPlaceholderText(/search/i), "Perso");
     userEvent.click(screen.getByRole("option", { name: /Create class/ }));
-
     expect(createNewClass).toHaveBeenCalledWith("Perso");
     expect(setIsOpen).toHaveBeenCalledWith(false);
   });

@@ -36,6 +36,7 @@ describe("Access control for dataset", () => {
     const createdDataset = await createDataset("My dataset", "my-workspace");
     expect(createdDataset.data.createDataset.name).toEqual("My dataset");
   });
+
   it("fails to create a dataset when the user does not have access to the workspace", async () => {
     await createWorkspace({ name: "My workspace" });
     user.id = testUser2Id;
@@ -43,6 +44,7 @@ describe("Access control for dataset", () => {
       createDataset("My dataset", "my-workspace")
     ).rejects.toThrow(`User not authorized to access workspace`);
   });
+
   it("allows to get a dataset to the user that created it", async () => {
     await createWorkspace({ name: "My workspace" });
     const createdDataset = await createDataset("My dataset", "my-workspace");
@@ -60,6 +62,7 @@ describe("Access control for dataset", () => {
     });
     expect(data.dataset.name).toEqual("My dataset");
   });
+
   it("fails to get a dataset if the user does not have access to it", async () => {
     await createWorkspace({ name: "My workspace" });
     const createdDataset = await createDataset("My dataset", "my-workspace");
@@ -79,6 +82,7 @@ describe("Access control for dataset", () => {
       })
     ).rejects.toThrow(`User not authorized to access dataset`);
   });
+
   it("allows to get a list of datasets to a user that has access to the workspace", async () => {
     await createWorkspace({ name: "My workspace" });
     await createDataset("My dataset", "my-workspace");
@@ -96,6 +100,7 @@ describe("Access control for dataset", () => {
     });
     expect(data.datasets.length).toEqual(1);
   });
+
   it("returns an emtpy list of datasets if the user does not have access to the workspace", async () => {
     await createWorkspace({ name: "My workspace" });
     await createDataset("My dataset", "my-workspace");
@@ -114,6 +119,7 @@ describe("Access control for dataset", () => {
     });
     expect(data.datasets.length).toEqual(0);
   });
+
   it("allows to update a dataset to a user that has access to it", async () => {
     await createWorkspace({ name: "My workspace" });
     const createdDataset = await createDataset("My dataset", "my-workspace");
@@ -146,6 +152,7 @@ describe("Access control for dataset", () => {
     });
     expect(data.dataset.name).toEqual("Name changed");
   });
+
   it("fails to update a dataset when the user does not have access to it", async () => {
     await createWorkspace({ name: "My workspace" });
     const createdDataset = await createDataset("My dataset", "my-workspace");
@@ -168,6 +175,7 @@ describe("Access control for dataset", () => {
       })
     ).rejects.toThrow(`User not authorized to access dataset`);
   });
+
   it("allows to delete a dataset to a user that has access to it", async () => {
     await createWorkspace({ name: "My workspace" });
     const createdDataset = await createDataset("My dataset", "my-workspace");
@@ -198,6 +206,7 @@ describe("Access control for dataset", () => {
     });
     expect(data.datasets.length).toEqual(0);
   });
+
   it("fails to delete a dataset to a user that has access to it", async () => {
     await createWorkspace({ name: "My workspace" });
     const createdDataset = await createDataset("My dataset", "my-workspace");
@@ -219,10 +228,10 @@ describe("Access control for dataset", () => {
       })
     ).rejects.toThrow(`User not authorized to access dataset`);
   });
+
   it("allows to get all information from nested resolvers", async () => {
     await createWorkspace({ name: "My workspace" });
     const createdDataset = await createDataset("My dataset", "my-workspace");
-
     const { data } = await client.query({
       query: gql`
         query dataset($id: ID!) {

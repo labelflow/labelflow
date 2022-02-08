@@ -5,10 +5,9 @@ mockNextRouter();
 
 import { SelectionTool } from "./selection-tool";
 
-describe("Selection tool", () => {
-  it("should be selected by default", () => {
+describe(SelectionTool, () => {
+  it("is selected by default", () => {
     render(<SelectionTool />);
-
     expect(screen.getByRole("checkbox", { checked: true })).toBeDefined();
   });
 });

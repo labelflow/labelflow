@@ -22,34 +22,7 @@ const renderImageNavigationTool = () =>
     apollo: { extraMocks: APOLLO_MOCKS },
   });
 
-beforeEach(async () => {
-  jest.clearAllMocks();
-});
-
-it("displays a dash and a zero when the image id isn't present/when the image list is empty", async () => {
-  const { queryByDisplayValue, queryByText } =
-    await renderImageNavigationTool();
-  // We look for the "left" value, the one in the 'input`
-  expect(queryByDisplayValue(/-/i)).toBeInTheDocument();
-  // We look for the "right" value, the total count.
-  await waitFor(() => expect(queryByText(/0/i)).toBeInTheDocument());
-});
-
-it("displays one when only one image in list", async () => {
-  (useRouter as jest.Mock).mockImplementation(() => ({
-    query: {
-      imageId: BASIC_IMAGE_DATA.id,
-      datasetSlug: BASIC_IMAGE_DATA.dataset.slug,
-      workspaceSlug: BASIC_IMAGE_DATA.dataset.workspace.slug,
-    },
-  }));
-  const { queryByDisplayValue, queryByText } =
-    await renderImageNavigationTool();
-  await waitFor(() => expect(queryByDisplayValue(/1/i)).toBeInTheDocument());
-  await waitFor(() => expect(queryByText(/1/i)).toBeInTheDocument());
-});
-
-const testNeighborImage = (direction: "previous" | "next") => async () => {
+const testNeighborImage = async (direction: "previous" | "next") => {
   const workspaceSlug = DEEP_DATASET_WITH_IMAGES_DATA.workspace.slug;
   const datasetSlug = DEEP_DATASET_WITH_IMAGES_DATA.slug;
   const imageId = DEEP_DATASET_WITH_IMAGES_DATA.images[1].id;
@@ -77,12 +50,37 @@ const testNeighborImage = (direction: "previous" | "next") => async () => {
   );
 };
 
-it(
-  "selects previous image when the left arrow is pressed",
-  testNeighborImage("previous")
-);
+describe(ImageNavigationTool, () => {
+  beforeEach(async () => {
+    jest.clearAllMocks();
+  });
 
-it(
-  "selects next image when the right arrow is pressed",
-  testNeighborImage("next")
-);
+  it("displays a dash and a zero when the image id isn't present/when the image list is empty", async () => {
+    const { queryByDisplayValue, queryByText } =
+      await renderImageNavigationTool();
+    // We look for the "left" value, the one in the 'input`
+    expect(queryByDisplayValue(/-/i)).toBeInTheDocument();
+    // We look for the "right" value, the total count.
+    await waitFor(() => expect(queryByText(/0/i)).toBeInTheDocument());
+  });
+
+  it("displays one when only one image in list", async () => {
+    (useRouter as jest.Mock).mockImplementation(() => ({
+      query: {
+        imageId: BASIC_IMAGE_DATA.id,
+        datasetSlug: BASIC_IMAGE_DATA.dataset.slug,
+        workspaceSlug: BASIC_IMAGE_DATA.dataset.workspace.slug,
+      },
+    }));
+    const { queryByDisplayValue, queryByText } =
+      await renderImageNavigationTool();
+    await waitFor(() => expect(queryByDisplayValue(/1/i)).toBeInTheDocument());
+    await waitFor(() => expect(queryByText(/1/i)).toBeInTheDocument());
+  });
+
+  it("selects previous image when the left arrow is pressed", () =>
+    testNeighborImage("previous"));
+
+  it("selects next image when the right arrow is pressed", () =>
+    testNeighborImage("next"));
+});

@@ -38,83 +38,91 @@ const renderTest = async (extraMocks: ApolloMockResponses) => {
   return { ...result, waitForValueToChange };
 };
 
-test("The currentImageIndex is undefined while loading", async () => {
-  const { result } = await renderTest(NO_IMAGES_MOCKS);
-  expect(result.current.currentImageIndex).toEqual(undefined);
-});
-
-test("The currentImageIndex is null if it can't be found in the images", async () => {
-  const { result, waitForValueToChange } = await renderTest(
-    CURRENT_NOT_IN_IMAGES_MOCKS
-  );
-  await waitForValueToChange(() => result.current.currentImageIndex);
-  expect(result.current.currentImageIndex).toEqual(null);
-});
-
-test("It returns the array of images when loaded", async () => {
-  const { result, waitForValueToChange } = await renderTest(THREE_IMAGES_MOCKS);
-  await waitForValueToChange(() => result.current.images);
-  expect(result.current.images?.length).toEqual(3);
-});
-
-test("It returns the index of the selected image when loaded", async () => {
-  const { result, waitForValueToChange } = await renderTest(THREE_IMAGES_MOCKS);
-  await waitForValueToChange(() => result.current.currentImageIndex);
-  expect(result.current.currentImageIndex).toEqual(1);
-});
-
-describe("Previous and Next ids", () => {
-  test("Previous and Next ids are undefined while loading", async () => {
+describe(useImagesNavigation, () => {
+  it("has an undefined currentImageIndex while loading", async () => {
     const { result } = await renderTest(NO_IMAGES_MOCKS);
-    expect(result.current.previousImageId).toEqual(undefined);
-    expect(result.current.nextImageId).toEqual(undefined);
+    expect(result.current.currentImageIndex).toEqual(undefined);
   });
 
-  test("Previous and Next ids are null when there is no image", async () => {
-    const { result, waitForValueToChange } = await renderTest(NO_IMAGES_MOCKS);
-    await waitForValueToChange(() => result.current.previousImageId);
-    expect(result.current.previousImageId).toEqual(null);
-    expect(result.current.nextImageId).toEqual(null);
-  });
-
-  test("Previous and Next ids are null when the selected image id can't be found in images", async () => {
+  it("has a null currentImageIndex if the image can't be found", async () => {
     const { result, waitForValueToChange } = await renderTest(
       CURRENT_NOT_IN_IMAGES_MOCKS
     );
-    await waitForValueToChange(() => result.current.previousImageId);
-    expect(result.current.previousImageId).toEqual(null);
-    expect(result.current.nextImageId).toEqual(null);
+    await waitForValueToChange(() => result.current.currentImageIndex);
+    expect(result.current.currentImageIndex).toEqual(null);
   });
 
-  test("Previous id is null when the selected image is the first", async () => {
-    const { result, waitForValueToChange } = await renderTest(
-      IMAGE_IS_FIRST_MOCKS
-    );
-    await waitForValueToChange(() => result.current.previousImageId);
-    expect(result.current.previousImageId).toEqual(null);
-  });
-
-  test("Next id is null when the selected image is the last", async () => {
-    const { result, waitForValueToChange } = await renderTest(
-      IMAGE_IS_LAST_MOCKS
-    );
-    await waitForValueToChange(() => result.current.nextImageId);
-    expect(result.current.nextImageId).toEqual(null);
-  });
-
-  test("Previous id is the first one when the selected image is the second", async () => {
+  it("returns the array of images when loaded", async () => {
     const { result, waitForValueToChange } = await renderTest(
       THREE_IMAGES_MOCKS
     );
-    await waitForValueToChange(() => result.current.previousImageId);
-    expect(result.current.previousImageId).toEqual(IMAGE_1_DATA.id);
+    await waitForValueToChange(() => result.current.images);
+    expect(result.current.images?.length).toEqual(3);
   });
 
-  test("Next id is the last one when the selected image is the second", async () => {
+  it("returns the index of the selected image when loaded", async () => {
     const { result, waitForValueToChange } = await renderTest(
       THREE_IMAGES_MOCKS
     );
-    await waitForValueToChange(() => result.current.nextImageId);
-    expect(result.current.nextImageId).toEqual(IMAGE_2_DATA.id);
+    await waitForValueToChange(() => result.current.currentImageIndex);
+    expect(result.current.currentImageIndex).toEqual(1);
+  });
+
+  describe("Previous and Next ids", () => {
+    it("has undefined previous and next ids while loading", async () => {
+      const { result } = await renderTest(NO_IMAGES_MOCKS);
+      expect(result.current.previousImageId).toEqual(undefined);
+      expect(result.current.nextImageId).toEqual(undefined);
+    });
+
+    it("has null previous and next ids when there is no image", async () => {
+      const { result, waitForValueToChange } = await renderTest(
+        NO_IMAGES_MOCKS
+      );
+      await waitForValueToChange(() => result.current.previousImageId);
+      expect(result.current.previousImageId).toEqual(null);
+      expect(result.current.nextImageId).toEqual(null);
+    });
+
+    it("has null previous and next ids when the selected image id can't be found in images", async () => {
+      const { result, waitForValueToChange } = await renderTest(
+        CURRENT_NOT_IN_IMAGES_MOCKS
+      );
+      await waitForValueToChange(() => result.current.previousImageId);
+      expect(result.current.previousImageId).toEqual(null);
+      expect(result.current.nextImageId).toEqual(null);
+    });
+
+    it("has a null previous id when the selected image is the first", async () => {
+      const { result, waitForValueToChange } = await renderTest(
+        IMAGE_IS_FIRST_MOCKS
+      );
+      await waitForValueToChange(() => result.current.previousImageId);
+      expect(result.current.previousImageId).toEqual(null);
+    });
+
+    it("has null next id when the selected image is the last", async () => {
+      const { result, waitForValueToChange } = await renderTest(
+        IMAGE_IS_LAST_MOCKS
+      );
+      await waitForValueToChange(() => result.current.nextImageId);
+      expect(result.current.nextImageId).toEqual(null);
+    });
+
+    it("has previous id as the first one when the selected image is the second", async () => {
+      const { result, waitForValueToChange } = await renderTest(
+        THREE_IMAGES_MOCKS
+      );
+      await waitForValueToChange(() => result.current.previousImageId);
+      expect(result.current.previousImageId).toEqual(IMAGE_1_DATA.id);
+    });
+
+    it("has next id as the last one when the selected image is the second", async () => {
+      const { result, waitForValueToChange } = await renderTest(
+        THREE_IMAGES_MOCKS
+      );
+      await waitForValueToChange(() => result.current.nextImageId);
+      expect(result.current.nextImageId).toEqual(IMAGE_2_DATA.id);
+    });
   });
 });

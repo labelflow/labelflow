@@ -1,4 +1,5 @@
 import { Matcher, render } from "@testing-library/react";
+import { ToggleButtonGroup } from ".";
 import { TestComponent, TestOption } from "./toggle-button-group.fixtures";
 
 type TestCase = [TestOption, TestOption];
@@ -35,7 +36,7 @@ const TEST_CASES: Record<string, TestCase> = {
   "works with ToggleImageButton": ["optionA", "imageOptionC"],
 };
 
-describe("ToggleButtonGroup", () => {
+describe(ToggleButtonGroup, () => {
   it.each(Object.entries(TEST_CASES))(
     "%s",
     async (_, testCase) => await runTest(testCase)

@@ -7,8 +7,8 @@ initMockedDate();
 const DATASET_SLUG = "my-dataset-slug";
 const EXPORT_FORMAT = ExportFormat.COCO;
 
-describe("Get dataset export name", () => {
-  it("Returns the correct name", () => {
+describe(getDatasetExportName, () => {
+  it("returns the correct name", () => {
     const exportName = getDatasetExportName(DATASET_SLUG, EXPORT_FORMAT);
     expect(exportName).toBe("my-dataset-slug-coco-2021-05-31T120000");
   });

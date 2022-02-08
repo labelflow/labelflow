@@ -1,4 +1,5 @@
 import { fireEvent, render, screen } from "@testing-library/react";
+import { LabelClassesTableRow } from "./label-classes-table-row";
 import {
   TestComponent,
   TEST_DATA,
@@ -18,7 +19,7 @@ const renderTestComponent = () => {
   );
 };
 
-describe("LabelClassTableRow", () => {
+describe(LabelClassesTableRow, () => {
   beforeEach(() => {
     setEditClass.mockReset();
     setDeleteClassId.mockReset();

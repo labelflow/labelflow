@@ -11,15 +11,13 @@ const renderTabBar = async (tabs: TabBarItem[]) =>
     apollo: true,
   });
 
-describe("TabBar", () => {
-  beforeEach(() => {});
-
-  it("should not display anything if no tab are passed in the list", async () => {
+describe(TabBar, () => {
+  it("does not display anything if no tab are passed in the list", async () => {
     const { queryByRole } = await renderTabBar([]);
     expect(queryByRole("tablist")).not.toBeInTheDocument();
   });
 
-  it("should display one tab when there is only one tabs in the list", async () => {
+  it("displays one tab when there is only one tabs in the list", async () => {
     const { getAllByRole, getByText, queryByRole } = await renderTabBar([
       { name: "test", url: "some link", isActive: true },
     ]);
@@ -30,7 +28,7 @@ describe("TabBar", () => {
     expect(getByText("test")).toHaveAttribute("aria-current", "location");
   });
 
-  it("should display an inactive tab", async () => {
+  it("displays an inactive tab", async () => {
     const { getByText } = await renderTabBar([
       { name: "test", url: "some link", isActive: false },
     ]);
@@ -38,7 +36,7 @@ describe("TabBar", () => {
     expect(getByText("test")).not.toHaveAttribute("aria-current");
   });
 
-  it("should display multiple tabs when there are several in the list", async () => {
+  it("displays multiple tabs when there are several in the list", async () => {
     const { getAllByRole } = await renderTabBar([
       { name: "test", url: "some link", isActive: true },
       { name: "test 2", url: "another link", isActive: false },

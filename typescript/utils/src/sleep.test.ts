@@ -2,7 +2,7 @@ import { sleep } from "./sleep";
 
 jest.useFakeTimers();
 
-describe("sleep", () => {
+describe(sleep, () => {
   it("waits for the specified amount of time", async () => {
     const resolve = jest.fn();
     const reject = jest.fn();

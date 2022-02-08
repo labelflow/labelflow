@@ -2,7 +2,7 @@ import { flushPromises, sleep, timeout } from ".";
 
 jest.useFakeTimers();
 
-describe("timeout", () => {
+describe(timeout, () => {
   const resolve = jest.fn();
   const reject = jest.fn();
 

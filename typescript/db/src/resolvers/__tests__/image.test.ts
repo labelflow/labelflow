@@ -55,29 +55,29 @@ const createImage = async (
   return id;
 };
 
-beforeAll(async () => {
-  await (
-    await getPrismaClient()
-  ).user.create({ data: { id: testUser1Id, name: "test-user-1" } });
-  await (
-    await getPrismaClient()
-  ).user.create({ data: { id: testUser2Id, name: "test-user-2" } });
-});
-
-beforeEach(async () => {
-  user.id = testUser1Id;
-  await (await getPrismaClient()).membership.deleteMany({});
-  await (await getPrismaClient()).workspace.deleteMany({});
-  await createWorkspace({ name: "My workspace" });
-  await createDataset("My dataset", "my-workspace", testDatasetId);
-});
-
-afterAll(async () => {
-  // Needed to avoid having the test process running indefinitely after the test suite has been run
-  await (await getPrismaClient()).$disconnect();
-});
-
 describe("Access control for image", () => {
+  beforeAll(async () => {
+    await (
+      await getPrismaClient()
+    ).user.create({ data: { id: testUser1Id, name: "test-user-1" } });
+    await (
+      await getPrismaClient()
+    ).user.create({ data: { id: testUser2Id, name: "test-user-2" } });
+  });
+
+  beforeEach(async () => {
+    user.id = testUser1Id;
+    await (await getPrismaClient()).membership.deleteMany({});
+    await (await getPrismaClient()).workspace.deleteMany({});
+    await createWorkspace({ name: "My workspace" });
+    await createDataset("My dataset", "my-workspace", testDatasetId);
+  });
+
+  afterAll(async () => {
+    // Needed to avoid having the test process running indefinitely after the test suite has been run
+    await (await getPrismaClient()).$disconnect();
+  });
+
   it("allows to create an image to a user that has access to the dataset", async () => {
     const createdImageId = await createImage(
       "test-image",
@@ -86,12 +86,14 @@ describe("Access control for image", () => {
     );
     expect(createdImageId).toEqual(testImageId);
   });
+
   it("fails to create an image when the user does not have access to the dataset", async () => {
     user.id = testUser2Id;
     await expect(() =>
       createImage("test-image", testDatasetId, testImageId)
     ).rejects.toThrow(`User not authorized to access dataset`);
   });
+
   it("allows to get an image to the user that created it", async () => {
     const createdImageId = await createImage(
       "test-image",
@@ -112,6 +114,7 @@ describe("Access control for image", () => {
     });
     expect(data.image.name).toEqual("test-image");
   });
+
   it("fails to get an image if the user does not have access to it", async () => {
     const createdImageId = await createImage(
       "test-image",
@@ -134,6 +137,7 @@ describe("Access control for image", () => {
       })
     ).rejects.toThrow(`User not authorized to access image`);
   });
+
   it("gives the amount of images the user has access to", async () => {
     await createImage("test-image", testDatasetId);
     await createImage("test-image", testDatasetId);
@@ -154,6 +158,7 @@ describe("Access control for image", () => {
     expect(data.imagesAggregates.totalCount).toEqual(3);
     expect(data.images.length).toEqual(3);
   });
+
   it("returns zero elements if user does not have access to any image", async () => {
     await createImage("test-image", testDatasetId);
     await createImage("test-image", testDatasetId);

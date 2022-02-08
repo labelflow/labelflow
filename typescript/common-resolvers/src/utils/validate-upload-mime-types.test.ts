@@ -3,8 +3,8 @@ import {
   isFilePathOfValidMimeTypeCategory,
 } from "./validate-upload-mime-types";
 
-describe("isFilePathOfValidMimeTypeCategory", () => {
-  test("Should spot a valid image filename", () => {
+describe(isFilePathOfValidMimeTypeCategory, () => {
+  it("spots a valid image filename", () => {
     expect(
       isFilePathOfValidMimeTypeCategory(
         "image.jpg",
@@ -12,7 +12,8 @@ describe("isFilePathOfValidMimeTypeCategory", () => {
       )
     ).toBeTruthy();
   });
-  test("Should spot a valid image path", () => {
+
+  it("spots a valid image path", () => {
     expect(
       isFilePathOfValidMimeTypeCategory(
         "some/random/path/to/my/image.jpg",
@@ -20,7 +21,8 @@ describe("isFilePathOfValidMimeTypeCategory", () => {
       )
     ).toBeTruthy();
   });
-  test("Should spot a valid image filename with an uncommon uppercase extension", () => {
+
+  it("spots a valid image filename with an uncommon uppercase extension", () => {
     expect(
       isFilePathOfValidMimeTypeCategory(
         "image.JPEG",
@@ -28,7 +30,8 @@ describe("isFilePathOfValidMimeTypeCategory", () => {
       )
     ).toBeTruthy();
   });
-  test("Should spot an invalid (unsupported) image filename", () => {
+
+  it("spots an invalid (unsupported) image filename", () => {
     expect(
       isFilePathOfValidMimeTypeCategory(
         "image.tiff",
@@ -36,10 +39,12 @@ describe("isFilePathOfValidMimeTypeCategory", () => {
       )
     ).toBeFalsy();
   });
-  test("Should spot a valid upload filename", () => {
+
+  it("spots a valid upload filename", () => {
     expect(isFilePathOfValidMimeTypeCategory("archive.zip")).toBeTruthy();
   });
-  test("Should spot an invalid upload filename", () => {
+
+  it("spots an invalid upload filename", () => {
     expect(isFilePathOfValidMimeTypeCategory("archive.tar.gz")).toBeFalsy();
   });
 });

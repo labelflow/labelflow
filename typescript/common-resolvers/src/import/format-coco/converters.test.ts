@@ -3,8 +3,8 @@ import {
   convertGeometryFromCocoAnnotationToLabel,
 } from "./converters";
 
-describe("isCocoSegmentationBox", () => {
-  test("Should spot segmentation box", () => {
+describe(isCocoSegmentationBox, () => {
+  it("spots segmentation box", () => {
     expect(
       isCocoSegmentationBox([
         [
@@ -14,10 +14,12 @@ describe("isCocoSegmentationBox", () => {
       ])
     ).toBeTruthy();
   });
-  test("Should consider an empty segmentation to a box, based on the bounding box", () => {
+
+  it("considers an empty segmentation to a box, based on the bounding box", () => {
     expect(isCocoSegmentationBox([])).toBeTruthy();
   });
-  test("Should discard segmentation with more than one polygon", () => {
+
+  it("discards segmentation with more than one polygon", () => {
     expect(
       isCocoSegmentationBox([
         [
@@ -28,7 +30,8 @@ describe("isCocoSegmentationBox", () => {
       ])
     ).toBeFalsy();
   });
-  test("Should discard segmentation with more than ten coordinates", () => {
+
+  it("discards segmentation with more than ten coordinates", () => {
     expect(
       isCocoSegmentationBox([
         [
@@ -38,7 +41,8 @@ describe("isCocoSegmentationBox", () => {
       ])
     ).toBeFalsy();
   });
-  test("Should discard reordered segmentation of a box", () => {
+
+  it("discards reordered segmentation of a box", () => {
     expect(
       isCocoSegmentationBox([
         [
@@ -48,7 +52,8 @@ describe("isCocoSegmentationBox", () => {
       ])
     ).toBeFalsy();
   });
-  test("Should discard degenerated box (reordered points)", () => {
+
+  it("discards degenerated box (reordered points)", () => {
     expect(
       isCocoSegmentationBox([
         [
@@ -60,8 +65,8 @@ describe("isCocoSegmentationBox", () => {
   });
 });
 
-describe("convertGeometryFromCocoAnnotationToLabel", () => {
-  test("Should convert a box into a box", () => {
+describe(convertGeometryFromCocoAnnotationToLabel, () => {
+  it("converts a box into a box", () => {
     expect(
       convertGeometryFromCocoAnnotationToLabel(
         [
@@ -75,12 +80,14 @@ describe("convertGeometryFromCocoAnnotationToLabel", () => {
       )
     ).toMatchSnapshot();
   });
-  test("Should convert an empty segmentation's bounding box into a box", () => {
+
+  it("converts an empty segmentation's bounding box into a box", () => {
     expect(
       convertGeometryFromCocoAnnotationToLabel([], [100, 200, 300, 400], 700)
     ).toMatchSnapshot();
   });
-  test("Should convert a polygon into a polygon", () => {
+
+  it("converts a polygon into a polygon", () => {
     expect(
       convertGeometryFromCocoAnnotationToLabel(
         [

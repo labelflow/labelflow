@@ -36,7 +36,7 @@ const renderEditLabelClassMenu = () => {
   });
 };
 
-describe("EditLabelClassMenu", () => {
+describe(EditLabelClassMenu, () => {
   beforeEach(() => {
     act(() =>
       useLabelingStore.setState({

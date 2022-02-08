@@ -1,6 +1,7 @@
 import { render, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { isEmpty, isNil } from "lodash/fp";
+import { WorkspaceNameInput } from ".";
 import {
   TestCase,
   TestComponent,
@@ -20,12 +21,10 @@ const runTest = async ([props, expected]: TestCase): Promise<void> => {
     userEvent.type(inputElement, name);
   }
   const messageElement = getByLabelText("workspace name message");
-  await waitFor(() => {
-    expect(messageElement.innerHTML).toBe(expected);
-  });
+  await waitFor(() => expect(messageElement.innerHTML).toBe(expected));
 };
 
-describe("WorkspaceNameInput", () => {
+describe(WorkspaceNameInput, () => {
   it.each(Object.entries(TEST_CASES))("%s", async (_, testCase) => {
     await runTest(testCase);
   });

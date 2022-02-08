@@ -119,7 +119,7 @@ const TEST_CASES: Record<string, TestCase> = {
   },
 };
 
-describe("CreateWorkspaceModal", () => {
+describe(CreateWorkspaceModal, () => {
   it.each(Object.entries(TEST_CASES))("%s", async (_, testCase) => {
     await runTest(testCase);
   });

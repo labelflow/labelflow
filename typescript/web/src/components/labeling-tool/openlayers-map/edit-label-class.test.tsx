@@ -44,7 +44,7 @@ describe("EditLabelClass", () => {
     jest.clearAllMocks();
   });
 
-  it("should create a class", async () => {
+  it("creates a class", async () => {
     const { getByPlaceholderText, getByText } = await renderEditLabelClass();
     userEvent.type(getByPlaceholderText(/Search/), "new label class name");
     await waitFor(() => expect(getByText("Create class")).toBeDefined());
@@ -55,7 +55,7 @@ describe("EditLabelClass", () => {
     });
   });
 
-  it("should change a class", async () => {
+  it("changes a class", async () => {
     const { getByText } = await renderEditLabelClass();
     await waitFor(() =>
       expect(

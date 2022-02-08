@@ -77,58 +77,39 @@ describe("Coco converters", () => {
     externalUrl: `https://${name}`,
     path: "/path",
     mimetype: "image/png",
-    // labels: [],
     datasetId: testDatasetId,
   });
 
-  test("Should convert a label class to a coco category", () => {
+  it("converts a label class to a coco category", () => {
     const myLabelClass = createLabelClass("My Label Class");
-
     const cocoCategory = convertLabelClassToCocoCategory(myLabelClass, 1);
-
     const expectedCocoCategory: CocoCategory = {
       id: 1,
       name: "My Label Class",
       supercategory: "",
     };
-
     expect(cocoCategory).toEqual(expectedCocoCategory);
   });
 
-  test("Should convert some label classes to coco categories", () => {
+  it("converts some label classes to coco categories", () => {
     const labelClassList = [
       createLabelClass("a-label-class"),
       createLabelClass("another-label-class"),
     ];
-
     const { cocoCategories, labelClassIdsMap } =
       convertLabelClassesToCocoCategories(labelClassList);
-
-    const expectedCocoCategories = [
-      {
-        id: 1,
-        // ...
-      },
-      {
-        id: 2,
-        // ...
-      },
-    ];
-
+    const expectedCocoCategories = [{ id: 1 }, { id: 2 }];
     const expectedLabelClassIdsMap = {
       "id-a-label-class": 1,
       "id-another-label-class": 2,
     };
-
     expect(cocoCategories).toMatchObject(expectedCocoCategories);
     expect(labelClassIdsMap).toMatchObject(expectedLabelClassIdsMap);
   });
 
-  test("Should convert a label to a coco annotation with a category", () => {
+  it("converts a label to a coco annotation with a category", () => {
     const label = createLabelWithImageDimensions("a-label-id", "an-image-id");
-
     const cocoAnnotation = convertLabelToCocoAnnotation(label, 1, 42, 3);
-
     const expectedAnnotation: CocoAnnotation = {
       id: 1,
       image_id: 42,
@@ -138,24 +119,17 @@ describe("Coco converters", () => {
       bbox: [1, 194, 3, 4],
       iscrowd: 0,
     };
-
     expect(cocoAnnotation).toEqual(expectedAnnotation);
   });
 
-  test("Should convert a label class to coco annotation and assign it to a category", () => {
+  it("converts a label class to coco annotation and assign it to a category", () => {
     const label = createLabelWithImageDimensions("a-label-id", "an-image-id");
-
     const cocoAnnotation = convertLabelToCocoAnnotation(label, 1, 42, 1);
-
-    const expectedAnnotation: Partial<CocoAnnotation> = {
-      category_id: 1,
-      // ...
-    };
-
+    const expectedAnnotation: Partial<CocoAnnotation> = { category_id: 1 };
     expect(cocoAnnotation).toMatchObject(expectedAnnotation);
   });
 
-  test("Should convert some labels to coco annotations and assign them to an image without id offset", () => {
+  it("converts some labels to coco annotations and assign them to an image without id offset", () => {
     const labels = [
       createLabelWithImageDimensions(
         "a-label-id",
@@ -168,43 +142,25 @@ describe("Coco converters", () => {
         "id-another-label-class"
       ),
     ];
-
-    const imageIdsMap = {
-      "an-image-id": 1,
-    };
-
+    const imageIdsMap = { "an-image-id": 1 };
     const labelClassIdMap = {
       "id-a-label-class": 1,
       "id-another-label-class": 2,
     };
-
     const cocoAnnotations = convertLabelsOfImageToCocoAnnotations(
       labels,
       imageIdsMap,
       labelClassIdMap
     );
-
     const expectedAnnotations = [
-      {
-        id: 1,
-        image_id: 1,
-        category_id: 1,
-        // ...
-      },
-      {
-        id: 2,
-        image_id: 1,
-        category_id: 2,
-        // ...
-      },
+      { id: 1, image_id: 1, category_id: 1 },
+      { id: 2, image_id: 1, category_id: 2 },
     ];
-
     expect(cocoAnnotations).toMatchObject(expectedAnnotations);
   });
 
-  test("Should convert an image to coco json image", () => {
+  it("converts an image to coco json image", () => {
     const image = createImage("an-image", 1, 2);
-
     expect(
       convertImageToCocoImage(image, 1, {
         avoidImageNameCollisions: true,
@@ -219,7 +175,6 @@ describe("Coco converters", () => {
       flickr_url: "",
       license: 0,
     });
-
     expect(
       convertImageToCocoImage(image, 1, {
         avoidImageNameCollisions: false,
@@ -236,43 +191,25 @@ describe("Coco converters", () => {
     });
   });
 
-  test("Should convert a list of images to coco images", () => {
+  it("converts a list of images to coco images", () => {
     const images = [
       createImage("an-image", 1, 2),
       createImage("another-image", 3, 4),
     ];
-
     const { cocoImages, imageIdsMap } = convertImagesToCocoImages(images, {
       avoidImageNameCollisions: false,
     });
-
-    const expectedCocoImage = [
-      {
-        id: 1,
-        // ...
-      },
-      {
-        id: 2,
-        // ...
-      },
-    ];
-
-    const expectedMapping = {
-      "id-an-image": 1,
-      "id-another-image": 2,
-    };
-
+    const expectedCocoImage = [{ id: 1 }, { id: 2 }];
+    const expectedMapping = { "id-an-image": 1, "id-another-image": 2 };
     expect(cocoImages).toMatchObject(expectedCocoImage);
     expect(imageIdsMap).toEqual(expectedMapping);
   });
 
-  test("Should convert a set of images and label classes to a coco dataset", () => {
+  it("converts a set of images and label classes to a coco dataset", () => {
     const labelClass1 = createLabelClass("label-class-1");
     const labelClass2 = createLabelClass("label-class-2");
-
     const image1 = createImage("image-1", 1, 2);
     const image2 = createImage("image-2", 1, 2);
-
     const label1 = createLabelWithImageDimensions(
       "id-label-1",
       image1.id,
@@ -288,64 +225,27 @@ describe("Coco converters", () => {
       image2.id,
       labelClass2.id
     );
-
     const expectedCocoDataset = {
       ...initialCocoDataset, // default coco dataset
-      categories: [
-        {
-          id: 1,
-          // ...
-        },
-        {
-          id: 2,
-          // ...
-        },
-      ],
-      images: [
-        {
-          id: 1,
-          // ...
-        },
-        {
-          id: 2,
-          // ...
-        },
-      ],
+      categories: [{ id: 1 }, { id: 2 }],
+      images: [{ id: 1 }, { id: 2 }],
       annotations: [
-        {
-          id: 1,
-          image_id: 1,
-          category_id: 1,
-          // ...
-        },
-        {
-          id: 2,
-          image_id: 1,
-          category_id: 2,
-          // ...
-        },
-        {
-          id: 3,
-          image_id: 2,
-          category_id: 2,
-          // ...
-        },
+        { id: 1, image_id: 1, category_id: 1 },
+        { id: 2, image_id: 1, category_id: 2 },
+        { id: 3, image_id: 2, category_id: 2 },
       ],
     };
-
     expect(
       convertLabelflowDatasetToCocoDataset(
         [image1, image2],
         [label1, label2, label3],
         [labelClass1, labelClass2],
-        {
-          avoidImageNameCollisions: false,
-        }
+        { avoidImageNameCollisions: false }
       )
     ).toMatchObject(expectedCocoDataset);
   });
 
-  test("should convert polygon geometry into segmentation", () => {
+  it("converts polygon geometry into segmentation", () => {
     const polygonGeometry = {
       type: "Polygon",
       coordinates: [
@@ -358,17 +258,14 @@ describe("Coco converters", () => {
         ],
       ],
     };
-
     const imageDimensions = { width: 600, height: 200 };
-
     const expectedSegmentation = [[1, 198, 1, 194, 4, 194, 4, 198, 1, 198]];
-
     expect(
       convertGeometryToSegmentation(polygonGeometry, imageDimensions.height)
     ).toEqual(expectedSegmentation);
   });
 
-  test("should convert multipolygon geometry into segmentation", () => {
+  it("converts multipolygon geometry into segmentation", () => {
     const multiPolygonGeometry = {
       type: "MultiPolygon",
       coordinates: [
@@ -390,14 +287,11 @@ describe("Coco converters", () => {
         ],
       ],
     };
-
     const imageDimensions = { width: 600, height: 200 };
-
     const expectedSegmentation = [
       [0, 200, 3, 200, 1.5, 198.5, 0, 200],
       [0, 197, 3, 197, 1.5, 198.5, 0, 197],
     ];
-
     expect(
       convertGeometryToSegmentation(
         multiPolygonGeometry,
@@ -406,7 +300,7 @@ describe("Coco converters", () => {
     ).toEqual(expectedSegmentation);
   });
 
-  test("should convert multipolygon geometry with hole into segmentation without hole", () => {
+  it("converts multipolygon geometry with hole into segmentation without hole", () => {
     const multiPolygonGeometry = {
       type: "MultiPolygon",
       coordinates: [
@@ -428,11 +322,8 @@ describe("Coco converters", () => {
         ],
       ],
     };
-
     const imageDimensions = { width: 600, height: 200 };
-
     const expectedSegmentation = [[0, 200, 3, 200, 3, 197, 0, 197, 0, 200]];
-
     expect(
       convertGeometryToSegmentation(
         multiPolygonGeometry,

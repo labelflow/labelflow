@@ -20,7 +20,7 @@ const renderTest = () =>
     apollo: { extraMocks: APOLLO_MOCKS },
   });
 
-describe("ExportModal", () => {
+describe(ExportModal, () => {
   it("downloads when user clicks on Export to COCO and Export", async () => {
     window.URL.createObjectURL = jest.fn();
     const { getByRole, getByText } = await renderTest();

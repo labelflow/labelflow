@@ -17,7 +17,7 @@ const renderTest = async (element: ReactElement) =>
 
 const NEW_WORKSPACE_NAME = "My New Workspace";
 
-describe("WorkspaceListItem", () => {
+describe(WorkspaceListItem, () => {
   it("only displays workspace name when it exists", async () => {
     const { getByText, queryByText } = await renderTest(
       <WorkspaceListItem

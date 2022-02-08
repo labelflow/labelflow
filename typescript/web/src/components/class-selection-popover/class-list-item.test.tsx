@@ -10,30 +10,32 @@ const classDefault = {
 };
 const classCreate = { type: "CreateClassItem", name: "nonExistingClass" };
 
-test("should display class name", () => {
-  render(
-    <ClassListItem
-      highlight={false}
-      index={0}
-      item={classDefault}
-      itemProps={{}}
-    />
-  );
-  expect(screen.getByText(/someClass/i)).toBeDefined();
-  expect(screen.queryByText(/Create class/i)).not.toBeInTheDocument();
-  expect(screen.getByText(/myShortcut/i)).toBeDefined();
-});
+describe(ClassListItem, () => {
+  it("displays class name", () => {
+    render(
+      <ClassListItem
+        highlight={false}
+        index={0}
+        item={classDefault}
+        itemProps={{}}
+      />
+    );
+    expect(screen.getByText(/someClass/i)).toBeDefined();
+    expect(screen.queryByText(/Create class/i)).not.toBeInTheDocument();
+    expect(screen.getByText(/myShortcut/i)).toBeDefined();
+  });
 
-test("should propose to create class", () => {
-  render(
-    <ClassListItem
-      highlight={false}
-      index={0}
-      item={classCreate}
-      itemProps={{}}
-      isCreateClassItem
-    />
-  );
-  expect(screen.getByText(/nonExistingClass/i)).toBeDefined();
-  expect(screen.getByText(/Create class/i)).toBeDefined();
+  it("proposes to create class", () => {
+    render(
+      <ClassListItem
+        highlight={false}
+        index={0}
+        item={classCreate}
+        itemProps={{}}
+        isCreateClassItem
+      />
+    );
+    expect(screen.getByText(/nonExistingClass/i)).toBeDefined();
+    expect(screen.getByText(/Create class/i)).toBeDefined();
+  });
 });

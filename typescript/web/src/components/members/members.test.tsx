@@ -24,22 +24,22 @@ const renderTest = (memberships: GetMembershipsMembersQuery_memberships[]) =>
     { auth: { withWorkspaces: true }, apollo: true }
   );
 
-describe("Workspace members list tests", () => {
+describe(Members, () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  test("Should render component", async () => {
+  it("renders component", async () => {
     const { queryByText } = await renderTest(TEST_MEMBERSHIPS);
     expect(queryByText(`Members (${TEST_MEMBERSHIPS.length})`)).toBeDefined();
   });
 
-  test("Should render no rows if no memberships were given", async () => {
+  it("renders no rows if no memberships were given", async () => {
     const { queryByText } = await renderTest([]);
     expect(queryByText("Members (0)")).toBeDefined();
   });
 
-  test("Should filter memberships depending on search input", async () => {
+  it("filters memberships depending on search input", async () => {
     const { getByText, getByPlaceholderText, queryByText } = await renderTest(
       TEST_MEMBERSHIPS
     );
@@ -54,7 +54,7 @@ describe("Workspace members list tests", () => {
     ).not.toBeInTheDocument();
   });
 
-  test("Should call function to change role when clicking role in popover", async () => {
+  it("calls function to change role when clicking role in popover", async () => {
     const { getByText } = await renderTest([TEST_MEMBERSHIPS[0]]);
     userEvent.click(getByText(MembershipRole.Admin));
     userEvent.click(getByText(MembershipRole.Owner));
@@ -64,13 +64,13 @@ describe("Workspace members list tests", () => {
     });
   });
 
-  test("Should give a warning modal when a user tries to remove himself from a workspace where he is the only owner", async () => {
+  it("gives a warning modal when a user tries to remove himself from a workspace where he is the only owner", async () => {
     const { getByText, queryByText } = await renderTest([TEST_MEMBERSHIPS[1]]);
     userEvent.click(getByText("Remove"));
     expect(queryByText(/Cannot remove owner/i)).toBeDefined();
   });
 
-  test("Should call function to delete a membership when clicking on Remove", async () => {
+  it("calls function to delete a membership when clicking on Remove", async () => {
     const { getAllByText, getByText, queryByText } = await renderTest(
       TEST_MEMBERSHIPS
     );

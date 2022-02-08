@@ -9,16 +9,13 @@ mockNextRouter();
 
 import { DrawingToolbar } from ".";
 
-test("should display tooltip", async () => {
-  useLabelingStore.setState({ isImageLoading: false });
-
-  render(<DrawingToolbar />);
-
-  const selectionToolButton = await screen.getByLabelText(/Selection tool/i);
-
-  userEvent.hover(selectionToolButton as HTMLElement);
-
-  await waitFor(() => expect(screen.getByText(/\[v\]/i)).toBeInTheDocument());
-
-  expect(screen.queryByText(/Selection tool/i)).toBeInTheDocument();
+describe(DrawingToolbar, () => {
+  it("displays tooltip", async () => {
+    useLabelingStore.setState({ isImageLoading: false });
+    render(<DrawingToolbar />);
+    const selectionToolButton = screen.getByLabelText(/Selection tool/i);
+    userEvent.hover(selectionToolButton as HTMLElement);
+    await waitFor(() => expect(screen.getByText(/\[v\]/i)).toBeInTheDocument());
+    expect(screen.queryByText(/Selection tool/i)).toBeInTheDocument();
+  });
 });

@@ -71,29 +71,29 @@ const renderTest = async (noWorkspaces?: boolean) => {
   return result;
 };
 
-describe("Class selection popover tests", () => {
+describe(WorkspaceSelectionPopover, () => {
   beforeEach(() => {
     jest.resetAllMocks();
   });
 
-  test("Should render component", async () => {
+  it("renders component", async () => {
     const { getByPlaceholderText } = await renderTest();
     expect(getByPlaceholderText(/search/i)).toBeDefined();
   });
 
-  test("Should render no workspaces if none were given", async () => {
+  it("renders no workspaces if none were given", async () => {
     const { queryByText } = await renderTest(true);
     expect(queryByText(WORKSPACE_1_DATA.name)).not.toBeInTheDocument();
     expect(queryByText(WORKSPACE_2_DATA.name)).not.toBeInTheDocument();
   });
 
-  test("Should render all workspaces in the list", async () => {
+  it("renders all workspaces in the list", async () => {
     const { getByText } = await renderTest();
     expect(getByText(WORKSPACE_1_DATA.name)).toBeDefined();
     expect(getByText(WORKSPACE_2_DATA.name)).toBeDefined();
   });
 
-  test("Should render matching workspaces with user search", async () => {
+  it("renders matching workspaces with user search", async () => {
     const { getByPlaceholderText, getByText, queryByText } = await renderTest();
     const searchTerm = WORKSPACE_1_DATA.name.substring(0, 3);
     userEvent.type(getByPlaceholderText(/search/i), searchTerm);
@@ -103,7 +103,7 @@ describe("Class selection popover tests", () => {
     expect(getByText(`"${searchTerm}"`)).toBeDefined();
   });
 
-  test("Should call onSelectedWorkspaceChange when clicking on existing workspace", async () => {
+  it("calls onSelectedWorkspaceChange when clicking on existing workspace", async () => {
     const { getByRole } = await renderTest();
     userEvent.click(
       getByRole("option", {
@@ -115,7 +115,7 @@ describe("Class selection popover tests", () => {
     );
   });
 
-  test("Should call onSelectedWorkspaceChange when clicking on create new workspace", async () => {
+  it("calls onSelectedWorkspaceChange when clicking on create new workspace", async () => {
     const { getByPlaceholderText, getByRole } = await renderTest();
     const searchTerm = WORKSPACE_1_DATA.name.substring(0, 3);
     userEvent.type(getByPlaceholderText(/search/i), searchTerm);

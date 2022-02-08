@@ -8,11 +8,11 @@ const runTest = async ([array, source, destination, expected]: TestCase) => {
 };
 
 const TEST_CASES: Record<string, TestCase> = {
-  "should reorder when moving up": [["a", "b", "c"], 1, 0, ["b", "a", "c"]],
-  "should reorder when moving down": [["a", "b", "c"], 1, 2, ["a", "c", "b"]],
+  "reorders when moving up": [["a", "b", "c"], 1, 0, ["b", "a", "c"]],
+  "reorders when moving down": [["a", "b", "c"], 1, 2, ["a", "c", "b"]],
 };
 
-describe("reorderArray", () => {
+describe(reorderArray, () => {
   it.concurrent.each(Object.entries(TEST_CASES))(
     "%s",
     async (_, testCase) => await runTest(testCase)

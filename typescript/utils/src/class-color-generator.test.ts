@@ -37,7 +37,7 @@ const TEST_CASES: Record<string, TestCase> = {
     ],
 };
 
-describe("getNextClassColor", () => {
+describe(getNextClassColor, () => {
   it.concurrent.each(Object.entries(TEST_CASES))("%s", async (_, testCase) =>
     runTest(testCase)
   );

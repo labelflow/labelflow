@@ -20,29 +20,6 @@ const testUser1Id = uuidV4();
 const testUser2Id = uuidV4();
 const testUser3Id = uuidV4();
 
-beforeAll(async () => {
-  await (
-    await getPrismaClient()
-  ).user.create({ data: { id: testUser1Id, name: "test-user-1" } });
-  await (
-    await getPrismaClient()
-  ).user.create({ data: { id: testUser2Id, name: "test-user-2" } });
-  await (
-    await getPrismaClient()
-  ).user.create({ data: { id: testUser3Id, name: "test-user-3" } });
-});
-
-beforeEach(async () => {
-  user.id = testUser1Id;
-  await (await getPrismaClient()).membership.deleteMany({});
-  return await (await getPrismaClient()).workspace.deleteMany({});
-});
-
-afterAll(async () => {
-  // Needed to avoid having the test process running indefinitely after the test suite has been run
-  await (await getPrismaClient()).$disconnect();
-});
-
 const createMembership = async (
   data?: MutationCreateMembershipArgs["data"]
 ) => {
@@ -107,6 +84,29 @@ const declineInvitation = async (membershipId: string) => {
     fetchPolicy: "no-cache",
   });
 };
+
+beforeAll(async () => {
+  await (
+    await getPrismaClient()
+  ).user.create({ data: { id: testUser1Id, name: "test-user-1" } });
+  await (
+    await getPrismaClient()
+  ).user.create({ data: { id: testUser2Id, name: "test-user-2" } });
+  await (
+    await getPrismaClient()
+  ).user.create({ data: { id: testUser3Id, name: "test-user-3" } });
+});
+
+beforeEach(async () => {
+  user.id = testUser1Id;
+  await (await getPrismaClient()).membership.deleteMany({});
+  return await (await getPrismaClient()).workspace.deleteMany({});
+});
+
+afterAll(async () => {
+  // Needed to avoid having the test process running indefinitely after the test suite has been run
+  await (await getPrismaClient()).$disconnect();
+});
 
 describe("createMembership mutation", () => {
   it("throws an error if the user doesn't exist", async () => {

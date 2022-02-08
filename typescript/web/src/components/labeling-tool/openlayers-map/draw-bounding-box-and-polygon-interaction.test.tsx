@@ -102,103 +102,85 @@ const renderDrawInteractionWithBasicBox = async (
   return mockLink;
 };
 
-it("create a label when the user has finished to draw a bounding box on the labeling interface", async () => {
-  await renderDrawInteractionWithBasicBox();
-  expect(CREATE_LABEL_ACTION_MOCK.result).toHaveBeenCalledWith(
-    basicBoxDrawExpectedMutationVars
-  );
-});
-
-it("is possible to undo the creation of the label", async () => {
-  await renderDrawInteractionWithBasicBox();
-  await useUndoStore.getState().undo();
-  expect(CREATE_LABEL_ACTION_MOCK.result).toHaveBeenCalled();
-  const { id } = (CREATE_LABEL_ACTION_MOCK.result as jest.Mock).mock.calls[0][0]
-    .data;
-  expect(DELETE_LABEL_ACTION_MOCK.result).toHaveBeenCalledWith(
-    expect.objectContaining({ id })
-  );
-});
-
-it("should select the newly created label", async () => {
-  await renderDrawInteractionWithBasicBox();
-  const { id } = (CREATE_LABEL_ACTION_MOCK.result as jest.Mock).mock.calls[0][0]
-    .data;
-  await waitFor(() => {
-    expect(useLabelingStore.getState()).toMatchObject({
-      selectedLabelId: id,
-    });
+describe(DrawInteraction, () => {
+  it("creates a label when the user has finished to draw a bounding box on the labeling interface", async () => {
+    await renderDrawInteractionWithBasicBox();
+    expect(CREATE_LABEL_ACTION_MOCK.result).toHaveBeenCalledWith(
+      basicBoxDrawExpectedMutationVars
+    );
   });
-});
 
-it("should unset the selected label when the effect is undone", async () => {
-  await renderDrawInteractionWithBasicBox();
-  await useUndoStore.getState().undo();
-  await waitFor(() => {
-    expect(useLabelingStore.getState()).toMatchObject({
-      selectedLabelId: null,
-    });
+  it("is possible to undo the creation of the label", async () => {
+    await renderDrawInteractionWithBasicBox();
+    await useUndoStore.getState().undo();
+    expect(CREATE_LABEL_ACTION_MOCK.result).toHaveBeenCalled();
+    const { id } = (CREATE_LABEL_ACTION_MOCK.result as jest.Mock).mock
+      .calls[0][0].data;
+    expect(DELETE_LABEL_ACTION_MOCK.result).toHaveBeenCalledWith(
+      expect.objectContaining({ id })
+    );
   });
-});
 
-it("is possible to redo an undone action", async () => {
-  await renderDrawInteractionWithBasicBox();
-  await useUndoStore.getState().undo();
-  await useUndoStore.getState().redo();
-  expect(CREATE_LABEL_ACTION_MOCK.result).toHaveBeenNthCalledWith(
-    3,
-    basicBoxDrawExpectedMutationVars
-  );
-});
-
-it("should set back the selected label when the effect is redone after an undone", async () => {
-  await renderDrawInteractionWithBasicBox();
-  await useUndoStore.getState().undo();
-  await useUndoStore.getState().redo();
-  const { id } = (CREATE_LABEL_ACTION_MOCK.result as jest.Mock).mock.calls[0][0]
-    .data;
-  await waitFor(() => {
-    expect(useLabelingStore.getState()).toMatchObject({
-      selectedLabelId: id,
-    });
-  });
-});
-
-it("handles cases where the label creation throws an error", async () => {
-  await renderDrawInteractionWithBasicBox([ERROR_CREATE_LABEL_ACTION_MOCK]);
-  await waitFor(() => {
-    expect(screen.getByText("Error creating bounding box")).toBeDefined();
-  });
-});
-
-it("create a label when the user has finished to draw a polygon on the labeling interface", async () => {
-  const { mapRef, mockLink } = renderDrawInteraction();
-  useLabelingStore.setState({ selectedTool: Tools.POLYGON });
-  const drawInteraction = mapRef.current?.getInteractions().getArray()?.[0];
-  drawInteraction?.dispatchEvent(
-    new DrawEvent(
-      "drawend" as DrawEventType,
-      new Feature({
-        geometry: new Polygon([
-          [
-            [100, 200],
-            [200, 300],
-            [250, 350],
-            [200, 200],
-            [100, 200],
-          ],
-        ]),
+  it("selects the newly created label", async () => {
+    await renderDrawInteractionWithBasicBox();
+    const { id } = (CREATE_LABEL_ACTION_MOCK.result as jest.Mock).mock
+      .calls[0][0].data;
+    await waitFor(() =>
+      expect(useLabelingStore.getState()).toMatchObject({
+        selectedLabelId: id,
       })
-    )
-  );
-  await act(() => mockLink.waitForAllResponses());
-  expect(CREATE_LABEL_ACTION_MOCK.result).toHaveBeenCalledWith(
-    expect.objectContaining({
-      data: expect.objectContaining({
-        imageId: BASIC_IMAGE_DATA.id,
-        geometry: {
-          type: "Polygon",
-          coordinates: [
+    );
+  });
+
+  it("unsets the selected label when the effect is undone", async () => {
+    await renderDrawInteractionWithBasicBox();
+    await useUndoStore.getState().undo();
+    await waitFor(() =>
+      expect(useLabelingStore.getState()).toMatchObject({
+        selectedLabelId: null,
+      })
+    );
+  });
+
+  it("is possible to redo an undone action", async () => {
+    await renderDrawInteractionWithBasicBox();
+    await useUndoStore.getState().undo();
+    await useUndoStore.getState().redo();
+    expect(CREATE_LABEL_ACTION_MOCK.result).toHaveBeenNthCalledWith(
+      3,
+      basicBoxDrawExpectedMutationVars
+    );
+  });
+
+  it("sets back the selected label when the effect is redone after an undone", async () => {
+    await renderDrawInteractionWithBasicBox();
+    await useUndoStore.getState().undo();
+    await useUndoStore.getState().redo();
+    const { id } = (CREATE_LABEL_ACTION_MOCK.result as jest.Mock).mock
+      .calls[0][0].data;
+    await waitFor(() =>
+      expect(useLabelingStore.getState()).toMatchObject({
+        selectedLabelId: id,
+      })
+    );
+  });
+
+  it("handles cases where the label creation throws an error", async () => {
+    await renderDrawInteractionWithBasicBox([ERROR_CREATE_LABEL_ACTION_MOCK]);
+    await waitFor(() =>
+      expect(screen.getByText("Error creating bounding box")).toBeDefined()
+    );
+  });
+
+  it("creates a label when the user has finished to draw a polygon on the labeling interface", async () => {
+    const { mapRef, mockLink } = renderDrawInteraction();
+    useLabelingStore.setState({ selectedTool: Tools.POLYGON });
+    const drawInteraction = mapRef.current?.getInteractions().getArray()?.[0];
+    drawInteraction?.dispatchEvent(
+      new DrawEvent(
+        "drawend" as DrawEventType,
+        new Feature({
+          geometry: new Polygon([
             [
               [100, 200],
               [200, 300],
@@ -206,9 +188,29 @@ it("create a label when the user has finished to draw a polygon on the labeling 
               [200, 200],
               [100, 200],
             ],
-          ],
-        },
-      }),
-    })
-  );
+          ]),
+        })
+      )
+    );
+    await act(() => mockLink.waitForAllResponses());
+    expect(CREATE_LABEL_ACTION_MOCK.result).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          imageId: BASIC_IMAGE_DATA.id,
+          geometry: {
+            type: "Polygon",
+            coordinates: [
+              [
+                [100, 200],
+                [200, 300],
+                [250, 350],
+                [200, 200],
+                [100, 200],
+              ],
+            ],
+          },
+        }),
+      })
+    );
+  });
 });

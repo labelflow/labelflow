@@ -13,16 +13,13 @@ const keymap = {
   },
 };
 
-test("should display the key map and full text on hover", async () => {
-  render(<KeymapModal keymap={keymap} isOpen onClose={() => {}} />);
-
-  const arrowKey = screen.getByText(/←/i);
-
-  expect(await screen.queryAllByText(/left/i)).toHaveLength(0);
-
-  userEvent.hover(arrowKey as HTMLElement);
-
-  expect(await screen.findAllByText(/left/i)).toHaveLength(2);
-
-  expect(screen.queryByText(/Navigation/i)).toBeInTheDocument();
+describe(KeymapModal, () => {
+  it("displays the key map and full text on hover", async () => {
+    render(<KeymapModal keymap={keymap} isOpen onClose={() => {}} />);
+    const arrowKey = screen.getByText(/←/i);
+    expect(screen.queryAllByText(/left/i)).toHaveLength(0);
+    userEvent.hover(arrowKey as HTMLElement);
+    expect(await screen.findAllByText(/left/i)).toHaveLength(2);
+    expect(screen.queryByText(/Navigation/i)).toBeInTheDocument();
+  });
 });

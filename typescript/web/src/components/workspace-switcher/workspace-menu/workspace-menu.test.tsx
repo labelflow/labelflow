@@ -49,7 +49,7 @@ const renderTest = (isOpen: boolean = false) =>
     }
   );
 
-describe("WorkspaceMenu", () => {
+describe(WorkspaceMenu, () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });

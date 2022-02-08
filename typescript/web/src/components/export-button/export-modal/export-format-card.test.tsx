@@ -29,19 +29,21 @@ const wrapper = ({ children }: PropsWithChildren<{}>) => (
   </ChakraProvider>
 );
 
-test("Nominal case should display card title", () => {
-  render(<ExportFormatCard colorScheme="brand" formatKey="coco" />, {
-    wrapper,
+describe(ExportFormatCard, () => {
+  it("displays card title", () => {
+    render(<ExportFormatCard colorScheme="brand" formatKey="coco" />, {
+      wrapper,
+    });
+    expect(screen.queryByText("Export to COCO")).toBeInTheDocument();
   });
-  expect(screen.queryByText("Export to COCO")).toBeInTheDocument();
-});
 
-test("Loading case should display the spinner", () => {
-  render(
-    <ExportModalContext.Provider value={loadingValue}>
-      <ExportFormatCard colorScheme="brand" formatKey="coco" />
-    </ExportModalContext.Provider>,
-    { wrapper }
-  );
-  expect(screen.queryByLabelText("loading")).toBeInTheDocument();
+  it("displays the spinner when loading", () => {
+    render(
+      <ExportModalContext.Provider value={loadingValue}>
+        <ExportFormatCard colorScheme="brand" formatKey="coco" />
+      </ExportModalContext.Provider>,
+      { wrapper }
+    );
+    expect(screen.queryByLabelText("loading")).toBeInTheDocument();
+  });
 });

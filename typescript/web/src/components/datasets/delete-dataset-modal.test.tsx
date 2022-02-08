@@ -13,28 +13,26 @@ const renderModal = (props = {}) => {
   });
 };
 
-afterEach(() => {
-  jest.clearAllMocks();
-});
-
-test("should delete a dataset when the button is clicked", async () => {
-  const onClose = jest.fn();
-  renderModal({ onClose, datasetId: BASIC_DATASET_DATA.id });
-  const button = screen.getByLabelText(/Dataset delete/i);
-  fireEvent.click(button);
-  await waitFor(() => {
-    expect(onClose).toHaveBeenCalled();
+describe(DeleteDatasetModal, () => {
+  afterEach(() => {
+    jest.clearAllMocks();
   });
-  expect(DELETE_DATASET_BY_ID_MOCK.result).toHaveBeenCalled();
-});
 
-test("shouldn't delete a dataset when the cancel is clicked", async () => {
-  const onClose = jest.fn();
-  renderModal({ onClose, datasetId: BASIC_DATASET_DATA.id });
-  const button = screen.getByLabelText(/Cancel delete/i);
-  fireEvent.click(button);
-  await waitFor(() => {
-    expect(onClose).toHaveBeenCalled();
+  it("deletes a dataset when the delete button is clicked", async () => {
+    const onClose = jest.fn();
+    renderModal({ onClose, datasetId: BASIC_DATASET_DATA.id });
+    const button = screen.getByLabelText(/Dataset delete/i);
+    fireEvent.click(button);
+    await waitFor(() => expect(onClose).toHaveBeenCalled());
+    expect(DELETE_DATASET_BY_ID_MOCK.result).toHaveBeenCalled();
   });
-  expect(DELETE_DATASET_BY_ID_MOCK.result).not.toHaveBeenCalled();
+
+  it("does not delete a dataset when the cancel button is clicked", async () => {
+    const onClose = jest.fn();
+    renderModal({ onClose, datasetId: BASIC_DATASET_DATA.id });
+    const button = screen.getByLabelText(/Cancel delete/i);
+    fireEvent.click(button);
+    await waitFor(() => expect(onClose).toHaveBeenCalled());
+    expect(DELETE_DATASET_BY_ID_MOCK.result).not.toHaveBeenCalled();
+  });
 });

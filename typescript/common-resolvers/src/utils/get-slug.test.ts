@@ -12,9 +12,9 @@ const TEST_CASES: TestCase[] = [
   ["", "😈"],
 ];
 
-describe("getSlug", () => {
+describe(getSlug, () => {
   it.concurrent.each(TEST_CASES)(
-    "should return %p if value is %p",
+    "returns %p if value is %p",
     async (expected, value) => expect(getSlug(value)).toBe(expected)
   );
 });

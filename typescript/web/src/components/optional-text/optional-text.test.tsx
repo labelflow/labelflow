@@ -13,6 +13,6 @@ const runTest = async (
   expect(element.innerHTML).toBe(expected);
 };
 
-describe("OptionalText", () => {
-  it.concurrent.each(TEST_CASES)("%p => %p", runTest);
+describe(OptionalText, () => {
+  it.concurrent.each(TEST_CASES)("expects %p to return %p", runTest);
 });

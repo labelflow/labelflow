@@ -41,53 +41,52 @@ const renderLabels = (imageId: string): { current: OlMap | null } => {
   return mapRef;
 };
 
-it("displays a single label", async () => {
-  const mapRef = renderLabels(DEEP_DATASET_WITH_LABELS_DATA.images[0].id);
+describe(Labels, () => {
+  it("displays a single label", async () => {
+    const mapRef = renderLabels(DEEP_DATASET_WITH_LABELS_DATA.images[0].id);
+    await waitFor(() =>
+      expect(
+        (
+          mapRef.current?.getLayers().getArray()[0] as VectorLayer<
+            VectorSource<Geometry>
+          >
+        )
+          .getSource()
+          .getFeatures()
+      ).toHaveLength(1)
+    );
+  });
 
-  await waitFor(() => {
-    expect(
-      (
+  it("displays created labels", async () => {
+    const mapRef = renderLabels(DEEP_DATASET_WITH_LABELS_DATA.images[1].id);
+    await waitFor(() => {
+      expect(
+        (
+          mapRef.current?.getLayers().getArray()[0] as VectorLayer<
+            VectorSource<Geometry>
+          >
+        )
+          .getSource()
+          .getFeatures()
+      ).toHaveLength(2);
+    });
+  });
+
+  it("changes style of selected label", async () => {
+    const mapRef = renderLabels(DEEP_DATASET_WITH_LABELS_DATA.images[0].id);
+    useLabelingStore.setState({
+      selectedLabelId: DEEP_DATASET_WITH_LABELS_DATA.images[0].labels[0].id,
+    });
+    await waitFor(() => {
+      const [feature] = (
         mapRef.current?.getLayers().getArray()[0] as VectorLayer<
           VectorSource<Geometry>
         >
       )
         .getSource()
-        .getFeatures()
-    ).toHaveLength(1);
-  });
-});
-
-it("displays created labels", async () => {
-  const mapRef = renderLabels(DEEP_DATASET_WITH_LABELS_DATA.images[1].id);
-
-  await waitFor(() => {
-    expect(
-      (
-        mapRef.current?.getLayers().getArray()[0] as VectorLayer<
-          VectorSource<Geometry>
-        >
-      )
-        .getSource()
-        .getFeatures()
-    ).toHaveLength(2);
-  });
-});
-
-it("should change style of selected label", async () => {
-  const mapRef = renderLabels(DEEP_DATASET_WITH_LABELS_DATA.images[0].id);
-  useLabelingStore.setState({
-    selectedLabelId: DEEP_DATASET_WITH_LABELS_DATA.images[0].labels[0].id,
-  });
-
-  await waitFor(() => {
-    const [feature] = (
-      mapRef.current?.getLayers().getArray()[0] as VectorLayer<
-        VectorSource<Geometry>
-      >
-    )
-      .getSource()
-      .getFeatures();
-    /* When the label is selected it contains two styles, one for the label, another for the vertices style */
-    expect(feature.getStyle()).toHaveLength(2);
+        .getFeatures();
+      /* When the label is selected it contains two styles, one for the label, another for the vertices style */
+      expect(feature.getStyle()).toHaveLength(2);
+    });
   });
 });

@@ -24,46 +24,48 @@ const DELETE_LABEL_CLASS_TEST = gql`
   }
 `;
 
-beforeAll(async () => {
-  await (
-    await getPrismaClient()
-  ).user.create({ data: { id: testUser1Id, name: "test-user-1" } });
-  await (
-    await getPrismaClient()
-  ).user.create({ data: { id: testUser2Id, name: "test-user-2" } });
-});
+describe("Access control for label-class", () => {
+  beforeAll(async () => {
+    await (
+      await getPrismaClient()
+    ).user.create({ data: { id: testUser1Id, name: "test-user-1" } });
+    await (
+      await getPrismaClient()
+    ).user.create({ data: { id: testUser2Id, name: "test-user-2" } });
+  });
 
-beforeEach(async () => {
-  user.id = testUser1Id;
-  await (await getPrismaClient()).membership.deleteMany({});
-  await (await getPrismaClient()).workspace.deleteMany({});
-  await createWorkspace({ name: "My workspace" });
-  await createDataset("My dataset", "my-workspace", testDatasetId);
-});
+  beforeEach(async () => {
+    user.id = testUser1Id;
+    await (await getPrismaClient()).membership.deleteMany({});
+    await (await getPrismaClient()).workspace.deleteMany({});
+    await createWorkspace({ name: "My workspace" });
+    await createDataset("My dataset", "my-workspace", testDatasetId);
+  });
 
-afterAll(async () => {
-  // Needed to avoid having the test process running indefinitely after the test suite has been run
-  await (await getPrismaClient()).$disconnect();
-});
+  afterAll(async () => {
+    // Needed to avoid having the test process running indefinitely after the test suite has been run
+    await (await getPrismaClient()).$disconnect();
+  });
 
-const labelClassData = {
-  datasetId: testDatasetId,
-  id: testLabelClassId,
-  color: "#0000FF",
-  name: "test class",
-};
+  const labelClassData = {
+    datasetId: testDatasetId,
+    id: testLabelClassId,
+    color: "#0000FF",
+    name: "test class",
+  };
 
-describe("Access control for label", () => {
   it("allows to create a label class to a user that has access to the dataset", async () => {
     const createdLabelClassId = await createLabelClass(labelClassData);
     expect(createdLabelClassId).toEqual(testLabelClassId);
   });
+
   it("fails to create a label class when the user does not have access to the dataset", async () => {
     user.id = testUser2Id;
     await expect(() => createLabelClass(labelClassData)).rejects.toThrow(
       `User not authorized to access dataset`
     );
   });
+
   it("allows to get a label class to the user that created it", async () => {
     const createdLabelClassId = await createLabelClass(labelClassData);
     const { data } = await client.query({
@@ -88,6 +90,7 @@ describe("Access control for label", () => {
     expect(data.labelClass.dataset.id).toEqual(testDatasetId);
     expect(data.labelClass.labels.length).toEqual(0);
   });
+
   it("fails to get a label class if the user does not have access to it", async () => {
     const createdLabelClassId = await createLabelClass(labelClassData);
     user.id = testUser2Id;
@@ -106,6 +109,7 @@ describe("Access control for label", () => {
       })
     ).rejects.toThrow(`User not authorized to access label class`);
   });
+
   it("gives the amount of label classes the user has access to", async () => {
     await createLabelClass(labelClassData);
     await createLabelClass({ ...labelClassData, id: undefined });
@@ -126,6 +130,7 @@ describe("Access control for label", () => {
     expect(data.labelClassesAggregates.totalCount).toEqual(3);
     expect(data.labelClasses.length).toEqual(3);
   });
+
   it("returns zero elements if user does not have access to any label class", async () => {
     await createLabelClass(labelClassData);
     await createLabelClass({ ...labelClassData, id: undefined });
@@ -147,6 +152,7 @@ describe("Access control for label", () => {
     expect(data.labelClassesAggregates.totalCount).toEqual(0);
     expect(data.labelClasses.length).toEqual(0);
   });
+
   it("allows to update a label class to a user that has access to it", async () => {
     const createdLabelClassId = await createLabelClass(labelClassData);
     await client.query({
@@ -180,10 +186,10 @@ describe("Access control for label", () => {
 
     expect(data.labelClass.name).toEqual("Changed name");
   });
+
   it("fails to update a label class when the user does not have access to it", async () => {
     const createdLabelClassId = await createLabelClass(labelClassData);
     user.id = testUser2Id;
-
     await expect(() =>
       client.query({
         query: gql`
@@ -203,6 +209,7 @@ describe("Access control for label", () => {
       })
     ).rejects.toThrow(`User not authorized to access label class`);
   });
+
   it("allows to delete a label class to a user that has access to it", async () => {
     const createdLabelClassId = await createLabelClass(labelClassData);
     await client.query({
@@ -224,10 +231,10 @@ describe("Access control for label", () => {
     });
     expect(data.labelClassesAggregates.totalCount).toEqual(0);
   });
+
   it("fails to delete a label class to a user that has access to it", async () => {
     const createdLabelClassId = await createLabelClass(labelClassData);
     user.id = testUser2Id;
-
     await expect(() =>
       client.query({
         query: DELETE_LABEL_CLASS_TEST,

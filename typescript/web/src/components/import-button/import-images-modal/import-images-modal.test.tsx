@@ -56,7 +56,7 @@ const renderTestAndImport = async (
   return result;
 };
 
-describe("ImportImagesModal", () => {
+describe(ImportImagesModal, () => {
   it("displays the number of valid images", async () => {
     const { getByText, queryByLabelText } = await renderTestAndImport();
     await waitFor(() =>
@@ -130,7 +130,7 @@ describe("ImportImagesModal", () => {
     await waitFor(() => expect(onClose).toHaveBeenCalled());
   });
 
-  it("do not close the modal while files are uploading", async () => {
+  it("does not close the modal while files are uploading", async () => {
     const { getByLabelText } = await renderTestAndImport(files.slice(0, 1));
     expect(getByLabelText("Loading indicator")).toBeDefined();
     expect(getByLabelText("Close")).toBeDisabled();
