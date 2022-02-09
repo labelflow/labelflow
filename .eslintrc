@@ -20,8 +20,8 @@
         "devDependencies": [
           "setup-tests.ts",
           "cypress/**/*.ts",
-          "**/*.@(test|stories|fixtures|scripts).ts?(x)",
-          "**/@(__tests__|__stories__|tests|stories)/**/*.ts?(x)"
+          "**/*.@(test|stories|fixtures).ts?(x)",
+          "**/@(__tests__|__stories__|tests|stories|scripts)/**/*.ts?(x)"
         ]
       }
     ]
@@ -43,6 +43,6 @@
     }
   ],
   "parserOptions": {
-    "project": "./tsconfig.jest.json"
+    "project": "./tsconfig.json"
   }
 }

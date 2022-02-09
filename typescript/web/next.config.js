@@ -20,6 +20,7 @@ const SentryWebpackPluginOptions = {
 
 module.exports = withSentryConfig(
   {
+    typescript: { tsconfigPath: "tsconfig.build.json" },
     sentry: {
       disableServerWebpackPlugin:
         process.env.SENTRY_AUTH_TOKEN != null ? false : true,
