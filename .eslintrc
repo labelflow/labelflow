@@ -20,7 +20,7 @@
         "devDependencies": [
           "setup-tests.ts",
           "cypress/**/*.ts",
-          "**/*.@(test|stories|fixtures).ts?(x)",
+          "**/*.@(test|stories|fixtures|scripts).ts?(x)",
           "**/@(__tests__|__stories__|tests|stories)/**/*.ts?(x)"
         ]
       }

@@ -31,6 +31,7 @@
     "**/*.fixtures.tsx",
     "**/src/utils/fixtures",
     "**/src/utils/tests",
-    "**/src/utils/stories"
+    "**/src/utils/stories",
+    "**/scripts"
   ]
 }
