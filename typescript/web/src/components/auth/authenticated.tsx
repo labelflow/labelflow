@@ -2,7 +2,7 @@ import { isNil } from "lodash/fp";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { PropsWithChildren, useEffect } from "react";
-import { UserProvider, useUser, useWorkspaces } from "../../hooks";
+import { useOptionalWorkspaces, UserProvider, useUser } from "../../hooks";
 
 const getSignInUrl = () => {
   const path = "/auth/signin";
@@ -18,7 +18,7 @@ export type AuthenticatedProps = PropsWithChildren<{
 
 const Body = ({ optional, withWorkspaces, children }: AuthenticatedProps) => {
   const user = useUser();
-  const workspaces = useWorkspaces();
+  const workspaces = useOptionalWorkspaces();
   const hasChildren =
     optional || (!isNil(user) && (!withWorkspaces || !isNil(workspaces)));
   return <>{hasChildren && <>{children}</>}</>;
@@ -36,7 +36,7 @@ export const Authenticated = (props: AuthenticatedProps) => {
   }, [optional, router, status]);
   return (
     <>
-      {status === "authenticated" && (
+      {(status === "authenticated" || optional) && (
         <UserProvider withWorkspaces={withWorkspaces}>
           <Body {...props} />
         </UserProvider>

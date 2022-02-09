@@ -15,9 +15,10 @@ describe("Invitation Manager (online)", () => {
           name: "UserNotAlreadyAMember",
           email: "test+1@labelflow.ai",
         }).then((token) => {
-          cy.setCookie("next-auth.session-token", token as string);
-          // visit the url from the invite mail
-          cy.visit(inviteUrl);
+          cy.setCookie("next-auth.session-token", token as string).then(() => {
+            // visit the url from the invite mail
+            cy.visit(inviteUrl);
+          });
         });
       });
 
@@ -178,7 +179,7 @@ describe("Invitation Manager (online)", () => {
     cy.location("pathname").should("eq", "/");
   });
 
-  it("should open the sign in modal if the user isn't logged in", () => {
+  it("should redirect to the sign-in page if the user isn't logged in", () => {
     // log in as the default user
     cy.task("performLogin").then((token) => {
       cy.setCookie("next-auth.session-token", token as string);
@@ -195,16 +196,6 @@ describe("Invitation Manager (online)", () => {
       });
     });
 
-    // try closing the sign in modals
-    cy.contains("Sign in to LabelFlow").should("be.visible");
-    // We call trigger to make sure that the modal has finished popping up
-    // https://stackoverflow.com/a/66371021
-    cy.get(`button[aria-label="Close"]`).trigger("click");
-
-    cy.contains("You need to sign in to continue").should("be.visible");
-    cy.get("button").contains("Sign In").trigger("click");
-    cy.contains("Sign in to LabelFlow").should("be.visible");
-    cy.get(`button[aria-label="Close"]`).trigger("click");
     cy.contains("Sign in to LabelFlow").should("be.visible");
 
     // log in as another user
