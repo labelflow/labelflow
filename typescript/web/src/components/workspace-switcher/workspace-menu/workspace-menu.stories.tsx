@@ -1,13 +1,23 @@
 import { BreadcrumbLink, Text } from "@chakra-ui/react";
 import NextLink from "next/link";
 import { useState } from "react";
-import { chakraDecorator, storybookTitle } from "../../../utils/stories";
+import {
+  USER_WITH_WORKSPACES_QUERY_MOCK,
+  WORKSPACE_DATA,
+} from "../../../utils/fixtures";
+import { createCommonDecorator, storybookTitle } from "../../../utils/stories";
 import { ResponsiveBreadcrumbs } from "../../layout/top-bar/breadcrumbs/responsive-breadcrumbs";
 import { WorkspaceMenu } from "./workspace-menu";
 
 export default {
   title: storybookTitle("Workspace Switcher", WorkspaceMenu),
-  decorators: [chakraDecorator],
+  decorators: [
+    createCommonDecorator({
+      auth: { withWorkspaces: true },
+      apollo: { extraMocks: [USER_WITH_WORKSPACES_QUERY_MOCK] },
+      router: { query: { workspaceSlug: WORKSPACE_DATA.slug } },
+    }),
+  ],
 };
 
 const createNewWorkspace = (name: string): void => {

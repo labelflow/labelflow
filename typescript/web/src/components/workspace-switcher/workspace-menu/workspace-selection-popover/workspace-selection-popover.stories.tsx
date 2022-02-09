@@ -1,10 +1,23 @@
 import { Button, useDisclosure } from "@chakra-ui/react";
-import { chakraDecorator, storybookTitle } from "../../../../utils/stories";
+import {
+  USER_WITH_WORKSPACES_QUERY_MOCK,
+  WORKSPACE_DATA,
+} from "../../../../utils/fixtures";
+import {
+  createCommonDecorator,
+  storybookTitle,
+} from "../../../../utils/stories";
 import { WorkspaceSelectionPopover } from "./workspace-selection-popover";
 
 export default {
   title: storybookTitle("Workspace Switcher", WorkspaceSelectionPopover),
-  decorators: [chakraDecorator],
+  decorators: [
+    createCommonDecorator({
+      auth: { withWorkspaces: true },
+      apollo: { extraMocks: [USER_WITH_WORKSPACES_QUERY_MOCK] },
+      router: { query: { workspaceSlug: WORKSPACE_DATA.slug } },
+    }),
+  ],
 };
 
 const workspaces = [
