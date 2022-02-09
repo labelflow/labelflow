@@ -30,7 +30,7 @@ import {
 } from "react-icons/ri";
 import { useQueryParam } from "use-query-params";
 import { UserQuery_user } from "../../../graphql-types/UserQuery";
-import { useUser } from "../../../hooks";
+import { useOptionalUser } from "../../../hooks";
 import { trackEvent } from "../../../utils/google-analytics";
 import { BoolParam } from "../../../utils/query-param-bool";
 import { randomBackgroundGradient } from "../../../utils/random-background-gradient";
@@ -46,7 +46,7 @@ const SignoutIcon = chakra(RiLogoutCircleRLine);
 
 const SettingsIcon = chakra(RiSettings4Line);
 
-type UserProps = UserQuery_user & { displayName?: string };
+type UserProps = Partial<UserQuery_user> & { displayName?: string };
 
 const UserAvatar = ({ image, displayName }: UserProps) => {
   const avatarBackground = useColorModeValue("white", "gray.700");
@@ -220,8 +220,8 @@ const UserMenuList = (props: UserProps) => {
 };
 
 const useUserWithDisplayName = (): UserProps => {
-  const user = useUser();
-  return { ...user, displayName: getDisplayName(user) };
+  const user = useOptionalUser();
+  return { ...user, displayName: getDisplayName(user ?? {}) };
 };
 
 export const UserMenu = () => {

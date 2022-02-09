@@ -1,9 +1,16 @@
 import { TabBar, TabBarItem } from ".";
-import { chakraDecorator, storybookTitle } from "../../../utils/stories";
+import { WORKSPACE_DATA } from "../../../utils/fixtures";
+import { createCommonDecorator, storybookTitle } from "../../../utils/stories";
 
 export default {
   title: storybookTitle(TabBar),
-  decorators: [chakraDecorator],
+  decorators: [
+    createCommonDecorator({
+      auth: { withWorkspaces: true },
+      apollo: true,
+      router: { query: { workspaceSlug: WORKSPACE_DATA.slug } },
+    }),
+  ],
 };
 
 const tabs: TabBarItem[] = [

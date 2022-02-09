@@ -6,7 +6,6 @@ import { EmptyStateNoSearchResult } from "../components/empty-state";
 import { Layout } from "../components/layout";
 import { NavLogo } from "../components/logo/nav-logo";
 import { Meta } from "../components/meta";
-import { WelcomeModal } from "../components/welcome-manager";
 
 export const Error404Content = () => (
   <Layout breadcrumbs={[<NavLogo key={0} />]}>
@@ -57,7 +56,6 @@ export const Error404Content = () => (
 const Error404Page = () => {
   return (
     <>
-      <WelcomeModal />
       <Meta title="LabelFlow | Not found" />
       <CookieBanner />
       <Error404Content />

@@ -12,14 +12,14 @@ import {
   BASIC_IMAGE_DATA,
   DEEP_DATASET_WITH_IMAGES_DATA,
 } from "../../../utils/fixtures";
-import { renderWithWrapper } from "../../../utils/tests";
+import { ApolloMockResponses, renderWithWrapper } from "../../../utils/tests";
 import { ImageNavigationTool } from "./image-navigation-tool";
 import { APOLLO_MOCKS } from "./image-navigation-tool.fixtures";
 
 const renderImageNavigationTool = () =>
   renderWithWrapper(<ImageNavigationTool />, {
     auth: { withWorkspaces: true },
-    apollo: { extraMocks: APOLLO_MOCKS },
+    apollo: { extraMocks: APOLLO_MOCKS as ApolloMockResponses },
   });
 
 const testNeighborImage = async (direction: "previous" | "next") => {

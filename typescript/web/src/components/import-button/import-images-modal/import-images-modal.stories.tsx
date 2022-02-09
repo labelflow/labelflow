@@ -1,10 +1,7 @@
 import { Button, useDisclosure } from "@chakra-ui/react";
-import {
-  apolloMockDecorator,
-  chakraDecorator,
-  queryParamsDecorator,
-  storybookTitle,
-} from "../../../utils/stories";
+import { BASIC_DATASET_DATA, WORKSPACE_DATA } from "../../../utils/fixtures";
+import { createCommonDecorator, storybookTitle } from "../../../utils/stories";
+import { IMPORT_BUTTON_MOCKS } from "../import-button.fixtures";
 import { ImportImagesModal } from "./import-images-modal";
 
 export default {
@@ -18,7 +15,18 @@ export default {
       },
     },
   },
-  decorators: [chakraDecorator, apolloMockDecorator, queryParamsDecorator],
+  decorators: [
+    createCommonDecorator({
+      auth: { withWorkspaces: true },
+      apollo: { extraMocks: IMPORT_BUTTON_MOCKS },
+      router: {
+        query: {
+          workspaceSlug: WORKSPACE_DATA.slug,
+          datasetSlug: BASIC_DATASET_DATA.slug,
+        },
+      },
+    }),
+  ],
 };
 
 export const Default = () => {

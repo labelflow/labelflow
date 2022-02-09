@@ -1,16 +1,24 @@
 import { SessionProvider } from "next-auth/react";
 import { Members } from ".";
-import {
-  apolloMockDecorator,
-  chakraDecorator,
-  storybookTitle,
-} from "../../utils/stories";
+import { BASIC_DATASET_DATA, WORKSPACE_DATA } from "../../utils/fixtures";
+import { createCommonDecorator, storybookTitle } from "../../utils/stories";
 import { TEST_MEMBERSHIPS } from "./members.fixtures";
 
 export default {
   title: storybookTitle(Members),
   component: Members,
-  decorators: [chakraDecorator, apolloMockDecorator],
+  decorators: [
+    createCommonDecorator({
+      auth: { withWorkspaces: true },
+      apollo: true,
+      router: {
+        query: {
+          workspaceSlug: WORKSPACE_DATA.slug,
+          datasetSlug: BASIC_DATASET_DATA.slug,
+        },
+      },
+    }),
+  ],
 };
 
 export const MembersList = () => {

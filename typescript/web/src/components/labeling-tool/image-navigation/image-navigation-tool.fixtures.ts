@@ -16,24 +16,24 @@ const DATASET_SLUG_DATA = {
   [DEEP_DATASET_WITH_IMAGES_DATA.slug]: DEEP_DATASET_WITH_IMAGES_DATA,
 };
 
-const getAllImagesOfADatasetMockResult = jest.fn(
-  (variables: GetAllImagesOfADatasetQueryVariables) => ({
-    data: {
-      dataset:
-        variables.slug in DATASET_SLUG_DATA
-          ? {
-              id: DATASET_SLUG_DATA[variables.slug].id,
-              images: DATASET_SLUG_DATA[variables.slug].images.map((image) =>
-                pick(["id", "url", "thumbnail200Url"], image)
-              ),
-            }
-          : {
-              id: "unknown dataset ID",
-              images: [],
-            },
-    },
-  })
-);
+const getAllImagesOfADatasetMockResult = (
+  variables: GetAllImagesOfADatasetQueryVariables
+) => ({
+  data: {
+    dataset:
+      variables.slug in DATASET_SLUG_DATA
+        ? {
+            id: DATASET_SLUG_DATA[variables.slug].id,
+            images: DATASET_SLUG_DATA[variables.slug].images.map((image) =>
+              pick(["id", "url", "thumbnail200Url"], image)
+            ),
+          }
+        : {
+            id: "unknown dataset ID",
+            images: [],
+          },
+  },
+});
 
 export const GET_ALL_IMAGES_OF_A_DATASET_MOCK: ApolloMockResponse<
   GetAllImagesOfADatasetQuery,

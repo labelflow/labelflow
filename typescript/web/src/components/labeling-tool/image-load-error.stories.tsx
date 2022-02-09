@@ -3,7 +3,6 @@ import { DecoratorFn, Story } from "@storybook/react";
 import {
   apolloMockDecorator,
   chakraDecorator,
-  mockImagesLoader,
   queryParamsDecorator,
   storybookTitle,
 } from "../../utils/stories";
@@ -22,7 +21,8 @@ function inGreyBoxDecorator(
 export default {
   title: storybookTitle(ImageLoadError),
   component: ImageLoadError,
-  loaders: [mockImagesLoader],
+  // FIXME SW Images are not loaded anymore
+  // loaders: [mockImagesLoader],
   decorators: [
     inGreyBoxDecorator,
     queryParamsDecorator,

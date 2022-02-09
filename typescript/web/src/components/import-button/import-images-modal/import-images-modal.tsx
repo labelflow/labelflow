@@ -15,6 +15,13 @@ import { ImportImagesModalUrlList } from "./modal-url-list/modal-url-list";
 import { DATASET_IMAGES_PAGE_DATASET_QUERY } from "../../../shared-queries/dataset-images-page.query";
 import { WORKSPACE_DATASETS_PAGE_DATASETS_QUERY } from "../../../shared-queries/workspace-datasets-page.query";
 import { useDataset, useWorkspace } from "../../../hooks";
+import {
+  DatasetImagesPageDatasetQuery,
+  DatasetImagesPageDatasetQueryVariables,
+  WorkspaceDatasetsPageDatasetsQuery,
+  WorkspaceDatasetsPageDatasetsQueryVariables,
+} from "../../../graphql-types";
+import { PAGINATED_IMAGES_QUERY } from "../../dataset-images-list";
 
 export type ImportImagesModalProps = {
   isOpen?: boolean;
@@ -46,7 +53,10 @@ export const ImportImagesModal = ({
   useEffect(() => {
     // Manually refetch
     if (hasUploaded) {
-      client.query({
+      client.query<
+        DatasetImagesPageDatasetQuery,
+        DatasetImagesPageDatasetQueryVariables
+      >({
         query: DATASET_IMAGES_PAGE_DATASET_QUERY,
         variables: {
           slug: datasetSlug,
@@ -54,12 +64,18 @@ export const ImportImagesModal = ({
         },
         fetchPolicy: "network-only",
       });
-      client.query({
+      client.query<
+        WorkspaceDatasetsPageDatasetsQuery,
+        WorkspaceDatasetsPageDatasetsQueryVariables
+      >({
         query: WORKSPACE_DATASETS_PAGE_DATASETS_QUERY,
         fetchPolicy: "network-only",
       });
       client.refetchQueries({
-        include: [WORKSPACE_DATASETS_PAGE_DATASETS_QUERY],
+        include: [
+          WORKSPACE_DATASETS_PAGE_DATASETS_QUERY,
+          PAGINATED_IMAGES_QUERY,
+        ],
       });
     }
   }, [hasUploaded]);

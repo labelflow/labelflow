@@ -7,19 +7,26 @@ import { mockWorkspace } from "../../utils/tests/mock-workspace";
 mockWorkspace();
 
 import { BASIC_DATASET_DATA } from "../../utils/fixtures";
-import { renderWithWrapper } from "../../utils/tests";
+import {
+  ApolloMockResponses,
+  injectJestInApolloMockResults,
+  renderWithWrapper,
+} from "../../utils/tests";
 import { UpsertDatasetModal } from "./upsert-dataset-modal";
 import {
   APOLLO_MOCKS,
   UPDATED_DATASET_MOCK_NAME,
-  CREATE_DATASET_MOCK,
-  UPDATE_DATASET_MOCK,
 } from "./upsert-dataset-modal.fixtures";
+
+const APOLLO_MOCKS_WITH_JEST = injectJestInApolloMockResults(APOLLO_MOCKS);
 
 const renderModal = (props = {}) =>
   renderWithWrapper(
     <UpsertDatasetModal isOpen onClose={() => {}} {...props} />,
-    { auth: { withWorkspaces: true }, apollo: { extraMocks: APOLLO_MOCKS } }
+    {
+      auth: { withWorkspaces: true },
+      apollo: { extraMocks: APOLLO_MOCKS_WITH_JEST as ApolloMockResponses },
+    }
   );
 
 describe(UpsertDatasetModal, () => {
@@ -53,7 +60,7 @@ describe(UpsertDatasetModal, () => {
     fireEvent.click(button);
     await waitFor(() => {
       expect(onClose).toHaveBeenCalled();
-      expect(CREATE_DATASET_MOCK.result).toHaveBeenCalled();
+      expect(APOLLO_MOCKS_WITH_JEST[3].result).toHaveBeenCalled();
     });
   });
 
@@ -100,6 +107,6 @@ describe(UpsertDatasetModal, () => {
     await waitFor(() => expect(input.value).toBe(UPDATED_DATASET_MOCK_NAME));
     userEvent.click(button);
     await waitFor(() => expect(onClose).toHaveBeenCalled());
-    expect(UPDATE_DATASET_MOCK.result).toHaveBeenCalled();
+    expect(APOLLO_MOCKS_WITH_JEST[4].result).toHaveBeenCalled();
   });
 });

@@ -97,14 +97,14 @@ export const CREATE_DATASET_MOCK: ApolloMockResponse<
       workspaceSlug: BASIC_DATASET_DATA.workspace.slug,
     },
   },
-  result: jest.fn(() => ({
+  result: () => ({
     data: {
       createDataset: {
         __typename: "Dataset",
         id: BASIC_DATASET_DATA.id,
       },
     },
-  })),
+  }),
 };
 
 export const UPDATE_DATASET_MOCK: ApolloMockResponse<
@@ -118,14 +118,14 @@ export const UPDATE_DATASET_MOCK: ApolloMockResponse<
       name: UPDATED_DATASET_MOCK_NAME,
     },
   },
-  result: jest.fn(() => ({
+  result: () => ({
     data: {
       updateDataset: {
         __typename: "Dataset",
         id: BASIC_DATASET_DATA.id,
       },
     },
-  })),
+  }),
 };
 
 export const APOLLO_MOCKS: ApolloMockResponses = [

@@ -5,7 +5,7 @@ export type OptionalParentProps<
   TParentPropsWithChildren = PropsWithChildren<TParentProps>
 > = PropsWithChildren<{
   enabled: boolean;
-  parent: (props: TParentPropsWithChildren) => JSX.Element;
+  parent: (props: TParentPropsWithChildren) => JSX.Element | null;
   parentProps: TParentProps;
 }>;
 

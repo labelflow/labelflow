@@ -1,25 +1,23 @@
 import { Button, useDisclosure } from "@chakra-ui/react";
 import { SessionProvider } from "next-auth/react";
-import {
-  apolloMockDecorator,
-  chakraDecorator,
-  queryParamsDecorator,
-  storybookTitle,
-} from "../../utils/stories";
+import { BASIC_DATASET_DATA, WORKSPACE_DATA } from "../../utils/fixtures";
+import { createCommonDecorator, storybookTitle } from "../../utils/stories";
 import { NewMemberModal } from "./new-member-modal";
 
 export default {
   title: storybookTitle(NewMemberModal),
-  parameters: {
-    nextRouter: {
-      path: "/images/[id]",
-      asPath: "/images/mock-image-id",
-      query: {
-        id: "mock-image-id",
+  decorators: [
+    createCommonDecorator({
+      auth: { withWorkspaces: true },
+      apollo: true,
+      router: {
+        query: {
+          workspaceSlug: WORKSPACE_DATA.slug,
+          datasetSlug: BASIC_DATASET_DATA.slug,
+        },
       },
-    },
-  },
-  decorators: [chakraDecorator, apolloMockDecorator, queryParamsDecorator],
+    }),
+  ],
 };
 
 export const Default = () => {

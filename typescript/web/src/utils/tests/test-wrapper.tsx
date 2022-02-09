@@ -4,7 +4,11 @@ import {
 } from "@apollo/client/testing";
 import { ChakraProvider } from "@chakra-ui/react";
 import { isNil } from "lodash/fp";
+import { SessionProvider } from "next-auth/react";
+import { RouterContext } from "next/dist/shared/lib/router-context";
+import { useRouter } from "next/router";
 import { PropsWithChildren } from "react";
+import { QueryParamProvider } from "use-query-params";
 import { WildcardMockLink } from "wildcard-mock-link";
 import {
   Authenticated,
@@ -13,10 +17,12 @@ import {
 import { theme } from "../../theme";
 import {
   USER_QUERY_MOCK,
+  USER_WITH_WORKSPACES_DATA,
   USER_WITH_WORKSPACES_QUERY_MOCK,
 } from "../fixtures/user.fixtures";
 import { OptionalParent } from "../optional-parent";
 import { ApolloMockResponses, getApolloMockLink } from "./apollo-mock";
+import { RouterMock, RouterMockOptions } from "./router-mocks";
 
 export type AuthMockOptions = boolean | Omit<AuthenticatedProps, "children">;
 
@@ -35,14 +41,65 @@ export type ApolloMockOptions =
 export type TestWrapperProps = PropsWithChildren<{
   auth?: AuthMockOptions;
   apollo?: ApolloMockOptions;
+  router?: RouterMockOptions;
+  queryParams?: Record<string, unknown>;
 }>;
 
 const hasWorkspaces = (auth: AuthMockOptions | undefined): boolean =>
   typeof auth !== "boolean" && (auth?.withWorkspaces ?? false);
 
+const hasAuth = (auth: AuthMockOptions | undefined): boolean =>
+  !isNil(auth) && auth !== false;
+
 export const hasRequiredAuth = (auth: AuthMockOptions | undefined): boolean =>
   (typeof auth === "boolean" && auth) ||
   (typeof auth === "object" && !auth.optional);
+
+type OptionalSessionProps = Pick<TestWrapperProps, "auth" | "children">;
+
+const SessionProviderMock = ({ children }: PropsWithChildren<{}>) => (
+  <SessionProvider
+    session={{ user: { id: USER_WITH_WORKSPACES_DATA.id } } as any}
+  >
+    {children}
+  </SessionProvider>
+);
+
+const OptionalSession = ({ auth, children }: OptionalSessionProps) => (
+  <OptionalParent
+    enabled={hasAuth(auth) && !isNil(SessionProvider)}
+    parent={SessionProviderMock}
+    parentProps={{}}
+  >
+    {children}
+  </OptionalParent>
+);
+
+const QueryParamProviderMock = ({ children }: PropsWithChildren<{}>) => {
+  const router = useRouter();
+  return <QueryParamProvider history={router}>{children}</QueryParamProvider>;
+};
+
+type OptionalNextRouterProps = Pick<TestWrapperProps, "router" | "children">;
+
+const RouterAndQueryParams = ({
+  router,
+  children,
+}: OptionalNextRouterProps) => (
+  <RouterContext.Provider value={new RouterMock(router)}>
+    <QueryParamProviderMock>{children}</QueryParamProviderMock>
+  </RouterContext.Provider>
+);
+
+const OptionalNextRouter = ({ router, children }: OptionalNextRouterProps) => (
+  <OptionalParent
+    enabled={!isNil(router)}
+    parent={RouterAndQueryParams}
+    parentProps={{ router }}
+  >
+    {children}
+  </OptionalParent>
+);
 
 type GetDefaultApolloMocksOptions = Pick<TestWrapperProps, "auth"> &
   DefaultApolloMockOptions;
@@ -116,11 +173,20 @@ const OptionalAuthProvider = ({
   </OptionalParent>
 );
 
-export const TestWrapper = ({ apollo, auth, children }: TestWrapperProps) => (
+export const TestWrapper = ({
+  apollo,
+  auth,
+  router,
+  children,
+}: TestWrapperProps) => (
   <ChakraProvider theme={theme} resetCSS>
-    <OptionalApolloProvider apollo={apollo} auth={auth}>
-      <OptionalAuthProvider auth={auth}>{children}</OptionalAuthProvider>
-    </OptionalApolloProvider>
+    <OptionalSession auth={auth}>
+      <OptionalNextRouter router={router}>
+        <OptionalApolloProvider apollo={apollo} auth={auth}>
+          <OptionalAuthProvider auth={auth}>{children}</OptionalAuthProvider>
+        </OptionalApolloProvider>
+      </OptionalNextRouter>
+    </OptionalSession>
   </ChakraProvider>
 );
 

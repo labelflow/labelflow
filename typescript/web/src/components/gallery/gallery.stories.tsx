@@ -1,12 +1,8 @@
 import { HStack } from "@chakra-ui/react";
 import { Story } from "@storybook/react";
+import { BASIC_DATASET_DATA, WORKSPACE_DATA } from "../../utils/fixtures";
 import imageSampleCollection from "../../utils/image-sample-collection";
-import {
-  apolloMockDecorator,
-  chakraDecorator,
-  mockImagesLoader,
-  storybookTitle,
-} from "../../utils/stories";
+import { createCommonDecorator, storybookTitle } from "../../utils/stories";
 import { Gallery } from "./gallery";
 
 const datasetId = "233e2e14-7be3-4371-a6de-1ebbe71c90b9";
@@ -26,8 +22,20 @@ const images = imageSampleCollection
 export default {
   title: storybookTitle(Gallery),
   component: Gallery,
-  loaders: [mockImagesLoader],
-  decorators: [chakraDecorator, apolloMockDecorator],
+  // FIXME SW Images are not loaded anymore
+  // loaders: [mockImagesLoader],
+  decorators: [
+    createCommonDecorator({
+      auth: { withWorkspaces: true },
+      apollo: true,
+      router: {
+        query: {
+          workspaceSlug: WORKSPACE_DATA.slug,
+          datasetSlug: BASIC_DATASET_DATA.slug,
+        },
+      },
+    }),
+  ],
 };
 
 const Template: Story = () => (

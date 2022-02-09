@@ -104,8 +104,9 @@ const performWelcomeWorkflow = async ({
             "GetImageLabelsQuery",
           ],
         });
-      if (createDemoDatasetErrors) {
-        throw createDemoDatasetErrors[0];
+      const firstError = createDemoDatasetErrors?.[0];
+      if (firstError) {
+        throw new Error(firstError?.message ?? "");
       }
     }
 

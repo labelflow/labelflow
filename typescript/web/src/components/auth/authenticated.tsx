@@ -1,9 +1,8 @@
 import { isNil } from "lodash/fp";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
+import { PropsWithChildren, useEffect } from "react";
 import { UserProvider, useUser, useWorkspaces } from "../../hooks";
-import { PropsWithRequiredChildren } from "../../utils";
 
 const getSignInUrl = () => {
   const path = "/auth/signin";
@@ -12,7 +11,7 @@ const getSignInUrl = () => {
   return `${path}?${searchParams}`;
 };
 
-export type AuthenticatedProps = PropsWithRequiredChildren<{
+export type AuthenticatedProps = PropsWithChildren<{
   optional?: boolean;
   withWorkspaces?: boolean;
 }>;

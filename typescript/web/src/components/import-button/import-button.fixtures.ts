@@ -97,7 +97,7 @@ const WORKSPACE_DATASETS_PAGE_DATASETS_MOCK: ApolloMockResponse<
 > = {
   request: {
     query: WORKSPACE_DATASETS_PAGE_DATASETS_QUERY,
-    variables: { first: 10, skip: 0 },
+    variables: MATCH_ANY_PARAMETERS,
   },
   result: {
     data: {
