@@ -18,8 +18,6 @@ import { useDataset, useWorkspace } from "../../../hooks";
 import {
   DatasetImagesPageDatasetQuery,
   DatasetImagesPageDatasetQueryVariables,
-  WorkspaceDatasetsPageDatasetsQuery,
-  WorkspaceDatasetsPageDatasetsQueryVariables,
 } from "../../../graphql-types";
 import { PAGINATED_IMAGES_QUERY } from "../../dataset-images-list";
 
@@ -62,13 +60,6 @@ export const ImportImagesModal = ({
           slug: datasetSlug,
           workspaceSlug,
         },
-        fetchPolicy: "network-only",
-      });
-      client.query<
-        WorkspaceDatasetsPageDatasetsQuery,
-        WorkspaceDatasetsPageDatasetsQueryVariables
-      >({
-        query: WORKSPACE_DATASETS_PAGE_DATASETS_QUERY,
         fetchPolicy: "network-only",
       });
       client.refetchQueries({
