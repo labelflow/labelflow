@@ -122,6 +122,7 @@ export const ImportImagesModal = ({
         <ModalFooter>
           {hasUploaded && (
             <Button
+              data-testid="start-labeling-button"
               colorScheme="brand"
               onClick={() => {
                 onClose();

@@ -22,7 +22,7 @@ export const declateTests = ({ getDatasetSlug, workspaceSlug }: TestInput) => {
       delay: 0,
     });
     cy.contains("Start Import").click();
-    cy.get(`[aria-label="Close"]`).click();
+    cy.get(`[data-testid="start-labeling-button"]`).click();
     cy.get("main").contains("photo").click({ force: true });
 
     // Check that we can reach the end of the list
