@@ -31,13 +31,8 @@ describe("Online workspaces access (online)", () => {
     cy.get('[aria-label="User and Preferences"]').click();
     cy.contains("Cypress test user").should("be.visible");
     // Click on create workspace in workspace switcher
-    cy.get('[aria-label="Open workspace selection popover"]').click();
-    cy.get('[aria-label="Workspace selection menu popover"]')
-      .contains("Create workspace")
-      .click({ force: true });
+    cy.get('[aria-label="workspace name input"]').type("Test workspace");
     // Click on create workspace in workspace creation modal
-    cy.contains("Workspace Name").should("be.visible");
-    cy.focused().type("Test workspace");
     cy.get('[aria-label="create workspace button"]').click();
     cy.wait(420);
     // Check that we were redirected to the new workspace page
