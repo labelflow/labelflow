@@ -22,13 +22,14 @@ import {
   GetDatasetByIdQuery,
   GetDatasetByIdQueryVariables,
 } from "../../graphql-types/GetDatasetByIdQuery";
-import { WORKSPACE_DATASETS_PAGE_DATASETS_QUERY } from "../../shared-queries/workspace-datasets-page.query";
 import { useWorkspace } from "../../hooks";
+import { WORKSPACE_DATASETS_PAGE_DATASETS_QUERY } from "../../shared-queries/workspace-datasets-page.query";
 import { CREATE_DATASET_MUTATION } from "./create-dataset.mutation";
 import {
   GET_DATASET_BY_ID_QUERY,
   SEARCH_DATASET_BY_SLUG_QUERY,
 } from "./datasets.query";
+import { GET_DATASETS_IDS_QUERY } from "./get-datasets-ids.query";
 import { UPDATE_DATASET_MUTATION } from "./update-dataset.mutation";
 
 const debounceTime = 200;
@@ -83,7 +84,10 @@ export const UpsertDatasetModal = ({
         name: datasetName,
         workspaceSlug,
       },
-      refetchQueries: [WORKSPACE_DATASETS_PAGE_DATASETS_QUERY],
+      refetchQueries: [
+        GET_DATASETS_IDS_QUERY,
+        WORKSPACE_DATASETS_PAGE_DATASETS_QUERY,
+      ],
       awaitRefetchQueries: true,
     }
   );
@@ -95,7 +99,10 @@ export const UpsertDatasetModal = ({
         id: datasetId,
         name: datasetName,
       },
-      refetchQueries: [WORKSPACE_DATASETS_PAGE_DATASETS_QUERY],
+      refetchQueries: [
+        GET_DATASETS_IDS_QUERY,
+        WORKSPACE_DATASETS_PAGE_DATASETS_QUERY,
+      ],
       awaitRefetchQueries: true,
     }
   );

@@ -1,4 +1,4 @@
-import { gql, useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client";
 import { Flex } from "@chakra-ui/react";
 import type { Dataset as DatasetType } from "@labelflow/graphql-types";
 import { PaginationProvider } from "../pagination";
@@ -11,14 +11,7 @@ import {
   DatasetListProvider,
   useDatasetList,
 } from "./dataset-list.context";
-
-export const GET_DATASETS_IDS_QUERY = gql`
-  query GetDatasetsIds($where: DatasetWhereInput) {
-    datasets(where: $where) {
-      id
-    }
-  }
-`;
+import { GET_DATASETS_IDS_QUERY } from "./get-datasets-ids.query";
 
 const LoadingCard = () => (
   <DatasetCardBox>
