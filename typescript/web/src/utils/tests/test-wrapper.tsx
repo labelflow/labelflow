@@ -3,25 +3,20 @@ import {
   MockedProviderProps,
 } from "@apollo/client/testing";
 import { ChakraProvider } from "@chakra-ui/react";
-import {
-  act,
-  render,
-  RenderOptions,
-  RenderResult,
-} from "@testing-library/react";
 import { isNil } from "lodash/fp";
-import { PropsWithChildren, ReactElement } from "react";
+import { PropsWithChildren } from "react";
 import { WildcardMockLink } from "wildcard-mock-link";
 import {
   Authenticated,
   AuthenticatedProps,
 } from "../../components/auth/authenticated";
 import { theme } from "../../theme";
-import { ApolloMockResponses, getApolloMockLink } from "./apollo-mock";
 import {
   USER_QUERY_MOCK,
   USER_WITH_WORKSPACES_QUERY_MOCK,
 } from "../fixtures/user.fixtures";
+import { OptionalParent } from "../optional-parent";
+import { ApolloMockResponses, getApolloMockLink } from "./apollo-mock";
 
 export type AuthMockOptions = boolean | Omit<AuthenticatedProps, "children">;
 
@@ -45,7 +40,7 @@ export type TestWrapperProps = PropsWithChildren<{
 const hasWorkspaces = (auth: AuthMockOptions | undefined): boolean =>
   typeof auth !== "boolean" && (auth?.withWorkspaces ?? false);
 
-const hasRequiredAuth = (auth: AuthMockOptions | undefined): boolean =>
+export const hasRequiredAuth = (auth: AuthMockOptions | undefined): boolean =>
   (typeof auth === "boolean" && auth) ||
   (typeof auth === "object" && !auth.optional);
 
@@ -62,17 +57,21 @@ const getDefaultApolloMocks = ({
   return [...authMock, ...extraMocks];
 };
 
-type GetApolloMocksOptions = Pick<TestWrapperProps, "auth"> &
+export type GetApolloMocksOptions = Pick<TestWrapperProps, "auth"> &
   (DefaultApolloMockOptions | WithMocksApolloOptions);
 
-const getApolloLink = ({
+export const getApolloMocks = ({
   auth,
   ...options
-}: GetApolloMocksOptions): WildcardMockLink => {
-  const apolloMocks =
-    "mocks" in options
-      ? options.mocks
-      : getDefaultApolloMocks({ auth, extraMocks: options.extraMocks });
+}: GetApolloMocksOptions): ApolloMockResponses | undefined => {
+  if ("link" in options) return undefined;
+  return "mocks" in options
+    ? options.mocks
+    : getDefaultApolloMocks({ auth, extraMocks: options.extraMocks });
+};
+
+const getApolloLink = (options: GetApolloMocksOptions): WildcardMockLink => {
+  const apolloMocks = getApolloMocks(options);
   return getApolloMockLink(apolloMocks);
 };
 
@@ -92,27 +91,30 @@ const getApolloProps = ({
     : { link: getApolloLink({ auth, ...apollo }) };
 };
 
-const OptionalApolloProvider = ({ children, ...props }: TestWrapperProps) => {
-  return isNil(props.apollo) || props.apollo === false ? (
-    <>{children}</>
-  ) : (
-    <ApolloProvider {...getApolloProps(props)}>{children}</ApolloProvider>
-  );
-};
+const OptionalApolloProvider = ({ children, ...props }: TestWrapperProps) => (
+  <OptionalParent
+    enabled={!isNil(props.apollo) && props.apollo !== false}
+    parent={(apolloProps) => <ApolloProvider {...apolloProps} />}
+    parentProps={getApolloProps(props)}
+  >
+    {children}
+  </OptionalParent>
+);
 
 type OptionalAuthProviderProps = Pick<TestWrapperProps, "children" | "auth">;
 
 const OptionalAuthProvider = ({
   children,
   auth = false,
-}: OptionalAuthProviderProps) => {
-  const authProps = typeof auth === "boolean" ? undefined : auth;
-  return auth ? (
-    <Authenticated {...authProps}>{children ?? "NO CHILDREN"}</Authenticated>
-  ) : (
-    <>{children}</>
-  );
-};
+}: OptionalAuthProviderProps) => (
+  <OptionalParent
+    enabled={!isNil(auth) && auth !== false}
+    parent={Authenticated}
+    parentProps={typeof auth === "boolean" ? {} : auth}
+  >
+    {children ?? "NO CHILDREN"}
+  </OptionalParent>
+);
 
 export const TestWrapper = ({ apollo, auth, children }: TestWrapperProps) => (
   <ChakraProvider theme={theme} resetCSS>
@@ -122,59 +124,21 @@ export const TestWrapper = ({ apollo, auth, children }: TestWrapperProps) => (
   </ChakraProvider>
 );
 
-type CreateTestWrapperResult = {
+export type CreateTestWrapperOptions = Omit<TestWrapperProps, "children">;
+
+export type CreateTestWrapperResult = {
   wrapper: (props: PropsWithChildren<{}>) => JSX.Element;
   apolloMockLink: WildcardMockLink;
 };
 
 export const createTestWrapper = (
-  props?: Omit<TestWrapperProps, "children">
+  options?: CreateTestWrapperOptions
 ): CreateTestWrapperResult => {
-  const apolloProps = getApolloProps(props);
+  const apolloProps = getApolloProps(options);
   return {
-    wrapper: ({ children }) => <TestWrapper {...props}>{children}</TestWrapper>,
+    wrapper: ({ children }) => (
+      <TestWrapper {...options}>{children}</TestWrapper>
+    ),
     apolloMockLink: apolloProps.link,
   };
-};
-
-export type RenderWithWrapperOptions = Omit<TestWrapperProps, "children"> & {
-  renderOptions?: RenderOptions;
-};
-
-export type RenderWithWrapperResult = RenderResult &
-  Pick<CreateTestWrapperResult, "apolloMockLink">;
-
-const waitForAuth = async (
-  auth: AuthMockOptions | undefined,
-  apolloMockLink: WildcardMockLink
-): Promise<void> => {
-  if (!hasRequiredAuth(auth)) return;
-  await act(() => apolloMockLink.waitForAllResponses());
-  await act(() => apolloMockLink.waitForAllResponses());
-};
-
-const addExtraWrapper = (
-  Wrapper: RenderOptions["wrapper"],
-  ExtraWrapper: RenderOptions["wrapper"] | undefined
-): RenderOptions["wrapper"] =>
-  ExtraWrapper
-    ? ({ children }: PropsWithChildren<{}>) => (
-        <Wrapper>
-          <ExtraWrapper>{children}</ExtraWrapper>
-        </Wrapper>
-      )
-    : Wrapper;
-
-export const renderWithWrapper = async (
-  element: ReactElement,
-  {
-    renderOptions: { wrapper: extraWrapper, ...renderOptions } = {},
-    ...options
-  }: RenderWithWrapperOptions = {}
-): Promise<RenderWithWrapperResult> => {
-  const { wrapper: testWrapper, apolloMockLink } = createTestWrapper(options);
-  const wrapper = addExtraWrapper(testWrapper, extraWrapper);
-  const renderResult = render(element, { wrapper, ...renderOptions });
-  await waitForAuth(options.auth, apolloMockLink);
-  return { ...renderResult, apolloMockLink };
 };

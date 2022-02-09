@@ -1,1 +1,1 @@
-export * from "./props-with-required-children";
+export * from "./optional-parent";

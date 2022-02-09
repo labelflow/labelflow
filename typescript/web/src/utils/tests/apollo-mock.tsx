@@ -1,13 +1,17 @@
-import { PropsWithChildren } from "react";
+import { FetchResult, GraphQLRequest } from "@apollo/client";
 import { MockedProvider } from "@apollo/client/testing";
+import { act } from "@testing-library/react";
+import { PropsWithChildren } from "react";
 import {
   MATCH_ANY_PARAMETERS,
   MockedResponses,
   WildcardMockedResponse,
   WildcardMockLink,
 } from "wildcard-mock-link";
-import { FetchResult, GraphQLRequest } from "@apollo/client";
-import { act } from "@testing-library/react";
+
+export type ApolloMockResponseResult<TData, TVariables> =
+  | FetchResult<TData>
+  | ((variables: TVariables) => FetchResult<TData>);
 
 export type ApolloMockResponse<TData, TVariables> = Omit<
   WildcardMockedResponse,
@@ -16,7 +20,7 @@ export type ApolloMockResponse<TData, TVariables> = Omit<
   request: Omit<GraphQLRequest, "variables"> & {
     variables: TVariables | typeof MATCH_ANY_PARAMETERS;
   };
-  result?: FetchResult<TData> | ((variables: TVariables) => FetchResult<TData>);
+  result?: ApolloMockResponseResult<TData, TVariables>;
 };
 
 export type ApolloMockResponses = ApolloMockResponse<any, any>[];
