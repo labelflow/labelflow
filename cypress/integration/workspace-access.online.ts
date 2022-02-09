@@ -1,24 +1,4 @@
 describe("Online workspaces access (online)", () => {
-  it("Should ask for sign up modal when not signed in and creating a workspace", () => {
-    cy.setCookie("hasUserTriedApp", "false");
-    cy.setCookie("consentedCookies", "true");
-    // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
-    cy.visit("/");
-    cy.contains("Skip the tutorial").click();
-
-    // Open workspace switcher and click on create a new workspace
-    cy.get('[aria-label="Open workspace selection popover"]').click();
-    cy.get('[aria-label="Workspace selection menu popover"]')
-      .contains("Create workspace")
-      .click({ force: true });
-    // Type a workspace name in the workspace creation modal
-    cy.contains("Workspace Name").should("be.visible");
-    cy.focused().type("Test workspace");
-    cy.get('[aria-label="create workspace button"]').click();
-    // Check that we were redirected to the sign in modal
-    cy.url().should("match", /modal-signin/);
-    cy.contains("Sign in to LabelFlow").should("be.visible");
-  });
   it("Should allow to create a new workspace to a signed in user", () => {
     cy.task("performLogin").then((token) => {
       cy.setCookie("next-auth.session-token", token as string);
