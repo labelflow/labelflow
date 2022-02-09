@@ -12,7 +12,10 @@ export const getThumbnailUrlFromImageUrl = ({
   const urlLastSlash = url.lastIndexOf("/");
   const urlPrefix = url.substring(0, urlLastSlash + 1);
   const urlSuffix = url.substring(urlLastSlash + 1);
-  return `${urlPrefix}thumbnails/${size}/${urlSuffix}.${extension}`;
+  const urlSuffixWithExension = urlSuffix.endsWith(`.${extension}`)
+    ? urlSuffix
+    : `${urlSuffix}.${extension}`;
+  return `${urlPrefix}thumbnails/${size}/${urlSuffixWithExension}`;
 };
 
 const urlRegex =

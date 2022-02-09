@@ -213,7 +213,6 @@ export const importAndProcessImage = async (
     thumbnail500Url,
     metadata,
   } = image;
-
   const now = image?.createdAt ?? new Date().toISOString();
   const imageId = id ?? uuidv4();
 
@@ -238,7 +237,6 @@ export const importAndProcessImage = async (
     },
     { repository, req }
   );
-
   const finalName = getImageName({ externalUrl, finalUrl, name });
   const finalPath = path ?? externalUrl ?? finalUrl;
 
