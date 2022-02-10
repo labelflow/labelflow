@@ -57,6 +57,7 @@ const UserAvatar = ({ image, displayName }: UserProps) => {
     <Avatar
       size="sm"
       bg={bg}
+      color={useColorModeValue("black", "white")}
       name={displayName}
       src={image ?? undefined}
       icon={
