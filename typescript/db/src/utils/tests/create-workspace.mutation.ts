@@ -3,6 +3,7 @@ import {
   MutationCreateWorkspaceArgs,
   Workspace,
 } from "@labelflow/graphql-types";
+import { USER_WITH_WORKSPACES_QUERY } from "../../../../web/src/shared-queries/user.query";
 import { client } from "../../dev/apollo-client";
 
 export const CREATE_WORKSPACE_MUTATION = gql`
@@ -36,4 +37,5 @@ export const createWorkspace = (
     variables: {
       data: { ...data, name: data?.name === undefined ? "test" : data.name },
     },
+    refetchQueries: [USER_WITH_WORKSPACES_QUERY],
   });
