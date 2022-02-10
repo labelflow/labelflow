@@ -1,5 +1,7 @@
+import { DATASET_NAME } from "../fixtures";
+
 describe("Online workspaces access (online)", () => {
-  it("Should allow to create a new workspace to a signed in user", () => {
+  it("Allows to create a new workspace to a signed in user", () => {
     cy.task("performLogin").then((token) => {
       cy.setCookie("next-auth.session-token", token as string);
     });
@@ -23,7 +25,8 @@ describe("Online workspaces access (online)", () => {
       .contains("Test workspace")
       .should("exist");
   });
-  it("Should allow a user to access one of his workspaces and the datasets in it", () => {
+
+  it("Allows a user to access one of his workspaces and the datasets in it", () => {
     // Login and create a workspace with datasets in it
     cy.task("performLogin").then((token) => {
       cy.setCookie("next-auth.session-token", token as string);
@@ -33,7 +36,7 @@ describe("Online workspaces access (online)", () => {
     cy.setCookie("consentedCookies", "true");
     // Check that the datasets are visible
     cy.visit("/cypress-test-workspace/datasets");
-    cy.contains("Test dataset cypress").should("be.visible");
+    cy.contains(DATASET_NAME).should("be.visible");
     // Check that the workspace is visible in the switcher
     cy.get('[aria-label="Open workspace selection popover"]').click();
     cy.get('[aria-label="Workspace selection menu popover"]')

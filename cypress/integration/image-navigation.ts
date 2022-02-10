@@ -1,16 +1,19 @@
 import imageSampleCollection from "../../typescript/web/src/utils/image-sample-collection";
+import { WORKSPACE_SLUG, DATASET_SLUG } from "../fixtures";
 
-type TestInput = {
-  getDatasetSlug: () => string;
-  workspaceSlug: string;
-};
+describe("Image Navigation (online)", () => {
+  beforeEach(() => {
+    cy.setCookie("consentedCookies", "true");
+    cy.task("performLogin").then((token) => {
+      cy.setCookie("next-auth.session-token", token as string);
+    });
+    cy.task("createWorkspaceAndDatasets");
+  });
 
-export const declateTests = ({ getDatasetSlug, workspaceSlug }: TestInput) => {
   it("Should let the user navigate within the image gallery", () => {
-    const datasetSlug = getDatasetSlug();
     // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
     cy.visit(
-      `/${workspaceSlug}/datasets/${datasetSlug}/images?modal-welcome=closed`
+      `/${WORKSPACE_SLUG}/datasets/${DATASET_SLUG}/images?modal-welcome=closed`
     );
     cy.contains("You don't have any images.").should("be.visible");
     cy.wait(420);
@@ -44,4 +47,4 @@ export const declateTests = ({ getDatasetSlug, workspaceSlug }: TestInput) => {
       expect($a).to.contain("4");
     });
   });
-};
+});

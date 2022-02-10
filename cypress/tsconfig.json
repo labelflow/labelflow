@@ -11,5 +11,5 @@
     "target": "es2019"
   },
   "include": ["../node_modules/cypress", "**/*.ts", "**/*.tsx"],
-  "exclude": ["node_modules", "**/*.graphql"]
+  "exclude": ["node_modules"]
 }

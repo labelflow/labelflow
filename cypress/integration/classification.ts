@@ -1,20 +1,32 @@
-type TestInput = {
-  workspaceSlug: string;
-  getDatasetSlug: () => string;
-  getImageId: () => string;
-};
+import { DATASET_SLUG, WORKSPACE_SLUG } from "../fixtures";
+import { createImage, createLabelClass } from "../utils/graphql";
 
-export const declareTests = ({
-  workspaceSlug,
-  getDatasetSlug,
-  getImageId,
-}: TestInput) => {
+describe("Classification (online)", () => {
+  let datasetId: string;
+  let imageId: string;
+
+  beforeEach(() => {
+    cy.setCookie("consentedCookies", "true");
+    cy.task("performLogin").then((token) => {
+      cy.setCookie("next-auth.session-token", token as string);
+    });
+    cy.task("createWorkspaceAndDatasets").then(async (createResult: any) => {
+      datasetId = createResult.datasetId;
+
+      const { id } = await createImage({
+        url: "https://images.unsplash.com/photo-1579513141590-c597876aefbc?auto=format&fit=crop&w=882&q=80",
+        datasetId,
+      });
+      imageId = id;
+
+      await createLabelClass({ name: "Rocket", color: "#F87171", datasetId });
+    });
+  });
+
   it("switches between drawing tools", () => {
-    const datasetSlug = getDatasetSlug();
-    const imageId = getImageId();
     // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
     cy.visit(
-      `/${workspaceSlug}/datasets/${datasetSlug}/images/${imageId}?modal-welcome=closed`
+      `/${WORKSPACE_SLUG}/datasets/${DATASET_SLUG}/images/${imageId}?modal-welcome=closed`
     );
     cy.get('[aria-label="loading indicator"]').should("not.exist");
     cy.get('[aria-label="Drawing classification tool"]').should("not.exist");
@@ -33,12 +45,10 @@ export const declareTests = ({
     cy.get('[aria-label="Drawing box tool"]').should("not.exist");
   });
 
-  it("add classses and remove them", () => {
-    const datasetSlug = getDatasetSlug();
-    const imageId = getImageId();
+  it("add classes and remove them", () => {
     // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
     cy.visit(
-      `/${workspaceSlug}/datasets/${datasetSlug}/images/${imageId}?modal-welcome=closed`
+      `/${WORKSPACE_SLUG}/datasets/${DATASET_SLUG}/images/${imageId}?modal-welcome=closed`
     );
 
     // Switch to classification tool
@@ -186,4 +196,4 @@ export const declareTests = ({
     cy.focused().type("1");
     cy.get('[aria-label="Classification tag: Rocket"]').should("not.exist");
   });
-};
+});

@@ -1,20 +1,35 @@
-type TestInput = {
-  workspaceSlug: string;
-  getDatasetSlug: () => string;
-  getImageId: () => string;
-};
+import { DATASET_SLUG, WORKSPACE_SLUG } from "../fixtures";
+import { createImage, createLabelClass } from "../utils/graphql";
 
-export const declareTests = ({
-  workspaceSlug,
-  getDatasetSlug,
-  getImageId,
-}: TestInput) => {
+describe("Polygon drawing (online)", () => {
+  let imageId: string;
+
+  beforeEach(() => {
+    cy.setCookie("consentedCookies", "true");
+    cy.task("performLogin").then((token) => {
+      cy.setCookie("next-auth.session-token", token as string);
+    });
+    cy.task("createWorkspaceAndDatasets").then(async (createResult: any) => {
+      const datasetId = createResult.id;
+
+      const { id } = await createImage({
+        url: "https://images.unsplash.com/photo-1579513141590-c597876aefbc?auto=format&fit=crop&w=882&q=80",
+        datasetId,
+      });
+      imageId = id;
+
+      await createLabelClass({
+        name: "Rocket",
+        color: "#F87171",
+        datasetId,
+      });
+    });
+  });
+
   it("switches between drawing tools", () => {
-    const datasetSlug = getDatasetSlug();
-    const imageId = getImageId();
     // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
     cy.visit(
-      `/${workspaceSlug}/datasets/${datasetSlug}/images/${imageId}?modal-welcome=closed`
+      `/${WORKSPACE_SLUG}/datasets/${DATASET_SLUG}/images/${imageId}?modal-welcome=closed`
     );
     cy.get('[aria-label="loading indicator"]').should("not.exist");
     cy.get('[aria-label="Drawing polygon tool"]').should("not.exist");
@@ -38,11 +53,9 @@ export const declareTests = ({
   });
 
   it("draws a polygon", () => {
-    const datasetSlug = getDatasetSlug();
-    const imageId = getImageId();
     // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
     cy.visit(
-      `/${workspaceSlug}/datasets/${datasetSlug}/images/${imageId}?modal-welcome=closed`
+      `/${WORKSPACE_SLUG}/datasets/${DATASET_SLUG}/images/${imageId}?modal-welcome=closed`
     );
     cy.get('[aria-label="loading indicator"]').should("not.exist");
     cy.get('[aria-label="Change Drawing tool"]').should("exist").click();
@@ -75,4 +88,4 @@ export const declareTests = ({
       .closest('[role="option"]')
       .should("have.attr", "aria-current", "true");
   });
-};
+});

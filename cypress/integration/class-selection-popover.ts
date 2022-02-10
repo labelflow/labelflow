@@ -1,27 +1,54 @@
-import { ApolloClient } from "@apollo/client";
-import { createLabelClass } from "./graphql-definitions.common";
+import { LabelType } from "../../typescript/graphql-types";
+import { DATASET_NAME, DATASET_SLUG, WORKSPACE_SLUG } from "../fixtures";
+import { createImage, createLabel, createLabelClass } from "../utils/graphql";
 
-type TestInput = {
-  client: ApolloClient<object>;
-  workspaceSlug: string;
-  getDatasetId: () => string;
-  getDatasetSlug: () => string;
-  getImageId: () => string;
-};
+describe("Class selection popover", () => {
+  let datasetId: string;
+  let imageId: string;
 
-export const declareTests = ({
-  client,
-  workspaceSlug,
-  getDatasetId,
-  getDatasetSlug,
-  getImageId,
-}: TestInput) => {
+  beforeEach(() => {
+    cy.setCookie("consentedCookies", "true");
+    cy.task("performLogin").then((token) => {
+      cy.setCookie("next-auth.session-token", token as string);
+    });
+    cy.task("createWorkspaceAndDatasets").then(async (createResult: any) => {
+      datasetId = createResult.datasetId;
+      const { id } = await createImage({
+        url: "https://images.unsplash.com/photo-1579513141590-c597876aefbc?auto=format&fit=crop&w=882&q=80",
+        datasetId,
+      });
+      imageId = id;
+      const { id: labelClassId } = await createLabelClass({
+        name: "A new class",
+        color: "#F87171",
+        datasetId,
+      });
+      await createLabel({
+        data: {
+          imageId,
+          labelClassId,
+          type: LabelType.Box,
+          geometry: {
+            type: LabelType.Polygon,
+            coordinates: [
+              [
+                [0, 900],
+                [900, 900],
+                [900, 1500],
+                [0, 1500],
+                [0, 900],
+              ],
+            ],
+          },
+        },
+      });
+    });
+  });
+
   it("right clicks on a label to change its class", () => {
-    const datasetSlug = getDatasetSlug();
-    const imageId = getImageId();
     // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
     cy.visit(
-      `/${workspaceSlug}/datasets/${datasetSlug}/images/${imageId}?modal-welcome=closed`
+      `/${WORKSPACE_SLUG}/datasets/${DATASET_SLUG}/images/${imageId}?modal-welcome=closed`
     );
     cy.get('[aria-label="loading indicator"]').should("not.exist");
     cy.get('[aria-label="Selection tool"]').click();
@@ -74,21 +101,17 @@ export const declareTests = ({
   });
 
   it("uses the class selection menu to change the class of created labels", () => {
-    const datasetId = getDatasetId();
-    const datasetSlug = getDatasetSlug();
-    const imageId = getImageId();
     cy.wrap(
       createLabelClass({
         name: "My new class",
         color: "#65A30D",
         datasetId,
-        client,
       })
     );
 
     // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
     cy.visit(
-      `/${workspaceSlug}/datasets/${datasetSlug}/images/${imageId}?modal-welcome=closed`
+      `/${WORKSPACE_SLUG}/datasets/${DATASET_SLUG}/images/${imageId}?modal-welcome=closed`
     );
 
     cy.wait(420);
@@ -172,20 +195,16 @@ export const declareTests = ({
   });
 
   it("uses shortcuts to change classes", () => {
-    const datasetId = getDatasetId();
-    const datasetSlug = getDatasetSlug();
-    const imageId = getImageId();
     cy.wrap(
       createLabelClass({
         name: "My new class",
         color: "#65A30D",
         datasetId,
-        client,
       })
     );
     // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
     cy.visit(
-      `/${workspaceSlug}/datasets/${datasetSlug}/images/${imageId}?modal-welcome=closed`
+      `/${WORKSPACE_SLUG}/datasets/${DATASET_SLUG}/images/${imageId}?modal-welcome=closed`
     );
     cy.get('[aria-label="loading indicator"]').should("not.exist");
     cy.get('[aria-label="Selection tool"]').click();
@@ -252,22 +271,20 @@ export const declareTests = ({
   });
 
   it("should update the label classes list when a label class is deleted", () => {
-    const datasetSlug = getDatasetSlug();
-    const imageId = getImageId();
     cy.visit(
-      `/${workspaceSlug}/datasets/${datasetSlug}/images/${imageId}?modal-welcome=closed`
+      `/${WORKSPACE_SLUG}/datasets/${DATASET_SLUG}/images/${imageId}?modal-welcome=closed`
     );
 
     cy.wait(420);
     cy.get('[aria-label="loading indicator"]').should("not.exist");
     cy.get('[aria-label="Navigate in hidden breadcrumbs"]').click();
-    cy.contains("cypress test dataset").click({ force: true });
+    cy.contains(DATASET_NAME).click({ force: true });
 
     cy.wait(420);
     cy.contains("classes").click();
     cy.url().should(
       "contain",
-      `/${workspaceSlug}/datasets/${datasetSlug}/classes`
+      `/${WORKSPACE_SLUG}/datasets/${DATASET_SLUG}/classes`
     );
 
     cy.wait(420);
@@ -290,4 +307,4 @@ export const declareTests = ({
       .contains("A new class")
       .should("not.exist");
   });
-};
+});

@@ -28,6 +28,12 @@
   },
   "overrides": [
     {
+      "files": ["cypress/**/*.ts"],
+      "rules": {
+        "import/no-extraneous-dependencies": "off"
+      }
+    },
+    {
       "files": ["**/*.stories.ts?(x)", "**/__stories__/**/*.ts?(x)"],
       "rules": {
         "no-console": "off",

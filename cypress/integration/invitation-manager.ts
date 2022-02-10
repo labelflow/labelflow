@@ -1,3 +1,5 @@
+import { WORKSPACE_SLUG } from "../fixtures";
+
 describe("Invitation Manager (online)", () => {
   it("should let the user accept an invite", () => {
     // log in as the default user
@@ -6,7 +8,7 @@ describe("Invitation Manager (online)", () => {
     });
     cy.setCookie("hasUserTriedApp", "true");
     cy.setCookie("consentedCookies", "true");
-    cy.task("createWorkspaceAndDatasets").then(({ workspaceSlug }: any) => {
+    cy.task("createWorkspaceAndDatasets").then(() => {
       cy.clearCookie("next-auth.session-token");
 
       // invite a new user to the workspace
@@ -29,7 +31,7 @@ describe("Invitation Manager (online)", () => {
 
       // check for the toast to be present
       cy.get('[role="alert"]').should("contain", "Invitation accepted");
-      cy.location("pathname").should("eq", `/${workspaceSlug}/datasets`);
+      cy.location("pathname").should("eq", `/${WORKSPACE_SLUG}/datasets`);
     });
   });
 

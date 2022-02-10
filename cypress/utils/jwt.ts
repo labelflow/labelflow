@@ -1,5 +1,4 @@
 import { User } from "@prisma/client";
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { encode as jwtEncode, JWT } from "next-auth/jwt";
 import { v4 as uuid } from "uuid";
 
