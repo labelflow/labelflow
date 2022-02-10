@@ -1,4 +1,4 @@
-import { Box, Text } from "@chakra-ui/react";
+import { Flex, Text } from "@chakra-ui/react";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import React from "react";
@@ -44,9 +44,8 @@ const GraphqlPlayground = () => {
           />
         }
       >
-        <Box
-          h="100%"
-          w="100%"
+        <Flex
+          grow={1}
           borderTop="solid 1px"
           borderColor="#d0d0d0"
           boxSizing="border-box"
@@ -60,7 +59,7 @@ const GraphqlPlayground = () => {
               }
             />
           )}
-        </Box>
+        </Flex>
       </Layout>
     </>
   );

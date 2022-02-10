@@ -8,13 +8,15 @@ export const GraphiQL = ({ url }: { url: string }) => {
   });
 
   return (
-    <GraphiQLOriginal
-      fetcher={fetcher}
-      editorTheme="dracula"
-      defaultVariableEditorOpen
-      defaultSecondaryEditorOpen
-      headerEditorEnabled
-      shouldPersistHeaders
-    />
+    <div style={{ flexGrow: 1 }}>
+      <GraphiQLOriginal
+        fetcher={fetcher}
+        editorTheme="dracula"
+        defaultVariableEditorOpen
+        defaultSecondaryEditorOpen
+        headerEditorEnabled
+        shouldPersistHeaders
+      />
+    </div>
   );
 };
