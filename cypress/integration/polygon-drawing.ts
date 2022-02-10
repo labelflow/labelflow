@@ -9,9 +9,7 @@ describe("Polygon drawing (online)", () => {
     cy.task("performLogin").then((token) => {
       cy.setCookie("next-auth.session-token", token as string);
     });
-    cy.task("createWorkspaceAndDatasets").then(async (createResult: any) => {
-      const datasetId = createResult.id;
-
+    cy.task("createWorkspaceAndDatasets").then(async ({ datasetId }: any) => {
       const { id } = await createImage({
         url: "https://images.unsplash.com/photo-1579513141590-c597876aefbc?auto=format&fit=crop&w=882&q=80",
         datasetId,
