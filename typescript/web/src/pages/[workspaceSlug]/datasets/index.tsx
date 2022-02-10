@@ -78,9 +78,7 @@ const MigrateLocalDatasetsModal = () => {
       <ModalContent>
         <ModalCloseButton />
         <ModalHeader>
-          <Heading as="h2" size="md">
-            🚨 Migrate Your Local Datasets Now!
-          </Heading>
+          <Heading size="md">🚨 Migrate Your Local Datasets Now!</Heading>
         </ModalHeader>
         <ModalBody>
           <Text>
