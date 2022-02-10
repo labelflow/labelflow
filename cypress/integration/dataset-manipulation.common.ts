@@ -9,6 +9,9 @@ export const declareTests = ({ workspaceSlug }: TestInput) => {
     // cy.contains("Try it now").click();
     cy.visit(`/${workspaceSlug}/datasets`);
     cy.wait(420);
+    if (workspaceSlug === "local") {
+      cy.get('[aria-label="I Understand"]').click();
+    }
     cy.get('[aria-label="Create new dataset"]').click();
     cy.get('[aria-label="Dataset name input"]').type("cypress dataset");
     cy.contains("Start Labeling").click();

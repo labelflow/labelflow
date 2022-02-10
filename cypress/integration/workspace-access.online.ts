@@ -4,6 +4,7 @@ describe("Online workspaces access (online)", () => {
     cy.setCookie("consentedCookies", "true");
     // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
     cy.visit("/local/datasets?modal-update-service-worker=update");
+    cy.get('[aria-label="I Understand"]').click();
     cy.contains("Skip the tutorial").click();
 
     // Open workspace switcher and click on create a new workspace
@@ -28,6 +29,7 @@ describe("Online workspaces access (online)", () => {
     // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
     cy.visit("/local/datasets?modal-update-service-worker=update");
     // Check that we are logged in
+    cy.get('[aria-label="I Understand"]').click();
     cy.get('[aria-label="User and Preferences"]').click();
     cy.contains("Cypress test user").should("be.visible");
     // Click on create workspace in workspace switcher

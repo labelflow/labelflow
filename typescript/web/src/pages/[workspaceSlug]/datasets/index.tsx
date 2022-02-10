@@ -96,7 +96,11 @@ const MigrateLocalDatasetsModal = () => {
           </Text>
         </ModalBody>
         <ModalFooter>
-          <Button onClick={setIsLocalDatasetsModalOpen.off} colorScheme="brand">
+          <Button
+            onClick={setIsLocalDatasetsModalOpen.off}
+            colorScheme="brand"
+            aria-label="I Understand"
+          >
             I Understand
           </Button>
         </ModalFooter>
