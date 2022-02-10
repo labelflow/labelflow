@@ -1,7 +1,20 @@
 import { gql } from "@apollo/client";
-import { Flex, Text } from "@chakra-ui/react";
+import {
+  Button,
+  Flex,
+  Heading,
+  Link,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  Text,
+} from "@chakra-ui/react";
 import { useRouter } from "next/router";
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useQueryParam } from "use-query-params";
 import { AuthManager } from "../../../components/auth-manager";
 import { CookieBanner } from "../../../components/cookie-banner";
@@ -40,6 +53,62 @@ export const getDatasetsQuery = gql`
     }
   }
 `;
+
+const MigrateLocalDatasetsModal = () => {
+  const router = useRouter();
+  const workspaceSlug = router?.query.workspaceSlug as string;
+  const [isLocalDatasetsModalOpen, setIsLocalDatasetsModalOpen] =
+    useState<boolean>(false);
+  const closeModal = useCallback(() => {
+    setIsLocalDatasetsModalOpen(false);
+  }, []);
+  useEffect(() => {
+    if (workspaceSlug === "local") {
+      setIsLocalDatasetsModalOpen(true);
+    }
+  }, [workspaceSlug]);
+  return (
+    <Modal
+      isOpen={isLocalDatasetsModalOpen}
+      onClose={closeModal}
+      isCentered
+      size="xl"
+    >
+      <ModalOverlay />
+      <ModalContent>
+        <ModalCloseButton />
+        <ModalHeader>
+          <Heading as="h2" size="md">
+            🚨 Migrate Your Local Datasets Now!
+          </Heading>
+        </ModalHeader>
+        <ModalBody>
+          <Text>
+            Migrate your local datasets to an online workspace before next
+            Monday (Feb 14th). Check{" "}
+            <Link
+              color="brand.600"
+              href="https://docs.labelflow.ai/labelflow/import-dataset/migrate-a-local-dataset"
+              isExternal
+            >
+              this tutorial
+            </Link>{" "}
+            to easily migrate your local datasets.
+            <br />
+            <Text fontWeight="bold" pt="4">
+              All your local datasets will be otherwise lost.
+            </Text>
+          </Text>
+        </ModalBody>
+        <ModalFooter>
+          <Button onClick={closeModal} colorScheme="brand">
+            I Understand
+          </Button>
+        </ModalFooter>
+      </ModalContent>
+    </Modal>
+  );
+};
 
 const DatasetPage = () => {
   const {
@@ -83,6 +152,7 @@ const DatasetPage = () => {
 
   return (
     <>
+      <MigrateLocalDatasetsModal />
       <ServiceWorkerManagerModal />
       <WelcomeManager />
       <AuthManager />
