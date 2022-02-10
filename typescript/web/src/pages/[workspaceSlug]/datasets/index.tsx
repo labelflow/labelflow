@@ -12,9 +12,10 @@ import {
   ModalHeader,
   ModalOverlay,
   Text,
+  useBoolean,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect } from "react";
 import { useQueryParam } from "use-query-params";
 import { AuthManager } from "../../../components/auth-manager";
 import { CookieBanner } from "../../../components/cookie-banner";
@@ -57,20 +58,16 @@ export const getDatasetsQuery = gql`
 const MigrateLocalDatasetsModal = () => {
   const router = useRouter();
   const workspaceSlug = router?.query.workspaceSlug as string;
-  const [isLocalDatasetsModalOpen, setIsLocalDatasetsModalOpen] =
-    useState<boolean>(false);
-  const closeModal = useCallback(() => {
-    setIsLocalDatasetsModalOpen(false);
-  }, []);
+  const [isLocalDatasetsModalOpen, setIsLocalDatasetsModalOpen] = useBoolean();
   useEffect(() => {
     if (workspaceSlug === "local") {
-      setIsLocalDatasetsModalOpen(true);
+      setIsLocalDatasetsModalOpen.on();
     }
   }, [workspaceSlug]);
   return (
     <Modal
       isOpen={isLocalDatasetsModalOpen}
-      onClose={closeModal}
+      onClose={setIsLocalDatasetsModalOpen.off}
       isCentered
       size="xl"
     >
@@ -99,7 +96,7 @@ const MigrateLocalDatasetsModal = () => {
           </Text>
         </ModalBody>
         <ModalFooter>
-          <Button onClick={closeModal} colorScheme="brand">
+          <Button onClick={setIsLocalDatasetsModalOpen.off} colorScheme="brand">
             I Understand
           </Button>
         </ModalFooter>
