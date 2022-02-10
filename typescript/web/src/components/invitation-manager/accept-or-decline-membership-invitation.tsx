@@ -1,4 +1,9 @@
-import { Button, Center, chakra } from "@chakra-ui/react";
+import {
+  Button,
+  Center,
+  chakra,
+  useColorModeValue as mode,
+} from "@chakra-ui/react";
 
 export const AcceptOrDeclineMembershipInvitation = ({
   accept,
@@ -20,7 +25,7 @@ export const AcceptOrDeclineMembershipInvitation = ({
       <Center h="full">
         <chakra.div
           role="dialog"
-          bg="white"
+          bg={mode("white", "gray.800")}
           borderRadius="md"
           boxShadow="lg"
           color="inherit"
