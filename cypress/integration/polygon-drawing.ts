@@ -1,5 +1,24 @@
-import { DATASET_SLUG, WORKSPACE_SLUG } from "../fixtures";
+import { DATASET_SLUG, WORKSPACE_SLUG, EXAMPLE_POLYGON } from "../fixtures";
+
 import { createImage, createLabelClass } from "../utils/graphql";
+
+const LABEL_CLASS_NAME = "Logo";
+
+const DRAW_X_OFFSET = 340;
+const DRAW_Y_OFFSET = 390;
+
+const getPoint = ([x, y]: [number, number]): [number, number] => [
+  x + DRAW_X_OFFSET,
+  y * -1 + DRAW_Y_OFFSET,
+];
+
+const drawPolygon = (geometry: [number, number][]): void => {
+  for (let i = 0; i < geometry.length - 1; i += 1) {
+    cy.get("main").click(...getPoint(geometry[i]));
+    cy.wait(100);
+  }
+  cy.get("main").dblclick(...getPoint(geometry[geometry.length - 1]));
+};
 
 describe("Polygon drawing (online)", () => {
   let imageId: string;
@@ -11,13 +30,13 @@ describe("Polygon drawing (online)", () => {
     });
     cy.task("createWorkspaceAndDatasets").then(async ({ datasetId }: any) => {
       const { id } = await createImage({
-        url: "https://images.unsplash.com/photo-1579513141590-c597876aefbc?auto=format&fit=crop&w=882&q=80",
+        url: "https://labelflow.ai/static/icon-512x512.png",
         datasetId,
       });
       imageId = id;
 
       await createLabelClass({
-        name: "Rocket",
+        name: LABEL_CLASS_NAME,
         color: "#F87171",
         datasetId,
       });
@@ -56,33 +75,24 @@ describe("Polygon drawing (online)", () => {
       `/${WORKSPACE_SLUG}/datasets/${DATASET_SLUG}/images/${imageId}?modal-welcome=closed`
     );
     cy.get('[aria-label="loading indicator"]').should("not.exist");
-    cy.get('[aria-label="Change Drawing tool"]').should("exist").click();
+    cy.get('[aria-label="Change Drawing tool"]').should("be.visible").click();
     cy.get('[aria-label="Polygon tool"]').click();
 
     cy.wait(420);
-    cy.get("main").click(475, 75);
-    cy.get("main").click(450, 100);
-    cy.get("main").click(450, 200);
-    cy.get("main").click(425, 240);
-    cy.get("main").click(450, 260);
-    cy.get("main").click(475, 220);
-    cy.get("main").click(500, 260);
-    cy.get("main").click(525, 240);
-    cy.get("main").click(500, 200);
-    cy.get("main").dblclick(500, 100);
+    drawPolygon(EXAMPLE_POLYGON);
 
     cy.wait(420);
-    cy.get("main").rightclick(475, 100);
+    cy.get("main").rightclick(500, 330);
     cy.get('[aria-label="Class selection popover"]')
-      .contains("Rocket")
+      .contains(LABEL_CLASS_NAME)
       .closest('[role="option"]')
       .should("have.attr", "aria-current", "false")
       .click();
 
     cy.wait(420);
-    cy.get("main").rightclick(475, 100);
+    cy.get("main").rightclick(500, 330);
     cy.get('[aria-label="Class selection popover"]')
-      .contains("Rocket")
+      .contains(LABEL_CLASS_NAME)
       .closest('[role="option"]')
       .should("have.attr", "aria-current", "true");
   });
