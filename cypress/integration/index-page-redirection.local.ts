@@ -10,7 +10,6 @@ describe("Index page redirections (local)", () => {
     cy.setCookie("consentedCookies", "true");
     cy.setCookie("hasUserTriedApp", "false");
     cy.visit(`/local/datasets?modal-update-service-worker=update`);
-    cy.get('[aria-label="I Understand"]').click();
     cy.contains("Get started").click();
     cy.url().should(
       "match",
