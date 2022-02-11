@@ -4,7 +4,7 @@
   "scripts": {
     "dev": "yarn codegen:all && next dev",
     "dev:test": "NODE_ENV=\"test\" && next dev -p 3001",
-    "build": "cd ../db && yarn codegen:all && cd ../web && next build",
+    "build": "yarn codegen:all && next build",
     "build:vercel": "yarn build && yarn sitemap && cd ../db && sh ./deploy-vercel.sh",
     "sitemap": "next-sitemap",
     "start": "next start",
