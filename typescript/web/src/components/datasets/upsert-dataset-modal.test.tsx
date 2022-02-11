@@ -10,7 +10,7 @@ import { BASIC_DATASET_DATA } from "../../utils/fixtures";
 import {
   ApolloMockResponses,
   injectJestInApolloMockResults,
-  renderWithWrapper,
+  renderWithTestWrapper,
 } from "../../utils/tests";
 import { UpsertDatasetModal } from "./upsert-dataset-modal";
 import {
@@ -21,7 +21,7 @@ import {
 const APOLLO_MOCKS_WITH_JEST = injectJestInApolloMockResults(APOLLO_MOCKS);
 
 const renderModal = (props = {}) =>
-  renderWithWrapper(
+  renderWithTestWrapper(
     <UpsertDatasetModal isOpen onClose={() => {}} {...props} />,
     {
       auth: { withWorkspaces: true },

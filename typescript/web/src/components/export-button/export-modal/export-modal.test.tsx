@@ -10,12 +10,12 @@ import { mockWorkspace } from "../../../utils/tests/mock-workspace";
 
 mockWorkspace({ queryParams: { datasetSlug: BASIC_DATASET_DATA.slug } });
 
-import { renderWithWrapper } from "../../../utils/tests";
+import { renderWithTestWrapper } from "../../../utils/tests";
 import { ExportModal } from ".";
 import { APOLLO_MOCKS } from "./export-modal.fixtures";
 
 const renderTest = () =>
-  renderWithWrapper(<ExportModal isOpen onClose={() => {}} />, {
+  renderWithTestWrapper(<ExportModal isOpen onClose={() => {}} />, {
     auth: { withWorkspaces: true },
     apollo: { extraMocks: APOLLO_MOCKS },
   });

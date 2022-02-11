@@ -76,7 +76,7 @@ export const injectJestInApolloMockResults = (
 ): JestApolloMockResponses =>
   mocks.map((mock) => injectJestInApolloMockResult(mock));
 
-export const renderWithWrapper = async (
+export const renderWithTestWrapper = async (
   element: ReactElement,
   {
     renderOptions: { wrapper: extraWrapper, ...renderOptions } = {},

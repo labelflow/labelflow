@@ -8,7 +8,10 @@ import {
   BASIC_DATASET_DATA,
   DEEP_DATASET_WITH_CLASSES_DATA,
 } from "../../utils/fixtures";
-import { renderWithWrapper, RenderWithWrapperResult } from "../../utils/tests";
+import {
+  renderWithTestWrapper,
+  RenderWithWrapperResult,
+} from "../../utils/tests";
 import { DatasetClasses } from "./dataset-classes";
 import { APOLLO_MOCKS } from "./dataset-classes.fixtures";
 
@@ -21,7 +24,7 @@ const renderComponent = async (dataset: {
   workspace: { slug: string };
   labelClasses: { length: number };
 }): Promise<RenderWithWrapperResult> => {
-  const result = await renderWithWrapper(
+  const result = await renderWithTestWrapper(
     <DatasetClasses
       datasetSlug={dataset.slug}
       workspaceSlug={dataset.workspace.slug}

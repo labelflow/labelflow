@@ -22,16 +22,19 @@ import {
   updateLabelClassActionMockResult,
   updateLabelClassOfLabelMockResult,
 } from "../edit-label-class.fixtures";
-import { renderWithWrapper } from "../../../utils/tests";
+import { renderWithTestWrapper } from "../../../utils/tests";
 import { EditLabelClass } from "./edit-label-class";
 
 const onCloseEditLabelClass = jest.fn();
 
 const renderEditLabelClass = () =>
-  renderWithWrapper(<EditLabelClass isOpen onClose={onCloseEditLabelClass} />, {
-    auth: { withWorkspaces: true },
-    apollo: { extraMocks: APOLLO_MOCKS },
-  });
+  renderWithTestWrapper(
+    <EditLabelClass isOpen onClose={onCloseEditLabelClass} />,
+    {
+      auth: { withWorkspaces: true },
+      apollo: { extraMocks: APOLLO_MOCKS },
+    }
+  );
 
 describe("EditLabelClass", () => {
   beforeEach(async () => {

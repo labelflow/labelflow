@@ -11,7 +11,7 @@ mockWorkspace({
 });
 
 import {
-  renderWithWrapper,
+  renderWithTestWrapper,
   RenderWithWrapperResult,
 } from "../../../utils/tests";
 import {
@@ -42,7 +42,7 @@ type TestComponentProps = Pick<
 const renderTest = async (
   props: Omit<TestComponentProps, "datasetSlug">
 ): Promise<RenderWithWrapperResult> => {
-  const result = await renderWithWrapper(
+  const result = await renderWithTestWrapper(
     <DatasetClassesContext.Provider
       value={{
         ...({} as DatasetClassesState),

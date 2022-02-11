@@ -8,7 +8,7 @@ import { mockWorkspace } from "../../../utils/tests/mock-workspace";
 mockWorkspace({ queryParams: { datasetSlug: BASIC_DATASET_DATA.slug } });
 
 import {
-  renderWithWrapper,
+  renderWithTestWrapper,
   RenderWithWrapperResult,
 } from "../../../utils/tests";
 import { ERROR_MOCKS, IMPORT_BUTTON_MOCKS } from "../import-button.fixtures";
@@ -34,7 +34,7 @@ const renderTest = async (
   error = false
 ): Promise<RenderWithWrapperResult> => {
   const extraMocks = error ? ERROR_MOCKS : IMPORT_BUTTON_MOCKS;
-  return await renderWithWrapper(
+  return await renderWithTestWrapper(
     <ImportImagesModal onClose={() => {}} {...props} />,
     { auth: { withWorkspaces: true }, apollo: { extraMocks } }
   );

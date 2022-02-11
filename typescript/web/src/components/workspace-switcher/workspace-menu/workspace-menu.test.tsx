@@ -18,7 +18,10 @@ import {
   USER_WITH_WORKSPACES_QUERY_MOCK,
   WORKSPACE_DATA,
 } from "../../../utils/fixtures";
-import { ApolloMockResponses, renderWithWrapper } from "../../../utils/tests";
+import {
+  ApolloMockResponses,
+  renderWithTestWrapper,
+} from "../../../utils/tests";
 import { WorkspaceMenu } from "./workspace-menu";
 
 const APOLLO_MOCKS: ApolloMockResponses = [USER_WITH_WORKSPACES_QUERY_MOCK];
@@ -34,7 +37,7 @@ const [onSelectedWorkspaceChange, createNewWorkspace] = [jest.fn(), jest.fn()];
 const setIsOpen = jest.fn();
 
 const renderTest = (isOpen: boolean = false) =>
-  renderWithWrapper(
+  renderWithTestWrapper(
     <WorkspaceMenu
       onSelectedWorkspaceChange={onSelectedWorkspaceChange}
       createNewWorkspace={createNewWorkspace}

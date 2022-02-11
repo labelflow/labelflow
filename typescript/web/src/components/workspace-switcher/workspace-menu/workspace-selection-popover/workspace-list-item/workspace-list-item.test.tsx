@@ -7,11 +7,11 @@ import { mockWorkspace } from "../../../../../utils/tests/mock-workspace";
 mockWorkspace();
 
 import { WORKSPACE_DATA } from "../../../../../utils/fixtures";
-import { renderWithWrapper } from "../../../../../utils/tests";
+import { renderWithTestWrapper } from "../../../../../utils/tests";
 import { WorkspaceListItem } from "./workspace-list-item";
 
 const renderTest = async (element: ReactElement) =>
-  await renderWithWrapper(element, {
+  await renderWithTestWrapper(element, {
     auth: { withWorkspaces: true },
     apollo: true,
   });

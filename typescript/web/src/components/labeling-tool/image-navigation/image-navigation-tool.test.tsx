@@ -12,12 +12,15 @@ import {
   BASIC_IMAGE_DATA,
   DEEP_DATASET_WITH_IMAGES_DATA,
 } from "../../../utils/fixtures";
-import { ApolloMockResponses, renderWithWrapper } from "../../../utils/tests";
+import {
+  ApolloMockResponses,
+  renderWithTestWrapper,
+} from "../../../utils/tests";
 import { ImageNavigationTool } from "./image-navigation-tool";
 import { APOLLO_MOCKS } from "./image-navigation-tool.fixtures";
 
 const renderImageNavigationTool = () =>
-  renderWithWrapper(<ImageNavigationTool />, {
+  renderWithTestWrapper(<ImageNavigationTool />, {
     auth: { withWorkspaces: true },
     apollo: { extraMocks: APOLLO_MOCKS as ApolloMockResponses },
   });

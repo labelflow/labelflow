@@ -10,7 +10,7 @@ import { mockWorkspace } from "../../utils/tests/mock-workspace";
 
 mockWorkspace({ queryParams: { datasetSlug: BASIC_DATASET_DATA.slug } });
 
-import { renderWithWrapper } from "../../utils/tests";
+import { renderWithTestWrapper } from "../../utils/tests";
 import { ImportButton } from "./import-button";
 import { IMPORT_BUTTON_MOCKS } from "./import-button.fixtures";
 
@@ -23,7 +23,7 @@ const files = [
 describe(ImportButton, () => {
   it("clears the modal content when closed", async () => {
     const { apolloMockLink, getAllByLabelText, getByLabelText, queryByText } =
-      await renderWithWrapper(<ImportButton />, {
+      await renderWithTestWrapper(<ImportButton />, {
         auth: { withWorkspaces: true },
         apollo: { extraMocks: IMPORT_BUTTON_MOCKS },
       });

@@ -18,7 +18,7 @@ mockWorkspace({
   },
 });
 
-import { renderWithWrapper } from "../../../utils/tests";
+import { renderWithTestWrapper } from "../../../utils/tests";
 import { Tools, useLabelingStore } from "../../../connectors/labeling-state";
 import {
   APOLLO_MOCKS,
@@ -29,7 +29,7 @@ import {
 import { EditLabelClassMenu } from "./edit-label-class-menu";
 
 const renderEditLabelClassMenu = () => {
-  return renderWithWrapper(<EditLabelClassMenu />, {
+  return renderWithTestWrapper(<EditLabelClassMenu />, {
     auth: { withWorkspaces: true },
     apollo: { extraMocks: APOLLO_MOCKS },
   });

@@ -8,7 +8,7 @@ mockWorkspace();
 
 import { MembershipRole } from "../../graphql-types/globalTypes";
 import { GetMembershipsMembersQuery_memberships } from "../../graphql-types/GetMembershipsMembersQuery";
-import { renderWithWrapper } from "../../utils/tests";
+import { renderWithTestWrapper } from "../../utils/tests";
 import { Members } from ".";
 import {
   TEST_MEMBERSHIPS,
@@ -22,7 +22,7 @@ const mockedRemoveMembership = jest.fn();
 const renderTest = async (
   memberships: GetMembershipsMembersQuery_memberships[]
 ) => {
-  const result = await renderWithWrapper(
+  const result = await renderWithTestWrapper(
     <Members
       memberships={memberships}
       changeMembershipRole={mockedChangeRole}

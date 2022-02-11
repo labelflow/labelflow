@@ -2,11 +2,11 @@ import { mockWorkspace } from "../../../utils/tests/mock-workspace";
 
 mockWorkspace({ queryParams: { datasetSlug: "test-dataset" } });
 
-import { renderWithWrapper } from "../../../utils/tests";
+import { renderWithTestWrapper } from "../../../utils/tests";
 import { TabBar, TabBarItem } from ".";
 
 const renderTabBar = async (tabs: TabBarItem[]) =>
-  await renderWithWrapper(<TabBar tabs={tabs} />, {
+  await renderWithTestWrapper(<TabBar tabs={tabs} />, {
     auth: { withWorkspaces: true },
     apollo: true,
   });

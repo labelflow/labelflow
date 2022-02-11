@@ -14,7 +14,7 @@ import {
   mockUserQuery,
 } from "../../../../utils/fixtures";
 
-import { renderWithWrapper } from "../../../../utils/tests";
+import { renderWithTestWrapper } from "../../../../utils/tests";
 import { WorkspaceSelectionPopover } from "./workspace-selection-popover";
 
 const [onClose, onSelectedWorkspaceChange, createNewWorkspace] = [
@@ -54,7 +54,7 @@ const getApolloMocks = (noWorkspaces: boolean | undefined) => [
 ];
 
 const renderTest = async (noWorkspaces?: boolean) => {
-  const result = await renderWithWrapper(
+  const result = await renderWithTestWrapper(
     <WorkspaceSelectionPopover
       trigger={<div>Ok</div>}
       isOpen
