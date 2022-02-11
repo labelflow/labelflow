@@ -32,6 +32,9 @@ export const declareTests = ({ workspaceSlug }: TestInput) => {
     cy.contains("Start Labeling").click();
 
     cy.wait(420);
+    if (workspaceSlug === "local") {
+      cy.get('[aria-label="I Understand"]').click();
+    }
     cy.contains("cypress dataset").click();
 
     cy.contains("You don't have any images.").should("be.visible");
