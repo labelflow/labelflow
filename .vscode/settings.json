@@ -17,7 +17,29 @@
       "source.fixAll.eslint": true
     }
   },
+  "[mdx]": {
+    "editor.formatOnSave": false,
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": true
+    }
+  },
+
   "eslint.workingDirectories": [{ "mode": "auto" }],
+  "eslint.options": {
+    "extensions": [".js", ".jsx", ".md", ".mdx", ".ts", ".tsx"]
+  },
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact",
+    "mdx"
+  ],
+
+  "jest.jestCommandLine": "yarn test",
+
+  "python.pythonPath": ".venv/bin/python",
+
   "cSpell.words": [
     "Heatmap",
     "Mapbox",
@@ -25,7 +47,5 @@
     "Zoomify",
     "openlayers",
     "upsert"
-  ],
-  "python.pythonPath": ".venv/bin/python",
-  "jest.jestCommandLine": "yarn test"
+  ]
 }
