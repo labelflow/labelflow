@@ -21,17 +21,30 @@
           "setup-tests.ts",
           "cypress/**/*.ts",
           "**/*.@(test|stories|fixtures).ts?(x)",
-          "**/@(__tests__|__stories__|tests|stories)/**/*.ts?(x)"
+          "**/@(__tests__|__stories__|tests|stories|scripts)/**/*.ts?(x)"
         ]
       }
     ]
   },
   "overrides": [
     {
+      "files": ["cypress/**/*.ts"],
+      "rules": {
+        "import/no-extraneous-dependencies": "off"
+      }
+    },
+    {
       "files": ["**/*.stories.ts?(x)", "**/__stories__/**/*.ts?(x)"],
       "rules": {
         "no-console": "off",
         "no-alert": "off"
+      }
+    },
+    {
+      "files": ["**/*.test.ts?(x)", "**/__tests__/**/*.ts?(x)"],
+      "rules": {
+        "import/first": "off",
+        "import/order": "off"
       }
     }
   ],

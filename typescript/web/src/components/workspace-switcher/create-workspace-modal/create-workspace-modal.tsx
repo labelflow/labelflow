@@ -24,7 +24,7 @@ import React, {
 } from "react";
 import { StringParam, useQueryParam } from "use-query-params";
 import { getApolloErrorMessage } from "../../../utils/get-apollo-error-message";
-import { Features } from "../../auth-manager/signin-modal/features";
+import { Features } from "../../auth/features";
 import { Logo } from "../../logo";
 import {
   useWorkspaceNameInput,
@@ -108,7 +108,11 @@ const CreateButton: FC<{ isDisabled?: boolean }> = ({ isDisabled }) => (
   </Button>
 );
 
-const useCreateWorkspace = (): [() => void, boolean, string | undefined] => {
+export const useCreateWorkspace = (): [
+  () => void,
+  boolean,
+  string | undefined
+] => {
   const { name } = useWorkspaceNameInput();
   const [create, { loading, error: createError, called }] =
     useCreateWorkspaceMutation(name);

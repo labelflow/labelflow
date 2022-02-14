@@ -2,7 +2,7 @@ import { Flex, Text } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { useCallback } from "react";
 import { useQueryParam } from "use-query-params";
-import { AuthManager } from "../../../components/auth-manager";
+import { Authenticated } from "../../../components/auth";
 import { CookieBanner } from "../../../components/cookie-banner";
 import { DatasetList, NewDatasetCard } from "../../../components/datasets";
 import { DeleteDatasetModal } from "../../../components/datasets/delete-dataset-modal";
@@ -13,13 +13,13 @@ import { NavLogo } from "../../../components/logo/nav-logo";
 import { Meta } from "../../../components/meta";
 import { WelcomeModal } from "../../../components/welcome-manager";
 import { WorkspaceSwitcher } from "../../../components/workspace-switcher";
+import { useWorkspace } from "../../../hooks";
 import { BoolParam, IdParam } from "../../../utils/query-param-bool";
 
-const DatasetPage = () => {
-  const {
-    query: { workspaceSlug },
-    isReady,
-  } = useRouter();
+const Body = () => {
+  const { slug: workspaceSlug } = useWorkspace();
+  const { isReady } = useRouter();
+
   const [isCreatingDataset, setIsCreatingDataset] = useQueryParam(
     "modal-create-dataset",
     BoolParam
@@ -57,16 +57,10 @@ const DatasetPage = () => {
   return (
     <>
       <WelcomeModal />
-      <AuthManager />
       <Meta title="LabelFlow | Datasets" />
       <CookieBanner />
       <Layout
-        tabBar={
-          <WorkspaceTabBar
-            currentTab="datasets"
-            workspaceSlug={workspaceSlug as string}
-          />
-        }
+        tabBar={<WorkspaceTabBar currentTab="datasets" />}
         breadcrumbs={[
           <NavLogo key={0} />,
           <WorkspaceSwitcher key={1} />,
@@ -103,5 +97,11 @@ const DatasetPage = () => {
     </>
   );
 };
+
+const DatasetPage = () => (
+  <Authenticated withWorkspaces>
+    <Body />
+  </Authenticated>
+);
 
 export default DatasetPage;

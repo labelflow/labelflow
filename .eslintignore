@@ -1,3 +1,4 @@
 typescript/graphql-types/src/graphql-types.generated.ts
+typescript/web/src/graphql-types
 typescript/web/src/components/graphics
 strapi

@@ -14,18 +14,26 @@ import { ImportImagesModalDropzone } from "./modal-dropzone/modal-dropzone";
 import { ImportImagesModalUrlList } from "./modal-url-list/modal-url-list";
 import { DATASET_IMAGES_PAGE_DATASET_QUERY } from "../../../shared-queries/dataset-images-page.query";
 import { WORKSPACE_DATASETS_PAGE_DATASETS_QUERY } from "../../../shared-queries/workspace-datasets-page.query";
-import { useDataset } from "../../../hooks";
+import { useDataset, useWorkspace } from "../../../hooks";
+import {
+  DatasetImagesPageDatasetQuery,
+  DatasetImagesPageDatasetQueryVariables,
+} from "../../../graphql-types";
+import { PAGINATED_IMAGES_QUERY } from "../../dataset-images-list";
+
+export type ImportImagesModalProps = {
+  isOpen?: boolean;
+  onClose?: () => void;
+};
 
 export const ImportImagesModal = ({
   isOpen = false,
   onClose = () => {},
-}: {
-  isOpen?: boolean;
-  onClose?: () => void;
-}) => {
+}: ImportImagesModalProps) => {
   const client = useApolloClient();
   const { isReady } = useRouter();
-  const { datasetSlug, workspaceSlug } = useDataset();
+  const { slug: workspaceSlug } = useWorkspace();
+  const { slug: datasetSlug } = useDataset();
 
   const [isCloseable, setCloseable] = useState(true);
   const [hasUploaded, setHasUploaded] = useState(false);
@@ -43,7 +51,10 @@ export const ImportImagesModal = ({
   useEffect(() => {
     // Manually refetch
     if (hasUploaded) {
-      client.query({
+      client.query<
+        DatasetImagesPageDatasetQuery,
+        DatasetImagesPageDatasetQueryVariables
+      >({
         query: DATASET_IMAGES_PAGE_DATASET_QUERY,
         variables: {
           slug: datasetSlug,
@@ -51,11 +62,12 @@ export const ImportImagesModal = ({
         },
         fetchPolicy: "network-only",
       });
-      client.query({
-        query: WORKSPACE_DATASETS_PAGE_DATASETS_QUERY,
-        fetchPolicy: "network-only",
+      client.refetchQueries({
+        include: [
+          WORKSPACE_DATASETS_PAGE_DATASETS_QUERY,
+          PAGINATED_IMAGES_QUERY,
+        ],
       });
-      client.refetchQueries({ include: ["PaginatedImagesQuery"] });
     }
   }, [hasUploaded]);
 
@@ -81,7 +93,7 @@ export const ImportImagesModal = ({
       isCentered
     >
       <ModalOverlay />
-      <ModalContent height="80vh">
+      <ModalContent height="80vh" data-testid="import-images-modal-content">
         <ModalCloseButton disabled={!isCloseable} />
         {mode !== "url-list" && (
           <ImportImagesModalDropzone
@@ -98,16 +110,19 @@ export const ImportImagesModal = ({
           />
         )}
 
-        <ModalFooter visibility={hasUploaded ? "visible" : "hidden"}>
-          <Button
-            colorScheme="brand"
-            onClick={() => {
-              onClose();
-              setHasUploaded(false);
-            }}
-          >
-            Start labeling
-          </Button>
+        <ModalFooter>
+          {hasUploaded && (
+            <Button
+              data-testid="start-labeling-button"
+              colorScheme="brand"
+              onClick={() => {
+                onClose();
+                setHasUploaded(false);
+              }}
+            >
+              Start labeling
+            </Button>
+          )}
         </ModalFooter>
       </ModalContent>
     </Modal>

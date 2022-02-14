@@ -1,12 +1,10 @@
-import { useDataset, UseDatasetResult } from "./use-dataset";
 import { useRouterQueryString } from "./use-router-query-string";
 
-export type UseDatasetImageResult = UseDatasetResult & {
-  imageId: string;
+export type UseDatasetImageResult = {
+  id: string;
 };
 
 export const useDatasetImage = (): UseDatasetImageResult => {
-  const datasetState = useDataset();
-  const imageId = useRouterQueryString("imageId");
-  return { ...datasetState, imageId };
+  const id = useRouterQueryString("imageId");
+  return { id };
 };

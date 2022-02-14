@@ -1,25 +1,18 @@
-import {
-  // useRef,
-  useEffect,
-  useCallback,
-  useState,
-} from "react";
 import { ApolloClient, gql, useApolloClient } from "@apollo/client";
-import { useCookies } from "react-cookie";
 import { Modal, ModalOverlay } from "@chakra-ui/react";
-import { QueryParamConfig, StringParam, useQueryParam } from "use-query-params";
-import { useRouter, NextRouter } from "next/router";
+import { NextRouter, useRouter } from "next/router";
+import { useCallback, useEffect, useState } from "react";
+import { useCookies } from "react-cookie";
 import { useErrorHandler } from "react-error-boundary";
-import { browser } from "../../utils/detect-scope";
-import { BrowserWarning } from "./steps/browser-warning";
-import { BrowserError } from "./steps/browser-error";
-import { Welcome } from "./steps/welcome";
-import { Loading } from "./steps/loading";
+import { QueryParamConfig, StringParam, useQueryParam } from "use-query-params";
 import {
   GetDatasetsNameQuery,
   GetDatasetsNameQueryVariables,
 } from "../../graphql-types/GetDatasetsNameQuery";
-import { useWorkspace } from "../../hooks";
+import { browser } from "../../utils/detect-scope";
+import { BrowserError } from "./steps/browser-error";
+import { BrowserWarning } from "./steps/browser-warning";
+import { Welcome } from "./steps/welcome";
 
 const tutorialDatasetFirstImageUrl =
   "/local/datasets/tutorial-dataset/images/2bbbf664-5810-4760-a10f-841de2f35510";
@@ -74,6 +67,7 @@ const performWelcomeWorkflow = async ({
   setBrowserError: (state: Error) => void;
   client: ApolloClient<{}>;
 }) => {
+  return; // FIXME SW Restore tutorials
   try {
     setParamModalWelcome(undefined, "replaceIn");
 
@@ -110,8 +104,9 @@ const performWelcomeWorkflow = async ({
             "GetImageLabelsQuery",
           ],
         });
-      if (createDemoDatasetErrors) {
-        throw createDemoDatasetErrors[0];
+      const firstError = createDemoDatasetErrors?.[0];
+      if (firstError) {
+        throw new Error(firstError?.message ?? "");
       }
     }
 
@@ -130,7 +125,6 @@ export const WelcomeModal = ({
   initialBrowserError?: Error;
   autoStartCountDown?: boolean;
 }) => {
-  const { workspaceSlug } = useWorkspace();
   const router = useRouter();
 
   const handleError = useErrorHandler();
@@ -208,14 +202,7 @@ export const WelcomeModal = ({
 
   // undefined => loading => welcome
   useEffect(() => {
-    if (
-      !process.env.STORYBOOK &&
-      router?.isReady &&
-      workspaceSlug === "local" &&
-      ((!(browserWarning && tryDespiteBrowserWarning !== "true") &&
-        paramModalWelcome !== "closed") ||
-        paramModalWelcome === "open")
-    ) {
+    if (!process.env.STORYBOOK && router?.isReady) {
       performWelcomeWorkflow({
         router,
         setBrowserError,
@@ -223,7 +210,7 @@ export const WelcomeModal = ({
         client,
       });
     }
-  }, [tryDespiteBrowserWarning, router?.isReady, workspaceSlug]);
+  }, [tryDespiteBrowserWarning, router?.isReady]);
 
   // welcome => undefined
   const handleGetStarted = useCallback(() => {
@@ -257,8 +244,6 @@ export const WelcomeModal = ({
     tryDespiteBrowserWarning !== "true" &&
     hasUserTriedApp !== "true";
 
-  const shouldShowLoadingModal = router?.isReady && hasUserTriedApp !== "true";
-
   const shouldShowWelcomeModal =
     router?.isReady &&
     (paramModalWelcome === "open" ||
@@ -271,10 +256,6 @@ export const WelcomeModal = ({
         (!shouldShowBrowserErrorModal && shouldShowBrowserWarningModal) ||
         (!shouldShowBrowserErrorModal &&
           !shouldShowBrowserWarningModal &&
-          shouldShowLoadingModal) ||
-        (!shouldShowBrowserErrorModal &&
-          !shouldShowBrowserWarningModal &&
-          !shouldShowLoadingModal &&
           shouldShowWelcomeModal)
       }
       onClose={() => {}}
@@ -299,11 +280,6 @@ export const WelcomeModal = ({
           return (
             <BrowserWarning onClickTryAnyway={pretendIsCompatibleBrowser} />
           );
-        }
-
-        // Nominal loading on first visit
-        if (shouldShowLoadingModal) {
-          return <Loading />;
         }
 
         // Nominal welcome modal on first vist after loading

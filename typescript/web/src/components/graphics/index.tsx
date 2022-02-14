@@ -43,3 +43,4 @@ export { default as SearchKey } from "./search-key";
 export { default as SearchQuestion } from "./search-question";
 export { default as search } from "./search";
 export { default as team } from "./team";
+export { default as NoWorkspaces } from "./no-workspace";

@@ -1,0 +1,17 @@
+{
+  "extends": "./tsconfig.json",
+  "exclude": [
+    "node_modules",
+    "cypress",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/*.stories.ts",
+    "**/*.stories.tsx",
+    "**/*.fixtures.ts",
+    "**/*.fixtures.tsx",
+    "**/src/utils/fixtures",
+    "**/src/utils/tests",
+    "**/src/utils/stories",
+    "**/scripts"
+  ]
+}

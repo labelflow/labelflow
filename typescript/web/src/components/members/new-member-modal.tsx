@@ -59,7 +59,7 @@ export const NewMemberModal = ({
   inviteMember?: InviteMember;
 }) => {
   const toast = useToast();
-  const { workspaceSlug } = useWorkspace();
+  const { slug: workspaceSlug } = useWorkspace();
   const [value, setValue] = useState<string>("");
   const [role, setRole] = useState<MembershipRole>(MembershipRole.Owner);
   const handleInputChange = (e: ChangeEvent<HTMLTextAreaElement>) => {

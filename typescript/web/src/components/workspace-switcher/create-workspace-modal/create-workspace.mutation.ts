@@ -20,6 +20,7 @@ import {
   CreateWorkspaceMutation,
   CreateWorkspaceMutationVariables,
 } from "../../../graphql-types/CreateWorkspaceMutation";
+import { USER_WITH_WORKSPACES_QUERY } from "../../../shared-queries/user.query";
 import { BoolParam } from "../../../utils/query-param-bool";
 
 export const CREATE_WORKSPACE_MUTATION = gql`
@@ -104,7 +105,7 @@ export function useCreateWorkspaceMutation(
     CreateWorkspaceMutationVariables
   >(CREATE_WORKSPACE_MUTATION, {
     variables: { name: workspaceName },
-    refetchQueries: ["GetWorkspacesQuery"],
+    refetchQueries: [USER_WITH_WORKSPACES_QUERY],
     onCompleted,
     onError,
   });

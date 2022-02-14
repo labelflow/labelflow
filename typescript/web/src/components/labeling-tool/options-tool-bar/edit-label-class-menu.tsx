@@ -18,7 +18,8 @@ import {
   GetImageLabelsQueryVariables,
 } from "../../../graphql-types/GetImageLabelsQuery";
 import { LabelType } from "../../../graphql-types/globalTypes";
-import { useDatasetImage } from "../../../hooks/use-dataset-image";
+import { useDataset, useWorkspace, useDatasetImage } from "../../../hooks";
+
 import { keymap } from "../../../keymap";
 import {
   GET_IMAGE_LABELS_QUERY,
@@ -30,7 +31,9 @@ import { ClassAdditionMenu } from "./class-addition-menu";
 import { ClassSelectionMenu, LabelClassItem } from "./class-selection-menu";
 
 export const EditLabelClassMenu = () => {
-  const { workspaceSlug, datasetSlug, imageId } = useDatasetImage();
+  const { slug: workspaceSlug } = useWorkspace();
+  const { slug: datasetSlug } = useDataset();
+  const { id: imageId } = useDatasetImage();
 
   const client = useApolloClient();
   const [isOpen, setIsOpen] = useState(false);

@@ -50,7 +50,7 @@ const DisabledSettingsLink = () => {
 };
 
 export const TabBarBody = ({ tabs }: TabBarProps) => {
-  const { workspaceSlug } = useWorkspace();
+  const { slug: workspaceSlug } = useWorkspace();
   return (
     <Flex
       alignItems="center"

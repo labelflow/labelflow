@@ -18,12 +18,13 @@ import { IoSearch } from "react-icons/io5";
 import { RiCloseCircleFill } from "react-icons/ri";
 import { useCombobox, UseComboboxStateChange } from "downshift";
 
+import { UserWithWorkspacesQuery_user_memberships_workspace } from "../../../../graphql-types/UserWithWorkspacesQuery";
+import { useWorkspaces } from "../../../../hooks";
 import { WorkspaceListItem } from "./workspace-list-item";
-import { GetWorkspacesQuery_workspaces } from "../../../../graphql-types/GetWorkspacesQuery";
 
-type CreateWorkspaceInput = { name: string; type: string };
+type CreateWorkspaceInput = { name: string; type: "CreateWorkspaceItem" };
 
-export type WorkspaceItem = GetWorkspacesQuery_workspaces;
+export type WorkspaceItem = UserWithWorkspacesQuery_user_memberships_workspace;
 
 const MagnifierIcon = chakra(IoSearch);
 const CloseCircleIcon = chakra(RiCloseCircleFill);
@@ -35,12 +36,12 @@ const filterWorkspaces = ({
   workspaces: WorkspaceItem[];
   inputValueCombobox: string;
 }): (WorkspaceItem | CreateWorkspaceInput)[] => {
-  const createWorkspaceItem =
+  const createWorkspaceItem: CreateWorkspaceInput | undefined =
     workspaces.filter(
       (workspace: WorkspaceItem) => workspace.name === inputValueCombobox
     ).length === 0
-      ? [{ name: inputValueCombobox, type: "CreateWorkspaceItem" }]
-      : [];
+      ? { name: inputValueCombobox, type: "CreateWorkspaceItem" }
+      : undefined;
 
   const filteredWorkspaces = workspaces.filter((workspace: WorkspaceItem) => {
     return workspace.name
@@ -48,7 +49,10 @@ const filterWorkspaces = ({
       .startsWith((inputValueCombobox ?? "").toLowerCase());
   });
 
-  return [...filteredWorkspaces, ...createWorkspaceItem];
+  return [
+    ...filteredWorkspaces,
+    ...(createWorkspaceItem ? [createWorkspaceItem] : []),
+  ];
 };
 
 export const WorkspaceSelectionPopover = ({
@@ -56,21 +60,19 @@ export const WorkspaceSelectionPopover = ({
   onClose = () => {},
   onSelectedWorkspaceChange,
   createNewWorkspace,
-  workspaces,
-  selectedWorkspaceId,
   trigger,
   ariaLabel = "Workspace selection popover",
 }: {
   isOpen?: boolean;
   onClose?: () => void;
   onSelectedWorkspaceChange: (item: WorkspaceItem) => void;
-  workspaces: WorkspaceItem[];
   createNewWorkspace: (name: string) => void;
-  selectedWorkspaceId?: string | null;
   trigger?: React.ReactNode;
   ariaLabel?: string;
 }) => {
   const [inputValueCombobox, setInputValueCombobox] = useState<string>("");
+
+  const workspaces = useWorkspaces();
 
   const filteredWorkspaces = useMemo(
     () =>
@@ -150,7 +152,12 @@ export const WorkspaceSelectionPopover = ({
         overflowX="visible"
         overflow="visible"
       >
-        <PopoverBody pl="0" pr="0" pt="0">
+        <PopoverBody
+          pl="0"
+          pr="0"
+          pt="0"
+          data-testid="workspace-selection-popover-body"
+        >
           <Box>
             <Box {...getComboboxProps()} pl="3" pr="3" pt="3">
               <InputGroup>
@@ -198,23 +205,21 @@ export const WorkspaceSelectionPopover = ({
               </InputGroup>
             </Box>
             <Box pt="1" {...getMenuProps()} overflowY="scroll" maxHeight="340">
-              {filteredWorkspaces.map(
-                (item: WorkspaceItem | CreateWorkspaceInput, index: number) => {
-                  return (
-                    <WorkspaceListItem
-                      itemProps={getItemProps({ item, index })}
-                      item={item}
-                      highlight={highlightedIndex === index}
-                      selected={"id" in item && item.id === selectedWorkspaceId}
-                      isCreateWorkspaceItem={
-                        "type" in item && item.type === "CreateWorkspaceItem"
-                      }
-                      index={index}
-                      key={item.name}
-                    />
-                  );
-                }
-              )}
+              {filteredWorkspaces.map((item, index) => {
+                return (
+                  <WorkspaceListItem
+                    itemProps={getItemProps({ item, index })}
+                    item={item}
+                    itemId={"id" in item ? item.id : undefined}
+                    highlight={highlightedIndex === index}
+                    isCreateWorkspaceItem={
+                      "type" in item && item.type === "CreateWorkspaceItem"
+                    }
+                    index={index}
+                    key={item.name}
+                  />
+                );
+              })}
             </Box>
           </Box>
         </PopoverBody>

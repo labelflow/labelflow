@@ -13,7 +13,7 @@ import {
   CountLabelsOfDatasetQueryVariables,
 } from "../../../graphql-types/CountLabelsOfDatasetQuery";
 import { ExportFormat } from "../../../graphql-types/globalTypes";
-import { useDataset } from "../../../hooks";
+import { useDataset, useWorkspace } from "../../../hooks";
 
 export const COUNT_LABELS_OF_DATASET_QUERY = gql`
   query CountLabelsOfDatasetQuery($slug: String!, $workspaceSlug: String!) {
@@ -62,7 +62,8 @@ export const ExportModalProvider = ({
   const [exportFormat, setExportFormat] = useState(ExportFormat.COCO);
   const [isExportRunning, setIsExportRunning] = useState(false);
   const [isOptionsModalOpen, setIsOptionsModalOpen] = useState(false);
-  const { datasetSlug, workspaceSlug } = useDataset();
+  const { slug: workspaceSlug } = useWorkspace();
+  const { slug: datasetSlug } = useDataset();
   const { data, loading } = useQuery<
     CountLabelsOfDatasetQuery,
     CountLabelsOfDatasetQueryVariables

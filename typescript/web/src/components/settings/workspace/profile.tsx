@@ -19,6 +19,7 @@ import {
   UpdateWorkspaceMutation,
   UpdateWorkspaceMutationVariables,
 } from "../../../graphql-types/UpdateWorkspaceMutation";
+import { USER_WITH_WORKSPACES_QUERY } from "../../../shared-queries/user.query";
 import { randomBackgroundGradient } from "../../../utils/random-background-gradient";
 import { useApolloError } from "../../error-handlers";
 import {
@@ -63,7 +64,7 @@ const useUpdateWorkspace = (): [() => void, string | undefined] => {
       image: null,
       workspaceSlug,
     },
-    refetchQueries: ["GetWorkspacesQuery"],
+    refetchQueries: [USER_WITH_WORKSPACES_QUERY],
     onCompleted: (data) => {
       if (!data?.updateWorkspace) return;
       router.push(`/${data.updateWorkspace.slug}/settings`);

@@ -11,7 +11,7 @@ import dynamic from "next/dynamic";
 import NextLink from "next/link";
 import React from "react";
 import { useErrorHandler } from "react-error-boundary";
-import { AuthManager } from "../../../../../components/auth-manager";
+import { Authenticated } from "../../../../../components/auth";
 import { CookieBanner } from "../../../../../components/cookie-banner";
 import { GET_DATASET_BY_SLUG_QUERY } from "../../../../../components/datasets/datasets.query";
 import { ExportButton } from "../../../../../components/export-button";
@@ -28,7 +28,12 @@ import {
   ImageNameQuery,
   ImageNameQueryVariables,
 } from "../../../../../graphql-types/ImageNameQuery";
-import { useDatasetImage } from "../../../../../hooks/use-dataset-image";
+import {
+  useDataset,
+  useWorkspace,
+  useDatasetImage,
+} from "../../../../../hooks";
+
 import { Error404Content } from "../../../../404";
 
 // The dynamic import is needed because openlayers use web apis that are not available
@@ -54,8 +59,10 @@ const IMAGE_NAME_QUERY = gql`
   }
 `;
 
-const ImagePage = () => {
-  const { workspaceSlug, datasetSlug, imageId } = useDatasetImage();
+const Body = () => {
+  const { slug: workspaceSlug } = useWorkspace();
+  const { slug: datasetSlug } = useDataset();
+  const { id: imageId } = useDatasetImage();
 
   const {
     data: imageResult,
@@ -89,7 +96,6 @@ const ImagePage = () => {
       return (
         <>
           <WelcomeModal />
-          <AuthManager />
           <Meta title="LabelFlow | Dataset not found" />
           <CookieBanner />
           <Error404Content />
@@ -103,7 +109,6 @@ const ImagePage = () => {
       return (
         <>
           <WelcomeModal />
-          <AuthManager />
           <Meta title="LabelFlow | Image not found" />
           <CookieBanner />
           <Error404Content />
@@ -115,7 +120,6 @@ const ImagePage = () => {
   return (
     <>
       <WelcomeModal />
-      <AuthManager />
       <Meta title={`LabelFlow | Image ${imageName ?? ""}`} />
       <CookieBanner />
       <Layout
@@ -165,5 +169,11 @@ const ImagePage = () => {
     </>
   );
 };
+
+const ImagePage = () => (
+  <Authenticated withWorkspaces>
+    <Body />
+  </Authenticated>
+);
 
 export default ImagePage;

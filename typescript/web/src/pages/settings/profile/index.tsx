@@ -3,12 +3,12 @@ import { useSession } from "next-auth/react";
 import { gql, useMutation, useQuery } from "@apollo/client";
 import { Meta } from "../../../components/meta";
 import { Layout } from "../../../components/layout";
-import { AuthManager } from "../../../components/auth-manager";
+import { Authenticated } from "../../../components/auth";
 import { WelcomeModal } from "../../../components/welcome-manager";
 import { CookieBanner } from "../../../components/cookie-banner";
 import { NavLogo } from "../../../components/logo/nav-logo";
-import { UserSettings } from "../../../components/settings/user";
-import { USER_PROFILE_QUERY } from "../../../shared-queries/user-profile.query";
+import { UserSettings } from "../../../components/settings/user/user-settings";
+import { USER_QUERY } from "../../../shared-queries/user.query";
 
 const UPDATE_USER_MUTATION = gql`
   mutation UpdateUserMutation($id: ID!, $data: UserUpdateInput!) {
@@ -22,13 +22,13 @@ const ProfilePage = () => {
   const session = useSession({ required: false });
   const userInfoFromSession = session?.data?.user;
 
-  const { data: userData, loading } = useQuery(USER_PROFILE_QUERY, {
+  const { data: userData, loading } = useQuery(USER_QUERY, {
     variables: { id: userInfoFromSession?.id },
     skip: userInfoFromSession?.id == null,
   });
   const user = userData?.user;
   const [updateUser] = useMutation(UPDATE_USER_MUTATION, {
-    refetchQueries: ["UserProfileQuery"],
+    refetchQueries: [USER_QUERY],
   });
   const changeUserName = useCallback(
     (name: string) => {
@@ -46,9 +46,8 @@ const ProfilePage = () => {
   }, [user, loading, userInfoFromSession?.id, session.status]);
 
   return (
-    <>
+    <Authenticated>
       <WelcomeModal />
-      <AuthManager />
       <Meta title="LabelFlow | Profile" />
       <CookieBanner />
       <Layout breadcrumbs={[<NavLogo key={0} />]}>
@@ -56,7 +55,7 @@ const ProfilePage = () => {
           <UserSettings user={user} changeUserName={changeUserName} />
         )}
       </Layout>
-    </>
+    </Authenticated>
   );
 };
 

@@ -1,13 +1,10 @@
-import { pick } from "lodash";
-import {
-  ApolloMockResponse,
-  ApolloMockResponses,
-} from "../../utils/tests/apollo-mock";
+import { pick } from "lodash/fp";
+import { ApolloMockResponse, ApolloMockResponses } from "../../utils/tests";
 import { DATASET_LABEL_CLASSES_QUERY_WITH_COUNT } from "./dataset-classes.query";
 import {
   BASIC_DATASET_DATA,
   DEEP_DATASET_WITH_CLASSES_DATA,
-} from "../../utils/tests/data.fixtures";
+} from "../../utils/fixtures";
 import { GET_LABEL_CLASS_BY_ID_MOCK } from "./delete-label-class-modal.fixtures";
 import { GET_LABEL_CLASS_EXISTS_MOCK } from "./upsert-class-modal/upsert-class-modal.fixtures";
 import {
@@ -29,7 +26,7 @@ export const GET_DATASET_WITHOUT_LABEL_CLASSES_MOCK: ApolloMockResponse<
   result: {
     data: {
       dataset: {
-        ...pick(BASIC_DATASET_DATA, "id", "name"),
+        ...pick(["id", "name"], BASIC_DATASET_DATA),
         labelClasses: [],
       },
     },
@@ -50,10 +47,13 @@ export const GET_DATASET_WITH_LABEL_CLASSES_MOCK: ApolloMockResponse<
   result: {
     data: {
       dataset: {
-        ...pick(DEEP_DATASET_WITH_CLASSES_DATA, "id", "name"),
+        ...pick(["id", "name"], DEEP_DATASET_WITH_CLASSES_DATA),
         labelClasses: DEEP_DATASET_WITH_CLASSES_DATA.labelClasses.map(
           (labelClass) =>
-            pick(labelClass, "id", "index", "name", "color", "labelsAggregates")
+            pick(
+              ["id", "index", "name", "color", "labelsAggregates"],
+              labelClass
+            )
         ),
       },
     },

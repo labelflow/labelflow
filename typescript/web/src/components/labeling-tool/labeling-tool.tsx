@@ -15,12 +15,12 @@ import { ImageNavigationTool } from "./image-navigation";
 import { useUndoStore } from "../../connectors/undo-store";
 import { useLabelingStore } from "../../connectors/labeling-state";
 import { BoolParam } from "../../utils/query-param-bool";
-import { useDatasetImage } from "../../hooks/use-dataset-image";
+import { useDatasetImage } from "../../hooks";
 
 export const LabelingTool = () => {
   const { clear } = useUndoStore();
 
-  const { imageId } = useDatasetImage();
+  const { id: imageId } = useDatasetImage();
   const containerRef = useRef<HTMLDivElement>(null);
 
   const containerSx = {

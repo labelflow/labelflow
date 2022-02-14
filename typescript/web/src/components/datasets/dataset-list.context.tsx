@@ -38,7 +38,7 @@ const useProviderState = (
   props: DatasetListProviderProps
 ): DatasetListState => {
   const { setDeleteDatasetId, setEditDatasetId } = props;
-  const { workspaceSlug } = useWorkspace();
+  const { slug: workspaceSlug } = useWorkspace();
   const { page, perPage, itemCount } = usePagination();
   const { data: datasetsResult, loading: datasetQueryLoading } = useQuery<
     WorkspaceDatasetsPageDatasetsQuery,

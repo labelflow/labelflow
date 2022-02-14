@@ -1,4 +1,3 @@
-import { useQuery } from "@apollo/client";
 import {
   Avatar,
   chakra,
@@ -17,7 +16,7 @@ import {
   useColorMode,
   useColorModeValue,
 } from "@chakra-ui/react";
-import { isEmpty, isNil } from "lodash/fp";
+import { isEmpty } from "lodash/fp";
 import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import React, { useCallback } from "react";
@@ -30,12 +29,8 @@ import {
   RiUserLine,
 } from "react-icons/ri";
 import { useQueryParam } from "use-query-params";
-import {
-  UserProfileQuery,
-  UserProfileQueryVariables,
-  UserProfileQuery_user,
-} from "../../../graphql-types/UserProfileQuery";
-import { USER_PROFILE_QUERY } from "../../../shared-queries/user-profile.query";
+import { UserQuery_user } from "../../../graphql-types/UserQuery";
+import { useOptionalUser } from "../../../hooks";
 import { trackEvent } from "../../../utils/google-analytics";
 import { BoolParam } from "../../../utils/query-param-bool";
 import { randomBackgroundGradient } from "../../../utils/random-background-gradient";
@@ -51,7 +46,7 @@ const SignoutIcon = chakra(RiLogoutCircleRLine);
 
 const SettingsIcon = chakra(RiSettings4Line);
 
-type UserProps = UserProfileQuery_user & { displayName?: string };
+type UserProps = Partial<UserQuery_user> & { displayName?: string };
 
 const UserAvatar = ({ image, displayName }: UserProps) => {
   const avatarBackground = useColorModeValue("white", "gray.700");
@@ -64,7 +59,12 @@ const UserAvatar = ({ image, displayName }: UserProps) => {
       bg={bg}
       name={displayName}
       src={image ?? undefined}
-      icon={<UserMenuIcon fontSize="xl" />}
+      icon={
+        <UserMenuIcon
+          fontSize="xl"
+          color={useColorModeValue("gray.700", "white")}
+        />
+      }
     />
   );
 };
@@ -208,15 +208,10 @@ const PreferencesMenuGroup = () => (
 );
 
 const UserMenuList = (props: UserProps) => {
-  const { data: session } = useSession({ required: false });
   return (
     <MenuList>
-      {session && (
-        <>
-          <ProfileMenuItem {...props} />
-          <MenuDivider />
-        </>
-      )}
+      <ProfileMenuItem {...props} />
+      <MenuDivider />
       <UserMenuGroup />
       <MenuDivider />
       <PreferencesMenuGroup />
@@ -224,32 +219,17 @@ const UserMenuList = (props: UserProps) => {
   );
 };
 
-const useUser = (): UserProps | undefined => {
-  const { data: session } = useSession({ required: false });
-  const userInfoFromSession = session?.user;
-  const { data: userData } = useQuery<
-    UserProfileQuery,
-    UserProfileQueryVariables
-  >(USER_PROFILE_QUERY, {
-    variables: { id: userInfoFromSession?.id ?? "" },
-    skip: isNil(userInfoFromSession?.id),
-  });
-  const user = userData?.user;
-  return isNil(user)
-    ? undefined
-    : { ...user, displayName: getDisplayName(user) };
+const useUserWithDisplayName = (): UserProps => {
+  const user = useOptionalUser();
+  return { ...user, displayName: getDisplayName(user ?? {}) };
 };
 
 export const UserMenu = () => {
-  const user = useUser();
+  const user = useUserWithDisplayName();
   return (
-    <>
-      {user && (
-        <Menu>
-          <UserMenuButton {...user} />
-          <UserMenuList {...user} />
-        </Menu>
-      )}
-    </>
+    <Menu>
+      <UserMenuButton {...user} />
+      <UserMenuList {...user} />
+    </Menu>
   );
 };

@@ -1,7 +1,6 @@
 import { ApolloError } from "@apollo/client";
 import { Modal, ModalOverlay } from "@chakra-ui/react";
 import { isEmpty, isNil } from "lodash/fp";
-import { useRouter } from "next/router";
 import React, {
   ChangeEvent,
   FormEvent,
@@ -9,6 +8,7 @@ import React, {
   useEffect,
   useState,
 } from "react";
+import { useDataset, useWorkspace } from "../../../hooks";
 import { useDatasetClasses } from "../dataset-classes.context";
 import { LabelClassWithShortcut } from "../types";
 import { useCreateLabelClassMutation } from "./create-label-class.mutation";
@@ -18,15 +18,15 @@ import { ModalContext } from "./modal-context";
 import { useUpdateLabelClass } from "./update-label-class-name.mutation";
 
 const useSubmit = (
-  datasetId: string | undefined,
-  datasetSlug: string | undefined,
+  datasetId: string,
   classId: string | undefined,
   className: string,
   classColor: string | undefined,
   onClose: () => void,
   setErrorMessage: (message: string) => void
 ): [(event: FormEvent) => Promise<void>, boolean] => {
-  const workspaceSlug = useRouter()?.query?.workspaceSlug as string | undefined;
+  const { slug: workspaceSlug } = useWorkspace();
+  const { slug: datasetSlug } = useDataset();
   const [updateLabelClass, { loading: updating }] = useUpdateLabelClass(
     classId,
     className,
@@ -71,7 +71,7 @@ const useSubmit = (
 };
 
 const useCheckName = (
-  datasetId: string | undefined,
+  datasetId: string,
   className: string,
   setErrorMessage: (msg: string) => void
 ) => {
@@ -114,7 +114,7 @@ export interface UpsertClassModalProps {
 }
 
 const useModalState = ({ isOpen, onClose }: UpsertClassModalProps) => {
-  const { editClass, datasetId, datasetSlug } = useDatasetClasses();
+  const { editClass, datasetId } = useDatasetClasses();
   const [classNameInputValue, setClassNameInputValue] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState<string>("");
   const handleInputValueChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -122,10 +122,9 @@ const useModalState = ({ isOpen, onClose }: UpsertClassModalProps) => {
   };
   const classId = editClass?.id ?? undefined;
   const className = classNameInputValue?.trim() ?? "";
-  useCheckName(datasetId, className, setErrorMessage);
+  useCheckName(datasetId ?? "", className, setErrorMessage);
   const [createClass, loading] = useSubmit(
-    datasetId,
-    datasetSlug,
+    datasetId ?? "",
     classId,
     className,
     editClass?.color ?? undefined,

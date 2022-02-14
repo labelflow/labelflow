@@ -4,8 +4,10 @@ import {
   GetAllImagesOfADatasetQuery,
   GetAllImagesOfADatasetQueryVariables,
 } from "../graphql-types/GetAllImagesOfADatasetQuery";
+import { useDataset } from "./use-dataset";
 import { useDatasetImage } from "./use-dataset-image";
 import { GET_ALL_IMAGES_OF_A_DATASET_QUERY } from "./use-images-navigation.query";
+import { useOptionalWorkspace } from "./use-user";
 
 /**
  * A Hook to handle image navigation.
@@ -19,11 +21,10 @@ import { GET_ALL_IMAGES_OF_A_DATASET_QUERY } from "./use-images-navigation.query
  * is already the last index of the array).
  */
 export const useImagesNavigation = () => {
-  const {
-    workspaceSlug,
-    datasetSlug,
-    imageId: currentImageId,
-  } = useDatasetImage();
+  const workspace = useOptionalWorkspace();
+  const workspaceSlug = workspace?.slug ?? "";
+  const { slug: datasetSlug } = useDataset();
+  const { id: currentImageId } = useDatasetImage();
 
   // Refetch images ?
   const { data } = useQuery<

@@ -1,30 +1,20 @@
+import { pick } from "lodash/fp";
 import {
   GetAllImagesOfADatasetQuery,
   GetAllImagesOfADatasetQueryVariables,
   GetAllImagesOfADatasetQuery_dataset_images,
 } from "../graphql-types/GetAllImagesOfADatasetQuery";
 import {
-  ApolloMockResponse,
-  ApolloMockResponses,
-} from "../utils/tests/apollo-mock";
-import { BASIC_DATASET_DATA } from "../utils/tests/data.fixtures";
+  BASIC_DATASET_DATA,
+  DEEP_DATASET_WITH_IMAGES_DATA,
+} from "../utils/fixtures";
+import { ApolloMockResponse, ApolloMockResponses } from "../utils/tests";
 import { GET_ALL_IMAGES_OF_A_DATASET_QUERY } from "./use-images-navigation.query";
 
-const EXAMPLE_URL = "https://labelflow.ai/static/icon-512x512.png";
-
-const IMAGES_IDS = [
-  "dd5f0305-3d69-457d-9a77-4a46cec0e10b",
-  "929f5445-812c-4679-86bd-0f0748679f38",
-  "51e00f79-d178-4ea1-8bb5-b0fa647f9d19",
-  "8067a965-d017-4c4b-a82d-98cc803d1020",
-];
-
-export const [CURRENT_IMAGE_DATA, IMAGE_1_DATA, IMAGE_2_DATA, IMAGE_3_DATA] =
-  IMAGES_IDS.map((id) => ({
-    id,
-    url: EXAMPLE_URL,
-    thumbnail200Url: EXAMPLE_URL,
-  }));
+export const [CURRENT_IMAGE_DATA, IMAGE_1_DATA, IMAGE_2_DATA, IMAGE_3_DATA] = [
+  BASIC_DATASET_DATA.images[0],
+  ...DEEP_DATASET_WITH_IMAGES_DATA.images,
+].map((imageData) => pick(["id", "url", "thumbnail200Url"], imageData));
 
 const CURRENT_IMAGE_IS_FIRST = [CURRENT_IMAGE_DATA, IMAGE_1_DATA, IMAGE_2_DATA];
 const CURRENT_IMAGE_IS_SECOND = [
@@ -56,6 +46,7 @@ const createImagesGenerator = (
       },
     },
   },
+  delay: 10,
 });
 
 const createImagesMocks = (

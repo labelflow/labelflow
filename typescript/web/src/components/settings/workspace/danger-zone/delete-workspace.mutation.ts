@@ -5,6 +5,7 @@ import {
   DeleteWorkspaceMutation,
   DeleteWorkspaceMutationVariables,
 } from "../../../../graphql-types/DeleteWorkspaceMutation";
+import { USER_WITH_WORKSPACES_QUERY } from "../../../../shared-queries/user.query";
 import { useApolloErrorToast } from "../../../toast";
 import { useWorkspaceSettings } from "../context";
 
@@ -39,6 +40,12 @@ export const useDeleteWorkspaceMutation = () => {
   const onError = useApolloErrorToast();
   return useMutation<DeleteWorkspaceMutation, DeleteWorkspaceMutationVariables>(
     DELETE_WORKSPACE_MUTATION,
-    { variables: { slug }, update, onCompleted, onError }
+    {
+      variables: { slug },
+      update,
+      onCompleted,
+      onError,
+      refetchQueries: [USER_WITH_WORKSPACES_QUERY],
+    }
   );
 };

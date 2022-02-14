@@ -1,37 +1,24 @@
-import { useState, useEffect, useCallback } from "react";
-import { isEmpty, isNil } from "lodash/fp";
+import { useApolloClient, useQuery } from "@apollo/client";
 import {
-  Heading,
-  ModalHeader,
-  ModalBody,
   Button,
+  Heading,
+  ModalBody,
+  ModalHeader,
   Text,
 } from "@chakra-ui/react";
-import { useApolloClient, useQuery, gql } from "@apollo/client";
-import { Dropzone } from "./dropzone";
-import { FilesStatuses } from "./file-statuses";
-import { DroppedFile, UploadStatuses } from "../types";
-
-import { importDroppedFiles } from "./import-dropped-files";
-import { flushPaginatedImagesCache } from "../../../dataset-images-list";
-import { GET_DATASET_BY_SLUG_QUERY } from "../../../datasets/datasets.query";
+import { isEmpty, isNil } from "lodash/fp";
+import { useCallback, useEffect, useState } from "react";
 import {
   GetDatasetBySlugQuery,
   GetDatasetBySlugQueryVariables,
 } from "../../../../graphql-types/GetDatasetBySlugQuery";
-import {
-  GetWorkspaceIdQuery,
-  GetWorkspaceIdQueryVariables,
-} from "../../../../graphql-types/GetWorkspaceIdQuery";
-import { useDataset } from "../../../../hooks";
-
-export const GET_WORKSPACE_ID_QUERY = gql`
-  query GetWorkspaceIdQuery($workspaceSlug: String) {
-    workspace(where: { slug: $workspaceSlug }) {
-      id
-    }
-  }
-`;
+import { useDataset, useWorkspace } from "../../../../hooks";
+import { flushPaginatedImagesCache } from "../../../dataset-images-list";
+import { GET_DATASET_BY_SLUG_QUERY } from "../../../datasets/datasets.query";
+import { DroppedFile, UploadStatuses } from "../types";
+import { Dropzone } from "./dropzone";
+import { FilesStatuses } from "./file-statuses";
+import { importDroppedFiles } from "./import-dropped-files";
 
 export const ImportImagesModalDropzone = ({
   setMode,
@@ -43,8 +30,8 @@ export const ImportImagesModalDropzone = ({
   onUploadEnd?: () => void;
 }) => {
   const apolloClient = useApolloClient();
-  const { workspaceSlug, datasetSlug } = useDataset();
-
+  const { id: workspaceId, slug: workspaceSlug } = useWorkspace();
+  const { slug: datasetSlug } = useDataset();
   /*
    * We need a state with the accepted and reject files to be able to reset the list
    * when we close the modal because react-dropzone doesn't provide a way to reset its
@@ -65,20 +52,12 @@ export const ImportImagesModalDropzone = ({
     },
     skip: isEmpty(workspaceSlug) || isEmpty(datasetSlug),
   });
-  const { data: getWorkspaceIdData } = useQuery<
-    GetWorkspaceIdQuery,
-    GetWorkspaceIdQueryVariables
-  >(GET_WORKSPACE_ID_QUERY, {
-    variables: { workspaceSlug },
-    skip: isEmpty(workspaceSlug),
-  });
 
   const datasetId = datasetResult?.dataset.id;
-  const workspaceId = getWorkspaceIdData?.workspace.id;
 
   const handleImport = useCallback(
     async (filesToImport: DroppedFile[]) => {
-      if (isNil(workspaceId) || isNil(datasetId)) return;
+      if (isNil(datasetId)) return;
       onUploadStart();
       await flushPaginatedImagesCache(apolloClient, datasetId);
       await importDroppedFiles({
@@ -102,7 +81,6 @@ export const ImportImagesModalDropzone = ({
 
   useEffect(() => {
     if (isEmpty(files) || !datasetId) return;
-
     handleImport(files);
   }, [files, datasetId, handleImport]);
 

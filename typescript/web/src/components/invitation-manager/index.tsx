@@ -1,15 +1,15 @@
 import { gql, useMutation, useQuery } from "@apollo/client";
 import { useToast } from "@chakra-ui/react";
-import { useSession } from "next-auth/react";
+import { isEmpty } from "lodash/fp";
 import { useRouter } from "next/router";
 import React from "react";
 import { CurrentUserCanAcceptInvitation } from "../../graphql-types/globalTypes";
-import { USER_PROFILE_QUERY } from "../../shared-queries/user-profile.query";
+import { useUser } from "../../hooks";
+import { USER_QUERY } from "../../shared-queries/user.query";
 import { getDisplayName } from "../members/user";
 import { LayoutSpinner } from "../spinner";
 import { AcceptOrDeclineMembershipInvitation } from "./accept-or-decline-membership-invitation";
 import { InvalidInvitation } from "./invalid-invitation";
-import { UserNeedsToSignIn } from "./user-needs-to-sign-in";
 
 const INVITATION_DETAILS_QUERY = gql`
   query InvitationDetailsQuery($id: ID!) {
@@ -44,11 +44,9 @@ const DECLINE_INVITATION_MUTATION = gql`
 
 export const InvitationManager = () => {
   const toast = useToast();
+  const { id: userId } = useUser();
   const router = useRouter();
   const { membershipId } = router.query;
-  const { data: session, status } = useSession({ required: false });
-  const userInfoFromSession = session?.user;
-
   const { data, loading: invitationDetailsAreLoading } = useQuery(
     INVITATION_DETAILS_QUERY,
     {
@@ -117,25 +115,16 @@ export const InvitationManager = () => {
     }
   );
 
-  const { data: userData, loading: userIsLoading } = useQuery(
-    USER_PROFILE_QUERY,
-    {
-      variables: { id: userInfoFromSession?.id },
-      skip: userInfoFromSession?.id == null,
-    }
-  );
+  const { data: userData, loading: userIsLoading } = useQuery(USER_QUERY, {
+    variables: { id: userId },
+    skip: isEmpty(userId),
+  });
   const displayName = userData?.user
     ? getDisplayName(userData?.user)
     : "Anonymous";
 
-  if (invitationDetailsAreLoading || status === "loading" || userIsLoading) {
+  if (invitationDetailsAreLoading || userIsLoading) {
     return <LayoutSpinner />;
-  }
-
-  if (!userData?.user) {
-    if (!membership) {
-      return <UserNeedsToSignIn />;
-    }
   }
 
   if (!membership) {

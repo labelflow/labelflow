@@ -90,14 +90,7 @@ const columns = [
     ) {
       return (
         <Flex justifyContent="flex-end">
-          <Tooltip
-            placement="top"
-            label={
-              workspace?.slug === "local"
-                ? "You cannot leave your own local workspace"
-                : "Remove this user from the workspace"
-            }
-          >
+          <Tooltip placement="top" label="Remove this user from the workspace">
             {/* This span is needed else the tooltip is not visible when the button is disabled */}
             <span>
               <Button

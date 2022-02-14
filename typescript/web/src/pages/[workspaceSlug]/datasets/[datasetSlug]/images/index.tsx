@@ -4,7 +4,7 @@ import type { Dataset as DatasetType } from "@labelflow/graphql-types";
 import { isEmpty } from "lodash/fp";
 import NextLink from "next/link";
 import { useErrorHandler } from "react-error-boundary";
-import { AuthManager } from "../../../../../components/auth-manager";
+import { Authenticated } from "../../../../../components/auth";
 import { CookieBanner } from "../../../../../components/cookie-banner";
 import { ImagesList } from "../../../../../components/dataset-images-list";
 import { ExportButton } from "../../../../../components/export-button";
@@ -16,12 +16,13 @@ import { NavLogo } from "../../../../../components/logo/nav-logo";
 import { Meta } from "../../../../../components/meta";
 import { WelcomeModal } from "../../../../../components/welcome-manager";
 import { WorkspaceSwitcher } from "../../../../../components/workspace-switcher";
-import { useDatasetImage } from "../../../../../hooks/use-dataset-image";
+import { useDataset, useWorkspace } from "../../../../../hooks";
 import { DATASET_IMAGES_PAGE_DATASET_QUERY } from "../../../../../shared-queries/dataset-images-page.query";
 import { Error404Content } from "../../../../404";
 
-const ImagesPage = () => {
-  const { workspaceSlug, datasetSlug } = useDatasetImage();
+const Body = () => {
+  const { slug: workspaceSlug } = useWorkspace();
+  const { slug: datasetSlug } = useDataset();
 
   const {
     data: datasetResult,
@@ -49,19 +50,17 @@ const ImagesPage = () => {
       handleError(datasetQueryError);
     }
     return (
-      <>
+      <Authenticated>
         <WelcomeModal />
-        <AuthManager />
         <Meta title="LabelFlow | Dataset not found" />
         <CookieBanner />
         <Error404Content />
-      </>
+      </Authenticated>
     );
   }
   return (
     <>
       <WelcomeModal />
-      <AuthManager />
       <Meta title="LabelFlow | Images" />
       <CookieBanner />
       <Layout
@@ -105,5 +104,11 @@ const ImagesPage = () => {
     </>
   );
 };
+
+const ImagesPage = () => (
+  <Authenticated withWorkspaces>
+    <Body />
+  </Authenticated>
+);
 
 export default ImagesPage;

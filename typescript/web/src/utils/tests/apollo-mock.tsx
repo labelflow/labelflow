@@ -1,13 +1,23 @@
-import { PropsWithChildren } from "react";
+import {
+  ApolloClient,
+  FetchResult,
+  GraphQLRequest,
+  InMemoryCache,
+  NormalizedCacheObject,
+} from "@apollo/client";
 import { MockedProvider } from "@apollo/client/testing";
+import { act } from "@testing-library/react";
+import { PropsWithChildren } from "react";
 import {
   MATCH_ANY_PARAMETERS,
   MockedResponses,
   WildcardMockedResponse,
   WildcardMockLink,
 } from "wildcard-mock-link";
-import { FetchResult, GraphQLRequest } from "@apollo/client";
-import { act } from "@testing-library/react";
+
+export type ApolloMockResponseResult<TData, TVariables> =
+  | FetchResult<TData>
+  | ((variables: TVariables) => FetchResult<TData>);
 
 export type ApolloMockResponse<TData, TVariables> = Omit<
   WildcardMockedResponse,
@@ -16,10 +26,15 @@ export type ApolloMockResponse<TData, TVariables> = Omit<
   request: Omit<GraphQLRequest, "variables"> & {
     variables: TVariables | typeof MATCH_ANY_PARAMETERS;
   };
-  result?: FetchResult<TData> | ((variables: TVariables) => FetchResult<TData>);
+  result?: ApolloMockResponseResult<TData, TVariables>;
 };
 
 export type ApolloMockResponses = ApolloMockResponse<any, any>[];
+
+export type ApolloClientWithMockLink = {
+  client: ApolloClient<NormalizedCacheObject>;
+  link: WildcardMockLink;
+};
 
 export const getApolloMockLink = (
   mocks?: ApolloMockResponse<object, object>[]
@@ -28,6 +43,17 @@ export const getApolloMockLink = (
     addTypename: true,
     act,
   });
+
+export const getApolloMockClient = (
+  data?: WildcardMockLink | ApolloMockResponse<object, object>[]
+): ApolloClientWithMockLink => {
+  const link =
+    data instanceof WildcardMockLink ? data : getApolloMockLink(data);
+  return {
+    client: new ApolloClient({ link, cache: new InMemoryCache() }),
+    link,
+  };
+};
 
 export const getApolloMockWrapper =
   (data?: WildcardMockLink | ApolloMockResponse<object, object>[]) =>
