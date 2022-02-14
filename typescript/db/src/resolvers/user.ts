@@ -76,7 +76,10 @@ const memberships = async (
   ).membership.findMany({
     where: {
       userId: parent.id,
-      workspace: { memberships: { some: { userId: userData?.id } } },
+      workspace: {
+        memberships: { some: { userId: userData?.id } },
+        deletedAt: null,
+      },
     },
     orderBy: { createdAt: Prisma.SortOrder.asc },
   });
