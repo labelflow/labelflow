@@ -1,6 +1,7 @@
 import GraphiQLOriginal from "graphiql";
 import "graphiql/graphiql.css";
 import { createGraphiQLFetcher } from "@graphiql/toolkit";
+import { Flex } from "@chakra-ui/react";
 
 export const GraphiQL = ({ url }: { url: string }) => {
   const fetcher = createGraphiQLFetcher({
@@ -8,13 +9,15 @@ export const GraphiQL = ({ url }: { url: string }) => {
   });
 
   return (
-    <GraphiQLOriginal
-      fetcher={fetcher}
-      editorTheme="dracula"
-      defaultVariableEditorOpen
-      defaultSecondaryEditorOpen
-      headerEditorEnabled
-      shouldPersistHeaders
-    />
+    <Flex grow={1}>
+      <GraphiQLOriginal
+        fetcher={fetcher}
+        editorTheme="dracula"
+        defaultVariableEditorOpen
+        defaultSecondaryEditorOpen
+        headerEditorEnabled
+        shouldPersistHeaders
+      />
+    </Flex>
   );
 };
