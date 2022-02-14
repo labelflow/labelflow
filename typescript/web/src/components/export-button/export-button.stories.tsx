@@ -1,12 +1,15 @@
 import { ExportButton } from ".";
 import { WORKSPACE_DATA, BASIC_DATASET_DATA } from "../../utils/fixtures";
-import { createCommonDecorator, storybookTitle } from "../../utils/stories";
+import {
+  createTestWrapperDecorator,
+  storybookTitle,
+} from "../../utils/stories";
 import { APOLLO_MOCKS } from "./export-modal/export-modal.fixtures";
 
 export default {
   title: storybookTitle("Export Button", ExportButton),
   decorators: [
-    createCommonDecorator({
+    createTestWrapperDecorator({
       auth: { withWorkspaces: true },
       apollo: { extraMocks: APOLLO_MOCKS },
       router: {

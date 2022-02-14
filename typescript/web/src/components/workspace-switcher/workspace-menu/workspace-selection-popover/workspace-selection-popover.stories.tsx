@@ -4,7 +4,7 @@ import {
   WORKSPACE_DATA,
 } from "../../../../utils/fixtures";
 import {
-  createCommonDecorator,
+  createTestWrapperDecorator,
   storybookTitle,
 } from "../../../../utils/stories";
 import { WorkspaceSelectionPopover } from "./workspace-selection-popover";
@@ -12,7 +12,7 @@ import { WorkspaceSelectionPopover } from "./workspace-selection-popover";
 export default {
   title: storybookTitle("Workspace Switcher", WorkspaceSelectionPopover),
   decorators: [
-    createCommonDecorator({
+    createTestWrapperDecorator({
       auth: { withWorkspaces: true },
       apollo: { extraMocks: [USER_WITH_WORKSPACES_QUERY_MOCK] },
       router: { query: { workspaceSlug: WORKSPACE_DATA.slug } },

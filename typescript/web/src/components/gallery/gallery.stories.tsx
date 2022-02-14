@@ -2,7 +2,10 @@ import { HStack } from "@chakra-ui/react";
 import { Story } from "@storybook/react";
 import { BASIC_DATASET_DATA, WORKSPACE_DATA } from "../../utils/fixtures";
 import imageSampleCollection from "../../utils/image-sample-collection";
-import { createCommonDecorator, storybookTitle } from "../../utils/stories";
+import {
+  createTestWrapperDecorator,
+  storybookTitle,
+} from "../../utils/stories";
 import { Gallery } from "./gallery";
 
 const datasetId = "233e2e14-7be3-4371-a6de-1ebbe71c90b9";
@@ -25,7 +28,7 @@ export default {
   // FIXME SW Images are not loaded anymore
   // loaders: [mockImagesLoader],
   decorators: [
-    createCommonDecorator({
+    createTestWrapperDecorator({
       auth: { withWorkspaces: true },
       apollo: true,
       router: {

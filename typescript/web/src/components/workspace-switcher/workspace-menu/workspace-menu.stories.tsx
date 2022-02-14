@@ -5,14 +5,17 @@ import {
   USER_WITH_WORKSPACES_QUERY_MOCK,
   WORKSPACE_DATA,
 } from "../../../utils/fixtures";
-import { createCommonDecorator, storybookTitle } from "../../../utils/stories";
+import {
+  createTestWrapperDecorator,
+  storybookTitle,
+} from "../../../utils/stories";
 import { ResponsiveBreadcrumbs } from "../../layout/top-bar/breadcrumbs/responsive-breadcrumbs";
 import { WorkspaceMenu } from "./workspace-menu";
 
 export default {
   title: storybookTitle("Workspace Switcher", WorkspaceMenu),
   decorators: [
-    createCommonDecorator({
+    createTestWrapperDecorator({
       auth: { withWorkspaces: true },
       apollo: { extraMocks: [USER_WITH_WORKSPACES_QUERY_MOCK] },
       router: { query: { workspaceSlug: WORKSPACE_DATA.slug } },

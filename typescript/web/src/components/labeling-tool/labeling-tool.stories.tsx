@@ -5,7 +5,10 @@ import {
   BASIC_IMAGE_DATA,
   WORKSPACE_DATA,
 } from "../../utils/fixtures";
-import { createCommonDecorator, storybookTitle } from "../../utils/stories";
+import {
+  createTestWrapperDecorator,
+  storybookTitle,
+} from "../../utils/stories";
 import { LabelingTool } from "./labeling-tool";
 
 const datasetId = "233e8af4-7be3-4371-a6de-1ebbe71c90b9";
@@ -45,7 +48,7 @@ export default {
   // loaders: [mockImagesLoader],
   decorators: [
     inGreyBoxDecorator,
-    createCommonDecorator({
+    createTestWrapperDecorator({
       auth: { withWorkspaces: true },
       apollo: true,
       router: {

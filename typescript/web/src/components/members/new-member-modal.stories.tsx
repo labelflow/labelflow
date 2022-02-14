@@ -1,13 +1,16 @@
 import { Button, useDisclosure } from "@chakra-ui/react";
 import { SessionProvider } from "next-auth/react";
 import { BASIC_DATASET_DATA, WORKSPACE_DATA } from "../../utils/fixtures";
-import { createCommonDecorator, storybookTitle } from "../../utils/stories";
+import {
+  createTestWrapperDecorator,
+  storybookTitle,
+} from "../../utils/stories";
 import { NewMemberModal } from "./new-member-modal";
 
 export default {
   title: storybookTitle(NewMemberModal),
   decorators: [
-    createCommonDecorator({
+    createTestWrapperDecorator({
       auth: { withWorkspaces: true },
       apollo: true,
       router: {

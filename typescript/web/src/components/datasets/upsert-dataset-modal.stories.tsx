@@ -1,13 +1,16 @@
 import { Button, useDisclosure } from "@chakra-ui/react";
 import { WORKSPACE_DATA, BASIC_DATASET_DATA } from "../../utils/fixtures";
-import { createCommonDecorator, storybookTitle } from "../../utils/stories";
+import {
+  createTestWrapperDecorator,
+  storybookTitle,
+} from "../../utils/stories";
 import { UpsertDatasetModal } from "./upsert-dataset-modal";
 import { APOLLO_MOCKS } from "./upsert-dataset-modal.fixtures";
 
 export default {
   title: storybookTitle(UpsertDatasetModal),
   decorators: [
-    createCommonDecorator({
+    createTestWrapperDecorator({
       auth: { withWorkspaces: true },
       apollo: { extraMocks: APOLLO_MOCKS },
       router: {
