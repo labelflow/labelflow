@@ -1,0 +1,59 @@
+import {
+  ArgsTable,
+  Canvas,
+  Description,
+  Meta,
+  Story,
+} from "@storybook/addon-docs";
+import { WorkspacePlan } from "../../graphql-types";
+import { WorkspacePlanBadge } from "./workspace-plan-badge";
+
+<Meta
+  title="web/Workspace Plan Badge"
+  component={WorkspacePlanBadge}
+  argTypes={{ plan: { options: Object.values(WorkspacePlan) } }}
+/>
+
+export const Template = WorkspacePlanBadge;
+
+# WorkspacePlanBadge
+
+<Description of={WorkspacePlanBadge} />
+
+## Props
+
+<ArgsTable of={WorkspacePlanBadge} />
+
+## Stories
+
+### Community
+
+<Canvas>
+  <Story name="Community" args={{ plan: WorkspacePlan.Community }}>
+    {Template.bind({})}
+  </Story>
+</Canvas>
+
+### Starter
+
+<Canvas>
+  <Story name="Starter" args={{ plan: WorkspacePlan.Starter }}>
+    {Template.bind({})}
+  </Story>
+</Canvas>
+
+### Pro
+
+<Canvas>
+  <Story name="Pro" args={{ plan: WorkspacePlan.Pro }}>
+    {Template.bind({})}
+  </Story>
+</Canvas>
+
+### Enterprise
+
+<Canvas>
+  <Story name="Enterprise" args={{ plan: WorkspacePlan.Enterprise }}>
+    {Template.bind({})}
+  </Story>
+</Canvas>

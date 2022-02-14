@@ -2,7 +2,8 @@ import { createContext, PropsWithChildren, useContext, useState } from "react";
 import { UserWithWorkspacesQuery_user_memberships_workspace } from "../../graphql-types/UserWithWorkspacesQuery";
 import { useWorkspaces } from "../../hooks";
 
-export type WorkspacesProps = {
+export type WorkspacesState = {
+  /** Called when the new workspace button has been clicked */
   openCreateWorkspaceModal: () => void;
 };
 
@@ -15,7 +16,9 @@ export type WorkspaceState = {
 
 const WorkspaceContext = createContext({} as WorkspaceState);
 
-export type WorkspacesContextProps = PropsWithChildren<WorkspacesProps>;
+export const useWorkspace = () => useContext(WorkspaceContext);
+
+export type WorkspacesContextProps = PropsWithChildren<WorkspacesState>;
 
 export const WorkspacesContextProvider = ({
   openCreateWorkspaceModal,
@@ -38,5 +41,3 @@ export const WorkspacesContextProvider = ({
     </WorkspaceContext.Provider>
   );
 };
-
-export const useWorkspace = () => useContext(WorkspaceContext);

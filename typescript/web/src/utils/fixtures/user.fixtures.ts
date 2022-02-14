@@ -21,11 +21,20 @@ export const USER_QUERY_DATA: UserQuery_user = {
   image: null,
 };
 
+export const USER_WITHOUT_WORKSPACES_DATA: UserWithWorkspacesQuery_user = {
+  ...USER_QUERY_DATA,
+  name: "user-without-workspaces",
+  createdAt: new Date(),
+  email: "without-workspaces@localhost",
+  image: null,
+  memberships: [],
+};
+
 export const USER_WITH_WORKSPACES_DATA: UserWithWorkspacesQuery_user = {
   ...USER_QUERY_DATA,
-  name: "full-user",
+  name: "user-with-workspaces",
   createdAt: new Date(),
-  email: "full.user@localhost",
+  email: "with-workspaces@localhost",
   image: null,
   memberships: [{ workspace: WORKSPACE_DATA }],
 };

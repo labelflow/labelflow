@@ -1,0 +1,90 @@
+import {
+  ArgsTable,
+  Canvas,
+  Description,
+  Meta,
+  Story,
+} from "@storybook/addon-docs";
+import { Workspaces } from "./workspaces";
+import { USER_WITH_WORKSPACES_QUERY } from "../../shared-queries/user.query";
+import {
+  mockUserQuery,
+  USER_WITHOUT_WORKSPACES_DATA,
+} from "../../utils/fixtures";
+import { createTestWrapperDecorator } from "../../utils/stories/test-wrapper-decorator";
+
+<Meta
+  title="web/Workspaces"
+  component={Workspaces}
+  decorators={[
+    createTestWrapperDecorator({
+      auth: { withWorkspaces: true },
+      apollo: true,
+      router: {},
+      queryParams: {},
+    }),
+  ]}
+/>
+
+export const Template = Workspaces;
+
+# Workspaces
+
+## Description
+
+<Description of={Workspaces} />
+
+## Props
+
+<ArgsTable of={Workspaces} />
+
+## Stories
+
+### With Workspaces
+
+When the end-user already have one or more workspaces, a list is shown:
+
+<Canvas>
+  <Story
+    name="With Workspaces"
+    args={{}}
+    decorators={[
+      createTestWrapperDecorator({
+        auth: { withWorkspaces: true },
+        apollo: true,
+        router: {},
+        queryParams: {},
+      }),
+    ]}
+  >
+    {Template.bind({})}
+  </Story>
+</Canvas>
+
+### Without workspaces
+
+When user has no workspaces, the following page is shown instead:
+
+<Canvas>
+  <Story
+    name="Without workspaces"
+    args={{}}
+    decorators={[
+      createTestWrapperDecorator({
+        auth: { withWorkspaces: true },
+        apollo: {
+          mocks: [
+            mockUserQuery(
+              USER_WITH_WORKSPACES_QUERY,
+              USER_WITHOUT_WORKSPACES_DATA
+            ),
+          ],
+        },
+        router: {},
+        queryParams: {},
+      }),
+    ]}
+  >
+    {Template.bind({})}
+  </Story>
+</Canvas>

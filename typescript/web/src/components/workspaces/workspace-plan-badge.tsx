@@ -1,5 +1,5 @@
 import { Badge } from "@chakra-ui/react";
-import { WorkspacePlan } from "@labelflow/graphql-types";
+import { WorkspacePlan } from "../../graphql-types";
 
 type WorkspacePlanStyle = {
   color: string;
@@ -13,7 +13,13 @@ const WORKSPACE_PLAN_STYLE: Record<WorkspacePlan, WorkspacePlanStyle> = {
   Enterprise: { color: "green.200", emoji: "🏢" },
 };
 
-export const WorkspacePlanBadge = ({ plan }: { plan: WorkspacePlan }) => {
+export type WorkspacePlanBadgeProps = {
+  /** Workspace plan for which the badge has to be shown */
+  plan: WorkspacePlan;
+};
+
+/** Shows the given workspace plan with an emoji in a pretty badge */
+export const WorkspacePlanBadge = ({ plan }: WorkspacePlanBadgeProps) => {
   const { color, emoji } = WORKSPACE_PLAN_STYLE[plan];
   return <Badge bgColor={color} color="black">{`${emoji} ${plan}`}</Badge>;
 };

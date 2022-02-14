@@ -20,6 +20,7 @@ import {
   USER_WITH_WORKSPACES_DATA,
   USER_WITH_WORKSPACES_QUERY_MOCK,
 } from "../fixtures/user.fixtures";
+import { MockableLocationProvider } from "../mockable-location";
 import { OptionalParent } from "../optional-parent";
 import { ApolloMockResponses, getApolloMockLink } from "./apollo-mock";
 import { RouterMock, RouterMockOptions } from "./router-mocks";
@@ -39,6 +40,7 @@ export type ApolloMockOptions =
   | WithLinkApolloOptions;
 
 export type TestWrapperProps = PropsWithChildren<{
+  chakra?: boolean;
   auth?: AuthMockOptions;
   apollo?: ApolloMockOptions;
   router?: RouterMockOptions;
@@ -174,20 +176,27 @@ const OptionalAuthProvider = ({
 );
 
 export const TestWrapper = ({
+  chakra = true,
   apollo,
   auth,
   router,
   children,
 }: TestWrapperProps) => (
-  <ChakraProvider theme={theme} resetCSS>
-    <OptionalSession auth={auth}>
-      <OptionalNextRouter router={router}>
-        <OptionalApolloProvider apollo={apollo} auth={auth}>
-          <OptionalAuthProvider auth={auth}>{children}</OptionalAuthProvider>
-        </OptionalApolloProvider>
-      </OptionalNextRouter>
-    </OptionalSession>
-  </ChakraProvider>
+  <OptionalParent
+    enabled={chakra}
+    parent={ChakraProvider}
+    parentProps={{ theme, resetCSS: true }}
+  >
+    <MockableLocationProvider location="http://localhost">
+      <OptionalSession auth={auth}>
+        <OptionalNextRouter router={router}>
+          <OptionalApolloProvider apollo={apollo} auth={auth}>
+            <OptionalAuthProvider auth={auth}>{children}</OptionalAuthProvider>
+          </OptionalApolloProvider>
+        </OptionalNextRouter>
+      </OptionalSession>
+    </MockableLocationProvider>
+  </OptionalParent>
 );
 
 export type CreateTestWrapperOptions = Omit<TestWrapperProps, "children">;
