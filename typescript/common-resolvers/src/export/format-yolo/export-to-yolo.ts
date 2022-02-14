@@ -1,10 +1,15 @@
 import { ExportOptionsYolo, LabelType } from "@labelflow/graphql-types";
+import { isEmpty, groupBy } from "lodash/fp";
 import JSZip from "jszip";
 import mime from "mime-types";
 import { DbImage, DbLabel, DbLabelClass } from "../../types";
 import { getImageName } from "../common";
 
 import { ExportFunction } from "../types";
+
+const groupLabelsByImage = (labelsArray: DbLabel[]) => {
+  return isEmpty(labelsArray) ? {} : groupBy("imageId", labelsArray);
+};
 
 export const generateNamesFile = (labelClasses: DbLabelClass[]): string => {
   return labelClasses
@@ -68,6 +73,8 @@ export const exportToYolo: ExportFunction = async (
 ) => {
   const images = await repository.image.list({ datasetId, user });
   const labelClasses = await repository.labelClass.list({ datasetId, user });
+  const labels = await repository.label.list({ datasetId, user });
+  const labelsByImage = groupLabelsByImage(labels);
   const datasetName = options?.name ?? "dataset-yolo";
   const zip = new JSZip();
   zip.file(
@@ -94,13 +101,16 @@ export const exportToYolo: ExportFunction = async (
           arrayBufferImage
         );
       }
-      const labelsOfImage = await repository.label.list({
-        imageId: image.id,
-        user,
-      });
+      const labelsOfImage = labelsByImage[image.id] ?? [];
+      const exportedLabels = generateLabelsOfImageFile(
+        labelsOfImage,
+        image,
+        labelClasses,
+        options
+      );
       zip.file(
         `${datasetName}/obj_train_data/${imageName}.txt`,
-        generateLabelsOfImageFile(labelsOfImage, image, labelClasses, options)
+        exportedLabels
       );
     })
   );
