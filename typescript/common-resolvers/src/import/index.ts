@@ -10,7 +10,7 @@ import { Context } from "../types";
 const makeImport = async (
   args: MutationImportDatasetArgs,
   { repository, req, user }: Context
-): Promise<void> => {
+): Promise<ImportStatus> => {
   const datasetBlob = new Blob(
     [await repository.upload.get(args.data.url, req)],
     {
@@ -29,7 +29,7 @@ const makeImport = async (
       throw new Error("YOLO format not supported, but will be soon!");
     }
     case ExportFormat.Coco: {
-      return importCoco(
+      return await importCoco(
         datasetBlob,
         args.where?.id,
         {
@@ -52,11 +52,11 @@ const importDataset = async (
   { repository, req, user }: Context
 ): Promise<ImportStatus> => {
   try {
-    await makeImport(args, { repository, req, user });
-    return {};
+    return await makeImport(args, { repository, req, user });
   } catch (e) {
     return {
       error: `${e.message}\n${e.stack}`,
+      skippedCrowdAnnotations: 0,
     };
   }
 };

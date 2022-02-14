@@ -4,7 +4,7 @@ import mime from "mime-types";
 
 import Bluebird from "bluebird";
 import { uploadFile } from "../../../../../utils/upload-file";
-import { DroppedFile, SetUploadStatuses } from "../../types";
+import { DroppedFile, SetUploadInfos } from "../../types";
 
 import { CONCURRENCY } from "../../constants";
 import { ExportFormat } from "../../../../../graphql-types/globalTypes";
@@ -16,6 +16,7 @@ const IMPORT_DATASET_MUTATION = gql`
   ) {
     importDataset(where: $where, data: $data) {
       error
+      skippedCrowdAnnotations
     }
   }
 `;
@@ -30,7 +31,7 @@ const importDataset = async ({
   datasetId: string;
   workspaceId: string;
   file: Blob;
-}) => {
+}): Promise<{ skippedCrowdAnnotations: number }> => {
   const id = uuidv4();
   const now = new Date().toISOString();
   const extension = mime.extension(file.type);
@@ -63,6 +64,10 @@ const importDataset = async ({
   if (dataImportDataset?.data?.importDataset?.error) {
     throw new Error(dataImportDataset?.data?.importDataset?.error);
   }
+  return {
+    skippedCrowdAnnotations:
+      dataImportDataset?.data?.importDataset?.skippedCrowdAnnotations ?? 0,
+  };
 };
 
 export const importDatasets = async ({
@@ -70,27 +75,30 @@ export const importDatasets = async ({
   datasetId,
   workspaceId,
   apolloClient,
-  setFileUploadStatuses,
+  setFileUploadInfos,
 }: {
   datasets: DroppedFile[];
   datasetId: string;
   workspaceId: string;
   apolloClient: ApolloClient<object>;
-  setFileUploadStatuses: SetUploadStatuses;
+  setFileUploadInfos: SetUploadInfos;
 }) => {
   return await Bluebird.Promise.map(
     datasets,
     async ({ file }) => {
-      await importDataset({
+      const { skippedCrowdAnnotations } = await importDataset({
         file,
         datasetId,
         workspaceId,
         apolloClient,
       });
 
-      setFileUploadStatuses((statuses) => ({
-        ...statuses,
-        [file.name ?? file.path]: true,
+      setFileUploadInfos((infos) => ({
+        ...infos,
+        [file.name ?? file.path]: {
+          status: true,
+          datasetSkippedCrowdAnnotations: skippedCrowdAnnotations,
+        },
       }));
     },
     { concurrency: CONCURRENCY }

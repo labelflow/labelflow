@@ -1,5 +1,6 @@
 type ImportStatus{
     error: String
+    skippedCrowdAnnotations: Int!
 }
 
 input ImportOptionsCoco {

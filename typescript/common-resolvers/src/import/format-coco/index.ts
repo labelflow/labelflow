@@ -216,11 +216,12 @@ async function importCocoAnnotationsIntoLabels(
   cocoImageIdToLabelFlowImageId: Map<number, string>,
   cocoCategoryIdToLabelFlowLabelClassId: Map<number, string>,
   { repository, req, user }: Context
-) {
+): Promise<{ skippedCrowdAnnotations: number }> {
   const indexedCocoImages = annotationFile.images.reduce(
     (imagesMap, image) => imagesMap.set(image.id, image),
     new Map<number, CocoImage>()
   );
+  let skippedCrowdAnnotations = 0;
   await Promise.all(
     annotationFile.annotations.map(async (annotation) => {
       if (!cocoImageIdToLabelFlowImageId.has(annotation.image_id)) {
@@ -228,7 +229,13 @@ async function importCocoAnnotationsIntoLabels(
           `Image ${annotation.image_id} referenced in annotation does not exist.`
         );
       }
-
+      if (annotation.iscrowd === 1) {
+        skippedCrowdAnnotations += 1;
+        console.log(
+          `Skipped annotation ${annotation.id}: crowd/RLE format no yet supported`
+        );
+        return;
+      }
       await labelResolvers.Mutation.createLabel(
         null,
         {
@@ -251,6 +258,7 @@ async function importCocoAnnotationsIntoLabels(
       console.log(`Created annotation ${annotation.id}`);
     })
   );
+  return { skippedCrowdAnnotations };
 }
 
 export const importCoco: ImportFunction = async (
@@ -276,10 +284,11 @@ export const importCoco: ImportFunction = async (
     cocoCategoryIdToLabelFlowLabelClassId,
     { repository, req, user }
   );
-  await importCocoAnnotationsIntoLabels(
+  const { skippedCrowdAnnotations } = await importCocoAnnotationsIntoLabels(
     annotationFile,
     cocoImageIdToLabelFlowImageId,
     cocoCategoryIdToLabelFlowLabelClassId,
     { repository, req, user }
   );
+  return { skippedCrowdAnnotations };
 };

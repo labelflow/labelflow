@@ -15,7 +15,7 @@ import {
 import { useDataset, useWorkspace } from "../../../../hooks";
 import { flushPaginatedImagesCache } from "../../../dataset-images-list";
 import { GET_DATASET_BY_SLUG_QUERY } from "../../../datasets/datasets.query";
-import { DroppedFile, UploadStatuses } from "../types";
+import { DroppedFile, UploadInfos } from "../types";
 import { Dropzone } from "./dropzone";
 import { FilesStatuses } from "./file-statuses";
 import { importDroppedFiles } from "./import-dropped-files";
@@ -38,9 +38,7 @@ export const ImportImagesModalDropzone = ({
    * internal state
    */
   const [files, setFiles] = useState<Array<DroppedFile>>([]);
-  const [fileUploadStatuses, setFileUploadStatuses] = useState<UploadStatuses>(
-    {}
-  );
+  const [fileUploadInfos, setFileUploadInfos] = useState<UploadInfos>({});
 
   const { data: datasetResult } = useQuery<
     GetDatasetBySlugQuery,
@@ -64,7 +62,7 @@ export const ImportImagesModalDropzone = ({
         files: filesToImport,
         workspaceId,
         datasetId,
-        setFileUploadStatuses,
+        setFileUploadInfos,
         apolloClient,
       });
       onUploadEnd();
@@ -72,7 +70,7 @@ export const ImportImagesModalDropzone = ({
     [
       workspaceId,
       datasetId,
-      setFileUploadStatuses,
+      setFileUploadInfos,
       apolloClient,
       onUploadStart,
       onUploadEnd,
@@ -115,10 +113,7 @@ export const ImportImagesModalDropzone = ({
         {isEmpty(files) ? (
           <Dropzone onDropEnd={setFiles} />
         ) : (
-          <FilesStatuses
-            files={files}
-            fileUploadStatuses={fileUploadStatuses}
-          />
+          <FilesStatuses files={files} fileUploadInfos={fileUploadInfos} />
         )}
       </ModalBody>
     </>

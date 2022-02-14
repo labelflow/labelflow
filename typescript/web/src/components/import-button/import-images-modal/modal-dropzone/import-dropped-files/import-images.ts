@@ -6,7 +6,7 @@ import mime from "mime-types";
 import chunk from "lodash/fp/chunk";
 
 import { uploadFile } from "../../../../../utils/upload-file";
-import { DroppedFile, SetUploadStatuses } from "../../types";
+import { DroppedFile, SetUploadInfos } from "../../types";
 
 import { BATCH_SIZE, CONCURRENCY } from "../../constants";
 
@@ -63,13 +63,13 @@ export const importImages = async ({
   workspaceId,
   datasetId,
   apolloClient,
-  setFileUploadStatuses,
+  setFileUploadInfos,
 }: {
   images: DroppedFile[];
   workspaceId: string;
   datasetId: string;
   apolloClient: ApolloClient<object>;
-  setFileUploadStatuses: SetUploadStatuses;
+  setFileUploadInfos: SetUploadInfos;
 }) => {
   const firstUploadDate = new Date();
   const batches = chunk(BATCH_SIZE, images);
@@ -92,17 +92,17 @@ export const importImages = async ({
           variables: { images: imagesToCreate, datasetId },
         });
 
-        setFileUploadStatuses((oldStatuses) => ({
-          ...oldStatuses,
+        setFileUploadInfos((oldInfos) => ({
+          ...oldInfos,
           ...Object.fromEntries(
-            imagesToCreate.map((image) => [image.name, true])
+            imagesToCreate.map((image) => [image.name, { status: true }])
           ),
         }));
       } catch (error) {
-        setFileUploadStatuses((oldStatuses) => ({
-          ...oldStatuses,
+        setFileUploadInfos((oldInfos) => ({
+          ...oldInfos,
           ...Object.fromEntries(
-            batch.map(({ file }) => [file.name, error?.message])
+            batch.map(({ file }) => [file.name, { status: error?.message }])
           ),
         }));
       }
