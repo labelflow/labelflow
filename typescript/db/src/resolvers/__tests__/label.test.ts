@@ -9,7 +9,7 @@ import {
   createDataset,
   createWorkspace,
   CREATE_IMAGE_MUTATION,
-} from "../../utils/tests";
+} from "../../dev/tests";
 
 jest.mock("../../repository/image-processing");
 const mockedProcessImage = processImage as jest.Mock;

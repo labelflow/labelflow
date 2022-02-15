@@ -1,7 +1,7 @@
 import "@testing-library/jest-dom/extend-expect";
 import userEvent from "@testing-library/user-event";
 
-import { mockWorkspace } from "../../../../utils/tests/mock-workspace";
+import { mockWorkspace } from "../../../../dev/tests/mock-workspace";
 
 mockWorkspace();
 
@@ -12,9 +12,9 @@ import {
   USER_WITH_WORKSPACES_DATA,
   WORKSPACE_DATA,
   mockUserQuery,
-} from "../../../../utils/fixtures";
+} from "../../../../dev/fixtures";
 
-import { renderWithTestWrapper } from "../../../../utils/tests";
+import { renderWithTestWrapper } from "../../../../dev/tests";
 import { WorkspaceSelectionPopover } from "./workspace-selection-popover";
 
 const [onClose, onSelectedWorkspaceChange, createNewWorkspace] = [

@@ -1,6 +1,6 @@
 import { Button, Center, chakra, Flex, Heading, Text } from "@chakra-ui/react";
 import { isEmpty } from "lodash";
-import { FC, useCallback, FormEvent } from "react";
+import { FC, FormEvent, useCallback } from "react";
 import { useWorkspaces } from "../../hooks";
 import NoWorkspacesGraphics from "../graphics/no-workspace";
 import {
@@ -11,8 +11,8 @@ import {
 } from "../workspace-name-input";
 import { useCreateWorkspace } from "../workspace-switcher/create-workspace-modal";
 import {
+  WorkspacesContextProps,
   WorkspacesContextProvider,
-  WorkspacesProps,
 } from "./workspaces-context";
 import { WorkspacesList } from "./workspaces-list";
 
@@ -45,9 +45,8 @@ const CreateWorkspaceForm = () => {
   const { name, error: nameError } = useWorkspaceNameInput();
   const [create, isLoading, createError] = useCreateWorkspace();
   const isDisabled = isLoading ? false : !isEmpty(nameError);
-  const empty = name.length === 0;
+  const empty = isEmpty(name);
   const handleSubmit = useSubmitForm(isDisabled, create);
-
   return (
     <Flex direction="column" align="start" w="full" maxWidth="sm" mt="16">
       <Text>Workspace name</Text>
@@ -75,6 +74,9 @@ const NoWorkspaces = () => (
   </Center>
 );
 
+export type WorkspacesProps = Omit<WorkspacesContextProps, "children">;
+
+/** Body of the page listing workspaces: `/workspaces` */
 export const Workspaces = (props: WorkspacesProps) => {
   const workspaces = useWorkspaces();
   return (

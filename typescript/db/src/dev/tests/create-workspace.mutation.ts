@@ -4,7 +4,7 @@ import {
   Workspace,
 } from "@labelflow/graphql-types";
 import { USER_WITH_WORKSPACES_QUERY } from "../../../../web/src/shared-queries/user.query";
-import { client } from "../../dev/apollo-client";
+import { client } from "../apollo-client";
 
 export const CREATE_WORKSPACE_MUTATION = gql`
   mutation createWorkspace($data: WorkspaceCreateInput!) {

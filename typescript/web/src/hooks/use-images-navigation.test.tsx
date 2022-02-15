@@ -1,6 +1,6 @@
 import { waitFor } from "@testing-library/react";
 import { renderHook, WaitForValueToChange } from "@testing-library/react-hooks";
-import { BASIC_DATASET_DATA } from "../utils/fixtures";
+import { BASIC_DATASET_DATA } from "../dev/fixtures";
 import {
   CURRENT_IMAGE_DATA,
   CURRENT_NOT_IN_IMAGES_MOCKS,
@@ -12,7 +12,7 @@ import {
   THREE_IMAGES_MOCKS,
 } from "./use-image-navigation.fixtures";
 
-import { mockWorkspace } from "../utils/tests/mock-workspace";
+import { mockWorkspace } from "../dev/tests/mock-workspace";
 
 mockWorkspace({
   workspaceSlug: BASIC_DATASET_DATA.workspace.slug,
@@ -22,7 +22,7 @@ mockWorkspace({
   },
 });
 
-import { ApolloMockResponses, createTestWrapper } from "../utils/tests";
+import { ApolloMockResponses, createTestWrapper } from "../dev/tests";
 import { useImagesNavigation } from "./use-images-navigation";
 
 const renderTest = async (extraMocks: ApolloMockResponses) => {

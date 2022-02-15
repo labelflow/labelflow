@@ -1,54 +1,83 @@
 {
-  "extends": [
-    "airbnb-typescript",
-    "plugin:prettier/recommended",
-    "plugin:react-hooks/recommended"
-  ],
-  "rules": {
-    "func-names": ["error", "always"],
-    "react/prop-types": "off",
-    "react/react-in-jsx-scope": "off",
-    "react/jsx-props-no-spreading": "off",
-    "react/require-default-props": "off",
-    "react/no-array-index-key": "warn",
-    "no-return-await": "off",
-    "@typescript-eslint/return-await": ["error", "always"],
-    "import/prefer-default-export": "off",
-    "import/no-extraneous-dependencies": [
-      "error",
-      {
-        "devDependencies": [
-          "setup-tests.ts",
-          "cypress/**/*.ts",
-          "**/*.@(test|stories|fixtures).ts?(x)",
-          "**/@(__tests__|__stories__|tests|stories|scripts)/**/*.ts?(x)"
-        ]
-      }
-    ]
-  },
   "overrides": [
     {
-      "files": ["cypress/**/*.ts"],
+      "files": ["*.ts", "*.tsx"],
+      "excludedFiles": "*.mdx/*.ts?(x)",
+      "extends": [
+        "airbnb-typescript",
+        "plugin:prettier/recommended",
+        "plugin:react-hooks/recommended"
+      ],
+      "parserOptions": {
+        "project": "./tsconfig.json"
+      },
+      "rules": {
+        "func-names": ["error", "always"],
+        "react/prop-types": "off",
+        "react/react-in-jsx-scope": "off",
+        "react/jsx-props-no-spreading": "off",
+        "react/require-default-props": "off",
+        "react/no-array-index-key": "warn",
+        "no-return-await": "off",
+        "@typescript-eslint/return-await": ["error", "always"],
+        "import/prefer-default-export": "off",
+        "import/no-extraneous-dependencies": [
+          "error",
+          {
+            "devDependencies": [
+              "setup-tests.ts",
+              "cypress/**/*.ts",
+              "**/*.@(test|stories|fixtures).@(ts?(x)|mdx)",
+              "**/@(__tests__|__stories__|tests|stories|dev|scripts)/**/*.@(ts?(x)|mdx)"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": "*.mdx",
+      "extends": [
+        "plugin:@typescript-eslint/recommended",
+        "plugin:prettier/recommended",
+        "plugin:mdx/recommended",
+        "plugin:mdx/overrides"
+      ],
+      "settings": {
+        "mdx/code-blocks": true
+      },
+      "parserOptions": {
+        "ecmaVersion": 2020,
+        "ecmaFeatures": {
+          "jsx": true
+        }
+      }
+    },
+    {
+      "files": "**/*.{md,mdx}/**",
+      "extends": "plugin:mdx/code-blocks"
+    },
+    {
+      "files": "cypress/**/*.ts",
       "rules": {
         "import/no-extraneous-dependencies": "off"
       }
     },
     {
-      "files": ["**/*.stories.ts?(x)", "**/__stories__/**/*.ts?(x)"],
+      "files": [
+        "**/*.stories.@(ts?(x)|mdx)",
+        "**/__stories__/**/*.@(ts?(x)|mdx)"
+      ],
       "rules": {
         "no-console": "off",
         "no-alert": "off"
       }
     },
     {
-      "files": ["**/*.test.ts?(x)", "**/__tests__/**/*.ts?(x)"],
+      "files": ["**/*.test.@(ts?(x)|mdx)", "**/__tests__/**/*.@(ts?(x)|mdx)"],
       "rules": {
         "import/first": "off",
         "import/order": "off"
       }
     }
-  ],
-  "parserOptions": {
-    "project": "./tsconfig.json"
-  }
+  ]
 }

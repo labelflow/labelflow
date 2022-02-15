@@ -20,8 +20,8 @@ import {
 import {
   BASIC_LABEL_CLASS_DATA,
   DEEP_DATASET_WITH_CLASSES_DATA,
-} from "../../../utils/fixtures";
-import { ApolloMockResponse, ApolloMockResponses } from "../../../utils/tests";
+} from "../../../dev/fixtures";
+import { ApolloMockResponse, ApolloMockResponses } from "../../../dev/tests";
 import { CREATE_LABEL_CLASS_MUTATION } from "./create-label-class.mutation";
 import { DATASET_LABEL_CLASSES_QUERY } from "./dataset-label-classes.query";
 import { LABEL_CLASS_EXISTS_QUERY } from "./label-class-exists.query";

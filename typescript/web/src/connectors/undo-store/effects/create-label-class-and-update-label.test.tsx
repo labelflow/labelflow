@@ -2,11 +2,9 @@ import { useUndoStore } from "..";
 import {
   BASIC_LABEL_DATA,
   DEEP_DATASET_WITH_CLASSES_DATA,
-} from "../../../utils/fixtures";
-import {
-  ApolloClientWithMockLink,
-  getApolloMockClient,
-} from "../../../utils/tests/apollo-mock";
+} from "../../../dev/fixtures";
+import { ApolloClientWithMockLink } from "../../../dev/common";
+import { getJestApolloMockClient } from "../../../dev/tests";
 import { useLabelingStore } from "../../labeling-state";
 import { createCreateLabelClassAndUpdateLabelEffect } from "./create-label-class-and-update-label";
 import {
@@ -26,7 +24,7 @@ describe("CreateLabelClassAndUpdateLabelEffect", () => {
 
   beforeEach(async () => {
     jest.clearAllMocks();
-    mockClient = getApolloMockClient(APOLLO_MOCKS);
+    mockClient = getJestApolloMockClient(APOLLO_MOCKS);
     useLabelingStore.setState({
       selectedLabelClassId: PREVIOUS_LABEL_CLASS_DATA.id,
     });

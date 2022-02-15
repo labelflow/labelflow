@@ -1,8 +1,11 @@
 import { Button, Flex, HStack } from "@chakra-ui/react";
 import { Story } from "@storybook/react";
 import React from "react";
-import { BASIC_DATASET_DATA, WORKSPACE_DATA } from "../../../utils/fixtures";
-import { createCommonDecorator, storybookTitle } from "../../../utils/stories";
+import { BASIC_DATASET_DATA, WORKSPACE_DATA } from "../../../dev/fixtures";
+import {
+  createTestWrapperDecorator,
+  storybookTitle,
+} from "../../../dev/stories";
 import { ImageNavigationTool } from "./image-navigation-tool";
 import { APOLLO_MOCKS } from "./image-navigation-tool.fixtures";
 
@@ -32,7 +35,7 @@ export default {
   // FIXME SW Images are not loaded anymore
   // loaders: [mockImagesLoader],
   decorators: [
-    createCommonDecorator({
+    createTestWrapperDecorator({
       auth: { withWorkspaces: true },
       apollo: { extraMocks: APOLLO_MOCKS },
       router: {

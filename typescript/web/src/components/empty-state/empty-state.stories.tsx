@@ -6,11 +6,10 @@ import {
   EmptyStateNoSearchResult,
   EmptyStateNoTasks,
 } from ".";
-import { chakraDecorator, storybookTitle } from "../../utils/stories";
+import { storybookTitle } from "../../dev/stories";
 
 export default {
   title: storybookTitle("Empty States"),
-  decorators: [chakraDecorator],
 };
 
 export const Error = () => <EmptyStateError />;

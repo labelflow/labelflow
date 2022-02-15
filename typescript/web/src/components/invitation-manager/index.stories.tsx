@@ -1,17 +1,16 @@
 import React from "react";
 import {
   apolloMockDecorator,
-  chakraDecorator,
   queryParamsDecorator,
   storybookTitle,
-} from "../../utils/stories";
+} from "../../dev/stories";
 import { AcceptOrDeclineMembershipInvitation } from "./accept-or-decline-membership-invitation";
 import { InvalidInvitation as InvalidInvitationComponent } from "./invalid-invitation";
 import { UserNeedsToSignIn as UserNeedsToSignInComponent } from "./user-needs-to-sign-in";
 
 export default {
   title: storybookTitle("Invitation manager"),
-  decorators: [chakraDecorator, apolloMockDecorator, queryParamsDecorator],
+  decorators: [apolloMockDecorator, queryParamsDecorator],
 };
 
 export const AcceptOrDecline = () => (

@@ -21,7 +21,7 @@
   },
   "peerDependencies": {
     "ol": "6.6.1",
-    "react": "17.x",
+    "react": "17.0.2",
     "react-dom": "17.x"
   },
   "devDependencies": {
@@ -37,7 +37,7 @@
     "ol": "6.6.1",
     "ol-mapbox-style": "6.4.1",
     "proj4": "2.6.3",
-    "react": "17.x",
+    "react": "17.0.2",
     "react-dom": "17.x",
     "react-use": "15.3.4",
     "typescript": "4.3.5"

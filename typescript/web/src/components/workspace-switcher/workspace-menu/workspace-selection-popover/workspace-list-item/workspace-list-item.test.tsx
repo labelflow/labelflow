@@ -2,12 +2,12 @@ import "@testing-library/jest-dom/extend-expect";
 import { ReactElement } from "react";
 import { waitFor } from "@testing-library/react";
 
-import { mockWorkspace } from "../../../../../utils/tests/mock-workspace";
+import { mockWorkspace } from "../../../../../dev/tests/mock-workspace";
 
 mockWorkspace();
 
-import { WORKSPACE_DATA } from "../../../../../utils/fixtures";
-import { renderWithTestWrapper } from "../../../../../utils/tests";
+import { WORKSPACE_DATA } from "../../../../../dev/fixtures";
+import { renderWithTestWrapper } from "../../../../../dev/tests";
 import { WorkspaceListItem } from "./workspace-list-item";
 
 const renderTest = async (element: ReactElement) =>

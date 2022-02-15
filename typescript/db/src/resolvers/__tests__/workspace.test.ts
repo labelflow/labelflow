@@ -9,7 +9,7 @@ import {
 import { v4 as uuidV4 } from "uuid";
 import { client, user } from "../../dev/apollo-client";
 import { getPrismaClient } from "../../prisma-client";
-import { createMembership, createWorkspace } from "../../utils/tests";
+import { createMembership, createWorkspace } from "../../dev/tests";
 
 // @ts-ignore
 fetch.disableFetchMocks();
@@ -55,7 +55,7 @@ describe("createWorkspace mutation", () => {
   });
 
   it("fails if no name is provided", async () => {
-    await expect(() => createWorkspace({ name: null })).rejects.toThrow();
+    await expect(() => createWorkspace({ name: undefined })).rejects.toThrow();
   });
 
   it("fails if the name is an empty string", async () => {
@@ -80,43 +80,43 @@ describe("createWorkspace mutation", () => {
     const { data } = await createWorkspace({
       name: "Test with spaces-and-Caps-and-hyphens",
     });
-    expect(data.createWorkspace.slug).toEqual(
+    expect(data?.createWorkspace.slug).toEqual(
       "test-with-spaces-and-caps-and-hyphens"
     );
   });
 
   it("returns the created workspace", async () => {
     const { data } = await createWorkspace();
-    expect(data.createWorkspace.name).toEqual("test");
+    expect(data?.createWorkspace.name).toEqual("test");
   });
 
   it("accepts an id", async () => {
     const id = uuidV4();
     const { data } = await createWorkspace({ id });
-    expect(data.createWorkspace.id).toEqual(id);
+    expect(data?.createWorkspace.id).toEqual(id);
   });
 
   it("generates a slug based on the workspace name", async () => {
     const { data } = await createWorkspace({
       name: "Test with spaces and Caps",
     });
-    expect(data.createWorkspace.slug).toEqual("test-with-spaces-and-caps");
+    expect(data?.createWorkspace.slug).toEqual("test-with-spaces-and-caps");
   });
 
   it("creates a workspace with the Community plan", async () => {
     const { data } = await createWorkspace();
-    expect(data.createWorkspace.plan).toEqual(WorkspacePlan.Community);
+    expect(data?.createWorkspace.plan).toEqual(WorkspacePlan.Community);
   });
 
   it("returns a workspace with the Online type", async () => {
     const { data } = await createWorkspace();
-    expect(data.createWorkspace.type).toEqual(WorkspaceType.Online);
+    expect(data?.createWorkspace.type).toEqual(WorkspaceType.Online);
   });
 
   it("sets the user who created the workspace as owner", async () => {
     const { data } = await createWorkspace({ name: "test" });
-    expect(data.createWorkspace.memberships[0]?.user?.id).toEqual(user.id);
-    expect(data.createWorkspace.memberships[0]?.role).toEqual(
+    expect(data?.createWorkspace.memberships[0]?.user?.id).toEqual(user.id);
+    expect(data?.createWorkspace.memberships[0]?.role).toEqual(
       MembershipRole.Owner
     );
   });
@@ -321,7 +321,7 @@ describe("workspace query", () => {
   });
 
   it("fails if user is not logged in", async () => {
-    const { id } = (await createWorkspace()).data.createWorkspace;
+    const id = (await createWorkspace()).data?.createWorkspace?.id;
     user.id = undefined;
     await expect(() =>
       client.query({
@@ -340,7 +340,7 @@ describe("workspace query", () => {
   });
 
   it("fails if user does not have access to workspace", async () => {
-    const { id } = (await createWorkspace()).data.createWorkspace;
+    const id = (await createWorkspace()).data?.createWorkspace?.id;
     user.id = testUser2Id;
     await expect(() =>
       client.query({
@@ -359,7 +359,7 @@ describe("workspace query", () => {
   });
 
   it("returns the workspace corresponding to the id", async () => {
-    const { id } = (await createWorkspace()).data.createWorkspace;
+    const id = (await createWorkspace()).data?.createWorkspace?.id;
     const { data } = await client.query<{
       workspace: Pick<Workspace, "id" | "name">;
     }>({
@@ -378,7 +378,7 @@ describe("workspace query", () => {
   });
 
   it("returns the workspace with an Online type", async () => {
-    const { id } = (await createWorkspace()).data.createWorkspace;
+    const id = (await createWorkspace()).data?.createWorkspace?.id;
     const { data } = await client.query<{
       workspace: Pick<Workspace, "id" | "type">;
     }>({
@@ -399,7 +399,7 @@ describe("workspace query", () => {
 
 describe("updatedWorkspace mutation", () => {
   it("can change the name of a workspace", async () => {
-    const id = (await createWorkspace())?.data.createWorkspace.id;
+    const id = (await createWorkspace())?.data?.createWorkspace?.id;
     const { data } = await client.mutate<{
       updateWorkspace: Pick<Workspace, "id" | "name">;
     }>({
@@ -414,11 +414,11 @@ describe("updatedWorkspace mutation", () => {
       variables: { id, data: { name: "new name" } },
       fetchPolicy: "no-cache",
     });
-    expect(data.updateWorkspace.name).toEqual("new name");
+    expect(data?.updateWorkspace.name).toEqual("new name");
   });
 
   it("fails if the user does not have access to the workspace", async () => {
-    const id = (await createWorkspace())?.data.createWorkspace.id;
+    const id = (await createWorkspace())?.data?.createWorkspace?.id;
     user.id = testUser2Id;
 
     await expect(
@@ -440,8 +440,7 @@ describe("updatedWorkspace mutation", () => {
   });
 
   it("changes the slug is the name of the workspace is changed", async () => {
-    const id = (await createWorkspace())?.data.createWorkspace.id;
-
+    const id = (await createWorkspace())?.data?.createWorkspace?.id;
     const { data } = await client.mutate<{
       updateWorkspace: Pick<Workspace, "id" | "slug">;
     }>({
@@ -456,20 +455,20 @@ describe("updatedWorkspace mutation", () => {
       variables: { id, data: { name: "new name" } },
       fetchPolicy: "no-cache",
     });
-    expect(data.updateWorkspace.slug).toEqual("new-name");
+    expect(data?.updateWorkspace.slug).toEqual("new-name");
   });
 });
 
 describe("nested resolvers", () => {
   it("can query memberships", async () => {
-    const slug = (await createWorkspace()).data.createWorkspace.slug as string;
+    const slug = (await createWorkspace()).data?.createWorkspace.slug as string;
     const membershipId = (
       await createMembership({
         userId: testUser2Id,
         workspaceSlug: slug,
         role: MembershipRole.Admin,
       })
-    ).data.createMembership.id as string;
+    ).data?.createMembership?.id;
     const { data } = await client.query<{
       workspace: Pick<Workspace, "id" | "memberships">;
     }>({
@@ -491,7 +490,7 @@ describe("nested resolvers", () => {
   });
 
   it("can query datasets", async () => {
-    const id = (await createWorkspace()).data.createWorkspace.id as string;
+    const id = (await createWorkspace()).data?.createWorkspace.id as string;
     const { data } = await client.query<{
       workspace: Pick<Workspace, "id" | "datasets">;
     }>({

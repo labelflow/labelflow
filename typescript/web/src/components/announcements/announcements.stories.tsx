@@ -4,7 +4,7 @@ import {
   Announcements,
   AnnouncementsButton as AnnouncementsButtonComponent,
 } from ".";
-import { chakraDecorator, storybookTitle } from "../../utils/stories";
+import { storybookTitle } from "../../dev/stories";
 
 const decorator = (StoryComponent: Story) => (
   <HStack>
@@ -14,7 +14,7 @@ const decorator = (StoryComponent: Story) => (
 
 export default {
   title: storybookTitle(Announcements),
-  decorators: [chakraDecorator, decorator],
+  decorators: [decorator],
 };
 
 export const Button = () => <AnnouncementsButtonComponent />;

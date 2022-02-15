@@ -5,13 +5,13 @@ import userEvent from "@testing-library/user-event";
 import { isNil } from "lodash/fp";
 import { PropsWithChildren, useState } from "react";
 import { MockableLocationProvider } from "../../../utils/mockable-location";
-import { getApolloMockLink } from "../../../utils/tests";
+import { getJestApolloMockLink } from "../../../dev/tests";
 import { GRAPHQL_MOCKS } from "../../workspace-name-input/workspace-name-input.fixtures";
 import { CreateWorkspaceModal } from "./create-workspace-modal";
 
 export const Wrapper = ({ children }: PropsWithChildren<{}>) => (
   <MockableLocationProvider>
-    <ApolloProvider link={getApolloMockLink(GRAPHQL_MOCKS)}>
+    <ApolloProvider link={getJestApolloMockLink(GRAPHQL_MOCKS)}>
       {children}
     </ApolloProvider>
   </MockableLocationProvider>

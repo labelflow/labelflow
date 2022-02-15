@@ -17,14 +17,11 @@ import {
   UpdateLabelClassActionMutation,
   UpdateLabelClassActionMutationVariables,
 } from "../../../graphql-types/UpdateLabelClassActionMutation";
-import {
-  ApolloMockResponse,
-  ApolloMockResponses,
-} from "../../../utils/tests/apollo-mock";
+import { ApolloMockResponse, ApolloMockResponses } from "../../../dev/common";
 import {
   BASIC_LABEL_DATA,
   DEEP_DATASET_WITH_CLASSES_DATA,
-} from "../../../utils/fixtures";
+} from "../../../dev/fixtures";
 import {
   CREATE_LABEL_CLASS_QUERY,
   DELETE_LABEL_CLASS_MUTATION,

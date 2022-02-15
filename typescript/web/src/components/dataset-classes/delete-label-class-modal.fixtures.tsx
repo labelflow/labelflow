@@ -8,8 +8,8 @@ import {
   GetLabelClassByIdQuery,
   GetLabelClassByIdQueryVariables,
 } from "../../graphql-types/GetLabelClassByIdQuery";
-import { BASIC_LABEL_CLASS_DATA } from "../../utils/fixtures";
-import { ApolloMockResponse, ApolloMockResponses } from "../../utils/tests";
+import { BASIC_LABEL_CLASS_DATA } from "../../dev/fixtures";
+import { ApolloMockResponse, ApolloMockResponses } from "../../dev/tests";
 import {
   DatasetClassesContext,
   DatasetClassesState,

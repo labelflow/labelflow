@@ -2,17 +2,13 @@ import { MockedProvider as ApolloProvider } from "@apollo/client/testing";
 import { Story } from "@storybook/react";
 import { CreateWorkspaceModal } from ".";
 import { MockableLocationProvider } from "../../../utils/mockable-location";
-import {
-  chakraDecorator,
-  queryParamsDecorator,
-  storybookTitle,
-} from "../../../utils/stories";
-import { getApolloMockLink } from "../../../utils/tests";
+import { queryParamsDecorator, storybookTitle } from "../../../dev/stories";
+import { getApolloMockLink } from "../../../dev/common";
 import { GRAPHQL_MOCKS } from "../../workspace-name-input/workspace-name-input.fixtures";
 
 export default {
   title: storybookTitle("Workspace Switcher", CreateWorkspaceModal),
-  decorators: [chakraDecorator, queryParamsDecorator],
+  decorators: [queryParamsDecorator],
 };
 
 const Template = () => (

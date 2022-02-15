@@ -2,7 +2,7 @@ import { gql } from "@apollo/client";
 import { v4 as uuidV4 } from "uuid";
 import { client, user } from "../../dev/apollo-client";
 import { getPrismaClient } from "../../prisma-client";
-import { createDataset, createWorkspace } from "../../utils/tests";
+import { createDataset, createWorkspace } from "../../dev/tests";
 
 // @ts-ignore
 fetch.disableFetchMocks();

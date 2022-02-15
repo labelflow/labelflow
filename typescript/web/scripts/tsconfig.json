@@ -11,8 +11,8 @@
     "**/*.stories.tsx",
     "**/*.fixtures.ts",
     "**/*.fixtures.tsx",
-    "**/src/utils/fixtures",
-    "**/src/utils/tests",
-    "**/src/utils/stories",
+    "**/src/dev/fixtures",
+    "**/src/dev/tests",
+    "**/src/dev/stories",
   ]
 }

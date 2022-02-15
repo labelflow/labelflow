@@ -1,7 +1,11 @@
 import { act, fireEvent, render, screen } from "@testing-library/react";
 import { WildcardMockLink } from "wildcard-mock-link";
-import { BASIC_LABEL_CLASS_DATA } from "../../utils/fixtures";
-import { getApolloMockLink, getApolloMockWrapper } from "../../utils/tests";
+import { BASIC_LABEL_CLASS_DATA } from "../../dev/fixtures";
+import {
+  getJestApolloMockLink,
+  getJestApolloMockWrapper,
+} from "../../dev/tests";
+
 import { DeleteLabelClassModal } from "./delete-label-class-modal";
 import {
   APOLLO_MOCKS,
@@ -20,9 +24,7 @@ const renderModal = (mockLink: WildcardMockLink) => {
         datasetId: BASIC_LABEL_CLASS_DATA.dataset.id,
       }}
     />,
-    {
-      wrapper: getApolloMockWrapper(mockLink),
-    }
+    { wrapper: getJestApolloMockWrapper(mockLink) }
   );
 };
 
@@ -32,7 +34,7 @@ describe(DeleteLabelClassModal, () => {
   });
 
   it("deletes a class when confirm is clicked", async () => {
-    const mockLink = getApolloMockLink(APOLLO_MOCKS);
+    const mockLink = getJestApolloMockLink(APOLLO_MOCKS);
     renderModal(mockLink);
     const confirmButton = screen.getByLabelText(/Confirm delete label class/);
     fireEvent.click(confirmButton);
@@ -42,7 +44,7 @@ describe(DeleteLabelClassModal, () => {
   });
 
   it("does not delete a class when cancel is clicked", async () => {
-    const mockLink = getApolloMockLink(APOLLO_MOCKS);
+    const mockLink = getJestApolloMockLink(APOLLO_MOCKS);
     renderModal(mockLink);
     const cancelButton = screen.getByLabelText(/Cancel delete label class/);
     fireEvent.click(cancelButton);

@@ -3,8 +3,8 @@ import { act, fireEvent, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { isNil } from "lodash/fp";
 
-import { BASIC_LABEL_CLASS_DATA } from "../../../utils/fixtures";
-import { mockWorkspace } from "../../../utils/tests/mock-workspace";
+import { BASIC_LABEL_CLASS_DATA } from "../../../dev/fixtures";
+import { mockWorkspace } from "../../../dev/tests/mock-workspace";
 
 mockWorkspace({
   queryParams: { datasetSlug: BASIC_LABEL_CLASS_DATA.dataset.slug },
@@ -13,7 +13,7 @@ mockWorkspace({
 import {
   renderWithTestWrapper,
   RenderWithWrapperResult,
-} from "../../../utils/tests";
+} from "../../../dev/tests";
 import {
   DatasetClassesContext,
   DatasetClassesState,

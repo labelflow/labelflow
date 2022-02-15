@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client";
-import { client } from "../../dev/apollo-client";
+import { client } from "../apollo-client";
 
 export const createLabelClass = async (data: {
   name: string;

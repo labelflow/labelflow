@@ -3,14 +3,13 @@ import { omit } from "lodash/fp";
 import { DatasetCard } from ".";
 import {
   apolloMockDecorator,
-  chakraDecorator,
   queryParamsDecorator,
   storybookTitle,
-} from "../../utils/stories";
+} from "../../dev/stories";
 
 export default {
   title: storybookTitle(DatasetCard),
-  decorators: [chakraDecorator, apolloMockDecorator, queryParamsDecorator],
+  decorators: [apolloMockDecorator, queryParamsDecorator],
 };
 
 const property = {

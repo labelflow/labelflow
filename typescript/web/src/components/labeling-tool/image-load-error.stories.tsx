@@ -2,10 +2,9 @@ import { Box } from "@chakra-ui/react";
 import { DecoratorFn, Story } from "@storybook/react";
 import {
   apolloMockDecorator,
-  chakraDecorator,
   queryParamsDecorator,
   storybookTitle,
-} from "../../utils/stories";
+} from "../../dev/stories";
 import { ImageLoadError } from "./image-load-error";
 
 function inGreyBoxDecorator(
@@ -23,12 +22,7 @@ export default {
   component: ImageLoadError,
   // FIXME SW Images are not loaded anymore
   // loaders: [mockImagesLoader],
-  decorators: [
-    inGreyBoxDecorator,
-    queryParamsDecorator,
-    chakraDecorator,
-    apolloMockDecorator,
-  ],
+  decorators: [inGreyBoxDecorator, queryParamsDecorator, apolloMockDecorator],
 };
 
 export const ErrorLoadingImage: Story = () => {

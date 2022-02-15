@@ -10,13 +10,12 @@ import NextLink from "next/link";
 import React from "react";
 import { RiArrowRightSLine } from "react-icons/ri";
 import { ResponsiveBreadcrumbs } from ".";
-import { chakraDecorator, storybookTitle } from "../../../../utils/stories";
+import { storybookTitle } from "../../../../dev/stories";
 
 const ArrowRightIcon = chakra(RiArrowRightSLine);
 
 export default {
   title: storybookTitle("Breadcrumbs", ResponsiveBreadcrumbs),
-  decorators: [chakraDecorator],
 };
 
 export const Empty = () => {

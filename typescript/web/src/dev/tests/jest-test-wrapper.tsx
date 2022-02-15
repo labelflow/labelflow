@@ -11,7 +11,7 @@ import {
   ApolloMockResponse,
   ApolloMockResponseResult,
   ApolloMockResponses,
-} from "./apollo-mock";
+} from "../common";
 import {
   AuthMockOptions,
   createTestWrapper,
@@ -76,6 +76,16 @@ export const injectJestInApolloMockResults = (
 ): JestApolloMockResponses =>
   mocks.map((mock) => injectJestInApolloMockResult(mock));
 
+const injectActInApolloOptions = (
+  apollo: Pick<RenderWithWrapperOptions, "apollo"> | undefined
+) => {
+  if (isNil(apollo) || apollo === false) return undefined;
+  if (typeof apollo === "boolean" && apollo) {
+    return { act };
+  }
+  return { ...apollo, act };
+};
+
 export const renderWithTestWrapper = async (
   element: ReactElement,
   {
@@ -83,7 +93,10 @@ export const renderWithTestWrapper = async (
     ...options
   }: RenderWithWrapperOptions = {}
 ): Promise<RenderWithWrapperResult> => {
-  const { wrapper: testWrapper, apolloMockLink } = createTestWrapper(options);
+  const { wrapper: testWrapper, apolloMockLink } = createTestWrapper({
+    ...options,
+    apollo: injectActInApolloOptions(options),
+  });
   const wrapper = addExtraWrapper(testWrapper, extraWrapper);
   const renderResult = render(element, { wrapper, ...renderOptions });
   await waitForAuth(options.auth, apolloMockLink);

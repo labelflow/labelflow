@@ -1,11 +1,14 @@
 import { TabBar, TabBarItem } from ".";
-import { WORKSPACE_DATA } from "../../../utils/fixtures";
-import { createCommonDecorator, storybookTitle } from "../../../utils/stories";
+import { WORKSPACE_DATA } from "../../../dev/fixtures";
+import {
+  createTestWrapperDecorator,
+  storybookTitle,
+} from "../../../dev/stories";
 
 export default {
   title: storybookTitle(TabBar),
   decorators: [
-    createCommonDecorator({
+    createTestWrapperDecorator({
       auth: { withWorkspaces: true },
       apollo: true,
       router: { query: { workspaceSlug: WORKSPACE_DATA.slug } },

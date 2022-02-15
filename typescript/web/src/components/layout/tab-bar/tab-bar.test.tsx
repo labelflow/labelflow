@@ -1,8 +1,8 @@
-import { mockWorkspace } from "../../../utils/tests/mock-workspace";
+import { mockWorkspace } from "../../../dev/tests/mock-workspace";
 
 mockWorkspace({ queryParams: { datasetSlug: "test-dataset" } });
 
-import { renderWithTestWrapper } from "../../../utils/tests";
+import { renderWithTestWrapper } from "../../../dev/tests";
 import { TabBar, TabBarItem } from ".";
 
 const renderTabBar = async (tabs: TabBarItem[]) =>

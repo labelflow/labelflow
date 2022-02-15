@@ -1,10 +1,9 @@
 import { Button, useDisclosure } from "@chakra-ui/react";
-import { chakraDecorator, storybookTitle } from "../../utils/stories";
+import { storybookTitle } from "../../dev/stories";
 import { ClassSelectionPopover } from "./class-selection-popover";
 
 export default {
   title: storybookTitle(ClassSelectionPopover),
-  decorators: [chakraDecorator],
 };
 
 const labelClasses = [

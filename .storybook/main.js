@@ -1,11 +1,15 @@
 const NodePolyfillPlugin = require("node-polyfill-webpack-plugin");
 
 module.exports = {
-  stories: ["../typescript/**/*.stories.tsx"],
+  stories: ["../typescript/**/*.stories.@(ts|md)x"],
   core: {
     builder: "webpack5",
   },
-  addons: ["storybook-addon-next-router"],
+  addons: [
+    "@storybook/addon-essentials",
+    "storybook-addon-next-router",
+    "@chakra-ui/storybook-addon",
+  ],
   typescript: { reactDocgen: "react-docgen" },
   webpackFinal: async (config) => {
     return {

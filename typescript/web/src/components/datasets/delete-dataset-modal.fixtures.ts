@@ -2,8 +2,8 @@ import {
   DeleteDatasetByIdMutation,
   DeleteDatasetByIdMutationVariables,
 } from "../../graphql-types/DeleteDatasetByIdMutation";
-import { BASIC_DATASET_DATA } from "../../utils/fixtures";
-import { ApolloMockResponse, ApolloMockResponses } from "../../utils/tests";
+import { BASIC_DATASET_DATA } from "../../dev/fixtures";
+import { ApolloMockResponse, ApolloMockResponses } from "../../dev/tests";
 import { DELETE_DATASET_BY_ID_MUTATION } from "./delete-dataset-modal";
 import { GET_DATASET_BY_ID_MOCK } from "./upsert-dataset-modal.fixtures";
 

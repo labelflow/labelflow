@@ -2,16 +2,16 @@ import { fireEvent, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom/extend-expect";
 
-import { mockWorkspace } from "../../utils/tests/mock-workspace";
+import { mockWorkspace } from "../../dev/tests/mock-workspace";
 
 mockWorkspace();
 
-import { BASIC_DATASET_DATA } from "../../utils/fixtures";
+import { BASIC_DATASET_DATA } from "../../dev/fixtures";
 import {
   ApolloMockResponses,
   injectJestInApolloMockResults,
   renderWithTestWrapper,
-} from "../../utils/tests";
+} from "../../dev/tests";
 import { UpsertDatasetModal } from "./upsert-dataset-modal";
 import {
   APOLLO_MOCKS,

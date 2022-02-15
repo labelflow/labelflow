@@ -5,12 +5,12 @@ import { mockMatchMedia } from "../../utils/mock-window";
 
 mockMatchMedia(jest);
 
-import { BASIC_DATASET_DATA } from "../../utils/fixtures";
-import { mockWorkspace } from "../../utils/tests/mock-workspace";
+import { BASIC_DATASET_DATA } from "../../dev/fixtures";
+import { mockWorkspace } from "../../dev/tests/mock-workspace";
 
 mockWorkspace({ queryParams: { datasetSlug: BASIC_DATASET_DATA.slug } });
 
-import { renderWithTestWrapper } from "../../utils/tests";
+import { renderWithTestWrapper } from "../../dev/tests";
 import { ImportButton } from "./import-button";
 import { IMPORT_BUTTON_MOCKS } from "./import-button.fixtures";
 

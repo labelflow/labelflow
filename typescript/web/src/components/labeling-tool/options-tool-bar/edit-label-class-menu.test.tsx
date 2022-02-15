@@ -8,8 +8,8 @@ mockMatchMedia(jest);
 import {
   BASIC_LABEL_DATA,
   DEEP_DATASET_WITH_CLASSES_DATA,
-} from "../../../utils/fixtures";
-import { mockWorkspace } from "../../../utils/tests/mock-workspace";
+} from "../../../dev/fixtures";
+import { mockWorkspace } from "../../../dev/tests/mock-workspace";
 
 mockWorkspace({
   queryParams: {
@@ -18,7 +18,7 @@ mockWorkspace({
   },
 });
 
-import { renderWithTestWrapper } from "../../../utils/tests";
+import { renderWithTestWrapper } from "../../../dev/tests";
 import { Tools, useLabelingStore } from "../../../connectors/labeling-state";
 import {
   APOLLO_MOCKS,

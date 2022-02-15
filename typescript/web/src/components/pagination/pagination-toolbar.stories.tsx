@@ -1,13 +1,11 @@
 import { Story } from "@storybook/react";
 import React from "react";
 import { PaginationProps, PaginationProvider, PaginationToolbar } from ".";
-import { storybookTitle } from "../../utils/stories";
-import { chakraDecorator } from "../../utils/stories/chakra-decorator";
+import { storybookTitle } from "../../dev/stories";
 
 export default {
   title: storybookTitle("Pagination", PaginationToolbar),
   component: PaginationToolbar,
-  decorators: [chakraDecorator],
 };
 
 const Template: Story<PaginationProps> = (args) => (
