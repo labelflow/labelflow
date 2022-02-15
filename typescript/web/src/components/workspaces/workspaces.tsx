@@ -1,6 +1,6 @@
 import { Center, chakra, Flex, Heading, Text } from "@chakra-ui/react";
 import { isEmpty } from "lodash";
-import { useCallback, FormEvent } from "react";
+import { FormEvent, useCallback } from "react";
 import { useWorkspaces } from "../../hooks";
 import NoWorkspacesGraphics from "../graphics/no-workspace";
 import {
