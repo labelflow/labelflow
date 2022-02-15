@@ -1,4 +1,5 @@
 import * as React from "react";
+import { DOCUMENTATION_URL } from "../../../constants";
 // import { IoCalendar, IoGrid, IoHelpBuoy } from "react-icons/io5";
 // import { MdWeb } from "react-icons/md";
 
@@ -51,7 +52,7 @@ export const links: Link[] = [
   { label: "Blog", href: "/posts" },
   {
     label: "Documentation",
-    href: "https://labelflow.gitbook.io/labelflow/",
+    href: DOCUMENTATION_URL,
     target: "_blank",
   },
   { label: "Jobs", href: "https://labelflow.recruitee.com", target: "_blank" },

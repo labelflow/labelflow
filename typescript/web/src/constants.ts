@@ -13,3 +13,6 @@ export const WEB_APP_URL_ORIGIN =
   process.env.NEXTAUTH_URL ??
   (process.env.VERCEL_URL && `https://${process.env.VERCEL_URL}`) ??
   APP_OFFICIAL_URL;
+
+/** Public documentation URL */
+export const DOCUMENTATION_URL = "https://docs.labelflow.ai/";

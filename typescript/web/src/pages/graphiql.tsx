@@ -1,4 +1,4 @@
-import { Box, Text } from "@chakra-ui/react";
+import { Flex, Text } from "@chakra-ui/react";
 import dynamic from "next/dynamic";
 import React from "react";
 import { Authenticated } from "../components/auth";
@@ -21,9 +21,8 @@ const GraphqlPlayground = () => (
     <Meta title="LabelFlow | GraphiQL" />
     <CookieBanner />
     <Layout breadcrumbs={[<NavLogo key={0} />, <Text key={0}>Graphiql</Text>]}>
-      <Box
-        h="100%"
-        w="100%"
+      <Flex
+        grow={1}
         borderTop="solid 1px"
         borderColor="#d0d0d0"
         boxSizing="border-box"
@@ -31,7 +30,7 @@ const GraphqlPlayground = () => (
         {globalThis.location && (
           <GraphiQL url={`${globalThis.location.origin}/api/graphql`} />
         )}
-      </Box>
+      </Flex>
     </Layout>
   </Authenticated>
 );

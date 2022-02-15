@@ -4,6 +4,7 @@ export default {
       displayName: "browser",
       preset: "ts-jest",
       collectCoverage: true,
+      coverageReporters: ["lcov"],
       testPathIgnorePatterns: ["node_modules"],
       setupFilesAfterEnv: ["<rootDir>/setup-tests.ts"],
       globals: {
@@ -29,6 +30,7 @@ export default {
       displayName: "nodejs",
       preset: "ts-jest",
       collectCoverage: true,
+      coverageReporters: ["lcov"],
       testPathIgnorePatterns: ["node_modules"],
       setupFilesAfterEnv: ["<rootDir>/setup-tests.ts"],
       globals: {

@@ -14,7 +14,7 @@
     <a href="https://labelflow.ai/"><strong>Try it now »</strong></a>
     <br />
     <br />
-    <a href="https://labelflow.gitbook.io/labelflow/">Explore docs</a>
+    <a href="https://docs.labelflow.ai/">Explore docs</a>
     ·
     <a href="https://github.com/labelflow/labelflow/issues/new?assignees=&labels=bug&template=bug_report.md&title=">Report Bug</a>
     ·

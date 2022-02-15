@@ -172,7 +172,6 @@ describe("Coco converters", () => {
       width: 2,
       coco_url: "https://an-image",
       file_name: "an-image_id-an-image.png",
-      flickr_url: "",
       license: 0,
     });
     expect(
@@ -186,7 +185,6 @@ describe("Coco converters", () => {
       width: 2,
       coco_url: "https://an-image",
       file_name: "an-image.png",
-      flickr_url: "",
       license: 0,
     });
   });

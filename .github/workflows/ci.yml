@@ -161,9 +161,33 @@ jobs:
       - name: Generate code
         run: yarn codegen
       - name: run tests
-        run: yarn test
+        run: yarn test --coverage
         env:
           POSTGRES_EXTERNAL_URL: postgresql://admin:admin@localhost:5433/labelflow?schema=public
+      - name: Upload code-coverage output
+        uses: actions/upload-artifact@v2
+        with:
+          name: lcov.info
+          path: coverage/lcov.info
+
+  publish-tests-coverage:
+    name: Publish tests code-coverage to CodeClimate
+    runs-on: ubuntu-20.04
+    needs: test-typescript
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
+      - name: Download code-coverage output
+        uses: actions/download-artifact@v2
+        with:
+          name: lcov.info
+      - name: Publish code-coverage output to CodeClimate
+        uses: paambaati/codeclimate-action@v3.0.0
+        env:
+          CC_TEST_REPORTER_ID: ${{secrets.CC_TEST_REPORTER_ID}}
+        with:
+          coverageLocations: |
+            lcov.info:lcov
 
   check-codegen-diff:
     name: Check diff after codegen
