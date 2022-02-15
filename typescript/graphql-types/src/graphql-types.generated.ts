@@ -539,6 +539,7 @@ export type MutationImportDatasetArgs = {
 
 export type MutationCreateWorkspaceArgs = {
   data: WorkspaceCreateInput;
+  options?: Maybe<WorkspaceCreateOptions>;
 };
 
 
@@ -818,6 +819,10 @@ export type WorkspaceCreateInput = {
   image?: Maybe<Scalars['String']>;
 };
 
+export type WorkspaceCreateOptions = {
+  createTutorial?: Maybe<Scalars['Boolean']>;
+};
+
 export enum WorkspacePlan {
   Community = 'Community',
   Starter = 'Starter',
@@ -1003,6 +1008,7 @@ export type ResolversTypes = {
   UserWhereUniqueInput: UserWhereUniqueInput;
   Workspace: ResolverTypeWrapper<Workspace>;
   WorkspaceCreateInput: WorkspaceCreateInput;
+  WorkspaceCreateOptions: WorkspaceCreateOptions;
   WorkspacePlan: WorkspacePlan;
   WorkspaceSlugAndDatasetSlug: WorkspaceSlugAndDatasetSlug;
   WorkspaceType: WorkspaceType;
@@ -1082,6 +1088,7 @@ export type ResolversParentTypes = {
   UserWhereUniqueInput: UserWhereUniqueInput;
   Workspace: Workspace;
   WorkspaceCreateInput: WorkspaceCreateInput;
+  WorkspaceCreateOptions: WorkspaceCreateOptions;
   WorkspaceSlugAndDatasetSlug: WorkspaceSlugAndDatasetSlug;
   WorkspaceUpdateInput: WorkspaceUpdateInput;
   WorkspaceWhereInput: WorkspaceWhereInput;

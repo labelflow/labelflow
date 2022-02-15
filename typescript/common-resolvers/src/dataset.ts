@@ -20,7 +20,7 @@ const getLabelClassesByDatasetId = async (
   return await repository.labelClass.list({ datasetId, user });
 };
 
-export const getDataset = async (
+const getDataset = async (
   where: DatasetWhereUniqueInput,
   repository: Repository,
   user?: { id: string }

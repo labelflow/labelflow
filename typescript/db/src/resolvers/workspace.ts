@@ -1,16 +1,11 @@
 import {
+  addTypename,
+  addTypenames,
   Context,
   DbWorkspace,
   DbWorkspaceWithType,
   Repository,
-  addTypename,
-  addTypenames,
 } from "@labelflow/common-resolvers";
-import {
-  tutorialImages,
-  tutorialLabelClass,
-  tutorialLabels,
-} from "@labelflow/common-resolvers/src/data/dataset-tutorial";
 import {
   Membership,
   MembershipRole,
@@ -22,7 +17,7 @@ import {
   WorkspaceWhereUniqueInput,
 } from "@labelflow/graphql-types";
 import { Prisma } from "@prisma/client";
-import { isNil, omit } from "lodash/fp";
+import { isNil } from "lodash/fp";
 import { getPrismaClient } from "../prisma-client";
 import { AuthorizationError } from "../repository/authorization-error";
 import { castObjectNullsToUndefined } from "../repository/utils";
@@ -84,87 +79,39 @@ const workspaces = async (
   );
 };
 
-type CreateTutorialDatasetOptions = Context & {
-  createdWorkspaceId: string;
-};
-
-const createTutorialDatasetInWorkspace = async ({
-  repository,
-  req,
-  user,
-  createdWorkspaceId,
-}: CreateTutorialDatasetOptions) => {
-  const now = new Date();
-  const createdWorkspace = await repository.workspace.get(
-    { id: createdWorkspaceId },
-    user
-  );
-  const imagesToCreate = tutorialImages.map(
-    ({ name, url, width, height, mimeType }, urlIndex) => {
-      const createdAt = new Date(now.getTime() + urlIndex);
-      return {
-        externalUrl: url,
-        name,
-        createdAt: createdAt.toISOString(),
-        noThumbnails: true,
-        width,
-        height,
-        mimeType,
-      };
-    }
-  );
-  const labels = tutorialLabels.map((label) => ({
-    ...omit(["id", "imageId"], label),
-  }));
-  const labelClass = tutorialLabelClass;
-  await createTutorialDataset(
-    null,
-    {
-      name: "Tutorial",
-      workspaceSlug: createdWorkspace?.slug ?? "",
-      images: imagesToCreate,
-      labelClass,
-      labels,
-    },
-    { repository, req, user }
-  );
-};
-
 const createWorkspace = async (
   _: any,
-  args: MutationCreateWorkspaceArgs,
-  { repository, user, req }: Context
+  { data, options }: MutationCreateWorkspaceArgs,
+  ctx: Context
 ): Promise<DbWorkspaceWithType> => {
+  const { repository, user } = ctx;
   if (typeof user?.id !== "string") {
     throw new Error("Couldn't create workspace: No user id");
   }
   const db = await getPrismaClient();
   const userInDb = await db.user.findUnique({ where: { id: user.id } });
-
   if (userInDb == null) {
     throw new Error(
       `Couldn't create workspace: User with id "${user.id}" doesn't exist in the database`
     );
   }
-
   const createdWorkspaceId = await repository.workspace.add(
     {
-      id: args.data.id ?? undefined,
-      name: args.data.name,
-      image: args.data.image ?? undefined,
+      id: data.id ?? undefined,
+      name: data.name,
+      image: data.image ?? undefined,
     },
     user
   );
-  if (createdWorkspaceId) {
-    await createTutorialDatasetInWorkspace({
-      repository,
-      user,
-      req,
-      createdWorkspaceId,
-    });
+  const newWorkspace = await getWorkspace(
+    { id: createdWorkspaceId },
+    repository,
+    user
+  );
+  if (options?.createTutorial) {
+    await createTutorialDataset(newWorkspace.id, newWorkspace.slug, ctx);
   }
-
-  return await getWorkspace({ id: createdWorkspaceId }, repository, user);
+  return newWorkspace;
 };
 
 const updateWorkspace = async (

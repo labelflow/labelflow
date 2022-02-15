@@ -1,105 +1,57 @@
-import { LabelType } from "@labelflow/graphql-types";
-import { LABEL_CLASS_COLOR_PALETTE } from "@labelflow/utils/src/class-color-generator";
+import { Label as GraphQlLabel, LabelType } from "@labelflow/graphql-types";
+import { LABEL_CLASS_COLOR_PALETTE } from "@labelflow/utils";
+import {
+  Dataset,
+  Image,
+  Label as PrismaLabel,
+  LabelClass,
+} from "@prisma/client";
+import { range } from "lodash/fp";
 
-const origin =
-  "location" in globalThis && typeof globalThis.location?.origin === "string"
-    ? globalThis.location?.origin
-    : "https://labelflow.ai";
+export type TutorialDataset = Pick<Dataset, "name">;
 
-export const tutorialDatasets = [
-  {
-    name: "Tutorial dataset",
-    slug: "tutorial-dataset",
-    id: "049fe9f0-9a19-43cd-be65-35d222d54b4d",
-    workspaceSlug: "local", // FIXME: Implement proper id here
-  },
-];
+export type TutorialImage = Pick<
+  Image,
+  "externalUrl" | "name" | "width" | "height" | "mimetype"
+>;
 
-export const tutorialImages = [
-  {
-    datasetId: "049fe9f0-9a19-43cd-be65-35d222d54b4d",
-    id: "2bbbf664-5810-4760-a10f-841de2f35510",
-    url: `${origin}/static/img/tutorial-image-1.jpg`,
-    name: "Image 1",
-    width: 2500,
-    height: 1667,
-    mimeType: "image/jpeg",
-  },
-  {
-    datasetId: "049fe9f0-9a19-43cd-be65-35d222d54b4d",
-    id: "506b263f-61a9-45ba-8f75-515534fae97c",
-    url: `${origin}/static/img/tutorial-image-2.jpg`,
-    name: "Image 2",
-    width: 2500,
-    height: 1667,
-    mimeType: "image/jpeg",
-  },
-  {
-    datasetId: "049fe9f0-9a19-43cd-be65-35d222d54b4d",
-    id: "04f999da-780c-461c-8e8e-c3189ae560fb",
-    url: `${origin}/static/img/tutorial-image-3.jpg`,
-    name: "Image 3",
-    width: 2500,
-    height: 1667,
-    mimeType: "image/jpeg",
-  },
-  {
-    datasetId: "049fe9f0-9a19-43cd-be65-35d222d54b4d",
-    id: "73b89fd9-0be8-4c76-bc4f-fee943b0d9d1",
-    url: `${origin}/static/img/tutorial-image-4.jpg`,
-    name: "Image 4",
-    width: 2500,
-    height: 1667,
-    mimeType: "image/jpeg",
-  },
-  {
-    datasetId: "049fe9f0-9a19-43cd-be65-35d222d54b4d",
-    id: "d96db1e2-2ecd-425e-b88f-7692a28d2dcf",
-    url: `${origin}/static/img/tutorial-image-5.jpg`,
-    name: "Image 5",
-    width: 2500,
-    height: 1667,
-    mimeType: "image/jpeg",
-  },
-  {
-    datasetId: "049fe9f0-9a19-43cd-be65-35d222d54b4d",
-    id: "dc736ae4-3c49-4081-9d75-b43e922e0ac9",
-    url: `${origin}/static/img/tutorial-image-6.jpg`,
-    name: "Image 6",
-    width: 2500,
-    height: 1667,
-    mimeType: "image/jpeg",
-  },
-];
+export type TutorialLabelClass = Pick<LabelClass, "index" | "name" | "color">;
 
-export const tutorialLabelClass = {
-  id: "2b4f7ed2-4257-48f8-b546-81af73f3c904",
+export type TutorialLabel = Pick<
+  PrismaLabel,
+  "labelClassId" | "x" | "y" | "width" | "height"
+> &
+  Pick<GraphQlLabel, "type" | "geometry">;
+
+export const TUTORIAL_DATASET: TutorialDataset = {
+  name: "Tutorial",
+};
+
+const getTutorialImage = (rootUrl: string, index: number): TutorialImage => ({
+  externalUrl: `${rootUrl}/static/img/tutorial-image-${index + 1}.jpg`,
+  name: `Image ${index + 1}`,
+  width: 2500,
+  height: 1667,
+  mimetype: "image/jpeg",
+});
+
+export const getTutorialImages = (rootUrl: string): TutorialImage[] =>
+  range(0, 6).map((index) => getTutorialImage(rootUrl, index));
+
+export const TUTORIAL_LABEL_CLASS: TutorialLabelClass = {
   index: 0,
   name: "Horse",
   color: LABEL_CLASS_COLOR_PALETTE[0],
-  datasetId: "049fe9f0-9a19-43cd-be65-35d222d54b4d",
 };
 
-export const tutorialLabelClasses = [
+export const getTutorialLabels = (labelClassId: string): TutorialLabel[] => [
   {
-    id: "2b4f7ed2-4257-48f8-b546-81af73f3c904",
-    index: 0,
-    name: "Horse",
-    color: LABEL_CLASS_COLOR_PALETTE[0],
-    datasetId: "049fe9f0-9a19-43cd-be65-35d222d54b4d",
-  },
-];
-
-export const tutorialLabels = [
-  {
-    id: "59ce52fb-fbdb-491d-ad2f-ddd5586a6e54",
-    type: LabelType.Box,
     labelClassId: null,
-    imageId: "73b89fd9-0be8-4c76-bc4f-fee943b0d9d1",
     x: 1399.9089081651664,
     y: 446.2497676315852,
     width: 179.36883194633174,
     height: 182.59331238677532,
+    type: LabelType.Box,
     geometry: {
       type: "Polygon",
       coordinates: [
@@ -114,8 +66,12 @@ export const tutorialLabels = [
     },
   },
   {
-    imageId: "73b89fd9-0be8-4c76-bc4f-fee943b0d9d1",
-    id: "75dff3c4-fdc8-42a0-945a-339effc2bb01",
+    labelClassId: null,
+    x: 521.4912592031518,
+    y: 424.03607721605067,
+    width: 153.09015568472773,
+    height: 244.1946831444609,
+    type: LabelType.Box,
     geometry: {
       type: "Polygon",
       coordinates: [
@@ -128,16 +84,14 @@ export const tutorialLabels = [
         ],
       ],
     },
-    height: 244.1946831444609,
-    labelClassId: "2b4f7ed2-4257-48f8-b546-81af73f3c904",
-    type: LabelType.Box,
-    width: 153.09015568472773,
-    x: 521.4912592031518,
-    y: 424.03607721605067,
   },
   {
-    imageId: "73b89fd9-0be8-4c76-bc4f-fee943b0d9d1",
-    id: "75dff3c4-fdc8-42a0-945a-339effc2bb02",
+    labelClassId: null,
+    x: 0.6954090947690474,
+    y: 367.6221793163677,
+    width: 157.71385707254922,
+    height: 136.81170410486232,
+    type: LabelType.Box,
     geometry: {
       type: "Polygon",
       coordinates: [
@@ -150,16 +104,14 @@ export const tutorialLabels = [
         ],
       ],
     },
-    height: 136.81170410486232,
-    labelClassId: "2b4f7ed2-4257-48f8-b546-81af73f3c904",
-    type: LabelType.Box,
-    width: 157.71385707254922,
-    x: 0.6954090947690474,
-    y: 367.6221793163677,
   },
   {
-    imageId: "73b89fd9-0be8-4c76-bc4f-fee943b0d9d1",
-    id: "75dff3c4-fdc8-42a0-945a-339effc2bb03",
+    labelClassId,
+    x: 2260.56395501186,
+    y: 959.1327316049208,
+    width: 130.18748222894828,
+    height: 228.65789276832538,
+    type: LabelType.Box,
     geometry: {
       type: "Polygon",
       coordinates: [
@@ -172,16 +124,14 @@ export const tutorialLabels = [
         ],
       ],
     },
-    height: 228.65789276832538,
-    labelClassId: "2b4f7ed2-4257-48f8-b546-81af73f3c904",
-    type: LabelType.Box,
-    width: 130.18748222894828,
-    x: 2260.56395501186,
-    y: 959.1327316049208,
   },
   {
-    imageId: "73b89fd9-0be8-4c76-bc4f-fee943b0d9d1",
-    id: "75dff3c4-fdc8-42a0-945a-339effc2bb05",
+    labelClassId: null,
+    x: 1996.4226900095955,
+    y: 1359.5804903586006,
+    width: 173.35982511251723,
+    height: 44.39210727193563,
+    type: LabelType.Box,
     geometry: {
       type: "Polygon",
       coordinates: [
@@ -194,16 +144,14 @@ export const tutorialLabels = [
         ],
       ],
     },
-    height: 44.39210727193563,
-    labelClassId: "2b4f7ed2-4257-48f8-b546-81af73f3c904",
-    type: LabelType.Box,
-    width: 173.35982511251723,
-    x: 1996.4226900095955,
-    y: 1359.5804903586006,
   },
   {
-    imageId: "73b89fd9-0be8-4c76-bc4f-fee943b0d9d1",
-    id: "75dff3c4-fdc8-42a0-945a-339effc2bb06",
+    labelClassId: null,
+    x: 734.7559483316069,
+    y: 387.19013009195646,
+    width: 145.013853175951,
+    height: 270.52021799053136,
+    type: LabelType.Box,
     geometry: {
       type: "Polygon",
       coordinates: [
@@ -216,16 +164,14 @@ export const tutorialLabels = [
         ],
       ],
     },
-    height: 270.52021799053136,
-    labelClassId: null,
-    type: LabelType.Box,
-    width: 145.013853175951,
-    x: 734.7559483316069,
-    y: 387.19013009195646,
   },
   {
-    imageId: "73b89fd9-0be8-4c76-bc4f-fee943b0d9d1",
-    id: "75dff3c4-fdc8-42a0-945a-339effc2bb07",
+    labelClassId,
+    x: 1639.0982578311537,
+    y: 1041.0029081292073,
+    width: 206.16400407461379,
+    height: 354.96464752386396,
+    type: LabelType.Box,
     geometry: {
       type: "Polygon",
       coordinates: [
@@ -238,16 +184,14 @@ export const tutorialLabels = [
         ],
       ],
     },
-    height: 354.96464752386396,
-    labelClassId: "2b4f7ed2-4257-48f8-b546-81af73f3c904",
-    type: LabelType.Box,
-    width: 206.16400407461379,
-    x: 1639.0982578311537,
-    y: 1041.0029081292073,
   },
   {
-    imageId: "73b89fd9-0be8-4c76-bc4f-fee943b0d9d1",
-    id: "75dff3c4-fdc8-42a0-945a-339effc2bb08",
+    labelClassId,
+    x: 1050.6194882147552,
+    y: 533.3125090123597,
+    width: 264.6054613340166,
+    height: 134.08705548424882,
+    type: LabelType.Box,
     geometry: {
       type: "Polygon",
       coordinates: [
@@ -260,18 +204,14 @@ export const tutorialLabels = [
         ],
       ],
     },
-    height: 134.08705548424882,
-    labelClassId: "2b4f7ed2-4257-48f8-b546-81af73f3c904",
-    type: LabelType.Box,
-    width: 264.6054613340166,
-    x: 1050.6194882147552,
-    y: 533.3125090123597,
   },
   {
-    id: "974ba8ee-8b11-455c-9ee2-575467b1150d",
-    type: LabelType.Polygon,
     labelClassId: null,
-    imageId: "73b89fd9-0be8-4c76-bc4f-fee943b0d9d1",
+    x: 1988,
+    y: 249,
+    height: 389,
+    width: 274,
+    type: LabelType.Polygon,
     geometry: {
       type: "Polygon",
       coordinates: [
@@ -337,16 +277,14 @@ export const tutorialLabels = [
         ],
       ],
     },
-    x: 1988,
-    y: 249,
-    height: 389,
-    width: 274,
   },
   {
-    id: "ebde220b-6d95-4531-8748-ecf9411e2b5a",
+    labelClassId,
+    x: 1756,
+    y: 408,
+    height: 254,
+    width: 365,
     type: LabelType.Polygon,
-    labelClassId: "2b4f7ed2-4257-48f8-b546-81af73f3c904",
-    imageId: "73b89fd9-0be8-4c76-bc4f-fee943b0d9d1",
     geometry: {
       type: "Polygon",
       coordinates: [
@@ -405,9 +343,5 @@ export const tutorialLabels = [
         ],
       ],
     },
-    x: 1756,
-    y: 408,
-    height: 254,
-    width: 365,
   },
 ];
