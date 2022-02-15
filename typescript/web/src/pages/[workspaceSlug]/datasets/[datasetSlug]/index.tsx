@@ -14,7 +14,6 @@ import { KeymapButton } from "../../../../components/layout/top-bar/keymap-butto
 import { NavLogo } from "../../../../components/logo/nav-logo";
 import { Meta } from "../../../../components/meta";
 import { LayoutSpinner } from "../../../../components/spinner";
-import { WelcomeModal } from "../../../../components/welcome-manager";
 import { WorkspaceSwitcher } from "../../../../components/workspace-switcher";
 import { Error404Content } from "../../../404";
 
@@ -48,18 +47,16 @@ const Body = () => {
       handleError(error);
     }
     return (
-      <Authenticated>
-        <WelcomeModal />
+      <>
         <Meta title="LabelFlow | Dataset not found" />
         <CookieBanner />
         <Error404Content />
-      </Authenticated>
+      </>
     );
   }
 
   return (
     <>
-      <WelcomeModal />
       <Meta title={`LabelFlow | ${datasetName ?? "Dataset"}`} />
       <CookieBanner />
       <Layout

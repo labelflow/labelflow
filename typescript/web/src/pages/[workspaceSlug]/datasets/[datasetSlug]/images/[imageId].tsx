@@ -22,7 +22,6 @@ import { KeymapButton } from "../../../../../components/layout/top-bar/keymap-bu
 import { NavLogo } from "../../../../../components/logo/nav-logo";
 import { Meta } from "../../../../../components/meta";
 import { LayoutSpinner } from "../../../../../components/spinner";
-import { WelcomeModal } from "../../../../../components/welcome-manager";
 import { WorkspaceSwitcher } from "../../../../../components/workspace-switcher";
 import {
   ImageNameQuery,
@@ -95,7 +94,6 @@ const Body = () => {
       }
       return (
         <>
-          <WelcomeModal />
           <Meta title="LabelFlow | Dataset not found" />
           <CookieBanner />
           <Error404Content />
@@ -108,7 +106,6 @@ const Body = () => {
       }
       return (
         <>
-          <WelcomeModal />
           <Meta title="LabelFlow | Image not found" />
           <CookieBanner />
           <Error404Content />
@@ -119,7 +116,6 @@ const Body = () => {
 
   return (
     <>
-      <WelcomeModal />
       <Meta title={`LabelFlow | Image ${imageName ?? ""}`} />
       <CookieBanner />
       <Layout

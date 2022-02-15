@@ -388,11 +388,10 @@ export const typeDefs = [
     updateIogLabel(data: UpdateIogInput!): Label
     createIogLabel(data: CreateIogLabelInput!): Label
     createDataset(data: DatasetCreateInput!): Dataset
-    createDemoDataset: Dataset
     updateDataset(where: DatasetWhereUniqueInput!, data: DatasetUpdateInput!): Dataset
     deleteDataset(where: DatasetWhereUniqueInput!): Dataset
     importDataset(where: DatasetWhereUniqueInput!, data: DatasetImportInput!): ImportStatus
-    createWorkspace(data: WorkspaceCreateInput!): Workspace
+    createWorkspace(data: WorkspaceCreateInput!, options: WorkspaceCreateOptions): Workspace
     updateWorkspace(where: WorkspaceWhereUniqueInput!, data: WorkspaceUpdateInput!): Workspace
     deleteWorkspace(where: WorkspaceWhereUniqueInput!): Workspace
     createMembership(data: MembershipCreateInput!): Membership
@@ -509,6 +508,10 @@ export const typeDefs = [
     id: ID
     name: String!
     image: String
+  }
+
+  input WorkspaceCreateOptions {
+    createTutorial: Boolean
   }
 
   enum WorkspacePlan {

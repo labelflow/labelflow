@@ -23,9 +23,9 @@ import {
 import { USER_WITH_WORKSPACES_QUERY } from "../../../shared-queries/user.query";
 import { BoolParam } from "../../../utils/query-param-bool";
 
-export const CREATE_WORKSPACE_MUTATION = gql`
+const CREATE_WORKSPACE_MUTATION = gql`
   mutation CreateWorkspaceMutation($name: String!) {
-    createWorkspace(data: { name: $name }) {
+    createWorkspace(data: { name: $name }, options: { createTutorial: true }) {
       id
       slug
     }

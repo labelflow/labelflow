@@ -8,7 +8,6 @@ import { WorkspaceTabBar } from "../../components/layout/tab-bar/workspace-tab-b
 import { NavLogo } from "../../components/logo/nav-logo";
 import { Meta } from "../../components/meta";
 import { LayoutSpinner } from "../../components/spinner";
-import { WelcomeModal } from "../../components/welcome-manager";
 import { WorkspaceSwitcher } from "../../components/workspace-switcher";
 
 const GraphiQL = dynamic(() => import("../../components/graphiql"), {
@@ -21,7 +20,6 @@ const GraphiQL = dynamic(() => import("../../components/graphiql"), {
 
 const GraphqlPlayground = () => (
   <Authenticated withWorkspaces>
-    <WelcomeModal />
     <Meta title="LabelFlow | GraphiQL" />
     <CookieBanner />
     <Layout

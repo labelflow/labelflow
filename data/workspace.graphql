@@ -4,6 +4,10 @@ input WorkspaceCreateInput {
   image: String
 }
 
+input WorkspaceCreateOptions {
+  createTutorial: Boolean
+}
+
 input WorkspaceWhereUniqueInput {
   id: ID
   slug: String

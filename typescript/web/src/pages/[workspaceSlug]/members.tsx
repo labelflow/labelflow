@@ -9,7 +9,6 @@ import { NavLogo } from "../../components/logo/nav-logo";
 import { Members } from "../../components/members";
 import { Meta } from "../../components/meta";
 import { LayoutSpinner } from "../../components/spinner";
-import { WelcomeModal } from "../../components/welcome-manager";
 import { WorkspaceSwitcher } from "../../components/workspace-switcher";
 import {
   GetMembershipsMembersQuery,
@@ -108,7 +107,6 @@ const LayoutBody = () => {
 const WorkspaceMembersPage = () => {
   return (
     <Authenticated withWorkspaces>
-      <WelcomeModal />
       <Meta title="LabelFlow | Members" />
       <CookieBanner />
       <Layout

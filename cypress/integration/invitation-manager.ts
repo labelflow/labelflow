@@ -6,7 +6,6 @@ describe("Invitation Manager (online)", () => {
     cy.task("performLogin").then((token) => {
       cy.setCookie("next-auth.session-token", token as string);
     });
-    cy.setCookie("hasUserTriedApp", "true");
     cy.setCookie("consentedCookies", "true");
     cy.task("createWorkspaceAndDatasets").then(() => {
       cy.clearCookie("next-auth.session-token");
@@ -40,7 +39,6 @@ describe("Invitation Manager (online)", () => {
     cy.task("performLogin").then((token) => {
       cy.setCookie("next-auth.session-token", token as string);
     });
-    cy.setCookie("hasUserTriedApp", "true");
     cy.setCookie("consentedCookies", "true");
     cy.task("createWorkspaceAndDatasets");
     cy.clearCookie("next-auth.session-token");
@@ -72,7 +70,6 @@ describe("Invitation Manager (online)", () => {
     cy.task("performLogin").then((token) => {
       cy.setCookie("next-auth.session-token", token as string);
     });
-    cy.setCookie("hasUserTriedApp", "true");
     cy.setCookie("consentedCookies", "true");
     cy.task("createWorkspaceAndDatasets").then(() => {
       cy.clearCookie("next-auth.session-token");
@@ -116,7 +113,6 @@ describe("Invitation Manager (online)", () => {
     cy.task("performLogin").then((token) => {
       cy.setCookie("next-auth.session-token", token as string);
     });
-    cy.setCookie("hasUserTriedApp", "true");
     cy.setCookie("consentedCookies", "true");
     cy.task("createWorkspaceAndDatasets").then(() => {
       cy.clearCookie("next-auth.session-token");
@@ -159,7 +155,6 @@ describe("Invitation Manager (online)", () => {
     // log in as the default user
     cy.task("performLogin").then((token) => {
       cy.setCookie("next-auth.session-token", token as string);
-      cy.setCookie("hasUserTriedApp", "true");
       cy.setCookie("consentedCookies", "true");
     });
     cy.task("createWorkspaceAndDatasets");
@@ -186,7 +181,6 @@ describe("Invitation Manager (online)", () => {
     cy.task("performLogin").then((token) => {
       cy.setCookie("next-auth.session-token", token as string);
     });
-    cy.setCookie("hasUserTriedApp", "true");
     cy.setCookie("consentedCookies", "true");
     cy.task("createWorkspaceAndDatasets").then(() => {
       // sign out
@@ -216,7 +210,6 @@ describe("Invitation Manager (online)", () => {
     // log in as the default user
     cy.task("performLogin").then((token) => {
       cy.setCookie("next-auth.session-token", token as string);
-      cy.setCookie("hasUserTriedApp", "true");
       cy.setCookie("consentedCookies", "true");
     });
     cy.task("createWorkspaceAndDatasets");

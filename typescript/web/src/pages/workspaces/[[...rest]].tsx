@@ -5,7 +5,6 @@ import { Layout } from "../../components/layout";
 import { NavLogo } from "../../components/logo/nav-logo";
 import { Meta } from "../../components/meta";
 import { LayoutSpinner } from "../../components/spinner";
-import { WelcomeModal } from "../../components/welcome-manager";
 
 const WorkspacesPages = () => {
   const router = useRouter();
@@ -18,7 +17,6 @@ const WorkspacesPages = () => {
 
   return (
     <>
-      <WelcomeModal />
       <Meta title="LabelFlow | Workspace" />
       <CookieBanner />
       <Layout breadcrumbs={[<NavLogo key={0} />]}>

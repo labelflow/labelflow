@@ -11,10 +11,8 @@ describe("Golden path (online)", () => {
   });
 
   it("Should execute the golden path without errors", () => {
-    cy.setCookie("hasUserTriedApp", "false");
     cy.setCookie("consentedCookies", "true");
     cy.visit(`/${WORKSPACE_SLUG}/datasets?`);
-    cy.contains("Skip the tutorial").click();
     cy.get('[aria-label="Create new dataset"]').click();
     cy.get('[aria-label="Dataset name input"]').type("cypress dataset");
 

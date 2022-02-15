@@ -5,7 +5,6 @@ describe("Online workspaces access (online)", () => {
     cy.task("performLogin").then((token) => {
       cy.setCookie("next-auth.session-token", token as string);
     });
-    cy.setCookie("hasUserTriedApp", "true");
     cy.setCookie("consentedCookies", "true");
     // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
     cy.visit("/?");
@@ -32,7 +31,6 @@ describe("Online workspaces access (online)", () => {
       cy.setCookie("next-auth.session-token", token as string);
     });
     cy.task("createWorkspaceAndDatasets");
-    cy.setCookie("hasUserTriedApp", "true");
     cy.setCookie("consentedCookies", "true");
     // Check that the datasets are visible
     cy.visit("/cypress-test-workspace/datasets");
