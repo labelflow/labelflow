@@ -53,10 +53,10 @@ const NoWorkspaces = () => (
     <Flex direction="column" align="center">
       <ChakraNoWorkspaces />
       <Heading mt="8" textAlign="center">
-        You don&apos;t have any workspaces.
+        Create your first workspace
       </Heading>
       <Text mt="4" textAlign="center">
-        Workspaces allow you to store your image datasets.
+        Workspaces allow you to store your image datasets
       </Text>
       <CreateWorkspaceForm />
     </Flex>
